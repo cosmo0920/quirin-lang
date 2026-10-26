@@ -12,16 +12,20 @@ gate has run, the integrator:
 2. regenerates the matrix: `python3 docs/reports/remaining-d02/build_matrix.py
    . --gate <gate.json>`;
 3. regenerates the report index: `python3 scripts/build_docs_index.py`;
-4. runs `python3 scripts/land.py check`, which must exit 0;
-5. commits the records;
-6. reruns the Python suite.
+4. regenerates the per-rule contributions page:
+   `python3 scripts/contribution_ledgers.py render` (card CONTRIBUTION-LEDGERS;
+   the page names each live profile's baseline, so a landing that moves a
+   baseline or adds a ledger changes it);
+5. runs `python3 scripts/land.py check`, which must exit 0;
+6. commits the records;
+7. reruns the Python suite.
 
 The recurring landing failure this guards is the Python suite running before
 step 2: a ledger edit changes `len(named_followups)` while
 `dimensions.named_followups` still holds the old count, so
 `test_build_matrix_sections` fails. `check` predicts that (and a stale
 `dimensions.requirements` or report index) without running the suite, and
-names the step to run first.
+names the step to run first; likewise a stale contributions page.
 
 Usage:
 
@@ -43,6 +47,7 @@ ROOT = Path(__file__).resolve().parents[1]
 MATRIX = Path("docs/reviews/r0_3/acceptance_matrix.json")
 MATRIX_COMMAND = "python3 docs/reports/remaining-d02/build_matrix.py . --gate <gate.json>"
 INDEX_COMMAND = "python3 scripts/build_docs_index.py"
+CONTRIBUTIONS_COMMAND = "python3 scripts/contribution_ledgers.py render"
 # The dimensions whose name is a section they count (test_build_matrix_sections).
 COUNTED_SECTIONS = ("requirements", "named_followups")
 SEQUENCE = (
@@ -50,6 +55,7 @@ SEQUENCE = (
     "(when the merged measurement differs from the card's gate)",
     MATRIX_COMMAND,
     INDEX_COMMAND,
+    CONTRIBUTIONS_COMMAND,
     "python3 scripts/land.py check",
     "git commit the records",
     "python3 -m unittest discover -s scripts/tests",
@@ -74,6 +80,12 @@ def stale_records(root):
     if index.returncode != 0:
         stale.append(("docs/reports/INDEX.md: " + (index.stderr or index.stdout).strip(),
                       INDEX_COMMAND))
+    ledgers = root / "scripts/contribution_ledgers.py"
+    if ledgers.is_file():
+        page = subprocess.run([sys.executable, str(ledgers), "--root", str(root), "render",
+                               "--check"], capture_output=True, text=True)
+        if page.returncode != 0:
+            stale.append(((page.stderr or page.stdout).strip(), CONTRIBUTIONS_COMMAND))
     return stale
 
 
@@ -93,7 +105,7 @@ def main(argv=None):
         print("land: regenerate, then rerun `python3 scripts/land.py check` before the Python "
               "suite", file=sys.stderr)
         return 1
-    print("land: matrix dimensions and report index are fresh")
+    print("land: matrix dimensions, report index and contributions page are fresh")
     return 0
 
 

@@ -202,7 +202,8 @@ target/release/quirin-audit --plugin-path target/release --output ../measure/car
 | `--inputs FILE`, `--routes R,...` | The explicit inputs (`quirin-measure-inputs/1`): per route a compile database (or the pinned corpus inputs root) and a unit list; [`inputs/live.json`](../../crates/quirin-audit-plugin-measure/inputs/live.json) holds the three live routes |
 | `--profile NAME` | A live evaluation profile, `contract/evaluations/<NAME>/evaluation.json` (`eight-home`, `fluent-bit-system`, `fluent-bit-tail-pause`; schema in `scripts/evaluation_profiles.py`), repeatable. Every untracked input digest it records is verified and every prepared directory must exist before anything runs; a frozen profile is refused. The record then carries each side's figures as `evaluation_profiles.py summarize` computes them and its `compare` verdict against the profile's baseline |
 | `--declared FILE` | Check the measured moves of the first comparison against the file's `measure-prediction` block (below) |
-| `--rules-off IDS` | Also measure the first comparison's after side with `QCORE_GATEWAY_RULES_OFF=IDS` and compare it with that side (the per-rule contribution). Refused, "not yet supported", unless the binary advertises the switch (every `quirin-audit` built since card GATEWAY-RULE-API does); after the run the components must record exactly that off-list. The ids are those of `crates/gateway-rules/registry.toml`; the analyzer refuses to run under an unknown id, a hold or a malformed list |
+| `--rules-off IDS` | Also measure the first comparison's after side `<tip>` with `QCORE_GATEWAY_RULES_OFF=IDS` as side `<tip>-off` and compare it with `<tip>` (the per-rule contribution, below). Ids are distinct. Refused, "not yet supported", unless the binary advertises the switch (every `quirin-audit` built since card GATEWAY-RULE-API does); after the run every switched side's components must record exactly its off-list. The ids are those of `crates/gateway-rules/registry.toml`; the analyzer refuses to run under an unknown id, a hold or a malformed list |
+| `--per-rule` | With two or more `--rules-off` ids: also measure one side `<tip>-off-<id>` per id with only that rule off, so each rule's rows are separated from the rows the rules move together (named interactions) |
 | `--repository DIR`, `--inputs-base DIR` | The repository (revisions, link map, `scripts/gate_slot.py`) and the root of the untracked prepared inputs (default: the repository) |
 | `--mirror auto\|always\|never` | Re-spell the compile databases into a digest-manifested mirror when they spell a non-canonical path (default `auto`); needed for analyzers built before AUDIT-CANONICAL-PATHS |
 | `--source-date-epoch SECONDS\|none` | `SOURCE_DATE_EPOCH` for every route of every side (default `1767225600`), so Clang expands Monkey's `__DATE__`/`__TIME__` identically and the lifetime-source pre-pass key does not move with the clock; recorded and part of a baseline's inputs |
@@ -224,6 +225,28 @@ where the contract sidecar's one clock-dependent lifetime-source key (Monkey's
 moved in more than one comparison are listed as named interactions; nothing is
 summed. An unmatched row stays in its side's denominator and marks the route
 incomplete.
+
+**Contribution ledgers** (card CONTRIBUTION-LEDGERS, plan seam A). With
+`--rules-off`, the record's `contribution` slot holds a
+`quirin-contribution-ledger/1` ledger per switched rule and profile, built
+from the switched comparisons of one binary (`ledger.rs`): the rows moved, each
+with the named premises its TIP row rests on (resolved through the route's
+contract sidecar), the leaves traded on rows whose status does not move, and
+the touched rows that stay Unknown with their remaining leaves. One rule
+switched alone owns every row its switch moves, and its ledger says its
+interactions were not measured. With `--per-rule`, a row is a rule's only when
+that rule's switch alone moves it, no other single switch does, and the joint
+switch moves it the same way; every other moved row is an interaction ledger
+(`33+35`), never attributed to either rule. The group's base (every switched
+rule off) plus all its ledgers' deltas must equal the TIP totals, or the run
+fails; nothing is repaired. Rows of the per-rule comparisons are not listed as
+comparison interactions. Commit the record (for example under
+`docs/reports/<card>/`) and write the ledgers into the tree with
+`python3 scripts/contribution_ledgers.py write --record <committed record>`,
+after the TIP run is the profile's baseline; that script owns the schema, the
+layout (`contract/contributions/<rule-id>/<profile>.json`,
+`contract/contributions/interactions/<key>/<profile>.json`), the profile
+consistency check and the generated [contributions page](contributions.md).
 
 **The prediction block.** One fenced block in `PREDICTION.md`:
 

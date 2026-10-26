@@ -469,3 +469,231 @@ fn bad_usage_is_refused_before_anything_runs() {
         assert!(!output.join("native-comparison.json").exists());
     }
 }
+
+/// The unit row of one switch state: `f`, `g`, `h` and `k` with the given
+/// statuses; `k`'s leaves name the state, so a switch that changes them is a
+/// content change, and `f` on TIP rests on declaration `log0`.
+fn switched_units(statuses: [&str; 4], k_leaf: &str, tip: bool) -> Vec<serde_json::Value> {
+    let mut f = function("f", statuses[0], &[], "d");
+    if tip {
+        f["contract_dependencies"] = json!({"hypothesis_dependencies": {"log0": ["a1"]}});
+    }
+    let functions = vec![
+        f,
+        function("g", statuses[1], &[], "d"),
+        function("h", statuses[2], &[], "d"),
+        function("k", statuses[3], &[k_leaf], "d"),
+    ];
+    let status = if statuses.contains(&"Unknown") {
+        "Unknown"
+    } else {
+        "Safe"
+    };
+    vec![unit("lib", "a.c", status, functions)]
+}
+
+/// f: rule 33 alone; g: both rules needed (each single switch moves it);
+/// h: either rule suffices (only the joint switch moves it); k: rule 33
+/// changes its leaves and it stays Unknown.
+fn switch_fixtures(directory: &std::path::Path) -> std::path::PathBuf {
+    let fixtures = directory.join("states");
+    switch_state(
+        &fixtures,
+        &[],
+        &switched_units(["Safe", "Safe", "Safe", "Unknown"], "tip leaf", true),
+    );
+    std::fs::write(
+        fixtures.join("none/contracts.json"),
+        json!({"contract_dependencies": {"declarations": {"log0": {"hypothesis_graph":
+            {"premises": {"0": {"children": ["a1"], "erasure": {"name": "rk_plugin_callback_closure"}}}}}}}})
+            .to_string(),
+    )
+    .unwrap();
+    switch_state(
+        &fixtures,
+        &["33"],
+        &switched_units(["Unknown", "Unknown", "Safe", "Unknown"], "off leaf", false),
+    );
+    switch_state(
+        &fixtures,
+        &["35"],
+        &switched_units(["Safe", "Unknown", "Safe", "Unknown"], "tip leaf", false),
+    );
+    switch_state(
+        &fixtures,
+        &["35", "33"], // the switch value as given on the command line
+        &switched_units(
+            ["Unknown", "Unknown", "Unknown", "Unknown"],
+            "off leaf",
+            false,
+        ),
+    );
+    fixtures
+}
+
+fn validate_with_the_python_authority(record: &std::path::Path) {
+    let script = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../../scripts/contribution_ledgers.py");
+    let output = std::process::Command::new("python3")
+        .arg(&script)
+        .arg("validate-record")
+        .arg(record)
+        .output()
+        .unwrap();
+    assert!(
+        output.status.success(),
+        "{}{}",
+        String::from_utf8_lossy(&output.stdout),
+        String::from_utf8_lossy(&output.stderr)
+    );
+}
+
+#[test]
+fn per_rule_switches_fill_the_contribution_slot_with_named_interactions() {
+    let directory = scratch("ledgers");
+    inputs(&directory);
+    let fixtures = switch_fixtures(&directory);
+    let binary = switch_checkout(&directory.join("checkout"), &fixtures);
+    let manifest = manifest(&directory).display().to_string();
+    let base = format!("base={}", binary.display());
+    let tip = format!("tip={}", binary.display());
+    let mut arguments = compare_args(&manifest, &base, &tip);
+    arguments.extend([
+        "--rules-off",
+        "35,33",
+        "--per-rule",
+        "--mount-root",
+        "/tmp/quirin-measure-test",
+    ]);
+    let output = directory.join("out");
+    let (invocation, _) = run(&arguments, &directory, &output);
+    assert!(invocation.status.success(), "{}", invocation.stderr);
+    let record = record(&output);
+    let labels: Vec<&str> = record["comparisons"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|comparison| comparison["comparison"].as_str().unwrap())
+        .collect();
+    assert_eq!(
+        labels,
+        [
+            "base->tip",
+            "tip-off->tip",
+            "tip-off-33->tip",
+            "tip-off-35->tip"
+        ]
+    );
+    let slot = &record["contribution"];
+    assert_eq!(slot["schema"], "quirin-contribution-ledger/1");
+    assert_eq!(slot["rules"], json!(["33", "35"]));
+    let ledgers: std::collections::BTreeMap<&str, &serde_json::Value> = slot["ledgers"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|ledger| (ledger["key"].as_str().unwrap(), ledger))
+        .collect();
+    assert_eq!(
+        ledgers.keys().copied().collect::<Vec<_>>(),
+        ["33", "33+35", "35"]
+    );
+    let rule = ledgers["33"];
+    assert_eq!(rule["profile"], "fixture-profile");
+    assert_eq!(rule["rows_moved"].as_array().unwrap().len(), 1);
+    assert_eq!(rule["rows_moved"][0]["before"], "Unknown");
+    assert_eq!(rule["premises"], json!(["rk_plugin_callback_closure"]));
+    assert_eq!(rule["delta"], json!({"Safe": 1, "Unknown": -1}));
+    assert!(
+        rule["rows_unknown"][0]["row"]
+            .as_str()
+            .unwrap()
+            .ends_with("::k#0")
+    );
+    assert_eq!(rule["rows_unknown"][0]["why"][0]["description"], "tip leaf");
+    assert_eq!(rule["leaves_traded"]["removed"], 1);
+    assert_eq!(rule["measurement"]["comparison"], "tip-off-33->tip");
+    assert!(
+        rule["measurement"]["binary_sha256"]
+            .as_str()
+            .is_some_and(|digest| digest.len() == 64)
+    );
+    assert_eq!(ledgers["35"]["rows_moved"], json!([]));
+    let interaction = ledgers["33+35"];
+    assert_eq!(interaction["kind"], "interaction");
+    assert_eq!(interaction["rows_moved"].as_array().unwrap().len(), 2);
+    assert_eq!(interaction["delta"], json!({"Safe": 2, "Unknown": -2}));
+    assert_eq!(rule["group"]["base"], json!({"Unknown": 4}));
+    assert_eq!(rule["group"]["on"], json!({"Safe": 3, "Unknown": 1}));
+    // Per-rule comparisons are attributed in the slot, not listed as
+    // comparison interactions.
+    assert!(
+        record["interactions"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .all(|row| row["moved_in"].as_array().unwrap().len() < 2)
+    );
+    validate_with_the_python_authority(&output.join("native-comparison.json"));
+
+    // One rule switched alone owns every row its switch moves, and says its
+    // interactions were not measured.
+    let mut arguments = compare_args(&manifest, &base, &tip);
+    arguments.extend([
+        "--rules-off",
+        "33",
+        "--mount-root",
+        "/tmp/quirin-measure-test",
+    ]);
+    let output = directory.join("out-single");
+    let (invocation, _) = run(&arguments, &directory, &output);
+    assert!(invocation.status.success(), "{}", invocation.stderr);
+    let single = support::record(&output);
+    let ledgers = single["contribution"]["ledgers"].as_array().unwrap();
+    assert_eq!(ledgers.len(), 1);
+    assert_eq!(ledgers[0]["key"], "33");
+    assert_eq!(ledgers[0]["rows_moved"].as_array().unwrap().len(), 2);
+    assert_eq!(ledgers[0]["group"]["interactions_measured"], false);
+    validate_with_the_python_authority(&output.join("native-comparison.json"));
+}
+
+#[test]
+fn per_rule_needs_two_rules_and_side_names_stay_free() {
+    let directory = scratch("per-rule-usage");
+    for arguments in [
+        vec![
+            "--inputs",
+            "m.json",
+            "--side",
+            "a=run:x",
+            "--side",
+            "b=run:y",
+            "--per-rule",
+        ],
+        vec![
+            "--inputs",
+            "m.json",
+            "--side",
+            "a=run:x",
+            "--side",
+            "b=run:y",
+            "--rules-off",
+            "33",
+            "--per-rule",
+        ],
+        vec![
+            "--inputs",
+            "m.json",
+            "--side",
+            "a=run:x",
+            "--side",
+            "b=run:y",
+            "--rules-off",
+            "33,33",
+        ],
+    ] {
+        let output = directory.join("out");
+        let (invocation, _) = run(&arguments, &directory, &output);
+        assert_eq!(invocation.status.code(), Some(1), "{arguments:?}");
+        assert!(!output.join("native-comparison.json").exists());
+    }
+}

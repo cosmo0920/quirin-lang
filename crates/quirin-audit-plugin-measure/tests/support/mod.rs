@@ -219,6 +219,58 @@ pub fn stub_checkout(directory: &Path, report: &Path, advertise: bool) -> PathBu
     binary
 }
 
+/// Write one switch state's report and sidecar (components recording `off`)
+/// under `fixtures/<off joined by ','>` (`none` for no rule off).
+pub fn switch_state(fixtures: &Path, off: &[&str], units: &[Value]) {
+    let name = if off.is_empty() {
+        "none".to_owned()
+    } else {
+        off.join(",")
+    };
+    let directory = fixtures.join(name);
+    std::fs::create_dir_all(&directory).unwrap();
+    let report = json!({"schema_version": 1, "units": units,
+                        "diagnostic_counts": {"unsupported": units.len()}});
+    std::fs::write(
+        directory.join("resource-diagnostics.json"),
+        serde_json::to_string_pretty(&report).unwrap(),
+    )
+    .unwrap();
+    std::fs::write(
+        directory.join("resource-diagnostics.components.json"),
+        serde_json::to_string(&sidecar(units, "switch@1", off)).unwrap(),
+    )
+    .unwrap();
+}
+
+/// A stub analyzer checkout that honours the rule switch: it copies
+/// `fixtures/<QCORE_GATEWAY_RULES_OFF or none>/` (see [`switch_state`]), and
+/// a `contracts.json` there when present, to `--report`.
+pub fn switch_checkout(directory: &Path, fixtures: &Path) -> PathBuf {
+    std::fs::create_dir_all(directory.join("target/release")).unwrap();
+    std::fs::create_dir_all(directory.join("scripts")).unwrap();
+    std::fs::create_dir_all(directory.join("contract/profiles/fixture")).unwrap();
+    std::fs::write(directory.join("scripts/run_pinned_audit.py"), "# stub\n").unwrap();
+    std::fs::write(
+        directory.join("contract/profiles/fixture/selection.json"),
+        "{}\n",
+    )
+    .unwrap();
+    let script = format!(
+        "#!/bin/sh\n# reads QCORE_GATEWAY_RULES_OFF\nout=\"\"\nwhile [ $# -gt 0 ]; do\n  \
+         if [ \"$1\" = --report ]; then out=$2; fi\n  shift\ndone\n\
+         state='{fixtures}'/\"${{QCORE_GATEWAY_RULES_OFF:-none}}\"\n\
+         cp \"$state/resource-diagnostics.json\" \"$out\"\n\
+         cp \"$state/resource-diagnostics.components.json\" \"${{out%.json}}.components.json\"\n\
+         if [ -f \"$state/contracts.json\" ]; then cp \"$state/contracts.json\" \
+         \"${{out%.json}}.contracts.json\"; fi\n",
+        fixtures = fixtures.display()
+    );
+    let binary = directory.join("target/release/quirin-audit");
+    process_fixture::write_executable_mode(&binary, script.as_bytes(), 0o755);
+    binary
+}
+
 /// `git init` and commit everything in `directory`; returns `HEAD`.
 pub fn commit_all(directory: &Path) -> String {
     let git = |arguments: &[&str]| {

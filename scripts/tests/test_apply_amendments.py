@@ -170,13 +170,26 @@ class ApplyTests(unittest.TestCase):
             expected.pop(self.root / "amendments.json", None)
             self.assertEqual(current, expected)
 
-    def test_contribution_is_validated_and_not_applied(self):
+    def test_a_null_contribution_applies_nothing_more(self):
         document = dict(DOCUMENT, ledger=[], status_paragraph=None, profiles=[],
-                        contribution={"rows": []})
+                        contribution=None)
         code, out, err = run(self.root, document)
         self.assertEqual(code, 0, err)
-        self.assertNotIn("reserved: profiles", out)
-        self.assertIn("reserved: contribution validated, not applied", out)
+        self.assertNotIn("reserved", out)
+        self.assertNotIn("contribution:", out)
+
+    def test_a_contribution_naming_an_absent_ledger_is_refused(self):
+        before = snapshot(self.root)
+        document = dict(DOCUMENT, ledger=[], status_paragraph=None,
+                        contribution={"ledgers": ["contract/contributions/33/eight-home.json"]})
+        code, _, err = run(self.root, document)
+        self.assertEqual(code, 1)
+        self.assertIn("no such ledger", err)
+        self.assertIn("nothing was written", err)
+        current = snapshot(self.root)
+        current.pop(self.root / "amendments.json", None)
+        before.pop(self.root / "amendments.json", None)
+        self.assertEqual(current, before)
 
     def test_profiles_in_a_tree_without_evaluation_profiles_are_refused(self):
         before = snapshot(self.root)
@@ -230,7 +243,67 @@ REFUSALS = {
     "bad profile": (mutated(lambda d: d.update(profiles=["Eight Home"])), "profile name"),
     "duplicate profile": (mutated(lambda d: d.update(profiles=["a", "a"])), "twice"),
     "bad contribution": (mutated(lambda d: d.update(contribution=[1])), "contribution"),
+    "reserved-shape contribution": (mutated(lambda d: d.update(contribution={"rows": []})),
+                                    "contribution must be null or"),
+    "empty contribution": (mutated(lambda d: d.update(contribution={"ledgers": []})),
+                           "non-empty list"),
+    "contribution outside the ledgers": (
+        mutated(lambda d: d.update(contribution={"ledgers": ["docs/x.json"]})),
+        "under contract/contributions/"),
 }
+
+
+class ContributionTests(unittest.TestCase):
+    """Card CONTRIBUTION-LEDGERS: the contribution field is checked through
+    contribution_ledgers.check_contribution and regenerates the page."""
+
+    def setUp(self):
+        from test_contribution_ledgers import Tree
+        self.directory = tempfile.TemporaryDirectory()
+        self.tree = Tree(self.directory.name)
+        self.root = self.tree.root
+        self.tree.write(self.tree.record())
+        self.paths = ["contract/contributions/33/demo.json",
+                      "contract/contributions/35/demo.json",
+                      "contract/contributions/interactions/33+35/demo.json"]
+
+    def tearDown(self):
+        self.directory.cleanup()
+
+    def test_listed_ledgers_are_checked_and_the_page_is_regenerated(self):
+        log, page = tool.check_contribution({"contribution": {"ledgers": self.paths}}, self.root)
+        self.assertEqual(len(log), 3)
+        self.assertTrue(log[0].startswith("contribution: contract/contributions/33/demo.json"))
+        path, old, new = page
+        self.assertEqual(str(path), "docs/development/contributions.md")
+        self.assertEqual(old, "")
+        self.assertIn("rule 33: one row", new)
+        (self.root / path).parent.mkdir(parents=True, exist_ok=True)
+        (self.root / path).write_text(new)
+        self.assertIsNone(tool.check_contribution(
+            {"contribution": {"ledgers": self.paths}}, self.root)[1])
+
+    def test_an_omitted_or_tampered_ledger_is_refused(self):
+        with self.assertRaises(tool.AmendmentError) as caught:
+            tool.check_contribution({"contribution": {"ledgers": self.paths[1:]}}, self.root)
+        self.assertIn("omits", str(caught.exception))
+        (self.root / "docs/reports/card/native-comparison.json").write_text("{}")
+        with self.assertRaises(tool.AmendmentError) as caught:
+            tool.check_contribution({"contribution": {"ledgers": self.paths}}, self.root)
+        self.assertIn("record digest", str(caught.exception))
+
+    def test_an_inconsistent_tree_is_refused(self):
+        self.tree.set_baseline({"Safe": 2, "Unknown": 2})
+        digest = json.loads((self.root / "contract/evaluations/demo/evaluation.json")
+                            .read_text())["baseline"]["sha256"]
+        for relative in self.paths:
+            path = self.root / relative
+            stored = json.loads(path.read_text())
+            stored["profile_baseline"]["sha256"] = digest
+            path.write_text(json.dumps(stored))
+        with self.assertRaises(tool.AmendmentError) as caught:
+            tool.check_contribution({"contribution": {"ledgers": self.paths}}, self.root)
+        self.assertIn("never repaired", str(caught.exception))
 
 
 class RefusalTests(unittest.TestCase):
