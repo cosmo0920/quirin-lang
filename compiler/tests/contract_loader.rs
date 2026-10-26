@@ -2129,9 +2129,11 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // Eight API functions plus two resource type declarations: 332 -> 342 non-v1.
     // Setter effect models add 15 non-v1 declarations: 342 -> 357.
     // Main adds interpreted writev and thrd_current: 495 -> 497.
+    // cmt-getter-ownership-closure (9e42dc021) adds the non-v1
+    // `cfl/hash_state.qv` (three functions and one type): 357 -> 361.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (66, 497, 357)
+        (66, 497, 361)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every

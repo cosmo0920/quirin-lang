@@ -360,8 +360,11 @@ fn a_pin_holds_at_every_reviewed_revision_and_nowhere_else() {
 
 #[test]
 fn a_version_one_lock_is_read_as_one_identity_per_entry() {
+    // One explicit stamp for both runs: a default (clock) stamp makes the
+    // byte comparison below depend on both runs falling in the same second.
+    const STAMP: &str = "2026-10-25T18:10:00Z";
     let tree = Tree::new();
-    succeeded(&tree.pin(&[]));
+    succeeded(&tree.pin(&["--pinned-at", STAMP]));
     let path = tree.0.join("contracts/contracts.lock");
     let lock: Value = serde_json::from_slice(&fs::read(&path).unwrap()).unwrap();
     let v1 = serde_json::json!({
@@ -378,8 +381,8 @@ fn a_version_one_lock_is_read_as_one_identity_per_entry() {
     });
     fs::write(&path, serde_json::to_string_pretty(&v1).unwrap()).unwrap();
     succeeded(&tree.pin(&["--check"]));
-    // Re-pinning writes version 2, identical to the lock it was made from.
-    succeeded(&tree.pin(&[]));
+    // Re-pinning writes the current version, identical to the lock it was made from.
+    succeeded(&tree.pin(&["--pinned-at", STAMP]));
     assert_eq!(tree.read("contracts/contracts.lock"), lock);
 }
 
