@@ -1,6 +1,6 @@
 {
   "card": "CONTRACT-SUPERSESSION",
-  "base": "1638e581a",
+  "base": "9c58892cf",
   "stamp": "2026-10-25T18:10:00Z",
   "fluent_bit_revision": "046accf6aded7906f66a1baf0202da349e521736",
   "rule": "the only change allowed is the addition of pin stamps and the revision tie (with the format version 4 that expresses them); every clause, digest, module and identity is unchanged",
