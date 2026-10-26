@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Compare BASE and TIP route outputs for the CONTRACT-SUPERSESSION identity run.
 
-Usage: compare_identity.py RUN_DIR BASE_SRC TIP_SRC OUT_JSON
+Usage: compare_identity.py RUN_DIR BASE_SRC TIP_SRC OUT_JSON [ROUTE...]
 
 Adapted from docs/reports/audit-composition/scripts/compare_identity.py. For
 each route (corpus, slice, system) under RUN_DIR/{base,tip}/<route>:
@@ -82,7 +82,7 @@ def main():
     locks = lock_map(base_src, tip_src)
     record = {'run': str(run), 'lock_digest_substitution': locks, 'routes': {}}
     ok = True
-    for route in ROUTES:
+    for route in sys.argv[5:] or ROUTES:
         base, tip = (run / 'base' / route).resolve(), (run / 'tip' / route).resolve()
         dirs = [(str(base.parent), str(tip.parent))]
         base_files, tip_files = files(base), files(tip)
