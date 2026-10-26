@@ -1437,6 +1437,10 @@ fn load_function(path: &str, decl: &SourceDeclaration) -> Result<BoundsFunctionC
         })
         .collect::<Vec<_>>();
     let graph = crate::hypothesis::declaration(decl, &legacy)?;
+    if !graph.requirements.is_empty() {
+        return Err("formal entry obligations have no interpreted source valuation; no summary is installed".into());
+    }
+
     crate::bounds_hypotheses::require_neutral_erasure(&graph, &legacy)?;
     crate::premise_flow::declaration(decl, &graph)?;
     crate::contract_lifecycle::declaration(decl, &graph)?;

@@ -30,6 +30,7 @@ pub fn declaration(decl: &SourceDeclaration, legacy: &[DeclaredPremise]) -> Resu
         atoms: BTreeMap::new(),
         premises: BTreeMap::new(),
         refinements: BTreeMap::new(),
+        requirements: Vec::new(),
     };
     for premise in legacy {
         append_legacy(
@@ -173,6 +174,20 @@ pub fn declaration(decl: &SourceDeclaration, legacy: &[DeclaredPremise]) -> Resu
             },
         );
     }
+    let grouped = graph
+        .premises
+        .values()
+        .flat_map(|p| p.children.iter())
+        .chain(graph.refinements.values().flat_map(|p| p.children.iter()))
+        .collect::<BTreeSet<_>>();
+    graph.requirements = graph
+        .atoms
+        .iter()
+        .filter(|(id, a)| {
+            matches!(a.proposition, Proposition::Formula { .. }) && !grouped.contains(id)
+        })
+        .map(|(id, _)| id.clone())
+        .collect();
     if graph
         .atoms
         .values()
@@ -190,7 +205,7 @@ pub fn validate(graph: &Graph) -> Result<(), String> {
         .atoms
         .values()
         .any(|a| matches!(a.proposition, Proposition::Formula { .. }));
-    if !matches!(graph.version, 1 | 2 | 3)
+    if !matches!(graph.version, 1..=3)
         || (graph.version == 3) != formal
         || (!formal && (graph.version == 1) != graph.refinements.is_empty())
     {
@@ -269,6 +284,20 @@ pub fn validate(graph: &Graph) -> Result<(), String> {
             used.insert(child.clone());
         }
     }
+    let expected_requirements = graph
+        .atoms
+        .iter()
+        .filter(|(id, a)| {
+            matches!(a.proposition, Proposition::Formula { .. }) && !used.contains(*id)
+        })
+        .map(|(id, _)| id.clone())
+        .collect::<Vec<_>>();
+    if graph.requirements != expected_requirements
+        || (graph.version != 3 && !graph.requirements.is_empty())
+    {
+        return Err("hypothesis: noncanonical or missing formal entry obligations".into());
+    }
+    used.extend(graph.requirements.iter().cloned());
     if used.len() != graph.atoms.len() {
         return Err("hypothesis: unreferenced atom".into());
     }
@@ -413,6 +442,7 @@ pub fn legacy_records(records: &[ErasedPremise]) -> Result<Graph, String> {
         atoms: BTreeMap::new(),
         premises: BTreeMap::new(),
         refinements: BTreeMap::new(),
+        requirements: Vec::new(),
     };
     for record in records {
         append_legacy(&mut graph, record.clone())?;

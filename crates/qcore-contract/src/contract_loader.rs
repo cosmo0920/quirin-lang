@@ -1756,6 +1756,10 @@ fn load_function_in(
         .flatten()
         .collect::<Vec<_>>();
     let graph = crate::hypothesis::declaration(decl, &graph_premises)?;
+    if !graph.requirements.is_empty() {
+        return Err("formal entry obligations have no interpreted source valuation; no summary is installed".into());
+    }
+
     crate::premise_flow::declaration(decl, &graph)?;
     crate::contract_lifecycle::declaration(decl, &graph)?;
     crate::guarded_decomposition::declaration(decl, &graph)?;

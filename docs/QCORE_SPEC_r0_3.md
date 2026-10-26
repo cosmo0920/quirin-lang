@@ -1836,6 +1836,22 @@ source facts remain open obligations and cannot create a Safe verdict. Missing
 facts do not prove negation; a bounded observation does not prove a universal
 quantifier. Existing evidence, trust and verdict rules in L20 remain mandatory.
 
+For plugin instantiation, a `quant theorem` application MUST identify the exact
+plugin, descriptor/interface, selected configuration and callback bindings.
+Input, output, filter, processor and custom interfaces require their own stated
+role obligations. Instantiation MUST retain ABI, lifecycle ordering, custody,
+permitted effects and environmental prerequisites; registration alone proves
+none of them. A custom interface requires an explicit contract rather than
+inheriting obligations from an unrelated built-in role.
+
+Atomic `quant effect` declarations MUST distinguish the selected backend,
+operation event, returned value, own read/write footprint and memory order.
+Compare-exchange success and failure are separate cases. Mutex-backed failures,
+initialization failure and platform-specific behavior MUST remain represented.
+An operation's own frame is not a claim that concurrent actors leave memory
+unchanged over the whole call. Atomicity alone establishes no synchronization.
+These theorem/effect requirements remain Proposed until their consumers exist.
+
 The all-provider migration MUST account for every previous hypothesis,
 including outer assumptions, and preserve its guards, alternatives, quantifier
 scope and effect ordering. Each replacement requires an explicit correspondence

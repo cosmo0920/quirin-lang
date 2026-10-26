@@ -5,3 +5,6 @@ import QCore.QuantProposition
 #print axioms QCore.QuantProposition.implication_does_not_establish_antecedent
 #print axioms QCore.QuantProposition.missing_evidence_allows_both_truth_values
 #print axioms QCore.QuantProposition.missing_evidence_is_not_refutation
+#print axioms QCore.QuantProposition.integer_addition_semantics
+#print axioms QCore.QuantProposition.noninteger_arithmetic_refuses
+#print axioms QCore.QuantProposition.arithmetic_result_has_integer_sort

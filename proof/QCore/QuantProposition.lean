@@ -1,53 +1,93 @@
 import QCore.HypothesisGraph
 
-/-! First-order meaning of decomposed `quant proposition` declarations.
-Identifiers, sorts and relations are symbolic names. A relation interpretation
-and a value valuation are independent inputs: neither declaration nor theorem
-application proves that these inputs describe C storage, executions or evidence.
-The single semantic carrier below abstracts the Rust named sorts; `WellFormed`
-checks the separate syntactic sort discipline. No C extraction is claimed. -/
+/-! Typed first-order mathematical terms and decomposed propositions.
+Functions, relations, opaque carriers and valuations are interpreted inputs.
+Integers use Lean `Int`, with no overflow or C conversion semantics. `WellFormed`
+is the separate syntactic sort discipline; the interpretation must independently
+respect it. Neither this model nor its conditional theorems establish that an
+interpretation describes C storage, executions, source extraction or evidence. -/
 namespace QCore.QuantProposition
 
 inductive ParameterSort where
   | value (sort : String)
   | predicate (arguments : List String)
+  | function (arguments : List String) (result : String)
   deriving DecidableEq, Repr
 
+inductive Term where
+  | var (name : String)
+  | integer (value : Int)
+  | apply (name : String) (arguments : List Term)
+  | add (left right : Term)
+  | sub (left right : Term)
+  | mul (left right : Term)
+  | neg (term : Term)
+  deriving Repr
+
+inductive Comparison where
+  | less | lessEqual | greater | greaterEqual
+  deriving Repr
+
 inductive Expr where
-  | predicate (name : String) (arguments : List String)
-  | equal (left right : String)
+  | predicate (name : String) (arguments : List Term)
+  | equal (left right : Term)
+  | compare (operator : Comparison) (left right : Term)
   | not (body : Expr)
   | and (left right : Expr)
   | or (left right : Expr)
   | implies (antecedent consequent : Expr)
-  | forall_ (variable sort : String) (body : Expr)
-  | exists_ (variable sort : String) (body : Expr)
+  | forall_ (boundName sort : String) (body : Expr)
+  | exists_ (boundName sort : String) (body : Expr)
   deriving Repr
 
 abbrev Signature := String → Option ParameterSort
 abbrev Scope := String → Option String
 
-def bind (valuation : String → α) (variable : String) (value : α) : String → α :=
-  fun name => if name = variable then value else valuation name
+def bind (valuation : String → α) (boundName : String) (value : α) : String → α :=
+  fun name => if name = boundName then value else valuation name
 
-def bindSort (scope : Scope) (variable sort : String) : Scope :=
-  fun name => if name = variable then some sort else scope name
+def bindSort (scope : Scope) (boundName sort : String) : Scope :=
+  fun name => if name = boundName then some sort else scope name
 
-def argumentsWellTyped (scope : Scope) : List String → List String → Prop
-  | [], [] => True
-  | argument :: arguments, sort :: sorts =>
-      scope argument = some sort ∧ argumentsWellTyped scope arguments sorts
-  | _, _ => False
+/-- Pure typing: a declared function is not evidence of a source field value. -/
+inductive TermTyped (signature : Signature) (scope : Scope) : Term → String → Prop where
+  | var {name sort} (typed : scope name = some sort) :
+      TermTyped signature scope (.var name) sort
+  | integer (value : Int) : TermTyped signature scope (.integer value) "integer"
+  | apply {name arguments sorts result}
+      (declared : signature name = some (.function sorts result))
+      (arity : arguments.length = sorts.length)
+      (typed : ∀ term sort, (term, sort) ∈ arguments.zip sorts →
+        TermTyped signature scope term sort) :
+      TermTyped signature scope (.apply name arguments) result
+  | add {left right} (l : TermTyped signature scope left "integer")
+      (r : TermTyped signature scope right "integer") :
+      TermTyped signature scope (.add left right) "integer"
+  | sub {left right} (l : TermTyped signature scope left "integer")
+      (r : TermTyped signature scope right "integer") :
+      TermTyped signature scope (.sub left right) "integer"
+  | mul {left right} (l : TermTyped signature scope left "integer")
+      (r : TermTyped signature scope right "integer") :
+      TermTyped signature scope (.mul left right) "integer"
+  | neg {term} (typed : TermTyped signature scope term "integer") :
+      TermTyped signature scope (.neg term) "integer"
 
 /-- Sort checks concern syntax, not the truth of a relation or a source fact. -/
 inductive WellFormed (signature : Signature) : Scope → Expr → Prop where
   | predicate {scope name arguments sorts}
       (declared : signature name = some (.predicate sorts))
-      (typed : argumentsWellTyped scope arguments sorts) :
+      (arity : arguments.length = sorts.length)
+      (typed : ∀ term sort, (term, sort) ∈ arguments.zip sorts →
+        TermTyped signature scope term sort) :
       WellFormed signature scope (.predicate name arguments)
   | equal {scope left right sort}
-      (leftTyped : scope left = some sort) (rightTyped : scope right = some sort) :
+      (leftTyped : TermTyped signature scope left sort)
+      (rightTyped : TermTyped signature scope right sort) :
       WellFormed signature scope (.equal left right)
+  | compare {scope operator left right}
+      (leftTyped : TermTyped signature scope left "integer")
+      (rightTyped : TermTyped signature scope right "integer") :
+      WellFormed signature scope (.compare operator left right)
   | not {scope body} (typed : WellFormed signature scope body) :
       WellFormed signature scope (.not body)
   | and {scope left right}
@@ -62,36 +102,79 @@ inductive WellFormed (signature : Signature) : Scope → Expr → Prop where
       (leftTyped : WellFormed signature scope left)
       (rightTyped : WellFormed signature scope right) :
       WellFormed signature scope (.implies left right)
-  | forall_ {scope variable sort body}
-      (typed : WellFormed signature (bindSort scope variable sort) body) :
-      WellFormed signature scope (.forall_ variable sort body)
-  | exists_ {scope variable sort body}
-      (typed : WellFormed signature (bindSort scope variable sort) body) :
-      WellFormed signature scope (.exists_ variable sort body)
+  | forall_ {scope boundName sort body}
+      (typed : WellFormed signature (bindSort scope boundName sort) body) :
+      WellFormed signature scope (.forall_ boundName sort body)
+  | exists_ {scope boundName sort body}
+      (typed : WellFormed signature (bindSort scope boundName sort) body) :
+      WellFormed signature scope (.exists_ boundName sort body)
 
-structure Interpretation (Value : Type u) where
-  sortHolds : String → Value → Prop
-  relation : String → List Value → Prop
+inductive SemanticValue (Opaque : Type u) where
+  | integer (value : Int)
+  | opaque (value : Opaque)
 
-/-- Quantifiers range over the explicitly interpreted named sort. -/
-def holds (meaning : Interpretation Value) (valuation : String → Value) : Expr → Prop
-  | .predicate name arguments => meaning.relation name (arguments.map valuation)
-  | .equal left right => valuation left = valuation right
+structure Interpretation (Opaque : Type u) where
+  sortHolds : String → SemanticValue Opaque → Prop
+  relation : String → List (SemanticValue Opaque) → Prop
+  function : String → List (SemanticValue Opaque) → Option (SemanticValue Opaque)
+
+def integerBinary (operation : Int → Int → Int) :
+    SemanticValue Opaque → SemanticValue Opaque → Option (SemanticValue Opaque)
+  | .integer left, .integer right => some (.integer (operation left right))
+  | _, _ => none
+
+/-- A partial interpretation refuses absent functions and noninteger arithmetic. -/
+def evaluate (meaning : Interpretation Opaque) (valuation : String → SemanticValue Opaque) :
+    Term → Option (SemanticValue Opaque)
+  | .var name => some (valuation name)
+  | .integer value => some (.integer value)
+  | .apply name arguments => do
+      let values ← arguments.mapM (evaluate meaning valuation)
+      meaning.function name values
+  | .add left right => do
+      integerBinary (· + ·) (← evaluate meaning valuation left) (← evaluate meaning valuation right)
+  | .sub left right => do
+      integerBinary (· - ·) (← evaluate meaning valuation left) (← evaluate meaning valuation right)
+  | .mul left right => do
+      integerBinary (· * ·) (← evaluate meaning valuation left) (← evaluate meaning valuation right)
+  | .neg term => do
+      let .integer value ← evaluate meaning valuation term | none
+      some (.integer (-value))
+
+def ordered (operator : Comparison) : SemanticValue Opaque → SemanticValue Opaque → Prop
+  | .integer left, .integer right => match operator with
+      | .less => left < right
+      | .lessEqual => left ≤ right
+      | .greater => left > right
+      | .greaterEqual => left ≥ right
+  | _, _ => False
+
+/-- Integer quantifiers range over mathematical integers, independent of opaque sorts. -/
+def sortMember (meaning : Interpretation Opaque) (sort : String) (value : SemanticValue Opaque) : Prop :=
+  if sort = "integer" then ∃ integer, value = .integer integer else meaning.sortHolds sort value
+
+def holds (meaning : Interpretation Opaque) (valuation : String → SemanticValue Opaque) : Expr → Prop
+  | .predicate name arguments =>
+      ∃ values, arguments.mapM (evaluate meaning valuation) = some values ∧ meaning.relation name values
+  | .equal left right =>
+      ∃ value, evaluate meaning valuation left = some value ∧ evaluate meaning valuation right = some value
+  | .compare operator left right =>
+      ∃ l r, evaluate meaning valuation left = some l ∧ evaluate meaning valuation right = some r ∧ ordered operator l r
   | .not body => ¬ holds meaning valuation body
   | .and left right => holds meaning valuation left ∧ holds meaning valuation right
   | .or left right => holds meaning valuation left ∨ holds meaning valuation right
   | .implies left right => holds meaning valuation left → holds meaning valuation right
-  | .forall_ variable sort body =>
-      ∀ value, meaning.sortHolds sort value → holds meaning (bind valuation variable value) body
-  | .exists_ variable sort body =>
-      ∃ value, meaning.sortHolds sort value ∧ holds meaning (bind valuation variable value) body
+  | .forall_ boundName sort body =>
+      ∀ value, sortMember meaning sort value → holds meaning (bind valuation boundName value) body
+  | .exists_ boundName sort body =>
+      ∃ value, sortMember meaning sort value ∧ holds meaning (bind valuation boundName value) body
 
-/-- Decomposition keeps the same variable, sort and valuation in both pieces. -/
+/-- Decomposition keeps the same boundName, sort and valuation in both pieces. -/
 theorem forall_conjunction_decomposition
-    (meaning : Interpretation Value) (valuation : String → Value)
-    (variable sort : String) (left right : Expr) :
-    holds meaning valuation (.forall_ variable sort (.and left right)) ↔
-      holds meaning valuation (.and (.forall_ variable sort left) (.forall_ variable sort right)) := by
+    (meaning : Interpretation Value) (valuation : String → SemanticValue Value)
+    (boundName sort : String) (left right : Expr) :
+    holds meaning valuation (.forall_ boundName sort (.and left right)) ↔
+      holds meaning valuation (.and (.forall_ boundName sort left) (.forall_ boundName sort right)) := by
   constructor
   · intro all
     exact ⟨fun value typed => (all value typed).1,
@@ -101,14 +184,14 @@ theorem forall_conjunction_decomposition
 
 /-- A guarded alternative survives decomposition; alternatives are not joined. -/
 theorem guarded_alternative_decomposition
-    (meaning : Interpretation Value) (valuation : String → Value)
-    (variable sort : String) (observed nested scalar declaration effects : Expr) :
-    holds meaning valuation (.forall_ variable sort
+    (meaning : Interpretation Value) (valuation : String → SemanticValue Value)
+    (boundName sort : String) (observed nested scalar declaration effects : Expr) :
+    holds meaning valuation (.forall_ boundName sort
       (.implies observed (.and (.or nested scalar) (.and declaration effects)))) ↔
     holds meaning valuation (.and
-      (.forall_ variable sort (.implies observed (.or nested scalar)))
-      (.and (.forall_ variable sort (.implies observed declaration))
-        (.forall_ variable sort (.implies observed effects)))) := by
+      (.forall_ boundName sort (.implies observed (.or nested scalar)))
+      (.and (.forall_ boundName sort (.implies observed declaration))
+        (.forall_ boundName sort (.implies observed effects)))) := by
   constructor
   · intro all
     exact ⟨fun value typed seen => (all value typed seen).1,
@@ -120,7 +203,7 @@ theorem guarded_alternative_decomposition
 
 /-- The scalar route suffices even when no nested route has been established. -/
 theorem scalar_alternative_is_sufficient
-    (meaning : Interpretation Value) (valuation : String → Value)
+    (meaning : Interpretation Value) (valuation : String → SemanticValue Value)
     (nested scalar declaration effects : Expr)
     (scalarHolds : holds meaning valuation scalar)
     (declarationHolds : holds meaning valuation declaration)
@@ -130,7 +213,7 @@ theorem scalar_alternative_is_sufficient
 
 /-- An implication is not a conjunction and does not assert its antecedent. -/
 theorem implication_does_not_establish_antecedent
-    (meaning : Interpretation Value) (valuation : String → Value) (left right : Expr)
+    (meaning : Interpretation Value) (valuation : String → SemanticValue Value) (left right : Expr)
     (absent : ¬ holds meaning valuation left) :
     holds meaning valuation (.implies left right) ∧
       ¬ holds meaning valuation (.and left right) := by
@@ -150,5 +233,28 @@ theorem missing_evidence_is_not_refutation (proposition : Prop) :
     evidenceCompatible .open proposition ∧
       HypothesisGraph.Disposition.open ≠ HypothesisGraph.Disposition.refuted := by
   exact ⟨True.intro, by intro impossible; cases impossible⟩
+
+/-- Addition is mathematical integer addition, with no machine truncation. -/
+theorem integer_addition_semantics
+    (meaning : Interpretation Value) (valuation : String → SemanticValue Value)
+    (left right : Term) (a b : Int)
+    (leftValue : evaluate meaning valuation left = some (.integer a))
+    (rightValue : evaluate meaning valuation right = some (.integer b)) :
+    evaluate meaning valuation (.add left right) = some (.integer (a + b)) := by
+  simp [evaluate, leftValue, rightValue, integerBinary]
+
+theorem noninteger_arithmetic_refuses
+    (meaning : Interpretation Value) (valuation : String → SemanticValue Value)
+    (left right : Term) (value : Value)
+    (leftValue : evaluate meaning valuation left = some (.opaque value)) :
+    evaluate meaning valuation (.add left right) = none := by
+  simp [evaluate, leftValue]
+  cases evaluate meaning valuation right <;> simp [integerBinary]
+
+theorem arithmetic_result_has_integer_sort
+    (signature : Signature) (scope : Scope) (left right : Term) (sort : String)
+    (typed : TermTyped signature scope (.add left right) sort) : sort = "integer" := by
+  cases typed
+  rfl
 
 end QCore.QuantProposition

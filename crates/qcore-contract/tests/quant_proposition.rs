@@ -1,6 +1,6 @@
 //! Formal syntax and its source/wire trust boundary; no C truth claims.
 use qcore_frontend::quant_proposition::{parse, validate};
-use qcore_schemas::quant_proposition::{Formula, Sort};
+use qcore_schemas::quant_proposition::{Comparison, Formula, Sort, Term};
 
 const ROUTE: &str = "#route(#env: environment, #observed: predicate<environment, site>, #nested: predicate<environment, site>, #scalar: predicate<environment, site>) = forall (#s: site) { (#observed(#env, #s) => (#nested(#env, #s) || #scalar(#env, #s))) }";
 #[test]
@@ -48,13 +48,15 @@ fn refuses_free_names_wrong_types_shadowing_and_unsupported_syntax() {
 fn checks_wire_formula_types_and_finite_limits() {
     let mut d = parse(ROUTE).unwrap();
     d.formula = Formula::Equal {
-        left: "env".into(),
-        right: "scalar".into(),
+        left: Term::Variable { name: "env".into() },
+        right: Term::Variable {
+            name: "scalar".into(),
+        },
     };
     assert!(validate(&d).is_err());
     d.formula = Formula::Predicate {
         name: "observed".into(),
-        arguments: vec!["env".into(); 2],
+        arguments: vec![Term::Variable { name: "env".into() }; 2],
     };
     assert!(validate(&d).is_err());
     let deep = format!("#p(#r: predicate<>) = {}#r()", "!".repeat(34));
@@ -104,4 +106,74 @@ extern fn f() -> unit contract {
     ] {
       assert!(load_resource_contract_sources(&BTreeMap::from([("test.qv".into(),invalid)])).is_err());
     }
+}
+
+#[test]
+fn exposes_nested_fields_and_mathematical_integer_bounds() {
+    let source = "#bounded(#m: metric, #label: function<metric, label>, #length: function<label, integer>, #limit: integer) = (0 <= #length(#label(#m)) && #length(#label(#m)) + 2 * 3 <= (#limit - -1))";
+    let d = parse(source).unwrap();
+    let Formula::And { right, .. } = &d.formula else {
+        panic!()
+    };
+    let Formula::Compare {
+        operator: Comparison::LessEqual,
+        left: Term::Add { right, .. },
+        ..
+    } = right.as_ref()
+    else {
+        panic!()
+    };
+    assert!(matches!(right.as_ref(), Term::Mul { .. }));
+    let bytes = serde_json::to_vec(&d).unwrap();
+    validate(&serde_json::from_slice(&bytes).unwrap()).unwrap();
+    assert!(matches!(
+        parse("#p(#x: integer) = #x != 0").unwrap().formula,
+        Formula::Not { .. }
+    ));
+    assert!(parse("#p(#zero: function<integer>) = #zero() == 0").is_ok());
+}
+#[test]
+fn refuses_unbound_functions_bad_sort_arity_and_noncanonical_integers() {
+    for source in [
+        "#p(#x: object) = #x < 1",
+        "#p(#x: object) = #x + 1 == 2",
+        "#p(#x: integer) = #missing(#x) == 1",
+        "#p(#x: integer, #f: function<object, integer>) = #f(#x) == 0",
+        "#p(#f: function<object, integer>) = #f() == 0",
+        "#p(#f: function<integer>) = #f(0) == 0",
+        "#p(#f: function<>) = #f() == 0",
+        "#p(#r: predicate<integer>) = #r(0) == 0",
+        "#p() = 00 == 0",
+        "#p() = 1.0 == 1",
+    ] {
+        assert!(parse(source).is_err(), "accepted {source}");
+    }
+    assert!(parse(&format!("#p() = {} == 0", "1".repeat(129))).is_err());
+}
+#[test]
+fn shared_budgets_refuse_deep_and_wide_terms_on_source_and_wire() {
+    let deep = format!(
+        "#p(#f: function<integer, integer>) = {}0{} == 0",
+        "#f(".repeat(34),
+        ")".repeat(34)
+    );
+    assert!(parse(&deep).is_err());
+    let wide = format!("#p() = {} == 0", vec!["1"; 260].join(" + "));
+    assert!(parse(&wide).is_err());
+    let mut d = parse("#p() = 1 == 1").unwrap();
+    let mut term = Term::Integer {
+        decimal: "1".into(),
+    };
+    for _ in 0..34 {
+        term = Term::Neg {
+            term: Box::new(term),
+        };
+    }
+    d.formula = Formula::Equal {
+        left: term,
+        right: Term::Integer {
+            decimal: "1".into(),
+        },
+    };
+    assert!(validate(&d).is_err());
 }

@@ -52,6 +52,10 @@ pub struct Graph {
     pub premises: BTreeMap<String, Conjunction>,
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     pub refinements: BTreeMap<String, Refinement>,
+    /// Standalone formal entry obligations of a declared model. Interpreted
+    /// resource/bounds summaries refuse these until an actual valuation is checked.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub requirements: Vec<String>,
 }
 /// Exact caller-held verdict context, never inferred from the presented evidence.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
