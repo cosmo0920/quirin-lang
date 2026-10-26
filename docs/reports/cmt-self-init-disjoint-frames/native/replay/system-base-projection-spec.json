@@ -1,0 +1,11 @@
+{
+  "diagnostics": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/base-system/resource-diagnostics.json",
+  "contracts": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/base-system/resource-diagnostics.contracts.json",
+  "null": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/base-system/null.jsonl",
+  "null_summary": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/base-system/null.summary.json",
+  "outer": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/base-system/outer.json",
+  "manifest": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/inputs/contract/profiles/fluent-bit/../../../cycle19-resource-contracts.json",
+  "database": "/media/Data/GitHub/quirin-lang/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-production/compile_commands.json",
+  "route": "configured",
+  "source_root": "/media/Data/GitHub/quirin-lang/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source"
+}

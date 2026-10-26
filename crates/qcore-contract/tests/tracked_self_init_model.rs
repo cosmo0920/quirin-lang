@@ -26,16 +26,39 @@ fn canonical_initializer_model_records_effects_without_granting_a_call_summary()
         .filter(|c| c.value.kind == SourceContractClauseKind::Requires)
         .map(|c| c.value.expression_source.as_str())
         .collect::<Vec<_>>();
-    assert_eq!(requires.len(), 11);
+    assert_eq!(requires.len(), 18);
     assert!(requires.contains(&"root_is_exactly_live_and_not_nullable"));
-    assert!(requires.contains(&"existing_rooted_member_facts_are_empty_or_name_the_same_owner"));
+    for guard in [
+        "custody_is_default_or_a_source_checked_disjoint_child_slot_frame",
+        "unprotected_owner_rooted_member_facts_are_empty_or_same_owner",
+        "nondefault_frame_has_exact_live_nonnullable_precise_heap_owner_and_children",
+        "nondefault_frame_has_only_actual_owner_field_links_and_subset_partial_links",
+        "nondefault_frame_has_no_caller_custody_out_slots_or_unrecognized_places",
+        "nondefault_frame_has_closed_typed_assignments_and_no_pointer_slot_addresses",
+        "nondefault_frame_calls_have_ordinary_contracts_without_out_stored_removed_or_other_custody_effects",
+        "nondefault_frame_slots_are_core_proved_disjoint_from_all_instantiated_writes",
+        "nondefault_frame_owner_identity_aliases_are_known_and_source_type_compatible",
+    ] {
+        assert!(requires.contains(&guard), "{guard}");
+    }
     let effects = clauses
         .iter()
         .filter(|c| matches!(c.value.kind, SourceContractClauseKind::Ensures(_)))
         .map(|c| c.value.expression_source.as_str())
         .collect::<Vec<_>>();
     assert!(effects.contains(&"instantiated_leaf_self_write_paths_are_recorded"));
-    assert!(effects.contains(&"all_owner_member_pointer_facts_are_forgotten_through_aliases"));
+    assert_eq!(effects.len(), 9);
+    assert!(
+        effects.contains(&"only_existing_layout_proved_owner_child_slot_pointer_facts_may_survive")
+    );
+    assert!(effects.contains(&"all_field_links_and_partial_links_are_preserved"));
+    assert!(
+        effects.contains(&"all_other_possible_member_pointer_facts_are_forgotten_conservatively")
+    );
+    assert!(
+        effects
+            .contains(&"declined_optional_probes_restore_reading_and_contract_consultation_state")
+    );
     assert!(effects.contains(&"all_resource_status_and_nullable_site_facts_are_preserved"));
     assert!(effects.contains(&"no_empty_list_membership_or_ordinary_summary_is_exported"));
 }

@@ -1,0 +1,15 @@
+{
+  "exit": 0,
+  "all_three_native_routes_complete": true,
+  "complete_attribution_complete": true,
+  "resource_safe_gain": 0,
+  "resource_safe_loss": 0,
+  "getter_closure_gain": 0,
+  "resource_semantic_row_changes": 0,
+  "independent_null_dictionary_changes": 0,
+  "unexplained_semantic_leaves": 0,
+  "source_binding": "Open",
+  "truth_transport": false,
+  "review": "semantic-review-reconstruction.json",
+  "stage_qualification": "Collector summaries and attributed-comparison files retain their intermediate pending labels. The complete review and six production projection replays discharge that pending accounting without altering the retained stage artifacts."
+}

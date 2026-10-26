@@ -1,0 +1,11 @@
+{
+  "command": [
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/replay-v3/projection-replay",
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/replay-v3/system-tip-projection-spec.json",
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/replay-v3/system-tip-projection-proof.json"
+  ],
+  "started": "2026-10-25T22:21:16.634001+00:00",
+  "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/replay-v3/system-tip-projection.log",
+  "exit": 0,
+  "ended": "2026-10-25T22:21:18.970796+00:00"
+}

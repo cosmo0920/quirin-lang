@@ -405,6 +405,46 @@ mod tests {
     }
 
     #[test]
+    fn initializer_child_slot_frame_readers_fit_at_the_admitted_bound() {
+        if !clang_available() {
+            return;
+        }
+        let shape = |arms| {
+            self_init_chain(arms)
+            .replace("void chain(struct Link *p)", "struct Item { int n; }; struct Owner { struct Link head; struct Item *payload; }; void chain(struct Owner *p, struct Item *c)")
+            .replace("reset(p);", "p->payload=c; reset(&p->head);")
+        };
+        let (arms, _) = deepest_admitted(shape, 50);
+        let mut measured = false;
+        for backoff in 0..=3 {
+            let source = shape(arms - backoff);
+            let nesting = filtered_depth(&source);
+            let (answer, kib) = high_water(move || {
+                let _scope =
+                    crate::typed_access_path::enter_source(&source, CCompilerDialect::Gnu17, None);
+                crate::legacy_c::tracked_self_init::exercise_frame_source_readers(&source)
+            });
+            if answer == Some(true) {
+                assert!(nesting > DEFAULT_LIMIT);
+                assert_stack_budget(
+                    kib,
+                    &format!("initializer child-slot source/layout readers, depth {nesting}"),
+                );
+                measured = true;
+                break;
+            }
+            assert_eq!(
+                answer, None,
+                "a parsed deep source must exercise a positive child-slot proof"
+            );
+        }
+        assert!(
+            measured,
+            "must reach the optional frame proof in the deep band"
+        );
+    }
+
+    #[test]
     fn checked_initializer_source_readers_fit_at_the_admitted_bound() {
         if !clang_available() {
             return;

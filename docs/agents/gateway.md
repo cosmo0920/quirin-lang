@@ -8903,28 +8903,60 @@ safety claim and no validation of the detach representation premise.
     members, arrays, casts, unions, bitfields, qualified or incomplete types,
     descriptor/in-place effects and escaping callee designators decline.
     The caller must hold one known, nonnull identity with exactly LIVE status
-    and no nullable-site fact; every custody field other than pointer bindings,
-    resource statuses and nullable sites must equal its default. No child,
-    containment, membership, publication, collection, retention, borrow,
-    callback or unresolved relation is discarded to satisfy that condition.
-    Existing rooted member facts may be empty or name only the same owner.
+    and no nullable-site fact. The original route requires every custody field
+    other than pointer bindings, resource statuses and nullable sites to equal
+    its default; it runs first, unchanged. Its existing rooted member facts may
+    be empty or name only the same owner.
+    An additive nondefault route permits only nonempty child field links of
+    that actual owner, with partial triples a subset of those links; all root
+    and child identities must be precise Heap, exactly LIVE and nonnullable,
+    with no self child, caller custody or sanctioned out slots. Every other
+    custody field must still equal its default, including future fields. No
+    foreign-owner, containment, membership, publication, collection, retention,
+    borrow, callback or unresolved relation is discarded for admission.
+    The optional source proof binds each protected ordinary direct pointer
+    slot to its actual field declaration and unique complete root record.
+    Rule 11k's core footprint checker must decide it disjoint from every
+    initializer write using Clang layout, or from the whole first enclosing
+    member for an embedded target. Different allocation IDs give no separation
+    or allocator-freshness premise. Missing, ambiguous or overlapping evidence
+    declines. Across the whole caller, pointer initializers/assignments permit
+    only same-type local copies, direct in-force Owned results or known NULL;
+    pointer slot addresses, pointer increments/compound assignments, retyping
+    and unsupported places decline. All other calls need ordinary contracts
+    in force, without Out/Stored/Removed, membership/count, relational or
+    retention/lifetime effects; indirect, guarded and missing interfaces decline.
+    Current owner identity aliases must be known, nonnull, singleton and source
+    type compatible. Older aggregate-store alias refusals remain unchanged.
+    A declined optional probe restores its reading and consultation state.
     The existing indirect-access check must add no diagnostic or state change.
-    Admission forgets all owner-rooted member pointer facts through every alias,
-    preserving plain/derived aliases, every resource status and nullable fact.
+    The default route forgets all owner-rooted member pointer facts through
+    every alias. The nondefault route retains only existing protected direct
+    slot facts through compatible identity aliases, conservatively forgetting
+    every other recognized member fact across all roots; unprotected owner-rooted
+    facts with foreign/unknown targets still decline. Plain/derived bindings,
+    every resource status and nullable fact, and all field/partial links remain
+    intact. Unrecognized pointer/out-slot keys decline the nondefault route.
     It creates no identity or ownership link and exports no empty-list or
     membership postcondition. Failure executes the exact old fallback;
     structurally unreachable markers regain that fallback. The appended tag
     never supplies an ordinary summary, callback permission or cross-unit
     contract; the whole caller and its exits still decide its own result.
-    Full owned-list semantics and callers with nondefault custody frames stay
-    separate tracked obligations. The canonical CFL `cfl/intrusive_list.qv`
+    Full owned-list semantics and unsupported custody frames stay separate
+    tracked obligations. The canonical CFL `cfl/intrusive_list.qv`
     declares these preconditions/effects as a model, outside both interpreted
     resource and bounds views; it grants no resource-v1 initializer contract.
     `QCore.TrackedSelfInit`, registered in `AuditTrackedSelfInit`, models source
     admission, invalidation, ledger preservation, finite composition and
-    embedding lifetime, with shared source/flow vectors. Faithful extraction,
+    embedding lifetime, with shared source/flow vectors. The additional
+    `QCore.TrackedSelfInitDisjointFrame`, registered in its own audit, connects
+    same-owner byte separation and embedded subwrites with ledger/field/partial
+    preservation, conservative fact retention, refusals and finite composition;
+    shared flow/core-layout vectors and source controls bind the reviewed model.
+    Faithful extraction,
     parent embedding and Rust/model correspondence remain premise 28.
     [Design](../reports/w48-cmt-tracked-interior-self-init/DESIGN.md).
+    [Child-slot frame design](../reports/cmt-self-init-disjoint-frames/DESIGN.md).
 
 <a id="constraint-36c"></a>
 

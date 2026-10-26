@@ -195,6 +195,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cmetrics-setter-contracts](cmetrics-setter-contracts/README.md) | CMetrics map, metric and typed setter contracts |
 
+| [cmt-self-init-disjoint-frames](cmt-self-init-disjoint-frames/README.md) | Checked initializer frames for same-owner child slots |
+
 | [compose-event-lines](compose-event-lines/README.md) | COMPOSE-EVENT-LINES — source lines in an event program, and why the comparison stays strict (wave 23) |
 
 | [composed-window-reach](composed-window-reach/README.md) | `COMPOSED-WINDOW-REACH` (wave 41) — the composed route's window function, measured |

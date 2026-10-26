@@ -18,16 +18,24 @@ fn sources() -> BTreeMap<String, String> {
             )
             .into(),
         ),
+        (
+            "cfl/hash_state.qv".into(),
+            include_str!("../../../providers/quirin-provider-cfl/contracts/cfl/hash_state.qv")
+                .into(),
+        ),
     ])
 }
 
 #[test]
-fn eight_source_audited_api_models_are_retained_without_interpreted_permissions() {
+fn source_audited_api_models_are_retained_without_interpreted_permissions() {
     let s = sources();
     let graphs = bounds_hypotheses::replay_model(&s).unwrap();
     assert_eq!(
         graphs.keys().map(String::as_str).collect::<Vec<_>>(),
         [
+            "cfl_hash_64bits_digest",
+            "cfl_hash_64bits_reset",
+            "cfl_hash_64bits_update",
             "cmt_map_create",
             "cmt_map_destroy",
             "cmt_map_metric_destroy",
@@ -69,6 +77,13 @@ fn eight_source_audited_api_models_are_retained_without_interpreted_permissions(
     assert!(
         get.iter()
             .any(|c| c == "read_lookup_may_allocate_or_mutate_secondary_index")
+    );
+    assert!(get.iter().any(|c| c == "labeled_hash_digest_is_nonzero"));
+    let digest = clauses("cfl_hash_64bits_digest");
+    assert!(
+        digest
+            .iter()
+            .any(|c| c == "result_may_equal_zero_for_a_nonempty_nul_free_stream")
     );
     let init = clauses("cmt_opts_init");
     assert!(
@@ -121,6 +136,9 @@ fn lifecycle_witnesses_match_the_audited_lean_model() {
     );
     let lean = include_str!("../../../proof/QCore/CmetricsApiContracts.lean");
     assert!(lean.contains("[true,false,true,true,true,false,false,false,true,false,false]"));
+    let getter_lean = include_str!("../../../proof/QCore/CMetricsGetterOwnership.lean");
+    assert!(getter_lean.contains("theorem exact_short_hash_is_zero"));
+    assert!(getter_lean.contains("theorem labeled_zero_path_reaches_destruction_leak"));
     // A NULL result after attachment is compatible with a live parent-owned
     // child; a failed initialization also retains its committed cleanup set.
     let returned: Option<u32> = None;
