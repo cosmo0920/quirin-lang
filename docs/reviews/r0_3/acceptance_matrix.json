@@ -12098,8 +12098,8 @@
   {
    "id": "GAPO-DISPATCHER-COVERAGE",
    "title": "Only the statement and return fallback chains are explicit tables; the condition routes and classify_simple's internal chain stay in code order",
-   "why": "Recorded by GATEWAY-ANALYSIS-PATH-OPTIMIZATION: legacy_route_table.rs holds the statement fallbacks (15 rows) and the return fallbacks (8 rows); the condition routes (whose parse-time order differs from CfgBuilder::compile's precedence, ROUTE-MAP section 3), classify_simple_unguarded's typed fallbacks and classify_simple_base's call holds are documented in ROUTE-MAP but remain in code order, because their entries interleave state (sites, lowerings, parity rows) a table would have to thread. DISCHARGE: each chain moved into a table with the identity runs, or ROUTE-MAP kept as their authority.",
-   "source": "docs/reports/gateway-analysis-path-optimization/README.md",
+   "why": "Recorded by GATEWAY-ANALYSIS-PATH-OPTIMIZATION: legacy_route_table.rs holds the statement fallbacks (15 rows) and the return fallbacks (8 rows); the condition routes (whose parse-time order differs from CfgBuilder::compile's precedence, ROUTE-MAP section 3), classify_simple_unguarded's typed fallbacks and classify_simple_base's call holds are documented in ROUTE-MAP but remain in code order, because their entries interleave state (sites, lowerings, parity rows) a table would have to thread. DISCHARGE: each chain moved into a table with the identity runs, or ROUTE-MAP kept as their authority. GATEWAY-RULE-API: consultation order is now generated from crates/gateway-rules/registry.toml (17 rows); W43-INDEX-TRAVERSAL and W44-INDIRECT-CALL-ARGUMENT-ACCESS are card names because no rule document exists for them.",
+   "source": "docs/reports/gateway-analysis-path-optimization/README.md, docs/reports/gateway-rule-api/README.md",
    "recorded_by": "GATEWAY-ANALYSIS-PATH-OPTIMIZATION"
   },
   {
@@ -13027,8 +13027,8 @@
   {
    "id": "COMPOSITION-CONTRACT-LOADER-WIRING",
    "title": "The contract loader unions bundles outside the composition interface",
-   "why": "Seam G makes the semigroup the only integration path for results and contracts. Card AUDIT-COMPOSITION built the results half; contract bundles still enter the environment through the loader's own union with a hard duplicate error, and the components' provenance records one 'resource-contracts' digest of the loaded environment rather than per-bundle digests. Supersession by pin stamp is the separate card CONTRACT-SUPERSESSION. DISCHARGE: the loader records one digest per provider bundle and the report's components carry them in Provenance.contract_bundles (so withdrawing a bundle is a removal over components), landed with or after CONTRACT-SUPERSESSION, with an identity run.",
-   "source": "docs/reports/audit-composition/README.md"
+   "why": "Seam G makes the semigroup the only integration path for results and contracts. Card AUDIT-COMPOSITION built the results half; contract bundles still enter the environment through the loader's own union with a hard duplicate error, and the components' provenance records one 'resource-contracts' digest of the loaded environment rather than per-bundle digests. Supersession by pin stamp is the separate card CONTRACT-SUPERSESSION. DISCHARGE: the loader records one digest per provider bundle and the report's components carry them in Provenance.contract_bundles (so withdrawing a bundle is a removal over components), landed with or after CONTRACT-SUPERSESSION, with an identity run. Card CONTRACT-SUPERSESSION replaced the loader's hard duplicate error with newer-stamp supersession and the contract-conflict residue (contract spec C06.6); per-bundle digests in Provenance.contract_bundles remain open.",
+   "source": "docs/reports/audit-composition/README.md, docs/reports/contract-supersession/README.md"
   },
   {
    "id": "COMPOSITION-PROPERTY-AND-CHECKPOINT-ROWS",
@@ -13039,8 +13039,8 @@
   {
    "id": "LIFETIME-SOURCE-IDENTITY-TIME-MACROS",
    "title": "The contract sidecar's lifetime-source unit identities depend on the minute Monkey's monkey.c was preprocessed",
-   "why": "qcore_c_gateway::loop_lifetime_source::read_unit names a unit by the SHA-256 of its preprocessing options and preprocessed text, and Fluent Bit's lib/monkey/mk_bin/monkey.c expands __DATE__ and __TIME__. Card AUDIT-COMPOSITION's identity runs measured it: in resource-diagnostics.contracts.json (callback_members/lifetime_protocols/evidence/summaries and the prepass copy) exactly one key changes between any two runs of the same binary (runs 2 and 3 of the same BASE code disagree; BASE and TIP started together agree), on the corpus, slice and system routes alike. Every identity run must therefore special-case this key, and a published digest carries the wall clock. DISCHARGE: preprocess the lifetime-source read with fixed __DATE__/__TIME__ (or hash the text with those expansions normalised), so two runs of one binary write byte-identical contract sidecars, with a test that preprocesses a unit using both macros twice. AMENDED by MEASURE-TOOL: every route of every side quirin-audit measure runs gets one fixed SOURCE_DATE_EPOCH (default 1767225600, --source-date-epoch, recorded in run.json and in a baseline's inputs), which CFG-RELEASE measured removes the key difference and the tool's live-4 run confirms (system and slice contracts sidecars byte-identical between two sides); for sides measured without it the tool accepts a differing contracts sidecar only by the checked one-key substitution of AUDIT-COMPOSITION's compare_identity.py (compare::time_key: exactly one lifetime-source summary key differs, no collision, equal as JSON and as a line multiset after the swap) and names it in the record. The analyzer itself still hashes the clock-dependent text outside the tool; the DISCHARGE (fixed or normalised time macros in loop_lifetime_source::read_unit, with its test) stays open.",
-   "source": "docs/reports/audit-composition/README.md, docs/reports/measure-tool/README.md"
+   "why": "qcore_c_gateway::loop_lifetime_source::read_unit names a unit by the SHA-256 of its preprocessing options and preprocessed text, and Fluent Bit's lib/monkey/mk_bin/monkey.c expands __DATE__ and __TIME__. Card AUDIT-COMPOSITION's identity runs measured it: in resource-diagnostics.contracts.json (callback_members/lifetime_protocols/evidence/summaries and the prepass copy) exactly one key changes between any two runs of the same binary (runs 2 and 3 of the same BASE code disagree; BASE and TIP started together agree), on the corpus, slice and system routes alike. Every identity run must therefore special-case this key, and a published digest carries the wall clock. DISCHARGE: preprocess the lifetime-source read with fixed __DATE__/__TIME__ (or hash the text with those expansions normalised), so two runs of one binary write byte-identical contract sidecars, with a test that preprocesses a unit using both macros twice. AMENDED by MEASURE-TOOL: every route of every side quirin-audit measure runs gets one fixed SOURCE_DATE_EPOCH (default 1767225600, --source-date-epoch, recorded in run.json and in a baseline's inputs), which CFG-RELEASE measured removes the key difference and the tool's live-4 run confirms (system and slice contracts sidecars byte-identical between two sides); for sides measured without it the tool accepts a differing contracts sidecar only by the checked one-key substitution of AUDIT-COMPOSITION's compare_identity.py (compare::time_key: exactly one lifetime-source summary key differs, no collision, equal as JSON and as a line multiset after the swap) and names it in the record. The analyzer itself still hashes the clock-dependent text outside the tool; the DISCHARGE (fixed or normalised time macros in loop_lifetime_source::read_unit, with its test) stays open. Card CONTRACT-SUPERSESSION's identity run set SOURCE_DATE_EPOCH=1790357241 on both sides and the key did not vary on any of the three routes, so an identity run can neutralise it by the environment; the published digest still carries the wall clock when the variable is unset.",
+   "source": "docs/reports/audit-composition/README.md, docs/reports/measure-tool/README.md, docs/reports/contract-supersession/README.md"
   },
   {
    "id": "COMPOSITION-ANALYZER-IDENTITY",
@@ -13072,8 +13072,8 @@
   {
    "id": "MEASURE-TOOL-RULES-OFF-LIVE",
    "title": "Exercise quirin-audit measure --rules-off and the contribution slot against a real rule switch",
-   "why": "Card MEASURE-TOOL parses --rules-off, builds the <tip>-off side from the same binary with QCORE_GATEWAY_RULES_OFF, compares it with <tip>, and after the run requires every component of the switched side to record exactly the requested off-list (and every other side none); until a binary advertises the switch the option is refused before any route runs ('not yet supported'). Both paths are tested only with stub analyzers, and the native-comparison record's `contribution` slot is reserved, not filled. DISCHARGE: after RULE-SWITCHES lands (and CONTRIBUTION-LEDGERS defines the ledger), one real --rules-off measurement on a migrated rule whose contribution equals that rule card's measured delta, with the slot filled from the <tip>-off -> <tip> comparison and interactions named, never summed. CONTRIBUTION-LEDGERS (2026-10-26) fills the slot: it holds quirin-contribution-ledger/1 ledgers built from the <tip>-off -> <tip> comparison (and with --per-rule from one <tip>-off-<id> side per rule, rows moved by two rules together named as interaction ledgers), checked by scripts/contribution_ledgers.py; exercised only with stub analyzers that honour the switch. The discharge still needs one real --rules-off measurement on a migrated rule, written with contribution_ledgers.py write and passing consistency.",
-   "source": "docs/reports/measure-tool/README.md, docs/reports/contribution-ledgers/README.md"
+   "why": "Card MEASURE-TOOL parses --rules-off, builds the <tip>-off side from the same binary with QCORE_GATEWAY_RULES_OFF, compares it with <tip>, and after the run requires every component of the switched side to record exactly the requested off-list (and every other side none); until a binary advertises the switch the option is refused before any route runs ('not yet supported'). Both paths are tested only with stub analyzers, and the native-comparison record's `contribution` slot is reserved, not filled. DISCHARGE: after RULE-SWITCHES lands (and CONTRIBUTION-LEDGERS defines the ledger), one real --rules-off measurement on a migrated rule whose contribution equals that rule card's measured delta, with the slot filled from the <tip>-off -> <tip> comparison and interactions named, never summed. CONTRIBUTION-LEDGERS (2026-10-26) fills the slot: it holds quirin-contribution-ledger/1 ledgers built from the <tip>-off -> <tip> comparison (and with --per-rule from one <tip>-off-<id> side per rule, rows moved by two rules together named as interaction ledgers), checked by scripts/contribution_ledgers.py; exercised only with stub analyzers that honour the switch. The discharge still needs one real --rules-off measurement on a migrated rule, written with contribution_ledgers.py write and passing consistency. GATEWAY-RULE-API ran a real `measure --rules-off 35`: the advertisement check passed and tip-off components record off = [\"35\"], but the run hit the 10 h quota before the post-run off-list check; rule 35 moves 12 corpus functions Safe -> Unknown, 0 system, 0 slice.",
+   "source": "docs/reports/measure-tool/README.md, docs/reports/contribution-ledgers/README.md, docs/reports/gateway-rule-api/README.md"
   },
   {
    "id": "MEASURE-TOOL-LANDING-PUBLISH",
@@ -13142,6 +13142,72 @@
    "why": "Observed during MEASURE-TOOL-LANDING-PUBLISH integration: the bootstrap host and scoped gate shell returned exit 130 after interruption, but the measure plugin PID 3083741, its audit slot descendants and the scoped gate PID 3088618 remained alive. The abandoned scoped-gate tree was explicitly terminated after process-table attribution; the immutable rev-side measurement was retained for separate collection. DISCHARGE: cancellation of the audit host and landing wrapper terminates and reaps every spawned plugin/route process and releases its slot locks, exercised with a running or queued measure plugin; no other worktree process is signalled.",
    "source": "docs/reports/measure-tool-landing-publish/integration/README.md",
    "recorded_by": "MEASURE-TOOL-LANDING-PUBLISH"
+  },
+  {
+   "id": "GATEWAY-RULE-API-HOLD-OFF",
+   "title": "Hold positions are not yet switchable",
+   "why": "GATEWAY-RULE-API made fallback positions switchable; hold positions (rule 32a's frame hold among them) need a decision on what 'off' means for a hold before rule 32a can migrate. DISCHARGE: a decision recorded in the plan and a switch with a test.",
+   "source": "docs/reports/gateway-rule-api/README.md"
+  },
+  {
+   "id": "GATEWAY-RULE-API-UNREPLACED-ARMS",
+   "title": "Compile-time arm constants remain",
+   "why": "The 10n and ENUM_ARM compile-time constants were not trivially equivalent to a run-time switch and remain. DISCHARGE: each replaced by its registry row's switch with an identity run, in the migration card for its rule.",
+   "source": "docs/reports/gateway-rule-api/README.md"
+  },
+  {
+   "id": "GATEWAY-RULE-API-PILOT-MIGRATIONS",
+   "title": "Pilot rule migrations",
+   "why": "Card-recommended order: 35, 37, 36, 33, 34 (needs a transfer position first), 32a (needs GATEWAY-RULE-API-HOLD-OFF). `known_rule` refuses ledgers for 32a/33/34/36/37 until each migration registers its rule. DISCHARGE: each pilot lands as its own card with an identity run and a switch-measured contribution ledger.",
+   "source": "docs/reports/gateway-rule-api/README.md"
+  },
+  {
+   "id": "GATEWAY-RULE-API-OTHER-ENTRY-POINTS",
+   "title": "Switch coverage of other entry points",
+   "why": "The switch is read on the audit entry points the card wired; other binaries that consult the gateway tables do not yet record the off-list. DISCHARGE: every entry point records the off-list, with a test.",
+   "source": "docs/reports/gateway-rule-api/README.md"
+  },
+  {
+   "id": "GATEWAY-RULE-API-SLICE-IDENTITY",
+   "title": "Slice identity not re-measured on the merged base",
+   "why": "Identity-2 timed out before base/slice ran; identity-1 (base 5813ddab9) showed slice byte-identical. DISCHARGE: a slice comparison of main against the pre-card base, or the next landing publication showing the tail-pause profile unchanged.",
+   "source": "docs/reports/gateway-rule-api/README.md"
+  },
+  {
+   "id": "MEASURE-CORPUS-SIDE-CWD-IN-BUILD-IDENTITY",
+   "title": "Corpus build identity digests the side's working directory",
+   "why": "Under `quirin-audit measure` each side's pinned corpus route runs in sides/<name>/work-corpus, and the unit build identity (projection.rs hypothesis_context) digests the working directory, so corpus artifacts are never byte-identical across sides and the tool reports composition-conflict for equal provenance. DISCHARGE: the tool runs every side's corpus at one fixed working directory, or the identity excludes it, with a byte-identity test.",
+   "source": "docs/reports/gateway-rule-api/README.md"
+  },
+  {
+   "id": "SUPERSESSION-BOUNDS-OUTER-VIEWS",
+   "title": "Bounds and outer contract views keep their own duplicate refusals and never consult pin stamps",
+   "why": "Card CONTRACT-SUPERSESSION decides duplicate resource declarations by pin stamp (contract spec C06.6). The bounds view (bounds_selection) and the outer view (outer_selection) still refuse a function declared twice, and their locks' stamps are written and verified but read by no loader. DISCHARGE: both views decide duplicates through qcore_schemas::contract_supersession::decide over their own locks' stamps, retaining superseded declarations and withholding conflicts under contract-conflict, with tests and an identity run.",
+   "source": "docs/reports/contract-supersession/README.md"
+  },
+  {
+   "id": "SUPERSESSION-OTHER-CONSUMERS",
+   "title": "Only the legacy-C gateway names a contract conflict; other environment consumers see an uncontracted callee",
+   "why": "ResourceContracts::contract_conflict withholds a function from every table, so every consumer refuses its calls, but only the legacy-C gateway rewrites them to the contract-conflict hold. The checked extern-call route (qcore_verification::driver) and other API callers report an uncontracted callee, Unknown under a different reason. DISCHARGE: those routes name contract-conflict for a withheld callee (as they do for a pending review), with a test per route.",
+   "source": "docs/reports/contract-supersession/README.md"
+  },
+  {
+   "id": "SUPERSESSION-INCLUSION-MODULES",
+   "title": "A supersession inside a module elaborated through inclusion refuses the whole selection",
+   "why": "load_resource_contract_selection_stamped refuses when a superseded or conflicted declaration lies in a module carrying inclusion evidence, because the evidence replays the elaborated text byte for byte and a cut text would not replay. Fail-closed, but the duplicate is not decided. DISCHARGE: the cut is replayed by the evidence check (or applied before elaboration at the declaration's source module), so such a duplicate is decided like any other, with a test over an #include/inherit fixture.",
+   "source": "docs/reports/contract-supersession/README.md"
+  },
+  {
+   "id": "PIN-LOCK-ARCHIVED-SET-SELECTION",
+   "title": "Archived pin lock sets are records; no audit route can select one",
+   "why": "The lock-set window (providers/pin-lock-window.json, user decision 9a) archives up to two earlier lock sets byte for byte under providers/pin-lock-sets/<revision>/, but every audit reads the live locks in providers/<crate>/. Comparing a re-based profile row by row with the previous revision under that revision's own lock set therefore needs a route option. DISCHARGE: the audit routes (and quirin-audit measure) accept a retained lock set by revision, refuse a retired one, record the set's revision and digests in the contract_revision section, and a test audits a fixture under an archived set.",
+   "source": "docs/reports/contract-supersession/README.md"
+  },
+  {
+   "id": "PIN-CHECK-STAMP-HISTORY",
+   "title": "pin --check does not verify that a re-pin's stamp is later than the committed entry it replaced",
+   "why": "quirin-audit pin enforces the later-stamp rule when it writes a lock (an explicit stamp not later than the replaced entry refuses), but pin --check and pin --verify-contracts read only the working tree, so a hand edit or a merge that lowers a stamp is not detected. DISCHARGE: pin --check (or providers/contracts.py check) compares each entry's stamp with the same entry at a named base revision and refuses a changed entry whose stamp is not later, with a test.",
+   "source": "docs/reports/contract-supersession/README.md"
   }
  ],
  "updated": "Completed plugin premise integration; exact hand-maintained union retains810followups, borrowed measured-source8419Rust/354Lean/freshcard133provider, exact source equivalence checked; authoritative root committed-matrix Python confirmation in integration receipt. CMetrics map/opts API model specifications added at the explicit user request. Eight declared-model API contracts remain outside interpreted views, with CMT-MAP-OPTS-CONTRACT-ADOPTION and CMT-LABELED-HASH-ZERO-STATIC-STORAGE Open. No trusted API coverage is claimed; the source gate is recorded by this card alongside its separate initializer native checkpoint. W48-CMT-TRACKED-INTERIOR-SELF-INIT implements rule 36b's checked initializer effect transport for an exact live owned root or embedded record, retaining actual self writes, invalidating aliased member facts and preserving resource obligations; nondefault custody frames refuse and no ordinary summary is exported. The canonical CFL intrusive_list.qv declares matching audit preconditions/effects; two CMetrics .qv modules add six map and two opts lifecycle models, including transitive ownership, partial failure, borrowed results and uncleared cleanup fields. All remain outside interpreted views; checked API adoption and labeled zero-hash storage accounting have named Open follow-ups. Fresh BASE/planner precedes prediction f18d96065 and implementation; the later contract amendment 08da23123 precedes .qv edits. Native corpus BASE/TIP Safe/Unknown/Pending/provisional-Unsafe: 1009 / 3816 / 0 / 9 to 1011 / 3814 / 0 / 9; full system/slice, 5781 NULL dictionaries and runtime projections are compared, 241 semantic leaves accounted, zero unexplained leaves and no prior Safe loss. Gate 8654 Rust / 370 Lean / 374 Python, provider 133 Rust / 25 Python and all five package verifies pass. The actual deep source reader uses 328 KiB below 1 MiB. Full getter closure remains Open; W48-CMT-SELF-INIT-DISJOINT-FRAMES tracks the next bounded frame extension, and W48-EXACT-RETURN-WITNESS-PRECISION is unchanged. Native evidence is isolated to measured e92d8aef35a8bd14550e90219d19a56eb3b196e7; later source gate 2d0d85299b830aa24d7f200d63a308653582363f validates the added declared API models separately; see docs/reports/w48-cmt-tracked-interior-self-init/README.md."
