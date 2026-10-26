@@ -1,0 +1,31 @@
+{
+  "schema": "cmetrics-hash-zero-storage-witness.v1",
+  "recorded_at": "2026-10-26T00:57:37.038373+00:00",
+  "source": {
+    "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+    "tracked_delta_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "cmt_map_c_sha256": "a02cdda1b17d6b7fbe70a8dfa5cd329261ce575960e58af369cf058e1fa12517",
+    "cmt_histogram_c_sha256": "2d0dc2a2c37914b8baa936ac7f91be19198b65b85f463721db8dfd80356966f2",
+    "cmt_opts_c_sha256": "0ce2593cf82686be46cda383e6ede07c7aa644ff5343a5eca6fb167c2b42c578",
+    "xxhash_h_sha256": "4f12938ecde575fd5477eb561e9b4cd16060b30ee496e2eeef6385c31721ca4b"
+  },
+  "hash": {
+    "input_hex": "42d568e138d727ff",
+    "input_contains_nul": false,
+    "one_shot_digest_hex": "0000000000000000",
+    "streamed_digest_hex": "0000000000000000",
+    "compile_exit": 0,
+    "run_exit": 0
+  },
+  "storage_lifecycle": {
+    "compile_exit": 0,
+    "run_exit": 0,
+    "public_histogram_observe_exit": 0,
+    "metric_static_set": 0,
+    "embedded_storage_allocated": true,
+    "dynamic_metric_list_empty": true,
+    "embedded_storage_freed_by_map_destroy": false
+  },
+  "validated": true,
+  "interpretation": "A valid labeled histogram lookup reaches the embedded metric at digest zero, allocates embedded histogram storage while metric_static_set remains zero, and map destruction does not free that allocation. Runtime addresses were intentionally omitted."
+}
