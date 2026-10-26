@@ -13012,15 +13012,15 @@
   {
    "id": "AMENDMENTS-RESERVED-FIELDS-UNAPPLIED",
    "title": "The amendments schema's profiles and contribution fields are validated but applied nowhere",
-   "why": "scripts/apply_amendments.py (card AMENDMENTS-SCHEMA) accepts `profiles` (distinct profile names) and `contribution` (null or an object) in quirin-amendments/1, checks only that shape, and prints that neither is applied, because their producers are later cards. DISCHARGE: EVALUATION-PROFILES defines the profile record and CONTRIBUTION-LEDGERS the contribution record. Each card narrows the field's schema in apply_amendments.py and applies it (profile bindings, a contribution ledger written beside the profile), or refuses it, with tests. A schema bump to quirin-amendments/2 is needed if an existing valid document's meaning would change.",
-   "source": "docs/reports/amendments-schema/README.md",
+   "why": "scripts/apply_amendments.py (card AMENDMENTS-SCHEMA) accepts `profiles` (distinct profile names) and `contribution` (null or an object) in quirin-amendments/1, checks only that shape, and prints that neither is applied, because their producers are later cards. DISCHARGE: EVALUATION-PROFILES defines the profile record and CONTRIBUTION-LEDGERS the contribution record. Each card narrows the field's schema in apply_amendments.py and applies it (profile bindings, a contribution ledger written beside the profile), or refuses it, with tests. A schema bump to quirin-amendments/2 is needed if an existing valid document's meaning would change. RECORDS-TOOLING (2026-10-26) discharges the profiles half: apply_amendments.py checks profiles[] through evaluation_profiles.check_amendments on every run (it writes nothing, since the baselines are in the card's own commits), and no schema bump was needed because no existing valid document changes meaning except that a profiles list naming a non-profile or disagreeing with the moved baselines is now refused. Only contribution remains reserved; its DISCHARGE is CONTRIBUTION-LEDGERS as stated.",
+   "source": "docs/reports/amendments-schema/README.md, docs/reports/records-tooling/README.md",
    "recorded_by": "AMENDMENTS-SCHEMA"
   },
   {
    "id": "CARD-BRIEF-AMENDMENTS-SHAPE",
    "title": "Card briefs still ask for the pre-schema integration-amendments.json shape",
-   "why": "The refactoring-round common brief (private/integrator-briefs/refactor-r1-common.md) and earlier briefs describe integration-amendments.json without the `schema` key, with `text`|`why` interchangeable and no per-operation field set. A card following them writes a file that apply_amendments.py reads only with --legacy. DISCHARGE: the P3 card-brief template asks for quirin-amendments/1 and for `python3 scripts/apply_amendments.py <file> --check` in the card's completion checklist. Evidence: the first card landed on that template carries a file that validates without --legacy.",
-   "source": "docs/reports/amendments-schema/README.md",
+   "why": "The refactoring-round common brief (private/integrator-briefs/refactor-r1-common.md) and earlier briefs describe integration-amendments.json without the `schema` key, with `text`|`why` interchangeable and no per-operation field set. A card following them writes a file that apply_amendments.py reads only with --legacy. DISCHARGE: the P3 card-brief template asks for quirin-amendments/1 and for `python3 scripts/apply_amendments.py <file> --check` in the card's completion checklist. Evidence: the first card landed on that template carries a file that validates without --legacy. RECORDS-TOOLING (2026-10-26): the card-brief section of docs/agents/operations.md, the tracked brief template, now asks for quirin-amendments/1 and for `python3 scripts/apply_amendments.py <file> --check` exiting 0 as a checklist item, and RECORDS-TOOLING's own file validates without --legacy. Still open: the untracked integrator scratch brief private/integrator-briefs/refactor-r1-common.md keeps the pre-schema shape (the card's worktree isolation refused the edit; the replacement text is in the card's report), and the entry retires when the first card briefed from the updated template lands a file that validates without --legacy.",
+   "source": "docs/reports/amendments-schema/README.md, docs/reports/records-tooling/README.md",
    "recorded_by": "AMENDMENTS-SCHEMA"
   },
   {
@@ -13061,13 +13061,6 @@
    "recorded_by": "CFG-RELEASE"
   },
   {
-   "id": "EVALUATION-PROFILES-AMENDMENTS-CHECK",
-   "title": "apply_amendments.py validates profiles[] only by shape",
-   "why": "Found by EVALUATION-PROFILES, which defines the reserved amendments field profiles[]: the live evaluation profiles whose baseline the card's measured tip records. Every name must be a profile, none may be frozen, and against the card base the list must equal the live profiles whose baseline changed (scripts/evaluation_profiles.py amendments <file> --base <rev>). apply_amendments.py, owned by AMENDMENTS-SCHEMA, still checks only the name shape, so an integrator applying a card's amendments does not run this check. DISCHARGE: apply_amendments.py --check calls evaluation_profiles.check_amendments with the document's base, with a refusal test for an unknown, a frozen and an unlisted moved profile.",
-   "source": "docs/reports/evaluation-profiles/README.md",
-   "recorded_by": "EVALUATION-PROFILES"
-  },
-  {
    "id": "EVALUATION-PROFILES-MATRIX-ROWS",
    "title": "Matrix corpus rows are bound to profiles but not derived from them",
    "why": "Found by EVALUATION-PROFILES. contract/evaluations/bindings.json classifies every key of the acceptance matrix corpus section, and a test refuses an unbound key, but the rows themselves stay hand-maintained: conditional_eight_home_cycle3, bound route by route to the three live profiles, still shows the W48 batch-5 figures (corpus 975 Safe) while the live baselines record BASE 710021bd7. DISCHARGE: build_matrix.py emits each bound row's profile name and policy and, for a live profile, the figures of its current baseline.json, so the row cannot drift from the profile.",
@@ -13078,13 +13071,6 @@
    "id": "REBASE-CORPUS",
    "title": "Re-base the live evaluation profiles onto a newer Fluent Bit revision every one to two months",
    "why": "User decision 2 of 2026-10-24 (docs/plans/pluggable-cards/README.md section 3 A, corpus cadence): the live profiles eight-home, fluent-bit-system and fluent-bit-tail-pause follow the Fluent Bit repository, best effort every one to two months. EVALUATION-PROFILES recorded their first baselines on BASE 710021bd7 over Fluent Bit 66910c10a (corpus), 046accf6a (system) and 34155955e (tail-pause slice). The policy check treats a change of a live profile's tracked inputs as a re-base that must record the newly measured baseline, with its reason, in the same commit; the previous baseline stays in baseline_history. Frozen cycle profiles are never moved. DISCHARGE: recurring; each firing is a card that prepares the newer revision's inputs, re-reviews the pins whose sites changed (pin --check, C06.2), records the new baselines through evaluation_profiles.py record and names the date of the next firing.",
-   "source": "docs/reports/evaluation-profiles/README.md",
-   "recorded_by": "EVALUATION-PROFILES"
-  },
-  {
-   "id": "GATE-SCOPE-EVALUATION-RECORDS",
-   "title": "The scoped gate falls back to the full suite for any evaluation-record change",
-   "why": "Found by EVALUATION-PROFILES. scripts/gate_scope.py classifies contract/evaluations/** as owned and read by no crate and not prose, Python, Lean or provider tooling, so it fails closed to the full Rust suite (the card's gate ran 553 units for JSON records only scripts/evaluation_profiles.py reads). Every future live-baseline record (each rule card, each REBASE-CORPUS firing) would pay the same. DISCHARGE: gate_scope.py treats contract/evaluations/** as Python-suite data (no Rust crate reads it: a string-literal census proves it), with a test that a record-only diff selects no Rust package and still runs the Python suite.",
    "source": "docs/reports/evaluation-profiles/README.md",
    "recorded_by": "EVALUATION-PROFILES"
   },

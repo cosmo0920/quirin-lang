@@ -364,15 +364,22 @@ class RealRepository(unittest.TestCase):
                              granularity="directory")
         self.assertTrue(write_lend_reads(by_directory, sibling))
 
-    def test_no_crate_reads_the_evaluation_records(self):
-        """The census GATE-SCOPE-EVALUATION-RECORDS rests on: no crate owns or
-        reads a tracked contract/evaluations path, by include or literal."""
+    def test_evaluation_records_are_claimed_by_their_readers(self):
+        """GATE-SCOPE-EVALUATION-RECORDS: no crate owns a tracked
+        contract/evaluations path. A crate that reads one (MEASURE-TOOL's
+        quirin-audit-plugin-measure reads the profile records at run time) still
+        claims it, so a records-only diff runs that crate's tests as well as
+        the Python suite, and never the full suite on records alone."""
         records = [path for path in scope_mod.tracked_files()
                    if path.startswith(scope_mod.PYTHON_RECORD_PREFIXES)]
         self.assertTrue(records)
         for path in records:
             self.assertIsNone(self.model.owner(path), path)
-            self.assertEqual(list(self.model.readers_of(path)), [], path)
+            readers = sorted({reader.crate for reader in self.model.readers_of(path)})
+            result = scope_mod.plan([path], self.model)
+            self.assertEqual(result["mode"], "scoped", (path, result["full_reasons"]))
+            self.assertTrue(set(readers) <= set(result["rust_packages"]), (path, readers))
+            self.assertTrue(result["python_reasons"], path)
 
     def test_the_census_is_json(self):
         census = scope_mod.cross_crate_readers(self.model)
