@@ -1,0 +1,364 @@
+{
+  "comparisons": [
+    {
+      "after": "tip",
+      "before": "prev",
+      "comparison": "prev->tip",
+      "routes": {
+        "corpus": {
+          "after_directory": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a684b9919d89b4918/private/measure/corpus-peak-20261026T175231Z/sides/tip/corpus",
+          "artifacts": {
+            "byte_identical_except_named_substitutions": false,
+            "differing": [
+              {
+                "after": "f0aecc6e735b7755bf0f9d7a77bd08285ea6521d4314d1199bae03704ccf1549",
+                "before": "d0409de931d007301dda6ca62942aa4470de3104cea7633e6e411daa1901aac6",
+                "file": "corpus-null.jsonl"
+              },
+              {
+                "after": "18ae143ddd624d7d5c245b89c6e01ebe95f37ddd78735700f1c7fbe4d3df689f",
+                "before": "230ee7f6d35ff8f8d67b475b963993776e5affc69dfa1d61beb85e8dde5bcfef",
+                "file": "corpus/resource-diagnostics.components.json"
+              },
+              {
+                "file": "corpus/resource-diagnostics.contracts.json",
+                "why": {
+                  "lifetime_keys_only_after": [],
+                  "lifetime_keys_only_before": []
+                }
+              },
+              {
+                "after": "4782b05c3c4b2b8ded9e9c6aa111c047f7864ad60567ca60466d7ca9fb5e5a3e",
+                "before": "78365caad10d235c9d215c87284e717378e6a193b768a224c5986f9e4c8ee8e8",
+                "file": "corpus/resource-diagnostics.json"
+              },
+              {
+                "after": "01b2b0aad53c707e2a03dd18dfcd3568584b8542ecbcffb1d38f8d0a5b15b7b5",
+                "before": "861f53458f92cadd5ea1af211ade2840c57936df37e8422471b44e0e5dd2e68f",
+                "file": "corpus/resource-diagnostics.source-effects.json"
+              }
+            ],
+            "identical": [
+              {
+                "file": "corpus-null.summary.json",
+                "sha256": "bc7d5dc2b803367d79b9c8f9841cce2cf599dce502b2d0df1dd589db4d50af9a"
+              },
+              {
+                "file": "corpus-outer.json",
+                "sha256": "31223a5daf37837626cc4e28414df5965ce9c8186954cd082195b7363b4b7a94"
+              },
+              {
+                "file": "corpus/monkey-source.json",
+                "sha256": "ba459c8ab988fc3e97b1efd8a9edbb3ffbd5c4933f79a2b77ae2464ad9f7ff2f"
+              },
+              {
+                "file": "corpus/resource-diagnostics.chunk-contracts.json",
+                "sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484"
+              }
+            ],
+            "identical_after_named_substitution": {},
+            "only_after": [],
+            "only_before": [],
+            "records_not_compared": [
+              "console.log",
+              "corpus.exit",
+              "corpus/audit.log",
+              "corpus/run.json",
+              "invocation.json",
+              "stderr.log"
+            ]
+          },
+          "before_directory": "/media/Data/GitHub/quirin-lang/private/baselines/b0b63da7dcdd7c3d289259caf4067b72ad45c757/eight-home/corpus",
+          "composition": {
+            "components": {
+              "after": 185,
+              "before": 185,
+              "union": 370
+            },
+            "conflicts": [],
+            "rows": 185
+          },
+          "conflicts": {
+            "after": [],
+            "before": []
+          },
+          "content_changes": [],
+          "environment_digest_fields": [
+            "assumptions",
+            "build_identity",
+            "environment_sha256",
+            "resource_contracts_sha256",
+            "id"
+          ],
+          "figures": {
+            "after": {
+              "null_rows": 4921,
+              "null_verdicts": {
+                "Safe": 2549,
+                "Unknown": 2355,
+                "Unsafe": 17
+              },
+              "null_verdicts_sha256": "c4e8644bac151ab51e4c887e27083ee0186447d5a42ebbd71270ce404863518c",
+              "row_statuses": {
+                "Safe": 1013,
+                "Unknown": 3812,
+                "Unsafe": 9
+              },
+              "row_verdicts_sha256": "7145778055e0c7b56f9b5ff434151696e3c28402f7b947da8bf6523f243fcc78",
+              "rows": 4834,
+              "unit_statuses": {
+                "Safe": 8,
+                "Unknown": 166,
+                "Unsafe": 7,
+                "data_only": 4
+              },
+              "unit_verdicts_sha256": "1d405041fde21d8b2028879c6b95cee7b3784b045b5632d310a61b2bd833c3e2",
+              "units": 185
+            },
+            "before": {
+              "null_rows": 4921,
+              "null_verdicts": {
+                "Safe": 2549,
+                "Unknown": 2355,
+                "Unsafe": 17
+              },
+              "null_verdicts_sha256": "c4e8644bac151ab51e4c887e27083ee0186447d5a42ebbd71270ce404863518c",
+              "row_statuses": {
+                "Safe": 1013,
+                "Unknown": 3812,
+                "Unsafe": 9
+              },
+              "row_verdicts_sha256": "7145778055e0c7b56f9b5ff434151696e3c28402f7b947da8bf6523f243fcc78",
+              "rows": 4834,
+              "unit_statuses": {
+                "Safe": 8,
+                "Unknown": 166,
+                "Unsafe": 7,
+                "data_only": 4
+              },
+              "unit_verdicts_sha256": "1d405041fde21d8b2028879c6b95cee7b3784b045b5632d310a61b2bd833c3e2",
+              "units": 185
+            }
+          },
+          "function_rows": {
+            "content_changed": 0,
+            "environment_only": 4834,
+            "identical": 0,
+            "moved": 0,
+            "unmatched": 0
+          },
+          "incomplete_because": [],
+          "moves": [],
+          "profile_baseline": {
+            "after": {
+              "exit": 0,
+              "lines": [
+                "eight-home: the run reproduces the baseline"
+              ],
+              "profile": "eight-home"
+            },
+            "before": {
+              "exit": 0,
+              "lines": [
+                "eight-home: the run reproduces the baseline"
+              ],
+              "profile": "eight-home"
+            }
+          },
+          "status": "complete",
+          "status_deltas": {
+            "Safe": 0,
+            "Unknown": 0,
+            "Unsafe": 0
+          },
+          "totals": {
+            "after": {
+              "conflicted_unit_rows": 0,
+              "diagnostic_counts": {
+                "leak": 40,
+                "summary_conflict": 3,
+                "unknown_alias": 10831,
+                "unsupported": 27300
+              },
+              "function_rows": 4834,
+              "function_status": {
+                "Safe": 1013,
+                "Unknown": 3812,
+                "Unsafe": 9
+              },
+              "row_source": "sidecar",
+              "unit_rows": 185,
+              "unit_verdict": {
+                "Safe": 12,
+                "Unknown": 166,
+                "Unsafe": 7
+              }
+            },
+            "before": {
+              "conflicted_unit_rows": 0,
+              "diagnostic_counts": {
+                "leak": 40,
+                "summary_conflict": 3,
+                "unknown_alias": 10831,
+                "unsupported": 27300
+              },
+              "function_rows": 4834,
+              "function_status": {
+                "Safe": 1013,
+                "Unknown": 3812,
+                "Unsafe": 9
+              },
+              "row_source": "sidecar",
+              "unit_rows": 185,
+              "unit_verdict": {
+                "Safe": 12,
+                "Unknown": 166,
+                "Unsafe": 7
+              }
+            }
+          },
+          "unit_field_differences": {},
+          "unit_moves": [],
+          "unit_rows_environment_only": 0,
+          "unmatched": [],
+          "unmatched_units": []
+        }
+      }
+    }
+  ],
+  "contribution": {
+    "ledgers": [],
+    "rules": [],
+    "schema": "quirin-contribution-ledger/1"
+  },
+  "declared": null,
+  "failures": [],
+  "inputs_spelling": {
+    "canonical_prefix": "/media/Data/GitHub/quirin-lang",
+    "manifest": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a684b9919d89b4918/private/measure/corpus-peak-20261026T175231Z/mirror/manifest.json",
+    "manifest_sha256": "843d1159d0a1db25a606274d3601687611d4da7a546542a2071972586ebca51c",
+    "mode": "auto",
+    "spelled_prefix": "/home/cosmo/Documents/GitHub/qcore-c",
+    "spelling": "mirror"
+  },
+  "interactions": [],
+  "routes": [
+    {
+      "definition": {
+        "clang": "/usr/lib/llvm-21/bin/clang",
+        "compile_databases": [
+          {
+            "path": "c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json",
+            "sha256": "5e6868d9af26eaec97bc8020ed5f23496f2490abf44532443239bd4d365f7e78"
+          },
+          {
+            "path": "c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
+            "sha256": "85cc996712bbd35675340b8b863b6ebc716cb94552253f2a6ad0288db920f331"
+          }
+        ],
+        "inputs_root": "build/cycle19",
+        "kind": "pinned-corpus",
+        "link_map": {
+          "path": "docs/reports/w48-bu-single-leaf-bodies/link-map.corpus.json",
+          "sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3"
+        },
+        "mirror_trees": [
+          "c-gateway-wave-pin/fluent-bit-clang-source",
+          "c-gateway-wave-pin/monkey",
+          "provider-packages-wave20"
+        ],
+        "name": "corpus",
+        "profile": "eight-home",
+        "source_commit": "66910c10",
+        "tracked": [
+          "contract/profiles/fluent-bit/audit.json",
+          "contract/profiles/fluent-bit/profile.json",
+          "contract/profiles/fluent-bit/member-facts-scope.json"
+        ]
+      },
+      "digest": "7eb1e7ec179f8625ea54e2d3b3fb84c15fbf0cde7f3a28800a86cb064d0757ff",
+      "name": "corpus",
+      "profile": "eight-home"
+    }
+  ],
+  "rules_off": [],
+  "schema": "quirin-native-comparison/1",
+  "sides": {
+    "prev": {
+      "binary": null,
+      "build_commit": null,
+      "bundles": null,
+      "directory": "/media/Data/GitHub/quirin-lang/private/baselines/b0b63da7dcdd7c3d289259caf4067b72ad45c757",
+      "inputs": {
+        "corpus": {
+          "canonical_prefix": "/media/Data/GitHub/quirin-lang",
+          "databases_as_spelled": {
+            "mirror/c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json": "162f27214282bb550851a4c72d4a05ad8773d5f08226ea6eacd55bdf3ef2476c",
+            "mirror/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json": "cc5f2e6b519f2e4b52c8b8a6e035fffcf541594180feaba50743f3e8b793d821"
+          },
+          "route_digest": "7eb1e7ec179f8625ea54e2d3b3fb84c15fbf0cde7f3a28800a86cb064d0757ff",
+          "source_date_epoch": 1767225600,
+          "spelled_prefix": "/home/cosmo/Documents/GitHub/qcore-c",
+          "spelling": "mirror"
+        }
+      },
+      "kind": "baseline",
+      "revision": "b0b63da7dcdd7c3d289259caf4067b72ad45c757",
+      "run_json": {
+        "path": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a684b9919d89b4918/private/measure/corpus-peak-20261026T175231Z/sides/prev/run.json",
+        "sha256": "60e66293b464366edf653dc1f459bfbf44da7c1a17b927d9df5c78e8f3212c5d"
+      },
+      "spec": "baseline:b0b63da7dcdd7c3d289259caf4067b72ad45c757"
+    },
+    "tip": {
+      "binary": {
+        "path": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a684b9919d89b4918/private/measure/corpus-peak-20261026T175231Z/sides/tip/src/target/release/quirin-audit",
+        "path_as_run": "/tmp/quirin-measure/src/target/release/quirin-audit",
+        "sha256": "216ca4829ef95107460959cbf873d54b5fa784b5491fb4a0bf267d269b1b5817"
+      },
+      "build_commit": "a42edeae4f44038701066b83bbd09eb8cd990f95",
+      "bundles": {
+        "contract": "299dc74056e7e14a7648198c58bd8343252f5e4a3d0c9ff3ab3f8c3b5b36d847",
+        "providers/qcore-provider-chunkio/contracts": "41e1ef343aca95f6ab279fb5a6079e0c6d3a8ff3bb83314bfbe62932baadade5",
+        "providers/qcore-provider-cmetrics/contracts": "7f86e78b21ed69885dd96c057877bc8d91791384ab5a1ad61a006db9d693de65",
+        "providers/qcore-provider-ctraces/contracts": "e90eb34adf062a1a118226488ce68614d27a986d4dd12627d7458048974a80d1",
+        "providers/qcore-provider-libevent/contracts": "2db0a1356298dd9a99c1bc0b5e50885ea48a28fede133590fb08657ae72e450e",
+        "providers/qcore-provider-librdkafka/contracts": "2fc906cd0d5145bb072e85e8405860968e65d409e8c31bf258354eabefa3def6",
+        "providers/quirin-provider-cfl/contracts": "373c6eed0c34e51af228beb6f2c65a04b0b12a98e1d2ea1b8ec41ff589f6721f",
+        "providers/quirin-provider-fluent-bit/contracts": "43dc9e8a3a5930bc08e8d0f914fdd955c7398bf54f3be0b225997e6b7379ca98",
+        "providers/quirin-provider-libc/contracts": "988ea6596b4acbb4ee16c2c21dfdb7f2ecea9e5d0693e41b67705ca9ba1ecff8",
+        "providers/quirin-provider-mpack/contracts": "14223b7f3b473e35df3b6468ef81ae4b3a074fe83d2d7f0d189301b28b0bdc10",
+        "providers/quirin-provider-msgpack/contracts": "e73fe57fc0d34045b4ee3eea73fa6838c15f08d0f1922b359e0682e30dfc15db",
+        "providers/quirin-provider-shared/contracts": "a4d40318b88bf388c0a7b38f7d83aa7f1dd38d5b9323056658b146cee14e4ba9"
+      },
+      "directory": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a684b9919d89b4918/private/measure/corpus-peak-20261026T175231Z/sides/tip",
+      "inputs": {
+        "corpus": {
+          "canonical_prefix": "/media/Data/GitHub/quirin-lang",
+          "databases_as_spelled": {
+            "mirror/c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json": "162f27214282bb550851a4c72d4a05ad8773d5f08226ea6eacd55bdf3ef2476c",
+            "mirror/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json": "cc5f2e6b519f2e4b52c8b8a6e035fffcf541594180feaba50743f3e8b793d821"
+          },
+          "route_digest": "7eb1e7ec179f8625ea54e2d3b3fb84c15fbf0cde7f3a28800a86cb064d0757ff",
+          "source_date_epoch": 1767225600,
+          "spelled_prefix": "/home/cosmo/Documents/GitHub/qcore-c",
+          "spelling": "mirror"
+        }
+      },
+      "kind": "rev",
+      "revision": "a42edeae4f44038701066b83bbd09eb8cd990f95",
+      "run_json": {
+        "path": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a684b9919d89b4918/private/measure/corpus-peak-20261026T175231Z/sides/tip/run.json",
+        "sha256": "33429e64f2e7065d891df846130b72a2b3a9c9290b1d3127d251a0e71b7594f0"
+      },
+      "spec": "rev:HEAD"
+    }
+  },
+  "source_date_epoch": 1767225600,
+  "status": "complete",
+  "tool": {
+    "name": "quirin-audit-measure",
+    "sha256": "50ad0efb34159fd32062a760c0a5540a8b308a1affa43a50ad5803598164122a",
+    "version": "0.1.0"
+  }
+}
