@@ -1299,20 +1299,24 @@ fn unsupported_or_incomplete_contracts_fail_atomically() {
     );
 }
 
+/// Card CONTRACT-SUPERSESSION (contract spec C06.6): a function declared by
+/// two modules is no longer refused; with no pin stamps (this loader has none)
+/// it is withheld as a contract conflict, identical texts included, and no
+/// declaration of it is in force. A function declared twice in one module and
+/// a module selected twice are still refused.
 #[test]
-fn duplicate_functions_and_inputs_are_rejected_even_when_identical() {
+fn duplicate_functions_are_withheld_and_duplicate_inputs_rejected() {
     let sources = BTreeMap::from([("a".into(), ALLOC.into()), ("b".into(), ALLOC.into())]);
-    assert!(
-        load_resource_contract_sources(&sources)
-            .unwrap_err()
-            .contains("duplicate function")
-    );
+    let loaded = load_resource_contract_sources(&sources).unwrap();
+    assert_eq!(loaded.contract_conflict().len(), 1);
+    assert!(loaded.functions().is_empty());
     assert!(
         load(&format!(
             "{ALLOC}{}",
             ALLOC.trim_start_matches("module contract;")
         ))
-        .is_err()
+        .unwrap_err()
+        .contains("declared twice in one module")
     );
     let file = manifest()
         .parent()
@@ -1327,7 +1331,10 @@ fn duplicate_functions_and_inputs_are_rejected_even_when_identical() {
         ("a".into(), ALLOC.into()),
         ("b".into(), ALLOC.replace("nullable", "nonnull")),
     ]);
-    assert!(load_resource_contract_sources(&conflicting).is_err());
+    let loaded = load_resource_contract_sources(&conflicting).unwrap();
+    let conflict = loaded.contract_conflict().values().next().unwrap();
+    assert_eq!(conflict.declarations.len(), 2, "both texts are retained");
+    assert!(loaded.functions().is_empty());
 }
 
 #[test]

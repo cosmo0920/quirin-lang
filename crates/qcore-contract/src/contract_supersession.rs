@@ -12,6 +12,10 @@
 //!   out and retained as a [`ContractConflict`]: none is in force, and the
 //!   gateway holds every call relying on it (`contract-conflict`, `Unknown`).
 //!
+//! A module that declares one function twice is still refused ("duplicate
+//! function contract"): supersession composes bundles, it does not repair a
+//! malformed module.
+//!
 //! A cut replaces the declaration's bytes with spaces and keeps its line
 //! breaks, so every other declaration keeps its byte offset, line and text,
 //! and therefore its digest. A module left with no declaration is dropped
@@ -103,6 +107,16 @@ pub fn supersede_sources(
     for (function, declarations) in by_function {
         if declarations.len() < 2 {
             continue;
+        }
+        // A module that declares one function twice is malformed, not a
+        // composition of bundles: it is refused as before.
+        let mut modules = declarations.iter().map(|(key, _)| key).collect::<Vec<_>>();
+        modules.sort();
+        if let Some(pair) = modules.windows(2).find(|pair| pair[0] == pair[1]) {
+            return Err(format!(
+                "{}: `{function}` is declared twice in one module: duplicate function contract",
+                pair[0]
+            ));
         }
         let text = |key: &str, declaration: &ModuleDeclaration| {
             sources[key][declaration.start..declaration.end].to_owned()
