@@ -33,7 +33,7 @@ Usage:
 
     python3 scripts/land.py            # print the sequence
     python3 scripts/land.py check [--root DIR]
-    python3 scripts/land.py publish [--root DIR] [--previous SHA] [--inputs-base DIR]
+    python3 scripts/land.py publish [--root DIR] [--previous SHA] [--inputs-base DIR] [--bootstrap]
 
 `check` exits 0 when the records are fresh, 1 naming each stale record and the
 command that regenerates it.
@@ -162,7 +162,7 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     parser.add_argument("command", nargs="?", choices=("sequence", "check", "publish"), default="sequence")
     parser.add_argument("--root", type=Path, default=ROOT)
-    parser.add_argument("--previous", help="previous landing revision (default: HEAD first parent)")
+    parser.add_argument("--previous", help="previous landing revision (default: nearest published first-parent ancestor; HEAD^1 for bootstrap)")
     parser.add_argument("--inputs-base", type=Path,
                         default=Path("/media/Data/GitHub/quirin-lang"),
                         help="root of prepared live route inputs")

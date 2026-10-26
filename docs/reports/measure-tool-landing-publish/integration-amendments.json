@@ -11,6 +11,14 @@
       "operation": "append",
       "text": "Card MEASURE-TOOL-LANDING-PUBLISH connected the publisher to scripts/land.py's post-gate sequence with clean-tree, first-parent baseline selection and explicit first-run bootstrap. The command-level test exercises bootstrap and later baseline selection. The named follow-up remains Open until the integrator publishes the landed SHA and a subsequent card reuses it with real plugin identity verification.",
       "source": "docs/reports/measure-tool-landing-publish/README.md"
+    },
+    {
+      "id": "MEASURE-TOOL-PROCESS-TREE-CANCELLATION",
+      "operation": "register",
+      "title": "Interrupting a measure host can leave the plugin and slot jobs alive",
+      "text": "Observed during MEASURE-TOOL-LANDING-PUBLISH integration: the bootstrap host and scoped gate shell returned exit 130 after interruption, but the measure plugin PID 3083741, its audit slot descendants and the scoped gate PID 3088618 remained alive. The abandoned scoped-gate tree was explicitly terminated after process-table attribution; the immutable rev-side measurement was retained for separate collection. DISCHARGE: cancellation of the audit host and landing wrapper terminates and reaps every spawned plugin/route process and releases its slot locks, exercised with a running or queued measure plugin; no other worktree process is signalled.",
+      "source": "docs/reports/measure-tool-landing-publish/integration/README.md",
+      "recorded_by": "MEASURE-TOOL-LANDING-PUBLISH"
     }
   ]
 }

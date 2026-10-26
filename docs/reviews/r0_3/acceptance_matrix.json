@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 850
+  "named_followups": 851
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -7248,7 +7248,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "card full gate on ed3710b18 + targeted landing check on the merge",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/contribution-ledgers/integration/gate.json)"
+  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
  "named_followups": [
   {
@@ -13078,8 +13078,8 @@
   {
    "id": "MEASURE-TOOL-LANDING-PUBLISH",
    "title": "Wire baseline publication into the integrator's landing gate",
-   "why": "Card MEASURE-TOOL implemented `quirin-audit measure publish --from <out>/sides/<name>` (output private/baselines/<sha>, one immutable <profile>/ per route with baseline.json digests) and identity-verified reuse by --side NAME=baseline:<sha>; the exact landing commands are in docs/reports/measure-tool/README.md. No landing has published a baseline yet. DISCHARGE: the integrator's per-landing full gate measures the landed revision with a rev:<sha> side on the live routes and publishes it, and the next card reuses it as BASE after verification instead of rebuilding BASE.",
-   "source": "docs/reports/measure-tool/README.md"
+   "why": "Card MEASURE-TOOL implemented `quirin-audit measure publish --from <out>/sides/<name>` (output private/baselines/<sha>, one immutable <profile>/ per route with baseline.json digests) and identity-verified reuse by --side NAME=baseline:<sha>; the exact landing commands are in docs/reports/measure-tool/README.md. No landing has published a baseline yet. DISCHARGE: the integrator's per-landing full gate measures the landed revision with a rev:<sha> side on the live routes and publishes it, and the next card reuses it as BASE after verification instead of rebuilding BASE. Card MEASURE-TOOL-LANDING-PUBLISH connected the publisher to scripts/land.py's post-gate sequence with clean-tree, first-parent baseline selection and explicit first-run bootstrap. The command-level test exercises bootstrap and later baseline selection. The named follow-up remains Open until the integrator publishes the landed SHA and a subsequent card reuses it with real plugin identity verification.",
+   "source": "docs/reports/measure-tool/README.md, docs/reports/measure-tool-landing-publish/README.md"
   },
   {
    "id": "GATE-SLOT-CURRENT-BUDGET-SPELLING",
@@ -13135,6 +13135,13 @@
    "why": "Rule 37's rows (W48-BU-RK-RESULT-CONSTRUCTORS) were measured by that card across revisions; CONTRIBUTION-LEDGERS did not transcribe them. DISCHARGE: after rule 37's migration card, a --rules-off 37 measurement on the live profiles writes its ledgers, consistency passes, and the report compares them with docs/reports/w48-bu-rk-result-constructors/README.md's recorded rows.",
    "source": "docs/reports/contribution-ledgers/README.md",
    "recorded_by": "CONTRIBUTION-LEDGERS"
+  },
+  {
+   "id": "MEASURE-TOOL-PROCESS-TREE-CANCELLATION",
+   "title": "Interrupting a measure host can leave the plugin and slot jobs alive",
+   "why": "Observed during MEASURE-TOOL-LANDING-PUBLISH integration: the bootstrap host and scoped gate shell returned exit 130 after interruption, but the measure plugin PID 3083741, its audit slot descendants and the scoped gate PID 3088618 remained alive. The abandoned scoped-gate tree was explicitly terminated after process-table attribution; the immutable rev-side measurement was retained for separate collection. DISCHARGE: cancellation of the audit host and landing wrapper terminates and reaps every spawned plugin/route process and releases its slot locks, exercised with a running or queued measure plugin; no other worktree process is signalled.",
+   "source": "docs/reports/measure-tool-landing-publish/integration/README.md",
+   "recorded_by": "MEASURE-TOOL-LANDING-PUBLISH"
   }
  ],
  "updated": "Completed plugin premise integration; exact hand-maintained union retains810followups, borrowed measured-source8419Rust/354Lean/freshcard133provider, exact source equivalence checked; authoritative root committed-matrix Python confirmation in integration receipt. CMetrics map/opts API model specifications added at the explicit user request. Eight declared-model API contracts remain outside interpreted views, with CMT-MAP-OPTS-CONTRACT-ADOPTION and CMT-LABELED-HASH-ZERO-STATIC-STORAGE Open. No trusted API coverage is claimed; the source gate is recorded by this card alongside its separate initializer native checkpoint. W48-CMT-TRACKED-INTERIOR-SELF-INIT implements rule 36b's checked initializer effect transport for an exact live owned root or embedded record, retaining actual self writes, invalidating aliased member facts and preserving resource obligations; nondefault custody frames refuse and no ordinary summary is exported. The canonical CFL intrusive_list.qv declares matching audit preconditions/effects; two CMetrics .qv modules add six map and two opts lifecycle models, including transitive ownership, partial failure, borrowed results and uncleared cleanup fields. All remain outside interpreted views; checked API adoption and labeled zero-hash storage accounting have named Open follow-ups. Fresh BASE/planner precedes prediction f18d96065 and implementation; the later contract amendment 08da23123 precedes .qv edits. Native corpus BASE/TIP Safe/Unknown/Pending/provisional-Unsafe: 1009 / 3816 / 0 / 9 to 1011 / 3814 / 0 / 9; full system/slice, 5781 NULL dictionaries and runtime projections are compared, 241 semantic leaves accounted, zero unexplained leaves and no prior Safe loss. Gate 8654 Rust / 370 Lean / 374 Python, provider 133 Rust / 25 Python and all five package verifies pass. The actual deep source reader uses 328 KiB below 1 MiB. Full getter closure remains Open; W48-CMT-SELF-INIT-DISJOINT-FRAMES tracks the next bounded frame extension, and W48-EXACT-RETURN-WITNESS-PRECISION is unchanged. Native evidence is isolated to measured e92d8aef35a8bd14550e90219d19a56eb3b196e7; later source gate 2d0d85299b830aa24d7f200d63a308653582363f validates the added declared API models separately; see docs/reports/w48-cmt-tracked-interior-self-init/README.md."
