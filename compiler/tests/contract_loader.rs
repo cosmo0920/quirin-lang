@@ -1761,7 +1761,9 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // `librdkafka/outer.qv` (one outer-only loader declaration).
     // 137 -> 138 by card W48-RK-LOG-CALLER-FRAME: `librdkafka/log_caller_frame.qv`.
     // Two additional declared CMetrics map/opts lifecycle model modules.
-    assert_eq!(modules.len(), 142, "corpus module count");
+    // 142 -> 143: cmt-getter-ownership-closure (9e42dc021) adds
+    // `cfl/hash_state.qv` (three cfl_hash_64bits_* declarations).
+    assert_eq!(modules.len(), 143, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
