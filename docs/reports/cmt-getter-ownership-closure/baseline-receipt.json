@@ -1,0 +1,43 @@
+{
+  "schema": "cmt-getter-ownership-closure-baseline.v1",
+  "semantic_base": "3e3d707bf7d8d12fb29d6cf6b0e690561ef80d64",
+  "working_head": "2ecdd0113c25559092ce3eac0e71a68b71286183",
+  "binary_sha256": "71fba495a454c266cc469499506e85e9479cb1a47cb09e06675154841732e7bc",
+  "snapshot_manifest_sha256": "9978454936481dd0901c13920ff81e6c776de7ff4f249032e567750a927fbb59",
+  "corpus": {
+    "command_exit": 0,
+    "stable": true,
+    "started_utc": "2026-10-25T23:25:42.231453+00:00",
+    "ended_utc": "2026-10-26T01:05:24.706242+00:00",
+    "functions": 4834,
+    "safe": 1013,
+    "unknown": 3812,
+    "provisional_unsafe": 9
+  },
+  "planner": {
+    "command_exit": 0,
+    "stable": true,
+    "started_utc": "2026-10-26T01:05:24.708829+00:00",
+    "ended_utc": "2026-10-26T01:05:26.570398+00:00",
+    "output_sha256": "cf3f030b2c12b9eb3d595c1e994dea60fa0450a0ca6c2222d104b245e0ef7a9f",
+    "bodies": 2189,
+    "baseline_same": 6,
+    "baseline_cross": 8,
+    "conditional_ceiling": 384,
+    "ceiling_waits_on_bodies": 12
+  },
+  "hash_zero_witness": {
+    "source_head": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+    "source_delta_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "input_hex": "42d568e138d727ff",
+    "one_shot_digest_hex": "0000000000000000",
+    "streamed_digest_hex": "0000000000000000",
+    "public_storage_witness_exit": 0,
+    "metric_static_set": 0,
+    "dynamic_metric_list_empty": true,
+    "embedded_storage_allocated": true,
+    "embedded_storage_freed_by_destroy": false,
+    "private_record": "private/cmt-getter-closure/hash-zero-witness.json"
+  },
+  "configured_routes": "still running against the frozen BASE binary and snapshot at prediction time"
+}
