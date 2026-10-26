@@ -21,29 +21,55 @@
       "inherits": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "17e5f22bb2b2ed10d1ed3f2baed212054cc13ebdb9551f8db7ac15ceb2f4d6f7"
+      "sha256": "75c95f0aec8b7a753158ce33557bf69b956009f56c5cf8292804aa646e3c54ae"
+    },
+    "cfl/atomic.qv": {
+      "clause_count": 12,
+      "declaration_count": 4,
+      "declarations": [
+        {
+          "clauses": 2,
+          "name": "cfl_atomic_initialize"
+        },
+        {
+          "clauses": 3,
+          "name": "cfl_atomic_store"
+        },
+        {
+          "clauses": 3,
+          "name": "cfl_atomic_load"
+        },
+        {
+          "clauses": 4,
+          "name": "cfl_atomic_compare_exchange"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "7dc816d38dab8e3364c3a9f41d567db7a5c38c1eef939bcac3385c50213f9573"
     },
     "cfl/hash_state.qv": {
-      "clause_count": 16,
+      "clause_count": 13,
       "declaration_count": 3,
       "declarations": [
         {
-          "clauses": 4,
+          "clauses": 3,
           "name": "cfl_hash_64bits_reset"
         },
         {
-          "clauses": 6,
+          "clauses": 5,
           "name": "cfl_hash_64bits_update"
         },
         {
-          "clauses": 6,
+          "clauses": 5,
           "name": "cfl_hash_64bits_digest"
         }
       ],
       "inherits": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "33951e05d93ef1e4d32770124154ba9198f129e60e7d90cb3fc70c08daa940bf"
+      "sha256": "bf69ba5ee465235cd5f244f03b0acbc28c039143cd11e4e14a2c5a9b828363b2"
     },
     "cfl/intrusive_list.qv": {
       "clause_count": 37,
@@ -65,7 +91,7 @@
       "inherits": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "1dc71a24ffaad7a6aadb24f999dcfd99cb0890155619c9f82304c59085b27da2"
+      "sha256": "589e2fad71318ab9bfbc8be00eb50db4ea02582717e333f889de995fed527b02"
     },
     "cfl/null_deref.qv": {
       "clause_count": 2,

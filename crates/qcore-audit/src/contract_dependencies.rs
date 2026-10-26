@@ -338,6 +338,7 @@ fn cached_contract_premises(
                     atoms: BTreeMap::new(),
                     premises: BTreeMap::new(),
                     refinements: BTreeMap::new(),
+                    requirements: Vec::new(),
                 });
         for record in records {
             let record: qcore_schemas::hypothesis::ErasedPremise =

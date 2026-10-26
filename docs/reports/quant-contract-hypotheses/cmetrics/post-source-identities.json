@@ -1,0 +1,66 @@
+{
+  "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+  "files": [
+    {
+      "path": "lib/cmetrics/src/cmt_opts.c",
+      "sha256": "0ce2593cf82686be46cda383e6ede07c7aa644ff5343a5eca6fb167c2b42c578",
+      "matches_pinned_blob": true
+    },
+    {
+      "path": "lib/cmetrics/src/cmt_counter.c",
+      "sha256": "e507481702ceea626ea71e1043b7534ae98b7c2f5d71366ee916c47e25ce88f0",
+      "matches_pinned_blob": true
+    },
+    {
+      "path": "lib/cmetrics/src/cmt_gauge.c",
+      "sha256": "4e6d77145b2bea6a45feaa14e927c849bcf5b8f0d6f0589412a5fd4a4d54ef41",
+      "matches_pinned_blob": true
+    },
+    {
+      "path": "lib/cmetrics/src/cmt_untyped.c",
+      "sha256": "16cbbdcae10eaf086c2505ef7819bf8c773d39089f0e59e13e7985add1a5101b",
+      "matches_pinned_blob": true
+    },
+    {
+      "path": "lib/cmetrics/src/cmt_metric.c",
+      "sha256": "43f5cffac5256bc2d9dfd83eec1dd301cc3f90e35337a34345e7cf78cbab1cb8",
+      "matches_pinned_blob": true
+    },
+    {
+      "path": "lib/cmetrics/src/cmt_metric_histogram.c",
+      "sha256": "c0188c906b1e56a1e0294dd2e9abf2183f159ca6d8403b0bd52f824c03117cc7",
+      "matches_pinned_blob": true
+    },
+    {
+      "path": "lib/cmetrics/src/cmt_summary.c",
+      "sha256": "fb3df5cd38613e844e2e37a5356cf3762f0d40a6d8ee96d5b1d7767fcc62925c",
+      "matches_pinned_blob": true
+    },
+    {
+      "path": "lib/cmetrics/src/cmt_histogram.c",
+      "sha256": "2d0dc2a2c37914b8baa936ac7f91be19198b65b85f463721db8dfd80356966f2",
+      "matches_pinned_blob": true
+    },
+    {
+      "path": "lib/cmetrics/src/cmt_exp_histogram.c",
+      "sha256": "bd6cc7f4f9b0e21f36e60b625e848d0a1071545ae3f1c3af0a51f0c524114e44",
+      "matches_pinned_blob": true
+    },
+    {
+      "path": "lib/cmetrics/src/cmt_map.c",
+      "sha256": "a02cdda1b17d6b7fbe70a8dfa5cd329261ce575960e58af369cf058e1fa12517",
+      "matches_pinned_blob": true
+    },
+    {
+      "path": "lib/cmetrics/include/cmetrics/cmetrics.h",
+      "sha256": "0d715731637bbeaba141b481621ad41f15bb8b0a9384c4ea2513dc8200e56bc9",
+      "matches_pinned_blob": true
+    },
+    {
+      "path": "lib/cmetrics/include/cmetrics/cmt_opts.h",
+      "sha256": "604b60bee2de9461983a2656cb6122e19d9f3dcf4c7011a407a348e9ad026c09",
+      "matches_pinned_blob": true
+    }
+  ],
+  "evidence": "byte identity only; no C semantic or trace binding"
+}

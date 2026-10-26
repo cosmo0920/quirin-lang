@@ -71,6 +71,45 @@ The shared envelopes are `requires expression;`, `ensures selector expression;`,
 
 The source parser rejects empty clauses and unknown clause introducers. It does not implement a general theorem prover for the retained expression text. Language-level effects, `own`, `borrow`, usage annotations, access requirements and task protocols need their specified source/model elaborators; the external resource loader is not a fallback elaborator for them.
 
+### C03.1. Formal contract hypotheses and conditions (migration in progress)
+
+The [language requirement L19.1](QCORE_SPEC_r0_3.md#l191-formal-contract-hypotheses-and-quant-effects-required-extension)
+applies across all provider contract families. The bounded mathematical
+representations `quant proposition`, `quant condition`, `quant theorem` and
+`quant effect` are implemented in G01p/G01c/G01t/G01e. Production proof discharge and source effect
+interpretation remain proposed. These forms retain obligations and grant no
+truth authority. The all-provider migration is in progress.
+
+The approved condition form is `quant condition SELECTOR #id(PARAMETERS) =
+FORMULA;` (G01c). `entry` is a prerequisite; `normal`, `error(E)` and `any` are
+exit assertions. A normal negative C return is still selected by `normal`.
+Exit conditions cover every matching terminating exit and assert no termination.
+Conditions are separate from the existing Boolean guard bindings/local blocks.
+Source/model interpretations of before/after/result/trace parameters remain
+explicit obligations. Unsupported consumers reject the clause; an entry
+condition is never dropped and an exit condition is never assumed at entry.
+
+A migrated precondition MUST expose its typed mathematical predicate and
+explicit quantifier domain. A migrated theorem application MUST retain all
+instantiated premises and the exact registered model/audit identity. A migrated
+effect MUST expose entry/exit states, guard, transition relation and frame.
+Existing prose statements may remain historical explanations, but cannot be
+the semantic representation of a completed migration.
+
+Each existing condition MUST have a recorded replacement and correspondence
+status. Proposed refinements in C04.18, symbolic lifecycle introductions and
+model theorem names are not evidence of equivalence to the old prose or of the
+new formula's truth for C. Open correspondence, source, environment, coverage
+or theorem-input obligations MUST remain visible. No new form may silently
+turn an evidence-only graph into a production discharge rule. A selected
+consumer that cannot interpret a relevant formal clause MUST reject the
+selection or return Unknown under C02.
+
+Provider inventory and pin changes require their existing review and generation
+steps. All-provider migration must retain each consumer's existing semantics
+until its replacement has demonstrated parity under the standing evidence
+rules; syntactic conversion alone establishes no safety coverage.
+
 ## C04. Resource-contract v1: total-or-reject loading
 
 The implementation is `crates/qcore-contract/src/contract_loader.rs`. The public entry points load file lists, an immutable map of source texts, or a versioned manifest. The result is a `ResourceContracts` environment from `qcore-schemas`.
@@ -973,6 +1012,63 @@ Every prior premise, including literal-argument metadata, elaborates to one opaq
 A graph instance binds artifact, property, semantic profile, scope, bounds, assumptions, source identity, build identity and evidence version by exact equality against independently held expected context. Disposition (`open`, `supported`, `refuted`) and warrant (`derived`, `observed`, `declared`, `human-reviewed`, `provider-proposed`) are separate fields. A warrant changes no disposition and grants no certificate authority. Reporting conjunction requires compatible context for every atom; a missing atom's evidence stays open. Relational propositions remain one atom and cannot be matched by separately named assertions.
 
 This version installs **no graph semantic consumer**. Opaque text and even supported/derived graph evidence discharge no safety obligation. All published atoms start open with declared warrant. Existing clause/body standing remains separate. Rule13f's actual declaration consultation closure, including validated summary inheritance and held/withdrawn names, lifts to per-row atom dependencies. Audit sidecars retain graph definitions, dependent contexts, row counts and Safe-row counts beside the old premise view. Erasing only graph additions reproduces the prior record. Rule31's pinned outer envelopes still cover legacy premise names and can only lower a runtime verdict; graphs add no envelope promise or static truth.
+
+### C04.18.7. Typed mathematical atoms and model entry obligations (graph version 3)
+
+A declaration may state `quant proposition #ID(PARAMETERS) = FORMULA;` using
+G01p. The atom retains a typed formula rather than an English condition. Named
+value sorts, relation/function signatures, actual operands and quantified domains
+are explicit. Integer terms and comparisons have mathematical semantics; target
+C bounds and conversion domains must be stated separately. An interpretation of
+these parameters is an input obligation, not evidence produced by parsing.
+
+Existing hypothesis groups, flows and symbolic lifecycle metadata may reference
+formal IDs. Ungrouped formal atoms in declared-model contracts are standalone
+entry obligations and appear in the graph's sorted `requirements` list. A v3
+graph may mix opaque and formal atoms/refinements; all definitions and direct
+requirements are validated. The strict resource/bounds loaders reject direct
+formal entry obligations until an interpreted source valuation is available.
+They never install a C summary by silently dropping one. The model inspection
+API does not create Supported/Refuted assignments, legacy implications, C
+transitions, source-binding proofs or verdicts.
+
+The migration starts with libc's eight reading atoms and the 105 former
+sentence prerequisites across CMetrics map/opts/typed-setter/metric-setter
+models. CMetrics has 161 formal clauses after the repeated getter bundle is
+split into its nine distinct obligations. Guards preserve NULL/out-of-range
+no-ops. Count arithmetic and target size/loop bounds are separate; floating
+conversions test finite truncated values, including negative fractions that
+truncate to unsigned zero. Complete-call interference exclusion remains an
+explicit quantified obligation.
+
+`QCore.QuantProposition` gives formula/term semantics.
+`QCore.LibcReadingPremises` and `QCore.CmetricsHypotheses` give conditional model
+decomposition properties; they prove no actual C extraction or complete trace.
+Source/environment/ABI/backend and Rust/Lean correspondence remain open. The
+all-provider migration and theorem/effect consumers are still unfinished.
+
+### C04.18.8. Explicit entry condition roots (graph version 4)
+
+`quant condition entry` is a declared prerequisite, distinct from a named
+proposition used only in proposed metadata. Graph version 4 records its exact
+bounded formula as an `entry-condition` atom. All explicit entry atoms remain
+required roots regardless of group/refinement membership. Ungrouped proposition
+atoms retain v3's root rule. Canonical validation recomputes the complete sorted
+root list and refuses omitted/extra/duplicate roots, wrong versions, or malformed
+formulas. Versions 1–3 retain their existing encodings and root rules.
+
+Normal/error/any assertions are retained by the typed condition view and never
+become entry hypotheses. No condition is established by its declaration or a
+graph evidence label. Interpreted resource/bounds loaders reject unresolved
+roots and unsupported condition clauses before installing a summary; legacy
+erasure cannot authorize dropping an entry obligation. No runtime valuation or
+C permission consumer is added by graph inspection. The separately bounded
+Boolean source reader in G01c retains caller assumptions, binds exact typed
+entry identities, and evaluates supported mathematical normal assertions over
+its existing complete paths. `QCore.BooleanConditionProfile` establishes the
+finite integer-domain enumeration and conditional caller predicates; no C
+interpretation follows from these model theorems. `QCore.QuantCondition` models canonical roots
+and proves that regrouping preserves every explicit entry obligation.
 
 ### C04.18.2. Neutral premise decomposition and explicit binding references (graph version 2)
 

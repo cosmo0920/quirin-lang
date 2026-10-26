@@ -451,8 +451,8 @@
     {
       "function": "cb_kafka_logger",
       "module": "librdkafka/logging.qv",
-      "contract_sha256": "20338489bb43ba3fc980d12ad13170571d12eb53f57f28072c8e9d021e97c785",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "23051de58b17211965402790182410e8d4e7567365de0980ef44bca204cb6f81",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -484,8 +484,8 @@
     {
       "function": "cb_kafka_msg",
       "module": "librdkafka/logging.qv",
-      "contract_sha256": "e73c635c83838b683f8e030dd1dbaf1ca60b02d981d52af13b9741a87993fdd7",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "d58d1a898d00f37121ec0d75b4cbe2ea926af77e18ed884a5f08374d53225d06",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -606,8 +606,8 @@
     {
       "function": "oauthbearer_token_refresh_cb",
       "module": "librdkafka/logging.qv",
-      "contract_sha256": "a96d0885f0449d32ae0ce22db45516f186403273992028356d2eeb10cdb811d1",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "fd9529059e30f612b51ac1d9852a151c11147d50834a4226b076f7ce9ea4796c",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -1065,8 +1065,8 @@
     {
       "function": "rd_kafka_AlterConsumerGroupOffsets_destroy",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "196e1c80183bf9d0039b9bd953489bbf304c9d84103dd2d2baa0dc1a3095202c",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "456dac9c163275f18d31c90ee532877ee43c868cfa25294de540a4187212cc4d",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -1159,8 +1159,8 @@
     {
       "function": "rd_kafka_DeleteConsumerGroupOffsets_destroy",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "3742a744e9eb17d667d3388e8bda3330fa8aa5054831596c31a234f799eb2c84",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "18d7cd86584cd8df52955a7aa86db9432ccf6fc881cb1690a6652455f3404d99",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -1192,8 +1192,8 @@
     {
       "function": "rd_kafka_DeleteRecords_leaders_queried_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "6a645679e0f498e338a62904a8e1bac3400c630666d935f73f338cd11353041c",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "7f4e849ab691a7ea95bb24845b79ff45654430a1dcb6dae51357a4a0ba527ca7",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -1220,8 +1220,8 @@
     {
       "function": "rd_kafka_ListConsumerGroupOffsets_destroy",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "fbf96aacc02aac52152fc3779164ed724650d8deebee2cf2a654746e74f817c3",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "9642de443c469c34ac5952ef6f69ae3878ad8536e21f5e13c2a2271e8543d6c8",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -1253,8 +1253,8 @@
     {
       "function": "rd_kafka_ListOffsets_leaders_queried_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "4a51e341b58090eeb6cce1b4863d009ca6fc02189b825008b4133bc1eb11dbde",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "d50f7f7059fba0dcc274afac152ec761319eabf7fb48b99689ccf9390722e232",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -1436,8 +1436,8 @@
     {
       "function": "rd_kafka_admin_fanout_worker",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "f3f9682d41254bae38ecdad53b72843c01195209176d6b0d888c606aef891313",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "b138acebdc9925cc16e013feb43314f701f8cb5c5f4a552053d00fcd872e5c5b",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -1553,8 +1553,8 @@
     {
       "function": "rd_kafka_admin_worker",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "330b59f4ab3961d55e883975127e3be409151c2493db5a11388ac4f8a029f111",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "7879f355059bcd7e2809acae03dce5eca6060be09d355b3d5b0d66138f742249",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -1647,8 +1647,8 @@
     {
       "function": "rd_kafka_background_queue_serve",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "0814d6032cd1e3320271b932bb33dc93594e7d08db3ef9daeb12c4b7c8ab4797",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "5a3d9c3adb4fe56c7566afdbd1fb5399559253e4ad783a6b8df37604fd9690c1",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -1675,8 +1675,8 @@
     {
       "function": "rd_kafka_broker_monitor_op_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "30fe012e6f0b30296bad1d31c83b9588772110bda2a083b271d022c2bba336eb",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "696c1c705ce656d4c9fa59a8aba3a87327abeeea6559eae7584a2eb1ef56f43e",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -1703,8 +1703,8 @@
     {
       "function": "rd_kafka_cgrp_assignor_handle_Metadata_op",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "0f0c7a6455f757da8249681832660deecd1cbe61ca294d93a2056c3be8684ca9",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "4f6c00853ba97d955e43057e7e07a65869385993ad3bbfacb2dbe32e0a2e4bcf",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -1731,8 +1731,8 @@
     {
       "function": "rd_kafka_cgrp_consumer_handle_Metadata_op",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "8e75df96d74d8e42531d293ae2f07825f90e3e1a0540c8cff9b1e984b59e3526",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "43a5fbb37cc469c2cce9ef59c708c4ae008f92253b488b2fc638c761df9a8c1f",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -1759,8 +1759,8 @@
     {
       "function": "rd_kafka_cgrp_handle_Metadata_op",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "b6fab683ba4a54d5d195364ea7098906d27c0376860bf0403f95d5cc22cf8ff4",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "d37245a8c4853fe5729463b39a23639cb2002f3588f63aac1b556ce03c029499",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -1787,8 +1787,8 @@
     {
       "function": "rd_kafka_cgrp_op_serve",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "86fe7b145241041eecb19e73fc709dba3d18aa0003b528b666cac0c00251587f",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "aef620528ad25575b06b4d21157f8e363d8ac324060fe8ad61c4a1fe5b490817",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -1820,8 +1820,8 @@
     {
       "function": "rd_kafka_conf_new",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "048cb2c5bcfa74388f83592b43c0b3f70813dc36aa6f703267598a94f76f4732",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "039f694b7b29cd9bd6bd3e7f9bb771c7985871cd32c5d6109d6aeec3e84adae9",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -1853,8 +1853,8 @@
     {
       "function": "rd_kafka_conf_set_background_event_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "29a5fd5ebb351cb5bb3885ee60f8b7ebe46b22ea317adf19aa89ef486f971d4a",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "eb3d07e8623118e64540bbfc3b5b803e4fb6d4c8377da0112c0d49d1c28c0e1f",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -1886,8 +1886,8 @@
     {
       "function": "rd_kafka_conf_set_closesocket_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "cd8189ff93099a857be2d94e779a49bf0bab5b8cf8149d270cb1a0e886fc506d",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "556d28a548dddbc118caaa2f3c1b9b3cfbae26a1fbed3b059977f5ae86919e97",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -1919,8 +1919,8 @@
     {
       "function": "rd_kafka_conf_set_connect_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "38488e32d39097a5890d7e214b43499f753cc9c7bd66ea6033ae30ba9247a4ab",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "232bb8ab2bf5ada1b5a42fdb7ef2e4c4ac75685172f8375e558fd6f55e86d648",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -1952,8 +1952,8 @@
     {
       "function": "rd_kafka_conf_set_consume_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "b8d8756fbd82775be5c8b041ef958f49029f059d7f0bc0aaff5d69a792e3ff5c",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "cb901edd25c758ec1f682f940e4bc95ac2e994714ff857bccd47c606a19627d4",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -1985,8 +1985,8 @@
     {
       "function": "rd_kafka_conf_set_dr_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "11d42a4d4232dc5cfe7481336652101cf75176a40994e0bb1a88ba783c5b2c22",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "b3679f12d13af617c2621b7bf06d07bcd411886bcbf3ae672c8fd2d470f595f8",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -2018,8 +2018,8 @@
     {
       "function": "rd_kafka_conf_set_dr_msg_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "f65937fbcaf54e5328a4b33681ffb5dc8f07e40e32ae887c7516d9edf9dd7d0e",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "187e027bae8ad7c78baf3e01301e46e0f303a1d5208ae88a206e7492121d87e9",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -2051,8 +2051,8 @@
     {
       "function": "rd_kafka_conf_set_error_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "c3b38af3f01ea7ba6dcbcef50af08d68f42806d92c25ca18aa9079053ea6fbae",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "6c66222896fa52f4e698cc52fe0ac698e182e6e05cdb1cfd517db60fb1d847aa",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -2084,8 +2084,8 @@
     {
       "function": "rd_kafka_conf_set_log_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "07e40d78d85750a042a3940b8a7261ec0e72e21b3ff83b01ad9ce20ab86c8462",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "08af3428086d613c0a2694c80a22d77877d67ed82701d3312333d73f62cbefff",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -2117,8 +2117,8 @@
     {
       "function": "rd_kafka_conf_set_oauthbearer_token_refresh_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "d5f73f0d4f0dc62b6bb3f1c8043e8ff33d34b678ac0b297d00db41fa33bd7302",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "b66a7f38e9e5acd3f563f5ebf4428f7f4412880a154e2523e943054cb372949a",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -2150,8 +2150,8 @@
     {
       "function": "rd_kafka_conf_set_offset_commit_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "9ad322ecc93d1438771d76e365f80fb4c9cb49e6f8373b482264056176fb93db",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "0eef677d5d80b5740e21e6c5fdd5c7b77c255ae4e05d01a4416b0bc81169eb39",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -2183,8 +2183,8 @@
     {
       "function": "rd_kafka_conf_set_open_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "d43f049ab0b785437a605faced615acf873f663690975b6e85d5bafa4b5a4d3c",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "2f2ca5e4805ac41d3b7a563e752a1c589fe0596b63f711683ee6790d8963097c",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -2216,8 +2216,8 @@
     {
       "function": "rd_kafka_conf_set_rebalance_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "d195ba5d905fa00386591bd7ea7d0812f5b551a85f44ae3ac79b7ec0fed41147",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "5eb3776e3c098a5339c33df90d2add3690a3e0a1d4a4e26da5fd9e90a758296e",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -2249,8 +2249,8 @@
     {
       "function": "rd_kafka_conf_set_resolve_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "deaa298df4c71f28a0d7ebcd9afbe5bf6d8426c672c371fef5279c00391a14cf",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "da0d4a83dee0e44a7d745b816588e86dac2cd61de6e148de018ea009acfce0bd",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -2282,8 +2282,8 @@
     {
       "function": "rd_kafka_conf_set_socket_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "6ec97882417087768e0d747eb178597046c7031d24958a415a5adad4ad9b2558",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "c12acab0a21a51786cca2a7adb854cf1e44256ab0057a3f89f67ad6d432f2310",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -2315,8 +2315,8 @@
     {
       "function": "rd_kafka_conf_set_ssl_cert_verify_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "6d44cabb49a8173dae2ecd0712278aebe5e2d757cfe26ea4a3a9662ae524bf9c",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "daa3a9d837f297cf77f5bfd5ca9eadbf1bf84bef3df102a269ed39c29bfecc11",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -2348,8 +2348,8 @@
     {
       "function": "rd_kafka_conf_set_stats_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "2e8c451c75d4484711de979529aa0eace414749565f3ba86ff6bb3be0f0a219f",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "a7ec99e865ed8a2ba0106159f02b498731da6bd434f0ed90ebef31c2ff7f53d6",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -2381,8 +2381,8 @@
     {
       "function": "rd_kafka_conf_set_throttle_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "2b9508bfa1d49acfa825b75384422ded84cba5598068a37d4c402090ebada079",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "b22a76cde5f464093a4065eb0ab79999e04c60f280fb9d14296752a5aa672fa0",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -2447,8 +2447,8 @@
     {
       "function": "rd_kafka_consume_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "d1dbde9f418bc309361d2ee0610b238348a0ecad153ab9683f64f1a23915a78f",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "45062dbddc65efa3c4545cc59a580c9a421c6a22b39d12c21391ffb2a1161269",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -2475,8 +2475,8 @@
     {
       "function": "rd_kafka_crash",
       "module": "librdkafka/memory.qv",
-      "contract_sha256": "70ab0d07c174dc91af8bbbaf60091611f1f5e4b44ba04249ede8c53db3d664fb",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "fd026f68eaeb013c1b6838e60ec22575055c84790430350f85fdc518cdfabbe2",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -2508,8 +2508,8 @@
     {
       "function": "rd_kafka_dump0",
       "module": "librdkafka/kafka_mem.qv",
-      "contract_sha256": "b9579542048c4128620c74ba7308d1e9fc73426b1ea4716a77af0913bb71b777",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "f4eeec88881e44e3828c9fc4b3d6e610dd535449c4d59c6a5e86507f2693106c",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -2536,8 +2536,8 @@
     {
       "function": "rd_kafka_enq_once_trigger",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "637d27facda4b824d8ee8f6693a8e093c74a1fe7ff967ddfca782489839482e8",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "137b31a0466e013db202f94430cd4e4a002e094ce63cf0ecd650447be0e5c9c9",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -2564,8 +2564,8 @@
     {
       "function": "rd_kafka_err_action",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "1484b68000c1dca53bf0a89e716e8051d1d9bd40a4baab38ea379e2c61a55802",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "e6fde472cc0360eabfd991523e1f13ef258b4b1a1e793baf1b004401bb31f3cc",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -2881,8 +2881,8 @@
     {
       "function": "rd_kafka_mock_cluster_op_serve",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "8b262ad08083ff742cfaab3c45716d168a661df826982696571df06975d76084",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "d477fa578723369d31128231dfb01df3152aa3c37dd7a91a3dbe459a23b1f501",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -2909,8 +2909,8 @@
     {
       "function": "rd_kafka_oauthbearer_refresh_op",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "7040ebc2e91b4508634e6dc637e30139e8bf1ef20a5827f07eac182606f26390",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "c356290f75e4eef8f5d7e1e3ba0431bbf6c3953445bca45ee97128058ddd79df",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -2937,8 +2937,8 @@
     {
       "function": "rd_kafka_oauthbearer_set_token_failure",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "587051a88b01a5f12969d65f563f19d39b96c26f86351929d95c9f13024f6095",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "578e39671867106769515f0a8d932f36aa56e92145501a7efb5d60688620babb",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -2970,8 +2970,8 @@
     {
       "function": "rd_kafka_oauthbearer_unsecured_token",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "37cec6016af19a51400d6a7482abf1df726e06ec4531b1b90ca58b8f116ec7d2",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "c67b4e4847be3a0e0959e6ee57da1606917daa8ef903fc21661bdd8e5c81ac83",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -3003,8 +3003,8 @@
     {
       "function": "rd_kafka_offset_reset_op_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "e57d6502c5fd89184246734cef72f473278d3ffdbb9d69b9ed4c6461f9d58bc2",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "271e5bc6cc002fcad7e0410e86912ace381c9265d598a23dfda9f973e4b5ffec",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -3031,8 +3031,8 @@
     {
       "function": "rd_kafka_offset_validate_op_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "cbbe89b5a354dc884fb4bfb4d0c2738c26effa5e9117239ce200ecd710c7d591",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "c77981e184fc97adf92db04e23250e11d153a9f69267e88647980f033ba1683d",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -3059,8 +3059,8 @@
     {
       "function": "rd_kafka_oidc_token_client_credentials_refresh_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "52cb16d65bdfb93046ac5d91a1dd5a7e57139c6dce12bc79292dc38af411ce74",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "4417fe00764b3fa0caa2563bbc3d2f238a7a60d7d61eb4098ef601ab34d46217",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -3092,8 +3092,8 @@
     {
       "function": "rd_kafka_oidc_token_jwt_bearer_refresh_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "685982d4334871ba1647fb39f49e11585e451eec4550859a86d28cf609e5ebde",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "226502632a58bdd947d242beb8184d1eccac4b32b0426030f4c191af92fcdee0",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -3125,8 +3125,8 @@
     {
       "function": "rd_kafka_oidc_token_metadata_aws_iam_refresh_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "b7f0c897edbc1aa37f8e3a1fe24c386da6cf5584b1927956491e7823009d4612",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "ea3ba87ddc5cd0c0f25082f8609dbbcb351c78589249aae3964877be844ecb54",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -3158,8 +3158,8 @@
     {
       "function": "rd_kafka_oidc_token_metadata_azure_imds_refresh_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "bf2cc007f21c099263ee81c807a6bb90e3fea89cc5c8d8261d89db7a22bc3d4f",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "6e296f375d7c4789d3cf06640af9cf5b4b23742e8ed5b5450bf09aec6dfe2205",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -3191,8 +3191,8 @@
     {
       "function": "rd_kafka_op_destroy",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "6ba24543f1e59b63ee37e1dc8b7b198df1a92d91584d8be3a29f071333154577",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "32c83eee9061d7208b916a6810a5082e892c06901909ae11a59d1bbe0f97cce9",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -3290,8 +3290,8 @@
     {
       "function": "rd_kafka_op_req",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "91e4109f28143ab3d6cd22dc218dacfcaebcea781f6735ae0352fe5da33211a6",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "e5f9944515c4757621bb69910d21f363d7cf1d0f15f73ff56c3421bc3a757109",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -3323,8 +3323,8 @@
     {
       "function": "rd_kafka_op_req0",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "36994ccc189636c64e9dee2089eb21b155526208c776a6156640954df5d8ba2c",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "64eb986f90cf4e8fc3f54625d4e06a924340f0768b55661db320681900af8f21",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -3356,8 +3356,8 @@
     {
       "function": "rd_kafka_op_req2",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "b3a5aeb3f0333139ed702e5cc0f145136d6f97b61ccc829eb6b34bc9c0e45ad0",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "736a86962418c2ed29b52561f7a88f1badd3e8dbd9d1868bbecf730e4c137a97",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -3389,8 +3389,8 @@
     {
       "function": "rd_kafka_poll_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "83dfeb6769b4d5cea96b88731ee736da23ba35e6cc3c367f1bee464b4af0cd5a",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "3101398d4c6670c356c57d0f4b768bb46f05b07b9dfbc35a8a88c5188ec3e1fb",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -3427,8 +3427,8 @@
     {
       "function": "rd_kafka_q_destroy0",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "3d354aa217f99312ab6ef30e759407c56aab69ddeba400d2c5df11e4fd2fb6bb",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "b58b8f33ffd24d08f08f9ceadf65f341bf3a7f2e4fc009a591b4f19db54b5842",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -3455,8 +3455,8 @@
     {
       "function": "rd_kafka_q_destroy_owner",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "937630c78008f058211156517c8cf04cd6c8db6505727be6b61bdf2cadd1ff5b",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "a446ec4591e4a3448a50dd8f3482ef8ff5c906cf23470846891bc7556914f538",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -3572,8 +3572,8 @@
     {
       "function": "rd_kafka_q_pop_serve",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "5e10f4ade1ab8f0a19b612497e6d4380718dda1d1f7fe4308174ad059fe48bac",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "a1ea255bb713731ab74585a7de2f2f502bd85b1e849f327aa1d526b589b6db61",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -3605,8 +3605,8 @@
     {
       "function": "rd_kafka_q_pop_serve0",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "faf8d2d2fb1167bf3ee1f4051f3a4956279a8a4131179c65223b7a2e9b17ef40",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "78ce5e65819a997be81670c442b2c102f464d98e33ee3f0947d9e4209618cdd5",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -3633,8 +3633,8 @@
     {
       "function": "rd_kafka_q_pop_serve_maybe_consume",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "9d5ed982c4212a5d4f0c24336590bd1e3db711d4a8672b6f673d23271067f96e",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "e29a31edfe6711aec509fa08c5ecf1e3b2300484adddb94bde5b44c957eb0b36",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -3666,8 +3666,8 @@
     {
       "function": "rd_kafka_q_purge0",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "5e38386608fa7864c181a60002608ffe431c2328985e99a8830df3ab1100d5e8",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "6d68e2b6ab3ac09aaff42d0777732409a8d375bfc26d4a98dbd1abf68a03c00c",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -3699,8 +3699,8 @@
     {
       "function": "rd_kafka_q_serve",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "819e9ece788d216e9ecf76899e2c4067a4660d5ba3c5b4fe76fad7c9741b3e41",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "615386c944ff11ac0875092ff83d868064972ea9c2987ae777c7d28a8c22dcb3",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -3732,8 +3732,8 @@
     {
       "function": "rd_kafka_q_serve0",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "070d82973a9342bad0b510c8afe1d88cc2cbca90c042e24fc048b34ea2f9cb9f",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "df751377831e5c4c9dd96972b33371a00581933e78a99b160aa2a6dd8950dbe9",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -3760,8 +3760,8 @@
     {
       "function": "rd_kafka_q_serve_maybe_consume",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "42462189632a00945c913ab5c08d794f60f4e1fb1fa12c87a7698124898a07b2",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "0adfa537cb479019ac79439f8ba8ff13f4309d7b572cada458d7131b3097a325",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -3793,8 +3793,8 @@
     {
       "function": "rd_kafka_q_wait_result",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "b560c23035bde8e8fe4c4bfb10c822c83412122ad6d6c4384b2279dcb633e9ab",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "20933d4c0436eb7110b87a35d5638ebb17c5bfe0fe4d61b11e8086c1bc6224b3",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -3859,8 +3859,8 @@
     {
       "function": "rd_kafka_share_ack_commit_cb_register_op",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "5b36af254de1d9d23d3fed4306b0f323c6e08c0c77c563cd5d79f22b7d41ad82",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "9e4107f509a5931eb7ea22437323d13f5937eae907ac7e3996d8efa6a39b9b0d",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -3887,8 +3887,8 @@
     {
       "function": "rd_kafka_share_commit_async_fanout_op",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "b1a58404af34bba2e839ac73d235bbefc790b1ce92c5ed924e5e231374e7061b",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "fd2c1e8e0ce6edcb1709dc5723f48239599ed9bdb96566be04f0495d2a29deae",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -3915,8 +3915,8 @@
     {
       "function": "rd_kafka_share_commit_sync_fanout_op",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "9310d3d0fcdce176b01158ba0a82d554ca34c1dabfe63feae4793da6e037d142",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "af4311ca6799e9d0ba9243b08d901a73bc9f83157572bd9c3bca59b399d8a01c",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -3943,8 +3943,8 @@
     {
       "function": "rd_kafka_share_fetch_fanout_op",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "fff17e33594761e4d46081f4d230fcac3ec0509eaa3bcc5855ba4e737aee5b16",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "9f7a96131d38bd38510bf62fc0885d7add5de8179934a5a000e564691f6f6236",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -3976,8 +3976,8 @@
     {
       "function": "rd_kafka_share_fetch_reply_op_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "9203f00962da4dd38c8647500dc1492a19e264de07a23862526a7bde988c414b",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "18614de98841faf1eb98a1816794b61fd93359e305246eaff7c00dcdf6345bfd",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -4004,8 +4004,8 @@
     {
       "function": "rd_kafka_topic_destroy0",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "83c483f4b6112fc7857cc35463dc8f1a981af9a57800e447f4fe872f8007a05b",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "8742bd1fb21fea795f8d41949aa64e56c7022a887ad96b94449907f2dd34a11e",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -4060,8 +4060,8 @@
     {
       "function": "rd_kafka_topic_partition_destroy0",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "2bd112f0be0495f9aa126ded4b00520d1f811f72611ca0573e11de81dc2df1fa",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "296f6f6c6c877d0a5875a17b1aa770d73672e77396db45d1a8ecd0b61a762983",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -4116,8 +4116,8 @@
     {
       "function": "rd_kafka_topic_partition_list_destroy",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "34e5024fe6d2c91dfc61044cdd23e9360c2deb549ec3e46e4a03c9ca8e5e7a4c",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "cb2142a628b22cc5fae94d97cc47c63ac3893b60a0ffc3b16dd8fb5bebf13e10",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -4149,8 +4149,8 @@
     {
       "function": "rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "a93a7eb4e45591c3c19142a09f67ee353f4081debf5dc9c22991f9910bbc231e",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "2613345f4087d25dd65c0cec57bfa5180c81aebaa08248239b37449c1c3465be",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -4215,8 +4215,8 @@
     {
       "function": "rd_kafka_topic_partition_result_destroy",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "043dae2da5dc6e2638ea2b661b625c26c69731867cad7c4981cfb8599216f446",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "7ee43d5884c15ad39c18a59a4657a1159a1923753baaf2d1077da4aef44483e6",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -4248,8 +4248,8 @@
     {
       "function": "rd_kafka_toppar_desired_add",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "9ce9ea662e39944819f2a7b4b562b0def411fb88347592ff93f9e90c5e9e8f54",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "88118d63f6c0e1984aa101f9f1802c9ceb0d3995f0952a40a621f92fa4a1dfd0",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -4314,8 +4314,8 @@
     {
       "function": "rd_kafka_toppar_destroy0",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "00a7b5c9f570c2a9ed8027b47bc41cc1926cc5a8f79cd4adfb2abaca9d33339f",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "7e4240be3a4bbcd885c4b6b7f89d82c569eeb56bcfc219d17a81430b22051a98",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -4342,8 +4342,8 @@
     {
       "function": "rd_kafka_toppar_fetch_backoff",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "59c867b248c1f05a3b86b889442b655e8d5434f85ae7c6c125c2bf9f7c43b3e2",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "c4f429cb5edeb6a4ddce055aaa9fc381ec2da765726b5ddd937aceb33e942728",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -4403,8 +4403,8 @@
     {
       "function": "rd_kafka_toppar_get2",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "32029cb59903a71374eeb87dcc17e99cca5e903096bb0aaa9e423bd95e8533aa",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "ac846ef6b23a06ed502f1460e91575d00fe603b2e639d177d6d0ee6a8379b689",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -4436,8 +4436,8 @@
     {
       "function": "rd_kafka_toppar_get_avail",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "1d1102305c308e17c3111ef0b988150b26765a4c3f5e405630a4e8d09cfb3ccf",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "9fafece3eaa0589b67fcca425a84b2369d300c67a08c33b1e005c669b14bceb3",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -4525,8 +4525,8 @@
     {
       "function": "rd_kafka_toppar_new0",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "64949448eedb5829e2f4ab2bf00c57d5247ae706ffcf4b31016d58808e4a995a",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "668abe63ae839f513b188f0be43c249e01f34fbb2cde307430dba87c0822e571",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -4558,8 +4558,8 @@
     {
       "function": "rd_kafka_toppars_pause_resume",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "e5430e5a8cd7dbbed3b636e1c93d9c5bd4ab795e7dd69e961bd8f7181ad992ca",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "069106e5c9bc0989446ff5add1f8caec377bbebfb645f375f14e2b66e07b3fe4",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -4591,8 +4591,8 @@
     {
       "function": "rd_kafka_txn_op_abort_transaction",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "685bac41987eeb9fb6bc4e6ea2c250ad9d69303f4e7140f5004a2aed03f99be2",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "73d7503c5473fe7b5174e59d4cc7e20495c89c3db8ddec09f21bb3d4b376f5cd",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -4619,8 +4619,8 @@
     {
       "function": "rd_kafka_txn_op_abort_transaction_ack",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "6beabb769a199e6db4d0a5419890ba5c58aaba209924a657cab237c1a39091ec",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "0c958131e623453843d75db0f7684a098691e4322a0de13c6f830f4739f31e4d",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -4647,8 +4647,8 @@
     {
       "function": "rd_kafka_txn_op_ack_init_transactions",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "1810c700e64a95d8f9192c36dc65a777f7d57734643dc2fcb6ccabdde45ae384",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "30167250b2aa14be409e50f41175e3eb393839de3ff82ac79237cda5b33eaf20",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -4675,8 +4675,8 @@
     {
       "function": "rd_kafka_txn_op_begin_abort",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "d62774dc68086ddb03b53d3a85d772949a3505243460aaf5aced4cdb34c5e416",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "869b85b0beb917240a371fdd5dff6098b2edde8ae2835680c935b3924c5514ce",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -4703,8 +4703,8 @@
     {
       "function": "rd_kafka_txn_op_begin_commit",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "67fcf09c9e9f08b4e2a782f65e408ca0ce19ec7838ac6a2c67b53dae95cd9c51",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "32a9309434d5606909fdce8b0ad7281050cb725f46cc2039755326fd62221a29",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -4731,8 +4731,8 @@
     {
       "function": "rd_kafka_txn_op_begin_transaction",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "e9f2d167c3d9e252550957a46fc657c089ca96695c6b39dd7503f92780dd517e",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "cc695aa04ee2b912c34ad17c7142f5295a6e9f5a9755b7760fe42cb7919b9400",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -4759,8 +4759,8 @@
     {
       "function": "rd_kafka_txn_op_commit_transaction",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "87e87a454387011db901855cad81b64f63e1397ce7d1916dda3c3a1ddec975d1",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "68b6ec0dbb90a13165888ecb6b63af066f70801fe172e00c60d1523a090d5784",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -4787,8 +4787,8 @@
     {
       "function": "rd_kafka_txn_op_commit_transaction_ack",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "2ead6b9c41e6e831adac07fb363e3a974608488e2614e7c6323778ea776f3baf",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "ca6b4ad7b958bfb3b7848a6270e8d2646b79b230a89d66e99371703ce422beb0",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -4815,8 +4815,8 @@
     {
       "function": "rd_kafka_txn_op_init_transactions",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "3fac79a7263551989dbc556dddc1c383a15a01330c33444214b0ea240bedfb09",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "d6f667ea8494fb4c38d1fe5a089cc49a8d6413078e5834b47d8e592694895fce",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -4843,8 +4843,8 @@
     {
       "function": "rd_kafka_txn_op_send_offsets_to_transaction",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "3b1ea2eeecb7bdc4326d15fd989cdb6bf0fe65ce3fffc7c2c75881db925e28f6",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "c154c4fbb00f7cef8acf1a0e47846c5239f3403084002e727726072480b2a167",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -5213,8 +5213,8 @@
     {
       "function": "unit_test_telemetry",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "35aa8eaf6f60d81c78910bf3baba98f3dfb60939c6dcc4631978fde45185f410",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "b88dfc2c1db02ede7893b700832a49ce9c4925c5ba79e105da3d5ee235e8ea97",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -5269,8 +5269,8 @@
     {
       "function": "ut_create_mock_toppar",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "eb6e183a2d2dd245c1c2ce4d0a49284f8e6eadabbf180d55b4e034eb739f7586",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "ff12f480e126bfe4cf3f2c35243ddd0689d738dc05b70322a4c254f9eb69fa27",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [
@@ -5297,8 +5297,8 @@
     {
       "function": "ut_destroy_mock_queue",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "946bfba21c9265667f4edd771d1ab4e17a6abe0f57e40e9d02a91f2d763b0043",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "ecd334f059fe1f9137a651f413e7db1a328b4e79feb8047e72103b1c94147f38",
+      "pinned_at": "2026-10-26T17:29:40Z",
       "identities": [
         {
           "reviewed_at": [

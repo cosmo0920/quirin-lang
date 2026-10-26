@@ -10,11 +10,11 @@ extern fn flb_input_chunk_release_lock(
     chunk: borrow<'call, mut, InputChunk> use one
 ) -> i32
 contract {
-    requires chunk_is_live;
-    requires exclusive_chunk_access;
-    requires busy_is_boolean;
-    requires lock_is_boolean;
-    ensures normal busy == 0;
-    ensures normal result == old_busy - 1;
-    ensures normal lock == old_lock;
+    quant condition entry #live(#env: environment, #modeled: predicate<environment,object>, #live: predicate<environment,object>) = forall (#o: object) { (#modeled(#env,#o) => #live(#env,#o)) };
+    quant condition entry #exclusive(#env: environment, #caller: actor, #modeled: predicate<environment,object>, #during: predicate<environment,event>, #access: predicate<environment,event,object>, #actor: function<event,actor>) = forall (#e: event) { forall (#o: object) { ((#modeled(#env,#o) && (#during(#env,#e) && #access(#env,#e,#o))) => #actor(#e) == #caller) } };
+    quant condition entry #old_busy_domain(#old_busy: integer) = ((#old_busy == 0) || (#old_busy == 1));
+    quant condition entry #old_lock_domain(#old_lock: integer) = ((#old_lock == 0) || (#old_lock == 1));
+    quant condition normal #exit_1(#busy: integer) = (#busy == 0);
+    quant condition normal #exit_2(#result: integer, #old_busy: integer) = (#result == #old_busy - 1);
+    quant condition normal #exit_3(#lock: integer, #old_lock: integer) = (#lock == #old_lock);
 };

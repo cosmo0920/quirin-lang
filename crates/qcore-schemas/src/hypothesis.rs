@@ -5,8 +5,20 @@ use std::collections::BTreeMap;
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "kebab-case", deny_unknown_fields)]
 pub enum Proposition {
-    Opaque { statement: String },
-    Typed { subject: String, predicate: String },
+    Opaque {
+        statement: String,
+    },
+    Typed {
+        subject: String,
+        predicate: String,
+    },
+    Formula {
+        definition: crate::quant_proposition::Definition,
+    },
+    /// Always a required root, including when metadata groups reference it.
+    EntryCondition {
+        definition: crate::quant_proposition::Definition,
+    },
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -44,6 +56,10 @@ pub struct Graph {
     pub premises: BTreeMap<String, Conjunction>,
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     pub refinements: BTreeMap<String, Refinement>,
+    /// Ungrouped formulas and every explicit entry-condition atom. Interpreted
+    /// resource/bounds summaries refuse these until an actual valuation is checked.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub requirements: Vec<String>,
 }
 /// Exact caller-held verdict context, never inferred from the presented evidence.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]

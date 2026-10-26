@@ -1,0 +1,6 @@
+import QCore.QuantEffect
+#print axioms QCore.QuantEffect.guarded_relation_decomposition
+#print axioms QCore.QuantEffect.absent_guard_refuses_step
+#print axioms QCore.QuantEffect.frame_composition
+#print axioms QCore.QuantEffect.operation_then_interference_frame
+#print axioms QCore.QuantEffect.own_frame_does_not_constrain_other_event

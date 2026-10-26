@@ -7,8 +7,8 @@ extern fn cmt_counter_allow_reset(
     counter: borrow<'call, mut, cmt_counter> use one
 ) -> unit
 contract {
-    requires object_is_live;
-    requires exclusive_object_access;
-    requires field_is_boolean;
-    ensures normal field == 1;
+    quant condition entry #live(#env: environment, #modeled: predicate<environment,object>, #live: predicate<environment,object>) = forall (#o: object) { (#modeled(#env,#o) => #live(#env,#o)) };
+    quant condition entry #exclusive(#env: environment, #caller: actor, #modeled: predicate<environment,object>, #during: predicate<environment,event>, #access: predicate<environment,event,object>, #actor: function<event,actor>) = forall (#e: event) { forall (#o: object) { ((#modeled(#env,#o) && (#during(#env,#e) && #access(#env,#e,#o))) => #actor(#e) == #caller) } };
+    quant condition entry #old_field_domain(#old_field: integer) = ((#old_field == 0) || (#old_field == 1));
+    quant condition normal #exit_1(#field: integer) = (#field == 1);
 };

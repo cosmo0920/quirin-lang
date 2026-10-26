@@ -1,0 +1,432 @@
+{
+  "definitions": [
+    {
+      "id": "plugin_artifact_symbol_abi",
+      "parameters": [
+        {
+          "name": "actual_abi",
+          "sort": "function<environment,integer,abi>"
+        },
+        {
+          "name": "actual_artifact",
+          "sort": "function<environment,plugin,digest>"
+        },
+        {
+          "name": "actual_build",
+          "sort": "function<environment,plugin,digest>"
+        },
+        {
+          "name": "actual_inventory",
+          "sort": "function<environment,digest>"
+        },
+        {
+          "name": "env",
+          "sort": "environment"
+        },
+        {
+          "name": "expected_abi",
+          "sort": "function<environment,integer,abi>"
+        },
+        {
+          "name": "expected_address",
+          "sort": "function<environment,plugin,symbol,integer>"
+        },
+        {
+          "name": "expected_artifact",
+          "sort": "function<environment,plugin,digest>"
+        },
+        {
+          "name": "expected_build",
+          "sort": "function<environment,plugin,digest>"
+        },
+        {
+          "name": "expected_inventory",
+          "sort": "function<environment,digest>"
+        },
+        {
+          "name": "loaded",
+          "sort": "predicate<environment,plugin,family>"
+        },
+        {
+          "name": "loader_enabled",
+          "sort": "function<environment,family,integer>"
+        },
+        {
+          "name": "required_symbol",
+          "sort": "predicate<environment,plugin,symbol>"
+        },
+        {
+          "name": "resolved_address",
+          "sort": "function<environment,plugin,symbol,integer>"
+        }
+      ],
+      "formula": "forall (#p: plugin) { (exists (#family: family) { #loaded(#env,#p,#family) } => (((((#actual_build(#env,#p) == #expected_build(#env,#p)) && (#actual_inventory(#env) == #expected_inventory(#env))) && forall (#family: family) { (#loaded(#env,#p,#family) => (#loader_enabled(#env,#family) == 1)) }) && (#actual_artifact(#env,#p) == #expected_artifact(#env,#p))) && forall (#symbol: symbol) { (#required_symbol(#env,#p,#symbol) => (((#resolved_address(#env,#p,#symbol) == #expected_address(#env,#p,#symbol)) && (#resolved_address(#env,#p,#symbol) != 0)) && (#actual_abi(#env,#resolved_address(#env,#p,#symbol)) == #expected_abi(#env,#expected_address(#env,#p,#symbol))))) })) }",
+      "source": "quant proposition #plugin_artifact_symbol_abi(#actual_abi: function<environment,integer,abi>, #actual_artifact: function<environment,plugin,digest>, #actual_build: function<environment,plugin,digest>, #actual_inventory: function<environment,digest>, #env: environment, #expected_abi: function<environment,integer,abi>, #expected_address: function<environment,plugin,symbol,integer>, #expected_artifact: function<environment,plugin,digest>, #expected_build: function<environment,plugin,digest>, #expected_inventory: function<environment,digest>, #loaded: predicate<environment,plugin,family>, #loader_enabled: function<environment,family,integer>, #required_symbol: predicate<environment,plugin,symbol>, #resolved_address: function<environment,plugin,symbol,integer>) = forall (#p: plugin) { (exists (#family: family) { #loaded(#env,#p,#family) } => (((((#actual_build(#env,#p) == #expected_build(#env,#p)) && (#actual_inventory(#env) == #expected_inventory(#env))) && forall (#family: family) { (#loaded(#env,#p,#family) => (#loader_enabled(#env,#family) == 1)) }) && (#actual_artifact(#env,#p) == #expected_artifact(#env,#p))) && forall (#symbol: symbol) { (#required_symbol(#env,#p,#symbol) => (((#resolved_address(#env,#p,#symbol) == #expected_address(#env,#p,#symbol)) && (#resolved_address(#env,#p,#symbol) != 0)) && (#actual_abi(#env,#resolved_address(#env,#p,#symbol)) == #expected_abi(#env,#expected_address(#env,#p,#symbol))))) })) };",
+      "model": "QCore.PluginPremiseDecomposition",
+      "source_binding": "open"
+    },
+    {
+      "id": "plugin_callback_candidates",
+      "parameters": [
+        {
+          "name": "action",
+          "sort": "function<environment,event,action>"
+        },
+        {
+          "name": "env",
+          "sort": "environment"
+        },
+        {
+          "name": "function",
+          "sort": "function<environment,event,callback>"
+        },
+        {
+          "name": "in_trace",
+          "sort": "predicate<environment,event>"
+        },
+        {
+          "name": "invoke",
+          "sort": "action"
+        },
+        {
+          "name": "member",
+          "sort": "function<environment,event,member>"
+        },
+        {
+          "name": "member_candidate",
+          "sort": "predicate<environment,member,callback>"
+        },
+        {
+          "name": "public_setter",
+          "sort": "function<environment,event,integer>"
+        },
+        {
+          "name": "register",
+          "sort": "action"
+        },
+        {
+          "name": "result",
+          "sort": "function<environment,event,integer>"
+        },
+        {
+          "name": "static_default",
+          "sort": "predicate<environment,member,callback>"
+        },
+        {
+          "name": "time",
+          "sort": "function<environment,event,integer>"
+        }
+      ],
+      "formula": "forall (#ev: event) { ((#in_trace(#env,#ev) && (#action(#env,#ev) == #invoke)) => (#member_candidate(#env,#member(#env,#ev),#function(#env,#ev)) && (#static_default(#env,#member(#env,#ev),#function(#env,#ev)) || exists (#reg: event) { ((((((#in_trace(#env,#reg) && (#action(#env,#reg) == #register)) && (#function(#env,#reg) == #function(#env,#ev))) && (#member(#env,#reg) == #member(#env,#ev))) && (#time(#env,#reg) < #time(#env,#ev))) && (#result(#env,#reg) == 0)) && (#public_setter(#env,#reg) == 1)) }))) }",
+      "source": "quant proposition #plugin_callback_candidates(#action: function<environment,event,action>, #env: environment, #function: function<environment,event,callback>, #in_trace: predicate<environment,event>, #invoke: action, #member: function<environment,event,member>, #member_candidate: predicate<environment,member,callback>, #public_setter: function<environment,event,integer>, #register: action, #result: function<environment,event,integer>, #static_default: predicate<environment,member,callback>, #time: function<environment,event,integer>) = forall (#ev: event) { ((#in_trace(#env,#ev) && (#action(#env,#ev) == #invoke)) => (#member_candidate(#env,#member(#env,#ev),#function(#env,#ev)) && (#static_default(#env,#member(#env,#ev),#function(#env,#ev)) || exists (#reg: event) { ((((((#in_trace(#env,#reg) && (#action(#env,#reg) == #register)) && (#function(#env,#reg) == #function(#env,#ev))) && (#member(#env,#reg) == #member(#env,#ev))) && (#time(#env,#reg) < #time(#env,#ev))) && (#result(#env,#reg) == 0)) && (#public_setter(#env,#reg) == 1)) }))) };",
+      "model": "QCore.PluginPremiseDecomposition",
+      "source_binding": "open"
+    },
+    {
+      "id": "plugin_code_context_lifetime",
+      "parameters": [
+        {
+          "name": "action",
+          "sort": "function<environment,event,action>"
+        },
+        {
+          "name": "code_live",
+          "sort": "predicate<environment,callback,integer>"
+        },
+        {
+          "name": "context_live",
+          "sort": "predicate<environment,context,integer>"
+        },
+        {
+          "name": "destroy_callback",
+          "sort": "action"
+        },
+        {
+          "name": "env",
+          "sort": "environment"
+        },
+        {
+          "name": "function",
+          "sort": "function<environment,event,callback>"
+        },
+        {
+          "name": "in_trace",
+          "sort": "predicate<environment,event>"
+        },
+        {
+          "name": "invoke",
+          "sort": "action"
+        },
+        {
+          "name": "loaded",
+          "sort": "predicate<environment,plugin,family>"
+        },
+        {
+          "name": "opaque",
+          "sort": "function<environment,event,context>"
+        },
+        {
+          "name": "plugin",
+          "sort": "function<environment,event,plugin>"
+        },
+        {
+          "name": "time",
+          "sort": "function<environment,event,integer>"
+        }
+      ],
+      "formula": "forall (#p: plugin) { (exists (#family: family) { #loaded(#env,#p,#family) } => forall (#ev: event) { ((#in_trace(#env,#ev) && (#plugin(#env,#ev) == #p)) => (((#action(#env,#ev) == #invoke) || (#action(#env,#ev) == #destroy_callback)) => (#code_live(#env,#function(#env,#ev),#time(#env,#ev)) && #context_live(#env,#opaque(#env,#ev),#time(#env,#ev))))) }) }",
+      "source": "quant proposition #plugin_code_context_lifetime(#action: function<environment,event,action>, #code_live: predicate<environment,callback,integer>, #context_live: predicate<environment,context,integer>, #destroy_callback: action, #env: environment, #function: function<environment,event,callback>, #in_trace: predicate<environment,event>, #invoke: action, #loaded: predicate<environment,plugin,family>, #opaque: function<environment,event,context>, #plugin: function<environment,event,plugin>, #time: function<environment,event,integer>) = forall (#p: plugin) { (exists (#family: family) { #loaded(#env,#p,#family) } => forall (#ev: event) { ((#in_trace(#env,#ev) && (#plugin(#env,#ev) == #p)) => (((#action(#env,#ev) == #invoke) || (#action(#env,#ev) == #destroy_callback)) => (#code_live(#env,#function(#env,#ev),#time(#env,#ev)) && #context_live(#env,#opaque(#env,#ev),#time(#env,#ev))))) }) };",
+      "model": "QCore.PluginPremiseDecomposition",
+      "source_binding": "open"
+    },
+    {
+      "id": "plugin_interceptor_custody",
+      "parameters": [
+        {
+          "name": "acquire",
+          "sort": "action"
+        },
+        {
+          "name": "action",
+          "sort": "function<environment,event,action>"
+        },
+        {
+          "name": "activation",
+          "sort": "function<environment,event,activation>"
+        },
+        {
+          "name": "env",
+          "sort": "environment"
+        },
+        {
+          "name": "global_custody",
+          "sort": "action"
+        },
+        {
+          "name": "in_interceptor",
+          "sort": "function<environment,event,integer>"
+        },
+        {
+          "name": "in_trace",
+          "sort": "predicate<environment,event>"
+        },
+        {
+          "name": "loaded",
+          "sort": "predicate<environment,plugin,family>"
+        },
+        {
+          "name": "local_resource",
+          "sort": "function<environment,event,integer>"
+        },
+        {
+          "name": "plugin",
+          "sort": "function<environment,event,plugin>"
+        },
+        {
+          "name": "pointer_borrowed",
+          "sort": "function<environment,event,integer>"
+        },
+        {
+          "name": "release",
+          "sort": "action"
+        },
+        {
+          "name": "resource",
+          "sort": "function<environment,event,resource>"
+        },
+        {
+          "name": "retain",
+          "sort": "action"
+        },
+        {
+          "name": "return_boundary",
+          "sort": "function<environment,activation,integer>"
+        },
+        {
+          "name": "return_local",
+          "sort": "action"
+        },
+        {
+          "name": "scalar_borrowed",
+          "sort": "function<environment,event,integer>"
+        },
+        {
+          "name": "time",
+          "sort": "function<environment,event,integer>"
+        },
+        {
+          "name": "transfer",
+          "sort": "action"
+        }
+      ],
+      "formula": "forall (#p: plugin) { (exists (#family: family) { #loaded(#env,#p,#family) } => forall (#ev: event) { ((#in_trace(#env,#ev) && (#plugin(#env,#ev) == #p)) => ((#in_interceptor(#env,#ev) == 1) => (((((((#pointer_borrowed(#env,#ev) == 1) && (#scalar_borrowed(#env,#ev) == 1)) && ((#action(#env,#ev) == #release) => (#local_resource(#env,#ev) == 1))) && (#action(#env,#ev) != #retain)) && (#action(#env,#ev) != #transfer)) && (#action(#env,#ev) != #global_custody)) && ((#action(#env,#ev) == #acquire) => exists (#drop: event) { ((((((#in_trace(#env,#drop) && (#plugin(#env,#drop) == #p)) && (#resource(#env,#drop) == #resource(#env,#ev))) && (#activation(#env,#drop) == #activation(#env,#ev))) && (#action(#env,#drop) == #return_local)) && (#time(#env,#ev) < #time(#env,#drop))) && (#time(#env,#drop) < #return_boundary(#env,#activation(#env,#ev)))) })))) }) }",
+      "source": "quant proposition #plugin_interceptor_custody(#acquire: action, #action: function<environment,event,action>, #activation: function<environment,event,activation>, #env: environment, #global_custody: action, #in_interceptor: function<environment,event,integer>, #in_trace: predicate<environment,event>, #loaded: predicate<environment,plugin,family>, #local_resource: function<environment,event,integer>, #plugin: function<environment,event,plugin>, #pointer_borrowed: function<environment,event,integer>, #release: action, #resource: function<environment,event,resource>, #retain: action, #return_boundary: function<environment,activation,integer>, #return_local: action, #scalar_borrowed: function<environment,event,integer>, #time: function<environment,event,integer>, #transfer: action) = forall (#p: plugin) { (exists (#family: family) { #loaded(#env,#p,#family) } => forall (#ev: event) { ((#in_trace(#env,#ev) && (#plugin(#env,#ev) == #p)) => ((#in_interceptor(#env,#ev) == 1) => (((((((#pointer_borrowed(#env,#ev) == 1) && (#scalar_borrowed(#env,#ev) == 1)) && ((#action(#env,#ev) == #release) => (#local_resource(#env,#ev) == 1))) && (#action(#env,#ev) != #retain)) && (#action(#env,#ev) != #transfer)) && (#action(#env,#ev) != #global_custody)) && ((#action(#env,#ev) == #acquire) => exists (#drop: event) { ((((((#in_trace(#env,#drop) && (#plugin(#env,#drop) == #p)) && (#resource(#env,#drop) == #resource(#env,#ev))) && (#activation(#env,#drop) == #activation(#env,#ev))) && (#action(#env,#drop) == #return_local)) && (#time(#env,#ev) < #time(#env,#drop))) && (#time(#env,#drop) < #return_boundary(#env,#activation(#env,#ev)))) })))) }) };",
+      "model": "QCore.PluginPremiseDecomposition",
+      "source_binding": "open"
+    },
+    {
+      "id": "plugin_interceptor_registration",
+      "parameters": [
+        {
+          "name": "action",
+          "sort": "function<environment,event,action>"
+        },
+        {
+          "name": "conf_live",
+          "sort": "function<environment,event,integer>"
+        },
+        {
+          "name": "config_registration",
+          "sort": "function<environment,event,integer>"
+        },
+        {
+          "name": "env",
+          "sort": "environment"
+        },
+        {
+          "name": "exact_candidate",
+          "sort": "function<environment,event,integer>"
+        },
+        {
+          "name": "from_on_new",
+          "sort": "function<environment,event,integer>"
+        },
+        {
+          "name": "in_trace",
+          "sort": "predicate<environment,event>"
+        },
+        {
+          "name": "initialized",
+          "sort": "function<environment,event,integer>"
+        },
+        {
+          "name": "intercept",
+          "sort": "action"
+        },
+        {
+          "name": "loaded",
+          "sort": "predicate<environment,plugin,family>"
+        },
+        {
+          "name": "plugin",
+          "sort": "function<environment,event,plugin>"
+        },
+        {
+          "name": "public_setter",
+          "sort": "function<environment,event,integer>"
+        },
+        {
+          "name": "result",
+          "sort": "function<environment,event,integer>"
+        },
+        {
+          "name": "share_consumer",
+          "sort": "function<environment,event,integer>"
+        }
+      ],
+      "formula": "forall (#p: plugin) { (exists (#family: family) { #loaded(#env,#p,#family) } => forall (#reg: event) { ((#in_trace(#env,#reg) && (#plugin(#env,#reg) == #p)) => ((#action(#env,#reg) == #intercept) => ((((#public_setter(#env,#reg) == 1) && (#result(#env,#reg) == 0)) && (#exact_candidate(#env,#reg) == 1)) && (((#config_registration(#env,#reg) == 1) && (#conf_live(#env,#reg) == 1)) || ((((#config_registration(#env,#reg) == 0) && (#from_on_new(#env,#reg) == 1)) && (#initialized(#env,#reg) == 0)) && (#share_consumer(#env,#reg) == 0)))))) }) }",
+      "source": "quant proposition #plugin_interceptor_registration(#action: function<environment,event,action>, #conf_live: function<environment,event,integer>, #config_registration: function<environment,event,integer>, #env: environment, #exact_candidate: function<environment,event,integer>, #from_on_new: function<environment,event,integer>, #in_trace: predicate<environment,event>, #initialized: function<environment,event,integer>, #intercept: action, #loaded: predicate<environment,plugin,family>, #plugin: function<environment,event,plugin>, #public_setter: function<environment,event,integer>, #result: function<environment,event,integer>, #share_consumer: function<environment,event,integer>) = forall (#p: plugin) { (exists (#family: family) { #loaded(#env,#p,#family) } => forall (#reg: event) { ((#in_trace(#env,#reg) && (#plugin(#env,#reg) == #p)) => ((#action(#env,#reg) == #intercept) => ((((#public_setter(#env,#reg) == 1) && (#result(#env,#reg) == 0)) && (#exact_candidate(#env,#reg) == 1)) && (((#config_registration(#env,#reg) == 1) && (#conf_live(#env,#reg) == 1)) || ((((#config_registration(#env,#reg) == 0) && (#from_on_new(#env,#reg) == 1)) && (#initialized(#env,#reg) == 0)) && (#share_consumer(#env,#reg) == 0)))))) }) };",
+      "model": "QCore.PluginPremiseDecomposition",
+      "source_binding": "open"
+    },
+    {
+      "id": "plugin_lifecycle_unload",
+      "parameters": [
+        {
+          "name": "action",
+          "sort": "function<environment,event,action>"
+        },
+        {
+          "name": "close",
+          "sort": "action"
+        },
+        {
+          "name": "copy_reference",
+          "sort": "action"
+        },
+        {
+          "name": "destroy_callback",
+          "sort": "action"
+        },
+        {
+          "name": "env",
+          "sort": "environment"
+        },
+        {
+          "name": "handle",
+          "sort": "function<environment,event,handle>"
+        },
+        {
+          "name": "handle_for",
+          "sort": "function<environment,plugin,handle>"
+        },
+        {
+          "name": "in_trace",
+          "sort": "predicate<environment,event>"
+        },
+        {
+          "name": "invoke",
+          "sort": "action"
+        },
+        {
+          "name": "loaded",
+          "sort": "predicate<environment,plugin,family>"
+        },
+        {
+          "name": "plugin",
+          "sort": "function<environment,event,plugin>"
+        },
+        {
+          "name": "ref_count",
+          "sort": "function<environment,handle,integer,integer>"
+        },
+        {
+          "name": "time",
+          "sort": "function<environment,event,integer>"
+        }
+      ],
+      "formula": "forall (#p: plugin) { (exists (#family: family) { #loaded(#env,#p,#family) } => (forall (#stop: event) { ((#in_trace(#env,#stop) && (#plugin(#env,#stop) == #p)) => ((((#action(#env,#stop) == #close) && (#handle(#env,#stop) == #handle_for(#env,#p))) && (#ref_count(#env,#handle(#env,#stop),#time(#env,#stop)) == 0)) => forall (#call: event) { ((#in_trace(#env,#call) && (#plugin(#env,#call) == #p)) => (((#action(#env,#call) == #invoke) || (#action(#env,#call) == #destroy_callback)) => (#time(#env,#call) < #time(#env,#stop)))) })) } && forall (#copy: event) { ((#in_trace(#env,#copy) && (#plugin(#env,#copy) == #p)) => ((#action(#env,#copy) == #copy_reference) => (0 < #ref_count(#env,#handle_for(#env,#p),#time(#env,#copy))))) })) }",
+      "source": "quant proposition #plugin_lifecycle_unload(#action: function<environment,event,action>, #close: action, #copy_reference: action, #destroy_callback: action, #env: environment, #handle: function<environment,event,handle>, #handle_for: function<environment,plugin,handle>, #in_trace: predicate<environment,event>, #invoke: action, #loaded: predicate<environment,plugin,family>, #plugin: function<environment,event,plugin>, #ref_count: function<environment,handle,integer,integer>, #time: function<environment,event,integer>) = forall (#p: plugin) { (exists (#family: family) { #loaded(#env,#p,#family) } => (forall (#stop: event) { ((#in_trace(#env,#stop) && (#plugin(#env,#stop) == #p)) => ((((#action(#env,#stop) == #close) && (#handle(#env,#stop) == #handle_for(#env,#p))) && (#ref_count(#env,#handle(#env,#stop),#time(#env,#stop)) == 0)) => forall (#call: event) { ((#in_trace(#env,#call) && (#plugin(#env,#call) == #p)) => (((#action(#env,#call) == #invoke) || (#action(#env,#call) == #destroy_callback)) => (#time(#env,#call) < #time(#env,#stop)))) })) } && forall (#copy: event) { ((#in_trace(#env,#copy) && (#plugin(#env,#copy) == #p)) => ((#action(#env,#copy) == #copy_reference) => (0 < #ref_count(#env,#handle_for(#env,#p),#time(#env,#copy))))) })) };",
+      "model": "QCore.PluginPremiseDecomposition",
+      "source_binding": "open"
+    },
+    {
+      "id": "plugin_outer_bridge",
+      "parameters": [
+        {
+          "name": "env",
+          "sort": "environment"
+        },
+        {
+          "name": "fluent_c",
+          "sort": "family"
+        },
+        {
+          "name": "fluent_go",
+          "sort": "family"
+        },
+        {
+          "name": "fluent_proposed",
+          "sort": "predicate<environment,plugin>"
+        },
+        {
+          "name": "loaded",
+          "sort": "predicate<environment,plugin,family>"
+        },
+        {
+          "name": "rk",
+          "sort": "family"
+        },
+        {
+          "name": "rk_proposed",
+          "sort": "predicate<environment,plugin>"
+        }
+      ],
+      "formula": "(forall (#p: plugin) { (#loaded(#env,#p,#rk) => #rk_proposed(#env,#p)) } && forall (#p: plugin) { ((#loaded(#env,#p,#fluent_c) || #loaded(#env,#p,#fluent_go)) => #fluent_proposed(#env,#p)) })",
+      "source": "quant proposition #plugin_outer_bridge(#env: environment, #fluent_c: family, #fluent_go: family, #fluent_proposed: predicate<environment,plugin>, #loaded: predicate<environment,plugin,family>, #rk: family, #rk_proposed: predicate<environment,plugin>) = (forall (#p: plugin) { (#loaded(#env,#p,#rk) => #rk_proposed(#env,#p)) } && forall (#p: plugin) { ((#loaded(#env,#p,#fluent_c) || #loaded(#env,#p,#fluent_go)) => #fluent_proposed(#env,#p)) });",
+      "model": "QCore.PluginPremiseDecomposition",
+      "source_binding": "open"
+    }
+  ],
+  "remaining": "outer bridge composition predicates require their own expanded catalogs; no source/model equivalence claimed"
+}

@@ -30,3 +30,7 @@ The final records commit is the landing revision published by
 revision, inputs, bundles and report digests. Publication runs after the full
 gate and committed record check and before pushing main. The original
 LANDING-PUBLISH follow-up remains open for a subsequent card's verified reuse.
+A card in another worktree selects this checkout's baseline store with
+`--baselines /media/Data/GitHub/quirin-lang/private/baselines` and passes
+`--side base=baseline:<landing-sha>` to `quirin-audit measure`; its receipt
+must show identity verification rather than a rebuilt BASE.

@@ -30,6 +30,7 @@ pub fn declaration(decl: &SourceDeclaration, legacy: &[DeclaredPremise]) -> Resu
         atoms: BTreeMap::new(),
         premises: BTreeMap::new(),
         refinements: BTreeMap::new(),
+        requirements: Vec::new(),
     };
     for premise in legacy {
         append_legacy(
@@ -41,9 +42,53 @@ pub fn declaration(decl: &SourceDeclaration, legacy: &[DeclaredPremise]) -> Resu
             },
         )?;
     }
+    if decl
+        .function_contract
+        .iter()
+        .flat_map(|c| &c.clauses)
+        .any(|c| matches!(c.value.kind, SourceContractClauseKind::QuantCondition(_)))
+    {
+        crate::quant_condition::declaration(decl)?;
+    }
     let mut attachments = Vec::new();
     for clause in decl.function_contract.iter().flat_map(|c| &c.clauses) {
         let source = &clause.value.expression_source;
+        if let SourceContractClauseKind::QuantCondition(selector) = &clause.value.kind {
+            let condition = qcore_frontend::quant_condition::parse(selector.clone(), source)?;
+            if condition.selector == qcore_schemas::quant_condition::Selector::Entry {
+                let definition = condition.proposition;
+                let id = definition.id.clone();
+                if graph
+                    .atoms
+                    .insert(
+                        id.clone(),
+                        Atom {
+                            id,
+                            proposition: Proposition::EntryCondition { definition },
+                        },
+                    )
+                    .is_some()
+                {
+                    return Err("hypothesis: duplicate formal atom ID".into());
+                }
+            }
+            // Exit assertions are retained by quant_condition::declaration.
+            // They never become hypotheses or acquire a truth assignment here.
+            continue;
+        }
+        if clause.value.kind == SourceContractClauseKind::QuantProposition {
+            let definition = qcore_frontend::quant_proposition::parse(source)?;
+            let id = definition.id.clone();
+            let atom = Atom {
+                id: id.clone(),
+                proposition: Proposition::Formula { definition },
+            };
+            if graph.atoms.insert(id, atom).is_some() {
+                return Err("hypothesis: duplicate formal atom ID".into());
+            }
+            continue;
+        }
+
         if !is_clause(source) {
             continue;
         }
@@ -160,15 +205,47 @@ pub fn declaration(decl: &SourceDeclaration, legacy: &[DeclaredPremise]) -> Resu
             },
         );
     }
-    if !graph.refinements.is_empty() {
-        graph.version = 2;
-    }
+    let grouped = graph
+        .premises
+        .values()
+        .flat_map(|p| p.children.iter())
+        .chain(graph.refinements.values().flat_map(|p| p.children.iter()))
+        .collect::<BTreeSet<_>>();
+    graph.requirements = graph
+        .atoms
+        .iter()
+        .filter(|(id, a)| {
+            matches!(a.proposition, Proposition::EntryCondition { .. })
+                || (matches!(a.proposition, Proposition::Formula { .. }) && !grouped.contains(id))
+        })
+        .map(|(id, _)| id.clone())
+        .collect();
+    graph.version = expected_version(&graph);
     validate(&graph)?;
     Ok(graph)
 }
+fn expected_version(graph: &Graph) -> u32 {
+    if graph
+        .atoms
+        .values()
+        .any(|a| matches!(a.proposition, Proposition::EntryCondition { .. }))
+    {
+        4
+    } else if graph
+        .atoms
+        .values()
+        .any(|a| matches!(a.proposition, Proposition::Formula { .. }))
+    {
+        3
+    } else if !graph.refinements.is_empty() {
+        2
+    } else {
+        1
+    }
+}
 pub fn validate(graph: &Graph) -> Result<(), String> {
-    if !matches!(graph.version, 1 | 2) || (graph.version == 1) != graph.refinements.is_empty() {
-        return Err("hypothesis: unsupported graph version".into());
+    if graph.version != expected_version(graph) {
+        return Err("hypothesis: unsupported or noncanonical graph version".into());
     }
     let mut used = BTreeSet::new();
     for (id, atom) in &graph.atoms {
@@ -177,6 +254,12 @@ pub fn validate(graph: &Graph) -> Result<(), String> {
         }
         match &atom.proposition {
             Proposition::Opaque { statement } if plain(statement) => (),
+            Proposition::Formula { definition } | Proposition::EntryCondition { definition } => {
+                if definition.id != *id {
+                    return Err("hypothesis: formal atom ID mismatch".into());
+                }
+                qcore_frontend::quant_proposition::validate(definition)?;
+            }
             Proposition::Typed { .. } => {
                 return Err("hypothesis: unknown typed predicate (registry is empty in v1)".into());
             }
@@ -237,6 +320,21 @@ pub fn validate(graph: &Graph) -> Result<(), String> {
             used.insert(child.clone());
         }
     }
+    let expected_requirements = graph
+        .atoms
+        .iter()
+        .filter(|(id, a)| {
+            matches!(a.proposition, Proposition::EntryCondition { .. })
+                || (matches!(a.proposition, Proposition::Formula { .. }) && !used.contains(*id))
+        })
+        .map(|(id, _)| id.clone())
+        .collect::<Vec<_>>();
+    if graph.requirements != expected_requirements
+        || (graph.version < 3 && !graph.requirements.is_empty())
+    {
+        return Err("hypothesis: noncanonical or missing formal entry obligations".into());
+    }
+    used.extend(graph.requirements.iter().cloned());
     if used.len() != graph.atoms.len() {
         return Err("hypothesis: unreferenced atom".into());
     }
@@ -381,6 +479,7 @@ pub fn legacy_records(records: &[ErasedPremise]) -> Result<Graph, String> {
         atoms: BTreeMap::new(),
         premises: BTreeMap::new(),
         refinements: BTreeMap::new(),
+        requirements: Vec::new(),
     };
     for record in records {
         append_legacy(&mut graph, record.clone())?;

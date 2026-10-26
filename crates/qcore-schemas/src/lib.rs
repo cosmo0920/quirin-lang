@@ -94,3 +94,11 @@ pub mod teardown_summary;
 pub mod hypothesis;
 
 pub mod premise_flow;
+
+pub mod quant_proposition;
+
+pub mod quant_effect;
+
+pub mod quant_theorem;
+
+pub mod quant_condition;

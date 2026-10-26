@@ -600,447 +600,447 @@
         {
           "declaration": "rd_kafka_AlterConsumerGroupOffsets_destroy",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "953131412908232f6d3137c63a725dd45d1683a7ee02327ecc2167152d3b7cb5"
+          "sha256": "4eeb10b641b3f07dc69a0be74c6d84675676d25efcb7e89f00f188eacb7b9dcc"
         },
         {
           "declaration": "rd_kafka_DeleteConsumerGroupOffsets_destroy",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "223161955075031fb2e31ae95aa5da79503a896ecd31b92f0d870bedd6fa8f86"
+          "sha256": "eec67988c23dbe3f4598cec413a64fc43c42e93ecf64913d65276d0ec9c407ae"
         },
         {
           "declaration": "rd_kafka_DeleteRecords_leaders_queried_cb",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "ea62f945cb92e889829ca3cce240246af1f926e3df713c5ccb52cf19a037beb8"
+          "sha256": "969dc88673d00a4629428c215b458cb7b281486cc76407cf242be83350ff14a7"
         },
         {
           "declaration": "rd_kafka_ListConsumerGroupOffsets_destroy",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "8a84835158e0d5205a900679cbe96307722e69a14627fbefe354a7a1ad2ff298"
+          "sha256": "f9b991049a68e50fbfa2bd195fcc7ddd47742415f987470be3f7f4ddc14c1190"
         },
         {
           "declaration": "rd_kafka_ListOffsets_leaders_queried_cb",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "6920c56bf0a83bdc4bd15ab99ff78c00cf2d35ff769530a51d6c95205cba74d9"
+          "sha256": "be117e9ed87375a0ef95f8aa09ed8692d0a6e885d3deb296fe37cc7e8733139b"
         },
         {
           "declaration": "rd_kafka_admin_fanout_worker",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "c25886994a4ae6fbf36a980b3614a5aa5cb98849acd77744051eaf5703c6b228"
+          "sha256": "15037b5bd16d849fad1f6d59afa798cc8dfb548f3755a3ca061449b296f586ed"
         },
         {
           "declaration": "rd_kafka_admin_worker",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "eb6760e658ecf0d2453636feacee013ec01e9ca2aeeb5c150eae218a744bd508"
+          "sha256": "5ad697078d94f9f1381b92e5a16a4121c20c63a6efe47338353532471405b1b3"
         },
         {
           "declaration": "rd_kafka_background_queue_serve",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "028f06434879ecce0fa179e8fed2f8107541687097d3e2724f908c0cacdcc1c0"
+          "sha256": "7d274b8acda81427b8df23e5c84d1b7d35da90412143314d479fd2e588b41798"
         },
         {
           "declaration": "rd_kafka_broker_monitor_op_cb",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "56288955a60e9c270542dfb9543cd9d5909b1edfab95f99aceed47aad0e812c5"
+          "sha256": "ecc8366f89660e52839c2d631a1e0d36b174a9dffe812851cbb064f8cb33ed92"
         },
         {
           "declaration": "rd_kafka_cgrp_assignor_handle_Metadata_op",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "c6d02bfb743b32fc2752d445c5ef251edf804c6c5547b81385393495bcd3bf99"
+          "sha256": "cc4cd13ca011bb88fd5242b3c31e2bb3874b5895aa41bf0d0960ac13fb420a27"
         },
         {
           "declaration": "rd_kafka_cgrp_consumer_handle_Metadata_op",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "e12faee62422b43fe2c34f7334fe90ae7982e115c712ac6cff67c7d4cd5406a4"
+          "sha256": "105cc6229d03eba583cbd7975bf3cb3b261aac7b7ab7790fddaa67f5a8ab8cfb"
         },
         {
           "declaration": "rd_kafka_cgrp_handle_Metadata_op",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "d0fe36a127eddcaf79297e6df0e2409076d2cd6a5199bd7258de2fe6d2c975e8"
+          "sha256": "5be9fb46ffe4ae827382bcce4a67f66e3763553f73f30cd5bfea3f321d8035e2"
         },
         {
           "declaration": "rd_kafka_cgrp_op_serve",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "321f4d08681f91e4d21773dd618c8b46c6b036e08647b5608d09f37f71423bdf"
+          "sha256": "225d7f3f455bfcc925a6b6f639c0efc3e54cdde9c099329adb9abf46bd2db9ea"
         },
         {
           "declaration": "rd_kafka_conf_new",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "ec8990a4fa03fb0d1bb155ff7b3f4b4b1cf3a468541543b0d6c65046f9828416"
+          "sha256": "c0d7f42734df06022374eea3135d54efc0f7451584b8818b37e14397d8b8ca61"
         },
         {
           "declaration": "rd_kafka_conf_set_background_event_cb",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "d6b4059222fa9455c5b06493ffdc18e71abbec1547b37f0f36d405bf70f298f7"
+          "sha256": "caa75e54a37b1294bc8cc5762d340fdfd741d459ed845004dbb9944b1b30b1cf"
         },
         {
           "declaration": "rd_kafka_conf_set_closesocket_cb",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "7ff13d9ddfc3f6934966b7486fdaf03ddd6d20c64f645d9881c91bb7cfa35f9d"
+          "sha256": "32b7c238fe3ef163a84bfa3848d52dd70d38f490bed42baa5b3ab9c80a5c4d3b"
         },
         {
           "declaration": "rd_kafka_conf_set_connect_cb",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "2bdb3ac43239164967d664ed1c74eaa2d00c186c68759aa1e5b296bd268f6eca"
+          "sha256": "ed6fc1dd791d96e4c28db419a246f0a3c619abf4a9b120b5c90f4ad321aff60e"
         },
         {
           "declaration": "rd_kafka_conf_set_consume_cb",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "08222f5caa8882ddeff9b9d8271165acd3045ada042b55f06a320c80150930e4"
+          "sha256": "c67745164605b6019ae0879a0d905f1e0a2226765adc60f4b37d2283c690d70b"
         },
         {
           "declaration": "rd_kafka_conf_set_dr_cb",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "f349683d9238b85cc30ff8d948e638f7b17e5db1e0ec58e0f642d7c491704bcf"
+          "sha256": "66bc50630ec5cc1665b2020a211981e65cba03b4be78fd26d60148c4fabe6547"
         },
         {
           "declaration": "rd_kafka_conf_set_dr_msg_cb",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "947711c6073e199a1dfd34938d8dbe9aa9b538c53a7d2b0eb6e758838b389558"
+          "sha256": "4bb7dc2857bc019e47abe89e23db76e8d4abf864f5f2243bfa94f6fb2818a37b"
         },
         {
           "declaration": "rd_kafka_conf_set_error_cb",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "b1eb8e03af48ff70d821e77448e37ea5d9b8fe3107fa589d0a4f095d0565fa2e"
+          "sha256": "105ee1f0ad81b6fb203ed641f8c117e509beba5ff92d8ea75812c16a7a77cf4a"
         },
         {
           "declaration": "rd_kafka_conf_set_log_cb",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "ac3fd632ae6eb94248df5259bf08aea5e07eafeb5eb5ae0da69fe6676fdf1a3c"
+          "sha256": "59ee4dc699288abbf12950e07d74d6aa90c9131cf077f6779dca80706a53cf13"
         },
         {
           "declaration": "rd_kafka_conf_set_oauthbearer_token_refresh_cb",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "84a09e8b03d1f7cfda5da753d8afb68102805dba3a413f0623c0d686169eeaf9"
+          "sha256": "80196c81c32d8e5ef78d6358f10c58e4c50bb254cf64bcfde255eb506db2d8b7"
         },
         {
           "declaration": "rd_kafka_conf_set_offset_commit_cb",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "949b0fbf56074a9167233bc8e49b5595316c9088694ae36a24be210a444cee3a"
+          "sha256": "11b4ad7b24f76268c6247a6efbd319f1329a8b4611f13752dcc19a8fc9df525e"
         },
         {
           "declaration": "rd_kafka_conf_set_open_cb",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "dd189e266586c6fa0d5af4aa541cbf2a10cb48bfb508815bccc376c8f4879fc7"
+          "sha256": "684e21d646baa1e902d0b36a22a2b5862212965b626081430334a969018ba1cb"
         },
         {
           "declaration": "rd_kafka_conf_set_rebalance_cb",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "026df17a7d7d7abf04111079b6b18e2e7c02affcaf908f989ef6fa491eb8a02a"
+          "sha256": "be4ffc018c6ec2758db0ac31b77827dc94de0fe008364e026d1210d04e456705"
         },
         {
           "declaration": "rd_kafka_conf_set_resolve_cb",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "b51555a96525f67366f06025e64423608e0f50f4859addab9814be6036322a60"
+          "sha256": "cd51855146f473dbbb75bd22dfe49e6b0c3b3075549d7866cdd248842a66083c"
         },
         {
           "declaration": "rd_kafka_conf_set_socket_cb",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "cfad17282daba77112537735753d2ad3422ad5e57ef6fd46cf18ddab974a3193"
+          "sha256": "0f4d95bd94653a85a9faf809c4f1784174e57243801caabbaec7ca84dd7ff2a5"
         },
         {
           "declaration": "rd_kafka_conf_set_ssl_cert_verify_cb",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "b78e95877d932ca897ab369219347bca8561bf33f84d11191e6bd9c28b26c592"
+          "sha256": "a0c7c7b8d75f9388e49fef7446f07667f71826af4f1128c72fad201133bb5f6d"
         },
         {
           "declaration": "rd_kafka_conf_set_stats_cb",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "0fe1dc5bcf6ba4b147b7c5eefc2cd03fa96504a3b1923c8b5def1cdaccc8d6ae"
+          "sha256": "e6b387e406d54bccabb5e1922faa1951a7c9570c33ae9f682af6b3e2c0ab54f7"
         },
         {
           "declaration": "rd_kafka_conf_set_throttle_cb",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "558f61f51180de39c5c35ad918bd5eff813a56e9ae451b89d0379ea74adcf129"
+          "sha256": "6079839dd685c1eb2cb3854642cb84d528b59a43e64ed5dc23135e1dcc7331be"
         },
         {
           "declaration": "rd_kafka_consume_cb",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "cf79a324c4bb9c6f9655117de8268a890dd7b0b3a459eb0a42a5496d5bcaf5c6"
+          "sha256": "59154969580b36a08d81f13de555ea4c69aae9d861af5a570412896b29686ac1"
         },
         {
           "declaration": "rd_kafka_enq_once_trigger",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "18c9aec12147c7d03c1933836b0c42353e5aa2a5f77cd765919f0043609a6006"
+          "sha256": "8e6d22aef46919c76ad60409f6720839f0c86dc9720156353822e639e8c1a5b9"
         },
         {
           "declaration": "rd_kafka_err_action",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "ac03baa02332a1f6a4da52f5643c5ecc88e9443cc32e30bd62772b5865a2e0a2"
+          "sha256": "bcf2db01d027dba213c7f1f41fffe13018f99c12702d5dd95ce8441887b79a29"
         },
         {
           "declaration": "rd_kafka_mock_cluster_op_serve",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "76d62754c9f5b5148b5507a089737346a14eef71288212b59d742321a8415fc0"
+          "sha256": "d4fd7deee269dacb8992b16865d73a23b7864b3a1b89b809f2cfbe6f38ffaed8"
         },
         {
           "declaration": "rd_kafka_oauthbearer_refresh_op",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "4d050cf523791854ab948de8372051badba71e4dedae1b3a5cfb84c5b94f10b9"
+          "sha256": "b6549b2c934aba526c5a338ce087e6ce25b4371026c028d46343c49a2c3ea5c4"
         },
         {
           "declaration": "rd_kafka_oauthbearer_set_token_failure",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "75c4082cae72a2c2908feccbb5dc2d70c0ede78cd8ae04b19d083a280e64a1f0"
+          "sha256": "cb7f6b8b82319f154bacf60ae4c91c8e497c20ce2a8fbd3923a387c84485a820"
         },
         {
           "declaration": "rd_kafka_oauthbearer_unsecured_token",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "d524ab50d05d8595f3acb068b0102039bcc3715b1897df9e902d2b88c3f9c454"
+          "sha256": "c186ece7b37deb84441fa3032c870d753da894b43c64f24339869c58d0906d5c"
         },
         {
           "declaration": "rd_kafka_offset_reset_op_cb",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "1902d56cffcb74081707bdc506631170f1798b4eacd952bc57468a725092e16b"
+          "sha256": "d394e8ceb14f42b73033b4aab4cd4c4225a73e39b478462d8876e79169646fa1"
         },
         {
           "declaration": "rd_kafka_offset_validate_op_cb",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "b936958c1b44cd34c650460f5c129adc357d9386d754f82998bafaa98dddd362"
+          "sha256": "68064ade9456f5731369186d90b7fe1f6fd4e3e6900a788184ef48a527efbd8e"
         },
         {
           "declaration": "rd_kafka_oidc_token_client_credentials_refresh_cb",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "e3252d1901f58e17bc11eb57fc07a339a69bb81593ebdfd21c77dae47789d9ee"
+          "sha256": "c0379b69da51d2d04da98f3e43b347141c73b811424ba964ac3af4e0ad4f618a"
         },
         {
           "declaration": "rd_kafka_oidc_token_jwt_bearer_refresh_cb",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "9a05fdbc67bce13e9251804acf4728e00b17bee3c57862ddd8985d9c3881da76"
+          "sha256": "5f99ee0e02309f50e76919502608c458c215f0348d1dac63a493b210d436839a"
         },
         {
           "declaration": "rd_kafka_oidc_token_metadata_aws_iam_refresh_cb",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "5812b14f707037888aab3dc9b2d499a1495a4db94efeafc785be5a2cceea1171"
+          "sha256": "4078257cd3c1ae59db7f31016775699fecbcf205014e7226c375e843bf8de4b3"
         },
         {
           "declaration": "rd_kafka_oidc_token_metadata_azure_imds_refresh_cb",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "74bf87e838200c9d0f60211234ffb53035375bcc24d85915aacfcd7484f1aa29"
+          "sha256": "bbc1d4ae21ac4602082effd25ceab12b63cf380164f719b43d002f12bcc03715"
         },
         {
           "declaration": "rd_kafka_op_destroy",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "42d6be37821af6cfce05cabca7114da3e876b68ff724bf9b4baeb588695f7a4c"
+          "sha256": "776db486e46e0aa7bead103eb7e81a29a15a8525be8b72c1266fee5e6c46a4a7"
         },
         {
           "declaration": "rd_kafka_op_req",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "b689fc86ae806208644871ae165330fdb68d0324dedc6d44120d736c00106724"
+          "sha256": "164bf416734a344ef3445a276247b85caed9ccfd9bcc1916247d70e672844aff"
         },
         {
           "declaration": "rd_kafka_op_req0",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "dbbffce7592a04fc422acec33a9b04090b12904df4551d3903f4f6406ebfe86e"
+          "sha256": "d00731bc35b41a68cf7b91c5f4209460ac12e5ad54b09ea517d632c87e279191"
         },
         {
           "declaration": "rd_kafka_op_req2",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "91ea3f38d65d077452b07ca9914c5308ad9987911319cbac1425c452b2b0144e"
+          "sha256": "79640e3073f6ffdf7dfe10ef8a759e78b9f5f6739357ae70eea5dad2aed192e5"
         },
         {
           "declaration": "rd_kafka_poll_cb",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "bb864cf5a123ede79152f9a512c8b5864bc53d6f5767ea99af03633fddbe58b9"
+          "sha256": "73f5e8c8c270d485094d421ccdf2c9d470e07e2ad87b3c29da1b73d7dcd948d7"
         },
         {
           "declaration": "rd_kafka_q_destroy0",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "bafde45ba73cd9fd460e41b4aaa31850004fb74619f34cef955ed70bc63ff88d"
+          "sha256": "cb56542972cc5e0b207c95a23e9eab45431c569d2e7513888d1c499c0c5c4fd0"
         },
         {
           "declaration": "rd_kafka_q_destroy_owner",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "d8d8877656d629d060d3773a9d1ebd80a89d7c067cf311cec406a255c0f3f335"
+          "sha256": "baf052837d66623649683ae791f1e4ffaa01986079fc1bccdf6b67814ad0654f"
         },
         {
           "declaration": "rd_kafka_q_pop_serve",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "969292d5d2306f7392bdaf1976fa0198688441de4902b6cc2408357a6fefc647"
+          "sha256": "d5c8952e1085c3a1326c09692a98e5add89fee6d27e3924f7cdd7430e3b3e19a"
         },
         {
           "declaration": "rd_kafka_q_pop_serve0",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "f067b9127b9b46f4079e46b75e45bf77da93139afd2d1a76a8c588c5b6e65aae"
+          "sha256": "f63d8d89cb8bd9fecd61fc9d5be8bac9ebcdf7aec6be22eaf86f5df234d43e37"
         },
         {
           "declaration": "rd_kafka_q_pop_serve_maybe_consume",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "52383d0c1f78f09274118295ed1aab7c8a1277454c6e99d1be12319869ab3bf3"
+          "sha256": "7bd2c135408a9bc0351a63a7f600d6af955dcb9ac04c6a99d19d016175ba207c"
         },
         {
           "declaration": "rd_kafka_q_purge0",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "cfc73f659408416d5e8b1ca409db667bd034c4fe7274a03d14dc0603e8fa0228"
+          "sha256": "0bee4fb776b13e40baf97dc25bd3a8a1d3b36d0a61d035492a7ec4895fc121e3"
         },
         {
           "declaration": "rd_kafka_q_serve",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "fdd5d51644c707f9734fa9e8866197687439f05bea04e56569ad4472d6b44b74"
+          "sha256": "41f4b98877c126bbcda1899705b46f70953ff0c54c026ba96d1ca098e777eaf1"
         },
         {
           "declaration": "rd_kafka_q_serve0",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "db2ad0206fe957c347f05709d89fd1fb4f293dfd26fb3403e6dd655a5d0ec97d"
+          "sha256": "f735b8fd8629d1a417bae6301ca17e65fdc2943a3a14a2803d7a970bee0a7027"
         },
         {
           "declaration": "rd_kafka_q_serve_maybe_consume",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "859808dd1d85877c1d0bc087969b8128ac9f8fc2238d04982da569b00bdbd0bf"
+          "sha256": "1ff9c98ace177ab816ed543a9bbb533e2a7294e9a53d2d85f0558ae54fe84453"
         },
         {
           "declaration": "rd_kafka_q_wait_result",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "d1f8a236cb0b9b768ae23f8b1bc2c2d1e2e0050aa508ec83de16dd9c0b90b4fb"
+          "sha256": "44699e411f192642d6c19952ec44f728cba1dbac0673baac4f3d8039b531e7ed"
         },
         {
           "declaration": "rd_kafka_share_ack_commit_cb_register_op",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "3a13319f5e972447fe4f7a3aac0c612578b453e21944177520bb371e7d27bd19"
+          "sha256": "853f6e4b2cadca0ac281c13e5944c289e927fc3fb77cd5593b2bd3112a8025ce"
         },
         {
           "declaration": "rd_kafka_share_commit_async_fanout_op",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "dac6a251b877e5da068c00299dcb9207385ceaefa33a1c8ee384ed5f6a2edb8f"
+          "sha256": "9c0bb4263070741040474e452929bd6da2c02e4bc85545bf3d40991ded321c8f"
         },
         {
           "declaration": "rd_kafka_share_commit_sync_fanout_op",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "d0f1b26e7b01ce27252db354bdd0a8c199ddfa51f475e7b82db424becce130b5"
+          "sha256": "493cdf248417e13ce439f58e9ecc26be46b9a188bc4e13eec8a815614acfbd6c"
         },
         {
           "declaration": "rd_kafka_share_fetch_fanout_op",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "de4b514c73c63ca66e01d3f9f9d27d197b663d8613cdd63df6075c0c614a5196"
+          "sha256": "053e4158de3c89d65fbd444e3e5519fa585ea4fa33704fecfea2525df38d83b5"
         },
         {
           "declaration": "rd_kafka_share_fetch_reply_op_cb",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "3e05bb37236ac2f4c99ad5e311bf6e4a962256ce4740c4d9fcb1fd8616aa8cb4"
+          "sha256": "cea49e0c35321503fe0efb6117da43f0366f8d10d19e32fc2715311d9de4fa65"
         },
         {
           "declaration": "rd_kafka_topic_destroy0",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "4e37dcc344a3707b97f4790c3320d8c48e520fe39a7dd9fd3d0ce83a6123c03b"
+          "sha256": "7fd2352e112634a3cb647e5024366ddbefc6958addb8bc424ff0bf6bdf69cdaf"
         },
         {
           "declaration": "rd_kafka_topic_partition_destroy0",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "48d64e6928c11650f700cea4fb8de5a4f3b2c76aa71094db5649f33793e9d75c"
+          "sha256": "b0f48898b5ef2daf7e421263aed52065a8a9749247eb52221d2d4600dce39006"
         },
         {
           "declaration": "rd_kafka_topic_partition_list_destroy",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "7e0b16a337a07cad664fdc37e82430e15b56049573de9e8bcf01d720293cc352"
+          "sha256": "15b28e40b48d59625600bcd6fe0fefaf2578a8ae3fbf436736ad49c991eaa820"
         },
         {
           "declaration": "rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "631f54f35cc01f75a14c4b6860ba27dbd46dc58d98acf0797124d4c40cbf035e"
+          "sha256": "050a9a6d7a4ab446c8ece7542f804e309c91b4b1789e2cdf6e020e30cfbe964d"
         },
         {
           "declaration": "rd_kafka_topic_partition_result_destroy",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "83d995b24833edf4e388114091cd264dba7a13aef1d7d82e07297467ddcda336"
+          "sha256": "dfef522bd96ec08ed3409b36fd11bb50943744b11414e03dd49aca08afbeb195"
         },
         {
           "declaration": "rd_kafka_toppar_desired_add",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "2f7e7c484b20b45dec079bb62392d9f0004cd36829ff5f2a3ae40ee30f1cd4f1"
+          "sha256": "91b09279fb237ed16b718a297e899a1fc1fd4d4313e2d42fc26c648ee6f111c7"
         },
         {
           "declaration": "rd_kafka_toppar_destroy0",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "0507f9cd18d0a50d785debaeee30a8bd6f43180583f39ca6f315b8a0302b6cf0"
+          "sha256": "c01debb9c689e499f696b6aad298f9dc965329ddde0eac966889a240b8cc0d5d"
         },
         {
           "declaration": "rd_kafka_toppar_fetch_backoff",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "399e193b6a6274e2bf7c8cd17e7e38e5cba34911d4311b21da3e92f94326917c"
+          "sha256": "2f0cf5c0bc06349a4a47e8d0bd50da3fe309e42b8a5894303e408859087d8a61"
         },
         {
           "declaration": "rd_kafka_toppar_get2",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "7b5573a37ae508f8034061cc1c46ce3cd8123116ea356533676e751f4a9a65d0"
+          "sha256": "fe43ca7e7f910c490d843d2251c86b0e3135a4520e4d2b8ee1d973070c42e9a6"
         },
         {
           "declaration": "rd_kafka_toppar_get_avail",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "8783b7fe9aad2f6b1ed8d11fd94bdf20c0b91924513869957880482bfd23a8eb"
+          "sha256": "5c425502aae982a3a2160f17c631895a9eb32ee3123d2d2c4984e8f20e5a9dab"
         },
         {
           "declaration": "rd_kafka_toppar_new0",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "0a92d5cf59f0ceafef58a8c5f595bae6a126a9b5f76c9df241545c09626d074a"
+          "sha256": "6b54e8b889c2d95610dd10d1168e918d376c5e2b716dc837f62751cf3edc2022"
         },
         {
           "declaration": "rd_kafka_toppars_pause_resume",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "e522d2d52dc3cfd93010489727c8172066586fd424c90bf2800ec26d93d78958"
+          "sha256": "653400eef7cc9d1692af2354c16cd709f1c137aeadf9b91e7cb293cdfe61b174"
         },
         {
           "declaration": "rd_kafka_txn_op_abort_transaction",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "4692f2a9018e67196bc830b6ff08aa384d27fe6f6236360a32b009ad89479b28"
+          "sha256": "6b596617c1e9884b35ce84f392c45e4492004a5f0e1f28d71b89117b86f3480d"
         },
         {
           "declaration": "rd_kafka_txn_op_abort_transaction_ack",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "8ec7043607368853dcdbc96e2885dd0804d62cebbde2609e9508ce53f75f2228"
+          "sha256": "698174b03d5d80313a7bbb6e4aa52982d30b337a454a0e043eb27ff5617ab3c7"
         },
         {
           "declaration": "rd_kafka_txn_op_ack_init_transactions",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "5b7a804d6b584d581958542f81e0272f9eba1def6db14b372084011fa3aed193"
+          "sha256": "6eb94de2d9a0c7d79bce238cb1a40e493d7c5c15b14c26ce6a07ebb43e4fdeeb"
         },
         {
           "declaration": "rd_kafka_txn_op_begin_abort",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "922c6190b4b40d6a6fb5d3e344b215480964312354eb1025fbd3054e4e476528"
+          "sha256": "65d215d50f6a31e998d940791c153b494a3a8681a844efb616b5458b15564bd3"
         },
         {
           "declaration": "rd_kafka_txn_op_begin_commit",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "d74beb47ffba10132265e56bb3fe055933ec0de66b873b5c1bcf6dc65e45811b"
+          "sha256": "3910e3d287b8a2fd938d217a83dc56f482a051da86b98da02006583807b69e2f"
         },
         {
           "declaration": "rd_kafka_txn_op_begin_transaction",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "f4cf0ef645f9b10506c52cad50e8337fb13ea3ced5d51c1acbc4afcdb04a91d7"
+          "sha256": "458b373c5ff9fa7217843c03356429e563cf3959ac96e63b7ff2a68a0616970c"
         },
         {
           "declaration": "rd_kafka_txn_op_commit_transaction",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "b792b93b6ef0638561c9be1ed14b2be9002e19cb3d715c4d573212f127fdffba"
+          "sha256": "69d515e82ac08224e895145b5acf62212d161149ac988bc8b9ef75d663fd0714"
         },
         {
           "declaration": "rd_kafka_txn_op_commit_transaction_ack",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "be74f5864931d5294d6532a780c7aee0acf16932bb6faae7ce3b461982e9737b"
+          "sha256": "36e90d81dca1f8803e42ce4d41373897d777f8335985c772e11a45d738d39e66"
         },
         {
           "declaration": "rd_kafka_txn_op_init_transactions",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "c1a23b83c528c69de766b80e873f339bfc0f86221118cee3baf2ba3766b4aa22"
+          "sha256": "7c2b7f030b2ee42b2e3c0fa856dd439ecea0dd73eb1da96dfe68e1fbb1e4cc5f"
         },
         {
           "declaration": "rd_kafka_txn_op_send_offsets_to_transaction",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "d99a4a4b69fe33f07439474481ea6d6d5324cb32da95309919bf670ceddead80"
+          "sha256": "c98170feffd82de14ee24d8683e9754880e6ae62811a4b4b8b2d752601578479"
         },
         {
           "declaration": "unit_test_telemetry",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "96677275a35084dc39eb969e5a526da3a564e374511b22d96a0a5350366f03ff"
+          "sha256": "f7a49341b6f64a2110dc7130a932647f647766ae0ae1cc6e3ff01d4e85917146"
         },
         {
           "declaration": "ut_create_mock_toppar",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "f8dd449a6d44e7e47ed3bb4244f5690e4ffd0020f869c8ddc721c3b3dbb997c9"
+          "sha256": "cc466b6c079b600b2b8fe93468e98b709612a665d55c0b1597a98c0d675b5d16"
         },
         {
           "declaration": "ut_destroy_mock_queue",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "c6ebdd7f9f1bf12e39ba723fea0fac2576d5e4d524c3b11e71374260a503c401"
+          "sha256": "a9462e7f7d84e97e52ae0d1da7d98b78ccdc5ed2dd29b4540ba467098c5c35d3"
         }
       ],
       "premises": {
@@ -1707,7 +1707,7 @@
           }
         ]
       },
-      "sha256": "a09f66246bb7cd2d7285ba553e9698c8f3bfab89b2347f7390a56f299fecd7f6"
+      "sha256": "cb0a8525793d5e7a74c78c1b359ce0a19fff69c1825031eb68441f4126bec07f"
     },
     "librdkafka/kafka_mem.qv": {
       "clause_count": 53,
@@ -1751,7 +1751,7 @@
         {
           "declaration": "rd_kafka_dump0",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "f86b101a9461536b91018f23ba7df6881fd9a6970b2797b36cd3b3d587c204e4"
+          "sha256": "6b5d0f479285a7704cb22c8497e6baa7ad0d7ad9c914cb65b50dbdd168a8525d"
         }
       ],
       "premises": {
@@ -1762,7 +1762,7 @@
           }
         ]
       },
-      "sha256": "459a1cb32e3512e97c267a4651ca1629943179e41e136b28b6c71e19b639d0d3"
+      "sha256": "f555011f83a457deb677b940eacd4193c440e627e669fcb434583e7d4c74c65a"
     },
     "librdkafka/log_caller_frame.qv": {
       "clause_count": 24,
@@ -1833,17 +1833,17 @@
         {
           "declaration": "cb_kafka_logger",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "c0e4629e58ec35de1a0251dce6700fc152438ac9ab4d6d8cb4500638c063f061"
+          "sha256": "b90b4e017a5216414e8ff6fe6c48cc6ff64aa50cf5d6da0c377905207ca95f5f"
         },
         {
           "declaration": "cb_kafka_msg",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "7a3a983e68e4a74083324f5c985948fc43f47eafc155152924489a55e4ccb482"
+          "sha256": "90128e9f37058d56b39dd14ae8adad235de9703e974843dc1da9b2b2f52990d6"
         },
         {
           "declaration": "oauthbearer_token_refresh_cb",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "c355b4f4418cb176f0eff2bb45cc9176fa5771c69aec5afdad2f6e92a938a729"
+          "sha256": "20f2d721e7b89fcd92f7f31f41657af2affdf6c3cd1b3cc01f99641551aa5e37"
         }
       ],
       "premises": {
@@ -1866,7 +1866,7 @@
           }
         ]
       },
-      "sha256": "17fcbea1eb6559fce4d1be34a2840f64a413582e69fe324986d6a0a30c8cdcb8"
+      "sha256": "45d1181af4e2114de77b09fe0051fb64663c14f10f849271da9dc3ed1e2ef269"
     },
     "librdkafka/lz4_stream.qv": {
       "clause_count": 71,
@@ -1989,7 +1989,7 @@
         {
           "declaration": "rd_kafka_crash",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "1f7ed5118d85a487094ca3a46a81a264dedf8abe4f6c0a9515d80c6e95dafe21"
+          "sha256": "b6a7885c39ad24a51598caa92198bb602c83835fdb193dd71d31653bf5eb9c61"
         }
       ],
       "premises": {
@@ -2012,7 +2012,7 @@
           }
         ]
       },
-      "sha256": "55c71fa47419acf0d7d143c50b0d5c10851d77e67d95978321eb482ed1786556"
+      "sha256": "55c1ebf9b2c20b503bd59a8e4599008e42eb36e18d5c298af7a2354cc543b9be"
     },
     "librdkafka/null_deref.qv": {
       "clause_count": 1380,
@@ -2368,357 +2368,357 @@
         {
           "declaration": "rd_kafka_ShareAcknowledgeRequest",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "535a0ca6652b3ac29511583341b68f8d59ad3b03d56a5f637b0d29c398b736ac"
+          "sha256": "63dfa5a508ef45cc08664228c911a134d911e356315cba1cfc0f8b7a93b08c96"
         },
         {
           "declaration": "rd_kafka_broker_active_toppar_add",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "2ef1d9383b7ba09027b5b42318c8decdff9c2afc1a242e5e8d583d7cbaf7aeec"
+          "sha256": "136663f589f867cd9cd3e4c9de6eafae89a1ee38ecd6e400f6cbc452142da21a"
         },
         {
           "declaration": "rd_kafka_broker_active_toppar_del",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "85f929c2edc3e5e87b21850a85657e248668e56d9255dd57d97e54f8337c2313"
+          "sha256": "02f86b783e29a3fbf95fd48e333ac9274d6f78d0a5dd99637407210d3b0a1423"
         },
         {
           "declaration": "rd_kafka_broker_add",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "6f023a4159bbc8bf65cf49ef72b07a9537656bf4b578e3792aaa81e1cd763ccc"
+          "sha256": "498a791ba8286a2209cb77f276bd07d517340e458430754479d12c96183c3977"
         },
         {
           "declaration": "rd_kafka_broker_buf_enq0",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "6b4043ca1e919c257e0df4144f7308ed89f8aeb318f146cf834a7e01fe3620b7"
+          "sha256": "33c2c9b0b1285740d862bd590cc7943ee30e5faec34b4206dc0cc39f47951496"
         },
         {
           "declaration": "rd_kafka_broker_buf_retry",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "c99ed0a26b90ccafcbfc6825e1f5a362178951a74866e4017b2679ec5621e3cf"
+          "sha256": "05155308293047896b5e3f65dbc054947f4bc0dea9236983c24245bf466d59df"
         },
         {
           "declaration": "rd_kafka_broker_bufq_timeout_scan",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "5d6a41ff63238ab1aff3688cb2014f4230fdf1684a3f67820cb77ccad8e4401b"
+          "sha256": "c4d07f089d5d24dec509aa21c2b5fac0196834db46bb16865266f500c31cc3f4"
         },
         {
           "declaration": "rd_kafka_broker_conn_closed",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "34c765b22613f0d79891d5ba4a00d59585375e131d1b90e27c14d53ad5694029"
+          "sha256": "c6c32fc80a2167e493ea44da58e6decc3f2bf1e2a546213590db2d08363845b8"
         },
         {
           "declaration": "rd_kafka_broker_connect",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "b2c8b3733f6b8ae487c7bb186b0785192b921c07fe503eed892a2524b14a44c6"
+          "sha256": "8b8c3cd3e4e8df09e73c81193c7f5df864c9deb412f2757a851206e3cabc6311"
         },
         {
           "declaration": "rd_kafka_broker_connect_auth",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "3fde96016a5cbe1a4448f12c4786cc5ea7ed878437d8522ab1989de35e4122c2"
+          "sha256": "40495c57b840462e628de4181a3aa9c30709a6200ce18841705d68031124a2dc"
         },
         {
           "declaration": "rd_kafka_broker_connect_done",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "06567103418a25c82bbc677ac22034d67686fc64a5bbdd0be3415f15fcda8a56"
+          "sha256": "50e91940f16ac630077a25dcb3849a80779fea755507ad55f590ce6b062cae42"
         },
         {
           "declaration": "rd_kafka_broker_connect_up",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "7b62fe621cd3c8bebccf1f825b9cb1d5f8e79a2d9e0d23ba3e428e6a0689b58e"
+          "sha256": "8f8f101d8c7657916daf271c1ac19587bbe9fd3bd0272485de3df9d7162142bf"
         },
         {
           "declaration": "rd_kafka_broker_consumer_serve",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "3840f8bb6cc57de33ba934755d4e3c2401fe046724ba87a5bc3240618c5c83f3"
+          "sha256": "f3971020293bd099d3c1b7aa09dddf3d1f8ae99dcd02ffaee43f86e05746dac5"
         },
         {
           "declaration": "rd_kafka_broker_destroy_final",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "2995bd0ad1c9498e057422b2e4cf11dd0c398ee469c5bc002a6ddf93e357c48c"
+          "sha256": "ad1a7c4afdc48617c0df500956e42f8511cb42f49435c74ad6ad50c4b4daf134"
         },
         {
           "declaration": "rd_kafka_broker_feature_disable",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "fc0a67ed75d4e353f1633ea1beff71bb383da1fa14813ba187bb67293d26b60c"
+          "sha256": "3b2117108a7014297c19f5fd37e2a91b91a6092229fe35b3f19f38eecb0997d7"
         },
         {
           "declaration": "rd_kafka_broker_feature_enable",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "e23d5ceb143f52eefc852d1dedbca91b1f3747c4af5ed0c1d51d2bc9f471952d"
+          "sha256": "979b15e7eccb4f212e40e3cecf5d4b8c015059c7a606809b2aadd586b61fa9f8"
         },
         {
           "declaration": "rd_kafka_broker_features_set",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "46f23e414e4126933940b6ea75a9dd6806140c030d98c77230993acd24e448ae"
+          "sha256": "6988ff3acde187315afa78ec82e14aa689e519cfb23895fe2a26aafe7678d385"
         },
         {
           "declaration": "rd_kafka_broker_fetch_backoff",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "92a78c06e28c6df566e253cb91b784229e0d70717426fa1d2fb26fd9b7c17ded"
+          "sha256": "b13dd0ae3902e84652f3d9ddc7e6da0474f9b2b1541829f60e2857b9f94f4277"
         },
         {
           "declaration": "rd_kafka_broker_fetch_toppars",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "60ee4fff8555f1589852447847dc9d7eefa65bff253605d266ef379cae454672"
+          "sha256": "fffe884dddb9d5f855122d06a39587cab0b329dd466ff8f377d4628e869a4162"
         },
         {
           "declaration": "rd_kafka_broker_handle_purge_queues",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "2411a61b7d6244fdb4c98921dc1761167fc6d3a714c78fd467b4d3681be0c57e"
+          "sha256": "454f0690af25059ad251abe2ae5063393bb37e647d4c7dd68ca4c847ee1d4824"
         },
         {
           "declaration": "rd_kafka_broker_idle_check",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "b64a6ec74bf5741c53eb3c62274e71674a249f7b5fcec801a0f03abca5e7f58e"
+          "sha256": "4ce9b083776bbdae000123cf04a79a95829b3a3aaff62f77f479b376c6af43cf"
         },
         {
           "declaration": "rd_kafka_broker_internal_serve",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "7b9ad2cf88fd6536d567c285ea9537024e580d177ab5c3d3d527595454d15af4"
+          "sha256": "a56cabd159bab4fd4318e95958a9c1bcb7b844ce29591e9326d858e8d2bf4227"
         },
         {
           "declaration": "rd_kafka_broker_needs_connection",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "cdc5417b55a354a0baa6abda37009952c43152b1e19dac59390cb767632e6181"
+          "sha256": "69f453bd8fc41b7e41afd4f8a82dbb6edb2b5079e5e96a67be3fcf29e045e78a"
         },
         {
           "declaration": "rd_kafka_broker_produce_toppars",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "cfb7edf332ccf4cabedf8ea668070a0c74f23941d5ca584851920dbe8f60c03a"
+          "sha256": "e65bc689adccccc097dd8ca4584dd66bef5e098595a44b483a139f05df4b1152"
         },
         {
           "declaration": "rd_kafka_broker_resolve",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "a6f93143be9746252cbcc64aae525e8d164d802385943437aa271c64413ee407"
+          "sha256": "ce804d3e81b070d3b7bd79ebb028f44cd298d8b79cf9bf97fc3ab7de1a634b5b"
         },
         {
           "declaration": "rd_kafka_broker_retry_bufs_move",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "f66f5cda6787a0c30a23a536bbaa2831021a0b809642b963715afb5f59aae084"
+          "sha256": "4ee54ff3aeb5c143b9f4562f572da57212b7a840dfd248fa469389071ea6f0a0"
         },
         {
           "declaration": "rd_kafka_broker_serve",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "6cfc5f8f0230ccf3f789eb4fcaae35a3a2b459aeb375e8d80ca28748a7aac71b"
+          "sha256": "9d56627cd525e7893d7b0096cb14a6445568cb321dc0c3b96dc49cec1b5456fe"
         },
         {
           "declaration": "rd_kafka_broker_session_add_partition_to_toppars_in_session",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "c4cadf85e6c5858994a23683797d73f4a93cbcc5e20af8a0bd6edff12615b66a"
+          "sha256": "0439123d225ca5798d42a7bc180a67171000d400a6e7b3b9471a9aa4bb0e7541"
         },
         {
           "declaration": "rd_kafka_broker_session_remove_partition_from_toppars_in_session",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "2f70a5128233a9f2b9734760eef94f36e18dda6b86d6ec8bce07e918de65db38"
+          "sha256": "8c7fd6ea45207395edc6b4cd66076b3755004828af0bfd4ab6a49a8db4ed4413"
         },
         {
           "declaration": "rd_kafka_broker_session_reset",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "12f8c8e585472daa45d3b635eceb2cba598bed2fd9b1ee56917949b4a88ff77a"
+          "sha256": "41f25a36f7abc32961a0ce1003cc3c9b322386d2365538fa16cb457edf3adafe"
         },
         {
           "declaration": "rd_kafka_broker_session_update_epoch",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "3f8fcce87cfa437d9524194c6022e1156ad944207a34bcfb910b6f1c50c88d0d"
+          "sha256": "6e39442a826fdc2f4f9e87b44c9ee0495db132d0957c34e43486f66278484e09"
         },
         {
           "declaration": "rd_kafka_broker_session_update_partitions",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "a8f941e1b5367e08f3c47fd934434b51000e52c5964467b4b38cdf6f9da86e3b"
+          "sha256": "352d967fe7e6f6391369c6fb8385312484d7820b850624f76735370a71c39755"
         },
         {
           "declaration": "rd_kafka_broker_set_api_versions",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "cc0dcad2087f65980ac48424a167e2d01116dc68bcd7d8f7af91af514d6ff405"
+          "sha256": "dc411c0068587955b00a64263ab9ac602e988d0be162d34973e2e360ab14f04e"
         },
         {
           "declaration": "rd_kafka_broker_set_nodename",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "16869c8aed4df167ac6ba688a4f011c1ebdaa99d2f6d514766a4853383bec8ce"
+          "sha256": "ffa9227a24f8a2c3c091e8af7fbc676f3534762b3a905e87438382aa52716d6c"
         },
         {
           "declaration": "rd_kafka_broker_set_state",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "3c0f83a616aef0da8e07ced5d56cf0ac84d5cf586a54b08fa1b9a47b778cb789"
+          "sha256": "6c9f699ea4cdcc7c41c0510fb43de65ac8c2a3680a545a9889fce50e56396ecf"
         },
         {
           "declaration": "rd_kafka_broker_share_fetch_session_clear",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "8301139a06c75927a093d1122b3c252ea30f9a5847deb8888874364321c07f9f"
+          "sha256": "795163424fd266ae24ef2e3ae5a64ed56e0c399fcfceadbc8da8bb85b006be47"
         },
         {
           "declaration": "rd_kafka_broker_share_fetch_session_leave",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "2396b7fcec6ac6d9490c67048fbdca9e2c58c1beebf461b29ae4568e0ba2c03c"
+          "sha256": "0f6caa142793f9d559c83aaaf2cc32e076880ef47662eb0cbc85bb90e720ddda"
         },
         {
           "declaration": "rd_kafka_broker_share_rpc",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "279150a059003b91dc7dcd5921b97ab202c2d456519d05dfc2b210628eae281e"
+          "sha256": "8306b091656fe0fad233d4b9f296e9eeda25f533c5254f4264b537832f0c020d"
         },
         {
           "declaration": "rd_kafka_broker_share_session_toppar_add",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "6143e106c1b1b603714157abd17afe76c5e46e2f0ff9370ddb0ce0a45fd0dd6f"
+          "sha256": "b05bfcceeb3d102d489e6953b28253246881ef6c84c003ef2f34980e4564c370"
         },
         {
           "declaration": "rd_kafka_broker_timeout_scan",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "8c8788a43f5358a81527caccc00c9c2e9d6a166c9f13ea204fd3de51e4ee36a6"
+          "sha256": "ab91450dc82c11837e84e8fb7f9cddc855dfd0dee2c19028fbeb5947c4ce79df"
         },
         {
           "declaration": "rd_kafka_broker_toppar_msgq_scan",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "5b5162160e1621f56ace572769637149c98f5f04de8d0875f3a91e7ef771e395"
+          "sha256": "dc572d23a55764bf7c0bc6fe21ef7c9a51ed6dc330f65a203aaa0d525d7de3ab"
         },
         {
           "declaration": "rd_kafka_broker_wakeup",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "e1a6e393b65e7827bedf7db531cb3b6014cfe936748d59adc86d1e64023e7563"
+          "sha256": "2b221a3686c2ae13cae48a176f8dc96301a94d9429f21fbd841ab14d786b7fa7"
         },
         {
           "declaration": "rd_kafka_buf_new_request0",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "48abe6348f9f90261a0bee7629b68648fa01e778ca23f2f1fb8cc95dfaa5c7e4"
+          "sha256": "427b38c4a41f6b8f5267baa674f5d5a8a03592abd4602a4e7468997b54b33d9d"
         },
         {
           "declaration": "rd_kafka_buf_retry",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "d0c7834ca1da02d17a9814c9d575c8aec0d34d6bd2d9696bd8820c1a0a101e14"
+          "sha256": "ae415be9d840d7298c2e6adc0fd1baa1ddfafbabd12b5d17c5178e1aad94ab90"
         },
         {
           "declaration": "rd_kafka_bufq_connection_reset",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "ff6bceb8b3277b3c3757387e091abf47fca2b40644460a0a7e1aef4cb1fe55bc"
+          "sha256": "e183ef941cb7e798800d572ac9a4b27ea50bb552f111af737fa065808d392cff"
         },
         {
           "declaration": "rd_kafka_bufq_dump",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "c555646d31043ddee22b6c24b7f2c580189346e59bfdfc7f205b2dc3ee236819"
+          "sha256": "bd4e00942ae119855db47b6d6dbc95f55fe6498ff2a1b44a8d6a3177a28192ff"
         },
         {
           "declaration": "rd_kafka_bufq_purge",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "0742a88fe39904ad173d2f18279739a841201f28bad1063fc08badfc9f36e3cc"
+          "sha256": "27c271eb57d934cc982076e3fd45ad2343db162deb6c132bdd874100a8649e9f"
         },
         {
           "declaration": "rd_kafka_cgrp_new",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "4e1625a43e2c1e9709e6da589ca50df05fb7b4ec464667581117857cf8644f24"
+          "sha256": "b5203e19a94088c3b476df2b188da367c5cf13dfce4f66e2cfe1f11e95b97da3"
         },
         {
           "declaration": "rd_kafka_dr_implicit_ack",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "a8f1b74474beeaecd3904a747f29c5f32dc12de20d4385f33c190a7d3bb88e4b"
+          "sha256": "90a9aa22208b08e132b77065a6396ec3d2d342f729c4bdf866aa1740d54f2673"
         },
         {
           "declaration": "rd_kafka_features_check",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "f7aba30dba5cdc58af07a842be1f692e194b9d14d0f9e07146413ab61379630c"
+          "sha256": "055c85b05e2c044d43b1b54993350bf48f2ff4cb825b1c2fd214ccd45cf218b3"
         },
         {
           "declaration": "rd_kafka_fetch_reply_handle_partition_error",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "2a6915bd79f12f807f55683a702145103069212f991bfbb658e04a83c90a301f"
+          "sha256": "1edf96b83adb703988b93d01f4c038c0089164a79b24c2667ae1a3ac73f04c2d"
         },
         {
           "declaration": "rd_kafka_group_MemberMetadata_consumer_read",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "00ebc112a1c8895056ed920b7b43905d206e56948316b3928eee2ac7b1c2ff50"
+          "sha256": "2c840939e05e8dcc1c7a003578a8708d4cf9bfee54a727479053f73b207c838b"
         },
         {
           "declaration": "rd_kafka_handle_Produce_metadata_update",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "7c10f9d2401611688f65fd795d128cfc72b5f25b622962d7792045cb29f291f3"
+          "sha256": "782abc794dcc000207c193744e4f25276534344167e20d37ed2db8c60659410b"
         },
         {
           "declaration": "rd_kafka_idemp_request_pid_failed",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "2287f786a04e70f2f3130a70eab611e9634b17808ed269d028e6443de7d38c26"
+          "sha256": "383871f0be69b7bcc7b2d28a51faa2a262cc668a1f7115f8bd2bb5116aba9052"
         },
         {
           "declaration": "rd_kafka_msgbatch_handle_Produce_result",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "2b40453dc7ddd289b820235c8d1b94d7028e13f1f4cb854fccb0d06cc3171b47"
+          "sha256": "96ff70fb1d6081d4a82563cddf6dcdad2a066545efcf9f9ad969bb153313c282"
         },
         {
           "declaration": "rd_kafka_op_throttle_time",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "990a1ccf6b9d44147b5f43bb68227d62c426dfa321752ac142109d36683c04fc"
+          "sha256": "b807ef83c1af53a53705ec306aa54ce9490b6ebad676f2d6bc4e5dfa11b235b8"
         },
         {
           "declaration": "rd_kafka_parse_Metadata_update_topic",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "dd7b2855fe2b89c8545dc5a747d053f17d4c2512cbafcc3a9c2f70455bbeef6b"
+          "sha256": "c3339c05c24a9b5cc66820effb528ab80862f07499a092f2af74609b92394834"
         },
         {
           "declaration": "rd_kafka_recv",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "0178ff53b3c4b06e7e2a2f240436fc8d889b8e300403ba54e64d03d915bfd038"
+          "sha256": "8c9658ba9875e94d569e28238a9c0f14d664f4b828d0ae4a70b21a796c637d82"
         },
         {
           "declaration": "rd_kafka_req_response",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "ed0d851ff8251d6b6c9575762d17be04dc6fff9e932d0b1d47a2192ee25c94a9"
+          "sha256": "2e0273e21a0e91357426e16f7370182766e302c94cb8ab287997a9a57636179e"
         },
         {
           "declaration": "rd_kafka_sasl_broker_init",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "f522099e3b27c0b7ae54eddb24df0deef177b6003910e17432135b920c595023"
+          "sha256": "43dff068656f5c671d9aad15d836e350c4578173555e6fd2aaf3b1e573715ad4"
         },
         {
           "declaration": "rd_kafka_sasl_broker_term",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "0a8c316158bb9c8f8967c857ca716c33994298e9a84afaf4f0bc77be9936850d"
+          "sha256": "5b57feacd09fb4ba09734d35ef571253a23d0930f27328ef51bb31514f2f6d2a"
         },
         {
           "declaration": "rd_kafka_send",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "a03010dec9d6e6427f01f7c0a500ca2c819c361315c46a8e89089edf0442a681"
+          "sha256": "13ba7941663018e2ac7a72731b013ae404dfe29b08501fc843e4ab0446ff5711"
         },
         {
           "declaration": "rd_kafka_ssl_hmac",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "82a68a996272a8db84f228930c473fda4d3ebacc989ffdc16c1c844f6e43e8c7"
+          "sha256": "c9759a0b70a3aa5f8825491ead4e963e2fc2e23c43cc5ac60a7798b492a0e462"
         },
         {
           "declaration": "rd_kafka_topic_new0",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "358fccb9cd3ab4f28b8872d907c57997f78522346c0ea7f65fcb418be910f01b"
+          "sha256": "eed1753cca2e81fb2774ed847f195e4142044b68c1de64fd6de5415f26cb4560"
         },
         {
           "declaration": "rd_kafka_toppar_fetch_backoff",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "a005bc4ffff3a03920af6c006058103067bcc9bbdde5c5f1bdac1fc04e491115"
+          "sha256": "d4f528dd5f252eccf23fe9ad4dd605c8c3e6e77e993538d4b2fa02af8191a762"
         },
         {
           "declaration": "rd_kafka_toppar_new0",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "ac8b7c6881d47ecbffa3ee572a4294e459868516a1533047ade141d0f819fc28"
+          "sha256": "efb518e99d98f99d29c6a144a048cf0b19ad7f23cc00c2a9b2e18c16eb476ceb"
         },
         {
           "declaration": "rd_kafka_transport_connect",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "55a7f45a00736034516c9af46277cd5aaa3f054aa36b5ceedacbc8bcde1bc16a"
+          "sha256": "d4a01a605835bfc9913d339d0d121e54a877b5a91383fc5558c4ab2ce7cf333e"
         },
         {
           "declaration": "rd_kafka_transport_new",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "4fe7f49a8b64e75716e30481a928023631725d6ad02e2b5329cdeb07fd8ff83b"
+          "sha256": "eca312987facc3a787df7a45c30ca2802946d3caeed61806dd0438d66e65c69e"
         },
         {
           "declaration": "rd_kafka_transport_ssl_connect",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "621d5957accc5ee81c5baf49358b7aca3fef4637d316cdb88970c212f2934cb8"
+          "sha256": "33dde5b3f314241876961a7631813f0f8160f3664deb5148c14cc387ae283147"
         },
         {
           "declaration": "rd_kafka_waitresp_find",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "a5beca767e3bac5c681c629384b0bf62c4bbbc438c5440d2b9b01203d269afac"
+          "sha256": "e41704718800155902a68d1848e2bc8d98bc0da4ad4ced06611c67c09055cfdd"
         },
         {
           "declaration": "rd_kafkap_share_leader_changes_apply",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "a180666072c56dd8acfa26b9a4d660b922ab803765e76a7c1103171b734d84fe"
+          "sha256": "769695633c404447461392bf041596a86f87fe97f093d553ef368c74e8fbbcc1"
         }
       ],
       "premises": {
@@ -3149,7 +3149,7 @@
           }
         ]
       },
-      "sha256": "4fd3563c67ad3698fcdcacea683d6990c01d4c8a6763956910f1e91d938dbe71"
+      "sha256": "a5f40b200cd0eefbe43f854a343e7cdb8fc787f048244ac4acfe88eb6f37087c"
     },
     "librdkafka/outer.qv": {
       "clause_count": 81,
@@ -3179,7 +3179,7 @@
         {
           "declaration": "rd_kafka_q_destroy_final",
           "premise": "rk_plugin_callback_closure",
-          "sha256": "a4d1ae87d10c769b4a210fcd876b6302b052cb488d6bfa7d1aeb9118d93861b8"
+          "sha256": "ee00b788bab7fe76130adc5fdc7aaef90cf107f1e603c475795bcc4f1afd57c4"
         }
       ],
       "premises": {
@@ -3190,7 +3190,7 @@
           }
         ]
       },
-      "sha256": "a97cdd5583925ab0e999fe93f783b17687b67c9c3cabaf142c6f3de47ea31ed7"
+      "sha256": "a4983acc1e1ac2315197e289a655153eeb12acb1d8b71a0efd5d48abb92a7fb0"
     },
     "librdkafka/refcount.qv": {
       "clause_count": 11,

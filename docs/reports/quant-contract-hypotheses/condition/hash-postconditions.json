@@ -1,0 +1,61 @@
+{
+  "file": "providers/quirin-provider-cfl/contracts/cfl/hash_state.qv",
+  "before_sha256": "3f56a431229eda33cf5f0b59414663bdf339d4057a520460000b467a820fe21e",
+  "after_sha256": "44962b47a0f7f483a99079c83532f9bebf4eafc73a5478a5685a42afa90ee523",
+  "replacements": [
+    {
+      "original": "zero_result_initializes_the_default_secret_stream",
+      "replacement": "quant condition normal #reset_zero(#result: integer, #after: state, #target: object, #initialized: predicate<state,object>, #secret: function<state,object,secret>, #default_secret: secret, #stream: function<state,object,stream>, #empty: stream) = ((#result == 0) => ((#initialized(#after,#target) && #secret(#after,#target) == #default_secret) && #stream(#after,#target) == #empty));",
+      "source_binding": "open",
+      "correspondence": "conditional formalization; C/Lean/Rust interpretation remains open"
+    },
+    {
+      "original": "nonzero_result_does_not_establish_initialized_state",
+      "replacement": "// A nonzero reset result supplies no initialized-state guarantee.",
+      "source_binding": "open",
+      "correspondence": "conditional formalization; C/Lean/Rust interpretation remains open"
+    },
+    {
+      "original": "no_input_buffer_or_caller_resource_is_consumed",
+      "replacement": "quant condition normal #reset_custody(#call: activation, #caller: predicate<activation,object>, #event_of: predicate<activation,event>, #consumes: predicate<event,object>) = forall (#resource: object) { (#caller(#call,#resource) => forall (#event: event) { (#event_of(#call,#event) => !#consumes(#event,#resource)) }) };",
+      "source_binding": "open",
+      "correspondence": "conditional formalization; C/Lean/Rust interpretation remains open"
+    },
+    {
+      "original": "zero_result_commits_exactly_the_len_byte_stream_effect",
+      "replacement": "quant condition normal #update_zero(#result: integer, #before: state, #after: state, #target: object, #input: object, #length: integer, #stream: function<state,object,stream>, #bytes: function<state,object,integer,stream>, #append: function<stream,stream,stream>) = ((#result == 0) => #stream(#after,#target) == #append(#stream(#before,#target),#bytes(#before,#input,#length)));",
+      "source_binding": "open",
+      "correspondence": "conditional formalization; C/Lean/Rust interpretation remains open"
+    },
+    {
+      "original": "nonzero_result_grants_no_digest_or_state_progress_claim",
+      "replacement": "// A nonzero update result supplies no digest/progress guarantee.",
+      "source_binding": "open",
+      "correspondence": "conditional formalization; C/Lean/Rust interpretation remains open"
+    },
+    {
+      "original": "input_storage_and_caller_resources_are_not_consumed",
+      "replacement": "quant condition normal #update_custody(#call: activation, #input: object, #caller: predicate<activation,object>, #event_of: predicate<activation,event>, #consumes: predicate<event,object>) = forall (#resource: object) { ((#resource == #input || #caller(#call,#resource)) => forall (#event: event) { (#event_of(#call,#event) => !#consumes(#event,#resource)) }) };",
+      "source_binding": "open",
+      "correspondence": "conditional formalization; C/Lean/Rust interpretation remains open"
+    },
+    {
+      "original": "result_is_the_xxh3_64_digest_of_the_committed_stream",
+      "replacement": "quant condition normal #digest_value(#result: integer, #before: state, #target: object, #stream: function<state,object,stream>, #xxh3: function<stream,integer>) = #result == #xxh3(#stream(#before,#target));",
+      "source_binding": "open",
+      "correspondence": "conditional formalization; C/Lean/Rust interpretation remains open"
+    },
+    {
+      "original": "result_may_equal_zero_for_a_nonempty_nul_free_stream",
+      "replacement": "// The pinned nonempty NUL-free zero-digest witness above forbids a nonzero-result assumption.",
+      "source_binding": "open",
+      "correspondence": "conditional formalization; C/Lean/Rust interpretation remains open"
+    },
+    {
+      "original": "state_storage_and_caller_resources_are_not_consumed",
+      "replacement": "quant condition normal #digest_custody(#call: activation, #target: object, #caller: predicate<activation,object>, #event_of: predicate<activation,event>, #consumes: predicate<event,object>) = forall (#resource: object) { ((#resource == #target || #caller(#call,#resource)) => forall (#event: event) { (#event_of(#call,#event) => !#consumes(#event,#resource)) }) };",
+      "source_binding": "open",
+      "correspondence": "conditional formalization; C/Lean/Rust interpretation remains open"
+    }
+  ]
+}

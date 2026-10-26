@@ -1,0 +1,62 @@
+{
+  "schema": "quant-opts-postcondition-migration/1",
+  "source": "providers/qcore-provider-cmetrics/contracts/cmetrics/opts_lifetime.qv",
+  "before_sha256": "ff9f4ad7026db16e46769e12044f189809118b889250627010c9b5a90090fecb",
+  "after_sha256": "5b3106651397e95ec5fdd5dbaf6f44a63993e11dcb0f2af6bcedacb54b636950",
+  "old_init_sentences": [
+    "null_name_returns_minus_one_without_committing_a_field",
+    "zero_result_owns_name_description_and_fqname_sds",
+    "optional_namespace_and_subsystem_copies_are_owned_when_created",
+    "every_committed_sds_field_remains_owned_by_opts_on_every_return",
+    "minus_one_result_may_retain_partial_initialization_obligations",
+    "failed_append_preserves_the_previous_fqname_handle",
+    "input_string_storage_is_neither_consumed_nor_retained",
+    "enclosing_record_and_resource_index_are_preserved",
+    "this_is_not_a_neutral_or_rollback_on_error_initializer"
+  ],
+  "old_exit_sentences": [
+    "every_nonnull_sds_field_obligation_is_discharged_once",
+    "enclosing_opts_record_is_not_freed",
+    "pointer_field_bytes_and_resource_index_are_not_cleared",
+    "aliases_to_released_sds_contents_are_invalidated",
+    "nonempty_repeated_exit_requires_independent_reestablishment_of_live_fields",
+    "maps_may_still_be_torn_down_without_reading_retired_opts_strings"
+  ],
+  "new_init_ids": [
+    "null_name",
+    "success_contents",
+    "optional_copies",
+    "stored_contents",
+    "failed_append",
+    "input_custody",
+    "record_frame"
+  ],
+  "new_exit_ids": [
+    "release_once",
+    "retire_contents",
+    "record_live",
+    "field_bytes",
+    "pointer_values",
+    "old_aliases"
+  ],
+  "new_entry_ids": {
+    "init": [
+      "call_exclusion",
+      "helper_frame"
+    ],
+    "exit": [
+      "call_exclusion",
+      "helper_frame",
+      "sds_physical_frame"
+    ]
+  },
+  "open_bindings": [
+    "exact five fields and resource_index byte layout",
+    "state/trace/environment interpretations",
+    "complete helper/callback trace",
+    "pointer bytes versus allocation epochs",
+    "physical ranges",
+    "actual source-to-model and Rust-to-Lean correspondence"
+  ],
+  "permission": "none"
+}

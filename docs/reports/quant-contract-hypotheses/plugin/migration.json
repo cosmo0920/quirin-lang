@@ -1,0 +1,61 @@
+{
+  "physical_plugin_atoms": 1162,
+  "plugin_declarations": 166,
+  "source_binding": "open",
+  "files": [
+    {
+      "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/client.qv",
+      "before_revision": "6ecb5498d",
+      "before_asset": "docs/reports/quant-contract-hypotheses/plugin/before/providers/qcore-provider-librdkafka/contracts/librdkafka/client.qv",
+      "before_sha256": "a09f66246bb7cd2d7285ba553e9698c8f3bfab89b2347f7390a56f299fecd7f6",
+      "after_sha256": "cb0a8525793d5e7a74c78c1b359ce0a19fff69c1825031eb68441f4126bec07f"
+    },
+    {
+      "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/kafka_mem.qv",
+      "before_revision": "6ecb5498d",
+      "before_asset": "docs/reports/quant-contract-hypotheses/plugin/before/providers/qcore-provider-librdkafka/contracts/librdkafka/kafka_mem.qv",
+      "before_sha256": "459a1cb32e3512e97c267a4651ca1629943179e41e136b28b6c71e19b639d0d3",
+      "after_sha256": "f555011f83a457deb677b940eacd4193c440e627e669fcb434583e7d4c74c65a"
+    },
+    {
+      "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/logging.qv",
+      "before_revision": "6ecb5498d",
+      "before_asset": "docs/reports/quant-contract-hypotheses/plugin/before/providers/qcore-provider-librdkafka/contracts/librdkafka/logging.qv",
+      "before_sha256": "17fcbea1eb6559fce4d1be34a2840f64a413582e69fe324986d6a0a30c8cdcb8",
+      "after_sha256": "45d1181af4e2114de77b09fe0051fb64663c14f10f849271da9dc3ed1e2ef269"
+    },
+    {
+      "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qv",
+      "before_revision": "6ecb5498d",
+      "before_asset": "docs/reports/quant-contract-hypotheses/plugin/before/providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qv",
+      "before_sha256": "55c71fa47419acf0d7d143c50b0d5c10851d77e67d95978321eb482ed1786556",
+      "after_sha256": "55c1ebf9b2c20b503bd59a8e4599008e42eb36e18d5c298af7a2354cc543b9be"
+    },
+    {
+      "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/null_deref.qv",
+      "before_revision": "6ecb5498d",
+      "before_asset": "docs/reports/quant-contract-hypotheses/plugin/before/providers/qcore-provider-librdkafka/contracts/librdkafka/null_deref.qv",
+      "before_sha256": "4fd3563c67ad3698fcdcacea683d6990c01d4c8a6763956910f1e91d938dbe71",
+      "after_sha256": "a5f40b200cd0eefbe43f854a343e7cdb8fc787f048244ac4acfe88eb6f37087c"
+    },
+    {
+      "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/queue_destructor.qv",
+      "before_revision": "6ecb5498d",
+      "before_asset": "docs/reports/quant-contract-hypotheses/plugin/before/providers/qcore-provider-librdkafka/contracts/librdkafka/queue_destructor.qv",
+      "before_sha256": "a97cdd5583925ab0e999fe93f783b17687b67c9c3cabaf142c6f3de47ea31ed7",
+      "after_sha256": "a4983acc1e1ac2315197e289a655153eeb12acb1d8b71a0efd5d48abb92a7fb0"
+    },
+    {
+      "file": "providers/quirin-provider-libc/contracts/libc/errno.qv",
+      "before_revision": "0b4d058b",
+      "before_asset": "docs/reports/quant-contract-hypotheses/plugin/before/providers/quirin-provider-libc/contracts/libc/errno.qv",
+      "before_sha256": "676c4ff84ddd784a35e5cb196ecf62fbef75f18a118f1aac925477b39dc37bfb",
+      "after_sha256": "6ff8c805b9e701d07a198c0d79478cba56555c548d9a4942d53b88e07e97c84f"
+    }
+  ],
+  "remaining_compositions": [
+    "rk_proposed",
+    "fluent_proposed"
+  ],
+  "model_correspondence": "conditional explicit formulas; no asserted C/prose/Rust equivalence"
+}

@@ -283,29 +283,43 @@ pub(crate) fn without_local(
     let render = |keep_local: bool| -> Result<String, String> {
         let mut rendered = Vec::new();
         for c in clauses {
-            let prefix = match &c.value.kind {
-                SourceContractClauseKind::Requires => "requires",
-                SourceContractClauseKind::Ensures(E::Normal) => "ensures normal",
-                SourceContractClauseKind::QuantLive => "quant live",
-                SourceContractClauseKind::QuantConditionBinding if keep_local => "quant",
-                SourceContractClauseKind::QuantConditionBlock { negated, .. } if keep_local => {
-                    if *negated {
-                        "quant not"
-                    } else {
-                        "quant"
+            let prefix =
+                match &c.value.kind {
+                    SourceContractClauseKind::Requires => "requires",
+                    SourceContractClauseKind::Ensures(E::Normal) => "ensures normal",
+                    SourceContractClauseKind::QuantLive => "quant live",
+                    SourceContractClauseKind::QuantEffect(_) => {
+                        return Err("quant effect models are not resource summaries".into());
                     }
-                }
-                SourceContractClauseKind::QuantRegistered if keep_local => "quant registered",
-                SourceContractClauseKind::QuantConditionBinding
-                | SourceContractClauseKind::QuantConditionBlock { .. }
-                | SourceContractClauseKind::QuantRegistered => continue,
-                _ => {
-                    return Err(
-                        "local-condition-contract: unsupported clause beside local conditions"
+                    SourceContractClauseKind::QuantTheorem => return Err(
+                        "local-condition: theorem applications have no interpreted local condition"
                             .into(),
-                    );
-                }
-            };
+                    ),
+                    SourceContractClauseKind::QuantProposition => "quant proposition",
+                    SourceContractClauseKind::QuantCondition(_) => {
+                        return Err(
+                            "quant conditions have no interpreted local-condition valuation".into(),
+                        );
+                    }
+                    SourceContractClauseKind::QuantConditionBinding if keep_local => "quant",
+                    SourceContractClauseKind::QuantConditionBlock { negated, .. } if keep_local => {
+                        if *negated {
+                            "quant not"
+                        } else {
+                            "quant"
+                        }
+                    }
+                    SourceContractClauseKind::QuantRegistered if keep_local => "quant registered",
+                    SourceContractClauseKind::QuantConditionBinding
+                    | SourceContractClauseKind::QuantConditionBlock { .. }
+                    | SourceContractClauseKind::QuantRegistered => continue,
+                    _ => {
+                        return Err(
+                            "local-condition-contract: unsupported clause beside local conditions"
+                                .into(),
+                        );
+                    }
+                };
             rendered.push(format!("{prefix} {};", c.value.expression_source));
         }
         if !keep_local && let Some(extra) = extra {
