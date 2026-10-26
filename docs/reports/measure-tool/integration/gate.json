@@ -1,0 +1,13 @@
+{
+  "note": "Integration of MEASURE-TOOL: merge of card tip 8f24e3634 onto main 8a015cd83. The card contains 8a015cd83 (origin/main), and its full standing gate ran ON 934d6bc4e through `scripts/gate_scope.py --base 8a015cd83` (full mode: workspace manifest changed) with gate slots (docs/reports/measure-tool/gate.json; console /media/Data/GitHub/quirin-lang/private/measure-tool/gate-4.console.log): submodules, fmt, Clippy, Rust 8722 passed/0 failed/15 ignored (560 units/574 summaries), both reevaluation examples, Python 492, all exit 0. 8f24e3634 adds report files only; the integration adds the records written by apply_amendments.py, the matrix regenerated on this record and the docs index; Python rerun on the committed matrix. providers/ and proof/ unchanged: provider_tests 133 and lean_audits 373 carried from bc1888f29's gate. Parity: rule 33's DETACH comparison replayed through `quirin-audit measure` reproduces 975->977 Safe and exactly the two recorded row moves (docs/reports/measure-tool/parity/).",
+  "workspace_tests": 8722,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 492,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "card full gate on 934d6bc4e (contains main 8a015cd83)",
+  "lean_audits": 373,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
