@@ -17,7 +17,7 @@ resource type CflHashState {
 
 extern fn cfl_hash_64bits_reset(state: borrow<'state, mut, CflHashState> use one) -> i32
 contract {
-    requires state_points_to_writable_live_cfl_hash_state;
+    quant proposition #r176(#env: environment, #hash_state_type: type, #live: predicate<environment, object>, #null: object, #state: object, #writable: predicate<environment, object, type>) = ((!((#state == #null)) && #live(#env,#state)) && #writable(#env,#state,#hash_state_type));
     ensures normal zero_result_initializes_the_default_secret_stream;
     ensures normal nonzero_result_does_not_establish_initialized_state;
     ensures normal no_input_buffer_or_caller_resource_is_consumed;
@@ -26,9 +26,9 @@ contract {
 extern fn cfl_hash_64bits_update(state: borrow<'state, mut, CflHashState> use one,
                                  input: ptr<const, u8>, len: usize) -> i32
 contract {
-    requires state_is_live_and_successfully_initialized;
-    requires input_is_readable_for_len_bytes_or_len_is_zero;
-    requires input_and_state_writable_storage_do_not_overlap;
+    quant proposition #r175(#call: activation, #env: environment, #latest_reset: predicate<trace, activation, object, event>, #live: predicate<environment, object>, #reset_event: predicate<trace, object, event>, #result: function<trace, event, integer>, #state: object, #trace: trace) = (#live(#env,#state) && exists (#reset: event) { ((#reset_event(#trace,#state,#reset) && (#result(#trace,#reset) == 0)) && #latest_reset(#trace,#call,#state,#reset)) });
+    quant proposition #r120(#env: environment, #input: object, #length: integer, #readable_byte: predicate<environment, object, integer>) = ((#length == 0) || ((#length > 0) && forall (#i: integer) { (((#i >= 0) && (#i < #length)) => #readable_byte(#env,#input,#i)) }));
+    quant proposition #r119(#env: environment, #input: object, #start: function<environment, object, integer>, #state: object, #stop: function<environment, object, integer>) = ((#stop(#env,#input) <= #start(#env,#state)) || (#stop(#env,#state) <= #start(#env,#input)));
     ensures normal zero_result_commits_exactly_the_len_byte_stream_effect;
     ensures normal nonzero_result_grants_no_digest_or_state_progress_claim;
     ensures normal input_storage_and_caller_resources_are_not_consumed;
@@ -36,9 +36,9 @@ contract {
 
 extern fn cfl_hash_64bits_digest(state: borrow<'state, const, CflHashState> use one) -> u64
 contract {
-    requires state_is_live_and_successfully_initialized;
-    requires every_successful_update_effect_is_in_stream_order;
-    requires pinned_default_secret_and_exact_xxh3_algorithm_identity;
+    quant proposition #r175(#call: activation, #env: environment, #latest_reset: predicate<trace, activation, object, event>, #live: predicate<environment, object>, #reset_event: predicate<trace, object, event>, #result: function<trace, event, integer>, #state: object, #trace: trace) = (#live(#env,#state) && exists (#reset: event) { ((#reset_event(#trace,#state,#reset) && (#result(#trace,#reset) == 0)) && #latest_reset(#trace,#call,#state,#reset)) });
+    quant proposition #r095(#event_index: function<trace, event, integer>, #prior_successful_bytes: function<trace, object, event, integer>, #state: object, #stream_offset: function<trace, event, integer>, #successful_update: predicate<trace, object, event>, #trace: trace, #update_length: function<trace, event, integer>) = (forall (#left: event) { forall (#right: event) { (((#successful_update(#trace,#state,#left) && #successful_update(#trace,#state,#right)) && (#event_index(#trace,#left) < #event_index(#trace,#right))) => ((#stream_offset(#trace,#left) + #update_length(#trace,#left)) <= #stream_offset(#trace,#right))) } } && forall (#event: event) { (#successful_update(#trace,#state,#event) => (#stream_offset(#trace,#event) == #prior_successful_bytes(#trace,#state,#event))) });
+    quant proposition #r162(#algorithm: function<environment, object, algorithm>, #default_secret: secret, #env: environment, #implementation_sha: digest, #pinned_implementation_sha: digest, #secret: function<environment, object, secret>, #state: object, #xxh3_64: algorithm) = (((#algorithm(#env,#state) == #xxh3_64) && (#secret(#env,#state) == #default_secret)) && (#implementation_sha == #pinned_implementation_sha));
     ensures normal result_is_the_xxh3_64_digest_of_the_committed_stream;
     ensures normal result_may_equal_zero_for_a_nonempty_nul_free_stream;
     ensures normal state_storage_and_caller_resources_are_not_consumed;

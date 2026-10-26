@@ -1,5 +1,11 @@
 module contract;
 
+// QUANT-CONTRACT-HYPOTHESES: each quant proposition is an entry obligation
+// under the explicitly bound model environment and relation/function meanings.
+// Mathematical integers have no C wraparound; C ranges are stated separately.
+// The migration map records primitive meanings and open C/model correspondence.
+// These declared models install no interpreted resource/bounds/outer permission.
+
 // Source-audited declared model, not an interpreted resource-v1 declaration.
 // Read cmt_opts.{h,c} and CFL SDS helpers at Fluent Bit
 // 66910c10a4d7eafa810b84229cf2dcf7b0f26f97. The enclosing opts record belongs
@@ -17,11 +23,63 @@ extern fn cmt_opts_init(opts: ptr<mut, u8>, ns: ptr<mut, u8>,
                          subsystem: ptr<mut, u8>, name: ptr<mut, u8>,
                          description: ptr<mut, u8>) -> i32
 contract {
-    requires opts_is_nonnull_writable_caller_owned_record_storage;
-    requires all_five_sds_pointer_fields_are_null_before_initialization;
-    requires nonnull_input_strings_are_readable_and_terminated;
-    requires input_string_views_are_stable_and_disjoint_from_opts_field_writes;
-    requires string_lengths_and_concatenation_sizes_fit_the_C_integer_types;
+    quant proposition #opts_storage(
+        #caller: object,
+        #env: environment,
+        #live: predicate<environment, object>,
+        #null: object,
+        #opts: object,
+        #opts_type: scalar_type,
+        #owns: predicate<environment, object, object>,
+        #writable: predicate<environment, object, scalar_type>
+    ) =
+        (((!((#opts == #null)) && #live(#env,#opts)) && #owns(#env,#caller,#opts)) && #writable(#env,#opts,#opts_type));
+    quant proposition #null_sds_fields(
+        #description_field: field,
+        #env: environment,
+        #field: predicate<environment, object, field, object>,
+        #fqname_field: field,
+        #name_field: field,
+        #ns_field: field,
+        #null: object,
+        #opts: object,
+        #subsystem_field: field
+    ) =
+        ((((#field(#env,#opts,#ns_field,#null) && #field(#env,#opts,#subsystem_field,#null)) && #field(#env,#opts,#name_field,#null)) && #field(#env,#opts,#description_field,#null)) && #field(#env,#opts,#fqname_field,#null));
+    quant proposition #input_strings(
+        #call: activation,
+        #env: environment,
+        #live: predicate<environment, object>,
+        #null: object,
+        #string_input: predicate<activation, object>,
+        #terminated: predicate<environment, object>
+    ) =
+        forall (#input: object) { ((#string_input(#call,#input) && !((#input == #null))) => (#live(#env,#input) && #terminated(#env,#input))) };
+    quant proposition #input_frame(
+        #call: activation,
+        #description_field: field,
+        #env: environment,
+        #field_disjoint: predicate<environment, object, object, field>,
+        #fqname_field: field,
+        #name_field: field,
+        #ns_field: field,
+        #null: object,
+        #opts: object,
+        #stable: predicate<trace, activation, object>,
+        #string_input: predicate<activation, object>,
+        #subsystem_field: field,
+        #trace: trace
+    ) =
+        forall (#input: object) { ((#string_input(#call,#input) && !((#input == #null))) => (#stable(#trace,#call,#input) && forall (#f: field) { (((#f == #ns_field) || ((#f == #subsystem_field) || ((#f == #name_field) || ((#f == #description_field) || (#f == #fqname_field))))) => #field_disjoint(#env,#input,#opts,#f)) })) };
+    quant proposition #string_bounds(
+        #allocation_size: predicate<environment, activation, integer>,
+        #call: activation,
+        #env: environment,
+        #int_argument: predicate<environment, activation, integer>,
+        #int_max: integer,
+        #size_max: integer
+    ) =
+        (forall (#amount: integer) { (#allocation_size(#env,#call,#amount) => ((0 <= #amount) && (#amount <= #size_max))) } && forall (#amount: integer) { (#int_argument(#env,#call,#amount) => ((0 <= #amount) && (#amount <= #int_max))) });
     ensures normal result_is_zero_or_minus_one;
     ensures normal null_name_returns_minus_one_without_committing_a_field;
     ensures normal zero_result_owns_name_description_and_fqname_sds;
@@ -36,10 +94,59 @@ contract {
 
 extern fn cmt_opts_exit(opts: ptr<mut, u8>) -> unit
 contract {
-    requires opts_is_nonnull_live_caller_record_storage;
-    requires every_nonnull_field_is_a_distinct_live_owned_sds_handle;
-    requires fields_describe_a_valid_complete_or_partial_initialization;
-    requires no_later_string_user_including_map_operations_uses_retired_contents;
+    quant proposition #opts_lifetime(
+        #caller: object,
+        #env: environment,
+        #live: predicate<environment, object>,
+        #null: object,
+        #opts: object,
+        #owns: predicate<environment, object, object>
+    ) =
+        ((!((#opts == #null)) && #live(#env,#opts)) && #owns(#env,#caller,#opts));
+    quant proposition #sds_ownership(
+        #description_field: field,
+        #env: environment,
+        #field: predicate<environment, object, field, object>,
+        #fqname_field: field,
+        #live: predicate<environment, object>,
+        #name_field: field,
+        #ns_field: field,
+        #null: object,
+        #opts: object,
+        #owns: predicate<environment, object, object>,
+        #sds_handle: predicate<environment, object>,
+        #subsystem_field: field
+    ) =
+        (forall (#f: field) { forall (#handle: object) { (((((#f == #ns_field) || ((#f == #subsystem_field) || ((#f == #name_field) || ((#f == #description_field) || (#f == #fqname_field))))) && #field(#env,#opts,#f,#handle)) && !((#handle == #null))) => ((#live(#env,#handle) && #owns(#env,#opts,#handle)) && #sds_handle(#env,#handle))) } } && forall (#f: field) { forall (#g: field) { forall (#left: object) { forall (#right: object) { ((((((((#f == #ns_field) || ((#f == #subsystem_field) || ((#f == #name_field) || ((#f == #description_field) || (#f == #fqname_field))))) && #field(#env,#opts,#f,#left)) && (((#g == #ns_field) || ((#g == #subsystem_field) || ((#g == #name_field) || ((#g == #description_field) || (#g == #fqname_field))))) && #field(#env,#opts,#g,#right))) && !((#left == #null))) && !((#right == #null))) && !((#f == #g))) => !((#left == #right))) } } } });
+    quant proposition #initialization_state(
+        #committed: predicate<environment, object, object>,
+        #description_field: field,
+        #env: environment,
+        #field: predicate<environment, object, field, object>,
+        #fqname_field: field,
+        #name_field: field,
+        #ns_field: field,
+        #null: object,
+        #opts: object,
+        #owns: predicate<environment, object, object>,
+        #subsystem_field: field
+    ) =
+        (forall (#handle: object) { (#committed(#env,#opts,#handle) => #owns(#env,#opts,#handle)) } && forall (#f: field) { forall (#handle: object) { (((((#f == #ns_field) || ((#f == #subsystem_field) || ((#f == #name_field) || ((#f == #description_field) || (#f == #fqname_field))))) && #field(#env,#opts,#f,#handle)) && !((#handle == #null))) => #committed(#env,#opts,#handle)) } });
+    quant proposition #sds_retirement(
+        #call: activation,
+        #description_field: field,
+        #env: environment,
+        #field: predicate<environment, object, field, object>,
+        #fqname_field: field,
+        #later_use: predicate<trace, activation, event, object>,
+        #name_field: field,
+        #ns_field: field,
+        #null: object,
+        #opts: object,
+        #subsystem_field: field,
+        #trace: trace
+    ) =
+        forall (#f: field) { forall (#handle: object) { (((((#f == #ns_field) || ((#f == #subsystem_field) || ((#f == #name_field) || ((#f == #description_field) || (#f == #fqname_field))))) && #field(#env,#opts,#f,#handle)) && !((#handle == #null))) => forall (#event: event) { !(#later_use(#trace,#call,#event,#handle)) }) } };
     ensures normal every_nonnull_sds_field_obligation_is_discharged_once;
     ensures normal enclosing_opts_record_is_not_freed;
     ensures normal pointer_field_bytes_and_resource_index_are_not_cleared;

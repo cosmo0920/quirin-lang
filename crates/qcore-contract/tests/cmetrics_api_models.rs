@@ -78,7 +78,10 @@ fn source_audited_api_models_are_retained_without_interpreted_permissions() {
         get.iter()
             .any(|c| c == "read_lookup_may_allocate_or_mutate_secondary_index")
     );
-    assert!(get.iter().any(|c| c == "labeled_hash_digest_is_nonzero"));
+    assert!(get.iter().any(|c| c.starts_with("#hash_nonzero(")));
+    let graph = &graphs["cmt_map_metric_get"];
+    assert_eq!(graph.version, 3);
+    assert!(graph.requirements.iter().any(|id| id == "hash_nonzero"));
     let digest = clauses("cfl_hash_64bits_digest");
     assert!(
         digest

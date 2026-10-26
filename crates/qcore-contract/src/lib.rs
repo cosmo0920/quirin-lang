@@ -50,3 +50,5 @@ pub mod caller_frame;
 
 /// Finite source-bound Monkey scheduler lifetime obligations.
 pub mod scheduler_lifetime;
+
+pub mod quant_theorem;

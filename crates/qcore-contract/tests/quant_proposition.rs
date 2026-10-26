@@ -177,3 +177,31 @@ fn shared_budgets_refuse_deep_and_wide_terms_on_source_and_wire() {
     };
     assert!(validate(&d).is_err());
 }
+
+#[test]
+fn direct_model_prerequisites_are_retained_and_never_install_c_permissions() {
+    use qcore_contract::{contract_loader, hypothesis};
+    use qcore_frontend::frontend::parse_source_program;
+    use std::collections::BTreeMap;
+    let source = "module contract; extern fn f() -> unit contract { requires resource_contract_v1; quant proposition #p(#r: predicate<>) = #r(); ensures normal resource_return_none(); };";
+    let parsed = parse_source_program(source).unwrap();
+    let graph = hypothesis::declaration(&parsed.declarations[0].value, &[]).unwrap();
+    assert_eq!(graph.requirements, vec!["p"]);
+    assert!(
+        contract_loader::load_resource_contract_sources(&BTreeMap::from([(
+            "test.qv".into(),
+            source.into()
+        )]))
+        .is_err()
+    );
+    let mut omitted = graph.clone();
+    omitted.requirements.clear();
+    assert!(hypothesis::validate(&omitted).is_err());
+}
+
+#[test]
+fn comparison_and_predicate_grouping_keep_the_implication_guard() {
+    let definition =
+        parse("#p(#n: integer, #r: predicate<integer>) = ((0 < #n) => ((#r(#n))))").unwrap();
+    assert!(matches!(definition.formula, Formula::Implies { .. }));
+}

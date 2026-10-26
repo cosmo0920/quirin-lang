@@ -74,10 +74,11 @@ The source parser rejects empty clauses and unknown clause introducers. It does 
 ### C03.1. Required formal hypothesis migration (Proposed)
 
 The [language requirement L19.1](QCORE_SPEC_r0_3.md#l191-formal-contract-hypotheses-and-quant-effects-required-extension)
-applies across all provider contract families. `quant proposition`,
-`quant theorem` and `quant effect` remain proposed. The initial implemented
-`quant proposition` form is defined in G01p and C04.18.7; it represents an
-explicit mathematical hypothesis and grants no truth authority.
+applies across all provider contract families. The bounded mathematical
+representations `quant proposition`, `quant theorem` and `quant effect` are
+implemented in G01p/G01t/G01e. Production proof discharge and source effect
+interpretation remain proposed. These forms retain obligations and grant no
+truth authority. The all-provider migration is in progress.
 
 A migrated precondition MUST expose its typed mathematical predicate and
 explicit quantifier domain. A migrated theorem application MUST retain all
@@ -1003,33 +1004,39 @@ A graph instance binds artifact, property, semantic profile, scope, bounds, assu
 
 This version installs **no graph semantic consumer**. Opaque text and even supported/derived graph evidence discharge no safety obligation. All published atoms start open with declared warrant. Existing clause/body standing remains separate. Rule13f's actual declaration consultation closure, including validated summary inheritance and held/withdrawn names, lifts to per-row atom dependencies. Audit sidecars retain graph definitions, dependent contexts, row counts and Safe-row counts beside the old premise view. Erasing only graph additions reproduces the prior record. Rule31's pinned outer envelopes still cover legacy premise names and can only lower a runtime verdict; graphs add no envelope promise or static truth.
 
-### C04.18.7. Typed mathematical atoms (graph version 3)
+### C04.18.7. Typed mathematical atoms and model entry obligations (graph version 3)
 
-A resource or bounds declaration may replace an opaque hypothesis atom with
-`quant proposition #ID(PARAMETERS) = FORMULA;`, using the exact G01p grammar.
-The atom stores the complete typed definition rather than an English sentence.
-Parameters expose named value sorts and the signatures of relation inputs;
-quantifiers bind value variables, and every call/equality is type checked.
-A definition is a parameterized predicate, not a universally proved assertion
-about every possible relation interpretation. Its interpretation must be bound
-to the actual caller-held model/environment before its truth can be established.
+A declaration may state `quant proposition #ID(PARAMETERS) = FORMULA;` using
+G01p. The atom retains a typed formula rather than an English condition. Named
+value sorts, relation/function signatures, actual operands and quantified domains
+are explicit. Integer terms and comparisons have mathematical semantics; target
+C bounds and conversion domains must be stated separately. An interpretation of
+these parameters is an input obligation, not evidence produced by parsing.
 
-The existing group, flow and symbolic lifecycle metadata may reference its ID.
-A version-3 graph contains at least one formal atom and may retain opaque atoms
-and proposed refinements. Version-1/2 compatibility erasure and the new graph's
-structured premise names retain their existing meanings. Canonical source replay
-and wire validation check the entire formal AST, including unused alternatives.
-A syntactic type check creates no Supported/Refuted assignment, evidence warrant,
-legacy-premise implication, source-binding proof, C transition or safety verdict.
-Unsupported theorem/effect source clauses continue to refuse their selection.
+Existing hypothesis groups, flows and symbolic lifecycle metadata may reference
+formal IDs. Ungrouped formal atoms in declared-model contracts are standalone
+entry obligations and appear in the graph's sorted `requirements` list. A v3
+graph may mix opaque and formal atoms/refinements; all definitions and direct
+requirements are validated. The strict resource/bounds loaders reject direct
+formal entry obligations until an interpreted source valuation is available.
+They never install a C summary by silently dropping one. The model inspection
+API does not create Supported/Refuted assignments, legacy implications, C
+transitions, source-binding proofs or verdicts.
 
-The first migration replaces the eight libc reading atoms in `libc/errno.qv`.
-`QCore.LibcReadingPremises` expresses their shared model environment;
-`QCore.QuantProposition` defines the formula semantics and proves quantifier/
-conjunction and guarded-alternative decomposition. Relation inputs such as the
-reading-route and declaration checks remain explicit open source obligations.
-The `nested_call_admission` premise name, modes and either-route alternative
-remain present. This increment does not complete the all-provider migration.
+The migration starts with libc's eight reading atoms and the 105 former
+sentence prerequisites across CMetrics map/opts/typed-setter/metric-setter
+models. CMetrics has 161 formal clauses after the repeated getter bundle is
+split into its nine distinct obligations. Guards preserve NULL/out-of-range
+no-ops. Count arithmetic and target size/loop bounds are separate; floating
+conversions test finite truncated values, including negative fractions that
+truncate to unsigned zero. Complete-call interference exclusion remains an
+explicit quantified obligation.
+
+`QCore.QuantProposition` gives formula/term semantics.
+`QCore.LibcReadingPremises` and `QCore.CmetricsHypotheses` give conditional model
+decomposition properties; they prove no actual C extraction or complete trace.
+Source/environment/ABI/backend and Rust/Lean correspondence remain open. The
+all-provider migration and theorem/effect consumers are still unfinished.
 
 ### C04.18.2. Neutral premise decomposition and explicit binding references (graph version 2)
 

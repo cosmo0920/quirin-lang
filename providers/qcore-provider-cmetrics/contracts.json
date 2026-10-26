@@ -4,12 +4,12 @@
   "contracts": {
     "contracts/cmetrics/context_lifetime.qv": "1ba76df850e122ae7a37a529594f94ad2257c31de5383e0fe106e063c2731014",
     "contracts/cmetrics/counter_reset.qv": "0ac6d629272eea0c892f7b53527e051af73f3452b98f082f24e6ae0719a3d37c",
-    "contracts/cmetrics/map_lifetime.qv": "b18c967e0be125a17c37b307dd5d926bd82673fc3e06116f7f9f059a58131186",
-    "contracts/cmetrics/metric_setters.qv": "1cbd66b5d9599148fbfa3278343ae2736329a58cf7b6d19e78d7c6d8e959af7e",
+    "contracts/cmetrics/map_lifetime.qv": "1170433ef4b062f4568500a5af68ddbe4544463d0f6ef4e3ecb7504a7f48d3d6",
+    "contracts/cmetrics/metric_setters.qv": "7342309c99a58531f634917c7c10bdf6a8ed2d7cb2639c193bd57fd41a6272e8",
     "contracts/cmetrics/metric_values.qv": "c3db21d15d98e12fdf11fe6ffe3de98f674c94625256a94b3270f9db73be1a43",
     "contracts/cmetrics/mpack_utils.qv": "c0c2c64b6b569303a24ecffd7c257641668747417851f2d12825aa13d13a93a2",
     "contracts/cmetrics/null_deref.qv": "4041672b8470b5553f70099da2f23fa2490cac2a7eba5801e847dccea861faf3",
-    "contracts/cmetrics/opts_lifetime.qv": "4b9ad1d7bf2bc8f06e2749b0e6ab4407ddd000fbc7bafed9c93d5dbd24ce1852",
-    "contracts/cmetrics/typed_setters.qv": "dd8e873ac560cd67855d8582609b2242be7c86913d7977e6686a63a680206327"
+    "contracts/cmetrics/opts_lifetime.qv": "74cca7e45c90456a8590e4644b5889036ec7c3f0605aa9f52719ce33d0103955",
+    "contracts/cmetrics/typed_setters.qv": "3c03548fca116f5c86e52c080bd63816f54f092dec9093615a80c15f817c2718"
   }
 }

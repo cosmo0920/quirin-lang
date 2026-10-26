@@ -21,7 +21,33 @@
       "inherits": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "17e5f22bb2b2ed10d1ed3f2baed212054cc13ebdb9551f8db7ac15ceb2f4d6f7"
+      "sha256": "3ad9467a22b7763451b9e8b6a24bd7d0aefdc74efcd146536bb51548ad91b7a3"
+    },
+    "cfl/atomic.qv": {
+      "clause_count": 12,
+      "declaration_count": 4,
+      "declarations": [
+        {
+          "clauses": 2,
+          "name": "cfl_atomic_initialize"
+        },
+        {
+          "clauses": 3,
+          "name": "cfl_atomic_store"
+        },
+        {
+          "clauses": 3,
+          "name": "cfl_atomic_load"
+        },
+        {
+          "clauses": 4,
+          "name": "cfl_atomic_compare_exchange"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "db382a07386cbfc89d6b530542868d5d9d277d7eaab8b0e8ec5182850e82d5a0"
     },
     "cfl/hash_state.qv": {
       "clause_count": 16,
@@ -43,7 +69,7 @@
       "inherits": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "33951e05d93ef1e4d32770124154ba9198f129e60e7d90cb3fc70c08daa940bf"
+      "sha256": "3f56a431229eda33cf5f0b59414663bdf339d4057a520460000b467a820fe21e"
     },
     "cfl/intrusive_list.qv": {
       "clause_count": 37,
@@ -65,7 +91,7 @@
       "inherits": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "1dc71a24ffaad7a6aadb24f999dcfd99cb0890155619c9f82304c59085b27da2"
+      "sha256": "e5e4f35f522ffdf5750da0799e1d74dbafba7a858b10cb4d0e9256cc1491514a"
     },
     "cfl/null_deref.qv": {
       "clause_count": 2,

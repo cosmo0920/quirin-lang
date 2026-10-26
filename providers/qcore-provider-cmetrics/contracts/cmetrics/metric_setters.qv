@@ -1,5 +1,11 @@
 module contract;
 
+// QUANT-CONTRACT-HYPOTHESES: each quant proposition is an entry obligation
+// under the explicitly bound model environment and relation/function meanings.
+// Mathematical integers have no C wraparound; C ranges are stated separately.
+// The migration map records primitive meanings and open C/model correspondence.
+// These declared models install no interpreted resource/bounds/outer permission.
+
 // Complete-call exclusion covers the typed owner (if any), selected metric
 // and storage used by the call: conflicting writers/raw readers, replacement,
 // expiration and destruction. Internal locks do not supply this caller guard.
@@ -16,9 +22,31 @@ module contract;
 
 extern fn cmt_metric_set(metric: ptr<mut, u8>, timestamp: u64, val: f64) -> unit
 contract {
-    requires metric_is_nonnull_live_writable_with_valid_atomic_field_layout;
-    requires caller_excludes_retirement_and_conflicting_metric_users_for_the_complete_call;
-    requires val_has_defined_C_double_to_int64_and_uint64_conversions;
+    quant proposition #metric_storage(
+        #atomic_backend: predicate<environment, object>,
+        #atomic_cell: predicate<environment, object, object>,
+        #env: environment,
+        #live: predicate<environment, object>,
+        #metric: object,
+        #metric_type: scalar_type,
+        #null: object,
+        #u64: scalar_type,
+        #writable: predicate<environment, object, scalar_type>
+    ) =
+        (((!((#metric == #null)) && #live(#env,#metric)) && #writable(#env,#metric,#metric_type)) && forall (#cell: object) { (#atomic_cell(#env,#metric,#cell) => (#writable(#env,#cell,#u64) && #atomic_backend(#env,#cell))) });
+    quant proposition #caller_exclusion(
+        #affected: predicate<trace, activation, object>,
+        #call: activation,
+        #conflicts: predicate<trace, activation, event, object>,
+        #trace: trace
+    ) =
+        forall (#target: object) { (#affected(#trace,#call,#target) => forall (#event: event) { !(#conflicts(#trace,#call,#event,#target)) }) };
+    quant proposition #scalar_conversions(
+        #finite: predicate<floating>,
+        #trunc: function<floating, integer>,
+        #val: floating
+    ) =
+        (#finite(#val) && (((-9223372036854775808 <= #trunc(#val)) && (#trunc(#val) <= 9223372036854775807)) && ((0 <= #trunc(#val)) && (#trunc(#val) <= 18446744073709551615))));
     ensures normal delegates_to_cmt_metric_set_double;
     ensures normal scalar_value_mirrors_timestamp_and_double_type_tag_are_stored;
     ensures normal no_whole_record_atomic_snapshot_is_promised;
@@ -28,16 +56,50 @@ contract {
 
 extern fn cmt_metric_set_exp_hist_count(metric: ptr<mut, u8>, count: u64) -> unit
 contract {
-    requires metric_is_nonnull_live_writable_with_valid_atomic_field_layout;
-    requires caller_excludes_retirement_and_conflicting_metric_users_for_the_complete_call;
+    quant proposition #metric_storage(
+        #atomic_backend: predicate<environment, object>,
+        #atomic_cell: predicate<environment, object, object>,
+        #env: environment,
+        #live: predicate<environment, object>,
+        #metric: object,
+        #metric_type: scalar_type,
+        #null: object,
+        #u64: scalar_type,
+        #writable: predicate<environment, object, scalar_type>
+    ) =
+        (((!((#metric == #null)) && #live(#env,#metric)) && #writable(#env,#metric,#metric_type)) && forall (#cell: object) { (#atomic_cell(#env,#metric,#cell) => (#writable(#env,#cell,#u64) && #atomic_backend(#env,#cell))) });
+    quant proposition #caller_exclusion(
+        #affected: predicate<trace, activation, object>,
+        #call: activation,
+        #conflicts: predicate<trace, activation, event, object>,
+        #trace: trace
+    ) =
+        forall (#target: object) { (#affected(#trace,#call,#target) => forall (#event: event) { !(#conflicts(#trace,#call,#event,#target)) }) };
     ensures normal exp_hist_count_is_stored_without_updating_timestamp;
     ensures normal metric_and_nested_storage_ownership_are_preserved;
 };
 
 extern fn cmt_metric_set_exp_hist_sum(metric: ptr<mut, u8>, sum_set: i32, sum: f64) -> unit
 contract {
-    requires metric_is_nonnull_live_writable_with_valid_atomic_field_layout;
-    requires caller_excludes_retirement_and_conflicting_metric_users_for_the_complete_call;
+    quant proposition #metric_storage(
+        #atomic_backend: predicate<environment, object>,
+        #atomic_cell: predicate<environment, object, object>,
+        #env: environment,
+        #live: predicate<environment, object>,
+        #metric: object,
+        #metric_type: scalar_type,
+        #null: object,
+        #u64: scalar_type,
+        #writable: predicate<environment, object, scalar_type>
+    ) =
+        (((!((#metric == #null)) && #live(#env,#metric)) && #writable(#env,#metric,#metric_type)) && forall (#cell: object) { (#atomic_cell(#env,#metric,#cell) => (#writable(#env,#cell,#u64) && #atomic_backend(#env,#cell))) });
+    quant proposition #caller_exclusion(
+        #affected: predicate<trace, activation, object>,
+        #call: activation,
+        #conflicts: predicate<trace, activation, event, object>,
+        #trace: trace
+    ) =
+        forall (#target: object) { (#affected(#trace,#call,#target) => forall (#event: event) { !(#conflicts(#trace,#call,#event,#target)) }) };
     ensures normal exp_hist_sum_set_is_normalized_to_zero_or_one;
     ensures normal enabled_sum_is_stored_as_double_bits_else_sum_bits_are_zero;
     ensures normal timestamp_is_not_updated_and_pair_is_not_a_single_atomic_store;
@@ -46,8 +108,25 @@ contract {
 
 extern fn cmt_metric_hist_count_set(metric: ptr<mut, u8>, timestamp: u64, count: u64) -> unit
 contract {
-    requires metric_is_nonnull_live_writable_with_valid_atomic_field_layout;
-    requires caller_excludes_retirement_and_conflicting_metric_users_for_the_complete_call;
+    quant proposition #metric_storage(
+        #atomic_backend: predicate<environment, object>,
+        #atomic_cell: predicate<environment, object, object>,
+        #env: environment,
+        #live: predicate<environment, object>,
+        #metric: object,
+        #metric_type: scalar_type,
+        #null: object,
+        #u64: scalar_type,
+        #writable: predicate<environment, object, scalar_type>
+    ) =
+        (((!((#metric == #null)) && #live(#env,#metric)) && #writable(#env,#metric,#metric_type)) && forall (#cell: object) { (#atomic_cell(#env,#metric,#cell) => (#writable(#env,#cell,#u64) && #atomic_backend(#env,#cell))) });
+    quant proposition #caller_exclusion(
+        #affected: predicate<trace, activation, object>,
+        #call: activation,
+        #conflicts: predicate<trace, activation, event, object>,
+        #trace: trace
+    ) =
+        forall (#target: object) { (#affected(#trace,#call,#target) => forall (#event: event) { !(#conflicts(#trace,#call,#event,#target)) }) };
     ensures normal successful_CAS_stores_hist_count_then_timestamp;
     ensures normal no_joint_atomicity_or_wait_free_progress_is_promised;
     ensures normal metric_and_nested_storage_ownership_are_preserved;
@@ -55,8 +134,25 @@ contract {
 
 extern fn cmt_metric_hist_sum_set(metric: ptr<mut, u8>, timestamp: u64, val: f64) -> unit
 contract {
-    requires metric_is_nonnull_live_writable_with_valid_atomic_field_layout;
-    requires caller_excludes_retirement_and_conflicting_metric_users_for_the_complete_call;
+    quant proposition #metric_storage(
+        #atomic_backend: predicate<environment, object>,
+        #atomic_cell: predicate<environment, object, object>,
+        #env: environment,
+        #live: predicate<environment, object>,
+        #metric: object,
+        #metric_type: scalar_type,
+        #null: object,
+        #u64: scalar_type,
+        #writable: predicate<environment, object, scalar_type>
+    ) =
+        (((!((#metric == #null)) && #live(#env,#metric)) && #writable(#env,#metric,#metric_type)) && forall (#cell: object) { (#atomic_cell(#env,#metric,#cell) => (#writable(#env,#cell,#u64) && #atomic_backend(#env,#cell))) });
+    quant proposition #caller_exclusion(
+        #affected: predicate<trace, activation, object>,
+        #call: activation,
+        #conflicts: predicate<trace, activation, event, object>,
+        #trace: trace
+    ) =
+        forall (#target: object) { (#affected(#trace,#call,#target) => forall (#event: event) { !(#conflicts(#trace,#call,#event,#target)) }) };
     ensures normal successful_CAS_stores_hist_sum_double_bits_then_timestamp;
     ensures normal no_joint_atomicity_or_wait_free_progress_is_promised;
     ensures normal metric_and_nested_storage_ownership_are_preserved;
@@ -64,10 +160,44 @@ contract {
 
 extern fn cmt_metric_hist_set(metric: ptr<mut, u8>, timestamp: u64, bucket_id: i32, val: f64) -> unit
 contract {
-    requires metric_is_nonnull_live_writable_with_valid_atomic_field_layout;
-    requires bucket_id_is_nonnegative_and_within_live_hist_buckets_extent;
-    requires val_has_defined_C_double_to_uint64_conversion;
-    requires caller_excludes_retirement_and_conflicting_metric_users_for_the_complete_call;
+    quant proposition #metric_storage(
+        #atomic_backend: predicate<environment, object>,
+        #atomic_cell: predicate<environment, object, object>,
+        #env: environment,
+        #live: predicate<environment, object>,
+        #metric: object,
+        #metric_type: scalar_type,
+        #null: object,
+        #u64: scalar_type,
+        #writable: predicate<environment, object, scalar_type>
+    ) =
+        (((!((#metric == #null)) && #live(#env,#metric)) && #writable(#env,#metric,#metric_type)) && forall (#cell: object) { (#atomic_cell(#env,#metric,#cell) => (#writable(#env,#cell,#u64) && #atomic_backend(#env,#cell))) });
+    quant proposition #bucket_extent(
+        #bucket_extent: integer,
+        #bucket_id: integer,
+        #env: environment,
+        #extent: predicate<environment, object, integer, scalar_type>,
+        #field: predicate<environment, object, field, object>,
+        #hist_buckets: object,
+        #hist_buckets_field: field,
+        #live: predicate<environment, object>,
+        #metric: object,
+        #u64: scalar_type
+    ) =
+        (((((0 <= #bucket_id) && (#bucket_id < #bucket_extent)) && #field(#env,#metric,#hist_buckets_field,#hist_buckets)) && #live(#env,#hist_buckets)) && #extent(#env,#hist_buckets,#bucket_extent,#u64));
+    quant proposition #unsigned_conversion(
+        #finite: predicate<floating>,
+        #trunc: function<floating, integer>,
+        #val: floating
+    ) =
+        (#finite(#val) && ((0 <= #trunc(#val)) && (#trunc(#val) <= 18446744073709551615)));
+    quant proposition #caller_exclusion(
+        #affected: predicate<trace, activation, object>,
+        #call: activation,
+        #conflicts: predicate<trace, activation, event, object>,
+        #trace: trace
+    ) =
+        forall (#target: object) { (#affected(#trace,#call,#target) => forall (#event: event) { !(#conflicts(#trace,#call,#event,#target)) }) };
     ensures normal successful_CAS_stores_converted_integer_bucket_count_then_timestamp;
     ensures normal no_joint_atomicity_or_wait_free_progress_is_promised;
     ensures normal metric_and_nested_storage_ownership_are_preserved;
@@ -75,9 +205,40 @@ contract {
 
 extern fn cmt_summary_quantile_set(metric: ptr<mut, u8>, timestamp: u64, quantile_id: i32, val: f64) -> unit
 contract {
-    requires nonnull_metric_is_live_and_has_valid_quantile_pointer_count_representation;
-    requires present_in_range_quantile_is_writable_with_valid_atomic_layout;
-    requires caller_excludes_retirement_and_conflicting_metric_users_for_the_complete_call;
+    quant proposition #quantile_representation(
+        #env: environment,
+        #extent: predicate<environment, object, integer, scalar_type>,
+        #field: predicate<environment, object, field, object>,
+        #integer_field: predicate<environment, object, field, integer>,
+        #live: predicate<environment, object>,
+        #metric: object,
+        #null: object,
+        #quantiles: object,
+        #quantiles_count: integer,
+        #quantiles_count_field: field,
+        #quantiles_field: field,
+        #u64: scalar_type
+    ) =
+        (!((#metric == #null)) => (((#live(#env,#metric) && #field(#env,#metric,#quantiles_field,#quantiles)) && #integer_field(#env,#metric,#quantiles_count_field,#quantiles_count)) && (!((#quantiles == #null)) => (#live(#env,#quantiles) && #extent(#env,#quantiles,#quantiles_count,#u64)))));
+    quant proposition #quantile_storage(
+        #atomic_array: predicate<environment, object, integer>,
+        #env: environment,
+        #metric: object,
+        #null: object,
+        #quantile_id: integer,
+        #quantiles: object,
+        #quantiles_count: integer,
+        #u64: scalar_type,
+        #writable: predicate<environment, object, scalar_type>
+    ) =
+        (((!((#metric == #null)) && !((#quantiles == #null))) && ((0 <= #quantile_id) && (#quantile_id < #quantiles_count))) => (#writable(#env,#quantiles,#u64) && #atomic_array(#env,#quantiles,#quantile_id)));
+    quant proposition #caller_exclusion(
+        #affected: predicate<trace, activation, object>,
+        #call: activation,
+        #conflicts: predicate<trace, activation, event, object>,
+        #trace: trace
+    ) =
+        forall (#target: object) { (#affected(#trace,#call,#target) => forall (#event: event) { !(#conflicts(#trace,#call,#event,#target)) }) };
     ensures normal null_metric_null_array_negative_or_out_of_range_id_is_a_noop;
     ensures normal admitted_slot_CAS_stores_double_bits_then_timestamp;
     ensures normal no_joint_atomicity_or_wait_free_progress_is_promised;
@@ -86,8 +247,25 @@ contract {
 
 extern fn cmt_summary_sum_set(metric: ptr<mut, u8>, timestamp: u64, val: f64) -> unit
 contract {
-    requires metric_is_nonnull_live_writable_with_valid_atomic_field_layout;
-    requires caller_excludes_retirement_and_conflicting_metric_users_for_the_complete_call;
+    quant proposition #metric_storage(
+        #atomic_backend: predicate<environment, object>,
+        #atomic_cell: predicate<environment, object, object>,
+        #env: environment,
+        #live: predicate<environment, object>,
+        #metric: object,
+        #metric_type: scalar_type,
+        #null: object,
+        #u64: scalar_type,
+        #writable: predicate<environment, object, scalar_type>
+    ) =
+        (((!((#metric == #null)) && #live(#env,#metric)) && #writable(#env,#metric,#metric_type)) && forall (#cell: object) { (#atomic_cell(#env,#metric,#cell) => (#writable(#env,#cell,#u64) && #atomic_backend(#env,#cell))) });
+    quant proposition #caller_exclusion(
+        #affected: predicate<trace, activation, object>,
+        #call: activation,
+        #conflicts: predicate<trace, activation, event, object>,
+        #trace: trace
+    ) =
+        forall (#target: object) { (#affected(#trace,#call,#target) => forall (#event: event) { !(#conflicts(#trace,#call,#event,#target)) }) };
     ensures normal successful_CAS_stores_summary_sum_double_bits_then_timestamp;
     ensures normal no_joint_atomicity_or_wait_free_progress_is_promised;
     ensures normal metric_and_nested_storage_ownership_are_preserved;
@@ -95,8 +273,25 @@ contract {
 
 extern fn cmt_summary_count_set(metric: ptr<mut, u8>, timestamp: u64, count: u64) -> unit
 contract {
-    requires metric_is_nonnull_live_writable_with_valid_atomic_field_layout;
-    requires caller_excludes_retirement_and_conflicting_metric_users_for_the_complete_call;
+    quant proposition #metric_storage(
+        #atomic_backend: predicate<environment, object>,
+        #atomic_cell: predicate<environment, object, object>,
+        #env: environment,
+        #live: predicate<environment, object>,
+        #metric: object,
+        #metric_type: scalar_type,
+        #null: object,
+        #u64: scalar_type,
+        #writable: predicate<environment, object, scalar_type>
+    ) =
+        (((!((#metric == #null)) && #live(#env,#metric)) && #writable(#env,#metric,#metric_type)) && forall (#cell: object) { (#atomic_cell(#env,#metric,#cell) => (#writable(#env,#cell,#u64) && #atomic_backend(#env,#cell))) });
+    quant proposition #caller_exclusion(
+        #affected: predicate<trace, activation, object>,
+        #call: activation,
+        #conflicts: predicate<trace, activation, event, object>,
+        #trace: trace
+    ) =
+        forall (#target: object) { (#affected(#trace,#call,#target) => forall (#event: event) { !(#conflicts(#trace,#call,#event,#target)) }) };
     ensures normal successful_CAS_stores_summary_count_then_timestamp;
     ensures normal no_joint_atomicity_or_wait_free_progress_is_promised;
     ensures normal metric_and_nested_storage_ownership_are_preserved;

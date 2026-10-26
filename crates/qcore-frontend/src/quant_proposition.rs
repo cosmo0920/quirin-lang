@@ -259,6 +259,11 @@ impl Reader {
         (self.at, self.nodes) = checkpoint;
         self.need(T::Symbol(S::LeftParen))?;
         let left = Box::new(self.formula(depth + 1)?);
+        if self.take(T::Symbol(S::RightParen)) {
+            // Grouping contributes parser work/depth but no additional AST node.
+            self.nodes -= 1;
+            return Ok(*left);
+        }
         let op = self.tokens.get(self.at).cloned().ok_or_else(error)?;
         if !matches!(op, T::Symbol(S::AndAnd | S::PipePipe | S::FatArrow)) {
             return Err(error());

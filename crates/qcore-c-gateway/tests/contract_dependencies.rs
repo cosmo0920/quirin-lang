@@ -448,6 +448,7 @@ fn actual_calls_and_summary_inheritance_lift_exactly_the_consulted_atoms() {
                     )]),
                     premises: BTreeMap::new(),
                     refinements: BTreeMap::new(),
+                    requirements: Vec::new(),
                 },
             )
         })

@@ -74,49 +74,140 @@ by this front end.
 ### G01p. Typed contract propositions (graph version 3)
 
 `quant proposition` is contextual inside a function contract. The structural
-parser retains its kind, text and span. Resource and bounds hypothesis replay
-parse and type check its complete expression; it supplies no C fact or effect.
-`quant theorem` and `quant effect` remain proposed and are refused.
+parser retains kind, text and span. Typed model inspection and graph replay
+parse and check the complete definition. A declared model's standalone formulas
+are entry obligations; they are not established by declaration. The strict
+resource/bounds loaders refuse unbound standalone entry obligations rather than
+installing a summary that ignores them. Grouped hypothesis metadata retains its
+existing evidence-only role. Theorem and effect representations are in
+G01t/G01e below.
 
 ```ebnf
 proposition = "quant", "proposition", "#", id, "(", [parameters], ")",
               "=", formula, ";" ;
 parameters  = parameter, {",", parameter} ;
 parameter   = "#", id, ":", sort ;
-sort        = id | "predicate", "<", [id, {",", id}], ">" ;
+sort        = id | "predicate", "<", [ids], ">"
+              | "function", "<", ids, ">" ;
+ids         = id, {",", id} ;
 formula     = "#", id, "(", [arguments], ")"
-            | "#", id, "==", "#", id
-            | "!", formula
+            | term, ("==" | "!=" | "<" | "<=" | ">" | ">="), term
+            | "!", formula | "(", formula, ")"
             | "(", formula, ("&&" | "||" | "=>"), formula, ")"
             | ("forall" | "exists"), "(", "#", id, ":", id, ")",
               "{", formula, "}" ;
-arguments   = "#", id, {",", "#", id} ;
+arguments   = term, {",", term} ;
+term        = sum ;
+sum         = product, {("+" | "-"), product} ;
+product     = primary, {"*", primary} ;
+primary     = "#", id | INTEGER | "-", primary
+            | "#", id, "(", [arguments], ")" | "(", term, ")" ;
 ```
 
 An `id` is 1–128 lowercase ASCII letters/digits/underscores beginning with a
-letter. `predicate` is a sort constructor, never a value sort. A value parameter
-has a named nominal sort. A relation parameter has the explicit ordered value
-sorts in `predicate<...>`; `predicate<>` is nullary. Only bound value parameters
-may be arguments or equality operands. Calls require a bound relation of exactly
-the declared arity and sorts. Equality requires equal value sorts. Free names,
-duplicate parameters, active binder shadowing, predicate quantification, prose
-strings, implicit predicates and unsupported operators refuse. Quantifier sorts
-are explicit and may denote empty domains; no finite or nonempty domain is
-inferred. Named sorts and relation interpretations remain supplied assumptions.
+letter. `predicate` and `function` are type constructors, never value sorts.
+`predicate<...>` lists ordered argument sorts (`predicate<>` is nullary).
+`function<A, B, R>` has arguments A/B and result R; `function<R>` is nullary.
+All relation/function symbols are explicitly bound parameters. Calls require
+exact arity and value sorts; equality requires equal value sorts. Free names,
+duplicate parameters, active binder shadowing, higher-order quantification,
+prose strings, implicit predicates/functions and unsupported operators refuse.
 
-Limits: 65,536 source bytes per definition; 64 parameters; 16 relation arguments;
-256 formula nodes and depth 32 (root depth zero). The same identifier, sort,
-arity, depth and node checks apply to schema/wire formulas. A source definition
-creates one graph atom whose ID is the `#` binder. IDs beginning `legacy_` are
-reserved, duplicate formal definitions refuse, and the existing conjunction,
-refinement and lifecycle rules require every referenced atom to exist. A graph
-containing a formal atom uses version 3; versions 1 and 2 retain their original
-encoding and refuse formal atoms. Exact serialized formula content participates
-in graph/atom digests and source replay. Interpretation and actual source binding
-are open; no theorem result or verdict authority is inferred from type checking.
+The value sort `integer` denotes mathematical unbounded integers. INTEGER is
+0 or a nonzero-leading decimal with at most 128 digits. Arithmetic and order
+require integer operands; `!=` lowers to negated equality. Functions/relations
+receive no C interpretation by their names. Target widths, sizes, constants,
+field identities, floating conversion and backend meanings require explicit
+bindings. Arithmetic does not wrap or assert that corresponding C arithmetic
+is defined. Other quantifier sorts may be empty; no finite or nonempty domain
+is inferred. Every source/model interpretation and actual premise remains open
+until checked for the exact environment. Missing interpretations are not
+negation evidence.
+
+Limits: 65,536 source bytes per definition; 64 parameters; 16 call arguments;
+256 combined formula/term AST nodes and depth 32 (root depth zero). Source
+nesting and parser work are additionally bounded (131,072 parsing steps;
+backtracking never replenishes work fuel). Schema validation rechecks identifier,
+sort, arity, node and depth limits. One definition creates one graph atom with
+its `#` binder as ID. `legacy_` is reserved; duplicate formal IDs refuse.
+
+A graph with formal atoms uses version 3. It records ungrouped formal IDs in
+its canonical sorted `requirements` list, so standalone model prerequisites
+cannot disappear. This field is omitted when empty; versions 1 and 2 retain
+their exact original encoding and refuse formal atoms or requirements. Group,
+refinement and lifecycle references retain their existing rules. Exact formal
+ASTs and requirements participate in graph digests and source replay.
+Interpretation/type checking alone supplies no theorem warrant or verdict.
 
 Implementation: `qcore_frontend::quant_proposition`,
 `qcore_schemas::quant_proposition`, `qcore_contract::hypothesis`.
+`quant_proposition_inventory` inspects specified model files and emits source/
+graph identities and entry requirements; it grants no C call permission.
+
+### G01t. Typed theorem instantiation obligations
+
+Inside a function contract, the contextual form is:
+
+```ebnf
+theorem = "quant", "theorem", "#", id, "(", [parameters], ")",
+          "using", reference, "(", [symbols], ")",
+          "requires", "(", [formula, {",", formula}], ")",
+          "yields", formula, ";" ;
+symbols = "#", id, {",", "#", id} ;
+reference = word, {".", word} ;
+```
+
+Parameters, terms and formulas follow G01p. A reference consists of nonempty ASCII
+identifier segments (letters/underscore first, letters/digits/underscores
+thereafter), at most 128 bytes each and 1,024 bytes overall, preserving case. It identifies the
+requested theorem; a spelling supplies no proof. Arguments are declared value,
+predicate or function symbols, at most 64. There are at most 32 prerequisites.
+A complete application has at most 65,536 source bytes, 64 parameters and 256
+combined formula/term nodes, depth 32. The selected reader consumes all bytes.
+
+`qcore_contract::quant_theorem::instantiate` accepts an explicitly supplied
+`TheoremSchema` and application. It checks both typed signatures, exact reference,
+argument sorts/arity and exact substituted prerequisites/conclusion. Substitution
+is conservative: a bound-name capture is refused; different binder spellings
+are not automatically equated. Model/audit references require well-formed paths
+and SHA256 values. No file, artifact contents, proof or registry authority is
+verified by those checks. The sealed, serialize-only result retains all premises,
+conclusion and artifact identities with `model_proof_binding` and `source_binding`
+**open**. No result can establish plugin suitability or discharge a premise.
+
+Structural parsing preserves the clause and generic views render it. Strict
+resource/bounds and local-condition consumers refuse applications. Implementation:
+`qcore_schemas::quant_theorem`, `qcore_frontend::quant_theorem`,
+`qcore_contract::quant_theorem`; conditional semantics/audit:
+`QCore.QuantTheorem` / `AuditQuantTheorem.lean`.
+
+### G01e. Typed conditional own-operation effects
+
+```ebnf
+effect = "quant", "effect", selector, "#", id, "(", [parameters], ")",
+         "from", "#", id, "to", "#", id,
+         "when", formula, "reads", "(", [arguments], ")",
+         "writes", "(", [arguments], ")", "frame", formula,
+         "=", formula, ";" ;
+selector = "normal" | "any" | "error", "(", word, ")" ;
+```
+
+Parameters/formulas/terms follow G01p. Entry and exit names are distinct bound
+values of sort `state`. Each footprint term has sort `object`. Reads and writes
+may overlap for read-modify-write operations. Each list has at most 64 terms;
+structurally identical duplicates within a list refuse. This is no alias proof.
+The complete definition has at most 65,536 bytes, 64 parameters and 256 combined
+formula/term nodes, depth 32 (footprint roots conservatively checked at depth 2).
+Guard, frame and transition are typed formulas over the same explicit signature.
+
+An effect is a conditional relation for the operation's own step. Its declaration
+establishes no occurrence, atomicity, memory order, synchronization, whole-call
+frame or source binding. Interference requires separate events and footprints.
+Structural parsing preserves selector/text/span; generic inclusion/views render
+it. Strict resource/bounds and local-condition consumers refuse it. No effect is
+installed as a call summary. Implementation: `qcore_schemas::quant_effect`,
+`qcore_frontend::quant_effect`; semantics/audit: `QCore.QuantEffect` /
+`AuditQuantEffect.lean`.
 
 ### G01a. Runtime import bundle
 

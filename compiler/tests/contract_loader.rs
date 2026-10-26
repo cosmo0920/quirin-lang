@@ -1763,7 +1763,7 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // Two additional declared CMetrics map/opts lifecycle model modules.
     // QUANT-CONTRACT-HYPOTHESES landing repair: the already-tracked CFL hash
     // model adds one non-v1 module and four declarations (including its type).
-    assert_eq!(modules.len(), 143, "corpus module count");
+    assert_eq!(modules.len(), 144, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
@@ -2124,7 +2124,7 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // Main adds interpreted writev and thrd_current: 495 -> 497.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (66, 497, 361)
+        (66, 497, 365)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every

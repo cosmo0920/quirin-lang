@@ -355,6 +355,25 @@ fn contract_surface_is_pinned_as_structured_clauses() {
                         | SourceContractClauseKind::QuantConditionBinding
                         | SourceContractClauseKind::QuantConditionBlock { .. }
                         | SourceContractClauseKind::QuantRegistered => {}
+                        SourceContractClauseKind::QuantProposition => {
+                            qcore_frontend::quant_proposition::parse(
+                                &clause.value.expression_source,
+                            )
+                            .unwrap();
+                        }
+                        SourceContractClauseKind::QuantTheorem => {
+                            qcore_frontend::quant_theorem::parse(&clause.value.expression_source)
+                                .unwrap();
+                        }
+                        SourceContractClauseKind::QuantEffect(selector) => {
+                            qcore_frontend::quant_effect::parse(&clause.value.expression_source)
+                                .unwrap();
+                            match selector {
+                                SourceContractExitSelector::Normal => has_normal = true,
+                                SourceContractExitSelector::Error(_) => has_error = true,
+                                SourceContractExitSelector::Any => has_any = true,
+                            }
+                        }
                         SourceContractClauseKind::Ensures(selector)
                         | SourceContractClauseKind::Quant(selector) => match selector {
                             SourceContractExitSelector::Normal => has_normal = true,

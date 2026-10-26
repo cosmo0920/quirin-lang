@@ -22,7 +22,7 @@
       "inherits": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "fe629d890215ff3ce59a4097cbd73ba007bf9c7108c80f7aa4b4c2823af2bc2d"
+      "sha256": "25c42a055b7d408faa4bb6a686103c812d221e988d71b489526e2f7f6ce96ddb"
     },
     "chunkio/chunk_residency.qv": {
       "clause_count": 18,
@@ -102,7 +102,7 @@
       "inherits": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "fcd5d00e8f453a26515621b5d4e1ec68f5f9f7c5ad7031701cf4d166848d5f39"
+      "sha256": "357c056e719924027589bf821ba9d8aa77284a48c6fa9d136fc3162078cc9e1a"
     },
     "chunkio/counters.qv": {
       "clause_count": 40,
@@ -488,7 +488,7 @@
       "inherits": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "c344b8cf5d2d76dcaf6211948ca1570191d2a152c2ddc6d6581927eb698c56ec"
+      "sha256": "79b45fd8cd059f934caecd4237411ec23e9a55f53850b8f92c9e9e48a031951f"
     },
     "chunkio/list_unlink.qv": {
       "clause_count": 18,
@@ -648,7 +648,7 @@
       "inherits": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "45436ac264a57862e2e7ac62f7f6c6094eb65185f5b90e32c6de6e9081444c9b"
+      "sha256": "0be0f1a8a64ffd5733bfc5b09c4c2bcde7d824450f2915f4c76e10d0a3024e18"
     },
     "chunkio/teardown_observation.qv": {
       "clause_count": 11,

@@ -135,6 +135,10 @@ pub enum SourceContractClauseKind {
     QuantCheck,
     /// Typed, explicitly parameterized first-order hypothesis; no truth admission.
     QuantProposition,
+    /// Checked theorem application syntax; proof and source bindings stay open.
+    QuantTheorem,
+    /// Conditional own-operation model relation; never an installed call summary.
+    QuantEffect(SourceContractExitSelector),
     /// Card `NULL-SAFETY-PROPERTY` (USER DECISION 2026-10-10): `quant
     /// null-deref #B;`, a collocated **check** that the function dereferences
     /// the pointer formal `B`, which must therefore be non-null. Like
@@ -1338,6 +1342,11 @@ impl<'a> SourceParser<'a> {
             }
             let (kind, expression_start) = if self.word(cursor, "requires") {
                 (SourceContractClauseKind::Requires, cursor + 1)
+            } else if self.word(cursor, "quant") && self.word(cursor + 1, "effect") {
+                let (selector, next) = self.contract_exit_selector(cursor + 2, close)?;
+                (SourceContractClauseKind::QuantEffect(selector), next)
+            } else if self.word(cursor, "quant") && self.word(cursor + 1, "theorem") {
+                (SourceContractClauseKind::QuantTheorem, cursor + 2)
             } else if self.word(cursor, "quant") && self.word(cursor + 1, "proposition") {
                 (SourceContractClauseKind::QuantProposition, cursor + 2)
             } else if self.word(cursor, "quant") && self.word(cursor + 1, "checks") {

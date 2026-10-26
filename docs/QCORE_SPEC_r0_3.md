@@ -1816,11 +1816,15 @@ The extension distinguishes three judgments:
   MUST NOT be treated as an assertion that the effect occurred.
 
 The first implemented source increment is `quant proposition` with explicit
-value and relation parameters and first-order formulas (G01p). It is a typed
+value/relation/function parameters, mathematical integer terms and first-order
+formulas (G01p). It is a typed
 hypothesis representation; its relation interpretations and actual source
-binding remain obligations. Theorem application and effect clauses remain
-Proposed. Mathematical semantics are in `QCore.QuantProposition`; the matching
-libc model supplies conditional decomposition theorems, not C extraction.
+binding remain obligations. Typed theorem application and effect clauses are implemented as bounded
+model representations (G01t/G01e); trusted proof verification and C effect
+interpretation remain Proposed. Mathematical semantics are in `QCore.QuantProposition`; the matching
+libc and CMetrics models supply conditional decomposition theorems, not C
+extraction. Standalone model prerequisites are retained explicitly and refused
+by interpreted C-summary loaders until their source valuation is supported.
 
 The intended contextual forms are `quant proposition`, `quant theorem` and
 `quant effect`; their exact bounded syntax and consumers MUST be registered in
@@ -1850,7 +1854,9 @@ Compare-exchange success and failure are separate cases. Mutex-backed failures,
 initialization failure and platform-specific behavior MUST remain represented.
 An operation's own frame is not a claim that concurrent actors leave memory
 unchanged over the whole call. Atomicity alone establishes no synchronization.
-These theorem/effect requirements remain Proposed until their consumers exist.
+The structural interfaces retain these obligations. Their trusted production
+consumers remain Proposed; instantiation produces obligations with open model
+proof and source bindings.
 
 The all-provider migration MUST account for every previous hypothesis,
 including outer assumptions, and preserve its guards, alternatives, quantifier

@@ -15,8 +15,8 @@ extern fn cio_destroy(
     context: own<ChunkContext> use one
 ) -> unit
 contract {
-    requires context_is_live;
-    requires wrapper_obligations_are_discharged;
+    quant proposition #r060(#context: object, #env: environment, #live: predicate<environment, object>) = #live(#env,#context);
+    quant proposition #r192(#context: object, #discharged: predicate<environment, obligation>, #env: environment, #wrapper_obligation: predicate<environment, object, obligation>) = forall (#obligation: obligation) { (#wrapper_obligation(#env,#context,#obligation) => #discharged(#env,#obligation)) };
     ensures normal every_stream_is_destroyed;
     ensures normal every_chunk_backend_is_closed;
     ensures normal chunk_counter_is_zero;
