@@ -39,5 +39,27 @@
     "embedded_storage_freed_by_destroy": false,
     "private_record": "private/cmt-getter-closure/hash-zero-witness.json"
   },
-  "configured_routes": "still running against the frozen BASE binary and snapshot at prediction time"
+  "configured_routes": {
+    "system": {
+      "command_exit": 0,
+      "stable": true,
+      "started_utc": "2026-10-26T01:05:26.677942+00:00",
+      "ended_utc": "2026-10-26T01:14:50.520453+00:00",
+      "functions": 448,
+      "safe": 101,
+      "unknown": 343,
+      "provisional_unsafe": 4
+    },
+    "slice": {
+      "command_exit": 0,
+      "stable": true,
+      "started_utc": "2026-10-26T01:14:50.572965+00:00",
+      "ended_utc": "2026-10-26T01:23:24.794783+00:00",
+      "functions": 404,
+      "safe": 57,
+      "pending": 4,
+      "unknown": 342,
+      "provisional_unsafe": 1
+    }
+  }
 }

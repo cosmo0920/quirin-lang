@@ -136,6 +136,16 @@ fn has_address_call(tokens: &[Token], suffix: &str, argument: &str) -> bool {
     })
 }
 
+fn has_null_assignment(tokens: &[Token], field: &str) -> bool {
+    has(tokens, &["metric", "-", ">", field, "=", "NULL", ";"])
+        || has(
+            tokens,
+            &[
+                "metric", "-", ">", field, "=", "(", "(", "void", "*", ")", "0", ")", ";",
+            ],
+        )
+}
+
 fn integer(text: &str) -> Option<u64> {
     let text = text.trim_end_matches(['u', 'U', 'l', 'L']);
     text.strip_prefix("0x")
@@ -313,10 +323,7 @@ fn extract(tokens: &[Token]) -> Option<Evidence> {
     let release_ok = has(
         release,
         &["free", "(", "metric", "-", ">", "hist_buckets", ")"],
-    ) && has(
-        release,
-        &["metric", "-", ">", "hist_buckets", "=", "NULL", ";"],
-    );
+    ) && has_null_assignment(release, "hist_buckets");
     let root_ok = has_call(root, "map_lock")
         && has_call(root, "map_metric_get_unlocked")
         && has_call(root, "map_unlock")
@@ -466,6 +473,10 @@ struct metric *cmt_map_metric_get(struct opts *opts, struct map *map, int n, cha
     fn complete_graph_is_required_and_source_mutations_fail_closed() {
         let tokens = tokenize(GRAPH);
         assert!(extract(&tokens).is_some());
+        assert!(
+            extract(&tokenize(&GRAPH.replace("NULL", "((void*)0)"))).is_some(),
+            "the pinned preprocessor's canonical NULL expansion is equivalent"
+        );
         for (old, new) in [
             ("hash == 0", "hash == 1"),
             ("metric_static_set = 1", "metric_static_set = 0"),
@@ -475,6 +486,7 @@ struct metric *cmt_map_metric_get(struct opts *opts, struct map *map, int n, cha
                 "free(metric->hist_buckets)",
                 "observe(metric->hist_buckets)",
             ),
+            ("hist_buckets = NULL", "hist_buckets = ((void*)1)"),
             ("map_unlock(map)", "observe(map)"),
             ("cfl_sds_len(opts->fqname)", "8"),
             ("labels_count == 0", "labels_count == 1"),

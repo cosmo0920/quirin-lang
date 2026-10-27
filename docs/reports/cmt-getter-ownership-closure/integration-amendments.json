@@ -1,0 +1,37 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "CMT-GETTER-OWNERSHIP-CLOSURE",
+ "base": "3e3d707bf7d8d12fb29d6cf6b0e690561ef80d64",
+ "measured_tip": "ab6569e42b8108d493a28d3cc8612d108bc41369",
+ "increment_paragraph": "**CMT-GETTER-OWNERSHIP-CLOSURE (2026-10-26).** The [card](../../reports/cmt-getter-ownership-closure/README.md) validates a reachable resource-custody violation in the pinned CMetrics labeled getter path. The NUL-free metric name `42 d5 68 e1 38 d7 27 ff` has XXH3 digest zero; one empty label preserves the stream, selects the embedded metric, allocates histogram storage without setting `metric_static_set`, and reaches map destruction without freeing that storage. Fresh BASE/planner preceded prediction and implementation. The first TIP attempt was unchanged because the source adapter refused Clang's canonical `((void*)0)` expansion; the corrected, fail-closed adapter accepts only literal `NULL` or that exact zero spelling and rejects a nonzero control. Final paired corpus changes exactly `cmt_map_metric_get` Unknown to provisional Unsafe: 1,013 Safe / 3,812 Unknown / 9 provisional Unsafe becomes 1,013 / 3,811 / 10. System remains 101 / 343 / 4 and slice remains 57 Safe / 4 Pending / 342 Unknown / 1 provisional Unsafe because neither configured selection contains the getter row, so the prediction for those routes misses. All NULL projections and all other semantic rows are unchanged after exact evidence-version and observation-only reading attribution. Matching generic Rust ownership state, placeholder-free Lean proofs and canonical CFL/CMetrics `.qv` models preserve fail-closed executable adoption; parsing a model grants no call permission.",
+ "status_paragraph": "CMT-GETTER-OWNERSHIP-CLOSURE validates the pinned labeled hash-zero counterexample and moves exactly corpus `cmt_map_metric_get` Unknown to provisional Unsafe (1,013 Safe / 3,811 Unknown / 10 provisional Unsafe). System and slice remain unchanged because their selections contain no getter row; all NULL projections and other semantic rows remain unchanged. This is a property/profile/source-bounded violation, not whole-Fluent-Bit safety coverage or an upstream-fix claim. Generic CMetrics contract adoption, broad disjoint-frame transport and source correspondence remain open.",
+ "profiles": [],
+ "ledger": [
+  {
+   "id": "CMT-MAP-METRIC-GET-OWNERSHIP-CHAIN",
+   "operation": "retire",
+   "why": "Discharged by CMT-GETTER-OWNERSHIP-CLOSURE: generic Rust and matching audited Lean model the complete primary/index/cache/embedded-storage/borrow/destructor graph, pinned CFL and CMetrics declarations state the hash effects and concrete nonzero safety premise, and the exact NUL-free XXH3-zero witness reaches a validated destruction leak through the public histogram path. Fresh ordered paired evidence moves exactly corpus cmt_map_metric_get Unknown to provisional Unsafe while preserving its earlier unsupported-helper evidence. Generic executable contract adoption and source correspondence remain separately tracked.",
+   "source": "docs/reports/cmt-getter-ownership-closure/README.md"
+  },
+  {
+   "id": "CMT-LABELED-HASH-ZERO-STATIC-STORAGE",
+   "operation": "retire",
+   "why": "Discharged by the validated pinned witness in CMT-GETTER-OWNERSHIP-CLOSURE: a valid NUL-free name plus one empty label produces digest zero, selects embedded storage, allocates histogram state with metric_static_set still false, and is not freed by destruction. The resulting getter row is provisional Unsafe for the recorded property/profile/source; no broader upstream claim is made.",
+   "source": "docs/reports/cmt-getter-ownership-closure/README.md"
+  },
+  {
+   "id": "CMT-MAP-OPTS-CONTRACT-ADOPTION",
+   "operation": "append",
+   "text": "CMT-GETTER-OWNERSHIP-CLOSURE adds a source-bound analyzer adapter for one complete pinned getter counterexample and changes that row to provisional Unsafe. It does not turn cmetrics/map_lifetime.qv, opts_lifetime.qv or setter declarations into executable summaries, and it supplies no generic checked consumer for copied/retained inputs, nested ownership, index/cache aliases, expiration or partial cleanup. Those adoption obligations remain Open.",
+   "source": "docs/reports/cmt-getter-ownership-closure/README.md"
+  },
+  {
+   "id": "CONTRACT-REQUIRE-BUNDLE-SHORTHAND",
+   "operation": "register",
+   "title": "Add pinned shorthand bundles for repeated provider contract requirements",
+   "text": "CMetrics and CFL contracts repeat long require lists. Add explicitly declared, provider-owned requirement bundles such as `contract_cmetrics_resource_v1` and `contract_cfl_resource_v1` whose expansion is pinned by exact clause identity, order and provenance. Missing, unknown, cyclic, duplicate or signature-mismatched bundles must refuse. A bundle is syntax-level requirement expansion only: it is not an alias for executable `resource_contract_v1`, supplies no call permission and cannot weaken Unknown. DISCHARGE: matching parser/formatter and Rust semantic support, placeholder-free Lean definitions/theorems, canonical `.qv` declarations, provider inventory/count/load-path pins, mutation controls for every refusal and fresh native attribution if any verdict-bearing semantics move.",
+   "source": "docs/reports/cmt-getter-ownership-closure/README.md",
+   "recorded_by": "CMT-GETTER-OWNERSHIP-CLOSURE"
+  }
+ ]
+}
