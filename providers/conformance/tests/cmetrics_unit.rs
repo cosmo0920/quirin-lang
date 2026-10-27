@@ -114,7 +114,20 @@ fn cmetrics_process_checks_unit_paths_and_rejects_scalar_or_unbound_claims() {
     rebound.task_digest = wrong_key.task_digest();
     let rejected = registry.verify_v2(&rebound, &wrong_key, Some(&replay));
     assert_eq!(rejected.verdict, ProposedVerdict::Unknown);
-    let false_policy = contract.replace("field == 1", "field == 0");
+    // Card LANDING-REPAIR: since the quant migration (6bcda2983) the contract
+    // also states the entry domain `(#old_field == 0) || (#old_field == 1)`,
+    // so a blanket `field == 1` rewrite corrupts that entry condition too.
+    // The derivation refuses such a domain outright; the false policy proper
+    // changes only the normal exit condition and must still be refused by
+    // the verifier.
+    let corrupted_domain = contract.replace("field == 1", "field == 0");
+    assert_eq!(contract.matches("field == 1").count(), 2);
+    assert!(
+        BooleanFieldSourceTask::derive(&summary, "counter.c", &corrupted_domain, target.clone())
+            .is_err()
+    );
+    assert_eq!(contract.matches("(#field == 1)").count(), 1);
+    let false_policy = contract.replace("(#field == 1)", "(#field == 0)");
     let false_replay =
         BooleanFieldSourceTask::derive(&summary, "counter.c", &false_policy, target).unwrap();
     assert_eq!(

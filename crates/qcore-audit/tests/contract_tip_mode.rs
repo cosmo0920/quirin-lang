@@ -503,7 +503,8 @@ fn a_tip_entry_keeps_its_payload_and_version_four_review_stamps() {
     );
     assert_same_pin_payload_with_monotone_stamps(&tip_lock, &regenerated);
     // `--untrack-tip` turns it back into a reviewed identity at HEAD (A):
-    // the lock is again the reviewed-only version-2 lock, byte for byte.
+    // the lock is again the reviewed-only lock (no `tip` section), equal to
+    // it except for review stamps, which may only move forward.
     succeeded(&tree.pin(&["--function", "box_drop", "--untrack-tip"]));
     assert_same_pin_payload_with_monotone_stamps(
         &reviewed,
@@ -548,12 +549,29 @@ fn assert_same_pin_payload_with_monotone_stamps(before: &str, after: &str) {
     assert_eq!(before["lock_version"], 4);
     assert_eq!(after["lock_version"], 4);
     for section in ["pinned", "flexible", "tip"] {
-        let old = before[section].as_array().unwrap();
+        // Card LANDING-REPAIR: the lock omits an empty `tip` section
+        // (`ContractLock::tip` is `skip_serializing_if = "Vec::is_empty"`
+        // since CONTRACT-PIN-TIP-MODE), so a reviewed-only lock has none.
+        // Both locks must agree on whether a section is present; an absent
+        // section holds no entry, and every present entry needs its stamp.
+        assert_eq!(
+            before.get(section).is_some(),
+            after.get(section).is_some(),
+            "section `{section}` appeared or disappeared"
+        );
+        let Some(old) = before.get(section) else {
+            continue;
+        };
+        let old = old.as_array().unwrap();
         let new = after[section].as_array_mut().unwrap();
         assert_eq!(old.len(), new.len());
         for (a, b) in old.iter().zip(new) {
-            let old_stamp = a["pinned_at"].as_str().unwrap();
-            let new_stamp = b["pinned_at"].as_str().unwrap();
+            let old_stamp = a["pinned_at"]
+                .as_str()
+                .expect("an entry without a pin stamp");
+            let new_stamp = b["pinned_at"]
+                .as_str()
+                .expect("an entry without a pin stamp");
             assert!(new_stamp >= old_stamp, "review stamp moved backwards");
             b["pinned_at"] = a["pinned_at"].clone();
         }

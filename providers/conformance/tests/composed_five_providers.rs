@@ -809,7 +809,9 @@ fn the_five_package_registry_composes_only_what_its_packages_implement() {
             &routes[1],
             &cmetrics_source,
             cmetrics_contract.clone(),
-            ("field == 1", "field == 0"),
+            // Card LANDING-REPAIR: only the normal exit condition; the
+            // entry domain `(#old_field == 0) || (#old_field == 1)` stays.
+            ("(#field == 1)", "(#field == 0)"),
         ),
     ] {
         let false_contract = BooleanFieldSourceTask::derive(

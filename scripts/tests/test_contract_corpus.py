@@ -68,9 +68,12 @@ class CanonicalCorpus(unittest.TestCase):
         # in qcore-provider-librdkafka (83 -> 84 owned).
         # Source-audited map/opts models add two CMetrics-owned modules.
         # CMT-GETTER-OWNERSHIP-CLOSURE adds CFL's declared hash-state model.
+        # 143 -> 144: quant-contract-hypotheses (6ecb5498d) adds the CFL
+        # conditional own-event model cfl/atomic.qv in quirin-provider-cfl
+        # (55 -> 56); LANDING-REPAIR records the crate count it moved.
         self.assertEqual(len(modules), 144)
         self.assertEqual(sum(any(part.startswith("qcore-provider-") for part in path.parts) for path in modules.values()), 88)
-        self.assertEqual(sum(any(part.startswith("quirin-provider-") for part in path.parts) for path in modules.values()), 55)
+        self.assertEqual(sum(any(part.startswith("quirin-provider-") for part in path.parts) for path in modules.values()), 56)
         libc = [path for name, path in modules.items() if name.startswith("libc/")]
         self.assertTrue(libc and all("quirin-provider-libc" in path.parts for path in libc))
 
