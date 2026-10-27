@@ -28,5 +28,9 @@
   "descriptor_close_claim": false,
   "slice_route_historical_directory_label": "90978ac6",
   "slice_preparation_source_revision": "34155955e4962a56d94eb23c03a002880899a0d1",
-  "slice_revision_authority": "private/w47-tail/attempt-1/prep/prepare.json:source_revision and pin tool output; the historical directory label is not a reviewed revision"
+  "slice_revision_authority": "private/w47-tail/attempt-1/prep/prepare.json:source_revision and pin tool output; the historical directory label is not a reviewed revision",
+  "documentation_correction": {
+    "formal_declaration_unchanged_from": "58e80090d",
+    "interpretation": "No descriptor-lifecycle effect is stated; the wrapper adds no direct close but backend del may close pipe descriptors."
+  }
 }

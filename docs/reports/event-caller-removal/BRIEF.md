@@ -7,3 +7,10 @@ First concrete increment: declare the exact `mk_event_timeout_disable(loop, data
 This increment carries an explicit removal effect across a declared function boundary. It does not implement retained/replayed lifetime imports across translation units, conditional host/record correlation, collector-by-id resolution, derived loop-path equality, or threaded teardown ordering. Keep `FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME`, `RETENTION-DERIVED-LOOP-PATH-EQUALITIES`, `RETENTION-PATH-LOOP-DESTROY-ADMISSION` and `MK-EVENT-DESCRIPTOR-CUSTODY` open. Body review and pins are declared assumptions, not a new automatic body proof.
 
 Close with the standing scoped gate on the final card commit, source reviews and pin checks at all three revisions, provider/package checks, complete BASE/TIP resource/NULL/dependency attribution through the measure plugin, one integration amendment paragraph and current status. The integrator runs the full landing gate and publishes the live profiles. No new native safety gain is promised.
+
+Documentation correction after semantic implementation: the statement above
+that disable does not close a descriptor describes the selected epoll reading,
+not every backend. The wrapper contains no extra close call, but its delegated
+backend may close descriptors (the Libevent `_mk_event_del` closes pipe ends).
+This card states no descriptor-lifecycle effect. The formal removal clauses
+and their interpreted semantics are unchanged.

@@ -3,8 +3,9 @@
 The canonical Monkey contract now states the registration removal performed by
 `mk_event_timeout_disable`. Its complete body forwards directly to
 `mk_event_del`. A caller can therefore end the exact unpoisoned registration
-across this declared API boundary before releasing its object. The call does
-not close a descriptor or destroy the loop. The wrapper is a pinned declared
+across this declared API boundary before releasing its object. The wrapper
+adds no close call and does not destroy the loop; descriptor effects of the
+delegated backend are outside this contract. The wrapper is a pinned declared
 assumption; the body-standing machinery does not automatically prove its
 removal clause.
 
