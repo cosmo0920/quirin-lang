@@ -1,0 +1,653 @@
+{
+  "schema": "cmt-getter-landing-native/1",
+  "merge": "f6591ceb4",
+  "measured_tip": "b403cd4deddaab711f446f383270363aca39a2af",
+  "previous_published": "d4c43b5accdf126523be0089183f346c09f0c281",
+  "command_exit": 0,
+  "run_record": "private/codex-cmt-landing-20261027/native-2/sides/tip/run.json",
+  "source_date_epoch": 1767225600,
+  "routes": {
+    "corpus": {
+      "figures": {
+        "after": {
+          "null_rows": 4921,
+          "null_verdicts": {
+            "Safe": 2549,
+            "Unknown": 2355,
+            "Unsafe": 17
+          },
+          "null_verdicts_sha256": "5e3809dd6ee98d3205736824d7d2f1e932836e296d4fc47f16f614b7a158f493",
+          "row_statuses": {
+            "Safe": 1013,
+            "Unknown": 3811,
+            "Unsafe": 10
+          },
+          "row_verdicts_sha256": "6019562445f06309f8419ff7c644cd8b764c8258c7deb625a60ba4227f603f82",
+          "rows": 4834,
+          "unit_statuses": {
+            "Safe": 8,
+            "Unknown": 165,
+            "Unsafe": 8,
+            "data_only": 4
+          },
+          "unit_verdicts_sha256": "58c0d37734220a4427792bc8b13569468da6e48cfd2e2425c9c02a96226cb770",
+          "units": 185
+        },
+        "before": {
+          "null_rows": 4921,
+          "null_verdicts": {
+            "Safe": 2549,
+            "Unknown": 2355,
+            "Unsafe": 17
+          },
+          "null_verdicts_sha256": "c4e8644bac151ab51e4c887e27083ee0186447d5a42ebbd71270ce404863518c",
+          "row_statuses": {
+            "Safe": 1013,
+            "Unknown": 3812,
+            "Unsafe": 9
+          },
+          "row_verdicts_sha256": "7145778055e0c7b56f9b5ff434151696e3c28402f7b947da8bf6523f243fcc78",
+          "rows": 4834,
+          "unit_statuses": {
+            "Safe": 8,
+            "Unknown": 166,
+            "Unsafe": 7,
+            "data_only": 4
+          },
+          "unit_verdicts_sha256": "1d405041fde21d8b2028879c6b95cee7b3784b045b5632d310a61b2bd833c3e2",
+          "units": 185
+        }
+      },
+      "moves": [
+        {
+          "leaves_added": [
+            {
+              "category": "leak",
+              "description": "live obligation acquired at cmt_map.c:210",
+              "origin": "cmt_map.c:210"
+            }
+          ],
+          "leaves_removed": [],
+          "other_fields_changed": [],
+          "row": "cmetrics::cmt_map.c::unit#0::resource-custody.v1::cmetrics::cmt_map_metric_get#0",
+          "status": [
+            "Unknown",
+            "Unsafe"
+          ]
+        }
+      ],
+      "content_changes": [],
+      "unmatched": [],
+      "conflicts": {
+        "after": [],
+        "before": []
+      },
+      "status": "complete"
+    },
+    "slice": {
+      "figures": {
+        "after": {
+          "null_rows": 406,
+          "null_verdicts": {
+            "Safe": 190,
+            "Unknown": 216
+          },
+          "null_verdicts_sha256": "08e9b5da9fe871894264c1b276f846c4cd387a95be5e4704fb4ac49e1dac744b",
+          "row_statuses": {
+            "Pending": 4,
+            "Safe": 57,
+            "Unknown": 342,
+            "Unsafe": 1
+          },
+          "row_verdicts_sha256": "a84686d4fd6a52b090bac9ed9302c52f2d79c1439fc7dfbbf421589ff4dd8781",
+          "rows": 404,
+          "unit_statuses": {
+            "Unknown": 15,
+            "Unsafe": 1
+          },
+          "unit_verdicts_sha256": "54e95d5f88252a15b9dd02fb3878b6286b16eeea24a5a4cfd4fde8a08af830e5",
+          "units": 16
+        },
+        "before": {
+          "null_rows": 406,
+          "null_verdicts": {
+            "Safe": 190,
+            "Unknown": 216
+          },
+          "null_verdicts_sha256": "08e9b5da9fe871894264c1b276f846c4cd387a95be5e4704fb4ac49e1dac744b",
+          "row_statuses": {
+            "Pending": 4,
+            "Safe": 57,
+            "Unknown": 342,
+            "Unsafe": 1
+          },
+          "row_verdicts_sha256": "a84686d4fd6a52b090bac9ed9302c52f2d79c1439fc7dfbbf421589ff4dd8781",
+          "rows": 404,
+          "unit_statuses": {
+            "Unknown": 15,
+            "Unsafe": 1
+          },
+          "unit_verdicts_sha256": "54e95d5f88252a15b9dd02fb3878b6286b16eeea24a5a4cfd4fde8a08af830e5",
+          "units": 16
+        }
+      },
+      "moves": [],
+      "content_changes": [],
+      "unmatched": [],
+      "conflicts": {
+        "after": [],
+        "before": []
+      },
+      "status": "complete"
+    },
+    "system": {
+      "figures": {
+        "after": {
+          "null_rows": 454,
+          "null_verdicts": {
+            "Safe": 211,
+            "Unknown": 243
+          },
+          "null_verdicts_sha256": "18d3b6d0fee4bc3f929e5dac2474bfb88a2290f3163dc698dc2abc3ba94155b3",
+          "row_statuses": {
+            "Safe": 101,
+            "Unknown": 343,
+            "Unsafe": 4
+          },
+          "row_verdicts_sha256": "1d17077f4986f2ea53867a1a2854eb5d5c54c22d755520a7151c5a9c1c6f0003",
+          "rows": 448,
+          "unit_statuses": {
+            "Unknown": 13,
+            "Unsafe": 2
+          },
+          "unit_verdicts_sha256": "d326464ed189bac74776761057f9be31bd5197eea46563b8991137944ed2a01f",
+          "units": 15
+        },
+        "before": {
+          "null_rows": 454,
+          "null_verdicts": {
+            "Safe": 211,
+            "Unknown": 243
+          },
+          "null_verdicts_sha256": "18d3b6d0fee4bc3f929e5dac2474bfb88a2290f3163dc698dc2abc3ba94155b3",
+          "row_statuses": {
+            "Safe": 101,
+            "Unknown": 343,
+            "Unsafe": 4
+          },
+          "row_verdicts_sha256": "1d17077f4986f2ea53867a1a2854eb5d5c54c22d755520a7151c5a9c1c6f0003",
+          "rows": 448,
+          "unit_statuses": {
+            "Unknown": 13,
+            "Unsafe": 2
+          },
+          "unit_verdicts_sha256": "d326464ed189bac74776761057f9be31bd5197eea46563b8991137944ed2a01f",
+          "units": 15
+        }
+      },
+      "moves": [],
+      "content_changes": [],
+      "unmatched": [],
+      "conflicts": {
+        "after": [],
+        "before": []
+      },
+      "status": "complete"
+    }
+  },
+  "files": [
+    {
+      "source": "private/codex-cmt-landing-20261027/native-2/native-comparison.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/native-comparison.json.gz",
+      "sha256": "6000fa10ded7a46aa2acfebc2277f00c286be96d0a0615eade7ab9a9e9211c24",
+      "bytes": 35520,
+      "gzip_bytes": 6486
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/d4c43b5accdf126523be0089183f346c09f0c281/eight-home/corpus/corpus/monkey-source.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/corpus/corpus/monkey-source.json.gz",
+      "sha256": "ba459c8ab988fc3e97b1efd8a9edbb3ffbd5c4933f79a2b77ae2464ad9f7ff2f",
+      "bytes": 1665415,
+      "gzip_bytes": 41994
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/d4c43b5accdf126523be0089183f346c09f0c281/eight-home/corpus/corpus/resource-diagnostics.chunk-contracts.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/corpus/corpus/resource-diagnostics.chunk-contracts.json.gz",
+      "sha256": "c56b0e2ac106ea57362cdc8d76a39a49ac4edcd02c1d46bfc0133b20c4f5cf88",
+      "bytes": 4190342,
+      "gzip_bytes": 282406
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/d4c43b5accdf126523be0089183f346c09f0c281/eight-home/corpus/corpus/resource-diagnostics.components.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/corpus/corpus/resource-diagnostics.components.json.gz",
+      "sha256": "6ba33628efa8a82c4403b86771793742a81f110dbacfc60d2fa1bdc4bfdbd07b",
+      "bytes": 108190239,
+      "gzip_bytes": 10316251
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/d4c43b5accdf126523be0089183f346c09f0c281/eight-home/corpus/corpus/resource-diagnostics.contracts.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/corpus/corpus/resource-diagnostics.contracts.json.gz",
+      "sha256": "29ebc1bbdf1cdcdcd705555be5a6ac3a677b77e12998891ad77223bcef9c9810",
+      "bytes": 55394410,
+      "gzip_bytes": 2468047
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/d4c43b5accdf126523be0089183f346c09f0c281/eight-home/corpus/corpus/resource-diagnostics.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/corpus/corpus/resource-diagnostics.json.gz",
+      "sha256": "03627744273bbf95ad6d1e429d30727616859d449a5c054b5b57ec3c66c6851f",
+      "bytes": 114388169,
+      "gzip_bytes": 10413951
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/d4c43b5accdf126523be0089183f346c09f0c281/eight-home/corpus/corpus/resource-diagnostics.source-effects.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/corpus/corpus/resource-diagnostics.source-effects.json.gz",
+      "sha256": "481a2b38df538e56c94e9676d4699f9f922d23c2632b51ef1ed77f68a2fbd955",
+      "bytes": 122792,
+      "gzip_bytes": 17340
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/d4c43b5accdf126523be0089183f346c09f0c281/eight-home/corpus/corpus/run.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/corpus/corpus/run.json.gz",
+      "sha256": "34347b710042b83cf47d861e93837590403838971e4461084453556c6e1a2ace",
+      "bytes": 1160,
+      "gzip_bytes": 587
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/d4c43b5accdf126523be0089183f346c09f0c281/eight-home/corpus/corpus-null.jsonl",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/corpus/corpus-null.jsonl.gz",
+      "sha256": "60338a5796fbd6c242ce788fa6e5c527b60d042ab5c0fbfe3892573a3a97625e",
+      "bytes": 46197279,
+      "gzip_bytes": 3012985
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/d4c43b5accdf126523be0089183f346c09f0c281/eight-home/corpus/corpus-null.summary.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/corpus/corpus-null.summary.json.gz",
+      "sha256": "bc7d5dc2b803367d79b9c8f9841cce2cf599dce502b2d0df1dd589db4d50af9a",
+      "bytes": 64900,
+      "gzip_bytes": 3637
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/d4c43b5accdf126523be0089183f346c09f0c281/eight-home/corpus/corpus-outer.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/corpus/corpus-outer.json.gz",
+      "sha256": "497745f3abb2bcbbd86378065ec22dfd95e5e58010eeb01b6aa503314ce66422",
+      "bytes": 711276,
+      "gzip_bytes": 20541
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/d4c43b5accdf126523be0089183f346c09f0c281/eight-home/corpus/invocation.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/corpus/invocation.json.gz",
+      "sha256": "db2c6e7e350874be483d7fd5d4c5270fcfaa183a7094217564122efe78da3dab",
+      "bytes": 4944,
+      "gzip_bytes": 1326
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/corpus/corpus/monkey-source.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/corpus/corpus/monkey-source.json.gz",
+      "sha256": "ba459c8ab988fc3e97b1efd8a9edbb3ffbd5c4933f79a2b77ae2464ad9f7ff2f",
+      "bytes": 1665415,
+      "gzip_bytes": 41994,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/corpus/corpus/resource-diagnostics.chunk-contracts.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/corpus/corpus/resource-diagnostics.chunk-contracts.json.gz",
+      "sha256": "c56b0e2ac106ea57362cdc8d76a39a49ac4edcd02c1d46bfc0133b20c4f5cf88",
+      "bytes": 4190342,
+      "gzip_bytes": 282406,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/corpus/corpus/resource-diagnostics.components.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/after/corpus/corpus/resource-diagnostics.components.json.gz",
+      "sha256": "0f54feadc21ffe15125cedff36e1c2b10ee14a7744199e1ecfa325e17fb373f9",
+      "bytes": 108190073,
+      "gzip_bytes": 10316414
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/corpus/corpus/resource-diagnostics.contracts.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/after/corpus/corpus/resource-diagnostics.contracts.json.gz",
+      "sha256": "3e57d25d02177c30221934b85846f28563f4918306c04688c2331eb91aefdaa0",
+      "bytes": 55394410,
+      "gzip_bytes": 2468314
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/corpus/corpus/resource-diagnostics.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/after/corpus/corpus/resource-diagnostics.json.gz",
+      "sha256": "5138c59069aaf63fbbf9e006d1db371f9670d305e57a09983dab721efa61cd98",
+      "bytes": 114388262,
+      "gzip_bytes": 10414387
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/corpus/corpus/resource-diagnostics.source-effects.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/after/corpus/corpus/resource-diagnostics.source-effects.json.gz",
+      "sha256": "d869bf227353bda942a8f1ef494d618d2252cad8e15f89112542d38338ea47d0",
+      "bytes": 122792,
+      "gzip_bytes": 17338
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/corpus/corpus/run.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/after/corpus/corpus/run.json.gz",
+      "sha256": "07dd5d6e123e1572775cea262d0cd3b3fe8d0a68be147b7616cbf31ae7bc9a32",
+      "bytes": 1072,
+      "gzip_bytes": 558
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/corpus/corpus-null.jsonl",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/after/corpus/corpus-null.jsonl.gz",
+      "sha256": "3a748b50aeab05a3b3ebc654062dbc9664aaac99a8a4f26cd63d691026906465",
+      "bytes": 46197277,
+      "gzip_bytes": 3013002
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/corpus/corpus-null.summary.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/after/corpus/corpus-null.summary.json.gz",
+      "sha256": "a4503189099be526778d038b68b9159632311573c63dd2da7acae906d16d1e5c",
+      "bytes": 64901,
+      "gzip_bytes": 3637
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/corpus/corpus-outer.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/after/corpus/corpus-outer.json.gz",
+      "sha256": "6810b3dabd1b78375a1998e27c4489f1e3cdae13ecfb72579fcd9898f737e5c4",
+      "bytes": 711280,
+      "gzip_bytes": 20540
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/corpus/invocation.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/after/corpus/invocation.json.gz",
+      "sha256": "d57e308420122d57d89750a2cc6263a1aeca4153eda674b1a771c056d31cc09a",
+      "bytes": 4372,
+      "gzip_bytes": 1295
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/d4c43b5accdf126523be0089183f346c09f0c281/fluent-bit-tail-pause/slice/invocation.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/slice/invocation.json.gz",
+      "sha256": "608661691f2181642e8f85631c6f6723ee61099c0441bc18f2c115848be25999",
+      "bytes": 4745,
+      "gzip_bytes": 1326
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/d4c43b5accdf126523be0089183f346c09f0c281/fluent-bit-tail-pause/slice/resource-diagnostics.chunk-contracts.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/slice/resource-diagnostics.chunk-contracts.json.gz",
+      "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+      "bytes": 385,
+      "gzip_bytes": 260
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/d4c43b5accdf126523be0089183f346c09f0c281/fluent-bit-tail-pause/slice/resource-diagnostics.components.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/slice/resource-diagnostics.components.json.gz",
+      "sha256": "11a7330dc28ae3beff3d6bffaf2a6a5da5f389d3777721d18bd32d8c225b24ab",
+      "bytes": 3763457,
+      "gzip_bytes": 346025
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/d4c43b5accdf126523be0089183f346c09f0c281/fluent-bit-tail-pause/slice/resource-diagnostics.contracts.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/slice/resource-diagnostics.contracts.json.gz",
+      "sha256": "e5d0fb33fcb64cc6b7ee8290f7f66b3c7487f85e094b624c8839349a808fe184",
+      "bytes": 22136557,
+      "gzip_bytes": 1169536
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/d4c43b5accdf126523be0089183f346c09f0c281/fluent-bit-tail-pause/slice/resource-diagnostics.invocation.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/slice/resource-diagnostics.invocation.json.gz",
+      "sha256": "cb39dbc2e7e00ebbebd7c457160a7c7094fe1e76c72fd5cde77471f8daf1f20b",
+      "bytes": 6797,
+      "gzip_bytes": 2285
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/d4c43b5accdf126523be0089183f346c09f0c281/fluent-bit-tail-pause/slice/resource-diagnostics.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/slice/resource-diagnostics.json.gz",
+      "sha256": "4b66fe0ab1a3ebf0c34818810784b27adc15395d003ca1559ac7a0c54a9ab0e4",
+      "bytes": 4367076,
+      "gzip_bytes": 358555
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/d4c43b5accdf126523be0089183f346c09f0c281/fluent-bit-tail-pause/slice/resource-diagnostics.source-effects.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/slice/resource-diagnostics.chunk-contracts.json.gz",
+      "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+      "bytes": 385,
+      "gzip_bytes": 260,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/d4c43b5accdf126523be0089183f346c09f0c281/fluent-bit-tail-pause/slice/slice-null.jsonl",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/slice/slice-null.jsonl.gz",
+      "sha256": "3963d2ad89e8d65531772100e106d49c73e9b2b78fffaffae38e11dc81bc865e",
+      "bytes": 1853651,
+      "gzip_bytes": 96991
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/d4c43b5accdf126523be0089183f346c09f0c281/fluent-bit-tail-pause/slice/slice-null.summary.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/slice/slice-null.summary.json.gz",
+      "sha256": "df4be8b649b807ee4b83c0516250e7495e7e57355733c126c24a6b3828960c56",
+      "bytes": 64487,
+      "gzip_bytes": 3435
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/d4c43b5accdf126523be0089183f346c09f0c281/fluent-bit-tail-pause/slice/slice-outer.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/slice/slice-outer.json.gz",
+      "sha256": "7f64ea5cc01c131f96a690fb893a581ce8a3fa863de07077e5114228f8cffd53",
+      "bytes": 88639,
+      "gzip_bytes": 7400
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/slice/invocation.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/after/slice/invocation.json.gz",
+      "sha256": "8eaf47767ae3a1e81a80e05c3192d359d9b75a7da7f42f2e2dc351a2445b3e9f",
+      "bytes": 4261,
+      "gzip_bytes": 1300
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/slice/resource-diagnostics.chunk-contracts.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/slice/resource-diagnostics.chunk-contracts.json.gz",
+      "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+      "bytes": 385,
+      "gzip_bytes": 260,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/slice/resource-diagnostics.components.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/after/slice/resource-diagnostics.components.json.gz",
+      "sha256": "f3c33b998277fc6e67ce301e24e9cf502fbe9c225749a93e39b3a49a4cdfbf38",
+      "bytes": 3763457,
+      "gzip_bytes": 346019
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/slice/resource-diagnostics.contracts.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/after/slice/resource-diagnostics.contracts.json.gz",
+      "sha256": "ac8ef2ebb38a1989349470386e488366b88080dbf163aa59886ccb7a441f710b",
+      "bytes": 22136557,
+      "gzip_bytes": 1169562
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/slice/resource-diagnostics.invocation.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/after/slice/resource-diagnostics.invocation.json.gz",
+      "sha256": "ac68d8b245f98e1da243719e655d2d6aad6cc42075d5aa6e1788ee5729b0bc3b",
+      "bytes": 6665,
+      "gzip_bytes": 2254
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/slice/resource-diagnostics.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/after/slice/resource-diagnostics.json.gz",
+      "sha256": "b77c92f5a2d9a753043053416fc0f3e6ec6830959eed0c5659d862c81519cdc5",
+      "bytes": 4367076,
+      "gzip_bytes": 358540
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/slice/resource-diagnostics.source-effects.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/slice/resource-diagnostics.chunk-contracts.json.gz",
+      "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+      "bytes": 385,
+      "gzip_bytes": 260,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/slice/slice-null.jsonl",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/after/slice/slice-null.jsonl.gz",
+      "sha256": "b05d2038478f474cd1ae88d9dfac0352f60158aa56eb8e2cf73755ca8f32b239",
+      "bytes": 1853651,
+      "gzip_bytes": 96991
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/slice/slice-null.summary.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/slice/slice-null.summary.json.gz",
+      "sha256": "df4be8b649b807ee4b83c0516250e7495e7e57355733c126c24a6b3828960c56",
+      "bytes": 64487,
+      "gzip_bytes": 3435,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/slice/slice-outer.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/slice/slice-outer.json.gz",
+      "sha256": "7f64ea5cc01c131f96a690fb893a581ce8a3fa863de07077e5114228f8cffd53",
+      "bytes": 88639,
+      "gzip_bytes": 7400,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/d4c43b5accdf126523be0089183f346c09f0c281/fluent-bit-system/system/invocation.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/system/invocation.json.gz",
+      "sha256": "9c5734655b2ae9bf35083d219b754b2d4159391182bdc33e682b4a1b2de25bd4",
+      "bytes": 4769,
+      "gzip_bytes": 1333
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/d4c43b5accdf126523be0089183f346c09f0c281/fluent-bit-system/system/resource-diagnostics.chunk-contracts.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/system/resource-diagnostics.chunk-contracts.json.gz",
+      "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+      "bytes": 385,
+      "gzip_bytes": 260
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/d4c43b5accdf126523be0089183f346c09f0c281/fluent-bit-system/system/resource-diagnostics.components.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/system/resource-diagnostics.components.json.gz",
+      "sha256": "e2cf8a9810c8ea046efcb3a52a4772282fd27bb6826c46c0e34496dab910ac43",
+      "bytes": 9384186,
+      "gzip_bytes": 962970
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/d4c43b5accdf126523be0089183f346c09f0c281/fluent-bit-system/system/resource-diagnostics.contracts.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/system/resource-diagnostics.contracts.json.gz",
+      "sha256": "c5158045d45024023f7484f4827d10ebacdd146965fb315768e0fbd2c7868819",
+      "bytes": 23323620,
+      "gzip_bytes": 1203300
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/d4c43b5accdf126523be0089183f346c09f0c281/fluent-bit-system/system/resource-diagnostics.invocation.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/system/resource-diagnostics.invocation.json.gz",
+      "sha256": "cf5abc062689cb6866b6e4bbe254a839e818fd437e677afd5ef83fe78a2dbd82",
+      "bytes": 6253,
+      "gzip_bytes": 2030
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/d4c43b5accdf126523be0089183f346c09f0c281/fluent-bit-system/system/resource-diagnostics.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/system/resource-diagnostics.json.gz",
+      "sha256": "a3f70ae3f8a4cae8fab4ce8497c50adb7b9e51c0b6bb141466b14d6e1c6d7599",
+      "bytes": 10021427,
+      "gzip_bytes": 967500
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/d4c43b5accdf126523be0089183f346c09f0c281/fluent-bit-system/system/resource-diagnostics.source-effects.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/system/resource-diagnostics.chunk-contracts.json.gz",
+      "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+      "bytes": 385,
+      "gzip_bytes": 260,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/d4c43b5accdf126523be0089183f346c09f0c281/fluent-bit-system/system/system-null.jsonl",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/system/system-null.jsonl.gz",
+      "sha256": "9bca4292ecad20fad0ba83637746f4ac09b626cd7d6f7ba4d21fbeab0726db1b",
+      "bytes": 1873227,
+      "gzip_bytes": 104446
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/d4c43b5accdf126523be0089183f346c09f0c281/fluent-bit-system/system/system-null.summary.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/system/system-null.summary.json.gz",
+      "sha256": "572117bd3758532c0ad224a8b40db30dc6793a36d0cec55c54a0c817a905d1e2",
+      "bytes": 64385,
+      "gzip_bytes": 3399
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/d4c43b5accdf126523be0089183f346c09f0c281/fluent-bit-system/system/system-outer.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/system/system-outer.json.gz",
+      "sha256": "705e46a8aeccd9bbfedab17339a1b033ca679333c7157cfa03157680e0fc7f7f",
+      "bytes": 67168,
+      "gzip_bytes": 6924
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/system/invocation.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/after/system/invocation.json.gz",
+      "sha256": "5ece41ecfef9354cd5a0a4d5b294f7153f281085f160d408442ca485c7902532",
+      "bytes": 4285,
+      "gzip_bytes": 1304
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/system/resource-diagnostics.chunk-contracts.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/system/resource-diagnostics.chunk-contracts.json.gz",
+      "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+      "bytes": 385,
+      "gzip_bytes": 260,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/system/resource-diagnostics.components.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/after/system/resource-diagnostics.components.json.gz",
+      "sha256": "554ac14ed141fcdf05361a2ddc6e7174400107f4596009b41e54ef21d8342596",
+      "bytes": 9384186,
+      "gzip_bytes": 962972
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/system/resource-diagnostics.contracts.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/after/system/resource-diagnostics.contracts.json.gz",
+      "sha256": "99ba81db8b549f372f79810d6f4962cc13a8085f61dfcc669c5f641600554b0f",
+      "bytes": 23323620,
+      "gzip_bytes": 1203284
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/system/resource-diagnostics.invocation.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/after/system/resource-diagnostics.invocation.json.gz",
+      "sha256": "827e125e6b92d3fa85f434e3ba3c49de5a52303546a91980e8d331b1315a05c8",
+      "bytes": 6121,
+      "gzip_bytes": 1998
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/system/resource-diagnostics.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/after/system/resource-diagnostics.json.gz",
+      "sha256": "d1955c930e777127d30b7113dfbeff733a6dd92ed007db0ee3174bf6600dbc0d",
+      "bytes": 10021427,
+      "gzip_bytes": 967439
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/system/resource-diagnostics.source-effects.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/system/resource-diagnostics.chunk-contracts.json.gz",
+      "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+      "bytes": 385,
+      "gzip_bytes": 260,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/system/system-null.jsonl",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/after/system/system-null.jsonl.gz",
+      "sha256": "93bfeec9d35efe8ccf76d299035b64bdd4218455a1ed6642aefd92b77038cbbf",
+      "bytes": 1873227,
+      "gzip_bytes": 104449
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/system/system-null.summary.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/system/system-null.summary.json.gz",
+      "sha256": "572117bd3758532c0ad224a8b40db30dc6793a36d0cec55c54a0c817a905d1e2",
+      "bytes": 64385,
+      "gzip_bytes": 3399,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/system/system-outer.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/system/system-outer.json.gz",
+      "sha256": "705e46a8aeccd9bbfedab17339a1b033ca679333c7157cfa03157680e0fc7f7f",
+      "bytes": 67168,
+      "gzip_bytes": 6924,
+      "shared_archive": true
+    }
+  ]
+}

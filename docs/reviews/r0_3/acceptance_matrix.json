@@ -6862,7 +6862,7 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Combined landing of GATEWAY-RULE-API, CONTRACT-SUPERSESSION records, LANDING-REPAIR and LANDING-PUBLISH-COMPLETION items 1-3 onto origin/main 508407913 (quant-contract-hypotheses merge f774f54de plus Codex's typed-setter repair). FULL GATE (gate_scope.py --base da13b7d12 --full) on dd99e783e, private logs /media/Data/GitHub/quirin-lang/private/landing-rapi/gate8: submodules, fmt, Clippy 0; Rust 8832 passed/0 failed/15 ignored (571 units/590 summaries) 0; both reevaluation examples 0; Lean 388 audits 0; provider package build/verify-all/verify 0; provider tests 133 passed/0 failed/1 ignored 0; provider fmt and Clippy 0. Python exited 1 (554 tests, 2 failures): the acceptance matrix's dimensions.named_followups (862 vs 861 after the applied amendments; regenerated here) and test_tracked_files' reviewed-walk table missing scripts/tests/test_land.py (LANDING-PUBLISH-COMPLETION's TemporaryDirectory iterdir; added with its reason). Both are records-only; the Python suite was rerun on the committed records commit.",
+  "note": "CMetrics 808d getter landing: merge f6591ceb4, full gate on b403cd4deddaab711f446f383270363aca39a2af. Fresh private logs private/codex-cmt-landing-20261027/host-full; exact commands/exits/counts in gate-steps.json. Rust 8832/0/15 (571 units/590 summaries); provider Rust 133/0/1 (43 summaries); Python 554, no skips; Lean 388. All steps exit 0, including five provider packages and provider fmt/Clippy. Re-run Python after the records commit. Sandbox attempt aborted143; corrected host gate is authoritative. Fresh merged native comparison adds exactly one bounded provisional Unsafe leak with no NULL-property movement.",
   "workspace_tests": 8832,
   "provider_tests": 133,
   "python_evidence_validator_tests": 554,
@@ -7261,9 +7261,9 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "full gate on dd99e783e + Python rerun on the records commit",
+  "standing_gate": "full source/provider gate on b403cd4de; records Python rerun before mandatory land.py publish",
   "full_language_conformance": false,
-  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
+  "measurement_provenance": "integrator_supplied (docs/reports/cmt-getter-ownership-closure/integration/gate.json)"
  },
  "named_followups": [
   {

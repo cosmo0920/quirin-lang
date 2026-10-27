@@ -1,0 +1,370 @@
+{
+  "schema": "quirin-gate-scope/1",
+  "revision": "b403cd4deddaab711f446f383270363aca39a2af",
+  "scope": {
+    "paths": [
+      "crates/qcore-c-gateway/src/legacy_conditional_embedded_storage.rs",
+      "docs/STATUS.md",
+      "docs/development/increments/wave-48-part12.md",
+      "docs/reports/INDEX.md",
+      "docs/reports/cmt-getter-ownership-closure/README.md",
+      "docs/reports/cmt-getter-ownership-closure/baseline-receipt.json",
+      "docs/reports/cmt-getter-ownership-closure/integration-amendments.json",
+      "docs/reports/cmt-getter-ownership-closure/native-witness.json",
+      "docs/reviews/r0_3/acceptance_matrix.json"
+    ],
+    "attribution": {
+      "crates/qcore-c-gateway/src/legacy_conditional_embedded_storage.rs": [
+        "owned by qcore-c-gateway",
+        "read by qcore-c-gateway (path, crates/qcore-c-gateway/src/legacy_c.rs:5761)",
+        "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:33)",
+        "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+      ],
+      "docs/STATUS.md": [
+        "class prose"
+      ],
+      "docs/development/increments/wave-48-part12.md": [
+        "class prose"
+      ],
+      "docs/reports/INDEX.md": [
+        "class prose"
+      ],
+      "docs/reports/cmt-getter-ownership-closure/README.md": [
+        "class prose"
+      ],
+      "docs/reports/cmt-getter-ownership-closure/baseline-receipt.json": [
+        "class prose"
+      ],
+      "docs/reports/cmt-getter-ownership-closure/integration-amendments.json": [
+        "class prose"
+      ],
+      "docs/reports/cmt-getter-ownership-closure/native-witness.json": [
+        "class prose"
+      ],
+      "docs/reviews/r0_3/acceptance_matrix.json": [
+        "class prose"
+      ]
+    },
+    "affected": {
+      "qcore-audit": [
+        "depends on qcore-c-gateway"
+      ],
+      "qcore-c-gateway": [
+        "owns crates/qcore-c-gateway/src/legacy_conditional_embedded_storage.rs",
+        "compiles it via #[path]: crates/qcore-c-gateway/src/legacy_conditional_embedded_storage.rs (crates/qcore-c-gateway/src/legacy_c.rs:5761)"
+      ],
+      "qcore-compiler": [
+        "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/src/legacy_conditional_embedded_storage.rs (compiler/tests/workspace_layering.rs:33)"
+      ],
+      "qcore-provider-conformance": [
+        "depends on qcore-c-gateway"
+      ],
+      "qcore-verification": [
+        "names crates in a string literal: crates/qcore-c-gateway/src/legacy_conditional_embedded_storage.rs (crates/qcore-verification/tests/composition_bounds.rs:288)"
+      ],
+      "qcorec": [
+        "depends on qcore-compiler"
+      ],
+      "quirin-source-analysis": [
+        "depends on qcore-c-gateway"
+      ]
+    },
+    "mode": "full",
+    "full_reasons": [
+      "requested with --full",
+      "the diff reaches qcore-c-gateway"
+    ],
+    "rust_packages": [
+      "qcore-audit",
+      "qcore-c-gateway",
+      "qcore-compiler",
+      "qcore-contract",
+      "qcore-core",
+      "qcore-frontend",
+      "qcore-gateway-rule-api",
+      "qcore-schemas",
+      "qcore-verification",
+      "qcore-verifier-host",
+      "qcorec",
+      "quirin-audit-plugin",
+      "quirin-audit-plugin-libevent",
+      "quirin-audit-plugin-measure",
+      "quirin-source-analysis"
+    ],
+    "probes": true,
+    "lean": {
+      "mode": "all"
+    },
+    "python_reasons": [],
+    "provider_gate": true,
+    "provider_reasons": [],
+    "provider_members_reached_without_providers_change": [
+      "qcore-provider-conformance"
+    ],
+    "unresolved_includes": [
+      {
+        "crate": "qcore-compiler",
+        "source": "compiler/tests/ct_corpus.rs:8069",
+        "literal": "include_str!(\\\"fixtures/ct/{id}/case.qr\\\")\");",
+        "why": "argument is not a string literal (or the macro is inside a string)"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "name": "submodules",
+      "argv": [
+        "git",
+        "-C",
+        "/media/Data/GitHub/quirin-lang",
+        "submodule",
+        "status",
+        "--recursive"
+      ],
+      "exit": 0,
+      "seconds": 0.2,
+      "log": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/host-full/submodules.log",
+      "counts": {
+        "submodules": 1,
+        "not_checked_out_or_moved": []
+      }
+    },
+    {
+      "name": "fmt",
+      "argv": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "seconds": 28.5,
+      "log": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/host-full/fmt.log",
+      "counts": {}
+    },
+    {
+      "name": "clippy",
+      "argv": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "seconds": 2.8,
+      "log": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/host-full/clippy.log",
+      "counts": {}
+    },
+    {
+      "name": "rust-suite",
+      "argv": [
+        "/usr/bin/python3",
+        "/media/Data/GitHub/quirin-lang/scripts/gate_slot.py",
+        "rust-suite",
+        "--receipt",
+        "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/host-full/slots/rust-suite.json",
+        "--",
+        "/usr/bin/python3",
+        "/media/Data/GitHub/quirin-lang/scripts/run_test_binaries.py",
+        "--log-dir",
+        "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/host-full/rust-suite"
+      ],
+      "exit": 0,
+      "seconds": 1294.4,
+      "log": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/host-full/rust-suite.log",
+      "counts": {
+        "units": 571,
+        "passed": 8832,
+        "failed": 0,
+        "ignored": 15,
+        "measured": 0,
+        "filtered": 24,
+        "summaries": 590,
+        "packages": null,
+        "summary": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/host-full/rust-suite/summary.json",
+        "ok": true
+      },
+      "slot_receipt": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/host-full/slots/rust-suite.json"
+    },
+    {
+      "name": "probe-reevaluation_probe",
+      "argv": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_probe"
+      ],
+      "exit": 0,
+      "seconds": 0.1,
+      "log": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/host-full/probe-reevaluation_probe.log",
+      "counts": {}
+    },
+    {
+      "name": "probe-reevaluation_followup",
+      "argv": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_followup"
+      ],
+      "exit": 0,
+      "seconds": 0.5,
+      "log": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/host-full/probe-reevaluation_followup.log",
+      "counts": {}
+    },
+    {
+      "name": "lean",
+      "argv": [
+        "/usr/bin/python3",
+        "/media/Data/GitHub/quirin-lang/scripts/gate_slot.py",
+        "lean",
+        "--receipt",
+        "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/host-full/slots/lean.json",
+        "--",
+        "/usr/bin/python3",
+        "/media/Data/GitHub/quirin-lang/scripts/check_lean_audits.py"
+      ],
+      "exit": 0,
+      "seconds": 16.7,
+      "log": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/host-full/lean.log",
+      "counts": {
+        "audits": 388
+      },
+      "slot_receipt": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/host-full/slots/lean.json"
+    },
+    {
+      "name": "python",
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "exit": 0,
+      "seconds": 51.9,
+      "log": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/host-full/python.log",
+      "counts": {
+        "tests": 554,
+        "skipped": 0,
+        "ok": true
+      }
+    },
+    {
+      "name": "provider-package-build",
+      "argv": [
+        "/usr/bin/python3",
+        "providers/package.py",
+        "build",
+        "--output",
+        "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/host-full/provider-packages"
+      ],
+      "exit": 0,
+      "seconds": 201.4,
+      "log": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/host-full/provider-package-build.log",
+      "counts": {}
+    },
+    {
+      "name": "provider-package-verify-all",
+      "argv": [
+        "/usr/bin/python3",
+        "/media/Data/GitHub/quirin-lang/scripts/gate_scope.py",
+        "--verify-packages",
+        "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/host-full/provider-packages"
+      ],
+      "exit": 0,
+      "seconds": 1.2,
+      "log": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/host-full/provider-package-verify-all.log",
+      "counts": {}
+    },
+    {
+      "name": "provider-package-verify",
+      "argv": [
+        "/usr/bin/python3",
+        "providers/package.py",
+        "verify",
+        "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/host-full/provider-packages/qcore.libevent"
+      ],
+      "exit": 0,
+      "seconds": 0.2,
+      "log": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/host-full/provider-package-verify.log",
+      "counts": {}
+    },
+    {
+      "name": "provider-test",
+      "argv": [
+        "/usr/bin/python3",
+        "/media/Data/GitHub/quirin-lang/scripts/gate_slot.py",
+        "rust-suite",
+        "--receipt",
+        "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/host-full/slots/provider-test.json",
+        "--",
+        "cargo",
+        "test",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--workspace",
+        "--locked",
+        "--offline"
+      ],
+      "exit": 0,
+      "seconds": 9935.5,
+      "log": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/host-full/provider-test.log",
+      "counts": {
+        "summaries": 43,
+        "passed": 133,
+        "failed": 0,
+        "ignored": 1,
+        "measured": 0,
+        "filtered": 0
+      },
+      "slot_receipt": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/host-full/slots/provider-test.json"
+    },
+    {
+      "name": "provider-fmt",
+      "argv": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "seconds": 6.6,
+      "log": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/host-full/provider-fmt.log",
+      "counts": {}
+    },
+    {
+      "name": "provider-clippy",
+      "argv": [
+        "cargo",
+        "clippy",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--locked",
+        "--offline",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "seconds": 9.1,
+      "log": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/host-full/provider-clippy.log",
+      "counts": {}
+    }
+  ],
+  "ran": true,
+  "ok": true
+}

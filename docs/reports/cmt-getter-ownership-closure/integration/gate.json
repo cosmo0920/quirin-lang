@@ -1,0 +1,13 @@
+{
+  "note": "CMetrics 808d getter landing: merge f6591ceb4, full gate on b403cd4deddaab711f446f383270363aca39a2af. Fresh private logs private/codex-cmt-landing-20261027/host-full; exact commands/exits/counts in gate-steps.json. Rust 8832/0/15 (571 units/590 summaries); provider Rust 133/0/1 (43 summaries); Python 554, no skips; Lean 388. All steps exit 0, including five provider packages and provider fmt/Clippy. Re-run Python after the records commit. Sandbox attempt aborted143; corrected host gate is authoritative. Fresh merged native comparison adds exactly one bounded provisional Unsafe leak with no NULL-property movement.",
+  "workspace_tests": 8832,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 554,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "full source/provider gate on b403cd4de; records Python rerun before mandatory land.py publish",
+  "lean_audits": 388,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

@@ -1,0 +1,25 @@
+{
+  "rows": 4921,
+  "unmatched": 0,
+  "null_dictionary_changes": [],
+  "custody_combined_changes": [
+    {
+      "row": [
+        "cmetrics",
+        "cmt_map.c",
+        "cmt_map_metric_get",
+        0
+      ],
+      "changes": {
+        "custody": [
+          "Unknown",
+          "Unsafe"
+        ],
+        "combined": [
+          "Unknown",
+          "Unsafe"
+        ]
+      }
+    }
+  ]
+}

@@ -195,6 +195,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cmetrics-setter-contracts](cmetrics-setter-contracts/README.md) | CMetrics map, metric and typed setter contracts |
 
+| [cmt-getter-landing](cmt-getter-landing/README.md) | CMetrics getter landing checkpoint |
+
 | [cmt-getter-ownership-closure](cmt-getter-ownership-closure/README.md) | CMetrics getter ownership closure |
 
 | [cmt-self-init-disjoint-frames](cmt-self-init-disjoint-frames/README.md) | Checked initializer frames for same-owner child slots |

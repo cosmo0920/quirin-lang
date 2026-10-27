@@ -1,0 +1,3247 @@
+{
+  "kind": "aborted sandbox attempt; partial outputs only, not validation evidence",
+  "exit": 143,
+  "reason": "native LeakSanitizer fatal errors under sandbox process restrictions",
+  "completed_unit_logs": 237,
+  "observed_summaries": 256,
+  "units": [
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/doc-tests.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        },
+        {
+          "status": "ok",
+          "passed": 17,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        },
+        {
+          "status": "ok",
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        },
+        {
+          "status": "ok",
+          "passed": 2,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        },
+        {
+          "status": "ok",
+          "passed": 4,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        },
+        {
+          "status": "ok",
+          "passed": 4,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        },
+        {
+          "status": "ok",
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        },
+        {
+          "status": "ok",
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        },
+        {
+          "status": "ok",
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        },
+        {
+          "status": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        },
+        {
+          "status": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        },
+        {
+          "status": "ok",
+          "passed": 2,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        },
+        {
+          "status": "ok",
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        },
+        {
+          "status": "ok",
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        },
+        {
+          "status": "ok",
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        },
+        {
+          "status": "ok",
+          "passed": 5,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-audit_bin_quirin-dump-checkpoint.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-audit_test_bounds_pin_hold.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 5,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-audit_test_bounds_transport.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 5,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-audit_test_canonical_paths.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 5,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-audit_test_cg30_target_identity.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 3,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-audit_test_clang_gap_flags.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 4,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-audit_test_compile_options.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 12,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-audit_test_contract_dependencies_report.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 12,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-audit_test_contract_revision_audit.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 4,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-audit_test_contract_revision_identities.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 3,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-audit_test_contract_supersession.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 4,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-audit_test_contract_tip_mode.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 2,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-audit_test_current_cli.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 17,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-audit_test_dependency_graph.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 2,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-audit_test_dump_checkpoint_cli.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 2,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-audit_test_guarded_contract_pin.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-audit_test_hypothesis_firewall.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-audit_test_member_prepass_routes.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-audit_test_no_build_cli.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 7,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-audit_test_outer_projection.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-audit_test_pending_review_report.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 3,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-audit_test_pinned_cli.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-audit_test_plugin_null_hypotheses.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 4,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-audit_test_prepare_cli.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 5,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-audit_test_sr5_pending_gates.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_lib_qcore_c_gateway.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 1236,
+          "failed": 0,
+          "ignored": 2,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_abi_enum_const_pp.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 7,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_access_path_position_residuals.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 8,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_access_path_positions.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 12,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_access_path_statements.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 7,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_alias_aggregate.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 12,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_app_rk_callbacks.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 8,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_atomic_publication_source.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 12,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_atomic_source_route.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_atomic_weak_memory_events.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 7,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_boolean_frame_helpers.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_bound_untracked_roots.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 9,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_bounds_body_evidence.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 4,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_c_numeric_abi_llp64.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_c_numeric_domain.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 7,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_call_argument_access.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 25,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_callback_member_data_only.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_callee_retention_class1.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 9,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_caller_frame_hold.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 7,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_cast_formalization.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_cg02_elaboration.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 4,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_cg03_call_instantiation.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 7,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_cg05_elaborator_call_footprints.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 5,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_cg05_nested_call_effects.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 9,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_cg06_connective_footprints.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 3,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_cg06_value_connectives.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_cg07_statement_expressions.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 7,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_cg08_casts_and_type_queries.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 14,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_cg10_sole_residual_contracts.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 5,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_cg11_pointer_stores.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 12,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_cg12_void_view_readback.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 8,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_cg14_aggregate_values.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 10,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_cg16_index_extents.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 20,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_cg21_call_exits.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 10,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_cg22_callback_registry.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 7,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_cg22_indirect_calls.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 10,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_cg22_op_callbacks.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 11,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_cg24_frames_and_relations.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 8,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_cg26_tail_residual_actuals.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_cg26_variadics.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 22,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_cg30_dialects_flags_types.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 10,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_chained_tail.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 13,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_checked_allocator_constructors.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 4,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_checked_result_null.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_chunkio_meta_len_bounds.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 3,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_clang_gap_phase1.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 30,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_clang_gap_phase2.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 14,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_clang_gap_phase3.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 15,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_clang_gap_phase4.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 33,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_condition_acquisition.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 9,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_container_root_reach.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 14,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_contextual_recursion.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 14,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_contract_clause_standing.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 5,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_contract_conflict_hold.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_contract_deferred_review.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 8,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_contract_dependencies.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 9,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_contract_noreturn_borrowed_tails.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 8,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_contract_pin_hold.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 5,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_cross_unit_summary.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 3,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_declared_entry_check.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 9,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_deep_unit_ast.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 4,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_deref_parts_null.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_descriptor_custody.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 15,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_detach_lookup_membership.stdout.log",
+      "summaries": [
+        {
+          "status": "FAILED",
+          "passed": 7,
+          "failed": 1,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_detach_same_item.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 7,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_detach_wrapper_composition.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_element_destroyer.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 9,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_event_loop_retention.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 12,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_field_link_join.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 7,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_footprint_connection.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 3,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_function_pointer_declarators.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 5,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_gapo_return_correctness.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_gateway_rule_switches.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 6
+        },
+        {
+          "status": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 6
+        },
+        {
+          "status": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 6
+        },
+        {
+          "status": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 6
+        },
+        {
+          "status": "ok",
+          "passed": 7,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_generic_selection.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 11,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_handoff_candidate_own_callbacks.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 8,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_handoff_direct_call.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 5,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_hash_contracts.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 24,
+          "failed": 0,
+          "ignored": 2,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_indirect_access_sole_blockers.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 13,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_indirect_access_sole_residuals.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_indirect_access_sole_residuals_r2.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 8,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_intrusive_list_iteration.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 20,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_layout_extents.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 8,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_lexical_closure_nested_assignment.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 4,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_libc_reading_dependencies.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_libc_reading_site_evidence.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_literal_decay_readings.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_loop_lifetime_s3.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 21,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_loop_site_generations.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 10,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_loops_recursion_budgets.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 18,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_member_path_direct_call.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 5,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_member_path_release.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 8,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_metric_aggregate_contracts.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 2,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_metric_trace_contract_gaps.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 2,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_monkey_vhost_property_custody.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 12,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_neighbours.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 12,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_null_candidate_triage.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 15,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_null_member_invariant_scope.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 8,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_null_member_premise.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 3,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_null_premise_custody.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 3,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_null_safety_property.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 16,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_null_triage_unresolved_paths.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 10,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_op_constructor_declarations.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 10,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_outer_record_graph.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 3,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_parenthesised_callee.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 23,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_premise_flow_dependencies.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_quant_index_checks.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 12,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_reading_site_domain.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_refcount_reference_returning.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 9,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_refcount_resource_kind.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 14,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_refused_call_hand_on.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_refuted_contract_foreign_unlink.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_refuted_contract_withdrawal.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 11,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_relational_postconditions.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 14,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_resource_kinds.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 13,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_resource_kinds_lean.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 2,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_result_constructors.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 9,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_retention_guard.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 2,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_retry_lifetime.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 21,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_return_code_handoff.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 7,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_return_expression_families.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 11,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_review_hold_standing.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 9,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_rko_union_layout.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 8,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_scalar_noop_alias.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 3,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_scalar_precedence.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 8,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_scalar_read_identity.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_serve_forwarded_callback_formals.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 9,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_sizeof_operand.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 17,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_slot_move_interior_borrow.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 10,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_sr5_soundness.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 15,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_storage_duration_volatile.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_sub_object_stores.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 22,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_summary_validation_premises.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 5,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_sup07_refused_test_accusation.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 7,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_typed_const_pointer_value.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 7,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_typed_root_declarations.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 8,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_union_bitfield_places.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_union_opaque_writes.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_va_loop_pointer_arg.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 10,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_verdict_fold.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 3,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_w46_external_callee_contracts.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_w46_libc_event_contract_gaps.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 4,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_w46_routing_query_contracts.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 3,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_w47_callee_closure_r2.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 4,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_w48_bottom_up_callee_bodies.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 5,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_w48_callee_closure_r3.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 4,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-c-gateway_test_w48_external_callee_contracts.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-compiler_lib_qcore_compiler.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 66,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-compiler_test_call_use_route_parity.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 3,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-compiler_test_chunk_lifecycle_coverage.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 4,
+          "failed": 0,
+          "ignored": 1,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-compiler_test_cleanup_replay_route_parity.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 4,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-compiler_test_closures.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 14,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-compiler_test_composition_route_parity.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 4,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-compiler_test_contract_loader.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 10,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-compiler_test_contract_view_census.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 2,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-compiler_test_counter_route_parity.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 2,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-compiler_test_ct_corpus.stdout.log",
+      "summaries": [
+        {
+          "status": "FAILED",
+          "passed": 7,
+          "failed": 1,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-compiler_test_emitted_c_werror.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 4,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-compiler_test_examples_suite.stdout.log",
+      "summaries": [
+        {
+          "status": "FAILED",
+          "passed": 32,
+          "failed": 10,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-compiler_test_extension_compatibility.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 4,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-compiler_test_extension_contract_compatibility.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 5,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-compiler_test_extern_call_deferred_review.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 2,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-compiler_test_extern_calls.stdout.log",
+      "summaries": [
+        {
+          "status": "FAILED",
+          "passed": 80,
+          "failed": 3,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-compiler_test_ffi_struct_import.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 23,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-compiler_test_file_close_route_parity.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 3,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-compiler_test_filesystem_chunk_close_route_parity.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 3,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-compiler_test_float_extern.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 4,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-compiler_test_float_ffi.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 3,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-compiler_test_float_ieee_vectors.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 3,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-compiler_test_memory_close_route_parity.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 3,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-compiler_test_obs_reordering.stdout.log",
+      "summaries": [
+        {
+          "status": "FAILED",
+          "passed": 8,
+          "failed": 2,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-compiler_test_qcore_contract_corpus.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-compiler_test_qr_lexical_selector_selection.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 11,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-compiler_test_qr_print_route_census.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 1,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-compiler_test_qr_print_route_selection.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 7,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-compiler_test_qrlib_linkage.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 12,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-compiler_test_quant_check_connectives.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 3,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-compiler_test_route_selection_table.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 7,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-compiler_test_task_route_tsan.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 20,
+          "failed": 0,
+          "ignored": 1,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-compiler_test_teardown_route_parity.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 4,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-compiler_test_thread_examples.stdout.log",
+      "summaries": [
+        {
+          "status": "FAILED",
+          "passed": 7,
+          "failed": 2,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-compiler_test_unsupported_close_route_parity.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 3,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-contract_test_contract_bundle.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 7,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-core_lib_qcore_core.stdout.log",
+      "summaries": [
+        {
+          "status": "FAILED",
+          "passed": 1106,
+          "failed": 6,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-verification_lib_qcore_verification.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 53,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-verification_test_atomic_publication_source.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 5,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-verification_test_call_use_dependents.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 3,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-verification_test_call_use_source.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 9,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-verification_test_chunk_lifecycle_coverage.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 40,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-verification_test_cleanup_replay_mutations.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 9,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-verification_test_cleanup_replay_source.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 4,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-verification_test_composition_mutations.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 7,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-verification_test_composition_source.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 8,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-verification_test_counter_source.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-verification_test_event_payload.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 5,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-verification_test_file_close_composition_mutations.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 7,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-verification_test_file_close_composition_source.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 13,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-verification_test_filesystem_chunk_close_composition_mutations.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 8,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-verification_test_filesystem_chunk_close_composition_source.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 13,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-verification_test_memory_close_composition_mutations.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 8,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-verification_test_memory_close_composition_source.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 12,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-verification_test_monkey_wait_projection.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 5,
+          "failed": 0,
+          "ignored": 1,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-verification_test_observed_wait_composition.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 3,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-verification_test_source_effect.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 9,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-verification_test_source_effect_helper_target.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-verification_test_source_effect_mutations.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 11,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-verification_test_source_effect_obligations.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-verification_test_teardown_prerequisites.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 5,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-verification_test_teardown_source.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 7,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-verification_test_unsupported_close_composition_mutations.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 10,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-verification_test_unsupported_close_composition_source.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 15,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "unit_log": "private/codex-cmt-landing-20261027/full/rust-suite/qcore-verification_test_wait_failure_paths.stdout.log",
+      "summaries": [
+        {
+          "status": "ok",
+          "passed": 2,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ]
+    }
+  ],
+  "measurement_attempt_1": {
+    "exit": 143,
+    "reason": "stopped before auditing after a mistaken baseline argument; corrected in native-2",
+    "path": "private/codex-cmt-landing-20261027/native"
+  }
+}

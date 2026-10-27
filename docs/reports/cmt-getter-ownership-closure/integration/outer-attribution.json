@@ -1,0 +1,160 @@
+{
+  "changes": [
+    {
+      "path": [
+        "scenarios",
+        "all",
+        "combined",
+        "Unknown"
+      ],
+      "before": 4026,
+      "after": 4025
+    },
+    {
+      "path": [
+        "scenarios",
+        "all",
+        "combined",
+        "Unsafe"
+      ],
+      "before": 26,
+      "after": 27
+    },
+    {
+      "path": [
+        "scenarios",
+        "all",
+        "custody",
+        "Unknown"
+      ],
+      "before": 3823,
+      "after": 3822
+    },
+    {
+      "path": [
+        "scenarios",
+        "all",
+        "custody",
+        "Unsafe"
+      ],
+      "before": 9,
+      "after": 10
+    },
+    {
+      "path": [
+        "scenarios",
+        "flb_external_plugin",
+        "combined",
+        "Unknown"
+      ],
+      "before": 4025,
+      "after": 4024
+    },
+    {
+      "path": [
+        "scenarios",
+        "flb_external_plugin",
+        "combined",
+        "Unsafe"
+      ],
+      "before": 26,
+      "after": 27
+    },
+    {
+      "path": [
+        "scenarios",
+        "flb_external_plugin",
+        "custody",
+        "Unknown"
+      ],
+      "before": 3823,
+      "after": 3822
+    },
+    {
+      "path": [
+        "scenarios",
+        "flb_external_plugin",
+        "custody",
+        "Unsafe"
+      ],
+      "before": 9,
+      "after": 10
+    },
+    {
+      "path": [
+        "scenarios",
+        "rk_plugin_library",
+        "combined",
+        "Unknown"
+      ],
+      "before": 4026,
+      "after": 4025
+    },
+    {
+      "path": [
+        "scenarios",
+        "rk_plugin_library",
+        "combined",
+        "Unsafe"
+      ],
+      "before": 26,
+      "after": 27
+    },
+    {
+      "path": [
+        "scenarios",
+        "rk_plugin_library",
+        "custody",
+        "Unknown"
+      ],
+      "before": 3823,
+      "after": 3822
+    },
+    {
+      "path": [
+        "scenarios",
+        "rk_plugin_library",
+        "custody",
+        "Unsafe"
+      ],
+      "before": 9,
+      "after": 10
+    },
+    {
+      "path": [
+        "static",
+        "combined",
+        "Unknown"
+      ],
+      "before": 4022,
+      "after": 4021
+    },
+    {
+      "path": [
+        "static",
+        "combined",
+        "Unsafe"
+      ],
+      "before": 26,
+      "after": 27
+    },
+    {
+      "path": [
+        "static",
+        "custody",
+        "Unknown"
+      ],
+      "before": 3812,
+      "after": 3811
+    },
+    {
+      "path": [
+        "static",
+        "custody",
+        "Unsafe"
+      ],
+      "before": 9,
+      "after": 10
+    }
+  ]
+}

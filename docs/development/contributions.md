@@ -6,7 +6,7 @@ Each live evaluation profile's total comes from a real run (its baseline record 
 
 ## eight-home
 
-Real-run total (baseline `704c47c97fab`, measured at `710021bd713b`): Safe 1013, Unknown 3812, Unsafe 9.
+Real-run total (baseline `d609aa16e9e6`, measured at `b403cd4dedda`): Safe 1013, Unknown 3811, Unsafe 10.
 
 No contribution ledger is recorded for this profile.
 
