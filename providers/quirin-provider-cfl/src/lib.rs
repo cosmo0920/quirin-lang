@@ -1,4 +1,4 @@
-//! Shared Quirin contract modules for the CFL support library (arena and SDS lifetimes, hash state, intrusive lists, time).
+//! Shared Quirin contract modules for the CFL support library (arena and SDS lifetimes, atomics, hash state, intrusive lists, time).
 //!
 //! The `.qcore` sources under this crate's `contracts/` are canonical: the
 //! corpus index `contract/corpus.json` names that directory as one of its
@@ -25,6 +25,10 @@ pub const CONTRACTS: &[(&str, &str)] = &[
         "cfl/arena_lifetime.qv",
         include_str!("../contracts/cfl/arena_lifetime.qv"),
     ),
+    // Card LANDING-REPAIR: quant-contract-hypotheses (6ecb5498d) added this
+    // conditional own-event model to the tree and to the load path but not
+    // to this index.
+    ("cfl/atomic.qv", include_str!("../contracts/cfl/atomic.qv")),
     (
         "cfl/hash_state.qv",
         include_str!("../contracts/cfl/hash_state.qv"),

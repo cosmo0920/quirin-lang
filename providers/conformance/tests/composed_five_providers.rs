@@ -803,7 +803,10 @@ fn the_five_package_registry_composes_only_what_its_packages_implement() {
             &routes[0],
             &chunkio_summary,
             boolean::CONTRACT.to_owned(),
-            ("result == old_lock", "result == 7"),
+            // Card LANDING-REPAIR: the quant migration typed this
+            // postcondition as `#exit_1 ... = (#result == #old_lock)`; the
+            // legacy spelling no longer occurs, so the rewrite was a no-op.
+            ("(#result == #old_lock)", "(#result == 7)"),
         ),
         (
             &routes[1],
@@ -814,6 +817,9 @@ fn the_five_package_registry_composes_only_what_its_packages_implement() {
             ("(#field == 1)", "(#field == 0)"),
         ),
     ] {
+        // Card LANDING-REPAIR: a rewrite that matches nothing would test the
+        // true contract; each must falsify exactly one normal condition.
+        assert_eq!(contract.matches(mutation.0).count(), 1, "{}", route.label);
         let false_contract = BooleanFieldSourceTask::derive(
             summary,
             "fixture.c",
