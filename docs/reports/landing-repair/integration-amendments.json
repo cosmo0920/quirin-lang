@@ -1,0 +1,18 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "LANDING-REPAIR",
+ "base": "c745b3ee2",
+ "measured_tip": "e579ed1e6",
+ "increment_paragraph": "**LANDING-REPAIR (2026-10-27).** Repairs the test failures that stopped integrator gate 7 on the landing base c745b3ee2 (three named, three more found by a --no-fail-fast provider run, gate 7's having stopped at the first failing binary) plus one record drift; no analyser, contract text, lock or Lean file changes, so no verdict moves. (1) contract_tip_mode's review-stamp helper assumed every lock has a `tip` key, but an empty tip section is omitted by format (ContractLock::tip skip_serializing_if empty, since CONTRACT-PIN-TIP-MODE); the pin tool stamps and keeps tip entries correctly (pin --verify-contracts passes on all 17 locks, the libevent tip entry carries its stamp), so the helper now requires matching section presence, a valid stamp on every present entry and no stamp moving backwards. (2) The quant migration 6bcda2983 gave cmetrics counter_reset.qv the typed entry domain `(#old_field == 0) || (#old_field == 1)`, so the tests' blanket `field == 1` rewrite also corrupted that domain, which the Boolean condition profile correctly refuses; cmetrics_unit and composed_five_providers now falsify only the normal exit `(#field == 1)` and still require Unknown with no certificate (QP009 in the composed test), and cmetrics_unit additionally asserts that the corrupted-domain contract is refused at derivation. (3) test_contract_corpus counts 56 quirin-provider modules: quant-contract-hypotheses 6ecb5498d added cfl/atomic.qv, which also was missing from quirin-provider-cfl's CONTRACTS index (failing the crate's index test and quirin-provider-shared's load-path test) and is now indexed. composed_five_providers' chunkio rewrite `result == old_lock` no longer matched the typed lock_state.qv, so its 'false' contract was the true one and came back Safe; it now falsifies `(#result == #old_lock)` and asserts every rewrite matches exactly once. (4) The acceptance matrix was regenerated with build_matrix.py (dimensions.named_followups 851 to 862, the eleven follow-ons ae6742618 registered without regenerating). One follow-on is registered: pin --regenerate does not compare the stamps it writes with those it replaces.",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "PIN-REGENERATE-STAMP-MONOTONICITY",
+   "operation": "register",
+   "title": "pin --regenerate writes stamps without comparing them with the stamps it replaces",
+   "text": "Contract spec C06.6 says a re-pin carries a later stamp than the entry it replaces, and an explicit stamp that is not later refuses. `quirin-audit pin --regenerate` starts from no lock (contract_pin.rs: existing = None; only tip entries are carried), so Stamper::replacing sees no replaced stamp. An explicit --pinned-at earlier than the lock's stamps is accepted, and a default clock stamp behind the lock is written unadjusted, which can reorder supersession between bundles. Card LANDING-REPAIR found this by code reading; no run has shown it. DISCHARGE: regeneration passes each replaced entry's stamp to Stamper::replacing (refusing an explicit earlier stamp, moving a default one past it), with a test that regenerates under an earlier --pinned-at and a matching Lean or spec note if the model covers regeneration.",
+   "source": "docs/reports/landing-repair/README.md",
+   "recorded_by": "LANDING-REPAIR"
+  }
+ ]
+}
