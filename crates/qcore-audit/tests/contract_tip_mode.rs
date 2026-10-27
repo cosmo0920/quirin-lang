@@ -503,7 +503,7 @@ fn a_tip_entry_keeps_its_payload_and_version_four_review_stamps() {
     );
     assert_same_pin_payload_with_monotone_stamps(&tip_lock, &regenerated);
     // `--untrack-tip` turns it back into a reviewed identity at HEAD (A):
-    // the lock is again the reviewed-only version-2 lock, byte for byte.
+    // the lock is again the reviewed-only version-4 payload, with review stamps.
     succeeded(&tree.pin(&["--function", "box_drop", "--untrack-tip"]));
     assert_same_pin_payload_with_monotone_stamps(
         &reviewed,
@@ -548,6 +548,12 @@ fn assert_same_pin_payload_with_monotone_stamps(before: &str, after: &str) {
     assert_eq!(before["lock_version"], 4);
     assert_eq!(after["lock_version"], 4);
     for section in ["pinned", "flexible", "tip"] {
+        // Empty sections are omitted by the lock serializer. Their absence
+        // must be preserved just as strictly as an existing section's payload.
+        if before[section].is_null() {
+            assert!(after[section].is_null(), "added section {section}");
+            continue;
+        }
         let old = before[section].as_array().unwrap();
         let new = after[section].as_array_mut().unwrap();
         assert_eq!(old.len(), new.len());

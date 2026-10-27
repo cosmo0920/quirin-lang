@@ -68,9 +68,10 @@ class CanonicalCorpus(unittest.TestCase):
         # in qcore-provider-librdkafka (83 -> 84 owned).
         # Source-audited map/opts models add two CMetrics-owned modules.
         # CMT-GETTER-OWNERSHIP-CLOSURE adds CFL's declared hash-state model.
+        # Typed quant effects add CFL's atomic module (55 -> 56 quirin-owned).
         self.assertEqual(len(modules), 144)
         self.assertEqual(sum(any(part.startswith("qcore-provider-") for part in path.parts) for path in modules.values()), 88)
-        self.assertEqual(sum(any(part.startswith("quirin-provider-") for part in path.parts) for path in modules.values()), 55)
+        self.assertEqual(sum(any(part.startswith("quirin-provider-") for part in path.parts) for path in modules.values()), 56)
         libc = [path for name, path in modules.items() if name.startswith("libc/")]
         self.assertTrue(libc and all("quirin-provider-libc" in path.parts for path in libc))
 

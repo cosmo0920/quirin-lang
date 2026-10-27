@@ -114,7 +114,14 @@ fn cmetrics_process_checks_unit_paths_and_rejects_scalar_or_unbound_claims() {
     rebound.task_digest = wrong_key.task_digest();
     let rejected = registry.verify_v2(&rebound, &wrong_key, Some(&replay));
     assert_eq!(rejected.verdict, ProposedVerdict::Unknown);
-    let false_policy = contract.replace("field == 1", "field == 0");
+    let false_policy = contract.replace(
+        "quant condition normal #exit_1(#field: integer) = (#field == 1);",
+        "quant condition normal #exit_1(#field: integer) = (#field == 0);",
+    );
+    assert_ne!(
+        false_policy, contract,
+        "negative control did not mutate the exit"
+    );
     let false_replay =
         BooleanFieldSourceTask::derive(&summary, "counter.c", &false_policy, target).unwrap();
     assert_eq!(
