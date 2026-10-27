@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 862
+  "named_followups": 861
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6862,10 +6862,10 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration of CONTRIBUTION-LEDGERS (landing-race policy: main moved b2af78eaf -> 9c58892cf by Codex's gateway frame audit and CMetrics getter-ownership closure, disjoint from this card except scripts/tests/test_contract_corpus.py, which the card does not touch). The card's full gate ran on ed3710b18 (base b2af78eaf): submodules, fmt, Clippy, Rust 8731 passed/0 failed/15 ignored (560 units/574 summaries), both reevaluation examples, Python 536, all exit 0 (docs/reports/contribution-ledgers/gate.json). TARGETED CHECK on the merge (private logs /media/Data/GitHub/quirin-lang/private/landing-cldg): cargo fmt --check 0; quirin-audit-plugin-measure clippy -D warnings and tests (43 passed/0 failed) 0 under a rust-suite slot; contribution_ledgers.py check and evaluation_profiles.py check --history pass; land.py check and the Python suite on the committed regenerated matrix. workspace_tests carried from the card's full gate; provider_tests 133 carried; Lean: main's tree had 375 audit files against a last recorded Lean gate of 373 (Codex's cmt-getter-ownership-closure merged AuditCMetricsGetterOwnership.lean without a gate record), so scripts/check_lean_audits.py was run on the merge under a lean slot: Passed 375 Lean audits, exit 0 (lean.log beside the other logs).",
-  "workspace_tests": 8731,
+  "note": "Combined landing of GATEWAY-RULE-API, CONTRACT-SUPERSESSION records, LANDING-REPAIR and LANDING-PUBLISH-COMPLETION items 1-3 onto origin/main 508407913 (quant-contract-hypotheses merge f774f54de plus Codex's typed-setter repair). FULL GATE (gate_scope.py --base da13b7d12 --full) on dd99e783e, private logs /media/Data/GitHub/quirin-lang/private/landing-rapi/gate8: submodules, fmt, Clippy 0; Rust 8832 passed/0 failed/15 ignored (571 units/590 summaries) 0; both reevaluation examples 0; Lean 388 audits 0; provider package build/verify-all/verify 0; provider tests 133 passed/0 failed/1 ignored 0; provider fmt and Clippy 0. Python exited 1 (554 tests, 2 failures): the acceptance matrix's dimensions.named_followups (862 vs 861 after the applied amendments; regenerated here) and test_tracked_files' reviewed-walk table missing scripts/tests/test_land.py (LANDING-PUBLISH-COMPLETION's TemporaryDirectory iterdir; added with its reason). Both are records-only; the Python suite was rerun on the committed records commit.",
+  "workspace_tests": 8832,
   "provider_tests": 133,
-  "python_evidence_validator_tests": 536,
+  "python_evidence_validator_tests": 554,
   "lean_audits": 388,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
@@ -7261,9 +7261,9 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "card full gate on ed3710b18 + targeted landing check on the merge",
+  "standing_gate": "full gate on dd99e783e + Python rerun on the records commit",
   "full_language_conformance": false,
-  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
+  "measurement_provenance": "integrator_supplied (docs/reports/landing-repair/integration/gate.json)"
  },
  "named_followups": [
   {

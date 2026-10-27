@@ -560,6 +560,10 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | Card directory | Original report title |
 |---|---|
 
+| [landing-publish-completion](landing-publish-completion/README.md) | LANDING-PUBLISH-COMPLETION |
+
+| [landing-repair](landing-repair/README.md) | LANDING-REPAIR |
+
 | [lean-4-35-toolchain](lean-4-35-toolchain/README.md) | LEAN-4-35-TOOLCHAIN |
 
 | [lean-build-performance](lean-build-performance/README.md) | Lean build performance and bounded audit runner — 2026-09-08 |

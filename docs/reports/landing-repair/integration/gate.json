@@ -1,0 +1,13 @@
+{
+  "note": "Combined landing of GATEWAY-RULE-API, CONTRACT-SUPERSESSION records, LANDING-REPAIR and LANDING-PUBLISH-COMPLETION items 1-3 onto origin/main 508407913 (quant-contract-hypotheses merge f774f54de plus Codex's typed-setter repair). FULL GATE (gate_scope.py --base da13b7d12 --full) on dd99e783e, private logs /media/Data/GitHub/quirin-lang/private/landing-rapi/gate8: submodules, fmt, Clippy 0; Rust 8832 passed/0 failed/15 ignored (571 units/590 summaries) 0; both reevaluation examples 0; Lean 388 audits 0; provider package build/verify-all/verify 0; provider tests 133 passed/0 failed/1 ignored 0; provider fmt and Clippy 0. Python exited 1 (554 tests, 2 failures): the acceptance matrix's dimensions.named_followups (862 vs 861 after the applied amendments; regenerated here) and test_tracked_files' reviewed-walk table missing scripts/tests/test_land.py (LANDING-PUBLISH-COMPLETION's TemporaryDirectory iterdir; added with its reason). Both are records-only; the Python suite was rerun on the committed records commit.",
+  "workspace_tests": 8832,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 554,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "full gate on dd99e783e + Python rerun on the records commit",
+  "lean_audits": 388,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
