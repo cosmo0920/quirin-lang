@@ -2183,7 +2183,9 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // Card FB-TEARDOWN-DESTROY-DECLARATIONS: the ten Fluent Bit destroyers
     // with member-path states (`fluent_bit/teardown_destroy.qv`; the other
     // four are in the function map): 96 -> 106.
-    assert_eq!(loaded.retaining().len(), 106);
+    // EVENT-CALLER-REMOVAL adds one withheld removal declaration: 106 -> 107.
+    // It must not become an ordinary borrow-only function-map entry.
+    assert_eq!(loaded.retaining().len(), 107);
     assert_eq!(
         loaded.functions().len()
             + loaded.pending_review().len()
