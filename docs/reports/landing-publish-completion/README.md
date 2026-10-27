@@ -83,14 +83,27 @@ too.
 
 ## 4. First landed publication
 
-**Pending: the integrator runs it after the landing push.** It runs `land.py
-publish` (the landed revision's own `land.py`) on the pushed landing SHA with
-`--previous b0b63da7dcdd7c3d289259caf4067b72ad45c757`. That verifies reuse of
-the bootstrap baseline and compares all three live routes against the live
-baselines committed at `710021bd7`. Fill in, per profile, either *verified
-unchanged* with the figures or the moved rows with their attribution. Use the
-result to discharge GATEWAY-RULE-API-SLICE-IDENTITY (`fluent-bit-tail-pause`
-unchanged) or amend it.
+**Verified unchanged.** The integrator ran `land.py publish` (the landed
+revision's own `land.py`) on the landing push `d4c43b5ac` with `--previous
+b0b63da7dcdd7c3d289259caf4067b72ad45c757`, from a clean primary checkout, on
+2026-10-27 (exit 0). The plugin verified reuse of the bootstrap baseline and
+compared the three live routes against the live baselines committed at
+`710021bd7`. Every route reproduced its committed profile
+(`profile_baseline.after.exit` 0) with no moved rows:
+
+| Profile (route) | Rows | Row statuses | Units | Null rows |
+|---|---|---|---|---|
+| `eight-home` (corpus) | 4,834 | Safe 1,013 / Unknown 3,812 / Unsafe 9 | 185 | 4,921: Safe 2,549 / Unknown 2,355 / Unsafe 17 |
+| `fluent-bit-system` (system) | 448 | Safe 101 / Unknown 343 / Unsafe 4 | 15 | 454: Safe 211 / Unknown 243 |
+| `fluent-bit-tail-pause` (slice) | 404 | Pending 4 / Safe 57 / Unknown 342 / Unsafe 1 | 16 | 406: Safe 190 / Unknown 216 |
+
+The corpus route is compared by rows (MEASURE-CORPUS-SIDE-CWD-IN-BUILD-IDENTITY,
+below). The published baseline is `private/baselines/d4c43b5ac.../{eight-home,
+fluent-bit-system,fluent-bit-tail-pause}`, which later cards reuse as
+`baseline:d4c43b5ac`. The measurement is
+`private/measure/landing-d4c43b5ac...-20261027T044910930605Z/` (private log
+`private/landing-publish-completion/publish-d4c43b5ac.log`). Because the
+tail-pause profile is unchanged, this discharges GATEWAY-RULE-API-SLICE-IDENTITY.
 
 Already observed: this card's tree (analyzer = `486b05a71`) reproduces the
 `eight-home` corpus figures against `baseline:b0b63da7`, which is the run in

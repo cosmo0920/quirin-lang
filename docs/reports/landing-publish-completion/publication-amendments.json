@@ -1,0 +1,23 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "LANDING-PUBLISH-COMPLETION-PUBLICATION",
+  "base": "d4c43b5ac",
+  "measured_tip": "d4c43b5accdf126523be0089183f346c09f0c281",
+  "profiles": [],
+  "increment_paragraph": "**First landed publication** ([report](../../reports/landing-publish-completion/README.md#4-first-landed-publication)). The integrator ran `land.py publish --previous b0b63da7` on landing `d4c43b5ac`; all three live profiles (`eight-home`, `fluent-bit-system`, `fluent-bit-tail-pause`) reproduced their committed baselines with no moved rows, and the baseline was published as `baseline:d4c43b5ac` for later cards. No analyzer, contract, route or Lean change.",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "GATEWAY-RULE-API-SLICE-IDENTITY",
+      "operation": "retire",
+      "why": "DISCHARGED by LANDING-PUBLISH-COMPLETION: the first landed publication (d4c43b5ac, prev=baseline:b0b63da7) shows the fluent-bit-tail-pause profile reproducing its committed baseline (rows 404: Pending 4 / Safe 57 / Unknown 342 / Unsafe 1; units 16; null rows 406), profile_baseline exit 0, no moved rows.",
+      "source": "docs/reports/landing-publish-completion/README.md"
+    },
+    {
+      "id": "MEASURE-CORPUS-SIDE-CWD-IN-BUILD-IDENTITY",
+      "operation": "amend",
+      "text": "Observed again by LANDING-PUBLISH-COMPLETION: corpus sides differ only in environment digest fields; component union 370 against 185 rows; compared by rows (0 moved, figures equal) in the card's corpus-peak run and in the first landed publication at d4c43b5ac.",
+      "source": "docs/reports/landing-publish-completion/README.md"
+    }
+  ]
+}

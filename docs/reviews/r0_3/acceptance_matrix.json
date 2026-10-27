@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 861
+  "named_followups": 860
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -13170,16 +13170,10 @@
    "source": "docs/reports/gateway-rule-api/README.md"
   },
   {
-   "id": "GATEWAY-RULE-API-SLICE-IDENTITY",
-   "title": "Slice identity not re-measured on the merged base",
-   "why": "Identity-2 timed out before base/slice ran; identity-1 (base 5813ddab9) showed slice byte-identical. DISCHARGE: a slice comparison of main against the pre-card base, or the next landing publication showing the tail-pause profile unchanged.",
-   "source": "docs/reports/gateway-rule-api/README.md"
-  },
-  {
    "id": "MEASURE-CORPUS-SIDE-CWD-IN-BUILD-IDENTITY",
    "title": "Corpus build identity digests the side's working directory",
-   "why": "Under `quirin-audit measure` each side's pinned corpus route runs in sides/<name>/work-corpus, and the unit build identity (projection.rs hypothesis_context) digests the working directory, so corpus artifacts are never byte-identical across sides and the tool reports composition-conflict for equal provenance. DISCHARGE: the tool runs every side's corpus at one fixed working directory, or the identity excludes it, with a byte-identity test.",
-   "source": "docs/reports/gateway-rule-api/README.md"
+   "why": "Under `quirin-audit measure` each side's pinned corpus route runs in sides/<name>/work-corpus, and the unit build identity (projection.rs hypothesis_context) digests the working directory, so corpus artifacts are never byte-identical across sides and the tool reports composition-conflict for equal provenance. DISCHARGE: the tool runs every side's corpus at one fixed working directory, or the identity excludes it, with a byte-identity test. Observed again by LANDING-PUBLISH-COMPLETION: corpus sides differ only in environment digest fields; component union 370 against 185 rows; compared by rows (0 moved, figures equal) in the card's corpus-peak run and in the first landed publication at d4c43b5ac.",
+   "source": "docs/reports/gateway-rule-api/README.md, docs/reports/landing-publish-completion/README.md"
   },
   {
    "id": "SUPERSESSION-BOUNDS-OUTER-VIEWS",
