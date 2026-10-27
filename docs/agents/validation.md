@@ -161,19 +161,25 @@ Heavy jobs take a named slot from `scripts/gate_slot.py <class>
 [--memory-budget 7G|5G|4G] -- <cmd>` instead of one global lock (user decision
 5 of 2026-10-24). A slot is a `flock` on `/tmp/quirin-gate/<class>/<n>`; the
 command's exit is the script's, and a receipt records class, slots held,
-budget, the memory reading and the argv as run.
+budget, admission budget, the memory reading, the argv as run and the child's
+peak resident set (`wait4`'s `ru_maxrss`: the largest single descendant).
 
 | Class | Slots | Use |
 |---|---|---|
 | `rust-suite` | 1; while it runs it also holds every `audit` slot | the root Rust suite and the provider workspace's `cargo test` (constraint 16's load-sensitive rows never share the host with an audit) |
-| `audit` | `max(1, floor(MemAvailable / budget))` when it asks; budget 7 GiB by default, 5 or 4 GiB selectable | corpus, system, slice and other `quirin-audit` runs |
+| `audit` | `max(1, floor(MemAvailable / admission budget))` when it asks; budget 7 GiB by default, 5 or 4 GiB selectable; the pinned corpus is admitted at 11 GiB | corpus, system, slice and other `quirin-audit` runs |
 | `lean` | 2 | `check_lean_audits.py`, `gate_lean.py` |
 
 The audit budget is the audit's own MiB planning budget (`audit-ir-working-set`):
 `quirin-audit current` gets `--memory-budget-mib`, a configuration's
 `memory_budget_mib` must equal it, and any other route gets `QCORE_AUDIT_JOBS`
 capped at `(budget - 1024) / 2048` workers, with an explicit `--jobs` above the
-cap refused, so a smaller budget lowers the run's own concurrency. During the
+cap refused, so a smaller budget lowers the run's own concurrency. Admission
+counts the larger of that budget and the route's measured budget: the pinned
+corpus (`run_pinned_audit.py`, `quirin-audit pinned`) peaks near 10.1 GB at
+three workers, so it is admitted at 11 GiB while its workers stay planned at the
+slot budget, the one measured exception to the 7 GiB default
+(`ROUTE_ADMISSION_MIB`, card `LANDING-PUBLISH-COMPLETION`). During the
 transition every slot job holds the legacy lock
 `/tmp/qcore-c-card-validation-20261022.lock` shared, so a job under
 `flock <legacy lock>` excludes every slot and every slot excludes it. Limits:

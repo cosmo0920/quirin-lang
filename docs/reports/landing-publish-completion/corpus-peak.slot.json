@@ -1,0 +1,83 @@
+{
+ "argv_requested": [
+  "unshare",
+  "-rm",
+  "sh",
+  "-c",
+  "set -e\nmount --bind \"$1\" \"$2\"\nmount --bind \"$3\" \"$4\"\ncd \"$5\"\nshift 5\nexec \"$@\"\n",
+  "quirin-measure-ns",
+  "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a684b9919d89b4918/private/measure/corpus-peak-20261026T175231Z/sides/tip/src",
+  "/tmp/quirin-measure/src",
+  "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a684b9919d89b4918/private/measure/corpus-peak-20261026T175231Z/mirror",
+  "/tmp/quirin-measure/mirror",
+  "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a684b9919d89b4918/private/measure/corpus-peak-20261026T175231Z/sides/tip/work-corpus",
+  "python3",
+  "/tmp/quirin-measure/src/scripts/run_pinned_audit.py",
+  "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a684b9919d89b4918/private/measure/corpus-peak-20261026T175231Z/sides/tip/corpus/corpus",
+  "66910c10",
+  "--inputs-root",
+  "/tmp/quirin-measure/mirror",
+  "--jobs",
+  "3"
+ ],
+ "argv_run": [
+  "unshare",
+  "-rm",
+  "sh",
+  "-c",
+  "set -e\nmount --bind \"$1\" \"$2\"\nmount --bind \"$3\" \"$4\"\ncd \"$5\"\nshift 5\nexec \"$@\"\n",
+  "quirin-measure-ns",
+  "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a684b9919d89b4918/private/measure/corpus-peak-20261026T175231Z/sides/tip/src",
+  "/tmp/quirin-measure/src",
+  "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a684b9919d89b4918/private/measure/corpus-peak-20261026T175231Z/mirror",
+  "/tmp/quirin-measure/mirror",
+  "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a684b9919d89b4918/private/measure/corpus-peak-20261026T175231Z/sides/tip/work-corpus",
+  "python3",
+  "/tmp/quirin-measure/src/scripts/run_pinned_audit.py",
+  "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a684b9919d89b4918/private/measure/corpus-peak-20261026T175231Z/sides/tip/corpus/corpus",
+  "66910c10",
+  "--inputs-root",
+  "/tmp/quirin-measure/mirror",
+  "--jobs",
+  "3"
+ ],
+ "budget": {
+  "QCORE_AUDIT_JOBS": {
+   "after": "3",
+   "before": null
+  },
+  "admission_mib": 11264,
+  "jobs_cap": 3,
+  "label": "7G",
+  "mechanism": "QCORE_AUDIT_JOBS",
+  "memory_budget_mib": 7168,
+  "route_class": "pinned-corpus"
+ },
+ "class": "audit",
+ "cwd": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a684b9919d89b4918/private/measure/corpus-peak-20261026T175231Z/sides/tip/work-corpus",
+ "exit": 0,
+ "finished": "2026-10-26T19:41:32+00:00",
+ "max_rss_kib": 9824888,
+ "max_rss_within_admission": true,
+ "pid": 835744,
+ "schema": "quirin-gate-slot/1",
+ "slot_record": {
+  "audit_slot_ceiling": 15,
+  "class": "audit",
+  "gate_dir": "/tmp/quirin-gate",
+  "held": [
+   "legacy",
+   "audit/0"
+  ],
+  "legacy_lock": {
+   "mode": "shared",
+   "path": "/tmp/qcore-c-card-validation-20261022.lock"
+  },
+  "mem_available_kib": 51886604,
+  "mem_total_kib": 63615012,
+  "slot": 0,
+  "slot_count": 4,
+  "waited_seconds": 772.098
+ },
+ "started": "2026-10-26T18:08:08+00:00"
+}

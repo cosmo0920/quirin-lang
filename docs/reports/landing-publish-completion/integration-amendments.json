@@ -1,0 +1,29 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "LANDING-PUBLISH-COMPLETION",
+  "base": "486b05a71",
+  "measured_tip": "a42edeae4f44038701066b83bbd09eb8cd990f95",
+  "profiles": [],
+  "increment_paragraph": "**LANDING-PUBLISH-COMPLETION** ([report](../../reports/landing-publish-completion/README.md)) completes MEASURE-TOOL-LANDING-PUBLISH. `scripts/gate_slot.py` now gives `quirin-audit current` its slot budget in the two-word form `--memory-budget-mib N` that `current_cli.rs` reads, and still accepts an existing flag in either spelling. Audit admission counts the larger of the slot budget and a route's measured budget. The pinned corpus is admitted at 11 GiB while its workers stay planned at the 7 GiB slot. Every receipt records `admission_mib`, `route_class` and the child's `wait4` peak RSS. Measured under the new admission, the corpus route at `--jobs 3` peaked at 9,824,888 KiB (10.06 GB), within its 11,264 MiB budget, and its figures reproduced the `eight-home` baseline against the verified bootstrap baseline `b0b63da7`. `scripts/land.py publish` now applies the evaluation-profile policy before it publishes. It refuses, and keeps the measurement, when a live profile is unmeasured or has no figures, when its landed figures differ from the baseline committed in the landing, when figures moved without a baseline change since the previous landing, or when `check_history` fails. A move therefore lands only with its new baseline and an appended `baseline_history` reason. No analyzer, contract, route or Lean change.",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "GATE-SLOT-CURRENT-BUDGET-SPELLING",
+      "operation": "retire",
+      "why": "DISCHARGED by LANDING-PUBLISH-COMPLETION: scripts/gate_slot.py inserts the two-word `--memory-budget-mib N` after `quirin-audit current` and reads an existing flag in either spelling; test_a_stub_current_route_accepts_the_inserted_budget runs a stub `quirin-audit current` that reads only the two-word form under a real audit slot (exit 0, budget 7168).",
+      "source": "docs/reports/landing-publish-completion/README.md"
+    },
+    {
+      "id": "CORPUS-PEAK-ABOVE-AUDIT-SLOT-BUDGET",
+      "operation": "retire",
+      "why": "DISCHARGED by LANDING-PUBLISH-COMPLETION: gate_slot.py budgets the corpus class at its measured peak. ROUTE_ADMISSION_MIB admits run_pinned_audit.py / quirin-audit pinned at 11,264 MiB, with workers still planned at the 7 GiB slot (3). Evidence: the corpus route run under that admission (receipt docs/reports/landing-publish-completion/corpus-peak.slot.json, slot 0 of 4) peaked at 9,824,888 KiB (10,060,685,312 B), max_rss_within_admission true.",
+      "source": "docs/reports/landing-publish-completion/README.md"
+    },
+    {
+      "id": "MEASURE-TOOL-LANDING-PUBLISH",
+      "operation": "amend",
+      "text": "Card LANDING-PUBLISH-COMPLETION made `land.py publish` apply the evaluation-profile policy before publishing: it refuses, and keeps the measurement, when a live profile's landed figures differ from the baseline committed in the landing, so a move lands only with its new baseline and an appended baseline_history reason. The first landed publication (`--previous b0b63da7`) is the integrator's step after the landing push.",
+      "source": "docs/reports/landing-publish-completion/README.md"
+    }
+  ]
+}

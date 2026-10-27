@@ -141,7 +141,10 @@ editing reconciliation tooling.
   post-gate sequence `scripts/land.py` owns. On a merge into a newer main, pass
   `--profiles-base <that main>` so the `profiles[]` check attributes only this
   card's baselines. Run `python3 scripts/land.py check` after regenerating the
-  matrix and report index and before the Python suite.
+  matrix and report index and before the Python suite. `land.py publish` ends
+  the landing: it refuses to publish when a live profile's landed figures
+  differ from the baseline committed in the landing, so a move lands with its
+  new baseline and an appended `baseline_history` reason.
 - If a merged measurement differs from the card's own gate, publish
   `docs/reports/<card>/integration/gate.json`, identify the measured tip and the
   merge SHA, and state it in the merge message. Equal figures need no duplicate

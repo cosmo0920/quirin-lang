@@ -22,6 +22,19 @@ gate has run, the integrator:
 8. measures the committed landing revision on all live routes and publishes
    its immutable baseline with `python3 scripts/land.py publish`.
 
+Step 8 applies the evaluation-profile policy before it publishes (card
+LANDING-PUBLISH-COMPLETION; `scripts/evaluation_profiles.py` owns the policy,
+this applies it): every live profile must have been measured, and the landed
+revision's figures must reproduce the baseline committed in that revision
+(`evaluation_profiles.compare`, exit 0). A live figure that moved therefore
+completes a landing only when the landing commits the new baseline with an
+appended `baseline_history` entry and reason (`evaluation_profiles.py
+record`); the history policy (`check_history`: append-only history, frozen
+profiles never move) must hold, and figures that moved since the previous
+published landing need a baseline change in that range. Anything else, a
+missing figure or comparison included, refuses publication; the measurement
+output is kept for the records.
+
 The recurring landing failure this guards is the Python suite running before
 step 2: a ledger edit changes `len(named_followups)` while
 `dimensions.named_followups` still holds the old count, so
@@ -48,6 +61,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import evaluation_profiles  # noqa: E402  (the profile policy's single authority)
 MATRIX = Path("docs/reviews/r0_3/acceptance_matrix.json")
 MATRIX_COMMAND = "python3 docs/reports/remaining-d02/build_matrix.py . --gate <gate.json>"
 INDEX_COMMAND = "python3 scripts/build_docs_index.py"
@@ -80,6 +95,68 @@ def previous_published(root, sha):
         if (root / "private/baselines" / ancestor).is_dir():
             return ancestor
     return None
+
+
+def profile_policy(root, comparison, prior, profiles=None):
+    """Refusals (empty: the landing may publish) of a measurement's `prev ->
+    tip` comparison under the evaluation-profile policy (module doc, step 8).
+
+    `root` is the clean landing checkout, so its working tree is the landed
+    revision's; `prior` is the previous landing the `prev` side measured."""
+    profiles = profiles or evaluation_profiles
+    refusals = []
+    try:
+        live = sorted(name for name, record in profiles.load_profiles(root).items()
+                      if record["policy"]["kind"] == "live")
+    except (profiles.ProfileError, OSError, ValueError, KeyError) as error:
+        return [f"the evaluation profiles cannot be read: {error}"]
+    pair = [entry for entry in comparison.get("comparisons", [])
+            if entry.get("before") == "prev" and entry.get("after") == "tip"]
+    if len(pair) != 1:
+        return ["the measurement has no single prev -> tip comparison"]
+    routes = pair[0].get("routes") or {}
+    by_profile = {}
+    for definition in comparison.get("routes", []):
+        name, profile = definition.get("name"), definition.get("profile")
+        if profile in by_profile:
+            refusals.append(f"{profile}: measured by more than one route")
+        by_profile[profile] = name
+    for profile in live:
+        if profile not in by_profile:
+            refusals.append(f"{profile}: live profile not measured")
+    for profile, name in sorted(by_profile.items(), key=lambda item: str(item[0])):
+        figures = (routes.get(name) or {}).get("figures") or {}
+        after, before = figures.get("after"), figures.get("before")
+        if not isinstance(after, dict) or not isinstance(before, dict):
+            refusals.append(f"{profile}: route {name} has no figures on both sides")
+            continue
+        try:
+            code, differences = profiles.compare(root, profile, after)
+        except (profiles.ProfileError, OSError, ValueError, KeyError) as error:
+            refusals.append(f"{profile}: cannot compare: {error}")
+            continue
+        if code == 2:
+            refusals.append(f"{profile}: " + "; ".join(differences))
+        elif code != 0:
+            refusals.append(
+                f"{profile}: the landed figures moved from the committed baseline; commit the "
+                "new baseline with an appended baseline_history entry and reason "
+                "(evaluation_profiles.py record) in the landing: " + "; ".join(differences))
+        elif before != after:
+            try:
+                old = profiles._record_at(root, prior, profile)
+            except (profiles.ProfileError, OSError, ValueError) as error:
+                refusals.append(f"{profile}: cannot read the record at {prior}: {error}")
+                continue
+            new = profiles._load_profile(root, profile)
+            if old is not None and old["baseline"]["sha256"] == new["baseline"]["sha256"]:
+                refusals.append(f"{profile}: the figures moved since {prior} but the committed "
+                                "baseline did not")
+    try:
+        profiles.check_history(root)
+    except (profiles.ProfileError, OSError, ValueError, KeyError) as error:
+        refusals.append(f"profile history policy: {error}")
+    return refusals
 
 
 def publish(root, previous=None, inputs_base=Path("/media/Data/GitHub/quirin-lang"),
@@ -123,8 +200,13 @@ def publish(root, previous=None, inputs_base=Path("/media/Data/GitHub/quirin-lan
     print(f"land: measuring {prior} -> {sha} at {output}", flush=True)
     subprocess.run(command, cwd=root, check=True)
     side = output / "sides/tip"
-    if not side.is_dir() or not (output / "native-comparison.json").is_file():
+    record = output / "native-comparison.json"
+    if not side.is_dir() or not record.is_file():
         raise ValueError("measurement did not produce a tip side and comparison")
+    refusals = profile_policy(root, json.loads(record.read_text(encoding="utf-8")), prior)
+    if refusals:
+        raise ValueError("the landing does not complete; nothing published (measurement kept "
+                         f"at {output}):\n  " + "\n  ".join(refusals))
     subprocess.run([str(executable), "--plugin-path", str(executable.parent),
                     "--output", str(baseline), "measure", "publish", "--from", str(side)],
                    cwd=root, check=True)
