@@ -1,0 +1,13 @@
+{
+  "note": "EVENT-CALLER-REMOVAL scoped gate selects full root Rust/Lean/provider validation on 6398ddd7c9911c3b38bf651fb3394d414cd1fb53. Rust 8834/0/15 (572 units/591 summaries); provider 133/0/1 (43 summaries); Python 554, skipped0; Lean389. All commands exit0. Exact commands/counts/private logs in evidence/gate-steps.json. Initial failed/deferred gate remains archived separately; records Python rerun follows the completion commit.",
+  "workspace_tests": 8834,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 554,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "full scoped source gate on 6398ddd7c9911c3b38bf651fb3394d414cd1fb53; records-only Python rerun after the completion commit",
+  "lean_audits": 389,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

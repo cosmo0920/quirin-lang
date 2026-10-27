@@ -1,0 +1,64 @@
+{
+  "schema": "event-caller-native-summary/1",
+  "status": "complete",
+  "declared_result": "match",
+  "routes": {
+    "corpus": {
+      "figures_equal": true,
+      "verdict_moves": 0,
+      "content_changes": [
+        {
+          "contract_dependencies": {
+            "after": {
+              "declarations": [
+                "mk_event_del",
+                "mk_event_timeout_disable"
+              ],
+              "hypothesis_dependencies": {}
+            },
+            "before": {
+              "declarations": [
+                "mk_event_del"
+              ],
+              "hypothesis_dependencies": {}
+            }
+          },
+          "leaves_added": [],
+          "leaves_removed": [],
+          "other_fields_changed": [],
+          "row": "monkey-libevent::mk_core/mk_event.c::unit#0::resource-custody.v1::monkey-libevent::mk_event_timeout_disable#0",
+          "status": [
+            "Safe",
+            "Safe"
+          ]
+        }
+      ],
+      "unmatched": 0
+    },
+    "slice": {
+      "figures_equal": true,
+      "verdict_moves": 0,
+      "content_changes": [],
+      "unmatched": 0
+    },
+    "system": {
+      "figures_equal": true,
+      "verdict_moves": 0,
+      "content_changes": [],
+      "unmatched": 0
+    }
+  },
+  "attribution": {
+    "reading_bindings_recomputed": 148,
+    "NULL_rows_unchanged_except_context": {
+      "corpus": 4921,
+      "system": 454,
+      "slice": 406
+    },
+    "outer_documents_equal": true,
+    "body_unvalidated_added": [
+      "mk_event_timeout_disable"
+    ]
+  },
+  "attribution_derived_from": "native-attribution.json.gz"
+}

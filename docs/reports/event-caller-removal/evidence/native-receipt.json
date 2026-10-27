@@ -1,0 +1,658 @@
+{
+  "schema": "event-caller-native-receipt/1",
+  "base": "b403cd4deddaab711f446f383270363aca39a2af",
+  "semantic_tip": "58e80090d7961097e6d951105eb44b806f821323",
+  "validation_tip": "6398ddd7c",
+  "native_run_exit": 0,
+  "paired_declared_comparison_exit": 0,
+  "declared": {
+    "comparison": "base->tip",
+    "path": "/media/Data/GitHub/quirin-lang/private/codex-event-caller-worktree/docs/reports/event-caller-removal/MEASURE_DECLARATION.md",
+    "result": "match",
+    "routes": {
+      "corpus": {
+        "declared": true,
+        "delta_mismatches": [],
+        "missing": [],
+        "result": "match",
+        "unpredicted": []
+      },
+      "slice": {
+        "declared": true,
+        "delta_mismatches": [],
+        "missing": [],
+        "result": "match",
+        "unpredicted": []
+      },
+      "system": {
+        "declared": true,
+        "delta_mismatches": [],
+        "missing": [],
+        "result": "match",
+        "unpredicted": []
+      }
+    },
+    "sha256": "3cfe82fe144b52976fd2c5c25d06c6c066d8f7438739e498dd1093ded2c6f52f"
+  },
+  "source_date_epoch": 1767225600,
+  "figures": {
+    "corpus": {
+      "null_rows": 4921,
+      "null_verdicts": {
+        "Safe": 2549,
+        "Unknown": 2355,
+        "Unsafe": 17
+      },
+      "null_verdicts_sha256": "5e3809dd6ee98d3205736824d7d2f1e932836e296d4fc47f16f614b7a158f493",
+      "row_statuses": {
+        "Safe": 1013,
+        "Unknown": 3811,
+        "Unsafe": 10
+      },
+      "row_verdicts_sha256": "6019562445f06309f8419ff7c644cd8b764c8258c7deb625a60ba4227f603f82",
+      "rows": 4834,
+      "unit_statuses": {
+        "Safe": 8,
+        "Unknown": 165,
+        "Unsafe": 8,
+        "data_only": 4
+      },
+      "unit_verdicts_sha256": "58c0d37734220a4427792bc8b13569468da6e48cfd2e2425c9c02a96226cb770",
+      "units": 185
+    },
+    "slice": {
+      "null_rows": 406,
+      "null_verdicts": {
+        "Safe": 190,
+        "Unknown": 216
+      },
+      "null_verdicts_sha256": "08e9b5da9fe871894264c1b276f846c4cd387a95be5e4704fb4ac49e1dac744b",
+      "row_statuses": {
+        "Pending": 4,
+        "Safe": 57,
+        "Unknown": 342,
+        "Unsafe": 1
+      },
+      "row_verdicts_sha256": "a84686d4fd6a52b090bac9ed9302c52f2d79c1439fc7dfbbf421589ff4dd8781",
+      "rows": 404,
+      "unit_statuses": {
+        "Unknown": 15,
+        "Unsafe": 1
+      },
+      "unit_verdicts_sha256": "54e95d5f88252a15b9dd02fb3878b6286b16eeea24a5a4cfd4fde8a08af830e5",
+      "units": 16
+    },
+    "system": {
+      "null_rows": 454,
+      "null_verdicts": {
+        "Safe": 211,
+        "Unknown": 243
+      },
+      "null_verdicts_sha256": "18d3b6d0fee4bc3f929e5dac2474bfb88a2290f3163dc698dc2abc3ba94155b3",
+      "row_statuses": {
+        "Safe": 101,
+        "Unknown": 343,
+        "Unsafe": 4
+      },
+      "row_verdicts_sha256": "1d17077f4986f2ea53867a1a2854eb5d5c54c22d755520a7151c5a9c1c6f0003",
+      "rows": 448,
+      "unit_statuses": {
+        "Unknown": 13,
+        "Unsafe": 2
+      },
+      "unit_verdicts_sha256": "d326464ed189bac74776761057f9be31bd5197eea46563b8991137944ed2a01f",
+      "units": 15
+    }
+  },
+  "content_changes": {
+    "corpus": [
+      {
+        "contract_dependencies": {
+          "after": {
+            "declarations": [
+              "mk_event_del",
+              "mk_event_timeout_disable"
+            ],
+            "hypothesis_dependencies": {}
+          },
+          "before": {
+            "declarations": [
+              "mk_event_del"
+            ],
+            "hypothesis_dependencies": {}
+          }
+        },
+        "leaves_added": [],
+        "leaves_removed": [],
+        "other_fields_changed": [],
+        "row": "monkey-libevent::mk_core/mk_event.c::unit#0::resource-custody.v1::monkey-libevent::mk_event_timeout_disable#0",
+        "status": [
+          "Safe",
+          "Safe"
+        ]
+      }
+    ],
+    "slice": [],
+    "system": []
+  },
+  "before_archive_revision": "9348f813444a25ef710ad6096cb88469913176fa",
+  "before_archives": [
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/corpus/corpus/monkey-source.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/corpus/corpus/monkey-source.json.gz",
+      "sha256": "ba459c8ab988fc3e97b1efd8a9edbb3ffbd5c4933f79a2b77ae2464ad9f7ff2f",
+      "bytes": 1665415,
+      "gzip_bytes": 41994,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/corpus/corpus/resource-diagnostics.chunk-contracts.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/corpus/corpus/resource-diagnostics.chunk-contracts.json.gz",
+      "sha256": "c56b0e2ac106ea57362cdc8d76a39a49ac4edcd02c1d46bfc0133b20c4f5cf88",
+      "bytes": 4190342,
+      "gzip_bytes": 282406,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/corpus/corpus/resource-diagnostics.components.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/after/corpus/corpus/resource-diagnostics.components.json.gz",
+      "sha256": "0f54feadc21ffe15125cedff36e1c2b10ee14a7744199e1ecfa325e17fb373f9",
+      "bytes": 108190073,
+      "gzip_bytes": 10316414
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/corpus/corpus/resource-diagnostics.contracts.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/after/corpus/corpus/resource-diagnostics.contracts.json.gz",
+      "sha256": "3e57d25d02177c30221934b85846f28563f4918306c04688c2331eb91aefdaa0",
+      "bytes": 55394410,
+      "gzip_bytes": 2468314
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/corpus/corpus/resource-diagnostics.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/after/corpus/corpus/resource-diagnostics.json.gz",
+      "sha256": "5138c59069aaf63fbbf9e006d1db371f9670d305e57a09983dab721efa61cd98",
+      "bytes": 114388262,
+      "gzip_bytes": 10414387
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/corpus/corpus/resource-diagnostics.source-effects.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/after/corpus/corpus/resource-diagnostics.source-effects.json.gz",
+      "sha256": "d869bf227353bda942a8f1ef494d618d2252cad8e15f89112542d38338ea47d0",
+      "bytes": 122792,
+      "gzip_bytes": 17338
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/corpus/corpus/run.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/after/corpus/corpus/run.json.gz",
+      "sha256": "07dd5d6e123e1572775cea262d0cd3b3fe8d0a68be147b7616cbf31ae7bc9a32",
+      "bytes": 1072,
+      "gzip_bytes": 558
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/corpus/corpus-null.jsonl",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/after/corpus/corpus-null.jsonl.gz",
+      "sha256": "3a748b50aeab05a3b3ebc654062dbc9664aaac99a8a4f26cd63d691026906465",
+      "bytes": 46197277,
+      "gzip_bytes": 3013002
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/corpus/corpus-null.summary.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/after/corpus/corpus-null.summary.json.gz",
+      "sha256": "a4503189099be526778d038b68b9159632311573c63dd2da7acae906d16d1e5c",
+      "bytes": 64901,
+      "gzip_bytes": 3637
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/corpus/corpus-outer.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/after/corpus/corpus-outer.json.gz",
+      "sha256": "6810b3dabd1b78375a1998e27c4489f1e3cdae13ecfb72579fcd9898f737e5c4",
+      "bytes": 711280,
+      "gzip_bytes": 20540
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/corpus/invocation.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/after/corpus/invocation.json.gz",
+      "sha256": "d57e308420122d57d89750a2cc6263a1aeca4153eda674b1a771c056d31cc09a",
+      "bytes": 4372,
+      "gzip_bytes": 1295
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/slice/invocation.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/after/slice/invocation.json.gz",
+      "sha256": "8eaf47767ae3a1e81a80e05c3192d359d9b75a7da7f42f2e2dc351a2445b3e9f",
+      "bytes": 4261,
+      "gzip_bytes": 1300
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/slice/resource-diagnostics.chunk-contracts.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/slice/resource-diagnostics.chunk-contracts.json.gz",
+      "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+      "bytes": 385,
+      "gzip_bytes": 260,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/slice/resource-diagnostics.components.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/after/slice/resource-diagnostics.components.json.gz",
+      "sha256": "f3c33b998277fc6e67ce301e24e9cf502fbe9c225749a93e39b3a49a4cdfbf38",
+      "bytes": 3763457,
+      "gzip_bytes": 346019
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/slice/resource-diagnostics.contracts.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/after/slice/resource-diagnostics.contracts.json.gz",
+      "sha256": "ac8ef2ebb38a1989349470386e488366b88080dbf163aa59886ccb7a441f710b",
+      "bytes": 22136557,
+      "gzip_bytes": 1169562
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/slice/resource-diagnostics.invocation.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/after/slice/resource-diagnostics.invocation.json.gz",
+      "sha256": "ac68d8b245f98e1da243719e655d2d6aad6cc42075d5aa6e1788ee5729b0bc3b",
+      "bytes": 6665,
+      "gzip_bytes": 2254
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/slice/resource-diagnostics.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/after/slice/resource-diagnostics.json.gz",
+      "sha256": "b77c92f5a2d9a753043053416fc0f3e6ec6830959eed0c5659d862c81519cdc5",
+      "bytes": 4367076,
+      "gzip_bytes": 358540
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/slice/resource-diagnostics.source-effects.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/slice/resource-diagnostics.chunk-contracts.json.gz",
+      "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+      "bytes": 385,
+      "gzip_bytes": 260,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/slice/slice-null.jsonl",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/after/slice/slice-null.jsonl.gz",
+      "sha256": "b05d2038478f474cd1ae88d9dfac0352f60158aa56eb8e2cf73755ca8f32b239",
+      "bytes": 1853651,
+      "gzip_bytes": 96991
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/slice/slice-null.summary.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/slice/slice-null.summary.json.gz",
+      "sha256": "df4be8b649b807ee4b83c0516250e7495e7e57355733c126c24a6b3828960c56",
+      "bytes": 64487,
+      "gzip_bytes": 3435,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/slice/slice-outer.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/slice/slice-outer.json.gz",
+      "sha256": "7f64ea5cc01c131f96a690fb893a581ce8a3fa863de07077e5114228f8cffd53",
+      "bytes": 88639,
+      "gzip_bytes": 7400,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/system/invocation.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/after/system/invocation.json.gz",
+      "sha256": "5ece41ecfef9354cd5a0a4d5b294f7153f281085f160d408442ca485c7902532",
+      "bytes": 4285,
+      "gzip_bytes": 1304
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/system/resource-diagnostics.chunk-contracts.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/system/resource-diagnostics.chunk-contracts.json.gz",
+      "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+      "bytes": 385,
+      "gzip_bytes": 260,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/system/resource-diagnostics.components.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/after/system/resource-diagnostics.components.json.gz",
+      "sha256": "554ac14ed141fcdf05361a2ddc6e7174400107f4596009b41e54ef21d8342596",
+      "bytes": 9384186,
+      "gzip_bytes": 962972
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/system/resource-diagnostics.contracts.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/after/system/resource-diagnostics.contracts.json.gz",
+      "sha256": "99ba81db8b549f372f79810d6f4962cc13a8085f61dfcc669c5f641600554b0f",
+      "bytes": 23323620,
+      "gzip_bytes": 1203284
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/system/resource-diagnostics.invocation.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/after/system/resource-diagnostics.invocation.json.gz",
+      "sha256": "827e125e6b92d3fa85f434e3ba3c49de5a52303546a91980e8d331b1315a05c8",
+      "bytes": 6121,
+      "gzip_bytes": 1998
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/system/resource-diagnostics.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/after/system/resource-diagnostics.json.gz",
+      "sha256": "d1955c930e777127d30b7113dfbeff733a6dd92ed007db0ee3174bf6600dbc0d",
+      "bytes": 10021427,
+      "gzip_bytes": 967439
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/system/resource-diagnostics.source-effects.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/system/resource-diagnostics.chunk-contracts.json.gz",
+      "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+      "bytes": 385,
+      "gzip_bytes": 260,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/system/system-null.jsonl",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/after/system/system-null.jsonl.gz",
+      "sha256": "93bfeec9d35efe8ccf76d299035b64bdd4218455a1ed6642aefd92b77038cbbf",
+      "bytes": 1873227,
+      "gzip_bytes": 104449
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/system/system-null.summary.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/system/system-null.summary.json.gz",
+      "sha256": "572117bd3758532c0ad224a8b40db30dc6793a36d0cec55c54a0c817a905d1e2",
+      "bytes": 64385,
+      "gzip_bytes": 3399,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-cmt-landing-20261027/native-2/sides/tip/system/system-outer.json",
+      "archive": "docs/reports/cmt-getter-ownership-closure/integration/raw/before/system/system-outer.json.gz",
+      "sha256": "705e46a8aeccd9bbfedab17339a1b033ca679333c7157cfa03157680e0fc7f7f",
+      "bytes": 67168,
+      "gzip_bytes": 6924,
+      "shared_archive": true
+    }
+  ],
+  "files": [
+    {
+      "source": "private/codex-event-caller-native-final/native-comparison.json",
+      "archive": "docs/reports/event-caller-removal/evidence/native-comparison.json.gz",
+      "sha256": "291bdf551289c9b333aea91943e70d45003de3fafaede2777eb4939e3c19576a",
+      "bytes": 69337,
+      "gzip_bytes": 8530
+    },
+    {
+      "source": "private/codex-event-caller-worktree/private/event-caller-removal/native-attribution/attribution.json",
+      "archive": "docs/reports/event-caller-removal/evidence/native-attribution.json.gz",
+      "sha256": "3fc8d50f5fe37a30b305447394f52ec49e9ee3fa295cb4bb5af67833f7ca577a",
+      "bytes": 532038,
+      "gzip_bytes": 56901
+    },
+    {
+      "source": "private/codex-event-caller-native-build/sides/tip/corpus/corpus/monkey-source.json",
+      "archive": "docs/reports/event-caller-removal/evidence/raw/after/corpus/corpus/monkey-source.json.gz",
+      "sha256": "ba459c8ab988fc3e97b1efd8a9edbb3ffbd5c4933f79a2b77ae2464ad9f7ff2f",
+      "bytes": 1665415,
+      "gzip_bytes": 41994
+    },
+    {
+      "source": "private/codex-event-caller-native-build/sides/tip/corpus/corpus/resource-diagnostics.chunk-contracts.json",
+      "archive": "docs/reports/event-caller-removal/evidence/raw/after/corpus/corpus/resource-diagnostics.chunk-contracts.json.gz",
+      "sha256": "c56b0e2ac106ea57362cdc8d76a39a49ac4edcd02c1d46bfc0133b20c4f5cf88",
+      "bytes": 4190342,
+      "gzip_bytes": 282406
+    },
+    {
+      "source": "private/codex-event-caller-native-build/sides/tip/corpus/corpus/resource-diagnostics.components.json",
+      "archive": "docs/reports/event-caller-removal/evidence/raw/after/corpus/corpus/resource-diagnostics.components.json.gz",
+      "sha256": "e6bd26bc0f60825e7ba3aeca9589f6b1f76a346cb54884216e971433f6dc0c6f",
+      "bytes": 108231350,
+      "gzip_bytes": 10322767
+    },
+    {
+      "source": "private/codex-event-caller-native-build/sides/tip/corpus/corpus/resource-diagnostics.contracts.json",
+      "archive": "docs/reports/event-caller-removal/evidence/raw/after/corpus/corpus/resource-diagnostics.contracts.json.gz",
+      "sha256": "bf408860e4e1d9ccc1cbca94d8fc3fdd0249488df2e2249624159472e96202b6",
+      "bytes": 55398722,
+      "gzip_bytes": 2468673
+    },
+    {
+      "source": "private/codex-event-caller-native-build/sides/tip/corpus/corpus/resource-diagnostics.json",
+      "archive": "docs/reports/event-caller-removal/evidence/raw/after/corpus/corpus/resource-diagnostics.json.gz",
+      "sha256": "1a613008c95f9a12d123ceeca3d7cca91d97a84bdbbb391b5c8ffe9f3d6304a0",
+      "bytes": 114429529,
+      "gzip_bytes": 10422276
+    },
+    {
+      "source": "private/codex-event-caller-native-build/sides/tip/corpus/corpus/resource-diagnostics.source-effects.json",
+      "archive": "docs/reports/event-caller-removal/evidence/raw/after/corpus/corpus/resource-diagnostics.source-effects.json.gz",
+      "sha256": "88f491a96d35f9a704a9c268230e11a49ae9beb12e6fce87c1adffc43d0da288",
+      "bytes": 122792,
+      "gzip_bytes": 17337
+    },
+    {
+      "source": "private/codex-event-caller-native-build/sides/tip/corpus/corpus/run.json",
+      "archive": "docs/reports/event-caller-removal/evidence/raw/after/corpus/corpus/run.json.gz",
+      "sha256": "8906443fbd767f3739880d4156e596d06cb0fa7794e72c7a5e77a8dcd9c8a823",
+      "bytes": 1064,
+      "gzip_bytes": 553
+    },
+    {
+      "source": "private/codex-event-caller-native-build/sides/tip/corpus/corpus-null.jsonl",
+      "archive": "docs/reports/event-caller-removal/evidence/raw/after/corpus/corpus-null.jsonl.gz",
+      "sha256": "6215f0caf1dd3eb800595ccadd204fe613279f8291ce689f82a1b260da94437f",
+      "bytes": 46197277,
+      "gzip_bytes": 3012856
+    },
+    {
+      "source": "private/codex-event-caller-native-build/sides/tip/corpus/corpus-null.summary.json",
+      "archive": "docs/reports/event-caller-removal/evidence/raw/after/corpus/corpus-null.summary.json.gz",
+      "sha256": "a4503189099be526778d038b68b9159632311573c63dd2da7acae906d16d1e5c",
+      "bytes": 64901,
+      "gzip_bytes": 3637
+    },
+    {
+      "source": "private/codex-event-caller-native-build/sides/tip/corpus/corpus-outer.json",
+      "archive": "docs/reports/event-caller-removal/evidence/raw/after/corpus/corpus-outer.json.gz",
+      "sha256": "6810b3dabd1b78375a1998e27c4489f1e3cdae13ecfb72579fcd9898f737e5c4",
+      "bytes": 711280,
+      "gzip_bytes": 20540
+    },
+    {
+      "source": "private/codex-event-caller-native-build/sides/tip/corpus/invocation.json",
+      "archive": "docs/reports/event-caller-removal/evidence/raw/after/corpus/invocation.json.gz",
+      "sha256": "fce16c7251b7d43673f768132fbb78fd226f12cbb28c713f8752ebd79b5bf9cc",
+      "bytes": 4320,
+      "gzip_bytes": 1293
+    },
+    {
+      "source": "private/codex-event-caller-native-build/sides/tip/system/invocation.json",
+      "archive": "docs/reports/event-caller-removal/evidence/raw/after/system/invocation.json.gz",
+      "sha256": "1d928ccc1b65e9706220a166433bd3741c3948291aa47c63a3a5df4efd9571a6",
+      "bytes": 4241,
+      "gzip_bytes": 1299
+    },
+    {
+      "source": "private/codex-event-caller-native-build/sides/tip/system/resource-diagnostics.chunk-contracts.json",
+      "archive": "docs/reports/event-caller-removal/evidence/raw/after/system/resource-diagnostics.chunk-contracts.json.gz",
+      "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+      "bytes": 385,
+      "gzip_bytes": 260
+    },
+    {
+      "source": "private/codex-event-caller-native-build/sides/tip/system/resource-diagnostics.components.json",
+      "archive": "docs/reports/event-caller-removal/evidence/raw/after/system/resource-diagnostics.components.json.gz",
+      "sha256": "22f6d3980f5586b379b8173f1f69aaabcb2d10e7c46e183f0d6e9ce12f8410b6",
+      "bytes": 9387926,
+      "gzip_bytes": 963742
+    },
+    {
+      "source": "private/codex-event-caller-native-build/sides/tip/system/resource-diagnostics.contracts.json",
+      "archive": "docs/reports/event-caller-removal/evidence/raw/after/system/resource-diagnostics.contracts.json.gz",
+      "sha256": "376a4939e398c95148fb2a20a6a366d6019c34819468dff006d58426e49026c9",
+      "bytes": 23325822,
+      "gzip_bytes": 1203515
+    },
+    {
+      "source": "private/codex-event-caller-native-build/sides/tip/system/resource-diagnostics.invocation.json",
+      "archive": "docs/reports/event-caller-removal/evidence/raw/after/system/resource-diagnostics.invocation.json.gz",
+      "sha256": "290bbe3a1188e1935d0068f7c013700f51b7fbc5aa6c7956c5a33bfbad654fc9",
+      "bytes": 6109,
+      "gzip_bytes": 1990
+    },
+    {
+      "source": "private/codex-event-caller-native-build/sides/tip/system/resource-diagnostics.json",
+      "archive": "docs/reports/event-caller-removal/evidence/raw/after/system/resource-diagnostics.json.gz",
+      "sha256": "96cb034c850b9f6038d9dcc071aee208aac8dce910a06b32ba6f5be22d02df08",
+      "bytes": 10025167,
+      "gzip_bytes": 968035
+    },
+    {
+      "source": "private/codex-event-caller-native-build/sides/tip/system/resource-diagnostics.source-effects.json",
+      "archive": "docs/reports/event-caller-removal/evidence/raw/after/system/resource-diagnostics.source-effects.json.gz",
+      "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+      "bytes": 385,
+      "gzip_bytes": 260
+    },
+    {
+      "source": "private/codex-event-caller-native-build/sides/tip/system/system-null.jsonl",
+      "archive": "docs/reports/event-caller-removal/evidence/raw/after/system/system-null.jsonl.gz",
+      "sha256": "04e991373d1b5e321ee45cf556803988cf1c17649d7ed365d93e48158ef708e0",
+      "bytes": 1873227,
+      "gzip_bytes": 104452
+    },
+    {
+      "source": "private/codex-event-caller-native-build/sides/tip/system/system-null.summary.json",
+      "archive": "docs/reports/event-caller-removal/evidence/raw/after/system/system-null.summary.json.gz",
+      "sha256": "572117bd3758532c0ad224a8b40db30dc6793a36d0cec55c54a0c817a905d1e2",
+      "bytes": 64385,
+      "gzip_bytes": 3399
+    },
+    {
+      "source": "private/codex-event-caller-native-build/sides/tip/system/system-outer.json",
+      "archive": "docs/reports/event-caller-removal/evidence/raw/after/system/system-outer.json.gz",
+      "sha256": "705e46a8aeccd9bbfedab17339a1b033ca679333c7157cfa03157680e0fc7f7f",
+      "bytes": 67168,
+      "gzip_bytes": 6924
+    },
+    {
+      "source": "private/codex-event-caller-native-build/sides/tip/slice/invocation.json",
+      "archive": "docs/reports/event-caller-removal/evidence/raw/after/slice/invocation.json.gz",
+      "sha256": "c8b3c600a1980088752dc650c367486cb55fc72dcb3b5efbc32104a69903ef06",
+      "bytes": 4217,
+      "gzip_bytes": 1298
+    },
+    {
+      "source": "private/codex-event-caller-native-build/sides/tip/slice/resource-diagnostics.chunk-contracts.json",
+      "archive": "docs/reports/event-caller-removal/evidence/raw/after/slice/resource-diagnostics.chunk-contracts.json.gz",
+      "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+      "bytes": 385,
+      "gzip_bytes": 260
+    },
+    {
+      "source": "private/codex-event-caller-native-build/sides/tip/slice/resource-diagnostics.components.json",
+      "archive": "docs/reports/event-caller-removal/evidence/raw/after/slice/resource-diagnostics.components.json.gz",
+      "sha256": "ce0d0a42bce1564c020fac591298f89a70a73e0e170c6987071cfb880b14d3ed",
+      "bytes": 3764392,
+      "gzip_bytes": 346151
+    },
+    {
+      "source": "private/codex-event-caller-native-build/sides/tip/slice/resource-diagnostics.contracts.json",
+      "archive": "docs/reports/event-caller-removal/evidence/raw/after/slice/resource-diagnostics.contracts.json.gz",
+      "sha256": "60d8126b192168f7c8f0a4ad0f04def9adf3f1c9f272d5d0b8eabda1c1f0d1dd",
+      "bytes": 22138759,
+      "gzip_bytes": 1169770
+    },
+    {
+      "source": "private/codex-event-caller-native-build/sides/tip/slice/resource-diagnostics.invocation.json",
+      "archive": "docs/reports/event-caller-removal/evidence/raw/after/slice/resource-diagnostics.invocation.json.gz",
+      "sha256": "b584c6e39fef055569cf329528671087413b8c6f0947b5077062a6c351b1a2ce",
+      "bytes": 6653,
+      "gzip_bytes": 2248
+    },
+    {
+      "source": "private/codex-event-caller-native-build/sides/tip/slice/resource-diagnostics.json",
+      "archive": "docs/reports/event-caller-removal/evidence/raw/after/slice/resource-diagnostics.json.gz",
+      "sha256": "e78e532176f4fc4b79ea041a64fed439f749dfc6e0ca5db681cb8c6fd6d9c0fd",
+      "bytes": 4368011,
+      "gzip_bytes": 358697
+    },
+    {
+      "source": "private/codex-event-caller-native-build/sides/tip/slice/resource-diagnostics.source-effects.json",
+      "archive": "docs/reports/event-caller-removal/evidence/raw/after/slice/resource-diagnostics.source-effects.json.gz",
+      "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+      "bytes": 385,
+      "gzip_bytes": 260
+    },
+    {
+      "source": "private/codex-event-caller-native-build/sides/tip/slice/slice-null.jsonl",
+      "archive": "docs/reports/event-caller-removal/evidence/raw/after/slice/slice-null.jsonl.gz",
+      "sha256": "57ee0c3b0333847757c9dc423d8c0deaf3b0f8dcfe436319b12898d9003f4bcd",
+      "bytes": 1853651,
+      "gzip_bytes": 96974
+    },
+    {
+      "source": "private/codex-event-caller-native-build/sides/tip/slice/slice-null.summary.json",
+      "archive": "docs/reports/event-caller-removal/evidence/raw/after/slice/slice-null.summary.json.gz",
+      "sha256": "df4be8b649b807ee4b83c0516250e7495e7e57355733c126c24a6b3828960c56",
+      "bytes": 64487,
+      "gzip_bytes": 3435
+    },
+    {
+      "source": "private/codex-event-caller-native-build/sides/tip/slice/slice-outer.json",
+      "archive": "docs/reports/event-caller-removal/evidence/raw/after/slice/slice-outer.json.gz",
+      "sha256": "7f64ea5cc01c131f96a690fb893a581ce8a3fa863de07077e5114228f8cffd53",
+      "bytes": 88639,
+      "gzip_bytes": 7400
+    },
+    {
+      "source": "private/codex-event-caller-native-build/sides/tip/run.json",
+      "archive": "docs/reports/event-caller-removal/evidence/run/run.json.gz",
+      "sha256": "d53e521502ac0bd0eb910e41ad64bd86109a4b7c416503daa639c5a9cb171080",
+      "bytes": 22754,
+      "gzip_bytes": 3944
+    },
+    {
+      "source": "private/codex-event-caller-native-build/sides/tip/corpus.slot.json",
+      "archive": "docs/reports/event-caller-removal/evidence/run/corpus.slot.json.gz",
+      "sha256": "bdcd65ec0dea0b1d533a816f0ff47fb98b1589ad3de1907146e00fafd8742fbb",
+      "bytes": 2482,
+      "gzip_bytes": 745
+    },
+    {
+      "source": "private/codex-event-caller-native-build/sides/tip/system.slot.json",
+      "archive": "docs/reports/event-caller-removal/evidence/run/system.slot.json.gz",
+      "sha256": "b9cf30624fa8745ec4d7f625d592260fec1c124f1ec1b002e330024272dba96a",
+      "bytes": 3228,
+      "gzip_bytes": 833
+    },
+    {
+      "source": "private/codex-event-caller-native-build/sides/tip/slice.slot.json",
+      "archive": "docs/reports/event-caller-removal/evidence/run/slice.slot.json.gz",
+      "sha256": "9dd551b209e16351573518275e3fc482c49518b9768c9d227047f7fdebd4a738",
+      "bytes": 3183,
+      "gzip_bytes": 826
+    },
+    {
+      "source": "private/codex-cmt-landing-20261027/native-2/sides/tip/run.json",
+      "archive": "docs/reports/event-caller-removal/evidence/run/base-run.json.gz",
+      "sha256": "7e841597f4738f7495bce6ea230fcdb3e39e7c3bf3c6f919d2d9690285cbfbd4",
+      "bytes": 22910,
+      "gzip_bytes": 3950
+    },
+    {
+      "source": "private/codex-cmt-landing-20261027/native-2/sides/tip/corpus.slot.json",
+      "archive": "docs/reports/event-caller-removal/evidence/run/base-corpus.slot.json.gz",
+      "sha256": "08b0574d6e1c2d5d91635548bd7ca506b899a4723b7dfa79fb223adee8aecf7e",
+      "bytes": 2518,
+      "gzip_bytes": 744
+    },
+    {
+      "source": "private/codex-cmt-landing-20261027/native-2/sides/tip/system.slot.json",
+      "archive": "docs/reports/event-caller-removal/evidence/run/base-system.slot.json.gz",
+      "sha256": "80778e8d37606f501595da72bb475305e725f076ecd63d2ae639d80e3b0a5ef1",
+      "bytes": 3263,
+      "gzip_bytes": 831
+    },
+    {
+      "source": "private/codex-cmt-landing-20261027/native-2/sides/tip/slice.slot.json",
+      "archive": "docs/reports/event-caller-removal/evidence/run/base-slice.slot.json.gz",
+      "sha256": "e36a2001378470afdd75fab6973b7cb33c9193bdec51052055a530d9da8e721c",
+      "bytes": 3218,
+      "gzip_bytes": 823
+    }
+  ],
+  "scope": "Declared exact removal boundary; no new body proof, descriptor effect or native Safe gain. Final comment/census corrections do not change the formal removal declaration; native inputs remain the exact semantic tip."
+}

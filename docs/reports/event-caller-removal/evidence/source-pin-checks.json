@@ -1,0 +1,53 @@
+[
+  {
+    "argv": [
+      "/media/Data/GitHub/quirin-lang/target/release/quirin-audit",
+      "pin",
+      "--source-root",
+      "/media/Data/GitHub/quirin-lang/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+      "--load-path",
+      "/media/Data/GitHub/quirin-lang/private/codex-event-caller-worktree/providers/contract-load-path.json",
+      "--crate",
+      "qcore-provider-libevent",
+      "--function",
+      "mk_event_timeout_disable",
+      "--check"
+    ],
+    "exit": 0,
+    "log": "private/event-caller-removal/pins-checked/66910c10.log"
+  },
+  {
+    "argv": [
+      "/media/Data/GitHub/quirin-lang/target/release/quirin-audit",
+      "pin",
+      "--source-root",
+      "/media/Data/GitHub/quirin-lang/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source",
+      "--load-path",
+      "/media/Data/GitHub/quirin-lang/private/codex-event-caller-worktree/providers/contract-load-path.json",
+      "--crate",
+      "qcore-provider-libevent",
+      "--function",
+      "mk_event_timeout_disable",
+      "--check"
+    ],
+    "exit": 0,
+    "log": "private/event-caller-removal/pins-checked/046accf6.log"
+  },
+  {
+    "argv": [
+      "/media/Data/GitHub/quirin-lang/target/release/quirin-audit",
+      "pin",
+      "--source-root",
+      "/media/Data/GitHub/quirin-lang/private/w47-tail/attempt-1/prep/fluent-bit-clang-source",
+      "--load-path",
+      "/media/Data/GitHub/quirin-lang/private/codex-event-caller-worktree/providers/contract-load-path.json",
+      "--crate",
+      "qcore-provider-libevent",
+      "--function",
+      "mk_event_timeout_disable",
+      "--check"
+    ],
+    "exit": 0,
+    "log": "private/event-caller-removal/pins-checked/34155955.log"
+  }
+]

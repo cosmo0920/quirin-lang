@@ -1,0 +1,87 @@
+{
+  "schema": "event-caller-validation-attempts/1",
+  "attempts": [
+    {
+      "kind": "source gate first attempt",
+      "record": "gate-attempt-1.json",
+      "nonzero_steps": [
+        {
+          "name": "rust-suite",
+          "exit": 101,
+          "counts": {
+            "units": 572,
+            "passed": 8833,
+            "failed": 1,
+            "ignored": 15,
+            "measured": 0,
+            "filtered": 24,
+            "summaries": 591,
+            "packages": null,
+            "summary": "/media/Data/GitHub/quirin-lang/private/codex-event-caller-worktree/private/event-caller-removal/gate/rust-suite/summary.json",
+            "ok": false
+          },
+          "log": "/media/Data/GitHub/quirin-lang/private/codex-event-caller-worktree/private/event-caller-removal/gate/rust-suite.log"
+        },
+        {
+          "name": "provider-test",
+          "exit": -15,
+          "counts": {
+            "summaries": 0,
+            "passed": 0,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered": 0
+          },
+          "log": "/media/Data/GitHub/quirin-lang/private/codex-event-caller-worktree/private/event-caller-removal/gate/provider-test.log"
+        }
+      ]
+    },
+    {
+      "kind": "targeted census companion failure",
+      "exit": null,
+      "exit_recording": "No separate numeric exit retained; failed libtest summary is retained, not presented as passing validation.",
+      "observed_libtest": {
+        "passed": 0,
+        "failed": 1,
+        "ignored": 0,
+        "filtered": 9
+      },
+      "reason": "Expected106 withheld structured effects versus actual107, after the interpreted-declaration census repair.",
+      "log": "private/event-caller-removal/pin-repair.log",
+      "corrected_rerun": {
+        "passed": 1,
+        "failed": 0,
+        "exit": 0,
+        "log": "private/event-caller-removal/pin-repair-2.log"
+      }
+    },
+    {
+      "kind": "source inventory initial preparation",
+      "command": "providers/contracts.py sync",
+      "exit": 1,
+      "reason": "new declaration had no generated source pin",
+      "log": "private/event-caller-removal/contracts-sync-1.log"
+    },
+    {
+      "kind": "initial source pin preparation",
+      "exit": 2,
+      "reason": "attempt during in-progress load-path regeneration",
+      "logs": "private/event-caller-removal/pins/"
+    },
+    {
+      "kind": "provenance reader development",
+      "exits": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0
+      ],
+      "final_log": "private/event-caller-removal/attribution-7.log",
+      "reason": "Strict reader evolved to handle optional environment maps, explicit body-unvalidated addition, full context renewal, reordered receipt multisets and NULL context metadata; final assertions retain all real changes and independently recompute 148 reading binding IDs. No production checker change."
+    }
+  ]
+}

@@ -1,0 +1,742 @@
+{
+  "schema": "quirin-gate-scope/1",
+  "source": "git diff",
+  "base": "b403cd4deddaab711f446f383270363aca39a2af",
+  "head": "6398ddd7c9911c3b38bf651fb3394d414cd1fb53",
+  "committed": [
+    "compiler/tests/contract_loader.rs",
+    "crates/qcore-c-gateway/tests/event_removal_wrapper.rs",
+    "docs/reports/INDEX.md",
+    "docs/reports/event-caller-removal/BRIEF.md",
+    "docs/reports/event-caller-removal/MEASURE_DECLARATION.md",
+    "docs/reports/event-caller-removal/PREDICTION.md",
+    "docs/reports/event-caller-removal/README.md",
+    "docs/reports/event-caller-removal/source-review.json",
+    "docs/reviews/r0_3/acceptance_matrix.json",
+    "proof/AuditEventRemovalWrapper.lean",
+    "proof/QCore.lean",
+    "proof/QCore/EventRemovalWrapper.lean",
+    "providers/qcore-provider-libevent/contract-inventory.lock",
+    "providers/qcore-provider-libevent/contracts.json",
+    "providers/qcore-provider-libevent/contracts.lock",
+    "providers/qcore-provider-libevent/contracts/monkey/event_loop.qv"
+  ],
+  "uncommitted": [],
+  "scope": {
+    "paths": [
+      "compiler/tests/contract_loader.rs",
+      "crates/qcore-c-gateway/tests/event_removal_wrapper.rs",
+      "docs/reports/INDEX.md",
+      "docs/reports/event-caller-removal/BRIEF.md",
+      "docs/reports/event-caller-removal/MEASURE_DECLARATION.md",
+      "docs/reports/event-caller-removal/PREDICTION.md",
+      "docs/reports/event-caller-removal/README.md",
+      "docs/reports/event-caller-removal/source-review.json",
+      "docs/reviews/r0_3/acceptance_matrix.json",
+      "proof/AuditEventRemovalWrapper.lean",
+      "proof/QCore.lean",
+      "proof/QCore/EventRemovalWrapper.lean",
+      "providers/qcore-provider-libevent/contract-inventory.lock",
+      "providers/qcore-provider-libevent/contracts.json",
+      "providers/qcore-provider-libevent/contracts.lock",
+      "providers/qcore-provider-libevent/contracts/monkey/event_loop.qv"
+    ],
+    "attribution": {
+      "compiler/tests/contract_loader.rs": [
+        "owned by qcore-compiler"
+      ],
+      "crates/qcore-c-gateway/tests/event_removal_wrapper.rs": [
+        "owned by qcore-c-gateway",
+        "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:33)",
+        "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+      ],
+      "docs/reports/INDEX.md": [
+        "class prose"
+      ],
+      "docs/reports/event-caller-removal/BRIEF.md": [
+        "class prose"
+      ],
+      "docs/reports/event-caller-removal/MEASURE_DECLARATION.md": [
+        "class prose"
+      ],
+      "docs/reports/event-caller-removal/PREDICTION.md": [
+        "class prose"
+      ],
+      "docs/reports/event-caller-removal/README.md": [
+        "class prose"
+      ],
+      "docs/reports/event-caller-removal/source-review.json": [
+        "class prose"
+      ],
+      "docs/reviews/r0_3/acceptance_matrix.json": [
+        "class prose"
+      ],
+      "proof/AuditEventRemovalWrapper.lean": [
+        "read by qcore-compiler (runtime, compiler/tests/float_ieee_vectors.rs:524)",
+        "read by qcore-compiler (runtime, compiler/tests/proof_leg_digests.rs:106)",
+        "class lean"
+      ],
+      "proof/QCore.lean": [
+        "read by qcore-compiler (runtime, compiler/tests/float_ieee_vectors.rs:524)",
+        "read by qcore-compiler (runtime, compiler/tests/proof_leg_digests.rs:106)",
+        "class lean"
+      ],
+      "proof/QCore/EventRemovalWrapper.lean": [
+        "read by qcore-compiler (runtime, compiler/tests/float_ieee_vectors.rs:524)",
+        "read by qcore-compiler (runtime, compiler/tests/proof_leg_digests.rs:106)",
+        "class lean"
+      ],
+      "providers/qcore-provider-libevent/contract-inventory.lock": [
+        "owned by qcore-provider-libevent",
+        "read by qcore-audit (runtime, crates/qcore-audit/src/pin_window.rs:60)",
+        "read by qcore-audit (runtime, crates/qcore-audit/tests/current_cli.rs:138)",
+        "read by qcore-audit (runtime, crates/qcore-audit/tests/dependency_graph.rs:92)",
+        "read by qcore-audit (runtime, crates/qcore-audit/tests/provider_selection.rs:620)",
+        "read by qcore-contract (runtime, crates/qcore-contract/tests/bounds_contract.rs:159)",
+        "read by qcore-contract (runtime, crates/qcore-contract/tests/event_loop_clauses.rs:211)",
+        "read by qcore-contract (runtime, crates/qcore-contract/tests/production_symbolic_adoption.rs:389)",
+        "read by qcore-compiler (runtime, compiler/tests/contract_inherit_qcore_provider.rs:437)",
+        "read by qcore-compiler (runtime, compiler/tests/monkey_profile.rs:41)",
+        "read by qcore-compiler (runtime, compiler/tests/profile_loader.rs:65)",
+        "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:171)",
+        "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/src/sides.rs:512)",
+        "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/tests/units.rs:298)",
+        "read by qcore-provider-conformance (runtime, providers/conformance/tests/composed_five_providers.rs:132)",
+        "read by qcore-provider-conformance (runtime, providers/conformance/tests/packages.rs:373)"
+      ],
+      "providers/qcore-provider-libevent/contracts.json": [
+        "owned by qcore-provider-libevent",
+        "read by qcore-provider-libevent (include_str, providers/qcore-provider-libevent/src/main.rs:46)",
+        "read by qcore-audit (runtime, crates/qcore-audit/src/pin_window.rs:60)",
+        "read by qcore-audit (runtime, crates/qcore-audit/tests/current_cli.rs:138)",
+        "read by qcore-audit (runtime, crates/qcore-audit/tests/dependency_graph.rs:92)",
+        "read by qcore-audit (runtime, crates/qcore-audit/tests/provider_selection.rs:620)",
+        "read by qcore-contract (runtime, crates/qcore-contract/tests/bounds_contract.rs:159)",
+        "read by qcore-contract (runtime, crates/qcore-contract/tests/event_loop_clauses.rs:211)",
+        "read by qcore-contract (runtime, crates/qcore-contract/tests/production_symbolic_adoption.rs:389)",
+        "read by qcore-compiler (runtime, compiler/tests/contract_inherit_qcore_provider.rs:437)",
+        "read by qcore-compiler (runtime, compiler/tests/monkey_profile.rs:41)",
+        "read by qcore-compiler (runtime, compiler/tests/profile_loader.rs:65)",
+        "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:171)",
+        "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/src/sides.rs:512)",
+        "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/tests/units.rs:298)",
+        "read by qcore-provider-conformance (runtime, providers/conformance/tests/composed_five_providers.rs:132)",
+        "read by qcore-provider-conformance (runtime, providers/conformance/tests/packages.rs:373)"
+      ],
+      "providers/qcore-provider-libevent/contracts.lock": [
+        "owned by qcore-provider-libevent",
+        "read by qcore-audit (runtime, crates/qcore-audit/src/pin_window.rs:60)",
+        "read by qcore-audit (runtime, crates/qcore-audit/tests/current_cli.rs:138)",
+        "read by qcore-audit (runtime, crates/qcore-audit/tests/dependency_graph.rs:92)",
+        "read by qcore-audit (runtime, crates/qcore-audit/tests/provider_selection.rs:620)",
+        "read by qcore-contract (runtime, crates/qcore-contract/tests/bounds_contract.rs:159)",
+        "read by qcore-contract (runtime, crates/qcore-contract/tests/event_loop_clauses.rs:211)",
+        "read by qcore-contract (runtime, crates/qcore-contract/tests/production_symbolic_adoption.rs:389)",
+        "read by qcore-compiler (runtime, compiler/tests/contract_inherit_qcore_provider.rs:437)",
+        "read by qcore-compiler (runtime, compiler/tests/monkey_profile.rs:41)",
+        "read by qcore-compiler (runtime, compiler/tests/profile_loader.rs:65)",
+        "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:171)",
+        "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/src/sides.rs:512)",
+        "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/tests/units.rs:298)",
+        "read by qcore-provider-conformance (runtime, providers/conformance/tests/composed_five_providers.rs:132)",
+        "read by qcore-provider-conformance (runtime, providers/conformance/tests/packages.rs:373)"
+      ],
+      "providers/qcore-provider-libevent/contracts/monkey/event_loop.qv": [
+        "owned by qcore-provider-libevent",
+        "read by qcore-c-gateway (include_str, crates/qcore-c-gateway/tests/event_removal_wrapper.rs:15)",
+        "read by qcore-c-gateway (runtime, crates/qcore-c-gateway/tests/event_removal_wrapper.rs:15)",
+        "read by qcore-audit (runtime, crates/qcore-audit/src/pin_window.rs:60)",
+        "read by qcore-audit (runtime, crates/qcore-audit/tests/current_cli.rs:138)",
+        "read by qcore-audit (runtime, crates/qcore-audit/tests/dependency_graph.rs:92)",
+        "read by qcore-audit (runtime, crates/qcore-audit/tests/provider_selection.rs:620)",
+        "read by qcore-contract (runtime, crates/qcore-contract/tests/bounds_contract.rs:159)",
+        "read by qcore-contract (runtime, crates/qcore-contract/tests/event_loop_clauses.rs:211)",
+        "read by qcore-contract (runtime, crates/qcore-contract/tests/production_symbolic_adoption.rs:389)",
+        "read by qcore-compiler (runtime, compiler/tests/contract_inherit_qcore_provider.rs:437)",
+        "read by qcore-compiler (runtime, compiler/tests/monkey_profile.rs:41)",
+        "read by qcore-compiler (runtime, compiler/tests/profile_loader.rs:65)",
+        "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:171)",
+        "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/src/sides.rs:512)",
+        "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/tests/units.rs:298)",
+        "read by qcore-provider-conformance (runtime, providers/conformance/tests/composed_five_providers.rs:132)",
+        "read by qcore-provider-conformance (runtime, providers/conformance/tests/packages.rs:373)"
+      ]
+    },
+    "affected": {
+      "qcore-audit": [
+        "names providers in a string literal: providers/qcore-provider-libevent/contract-inventory.lock (crates/qcore-audit/src/pin_window.rs:60)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contract-inventory.lock (crates/qcore-audit/tests/current_cli.rs:138)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contract-inventory.lock (crates/qcore-audit/tests/dependency_graph.rs:92)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contract-inventory.lock (crates/qcore-audit/tests/provider_selection.rs:620)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contracts.json (crates/qcore-audit/src/pin_window.rs:60)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contracts.json (crates/qcore-audit/tests/current_cli.rs:138)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contracts.json (crates/qcore-audit/tests/dependency_graph.rs:92)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contracts.json (crates/qcore-audit/tests/provider_selection.rs:620)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contracts.lock (crates/qcore-audit/src/pin_window.rs:60)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contracts.lock (crates/qcore-audit/tests/current_cli.rs:138)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contracts.lock (crates/qcore-audit/tests/dependency_graph.rs:92)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contracts.lock (crates/qcore-audit/tests/provider_selection.rs:620)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contracts/monkey/event_loop.qv (crates/qcore-audit/src/pin_window.rs:60)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contracts/monkey/event_loop.qv (crates/qcore-audit/tests/current_cli.rs:138)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contracts/monkey/event_loop.qv (crates/qcore-audit/tests/dependency_graph.rs:92)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contracts/monkey/event_loop.qv (crates/qcore-audit/tests/provider_selection.rs:620)"
+      ],
+      "qcore-c-gateway": [
+        "owns crates/qcore-c-gateway/tests/event_removal_wrapper.rs",
+        "reads it with include_str!: providers/qcore-provider-libevent/contracts/monkey/event_loop.qv (crates/qcore-c-gateway/tests/event_removal_wrapper.rs:15)",
+        "names providers/qcore-provider-libevent/contracts/monkey/event_loop.qv in a string literal: providers/qcore-provider-libevent/contracts/monkey/event_loop.qv (crates/qcore-c-gateway/tests/event_removal_wrapper.rs:15)"
+      ],
+      "qcore-compiler": [
+        "owns compiler/tests/contract_loader.rs",
+        "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/tests/event_removal_wrapper.rs (compiler/tests/workspace_layering.rs:33)",
+        "names proof in a string literal: proof/AuditEventRemovalWrapper.lean (compiler/tests/float_ieee_vectors.rs:524)",
+        "names proof in a string literal: proof/AuditEventRemovalWrapper.lean (compiler/tests/proof_leg_digests.rs:106)",
+        "names proof in a string literal: proof/QCore.lean (compiler/tests/float_ieee_vectors.rs:524)",
+        "names proof in a string literal: proof/QCore.lean (compiler/tests/proof_leg_digests.rs:106)",
+        "names proof in a string literal: proof/QCore/EventRemovalWrapper.lean (compiler/tests/float_ieee_vectors.rs:524)",
+        "names proof in a string literal: proof/QCore/EventRemovalWrapper.lean (compiler/tests/proof_leg_digests.rs:106)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contract-inventory.lock (compiler/tests/contract_inherit_qcore_provider.rs:437)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contract-inventory.lock (compiler/tests/monkey_profile.rs:41)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contract-inventory.lock (compiler/tests/profile_loader.rs:65)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contract-inventory.lock (compiler/tests/workspace_layering.rs:171)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contracts.json (compiler/tests/contract_inherit_qcore_provider.rs:437)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contracts.json (compiler/tests/monkey_profile.rs:41)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contracts.json (compiler/tests/profile_loader.rs:65)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contracts.json (compiler/tests/workspace_layering.rs:171)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contracts.lock (compiler/tests/contract_inherit_qcore_provider.rs:437)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contracts.lock (compiler/tests/monkey_profile.rs:41)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contracts.lock (compiler/tests/profile_loader.rs:65)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contracts.lock (compiler/tests/workspace_layering.rs:171)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contracts/monkey/event_loop.qv (compiler/tests/contract_inherit_qcore_provider.rs:437)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contracts/monkey/event_loop.qv (compiler/tests/monkey_profile.rs:41)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contracts/monkey/event_loop.qv (compiler/tests/profile_loader.rs:65)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contracts/monkey/event_loop.qv (compiler/tests/workspace_layering.rs:171)"
+      ],
+      "qcore-contract": [
+        "names providers in a string literal: providers/qcore-provider-libevent/contract-inventory.lock (crates/qcore-contract/tests/bounds_contract.rs:159)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contract-inventory.lock (crates/qcore-contract/tests/event_loop_clauses.rs:211)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contract-inventory.lock (crates/qcore-contract/tests/production_symbolic_adoption.rs:389)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contracts.json (crates/qcore-contract/tests/bounds_contract.rs:159)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contracts.json (crates/qcore-contract/tests/event_loop_clauses.rs:211)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contracts.json (crates/qcore-contract/tests/production_symbolic_adoption.rs:389)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contracts.lock (crates/qcore-contract/tests/bounds_contract.rs:159)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contracts.lock (crates/qcore-contract/tests/event_loop_clauses.rs:211)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contracts.lock (crates/qcore-contract/tests/production_symbolic_adoption.rs:389)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contracts/monkey/event_loop.qv (crates/qcore-contract/tests/bounds_contract.rs:159)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contracts/monkey/event_loop.qv (crates/qcore-contract/tests/event_loop_clauses.rs:211)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contracts/monkey/event_loop.qv (crates/qcore-contract/tests/production_symbolic_adoption.rs:389)"
+      ],
+      "qcore-provider-conformance": [
+        "names providers in a string literal: providers/qcore-provider-libevent/contract-inventory.lock (providers/conformance/tests/composed_five_providers.rs:132)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contract-inventory.lock (providers/conformance/tests/packages.rs:373)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contracts.json (providers/conformance/tests/composed_five_providers.rs:132)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contracts.json (providers/conformance/tests/packages.rs:373)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contracts.lock (providers/conformance/tests/composed_five_providers.rs:132)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contracts.lock (providers/conformance/tests/packages.rs:373)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contracts/monkey/event_loop.qv (providers/conformance/tests/composed_five_providers.rs:132)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contracts/monkey/event_loop.qv (providers/conformance/tests/packages.rs:373)"
+      ],
+      "qcore-provider-libevent": [
+        "owns providers/qcore-provider-libevent/contract-inventory.lock",
+        "owns providers/qcore-provider-libevent/contracts.json",
+        "reads it with include_str!: providers/qcore-provider-libevent/contracts.json (providers/qcore-provider-libevent/src/main.rs:46)",
+        "owns providers/qcore-provider-libevent/contracts.lock",
+        "owns providers/qcore-provider-libevent/contracts/monkey/event_loop.qv"
+      ],
+      "qcore-verification": [
+        "names crates in a string literal: crates/qcore-c-gateway/tests/event_removal_wrapper.rs (crates/qcore-verification/tests/composition_bounds.rs:288)"
+      ],
+      "qcorec": [
+        "depends on qcore-compiler"
+      ],
+      "quirin-audit-plugin-measure": [
+        "names providers in a string literal: providers/qcore-provider-libevent/contract-inventory.lock (crates/quirin-audit-plugin-measure/src/sides.rs:512)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contract-inventory.lock (crates/quirin-audit-plugin-measure/tests/units.rs:298)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contracts.json (crates/quirin-audit-plugin-measure/src/sides.rs:512)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contracts.json (crates/quirin-audit-plugin-measure/tests/units.rs:298)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contracts.lock (crates/quirin-audit-plugin-measure/src/sides.rs:512)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contracts.lock (crates/quirin-audit-plugin-measure/tests/units.rs:298)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contracts/monkey/event_loop.qv (crates/quirin-audit-plugin-measure/src/sides.rs:512)",
+        "names providers in a string literal: providers/qcore-provider-libevent/contracts/monkey/event_loop.qv (crates/quirin-audit-plugin-measure/tests/units.rs:298)"
+      ],
+      "quirin-source-analysis": [
+        "depends on qcore-c-gateway"
+      ]
+    },
+    "mode": "full",
+    "full_reasons": [
+      "the diff reaches qcore-c-gateway",
+      "the diff reaches qcore-contract"
+    ],
+    "rust_packages": [
+      "qcore-audit",
+      "qcore-c-gateway",
+      "qcore-compiler",
+      "qcore-contract",
+      "qcore-core",
+      "qcore-frontend",
+      "qcore-gateway-rule-api",
+      "qcore-schemas",
+      "qcore-verification",
+      "qcore-verifier-host",
+      "qcorec",
+      "quirin-audit-plugin",
+      "quirin-audit-plugin-libevent",
+      "quirin-audit-plugin-measure",
+      "quirin-source-analysis"
+    ],
+    "probes": true,
+    "lean": {
+      "mode": "all",
+      "reasons": [
+        "proof/QCore.lean: a proof root changed"
+      ],
+      "modules": [],
+      "audits": []
+    },
+    "python_reasons": [],
+    "provider_gate": true,
+    "provider_reasons": [
+      "providers/qcore-provider-libevent/contract-inventory.lock: providers/ changed",
+      "providers/qcore-provider-libevent/contracts.json: providers/ changed",
+      "providers/qcore-provider-libevent/contracts.lock: providers/ changed",
+      "providers/qcore-provider-libevent/contracts/monkey/event_loop.qv: providers/ changed"
+    ],
+    "provider_members_reached_without_providers_change": [],
+    "unresolved_includes": [
+      {
+        "crate": "qcore-compiler",
+        "source": "compiler/tests/ct_corpus.rs:8069",
+        "literal": "include_str!(\\\"fixtures/ct/{id}/case.qr\\\")\");",
+        "why": "argument is not a string literal (or the macro is inside a string)"
+      }
+    ]
+  },
+  "planned_steps": [
+    {
+      "name": "submodules",
+      "argv": [
+        "git",
+        "-C",
+        "/media/Data/GitHub/quirin-lang/private/codex-event-caller-worktree",
+        "submodule",
+        "status",
+        "--recursive"
+      ],
+      "slot": null
+    },
+    {
+      "name": "fmt",
+      "argv": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "slot": null
+    },
+    {
+      "name": "clippy",
+      "argv": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "slot": null
+    },
+    {
+      "name": "rust-suite",
+      "argv": [
+        "/usr/bin/python3",
+        "/media/Data/GitHub/quirin-lang/private/codex-event-caller-worktree/scripts/run_test_binaries.py",
+        "--log-dir",
+        "/media/Data/GitHub/quirin-lang/private/codex-event-caller-worktree/private/event-caller-removal/final-plan-2/rust-suite"
+      ],
+      "slot": "rust-suite"
+    },
+    {
+      "name": "probe-reevaluation_probe",
+      "argv": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_probe"
+      ],
+      "slot": null
+    },
+    {
+      "name": "probe-reevaluation_followup",
+      "argv": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_followup"
+      ],
+      "slot": null
+    },
+    {
+      "name": "lean",
+      "argv": [
+        "/usr/bin/python3",
+        "/media/Data/GitHub/quirin-lang/private/codex-event-caller-worktree/scripts/check_lean_audits.py"
+      ],
+      "slot": "lean"
+    },
+    {
+      "name": "python",
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "slot": null
+    },
+    {
+      "name": "provider-package-build",
+      "argv": [
+        "/usr/bin/python3",
+        "providers/package.py",
+        "build",
+        "--output",
+        "/media/Data/GitHub/quirin-lang/private/codex-event-caller-worktree/private/event-caller-removal/final-plan-2/provider-packages"
+      ],
+      "slot": null
+    },
+    {
+      "name": "provider-package-verify-all",
+      "argv": [
+        "/usr/bin/python3",
+        "/media/Data/GitHub/quirin-lang/private/codex-event-caller-worktree/scripts/gate_scope.py",
+        "--verify-packages",
+        "/media/Data/GitHub/quirin-lang/private/codex-event-caller-worktree/private/event-caller-removal/final-plan-2/provider-packages"
+      ],
+      "slot": null
+    },
+    {
+      "name": "provider-package-verify",
+      "argv": [
+        "/usr/bin/python3",
+        "providers/package.py",
+        "verify",
+        "/media/Data/GitHub/quirin-lang/private/codex-event-caller-worktree/private/event-caller-removal/final-plan-2/provider-packages/qcore.libevent"
+      ],
+      "slot": null
+    },
+    {
+      "name": "provider-test",
+      "argv": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--workspace",
+        "--locked",
+        "--offline"
+      ],
+      "slot": "rust-suite"
+    },
+    {
+      "name": "provider-fmt",
+      "argv": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "slot": null
+    },
+    {
+      "name": "provider-clippy",
+      "argv": [
+        "cargo",
+        "clippy",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--locked",
+        "--offline",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "slot": null
+    }
+  ],
+  "slots": true,
+  "started": "20261027T140835Z",
+  "ran": true,
+  "validation_tip": "6398ddd7c9911c3b38bf651fb3394d414cd1fb53",
+  "steps": [
+    {
+      "name": "submodules",
+      "argv": [
+        "git",
+        "-C",
+        "/media/Data/GitHub/quirin-lang/private/codex-event-caller-worktree",
+        "submodule",
+        "status",
+        "--recursive"
+      ],
+      "exit": 0,
+      "seconds": 0.0,
+      "log": "/media/Data/GitHub/quirin-lang/private/codex-event-caller-worktree/private/event-caller-removal/final-gate/submodules.log",
+      "counts": {
+        "submodules": 1,
+        "not_checked_out_or_moved": []
+      }
+    },
+    {
+      "name": "fmt",
+      "argv": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "seconds": 6.6,
+      "log": "/media/Data/GitHub/quirin-lang/private/codex-event-caller-worktree/private/event-caller-removal/final-gate/fmt.log",
+      "counts": {}
+    },
+    {
+      "name": "clippy",
+      "argv": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "seconds": 6.7,
+      "log": "/media/Data/GitHub/quirin-lang/private/codex-event-caller-worktree/private/event-caller-removal/final-gate/clippy.log",
+      "counts": {}
+    },
+    {
+      "name": "rust-suite",
+      "argv": [
+        "/usr/bin/python3",
+        "/media/Data/GitHub/quirin-lang/private/codex-event-caller-worktree/scripts/gate_slot.py",
+        "rust-suite",
+        "--receipt",
+        "/media/Data/GitHub/quirin-lang/private/codex-event-caller-worktree/private/event-caller-removal/final-gate/slots/rust-suite.json",
+        "--",
+        "/usr/bin/python3",
+        "/media/Data/GitHub/quirin-lang/private/codex-event-caller-worktree/scripts/run_test_binaries.py",
+        "--log-dir",
+        "/media/Data/GitHub/quirin-lang/private/codex-event-caller-worktree/private/event-caller-removal/final-gate/rust-suite",
+        "--jobs",
+        "16"
+      ],
+      "exit": 0,
+      "seconds": 9797.2,
+      "log": "/media/Data/GitHub/quirin-lang/private/codex-event-caller-worktree/private/event-caller-removal/final-gate/rust-suite.log",
+      "counts": {
+        "units": 572,
+        "passed": 8834,
+        "failed": 0,
+        "ignored": 15,
+        "measured": 0,
+        "filtered": 24,
+        "summaries": 591,
+        "packages": null,
+        "summary": "/media/Data/GitHub/quirin-lang/private/codex-event-caller-worktree/private/event-caller-removal/final-gate/rust-suite/summary.json",
+        "ok": true
+      },
+      "slot_receipt": "/media/Data/GitHub/quirin-lang/private/codex-event-caller-worktree/private/event-caller-removal/final-gate/slots/rust-suite.json"
+    },
+    {
+      "name": "probe-reevaluation_probe",
+      "argv": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_probe"
+      ],
+      "exit": 0,
+      "seconds": 0.1,
+      "log": "/media/Data/GitHub/quirin-lang/private/codex-event-caller-worktree/private/event-caller-removal/final-gate/probe-reevaluation_probe.log",
+      "counts": {}
+    },
+    {
+      "name": "probe-reevaluation_followup",
+      "argv": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_followup"
+      ],
+      "exit": 0,
+      "seconds": 0.4,
+      "log": "/media/Data/GitHub/quirin-lang/private/codex-event-caller-worktree/private/event-caller-removal/final-gate/probe-reevaluation_followup.log",
+      "counts": {}
+    },
+    {
+      "name": "lean",
+      "argv": [
+        "/usr/bin/python3",
+        "/media/Data/GitHub/quirin-lang/private/codex-event-caller-worktree/scripts/gate_slot.py",
+        "lean",
+        "--receipt",
+        "/media/Data/GitHub/quirin-lang/private/codex-event-caller-worktree/private/event-caller-removal/final-gate/slots/lean.json",
+        "--",
+        "/usr/bin/python3",
+        "/media/Data/GitHub/quirin-lang/private/codex-event-caller-worktree/scripts/check_lean_audits.py"
+      ],
+      "exit": 0,
+      "seconds": 14.6,
+      "log": "/media/Data/GitHub/quirin-lang/private/codex-event-caller-worktree/private/event-caller-removal/final-gate/lean.log",
+      "counts": {
+        "audits": 389
+      },
+      "slot_receipt": "/media/Data/GitHub/quirin-lang/private/codex-event-caller-worktree/private/event-caller-removal/final-gate/slots/lean.json"
+    },
+    {
+      "name": "python",
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "exit": 0,
+      "seconds": 42.5,
+      "log": "/media/Data/GitHub/quirin-lang/private/codex-event-caller-worktree/private/event-caller-removal/final-gate/python.log",
+      "counts": {
+        "tests": 554,
+        "skipped": 0,
+        "ok": true
+      }
+    },
+    {
+      "name": "provider-package-build",
+      "argv": [
+        "/usr/bin/python3",
+        "providers/package.py",
+        "build",
+        "--output",
+        "/media/Data/GitHub/quirin-lang/private/codex-event-caller-worktree/private/event-caller-removal/final-gate/provider-packages"
+      ],
+      "exit": 0,
+      "seconds": 138.8,
+      "log": "/media/Data/GitHub/quirin-lang/private/codex-event-caller-worktree/private/event-caller-removal/final-gate/provider-package-build.log",
+      "counts": {}
+    },
+    {
+      "name": "provider-package-verify-all",
+      "argv": [
+        "/usr/bin/python3",
+        "/media/Data/GitHub/quirin-lang/private/codex-event-caller-worktree/scripts/gate_scope.py",
+        "--verify-packages",
+        "/media/Data/GitHub/quirin-lang/private/codex-event-caller-worktree/private/event-caller-removal/final-gate/provider-packages"
+      ],
+      "exit": 0,
+      "seconds": 0.8,
+      "log": "/media/Data/GitHub/quirin-lang/private/codex-event-caller-worktree/private/event-caller-removal/final-gate/provider-package-verify-all.log",
+      "counts": {}
+    },
+    {
+      "name": "provider-package-verify",
+      "argv": [
+        "/usr/bin/python3",
+        "providers/package.py",
+        "verify",
+        "/media/Data/GitHub/quirin-lang/private/codex-event-caller-worktree/private/event-caller-removal/final-gate/provider-packages/qcore.libevent"
+      ],
+      "exit": 0,
+      "seconds": 0.1,
+      "log": "/media/Data/GitHub/quirin-lang/private/codex-event-caller-worktree/private/event-caller-removal/final-gate/provider-package-verify.log",
+      "counts": {}
+    },
+    {
+      "name": "provider-test",
+      "argv": [
+        "/usr/bin/python3",
+        "/media/Data/GitHub/quirin-lang/private/codex-event-caller-worktree/scripts/gate_slot.py",
+        "rust-suite",
+        "--receipt",
+        "/media/Data/GitHub/quirin-lang/private/codex-event-caller-worktree/private/event-caller-removal/final-gate/slots/provider-test.json",
+        "--",
+        "cargo",
+        "test",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--workspace",
+        "--locked",
+        "--offline"
+      ],
+      "exit": 0,
+      "seconds": 2253.4,
+      "log": "/media/Data/GitHub/quirin-lang/private/codex-event-caller-worktree/private/event-caller-removal/final-gate/provider-test.log",
+      "counts": {
+        "summaries": 43,
+        "passed": 133,
+        "failed": 0,
+        "ignored": 1,
+        "measured": 0,
+        "filtered": 0
+      },
+      "slot_receipt": "/media/Data/GitHub/quirin-lang/private/codex-event-caller-worktree/private/event-caller-removal/final-gate/slots/provider-test.json"
+    },
+    {
+      "name": "provider-fmt",
+      "argv": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "seconds": 4.2,
+      "log": "/media/Data/GitHub/quirin-lang/private/codex-event-caller-worktree/private/event-caller-removal/final-gate/provider-fmt.log",
+      "counts": {}
+    },
+    {
+      "name": "provider-clippy",
+      "argv": [
+        "cargo",
+        "clippy",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--locked",
+        "--offline",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "seconds": 1.3,
+      "log": "/media/Data/GitHub/quirin-lang/private/codex-event-caller-worktree/private/event-caller-removal/final-gate/provider-clippy.log",
+      "counts": {}
+    }
+  ],
+  "ok": true
+}
