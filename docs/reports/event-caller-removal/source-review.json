@@ -1,0 +1,32 @@
+{
+  "kind": "source review, not automatic body validation",
+  "copies": {
+    "66910c10": {
+      "path": "lib/monkey/mk_core/mk_event.c",
+      "line": 166,
+      "body": "int mk_event_timeout_disable(struct mk_event_loop *loop, void *data)\n{\n    return mk_event_del(loop, (struct mk_event *) data);\n}",
+      "normalized_sha256": "9c7ca04c6398e313c1d634381e9f5d4453623c839831854f1ecd5c0b4ca2ff9d",
+      "file_sha256": "8ef958d26545ef52865f69cde0abf86cfdbeceb925557ff37af41031297b2382"
+    },
+    "046accf6": {
+      "path": "lib/monkey/mk_core/mk_event.c",
+      "line": 166,
+      "body": "int mk_event_timeout_disable(struct mk_event_loop *loop, void *data)\n{\n    return mk_event_del(loop, (struct mk_event *) data);\n}",
+      "normalized_sha256": "9c7ca04c6398e313c1d634381e9f5d4453623c839831854f1ecd5c0b4ca2ff9d",
+      "file_sha256": "8ef958d26545ef52865f69cde0abf86cfdbeceb925557ff37af41031297b2382"
+    },
+    "34155955": {
+      "path": "lib/monkey/mk_core/mk_event.c",
+      "line": 166,
+      "body": "int mk_event_timeout_disable(struct mk_event_loop *loop, void *data)\n{\n    return mk_event_del(loop, (struct mk_event *) data);\n}",
+      "normalized_sha256": "9c7ca04c6398e313c1d634381e9f5d4453623c839831854f1ecd5c0b4ca2ff9d",
+      "file_sha256": "8ef958d26545ef52865f69cde0abf86cfdbeceb925557ff37af41031297b2382"
+    }
+  },
+  "corpus_monkey_own_copy_contains_identical_complete_body": true,
+  "wrapper_has_no_configuration_arm": true,
+  "descriptor_close_claim": false,
+  "slice_route_historical_directory_label": "90978ac6",
+  "slice_preparation_source_revision": "34155955e4962a56d94eb23c03a002880899a0d1",
+  "slice_revision_authority": "private/w47-tail/attempt-1/prep/prepare.json:source_revision and pin tool output; the historical directory label is not a reviewed revision"
+}

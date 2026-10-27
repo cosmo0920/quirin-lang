@@ -521,6 +521,43 @@
       ]
     },
     {
+      "function": "mk_event_timeout_disable",
+      "module": "monkey/event_loop.qv",
+      "contract_sha256": "63b15a48345013857697af078f519cf8b856ea5e4f84dbd19ebcf56acd64249a",
+      "pinned_at": "2026-10-27T12:11:52Z",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/monkey/include/monkey/mk_core/mk_event.h",
+              "kind": "declaration",
+              "declaration_sha256": "d571dcc00b3fed145f91736c1a7729b89f9810b75aa4679f5e3a820494102cd2"
+            },
+            {
+              "path": "lib/monkey/mk_core/mk_event.c",
+              "kind": "definition",
+              "declaration_sha256": "d571dcc00b3fed145f91736c1a7729b89f9810b75aa4679f5e3a820494102cd2",
+              "body_sha256": "cbf66ffe4c135bd192768d9fb0078f28ea61be0026bfb2ee07c2a33777731e50"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "mk_event_wait",
       "module": "monkey/event_loop.qv",
       "contract_sha256": "71ff6949f549c0ca1eb99bf1dea5dff5724c6d105f6eb64635b089cd74af05f4",

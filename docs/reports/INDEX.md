@@ -459,6 +459,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [evaluation-profiles](evaluation-profiles/README.md) | EVALUATION-PROFILES: profile records, cycle bindings, frozen/live policy |
 
+| [event-caller-removal](event-caller-removal/README.md) | Event caller removal contract |
+
 | [examples-aggregates](examples-aggregates/README.md) | EXAMPLES-AGGREGATES — the published records family (wave 28) |
 
 | [examples-suite-wire](examples-suite-wire/README.md) | EXAMPLES-SUITE-WIRE — every published example family under one standard (wave 26) |

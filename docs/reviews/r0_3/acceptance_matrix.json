@@ -6866,7 +6866,7 @@
   "workspace_tests": 8832,
   "provider_tests": 133,
   "python_evidence_validator_tests": 554,
-  "lean_audits": 388,
+  "lean_audits": 389,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -7000,6 +7000,7 @@
    "AuditErrorPayload.lean",
    "AuditEventCompositionContext.lean",
    "AuditEventPayloadBoundary.lean",
+   "AuditEventRemovalWrapper.lean",
    "AuditExecutionCoverage.lean",
    "AuditExternCall.lean",
    "AuditFfiStructImport.lean",

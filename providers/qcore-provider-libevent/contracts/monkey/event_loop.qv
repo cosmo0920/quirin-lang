@@ -127,6 +127,19 @@ contract {
     ensures normal resource_return_none();
 };
 
+// mk_event.c:166 at 66910c10, 046accf6 and 34155955: the complete body is
+// `return mk_event_del(loop, (struct mk_event *) data);`. Disable removes
+// the registration using the same poisoning rules as del; it does not close
+// the event's descriptor. This is a pinned declaration, not a body proof.
+extern fn mk_event_timeout_disable(loop: ptr<mut, u8>, data: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(loop);
+    ensures normal resource_borrowed(data);
+    quant live #loop: #holds(data) |-> #absent;
+    ensures normal resource_return_none();
+};
+
 extern fn mk_event_channel_destroy(loop: ptr<mut, u8>, r_fd: i32, w_fd: i32, data: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;

@@ -234,8 +234,8 @@
       "sha256": "89ffc2dfaae320c37341f4f6465b8b32c66a85134fff795bcd43364aec13c091"
     },
     "monkey/event_loop.qv": {
-      "clause_count": 51,
-      "declaration_count": 9,
+      "clause_count": 56,
+      "declaration_count": 10,
       "declarations": [
         {
           "clauses": 8,
@@ -256,6 +256,10 @@
         {
           "clauses": 6,
           "name": "mk_event_timeout_destroy"
+        },
+        {
+          "clauses": 5,
+          "name": "mk_event_timeout_disable"
         },
         {
           "clauses": 7,
@@ -302,7 +306,7 @@
           }
         ]
       },
-      "sha256": "bcd64a750c1830c44b501d0fc13cd19268c40751aa909789ca1598ca11085e15"
+      "sha256": "5567383ec020ef425f01a00b254fb4c7daab5605a7382b9ae2bff6e8dae37039"
     },
     "monkey/event_payload.qv": {
       "clause_count": 47,
