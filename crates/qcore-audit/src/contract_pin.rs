@@ -58,7 +58,12 @@
 //! a later stamp than the entry it replaces: an explicit stamp that is not
 //! later refuses, and a default stamp that is not later (two runs in one
 //! second, or a clock behind the lock) is moved to one second after the
-//! replaced stamp. An entry a run leaves unchanged keeps its stamp.
+//! replaced stamp. An entry a run leaves unchanged keeps its stamp. Card
+//! **PIN-REGENERATE-STAMP-MONOTONICITY**: the replaced entry is the
+//! function's entry in the lock on disk before the run, of whatever kind (a
+//! revision-mode change replaces the entry of the other kind), and under
+//! `--regenerate` too, which otherwise starts from no lock. Every lock of a
+//! run is computed before any is written, so a refusal writes none.
 //! `--stamp-only` (with `--source-root`) is the one-time migration: it stamps
 //! every unstamped entry whose contract text is current, changes no identity,
 //! and ties each lock to the checkout's `HEAD` (`fluent_bit_revision`).
@@ -766,13 +771,46 @@ fn empty_lock(target: &Target) -> ContractLock {
     }
 }
 
+/// Card PIN-REGENERATE-STAMP-MONOTONICITY: the stamp of the entry that an
+/// entry of `function` written now replaces, read from `replaced`, the lock
+/// on disk before the run: the latest valid stamp of any entry of `function`
+/// in it, pinned, flexible or tip, since a revision-mode change replaces the
+/// entry of the other kind. `None` when the lock holds no stamped entry of
+/// it (or there is no readable lock).
+fn replaced_stamp<'a>(replaced: Option<&'a ContractLock>, function: &str) -> Option<&'a str> {
+    let lock = replaced?;
+    lock.pinned
+        .iter()
+        .filter(|e| e.function == function)
+        .map(|e| e.pinned_at.as_deref())
+        .chain(
+            lock.flexible
+                .iter()
+                .filter(|e| e.function == function)
+                .map(|e| e.pinned_at.as_deref()),
+        )
+        .chain(
+            lock.tip
+                .iter()
+                .filter(|e| e.function == function)
+                .map(|e| e.pinned_at.as_deref()),
+        )
+        .flatten()
+        .filter(|stamp| qcore_schemas::contract_supersession::validate_stamp(stamp).is_ok())
+        .max()
+}
+
 /// Add or refresh the identities `tree` gives: every current declaration (or
 /// only `functions`) is recorded at the tree's source. Identities reviewed at
 /// other sources are kept, unless the contract text changed, which voids
 /// them. Entries no longer declared go (only on a full update). Returns the
-/// new lock and one line per changed entry.
+/// new lock and one line per changed entry. Each entry written anew is
+/// stamped later than the entry of its function in `replaced` (the lock on
+/// disk before the run: `existing` for an update, the lock a regeneration
+/// replaces otherwise).
 fn update(
     existing: Option<&ContractLock>,
+    replaced: Option<&ContractLock>,
     target: &Target,
     tree: &SourceTree,
     functions: &BTreeSet<String>,
@@ -923,17 +961,18 @@ fn update(
                 }
                 // Card CONTRACT-SUPERSESSION: an entry this run adds or
                 // changes carries the run's stamp, later than the replaced
-                // one; an unchanged entry keeps its own.
+                // one; an unchanged entry keeps its own. Card
+                // PIN-REGENERATE-STAMP-MONOTONICITY: the replaced one is the
+                // lock's entry of the function before the run, whatever its
+                // kind, also under a regeneration.
                 let same = unchanged.as_ref().is_some_and(|old| {
                     old.module == entry.module
                         && old.contract_sha256 == entry.contract_sha256
                         && old.identities == entry.identities
                 });
                 if !same || entry.pinned_at.is_none() {
-                    entry.pinned_at = Some(stamper.replacing(
-                        name,
-                        unchanged.as_ref().and_then(|old| old.pinned_at.as_deref()),
-                    )?);
+                    entry.pinned_at =
+                        Some(stamper.replacing(name, replaced_stamp(replaced, name))?);
                 }
                 lock.pinned.push(entry);
             }
@@ -953,10 +992,8 @@ fn update(
                     old.module == entry.module && old.contract_sha256 == entry.contract_sha256
                 });
                 if !same || entry.pinned_at.is_none() {
-                    entry.pinned_at = Some(
-                        stamper
-                            .replacing(name, previous.and_then(|old| old.pinned_at.as_deref()))?,
-                    );
+                    entry.pinned_at =
+                        Some(stamper.replacing(name, replaced_stamp(replaced, name))?);
                 }
                 lock.flexible.push(entry);
             }
@@ -1758,6 +1795,10 @@ fn run(arguments: Arguments) -> Result<bool, String> {
     };
     let mut clean = true;
     let mut tips = TipResolver::from_environment()?;
+    // Card PIN-REGENERATE-STAMP-MONOTONICITY: every lock is computed before
+    // any is written, so a refused entry (a stamp not later than the one it
+    // replaces) leaves every lock as it was.
+    let mut writes = Vec::new();
     for target in &targets {
         if arguments.check {
             clean &= check(
@@ -1769,34 +1810,39 @@ fn run(arguments: Arguments) -> Result<bool, String> {
             continue;
         }
         // A regeneration starts from nothing (and replaces an unreadable
-        // lock, saying so); an update needs a lock it can read.
-        let (existing, replaced) = if arguments.regenerate {
-            let replaced = match read_existing(target) {
-                Ok(Some(_)) => Some("replaces the lock from this source alone".to_owned()),
-                Ok(None) => None,
-                Err(error) => Some(format!("replaces an unreadable lock: {error}")),
-            };
-            (None, replaced)
+        // lock, saying so); an update needs a lock it can read. Card
+        // PIN-REGENERATE-STAMP-MONOTONICITY: the lock a regeneration
+        // replaces still orders its stamps.
+        let (existing, previous, replaced) = if arguments.regenerate {
+            match read_existing(target) {
+                Ok(Some(lock)) => (
+                    None,
+                    Some(lock),
+                    Some("replaces the lock from this source alone".to_owned()),
+                ),
+                Ok(None) => (None, None, None),
+                Err(error) => (
+                    None,
+                    None,
+                    Some(format!("replaces an unreadable lock: {error}")),
+                ),
+            }
         } else {
-            (read_existing(target)?, None)
+            (read_existing(target)?, None, None)
         };
         // Card CONTRACT-PIN-TIP-MODE: a regeneration keeps tip entries as
         // written (they name no revision of this source).
-        let kept_tips = if arguments.regenerate {
-            read_existing(target)
-                .ok()
-                .flatten()
-                .map(|lock| lock.tip)
-                .unwrap_or_default()
-        } else {
-            Vec::new()
-        };
+        let kept_tips = previous
+            .as_ref()
+            .map(|lock| lock.tip.clone())
+            .unwrap_or_default();
         let regenerated_from = (!kept_tips.is_empty()).then(|| ContractLock {
             tip: kept_tips,
             ..empty_lock(target)
         });
         let (mut lock, mut lines) = update(
             existing.as_ref().or(regenerated_from.as_ref()),
+            existing.as_ref().or(previous.as_ref()),
             target,
             &tree,
             &arguments.functions,
@@ -1819,7 +1865,11 @@ fn run(arguments: Arguments) -> Result<bool, String> {
             lines.insert(0, format!("! {replaced}"));
         }
         lines.extend(tip_notices(&lock, target, &tree, &mut tips)?);
-        fs::write(&target.lock, lock.to_text()?)
+        let text = lock.to_text()?;
+        writes.push((target, lock, text, lines));
+    }
+    for (target, lock, text, lines) in writes {
+        fs::write(&target.lock, text)
             .map_err(|error| format!("{}: {error}", target.lock.display()))?;
         println!(
             "pin: {}: {} pinned, {} flexible; recorded at {}; wrote {}",
