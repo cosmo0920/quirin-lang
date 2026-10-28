@@ -2089,10 +2089,10 @@ home evidence. Borrowed custody alone establishes no heap frame. Frames stay
 outside ordinary borrowed summaries and are compared with rederived home
 records, including on certificate replay. The schema-major negotiation is 24.
 
-Exact immutable local collector copies and loop snapshots may reuse their
+Exact immutable local copies of collector pointers and loop snapshots may reuse their
 original formal-rooted path only after unique declaration, initialization,
 single write, no address escape, compatible typed interpretation and complete
-straight-line control are checked. All collector-copy uses remain in the
+straight-line control are checked. All collector-pointer-copy uses remain in the
 holder census. A runtime numeric collector id, a record type or an allocation
 candidate set never supplies equality; conditional host/loop correlation and
 collector-search selection still require their own checked relation. Existing

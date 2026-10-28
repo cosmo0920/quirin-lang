@@ -7,6 +7,9 @@ use qcore_contract::contract_loader::load_resource_contract_sources;
 use std::collections::BTreeMap;
 
 fn check(body: &str, helper: &str) -> UnrestrictedLegacyResult {
+    check_signature(body, helper, "struct collector *c, struct collector *other")
+}
+fn check_signature(body: &str, helper: &str, parameters: &str) -> UnrestrictedLegacyResult {
     let declarations = r#"module contract;
 extern fn add(loop: ptr<mut, u8>, event: ptr<mut, u8>) -> unit contract { requires resource_contract_v1; ensures normal resource_borrowed(loop); ensures normal resource_borrowed(event); ensures normal resource_retained_by(event, loop); ensures normal resource_return_none(); };
 extern fn del(loop: ptr<mut, u8>, event: ptr<mut, u8>) -> unit contract { requires resource_contract_v1; ensures normal resource_borrowed(loop); ensures normal resource_borrowed(event); quant live #loop: #holds(event) |-> #absent; ensures normal resource_return_none(); };
@@ -17,7 +20,7 @@ extern fn protocol(c: ptr<mut, u8>) -> unit contract { requires resource_contrac
         load_resource_contract_sources(&BTreeMap::from([("s3.qv".into(), declarations.into())]))
             .unwrap();
     let c = format!(
-        "struct loop {{ int fd; }}; struct event {{ int state; }}; struct collector {{ struct loop *evl; struct loop *other; struct event event; int id; }}; void add(struct loop *, void *); void del(struct loop *, void *); void opaque(void *); {helper} void caller(struct collector *c, struct collector *other) {{ {body} }}"
+        "struct loop {{ int fd; }}; struct event {{ int state; }}; struct collector {{ struct loop *evl; struct loop *other; struct event event; int id; }}; void add(struct loop *, void *); void del(struct loop *, void *); void opaque(void *); {helper} void caller({parameters}) {{ {body} }}"
     );
     analyze_unrestricted_c11(
         &C11TranslationUnit {
@@ -150,5 +153,32 @@ fn exact_collector_copies_and_bottom_up_frames_compose_without_a_type_wide_binde
                 "unknown collector identity was discharged: {body}"
             );
         }
+    }
+}
+
+#[test]
+fn address_initializers_and_by_value_formals_do_not_become_caller_pointer_identities() {
+    for (parameters, body) in [
+        ("struct collector c", "add(c.evl, &c.event);"),
+        (
+            "struct collector c",
+            "struct collector *copy = &c; starts(copy);",
+        ),
+        (
+            "struct collector *c",
+            "struct collector **slot = &c; struct collector *copy = *slot; starts(copy);",
+        ),
+        (
+            "struct collector *c",
+            "struct loop **slot = &c->evl; starts(c); del(*slot, &c->event);",
+        ),
+    ] {
+        assert!(
+            !matches!(
+                check_signature(body, START, parameters),
+                UnrestrictedLegacyResult::Safe(_)
+            ),
+            "an address or value-formal became a caller pointer: {body}"
+        );
     }
 }

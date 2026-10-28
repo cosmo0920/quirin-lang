@@ -6176,10 +6176,12 @@ own anchor here.
     that record's custody component; actual calls still apply full lifetime
     effects, and no ordinary function-map contract is installed. An exact
     uniquely named, initialized, unaddressed, single-write, type-preserving
-    local copy may name its original collector or loop path on a fully read
-    straight-line body. Every collector-copy use participates in the path
+    local pointer-value copy may name its original pointer formal's collector
+    or loop path on a fully read
+    straight-line body. Every collector-pointer-copy use participates in the path
     census; declarations, casts, writes, shadowing, address escapes, unknown
-    control and another formal never establish identity. Existing alias/liveness
+    control, address initializers, value formals and another formal never
+    establish identity. Existing alias/liveness
     reads remain required: lifetime identity does not discharge them. Numeric
     ids, record types and allocation candidates supply no runtime equality.
     Poisoned outstanding effects remain explicitly forwarded rather than

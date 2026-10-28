@@ -512,6 +512,13 @@ fn function(
                 && !ty(n).contains("volatile")
                 && !ty(n).contains("_Atomic")
                 && let Some(Some(alias)) = condition_aliases.get(id)
+                && writes.get(id).is_some_and(|values| {
+                    let mut address = false;
+                    walk(&values[0], &mut |n| {
+                        address |= kind(n) == "UnaryOperator" && n["opcode"].as_str() == Some("&");
+                    });
+                    !address
+                })
             {
                 let mut value = Some(alias.clone());
                 canonical(&mut value);
@@ -1708,12 +1715,18 @@ pub(crate) fn immutable_holder_alias(
     }
     let index = facts.parameters.iter().position(|id| id == &alias.root)?;
     let formal = crate::typed_access_path::with_indirect_call_unit(|unit| {
-        children(unit.function(function)?)
+        let parameter = children(unit.function(function)?)
             .iter()
             .filter(|p| kind(p) == "ParmVarDecl")
-            .nth(index)?["name"]
-            .as_str()
-            .map(str::to_owned)
+            .nth(index)?;
+        let spelling = ty(parameter);
+        if spelling.matches('*').count() != 1
+            || !spelling.trim_end().ends_with('*')
+            || record(spelling).as_deref() != Some(alias.record.as_str())
+        {
+            return None;
+        }
+        parameter["name"].as_str().map(str::to_owned)
     })
     .flatten()?;
     crate::contract_dependencies::lifetime_evidence(
@@ -1748,6 +1761,13 @@ pub(crate) fn collector_alias_frame(
             .iter()
             .filter(|p| kind(p) == "ParmVarDecl")
             .position(|p| p["name"].as_str() == Some(formal))?;
+        let parameter = children(ast)
+            .iter()
+            .filter(|p| kind(p) == "ParmVarDecl")
+            .nth(index)?;
+        if ty(parameter).matches('*').count() != 1 || !ty(parameter).trim_end().ends_with('*') {
+            return None;
+        }
         let root = facts.parameters.get(index)?;
         let mut aliases = BTreeSet::new();
         let mut allowed = BTreeSet::new();
@@ -1785,4 +1805,21 @@ pub(crate) fn collector_alias_frame(
     })
     .flatten()
     .unwrap_or_else(empty)
+}
+
+/// A value formal is this frame's object, not a caller-supplied pointee.
+pub(crate) fn caller_pointer_formal(function: &str, formal: &str) -> bool {
+    crate::typed_access_path::with_indirect_call_unit(|unit| {
+        children(unit.function(function)?)
+            .iter()
+            .find(|p| kind(p) == "ParmVarDecl" && p["name"].as_str() == Some(formal))
+            .map(|p| {
+                ty(p).matches('*').count() == 1
+                    && ty(p).trim_end().ends_with('*')
+                    && !ty(p).contains("volatile")
+                    && !ty(p).contains("_Atomic")
+            })
+    })
+    .flatten()
+    .unwrap_or(false)
 }

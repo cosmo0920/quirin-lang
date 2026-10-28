@@ -312,6 +312,9 @@ fn framed_path_stable(
     fields: &[String],
     contracts: &ResourceContracts,
 ) -> bool {
+    if !crate::loop_lifetime_source::caller_pointer_formal(function, root) {
+        return false;
+    }
     let merged = merged_punctuators(body);
     let texts = merged.iter().map(String::as_str).collect::<Vec<_>>();
     let (aliases, mut framed) =

@@ -13,3 +13,5 @@ import QCore.HolderFrameIdentity
 #print axioms QCore.HolderFrameIdentity.an_addressed_local_supplies_no_identity
 #print axioms QCore.HolderFrameIdentity.a_retyped_local_supplies_no_identity
 #print axioms QCore.HolderFrameIdentity.a_conditional_initialization_supplies_no_identity
+#print axioms QCore.HolderFrameIdentity.a_by_value_formal_supplies_no_pointer_identity
+#print axioms QCore.HolderFrameIdentity.an_address_initializer_supplies_no_value_identity

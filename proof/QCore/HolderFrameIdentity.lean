@@ -69,19 +69,25 @@ theorem another_record_never_matches (a c d e : Nat) (distinct : c ≠ d) :
 theorem another_loop_member_never_matches (a c e f : Nat) (distinct : e ≠ f) :
     frameMatch a a c c e f = false := by simp [frameMatch, distinct]
 
-def aliasAdmission (initialized singleWrite unaddressed typed straightLine : Bool) : Bool :=
-  initialized && singleWrite && unaddressed && typed && straightLine
+def aliasAdmission (initialized singleWrite unaddressed typed straightLine pointerRoot valueInitializer : Bool) : Bool :=
+  initialized && singleWrite && unaddressed && typed && straightLine && pointerRoot && valueInitializer
 
-theorem a_rebound_local_supplies_no_identity (a c d e : Bool) :
-    aliasAdmission a false c d e = false := by simp [aliasAdmission]
+theorem a_rebound_local_supplies_no_identity (a c d e p v : Bool) :
+    aliasAdmission a false c d e p v = false := by simp [aliasAdmission]
 
-theorem an_addressed_local_supplies_no_identity (a b d e : Bool) :
-    aliasAdmission a b false d e = false := by simp [aliasAdmission]
+theorem an_addressed_local_supplies_no_identity (a b d e p v : Bool) :
+    aliasAdmission a b false d e p v = false := by simp [aliasAdmission]
 
-theorem a_retyped_local_supplies_no_identity (a b c e : Bool) :
-    aliasAdmission a b c false e = false := by simp [aliasAdmission]
+theorem a_retyped_local_supplies_no_identity (a b c e p v : Bool) :
+    aliasAdmission a b c false e p v = false := by simp [aliasAdmission]
 
-theorem a_conditional_initialization_supplies_no_identity (a b c d : Bool) :
-    aliasAdmission a b c d false = false := by simp [aliasAdmission]
+theorem a_conditional_initialization_supplies_no_identity (a b c d p v : Bool) :
+    aliasAdmission a b c d false p v = false := by simp [aliasAdmission]
+
+theorem a_by_value_formal_supplies_no_pointer_identity (a b c d e v : Bool) :
+    aliasAdmission a b c d e false v = false := by simp [aliasAdmission]
+
+theorem an_address_initializer_supplies_no_value_identity (a b c d e p : Bool) :
+    aliasAdmission a b c d e p false = false := by simp [aliasAdmission]
 
 end QCore.HolderFrameIdentity
