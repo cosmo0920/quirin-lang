@@ -328,18 +328,15 @@ extern fn protocol_host(c: ptr<mut, u8>) -> unit contract { requires resource_co
             &[exports[0].home.clone()],
         )
         .unwrap();
-        match result {
-            UnrestrictedLegacyResult::Safe(cert) => {
-                assert!(
-                    cert.summary.functions["caller"]
-                        .lifetime_effects
-                        .iter()
-                        .any(|e| e.registration.poisoned),
-                    "poison was discharged: {body}"
-                );
-                check_legacy_safety_certificate(&cert).unwrap();
-            }
-            _ => {}
+        if let UnrestrictedLegacyResult::Safe(cert) = result {
+            assert!(
+                cert.summary.functions["caller"]
+                    .lifetime_effects
+                    .iter()
+                    .any(|e| e.registration.poisoned),
+                "poison was discharged: {body}"
+            );
+            check_legacy_safety_certificate(&cert).unwrap();
         }
     }
 }
