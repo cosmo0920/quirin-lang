@@ -15,7 +15,7 @@ internally linked helper. The old unordered removal set never supplies order.
 
 Removal-only C helpers additionally export ordered formal-index traces in the
 same effect-bearing channel. Their complete CFG must be one acyclic path of
-removal calls and exits, with borrowed/none custody, exact unrebound formal
+removal calls and exits, with borrowed/none custody, internal linkage or a replayed external home, exact unrebound formal
 operands and typed nonvolatile/non-atomic parameter slots. No extra call,
 member/scalar write, branch, alias, release or mixed effect class supplies a
 heap frame. Ordinary W4 publication rejects removals; the richer hook applies
@@ -34,7 +34,7 @@ retains the named protocol premise and source-qualified registration. Missing,
 changed, duplicate or chained homes/effects refuse. Unaware custody/lookup/frame
 routes continue to withhold these imports.
 
-The registered `OrderedLifetimeReplay` Lean audit currently passes 14 theorem
+The registered `OrderedLifetimeReplay` Lean audit currently has 16 theorem
 checks: complete sequential composition, sticky refusal, exact/poisoned/unmatched
 removal controls, import effect/identity equality, missing-home/empty-projection
 refusal, identical-trace joins and complete bounded admission. Source extraction

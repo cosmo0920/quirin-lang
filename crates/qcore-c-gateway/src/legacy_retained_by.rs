@@ -306,6 +306,17 @@ impl Parser<'_> {
             writes: this.refused_writes(texts),
         };
         let inferred = self.contracts.lifetime_summary(function).cloned();
+        if inferred
+            .as_ref()
+            .is_some_and(|summary| !summary.removals.is_empty())
+            && !self.contracts.lifetime_imports().contains_key(function)
+            && !super::callee_scope::has_internal_linkage(self.tokens, function)
+        {
+            return Some(refuse(
+                self,
+                "ordered removal requires an internal helper or a replayed external home".into(),
+            ));
+        }
         let mut declaration = if let Some(summary) = &inferred {
             qcore_schemas::contract_consultation::note_relied(function);
             qcore_schemas::retained_by::RetainingContract::custody_only(summary.contract.clone())

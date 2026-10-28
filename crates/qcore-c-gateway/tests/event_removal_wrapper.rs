@@ -111,6 +111,10 @@ fn inferred_removal_only_helpers_transport_order_in_the_actual_caller() {
     let row = &bad.functions["caller"];
     assert_eq!(row.status, AnalysisStatus::Unknown);
     assert!(format!("{:?}", row.diagnostics).contains("retention-removal-poisoned"));
+    let external = check(
+        "void external_remove(struct loop *l, void *e) { mk_event_timeout_disable(l, e); } void caller(struct collector *c) { mk_event_add(c->evl, 1, 1, 1, &c->event); external_remove(c->evl, &c->event); }",
+    );
+    assert_ne!(external.functions["caller"].status, AnalysisStatus::Safe);
 }
 
 #[test]

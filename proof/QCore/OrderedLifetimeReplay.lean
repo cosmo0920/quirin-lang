@@ -127,4 +127,17 @@ theorem mixed_effect_vectors_do_not_establish_an_order
     (registration removal : Nat) (registrations removals : List Nat) :
     effectClass (registration :: registrations) (removal :: removals) = false := by
   simp [effectClass]
+def removalCallAllowed (internal replayedHome : Bool) : Bool := internal || replayedHome
+
+theorem an_unresolved_external_call_cannot_supply_a_removal :
+    removalCallAllowed false false = false := by decide
+
+def sourceAdmission (seededLocal : Bool) (homePresent : Bool)
+    (actual expected : Nat) (imported recomputed : List Nat) : Bool :=
+    !seededLocal && admitImport homePresent actual expected imported recomputed
+
+theorem preseeded_local_inference_is_not_source_authority
+    (homePresent : Bool) (actual expected : Nat) (imported recomputed : List Nat) :
+    sourceAdmission true homePresent actual expected imported recomputed = false := by
+  simp [sourceAdmission]
 end QCore.OrderedLifetimeReplay
