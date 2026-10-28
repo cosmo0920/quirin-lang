@@ -1,0 +1,17 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "EVENT-ORDERED-LIFETIME",
+  "base": "c265a31fadf7e69933fb106ce08408789944a26e",
+  "measured_tip": "d313cc177dfe666fe51bd87b4fa2135e600bfcb7",
+  "increment_paragraph": "**EVENT-ORDERED-LIFETIME (2026-10-28).** The [card](../../reports/event-ordered-lifetime/README.md) adds bounded complete ordered register/remove/destroy/release traces and a separate, independently replayed cross-unit lifetime channel. Removal-only C helpers carry exact formal-index order through static same-unit calls or a selected external home; early release, wrong-holder poison, mixed effects, altered homes and supplied local inference remain refused. Schema 23 prevents older readers from silently treating the effect-bearing record as ordinary borrowed custody. Sixteen Lean theorem checks accompany the Rust controls. Source extraction, declared API semantics and model correspondence remain assumptions; whole-record holder frames, collector identity, conditional per-record loop correlation, derived path equality, threaded teardown, descriptors and automatic backend body proof remain open. All three native verdict vectors remain unchanged. Six already-Unknown system scheduler rows expose stricter diagnostics after removal-bearing helper effects are withheld from ordinary borrow publication.",
+  "status_paragraph": "EVENT-ORDERED-LIFETIME adds complete bounded ordered summaries and independently replayed lifetime imports, including exact removal-only C helper composition. The effect-bearing schema is 23.0.0. These capabilities cover reduced exact-path controls; they do not close whole-record holder frames or the full production collector chain. Source extraction and declared contract semantics remain assumptions. [Report](reports/event-ordered-lifetime/README.md). Native verdict vectors remain unchanged; the system scheduler diagnostic tightening is explicitly attributed.",
+  "profiles": [],
+  "ledger": [
+    {
+      "id": "FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME",
+      "operation": "append",
+      "text": "EVENT-ORDERED-LIFETIME adds bounded complete ordered traces and exact removal-only caller transfer through internally linked helpers or independently replayed external homes. The richer lifetime channel preserves incoming registrations, removal order and sticky poison; ordinary borrowed summaries cannot erase these effects. Whole-record holder frames, collector-id resolution, conditional per-record host/loop correlation, derived loop-path equalities, all-path threaded join/destroy ordering, descriptor custody and automatic backend contract-body proof remain Open.",
+      "source": "docs/reports/event-ordered-lifetime/README.md"
+    }
+  ]
+}

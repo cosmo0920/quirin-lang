@@ -602,6 +602,7 @@ pub fn project_unit_into_with_cross_unit(
             None => {
                 let mut environment = contracts.clone();
                 environment.set_inferred_imports(Default::default());
+                environment.set_lifetime_imports(Default::default());
                 (environment, Vec::new())
             }
         })

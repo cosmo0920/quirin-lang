@@ -463,6 +463,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [event-caller-removal](event-caller-removal/README.md) | Event caller removal contract |
 
+| [event-ordered-lifetime](event-ordered-lifetime/README.md) | Ordered removal summaries and cross-unit lifetime replay |
+
 | [examples-aggregates](examples-aggregates/README.md) | EXAMPLES-AGGREGATES — the published records family (wave 28) |
 
 | [examples-suite-wire](examples-suite-wire/README.md) | EXAMPLES-SUITE-WIRE — every published example family under one standard (wave 26) |

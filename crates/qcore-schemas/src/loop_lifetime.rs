@@ -84,4 +84,8 @@ pub struct ForwardedLifetime {
 pub struct InferredLifetimeSummary {
     pub contract: crate::contract::ResourceFunctionContract,
     pub effects: Vec<ForwardedLifetime>,
+    /// A removal-only trace in source execution order. Mixed effect classes
+    /// require a richer consumer and are withheld, never reordered.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub removals: Vec<crate::retained_by::Removal>,
 }

@@ -28,6 +28,9 @@ pub struct ReleaseEffect {
 }
 #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Summary {
+    /// Complete bounded trace; absence grants no ordered discharge.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub ordered: Option<Vec<OrderedStep>>,
     pub may_register: BTreeSet<Registration>,
     pub may_release: BTreeSet<ReleaseEffect>,
     pub must_end: BTreeSet<Ending>,
@@ -36,6 +39,24 @@ pub struct Summary {
     /// A summary preserves possible poisoning of records its caller supplied.
     pub may_poison: BTreeSet<Path>,
     pub poison_all: bool,
+}
+/// Primitive steps carry order across a call without guessing from must-end sets.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub enum OrderedStep {
+    Register(Registration),
+    Remove(Option<Path>, Option<Path>),
+    Destroy(Path),
+    Release(Path),
+}
+impl OrderedStep {
+    fn event(&self) -> Event {
+        match self {
+            Self::Register(r) => Event::Register(r.clone()),
+            Self::Remove(o, h) => Event::Remove(o.clone(), h.clone()),
+            Self::Destroy(h) => Event::Destroy(h.clone()),
+            Self::Release(o) => Event::Release(o.clone()),
+        }
+    }
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Event {
@@ -91,6 +112,49 @@ fn end(rs: &mut BTreeSet<Registration>, ending: &Ending) {
 /// never equates distinct paths merely because their candidates overlap.
 #[must_use]
 pub fn path(events: &[Event]) -> Summary {
+    // A differing/unknown exit trace uses the old conservative may/must fold.
+    // Bounds are admission limits, never truncation of a trace.
+    let mut trace = Vec::new();
+    let mut inherited = BTreeSet::new();
+    for event in events {
+        let step = match event {
+            Event::Register(r) => OrderedStep::Register(r.clone()),
+            Event::Remove(o, h) => OrderedStep::Remove(o.clone(), h.clone()),
+            Event::Destroy(h) => OrderedStep::Destroy(h.clone()),
+            Event::Release(o) => OrderedStep::Release(o.clone()),
+            Event::Call(summary) => {
+                let Some(steps) = &summary.ordered else {
+                    return unordered_path(events);
+                };
+                if !summary.open.is_empty() {
+                    return unordered_path(events);
+                }
+                inherited.extend(summary.requirements.iter().cloned());
+                if trace.len().saturating_add(steps.len()) > 4096 {
+                    let mut out = unordered_path(events);
+                    out.open
+                        .insert("ordered lifetime trace exceeds 4096 steps".into());
+                    return out;
+                }
+                trace.extend(steps.iter().cloned());
+                continue;
+            }
+        };
+        if trace.len() == 4096 {
+            let mut out = unordered_path(events);
+            out.open
+                .insert("ordered lifetime trace exceeds 4096 steps".into());
+            return out;
+        }
+        trace.push(step);
+    }
+    let mut out = unordered_path(&trace.iter().map(OrderedStep::event).collect::<Vec<_>>());
+    out.requirements.extend(inherited);
+    out.ordered = Some(trace);
+    out
+}
+
+fn unordered_path(events: &[Event]) -> Summary {
     let mut out = Summary::default();
     for e in events {
         match e {
@@ -226,6 +290,9 @@ pub fn join(paths: &[Summary]) -> Summary {
     };
     let mut out = first.clone();
     for p in &paths[1..] {
+        if out.ordered != p.ordered {
+            out.ordered = None;
+        }
         out.may_register.extend(p.may_register.iter().cloned());
         out.may_release.extend(p.may_release.iter().cloned());
         out.requirements.extend(p.requirements.iter().cloned());
@@ -279,6 +346,34 @@ pub fn substitute(
         ..Default::default()
     };
     let sub = |p: &Path| substitute_path(p, callee_scope, actuals, result, closed_footprint);
+    // A lifted/unknown actual is not an exact runtime registration key.
+    let exact = |p: &Path| sub(p).filter(concrete);
+    out.ordered = summary.ordered.as_ref().and_then(|steps| {
+        steps
+            .iter()
+            .map(|step| {
+                Some(match step {
+                    OrderedStep::Register(r) => OrderedStep::Register(Registration {
+                        object: exact(&r.object)?,
+                        holder: exact(&r.holder)?,
+                        poisoned: r.poisoned,
+                    }),
+                    OrderedStep::Remove(o, h) => OrderedStep::Remove(
+                        match o {
+                            Some(o) => Some(exact(o)?),
+                            None => None,
+                        },
+                        match h {
+                            Some(h) => Some(exact(h)?),
+                            None => None,
+                        },
+                    ),
+                    OrderedStep::Destroy(h) => OrderedStep::Destroy(exact(h)?),
+                    OrderedStep::Release(o) => OrderedStep::Release(exact(o)?),
+                })
+            })
+            .collect()
+    });
     for release in &summary.may_release {
         if let Some(object) = sub(&release.object) {
             out.may_release.insert(ReleaseEffect {
@@ -902,7 +997,16 @@ pub fn derive_source(
                         let callee_scope = format!("{}:{}", unit.identity, call.callee);
                         // Different record types need different footprints;
                         // no guessed universal lift key is supplied here.
-                        let effect = substitute(callee, &callee_scope, &actuals, None, None);
+                        let mut effect = substitute(callee, &callee_scope, &actuals, None, None);
+                        // A same-unit external definition does not establish
+                        // which body a call executes in the linked program.
+                        if !unit
+                            .functions
+                            .get(&call.callee)
+                            .is_some_and(|f| f.internal_linkage)
+                        {
+                            effect.ordered = None;
+                        }
                         let effect = if call.conditional {
                             join(&[effect, Summary::default()])
                         } else {
@@ -930,6 +1034,7 @@ pub fn derive_source(
                         .may_release
                         .iter()
                         .any(|effect| !effect.destroyed_before.is_empty());
+                summary.ordered = None;
                 summary.must_end.clear();
                 summary.may_release = summary
                     .may_release
@@ -967,6 +1072,7 @@ pub fn derive_source(
             summary.open.insert(
                 "lifetime summary fixed point did not converge within its function bound".into(),
             );
+            summary.ordered = None;
             summary.must_end.clear();
         }
     }

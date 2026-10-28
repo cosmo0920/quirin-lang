@@ -271,8 +271,9 @@ impl CustodyDerivation {
                     ContractTrust::InferredValidated,
                     contract.clone(),
                 );
-                if let Some(lifetime) = self.environment.inferred_lifetimes().get(name) {
+                if let Some(lifetime) = self.environment.lifetime_summary(name) {
                     record.lifetime_effects = lifetime.effects.clone();
+                    record.lifetime_removals = lifetime.removals.clone();
                 }
                 record
             })
@@ -827,10 +828,47 @@ fn infer_lifetime_summary(
     );
     let entry = EntryCustody::build(&cfg, &parameters, &borrowed)?;
     let (summary, observations) = analyze_cfg_with_entry(cfg, &entry);
-    if summary.status != AnalysisStatus::Safe
-        || !summary.diagnostics.is_empty()
-        || summary.lifetime_effects.is_empty()
-    {
+    if summary.status != AnalysisStatus::Safe || !summary.diagnostics.is_empty() {
+        return None;
+    }
+    let has_removals = has_removal_effects(&summary.cfg);
+    let removals = if has_removals {
+        // A pair of separate vectors cannot encode arbitrary mixed order.
+        if !summary.lifetime_effects.is_empty() {
+            return None;
+        }
+        let stable_slots = crate::typed_access_path::with_indirect_call_unit(|unit| {
+            let ast = unit.function(function)?;
+            let slots = ast["inner"]
+                .as_array()?
+                .iter()
+                .filter(|p| p["kind"].as_str() == Some("ParmVarDecl"))
+                .collect::<Vec<_>>();
+            if slots.len() != parameters.len() {
+                return None;
+            }
+            for slot in slots {
+                let ty = &slot["type"];
+                let spelled = ty["desugaredQualType"].as_str().or_else(|| {
+                    if ty["typeAliasDeclId"].is_string() {
+                        None
+                    } else {
+                        ty["qualType"].as_str()
+                    }
+                })?;
+                if spelled.contains("volatile") || spelled.contains("_Atomic") {
+                    return None;
+                }
+            }
+            Some(())
+        })
+        .flatten();
+        stable_slots?;
+        ordered_removals(&summary.cfg, &parameters)?
+    } else {
+        Vec::new()
+    };
+    if summary.lifetime_effects.is_empty() && removals.is_empty() {
         return None;
     }
     let candidate = propose_contract(&entry, &observations)?;
@@ -845,13 +883,119 @@ fn infer_lifetime_summary(
     let effects = summary.lifetime_effects.iter().cloned().collect();
     let mut custody_projection = summary;
     custody_projection.lifetime_effects.clear();
+    // Only the custody projection is compared here. The complete removal
+    // trace above is independently retained, substituted and replayed.
+    for node in &mut custody_projection.cfg.nodes {
+        if let LegacyInstruction::ContractCall {
+            retention: Some(operands),
+            ..
+        } = &mut node.instruction
+        {
+            operands.removals.clear();
+        }
+    }
     if !observations_match_contract(&candidate, &entry, &custody_projection, &observations) {
         return None;
     }
     Some(qcore_schemas::loop_lifetime::InferredLifetimeSummary {
         contract: candidate,
         effects,
+        removals,
     })
+}
+
+pub(super) fn has_removal_effects(cfg: &crate::legacy_c::LegacyCfg) -> bool {
+    let mut pending = vec![cfg.entry];
+    let mut seen = BTreeSet::new();
+    while let Some(at) = pending.pop() {
+        if !seen.insert(at) {
+            continue;
+        }
+        let Some(node) = cfg.nodes.get(at) else {
+            return true;
+        };
+        if matches!(&node.instruction,
+            LegacyInstruction::ContractCall { retention: Some(operands), .. } if !operands.removals.is_empty())
+        {
+            return true;
+        }
+        pending.extend(node.successors.iter().copied());
+    }
+    false
+}
+
+/// One fully read, acyclic, single-successor path containing removal calls
+/// and exit nodes only. Borrowed custody alone supplies no heap frame for an
+/// additional call or scalar/member write. Formal indices are exact; aliases,
+/// field projections, conditional paths and mixed effects stay unsupported.
+pub(super) fn ordered_removals(
+    cfg: &crate::legacy_c::LegacyCfg,
+    parameters: &[Option<String>],
+) -> Option<Vec<qcore_schemas::retained_by::Removal>> {
+    use crate::legacy_c::retained_by_route::{HolderSpelling, RetainedSpelling};
+    let mut seen = BTreeSet::new();
+    let mut at = cfg.entry;
+    let mut out = Vec::new();
+    loop {
+        if !seen.insert(at) {
+            return None;
+        }
+        let node = cfg.nodes.get(at)?;
+        match &node.instruction {
+            LegacyInstruction::NoOp if node.is_exit => {}
+            LegacyInstruction::ContractCall {
+                contract,
+                destination,
+                produced_sites,
+                nested,
+                container,
+                retention: Some(ops),
+                ..
+            } if destination.is_none()
+                && produced_sites.is_empty()
+                && nested.is_empty()
+                && container.is_none()
+                && contract.result == ResourceReturnMode::None
+                && contract
+                    .parameters
+                    .iter()
+                    .all(|p| matches!(p, ResourceParameterMode::Borrowed))
+                && !contract.has_container_effect()
+                && ops.retentions.is_empty()
+                && ops.forwarded.is_empty()
+                && ops.resets.is_empty()
+                && ops.slots.is_empty()
+                && ops.references.is_empty()
+                && ops.callbacks.is_none()
+                && !ops.removals.is_empty() =>
+            {
+                for (object, holder) in &ops.removals {
+                    let (
+                        Some(RetainedSpelling::Formal(object)),
+                        Some(HolderSpelling::Name(holder)),
+                    ) = (object, holder)
+                    else {
+                        return None;
+                    };
+                    out.push(qcore_schemas::retained_by::Removal {
+                        retained: parameters.iter().position(|p| p.as_ref() == Some(object))?,
+                        holder: parameters.iter().position(|p| p.as_ref() == Some(holder))?,
+                    });
+                    if out.len() > 4096 {
+                        return None;
+                    }
+                }
+            }
+            _ => return None,
+        }
+        if node.is_exit {
+            return (node.successors.is_empty() && !out.is_empty()).then_some(out);
+        }
+        let [next] = node.successors.as_slice() else {
+            return None;
+        };
+        at = *next;
+    }
 }
 
 /// Card **W43-RESULT-ALIAS-RETURNED**: the derived-result route, consulted
@@ -1484,6 +1628,11 @@ pub(crate) fn observations_match_contract(
         || !summary.diagnostics.is_empty()
         || !summary.lifetime_effects.is_empty()
     {
+        return false;
+    }
+    // A removal changes incoming registrations even when this body acquired
+    // none. Only an effect-bearing ordered summary can transport it.
+    if has_removal_effects(&summary.cfg) {
         return false;
     }
     // Card W45-CONTAINER-ROOT-REACH: a body that took custody of an element of

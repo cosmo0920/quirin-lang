@@ -2058,6 +2058,28 @@ endings require all feasible exits, poison survives unmatched removals, and
 only the record's own holder ending ends a poisoned registration. Unread
 source, missing homes/correlations and unproved endings withhold admission.
 
+Bounded ordered summary transport retains the complete primitive trace (at
+most 4096 steps), substitutes exact source-qualified paths and replays it
+against the incoming registration/poison state. A join retains an ordered
+trace only when every exit has the same trace. Unresolved or lifted actuals,
+unsupported control flow and unstable snapshots withhold this discharge;
+an ending after release never repairs that obligation. Same-unit transport
+of this ordered evidence requires an internally linked helper. Cross-unit
+outgoing lifetime records use a separate effect-bearing import channel:
+independent source replay must reproduce the exact home custody contract and
+lifetime effects, with caller-expected home identities and an explicit linked
+resolution premise. Missing or altered effects cannot become a plain borrowed
+summary. Recursive imported-home chains and guarded mixtures remain refused.
+Removal-only source helpers retain their ordered formal-index effects outside
+the ordinary borrowed map. The admitted body has one acyclic path of removal
+calls and exits, exact unmodified formal operands, nonvolatile/non-atomic
+parameter slots and no additional frame-changing operations. Branches, aliases,
+writes, releases and mixed registration/removal classes remain unsupported.
+A supplied local-inference table is not source authority: issuance and replay
+rederive local summaries and compare imported traces against their exact homes.
+
+
+
 ## C05. Manifests and immutable assumptions
 
 A resource manifest has the following existing version-1 shape:

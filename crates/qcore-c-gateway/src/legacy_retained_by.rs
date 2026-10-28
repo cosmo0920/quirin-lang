@@ -127,11 +127,11 @@ pub(super) fn retaining_environment(
     let retaining = contracts.retaining();
     if (retaining.is_empty()
         && contracts.guarded_retaining().is_empty()
-        && contracts.inferred_lifetimes().is_empty())
+        && contracts.lifetime_summaries().next().is_none())
         || !tokens.iter().any(|token| {
             retaining.contains_key(&token.text)
                 || contracts.guarded_retaining().contains_key(&token.text)
-                || contracts.inferred_lifetimes().contains_key(&token.text)
+                || contracts.lifetime_summary(&token.text).is_some()
         })
     {
         return None;
@@ -144,7 +144,7 @@ pub(super) fn retaining_environment(
             super::reference_route::custody_contract(declaration),
         );
     }
-    for (name, summary) in contracts.inferred_lifetimes() {
+    for (name, summary) in contracts.lifetime_summaries() {
         environment.insert_contract(retained_name(name), summary.contract.clone());
     }
     Some(environment)
@@ -305,8 +305,19 @@ impl Parser<'_> {
             description,
             writes: this.refused_writes(texts),
         };
-        let inferred = self.contracts.inferred_lifetimes().get(function).cloned();
-        let declaration = if let Some(summary) = &inferred {
+        let inferred = self.contracts.lifetime_summary(function).cloned();
+        if inferred
+            .as_ref()
+            .is_some_and(|summary| !summary.removals.is_empty())
+            && !self.contracts.lifetime_imports().contains_key(function)
+            && !super::callee_scope::has_internal_linkage(self.tokens, function)
+        {
+            return Some(refuse(
+                self,
+                "ordered removal requires an internal helper or a replayed external home".into(),
+            ));
+        }
+        let mut declaration = if let Some(summary) = &inferred {
             qcore_schemas::contract_consultation::note_relied(function);
             qcore_schemas::retained_by::RetainingContract::custody_only(summary.contract.clone())
         } else if let Some(scoped) = self
@@ -601,6 +612,11 @@ impl Parser<'_> {
                     ));
                 }
             }
+        }
+        if let Some(summary) = &inferred {
+            // Registration-only and removal-only summaries are separate
+            // admitted classes. The latter preserve source order verbatim.
+            declaration.removals = summary.removals.clone();
         }
         // Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION (rule 12t, USER
         // DECISION 2026-10-16, "R3: quant state"): each removal, never a

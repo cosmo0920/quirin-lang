@@ -39,6 +39,7 @@ pub struct CrossUnitHomeEvidence {
 pub struct CrossUnitExport {
     pub home: CrossUnitHomeEvidence,
     pub contract: ResourceFunctionContract,
+    pub lifetime: Option<qcore_schemas::loop_lifetime::InferredLifetimeSummary>,
 }
 
 impl CrossUnitHomeEvidence {
@@ -66,7 +67,9 @@ pub fn export_homes(
         return Ok(Vec::new());
     }
     if prepared.function_scope() != LegacyFunctionScope::MainSourceDefinitions
+        || !environment.inferred_lifetimes().is_empty()
         || !environment.inferred_imports().is_empty()
+        || !environment.lifetime_imports().is_empty()
         || !environment.cross_unit_import_identities().is_empty()
         || !sha256_spelling(link_resolution_sha256)
     {
@@ -110,8 +113,7 @@ pub fn export_homes(
     let mut exports = Vec::new();
     for record in result.summaries {
         let name = &record.function;
-        if !record.lifetime_effects.is_empty()
-            || !requested.contains(name)
+        if !requested.contains(name)
             || !names.contains(name)
             || callee_scope::has_internal_linkage(&tokens, name)
             || linkage_sensitive_declaration(&tokens, name)
@@ -135,6 +137,15 @@ pub fn export_homes(
                 input_identity: scope.input_identity.clone(),
                 environment_sha256: digest_environment(environment)?,
                 link_resolution_sha256: link_resolution_sha256.to_owned(),
+            },
+            lifetime: if record.lifetime_effects.is_empty() && record.lifetime_removals.is_empty() {
+                None
+            } else {
+                Some(qcore_schemas::loop_lifetime::InferredLifetimeSummary {
+                    contract: record.contract.clone(),
+                    effects: record.lifetime_effects,
+                    removals: record.lifetime_removals,
+                })
             },
             contract: record.contract,
         });
@@ -167,6 +178,14 @@ pub fn for_caller(
         .map(|(name, contract)| (name.clone(), contract.clone()))
         .collect();
     environment.set_inferred_imports(imports);
+    environment.set_lifetime_imports(
+        environment
+            .lifetime_imports()
+            .iter()
+            .filter(|(name, _)| !local.contains(*name))
+            .map(|(name, summary)| (name.clone(), summary.clone()))
+            .collect(),
+    );
     let identities = environment
         .cross_unit_import_identities()
         .iter()
@@ -191,8 +210,12 @@ pub(super) fn check_imports(
     contracts: &ResourceContracts,
     homes: &[CrossUnitHomeEvidence],
 ) -> Result<(), String> {
+    if !contracts.inferred_lifetimes().is_empty() {
+        return Err("local inferred lifetime summaries must be rederived from this unit, not supplied as authority".into());
+    }
     if homes.is_empty()
         && contracts.inferred_imports().is_empty()
+        && contracts.lifetime_imports().is_empty()
         && contracts.cross_unit_import_identities().is_empty()
     {
         return Ok(());
@@ -200,6 +223,7 @@ pub(super) fn check_imports(
     let (caller_tokens, caller_conditionals) = tokenize_with_conditionals(caller_source);
     let caller_definitions = function_names(&caller_tokens, &caller_conditionals).definitions;
     let mut validated = BTreeMap::<String, ResourceFunctionContract>::new();
+    let mut validated_lifetimes = BTreeMap::new();
     let mut validated_identities = BTreeMap::<String, CrossUnitImportIdentity>::new();
     for home in homes {
         if !sha256_spelling(&home.link_resolution_sha256) {
@@ -226,7 +250,9 @@ pub(super) fn check_imports(
                 home.function
             ));
         }
-        if !home.environment.inferred_imports().is_empty()
+        if !home.environment.inferred_lifetimes().is_empty()
+            || !home.environment.inferred_imports().is_empty()
+            || !home.environment.lifetime_imports().is_empty()
             || !home.environment.cross_unit_import_identities().is_empty()
         {
             return Err(format!(
@@ -308,19 +334,48 @@ pub(super) fn check_imports(
                 home.function
             ));
         };
-        if !record.lifetime_effects.is_empty() || !row.lifetime_effects.is_empty() {
+        if record
+            .lifetime_effects
+            .iter()
+            .cloned()
+            .collect::<BTreeSet<_>>()
+            != row.lifetime_effects
+        {
             return Err(format!(
-                "cross-unit `{}` has lifetime effects without retained import support",
+                "cross-unit `{}` lifetime effects differ from its Safe row",
                 home.function
             ));
         }
-        if validated
-            .insert(home.function.clone(), record.contract.clone())
-            .is_some()
+        if validated.contains_key(&home.function)
+            || validated_lifetimes.contains_key(&home.function)
         {
             return Err(format!("cross-unit `{}` has multiple homes", home.function));
         }
+        if !record.lifetime_removals.is_empty() {
+            let parameters = super::function_parameters(&tokens, &home.function)
+                .ok_or("removal home has no formal inventory")?;
+            if crate::legacy_summary::ordered_removals(&row.cfg, &parameters).as_ref()
+                != Some(&record.lifetime_removals)
+            {
+                return Err("cross-unit ordered removal trace differs from replayed home".into());
+            }
+        }
+        if record.lifetime_effects.is_empty() && record.lifetime_removals.is_empty() {
+            validated.insert(home.function.clone(), record.contract.clone());
+        } else {
+            validated_lifetimes.insert(
+                home.function.clone(),
+                qcore_schemas::loop_lifetime::InferredLifetimeSummary {
+                    contract: record.contract.clone(),
+                    effects: record.lifetime_effects.clone(),
+                    removals: record.lifetime_removals.clone(),
+                },
+            );
+        }
         validated_identities.insert(home.function.clone(), home.import_identity());
+    }
+    if &validated_lifetimes != contracts.lifetime_imports() {
+        return Err("cross-unit imported lifetime effects differ from replayed homes".into());
     }
     if &validated != contracts.inferred_imports() {
         return Err("cross-unit imported contracts differ from replayed homes".into());

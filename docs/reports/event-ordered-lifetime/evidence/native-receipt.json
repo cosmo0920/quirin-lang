@@ -1,0 +1,652 @@
+{
+  "schema": "event-ordered-native-receipt/1",
+  "base": "facdb5f4ec1806c38f09f953f4c5b2ae463386e5",
+  "semantic_tip": "d313cc177dfe666fe51bd87b4fa2135e600bfcb7",
+  "native_exit": 0,
+  "source_date_epoch": 1767225600,
+  "declared": {
+    "comparison": "base->tip",
+    "path": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/docs/reports/event-ordered-lifetime/PREDICTION.md",
+    "result": "match",
+    "routes": {
+      "corpus": {
+        "declared": true,
+        "delta_mismatches": [],
+        "missing": [],
+        "result": "match",
+        "unpredicted": []
+      },
+      "slice": {
+        "declared": true,
+        "delta_mismatches": [],
+        "missing": [],
+        "result": "match",
+        "unpredicted": []
+      },
+      "system": {
+        "declared": true,
+        "delta_mismatches": [],
+        "missing": [],
+        "result": "match",
+        "unpredicted": []
+      }
+    },
+    "sha256": "4048d0564b301fe4cbce5007006885113be5de6379d123fcd13a3494ae302038"
+  },
+  "figures": {
+    "corpus": {
+      "null_rows": 4921,
+      "null_verdicts": {
+        "Safe": 2549,
+        "Unknown": 2355,
+        "Unsafe": 17
+      },
+      "null_verdicts_sha256": "5e3809dd6ee98d3205736824d7d2f1e932836e296d4fc47f16f614b7a158f493",
+      "row_statuses": {
+        "Safe": 1013,
+        "Unknown": 3811,
+        "Unsafe": 10
+      },
+      "row_verdicts_sha256": "6019562445f06309f8419ff7c644cd8b764c8258c7deb625a60ba4227f603f82",
+      "rows": 4834,
+      "unit_statuses": {
+        "Safe": 8,
+        "Unknown": 165,
+        "Unsafe": 8,
+        "data_only": 4
+      },
+      "unit_verdicts_sha256": "58c0d37734220a4427792bc8b13569468da6e48cfd2e2425c9c02a96226cb770",
+      "units": 185
+    },
+    "slice": {
+      "null_rows": 406,
+      "null_verdicts": {
+        "Safe": 190,
+        "Unknown": 216
+      },
+      "null_verdicts_sha256": "08e9b5da9fe871894264c1b276f846c4cd387a95be5e4704fb4ac49e1dac744b",
+      "row_statuses": {
+        "Pending": 4,
+        "Safe": 57,
+        "Unknown": 342,
+        "Unsafe": 1
+      },
+      "row_verdicts_sha256": "a84686d4fd6a52b090bac9ed9302c52f2d79c1439fc7dfbbf421589ff4dd8781",
+      "rows": 404,
+      "unit_statuses": {
+        "Unknown": 15,
+        "Unsafe": 1
+      },
+      "unit_verdicts_sha256": "54e95d5f88252a15b9dd02fb3878b6286b16eeea24a5a4cfd4fde8a08af830e5",
+      "units": 16
+    },
+    "system": {
+      "null_rows": 454,
+      "null_verdicts": {
+        "Safe": 211,
+        "Unknown": 243
+      },
+      "null_verdicts_sha256": "18d3b6d0fee4bc3f929e5dac2474bfb88a2290f3163dc698dc2abc3ba94155b3",
+      "row_statuses": {
+        "Safe": 101,
+        "Unknown": 343,
+        "Unsafe": 4
+      },
+      "row_verdicts_sha256": "1d17077f4986f2ea53867a1a2854eb5d5c54c22d755520a7151c5a9c1c6f0003",
+      "rows": 448,
+      "unit_statuses": {
+        "Unknown": 13,
+        "Unsafe": 2
+      },
+      "unit_verdicts_sha256": "d326464ed189bac74776761057f9be31bd5197eea46563b8991137944ed2a01f",
+      "units": 15
+    }
+  },
+  "files": [
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/facdb5f4ec1806c38f09f953f4c5b2ae463386e5/eight-home/corpus/corpus-null.jsonl",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/before/corpus/corpus-null.jsonl.gz",
+      "sha256": "ec178abe864cf2dca7f77ab52618854fa295526e60b5216da45536cb0b3479a0",
+      "bytes": 46197277,
+      "gzip_bytes": 3012445,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/facdb5f4ec1806c38f09f953f4c5b2ae463386e5/eight-home/corpus/corpus-null.summary.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/before/corpus/corpus-null.summary.json.gz",
+      "sha256": "a4503189099be526778d038b68b9159632311573c63dd2da7acae906d16d1e5c",
+      "bytes": 64901,
+      "gzip_bytes": 3637,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/facdb5f4ec1806c38f09f953f4c5b2ae463386e5/eight-home/corpus/corpus-outer.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/before/corpus/corpus-outer.json.gz",
+      "sha256": "6810b3dabd1b78375a1998e27c4489f1e3cdae13ecfb72579fcd9898f737e5c4",
+      "bytes": 711280,
+      "gzip_bytes": 20540,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/facdb5f4ec1806c38f09f953f4c5b2ae463386e5/eight-home/corpus/corpus/monkey-source.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/before/corpus/corpus/monkey-source.json.gz",
+      "sha256": "ba459c8ab988fc3e97b1efd8a9edbb3ffbd5c4933f79a2b77ae2464ad9f7ff2f",
+      "bytes": 1665415,
+      "gzip_bytes": 41994,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/facdb5f4ec1806c38f09f953f4c5b2ae463386e5/eight-home/corpus/corpus/resource-diagnostics.chunk-contracts.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/before/corpus/corpus/resource-diagnostics.chunk-contracts.json.gz",
+      "sha256": "c56b0e2ac106ea57362cdc8d76a39a49ac4edcd02c1d46bfc0133b20c4f5cf88",
+      "bytes": 4190342,
+      "gzip_bytes": 282406,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/facdb5f4ec1806c38f09f953f4c5b2ae463386e5/eight-home/corpus/corpus/resource-diagnostics.components.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/before/corpus/corpus/resource-diagnostics.components.json.gz",
+      "sha256": "3b7a8869d90328107ec8a973824071f0a71c8d9203fe7e86f45e08e2f931708e",
+      "bytes": 108233870,
+      "gzip_bytes": 10323311,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/facdb5f4ec1806c38f09f953f4c5b2ae463386e5/eight-home/corpus/corpus/resource-diagnostics.contracts.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/before/corpus/corpus/resource-diagnostics.contracts.json.gz",
+      "sha256": "7a182c25c64d2a1d18bf772389cce5e84b3f70446d271ca1f83db658737e9435",
+      "bytes": 55398777,
+      "gzip_bytes": 2468393,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/facdb5f4ec1806c38f09f953f4c5b2ae463386e5/eight-home/corpus/corpus/resource-diagnostics.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/before/corpus/corpus/resource-diagnostics.json.gz",
+      "sha256": "1081a66b100b73a84ca4a887ceeb792810947c7468b912e8a85340d3495f1e1c",
+      "bytes": 114432049,
+      "gzip_bytes": 10422074,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/facdb5f4ec1806c38f09f953f4c5b2ae463386e5/eight-home/corpus/corpus/resource-diagnostics.source-effects.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/before/corpus/corpus/resource-diagnostics.source-effects.json.gz",
+      "sha256": "78e2b59f112c44da8824b120b4891ba2b8d9b5dd46644a503b4a2adffbb5bb2f",
+      "bytes": 122792,
+      "gzip_bytes": 17342,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-ordered-native-20261028/sides/tip/corpus/corpus-null.jsonl",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/after/corpus/corpus-null.jsonl.gz",
+      "sha256": "1e6d94855c44a510d5c73b97c37e4df42485097ce9cce761db6f41aaca441559",
+      "bytes": 46197277,
+      "gzip_bytes": 3013108,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-ordered-native-20261028/sides/tip/corpus/corpus-null.summary.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/before/corpus/corpus-null.summary.json.gz",
+      "sha256": "a4503189099be526778d038b68b9159632311573c63dd2da7acae906d16d1e5c",
+      "bytes": 64901,
+      "gzip_bytes": 3637,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-ordered-native-20261028/sides/tip/corpus/corpus-outer.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/before/corpus/corpus-outer.json.gz",
+      "sha256": "6810b3dabd1b78375a1998e27c4489f1e3cdae13ecfb72579fcd9898f737e5c4",
+      "bytes": 711280,
+      "gzip_bytes": 20540,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-ordered-native-20261028/sides/tip/corpus/corpus/monkey-source.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/before/corpus/corpus/monkey-source.json.gz",
+      "sha256": "ba459c8ab988fc3e97b1efd8a9edbb3ffbd5c4933f79a2b77ae2464ad9f7ff2f",
+      "bytes": 1665415,
+      "gzip_bytes": 41994,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-ordered-native-20261028/sides/tip/corpus/corpus/resource-diagnostics.chunk-contracts.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/before/corpus/corpus/resource-diagnostics.chunk-contracts.json.gz",
+      "sha256": "c56b0e2ac106ea57362cdc8d76a39a49ac4edcd02c1d46bfc0133b20c4f5cf88",
+      "bytes": 4190342,
+      "gzip_bytes": 282406,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-ordered-native-20261028/sides/tip/corpus/corpus/resource-diagnostics.components.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/after/corpus/corpus/resource-diagnostics.components.json.gz",
+      "sha256": "928238aeff69f01219a3d0ae811af61120f4fcfbf98c1b15cd7b76c77810e478",
+      "bytes": 108233870,
+      "gzip_bytes": 10323325,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-ordered-native-20261028/sides/tip/corpus/corpus/resource-diagnostics.contracts.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/after/corpus/corpus/resource-diagnostics.contracts.json.gz",
+      "sha256": "b4035265ac6c7421ebda9af67d7967c696f378a5ff5287ac46827154ba08a6b1",
+      "bytes": 55398777,
+      "gzip_bytes": 2468381,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-ordered-native-20261028/sides/tip/corpus/corpus/resource-diagnostics.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/after/corpus/corpus/resource-diagnostics.json.gz",
+      "sha256": "b2d9eadf451ab08a3a37e40bae9df3e4322401bfafc384d7147b4788bd368dc0",
+      "bytes": 114432049,
+      "gzip_bytes": 10421984,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-ordered-native-20261028/sides/tip/corpus/corpus/resource-diagnostics.source-effects.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/after/corpus/corpus/resource-diagnostics.source-effects.json.gz",
+      "sha256": "e2bc890bb42bcb0bbfc43e5b3d0b73b3254b6e109821ef569595d88e7c551eb1",
+      "bytes": 122792,
+      "gzip_bytes": 17341,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/facdb5f4ec1806c38f09f953f4c5b2ae463386e5/fluent-bit-tail-pause/slice/resource-diagnostics.chunk-contracts.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/before/slice/resource-diagnostics.chunk-contracts.json.gz",
+      "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+      "bytes": 385,
+      "gzip_bytes": 260,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/facdb5f4ec1806c38f09f953f4c5b2ae463386e5/fluent-bit-tail-pause/slice/resource-diagnostics.components.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/before/slice/resource-diagnostics.components.json.gz",
+      "sha256": "c154111807db7ab71bc39ffa6e080d382eed1fde1b8165c83292dce259b06b60",
+      "bytes": 3764448,
+      "gzip_bytes": 346156,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/facdb5f4ec1806c38f09f953f4c5b2ae463386e5/fluent-bit-tail-pause/slice/resource-diagnostics.contracts.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/before/slice/resource-diagnostics.contracts.json.gz",
+      "sha256": "23e4de4556f508e9f2db324f198e7de2f95a82b04d20c730653d0d9764a64f79",
+      "bytes": 22138814,
+      "gzip_bytes": 1169765,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/facdb5f4ec1806c38f09f953f4c5b2ae463386e5/fluent-bit-tail-pause/slice/resource-diagnostics.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/before/slice/resource-diagnostics.json.gz",
+      "sha256": "6941f1e5b9ee1645a66efddcac277dc34eac5dab3d81cca0cd1d63de3ede8849",
+      "bytes": 4368067,
+      "gzip_bytes": 358696,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/facdb5f4ec1806c38f09f953f4c5b2ae463386e5/fluent-bit-tail-pause/slice/resource-diagnostics.source-effects.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/before/slice/resource-diagnostics.chunk-contracts.json.gz",
+      "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+      "bytes": 385,
+      "gzip_bytes": 260,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/facdb5f4ec1806c38f09f953f4c5b2ae463386e5/fluent-bit-tail-pause/slice/slice-null.jsonl",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/before/slice/slice-null.jsonl.gz",
+      "sha256": "20cdf44b33b596ea8f6248cc36dd355b65d1730453c7bfb867a239600060829d",
+      "bytes": 1853651,
+      "gzip_bytes": 97000,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/facdb5f4ec1806c38f09f953f4c5b2ae463386e5/fluent-bit-tail-pause/slice/slice-null.summary.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/before/slice/slice-null.summary.json.gz",
+      "sha256": "df4be8b649b807ee4b83c0516250e7495e7e57355733c126c24a6b3828960c56",
+      "bytes": 64487,
+      "gzip_bytes": 3435,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/facdb5f4ec1806c38f09f953f4c5b2ae463386e5/fluent-bit-tail-pause/slice/slice-outer.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/before/slice/slice-outer.json.gz",
+      "sha256": "7f64ea5cc01c131f96a690fb893a581ce8a3fa863de07077e5114228f8cffd53",
+      "bytes": 88639,
+      "gzip_bytes": 7400,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-ordered-native-20261028/sides/tip/slice/resource-diagnostics.chunk-contracts.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/before/slice/resource-diagnostics.chunk-contracts.json.gz",
+      "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+      "bytes": 385,
+      "gzip_bytes": 260,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-ordered-native-20261028/sides/tip/slice/resource-diagnostics.components.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/after/slice/resource-diagnostics.components.json.gz",
+      "sha256": "a318a2bfa4bec06ee12c961021bfb26e233efc2793c526974fb9e0bc2968e91c",
+      "bytes": 3764448,
+      "gzip_bytes": 346151,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-ordered-native-20261028/sides/tip/slice/resource-diagnostics.contracts.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/after/slice/resource-diagnostics.contracts.json.gz",
+      "sha256": "d1385e520b555b9a12bf37101c8d95f5b502a14be16a019ee0f5300e8c37f258",
+      "bytes": 22138814,
+      "gzip_bytes": 1169697,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-ordered-native-20261028/sides/tip/slice/resource-diagnostics.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/after/slice/resource-diagnostics.json.gz",
+      "sha256": "a71c68c376fe0927a559810c6d43d026c7f01166170466bf79b1eabcc5094927",
+      "bytes": 4368067,
+      "gzip_bytes": 358688,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-ordered-native-20261028/sides/tip/slice/resource-diagnostics.source-effects.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/before/slice/resource-diagnostics.chunk-contracts.json.gz",
+      "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+      "bytes": 385,
+      "gzip_bytes": 260,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-ordered-native-20261028/sides/tip/slice/slice-null.jsonl",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/after/slice/slice-null.jsonl.gz",
+      "sha256": "24574108fd13792bda74fe6e05c8de75f66f03d7dcb3ed91e22223d52ad35592",
+      "bytes": 1853651,
+      "gzip_bytes": 97000,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-ordered-native-20261028/sides/tip/slice/slice-null.summary.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/before/slice/slice-null.summary.json.gz",
+      "sha256": "df4be8b649b807ee4b83c0516250e7495e7e57355733c126c24a6b3828960c56",
+      "bytes": 64487,
+      "gzip_bytes": 3435,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-ordered-native-20261028/sides/tip/slice/slice-outer.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/before/slice/slice-outer.json.gz",
+      "sha256": "7f64ea5cc01c131f96a690fb893a581ce8a3fa863de07077e5114228f8cffd53",
+      "bytes": 88639,
+      "gzip_bytes": 7400,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/facdb5f4ec1806c38f09f953f4c5b2ae463386e5/fluent-bit-system/system/resource-diagnostics.chunk-contracts.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/before/system/resource-diagnostics.chunk-contracts.json.gz",
+      "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+      "bytes": 385,
+      "gzip_bytes": 260,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/facdb5f4ec1806c38f09f953f4c5b2ae463386e5/fluent-bit-system/system/resource-diagnostics.components.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/before/system/resource-diagnostics.components.json.gz",
+      "sha256": "c4f2558063a38866781211f0672232ba35135151c9e6a0e3e1a4dd714966974f",
+      "bytes": 9388150,
+      "gzip_bytes": 963840,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/facdb5f4ec1806c38f09f953f4c5b2ae463386e5/fluent-bit-system/system/resource-diagnostics.contracts.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/before/system/resource-diagnostics.contracts.json.gz",
+      "sha256": "c744acc4ff5ef5e0fd0ec2fc429dfdac375dfafdc6f3ddf303a3a222082498ef",
+      "bytes": 23325877,
+      "gzip_bytes": 1203473,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/facdb5f4ec1806c38f09f953f4c5b2ae463386e5/fluent-bit-system/system/resource-diagnostics.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/before/system/resource-diagnostics.json.gz",
+      "sha256": "2207e23acf6f08a287e24a63c543d52834fcd4c301abb7e524a7c82654cedc44",
+      "bytes": 10025391,
+      "gzip_bytes": 968198,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/facdb5f4ec1806c38f09f953f4c5b2ae463386e5/fluent-bit-system/system/resource-diagnostics.source-effects.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/before/system/resource-diagnostics.chunk-contracts.json.gz",
+      "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+      "bytes": 385,
+      "gzip_bytes": 260,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/facdb5f4ec1806c38f09f953f4c5b2ae463386e5/fluent-bit-system/system/system-null.jsonl",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/before/system/system-null.jsonl.gz",
+      "sha256": "970220ed584b787f111c95e2f7fb8ce2d683ffa7b91e4ded40e781b6d57bbf89",
+      "bytes": 1873227,
+      "gzip_bytes": 104456,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/facdb5f4ec1806c38f09f953f4c5b2ae463386e5/fluent-bit-system/system/system-null.summary.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/before/system/system-null.summary.json.gz",
+      "sha256": "572117bd3758532c0ad224a8b40db30dc6793a36d0cec55c54a0c817a905d1e2",
+      "bytes": 64385,
+      "gzip_bytes": 3399,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/facdb5f4ec1806c38f09f953f4c5b2ae463386e5/fluent-bit-system/system/system-outer.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/before/system/system-outer.json.gz",
+      "sha256": "705e46a8aeccd9bbfedab17339a1b033ca679333c7157cfa03157680e0fc7f7f",
+      "bytes": 67168,
+      "gzip_bytes": 6924,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-ordered-native-20261028/sides/tip/system/resource-diagnostics.chunk-contracts.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/before/system/resource-diagnostics.chunk-contracts.json.gz",
+      "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+      "bytes": 385,
+      "gzip_bytes": 260,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-ordered-native-20261028/sides/tip/system/resource-diagnostics.components.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/after/system/resource-diagnostics.components.json.gz",
+      "sha256": "f035945c01df78ac03f72550e29dc333089953df54b19251d9d40c4aa466d764",
+      "bytes": 9388314,
+      "gzip_bytes": 963849,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-ordered-native-20261028/sides/tip/system/resource-diagnostics.contracts.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/after/system/resource-diagnostics.contracts.json.gz",
+      "sha256": "b813653a8f30e086e56568c79fe8677c3df2a90b6bf4fcc8f150c78b1f9ee0f2",
+      "bytes": 23315801,
+      "gzip_bytes": 1203383,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-ordered-native-20261028/sides/tip/system/resource-diagnostics.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/after/system/resource-diagnostics.json.gz",
+      "sha256": "421e59aa40e96df0fd9b7d3be76480fb49a5d7f464f134d0bdd5f6b6c87a560f",
+      "bytes": 10025541,
+      "gzip_bytes": 968239,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-ordered-native-20261028/sides/tip/system/resource-diagnostics.source-effects.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/before/system/resource-diagnostics.chunk-contracts.json.gz",
+      "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+      "bytes": 385,
+      "gzip_bytes": 260,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-ordered-native-20261028/sides/tip/system/system-null.jsonl",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/after/system/system-null.jsonl.gz",
+      "sha256": "5f7bdb07d45ff1a75583818515a40934b78a9163b1b9caa350695a56418e72b5",
+      "bytes": 1873227,
+      "gzip_bytes": 104455,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-ordered-native-20261028/sides/tip/system/system-null.summary.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/before/system/system-null.summary.json.gz",
+      "sha256": "572117bd3758532c0ad224a8b40db30dc6793a36d0cec55c54a0c817a905d1e2",
+      "bytes": 64385,
+      "gzip_bytes": 3399,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-ordered-native-20261028/sides/tip/system/system-outer.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/raw/before/system/system-outer.json.gz",
+      "sha256": "705e46a8aeccd9bbfedab17339a1b033ca679333c7157cfa03157680e0fc7f7f",
+      "bytes": 67168,
+      "gzip_bytes": 6924,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-ordered-native-20261028/native-comparison.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/native-comparison.json.gz",
+      "sha256": "c912323c7208fd2ea7331b5fe41a06b4b39b34d4ef5babda1f2b79df0d9d30b9",
+      "bytes": 50019,
+      "gzip_bytes": 6843,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/native-attribution/attribution.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/native-attribution.json.gz",
+      "sha256": "744b102571c8e03848e461e5b3163cc56bf3401221b5d4bd4a2c16a629e39893",
+      "bytes": 132359,
+      "gzip_bytes": 8719,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/provenance-preimages.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/provenance-preimages.json.gz",
+      "sha256": "d7c5bb93e346377f4c3aebe89d43312e64ea3f18844913b00f57b637c7aafb66",
+      "bytes": 76186395,
+      "gzip_bytes": 10991565,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/provenance-task-preimages.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/provenance-task-preimages.json.gz",
+      "sha256": "1fe15412719623a40d8cb721c287ff357ff5cac4b86518ea18bbcc479da869f8",
+      "bytes": 23300,
+      "gzip_bytes": 2250,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/provenance-run-3.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/provenance-run-3.json.gz",
+      "sha256": "6677184b32e9823faf918996cc93c3e3b664aed546a3968de3061d153f6599b2",
+      "bytes": 830,
+      "gzip_bytes": 329,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/provenance.rs",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/provenance.rs.gz",
+      "sha256": "3e03edb65fa1e491482f2cef54b7f0be6f9da1872c74b6101d508236b988c5aa",
+      "bytes": 3533,
+      "gzip_bytes": 1356,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/provenance-input.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/provenance-input.json.gz",
+      "sha256": "87f1cd5bc8f1ad3ce0d8e72c599b4ef24350a3b231c645a0f18937b6702baedb",
+      "bytes": 493,
+      "gzip_bytes": 281,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/provenance-crate/Cargo.toml",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/provenance-crate/Cargo.toml.gz",
+      "sha256": "e21751ad602cd8a5436034ec1665bdc7159ef56dd332695d6f6660262b338faf",
+      "bytes": 422,
+      "gzip_bytes": 226,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/provenance-crate/Cargo.lock",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/provenance-crate/Cargo.lock.gz",
+      "sha256": "a18d4a3a86953cc4fe25fee6984d199d7f1d49e2a9c411ccd171155e0b77506c",
+      "bytes": 8719,
+      "gzip_bytes": 2246,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/run-provenance.py",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/run-provenance.py.gz",
+      "sha256": "85ba8b202e73035bd5022a6e3e182a846791f22df312fd21f6a769ce40fa9536",
+      "bytes": 1706,
+      "gzip_bytes": 731,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/provenance-cargo.exit",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/provenance-cargo.exit.gz",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2,
+      "gzip_bytes": 22,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/provenance-tasks.exit",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/provenance-cargo.exit.gz",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2,
+      "gzip_bytes": 22,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-ordered-native-20261028/sides/tip/corpus/invocation.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/run/corpus-invocation.json.gz",
+      "sha256": "76a8b3fe9aa9f593426d584dea78143b5dfe46eaf0a93ed4483ce8b3815abbc2",
+      "bytes": 4294,
+      "gzip_bytes": 1292,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-ordered-native-20261028/sides/tip/corpus.slot.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/run/corpus-corpus.slot.json.gz",
+      "sha256": "7ee65be72a6b9ca1a03aa04bfa9777163f3832a0107fad418ba1f0013ccec487",
+      "bytes": 2461,
+      "gzip_bytes": 733,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-ordered-native-20261028/sides/tip/slice/invocation.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/run/slice-invocation.json.gz",
+      "sha256": "970698c620767b8baed47870260d810114c6521c6bc55ae392367505e551d6ea",
+      "bytes": 4195,
+      "gzip_bytes": 1293,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-ordered-native-20261028/sides/tip/slice.slot.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/run/slice-slice.slot.json.gz",
+      "sha256": "5b78beb5e3262fc714222ed05dc8a5109ee9a21aec049dcad3c03c7939bb3a57",
+      "bytes": 3160,
+      "gzip_bytes": 813,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-ordered-native-20261028/sides/tip/system/invocation.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/run/system-invocation.json.gz",
+      "sha256": "72d4c617d7ef6e354c03396f62c37ed86efb60f746149621804efb596df7362c",
+      "bytes": 4219,
+      "gzip_bytes": 1300,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-ordered-native-20261028/sides/tip/system.slot.json",
+      "archive": "docs/reports/event-ordered-lifetime/evidence/run/system-system.slot.json.gz",
+      "sha256": "ed090a31ddd5e3e60ee2bb904a820bf7e40efc411fdb0eebe71febb1fc6bb3c7",
+      "bytes": 3205,
+      "gzip_bytes": 827,
+      "shared_archive": false
+    }
+  ],
+  "scope": "Exact raw reports and independent attribution; conditional resource/NULL/runtime profiles, no whole-C or backend-body proof."
+}
