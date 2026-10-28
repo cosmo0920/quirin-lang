@@ -326,6 +326,7 @@ import QCore.ResidualAccessReadings
 import QCore.Resource
 import QCore.ResourceCalls
 import QCore.ResourceKinds
+import QCore.ResultConstructorSwitch
 import QCore.ResultConstructors
 import QCore.RetainedBy
 import QCore.RetentionGuard

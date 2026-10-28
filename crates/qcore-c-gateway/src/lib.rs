@@ -166,6 +166,8 @@ mod may_alias;
 mod neutral_position;
 mod publication;
 // Card W44-COLLECTION-ALLOCATION: unevaluated `sizeof` dereference operands.
+// Card RULE37-PILOT: the host side of rule 37's package.
+mod result_constructor_rule;
 mod sizeof_operand;
 // Card W45-SUB-OBJECT-STORES: the sub-object store census.
 pub mod source_call_use;

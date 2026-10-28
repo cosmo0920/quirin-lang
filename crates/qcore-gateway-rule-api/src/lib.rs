@@ -26,6 +26,7 @@
 //! No analysis logic lives here and nothing here decides a verdict.
 
 mod answer;
+pub mod checked_readings;
 mod position;
 mod reason;
 mod registry;
@@ -33,6 +34,9 @@ mod switches;
 pub mod traits;
 
 pub use answer::{Admission, Answer, Consulted, Obligation, consult};
+pub use checked_readings::{
+    CheckedOperandArm, CheckedOperandQuery, SpecificationPremiseArm, SpecificationQuery,
+};
 pub use position::{Position, UnknownPosition};
 pub use reason::{ReasonKey, check_reservations};
 pub use registry::{Off, Placement, RegistryError, RuleEntry, check_registry, ordered_table};

@@ -215,3 +215,20 @@ off = "refuses"
 placements = [
   { position = "typed-reader", arm = "scalar-element-address", route = "scalar_element_address::shape_admitted" },
 ]
+
+# Card RULE37-PILOT: rule 37's body lives in its own package. Its two arms
+# amend the aggregate store scan's mention reading (the typed sizeof
+# exemption) and the checked-specification settlement (a specification naming
+# its `asserted_allocation` premise stands only while rule 37 admits it, with
+# the premise as an obligation). The null readers' checked-result guard is
+# rule 37's too but is a restriction, so it stays in the host and has no arm.
+[[rule]]
+id = "37"
+crate = "rule-37-result-constructors"
+lean = ["QCore.ResultConstructors", "QCore.ResultConstructorSwitch"]
+document = "docs/agents/rules/37.md"
+off = "refuses"
+placements = [
+  { position = "typed-reader", arm = "sizeof-operand-exemption", route = "aggregate_store::store_bases" },
+  { position = "classification", arm = "asserted-allocation-premise", route = "legacy_checked_spec::settle" },
+]

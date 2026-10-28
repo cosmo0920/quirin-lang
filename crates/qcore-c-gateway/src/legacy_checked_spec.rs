@@ -48,6 +48,11 @@ pub(crate) enum Withdrawal {
     Recursive,
     /// The body does not establish the specification.
     NotEstablished,
+    /// Card RULE37-PILOT: the declaration names a premise a gateway rule
+    /// package owns (`asserted_allocation`, rule 37), and that package does
+    /// not admit it (switched off), or admits it with an obligation the
+    /// declaration does not state.
+    PremiseNotAdmitted,
 }
 
 impl Withdrawal {
@@ -59,6 +64,9 @@ impl Withdrawal {
             Self::NotEstablished => {
                 "its body, analysed under it, is not fully modelled, reports a diagnostic or \
                  leaves an exit that does not match it"
+            }
+            Self::PremiseNotAdmitted => {
+                "the gateway rule owning its named premise does not admit it (switched off)"
             }
         }
     }
@@ -209,6 +217,26 @@ pub(crate) fn settle(tokens: &[Token], scope: &[String], contracts: &ResourceCon
             withdrawn.insert(name.clone(), Withdrawal::NoBody);
         } else if recursive.contains(name) {
             withdrawn.insert(name.clone(), Withdrawal::Recursive);
+        }
+    }
+    // Card RULE37-PILOT: a specification naming a premise a rule package owns
+    // stands only while that package admits it (rule 37's
+    // `asserted_allocation`). Unreadable premises withdraw every checked
+    // specification, as an unreadable checked set does.
+    match crate::result_constructor_rule::premise_withdrawals(contracts, &checked) {
+        Some(refused) => {
+            for name in refused {
+                withdrawn
+                    .entry(name)
+                    .or_insert(Withdrawal::PremiseNotAdmitted);
+            }
+        }
+        None => {
+            for name in &checked {
+                withdrawn
+                    .entry(name.clone())
+                    .or_insert(Withdrawal::Unreadable);
+            }
         }
     }
     // Each round that continues withdraws at least one of `checked`, so

@@ -31,6 +31,9 @@ qcore-core = { path = "../qcore-core", version = "0.1.0" }
 # the run-time switches the generated tables read.
 qcore-gateway-rule-api = { path = "../qcore-gateway-rule-api", version = "0.1.0" }
 qcore-schemas = { path = "../qcore-schemas", version = "23.0.0" }
+# Card RULE37-PILOT: rule 37's package (plan seam B), asked through the rule
+# interface at its two registered arms.
+rule-37-result-constructors = { path = "../gateway-rules/rule-37-result-constructors", version = "0.1.0" }
 serde = { version = "1.0.229", features = ["derive"] }
 # `unbounded_depth` (no added crate): the typed dispatch reader streams
 # Clang's JSON AST, whose statement nesting exceeds the default limit.
