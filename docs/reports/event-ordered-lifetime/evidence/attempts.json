@@ -1,0 +1,339 @@
+{
+  "schema": "event-ordered-attempts/1",
+  "scope": "Focused checkpoints are not the final standing gate. Initial Lean and focused Rust failures are preserved. Full final gate is in gate-steps.json; compilation/Clippy and superseded partial logs remain at the private paths disclosed in README.",
+  "attempts": [
+    {
+      "receipt": "lean-slot.json",
+      "exit": 1,
+      "libtest_summaries": [],
+      "files": [
+        {
+          "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/lean-slot.json",
+          "archive": "docs/reports/event-ordered-lifetime/evidence/attempts/lean-slot.json.gz",
+          "bytes": 943,
+          "sha256": "f8ce637d16449546d9bcb8ef61ea23193218f7035e3cce5f6e0efb4a2d637616"
+        },
+        {
+          "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/lean.log",
+          "archive": "docs/reports/event-ordered-lifetime/evidence/attempts/lean.log.gz",
+          "bytes": 1888,
+          "sha256": "248cc6cde69de7fc2d8526c7f06d3f51748c72e870e6d547582d431bd7a94ad8"
+        }
+      ]
+    },
+    {
+      "receipt": "lean-slot-2.json",
+      "exit": 0,
+      "libtest_summaries": [],
+      "files": [
+        {
+          "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/lean-slot-2.json",
+          "archive": "docs/reports/event-ordered-lifetime/evidence/attempts/lean-slot-2.json.gz",
+          "bytes": 943,
+          "sha256": "29f4c230cb7d09a5e04ffc1f761c3920ac62ae32479066b2887ba48193ff9b89"
+        },
+        {
+          "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/lean-2.log",
+          "archive": "docs/reports/event-ordered-lifetime/evidence/attempts/lean-2.log.gz",
+          "bytes": 1496,
+          "sha256": "c48ac68771f94fbfd5118964eabc2898b308651880c872662ec1eebb050e1bd7"
+        }
+      ]
+    },
+    {
+      "receipt": "lean-slot-3.json",
+      "exit": 0,
+      "libtest_summaries": [],
+      "files": [
+        {
+          "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/lean-slot-3.json",
+          "archive": "docs/reports/event-ordered-lifetime/evidence/attempts/lean-slot-3.json.gz",
+          "bytes": 943,
+          "sha256": "c5abf343585d7c0c36d50fde252f05a00cf5d33ec6dfe2ca0204c264ea61e5c5"
+        },
+        {
+          "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/lean-3.log",
+          "archive": "docs/reports/event-ordered-lifetime/evidence/attempts/lean-3.log.gz",
+          "bytes": 1847,
+          "sha256": "0f242c5f0432fbdf2b1a43c85b6d295f66932aa4730b2a6a706de7486174250e"
+        }
+      ]
+    },
+    {
+      "receipt": "lean-slot-4.json",
+      "exit": 0,
+      "libtest_summaries": [],
+      "files": [
+        {
+          "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/lean-slot-4.json",
+          "archive": "docs/reports/event-ordered-lifetime/evidence/attempts/lean-slot-4.json.gz",
+          "bytes": 943,
+          "sha256": "698cd4dd520b59451f2ce76f4d682b9747b2ad136d8d3741f56fbe5f6081222f"
+        },
+        {
+          "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/lean-4.log",
+          "archive": "docs/reports/event-ordered-lifetime/evidence/attempts/lean-4.log.gz",
+          "bytes": 2065,
+          "sha256": "ebedcfcebc1f67c4d45ccdcc2058c172a2a378734b79acf7894de5ca5384c703"
+        }
+      ]
+    },
+    {
+      "receipt": "lean-slot-5.json",
+      "exit": 0,
+      "libtest_summaries": [],
+      "files": [
+        {
+          "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/lean-slot-5.json",
+          "archive": "docs/reports/event-ordered-lifetime/evidence/attempts/lean-slot-5.json.gz",
+          "bytes": 942,
+          "sha256": "3ded0f6e66ea6f37cdab89b4b36e5479bdc26ae6fc5e10c5a817e355e8593baa"
+        },
+        {
+          "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/lean-5.log",
+          "archive": "docs/reports/event-ordered-lifetime/evidence/attempts/lean-5.log.gz",
+          "bytes": 2286,
+          "sha256": "aa4bc340ee6292e0c8d07ac952166099a46064133567efd1d4f47def7b01608b"
+        }
+      ]
+    },
+    {
+      "receipt": "focused-slot.json",
+      "exit": 101,
+      "libtest_summaries": [
+        {
+          "result": "FAILED",
+          "passed": 3,
+          "failed": 1,
+          "ignored": 0,
+          "filtered": 0
+        }
+      ],
+      "files": [
+        {
+          "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/focused-slot.json",
+          "archive": "docs/reports/event-ordered-lifetime/evidence/attempts/focused-slot.json.gz",
+          "bytes": 1349,
+          "sha256": "b18f87c6c6572aa50d073fced778d1d5ac7997b946db2cec00b069b4da1938f7"
+        },
+        {
+          "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/focused.log",
+          "archive": "docs/reports/event-ordered-lifetime/evidence/attempts/focused.log.gz",
+          "bytes": 4962,
+          "sha256": "afbc08b05075f31743faeefbf3faf0784bcdd62870c0857ccbf6ad6aa95db7b9"
+        }
+      ]
+    },
+    {
+      "receipt": "focused-slot-2.json",
+      "exit": 0,
+      "libtest_summaries": [
+        {
+          "result": "ok",
+          "passed": 4,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "result": "ok",
+          "passed": 3,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        }
+      ],
+      "files": [
+        {
+          "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/focused-slot-2.json",
+          "archive": "docs/reports/event-ordered-lifetime/evidence/attempts/focused-slot-2.json.gz",
+          "bytes": 1384,
+          "sha256": "f3763a2466187bc307f065ddc3cc716e04ff08130da792b3245d7552f335e751"
+        },
+        {
+          "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/focused-2.log",
+          "archive": "docs/reports/event-ordered-lifetime/evidence/attempts/focused-2.log.gz",
+          "bytes": 1551,
+          "sha256": "9fa7a33f67906bb25242ec97601c9724e34579e6f4e775eb9580b58322ae5113"
+        }
+      ]
+    },
+    {
+      "receipt": "audit-link-slot.json",
+      "exit": 0,
+      "libtest_summaries": [
+        {
+          "result": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 154
+        }
+      ],
+      "files": [
+        {
+          "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/audit-link-slot.json",
+          "archive": "docs/reports/event-ordered-lifetime/evidence/attempts/audit-link-slot.json.gz",
+          "bytes": 1318,
+          "sha256": "0d90c2c9ea2fd3ebe9940e0539b03ae651f3926d39ffb30da489f42c3c09957e"
+        },
+        {
+          "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/audit-link.log",
+          "archive": "docs/reports/event-ordered-lifetime/evidence/attempts/audit-link.log.gz",
+          "bytes": 1919,
+          "sha256": "6b45166b4615e836bba3f21c2ec2dfd02f7d05f82a356981f3b25ee3d18bddf5"
+        }
+      ]
+    },
+    {
+      "receipt": "removal-carrier-slot.json",
+      "exit": 101,
+      "libtest_summaries": [
+        {
+          "result": "ok",
+          "passed": 4,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "result": "FAILED",
+          "passed": 3,
+          "failed": 1,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "result": "ok",
+          "passed": 3,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        }
+      ],
+      "files": [
+        {
+          "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/removal-carrier-slot.json",
+          "archive": "docs/reports/event-ordered-lifetime/evidence/attempts/removal-carrier-slot.json.gz",
+          "bytes": 1464,
+          "sha256": "012ecebc5df3a58da56673205316c0d71ec8524e4062155cfdedc4dc983359ad"
+        },
+        {
+          "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/removal-carrier-focused.log",
+          "archive": "docs/reports/event-ordered-lifetime/evidence/attempts/removal-carrier-focused.log.gz",
+          "bytes": 2705,
+          "sha256": "0bb3fc0a58aacaec0adc2d8ef8d186bf52df34c80ee290c4cd56dc52d112cf24"
+        }
+      ]
+    },
+    {
+      "receipt": "removal-carrier-slot-2.json",
+      "exit": 0,
+      "libtest_summaries": [
+        {
+          "result": "ok",
+          "passed": 5,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "result": "ok",
+          "passed": 4,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "result": "ok",
+          "passed": 3,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        }
+      ],
+      "files": [
+        {
+          "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/removal-carrier-slot-2.json",
+          "archive": "docs/reports/event-ordered-lifetime/evidence/attempts/removal-carrier-slot-2.json.gz",
+          "bytes": 1463,
+          "sha256": "f2ce410e74be341e284a48cfb5190ae4bf480fab7929baaa418f77c57dc4a8c0"
+        },
+        {
+          "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/removal-carrier-focused-2.log",
+          "archive": "docs/reports/event-ordered-lifetime/evidence/attempts/removal-carrier-focused-2.log.gz",
+          "bytes": 2192,
+          "sha256": "ba5217d2abe0b3c2d483c93aa4dfbcab9399f94d9184effe3006fc4662f0a70e"
+        }
+      ]
+    },
+    {
+      "receipt": "final-focused-slot.json",
+      "exit": 0,
+      "libtest_summaries": [
+        {
+          "result": "ok",
+          "passed": 5,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "result": "ok",
+          "passed": 4,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "result": "ok",
+          "passed": 3,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        }
+      ],
+      "files": [
+        {
+          "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/final-focused-slot.json",
+          "archive": "docs/reports/event-ordered-lifetime/evidence/attempts/final-focused-slot.json.gz",
+          "bytes": 1466,
+          "sha256": "268eff88f59e131fa19689e420872ef552e222222ccffca97a4150ac23fcb5f3"
+        },
+        {
+          "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/final-focused.log",
+          "archive": "docs/reports/event-ordered-lifetime/evidence/attempts/final-focused.log.gz",
+          "bytes": 2748,
+          "sha256": "20606cbe6695d157db3aee5cf9a68d0ebb6b5e5abf390c4320aa2b43fe71823d"
+        }
+      ]
+    },
+    {
+      "receipt": "final-audit-link-slot.json",
+      "exit": 0,
+      "libtest_summaries": [
+        {
+          "result": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 154
+        }
+      ],
+      "files": [
+        {
+          "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/final-audit-link-slot.json",
+          "archive": "docs/reports/event-ordered-lifetime/evidence/attempts/final-audit-link-slot.json.gz",
+          "bytes": 1319,
+          "sha256": "9af31328aff2ba4725a8616108db330ab904a621317d41fbb3a5993bf8588aed"
+        },
+        {
+          "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/final-audit-link.log",
+          "archive": "docs/reports/event-ordered-lifetime/evidence/attempts/final-audit-link.log.gz",
+          "bytes": 720,
+          "sha256": "d7aec96a5676df68b6ab2f3b5d1fb71197037bcefa3c8075c478db46794e0d36"
+        }
+      ]
+    }
+  ]
+}

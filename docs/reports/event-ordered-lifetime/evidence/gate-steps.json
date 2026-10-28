@@ -1,0 +1,1013 @@
+{
+  "schema": "quirin-gate-scope/1",
+  "source": "git diff",
+  "base": "c265a31fadf7e69933fb106ce08408789944a26e",
+  "head": "d313cc177dfe666fe51bd87b4fa2135e600bfcb7",
+  "committed": [
+    "Cargo.lock",
+    "compiler/Cargo.toml",
+    "compiler/tests/fixtures/w3/provider/Cargo.lock",
+    "compiler/tests/fixtures/w3/provider/Cargo.toml",
+    "crates/qcore-audit/Cargo.toml",
+    "crates/qcore-audit/src/cross_unit_links.rs",
+    "crates/qcore-audit/src/projection.rs",
+    "crates/qcore-c-gateway/Cargo.toml",
+    "crates/qcore-c-gateway/src/contract_dependencies.rs",
+    "crates/qcore-c-gateway/src/legacy_call_argument_access.rs",
+    "crates/qcore-c-gateway/src/legacy_cross_unit.rs",
+    "crates/qcore-c-gateway/src/legacy_lookup.rs",
+    "crates/qcore-c-gateway/src/legacy_retained_by.rs",
+    "crates/qcore-c-gateway/src/legacy_selection.rs",
+    "crates/qcore-c-gateway/src/legacy_summary.rs",
+    "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+    "crates/qcore-c-gateway/src/loop_lifetime_source.rs",
+    "crates/qcore-c-gateway/src/loop_lifetime_summary.rs",
+    "crates/qcore-c-gateway/tests/cross_unit_summary.rs",
+    "crates/qcore-c-gateway/tests/event_removal_wrapper.rs",
+    "crates/qcore-c-gateway/tests/ordered_lifetime.rs",
+    "crates/qcore-contract/Cargo.toml",
+    "crates/qcore-frontend/Cargo.toml",
+    "crates/qcore-gateway-rule-api/Cargo.toml",
+    "crates/qcore-schemas/Cargo.toml",
+    "crates/qcore-schemas/src/contract.rs",
+    "crates/qcore-schemas/src/loop_lifetime.rs",
+    "crates/qcore-verification/Cargo.toml",
+    "crates/qcore-verifier-host/Cargo.toml",
+    "crates/quirin-audit-plugin-libevent/Cargo.toml",
+    "crates/quirin-audit-plugin-measure/Cargo.toml",
+    "crates/quirin-audit-plugin/Cargo.toml",
+    "crates/quirin-source-analysis/Cargo.toml",
+    "docs/QCORE_CONTRACT_SPEC_r0_3.md",
+    "docs/agents/gateway.md",
+    "docs/agents/rules/12t.md",
+    "docs/agents/rules/4c.md",
+    "docs/reports/event-ordered-lifetime/BRIEF.md",
+    "docs/reports/event-ordered-lifetime/PREDICTION.md",
+    "docs/reports/event-ordered-lifetime/README.md",
+    "proof/AuditOrderedLifetimeReplay.lean",
+    "proof/QCore.lean",
+    "proof/QCore/OrderedLifetimeReplay.lean",
+    "providers/Cargo.lock",
+    "providers/Cargo.toml"
+  ],
+  "uncommitted": [],
+  "scope": {
+    "paths": [
+      "Cargo.lock",
+      "compiler/Cargo.toml",
+      "compiler/tests/fixtures/w3/provider/Cargo.lock",
+      "compiler/tests/fixtures/w3/provider/Cargo.toml",
+      "crates/qcore-audit/Cargo.toml",
+      "crates/qcore-audit/src/cross_unit_links.rs",
+      "crates/qcore-audit/src/projection.rs",
+      "crates/qcore-c-gateway/Cargo.toml",
+      "crates/qcore-c-gateway/src/contract_dependencies.rs",
+      "crates/qcore-c-gateway/src/legacy_call_argument_access.rs",
+      "crates/qcore-c-gateway/src/legacy_cross_unit.rs",
+      "crates/qcore-c-gateway/src/legacy_lookup.rs",
+      "crates/qcore-c-gateway/src/legacy_retained_by.rs",
+      "crates/qcore-c-gateway/src/legacy_selection.rs",
+      "crates/qcore-c-gateway/src/legacy_summary.rs",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/loop_lifetime_source.rs",
+      "crates/qcore-c-gateway/src/loop_lifetime_summary.rs",
+      "crates/qcore-c-gateway/tests/cross_unit_summary.rs",
+      "crates/qcore-c-gateway/tests/event_removal_wrapper.rs",
+      "crates/qcore-c-gateway/tests/ordered_lifetime.rs",
+      "crates/qcore-contract/Cargo.toml",
+      "crates/qcore-frontend/Cargo.toml",
+      "crates/qcore-gateway-rule-api/Cargo.toml",
+      "crates/qcore-schemas/Cargo.toml",
+      "crates/qcore-schemas/src/contract.rs",
+      "crates/qcore-schemas/src/loop_lifetime.rs",
+      "crates/qcore-verification/Cargo.toml",
+      "crates/qcore-verifier-host/Cargo.toml",
+      "crates/quirin-audit-plugin-libevent/Cargo.toml",
+      "crates/quirin-audit-plugin-measure/Cargo.toml",
+      "crates/quirin-audit-plugin/Cargo.toml",
+      "crates/quirin-source-analysis/Cargo.toml",
+      "docs/QCORE_CONTRACT_SPEC_r0_3.md",
+      "docs/agents/gateway.md",
+      "docs/agents/rules/12t.md",
+      "docs/agents/rules/4c.md",
+      "docs/reports/event-ordered-lifetime/BRIEF.md",
+      "docs/reports/event-ordered-lifetime/PREDICTION.md",
+      "docs/reports/event-ordered-lifetime/README.md",
+      "proof/AuditOrderedLifetimeReplay.lean",
+      "proof/QCore.lean",
+      "proof/QCore/OrderedLifetimeReplay.lean",
+      "providers/Cargo.lock",
+      "providers/Cargo.toml"
+    ],
+    "attribution": {
+      "Cargo.lock": [
+        "no crate owns or reads it"
+      ],
+      "compiler/Cargo.toml": [
+        "owned by qcore-compiler",
+        "read by qcore-compiler (include_str, compiler/tests/workspace_layering.rs:207)"
+      ],
+      "compiler/tests/fixtures/w3/provider/Cargo.lock": [
+        "owned by qcore-compiler",
+        "read by qcorec (runtime, crates/qcorec/tests/cli.rs:335)"
+      ],
+      "compiler/tests/fixtures/w3/provider/Cargo.toml": [
+        "owned by qcore-compiler",
+        "read by qcorec (runtime, crates/qcorec/tests/cli.rs:335)"
+      ],
+      "crates/qcore-audit/Cargo.toml": [
+        "owned by qcore-audit",
+        "read by qcore-audit (include_str, crates/qcore-audit/tests/dependency_graph.rs:88)",
+        "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:82)",
+        "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+      ],
+      "crates/qcore-audit/src/cross_unit_links.rs": [
+        "owned by qcore-audit",
+        "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:82)",
+        "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+      ],
+      "crates/qcore-audit/src/projection.rs": [
+        "owned by qcore-audit",
+        "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:82)",
+        "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+      ],
+      "crates/qcore-c-gateway/Cargo.toml": [
+        "owned by qcore-c-gateway",
+        "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:33)",
+        "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+      ],
+      "crates/qcore-c-gateway/src/contract_dependencies.rs": [
+        "owned by qcore-c-gateway",
+        "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:33)",
+        "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+      ],
+      "crates/qcore-c-gateway/src/legacy_call_argument_access.rs": [
+        "owned by qcore-c-gateway",
+        "read by qcore-c-gateway (path, crates/qcore-c-gateway/src/legacy_c.rs:137)",
+        "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:33)",
+        "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+      ],
+      "crates/qcore-c-gateway/src/legacy_cross_unit.rs": [
+        "owned by qcore-c-gateway",
+        "read by qcore-c-gateway (path, crates/qcore-c-gateway/src/legacy_c.rs:3167)",
+        "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:33)",
+        "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+      ],
+      "crates/qcore-c-gateway/src/legacy_lookup.rs": [
+        "owned by qcore-c-gateway",
+        "read by qcore-c-gateway (path, crates/qcore-c-gateway/src/legacy_c.rs:360)",
+        "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:33)",
+        "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+      ],
+      "crates/qcore-c-gateway/src/legacy_retained_by.rs": [
+        "owned by qcore-c-gateway",
+        "read by qcore-c-gateway (path, crates/qcore-c-gateway/src/legacy_c.rs:352)",
+        "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:33)",
+        "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+      ],
+      "crates/qcore-c-gateway/src/legacy_selection.rs": [
+        "owned by qcore-c-gateway",
+        "read by qcore-c-gateway (path, crates/qcore-c-gateway/src/legacy_c.rs:364)",
+        "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:33)",
+        "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+      ],
+      "crates/qcore-c-gateway/src/legacy_summary.rs": [
+        "owned by qcore-c-gateway",
+        "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:33)",
+        "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+      ],
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs": [
+        "owned by qcore-c-gateway",
+        "read by qcore-c-gateway (path, crates/qcore-c-gateway/src/legacy_c.rs:5810)",
+        "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:33)",
+        "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+      ],
+      "crates/qcore-c-gateway/src/loop_lifetime_source.rs": [
+        "owned by qcore-c-gateway",
+        "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:33)",
+        "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+      ],
+      "crates/qcore-c-gateway/src/loop_lifetime_summary.rs": [
+        "owned by qcore-c-gateway",
+        "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:33)",
+        "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+      ],
+      "crates/qcore-c-gateway/tests/cross_unit_summary.rs": [
+        "owned by qcore-c-gateway",
+        "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:33)",
+        "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+      ],
+      "crates/qcore-c-gateway/tests/event_removal_wrapper.rs": [
+        "owned by qcore-c-gateway",
+        "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:33)",
+        "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+      ],
+      "crates/qcore-c-gateway/tests/ordered_lifetime.rs": [
+        "owned by qcore-c-gateway",
+        "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:33)",
+        "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+      ],
+      "crates/qcore-contract/Cargo.toml": [
+        "owned by qcore-contract",
+        "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:17)",
+        "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+      ],
+      "crates/qcore-frontend/Cargo.toml": [
+        "owned by qcore-frontend",
+        "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:15)",
+        "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+      ],
+      "crates/qcore-gateway-rule-api/Cargo.toml": [
+        "owned by qcore-gateway-rule-api",
+        "read by qcore-gateway-rule-api (include_str, crates/qcore-gateway-rule-api/src/lib.rs:49)",
+        "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:29)",
+        "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+      ],
+      "crates/qcore-schemas/Cargo.toml": [
+        "owned by qcore-schemas",
+        "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:11)",
+        "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+      ],
+      "crates/qcore-schemas/src/contract.rs": [
+        "owned by qcore-schemas",
+        "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:11)",
+        "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+      ],
+      "crates/qcore-schemas/src/loop_lifetime.rs": [
+        "owned by qcore-schemas",
+        "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:11)",
+        "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+      ],
+      "crates/qcore-verification/Cargo.toml": [
+        "owned by qcore-verification",
+        "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:46)",
+        "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+      ],
+      "crates/qcore-verifier-host/Cargo.toml": [
+        "owned by qcore-verifier-host",
+        "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:42)",
+        "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+      ],
+      "crates/quirin-audit-plugin-libevent/Cargo.toml": [
+        "owned by quirin-audit-plugin-libevent",
+        "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:99)",
+        "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+      ],
+      "crates/quirin-audit-plugin-measure/Cargo.toml": [
+        "owned by quirin-audit-plugin-measure",
+        "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:105)",
+        "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+      ],
+      "crates/quirin-audit-plugin/Cargo.toml": [
+        "owned by quirin-audit-plugin",
+        "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:97)",
+        "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+      ],
+      "crates/quirin-source-analysis/Cargo.toml": [
+        "owned by quirin-source-analysis",
+        "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:57)",
+        "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+      ],
+      "docs/QCORE_CONTRACT_SPEC_r0_3.md": [
+        "class prose"
+      ],
+      "docs/agents/gateway.md": [
+        "class prose"
+      ],
+      "docs/agents/rules/12t.md": [
+        "class prose"
+      ],
+      "docs/agents/rules/4c.md": [
+        "class prose"
+      ],
+      "docs/reports/event-ordered-lifetime/BRIEF.md": [
+        "class prose"
+      ],
+      "docs/reports/event-ordered-lifetime/PREDICTION.md": [
+        "class prose"
+      ],
+      "docs/reports/event-ordered-lifetime/README.md": [
+        "class prose"
+      ],
+      "proof/AuditOrderedLifetimeReplay.lean": [
+        "read by qcore-compiler (runtime, compiler/tests/float_ieee_vectors.rs:524)",
+        "read by qcore-compiler (runtime, compiler/tests/proof_leg_digests.rs:106)",
+        "class lean"
+      ],
+      "proof/QCore.lean": [
+        "read by qcore-compiler (runtime, compiler/tests/float_ieee_vectors.rs:524)",
+        "read by qcore-compiler (runtime, compiler/tests/proof_leg_digests.rs:106)",
+        "class lean"
+      ],
+      "proof/QCore/OrderedLifetimeReplay.lean": [
+        "read by qcore-compiler (runtime, compiler/tests/float_ieee_vectors.rs:524)",
+        "read by qcore-compiler (runtime, compiler/tests/proof_leg_digests.rs:106)",
+        "class lean"
+      ],
+      "providers/Cargo.lock": [
+        "read by qcore-audit (runtime, crates/qcore-audit/src/pin_window.rs:60)",
+        "read by qcore-audit (runtime, crates/qcore-audit/tests/current_cli.rs:138)",
+        "read by qcore-audit (runtime, crates/qcore-audit/tests/dependency_graph.rs:92)",
+        "read by qcore-audit (runtime, crates/qcore-audit/tests/provider_selection.rs:620)",
+        "read by qcore-contract (runtime, crates/qcore-contract/tests/bounds_contract.rs:159)",
+        "read by qcore-contract (runtime, crates/qcore-contract/tests/event_loop_clauses.rs:211)",
+        "read by qcore-contract (runtime, crates/qcore-contract/tests/production_symbolic_adoption.rs:389)",
+        "read by qcore-compiler (runtime, compiler/tests/contract_inherit_qcore_provider.rs:437)",
+        "read by qcore-compiler (runtime, compiler/tests/monkey_profile.rs:41)",
+        "read by qcore-compiler (runtime, compiler/tests/profile_loader.rs:65)",
+        "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:171)",
+        "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/src/sides.rs:512)",
+        "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/tests/units.rs:298)",
+        "read by qcore-provider-conformance (runtime, providers/conformance/tests/composed_five_providers.rs:132)",
+        "read by qcore-provider-conformance (runtime, providers/conformance/tests/packages.rs:373)",
+        "class providers"
+      ],
+      "providers/Cargo.toml": [
+        "read by qcore-audit (runtime, crates/qcore-audit/src/pin_window.rs:60)",
+        "read by qcore-audit (runtime, crates/qcore-audit/tests/current_cli.rs:138)",
+        "read by qcore-audit (runtime, crates/qcore-audit/tests/dependency_graph.rs:92)",
+        "read by qcore-audit (runtime, crates/qcore-audit/tests/provider_selection.rs:620)",
+        "read by qcore-contract (runtime, crates/qcore-contract/tests/bounds_contract.rs:159)",
+        "read by qcore-contract (runtime, crates/qcore-contract/tests/event_loop_clauses.rs:211)",
+        "read by qcore-contract (runtime, crates/qcore-contract/tests/production_symbolic_adoption.rs:389)",
+        "read by qcore-compiler (runtime, compiler/tests/contract_inherit_qcore_provider.rs:437)",
+        "read by qcore-compiler (runtime, compiler/tests/monkey_profile.rs:41)",
+        "read by qcore-compiler (runtime, compiler/tests/profile_loader.rs:65)",
+        "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:171)",
+        "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/src/sides.rs:512)",
+        "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/tests/units.rs:298)",
+        "read by qcore-provider-conformance (runtime, providers/conformance/tests/composed_five_providers.rs:132)",
+        "read by qcore-provider-conformance (runtime, providers/conformance/tests/packages.rs:373)",
+        "class providers"
+      ]
+    },
+    "affected": {
+      "qcore-audit": [
+        "owns crates/qcore-audit/Cargo.toml",
+        "reads it with include_str!: crates/qcore-audit/Cargo.toml (crates/qcore-audit/tests/dependency_graph.rs:88)",
+        "owns crates/qcore-audit/src/cross_unit_links.rs",
+        "owns crates/qcore-audit/src/projection.rs",
+        "names providers in a string literal: providers/Cargo.lock (crates/qcore-audit/src/pin_window.rs:60)",
+        "names providers in a string literal: providers/Cargo.lock (crates/qcore-audit/tests/current_cli.rs:138)",
+        "names providers in a string literal: providers/Cargo.lock (crates/qcore-audit/tests/dependency_graph.rs:92)",
+        "names providers in a string literal: providers/Cargo.lock (crates/qcore-audit/tests/provider_selection.rs:620)",
+        "names providers in a string literal: providers/Cargo.toml (crates/qcore-audit/src/pin_window.rs:60)",
+        "names providers in a string literal: providers/Cargo.toml (crates/qcore-audit/tests/current_cli.rs:138)",
+        "names providers in a string literal: providers/Cargo.toml (crates/qcore-audit/tests/dependency_graph.rs:92)",
+        "names providers in a string literal: providers/Cargo.toml (crates/qcore-audit/tests/provider_selection.rs:620)"
+      ],
+      "qcore-c-gateway": [
+        "owns crates/qcore-c-gateway/Cargo.toml",
+        "owns crates/qcore-c-gateway/src/contract_dependencies.rs",
+        "owns crates/qcore-c-gateway/src/legacy_call_argument_access.rs",
+        "compiles it via #[path]: crates/qcore-c-gateway/src/legacy_call_argument_access.rs (crates/qcore-c-gateway/src/legacy_c.rs:137)",
+        "owns crates/qcore-c-gateway/src/legacy_cross_unit.rs",
+        "compiles it via #[path]: crates/qcore-c-gateway/src/legacy_cross_unit.rs (crates/qcore-c-gateway/src/legacy_c.rs:3167)",
+        "owns crates/qcore-c-gateway/src/legacy_lookup.rs",
+        "compiles it via #[path]: crates/qcore-c-gateway/src/legacy_lookup.rs (crates/qcore-c-gateway/src/legacy_c.rs:360)",
+        "owns crates/qcore-c-gateway/src/legacy_retained_by.rs",
+        "compiles it via #[path]: crates/qcore-c-gateway/src/legacy_retained_by.rs (crates/qcore-c-gateway/src/legacy_c.rs:352)",
+        "owns crates/qcore-c-gateway/src/legacy_selection.rs",
+        "compiles it via #[path]: crates/qcore-c-gateway/src/legacy_selection.rs (crates/qcore-c-gateway/src/legacy_c.rs:364)",
+        "owns crates/qcore-c-gateway/src/legacy_summary.rs",
+        "owns crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+        "compiles it via #[path]: crates/qcore-c-gateway/src/legacy_tracked_self_init.rs (crates/qcore-c-gateway/src/legacy_c.rs:5810)",
+        "owns crates/qcore-c-gateway/src/loop_lifetime_source.rs",
+        "owns crates/qcore-c-gateway/src/loop_lifetime_summary.rs",
+        "owns crates/qcore-c-gateway/tests/cross_unit_summary.rs",
+        "owns crates/qcore-c-gateway/tests/event_removal_wrapper.rs",
+        "owns crates/qcore-c-gateway/tests/ordered_lifetime.rs"
+      ],
+      "qcore-compiler": [
+        "owns compiler/Cargo.toml",
+        "reads it with include_str!: compiler/Cargo.toml (compiler/tests/workspace_layering.rs:207)",
+        "owns compiler/tests/fixtures/w3/provider/Cargo.lock",
+        "owns compiler/tests/fixtures/w3/provider/Cargo.toml",
+        "names crates/qcore-audit in a string literal: crates/qcore-audit/Cargo.toml (compiler/tests/workspace_layering.rs:82)",
+        "names crates/qcore-audit in a string literal: crates/qcore-audit/src/cross_unit_links.rs (compiler/tests/workspace_layering.rs:82)",
+        "names crates/qcore-audit in a string literal: crates/qcore-audit/src/projection.rs (compiler/tests/workspace_layering.rs:82)",
+        "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/Cargo.toml (compiler/tests/workspace_layering.rs:33)",
+        "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/src/contract_dependencies.rs (compiler/tests/workspace_layering.rs:33)",
+        "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/src/legacy_call_argument_access.rs (compiler/tests/workspace_layering.rs:33)",
+        "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/src/legacy_cross_unit.rs (compiler/tests/workspace_layering.rs:33)",
+        "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/src/legacy_lookup.rs (compiler/tests/workspace_layering.rs:33)",
+        "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/src/legacy_retained_by.rs (compiler/tests/workspace_layering.rs:33)",
+        "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/src/legacy_selection.rs (compiler/tests/workspace_layering.rs:33)",
+        "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/src/legacy_summary.rs (compiler/tests/workspace_layering.rs:33)",
+        "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/src/legacy_tracked_self_init.rs (compiler/tests/workspace_layering.rs:33)",
+        "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/src/loop_lifetime_source.rs (compiler/tests/workspace_layering.rs:33)",
+        "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/src/loop_lifetime_summary.rs (compiler/tests/workspace_layering.rs:33)",
+        "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/tests/cross_unit_summary.rs (compiler/tests/workspace_layering.rs:33)",
+        "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/tests/event_removal_wrapper.rs (compiler/tests/workspace_layering.rs:33)",
+        "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/tests/ordered_lifetime.rs (compiler/tests/workspace_layering.rs:33)",
+        "names crates/qcore-contract in a string literal: crates/qcore-contract/Cargo.toml (compiler/tests/workspace_layering.rs:17)",
+        "names crates/qcore-frontend in a string literal: crates/qcore-frontend/Cargo.toml (compiler/tests/workspace_layering.rs:15)",
+        "names crates/qcore-gateway-rule-api in a string literal: crates/qcore-gateway-rule-api/Cargo.toml (compiler/tests/workspace_layering.rs:29)",
+        "names crates/qcore-schemas in a string literal: crates/qcore-schemas/Cargo.toml (compiler/tests/workspace_layering.rs:11)",
+        "names crates/qcore-schemas in a string literal: crates/qcore-schemas/src/contract.rs (compiler/tests/workspace_layering.rs:11)",
+        "names crates/qcore-schemas in a string literal: crates/qcore-schemas/src/loop_lifetime.rs (compiler/tests/workspace_layering.rs:11)",
+        "names crates/qcore-verification in a string literal: crates/qcore-verification/Cargo.toml (compiler/tests/workspace_layering.rs:46)",
+        "names crates/qcore-verifier-host in a string literal: crates/qcore-verifier-host/Cargo.toml (compiler/tests/workspace_layering.rs:42)",
+        "names crates/quirin-audit-plugin-libevent in a string literal: crates/quirin-audit-plugin-libevent/Cargo.toml (compiler/tests/workspace_layering.rs:99)",
+        "names crates/quirin-audit-plugin-measure in a string literal: crates/quirin-audit-plugin-measure/Cargo.toml (compiler/tests/workspace_layering.rs:105)",
+        "names crates/quirin-audit-plugin in a string literal: crates/quirin-audit-plugin/Cargo.toml (compiler/tests/workspace_layering.rs:97)",
+        "names crates/quirin-source-analysis in a string literal: crates/quirin-source-analysis/Cargo.toml (compiler/tests/workspace_layering.rs:57)",
+        "names proof in a string literal: proof/AuditOrderedLifetimeReplay.lean (compiler/tests/float_ieee_vectors.rs:524)",
+        "names proof in a string literal: proof/AuditOrderedLifetimeReplay.lean (compiler/tests/proof_leg_digests.rs:106)",
+        "names proof in a string literal: proof/QCore.lean (compiler/tests/float_ieee_vectors.rs:524)",
+        "names proof in a string literal: proof/QCore.lean (compiler/tests/proof_leg_digests.rs:106)",
+        "names proof in a string literal: proof/QCore/OrderedLifetimeReplay.lean (compiler/tests/float_ieee_vectors.rs:524)",
+        "names proof in a string literal: proof/QCore/OrderedLifetimeReplay.lean (compiler/tests/proof_leg_digests.rs:106)",
+        "names providers in a string literal: providers/Cargo.lock (compiler/tests/contract_inherit_qcore_provider.rs:437)",
+        "names providers in a string literal: providers/Cargo.lock (compiler/tests/monkey_profile.rs:41)",
+        "names providers in a string literal: providers/Cargo.lock (compiler/tests/profile_loader.rs:65)",
+        "names providers in a string literal: providers/Cargo.lock (compiler/tests/workspace_layering.rs:171)",
+        "names providers in a string literal: providers/Cargo.toml (compiler/tests/contract_inherit_qcore_provider.rs:437)",
+        "names providers in a string literal: providers/Cargo.toml (compiler/tests/monkey_profile.rs:41)",
+        "names providers in a string literal: providers/Cargo.toml (compiler/tests/profile_loader.rs:65)",
+        "names providers in a string literal: providers/Cargo.toml (compiler/tests/workspace_layering.rs:171)"
+      ],
+      "qcore-contract": [
+        "owns crates/qcore-contract/Cargo.toml",
+        "names providers in a string literal: providers/Cargo.lock (crates/qcore-contract/tests/bounds_contract.rs:159)",
+        "names providers in a string literal: providers/Cargo.lock (crates/qcore-contract/tests/event_loop_clauses.rs:211)",
+        "names providers in a string literal: providers/Cargo.lock (crates/qcore-contract/tests/production_symbolic_adoption.rs:389)",
+        "names providers in a string literal: providers/Cargo.toml (crates/qcore-contract/tests/bounds_contract.rs:159)",
+        "names providers in a string literal: providers/Cargo.toml (crates/qcore-contract/tests/event_loop_clauses.rs:211)",
+        "names providers in a string literal: providers/Cargo.toml (crates/qcore-contract/tests/production_symbolic_adoption.rs:389)"
+      ],
+      "qcore-frontend": [
+        "owns crates/qcore-frontend/Cargo.toml"
+      ],
+      "qcore-gateway-rule-api": [
+        "owns crates/qcore-gateway-rule-api/Cargo.toml",
+        "reads it with include_str!: crates/qcore-gateway-rule-api/Cargo.toml (crates/qcore-gateway-rule-api/src/lib.rs:49)"
+      ],
+      "qcore-provider-chunkio": [
+        "depends on qcore-schemas"
+      ],
+      "qcore-provider-cmetrics": [
+        "depends on qcore-schemas"
+      ],
+      "qcore-provider-conformance": [
+        "names providers in a string literal: providers/Cargo.lock (providers/conformance/tests/composed_five_providers.rs:132)",
+        "names providers in a string literal: providers/Cargo.lock (providers/conformance/tests/packages.rs:373)",
+        "names providers in a string literal: providers/Cargo.toml (providers/conformance/tests/composed_five_providers.rs:132)",
+        "names providers in a string literal: providers/Cargo.toml (providers/conformance/tests/packages.rs:373)"
+      ],
+      "qcore-provider-ctraces": [
+        "depends on qcore-schemas"
+      ],
+      "qcore-provider-libevent": [
+        "depends on qcore-schemas"
+      ],
+      "qcore-provider-librdkafka": [
+        "depends on qcore-schemas"
+      ],
+      "qcore-schemas": [
+        "owns crates/qcore-schemas/Cargo.toml",
+        "owns crates/qcore-schemas/src/contract.rs",
+        "owns crates/qcore-schemas/src/loop_lifetime.rs"
+      ],
+      "qcore-verification": [
+        "names crates in a string literal: crates/qcore-audit/Cargo.toml (crates/qcore-verification/tests/composition_bounds.rs:288)",
+        "names crates in a string literal: crates/qcore-audit/src/cross_unit_links.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+        "names crates in a string literal: crates/qcore-audit/src/projection.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+        "names crates in a string literal: crates/qcore-c-gateway/Cargo.toml (crates/qcore-verification/tests/composition_bounds.rs:288)",
+        "names crates in a string literal: crates/qcore-c-gateway/src/contract_dependencies.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+        "names crates in a string literal: crates/qcore-c-gateway/src/legacy_call_argument_access.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+        "names crates in a string literal: crates/qcore-c-gateway/src/legacy_cross_unit.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+        "names crates in a string literal: crates/qcore-c-gateway/src/legacy_lookup.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+        "names crates in a string literal: crates/qcore-c-gateway/src/legacy_retained_by.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+        "names crates in a string literal: crates/qcore-c-gateway/src/legacy_selection.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+        "names crates in a string literal: crates/qcore-c-gateway/src/legacy_summary.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+        "names crates in a string literal: crates/qcore-c-gateway/src/legacy_tracked_self_init.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+        "names crates in a string literal: crates/qcore-c-gateway/src/loop_lifetime_source.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+        "names crates in a string literal: crates/qcore-c-gateway/src/loop_lifetime_summary.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+        "names crates in a string literal: crates/qcore-c-gateway/tests/cross_unit_summary.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+        "names crates in a string literal: crates/qcore-c-gateway/tests/event_removal_wrapper.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+        "names crates in a string literal: crates/qcore-c-gateway/tests/ordered_lifetime.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+        "names crates in a string literal: crates/qcore-contract/Cargo.toml (crates/qcore-verification/tests/composition_bounds.rs:288)",
+        "names crates in a string literal: crates/qcore-frontend/Cargo.toml (crates/qcore-verification/tests/composition_bounds.rs:288)",
+        "names crates in a string literal: crates/qcore-gateway-rule-api/Cargo.toml (crates/qcore-verification/tests/composition_bounds.rs:288)",
+        "names crates in a string literal: crates/qcore-schemas/Cargo.toml (crates/qcore-verification/tests/composition_bounds.rs:288)",
+        "names crates in a string literal: crates/qcore-schemas/src/contract.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+        "names crates in a string literal: crates/qcore-schemas/src/loop_lifetime.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+        "owns crates/qcore-verification/Cargo.toml",
+        "names crates in a string literal: crates/qcore-verification/Cargo.toml (crates/qcore-verification/tests/composition_bounds.rs:288)",
+        "names crates in a string literal: crates/qcore-verifier-host/Cargo.toml (crates/qcore-verification/tests/composition_bounds.rs:288)",
+        "names crates in a string literal: crates/quirin-audit-plugin-libevent/Cargo.toml (crates/qcore-verification/tests/composition_bounds.rs:288)",
+        "names crates in a string literal: crates/quirin-audit-plugin-measure/Cargo.toml (crates/qcore-verification/tests/composition_bounds.rs:288)",
+        "names crates in a string literal: crates/quirin-audit-plugin/Cargo.toml (crates/qcore-verification/tests/composition_bounds.rs:288)",
+        "names crates in a string literal: crates/quirin-source-analysis/Cargo.toml (crates/qcore-verification/tests/composition_bounds.rs:288)"
+      ],
+      "qcore-verifier-host": [
+        "owns crates/qcore-verifier-host/Cargo.toml"
+      ],
+      "qcorec": [
+        "names compiler/tests/fixtures in a string literal: compiler/tests/fixtures/w3/provider/Cargo.lock (crates/qcorec/tests/cli.rs:335)",
+        "names compiler/tests/fixtures in a string literal: compiler/tests/fixtures/w3/provider/Cargo.toml (crates/qcorec/tests/cli.rs:335)"
+      ],
+      "quirin-audit-plugin": [
+        "owns crates/quirin-audit-plugin/Cargo.toml"
+      ],
+      "quirin-audit-plugin-libevent": [
+        "owns crates/quirin-audit-plugin-libevent/Cargo.toml"
+      ],
+      "quirin-audit-plugin-measure": [
+        "owns crates/quirin-audit-plugin-measure/Cargo.toml",
+        "names providers in a string literal: providers/Cargo.lock (crates/quirin-audit-plugin-measure/src/sides.rs:512)",
+        "names providers in a string literal: providers/Cargo.lock (crates/quirin-audit-plugin-measure/tests/units.rs:298)",
+        "names providers in a string literal: providers/Cargo.toml (crates/quirin-audit-plugin-measure/src/sides.rs:512)",
+        "names providers in a string literal: providers/Cargo.toml (crates/quirin-audit-plugin-measure/tests/units.rs:298)"
+      ],
+      "quirin-provider-plugin": [
+        "depends on qcore-schemas"
+      ],
+      "quirin-provider-shared": [
+        "depends on qcore-schemas"
+      ],
+      "quirin-source-analysis": [
+        "owns crates/quirin-source-analysis/Cargo.toml"
+      ]
+    },
+    "mode": "full",
+    "full_reasons": [
+      "requested with --full",
+      "Cargo.lock: workspace manifest or toolchain",
+      "the diff reaches qcore-c-gateway",
+      "the diff reaches qcore-contract",
+      "the diff reaches qcore-schemas"
+    ],
+    "rust_packages": [
+      "qcore-audit",
+      "qcore-c-gateway",
+      "qcore-compiler",
+      "qcore-contract",
+      "qcore-core",
+      "qcore-frontend",
+      "qcore-gateway-rule-api",
+      "qcore-schemas",
+      "qcore-verification",
+      "qcore-verifier-host",
+      "qcorec",
+      "quirin-audit-plugin",
+      "quirin-audit-plugin-libevent",
+      "quirin-audit-plugin-measure",
+      "quirin-source-analysis"
+    ],
+    "probes": true,
+    "lean": {
+      "mode": "all",
+      "reasons": [
+        "proof/QCore.lean: a proof root changed"
+      ],
+      "modules": [],
+      "audits": []
+    },
+    "python_reasons": [],
+    "provider_gate": true,
+    "provider_reasons": [
+      "providers/Cargo.lock: providers/ changed",
+      "providers/Cargo.toml: providers/ changed"
+    ],
+    "provider_members_reached_without_providers_change": [],
+    "unresolved_includes": [
+      {
+        "crate": "qcore-compiler",
+        "source": "compiler/tests/ct_corpus.rs:8069",
+        "literal": "include_str!(\\\"fixtures/ct/{id}/case.qr\\\")\");",
+        "why": "argument is not a string literal (or the macro is inside a string)"
+      }
+    ]
+  },
+  "planned_steps": [
+    {
+      "name": "submodules",
+      "argv": [
+        "git",
+        "-C",
+        "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree",
+        "submodule",
+        "status",
+        "--recursive"
+      ],
+      "slot": null
+    },
+    {
+      "name": "fmt",
+      "argv": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "slot": null
+    },
+    {
+      "name": "clippy",
+      "argv": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "slot": null
+    },
+    {
+      "name": "rust-suite",
+      "argv": [
+        "/usr/bin/python3",
+        "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/scripts/run_test_binaries.py",
+        "--log-dir",
+        "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/validated-final-plan/rust-suite"
+      ],
+      "slot": "rust-suite"
+    },
+    {
+      "name": "probe-reevaluation_probe",
+      "argv": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_probe"
+      ],
+      "slot": null
+    },
+    {
+      "name": "probe-reevaluation_followup",
+      "argv": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_followup"
+      ],
+      "slot": null
+    },
+    {
+      "name": "lean",
+      "argv": [
+        "/usr/bin/python3",
+        "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/scripts/check_lean_audits.py"
+      ],
+      "slot": "lean"
+    },
+    {
+      "name": "python",
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "slot": null
+    },
+    {
+      "name": "provider-package-build",
+      "argv": [
+        "/usr/bin/python3",
+        "providers/package.py",
+        "build",
+        "--output",
+        "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/validated-final-plan/provider-packages"
+      ],
+      "slot": null
+    },
+    {
+      "name": "provider-package-verify-all",
+      "argv": [
+        "/usr/bin/python3",
+        "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/scripts/gate_scope.py",
+        "--verify-packages",
+        "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/validated-final-plan/provider-packages"
+      ],
+      "slot": null
+    },
+    {
+      "name": "provider-package-verify",
+      "argv": [
+        "/usr/bin/python3",
+        "providers/package.py",
+        "verify",
+        "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/validated-final-plan/provider-packages/qcore.libevent"
+      ],
+      "slot": null
+    },
+    {
+      "name": "provider-test",
+      "argv": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--workspace",
+        "--locked",
+        "--offline"
+      ],
+      "slot": "rust-suite"
+    },
+    {
+      "name": "provider-fmt",
+      "argv": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "slot": null
+    },
+    {
+      "name": "provider-clippy",
+      "argv": [
+        "cargo",
+        "clippy",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--locked",
+        "--offline",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "slot": null
+    }
+  ],
+  "slots": true,
+  "started": "2026-10-28T06:21:35.272937+00:00",
+  "ran": true,
+  "validation_tip": "d313cc177dfe666fe51bd87b4fa2135e600bfcb7",
+  "scope_plan_origin": "validated-final-plan generated on d313cc177, full root Rust/all Lean/provider selection",
+  "steps": [
+    {
+      "name": "submodules",
+      "argv": [
+        "git",
+        "-C",
+        "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree",
+        "submodule",
+        "status",
+        "--recursive"
+      ],
+      "exit": 0,
+      "seconds": 0.0,
+      "log": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/final-gate/submodules.log",
+      "counts": {
+        "submodules": 1,
+        "not_checked_out_or_moved": []
+      }
+    },
+    {
+      "name": "fmt",
+      "argv": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "seconds": 4.0,
+      "log": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/final-gate/fmt.log",
+      "counts": {}
+    },
+    {
+      "name": "clippy",
+      "argv": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "seconds": 3.9,
+      "log": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/final-gate/clippy.log",
+      "counts": {}
+    },
+    {
+      "name": "rust-suite",
+      "argv": [
+        "/usr/bin/python3",
+        "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/scripts/gate_slot.py",
+        "rust-suite",
+        "--receipt",
+        "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/final-gate/slots/rust-suite.json",
+        "--",
+        "/usr/bin/python3",
+        "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/scripts/run_test_binaries.py",
+        "--log-dir",
+        "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/final-gate/rust-suite",
+        "--jobs",
+        "16"
+      ],
+      "exit": 0,
+      "seconds": 1155.4,
+      "log": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/final-gate/rust-suite.log",
+      "counts": {
+        "units": 573,
+        "passed": 8842,
+        "failed": 0,
+        "ignored": 15,
+        "measured": 0,
+        "filtered": 24,
+        "summaries": 592,
+        "packages": null,
+        "summary": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/final-gate/rust-suite/summary.json",
+        "ok": true
+      },
+      "slot_receipt": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/final-gate/slots/rust-suite.json"
+    },
+    {
+      "name": "probe-reevaluation_probe",
+      "argv": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_probe"
+      ],
+      "exit": 0,
+      "seconds": 0.1,
+      "log": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/final-gate/probe-reevaluation_probe.log",
+      "counts": {}
+    },
+    {
+      "name": "probe-reevaluation_followup",
+      "argv": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_followup"
+      ],
+      "exit": 0,
+      "seconds": 0.5,
+      "log": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/final-gate/probe-reevaluation_followup.log",
+      "counts": {}
+    },
+    {
+      "name": "lean",
+      "argv": [
+        "/usr/bin/python3",
+        "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/scripts/gate_slot.py",
+        "lean",
+        "--receipt",
+        "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/final-gate/slots/lean.json",
+        "--",
+        "/usr/bin/python3",
+        "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/scripts/check_lean_audits.py"
+      ],
+      "exit": 0,
+      "seconds": 14.2,
+      "log": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/final-gate/lean.log",
+      "counts": {
+        "audits": 390
+      },
+      "slot_receipt": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/final-gate/slots/lean.json"
+    },
+    {
+      "name": "provider-package-build",
+      "argv": [
+        "/usr/bin/python3",
+        "providers/package.py",
+        "build",
+        "--output",
+        "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/final-gate/provider-packages"
+      ],
+      "exit": 0,
+      "seconds": 137.8,
+      "log": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/final-gate/provider-package-build.log",
+      "counts": {}
+    },
+    {
+      "name": "provider-package-verify-all",
+      "argv": [
+        "/usr/bin/python3",
+        "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/scripts/gate_scope.py",
+        "--verify-packages",
+        "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/final-gate/provider-packages"
+      ],
+      "exit": 0,
+      "seconds": 0.8,
+      "log": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/final-gate/provider-package-verify-all.log",
+      "counts": {}
+    },
+    {
+      "name": "provider-package-verify",
+      "argv": [
+        "/usr/bin/python3",
+        "providers/package.py",
+        "verify",
+        "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/final-gate/provider-packages/qcore.libevent"
+      ],
+      "exit": 0,
+      "seconds": 0.1,
+      "log": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/final-gate/provider-package-verify.log",
+      "counts": {}
+    },
+    {
+      "name": "provider-test",
+      "argv": [
+        "/usr/bin/python3",
+        "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/scripts/gate_slot.py",
+        "rust-suite",
+        "--receipt",
+        "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/final-gate/slots/provider-test.json",
+        "--",
+        "cargo",
+        "test",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--workspace",
+        "--locked",
+        "--offline"
+      ],
+      "exit": 0,
+      "seconds": 2277.5,
+      "log": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/final-gate/provider-test.log",
+      "counts": {
+        "summaries": 43,
+        "passed": 133,
+        "failed": 0,
+        "ignored": 1,
+        "measured": 0,
+        "filtered": 0
+      },
+      "slot_receipt": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/final-gate/slots/provider-test.json"
+    },
+    {
+      "name": "provider-fmt",
+      "argv": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "seconds": 4.3,
+      "log": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/final-gate/provider-fmt.log",
+      "counts": {}
+    },
+    {
+      "name": "provider-clippy",
+      "argv": [
+        "cargo",
+        "clippy",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--locked",
+        "--offline",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "seconds": 0.2,
+      "log": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/final-gate/provider-clippy.log",
+      "counts": {}
+    },
+    {
+      "name": "python",
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "exit": 0,
+      "seconds": 42.4,
+      "log": "/media/Data/GitHub/quirin-lang/private/codex-event-ordered-worktree/private/ordered-lifetime/final-gate/python.log",
+      "counts": {
+        "tests": 554,
+        "skipped": 0,
+        "ok": true
+      }
+    }
+  ],
+  "ok": true,
+  "finished": "2026-10-28T07:22:17.064200+00:00"
+}

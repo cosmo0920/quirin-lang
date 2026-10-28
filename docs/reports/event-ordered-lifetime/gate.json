@@ -1,0 +1,13 @@
+{
+  "note": "EVENT-ORDERED-LIFETIME full source/provider gate on d313cc177dfe666fe51bd87b4fa2135e600bfcb7: Rust 8842/0/15 (573 units/592 summaries); provider 133/0/1; Lean390; Python554/no skips; all commands exit0. Exact commands and private logs are in evidence/gate-steps.json. Initial focused/partial attempts are separate checkpoints. Records-only Python rerun follows the completion commit.",
+  "workspace_tests": 8842,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 554,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "full source/provider gate on d313cc177dfe666fe51bd87b4fa2135e600bfcb7; records-only Python rerun after completion commit",
+  "lean_audits": 390,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
