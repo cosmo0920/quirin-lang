@@ -1,0 +1,24 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "PIN-REGENERATE-STAMP-MONOTONICITY",
+ "base": "80c8aea98",
+ "measured_tip": "00ad811c5",
+ "increment_paragraph": "**PIN-REGENERATE-STAMP-MONOTONICITY (2026-10-28, base 80c8aea98).** `quirin-audit pin` now orders every stamp it writes against the entry it replaces, as contract spec C06.6 requires: the replaced entry is the function's entry of any kind (pinned, flexible or tip) in the lock on disk before the run, so `--regenerate`, which started from no lock, and a revision-mode change, which looked up only the new kind, no longer accept an explicit `--pinned-at` that is not later nor write a default clock stamp behind the lock (it moves one second past the replaced stamp); the update/regenerate loop computes every lock before writing any, so a refusal writes none. Three tests in `crates/qcore-audit/tests/pin_regenerate_stamps.rs` failed before the fix (regenerate under an earlier and an equal stamp, a clock behind a lock stamped in 2999, a flexible-to-pinned change under update and regenerate) and pass after it, with the existing pin tests. No Lean change: `QCore.ContractSupersession` models the decision over given stamps, not pin runs (its consequence is `strictly_newest_wins`); C06.6 records the replaced-entry rule and why. No lock changes (`providers/contracts.py check` exit 0; every shipped stamp is on or before 2026-10-27T12:11:52Z), so no supersession order or verdict moves. One follow-up is registered: `pin --track-tip` can leave earlier locks written when it refuses ([report](../../reports/pin-regenerate-stamp-monotonicity/README.md)).",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "PIN-REGENERATE-STAMP-MONOTONICITY",
+   "operation": "retire",
+   "why": "DISCHARGE (card PIN-REGENERATE-STAMP-MONOTONICITY, docs/reports/pin-regenerate-stamp-monotonicity/README.md): contract_pin.rs replaced_stamp passes Stamper::replacing the latest valid stamp of the function's entry of any kind (pinned, flexible, tip) in the lock on disk before the run, under an update and under --regenerate (which reads the replaced lock once and still carries only its tip entries), so an explicit --pinned-at not later refuses and a default stamp moves one second past it; a revision-mode change, previously also compared with no stamp, is ordered against the entry of the other kind; the update/regenerate loop computes every lock before writing any, so a refusal writes none. Reproduced first by crates/qcore-audit/tests/pin_regenerate_stamps.rs (7eefaf63c: 0 passed, 3 failed: regenerate under an earlier and an equal --pinned-at, a clock behind a lock stamped 2999-01-01T00:00:00Z, a flexible-to-pinned change under update and regenerate), passing at 00ad811c5 with the existing pin tests. Lean: QCore.ContractSupersession models the decision over given stamps, not pin runs, so no theorem applies (its decision-side consequence is strictly_newest_wins); C06.6 gains the note. No shipped lock changes (providers/contracts.py check exit 0; all 613 entries stamped on or before 2026-10-27T12:11:52Z, no function with two entry kinds), so no supersession order or verdict moves.",
+   "source": "docs/reports/pin-regenerate-stamp-monotonicity/README.md"
+  },
+  {
+   "id": "PIN-TRACK-TIP-WRITE-ATOMICITY",
+   "operation": "register",
+   "title": "pin --track-tip writes each lock before the run can refuse",
+   "text": "`quirin-audit pin --track-tip` (contract_pin.rs run) writes each selected target's lock inside its loop, and refuses only afterwards when a named function is declared by no selected crate (or when `track` refuses a later target), so a refused run can leave earlier locks rewritten. Card PIN-REGENERATE-STAMP-MONOTONICITY made the update/regenerate loop compute every lock before writing any; --stamp-only and --drop-revision already did. Found by code reading; no run has shown it. DISCHARGE: the track-tip branch computes every lock and checks every named function before any write, with a test that a refused multi-target run leaves every lock byte-identical.",
+   "source": "docs/reports/pin-regenerate-stamp-monotonicity/README.md",
+   "recorded_by": "PIN-REGENERATE-STAMP-MONOTONICITY"
+  }
+ ]
+}
