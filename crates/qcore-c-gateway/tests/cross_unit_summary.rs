@@ -227,7 +227,9 @@ extern fn protocol_host(c: ptr<mut, u8>) -> unit contract { requires resource_co
         env.contract("starts").is_none(),
         "ordinary consumers cannot read a borrowed projection"
     );
-    for (body, expected_effects) in [("starts(c);", 1)] {
+    {
+        let body = "starts(c);";
+        let expected_effects = 1;
         let source = format!(
             "{prelude}\nvoid starts(struct collector *); void caller(struct collector *c) {{ {body} }}\n"
         );
