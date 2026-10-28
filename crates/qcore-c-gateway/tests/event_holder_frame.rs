@@ -146,6 +146,7 @@ fn exact_collector_copies_and_bottom_up_frames_compose_without_a_type_wide_binde
         "struct collector *copy = c; starts(copy); copy = other; del(copy->evl, &c->event);",
         "struct collector *copy = c; starts(copy); opaque(&copy); del(c->evl, &c->event);",
         "struct collector *copy = c; { struct collector *copy = other; starts(copy); } del(c->evl, &c->event);",
+        "{ struct collector *c = other; starts(c); } del(c->evl, &c->event);",
     ] {
         if let UnrestrictedLegacyResult::Safe(cert) = check(body, &helper) {
             assert!(
@@ -158,6 +159,21 @@ fn exact_collector_copies_and_bottom_up_frames_compose_without_a_type_wide_binde
 
 #[test]
 fn address_initializers_and_by_value_formals_do_not_become_caller_pointer_identities() {
+    let source = "struct collector { int id; }; void f(struct collector *c, struct collector *other) { { struct collector *c = other; } }";
+    let facts = qcore_c_gateway::loop_lifetime_source::read_unit(
+        source,
+        &C11TranslationUnit {
+            source,
+            ..Default::default()
+        },
+        &qcore_schemas::contract::ResourceContracts::default(),
+    )
+    .unwrap();
+    assert!(
+        !facts.functions["f"].immutable_aliases.contains_key("c"),
+        "a local shadowing a formal acquired spelling-wide identity"
+    );
+
     for (parameters, body) in [
         ("struct collector c", "add(c.evl, &c.event);"),
         (

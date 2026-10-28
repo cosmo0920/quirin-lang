@@ -46,7 +46,7 @@ use premise, declared API semantics, link resolution and Rust/Lean correspondenc
 remain assumptions.
 
 The focused source checkpoints retain commands and outputs under
-`private/` in this worktree: frame-test-1 through frame-test-10, frame-clippy-1
+`private/` in this worktree: frame-test-1 through frame-test-11, frame-clippy-1
 through frame-clippy-5, initial-check.log and lean-frame-3.log. The final focused
 run has 10 tests passed (5 cross-unit, 5 holder/identity); the matching Lean audit
 passes all 16 theorem checks. Initial focused attempts exposed the two opaque
@@ -73,3 +73,7 @@ Pointer-value admission additionally rejects address initializers, by-value
 record formals and pointer-slot aliases. These are not caller object identities.
 The superseded 0a0aa31a6 prerequisite run is preserved separately; only the final
 source run is credited below.
+
+Alias names must also be unique across formals and locals; shadowing cannot
+create spelling-wide identity. The typed source census and caller controls
+exercise that boundary.

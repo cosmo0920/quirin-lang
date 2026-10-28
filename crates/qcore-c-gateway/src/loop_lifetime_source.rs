@@ -498,6 +498,11 @@ fn function(
     // initializers receive an exact identity. No id-search or type-wide alias.
     if out.complete_straight_line {
         let mut names = BTreeMap::<String, usize>::new();
+        for parameter in children(node).iter().filter(|p| kind(p) == "ParmVarDecl") {
+            if let Some(name) = parameter["name"].as_str() {
+                *names.entry(name.into()).or_default() += 1;
+            }
+        }
         walk(body, &mut |n| {
             if kind(n) == "VarDecl"
                 && let Some(name) = n["name"].as_str()
