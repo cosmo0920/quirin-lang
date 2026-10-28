@@ -215,7 +215,7 @@ dependencies = [
 
 [[package]]
 name = "qcore-schemas"
-version = "23.0.0"
+version = "24.0.0"
 dependencies = [
  "serde",
  "serde_json",

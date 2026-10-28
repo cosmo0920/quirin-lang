@@ -78,10 +78,21 @@ pub struct ForwardedLifetime {
     pub registration: Registration,
 }
 
+/// A source-checked preservation frame for one exact formal-rooted holder.
+/// It conveys no ordinary custody or record-wide immutability guarantee.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+pub struct HolderFrame {
+    pub parameter: usize,
+    pub record: String,
+    pub fields: Vec<String>,
+}
+
 /// Same-unit inference retains custody and its outgoing lifetime effects as
 /// one record. Ordinary custody consumers cannot read this as a bare borrow.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 pub struct InferredLifetimeSummary {
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub holder_frames: Vec<HolderFrame>,
     pub contract: crate::contract::ResourceFunctionContract,
     pub effects: Vec<ForwardedLifetime>,
     /// A removal-only trace in source execution order. Mixed effect classes

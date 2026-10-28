@@ -2079,6 +2079,26 @@ A supplied local-inference table is not source authority: issuance and replay
 rederive local summaries and compare imported traces against their exact homes.
 
 
+A source-derived effect-bearing record may carry a checked holder frame for
+one direct struct member below an exact formal. A complete straight-line body,
+no stores or unread effects, and a census of every root use establish the
+bounded preservation reading; checked internal callee frames compose bottom up.
+Whole-record caller transfer requires a typed direct call and the same exact
+formal, record and member, with internal linkage or independently replayed
+home evidence. Borrowed custody alone establishes no heap frame. Frames stay
+outside ordinary borrowed summaries and are compared with rederived home
+records, including on certificate replay. The schema-major negotiation is 24.
+
+Exact immutable local collector copies and loop snapshots may reuse their
+original formal-rooted path only after unique declaration, initialization,
+single write, no address escape, compatible typed interpretation and complete
+straight-line control are checked. All collector-copy uses remain in the
+holder census. A runtime numeric collector id, a record type or an allocation
+candidate set never supplies equality; conditional host/loop correlation and
+collector-search selection still require their own checked relation. Existing
+custody and alias-liveness obligations are not discharged by this path identity.
+Source extraction, declared API semantics and P-HOLDER-PATH-STABLE's original
+member-use premise remain attributed assumptions.
 
 ## C05. Manifests and immutable assumptions
 

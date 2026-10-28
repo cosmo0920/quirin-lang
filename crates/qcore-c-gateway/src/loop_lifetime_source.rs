@@ -57,6 +57,8 @@ pub struct CallSite {
 #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct FunctionFacts {
     #[serde(default)]
+    pub immutable_aliases: BTreeMap<String, Path>,
+    #[serde(default)]
     pub internal_linkage: bool,
     pub tokens_sha256: String,
     pub complete_straight_line: bool,
@@ -492,6 +494,33 @@ fn function(
             }
         }
     };
+    // Only initialized, unaddressed, single-write locals with type-preserving
+    // initializers receive an exact identity. No id-search or type-wide alias.
+    if out.complete_straight_line {
+        let mut names = BTreeMap::<String, usize>::new();
+        walk(body, &mut |n| {
+            if kind(n) == "VarDecl"
+                && let Some(name) = n["name"].as_str()
+            {
+                *names.entry(name.into()).or_default() += 1;
+            }
+        });
+        walk(body, &mut |n| {
+            if kind(n) == "VarDecl"
+                && let (Some(id), Some(name)) = (n["id"].as_str(), n["name"].as_str())
+                && names.get(name) == Some(&1)
+                && !ty(n).contains("volatile")
+                && !ty(n).contains("_Atomic")
+                && let Some(Some(alias)) = condition_aliases.get(id)
+            {
+                let mut value = Some(alias.clone());
+                canonical(&mut value);
+                if let Some(path) = value {
+                    out.immutable_aliases.insert(name.into(), path);
+                }
+            }
+        });
+    }
     for op in &mut out.operations {
         canonical(&mut op.object);
         canonical(&mut op.holder);
@@ -1597,4 +1626,163 @@ pub(crate) fn substitute_forwarded_call(
         BTreeSet::from([forwarded.premise.clone()]),
     );
     Some(forwarded)
+}
+
+/// The frame is tied to a typed direct call and its exact collector root.
+/// A matching field spelling on a different record or formal never suffices.
+pub(crate) fn holder_frame_at_call(
+    caller: &str,
+    callee: &str,
+    formal: &str,
+    fields: &[String],
+    tokens: &[&str],
+    parameter: usize,
+    contracts: &ResourceContracts,
+) -> bool {
+    let Some(summary) = contracts.lifetime_summary(callee) else {
+        return false;
+    };
+    let Ok(source) = crate::typed_access_path::current_lifetime_source(contracts) else {
+        return false;
+    };
+    let Some(body) = source.functions.get(caller) else {
+        return false;
+    };
+    if !source.open.is_empty() || !body.open.is_empty() {
+        return false;
+    }
+    let Some(index) = crate::typed_access_path::with_indirect_call_unit(|unit| {
+        children(unit.function(caller)?)
+            .iter()
+            .filter(|n| kind(n) == "ParmVarDecl")
+            .position(|p| p["name"].as_str() == Some(formal))
+    })
+    .flatten() else {
+        return false;
+    };
+    let matches = body
+        .calls
+        .iter()
+        .filter(|c| {
+            c.callee == callee
+                && c.tokens
+                    .iter()
+                    .map(String::as_str)
+                    .eq(tokens.iter().copied())
+        })
+        .collect::<Vec<_>>();
+    let [call] = matches.as_slice() else {
+        return false;
+    };
+    if !call.pure_operands {
+        return false;
+    }
+    let Some(actual) = call
+        .condition_actuals
+        .get(parameter)
+        .and_then(Option::as_ref)
+    else {
+        return false;
+    };
+    body.parameters.get(index) == Some(&actual.root)
+        && actual.fields.is_empty()
+        && summary.holder_frames.iter().any(|frame| {
+            frame.parameter == parameter && frame.record == actual.record && frame.fields == fields
+        })
+}
+
+/// An immutable local loop snapshot names only its original exact formal path.
+pub(crate) fn immutable_holder_alias(
+    function: &str,
+    local: &str,
+    contracts: &ResourceContracts,
+) -> Option<(String, Vec<String>)> {
+    let source = crate::typed_access_path::current_lifetime_source(contracts).ok()?;
+    let facts = source.functions.get(function)?;
+    if !source.open.is_empty() || !facts.open.is_empty() {
+        return None;
+    }
+    let alias = facts.immutable_aliases.get(local)?;
+    if alias.fields.len() > 1 {
+        return None;
+    }
+    let index = facts.parameters.iter().position(|id| id == &alias.root)?;
+    let formal = crate::typed_access_path::with_indirect_call_unit(|unit| {
+        children(unit.function(function)?)
+            .iter()
+            .filter(|p| kind(p) == "ParmVarDecl")
+            .nth(index)?["name"]
+            .as_str()
+            .map(str::to_owned)
+    })
+    .flatten()?;
+    crate::contract_dependencies::lifetime_evidence(
+        function,
+        BTreeSet::from([format!("{}.{}", alias.record, alias.fields.join("."))]),
+    );
+    Some((formal, alias.fields.clone()))
+}
+
+/// Read exact, uniquely named collector copies and their initializer spans.
+/// Every later use is still checked by the holder path census, under the
+/// canonical original formal. No alias is guessed from type or numeric id.
+pub(crate) fn collector_alias_frame(
+    function: &str,
+    formal: &str,
+    body: &[&str],
+    contracts: &ResourceContracts,
+) -> (BTreeSet<String>, BTreeSet<usize>) {
+    let empty = || (BTreeSet::new(), BTreeSet::new());
+    let Ok(source) = crate::typed_access_path::current_lifetime_source(contracts) else {
+        return empty();
+    };
+    let Some(facts) = source.functions.get(function) else {
+        return empty();
+    };
+    if !source.open.is_empty() || !facts.open.is_empty() || !facts.complete_straight_line {
+        return empty();
+    }
+    crate::typed_access_path::with_indirect_call_unit(|unit| {
+        let ast = unit.function(function)?;
+        let index = children(ast)
+            .iter()
+            .filter(|p| kind(p) == "ParmVarDecl")
+            .position(|p| p["name"].as_str() == Some(formal))?;
+        let root = facts.parameters.get(index)?;
+        let mut aliases = BTreeSet::new();
+        let mut allowed = BTreeSet::new();
+        walk(ast, &mut |node| {
+            if kind(node) != "VarDecl" {
+                return;
+            }
+            let Some(name) = node["name"].as_str() else {
+                return;
+            };
+            if !facts
+                .immutable_aliases
+                .get(name)
+                .is_some_and(|p| p.root == *root && p.fields.is_empty())
+            {
+                return;
+            }
+            let Some(tokens) = unit.node_tokens(node) else {
+                return;
+            };
+            if tokens.is_empty() {
+                return;
+            }
+            let spans = body
+                .windows(tokens.len())
+                .enumerate()
+                .filter(|(_, window)| window.iter().copied().eq(tokens.iter().map(String::as_str)))
+                .map(|(i, _)| i)
+                .collect::<Vec<_>>();
+            let [at] = spans.as_slice() else { return };
+            aliases.insert(name.into());
+            allowed.extend(*at..at + tokens.len());
+        });
+        Some((aliases, allowed))
+    })
+    .flatten()
+    .unwrap_or_else(empty)
 }

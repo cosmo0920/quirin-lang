@@ -274,6 +274,7 @@ impl CustodyDerivation {
                 if let Some(lifetime) = self.environment.lifetime_summary(name) {
                     record.lifetime_effects = lifetime.effects.clone();
                     record.lifetime_removals = lifetime.removals.clone();
+                    record.lifetime_holder_frames = lifetime.holder_frames.clone();
                 }
                 record
             })
@@ -880,7 +881,13 @@ fn infer_lifetime_summary(
     {
         return None;
     }
-    let effects = summary.lifetime_effects.iter().cloned().collect();
+    let effects: Vec<_> = summary.lifetime_effects.iter().cloned().collect();
+    let holder_frames = crate::legacy_c::retained_by_route::derive_holder_frames(
+        tokens,
+        function,
+        &effects,
+        environment,
+    );
     let mut custody_projection = summary;
     custody_projection.lifetime_effects.clear();
     // Only the custody projection is compared here. The complete removal
@@ -898,6 +905,7 @@ fn infer_lifetime_summary(
         return None;
     }
     Some(qcore_schemas::loop_lifetime::InferredLifetimeSummary {
+        holder_frames,
         contract: candidate,
         effects,
         removals,
