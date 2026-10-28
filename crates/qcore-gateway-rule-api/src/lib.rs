@@ -37,7 +37,7 @@ pub use position::{Position, UnknownPosition};
 pub use reason::{ReasonKey, check_reservations};
 pub use registry::{Off, Placement, RegistryError, RuleEntry, check_registry, ordered_table};
 pub use switches::{RULES_OFF_VARIABLE, RulesOff, SwitchError};
-pub use traits::Host;
+pub use traits::{Host, LexicalHost, TypedHost, TypedReading, Witness};
 
 #[cfg(test)]
 mod tests {

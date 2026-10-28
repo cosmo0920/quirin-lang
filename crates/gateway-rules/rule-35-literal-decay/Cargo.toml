@@ -1,0 +1,12 @@
+[package]
+name = "rule-35-literal-decay"
+version = "0.1.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+description = "C gateway rule 35 as a rule package: a `*` applied to a string literal that is only read is constant data (classification arm `literal-read`), and an array member decayed at a call actual is rule 14c's element address (typed-reader arm `array-member-decay`)."
+
+# Plan docs/plans/pluggable-cards/README.md seam B: a rule package depends on
+# the rule API only, never on qcore-c-gateway or another rule package
+# (compiler/tests/workspace_layering.rs holds the set).
+[dependencies]
+qcore-gateway-rule-api = { path = "../../qcore-gateway-rule-api", version = "0.1.0" }

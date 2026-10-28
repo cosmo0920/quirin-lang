@@ -17,9 +17,11 @@
 # route, same order); moving a row is a semantic change with its own identity
 # run, never an edit here alone.
 #
-# The registry starts by describing today's routes: every body still lives in
+# The registry started by describing the routes as they were, every body in
 # qcore-c-gateway. Each rule's migration to crates/gateway-rules/rule-<id>-<name>
-# (32a, 33, 34, 35, 36, 37 first) is its own card.
+# (32a, 33, 34, 35, 36, 37 first) is its own card; a migrated rule's `crate`
+# names its package (rule 35: card RULE35-PILOT), which the generator requires
+# to exist with every arm route a `pub fn` of the package.
 
 schema = "qcore-gateway-rules/1"
 route_map = "docs/reports/gateway-analysis-path-optimization/ROUTE-MAP.md"
@@ -184,15 +186,18 @@ placements = [
 # --- postdate the route map's base or sit inside a reader, so they have no
 # --- consultation order.
 
+# Rule 35 is its own rule package (card RULE35-PILOT): an arm's route is
+# `module::function` of the package's crate under crates/gateway-rules/, and
+# the gateway hosts it through the rule API (`rule_hosts`).
 [[rule]]
 id = "35"
-crate = "qcore-c-gateway"
+crate = "rule-35-literal-decay"
 lean = ["QCore.LiteralDecayReadings"]
 document = "docs/agents/rules/35.md"
 off = "refuses"
 placements = [
-  { position = "classification", arm = "literal-read", route = "literal_dereference::decide" },
-  { position = "typed-reader", arm = "array-member-decay", route = "array_member_decay::decayed_operand" },
+  { position = "classification", arm = "literal-read", route = "literal_read::decide" },
+  { position = "typed-reader", arm = "array-member-decay", route = "array_member_decay::decide" },
 ]
 
 [[rule]]
