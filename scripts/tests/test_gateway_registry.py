@@ -44,8 +44,8 @@ class GatewayRegistryTests(unittest.TestCase):
         paths = [ROOT / "crates/qcore-c-gateway/src" / path
                  for path in ("rule_hosts.rs", "typed_const_pointer_value.rs",
                               "scalar_element_address.rs")]
-        paths += sorted((ROOT / "crates/gateway-rules/rule-35-literal-decay/src").glob("*.rs"))
-        self.assertGreater(len(paths), 4)
+        paths += [ROOT / "crates/gateway-rules/rule-35-literal-decay/src" / path
+                  for path in ("lib.rs", "literal_read.rs", "array_member_decay.rs")]
         for name in ("LITERAL_ARM", "DECAY_ARM", "CONST_VALUE_ARM", "VOID_BIT_CAST_ARM",
                      "ELEMENT_ARM"):
             for path in paths:

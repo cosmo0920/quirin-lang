@@ -4,6 +4,9 @@
 
 use std::path::PathBuf;
 
+#[path = "../../tests/support/tracked_files.rs"]
+mod tracked_files;
+
 /// Workspace crates and the workspace dependencies each is allowed
 /// (`docs/GENERALIZATION_PLAN.md` §3.1; the grab-bag `qcore-compiler` and
 /// the CLI sit above every extracted layer).
@@ -167,13 +170,15 @@ fn workspace_dependencies_point_strictly_downward() {
 fn rule_packages_depend_on_the_api_only() {
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("..");
     let workspace = std::fs::read_to_string(root.join("Cargo.toml")).unwrap();
-    let mut packages = Vec::new();
-    for entry in std::fs::read_dir(root.join("crates/gateway-rules")).unwrap() {
-        let path = entry.unwrap().path();
-        if path.join("Cargo.toml").is_file() {
-            packages.push(path);
-        }
-    }
+    let base = root.join("crates/gateway-rules");
+    let packages: Vec<PathBuf> = tracked_files::tracked_files(&base)
+        .into_iter()
+        .filter(|path| {
+            path.file_name().is_some_and(|name| name == "Cargo.toml")
+                && path.parent().and_then(|dir| dir.parent()) == Some(base.as_path())
+        })
+        .map(|manifest| manifest.parent().unwrap().to_path_buf())
+        .collect();
     assert!(!packages.is_empty(), "rule 35's package exists");
     for path in packages {
         let name = path.file_name().unwrap().to_str().unwrap().to_owned();
