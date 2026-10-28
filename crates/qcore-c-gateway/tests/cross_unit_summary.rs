@@ -227,10 +227,7 @@ extern fn protocol_host(c: ptr<mut, u8>) -> unit contract { requires resource_co
         env.contract("starts").is_none(),
         "ordinary consumers cannot read a borrowed projection"
     );
-    for (body, expected_effects) in [
-        ("starts(c);", 1),
-        ("starts(c); ev_del(c->evl, &c->event);", 0),
-    ] {
+    for (body, expected_effects) in [("starts(c);", 1)] {
         let source = format!(
             "{prelude}\nvoid starts(struct collector *); void caller(struct collector *c) {{ {body} }}\n"
         );
@@ -274,7 +271,10 @@ extern fn protocol_host(c: ptr<mut, u8>) -> unit contract { requires resource_co
         changed.cross_unit_homes[0].preprocessed_source.push(' ');
         assert!(check_legacy_safety_certificate(&changed).is_err());
     }
+    // Whole-record handoff does not establish the holder snapshot frame
+    // required by a subsequent member-path removal, even with an exact home.
     for body in [
+        "starts(c); ev_del(c->evl, &c->event);",
         "starts(c); ev_del(other, &c->event); ev_del(c->evl, &c->event);",
         "starts(c); release(c); ev_del(c->evl, &c->event);",
     ] {

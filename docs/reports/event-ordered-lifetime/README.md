@@ -33,7 +33,15 @@ and independent home/caller certificate replay with altered-evidence controls.
 
 The initial focused Lean build failed on the reserved `prefix` binder and a
 nonexistent theorem accessor; corrected runs pass without weakening theorems.
-Private logs: `private/ordered-lifetime/lean*.log`. Submodule initialization first
+Private logs: `private/ordered-lifetime/lean*.log`. The initial focused Rust
+run passed the three existing cross-unit controls and the new forwarding/replay
+path, then failed a new expectation that removal after `starts(c)` would be
+Safe. That expectation lacked the existing member-holder snapshot frame:
+passing the record whole is deliberately outside `P-HOLDER-PATH-STABLE`.
+The control now explicitly expects this refusal; no existing pin was weakened.
+Ordered model/source-helper controls and cross-unit outgoing-effect replay
+remain separate capabilities. A checked whole-record holder frame is an open
+prerequisite for that additional caller-removal admission. Submodule initialization first
 failed under sandbox DNS restrictions; host initialization succeeded at the
 pinned d82464a277d0f42703702c4dfd9af6af38595a83 revision. Focused Rust controls,
 full source/provider gate and native comparison remain pending here.
