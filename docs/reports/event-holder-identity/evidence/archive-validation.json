@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "python3",
+    "private/holder-identity/archive-stage/docs/reports/event-holder-identity/evidence/validate-native.py",
+    "--receipt",
+    "private/holder-identity/archive-stage/docs/reports/event-holder-identity/evidence/native-receipt.json",
+    "--reviewed-deltas",
+    "private/holder-identity/archive-stage/docs/reports/event-holder-identity/evidence/reviewed-deltas.json.gz"
+  ],
+  "exit": 0,
+  "worktree_head": "348a2081a220e17fe049083752544a623a7f2ad4",
+  "log": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/archive-validation.log",
+  "sha256": {
+    "validate-native.py": "4d94575854796d4cf8adcc41195750872759958ba25b06a52c68e849aff65c77",
+    "provenance_support.py": "390a46eb31749106c18df46ec0e69483a89320f38a16085d6027deca98e21819",
+    "native-receipt.json": "ff68c0e13a1347a3f0ccbf6eb5e5969cdd7e538d70fd29a7167df767dd6027f1",
+    "reviewed-deltas.json.gz": "73902fbbb542104eb81098c81dd70e745305431e9bf91fc695c6eea9bd0d60e4"
+  },
+  "note": "Replay consumed only the staged archive and retained preimages. All25 payloads compared in full; zero remaining semantic deltas. Staging kept the source worktree clean during the final Rust gate."
+}

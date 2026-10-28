@@ -1,0 +1,652 @@
+{
+  "schema": "event-holder-native-receipt/1",
+  "base": "80c8aea989029c10b3dfbd0179715b7ea050262c",
+  "semantic_tip": "348a2081a220e17fe049083752544a623a7f2ad4",
+  "native_exit": 0,
+  "source_date_epoch": 1767225600,
+  "declared": {
+    "comparison": "base->tip",
+    "path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/docs/reports/event-holder-identity/PREDICTION.md",
+    "result": "match",
+    "routes": {
+      "corpus": {
+        "declared": true,
+        "delta_mismatches": [],
+        "missing": [],
+        "result": "match",
+        "unpredicted": []
+      },
+      "slice": {
+        "declared": true,
+        "delta_mismatches": [],
+        "missing": [],
+        "result": "match",
+        "unpredicted": []
+      },
+      "system": {
+        "declared": true,
+        "delta_mismatches": [],
+        "missing": [],
+        "result": "match",
+        "unpredicted": []
+      }
+    },
+    "sha256": "ab2326c108f9e1e8aacd763668c639314e979871e2daf430801d14809f3ece92"
+  },
+  "figures": {
+    "corpus": {
+      "null_rows": 4921,
+      "null_verdicts": {
+        "Safe": 2549,
+        "Unknown": 2355,
+        "Unsafe": 17
+      },
+      "null_verdicts_sha256": "5e3809dd6ee98d3205736824d7d2f1e932836e296d4fc47f16f614b7a158f493",
+      "row_statuses": {
+        "Safe": 1013,
+        "Unknown": 3811,
+        "Unsafe": 10
+      },
+      "row_verdicts_sha256": "6019562445f06309f8419ff7c644cd8b764c8258c7deb625a60ba4227f603f82",
+      "rows": 4834,
+      "unit_statuses": {
+        "Safe": 8,
+        "Unknown": 165,
+        "Unsafe": 8,
+        "data_only": 4
+      },
+      "unit_verdicts_sha256": "58c0d37734220a4427792bc8b13569468da6e48cfd2e2425c9c02a96226cb770",
+      "units": 185
+    },
+    "slice": {
+      "null_rows": 406,
+      "null_verdicts": {
+        "Safe": 190,
+        "Unknown": 216
+      },
+      "null_verdicts_sha256": "08e9b5da9fe871894264c1b276f846c4cd387a95be5e4704fb4ac49e1dac744b",
+      "row_statuses": {
+        "Pending": 4,
+        "Safe": 57,
+        "Unknown": 342,
+        "Unsafe": 1
+      },
+      "row_verdicts_sha256": "a84686d4fd6a52b090bac9ed9302c52f2d79c1439fc7dfbbf421589ff4dd8781",
+      "rows": 404,
+      "unit_statuses": {
+        "Unknown": 15,
+        "Unsafe": 1
+      },
+      "unit_verdicts_sha256": "54e95d5f88252a15b9dd02fb3878b6286b16eeea24a5a4cfd4fde8a08af830e5",
+      "units": 16
+    },
+    "system": {
+      "null_rows": 454,
+      "null_verdicts": {
+        "Safe": 211,
+        "Unknown": 243
+      },
+      "null_verdicts_sha256": "18d3b6d0fee4bc3f929e5dac2474bfb88a2290f3163dc698dc2abc3ba94155b3",
+      "row_statuses": {
+        "Safe": 101,
+        "Unknown": 343,
+        "Unsafe": 4
+      },
+      "row_verdicts_sha256": "1d17077f4986f2ea53867a1a2854eb5d5c54c22d755520a7151c5a9c1c6f0003",
+      "rows": 448,
+      "unit_statuses": {
+        "Unknown": 13,
+        "Unsafe": 2
+      },
+      "unit_verdicts_sha256": "d326464ed189bac74776761057f9be31bd5197eea46563b8991137944ed2a01f",
+      "units": 15
+    }
+  },
+  "files": [
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/80c8aea989029c10b3dfbd0179715b7ea050262c/eight-home/corpus/corpus-null.jsonl",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/before/corpus/corpus-null.jsonl.gz",
+      "sha256": "6b37d52f3649c151508cc3ff41783da3855d3e588071da2740e0eef170019bda",
+      "bytes": 46197277,
+      "gzip_bytes": 3013133,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/80c8aea989029c10b3dfbd0179715b7ea050262c/eight-home/corpus/corpus-null.summary.json",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/before/corpus/corpus-null.summary.json.gz",
+      "sha256": "a4503189099be526778d038b68b9159632311573c63dd2da7acae906d16d1e5c",
+      "bytes": 64901,
+      "gzip_bytes": 3637,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/80c8aea989029c10b3dfbd0179715b7ea050262c/eight-home/corpus/corpus-outer.json",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/before/corpus/corpus-outer.json.gz",
+      "sha256": "6810b3dabd1b78375a1998e27c4489f1e3cdae13ecfb72579fcd9898f737e5c4",
+      "bytes": 711280,
+      "gzip_bytes": 20540,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/80c8aea989029c10b3dfbd0179715b7ea050262c/eight-home/corpus/corpus/monkey-source.json",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/before/corpus/corpus/monkey-source.json.gz",
+      "sha256": "ba459c8ab988fc3e97b1efd8a9edbb3ffbd5c4933f79a2b77ae2464ad9f7ff2f",
+      "bytes": 1665415,
+      "gzip_bytes": 41994,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/80c8aea989029c10b3dfbd0179715b7ea050262c/eight-home/corpus/corpus/resource-diagnostics.chunk-contracts.json",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/before/corpus/corpus/resource-diagnostics.chunk-contracts.json.gz",
+      "sha256": "c56b0e2ac106ea57362cdc8d76a39a49ac4edcd02c1d46bfc0133b20c4f5cf88",
+      "bytes": 4190342,
+      "gzip_bytes": 282406,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/80c8aea989029c10b3dfbd0179715b7ea050262c/eight-home/corpus/corpus/resource-diagnostics.components.json",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/before/corpus/corpus/resource-diagnostics.components.json.gz",
+      "sha256": "65aeeef35495fbfd2403ccdfc26f1d9a6f1d91c1498116300611c2a893e91a20",
+      "bytes": 108233870,
+      "gzip_bytes": 10323551,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/80c8aea989029c10b3dfbd0179715b7ea050262c/eight-home/corpus/corpus/resource-diagnostics.contracts.json",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/before/corpus/corpus/resource-diagnostics.contracts.json.gz",
+      "sha256": "102a4fe1c7b577b30eb686d924c7fa37d4c939cd8cb14e0eaea1b0cdf856ac18",
+      "bytes": 55398777,
+      "gzip_bytes": 2468598,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/80c8aea989029c10b3dfbd0179715b7ea050262c/eight-home/corpus/corpus/resource-diagnostics.json",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/before/corpus/corpus/resource-diagnostics.json.gz",
+      "sha256": "3887a634d4dd5b9c4bd93ae10abf3c43d0ed89a2350b8cbe5b331547c18d908c",
+      "bytes": 114432049,
+      "gzip_bytes": 10422171,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/80c8aea989029c10b3dfbd0179715b7ea050262c/eight-home/corpus/corpus/resource-diagnostics.source-effects.json",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/before/corpus/corpus/resource-diagnostics.source-effects.json.gz",
+      "sha256": "343e874011f7eab20b834d6e6eb902afaf648737aec36bc2f0c7e34c12bef7ee",
+      "bytes": 122792,
+      "gzip_bytes": 17342,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-holder-native-20261028/sides/tip/corpus/corpus-null.jsonl",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/after/corpus/corpus-null.jsonl.gz",
+      "sha256": "403fdd2afab9736e1ff940aeab873e44d0baccba570d1d648c7c6e0119f667ea",
+      "bytes": 46197277,
+      "gzip_bytes": 3012676,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-holder-native-20261028/sides/tip/corpus/corpus-null.summary.json",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/before/corpus/corpus-null.summary.json.gz",
+      "sha256": "a4503189099be526778d038b68b9159632311573c63dd2da7acae906d16d1e5c",
+      "bytes": 64901,
+      "gzip_bytes": 3637,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-holder-native-20261028/sides/tip/corpus/corpus-outer.json",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/before/corpus/corpus-outer.json.gz",
+      "sha256": "6810b3dabd1b78375a1998e27c4489f1e3cdae13ecfb72579fcd9898f737e5c4",
+      "bytes": 711280,
+      "gzip_bytes": 20540,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-holder-native-20261028/sides/tip/corpus/corpus/monkey-source.json",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/before/corpus/corpus/monkey-source.json.gz",
+      "sha256": "ba459c8ab988fc3e97b1efd8a9edbb3ffbd5c4933f79a2b77ae2464ad9f7ff2f",
+      "bytes": 1665415,
+      "gzip_bytes": 41994,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-holder-native-20261028/sides/tip/corpus/corpus/resource-diagnostics.chunk-contracts.json",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/before/corpus/corpus/resource-diagnostics.chunk-contracts.json.gz",
+      "sha256": "c56b0e2ac106ea57362cdc8d76a39a49ac4edcd02c1d46bfc0133b20c4f5cf88",
+      "bytes": 4190342,
+      "gzip_bytes": 282406,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-holder-native-20261028/sides/tip/corpus/corpus/resource-diagnostics.components.json",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/after/corpus/corpus/resource-diagnostics.components.json.gz",
+      "sha256": "9a0d5a18e51fe1c819327d18cf5a240148df4e7d35ff2872b641f028219d4238",
+      "bytes": 108233870,
+      "gzip_bytes": 10323311,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-holder-native-20261028/sides/tip/corpus/corpus/resource-diagnostics.contracts.json",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/after/corpus/corpus/resource-diagnostics.contracts.json.gz",
+      "sha256": "e2e3e941004e9a1e92ae2263e93614f11b6a785d34277ad7fa05af583df07d01",
+      "bytes": 55398777,
+      "gzip_bytes": 2468539,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-holder-native-20261028/sides/tip/corpus/corpus/resource-diagnostics.json",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/after/corpus/corpus/resource-diagnostics.json.gz",
+      "sha256": "e95ba21fdd6e057de1c3aad6714ca638c3b24adeabeef08657832d446a330c9b",
+      "bytes": 114432049,
+      "gzip_bytes": 10421958,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-holder-native-20261028/sides/tip/corpus/corpus/resource-diagnostics.source-effects.json",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/after/corpus/corpus/resource-diagnostics.source-effects.json.gz",
+      "sha256": "57d194bf7283c988583198a69a05387141ba866cf533b9191b69bc6c51c6a604",
+      "bytes": 122792,
+      "gzip_bytes": 17338,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/80c8aea989029c10b3dfbd0179715b7ea050262c/fluent-bit-tail-pause/slice/resource-diagnostics.chunk-contracts.json",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/before/slice/resource-diagnostics.chunk-contracts.json.gz",
+      "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+      "bytes": 385,
+      "gzip_bytes": 260,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/80c8aea989029c10b3dfbd0179715b7ea050262c/fluent-bit-tail-pause/slice/resource-diagnostics.components.json",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/before/slice/resource-diagnostics.components.json.gz",
+      "sha256": "014db3026b4cda7c78915cc10e46ef3ead2634d54fd2adf36cec1bc55b11b182",
+      "bytes": 3764448,
+      "gzip_bytes": 346154,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/80c8aea989029c10b3dfbd0179715b7ea050262c/fluent-bit-tail-pause/slice/resource-diagnostics.contracts.json",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/before/slice/resource-diagnostics.contracts.json.gz",
+      "sha256": "c390cd02ce8b0fbbcf426860e0cdb7200da45adf50320ad46483ddf5a3c872b7",
+      "bytes": 22138814,
+      "gzip_bytes": 1169758,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/80c8aea989029c10b3dfbd0179715b7ea050262c/fluent-bit-tail-pause/slice/resource-diagnostics.json",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/before/slice/resource-diagnostics.json.gz",
+      "sha256": "05ce320c195a2ca856f9c1748b8bd57ed99526ad17d069620ce4c0d266e3cd8d",
+      "bytes": 4368067,
+      "gzip_bytes": 358708,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/80c8aea989029c10b3dfbd0179715b7ea050262c/fluent-bit-tail-pause/slice/resource-diagnostics.source-effects.json",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/before/slice/resource-diagnostics.chunk-contracts.json.gz",
+      "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+      "bytes": 385,
+      "gzip_bytes": 260,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/80c8aea989029c10b3dfbd0179715b7ea050262c/fluent-bit-tail-pause/slice/slice-null.jsonl",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/before/slice/slice-null.jsonl.gz",
+      "sha256": "7206132f93ecb8e405ca7a404e69e13bd79c03cf3bad0091feaa9f45705a31f5",
+      "bytes": 1853651,
+      "gzip_bytes": 97000,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/80c8aea989029c10b3dfbd0179715b7ea050262c/fluent-bit-tail-pause/slice/slice-null.summary.json",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/before/slice/slice-null.summary.json.gz",
+      "sha256": "df4be8b649b807ee4b83c0516250e7495e7e57355733c126c24a6b3828960c56",
+      "bytes": 64487,
+      "gzip_bytes": 3435,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/80c8aea989029c10b3dfbd0179715b7ea050262c/fluent-bit-tail-pause/slice/slice-outer.json",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/before/slice/slice-outer.json.gz",
+      "sha256": "7f64ea5cc01c131f96a690fb893a581ce8a3fa863de07077e5114228f8cffd53",
+      "bytes": 88639,
+      "gzip_bytes": 7400,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-holder-native-20261028/sides/tip/slice/resource-diagnostics.chunk-contracts.json",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/before/slice/resource-diagnostics.chunk-contracts.json.gz",
+      "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+      "bytes": 385,
+      "gzip_bytes": 260,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-holder-native-20261028/sides/tip/slice/resource-diagnostics.components.json",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/after/slice/resource-diagnostics.components.json.gz",
+      "sha256": "48f9b8271eda43ccd217bf55d1eb7afd5bc741ed21c95f4ad334959b0e574f69",
+      "bytes": 3764448,
+      "gzip_bytes": 346154,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-holder-native-20261028/sides/tip/slice/resource-diagnostics.contracts.json",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/after/slice/resource-diagnostics.contracts.json.gz",
+      "sha256": "675200fbacc64f9532da6a3f68d1f9b731366a33663668c8c1a2c2dbbdcdf04f",
+      "bytes": 22138814,
+      "gzip_bytes": 1169713,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-holder-native-20261028/sides/tip/slice/resource-diagnostics.json",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/after/slice/resource-diagnostics.json.gz",
+      "sha256": "9dc9c2801125b05f363d5b484d60af993d3187308b0e3f7f072d465829165571",
+      "bytes": 4368067,
+      "gzip_bytes": 358678,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-holder-native-20261028/sides/tip/slice/resource-diagnostics.source-effects.json",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/before/slice/resource-diagnostics.chunk-contracts.json.gz",
+      "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+      "bytes": 385,
+      "gzip_bytes": 260,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-holder-native-20261028/sides/tip/slice/slice-null.jsonl",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/after/slice/slice-null.jsonl.gz",
+      "sha256": "9a6d1096924fd1234daf4697fe6917c48e22ea6fbdf69e368300eb10afbd05b4",
+      "bytes": 1853651,
+      "gzip_bytes": 96999,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-holder-native-20261028/sides/tip/slice/slice-null.summary.json",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/before/slice/slice-null.summary.json.gz",
+      "sha256": "df4be8b649b807ee4b83c0516250e7495e7e57355733c126c24a6b3828960c56",
+      "bytes": 64487,
+      "gzip_bytes": 3435,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-holder-native-20261028/sides/tip/slice/slice-outer.json",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/before/slice/slice-outer.json.gz",
+      "sha256": "7f64ea5cc01c131f96a690fb893a581ce8a3fa863de07077e5114228f8cffd53",
+      "bytes": 88639,
+      "gzip_bytes": 7400,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/80c8aea989029c10b3dfbd0179715b7ea050262c/fluent-bit-system/system/resource-diagnostics.chunk-contracts.json",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/before/system/resource-diagnostics.chunk-contracts.json.gz",
+      "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+      "bytes": 385,
+      "gzip_bytes": 260,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/80c8aea989029c10b3dfbd0179715b7ea050262c/fluent-bit-system/system/resource-diagnostics.components.json",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/before/system/resource-diagnostics.components.json.gz",
+      "sha256": "c58f23d5714f85d1e356be7da1cfe7cfbea05b5fc6438d69e2f48c49525fb791",
+      "bytes": 9388314,
+      "gzip_bytes": 963837,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/80c8aea989029c10b3dfbd0179715b7ea050262c/fluent-bit-system/system/resource-diagnostics.contracts.json",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/before/system/resource-diagnostics.contracts.json.gz",
+      "sha256": "da6b2e14feca3c97b7ba046d3c692ccd73b96d2e3e986515171d22cbecd0c9e1",
+      "bytes": 23315801,
+      "gzip_bytes": 1203377,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/80c8aea989029c10b3dfbd0179715b7ea050262c/fluent-bit-system/system/resource-diagnostics.json",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/before/system/resource-diagnostics.json.gz",
+      "sha256": "a432a6b538ed7b55c4089cc9a706673ba5b7b1d986287a49b5347e5af12a200a",
+      "bytes": 10025541,
+      "gzip_bytes": 968213,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/80c8aea989029c10b3dfbd0179715b7ea050262c/fluent-bit-system/system/resource-diagnostics.source-effects.json",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/before/system/resource-diagnostics.chunk-contracts.json.gz",
+      "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+      "bytes": 385,
+      "gzip_bytes": 260,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/80c8aea989029c10b3dfbd0179715b7ea050262c/fluent-bit-system/system/system-null.jsonl",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/before/system/system-null.jsonl.gz",
+      "sha256": "ab30a1d34c5f1c9cf1b0d83df9384f5aa94c5faa143f9627ac49b8b7e51fa2be",
+      "bytes": 1873227,
+      "gzip_bytes": 104456,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/80c8aea989029c10b3dfbd0179715b7ea050262c/fluent-bit-system/system/system-null.summary.json",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/before/system/system-null.summary.json.gz",
+      "sha256": "572117bd3758532c0ad224a8b40db30dc6793a36d0cec55c54a0c817a905d1e2",
+      "bytes": 64385,
+      "gzip_bytes": 3399,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/baselines/80c8aea989029c10b3dfbd0179715b7ea050262c/fluent-bit-system/system/system-outer.json",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/before/system/system-outer.json.gz",
+      "sha256": "705e46a8aeccd9bbfedab17339a1b033ca679333c7157cfa03157680e0fc7f7f",
+      "bytes": 67168,
+      "gzip_bytes": 6924,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-holder-native-20261028/sides/tip/system/resource-diagnostics.chunk-contracts.json",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/before/system/resource-diagnostics.chunk-contracts.json.gz",
+      "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+      "bytes": 385,
+      "gzip_bytes": 260,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-holder-native-20261028/sides/tip/system/resource-diagnostics.components.json",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/after/system/resource-diagnostics.components.json.gz",
+      "sha256": "61f8563c4f034818eb5615cbfea124c8a326c14edfe37ce62f2e39313f734df0",
+      "bytes": 9388314,
+      "gzip_bytes": 963844,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-holder-native-20261028/sides/tip/system/resource-diagnostics.contracts.json",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/after/system/resource-diagnostics.contracts.json.gz",
+      "sha256": "35b6a1237c1381f293e71abd57eba2953ba68e09d8ff004e919f93f5ee679765",
+      "bytes": 23315801,
+      "gzip_bytes": 1203403,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-holder-native-20261028/sides/tip/system/resource-diagnostics.json",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/after/system/resource-diagnostics.json.gz",
+      "sha256": "b02745cc50bbc8773b54dd3491439adeed1322540d27258a1b2df83944737520",
+      "bytes": 10025541,
+      "gzip_bytes": 968331,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-holder-native-20261028/sides/tip/system/resource-diagnostics.source-effects.json",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/before/system/resource-diagnostics.chunk-contracts.json.gz",
+      "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+      "bytes": 385,
+      "gzip_bytes": 260,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-holder-native-20261028/sides/tip/system/system-null.jsonl",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/after/system/system-null.jsonl.gz",
+      "sha256": "b381ffb782524a148123ec27e34095a14a17698598fc2dfe373a1af16c9c7797",
+      "bytes": 1873227,
+      "gzip_bytes": 104454,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-holder-native-20261028/sides/tip/system/system-null.summary.json",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/before/system/system-null.summary.json.gz",
+      "sha256": "572117bd3758532c0ad224a8b40db30dc6793a36d0cec55c54a0c817a905d1e2",
+      "bytes": 64385,
+      "gzip_bytes": 3399,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-holder-native-20261028/sides/tip/system/system-outer.json",
+      "archive": "docs/reports/event-holder-identity/evidence/raw/before/system/system-outer.json.gz",
+      "sha256": "705e46a8aeccd9bbfedab17339a1b033ca679333c7157cfa03157680e0fc7f7f",
+      "bytes": 67168,
+      "gzip_bytes": 6924,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-holder-native-20261028/native-comparison.json",
+      "archive": "docs/reports/event-holder-identity/evidence/native-comparison.json.gz",
+      "sha256": "00e86e43017311fcfdf5edcd347f2ba9a431abb615dd8fee06266d2ae0c9210f",
+      "bytes": 34053,
+      "gzip_bytes": 5946,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/native-attribution/attribution.json",
+      "archive": "docs/reports/event-holder-identity/evidence/native-attribution.json.gz",
+      "sha256": "f176f69cd683abd60950de1a8de584b82e68f4d4449d04f7cd117ce5baf9a638",
+      "bytes": 19262,
+      "gzip_bytes": 3807,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/provenance-preimages.json",
+      "archive": "docs/reports/event-holder-identity/evidence/provenance-preimages.json.gz",
+      "sha256": "94d71e046d47b102edee8d380022fd7cda4ddf35eded029e04b187b368c56d06",
+      "bytes": 76184991,
+      "gzip_bytes": 10991581,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/provenance-task-preimages.json",
+      "archive": "docs/reports/event-holder-identity/evidence/provenance-task-preimages.json.gz",
+      "sha256": "87e0b6aecab44380cc3ee4b3e249e248139d084057d04f1cfb35891bc9179c7a",
+      "bytes": 23297,
+      "gzip_bytes": 2244,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/provenance-run-3.json",
+      "archive": "docs/reports/event-holder-identity/evidence/provenance-run-3.json.gz",
+      "sha256": "96fe6d11d5f9522088df9eaeaf1b9755b84cf2d42383e67ba0fb890a83233b28",
+      "bytes": 823,
+      "gzip_bytes": 330,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/provenance.rs",
+      "archive": "docs/reports/event-holder-identity/evidence/provenance.rs.gz",
+      "sha256": "3e03edb65fa1e491482f2cef54b7f0be6f9da1872c74b6101d508236b988c5aa",
+      "bytes": 3533,
+      "gzip_bytes": 1356,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/provenance-input.json",
+      "archive": "docs/reports/event-holder-identity/evidence/provenance-input.json.gz",
+      "sha256": "28c45ef34ce30694d6b7942593df6c1ff0a0d4f75ee8941fbc1ef02264c19b06",
+      "bytes": 492,
+      "gzip_bytes": 280,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/provenance-crate/Cargo.toml",
+      "archive": "docs/reports/event-holder-identity/evidence/provenance-crate/Cargo.toml.gz",
+      "sha256": "764ce7dccbd16f9d7096a2207b1c927ee6045dffd80c6a231931fac2319db71c",
+      "bytes": 420,
+      "gzip_bytes": 224,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/provenance-crate/Cargo.lock",
+      "archive": "docs/reports/event-holder-identity/evidence/provenance-crate/Cargo.lock.gz",
+      "sha256": "d60ddcc8637e2c9a977f3900d03c9137394435a41a0f9064ef20427e7a9c4059",
+      "bytes": 8718,
+      "gzip_bytes": 2242,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/run-provenance.py",
+      "archive": "docs/reports/event-holder-identity/evidence/run-provenance.py.gz",
+      "sha256": "330853412cba8d39e59a89e25cf385346a8f6a39fdc94cee1a4944f0eca5b0c1",
+      "bytes": 1890,
+      "gzip_bytes": 806,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/provenance-cargo.exit",
+      "archive": "docs/reports/event-holder-identity/evidence/provenance-cargo.exit.gz",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2,
+      "gzip_bytes": 22,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/provenance-tasks.exit",
+      "archive": "docs/reports/event-holder-identity/evidence/provenance-cargo.exit.gz",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2,
+      "gzip_bytes": 22,
+      "shared_archive": true
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-holder-native-20261028/sides/tip/corpus/invocation.json",
+      "archive": "docs/reports/event-holder-identity/evidence/run/corpus-invocation.json.gz",
+      "sha256": "aa5facb8e36652792ab68c9e00cfb94057e337d8c5bb7e390ae2759b97fc3691",
+      "bytes": 4281,
+      "gzip_bytes": 1291,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-holder-native-20261028/sides/tip/corpus.slot.json",
+      "archive": "docs/reports/event-holder-identity/evidence/run/corpus-corpus.slot.json.gz",
+      "sha256": "136bc4902f32706d0759559fa798c966eccab9d379ae1dabfe82dddd6397467f",
+      "bytes": 2456,
+      "gzip_bytes": 739,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-holder-native-20261028/sides/tip/slice/invocation.json",
+      "archive": "docs/reports/event-holder-identity/evidence/run/slice-invocation.json.gz",
+      "sha256": "1e3e9bb8608076c69eb496355342a5e694010e102e2e79763cc5186696eca440",
+      "bytes": 4184,
+      "gzip_bytes": 1293,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-holder-native-20261028/sides/tip/slice.slot.json",
+      "archive": "docs/reports/event-holder-identity/evidence/run/slice-slice.slot.json.gz",
+      "sha256": "7646aebba9180cc44c3fc1f37d0b986c015598a62b383c836e7b6a80f0cf9c9f",
+      "bytes": 3155,
+      "gzip_bytes": 814,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-holder-native-20261028/sides/tip/system/invocation.json",
+      "archive": "docs/reports/event-holder-identity/evidence/run/system-invocation.json.gz",
+      "sha256": "f2c66cfcc07704e8a9c857af23f7ccbb374c86dd9292a2f041e99c4a6d5c4c90",
+      "bytes": 4208,
+      "gzip_bytes": 1302,
+      "shared_archive": false
+    },
+    {
+      "source": "/media/Data/GitHub/quirin-lang/private/event-holder-native-20261028/sides/tip/system.slot.json",
+      "archive": "docs/reports/event-holder-identity/evidence/run/system-system.slot.json.gz",
+      "sha256": "2fb886ae771955395139341a9577385cfb945b39c5d3ca9261a85536ea826ca3",
+      "bytes": 3201,
+      "gzip_bytes": 829,
+      "shared_archive": false
+    }
+  ],
+  "scope": "Exact raw reports and independent attribution; conditional resource/NULL/runtime profiles, no whole-C or backend-body proof."
+}

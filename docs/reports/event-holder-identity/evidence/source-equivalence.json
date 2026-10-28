@@ -1,0 +1,25 @@
+{
+  "native_checkpoint": "348a2081a220e17fe049083752544a623a7f2ad4",
+  "validation_tip": "2bb3260b4095fe1199549464d798fe4a65fc86d4",
+  "changed_paths": [
+    "crates/qcore-c-gateway/tests/loop_lifetime_s3.rs"
+  ],
+  "other_tracked_inputs_equal": true,
+  "comparison_argv": [
+    "git",
+    "diff",
+    "--exit-code",
+    "348a2081a220e17fe049083752544a623a7f2ad4",
+    "2bb3260b4095fe1199549464d798fe4a65fc86d4",
+    "--",
+    ".",
+    ":(exclude)crates/qcore-c-gateway/tests/loop_lifetime_s3.rs"
+  ],
+  "comparison_exit": 0,
+  "patch_sha256": "64658eb7cdaa9e3f195af4017a05ffad64a01070bac2be4f7eeb8365f3e587bf",
+  "patch_bytes": 4693,
+  "patch_archive": "docs/reports/event-holder-identity/evidence/source-test-difference.patch.gz",
+  "old_test_blob": "4afd50912d665728710057a7247a1720b7498a74",
+  "new_test_blob": "071740c423c1425fe5b0842faa0c9ebdabcd98e4",
+  "scope": "Only the integration-test fixture changes. All other tracked checker, schema, provider/contract, proof, manifest and configuration inputs are identical. Native results remain pinned to the actual native checkpoint; no native execution on the later test commit is claimed."
+}

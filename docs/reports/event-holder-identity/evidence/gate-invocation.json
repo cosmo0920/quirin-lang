@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "python3",
+    "private/holder-identity/final-gate-driver.py"
+  ],
+  "driver_sha256": "40ba8de973dcfe986048d6cfbe0ae40774230bdd5dc19a786d8675bb7b53dab1",
+  "validation_tip": "2bb3260b4095fe1199549464d798fe4a65fc86d4",
+  "native_checkpoint": "348a2081a220e17fe049083752544a623a7f2ad4",
+  "plan": "private/holder-final-plan-v5/gate.json"
+}
