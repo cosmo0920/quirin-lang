@@ -135,4 +135,4 @@ The write guard of this card's worktree refused writes under
 | Failing tests before the fix | `red.log` | 0 passed, 3 failed |
 | Pin tests after the fix | `green.log` | `pin_regenerate_stamps` 3, `contract_tip_mode` 2, `contract_revision_identities` 3, `contract_revision_audit` 4, `contract_supersession` 4; all pass |
 | `providers/contracts.py check` | `contracts-check.log` | exit 0 |
-| Scoped card gate | `gate.json` in this directory | See the card's hand-back |
+| Scoped card gate (`python3 scripts/gate_scope.py --base 80c8aea98 --out private/gate`, head `bd091a916`) | `gate.json` in this directory; console `gate.log`; step logs in the worktree's `private/gate/` | exit 0, 7 steps: submodules 0, fmt 0, Clippy 0 (5 crates), Rust suite 0 (qcore-audit, qcore-compiler, qcore-verification, qcorec, quirin-source-analysis: 250 units, 3273 passed, 0 failed, 5 ignored), both reevaluation probes 0, Python suite 0 (554 tests); Lean none (no `proof/` change); provider gate not selected |
