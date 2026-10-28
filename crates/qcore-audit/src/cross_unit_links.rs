@@ -193,4 +193,68 @@ mod tests {
         let (_, missing) = map.select(found, [], &base);
         assert!(missing.is_empty());
     }
+    #[test]
+    fn selected_lifetime_home_preserves_effects_through_caller_certificate_replay() {
+        use qcore_c_gateway::legacy_c::{
+            UnrestrictedLegacyResult, analyze_prepared_translation_unit_with_cross_unit,
+            check_legacy_safety_certificate,
+        };
+        let base = qcore_contract::contract_loader::load_resource_contract_sources(&BTreeMap::from([(
+            "lifetime.qv".into(),
+            r#"module contract;
+extern fn ev_add(loop: ptr<mut, u8>, event: ptr<mut, u8>) -> i32 contract { requires resource_contract_v1; ensures normal resource_borrowed(loop); ensures normal resource_borrowed(event); ensures normal resource_retained_by(event, loop); ensures normal resource_return_none(); };
+extern fn protocol_host(c: ptr<mut, u8>) -> unit contract { requires resource_contract_v1; ensures normal resource_borrowed(c); ensures normal resource_return_none(); quant registered #c: collector.event |-> collector.evl; };
+"#.into(),
+        )])).unwrap();
+        let map = LinkMap {
+            digest: "a".repeat(64),
+            premise: "External starts resolves to lib/home.c".into(),
+            homes: BTreeMap::from([("starts".into(), "lib/home.c".into())]),
+        };
+        let prelude = "struct loop { int fd; }; struct event { int state; }; struct collector { struct loop *evl; struct event event; }; int ev_add(struct loop *, void *);";
+        let source = format!(
+            "{prelude}\nvoid starts(struct collector *c) {{ ev_add(c->evl, &c->event); }}\n"
+        );
+        let home = prepare_translation_unit(&C11TranslationUnit {
+            source: &source,
+            function_scope: LegacyFunctionScope::MainSourceDefinitions,
+            ..Default::default()
+        });
+        let export = export_cross_unit_homes(&home, &base, &map.requested(), &map.digest)
+            .unwrap()
+            .pop()
+            .expect("effect-bearing home");
+        let (environment, homes) = map.select(
+            [("lib/home.c".into(), export)],
+            [("lib/home.c".into(), "starts".into())],
+            &base,
+        );
+        assert!(environment.inferred_imports().is_empty());
+        assert_eq!(environment.lifetime_imports()["starts"].effects.len(), 1);
+        let caller_source = format!(
+            "{prelude}\nvoid starts(struct collector *); void caller(struct collector *c) {{ starts(c); }}\n"
+        );
+        let caller = prepare_translation_unit(&C11TranslationUnit {
+            source: &caller_source,
+            function_scope: LegacyFunctionScope::MainSourceDefinitions,
+            ..Default::default()
+        });
+        let result = analyze_prepared_translation_unit_with_cross_unit(
+            &caller,
+            "caller",
+            &environment,
+            &homes,
+        )
+        .unwrap();
+        let UnrestrictedLegacyResult::Safe(certificate) = result else {
+            panic!("selected lifetime import was lost: {result:?}");
+        };
+        assert_eq!(
+            certificate.summary.functions["caller"]
+                .lifetime_effects
+                .len(),
+            1
+        );
+        check_legacy_safety_certificate(&certificate).unwrap();
+    }
 }
