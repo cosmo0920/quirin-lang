@@ -113,4 +113,18 @@ theorem admitted_imports_keep_the_independently_expected_identity
     (present : Bool) (actual expected : Nat) (imported recomputed : List Nat)
     (admitted : admitImport present actual expected imported recomputed = true) :
     actual = expected := by simp_all [admitImport]
+/-- An ordinary borrow record has nowhere to retain removal order. -/
+def ordinaryPublication (hasRemoval : Bool) : Bool := !hasRemoval
+
+theorem a_removal_cannot_be_published_as_an_ordinary_borrow :
+    ordinaryPublication true = false := by decide
+
+def effectClass (registrations removals : List Nat) : Bool :=
+    (registrations.isEmpty && !removals.isEmpty) ||
+    (!registrations.isEmpty && removals.isEmpty)
+
+theorem mixed_effect_vectors_do_not_establish_an_order
+    (registration removal : Nat) (registrations removals : List Nat) :
+    effectClass (registration :: registrations) (removal :: removals) = false := by
+  simp [effectClass]
 end QCore.OrderedLifetimeReplay

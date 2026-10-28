@@ -306,7 +306,7 @@ impl Parser<'_> {
             writes: this.refused_writes(texts),
         };
         let inferred = self.contracts.lifetime_summary(function).cloned();
-        let declaration = if let Some(summary) = &inferred {
+        let mut declaration = if let Some(summary) = &inferred {
             qcore_schemas::contract_consultation::note_relied(function);
             qcore_schemas::retained_by::RetainingContract::custody_only(summary.contract.clone())
         } else if let Some(scoped) = self
@@ -601,6 +601,11 @@ impl Parser<'_> {
                     ));
                 }
             }
+        }
+        if let Some(summary) = &inferred {
+            // Registration-only and removal-only summaries are separate
+            // admitted classes. The latter preserve source order verbatim.
+            declaration.removals = summary.removals.clone();
         }
         // Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION (rule 12t, USER
         // DECISION 2026-10-16, "R3: quant state"): each removal, never a

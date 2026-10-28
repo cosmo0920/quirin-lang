@@ -67,6 +67,7 @@ pub fn export_homes(
         return Ok(Vec::new());
     }
     if prepared.function_scope() != LegacyFunctionScope::MainSourceDefinitions
+        || !environment.inferred_lifetimes().is_empty()
         || !environment.inferred_imports().is_empty()
         || !environment.lifetime_imports().is_empty()
         || !environment.cross_unit_import_identities().is_empty()
@@ -137,12 +138,13 @@ pub fn export_homes(
                 environment_sha256: digest_environment(environment)?,
                 link_resolution_sha256: link_resolution_sha256.to_owned(),
             },
-            lifetime: if record.lifetime_effects.is_empty() {
+            lifetime: if record.lifetime_effects.is_empty() && record.lifetime_removals.is_empty() {
                 None
             } else {
                 Some(qcore_schemas::loop_lifetime::InferredLifetimeSummary {
                     contract: record.contract.clone(),
                     effects: record.lifetime_effects,
+                    removals: record.lifetime_removals,
                 })
             },
             contract: record.contract,
@@ -208,6 +210,9 @@ pub(super) fn check_imports(
     contracts: &ResourceContracts,
     homes: &[CrossUnitHomeEvidence],
 ) -> Result<(), String> {
+    if !contracts.inferred_lifetimes().is_empty() {
+        return Err("local inferred lifetime summaries must be rederived from this unit, not supplied as authority".into());
+    }
     if homes.is_empty()
         && contracts.inferred_imports().is_empty()
         && contracts.lifetime_imports().is_empty()
@@ -245,7 +250,8 @@ pub(super) fn check_imports(
                 home.function
             ));
         }
-        if !home.environment.inferred_imports().is_empty()
+        if !home.environment.inferred_lifetimes().is_empty()
+            || !home.environment.inferred_imports().is_empty()
             || !home.environment.lifetime_imports().is_empty()
             || !home.environment.cross_unit_import_identities().is_empty()
         {
@@ -345,7 +351,16 @@ pub(super) fn check_imports(
         {
             return Err(format!("cross-unit `{}` has multiple homes", home.function));
         }
-        if record.lifetime_effects.is_empty() {
+        if !record.lifetime_removals.is_empty() {
+            let parameters = super::function_parameters(&tokens, &home.function)
+                .ok_or("removal home has no formal inventory")?;
+            if crate::legacy_summary::ordered_removals(&row.cfg, &parameters).as_ref()
+                != Some(&record.lifetime_removals)
+            {
+                return Err("cross-unit ordered removal trace differs from replayed home".into());
+            }
+        }
+        if record.lifetime_effects.is_empty() && record.lifetime_removals.is_empty() {
             validated.insert(home.function.clone(), record.contract.clone());
         } else {
             validated_lifetimes.insert(
@@ -353,6 +368,7 @@ pub(super) fn check_imports(
                 qcore_schemas::loop_lifetime::InferredLifetimeSummary {
                     contract: record.contract.clone(),
                     effects: record.lifetime_effects.clone(),
+                    removals: record.lifetime_removals.clone(),
                 },
             );
         }

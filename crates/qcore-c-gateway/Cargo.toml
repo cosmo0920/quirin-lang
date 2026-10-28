@@ -30,7 +30,7 @@ qcore-core = { path = "../qcore-core", version = "0.1.0" }
 # Card GATEWAY-RULE-API: the rule-package interface, the registry model and
 # the run-time switches the generated tables read.
 qcore-gateway-rule-api = { path = "../qcore-gateway-rule-api", version = "0.1.0" }
-qcore-schemas = { path = "../qcore-schemas", version = "22.1.0" }
+qcore-schemas = { path = "../qcore-schemas", version = "23.0.0" }
 serde = { version = "1.0.229", features = ["derive"] }
 # `unbounded_depth` (no added crate): the typed dispatch reader streams
 # Clang's JSON AST, whose statement nesting exceeds the default limit.

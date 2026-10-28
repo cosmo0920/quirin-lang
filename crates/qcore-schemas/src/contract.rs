@@ -595,6 +595,8 @@ pub struct PendingHumanReview {
 pub struct ResourceSummaryRecord {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub lifetime_effects: Vec<crate::loop_lifetime::ForwardedLifetime>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub lifetime_removals: Vec<crate::retained_by::Removal>,
     pub function: String,
     pub trust: ContractTrust,
     pub contract: ResourceFunctionContract,
@@ -612,6 +614,7 @@ impl ResourceSummaryRecord {
             trust,
             contract,
             lifetime_effects: Vec::new(),
+            lifetime_removals: Vec::new(),
         }
     }
 }
@@ -1207,7 +1210,19 @@ impl ResourceContracts {
     /// prepass can read the raw retaining table.
     pub fn validate_lifetime_partition(&self) -> Result<(), String> {
         if self.lifetime_imports.iter().any(|(name, summary)| {
-            summary.effects.is_empty()
+            (summary.effects.is_empty() && summary.removals.is_empty())
+                || (!summary.effects.is_empty() && !summary.removals.is_empty())
+                || summary.contract.result != ResourceReturnMode::None
+                || summary
+                    .contract
+                    .parameters
+                    .iter()
+                    .any(|p| !matches!(p, ResourceParameterMode::Borrowed))
+                || summary.removals.len() > 4096
+                || summary.removals.iter().any(|r| {
+                    r.retained >= summary.contract.parameters.len()
+                        || r.holder >= summary.contract.parameters.len()
+                })
                 || self.inferred_imports.contains_key(name)
                 || self.functions.contains_key(name)
                 || self.inferred_lifetimes.contains_key(name)

@@ -301,3 +301,112 @@ extern fn protocol_host(c: ptr<mut, u8>) -> unit contract { requires resource_co
         );
     }
 }
+
+#[test]
+fn ordered_removal_imports_replay_source_order_and_cannot_be_erased_or_reversed() {
+    let declarations = r#"module contract;
+extern fn add(loop: ptr<mut, u8>, event: ptr<mut, u8>) -> unit contract { requires resource_contract_v1; ensures normal resource_borrowed(loop); ensures normal resource_borrowed(event); ensures normal resource_retained_by(event, loop); ensures normal resource_return_none(); };
+extern fn del(loop: ptr<mut, u8>, event: ptr<mut, u8>) -> unit contract { requires resource_contract_v1; ensures normal resource_borrowed(loop); ensures normal resource_borrowed(event); quant live #loop: #holds(event) |-> #absent; ensures normal resource_return_none(); };
+"#;
+    let base = load_resource_contract_sources(&BTreeMap::from([(
+        "removals.qv".into(),
+        declarations.into(),
+    )]))
+    .unwrap();
+    let prelude = "struct loop { int fd; }; struct event { int state; }; struct collector { struct loop *evl; struct event event; }; void add(struct loop *, void *); void del(struct loop *, void *);";
+    let caller_text = format!(
+        "{prelude}\nvoid clean(struct loop *, struct loop *, void *); void caller(struct collector *c, struct collector *other) {{ add(c->evl, &c->event); clean(c->evl, other->evl, &c->event); }}\n"
+    );
+    let caller = prepare_translation_unit(&C11TranslationUnit {
+        source: &caller_text,
+        function_scope: LegacyFunctionScope::MainSourceDefinitions,
+        ..Default::default()
+    });
+    let digest = "a".repeat(64);
+    for (body, safe) in [
+        ("del(l, e); del(other, e);", true),
+        ("del(other, e); del(l, e);", false),
+    ] {
+        let home_text = format!(
+            "{prelude}\nvoid clean(struct loop *l, struct loop *other, void *e) {{ {body} }}\n"
+        );
+        let home = prepare_translation_unit(&C11TranslationUnit {
+            source: &home_text,
+            function_scope: LegacyFunctionScope::MainSourceDefinitions,
+            ..Default::default()
+        });
+        let exports =
+            export_cross_unit_homes(&home, &base, &BTreeSet::from(["clean".into()]), &digest)
+                .unwrap();
+        assert_eq!(exports.len(), 1);
+        let effect = exports[0].lifetime.clone().expect("ordered effect carrier");
+        assert!(effect.effects.is_empty());
+        assert_eq!(effect.removals.len(), 2);
+        let mut env = base.clone();
+        env.set_lifetime_imports(BTreeMap::from([("clean".into(), effect.clone())]));
+        env.set_cross_unit_import_identities(BTreeMap::from([(
+            "clean".into(),
+            exports[0].home.import_identity(),
+        )]));
+        env.set_link_resolution_sha256(Some(digest.clone()));
+        assert!(env.contract("clean").is_none());
+        let result = analyze_prepared_translation_unit_with_cross_unit(
+            &caller,
+            "caller",
+            &env,
+            &[exports[0].home.clone()],
+        )
+        .unwrap();
+        if safe {
+            let UnrestrictedLegacyResult::Safe(certificate) = result else {
+                panic!("ordered removals did not compose: {result:?}");
+            };
+            check_legacy_safety_certificate(&certificate).unwrap();
+            for reverse in [true, false] {
+                let mut changed = certificate.clone();
+                let mut bad = effect.clone();
+                if reverse {
+                    bad.removals.reverse();
+                } else {
+                    bad.removals.clear();
+                }
+                changed
+                    .contracts
+                    .set_lifetime_imports(BTreeMap::from([("clean".into(), bad)]));
+                assert!(check_legacy_safety_certificate(&changed).is_err());
+            }
+            let mut erased = certificate.clone();
+            erased.contracts.set_lifetime_imports(BTreeMap::new());
+            erased
+                .contracts
+                .set_inferred_imports(BTreeMap::from([("clean".into(), effect.contract.clone())]));
+            assert!(check_legacy_safety_certificate(&erased).is_err());
+            let mut seeded = certificate.clone();
+            seeded.contracts.set_lifetime_imports(BTreeMap::new());
+            seeded
+                .contracts
+                .set_cross_unit_import_identities(BTreeMap::new());
+            seeded.cross_unit_homes.clear();
+            seeded
+                .contracts
+                .insert_inferred_lifetime("clean".into(), effect.clone());
+            assert!(
+                check_legacy_safety_certificate(&seeded)
+                    .unwrap_err()
+                    .contains("local inferred lifetime")
+            );
+        } else {
+            let UnrestrictedLegacyResult::Unknown {
+                partial: Some(summary),
+                ..
+            } = result
+            else {
+                panic!("wrong-holder poison did not refuse: {result:?}");
+            };
+            assert!(
+                format!("{:?}", summary.functions["caller"].diagnostics)
+                    .contains("retention-removal-poisoned")
+            );
+        }
+    }
+}

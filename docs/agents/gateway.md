@@ -6135,7 +6135,15 @@ own anchor here.
     repair an earlier release. Same-unit ordered transport requires internal
     linkage, exact substitution and stable snapshots. Differing exit traces,
     unresolved/lifted actuals and traces beyond 4096 primitive steps withhold
-    ordered discharge. A later destroy or an unordered removal supplies none. Unsupported control flow, member stores
+    ordered discharge. A later destroy or an unordered removal supplies none.
+    Removal-only C helpers also require a separate effect-bearing record with
+    the complete ordered formal-index trace. Its source CFG is one acyclic
+    path of removal calls and exits, with stable typed parameter slots and no
+    extra effect or unresolved alias. Ordinary W4 publication cannot discard
+    removals. Mixed effect vectors, writes, additional calls and conditional
+    paths refuse this source-summary class. Imported traces are compared with
+    the independently replayed home; local inference is rederived, never
+    accepted as pre-seeded authority. Unsupported control flow, member stores
     and unread call frames withhold must-ending/prefix evidence; a custody
     contract is no heap frame proof. Exact source/type/object/snapshot
     extraction remains trust boundary 28, not a theorem about Clang.

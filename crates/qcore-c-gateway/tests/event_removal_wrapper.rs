@@ -59,7 +59,12 @@ fn the_canonical_disable_contract_ends_only_the_exact_unpoisoned_registration() 
     let good = check(
         "void caller(struct collector *c) { mk_event_add(c->evl, 1, 1, 1, &c->event); mk_event_timeout_disable(c->evl, &c->event); }",
     );
-    assert_eq!(good.functions["caller"].status, AnalysisStatus::Safe);
+    assert_eq!(
+        good.functions["caller"].status,
+        AnalysisStatus::Safe,
+        "{:?}",
+        good.functions["caller"].diagnostics
+    );
     let poisoned = check(
         "void caller(struct collector *c, struct collector *other) { mk_event_add(c->evl, 1, 1, 1, &c->event); mk_event_timeout_disable(other->evl, &c->event); mk_event_timeout_disable(c->evl, &c->event); }",
     );
@@ -74,11 +79,68 @@ fn disabling_before_release_discharges_the_callers_retained_object() {
     let good = check(&format!(
         "{prefix} mk_event_timeout_disable(loop, event); drop(event); mk_event_loop_destroy(loop); }}"
     ));
-    assert_eq!(good.functions["caller"].status, AnalysisStatus::Safe);
+    assert_eq!(
+        good.functions["caller"].status,
+        AnalysisStatus::Safe,
+        "{:?}",
+        good.functions["caller"].diagnostics
+    );
     let bad = check(&format!(
         "{prefix} drop(event); mk_event_timeout_disable(loop, event); mk_event_loop_destroy(loop); }}"
     ));
     let row = &bad.functions["caller"];
     assert_eq!(row.status, AnalysisStatus::Unknown);
     assert!(format!("{:?}", row.diagnostics).contains("retention-released-while-held"));
+}
+
+#[test]
+fn inferred_removal_only_helpers_transport_order_in_the_actual_caller() {
+    let definitions = "static void first(struct loop *l, void *e) { mk_event_timeout_disable(l, e); } static void exact(struct loop *l, void *e) { first(l, e); } static void wrong_then_right(struct loop *l, struct loop *other, void *e) { first(other, e); first(l, e); }";
+    let good = check(&format!(
+        "{definitions} void caller(struct collector *c) {{ mk_event_add(c->evl, 1, 1, 1, &c->event); exact(c->evl, &c->event); }}"
+    ));
+    assert_eq!(
+        good.functions["caller"].status,
+        AnalysisStatus::Safe,
+        "{:?}",
+        good.functions["caller"].diagnostics
+    );
+    let bad = check(&format!(
+        "{definitions} void caller(struct collector *c, struct collector *other) {{ mk_event_add(c->evl, 1, 1, 1, &c->event); wrong_then_right(c->evl, other->evl, &c->event); }}"
+    ));
+    let row = &bad.functions["caller"];
+    assert_eq!(row.status, AnalysisStatus::Unknown);
+    assert!(format!("{:?}", row.diagnostics).contains("retention-removal-poisoned"));
+}
+
+#[test]
+fn ordered_removal_helpers_never_repair_early_release_or_erase_mixed_effects() {
+    let definitions =
+        "static void exact(struct loop *l, void *e) { mk_event_timeout_disable(l, e); }";
+    let prefix = "void caller(void) { struct loop *loop = mk_event_loop_create(1); if (!loop) return; void *event = allocate(16); if (!event) { mk_event_loop_destroy(loop); return; } mk_event_add(loop, 1, 1, 1, event);";
+    let good = check(&format!(
+        "{definitions} {prefix} exact(loop, event); drop(event); mk_event_loop_destroy(loop); }}"
+    ));
+    assert_eq!(
+        good.functions["caller"].status,
+        AnalysisStatus::Safe,
+        "{:?}",
+        good.functions["caller"].diagnostics
+    );
+    let early = check(&format!(
+        "{definitions} {prefix} drop(event); exact(loop, event); mk_event_loop_destroy(loop); }}"
+    ));
+    assert_eq!(early.functions["caller"].status, AnalysisStatus::Unknown);
+    assert!(
+        format!("{:?}", early.functions["caller"].diagnostics)
+            .contains("retention-released-while-held")
+    );
+    let mixed = check(&format!(
+        "{definitions} static void mixed(struct loop *l, void *e) {{ mk_event_timeout_disable(l, e); drop(e); }} {prefix} mixed(loop, event); mk_event_loop_destroy(loop); }}"
+    ));
+    assert_ne!(mixed.functions["caller"].status, AnalysisStatus::Safe);
+    let volatile = check(&format!(
+        "typedef void * volatile event_ptr; static void changing(struct loop *l, event_ptr e) {{ mk_event_timeout_disable(l, e); }} {prefix} changing(loop, event); drop(event); mk_event_loop_destroy(loop); }}"
+    ));
+    assert_ne!(volatile.functions["caller"].status, AnalysisStatus::Safe);
 }

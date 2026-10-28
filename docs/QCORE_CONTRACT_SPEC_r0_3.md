@@ -2070,6 +2070,14 @@ independent source replay must reproduce the exact home custody contract and
 lifetime effects, with caller-expected home identities and an explicit linked
 resolution premise. Missing or altered effects cannot become a plain borrowed
 summary. Recursive imported-home chains and guarded mixtures remain refused.
+Removal-only source helpers retain their ordered formal-index effects outside
+the ordinary borrowed map. The admitted body has one acyclic path of removal
+calls and exits, exact unmodified formal operands, nonvolatile/non-atomic
+parameter slots and no additional frame-changing operations. Branches, aliases,
+writes, releases and mixed registration/removal classes remain unsupported.
+A supplied local-inference table is not source authority: issuance and replay
+rederive local summaries and compare imported traces against their exact homes.
+
 
 
 ## C05. Manifests and immutable assumptions
