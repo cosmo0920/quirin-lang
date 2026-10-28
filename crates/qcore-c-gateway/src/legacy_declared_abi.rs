@@ -748,28 +748,19 @@ pub(crate) fn declares_object_pointer_result(texts: &[&str], name: &str) -> bool
 }
 
 /// Rule 36: positively matching depth-one object-pointer result/formal types.
+/// Card RULE36-PILOT: the decision is the package's
+/// (`rule_36_exact_formal_return::source::pointer_formals`); this reads the
+/// declaration for it.
 pub(super) fn exact_pointer_formals(texts: &[&str], name: &str) -> BTreeSet<usize> {
     let declarations = read_c_declarations(texts, &BTreeSet::from([name]));
     let Some(Ok(declaration)) = declarations.get(name) else {
         return BTreeSet::new();
     };
-    let Some(result) = &declaration.result else {
-        return BTreeSet::new();
-    };
-    if declaration.unspecified
-        || result.len() != 1
-        || !result
-            .iter()
-            .all(|ty| matches!(*ty, "ptr<mut, u8>" | "ptr<const, u8>"))
-    {
-        return BTreeSet::new();
-    }
-    declaration
-        .parameters
-        .iter()
-        .enumerate()
-        .filter_map(|(index, ty)| (ty.as_ref() == Some(result)).then_some(index))
-        .collect()
+    rule_36_exact_formal_return::source::pointer_formals(
+        declaration.unspecified,
+        declaration.result.as_ref(),
+        &declaration.parameters,
+    )
 }
 
 /// Compose two readings of the same name in one unit.

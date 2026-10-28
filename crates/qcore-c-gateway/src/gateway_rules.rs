@@ -113,10 +113,39 @@ mod tests {
     fn the_registry_keeps_the_api_laws_and_every_rule_is_switchable() {
         assert_eq!(check_registry(REGISTRY), Ok(()));
         assert!(REGISTRY.iter().all(|entry| entry.off == Off::Refuses));
-        assert!(
-            REGISTRY
+        // A body lives in the gateway until its migration card moves it to
+        // its own package under crates/gateway-rules/, which the gateway
+        // hosts (card RULE36-PILOT: rule 36).
+        for entry in REGISTRY {
+            assert!(
+                entry.crate_name == "qcore-c-gateway"
+                    || HOSTED.contains(&(entry.id, entry.crate_name)),
+                "rule {} names crate {}, which the gateway does not host",
+                entry.id,
+                entry.crate_name
+            );
+        }
+        for (id, crate_name) in HOSTED {
+            let entry = REGISTRY
                 .iter()
-                .all(|entry| entry.crate_name == "qcore-c-gateway")
+                .find(|entry| entry.id == *id)
+                .expect("a hosted package is registered");
+            assert_eq!(entry.crate_name, *crate_name);
+        }
+    }
+
+    /// The rule packages the gateway hosts: (registry id, crate).
+    const HOSTED: &[(&str, &str)] = &[(
+        rule_36_exact_formal_return::ID,
+        "rule-36-exact-formal-return",
+    )];
+
+    #[test]
+    fn every_hosted_package_answers_under_its_registry_id() {
+        use qcore_gateway_rule_api::traits::RulePackage;
+        assert_eq!(
+            rule_36_exact_formal_return::ExactFormalReturnRoute.id(),
+            "36"
         );
     }
 

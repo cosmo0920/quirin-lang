@@ -29,6 +29,13 @@ const ALLOWED: &[(&str, &[&str])] = &[
         "crates/qcore-gateway-rule-api",
         &["qcore-schemas", "qcore-contract"],
     ),
+    // Card RULE36-PILOT: rule 36's package. A package under
+    // `crates/gateway-rules/` depends on the rule API only (plan seam B),
+    // never on the gateway or another rule package.
+    (
+        "crates/gateway-rules/rule-36-exact-formal-return",
+        &["qcore-gateway-rule-api"],
+    ),
     (
         "crates/qcore-c-gateway",
         &[
@@ -36,6 +43,8 @@ const ALLOWED: &[(&str, &[&str])] = &[
             "qcore-core",
             "qcore-gateway-rule-api",
             "qcore-schemas",
+            // Card RULE36-PILOT: the gateway hosts rule 36's package.
+            "rule-36-exact-formal-return",
         ],
     ),
     (

@@ -215,3 +215,20 @@ off = "refuses"
 placements = [
   { position = "typed-reader", arm = "scalar-element-address", route = "scalar_element_address::shape_admitted" },
 ]
+
+# Card RULE36-PILOT: rule 36's body lives in its own package. Its one
+# placement is the head of `return_statement` (route map §4 step 2, which
+# predates the rule, so it has no consultation order): in the derived-result
+# CFG only, a confirmed bare return of the original borrowed formal. The same
+# switch gates the package's lexical candidate (the derived CFG pre-filter and
+# the neutral summary's refinement) and its exit classifier, which off
+# refuses; every part only removes admissions when off.
+[[rule]]
+id = "36"
+crate = "rule-36-exact-formal-return"
+lean = ["QCore.ExactFormalReturn", "QCore.ExactFormalReturnSwitch"]
+document = "docs/agents/rules/36.md"
+off = "refuses"
+placements = [
+  { position = "return-route", arm = "exact-formal-return", route = "route::decide" },
+]

@@ -208,4 +208,15 @@ pub const REGISTRY: &[RuleEntry] = &[
         reason_keys: &[],
         off: Off::Refuses,
     },
+    RuleEntry {
+        id: "36",
+        crate_name: "rule-36-exact-formal-return",
+        placements: &[
+            Placement { position: Position::ReturnRoute, order: None, arm: Some("exact-formal-return"), route: "route::decide" },
+        ],
+        lean: &["QCore.ExactFormalReturn", "QCore.ExactFormalReturnSwitch"],
+        document: "docs/agents/rules/36.md",
+        reason_keys: &[],
+        off: Off::Refuses,
+    },
 ];

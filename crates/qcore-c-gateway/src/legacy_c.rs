@@ -5456,22 +5456,12 @@ impl Parser<'_> {
     /// and `;`. Card CG02-ELABORATION-CORE: also the lowering of the value
     /// operand the elaborator hands back after sequencing a comma (rule 10s).
     fn return_statement(&mut self, expression: Vec<Token>, line: usize) -> Statement {
-        if self.admit_derived_returns
-            && expression.len() == 1
-            && let Some(parameter) = self.exact_formal_return(&expression[0].text, line)
-        {
-            return Statement::Return {
-                line,
-                writes: self.expression_writes(&expression),
-                expression_supported: true,
-                returned_place: None,
-                returned_evaluation: Some(Box::new(LegacyInstruction::ExactFormalReturn {
-                    source: expression[0].text.clone(),
-                    parameter,
-                })),
-                returned_evaluation_escapes: false,
-                returns_null_constant: false,
-            };
+        // Rule 36 (card RULE36-PILOT: package `rule-36-exact-formal-return`),
+        // the first return route: in the derived-result CFG only, a confirmed
+        // bare return of the original borrowed formal. Off or refused, the
+        // return keeps the lowering below.
+        if let Some(exact) = self.exact_formal_return_route(&expression, line) {
+            return exact;
         }
         {
             {
