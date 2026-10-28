@@ -2129,9 +2129,12 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // Eight API functions plus two resource type declarations: 332 -> 342 non-v1.
     // Setter effect models add 15 non-v1 declarations: 342 -> 357.
     // Main adds interpreted writev and thrd_current: 495 -> 497.
+    // EVENT-CALLER-REMOVAL adds the exact mk_event_timeout_disable removal
+    // declaration to the existing Monkey event-loop module: 497 -> 498.
+    // Selected modules and rejected declarations are unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (66, 497, 365)
+        (66, 498, 365)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every
@@ -2180,7 +2183,9 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // Card FB-TEARDOWN-DESTROY-DECLARATIONS: the ten Fluent Bit destroyers
     // with member-path states (`fluent_bit/teardown_destroy.qv`; the other
     // four are in the function map): 96 -> 106.
-    assert_eq!(loaded.retaining().len(), 106);
+    // EVENT-CALLER-REMOVAL adds one withheld removal declaration: 106 -> 107.
+    // It must not become an ordinary borrow-only function-map entry.
+    assert_eq!(loaded.retaining().len(), 107);
     assert_eq!(
         loaded.functions().len()
             + loaded.pending_review().len()

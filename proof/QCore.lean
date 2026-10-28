@@ -141,6 +141,7 @@ import QCore.EventCompositionContext
 import QCore.EventDriven
 import QCore.EventObservation
 import QCore.EventPayloadBoundary
+import QCore.EventRemovalWrapper
 import QCore.ExactFormalReturn
 import QCore.ExecutableModel
 import QCore.ExecutionCoverage

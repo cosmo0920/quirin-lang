@@ -1,0 +1,31 @@
+{
+  "schema": "event-caller-capability-review/1",
+  "source_revision": "6398ddd7c",
+  "new_boundary": "mk_event_timeout_disable forwards the exact mk_event_del removal through a pinned declared API contract",
+  "automatic_body_proof_added": false,
+  "cross_unit_lifetime_imports": {
+    "status": "unsupported; fail-closed",
+    "source": "crates/qcore-c-gateway/src/legacy_cross_unit.rs",
+    "export_refusal_line": 113,
+    "independent_replay_refusal_line": 311
+  },
+  "ordered_cross_function_removal": {
+    "status": "not discharged by the current set abstraction",
+    "source": "crates/qcore-c-gateway/src/loop_lifetime_summary.rs",
+    "ordered_trace_limit_line": 198,
+    "release_requirement_line": 873
+  },
+  "conditional_host_record_correlation": {
+    "status": "requires a checked record.instance == hosting actual relation",
+    "source": "crates/qcore-c-gateway/src/loop_lifetime_summary.rs",
+    "declared_assumption_line": 1024
+  },
+  "tracked_remaining_obligations": [
+    "FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME",
+    "RETENTION-DERIVED-LOOP-PATH-EQUALITIES",
+    "RETENTION-PATH-LOOP-DESTROY-ADMISSION",
+    "MK-EVENT-DESCRIPTOR-CUSTODY"
+  ],
+  "scope": "Property/profile/source-bounded declared contract and caller controls; no complete Fluent Bit lifetime closure or descriptor-lifecycle proof",
+  "removal_premise": "The direct wrapper inherits mk_event_del's declared removal assumption. No new automatic proof of backend failure or cleanup paths is claimed."
+}

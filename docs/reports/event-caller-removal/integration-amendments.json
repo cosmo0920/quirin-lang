@@ -1,0 +1,17 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "EVENT-CALLER-REMOVAL",
+  "base": "b403cd4deddaab711f446f383270363aca39a2af",
+  "measured_tip": "58e80090d",
+  "increment_paragraph": "**EVENT-CALLER-REMOVAL (2026-10-28).** The [card](../../reports/event-caller-removal/README.md) extends exact caller lifetime composition through the canonical `mk_event_timeout_disable` boundary, whose complete pinned body forwards to `mk_event_del`. The declaration ends only the exact unpoisoned object/loop registration; wrong-holder removal and release-before-disable remain Unknown. Canonical-contract Rust controls independently replay every Safe certificate, and three audited Lean theorems match removal, poison persistence and holder survival. The Monkey inventory deliberately grows 9/51 to 10/56 functions/clauses, with generated source locks for all three prepared revisions. This is a declared-contract increment, not automatic proof of arbitrary backend removal, descriptor lifecycle or the complete Fluent Bit collector chain. Cross-unit lifetime imports, ordered summary effects, collector identity, per-record loop equality and all-path join/destroy ordering remain open.",
+  "status_paragraph": "EVENT-CALLER-REMOVAL adds the pinned `mk_event_timeout_disable` removal contract and caller-ordering controls with matching Lean. The wrapper transports the existing `mk_event_del` effect across a declared API boundary; source review and pins remain assumptions. No complete caller-lifetime closure or new native Safe gain is claimed. Retained/replayed lifetime imports, ordered removals, collector identity, per-record loop equality, threaded teardown and descriptor custody remain open. [Report](reports/event-caller-removal/README.md).",
+  "profiles": [],
+  "ledger": [
+    {
+      "id": "FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME",
+      "operation": "append",
+      "text": "EVENT-CALLER-REMOVAL adds the canonical pinned mk_event_timeout_disable removal boundary and independently replayed caller-order controls. It preserves wrong-holder poisoning and release-before-removal refusals. This discharges one declared wrapper boundary only; retained/replayed cross-unit lifetime effects, ordered removal summaries, collector-id resolution, conditional per-record host/loop correlation and all-path join/destroy ordering remain Open. No descriptor-lifecycle clause or automatic body proof is added.",
+      "source": "docs/reports/event-caller-removal/README.md"
+    }
+  ]
+}

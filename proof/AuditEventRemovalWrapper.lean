@@ -1,0 +1,5 @@
+import QCore.EventRemovalWrapper
+
+#print axioms QCore.EventRemovalWrapper.disable_ends_a_fresh_exact_registration
+#print axioms QCore.EventRemovalWrapper.disable_keeps_an_already_poisoned_registration
+#print axioms QCore.EventRemovalWrapper.disable_does_not_destroy_its_holder
