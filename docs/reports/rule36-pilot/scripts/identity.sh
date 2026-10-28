@@ -8,6 +8,10 @@
 # against PREDICTION.md (`--declared`: no row moves), plus `tip-off`, the same
 # TIP binary under QCORE_GATEWAY_RULES_OFF=36 (rule 36's contribution,
 # tip-off -> tip). Wall-time quota 24 h (GATEWAY-RULE-API hit the 10 h one).
+# The routes come from inputs/live.json, as the landing's publication spelled
+# them: a published baseline is reused only when each route's digest is
+# equal, and `--profile` spells the eight-home link map at its
+# contract/evaluations/ path, so identity-1 (with --profile) was refused.
 # Usage: identity.sh WORKTREE OUT_DIR BASE_SHA TIP_REV   (OUT_DIR fresh, outside the worktree)
 set -u
 W=$1
@@ -18,7 +22,7 @@ cd "$W" || exit 2
 date -u +%Y-%m-%dT%H:%M:%SZ >"$OUT.start"
 "$W/target/release/quirin-audit" --plugin-path "$W/target/release" --output "$OUT" \
   --timeout-ms 86400000 measure \
-  --profile eight-home --profile fluent-bit-system --profile fluent-bit-tail-pause \
+  --inputs crates/quirin-audit-plugin-measure/inputs/live.json \
   --side base=baseline:"$BASE" --side tip=rev:"$TIP" --rules-off 36 \
   --declared docs/reports/rule36-pilot/PREDICTION.md \
   --build-commit "$BASE" \
