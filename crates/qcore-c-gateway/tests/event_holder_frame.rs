@@ -77,6 +77,8 @@ fn loop_snapshot_identity_is_exact_and_does_not_come_from_collector_type_or_id()
 #[test]
 fn ordinary_borrow_and_mutating_or_escaping_helpers_supply_no_holder_frame() {
     for (body, helper) in [
+        ("starts(c); opaque(c);", START),
+        ("starts(c); c->evl = other->evl;", START),
         (
             "add(c->evl, &c->event); opaque(c); del(c->evl, &c->event);",
             "",

@@ -723,6 +723,18 @@ impl Parser<'_> {
                 else {
                     return Some(refuse(self, "lifetime-precondition-undischarged: inferred effect actual is not an exact caller formal".into()));
                 };
+                if !body.as_deref().is_some_and(|body| {
+                    framed_path_stable(
+                        self.tokens,
+                        &self.typed_path_function,
+                        body,
+                        &root,
+                        &effect.registration.holder.fields,
+                        self.contracts,
+                    )
+                }) {
+                    return Some(refuse(self, "lifetime-precondition-undischarged: outgoing holder has no complete caller preservation frame".into()));
+                }
                 let Some(proof) = crate::loop_lifetime_source::substitute_forwarded_call(
                     &self.typed_path_function,
                     function,

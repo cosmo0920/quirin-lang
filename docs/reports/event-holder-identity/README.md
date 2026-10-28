@@ -11,7 +11,9 @@ complete straight-line body has no stores or unread effects, and every use of
 the root passes the original member-path stability census or an already
 source-derived internal callee frame. Frames compose bottom up. A whole-record
 caller obtains a frame only from the exact typed direct actual and an internally
-linked helper or independently replayed external home. Ordinary borrowed
+linked helper or independently replayed external home. The complete caller body must preserve
+the outgoing holder too: a later opaque whole-record call or holder write
+withholds forwarding. Ordinary borrowed
 custody remains insufficient. Both root readers can consult the framed record's
 custody component, while actual calls still apply the full lifetime hook.
 
@@ -44,8 +46,8 @@ use premise, declared API semantics, link resolution and Rust/Lean correspondenc
 remain assumptions.
 
 The focused source checkpoints retain commands and outputs under
-`private/` in this worktree: frame-test-1 through frame-test-6, frame-clippy-1
-through frame-clippy-3, initial-check.log and lean-frame-2.log. The final focused
+`private/` in this worktree: frame-test-1 through frame-test-7, frame-clippy-1
+through frame-clippy-4, initial-check.log and lean-frame-2.log. The final focused
 run has 9 tests passed (5 cross-unit, 4 holder/identity); the matching Lean audit
 passes all 14 theorem checks. Initial focused attempts exposed the two opaque
 root readers and tests incorrectly treating a forwarded poison obligation as a
@@ -55,7 +57,9 @@ preserves and asserts the independent UnknownAlias refusal. Clippy's initial
 argument-count and single-match failures were corrected without suppression.
 The first submodule setup failed on sandbox DNS, then on disk exhaustion;
 the host setup succeeded at the pinned d82464a277d0f42703702c4dfd9af6af38595a83.
-No failed attempt counts as validation.
+No failed attempt counts as validation. The initial native/gate admission
+waiters were interrupted before starting either measurement so that the complete
+caller-frame correction is included in the final measured source.
 
 Open follow-ons remain on FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME: production
 collector-by-id selection, conditional per-record instance/host/loop correlation,
