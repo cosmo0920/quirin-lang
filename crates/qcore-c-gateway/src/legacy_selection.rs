@@ -247,7 +247,7 @@ fn same_item_detach(contracts: &ResourceContracts, detach: &str) -> bool {
         && contract.parameter_kind(1) == ResourceKind::Heap
         && !contract.has_container_effect()
         && contracts.lifetime_contract(detach).is_none()
-        && !contracts.inferred_lifetimes().contains_key(detach)
+        && !contracts.lifetime_summary(detach).is_some()
         && !contracts.retaining().contains_key(detach)
         && !contracts.has_guarded_interface(detach);
     shape
@@ -279,7 +279,7 @@ fn borrowed_lookup(contracts: &ResourceContracts, lookup: &str) -> bool {
                 }
             && !contract.has_container_effect()
     }) && contracts.lifetime_contract(lookup).is_none()
-        && !contracts.inferred_lifetimes().contains_key(lookup)
+        && !contracts.lifetime_summary(lookup).is_some()
 }
 
 fn nullable_release(contracts: &ResourceContracts, release: &str) -> bool {
@@ -289,7 +289,7 @@ fn nullable_release(contracts: &ResourceContracts, release: &str) -> bool {
             && contract.parameter_kind(0) == ResourceKind::Heap
             && !contract.has_container_effect()
     }) && contracts.lifetime_contract(release).is_none()
-        && !contracts.inferred_lifetimes().contains_key(release)
+        && !contracts.lifetime_summary(release).is_some()
         && !contracts.retaining().contains_key(release)
         && !contracts.has_guarded_interface(release)
         && contracts.relational_contract(release).is_none()

@@ -445,7 +445,7 @@ pub(super) fn settle_calls(
             || retention.is_some()
             || !produced_sites.is_empty()
             || contracts.lifetime_contract(function).is_some()
-            || contracts.inferred_lifetimes().contains_key(function)
+            || contracts.lifetime_summary(function).is_some()
             || contract.parameters
                 != [
                     ResourceParameterMode::Borrowed,

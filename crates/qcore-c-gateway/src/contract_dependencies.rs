@@ -455,7 +455,7 @@ fn in_force(environment: &ResourceContracts, name: &str) -> bool {
         || environment.relational().contains_key(name)
         || environment.retaining().contains_key(name)
         || environment.guarded_retaining().contains_key(name)
-        || environment.inferred_lifetimes().contains_key(name)
+        || environment.lifetime_summary(name).is_some()
 }
 
 /// Whether `environment` holds `name` for a human act.

@@ -327,7 +327,7 @@ fn source_frame(
                     if contracts.relational_contract(function).is_some()
                         || contracts.retaining_contract(function).is_some()
                         || contracts.lifetime_contract(function).is_some()
-                        || contracts.inferred_lifetimes().contains_key(function)
+                        || contracts.lifetime_summary(function).is_some()
                         || !contract.container_effects.is_empty()
                         || !contract.counted_users.is_empty()
                         || contract.parameters.iter().any(|mode| {

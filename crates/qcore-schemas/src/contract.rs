@@ -754,6 +754,10 @@ pub struct ResourceContracts {
     declared_guarded: BTreeSet<String>,
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     inferred_lifetimes: BTreeMap<String, crate::loop_lifetime::InferredLifetimeSummary>,
+    /// Cross-unit effects remain separate from ordinary borrowed imports.
+    /// Gateway admission replays the exact home before consuming these records.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    lifetime_imports: BTreeMap<String, crate::loop_lifetime::InferredLifetimeSummary>,
     /// Card CONTRACT-SUPERSESSION (contract spec §C06.6): per function, the
     /// declarations a newer-stamped declaration superseded, retained with
     /// their texts. The declaration in force is the function's ordinary entry.
@@ -788,6 +792,7 @@ impl ResourceContracts {
             guarded_retaining: BTreeMap::new(),
             declared_guarded: BTreeSet::new(),
             inferred_lifetimes: BTreeMap::new(),
+            lifetime_imports: BTreeMap::new(),
             superseded: BTreeMap::new(),
             contract_conflict: BTreeMap::new(),
         }
@@ -839,6 +844,33 @@ impl ResourceContracts {
     /// Install the contracts of independently replayable cross-unit imports.
     /// The gateway certificate checker refuses a nonempty import map without
     /// matching home evidence; this setter conveys no authority by itself.
+    pub fn set_lifetime_imports(
+        &mut self,
+        imports: BTreeMap<String, crate::loop_lifetime::InferredLifetimeSummary>,
+    ) {
+        self.lifetime_imports = imports;
+    }
+    #[must_use]
+    pub fn lifetime_imports(
+        &self,
+    ) -> &BTreeMap<String, crate::loop_lifetime::InferredLifetimeSummary> {
+        &self.lifetime_imports
+    }
+    #[must_use]
+    pub fn lifetime_summary(
+        &self,
+        name: &str,
+    ) -> Option<&crate::loop_lifetime::InferredLifetimeSummary> {
+        self.inferred_lifetimes
+            .get(name)
+            .or_else(|| self.lifetime_imports.get(name))
+    }
+    pub fn lifetime_summaries(
+        &self,
+    ) -> impl Iterator<Item = (&String, &crate::loop_lifetime::InferredLifetimeSummary)> {
+        self.inferred_lifetimes.iter().chain(&self.lifetime_imports)
+    }
+
     pub fn set_inferred_imports(&mut self, imports: BTreeMap<String, ResourceFunctionContract>) {
         self.inferred_imports = imports;
     }
@@ -875,6 +907,7 @@ impl ResourceContracts {
     /// replays every imported home and its link-resolution premise.
     pub fn carry_cross_unit_imports(&mut self, from: &Self) {
         self.inferred_imports = from.inferred_imports.clone();
+        self.lifetime_imports = from.lifetime_imports.clone();
         self.cross_unit_import_identities = from.cross_unit_import_identities.clone();
         self.link_resolution_sha256 = from.link_resolution_sha256.clone();
     }
@@ -1173,7 +1206,14 @@ impl ResourceContracts {
     /// Enforce the partition even for deserialized inputs, before any legacy
     /// prepass can read the raw retaining table.
     pub fn validate_lifetime_partition(&self) -> Result<(), String> {
-        if self.retaining.values().any(|c| c.is_condition_bearing())
+        if self.lifetime_imports.iter().any(|(name, summary)| {
+            summary.effects.is_empty()
+                || self.inferred_imports.contains_key(name)
+                || self.functions.contains_key(name)
+                || self.inferred_lifetimes.contains_key(name)
+                || self.has_guarded_interface(name)
+                || self.retaining.contains_key(name)
+        }) || self.retaining.values().any(|c| c.is_condition_bearing())
             || self.declared_guarded.iter().any(|name| {
                 self.functions.contains_key(name)
                     || self.inferred_lifetimes.contains_key(name)

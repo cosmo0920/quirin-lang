@@ -56,6 +56,8 @@ pub struct CallSite {
 }
 #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct FunctionFacts {
+    #[serde(default)]
+    pub internal_linkage: bool,
     pub tokens_sha256: String,
     pub complete_straight_line: bool,
     pub parameters: Vec<String>,
@@ -284,6 +286,11 @@ fn function(
         complete_straight_line = false;
     }
     let mut out = FunctionFacts {
+        internal_linkage: node["storageClass"].as_str() == Some("static")
+            && !name.starts_with("__")
+            && !name
+                .strip_prefix('_')
+                .is_some_and(|s| s.starts_with(|c: char| c.is_ascii_uppercase())),
         parameters,
         complete_straight_line,
         ..Default::default()
@@ -1483,7 +1490,8 @@ pub(crate) fn forwarding_at_source_call(
     None
 }
 
-/// Import only a source-rederived same-unit outgoing registration. Bounded
+/// Import only a source-rederived outgoing registration. Cross-unit effects
+/// require a separately retained home and exact replayed import record. Bounded
 /// substitution requires an exact current caller formal and unchanged members;
 /// no lookup by callee spelling alone or closed-type lifting establishes it.
 pub(crate) fn substitute_forwarded_call(
@@ -1496,7 +1504,7 @@ pub(crate) fn substitute_forwarded_call(
 ) -> Option<crate::loop_lifetime_summary::ForwardedLifetime> {
     use crate::loop_lifetime_summary::{Path as SymbolicPath, Root};
     let source = crate::typed_access_path::current_lifetime_source(contracts).ok()?;
-    if !source.open.is_empty() || !source.functions.contains_key(callee) {
+    if !source.open.is_empty() {
         return None;
     }
     let body = source.functions.get(caller)?;
@@ -1513,8 +1521,19 @@ pub(crate) fn substitute_forwarded_call(
     let Root::Formal { scope, index } = &effect.registration.object.root else {
         return None;
     };
+    let local_home =
+        source.functions.contains_key(callee) && *scope == format!("{}:{callee}", source.identity);
+    let imported_home = !source.functions.contains_key(callee)
+        && contracts
+            .lifetime_imports()
+            .get(callee)
+            .is_some_and(|s| s.effects.contains(effect))
+        && contracts
+            .cross_unit_import_identities()
+            .contains_key(callee)
+        && contracts.link_resolution_sha256().is_some();
     if effect.registration.holder.root != effect.registration.object.root
-        || *scope != format!("{}:{callee}", source.identity)
+        || !(local_home || imported_home)
     {
         return None;
     }

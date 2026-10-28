@@ -271,7 +271,7 @@ impl CustodyDerivation {
                     ContractTrust::InferredValidated,
                     contract.clone(),
                 );
-                if let Some(lifetime) = self.environment.inferred_lifetimes().get(name) {
+                if let Some(lifetime) = self.environment.lifetime_summary(name) {
                     record.lifetime_effects = lifetime.effects.clone();
                 }
                 record

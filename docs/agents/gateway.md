@@ -172,6 +172,12 @@ which is not a second authority.
     call uncontracted. Checkpoint composition and contracts-only routes
     refuse the opt-in mode. `QCore.CrossUnitSummary`;
     [report](../reports/w44-cross-unit-summary/README.md).
+    The bounded S3 extension retains outgoing lifetime effects separately from
+    ordinary imports, compares them with the independently replayed Safe home
+    and its W4 record, and preserves exact home/link identities at the caller.
+    Unaware consumers still see no ordinary borrowed contract. Guarded mixtures,
+    imported-home chains and missing effects remain refused; see
+    [ordered lifetime replay](../reports/event-ordered-lifetime/README.md).
 
 <a id="constraint-5"></a>
 
@@ -6111,8 +6117,11 @@ own anchor here.
     Callers must discharge or forward it, and unresolved roots remain
     Unknown. Source/configuration/function-qualified summary and certificate
     replay retain/rederive these effects; ordinary W4 records and declared
-    borrow-only custody cannot erase them. Cross-unit import refuses until
-    the richer evidence can be retained and replayed.
+    borrow-only custody cannot erase them. Cross-unit lifetime import uses a separate effect-bearing channel: the
+    home raw/marked/preprocessed source, request, environment and linked-program
+    identities are retained and independently rederived before the exact
+    outgoing effects are consumed. An ordinary borrowed import cannot replace
+    that record; missing, altered or duplicate homes/effects refuse.
 
     Every available registration/store site participates in protocol standing:
     a contradiction withdraws the clause; an uncheckable closure is an
@@ -6120,9 +6129,13 @@ own anchor here.
     An unused footprint supplies no premise to ordinary custody/callback use.
     Holder equality is still derived-only (D3). Closed allocation candidates
     supply neither runtime equality nor universal destroy evidence. Call
-    composition retains may-release ordering: only a concrete must-destroy
-    proved before release can discharge an incoming record, never a later
-    destroy or an unordered removal. Unsupported control flow, member stores
+    composition retains may-release ordering: a concrete must-destroy proved before release can discharge an incoming
+    record. A bounded complete ordered trace may additionally replay exact
+    removals against the incoming poison state; it cannot clear poison or
+    repair an earlier release. Same-unit ordered transport requires internal
+    linkage, exact substitution and stable snapshots. Differing exit traces,
+    unresolved/lifted actuals and traces beyond 4096 primitive steps withhold
+    ordered discharge. A later destroy or an unordered removal supplies none. Unsupported control flow, member stores
     and unread call frames withhold must-ending/prefix evidence; a custody
     contract is no heap frame proof. Exact source/type/object/snapshot
     extraction remains trust boundary 28, not a theorem about Clang.

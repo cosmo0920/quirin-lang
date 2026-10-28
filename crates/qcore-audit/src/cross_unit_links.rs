@@ -115,6 +115,7 @@ impl LinkMap {
         }
         let mut environment = loaded.clone();
         let mut imports = BTreeMap::<String, ResourceFunctionContract>::new();
+        let mut lifetimes = BTreeMap::new();
         let mut identities = BTreeMap::<String, CrossUnitImportIdentity>::new();
         let mut homes = Vec::new();
         for (name, claimed_unit) in &self.homes {
@@ -128,13 +129,18 @@ impl LinkMap {
                     .is_some_and(|rows| rows == std::slice::from_ref(unit))
                 && !loaded.functions().contains_key(name)
             {
-                imports.insert(name.clone(), candidate.contract.clone());
+                if let Some(lifetime) = &candidate.lifetime {
+                    lifetimes.insert(name.clone(), lifetime.clone());
+                } else {
+                    imports.insert(name.clone(), candidate.contract.clone());
+                }
                 identities.insert(name.clone(), candidate.home.import_identity());
                 homes.push(candidate.home.clone());
             }
         }
         environment.set_link_resolution_sha256(Some(self.digest.clone()));
         environment.set_inferred_imports(imports);
+        environment.set_lifetime_imports(lifetimes);
         environment.set_cross_unit_import_identities(identities);
         (environment, homes)
     }
