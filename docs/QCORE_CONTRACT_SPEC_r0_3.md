@@ -2100,6 +2100,16 @@ custody and alias-liveness obligations are not discharged by this path identity.
 Source extraction, declared API semantics and P-HOLDER-PATH-STABLE's original
 member-use premise remain attributed assumptions.
 
+A collector source-audit import is separate from a lifetime summary. It may
+identify the first key-matching entry in one exact owner list and the
+constructor-local instance/conditional-loop store relation, with closed
+subobject initialization frames. A successful replay validates that bounded
+source reading only. It does not prove the list-membership/instance-field
+invariant, uniqueness of ids, cross-call list stability, enduring record/flag
+stability, caller config equality, nonnullness or caller lifetime closure.
+These reports grant no ordinary borrowed contract or automatic Safe permission;
+all existing lifetime, alias/liveness and poison obligations remain in force.
+
 ## C05. Manifests and immutable assumptions
 
 A resource manifest has the following existing version-1 shape:

@@ -430,3 +430,6 @@ mod call_free_condition_reads;
 
 /// Bounded complete recorded-site source replay; no verdict consumer.
 pub mod reading_site_domain;
+
+// Source-checked collector selection and constructor-local conditional identity.
+pub mod collector_identity;
