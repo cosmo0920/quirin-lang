@@ -1,0 +1,17 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "EVENT-HOLDER-IDENTITY",
+  "base": "153fd9cc3",
+  "measured_tip": "348a2081a220e17fe049083752544a623a7f2ad4",
+  "increment_paragraph": "**EVENT-HOLDER-IDENTITY (2026-10-29).** The [card](../../reports/event-holder-identity/README.md) carries source-checked whole-record holder frames through exact typed internal calls and independently replayed external homes, composing internal frames bottom up. Schema 24 preserves frames outside ordinary borrowed summaries. Exact immutable collector copies and loop snapshots retain their original formal-rooted identity; another record, formal, loop member or numeric id supplies none. Poison remains an explicit outgoing obligation. Collector-copy alias-liveness refusals remain Unknown even when lifetime identity discharges. Sixteen audited Lean checks accompany the source controls. Source extraction, existing member-use stability, declared API semantics, link resolution and Rust/Lean correspondence remain assumptions. Production collector search, conditional host/loop correlation, member-operand removal wrappers, imported-home chains, threaded teardown, descriptors and automatic backend-body proof remain open. Native and gate measurements belong to the report's completed checkpoint, not this proposed paragraph alone.",
+  "status_paragraph": "EVENT-HOLDER-IDENTITY adds bounded source-checked whole-record holder frames and exact immutable collector/loop path identity with independent external-home replay (schema 24.0.0). Borrowed custody alone supplies no frame; poison remains explicit, and collector-copy alias-liveness refusals remain Unknown. This does not close production collector selection, conditional loop correlation or threaded teardown. [Report](reports/event-holder-identity/README.md).",
+  "profiles": [],
+  "ledger": [
+    {
+      "id": "FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME",
+      "operation": "append",
+      "text": "EVENT-HOLDER-IDENTITY adds exact source-checked direct-member holder frames through internal helper chains or independently replayed external homes, plus immutable collector-copy and loop-snapshot path identity. Borrowed custody, record types, allocation candidates and numeric ids cannot establish a frame or equality. Existing collector-copy alias-liveness refusals remain; poisoned outgoing effects stay explicit. Production collector-by-id selection, conditional per-record host/loop correlation, store-derived loop equalities, member-operand removal helpers, guarded/imported-home frame chains, all-path threaded teardown, descriptor custody and automatic backend-body proof remain Open.",
+      "source": "docs/reports/event-holder-identity/README.md"
+    }
+  ]
+}

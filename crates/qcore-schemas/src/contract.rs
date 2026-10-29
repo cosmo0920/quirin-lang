@@ -594,6 +594,8 @@ pub struct PendingHumanReview {
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 pub struct ResourceSummaryRecord {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub lifetime_holder_frames: Vec<crate::loop_lifetime::HolderFrame>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub lifetime_effects: Vec<crate::loop_lifetime::ForwardedLifetime>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub lifetime_removals: Vec<crate::retained_by::Removal>,
@@ -615,6 +617,7 @@ impl ResourceSummaryRecord {
             contract,
             lifetime_effects: Vec::new(),
             lifetime_removals: Vec::new(),
+            lifetime_holder_frames: Vec::new(),
         }
     }
 }
@@ -1218,6 +1221,11 @@ impl ResourceContracts {
                     .parameters
                     .iter()
                     .any(|p| !matches!(p, ResourceParameterMode::Borrowed))
+                || summary.holder_frames.iter().any(|f| {
+                    f.parameter >= summary.contract.parameters.len()
+                        || f.record.is_empty()
+                        || f.fields.len() != 1
+                })
                 || summary.removals.len() > 4096
                 || summary.removals.iter().any(|r| {
                     r.retained >= summary.contract.parameters.len()

@@ -474,7 +474,8 @@ impl<'a> Walk<'a, '_> {
             return;
         };
         let name = callee_name(callee);
-        let contract = name.and_then(|name| self.contracts.contract(name));
+        let contract = name
+            .and_then(|name| crate::borrowed_actual::root_custody_contract(self.contracts, name));
         for (index, actual) in actuals.iter().enumerate() {
             if self.read_only_list_count
                 && name == Some("rd_list_cnt")

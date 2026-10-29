@@ -167,6 +167,7 @@ import QCore.GuardedDecomposition
 import QCore.GuardedDelete
 import QCore.GuardedSourceAdoption
 import QCore.HandOffDirect
+import QCore.HolderFrameIdentity
 import QCore.HttpComputedLength
 import QCore.HypothesisGraph
 import QCore.Ieee754

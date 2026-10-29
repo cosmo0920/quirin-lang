@@ -273,10 +273,43 @@ extern fn protocol_host(c: ptr<mut, u8>) -> unit contract { requires resource_co
         changed.cross_unit_homes[0].preprocessed_source.push(' ');
         assert!(check_legacy_safety_certificate(&changed).is_err());
     }
-    // Whole-record handoff does not establish the holder snapshot frame
-    // required by a subsequent member-path removal, even with an exact home.
+    assert_eq!(effect.holder_frames.len(), 1);
     for body in [
         "starts(c); ev_del(c->evl, &c->event);",
+        "struct loop *l = c->evl; starts(c); ev_del(l, &c->event);",
+    ] {
+        let source = format!(
+            "{prelude} void starts(struct collector *); void caller(struct collector *c) {{ {body} }}"
+        );
+        let caller = prepare_translation_unit(&C11TranslationUnit {
+            source: &source,
+            function_scope: LegacyFunctionScope::MainSourceDefinitions,
+            ..Default::default()
+        });
+        let result = analyze_prepared_translation_unit_with_cross_unit(
+            &caller,
+            "caller",
+            &env,
+            &[exports[0].home.clone()],
+        )
+        .unwrap();
+        let UnrestrictedLegacyResult::Safe(cert) = result else {
+            panic!("checked frame refused {body}: {result:?}")
+        };
+        assert!(
+            cert.summary.functions["caller"].lifetime_effects.is_empty(),
+            "removal did not discharge the exact holder"
+        );
+        check_legacy_safety_certificate(&cert).unwrap();
+        let mut bad = cert.clone();
+        let mut altered = effect.clone();
+        altered.holder_frames[0].fields[0] = "event".into();
+        bad.contracts
+            .set_lifetime_imports(BTreeMap::from([("starts".into(), altered)]));
+        assert!(check_legacy_safety_certificate(&bad).is_err());
+    }
+    // Frames preserve exact holder identity; they do not repair poison or release.
+    for body in [
         "starts(c); ev_del(other, &c->event); ev_del(c->evl, &c->event);",
         "starts(c); release(c); ev_del(c->evl, &c->event);",
     ] {
@@ -295,10 +328,16 @@ extern fn protocol_host(c: ptr<mut, u8>) -> unit contract { requires resource_co
             &[exports[0].home.clone()],
         )
         .unwrap();
-        assert!(
-            !matches!(result, UnrestrictedLegacyResult::Safe(_)),
-            "refused ordering/poison became Safe: {body}"
-        );
+        if let UnrestrictedLegacyResult::Safe(cert) = result {
+            assert!(
+                cert.summary.functions["caller"]
+                    .lifetime_effects
+                    .iter()
+                    .any(|e| e.registration.poisoned),
+                "poison was discharged: {body}"
+            );
+            check_legacy_safety_certificate(&cert).unwrap();
+        }
     }
 }
 

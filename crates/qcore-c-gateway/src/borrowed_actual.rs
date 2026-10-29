@@ -255,7 +255,7 @@ pub(crate) fn closure_reasons(
         add(text, reason.into());
     }
     for (open, callee) in call_sites(body) {
-        let contract = contracts.contract(callee);
+        let contract = root_custody_contract(contracts, callee);
         let Some(arguments) = argument_spans(body, open) else {
             continue;
         };
@@ -431,6 +431,21 @@ fn seed_addresses_and_writes(body: &[&str], risky: &mut BTreeSet<String>) {
     }
 }
 
+/// Only the never-bound closure reads this custody component. Actual call
+/// classification still uses the complete lifetime hook, and holder matching
+/// separately demands the exact source frame. No ordinary contract is installed.
+pub(crate) fn root_custody_contract<'a>(
+    contracts: &'a ResourceContracts,
+    callee: &str,
+) -> Option<&'a qcore_schemas::contract::ResourceFunctionContract> {
+    contracts.contract(callee).or_else(|| {
+        contracts
+            .lifetime_summary(callee)
+            .filter(|s| !s.holder_frames.is_empty())
+            .map(|s| &s.contract)
+    })
+}
+
 /// Every call argument that is not a declared `Borrowed` position may have its
 /// custody changed by the callee, so its root names are refused as bases.
 fn seed_call_arguments(
@@ -440,7 +455,7 @@ fn seed_call_arguments(
     risky: &mut BTreeSet<String>,
 ) {
     for (open, callee) in call_sites(body) {
-        let contract = contracts.contract(callee);
+        let contract = root_custody_contract(contracts, callee);
         let Some(arguments) = argument_spans(body, open) else {
             // An unbalanced argument list: refuse every root name after it
             // rather than guess where it ended.

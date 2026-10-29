@@ -142,6 +142,7 @@ pub fn export_homes(
                 None
             } else {
                 Some(qcore_schemas::loop_lifetime::InferredLifetimeSummary {
+                    holder_frames: record.lifetime_holder_frames.clone(),
                     contract: record.contract.clone(),
                     effects: record.lifetime_effects,
                     removals: record.lifetime_removals,
@@ -366,6 +367,7 @@ pub(super) fn check_imports(
             validated_lifetimes.insert(
                 home.function.clone(),
                 qcore_schemas::loop_lifetime::InferredLifetimeSummary {
+                    holder_frames: record.lifetime_holder_frames.clone(),
                     contract: record.contract.clone(),
                     effects: record.lifetime_effects.clone(),
                     removals: record.lifetime_removals.clone(),

@@ -1,0 +1,1213 @@
+{
+  "schema": "event-holder-attempts/1",
+  "scope": "All available focused outputs, known exits, superseded prerequisite runs and final gate logs. Missing exits are explicitly uncredited; source validation is owned by gate-steps.json.",
+  "attempts": [
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/frame-build-2.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/frame-build-2.log.gz",
+        "bytes": 395,
+        "sha256": "2a1c1a6b50ba1e432f7c63edbc412e8fc72a409a44827bc400e14c390b2835e5"
+      },
+      "scope": "focused checkpoint; not the final standing gate",
+      "recorded_exit": null,
+      "exit_note": "No independent exit recording; terminal output alone is not credited as a completed gate.",
+      "libtest_summaries": []
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/frame-build.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/frame-build.log.gz",
+        "bytes": 450,
+        "sha256": "1d36ccc8f17edb7c085d26707a186daff3923d382a8efe4ecafb21817a27161d"
+      },
+      "scope": "focused checkpoint; not the final standing gate",
+      "recorded_exit": null,
+      "exit_note": "No independent exit recording; terminal output alone is not credited as a completed gate.",
+      "libtest_summaries": []
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/frame-clippy-1.exit",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/frame-clippy-1.exit.gz",
+        "bytes": 4,
+        "sha256": "39b8dc3fc8b44765c8e6f1adee04c5b465e555ab791cc42d0d9e810d5b64297c"
+      },
+      "scope": "focused checkpoint; not the final standing gate"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/frame-clippy-1.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/frame-clippy-1.log.gz",
+        "bytes": 1602,
+        "sha256": "1488ca874835f35eefcc31223fb86f9665ecf1de494aee4a311abd979197675c"
+      },
+      "scope": "focused checkpoint; not the final standing gate",
+      "recorded_exit": 101,
+      "libtest_summaries": []
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/frame-clippy-2.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/frame-clippy-2.log.gz",
+        "bytes": 1448,
+        "sha256": "535e8bfc3acd70288caacfe822691ce7202c113964a2cc09d79fa2fb19488290"
+      },
+      "scope": "focused checkpoint; not the final standing gate",
+      "recorded_exit": null,
+      "exit_note": "No independent exit recording; terminal output alone is not credited as a completed gate.",
+      "libtest_summaries": []
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/frame-clippy-3.exit",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/frame-clippy-3.exit.gz",
+        "bytes": 2,
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "scope": "focused checkpoint; not the final standing gate"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/frame-clippy-3.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/frame-clippy-3.log.gz",
+        "bytes": 200,
+        "sha256": "9cce0243dcf3b6ca6dfc66b046b289cc952f97b9dad90e769b273d8ebd432b0e"
+      },
+      "scope": "focused checkpoint; not the final standing gate",
+      "recorded_exit": 0,
+      "libtest_summaries": []
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/frame-clippy-4.exit",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/frame-clippy-4.exit.gz",
+        "bytes": 2,
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "scope": "focused checkpoint; not the final standing gate"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/frame-clippy-4.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/frame-clippy-4.log.gz",
+        "bytes": 200,
+        "sha256": "bb0ed1fb6d24c58bfa47168904eccef304ed4f567c0c6c965489ac997cf1c849"
+      },
+      "scope": "focused checkpoint; not the final standing gate",
+      "recorded_exit": 0,
+      "libtest_summaries": []
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/frame-clippy-5.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/frame-clippy-5.log.gz",
+        "bytes": 200,
+        "sha256": "0551d21df5be98f87833f9c6100b55dc12bb9bd01158fd462944ae6bf7c04db8"
+      },
+      "scope": "focused checkpoint; not the final standing gate",
+      "recorded_exit": null,
+      "exit_note": "No independent exit recording; terminal output alone is not credited as a completed gate.",
+      "libtest_summaries": []
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/frame-test-1.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/frame-test-1.log.gz",
+        "bytes": 5198,
+        "sha256": "199143abc25a93580cd7413af05f758ca23d15c90959972d0dd63a264e25786e"
+      },
+      "scope": "focused checkpoint; not the final standing gate",
+      "recorded_exit": null,
+      "exit_note": "No independent exit recording; terminal output alone is not credited as a completed gate.",
+      "libtest_summaries": [
+        {
+          "result": "FAILED",
+          "passed": 0,
+          "failed": 1,
+          "ignored": 0,
+          "filtered": 4
+        }
+      ]
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/frame-test-10.exit",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/frame-test-10.exit.gz",
+        "bytes": 2,
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "scope": "focused checkpoint; not the final standing gate"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/frame-test-10.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/frame-test-10.log.gz",
+        "bytes": 1408,
+        "sha256": "7a3c6e1ef92d942627e3b59403581fa8ea6fbe3c3b9c2fc8f6a4a37773608dff"
+      },
+      "scope": "focused checkpoint; not the final standing gate",
+      "recorded_exit": 0,
+      "libtest_summaries": [
+        {
+          "result": "ok",
+          "passed": 5,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "result": "ok",
+          "passed": 5,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/frame-test-11.exit",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/frame-test-11.exit.gz",
+        "bytes": 2,
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "scope": "focused checkpoint; not the final standing gate"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/frame-test-11.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/frame-test-11.log.gz",
+        "bytes": 1408,
+        "sha256": "e4d506c6d3a052897aae22c2caa2cbf903f435beebe0238aad40a532fd7385e0"
+      },
+      "scope": "focused checkpoint; not the final standing gate",
+      "recorded_exit": 0,
+      "libtest_summaries": [
+        {
+          "result": "ok",
+          "passed": 5,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "result": "ok",
+          "passed": 5,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/frame-test-2.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/frame-test-2.log.gz",
+        "bytes": 4405,
+        "sha256": "707c92d1207bfb8f4554ccca7f04932d611790fe839cb41497df9c4aa417506d"
+      },
+      "scope": "focused checkpoint; not the final standing gate",
+      "recorded_exit": 101,
+      "libtest_summaries": [
+        {
+          "result": "FAILED",
+          "passed": 0,
+          "failed": 1,
+          "ignored": 0,
+          "filtered": 4
+        }
+      ]
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/frame-test-2.slot.json",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/frame-test-2.slot.json.gz",
+        "bytes": 1439,
+        "sha256": "66fe56ba6160c94d9e7b40dfa4a047e143ab502c2ef246c4b13d48d54aebd9d8"
+      },
+      "scope": "focused checkpoint; not the final standing gate"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/frame-test-3.exit",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/frame-test-3.exit.gz",
+        "bytes": 4,
+        "sha256": "39b8dc3fc8b44765c8e6f1adee04c5b465e555ab791cc42d0d9e810d5b64297c"
+      },
+      "scope": "focused checkpoint; not the final standing gate"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/frame-test-3.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/frame-test-3.log.gz",
+        "bytes": 2948,
+        "sha256": "de0bebae254d97c14fc13ebe62cdd4aa4a0668845cae4ae657d62957586c4c26"
+      },
+      "scope": "focused checkpoint; not the final standing gate",
+      "recorded_exit": 101,
+      "libtest_summaries": [
+        {
+          "result": "FAILED",
+          "passed": 4,
+          "failed": 1,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "result": "FAILED",
+          "passed": 1,
+          "failed": 2,
+          "ignored": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/frame-test-4.exit",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/frame-test-4.exit.gz",
+        "bytes": 2,
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "scope": "focused checkpoint; not the final standing gate"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/frame-test-4.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/frame-test-4.log.gz",
+        "bytes": 1223,
+        "sha256": "4e5cedf5dab4bd480d0fe565898e88d9bd5c565814e9e6096c32640539b63a09"
+      },
+      "scope": "focused checkpoint; not the final standing gate",
+      "recorded_exit": 0,
+      "libtest_summaries": [
+        {
+          "result": "ok",
+          "passed": 5,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "result": "ok",
+          "passed": 3,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/frame-test-5.exit",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/frame-test-5.exit.gz",
+        "bytes": 4,
+        "sha256": "39b8dc3fc8b44765c8e6f1adee04c5b465e555ab791cc42d0d9e810d5b64297c"
+      },
+      "scope": "focused checkpoint; not the final standing gate"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/frame-test-5.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/frame-test-5.log.gz",
+        "bytes": 12024,
+        "sha256": "b10934f70d11abe1bc73665982aa7e2c98d25ff1d76059d9005543722df9a5cb"
+      },
+      "scope": "focused checkpoint; not the final standing gate",
+      "recorded_exit": 101,
+      "libtest_summaries": [
+        {
+          "result": "ok",
+          "passed": 5,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "result": "FAILED",
+          "passed": 3,
+          "failed": 1,
+          "ignored": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/frame-test-6.exit",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/frame-test-6.exit.gz",
+        "bytes": 2,
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "scope": "focused checkpoint; not the final standing gate"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/frame-test-6.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/frame-test-6.log.gz",
+        "bytes": 1804,
+        "sha256": "22d4772d66590e9e052aade0b55c9eb424e52f2946bc9e4fd91fccfff47718ee"
+      },
+      "scope": "focused checkpoint; not the final standing gate",
+      "recorded_exit": 0,
+      "libtest_summaries": [
+        {
+          "result": "ok",
+          "passed": 5,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "result": "ok",
+          "passed": 4,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/frame-test-7.exit",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/frame-test-7.exit.gz",
+        "bytes": 2,
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "scope": "focused checkpoint; not the final standing gate"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/frame-test-7.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/frame-test-7.log.gz",
+        "bytes": 1315,
+        "sha256": "db5e0635a6748f4a830bf540d0572d154fdf67da817c7c8ad2fb0995b8e884ee"
+      },
+      "scope": "focused checkpoint; not the final standing gate",
+      "recorded_exit": 0,
+      "libtest_summaries": [
+        {
+          "result": "ok",
+          "passed": 5,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "result": "ok",
+          "passed": 4,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/frame-test-8.exit",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/frame-test-8.exit.gz",
+        "bytes": 2,
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "scope": "focused checkpoint; not the final standing gate"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/frame-test-8.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/frame-test-8.log.gz",
+        "bytes": 1409,
+        "sha256": "ed584f34b1f847170277774d37e00e4c76818404ffa1f3f72014337a27b6d2c4"
+      },
+      "scope": "focused checkpoint; not the final standing gate",
+      "recorded_exit": 0,
+      "libtest_summaries": [
+        {
+          "result": "ok",
+          "passed": 5,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "result": "ok",
+          "passed": 5,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/frame-test-9.exit",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/frame-test-9.exit.gz",
+        "bytes": 2,
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "scope": "focused checkpoint; not the final standing gate"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/frame-test-9.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/frame-test-9.log.gz",
+        "bytes": 1408,
+        "sha256": "b958c842d93bbcdfcddc52f2ac1a68f2272fe63866e75dd3bee7ce470a15fbbe"
+      },
+      "scope": "focused checkpoint; not the final standing gate",
+      "recorded_exit": 0,
+      "libtest_summaries": [
+        {
+          "result": "ok",
+          "passed": 5,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "result": "ok",
+          "passed": 5,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        }
+      ]
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/lean-frame-1.slot.json",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/lean-frame-1.slot.json.gz",
+        "bytes": 772,
+        "sha256": "6928bd6f2bd6aa7c3e0c5f07a8a50921b9c8a2cbd6a09e1aad465be1d6f1b867"
+      },
+      "scope": "focused checkpoint; not the final standing gate"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/lean-frame-2.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/lean-frame-2.log.gz",
+        "bytes": 2150,
+        "sha256": "b011ddcbc47151b4f6442d04b358850fc0b09dbb628d1ba79d0571ce83984143"
+      },
+      "scope": "focused checkpoint; not the final standing gate",
+      "recorded_exit": 0,
+      "libtest_summaries": []
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/lean-frame-2.slot.json",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/lean-frame-2.slot.json.gz",
+        "bytes": 940,
+        "sha256": "c475ec044232257b369919fd5698b829fc4ff5754907ddf4cfe21f6a96748414"
+      },
+      "scope": "focused checkpoint; not the final standing gate"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/lean-frame-3.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/lean-frame-3.log.gz",
+        "bytes": 2173,
+        "sha256": "b5446a1c49bacdcde0cb06218d5618147d2d2a6c6863c8470e507c383a578004"
+      },
+      "scope": "focused checkpoint; not the final standing gate",
+      "recorded_exit": 0,
+      "libtest_summaries": []
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/lean-frame-3.slot.json",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/lean-frame-3.slot.json.gz",
+        "bytes": 940,
+        "sha256": "1bfb9c1b5c984e072460354bb685419bfffc01bf4eb3669ea89a79bd79774b86"
+      },
+      "scope": "focused checkpoint; not the final standing gate"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/initial-check.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/initial-check.log.gz",
+        "bytes": 1644,
+        "sha256": "0f2f81902d793f854224042edc7ea76ce3098e189a6cfecffe8a28f82e43fb34"
+      },
+      "scope": "focused checkpoint; not the final standing gate",
+      "recorded_exit": null,
+      "exit_note": "No independent exit recording; terminal output alone is not credited as a completed gate.",
+      "libtest_summaries": []
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/superseded-prerequisites-0a/clippy.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__superseded-prerequisites-0a__clippy.log.gz",
+        "bytes": 2749,
+        "sha256": "b411c0c4f1308717ed6480cd73dbfc92f77f0f212d6b56fde2b04164b593b6d8"
+      },
+      "scope": "superseded source prerequisite run; excluded from final gate credit"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/superseded-prerequisites-0a/fmt.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__superseded-prerequisites-0a__fmt.log.gz",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "scope": "superseded source prerequisite run; excluded from final gate credit"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/superseded-prerequisites-0a/lean.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__superseded-prerequisites-0a__lean.log.gz",
+        "bytes": 935213,
+        "sha256": "6761cf0d40daf3b2f7bb5d923f7d2dc18aa911c431f85d4ac106d3fb57a1ba02"
+      },
+      "scope": "superseded source prerequisite run; excluded from final gate credit"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/superseded-prerequisites-0a/probe-reevaluation_followup.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__superseded-prerequisites-0a__probe-reevaluation_followup.log.gz",
+        "bytes": 12432,
+        "sha256": "a9da646b5acc74a84010fe384422f541cda4586963e4530d5e1ee7df4aec9d14"
+      },
+      "scope": "superseded source prerequisite run; excluded from final gate credit"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/superseded-prerequisites-0a/probe-reevaluation_probe.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__superseded-prerequisites-0a__probe-reevaluation_probe.log.gz",
+        "bytes": 4116,
+        "sha256": "3e523d20d102e266861acffc2d84d5655c1b8f639a979fd2b42941bb6fbe5d99"
+      },
+      "scope": "superseded source prerequisite run; excluded from final gate credit"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/superseded-prerequisites-0a/provider-clippy.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__superseded-prerequisites-0a__provider-clippy.log.gz",
+        "bytes": 4290,
+        "sha256": "af3514edf072cd51af6b8fd9491553884e801ec3c412cfa78754d8ccc4ae62ef"
+      },
+      "scope": "superseded source prerequisite run; excluded from final gate credit"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/superseded-prerequisites-0a/provider-fmt.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__superseded-prerequisites-0a__provider-fmt.log.gz",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "scope": "superseded source prerequisite run; excluded from final gate credit"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/superseded-prerequisites-0a/provider-package-build.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__superseded-prerequisites-0a__provider-package-build.log.gz",
+        "bytes": 13913,
+        "sha256": "7b9e485656dd04f620072586c888b4ec6572486ae44bf605a22f378986843eaf"
+      },
+      "scope": "superseded source prerequisite run; excluded from final gate credit"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/superseded-prerequisites-0a/provider-package-verify-all.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__superseded-prerequisites-0a__provider-package-verify-all.log.gz",
+        "bytes": 170,
+        "sha256": "a8eac90327e149f01eee66899f1a564531831391726d8de86c18c0bd29f9a1ae"
+      },
+      "scope": "superseded source prerequisite run; excluded from final gate credit"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/superseded-prerequisites-0a/provider-package-verify.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__superseded-prerequisites-0a__provider-package-verify.log.gz",
+        "bytes": 1073,
+        "sha256": "8457afd6ffc1e708c3959fb51afc1e355b3dcbeb58ddd677128a04c3a398dc6f"
+      },
+      "scope": "superseded source prerequisite run; excluded from final gate credit"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/superseded-prerequisites-0a/submodules.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__superseded-prerequisites-0a__submodules.log.gz",
+        "bytes": 98,
+        "sha256": "f4404938c43b20c58d6c0a19e925d921a64b1775b9ae28edbbc63932670d55ae"
+      },
+      "scope": "superseded source prerequisite run; excluded from final gate credit"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/superseded-prerequisites-0a/before-native.json",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__superseded-prerequisites-0a__before-native.json.gz",
+        "bytes": 40163,
+        "sha256": "cc40cc8e6a31e158c58400f9bc257c17178fac6c36f4ad1954258fa1ff2745d9"
+      },
+      "scope": "superseded source prerequisite run; excluded from final gate credit"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/superseded-prerequisites-0a/slots/lean.json",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__superseded-prerequisites-0a__slots__lean.json.gz",
+        "bytes": 924,
+        "sha256": "b9c16f98ad7c25a3a8400c1181a14a70f6aae563fa7a67eb516a83324d9e2706"
+      },
+      "scope": "superseded source prerequisite run; excluded from final gate credit"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/superseded-prerequisites-41de/clippy.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__superseded-prerequisites-41de__clippy.log.gz",
+        "bytes": 820,
+        "sha256": "ebf2dcc07245c4c01e89b074a2e0e8aa1d1b06e53cdcd5671893a1b620e96ac2"
+      },
+      "scope": "superseded source prerequisite run; excluded from final gate credit"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/superseded-prerequisites-41de/fmt.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__superseded-prerequisites-41de__fmt.log.gz",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "scope": "superseded source prerequisite run; excluded from final gate credit"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/superseded-prerequisites-41de/lean.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__superseded-prerequisites-41de__lean.log.gz",
+        "bytes": 912774,
+        "sha256": "5c8bf7b7cf7269e157b5551ca8b79ceb2e99e1029769cb18392cbf58e843403d"
+      },
+      "scope": "superseded source prerequisite run; excluded from final gate credit"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/superseded-prerequisites-41de/probe-reevaluation_followup.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__superseded-prerequisites-41de__probe-reevaluation_followup.log.gz",
+        "bytes": 12432,
+        "sha256": "baea69ddb6afe08d332ec546e92ef415c9305be56b50f8d9ca0e5d60dadf3837"
+      },
+      "scope": "superseded source prerequisite run; excluded from final gate credit"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/superseded-prerequisites-41de/probe-reevaluation_probe.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__superseded-prerequisites-41de__probe-reevaluation_probe.log.gz",
+        "bytes": 3239,
+        "sha256": "7a87dc5ed4798f02e5e997bdc308ced1c2f5633fa445a592a6eac4d4cebe69ca"
+      },
+      "scope": "superseded source prerequisite run; excluded from final gate credit"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/superseded-prerequisites-41de/provider-package-build.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__superseded-prerequisites-41de__provider-package-build.log.gz",
+        "bytes": 2933,
+        "sha256": "035b70e4ed1698e9f98f3a6229fb19a1985cccaf95794afbe79b072d27ac543a"
+      },
+      "scope": "superseded source prerequisite run; excluded from final gate credit"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/superseded-prerequisites-41de/submodules.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__superseded-prerequisites-41de__submodules.log.gz",
+        "bytes": 98,
+        "sha256": "f4404938c43b20c58d6c0a19e925d921a64b1775b9ae28edbbc63932670d55ae"
+      },
+      "scope": "superseded source prerequisite run; excluded from final gate credit"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/superseded-prerequisites-41de/slots/lean.json",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__superseded-prerequisites-41de__slots__lean.json.gz",
+        "bytes": 923,
+        "sha256": "35f7d320460b8e0f3056f62a0037842cb9100d3d37736f65d90a2118b1d959b5"
+      },
+      "scope": "superseded source prerequisite run; excluded from final gate credit"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/failed-standing-348/clippy.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__failed-standing-348__clippy.log.gz",
+        "bytes": 820,
+        "sha256": "03a96a19e1e00acf5c9e747708e028498a02ba3b6c8d89d3862c8540ec97a3d3"
+      },
+      "scope": "failed initial standing gate; excluded from final gate credit"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/failed-standing-348/fmt.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__failed-standing-348__fmt.log.gz",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "scope": "failed initial standing gate; excluded from final gate credit"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/failed-standing-348/lean.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__failed-standing-348__lean.log.gz",
+        "bytes": 912741,
+        "sha256": "dbf4985220139ee8e48196c72c5011541027a3f4c08634b57320aab9cc1f386d"
+      },
+      "scope": "failed initial standing gate; excluded from final gate credit"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/failed-standing-348/probe-reevaluation_followup.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__failed-standing-348__probe-reevaluation_followup.log.gz",
+        "bytes": 12432,
+        "sha256": "ef4004692f3e9de04cb5f0653346bb42898c743361b8bb050e4daf368edba437"
+      },
+      "scope": "failed initial standing gate; excluded from final gate credit"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/failed-standing-348/probe-reevaluation_probe.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__failed-standing-348__probe-reevaluation_probe.log.gz",
+        "bytes": 3239,
+        "sha256": "f96a739563320b1e0a1811de1420f531eb39153857c8eea490710753fedfdf53"
+      },
+      "scope": "failed initial standing gate; excluded from final gate credit"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/failed-standing-348/provider-clippy.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__failed-standing-348__provider-clippy.log.gz",
+        "bytes": 734,
+        "sha256": "01d2439073cc62de3278c078f649be46096dac4592648097c9240b202d95fc84"
+      },
+      "scope": "failed initial standing gate; excluded from final gate credit"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/failed-standing-348/provider-fmt.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__failed-standing-348__provider-fmt.log.gz",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "scope": "failed initial standing gate; excluded from final gate credit"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/failed-standing-348/provider-package-build.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__failed-standing-348__provider-package-build.log.gz",
+        "bytes": 11856,
+        "sha256": "1f8738db80a60d327a1a572cf4a9b37f4e9c0b078add1a129a13017269f2fc7a"
+      },
+      "scope": "failed initial standing gate; excluded from final gate credit"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/failed-standing-348/provider-package-verify-all.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__failed-standing-348__provider-package-verify-all.log.gz",
+        "bytes": 170,
+        "sha256": "a8eac90327e149f01eee66899f1a564531831391726d8de86c18c0bd29f9a1ae"
+      },
+      "scope": "failed initial standing gate; excluded from final gate credit"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/failed-standing-348/provider-package-verify.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__failed-standing-348__provider-package-verify.log.gz",
+        "bytes": 1073,
+        "sha256": "8457afd6ffc1e708c3959fb51afc1e355b3dcbeb58ddd677128a04c3a398dc6f"
+      },
+      "scope": "failed initial standing gate; excluded from final gate credit"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/failed-standing-348/provider-test.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__failed-standing-348__provider-test.log.gz",
+        "bytes": 26402,
+        "sha256": "a265636a9c7d22f473eb71a69b658d9f41e3bbb18dd4365ed48fbe28cf98eb00"
+      },
+      "scope": "failed initial standing gate; excluded from final gate credit"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/failed-standing-348/rust-suite.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__failed-standing-348__rust-suite.log.gz",
+        "bytes": 56124,
+        "sha256": "df46a1d433b963258aabf418162328410d21977a31b89ca28b87582bac43ef53"
+      },
+      "scope": "failed initial standing gate; excluded from final gate credit"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/failed-standing-348/submodules.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__failed-standing-348__submodules.log.gz",
+        "bytes": 98,
+        "sha256": "f4404938c43b20c58d6c0a19e925d921a64b1775b9ae28edbbc63932670d55ae"
+      },
+      "scope": "failed initial standing gate; excluded from final gate credit"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/failed-standing-348/before-native.json",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__failed-standing-348__before-native.json.gz",
+        "bytes": 40161,
+        "sha256": "7daaaf570e2daa80c7e20dc8a9b8eb284545f948724557f4f6b0da33011eac97"
+      },
+      "scope": "failed initial standing gate; excluded from final gate credit"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/failed-standing-348/before-python.json",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__failed-standing-348__before-python.json.gz",
+        "bytes": 42604,
+        "sha256": "bd4c6debf1688ffdef679d5ef1ecd806398981a44b112095432f418397abd97d"
+      },
+      "scope": "failed initial standing gate; excluded from final gate credit"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/failed-standing-348/slots/lean.json",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__failed-standing-348__slots__lean.json.gz",
+        "bytes": 923,
+        "sha256": "f7475d6e03a9f102a8298bcadbe211d4e883e2fd401be543ae1c275b5058bdd8"
+      },
+      "scope": "failed initial standing gate; excluded from final gate credit"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/failed-standing-348/slots/provider-test.json",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__failed-standing-348__slots__provider-test.json.gz",
+        "bytes": 1283,
+        "sha256": "cdcc75035f5d91464968784a9923b3933eb534f01b63de546dc1e1be53cfee88"
+      },
+      "scope": "failed initial standing gate; excluded from final gate credit"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/failed-standing-348/slots/rust-suite.json",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__failed-standing-348__slots__rust-suite.json.gz",
+        "bytes": 1611,
+        "sha256": "22a310e579102a9119ef0a4fb4af5c9d5ba3247c403b04e64be7d6b9cfde6ca7"
+      },
+      "scope": "failed initial standing gate; excluded from final gate credit"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/failed-standing-348/rust-suite/summary.json",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__failed-standing-348__rust-suite__summary.json.gz",
+        "bytes": 1288064,
+        "sha256": "940431e548ecf03d590d36514a8906dbe2ae20fc4bf009f1f19b16cfc8050057"
+      },
+      "scope": "failed initial standing gate; excluded from final gate credit"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/failed-standing-348/rust-suite/qcore-c-gateway_test_loop_lifetime_s3.stdout.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__failed-standing-348__rust-suite__qcore-c-gateway_test_loop_lifetime_s3.stdout.log.gz",
+        "bytes": 11875,
+        "sha256": "54f426cd6ea4a73c2c53e19ff2a0d64c26886e094932e2241246a23a88b4dc74"
+      },
+      "scope": "failed initial standing gate; excluded from final gate credit"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/failed-standing-348/rust-suite/qcore-c-gateway_test_loop_lifetime_s3.stderr.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__failed-standing-348__rust-suite__qcore-c-gateway_test_loop_lifetime_s3.stderr.log.gz",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "scope": "failed initial standing gate; excluded from final gate credit"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/final-gate/clippy.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__final-gate__clippy.log.gz",
+        "bytes": 433,
+        "sha256": "571c7fe3a51799e6c374c8fa8c2ce8114944ac900e8ea959acadfbfde490d753"
+      },
+      "scope": "final gate exact log/receipt"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/final-gate/fmt.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__final-gate__fmt.log.gz",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "scope": "final gate exact log/receipt"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/final-gate/lean.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__final-gate__lean.log.gz",
+        "bytes": 912741,
+        "sha256": "5078c02e1ff27b0dec6a0bd89e7866eb8342c1206d935a97937f5350ebdaf2c8"
+      },
+      "scope": "final gate exact log/receipt"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/final-gate/probe-reevaluation_followup.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__final-gate__probe-reevaluation_followup.log.gz",
+        "bytes": 12432,
+        "sha256": "9e7c4c9a7dd31abb327072e78c6b369a6fd5244df24607fcfb1bcc9c12153304"
+      },
+      "scope": "final gate exact log/receipt"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/final-gate/probe-reevaluation_probe.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__final-gate__probe-reevaluation_probe.log.gz",
+        "bytes": 2834,
+        "sha256": "08e5dca072021920f678b686b651e06120a459e896592b5b4385c1ea332b9765"
+      },
+      "scope": "final gate exact log/receipt"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/final-gate/provider-clippy.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__final-gate__provider-clippy.log.gz",
+        "bytes": 330,
+        "sha256": "6a79c6968780d98a11aed5fa231305fa4aa7ee2d04d9d0023e36b03a38e137b0"
+      },
+      "scope": "final gate exact log/receipt"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/final-gate/provider-fmt.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__final-gate__provider-fmt.log.gz",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "scope": "final gate exact log/receipt"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/final-gate/provider-package-build.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__final-gate__provider-package-build.log.gz",
+        "bytes": 11856,
+        "sha256": "0bde061eb1db90871cd397f58121f28d7057f7254fa0511a846cc1a2ea4d4d54"
+      },
+      "scope": "final gate exact log/receipt"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/final-gate/provider-package-verify-all.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__final-gate__provider-package-verify-all.log.gz",
+        "bytes": 170,
+        "sha256": "a8eac90327e149f01eee66899f1a564531831391726d8de86c18c0bd29f9a1ae"
+      },
+      "scope": "final gate exact log/receipt"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/final-gate/provider-package-verify.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__final-gate__provider-package-verify.log.gz",
+        "bytes": 1073,
+        "sha256": "8457afd6ffc1e708c3959fb51afc1e355b3dcbeb58ddd677128a04c3a398dc6f"
+      },
+      "scope": "final gate exact log/receipt"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/final-gate/provider-test.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__final-gate__provider-test.log.gz",
+        "bytes": 22633,
+        "sha256": "9b3a4cfc451f0d0e6e284b9614d81e67e9235a467764aa2ec6f04498e5efee3c"
+      },
+      "scope": "final gate exact log/receipt"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/final-gate/python.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__final-gate__python.log.gz",
+        "bytes": 3927,
+        "sha256": "981d378c66d730a2248ddaca34c944434ce6188f9ba7a67d85e6a4a44ef61620"
+      },
+      "scope": "final gate exact log/receipt"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/final-gate/rust-suite.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__final-gate__rust-suite.log.gz",
+        "bytes": 54006,
+        "sha256": "eb11f980e2a662599d9f7a87fd2fd24e5cc21beb3c70d8812927f9bd02f1ddac"
+      },
+      "scope": "final gate exact log/receipt"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/final-gate/submodules.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__final-gate__submodules.log.gz",
+        "bytes": 98,
+        "sha256": "f4404938c43b20c58d6c0a19e925d921a64b1775b9ae28edbbc63932670d55ae"
+      },
+      "scope": "final gate exact log/receipt"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/final-gate/before-native.json",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__final-gate__before-native.json.gz",
+        "bytes": 41463,
+        "sha256": "979df82d86dc9b4a077874c0bf7a6cd68ce74cab28e5db30e54857468a4bcebb"
+      },
+      "scope": "final gate exact log/receipt"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/final-gate/before-python.json",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__final-gate__before-python.json.gz",
+        "bytes": 43903,
+        "sha256": "3cd04c847ff9221b074cc3b61b35a96c8c885c1f071977b5b614f5ea518efaa9"
+      },
+      "scope": "final gate exact log/receipt"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/final-gate/gate.json",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__final-gate__gate.json.gz",
+        "bytes": 44392,
+        "sha256": "594a5c7e5951d837653f8fc3a9789fa72a3289527a381e4f507c6f5bf5ec2303"
+      },
+      "scope": "final gate exact log/receipt"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/final-gate/slots/lean.json",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__final-gate__slots__lean.json.gz",
+        "bytes": 923,
+        "sha256": "1056f49077f8d6d3f893ecc0ea984e2f342d4ef61f6c725723c86461ea229744"
+      },
+      "scope": "final gate exact log/receipt"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/final-gate/slots/provider-test.json",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__final-gate__slots__provider-test.json.gz",
+        "bytes": 1283,
+        "sha256": "0eadc951989c298e433a372f768fe82945a1132db9e56163f8f4500f3b486e0b"
+      },
+      "scope": "final gate exact log/receipt"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/final-gate/slots/rust-suite.json",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__final-gate__slots__rust-suite.json.gz",
+        "bytes": 1610,
+        "sha256": "a0e1886d058dc13d2bc3d2dee4c0daaca0ad85f4bee62a15cdc6dec0172584d3"
+      },
+      "scope": "final gate exact log/receipt"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/failed-standing-348-driver.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__failed-standing-348-driver.log.gz",
+        "bytes": 3874,
+        "sha256": "39180facb0931f1521d09690c252f897e8ee89c4f496240b92db58d0b19d2d2b"
+      },
+      "scope": "Standing-gate execution provenance; the failed run remains excluded from final credit"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/final-gate-driver-2bb.py",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__final-gate-driver-2bb.py.gz",
+        "bytes": 5547,
+        "sha256": "40ba8de973dcfe986048d6cfbe0ae40774230bdd5dc19a786d8675bb7b53dab1"
+      },
+      "scope": "Standing-gate execution provenance; the failed run remains excluded from final credit"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/final-gate-invocation.json",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__final-gate-invocation.json.gz",
+        "bytes": 356,
+        "sha256": "7b12751ed562e0b5ceaea5fdf2ea1cf9086e3bd3d01d19eaef5e8c9b8046ef4f"
+      },
+      "scope": "Standing-gate execution provenance; the failed run remains excluded from final credit"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/fixture-corrected-focused-run.json",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__fixture-corrected-focused-run.json.gz",
+        "bytes": 391,
+        "sha256": "11f6a7797cc57194501d9955e943cbfef89a3ab9258b4d57ff9ed9003826ff57"
+      },
+      "scope": "S3 fixture correction and focused admission; not the full final standing gate"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/fixture-corrected-focused.exit",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__fixture-corrected-focused.exit.gz",
+        "bytes": 2,
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "scope": "S3 fixture correction and focused admission; not the full final standing gate"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/fixture-corrected-focused.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__fixture-corrected-focused.log.gz",
+        "bytes": 2166,
+        "sha256": "4dc538d860c6c6fbb1fe9df503dbd7495136a038b184a1e92d41791da4376581"
+      },
+      "scope": "S3 fixture correction and focused admission; not the full final standing gate"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/fixture-correction-plan.json",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__fixture-correction-plan.json.gz",
+        "bytes": 386,
+        "sha256": "c160582e263fc16d9ed77eaa62fd6201fc934c8df7542ac58a76de2a73c7e22f"
+      },
+      "scope": "S3 fixture correction and focused admission; not the full final standing gate"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/fixture-fmt.exit",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__fixture-fmt.exit.gz",
+        "bytes": 2,
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "scope": "S3 fixture correction and focused admission; not the full final standing gate"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/fixture-fmt.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__fixture-fmt.log.gz",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "scope": "S3 fixture correction and focused admission; not the full final standing gate"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/fixture-focused-wait-cancelled.json",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__fixture-focused-wait-cancelled.json.gz",
+        "bytes": 530,
+        "sha256": "d291b9307d8747fc303190d7a7e81fc5b46dd64c20057ebb05ac8a92b0ebbfad"
+      },
+      "scope": "S3 fixture correction and focused admission; not the full final standing gate"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/fixture-focused.exit",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__fixture-focused.exit.gz",
+        "bytes": 4,
+        "sha256": "9d9b18720961e9b4689fd763b85e7b6f36160ccd3a8a1c9ddc5103bb0f66c396"
+      },
+      "scope": "S3 fixture correction and focused admission; not the full final standing gate"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/fixture-focused.log",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__fixture-focused.log.gz",
+        "bytes": 41,
+        "sha256": "3f81988c6a07399a2bc5ad54ba3cec263121cba7b87064f7936c87fa0ff0c39a"
+      },
+      "scope": "S3 fixture correction and focused admission; not the full final standing gate"
+    },
+    {
+      "file": {
+        "private_path": "/media/Data/GitHub/quirin-lang/private/codex-event-holder-worktree/private/holder-identity/fixture-format-history.json",
+        "archive": "docs/reports/event-holder-identity/evidence/attempts/holder-identity__fixture-format-history.json.gz",
+        "bytes": 544,
+        "sha256": "2f18b8f16a4e07bb0c354a2715d08f69af3bb9716b932757e159dc7d60379e62"
+      },
+      "scope": "S3 fixture correction and focused admission; not the full final standing gate"
+    }
+  ]
+}

@@ -245,7 +245,17 @@ fn only_holder_mentions(body: &[&str], name: &str, contracts: &ResourceContracts
 /// the address of, or steps a member path that is a prefix of `fields`. The
 /// path then denotes one object for the whole body: the formal is never
 /// copied or rebound, and no call receives it whole or a view of the path.
+#[cfg(test)]
 fn path_stable(body: &[&str], root: &str, fields: &[String]) -> bool {
+    path_stable_with(body, root, fields, &BTreeSet::new())
+}
+
+fn path_stable_with(
+    body: &[&str],
+    root: &str,
+    fields: &[String],
+    framed: &BTreeSet<usize>,
+) -> bool {
     let body = merged_punctuators(body);
     let body = body.iter().map(String::as_str).collect::<Vec<_>>();
     let mut seen = false;
@@ -269,6 +279,9 @@ fn path_stable(body: &[&str], root: &str, fields: &[String]) -> bool {
             at += 2;
         }
         if chain.is_empty() {
+            if framed.contains(&index) {
+                continue;
+            }
             return false;
         }
         let on_path = chain
@@ -291,6 +304,158 @@ fn path_stable(body: &[&str], root: &str, fields: &[String]) -> bool {
     seen
 }
 
+fn framed_path_stable(
+    tokens: &[Token],
+    function: &str,
+    body: &[&str],
+    root: &str,
+    fields: &[String],
+    contracts: &ResourceContracts,
+) -> bool {
+    if !crate::loop_lifetime_source::caller_pointer_formal(function, root) {
+        return false;
+    }
+    let merged = merged_punctuators(body);
+    let texts = merged.iter().map(String::as_str).collect::<Vec<_>>();
+    let (aliases, mut framed) =
+        crate::loop_lifetime_source::collector_alias_frame(function, root, &texts, contracts);
+    for (at, callee) in texts.iter().enumerate() {
+        if !is_identifier(callee) || texts.get(at + 1) != Some(&"(") {
+            continue;
+        }
+        let Some(spans) = super::call_argument_spans(&texts, at) else {
+            continue;
+        };
+        if contracts.lifetime_summary(callee).is_none() {
+            continue;
+        }
+        if !contracts.lifetime_imports().contains_key(*callee)
+            && !super::callee_scope::has_internal_linkage(tokens, callee)
+        {
+            continue;
+        }
+        for (parameter, &(start, end)) in spans.iter().enumerate() {
+            if !matches!(texts.get(start..end), Some([name]) if *name == root || aliases.contains(*name))
+            {
+                continue;
+            }
+            let Some(close) = close_of(&texts, at + 1) else {
+                continue;
+            };
+            if crate::loop_lifetime_source::holder_frame_at_call(
+                function,
+                callee,
+                root,
+                fields,
+                &texts[at..=close],
+                parameter,
+                contracts,
+            ) {
+                framed.insert(start);
+            }
+        }
+    }
+    let canonical = texts
+        .iter()
+        .enumerate()
+        .map(|(i, word)| {
+            if aliases.contains(*word)
+                && !matches!(i.checked_sub(1).map(|p| texts[p]), Some("." | "->"))
+            {
+                root
+            } else {
+                *word
+            }
+        })
+        .collect::<Vec<_>>();
+    path_stable_with(&canonical, root, fields, &framed)
+}
+
+/// Export a complete body's exact holder preservation reading, bottom up.
+/// This carries the existing P-HOLDER-PATH-STABLE member-use premise across
+/// a whole-record call; it is never inferred from borrowed custody alone.
+pub(crate) fn derive_holder_frames(
+    tokens: &[Token],
+    function: &str,
+    effects: &[crate::loop_lifetime_summary::ForwardedLifetime],
+    contracts: &ResourceContracts,
+) -> Vec<qcore_schemas::loop_lifetime::HolderFrame> {
+    use qcore_schemas::loop_lifetime::{HolderFrame, Root};
+    let Some((start, _)) = super::find_function_body(tokens, function) else {
+        return vec![];
+    };
+    let Some(end) = super::matching(tokens, start, "{", "}") else {
+        return vec![];
+    };
+    let body = tokens[start + 1..end]
+        .iter()
+        .map(|t| t.text.as_str())
+        .collect::<Vec<_>>();
+    let Ok(source) = crate::typed_access_path::current_lifetime_source(contracts) else {
+        return vec![];
+    };
+    let Some(facts) = source.functions.get(function) else {
+        return vec![];
+    };
+    if !source.open.is_empty()
+        || !facts.open.is_empty()
+        || !facts.complete_straight_line
+        || !facts.stores.is_empty()
+        || facts.calls.iter().any(|call| {
+            !call.pure_operands
+                || (contracts.retaining_contract(&call.callee).is_none()
+                    && contracts
+                        .lifetime_summary(&call.callee)
+                        .is_none_or(|s| s.holder_frames.is_empty()))
+        })
+    {
+        return vec![];
+    }
+    let mut frames = BTreeSet::new();
+    for effect in effects {
+        let Root::Formal { index, .. } = &effect.registration.holder.root else {
+            continue;
+        };
+        let fields = &effect.registration.holder.fields;
+        if fields.len() != 1 {
+            continue;
+        }
+        let frame = crate::typed_access_path::with_indirect_call_unit(|unit| {
+            let ast = unit.function(function)?;
+            let parameter = crate::typed_c_ast::children(ast)
+                .iter()
+                .filter(|p| crate::typed_c_ast::kind(p) == "ParmVarDecl")
+                .nth(*index)?;
+            let name = parameter["name"].as_str()?;
+            let ty = &parameter["type"];
+            let text = ty["desugaredQualType"]
+                .as_str()
+                .or_else(|| ty["qualType"].as_str())?;
+            let words = text.split_whitespace().collect::<Vec<_>>();
+            let ["struct", record, "*"] = words.as_slice() else {
+                return None;
+            };
+            let member = source.fields.get(&format!("{record}.{}", fields[0]))?;
+            if member.contains("volatile")
+                || member.contains("_Atomic")
+                || !framed_path_stable(tokens, function, &body, name, fields, contracts)
+            {
+                return None;
+            }
+            Some(HolderFrame {
+                parameter: *index,
+                record: (*record).into(),
+                fields: fields.clone(),
+            })
+        })
+        .flatten();
+        if let Some(frame) = frame {
+            frames.insert(frame);
+        }
+    }
+    frames.into_iter().collect()
+}
+
 impl Parser<'_> {
     /// Hook (rule 12t): classify a call to a retaining callee, or `None` when
     /// `function` has no retaining declaration.
@@ -308,13 +473,13 @@ impl Parser<'_> {
         let inferred = self.contracts.lifetime_summary(function).cloned();
         if inferred
             .as_ref()
-            .is_some_and(|summary| !summary.removals.is_empty())
+            .is_some_and(|summary| !summary.removals.is_empty() || !summary.effects.is_empty())
             && !self.contracts.lifetime_imports().contains_key(function)
             && !super::callee_scope::has_internal_linkage(self.tokens, function)
         {
             return Some(refuse(
                 self,
-                "ordered removal requires an internal helper or a replayed external home".into(),
+                "lifetime transport requires an internal helper or a replayed external home".into(),
             ));
         }
         let mut declaration = if let Some(summary) = &inferred {
@@ -427,9 +592,9 @@ impl Parser<'_> {
                         });
                     frame.then(|| (HolderSpelling::Frame((*name).to_owned()), text))
                 }
-                [name] if is_identifier(name) => {
-                    Some((HolderSpelling::Name((*name).to_owned()), text))
-                }
+                [name] if is_identifier(name) => this
+                    .path_holder(spelled, &[], body.as_deref())
+                    .or_else(|| Some((HolderSpelling::Name((*name).to_owned()), text))),
                 // Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION: a member
                 // path below an unrebound formal of this function.
                 _ => this.path_holder(spelled, &[], body.as_deref()),
@@ -561,6 +726,18 @@ impl Parser<'_> {
                 else {
                     return Some(refuse(self, "lifetime-precondition-undischarged: inferred effect actual is not an exact caller formal".into()));
                 };
+                if !body.as_deref().is_some_and(|body| {
+                    framed_path_stable(
+                        self.tokens,
+                        &self.typed_path_function,
+                        body,
+                        &root,
+                        &effect.registration.holder.fields,
+                        self.contracts,
+                    )
+                }) {
+                    return Some(refuse(self, "lifetime-precondition-undischarged: outgoing holder has no complete caller preservation frame".into()));
+                }
                 let Some(proof) = crate::loop_lifetime_source::substitute_forwarded_call(
                     &self.typed_path_function,
                     function,
@@ -703,17 +880,29 @@ impl Parser<'_> {
             Some([name]) if is_identifier(name) => Some(if self.caller_formals.contains(name) {
                 RetainedSpelling::Formal((*name).to_owned())
             } else {
-                RetainedSpelling::Name((*name).to_owned())
+                crate::loop_lifetime_source::immutable_holder_alias(
+                    &self.typed_path_function,
+                    name,
+                    self.contracts,
+                )
+                .filter(|(_, fields)| fields.is_empty())
+                .map(|(formal, _)| RetainedSpelling::Formal(formal))
+                .unwrap_or_else(|| RetainedSpelling::Name((*name).to_owned()))
             }),
             // Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION: `&X->f[->g]`.
             Some(["&", root, rest @ ..]) if is_identifier(root) => member_chain(rest)
                 .filter(|fields| !fields.is_empty())
                 .map(|fields| {
-                    RetainedSpelling::Interior(
-                        (*root).to_owned(),
-                        fields,
-                        self.caller_formals.contains(root),
+                    let root = crate::loop_lifetime_source::immutable_holder_alias(
+                        &self.typed_path_function,
+                        root,
+                        self.contracts,
                     )
+                    .filter(|(_, alias)| alias.is_empty())
+                    .map(|(formal, _)| formal)
+                    .unwrap_or_else(|| (*root).to_owned());
+                    let caller = self.caller_formals.contains(root.as_str());
+                    RetainedSpelling::Interior(root, fields, caller)
                 }),
             _ => None,
         }
@@ -730,14 +919,38 @@ impl Parser<'_> {
         fields: &[String],
         body: Option<&[&str]>,
     ) -> Option<(HolderSpelling, String)> {
-        let (name, mut chain) = match root {
+        let (name, chain) = match root {
             [name, rest @ ..] if is_identifier(name) => ((*name).to_owned(), member_chain(rest)?),
             _ => return None,
+        };
+        let (name, mut chain) = if !self.caller_formals.contains(name.as_str()) {
+            let (formal, alias) = crate::loop_lifetime_source::immutable_holder_alias(
+                &self.typed_path_function,
+                &name,
+                self.contracts,
+            )?;
+            if !alias.is_empty() && !chain.is_empty() {
+                return None;
+            }
+            let mut combined = alias;
+            combined.extend(chain);
+            (formal, combined)
+        } else {
+            (name, chain)
         };
         chain.extend(fields.iter().cloned());
         if chain.is_empty()
             || !self.caller_formals.contains(name.as_str())
-            || !body.is_some_and(|body| path_stable(body, &name, &chain))
+            || !body.is_some_and(|body| {
+                framed_path_stable(
+                    self.tokens,
+                    &self.typed_path_function,
+                    body,
+                    &name,
+                    &chain,
+                    self.contracts,
+                )
+            })
         {
             return None;
         }

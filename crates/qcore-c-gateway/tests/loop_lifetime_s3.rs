@@ -378,7 +378,7 @@ fn a_same_unit_caller_consumes_and_forwards_the_exact_exported_registration() {
     use qcore_c_gateway::legacy_c::{
         UnrestrictedLegacyResult, analyze_unrestricted_c11, check_legacy_safety_certificate,
     };
-    let source = "struct loop { int fd; }; struct event { int state; }; struct collector { struct loop *evl; struct event event; }; int ev_add(struct loop *, void *);\nvoid starts(struct collector *c) { ev_add(c->evl, &c->event); }\nvoid caller(struct collector *c) { starts(c); }\n";
+    let source = "struct loop { int fd; }; struct event { int state; }; struct collector { struct loop *evl; struct event event; }; int ev_add(struct loop *, void *);\nstatic void starts(struct collector *c) { ev_add(c->evl, &c->event); }\nvoid caller(struct collector *c) { starts(c); }\n";
     let mut texts = contracts().source_assumptions().clone();
     texts.insert("protocol.qv".into(), "module contract; extern fn protocol_host(c: ptr<mut, u8>) -> unit contract { requires resource_contract_v1; ensures normal resource_borrowed(c); ensures normal resource_return_none(); quant registered #c: collector.event |-> collector.evl; };".into());
     let env = load_resource_contract_sources(&texts).unwrap();
@@ -407,6 +407,25 @@ fn a_same_unit_caller_consumes_and_forwards_the_exact_exported_registration() {
             .any(|s| s.function == "starts" && !s.lifetime_effects.is_empty())
     );
     check_legacy_safety_certificate(&certificate).unwrap();
+
+    // An ordinary declaration or same-unit body cannot prove which externally
+    // linked definition a call reaches. Transport needs an internal helper or
+    // independently replayed external home.
+    let external = source.replace("static void starts", "void starts");
+    let unreplayed = analyze_unrestricted_c11(
+        &C11TranslationUnit {
+            source: &external,
+            ..Default::default()
+        },
+        "caller",
+        &env,
+    )
+    .unwrap();
+    assert!(matches!(
+        unreplayed,
+        UnrestrictedLegacyResult::Unknown { .. }
+    ));
+
     let mut missing_effect = certificate.clone();
     missing_effect
         .summaries
@@ -469,7 +488,7 @@ fn an_ordinary_custody_declaration_cannot_erase_its_bodys_registration() {
     use qcore_c_gateway::legacy_c::{
         UnrestrictedLegacyResult, analyze_unrestricted_c11, check_legacy_safety_certificate,
     };
-    let source = "struct loop { int fd; }; struct event { int state; }; struct collector { struct loop *evl; struct event event; }; int ev_add(struct loop *, void *);\nvoid starts(struct collector *c) { ev_add(c->evl, &c->event); }\nvoid caller(struct collector *c) { starts(c); }\n";
+    let source = "struct loop { int fd; }; struct event { int state; }; struct collector { struct loop *evl; struct event event; }; int ev_add(struct loop *, void *);\nstatic void starts(struct collector *c) { ev_add(c->evl, &c->event); }\nvoid caller(struct collector *c) { starts(c); }\n";
     let mut texts = contracts().source_assumptions().clone();
     texts.insert("protocol.qv".into(), "module contract; extern fn protocol_host(c: ptr<mut, u8>) -> unit contract { requires resource_contract_v1; ensures normal resource_borrowed(c); ensures normal resource_return_none(); quant registered #c: collector.event |-> collector.evl; }; extern fn starts(c: ptr<mut, u8>) -> unit contract { requires resource_contract_v1; ensures normal resource_borrowed(c); ensures normal resource_return_none(); };".into());
     let env = load_resource_contract_sources(&texts).unwrap();
@@ -498,6 +517,24 @@ fn an_ordinary_custody_declaration_cannot_erase_its_bodys_registration() {
             .any(|s| s.function == "starts" && !s.lifetime_effects.is_empty())
     );
     check_legacy_safety_certificate(&certificate).unwrap();
+
+    // An ordinary declaration or same-unit body cannot prove which externally
+    // linked definition a call reaches. Transport needs an internal helper or
+    // independently replayed external home.
+    let external = source.replace("static void starts", "void starts");
+    let unreplayed = analyze_unrestricted_c11(
+        &C11TranslationUnit {
+            source: &external,
+            ..Default::default()
+        },
+        "caller",
+        &env,
+    )
+    .unwrap();
+    assert!(matches!(
+        unreplayed,
+        UnrestrictedLegacyResult::Unknown { .. }
+    ));
 }
 
 #[test]
