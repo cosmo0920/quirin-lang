@@ -5,7 +5,15 @@ Card RULE33-PILOT, the fourth pilot of `GATEWAY-RULE-API-PILOT-MIGRATIONS`
 [interface report](../gateway-rule-api/README.md) §7: "a statement-position
 package with caller expansion"). Base `80c8aea98`. Implementation
 `a98b6112e`; [prediction](PREDICTION.md) committed before it (`6ab326999`);
-rule document and architecture row `dc72dee7e`.
+rule document and architecture row `dc72dee7e`. The card was halted on the
+user's request while its measurement ran and merged onto main as found
+(`16df251ad`, draft report `15e03d523`); the integrator added
+`selection_route::{expand,row}`, thin wrappers over the package's two arms,
+so the registry routes satisfy RULE35-PILOT's generator check
+([landing](../pilots-r1-landing/integration/README.md), "Halted cards and tip
+validation"). This round (pilots round 2, base `62c8e461c`) adds the
+evidence: section 3 records what ran before the halt and what the shared
+measurement adds.
 
 ## 1. What moved
 
@@ -104,16 +112,95 @@ frame reading and run observations, the older routes' soundness.
 
 ## 3. Identity run and contribution
 
-MEASUREMENT
+**Before the halt (no evidence).** `measure-1`
+(`/media/Data/GitHub/quirin-lang/private/rule33-pilot/measure-1/`, script
+`private/rule33/measure.sh` of the card's worktree) started at 05:25:56Z:
+`--side base=baseline:80c8aea98 --side tip=rev:a98b6112e --rules-off 33
+--declared PREDICTION.md`, release host and plugin from `release-build-2`.
+It was stopped by the halt at about 07:07Z with the tip and tip-off corpus
+routes unfinished; it wrote no report and no comparison. It is kept as an
+incomplete attempt and is not used.
 
-## 4. Gate
+SHARED_MEASUREMENT
 
-GATE
+## 4. Tests and gate
+
+Focused runs before the halt (on `a98b6112e`'s tree): the package 9/9 tests
+(5 moved, 4 new), `qcore-gateway-rule-api` 16/16 (with the new capability
+test), `detach_wrapper_composition`
+6/6 unchanged, `rule33_switch` 5/5 (nothing off: the three rule-33 rows and
+four rule-independent lookups `Safe`; `33` off in a child process: the
+pre-rule-33 refusals, exactly the three rows leave `Safe`; `35` off: rule 33
+still admits), Clippy `-D warnings` on the three crates exit 0, `lake build
+QCore.RemovedSelectionSwitch` and its audit exit 0.
+
+Card gate before the halt: `gate_scope.py --base 80c8aea98 --out
+private/gate-2` on `dc72dee7e` (full mode: workspace manifest, lockfile,
+`qcore-c-gateway`), 03:45–04:31Z. Submodules, fmt, Clippy, both probes exit
+0; Rust suite exit 0, 575 units, 597 summaries, 8,854 passed, 0 failed, 15
+ignored (2,452 s); `check_lean_audits.py` exit 0, 391 audits; Python exit 1,
+554 tests, 1 failure: `test_the_derived_facts_are_recomputed_rather_than_carried`
+(committed matrix `lean_audits` 390 against 391 files, the new
+`AuditRemovedSelectionSwitch.lean`), the integrator's regeneration. Logs:
+`/media/Data/GitHub/quirin-lang/private/rule33-pilot/gate-2.log` and
+`gate-2-logs/`. `gate-1` (01:37Z) and the first release build died on the
+shared disk's exhaustion (`No space left on device`); they are kept as
+failed attempts and are no evidence. The landing's full gate on `442dfa6f0`
+then ran this code merged with the other pilots (8,927 passed, 0 failed).
+
+Card gate of this round: GATE_R2
 
 ## 5. Parity cost (plan decision 6)
 
-COST
+- **Lines.** About 700 lines of rule code moved: the pure decisions
+  (`removed_selection.rs`, 371 lines with their tests) and about 330 lines
+  of word-level frame, expansion and statement code from
+  `legacy_selection.rs` (−331/+101 there). The package is 994 lines (627
+  before its tests); new in it are about 90 lines of package glue
+  (`RemovedSelection`, `ValidationRun`, anchors) and 4 tests. Around that:
+  204 lines of API (two capabilities and a test), 224 of switch integration
+  test, 132 of Lean, 21 registry lines and 12 generated, 7 of host glue in
+  `legacy_summary.rs`/`gateway_rules.rs`, 30 of manifests and pins. In all
+  1,782 added and 712 deleted lines; unlike rule 37 (about 10 lines of rule
+  code), most of this card's added lines are the rule itself, moved.
+- **Time.** Reading and design about 0.4 h (01:10–01:23Z, prediction
+  committed); implementation, Lean and focused tests 0.2 h (code commit
+  01:35Z); documents 2 min. The card gate took 46 min of execution but
+  started 2 h late because the shared disk was full; the release build took
+  4 min after 1 h 40 min waiting for an audit slot. The card's own
+  measurement ran 1 h 40 min until the halt and is superseded (section 3).
+  Evidence this round: MEASURE_TIME.
+- **Friction.**
+  1. The frame row and the body rewrite have no route-map position: §1 lists
+     the CFG-build rewrites beside the holds, and the custody derivation's
+     row routes are not mapped. Both arms are placed by effect, as rule 37's
+     settlement was (registered as `GATEWAY-RULE-API-BODY-REWRITE-POSITION`).
+  2. The existing positional traits read the host's vocabulary; a body
+     rewrite needs only words and the source line of each output word. The
+     anchor (index of the input word whose line an output word takes) keeps
+     the expanded stream byte-identical without exposing `Token`.
+  3. The frame and run types are the rule's, so the two capabilities carry
+     them as associated types rather than in the API; the host builds them
+     after its own checks, which keeps the host's contract, type-model and
+     linkage readings out of the package.
+  4. The registry test and the layering pin are shared-file edits every
+     pilot repeats; RULE35's generator check later required each arm's route
+     to be a `pub fn` of the package, which the integrator added at merge.
+  5. A new Lean audit file makes the committed matrix's derived count stale,
+     so the card gate's Python suite fails until the integrator regenerates
+     it (as for rule 37).
 
 ## 6. Likely conflicts and follow-ups
 
-CONFLICTS
+The code is on main already. This round adds only records: this report,
+`integration-amendments.json`, and the rule-33 ledgers under
+`contract/contributions/33/`. RULE36-PILOT and RULE34-PILOT amend the same
+`GATEWAY-RULE-API-PILOT-MIGRATIONS` entry and regenerate the same
+contributions page (`contribution_ledgers.py render`; rerun on a conflict).
+
+Follow-ups ([amendments](integration-amendments.json)):
+
+- **Registered `GATEWAY-RULE-API-BODY-REWRITE-POSITION`**: friction 1.
+- **Amended `GATEWAY-RULE-API-PILOT-MIGRATIONS`** for rule 33 (not retired:
+  32a remains).
+- CONTRIBUTION_FOLLOWUP
