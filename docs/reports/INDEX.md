@@ -1114,6 +1114,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [task-route-tsan](task-route-tsan/README.md) | TASK-ROUTE-TSAN — ThreadSanitizer on the checked task route (wave 37) |
 
+| [test-storage-budget](test-storage-budget/README.md) | TEST-STORAGE-BUDGET: the test suites in about 4 GB of disk instead of 86 |
+
 | [trace-alphabet-lease-boundary](trace-alphabet-lease-boundary/README.md) | The F02 trace alphabet's lease boundary — proved and exercised (TRACE-ALPHABET-LEASE-BOUNDARY) |
 
 | [tsan-failure-arms](tsan-failure-arms/README.md) | `TSAN-FAILURE-ARMS` — a ThreadSanitizer release trigger the join does not own, the task programs' failure arms, and an enforced invisibility property (wave 41) |
