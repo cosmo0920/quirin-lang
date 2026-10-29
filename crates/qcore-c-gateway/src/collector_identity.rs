@@ -692,19 +692,37 @@ mod stack_tests {
         let observed = source_depth(&deep);
         assert!(observed > 128 && observed <= ADMITTED_DEPTH);
         assert!(source_depth(&source(arms + 3, 15)) > ADMITTED_DEPTH);
-        let ((selected, conditional), kib) = high_water(move || {
-            (
-                import_selection(&unit(&deep), &selector()),
-                import_conditional_loop(&unit(&deep), &loops()),
-            )
-        });
+        // Also put the deep expression on the reader's recursive semantic
+        // path, at the bottom of the maximum admitted helper chain.
+        let value_source =
+            |n: usize| source(1, 15).replace("e->fd=0", &format!("e->fd={}0", "+ ".repeat(n)));
+        let mut unary = 100;
+        while source_depth(&value_source(unary + 1)) <= ADMITTED_DEPTH {
+            unary += 1;
+        }
+        let deep_value = value_source(unary);
+        let value_depth = source_depth(&deep_value);
+        assert!(value_depth > 128 && value_depth <= ADMITTED_DEPTH);
+        let over_value = value_source(unary + 1);
+        assert!(source_depth(&over_value) > ADMITTED_DEPTH);
+        let ((selected, conditional, value_selected, value_conditional), kib) =
+            high_water(move || {
+                (
+                    import_selection(&unit(&deep), &selector()),
+                    import_conditional_loop(&unit(&deep), &loops()),
+                    import_selection(&unit(&deep_value), &selector()),
+                    import_conditional_loop(&unit(&deep_value), &loops()),
+                )
+            });
         selected.unwrap();
         conditional.unwrap();
+        value_selected.unwrap();
+        value_conditional.unwrap();
         #[cfg(target_os = "linux")]
         {
             let measured = kib.expect("Linux stack high-water mark must be available");
             eprintln!(
-                "collector readers: JSON depth {observed}, helper depth 15, stack {measured} KiB"
+                "collector readers: JSON depths {observed}/{value_depth}, helper depth 15, stack {measured} KiB"
             );
             assert!(
                 measured <= 1024,
@@ -717,6 +735,7 @@ mod stack_tests {
             eprintln!("collector stack measurement unavailable off Linux");
         }
         assert!(import_selection(&unit(&source(arms + 3, 15)), &selector()).is_err());
+        assert!(import_conditional_loop(&unit(&over_value), &loops()).is_err());
         assert!(import_conditional_loop(&unit(&source(arms, 16)), &loops()).is_err());
     }
 }
