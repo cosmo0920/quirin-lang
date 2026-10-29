@@ -410,3 +410,21 @@ changed none of them: fixing any could move an output.
     walks per hook, the token-text vector and `find_call` recomputations, and
     the unit-wide scans (`place_is_unspelled`, `find_function_body`,
     `nested_call_declines`) per consultation.
+
+## 10. The transfer (added by card RULE34-PILOT)
+
+Added after this map was frozen, read at base `80c8aea98`; sections 1-9 are
+unchanged. Every section above lowers a statement, condition or return to an
+instruction. The transfer (`legacy_transfer.rs`: `transfer` at 2699,
+`transfer_base` at 3294) then applies one instruction to the abstract state.
+For an admitted contract call (`LegacyInstruction::ContractCall`, the arm at
+4154) the host's order is: the nested calls' declared effects (O04-TRACE),
+the call's own reading (`apply_contract_call`: parameter modes and result),
+then its declared container effects (W45-FB-RETRY-LIFETIME,
+`container_publication::apply`), then its retentions, references and
+callbacks (rules 12t, 13b, 13w/13x). Rule 34 is the one rule that orders
+inside it: an element destroyer's unlink (`resource_unpublished(p)` beside
+`resource_released(p, …)`) applies before the call's own reading. The rule
+interface's `Position::Transfer` (`transfer`) is this position; an arm there
+answers one phase per declared container effect, and its refusal keeps the
+host's order.

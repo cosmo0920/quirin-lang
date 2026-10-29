@@ -141,8 +141,10 @@ pub mod legacy_c;
 pub mod legacy_census;
 // Card GATEWAY-RULE-API: the rule registry and its run-time switches.
 pub mod gateway_rules;
+// Card RULE34-PILOT: the gateway as host of the transfer position (rule 34).
 mod legacy_condition_call;
 mod loop_generations;
+mod transfer_rules;
 // Card B08-FIELD-LINK-JOIN-SILENT-UNRESOLVED (rule 11c): partial field links
 // and the settled-exit floor; the G hooks are in `legacy_field_link_join.rs`.
 mod field_link_join;

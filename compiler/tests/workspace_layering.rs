@@ -29,6 +29,12 @@ const ALLOWED: &[(&str, &[&str])] = &[
         "crates/qcore-gateway-rule-api",
         &["qcore-schemas", "qcore-contract"],
     ),
+    // Card RULE34-PILOT: a rule package depends on the rule interface only,
+    // and the gateway asks it through that interface.
+    (
+        "crates/gateway-rules/rule-34-element-destroyer",
+        &["qcore-gateway-rule-api"],
+    ),
     (
         "crates/qcore-c-gateway",
         &[
@@ -36,6 +42,7 @@ const ALLOWED: &[(&str, &[&str])] = &[
             "qcore-core",
             "qcore-gateway-rule-api",
             "qcore-schemas",
+            "rule-34-element-destroyer",
         ],
     ),
     (

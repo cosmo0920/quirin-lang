@@ -4,8 +4,10 @@ import QCore.SchedulerLifetime
 /-!
 # The element destroyer (card W48-SCHED-CLEANUP-PRODUCTION, gateway rule 34)
 
-The abstract rule implemented by `legacy_c::container_publication::destroyer_split`
-and the `ContractCall` arm of `legacy_transfer.rs`, with the loader placement
+The abstract rule implemented by the transfer arm `destroyer-order`
+(`rule-34-element-destroyer`, asked by `transfer_rules::container_order`
+since card RULE34-PILOT; `QCore.ElementDestroyerSwitch` models its phases
+and switch) and the `ContractCall` arm of `legacy_transfer.rs`, with the loader placement
 rule of `qcore_contract::contract_counted_users::validate`.
 
 * A declaration may state `resource_unpublished(p)` beside

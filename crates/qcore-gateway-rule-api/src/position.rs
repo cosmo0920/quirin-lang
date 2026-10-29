@@ -38,11 +38,17 @@ pub enum Position {
     /// §7: an arm of a Clang-typed reader (the typed access path, its value
     /// and argument positions).
     TypedReader,
+    /// §10 (card RULE34-PILOT): the transfer of one admitted contract call
+    /// (`legacy_transfer.rs`, the `ContractCall` arm), after the parser and
+    /// every position above have lowered it: the order in which the call's
+    /// declared container effects apply around its own reading
+    /// ([`crate::transfer`]).
+    Transfer,
 }
 
 impl Position {
     /// Every position, in route-map order.
-    pub const ALL: [Self; 11] = [
+    pub const ALL: [Self; 12] = [
         Self::TokenHold,
         Self::StatementPre,
         Self::Classification,
@@ -54,6 +60,7 @@ impl Position {
         Self::ReturnRoute,
         Self::ReturnFallback,
         Self::TypedReader,
+        Self::Transfer,
     ];
 
     /// The registry's spelling.
@@ -71,6 +78,7 @@ impl Position {
             Self::ReturnRoute => "return-route",
             Self::ReturnFallback => "return-fallback",
             Self::TypedReader => "typed-reader",
+            Self::Transfer => "transfer",
         }
     }
 
@@ -87,6 +95,7 @@ impl Position {
             Self::ReturnRoute => "§4 steps 1-2",
             Self::ReturnFallback => "§4 step 3",
             Self::TypedReader => "§7",
+            Self::Transfer => "§10",
         }
     }
 
@@ -139,5 +148,31 @@ mod tests {
         assert!("".parse::<Position>().is_err());
         let holds: Vec<_> = Position::ALL.into_iter().filter(|p| p.is_hold()).collect();
         assert_eq!(holds, [Position::TokenHold, Position::CallHold]);
+    }
+
+    /// `ALL` is in route-map order: the major section each position is read
+    /// from never decreases (within §2 the order is the consultation order of
+    /// `expression_statement` and `classify_simple`), and the transfer, which
+    /// reads what every other position lowered, is last (card RULE34-PILOT).
+    #[test]
+    fn every_position_follows_the_route_map_order() {
+        let major = |position: Position| -> u32 {
+            let section = position.route_map_section();
+            let digits: String = section
+                .trim_start_matches('§')
+                .chars()
+                .take_while(char::is_ascii_digit)
+                .collect();
+            digits.parse().expect("a route-map section number")
+        };
+        let sections: Vec<u32> = Position::ALL.into_iter().map(major).collect();
+        assert_eq!(sections, [1, 2, 2, 2, 2, 2, 2, 3, 4, 4, 7, 10]);
+        assert!(sections.windows(2).all(|pair| pair[0] <= pair[1]));
+        assert_eq!(Position::ALL.last(), Some(&Position::Transfer));
+        assert!(!Position::Transfer.is_hold());
+        let mut names: Vec<_> = Position::ALL.into_iter().map(Position::name).collect();
+        names.sort_unstable();
+        names.dedup();
+        assert_eq!(names.len(), Position::ALL.len());
     }
 }

@@ -23,6 +23,9 @@
 //!   fail-closed by construction; an id the registry does not hold, or one
 //!   whose refusal would widen (a hold), is refused, never ignored.
 //!
+//! * [`transfer`] (card RULE34-PILOT): the transfer position, the order in
+//!   which one admitted contract call's declared container effects apply.
+//!
 //! No analysis logic lives here and nothing here decides a verdict.
 
 mod answer;
@@ -31,6 +34,7 @@ mod reason;
 mod registry;
 mod switches;
 pub mod traits;
+pub mod transfer;
 
 pub use answer::{Admission, Answer, Consulted, Obligation, consult};
 pub use position::{Position, UnknownPosition};
@@ -38,6 +42,7 @@ pub use reason::{ReasonKey, check_reservations};
 pub use registry::{Off, Placement, RegistryError, RuleEntry, check_registry, ordered_table};
 pub use switches::{RULES_OFF_VARIABLE, RulesOff, SwitchError};
 pub use traits::Host;
+pub use transfer::{DeclaredEffect, Phase, TransferArm, TransferQuery};
 
 #[cfg(test)]
 mod tests {

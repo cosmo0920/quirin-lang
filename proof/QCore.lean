@@ -132,6 +132,7 @@ import QCore.DisjointFootprint
 import QCore.ElaborationCore
 import QCore.ElaboratorCallFootprints
 import QCore.ElementDestroyer
+import QCore.ElementDestroyerSwitch
 import QCore.EnumerationAttribution
 import QCore.EpochAccounting
 import QCore.EpochSourceLowering

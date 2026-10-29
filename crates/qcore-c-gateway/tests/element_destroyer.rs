@@ -13,6 +13,9 @@
 //! every fixture reaches the gateway in the preprocessed form a production
 //! unit does. `item_destroy` stands for `mk_http_thread_destroy`.
 
+use std::process::Command;
+
+use qcore_c_gateway::gateway_rules;
 use qcore_c_gateway::legacy_c::{
     AnalysisStatus, C11TranslationUnit, CCompilerDialect, LegacyDiagnosticKind, ResourceContracts,
     UnrestrictedLegacyResult, analyze_unrestricted_c11,
@@ -349,4 +352,157 @@ fn a_destroying_body_publishes_no_summary() {
         )),
         "{diagnostics:?}"
     );
+}
+
+// ---- the switch (card RULE34-PILOT) ----------------------------------------
+//
+// Rule 34 is asked at the transfer position from its own package. The switch
+// is read once per process, so each switched case runs this binary again as a
+// child with `QCORE_GATEWAY_RULES_OFF` set (`child_*` tests do nothing unless
+// `ELEMENT_DESTROYER_CHILD` names them).
+
+const CHILD: &str = "ELEMENT_DESTROYER_CHILD";
+
+/// The refusal of a destroyer no transfer rule orders.
+const UNORDERED: &str = "element destroyer `item_destroy`: no transfer rule orders its unlink \
+                         before its release (gateway rule 34 is off)";
+
+/// Every fixture above that calls the destroyer, with its verdict with rule
+/// 34 on.
+const DESTROYING: &[(&str, AnalysisStatus)] = &[
+    (
+        "static int subject(struct queue *sched, struct mk_list *list) { int c = 0;
+         struct mk_list *tmp; struct mk_list *head; struct item *mth; (void) sched;
+         mk_list_foreach_safe(head, tmp, list) { mth = mk_list_entry(head, struct item, _head);
+         item_destroy(mth); c++; } return c; }",
+        AnalysisStatus::Safe,
+    ),
+    (
+        "int subject(struct queue *q, void *conn) { int c = 0; struct mk_list *it, *tmp; struct item *e;
+         mk_list_foreach_safe(it, tmp, &q->items) { e = mk_list_entry(it, struct item, _head);
+         if (e->session->conn == conn) { item_destroy(e); c++; } } return c; }",
+        AnalysisStatus::Safe,
+    ),
+    (
+        "void subject(struct queue *q) { struct item *e;
+         e = mk_list_entry_first(&q->items, struct item, _head); item_destroy(e); }",
+        AnalysisStatus::Safe,
+    ),
+    (
+        "void subject(struct queue *q) { struct item *e = q_alloc();
+         mk_list_add(&e->_head, &q->items); item_destroy(e); }",
+        AnalysisStatus::Safe,
+    ),
+    (
+        "void subject(struct queue *q) { struct item *e;
+         e = mk_list_entry_first(&q->items, struct item, _head); item_destroy(e); q_free(e); }",
+        AnalysisStatus::Unsafe,
+    ),
+    (
+        "void subject(struct queue *q) { struct item *e;
+         e = mk_list_entry_first(&q->items, struct item, _head);
+         mk_list_del(&e->_head); item_destroy(e); }",
+        AnalysisStatus::Unknown,
+    ),
+    (
+        "void subject(void) { struct item *e = q_alloc(); item_destroy(e); }",
+        AnalysisStatus::Unknown,
+    ),
+    (
+        "void subject(struct queue *q) { struct mk_list *it; struct item *e;
+         mk_list_foreach(it, &q->items) { e = mk_list_entry(it, struct item, _head);
+         item_destroy(e); } }",
+        AnalysisStatus::Unknown,
+    ),
+];
+
+/// A fixture with no destroyer: rule 10f's unlink, then a release.
+const UNLINK_THEN_FREE: &str = "void subject(struct queue *q) { struct item *e;
+         e = mk_list_entry_first(&q->items, struct item, _head);
+         mk_list_del(&e->_head); q_free(e); }";
+
+fn run_child(test: &str, list: &str) {
+    let status = Command::new(std::env::current_exe().expect("the test binary"))
+        .args([test, "--exact", "--nocapture", "--test-threads=1"])
+        .env(CHILD, test)
+        .env(gateway_rules::RULES_OFF_VARIABLE, list)
+        .status()
+        .expect("the child test runs");
+    assert!(status.success(), "{test} with {list:?}: {status}");
+}
+
+fn is_child(test: &str) -> bool {
+    std::env::var(CHILD).is_ok_and(|named| named == test)
+}
+
+#[test]
+fn with_rule_34_on_every_destroying_fixture_keeps_its_verdict() {
+    if std::env::var_os(CHILD).is_some() || !clang_available() {
+        return;
+    }
+    assert!(gateway_rules::effective_off().is_empty());
+    for (body, on) in DESTROYING {
+        let (status, diagnostics) = analyze(body);
+        assert_eq!(status, *on, "{body}\n{diagnostics:?}");
+        assert!(!has(&diagnostics, UNORDERED), "{body}\n{diagnostics:?}");
+    }
+    assert_eq!(analyze(UNLINK_THEN_FREE).0, AnalysisStatus::Safe);
+}
+
+#[test]
+fn switching_rule_34_off_refuses_every_destroyer_and_never_widens() {
+    if std::env::var_os(CHILD).is_some() || !clang_available() {
+        return;
+    }
+    run_child("child_rule_34_off", "34");
+}
+
+#[test]
+fn child_rule_34_off() {
+    if !is_child("child_rule_34_off") {
+        return;
+    }
+    assert_eq!(
+        gateway_rules::effective_off()
+            .into_iter()
+            .collect::<Vec<_>>(),
+        ["34"]
+    );
+    for (body, on) in DESTROYING {
+        // The call is refused before any of its effects apply: Unknown, as
+        // an uncontracted call was before rule 34, never Safe, and never an
+        // accusation (no leak of what the call was going to release, no
+        // double release of what it was going to end). A body whose
+        // iteration rule 5l already refuses at the lowering (the plain
+        // iteration) never reaches the transfer and keeps that refusal.
+        let (status, diagnostics) = analyze(body);
+        assert_eq!(status, AnalysisStatus::Unknown, "{body}\n{diagnostics:?}");
+        if *on != AnalysisStatus::Unknown {
+            assert!(has(&diagnostics, UNORDERED), "{body}\n{diagnostics:?}");
+        }
+        if !has(&diagnostics, UNORDERED) {
+            assert!(has(&diagnostics, PLAIN_REFUSAL), "{body}\n{diagnostics:?}");
+        }
+        assert_eq!(
+            count(&diagnostics, |kind| matches!(
+                kind,
+                LegacyDiagnosticKind::Leak { .. } | LegacyDiagnosticKind::DoubleRelease { .. }
+            )),
+            0,
+            "{body}\n{diagnostics:?}"
+        );
+    }
+    // A call without a destroyer is not rule 34's: unchanged.
+    let (status, diagnostics) = analyze(UNLINK_THEN_FREE);
+    assert_eq!(status, AnalysisStatus::Safe, "{diagnostics:?}");
+    // Rule 10f(3)'s summary gate is upstream of the transfer and unchanged;
+    // the drain itself is now refused at its destroyer.
+    let unit = "static int drain(struct mk_list *list) { struct mk_list *it, *tmp; struct item *e;
+         mk_list_foreach_safe(it, tmp, list) { e = mk_list_entry(it, struct item, _head);
+         item_destroy(e); } return 0; }
+         void subject(struct queue *q) { struct item *x = q_alloc();
+         mk_list_add(&x->_head, &q->items); drain(&q->items); mk_list_del(&x->_head); q_free(x); }";
+    let (status, diagnostics) = analyze_entry(unit, "drain");
+    assert_eq!(status, AnalysisStatus::Unknown, "{diagnostics:?}");
+    assert_ne!(analyze(unit).0, AnalysisStatus::Safe);
 }

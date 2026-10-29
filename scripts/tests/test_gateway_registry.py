@@ -3,6 +3,7 @@
 the committed files equal the generated ones, and every ordered placement
 equals the frozen route map's row (same rule, same route, same order)."""
 import copy
+import re
 import sys
 import tempfile
 import unittest
@@ -31,6 +32,23 @@ class GatewayRegistryTests(unittest.TestCase):
             self.assertEqual(placed, rows, position)
         self.assertEqual(len(frozen["statement-fallback"]), 15)
         self.assertEqual(len(frozen["return-fallback"]), 8)
+
+    def test_positions_follow_the_route_map_order(self):
+        """Card RULE34-PILOT: the generator's positions are the rule API's
+        `Position::ALL`, in its route-map order, with the same spellings; and
+        the route map holds a section for each position's section number,
+        the transfer's §10 included."""
+        source = (ROOT / "crates/qcore-gateway-rule-api/src/position.rs").read_text(encoding="utf-8")
+        listed = source.split("pub const ALL: [Self; ")[1].split("];")[0]
+        variants = re.findall(r"Self::([A-Za-z]+),", listed)
+        self.assertEqual(variants, list(gen.POSITIONS.values()))
+        for spelling, variant in gen.POSITIONS.items():
+            self.assertIn(f'Self::{variant} => "{spelling}",', source)
+        self.assertEqual(list(gen.POSITIONS)[-1], "transfer")
+        route_map = (ROOT / self.registry["route_map"]).read_text(encoding="utf-8")
+        sections = re.findall(r'Self::[A-Za-z |:]+=> "§(\d+)', source)
+        for number in sorted(set(sections), key=int):
+            self.assertRegex(route_map, rf"(?m)^## {number}\. ")
 
     def test_every_ordered_route_has_its_ask_function(self):
         table = (ROOT / gen.TABLE_RS).read_text(encoding="utf-8")

@@ -113,10 +113,24 @@ mod tests {
     fn the_registry_keeps_the_api_laws_and_every_rule_is_switchable() {
         assert_eq!(check_registry(REGISTRY), Ok(()));
         assert!(REGISTRY.iter().all(|entry| entry.off == Off::Refuses));
+        // A body lives in the gateway until its migration card moves it to
+        // its own package under crates/gateway-rules/ (card RULE34-PILOT:
+        // rule 34, asked at the transfer position).
+        assert!(REGISTRY.iter().all(|entry| {
+            entry.crate_name == "qcore-c-gateway"
+                || entry.crate_name.starts_with(&format!("rule-{}-", entry.id))
+        }));
+        let rule_34 = REGISTRY
+            .iter()
+            .find(|entry| entry.id == "34")
+            .expect("rule 34 is registered");
+        assert_eq!(rule_34.crate_name, "rule-34-element-destroyer");
+        assert_eq!(rule_34_element_destroyer::ID, rule_34.id);
         assert!(
-            REGISTRY
+            rule_34
+                .placements
                 .iter()
-                .all(|entry| entry.crate_name == "qcore-c-gateway")
+                .all(|placement| placement.position == qcore_gateway_rule_api::Position::Transfer)
         );
     }
 
