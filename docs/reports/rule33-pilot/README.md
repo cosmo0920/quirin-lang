@@ -121,7 +121,60 @@ It was stopped by the halt at about 07:07Z with the tip and tip-off corpus
 routes unfinished; it wrote no report and no comparison. It is kept as an
 incomplete attempt and is not used.
 
-SHARED_MEASUREMENT
+**This round: the shared measurement.** RULE36-PILOT ran one `quirin-audit
+measure` for the three halted pilots
+(`/media/Data/GitHub/quirin-lang/private/pilots-r2-measure/`, 09:32:40Z to
+21:44:54Z, exit 0, status `complete`, no failures): `--side
+base=rev:0d15e7b19 --side tip=rev:62c8e461c --rules-off 33,34,36 --per-rule
+--declared` the combined prediction (RULE36-PILOT's `PREDICTION-r2.md`, which
+carries this card's `none` block). Its record is
+`docs/reports/rule36-pilot/native-comparison.json` (sha256 `93035654cecf…`);
+this card commits a byte-identical copy at that path, since the ledgers name
+the record they come from (below).
+
+**Identity (BASE `0d15e7b19` -> TIP `62c8e461c`, the three moves together).**
+The declared check is `match` on all three routes (no unpredicted, missing or
+mismatched row). Slice: 404 rows identical; system: 448 identical; corpus:
+4,834 rows, 0 moved, 0 content changes, 0 unmatched, every row differing only
+in the environment fields, totals 1,013 Safe / 3,811 Unknown / 10 Unsafe on
+both sides. The corpus comparison is marked `incomplete` for "composition-
+conflict in the union of the two sides": both sides were built under one
+fixed build commit, so each corpus unit row has two components under one
+analyzer revision in the union (180 of the 185 unit rows listed; 365
+components in the union). That classification, and
+the digest substitution of the differing corpus artifacts, are RULE36-PILOT's
+to report (it owns the run and the checkers); this card records the result by
+reference and adds no check of its own.
+
+**Rule 33's contribution (`tip-off-33 -> tip`, one binary, rule 33 alone;
+interactions measured by `--per-rule`).** Ledgers
+`contract/contributions/33/{eight-home,fluent-bit-system,fluent-bit-tail-pause}.json`:
+
+| Profile | Rule 33 off | Rule 33 on | Rows moved |
+|---|---|---|---|
+| eight-home (corpus) | 1,011 Safe / 3,813 Unknown / 10 Unsafe | 1,013 / 3,811 / 10 | 2 Unknown -> Safe, both under `cJSON_DetachItemViaPointer`'s `detach_list_representation` |
+| fluent-bit-system | 101 / 343 / 4 | same | none |
+| fluent-bit-tail-pause | 57 / 4 Pending / 342 / 1 | same | none |
+
+The two rows are librdkafka's `cJSON.c` `cJSON_DetachItemFromArray` (off:
+"nested call `get_array_item` inside a modeled call is outside the resource
+projection") and `cJSON_DeleteItemFromArray` (off: the nested
+`cJSON_DetachItemFromArray`): exactly the prediction, and exactly the two rows
+rule 33's own card recorded as a BASE -> TIP delta across revisions (975 ->
+977 Safe; [report](../detach-result-wrapper-composition/README.md)). No row
+moves toward `Safe` with rule 33 off, no touched row stays Unknown, no leaf is
+traded elsewhere, and the tool reports no interaction: the joint off side
+(`tip-off`, 33, 34 and 36 together) moves 4 rows, rule 33's 2 and rule 34's 2.
+The tool's post-run off-list check passed (status `complete`, no failures;
+the `tip-off-33` components record `rule_set.off = ["33"]`, `tip` none).
+
+**The group is indivisible.** `contribution_ledgers.py write` writes every
+ledger of the record (rules 33, 34 and 36, three profiles each), and `check`
+refuses a per-rule group committed in part (`the group lists [33, 34, 36],
+the ledgers are [33]`). So this card commits all nine, written from the
+record's path in RULE36-PILOT's report directory; RULE34-PILOT and
+RULE36-PILOT writing from the same path produce the same bytes. `check` (15
+ledgers) and `consistency` exit 0; the contributions page is regenerated.
 
 ## 4. Tests and gate
 
@@ -169,7 +222,7 @@ Card gate of this round: GATE_R2
   started 2 h late because the shared disk was full; the release build took
   4 min after 1 h 40 min waiting for an audit slot. The card's own
   measurement ran 1 h 40 min until the halt and is superseded (section 3).
-  Evidence this round: MEASURE_TIME.
+  Evidence this round: the shared measurement took 12 h 12 min of wall clock for three rules (six sides), one run instead of three; writing the ledgers and this report about 1 h.
 - **Friction.**
   1. The frame row and the body rewrite have no route-map position: §1 lists
      the CFG-build rewrites beside the holds, and the custody derivation's
@@ -203,4 +256,7 @@ Follow-ups ([amendments](integration-amendments.json)):
 - **Registered `GATEWAY-RULE-API-BODY-REWRITE-POSITION`**: friction 1.
 - **Amended `GATEWAY-RULE-API-PILOT-MIGRATIONS`** for rule 33 (not retired:
   32a remains).
-- CONTRIBUTION_FOLLOWUP
+- **Retired `CONTRIBUTION-LEDGER-RULE-33`**: the switch-measured ledgers are
+  written and consistent, and equal the two rows rule 33's card recorded.
+- `MEASURE-TOOL-RULES-OFF-LIVE` was already retired by RULE37-PILOT; this
+  run is a further complete `--rules-off` run (with `--per-rule`).

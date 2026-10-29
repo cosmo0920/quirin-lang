@@ -1,0 +1,114 @@
+{
+ "delta": {},
+ "group": {
+  "base": {
+   "Pending": 4,
+   "Safe": 57,
+   "Unknown": 342,
+   "Unsafe": 1
+  },
+  "interactions": [],
+  "interactions_measured": true,
+  "joint_comparison": "tip-off->tip",
+  "on": {
+   "Pending": 4,
+   "Safe": 57,
+   "Unknown": 342,
+   "Unsafe": 1
+  },
+  "per_rule": true,
+  "rules": [
+   "33",
+   "34",
+   "36"
+  ],
+  "tip_figures": {
+   "null_rows": 406,
+   "null_verdicts": {
+    "Safe": 190,
+    "Unknown": 216
+   },
+   "null_verdicts_sha256": "08e9b5da9fe871894264c1b276f846c4cd387a95be5e4704fb4ac49e1dac744b",
+   "row_statuses": {
+    "Pending": 4,
+    "Safe": 57,
+    "Unknown": 342,
+    "Unsafe": 1
+   },
+   "row_verdicts_sha256": "a84686d4fd6a52b090bac9ed9302c52f2d79c1439fc7dfbbf421589ff4dd8781",
+   "rows": 404,
+   "unit_statuses": {
+    "Unknown": 15,
+    "Unsafe": 1
+   },
+   "unit_verdicts_sha256": "54e95d5f88252a15b9dd02fb3878b6286b16eeea24a5a4cfd4fde8a08af830e5",
+   "units": 16
+  }
+ },
+ "key": "33",
+ "kind": "rule",
+ "leaves_traded": {
+  "added": 0,
+  "removed": 0,
+  "rows": []
+ },
+ "measurement": {
+  "binary_sha256": "d62adccc7d0f28af8827ca5f7ef28a1bff0b1f0d6583b33916620b70c14707da",
+  "build_commit": "pilots-r2-identity",
+  "bundles": {
+   "contract": "8175d152272bf55e60faf7fbb7efd93c31839dbd9e78e5e5cfda9ccb10356ae9",
+   "providers/qcore-provider-chunkio/contracts": "6d25297b37c4f41bf63ad73acaef36732ae4d6a92805cc34ae38611f61fc8d13",
+   "providers/qcore-provider-cmetrics/contracts": "870ba620e5b1cb3b5f771793688ba5de3ccaddd1062e0d4347bbb7a71c0d0a04",
+   "providers/qcore-provider-ctraces/contracts": "e90eb34adf062a1a118226488ce68614d27a986d4dd12627d7458048974a80d1",
+   "providers/qcore-provider-libevent/contracts": "dc1adb13032e25baaf77ce60a154736ce530c1253b813694361bf2a9172c4835",
+   "providers/qcore-provider-librdkafka/contracts": "5fe62606dcc8ff4017a5d8ff03556ca60d26bd15a2519b756881e936a57e38a9",
+   "providers/quirin-provider-cfl/contracts": "2a55d7f5c586fac48704627331490074b3eb81730470bd36af1d78b09085aaf7",
+   "providers/quirin-provider-fluent-bit/contracts": "43dc9e8a3a5930bc08e8d0f914fdd955c7398bf54f3be0b225997e6b7379ca98",
+   "providers/quirin-provider-libc/contracts": "deea1b618acc7b2e7bf38c8fcffa02825edcc8361f590c40737ee1d0325d9e89",
+   "providers/quirin-provider-mpack/contracts": "14223b7f3b473e35df3b6468ef81ae4b3a074fe83d2d7f0d189301b28b0bdc10",
+   "providers/quirin-provider-msgpack/contracts": "e73fe57fc0d34045b4ee3eea73fa6838c15f08d0f1922b359e0682e30dfc15db",
+   "providers/quirin-provider-shared/contracts": "a4d40318b88bf388c0a7b38f7d83aa7f1dd38d5b9323056658b146cee14e4ba9"
+  },
+  "comparison": "tip-off-33->tip",
+  "revision": "62c8e461cf00628ab6c26a45dcdb243e91d79924",
+  "source_date_epoch": 1767225600,
+  "tip_side": "tip",
+  "tool": {
+   "name": "quirin-audit-measure",
+   "sha256": "ac755de615014122a28b83c4c9dd76a71b67cc8b2ec5d45935c966621e8c85ae",
+   "version": "0.1.0"
+  }
+ },
+ "premises": [],
+ "profile": "fluent-bit-tail-pause",
+ "profile_baseline": {
+  "measured_revision": "710021bd713b90037e803d4a1f87d95eba6476c9",
+  "sha256": "dce03b504b8967c470bc17d17ab9ccb03bac5a3a5bb6030a338b35241df3f2dc"
+ },
+ "record": {
+  "path": "docs/reports/rule36-pilot/native-comparison.json",
+  "sha256": "93035654cecffceed326ba4063f0277dde9005058419cf36f367f57c85de6977"
+ },
+ "route": "slice",
+ "rows_moved": [],
+ "rows_unknown": [],
+ "rules": [
+  "33"
+ ],
+ "schema": "quirin-contribution-ledger/1",
+ "source": "measured-by-switch",
+ "totals": {
+  "off": {
+   "Pending": 4,
+   "Safe": 57,
+   "Unknown": 342,
+   "Unsafe": 1
+  },
+  "on": {
+   "Pending": 4,
+   "Safe": 57,
+   "Unknown": 342,
+   "Unsafe": 1
+  }
+ }
+}
