@@ -605,3 +605,118 @@ pub fn replay_conditional_loop(
         .then_some(())
         .ok_or_else(|| "conditional loop import differs on replay".into())
 }
+
+#[cfg(test)]
+mod stack_tests {
+    use super::*;
+    use crate::deep_ast_transports::stack::high_water;
+    use crate::deep_unit_ast::{ADMITTED_DEPTH, depth};
+    use crate::legacy_c::CCompilerDialect;
+    const FIXTURE: &str = include_str!("../tests/fixtures/collector_identity.c");
+    fn unit(source: &str) -> C11TranslationUnit<'_> {
+        C11TranslationUnit {
+            source,
+            dialect: CCompilerDialect::Gnu17,
+            ..Default::default()
+        }
+    }
+    fn selector() -> SelectorQuery {
+        SelectorQuery {
+            function: "get_collector".into(),
+            record: "collector".into(),
+            owner_record: "instance".into(),
+            list_record: "mk_list".into(),
+            list_member: "collectors".into(),
+            link_member: "_head".into(),
+            key_member: "id".into(),
+        }
+    }
+    fn loops() -> LoopQuery {
+        LoopQuery {
+            function: "create".into(),
+            predicate: "threaded".into(),
+            record: "collector".into(),
+            owner_record: "instance".into(),
+            worker_record: "worker".into(),
+            config_record: "config".into(),
+            loop_record: "loop".into(),
+            instance_member: "instance".into(),
+            threaded_member: "is_threaded".into(),
+            worker_member: "thi".into(),
+            loop_member: "evl".into(),
+        }
+    }
+    fn source(arms: usize, helper: usize) -> String {
+        let mut helpers = String::from(
+            "struct event { int fd; }; static void frame0(struct event *e) { e->fd=0; }\n",
+        );
+        for index in 1..=16 {
+            helpers.push_str(&format!(
+                "static void frame{index}(struct event *e) {{ frame{}(e); }}\n",
+                index - 1
+            ));
+        }
+        let base = FIXTURE
+            .replace(
+                "struct collector {",
+                &format!("{helpers} struct collector {{ struct event event;"),
+            )
+            .replace(
+                "coll->instance=ins;",
+                &format!("coll->instance=ins; frame{helper}(&coll->event);"),
+            );
+        let mut chain = String::from("int deep_chain(int x) { if (x==0) return 0;\n");
+        for arm in 1..arms {
+            chain.push_str(&format!("else if (x=={arm}) return {arm};\n"));
+        }
+        chain.push_str("return -1; }\n");
+        base + &chain
+    }
+    fn source_depth(source: &str) -> usize {
+        crate::typed_c_ast::translation_unit_ast_read(source, &unit(source), |reader| {
+            let mut bytes = Vec::new();
+            std::io::Read::read_to_end(reader, &mut bytes).map_err(serde_json::Error::io)?;
+            Ok::<_, serde_json::Error>(depth(&bytes))
+        })
+        .unwrap()
+    }
+    #[test]
+    fn complete_collector_readers_fit_the_existing_ast_stack_budget() {
+        // Pin the actual JSON depth of this Clang's whole-unit document, not
+        // an assumed relation between C nesting and JSON nesting.
+        let mut arms = 100;
+        while source_depth(&source(arms + 1, 15)) <= ADMITTED_DEPTH {
+            arms += 1;
+        }
+        let deep = source(arms, 15);
+        let observed = source_depth(&deep);
+        assert!(observed > 128 && observed <= ADMITTED_DEPTH);
+        assert!(source_depth(&source(arms + 3, 15)) > ADMITTED_DEPTH);
+        let ((selected, conditional), kib) = high_water(move || {
+            (
+                import_selection(&unit(&deep), &selector()),
+                import_conditional_loop(&unit(&deep), &loops()),
+            )
+        });
+        selected.unwrap();
+        conditional.unwrap();
+        #[cfg(target_os = "linux")]
+        {
+            let measured = kib.expect("Linux stack high-water mark must be available");
+            eprintln!(
+                "collector readers: JSON depth {observed}, helper depth 15, stack {measured} KiB"
+            );
+            assert!(
+                measured <= 1024,
+                "collector readers exceed the existing 1 MiB budget: {measured} KiB"
+            );
+        }
+        #[cfg(not(target_os = "linux"))]
+        {
+            assert_eq!(kib, None);
+            eprintln!("collector stack measurement unavailable off Linux");
+        }
+        assert!(import_selection(&unit(&source(arms + 3, 15)), &selector()).is_err());
+        assert!(import_conditional_loop(&unit(&source(arms, 16)), &loops()).is_err());
+    }
+}
