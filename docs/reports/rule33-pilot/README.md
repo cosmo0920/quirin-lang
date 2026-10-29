@@ -201,7 +201,13 @@ shared disk's exhaustion (`No space left on device`); they are kept as
 failed attempts and are no evidence. The landing's full gate on `442dfa6f0`
 then ran this code merged with the other pilots (8,927 passed, 0 failed).
 
-Card gate of this round: GATE_R2
+Card gate of this round: `gate_scope.py --base 62c8e461c --out private/gate-r2`
+on `8d0cb911b` (the ledgers, record copy, report and amendments; scoped:
+no crate, no Lean), exit 0: submodules, fmt, Python 556 tests, 0 failures
+([record](gate.json); console
+`/media/Data/GitHub/quirin-lang/private/rule33-pilot/gate-r2.log`, steps
+`gate-r2-logs/`). The commit after it adds only this paragraph and the gate
+record.
 
 ## 5. Parity cost (plan decision 6)
 
