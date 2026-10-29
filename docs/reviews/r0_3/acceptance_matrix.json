@@ -6866,7 +6866,7 @@
   "workspace_tests": 8847,
   "provider_tests": 133,
   "python_evidence_validator_tests": 554,
-  "lean_audits": 391,
+  "lean_audits": 392,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -6928,6 +6928,7 @@
    "AuditCmetricsMetricConditions.lean",
    "AuditCmetricsOptsConditions.lean",
    "AuditCmetricsScalarWrapperConditions.lean",
+   "AuditCollectorIdentity.lean",
    "AuditComposeEventLines.lean",
    "AuditComposedStdIo.lean",
    "AuditComposedTasks.lean",
@@ -7266,7 +7267,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "full source/provider gate on 2bb3260b4095fe1199549464d798fe4a65fc86d4; records-only Python rerun after completion commit",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/event-holder-identity/gate.json)"
+  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
  "named_followups": [
   {

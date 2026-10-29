@@ -1,0 +1,17 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "EVENT-COLLECTOR-SELECTION",
+  "base": "3ee2c5ac1",
+  "measured_tip": "359b5fbe7ae49ebdc47dc1110dc4ce2be3b06270",
+  "increment_paragraph": "**EVENT-COLLECTOR-SELECTION (2026-10-29).** The [source audit](../../reports/event-collector-selection/README.md) adds exact internally linked first-match collector lookup imports and constructor-local conditional instance/worker/config loop relations, with bounded checked subobject initialization frames and independent replay. Source pins cover three revisions and six compilation snapshots; 21 audited Lean checks and eight focused Rust tests exercise selection, snapshot and refusal boundaries. These imports are outside Safe/lifetime-summary authority: list membership does not establish the record instance field, config formals remain distinct, and list/key/record/flag stability plus caller composition remain open. No profile promotion or tracker retirement is claimed.",
+  "status_paragraph": "EVENT-COLLECTOR-SELECTION adds independently replayed source-audit imports for first-match collector selection and constructor-local conditional instance/loop stores. Production snapshots across three pinned revisions are read, but membership/instance invariance, persistent frames and caller lifetime composition remain open; no Safe route consumes these imports. [Report](reports/event-collector-selection/README.md).",
+  "profiles": [],
+  "ledger": [
+    {
+      "id": "FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME",
+      "operation": "append",
+      "text": "EVENT-COLLECTOR-SELECTION adds separately replayed observational source imports for exact first-match owner-list/id searches and constructor-local instance/conditional loop stores, including closed subobject initialization frames. No Safe or lifetime-summary route consumes these imports. List membership/instance-field invariance, duplicate-key/cross-call stability, enduring record/flag frames, config actual/instance equality, automatic caller lifetime transport, alias liveness, imported-home chains, threaded teardown, descriptor custody and backend-body proof remain Open.",
+      "source": "docs/reports/event-collector-selection/README.md"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "source_checkpoint": "359b5fbe7ae49ebdc47dc1110dc4ce2be3b06270",
+  "verified_archives": 75,
+  "replayed_configurations": 6,
+  "imports": 12,
+  "internal_source_replays": 12,
+  "remaining_report_deltas": 0,
+  "lifetime_verdict": "not established"
+}

@@ -463,6 +463,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [event-caller-removal](event-caller-removal/README.md) | Event caller removal contract |
 
+| [event-collector-selection](event-collector-selection/README.md) | Collector selection and conditional instance/loop source audit |
+
 | [event-holder-identity](event-holder-identity/README.md) | Whole-record holder frames and exact collector/loop identity |
 
 | [event-ordered-lifetime](event-ordered-lifetime/README.md) | Ordered removal summaries and cross-unit lifetime replay |
