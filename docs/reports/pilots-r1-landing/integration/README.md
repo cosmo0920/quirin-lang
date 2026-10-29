@@ -39,3 +39,30 @@ not validation; its logs remain in `private/landing-pilots-r1/gate-1-enospc`.
 The build directories of the three merged cards were reclaimed before this
 gate. Final publication is `land.py publish` on the committed landing records;
 no outcome of it is inferred here.
+
+## Halted cards and tip validation (2026-10-29)
+
+On the user's request the running cards RULE36-PILOT, RULE33-PILOT and
+RULE34-PILOT were halted and every card's commits merged onto main. Each
+halted card's uncommitted draft report was committed as found (WIP). They
+landed **without** their own identity measurement, contribution ledger,
+card gate or integration amendments; their reports are drafts and
+`GATEWAY-RULE-API-PILOT-MIGRATIONS` is not amended for them. Rule 33 gains
+`selection_route::{expand,row}`, thin wrappers over its arms, so its
+registry routes satisfy RULE35's generator check. Main had meanwhile gained
+`41edebfc4` (this branch) and `0d15e7b19` (codex/event-collector-selection),
+merged here as `442dfa6f0`.
+
+`gate_scope.py --base 80c8aea98 --full` on `442dfa6f0`: submodules, fmt,
+Clippy exit 0; Rust 584 units, 8,927 passed / 0 failed / 15 ignored (69
+filtered); Lean 396 audits exit 0; Python 556 tests, 1 failure (the stale
+matrix derived counts, regenerated below); provider fmt exit 0; provider
+build, verify, test and Clippy failed because `providers/Cargo.lock` lacked
+the five rule packages ([steps](tip-gate-steps.json)). `dc5d07c95` adds
+exactly those five lock entries; the provider steps rerun on it all exit 0:
+five packages built and verified, provider Rust 133 passed / 0 failed / 1
+ignored (43 binaries), fmt, Clippy ([steps](tip-provider-steps.json)). Logs:
+`private/landing-pilots-r1/gate-tip-442dfa6f0/` and
+`private/landing-pilots-r1/provider-dc5d07c95/`. The matrix, report index and
+contributions page were regenerated (`land.py check` fresh) and committed
+with this record before the Python rerun.

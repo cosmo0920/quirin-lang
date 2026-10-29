@@ -1040,7 +1040,13 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [route-selection-order-restated](route-selection-order-restated/README.md) | ROUTE-SELECTION-ORDER-RESTATED: the route order is written once |
 
+| [rule33-pilot](rule33-pilot/README.md) | RULE33-PILOT: rule 33 as a rule package |
+
+| [rule34-pilot](rule34-pilot/README.md) | RULE34-PILOT: gateway rule 34 at a new transfer position |
+
 | [rule35-pilot](rule35-pilot/README.md) | RULE35-PILOT: gateway rule 35 as its own rule package |
+
+| [rule36-pilot](rule36-pilot/README.md) | RULE36-PILOT: rule 36 as its own rule package |
 
 | [rule37-pilot](rule37-pilot/README.md) | RULE37-PILOT: rule 37 as a rule package |
 

@@ -1,0 +1,91 @@
+{
+ "head": "dc5d07c95f65cf69f785110db9b256a921486d67",
+ "steps": [
+  {
+   "name": "provider-package-build",
+   "argv": [
+    "/usr/bin/python3",
+    "providers/package.py",
+    "build",
+    "--output",
+    "/media/Data/GitHub/quirin-lang/private/landing-pilots-r1/provider-dc5d07c95/provider-packages"
+   ],
+   "exit": 0,
+   "seconds": 168.6
+  },
+  {
+   "name": "provider-package-verify-all",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-pilots-r1/scripts/gate_scope.py",
+    "--verify-packages",
+    "/media/Data/GitHub/quirin-lang/private/landing-pilots-r1/provider-dc5d07c95/provider-packages"
+   ],
+   "exit": 0,
+   "seconds": 0.8
+  },
+  {
+   "name": "provider-package-verify",
+   "argv": [
+    "/usr/bin/python3",
+    "providers/package.py",
+    "verify",
+    "/media/Data/GitHub/quirin-lang/private/landing-pilots-r1/provider-dc5d07c95/provider-packages/qcore.libevent"
+   ],
+   "exit": 0,
+   "seconds": 0.1
+  },
+  {
+   "name": "provider-test",
+   "argv": [
+    "/usr/bin/python3",
+    "scripts/gate_slot.py",
+    "rust-suite",
+    "--receipt",
+    "/media/Data/GitHub/quirin-lang/private/landing-pilots-r1/provider-dc5d07c95/slots/provider-test.json",
+    "--",
+    "cargo",
+    "test",
+    "--manifest-path",
+    "providers/Cargo.toml",
+    "--workspace",
+    "--locked",
+    "--offline"
+   ],
+   "exit": 0,
+   "seconds": 2242.9
+  },
+  {
+   "name": "provider-fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--manifest-path",
+    "providers/Cargo.toml",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "exit": 0,
+   "seconds": 4.3
+  },
+  {
+   "name": "provider-clippy",
+   "argv": [
+    "cargo",
+    "clippy",
+    "--manifest-path",
+    "providers/Cargo.toml",
+    "--workspace",
+    "--all-targets",
+    "--locked",
+    "--offline",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "exit": 0,
+   "seconds": 22.3
+  }
+ ]
+}

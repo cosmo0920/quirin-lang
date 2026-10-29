@@ -6809,10 +6809,13 @@
   }
  },
  "workspace": {
-  "cargo_workspace_members": 17,
+  "cargo_workspace_members": 20,
   "cargo_workspace_member_paths": [
    "compiler",
+   "crates/gateway-rules/rule-33-removed-selection",
+   "crates/gateway-rules/rule-34-element-destroyer",
    "crates/gateway-rules/rule-35-literal-decay",
+   "crates/gateway-rules/rule-36-exact-formal-return",
    "crates/gateway-rules/rule-37-result-constructors",
    "crates/qcore-audit",
    "crates/qcore-c-gateway",
@@ -6830,7 +6833,10 @@
    "crates/quirin-source-analysis"
   ],
   "crates_directory_members": [
+   "crates/gateway-rules/rule-33-removed-selection",
+   "crates/gateway-rules/rule-34-element-destroyer",
    "crates/gateway-rules/rule-35-literal-decay",
+   "crates/gateway-rules/rule-36-exact-formal-return",
    "crates/gateway-rules/rule-37-result-constructors",
    "crates/qcore-audit",
    "crates/qcore-c-gateway",
@@ -6870,7 +6876,7 @@
   "workspace_tests": 8847,
   "provider_tests": 133,
   "python_evidence_validator_tests": 554,
-  "lean_audits": 392,
+  "lean_audits": 396,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -6999,6 +7005,7 @@
    "AuditElaborationCore.lean",
    "AuditElaboratorCallFootprints.lean",
    "AuditElementDestroyer.lean",
+   "AuditElementDestroyerSwitch.lean",
    "AuditEnumerationAttribution.lean",
    "AuditEpochAccounting.lean",
    "AuditEpochSourceLowering.lean",
@@ -7006,6 +7013,7 @@
    "AuditEventCompositionContext.lean",
    "AuditEventPayloadBoundary.lean",
    "AuditEventRemovalWrapper.lean",
+   "AuditExactFormalReturnSwitch.lean",
    "AuditExecutionCoverage.lean",
    "AuditExternCall.lean",
    "AuditFfiStructImport.lean",
@@ -7153,6 +7161,7 @@
    "AuditRelationalForwarding.lean",
    "AuditRelationalPost.lean",
    "AuditRemovedSelection.lean",
+   "AuditRemovedSelectionSwitch.lean",
    "AuditRequestConsumption.lean",
    "AuditReservedSpelling.lean",
    "AuditResidualAccessReadings.lean",
