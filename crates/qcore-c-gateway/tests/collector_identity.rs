@@ -186,3 +186,34 @@ fn the_builtin_offset_form_uses_the_exact_record_and_member() {
     let bad = c.replace("- offsetof(type,member)", "- offsetof(type,id)");
     assert!(import_selection(&unit(&bad), &selector()).is_err());
 }
+
+#[test]
+fn a_shadowed_tag_or_function_pointer_cannot_borrow_another_definitions_authority() {
+    let shadow = C.replace(
+        "struct collector *coll; struct worker *thi;",
+        "struct collector *coll; struct worker *thi; int (*threaded)(struct instance *)=0;",
+    );
+    assert!(import_conditional_loop(&unit(&shadow), &loops()).is_err());
+    let local_tag=C.replace("struct collector *coll; struct worker *thi;", "struct collector { struct instance *instance; struct loop *evl; }; struct collector *coll; struct worker *thi;");
+    assert!(import_conditional_loop(&unit(&local_tag), &loops()).is_err());
+}
+
+#[test]
+fn increments_compound_writes_and_binding_address_escapes_refuse_entry_correspondence() {
+    for statement in [
+        "ins++;",
+        "ins+=1;",
+        "opaque(&ins);",
+        "opaque(&config);",
+        "opaque(&thi);",
+    ] {
+        let changed = C.replace(
+            "coll->instance=ins;",
+            &format!("{statement} coll->instance=ins;"),
+        );
+        assert!(
+            import_conditional_loop(&unit(&changed), &loops()).is_err(),
+            "{statement}"
+        );
+    }
+}

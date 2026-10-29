@@ -142,14 +142,17 @@ fn body(n: &Value) -> Result<&Value, String> {
         .ok_or_else(|| "missing body".into())
 }
 fn field(ast: &Value, record: &str, member: &str, expected: &str) -> Result<(), String> {
-    let defs = children(ast)
-        .iter()
-        .filter(|n| {
-            kind(n) == "RecordDecl"
-                && n["name"].as_str() == Some(record)
-                && n["completeDefinition"].as_bool() == Some(true)
-        })
-        .collect::<Vec<_>>();
+    let mut defs = Vec::new();
+    let mut pending = vec![ast];
+    while let Some(n) = pending.pop() {
+        if kind(n) == "RecordDecl"
+            && n["name"].as_str() == Some(record)
+            && n["completeDefinition"].as_bool() == Some(true)
+        {
+            defs.push(n);
+        }
+        pending.extend(children(n));
+    }
     let [def] = defs.as_slice() else {
         return Err("missing or ambiguous record definition".into());
     };
@@ -195,6 +198,37 @@ fn locals(n: &Value) -> Vec<&Value> {
         .filter(|n| kind(n) == "VarDecl")
         .collect()
 }
+fn stable_binding(body: &Value, declaration: &Value, expected_writes: usize) -> bool {
+    let Some(id) = declaration["id"].as_str() else {
+        return false;
+    };
+    let mut pending = vec![body];
+    let mut writes = 0usize;
+    while let Some(n) = pending.pop() {
+        if matches!(
+            kind(n),
+            "GCCAsmStmt" | "MSAsmStmt" | "GotoStmt" | "IndirectGotoStmt" | "LabelStmt"
+        ) {
+            return false;
+        }
+        if kind(n) == "UnaryOperator" && children(n).first().is_some_and(|n| reference(n, id)) {
+            match n["opcode"].as_str() {
+                Some("&") => return false,
+                Some("++" | "--") => writes += 1,
+                _ => (),
+            }
+        }
+        if (kind(n) == "BinaryOperator" && n["opcode"].as_str() == Some("=")
+            || kind(n) == "CompoundAssignOperator")
+            && children(n).first().is_some_and(|n| reference(n, id))
+        {
+            writes += 1;
+        }
+        pending.extend(children(n));
+    }
+    writes == expected_writes
+}
+
 fn digest(unit: &C11TranslationUnit<'_>) -> String {
     qcore_schemas::sha256_hex(
         format!(
@@ -368,6 +402,7 @@ fn subobject_frame(ast: &Value, function: &Value, depth: usize) -> bool {
             };
             let called_params = parameters(called);
             return kind(callee) == "DeclRefExpr"
+                && callee["referencedDecl"]["kind"].as_str() == Some("FunctionDecl")
                 && called_params.len() + 1 == args.len()
                 && called_params.first().is_some_and(|p| ty(p) == ty(first))
                 && args.get(1).is_some_and(|n| reference(n, id))
@@ -388,6 +423,7 @@ fn preserves_outer(ast: &Value, statement: &Value, coll: &Value, record: &str) -
         return false;
     };
     if kind(callee) != "DeclRefExpr"
+        || callee["referencedDecl"]["kind"].as_str() != Some("FunctionDecl")
         || kind(actual) != "UnaryOperator"
         || actual["opcode"].as_str() != Some("&")
     {
@@ -483,6 +519,7 @@ pub fn import_conditional_loop(
     let (_, coll) = unique_typed(&ls, &format!("struct {} *", query.record))?;
     let (_, worker) = unique_typed(&ls, &format!("struct {} *", query.worker_record))?;
     let coll_decl = coll;
+    let binding_declarations = [(owner, 0), (config, 0), (worker, 1)];
     let (owner, config, coll, worker) = (name(owner)?, name(config)?, name(coll)?, name(worker)?);
     let instance = &query.instance_member;
     let worker_member = &query.worker_member;
@@ -496,6 +533,19 @@ pub fn import_conditional_loop(
     let mut pairs = 0usize;
     for (end, statement) in statements.iter().enumerate() {
         if !text(&source, statement).is_ok_and(|s| tokens(s) == expected_if) {
+            continue;
+        }
+        let Some(condition) = children(statement).first().map(strip) else {
+            continue;
+        };
+        let Some(callee) = children(condition).first().map(strip) else {
+            continue;
+        };
+        if kind(condition) != "CallExpr"
+            || kind(callee) != "DeclRefExpr"
+            || callee["referencedDecl"]["kind"].as_str() != Some("FunctionDecl")
+            || callee["referencedDecl"]["name"].as_str() != Some(query.predicate.as_str())
+        {
             continue;
         }
         for start in (0..end).rev() {
@@ -516,15 +566,11 @@ pub fn import_conditional_loop(
     }
     // This is a snapshot at the conditional's join, not a whole-body invariant.
     // Local/formal rebinding anywhere invalidates spelling-based substitution.
-    let body_tokens = tokens(text(&source, b)?);
-    for (local, expected_writes) in [(owner, 0), (config, 0), (worker, 1)] {
-        if body_tokens
-            .windows(2)
-            .filter(|w| w[0] == local && w[1] == "=")
-            .count()
-            != expected_writes
-        {
-            return Err("formal or worker rebinding prevents exact instance identity".into());
+    for (declaration, writes) in binding_declarations {
+        if !stable_binding(b, declaration, writes) {
+            return Err(
+                "formal or worker rebinding/escape prevents exact instance identity".into(),
+            );
         }
     }
     Ok(ConditionalLoopImport {
