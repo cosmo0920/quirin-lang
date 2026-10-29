@@ -13,6 +13,14 @@ quirin-provider-mpack = { path = "quirin-provider-mpack" }
 quirin-provider-msgpack = { path = "quirin-provider-msgpack" }
 quirin-provider-fluent-bit = { path = "quirin-provider-fluent-bit" }
 
+# Card TEST-STORAGE-BUDGET: line tables only, as the root workspace's dev
+# profile (card W44-TEST-SUITE-WALL-TIME), so panics and backtraces keep
+# file:line while the provider tests' executables, each linking the analysis
+# crates, lose their full DWARF. opt-level, debug-assertions and
+# overflow-checks keep their dev defaults; release (the packages) is unchanged.
+[profile.dev]
+debug = "line-tables-only"
+
 [profile.release]
 debug = false
 strip = "debuginfo"

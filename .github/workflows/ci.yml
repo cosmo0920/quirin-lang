@@ -10,6 +10,11 @@ permissions:
 jobs:
   rust:
     runs-on: ubuntu-latest
+    # Card TEST-STORAGE-BUDGET: a CI build is fresh, so incremental state is
+    # disk nothing reads again; this equals the test configuration's
+    # build.incremental=false, so steps with and without it share their units.
+    env:
+      CARGO_INCREMENTAL: "0"
     steps:
       - name: Check out pinned sources
         uses: actions/checkout@v4
@@ -31,19 +36,33 @@ jobs:
       # W43-INDIRECT-ACCESS-GENERAL. No workspace member enables the census
       # feature, so without this step its hooks in the gateway compile nowhere
       # and rot silently (INDIRECT-CENSUS-FEATURE-UNBUILT).
+      # Card TEST-STORAGE-BUDGET. Every step below that builds root-workspace
+      # tests or examples passes the test-build configuration of
+      # scripts/test_link_config.py (docs/agents/validation.md "Test build
+      # storage"): no incremental state, and on Linux the workspace libraries
+      # as Rust dylibs that test executables, binaries and examples link
+      # dynamically. A fresh `cargo test --workspace` then peaks near 4 GB of
+      # target/ instead of 86 GB. The local gates pass the same arguments.
       - name: Lint and test the gateway with the indirect-access census compiled in
         run: |
           cargo clippy -p qcore-c-gateway --features indirect-census --all-targets -- -D warnings
-          cargo test -p qcore-c-gateway --features indirect-census --lib
+          mapfile -t test_config < <(python3 scripts/test_link_config.py)
+          cargo test "${test_config[@]}" -p qcore-c-gateway --features indirect-census --lib
 
       - name: Test, including the pinned Libevent audit
-        run: cargo test --workspace
+        run: |
+          mapfile -t test_config < <(python3 scripts/test_link_config.py)
+          cargo test "${test_config[@]}" --workspace
 
       - name: Check the six reevaluation regressions and controls
-        run: cargo run -p qcore-compiler --example reevaluation_probe
+        run: |
+          mapfile -t test_config < <(python3 scripts/test_link_config.py)
+          cargo run "${test_config[@]}" -p qcore-compiler --example reevaluation_probe
 
       - name: Check the reevaluation follow-up regressions and controls
-        run: cargo run -p qcore-compiler --example reevaluation_followup
+        run: |
+          mapfile -t test_config < <(python3 scripts/test_link_config.py)
+          cargo run "${test_config[@]}" -p qcore-compiler --example reevaluation_followup
 
       # Card P03-F. `cargo test --workspace` already runs these; naming them
       # separately with --nocapture puts the executed refusal ground and the
@@ -51,7 +70,8 @@ jobs:
       # override path would otherwise be invisible.
       - name: Execute the confinement refusal grounds and the per-execution quota
         run: |
-          cargo test -p qcore-verifier-host --test execution_quota -- \
+          mapfile -t test_config < <(python3 scripts/test_link_config.py)
+          cargo test "${test_config[@]}" -p qcore-verifier-host --test execution_quota -- \
             --nocapture --test-threads=1 2>&1 | tee quota.log
           grep -q 'P03F-GROUND4:' quota.log
 
@@ -97,6 +117,9 @@ jobs:
         toolchain: [msvc-core, msvc-clang-analysis]
     env:
       CC: cl
+      # Card TEST-STORAGE-BUDGET: as in the Linux job, and equal to the
+      # runner's build.incremental=false, so every step shares its units.
+      CARGO_INCREMENTAL: "0"
     steps:
       - name: Preserve pinned source line endings
         run: git config --global core.autocrlf false
@@ -177,7 +200,13 @@ jobs:
             & $binary
             if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           }
-          cargo test --workspace
+          # Card TEST-STORAGE-BUDGET: Windows links tests statically (a DLL of
+          # the large crates would exceed the 65,535-export limit), so the
+          # suite runs in batches of 32 target names, each built, run and
+          # deleted before the next (`--batch-size`), one executable at a
+          # time as `cargo test` runs them (`--jobs 1`); the test set and
+          # its fail-closed verdicts are the runner's, docs/agents/validation.md.
+          python scripts/run_test_binaries.py --jobs 1 --batch-size 32
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           cargo run -p qcore-compiler --example reevaluation_probe
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }

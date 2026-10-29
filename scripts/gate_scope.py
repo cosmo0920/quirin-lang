@@ -71,6 +71,8 @@ import sys
 import time
 from typing import Iterable, Optional, Sequence
 
+import test_link_config
+
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = Path(__file__).resolve().parent
 
@@ -80,7 +82,8 @@ FULL_CRATES = ("qcore-c-gateway", "qcore-core", "qcore-contract", "qcore-schemas
 WORKSPACE_FILES = ("Cargo.toml", "Cargo.lock", "rust-toolchain", "rust-toolchain.toml")
 WORKSPACE_PREFIXES = (".cargo/",)
 # Tools whose change makes their own selection untrustworthy.
-FULL_RUST_TOOLS = ("scripts/run_test_binaries.py", "scripts/gate_scope.py")
+FULL_RUST_TOOLS = ("scripts/run_test_binaries.py", "scripts/gate_scope.py",
+                   "scripts/test_link_config.py", "scripts/rustc_test_dylib.py")
 FULL_LEAN_TOOLS = ("scripts/check_lean_audits.py", "scripts/gate_lean.py")
 # Prose and CI configuration: no gate step reads them unless a crate is found
 # reading them (and the Python suite, which always runs, may).
@@ -630,9 +633,12 @@ def steps_for(scope: dict, out: Path, python: str = sys.executable) -> list[Step
                                          "--log-dir", str(out / "rust-suite")],
                           slot="rust-suite", counts="rust-summary"))
     if scope["probes"]:
+        # The test-build configuration (card TEST-STORAGE-BUDGET), so the
+        # examples reuse the suite's build instead of rebuilding every crate.
+        config = test_link_config.cargo_config_args()
         for probe in PROBES:
-            steps.append(Step(f"probe-{probe}", ["cargo", "run", "-p", PROBE_CRATE, "--example",
-                                                 probe]))
+            steps.append(Step(f"probe-{probe}", ["cargo", "run", *config, "-p", PROBE_CRATE,
+                                                 "--example", probe]))
     lean = scope["lean"]
     if lean["mode"] == "all":
         steps.append(Step("lean", [python, str(SCRIPTS / "check_lean_audits.py")], slot="lean",

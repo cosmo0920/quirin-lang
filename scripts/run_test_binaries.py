@@ -45,6 +45,14 @@ the parallel phase, and a stale entry for a selected member still fails the run.
 A restricted run is the scoped card gate's suite (``scripts/gate_scope.py``),
 never the standing gate's: ``summary.json`` and the totals line name the
 selection.
+
+Every cargo command it runs carries the test-build configuration of
+``scripts/test_link_config.py`` (card TEST-STORAGE-BUDGET): no incremental
+state, and on Linux dynamically linked test executables, binaries and
+examples (``--link dynamic``, the default there).  ``--link static`` builds
+as plain ``cargo test`` does; the test set and its results are the same
+either way, only the bytes on disk differ.  ``summary.json`` records the mode
+and the arguments.
 """
 
 from __future__ import annotations
@@ -64,6 +72,8 @@ import sys
 import threading
 import time
 from typing import Callable, Iterable, Optional, Sequence
+
+import test_link_config
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_WEIGHTS = Path(__file__).resolve().with_name("test_binary_weights.json")
@@ -423,14 +433,20 @@ def unit_id(package: str, target: dict) -> str:
 
 
 def build(cargo: str, extra: Sequence[str], log_dir: Path,
-          packages: Optional[Sequence[str]] = None) -> tuple[int, dict[str, str]]:
-    """Build like `cargo test` does; return (exit, executable -> unit id)."""
+          packages: Optional[Sequence[str]] = None, filters: Sequence[str] = (),
+          label: str = "") -> tuple[int, dict[str, str]]:
+    """Build like `cargo test` does; return (exit, executable -> unit id).
+
+    ``filters`` (cargo target filters such as ``--test NAME``) restrict the
+    build to one batch of ``--batch-size``; none builds what ``cargo test``
+    builds.
+    """
     names = package_names(cargo, extra)
     argv = [cargo, "test", *selection_args(packages), "--no-run",
-            "--message-format=json-render-diagnostics", *extra]
+            "--message-format=json-render-diagnostics", *filters, *extra]
     print(f"$ {shlex.join(argv)}", flush=True)
     executables: dict[str, str] = {}
-    with open(log_dir / "build.stdout.jsonl", "wb") as raw:
+    with open(log_dir / f"build{label}.stdout.jsonl", "wb") as raw:
         process = subprocess.Popen(argv, stdout=subprocess.PIPE)
         assert process.stdout is not None
         for line in process.stdout:
@@ -471,20 +487,22 @@ def capture_command(capture_dir: Path) -> list[str]:
 
 
 def capture(cargo: str, extra: Sequence[str], log_dir: Path,
-            packages: Optional[Sequence[str]] = None) -> tuple[int, list[dict]]:
+            packages: Optional[Sequence[str]] = None, filters: Sequence[str] = (),
+            label: str = "") -> tuple[int, list[dict]]:
     """Record cargo's own launch of every test executable without running it."""
-    capture_dir = log_dir / "capture"
+    capture_dir = log_dir / f"capture{label}"
     capture_dir.mkdir()
     runner = capture_command(capture_dir)
     triple = host_triple(dict(os.environ))
     config = f"target.{triple}.runner=[{', '.join(json.dumps(part) for part in runner)}]"
     selection = selection_args(packages)
-    argv = [cargo, "test", *selection, "--no-fail-fast", "--tests",
+    targets = list(filters) or ["--tests"]
+    argv = [cargo, "test", *selection, "--no-fail-fast", *targets,
             "--config", config, *extra]
-    print(f"$ cargo test {shlex.join(selection)} --no-fail-fast --tests "
+    print(f"$ cargo test {shlex.join(selection)} --no-fail-fast {shlex.join(targets)} "
           f"--config target.{triple}.runner=<capture> {shlex.join(extra)}", flush=True)
-    with open(log_dir / "capture.stdout.log", "wb") as out, \
-            open(log_dir / "capture.stderr.log", "wb") as err:
+    with open(log_dir / f"capture{label}.stdout.log", "wb") as out, \
+            open(log_dir / f"capture{label}.stderr.log", "wb") as err:
         code = subprocess.run(argv, stdout=out, stderr=err).returncode
     records = []
     for path in sorted(capture_dir.glob("*.json")):
@@ -507,8 +525,13 @@ def plan_units(
     workspace_packages: Iterable[str],
     weights: dict[str, float],
     doc_unit: Optional[Unit],
+    check_exclusive: bool = True,
 ) -> tuple[list[Unit], list[str]]:
-    """Turn captured launches into units; return (units, fail-closed problems)."""
+    """Turn captured launches into units; return (units, fail-closed problems).
+
+    ``check_exclusive=False`` (one batch of ``--batch-size``) leaves the stale
+    ``EXCLUSIVE`` check to ``stale_exclusive`` over the whole run.
+    """
     problems: list[str] = []
     units: list[Unit] = []
     seen: set[str] = set()
@@ -538,11 +561,8 @@ def plan_units(
     for executable, uid in sorted(executables.items(), key=lambda item: item[1]):
         if executable not in seen:
             problems.append(f"built test executable was never launched by cargo: {uid}")
-    packages = set(workspace_packages)
-    present = {unit.uid for unit in units}
-    for uid in sorted(EXCLUSIVE):
-        if uid.split("::", 1)[0] in packages and uid not in present:
-            problems.append(f"EXCLUSIVE entry matches no built binary (stale?): {uid}")
+    if check_exclusive:
+        problems += stale_exclusive(workspace_packages, {unit.uid for unit in units})
     ids = [unit.uid for unit in units]
     duplicates = sorted({uid for uid in ids if ids.count(uid) > 1})
     for uid in duplicates:
@@ -553,6 +573,117 @@ def plan_units(
     return units, problems
 
 
+def stale_exclusive(workspace_packages: Iterable[str], present: set[str]) -> list[str]:
+    packages = set(workspace_packages)
+    return [f"EXCLUSIVE entry matches no built binary (stale?): {uid}"
+            for uid in sorted(EXCLUSIVE)
+            if uid.split("::", 1)[0] in packages and uid not in present]
+
+
+# --- batches (--batch-size) ----------------------------------------------------
+
+
+def test_targets(document: dict, selected: Iterable[str]) -> tuple[list[list[str]], set[str],
+                                                                  list[str]]:
+    """What `cargo test` builds for the selected members, as batchable filters.
+
+    Returns: one cargo target filter per test-run target name, in a stable
+    order; the unit id of every test executable those filters build; and the
+    names of the examples `cargo test` only compiles.  Under ``--workspace``
+    or ``-p`` a filter selects that target in every selected member that has
+    it, so a name two members share is one filter, in one batch.
+    """
+    chosen = set(selected)
+    lib = False
+    filters: dict[tuple[str, str], list[str]] = {}
+    expected: set[str] = set()
+    examples: set[str] = set()
+    for package in document["packages"]:
+        if package["name"] not in chosen:
+            continue
+        for target in package["targets"]:
+            kinds = set(target["kind"])
+            name = target["name"]
+            runs = bool(target.get("test"))
+            if kinds & LIBRARY_KINDS:
+                if runs:
+                    lib = True
+                    expected.add(unit_id(package["name"], target))
+                continue
+            kind = next((k for k in ("bin", "test", "bench", "example") if k in kinds), None)
+            if kind is None:
+                continue  # a build script
+            if runs:
+                filters[(kind, name)] = [f"--{kind}", name]
+                expected.add(unit_id(package["name"], target))
+            elif kind == "example":
+                examples.add(name)
+    ordered = ([["--lib"]] if lib else []) + [filters[key] for key in sorted(filters)]
+    return ordered, expected, sorted(examples)
+
+
+def chunks(items: Sequence, size: int) -> list[list]:
+    return [list(items[start:start + size]) for start in range(0, len(items), size)]
+
+
+def remove_outputs(paths: Iterable[str]) -> int:
+    """Delete built executables; return the bytes freed.
+
+    Also deletes a Windows ``.pdb`` beside one, and every other name of the
+    same file in its directory: cargo reports an uplifted example as
+    ``examples/<name>``, a hard link of ``examples/<name>-<hash>``, and
+    deleting one name frees nothing.
+    """
+    freed = 0
+    for path in paths:
+        for candidate in (Path(path), Path(path).with_suffix(".pdb")):
+            try:
+                stat = candidate.stat()
+            except FileNotFoundError:
+                continue
+            names = [candidate]
+            if stat.st_nlink > 1:
+                for sibling in candidate.parent.iterdir():
+                    try:
+                        other = sibling.stat()
+                    except FileNotFoundError:
+                        continue
+                    if (sibling != candidate and other.st_ino == stat.st_ino
+                            and other.st_dev == stat.st_dev):
+                        names.append(sibling)
+            for name in names:
+                name.unlink(missing_ok=True)
+            if len(names) >= stat.st_nlink:
+                freed += stat.st_size
+    return freed
+
+
+def build_examples(cargo: str, extra: Sequence[str], log_dir: Path,
+                   packages: Optional[Sequence[str]], names: Sequence[str],
+                   label: str) -> tuple[int, list[str]]:
+    """Compile examples as `cargo test` does (to check that they build); return their files."""
+    argv = [cargo, "build", *selection_args(packages), "--message-format=json-render-diagnostics"]
+    for name in names:
+        argv += ["--example", name]
+    argv += list(extra)
+    print(f"$ {shlex.join(argv)}", flush=True)
+    outputs: list[str] = []
+    with open(log_dir / f"build{label}.stdout.jsonl", "wb") as raw:
+        process = subprocess.Popen(argv, stdout=subprocess.PIPE)
+        assert process.stdout is not None
+        for line in process.stdout:
+            raw.write(line)
+            try:
+                message = json.loads(line)
+            except ValueError:
+                continue
+            if (message.get("reason") == "compiler-artifact"
+                    and "example" in message.get("target", {}).get("kind", [])):
+                outputs += message.get("filenames", [])
+        code = process.wait()
+    return code, outputs
+
+
 def write_summary(
     log_dir: Path,
     results: Sequence[Result],
@@ -561,12 +692,19 @@ def write_summary(
     jobs: int,
     runner: Optional[Runner],
     packages: Optional[Sequence[str]] = None,
+    link: Optional[dict] = None,
+    batches: Optional[list[dict]] = None,
 ) -> dict:
     total = totals(results)
     failed_units = sorted(r.uid for r in results if not r.ok)
     document = {
         "schema": "qcore-test-binaries/1",
         "jobs": jobs,
+        # The test-build configuration (scripts/test_link_config.py).
+        "link": link,
+        # None: one build of everything; a list: the --batch-size batches, each
+        # built, run and deleted before the next is built.
+        "batches": batches,
         # None: the whole workspace (the standing gate); a list: a scoped run.
         "packages": list(packages) if packages is not None else None,
         "phases_seconds": phases,
@@ -631,6 +769,14 @@ def parse_args(argv: Sequence[str]) -> argparse.Namespace:
     parser.add_argument("--packages", action="append", metavar="A,B",
                         help="restrict the run to these workspace members (repeatable, "
                              "comma-separated); the scoped card gate, NOT the standing gate")
+    parser.add_argument("--link", choices=test_link_config.LINK_MODES,
+                        default=test_link_config.default_link(),
+                        help="how test executables link the workspace libraries "
+                             "(default on this platform: %(default)s); same tests, same results")
+    parser.add_argument("--batch-size", type=positive_int, metavar="N",
+                        help="build, run and then delete the test executables N target names "
+                             "at a time, so the disk holds one batch, not the suite "
+                             "(card TEST-STORAGE-BUDGET; for platforms without --link dynamic)")
     parser.add_argument("cargo_args", nargs="*",
                         help="extra cargo arguments after `--`, e.g. --locked --offline")
     return parser.parse_args(argv)
@@ -638,7 +784,11 @@ def parse_args(argv: Sequence[str]) -> argparse.Namespace:
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
     args = parse_args(list(sys.argv[1:] if argv is None else argv))
-    extra = list(args.cargo_args)
+    config = test_link_config.cargo_config_args(args.link)
+    link = {"mode": args.link, "cargo_config": config}
+    # The configuration goes first so that every cargo command below -- the
+    # build, the capture pass and the doc-test unit -- builds the same units.
+    extra = [*config, *args.cargo_args]
     cargo = os.environ.get("CARGO", "cargo")
     document_meta = metadata(cargo, extra)
     root = Path(document_meta["workspace_root"]).resolve()
@@ -670,15 +820,22 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     print(f"logs: {log_dir}", flush=True)
     if packages is not None:
         print(f"packages: {', '.join(packages)} (scoped run, not the standing gate)", flush=True)
+    print(f"link: {args.link} ({shlex.join(config)})", flush=True)
     phases: dict[str, float] = {}
     problems: list[str] = []
+    selected = set(packages) if packages is not None else members
+    doc_unit = None if args.no_doc else make_doc_unit(cargo, extra, packages, selected,
+                                                       document_meta)
+    if args.batch_size:
+        return run_batched(args, cargo, extra, log_dir, packages, selected, document_meta,
+                           doc_unit, link)
 
     t0 = time.monotonic()
     code, executables = build(cargo, extra, log_dir, packages)
     phases["build"] = round(time.monotonic() - t0, 3)
     if code != 0:
         problems.append(f"build failed with exit {code}")
-        write_summary(log_dir, [], problems, phases, args.jobs, None, packages)
+        write_summary(log_dir, [], problems, phases, args.jobs, None, packages, link)
         print(f"error: build failed (exit {code})", file=sys.stderr)
         return 101
 
@@ -688,27 +845,6 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     if code != 0:
         problems.append(f"capture pass failed with exit {code}")
 
-    selected = set(packages) if packages is not None else members
-    doc_unit = None
-    if not args.no_doc:
-        doc_selection: Optional[list[str]] = None
-        if packages is not None:
-            # `cargo test -p X --doc` refuses a member without a library target;
-            # `--workspace --doc` skips it. Select exactly the members that can
-            # have doc-tests, and run no doc unit when none of them can.
-            doc_selection = sorted(selected & library_packages(document_meta))
-        if doc_selection is None or doc_selection:
-            doc_unit = Unit(
-                uid="doc-tests",
-                argv=[cargo, "test", *selection_args(doc_selection), "--doc",
-                      "--no-fail-fast", *extra],
-                cwd=os.getcwd(),
-                env=dict(os.environ),
-                weight=1.0,
-            )
-        else:
-            print("doc-tests: no selected member has a library target; no doc unit",
-                  flush=True)
     units, plan_problems = plan_units(
         executables, records, selected, load_weights(args.weights), doc_unit
     )
@@ -717,7 +853,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         print(f"error: {problem}", file=sys.stderr)
     if problems:
         # Fail closed before running anything: the plan is not the suite.
-        write_summary(log_dir, [], problems, phases, args.jobs, None, packages)
+        write_summary(log_dir, [], problems, phases, args.jobs, None, packages, link)
         print("error: the test plan is not trustworthy; nothing was run", file=sys.stderr)
         return 101
     exclusive_count = sum(1 for unit in units if unit.exclusive)
@@ -735,8 +871,126 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         print("interrupted", file=sys.stderr)
         return 130
     phases["run"] = round(time.monotonic() - t0, 3)
-    document = write_summary(log_dir, results, problems, phases, args.jobs, runner, packages)
+    document = write_summary(log_dir, results, problems, phases, args.jobs, runner, packages, link)
+    return report(args, document, results, phases, log_dir)
 
+
+def make_doc_unit(cargo: str, extra: Sequence[str], packages: Optional[Sequence[str]],
+                  selected: set[str], document_meta: dict) -> Optional[Unit]:
+    doc_selection: Optional[list[str]] = None
+    if packages is not None:
+        # `cargo test -p X --doc` refuses a member without a library target;
+        # `--workspace --doc` skips it. Select exactly the members that can
+        # have doc-tests, and run no doc unit when none of them can.
+        doc_selection = sorted(selected & library_packages(document_meta))
+    if doc_selection is not None and not doc_selection:
+        print("doc-tests: no selected member has a library target; no doc unit", flush=True)
+        return None
+    return Unit(
+        uid="doc-tests",
+        argv=[cargo, "test", *selection_args(doc_selection), "--doc", "--no-fail-fast", *extra],
+        cwd=os.getcwd(),
+        env=dict(os.environ),
+        weight=1.0,
+    )
+
+
+def run_batched(args: argparse.Namespace, cargo: str, extra: Sequence[str], log_dir: Path,
+                packages: Optional[Sequence[str]], selected: set[str], document_meta: dict,
+                doc_unit: Optional[Unit], link: dict) -> int:
+    """``--batch-size N``: the suite in batches, each built, run and deleted.
+
+    Every rule of the single build holds per batch: cargo's own launches are
+    captured and must equal the batch's build; the batch's parallel units run,
+    then its ``EXCLUSIVE`` units one at a time with nothing else running; then
+    its executables are deleted before the next batch is built.  Over the
+    whole run: the executables built must be exactly the test targets of the
+    selected members (``test_targets``), no unit may be built twice, the
+    stale-``EXCLUSIVE`` check covers the selection, the examples ``cargo
+    test`` compiles are compiled (and deleted) in batches too, and the doc-test
+    unit runs last.  The first failing build, capture or plan stops the run
+    (fail-closed, exit 101); a failing test does not.
+    """
+    weights = load_weights(args.weights)
+    filters, expected, examples = test_targets(document_meta, selected)
+    groups = chunks(filters, args.batch_size)
+    print(f"batches: {len(groups)} of up to {args.batch_size} target names "
+          f"({len(expected)} test executables), then {len(examples)} examples to compile",
+          flush=True)
+    runner = Runner(log_dir, args.jobs)
+    phases: dict[str, float] = {"build": 0.0, "capture": 0.0, "run": 0.0}
+    problems: list[str] = []
+    results: list[Result] = []
+    batches: list[dict] = []
+    built: dict[str, str] = {}
+    try:
+        for index, group in enumerate(groups, 1):
+            label = f"-{index:03d}"
+            flat = [arg for target in group for arg in target]
+            record: dict = {"index": index, "filters": flat}
+            batches.append(record)
+            t0 = time.monotonic()
+            code, executables = build(cargo, extra, log_dir, packages, flat, label)
+            phases["build"] += time.monotonic() - t0
+            record["build_exit"] = code
+            if code != 0:
+                problems.append(f"batch {index}: build failed with exit {code}")
+                break
+            t0 = time.monotonic()
+            code, records = capture(cargo, extra, log_dir, packages, flat, label)
+            phases["capture"] += time.monotonic() - t0
+            record["capture_exit"] = code
+            if code != 0:
+                problems.append(f"batch {index}: capture pass failed with exit {code}")
+                break
+            units, plan_problems = plan_units(executables, records, selected, weights, None,
+                                              check_exclusive=False)
+            twice = sorted(set(built.values()) & set(executables.values()))
+            plan_problems += [f"built in two batches: {uid}" for uid in twice]
+            if plan_problems:
+                problems += [f"batch {index}: {problem}" for problem in plan_problems]
+                break
+            built.update(executables)
+            record["units"] = sorted(unit.uid for unit in units)
+            t0 = time.monotonic()
+            results += runner.run(units)
+            phases["run"] += time.monotonic() - t0
+            record["deleted_bytes"] = remove_outputs(executables)
+        if not problems:
+            for index, group in enumerate(chunks(examples, args.batch_size), 1):
+                label = f"-examples-{index:03d}"
+                t0 = time.monotonic()
+                code, outputs = build_examples(cargo, extra, log_dir, packages, group, label)
+                phases["build"] += time.monotonic() - t0
+                batches.append({"examples": group, "build_exit": code,
+                                "deleted_bytes": remove_outputs(outputs)})
+                if code != 0:
+                    problems.append(f"examples batch {index}: build failed with exit {code}")
+                    break
+        if not problems:
+            present = set(built.values())
+            problems += [f"test target never built: {uid}" for uid in sorted(expected - present)]
+            problems += [f"built a unit no test target names: {uid}"
+                         for uid in sorted(present - expected)]
+            problems += stale_exclusive(selected, present)
+        if not problems and doc_unit is not None:
+            doc_unit.weight = weights.get(doc_unit.uid, doc_unit.weight)
+            t0 = time.monotonic()
+            results += runner.run([doc_unit])
+            phases["run"] += time.monotonic() - t0
+    except KeyboardInterrupt:
+        print("interrupted", file=sys.stderr)
+        return 130
+    phases = {key: round(value, 3) for key, value in phases.items()}
+    for problem in problems:
+        print(f"error: {problem}", file=sys.stderr)
+    document = write_summary(log_dir, results, problems, phases, args.jobs, runner, packages, link,
+                             batches)
+    return report(args, document, results, phases, log_dir)
+
+
+def report(args: argparse.Namespace, document: dict, results: Sequence[Result],
+           phases: dict[str, float], log_dir: Path) -> int:
     total = document["totals"]
     print()
     print(
