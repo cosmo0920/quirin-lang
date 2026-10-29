@@ -231,7 +231,26 @@ is [`gate/gate.json`](gate/gate.json).
   `test_every_remaining_tree_walk_in_the_tests_is_a_reviewed_one`, on the new
   walks in `workspace_layering.rs` and `test_gateway_registry.py`. Fixed in
   `f2f821e63`; no analyzer code changed.
-- **gate-2** on the final commit: see below.
+- **gate-2** on `3608e432b` (the report commit) exited 1 on the submodule
+  step only: `third_party/libevent` had lost its registration in the shared
+  `.git/config` while the card was idle (not a change of the card's). Every
+  other step exited 0: the Rust suite had 574 units, 8,849 passed and 0
+  failed; Python ran 555 tests. `git submodule update --init --recursive`
+  re-registered it.
+- **gate-3** on `3608e432b` exited 0, which is the card gate. Every step
+  passed:
+  - submodules: 1, none moved;
+  - fmt and Clippy;
+  - Rust suite: 574 units, 594 summaries, 8,849 passed, 0 failed, 15
+    ignored, 24 filtered. Its 7,413 s were 6,273 s of slot wait and 19 min
+    of run.
+  - both probes;
+  - Lean: `QCore.LiteralDecayReadings`, 1 audit;
+  - Python: 555 tests, 0 skipped.
+
+  The log is `private/rule35-pilot/gate-3.log` and the record is
+  [`gate/gate.json`](gate/gate.json). The commit after `3608e432b` adds only
+  this record and this paragraph.
 
 ## 7. Boundaries
 
