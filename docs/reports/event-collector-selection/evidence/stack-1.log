@@ -1,0 +1,13 @@
+   Compiling qcore-c-gateway v0.1.0 (/media/Data/GitHub/quirin-lang/private/codex-event-collector-worktree/crates/qcore-c-gateway)
+error[E0277]: `?` couldn't convert the error to `serde_json::Error`
+   --> crates/qcore-c-gateway/src/collector_identity.rs:678:59
+    |
+678 |             std::io::Read::read_to_end(reader, &mut bytes)?;
+    |             ----------------------------------------------^ the trait `From<std::io::Error>` is not implemented for `serde_json::Error`
+    |             |
+    |             this can't be annotated with `?` because it has type `Result<_, std::io::Error>`
+    |
+    = note: the question mark operation (`?`) implicitly performs a conversion on the error value using the `From` trait
+
+For more information about this error, try `rustc --explain E0277`.
+error: could not compile `qcore-c-gateway` (lib test) due to 1 previous error

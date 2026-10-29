@@ -1,0 +1,15 @@
+gate_slot: waiting for slot rust-suite/0
+gate_slot: waiting for slot audit/0
+gate_slot: waiting for slot audit/1
+gate_slot: rust-suite slot 0
+   Compiling qcore-c-gateway v0.1.0 (/media/Data/GitHub/quirin-lang/private/codex-event-collector-worktree/crates/qcore-c-gateway)
+    Finished `test` profile [unoptimized] target(s) in 10.23s
+     Running unittests src/lib.rs (target/debug/deps/qcore_c_gateway-0c747b6f45779f5b)
+
+running 1 test
+test collector_identity::stack_tests::complete_collector_readers_fit_the_existing_ast_stack_budget ... collector readers: JSON depths 255/255, helper depth 15, stack 292 KiB
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1238 filtered out; finished in 3.11s
+
+gate_slot: exit 0; receipt /media/Data/GitHub/quirin-lang/private/codex-event-collector-worktree/private/collector-selection/stack-3.slot.json

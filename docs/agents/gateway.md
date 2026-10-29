@@ -6193,6 +6193,24 @@ own anchor here.
     host/loop, thread-join or backend-body proof. `QCore.HolderFrameIdentity`;
     [report](../reports/event-holder-identity/README.md).
 
+    **Collector source-audit boundary (EVENT-COLLECTOR-SELECTION):** the
+    separately replayed `collector_identity` imports read an exact internally
+    linked first-match owner-list/id search, including its GNU container-of
+    expansion and null result, and a constructor-local instance store plus
+    conditional worker/config loop stores. A checked internal subobject-only
+    initialization frame may intervene. These are source-shape/snapshot reports,
+    not lifetime summaries or ordinary borrowed contracts; no Safe route consumes
+    them. The selected list's owner does not establish the selected record's
+    instance member without a membership invariant. Duplicate ids retain first
+    match semantics; matching ids do not establish record identity across list
+    changes. The false arm keeps the exact config formal and supplies no
+    config/instance equality. A constructor snapshot gives no enduring loop or
+    flag stability. Source/configuration/compiler binding and independent replay
+    do not discharge list/key/record frames, thread teardown, descriptor custody
+    or backend-body proof. Faithful extraction and Rust/Lean correspondence
+    remain premises. `QCore.CollectorIdentity`;
+    [report](../reports/event-collector-selection/README.md).
+
 <a id="constraint-12u"></a>
 
 12u. **An enumeration in a declaration's C prototype is the integer type

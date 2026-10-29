@@ -6932,6 +6932,7 @@
    "AuditCmetricsMetricConditions.lean",
    "AuditCmetricsOptsConditions.lean",
    "AuditCmetricsScalarWrapperConditions.lean",
+   "AuditCollectorIdentity.lean",
    "AuditComposeEventLines.lean",
    "AuditComposedStdIo.lean",
    "AuditComposedTasks.lean",
