@@ -180,8 +180,13 @@ the committed acceptance matrix carries `lean_audits` 390 and the tree now has
 integrator's record, regenerated at landing; nothing else failed. The
 records committed after the gate (this report, the comparison record, the
 ledgers, `scripts/substitution.py`) reach no crate (`gate_scope.py --plan`:
-0 affected crates, Python only); the Python suite was rerun on the final
-commit: PYTHON-RERUN.
+0 affected crates, Python only), so the Python suite was rerun on them. On
+`b3ebc41f0` it found 554 tests and 2 failures: the same matrix test, and
+`test_the_committed_page_equals_the_generated_page`, because the first
+ledgers change the generated page `docs/development/contributions.md`. The
+page was regenerated (`contribution_ledgers.py render`; on a conflict, rerun
+it) and the final run on the last commit has only the matrix failure:
+`/media/Data/GitHub/quirin-lang/private/rule37-pilot/python-final.log`.
 
 ## 5. Parity cost (plan decision 6)
 
