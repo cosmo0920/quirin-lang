@@ -15,6 +15,14 @@ Measurement `3f505732cabd` (docs/reports/rule35-pilot/native-comparison.json), r
 - interactions of rule 35 with other rules: not measured (switched alone)
 - consistency: base + contributions + interactions = Safe 1013, Unknown 3811, Unsafe 10 = the real-run total
 
+Measurement `93035654cecf` (docs/reports/rule34-pilot/native-comparison-r2.json), rules 33, 34, 36 switched off in one binary (`62c8e461cf00`), current:
+
+- base (rules 33, 34, 36 off): Safe 1009, Unknown 3815, Unsafe 10
+- rule 33: two rows under one premise (`detach_list_representation`); Unknown→Safe 2
+- rule 36: no rows
+- rule 34: two rows under eight premises (`scheduler_borrowed_chain_live`, `scheduler_callback_footprint`, `scheduler_callee_live`, `scheduler_exact_parent_embedding`, `scheduler_no_later_alias_use`, `scheduler_tls_params_owned`, `scheduler_valgrind_request_neutral`, `scheduler_valid_membership`); Unknown→Safe 2
+- consistency: base + contributions + interactions = Safe 1013, Unknown 3811, Unsafe 10 = the real-run total
+
 Measurement `78a83e75ed31` (docs/reports/rule37-pilot/native-comparison.json), rules 37 switched off in one binary (`6b6a3a438d89`), current:
 
 - base (rules 37 off): Safe 1008, Unknown 3816, Unsafe 10
@@ -33,6 +41,14 @@ Measurement `3f505732cabd` (docs/reports/rule35-pilot/native-comparison.json), r
 - interactions of rule 35 with other rules: not measured (switched alone)
 - consistency: base + contributions + interactions = Safe 101, Unknown 343, Unsafe 4 = the real-run total
 
+Measurement `93035654cecf` (docs/reports/rule34-pilot/native-comparison-r2.json), rules 33, 34, 36 switched off in one binary (`62c8e461cf00`), current:
+
+- base (rules 33, 34, 36 off): Safe 101, Unknown 343, Unsafe 4
+- rule 33: no rows
+- rule 36: no rows
+- rule 34: no rows
+- consistency: base + contributions + interactions = Safe 101, Unknown 343, Unsafe 4 = the real-run total
+
 Measurement `78a83e75ed31` (docs/reports/rule37-pilot/native-comparison.json), rules 37 switched off in one binary (`6b6a3a438d89`), current:
 
 - base (rules 37 off): Safe 101, Unknown 343, Unsafe 4
@@ -49,6 +65,14 @@ Measurement `3f505732cabd` (docs/reports/rule35-pilot/native-comparison.json), r
 - base (rules 35 off): Pending 4, Safe 57, Unknown 342, Unsafe 1
 - rule 35: no rows; 9 touched rows stay Unknown; leaves traded −11 +3
 - interactions of rule 35 with other rules: not measured (switched alone)
+- consistency: base + contributions + interactions = Pending 4, Safe 57, Unknown 342, Unsafe 1 = the real-run total
+
+Measurement `93035654cecf` (docs/reports/rule34-pilot/native-comparison-r2.json), rules 33, 34, 36 switched off in one binary (`62c8e461cf00`), current:
+
+- base (rules 33, 34, 36 off): Pending 4, Safe 57, Unknown 342, Unsafe 1
+- rule 33: no rows
+- rule 36: no rows
+- rule 34: no rows
 - consistency: base + contributions + interactions = Pending 4, Safe 57, Unknown 342, Unsafe 1 = the real-run total
 
 Measurement `78a83e75ed31` (docs/reports/rule37-pilot/native-comparison.json), rules 37 switched off in one binary (`6b6a3a438d89`), current:

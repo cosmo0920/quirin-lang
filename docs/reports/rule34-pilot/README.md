@@ -150,15 +150,77 @@ every change but the 33, 34 and 36 moves) against `--side tip=rev:62c8e461c`
 RULE36-PILOT's ([report](../rule36-pilot/README.md)). Rule 34's ledger is
 written from that run's `tip-off-34` side.
 
-R2-MEASUREMENT
+The run completed (about 2026-10-29T09:32Z to 21:44Z, 12 h 12 min wall,
+plugin exit 0, record status `complete`, no failures, built at one
+`--build-commit`). Its record is committed here byte for byte as
+[`native-comparison-r2.json`](native-comparison-r2.json) (sha256
+`93035654cecf…`; the original is
+`private/pilots-r2-measure/native-comparison.json`), because
+`contribution_ledgers.py write` stamps the ledgers with a record inside the
+tree.
 
 ## 3. Identity (BASE → TIP, every rule on)
 
-R2-IDENTITY
+From the shared run (BASE `rev:0d15e7b19` → TIP `rev:62c8e461c`, which
+differ by exactly the 33, 34 and 36 moves): the declared check **matches**
+on all three routes (`none`; no unpredicted or missing row, no delta
+mismatch).
+
+| Route | Rows | Moved | Content changed | Artifacts |
+|---|---:|---:|---:|---|
+| system | 448 | 0 | 0 | byte-identical |
+| slice | 404 | 0 | 0 | byte-identical |
+| corpus | 4,834 | 0 | 0 | equal under a checked one-to-one substitution |
+
+The corpus route is `incomplete` only by the named `composition-conflict`
+(MEASURE-CORPUS-SIDE-CWD-IN-BUILD-IDENTITY): every one of its 4,834 rows is
+environment-only. The five differing corpus artifacts pass RULE35-PILOT's
+strict pairing ([`substitution_ids.py`](scripts/substitution_ids.py), exit 0,
+`private/rule34-pilot/r2-corpus-ids.jsonl`): `corpus-null.jsonl`, the
+components, contracts, diagnostics and source-effects files are each equal
+under a one-to-one token substitution with lists as multisets (180, 302,
+175, 302 and 10 tokens substituted). Here both sides share the revision and
+the build commit, so the strict pairing concludes, unlike against the
+baseline in round 1. RULE36-PILOT's report owns this run's record; the
+figures above are read from the committed copy.
 
 ## 4. Rule 34's contribution (TIP with 34 off → TIP)
 
-R2-CONTRIBUTION
+From the same run's `tip-off-34` side (rule 34 switched alone; `--per-rule`
+also measured 33 and 36 alone and all three together; **no interaction**:
+no row moves only with two or more rules off):
+
+| Profile | 34 off | 34 on | Rows moved |
+|---|---|---|---|
+| eight-home (corpus) | Safe 1,011 / Unknown 3,813 / Unsafe 10 | 1,013 / 3,811 / 10 | 2 Unknown → Safe |
+| fluent-bit-system | 101 / 343 / 4 | same | none |
+| fluent-bit-tail-pause | Pending 4 / Safe 57 / Unknown 342 / Unsafe 1 | same | none |
+
+The two rows are exactly W48-SCHED-CLEANUP-PRODUCTION's
+[two](../w48-sched-cleanup-production/README.md#measurement):
+`sched_thread_cleanup` (`mk_scheduler.c:614`), which with 34 off has the
+guard's leaf at `:625`, and `mk_sched_threads_destroy_conn` (`:657`), which
+with 34 off has the guard's leaf at `:669` and `unresolved resource identity
+mth` at `:668`. Both rest on the eight `mk_http_thread_destroy` premises
+(`scheduler_borrowed_chain_live`, `scheduler_callback_footprint`,
+`scheduler_callee_live`, `scheduler_exact_parent_embedding`,
+`scheduler_no_later_alias_use`, `scheduler_tls_params_owned`,
+`scheduler_valgrind_request_neutral`, `scheduler_valid_membership`). Off
+gives the guard's leaf where W48 had the pre-rule-34 `call to uncontracted
+function` leaf, as section 1 predicts. No row moves toward `Safe` with 34
+off, no leaves are traded on unmoved rows, and no touched row stays Unknown.
+The tool's post-run off-list check passed.
+
+**Ledgers.** `contribution_ledgers.py write --record
+docs/reports/rule34-pilot/native-comparison-r2.json` writes one group of
+ledgers per profile for rules 33, 34 and 36. `check` and `consistency` refuse
+any part of a group on its own (`the group lists [33, 34, 36], the ledgers
+are [34]`), so this card commits the whole group:
+`contract/contributions/{33,34,36}/{eight-home,fluent-bit-system,fluent-bit-tail-pause}.json`.
+`check` (15 ledgers valid) and `consistency` exit 0, and the contributions
+page is regenerated (`render`). Rules 33 and 36 get byte-identical ledgers
+only if they stamp the same record path. The integrator keeps one copy of
+the group (this one or RULE36-PILOT's) at the landing.
 
 ## 5. Parity cost (plan decision 6)
 
@@ -234,16 +296,17 @@ test, the gateway's registry test, the rule API's `lib.rs` re-exports,
 the integrator at `62c8e461c`, keeping both sides of the API re-exports.
 Rule 34's route `destroyer_order::order` is a `pub fn` of the package's
 `src/destroyer_order.rs`, so it passes RULE35-PILOT's generator check
-unchanged. Round 2 changes only `docs/reports/rule34-pilot/`,
-`contract/contributions/34/` and the generated
-`docs/development/contributions.md` (shared with RULE33/36: rerun
-`contribution_ledgers.py` on a conflict).
+unchanged. Round 2 changes only `docs/reports/rule34-pilot/` (including the
+record copy), the ledger group `contract/contributions/{33,34,36}/` and the
+generated `docs/development/contributions.md`. All three are shared with
+RULE33/36: keep one copy of the group and rerun `contribution_ledgers.py
+render` on a conflict.
 
 Follow-ups ([amendments](integration-amendments.json)):
 
 - Amended `GATEWAY-RULE-API-PILOT-MIGRATIONS`: rule 34 migrated at the new
-  transfer position; remaining 36, 33 (running) and 32a.
+  transfer position, with its evidence; 32a remains.
 - Retired `CONTRIBUTION-LEDGER-RULE-34`: its discharge condition is met
   (section 4).
-- Appended to `MEASURE-CORPUS-SIDE-CWD-IN-BUILD-IDENTITY`: this run's
-  substitution.
+- Appended to `GATEWAY-RULE-API-ARM-OBLIGATIONS`: the transfer host also
+  refuses an admission carrying obligations.
