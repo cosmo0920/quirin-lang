@@ -1,0 +1,560 @@
+{
+ "schema": "quirin-gate-scope/1",
+ "source": "git diff",
+ "base": "80c8aea989029c10b3dfbd0179715b7ea050262c",
+ "head": "a5ef39093fed13118128f801f6d5d6f6f2c04feb",
+ "committed": [
+  "Cargo.lock",
+  "Cargo.toml",
+  "compiler/tests/workspace_layering.rs",
+  "crates/gateway-rules/registry.toml",
+  "crates/gateway-rules/rule-37-result-constructors/Cargo.toml",
+  "crates/gateway-rules/rule-37-result-constructors/src/lib.rs",
+  "crates/qcore-c-gateway/Cargo.toml",
+  "crates/qcore-c-gateway/src/aggregate_store.rs",
+  "crates/qcore-c-gateway/src/gateway_rule_registry.rs",
+  "crates/qcore-c-gateway/src/gateway_rules.rs",
+  "crates/qcore-c-gateway/src/legacy_checked_spec.rs",
+  "crates/qcore-c-gateway/src/lib.rs",
+  "crates/qcore-c-gateway/src/result_constructor_rule.rs",
+  "crates/qcore-c-gateway/tests/rule37_switch.rs",
+  "crates/qcore-gateway-rule-api/src/checked_readings.rs",
+  "crates/qcore-gateway-rule-api/src/lib.rs",
+  "docs/agents/gateway.md",
+  "docs/agents/rules/37.md",
+  "docs/development/architecture.md",
+  "docs/reports/rule37-pilot/PREDICTION.md",
+  "docs/reports/rule37-pilot/README.md",
+  "proof/AuditResultConstructorSwitch.lean",
+  "proof/QCore.lean",
+  "proof/QCore/ResultConstructorSwitch.lean"
+ ],
+ "uncommitted": [],
+ "scope": {
+  "paths": [
+   "Cargo.lock",
+   "Cargo.toml",
+   "compiler/tests/workspace_layering.rs",
+   "crates/gateway-rules/registry.toml",
+   "crates/gateway-rules/rule-37-result-constructors/Cargo.toml",
+   "crates/gateway-rules/rule-37-result-constructors/src/lib.rs",
+   "crates/qcore-c-gateway/Cargo.toml",
+   "crates/qcore-c-gateway/src/aggregate_store.rs",
+   "crates/qcore-c-gateway/src/gateway_rule_registry.rs",
+   "crates/qcore-c-gateway/src/gateway_rules.rs",
+   "crates/qcore-c-gateway/src/legacy_checked_spec.rs",
+   "crates/qcore-c-gateway/src/lib.rs",
+   "crates/qcore-c-gateway/src/result_constructor_rule.rs",
+   "crates/qcore-c-gateway/tests/rule37_switch.rs",
+   "crates/qcore-gateway-rule-api/src/checked_readings.rs",
+   "crates/qcore-gateway-rule-api/src/lib.rs",
+   "docs/agents/gateway.md",
+   "docs/agents/rules/37.md",
+   "docs/development/architecture.md",
+   "docs/reports/rule37-pilot/PREDICTION.md",
+   "docs/reports/rule37-pilot/README.md",
+   "proof/AuditResultConstructorSwitch.lean",
+   "proof/QCore.lean",
+   "proof/QCore/ResultConstructorSwitch.lean"
+  ],
+  "attribution": {
+   "Cargo.lock": [
+    "no crate owns or reads it"
+   ],
+   "Cargo.toml": [
+    "read by qcore-audit (runtime, crates/qcore-audit/src/contract_revision.rs:759)",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/contract_supersession.rs:87)",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/dependency_graph.rs:21)",
+    "read by qcore-gateway-rule-api (runtime, crates/qcore-gateway-rule-api/src/lib.rs:53)",
+    "read by rule-37-result-constructors (runtime, crates/gateway-rules/rule-37-result-constructors/src/lib.rs:255)",
+    "read by quirin-audit-plugin (runtime, crates/quirin-audit-plugin/tests/dependencies.rs:13)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:214)",
+    "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/src/sides.rs:816)",
+    "read by quirin-provider-plugin (runtime, providers/quirin-provider-plugin/src/user_crate.rs:96)",
+    "read by qcore-provider-conformance (runtime, providers/conformance/tests/packages.rs:615)"
+   ],
+   "compiler/tests/workspace_layering.rs": [
+    "owned by qcore-compiler"
+   ],
+   "crates/gateway-rules/registry.toml": [
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/gateway-rules/rule-37-result-constructors/Cargo.toml": [
+    "owned by rule-37-result-constructors",
+    "read by rule-37-result-constructors (include_str, crates/gateway-rules/rule-37-result-constructors/src/lib.rs:255)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:35)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/gateway-rules/rule-37-result-constructors/src/lib.rs": [
+    "owned by rule-37-result-constructors",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:35)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/Cargo.toml": [
+    "owned by qcore-c-gateway",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:39)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/src/aggregate_store.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:39)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/src/gateway_rule_registry.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-c-gateway (path, crates/qcore-c-gateway/src/gateway_rules.rs:27)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:39)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/src/gateway_rules.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:39)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/src/legacy_checked_spec.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-c-gateway (path, crates/qcore-c-gateway/src/legacy_c.rs:408)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:39)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/src/lib.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:39)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/src/result_constructor_rule.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:39)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/tests/rule37_switch.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:39)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-gateway-rule-api/src/checked_readings.rs": [
+    "owned by qcore-gateway-rule-api",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:29)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-gateway-rule-api/src/lib.rs": [
+    "owned by qcore-gateway-rule-api",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:29)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "docs/agents/gateway.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/37.md": [
+    "read by qcore-c-gateway (runtime, crates/qcore-c-gateway/src/gateway_rule_registry.rs:219)",
+    "class prose"
+   ],
+   "docs/development/architecture.md": [
+    "class prose"
+   ],
+   "docs/reports/rule37-pilot/PREDICTION.md": [
+    "class prose"
+   ],
+   "docs/reports/rule37-pilot/README.md": [
+    "class prose"
+   ],
+   "proof/AuditResultConstructorSwitch.lean": [
+    "read by qcore-compiler (runtime, compiler/tests/float_ieee_vectors.rs:524)",
+    "read by qcore-compiler (runtime, compiler/tests/proof_leg_digests.rs:106)",
+    "class lean"
+   ],
+   "proof/QCore.lean": [
+    "read by qcore-compiler (runtime, compiler/tests/float_ieee_vectors.rs:524)",
+    "read by qcore-compiler (runtime, compiler/tests/proof_leg_digests.rs:106)",
+    "class lean"
+   ],
+   "proof/QCore/ResultConstructorSwitch.lean": [
+    "read by qcore-compiler (runtime, compiler/tests/float_ieee_vectors.rs:524)",
+    "read by qcore-compiler (runtime, compiler/tests/proof_leg_digests.rs:106)",
+    "class lean"
+   ]
+  },
+  "affected": {
+   "qcore-audit": [
+    "names Cargo.toml in a string literal: Cargo.toml (crates/qcore-audit/src/contract_revision.rs:759)",
+    "names Cargo.toml in a string literal: Cargo.toml (crates/qcore-audit/tests/contract_supersession.rs:87)",
+    "names Cargo.toml in a string literal: Cargo.toml (crates/qcore-audit/tests/dependency_graph.rs:21)"
+   ],
+   "qcore-c-gateway": [
+    "owns crates/qcore-c-gateway/Cargo.toml",
+    "owns crates/qcore-c-gateway/src/aggregate_store.rs",
+    "owns crates/qcore-c-gateway/src/gateway_rule_registry.rs",
+    "compiles it via #[path]: crates/qcore-c-gateway/src/gateway_rule_registry.rs (crates/qcore-c-gateway/src/gateway_rules.rs:27)",
+    "owns crates/qcore-c-gateway/src/gateway_rules.rs",
+    "owns crates/qcore-c-gateway/src/legacy_checked_spec.rs",
+    "compiles it via #[path]: crates/qcore-c-gateway/src/legacy_checked_spec.rs (crates/qcore-c-gateway/src/legacy_c.rs:408)",
+    "owns crates/qcore-c-gateway/src/lib.rs",
+    "owns crates/qcore-c-gateway/src/result_constructor_rule.rs",
+    "owns crates/qcore-c-gateway/tests/rule37_switch.rs",
+    "names docs/agents/rules/37.md in a string literal: docs/agents/rules/37.md (crates/qcore-c-gateway/src/gateway_rule_registry.rs:219)"
+   ],
+   "qcore-compiler": [
+    "names Cargo.toml in a string literal: Cargo.toml (compiler/tests/workspace_layering.rs:214)",
+    "owns compiler/tests/workspace_layering.rs",
+    "names crates/gateway-rules/rule-37-result-constructors in a string literal: crates/gateway-rules/rule-37-result-constructors/Cargo.toml (compiler/tests/workspace_layering.rs:35)",
+    "names crates/gateway-rules/rule-37-result-constructors in a string literal: crates/gateway-rules/rule-37-result-constructors/src/lib.rs (compiler/tests/workspace_layering.rs:35)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/Cargo.toml (compiler/tests/workspace_layering.rs:39)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/src/aggregate_store.rs (compiler/tests/workspace_layering.rs:39)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/src/gateway_rule_registry.rs (compiler/tests/workspace_layering.rs:39)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/src/gateway_rules.rs (compiler/tests/workspace_layering.rs:39)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/src/legacy_checked_spec.rs (compiler/tests/workspace_layering.rs:39)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/src/lib.rs (compiler/tests/workspace_layering.rs:39)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/src/result_constructor_rule.rs (compiler/tests/workspace_layering.rs:39)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/tests/rule37_switch.rs (compiler/tests/workspace_layering.rs:39)",
+    "names crates/qcore-gateway-rule-api in a string literal: crates/qcore-gateway-rule-api/src/checked_readings.rs (compiler/tests/workspace_layering.rs:29)",
+    "names crates/qcore-gateway-rule-api in a string literal: crates/qcore-gateway-rule-api/src/lib.rs (compiler/tests/workspace_layering.rs:29)",
+    "names proof in a string literal: proof/AuditResultConstructorSwitch.lean (compiler/tests/float_ieee_vectors.rs:524)",
+    "names proof in a string literal: proof/AuditResultConstructorSwitch.lean (compiler/tests/proof_leg_digests.rs:106)",
+    "names proof in a string literal: proof/QCore.lean (compiler/tests/float_ieee_vectors.rs:524)",
+    "names proof in a string literal: proof/QCore.lean (compiler/tests/proof_leg_digests.rs:106)",
+    "names proof in a string literal: proof/QCore/ResultConstructorSwitch.lean (compiler/tests/float_ieee_vectors.rs:524)",
+    "names proof in a string literal: proof/QCore/ResultConstructorSwitch.lean (compiler/tests/proof_leg_digests.rs:106)"
+   ],
+   "qcore-gateway-rule-api": [
+    "names Cargo.toml in a string literal: Cargo.toml (crates/qcore-gateway-rule-api/src/lib.rs:53)",
+    "owns crates/qcore-gateway-rule-api/src/checked_readings.rs",
+    "owns crates/qcore-gateway-rule-api/src/lib.rs"
+   ],
+   "qcore-provider-conformance": [
+    "names Cargo.toml in a string literal: Cargo.toml (providers/conformance/tests/packages.rs:615)"
+   ],
+   "qcore-verification": [
+    "names crates in a string literal: crates/gateway-rules/registry.toml (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/gateway-rules/rule-37-result-constructors/Cargo.toml (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/gateway-rules/rule-37-result-constructors/src/lib.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/Cargo.toml (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/src/aggregate_store.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/src/gateway_rule_registry.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/src/gateway_rules.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/src/legacy_checked_spec.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/src/lib.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/src/result_constructor_rule.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/tests/rule37_switch.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-gateway-rule-api/src/checked_readings.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-gateway-rule-api/src/lib.rs (crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "qcorec": [
+    "depends on qcore-compiler"
+   ],
+   "quirin-audit-plugin": [
+    "names Cargo.toml in a string literal: Cargo.toml (crates/quirin-audit-plugin/tests/dependencies.rs:13)"
+   ],
+   "quirin-audit-plugin-libevent": [
+    "depends on quirin-audit-plugin"
+   ],
+   "quirin-audit-plugin-measure": [
+    "names Cargo.toml in a string literal: Cargo.toml (crates/quirin-audit-plugin-measure/src/sides.rs:816)"
+   ],
+   "quirin-provider-plugin": [
+    "names Cargo.toml in a string literal: Cargo.toml (providers/quirin-provider-plugin/src/user_crate.rs:96)"
+   ],
+   "quirin-source-analysis": [
+    "depends on qcore-c-gateway"
+   ],
+   "rule-37-result-constructors": [
+    "names Cargo.toml in a string literal: Cargo.toml (crates/gateway-rules/rule-37-result-constructors/src/lib.rs:255)",
+    "owns crates/gateway-rules/rule-37-result-constructors/Cargo.toml",
+    "reads it with include_str!: crates/gateway-rules/rule-37-result-constructors/Cargo.toml (crates/gateway-rules/rule-37-result-constructors/src/lib.rs:255)",
+    "owns crates/gateway-rules/rule-37-result-constructors/src/lib.rs"
+   ]
+  },
+  "mode": "full",
+  "full_reasons": [
+   "Cargo.lock: workspace manifest or toolchain",
+   "Cargo.toml: workspace manifest or toolchain",
+   "the diff reaches qcore-c-gateway"
+  ],
+  "rust_packages": [
+   "qcore-audit",
+   "qcore-c-gateway",
+   "qcore-compiler",
+   "qcore-contract",
+   "qcore-core",
+   "qcore-frontend",
+   "qcore-gateway-rule-api",
+   "qcore-schemas",
+   "qcore-verification",
+   "qcore-verifier-host",
+   "qcorec",
+   "quirin-audit-plugin",
+   "quirin-audit-plugin-libevent",
+   "quirin-audit-plugin-measure",
+   "quirin-source-analysis",
+   "rule-37-result-constructors"
+  ],
+  "probes": true,
+  "lean": {
+   "mode": "all",
+   "reasons": [
+    "proof/QCore.lean: a proof root changed"
+   ],
+   "modules": [],
+   "audits": []
+  },
+  "python_reasons": [],
+  "provider_gate": false,
+  "provider_reasons": [],
+  "provider_members_reached_without_providers_change": [
+   "qcore-provider-conformance",
+   "quirin-provider-plugin"
+  ],
+  "unresolved_includes": [
+   {
+    "crate": "qcore-compiler",
+    "source": "compiler/tests/ct_corpus.rs:8069",
+    "literal": "include_str!(\\\"fixtures/ct/{id}/case.qr\\\")\");",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   }
+  ]
+ },
+ "planned_steps": [
+  {
+   "name": "submodules",
+   "argv": [
+    "git",
+    "-C",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a14ffd9347afa9f67",
+    "submodule",
+    "status",
+    "--recursive"
+   ],
+   "slot": null
+  },
+  {
+   "name": "fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "slot": null
+  },
+  {
+   "name": "clippy",
+   "argv": [
+    "cargo",
+    "clippy",
+    "--all-targets",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "slot": null
+  },
+  {
+   "name": "rust-suite",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a14ffd9347afa9f67/scripts/run_test_binaries.py",
+    "--log-dir",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a14ffd9347afa9f67/private/gate-1/rust-suite"
+   ],
+   "slot": "rust-suite"
+  },
+  {
+   "name": "probe-reevaluation_probe",
+   "argv": [
+    "cargo",
+    "run",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_probe"
+   ],
+   "slot": null
+  },
+  {
+   "name": "probe-reevaluation_followup",
+   "argv": [
+    "cargo",
+    "run",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_followup"
+   ],
+   "slot": null
+  },
+  {
+   "name": "lean",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a14ffd9347afa9f67/scripts/check_lean_audits.py"
+   ],
+   "slot": "lean"
+  },
+  {
+   "name": "python",
+   "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+   ],
+   "slot": null
+  }
+ ],
+ "slots": true,
+ "started": "20261028T113743Z",
+ "ran": true,
+ "steps": [
+  {
+   "name": "submodules",
+   "argv": [
+    "git",
+    "-C",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a14ffd9347afa9f67",
+    "submodule",
+    "status",
+    "--recursive"
+   ],
+   "exit": 0,
+   "seconds": 0.1,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a14ffd9347afa9f67/private/gate-1/submodules.log",
+   "counts": {
+    "submodules": 1,
+    "not_checked_out_or_moved": []
+   }
+  },
+  {
+   "name": "fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "exit": 0,
+   "seconds": 12.3,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a14ffd9347afa9f67/private/gate-1/fmt.log",
+   "counts": {}
+  },
+  {
+   "name": "clippy",
+   "argv": [
+    "cargo",
+    "clippy",
+    "--all-targets",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "exit": 0,
+   "seconds": 94.6,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a14ffd9347afa9f67/private/gate-1/clippy.log",
+   "counts": {}
+  },
+  {
+   "name": "rust-suite",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a14ffd9347afa9f67/scripts/gate_slot.py",
+    "rust-suite",
+    "--receipt",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a14ffd9347afa9f67/private/gate-1/slots/rust-suite.json",
+    "--",
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a14ffd9347afa9f67/scripts/run_test_binaries.py",
+    "--log-dir",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a14ffd9347afa9f67/private/gate-1/rust-suite"
+   ],
+   "exit": 0,
+   "seconds": 8972.5,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a14ffd9347afa9f67/private/gate-1/rust-suite.log",
+   "counts": {
+    "units": 575,
+    "passed": 8858,
+    "failed": 0,
+    "ignored": 15,
+    "measured": 0,
+    "filtered": 34,
+    "summaries": 597,
+    "packages": null,
+    "summary": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a14ffd9347afa9f67/private/gate-1/rust-suite/summary.json",
+    "ok": true
+   },
+   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a14ffd9347afa9f67/private/gate-1/slots/rust-suite.json"
+  },
+  {
+   "name": "probe-reevaluation_probe",
+   "argv": [
+    "cargo",
+    "run",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_probe"
+   ],
+   "exit": 0,
+   "seconds": 0.1,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a14ffd9347afa9f67/private/gate-1/probe-reevaluation_probe.log",
+   "counts": {}
+  },
+  {
+   "name": "probe-reevaluation_followup",
+   "argv": [
+    "cargo",
+    "run",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_followup"
+   ],
+   "exit": 0,
+   "seconds": 0.7,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a14ffd9347afa9f67/private/gate-1/probe-reevaluation_followup.log",
+   "counts": {}
+  },
+  {
+   "name": "lean",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a14ffd9347afa9f67/scripts/gate_slot.py",
+    "lean",
+    "--receipt",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a14ffd9347afa9f67/private/gate-1/slots/lean.json",
+    "--",
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a14ffd9347afa9f67/scripts/check_lean_audits.py"
+   ],
+   "exit": 0,
+   "seconds": 54.7,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a14ffd9347afa9f67/private/gate-1/lean.log",
+   "counts": {
+    "audits": 391
+   },
+   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a14ffd9347afa9f67/private/gate-1/slots/lean.json"
+  },
+  {
+   "name": "python",
+   "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+   ],
+   "exit": 1,
+   "seconds": 87.5,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a14ffd9347afa9f67/private/gate-1/python.log",
+   "counts": {
+    "tests": 554,
+    "skipped": 0,
+    "ok": false
+   }
+  }
+ ],
+ "ok": false,
+ "finished": "20261028T141125Z"
+}

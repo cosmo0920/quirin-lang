@@ -242,10 +242,11 @@ pub(crate) fn store_bases(
     if !types.is_readable() {
         return AggregateStoreBases::default();
     }
-    // Rule 37: only the existing checked non-VLA reader makes a mention
-    // unevaluated. It supplies neither an owner identity nor non-nullness.
-    let operand_types = crate::sizeof_operand::OperandTypes::read(model, parameters, body);
-    let unevaluated = crate::sizeof_operand::unevaluated_spans(body, &operand_types);
+    // Rule 37 (its package, card RULE37-PILOT): only spans the existing
+    // checked non-VLA reader admits, and only while rule 37 is on, make a
+    // mention unevaluated. They supply neither an owner identity nor
+    // non-nullness; off, the scan counts every mention as before rule 37.
+    let unevaluated = crate::result_constructor_rule::exempt_operand_spans(model, parameters, body);
     let mut candidates = BTreeSet::new();
     let mut refused = BTreeSet::new();
     let mut assignments: Vec<&str> = Vec::new();

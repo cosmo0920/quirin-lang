@@ -126,8 +126,15 @@ mod tests {
         }
     }
 
-    /// The rule packages `rule_hosts` hosts: (registry id, crate).
-    const HOSTED: &[(&str, &str)] = &[(rule_35_literal_decay::ID, "rule-35-literal-decay")];
+    /// The rule packages the gateway hosts: (registry id, crate). Rule 35 is
+    /// asked through `rule_hosts`, rule 37 through `result_constructor_rule`.
+    const HOSTED: &[(&str, &str)] = &[
+        (rule_35_literal_decay::ID, "rule-35-literal-decay"),
+        (
+            rule_37_result_constructors::ID,
+            "rule-37-result-constructors",
+        ),
+    ];
 
     #[test]
     fn every_hosted_package_answers_under_its_registry_id() {

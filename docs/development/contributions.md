@@ -15,6 +15,13 @@ Measurement `3f505732cabd` (docs/reports/rule35-pilot/native-comparison.json), r
 - interactions of rule 35 with other rules: not measured (switched alone)
 - consistency: base + contributions + interactions = Safe 1013, Unknown 3811, Unsafe 10 = the real-run total
 
+Measurement `78a83e75ed31` (docs/reports/rule37-pilot/native-comparison.json), rules 37 switched off in one binary (`6b6a3a438d89`), current:
+
+- base (rules 37 off): Safe 1008, Unknown 3816, Unsafe 10
+- rule 37: five rows under one premise (`asserted_allocation`); Unknown→Safe 5; 260 touched rows stay Unknown; leaves traded −36 +22
+- interactions of rule 37 with other rules: not measured (switched alone)
+- consistency: base + contributions + interactions = Safe 1013, Unknown 3811, Unsafe 10 = the real-run total
+
 ## fluent-bit-system
 
 Real-run total (baseline `62f7368f87f9`, measured at `710021bd713b`): Safe 101, Unknown 343, Unsafe 4.
@@ -26,6 +33,13 @@ Measurement `3f505732cabd` (docs/reports/rule35-pilot/native-comparison.json), r
 - interactions of rule 35 with other rules: not measured (switched alone)
 - consistency: base + contributions + interactions = Safe 101, Unknown 343, Unsafe 4 = the real-run total
 
+Measurement `78a83e75ed31` (docs/reports/rule37-pilot/native-comparison.json), rules 37 switched off in one binary (`6b6a3a438d89`), current:
+
+- base (rules 37 off): Safe 101, Unknown 343, Unsafe 4
+- rule 37: no rows
+- interactions of rule 37 with other rules: not measured (switched alone)
+- consistency: base + contributions + interactions = Safe 101, Unknown 343, Unsafe 4 = the real-run total
+
 ## fluent-bit-tail-pause
 
 Real-run total (baseline `dce03b504b89`, measured at `710021bd713b`): Pending 4, Safe 57, Unknown 342, Unsafe 1.
@@ -35,4 +49,11 @@ Measurement `3f505732cabd` (docs/reports/rule35-pilot/native-comparison.json), r
 - base (rules 35 off): Pending 4, Safe 57, Unknown 342, Unsafe 1
 - rule 35: no rows; 9 touched rows stay Unknown; leaves traded −11 +3
 - interactions of rule 35 with other rules: not measured (switched alone)
+- consistency: base + contributions + interactions = Pending 4, Safe 57, Unknown 342, Unsafe 1 = the real-run total
+
+Measurement `78a83e75ed31` (docs/reports/rule37-pilot/native-comparison.json), rules 37 switched off in one binary (`6b6a3a438d89`), current:
+
+- base (rules 37 off): Pending 4, Safe 57, Unknown 342, Unsafe 1
+- rule 37: no rows
+- interactions of rule 37 with other rules: not measured (switched alone)
 - consistency: base + contributions + interactions = Pending 4, Safe 57, Unknown 342, Unsafe 1 = the real-run total

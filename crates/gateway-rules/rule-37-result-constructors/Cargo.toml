@@ -1,0 +1,12 @@
+[package]
+name = "rule-37-result-constructors"
+version = "0.1.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+description = "C gateway rule 37 (checked result constructors): the typed sizeof exemption of the aggregate store scan and the named asserted_allocation premise of checked allocator specifications, as a rule package of the gateway rule interface."
+
+# Plan docs/plans/pluggable-cards/README.md seam B: a rule package depends on
+# the rule interface only, never on qcore-c-gateway or another rule package
+# (a test holds the set).
+[dependencies]
+qcore-gateway-rule-api = { path = "../../qcore-gateway-rule-api", version = "0.1.0" }

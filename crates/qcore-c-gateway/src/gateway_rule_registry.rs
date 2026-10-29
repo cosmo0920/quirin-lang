@@ -208,4 +208,16 @@ pub const REGISTRY: &[RuleEntry] = &[
         reason_keys: &[],
         off: Off::Refuses,
     },
+    RuleEntry {
+        id: "37",
+        crate_name: "rule-37-result-constructors",
+        placements: &[
+            Placement { position: Position::TypedReader, order: None, arm: Some("sizeof-operand-exemption"), route: "sizeof_operand::decide" },
+            Placement { position: Position::Classification, order: None, arm: Some("asserted-allocation-premise"), route: "asserted_allocation::decide" },
+        ],
+        lean: &["QCore.ResultConstructors", "QCore.ResultConstructorSwitch"],
+        document: "docs/agents/rules/37.md",
+        reason_keys: &[],
+        off: Off::Refuses,
+    },
 ];

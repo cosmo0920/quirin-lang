@@ -128,6 +128,7 @@ dependencies = [
  "qcore-gateway-rule-api",
  "qcore-schemas",
  "rule-35-literal-decay",
+ "rule-37-result-constructors",
  "serde",
  "serde_json",
 ]
@@ -280,6 +281,13 @@ dependencies = [
 
 [[package]]
 name = "rule-35-literal-decay"
+version = "0.1.0"
+dependencies = [
+ "qcore-gateway-rule-api",
+]
+
+[[package]]
+name = "rule-37-result-constructors"
 version = "0.1.0"
 dependencies = [
  "qcore-gateway-rule-api",

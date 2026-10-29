@@ -40,6 +40,12 @@ const ALLOWED: &[(&str, &[&str])] = &[
         "crates/gateway-rules/rule-35-literal-decay",
         &["qcore-gateway-rule-api"],
     ),
+    // Card RULE37-PILOT: a rule package depends on the rule interface only,
+    // and the gateway asks it through that interface.
+    (
+        "crates/gateway-rules/rule-37-result-constructors",
+        &["qcore-gateway-rule-api"],
+    ),
     (
         "crates/qcore-c-gateway",
         &[
@@ -49,6 +55,7 @@ const ALLOWED: &[(&str, &[&str])] = &[
             "qcore-schemas",
             // Card RULE35-PILOT: the gateway hosts rule 35's package.
             "rule-35-literal-decay",
+            "rule-37-result-constructors",
         ],
     ),
     (

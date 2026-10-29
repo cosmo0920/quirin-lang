@@ -9075,8 +9075,23 @@ safety claim and no validation of the detach representation premise.
     card's fresh per-body and per-leaf BASE/TIP movements, with each movement's
     bounds and assumptions; planner ceilings are not gains.
 
+    The rule's body is the package `crates/gateway-rules/rule-37-result-constructors`
+    (card RULE37-PILOT), asked through the rule interface at two registered
+    arms: the store scan's checked operand spans (`aggregate_store::store_bases`)
+    and the checked-specification settlement (`legacy_checked_spec::settle`),
+    where a specification naming `asserted_allocation` stands only while the
+    package admits it with that premise as an obligation the declaration
+    states. `QCORE_GATEWAY_RULES_OFF=37` removes both answers: the scan counts
+    every mention, as before this rule, and every such specification is
+    withdrawn; its callers then see only what W4 validates from an in-unit
+    body. The null readers' checked-result guard is a restriction, so it stays
+    in the host and is never switched off.
+
     Lean: `QCore.ResultConstructors` (all companion theorems registered in
-    `AuditResultConstructors.lean`);
-    [report](../reports/w48-bu-rk-result-constructors/README.md).
+    `AuditResultConstructors.lean`) and `QCore.ResultConstructorSwitch` (on is
+    the rule, off is the old reading, off never widens;
+    `AuditResultConstructorSwitch.lean`);
+    [report](../reports/w48-bu-rk-result-constructors/README.md),
+    [migration](../reports/rule37-pilot/README.md).
 
 <!-- generated:rules:end -->
