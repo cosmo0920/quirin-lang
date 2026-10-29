@@ -1,0 +1,9 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "TEST-STORAGE-BUDGET",
+  "base": "62c8e461c",
+  "measured_tip": "62c8e461c",
+  "increment_paragraph": "TBD",
+  "status_paragraph": null,
+  "ledger": []
+}

@@ -18,8 +18,9 @@ git submodule update --init --recursive   # every fresh checkout, worktrees incl
 python3 scripts/run_test_binaries.py      # parallel form of: cargo test --workspace --no-fail-fast
 cargo fmt --all -- --check
 cargo clippy --all-targets -- -D warnings
-cargo run -p qcore-compiler --example reevaluation_probe      # expect exit 0
-cargo run -p qcore-compiler --example reevaluation_followup   # expect exit 0
+mapfile -t test_config < <(python3 scripts/test_link_config.py)   # see "Test build storage"
+cargo run "${test_config[@]}" -p qcore-compiler --example reevaluation_probe      # expect exit 0
+cargo run "${test_config[@]}" -p qcore-compiler --example reevaluation_followup   # expect exit 0
 python3 scripts/check_lean_audits.py
 python3 -m unittest discover -s scripts/tests
 ```
@@ -52,7 +53,9 @@ or an unparsable result fails the run (exit 101). Report its totals line
 which sums the same summaries `cargo test` prints, and its log directory
 (`private/test-binaries/<stamp>/`, one stdout/stderr log per unit plus
 `summary.json`). Constraint 16's instruction is unchanged: a load-sensitive row
-that fails is verified in isolation, never weakened. The provider workspace is
+that fails is verified in isolation, never weakened. Every cargo command it
+runs carries the test-build configuration (`--link`, `--batch-size`:
+[Test build storage](#test-build-storage)). The provider workspace is
 not covered — its conformance binaries launch process providers throughout —
 and keeps plain `cargo test`; the runner refuses any workspace but the root.
 [Report](../reports/w44-test-suite-wall-time/README.md).
@@ -137,7 +140,8 @@ parent directory in code `cargo test` runs. The Rust suite is then
 `run_test_binaries.py --packages <affected root members>`, its `EXCLUSIVE` phase
 unchanged, or the whole suite when the diff reaches `qcore-c-gateway`,
 `qcore-core`, `qcore-contract` or `qcore-schemas`, a workspace manifest or
-lockfile, the runner or the scoper, or a path that no crate owns or reads and
+lockfile, the runner, the scoper or the test-build configuration
+(`test_link_config.py`, `rustc_test_dylib.py`), or a path that no crate owns or reads and
 that is not prose, Python, Lean or provider tooling. Beside it: the submodule
 state, fmt, Clippy on the same crates, both reevaluation examples when
 `qcore-compiler` is affected, Lean (`scripts/gate_lean.py` on the changed
@@ -187,6 +191,49 @@ fmt, Clippy and builds take no slot, so another card's build can still load the
 host beside a `rust-suite` job; `MemAvailable` already excludes running audits'
 resident memory, so admission is conservative; an exclusive legacy waiter can
 wait while slot jobs keep the lock shared.
+
+## Test build storage
+
+Building and running the test suites must fit a CI runner's disk: about 15 GB
+at peak from an empty `target/` (user request of 2026-10-29, card
+`TEST-STORAGE-BUDGET`). `scripts/test_link_config.py` is the one place that
+names the test-build configuration; `run_test_binaries.py` (both gates), the
+scoped gate's reevaluation examples and CI's test steps pass its `--config`
+arguments to every cargo command that builds the root workspace's tests:
+
+- `build.incremental=false` (the CI jobs also set `CARGO_INCREMENTAL=0`, the
+  same setting): a gate or CI build starts from an empty or foreign `target/`,
+  and incremental state is gigabytes nothing reads again.
+- On Linux, `build.rustc-wrapper` = `scripts/rustc_test_dylib.py`: every
+  root-workspace library is also emitted as a Rust dylib, and every test
+  executable, binary and example of the root workspace links those and
+  `libstd` dynamically, with absolute run paths (an executable started with a
+  cleared environment still loads them). The wrapper withholds rustc's early
+  metadata signal, so cargo starts a dependent only after the whole upstream
+  build, `.so` included. A fresh `cargo test --workspace` peaked at 86.4 GB of
+  `target/` before; this build peaks at 3.6 GB.
+- Elsewhere tests link statically: a Windows DLL of the large crates would
+  exceed the 65,535-export limit. Windows CI runs the full suite as
+  `run_test_binaries.py --jobs 1 --batch-size 32`: each batch of 32 target
+  names is built, captured, run (parallel units, then its `EXCLUSIVE` units
+  alone) and its executables deleted before the next is built; the examples
+  `cargo test` compiles are compiled and deleted in batches too; the run fails
+  closed unless the executables built are exactly the selection's test
+  targets, each once, and runs the doc-tests last.
+- Debug information stays `line-tables-only` in both workspaces' dev profiles
+  (the provider workspace's since this card), so panics keep file:line; the
+  budget is met without dropping it.
+
+The test set, its order-independent verdicts and the fail-closed rules are
+the same in every mode; only the bytes on disk differ. The root manifests,
+lockfile and cargo configuration files do not change, so release builds
+(`quirin-audit`, `quirin-audit measure`'s `rev:` sides, provider packages)
+are the builds they were, and cargo runs started by tests never inherit the
+`--config` arguments. Plain `cargo test --workspace --no-fail-fast` stays the
+reference command and builds statically; alternating it with a configured
+command in one `target/` rebuilds the workspace each time, because the wrapper
+and the incremental setting are part of cargo's fingerprint.
+[Report](../reports/test-storage-budget/README.md).
 
 <!-- generated:rules:start — edit docs/agents/rules/<id>.md, then run python3 scripts/gen_rule_docs.py -->
 

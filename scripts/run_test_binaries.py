@@ -651,9 +651,16 @@ def remove_outputs(paths: Iterable[str]) -> int:
                     if (sibling != candidate and other.st_ino == stat.st_ino
                             and other.st_dev == stat.st_dev):
                         names.append(sibling)
+            removed = 0
             for name in names:
-                name.unlink(missing_ok=True)
-            if len(names) >= stat.st_nlink:
+                try:
+                    name.unlink(missing_ok=True)
+                    removed += 1
+                except OSError as error:
+                    # A storage measure, not a verdict: a file still in use
+                    # (Windows) stays, and the next batch is built beside it.
+                    print(f"warning: could not delete {name}: {error}", file=sys.stderr)
+            if removed >= stat.st_nlink:
                 freed += stat.st_size
     return freed
 
