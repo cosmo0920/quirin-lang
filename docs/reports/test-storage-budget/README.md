@@ -295,3 +295,26 @@ reads every `test <name> ...` fragment of a line rather than whole lines.
   every run here) and searched the rest for the touched paths and tools; I did
   not read the 623 KB gateway page or the semantic topic pages in full. The
   card changes no analysis code, contract or rule.
+
+## 8. Gate
+
+The scoped card gate, `python3 scripts/gate_scope.py --base 62c8e461c
+--no-slots`, ran inside the measurement script's own `rust-suite` slot hold
+(`evidence/after.sh` steps E and F, receipt `evidence/after.slot.json`), so no
+audit ran beside it. Mode full (the runner, the scoper and the two new
+scripts changed; the diff reaches `qcore-contract` through string-literal
+readers of `providers/Cargo.toml`); Lean none; provider gate yes.
+
+- **Attempt 1** on `36497799b`: exit 1, the Python suite only
+  (`test_tracked_files`: the new test listed a temporary directory with
+  `iterdir()`, a walk primitive rule 29's tripwire refuses in test files;
+  `gate-attempt-1/`). Every other step exited 0, the Rust suite at 8,927 / 0 /
+  15 and the provider tests at 133 / 0 / 1.
+- **Attempt 2** on `745fcb58f` (the test checks each name's existence
+  instead): **exit 0**, `gate.json`, `gate-console.txt`. Submodules 0 (one,
+  checked out); fmt 0; Clippy 0; Rust suite 0, 584 units, 617 summaries,
+  8,927 passed, 0 failed, 15 ignored (dynamic, the new default); both
+  reevaluation examples 0 (with the configuration, no rebuild); Python 0, 568
+  tests; provider packages built and all five verified 0; provider tests 0,
+  133 / 0 / 1; provider fmt and Clippy 0. Logs:
+  `private/gate-scope/20261029T184121Z-5422/` in the card worktree.

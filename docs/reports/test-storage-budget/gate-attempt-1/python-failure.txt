@@ -1,0 +1,13 @@
+52:FAIL: test_every_remaining_tree_walk_in_the_tests_is_a_reviewed_one (test_tracked_files.TrackedFiles.test_every_remaining_tree_walk_in_the_tests_is_a_reviewed_one)
+53-----------------------------------------------------------------------
+54-Traceback (most recent call last):
+55-  File "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/scripts/tests/test_tracked_files.py", line 118, in test_every_remaining_tree_walk_in_the_tests_is_a_reviewed_one
+56-    self.assertEqual(found, REVIEWED_WALKS)
+57-    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+58-AssertionError: {'com[234 chars]sts/checkpoint_cli.rs': 1, 'crates/qcore-audit[580 chars]': 1} != {'com[234 chars]sts/configured_cli.rs': 6, 'crates/qcore-c-gat[532 chars]': 1}
+59-Diff is 924 characters long. Set self.maxDiff to None to see it.
+60-
+61-----------------------------------------------------------------------
+62-Ran 568 tests in 44.270s
+63-
+64-FAILED (failures=1)

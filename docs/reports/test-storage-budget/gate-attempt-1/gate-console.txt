@@ -1,0 +1,48 @@
+gate_scope: failed steps: python
+mode: full
+  full because scripts/gate_scope.py: the test runner or this scoper changed
+  full because scripts/run_test_binaries.py: the test runner or this scoper changed
+  full because scripts/rustc_test_dylib.py: the test runner or this scoper changed
+  full because scripts/test_link_config.py: the test runner or this scoper changed
+  full because the diff reaches qcore-contract
+affected crates (9):
+  qcore-audit: names providers in a string literal: providers/Cargo.toml (crates/qcore-audit/src/pin_window.rs:60); names providers in a string literal: providers/Cargo.toml (crates/qcore-audit/tests/current_cli.rs:138); names providers in a string literal: providers/Cargo.toml (crates/qcore-audit/tests/dependency_graph.rs:92); ... 1 more
+  qcore-c-gateway: depends on qcore-contract
+  qcore-compiler: names providers in a string literal: providers/Cargo.toml (compiler/tests/contract_inherit_qcore_provider.rs:437); names providers in a string literal: providers/Cargo.toml (compiler/tests/monkey_profile.rs:41); names providers in a string literal: providers/Cargo.toml (compiler/tests/profile_loader.rs:65); ... 1 more
+  qcore-contract: names providers in a string literal: providers/Cargo.toml (crates/qcore-contract/tests/bounds_contract.rs:159); names providers in a string literal: providers/Cargo.toml (crates/qcore-contract/tests/event_loop_clauses.rs:211); names providers in a string literal: providers/Cargo.toml (crates/qcore-contract/tests/production_symbolic_adoption.rs:389)
+  qcore-provider-conformance: names providers in a string literal: providers/Cargo.toml (providers/conformance/tests/composed_five_providers.rs:132); names providers in a string literal: providers/Cargo.toml (providers/conformance/tests/packages.rs:373)
+  qcore-verification: depends on qcore-contract
+  qcorec: depends on qcore-compiler
+  quirin-audit-plugin-measure: names providers in a string literal: providers/Cargo.toml (crates/quirin-audit-plugin-measure/src/sides.rs:512); names providers in a string literal: providers/Cargo.toml (crates/quirin-audit-plugin-measure/tests/units.rs:298); names scripts in a string literal: scripts/gate_scope.py (crates/quirin-audit-plugin-measure/tests/support/mod.rs:197); ... 4 more
+  quirin-source-analysis: depends on qcore-contract
+rust suite packages: qcore-audit, qcore-c-gateway, qcore-compiler, qcore-contract, qcore-core, qcore-frontend, qcore-gateway-rule-api, qcore-schemas, qcore-verification, qcore-verifier-host, qcorec, quirin-audit-plugin, quirin-audit-plugin-libevent, quirin-audit-plugin-measure, quirin-source-analysis, rule-33-removed-selection, rule-34-element-destroyer, rule-35-literal-decay, rule-36-exact-formal-return, rule-37-result-constructors
+lean: none
+provider gate: yes
+python suite: always
+[submodules] $ git -C /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f submodule status --recursive
+[submodules] exit 0 in 0.1s {"submodules": 1, "not_checked_out_or_moved": []}
+[fmt] $ cargo fmt --all -- --check
+[fmt] exit 0 in 3.9s 
+[clippy] $ cargo clippy --all-targets -- -D warnings
+[clippy] exit 0 in 41.3s 
+[rust-suite] $ /usr/bin/python3 /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/scripts/run_test_binaries.py --log-dir /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/private/gate-scope/20261029T174151Z-3932358/rust-suite
+[rust-suite] exit 0 in 1092.8s {"units": 584, "passed": 8927, "failed": 0, "ignored": 15, "measured": 0, "filtered": 69, "summaries": 617, "packages": null, "summary": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/private/gate-scope/20261029T174151Z-3932358/rust-suite/summary.json", "ok": true}
+[probe-reevaluation_probe] $ cargo run --config build.incremental=false --config build.rustc-wrapper="/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/scripts/rustc_test_dylib.py" -p qcore-compiler --example reevaluation_probe
+[probe-reevaluation_probe] exit 0 in 0.2s 
+[probe-reevaluation_followup] $ cargo run --config build.incremental=false --config build.rustc-wrapper="/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/scripts/rustc_test_dylib.py" -p qcore-compiler --example reevaluation_followup
+[probe-reevaluation_followup] exit 0 in 0.5s 
+[python] $ /usr/bin/python3 -m unittest discover -s scripts/tests
+[python] exit 1 in 44.5s {"tests": 568, "skipped": 0, "ok": false}
+[provider-package-build] $ /usr/bin/python3 providers/package.py build --output /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/private/gate-scope/20261029T174151Z-3932358/provider-packages
+[provider-package-build] exit 0 in 215.6s 
+[provider-package-verify-all] $ /usr/bin/python3 /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/scripts/gate_scope.py --verify-packages /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/private/gate-scope/20261029T174151Z-3932358/provider-packages
+[provider-package-verify-all] exit 0 in 0.8s 
+[provider-package-verify] $ /usr/bin/python3 providers/package.py verify /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/private/gate-scope/20261029T174151Z-3932358/provider-packages/qcore.libevent
+[provider-package-verify] exit 0 in 0.1s 
+[provider-test] $ cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline
+[provider-test] exit 0 in 2137.7s {"summaries": 43, "passed": 133, "failed": 0, "ignored": 1, "measured": 0, "filtered": 0}
+[provider-fmt] $ cargo fmt --manifest-path providers/Cargo.toml --all -- --check
+[provider-fmt] exit 0 in 4.2s 
+[provider-clippy] $ cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --locked --offline -- -D warnings
+[provider-clippy] exit 0 in 26.2s 
+gate.json: /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/private/gate-scope/20261029T174151Z-3932358/gate.json

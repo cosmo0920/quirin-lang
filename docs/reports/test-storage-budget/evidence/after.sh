@@ -56,3 +56,8 @@ cd $W
 while [ ! -f $M/go-gate ]; do sleep 20; done
 python3 scripts/gate_scope.py --base 62c8e461c --no-slots > $M/gate.log 2>&1
 echo "E exit $?" >> $M/after.status
+
+# F. The gate again, on the commit that repairs E's Python failure.
+while [ ! -f $M/go-gate2 ]; do sleep 20; done
+python3 scripts/gate_scope.py --base 62c8e461c --no-slots > $M/gate2.log 2>&1
+echo "F exit $?" >> $M/after.status

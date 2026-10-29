@@ -1,0 +1,777 @@
+{
+ "schema": "quirin-gate-scope/1",
+ "source": "git diff",
+ "base": "62c8e461cf00628ab6c26a45dcdb243e91d79924",
+ "head": "36497799bd4a12f9311322832a7d5cd55062339e",
+ "committed": [
+  ".github/workflows/ci.yml",
+  "docs/agents/validation.md",
+  "docs/reports/test-storage-budget/README.md",
+  "docs/reports/test-storage-budget/compare_tests.py",
+  "docs/reports/test-storage-budget/evidence/after-dyn/peak.json",
+  "docs/reports/test-storage-budget/evidence/after-dyn/samples.tsv",
+  "docs/reports/test-storage-budget/evidence/after-static-batch/peak.json",
+  "docs/reports/test-storage-budget/evidence/after-static-batch/samples.tsv",
+  "docs/reports/test-storage-budget/evidence/after.sh",
+  "docs/reports/test-storage-budget/evidence/base-build/peak.json",
+  "docs/reports/test-storage-budget/evidence/base-build/samples.tsv",
+  "docs/reports/test-storage-budget/evidence/base-run/peak.json",
+  "docs/reports/test-storage-budget/evidence/base-run/samples.tsv",
+  "docs/reports/test-storage-budget/evidence/clippy/peak.json",
+  "docs/reports/test-storage-budget/evidence/clippy/samples.tsv",
+  "docs/reports/test-storage-budget/evidence/dyn-build-1/peak.json",
+  "docs/reports/test-storage-budget/evidence/dyn-build-1/samples.tsv",
+  "docs/reports/test-storage-budget/evidence/dyn-debug0-build/peak.json",
+  "docs/reports/test-storage-budget/evidence/dyn-debug0-build/samples.tsv",
+  "docs/reports/test-storage-budget/evidence/macos-proxy.sh",
+  "docs/reports/test-storage-budget/evidence/macos-proxy/peak.json",
+  "docs/reports/test-storage-budget/evidence/macos-proxy/samples.tsv",
+  "docs/reports/test-storage-budget/evidence/msvc-core-proxy.sh",
+  "docs/reports/test-storage-budget/evidence/msvc-core-proxy/peak.json",
+  "docs/reports/test-storage-budget/evidence/msvc-core-proxy/samples.tsv",
+  "docs/reports/test-storage-budget/evidence/parity-providers.txt",
+  "docs/reports/test-storage-budget/evidence/parity-root.txt",
+  "docs/reports/test-storage-budget/evidence/prov-after/peak.json",
+  "docs/reports/test-storage-budget/evidence/prov-after/samples.tsv",
+  "docs/reports/test-storage-budget/evidence/prov-base-build/peak.json",
+  "docs/reports/test-storage-budget/evidence/prov-base-build/samples.tsv",
+  "docs/reports/test-storage-budget/evidence/prov-base-run/peak.json",
+  "docs/reports/test-storage-budget/evidence/prov-base-run/samples.tsv",
+  "docs/reports/test-storage-budget/evidence/prov-lt-build/peak.json",
+  "docs/reports/test-storage-budget/evidence/prov-lt-build/samples.tsv",
+  "docs/reports/test-storage-budget/evidence/runner-totals.txt",
+  "docs/reports/test-storage-budget/evidence/static-debug0-build/peak.json",
+  "docs/reports/test-storage-budget/evidence/static-debug0-build/samples.tsv",
+  "docs/reports/test-storage-budget/evidence/timing.log",
+  "docs/reports/test-storage-budget/evidence/timing.sh",
+  "docs/reports/test-storage-budget/integration-amendments.json",
+  "docs/reports/test-storage-budget/measure_peak.py",
+  "providers/Cargo.toml",
+  "scripts/gate_scope.py",
+  "scripts/run_test_binaries.py",
+  "scripts/rustc_test_dylib.py",
+  "scripts/test_link_config.py",
+  "scripts/tests/test_test_storage_budget.py"
+ ],
+ "uncommitted": [],
+ "scope": {
+  "paths": [
+   ".github/workflows/ci.yml",
+   "docs/agents/validation.md",
+   "docs/reports/test-storage-budget/README.md",
+   "docs/reports/test-storage-budget/compare_tests.py",
+   "docs/reports/test-storage-budget/evidence/after-dyn/peak.json",
+   "docs/reports/test-storage-budget/evidence/after-dyn/samples.tsv",
+   "docs/reports/test-storage-budget/evidence/after-static-batch/peak.json",
+   "docs/reports/test-storage-budget/evidence/after-static-batch/samples.tsv",
+   "docs/reports/test-storage-budget/evidence/after.sh",
+   "docs/reports/test-storage-budget/evidence/base-build/peak.json",
+   "docs/reports/test-storage-budget/evidence/base-build/samples.tsv",
+   "docs/reports/test-storage-budget/evidence/base-run/peak.json",
+   "docs/reports/test-storage-budget/evidence/base-run/samples.tsv",
+   "docs/reports/test-storage-budget/evidence/clippy/peak.json",
+   "docs/reports/test-storage-budget/evidence/clippy/samples.tsv",
+   "docs/reports/test-storage-budget/evidence/dyn-build-1/peak.json",
+   "docs/reports/test-storage-budget/evidence/dyn-build-1/samples.tsv",
+   "docs/reports/test-storage-budget/evidence/dyn-debug0-build/peak.json",
+   "docs/reports/test-storage-budget/evidence/dyn-debug0-build/samples.tsv",
+   "docs/reports/test-storage-budget/evidence/macos-proxy.sh",
+   "docs/reports/test-storage-budget/evidence/macos-proxy/peak.json",
+   "docs/reports/test-storage-budget/evidence/macos-proxy/samples.tsv",
+   "docs/reports/test-storage-budget/evidence/msvc-core-proxy.sh",
+   "docs/reports/test-storage-budget/evidence/msvc-core-proxy/peak.json",
+   "docs/reports/test-storage-budget/evidence/msvc-core-proxy/samples.tsv",
+   "docs/reports/test-storage-budget/evidence/parity-providers.txt",
+   "docs/reports/test-storage-budget/evidence/parity-root.txt",
+   "docs/reports/test-storage-budget/evidence/prov-after/peak.json",
+   "docs/reports/test-storage-budget/evidence/prov-after/samples.tsv",
+   "docs/reports/test-storage-budget/evidence/prov-base-build/peak.json",
+   "docs/reports/test-storage-budget/evidence/prov-base-build/samples.tsv",
+   "docs/reports/test-storage-budget/evidence/prov-base-run/peak.json",
+   "docs/reports/test-storage-budget/evidence/prov-base-run/samples.tsv",
+   "docs/reports/test-storage-budget/evidence/prov-lt-build/peak.json",
+   "docs/reports/test-storage-budget/evidence/prov-lt-build/samples.tsv",
+   "docs/reports/test-storage-budget/evidence/runner-totals.txt",
+   "docs/reports/test-storage-budget/evidence/static-debug0-build/peak.json",
+   "docs/reports/test-storage-budget/evidence/static-debug0-build/samples.tsv",
+   "docs/reports/test-storage-budget/evidence/timing.log",
+   "docs/reports/test-storage-budget/evidence/timing.sh",
+   "docs/reports/test-storage-budget/integration-amendments.json",
+   "docs/reports/test-storage-budget/measure_peak.py",
+   "providers/Cargo.toml",
+   "scripts/gate_scope.py",
+   "scripts/run_test_binaries.py",
+   "scripts/rustc_test_dylib.py",
+   "scripts/test_link_config.py",
+   "scripts/tests/test_test_storage_budget.py"
+  ],
+  "attribution": {
+   ".github/workflows/ci.yml": [
+    "class prose"
+   ],
+   "docs/agents/validation.md": [
+    "class prose"
+   ],
+   "docs/reports/test-storage-budget/README.md": [
+    "class prose"
+   ],
+   "docs/reports/test-storage-budget/compare_tests.py": [
+    "class prose"
+   ],
+   "docs/reports/test-storage-budget/evidence/after-dyn/peak.json": [
+    "class prose"
+   ],
+   "docs/reports/test-storage-budget/evidence/after-dyn/samples.tsv": [
+    "class prose"
+   ],
+   "docs/reports/test-storage-budget/evidence/after-static-batch/peak.json": [
+    "class prose"
+   ],
+   "docs/reports/test-storage-budget/evidence/after-static-batch/samples.tsv": [
+    "class prose"
+   ],
+   "docs/reports/test-storage-budget/evidence/after.sh": [
+    "class prose"
+   ],
+   "docs/reports/test-storage-budget/evidence/base-build/peak.json": [
+    "class prose"
+   ],
+   "docs/reports/test-storage-budget/evidence/base-build/samples.tsv": [
+    "class prose"
+   ],
+   "docs/reports/test-storage-budget/evidence/base-run/peak.json": [
+    "class prose"
+   ],
+   "docs/reports/test-storage-budget/evidence/base-run/samples.tsv": [
+    "class prose"
+   ],
+   "docs/reports/test-storage-budget/evidence/clippy/peak.json": [
+    "class prose"
+   ],
+   "docs/reports/test-storage-budget/evidence/clippy/samples.tsv": [
+    "class prose"
+   ],
+   "docs/reports/test-storage-budget/evidence/dyn-build-1/peak.json": [
+    "class prose"
+   ],
+   "docs/reports/test-storage-budget/evidence/dyn-build-1/samples.tsv": [
+    "class prose"
+   ],
+   "docs/reports/test-storage-budget/evidence/dyn-debug0-build/peak.json": [
+    "class prose"
+   ],
+   "docs/reports/test-storage-budget/evidence/dyn-debug0-build/samples.tsv": [
+    "class prose"
+   ],
+   "docs/reports/test-storage-budget/evidence/macos-proxy.sh": [
+    "class prose"
+   ],
+   "docs/reports/test-storage-budget/evidence/macos-proxy/peak.json": [
+    "class prose"
+   ],
+   "docs/reports/test-storage-budget/evidence/macos-proxy/samples.tsv": [
+    "class prose"
+   ],
+   "docs/reports/test-storage-budget/evidence/msvc-core-proxy.sh": [
+    "class prose"
+   ],
+   "docs/reports/test-storage-budget/evidence/msvc-core-proxy/peak.json": [
+    "class prose"
+   ],
+   "docs/reports/test-storage-budget/evidence/msvc-core-proxy/samples.tsv": [
+    "class prose"
+   ],
+   "docs/reports/test-storage-budget/evidence/parity-providers.txt": [
+    "class prose"
+   ],
+   "docs/reports/test-storage-budget/evidence/parity-root.txt": [
+    "class prose"
+   ],
+   "docs/reports/test-storage-budget/evidence/prov-after/peak.json": [
+    "class prose"
+   ],
+   "docs/reports/test-storage-budget/evidence/prov-after/samples.tsv": [
+    "class prose"
+   ],
+   "docs/reports/test-storage-budget/evidence/prov-base-build/peak.json": [
+    "class prose"
+   ],
+   "docs/reports/test-storage-budget/evidence/prov-base-build/samples.tsv": [
+    "class prose"
+   ],
+   "docs/reports/test-storage-budget/evidence/prov-base-run/peak.json": [
+    "class prose"
+   ],
+   "docs/reports/test-storage-budget/evidence/prov-base-run/samples.tsv": [
+    "class prose"
+   ],
+   "docs/reports/test-storage-budget/evidence/prov-lt-build/peak.json": [
+    "class prose"
+   ],
+   "docs/reports/test-storage-budget/evidence/prov-lt-build/samples.tsv": [
+    "class prose"
+   ],
+   "docs/reports/test-storage-budget/evidence/runner-totals.txt": [
+    "class prose"
+   ],
+   "docs/reports/test-storage-budget/evidence/static-debug0-build/peak.json": [
+    "class prose"
+   ],
+   "docs/reports/test-storage-budget/evidence/static-debug0-build/samples.tsv": [
+    "class prose"
+   ],
+   "docs/reports/test-storage-budget/evidence/timing.log": [
+    "class prose"
+   ],
+   "docs/reports/test-storage-budget/evidence/timing.sh": [
+    "class prose"
+   ],
+   "docs/reports/test-storage-budget/integration-amendments.json": [
+    "class prose"
+   ],
+   "docs/reports/test-storage-budget/measure_peak.py": [
+    "class prose"
+   ],
+   "providers/Cargo.toml": [
+    "read by qcore-audit (runtime, crates/qcore-audit/src/pin_window.rs:60)",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/current_cli.rs:138)",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/dependency_graph.rs:92)",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/provider_selection.rs:620)",
+    "read by qcore-contract (runtime, crates/qcore-contract/tests/bounds_contract.rs:159)",
+    "read by qcore-contract (runtime, crates/qcore-contract/tests/event_loop_clauses.rs:211)",
+    "read by qcore-contract (runtime, crates/qcore-contract/tests/production_symbolic_adoption.rs:389)",
+    "read by qcore-compiler (runtime, compiler/tests/contract_inherit_qcore_provider.rs:437)",
+    "read by qcore-compiler (runtime, compiler/tests/monkey_profile.rs:41)",
+    "read by qcore-compiler (runtime, compiler/tests/profile_loader.rs:65)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:254)",
+    "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/src/sides.rs:512)",
+    "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/tests/units.rs:298)",
+    "read by qcore-provider-conformance (runtime, providers/conformance/tests/composed_five_providers.rs:132)",
+    "read by qcore-provider-conformance (runtime, providers/conformance/tests/packages.rs:373)",
+    "class providers"
+   ],
+   "scripts/gate_scope.py": [
+    "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/tests/support/mod.rs:197)",
+    "class python"
+   ],
+   "scripts/run_test_binaries.py": [
+    "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/tests/support/mod.rs:197)",
+    "class python"
+   ],
+   "scripts/rustc_test_dylib.py": [
+    "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/tests/support/mod.rs:197)",
+    "class python"
+   ],
+   "scripts/test_link_config.py": [
+    "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/tests/support/mod.rs:197)",
+    "class python"
+   ],
+   "scripts/tests/test_test_storage_budget.py": [
+    "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/tests/support/mod.rs:197)",
+    "class python"
+   ]
+  },
+  "affected": {
+   "qcore-audit": [
+    "names providers in a string literal: providers/Cargo.toml (crates/qcore-audit/src/pin_window.rs:60)",
+    "names providers in a string literal: providers/Cargo.toml (crates/qcore-audit/tests/current_cli.rs:138)",
+    "names providers in a string literal: providers/Cargo.toml (crates/qcore-audit/tests/dependency_graph.rs:92)",
+    "names providers in a string literal: providers/Cargo.toml (crates/qcore-audit/tests/provider_selection.rs:620)"
+   ],
+   "qcore-c-gateway": [
+    "depends on qcore-contract"
+   ],
+   "qcore-compiler": [
+    "names providers in a string literal: providers/Cargo.toml (compiler/tests/contract_inherit_qcore_provider.rs:437)",
+    "names providers in a string literal: providers/Cargo.toml (compiler/tests/monkey_profile.rs:41)",
+    "names providers in a string literal: providers/Cargo.toml (compiler/tests/profile_loader.rs:65)",
+    "names providers in a string literal: providers/Cargo.toml (compiler/tests/workspace_layering.rs:254)"
+   ],
+   "qcore-contract": [
+    "names providers in a string literal: providers/Cargo.toml (crates/qcore-contract/tests/bounds_contract.rs:159)",
+    "names providers in a string literal: providers/Cargo.toml (crates/qcore-contract/tests/event_loop_clauses.rs:211)",
+    "names providers in a string literal: providers/Cargo.toml (crates/qcore-contract/tests/production_symbolic_adoption.rs:389)"
+   ],
+   "qcore-provider-conformance": [
+    "names providers in a string literal: providers/Cargo.toml (providers/conformance/tests/composed_five_providers.rs:132)",
+    "names providers in a string literal: providers/Cargo.toml (providers/conformance/tests/packages.rs:373)"
+   ],
+   "qcore-verification": [
+    "depends on qcore-contract"
+   ],
+   "qcorec": [
+    "depends on qcore-compiler"
+   ],
+   "quirin-audit-plugin-measure": [
+    "names providers in a string literal: providers/Cargo.toml (crates/quirin-audit-plugin-measure/src/sides.rs:512)",
+    "names providers in a string literal: providers/Cargo.toml (crates/quirin-audit-plugin-measure/tests/units.rs:298)",
+    "names scripts in a string literal: scripts/gate_scope.py (crates/quirin-audit-plugin-measure/tests/support/mod.rs:197)",
+    "names scripts in a string literal: scripts/run_test_binaries.py (crates/quirin-audit-plugin-measure/tests/support/mod.rs:197)",
+    "names scripts in a string literal: scripts/rustc_test_dylib.py (crates/quirin-audit-plugin-measure/tests/support/mod.rs:197)",
+    "names scripts in a string literal: scripts/test_link_config.py (crates/quirin-audit-plugin-measure/tests/support/mod.rs:197)",
+    "names scripts in a string literal: scripts/tests/test_test_storage_budget.py (crates/quirin-audit-plugin-measure/tests/support/mod.rs:197)"
+   ],
+   "quirin-source-analysis": [
+    "depends on qcore-contract"
+   ]
+  },
+  "mode": "full",
+  "full_reasons": [
+   "scripts/gate_scope.py: the test runner or this scoper changed",
+   "scripts/run_test_binaries.py: the test runner or this scoper changed",
+   "scripts/rustc_test_dylib.py: the test runner or this scoper changed",
+   "scripts/test_link_config.py: the test runner or this scoper changed",
+   "the diff reaches qcore-contract"
+  ],
+  "rust_packages": [
+   "qcore-audit",
+   "qcore-c-gateway",
+   "qcore-compiler",
+   "qcore-contract",
+   "qcore-core",
+   "qcore-frontend",
+   "qcore-gateway-rule-api",
+   "qcore-schemas",
+   "qcore-verification",
+   "qcore-verifier-host",
+   "qcorec",
+   "quirin-audit-plugin",
+   "quirin-audit-plugin-libevent",
+   "quirin-audit-plugin-measure",
+   "quirin-source-analysis",
+   "rule-33-removed-selection",
+   "rule-34-element-destroyer",
+   "rule-35-literal-decay",
+   "rule-36-exact-formal-return",
+   "rule-37-result-constructors"
+  ],
+  "probes": true,
+  "lean": {
+   "mode": "none",
+   "reasons": [],
+   "modules": [],
+   "audits": []
+  },
+  "python_reasons": [
+   "docs/reports/test-storage-budget/compare_tests.py: Python",
+   "docs/reports/test-storage-budget/measure_peak.py: Python",
+   "scripts/gate_scope.py: Python",
+   "scripts/run_test_binaries.py: Python",
+   "scripts/rustc_test_dylib.py: Python",
+   "scripts/test_link_config.py: Python",
+   "scripts/tests/test_test_storage_budget.py: Python"
+  ],
+  "provider_gate": true,
+  "provider_reasons": [
+   "providers/Cargo.toml: providers/ changed"
+  ],
+  "provider_members_reached_without_providers_change": [],
+  "unresolved_includes": [
+   {
+    "crate": "qcore-compiler",
+    "source": "compiler/tests/ct_corpus.rs:8069",
+    "literal": "include_str!(\\\"fixtures/ct/{id}/case.qr\\\")\");",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   }
+  ]
+ },
+ "planned_steps": [
+  {
+   "name": "submodules",
+   "argv": [
+    "git",
+    "-C",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f",
+    "submodule",
+    "status",
+    "--recursive"
+   ],
+   "slot": null
+  },
+  {
+   "name": "fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "slot": null
+  },
+  {
+   "name": "clippy",
+   "argv": [
+    "cargo",
+    "clippy",
+    "--all-targets",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "slot": null
+  },
+  {
+   "name": "rust-suite",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/scripts/run_test_binaries.py",
+    "--log-dir",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/private/gate-scope/20261029T174151Z-3932358/rust-suite"
+   ],
+   "slot": "rust-suite"
+  },
+  {
+   "name": "probe-reevaluation_probe",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_probe"
+   ],
+   "slot": null
+  },
+  {
+   "name": "probe-reevaluation_followup",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_followup"
+   ],
+   "slot": null
+  },
+  {
+   "name": "python",
+   "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+   ],
+   "slot": null
+  },
+  {
+   "name": "provider-package-build",
+   "argv": [
+    "/usr/bin/python3",
+    "providers/package.py",
+    "build",
+    "--output",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/private/gate-scope/20261029T174151Z-3932358/provider-packages"
+   ],
+   "slot": null
+  },
+  {
+   "name": "provider-package-verify-all",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/scripts/gate_scope.py",
+    "--verify-packages",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/private/gate-scope/20261029T174151Z-3932358/provider-packages"
+   ],
+   "slot": null
+  },
+  {
+   "name": "provider-package-verify",
+   "argv": [
+    "/usr/bin/python3",
+    "providers/package.py",
+    "verify",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/private/gate-scope/20261029T174151Z-3932358/provider-packages/qcore.libevent"
+   ],
+   "slot": null
+  },
+  {
+   "name": "provider-test",
+   "argv": [
+    "cargo",
+    "test",
+    "--manifest-path",
+    "providers/Cargo.toml",
+    "--workspace",
+    "--locked",
+    "--offline"
+   ],
+   "slot": "rust-suite"
+  },
+  {
+   "name": "provider-fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--manifest-path",
+    "providers/Cargo.toml",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "slot": null
+  },
+  {
+   "name": "provider-clippy",
+   "argv": [
+    "cargo",
+    "clippy",
+    "--manifest-path",
+    "providers/Cargo.toml",
+    "--workspace",
+    "--all-targets",
+    "--locked",
+    "--offline",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "slot": null
+  }
+ ],
+ "slots": false,
+ "started": "20261029T174151Z",
+ "ran": true,
+ "steps": [
+  {
+   "name": "submodules",
+   "argv": [
+    "git",
+    "-C",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f",
+    "submodule",
+    "status",
+    "--recursive"
+   ],
+   "exit": 0,
+   "seconds": 0.1,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/private/gate-scope/20261029T174151Z-3932358/submodules.log",
+   "counts": {
+    "submodules": 1,
+    "not_checked_out_or_moved": []
+   }
+  },
+  {
+   "name": "fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "exit": 0,
+   "seconds": 3.9,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/private/gate-scope/20261029T174151Z-3932358/fmt.log",
+   "counts": {}
+  },
+  {
+   "name": "clippy",
+   "argv": [
+    "cargo",
+    "clippy",
+    "--all-targets",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "exit": 0,
+   "seconds": 41.3,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/private/gate-scope/20261029T174151Z-3932358/clippy.log",
+   "counts": {}
+  },
+  {
+   "name": "rust-suite",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/scripts/run_test_binaries.py",
+    "--log-dir",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/private/gate-scope/20261029T174151Z-3932358/rust-suite"
+   ],
+   "exit": 0,
+   "seconds": 1092.8,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/private/gate-scope/20261029T174151Z-3932358/rust-suite.log",
+   "counts": {
+    "units": 584,
+    "passed": 8927,
+    "failed": 0,
+    "ignored": 15,
+    "measured": 0,
+    "filtered": 69,
+    "summaries": 617,
+    "packages": null,
+    "summary": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/private/gate-scope/20261029T174151Z-3932358/rust-suite/summary.json",
+    "ok": true
+   }
+  },
+  {
+   "name": "probe-reevaluation_probe",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_probe"
+   ],
+   "exit": 0,
+   "seconds": 0.2,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/private/gate-scope/20261029T174151Z-3932358/probe-reevaluation_probe.log",
+   "counts": {}
+  },
+  {
+   "name": "probe-reevaluation_followup",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_followup"
+   ],
+   "exit": 0,
+   "seconds": 0.5,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/private/gate-scope/20261029T174151Z-3932358/probe-reevaluation_followup.log",
+   "counts": {}
+  },
+  {
+   "name": "python",
+   "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+   ],
+   "exit": 1,
+   "seconds": 44.5,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/private/gate-scope/20261029T174151Z-3932358/python.log",
+   "counts": {
+    "tests": 568,
+    "skipped": 0,
+    "ok": false
+   }
+  },
+  {
+   "name": "provider-package-build",
+   "argv": [
+    "/usr/bin/python3",
+    "providers/package.py",
+    "build",
+    "--output",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/private/gate-scope/20261029T174151Z-3932358/provider-packages"
+   ],
+   "exit": 0,
+   "seconds": 215.6,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/private/gate-scope/20261029T174151Z-3932358/provider-package-build.log",
+   "counts": {}
+  },
+  {
+   "name": "provider-package-verify-all",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/scripts/gate_scope.py",
+    "--verify-packages",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/private/gate-scope/20261029T174151Z-3932358/provider-packages"
+   ],
+   "exit": 0,
+   "seconds": 0.8,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/private/gate-scope/20261029T174151Z-3932358/provider-package-verify-all.log",
+   "counts": {}
+  },
+  {
+   "name": "provider-package-verify",
+   "argv": [
+    "/usr/bin/python3",
+    "providers/package.py",
+    "verify",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/private/gate-scope/20261029T174151Z-3932358/provider-packages/qcore.libevent"
+   ],
+   "exit": 0,
+   "seconds": 0.1,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/private/gate-scope/20261029T174151Z-3932358/provider-package-verify.log",
+   "counts": {}
+  },
+  {
+   "name": "provider-test",
+   "argv": [
+    "cargo",
+    "test",
+    "--manifest-path",
+    "providers/Cargo.toml",
+    "--workspace",
+    "--locked",
+    "--offline"
+   ],
+   "exit": 0,
+   "seconds": 2137.7,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/private/gate-scope/20261029T174151Z-3932358/provider-test.log",
+   "counts": {
+    "summaries": 43,
+    "passed": 133,
+    "failed": 0,
+    "ignored": 1,
+    "measured": 0,
+    "filtered": 0
+   }
+  },
+  {
+   "name": "provider-fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--manifest-path",
+    "providers/Cargo.toml",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "exit": 0,
+   "seconds": 4.2,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/private/gate-scope/20261029T174151Z-3932358/provider-fmt.log",
+   "counts": {}
+  },
+  {
+   "name": "provider-clippy",
+   "argv": [
+    "cargo",
+    "clippy",
+    "--manifest-path",
+    "providers/Cargo.toml",
+    "--workspace",
+    "--all-targets",
+    "--locked",
+    "--offline",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "exit": 0,
+   "seconds": 26.2,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/private/gate-scope/20261029T174151Z-3932358/provider-clippy.log",
+   "counts": {}
+  }
+ ],
+ "ok": false,
+ "finished": "20261029T184119Z"
+}
