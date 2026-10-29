@@ -15,7 +15,7 @@ Measurement `3f505732cabd` (docs/reports/rule35-pilot/native-comparison.json), r
 - interactions of rule 35 with other rules: not measured (switched alone)
 - consistency: base + contributions + interactions = Safe 1013, Unknown 3811, Unsafe 10 = the real-run total
 
-Measurement `93035654cecf` (docs/reports/rule34-pilot/native-comparison-r2.json), rules 33, 34, 36 switched off in one binary (`62c8e461cf00`), current:
+Measurement `93035654cecf` (docs/reports/rule36-pilot/native-comparison.json), rules 33, 34, 36 switched off in one binary (`62c8e461cf00`), current:
 
 - base (rules 33, 34, 36 off): Safe 1009, Unknown 3815, Unsafe 10
 - rule 33: two rows under one premise (`detach_list_representation`); Unknown→Safe 2
@@ -41,7 +41,7 @@ Measurement `3f505732cabd` (docs/reports/rule35-pilot/native-comparison.json), r
 - interactions of rule 35 with other rules: not measured (switched alone)
 - consistency: base + contributions + interactions = Safe 101, Unknown 343, Unsafe 4 = the real-run total
 
-Measurement `93035654cecf` (docs/reports/rule34-pilot/native-comparison-r2.json), rules 33, 34, 36 switched off in one binary (`62c8e461cf00`), current:
+Measurement `93035654cecf` (docs/reports/rule36-pilot/native-comparison.json), rules 33, 34, 36 switched off in one binary (`62c8e461cf00`), current:
 
 - base (rules 33, 34, 36 off): Safe 101, Unknown 343, Unsafe 4
 - rule 33: no rows
@@ -67,7 +67,7 @@ Measurement `3f505732cabd` (docs/reports/rule35-pilot/native-comparison.json), r
 - interactions of rule 35 with other rules: not measured (switched alone)
 - consistency: base + contributions + interactions = Pending 4, Safe 57, Unknown 342, Unsafe 1 = the real-run total
 
-Measurement `93035654cecf` (docs/reports/rule34-pilot/native-comparison-r2.json), rules 33, 34, 36 switched off in one binary (`62c8e461cf00`), current:
+Measurement `93035654cecf` (docs/reports/rule36-pilot/native-comparison.json), rules 33, 34, 36 switched off in one binary (`62c8e461cf00`), current:
 
 - base (rules 33, 34, 36 off): Pending 4, Safe 57, Unknown 342, Unsafe 1
 - rule 33: no rows

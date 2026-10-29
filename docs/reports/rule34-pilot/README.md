@@ -152,10 +152,10 @@ written from that run's `tip-off-34` side.
 
 The run completed (about 2026-10-29T09:32Z to 21:44Z, 12 h 12 min wall,
 plugin exit 0, record status `complete`, no failures, built at one
-`--build-commit`). Its record is committed here byte for byte as
-[`native-comparison-r2.json`](native-comparison-r2.json) (sha256
-`93035654cecf…`; the original is
-`private/pilots-r2-measure/native-comparison.json`), because
+`--build-commit`). Its record is
+[`../rule36-pilot/native-comparison.json`](../rule36-pilot/native-comparison.json)
+(sha256 `93035654cecf…`), the path RULE36-PILOT and RULE33-PILOT commit it
+at; this card commits the same bytes at the same path, because
 `contribution_ledgers.py write` stamps the ledgers with a record inside the
 tree.
 
@@ -212,15 +212,15 @@ off, no leaves are traded on unmoved rows, and no touched row stays Unknown.
 The tool's post-run off-list check passed.
 
 **Ledgers.** `contribution_ledgers.py write --record
-docs/reports/rule34-pilot/native-comparison-r2.json` writes one group of
-ledgers per profile for rules 33, 34 and 36. `check` and `consistency` refuse
-any part of a group on its own (`the group lists [33, 34, 36], the ledgers
-are [34]`), so this card commits the whole group:
+docs/reports/rule36-pilot/native-comparison.json` writes one group of ledgers
+per profile for rules 33, 34 and 36. `check` and `consistency` refuse any
+part of a group on its own (`the group lists [33, 34, 36], the ledgers are
+[34]`), so the whole group is committed:
 `contract/contributions/{33,34,36}/{eight-home,fluent-bit-system,fluent-bit-tail-pause}.json`.
-`check` (15 ledgers valid) and `consistency` exit 0, and the contributions
-page is regenerated (`render`). Rules 33 and 36 get byte-identical ledgers
-only if they stamp the same record path. The integrator keeps one copy of
-the group (this one or RULE36-PILOT's) at the landing.
+The record, all nine ledgers and the regenerated contributions page are
+byte-identical to RULE36-PILOT's (`63639c5d6`) and RULE33-PILOT's
+(`6dea720e7`), so the three cards merge without conflict. `check` (15
+ledgers valid) and `consistency` exit 0.
 
 ## 5. Parity cost (plan decision 6)
 
@@ -296,11 +296,11 @@ test, the gateway's registry test, the rule API's `lib.rs` re-exports,
 the integrator at `62c8e461c`, keeping both sides of the API re-exports.
 Rule 34's route `destroyer_order::order` is a `pub fn` of the package's
 `src/destroyer_order.rs`, so it passes RULE35-PILOT's generator check
-unchanged. Round 2 changes only `docs/reports/rule34-pilot/` (including the
-record copy), the ledger group `contract/contributions/{33,34,36}/` and the
-generated `docs/development/contributions.md`. All three are shared with
-RULE33/36: keep one copy of the group and rerun `contribution_ledgers.py
-render` on a conflict.
+unchanged. Round 2 changes `docs/reports/rule34-pilot/`, and adds the shared
+record `docs/reports/rule36-pilot/native-comparison.json`, the ledger group
+`contract/contributions/{33,34,36}/` and the regenerated
+`docs/development/contributions.md`. The last three are byte-identical to
+RULE36/33's commits, so they merge cleanly.
 
 Follow-ups ([amendments](integration-amendments.json)):
 

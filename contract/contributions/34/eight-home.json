@@ -98,7 +98,7 @@
   "sha256": "d609aa16e9e650e412398fc4352ef3b462765d5da5ad84dda1560a7507fe9dc8"
  },
  "record": {
-  "path": "docs/reports/rule34-pilot/native-comparison-r2.json",
+  "path": "docs/reports/rule36-pilot/native-comparison.json",
   "sha256": "93035654cecffceed326ba4063f0277dde9005058419cf36f367f57c85de6977"
  },
  "route": "corpus",
