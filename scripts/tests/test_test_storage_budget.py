@@ -141,7 +141,9 @@ class BatchTests(unittest.TestCase):
             (examples / "other").write_bytes(b"y")
             freed = runner_mod.remove_outputs([str(examples / "demo")])
             self.assertEqual(freed, 10)
-            self.assertEqual(sorted(p.name for p in examples.iterdir()), ["other"])
+            self.assertFalse((examples / "demo").exists())
+            self.assertFalse(hashed.exists(), "the other hard-link name is deleted too")
+            self.assertTrue((examples / "other").exists(), "an unrelated file stays")
             self.assertEqual(runner_mod.remove_outputs([str(examples / "gone")]), 0)
 
     def test_stale_exclusive_is_checked_over_the_whole_run(self):
