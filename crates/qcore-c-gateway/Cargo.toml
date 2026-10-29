@@ -34,6 +34,9 @@ qcore-schemas = { path = "../qcore-schemas", version = "24.0.0" }
 # Card RULE33-PILOT: rule 33's package (plan seam B), asked through the rule
 # interface at its caller expansion and its frame row.
 rule-33-removed-selection = { path = "../gateway-rules/rule-33-removed-selection", version = "0.1.0" }
+# Card RULE34-PILOT: rule 34's package (plan seam B), asked through the rule
+# interface at the transfer position.
+rule-34-element-destroyer = { path = "../gateway-rules/rule-34-element-destroyer", version = "0.1.0" }
 # Card RULE35-PILOT: gateway rule 35 as a rule package, hosted through the
 # rule API (`rule_hosts`).
 rule-35-literal-decay = { path = "../gateway-rules/rule-35-literal-decay", version = "0.1.0" }

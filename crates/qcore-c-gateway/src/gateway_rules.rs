@@ -130,6 +130,7 @@ mod tests {
     /// asked through `rule_hosts`, rule 37 through `result_constructor_rule`.
     const HOSTED: &[(&str, &str)] = &[
         (rule_33_removed_selection::ID, "rule-33-removed-selection"),
+        (rule_34_element_destroyer::ID, "rule-34-element-destroyer"),
         (rule_35_literal_decay::ID, "rule-35-literal-decay"),
         (
             rule_36_exact_formal_return::ID,

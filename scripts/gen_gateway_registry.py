@@ -40,7 +40,8 @@ RULE_PACKAGES = Path("crates/gateway-rules")
 START = "// generated:registry:start"
 END = "// generated:registry:end"
 
-# Registry spelling -> `qcore_gateway_rule_api::Position` variant.
+# Registry spelling -> `qcore_gateway_rule_api::Position` variant, in the
+# route-map order of `Position::ALL` (the Python suite checks both).
 POSITIONS = {
     "token-hold": "TokenHold",
     "statement-pre": "StatementPre",
@@ -53,6 +54,9 @@ POSITIONS = {
     "return-route": "ReturnRoute",
     "return-fallback": "ReturnFallback",
     "typed-reader": "TypedReader",
+    # Card RULE34-PILOT: the transfer of one admitted contract call (route
+    # map §10), where rule 34 orders a destroyer's unlink and release.
+    "transfer": "Transfer",
 }
 HOLDS = {"token-hold", "call-hold"}
 OFF = {"refuses": "Refuses", "not-switchable": "NotSwitchable"}

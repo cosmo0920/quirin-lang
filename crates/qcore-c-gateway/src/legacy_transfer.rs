@@ -3987,6 +3987,50 @@ pub(super) fn transfer_base(
             }
         }
     };
+    // Card RULE34-PILOT: the transfer position (route map §10). An admitted
+    // contract call's container operands, ordered by the transfer arms around
+    // the call's own reading ([`crate::transfer_rules`]; rule 34 moves an
+    // element destroyer's unlink before it). A call that declares an unlink of
+    // a parameter it releases, which no transfer rule orders (rule 34 off), is
+    // refused before any of its effects apply: the host's order would release
+    // before unlinking. As for any call whose declared effects never apply, its
+    // arguments' own identities lose their residual claim, so a release the
+    // call was going to make is never reported as a leak, and every binding is
+    // poisoned, as an uncontracted call's refusal poisons them.
+    let ordered_container = match &node.instruction {
+        LegacyInstruction::ContractCall {
+            function: called,
+            arguments,
+            contract,
+            container: Some(operands),
+            ..
+        } => match crate::transfer_rules::container_order(called, contract, operands) {
+            Some(ordered) => Some(ordered),
+            None => {
+                let named = arguments
+                    .iter()
+                    .flatten()
+                    .filter_map(|argument| state.pointers.get(argument).cloned())
+                    .collect::<Vec<_>>();
+                for pointer in &named {
+                    mark_unresolved_effect(&mut state, pointer);
+                }
+                diagnostics.insert(LegacyDiagnostic {
+                    function: function.to_owned(),
+                    line: node.line,
+                    kind: LegacyDiagnosticKind::Unsupported {
+                        description: crate::transfer_rules::unordered_destroyer(called),
+                    },
+                });
+                for pointer in state.pointers.values_mut() {
+                    pointer.unknown = true;
+                    pointer.may_be_null = true;
+                }
+                return state;
+            }
+        },
+        _ => None,
+    };
     match &node.instruction {
         LegacyInstruction::Acquire { destination, site } => {
             state.resources.insert(*site, LIVE);
@@ -4163,7 +4207,8 @@ pub(super) fn transfer_base(
             aggregate_addresses: _,
             alias_reads: _,
             nested,
-            container,
+            // Ordered above, at the transfer position.
+            container: _,
             retention,
         } => {
             // Card O04-TRACE: the admitted nested call's declared effects, in
@@ -4184,15 +4229,12 @@ pub(super) fn transfer_base(
                     diagnostics,
                 );
             }
-            // Card W48-SCHED-CLEANUP-PRODUCTION (rule 34): an element
-            // destroyer's unlink, before the call's own reading, so that the
-            // declared release ends the custody the unlink took.
-            let (destroyers, container) = match container {
-                Some(operands) => {
-                    let (before, after) =
-                        container_publication::destroyer_split(contract, operands);
-                    (Some(before), Some(after))
-                }
+            // Card W48-SCHED-CLEANUP-PRODUCTION (rule 34, asked at the
+            // transfer position since RULE34-PILOT): an element destroyer's
+            // unlink, before the call's own reading, so that the declared
+            // release ends the custody the unlink took.
+            let (destroyers, container) = match ordered_container {
+                Some((before, after)) => (Some(before), Some(after)),
                 None => (None, None),
             };
             if let Some(operands) = destroyers

@@ -8808,10 +8808,12 @@ safety claim and no validation of the detach representation premise.
     `resource_unpublished(p)` beside `resource_released(p, …)`
     (`qcore_contract::contract_counted_users::validate`; a publication's
     entry stays `resource_borrowed`, and an unlink beside any other custody
-    mode rejects the module). At a call, `container_publication::destroyer_split`
-    takes those unlinks out of the call's container operands and the
-    `ContractCall` arm of `legacy_transfer.rs` applies them **before** the
-    call's own reading, so its release ends exactly the custody the unlink
+    mode rejects the module). At a call, the transfer arm `destroyer-order` of
+    the rule package `crates/gateway-rules/rule-34-element-destroyer` (card
+    RULE34-PILOT; the rule interface's transfer position, route map §10,
+    asked by `transfer_rules::container_order`) takes those unlinks out of
+    the call's container operands and the `ContractCall` arm of
+    `legacy_transfer.rs` applies them **before** the call's own reading, so its release ends exactly the custody the unlink
     took: rule 10d's restored published site, or rule 10f(2)'s admitted
     foreign element (a `container_of` element of a safe iteration, or a
     `->next` lookup, over a container rooted at an unrebound formal, a local
@@ -8836,13 +8838,28 @@ safety claim and no validation of the detach representation premise.
     the release before the unlink, admit an entry 10d/10f do not, read a
     destroyer as a borrow anywhere a container effect must refuse, or drop
     10f(3)'s summary gate without a caller-side rule that forgets the
-    published sites the call may release. `QCore.ElementDestroyer`
+    published sites the call may release. **Switch.** With `34` in
+    `QCORE_GATEWAY_RULES_OFF` the arm is not asked, and the host's guard
+    refuses a call that still declares an unlink of a parameter it releases,
+    before any of its effects apply (`element destroyer `NAME`: no transfer
+    rule orders its unlink before its release (gateway rule 34 is off)`; its
+    arguments lose their residual claim and every binding is poisoned): the
+    call reads `Unknown`, as an uncontracted call did before rule 34, and no
+    other call changes. The guard is the host's end of the transfer table,
+    not a package, so it is not switchable: the host's own order would
+    release before unlinking, which is what this rule forbids, so off never
+    falls back to it. `QCore.ElementDestroyer`
     (`destroying_an_admitted_element_is_safe`,
     `the_release_never_precedes_the_unlink`,
     `the_modelled_destroy_is_an_unlink_then_a_release`,
-    `a_modelled_cleanup_unlinks_and_retires`, …);
-    `crates/qcore-c-gateway/tests/element_destroyer.rs`;
-    [report](../reports/w48-sched-cleanup-production/README.md).
+    `a_modelled_cleanup_unlinks_and_retires`, …); `QCore.ElementDestroyerSwitch`
+    (`the_phase_vectors_are_the_arm`, `the_switch_on_is_rule_34`,
+    `a_call_without_a_destroyer_ignores_the_switch`,
+    `the_switch_off_refuses_the_destroyer`, `the_switch_off_never_widens`, …);
+    `crates/qcore-c-gateway/tests/element_destroyer.rs` (with its switched
+    child), the package's `tests/unit/destroyer_order.rs`;
+    [report](../reports/w48-sched-cleanup-production/README.md),
+    [migration](../reports/rule34-pilot/README.md).
 
 <a id="constraint-35"></a>
 

@@ -1,0 +1,12 @@
+[package]
+name = "rule-34-element-destroyer"
+version = "0.1.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+description = "C gateway rule 34 (the element destroyer) as a rule package: an unlink declared beside a release of the same parameter applies before the call's own reading (transfer arm `destroyer-order`)."
+
+# Plan docs/plans/pluggable-cards/README.md seam B: a rule package depends on
+# the rule API only, never on qcore-c-gateway or another rule package
+# (compiler/tests/workspace_layering.rs holds the set).
+[dependencies]
+qcore-gateway-rule-api = { path = "../../qcore-gateway-rule-api", version = "0.1.0" }

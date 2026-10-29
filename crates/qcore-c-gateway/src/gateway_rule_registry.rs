@@ -243,4 +243,15 @@ pub const REGISTRY: &[RuleEntry] = &[
         reason_keys: &[],
         off: Off::Refuses,
     },
+    RuleEntry {
+        id: "34",
+        crate_name: "rule-34-element-destroyer",
+        placements: &[
+            Placement { position: Position::Transfer, order: None, arm: Some("destroyer-order"), route: "destroyer_order::order" },
+        ],
+        lean: &["QCore.ElementDestroyer", "QCore.ElementDestroyerSwitch"],
+        document: "docs/agents/rules/34.md",
+        reason_keys: &[],
+        off: Off::Refuses,
+    },
 ];

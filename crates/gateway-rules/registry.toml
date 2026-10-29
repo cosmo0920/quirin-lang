@@ -275,3 +275,19 @@ placements = [
   { position = "typed-reader", arm = "sizeof-operand-exemption", route = "sizeof_operand::decide" },
   { position = "classification", arm = "asserted-allocation-premise", route = "asserted_allocation::decide" },
 ]
+
+# --- The transfer (ROUTE-MAP section 10, added by card RULE34-PILOT): arms
+# --- that order one admitted contract call's declared container effects
+# --- around its own reading. Off, the arm is not asked; the host's guard then
+# --- refuses a call with an unlink of a released parameter (it is the end of
+# --- the table, not a package, so it has no switch).
+
+[[rule]]
+id = "34"
+crate = "rule-34-element-destroyer"
+lean = ["QCore.ElementDestroyer", "QCore.ElementDestroyerSwitch"]
+document = "docs/agents/rules/34.md"
+off = "refuses"
+placements = [
+  { position = "transfer", arm = "destroyer-order", route = "destroyer_order::order" },
+]
