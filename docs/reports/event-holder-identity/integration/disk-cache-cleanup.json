@@ -1,0 +1,6 @@
+{
+  "time": "2026-10-29T12:44:01.442877+09:00",
+  "removed": "/media/Data/GitHub/quirin-lang/target/debug/incremental",
+  "kind": "disposable Rust incremental compilation cache",
+  "retained": "source, test logs, native outputs, compiler binaries and dependency artifacts"
+}

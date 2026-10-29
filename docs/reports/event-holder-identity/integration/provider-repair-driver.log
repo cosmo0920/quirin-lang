@@ -1,0 +1,5 @@
+[provider-test] $ /usr/bin/python3 /media/Data/GitHub/quirin-lang/scripts/gate_slot.py rust-suite --receipt /media/Data/GitHub/quirin-lang/private/event-holder-landing-20261029/provider-repair/slots/provider-test.json -- cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline
+[provider-test] exit 0 in 5813.4s {"summaries": 43, "passed": 133, "failed": 0, "ignored": 1, "measured": 0, "filtered": 0}
+[provider-clippy] $ cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --locked --offline -- -D warnings
+[provider-clippy] exit 0 in 62.9s 
+Full holder landing gate complete, including recovered provider checks.

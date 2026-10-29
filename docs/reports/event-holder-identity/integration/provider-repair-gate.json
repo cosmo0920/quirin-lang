@@ -1,0 +1,57 @@
+{
+  "head": "3ee2c5ac172ef756836034508a8aa9f3d60e5413",
+  "validation_tip": "3ee2c5ac172ef756836034508a8aa9f3d60e5413",
+  "steps": [
+    {
+      "name": "provider-test",
+      "argv": [
+        "/usr/bin/python3",
+        "/media/Data/GitHub/quirin-lang/scripts/gate_slot.py",
+        "rust-suite",
+        "--receipt",
+        "/media/Data/GitHub/quirin-lang/private/event-holder-landing-20261029/provider-repair/slots/provider-test.json",
+        "--",
+        "cargo",
+        "test",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--workspace",
+        "--locked",
+        "--offline"
+      ],
+      "exit": 0,
+      "seconds": 5813.4,
+      "log": "/media/Data/GitHub/quirin-lang/private/event-holder-landing-20261029/provider-repair/provider-test.log",
+      "counts": {
+        "summaries": 43,
+        "passed": 133,
+        "failed": 0,
+        "ignored": 1,
+        "measured": 0,
+        "filtered": 0
+      },
+      "slot_receipt": "/media/Data/GitHub/quirin-lang/private/event-holder-landing-20261029/provider-repair/slots/provider-test.json"
+    },
+    {
+      "name": "provider-clippy",
+      "argv": [
+        "cargo",
+        "clippy",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--locked",
+        "--offline",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "seconds": 62.9,
+      "log": "/media/Data/GitHub/quirin-lang/private/event-holder-landing-20261029/provider-repair/provider-clippy.log",
+      "counts": {}
+    }
+  ],
+  "ok": true
+}

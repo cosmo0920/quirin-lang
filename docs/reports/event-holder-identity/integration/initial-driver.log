@@ -1,0 +1,40 @@
+[submodules] $ git -C /media/Data/GitHub/quirin-lang submodule status --recursive
+[submodules] exit 0 in 0.2s {"submodules": 1, "not_checked_out_or_moved": []}
+[fmt] $ cargo fmt --all -- --check
+[fmt] exit 0 in 16.4s 
+[clippy] $ cargo clippy --all-targets -- -D warnings
+[clippy] exit 0 in 140.2s 
+[rust-suite] $ /usr/bin/python3 /media/Data/GitHub/quirin-lang/scripts/gate_slot.py rust-suite --receipt /media/Data/GitHub/quirin-lang/private/event-holder-landing-20261029/full-gate/slots/rust-suite.json -- /usr/bin/python3 /media/Data/GitHub/quirin-lang/scripts/run_test_binaries.py --log-dir /media/Data/GitHub/quirin-lang/private/event-holder-landing-20261029/full-gate/rust-suite --jobs 16
+[rust-suite] exit 0 in 8609.6s {"units": 574, "passed": 8847, "failed": 0, "ignored": 15, "measured": 0, "filtered": 24, "summaries": 593, "packages": null, "summary": "/media/Data/GitHub/quirin-lang/private/event-holder-landing-20261029/full-gate/rust-suite/summary.json", "ok": true}
+[probe-reevaluation_probe] $ cargo run -p qcore-compiler --example reevaluation_probe
+[probe-reevaluation_probe] exit 0 in 0.1s 
+[probe-reevaluation_followup] $ cargo run -p qcore-compiler --example reevaluation_followup
+[probe-reevaluation_followup] exit 0 in 0.5s 
+[lean] $ /usr/bin/python3 /media/Data/GitHub/quirin-lang/scripts/gate_slot.py lean --receipt /media/Data/GitHub/quirin-lang/private/event-holder-landing-20261029/full-gate/slots/lean.json -- /usr/bin/python3 /media/Data/GitHub/quirin-lang/scripts/check_lean_audits.py
+[lean] exit 0 in 17.5s {"audits": 391}
+[python] $ /usr/bin/python3 -m unittest discover -s scripts/tests
+[python] exit 0 in 45.3s {"tests": 554, "skipped": 0, "ok": true}
+[provider-package-build] $ /usr/bin/python3 providers/package.py build --output /media/Data/GitHub/quirin-lang/private/event-holder-landing-20261029/full-gate/provider-packages
+[provider-package-build] exit 0 in 193.9s 
+[provider-package-verify-all] $ /usr/bin/python3 /media/Data/GitHub/quirin-lang/scripts/gate_scope.py --verify-packages /media/Data/GitHub/quirin-lang/private/event-holder-landing-20261029/full-gate/provider-packages
+[provider-package-verify-all] exit 0 in 0.9s 
+[provider-package-verify] $ /usr/bin/python3 providers/package.py verify /media/Data/GitHub/quirin-lang/private/event-holder-landing-20261029/full-gate/provider-packages/qcore.libevent
+[provider-package-verify] exit 0 in 0.1s 
+[provider-test] $ /usr/bin/python3 /media/Data/GitHub/quirin-lang/scripts/gate_slot.py rust-suite --receipt /media/Data/GitHub/quirin-lang/private/event-holder-landing-20261029/full-gate/slots/provider-test.json -- cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline
+[provider-test] exit 1 in 396.2s {"summaries": 0, "passed": 0, "failed": 0, "ignored": 0, "measured": 0, "filtered": 0}
+[provider-fmt] $ cargo fmt --manifest-path providers/Cargo.toml --all -- --check
+[provider-fmt] exit 0 in 5.0s 
+[provider-clippy] $ cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --locked --offline -- -D warnings
+[provider-clippy] exit 101 in 0.1s 
+OSError: [Errno 28] No space left on device
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/media/Data/GitHub/quirin-lang/private/event-holder-landing-20261029/run-gate.py", line 16, in <module>
+    (out/'gate.json').write_text(json.dumps(doc,indent=2)+'\n')
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/pathlib/__init__.py", line 810, in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
