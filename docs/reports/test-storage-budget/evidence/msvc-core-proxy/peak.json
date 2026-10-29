@@ -1,0 +1,18 @@
+{
+ "command": [
+  "bash",
+  "private/tsb-measure/msvc-core-proxy.sh"
+ ],
+ "exit": 0,
+ "interval_seconds": 5.0,
+ "wall_seconds": 277.8,
+ "peak_bytes": 4876955648,
+ "peak_gb": 4.88,
+ "peak_at_seconds": 277.8,
+ "peak_by_dir": {
+  "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/private/tsb-msvc-target": 4876955648
+ },
+ "final": {
+  "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/private/tsb-msvc-target": 4876955648
+ }
+}

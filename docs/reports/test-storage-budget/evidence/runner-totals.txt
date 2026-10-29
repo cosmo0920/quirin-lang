@@ -1,0 +1,2 @@
+after-dyn-tests {'passed': 8927, 'failed': 0, 'ignored': 15, 'measured': 0, 'filtered': 69, 'summaries': 617} 584 {'build': 98.806, 'capture': 8.394, 'run': 1144.096} dynamic 0
+after-static-batch-tests {'passed': 8927, 'failed': 0, 'ignored': 15, 'measured': 0, 'filtered': 69, 'summaries': 617} 584 {'build': 137.586, 'capture': 10.028, 'run': 1466.502} static 20

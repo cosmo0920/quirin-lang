@@ -1,0 +1,24 @@
+{
+ "command": [
+  "cargo",
+  "test",
+  "--workspace",
+  "--no-run",
+  "--config",
+  "build.incremental=false",
+  "--config",
+  "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/scripts/rustc_test_dylib.py\""
+ ],
+ "exit": 0,
+ "interval_seconds": 5.0,
+ "wall_seconds": 130.8,
+ "peak_bytes": 3625664512,
+ "peak_gb": 3.63,
+ "peak_at_seconds": 130.8,
+ "peak_by_dir": {
+  "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/private/tsb-dyn-target": 3625664512
+ },
+ "final": {
+  "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/private/tsb-dyn-target": 3625664512
+ }
+}

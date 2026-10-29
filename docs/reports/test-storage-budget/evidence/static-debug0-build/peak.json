@@ -1,0 +1,22 @@
+{
+ "command": [
+  "cargo",
+  "test",
+  "--workspace",
+  "--no-run",
+  "--config",
+  "build.incremental=false"
+ ],
+ "exit": 0,
+ "interval_seconds": 5.0,
+ "wall_seconds": 126.7,
+ "peak_bytes": 19384471552,
+ "peak_gb": 19.38,
+ "peak_at_seconds": 126.7,
+ "peak_by_dir": {
+  "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/private/tsb-st0-target": 19384471552
+ },
+ "final": {
+  "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/private/tsb-st0-target": 19384471552
+ }
+}

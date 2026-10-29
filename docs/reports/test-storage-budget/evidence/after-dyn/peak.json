@@ -1,0 +1,22 @@
+{
+ "command": [
+  "python3",
+  "scripts/run_test_binaries.py",
+  "--log-dir",
+  "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/private/tsb-measure/after-dyn-tests"
+ ],
+ "exit": 0,
+ "interval_seconds": 5.0,
+ "wall_seconds": 1251.4,
+ "peak_bytes": 3759300608,
+ "peak_gb": 3.76,
+ "peak_at_seconds": 1235.2,
+ "peak_by_dir": {
+  "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/private/tsb-after-dyn/target": 3644133376,
+  "/tmp/tsb-ad": 115167232
+ },
+ "final": {
+  "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/private/tsb-after-dyn/target": 3644133376,
+  "/tmp/tsb-ad": 405504
+ }
+}

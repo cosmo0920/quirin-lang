@@ -1,0 +1,17 @@
+== dynamic
+     Running tests/provider_selection.rs (private/tsb-after-dyn/target/debug/deps/provider_selection-298c41d442003f29)
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 134.52s
+     Running tests/contract_views.rs (private/tsb-after-dyn/target/debug/deps/contract_views-4ee062349f9c7d90)
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 188.29s
+== static build
+  Executable tests/contract_views.rs (private/tsb-static-time/target/debug/deps/contract_views-4ee062349f9c7d90)
+== static
+     Running tests/provider_selection.rs (private/tsb-static-time/target/debug/deps/provider_selection-298c41d442003f29)
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 131.50s
+     Running tests/contract_views.rs (private/tsb-static-time/target/debug/deps/contract_views-4ee062349f9c7d90)
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 182.09s
+== dynamic again
+     Running tests/provider_selection.rs (private/tsb-after-dyn/target/debug/deps/provider_selection-298c41d442003f29)
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 132.55s
+     Running tests/contract_views.rs (private/tsb-after-dyn/target/debug/deps/contract_views-4ee062349f9c7d90)
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 177.70s

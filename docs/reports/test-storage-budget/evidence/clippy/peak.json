@@ -1,0 +1,23 @@
+{
+ "command": [
+  "cargo",
+  "clippy",
+  "--workspace",
+  "--all-targets",
+  "--",
+  "-D",
+  "warnings"
+ ],
+ "exit": 0,
+ "interval_seconds": 5.0,
+ "wall_seconds": 35.1,
+ "peak_bytes": 149598208,
+ "peak_gb": 0.15,
+ "peak_at_seconds": 35.1,
+ "peak_by_dir": {
+  "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/private/tsb-clippy-target": 149598208
+ },
+ "final": {
+  "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/private/tsb-clippy-target": 149598208
+ }
+}

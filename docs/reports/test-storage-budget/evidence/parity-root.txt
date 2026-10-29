@@ -1,0 +1,3 @@
+reference private/tsb-measure/base-run.log: 8942 tests, 15 ignored, 0 failed
+private/tsb-measure/after-dyn-tests/summary.json: 8942 tests, 15 ignored, 0 failed; runner totals 8927 passed, 0 failed, 15 ignored; EQUAL
+private/tsb-measure/after-static-batch-tests/summary.json: 8942 tests, 15 ignored, 0 failed; runner totals 8927 passed, 0 failed, 15 ignored; EQUAL

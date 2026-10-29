@@ -1,0 +1,18 @@
+{
+ "command": [
+  "bash",
+  "private/tsb-measure/macos-proxy.sh"
+ ],
+ "exit": 0,
+ "interval_seconds": 5.0,
+ "wall_seconds": 163.2,
+ "peak_bytes": 5782495232,
+ "peak_gb": 5.78,
+ "peak_at_seconds": 163.2,
+ "peak_by_dir": {
+  "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/private/tsb-macos-target": 5782495232
+ },
+ "final": {
+  "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/private/tsb-macos-target": 5782495232
+ }
+}

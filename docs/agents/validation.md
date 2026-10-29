@@ -210,8 +210,9 @@ arguments to every cargo command that builds the root workspace's tests:
   `libstd` dynamically, with absolute run paths (an executable started with a
   cleared environment still loads them). The wrapper withholds rustc's early
   metadata signal, so cargo starts a dependent only after the whole upstream
-  build, `.so` included. A fresh `cargo test --workspace` peaked at 86.4 GB of
-  `target/` before; this build peaks at 3.6 GB.
+  build, `.so` included. A fresh `cargo test --workspace` peaked at 87.4 GB
+  (`target/` plus temporary files); the gate's runner now peaks at 3.8 GB,
+  with the same tests and outcomes and the same run time per executable.
 - Elsewhere tests link statically: a Windows DLL of the large crates would
   exceed the 65,535-export limit. Windows CI runs the full suite as
   `run_test_binaries.py --jobs 1 --batch-size 32`: each batch of 32 target
@@ -219,13 +220,14 @@ arguments to every cargo command that builds the root workspace's tests:
   alone) and its executables deleted before the next is built; the examples
   `cargo test` compiles are compiled and deleted in batches too; the run fails
   closed unless the executables built are exactly the selection's test
-  targets, each once, and runs the doc-tests last.
+  targets, each once, and runs the doc-tests last. Measured on Linux in that
+  mode: 6.2 GB.
 - Debug information stays `line-tables-only` in both workspaces' dev profiles
-  (the provider workspace's since this card), so panics keep file:line; the
-  budget is met without dropping it.
+  (the provider workspace's since this card: its suite went from 15.0 to
+  5.2 GB), so panics keep file:line; the budget is met without dropping it.
 
-The test set, its order-independent verdicts and the fail-closed rules are
-the same in every mode; only the bytes on disk differ. The root manifests,
+The test set, the outcomes and the fail-closed rules are the same in every
+mode; only the bytes on disk differ. The root manifests,
 lockfile and cargo configuration files do not change, so release builds
 (`quirin-audit`, `quirin-audit measure`'s `rev:` sides, provider packages)
 are the builds they were, and cargo runs started by tests never inherit the

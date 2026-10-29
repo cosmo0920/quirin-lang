@@ -1,0 +1,24 @@
+{
+ "command": [
+  "cargo",
+  "test",
+  "--manifest-path",
+  "providers/Cargo.toml",
+  "--workspace",
+  "--no-run"
+ ],
+ "exit": 0,
+ "interval_seconds": 5.0,
+ "wall_seconds": 74.1,
+ "peak_bytes": 14432825344,
+ "peak_gb": 14.43,
+ "peak_at_seconds": 74.1,
+ "peak_by_dir": {
+  "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/private/tsb-base/providers/target": 14432825344,
+  "/tmp/tsb-pb": 0
+ },
+ "final": {
+  "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8181d93e05d7d24f/private/tsb-base/providers/target": 14432825344,
+  "/tmp/tsb-pb": 0
+ }
+}

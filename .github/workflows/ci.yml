@@ -42,7 +42,7 @@ jobs:
       # storage"): no incremental state, and on Linux the workspace libraries
       # as Rust dylibs that test executables, binaries and examples link
       # dynamically. A fresh `cargo test --workspace` then peaks near 4 GB of
-      # target/ instead of 86 GB. The local gates pass the same arguments.
+      # disk instead of 87 GB. The local gates pass the same arguments.
       - name: Lint and test the gateway with the indirect-access census compiled in
         run: |
           cargo clippy -p qcore-c-gateway --features indirect-census --all-targets -- -D warnings
