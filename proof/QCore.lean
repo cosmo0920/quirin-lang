@@ -73,6 +73,7 @@ import QCore.CmetricsHypotheses
 import QCore.CmetricsMetricConditions
 import QCore.CmetricsOptsConditions
 import QCore.CmetricsScalarWrapperConditions
+import QCore.CollectorIdentity
 import QCore.Compiler
 import QCore.ComposeEventLines
 import QCore.ComposedStdIo
