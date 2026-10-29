@@ -273,7 +273,34 @@ Friction:
 
 ## 6. Gate
 
-GATE
+**Round 1** (no card gate before the halt; checks on `a78c190dd`, logs in
+this worktree's `private/rule34-pilot/`):
+
+- Targeted tests passed. Package and API: 22. Gateway lib `transfer_rules`
+  and `gateway_rules`: 7. `element_destroyer`: 12. `gateway_rule_switches`
+  and `workspace_layering` passed too.
+- fmt and workspace Clippy (`--all-targets -D warnings`) exit 0.
+- `gate_lean.py` exit 0 (`QCore.ElementDestroyerSwitch`, 1 audit).
+- Python: 555 tests, 1 failure, the matrix's derived count (friction 5).
+
+The integrator's full gate on the merged tip `442dfa6f0`/`dc5d07c95`
+([landing](../pilots-r1-landing/integration/README.md#halted-cards-and-tip-validation))
+covers this card's code: Rust 8,927 passed, 0 failed; Lean 396 audits.
+
+**Round 2: the card gate**, `python3 scripts/gate_scope.py --base 62c8e461c
+--out private/gate-r2-b` on `fbfd2a900`, exit 0. It ran in scoped mode
+(records only: no crate is affected, no Lean, no provider gate):
+
+- submodules: 1, none moved;
+- fmt exit 0;
+- Python: 556 tests, 0 skipped, exit 0.
+
+Console log: `private/rule34-pilot/gate-r2-3.log`; record:
+[`gate/gate.json`](gate/gate.json). The first round-2 attempt (`gate-r2`, on
+`58b717296`) was stopped before it finished, when the record path changed;
+its output directory blocked a rerun at the same path (`gate-r2-2.log`, exit
+1, `FileExistsError`). The commit after `fbfd2a900` adds only this record and
+this section.
 
 ## 7. Boundaries
 
