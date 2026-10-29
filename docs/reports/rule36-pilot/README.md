@@ -155,7 +155,15 @@ Round 1's attempts (section 6) are superseded and are not evidence here.
 
 ## 4. Gate
 
-**Round 2** (base `62c8e461c`): GATER2
+**Round 2** (base `62c8e461c`): `python3 scripts/gate_scope.py --base 62c8e461c
+--out private/gate-r2` on `63639c5d6` (records only: the report, the
+committed record, the nine ledgers and the contributions page; no crate, Lean
+or provider path in scope), exit 0: submodules exit 0, fmt exit 0, Python
+suite exit 0 (556 tests, 0 failures). Console log
+`/media/Data/GitHub/quirin-lang/private/rule36-pilot/r2/gate-r2.log`;
+[gate.json](gate.json). The code itself passed main's full gate at
+`442dfa6f0`/`dc5d07c95` (landing record, section 6), so this gate adds no
+Rust or Lean run.
 
 **Round 1** (before the halt): `python3 scripts/gate_scope.py --base 80c8aea98 --out private/gate-1` on
 `6c3f84e31` (code tip `375ec9326` plus the measurement script; the diff
