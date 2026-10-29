@@ -1,0 +1,70 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "RULE36-PILOT",
+ "base": "62c8e461cf00628ab6c26a45dcdb243e91d79924",
+ "measured_tip": "62c8e461cf00628ab6c26a45dcdb243e91d79924",
+ "increment_paragraph": "**RULE36-PILOT (2026-10-28 to 2026-10-30, base 80c8aea98, finished on 62c8e461c).** Gateway rule 36 (the exact borrowed-formal return `ExactFormalReturn` of the derived-result CFG) is its own rule package `crates/gateway-rules/rule-36-exact-formal-return` on the GATEWAY-RULE-API interface, the first `ReturnRoute` package: its lexical candidate, the declaration's matching pointer formals, the typed source conjunction (generic over a package-local `SourceHost`), the return route and the exit classifier with the fourteen flow vectors shared with Lean; the gateway's `legacy_exact_formal_return.rs` is its host. Registry row `36` (one `return-route` arm, `route::decide`) makes the switch real: with 36 off the candidate is false, the route is not asked and the classifier refuses, so the one-path wrapper keeps its pre-rule-36 return refusal and the bare identity its neutral summary (`tests/rule36_switch.rs`); `QCore.ExactFormalReturnSwitch` (13 audited theorems) proves on equals rule 36 and off never widens. The card was halted and merged onto main by the integrator; its evidence is the round-2 shared measurement it owns for rules 33, 34 and 36 (BASE `0d15e7b19`, TIP `62c8e461c`, `--rules-off 33,34,36 --per-rule`, declared identity matched on all three profiles; system and slice byte-identical, corpus equal under a checked one-to-one substitution), whose ledgers measure rule 36's contribution as 0 rows on every profile, rule 33 and 34 +2 Safe each on eight-home, and no interaction. Five follow-ups record the pilot's friction for plan decision 6 ([report](../../reports/rule36-pilot/README.md)).",
+ "status_paragraph": null,
+ "profiles": [],
+ "contribution": {
+  "ledgers": [
+   "contract/contributions/33/eight-home.json",
+   "contract/contributions/34/eight-home.json",
+   "contract/contributions/36/eight-home.json",
+   "contract/contributions/33/fluent-bit-system.json",
+   "contract/contributions/34/fluent-bit-system.json",
+   "contract/contributions/36/fluent-bit-system.json",
+   "contract/contributions/33/fluent-bit-tail-pause.json",
+   "contract/contributions/34/fluent-bit-tail-pause.json",
+   "contract/contributions/36/fluent-bit-tail-pause.json"
+  ]
+ },
+ "ledger": [
+  {
+   "id": "GATEWAY-RULE-API-PILOT-MIGRATIONS",
+   "operation": "amend",
+   "text": "RULE36-PILOT (2026-10-30) migrated rule 36 to crates/gateway-rules/rule-36-exact-formal-return, the first ReturnRoute package (registered as a return-route arm: the frozen route map has no row for it). Halted and merged onto main 62c8e461c, it then owned the round-2 shared measurement for rules 33, 34 and 36 (BASE rev:0d15e7b19, TIP rev:62c8e461c, --rules-off 33,34,36 --per-rule; record docs/reports/rule36-pilot/native-comparison.json): declared identity matched on all three profiles, system and slice byte-identical, corpus equal under a checked one-to-one substitution; ledgers contract/contributions/{33,34,36}/ (36: 0 rows on every profile; 33 and 34: +2 Safe each on eight-home; no interaction). Parity cost for plan decision 6: about 280 decision lines moved in 25 minutes, the host adapter as large as the moved code, the evidence about 12 h of shared measurement; friction registered as RULE36-SOURCEHOST-TYPEDHOST-UNIFY, GATEWAY-RULE-API-RETURN-QUERY-FIRST-ROUTE, MEASURE-BASELINE-ROUTE-SPELLING, CONTRIBUTION-LEDGER-WRITE-SHARED-RECORD and CARD-GATE-NEW-AUDIT-MATRIX-COUNT.",
+   "source": "docs/reports/rule36-pilot/README.md"
+  },
+  {
+   "id": "RULE36-SOURCEHOST-TYPEDHOST-UNIFY",
+   "operation": "register",
+   "title": "Rule 36's package-local SourceHost repeats the API's TypedHost",
+   "text": "crates/gateway-rules/rule-36-exact-formal-return/src/source.rs defines SourceHost (node kind, string attribute, object field, type, children, the host's pointer-type test) because RULE35-PILOT's TypedHost was not yet in the API at the card's base; TypedHost now is, with the same reads minus node_field, so the gateway implements two typed-node capabilities over serde_json::Value. DISCHARGE: SourceHost becomes TypedHost plus whatever it adds (node_field, pointer_type) as an API capability, rule 36's package bounds on it, and an identity run (or the package's and gateway's rule-36 tests, if the change is proved behaviour-neutral) shows no movement.",
+   "source": "docs/reports/rule36-pilot/README.md",
+   "recorded_by": "RULE36-PILOT"
+  },
+  {
+   "id": "GATEWAY-RULE-API-RETURN-QUERY-FIRST-ROUTE",
+   "operation": "register",
+   "title": "ReturnQuery has no honest values for the first return route",
+   "text": "qcore-gateway-rule-api's ReturnQuery requires origin: usize and decided: &Statement. Rule 36's route is asked first in return_statement, which is also the lowering of operands the elaborators hand back without a stream place, so the gateway host passes origin usize::MAX and, as decided, its own refusal (not supported, no evaluation); rule 36 reads neither. DISCHARGE: the API gives the return route position an optional origin and no decided value before the first route (or a separate first-route query), and the rule-36 host drops the placeholders.",
+   "source": "docs/reports/rule36-pilot/README.md",
+   "recorded_by": "RULE36-PILOT"
+  },
+  {
+   "id": "MEASURE-BASELINE-ROUTE-SPELLING",
+   "operation": "register",
+   "title": "A published baseline is refused by a --profile measurement",
+   "text": "quirin-audit measure verifies a baseline:<sha> side by each route's digest, the SHA-256 of the route definition. The landing publication measures from inputs/live.json, which spells the eight-home link map as docs/reports/w48-bu-single-leaf-bodies/link-map.corpus.json; --profile spells it contract/evaluations/eight-home/link-map.json (the same bytes). RULE36-PILOT's first identity run (--profile with --side base=baseline:80c8aea98) was refused on all three routes after its TIP sides had run (about 5 h), so the plan's section 4 step 3 command cannot reuse today's baselines. DISCHARGE: the route digest is computed over the inputs' content digests rather than their spellings, or publication and --profile share one spelling, with a test that a --profile measurement accepts a baseline published from inputs/live.json; the refusal should also come before any side runs.",
+   "source": "docs/reports/rule36-pilot/README.md",
+   "recorded_by": "RULE36-PILOT"
+  },
+  {
+   "id": "CONTRIBUTION-LEDGER-WRITE-SHARED-RECORD",
+   "operation": "register",
+   "title": "A record shared by several cards has one ledger writer",
+   "text": "scripts/contribution_ledgers.py write copies every ledger of a native-comparison record, and check_contribution requires the amendments field to list every ledger of the same measurement and profile. The round-2 shared measurement (rules 33, 34, 36, one record) therefore had its nine ledgers written and listed by RULE36-PILOT; RULE33-PILOT and RULE34-PILOT cannot list only their own. DISCHARGE: write accepts a rule filter and check_contribution accepts a card's subset of a group when the rest of the group is committed, or the shared-measurement procedure names one writer for the whole group, recorded in operations.md.",
+   "source": "docs/reports/rule36-pilot/README.md",
+   "recorded_by": "RULE36-PILOT"
+  },
+  {
+   "id": "CARD-GATE-NEW-AUDIT-MATRIX-COUNT",
+   "operation": "register",
+   "title": "A card adding a Lean audit fails its own gate on the stale matrix",
+   "text": "scripts/tests/test_build_matrix_sections.py pins the committed acceptance matrix's derived validation.lean_audits against the tree's Audit*.lean count. A card that adds an audit (RULE36-PILOT's round-1 gate: 390 committed against 391) fails the Python suite until the matrix is regenerated, which is the integrator's record, so the scoped card gate cannot be green for such a card. DISCHARGE: the card gate regenerates or ignores the matrix's derived counts on a card branch (the landing gate keeps the check), or cards are told to regenerate the derived fields, with the rule stated in validation.md.",
+   "source": "docs/reports/rule36-pilot/README.md",
+   "recorded_by": "RULE36-PILOT"
+  }
+ ]
+}
