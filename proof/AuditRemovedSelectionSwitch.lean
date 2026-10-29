@@ -1,0 +1,14 @@
+import QCore.RemovedSelectionSwitch
+
+/-! Card RULE33-PILOT: every public theorem of rule 33's switch is audited. -/
+
+#print axioms QCore.RemovedSelectionSwitch.the_switch_on_reads_rule_33
+#print axioms QCore.RemovedSelectionSwitch.the_switch_on_is_the_expansion
+#print axioms QCore.RemovedSelectionSwitch.the_switch_off_installs_no_frame
+#print axioms QCore.RemovedSelectionSwitch.the_switch_off_expands_nothing
+#print axioms QCore.RemovedSelectionSwitch.an_admitted_row_validates
+#print axioms QCore.RemovedSelectionSwitch.the_switch_off_row_is_the_ordinary_analysis
+#print axioms QCore.RemovedSelectionSwitch.the_switch_off_never_widens_a_frame_row
+#print axioms QCore.RemovedSelectionSwitch.the_switch_off_refuses_every_frame_caller
+#print axioms QCore.RemovedSelectionSwitch.the_switch_off_never_widens_a_caller
+#print axioms QCore.RemovedSelectionSwitch.the_switch_decides_the_retained_release_frame

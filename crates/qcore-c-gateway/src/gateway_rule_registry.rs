@@ -209,6 +209,18 @@ pub const REGISTRY: &[RuleEntry] = &[
         off: Off::Refuses,
     },
     RuleEntry {
+        id: "33",
+        crate_name: "rule-33-removed-selection",
+        placements: &[
+            Placement { position: Position::StatementRewrite, order: None, arm: Some("removed-selection-expansion"), route: "selection_route::expand" },
+            Placement { position: Position::Classification, order: None, arm: Some("removed-selection-entry"), route: "selection_route::row" },
+        ],
+        lean: &["QCore.RemovedSelection", "QCore.RemovedSelectionSwitch"],
+        document: "docs/agents/rules/33.md",
+        reason_keys: &[],
+        off: Off::Refuses,
+    },
+    RuleEntry {
         id: "36",
         crate_name: "rule-36-exact-formal-return",
         placements: &[

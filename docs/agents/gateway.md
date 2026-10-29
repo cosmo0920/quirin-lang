@@ -8772,14 +8772,33 @@ safety claim and no validation of the detach representation premise.
     call shape. String-keyed object lookup has no checked membership frame
     and stays refused. Every promoted row remains conditional on `D`'s
     `DeclaredAssumption` premise and `L`'s null premise.
+
+    The rule's body is the package `crates/gateway-rules/rule-33-removed-selection`
+    (card RULE33-PILOT: the frame bodies' word shapes, the caller expansion,
+    the selection decisions), asked through the rule interface's
+    `StatementExpansion` and `EntryRow` capabilities at two registered arms:
+    the body rewrite of each CFG build (`selection_route::expand`) and the
+    frame's own row (`selection_route::row`, which installs the frame).
+    `legacy_selection.rs` stays the host: it reads each frame against the
+    contract environment, the type model and the linkage, builds the
+    selection entry and observes the run. `QCORE_GATEWAY_RULES_OFF=33` asks
+    neither arm: no body is expanded and no frame is installed, so every
+    frame and caller keeps its pre-rule-33 refusal and every frame name takes
+    the older routes.
+
     `QCore.RemovedSelection` (`selected_is_a_member`,
     `nonnegative_constant_is_the_lookup`, `the_result_is_the_selection`,
     `detach_inventory_is_preserved`, `delete_releases_exactly_the_selection`,
     `materialization_needs_every_fact`,
     `accepted_detach_exit_returns_the_selection_or_nothing`,
     `accepted_release_exit_keeps_no_selection` and the three shared vector
-    tables); `crates/qcore-c-gateway/tests/detach_wrapper_composition.rs`;
-    [report](../reports/detach-result-wrapper-composition/README.md).
+    tables) and `QCore.RemovedSelectionSwitch` (on is the rule, off is the
+    gateway before it, off never widens a frame row or a caller;
+    `AuditRemovedSelectionSwitch.lean`);
+    `crates/qcore-c-gateway/tests/detach_wrapper_composition.rs`,
+    `crates/qcore-c-gateway/tests/rule33_switch.rs`;
+    [report](../reports/detach-result-wrapper-composition/README.md),
+    [migration](../reports/rule33-pilot/README.md).
 
 <a id="constraint-34"></a>
 

@@ -53,6 +53,12 @@ const ALLOWED: &[(&str, &[&str])] = &[
         "crates/gateway-rules/rule-36-exact-formal-return",
         &["qcore-gateway-rule-api"],
     ),
+    // Card RULE33-PILOT: a rule package depends on the rule interface only,
+    // and the gateway asks it through that interface.
+    (
+        "crates/gateway-rules/rule-33-removed-selection",
+        &["qcore-gateway-rule-api"],
+    ),
     (
         "crates/qcore-c-gateway",
         &[
@@ -65,6 +71,7 @@ const ALLOWED: &[(&str, &[&str])] = &[
             "rule-37-result-constructors",
             // Card RULE36-PILOT: the gateway hosts rule 36's package.
             "rule-36-exact-formal-return",
+            "rule-33-removed-selection",
         ],
     ),
     (

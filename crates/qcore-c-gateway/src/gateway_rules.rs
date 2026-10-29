@@ -129,6 +129,7 @@ mod tests {
     /// The rule packages the gateway hosts: (registry id, crate). Rule 35 is
     /// asked through `rule_hosts`, rule 37 through `result_constructor_rule`.
     const HOSTED: &[(&str, &str)] = &[
+        (rule_33_removed_selection::ID, "rule-33-removed-selection"),
         (rule_35_literal_decay::ID, "rule-35-literal-decay"),
         (
             rule_36_exact_formal_return::ID,

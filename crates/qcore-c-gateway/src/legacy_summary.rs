@@ -350,8 +350,11 @@ pub(crate) fn derive_custody_summaries(
                 // undeclared checked selection frame whose own row validates
                 // under its selection entry. It installs nothing in the
                 // environment; a frame that does not validate falls through
-                // to every older route unchanged.
-                if contracts.contract(&name).is_none()
+                // to every older route unchanged. Card RULE33-PILOT: with
+                // rule 33 off no frame is read, so every name takes the older
+                // routes, as before rule 33.
+                if crate::legacy_c::selection_route::enabled()
+                    && contracts.contract(&name).is_none()
                     && contracts.relational_contract(&name).is_none()
                     && let Some(frame) = crate::legacy_c::selection_route::frame(
                         tokens,

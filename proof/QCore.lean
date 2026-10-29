@@ -321,6 +321,7 @@ import QCore.RegistrationById
 import QCore.RelationalForwarding
 import QCore.RelationalPost
 import QCore.RemovedSelection
+import QCore.RemovedSelectionSwitch
 import QCore.RequestConsumption
 import QCore.ResearchExtensions
 import QCore.ReservedSpelling

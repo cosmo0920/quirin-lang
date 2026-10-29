@@ -108,8 +108,8 @@ pub mod member_run_facts;
 pub mod detach_same_item;
 pub mod list_lookup;
 // Card DETACH-RESULT-WRAPPER-COMPOSITION (rule 33): the pure removed-selection
-// decisions; the G hooks are in `legacy_selection.rs`.
-pub mod removed_selection;
+// decisions moved to `crates/gateway-rules/rule-33-removed-selection` (card
+// RULE33-PILOT); the G hooks are in `legacy_selection.rs`.
 pub mod slot_move_borrow;
 // Card REFCOUNT-RESOURCE-KIND (gateway rules 13b, 13c): the reference-count
 // kind's pure decisions are here, the G hooks in `legacy_reference_count.rs`.

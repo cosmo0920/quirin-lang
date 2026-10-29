@@ -1,5 +1,12 @@
 //! Card **DETACH-RESULT-WRAPPER-COMPOSITION** (gateway rule 33): the checked
-//! removed-selection composition, connected to the custody gateway.
+//! removed-selection composition, connected to the custody gateway. Card
+//! **RULE33-PILOT**: the rule's body is the package
+//! `crates/gateway-rules/rule-33-removed-selection` (the frame bodies' word
+//! shapes, the caller expansion, the selection decisions); this file is the
+//! host side: it reads the frame against the contract environment and the
+//! type model, builds the selection entry, analyses the row, and asks the
+//! package under `QCORE_GATEWAY_RULES_OFF` (`33` off: nothing is expanded and
+//! no frame is installed, which is the gateway before rule 33).
 //!
 //! # The two frames
 //!
@@ -47,11 +54,17 @@
 //! write) the selected child appears as one nullable child uniquely contained
 //! by `P` ([`materialize`]); the existing adapter then decides the detach. The
 //! run must be diagnostic-free, select on some path and accept every exit
-//! ([`crate::removed_selection::accept_exit`]). Nothing is published as a
+//! (`rule_33_removed_selection::accept_exit`). Nothing is published as a
 //! `ResourceFunctionContract`, so no other route, unit or ordinary W4/fresh
 //! result reading sees the selected child as fresh custody. `QCore.RemovedSelection`.
 
 use std::collections::BTreeSet;
+
+use qcore_gateway_rule_api::{BodyQuery, EntryRow, StatementExpansion, consult};
+use rule_33_removed_selection::{
+    Disposition, ExitFacts, FRAME_SPAN, ITEM_PLACE, MaterializeFacts, RESERVED, RemovedSelection,
+    Returned, Selected, ValidationRun, materialize as decide,
+};
 
 use super::{
     AbstractPointer, AbstractState, CONTAINED, Derivation, DerivedExtent, EntryCustody, LIVE,
@@ -59,30 +72,17 @@ use super::{
     ResourceKind, ResourceParameterMode, ResourceReturnMode, ReturnedValue, SiteDisposition, Token,
     find_function_body, function_parameter_range, function_parameters, matching,
 };
-use crate::removed_selection::{
-    Disposition, ExitFacts, MaterializeFacts, Returned, Selected, materialize as decide, validates,
-};
 
-/// The reserved prefix of every place this route introduces.
-pub(crate) const RESERVED: &str = "__qcore_selection_";
-/// The frame's own lookup destination, read by the selection entry.
-pub(crate) const ITEM_PLACE: &str = "__qcore_selection_item";
-const RESULT_PLACE: &str = "__qcore_selection_result";
+/// A checked selection frame (the package's own type; the host builds it
+/// after its checks).
+pub(crate) use rule_33_removed_selection::Frame;
 
-/// A checked selection frame.
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub(crate) struct Frame {
-    pub(crate) disposition: Disposition,
-    pub(crate) owner: String,
-    pub(crate) index: String,
-    /// The owner's declared pointee spelling (`R` of `R *P`).
-    pub(crate) pointee: Vec<String>,
-    pub(crate) record: String,
-    pub(crate) lookup: String,
-    pub(crate) detach: String,
-    /// `G` only: the release and the selection detach it composes.
-    pub(crate) release: Option<String>,
-    pub(crate) inner: Option<String>,
+/// Rule 33's package, asked at its two registered arms.
+const PACKAGE: [RemovedSelection; 1] = [RemovedSelection];
+
+/// Whether rule 33 answers in this run (`QCORE_GATEWAY_RULES_OFF`).
+pub(crate) fn enabled() -> bool {
+    crate::gateway_rules::enabled(rule_33_removed_selection::ID)
 }
 
 /// The selection the entry hands the analyzer.
@@ -101,33 +101,6 @@ fn words(tokens: &[Token]) -> Vec<&str> {
 
 fn identifier(text: &str) -> bool {
     super::is_identifier(text)
-}
-
-/// The NULL spellings the detach and lookup readers already normalize.
-fn nulls(mut words: Vec<String>) -> Vec<String> {
-    loop {
-        let mut change = None;
-        for at in 0..words.len() {
-            let tail = &words[at..];
-            if tail
-                .iter()
-                .map(String::as_str)
-                .take(5)
-                .eq(["(", "void", "*", ")", "0"])
-            {
-                change = Some((at, 5));
-                break;
-            }
-            if tail.iter().map(String::as_str).take(3).eq(["(", "0", ")"]) {
-                change = Some((at, 3));
-                break;
-            }
-        }
-        let Some((at, n)) = change else {
-            return words;
-        };
-        words.splice(at..at + n, ["0".to_owned()]);
-    }
 }
 
 /// `R * P , int W`: the owner's pointee spelling, the two names.
@@ -161,67 +134,37 @@ fn signature(tokens: &[Token], function: &str) -> Option<(Vec<String>, String, S
     Some((pointee, owner.clone(), index.clone()))
 }
 
-/// A frame body is short: anything longer is refused before any other read.
-const FRAME_SPAN: usize = 64;
-
 fn small_body(tokens: &[Token], function: &str) -> Option<(usize, usize)> {
     let (start, _) = find_function_body(tokens, function)?;
     let end = matching(tokens, start, "{", "}")?;
     (end - start < FRAME_SPAN).then_some((start, end))
 }
 
-fn body_words(tokens: &[Token], start: usize, end: usize) -> Vec<String> {
-    nulls(
-        tokens[start..=end]
-            .iter()
-            .map(|token| token.text.clone())
-            .collect(),
-    )
-}
-
-/// The cheap lexical shape of `F`'s body, before any type model is read.
+/// The cheap lexical shape of `F`'s body, before any type model is read (the
+/// package's word shape over the formals the host read).
 fn detach_shape(tokens: &[Token], function: &str) -> Option<(String, String, String, String)> {
     let (start, end) = small_body(tokens, function)?;
-    let body = body_words(tokens, start, end);
-    if body.len() != 29 {
-        return None;
-    }
     let (_, owner, index) = signature(tokens, function)?;
-    let detach = body.get(13)?.clone();
-    let lookup = body.get(17)?.clone();
-    let expected = [
-        "{", "if", "(", &index, "<", "0", ")", "{", "return", "0", ";", "}", "return", &detach,
-        "(", &owner, ",", &lookup, "(", &owner, ",", "(", "size_t", ")", &index, ")", ")", ";",
-        "}",
-    ];
-    (body.iter().map(String::as_str).eq(expected)
-        && identifier(&detach)
-        && identifier(&lookup)
-        && ![&owner, &index, &function.to_owned()].contains(&&detach)
-        && ![&owner, &index, &function.to_owned(), &detach].contains(&&lookup))
-    .then_some((owner, index, detach, lookup))
+    let (detach, lookup) = rule_33_removed_selection::detach_body(
+        &words(&tokens[start..=end]),
+        &owner,
+        &index,
+        function,
+    )?;
+    Some((owner, index, detach, lookup))
 }
 
 /// The cheap lexical shape of `G`'s body.
 fn release_shape(tokens: &[Token], function: &str) -> Option<(String, String, String, String)> {
     let (start, end) = small_body(tokens, function)?;
-    let body = body_words(tokens, start, end);
-    if body.len() != 12 {
-        return None;
-    }
     let (_, owner, index) = signature(tokens, function)?;
-    let release = body.get(1)?.clone();
-    let inner = body.get(3)?.clone();
-    let expected = [
-        "{", &release, "(", &inner, "(", &owner, ",", &index, ")", ")", ";", "}",
-    ];
-    (body.iter().map(String::as_str).eq(expected)
-        && identifier(&release)
-        && identifier(&inner)
-        && release != inner
-        && ![&owner, &index, &function.to_owned()].contains(&&release)
-        && ![&owner, &index, &function.to_owned()].contains(&&inner))
-    .then_some((owner, index, release, inner))
+    let (release, inner) = rule_33_removed_selection::release_body(
+        &words(&tokens[start..=end]),
+        &owner,
+        &index,
+        function,
+    )?;
+    Some((owner, index, release, inner))
 }
 
 fn same_item_detach(contracts: &ResourceContracts, detach: &str) -> bool {
@@ -386,122 +329,6 @@ pub(crate) fn frame(
     })
 }
 
-fn spell(texts: &[&str], line: usize) -> Vec<Token> {
-    texts
-        .iter()
-        .map(|text| Token {
-            text: (*text).to_owned(),
-            line,
-        })
-        .collect()
-}
-
-/// A frame's own body as its constituent calls. The guard is kept verbatim.
-fn own_body(tokens: &[Token], function: &str, frame: &Frame) -> Option<Vec<Token>> {
-    let (start, _) = find_function_body(tokens, function)?;
-    let end = matching(tokens, start, "{", "}")?;
-    let pointee = frame.pointee.iter().map(String::as_str).collect::<Vec<_>>();
-    let (owner, index) = (frame.owner.as_str(), frame.index.as_str());
-    let (lookup, detach) = (frame.lookup.as_str(), frame.detach.as_str());
-    let mut texts = Vec::new();
-    match frame.disposition {
-        Disposition::Returned => {
-            // Everything before the second `return`, verbatim.
-            let second = tokens[start..end]
-                .iter()
-                .enumerate()
-                .filter(|(_, token)| token.text == "return")
-                .nth(1)
-                .map(|(at, _)| start + at)?;
-            let line = tokens[second].line;
-            let mut out = tokens[start..second].to_vec();
-            texts.extend(pointee.iter().copied());
-            texts.extend([
-                "*", ITEM_PLACE, "=", lookup, "(", owner, ",", "(", "size_t", ")",
-            ]);
-            texts.extend([index, ")", ";"]);
-            texts.extend(pointee.iter().copied());
-            texts.extend([
-                "*",
-                RESULT_PLACE,
-                "=",
-                detach,
-                "(",
-                owner,
-                ",",
-                ITEM_PLACE,
-                ")",
-                ";",
-            ]);
-            texts.extend(["return", RESULT_PLACE, ";", "}"]);
-            out.extend(spell(&texts, line));
-            Some(out)
-        }
-        Disposition::Released => {
-            let line = tokens.get(start + 1)?.line;
-            let release = frame.release.as_deref()?;
-            texts.push("{");
-            for place in [RESULT_PLACE, ITEM_PLACE] {
-                texts.extend(pointee.iter().copied());
-                texts.extend(["*", place, "=", "(", "(", "void", "*", ")", "0", ")", ";"]);
-            }
-            texts.extend(["if", "(", index, "<", "0", ")", "{", "}", "else", "{"]);
-            texts.extend([
-                ITEM_PLACE, "=", lookup, "(", owner, ",", "(", "size_t", ")", index,
-            ]);
-            texts.extend([
-                ")",
-                ";",
-                RESULT_PLACE,
-                "=",
-                detach,
-                "(",
-                owner,
-                ",",
-                ITEM_PLACE,
-                ")",
-            ]);
-            texts.extend([";", "}", release, "(", RESULT_PLACE, ")", ";", "}"]);
-            Some(spell(&texts, line))
-        }
-    }
-}
-
-/// A caller statement's destination part: nothing (`F(q, K);`), an
-/// assignment `d =`, or a one-declarator pointer declaration `R *d =` /
-/// `struct T *d =`. Answers its length, the destination and the declaration
-/// spelling kept in the enclosing scope.
-fn statement_prefix<'a>(rest: &[&'a str]) -> (usize, Option<&'a str>, Vec<&'a str>) {
-    match rest {
-        [name, "=", ..] if identifier(name) => (2, Some(*name), Vec::new()),
-        [ty, "*", name, "=", ..] if identifier(ty) && identifier(name) => {
-            (4, Some(*name), vec![*ty, "*", *name, ";"])
-        }
-        ["struct", tag, "*", name, "=", ..] if identifier(tag) && identifier(name) => {
-            (5, Some(*name), vec!["struct", *tag, "*", *name, ";"])
-        }
-        _ => (0, None, Vec::new()),
-    }
-}
-
-/// The callee of a caller statement shape at `at`, before any frame read.
-fn statement_callee<'a>(body: &[&'a str], at: usize) -> Option<&'a str> {
-    // The statement starts after `;`, `{` or `}`.
-    if at > 0 && !matches!(body[at - 1], ";" | "{" | "}") {
-        return None;
-    }
-    let rest = &body[at..];
-    let (prefix, ..) = statement_prefix(rest);
-    match &rest[prefix..] {
-        [callee, "(", parent, ",", constant, ")", ";", ..]
-            if identifier(callee) && identifier(parent) && decimal(constant) =>
-        {
-            Some(*callee)
-        }
-        _ => None,
-    }
-}
-
 /// One pass over the stream: the named functions with a frame-sized body.
 fn small_definitions(tokens: &[Token], names: &BTreeSet<&str>) -> BTreeSet<String> {
     let mut found = BTreeSet::new();
@@ -524,141 +351,75 @@ fn small_definitions(tokens: &[Token], names: &BTreeSet<&str>) -> BTreeSet<Strin
     found
 }
 
-fn decimal(text: &str) -> bool {
-    !text.is_empty()
-        && text.bytes().all(|b| b.is_ascii_digit())
-        && (text == "0" || !text.starts_with('0'))
-        && text.parse::<usize>().is_ok_and(|value| value <= 255)
-}
-
-/// One caller statement, `[R *] d = F(q, K);`, `F(q, K);` or `G(q, K);`.
-fn caller_statement(
-    body: &[&str],
-    at: usize,
-    frames: &std::collections::BTreeMap<String, Frame>,
-    serial: usize,
-) -> Option<(usize, Vec<Token>)> {
-    let callee = statement_callee(body, at)?;
-    let frame = frames.get(callee)?;
-    let rest = &body[at..];
-    let (prefix, destination, declaration) = statement_prefix(rest);
-    let [_, "(", parent, ",", constant, ")", ";", ..] = &rest[prefix..] else {
-        return None;
-    };
-    if destination.is_some() && frame.disposition == Disposition::Released {
-        return None;
-    }
-    let item = format!("{ITEM_PLACE}_{serial}");
-    let result = format!("{RESULT_PLACE}_{serial}");
-    let pointee = frame.pointee.iter().map(String::as_str).collect::<Vec<_>>();
-    // A declaration keeps its name in the enclosing scope.
-    let mut texts: Vec<&str> = declaration;
-    texts.push("{");
-    texts.extend(pointee.iter().copied());
-    texts.extend([
-        "*",
-        &item,
-        "=",
-        &frame.lookup,
-        "(",
-        parent,
-        ",",
-        constant,
-        ")",
-        ";",
-    ]);
-    let destination = match destination {
-        Some(destination) => destination,
-        None => {
-            texts.extend(pointee.iter().copied());
-            texts.push("*");
-            &result
-        }
-    };
-    texts.extend([
-        destination,
-        "=",
-        &frame.detach,
-        "(",
-        parent,
-        ",",
-        &item,
-        ")",
-        ";",
-    ]);
-    if let Some(release) = frame.release.as_deref() {
-        texts.extend([release, "(", &result, ")", ";"]);
-    }
-    texts.push("}");
-    let tokens = texts
-        .iter()
-        .map(|text| Token {
-            text: (*text).to_owned(),
-            line: 0,
-        })
-        .collect();
-    Some((prefix + 7, tokens))
-}
-
 /// Card DETACH-RESULT-WRAPPER-COMPOSITION (rule 33): the build stream with
-/// only `function`'s body rewritten, or `None` when nothing applies.
+/// only `function`'s body rewritten, or `None` when nothing applies. Card
+/// RULE33-PILOT: the rewrite is the package's [`StatementExpansion`] answer;
+/// with rule 33 off nothing is read or rewritten.
 pub(crate) fn expand(
     tokens: &[Token],
     function: &str,
     contracts: &ResourceContracts,
 ) -> Option<Vec<Token>> {
+    if !enabled() {
+        return None;
+    }
+    let package = &PACKAGE[0];
     let (start, _) = find_function_body(tokens, function)?;
     let end = matching(tokens, start, "{", "}")?;
-    let body = words(&tokens[start + 1..end]);
+    let body = words(&tokens[start..=end]);
     // Cheap prefilters first: a frame-sized body, or a caller statement.
     let own = end - start < FRAME_SPAN
         && (detach_shape(tokens, function).is_some() || release_shape(tokens, function).is_some());
-    let callees = (0..body.len())
-        .filter_map(|at| statement_callee(&body, at))
-        .filter(|callee| *callee != function)
-        .collect::<BTreeSet<_>>();
+    let callees = package.candidates(function, &body);
     if !own && callees.is_empty() {
         return None;
     }
-    if !reserved_unspelled(tokens) {
+    if tokens
+        .iter()
+        .any(|token| token.text.starts_with(package.reserved_prefix()))
+    {
         return None;
     }
-    if own {
-        let own = frame(tokens, function, contracts)?;
-        let rewritten = own_body(tokens, function, &own)?;
-        let mut out = tokens[..start].to_vec();
-        out.extend(rewritten);
-        out.extend_from_slice(&tokens[end + 1..]);
-        return Some(out);
-    }
-    let frames = small_definitions(tokens, &callees)
-        .into_iter()
-        .filter_map(|callee| frame(tokens, &callee, contracts).map(|frame| (callee, frame)))
-        .collect::<std::collections::BTreeMap<_, _>>();
-    if frames.is_empty() {
+    let own = if own {
+        Some(frame(tokens, function, contracts)?)
+    } else {
+        None
+    };
+    let frames = if own.is_some() {
+        std::collections::BTreeMap::new()
+    } else {
+        small_definitions(tokens, &callees)
+            .into_iter()
+            .filter_map(|callee| frame(tokens, &callee, contracts).map(|frame| (callee, frame)))
+            .collect()
+    };
+    if own.is_none() && frames.is_empty() {
         return None;
     }
-    let mut out = tokens[..=start].to_vec();
-    let mut at = 0;
-    let mut serial = 0;
-    let mut changed = false;
-    while at < body.len() {
-        if let Some((length, mut replacement)) = caller_statement(&body, at, &frames, serial) {
-            let line = tokens[start + 1 + at].line;
-            for token in &mut replacement {
-                token.line = line;
-            }
-            out.extend(replacement);
-            at += length;
-            serial += 1;
-            changed = true;
-        } else {
-            out.push(tokens[start + 1 + at].clone());
-            at += 1;
-        }
+    let query = BodyQuery {
+        function,
+        body: &body,
+        own: own.as_ref(),
+        callees: &frames,
+    };
+    let expanded = consult(
+        &PACKAGE,
+        |_| enabled(),
+        |_, package| StatementExpansion::ask(package, &query),
+    )?
+    .admission
+    .lowering;
+    // An anchor outside the body is no answer: the body stays verbatim.
+    if !expanded.anchored_within(body.len()) {
+        return None;
     }
-    out.extend_from_slice(&tokens[end..]);
-    changed.then_some(out)
+    let mut out = tokens[..start].to_vec();
+    out.extend(expanded.words.into_iter().map(|(text, anchor)| Token {
+        text,
+        line: tokens[start + anchor].line,
+    }));
+    out.extend_from_slice(&tokens[end + 1..]);
+    Some(out)
 }
 
 /// The frame's lookup is reached from entry through branches and reserved
@@ -877,8 +638,17 @@ pub(crate) fn row(
             },
         })
         .collect::<Vec<_>>();
-    let selected_somewhere = exits.iter().any(|exit| exit.selected != Selected::Absent);
-    validates(frame.disposition, clean, &exits, selected_somewhere).then_some(summary)
+    let run = ValidationRun {
+        disposition: frame.disposition,
+        clean,
+        exits,
+    };
+    consult(
+        &PACKAGE,
+        |_| enabled(),
+        |_, package| EntryRow::ask(package, &run),
+    )
+    .map(|_| summary)
 }
 
 /// Whether `function`'s frame validates in this unit (its summary exists).
