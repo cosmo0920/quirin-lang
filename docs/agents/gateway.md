@@ -8914,6 +8914,12 @@ safety claim and no validation of the detach representation premise.
     This establishes none of the CMetrics getter chain's foreign-member,
     collection, secondary-index or cache ownership obligations; its remainder
     stays Open. [Design](../reports/w48-bu-cmt-map-metric-get/DESIGN.md).
+    The body is the rule package `crates/gateway-rules/rule-36-exact-formal-return`
+    (card RULE36-PILOT), registry id `36`, the first `return-route` package:
+    with `36` in `QCORE_GATEWAY_RULES_OFF` the gateway asks none of its parts,
+    so the lexical candidate is false, the return keeps its pre-rule-36
+    lowering and the classifier refuses; off only removes admissions
+    (`QCore.ExactFormalReturnSwitch`). [Pilot](../reports/rule36-pilot/README.md).
 
 <a id="constraint-36a"></a>
 

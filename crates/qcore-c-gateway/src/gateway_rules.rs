@@ -131,6 +131,10 @@ mod tests {
     const HOSTED: &[(&str, &str)] = &[
         (rule_35_literal_decay::ID, "rule-35-literal-decay"),
         (
+            rule_36_exact_formal_return::ID,
+            "rule-36-exact-formal-return",
+        ),
+        (
             rule_37_result_constructors::ID,
             "rule-37-result-constructors",
         ),
@@ -141,6 +145,10 @@ mod tests {
         use qcore_gateway_rule_api::traits::RulePackage;
         assert_eq!(rule_35_literal_decay::LiteralRead.id(), "35");
         assert_eq!(rule_35_literal_decay::ArrayMemberDecay.id(), "35");
+        assert_eq!(
+            rule_36_exact_formal_return::ExactFormalReturnRoute.id(),
+            "36"
+        );
         for (id, crate_name) in HOSTED {
             let entry = REGISTRY
                 .iter()

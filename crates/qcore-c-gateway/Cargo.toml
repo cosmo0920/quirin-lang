@@ -34,6 +34,8 @@ qcore-schemas = { path = "../qcore-schemas", version = "24.0.0" }
 # Card RULE35-PILOT: gateway rule 35 as a rule package, hosted through the
 # rule API (`rule_hosts`).
 rule-35-literal-decay = { path = "../gateway-rules/rule-35-literal-decay", version = "0.1.0" }
+# Card RULE36-PILOT: the gateway hosts rule 36's package.
+rule-36-exact-formal-return = { path = "../gateway-rules/rule-36-exact-formal-return", version = "0.1.0" }
 # Card RULE37-PILOT: rule 37's package (plan seam B), asked through the rule
 # interface at its two registered arms.
 rule-37-result-constructors = { path = "../gateway-rules/rule-37-result-constructors", version = "0.1.0" }

@@ -143,6 +143,7 @@ import QCore.EventObservation
 import QCore.EventPayloadBoundary
 import QCore.EventRemovalWrapper
 import QCore.ExactFormalReturn
+import QCore.ExactFormalReturnSwitch
 import QCore.ExecutableModel
 import QCore.ExecutionCoverage
 import QCore.ExitResiduals

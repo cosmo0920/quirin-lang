@@ -14,6 +14,7 @@ members = [
     "crates/qcore-verifier-host",
     "crates/qcore-verification",
     "crates/gateway-rules/rule-35-literal-decay",
+    "crates/gateway-rules/rule-36-exact-formal-return",
     "crates/qcorec",
     "crates/quirin-audit-plugin",
     "crates/quirin-audit-plugin-libevent",
