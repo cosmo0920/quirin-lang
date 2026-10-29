@@ -175,10 +175,10 @@ pub const REGISTRY: &[RuleEntry] = &[
     },
     RuleEntry {
         id: "35",
-        crate_name: "qcore-c-gateway",
+        crate_name: "rule-35-literal-decay",
         placements: &[
-            Placement { position: Position::Classification, order: None, arm: Some("literal-read"), route: "literal_dereference::decide" },
-            Placement { position: Position::TypedReader, order: None, arm: Some("array-member-decay"), route: "array_member_decay::decayed_operand" },
+            Placement { position: Position::Classification, order: None, arm: Some("literal-read"), route: "literal_read::decide" },
+            Placement { position: Position::TypedReader, order: None, arm: Some("array-member-decay"), route: "array_member_decay::decide" },
         ],
         lean: &["QCore.LiteralDecayReadings"],
         document: "docs/agents/rules/35.md",
@@ -205,6 +205,18 @@ pub const REGISTRY: &[RuleEntry] = &[
         ],
         lean: &["QCore.ResidualAccessReadings"],
         document: "docs/agents/rules/14c.md",
+        reason_keys: &[],
+        off: Off::Refuses,
+    },
+    RuleEntry {
+        id: "37",
+        crate_name: "rule-37-result-constructors",
+        placements: &[
+            Placement { position: Position::TypedReader, order: None, arm: Some("sizeof-operand-exemption"), route: "sizeof_operand::decide" },
+            Placement { position: Position::Classification, order: None, arm: Some("asserted-allocation-premise"), route: "asserted_allocation::decide" },
+        ],
+        lean: &["QCore.ResultConstructors", "QCore.ResultConstructorSwitch"],
+        document: "docs/agents/rules/37.md",
         reason_keys: &[],
         off: Off::Refuses,
     },

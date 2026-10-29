@@ -3,11 +3,12 @@ import QCore.ResidualAccessReadings
 /-!
 # String-literal reads and decayed array members (card W48-BU-SINGLE-LEAF-BODIES, gateway rule 35)
 
-The abstract rule implemented by
-`crates/qcore-c-gateway/src/literal_dereference.rs` (arm 1, hooked into the
-lexical access predicate `legacy_token_shapes::contains_unmodeled_access`) and
-`crates/qcore-c-gateway/src/array_member_decay.rs` (arm 2, hooked into the W44
-typed call-actual reader `typed_access_positions::StatementIndex::argument`).
+The abstract rule implemented by the rule package
+`crates/gateway-rules/rule-35-literal-decay` (card RULE35-PILOT):
+`literal_read.rs` (arm 1, hosted in the gateway's lexical access predicate
+`legacy_token_shapes::contains_unmodeled_access`) and `array_member_decay.rs`
+(arm 2, hosted in the W44 typed call-actual reader
+`typed_access_positions::StatementIndex::argument`).
 
 **Arm 1.** A `*` token whose operand begins with a literal that is only read
 reads one character of a string literal: an array object of static storage
@@ -39,14 +40,14 @@ inductive LiteralDecision where
   | notLiteral
   deriving DecidableEq, Repr
 
-/-- `literal_dereference::decide`: whether the next token is a literal, and
+/-- `literal_read::decide`: whether the next token is a literal, and
 whether the literal run is stored into or incremented. -/
 def decideLiteral (nextIsLiteral : Bool) (store : Bool) : LiteralDecision :=
   if !nextIsLiteral then .notLiteral
   else if store then .store
   else .literal
 
-/-- The decision vectors, spelled as `literal_dereference::DECISION_VECTORS`. -/
+/-- The decision vectors, spelled as `literal_read::DECISION_VECTORS`. -/
 def literalVectors : List (Bool × Bool × LiteralDecision) :=
   [ (true, false, .literal)
   , (true, true, .store)

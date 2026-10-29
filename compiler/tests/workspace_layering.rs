@@ -4,6 +4,9 @@
 
 use std::path::PathBuf;
 
+#[path = "../../tests/support/tracked_files.rs"]
+mod tracked_files;
+
 /// Workspace crates and the workspace dependencies each is allowed
 /// (`docs/GENERALIZATION_PLAN.md` §3.1; the grab-bag `qcore-compiler` and
 /// the CLI sit above every extracted layer).
@@ -29,6 +32,20 @@ const ALLOWED: &[(&str, &[&str])] = &[
         "crates/qcore-gateway-rule-api",
         &["qcore-schemas", "qcore-contract"],
     ),
+    // Card RULE35-PILOT: the first rule package. A package under
+    // `crates/gateway-rules/` depends on the rule API only (and `qcore-core`
+    // where it reads a kernel model); `rule_packages_depend_on_the_api_only`
+    // below holds that for every package, present and future.
+    (
+        "crates/gateway-rules/rule-35-literal-decay",
+        &["qcore-gateway-rule-api"],
+    ),
+    // Card RULE37-PILOT: a rule package depends on the rule interface only,
+    // and the gateway asks it through that interface.
+    (
+        "crates/gateway-rules/rule-37-result-constructors",
+        &["qcore-gateway-rule-api"],
+    ),
     (
         "crates/qcore-c-gateway",
         &[
@@ -36,6 +53,9 @@ const ALLOWED: &[(&str, &[&str])] = &[
             "qcore-core",
             "qcore-gateway-rule-api",
             "qcore-schemas",
+            // Card RULE35-PILOT: the gateway hosts rule 35's package.
+            "rule-35-literal-decay",
+            "rule-37-result-constructors",
         ],
     ),
     (
@@ -144,6 +164,46 @@ fn workspace_dependencies_point_strictly_downward() {
                 allowed.contains(&dependency.as_str()),
                 "{crate_path} must not depend on `{dependency}` \
                  (allowed workspace dependencies: {allowed:?})"
+            );
+        }
+    }
+}
+
+/// Plan `docs/plans/pluggable-cards/README.md` seam B (card RULE35-PILOT):
+/// every rule package under `crates/gateway-rules/` is a workspace member and
+/// depends on the rule API (and `qcore-core` where it reads a kernel model)
+/// only: never on `qcore-c-gateway`, never on another rule package.
+#[test]
+fn rule_packages_depend_on_the_api_only() {
+    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("..");
+    let workspace = std::fs::read_to_string(root.join("Cargo.toml")).unwrap();
+    let base = root.join("crates/gateway-rules");
+    let packages: Vec<PathBuf> = tracked_files::tracked_files(&base)
+        .into_iter()
+        .filter(|path| {
+            path.file_name().is_some_and(|name| name == "Cargo.toml")
+                && path.parent().and_then(|dir| dir.parent()) == Some(base.as_path())
+        })
+        .map(|manifest| manifest.parent().unwrap().to_path_buf())
+        .collect();
+    assert!(!packages.is_empty(), "rule 35's package exists");
+    for path in packages {
+        let name = path.file_name().unwrap().to_str().unwrap().to_owned();
+        let member = format!("\"crates/gateway-rules/{name}\",");
+        assert!(
+            workspace.contains(&member),
+            "{name} is not a workspace member"
+        );
+        let manifest = std::fs::read_to_string(path.join("Cargo.toml")).unwrap();
+        let dependencies = workspace_dependencies(&manifest);
+        assert!(
+            dependencies.contains(&"qcore-gateway-rule-api".to_owned()),
+            "{name} must implement the rule API"
+        );
+        for dependency in dependencies {
+            assert!(
+                ["qcore-gateway-rule-api", "qcore-core"].contains(&dependency.as_str()),
+                "rule package {name} must not depend on `{dependency}`"
             );
         }
     }

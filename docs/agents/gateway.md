@@ -8829,10 +8829,14 @@ safety claim and no validation of the detach representation premise.
 
 35. **A `*` applied to a string literal that is only read is constant data,
     and an array member decayed at a `Borrowed` or data-tail call actual is
-    rule 14c's element address `&PATH[0]`.** Card W48-BU-SINGLE-LEAF-BODIES
-    (`literal_dereference.rs`, a thin hook in
+    rule 14c's element address `&PATH[0]`.** Card W48-BU-SINGLE-LEAF-BODIES;
+    since card RULE35-PILOT the rule package
+    `crates/gateway-rules/rule-35-literal-decay` (`literal_read.rs`, the
+    classification arm `literal-read`, hosted by `rule_hosts::literal_read` in
     `legacy_token_shapes::contains_unmodeled_access`; `array_member_decay.rs`,
-    a thin hook in `typed_access_positions::StatementIndex::argument`). It
+    the typed-reader arm `array-member-decay`, hosted by
+    `rule_hosts::decay_reads` in `typed_access_positions::StatementIndex::argument`;
+    switch `35` turns both off). It
     amends the lexical access gate (arm 1) and rules 10n(1) and 14c (arm 2);
     every other refusal of theirs stands. (1) **Literal read.** A `*` token
     whose next token is a literal (the lexer spells every string and
@@ -9071,8 +9075,23 @@ safety claim and no validation of the detach representation premise.
     card's fresh per-body and per-leaf BASE/TIP movements, with each movement's
     bounds and assumptions; planner ceilings are not gains.
 
+    The rule's body is the package `crates/gateway-rules/rule-37-result-constructors`
+    (card RULE37-PILOT), asked through the rule interface at two registered
+    arms: the store scan's checked operand spans (`aggregate_store::store_bases`)
+    and the checked-specification settlement (`legacy_checked_spec::settle`),
+    where a specification naming `asserted_allocation` stands only while the
+    package admits it with that premise as an obligation the declaration
+    states. `QCORE_GATEWAY_RULES_OFF=37` removes both answers: the scan counts
+    every mention, as before this rule, and every such specification is
+    withdrawn; its callers then see only what W4 validates from an in-unit
+    body. The null readers' checked-result guard is a restriction, so it stays
+    in the host and is never switched off.
+
     Lean: `QCore.ResultConstructors` (all companion theorems registered in
-    `AuditResultConstructors.lean`);
-    [report](../reports/w48-bu-rk-result-constructors/README.md).
+    `AuditResultConstructors.lean`) and `QCore.ResultConstructorSwitch` (on is
+    the rule, off is the old reading, off never widens;
+    `AuditResultConstructorSwitch.lean`);
+    [report](../reports/w48-bu-rk-result-constructors/README.md),
+    [migration](../reports/rule37-pilot/README.md).
 
 <!-- generated:rules:end -->

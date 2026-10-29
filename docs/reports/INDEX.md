@@ -676,6 +676,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | Card directory | Original report title |
 |---|---|
 
+| [pin-regenerate-stamp-monotonicity](pin-regenerate-stamp-monotonicity/README.md) | PIN-REGENERATE-STAMP-MONOTONICITY |
+
 | [pipe-drop-stage](pipe-drop-stage/README.md) | PIPE-DROP-STAGE — the releasing pipeline stage (wave 23) |
 
 | [plugin-package-build-write](plugin-package-build-write/README.md) | PLUGIN-PACKAGE-BUILD-WRITES-EXECUTABLE-IN-PROCESS: `package::build` holds no write descriptor on the executable |
@@ -1035,6 +1037,10 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [rko-op-cb-union-closure](rko-op-cb-union-closure/README.md) | RKO-OP-CB-RUN-SET-OPEN-THROUGH-UNION: rko_u's places by layout |
 
 | [route-selection-order-restated](route-selection-order-restated/README.md) | ROUTE-SELECTION-ORDER-RESTATED: the route order is written once |
+
+| [rule35-pilot](rule35-pilot/README.md) | RULE35-PILOT: gateway rule 35 as its own rule package |
+
+| [rule37-pilot](rule37-pilot/README.md) | RULE37-PILOT: rule 37 as a rule package |
 
 | [runtime-source-imports](runtime-source-imports/README.md) | Runtime source imports |
 

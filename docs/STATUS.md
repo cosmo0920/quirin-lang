@@ -1,5 +1,9 @@
 # Current status and evidence boundaries
 
+Rule 37's measured contribution by switch (RULE37-PILOT, one binary at `6b6a3a438`, ledgers `contract/contributions/37/`): eight-home 5 rows Unknown -> Safe under the one premise `asserted_allocation`; fluent-bit-system and fluent-bit-tail-pause 0. Profile totals are unchanged by the migration (identity run against baseline `80c8aea98`).
+
+Gateway rule packages (2026-10-29, RULE35-PILOT): rule 35 is the first rule outside `qcore-c-gateway`, in `crates/gateway-rules/rule-35-literal-decay`, hosted through the rule API with no verdict change on the three live profiles, and its contribution is the first switch-measured ledger ([contributions](development/contributions.md)): eight-home 12 Unknown→Safe, system and slice no row. The other pilot rules' bodies still live in `qcore-c-gateway`.
+
 EVENT-HOLDER-IDENTITY adds bounded source-checked whole-record holder frames and exact immutable collector/loop path identity with independent external-home replay (schema 24.0.0). Borrowed custody alone supplies no frame; poison remains explicit, and collector-copy alias-liveness refusals remain Unknown. This does not close production collector selection, conditional loop correlation or threaded teardown. [Report](reports/event-holder-identity/README.md).
 
 EVENT-ORDERED-LIFETIME adds complete bounded ordered summaries and independently replayed lifetime imports, including exact removal-only C helper composition. The effect-bearing schema is 23.0.0. These capabilities cover reduced exact-path controls; they do not close whole-record holder frames or the full production collector chain. Source extraction and declared contract semantics remain assumptions. [Report](reports/event-ordered-lifetime/README.md). Native verdict vectors remain unchanged; the system scheduler diagnostic tightening is explicitly attributed.

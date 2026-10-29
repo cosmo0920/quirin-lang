@@ -40,12 +40,34 @@ class GatewayRegistryTests(unittest.TestCase):
                 self.assertIn(f"ask: {module}::{placement['route']} }}", table)
 
     def test_replaced_arm_constants_are_gone(self):
-        sources = ROOT / "crates/qcore-c-gateway/src"
+        # Rule 35's arms moved into their package (card RULE35-PILOT).
+        paths = [ROOT / "crates/qcore-c-gateway/src" / path
+                 for path in ("rule_hosts.rs", "typed_const_pointer_value.rs",
+                              "scalar_element_address.rs")]
+        paths += [ROOT / "crates/gateway-rules/rule-35-literal-decay/src" / path
+                  for path in ("lib.rs", "literal_read.rs", "array_member_decay.rs")]
         for name in ("LITERAL_ARM", "DECAY_ARM", "CONST_VALUE_ARM", "VOID_BIT_CAST_ARM",
                      "ELEMENT_ARM"):
-            for path in ("literal_dereference.rs", "array_member_decay.rs",
-                         "typed_const_pointer_value.rs", "scalar_element_address.rs"):
-                self.assertNotIn(f"const {name}", (sources / path).read_text(encoding="utf-8"))
+            for path in paths:
+                self.assertNotIn(f"const {name}", path.read_text(encoding="utf-8"))
+
+    def test_a_migrated_rule_names_its_package_and_its_routes(self):
+        """Card RULE35-PILOT: rule 35 is its own package, the gateway keeps
+        none of its decision modules, and a registry row naming a missing
+        package or a route that is not a `pub fn` of it fails closed."""
+        rule35 = next(r for r in self.rules if r["id"] == "35")
+        self.assertEqual(rule35["crate"], "rule-35-literal-decay")
+        self.assertIsNotNone(gen.rule_package(ROOT, "rule-35-literal-decay"))
+        for gone in ("literal_dereference.rs", "array_member_decay.rs"):
+            self.assertFalse((ROOT / "crates/qcore-c-gateway/src" / gone).exists(), gone)
+
+        def rule(registry, rule_id):
+            return next(r for r in registry["rule"] if r["id"] == rule_id)
+
+        self.broken(lambda r: rule(r, "35").update(crate="rule-99-missing"))
+        self.broken(lambda r: rule(r, "35")["placements"][0].update(route="literal_read::exempt_x"))
+        self.broken(lambda r: rule(r, "35")["placements"][1].update(route="no_module::decide"))
+        self.broken(lambda r: rule(r, "10s").update(crate="rule-35-literal-decay-x"))
 
     def broken(self, mutate):
         registry = copy.deepcopy(self.registry)

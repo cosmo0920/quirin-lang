@@ -113,11 +113,41 @@ mod tests {
     fn the_registry_keeps_the_api_laws_and_every_rule_is_switchable() {
         assert_eq!(check_registry(REGISTRY), Ok(()));
         assert!(REGISTRY.iter().all(|entry| entry.off == Off::Refuses));
-        assert!(
-            REGISTRY
+        // Card RULE35-PILOT: every rule's body is in the gateway or in a
+        // rule package the gateway hosts (`rule_hosts`).
+        for entry in REGISTRY {
+            assert!(
+                HOSTED.contains(&(entry.id, entry.crate_name))
+                    || entry.crate_name == "qcore-c-gateway",
+                "rule {} names crate {}, which the gateway does not host",
+                entry.id,
+                entry.crate_name
+            );
+        }
+    }
+
+    /// The rule packages the gateway hosts: (registry id, crate). Rule 35 is
+    /// asked through `rule_hosts`, rule 37 through `result_constructor_rule`.
+    const HOSTED: &[(&str, &str)] = &[
+        (rule_35_literal_decay::ID, "rule-35-literal-decay"),
+        (
+            rule_37_result_constructors::ID,
+            "rule-37-result-constructors",
+        ),
+    ];
+
+    #[test]
+    fn every_hosted_package_answers_under_its_registry_id() {
+        use qcore_gateway_rule_api::traits::RulePackage;
+        assert_eq!(rule_35_literal_decay::LiteralRead.id(), "35");
+        assert_eq!(rule_35_literal_decay::ArrayMemberDecay.id(), "35");
+        for (id, crate_name) in HOSTED {
+            let entry = REGISTRY
                 .iter()
-                .all(|entry| entry.crate_name == "qcore-c-gateway")
-        );
+                .find(|entry| entry.id == *id)
+                .expect("a hosted package is registered");
+            assert_eq!(entry.crate_name, *crate_name);
+        }
     }
 
     #[test]
@@ -145,8 +175,7 @@ mod tests {
     /// the arm admits; off, its reader's old refusal stands.
     #[test]
     fn the_arm_switches_restore_the_old_refusals() {
-        use crate::array_member_decay::decayed_operand;
-        use crate::literal_dereference::{Decision, Follow, decide};
+        use crate::rule_hosts::{decay_reads, literal_read};
         use crate::scalar_element_address::shape_admitted;
         use crate::typed_const_pointer_value::pointer_value;
         let decayed = serde_json::json!({
@@ -157,13 +186,14 @@ mod tests {
             "kind": "ImplicitCastExpr", "castKind": "LValueToRValue",
             "type": { "qualType": "struct p *const" }
         });
-        assert_eq!(decide(true, Follow::Read), Decision::Literal);
-        assert!(decayed_operand(&decayed).is_some());
+        let literal_star = ["*", "__qcore_literal__"];
+        assert!(literal_read(&literal_star, 0));
+        assert!(decay_reads(&decayed));
         assert!(shape_admitted("ArraySubscriptExpr", true));
         assert!(pointer_value(&const_value));
         with_rules_off("35", || {
-            assert_eq!(decide(true, Follow::Read), Decision::NotLiteral);
-            assert!(decayed_operand(&decayed).is_none());
+            assert!(!literal_read(&literal_star, 0));
+            assert!(!decay_reads(&decayed));
             assert!(shape_admitted("ArraySubscriptExpr", true), "14c stays on");
         });
         with_rules_off("14c", || {
@@ -175,7 +205,7 @@ mod tests {
         });
         with_rules_off("10m", || {
             assert!(!pointer_value(&const_value));
-            assert_eq!(decide(true, Follow::Read), Decision::Literal, "35 stays on");
+            assert!(literal_read(&literal_star, 0), "35 stays on");
         });
     }
 }
