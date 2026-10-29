@@ -2,8 +2,11 @@
 
 The fifth pilot of `GATEWAY-RULE-API-PILOT-MIGRATIONS` (pluggable-cards
 [plan](../../plans/pluggable-cards/README.md) seam B and §4, phase P2). Base
-`80c8aea98`; measured tip `a78c190dd` (the code; later commits change this
-report, its scripts and records, and the ledgers only). Rule 34
+`80c8aea98`; the code is `a78c190dd` (later commits change this report, its
+scripts, the ledgers and records only). The card was halted by the user
+mid-measurement and its commits were merged onto main `62c8e461c`
+([landing](../pilots-r1-landing/integration/README.md#halted-cards-and-tip-validation));
+round 2 ([section 2](#2-measurement)) finishes its evidence from there. Rule 34
 (`docs/agents/rules/34.md`, the element destroyer) acted inside the transfer,
 which no route-map position covered
 ([GATEWAY-RULE-API §7](../gateway-rule-api/README.md#7-follow-ups-and-the-pilot-migration-order)).
@@ -101,15 +104,61 @@ without a destroyer. The API has one consultation test for the arm.
 
 ## 2. Measurement
 
-MEASUREMENT
+**Before the halt (round 1), the card's own runs**, each with
+[`scripts/identity.sh`](scripts/identity.sh) (`--side
+base=baseline:80c8aea98`, `--side tip=rev:a78c190dd`, `--rules-off 34`,
+`--declared PREDICTION.md`, three live profiles, 24 h quota). Outputs under
+`private/rule34-pilot/` of this worktree:
+
+| Attempt | Started | Outcome | Evidence? |
+|---|---|---|---|
+| `measure-1` | 01:46Z | refused: a mistyped revision (`a78c190dd0`), nothing ran | no |
+| `measure-2` | 01:46Z | every route failed at 03:43Z with `No space left on device` (the shared disk reached 100%) | no: it measured the disk |
+| `measure-3` | 03:44Z | system and slice complete on `tip` and `tip-off`; the corpus routes were still queued for audit slots when the halt stopped the run (no exit, no record) | partial, below; not the card's identity record |
+
+From `measure-3`'s completed routes, checked by hand against the published
+baseline (`private/rule34-pilot/pre-identity-*.json`,
+[`scripts/check_identity.sh`](scripts/check_identity.sh)):
+
+- system and slice TIP against `baseline:80c8aea98`: every differing report
+  artifact (`resource-diagnostics{,.components,.contracts}.json`, the null
+  `*.jsonl`) is equal after normalising the revision and its derived digests
+  with lists as multisets, and the differing values form one bijection
+  (system 6 values, slice 4, two of them the revision itself; RULE37-PILOT's
+  [`substitution.py`](scripts/substitution.py), exit 0). The other report
+  artifacts are byte-identical. These are RULE37-PILOT's figures for the same
+  baseline. RULE35-PILOT's stricter pairing
+  ([`substitution_ids.py`](scripts/substitution_ids.py), extended here to the
+  40-hex revision) is inconclusive on these files (exit 1, "list groups stay
+  ambiguous under the map"): the revision moves every derived digest, so tied
+  list items cannot be paired. That is a limit of the checker, not a
+  difference.
+- system and slice `tip-off` (34 off) against `tip`: every artifact
+  byte-identical except `resource-diagnostics.components.json`, which equals
+  TIP once each component's recorded `rule_set.off` (`["34"]`, 30 and 32
+  components) is cleared. Rule 34 off moves nothing on either route, as
+  predicted (no Monkey unit).
+
+**Round 2 (this evidence round).** Per the integrator's round-2 brief
+(`private/integrator-briefs/pilots-r2-evidence.md`), this card runs no
+measurement. RULE36-PILOT runs one shared `quirin-audit
+measure` for the three halted pilots: `--side base=rev:0d15e7b19` (main with
+every change but the 33, 34 and 36 moves) against `--side tip=rev:62c8e461c`
+(main with them), `--rules-off 33,34,36 --per-rule`, the combined prediction
+(identity), three live profiles, output
+`/media/Data/GitHub/quirin-lang/private/pilots-r2-measure/`; its record is
+RULE36-PILOT's ([report](../rule36-pilot/README.md)). Rule 34's ledger is
+written from that run's `tip-off-34` side.
+
+R2-MEASUREMENT
 
 ## 3. Identity (BASE → TIP, every rule on)
 
-IDENTITY
+R2-IDENTITY
 
 ## 4. Rule 34's contribution (TIP with 34 off → TIP)
 
-CONTRIBUTION
+R2-CONTRIBUTION
 
 ## 5. Parity cost (plan decision 6)
 
@@ -122,7 +171,8 @@ CONTRIBUTION
 | Lean | `ElementDestroyerSwitch.lean` 167 lines, audit 18 |
 | Whole code diff | 31 files, +1,244 −63 (`80c8aea98..a78c190dd`, docs included) |
 | Active time | about 1 h 30 min: reading 35 min, the position and the package 20 min, host, guard and tests 25 min, Lean 10 min |
-| Wall clock | WALL |
+| Wall clock (round 1) | about 6 h 10 min to the halt (09:55 to 16:07 local): code committed after 50 min; the rest was measurement, almost all of it queued for audit slots, and one disk-exhausted attempt |
+| Wall clock (round 2) | records, ledger and gate only; the measurement is shared with RULE33/36 and charged to RULE36-PILOT |
 
 Friction:
 
@@ -143,13 +193,21 @@ Friction:
    `workspace_layering.rs`, the gateway's registry test, `Cargo.toml`/lock,
    `qcore-c-gateway/Cargo.toml` and `lib.rs`, the API's `lib.rs`,
    `architecture.md`'s row, `proof/QCore.lean`.
-5. **Derived matrix count**: the new audit file makes the committed matrix's
-   `lean_audits` stale (390 → 391), so the Python suite fails one test
-   (`test_the_derived_facts_are_recomputed_rather_than_carried`) until the
-   integrator regenerates it. Rule 37's audit file does the same, so after
-   both land the count is 392.
+5. **Derived matrix count**: the new audit file made the committed matrix's
+   `lean_audits` stale (390 → 391 on this card's base), so the round-1
+   Python suite failed one test
+   (`test_the_derived_facts_are_recomputed_rather_than_carried`); the
+   integrator regenerated the matrix at the landing (`62c8e461c`).
 6. **Identity needs a checker outside the tool** (BASE is the published
    baseline, TIP a revision build); the two pilots' checkers were reused.
+   RULE35-PILOT's stricter pairing cannot decide when the whole revision
+   moves (ties stay ambiguous), so against a baseline only RULE37-PILOT's
+   normalising check concludes.
+7. **The measurement is the cost, and it is contended.** Three cards'
+   measurements and suites shared the audit slots; this card's corpus routes
+   waited more than three hours without admission, and one attempt was lost
+   to a full shared disk. One shared `--per-rule` run per round (round 2)
+   is the cheaper shape.
 
 ## 6. Gate
 
@@ -167,22 +225,19 @@ GATE
   rows W48-SCHED-CLEANUP-PRODUCTION separated by attribution) are unmeasured.
 - Out of scope: other rules, GATEWAY-RULE-API-HOLD-OFF, contract edits.
 
-## 8. Likely conflicts and follow-ups
+## 8. Conflicts and follow-ups
 
-Files RULE35-PILOT and RULE37-PILOT also touch (take both sides, rerun the
-generators): `crates/gateway-rules/registry.toml` and
-`gateway_rule_registry.rs` (`scripts/gen_gateway_registry.py`), `Cargo.toml`
-members and `Cargo.lock` (`cargo update -w`), `compiler/tests/workspace_layering.rs`
-(every rule crate and every gateway edge), `crates/qcore-c-gateway/Cargo.toml`,
-`crates/qcore-c-gateway/src/lib.rs`, the registry test in `gateway_rules.rs`
-(all three relax the all-in-gateway assertion), `crates/qcore-gateway-rule-api/src/lib.rs`
-(module and re-export lines), `scripts/gen_gateway_registry.py` (rule 35's
-crate and arm-route checks; this card's route `destroyer_order::order` is a
-`pub fn` of the package's `src/destroyer_order.rs`, so it passes them),
-`scripts/tests/test_gateway_registry.py`, `proof/QCore.lean`
-(`scripts/gen_lean_roots.py`), `docs/development/architecture.md` (the
-`crates/gateway-rules/` row), `docs/agents/gateway.md` (`scripts/gen_rule_docs.py`)
-and `docs/development/contributions.md` (regenerated from the ledgers).
+The shared-file conflicts with RULE35/36/37/33 (`registry.toml` and its
+generated tables, the workspace and gateway manifests and lock, the layering
+test, the gateway's registry test, the rule API's `lib.rs` re-exports,
+`proof/QCore.lean`, `architecture.md`'s row, `gateway.md`) were resolved by
+the integrator at `62c8e461c`, keeping both sides of the API re-exports.
+Rule 34's route `destroyer_order::order` is a `pub fn` of the package's
+`src/destroyer_order.rs`, so it passes RULE35-PILOT's generator check
+unchanged. Round 2 changes only `docs/reports/rule34-pilot/`,
+`contract/contributions/34/` and the generated
+`docs/development/contributions.md` (shared with RULE33/36: rerun
+`contribution_ledgers.py` on a conflict).
 
 Follow-ups ([amendments](integration-amendments.json)):
 
