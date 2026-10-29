@@ -13069,12 +13069,6 @@
    "recorded_by": "EVALUATION-PROFILES"
   },
   {
-   "id": "MEASURE-TOOL-RULES-OFF-LIVE",
-   "title": "Exercise quirin-audit measure --rules-off and the contribution slot against a real rule switch",
-   "why": "Card MEASURE-TOOL parses --rules-off, builds the <tip>-off side from the same binary with QCORE_GATEWAY_RULES_OFF, compares it with <tip>, and after the run requires every component of the switched side to record exactly the requested off-list (and every other side none); until a binary advertises the switch the option is refused before any route runs ('not yet supported'). Both paths are tested only with stub analyzers, and the native-comparison record's `contribution` slot is reserved, not filled. DISCHARGE: after RULE-SWITCHES lands (and CONTRIBUTION-LEDGERS defines the ledger), one real --rules-off measurement on a migrated rule whose contribution equals that rule card's measured delta, with the slot filled from the <tip>-off -> <tip> comparison and interactions named, never summed. CONTRIBUTION-LEDGERS (2026-10-26) fills the slot: it holds quirin-contribution-ledger/1 ledgers built from the <tip>-off -> <tip> comparison (and with --per-rule from one <tip>-off-<id> side per rule, rows moved by two rules together named as interaction ledgers), checked by scripts/contribution_ledgers.py; exercised only with stub analyzers that honour the switch. The discharge still needs one real --rules-off measurement on a migrated rule, written with contribution_ledgers.py write and passing consistency. GATEWAY-RULE-API ran a real `measure --rules-off 35`: the advertisement check passed and tip-off components record off = [\"35\"], but the run hit the 10 h quota before the post-run off-list check; rule 35 moves 12 corpus functions Safe -> Unknown, 0 system, 0 slice.",
-   "source": "docs/reports/measure-tool/README.md, docs/reports/contribution-ledgers/README.md, docs/reports/gateway-rule-api/README.md"
-  },
-  {
    "id": "MEASURE-TOOL-LANDING-PUBLISH",
    "title": "Wire baseline publication into the integrator's landing gate",
    "why": "Card MEASURE-TOOL implemented `quirin-audit measure publish --from <out>/sides/<name>` (output private/baselines/<sha>, one immutable <profile>/ per route with baseline.json digests) and identity-verified reuse by --side NAME=baseline:<sha>; the exact landing commands are in docs/reports/measure-tool/README.md. No landing has published a baseline yet. DISCHARGE: the integrator's per-landing full gate measures the landed revision with a rev:<sha> side on the live routes and publishes it, and the next card reuses it as BASE after verification instead of rebuilding BASE. Card MEASURE-TOOL-LANDING-PUBLISH connected the publisher to scripts/land.py's post-gate sequence with clean-tree, first-parent baseline selection and explicit first-run bootstrap. The command-level test exercises bootstrap and later baseline selection. The named follow-up remains Open until the integrator publishes the landed SHA and a subsequent card reuses it with real plugin identity verification. Card LANDING-PUBLISH-COMPLETION made `land.py publish` apply the evaluation-profile policy before publishing: it refuses, and keeps the measurement, when a live profile's landed figures differ from the baseline committed in the landing, so a move lands only with its new baseline and an appended baseline_history reason. The first landed publication (`--previous b0b63da7`) is the integrator's step after the landing push.",
@@ -13109,23 +13103,9 @@
    "recorded_by": "CONTRIBUTION-LEDGERS"
   },
   {
-   "id": "CONTRIBUTION-LEDGER-RULE-35",
-   "title": "Measure rule 35's contribution ledgers by switch",
-   "why": "Rule 35's twelve eight-home rows (W48-BU-SINGLE-LEAF-BODIES; its TIPOFF to TIP comparison by a compile-time arm, LITERAL_ARM/DECAY_ARM) are not a run-time switch measurement; CONTRIBUTION-LEDGERS did not transcribe them. DISCHARGE: after rule 35's migration card, a --rules-off 35 measurement on the live profiles writes its ledgers, consistency passes, and the report compares them with the recorded twelve rows.",
-   "source": "docs/reports/contribution-ledgers/README.md",
-   "recorded_by": "CONTRIBUTION-LEDGERS"
-  },
-  {
    "id": "CONTRIBUTION-LEDGER-RULE-36",
    "title": "Measure rule 36's contribution ledgers by switch",
    "why": "Rule 36's rows (W48-BU-CMT-MAP-METRIC-GET) were measured by that card across revisions; CONTRIBUTION-LEDGERS did not transcribe them. DISCHARGE: after rule 36's migration card, a --rules-off 36 measurement on the live profiles writes its ledgers, consistency passes, and the report compares them with docs/reports/w48-bu-cmt-map-metric-get/README.md's recorded rows.",
-   "source": "docs/reports/contribution-ledgers/README.md",
-   "recorded_by": "CONTRIBUTION-LEDGERS"
-  },
-  {
-   "id": "CONTRIBUTION-LEDGER-RULE-37",
-   "title": "Measure rule 37's contribution ledgers by switch",
-   "why": "Rule 37's rows (W48-BU-RK-RESULT-CONSTRUCTORS) were measured by that card across revisions; CONTRIBUTION-LEDGERS did not transcribe them. DISCHARGE: after rule 37's migration card, a --rules-off 37 measurement on the live profiles writes its ledgers, consistency passes, and the report compares them with docs/reports/w48-bu-rk-result-constructors/README.md's recorded rows.",
    "source": "docs/reports/contribution-ledgers/README.md",
    "recorded_by": "CONTRIBUTION-LEDGERS"
   },
@@ -13151,8 +13131,8 @@
   {
    "id": "GATEWAY-RULE-API-PILOT-MIGRATIONS",
    "title": "Pilot rule migrations",
-   "why": "Card-recommended order: 35, 37, 36, 33, 34 (needs a transfer position first), 32a (needs GATEWAY-RULE-API-HOLD-OFF). `known_rule` refuses ledgers for 32a/33/34/36/37 until each migration registers its rule. DISCHARGE: each pilot lands as its own card with an identity run and a switch-measured contribution ledger.",
-   "source": "docs/reports/gateway-rule-api/README.md"
+   "why": "Card-recommended order: 35, 37, 36, 33, 34 (needs a transfer position first), 32a (needs GATEWAY-RULE-API-HOLD-OFF). `known_rule` refuses ledgers for 32a/33/34/36/37 until each migration registers its rule. DISCHARGE: each pilot lands as its own card with an identity run and a switch-measured contribution ledger. RULE35-PILOT (2026-10-29) migrated rule 35 (identity run complete on all three live profiles; ledgers in contract/contributions/35/). It fixed the host capabilities the later pilots reuse: LexicalHost, TypedHost, the non-exhaustive TypedReading, Witness, and a reads/ask/witness TypedReaderArm; hosted arms refuse an admission with obligations (GATEWAY-RULE-API-ARM-OBLIGATIONS), which rule 37's premise needs first. Parity cost for plan decision 6: about 370 decision lines moved, 30 min of porting, 1 h 15 min active, 10 h 13 min measuring (three sides, three routes, under contention). Remaining: 37, 36, 33, 34, 32a. RULE37-PILOT (2026-10-29) migrated rule 37 to crates/gateway-rules/rule-37-result-constructors. It ran an identity run against baseline 80c8aea98 (declared none on all routes, with a checked bijective revision/digest substitution) and wrote switch-measured ledgers (eight-home +5 Safe, system 0, slice 0); registry id 37 is now known to known_rule. It added two vocabulary-free capabilities (CheckedOperandArm, SpecificationPremiseArm). The checked-specification settlement has no route-map position, so its premise arm is registered at classification, by its effect. Remaining: 35 (RULE35-PILOT, concurrent), 36, 33, 34 and 32a.",
+   "source": "docs/reports/gateway-rule-api/README.md, docs/reports/rule35-pilot/README.md, docs/reports/rule37-pilot/README.md"
   },
   {
    "id": "GATEWAY-RULE-API-OTHER-ENTRY-POINTS",
@@ -13163,8 +13143,8 @@
   {
    "id": "MEASURE-CORPUS-SIDE-CWD-IN-BUILD-IDENTITY",
    "title": "Corpus build identity digests the side's working directory",
-   "why": "Under `quirin-audit measure` each side's pinned corpus route runs in sides/<name>/work-corpus, and the unit build identity (projection.rs hypothesis_context) digests the working directory, so corpus artifacts are never byte-identical across sides and the tool reports composition-conflict for equal provenance. DISCHARGE: the tool runs every side's corpus at one fixed working directory, or the identity excludes it, with a byte-identity test. Observed again by LANDING-PUBLISH-COMPLETION: corpus sides differ only in environment digest fields; component union 370 against 185 rows; compared by rows (0 moved, figures equal) in the card's corpus-peak run and in the first landed publication at d4c43b5ac.",
-   "source": "docs/reports/gateway-rule-api/README.md, docs/reports/landing-publish-completion/README.md"
+   "why": "Under `quirin-audit measure` each side's pinned corpus route runs in sides/<name>/work-corpus, and the unit build identity (projection.rs hypothesis_context) digests the working directory, so corpus artifacts are never byte-identical across sides and the tool reports composition-conflict for equal provenance. DISCHARGE: the tool runs every side's corpus at one fixed working directory, or the identity excludes it, with a byte-identity test. Observed again by LANDING-PUBLISH-COMPLETION: corpus sides differ only in environment digest fields; component union 370 against 185 rows; compared by rows (0 moved, figures equal) in the card's corpus-peak run and in the first landed publication at d4c43b5ac. Observed again by RULE35-PILOT (base rev:80c8aea98, tip rev:555bd17db): 365 components for 185 rows, 0 rows moved; besides 64-hex digests the moved build identity also moves 24-hex `resource_contracts:` ids and id-sorted evidence order, which GATEWAY-RULE-API's substitution.py cannot pair; docs/reports/rule35-pilot/scripts/substitution_ids.py checks a one-to-one substitution of both token kinds with lists as multisets (all five differing corpus artifacts pass). A fix in the tool would retire both checkers.",
+   "source": "docs/reports/gateway-rule-api/README.md, docs/reports/landing-publish-completion/README.md, docs/reports/rule35-pilot/README.md"
   },
   {
    "id": "SUPERSESSION-BOUNDS-OUTER-VIEWS",
@@ -13197,18 +13177,39 @@
    "source": "docs/reports/contract-supersession/README.md"
   },
   {
-   "id": "PIN-REGENERATE-STAMP-MONOTONICITY",
-   "title": "pin --regenerate writes stamps without comparing them with the stamps it replaces",
-   "why": "Contract spec C06.6 says a re-pin carries a later stamp than the entry it replaces, and an explicit stamp that is not later refuses. `quirin-audit pin --regenerate` starts from no lock (contract_pin.rs: existing = None; only tip entries are carried), so Stamper::replacing sees no replaced stamp. An explicit --pinned-at earlier than the lock's stamps is accepted, and a default clock stamp behind the lock is written unadjusted, which can reorder supersession between bundles. Card LANDING-REPAIR found this by code reading; no run has shown it. DISCHARGE: regeneration passes each replaced entry's stamp to Stamper::replacing (refusing an explicit earlier stamp, moving a default one past it), with a test that regenerates under an earlier --pinned-at and a matching Lean or spec note if the model covers regeneration.",
-   "source": "docs/reports/landing-repair/README.md",
-   "recorded_by": "LANDING-REPAIR"
-  },
-  {
    "id": "CONTRACT-REQUIRE-BUNDLE-SHORTHAND",
    "title": "Add pinned shorthand bundles for repeated provider contract requirements",
    "why": "CMetrics and CFL contracts repeat long require lists. Add explicitly declared, provider-owned requirement bundles such as `contract_cmetrics_resource_v1` and `contract_cfl_resource_v1` whose expansion is pinned by exact clause identity, order and provenance. Missing, unknown, cyclic, duplicate or signature-mismatched bundles must refuse. A bundle is syntax-level requirement expansion only: it is not an alias for executable `resource_contract_v1`, supplies no call permission and cannot weaken Unknown. DISCHARGE: matching parser/formatter and Rust semantic support, placeholder-free Lean definitions/theorems, canonical `.qv` declarations, provider inventory/count/load-path pins, mutation controls for every refusal and fresh native attribution if any verdict-bearing semantics move.",
    "source": "docs/reports/cmt-getter-ownership-closure/README.md",
    "recorded_by": "CMT-GETTER-OWNERSHIP-CLOSURE"
+  },
+  {
+   "id": "PIN-TRACK-TIP-WRITE-ATOMICITY",
+   "title": "pin --track-tip writes each lock before the run can refuse",
+   "why": "`quirin-audit pin --track-tip` (contract_pin.rs run) writes each selected target's lock inside its loop, and refuses only afterwards when a named function is declared by no selected crate (or when `track` refuses a later target), so a refused run can leave earlier locks rewritten. Card PIN-REGENERATE-STAMP-MONOTONICITY made the update/regenerate loop compute every lock before writing any; --stamp-only and --drop-revision already did. Found by code reading; no run has shown it. DISCHARGE: the track-tip branch computes every lock and checks every named function before any write, with a test that a refused multi-target run leaves every lock byte-identical.",
+   "source": "docs/reports/pin-regenerate-stamp-monotonicity/README.md",
+   "recorded_by": "PIN-REGENERATE-STAMP-MONOTONICITY"
+  },
+  {
+   "id": "GATEWAY-RULES-PRODUCTION-SOURCE-SCANS",
+   "title": "Production-source scans skip rule packages",
+   "why": "Tests that enumerate production sources as `crates/*/src` (for example qcore-verification's composition_bounds.rs `production_sources`, the E03-B-O3 vacuity tripwire) do not see `crates/gateway-rules/<package>/src`, which RULE35-PILOT introduced. Rule 35's package states no such derivation, so nothing is missed today. DISCHARGE: every production-source scan includes rule packages, with a test naming rule 35's package.",
+   "source": "docs/reports/rule35-pilot/README.md",
+   "recorded_by": "RULE35-PILOT"
+  },
+  {
+   "id": "GATEWAY-RULE-API-ARM-OBLIGATIONS",
+   "title": "Hosted arms cannot carry an admission's obligations",
+   "why": "The gateway's rule host (`rule_hosts.rs`, RULE35-PILOT) refuses any arm admission that carries `Obligation::Premise` or `Obligation::Open`, because no arm placement has a row that could carry it (fail-closed, nothing dropped). Rule 37's `asserted_allocation` premise is the first that needs one. DISCHARGE: the position a premise-carrying arm answers at carries its obligations into the row's assumptions (and an open obligation into the denominator), with a test, before such an arm is hosted.",
+   "source": "docs/reports/rule35-pilot/README.md",
+   "recorded_by": "RULE35-PILOT"
+  },
+  {
+   "id": "RULE37-W4-ASSERT-PREMISE-VISIBILITY",
+   "title": "W4 summaries of asserting wrappers carry no named build premise",
+   "why": "With rule 37 off (QCORE_GATEWAY_RULES_OFF=37), the checked specifications of rd_calloc and rd_strdup are withdrawn, which is the existing W45 withdrawal. Their callers then see what W4 validates from the in-unit asserting body: a non-null result through the enabled assert's terminating call. A caller with no sizeof, such as rd_calloc(1, 16) in tests/rule37_switch.rs, therefore stays Safe on that summary, and its row names no asserted_allocation premise. This is no Unknown-to-Safe by the migration, since the row is Safe with 37 on too. It also predates rule 37 for any undeclared asserting wrapper. But it means the deployed-build fact rule 37 makes explicit for a declared specification is only implicit, as the analysed-build assumption, for a W4-inferred one. DISCHARGE: decide whether a W4 summary that rests on a terminating assertion must carry a named premise (and implement it with an identity or measured run), or record that it rests on the standing analysed-build assumption.",
+   "source": "docs/reports/rule37-pilot/README.md",
+   "recorded_by": "RULE37-PILOT"
   }
  ],
  "updated": "Completed plugin premise integration; exact hand-maintained union retains810followups, borrowed measured-source8419Rust/354Lean/freshcard133provider, exact source equivalence checked; authoritative root committed-matrix Python confirmation in integration receipt. CMetrics map/opts API model specifications added at the explicit user request. Eight declared-model API contracts remain outside interpreted views, with CMT-MAP-OPTS-CONTRACT-ADOPTION and CMT-LABELED-HASH-ZERO-STATIC-STORAGE Open. No trusted API coverage is claimed; the source gate is recorded by this card alongside its separate initializer native checkpoint. W48-CMT-TRACKED-INTERIOR-SELF-INIT implements rule 36b's checked initializer effect transport for an exact live owned root or embedded record, retaining actual self writes, invalidating aliased member facts and preserving resource obligations; nondefault custody frames refuse and no ordinary summary is exported. The canonical CFL intrusive_list.qv declares matching audit preconditions/effects; two CMetrics .qv modules add six map and two opts lifecycle models, including transitive ownership, partial failure, borrowed results and uncleared cleanup fields. All remain outside interpreted views; checked API adoption and labeled zero-hash storage accounting have named Open follow-ups. Fresh BASE/planner precedes prediction f18d96065 and implementation; the later contract amendment 08da23123 precedes .qv edits. Native corpus BASE/TIP Safe/Unknown/Pending/provisional-Unsafe: 1009 / 3816 / 0 / 9 to 1011 / 3814 / 0 / 9; full system/slice, 5781 NULL dictionaries and runtime projections are compared, 241 semantic leaves accounted, zero unexplained leaves and no prior Safe loss. Gate 8654 Rust / 370 Lean / 374 Python, provider 133 Rust / 25 Python and all five package verifies pass. The actual deep source reader uses 328 KiB below 1 MiB. Full getter closure remains Open; W48-CMT-SELF-INIT-DISJOINT-FRAMES tracks the next bounded frame extension, and W48-EXACT-RETURN-WITNESS-PRECISION is unchanged. Native evidence is isolated to measured e92d8aef35a8bd14550e90219d19a56eb3b196e7; later source gate 2d0d85299b830aa24d7f200d63a308653582363f validates the added declared API models separately; see docs/reports/w48-cmt-tracked-interior-self-init/README.md."
