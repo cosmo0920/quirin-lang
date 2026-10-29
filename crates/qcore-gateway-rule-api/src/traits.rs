@@ -33,6 +33,57 @@ pub trait Host {
     fn refusal(decision: &Self::Decision) -> Option<&str>;
 }
 
+/// Host capability of the classification arms (§2.2), fixed by rule 35's
+/// literal-read arm (card RULE35-PILOT): which tokens are literals.
+pub trait LexicalHost: Host {
+    /// Whether `token` is a string or character literal. The host's lexer
+    /// spells each literal as one token; how it spells it is the host's.
+    fn is_literal(token: &Self::Token) -> bool;
+}
+
+/// Host capability of the typed-reader arms (§7), fixed by rule 35's
+/// decayed-member arm (card RULE35-PILOT): the reads of one node of the
+/// unit's typed (Clang) AST an arm needs to decide it. Each read is total:
+/// an absent kind is empty, an absent attribute or type is `None`, an absent
+/// child list is empty, so a malformed node is decided, never trusted.
+pub trait TypedHost: Host {
+    /// The node's kind (`ImplicitCastExpr`, `MemberExpr`, ...).
+    fn node_kind(node: &Self::Node) -> &str;
+    /// A string attribute of the node (`castKind`, `opcode`, `name`).
+    fn node_attribute<'n>(node: &'n Self::Node, key: &str) -> Option<&'n str>;
+    /// The node's type spelling: the desugared spelling when the AST gives
+    /// one, else the written one.
+    fn node_type(node: &Self::Node) -> Option<&str>;
+    /// The node's children, in order.
+    fn node_children(node: &Self::Node) -> &[Self::Node];
+}
+
+/// What an admitted typed-reader arm has the host read in its place.
+/// Non-exhaustive: a later arm adds its reading here, and a host that does
+/// not know a reading refuses it.
+#[non_exhaustive]
+#[derive(Debug, PartialEq, Eq)]
+pub enum TypedReading<'n, N> {
+    /// Read `place` as the address of its initial element (rule 35, arm 2:
+    /// `&PATH[0]`): every hop of the place is checked as the host's address
+    /// reading (rule 10n(1)) checks it, and the array itself is not read.
+    ElementAddress(&'n N),
+}
+
+/// A typed-reader arm's decision on one node, as a host records it on parity
+/// runs (rule 12q's `typed-place` rows): `{"rule": <id>, <subject>:
+/// {<fields>}, "admitted": .., "refusal": ..}`.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Witness<'n> {
+    /// The row's key for the node decided (rule 35: `decayed_member`).
+    pub subject: &'static str,
+    /// The subject's fields, in order; `None` is recorded as null.
+    pub fields: Vec<(&'static str, Option<&'n str>)>,
+    pub admitted: bool,
+    /// The refusal's code, when the arm refused.
+    pub refusal: Option<&'static str>,
+}
+
 /// The identity a package answers under: its registry id.
 pub trait RulePackage {
     fn id(&self) -> &'static str;
@@ -113,7 +164,8 @@ pub trait StatementPre<H: Host + ?Sized>: RulePackage {
 
 /// §2.2: an arm amending one classification predicate (for example the
 /// lexical gate's access test). Admit means the arm's reading applies;
-/// refuse keeps the predicate's old answer.
+/// refuse keeps the predicate's old answer. An arm reads tokens through
+/// [`Host`] and, where it needs to know literals, [`LexicalHost`].
 pub trait ClassificationArm<H: Host + ?Sized>: RulePackage {
     fn ask(&self, host: &H, query: &TokenQuery<'_, H>) -> Answer<()>;
 }
@@ -154,10 +206,23 @@ pub trait ReturnFallback<H: Host + ?Sized>: RulePackage {
     fn ask(&self, host: &mut H, query: &ReturnQuery<'_, H>) -> Answer<H::Statement>;
 }
 
-/// §7: an arm of a typed reader. Admit means the arm's reading of `node`
-/// applies; refuse keeps the reader's old refusal.
+/// §7: an arm of a typed reader, reading nodes through [`TypedHost`].
+///
+/// The reader asks [`reads`](Self::reads) first: a node of the arm's shape
+/// is the arm's to decide, and the reader asks no older route for it.
+/// [`ask`](Self::ask) then admits with the [`TypedReading`] the host
+/// performs, or refuses, and the reader refuses the node (the reader's old
+/// answer for every node of such a shape was a refusal, which is what makes
+/// the arm an amendment). A switched-off arm is not asked at all, so the
+/// reader's older routes answer exactly as before the arm existed.
 pub trait TypedReaderArm<H: Host + ?Sized>: RulePackage {
-    fn ask(&self, host: &H, node: &H::Node) -> Answer<()>;
+    /// Whether `node` has the arm's shape.
+    fn reads(&self, host: &H, node: &H::Node) -> bool;
+    /// The arm's decision on a node of its shape.
+    fn ask<'n>(&self, host: &H, node: &'n H::Node) -> Answer<TypedReading<'n, H::Node>>;
+    /// Parity runs: the decision on a node of the arm's shape as a row, or
+    /// `None` when the arm records nothing.
+    fn witness<'n>(&self, host: &H, node: &'n H::Node) -> Option<Witness<'n>>;
 }
 
 #[cfg(test)]

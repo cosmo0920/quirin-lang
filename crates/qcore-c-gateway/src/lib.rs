@@ -13,12 +13,10 @@
 #[cfg(feature = "indirect-census")]
 pub mod access_path_census;
 mod aggregate_store;
-mod array_member_decay;
 pub mod atomic_publication_source;
 pub mod audit_ir;
 pub mod audit_ir_capture;
 pub mod audit_ir_store;
-mod literal_dereference;
 // Card CG19-ATOMIC-SOURCE-ROUTE (gateway rule 11i): C atomics routed to the
 // core weak-memory model.
 pub mod atomic_source_route;
@@ -197,6 +195,9 @@ mod typed_access_positions;
 mod typed_position_shapes;
 // Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 2 (rules 14a-14d).
 mod residual_access_reading;
+// Card RULE35-PILOT: the host of the rule packages under
+// `crates/gateway-rules/` (rule 35's two arms).
+mod rule_hosts;
 mod scalar_element_address;
 // Card CG10-COMMON-TYPED-PLACE (rule 10t): the common typed place.
 mod typed_place;

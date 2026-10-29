@@ -1,5 +1,5 @@
-//! Card **W48-BU-SINGLE-LEAF-BODIES** (gateway rule 35, arm 2): an array
-//! member that decays to a pointer at a `Borrowed` or data-tail actual is the
+//! Rule 35, arm 2 (typed-reader arm `array-member-decay`): an array member
+//! that decays to a pointer at a `Borrowed` or data-tail actual is the
 //! address of its first element, read as rule 14c's scalar element address.
 //!
 //! ## The gap
@@ -14,8 +14,10 @@
 //!
 //! ## The rule ([`decide`])
 //!
-//! At a call actual the W44 typed reader reads, an `ImplicitCastExpr` of kind
-//! `ArrayToPointerDecay` whose operand (through parentheses) is
+//! At a call actual the host's W44 typed reader reads (the C gateway's
+//! `typed_access_positions::StatementIndex::argument`), an `ImplicitCastExpr`
+//! of kind `ArrayToPointerDecay` ([`decayed_operand`]) whose operand (through
+//! parentheses) is
 //!
 //! 1. a **member place** (`B->F`, `S.F`, or a deeper member path), and
 //! 2. of a **one-dimensional array type whose element is a builtin scalar**
@@ -23,8 +25,9 @@
 //!    opaque element), and
 //! 3. **neither `volatile` nor `_Atomic`**,
 //!
-//! is read as the address of its first element: every hop of the path keeps
-//! its per-hop obligation, the array itself is not read, and the never-bound
+//! is read as the address of its first element
+//! ([`TypedReading::ElementAddress`]): every hop of the path keeps its
+//! per-hop obligation, the array itself is not read, and the never-bound
 //! premise on every root stands (rule 10n(1)'s address premise, unchanged).
 //! An array holding only scalars holds no pointer a callee writing through
 //! the address could reach, which is exactly rule 14c's premise. Everything
@@ -38,21 +41,13 @@
 //! boundary 28). The Lean model is `QCore.LiteralDecayReadings`
 //! (`decayVectors`).
 
-use serde_json::Value;
+use qcore_gateway_rule_api::traits::{RulePackage, TypedReaderArm};
+use qcore_gateway_rule_api::{Answer, TypedHost, TypedReading, Witness};
 
-use crate::typed_c_ast::{children, kind};
-
-/// The rule's arm switch: registry rule `35` (card GATEWAY-RULE-API, which
-/// replaced the compile-time `DECAY_ARM`); off keeps the refusal.
-fn decay_arm() -> bool {
-    crate::gateway_rules::enabled("35")
-}
-
-/// The element of the decayed array, read from the member's Clang type.
+/// The element of the decayed array, read from the member's type spelling.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) enum Element {
-    /// A builtin scalar (the reader's [`crate::typed_access_path::is_scalar`]
-    /// words).
+pub enum Element {
+    /// A builtin scalar.
     Scalar,
     /// A pointer or a function pointer.
     Pointer,
@@ -66,7 +61,8 @@ pub(crate) enum Element {
 }
 
 impl Element {
-    pub(crate) fn code(self) -> &'static str {
+    #[must_use]
+    pub fn code(self) -> &'static str {
         match self {
             Self::Scalar => "scalar",
             Self::Pointer => "pointer",
@@ -79,7 +75,7 @@ impl Element {
 
 /// The rule's answer.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) enum Decision {
+pub enum Decision {
     Admit,
     /// The decayed operand is not a member place.
     NotMember,
@@ -90,7 +86,8 @@ pub(crate) enum Decision {
 }
 
 impl Decision {
-    pub(crate) fn code(self) -> &'static str {
+    #[must_use]
+    pub fn code(self) -> &'static str {
         match self {
             Self::Admit => "admit",
             Self::NotMember => "not-member",
@@ -101,7 +98,8 @@ impl Decision {
 }
 
 /// `QCore.LiteralDecayReadings.decideDecay`.
-pub(crate) fn decide(member: bool, element: Element, qualified: bool) -> Decision {
+#[must_use]
+pub fn decide(member: bool, element: Element, qualified: bool) -> Decision {
     if !member {
         Decision::NotMember
     } else if qualified {
@@ -115,8 +113,7 @@ pub(crate) fn decide(member: bool, element: Element, qualified: bool) -> Decisio
 
 /// The decision vectors shared with `proof/QCore/LiteralDecayReadings.lean`
 /// (`decayVectors`): member, element, qualified, decision.
-#[cfg(test)]
-pub(crate) const DECISION_VECTORS: &[(bool, &str, bool, &str)] = &[
+pub const DECISION_VECTORS: &[(bool, &str, bool, &str)] = &[
     (true, "scalar", false, "admit"),
     (true, "pointer", false, "element"),
     (true, "record", false, "element"),
@@ -128,7 +125,8 @@ pub(crate) const DECISION_VECTORS: &[(bool, &str, bool, &str)] = &[
 ];
 
 /// The element class of an array type spelling `T [N]`.
-pub(crate) fn element_of(array_type: &str) -> Element {
+#[must_use]
+pub fn element_of(array_type: &str) -> Element {
     let Some(open) = array_type.find('[') else {
         return Element::Other;
     };
@@ -164,70 +162,75 @@ pub(crate) fn element_of(array_type: &str) -> Element {
     }
 }
 
-/// The member place a decayed actual converts, when `node` is an
+/// The place a decayed actual converts, when `node` is an
 /// `ArrayToPointerDecay` cast (through parentheses); `None` otherwise.
-pub(crate) fn decayed_operand(node: &Value) -> Option<&Value> {
-    if kind(node) != "ImplicitCastExpr"
-        || node["castKind"].as_str() != Some("ArrayToPointerDecay")
-        || !decay_arm()
+pub fn decayed_operand<H: TypedHost + ?Sized>(node: &H::Node) -> Option<&H::Node> {
+    if H::node_kind(node) != "ImplicitCastExpr"
+        || H::node_attribute(node, "castKind") != Some("ArrayToPointerDecay")
     {
         return None;
     }
-    let mut operand = children(node).first()?;
-    while kind(operand) == "ParenExpr" {
-        operand = children(operand).first()?;
+    let mut operand = H::node_children(node).first()?;
+    while H::node_kind(operand) == "ParenExpr" {
+        operand = H::node_children(operand).first()?;
     }
     Some(operand)
 }
 
 /// The decision for the operand of a decayed actual.
-pub(crate) fn decide_operand(operand: &Value) -> Decision {
-    let array_type = crate::typed_access_path::qual(operand).unwrap_or("");
+pub fn decide_operand<H: TypedHost + ?Sized>(operand: &H::Node) -> Decision {
+    let array_type = H::node_type(operand).unwrap_or("");
     decide(
-        kind(operand) == "MemberExpr",
+        H::node_kind(operand) == "MemberExpr",
         element_of(array_type),
         array_type.contains("volatile") || array_type.contains("_Atomic"),
     )
 }
 
-/// Parity only: the decision as a `typed-place` place row (rule 12q).
-pub(crate) fn record(
-    decisions: Option<&crate::consultation_decisions::Decisions>,
-    operand: &Value,
-    decision: Decision,
-) {
-    let Some(decisions) = decisions else {
-        return;
-    };
-    decisions.place(|| {
-        serde_json::json!({
-            "rule": "35",
-            "decayed_member": {
-                "kind": kind(operand),
-                "type": crate::typed_access_path::qual(operand),
-                "element": element_of(crate::typed_access_path::qual(operand).unwrap_or("")).code(),
-            },
-            "admitted": decision == Decision::Admit,
-            "refusal": (decision != Decision::Admit).then(|| decision.code()),
-        })
-    });
+/// The package of arm 2: registry rule `35`, typed-reader arm
+/// `array-member-decay`, route `array_member_decay::decide`. It reads every
+/// `ArrayToPointerDecay` cast with an operand, admits the scalar member
+/// places as their element address, and refuses the rest.
+#[derive(Clone, Copy, Debug, Default)]
+pub struct ArrayMemberDecay;
+
+impl RulePackage for ArrayMemberDecay {
+    fn id(&self) -> &'static str {
+        crate::ID
+    }
 }
 
-impl crate::typed_access_path::Reader<'_> {
-    /// A decayed array member at a call actual, read as the address of its
-    /// first element: every hop of the place is checked exactly as rule
-    /// 10n(1)'s address reads it, and the array is not read.
-    pub(crate) fn decayed_address(&mut self, cast: &Value) -> Option<()> {
-        let operand = decayed_operand(cast)?;
-        let decision = decide_operand(operand);
-        record(self.decisions(), operand, decision);
-        if decision != Decision::Admit {
-            return None;
+impl<H: TypedHost + ?Sized> TypedReaderArm<H> for ArrayMemberDecay {
+    fn reads(&self, _host: &H, node: &H::Node) -> bool {
+        decayed_operand::<H>(node).is_some()
+    }
+
+    fn ask<'n>(&self, _host: &H, node: &'n H::Node) -> Answer<TypedReading<'n, H::Node>> {
+        match decayed_operand::<H>(node) {
+            Some(operand) if decide_operand::<H>(operand) == Decision::Admit => {
+                Answer::admit(TypedReading::ElementAddress(operand))
+            }
+            _ => Answer::Refuse,
         }
-        self.address_target = true;
-        let read = self.path(operand, false, false);
-        self.address_target = false;
-        read
+    }
+
+    /// The decision as a `typed-place` row: `{"rule": "35",
+    /// "decayed_member": {"kind", "type", "element"}, "admitted",
+    /// "refusal"}`.
+    fn witness<'n>(&self, _host: &H, node: &'n H::Node) -> Option<Witness<'n>> {
+        let operand = decayed_operand::<H>(node)?;
+        let decision = decide_operand::<H>(operand);
+        let array_type = H::node_type(operand);
+        Some(Witness {
+            subject: "decayed_member",
+            fields: vec![
+                ("kind", Some(H::node_kind(operand))),
+                ("type", array_type),
+                ("element", Some(element_of(array_type.unwrap_or("")).code())),
+            ],
+            admitted: decision == Decision::Admit,
+            refusal: (decision != Decision::Admit).then(|| decision.code()),
+        })
     }
 }
 

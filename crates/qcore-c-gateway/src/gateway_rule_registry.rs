@@ -175,10 +175,10 @@ pub const REGISTRY: &[RuleEntry] = &[
     },
     RuleEntry {
         id: "35",
-        crate_name: "qcore-c-gateway",
+        crate_name: "rule-35-literal-decay",
         placements: &[
-            Placement { position: Position::Classification, order: None, arm: Some("literal-read"), route: "literal_dereference::decide" },
-            Placement { position: Position::TypedReader, order: None, arm: Some("array-member-decay"), route: "array_member_decay::decayed_operand" },
+            Placement { position: Position::Classification, order: None, arm: Some("literal-read"), route: "literal_read::decide" },
+            Placement { position: Position::TypedReader, order: None, arm: Some("array-member-decay"), route: "array_member_decay::decide" },
         ],
         lean: &["QCore.LiteralDecayReadings"],
         document: "docs/agents/rules/35.md",

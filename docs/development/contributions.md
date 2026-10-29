@@ -8,16 +8,31 @@ Each live evaluation profile's total comes from a real run (its baseline record 
 
 Real-run total (baseline `d609aa16e9e6`, measured at `b403cd4dedda`): Safe 1013, Unknown 3811, Unsafe 10.
 
-No contribution ledger is recorded for this profile.
+Measurement `3f505732cabd` (docs/reports/rule35-pilot/native-comparison.json), rules 35 switched off in one binary (`555bd17db877`), current:
+
+- base (rules 35 off): Safe 1001, Unknown 3823, Unsafe 10
+- rule 35: 12 rows under no named premise; Unknown→Safe 12; 104 touched rows stay Unknown; leaves traded −123 +8
+- interactions of rule 35 with other rules: not measured (switched alone)
+- consistency: base + contributions + interactions = Safe 1013, Unknown 3811, Unsafe 10 = the real-run total
 
 ## fluent-bit-system
 
 Real-run total (baseline `62f7368f87f9`, measured at `710021bd713b`): Safe 101, Unknown 343, Unsafe 4.
 
-No contribution ledger is recorded for this profile.
+Measurement `3f505732cabd` (docs/reports/rule35-pilot/native-comparison.json), rules 35 switched off in one binary (`555bd17db877`), current:
+
+- base (rules 35 off): Safe 101, Unknown 343, Unsafe 4
+- rule 35: no rows; 4 touched rows stay Unknown; leaves traded −4 +0
+- interactions of rule 35 with other rules: not measured (switched alone)
+- consistency: base + contributions + interactions = Safe 101, Unknown 343, Unsafe 4 = the real-run total
 
 ## fluent-bit-tail-pause
 
 Real-run total (baseline `dce03b504b89`, measured at `710021bd713b`): Pending 4, Safe 57, Unknown 342, Unsafe 1.
 
-No contribution ledger is recorded for this profile.
+Measurement `3f505732cabd` (docs/reports/rule35-pilot/native-comparison.json), rules 35 switched off in one binary (`555bd17db877`), current:
+
+- base (rules 35 off): Pending 4, Safe 57, Unknown 342, Unsafe 1
+- rule 35: no rows; 9 touched rows stay Unknown; leaves traded −11 +3
+- interactions of rule 35 with other rules: not measured (switched alone)
+- consistency: base + contributions + interactions = Pending 4, Safe 57, Unknown 342, Unsafe 1 = the real-run total

@@ -15,8 +15,10 @@ registry is the source; this script writes
 It validates first and fails closed: an unknown key or position, a placement
 with both or neither of `order` and `arm`, a gap or repeat in a table's
 orders, an ordered placement at a position with no generated table, a hold
-that is switchable, a missing rule document or Lean module, or a duplicated id
-or reason key writes nothing. Every ordered placement must also equal the
+that is switchable, a missing rule document or Lean module, a duplicated id
+or reason key, or a crate that is neither `qcore-c-gateway` nor a rule package
+`crates/gateway-rules/<crate>/` (card RULE35-PILOT) whose arm routes are
+`pub fn`s of its `src/<module>.rs` writes nothing. Every ordered placement must also equal the
 frozen route map's row; the Python suite checks that
 (`scripts/tests/test_gateway_registry.py`), with committed equals generated.
 
@@ -33,6 +35,8 @@ REGISTRY = Path("crates/gateway-rules/registry.toml")
 REGISTRY_RS = Path("crates/qcore-c-gateway/src/gateway_rule_registry.rs")
 TABLE_RS = Path("crates/qcore-c-gateway/src/legacy_route_table.rs")
 SCHEMA = "qcore-gateway-rules/1"
+GATEWAY = "qcore-c-gateway"
+RULE_PACKAGES = Path("crates/gateway-rules")
 START = "// generated:registry:start"
 END = "// generated:registry:end"
 
@@ -76,6 +80,19 @@ class RegistryError(ValueError):
     pass
 
 
+def rule_package(root, name):
+    """The directory of rule package `name` (card RULE35-PILOT: a migrated
+    rule's crate is `crates/gateway-rules/<name>/`, its manifest's package
+    name `name`), or None."""
+    directory = root / RULE_PACKAGES / name
+    manifest = directory / "Cargo.toml"
+    if not manifest.is_file():
+        return None
+    with open(manifest, "rb") as handle:
+        package = tomllib.load(handle).get("package", {})
+    return directory if package.get("name") == name else None
+
+
 def load(root=ROOT):
     with open(root / REGISTRY, "rb") as handle:
         return tomllib.load(handle)
@@ -113,6 +130,10 @@ def validate(registry, root=ROOT):
         ids.add(rule_id)
         if not isinstance(rule["crate"], str) or not rule["crate"]:
             fail(f"{where}: crate must be a crate name")
+        package = rule_package(root, rule["crate"]) if rule["crate"] != GATEWAY else None
+        if rule["crate"] != GATEWAY and package is None:
+            fail(f"{where}: crate {rule['crate']} is neither {GATEWAY} nor a rule package "
+                 f"{RULE_PACKAGES}/{rule['crate']}/ whose manifest names it")
         if rule["off"] not in OFF:
             fail(f"{where}: off must be one of {sorted(OFF)}")
         if not (root / rule["document"]).is_file():
@@ -175,6 +196,13 @@ def validate(registry, root=ROOT):
                 arms.add((position, placement["arm"]))
                 if not isinstance(route, str) or not ARM_ROUTE.match(route):
                     fail(f"{where} at {position}: an arm's route is `module::function`")
+                if package is not None:
+                    module, function = route.split("::")
+                    source = package / "src" / f"{module}.rs"
+                    if not source.is_file() or not re.search(
+                            rf"^pub fn {function}\(", source.read_text(encoding="utf-8"), re.M):
+                        fail(f"{where} at {position}: route {route} is not a `pub fn` of "
+                             f"{source.relative_to(root)}")
     for position, listed in orders.items():
         if sorted(listed) != list(range(1, len(listed) + 1)):
             fail(f"{position}: consultation orders {sorted(listed)} are not 1..{len(listed)}")

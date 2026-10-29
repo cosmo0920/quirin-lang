@@ -1,0 +1,57 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "RULE35-PILOT",
+  "base": "80c8aea98",
+  "measured_tip": "555bd17db",
+  "increment_paragraph": "**RULE35-PILOT** (pluggable-cards seam B, phase P2, the first pilot of GATEWAY-RULE-API-PILOT-MIGRATIONS; [report](../../reports/rule35-pilot/README.md)) moves gateway rule 35 out of `qcore-c-gateway` into the rule package `crates/gateway-rules/rule-35-literal-decay` (depends on the rule API only): the classification arm `literal-read` and the typed-reader arm `array-member-decay`, with their decision tables bound to `QCore.LiteralDecayReadings` (unchanged; the proof did not move). The rule API gains the host capabilities `LexicalHost` and `TypedHost`, the non-exhaustive `TypedReading` and the parity `Witness`, and `TypedReaderArm` becomes `reads`/`ask`/`witness`; the gateway hosts the package in `rule_hosts.rs` through the registry switch, refuses an admission carrying obligations, and keeps no rule-35 decision. The registry row names the package, and the generator refuses a crate that is not the gateway or a package under `crates/gateway-rules/`, or an arm route that is not a `pub fn` of it; a layering test holds every rule package to the API. One `quirin-audit measure` run (base `rev:80c8aea98`, tip `rev:555bd17db`, `--rules-off 35`, `--declared`, three live profiles, complete in 10 h 13 min): system and slice byte-identical, corpus 0 of 4,834 rows moved and equal under a checked one-to-one substitution of 64-hex digests and 24-hex contract ids (MEASURE-CORPUS-SIDE-CWD-IN-BUILD-IDENTITY), every profile reproducing its baseline; rule 35's switch-measured ledgers (`contract/contributions/35/`): eight-home 12 Unknown→Safe (exactly the rule card's twelve), system and slice 0 rows with leaf trades only; check and consistency pass. Parity cost: about 30 min to move the code, ten hours to measure.",
+  "status_paragraph": "Gateway rule packages (2026-10-29, RULE35-PILOT): rule 35 is the first rule outside `qcore-c-gateway`, in `crates/gateway-rules/rule-35-literal-decay`, hosted through the rule API with no verdict change on the three live profiles, and its contribution is the first switch-measured ledger ([contributions](development/contributions.md)): eight-home 12 Unknown→Safe, system and slice no row. The other pilot rules' bodies still live in `qcore-c-gateway`.",
+  "ledger": [
+    {
+      "id": "GATEWAY-RULE-API-PILOT-MIGRATIONS",
+      "operation": "amend",
+      "text": "RULE35-PILOT (2026-10-29) migrated rule 35 (identity run complete on all three live profiles; ledgers in contract/contributions/35/). It fixed the host capabilities the later pilots reuse: LexicalHost, TypedHost, the non-exhaustive TypedReading, Witness, and a reads/ask/witness TypedReaderArm; hosted arms refuse an admission with obligations (GATEWAY-RULE-API-ARM-OBLIGATIONS), which rule 37's premise needs first. Parity cost for plan decision 6: about 370 decision lines moved, 30 min of porting, 1 h 15 min active, 10 h 13 min measuring (three sides, three routes, under contention). Remaining: 37, 36, 33, 34, 32a.",
+      "source": "docs/reports/rule35-pilot/README.md"
+    },
+    {
+      "id": "CONTRIBUTION-LEDGER-RULE-35",
+      "operation": "retire",
+      "why": "DISCHARGE (RULE35-PILOT, 2026-10-29): after rule 35's migration, `quirin-audit measure --rules-off 35` on the three live profiles wrote its ledgers (contract/contributions/35/{eight-home,fluent-bit-system,fluent-bit-tail-pause}.json via contribution_ledgers.py write; check and consistency exit 0); the eight-home ledger's 12 Unknown->Safe rows are exactly the twelve rows W48-BU-SINGLE-LEAF-BODIES recorded by its compile-time arms-off build; system and slice move no row.",
+      "source": "docs/reports/rule35-pilot/README.md"
+    },
+    {
+      "id": "MEASURE-TOOL-RULES-OFF-LIVE",
+      "operation": "retire",
+      "why": "DISCHARGE (RULE35-PILOT, 2026-10-29): one real `measure --rules-off 35` on a migrated rule completed (status complete, no failures, the post-run off-list check passed: tip-off components record off = [\"35\"], the other sides none); its contribution slot holds three quirin-contribution-ledger/1 ledgers built from the tip-off -> tip comparison, equal to rule 35's recorded delta (12 corpus rows), written with contribution_ledgers.py write and passing check and consistency.",
+      "source": "docs/reports/rule35-pilot/README.md"
+    },
+    {
+      "id": "MEASURE-CORPUS-SIDE-CWD-IN-BUILD-IDENTITY",
+      "operation": "append",
+      "text": "Observed again by RULE35-PILOT (base rev:80c8aea98, tip rev:555bd17db): 365 components for 185 rows, 0 rows moved; besides 64-hex digests the moved build identity also moves 24-hex `resource_contracts:` ids and id-sorted evidence order, which GATEWAY-RULE-API's substitution.py cannot pair; docs/reports/rule35-pilot/scripts/substitution_ids.py checks a one-to-one substitution of both token kinds with lists as multisets (all five differing corpus artifacts pass). A fix in the tool would retire both checkers.",
+      "source": "docs/reports/rule35-pilot/README.md"
+    },
+    {
+      "id": "GATEWAY-RULES-PRODUCTION-SOURCE-SCANS",
+      "operation": "register",
+      "title": "Production-source scans skip rule packages",
+      "text": "Tests that enumerate production sources as `crates/*/src` (for example qcore-verification's composition_bounds.rs `production_sources`, the E03-B-O3 vacuity tripwire) do not see `crates/gateway-rules/<package>/src`, which RULE35-PILOT introduced. Rule 35's package states no such derivation, so nothing is missed today. DISCHARGE: every production-source scan includes rule packages, with a test naming rule 35's package.",
+      "source": "docs/reports/rule35-pilot/README.md",
+      "recorded_by": "RULE35-PILOT"
+    },
+    {
+      "id": "GATEWAY-RULE-API-ARM-OBLIGATIONS",
+      "operation": "register",
+      "title": "Hosted arms cannot carry an admission's obligations",
+      "text": "The gateway's rule host (`rule_hosts.rs`, RULE35-PILOT) refuses any arm admission that carries `Obligation::Premise` or `Obligation::Open`, because no arm placement has a row that could carry it (fail-closed, nothing dropped). Rule 37's `asserted_allocation` premise is the first that needs one. DISCHARGE: the position a premise-carrying arm answers at carries its obligations into the row's assumptions (and an open obligation into the denominator), with a test, before such an arm is hosted.",
+      "source": "docs/reports/rule35-pilot/README.md",
+      "recorded_by": "RULE35-PILOT"
+    }
+  ],
+  "contribution": {
+    "ledgers": [
+      "contract/contributions/35/eight-home.json",
+      "contract/contributions/35/fluent-bit-system.json",
+      "contract/contributions/35/fluent-bit-tail-pause.json"
+    ]
+  }
+}
