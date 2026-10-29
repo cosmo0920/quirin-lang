@@ -215,3 +215,24 @@ off = "refuses"
 placements = [
   { position = "typed-reader", arm = "scalar-element-address", route = "scalar_element_address::shape_admitted" },
 ]
+
+# Card RULE33-PILOT: rule 33's body lives in its own package (the frame
+# bodies' word shapes, the caller expansion and the selection decisions); the
+# host reads each frame against its contracts and type model. Two arms: the
+# body rewrite of each CFG build, which expands a checked frame's own body and
+# its decimal-constant caller statements into the constituent calls (no
+# route-map position names CFG-build rewrites, ROUTE-MAP §1, so it sits at the
+# statement rewrite, its effect), and the frame's own row under the selection
+# entry, whose materialization is read at the frame's lookup call (the
+# contracted arm, §2.2). Off expands nothing and installs no frame, which is
+# the gateway before rule 33.
+[[rule]]
+id = "33"
+crate = "rule-33-removed-selection"
+lean = ["QCore.RemovedSelection", "QCore.RemovedSelectionSwitch"]
+document = "docs/agents/rules/33.md"
+off = "refuses"
+placements = [
+  { position = "statement-rewrite", arm = "removed-selection-expansion", route = "selection_route::expand" },
+  { position = "classification", arm = "removed-selection-entry", route = "selection_route::row" },
+]

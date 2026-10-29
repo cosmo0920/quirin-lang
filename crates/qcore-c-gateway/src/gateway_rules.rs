@@ -113,10 +113,19 @@ mod tests {
     fn the_registry_keeps_the_api_laws_and_every_rule_is_switchable() {
         assert_eq!(check_registry(REGISTRY), Ok(()));
         assert!(REGISTRY.iter().all(|entry| entry.off == Off::Refuses));
+        // A body lives in the gateway until its migration card moves it to
+        // its own package under crates/gateway-rules/ (card RULE33-PILOT:
+        // rule 33).
         assert!(
             REGISTRY
                 .iter()
-                .all(|entry| entry.crate_name == "qcore-c-gateway")
+                .all(|entry| entry.crate_name == "qcore-c-gateway"
+                    || entry.crate_name.starts_with(&format!("rule-{}-", entry.id)))
+        );
+        assert!(
+            REGISTRY
+                .iter()
+                .any(|entry| entry.id == "33" && entry.crate_name == "rule-33-removed-selection")
         );
     }
 

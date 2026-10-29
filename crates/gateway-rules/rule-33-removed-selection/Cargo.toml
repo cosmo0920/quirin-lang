@@ -1,0 +1,12 @@
+[package]
+name = "rule-33-removed-selection"
+version = "0.1.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+description = "C gateway rule 33 (checked removed-selection frames): the frame's word shapes, its caller expansion and its selection-entry decisions, as a rule package of the gateway rule interface."
+
+# Plan docs/plans/pluggable-cards/README.md seam B: a rule package depends on
+# the rule interface only, never on qcore-c-gateway or another rule package
+# (a test holds the set).
+[dependencies]
+qcore-gateway-rule-api = { path = "../../qcore-gateway-rule-api", version = "0.1.0" }
