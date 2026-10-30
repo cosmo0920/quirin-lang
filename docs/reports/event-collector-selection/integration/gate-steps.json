@@ -1,0 +1,342 @@
+{
+  "schema": "quirin-gate-scope/1",
+  "source": "git diff",
+  "base": "a731e42f00e25055d8b5422db951b04eb0019afc",
+  "head": "a010c6dfc9f410b674358c99b5dfd58075d3d640",
+  "committed": [
+    "docs/STATUS.md",
+    "docs/development/increments/wave-48-part12.md",
+    "docs/reports/event-collector-selection/README.md",
+    "docs/reviews/r0_3/acceptance_matrix.json"
+  ],
+  "uncommitted": [],
+  "scope": {
+    "paths": [
+      "docs/STATUS.md",
+      "docs/development/increments/wave-48-part12.md",
+      "docs/reports/event-collector-selection/README.md",
+      "docs/reviews/r0_3/acceptance_matrix.json"
+    ],
+    "attribution": {
+      "docs/STATUS.md": [
+        "class prose"
+      ],
+      "docs/development/increments/wave-48-part12.md": [
+        "class prose"
+      ],
+      "docs/reports/event-collector-selection/README.md": [
+        "class prose"
+      ],
+      "docs/reviews/r0_3/acceptance_matrix.json": [
+        "class prose"
+      ]
+    },
+    "affected": {},
+    "mode": "full",
+    "full_reasons": [
+      "requested with --full"
+    ],
+    "rust_packages": [
+      "qcore-audit",
+      "qcore-c-gateway",
+      "qcore-compiler",
+      "qcore-contract",
+      "qcore-core",
+      "qcore-frontend",
+      "qcore-gateway-rule-api",
+      "qcore-schemas",
+      "qcore-verification",
+      "qcore-verifier-host",
+      "qcorec",
+      "quirin-audit-plugin",
+      "quirin-audit-plugin-libevent",
+      "quirin-audit-plugin-measure",
+      "quirin-source-analysis",
+      "rule-33-removed-selection",
+      "rule-34-element-destroyer",
+      "rule-35-literal-decay",
+      "rule-36-exact-formal-return",
+      "rule-37-result-constructors"
+    ],
+    "probes": true,
+    "lean": {
+      "mode": "all",
+      "reasons": [],
+      "modules": [],
+      "audits": []
+    },
+    "python_reasons": [],
+    "provider_gate": false,
+    "provider_reasons": [],
+    "provider_members_reached_without_providers_change": [],
+    "unresolved_includes": [
+      {
+        "crate": "qcore-compiler",
+        "source": "compiler/tests/ct_corpus.rs:8069",
+        "literal": "include_str!(\\\"fixtures/ct/{id}/case.qr\\\")\");",
+        "why": "argument is not a string literal (or the macro is inside a string)"
+      }
+    ]
+  },
+  "planned_steps": [
+    {
+      "name": "submodules",
+      "argv": [
+        "git",
+        "-C",
+        "/media/Data/GitHub/quirin-lang",
+        "submodule",
+        "status",
+        "--recursive"
+      ],
+      "slot": null
+    },
+    {
+      "name": "fmt",
+      "argv": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "slot": null
+    },
+    {
+      "name": "clippy",
+      "argv": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "slot": null
+    },
+    {
+      "name": "rust-suite",
+      "argv": [
+        "/usr/bin/python3",
+        "/media/Data/GitHub/quirin-lang/scripts/run_test_binaries.py",
+        "--log-dir",
+        "/media/Data/GitHub/quirin-lang/private/event-collector-landing-20261030/full-plan/rust-suite"
+      ],
+      "slot": "rust-suite"
+    },
+    {
+      "name": "probe-reevaluation_probe",
+      "argv": [
+        "cargo",
+        "run",
+        "--config",
+        "build.incremental=false",
+        "--config",
+        "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/scripts/rustc_test_dylib.py\"",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_probe"
+      ],
+      "slot": null
+    },
+    {
+      "name": "probe-reevaluation_followup",
+      "argv": [
+        "cargo",
+        "run",
+        "--config",
+        "build.incremental=false",
+        "--config",
+        "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/scripts/rustc_test_dylib.py\"",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_followup"
+      ],
+      "slot": null
+    },
+    {
+      "name": "python",
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "slot": null
+    }
+  ],
+  "slots": true,
+  "started": "2026-10-30T12:14:36.782073+00:00",
+  "ran": true,
+  "validation_tip": "a010c6dfc9f410b674358c99b5dfd58075d3d640",
+  "scope_plan_origin": "full landing gate: full workspace Rust, both probes and all Lean audits explicitly selected even though pending integration records are prose-only",
+  "environment": {
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_BUILD_JOBS": "2"
+  },
+  "steps": [
+    {
+      "name": "submodules",
+      "argv": [
+        "git",
+        "-C",
+        "/media/Data/GitHub/quirin-lang",
+        "submodule",
+        "status",
+        "--recursive"
+      ],
+      "exit": 0,
+      "seconds": 0.0,
+      "log": "/media/Data/GitHub/quirin-lang/private/event-collector-landing-20261030/full-gate/submodules.log",
+      "counts": {
+        "submodules": 1,
+        "not_checked_out_or_moved": []
+      }
+    },
+    {
+      "name": "fmt",
+      "argv": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "seconds": 4.0,
+      "log": "/media/Data/GitHub/quirin-lang/private/event-collector-landing-20261030/full-gate/fmt.log",
+      "counts": {}
+    },
+    {
+      "name": "clippy",
+      "argv": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "seconds": 52.8,
+      "log": "/media/Data/GitHub/quirin-lang/private/event-collector-landing-20261030/full-gate/clippy.log",
+      "counts": {}
+    },
+    {
+      "name": "rust-suite",
+      "argv": [
+        "/usr/bin/python3",
+        "/media/Data/GitHub/quirin-lang/scripts/gate_slot.py",
+        "rust-suite",
+        "--receipt",
+        "/media/Data/GitHub/quirin-lang/private/event-collector-landing-20261030/full-gate/slots/rust-suite.json",
+        "--",
+        "/usr/bin/python3",
+        "/media/Data/GitHub/quirin-lang/scripts/run_test_binaries.py",
+        "--log-dir",
+        "/media/Data/GitHub/quirin-lang/private/event-collector-landing-20261030/full-gate/rust-suite",
+        "--jobs",
+        "16"
+      ],
+      "exit": 0,
+      "seconds": 1113.5,
+      "log": "/media/Data/GitHub/quirin-lang/private/event-collector-landing-20261030/full-gate/rust-suite.log",
+      "counts": {
+        "units": 584,
+        "passed": 8927,
+        "failed": 0,
+        "ignored": 15,
+        "measured": 0,
+        "filtered": 69,
+        "summaries": 617,
+        "packages": null,
+        "summary": "/media/Data/GitHub/quirin-lang/private/event-collector-landing-20261030/full-gate/rust-suite/summary.json",
+        "ok": true
+      },
+      "slot_receipt": "/media/Data/GitHub/quirin-lang/private/event-collector-landing-20261030/full-gate/slots/rust-suite.json"
+    },
+    {
+      "name": "probe-reevaluation_probe",
+      "argv": [
+        "cargo",
+        "run",
+        "--config",
+        "build.incremental=false",
+        "--config",
+        "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/scripts/rustc_test_dylib.py\"",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_probe"
+      ],
+      "exit": 0,
+      "seconds": 0.2,
+      "log": "/media/Data/GitHub/quirin-lang/private/event-collector-landing-20261030/full-gate/probe-reevaluation_probe.log",
+      "counts": {}
+    },
+    {
+      "name": "probe-reevaluation_followup",
+      "argv": [
+        "cargo",
+        "run",
+        "--config",
+        "build.incremental=false",
+        "--config",
+        "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/scripts/rustc_test_dylib.py\"",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_followup"
+      ],
+      "exit": 0,
+      "seconds": 0.4,
+      "log": "/media/Data/GitHub/quirin-lang/private/event-collector-landing-20261030/full-gate/probe-reevaluation_followup.log",
+      "counts": {}
+    },
+    {
+      "name": "lean",
+      "argv": [
+        "/usr/bin/python3",
+        "/media/Data/GitHub/quirin-lang/scripts/gate_slot.py",
+        "lean",
+        "--receipt",
+        "/media/Data/GitHub/quirin-lang/private/event-collector-landing-20261030/full-gate/slots/lean.json",
+        "--",
+        "/usr/bin/python3",
+        "/media/Data/GitHub/quirin-lang/scripts/check_lean_audits.py"
+      ],
+      "exit": 0,
+      "seconds": 16.3,
+      "log": "/media/Data/GitHub/quirin-lang/private/event-collector-landing-20261030/full-gate/lean.log",
+      "counts": {
+        "audits": 396
+      },
+      "slot_receipt": "/media/Data/GitHub/quirin-lang/private/event-collector-landing-20261030/full-gate/slots/lean.json"
+    },
+    {
+      "name": "python",
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "exit": 0,
+      "seconds": 40.3,
+      "log": "/media/Data/GitHub/quirin-lang/private/event-collector-landing-20261030/full-gate/python.log",
+      "counts": {
+        "tests": 568,
+        "skipped": 0,
+        "ok": true
+      }
+    }
+  ],
+  "ok": true,
+  "finished": "2026-10-30T12:35:04.503818+00:00"
+}

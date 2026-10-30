@@ -1,0 +1,441 @@
+{
+  "schema": "event-collector-native-attribution/1",
+  "reviewed": true,
+  "base": "fb8082f19b82582b08cee5cb39c8b2c3c3787721",
+  "tip": "a731e42f00e25055d8b5422db951b04eb0019afc",
+  "normalization": "Exact expected analyzer revisions and hypothesis evidence versions; independently recomputed reading-site binding IDs; and cwd-dependent build/configuration/import/task/obligation identities checked from retained preimages. The same raw sources/options/Clang description with only the recorded corpus working-directory change must reproduce both identity chains. Reading receipts are aligned by exact source anchors after their ID checks. Every remaining delta is retained with complete before/after values, including graphs, atoms, contracts, source effects, runtime, auxiliary lifetime summaries, diagnostics and NULL carriers. Published environment strings are independently SHA256 checked; missing exact environment tables are disclosed and do not acquire replay authority. No semantic field or carrier is suppressed.",
+  "routes": {
+    "corpus": {
+      "figures": {
+        "null_rows": 4921,
+        "null_verdicts": {
+          "Safe": 2549,
+          "Unknown": 2355,
+          "Unsafe": 17
+        },
+        "null_verdicts_sha256": "5e3809dd6ee98d3205736824d7d2f1e932836e296d4fc47f16f614b7a158f493",
+        "row_statuses": {
+          "Safe": 1013,
+          "Unknown": 3811,
+          "Unsafe": 10
+        },
+        "row_verdicts_sha256": "6019562445f06309f8419ff7c644cd8b764c8258c7deb625a60ba4227f603f82",
+        "rows": 4834,
+        "unit_statuses": {
+          "Safe": 8,
+          "Unknown": 165,
+          "Unsafe": 8,
+          "data_only": 4
+        },
+        "unit_verdicts_sha256": "58c0d37734220a4427792bc8b13569468da6e48cfd2e2425c9c02a96226cb770",
+        "units": 185
+      },
+      "all_payloads_compared_in_full": true,
+      "null_carriers_equal_after_checked_provenance_renewal": true,
+      "null_carrier_rows": 4921,
+      "environment_strings_checked": 38,
+      "files": [
+        {
+          "file": "corpus-null.jsonl",
+          "byte_identical": false,
+          "before_sha256": "e483e0523e391571fe13ec64d9daee8b5fdc840eebacc2ee7f39b70e02e1187d",
+          "after_sha256": "b144eeae787eded663e59fcf0ffcbcbbbe17d971694783eb3ec614a6e014368b",
+          "equal_after_checked_provenance_renewal": true,
+          "before_counts": {
+            "independently_recomputed_cwd_builds": 4834,
+            "checked_hypothesis_contexts": 4834
+          },
+          "after_counts": {
+            "independently_recomputed_cwd_builds": 4834,
+            "checked_hypothesis_contexts": 4834
+          },
+          "deltas": []
+        },
+        {
+          "file": "corpus-null.summary.json",
+          "byte_identical": true,
+          "before_sha256": "a4503189099be526778d038b68b9159632311573c63dd2da7acae906d16d1e5c",
+          "after_sha256": "a4503189099be526778d038b68b9159632311573c63dd2da7acae906d16d1e5c",
+          "equal_after_checked_provenance_renewal": true,
+          "before_counts": {},
+          "after_counts": {},
+          "deltas": []
+        },
+        {
+          "file": "corpus-outer.json",
+          "byte_identical": true,
+          "before_sha256": "6810b3dabd1b78375a1998e27c4489f1e3cdae13ecfb72579fcd9898f737e5c4",
+          "after_sha256": "6810b3dabd1b78375a1998e27c4489f1e3cdae13ecfb72579fcd9898f737e5c4",
+          "equal_after_checked_provenance_renewal": true,
+          "before_counts": {},
+          "after_counts": {},
+          "deltas": []
+        },
+        {
+          "file": "corpus/monkey-source.json",
+          "byte_identical": true,
+          "before_sha256": "ba459c8ab988fc3e97b1efd8a9edbb3ffbd5c4933f79a2b77ae2464ad9f7ff2f",
+          "after_sha256": "ba459c8ab988fc3e97b1efd8a9edbb3ffbd5c4933f79a2b77ae2464ad9f7ff2f",
+          "equal_after_checked_provenance_renewal": true,
+          "before_counts": {},
+          "after_counts": {},
+          "deltas": []
+        },
+        {
+          "file": "corpus/resource-diagnostics.chunk-contracts.json",
+          "byte_identical": true,
+          "before_sha256": "c56b0e2ac106ea57362cdc8d76a39a49ac4edcd02c1d46bfc0133b20c4f5cf88",
+          "after_sha256": "c56b0e2ac106ea57362cdc8d76a39a49ac4edcd02c1d46bfc0133b20c4f5cf88",
+          "equal_after_checked_provenance_renewal": true,
+          "before_counts": {},
+          "after_counts": {},
+          "deltas": []
+        },
+        {
+          "file": "corpus/resource-diagnostics.components.json",
+          "byte_identical": false,
+          "before_sha256": "a8200ff1e870af7b8276557d957a0e0020bf594930decf89eba7017211c5eba2",
+          "after_sha256": "9fe6f996e2e843d76f1bccdec2276322fc802e21aa5e8df99f3b0466ea163384",
+          "equal_after_checked_provenance_renewal": true,
+          "before_counts": {
+            "checked_component_revisions": 185,
+            "independently_recomputed_cwd_builds": 4956,
+            "checked_hypothesis_contexts": 4956,
+            "bindings_with_published_environment": 122,
+            "independently_recomputed_reading_site_ids": 122
+          },
+          "after_counts": {
+            "checked_component_revisions": 185,
+            "independently_recomputed_cwd_builds": 4956,
+            "checked_hypothesis_contexts": 4956,
+            "bindings_with_published_environment": 122,
+            "independently_recomputed_reading_site_ids": 122
+          },
+          "deltas": []
+        },
+        {
+          "file": "corpus/resource-diagnostics.contracts.json",
+          "byte_identical": false,
+          "before_sha256": "ae5f36ebec9953a92ddf78390f30da7c767277320c6f0494500b8e55aca8022f",
+          "after_sha256": "1b595310e23abda9c7ba877e3d80a9e9fb53c34e8bc2d024f44ab6f809f922f6",
+          "equal_after_checked_provenance_renewal": true,
+          "before_counts": {
+            "independently_recomputed_cwd_builds": 9188,
+            "checked_hypothesis_contexts": 9188
+          },
+          "after_counts": {
+            "independently_recomputed_cwd_builds": 9188,
+            "checked_hypothesis_contexts": 9188
+          },
+          "deltas": []
+        },
+        {
+          "file": "corpus/resource-diagnostics.json",
+          "byte_identical": false,
+          "before_sha256": "f44c7bc962ed09e9e9c7c5db3b221390aa76e54cc3b4403ba93355ca8944e117",
+          "after_sha256": "8b2b180f065c8b1f7b5fb79317a3827379ba99447c7e9116dd0ed971b34b784a",
+          "equal_after_checked_provenance_renewal": true,
+          "before_counts": {
+            "independently_recomputed_cwd_builds": 4956,
+            "checked_hypothesis_contexts": 4956,
+            "bindings_with_published_environment": 122,
+            "independently_recomputed_reading_site_ids": 122
+          },
+          "after_counts": {
+            "independently_recomputed_cwd_builds": 4956,
+            "checked_hypothesis_contexts": 4956,
+            "bindings_with_published_environment": 122,
+            "independently_recomputed_reading_site_ids": 122
+          },
+          "deltas": []
+        },
+        {
+          "file": "corpus/resource-diagnostics.source-effects.json",
+          "byte_identical": false,
+          "before_sha256": "9aab407bc16c4c7bacc6058d6b8264e128966b2a05a6365e8730c362f7c4335d",
+          "after_sha256": "7726580e79d9af31589f2f09b76f8e36ba12999b829d124ce04c60306d126a7b",
+          "equal_after_checked_provenance_renewal": true,
+          "before_counts": {
+            "independently_recomputed_source_effect_tasks": 3
+          },
+          "after_counts": {
+            "independently_recomputed_source_effect_tasks": 3
+          },
+          "deltas": []
+        }
+      ]
+    },
+    "slice": {
+      "figures": {
+        "null_rows": 406,
+        "null_verdicts": {
+          "Safe": 190,
+          "Unknown": 216
+        },
+        "null_verdicts_sha256": "08e9b5da9fe871894264c1b276f846c4cd387a95be5e4704fb4ac49e1dac744b",
+        "row_statuses": {
+          "Pending": 4,
+          "Safe": 57,
+          "Unknown": 342,
+          "Unsafe": 1
+        },
+        "row_verdicts_sha256": "a84686d4fd6a52b090bac9ed9302c52f2d79c1439fc7dfbbf421589ff4dd8781",
+        "rows": 404,
+        "unit_statuses": {
+          "Unknown": 15,
+          "Unsafe": 1
+        },
+        "unit_verdicts_sha256": "54e95d5f88252a15b9dd02fb3878b6286b16eeea24a5a4cfd4fde8a08af830e5",
+        "units": 16
+      },
+      "all_payloads_compared_in_full": true,
+      "null_carriers_equal_after_checked_provenance_renewal": true,
+      "null_carrier_rows": 406,
+      "environment_strings_checked": 1,
+      "files": [
+        {
+          "file": "resource-diagnostics.chunk-contracts.json",
+          "byte_identical": true,
+          "before_sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+          "after_sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+          "equal_after_checked_provenance_renewal": true,
+          "before_counts": {},
+          "after_counts": {},
+          "deltas": []
+        },
+        {
+          "file": "resource-diagnostics.components.json",
+          "byte_identical": false,
+          "before_sha256": "13c3066615b0e11aa4987bc1a2bcb7813f98efc5ee45f318899392a745f03159",
+          "after_sha256": "c4aeb689b7cc77754979259ea5a084142ccee1d4793ed0486234d59eacef6e08",
+          "equal_after_checked_provenance_renewal": true,
+          "before_counts": {
+            "checked_component_revisions": 16,
+            "checked_hypothesis_contexts": 406,
+            "bindings_with_published_environment": 2,
+            "independently_recomputed_reading_site_ids": 2
+          },
+          "after_counts": {
+            "checked_component_revisions": 16,
+            "checked_hypothesis_contexts": 406,
+            "bindings_with_published_environment": 2,
+            "independently_recomputed_reading_site_ids": 2
+          },
+          "deltas": []
+        },
+        {
+          "file": "resource-diagnostics.contracts.json",
+          "byte_identical": false,
+          "before_sha256": "e0aba49a8acc3462d533f7f072e10ee67b5b2a48673192bf67fd9124b6ae8e42",
+          "after_sha256": "2f466d4efb3a5348e33e527d34200d6477cbc9e3e3197e416d6c38b77c3a333b",
+          "equal_after_checked_provenance_renewal": true,
+          "before_counts": {
+            "checked_hypothesis_contexts": 764
+          },
+          "after_counts": {
+            "checked_hypothesis_contexts": 764
+          },
+          "deltas": []
+        },
+        {
+          "file": "resource-diagnostics.json",
+          "byte_identical": false,
+          "before_sha256": "72a389703bd6726fcf177161dfa8c83d6e2d66f26cb350bbf9b1a3663c23f648",
+          "after_sha256": "10bf917f7690a324df7b3b86826a6bd4e2487799acdb193f430c5c041b98df11",
+          "equal_after_checked_provenance_renewal": true,
+          "before_counts": {
+            "checked_hypothesis_contexts": 406,
+            "bindings_with_published_environment": 2,
+            "independently_recomputed_reading_site_ids": 2
+          },
+          "after_counts": {
+            "checked_hypothesis_contexts": 406,
+            "bindings_with_published_environment": 2,
+            "independently_recomputed_reading_site_ids": 2
+          },
+          "deltas": []
+        },
+        {
+          "file": "resource-diagnostics.source-effects.json",
+          "byte_identical": true,
+          "before_sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+          "after_sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+          "equal_after_checked_provenance_renewal": true,
+          "before_counts": {},
+          "after_counts": {},
+          "deltas": []
+        },
+        {
+          "file": "slice-null.jsonl",
+          "byte_identical": false,
+          "before_sha256": "fa7ccc80bdf3bc46f48360276b0e7a3bc7f9ba4e4795e55886e04d1c8b59926a",
+          "after_sha256": "6bc2cb2f7c379fc4cec496c02eb997102d32488df48b099a7c524025150f0095",
+          "equal_after_checked_provenance_renewal": true,
+          "before_counts": {
+            "checked_hypothesis_contexts": 404
+          },
+          "after_counts": {
+            "checked_hypothesis_contexts": 404
+          },
+          "deltas": []
+        },
+        {
+          "file": "slice-null.summary.json",
+          "byte_identical": true,
+          "before_sha256": "df4be8b649b807ee4b83c0516250e7495e7e57355733c126c24a6b3828960c56",
+          "after_sha256": "df4be8b649b807ee4b83c0516250e7495e7e57355733c126c24a6b3828960c56",
+          "equal_after_checked_provenance_renewal": true,
+          "before_counts": {},
+          "after_counts": {},
+          "deltas": []
+        },
+        {
+          "file": "slice-outer.json",
+          "byte_identical": true,
+          "before_sha256": "7f64ea5cc01c131f96a690fb893a581ce8a3fa863de07077e5114228f8cffd53",
+          "after_sha256": "7f64ea5cc01c131f96a690fb893a581ce8a3fa863de07077e5114228f8cffd53",
+          "equal_after_checked_provenance_renewal": true,
+          "before_counts": {},
+          "after_counts": {},
+          "deltas": []
+        }
+      ]
+    },
+    "system": {
+      "figures": {
+        "null_rows": 454,
+        "null_verdicts": {
+          "Safe": 211,
+          "Unknown": 243
+        },
+        "null_verdicts_sha256": "18d3b6d0fee4bc3f929e5dac2474bfb88a2290f3163dc698dc2abc3ba94155b3",
+        "row_statuses": {
+          "Safe": 101,
+          "Unknown": 343,
+          "Unsafe": 4
+        },
+        "row_verdicts_sha256": "1d17077f4986f2ea53867a1a2854eb5d5c54c22d755520a7151c5a9c1c6f0003",
+        "rows": 448,
+        "unit_statuses": {
+          "Unknown": 13,
+          "Unsafe": 2
+        },
+        "unit_verdicts_sha256": "d326464ed189bac74776761057f9be31bd5197eea46563b8991137944ed2a01f",
+        "units": 15
+      },
+      "all_payloads_compared_in_full": true,
+      "null_carriers_equal_after_checked_provenance_renewal": true,
+      "null_carrier_rows": 454,
+      "environment_strings_checked": 2,
+      "files": [
+        {
+          "file": "resource-diagnostics.chunk-contracts.json",
+          "byte_identical": true,
+          "before_sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+          "after_sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+          "equal_after_checked_provenance_renewal": true,
+          "before_counts": {},
+          "after_counts": {},
+          "deltas": []
+        },
+        {
+          "file": "resource-diagnostics.components.json",
+          "byte_identical": false,
+          "before_sha256": "ad38a3e9a16ae7bfacc578dfacfd3838fefcd568c357fe4955f869be0e4df15b",
+          "after_sha256": "ef5e2c203bdf817e97b8cbf5d9f2e738cd1dfa57a6c3f8c382ad60614e728e5e",
+          "equal_after_checked_provenance_renewal": true,
+          "before_counts": {
+            "checked_component_revisions": 15,
+            "checked_hypothesis_contexts": 472,
+            "bindings_with_published_environment": 24,
+            "independently_recomputed_reading_site_ids": 24
+          },
+          "after_counts": {
+            "checked_component_revisions": 15,
+            "checked_hypothesis_contexts": 472,
+            "bindings_with_published_environment": 24,
+            "independently_recomputed_reading_site_ids": 24
+          },
+          "deltas": []
+        },
+        {
+          "file": "resource-diagnostics.contracts.json",
+          "byte_identical": false,
+          "before_sha256": "72a7e7f6aa4ca6a49a232323603c9e06a1ac0c560666819f2ffa788fea7a8232",
+          "after_sha256": "15aaf6cd29dfe369d4bcf7b71f20a04e3f51ee283fdf9b663976c6ef4e40c2e7",
+          "equal_after_checked_provenance_renewal": true,
+          "before_counts": {
+            "checked_hypothesis_contexts": 1252
+          },
+          "after_counts": {
+            "checked_hypothesis_contexts": 1252
+          },
+          "deltas": []
+        },
+        {
+          "file": "resource-diagnostics.json",
+          "byte_identical": false,
+          "before_sha256": "7f4e2111c41b2ad6b3cc6535958e17cc9d4642f28b500065c06256c2520bd4cf",
+          "after_sha256": "b6a452b8f210ac6b84118899d1c20e060f8ce7aaa81b18921a7a6259c1d31504",
+          "equal_after_checked_provenance_renewal": true,
+          "before_counts": {
+            "checked_hypothesis_contexts": 472,
+            "bindings_with_published_environment": 24,
+            "independently_recomputed_reading_site_ids": 24
+          },
+          "after_counts": {
+            "checked_hypothesis_contexts": 472,
+            "bindings_with_published_environment": 24,
+            "independently_recomputed_reading_site_ids": 24
+          },
+          "deltas": []
+        },
+        {
+          "file": "resource-diagnostics.source-effects.json",
+          "byte_identical": true,
+          "before_sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+          "after_sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+          "equal_after_checked_provenance_renewal": true,
+          "before_counts": {},
+          "after_counts": {},
+          "deltas": []
+        },
+        {
+          "file": "system-null.jsonl",
+          "byte_identical": false,
+          "before_sha256": "56066e03b12c951fce2726f38e0d7a314056fe7ba68014e03b245b4002060c2f",
+          "after_sha256": "ad893d79a4bb9f3878a5470bafbadf418cb01ac53d3fbea6821dfc7d5c2379ae",
+          "equal_after_checked_provenance_renewal": true,
+          "before_counts": {
+            "checked_hypothesis_contexts": 448
+          },
+          "after_counts": {
+            "checked_hypothesis_contexts": 448
+          },
+          "deltas": []
+        },
+        {
+          "file": "system-null.summary.json",
+          "byte_identical": true,
+          "before_sha256": "572117bd3758532c0ad224a8b40db30dc6793a36d0cec55c54a0c817a905d1e2",
+          "after_sha256": "572117bd3758532c0ad224a8b40db30dc6793a36d0cec55c54a0c817a905d1e2",
+          "equal_after_checked_provenance_renewal": true,
+          "before_counts": {},
+          "after_counts": {},
+          "deltas": []
+        },
+        {
+          "file": "system-outer.json",
+          "byte_identical": true,
+          "before_sha256": "705e46a8aeccd9bbfedab17339a1b033ca679333c7157cfa03157680e0fc7f7f",
+          "after_sha256": "705e46a8aeccd9bbfedab17339a1b033ca679333c7157cfa03157680e0fc7f7f",
+          "equal_after_checked_provenance_renewal": true,
+          "before_counts": {},
+          "after_counts": {},
+          "deltas": []
+        }
+      ]
+    }
+  },
+  "review_rationale": "Compared every payload in full across published holder fb8082f19 and combined main a731e42f0, including intervening pilot migrations. Figures and row/unit inventories are identical. Only exact analyzer/evidence revisions, recomputed reading-site IDs, and independently recomputed cwd-dependent configuration/build/task/obligation IDs are renewed; graphs, atoms, contracts, source effects, runtime, NULL and auxiliary lifetime carriers retain complete comparison coverage. No semantic delta remains. This is combined-baseline evidence, not isolated attribution or a fresh native execution. The first preimage attempt used outer-route compiler spelling; the corrected input is the actual pinned wrapper /usr/bin/clang recorded independently in both inner run.json files, without weakening the validator."
+}

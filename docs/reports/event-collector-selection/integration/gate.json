@@ -1,0 +1,13 @@
+{
+  "note": "EVENT-COLLECTOR-SELECTION full landing gate on a010c6dfc9f410b674358c99b5dfd58075d3d640. All eight selected commands exited 0. Exact commands, counts, source and private paths are in gate-steps.json. Provider 133/0/1 is carried from dc5d07c95 (pilots-r1 integration/tip-provider-steps.json); no provider gate was selected for this prose/record-only continuation.",
+  "workspace_tests": 8927,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 568,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "Full landing gate; records-only Python rerun follows final records commit. Provider 133/0/1 is carried from dc5d07c95 (pilots-r1 integration/tip-provider-steps.json); no provider gate was selected for this prose/record-only continuation.",
+  "lean_audits": 396,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
