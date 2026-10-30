@@ -1,5 +1,7 @@
 # Current status and evidence boundaries
 
+EVENT-COLLECTOR-SELECTION adds independently replayed source-audit imports for first-match collector selection and constructor-local conditional instance/loop stores. Production snapshots across three pinned revisions are read, but membership/instance invariance, persistent frames and caller lifetime composition remain open; no Safe route consumes these imports. [Report](reports/event-collector-selection/README.md).
+
 Rule 37's measured contribution by switch (RULE37-PILOT, one binary at `6b6a3a438`, ledgers `contract/contributions/37/`): eight-home 5 rows Unknown -> Safe under the one premise `asserted_allocation`; fluent-bit-system and fluent-bit-tail-pause 0. Profile totals are unchanged by the migration (identity run against baseline `80c8aea98`).
 
 Gateway rule packages (2026-10-29, RULE35-PILOT): rule 35 is the first rule outside `qcore-c-gateway`, in `crates/gateway-rules/rule-35-literal-decay`, hosted through the rule API with no verdict change on the three live profiles, and its contribution is the first switch-measured ledger ([contributions](development/contributions.md)): eight-home 12 Unknown→Safe, system and slice no row. The other pilot rules' bodies still live in `qcore-c-gateway`.
