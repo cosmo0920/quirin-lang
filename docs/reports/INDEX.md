@@ -1046,6 +1046,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [rule-switch-entry-points](rule-switch-entry-points/README.md) | RULE-SWITCH-ENTRY-POINTS: every gateway entry point records or refuses the rule switch |
 
+| [rule32a-pilot](rule32a-pilot/README.md) | RULE32A-PILOT: rule 32a's caller-frame hold as a rule package, and what "off" means for a hold |
+
 | [rule33-pilot](rule33-pilot/README.md) | RULE33-PILOT: rule 33 as a rule package |
 
 | [rule34-pilot](rule34-pilot/README.md) | RULE34-PILOT: gateway rule 34 at a new transfer position |
