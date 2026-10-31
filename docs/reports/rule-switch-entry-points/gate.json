@@ -1,0 +1,816 @@
+{
+ "schema": "quirin-gate-scope/1",
+ "source": "git diff",
+ "base": "98b1bb7851a71ed2d007abc734ed0b94ec1b00f6",
+ "head": "55cd9f16753d58c8f507214d45c3604499508262",
+ "committed": [
+  "compiler/examples/alias_aggregate_probe.rs",
+  "compiler/examples/c03_reach_census.rs",
+  "compiler/examples/check_contract_observations.rs",
+  "compiler/examples/check_monkey_observations.rs",
+  "compiler/examples/cycle17_legacy_audit.rs",
+  "compiler/examples/cycle18_libevent_audit.rs",
+  "compiler/examples/extension_source_parity.rs",
+  "compiler/examples/reevaluation_followup.rs",
+  "compiler/examples/reevaluation_probe.rs",
+  "compiler/examples/runtime_import_spelling_inventory.rs",
+  "compiler/examples/validate_integrity_observations.rs",
+  "compiler/src/lib.rs",
+  "crates/qcore-audit/examples/component_check.rs",
+  "crates/qcore-audit/examples/handoff_census.rs",
+  "crates/qcore-audit/examples/libc_local_source_domains.rs",
+  "crates/qcore-audit/examples/member_facts_census.rs",
+  "crates/qcore-audit/examples/member_prepass_run.rs",
+  "crates/qcore-audit/examples/plugin_sidecar_bindings.rs",
+  "crates/qcore-audit/examples/premise_bindings_replay.rs",
+  "crates/qcore-audit/examples/premise_environment.rs",
+  "crates/qcore-audit/examples/premise_graph.rs",
+  "crates/qcore-audit/examples/premise_outer_facts.rs",
+  "crates/qcore-audit/examples/provider_resource_views.rs",
+  "crates/qcore-audit/examples/timeout_teardown.rs",
+  "crates/qcore-audit/src/bin/quirin-dump-checkpoint.rs",
+  "crates/qcore-audit/src/current_cli.rs",
+  "crates/qcore-audit/src/lib.rs",
+  "crates/qcore-audit/src/main.rs",
+  "crates/qcore-audit/src/no_build.rs",
+  "crates/qcore-audit/src/pinned_cli.rs",
+  "crates/qcore-audit/src/rule_switch_entry.rs",
+  "crates/qcore-audit/tests/configured_cli.rs",
+  "crates/qcore-audit/tests/current_cli.rs",
+  "crates/qcore-audit/tests/no_build_cli.rs",
+  "crates/qcore-audit/tests/rule_switch_entry_points.rs",
+  "crates/qcore-c-gateway/examples/clang_transport_measure.rs",
+  "crates/qcore-c-gateway/examples/collector_identity_audit.rs",
+  "crates/qcore-c-gateway/examples/declared_abi_census.rs",
+  "crates/qcore-c-gateway/examples/declared_mode_census.rs",
+  "crates/qcore-c-gateway/examples/member_path_probe.rs",
+  "crates/qcore-c-gateway/examples/numeric_obligations.rs",
+  "crates/qcore-c-gateway/examples/quant_index_probe.rs",
+  "crates/qcore-c-gateway/src/gateway_rules.rs",
+  "crates/qcorec/src/main.rs",
+  "crates/qcorec/tests/cli.rs",
+  "crates/quirin-source-analysis/examples/cjson_local_source.rs",
+  "crates/quirin-source-analysis/examples/condvar_join_census.rs",
+  "crates/quirin-source-analysis/examples/loop_owner_census.rs",
+  "crates/quirin-source-analysis/examples/plugin_source_witnesses.rs",
+  "crates/quirin-source-analysis/examples/predefined_macro_facts.rs",
+  "crates/quirin-source-analysis/examples/region_macro_facts.rs",
+  "crates/quirin-source-analysis/examples/typed_dispatch_facts.rs",
+  "docs/development/audit-subcommand-plugins.md",
+  "docs/reports/rule-switch-entry-points/README.md",
+  "docs/reports/rule-switch-entry-points/identity/artifact-sha256.txt",
+  "docs/reports/rule-switch-entry-points/integration-amendments.json"
+ ],
+ "uncommitted": [],
+ "scope": {
+  "paths": [
+   "compiler/examples/alias_aggregate_probe.rs",
+   "compiler/examples/c03_reach_census.rs",
+   "compiler/examples/check_contract_observations.rs",
+   "compiler/examples/check_monkey_observations.rs",
+   "compiler/examples/cycle17_legacy_audit.rs",
+   "compiler/examples/cycle18_libevent_audit.rs",
+   "compiler/examples/extension_source_parity.rs",
+   "compiler/examples/reevaluation_followup.rs",
+   "compiler/examples/reevaluation_probe.rs",
+   "compiler/examples/runtime_import_spelling_inventory.rs",
+   "compiler/examples/validate_integrity_observations.rs",
+   "compiler/src/lib.rs",
+   "crates/qcore-audit/examples/component_check.rs",
+   "crates/qcore-audit/examples/handoff_census.rs",
+   "crates/qcore-audit/examples/libc_local_source_domains.rs",
+   "crates/qcore-audit/examples/member_facts_census.rs",
+   "crates/qcore-audit/examples/member_prepass_run.rs",
+   "crates/qcore-audit/examples/plugin_sidecar_bindings.rs",
+   "crates/qcore-audit/examples/premise_bindings_replay.rs",
+   "crates/qcore-audit/examples/premise_environment.rs",
+   "crates/qcore-audit/examples/premise_graph.rs",
+   "crates/qcore-audit/examples/premise_outer_facts.rs",
+   "crates/qcore-audit/examples/provider_resource_views.rs",
+   "crates/qcore-audit/examples/timeout_teardown.rs",
+   "crates/qcore-audit/src/bin/quirin-dump-checkpoint.rs",
+   "crates/qcore-audit/src/current_cli.rs",
+   "crates/qcore-audit/src/lib.rs",
+   "crates/qcore-audit/src/main.rs",
+   "crates/qcore-audit/src/no_build.rs",
+   "crates/qcore-audit/src/pinned_cli.rs",
+   "crates/qcore-audit/src/rule_switch_entry.rs",
+   "crates/qcore-audit/tests/configured_cli.rs",
+   "crates/qcore-audit/tests/current_cli.rs",
+   "crates/qcore-audit/tests/no_build_cli.rs",
+   "crates/qcore-audit/tests/rule_switch_entry_points.rs",
+   "crates/qcore-c-gateway/examples/clang_transport_measure.rs",
+   "crates/qcore-c-gateway/examples/collector_identity_audit.rs",
+   "crates/qcore-c-gateway/examples/declared_abi_census.rs",
+   "crates/qcore-c-gateway/examples/declared_mode_census.rs",
+   "crates/qcore-c-gateway/examples/member_path_probe.rs",
+   "crates/qcore-c-gateway/examples/numeric_obligations.rs",
+   "crates/qcore-c-gateway/examples/quant_index_probe.rs",
+   "crates/qcore-c-gateway/src/gateway_rules.rs",
+   "crates/qcorec/src/main.rs",
+   "crates/qcorec/tests/cli.rs",
+   "crates/quirin-source-analysis/examples/cjson_local_source.rs",
+   "crates/quirin-source-analysis/examples/condvar_join_census.rs",
+   "crates/quirin-source-analysis/examples/loop_owner_census.rs",
+   "crates/quirin-source-analysis/examples/plugin_source_witnesses.rs",
+   "crates/quirin-source-analysis/examples/predefined_macro_facts.rs",
+   "crates/quirin-source-analysis/examples/region_macro_facts.rs",
+   "crates/quirin-source-analysis/examples/typed_dispatch_facts.rs",
+   "docs/development/audit-subcommand-plugins.md",
+   "docs/reports/rule-switch-entry-points/README.md",
+   "docs/reports/rule-switch-entry-points/identity/artifact-sha256.txt",
+   "docs/reports/rule-switch-entry-points/integration-amendments.json"
+  ],
+  "attribution": {
+   "compiler/examples/alias_aggregate_probe.rs": [
+    "owned by qcore-compiler"
+   ],
+   "compiler/examples/c03_reach_census.rs": [
+    "owned by qcore-compiler"
+   ],
+   "compiler/examples/check_contract_observations.rs": [
+    "owned by qcore-compiler"
+   ],
+   "compiler/examples/check_monkey_observations.rs": [
+    "owned by qcore-compiler"
+   ],
+   "compiler/examples/cycle17_legacy_audit.rs": [
+    "owned by qcore-compiler"
+   ],
+   "compiler/examples/cycle18_libevent_audit.rs": [
+    "owned by qcore-compiler"
+   ],
+   "compiler/examples/extension_source_parity.rs": [
+    "owned by qcore-compiler"
+   ],
+   "compiler/examples/reevaluation_followup.rs": [
+    "owned by qcore-compiler"
+   ],
+   "compiler/examples/reevaluation_probe.rs": [
+    "owned by qcore-compiler",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/rule_switch_entry_points.rs:464)"
+   ],
+   "compiler/examples/runtime_import_spelling_inventory.rs": [
+    "owned by qcore-compiler"
+   ],
+   "compiler/examples/validate_integrity_observations.rs": [
+    "owned by qcore-compiler"
+   ],
+   "compiler/src/lib.rs": [
+    "owned by qcore-compiler",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:297)"
+   ],
+   "crates/qcore-audit/examples/component_check.rs": [
+    "owned by qcore-audit",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:125)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-audit/examples/handoff_census.rs": [
+    "owned by qcore-audit",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:125)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-audit/examples/libc_local_source_domains.rs": [
+    "owned by qcore-audit",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:125)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-audit/examples/member_facts_census.rs": [
+    "owned by qcore-audit",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:125)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-audit/examples/member_prepass_run.rs": [
+    "owned by qcore-audit",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:125)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-audit/examples/plugin_sidecar_bindings.rs": [
+    "owned by qcore-audit",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:125)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-audit/examples/premise_bindings_replay.rs": [
+    "owned by qcore-audit",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:125)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-audit/examples/premise_environment.rs": [
+    "owned by qcore-audit",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:125)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-audit/examples/premise_graph.rs": [
+    "owned by qcore-audit",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:125)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-audit/examples/premise_outer_facts.rs": [
+    "owned by qcore-audit",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:125)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-audit/examples/provider_resource_views.rs": [
+    "owned by qcore-audit",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:125)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-audit/examples/timeout_teardown.rs": [
+    "owned by qcore-audit",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:125)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-audit/src/bin/quirin-dump-checkpoint.rs": [
+    "owned by qcore-audit",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:125)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-audit/src/current_cli.rs": [
+    "owned by qcore-audit",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:125)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-audit/src/lib.rs": [
+    "owned by qcore-audit",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:125)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-audit/src/main.rs": [
+    "owned by qcore-audit",
+    "read by qcore-audit (include_str, crates/qcore-audit/src/subcommand_plugins.rs:1234)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:125)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-audit/src/no_build.rs": [
+    "owned by qcore-audit",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:125)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-audit/src/pinned_cli.rs": [
+    "owned by qcore-audit",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:125)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-audit/src/rule_switch_entry.rs": [
+    "owned by qcore-audit",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:125)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-audit/tests/configured_cli.rs": [
+    "owned by qcore-audit",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:125)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-audit/tests/current_cli.rs": [
+    "owned by qcore-audit",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:125)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-audit/tests/no_build_cli.rs": [
+    "owned by qcore-audit",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:125)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-audit/tests/rule_switch_entry_points.rs": [
+    "owned by qcore-audit",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:125)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/examples/clang_transport_measure.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:69)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/examples/collector_identity_audit.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:69)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/examples/declared_abi_census.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:69)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/examples/declared_mode_census.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:69)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/examples/member_path_probe.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/rule_switch_entry_points.rs:462)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:69)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/examples/numeric_obligations.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:69)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/examples/quant_index_probe.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:69)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/src/gateway_rules.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:69)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcorec/src/main.rs": [
+    "owned by qcorec",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/rule_switch_entry_points.rs:460)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:151)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcorec/tests/cli.rs": [
+    "owned by qcorec",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:151)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/quirin-source-analysis/examples/cjson_local_source.rs": [
+    "owned by quirin-source-analysis",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:100)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/quirin-source-analysis/examples/condvar_join_census.rs": [
+    "owned by quirin-source-analysis",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:100)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/quirin-source-analysis/examples/loop_owner_census.rs": [
+    "owned by quirin-source-analysis",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/rule_switch_entry_points.rs:463)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:100)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/quirin-source-analysis/examples/plugin_source_witnesses.rs": [
+    "owned by quirin-source-analysis",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:100)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/quirin-source-analysis/examples/predefined_macro_facts.rs": [
+    "owned by quirin-source-analysis",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:100)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/quirin-source-analysis/examples/region_macro_facts.rs": [
+    "owned by quirin-source-analysis",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:100)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/quirin-source-analysis/examples/typed_dispatch_facts.rs": [
+    "owned by quirin-source-analysis",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:100)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "docs/development/audit-subcommand-plugins.md": [
+    "class prose"
+   ],
+   "docs/reports/rule-switch-entry-points/README.md": [
+    "class prose"
+   ],
+   "docs/reports/rule-switch-entry-points/identity/artifact-sha256.txt": [
+    "class prose"
+   ],
+   "docs/reports/rule-switch-entry-points/integration-amendments.json": [
+    "class prose"
+   ]
+  },
+  "affected": {
+   "qcore-audit": [
+    "names compiler/examples/reevaluation_probe.rs in a string literal: compiler/examples/reevaluation_probe.rs (crates/qcore-audit/tests/rule_switch_entry_points.rs:464)",
+    "owns crates/qcore-audit/examples/component_check.rs",
+    "owns crates/qcore-audit/examples/handoff_census.rs",
+    "owns crates/qcore-audit/examples/libc_local_source_domains.rs",
+    "owns crates/qcore-audit/examples/member_facts_census.rs",
+    "owns crates/qcore-audit/examples/member_prepass_run.rs",
+    "owns crates/qcore-audit/examples/plugin_sidecar_bindings.rs",
+    "owns crates/qcore-audit/examples/premise_bindings_replay.rs",
+    "owns crates/qcore-audit/examples/premise_environment.rs",
+    "owns crates/qcore-audit/examples/premise_graph.rs",
+    "owns crates/qcore-audit/examples/premise_outer_facts.rs",
+    "owns crates/qcore-audit/examples/provider_resource_views.rs",
+    "owns crates/qcore-audit/examples/timeout_teardown.rs",
+    "owns crates/qcore-audit/src/bin/quirin-dump-checkpoint.rs",
+    "owns crates/qcore-audit/src/current_cli.rs",
+    "owns crates/qcore-audit/src/lib.rs",
+    "owns crates/qcore-audit/src/main.rs",
+    "reads it with include_str!: crates/qcore-audit/src/main.rs (crates/qcore-audit/src/subcommand_plugins.rs:1234)",
+    "owns crates/qcore-audit/src/no_build.rs",
+    "owns crates/qcore-audit/src/pinned_cli.rs",
+    "owns crates/qcore-audit/src/rule_switch_entry.rs",
+    "owns crates/qcore-audit/tests/configured_cli.rs",
+    "owns crates/qcore-audit/tests/current_cli.rs",
+    "owns crates/qcore-audit/tests/no_build_cli.rs",
+    "owns crates/qcore-audit/tests/rule_switch_entry_points.rs",
+    "names crates/qcore-c-gateway/examples/member_path_probe.rs in a string literal: crates/qcore-c-gateway/examples/member_path_probe.rs (crates/qcore-audit/tests/rule_switch_entry_points.rs:462)",
+    "names crates/qcorec/src/main.rs in a string literal: crates/qcorec/src/main.rs (crates/qcore-audit/tests/rule_switch_entry_points.rs:460)",
+    "names crates/quirin-source-analysis/examples/loop_owner_census.rs in a string literal: crates/quirin-source-analysis/examples/loop_owner_census.rs (crates/qcore-audit/tests/rule_switch_entry_points.rs:463)"
+   ],
+   "qcore-c-gateway": [
+    "owns crates/qcore-c-gateway/examples/clang_transport_measure.rs",
+    "owns crates/qcore-c-gateway/examples/collector_identity_audit.rs",
+    "owns crates/qcore-c-gateway/examples/declared_abi_census.rs",
+    "owns crates/qcore-c-gateway/examples/declared_mode_census.rs",
+    "owns crates/qcore-c-gateway/examples/member_path_probe.rs",
+    "owns crates/qcore-c-gateway/examples/numeric_obligations.rs",
+    "owns crates/qcore-c-gateway/examples/quant_index_probe.rs",
+    "owns crates/qcore-c-gateway/src/gateway_rules.rs"
+   ],
+   "qcore-compiler": [
+    "owns compiler/examples/alias_aggregate_probe.rs",
+    "owns compiler/examples/c03_reach_census.rs",
+    "owns compiler/examples/check_contract_observations.rs",
+    "owns compiler/examples/check_monkey_observations.rs",
+    "owns compiler/examples/cycle17_legacy_audit.rs",
+    "owns compiler/examples/cycle18_libevent_audit.rs",
+    "owns compiler/examples/extension_source_parity.rs",
+    "owns compiler/examples/reevaluation_followup.rs",
+    "owns compiler/examples/reevaluation_probe.rs",
+    "owns compiler/examples/runtime_import_spelling_inventory.rs",
+    "owns compiler/examples/validate_integrity_observations.rs",
+    "owns compiler/src/lib.rs",
+    "names crates/qcore-audit in a string literal: crates/qcore-audit/examples/component_check.rs (compiler/tests/workspace_layering.rs:125)",
+    "names crates/qcore-audit in a string literal: crates/qcore-audit/examples/handoff_census.rs (compiler/tests/workspace_layering.rs:125)",
+    "names crates/qcore-audit in a string literal: crates/qcore-audit/examples/libc_local_source_domains.rs (compiler/tests/workspace_layering.rs:125)",
+    "names crates/qcore-audit in a string literal: crates/qcore-audit/examples/member_facts_census.rs (compiler/tests/workspace_layering.rs:125)",
+    "names crates/qcore-audit in a string literal: crates/qcore-audit/examples/member_prepass_run.rs (compiler/tests/workspace_layering.rs:125)",
+    "names crates/qcore-audit in a string literal: crates/qcore-audit/examples/plugin_sidecar_bindings.rs (compiler/tests/workspace_layering.rs:125)",
+    "names crates/qcore-audit in a string literal: crates/qcore-audit/examples/premise_bindings_replay.rs (compiler/tests/workspace_layering.rs:125)",
+    "names crates/qcore-audit in a string literal: crates/qcore-audit/examples/premise_environment.rs (compiler/tests/workspace_layering.rs:125)",
+    "names crates/qcore-audit in a string literal: crates/qcore-audit/examples/premise_graph.rs (compiler/tests/workspace_layering.rs:125)",
+    "names crates/qcore-audit in a string literal: crates/qcore-audit/examples/premise_outer_facts.rs (compiler/tests/workspace_layering.rs:125)",
+    "names crates/qcore-audit in a string literal: crates/qcore-audit/examples/provider_resource_views.rs (compiler/tests/workspace_layering.rs:125)",
+    "names crates/qcore-audit in a string literal: crates/qcore-audit/examples/timeout_teardown.rs (compiler/tests/workspace_layering.rs:125)",
+    "names crates/qcore-audit in a string literal: crates/qcore-audit/src/bin/quirin-dump-checkpoint.rs (compiler/tests/workspace_layering.rs:125)",
+    "names crates/qcore-audit in a string literal: crates/qcore-audit/src/current_cli.rs (compiler/tests/workspace_layering.rs:125)",
+    "names crates/qcore-audit in a string literal: crates/qcore-audit/src/lib.rs (compiler/tests/workspace_layering.rs:125)",
+    "names crates/qcore-audit in a string literal: crates/qcore-audit/src/main.rs (compiler/tests/workspace_layering.rs:125)",
+    "names crates/qcore-audit in a string literal: crates/qcore-audit/src/no_build.rs (compiler/tests/workspace_layering.rs:125)",
+    "names crates/qcore-audit in a string literal: crates/qcore-audit/src/pinned_cli.rs (compiler/tests/workspace_layering.rs:125)",
+    "names crates/qcore-audit in a string literal: crates/qcore-audit/src/rule_switch_entry.rs (compiler/tests/workspace_layering.rs:125)",
+    "names crates/qcore-audit in a string literal: crates/qcore-audit/tests/configured_cli.rs (compiler/tests/workspace_layering.rs:125)",
+    "names crates/qcore-audit in a string literal: crates/qcore-audit/tests/current_cli.rs (compiler/tests/workspace_layering.rs:125)",
+    "names crates/qcore-audit in a string literal: crates/qcore-audit/tests/no_build_cli.rs (compiler/tests/workspace_layering.rs:125)",
+    "names crates/qcore-audit in a string literal: crates/qcore-audit/tests/rule_switch_entry_points.rs (compiler/tests/workspace_layering.rs:125)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/examples/clang_transport_measure.rs (compiler/tests/workspace_layering.rs:69)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/examples/collector_identity_audit.rs (compiler/tests/workspace_layering.rs:69)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/examples/declared_abi_census.rs (compiler/tests/workspace_layering.rs:69)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/examples/declared_mode_census.rs (compiler/tests/workspace_layering.rs:69)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/examples/member_path_probe.rs (compiler/tests/workspace_layering.rs:69)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/examples/numeric_obligations.rs (compiler/tests/workspace_layering.rs:69)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/examples/quant_index_probe.rs (compiler/tests/workspace_layering.rs:69)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/src/gateway_rules.rs (compiler/tests/workspace_layering.rs:69)",
+    "names crates/qcorec in a string literal: crates/qcorec/src/main.rs (compiler/tests/workspace_layering.rs:151)",
+    "names crates/qcorec in a string literal: crates/qcorec/tests/cli.rs (compiler/tests/workspace_layering.rs:151)",
+    "names crates/quirin-source-analysis in a string literal: crates/quirin-source-analysis/examples/cjson_local_source.rs (compiler/tests/workspace_layering.rs:100)",
+    "names crates/quirin-source-analysis in a string literal: crates/quirin-source-analysis/examples/condvar_join_census.rs (compiler/tests/workspace_layering.rs:100)",
+    "names crates/quirin-source-analysis in a string literal: crates/quirin-source-analysis/examples/loop_owner_census.rs (compiler/tests/workspace_layering.rs:100)",
+    "names crates/quirin-source-analysis in a string literal: crates/quirin-source-analysis/examples/plugin_source_witnesses.rs (compiler/tests/workspace_layering.rs:100)",
+    "names crates/quirin-source-analysis in a string literal: crates/quirin-source-analysis/examples/predefined_macro_facts.rs (compiler/tests/workspace_layering.rs:100)",
+    "names crates/quirin-source-analysis in a string literal: crates/quirin-source-analysis/examples/region_macro_facts.rs (compiler/tests/workspace_layering.rs:100)",
+    "names crates/quirin-source-analysis in a string literal: crates/quirin-source-analysis/examples/typed_dispatch_facts.rs (compiler/tests/workspace_layering.rs:100)"
+   ],
+   "qcore-provider-conformance": [
+    "depends on qcore-audit"
+   ],
+   "qcore-verification": [
+    "names compiler/src in a string literal: compiler/src/lib.rs (crates/qcore-verification/tests/composition_bounds.rs:297)",
+    "names crates in a string literal: crates/qcore-audit/examples/component_check.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-audit/examples/handoff_census.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-audit/examples/libc_local_source_domains.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-audit/examples/member_facts_census.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-audit/examples/member_prepass_run.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-audit/examples/plugin_sidecar_bindings.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-audit/examples/premise_bindings_replay.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-audit/examples/premise_environment.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-audit/examples/premise_graph.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-audit/examples/premise_outer_facts.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-audit/examples/provider_resource_views.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-audit/examples/timeout_teardown.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-audit/src/bin/quirin-dump-checkpoint.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-audit/src/current_cli.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-audit/src/lib.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-audit/src/main.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-audit/src/no_build.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-audit/src/pinned_cli.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-audit/src/rule_switch_entry.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-audit/tests/configured_cli.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-audit/tests/current_cli.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-audit/tests/no_build_cli.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-audit/tests/rule_switch_entry_points.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/examples/clang_transport_measure.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/examples/collector_identity_audit.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/examples/declared_abi_census.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/examples/declared_mode_census.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/examples/member_path_probe.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/examples/numeric_obligations.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/examples/quant_index_probe.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/src/gateway_rules.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcorec/src/main.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcorec/tests/cli.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/quirin-source-analysis/examples/cjson_local_source.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/quirin-source-analysis/examples/condvar_join_census.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/quirin-source-analysis/examples/loop_owner_census.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/quirin-source-analysis/examples/plugin_source_witnesses.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/quirin-source-analysis/examples/predefined_macro_facts.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/quirin-source-analysis/examples/region_macro_facts.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/quirin-source-analysis/examples/typed_dispatch_facts.rs (crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "qcorec": [
+    "owns crates/qcorec/src/main.rs",
+    "owns crates/qcorec/tests/cli.rs"
+   ],
+   "quirin-source-analysis": [
+    "owns crates/quirin-source-analysis/examples/cjson_local_source.rs",
+    "owns crates/quirin-source-analysis/examples/condvar_join_census.rs",
+    "owns crates/quirin-source-analysis/examples/loop_owner_census.rs",
+    "owns crates/quirin-source-analysis/examples/plugin_source_witnesses.rs",
+    "owns crates/quirin-source-analysis/examples/predefined_macro_facts.rs",
+    "owns crates/quirin-source-analysis/examples/region_macro_facts.rs",
+    "owns crates/quirin-source-analysis/examples/typed_dispatch_facts.rs"
+   ]
+  },
+  "mode": "full",
+  "full_reasons": [
+   "the diff reaches qcore-c-gateway"
+  ],
+  "rust_packages": [
+   "qcore-audit",
+   "qcore-c-gateway",
+   "qcore-compiler",
+   "qcore-contract",
+   "qcore-core",
+   "qcore-frontend",
+   "qcore-gateway-rule-api",
+   "qcore-schemas",
+   "qcore-verification",
+   "qcore-verifier-host",
+   "qcorec",
+   "quirin-audit-plugin",
+   "quirin-audit-plugin-libevent",
+   "quirin-audit-plugin-measure",
+   "quirin-source-analysis",
+   "rule-33-removed-selection",
+   "rule-34-element-destroyer",
+   "rule-35-literal-decay",
+   "rule-36-exact-formal-return",
+   "rule-37-result-constructors"
+  ],
+  "probes": true,
+  "lean": {
+   "mode": "none",
+   "reasons": [],
+   "modules": [],
+   "audits": []
+  },
+  "python_reasons": [],
+  "provider_gate": false,
+  "provider_reasons": [],
+  "provider_members_reached_without_providers_change": [
+   "qcore-provider-conformance"
+  ],
+  "unresolved_includes": [
+   {
+    "crate": "qcore-compiler",
+    "source": "compiler/tests/ct_corpus.rs:8069",
+    "literal": "include_str!(\\\"fixtures/ct/{id}/case.qr\\\")\");",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   }
+  ]
+ },
+ "planned_steps": [
+  {
+   "name": "submodules",
+   "argv": [
+    "git",
+    "-C",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a66f13bf7895c04d3",
+    "submodule",
+    "status",
+    "--recursive"
+   ],
+   "slot": null
+  },
+  {
+   "name": "fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "slot": null
+  },
+  {
+   "name": "clippy",
+   "argv": [
+    "cargo",
+    "clippy",
+    "--all-targets",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "slot": null
+  },
+  {
+   "name": "rust-suite",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a66f13bf7895c04d3/scripts/run_test_binaries.py",
+    "--log-dir",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a66f13bf7895c04d3/private/gate/rust-suite"
+   ],
+   "slot": "rust-suite"
+  },
+  {
+   "name": "probe-reevaluation_probe",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a66f13bf7895c04d3/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_probe"
+   ],
+   "slot": null
+  },
+  {
+   "name": "probe-reevaluation_followup",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a66f13bf7895c04d3/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_followup"
+   ],
+   "slot": null
+  },
+  {
+   "name": "python",
+   "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+   ],
+   "slot": null
+  }
+ ],
+ "slots": true,
+ "started": "20261031T144422Z",
+ "ran": true,
+ "steps": [
+  {
+   "name": "submodules",
+   "argv": [
+    "git",
+    "-C",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a66f13bf7895c04d3",
+    "submodule",
+    "status",
+    "--recursive"
+   ],
+   "exit": 0,
+   "seconds": 0.1,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a66f13bf7895c04d3/private/gate/submodules.log",
+   "counts": {
+    "submodules": 1,
+    "not_checked_out_or_moved": []
+   }
+  },
+  {
+   "name": "fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "exit": 0,
+   "seconds": 4.6,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a66f13bf7895c04d3/private/gate/fmt.log",
+   "counts": {}
+  },
+  {
+   "name": "clippy",
+   "argv": [
+    "cargo",
+    "clippy",
+    "--all-targets",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "exit": 0,
+   "seconds": 52.1,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a66f13bf7895c04d3/private/gate/clippy.log",
+   "counts": {}
+  },
+  {
+   "name": "rust-suite",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a66f13bf7895c04d3/scripts/gate_slot.py",
+    "rust-suite",
+    "--receipt",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a66f13bf7895c04d3/private/gate/slots/rust-suite.json",
+    "--",
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a66f13bf7895c04d3/scripts/run_test_binaries.py",
+    "--log-dir",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a66f13bf7895c04d3/private/gate/rust-suite"
+   ],
+   "exit": 0,
+   "seconds": 10071.0,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a66f13bf7895c04d3/private/gate/rust-suite.log",
+   "counts": {
+    "units": 585,
+    "passed": 8951,
+    "failed": 0,
+    "ignored": 15,
+    "measured": 0,
+    "filtered": 69,
+    "summaries": 618,
+    "packages": null,
+    "summary": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a66f13bf7895c04d3/private/gate/rust-suite/summary.json",
+    "ok": true
+   },
+   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a66f13bf7895c04d3/private/gate/slots/rust-suite.json"
+  },
+  {
+   "name": "probe-reevaluation_probe",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a66f13bf7895c04d3/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_probe"
+   ],
+   "exit": 0,
+   "seconds": 0.1,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a66f13bf7895c04d3/private/gate/probe-reevaluation_probe.log",
+   "counts": {}
+  },
+  {
+   "name": "probe-reevaluation_followup",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a66f13bf7895c04d3/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_followup"
+   ],
+   "exit": 0,
+   "seconds": 0.4,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a66f13bf7895c04d3/private/gate/probe-reevaluation_followup.log",
+   "counts": {}
+  },
+  {
+   "name": "python",
+   "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+   ],
+   "exit": 0,
+   "seconds": 54.2,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a66f13bf7895c04d3/private/gate/python.log",
+   "counts": {
+    "tests": 568,
+    "skipped": 0,
+    "ok": true
+   }
+  }
+ ],
+ "ok": true,
+ "finished": "20261031T173404Z"
+}
