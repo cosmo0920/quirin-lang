@@ -6694,7 +6694,15 @@ safety claim and no validation of the detach representation premise.
     writes `contract_dependencies` into every row after the verdict is
     settled (`qcore_audit::contract_dependencies::annotate_unit`). **Do not**
     read the log from any analysis decision, attribute a lookup a body does
-    not spell to its row, or source the set from a lexical scan alone.
+    not spell to its row, or source the set from a lexical scan alone. The
+    one exception is the obligation carriage's attribution (card
+    ARM-OBLIGATIONS-UNIT-GRAIN, rule 37): while a unit frame is open,
+    `within` and `body` also note every function's work and body in the
+    frame's own `contract_dependencies::attribution`, in every run whether
+    or not a recording is open, so it never reads the audit's recording and
+    leaves the recorded evidence unchanged; it may only narrow an
+    obligation from the unit's rows to the rows reaching the admitted
+    declaration.
     Measured (binary `377d3462…`): every row of corpus (4,834), system (448)
     and slice (404) carries it; corpus Safe rows rest on 0.77 declarations on
     average (at most 12). Controls in `tests/contract_dependencies.rs`;
@@ -9157,11 +9165,20 @@ safety claim and no validation of the detach representation premise.
     and the checked-specification settlement (`legacy_checked_spec::settle`),
     where a specification naming `asserted_allocation` stands only while the
     package admits it with that premise as an obligation the declaration
-    states. While such a specification stands, every row of its unit carries
-    the admission's premise among its assumptions (`rule_obligations`, folded
-    into the verdict contract's `assumptions`; card ARM-OBLIGATIONS, which
-    carries any package admission's obligations into its unit's rows and
-    keeps a row with an open one out of `Safe`); a withdrawn specification's
+    states. While such a specification stands, every row whose derivation
+    reaches it carries the admission's premise among its assumptions
+    (`rule_obligations`, folded into the verdict contract's `assumptions`;
+    card ARM-OBLIGATIONS, which carries any package admission's obligations
+    into the rows resting on it and keeps a row with an open one out of
+    `Safe`). Card ARM-OBLIGATIONS-UNIT-GRAIN narrows the carriage from the
+    unit to those rows: the specification's own row and every row whose
+    work, or the work of an in-unit function it consulted, transitively,
+    consulted the specification's name (its body's spellings, minted ones
+    read back, its applied callees, its relied-on callback candidates), noted
+    per unit frame in every run (`contract_dependencies::attribution`), never
+    read from the audit's recording, so the certificate recheck reproduces
+    it. An admission without an established attribution (a host's, a nested
+    analysis's hand-up) keeps the unit grain. A withdrawn specification's
     admission carries nothing, since no row rests on it.
     `QCORE_GATEWAY_RULES_OFF=37` removes both answers: the scan counts every
     mention, as before this rule, and every such specification is

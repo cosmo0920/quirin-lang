@@ -278,6 +278,9 @@ impl Drop for Recording {
 struct Scope {
     function: String,
     enclosing: Option<Option<Consulted>>,
+    /// Card ARM-OBLIGATIONS-UNIT-GRAIN: the function was pushed on the
+    /// attribution's active stack.
+    active: bool,
 }
 
 impl Drop for Scope {
@@ -288,6 +291,10 @@ impl Drop for Scope {
         let mine = contract_consultation::close(enclosing);
         contract_consultation::absorb(&mine);
         let function = std::mem::take(&mut self.function);
+        if self.active {
+            attribution::work(&function, &mine);
+            attribution::leave();
+        }
         with_recorder(|recorder| {
             recorder
                 .record
@@ -300,22 +307,28 @@ impl Drop for Scope {
 }
 
 /// Run `work` as `function`'s: every lookup it makes is noted under that
-/// function. The identity when no recording is open.
+/// function. The identity when no recording and no attribution is open.
 pub(crate) fn within<R>(function: &str, work: impl FnOnce() -> R) -> R {
-    if !recording() {
+    let active = attribution::open();
+    if !recording() && !active {
         return work();
+    }
+    if active {
+        attribution::enter(function);
     }
     let _scope = Scope {
         function: function.to_owned(),
         enclosing: Some(contract_consultation::open()),
+        active,
     };
     work()
 }
 
 /// Record the identifiers of `function`'s body, the braced block opening at
-/// `start` in `tokens`. Nothing without a recording.
+/// `start` in `tokens`. Nothing without a recording or an attribution.
 pub(crate) fn body(function: &str, tokens: &[crate::legacy_c::Token], start: usize) {
-    if !recording() {
+    let active = attribution::open();
+    if !recording() && !active {
         return;
     }
     let mut depth = 0usize;
@@ -339,6 +352,9 @@ pub(crate) fn body(function: &str, tokens: &[crate::legacy_c::Token], start: usi
             }
             _ => {}
         }
+    }
+    if active {
+        attribution::body(function, &names);
     }
     with_recorder(|recorder| {
         recorder
@@ -403,6 +419,234 @@ pub(crate) fn unrecorded<R>(work: impl FnOnce() -> R) -> R {
         log: Some(contract_consultation::open()),
     };
     work()
+}
+
+/// Card HANDOFF-CANDIDATE-OWN-CALLBACKS: note that the current work relied on
+/// the declaration `name` through a decided callback invocation (the body
+/// need not spell it). Card ARM-OBLIGATIONS-UNIT-GRAIN: the note also reaches
+/// every open attribution for every function whose work is running, where a
+/// declining probe's rollback of the consultation log cannot erase it.
+pub(crate) fn relied(name: &str) {
+    contract_consultation::note_relied(name);
+    attribution::relied(name);
+}
+
+/// Card **ARM-OBLIGATIONS-UNIT-GRAIN**: which rows of a unit reach a
+/// declaration, for the carriage of a rule package admission's obligations
+/// (`crate::arm_obligations`).
+///
+/// While a unit frame is open (`crate::arm_obligations::Frame`), every
+/// function's work ([`within`]) and every body a CFG build reads ([`body`])
+/// is noted in the frame's [`Attribution`], in **every** run: the audit's
+/// [`Recording`] is neither needed nor read, so a row's carriage is the same
+/// whether a recording is open or not (the certificate recheck reruns the
+/// analysis outside one). The sources are rule 13f's: a function's own name,
+/// every identifier its body spells in a stream a build of it read (minted
+/// and held spellings read back to their declaration), every callee its row's
+/// solved CFG applies, and every decided callback candidate its work relied
+/// on. Unlike rule 13f's set the closure follows every in-unit function that
+/// has work in the frame (an inferred summary, a standing checked
+/// specification, a declaration withdrawn here), and a function with work but
+/// no recorded body contributes every name its work looked up, unfiltered.
+pub(crate) mod attribution {
+    use std::cell::RefCell;
+    use std::collections::{BTreeMap, BTreeSet};
+
+    use qcore_schemas::contract::ResourceContracts;
+    use qcore_schemas::contract_consultation::{self, Consulted};
+
+    use super::{Spelling, read};
+
+    /// One unit frame's notes.
+    #[derive(Clone, Debug, Default, PartialEq, Eq)]
+    pub(crate) struct Attribution {
+        /// Per function, every name its work looked up.
+        pub(crate) work: BTreeMap<String, Consulted>,
+        /// Per function, every identifier its body spells in a stream a CFG
+        /// build of it read.
+        pub(crate) bodies: BTreeMap<String, BTreeSet<String>>,
+        /// Per function, every decided callback candidate its work relied
+        /// on, never rolled back.
+        pub(crate) relied: BTreeMap<String, BTreeSet<String>>,
+    }
+
+    thread_local! {
+        static STACK: RefCell<Vec<Attribution>> = const { RefCell::new(Vec::new()) };
+        static ACTIVE: RefCell<Vec<String>> = const { RefCell::new(Vec::new()) };
+    }
+
+    /// Whether a unit frame's attribution is open on this thread.
+    pub(crate) fn open() -> bool {
+        STACK.with(|stack| !stack.borrow().is_empty())
+    }
+
+    /// Open one unit frame's attribution; its depth closes it.
+    pub(crate) fn start() -> usize {
+        STACK.with(|stack| {
+            let mut stack = stack.borrow_mut();
+            stack.push(Attribution::default());
+            stack.len()
+        })
+    }
+
+    /// Close the attribution opened at `depth` (and any left open inside it
+    /// by an unwind) and return its notes.
+    pub(crate) fn finish(depth: usize) -> Attribution {
+        STACK.with(|stack| {
+            let mut stack = stack.borrow_mut();
+            let mut mine = Attribution::default();
+            while stack.len() >= depth {
+                let Some(top) = stack.pop() else {
+                    break;
+                };
+                if stack.len() + 1 == depth {
+                    mine = top;
+                }
+            }
+            mine
+        })
+    }
+
+    pub(super) fn enter(function: &str) {
+        ACTIVE.with(|active| active.borrow_mut().push(function.to_owned()));
+    }
+
+    pub(super) fn leave() {
+        ACTIVE.with(|active| {
+            active.borrow_mut().pop();
+        });
+    }
+
+    fn with_top(change: impl FnOnce(&mut Attribution)) {
+        STACK.with(|stack| {
+            if let Some(top) = stack.borrow_mut().last_mut() {
+                change(top);
+            }
+        });
+    }
+
+    pub(super) fn work(function: &str, consulted: &Consulted) {
+        with_top(|top| {
+            top.work
+                .entry(function.to_owned())
+                .or_default()
+                .absorb(consulted);
+        });
+    }
+
+    pub(super) fn body(function: &str, names: &BTreeSet<String>) {
+        with_top(|top| {
+            top.bodies
+                .entry(function.to_owned())
+                .or_default()
+                .extend(names.iter().cloned());
+        });
+    }
+
+    pub(super) fn relied(name: &str) {
+        let active = ACTIVE.with(|active| active.borrow().clone());
+        if active.is_empty() {
+            return;
+        }
+        STACK.with(|stack| {
+            for attribution in stack.borrow_mut().iter_mut() {
+                for function in &active {
+                    attribution
+                        .relied
+                        .entry(function.clone())
+                        .or_default()
+                        .insert(name.to_owned());
+                }
+            }
+        });
+    }
+
+    /// The names `function`'s derivation consulted directly, read back to
+    /// their declarations: its own name, its body's spellings (every name
+    /// its work looked up when no body was recorded), its relied-on
+    /// candidates and `callees` (its row's applied callees).
+    fn direct(
+        attribution: &Attribution,
+        function: &str,
+        callees: Option<&BTreeSet<String>>,
+        environment: &ResourceContracts,
+    ) -> BTreeSet<String> {
+        let mut spellings = BTreeSet::new();
+        let work = attribution.work.get(function);
+        match attribution.bodies.get(function) {
+            Some(body) => spellings.extend(body.iter().cloned()),
+            None => {
+                if let Some(work) = work {
+                    spellings.extend(work.found.iter().chain(&work.missed).cloned());
+                }
+            }
+        }
+        if let Some(work) = work {
+            spellings.extend(work.relied.iter().cloned());
+        }
+        if let Some(relied) = attribution.relied.get(function) {
+            spellings.extend(relied.iter().cloned());
+        }
+        if let Some(callees) = callees {
+            spellings.extend(callees.iter().cloned());
+        }
+        let mut names = BTreeSet::new();
+        names.insert(function.to_owned());
+        for spelling in spellings {
+            match read(&spelling, environment) {
+                Spelling::Plain(name) | Spelling::Held(name) | Spelling::Withdrawn(name) => {
+                    names.insert(name);
+                }
+                Spelling::Other => {}
+            }
+        }
+        names
+    }
+
+    /// For every name of `targets`, the functions whose derivation reaches
+    /// it: the function itself, and every function with work in the frame or
+    /// a row of `rows` (with its applied callees) whose direct names contain
+    /// a function that reaches it, transitively.
+    #[must_use]
+    pub(crate) fn reaching(
+        attribution: &Attribution,
+        rows: &BTreeMap<String, BTreeSet<String>>,
+        environment: &ResourceContracts,
+        targets: &BTreeSet<String>,
+    ) -> BTreeMap<String, BTreeSet<String>> {
+        // Reading a spelling back asks the environment; keep those lookups
+        // out of every enclosing log (rule 13f evidence is unchanged).
+        let enclosing = contract_consultation::open();
+        let nodes = attribution
+            .work
+            .keys()
+            .chain(attribution.bodies.keys())
+            .chain(rows.keys())
+            .cloned()
+            .collect::<BTreeSet<_>>();
+        let mut callers: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
+        for node in &nodes {
+            for name in direct(attribution, node, rows.get(node), environment) {
+                callers.entry(name).or_default().insert(node.clone());
+            }
+        }
+        let _discarded = contract_consultation::close(enclosing);
+        targets
+            .iter()
+            .map(|target| {
+                let mut reached = BTreeSet::new();
+                let mut queue = vec![target.clone()];
+                while let Some(name) = queue.pop() {
+                    for caller in callers.get(&name).into_iter().flatten() {
+                        if reached.insert(caller.clone()) {
+                            queue.push(caller.clone());
+                        }
+                    }
+                }
+                (target.clone(), reached)
+            })
+            .collect()
+    }
 }
 
 /// `name` was given an in-unit summary.

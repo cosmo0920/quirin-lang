@@ -33,14 +33,22 @@
 //! better) and stays in the denominator. A row is `Safe` only when it
 //! carries no open obligation.
 //!
-//! The unit is the carriage's grain: an obligation reached anywhere in the
-//! unit's analysis is carried by every row of the unit, and a nested analysis
-//! hands what it carried to the enclosing frame as well. That over-approximates
-//! which rows rest on it (an assumption too many, never one too few).
+//! Card **ARM-OBLIGATIONS-UNIT-GRAIN**: the grain is the row where the
+//! attribution is established, the unit where it is not ([`FrameCarriage`]).
+//! An admission of a named declaration (rule 37's checked specification of
+//! `rd_calloc`) is carried by the rows whose derivation reaches that
+//! declaration: the row itself, or a function its work consulted, through
+//! every in-unit function with work in the frame, transitively
+//! (`contract_dependencies::attribution::reaching`, read in every run, never
+//! from the audit's recording). Every other admission (a host asked during
+//! the analysis, a nested analysis handing its carriage up, a test
+//! injection) has no established attribution and keeps the unit grain:
+//! every row of the unit carries it, as before. Either way a row's set is a
+//! subset of the unit's and holds every obligation its derivation used.
 //! `QCore.ArmObligations` models the law.
 
 use std::cell::RefCell;
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 
 use qcore_gateway_rule_api::{Admission, Answer, Obligation};
 
@@ -90,32 +98,83 @@ impl Carried {
     }
 }
 
+/// Card ARM-OBLIGATIONS-UNIT-GRAIN: one frame's obligations by attribution.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+#[must_use = "a carried obligation must reach a row"]
+pub struct FrameCarriage {
+    /// Carried by every row of the unit: the attribution is not established.
+    pub unit: Carried,
+    /// Carried by the rows whose derivation reaches the named declaration.
+    pub declarations: BTreeMap<String, Carried>,
+}
+
+impl FrameCarriage {
+    /// Everything the frame carried, whatever its attribution (the unit grain).
+    pub fn all(&self) -> Carried {
+        let mut all = self.unit.clone();
+        for carried in self.declarations.values() {
+            all.extend(carried.clone());
+        }
+        all
+    }
+
+    #[must_use]
+    pub fn is_empty(&self) -> bool {
+        self.unit.is_empty() && self.declarations.values().all(Carried::is_empty)
+    }
+
+    /// What one row carries: the unit's obligations, and every declaration's
+    /// whose name the row's derivation reaches (`reaches`). A subset of
+    /// [`Self::all`].
+    pub fn row(&self, reaches: impl Fn(&str) -> bool) -> Carried {
+        let mut row = self.unit.clone();
+        for (declaration, carried) in &self.declarations {
+            if reaches(declaration) {
+                row.extend(carried.clone());
+            }
+        }
+        row
+    }
+}
+
 thread_local! {
-    static FRAMES: RefCell<Vec<Carried>> = const { RefCell::new(Vec::new()) };
+    static FRAMES: RefCell<Vec<FrameCarriage>> = const { RefCell::new(Vec::new()) };
 }
 
 /// One unit's analysis: the obligations carried while it is open. Closing
 /// (or dropping) it hands what it carried to the enclosing frame too, so a
-/// nested analysis whose result the enclosing one reads never sheds one.
+/// nested analysis whose result the enclosing one reads never sheds one;
+/// the enclosing frame carries it at unit grain, since which of its rows
+/// read the nested result is not attributed.
 #[must_use = "a frame collects the obligations its unit's rows carry"]
 pub(crate) struct Frame {
     depth: usize,
+    attribution: usize,
     closed: bool,
 }
 
 #[cfg(test)]
 thread_local! {
     /// Test only: what the next frame opens with, standing in for a package
-    /// admission with obligations reached during that unit's analysis.
+    /// admission with obligations reached during that unit's analysis whose
+    /// attribution is not established (unit grain).
     pub(crate) static INJECTED: RefCell<Option<Carried>> = const { RefCell::new(None) };
+    /// Test only: likewise, attributed to the named declarations.
+    pub(crate) static INJECTED_DECLARATIONS: RefCell<BTreeMap<String, Carried>> =
+        const { RefCell::new(BTreeMap::new()) };
 }
 
 impl Frame {
     pub(crate) fn open() -> Self {
         #[cfg(test)]
-        let opening = INJECTED.with(|injected| injected.borrow_mut().take().unwrap_or_default());
+        let opening = FrameCarriage {
+            unit: INJECTED.with(|injected| injected.borrow_mut().take().unwrap_or_default()),
+            declarations: INJECTED_DECLARATIONS
+                .with(|injected| std::mem::take(&mut *injected.borrow_mut())),
+        };
         #[cfg(not(test))]
-        let opening = Carried::default();
+        let opening = FrameCarriage::default();
+        let attribution = crate::contract_dependencies::attribution::start();
         let depth = FRAMES.with(|frames| {
             let mut frames = frames.borrow_mut();
             frames.push(opening);
@@ -123,23 +182,44 @@ impl Frame {
         });
         Self {
             depth,
+            attribution,
             closed: false,
         }
     }
 
-    /// Carry obligations whose lowering this unit's analysis uses.
-    pub(crate) fn carry(&self, carried: Carried) {
+    /// Carry the obligations of admitted declarations whose lowering this
+    /// unit's analysis uses, each attributed to its declaration's name.
+    pub(crate) fn carry_declarations(&self, carried: BTreeMap<String, Carried>) {
         FRAMES.with(|frames| {
             if let Some(frame) = frames.borrow_mut().get_mut(self.depth - 1) {
-                frame.extend(carried);
+                for (declaration, obligations) in carried {
+                    if !obligations.is_empty() {
+                        frame
+                            .declarations
+                            .entry(declaration)
+                            .or_default()
+                            .extend(obligations);
+                    }
+                }
             }
         });
     }
 
-    /// Everything this frame carried; the enclosing frame keeps a copy.
-    pub(crate) fn close(mut self) -> Carried {
+    /// Everything this frame carried and the attribution its analysis
+    /// noted; the enclosing frame keeps a copy of the carriage, at unit
+    /// grain.
+    pub(crate) fn close(
+        mut self,
+    ) -> (
+        FrameCarriage,
+        crate::contract_dependencies::attribution::Attribution,
+    ) {
         self.closed = true;
-        pop(self.depth)
+        let carried = pop(self.depth);
+        (
+            carried,
+            crate::contract_dependencies::attribution::finish(self.attribution),
+        )
     }
 }
 
@@ -147,39 +227,46 @@ impl Drop for Frame {
     fn drop(&mut self) {
         if !self.closed {
             let _ = pop(self.depth);
+            let _ = crate::contract_dependencies::attribution::finish(self.attribution);
         }
     }
 }
 
-fn pop(depth: usize) -> Carried {
+fn pop(depth: usize) -> FrameCarriage {
     FRAMES.with(|frames| {
         let mut frames = frames.borrow_mut();
         // Frames close in order; an inner frame left open by a panic is
-        // folded into this one rather than lost.
-        let mut carried = Carried::default();
+        // folded into this one, at unit grain, rather than lost.
+        let mut carried = FrameCarriage::default();
+        let mut inner = Carried::default();
         while frames.len() >= depth {
-            if let Some(frame) = frames.pop() {
-                carried.extend(frame);
+            let Some(frame) = frames.pop() else {
+                break;
+            };
+            if frames.len() + 1 == depth {
+                carried = frame;
+            } else {
+                inner.extend(frame.all());
             }
         }
+        carried.unit.extend(inner);
         if let Some(parent) = frames.last_mut() {
-            parent.extend(carried.clone());
+            parent.unit.extend(carried.all());
         }
         carried
     })
 }
 
-/// Carry `carried` into every open frame; `false` when none is open, so the
-/// admission it came from cannot be carried.
+/// Carry `carried` into the innermost open frame at unit grain (its
+/// enclosing frames receive it when it closes); `false` when none is open,
+/// so the admission it came from cannot be carried.
 fn carry_open(carried: &Carried) -> bool {
     FRAMES.with(|frames| {
         let mut frames = frames.borrow_mut();
-        if frames.is_empty() {
+        let Some(frame) = frames.last_mut() else {
             return false;
-        }
-        for frame in frames.iter_mut() {
-            frame.extend(carried.clone());
-        }
+        };
+        frame.unit.extend(carried.clone());
         true
     })
 }
@@ -255,6 +342,36 @@ pub(crate) fn consult_held<E, L>(
         carried: Carried::of(rule, &obligations),
         obligations,
     })
+}
+
+/// Card ARM-OBLIGATIONS-UNIT-GRAIN: for every declaration `carried`
+/// attributes an admission to, the rows of `functions` whose derivation
+/// reaches it ([`crate::contract_dependencies::attribution::reaching`]), read
+/// back against the unit's input `environment`.
+pub(crate) fn reaching_rows(
+    carried: &FrameCarriage,
+    attribution: &crate::contract_dependencies::attribution::Attribution,
+    functions: &BTreeMap<String, crate::legacy_c::LegacyFunctionSummary>,
+    environment: &qcore_schemas::contract::ResourceContracts,
+) -> BTreeMap<String, BTreeSet<String>> {
+    if carried.declarations.is_empty() {
+        return BTreeMap::new();
+    }
+    let rows = functions
+        .iter()
+        .map(|(name, summary)| {
+            (
+                name.clone(),
+                crate::contract_dependencies::cfg_callees(&summary.cfg),
+            )
+        })
+        .collect::<BTreeMap<_, _>>();
+    let targets = carried
+        .declarations
+        .keys()
+        .cloned()
+        .collect::<BTreeSet<_>>();
+    crate::contract_dependencies::attribution::reaching(attribution, &rows, environment, &targets)
 }
 
 /// The diagnostic an open obligation leaves on a row.

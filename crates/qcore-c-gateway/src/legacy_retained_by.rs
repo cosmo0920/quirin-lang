@@ -483,7 +483,7 @@ impl Parser<'_> {
             ));
         }
         let mut declaration = if let Some(summary) = &inferred {
-            qcore_schemas::contract_consultation::note_relied(function);
+            crate::contract_dependencies::relied(function);
             qcore_schemas::retained_by::RetainingContract::custody_only(summary.contract.clone())
         } else if let Some(scoped) = self
             .contracts

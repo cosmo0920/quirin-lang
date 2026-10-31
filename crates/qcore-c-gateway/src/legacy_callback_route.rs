@@ -85,9 +85,9 @@ impl Classified {
     /// candidate, and a composed candidate's inner candidates.
     fn note_relied(&self, candidates: &BTreeSet<String>) {
         for name in candidates {
-            qcore_schemas::contract_consultation::note_relied(name);
+            crate::contract_dependencies::relied(name);
             for inner in self.inner.get(name).into_iter().flatten() {
-                qcore_schemas::contract_consultation::note_relied(inner);
+                crate::contract_dependencies::relied(inner);
             }
         }
     }

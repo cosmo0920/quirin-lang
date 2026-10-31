@@ -236,4 +236,168 @@ theorem the_apply_vectors_are_apply :
       (apply (vectorCarried row.2.1) ⟨row.1, []⟩).verdict == row.2.2) = true := by
   decide
 
+/-! ## Row grain (card ARM-OBLIGATIONS-UNIT-GRAIN)
+
+A frame's obligations are attributed (`FrameCarriage` in
+`arm_obligations.rs`): an admission of a named declaration (rule 37's
+checked specification) to that declaration, every other admission (a host's,
+a nested frame's hand-up) to the unit. A row carries the unit's obligations
+and those of every declaration its derivation reaches ([`rowGrain`]).
+
+The derivation's consultations are a relation `consulted m n` (function `m`'s
+work consulted the name `n`); `Used` is its reflexive-transitive closure from
+the row, so a use through an in-unit callee's summary is a use. The gateway
+records a graph `direct` (`contract_dependencies::attribution`) and computes
+the set of names a row reaches over it (`reaching`). Two premises are kept
+separate (trust boundary 28): the recorded graph holds every consultation
+(`complete`, rule 13f's never-omits claim, with the closure following every
+function with work), and the computed set holds every name reachable in the
+recorded graph (`closed`, pinned by the gateway's unit tests of `reaching`).
+Under them a row's set is a subset of the unit's and holds every obligation
+its derivation used. -/
+
+/-- Where a frame attributes an obligation. -/
+inductive Anchor where
+  /-- Not established: every row of the unit carries it. -/
+  | unit
+  /-- The rows whose derivation reaches the named declaration carry it. -/
+  | declaration (name : String)
+  deriving DecidableEq, Repr
+
+/-- A frame's carriage, by attribution. -/
+abbrev FrameCarriage := List (Anchor × Carried)
+
+/-- The unit grain: everything the frame carried. -/
+def unitGrain (f : FrameCarriage) : Carried := f.flatMap (·.2)
+
+/-- Whether a row that reaches the names `reach` says is reached by the
+anchor's attribution. -/
+def Anchor.reachedBy (reach : String → Bool) : Anchor → Bool
+  | .unit => true
+  | .declaration n => reach n
+
+/-- The row grain: the obligations of every entry whose anchor the row
+reaches. -/
+def rowGrain (f : FrameCarriage) (reach : String → Bool) : Carried :=
+  (f.filter (fun e => e.1.reachedBy reach)).flatMap (·.2)
+
+/-- A nested frame closes into its enclosing one at unit grain. -/
+def closeInto (outer : FrameCarriage) (inner : FrameCarriage) : FrameCarriage :=
+  outer ++ [(.unit, unitGrain inner)]
+
+/-- Reachability over a consultation relation, from a row. -/
+inductive Reaches (step : String → String → Prop) : String → String → Prop where
+  | refl (r : String) : Reaches step r r
+  | tail {r m n : String} : Reaches step r m → step m n → Reaches step r n
+
+/-- The names a row's derivation used: its own, and every name the work of a
+function it used consulted. -/
+abbrev Used (consulted : String → String → Prop) (r n : String) : Prop :=
+  Reaches consulted r n
+
+theorem mem_rowGrain {f : FrameCarriage} {reach : String → Bool} {o : Obligation} :
+    o ∈ rowGrain f reach ↔ ∃ e ∈ f, e.1.reachedBy reach = true ∧ o ∈ e.2 := by
+  simp [rowGrain, List.mem_flatMap, List.mem_filter, and_assoc]
+
+theorem mem_unitGrain {f : FrameCarriage} {o : Obligation} :
+    o ∈ unitGrain f ↔ ∃ e ∈ f, o ∈ e.2 := by
+  simp [unitGrain, List.mem_flatMap]
+
+/-- Row grain refines unit grain: a row's set is a subset of the unit's. -/
+theorem the_row_grain_refines_the_unit_grain (f : FrameCarriage) (reach : String → Bool)
+    (o : Obligation) (h : o ∈ rowGrain f reach) : o ∈ unitGrain f := by
+  obtain ⟨e, he, _, ho⟩ := mem_rowGrain.mp h
+  exact mem_unitGrain.mpr ⟨e, he, ho⟩
+
+/-- An obligation whose attribution is not established reaches every row. -/
+theorem an_unattributed_obligation_reaches_every_row (f : FrameCarriage)
+    (reach : String → Bool) (c : Carried) (hc : (.unit, c) ∈ f) (o : Obligation)
+    (ho : o ∈ c) : o ∈ rowGrain f reach :=
+  mem_rowGrain.mpr ⟨(.unit, c), hc, rfl, ho⟩
+
+/-- Attribution unknown for every declaration is the unit grain. -/
+theorem an_unknown_attribution_is_the_unit_grain (f : FrameCarriage) :
+    rowGrain f (fun _ => true) = unitGrain f := by
+  have : ∀ e : Anchor × Carried, e.1.reachedBy (fun _ => true) = true := by
+    intro e
+    cases e.1 <;> rfl
+  simp [rowGrain, unitGrain, List.filter_eq_self.mpr (fun e _ => this e)]
+
+/-- Reachability in a complete record: every use is recorded. -/
+theorem a_used_name_is_reached {consulted : String → String → Prop}
+    {direct : String → String → Prop} (complete : ∀ m n, consulted m n → direct m n)
+    {r n : String} (h : Used consulted r n) : Reaches direct r n := by
+  induction h with
+  | refl => exact .refl _
+  | tail _ hstep ih => exact .tail ih (complete _ _ hstep)
+
+/-- The row grain holds every obligation the row's derivation used: given a
+record complete for the derivation's consultations and a reach set closed
+over the record, an admission attributed to a declaration the row used is
+carried by the row. -/
+theorem the_row_grain_holds_every_obligation_its_derivation_used
+    {consulted direct : String → String → Prop} (complete : ∀ m n, consulted m n → direct m n)
+    (r : String) (reach : String → Bool) (closed : ∀ n, Reaches direct r n → reach n = true)
+    (f : FrameCarriage) (s : String) (c : Carried) (hc : (.declaration s, c) ∈ f)
+    (used : Used consulted r s) (o : Obligation) (ho : o ∈ c) : o ∈ rowGrain f reach :=
+  mem_rowGrain.mpr ⟨(.declaration s, c), hc, closed s (a_used_name_is_reached complete used), ho⟩
+
+/-- The transitive-callee case: a row that uses a function whose work used
+the declaration carries the declaration's obligations. -/
+theorem a_transitive_callee_use_is_carried
+    {consulted direct : String → String → Prop} (complete : ∀ m n, consulted m n → direct m n)
+    (r g s : String) (reach : String → Bool) (closed : ∀ n, Reaches direct r n → reach n = true)
+    (hrg : consulted r g) (hgs : consulted g s)
+    (f : FrameCarriage) (c : Carried) (hc : (.declaration s, c) ∈ f) (o : Obligation)
+    (ho : o ∈ c) : o ∈ rowGrain f reach :=
+  the_row_grain_holds_every_obligation_its_derivation_used complete r reach closed f s c hc
+    (.tail (.tail (.refl r) hrg) hgs) o ho
+
+/-- The nested case: everything a nested frame carried reaches every row of
+the enclosing frame (unit grain), whatever the row reaches. -/
+theorem a_nested_frame_reaches_every_enclosing_row (outer inner : FrameCarriage)
+    (reach : String → Bool) (o : Obligation) (ho : o ∈ unitGrain inner) :
+    o ∈ rowGrain (closeInto outer inner) reach :=
+  an_unattributed_obligation_reaches_every_row _ reach _
+    (List.mem_append.mpr (Or.inr (List.mem_singleton.mpr rfl))) o ho
+
+/-- Precision: an attributed obligation does not reach a row that does not
+reach its declaration, unless another entry carries it. -/
+theorem an_unreached_declaration_is_not_carried (f : FrameCarriage) (reach : String → Bool)
+    (o : Obligation)
+    (only : ∀ e ∈ f, o ∈ e.2 → ∃ s, e.1 = .declaration s ∧ reach s = false) :
+    o ∉ rowGrain f reach := by
+  intro h
+  obtain ⟨e, he, hr, ho⟩ := mem_rowGrain.mp h
+  obtain ⟨s, hs, hfalse⟩ := only e he ho
+  rw [hs] at hr
+  simp [Anchor.reachedBy, hfalse] at hr
+
+/-- A row carrying an open obligation it rests on is never `Safe`; so a
+`Safe` row rests on no open obligation: neither an unattributed one nor one
+of a declaration its derivation used. -/
+theorem a_safe_row_rests_on_no_open_obligation
+    {consulted direct : String → String → Prop} (complete : ∀ m n, consulted m n → direct m n)
+    (r : String) (reach : String → Bool) (closed : ∀ n, Reaches direct r n → reach n = true)
+    (f : FrameCarriage) (row : Row) (wf : row.wellFormed)
+    (hs : (apply (rowGrain f reach) row).verdict = .safe) :
+    (∀ c, (.unit, c) ∈ f → hasOpen c = false) ∧
+      (∀ s c, (.declaration s, c) ∈ f → Used consulted r s → hasOpen c = false) := by
+  have none_open : ∀ o ∈ rowGrain f reach, o.isOpen = false := fun o ho =>
+    a_safe_row_carries_no_open_obligation (rowGrain f reach) row wf hs o
+      (List.mem_append.mpr (Or.inr ho))
+  have closedC : ∀ c : Carried, (∀ o ∈ c, o ∈ rowGrain f reach) → hasOpen c = false := by
+    intro c hc
+    cases h : hasOpen c
+    · rfl
+    · simp only [hasOpen, List.any_eq_true] at h
+      obtain ⟨o, ho, hopen⟩ := h
+      exact absurd (none_open o (hc o ho)) (by simp [hopen])
+  refine ⟨fun c hc => closedC c (fun o ho =>
+      an_unattributed_obligation_reaches_every_row f reach c hc o ho), ?_⟩
+  intro s c hc used
+  exact closedC c (fun o ho =>
+    the_row_grain_holds_every_obligation_its_derivation_used complete r reach closed f s c hc
+      used o ho)
+
 end QCore.ArmObligations

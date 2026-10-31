@@ -158,6 +158,8 @@ struct envelope *build(const char *name) {{
     struct envelope *e = rd_calloc(1, {size});
     e->name = rd_strdup(name); e->state = 1; return e;
 }}
+struct envelope *make(void) {{ return build("x"); }}
+int answer(int x) {{ return x + 1; }}
 "#
     );
     let fixture = SourceFixture::new(&source);
@@ -232,9 +234,14 @@ fn with_nothing_off_rule_37_admits_the_provider_constructors() {
             "{size}: {constructor:#?}"
         );
         // Card ARM-OBLIGATIONS: the admitted specifications stand in this
-        // unit, so every row carries their admission's premise among its
-        // assumptions, and the verdict is unchanged.
-        for function in ["build", "rd_calloc", "rd_strdup"] {
+        // unit, so every row resting on them carries their admission's
+        // premise among its assumptions, and the verdict is unchanged.
+        // Card ARM-OBLIGATIONS-UNIT-GRAIN: the rows whose derivation reaches
+        // `rd_calloc` or `rd_strdup` are the specifications' own rows, their
+        // caller `build` and, through `build`'s in-unit summary, `make`;
+        // `answer` reaches neither and carries nothing. The unit is `Safe`,
+        // so the certificate recheck (outside any recording) reproduced it.
+        for function in ["build", "make", "rd_calloc", "rd_strdup"] {
             let row = provider_row(size, function);
             assert_eq!(
                 row.rule_obligations,
@@ -242,6 +249,9 @@ fn with_nothing_off_rule_37_admits_the_provider_constructors() {
                 "{size} {function}"
             );
         }
+        let answer = provider_row(size, "answer");
+        assert_eq!(answer.status, AnalysisStatus::Safe, "{answer:#?}");
+        assert!(answer.rule_obligations.is_empty(), "{size}: {answer:#?}");
     }
 }
 

@@ -3393,8 +3393,9 @@ fn analyze_translation_unit_under_holds(
         withdrawn: withdrawn_specifications,
         carried: specification_obligations,
     } = refuted_contract::settle(&tokens, &scope, contracts, &refuted_table);
-    // Card ARM-OBLIGATIONS: the standing specifications' admissions.
-    obligations.carry(specification_obligations);
+    // Card ARM-OBLIGATIONS: the standing specifications' admissions, each
+    // attributed to its specification (card ARM-OBLIGATIONS-UNIT-GRAIN).
+    obligations.carry_declarations(specification_obligations);
     // Card VERDICT-CONTRACT-DEPENDENCIES (rule 13g): what the final
     // derivation's bodies made of the declarations they define.
     let mode_withdrawn = gate
@@ -3484,12 +3485,24 @@ fn analyze_translation_unit_under_holds(
     // embedded storage. This can only append a witnessed violation to the
     // public root; every ordinary diagnostic remains evidence.
     legacy_conditional_embedded_storage::diagnose(&tokens, &mut functions);
-    // Card ARM-OBLIGATIONS: every row carries what the unit's admissions rest
-    // on: premises into its assumptions, an open obligation out of `Safe`.
-    let carried = obligations.close();
-    for (name, summary) in &mut functions {
-        let line = find_function_body(&tokens, name).map_or(0, |(_, line)| line);
-        crate::arm_obligations::apply(summary, &carried, line);
+    // Card ARM-OBLIGATIONS: every row carries what the unit's admissions it
+    // rests on rest on: premises into its assumptions, an open obligation out
+    // of `Safe`. Card ARM-OBLIGATIONS-UNIT-GRAIN: an admission attributed to
+    // a declaration only on the rows whose derivation reaches it, every
+    // other admission on every row.
+    let (carried, attribution) = obligations.close();
+    if !carried.is_empty() {
+        let reaching =
+            crate::arm_obligations::reaching_rows(&carried, &attribution, &functions, input);
+        for (name, summary) in &mut functions {
+            let line = find_function_body(&tokens, name).map_or(0, |(_, line)| line);
+            let row = carried.row(|declaration| {
+                reaching
+                    .get(declaration)
+                    .is_none_or(|rows| rows.contains(name))
+            });
+            crate::arm_obligations::apply(summary, &row, line);
+        }
     }
     // Card W45-USER-CONTRACT-PLUGINS: the fold of the verdict semigroup,
     // which is the three-way decision this replaced on every status it had.

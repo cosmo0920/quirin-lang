@@ -1,6 +1,7 @@
 import QCore.ArmObligations
 
-/-! Card ARM-OBLIGATIONS: every public theorem of the carriage law is audited. -/
+/-! Cards ARM-OBLIGATIONS and ARM-OBLIGATIONS-UNIT-GRAIN: every public theorem
+of the carriage law and of its row grain is audited. -/
 
 #print axioms QCore.ArmObligations.the_join_with_unknown_is_never_safe
 #print axioms QCore.ArmObligations.the_join_never_lowers
@@ -19,3 +20,14 @@ import QCore.ArmObligations
 #print axioms QCore.ArmObligations.premises_alone_keep_the_verdict
 #print axioms QCore.ArmObligations.the_empty_carriage_is_the_identity
 #print axioms QCore.ArmObligations.the_apply_vectors_are_apply
+#print axioms QCore.ArmObligations.mem_rowGrain
+#print axioms QCore.ArmObligations.mem_unitGrain
+#print axioms QCore.ArmObligations.the_row_grain_refines_the_unit_grain
+#print axioms QCore.ArmObligations.an_unattributed_obligation_reaches_every_row
+#print axioms QCore.ArmObligations.an_unknown_attribution_is_the_unit_grain
+#print axioms QCore.ArmObligations.a_used_name_is_reached
+#print axioms QCore.ArmObligations.the_row_grain_holds_every_obligation_its_derivation_used
+#print axioms QCore.ArmObligations.a_transitive_callee_use_is_carried
+#print axioms QCore.ArmObligations.a_nested_frame_reaches_every_enclosing_row
+#print axioms QCore.ArmObligations.an_unreached_declaration_is_not_carried
+#print axioms QCore.ArmObligations.a_safe_row_rests_on_no_open_obligation

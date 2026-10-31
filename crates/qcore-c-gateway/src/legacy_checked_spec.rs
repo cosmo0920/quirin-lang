@@ -85,24 +85,25 @@ pub(crate) struct Settled {
     /// Every withdrawn specification, with its reason.
     pub(crate) withdrawn: BTreeMap<String, Withdrawal>,
     /// Card ARM-OBLIGATIONS: the obligations of the rule packages' admissions
-    /// of the specifications that stand (rule 37's `asserted_allocation`),
-    /// which every row of the unit carries. A withdrawn specification's
-    /// admission has no row resting on it and contributes nothing.
-    pub(crate) carried: crate::arm_obligations::Carried,
+    /// of the specifications that stand (rule 37's `asserted_allocation`).
+    /// Card ARM-OBLIGATIONS-UNIT-GRAIN: per specification, so that the rows
+    /// whose derivation reaches its name carry them. A withdrawn
+    /// specification's admission has no row resting on it and contributes
+    /// nothing.
+    pub(crate) carried: BTreeMap<String, crate::arm_obligations::Carried>,
 }
 
-/// The obligations the standing specifications' admissions rest on.
+/// The obligations the standing specifications' admissions rest on, by
+/// specification.
 fn standing_obligations(
     admitted: &BTreeMap<String, crate::arm_obligations::Carried>,
     withdrawn: &BTreeMap<String, Withdrawal>,
-) -> crate::arm_obligations::Carried {
-    let mut carried = crate::arm_obligations::Carried::default();
-    for (name, obligations) in admitted {
-        if !withdrawn.contains_key(name) {
-            carried.extend(obligations.clone());
-        }
-    }
-    carried
+) -> BTreeMap<String, crate::arm_obligations::Carried> {
+    admitted
+        .iter()
+        .filter(|(name, obligations)| !withdrawn.contains_key(*name) && !obligations.is_empty())
+        .map(|(name, obligations)| (name.clone(), obligations.clone()))
+        .collect()
 }
 
 /// The diagnostic text for a withdrawn specification defined here.
@@ -216,7 +217,7 @@ pub(crate) fn settle(tokens: &[Token], scope: &[String], contracts: &ResourceCon
             return Settled {
                 gate: ModeGate::apply(tokens, scope, &environment),
                 withdrawn,
-                carried: crate::arm_obligations::Carried::default(),
+                carried: BTreeMap::new(),
             };
         }
     };
@@ -228,7 +229,7 @@ pub(crate) fn settle(tokens: &[Token], scope: &[String], contracts: &ResourceCon
         return Settled {
             gate: ModeGate::apply(tokens, scope, contracts),
             withdrawn: BTreeMap::new(),
-            carried: crate::arm_obligations::Carried::default(),
+            carried: BTreeMap::new(),
         };
     }
     let mut withdrawn = BTreeMap::new();
