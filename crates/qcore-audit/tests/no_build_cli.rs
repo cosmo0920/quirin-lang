@@ -620,3 +620,57 @@ fn the_assumption_record_travels_with_every_verdict() {
     assert_eq!(sidecar["selection"]["sources"], json!(["plain.c", "sub"]));
     assert_eq!(sidecar["provider_selection"]["selection"], "all-loaded");
 }
+
+/// Card RULE-SWITCH-ENTRY-POINTS: `contracts` with a report records the
+/// effective switch list in every component (`rule_set.off`), and without a
+/// report, where nothing would record it, refuses a non-empty list before any
+/// unit is analysed. A refused list is refused either way.
+#[test]
+fn a_switch_list_is_recorded_in_every_component_or_refused_without_a_report() {
+    let Some(_) = clang() else { return };
+    let fixture = Fixture::new();
+    let run = |list: &str, report: bool| {
+        let mut command = Command::new(env!("CARGO_BIN_EXE_quirin-audit"));
+        command.current_dir(&fixture.0).args([
+            "contracts",
+            "--source-root",
+            "tree",
+            "--load-path",
+            "providers/contract-load-path.json",
+            "--jobs",
+            "1",
+        ]);
+        if report {
+            command.args(["--report", "out/report.json"]);
+        }
+        command
+            .env("QCORE_GATEWAY_RULES_OFF", list)
+            .output()
+            .unwrap()
+    };
+    let rule_sets = || {
+        let sidecar: qcore_schemas::composition::ComponentSidecar =
+            serde_json::from_value(fixture.read("out/report.components.json")).unwrap();
+        sidecar
+            .contribution
+            .components()
+            .map(|component| component.provenance.rule_set.off.clone())
+            .collect::<std::collections::BTreeSet<_>>()
+    };
+    succeeded(&run("35,10s", true));
+    let switched = std::collections::BTreeSet::from(["10s".to_owned(), "35".to_owned()]);
+    assert_eq!(rule_sets(), std::collections::BTreeSet::from([switched]));
+    succeeded(&run("", true));
+    assert_eq!(
+        rule_sets(),
+        std::collections::BTreeSet::from([std::collections::BTreeSet::new()])
+    );
+    let unreported = run("35", false);
+    refused(
+        &unreported,
+        "quirin-audit contracts without a report does not record the gateway rule set",
+    );
+    assert!(unreported.stdout.is_empty(), "nothing was analysed");
+    succeeded(&run("", false));
+    refused(&run("35,no-such-rule", true), "no-such-rule");
+}

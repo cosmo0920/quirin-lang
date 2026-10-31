@@ -480,6 +480,11 @@ fn run(arguments: &[String]) -> Result<bool, String> {
         configuration.monkey_database,
     )?;
     let report = one("report", command_line.report, configuration.report)?;
+    // Card RULE-SWITCH-ENTRY-POINTS: without a report no component records
+    // `rule_set.off`, so the counts alone must not run under a switch list.
+    if report.is_none() {
+        qcore_c_gateway::gateway_rules::refuse_unrecorded("quirin-audit current without a report")?;
+    }
     let monkey_source_report = one(
         "monkey_source_report",
         command_line.monkey_source_report,

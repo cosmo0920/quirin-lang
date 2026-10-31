@@ -7,6 +7,8 @@
 //! usage: member_prepass_run DATABASE SOURCE_ROOT PROFILE_DIRECTORY OUT.json JOBS
 
 fn main() -> Result<(), String> {
+    // Card RULE-SWITCH-ENTRY-POINTS: this example records no gateway rule set.
+    qcore_c_gateway::gateway_rules::exit_if_unrecorded("example member_prepass_run");
     let arguments = std::env::args().skip(1).collect::<Vec<_>>();
     let [database, source_root, profile, out, jobs] = arguments.as_slice() else {
         return Err(

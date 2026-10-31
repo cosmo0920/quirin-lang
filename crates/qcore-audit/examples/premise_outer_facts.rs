@@ -3,6 +3,8 @@ use qcore_audit::outer_selection::custody_facts;
 use serde_json::{Value, json};
 use std::{env, fs};
 fn main() {
+    // Card RULE-SWITCH-ENTRY-POINTS: this example records no gateway rule set.
+    qcore_c_gateway::gateway_rules::exit_if_unrecorded("example premise_outer_facts");
     let args: Vec<_> = env::args().collect();
     assert_eq!(args.len(), 4, "DIAGNOSTICS CONTRACTS OUTPUT");
     let report: Value = serde_json::from_slice(&fs::read(&args[1]).unwrap()).unwrap();

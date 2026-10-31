@@ -8,6 +8,8 @@ use std::{
     path::{Path, PathBuf},
 };
 fn main() -> Result<(), String> {
+    // Card RULE-SWITCH-ENTRY-POINTS: this example records no gateway rule set.
+    qcore_c_gateway::gateway_rules::exit_if_unrecorded("example cjson_local_source");
     let args = std::env::args().collect::<Vec<_>>();
     if args.len() != 4 {
         return Err("SOURCE_C HEADER FRESH_OUTPUT_DIRECTORY".into());

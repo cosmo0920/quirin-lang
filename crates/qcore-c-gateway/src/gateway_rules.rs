@@ -56,6 +56,42 @@ pub fn effective_off() -> BTreeSet<String> {
     }
 }
 
+/// Card RULE-SWITCH-ENTRY-POINTS: the admission of an entry point whose
+/// output does not record the rule set it ran under (`rule_set.off`).
+///
+/// Such an entry point runs only with nothing switched off: a non-empty list
+/// would change its answers without its output saying so, and ignoring the
+/// list would let a reader believe rules were off that were not. A refused
+/// list (unknown id, hold, malformed) is refused here as everywhere.
+///
+/// # Errors
+///
+/// The list is refused, or it names any rule: the message names
+/// `entry_point`, the list and the route that records it.
+pub fn refuse_unrecorded(entry_point: &str) -> Result<(), String> {
+    let off = check().map_err(|refusal| format!("{entry_point}: {refusal}"))?;
+    if off.is_empty() {
+        return Ok(());
+    }
+    Err(format!(
+        "{entry_point} does not record the gateway rule set it runs under, so it refuses \
+         {RULES_OFF_VARIABLE}={}; unset it, or run a route that records it \
+         (quirin-audit current, pinned or contracts with a report, or a configuration run, \
+         each writing rule_set.off; quirin-audit measure --rules-off)",
+        off.ids().iter().cloned().collect::<Vec<_>>().join(",")
+    ))
+}
+
+/// [`refuse_unrecorded`] for a `main` with nothing to return: the refusal is
+/// printed on standard error and the process exits with status 1 before
+/// anything is analysed.
+pub fn exit_if_unrecorded(entry_point: &str) {
+    if let Err(refusal) = refuse_unrecorded(entry_point) {
+        eprintln!("{refusal}");
+        std::process::exit(1);
+    }
+}
+
 /// Whether rule `id`'s package answers in this run.
 pub(crate) fn enabled(id: &str) -> bool {
     debug_assert!(

@@ -22,6 +22,8 @@ use qcore_c_gateway::c_numeric_obligations::report;
 use serde_json::Value;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
+    // Card RULE-SWITCH-ENTRY-POINTS: this example records no gateway rule set.
+    qcore_c_gateway::gateway_rules::exit_if_unrecorded("example numeric_obligations");
     let arguments = std::env::args().skip(1).collect::<Vec<_>>();
     let [database, file, filter, rest @ ..] = arguments.as_slice() else {
         return Err(

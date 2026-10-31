@@ -59,6 +59,8 @@ pub use qcore_c_gateway::legacy_c;
 // Card W48-QRLIB-LINKAGE: the symbol readers, the `.qrlib` generator and the
 // link plan, for the `quirin qrlib` and `quirin build` commands.
 pub use qcore_c_gateway::linkage;
+// Card RULE-SWITCH-ENTRY-POINTS: the rule switch, for `quirin`'s admission.
+pub use qcore_c_gateway::gateway_rules;
 pub use qcore_core::index;
 pub use qcore_core::inference;
 pub use qcore_frontend::frontend;

@@ -10,6 +10,8 @@ fn object_file(path: &Value) -> BTreeMap<String, String> {
     serde_json::from_slice(&read(path.as_str().unwrap())).unwrap()
 }
 fn main() {
+    // Card RULE-SWITCH-ENTRY-POINTS: this example records no gateway rule set.
+    qcore_c_gateway::gateway_rules::exit_if_unrecorded("example plugin_sidecar_bindings");
     let args: Vec<_> = env::args().collect();
     assert_eq!(args.len(), 3, "INPUT OUTPUT");
     let spec: Value = serde_json::from_slice(&read(&args[1])).unwrap();

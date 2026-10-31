@@ -98,6 +98,46 @@ fn cli_names_owned_profile_and_emits_real_buffer_transfer() {
     std::fs::remove_dir_all(directory).unwrap();
 }
 
+/// Card RULE-SWITCH-ENTRY-POINTS: `quirin` records no gateway rule set, so
+/// it refuses a non-empty `QCORE_GATEWAY_RULES_OFF` before it reads anything
+/// (and a refused list as everywhere); with nothing off it runs as before.
+#[test]
+fn quirin_refuses_a_gateway_switch_list_it_cannot_record() {
+    let directory = std::env::temp_dir().join(format!("qcore-rule-switch-{}", std::process::id()));
+    std::fs::create_dir_all(&directory).unwrap();
+    let input = directory.join("main.qcore");
+    std::fs::write(&input, "fn main() -> i32 { return 17; }").unwrap();
+    let check = |list: Option<&str>| {
+        let mut command = Command::new(env!("CARGO_BIN_EXE_quirin"));
+        command.arg("check").arg(&input);
+        match list {
+            Some(list) => command.env("QCORE_GATEWAY_RULES_OFF", list),
+            None => command.env_remove("QCORE_GATEWAY_RULES_OFF"),
+        };
+        command.output().unwrap()
+    };
+    for (list, expected) in [
+        (
+            "35",
+            "quirin does not record the gateway rule set it runs under",
+        ),
+        ("35,no-such-rule", "no-such-rule"),
+    ] {
+        let output = check(Some(list));
+        assert_eq!(output.status.code(), Some(1), "{output:?}");
+        assert!(output.stdout.is_empty(), "{output:?}");
+        assert!(
+            String::from_utf8_lossy(&output.stderr).contains(expected),
+            "{output:?}"
+        );
+    }
+    for list in [None, Some("")] {
+        let output = check(list);
+        assert!(output.status.success(), "{list:?}: {output:?}");
+    }
+    std::fs::remove_dir_all(directory).unwrap();
+}
+
 #[test]
 fn core_cli_works_without_clang() {
     let directory = std::env::temp_dir().join(format!("qcore-no-clang-{}", std::process::id()));

@@ -89,6 +89,8 @@ pub mod user_plugins;
 // Card W45-AUDIT-SUBCOMMAND-PLUGINS: external `quirin-audit NAME` subcommands
 // (`quirin-audit-NAME` on a declared search path), through the plugin firewall.
 pub mod subcommand_plugins;
+// Card RULE-SWITCH-ENTRY-POINTS: which command lines record the rule set.
+pub mod rule_switch_entry;
 pub mod wait_failures;
 // Card AUDIT-CANONICAL-PATHS: unit selection compares located (canonical)
 // paths, never path strings, so a moved or symlinked checkout keeps working.

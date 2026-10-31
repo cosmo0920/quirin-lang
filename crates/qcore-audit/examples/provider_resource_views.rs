@@ -7,6 +7,8 @@
 use std::path::PathBuf;
 
 fn main() -> Result<(), String> {
+    // Card RULE-SWITCH-ENTRY-POINTS: this example records no gateway rule set.
+    qcore_c_gateway::gateway_rules::exit_if_unrecorded("example provider_resource_views");
     let usage = "usage: provider_resource_views LOAD_PATH.json";
     let mut arguments = std::env::args_os().skip(1);
     let load_path = arguments.next().ok_or(usage)?;

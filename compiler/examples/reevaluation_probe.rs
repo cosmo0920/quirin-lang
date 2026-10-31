@@ -109,6 +109,8 @@ impl VerifierProvider for EmptyEvidenceProvider {
 }
 
 fn main() {
+    // Card RULE-SWITCH-ENTRY-POINTS: this example records no gateway rule set.
+    qcore_c_gateway::gateway_rules::exit_if_unrecorded("example reevaluation_probe");
     let mut results = vec![];
     for (id, order, expected) in [
         ("WM01_acq_rel_plain_operations", O::AcquireRelease, false),

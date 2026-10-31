@@ -43,6 +43,8 @@ fn collect(root: &Path, path: &Path, out: &mut Vec<PathBuf>) {
 }
 
 fn main() {
+    // Card RULE-SWITCH-ENTRY-POINTS: this example records no gateway rule set.
+    qcore_c_gateway::gateway_rules::exit_if_unrecorded("example predefined_macro_facts");
     let mut database = None;
     let mut root = None;
     let mut provenance = None;

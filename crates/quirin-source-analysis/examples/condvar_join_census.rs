@@ -65,6 +65,8 @@ fn verdict(verdict: &SyncVerdict) -> serde_json::Value {
 }
 
 fn main() {
+    // Card RULE-SWITCH-ENTRY-POINTS: this example records no gateway rule set.
+    qcore_c_gateway::gateway_rules::exit_if_unrecorded("example condvar_join_census");
     let mut arguments = std::env::args().skip(1).collect::<Vec<_>>();
     // Card W47-FLB-LIB-LIFECYCLE: `--lifecycle-module=PATH` reads the declared
     // lifecycle obligations from that contract module.

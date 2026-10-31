@@ -27,6 +27,8 @@ use qcore_contract::contract_loader::{
 };
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
+    // Card RULE-SWITCH-ENTRY-POINTS: this example records no gateway rule set.
+    qcore_c_gateway::gateway_rules::exit_if_unrecorded("example declared_mode_census");
     let mut arguments = std::env::args().skip(1).peekable();
     let first = arguments
         .next()

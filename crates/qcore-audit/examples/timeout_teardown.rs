@@ -1,6 +1,8 @@
 use std::path::PathBuf;
 
 fn main() -> Result<(), String> {
+    // Card RULE-SWITCH-ENTRY-POINTS: this example records no gateway rule set.
+    qcore_c_gateway::gateway_rules::exit_if_unrecorded("example timeout_teardown");
     let mut arguments = std::env::args_os().skip(1);
     let config = arguments
         .next()

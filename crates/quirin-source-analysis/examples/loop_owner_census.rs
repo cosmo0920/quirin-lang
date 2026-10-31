@@ -270,6 +270,8 @@ fn yield_paths(
 }
 
 fn main() {
+    // Card RULE-SWITCH-ENTRY-POINTS: this example records no gateway rule set.
+    qcore_c_gateway::gateway_rules::exit_if_unrecorded("example loop_owner_census");
     let mut arguments = std::env::args().skip(1).collect::<Vec<_>>();
     // Card W47-LOOP-OWNER-COROUTINE-HOP: `--compile-commands=PATH` reads the
     // conditional groups under that build's configuration, with

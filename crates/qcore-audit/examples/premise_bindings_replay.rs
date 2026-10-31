@@ -7,6 +7,8 @@ fn read(path: &str) -> Vec<u8> {
     fs::read(path).unwrap()
 }
 fn main() {
+    // Card RULE-SWITCH-ENTRY-POINTS: this example records no gateway rule set.
+    qcore_c_gateway::gateway_rules::exit_if_unrecorded("example premise_bindings_replay");
     let args: Vec<_> = env::args().collect();
     assert_eq!(
         args.len(),

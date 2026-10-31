@@ -75,6 +75,16 @@ pub fn main(arguments: Vec<OsString>) -> ExitCode {
         eprintln!("{USAGE}");
         return ExitCode::FAILURE;
     }
+    // Card RULE-SWITCH-ENTRY-POINTS: only the diagnostic report's components
+    // record `rule_set.off`; without it the run must not use a switch list.
+    if diagnostic_report.is_none()
+        && let Err(refusal) = qcore_c_gateway::gateway_rules::refuse_unrecorded(
+            "quirin-audit pinned without a diagnostic report",
+        )
+    {
+        eprintln!("{refusal}");
+        return ExitCode::FAILURE;
+    }
     match crate::pinned_route::run(
         &root,
         monkey_database.as_deref(),

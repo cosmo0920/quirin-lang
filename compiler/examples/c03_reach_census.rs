@@ -29,6 +29,8 @@ use qcore_compiler::source_profiles::{FLUENT_BIT_SOURCE_SET, load_profile};
 use qcore_compiler::{C11TranslationUnit, LegacyFunctionScope, ResourceContracts};
 
 fn main() -> ExitCode {
+    // Card RULE-SWITCH-ENTRY-POINTS: this example records no gateway rule set.
+    qcore_c_gateway::gateway_rules::exit_if_unrecorded("example c03_reach_census");
     let mut arguments = std::env::args_os().skip(1);
     let Some(root) = arguments.next().map(PathBuf::from) else {
         eprintln!(

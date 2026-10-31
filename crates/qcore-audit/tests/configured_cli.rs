@@ -191,6 +191,53 @@ impl Drop for Fixture {
     }
 }
 
+/// Card RULE-SWITCH-ENTRY-POINTS: the configuration route records the
+/// effective switch list in every component (`rule_set.off`) and in
+/// `invocation.json`, and nothing when the list is empty.
+#[test]
+fn the_configuration_route_records_its_switch_list() {
+    if !clang_available() {
+        return;
+    }
+    let fixture = Fixture::new("void subject(void) { return; }\n");
+    for (list, expected) in [("10s, 35", vec!["10s", "35"]), ("", vec![])] {
+        let output = Command::new(env!("CARGO_BIN_EXE_quirin-audit"))
+            .current_dir(&fixture.0)
+            .arg(fixture.0.join("audit.json"))
+            .env("QCORE_GATEWAY_RULES_OFF", list)
+            .output()
+            .unwrap();
+        assert!(
+            output.status.success(),
+            "{}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+        let expected = expected
+            .into_iter()
+            .map(str::to_owned)
+            .collect::<std::collections::BTreeSet<_>>();
+        let sidecar: qcore_schemas::composition::ComponentSidecar = serde_json::from_slice(
+            &fs::read(fixture.0.join("output/report.components.json")).unwrap(),
+        )
+        .unwrap();
+        let recorded = sidecar
+            .contribution
+            .components()
+            .map(|component| component.provenance.rule_set.off.clone())
+            .collect::<std::collections::BTreeSet<_>>();
+        assert_eq!(
+            recorded,
+            std::collections::BTreeSet::from([expected.clone()])
+        );
+        let invocation: Value = serde_json::from_slice(
+            &fs::read(fixture.0.join("output/report.invocation.json")).unwrap(),
+        )
+        .unwrap();
+        assert_eq!(invocation["gateway_rules_off"], json!(expected));
+        assert_eq!(invocation["environment"]["QCORE_GATEWAY_RULES_OFF"], list);
+    }
+}
+
 fn commit_source(fixture: &Fixture, source: &str) -> String {
     fs::write(fixture.0.join("checkout/src/unit.c"), source).unwrap();
     let output = Command::new("git")

@@ -2,6 +2,8 @@
 use quirin_source_analysis::plugin_source_witnesses::{self as witness, Observation};
 use std::{fs, path::PathBuf};
 fn main() -> Result<(), String> {
+    // Card RULE-SWITCH-ENTRY-POINTS: this example records no gateway rule set.
+    qcore_c_gateway::gateway_rules::exit_if_unrecorded("example plugin_source_witnesses");
     let root = PathBuf::from(
         std::env::args()
             .nth(1)
