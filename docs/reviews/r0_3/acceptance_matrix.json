@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 867
+  "named_followups": 866
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -13209,22 +13209,15 @@
   {
    "id": "WINDOWS-BATCHED-SUITE-FIRST-RUN",
    "title": "The Windows full-suite leg's batched runner has not run on Windows",
-   "why": "TEST-STORAGE-BUDGET moved CI's msvc-clang-analysis full suite from `cargo test --workspace` to `python scripts/run_test_binaries.py --jobs 1 --batch-size 32` (static linking, batches built, run and deleted). The batched mode ran green on Linux in static mode with --jobs 8 (8,927 / 0 / 15, test set equal to the base, 6.19 GB peak), but never on Windows or with --jobs 1; the first CI run is its first Windows execution. Check that run's totals against the Linux figure and its per-batch deleted_bytes in summary.json; a dynamic Windows build would first need the DLL export counts of the large crates measured against the 65,535 limit.",
-   "source": "docs/reports/test-storage-budget/README.md",
-   "recorded_by": "TEST-STORAGE-BUDGET"
-  },
-  {
-   "id": "CI-RUST-JOB-PEAK-UNMEASURED",
-   "title": "The CI rust job's whole-sequence disk peak is estimated, not measured",
-   "why": "TEST-STORAGE-BUDGET measured the root suite (3.76 GB), the provider suite (5.15 GB), Clippy (0.15 GB) and the package build's release target (0.1 GB) separately; the job keeps both workspaces' targets, so its peak is estimated at about 10.5-11 GB, including about 1.3 GB that `providers/package.py build`'s source-mode probe (a plain `cargo run` in the root workspace, without the test configuration) rebuilds statically beside the dynamic build. Measure the job's sequence once on a fresh checkout, and consider passing the test configuration to that probe.",
-   "source": "docs/reports/test-storage-budget/README.md",
+   "why": "TEST-STORAGE-BUDGET moved CI's msvc-clang-analysis full suite from `cargo test --workspace` to `python scripts/run_test_binaries.py --jobs 1 --batch-size 32` (static linking, batches built, run and deleted). The batched mode ran green on Linux in static mode with --jobs 8 (8,927 / 0 / 15, test set equal to the base, 6.19 GB peak), but never on Windows or with --jobs 1; the first CI run is its first Windows execution. Check that run's totals against the Linux figure and its per-batch deleted_bytes in summary.json; a dynamic Windows build would first need the DLL export counts of the large crates measured against the 65,535 limit. CI-RUST-JOB-PEAK (2026-10-31) could not observe a Windows CI run: `git ls-remote origin` shows refs only, GitHub's public API answers 404 for the private repository's workflow runs, and the host has no gh CLI or token; still open.",
+   "source": "docs/reports/test-storage-budget/README.md, docs/reports/ci-rust-job-peak/README.md",
    "recorded_by": "TEST-STORAGE-BUDGET"
   },
   {
    "id": "PACKAGE-BYTES-DEPEND-ON-CHECKOUT",
    "title": "Provider package executables differed between two checkouts of the same sources",
-   "why": "Observed by TEST-STORAGE-BUDGET: `providers/package.py build` in a clone of 62c8e461c and in the card's worktree (same Rust sources, different checkout path and HEAD) produced different provider executables for all five packages, while the worktree with and without the card's providers/Cargo.toml change produced byte-identical ones. package.py remaps the repository path prefix, so the remaining difference (path-dependent metadata hashes of path dependencies outside the provider workspace, or a revision embedded at build time) is unidentified; if package digests are meant to be reproducible across checkouts, find it.",
-   "source": "docs/reports/test-storage-budget/README.md",
+   "why": "Observed by TEST-STORAGE-BUDGET: `providers/package.py build` in a clone of 62c8e461c and in the card's worktree (same Rust sources, different checkout path and HEAD) produced different provider executables for all five packages, while the worktree with and without the card's providers/Cargo.toml change produced byte-identical ones. package.py remaps the repository path prefix, so the remaining difference (path-dependent metadata hashes of path dependencies outside the provider workspace, or a revision embedded at build time) is unidentified; if package digests are meant to be reproducible across checkouts, find it. Cause found by CI-RUST-JOB-PEAK (reproduced with two checkouts of db2795100): cargo's unit hash (-C metadata) of `qcore-schemas`, which the provider workspace takes from `../crates/qcore-schemas` outside its root, depends on the absolute path; the crate disambiguators of `qcore_schemas`, `quirin_provider_shared` and each provider binary differ while every registry crate and the five provider libraries without that dependency are equal, which changes symbol names and code layout (24 of 32 ELF sections equal). No repository path is embedded (`--remap-path-prefix` works), but 14 unremapped `~/.cargo/registry` and `~/.rustup` paths per executable make the bytes depend on CARGO_HOME and the toolchain path too. Not fixed: a constant build path, moving `qcore-schemas` inside the provider workspace, or remapping those paths each moves all five package digests and needs a decision.",
+   "source": "docs/reports/test-storage-budget/README.md, docs/reports/ci-rust-job-peak/README.md",
    "recorded_by": "TEST-STORAGE-BUDGET"
   },
   {

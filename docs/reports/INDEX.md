@@ -193,6 +193,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [chunkio-meta-len-bounds-contracts](chunkio-meta-len-bounds-contracts/README.md) | CHUNKIO-META-LEN-BOUNDS-CONTRACTS |
 
+| [ci-rust-job-peak](ci-rust-job-peak/README.md) | CI-RUST-JOB-PEAK: the Linux CI job measured as one sequence |
+
 | [cjson-detach-same-item](cjson-detach-same-item/README.md) | Checked same-item detach |
 
 | [cmetrics-setter-contracts](cmetrics-setter-contracts/README.md) | CMetrics map, metric and typed setter contracts |
