@@ -1,0 +1,748 @@
+{
+ "schema": "quirin-gate-scope/1",
+ "source": "git diff",
+ "base": "db2795100a760efa0a2cbcbe13217bffc3cf4733",
+ "head": "e4d0c73b116c17b0eab8121effc25dce55377761",
+ "committed": [
+  ".github/workflows/ci.yml",
+  "docs/agents/validation.md",
+  "docs/reports/ci-rust-job-peak/README.md",
+  "docs/reports/ci-rust-job-peak/ci_rust_job.sh",
+  "docs/reports/ci-rust-job-peak/evidence/after/after.console",
+  "docs/reports/ci-rust-job-peak/evidence/after/peak.json",
+  "docs/reports/ci-rust-job-peak/evidence/after/results.txt",
+  "docs/reports/ci-rust-job-peak/evidence/after/root-target-written-after-step-9.txt",
+  "docs/reports/ci-rust-job-peak/evidence/after/samples.tsv",
+  "docs/reports/ci-rust-job-peak/evidence/after/slot.json",
+  "docs/reports/ci-rust-job-peak/evidence/after/steps-index.tsv",
+  "docs/reports/ci-rust-job-peak/evidence/after/steps.tsv",
+  "docs/reports/ci-rust-job-peak/evidence/before/before.console",
+  "docs/reports/ci-rust-job-peak/evidence/before/peak.json",
+  "docs/reports/ci-rust-job-peak/evidence/before/results.txt",
+  "docs/reports/ci-rust-job-peak/evidence/before/root-target-written-after-step-9.txt",
+  "docs/reports/ci-rust-job-peak/evidence/before/samples.tsv",
+  "docs/reports/ci-rust-job-peak/evidence/before/slot.json",
+  "docs/reports/ci-rust-job-peak/evidence/before/steps-index.tsv",
+  "docs/reports/ci-rust-job-peak/evidence/before/steps.tsv",
+  "docs/reports/ci-rust-job-peak/evidence/package-checkout-digests.txt",
+  "docs/reports/ci-rust-job-peak/evidence/package-diff-qcore.chunkio.txt",
+  "docs/reports/ci-rust-job-peak/evidence/package-diff-qcore.cmetrics.txt",
+  "docs/reports/ci-rust-job-peak/evidence/package-diff-qcore.ctraces.txt",
+  "docs/reports/ci-rust-job-peak/evidence/package-diff-qcore.libevent.txt",
+  "docs/reports/ci-rust-job-peak/evidence/package-diff-qcore.librdkafka.txt",
+  "docs/reports/ci-rust-job-peak/evidence/package-identity.txt",
+  "docs/reports/ci-rust-job-peak/evidence/package-unit-hashes.txt",
+  "docs/reports/ci-rust-job-peak/evidence/parity-providers.txt",
+  "docs/reports/ci-rust-job-peak/evidence/parity-root.txt",
+  "docs/reports/ci-rust-job-peak/integration-amendments.json",
+  "docs/reports/ci-rust-job-peak/package_diff.py",
+  "docs/reports/ci-rust-job-peak/workflow_steps.py",
+  "providers/contracts.py",
+  "providers/package.py"
+ ],
+ "uncommitted": [],
+ "scope": {
+  "paths": [
+   ".github/workflows/ci.yml",
+   "docs/agents/validation.md",
+   "docs/reports/ci-rust-job-peak/README.md",
+   "docs/reports/ci-rust-job-peak/ci_rust_job.sh",
+   "docs/reports/ci-rust-job-peak/evidence/after/after.console",
+   "docs/reports/ci-rust-job-peak/evidence/after/peak.json",
+   "docs/reports/ci-rust-job-peak/evidence/after/results.txt",
+   "docs/reports/ci-rust-job-peak/evidence/after/root-target-written-after-step-9.txt",
+   "docs/reports/ci-rust-job-peak/evidence/after/samples.tsv",
+   "docs/reports/ci-rust-job-peak/evidence/after/slot.json",
+   "docs/reports/ci-rust-job-peak/evidence/after/steps-index.tsv",
+   "docs/reports/ci-rust-job-peak/evidence/after/steps.tsv",
+   "docs/reports/ci-rust-job-peak/evidence/before/before.console",
+   "docs/reports/ci-rust-job-peak/evidence/before/peak.json",
+   "docs/reports/ci-rust-job-peak/evidence/before/results.txt",
+   "docs/reports/ci-rust-job-peak/evidence/before/root-target-written-after-step-9.txt",
+   "docs/reports/ci-rust-job-peak/evidence/before/samples.tsv",
+   "docs/reports/ci-rust-job-peak/evidence/before/slot.json",
+   "docs/reports/ci-rust-job-peak/evidence/before/steps-index.tsv",
+   "docs/reports/ci-rust-job-peak/evidence/before/steps.tsv",
+   "docs/reports/ci-rust-job-peak/evidence/package-checkout-digests.txt",
+   "docs/reports/ci-rust-job-peak/evidence/package-diff-qcore.chunkio.txt",
+   "docs/reports/ci-rust-job-peak/evidence/package-diff-qcore.cmetrics.txt",
+   "docs/reports/ci-rust-job-peak/evidence/package-diff-qcore.ctraces.txt",
+   "docs/reports/ci-rust-job-peak/evidence/package-diff-qcore.libevent.txt",
+   "docs/reports/ci-rust-job-peak/evidence/package-diff-qcore.librdkafka.txt",
+   "docs/reports/ci-rust-job-peak/evidence/package-identity.txt",
+   "docs/reports/ci-rust-job-peak/evidence/package-unit-hashes.txt",
+   "docs/reports/ci-rust-job-peak/evidence/parity-providers.txt",
+   "docs/reports/ci-rust-job-peak/evidence/parity-root.txt",
+   "docs/reports/ci-rust-job-peak/integration-amendments.json",
+   "docs/reports/ci-rust-job-peak/package_diff.py",
+   "docs/reports/ci-rust-job-peak/workflow_steps.py",
+   "providers/contracts.py",
+   "providers/package.py"
+  ],
+  "attribution": {
+   ".github/workflows/ci.yml": [
+    "class prose"
+   ],
+   "docs/agents/validation.md": [
+    "class prose"
+   ],
+   "docs/reports/ci-rust-job-peak/README.md": [
+    "class prose"
+   ],
+   "docs/reports/ci-rust-job-peak/ci_rust_job.sh": [
+    "class prose"
+   ],
+   "docs/reports/ci-rust-job-peak/evidence/after/after.console": [
+    "class prose"
+   ],
+   "docs/reports/ci-rust-job-peak/evidence/after/peak.json": [
+    "class prose"
+   ],
+   "docs/reports/ci-rust-job-peak/evidence/after/results.txt": [
+    "class prose"
+   ],
+   "docs/reports/ci-rust-job-peak/evidence/after/root-target-written-after-step-9.txt": [
+    "class prose"
+   ],
+   "docs/reports/ci-rust-job-peak/evidence/after/samples.tsv": [
+    "class prose"
+   ],
+   "docs/reports/ci-rust-job-peak/evidence/after/slot.json": [
+    "class prose"
+   ],
+   "docs/reports/ci-rust-job-peak/evidence/after/steps-index.tsv": [
+    "class prose"
+   ],
+   "docs/reports/ci-rust-job-peak/evidence/after/steps.tsv": [
+    "class prose"
+   ],
+   "docs/reports/ci-rust-job-peak/evidence/before/before.console": [
+    "class prose"
+   ],
+   "docs/reports/ci-rust-job-peak/evidence/before/peak.json": [
+    "class prose"
+   ],
+   "docs/reports/ci-rust-job-peak/evidence/before/results.txt": [
+    "class prose"
+   ],
+   "docs/reports/ci-rust-job-peak/evidence/before/root-target-written-after-step-9.txt": [
+    "class prose"
+   ],
+   "docs/reports/ci-rust-job-peak/evidence/before/samples.tsv": [
+    "class prose"
+   ],
+   "docs/reports/ci-rust-job-peak/evidence/before/slot.json": [
+    "class prose"
+   ],
+   "docs/reports/ci-rust-job-peak/evidence/before/steps-index.tsv": [
+    "class prose"
+   ],
+   "docs/reports/ci-rust-job-peak/evidence/before/steps.tsv": [
+    "class prose"
+   ],
+   "docs/reports/ci-rust-job-peak/evidence/package-checkout-digests.txt": [
+    "class prose"
+   ],
+   "docs/reports/ci-rust-job-peak/evidence/package-diff-qcore.chunkio.txt": [
+    "class prose"
+   ],
+   "docs/reports/ci-rust-job-peak/evidence/package-diff-qcore.cmetrics.txt": [
+    "class prose"
+   ],
+   "docs/reports/ci-rust-job-peak/evidence/package-diff-qcore.ctraces.txt": [
+    "class prose"
+   ],
+   "docs/reports/ci-rust-job-peak/evidence/package-diff-qcore.libevent.txt": [
+    "class prose"
+   ],
+   "docs/reports/ci-rust-job-peak/evidence/package-diff-qcore.librdkafka.txt": [
+    "class prose"
+   ],
+   "docs/reports/ci-rust-job-peak/evidence/package-identity.txt": [
+    "class prose"
+   ],
+   "docs/reports/ci-rust-job-peak/evidence/package-unit-hashes.txt": [
+    "class prose"
+   ],
+   "docs/reports/ci-rust-job-peak/evidence/parity-providers.txt": [
+    "class prose"
+   ],
+   "docs/reports/ci-rust-job-peak/evidence/parity-root.txt": [
+    "class prose"
+   ],
+   "docs/reports/ci-rust-job-peak/integration-amendments.json": [
+    "class prose"
+   ],
+   "docs/reports/ci-rust-job-peak/package_diff.py": [
+    "class prose"
+   ],
+   "docs/reports/ci-rust-job-peak/workflow_steps.py": [
+    "class prose"
+   ],
+   "providers/contracts.py": [
+    "read by qcore-audit (runtime, crates/qcore-audit/src/bounds_selection.rs:69)",
+    "read by qcore-audit (runtime, crates/qcore-audit/src/providers.rs:644)",
+    "read by qcore-compiler (runtime, compiler/tests/qcore_contract_corpus.rs:57)",
+    "read by qcore-audit (runtime, crates/qcore-audit/src/pin_window.rs:60)",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/current_cli.rs:138)",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/dependency_graph.rs:92)",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/provider_selection.rs:620)",
+    "read by qcore-contract (runtime, crates/qcore-contract/tests/bounds_contract.rs:159)",
+    "read by qcore-contract (runtime, crates/qcore-contract/tests/event_loop_clauses.rs:211)",
+    "read by qcore-contract (runtime, crates/qcore-contract/tests/production_symbolic_adoption.rs:389)",
+    "read by qcore-compiler (runtime, compiler/tests/contract_inherit_qcore_provider.rs:437)",
+    "read by qcore-compiler (runtime, compiler/tests/monkey_profile.rs:41)",
+    "read by qcore-compiler (runtime, compiler/tests/profile_loader.rs:65)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:254)",
+    "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/src/sides.rs:512)",
+    "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/tests/units.rs:298)",
+    "read by qcore-provider-conformance (runtime, providers/conformance/tests/composed_five_providers.rs:132)",
+    "read by qcore-provider-conformance (runtime, providers/conformance/tests/packages.rs:373)",
+    "class python"
+   ],
+   "providers/package.py": [
+    "read by qcore-provider-conformance (runtime, providers/conformance/tests/cmetrics_unit.rs:22)",
+    "read by qcore-audit (runtime, crates/qcore-audit/src/pin_window.rs:60)",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/current_cli.rs:138)",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/dependency_graph.rs:92)",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/provider_selection.rs:620)",
+    "read by qcore-contract (runtime, crates/qcore-contract/tests/bounds_contract.rs:159)",
+    "read by qcore-contract (runtime, crates/qcore-contract/tests/event_loop_clauses.rs:211)",
+    "read by qcore-contract (runtime, crates/qcore-contract/tests/production_symbolic_adoption.rs:389)",
+    "read by qcore-compiler (runtime, compiler/tests/contract_inherit_qcore_provider.rs:437)",
+    "read by qcore-compiler (runtime, compiler/tests/monkey_profile.rs:41)",
+    "read by qcore-compiler (runtime, compiler/tests/profile_loader.rs:65)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:254)",
+    "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/src/sides.rs:512)",
+    "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/tests/units.rs:298)",
+    "read by qcore-provider-conformance (runtime, providers/conformance/tests/composed_five_providers.rs:132)",
+    "read by qcore-provider-conformance (runtime, providers/conformance/tests/packages.rs:373)",
+    "class python"
+   ]
+  },
+  "affected": {
+   "qcore-audit": [
+    "names providers/contracts.py in a string literal: providers/contracts.py (crates/qcore-audit/src/bounds_selection.rs:69)",
+    "names providers/contracts.py in a string literal: providers/contracts.py (crates/qcore-audit/src/providers.rs:644)",
+    "names providers in a string literal: providers/contracts.py (crates/qcore-audit/src/pin_window.rs:60)",
+    "names providers in a string literal: providers/contracts.py (crates/qcore-audit/tests/current_cli.rs:138)",
+    "names providers in a string literal: providers/contracts.py (crates/qcore-audit/tests/dependency_graph.rs:92)",
+    "names providers in a string literal: providers/contracts.py (crates/qcore-audit/tests/provider_selection.rs:620)",
+    "names providers in a string literal: providers/package.py (crates/qcore-audit/src/pin_window.rs:60)",
+    "names providers in a string literal: providers/package.py (crates/qcore-audit/tests/current_cli.rs:138)",
+    "names providers in a string literal: providers/package.py (crates/qcore-audit/tests/dependency_graph.rs:92)",
+    "names providers in a string literal: providers/package.py (crates/qcore-audit/tests/provider_selection.rs:620)"
+   ],
+   "qcore-c-gateway": [
+    "depends on qcore-contract"
+   ],
+   "qcore-compiler": [
+    "names providers/contracts.py in a string literal: providers/contracts.py (compiler/tests/qcore_contract_corpus.rs:57)",
+    "names providers in a string literal: providers/contracts.py (compiler/tests/contract_inherit_qcore_provider.rs:437)",
+    "names providers in a string literal: providers/contracts.py (compiler/tests/monkey_profile.rs:41)",
+    "names providers in a string literal: providers/contracts.py (compiler/tests/profile_loader.rs:65)",
+    "names providers in a string literal: providers/contracts.py (compiler/tests/workspace_layering.rs:254)",
+    "names providers in a string literal: providers/package.py (compiler/tests/contract_inherit_qcore_provider.rs:437)",
+    "names providers in a string literal: providers/package.py (compiler/tests/monkey_profile.rs:41)",
+    "names providers in a string literal: providers/package.py (compiler/tests/profile_loader.rs:65)",
+    "names providers in a string literal: providers/package.py (compiler/tests/workspace_layering.rs:254)"
+   ],
+   "qcore-contract": [
+    "names providers in a string literal: providers/contracts.py (crates/qcore-contract/tests/bounds_contract.rs:159)",
+    "names providers in a string literal: providers/contracts.py (crates/qcore-contract/tests/event_loop_clauses.rs:211)",
+    "names providers in a string literal: providers/contracts.py (crates/qcore-contract/tests/production_symbolic_adoption.rs:389)",
+    "names providers in a string literal: providers/package.py (crates/qcore-contract/tests/bounds_contract.rs:159)",
+    "names providers in a string literal: providers/package.py (crates/qcore-contract/tests/event_loop_clauses.rs:211)",
+    "names providers in a string literal: providers/package.py (crates/qcore-contract/tests/production_symbolic_adoption.rs:389)"
+   ],
+   "qcore-provider-conformance": [
+    "names providers in a string literal: providers/contracts.py (providers/conformance/tests/composed_five_providers.rs:132)",
+    "names providers in a string literal: providers/contracts.py (providers/conformance/tests/packages.rs:373)",
+    "names providers/package.py in a string literal: providers/package.py (providers/conformance/tests/cmetrics_unit.rs:22)",
+    "names providers in a string literal: providers/package.py (providers/conformance/tests/composed_five_providers.rs:132)",
+    "names providers in a string literal: providers/package.py (providers/conformance/tests/packages.rs:373)"
+   ],
+   "qcore-verification": [
+    "depends on qcore-contract"
+   ],
+   "qcorec": [
+    "depends on qcore-compiler"
+   ],
+   "quirin-audit-plugin-measure": [
+    "names providers in a string literal: providers/contracts.py (crates/quirin-audit-plugin-measure/src/sides.rs:512)",
+    "names providers in a string literal: providers/contracts.py (crates/quirin-audit-plugin-measure/tests/units.rs:298)",
+    "names providers in a string literal: providers/package.py (crates/quirin-audit-plugin-measure/src/sides.rs:512)",
+    "names providers in a string literal: providers/package.py (crates/quirin-audit-plugin-measure/tests/units.rs:298)"
+   ],
+   "quirin-source-analysis": [
+    "depends on qcore-contract"
+   ]
+  },
+  "mode": "full",
+  "full_reasons": [
+   "the diff reaches qcore-contract"
+  ],
+  "rust_packages": [
+   "qcore-audit",
+   "qcore-c-gateway",
+   "qcore-compiler",
+   "qcore-contract",
+   "qcore-core",
+   "qcore-frontend",
+   "qcore-gateway-rule-api",
+   "qcore-schemas",
+   "qcore-verification",
+   "qcore-verifier-host",
+   "qcorec",
+   "quirin-audit-plugin",
+   "quirin-audit-plugin-libevent",
+   "quirin-audit-plugin-measure",
+   "quirin-source-analysis",
+   "rule-33-removed-selection",
+   "rule-34-element-destroyer",
+   "rule-35-literal-decay",
+   "rule-36-exact-formal-return",
+   "rule-37-result-constructors"
+  ],
+  "probes": true,
+  "lean": {
+   "mode": "none",
+   "reasons": [],
+   "modules": [],
+   "audits": []
+  },
+  "python_reasons": [
+   "docs/reports/ci-rust-job-peak/package_diff.py: Python",
+   "docs/reports/ci-rust-job-peak/workflow_steps.py: Python",
+   "providers/contracts.py: Python",
+   "providers/package.py: Python"
+  ],
+  "provider_gate": true,
+  "provider_reasons": [
+   "providers/contracts.py: providers/ changed",
+   "providers/package.py: providers/ changed"
+  ],
+  "provider_members_reached_without_providers_change": [],
+  "unresolved_includes": [
+   {
+    "crate": "qcore-compiler",
+    "source": "compiler/tests/ct_corpus.rs:8069",
+    "literal": "include_str!(\\\"fixtures/ct/{id}/case.qr\\\")\");",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   }
+  ]
+ },
+ "planned_steps": [
+  {
+   "name": "submodules",
+   "argv": [
+    "git",
+    "-C",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1f54d4b8e7850585",
+    "submodule",
+    "status",
+    "--recursive"
+   ],
+   "slot": null
+  },
+  {
+   "name": "fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "slot": null
+  },
+  {
+   "name": "clippy",
+   "argv": [
+    "cargo",
+    "clippy",
+    "--all-targets",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "slot": null
+  },
+  {
+   "name": "rust-suite",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1f54d4b8e7850585/scripts/run_test_binaries.py",
+    "--log-dir",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1f54d4b8e7850585/private/gate/rust-suite"
+   ],
+   "slot": "rust-suite"
+  },
+  {
+   "name": "probe-reevaluation_probe",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1f54d4b8e7850585/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_probe"
+   ],
+   "slot": null
+  },
+  {
+   "name": "probe-reevaluation_followup",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1f54d4b8e7850585/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_followup"
+   ],
+   "slot": null
+  },
+  {
+   "name": "python",
+   "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+   ],
+   "slot": null
+  },
+  {
+   "name": "provider-package-build",
+   "argv": [
+    "/usr/bin/python3",
+    "providers/package.py",
+    "build",
+    "--output",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1f54d4b8e7850585/private/gate/provider-packages"
+   ],
+   "slot": null
+  },
+  {
+   "name": "provider-package-verify-all",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1f54d4b8e7850585/scripts/gate_scope.py",
+    "--verify-packages",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1f54d4b8e7850585/private/gate/provider-packages"
+   ],
+   "slot": null
+  },
+  {
+   "name": "provider-package-verify",
+   "argv": [
+    "/usr/bin/python3",
+    "providers/package.py",
+    "verify",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1f54d4b8e7850585/private/gate/provider-packages/qcore.libevent"
+   ],
+   "slot": null
+  },
+  {
+   "name": "provider-test",
+   "argv": [
+    "cargo",
+    "test",
+    "--manifest-path",
+    "providers/Cargo.toml",
+    "--workspace",
+    "--locked",
+    "--offline"
+   ],
+   "slot": "rust-suite"
+  },
+  {
+   "name": "provider-fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--manifest-path",
+    "providers/Cargo.toml",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "slot": null
+  },
+  {
+   "name": "provider-clippy",
+   "argv": [
+    "cargo",
+    "clippy",
+    "--manifest-path",
+    "providers/Cargo.toml",
+    "--workspace",
+    "--all-targets",
+    "--locked",
+    "--offline",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "slot": null
+  }
+ ],
+ "slots": true,
+ "started": "20261031T113634Z",
+ "ran": true,
+ "steps": [
+  {
+   "name": "submodules",
+   "argv": [
+    "git",
+    "-C",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1f54d4b8e7850585",
+    "submodule",
+    "status",
+    "--recursive"
+   ],
+   "exit": 0,
+   "seconds": 0.2,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1f54d4b8e7850585/private/gate/submodules.log",
+   "counts": {
+    "submodules": 1,
+    "not_checked_out_or_moved": []
+   }
+  },
+  {
+   "name": "fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "exit": 0,
+   "seconds": 16.5,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1f54d4b8e7850585/private/gate/fmt.log",
+   "counts": {}
+  },
+  {
+   "name": "clippy",
+   "argv": [
+    "cargo",
+    "clippy",
+    "--all-targets",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "exit": 0,
+   "seconds": 125.3,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1f54d4b8e7850585/private/gate/clippy.log",
+   "counts": {}
+  },
+  {
+   "name": "rust-suite",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1f54d4b8e7850585/scripts/gate_slot.py",
+    "rust-suite",
+    "--receipt",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1f54d4b8e7850585/private/gate/slots/rust-suite.json",
+    "--",
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1f54d4b8e7850585/scripts/run_test_binaries.py",
+    "--log-dir",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1f54d4b8e7850585/private/gate/rust-suite"
+   ],
+   "exit": 0,
+   "seconds": 9673.5,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1f54d4b8e7850585/private/gate/rust-suite.log",
+   "counts": {
+    "units": 584,
+    "passed": 8927,
+    "failed": 0,
+    "ignored": 15,
+    "measured": 0,
+    "filtered": 69,
+    "summaries": 617,
+    "packages": null,
+    "summary": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1f54d4b8e7850585/private/gate/rust-suite/summary.json",
+    "ok": true
+   },
+   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1f54d4b8e7850585/private/gate/slots/rust-suite.json"
+  },
+  {
+   "name": "probe-reevaluation_probe",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1f54d4b8e7850585/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_probe"
+   ],
+   "exit": 0,
+   "seconds": 0.2,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1f54d4b8e7850585/private/gate/probe-reevaluation_probe.log",
+   "counts": {}
+  },
+  {
+   "name": "probe-reevaluation_followup",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1f54d4b8e7850585/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_followup"
+   ],
+   "exit": 0,
+   "seconds": 0.5,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1f54d4b8e7850585/private/gate/probe-reevaluation_followup.log",
+   "counts": {}
+  },
+  {
+   "name": "python",
+   "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+   ],
+   "exit": 0,
+   "seconds": 62.1,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1f54d4b8e7850585/private/gate/python.log",
+   "counts": {
+    "tests": 568,
+    "skipped": 0,
+    "ok": true
+   }
+  },
+  {
+   "name": "provider-package-build",
+   "argv": [
+    "/usr/bin/python3",
+    "providers/package.py",
+    "build",
+    "--output",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1f54d4b8e7850585/private/gate/provider-packages"
+   ],
+   "exit": 0,
+   "seconds": 306.3,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1f54d4b8e7850585/private/gate/provider-package-build.log",
+   "counts": {}
+  },
+  {
+   "name": "provider-package-verify-all",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1f54d4b8e7850585/scripts/gate_scope.py",
+    "--verify-packages",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1f54d4b8e7850585/private/gate/provider-packages"
+   ],
+   "exit": 0,
+   "seconds": 2.1,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1f54d4b8e7850585/private/gate/provider-package-verify-all.log",
+   "counts": {}
+  },
+  {
+   "name": "provider-package-verify",
+   "argv": [
+    "/usr/bin/python3",
+    "providers/package.py",
+    "verify",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1f54d4b8e7850585/private/gate/provider-packages/qcore.libevent"
+   ],
+   "exit": 0,
+   "seconds": 0.2,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1f54d4b8e7850585/private/gate/provider-package-verify.log",
+   "counts": {}
+  },
+  {
+   "name": "provider-test",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1f54d4b8e7850585/scripts/gate_slot.py",
+    "rust-suite",
+    "--receipt",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1f54d4b8e7850585/private/gate/slots/provider-test.json",
+    "--",
+    "cargo",
+    "test",
+    "--manifest-path",
+    "providers/Cargo.toml",
+    "--workspace",
+    "--locked",
+    "--offline"
+   ],
+   "exit": 0,
+   "seconds": 9940.7,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1f54d4b8e7850585/private/gate/provider-test.log",
+   "counts": {
+    "summaries": 43,
+    "passed": 133,
+    "failed": 0,
+    "ignored": 1,
+    "measured": 0,
+    "filtered": 0
+   },
+   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1f54d4b8e7850585/private/gate/slots/provider-test.json"
+  },
+  {
+   "name": "provider-fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--manifest-path",
+    "providers/Cargo.toml",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "exit": 0,
+   "seconds": 14.9,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1f54d4b8e7850585/private/gate/provider-fmt.log",
+   "counts": {}
+  },
+  {
+   "name": "provider-clippy",
+   "argv": [
+    "cargo",
+    "clippy",
+    "--manifest-path",
+    "providers/Cargo.toml",
+    "--workspace",
+    "--all-targets",
+    "--locked",
+    "--offline",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "exit": 0,
+   "seconds": 174.9,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1f54d4b8e7850585/private/gate/provider-clippy.log",
+   "counts": {}
+  }
+ ],
+ "ok": true,
+ "finished": "20261031T171511Z"
+}

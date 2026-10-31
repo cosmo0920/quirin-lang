@@ -183,4 +183,18 @@ the second (registry and toolchain path) dependency recorded.
 
 ## 8. Gate
 
-GATE_SECTION
+`python3 scripts/gate_scope.py --base db2795100 --out <worktree>/private/gate`
+on `e4d0c73b1`: **exit 0**, 13 steps (`gate.json`, `gate-console.txt`). Mode
+full: the diff reaches `qcore-contract`, which, like `qcore-audit`,
+`qcore-compiler` and the measure plugin, names `providers/contracts.py` or
+`providers/package.py` in a string literal; Lean none; provider gate yes.
+Submodules 0 (one); fmt 0; Clippy 0; Rust suite 0, 584 units, 617 summaries,
+8,927 passed, 0 failed, 15 ignored; both reevaluation examples 0; Python 0,
+568 tests; provider packages built and all five verified 0; provider tests 0,
+133 / 0 / 1; provider fmt and Clippy 0. The two suites' wall times (9,674 s
+and 9,941 s) include waits for slots other cards held. Beside the gate:
+`python3 -m unittest discover -s providers/tests` 26 tests OK (the provider
+tooling's own tests, which call the real probes, including a failing probe's
+message) and `scripts.tests.test_package_contract_includes` 8 OK, run in this
+worktree on the probe change. Logs: `private/gate/` in the card worktree.
+`python3 scripts/apply_amendments.py docs/reports/ci-rust-job-peak/integration-amendments.json --check`: exit 0.
