@@ -84,6 +84,25 @@ pub(crate) struct Settled {
     pub(crate) gate: ModeGate,
     /// Every withdrawn specification, with its reason.
     pub(crate) withdrawn: BTreeMap<String, Withdrawal>,
+    /// Card ARM-OBLIGATIONS: the obligations of the rule packages' admissions
+    /// of the specifications that stand (rule 37's `asserted_allocation`),
+    /// which every row of the unit carries. A withdrawn specification's
+    /// admission has no row resting on it and contributes nothing.
+    pub(crate) carried: crate::arm_obligations::Carried,
+}
+
+/// The obligations the standing specifications' admissions rest on.
+fn standing_obligations(
+    admitted: &BTreeMap<String, crate::arm_obligations::Carried>,
+    withdrawn: &BTreeMap<String, Withdrawal>,
+) -> crate::arm_obligations::Carried {
+    let mut carried = crate::arm_obligations::Carried::default();
+    for (name, obligations) in admitted {
+        if !withdrawn.contains_key(name) {
+            carried.extend(obligations.clone());
+        }
+    }
+    carried
 }
 
 /// The diagnostic text for a withdrawn specification defined here.
@@ -197,6 +216,7 @@ pub(crate) fn settle(tokens: &[Token], scope: &[String], contracts: &ResourceCon
             return Settled {
                 gate: ModeGate::apply(tokens, scope, &environment),
                 withdrawn,
+                carried: crate::arm_obligations::Carried::default(),
             };
         }
     };
@@ -208,6 +228,7 @@ pub(crate) fn settle(tokens: &[Token], scope: &[String], contracts: &ResourceCon
         return Settled {
             gate: ModeGate::apply(tokens, scope, contracts),
             withdrawn: BTreeMap::new(),
+            carried: crate::arm_obligations::Carried::default(),
         };
     }
     let mut withdrawn = BTreeMap::new();
@@ -223,13 +244,17 @@ pub(crate) fn settle(tokens: &[Token], scope: &[String], contracts: &ResourceCon
     // stands only while that package admits it (rule 37's
     // `asserted_allocation`). Unreadable premises withdraw every checked
     // specification, as an unreadable checked set does.
-    match crate::result_constructor_rule::premise_withdrawals(contracts, &checked) {
-        Some(refused) => {
-            for name in refused {
+    // Card ARM-OBLIGATIONS: an admitted one keeps its admission's
+    // obligations, carried below while it stands.
+    let mut admitted = BTreeMap::new();
+    match crate::result_constructor_rule::premise_settlement(contracts, &checked) {
+        Some(settlement) => {
+            for name in settlement.withdrawn {
                 withdrawn
                     .entry(name)
                     .or_insert(Withdrawal::PremiseNotAdmitted);
             }
+            admitted = settlement.admitted;
         }
         None => {
             for name in &checked {
@@ -252,7 +277,12 @@ pub(crate) fn settle(tokens: &[Token], scope: &[String], contracts: &ResourceCon
             .cloned()
             .collect::<Vec<_>>();
         if failing.is_empty() {
-            return Settled { gate, withdrawn };
+            let carried = standing_obligations(&admitted, &withdrawn);
+            return Settled {
+                gate,
+                withdrawn,
+                carried,
+            };
         }
         for name in failing {
             withdrawn.insert(name, Withdrawal::NotEstablished);
@@ -260,6 +290,7 @@ pub(crate) fn settle(tokens: &[Token], scope: &[String], contracts: &ResourceCon
     }
     Settled {
         gate: ModeGate::apply(tokens, scope, &reduced(contracts, &withdrawn)),
+        carried: standing_obligations(&admitted, &withdrawn),
         withdrawn,
     }
 }

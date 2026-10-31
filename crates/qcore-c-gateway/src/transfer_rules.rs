@@ -6,7 +6,7 @@
 //! applied before the call's own reading, and those applied after it. The
 //! transfer arms (today rule 34's `destroyer-order`,
 //! `rule-34-element-destroyer`) are asked through
-//! [`qcore_gateway_rule_api::consult`] and their run-time switches
+//! [`crate::arm_obligations::consult`] and their run-time switches
 //! ([`crate::gateway_rules::enabled`]). When no arm admits, the host's order
 //! stands, every operand after the call, except for a call that declares an
 //! unlink of a parameter it releases: no transfer rule orders it, and the
@@ -17,11 +17,12 @@
 //! admission, and the call reads `Unknown` as it did before rule 34, when no
 //! such declaration was admitted.
 //!
-//! An admission is read fail-closed: one phase per declared effect and no
-//! obligation (no transfer placement carries a premise yet,
-//! GATEWAY-RULE-API-ARM-OBLIGATIONS); anything else is a refusal.
+//! An admission is read fail-closed: one phase per declared effect, else a
+//! refusal. Card ARM-OBLIGATIONS: its obligations are carried into the rows
+//! of the unit whose analysis asked ([`crate::arm_obligations`]), and an
+//! admission asked outside one, where no row could carry them, is refused.
 
-use qcore_gateway_rule_api::{DeclaredEffect, Phase, TransferArm, TransferQuery, consult};
+use qcore_gateway_rule_api::{DeclaredEffect, Phase, TransferArm, TransferQuery};
 use qcore_schemas::contract::{ContainerEffect, ResourceFunctionContract, ResourceParameterMode};
 
 use crate::legacy_c::container_publication::Operands;
@@ -60,17 +61,23 @@ fn phases(called: &str, effects: &[DeclaredEffect]) -> Option<Vec<Phase>> {
         callee: called,
         effects,
     };
-    let admitted = consult(
+    // A phase list of the wrong length is refused before its obligations
+    // are carried, so a refused admission carries nothing.
+    let admitted = crate::arm_obligations::consult(
         &TRANSFER_ARMS,
+        |arm| arm.id(),
         |arm| crate::gateway_rules::enabled(arm.id()),
-        |_, arm| arm.ask(&query),
-    )
-    .map(|consulted| consulted.admission)
-    .filter(|admission| {
-        admission.obligations.is_empty() && admission.lowering.len() == effects.len()
-    });
+        |_, arm| match arm.ask(&query) {
+            qcore_gateway_rule_api::Answer::Admit(admission)
+                if admission.lowering.len() != effects.len() =>
+            {
+                qcore_gateway_rule_api::Answer::Refuse
+            }
+            answer => answer,
+        },
+    );
     match admitted {
-        Some(admission) => Some(admission.lowering),
+        Some(decided) => Some(decided.lowering),
         None if effects.iter().any(needs_an_order) => None,
         None => Some(vec![Phase::AfterCall; effects.len()]),
     }

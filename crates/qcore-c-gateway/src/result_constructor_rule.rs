@@ -3,7 +3,7 @@
 //!
 //! The package's body lives in its crate; this module only builds the
 //! queries from the gateway's own readings and composes the answers through
-//! [`qcore_gateway_rule_api::consult`], with the package's run-time switch
+//! [`crate::arm_obligations::consult`], with the package's run-time switch
 //! ([`crate::gateway_rules::enabled`]). With the switch on, every decision is
 //! the one the gateway made before the move (identity run in
 //! `docs/reports/rule37-pilot/`); off, the package is not asked: the store
@@ -12,9 +12,9 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
+use qcore_gateway_rule_api::traits::RulePackage;
 use qcore_gateway_rule_api::{
-    CheckedOperandArm, CheckedOperandQuery, Obligation, SpecificationPremiseArm,
-    SpecificationQuery, consult,
+    CheckedOperandArm, CheckedOperandQuery, Obligation, SpecificationPremiseArm, SpecificationQuery,
 };
 use qcore_schemas::contract::ResourceContracts;
 use rule_37_result_constructors::{ID, PACKAGE};
@@ -32,8 +32,9 @@ pub(crate) fn exempt_operand_spans(
     parameters: &[&str],
     body: &[&str],
 ) -> Vec<(usize, usize)> {
-    consult(
+    crate::arm_obligations::consult(
         &[PACKAGE],
+        |package| package.id(),
         |_| crate::gateway_rules::enabled(ID),
         |_, package| {
             let operand_types = crate::sizeof_operand::OperandTypes::read(model, parameters, body);
@@ -47,27 +48,38 @@ pub(crate) fn exempt_operand_spans(
             )
         },
     )
-    .map(|consulted| consulted.admission.lowering)
+    .map(|decided| decided.lowering)
     .unwrap_or_default()
 }
 
-/// Arm `asserted-allocation-premise` at `legacy_checked_spec::settle`: the
-/// checked specifications among `checked` that must be withdrawn because they
-/// name the premise rule 37 owns and rule 37 does not admit them, or admits
-/// them with an obligation their declaration does not state.
+/// Arm `asserted-allocation-premise` at `legacy_checked_spec::settle`: which
+/// checked specifications naming the premise rule 37 owns are withdrawn, and
+/// the obligations each admitted one rests on.
+#[derive(Debug, Default, PartialEq, Eq)]
+pub(crate) struct PremiseSettlement {
+    /// Withdrawn: rule 37 does not admit them, or admits them with a premise
+    /// their declaration does not state.
+    pub(crate) withdrawn: BTreeSet<String>,
+    /// Card ARM-OBLIGATIONS: every admitted specification with its
+    /// admission's obligations, which the settlement carries into the unit's
+    /// rows while the specification stands.
+    pub(crate) admitted: BTreeMap<String, crate::arm_obligations::Carried>,
+}
+
+/// The settlement of [`PremiseSettlement`] over the unit's environment.
 ///
 /// `None` when the environment's declared premises cannot be read: the
 /// caller then withdraws every checked specification (fail-closed, as for an
 /// unreadable checked set).
-pub(crate) fn premise_withdrawals(
+pub(crate) fn premise_settlement(
     contracts: &ResourceContracts,
     checked: &BTreeSet<String>,
-) -> Option<BTreeSet<String>> {
+) -> Option<PremiseSettlement> {
     if checked.is_empty() {
-        return Some(BTreeSet::new());
+        return Some(PremiseSettlement::default());
     }
     let declared = qcore_contract::contract_loader::declared_premises(contracts).ok()?;
-    Some(withdrawn_by_premise(
+    Some(settle_premises(
         &declared_names(&declared),
         checked,
         crate::gateway_rules::enabled,
@@ -96,57 +108,75 @@ fn declared_names(
         .collect()
 }
 
-/// The decision of [`premise_withdrawals`] over already-read premise names,
+/// The decision of [`premise_settlement`] over already-read premise names,
 /// with the switch as a parameter (`QCore.ResultConstructorSwitch.inForce`
-/// with `established` left to the settlement).
-fn withdrawn_by_premise(
+/// with `established` left to the settlement). An admitted specification
+/// keeps its admission's obligations (`QCore.ArmObligations`): its premises
+/// for the rows' assumptions, an open obligation for their denominator.
+fn settle_premises(
     premises: &BTreeMap<String, Vec<String>>,
     checked: &BTreeSet<String>,
     enabled: impl Fn(&str) -> bool,
-) -> BTreeSet<String> {
+) -> PremiseSettlement {
     let owned = SpecificationPremiseArm::premise(&PACKAGE);
-    checked
-        .iter()
-        .filter(|function| {
-            let names = premises
-                .get(function.as_str())
-                .map(|names| names.iter().map(String::as_str).collect::<Vec<_>>())
-                .unwrap_or_default();
-            if !names.contains(&owned) {
-                return false;
+    let mut settlement = PremiseSettlement::default();
+    for function in checked {
+        let names = premises
+            .get(function.as_str())
+            .map(|names| names.iter().map(String::as_str).collect::<Vec<_>>())
+            .unwrap_or_default();
+        if !names.contains(&owned) {
+            continue;
+        }
+        let held = crate::arm_obligations::consult_held(
+            &[PACKAGE],
+            |package| package.id(),
+            |_| enabled(ID),
+            |_, package| {
+                SpecificationPremiseArm::ask(
+                    package,
+                    &SpecificationQuery {
+                        function,
+                        premises: &names,
+                    },
+                )
+            },
+        );
+        match held {
+            // The lowering is the specification standing; its obligations
+            // go with it.
+            Some(crate::arm_obligations::Held {
+                lowering: (),
+                obligations,
+                carried,
+            }) if obligations.iter().all(|obligation| match obligation {
+                Obligation::Premise(name) => names.contains(&name.as_str()),
+                Obligation::Open(_) => true,
+            }) =>
+            {
+                settlement.admitted.insert(function.clone(), carried);
             }
-            let admitted = consult(
-                &[PACKAGE],
-                |_| enabled(ID),
-                |_, package| {
-                    SpecificationPremiseArm::ask(
-                        package,
-                        &SpecificationQuery {
-                            function,
-                            premises: &names,
-                        },
-                    )
-                },
-            );
-            !admitted.is_some_and(|consulted| {
-                consulted
-                    .admission
-                    .obligations
-                    .iter()
-                    .all(|obligation| match obligation {
-                        Obligation::Premise(name) => names.contains(&name.as_str()),
-                        Obligation::Open(_) => false,
-                    })
-            })
-        })
-        .cloned()
-        .collect()
+            _ => {
+                settlement.withdrawn.insert(function.clone());
+            }
+        }
+    }
+    settlement
 }
 
 #[cfg(test)]
 mod tests {
-    use super::withdrawn_by_premise;
+    use super::settle_premises;
+    use crate::arm_obligations::{Carriage, Carried};
     use std::collections::{BTreeMap, BTreeSet};
+
+    fn withdrawn_by_premise(
+        premises: &BTreeMap<String, Vec<String>>,
+        checked: &BTreeSet<String>,
+        enabled: impl Fn(&str) -> bool,
+    ) -> BTreeSet<String> {
+        settle_premises(premises, checked, enabled).withdrawn
+    }
 
     fn names(entries: &[(&str, &[&str])]) -> BTreeMap<String, Vec<String>> {
         entries
@@ -182,5 +212,37 @@ mod tests {
             withdrawn_by_premise(&premises, &BTreeSet::new(), |_| false).is_empty(),
             "nothing checked, nothing withdrawn"
         );
+    }
+
+    /// Card ARM-OBLIGATIONS: an admitted specification keeps its admission's
+    /// premise for the rows resting on it; a withdrawn one keeps none.
+    #[test]
+    fn an_admitted_specification_keeps_its_premise() {
+        let premises = names(&[
+            ("rd_calloc", &["asserted_allocation"]),
+            ("other", &["rk_no_plugin_library"]),
+        ]);
+        let checked: BTreeSet<String> = ["rd_calloc", "other"]
+            .into_iter()
+            .map(str::to_owned)
+            .collect();
+        let on = settle_premises(&premises, &checked, |_| true);
+        assert!(on.withdrawn.is_empty());
+        assert_eq!(
+            on.admitted,
+            BTreeMap::from([(
+                "rd_calloc".to_owned(),
+                Carried {
+                    premises: BTreeSet::from([Carriage {
+                        rule: "37".into(),
+                        name: "asserted_allocation".into(),
+                    }]),
+                    open: BTreeSet::new(),
+                }
+            )])
+        );
+        let off = settle_premises(&premises, &checked, |id| id != "37");
+        assert!(off.admitted.is_empty(), "withdrawn: nothing rests on it");
+        assert_eq!(off.withdrawn, BTreeSet::from(["rd_calloc".to_owned()]));
     }
 }

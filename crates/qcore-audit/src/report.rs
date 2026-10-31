@@ -13,6 +13,43 @@ use qcore_schemas::contract::ResourceContracts;
 use qcore_schemas::reason::ReasonCategory;
 use serde_json::{Value, json};
 
+/// Card ARM-OBLIGATIONS: the row key of the rule packages' carried
+/// obligations.
+pub const RULE_OBLIGATIONS_KEY: &str = "rule_obligations";
+
+/// The row field of a row's carried obligations, `None` when it carries none
+/// (the row keeps its bytes): `premises` and `open`, each `{rule, name}`.
+#[must_use]
+pub fn rule_obligations_field(
+    carried: &qcore_c_gateway::arm_obligations::Carried,
+) -> Option<Value> {
+    if carried.is_empty() {
+        return None;
+    }
+    let list = |set: &std::collections::BTreeSet<qcore_c_gateway::arm_obligations::Carriage>| {
+        set.iter()
+            .map(|carriage| json!({"rule": carriage.rule, "name": carriage.name}))
+            .collect::<Vec<_>>()
+    };
+    Some(json!({"premises": list(&carried.premises), "open": list(&carried.open)}))
+}
+
+/// Card ARM-OBLIGATIONS: a row's verdict-contract `assumptions` with the
+/// premises it carries folded in. A row that carries none keeps `base`
+/// exactly, so only a row resting on a rule package's premise changes.
+#[must_use]
+pub fn assumptions_with_premises(base: &str, row: &Value) -> String {
+    let premises = &row[RULE_OBLIGATIONS_KEY]["premises"];
+    match premises.as_array() {
+        Some(premises) if !premises.is_empty() => qcore_schemas::sha256_hex(
+            json!({"sources": base, "rule_premises": premises})
+                .to_string()
+                .as_bytes(),
+        ),
+        _ => base.to_owned(),
+    }
+}
+
 /// The closed L21.1 category of a per-unit reason, as a report value.
 ///
 /// This is the second carrier of the reason-code vocabulary
@@ -858,6 +895,15 @@ impl AuditReport {
                         })
                         .collect();
                 }
+                // Card ARM-OBLIGATIONS: the obligations of the rule packages'
+                // admissions this row's unit analysis used: premises are
+                // among the row's assumptions (folded into its verdict
+                // contract's `assumptions`), open obligations keep it out of
+                // `Safe`. Omitted when there is none, so every other row is
+                // byte-identical.
+                if let Some(field) = rule_obligations_field(&function.rule_obligations) {
+                    row[RULE_OBLIGATIONS_KEY] = field;
+                }
                 // Card W45-FB-RETRY-LIFETIME: every counted-user clause
                 // checked against this body, with its verdict. Omitted when
                 // there is none, so every other row is byte-identical.
@@ -1195,6 +1241,43 @@ fn diagnostic_description(
 
 #[cfg(test)]
 mod tests {
+    /// Card ARM-OBLIGATIONS: a carried premise is published in the row and
+    /// folded into its verdict contract's assumptions; a row carrying none
+    /// keeps both its bytes and its assumptions digest.
+    #[test]
+    fn a_carried_premise_is_among_the_rows_assumptions() {
+        use qcore_c_gateway::arm_obligations::{Carriage, Carried};
+        assert_eq!(super::rule_obligations_field(&Carried::default()), None);
+        let mut row = serde_json::json!({"function": "f", "status": "Safe"});
+        assert_eq!(super::assumptions_with_premises("base", &row), "base");
+        let carried = Carried {
+            premises: [Carriage {
+                rule: "37".into(),
+                name: "asserted_allocation".into(),
+            }]
+            .into(),
+            open: Default::default(),
+        };
+        let field = super::rule_obligations_field(&carried).expect("carried");
+        assert_eq!(
+            field,
+            serde_json::json!({"premises": [{"rule": "37", "name": "asserted_allocation"}],
+                "open": []})
+        );
+        row[super::RULE_OBLIGATIONS_KEY] = field;
+        let assumptions = super::assumptions_with_premises("base", &row);
+        assert_ne!(assumptions, "base");
+        assert_eq!(
+            assumptions,
+            qcore_schemas::sha256_hex(
+                serde_json::json!({"sources": "base", "rule_premises":
+                    [{"rule": "37", "name": "asserted_allocation"}]})
+                .to_string()
+                .as_bytes()
+            )
+        );
+    }
+
     #[test]
     fn streamed_report_matches_owned_encoding_with_optional_fields_and_writer_failures() {
         let mut report = super::AuditReport::new("revision");

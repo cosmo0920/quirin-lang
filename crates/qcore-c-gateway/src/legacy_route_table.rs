@@ -26,15 +26,15 @@
 //! markers below (the Python suite fails when they differ from what it
 //! generates, and when a row differs from the frozen route map). Each row is a
 //! `qcore_gateway_rule_api` package of its position, and the dispatchers
-//! compose the rows with `qcore_gateway_rule_api::consult`: the first answer
+//! compose the rows with `crate::arm_obligations::consult`: the first answer
 //! wins, a row whose rule `QCORE_GATEWAY_RULES_OFF` lists is not asked and
 //! falls through, and the end of the table is the existing refusal. With no
 //! rule off every row is asked exactly as before. The routes' bodies are
 //! unchanged and stay in this crate; the `ask` functions below are the
 //! closures the hand-written tables held, named after the route they ask.
 
+use qcore_gateway_rule_api::Answer;
 use qcore_gateway_rule_api::traits::{self as package, Host, RulePackage};
-use qcore_gateway_rule_api::{Answer, consult};
 
 use super::condition_desugar::ConditionPlan;
 use super::{LegacyInstruction, Parser, Statement, Token, atomic_route, return_refused};
@@ -437,8 +437,9 @@ impl Parser<'_> {
             origin: query.origin,
             decision: query.instruction,
         };
-        let decided = consult(
+        let decided = crate::arm_obligations::consult(
             STATEMENT_FALLBACKS,
+            |fallback| fallback.rule,
             |fallback| crate::gateway_rules::enabled(fallback.rule),
             |_position, fallback| {
                 let answer = package::StatementFallback::ask(fallback, self, &query);
@@ -455,7 +456,7 @@ impl Parser<'_> {
         if STATEMENT_FALLBACKS[decided.index].clears_origins {
             self.element_origins.clear();
         }
-        Some(decided.admission.lowering)
+        Some(decided.lowering)
     }
 
     /// Ask the return fallbacks in table order; the first answer wins and a
@@ -467,8 +468,9 @@ impl Parser<'_> {
             origin: query.origin,
             decided: query.statement,
         };
-        consult(
+        crate::arm_obligations::consult(
             RETURN_FALLBACKS,
+            |fallback| fallback.rule,
             |fallback| crate::gateway_rules::enabled(fallback.rule),
             |_position, fallback| {
                 let answer = package::ReturnFallback::ask(fallback, self, &query);
@@ -482,7 +484,7 @@ impl Parser<'_> {
                 answer
             },
         )
-        .map(|decided| decided.admission.lowering)
+        .map(|decided| decided.lowering)
     }
 }
 

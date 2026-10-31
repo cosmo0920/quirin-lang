@@ -1,0 +1,21 @@
+import QCore.ArmObligations
+
+/-! Card ARM-OBLIGATIONS: every public theorem of the carriage law is audited. -/
+
+#print axioms QCore.ArmObligations.the_join_with_unknown_is_never_safe
+#print axioms QCore.ArmObligations.the_join_never_lowers
+#print axioms QCore.ArmObligations.an_admission_without_obligations_is_its_lowering
+#print axioms QCore.ArmObligations.an_uncarriable_obligation_is_refused
+#print axioms QCore.ArmObligations.the_lowering_never_travels_without_its_obligations
+#print axioms QCore.ArmObligations.the_carriage_never_erases
+#print axioms QCore.ArmObligations.the_carriage_preserves_every_obligation
+#print axioms QCore.ArmObligations.a_nested_frame_hands_on_its_obligations
+#print axioms QCore.ArmObligations.the_row_carries_every_obligation
+#print axioms QCore.ArmObligations.an_open_obligation_is_never_safe
+#print axioms QCore.ArmObligations.hasOpen_append
+#print axioms QCore.ArmObligations.the_carriage_keeps_rows_well_formed
+#print axioms QCore.ArmObligations.a_safe_row_carries_no_open_obligation
+#print axioms QCore.ArmObligations.the_carriage_never_improves
+#print axioms QCore.ArmObligations.premises_alone_keep_the_verdict
+#print axioms QCore.ArmObligations.the_empty_carriage_is_the_identity
+#print axioms QCore.ArmObligations.the_apply_vectors_are_apply

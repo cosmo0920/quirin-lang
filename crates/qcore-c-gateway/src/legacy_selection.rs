@@ -60,7 +60,8 @@
 
 use std::collections::BTreeSet;
 
-use qcore_gateway_rule_api::{BodyQuery, EntryRow, StatementExpansion, consult};
+use qcore_gateway_rule_api::traits::RulePackage;
+use qcore_gateway_rule_api::{BodyQuery, EntryRow, StatementExpansion};
 use rule_33_removed_selection::{
     Disposition, ExitFacts, FRAME_SPAN, ITEM_PLACE, MaterializeFacts, RESERVED, RemovedSelection,
     Returned, Selected, ValidationRun, materialize as decide,
@@ -402,12 +403,12 @@ pub(crate) fn expand(
         own: own.as_ref(),
         callees: &frames,
     };
-    let expanded = consult(
+    let expanded = crate::arm_obligations::consult(
         &PACKAGE,
+        |package| package.id(),
         |_| enabled(),
         |_, package| StatementExpansion::ask(package, &query),
     )?
-    .admission
     .lowering;
     // An anchor outside the body is no answer: the body stays verbatim.
     if !expanded.anchored_within(body.len()) {
@@ -643,8 +644,9 @@ pub(crate) fn row(
         clean,
         exits,
     };
-    consult(
+    crate::arm_obligations::consult(
         &PACKAGE,
+        |package| package.id(),
         |_| enabled(),
         |_, package| EntryRow::ask(package, &run),
     )

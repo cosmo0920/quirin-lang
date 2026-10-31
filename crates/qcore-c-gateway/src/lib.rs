@@ -202,6 +202,9 @@ mod residual_access_reading;
 // Card RULE35-PILOT: the host of the rule packages under
 // `crates/gateway-rules/` (rule 35's two arms).
 mod rule_hosts;
+// Card ARM-OBLIGATIONS: every package consultation, carrying an admission's
+// obligations into the unit's rows.
+pub mod arm_obligations;
 mod scalar_element_address;
 // Card CG10-COMMON-TYPED-PLACE (rule 10t): the common typed place.
 mod typed_place;
