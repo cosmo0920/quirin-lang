@@ -1044,6 +1044,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [route-selection-order-restated](route-selection-order-restated/README.md) | ROUTE-SELECTION-ORDER-RESTATED: the route order is written once |
 
+| [rule-switch-entry-points](rule-switch-entry-points/README.md) | RULE-SWITCH-ENTRY-POINTS: every gateway entry point records or refuses the rule switch |
+
 | [rule33-pilot](rule33-pilot/README.md) | RULE33-PILOT: rule 33 as a rule package |
 
 | [rule34-pilot](rule34-pilot/README.md) | RULE34-PILOT: gateway rule 34 at a new transfer position |
