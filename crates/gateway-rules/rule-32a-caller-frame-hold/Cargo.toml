@@ -1,0 +1,12 @@
+[package]
+name = "rule-32a-caller-frame-hold"
+version = "0.1.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+description = "C gateway rule 32a (a caller-frame declaration serves only callers outside its frame) as a rule package: inside a frame member's own body, a call to a member of the same frame whose declaration is in force is held (token hold `caller-frame-hold`, reason key `caller-frame-self-reliance`)."
+
+# Plan docs/plans/pluggable-cards/README.md seam B: a rule package depends on
+# the rule API only, never on qcore-c-gateway or another rule package
+# (compiler/tests/workspace_layering.rs holds the set).
+[dependencies]
+qcore-gateway-rule-api = { path = "../../qcore-gateway-rule-api", version = "0.1.0" }

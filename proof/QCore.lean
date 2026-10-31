@@ -44,6 +44,7 @@ import QCore.CallbackForward
 import QCore.CallbackSource
 import QCore.CallbackTaskHandoff
 import QCore.CalleeSummaryScope
+import QCore.CallerFrameHoldSwitch
 import QCore.CandidateComposition
 import QCore.CapacityBoundary
 import QCore.CarriedPublication

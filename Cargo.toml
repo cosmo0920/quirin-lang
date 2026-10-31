@@ -10,6 +10,7 @@ members = [
     "crates/gateway-rules/rule-37-result-constructors",
     "crates/gateway-rules/rule-33-removed-selection",
     "crates/gateway-rules/rule-34-element-destroyer",
+    "crates/gateway-rules/rule-32a-caller-frame-hold",
     "crates/qcore-frontend",
     "crates/qcore-gateway-rule-api",
     "crates/qcore-schemas",

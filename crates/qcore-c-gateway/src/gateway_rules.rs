@@ -14,11 +14,16 @@
 //! `quirin-audit` turns into a failed run before any analysis, and a library
 //! caller that does not stop gets every switchable rule off (the analysis
 //! only refuses more) with one line on standard error.
+//!
+//! A hold (`off = "not-switchable"`, rule 32a's caller-frame hold; card
+//! RULE32A-PILOT) is on under every list, a refused one included: its
+//! admission is a refusal, so removing it would widen. A list naming it is
+//! refused, never applied.
 
 use std::collections::BTreeSet;
 use std::sync::{Once, OnceLock};
 
-use qcore_gateway_rule_api::{RulesOff, SwitchError};
+use qcore_gateway_rule_api::{Off, RulesOff, SwitchError};
 
 pub use qcore_gateway_rule_api::RULES_OFF_VARIABLE;
 pub use registry::REGISTRY;
@@ -56,12 +61,23 @@ pub fn effective_off() -> BTreeSet<String> {
     }
 }
 
-/// Whether rule `id`'s package answers in this run.
+/// Whether `id` is registered as a hold, which no list switches off.
+fn is_hold(id: &str) -> bool {
+    REGISTRY
+        .iter()
+        .any(|entry| entry.id == id && entry.off == Off::NotSwitchable)
+}
+
+/// Whether rule `id`'s package answers in this run. A hold answers under
+/// every list, including a refused one (card RULE32A-PILOT).
 pub(crate) fn enabled(id: &str) -> bool {
     debug_assert!(
         REGISTRY.iter().any(|entry| entry.id == id),
         "gateway rule {id} reads its switch but is not registered"
     );
+    if is_hold(id) {
+        return true;
+    }
     #[cfg(test)]
     if let Some(on) = test_override::enabled(id) {
         return on;
@@ -106,13 +122,36 @@ pub(crate) mod test_override {
 #[cfg(test)]
 mod tests {
     use super::test_override::with_rules_off;
-    use super::{REGISTRY, enabled};
-    use qcore_gateway_rule_api::{Off, RulesOff, SwitchError, check_registry};
+    use super::{REGISTRY, enabled, is_hold};
+    use qcore_gateway_rule_api::{Off, Position, RulesOff, SwitchError, check_registry};
 
     #[test]
-    fn the_registry_keeps_the_api_laws_and_every_rule_is_switchable() {
+    fn the_registry_keeps_the_api_laws_and_every_rule_but_the_hold_is_switchable() {
         assert_eq!(check_registry(REGISTRY), Ok(()));
-        assert!(REGISTRY.iter().all(|entry| entry.off == Off::Refuses));
+        // Card RULE32A-PILOT: rule 32a's caller-frame hold is the one
+        // registered hold, and the one rule that is not switchable.
+        for entry in REGISTRY {
+            let hold = entry
+                .placements
+                .iter()
+                .any(|placement| placement.position.is_hold());
+            assert_eq!(
+                entry.off,
+                if hold {
+                    Off::NotSwitchable
+                } else {
+                    Off::Refuses
+                },
+                "rule {}",
+                entry.id
+            );
+        }
+        let holds: Vec<&str> = REGISTRY
+            .iter()
+            .filter(|entry| entry.off == Off::NotSwitchable)
+            .map(|entry| entry.id)
+            .collect();
+        assert_eq!(holds, ["32a"]);
         // Card RULE35-PILOT: every rule's body is in the gateway or in a
         // rule package the gateway hosts (`rule_hosts`).
         for entry in REGISTRY {
@@ -131,6 +170,7 @@ mod tests {
     const HOSTED: &[(&str, &str)] = &[
         (rule_33_removed_selection::ID, "rule-33-removed-selection"),
         (rule_34_element_destroyer::ID, "rule-34-element-destroyer"),
+        (rule_32a_caller_frame_hold::ID, "rule-32a-caller-frame-hold"),
         (rule_35_literal_decay::ID, "rule-35-literal-decay"),
         (
             rule_36_exact_formal_return::ID,
@@ -158,6 +198,54 @@ mod tests {
                 .expect("a hosted package is registered");
             assert_eq!(entry.crate_name, *crate_name);
         }
+    }
+
+    /// Card RULE32A-PILOT (GATEWAY-RULE-API-HOLD-OFF): the hold is fixed.
+    /// Its row is the package's, at the token hold, reserving the package's
+    /// reason key; a list naming it is refused, alone or beside a switchable
+    /// rule; it stays on under every accepted list; and the fallback of a
+    /// refused list (every switchable rule off) leaves it on.
+    #[test]
+    fn rule_32a_is_a_fixed_hold() {
+        use qcore_gateway_rule_api::traits::RulePackage;
+        let entry = REGISTRY
+            .iter()
+            .find(|entry| entry.id == "32a")
+            .expect("rule 32a is registered");
+        assert_eq!(entry.crate_name, "rule-32a-caller-frame-hold");
+        assert_eq!(entry.off, Off::NotSwitchable);
+        assert_eq!(
+            entry
+                .placements
+                .iter()
+                .map(|placement| (placement.position, placement.arm, placement.route))
+                .collect::<Vec<_>>(),
+            [(
+                Position::TokenHold,
+                Some("caller-frame-hold"),
+                "hold::decide"
+            )]
+        );
+        assert_eq!(
+            entry.reason_keys,
+            [rule_32a_caller_frame_hold::SELF_RELIANCE]
+        );
+        assert_eq!(rule_32a_caller_frame_hold::CallerFrameHold.id(), entry.id);
+        assert_eq!(
+            crate::legacy_c::caller_frame_hold::CALLER_FRAME_SELF_RELIANCE,
+            entry.reason_keys[0].key
+        );
+        for list in ["32a", " 32a ", "35,32a", "32a,10s"] {
+            assert_eq!(
+                RulesOff::parse(list, REGISTRY),
+                Err(SwitchError::NotSwitchable(vec!["32a".into()])),
+                "{list}"
+            );
+        }
+        assert!(is_hold("32a") && !is_hold("35"));
+        assert!(enabled("32a"));
+        with_rules_off("35,10s,33,34,36,37", || assert!(enabled("32a")));
+        assert!(!RulesOff::all(REGISTRY).is_off("32a"));
     }
 
     #[test]

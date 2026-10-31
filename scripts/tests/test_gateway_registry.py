@@ -114,16 +114,32 @@ class GatewayRegistryTests(unittest.TestCase):
         self.broken(lambda r: r.update(schema="qcore-gateway-rules/0"))
 
     def test_a_hold_must_be_registered_not_switchable(self):
+        # Card RULE32A-PILOT: rule 32a's caller-frame hold is registered, not
+        # switchable, and reserves its reason key; a refusing off is refused.
+        def rule(registry, rule_id):
+            return next(r for r in registry["rule"] if r["id"] == rule_id)
+
+        hold = rule(self.registry, "32a")
+        self.assertEqual(hold["off"], "not-switchable")
+        self.assertEqual(hold["crate"], "rule-32a-caller-frame-hold")
+        self.assertEqual([p["position"] for p in hold["placements"]], ["token-hold"])
+        self.assertEqual(hold["reason_keys"], [{"key": "caller-frame-self-reliance",
+                                                "category": "incomplete-obligation-coverage"}])
+        self.broken(lambda r: rule(r, "32a").update(off="refuses"))
         registry = copy.deepcopy(self.registry)
-        hold = {"id": "32a", "crate": "qcore-c-gateway", "lean": [],
-                "document": "docs/agents/rules/32a.md", "off": "refuses",
-                "placements": [{"position": "token-hold", "arm": "caller-frame-hold",
-                                "route": "legacy_caller_frame_hold::hold"}]}
-        registry["rule"].append(hold)
+        other = {"id": "hold-x", "crate": "qcore-c-gateway", "lean": [],
+                 "document": "docs/agents/rules/32a.md", "off": "refuses",
+                 "placements": [{"position": "call-hold", "arm": "other-hold",
+                                 "route": "legacy_other_hold::hold"}]}
+        registry["rule"].append(other)
         with self.assertRaises(gen.RegistryError):
             gen.validate(registry, ROOT)
-        hold["off"] = "not-switchable"
+        other["off"] = "not-switchable"
         self.assertEqual(len(gen.validate(registry, ROOT)), len(self.rules) + 1)
+        other["reason_keys"] = [{"key": "caller-frame-self-reliance",
+                                 "category": "incomplete-obligation-coverage"}]
+        with self.assertRaises(gen.RegistryError):
+            gen.validate(registry, ROOT)
 
     def test_missing_markers_fail_closed(self):
         with self.assertRaises(gen.RegistryError):
