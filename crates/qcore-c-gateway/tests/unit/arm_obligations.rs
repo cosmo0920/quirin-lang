@@ -6,6 +6,9 @@ use std::collections::BTreeSet;
 use qcore_gateway_rule_api::{Admission, Answer, Obligation};
 
 use super::*;
+
+#[path = "../../../../tests/support/tracked_files.rs"]
+mod tracked;
 use crate::legacy_c::{
     AnalysisStatus, LegacyDiagnostic, LegacyDiagnosticKind, LegacyFunctionSummary,
 };
@@ -431,19 +434,12 @@ fn no_host_reads_an_admission_without_carrying_its_obligations() {
     for mutant in mutants {
         assert!(!bypasses("mutant.rs", mutant).is_empty(), "{mutant}");
     }
+    // Rule 29: the tracked sources, never a walk of the working tree.
     let src = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("src");
-    let mut files = Vec::new();
-    let mut work = vec![src.clone()];
-    while let Some(directory) = work.pop() {
-        for entry in std::fs::read_dir(&directory).expect("the gateway sources") {
-            let path = entry.expect("an entry").path();
-            if path.is_dir() {
-                work.push(path);
-            } else if path.extension().is_some_and(|ext| ext == "rs") {
-                files.push(path);
-            }
-        }
-    }
+    let files = tracked::tracked_files(&src)
+        .into_iter()
+        .filter(|path| path.extension().is_some_and(|ext| ext == "rs"))
+        .collect::<Vec<_>>();
     assert!(files.len() > 100, "the scan reads the crate");
     let mut found = Vec::new();
     for path in files {
