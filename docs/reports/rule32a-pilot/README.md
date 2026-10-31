@@ -202,7 +202,31 @@ card gate (section 5) runs on the merged branch.
 
 ## 5. Gate
 
-GATE-PENDING
+`python3 scripts/gate_scope.py --base db2795100 --out private/gate` on
+`42ce08ae9` (the merged branch with every code, Lean and record change; the
+commit after it adds only this section and [gate.json](gate.json)). Console
+log `/media/Data/GitHub/quirin-lang/private/rule32a-pilot/gate.log`, step
+logs in the worktree's `private/gate/`. Scope: full (the workspace manifest
+and lockfile change, and the diff reaches `qcore-c-gateway`), all Lean (a
+proof root changed), no provider gate. Overall exit 1, from one known Python
+test:
+
+| Step | Exit | Counts |
+|---|---|---|
+| submodules | 0 | 1 submodule at its pin |
+| fmt, Clippy (`--all-targets -D warnings`) | 0, 0 | |
+| Rust suite (`run_test_binaries.py`, rust-suite slot) | 0 | 586 units, 623 summaries; 8,956 passed, 0 failed, 15 ignored |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| Lean (`check_lean_audits.py`) | 0 | 398 audits |
+| Python suite | 1 | 568 tests, 1 failure |
+
+The one failure is
+`test_build_matrix_sections.test_the_derived_facts_are_recomputed_rather_than_carried`:
+the committed acceptance matrix records `lean_audits` 397 and the tree has 398
+(this card's `AuditCallerFrameHoldSwitch.lean`). The matrix's derived fields
+are the integrator's, regenerated at landing, so this is the expected residue
+of adding an audit (`CARD-GATE-NEW-AUDIT-MATRIX-COUNT`, as for RULE36-PILOT),
+not a defect.
 
 ## 6. Ledger and follow-ups
 
