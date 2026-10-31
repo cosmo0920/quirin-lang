@@ -1,0 +1,21 @@
+gate_slot: rust-suite slot 0
+=== step 03 Verify formatting (t=0s)
+=== step 03 exit 0 (t=4s)
+=== step 04 Lint (t=4s)
+=== step 04 exit 0 (t=42s)
+=== step 05 Lint and test the gateway with the indirect-access census compiled in (t=42s)
+=== step 05 exit 0 (t=148s)
+=== step 06 Test, including the pinned Libevent audit (t=149s)
+=== step 06 exit 0 (t=2405s)
+=== step 07 Check the six reevaluation regressions and controls (t=2405s)
+=== step 07 exit 0 (t=2405s)
+=== step 08 Check the reevaluation follow-up regressions and controls (t=2406s)
+=== step 08 exit 0 (t=2406s)
+=== step 09 Execute the confinement refusal grounds and the per-execution quota (t=2406s)
+=== step 09 exit 0 (t=2425s)
+=== step 10 Build and verify the five provider packages against the pinned lockfile (t=2425s)
+=== step 10 exit 0 (t=2588s)
+=== step 11 Run the provider workspace tests (t=2588s)
+=== step 11 exit 0 (t=4726s)
+{"exit": 0, "peak_gb": 11.04, "wall_seconds": 4726.4}
+gate_slot: exit 0; receipt /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1f54d4b8e7850585/private/crjp-measure/before.slot.json

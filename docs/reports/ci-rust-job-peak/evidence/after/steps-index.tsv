@@ -1,0 +1,11 @@
+01	uses	Check out pinned sources
+02	uses	Install Rust toolchain
+03	run	Verify formatting
+04	run	Lint
+05	run	Lint and test the gateway with the indirect-access census compiled in
+06	run	Test, including the pinned Libevent audit
+07	run	Check the six reevaluation regressions and controls
+08	run	Check the reevaluation follow-up regressions and controls
+09	run	Execute the confinement refusal grounds and the per-execution quota
+10	run	Build and verify the five provider packages against the pinned lockfile
+11	run	Run the provider workspace tests

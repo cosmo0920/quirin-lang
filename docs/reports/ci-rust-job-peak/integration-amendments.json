@@ -1,0 +1,28 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "CI-RUST-JOB-PEAK",
+  "base": "db2795100",
+  "measured_tip": "25c9af0d3",
+  "increment_paragraph": "**CI-RUST-JOB-PEAK** (user request of 2026-10-29: CI test runs within about 15 GB of disk; [report](../../reports/ci-rust-job-peak/README.md)). The Linux CI `rust` job, measured for the first time as one sequence (`ci_rust_job.sh` runs the job's own `run:` steps from a fresh shallow clone with an empty `CARGO_HOME`, sampled every 5 s): 11.04 GB at peak on the base, 10.69 GB on the card's tip, during the provider suite (checkout 2.60 GB, root target 4.17 GB, provider target 3.75 GB, temporary files 0.17 GB), so no step deletes a target. Two steps rebuilt root-workspace crates beside the test build because `-p <crate>` resolves that crate's features alone: the quota step (0.18 GB) now selects its test with `--workspace --test execution_quota`, and the tooling probes of `providers/package.py` and `providers/contracts.py` (source mode, resource views, contract inventory, `quirin-audit pin --verify-contracts`; 0.17 GB in sequence, not TEST-STORAGE-BUDGET's 1.3 GB estimate) are built by the new `root_workspace_executable` with `--workspace` and the test-build configuration and run directly; both now compile nothing. Root suite 8,927 / 0 / 15 and provider suite 133 / 0 / 1 in both runs with equal test sets; `package.py build` gives the same 112 files on base and tip. Observed: cargo leaves `build.rustc-wrapper` out of its fingerprint, so with `CARGO_INCREMENTAL=0` plain commands reuse configured units; validation.md \"Test build storage\" now says so and records the job figure. PACKAGE-BYTES-DEPEND-ON-CHECKOUT: cause found, cargo's unit hash of `qcore-schemas`, a path package outside the provider workspace root, depends on its absolute path and changes the crate disambiguators of it and its dependents; not fixed (every fix moves all five package digests). The Windows batched suite's first CI run is not observable from this host. No analyzer, contract, verdict or Lean change.",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "CI-RUST-JOB-PEAK-UNMEASURED",
+      "operation": "retire",
+      "why": "DISCHARGED by CI-RUST-JOB-PEAK: the Linux rust job measured as one sequence on a fresh shallow clone (docs/reports/ci-rust-job-peak/ci_rust_job.sh, steps read from the clone's own ci.yml): 11.04 GB at peak on db2795100, 10.69 GB on the card's tip, under the 15 GB budget; the package step's probes rebuilt 0.17 GB in sequence, and they and the quota step now reuse the test build.",
+      "source": "docs/reports/ci-rust-job-peak/README.md"
+    },
+    {
+      "id": "WINDOWS-BATCHED-SUITE-FIRST-RUN",
+      "operation": "append",
+      "text": "CI-RUST-JOB-PEAK (2026-10-31) could not observe a Windows CI run: `git ls-remote origin` shows refs only, GitHub's public API answers 404 for the private repository's workflow runs, and the host has no gh CLI or token; still open.",
+      "source": "docs/reports/ci-rust-job-peak/README.md"
+    },
+    {
+      "id": "PACKAGE-BYTES-DEPEND-ON-CHECKOUT",
+      "operation": "amend",
+      "text": "Cause found by CI-RUST-JOB-PEAK (reproduced with two checkouts of db2795100): cargo's unit hash (-C metadata) of `qcore-schemas`, which the provider workspace takes from `../crates/qcore-schemas` outside its root, depends on the absolute path; the crate disambiguators of `qcore_schemas`, `quirin_provider_shared` and each provider binary differ while every registry crate and the five provider libraries without that dependency are equal, which changes symbol names and code layout (24 of 32 ELF sections equal). No repository path is embedded (`--remap-path-prefix` works), but 14 unremapped `~/.cargo/registry` and `~/.rustup` paths per executable make the bytes depend on CARGO_HOME and the toolchain path too. Not fixed: a constant build path, moving `qcore-schemas` inside the provider workspace, or remapping those paths each moves all five package digests and needs a decision.",
+      "source": "docs/reports/ci-rust-job-peak/README.md"
+    }
+  ]
+}

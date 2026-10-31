@@ -1,0 +1,8 @@
+# root target/ files written after step 9 (newer than quota.log), run before; size in bytes
+61057672	target/debug/deps/libqcore_contract-3a8a622b6a57ff60.rlib
+4224062	target/debug/deps/libqcore_contract-3a8a622b6a57ff60.rmeta
+61172792	target/debug/examples/contract_inventory
+61172792	target/debug/examples/contract_inventory-95b90968f1c10205
+44458096	target/debug/examples/source_extension_modes
+44458096	target/debug/examples/source_extension_modes-d787c47010e23e11
+# total: 276543510 bytes

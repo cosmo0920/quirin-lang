@@ -1,0 +1,32 @@
+sections equal: 24 of 32
+  differs: .note.gnu.build-id (20 of 36 bytes; sizes 36 / 36)
+  differs: .gcc_except_table (7733 of 101232 bytes; sizes 101232 / 101232)
+  differs: .rodata (331 of 105948 bytes; sizes 105948 / 105948)
+  differs: .eh_frame_hdr (376 of 21044 bytes; sizes 21044 / 21044)
+  differs: .eh_frame (4662 of 129676 bytes; sizes 129676 / 129676)
+  differs: .text (38158 of 1488915 bytes; sizes 1488915 / 1488915)
+  differs: .symtab (12501 of 149832 bytes; sizes 149832 / 149832)
+  differs: .strtab (761390 of 790990 bytes; sizes 790990 / 793155)
+A: 14 absolute paths, under ['/home/cosmo/.cargo/registry', '/home/cosmo/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib']
+B: 14 absolute paths, under ['/home/cosmo/.cargo/registry', '/home/cosmo/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib']
+  same crate ___rust: ['dtSMxSA38aw'] / ['dtSMxSA38aw']
+  same crate addr2line: ['PlFyi5y0Kx'] / ['PlFyi5y0Kx']
+  same crate adler2: ['dRjbPNwFnbW'] / ['dRjbPNwFnbW']
+  same crate alloc: ['1C1lLj4PWSY'] / ['1C1lLj4PWSY']
+  same crate core: ['evLNFiNqfJP'] / ['evLNFiNqfJP']
+  same crate gimli: ['iK12aF3ve0B'] / ['iK12aF3ve0B']
+  same crate itoa: ['joDaGWP7bJc'] / ['joDaGWP7bJc']
+  same crate memchr: ['21LozBRn4XL', '2QZ6mYQaT5W'] / ['21LozBRn4XL', '2QZ6mYQaT5W']
+  same crate miniz_oxide: ['4LxmvjlXZsj'] / ['4LxmvjlXZsj']
+  same crate object: ['cuCkWELI6ch'] / ['cuCkWELI6ch']
+  same crate panic_unwind: ['9YEjbUabcSj'] / ['9YEjbUabcSj']
+  DIFFERS crate qcore_provider_cmetrics: ['5JPYgJ0FVBk'] / ['7QqsSa146l8']
+  DIFFERS crate qcore_schemas: ['SeLD0wKbEz'] / ['fCmguwocsW8']
+  DIFFERS crate quirin_provider_shared: ['8ZOASFoZKDH'] / ['71GuUYuMoYb']
+  same crate rustc_demangle: ['bqKBVLtWDau'] / ['bqKBVLtWDau']
+  same crate serde: ['fL6EItDq4hZ'] / ['fL6EItDq4hZ']
+  same crate serde_core: ['1o8HKRI8GtU'] / ['1o8HKRI8GtU']
+  same crate serde_json: ['dJWlZhdBoow'] / ['dJWlZhdBoow']
+  same crate std: ['gHYyB3hU8Ec'] / ['gHYyB3hU8Ec']
+  same crate std_detect: ['2isY2vBRLTu'] / ['2isY2vBRLTu']
+  same crate zmij: ['jRQE1J3OgiQ'] / ['jRQE1J3OgiQ']

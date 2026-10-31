@@ -3,6 +3,7 @@
 import argparse
 import gzip
 import hashlib
+import importlib.util
 import io
 import json
 import os
@@ -112,6 +113,56 @@ def reject_dual_stems(paths):
         stems[stem] = name
 
 
+def root_test_config_args():
+    """The root workspace's test-build `--config` arguments.
+
+    `scripts/test_link_config.py` is their one authority (docs/agents/validation.md
+    "Test build storage"); it is loaded by path, as this file is by its callers.
+    """
+    spec = importlib.util.spec_from_file_location(
+        "qcore_test_link_config", REPO / "scripts" / "test_link_config.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.cargo_config_args()
+
+
+def root_workspace_executable(kind, name, probe, manifest=REPO / "Cargo.toml"):
+    """Build one root-workspace `example` or `bin` and return its executable.
+
+    Card CI-RUST-JOB-PEAK. The probes this tooling runs (the source-mode probe
+    here; the view, inventory and lock probes of `contracts.py`) are built in
+    the root workspace's own `target/` with the test-build configuration and
+    the whole workspace's feature selection (`--workspace`), so each is the
+    unit a configured `cargo test --workspace` already built and nothing is
+    rebuilt beside it. A plain `cargo run -p <crate>` built the crate and its
+    dependencies a second time, statically and with that crate's features
+    alone. The probes only read and classify sources, so neither the
+    configuration nor the features reach a package's bytes, whose release
+    build `build()` runs in its own target directory as before.
+    """
+    if kind not in ("example", "bin"):
+        raise ValueError(f"unknown probe target kind {kind!r}")
+    command = ["cargo", "build", "--quiet", "--offline", "--locked",
+               *root_test_config_args(),
+               "--manifest-path", str(manifest), "--workspace",
+               f"--{kind}", name, "--message-format=json-render-diagnostics"]
+    result = subprocess.run(command, capture_output=True, text=True)
+    if result.returncode:
+        raise ValueError(f"{probe} failed (exit {result.returncode}): building {kind} {name}: "
+                         f"{result.stderr.strip()}")
+    executables = []
+    for line in result.stdout.splitlines():
+        message = json.loads(line) if line.startswith("{") else {}
+        target = message.get("target") or {}
+        if (message.get("reason") == "compiler-artifact" and target.get("name") == name
+                and target.get("kind") == [kind] and message.get("executable")):
+            executables.append(message["executable"])
+    if len(executables) != 1:
+        raise ValueError(f"{probe} failed: building {kind} {name} named "
+                         f"{len(executables)} executables, expected 1")
+    return executables[0]
+
+
 def validate_source_modes(sources, warn_legacy=False):
     """Use the frontend's header parser for new contracts and legacy warnings.
 
@@ -123,9 +174,8 @@ def validate_source_modes(sources, warn_legacy=False):
                 if name.endswith(".qv") or (warn_legacy and name.endswith(".qcore"))}
     if not selected:
         return
-    command = ["cargo", "run", "--quiet", "--offline", "--locked",
-               "--manifest-path", str(REPO / "Cargo.toml"), "-p", "qcore-frontend",
-               "--example", "source_extension_modes", "--",
+    command = [root_workspace_executable("example", "source_extension_modes",
+                                        "source mode probe"),
                *(str(path) for path in selected.values())]
     result = subprocess.run(command, capture_output=True, text=True)
     if result.returncode:

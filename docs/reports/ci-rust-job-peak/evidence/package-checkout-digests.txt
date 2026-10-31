@@ -1,0 +1,12 @@
+# provider executables of the same base sources (db2795100) built in two checkouts:
+# this worktree (pkgs-base) and private/pkgclone (pkgs-clone), each with its own fresh target.
+7ffc91f90b8b95d659f7500c605210d6fbe4fda14db107a21598f1cc121b6bbb  pkgs-base/qcore.chunkio/provider
+3c06bd8ab06956247388c88b1668d411dcde16fec22dc11fff9a56e3a50f1620  pkgs-base/qcore.cmetrics/provider
+29e2ee813ba7904dbc820cc4dad6dc677f472d6bbdc2c8670f6285f1b5f5fb0d  pkgs-base/qcore.ctraces/provider
+446891862907b2146b060c2a85138ecc5d2e1283fd08014b37ae94c28301510f  pkgs-base/qcore.libevent/provider
+09db99d21873a3c701750d17c801ed8b69a1952526fa214af8f70d0147a3f7ba  pkgs-base/qcore.librdkafka/provider
+dc5de78285f265cf26ed5ac2e754b2b3646195e071a28e6b3636478c9057ac7f  pkgs-clone/qcore.chunkio/provider
+952e298e0e2902eb5cee3c5d30257ff372e62814c7d9eb6ea58b8bf9ba0f2445  pkgs-clone/qcore.cmetrics/provider
+74309886eeb45e2c3e5d3d077682b610938853507eeb2d87beb1984aff3a75d6  pkgs-clone/qcore.ctraces/provider
+c530f8194ff89045318de32817369a24b752ce7e45c594c2fd0d0b7b5286a80d  pkgs-clone/qcore.libevent/provider
+2836efa20ce2e1814a7ee110a98e1ebdce6f402888df1bacf270e73e6826a679  pkgs-clone/qcore.librdkafka/provider

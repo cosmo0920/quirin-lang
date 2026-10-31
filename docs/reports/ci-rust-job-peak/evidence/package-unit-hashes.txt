@@ -1,0 +1,13 @@
+# release rlib names (cargo's -C metadata hash) of the package build: this worktree (left) vs private/pkgclone (right), same sources db2795100
+# only on one side:
+	libqcore_schemas-b8a63b3ee19977e3.rlib
+libqcore_schemas-e7d789bc6031ec61.rlib
+libquirin_provider_shared-34234b7398588dbb.rlib
+	libquirin_provider_shared-b3e4bc322f06122b.rlib
+# provider-workspace crates with the same name on both sides:
+libquirin_provider_cfl-925f0567476b67bc.rlib
+libquirin_provider_fluent_bit-38b747964998889c.rlib
+libquirin_provider_libc-8760b93da4604bd0.rlib
+libquirin_provider_mpack-5d192a92a48f73e2.rlib
+libquirin_provider_msgpack-aeb2611ef94ced01.rlib
+# registry crates: 10 equal, 0 differing

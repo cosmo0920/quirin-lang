@@ -68,10 +68,14 @@ jobs:
       # separately with --nocapture puts the executed refusal ground and the
       # measured quota counters in the CI log, where a silent regression to the
       # override path would otherwise be invisible.
+      # Card CI-RUST-JOB-PEAK: `--workspace --test execution_quota` (the one
+      # target of that name, in qcore-verifier-host) keeps the whole
+      # workspace's feature selection, so this reuses the test step's build;
+      # `-p qcore-verifier-host` rebuilt four crates with that crate's features.
       - name: Execute the confinement refusal grounds and the per-execution quota
         run: |
           mapfile -t test_config < <(python3 scripts/test_link_config.py)
-          cargo test "${test_config[@]}" -p qcore-verifier-host --test execution_quota -- \
+          cargo test "${test_config[@]}" --workspace --test execution_quota -- \
             --nocapture --test-threads=1 2>&1 | tee quota.log
           grep -q 'P03F-GROUND4:' quota.log
 
@@ -79,6 +83,11 @@ jobs:
       # --locked --offline, so a providers/Cargo.lock left stale by a version
       # bump fails here. Nothing in CI built the packages before, which is how
       # that lockfile stayed broken from P09 until the wave-6 repair.
+      # Card CI-RUST-JOB-PEAK: the probes package.py and contracts.py run in the
+      # root workspace (four examples and `quirin-audit`) are built with the
+      # test-build configuration and the workspace's features, so they reuse
+      # the test step's units instead of rebuilding them statically; the
+      # packages themselves are the same release build as before.
       - name: Build and verify the five provider packages against the pinned lockfile
         run: |
           python3 providers/package.py build --output "$RUNNER_TEMP/provider-packages"
