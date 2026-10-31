@@ -40,6 +40,7 @@ REVIEWED_WALKS = {
     "scripts/tests/test_build_matrix_sections.py": 4,  # mirrors build_matrix.py's own reads
     "scripts/tests/test_check_lean_audits.py": 1,  # a scratch proof directory
     "scripts/tests/test_land.py": 1,  # a scratch measure directory (a TemporaryDirectory)
+    "scripts/tests/test_package_reproducible.py": 2,  # a scratch stage and CARGO_HOME (TemporaryDirectory)
     "scripts/tests/test_run_test_binaries.py": 1,  # a scratch capture directory
     "scripts/tests/test_w43_chunk_source_profile.py": 1,  # the vendored fixture tree
 }
