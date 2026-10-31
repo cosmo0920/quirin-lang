@@ -249,6 +249,13 @@ The committed matrix records `lean_audits` 396 and the tree has 397
 (`AuditArmObligations.lean`). The matrix is the integrator's record and is
 regenerated at landing (CARD-GATE-NEW-AUDIT-MATRIX-COUNT).
 
+The records committed after the gate (this report, the comparison record,
+`identity/`, `scripts/`, the amended amendments file) reach no crate:
+`gate_scope.py --base 04b178120 --plan` reports 0 affected crates and the
+Python suite only. On `95942ad54` the Python suite ran 568 tests with the
+same single matrix-count failure; log
+`/media/Data/GitHub/quirin-lang/private/arm-obligations/python-final.log`.
+
 An earlier run on `7193c4850` (`gate-1`, logs
 `/media/Data/GitHub/quirin-lang/private/arm-obligations/gate-1-logs/`) had
 the same counts and one more Python failure. The rule 29 tripwire
