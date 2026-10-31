@@ -3,8 +3,11 @@
 The last pilot of `GATEWAY-RULE-API-PILOT-MIGRATIONS` (pluggable-cards
 [plan](../../plans/pluggable-cards/README.md) seam B, phase P2), which also
 discharges `GATEWAY-RULE-API-HOLD-OFF`. Base `db2795100`; prediction
-`15a76ea84` (committed before any code edit), code `492f0418a`; later commits
-change docs, this report and its scripts only. Rule 32a
+`15a76ea84` (committed before any code edit), code `492f0418a` (the measured
+TIP). The branch then merged origin/main `98b1bb785` (ARM-OBLIGATIONS, on the
+integrator's request) and `c74537b7c` routes the hold through
+`arm_obligations::consult` (section 2); every other later commit changes docs,
+this report and its scripts only. Rule 32a
 (`docs/agents/rules/32a.md`, card W48-RK-LOG-CALLER-FRAME) is a restriction:
 inside a caller-frame member's own body, a call to a member of the same frame
 whose declaration is in force is held `Unknown` under
@@ -77,7 +80,12 @@ package through `consult`, and read the registry row's key, crate and off.
 signature and its three callers (the three token pipelines are unchanged);
 for each `name (` inside a registered member's body at a call position it
 asks the package through `consult` and the registry switch, once per
-enclosing member body, and spells the hold as before. Moved out of the host:
+enclosing member body, and spells the hold as before. After the merge of
+ARM-OBLIGATIONS (`98b1bb785`), the consultation is
+`crate::arm_obligations::consult` (`c74537b7c`), as that card's source scan
+requires of every package admission: the hold's admission carries no
+obligation, so it is its lowering whether or not a unit frame is open, and
+nothing changes (targeted check below). Moved out of the host:
 `is_frame_member(name)`, the in-force test as a filter and
 `within_one_frame(owner, name)`, i.e. the decision. Kept: the member bodies,
 `is_call_position`, the held spelling, `hold_description`/`held_call` and
@@ -128,13 +136,81 @@ module and test); `gateway.md` regenerated; the plan's §6 item 10 and §3 B;
 
 ## 4. Identity run
 
-MEASUREMENT-PENDING
+Two attempts, outputs under this worktree's `private/rule32a-pilot/`:
+
+| Attempt | Script | Window (UTC) | Outcome |
+|---|---|---|---|
+| `measure-1` | [`identity.sh`](scripts/identity.sh): `--side base=baseline:db2795100`, `--side tip=rev:492f0418a --build-commit db2795100…`, `--profile` ×3, `--declared` | 10-31 08:35 – 16:35 | TIP built and ran all three routes, exit 0 each (the corpus waited about 4 h for an audit slot); the plugin then **refused BASE**: each profile's baseline records a different `inputs.route_digest`. No comparison; status `failed` |
+| `measure-2` | [`identity-2.sh`](scripts/identity-2.sh): `--side base=run:<landing>/sides/tip`, `--side tip=run:measure-1/sides/tip`, same profiles and prediction | 10-31 16:37 – 16:37 | exit 0, status `complete`, no failure: **the record** ([native-comparison.json](native-comparison.json), sha256 `c818baa27c7d…`) |
+
+Why `measure-1` refused the baseline: `baseline:db2795100` was published by
+`land.py publish` from a measurement that spells its routes from the explicit
+inputs (`inputs/live.json`, link map
+`docs/reports/w48-bu-single-leaf-bodies/link-map.corpus.json`), while this run
+spells `--profile` (`contract/evaluations/eight-home/link-map.json`, the same
+bytes, digest `98a4db76…`). The route digest covers the spelling, so the
+baseline check refuses: the known hazard `MEASURE-BASELINE-ROUTE-SPELLING`,
+which this card should have checked before choosing the baseline side. `measure-2` therefore reads, as
+written, the landing measurement's own `sides/tip` (rev:`db2795100`, built at
+the fixed path with build commit `db2795100`), the directory the baseline was
+published from: [`landing_equals_baseline.py`](scripts/landing_equals_baseline.py)
+checks that each of the 41 report files the three `baseline.json` records list
+is in that side with its published SHA-256 (exit 0, 0 differ; the profiles'
+own `run.json` are not compared). BASE is so the brief's `rev:db2795100`, run
+by the integrator's landing; TIP is `rev:492f0418a`.
+
+**Identity (BASE → TIP).** The declared check **matches** on all three
+routes (`none`: no unpredicted or missing row, no delta mismatch). Each
+side reproduces its profile's committed baseline (`evaluation_profiles
+compare`, exit 0, both sides).
+
+| Route | Rows | Safe / Unknown / Unsafe (Pending) | Moved | Content changed | Artifacts |
+|---|---:|---|---:|---:|---|
+| system | 448 | 101 / 343 / 4 | 0 | 0 | byte-identical |
+| slice | 404 | 57 / 342 / 1 (Pending 4) | 0 | 0 | byte-identical |
+| corpus | 4,834 | 1,013 / 3,811 / 10 | 0 | 0 | equal under a checked one-to-one substitution |
+
+System and slice: every report artifact (`resource-diagnostics.json`, its
+components, contracts, source-effects and chunk-contracts, the null property,
+its summary, the outer projection, the exit) is byte-identical; only
+`console.log`, `stderr.log` and the two invocation records differ (paths,
+times, binary digest). The corpus route is `incomplete` only by the named
+`composition-conflict` (MEASURE-CORPUS-SIDE-CWD-IN-BUILD-IDENTITY); its unit
+and function rows have 0 moves and 0 content changes, 0 unmatched. By hand
+([`check_identity.sh`](scripts/check_identity.sh), outputs in
+[identity/](identity/)): `monkey-source.json`, `chunk-contracts`, the null
+summary and the outer projection are byte-identical; RULE36-PILOT's
+`corpus_substitution.py` (exit 0): 185 units, 4,834 functions, 180 build
+identities mapped one to one (none unchanged), 0 rows moved or changed, every
+file equal under the substitution or with the remaining digests blanked and
+lists as multisets; RULE35-PILOT's `substitution_ids.py` (exit 0): every
+differing artifact equal under a bijective token map
+(`resource-diagnostics.json` 302 of 653 tokens, components 302/654, contracts
+175/2,122, source-effects 10/29 with 3 contract ids, `corpus-null.jsonl`
+180/616). These are the figures of the earlier pilots' identity runs.
+
+No `--rules-off` side: rule 32a is fixed, and `--rules-off 32a` is refused by
+the analyzer.
+
+**After the merge** (`c74537b7c`, targeted check, not a re-measurement, on
+the integrator's instruction): the gateway's library tests including
+ARM-OBLIGATIONS' source scan (597 passed, 1 ignored, filtered to
+`arm_obligations`, `gateway_rules`, the hold and its children),
+`caller_frame_hold.rs` 7 passed, `rule32a_hold.rs` 5 passed, `cargo fmt`
+clean, Clippy `-D warnings` clean on `qcore-c-gateway` and the package. The
+card gate (section 5) runs on the merged branch.
 
 ## 5. Gate
 
 GATE-PENDING
 
 ## 6. Ledger and follow-ups
+
+- `MEASURE-BASELINE-ROUTE-SPELLING` **amended**: a second instance (this
+  card's `measure-1`, about 8 h of TIP before the refusal), and the recovery
+  this card used: `--side base=run:<landing>/sides/tip` while the landing
+  measurement's side is still on disk, checked file by file against the
+  baseline's digests.
 
 - `GATEWAY-RULE-API-HOLD-OFF` **retired**: the decision is in the plan (§6
   item 10) and the switch (fixed: refused when named, on under every list)
@@ -155,4 +231,40 @@ GATE-PENDING
 
 ## 7. Parity cost (plan decision 6)
 
-PARITY-PENDING
+| | |
+|---|---|
+| Decision code moved | about 10 gateway lines (the member test, the in-force filter and `within_one_frame` in `hold_call_sites`) → 90 package lines (`hold.rs`) + 37 `lib.rs`; the growth is the host capability, the trait impl, the table and docs |
+| New interface | none beyond the `ReasonCategory` re-export (+6): `TokenHold`, `HoldQuery` and `Hold` already existed |
+| Host | `legacy_caller_frame_hold.rs` +95 −14 (the host type, the consultation); `gateway_rules.rs` +94 −6 (the hold in `enabled`, its tests) |
+| Tests | package 201 lines; `rule32a_hold.rs` 167; Python +22 −6 |
+| Lean | `CallerFrameHoldSwitch.lean` 214 lines, audit 17 |
+| Whole code diff | 19 files, +1,046 −27 (`db2795100..492f0418a`, prediction included); the merge follow-up +9 −6 |
+| Active time | about 1 h: the brief to the code commit about 16 min after the brief was written (17:18 to 17:34 local), then docs, report and the merge follow-up |
+| Wall clock | about 8 h 20 min to the identity record: TIP's routes 8 h (4 h of it the corpus waiting for an audit slot behind other cards' Rust suites), the refused baseline, then a 7-second `run:` comparison |
+
+Friction:
+
+1. **"Off" was the whole question.** The code move was small; the decision
+   and its proof (why neither off is acceptable) were the card.
+2. **A latent widening in the switch reader** (section 1): `enabled` was
+   written for packages whose off only refuses; a hold needed it to read the
+   registry's `off` first.
+3. **The published baseline is not reusable under `--profile`.** A baseline
+   published by `land.py` from `inputs/live.json` refuses a `--profile`
+   measurement over byte-equal inputs, after TIP has been measured. Cost here:
+   one wasted BASE check, recovered with `run:` because the landing side was
+   still on disk (`MEASURE-BASELINE-ROUTE-SPELLING`, already registered by
+   RULE36-PILOT; this card did not check the ledger before choosing the side).
+4. **Shared files**: `registry.toml`, the generated registry, `Cargo.toml` and
+   the lock, `qcore-c-gateway/Cargo.toml`, `workspace_layering.rs`, the
+   gateway's `gateway_rules.rs` tests, the API's `lib.rs`, `proof/QCore.lean`,
+   `architecture.md`'s row, the plan, and, after ARM-OBLIGATIONS, the
+   consultation call.
+5. **New audit file**: the committed matrix's derived `lean_audits` is stale
+   by one (CARD-GATE-NEW-AUDIT-MATRIX-COUNT), so the card gate's Python suite
+   is expected to fail that one test (section 5).
+
+Over the six pilots: moving a rule's decision costs well under an hour of
+code each time. The evidence (one identity run per move, 8-14 h under slot
+contention) is the cost, and a fixed hold adds a decision record but no
+ledger.

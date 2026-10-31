@@ -1,0 +1,47 @@
+DIFF console.log b39293d5247776fc b39a58b2032f3a59
+DIFF invocation.json 03c6b69d23ff5c1c a3b4b2831644a2f2
+    binary_sha256: 8b7c74b2429161c39c1d1c2739d79c4ad17803e10ca54b48aa3d1a763798bdad -> cf037841a672a6880ba5790a071ec5faac1875ff70f434baa6566d6eb0416e30
+    binary_sha256_after: 8b7c74b2429161c39c1d1c2739d79c4ad17803e10ca54b48aa3d1a763798bdad -> cf037841a672a6880ba5790a071ec5faac1875ff70f434baa6566d6eb0416e30
+    command[14]: /media/Data/GitHub/quirin-lang/private/measure/landing-db2795100a760efa0a2cbcbe13217bffc3cf4733-20261030T123833260013Z/s -> /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac91a2899bf5abe96/private/rule32a-pilot/measure-1/sides/tip/src
+    command[16]: /media/Data/GitHub/quirin-lang/private/measure/landing-db2795100a760efa0a2cbcbe13217bffc3cf4733-20261030T123833260013Z/m -> /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac91a2899bf5abe96/private/rule32a-pilot/measure-1/mirror
+    command[18]: /media/Data/GitHub/quirin-lang/private/measure/landing-db2795100a760efa0a2cbcbe13217bffc3cf4733-20261030T123833260013Z/s -> /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac91a2899bf5abe96/private/rule32a-pilot/measure-1/sides/tip/work-
+    command[1]: /media/Data/GitHub/quirin-lang/scripts/gate_slot.py -> /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac91a2899bf5abe96/scripts/gate_slot.py
+    command[34]: /media/Data/GitHub/quirin-lang/private/measure/landing-db2795100a760efa0a2cbcbe13217bffc3cf4733-20261030T123833260013Z/s -> /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac91a2899bf5abe96/private/rule32a-pilot/measure-1/sides/tip/syste
+    command[6]: /media/Data/GitHub/quirin-lang/private/measure/landing-db2795100a760efa0a2cbcbe13217bffc3cf4733-20261030T123833260013Z/s -> /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac91a2899bf5abe96/private/rule32a-pilot/measure-1/sides/tip/syste
+    ended: 2026-10-30T12:53:43Z -> 2026-10-31T10:04:21Z
+    environment.QCORE_CROSS_UNIT_LINK_MAP: /media/Data/GitHub/quirin-lang/docs/reports/w48-bu-single-leaf-bodies/link-map.corpus.json -> /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac91a2899bf5abe96/contract/evaluations/eight-home/link-map.json
+    environment.QCORE_NULL_PROPERTY: /media/Data/GitHub/quirin-lang/private/measure/landing-db2795100a760efa0a2cbcbe13217bffc3cf4733-20261030T123833260013Z/s -> /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac91a2899bf5abe96/private/rule32a-pilot/measure-1/sides/tip/syste
+    environment.QCORE_OUTER_PROJECTION: /media/Data/GitHub/quirin-lang/private/measure/landing-db2795100a760efa0a2cbcbe13217bffc3cf4733-20261030T123833260013Z/s -> /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac91a2899bf5abe96/private/rule32a-pilot/measure-1/sides/tip/syste
+    externals_after./media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac91a2899bf5abe96/contract/evaluations/eight-home/link-map.json: None -> 98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3
+    externals_after./media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac91a2899bf5abe96/private/rule32a-pilot/measure-1/mirror/system-compile_commands.json: None -> fab8cadc9540a2cb1a674437558cecab5b437a64a50d490a8f7c3f54e2d950a9
+    externals_after./media/Data/GitHub/quirin-lang/docs/reports/w48-bu-single-leaf-bodies/link-map.corpus.json: 98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3 -> None
+    externals_after./media/Data/GitHub/quirin-lang/private/measure/landing-db2795100a760efa0a2cbcbe13217bffc3cf4733-20261030T123833260013Z/mirror/system-compile_commands.json: fab8cadc9540a2cb1a674437558cecab5b437a64a50d490a8f7c3f54e2d950a9 -> None
+    externals_before./media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac91a2899bf5abe96/contract/evaluations/eight-home/link-map.json: None -> 98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3
+    externals_before./media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac91a2899bf5abe96/private/rule32a-pilot/measure-1/mirror/system-compile_commands.json: None -> fab8cadc9540a2cb1a674437558cecab5b437a64a50d490a8f7c3f54e2d950a9
+    externals_before./media/Data/GitHub/quirin-lang/docs/reports/w48-bu-single-leaf-bodies/link-map.corpus.json: 98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3 -> None
+    externals_before./media/Data/GitHub/quirin-lang/private/measure/landing-db2795100a760efa0a2cbcbe13217bffc3cf4733-20261030T123833260013Z/mirror/system-compile_commands.json: fab8cadc9540a2cb1a674437558cecab5b437a64a50d490a8f7c3f54e2d950a9 -> None
+    inputs_after.digest: f9242008d5e14a69fe9494949b493bc521016826e6838d6cdd90ef8e18af0117 -> d7b6dbe093fc6b0b0f8e48336cc7eb953ea607f23efb14ef40d20af438ee24f4
+    inputs_after.files: 28721 -> 28729
+    inputs_before.digest: f9242008d5e14a69fe9494949b493bc521016826e6838d6cdd90ef8e18af0117 -> d7b6dbe093fc6b0b0f8e48336cc7eb953ea607f23efb14ef40d20af438ee24f4
+    inputs_before.files: 28721 -> 28729
+    link_map: /media/Data/GitHub/quirin-lang/docs/reports/w48-bu-single-leaf-bodies/link-map.corpus.json -> /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac91a2899bf5abe96/contract/evaluations/eight-home/link-map.json
+    route_digest: 062d37eec4d7a1b7db4eeb77fe1ddf22f8118fbe0fe9306df7ad68cf38bec6d5 -> dbe4a1743e77d0fa2b24b9733a3c0e02dbc887392cee23ec4383eb7080a5caa3
+    slot_receipt: /media/Data/GitHub/quirin-lang/private/measure/landing-db2795100a760efa0a2cbcbe13217bffc3cf4733-20261030T123833260013Z/s -> /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac91a2899bf5abe96/private/rule32a-pilot/measure-1/sides/tip/syste
+    started: 2026-10-30T12:40:38Z -> 2026-10-31T08:40:58Z
+    tracked_inputs.contract/evaluations/eight-home/link-map.json: None -> 98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3
+    working_directory: /media/Data/GitHub/quirin-lang/private/measure/landing-db2795100a760efa0a2cbcbe13217bffc3cf4733-20261030T123833260013Z/s -> /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac91a2899bf5abe96/private/rule32a-pilot/measure-1/sides/tip/work-
+same resource-diagnostics.chunk-contracts.json e7e0d254d9e7ee19 e7e0d254d9e7ee19
+same resource-diagnostics.components.json 44c8691e1e77199a 44c8691e1e77199a
+same resource-diagnostics.contracts.json fe6865c5e9a197ea fe6865c5e9a197ea
+DIFF resource-diagnostics.invocation.json 761d6e8a18986d0a 1a41359838dc023b
+    argv[15]: /media/Data/GitHub/quirin-lang/private/measure/landing-db2795100a760efa0a2cbcbe13217bffc3cf4733-20261030T123833260013Z/s -> /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac91a2899bf5abe96/private/rule32a-pilot/measure-1/sides/tip/syste
+    cwd: /media/Data/GitHub/quirin-lang/private/measure/landing-db2795100a760efa0a2cbcbe13217bffc3cf4733-20261030T123833260013Z/s -> /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac91a2899bf5abe96/private/rule32a-pilot/measure-1/sides/tip/work-
+    reports.report: /media/Data/GitHub/quirin-lang/private/measure/landing-db2795100a760efa0a2cbcbe13217bffc3cf4733-20261030T123833260013Z/s -> /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac91a2899bf5abe96/private/rule32a-pilot/measure-1/sides/tip/syste
+same resource-diagnostics.json 1c41dc0c162015a2 1c41dc0c162015a2
+same resource-diagnostics.source-effects.json e7e0d254d9e7ee19 e7e0d254d9e7ee19
+DIFF stderr.log 4ee82b55bbc0e39c dd8f7f5bd908c8a8
+same system-null.jsonl 3be5981f6909c7bb 3be5981f6909c7bb
+same system-null.summary.json 572117bd3758532c 572117bd3758532c
+same system-outer.json 705e46a8aeccd9bb 705e46a8aeccd9bb
+same system.exit 9a271f2a916b0b6e 9a271f2a916b0b6e
+13 files, 4 differ
