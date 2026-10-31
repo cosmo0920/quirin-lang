@@ -292,7 +292,9 @@ Step logs: `private/gate-1/` in the card's worktree. Exit 0:
 
 The commits after `051aef7f2` (this report, the records, `identity/`,
 `scripts/`, the amendments) reach no crate and no Lean module.
-`gate_scope.py --plan` on the final commit selects the Python suite only.
+`gate_scope.py --base 051aef7f2 --plan` selects the Python suite only, which
+ran on `42469ecc6`: 568 tests, OK (exit 0, log `private/python-final.log` in
+the card's worktree).
 
 ## 6. Files likely to conflict
 
