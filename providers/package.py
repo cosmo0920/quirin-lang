@@ -819,8 +819,8 @@ def reproduce(output, target, work):
     package's `verify`, which the first build ran on bytes the second must
     equal. (Both build root-workspace probes, which a second checkout would
     rebuild from nothing.) Every file of the two outputs, `packages.json` and
-    the archives included, must be equal. `work` is removed after a match and
-    kept after a difference."""
+    the archives included, must be equal. After a match `work` and the first
+    build's stage are removed; after a difference both are kept."""
     if work.exists():
         raise ValueError(f"work directory already exists: {work}")
     build(output, target)
@@ -844,6 +844,10 @@ def reproduce(output, target, work):
         raise ValueError(f"package bytes depend on the checkout: {differing} differ between "
                          f"{output} and {second} (kept for inspection)")
     shutil.rmtree(work)
+    # The first build's stage too (38 MB), so the target directory a check run
+    # leaves is the release build alone, as before the stage existed (CI's
+    # provider suite runs beside it); the next build writes the stage anew.
+    shutil.rmtree(target / STAGE_DIRECTORY)
     print(f"reproduced {len(first)} files byte for byte from a second checkout path and "
           f"CARGO_HOME", file=sys.stderr)
 

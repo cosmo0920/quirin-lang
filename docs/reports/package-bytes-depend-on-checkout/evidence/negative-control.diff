@@ -1,0 +1,14 @@
+diff --git a/providers/package.py b/providers/package.py
+index eabea0d93..8a9149379 100644
+--- a/providers/package.py
++++ b/providers/package.py
+@@ -690,7 +690,8 @@ def build(output, target, checks=True):
+     stage_root = stage(REPO, target, env)
+     env["CARGO_ENCODED_RUSTFLAGS"] = "\x1f".join(
+         remap_flags(stage_root, target, home, sysroot, commit))
+-    command = ["cargo", "build", "--manifest-path", str(stage_root / "Cargo.toml"),
++    env["CARGO_ENCODED_RUSTFLAGS"] += f"\x1f--remap-path-prefix={REPO}=/qcore"  # MUTATION
++    command = ["cargo", "build", "--manifest-path", str(REPO / "providers" / "Cargo.toml"),
+                "--locked", "--offline", "--release", "--target-dir", str(target), "-j", "2"]
+     for template in templates():
+         command += ["-p", template.parent.name]

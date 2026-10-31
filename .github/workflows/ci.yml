@@ -91,7 +91,8 @@ jobs:
       # Card PACKAGE-BYTES-DEPEND-ON-CHECKOUT: `reproduce` is `build` followed by
       # a second build from a copy of the checkout at another path with another
       # CARGO_HOME; it fails unless every output file is byte-identical, and
-      # removes the second tree (about 0.3 GB) before the step ends.
+      # removes the second tree (0.25 GB) and the first build's 38 MB stage before
+      # the step ends, so the provider suite runs beside the same 0.11 GB target.
       - name: Build, reproduce and verify the five provider packages against the pinned lockfile
         run: |
           python3 providers/package.py reproduce --output "$RUNNER_TEMP/provider-packages"

@@ -167,7 +167,8 @@ any of those paths, the repository's or the home directory.
 `DIR`, builds again by running the `package.py` of a copy of the checkout
 (without `docs/` and the submodule) at another path with another `CARGO_HOME`
 holding only the locked registry files, and fails unless every output file,
-`packages.json` included, is byte-identical. CI runs it in place of `build`.
+`packages.json` included, is byte-identical; after a match it removes the
+second tree and the first build's stage. CI runs it in place of `build`.
 
 Each package contains `provider`, `verifier-plugin.json`, `contracts.json` and
 the provider-owned `contracts/` tree. Its
