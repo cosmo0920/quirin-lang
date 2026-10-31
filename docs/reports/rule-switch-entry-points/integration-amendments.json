@@ -1,0 +1,17 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "RULE-SWITCH-ENTRY-POINTS",
+  "base": "98b1bb785",
+  "measured_tip": "98b1bb785",
+  "increment_paragraph": "**RULE-SWITCH-ENTRY-POINTS** (pluggable-cards seam B, discharging GATEWAY-RULE-API-OTHER-ENTRY-POINTS; [report](../../reports/rule-switch-entry-points/README.md)) makes every entry point that links the C gateway either record `QCORE_GATEWAY_RULES_OFF` in what it publishes or refuse a non-empty list before it starts; a refused list (unknown id, hold, malformed) stays refused everywhere. The census (cargo metadata of both workspaces, the variable name in the built binaries, and each `quirin-audit` built-in read to its writer) finds 40 linking entry points: the recording routes are the configuration run, `current` and `contracts` with a report, `pinned` with its diagnostic report and `prepare --run` (components' `rule_set.off`, plus `invocation.json` for `current` and the configuration run); without their report the first three now refuse a non-empty list. The 14 other built-ins (`compare`, `checkpoint`, `pin`, the bounded audits, ...), every subcommand plugin command line (the host clears the plugin's environment, so the list was silently dropped; `measure --rules-off` is the switched route), `quirin-dump-checkpoint`, `quirin` and 37 examples of `qcore-audit`, `qcore-c-gateway`, `quirin-source-analysis` and `qcore-compiler` refuse it through `gateway_rules::refuse_unrecorded`/`exit_if_unrecorded`; `qcore_audit::rule_switch_entry` partitions `BUILTINS` into recording and unrecorded under a unit test. No provider binary links the gateway. `tests/rule_switch_entry_points.rs` scans the tracked manifests and sources (with mutant mains) so a new gateway entry point without an admission fails, runs every unrecorded built-in and the checkpoint dump under a list, and the `current`, `contracts`, configuration and `quirin` tests run each route under a list. No Lean change (a process admission, no semantic law). Identity: with an empty list every changed site is the old path; `quirin-audit contracts` on a two-unit fixture writes byte-identical report, components, contracts and invocation files from the base and tip builds, with the variable unset and with `35` (`identity/artifact-sha256.txt`), so no measure run was needed.",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "GATEWAY-RULE-API-OTHER-ENTRY-POINTS",
+      "operation": "retire",
+      "why": "DISCHARGE (RULE-SWITCH-ENTRY-POINTS, 2026-10-31): every entry point linking qcore-c-gateway records the off-list or refuses it. Recording: the configuration run, current and contracts with a report, pinned with its diagnostic report, prepare --run (components' rule_set.off; invocation.json for current and the configuration run); without their report current, contracts and pinned refuse a non-empty list. Refusing (gateway_rules::refuse_unrecorded / exit_if_unrecorded): the 14 other quirin-audit built-ins, every subcommand plugin command line (the host clears its environment), quirin-dump-checkpoint, quirin and 37 examples. Tests: crates/qcore-audit/tests/rule_switch_entry_points.rs (tracked-manifest census with mutant mains, so a new gateway entry point without an admission fails; every unrecorded built-in and the dump refuse a list), the current, contracts and configuration route tests under a list, crates/qcorec/tests/cli.rs.",
+      "source": "docs/reports/rule-switch-entry-points/README.md"
+    }
+  ],
+  "profiles": []
+}
