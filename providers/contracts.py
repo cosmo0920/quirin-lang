@@ -11,9 +11,10 @@ pins, resolved on that load path.
 Each load-path crate record also carries its `resource_view` (card
 W44-PROVIDER-RESOURCE-VIEW): the owned modules the resource-contract loader
 accepts, which `quirin-audit --provider NAME` selects. `sync` generates it by
-running the loader (`cargo run -p qcore-audit --example
-provider_resource_views`); `check` recomputes it and refuses a view that
-declares a module the loader refuses or omits one it accepts.
+running the loader (`qcore-audit`'s example `provider_resource_views`,
+built by `package.py`'s `root_workspace_executable`); `check` recomputes it
+and refuses a view that declares a module the loader refuses or omits one it
+accepts.
 Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS: each record also carries its
 `bounds_view`, the owned modules the bounds contract v1 loader accepts (a
 separate property vocabulary, never in a resource view), computed by the same
@@ -26,8 +27,8 @@ computed by the same probe; the runtime projection loads every outer view
 Card CONTRACT-LOCKS: both also maintain each load-path crate's
 `contract-inventory.lock` (per-file SHA-256, declarations with their
 elaborated clause counts, inheritance edges as written, the premise manifest
-and the three views), computed with the loaders' own parser by `cargo run -p
-qcore-contract --example contract_inventory`; the corpus tests read these locks
+and the three views), computed with the loaders' own parser by `qcore-contract`'s
+example `contract_inventory`; the corpus tests read these locks
 instead of literal tables, so a contract change is a reviewed lock diff.
 The retired ``contract/qcore`` compatibility tree is refused so it cannot
 silently become a second source of provider contracts again.
@@ -278,9 +279,9 @@ def loader_resource_views(root, load_path_file):
     the outer view). Runs the probe example in the repository workspace; any failure of
     the probe is an error, never an empty view."""
     workspace = Path(root).resolve().parent / "Cargo.toml"
-    command = ["cargo", "run", "--quiet", "--offline", "--locked", "--manifest-path",
-               str(workspace), "-p", "qcore-audit", "--example", "provider_resource_views",
-               "--", str(Path(load_path_file).resolve())]
+    command = [package_module().root_workspace_executable(
+                   "example", "provider_resource_views", "resource view probe", workspace),
+               str(Path(load_path_file).resolve())]
     completed = subprocess.run(command, capture_output=True, text=True)
     if completed.returncode != 0:
         raise ValueError(f"resource view probe failed (exit {completed.returncode}): "
@@ -314,8 +315,8 @@ def verify_locks(root, load_path_file):
     return its report lines. Any failure of the probe, or a stale or missing
     lock, is an error naming the command that regenerates the locks."""
     workspace = Path(root).resolve().parent / "Cargo.toml"
-    command = ["cargo", "run", "--quiet", "--offline", "--locked", "--manifest-path",
-               str(workspace), "-p", "qcore-audit", "--bin", "quirin-audit", "--",
+    command = [package_module().root_workspace_executable(
+                   "bin", "quirin-audit", "contract lock probe", workspace),
                "pin", "--verify-contracts", "--load-path", str(Path(load_path_file).resolve())]
     completed = subprocess.run(command, capture_output=True, text=True)
     if completed.returncode != 0:
@@ -346,9 +347,9 @@ def probe_inventories(root, load_path_file):
     elaborates and reads premises with the loaders' own code. Any failure of
     the probe is an error, never an empty inventory."""
     workspace = Path(root).resolve().parent / "Cargo.toml"
-    command = ["cargo", "run", "--quiet", "--offline", "--locked", "--manifest-path",
-               str(workspace), "-p", "qcore-contract", "--example", "contract_inventory",
-               "--", str(Path(load_path_file).resolve())]
+    command = [package_module().root_workspace_executable(
+                   "example", "contract_inventory", "contract inventory probe", workspace),
+               str(Path(load_path_file).resolve())]
     completed = subprocess.run(command, capture_output=True, text=True)
     if completed.returncode != 0:
         raise ValueError(f"contract inventory probe failed (exit {completed.returncode}): "
