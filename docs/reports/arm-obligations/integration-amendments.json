@@ -1,0 +1,45 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "ARM-OBLIGATIONS",
+  "base": "db2795100",
+  "measured_tip": "1aa2555a3",
+  "increment_paragraph": "**ARM-OBLIGATIONS** (pluggable-cards seam B, discharging GATEWAY-RULE-API-ARM-OBLIGATIONS; [report](../../reports/arm-obligations/README.md)) makes the gateway carry a rule package admission's obligations into the published row instead of refusing them. Every package consultation in `qcore-c-gateway` now goes through `arm_obligations::consult` (or `consult_held`, for a position that uses its lowering later): an admission without obligations is its lowering as before; one with obligations is carried into the frame of the translation unit whose analysis asked (`analyze_translation_unit_under_holds` opens it; a nested analysis hands its obligations to the enclosing frame), and refused when no frame is open. Every row of the unit then carries the frame's obligations (`LegacyFunctionSummary::rule_obligations`): a `Premise` among its assumptions (the audit publishes `rule_obligations` and folds the premises into the verdict contract's `assumptions` digest; a row carrying none keeps its bytes), an `Open` obligation as an `Unsupported` diagnostic, so the row is `Unknown` (or `Unsafe`) and stays in the denominator. Rule 37's `asserted-allocation-premise` arm is the first consumer: the checked-specification settlement keeps each admitted specification's obligations and carries those of the specifications that stand. A cross-unit home whose row carries an obligation is not exported. The transfer host carries the same way and keeps its phase-count refusal; three sites that read an admission's lowering without its obligations (statement expansion and entry row of rule 33, the route table's fallbacks, rule 37's exempt spans) now carry them too, and a source scan with mutants fails the suite on any host that reads an admission outside the carriage. Lean `QCore.ArmObligations` (17 audited theorems): the lowering never travels without its obligations, carriage never erases, a row with an open obligation is never `Safe`, premises alone keep the verdict, the empty carriage is the identity, and the Rust `APPLY_VECTORS` are the model's. Measurement (`quirin-audit measure`, `rev:db2795100` -> `rev:1aa2555a3`, `--declared`, three live profiles, `--build-commit arm-obligations-identity`; record `docs/reports/arm-obligations/native-comparison.json`): the declared identity matches on every route and no verdict moves; system and slice are byte-identical; on the corpus every function row of the 54 librdkafka units in which `rd_calloc` or `rd_strdup` stands as a checked specification (2,693 rows: 428 Safe, 2,260 Unknown, 5 Unsafe) now carries `asserted_allocation` among its assumptions, which the prediction's prose had not foreseen (a row's `withdrawn` dependency set is the union over the unit recording's analyses); after `strip_carriage.py` checks and undoes exactly those additions the corpus is equal under RULE36-PILOT's and RULE35-PILOT's one-to-one substitution checks (MEASURE-CORPUS-SIDE-CWD-IN-BUILD-IDENTITY). Card gate on `04b178120`: Rust 8,941 passed / 0 failed, Lean 397 audits, Python 568 tests with the one matrix-count failure (CARD-GATE-NEW-AUDIT-MATRIX-COUNT).",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "GATEWAY-RULE-API-ARM-OBLIGATIONS",
+      "operation": "retire",
+      "why": "DISCHARGE (ARM-OBLIGATIONS, 2026-10-31): every package consultation in qcore-c-gateway goes through arm_obligations::consult/consult_held; an admission's obligations are carried into the rows of the unit whose analysis used it (premises into rule_obligations and the verdict contract's assumptions digest, open obligations as Unsupported diagnostics keeping the row out of Safe), and refused where no unit frame is open. Rule 37's asserted_allocation premise arm at the checked-specification settlement carries its premise into every row of a unit where the specification stands (tests/rule37_switch.rs). Tests: tests/unit/arm_obligations.rs (premise in assumptions, open obligation keeps every row and the unit Unknown, source scan with mutants for a dropped obligation), rule_hosts and transfer tests; Lean QCore.ArmObligations audited.",
+      "source": "docs/reports/arm-obligations/README.md"
+    },
+    {
+      "id": "RULE37-W4-ASSERT-PREMISE-VISIBILITY",
+      "operation": "append",
+      "text": "ARM-OBLIGATIONS: rows resting on a standing asserted_allocation specification now carry the premise (rule_obligations, folded into the assumptions digest); a W4-inferred summary of an asserting body still carries none, so this residual is unchanged.",
+      "source": "docs/reports/arm-obligations/README.md"
+    },
+    {
+      "id": "AUDIT-ROW-ASSUMPTIONS-UNRECORDED",
+      "operation": "append",
+      "text": "ARM-OBLIGATIONS: a function row now names the rule packages' premises its unit analysis used (rule_obligations, folded into hypothesis_context.assumptions); declared-contract premises and run-level assumptions are unchanged.",
+      "source": "docs/reports/arm-obligations/README.md"
+    },
+    {
+      "id": "ARM-OBLIGATIONS-UNIT-GRAIN",
+      "operation": "register",
+      "title": "Rule-package obligations are carried at unit grain",
+      "text": "ARM-OBLIGATIONS carries an admission's obligations into every row of the unit whose analysis used it (and, for a nested analysis, into the enclosing unit's rows too). That over-approximates which rows rest on it: an assumption too many, or an open obligation keeping an unrelated row of the same unit Unknown, never one too few. Measured: on the corpus all 2,693 rows of the 54 librdkafka units where rd_calloc or rd_strdup stands carry asserted_allocation, including rows that never call either (docs/reports/arm-obligations/README.md section 4). DISCHARGE: narrow the carriage to the rows whose derivation used the admission (for example through the rule 13f consultation record made verdict-bearing, or a per-function frame with transitive in-unit summaries), with a test that every row resting on it still carries it, or record that unit grain is the intended precision.",
+      "source": "docs/reports/arm-obligations/README.md",
+      "recorded_by": "ARM-OBLIGATIONS"
+    },
+    {
+      "id": "ARM-OBLIGATIONS-CROSS-UNIT-AND-THREADS",
+      "operation": "register",
+      "title": "Obligations do not cross a unit export or a spawned thread",
+      "text": "ARM-OBLIGATIONS refuses rather than carries in two places: a cross-unit home whose row carries a rule-package obligation is not exported (an imported contract has no premise slot), and an admission asked on a thread a unit analysis spawns (std::thread::scope in deep_unit_ast, null_deref, typed_dispatch_census, loop_owner_region_macros, c_numeric_obligations) sees no frame and is refused. Both are fail-closed; the identity run moved no live verdict. Open obligations publish as Unknown only; no route publishes Pending for a named human-resolvable open key. DISCHARGE: carry obligations through a cross-unit import (an obligation slot on the imported summary that the caller's rows carry) and into spawned workers (a frame handle passed to the worker), each with a test, or record the refusals as the intended boundary.",
+      "source": "docs/reports/arm-obligations/README.md",
+      "recorded_by": "ARM-OBLIGATIONS"
+    }
+  ],
+  "profiles": []
+}

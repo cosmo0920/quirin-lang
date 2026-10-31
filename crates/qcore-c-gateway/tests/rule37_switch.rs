@@ -231,6 +231,29 @@ fn with_nothing_off_rule_37_admits_the_provider_constructors() {
             AnalysisStatus::Safe,
             "{size}: {constructor:#?}"
         );
+        // Card ARM-OBLIGATIONS: the admitted specifications stand in this
+        // unit, so every row carries their admission's premise among its
+        // assumptions, and the verdict is unchanged.
+        for function in ["build", "rd_calloc", "rd_strdup"] {
+            let row = provider_row(size, function);
+            assert_eq!(
+                row.rule_obligations,
+                asserted_allocation(),
+                "{size} {function}"
+            );
+        }
+    }
+}
+
+/// Rule 37's admission obligation, as a row carries it.
+fn asserted_allocation() -> qcore_c_gateway::arm_obligations::Carried {
+    qcore_c_gateway::arm_obligations::Carried {
+        premises: [qcore_c_gateway::arm_obligations::Carriage {
+            rule: "37".into(),
+            name: "asserted_allocation".into(),
+        }]
+        .into(),
+        open: Default::default(),
     }
 }
 
@@ -286,6 +309,9 @@ fn child_rule_37_off() {
         // RULE37-W4-ASSERT-PREMISE-VISIBILITY).
         let literal = provider_constructor("16");
         assert_eq!(literal.status, AnalysisStatus::Safe, "{literal:#?}");
+        // Card ARM-OBLIGATIONS: no specification stands, so no row carries
+        // rule 37's premise: nothing rests on a withdrawn admission.
+        assert!(literal.rule_obligations.is_empty(), "{literal:#?}");
     }
 }
 

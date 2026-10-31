@@ -11,16 +11,15 @@
 //! decision of a hosted rule; it performs what an admission names
 //! ([`TypedReading`]) and records what an arm witnesses on parity runs.
 //!
-//! An admission that carries obligations is refused here: no hosted arm's
-//! placement has a row that could carry a premise yet, so an obligation the
-//! host cannot carry is never dropped (fail-closed).
+//! Card ARM-OBLIGATIONS: an admission that carries obligations is carried
+//! into the rows of the unit whose analysis asked ([`crate::arm_obligations`]);
+//! asked outside a unit's analysis, where no row could carry it, it is
+//! refused, so an obligation is never dropped (fail-closed).
 
 use std::marker::PhantomData;
 
 use qcore_gateway_rule_api::traits::{ClassificationArm, RulePackage, TokenQuery, TypedReaderArm};
-use qcore_gateway_rule_api::{
-    Admission, Answer, Host, LexicalHost, TypedHost, TypedReading, Witness, consult,
-};
+use qcore_gateway_rule_api::{Host, LexicalHost, TypedHost, TypedReading, Witness};
 use serde_json::Value;
 
 use crate::legacy_c::LegacyInstruction;
@@ -86,29 +85,17 @@ impl TypedHost for ArmHost<'_> {
     }
 }
 
-/// The admission's lowering, or `None` for a refusal or an admission with
-/// obligations the host cannot carry.
-fn carried<L>(answer: Answer<L>) -> Option<L> {
-    match answer.into_admission() {
-        Some(Admission {
-            lowering,
-            obligations,
-        }) if obligations.is_empty() => Some(lowering),
-        _ => None,
-    }
-}
-
 /// Rule 35, arm 1 (`literal-read`, amending the lexical access gate
 /// `legacy_token_shapes::contains_unmodeled_access`): whether the `*` at
 /// `at` of `texts` is not an access.
 pub(crate) fn literal_read(texts: &[&str], at: usize) -> bool {
     let query = TokenQuery::<ArmHost<'_>> { tokens: texts, at };
-    consult(
+    crate::arm_obligations::consult(
         &[rule_35_literal_decay::LiteralRead],
+        |package| package.id(),
         |package| crate::gateway_rules::enabled(package.id()),
         |_, package| ClassificationArm::ask(package, &ArmHost::HOST, &query),
     )
-    .and_then(|decided| carried(Answer::Admit(decided.admission)))
     .is_some()
 }
 
@@ -164,7 +151,7 @@ fn typed_arm_reading<'n, A: for<'t> TypedReaderArm<ArmHost<'t>>>(
     {
         decisions.place(|| witness_row(arm.id(), &witness));
     }
-    carried(arm.ask(&ArmHost::HOST, node))
+    crate::arm_obligations::carry_answer(arm.id(), arm.ask(&ArmHost::HOST, node))
 }
 
 /// A witness as a `typed-place` row (rule 12q).
