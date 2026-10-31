@@ -226,16 +226,35 @@ arguments to every cargo command that builds the root workspace's tests:
   (the provider workspace's since this card: its suite went from 15.0 to
   5.2 GB), so panics keep file:line; the budget is met without dropping it.
 
+- The root-workspace probes of the provider tooling (`providers/package.py`'s
+  source-mode probe, `providers/contracts.py`'s view, inventory and lock
+  probes) are built by `package.py`'s `root_workspace_executable`: `cargo
+  build --workspace --example|--bin NAME` with this configuration, then run
+  directly. A command that builds into the test build's `target/` keeps the
+  workspace's feature selection (`--workspace` with a target filter, as CI's
+  quota step does): `-p <crate>` resolves that crate's features alone and
+  rebuilds the libraries whose features differ.
+- The Linux CI `rust` job, measured as one sequence from a fresh shallow
+  checkout (card `CI-RUST-JOB-PEAK`): **10.7 GB** at peak (11.0 GB before it
+  shared the probes' and the quota step's units), during the
+  provider suite, with the checkout (2.6 GB), both workspaces' targets and the
+  temporary directories counted.
+
 The test set, the outcomes and the fail-closed rules are the same in every
 mode; only the bytes on disk differ. The root manifests,
 lockfile and cargo configuration files do not change, so release builds
 (`quirin-audit`, `quirin-audit measure`'s `rev:` sides, provider packages)
 are the builds they were, and cargo runs started by tests never inherit the
 `--config` arguments. Plain `cargo test --workspace --no-fail-fast` stays the
-reference command and builds statically; alternating it with a configured
-command in one `target/` rebuilds the workspace each time, because the wrapper
-and the incremental setting are part of cargo's fingerprint.
-[Report](../reports/test-storage-budget/README.md).
+reference command and builds statically in a fresh `target/`. The incremental
+setting is part of cargo's fingerprint and the wrapper is not: in one
+`target/`, a plain command with incremental builds on (the default) and a
+configured one rebuild each other, while a plain command with
+`CARGO_INCREMENTAL=0` reuses configured units, dynamically linked ones
+included, and a configured build then reuses a library a plain build left
+without its `.so` and, by the wrapper's fallback, links it statically.
+[Report](../reports/test-storage-budget/README.md),
+[whole-job measurement](../reports/ci-rust-job-peak/README.md).
 
 <!-- generated:rules:start — edit docs/agents/rules/<id>.md, then run python3 scripts/gen_rule_docs.py -->
 

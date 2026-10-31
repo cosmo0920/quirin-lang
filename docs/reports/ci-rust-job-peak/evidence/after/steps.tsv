@@ -1,0 +1,12 @@
+step	name	start_s	end_s	exit	crjp-after	crjp-after/target	crjp-after/providers/target	/tmp/crjp-after/tmp	/tmp/crjp-after/runner-temp	/tmp/crjp-after/cargo-home
+01	Check out pinned sources	0	0	skipped	2604122112	0	0	0	0	0
+02	Install Rust toolchain	1	1	skipped	2604122112	0	0	0	0	0
+03	Verify formatting	1	17	0	2604122112	0	0	0	0	0
+04	Lint	17	90	0	2753835008	149712896	0	0	0	26083328
+05	Lint and test the gateway with the indirect-access census compiled in	91	175	0	3406516224	802394112	0	0	0	26083328
+06	Test, including the pinned Libevent audit	175	1996	0	6769778688	4165648384	0	405504	0	26083328
+07	Check the six reevaluation regressions and controls	1996	1996	0	6769778688	4165648384	0	405504	0	26083328
+08	Check the reevaluation follow-up regressions and controls	1996	1997	0	6769778688	4165648384	0	405504	0	26083328
+09	Execute the confinement refusal grounds and the per-execution quota	1997	2006	0	6769782784	4165648384	0	405504	0	26083328
+10	Build and verify the five provider packages against the pinned lockfile	2006	2163	0	6883147776	4165754880	113258496	405504	21680128	26083328
+11	Run the provider workspace tests	2163	4312	0	10522300416	4165754880	3752402944	20377600	21680128	26083328

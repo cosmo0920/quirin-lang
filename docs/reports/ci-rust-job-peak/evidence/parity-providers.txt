@@ -1,0 +1,2 @@
+reference private/crjp-measure/before-job/steps/11.log: 134 tests, 1 ignored, 0 failed
+private/crjp-measure/after-job/steps/11.log: 134 tests, 1 ignored, 0 failed; runner totals 133 passed, 0 failed, 1 ignored; EQUAL

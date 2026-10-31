@@ -1,0 +1,23 @@
+{
+ "command": [
+  "bash",
+  "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1f54d4b8e7850585/docs/reports/ci-rust-job-peak/ci_rust_job.sh",
+  "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1f54d4b8e7850585/private/crjp-base",
+  "/tmp/crjp-b",
+  "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1f54d4b8e7850585/private/crjp-measure/before-job"
+ ],
+ "exit": 0,
+ "interval_seconds": 5.0,
+ "wall_seconds": 4726.4,
+ "peak_bytes": 11035254784,
+ "peak_gb": 11.04,
+ "peak_at_seconds": 3380.7,
+ "peak_by_dir": {
+  "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1f54d4b8e7850585/private/crjp-base": 10869518336,
+  "/tmp/crjp-b": 165736448
+ },
+ "final": {
+  "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1f54d4b8e7850585/private/crjp-base": 10869518336,
+  "/tmp/crjp-b": 68124672
+ }
+}
