@@ -291,3 +291,28 @@ off = "refuses"
 placements = [
   { position = "transfer", arm = "destroyer-order", route = "destroyer_order::order" },
 ]
+
+# --- Token holds (ROUTE-MAP section 1): a hold's admission is the refusal of
+# --- a reading, so a switch that removed it would widen. Every hold is
+# --- off = "not-switchable": QCORE_GATEWAY_RULES_OFF naming it is refused, and
+# --- its host asks it under every switch list (card RULE32A-PILOT; the
+# --- decision is the pluggable-cards plan's section 6 item 10).
+
+# Card RULE32A-PILOT: rule 32a's decision lives in its own package. Its one
+# placement is the caller-frame hold of the three token pipelines
+# (`legacy_caller_frame_hold`, beside the review and pin holds): inside a
+# frame member's own body, a call to a member of the same frame whose
+# declaration is in force is held, refused `Unknown` under the reason key the
+# row reserves.
+[[rule]]
+id = "32a"
+crate = "rule-32a-caller-frame-hold"
+lean = ["QCore.RkLogCallerFrame", "QCore.CallerFrameHoldSwitch"]
+document = "docs/agents/rules/32a.md"
+off = "not-switchable"
+reason_keys = [
+  { key = "caller-frame-self-reliance", category = "incomplete-obligation-coverage" },
+]
+placements = [
+  { position = "token-hold", arm = "caller-frame-hold", route = "hold::decide" },
+]

@@ -31,6 +31,9 @@ qcore-core = { path = "../qcore-core", version = "0.1.0" }
 # the run-time switches the generated tables read.
 qcore-gateway-rule-api = { path = "../qcore-gateway-rule-api", version = "0.1.0" }
 qcore-schemas = { path = "../qcore-schemas", version = "24.0.0" }
+# Card RULE32A-PILOT: rule 32a's package (plan seam B), asked through the rule
+# interface at the caller-frame token hold.
+rule-32a-caller-frame-hold = { path = "../gateway-rules/rule-32a-caller-frame-hold", version = "0.1.0" }
 # Card RULE33-PILOT: rule 33's package (plan seam B), asked through the rule
 # interface at its caller expansion and its frame row.
 rule-33-removed-selection = { path = "../gateway-rules/rule-33-removed-selection", version = "0.1.0" }

@@ -1,0 +1,1013 @@
+{
+ "schema": "quirin-gate-scope/1",
+ "source": "git diff",
+ "base": "db2795100a760efa0a2cbcbe13217bffc3cf4733",
+ "head": "42ce08ae9ce22d2650b5e1dcf3ad5418fab652e5",
+ "committed": [
+  "Cargo.lock",
+  "Cargo.toml",
+  "compiler/tests/workspace_layering.rs",
+  "crates/gateway-rules/registry.toml",
+  "crates/gateway-rules/rule-32a-caller-frame-hold/Cargo.toml",
+  "crates/gateway-rules/rule-32a-caller-frame-hold/src/hold.rs",
+  "crates/gateway-rules/rule-32a-caller-frame-hold/src/lib.rs",
+  "crates/gateway-rules/rule-32a-caller-frame-hold/tests/unit/hold.rs",
+  "crates/qcore-audit/src/projection.rs",
+  "crates/qcore-audit/src/report.rs",
+  "crates/qcore-c-gateway/Cargo.toml",
+  "crates/qcore-c-gateway/src/arm_obligations.rs",
+  "crates/qcore-c-gateway/src/gateway_rule_registry.rs",
+  "crates/qcore-c-gateway/src/gateway_rules.rs",
+  "crates/qcore-c-gateway/src/legacy_c.rs",
+  "crates/qcore-c-gateway/src/legacy_caller_frame_hold.rs",
+  "crates/qcore-c-gateway/src/legacy_checked_spec.rs",
+  "crates/qcore-c-gateway/src/legacy_cross_unit.rs",
+  "crates/qcore-c-gateway/src/legacy_exact_formal_return.rs",
+  "crates/qcore-c-gateway/src/legacy_route_table.rs",
+  "crates/qcore-c-gateway/src/legacy_selection.rs",
+  "crates/qcore-c-gateway/src/legacy_transfer.rs",
+  "crates/qcore-c-gateway/src/lib.rs",
+  "crates/qcore-c-gateway/src/result_constructor_rule.rs",
+  "crates/qcore-c-gateway/src/rule_hosts.rs",
+  "crates/qcore-c-gateway/src/transfer_rules.rs",
+  "crates/qcore-c-gateway/tests/contract_dependencies.rs",
+  "crates/qcore-c-gateway/tests/rule32a_hold.rs",
+  "crates/qcore-c-gateway/tests/rule37_switch.rs",
+  "crates/qcore-c-gateway/tests/unit/arm_obligations.rs",
+  "crates/qcore-c-gateway/tests/unit/rule_hosts.rs",
+  "crates/qcore-gateway-rule-api/src/lib.rs",
+  "docs/agents/gateway.md",
+  "docs/agents/rules/32a.md",
+  "docs/agents/rules/37.md",
+  "docs/development/architecture.md",
+  "docs/development/increments/wave-48-part12.md",
+  "docs/plans/pluggable-cards/README.md",
+  "docs/reports/INDEX.md",
+  "docs/reports/arm-obligations/PREDICTION.md",
+  "docs/reports/arm-obligations/README.md",
+  "docs/reports/arm-obligations/gate.json",
+  "docs/reports/arm-obligations/identity/bytes-corpus.txt",
+  "docs/reports/arm-obligations/identity/bytes-slice.txt",
+  "docs/reports/arm-obligations/identity/bytes-system.txt",
+  "docs/reports/arm-obligations/identity/carrying-units.txt",
+  "docs/reports/arm-obligations/identity/corpus-substitution.exit",
+  "docs/reports/arm-obligations/identity/corpus-substitution.txt",
+  "docs/reports/arm-obligations/identity/strip.exit",
+  "docs/reports/arm-obligations/identity/strip.txt",
+  "docs/reports/arm-obligations/identity/substitution-ids.exit",
+  "docs/reports/arm-obligations/identity/substitution-ids.jsonl",
+  "docs/reports/arm-obligations/integration-amendments.json",
+  "docs/reports/arm-obligations/native-comparison.json",
+  "docs/reports/arm-obligations/scripts/carrying_units.py",
+  "docs/reports/arm-obligations/scripts/identity.sh",
+  "docs/reports/arm-obligations/scripts/strip_carriage.py",
+  "docs/reports/rule32a-pilot/PREDICTION.md",
+  "docs/reports/rule32a-pilot/README.md",
+  "docs/reports/rule32a-pilot/identity/bytes-corpus-top.txt",
+  "docs/reports/rule32a-pilot/identity/bytes-corpus.txt",
+  "docs/reports/rule32a-pilot/identity/bytes-slice.txt",
+  "docs/reports/rule32a-pilot/identity/bytes-system.txt",
+  "docs/reports/rule32a-pilot/identity/corpus-substitution.exit",
+  "docs/reports/rule32a-pilot/identity/corpus-substitution.txt",
+  "docs/reports/rule32a-pilot/identity/substitution-ids.exit",
+  "docs/reports/rule32a-pilot/identity/substitution-ids.jsonl",
+  "docs/reports/rule32a-pilot/integration-amendments.json",
+  "docs/reports/rule32a-pilot/native-comparison.json",
+  "docs/reports/rule32a-pilot/scripts/check_identity.sh",
+  "docs/reports/rule32a-pilot/scripts/identity-2.sh",
+  "docs/reports/rule32a-pilot/scripts/identity.sh",
+  "docs/reports/rule32a-pilot/scripts/landing_equals_baseline.py",
+  "docs/reviews/r0_3/acceptance_matrix.json",
+  "proof/AuditArmObligations.lean",
+  "proof/AuditCallerFrameHoldSwitch.lean",
+  "proof/QCore.lean",
+  "proof/QCore/ArmObligations.lean",
+  "proof/QCore/CallerFrameHoldSwitch.lean",
+  "scripts/tests/test_gateway_registry.py"
+ ],
+ "uncommitted": [],
+ "scope": {
+  "paths": [
+   "Cargo.lock",
+   "Cargo.toml",
+   "compiler/tests/workspace_layering.rs",
+   "crates/gateway-rules/registry.toml",
+   "crates/gateway-rules/rule-32a-caller-frame-hold/Cargo.toml",
+   "crates/gateway-rules/rule-32a-caller-frame-hold/src/hold.rs",
+   "crates/gateway-rules/rule-32a-caller-frame-hold/src/lib.rs",
+   "crates/gateway-rules/rule-32a-caller-frame-hold/tests/unit/hold.rs",
+   "crates/qcore-audit/src/projection.rs",
+   "crates/qcore-audit/src/report.rs",
+   "crates/qcore-c-gateway/Cargo.toml",
+   "crates/qcore-c-gateway/src/arm_obligations.rs",
+   "crates/qcore-c-gateway/src/gateway_rule_registry.rs",
+   "crates/qcore-c-gateway/src/gateway_rules.rs",
+   "crates/qcore-c-gateway/src/legacy_c.rs",
+   "crates/qcore-c-gateway/src/legacy_caller_frame_hold.rs",
+   "crates/qcore-c-gateway/src/legacy_checked_spec.rs",
+   "crates/qcore-c-gateway/src/legacy_cross_unit.rs",
+   "crates/qcore-c-gateway/src/legacy_exact_formal_return.rs",
+   "crates/qcore-c-gateway/src/legacy_route_table.rs",
+   "crates/qcore-c-gateway/src/legacy_selection.rs",
+   "crates/qcore-c-gateway/src/legacy_transfer.rs",
+   "crates/qcore-c-gateway/src/lib.rs",
+   "crates/qcore-c-gateway/src/result_constructor_rule.rs",
+   "crates/qcore-c-gateway/src/rule_hosts.rs",
+   "crates/qcore-c-gateway/src/transfer_rules.rs",
+   "crates/qcore-c-gateway/tests/contract_dependencies.rs",
+   "crates/qcore-c-gateway/tests/rule32a_hold.rs",
+   "crates/qcore-c-gateway/tests/rule37_switch.rs",
+   "crates/qcore-c-gateway/tests/unit/arm_obligations.rs",
+   "crates/qcore-c-gateway/tests/unit/rule_hosts.rs",
+   "crates/qcore-gateway-rule-api/src/lib.rs",
+   "docs/agents/gateway.md",
+   "docs/agents/rules/32a.md",
+   "docs/agents/rules/37.md",
+   "docs/development/architecture.md",
+   "docs/development/increments/wave-48-part12.md",
+   "docs/plans/pluggable-cards/README.md",
+   "docs/reports/INDEX.md",
+   "docs/reports/arm-obligations/PREDICTION.md",
+   "docs/reports/arm-obligations/README.md",
+   "docs/reports/arm-obligations/gate.json",
+   "docs/reports/arm-obligations/identity/bytes-corpus.txt",
+   "docs/reports/arm-obligations/identity/bytes-slice.txt",
+   "docs/reports/arm-obligations/identity/bytes-system.txt",
+   "docs/reports/arm-obligations/identity/carrying-units.txt",
+   "docs/reports/arm-obligations/identity/corpus-substitution.exit",
+   "docs/reports/arm-obligations/identity/corpus-substitution.txt",
+   "docs/reports/arm-obligations/identity/strip.exit",
+   "docs/reports/arm-obligations/identity/strip.txt",
+   "docs/reports/arm-obligations/identity/substitution-ids.exit",
+   "docs/reports/arm-obligations/identity/substitution-ids.jsonl",
+   "docs/reports/arm-obligations/integration-amendments.json",
+   "docs/reports/arm-obligations/native-comparison.json",
+   "docs/reports/arm-obligations/scripts/carrying_units.py",
+   "docs/reports/arm-obligations/scripts/identity.sh",
+   "docs/reports/arm-obligations/scripts/strip_carriage.py",
+   "docs/reports/rule32a-pilot/PREDICTION.md",
+   "docs/reports/rule32a-pilot/README.md",
+   "docs/reports/rule32a-pilot/identity/bytes-corpus-top.txt",
+   "docs/reports/rule32a-pilot/identity/bytes-corpus.txt",
+   "docs/reports/rule32a-pilot/identity/bytes-slice.txt",
+   "docs/reports/rule32a-pilot/identity/bytes-system.txt",
+   "docs/reports/rule32a-pilot/identity/corpus-substitution.exit",
+   "docs/reports/rule32a-pilot/identity/corpus-substitution.txt",
+   "docs/reports/rule32a-pilot/identity/substitution-ids.exit",
+   "docs/reports/rule32a-pilot/identity/substitution-ids.jsonl",
+   "docs/reports/rule32a-pilot/integration-amendments.json",
+   "docs/reports/rule32a-pilot/native-comparison.json",
+   "docs/reports/rule32a-pilot/scripts/check_identity.sh",
+   "docs/reports/rule32a-pilot/scripts/identity-2.sh",
+   "docs/reports/rule32a-pilot/scripts/identity.sh",
+   "docs/reports/rule32a-pilot/scripts/landing_equals_baseline.py",
+   "docs/reviews/r0_3/acceptance_matrix.json",
+   "proof/AuditArmObligations.lean",
+   "proof/AuditCallerFrameHoldSwitch.lean",
+   "proof/QCore.lean",
+   "proof/QCore/ArmObligations.lean",
+   "proof/QCore/CallerFrameHoldSwitch.lean",
+   "scripts/tests/test_gateway_registry.py"
+  ],
+  "attribution": {
+   "Cargo.lock": [
+    "no crate owns or reads it"
+   ],
+   "Cargo.toml": [
+    "read by qcore-audit (runtime, crates/qcore-audit/src/contract_revision.rs:759)",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/contract_supersession.rs:87)",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/dependency_graph.rs:21)",
+    "read by qcore-gateway-rule-api (runtime, crates/qcore-gateway-rule-api/src/lib.rs:66)",
+    "read by rule-33-removed-selection (runtime, crates/gateway-rules/rule-33-removed-selection/src/lib.rs:981)",
+    "read by rule-37-result-constructors (runtime, crates/gateway-rules/rule-37-result-constructors/src/lib.rs:258)",
+    "read by quirin-audit-plugin (runtime, crates/quirin-audit-plugin/tests/dependencies.rs:13)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:298)",
+    "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/src/sides.rs:816)",
+    "read by quirin-provider-plugin (runtime, providers/quirin-provider-plugin/src/user_crate.rs:96)",
+    "read by qcore-provider-conformance (runtime, providers/conformance/tests/packages.rs:615)"
+   ],
+   "compiler/tests/workspace_layering.rs": [
+    "owned by qcore-compiler"
+   ],
+   "crates/gateway-rules/registry.toml": [
+    "read by rule-32a-caller-frame-hold (include_str, crates/gateway-rules/rule-32a-caller-frame-hold/tests/unit/hold.rs:121)",
+    "read by rule-32a-caller-frame-hold (runtime, crates/gateway-rules/rule-32a-caller-frame-hold/tests/unit/hold.rs:121)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:211)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/gateway-rules/rule-32a-caller-frame-hold/Cargo.toml": [
+    "owned by rule-32a-caller-frame-hold",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:71)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:211)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/gateway-rules/rule-32a-caller-frame-hold/src/hold.rs": [
+    "owned by rule-32a-caller-frame-hold",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:71)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:211)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/gateway-rules/rule-32a-caller-frame-hold/src/lib.rs": [
+    "owned by rule-32a-caller-frame-hold",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:71)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:211)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/gateway-rules/rule-32a-caller-frame-hold/tests/unit/hold.rs": [
+    "owned by rule-32a-caller-frame-hold",
+    "read by rule-32a-caller-frame-hold (path, crates/gateway-rules/rule-32a-caller-frame-hold/src/hold.rs:89)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:71)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:211)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-audit/src/projection.rs": [
+    "owned by qcore-audit",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:133)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-audit/src/report.rs": [
+    "owned by qcore-audit",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:133)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/Cargo.toml": [
+    "owned by qcore-c-gateway",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:75)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/src/arm_obligations.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:75)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/src/gateway_rule_registry.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-c-gateway (path, crates/qcore-c-gateway/src/gateway_rules.rs:32)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:75)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/src/gateway_rules.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:75)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/src/legacy_c.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-c-gateway (include_str, crates/qcore-c-gateway/tests/unit/legacy_probe_state.rs:28)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:75)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/src/legacy_caller_frame_hold.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-c-gateway (path, crates/qcore-c-gateway/src/legacy_c.rs:94)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:75)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/src/legacy_checked_spec.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-c-gateway (path, crates/qcore-c-gateway/src/legacy_c.rs:408)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:75)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/src/legacy_cross_unit.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-c-gateway (path, crates/qcore-c-gateway/src/legacy_c.rs:3173)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:75)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/src/legacy_exact_formal_return.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-c-gateway (path, crates/qcore-c-gateway/src/legacy_c.rs:5815)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:75)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/src/legacy_route_table.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-c-gateway (path, crates/qcore-c-gateway/src/legacy_c.rs:418)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:75)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/src/legacy_selection.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-c-gateway (path, crates/qcore-c-gateway/src/legacy_c.rs:364)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:75)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/src/legacy_transfer.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-c-gateway (path, crates/qcore-c-gateway/src/legacy_c.rs:5822)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:75)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/src/lib.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:75)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/src/result_constructor_rule.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:75)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/src/rule_hosts.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:75)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/src/transfer_rules.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:75)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/tests/contract_dependencies.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:75)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/tests/rule32a_hold.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:75)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/tests/rule37_switch.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:75)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/tests/unit/arm_obligations.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-c-gateway (path, crates/qcore-c-gateway/src/arm_obligations.rs:299)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:75)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/tests/unit/rule_hosts.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-c-gateway (path, crates/qcore-c-gateway/src/rule_hosts.rs:180)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:75)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-gateway-rule-api/src/lib.rs": [
+    "owned by qcore-gateway-rule-api",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:32)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "docs/agents/gateway.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/32a.md": [
+    "read by qcore-c-gateway (runtime, crates/qcore-c-gateway/src/gateway_rule_registry.rs:266)",
+    "class prose"
+   ],
+   "docs/agents/rules/37.md": [
+    "read by qcore-c-gateway (runtime, crates/qcore-c-gateway/src/gateway_rule_registry.rs:244)",
+    "class prose"
+   ],
+   "docs/development/architecture.md": [
+    "class prose"
+   ],
+   "docs/development/increments/wave-48-part12.md": [
+    "class prose"
+   ],
+   "docs/plans/pluggable-cards/README.md": [
+    "class prose"
+   ],
+   "docs/reports/INDEX.md": [
+    "class prose"
+   ],
+   "docs/reports/arm-obligations/PREDICTION.md": [
+    "class prose"
+   ],
+   "docs/reports/arm-obligations/README.md": [
+    "class prose"
+   ],
+   "docs/reports/arm-obligations/gate.json": [
+    "class prose"
+   ],
+   "docs/reports/arm-obligations/identity/bytes-corpus.txt": [
+    "class prose"
+   ],
+   "docs/reports/arm-obligations/identity/bytes-slice.txt": [
+    "class prose"
+   ],
+   "docs/reports/arm-obligations/identity/bytes-system.txt": [
+    "class prose"
+   ],
+   "docs/reports/arm-obligations/identity/carrying-units.txt": [
+    "class prose"
+   ],
+   "docs/reports/arm-obligations/identity/corpus-substitution.exit": [
+    "class prose"
+   ],
+   "docs/reports/arm-obligations/identity/corpus-substitution.txt": [
+    "class prose"
+   ],
+   "docs/reports/arm-obligations/identity/strip.exit": [
+    "class prose"
+   ],
+   "docs/reports/arm-obligations/identity/strip.txt": [
+    "class prose"
+   ],
+   "docs/reports/arm-obligations/identity/substitution-ids.exit": [
+    "class prose"
+   ],
+   "docs/reports/arm-obligations/identity/substitution-ids.jsonl": [
+    "class prose"
+   ],
+   "docs/reports/arm-obligations/integration-amendments.json": [
+    "class prose"
+   ],
+   "docs/reports/arm-obligations/native-comparison.json": [
+    "class prose"
+   ],
+   "docs/reports/arm-obligations/scripts/carrying_units.py": [
+    "class prose"
+   ],
+   "docs/reports/arm-obligations/scripts/identity.sh": [
+    "class prose"
+   ],
+   "docs/reports/arm-obligations/scripts/strip_carriage.py": [
+    "class prose"
+   ],
+   "docs/reports/rule32a-pilot/PREDICTION.md": [
+    "class prose"
+   ],
+   "docs/reports/rule32a-pilot/README.md": [
+    "class prose"
+   ],
+   "docs/reports/rule32a-pilot/identity/bytes-corpus-top.txt": [
+    "class prose"
+   ],
+   "docs/reports/rule32a-pilot/identity/bytes-corpus.txt": [
+    "class prose"
+   ],
+   "docs/reports/rule32a-pilot/identity/bytes-slice.txt": [
+    "class prose"
+   ],
+   "docs/reports/rule32a-pilot/identity/bytes-system.txt": [
+    "class prose"
+   ],
+   "docs/reports/rule32a-pilot/identity/corpus-substitution.exit": [
+    "class prose"
+   ],
+   "docs/reports/rule32a-pilot/identity/corpus-substitution.txt": [
+    "class prose"
+   ],
+   "docs/reports/rule32a-pilot/identity/substitution-ids.exit": [
+    "class prose"
+   ],
+   "docs/reports/rule32a-pilot/identity/substitution-ids.jsonl": [
+    "class prose"
+   ],
+   "docs/reports/rule32a-pilot/integration-amendments.json": [
+    "class prose"
+   ],
+   "docs/reports/rule32a-pilot/native-comparison.json": [
+    "class prose"
+   ],
+   "docs/reports/rule32a-pilot/scripts/check_identity.sh": [
+    "class prose"
+   ],
+   "docs/reports/rule32a-pilot/scripts/identity-2.sh": [
+    "class prose"
+   ],
+   "docs/reports/rule32a-pilot/scripts/identity.sh": [
+    "class prose"
+   ],
+   "docs/reports/rule32a-pilot/scripts/landing_equals_baseline.py": [
+    "class prose"
+   ],
+   "docs/reviews/r0_3/acceptance_matrix.json": [
+    "class prose"
+   ],
+   "proof/AuditArmObligations.lean": [
+    "read by qcore-compiler (runtime, compiler/tests/float_ieee_vectors.rs:524)",
+    "read by qcore-compiler (runtime, compiler/tests/proof_leg_digests.rs:106)",
+    "class lean"
+   ],
+   "proof/AuditCallerFrameHoldSwitch.lean": [
+    "read by qcore-compiler (runtime, compiler/tests/float_ieee_vectors.rs:524)",
+    "read by qcore-compiler (runtime, compiler/tests/proof_leg_digests.rs:106)",
+    "class lean"
+   ],
+   "proof/QCore.lean": [
+    "read by qcore-compiler (runtime, compiler/tests/float_ieee_vectors.rs:524)",
+    "read by qcore-compiler (runtime, compiler/tests/proof_leg_digests.rs:106)",
+    "class lean"
+   ],
+   "proof/QCore/ArmObligations.lean": [
+    "read by qcore-c-gateway (include_str, crates/qcore-c-gateway/tests/unit/arm_obligations.rs:288)",
+    "read by qcore-c-gateway (runtime, crates/qcore-c-gateway/tests/unit/arm_obligations.rs:288)",
+    "read by qcore-compiler (runtime, compiler/tests/float_ieee_vectors.rs:524)",
+    "read by qcore-compiler (runtime, compiler/tests/proof_leg_digests.rs:106)",
+    "class lean"
+   ],
+   "proof/QCore/CallerFrameHoldSwitch.lean": [
+    "read by rule-32a-caller-frame-hold (include_str, crates/gateway-rules/rule-32a-caller-frame-hold/tests/unit/hold.rs:44)",
+    "read by rule-32a-caller-frame-hold (runtime, crates/gateway-rules/rule-32a-caller-frame-hold/tests/unit/hold.rs:44)",
+    "read by qcore-compiler (runtime, compiler/tests/float_ieee_vectors.rs:524)",
+    "read by qcore-compiler (runtime, compiler/tests/proof_leg_digests.rs:106)",
+    "class lean"
+   ],
+   "scripts/tests/test_gateway_registry.py": [
+    "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/tests/support/mod.rs:197)",
+    "class python"
+   ]
+  },
+  "affected": {
+   "qcore-audit": [
+    "names Cargo.toml in a string literal: Cargo.toml (crates/qcore-audit/src/contract_revision.rs:759)",
+    "names Cargo.toml in a string literal: Cargo.toml (crates/qcore-audit/tests/contract_supersession.rs:87)",
+    "names Cargo.toml in a string literal: Cargo.toml (crates/qcore-audit/tests/dependency_graph.rs:21)",
+    "owns crates/qcore-audit/src/projection.rs",
+    "owns crates/qcore-audit/src/report.rs"
+   ],
+   "qcore-c-gateway": [
+    "owns crates/qcore-c-gateway/Cargo.toml",
+    "owns crates/qcore-c-gateway/src/arm_obligations.rs",
+    "owns crates/qcore-c-gateway/src/gateway_rule_registry.rs",
+    "compiles it via #[path]: crates/qcore-c-gateway/src/gateway_rule_registry.rs (crates/qcore-c-gateway/src/gateway_rules.rs:32)",
+    "owns crates/qcore-c-gateway/src/gateway_rules.rs",
+    "owns crates/qcore-c-gateway/src/legacy_c.rs",
+    "reads it with include_str!: crates/qcore-c-gateway/src/legacy_c.rs (crates/qcore-c-gateway/tests/unit/legacy_probe_state.rs:28)",
+    "owns crates/qcore-c-gateway/src/legacy_caller_frame_hold.rs",
+    "compiles it via #[path]: crates/qcore-c-gateway/src/legacy_caller_frame_hold.rs (crates/qcore-c-gateway/src/legacy_c.rs:94)",
+    "owns crates/qcore-c-gateway/src/legacy_checked_spec.rs",
+    "compiles it via #[path]: crates/qcore-c-gateway/src/legacy_checked_spec.rs (crates/qcore-c-gateway/src/legacy_c.rs:408)",
+    "owns crates/qcore-c-gateway/src/legacy_cross_unit.rs",
+    "compiles it via #[path]: crates/qcore-c-gateway/src/legacy_cross_unit.rs (crates/qcore-c-gateway/src/legacy_c.rs:3173)",
+    "owns crates/qcore-c-gateway/src/legacy_exact_formal_return.rs",
+    "compiles it via #[path]: crates/qcore-c-gateway/src/legacy_exact_formal_return.rs (crates/qcore-c-gateway/src/legacy_c.rs:5815)",
+    "owns crates/qcore-c-gateway/src/legacy_route_table.rs",
+    "compiles it via #[path]: crates/qcore-c-gateway/src/legacy_route_table.rs (crates/qcore-c-gateway/src/legacy_c.rs:418)",
+    "owns crates/qcore-c-gateway/src/legacy_selection.rs",
+    "compiles it via #[path]: crates/qcore-c-gateway/src/legacy_selection.rs (crates/qcore-c-gateway/src/legacy_c.rs:364)",
+    "owns crates/qcore-c-gateway/src/legacy_transfer.rs",
+    "compiles it via #[path]: crates/qcore-c-gateway/src/legacy_transfer.rs (crates/qcore-c-gateway/src/legacy_c.rs:5822)",
+    "owns crates/qcore-c-gateway/src/lib.rs",
+    "owns crates/qcore-c-gateway/src/result_constructor_rule.rs",
+    "owns crates/qcore-c-gateway/src/rule_hosts.rs",
+    "owns crates/qcore-c-gateway/src/transfer_rules.rs",
+    "owns crates/qcore-c-gateway/tests/contract_dependencies.rs",
+    "owns crates/qcore-c-gateway/tests/rule32a_hold.rs",
+    "owns crates/qcore-c-gateway/tests/rule37_switch.rs",
+    "owns crates/qcore-c-gateway/tests/unit/arm_obligations.rs",
+    "compiles it via #[path]: crates/qcore-c-gateway/tests/unit/arm_obligations.rs (crates/qcore-c-gateway/src/arm_obligations.rs:299)",
+    "owns crates/qcore-c-gateway/tests/unit/rule_hosts.rs",
+    "compiles it via #[path]: crates/qcore-c-gateway/tests/unit/rule_hosts.rs (crates/qcore-c-gateway/src/rule_hosts.rs:180)",
+    "names docs/agents/rules/32a.md in a string literal: docs/agents/rules/32a.md (crates/qcore-c-gateway/src/gateway_rule_registry.rs:266)",
+    "names docs/agents/rules/37.md in a string literal: docs/agents/rules/37.md (crates/qcore-c-gateway/src/gateway_rule_registry.rs:244)",
+    "reads it with include_str!: proof/QCore/ArmObligations.lean (crates/qcore-c-gateway/tests/unit/arm_obligations.rs:288)",
+    "names proof/QCore/ArmObligations.lean in a string literal: proof/QCore/ArmObligations.lean (crates/qcore-c-gateway/tests/unit/arm_obligations.rs:288)"
+   ],
+   "qcore-compiler": [
+    "names Cargo.toml in a string literal: Cargo.toml (compiler/tests/workspace_layering.rs:298)",
+    "owns compiler/tests/workspace_layering.rs",
+    "names crates/gateway-rules in a string literal: crates/gateway-rules/registry.toml (compiler/tests/workspace_layering.rs:211)",
+    "names crates/gateway-rules/rule-32a-caller-frame-hold in a string literal: crates/gateway-rules/rule-32a-caller-frame-hold/Cargo.toml (compiler/tests/workspace_layering.rs:71)",
+    "names crates/gateway-rules in a string literal: crates/gateway-rules/rule-32a-caller-frame-hold/Cargo.toml (compiler/tests/workspace_layering.rs:211)",
+    "names crates/gateway-rules/rule-32a-caller-frame-hold in a string literal: crates/gateway-rules/rule-32a-caller-frame-hold/src/hold.rs (compiler/tests/workspace_layering.rs:71)",
+    "names crates/gateway-rules in a string literal: crates/gateway-rules/rule-32a-caller-frame-hold/src/hold.rs (compiler/tests/workspace_layering.rs:211)",
+    "names crates/gateway-rules/rule-32a-caller-frame-hold in a string literal: crates/gateway-rules/rule-32a-caller-frame-hold/src/lib.rs (compiler/tests/workspace_layering.rs:71)",
+    "names crates/gateway-rules in a string literal: crates/gateway-rules/rule-32a-caller-frame-hold/src/lib.rs (compiler/tests/workspace_layering.rs:211)",
+    "names crates/gateway-rules/rule-32a-caller-frame-hold in a string literal: crates/gateway-rules/rule-32a-caller-frame-hold/tests/unit/hold.rs (compiler/tests/workspace_layering.rs:71)",
+    "names crates/gateway-rules in a string literal: crates/gateway-rules/rule-32a-caller-frame-hold/tests/unit/hold.rs (compiler/tests/workspace_layering.rs:211)",
+    "names crates/qcore-audit in a string literal: crates/qcore-audit/src/projection.rs (compiler/tests/workspace_layering.rs:133)",
+    "names crates/qcore-audit in a string literal: crates/qcore-audit/src/report.rs (compiler/tests/workspace_layering.rs:133)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/Cargo.toml (compiler/tests/workspace_layering.rs:75)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/src/arm_obligations.rs (compiler/tests/workspace_layering.rs:75)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/src/gateway_rule_registry.rs (compiler/tests/workspace_layering.rs:75)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/src/gateway_rules.rs (compiler/tests/workspace_layering.rs:75)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/src/legacy_c.rs (compiler/tests/workspace_layering.rs:75)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/src/legacy_caller_frame_hold.rs (compiler/tests/workspace_layering.rs:75)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/src/legacy_checked_spec.rs (compiler/tests/workspace_layering.rs:75)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/src/legacy_cross_unit.rs (compiler/tests/workspace_layering.rs:75)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/src/legacy_exact_formal_return.rs (compiler/tests/workspace_layering.rs:75)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/src/legacy_route_table.rs (compiler/tests/workspace_layering.rs:75)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/src/legacy_selection.rs (compiler/tests/workspace_layering.rs:75)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/src/legacy_transfer.rs (compiler/tests/workspace_layering.rs:75)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/src/lib.rs (compiler/tests/workspace_layering.rs:75)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/src/result_constructor_rule.rs (compiler/tests/workspace_layering.rs:75)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/src/rule_hosts.rs (compiler/tests/workspace_layering.rs:75)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/src/transfer_rules.rs (compiler/tests/workspace_layering.rs:75)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/tests/contract_dependencies.rs (compiler/tests/workspace_layering.rs:75)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/tests/rule32a_hold.rs (compiler/tests/workspace_layering.rs:75)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/tests/rule37_switch.rs (compiler/tests/workspace_layering.rs:75)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/tests/unit/arm_obligations.rs (compiler/tests/workspace_layering.rs:75)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/tests/unit/rule_hosts.rs (compiler/tests/workspace_layering.rs:75)",
+    "names crates/qcore-gateway-rule-api in a string literal: crates/qcore-gateway-rule-api/src/lib.rs (compiler/tests/workspace_layering.rs:32)",
+    "names proof in a string literal: proof/AuditArmObligations.lean (compiler/tests/float_ieee_vectors.rs:524)",
+    "names proof in a string literal: proof/AuditArmObligations.lean (compiler/tests/proof_leg_digests.rs:106)",
+    "names proof in a string literal: proof/AuditCallerFrameHoldSwitch.lean (compiler/tests/float_ieee_vectors.rs:524)",
+    "names proof in a string literal: proof/AuditCallerFrameHoldSwitch.lean (compiler/tests/proof_leg_digests.rs:106)",
+    "names proof in a string literal: proof/QCore.lean (compiler/tests/float_ieee_vectors.rs:524)",
+    "names proof in a string literal: proof/QCore.lean (compiler/tests/proof_leg_digests.rs:106)",
+    "names proof in a string literal: proof/QCore/ArmObligations.lean (compiler/tests/float_ieee_vectors.rs:524)",
+    "names proof in a string literal: proof/QCore/ArmObligations.lean (compiler/tests/proof_leg_digests.rs:106)",
+    "names proof in a string literal: proof/QCore/CallerFrameHoldSwitch.lean (compiler/tests/float_ieee_vectors.rs:524)",
+    "names proof in a string literal: proof/QCore/CallerFrameHoldSwitch.lean (compiler/tests/proof_leg_digests.rs:106)"
+   ],
+   "qcore-gateway-rule-api": [
+    "names Cargo.toml in a string literal: Cargo.toml (crates/qcore-gateway-rule-api/src/lib.rs:66)",
+    "owns crates/qcore-gateway-rule-api/src/lib.rs"
+   ],
+   "qcore-provider-conformance": [
+    "names Cargo.toml in a string literal: Cargo.toml (providers/conformance/tests/packages.rs:615)"
+   ],
+   "qcore-verification": [
+    "names crates in a string literal: crates/gateway-rules/registry.toml (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/gateway-rules/rule-32a-caller-frame-hold/Cargo.toml (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/gateway-rules/rule-32a-caller-frame-hold/src/hold.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/gateway-rules/rule-32a-caller-frame-hold/src/lib.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/gateway-rules/rule-32a-caller-frame-hold/tests/unit/hold.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-audit/src/projection.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-audit/src/report.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/Cargo.toml (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/src/arm_obligations.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/src/gateway_rule_registry.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/src/gateway_rules.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/src/legacy_c.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/src/legacy_caller_frame_hold.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/src/legacy_checked_spec.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/src/legacy_cross_unit.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/src/legacy_exact_formal_return.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/src/legacy_route_table.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/src/legacy_selection.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/src/legacy_transfer.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/src/lib.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/src/result_constructor_rule.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/src/rule_hosts.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/src/transfer_rules.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/tests/contract_dependencies.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/tests/rule32a_hold.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/tests/rule37_switch.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/tests/unit/arm_obligations.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/tests/unit/rule_hosts.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-gateway-rule-api/src/lib.rs (crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "qcorec": [
+    "depends on qcore-compiler"
+   ],
+   "quirin-audit-plugin": [
+    "names Cargo.toml in a string literal: Cargo.toml (crates/quirin-audit-plugin/tests/dependencies.rs:13)"
+   ],
+   "quirin-audit-plugin-libevent": [
+    "depends on quirin-audit-plugin"
+   ],
+   "quirin-audit-plugin-measure": [
+    "names Cargo.toml in a string literal: Cargo.toml (crates/quirin-audit-plugin-measure/src/sides.rs:816)",
+    "names scripts in a string literal: scripts/tests/test_gateway_registry.py (crates/quirin-audit-plugin-measure/tests/support/mod.rs:197)"
+   ],
+   "quirin-provider-plugin": [
+    "names Cargo.toml in a string literal: Cargo.toml (providers/quirin-provider-plugin/src/user_crate.rs:96)"
+   ],
+   "quirin-source-analysis": [
+    "depends on qcore-c-gateway"
+   ],
+   "rule-32a-caller-frame-hold": [
+    "reads it with include_str!: crates/gateway-rules/registry.toml (crates/gateway-rules/rule-32a-caller-frame-hold/tests/unit/hold.rs:121)",
+    "names crates/gateway-rules/registry.toml in a string literal: crates/gateway-rules/registry.toml (crates/gateway-rules/rule-32a-caller-frame-hold/tests/unit/hold.rs:121)",
+    "owns crates/gateway-rules/rule-32a-caller-frame-hold/Cargo.toml",
+    "owns crates/gateway-rules/rule-32a-caller-frame-hold/src/hold.rs",
+    "owns crates/gateway-rules/rule-32a-caller-frame-hold/src/lib.rs",
+    "owns crates/gateway-rules/rule-32a-caller-frame-hold/tests/unit/hold.rs",
+    "compiles it via #[path]: crates/gateway-rules/rule-32a-caller-frame-hold/tests/unit/hold.rs (crates/gateway-rules/rule-32a-caller-frame-hold/src/hold.rs:89)",
+    "reads it with include_str!: proof/QCore/CallerFrameHoldSwitch.lean (crates/gateway-rules/rule-32a-caller-frame-hold/tests/unit/hold.rs:44)",
+    "names proof/QCore/CallerFrameHoldSwitch.lean in a string literal: proof/QCore/CallerFrameHoldSwitch.lean (crates/gateway-rules/rule-32a-caller-frame-hold/tests/unit/hold.rs:44)"
+   ],
+   "rule-33-removed-selection": [
+    "names Cargo.toml in a string literal: Cargo.toml (crates/gateway-rules/rule-33-removed-selection/src/lib.rs:981)"
+   ],
+   "rule-34-element-destroyer": [
+    "depends on qcore-gateway-rule-api"
+   ],
+   "rule-35-literal-decay": [
+    "depends on qcore-gateway-rule-api"
+   ],
+   "rule-36-exact-formal-return": [
+    "depends on qcore-gateway-rule-api"
+   ],
+   "rule-37-result-constructors": [
+    "names Cargo.toml in a string literal: Cargo.toml (crates/gateway-rules/rule-37-result-constructors/src/lib.rs:258)"
+   ]
+  },
+  "mode": "full",
+  "full_reasons": [
+   "Cargo.lock: workspace manifest or toolchain",
+   "Cargo.toml: workspace manifest or toolchain",
+   "the diff reaches qcore-c-gateway"
+  ],
+  "rust_packages": [
+   "qcore-audit",
+   "qcore-c-gateway",
+   "qcore-compiler",
+   "qcore-contract",
+   "qcore-core",
+   "qcore-frontend",
+   "qcore-gateway-rule-api",
+   "qcore-schemas",
+   "qcore-verification",
+   "qcore-verifier-host",
+   "qcorec",
+   "quirin-audit-plugin",
+   "quirin-audit-plugin-libevent",
+   "quirin-audit-plugin-measure",
+   "quirin-source-analysis",
+   "rule-32a-caller-frame-hold",
+   "rule-33-removed-selection",
+   "rule-34-element-destroyer",
+   "rule-35-literal-decay",
+   "rule-36-exact-formal-return",
+   "rule-37-result-constructors"
+  ],
+  "probes": true,
+  "lean": {
+   "mode": "all",
+   "reasons": [
+    "proof/QCore.lean: a proof root changed"
+   ],
+   "modules": [],
+   "audits": []
+  },
+  "python_reasons": [
+   "docs/reports/arm-obligations/scripts/carrying_units.py: Python",
+   "docs/reports/arm-obligations/scripts/strip_carriage.py: Python",
+   "docs/reports/rule32a-pilot/scripts/landing_equals_baseline.py: Python",
+   "scripts/tests/test_gateway_registry.py: Python"
+  ],
+  "provider_gate": false,
+  "provider_reasons": [],
+  "provider_members_reached_without_providers_change": [
+   "qcore-provider-conformance",
+   "quirin-provider-plugin"
+  ],
+  "unresolved_includes": [
+   {
+    "crate": "qcore-compiler",
+    "source": "compiler/tests/ct_corpus.rs:8069",
+    "literal": "include_str!(\\\"fixtures/ct/{id}/case.qr\\\")\");",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   }
+  ]
+ },
+ "planned_steps": [
+  {
+   "name": "submodules",
+   "argv": [
+    "git",
+    "-C",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac91a2899bf5abe96",
+    "submodule",
+    "status",
+    "--recursive"
+   ],
+   "slot": null
+  },
+  {
+   "name": "fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "slot": null
+  },
+  {
+   "name": "clippy",
+   "argv": [
+    "cargo",
+    "clippy",
+    "--all-targets",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "slot": null
+  },
+  {
+   "name": "rust-suite",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac91a2899bf5abe96/scripts/run_test_binaries.py",
+    "--log-dir",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac91a2899bf5abe96/private/gate/rust-suite"
+   ],
+   "slot": "rust-suite"
+  },
+  {
+   "name": "probe-reevaluation_probe",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac91a2899bf5abe96/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_probe"
+   ],
+   "slot": null
+  },
+  {
+   "name": "probe-reevaluation_followup",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac91a2899bf5abe96/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_followup"
+   ],
+   "slot": null
+  },
+  {
+   "name": "lean",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac91a2899bf5abe96/scripts/check_lean_audits.py"
+   ],
+   "slot": "lean"
+  },
+  {
+   "name": "python",
+   "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+   ],
+   "slot": null
+  }
+ ],
+ "slots": true,
+ "started": "20261031T164126Z",
+ "ran": true,
+ "steps": [
+  {
+   "name": "submodules",
+   "argv": [
+    "git",
+    "-C",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac91a2899bf5abe96",
+    "submodule",
+    "status",
+    "--recursive"
+   ],
+   "exit": 0,
+   "seconds": 0.0,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac91a2899bf5abe96/private/gate/submodules.log",
+   "counts": {
+    "submodules": 1,
+    "not_checked_out_or_moved": []
+   }
+  },
+  {
+   "name": "fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "exit": 0,
+   "seconds": 4.2,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac91a2899bf5abe96/private/gate/fmt.log",
+   "counts": {}
+  },
+  {
+   "name": "clippy",
+   "argv": [
+    "cargo",
+    "clippy",
+    "--all-targets",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "exit": 0,
+   "seconds": 39.8,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac91a2899bf5abe96/private/gate/clippy.log",
+   "counts": {}
+  },
+  {
+   "name": "rust-suite",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac91a2899bf5abe96/scripts/gate_slot.py",
+    "rust-suite",
+    "--receipt",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac91a2899bf5abe96/private/gate/slots/rust-suite.json",
+    "--",
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac91a2899bf5abe96/scripts/run_test_binaries.py",
+    "--log-dir",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac91a2899bf5abe96/private/gate/rust-suite"
+   ],
+   "exit": 0,
+   "seconds": 4156.9,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac91a2899bf5abe96/private/gate/rust-suite.log",
+   "counts": {
+    "units": 586,
+    "passed": 8956,
+    "failed": 0,
+    "ignored": 15,
+    "measured": 0,
+    "filtered": 81,
+    "summaries": 623,
+    "packages": null,
+    "summary": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac91a2899bf5abe96/private/gate/rust-suite/summary.json",
+    "ok": true
+   },
+   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac91a2899bf5abe96/private/gate/slots/rust-suite.json"
+  },
+  {
+   "name": "probe-reevaluation_probe",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac91a2899bf5abe96/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_probe"
+   ],
+   "exit": 0,
+   "seconds": 0.2,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac91a2899bf5abe96/private/gate/probe-reevaluation_probe.log",
+   "counts": {}
+  },
+  {
+   "name": "probe-reevaluation_followup",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac91a2899bf5abe96/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_followup"
+   ],
+   "exit": 0,
+   "seconds": 0.5,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac91a2899bf5abe96/private/gate/probe-reevaluation_followup.log",
+   "counts": {}
+  },
+  {
+   "name": "lean",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac91a2899bf5abe96/scripts/gate_slot.py",
+    "lean",
+    "--receipt",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac91a2899bf5abe96/private/gate/slots/lean.json",
+    "--",
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac91a2899bf5abe96/scripts/check_lean_audits.py"
+   ],
+   "exit": 0,
+   "seconds": 121.1,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac91a2899bf5abe96/private/gate/lean.log",
+   "counts": {
+    "audits": 398
+   },
+   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac91a2899bf5abe96/private/gate/slots/lean.json"
+  },
+  {
+   "name": "python",
+   "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+   ],
+   "exit": 1,
+   "seconds": 46.4,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac91a2899bf5abe96/private/gate/python.log",
+   "counts": {
+    "tests": 568,
+    "skipped": 0,
+    "ok": false
+   }
+  }
+ ],
+ "ok": false,
+ "finished": "20261031T175415Z"
+}

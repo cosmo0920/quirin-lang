@@ -25,6 +25,9 @@
 //!
 //! * [`transfer`] (card RULE34-PILOT): the transfer position, the order in
 //!   which one admitted contract call's declared container effects apply.
+//! * [`traits::TokenHold`] (card RULE32A-PILOT, first used by rule 32a's
+//!   caller-frame hold): a hold of the token stream. A hold is registered
+//!   `not-switchable` and its host asks it under every switch list.
 //!
 //! No analysis logic lives here and nothing here decides a verdict.
 
@@ -43,6 +46,9 @@ pub use checked_readings::{
     CheckedOperandArm, CheckedOperandQuery, SpecificationPremiseArm, SpecificationQuery,
 };
 pub use position::{Position, UnknownPosition};
+/// Card RULE32A-PILOT: a package that reserves a reason key names its closed
+/// §L21.1 category, so the category is part of the interface.
+pub use qcore_schemas::reason::ReasonCategory;
 pub use reason::{ReasonKey, check_reservations};
 pub use registry::{Off, Placement, RegistryError, RuleEntry, check_registry, ordered_table};
 pub use statement_expansion::{BodyQuery, EntryRow, Expanded, StatementExpansion};

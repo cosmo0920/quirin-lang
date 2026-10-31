@@ -1,0 +1,35 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "RULE32A-PILOT",
+  "base": "db2795100",
+  "measured_tip": "492f0418a",
+  "increment_paragraph": "**RULE32A-PILOT** (pluggable-cards seam B, phase P2, the last pilot of GATEWAY-RULE-API-PILOT-MIGRATIONS; [report](../../reports/rule32a-pilot/README.md)) decides what \"off\" means for a hold and moves gateway rule 32a onto the rule interface's token hold. Decision (plan §6 item 10, a card decision under the invariants): a hold is not switchable. A refusing off would let the logger's own row read its sibling's caller-frame declaration and be `Safe` again (widening); an off that holds more never widens but moves no frame member's row, only outside callers', so its ledger would be rule 32's filed under 32a. Registry row `32a` (`off = \"not-switchable\"`, the first hold and the first reserved reason key, `caller-frame-self-reliance`/`incomplete-obligation-coverage`) names the package `crates/gateway-rules/rule-32a-caller-frame-hold` (`CallerFrameHold: TokenHold` over its own `FrameHost` capability: held iff the call stays in one registered frame and the callee's declaration is in force), asked by `legacy_caller_frame_hold` in all three token pipelines through `consult`; the host keeps the member bodies, call positions and the held spelling. `QCORE_GATEWAY_RULES_OFF` naming `32a` is refused, and `gateway_rules::enabled` now answers `true` for a hold before reading the list (it answered `false` for every id under a refused list, which would have removed a hold). The rule API re-exports `ReasonCategory`. `caller_frame_hold.rs` is unchanged and green; new `rule32a_hold.rs` (refused lists, the hold on under the fallback and under accepted lists), gateway registry tests, package tests bound to the Lean table, Python registry tests. Lean `QCore.CallerFrameHoldSwitch` (13 audited theorems): the package's table, `holds_iff` with `withinFrame`, the fixed switch never removes the hold or widens, `a_refusing_off_would_widen`, `holding_more_changes_no_member_row`, `holding_more_moves_an_outside_row`. Rule 32a has no switch-measured ledger, by the decision. Identity (BASE rev:db2795100, the landing measurement's side the baseline was published from, read with run: after baseline:db2795100 was refused on route spelling, MEASURE-BASELINE-ROUTE-SPELLING; TIP rev:492f0418a; --declared none on the three live profiles; record docs/reports/rule32a-pilot/native-comparison.json, complete): the declared check matches on every route; system and slice are byte-identical; the corpus has 0 of 4,834 rows moved or changed, its differing artifacts equal under a checked one-to-one substitution (MEASURE-CORPUS-SIDE-CWD-IN-BUILD-IDENTITY). After the merge of ARM-OBLIGATIONS (98b1bb785) the hold is asked through arm_obligations::consult (it carries no obligation), confirmed by targeted tests. Card gate on the final commit: see the report.",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "GATEWAY-RULE-API-HOLD-OFF",
+      "operation": "retire",
+      "why": "DISCHARGE (RULE32A-PILOT, 2026-10-31): the decision is recorded in the plan (docs/plans/pluggable-cards/README.md section 6 item 10, pointed to from section 3 B): a hold is not switchable. A refusing off widens (Lean a_refusing_off_would_widen: the logger's own row is Safe again); an off that holds more moves only outside callers' rows (holding_more_changes_no_member_row, holding_more_moves_an_outside_row), i.e. rule 32's reading, not 32a's. The switch with its tests: registry row 32a off = not-switchable; RulesOff::parse refuses any list naming 32a; gateway_rules::enabled answers true for a hold under every list, a refused one included (gateway unit test rule_32a_is_a_fixed_hold; integration test crates/qcore-c-gateway/tests/rule32a_hold.rs re-running itself under QCORE_GATEWAY_RULES_OFF=32a, 35,32a and 33,34,35,36,37; Python test_gateway_registry; Lean QCore.CallerFrameHoldSwitch the_switch_never_removes_the_hold, the_switch_never_widens).",
+      "source": "docs/reports/rule32a-pilot/README.md"
+    },
+    {
+      "id": "GATEWAY-RULE-API-PILOT-MIGRATIONS",
+      "operation": "retire",
+      "why": "DISCHARGE (RULE32A-PILOT, 2026-10-31): every pilot landed as its own card with an identity run (35 and 37 on their own runs; 33, 34 and 36 through RULE36-PILOT's shared round-2 run; 32a in RULE32A-PILOT's run, report section 4) and every switchable pilot has its switch-measured ledger (contract/contributions/{35,37,33,34,36}/). Rule 32a migrated to crates/gateway-rules/rule-32a-caller-frame-hold (registry row 32a, known to known_rule) and has no switch-measured ledger by the GATEWAY-RULE-API-HOLD-OFF decision: a fixed hold has no switch, and the measurable quantity behind it is rule 32's (CONTRIBUTION-LEDGER-RULE-32-32A, amended). That clause is the one judgment in this retirement. Parity cost of the last pilot for plan decision 6: about 10 decision lines moved to a 90-line package module (127 with lib.rs); +1,046 -27 lines in the code commit in all (package with tests 340, host +95 -14, switch and its tests +94 -6, integration test 167, Lean 231); about 16 minutes from the brief to the code commit; the rest is the identity measurement (report section 7).",
+      "source": "docs/reports/rule32a-pilot/README.md"
+    },
+    {
+      "id": "MEASURE-BASELINE-ROUTE-SPELLING",
+      "operation": "amend",
+      "text": "RULE32A-PILOT (2026-10-31) hit it again: --profile with --side base=baseline:db2795100 refused all three routes after TIP (rev:492f0418a) had run for about 8 h. Recovered without re-measuring: --side base=run:<landing measurement>/sides/tip (the land.py side the baseline was published from, every listed file checked against the baseline's SHA-256 by docs/reports/rule32a-pilot/scripts/landing_equals_baseline.py) and --side tip=run:<measure-1>/sides/tip, which completes; this works only while the landing side is still on disk.",
+      "source": "docs/reports/rule32a-pilot/README.md"
+    },
+    {
+      "id": "CONTRIBUTION-LEDGER-RULE-32-32A",
+      "operation": "amend",
+      "text": "RULE32A-PILOT (2026-10-31): rule 32a is a fixed hold (plan section 6 item 10, GATEWAY-RULE-API-HOLD-OFF retired), so --rules-off 32a is refused by design and 32a has no switch-measured ledger; the 7 recorded rows are callers outside the frame reading the caller-frame declarations, i.e. rule 32's contribution (Lean QCore.CallerFrameHoldSwitch.holding_more_moves_an_outside_row). Amended DISCHARGE: a card registers rule 32 with a refusing switch over the outside callers' reading of the caller-frame declarations (off: the declaration is not read, which never widens), then quirin-audit measure on the live profiles --rules-off 32 writes rule 32's ledgers with contribution_ledgers.py write, consistency passes, and the report compares the measured rows and premises with the recorded 7.",
+      "source": "docs/reports/rule32a-pilot/README.md"
+    }
+  ],
+  "profiles": []
+}

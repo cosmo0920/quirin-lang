@@ -38,15 +38,39 @@
 //! `QCore.RkLogCallerFrame` (`a_member_never_reads_a_member_declaration`,
 //! `a_held_member_row_is_never_safe`, `an_outside_caller_reads_the_declaration`,
 //! `the_hold_never_certifies`).
+//!
+//! # The package and its host
+//!
+//! Card RULE32A-PILOT: which calls are held is decided by rule 32a's package,
+//! `rule-32a-caller-frame-hold` (registry row `32a`, the rule interface's
+//! token hold), asked through `arm_obligations::consult` (card
+//! ARM-OBLIGATIONS: every package admission in the gateway is read there; the
+//! hold's admission carries no obligation, so it needs no unit frame and is
+//! its lowering, as before). This module is its host
+//! ([`FrameHoldHost`]): it finds each registered member's own body, the call
+//! positions inside it (`is_call_position`), and reads the frames
+//! (`caller_frame::FRAMES`) and whether a callee's declaration is in force
+//! for the package; the held spelling and the refusal text stay here. The
+//! host asks only inside a member's body: the package holds no call of any
+//! other caller (`within_one_frame` needs the caller to be a member), so a
+//! unit that defines no member is unchanged and unasked, as before.
+//!
+//! The hold is not switchable (`off = "not-switchable"`): a switch list
+//! naming `32a` is refused, and `gateway_rules::enabled` answers `true` for a
+//! hold under every list, a refused one included, so no list can remove it
+//! (Lean `QCore.CallerFrameHoldSwitch`).
 
 use qcore_contract::caller_frame;
+use qcore_gateway_rule_api::traits::{HoldQuery, Host, RulePackage, TokenHold};
 use qcore_schemas::contract::ResourceContracts;
+use rule_32a_caller_frame_hold::{CallerFrameHold, FrameHost};
 
 use super::declared_abi::is_call_position;
 use super::{Token, find_function_body, matching};
 
-/// The stable reason key of a held call.
-pub const CALLER_FRAME_SELF_RELIANCE: &str = "caller-frame-self-reliance";
+/// The stable reason key of a held call: the key rule 32a's package
+/// reserves (`rule_32a_caller_frame_hold::SELF_RELIANCE`).
+pub const CALLER_FRAME_SELF_RELIANCE: &str = rule_32a_caller_frame_hold::SELF_RELIANCE.key;
 
 /// The prefix a held callee's call sites are rewritten with, reserved for
 /// this rewrite (`reserved_spelling` escapes a source that spells it).
@@ -85,9 +109,67 @@ fn own_body_range(tokens: &[Token], function: &str) -> Option<(usize, usize)> {
     Some((open, close))
 }
 
-/// Rewrite every call, inside a frame member's own body, to a member of the
-/// same frame whose declaration is in force. `None` means the stream is
-/// unchanged, which is every unit that defines no member.
+/// The gateway as rule 32a's host: the unit's contract environment and the
+/// registered caller frames, read in names only.
+pub(crate) struct FrameHoldHost<'c> {
+    contracts: &'c ResourceContracts,
+}
+
+impl Host for FrameHoldHost<'_> {
+    type Token = Token;
+    type Decision = ();
+    type Statement = ();
+    type Condition = ();
+    type Node = ();
+
+    fn token_text(token: &Token) -> &str {
+        &token.text
+    }
+
+    fn token_line(token: &Token) -> usize {
+        token.line
+    }
+
+    fn refusal(_: &()) -> Option<&str> {
+        None
+    }
+}
+
+impl FrameHost for FrameHoldHost<'_> {
+    fn frames(&self) -> &[&[&str]] {
+        caller_frame::FRAMES
+    }
+
+    fn declaration_in_force(&self, function: &str) -> bool {
+        self.contracts.contract(function).is_some()
+    }
+}
+
+/// The rule packages at this hold, in consultation order.
+const HOLDS: &[CallerFrameHold] = &[CallerFrameHold];
+
+/// Whether rule 32a's package holds `call` (callee first) in `caller`'s
+/// body. Asked through the switch, which never removes a hold.
+fn held_by_rule(host: &FrameHoldHost<'_>, caller: &str, call: &[Token]) -> bool {
+    let query = HoldQuery::<FrameHoldHost<'_>> {
+        caller,
+        callee: &call[0].text,
+        call,
+        line: call[0].line,
+    };
+    crate::arm_obligations::consult(
+        HOLDS,
+        |package| package.id(),
+        |package| crate::gateway_rules::enabled(package.id()),
+        |_, package| TokenHold::ask(package, host, &query),
+    )
+    .is_some()
+}
+
+/// Rewrite every call, inside a frame member's own body, that rule 32a's
+/// package holds: a call to a member of the same frame whose declaration is
+/// in force. `None` means the stream is unchanged, which is every unit that
+/// defines no member.
 pub(crate) fn hold_call_sites(
     tokens: &[Token],
     contracts: &ResourceContracts,
@@ -100,24 +182,26 @@ pub(crate) fn hold_call_sites(
     if bodies.is_empty() {
         return None;
     }
+    let host = FrameHoldHost { contracts };
     let mut rewritten: Option<Vec<Token>> = None;
     for index in 0..tokens.len() {
         if tokens.get(index + 1).is_none_or(|token| token.text != "(") {
             continue;
         }
+        let mut owners = bodies
+            .iter()
+            .filter(|(_, (start, end))| index > *start && index < *end)
+            .map(|(owner, _)| *owner)
+            .peekable();
+        if owners.peek().is_none() || !is_call_position(tokens, index) {
+            continue;
+        }
+        let close = matching(tokens, index + 1, "(", ")").unwrap_or(index + 1);
+        let call = &tokens[index..=close];
+        if !owners.any(|owner| held_by_rule(&host, owner, call)) {
+            continue;
+        }
         let name = tokens[index].text.as_str();
-        if !caller_frame::is_frame_member(name)
-            || contracts.contract(name).is_none()
-            || !is_call_position(tokens, index)
-        {
-            continue;
-        }
-        let inside = bodies.iter().any(|(owner, (start, end))| {
-            index > *start && index < *end && caller_frame::within_one_frame(owner, name)
-        });
-        if !inside {
-            continue;
-        }
         let target = rewritten.get_or_insert_with(|| tokens.to_vec());
         target[index].text = format!("{HELD_PREFIX}{name}");
     }

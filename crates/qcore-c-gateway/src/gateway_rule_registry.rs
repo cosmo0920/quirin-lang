@@ -5,7 +5,9 @@
 //! package in the registry file's order.
 
 #[rustfmt::skip]
-use qcore_gateway_rule_api::{Off, Placement, Position, RuleEntry};
+use qcore_gateway_rule_api::{Off, Placement, Position, ReasonKey, RuleEntry};
+#[rustfmt::skip]
+use qcore_schemas::reason::ReasonCategory;
 
 /// Every registered rule.
 #[rustfmt::skip]
@@ -253,5 +255,16 @@ pub const REGISTRY: &[RuleEntry] = &[
         document: "docs/agents/rules/34.md",
         reason_keys: &[],
         off: Off::Refuses,
+    },
+    RuleEntry {
+        id: "32a",
+        crate_name: "rule-32a-caller-frame-hold",
+        placements: &[
+            Placement { position: Position::TokenHold, order: None, arm: Some("caller-frame-hold"), route: "hold::decide" },
+        ],
+        lean: &["QCore.RkLogCallerFrame", "QCore.CallerFrameHoldSwitch"],
+        document: "docs/agents/rules/32a.md",
+        reason_keys: &[ReasonKey { key: "caller-frame-self-reliance", category: ReasonCategory::IncompleteObligationCoverage }],
+        off: Off::NotSwitchable,
     },
 ];

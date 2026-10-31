@@ -65,6 +65,12 @@ const ALLOWED: &[(&str, &[&str])] = &[
         "crates/gateway-rules/rule-34-element-destroyer",
         &["qcore-gateway-rule-api"],
     ),
+    // Card RULE32A-PILOT: a rule package depends on the rule interface only,
+    // and the gateway asks it through that interface.
+    (
+        "crates/gateway-rules/rule-32a-caller-frame-hold",
+        &["qcore-gateway-rule-api"],
+    ),
     (
         "crates/qcore-c-gateway",
         &[
@@ -79,6 +85,8 @@ const ALLOWED: &[(&str, &[&str])] = &[
             "rule-36-exact-formal-return",
             "rule-33-removed-selection",
             "rule-34-element-destroyer",
+            // Card RULE32A-PILOT: the gateway hosts rule 32a's hold.
+            "rule-32a-caller-frame-hold",
         ],
     ),
     (
