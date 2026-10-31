@@ -2283,6 +2283,7 @@ fn analyze_cfg_with_entry_collected(
             refutations: Vec::new(),
             null_premises: Vec::new(),
             lifetime_effects,
+            rule_obligations: crate::arm_obligations::Carried::default(),
         },
         observations,
     )

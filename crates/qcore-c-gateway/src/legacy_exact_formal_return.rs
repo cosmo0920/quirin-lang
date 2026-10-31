@@ -13,8 +13,8 @@
 use super::*;
 use crate::typed_access_path::{StatementIndex, is_pointer_type, qual};
 use crate::typed_c_ast::{children, kind};
+use qcore_gateway_rule_api::Host;
 use qcore_gateway_rule_api::traits::{self as package, RulePackage};
-use qcore_gateway_rule_api::{Host, consult};
 use rule_36_exact_formal_return::{
     self as rule, Binding, ExactFormalHost, ExactFormalReturnRoute, FormalReturnHost,
     FunctionReading, SourceHost,
@@ -239,18 +239,15 @@ impl Parser<'_> {
             origin: usize::MAX,
             decided: &refused,
         };
-        let decided = consult(
+        // Card ARM-OBLIGATIONS: an admission's obligations are carried
+        // into the unit's rows, or it is refused.
+        crate::arm_obligations::consult(
             &[ExactFormalReturnRoute],
+            |route| route.id(),
             |route| crate::gateway_rules::enabled(route.id()),
             |_, route| package::ReturnRoute::ask(route, self, &query),
-        )?;
-        // No admission of this route carries an obligation its instruction
-        // does not; one that did could not be carried, so it is refused.
-        decided
-            .admission
-            .obligations
-            .is_empty()
-            .then_some(decided.admission.lowering)
+        )
+        .map(|decided| decided.lowering)
     }
 
     fn read_exact_formal_returns(&self) -> BTreeMap<(usize, String), usize> {

@@ -1,0 +1,5 @@
+carries=False examined=[] every_row=None: 131
+carries=True examined=['rd_calloc', 'rd_strdup'] every_row=True: 24
+carries=True examined=['rd_calloc'] every_row=True: 22
+carries=True examined=['rd_strdup'] every_row=True: 8
+carrying without an examined body: []

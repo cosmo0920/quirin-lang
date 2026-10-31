@@ -7,6 +7,7 @@ import QCore.AggregateOwnedField
 import QCore.AggregateStore
 import QCore.AggregateValue
 import QCore.AppRkCallbacks
+import QCore.ArmObligations
 import QCore.AssignmentDestinationSuffix
 import QCore.AtomicPublication
 import QCore.AtomicSourceRoute

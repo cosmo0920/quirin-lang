@@ -1140,6 +1140,10 @@ fn record_projection(
                 context.artifact.push_str(name);
             }
             context.scope = serde_json::to_string(source_functions).map_err(|e| e.to_string())?;
+            // Card ARM-OBLIGATIONS: a carried premise is one of the row's
+            // assumptions.
+            context.assumptions =
+                crate::report::assumptions_with_premises(&context.assumptions, function);
             let name = function["function"].as_str().unwrap_or_default();
             let mut readings = Vec::new();
             for observation in dependencies

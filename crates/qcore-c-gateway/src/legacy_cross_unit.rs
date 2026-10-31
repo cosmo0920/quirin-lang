@@ -121,7 +121,14 @@ pub fn export_homes(
                 .summary
                 .functions
                 .get(name)
-                .is_some_and(|row| row.status == AnalysisStatus::Safe && row.diagnostics.is_empty())
+                // Card ARM-OBLIGATIONS: a summary resting on a rule
+                // package's obligation is not exported: an imported contract
+                // carries no premise, so the caller's row would shed it.
+                .is_some_and(|row| {
+                    row.status == AnalysisStatus::Safe
+                        && row.diagnostics.is_empty()
+                        && row.rule_obligations.is_empty()
+                })
         {
             continue;
         }

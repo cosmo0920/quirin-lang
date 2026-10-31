@@ -1378,6 +1378,12 @@ pub struct LegacyFunctionSummary {
     /// Exact outgoing registrations; Safe is conditional on their attributed
     /// protocol and every dependent caller's lifetime obligations.
     pub lifetime_effects: BTreeSet<crate::loop_lifetime_summary::ForwardedLifetime>,
+    /// Card ARM-OBLIGATIONS: the obligations of the rule packages' admissions
+    /// this row's unit analysis used ([`crate::arm_obligations`]): named
+    /// premises among the row's assumptions, and open obligations, each of
+    /// which also left an `Unsupported` diagnostic. Empty for every row whose
+    /// unit used no admission with an obligation.
+    pub rule_obligations: crate::arm_obligations::Carried,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -3246,6 +3252,9 @@ fn analyze_translation_unit_under_holds(
     typed_context: (CCompilerDialect, Option<&LegacyCertificateRequest>),
 ) -> Result<PartialTranslationUnitAnalysis, LegacyCError> {
     let (dialect, request) = typed_context;
+    // Card ARM-OBLIGATIONS: every rule package admission this analysis uses
+    // carries its obligations here, and every row below carries them.
+    let obligations = crate::arm_obligations::Frame::open();
     // Card VERDICT-CONTRACT-DEPENDENCIES (rule 13g): the environment the unit
     // is analysed under, before any withdrawal, for the body evidence.
     let input = contracts;
@@ -3382,7 +3391,10 @@ fn analyze_translation_unit_under_holds(
     let checked_spec::Settled {
         gate,
         withdrawn: withdrawn_specifications,
+        carried: specification_obligations,
     } = refuted_contract::settle(&tokens, &scope, contracts, &refuted_table);
+    // Card ARM-OBLIGATIONS: the standing specifications' admissions.
+    obligations.carry(specification_obligations);
     // Card VERDICT-CONTRACT-DEPENDENCIES (rule 13g): what the final
     // derivation's bodies made of the declarations they define.
     let mode_withdrawn = gate
@@ -3472,6 +3484,13 @@ fn analyze_translation_unit_under_holds(
     // embedded storage. This can only append a witnessed violation to the
     // public root; every ordinary diagnostic remains evidence.
     legacy_conditional_embedded_storage::diagnose(&tokens, &mut functions);
+    // Card ARM-OBLIGATIONS: every row carries what the unit's admissions rest
+    // on: premises into its assumptions, an open obligation out of `Safe`.
+    let carried = obligations.close();
+    for (name, summary) in &mut functions {
+        let line = find_function_body(&tokens, name).map_or(0, |(_, line)| line);
+        crate::arm_obligations::apply(summary, &carried, line);
+    }
     // Card W45-USER-CONTRACT-PLUGINS: the fold of the verdict semigroup,
     // which is the three-way decision this replaced on every status it had.
     let status = verdict::unit_status(functions.values(), !projection_failures.is_empty());

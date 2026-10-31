@@ -102,16 +102,22 @@ fn the_clang_cast_reaches_the_decay_arm_and_the_row_keeps_its_shape() {
     });
 }
 
+/// Card ARM-OBLIGATIONS: a hosted arm's admission with obligations is
+/// carried into the open unit frame, and refused with none open.
 #[test]
-fn an_admission_with_obligations_is_not_carried() {
-    use qcore_gateway_rule_api::Obligation;
-    assert_eq!(carried(Answer::admit(1)), Some(1));
-    assert_eq!(carried(Answer::<u8>::Refuse), None);
-    assert_eq!(
-        carried(Answer::Admit(Admission {
+fn an_admission_with_obligations_is_carried_or_refused() {
+    use crate::arm_obligations::{Frame, carry_answer};
+    use qcore_gateway_rule_api::{Admission, Answer, Obligation};
+    let premised = || {
+        Answer::Admit(Admission {
             lowering: 1,
             obligations: vec![Obligation::Premise("p".into())],
-        })),
-        None
-    );
+        })
+    };
+    assert_eq!(carry_answer("35", Answer::admit(1)), Some(1));
+    assert_eq!(carry_answer("35", Answer::<u8>::Refuse), None);
+    assert_eq!(carry_answer("35", premised()), None, "no frame: refused");
+    let frame = Frame::open();
+    assert_eq!(carry_answer("35", premised()), Some(1));
+    assert_eq!(frame.close().premises.len(), 1);
 }
