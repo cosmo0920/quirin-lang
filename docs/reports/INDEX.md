@@ -23,6 +23,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [aom-destroy-siblings](aom-destroy-siblings/README.md) | AOM-DESTROY-SIBLINGS — the two undeclared sibling destructors, decided differently — 2026-09-11 |
 
+| [arm-obligations](arm-obligations/README.md) | ARM-OBLIGATIONS: carrying an admission's obligations into the row |
+
 | [audit-canonical-paths](audit-canonical-paths/README.md) | AUDIT-CANONICAL-PATHS: unit selection by canonical path |
 
 | [audit-checkpoint-files](audit-checkpoint-files/README.md) | Per-configuration audit checkpoints |

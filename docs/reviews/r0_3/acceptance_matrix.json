@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 866
+  "named_followups": 867
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6876,7 +6876,7 @@
   "workspace_tests": 8927,
   "provider_tests": 133,
   "python_evidence_validator_tests": 568,
-  "lean_audits": 396,
+  "lean_audits": 397,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -6884,6 +6884,7 @@
    "AuditAggregateValue.lean",
    "AuditAll.lean",
    "AuditAppRkCallbacks.lean",
+   "AuditArmObligations.lean",
    "AuditAssignmentDestinationSuffix.lean",
    "AuditAtomicPublication.lean",
    "AuditAtomicSourceRoute.lean",
@@ -7281,7 +7282,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "Full landing gate; records-only Python rerun follows final records commit. Provider 133/0/1 is carried from dc5d07c95 (pilots-r1 integration/tip-provider-steps.json); no provider gate was selected for this prose/record-only continuation.",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/media/Data/GitHub/quirin-lang/docs/reports/event-collector-selection/integration/gate.json)"
+  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
  "named_followups": [
   {
@@ -10430,8 +10431,8 @@
   {
    "id": "AUDIT-ROW-ASSUMPTIONS-UNRECORDED",
    "title": "Per-function and per-unit audit rows carry no assumptions: declared libc premises and Fluent Bit reachability premises live only in run-level text",
-   "why": "MEASURED by card STABILITY-REEVAL-5 (wave-45 close, base 8c1f15eb): the W45 slice's resource-diagnostics.json (docs/reports/w45-fb-retry-lifetime/artifacts/slice-after-providers-046accf6/) has top-level keys diagnostic_counts, enumeration_meaning, fluent_bit_revision, line_coordinates, not_projected_meaning, origin_meaning, reason_code_meaning, schema_version, scope, units, and unit rows carry no assumptions key, although OR-1's provisional Unsafe rests on the synchronous-proxy premise and OR-7's on unchecked neutrality (W45-FB-CROSS-UNIT-USER-PREMISES); unit assumptions are written only for no-build units (crates/qcore-audit/src/report.rs:301-304). The corpus's 22 W43 libc moves to Safe rest on declared, unchecked contracts disclosed at run level only (contracts.json trust string). Hard invariant 2 requires assumptions in every published result. DISCHARGE: each published row (or a linked sidecar keyed by row) names the premises and declared contracts it used, or the verdict contract states that a run-level assumption set suffices and every report says so.",
-   "source": "docs/reports/stability-reeval-5/README.md",
+   "why": "MEASURED by card STABILITY-REEVAL-5 (wave-45 close, base 8c1f15eb): the W45 slice's resource-diagnostics.json (docs/reports/w45-fb-retry-lifetime/artifacts/slice-after-providers-046accf6/) has top-level keys diagnostic_counts, enumeration_meaning, fluent_bit_revision, line_coordinates, not_projected_meaning, origin_meaning, reason_code_meaning, schema_version, scope, units, and unit rows carry no assumptions key, although OR-1's provisional Unsafe rests on the synchronous-proxy premise and OR-7's on unchecked neutrality (W45-FB-CROSS-UNIT-USER-PREMISES); unit assumptions are written only for no-build units (crates/qcore-audit/src/report.rs:301-304). The corpus's 22 W43 libc moves to Safe rest on declared, unchecked contracts disclosed at run level only (contracts.json trust string). Hard invariant 2 requires assumptions in every published result. DISCHARGE: each published row (or a linked sidecar keyed by row) names the premises and declared contracts it used, or the verdict contract states that a run-level assumption set suffices and every report says so. ARM-OBLIGATIONS: a function row now names the rule packages' premises its unit analysis used (rule_obligations, folded into hypothesis_context.assumptions); declared-contract premises and run-level assumptions are unchanged.",
+   "source": "docs/reports/stability-reeval-5/README.md, docs/reports/arm-obligations/README.md",
    "recorded_by": "STABILITY-REEVAL-5"
   },
   {
@@ -13199,17 +13200,10 @@
    "recorded_by": "RULE35-PILOT"
   },
   {
-   "id": "GATEWAY-RULE-API-ARM-OBLIGATIONS",
-   "title": "Hosted arms cannot carry an admission's obligations",
-   "why": "The gateway's rule host (`rule_hosts.rs`, RULE35-PILOT) refuses any arm admission that carries `Obligation::Premise` or `Obligation::Open`, because no arm placement has a row that could carry it (fail-closed, nothing dropped). Rule 37's `asserted_allocation` premise is the first that needs one. DISCHARGE: the position a premise-carrying arm answers at carries its obligations into the row's assumptions (and an open obligation into the denominator), with a test, before such an arm is hosted. RULE34-PILOT: the transfer host (`transfer_rules.rs`) also refuses an admission carrying obligations (and one whose phase count differs from the call's effects); rule 34's arm carries none.",
-   "source": "docs/reports/rule35-pilot/README.md, docs/reports/rule34-pilot/README.md",
-   "recorded_by": "RULE35-PILOT"
-  },
-  {
    "id": "RULE37-W4-ASSERT-PREMISE-VISIBILITY",
    "title": "W4 summaries of asserting wrappers carry no named build premise",
-   "why": "With rule 37 off (QCORE_GATEWAY_RULES_OFF=37), the checked specifications of rd_calloc and rd_strdup are withdrawn, which is the existing W45 withdrawal. Their callers then see what W4 validates from the in-unit asserting body: a non-null result through the enabled assert's terminating call. A caller with no sizeof, such as rd_calloc(1, 16) in tests/rule37_switch.rs, therefore stays Safe on that summary, and its row names no asserted_allocation premise. This is no Unknown-to-Safe by the migration, since the row is Safe with 37 on too. It also predates rule 37 for any undeclared asserting wrapper. But it means the deployed-build fact rule 37 makes explicit for a declared specification is only implicit, as the analysed-build assumption, for a W4-inferred one. DISCHARGE: decide whether a W4 summary that rests on a terminating assertion must carry a named premise (and implement it with an identity or measured run), or record that it rests on the standing analysed-build assumption.",
-   "source": "docs/reports/rule37-pilot/README.md",
+   "why": "With rule 37 off (QCORE_GATEWAY_RULES_OFF=37), the checked specifications of rd_calloc and rd_strdup are withdrawn, which is the existing W45 withdrawal. Their callers then see what W4 validates from the in-unit asserting body: a non-null result through the enabled assert's terminating call. A caller with no sizeof, such as rd_calloc(1, 16) in tests/rule37_switch.rs, therefore stays Safe on that summary, and its row names no asserted_allocation premise. This is no Unknown-to-Safe by the migration, since the row is Safe with 37 on too. It also predates rule 37 for any undeclared asserting wrapper. But it means the deployed-build fact rule 37 makes explicit for a declared specification is only implicit, as the analysed-build assumption, for a W4-inferred one. DISCHARGE: decide whether a W4 summary that rests on a terminating assertion must carry a named premise (and implement it with an identity or measured run), or record that it rests on the standing analysed-build assumption. ARM-OBLIGATIONS: rows resting on a standing asserted_allocation specification now carry the premise (rule_obligations, folded into the assumptions digest); a W4-inferred summary of an asserting body still carries none, so this residual is unchanged.",
+   "source": "docs/reports/rule37-pilot/README.md, docs/reports/arm-obligations/README.md",
    "recorded_by": "RULE37-PILOT"
   },
   {
@@ -13274,6 +13268,20 @@
    "why": "ROUTE-MAP section 1 lists the per-CFG-build body rewrites (_Generic resolution, literal premises, 11r, and since rule 33 the removed-selection expansion) beside the token holds, and the custody derivation's function-row routes (rule 33's frame install and row under its selection entry, rule 37's checked-specification settlement) are not mapped at all. The only position of section 1 is token-hold, a hold, which forces not-switchable; so RULE33-PILOT registered its expansion arm at statement-rewrite and its entry-row arm at classification, by effect, as RULE37-PILOT did for its settlement arm. Placement by effect is unchecked: the generator and the route-map test cannot tell whether an arm sits where its host consults it. DISCHARGE: add non-hold positions for body rewrites and derivation rows to qcore-gateway-rule-api's Position and the route map, move the arms placed by effect there (an identity run per move), or record that placement by effect is the registry's policy.",
    "source": "docs/reports/rule33-pilot/README.md",
    "recorded_by": "RULE33-PILOT"
+  },
+  {
+   "id": "ARM-OBLIGATIONS-UNIT-GRAIN",
+   "title": "Rule-package obligations are carried at unit grain",
+   "why": "ARM-OBLIGATIONS carries an admission's obligations into every row of the unit whose analysis used it (and, for a nested analysis, into the enclosing unit's rows too). That over-approximates which rows rest on it: an assumption too many, or an open obligation keeping an unrelated row of the same unit Unknown, never one too few. Measured: on the corpus all 2,693 rows of the 54 librdkafka units where rd_calloc or rd_strdup stands carry asserted_allocation, including rows that never call either (docs/reports/arm-obligations/README.md section 4). DISCHARGE: narrow the carriage to the rows whose derivation used the admission (for example through the rule 13f consultation record made verdict-bearing, or a per-function frame with transitive in-unit summaries), with a test that every row resting on it still carries it, or record that unit grain is the intended precision.",
+   "source": "docs/reports/arm-obligations/README.md",
+   "recorded_by": "ARM-OBLIGATIONS"
+  },
+  {
+   "id": "ARM-OBLIGATIONS-CROSS-UNIT-AND-THREADS",
+   "title": "Obligations do not cross a unit export or a spawned thread",
+   "why": "ARM-OBLIGATIONS refuses rather than carries in two places: a cross-unit home whose row carries a rule-package obligation is not exported (an imported contract has no premise slot), and an admission asked on a thread a unit analysis spawns (std::thread::scope in deep_unit_ast, null_deref, typed_dispatch_census, loop_owner_region_macros, c_numeric_obligations) sees no frame and is refused. Both are fail-closed; the identity run moved no live verdict. Open obligations publish as Unknown only; no route publishes Pending for a named human-resolvable open key. DISCHARGE: carry obligations through a cross-unit import (an obligation slot on the imported summary that the caller's rows carry) and into spawned workers (a frame handle passed to the worker), each with a test, or record the refusals as the intended boundary.",
+   "source": "docs/reports/arm-obligations/README.md",
+   "recorded_by": "ARM-OBLIGATIONS"
   }
  ],
  "updated": "Completed plugin premise integration; exact hand-maintained union retains810followups, borrowed measured-source8419Rust/354Lean/freshcard133provider, exact source equivalence checked; authoritative root committed-matrix Python confirmation in integration receipt. CMetrics map/opts API model specifications added at the explicit user request. Eight declared-model API contracts remain outside interpreted views, with CMT-MAP-OPTS-CONTRACT-ADOPTION and CMT-LABELED-HASH-ZERO-STATIC-STORAGE Open. No trusted API coverage is claimed; the source gate is recorded by this card alongside its separate initializer native checkpoint. W48-CMT-TRACKED-INTERIOR-SELF-INIT implements rule 36b's checked initializer effect transport for an exact live owned root or embedded record, retaining actual self writes, invalidating aliased member facts and preserving resource obligations; nondefault custody frames refuse and no ordinary summary is exported. The canonical CFL intrusive_list.qv declares matching audit preconditions/effects; two CMetrics .qv modules add six map and two opts lifecycle models, including transitive ownership, partial failure, borrowed results and uncleared cleanup fields. All remain outside interpreted views; checked API adoption and labeled zero-hash storage accounting have named Open follow-ups. Fresh BASE/planner precedes prediction f18d96065 and implementation; the later contract amendment 08da23123 precedes .qv edits. Native corpus BASE/TIP Safe/Unknown/Pending/provisional-Unsafe: 1009 / 3816 / 0 / 9 to 1011 / 3814 / 0 / 9; full system/slice, 5781 NULL dictionaries and runtime projections are compared, 241 semantic leaves accounted, zero unexplained leaves and no prior Safe loss. Gate 8654 Rust / 370 Lean / 374 Python, provider 133 Rust / 25 Python and all five package verifies pass. The actual deep source reader uses 328 KiB below 1 MiB. Full getter closure remains Open; W48-CMT-SELF-INIT-DISJOINT-FRAMES tracks the next bounded frame extension, and W48-EXACT-RETURN-WITNESS-PRECISION is unchanged. Native evidence is isolated to measured e92d8aef35a8bd14550e90219d19a56eb3b196e7; later source gate 2d0d85299b830aa24d7f200d63a308653582363f validates the added declared API models separately; see docs/reports/w48-cmt-tracked-interior-self-init/README.md."
