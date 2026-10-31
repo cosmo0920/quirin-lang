@@ -1,5 +1,7 @@
 # Current status and evidence boundaries
 
+Rule-package obligations are carried at row grain where attributed (ARM-OBLIGATIONS-UNIT-GRAIN, measured `rev:3e53c34fe` -> `rev:051aef7f2`, no verdict moved on any route): on the corpus 789 rows (34 Safe, 752 Unknown, 3 Unsafe) of the 54 librdkafka units in which `rd_calloc` or `rd_strdup` stands as a checked specification carry rule 37's `asserted_allocation`, the rows whose derivation reaches either specification; the other 1,904 rows of those units no longer list it. System and slice carry none.
+
 EVENT-COLLECTOR-SELECTION adds independently replayed source-audit imports for first-match collector selection and constructor-local conditional instance/loop stores. Production snapshots across three pinned revisions are read, but membership/instance invariance, persistent frames and caller lifetime composition remain open; no Safe route consumes these imports. [Report](reports/event-collector-selection/README.md).
 
 Rule 37's measured contribution by switch (RULE37-PILOT, one binary at `6b6a3a438`, ledgers `contract/contributions/37/`): eight-home 5 rows Unknown -> Safe under the one premise `asserted_allocation`; fluent-bit-system and fluent-bit-tail-pause 0. Profile totals are unchanged by the migration (identity run against baseline `80c8aea98`).

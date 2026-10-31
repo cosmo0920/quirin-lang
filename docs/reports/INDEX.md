@@ -25,6 +25,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [arm-obligations](arm-obligations/README.md) | ARM-OBLIGATIONS: carrying an admission's obligations into the row |
 
+| [arm-obligations-unit-grain](arm-obligations-unit-grain/README.md) | ARM-OBLIGATIONS-UNIT-GRAIN: carrying an admission only into the rows that rest on it |
+
 | [audit-canonical-paths](audit-canonical-paths/README.md) | AUDIT-CANONICAL-PATHS: unit selection by canonical path |
 
 | [audit-checkpoint-files](audit-checkpoint-files/README.md) | Per-configuration audit checkpoints |
