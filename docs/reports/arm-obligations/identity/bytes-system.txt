@@ -1,0 +1,32 @@
+DIFF console.log 3c780779d22584e4 009834fd829eaa6c
+DIFF invocation.json 6daa7a9b6261764b 309e678392f16c77
+    binary_sha256: 7a5f2bba4b1c78070401004bc7255b09e2ffc3e205e912470c1dc39232f65c8c -> cf80afdc9482028ef47ca265f3c284069de2bf27cd9bddb046e9caa9e3be2267
+    binary_sha256_after: 7a5f2bba4b1c78070401004bc7255b09e2ffc3e205e912470c1dc39232f65c8c -> cf80afdc9482028ef47ca265f3c284069de2bf27cd9bddb046e9caa9e3be2267
+    command[14]: /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a5f4cdd7c510e0ed9/private/arm-obligations/measure-1/sides/base/sr -> /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a5f4cdd7c510e0ed9/private/arm-obligations/measure-1/sides/tip/src
+    command[18]: /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a5f4cdd7c510e0ed9/private/arm-obligations/measure-1/sides/base/wo -> /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a5f4cdd7c510e0ed9/private/arm-obligations/measure-1/sides/tip/wor
+    command[34]: /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a5f4cdd7c510e0ed9/private/arm-obligations/measure-1/sides/base/sy -> /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a5f4cdd7c510e0ed9/private/arm-obligations/measure-1/sides/tip/sys
+    command[6]: /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a5f4cdd7c510e0ed9/private/arm-obligations/measure-1/sides/base/sy -> /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a5f4cdd7c510e0ed9/private/arm-obligations/measure-1/sides/tip/sys
+    ended: 2026-10-31T10:04:19Z -> 2026-10-31T10:04:20Z
+    environment.QCORE_NULL_PROPERTY: /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a5f4cdd7c510e0ed9/private/arm-obligations/measure-1/sides/base/sy -> /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a5f4cdd7c510e0ed9/private/arm-obligations/measure-1/sides/tip/sys
+    environment.QCORE_OUTER_PROJECTION: /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a5f4cdd7c510e0ed9/private/arm-obligations/measure-1/sides/base/sy -> /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a5f4cdd7c510e0ed9/private/arm-obligations/measure-1/sides/tip/sys
+    inputs_after.digest: f9242008d5e14a69fe9494949b493bc521016826e6838d6cdd90ef8e18af0117 -> a4b68d4dd1de815f2f1b4bd12daafb079a0cff5700efc8286b6db977df2dda8d
+    inputs_after.files: 28721 -> 28726
+    inputs_before.digest: f9242008d5e14a69fe9494949b493bc521016826e6838d6cdd90ef8e18af0117 -> a4b68d4dd1de815f2f1b4bd12daafb079a0cff5700efc8286b6db977df2dda8d
+    inputs_before.files: 28721 -> 28726
+    slot_receipt: /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a5f4cdd7c510e0ed9/private/arm-obligations/measure-1/sides/base/sy -> /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a5f4cdd7c510e0ed9/private/arm-obligations/measure-1/sides/tip/sys
+    working_directory: /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a5f4cdd7c510e0ed9/private/arm-obligations/measure-1/sides/base/wo -> /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a5f4cdd7c510e0ed9/private/arm-obligations/measure-1/sides/tip/wor
+same resource-diagnostics.chunk-contracts.json e7e0d254d9e7ee19 e7e0d254d9e7ee19
+same resource-diagnostics.components.json 61e849335e8fc695 61e849335e8fc695
+same resource-diagnostics.contracts.json bb1641a51696c99d bb1641a51696c99d
+DIFF resource-diagnostics.invocation.json 47bb6504695704e4 db6d305116afbd5e
+    argv[15]: /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a5f4cdd7c510e0ed9/private/arm-obligations/measure-1/sides/base/sy -> /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a5f4cdd7c510e0ed9/private/arm-obligations/measure-1/sides/tip/sys
+    cwd: /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a5f4cdd7c510e0ed9/private/arm-obligations/measure-1/sides/base/wo -> /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a5f4cdd7c510e0ed9/private/arm-obligations/measure-1/sides/tip/wor
+    reports.report: /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a5f4cdd7c510e0ed9/private/arm-obligations/measure-1/sides/base/sy -> /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a5f4cdd7c510e0ed9/private/arm-obligations/measure-1/sides/tip/sys
+same resource-diagnostics.json 0f3bf9bd240dcb8c 0f3bf9bd240dcb8c
+same resource-diagnostics.source-effects.json e7e0d254d9e7ee19 e7e0d254d9e7ee19
+DIFF stderr.log 66c41b42a258b283 42f3b75fd5b61acb
+same system-null.jsonl 0cdecae7cc397837 0cdecae7cc397837
+same system-null.summary.json 572117bd3758532c 572117bd3758532c
+same system-outer.json 705e46a8aeccd9bb 705e46a8aeccd9bb
+same system.exit 9a271f2a916b0b6e 9a271f2a916b0b6e
+13 files, 4 differ

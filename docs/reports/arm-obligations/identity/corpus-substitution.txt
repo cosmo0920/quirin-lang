@@ -1,0 +1,11 @@
+units 185; functions 4834; build identities one-to-one: True (180 pairs, 0 unchanged)
+rows moved or changed (unit status, function status/diagnostics/dependencies): 0
+resource-diagnostics.json: differs after substitution (608 leaf positions); equal with remaining digests blanked and lists as multisets: True; distinct digests 657 / 657
+resource-diagnostics.components.json: differs after substitution (608 leaf positions); equal with remaining digests blanked and lists as multisets: True; distinct digests 658 / 658
+resource-diagnostics.contracts.json: equal under the substitution
+resource-diagnostics.source-effects.json: differs after substitution (38 leaf positions); equal with remaining digests blanked and lists as multisets: True; distinct digests 30 / 30
+resource-diagnostics.chunk-contracts.json: equal under the substitution
+monkey-source.json: equal under the substitution
+../corpus-null.jsonl: differs after substitution (2693 leaf positions); equal with remaining digests blanked and lists as multisets: True; distinct digests 616 / 616
+../corpus-null.summary.json: equal under the substitution
+../corpus-outer.json: equal under the substitution
