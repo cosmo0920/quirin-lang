@@ -1,0 +1,1 @@
+null rows: 4921; digest unchanged 3017; changed on dropped custody rows 1904 (54 BASE -> 54 TIP digests, one-to-one: True); failures 0

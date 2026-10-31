@@ -1,0 +1,3 @@
+resource-diagnostics.json: kept 789 {'Safe': 34, 'Unknown': 752, 'Unsafe': 3} in 54 units; dropped 1904 {'Safe': 394, 'Unknown': 1508, 'Unsafe': 2} in 54 units; carrying units at BASE 54; failing rows: 0
+resource-diagnostics.components.json: kept 789 {'Safe': 34, 'Unknown': 752, 'Unsafe': 3} in 54 units; dropped 1904 {'Safe': 394, 'Unknown': 1508, 'Unsafe': 2} in 54 units; carrying units at BASE 54; failing rows: 0
+resource-diagnostics.contracts.json: 1 folded assumptions digest(s), one-to-one: True; 3316 dropped row quotation(s) rewritten; 2522 kept quotation(s) left; artifacts both kept and dropped: 0
