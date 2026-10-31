@@ -222,7 +222,9 @@ a profile total is a derivation over atoms from real runs, and a rule's ledger
   existing refusal. The only answers are admit-with-obligations or refuse.
 - **Rule switches at run time.** Every package reads
   `QCORE_GATEWAY_RULES_OFF` (comma list of ids) and refuses when listed; off
-  is fail-closed by construction; `run.json` records the list. This replaces
+  is fail-closed by construction; `run.json` records the list. A hold is the
+  exception: it is not switchable, and a list naming it is refused (§6
+  item 10). This replaces
   per-card compile-time constants (`DECAY_ARM`, `LITERAL_ARM`) and makes seam
   A's per-rule ledger a single-binary measurement.
 - Migration order: rules 32a, 33, 34, 35, 36, 37 first, each with an identity
@@ -355,6 +357,30 @@ Decided by the user on 2026-10-24, 2026-10-25 and 2026-10-26 (items 1–9 and 9a
    revisions (the latest and the two before it); each re-base adds a set and
    retires the oldest. Frozen cycles outside the window keep their report
    evidence but no live lock.
+10. **What "off" means for a hold** (`GATEWAY-RULE-API-HOLD-OFF`; decided by
+   card RULE32A-PILOT on 2026-10-31 under the hard invariants, not a user
+   decision): **a hold is not switchable.** Its registry row is
+   `off = "not-switchable"`, a `QCORE_GATEWAY_RULES_OFF` list naming it is
+   refused, and its host asks it under every list, a refused one included
+   (`gateway_rules::enabled`). Reasoning, on rule 32a, the first hold: a
+   hold's admission is the refusal of a reading. (a) A refusing off, as for
+   every other package, removes the hold, and the logger's own row reads its
+   sibling's caller-frame declaration and is `Safe` again, the regression
+   rule 32a exists to refuse; it widens, which invariant 1 forbids. (b) An off
+   that holds more (every call to a frame member held, from any caller)
+   never widens, but it changes no frame member's row: every row it moves is
+   a caller outside the frame, which rule 32a leaves to the declaration by
+   definition. Its measured "contribution" would be rule 32's (the outside
+   callers' reading of the declarations) filed under 32a, a mislabelled
+   ledger. Both readings are theorems of `QCore.CallerFrameHoldSwitch`
+   (`a_refusing_off_would_widen`, `holding_more_changes_no_member_row`,
+   `holding_more_moves_an_outside_row`). This follows rule 34's precedent: a
+   guard whose absence would widen stays unswitchable. Consequence for the
+   ledgers (seam A): a hold is registered, so `known_rule` accepts its id,
+   and it has **no switch-measured contribution ledger**; none is written or
+   transcribed. The measurable quantity behind it, what the caller-frame
+   declarations give their outside callers, is rule 32's and needs a rule-32
+   switch (its off refuses an admission, so it never widens).
 
 ## 7. Risks and boundaries
 
