@@ -28,6 +28,8 @@ use qcore_compiler::{
 };
 
 fn main() -> ExitCode {
+    // Card RULE-SWITCH-ENTRY-POINTS: this example records no gateway rule set.
+    qcore_c_gateway::gateway_rules::exit_if_unrecorded("example alias_aggregate_probe");
     let mut arguments = std::env::args_os().skip(1);
     let (Some(database), Some(file), Some(function)) = (
         arguments.next().map(PathBuf::from),

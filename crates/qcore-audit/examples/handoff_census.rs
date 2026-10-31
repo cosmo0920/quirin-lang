@@ -19,6 +19,8 @@ use qcore_c_gateway::handoff_branch::{
 use qcore_schemas::handoff::{GuardOp, HandOffGuard};
 
 fn main() -> Result<(), String> {
+    // Card RULE-SWITCH-ENTRY-POINTS: this example records no gateway rule set.
+    qcore_c_gateway::gateway_rules::exit_if_unrecorded("example handoff_census");
     let arguments = std::env::args().skip(1).collect::<Vec<_>>();
     let [database, filter, jobs, out] = arguments.as_slice() else {
         return Err("usage: handoff_census DATABASE FILTER JOBS OUT.json".into());

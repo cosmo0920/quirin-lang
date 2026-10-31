@@ -2,6 +2,8 @@
 use qcore_contract::contract_loader::load_resource_contract_manifest;
 use std::{fs, path::Path};
 fn main() {
+    // Card RULE-SWITCH-ENTRY-POINTS: this example records no gateway rule set.
+    qcore_c_gateway::gateway_rules::exit_if_unrecorded("example premise_environment");
     let args: Vec<_> = std::env::args().collect();
     assert_eq!(args.len(), 4, "MANIFEST SOURCE_ROOT OUTPUT");
     let manifest = Path::new(&args[1]);

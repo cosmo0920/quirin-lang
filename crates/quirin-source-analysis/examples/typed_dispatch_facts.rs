@@ -96,6 +96,8 @@ fn selected(relative: &str, paths: &[String]) -> bool {
 }
 
 fn main() {
+    // Card RULE-SWITCH-ENTRY-POINTS: this example records no gateway rule set.
+    qcore_c_gateway::gateway_rules::exit_if_unrecorded("example typed_dispatch_facts");
     let mut database = None;
     let mut root = None;
     let mut output = None;

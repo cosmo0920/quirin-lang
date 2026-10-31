@@ -12,6 +12,8 @@ use std::sync::Mutex;
 use qcore_c_gateway::callback_member_closure::{MemberFacts, closure};
 
 fn main() -> Result<(), String> {
+    // Card RULE-SWITCH-ENTRY-POINTS: this example records no gateway rule set.
+    qcore_c_gateway::gateway_rules::exit_if_unrecorded("example member_facts_census");
     let arguments = std::env::args().skip(1).collect::<Vec<_>>();
     let [database, filter, out, jobs, members @ ..] = arguments.as_slice() else {
         return Err("usage: member_facts_census DATABASE FILTER OUT.json JOBS MEMBER...".into());

@@ -19,8 +19,11 @@ fn main() -> ExitCode {
     };
     // Card GATEWAY-RULE-API: a rule-switch list naming an unknown id, a hold
     // or a malformed element is refused before any route runs, never ignored.
-    if let Err(refusal) = qcore_c_gateway::gateway_rules::check() {
-        eprintln!("quirin-audit: {refusal}");
+    // Card RULE-SWITCH-ENTRY-POINTS: a command line that does not record the
+    // rule set (`rule_set.off`) also refuses a non-empty list.
+    let rest = std::env::args_os().skip(2).collect::<Vec<_>>();
+    if let Err(refusal) = qcore_audit::rule_switch_entry::admit(&path, &rest) {
+        eprintln!("{refusal}");
         return ExitCode::FAILURE;
     }
     if path == "pinned" {

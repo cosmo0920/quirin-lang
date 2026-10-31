@@ -339,6 +339,67 @@ fn command_line_configuration_and_both_forms_produce_the_same_run() {
     assert_eq!(units.as_array().unwrap().len(), 6);
 }
 
+/// Card RULE-SWITCH-ENTRY-POINTS: `current` with a report records the
+/// effective switch list in every component (`rule_set.off`) and in
+/// `invocation.json`; without a report, where nothing would record it, it
+/// refuses a non-empty list before any unit is analysed.
+#[test]
+fn a_switch_list_is_recorded_in_components_and_invocation_or_refused_without_a_report() {
+    let Some(clang) = clang() else { return };
+    let fixture = Fixture::new(&clang, true);
+    let run = |list: &str, args: &[String]| {
+        Command::new(env!("CARGO_BIN_EXE_quirin-audit"))
+            .current_dir(&fixture.0)
+            .arg("current")
+            .args(args)
+            .env("QCORE_GATEWAY_RULES_OFF", list)
+            .output()
+            .unwrap()
+    };
+    let providers = strings(&[
+        "--load-path",
+        "providers/contract-load-path.json",
+        "--provider",
+        "quirin-provider-alpha",
+    ]);
+    let mut args = fixture.base_args("switched");
+    args.extend(providers.clone());
+    succeeded(&run("35", &args));
+    let sidecar: qcore_schemas::composition::ComponentSidecar =
+        serde_json::from_value(fixture.read("switched/report.components.json")).unwrap();
+    let recorded = sidecar
+        .contribution
+        .components()
+        .map(|component| component.provenance.rule_set.off.clone())
+        .collect::<std::collections::BTreeSet<_>>();
+    assert_eq!(
+        recorded,
+        std::collections::BTreeSet::from([std::collections::BTreeSet::from(["35".to_owned()])])
+    );
+    let invocation = fixture.read("switched/report.invocation.json");
+    assert_eq!(invocation["environment"]["QCORE_GATEWAY_RULES_OFF"], "35");
+    assert_eq!(invocation["gateway_rules_off"], json!(["35"]));
+    // Without a report nothing records the list.
+    let mut unreported = strings(&[
+        "--checkout",
+        "checkout",
+        "--profile-directory",
+        "profiles/sample",
+        "--compile-database",
+        "compile_commands.json",
+        "--jobs",
+        "1",
+    ]);
+    unreported.extend(providers);
+    let output = run("35", &unreported);
+    refused(
+        &output,
+        "quirin-audit current without a report does not record the gateway rule set",
+    );
+    assert!(output.stdout.is_empty(), "nothing was analysed");
+    succeeded(&run("", &unreported));
+}
+
 #[test]
 fn conflicting_forms_refuse_instead_of_merging() {
     let Some(clang) = clang() else { return };

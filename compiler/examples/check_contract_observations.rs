@@ -52,6 +52,8 @@ fn run() -> Result<(), String> {
     Ok(())
 }
 fn main() -> ExitCode {
+    // Card RULE-SWITCH-ENTRY-POINTS: this example records no gateway rule set.
+    qcore_c_gateway::gateway_rules::exit_if_unrecorded("example check_contract_observations");
     match run() {
         Ok(()) => ExitCode::SUCCESS,
         Err(e) => {

@@ -38,6 +38,8 @@ fn canonicalize(value: &mut Value, identities: &mut BTreeMap<String, String>) {
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
+    // Card RULE-SWITCH-ENTRY-POINTS: this example records no gateway rule set.
+    qcore_c_gateway::gateway_rules::exit_if_unrecorded("example clang_transport_measure");
     let config: Config = serde_json::from_slice(&std::fs::read(
         std::env::args().nth(1).ok_or("configuration missing")?,
     )?)?;

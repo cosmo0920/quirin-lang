@@ -169,6 +169,8 @@ fn reconstruct_imports(
 }
 
 fn main() -> Result<(), String> {
+    // Card RULE-SWITCH-ENTRY-POINTS: this example records no gateway rule set.
+    qcore_c_gateway::gateway_rules::exit_if_unrecorded("example libc_local_source_domains");
     let args = std::env::args().collect::<Vec<_>>();
     if args.len() != 8 {
         return Err("INPUT_ROOT CHECKOUT REPO DIAGNOSTICS INVOCATION FRESH_OUTPUT_DIRECTORY EXPECTED_GRAPH_EVIDENCE_VERSION".into());

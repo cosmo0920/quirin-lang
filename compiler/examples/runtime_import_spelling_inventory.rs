@@ -5,6 +5,8 @@ use serde_json::json;
 use std::{fs, process::Command};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
+    // Card RULE-SWITCH-ENTRY-POINTS: this example records no gateway rule set.
+    qcore_c_gateway::gateway_rules::exit_if_unrecorded("example runtime_import_spelling_inventory");
     let tracked = Command::new("git")
         .args(["ls-files", "-z", "--", "*.qr"])
         .output()?;

@@ -1,0 +1,31 @@
+mode: full
+  full because the diff reaches qcore-c-gateway
+affected crates (7):
+  qcore-audit: names compiler/examples/reevaluation_probe.rs in a string literal: compiler/examples/reevaluation_probe.rs (crates/qcore-audit/tests/rule_switch_entry_points.rs:464); owns crates/qcore-audit/examples/component_check.rs; owns crates/qcore-audit/examples/handoff_census.rs; ... 25 more
+  qcore-c-gateway: owns crates/qcore-c-gateway/examples/clang_transport_measure.rs; owns crates/qcore-c-gateway/examples/collector_identity_audit.rs; owns crates/qcore-c-gateway/examples/declared_abi_census.rs; ... 5 more
+  qcore-compiler: owns compiler/examples/alias_aggregate_probe.rs; owns compiler/examples/c03_reach_census.rs; owns compiler/examples/check_contract_observations.rs; ... 49 more
+  qcore-provider-conformance: depends on qcore-audit
+  qcore-verification: names compiler/src in a string literal: compiler/src/lib.rs (crates/qcore-verification/tests/composition_bounds.rs:297); names crates in a string literal: crates/qcore-audit/examples/component_check.rs (crates/qcore-verification/tests/composition_bounds.rs:288); names crates in a string literal: crates/qcore-audit/examples/handoff_census.rs (crates/qcore-verification/tests/composition_bounds.rs:288); ... 38 more
+  qcorec: owns crates/qcorec/src/main.rs; owns crates/qcorec/tests/cli.rs
+  quirin-source-analysis: owns crates/quirin-source-analysis/examples/cjson_local_source.rs; owns crates/quirin-source-analysis/examples/condvar_join_census.rs; owns crates/quirin-source-analysis/examples/loop_owner_census.rs; ... 4 more
+rust suite packages: qcore-audit, qcore-c-gateway, qcore-compiler, qcore-contract, qcore-core, qcore-frontend, qcore-gateway-rule-api, qcore-schemas, qcore-verification, qcore-verifier-host, qcorec, quirin-audit-plugin, quirin-audit-plugin-libevent, quirin-audit-plugin-measure, quirin-source-analysis, rule-33-removed-selection, rule-34-element-destroyer, rule-35-literal-decay, rule-36-exact-formal-return, rule-37-result-constructors
+lean: none
+provider gate: no
+  (provider members reached through core crates, not gated here: qcore-provider-conformance)
+python suite: always
+[submodules] $ git -C /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a66f13bf7895c04d3 submodule status --recursive
+[submodules] exit 0 in 0.1s {"submodules": 1, "not_checked_out_or_moved": []}
+[fmt] $ cargo fmt --all -- --check
+[fmt] exit 0 in 4.6s 
+[clippy] $ cargo clippy --all-targets -- -D warnings
+[clippy] exit 0 in 52.1s 
+[rust-suite] $ /usr/bin/python3 /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a66f13bf7895c04d3/scripts/gate_slot.py rust-suite --receipt /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a66f13bf7895c04d3/private/gate/slots/rust-suite.json -- /usr/bin/python3 /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a66f13bf7895c04d3/scripts/run_test_binaries.py --log-dir /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a66f13bf7895c04d3/private/gate/rust-suite
+[rust-suite] exit 0 in 10071.0s {"units": 585, "passed": 8951, "failed": 0, "ignored": 15, "measured": 0, "filtered": 69, "summaries": 618, "packages": null, "summary": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a66f13bf7895c04d3/private/gate/rust-suite/summary.json", "ok": true}
+[probe-reevaluation_probe] $ cargo run --config build.incremental=false --config build.rustc-wrapper="/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a66f13bf7895c04d3/scripts/rustc_test_dylib.py" -p qcore-compiler --example reevaluation_probe
+[probe-reevaluation_probe] exit 0 in 0.1s 
+[probe-reevaluation_followup] $ cargo run --config build.incremental=false --config build.rustc-wrapper="/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a66f13bf7895c04d3/scripts/rustc_test_dylib.py" -p qcore-compiler --example reevaluation_followup
+[probe-reevaluation_followup] exit 0 in 0.4s 
+[python] $ /usr/bin/python3 -m unittest discover -s scripts/tests
+[python] exit 0 in 54.2s {"tests": 568, "skipped": 0, "ok": true}
+gate.json: /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a66f13bf7895c04d3/private/gate/gate.json
+gate_scope: 7 steps passed

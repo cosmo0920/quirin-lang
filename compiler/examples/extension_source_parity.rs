@@ -13,6 +13,8 @@ fn mapped_source_path<'a>(old: &'a str, new: &'a str) -> Result<&'a str, String>
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
+    // Card RULE-SWITCH-ENTRY-POINTS: this example records no gateway rule set.
+    qcore_c_gateway::gateway_rules::exit_if_unrecorded("example extension_source_parity");
     let mapping = fs::read_to_string("docs/reports/extension-compatibility/mapping.tsv")?;
     let mut rows = Vec::new();
     let mut admitted = 0;

@@ -67,6 +67,8 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
 }
 
 fn main() {
+    // Card RULE-SWITCH-ENTRY-POINTS: this example records no gateway rule set.
+    qcore_c_gateway::gateway_rules::exit_if_unrecorded("example member_path_probe");
     let arguments = std::env::args().skip(1).collect::<Vec<_>>();
     // Deep Clang ASTs: read and walk them on a large stack.
     let worker = std::thread::Builder::new()

@@ -7,6 +7,8 @@ use qcore_compiler::verifier_plugins::libevent::LIBEVENT_SUBMODULE_PATH;
 use qcore_compiler::verify_pinned_libevent_source;
 
 fn main() -> ExitCode {
+    // Card RULE-SWITCH-ENTRY-POINTS: this example records no gateway rule set.
+    qcore_c_gateway::gateway_rules::exit_if_unrecorded("example cycle18_libevent_audit");
     let root = env::args_os().nth(1).map_or_else(
         || {
             Path::new(env!("CARGO_MANIFEST_DIR"))

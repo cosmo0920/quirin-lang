@@ -12,6 +12,8 @@ struct Query {
     conditional_loop: LoopQuery,
 }
 fn main() -> Result<(), String> {
+    // Card RULE-SWITCH-ENTRY-POINTS: this example records no gateway rule set.
+    qcore_c_gateway::gateway_rules::exit_if_unrecorded("example collector_identity_audit");
     let args = std::env::args().skip(1).collect::<Vec<_>>();
     let [source_path, query_path] = args.as_slice() else {
         return Err("usage: collector_identity_audit PREPROCESSED_C QUERY_JSON".into());

@@ -161,6 +161,8 @@ fn process_probes(results: &mut Vec<serde_json::Value>) {
 }
 
 fn main() {
+    // Card RULE-SWITCH-ENTRY-POINTS: this example records no gateway rule set.
+    qcore_c_gateway::gateway_rules::exit_if_unrecorded("example reevaluation_followup");
     let mut results = vec![];
     let calls = Arc::new(AtomicUsize::new(0));
     let mut registry = VerifierRegistry::default();

@@ -7,6 +7,8 @@ use qcore_compiler::{
 };
 
 fn main() -> ExitCode {
+    // Card RULE-SWITCH-ENTRY-POINTS: this example records no gateway rule set.
+    qcore_c_gateway::gateway_rules::exit_if_unrecorded("example cycle17_legacy_audit");
     let arguments = env::args().skip(1).collect::<Vec<_>>();
     if arguments.len() < 2 {
         eprintln!(
