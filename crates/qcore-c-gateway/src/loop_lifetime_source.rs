@@ -1343,7 +1343,7 @@ pub(crate) fn ready_at_source_call(
                 })
                 .collect();
             crate::contract_dependencies::lifetime_entry_evidence(function, assumptions);
-            qcore_schemas::contract_consultation::note_relied(callee);
+            crate::contract_dependencies::relied(callee);
         }
         if let Some(entry) = entry.as_ref() {
             let mut prerequisites = BTreeSet::new();
@@ -1496,7 +1496,7 @@ pub(crate) fn forwarding_at_source_call(
                 protocol.record,
                 holder_fields.join(".")
             );
-            qcore_schemas::contract_consultation::note_relied(host);
+            crate::contract_dependencies::relied(host);
             crate::contract_dependencies::lifetime_evidence(
                 function_name,
                 BTreeSet::from([
@@ -1625,7 +1625,7 @@ pub(crate) fn substitute_forwarded_call(
         root,
         fields: effect.registration.holder.fields.clone(),
     };
-    qcore_schemas::contract_consultation::note_relied(&effect.host);
+    crate::contract_dependencies::relied(&effect.host);
     crate::contract_dependencies::lifetime_evidence(
         caller,
         BTreeSet::from([

@@ -119,5 +119,5 @@ fn an_admission_with_obligations_is_carried_or_refused() {
     assert_eq!(carry_answer("35", premised()), None, "no frame: refused");
     let frame = Frame::open();
     assert_eq!(carry_answer("35", premised()), Some(1));
-    assert_eq!(frame.close().premises.len(), 1);
+    assert_eq!(frame.close().0.unit.premises.len(), 1);
 }
