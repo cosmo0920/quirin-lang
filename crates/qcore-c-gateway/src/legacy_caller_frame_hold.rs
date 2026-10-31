@@ -43,7 +43,10 @@
 //!
 //! Card RULE32A-PILOT: which calls are held is decided by rule 32a's package,
 //! `rule-32a-caller-frame-hold` (registry row `32a`, the rule interface's
-//! token hold), asked through [`consult`]. This module is its host
+//! token hold), asked through `arm_obligations::consult` (card
+//! ARM-OBLIGATIONS: every package admission in the gateway is read there; the
+//! hold's admission carries no obligation, so it needs no unit frame and is
+//! its lowering, as before). This module is its host
 //! ([`FrameHoldHost`]): it finds each registered member's own body, the call
 //! positions inside it (`is_call_position`), and reads the frames
 //! (`caller_frame::FRAMES`) and whether a callee's declaration is in force
@@ -58,7 +61,6 @@
 //! (Lean `QCore.CallerFrameHoldSwitch`).
 
 use qcore_contract::caller_frame;
-use qcore_gateway_rule_api::consult;
 use qcore_gateway_rule_api::traits::{HoldQuery, Host, RulePackage, TokenHold};
 use qcore_schemas::contract::ResourceContracts;
 use rule_32a_caller_frame_hold::{CallerFrameHold, FrameHost};
@@ -155,8 +157,9 @@ fn held_by_rule(host: &FrameHoldHost<'_>, caller: &str, call: &[Token]) -> bool 
         call,
         line: call[0].line,
     };
-    consult(
+    crate::arm_obligations::consult(
         HOLDS,
+        |package| package.id(),
         |package| crate::gateway_rules::enabled(package.id()),
         |_, package| TokenHold::ask(package, host, &query),
     )
