@@ -684,6 +684,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | Card directory | Original report title |
 |---|---|
 
+| [package-bytes-depend-on-checkout](package-bytes-depend-on-checkout/README.md) | PACKAGE-BYTES-DEPEND-ON-CHECKOUT |
+
 | [pin-regenerate-stamp-monotonicity](pin-regenerate-stamp-monotonicity/README.md) | PIN-REGENERATE-STAMP-MONOTONICITY |
 
 | [pipe-drop-stage](pipe-drop-stage/README.md) | PIPE-DROP-STAGE — the releasing pipeline stage (wave 23) |
