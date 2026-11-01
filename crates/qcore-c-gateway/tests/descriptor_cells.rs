@@ -375,10 +375,11 @@ fn a_mix_of_actual_types_refuses() {
 
 /// The member-equality guard reads the first member too: a channel created
 /// and destroyed through the record closes both ends, as through
-/// `&c->event` (the ends live in a second object, `s`). A function that
-/// spells the caller's record both ways keeps a refusal (the access gate's
-/// at the `&c->event` call, reported in the card's report), never `Safe`
-/// by a mismatched key.
+/// `&c->event` (the ends live in a second object, `s`). The record and
+/// `&c->event` key one cell, so spelling the caller's record both ways is
+/// `Safe` too once rule 38a lets `&c->event` leave the access gate
+/// (integration with MK-EVENT-CELL-ARRAY-SLOTS); a record whose first
+/// member is not the event never meets the cell.
 #[test]
 fn a_channel_through_its_first_member_record_is_safe() {
     if !clang_available() {
@@ -398,14 +399,17 @@ fn a_channel_through_its_first_member_record_is_safe() {
         ));
         rows.remove("cycle").expect("the row")
     };
-    for spelling in ["c", "&c->event"] {
-        let row = channel(spelling, spelling);
-        assert!(row.safe(), "{spelling}: {row:?}");
-    }
-    for (create, destroy) in [("c", "&c->event"), ("&c->event", "c"), ("&c->event", "l")] {
+    for (create, destroy) in [
+        ("c", "c"),
+        ("&c->event", "&c->event"),
+        ("c", "&c->event"),
+        ("&c->event", "c"),
+    ] {
         let row = channel(create, destroy);
-        assert!(!row.safe(), "{create} / {destroy}: {row:?}");
+        assert!(row.safe(), "{create} / {destroy}: {row:?}");
     }
+    let row = channel("&c->event", "l");
+    assert!(!row.safe(), "&c->event / l: {row:?}");
     // A record whose first member is not the event never meets the cell.
     let later = channel("&c->event", "l");
     assert!(later.refused_with("descriptor-cell-undecided"), "{later:?}");

@@ -386,10 +386,12 @@ fn child_rule_38_off() {
 /// caller's record passed whole to one cell call and spelled `&c->event` at
 /// another kept the access gate's refusal at the member address. That
 /// refusal was the minted-name gap, so under rule 38a the member address
-/// leaves the gate and rule 38 answers. The assertions are kept free of
-/// rule 38's own wording, which the first-member reading changes. Fluent
-/// Bit's shape, `ins` whole beside `&ins->ch_events[0]` in one call, is
-/// covered too.
+/// leaves the gate and rule 38 answers. With the first-member reading
+/// (rule 38 (1)) the whole record and `&c->event` key one cell, so each
+/// cycle closes what it created and is `Safe` (integration of the two
+/// cards); a destroy through a record whose first member is not the event
+/// keeps refusing (`descriptor_cells.rs`). Fluent Bit's shape, `ins` whole
+/// beside `&ins->ch_events[0]`, is covered too.
 #[test]
 fn a_record_passed_whole_never_keeps_the_gate_at_its_member_address() {
     if !clang_available() {
@@ -417,16 +419,11 @@ int w(struct wrapper *c, struct pair *s) {{
     ] {
         let body = channel(create, destroy);
         let (status, diagnostics) = outcome(&body);
-        assert_ne!(status, "Safe", "{body}\n{diagnostics:?}");
         assert!(
             !diagnostics.iter().any(|diagnostic| diagnostic == GATE),
             "{body}\n{diagnostics:?}"
         );
-        assert!(
-            diagnostics
-                .iter()
-                .any(|diagnostic| diagnostic.contains("(descriptor-cell-")),
-            "{body}\n{diagnostics:?}"
-        );
+        assert_eq!(status, "Safe", "{body}\n{diagnostics:?}");
+        assert!(diagnostics.is_empty(), "{body}\n{diagnostics:?}");
     }
 }
