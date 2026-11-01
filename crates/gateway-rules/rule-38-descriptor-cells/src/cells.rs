@@ -341,7 +341,7 @@ pub fn run_vector(trace: &str) -> &'static str {
     let mut cells: Cells<&str> = Cells::default();
     for step in trace.split(';').map(str::trim) {
         let outcome = match step.split_whitespace().collect::<Vec<_>>().as_slice() {
-            ["fresh", key] => cells.create(Some(key), 1, true).map(|()| ()),
+            ["fresh", key] => cells.create(Some(key), 1, true),
             ["witness", "ok"] => {
                 cells.witness(1, true);
                 Ok(())
