@@ -149,6 +149,47 @@ system row instances and 16 slice row instances. The one `Safe` row,
 `flb_sched_timer_cb_disable` (×2), is the shape of the fixture
 `a_destroy_of_a_callers_cell_is_the_identity`, which stays `Safe`.
 
+## Card gate
+
+The gate ran as `python3 scripts/gate_scope.py --base eb49bb6ce --out
+private/gate-2` on `3d3e3db93`, the last code commit; only this section
+changed after it. Scope: effectively the full gate, with every Lean audit and
+the provider gate.
+
+| Step | Exit | Counts |
+|---|---|---|
+| submodules | 0 | 1 checked |
+| fmt | 0 | |
+| clippy | 0 | |
+| Rust suite | 0 | 590 units; 8,993 passed, 0 failed, 15 ignored, 90 filtered |
+| `reevaluation_probe` | 0 | |
+| `reevaluation_followup` | 0 | |
+| Lean audits | 0 | 399 |
+| Python suite | **1** | 568 tests, 1 failure |
+| provider package build | 0 | |
+| provider package verify-all | 0 | |
+| provider package verify | 0 | |
+| provider tests | 0 | 133 passed, 0 failed, 1 ignored |
+| provider fmt | 0 | |
+| provider clippy | 0 | |
+
+**The Python failure.** The one failure is
+`test_build_matrix_sections.test_the_derived_facts_are_recomputed_rather_than_carried`:
+the acceptance matrix's derived `lean_audits` is 398, and the tree now gives
+399, the new `AuditDescriptorCells`. The matrix is the integrator's to
+regenerate at landing, as for every card that adds a Lean audit.
+
+**The first gate run.** `private/gate` on `3a0defb78` exited 1 on two pins
+this card moves, now fixed: the withheld-declaration count (107 → 108) and
+the parser-field classification of `cell_witness_names`.
+
+**Lock fix.** Commit `b2b10e54d`, the providers-lock fix, is cherry-picked as
+`f3afdedc5`.
+
+**Logs.** Gate logs are under `private/gate-2/` and the console log is
+`private/logs/gate-2-console.log`. The console log is in the worktree because
+the isolation guard refuses a redirect to the scratchpad path.
+
 ## Observations and follow-ups
 
 - **`MK-EVENT-FIRST-MEMBER-CELL`.** A `data` actual whose pointee is a record
