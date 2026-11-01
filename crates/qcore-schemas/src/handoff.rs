@@ -30,9 +30,12 @@ use serde::{Deserialize, Serialize};
 /// alias may not take one of these names.
 ///
 /// Card **OP-CALLBACK-MEMBER-PATH-RELEASE** adds the member-path states
-/// `released`, `moved`, `stale` and `kept` (`crate::member_path`).
-pub const RESERVED_KEYWORDS: [&str; 8] = [
-    "absent", "owner", "callback", "result", "released", "moved", "stale", "kept",
+/// `released`, `moved`, `stale` and `kept` (`crate::member_path`); card
+/// **MK-EVENT-DESCRIPTOR-QUANT** the cell words `fresh`, `same` and `pointee`
+/// (`crate::descriptor_cell`).
+pub const RESERVED_KEYWORDS: [&str; 11] = [
+    "absent", "owner", "callback", "result", "released", "moved", "stale", "kept", "fresh", "same",
+    "pointee",
 ];
 
 /// How a guard compares the call's result with its constant.

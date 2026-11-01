@@ -13,6 +13,7 @@ pub mod callback;
 pub mod composition;
 pub mod constructed_state;
 pub mod contract;
+pub mod descriptor_cell;
 // Card VERDICT-CONTRACT-DEPENDENCIES (gateway rule 13f): the per-thread log of
 // the names a resource environment was asked for; evidence only.
 pub mod contract_consultation;

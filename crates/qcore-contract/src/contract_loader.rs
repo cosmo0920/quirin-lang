@@ -334,6 +334,8 @@ mod arm_release;
 mod constructed_state;
 // Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF: a formal the callback takes
 // depending on its return code, and the module's aliases (§C04.19.5).
+#[path = "contract_descriptor_cell.rs"]
+mod descriptor_cell;
 #[path = "contract_handoff.rs"]
 mod handoff;
 #[path = "contract_member_path.rs"]
@@ -1945,6 +1947,12 @@ fn load_function_in(
     // retentions and removals of one registration, as written.
     let mut path_retentions: Vec<retained_by::WrittenPath> = Vec::new();
     let mut removals: Vec<(String, String)> = Vec::new();
+    // Card MK-EVENT-DESCRIPTOR-QUANT (§C04.6.2, rule 38): the descriptor
+    // cell clauses (both levels), the guarded releases and the removal
+    // guards, as written.
+    let mut cell_clauses: Vec<descriptor_cell::Written> = Vec::new();
+    let mut cell_releases: Vec<(String, descriptor_cell::WrittenEquality)> = Vec::new();
+    let mut removal_guards: Vec<descriptor_cell::WrittenEquality> = Vec::new();
     for clause in clauses {
         if clause.value.kind == SourceContractClauseKind::QuantProposition {
             // The whole graph was type checked above; this is an explicit
@@ -1952,7 +1960,16 @@ fn load_function_in(
             continue;
         }
         if clause.value.kind == SourceContractClauseKind::QuantLive {
-            if retained_by::is_removal(&clause.value.expression_source) {
+            if descriptor_cell::is_guarded_removal(&clause.value.expression_source) {
+                let (holder, retained, guard) =
+                    descriptor_cell::guarded_removal_clause(&clause.value.expression_source)?;
+                removals.push((holder, retained));
+                removal_guards.push(guard);
+            } else if descriptor_cell::is_cell_clause(&clause.value.expression_source) {
+                cell_clauses.push(descriptor_cell::quant_cell_clause(
+                    &clause.value.expression_source,
+                )?);
+            } else if retained_by::is_removal(&clause.value.expression_source) {
                 removals.push(retained_by::removal_clause(
                     &clause.value.expression_source,
                 )?);
@@ -2148,6 +2165,17 @@ fn load_function_in(
                 ));
             }
             literal_arguments.push(DeclaredLiteralArgument { parameter, literal });
+            continue;
+        }
+        // Card MK-EVENT-DESCRIPTOR-QUANT (§C04.6.2, rule 38): a release
+        // guarded by a member equality, and the member-cell words of the lower
+        // level, read before every other guarded or dotted clause.
+        if let Some(release) = descriptor_cell::guarded_release(expression)? {
+            cell_releases.push(release);
+            continue;
+        }
+        if let Some(written) = descriptor_cell::lower_clause(expression)? {
+            cell_clauses.push(written);
             continue;
         }
         // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (§C04.19.2): an arm
@@ -2400,6 +2428,68 @@ fn load_function_in(
         return Err("missing resource_contract_v1 requirement".into());
     }
     let result = result.ok_or("missing result mode")?;
+    // Card MK-EVENT-DESCRIPTOR-QUANT (§C04.6.2, rule 38): a slot cell's lower
+    // level (its kind and its two return-code dispositions), a slot binder's
+    // kind, and a guarded release's kind are the cell's, not a position's:
+    // they move into the cell clauses, and the formal's custody mode is
+    // `resource_borrowed` (the route applies the cell's effect).
+    {
+        let slots = descriptor_cell::slot_binders(&cell_clauses);
+        for (position, parameter) in decl.parameters.iter().enumerate() {
+            let name = parameter.name.value.as_str();
+            let Some(kind) = parameter_kinds[position] else {
+                continue;
+            };
+            if cell_releases.iter().any(|(released, _)| released == name) {
+                if kind != ResourceKind::Descriptor || parameters[position].is_some() {
+                    return Err(format!(
+                        "quant-live-cell-equality: a guarded release of `{name}` states its kind \
+                         `descriptor` and no other mode"
+                    ));
+                }
+                parameter_kinds[position] = None;
+                parameters[position] = Some(ResourceParameterMode::Borrowed);
+                continue;
+            }
+            if slots.iter().any(|slot| slot == name) {
+                cell_clauses.push(descriptor_cell::Written::Kind {
+                    binder: name.to_owned(),
+                    place: descriptor_cell::WrittenPlace::Pointee,
+                    kind,
+                    text: format!("resource_kind({name}, {kind:?})"),
+                });
+                parameter_kinds[position] = None;
+                continue;
+            }
+            if parameter_types[position] != "ptr<mut, u8>" || parameters[position].is_some() {
+                continue;
+            }
+            let mut dispositions = Vec::new();
+            for (at, (relation, inner)) in conditional.iter().enumerate() {
+                let words = predicate_call(inner)?;
+                if words.get(1).map(String::as_str) == Some(name) {
+                    dispositions.push((at, *relation, inner.clone()));
+                }
+            }
+            if let Some(written) = descriptor_cell::slot_lower_level(name, kind, &dispositions) {
+                for (at, ..) in dispositions.iter().rev() {
+                    conditional.remove(*at);
+                }
+                cell_clauses.extend(written);
+                parameter_kinds[position] = None;
+                parameters[position] = Some(ResourceParameterMode::Borrowed);
+            }
+        }
+        for (released, _) in &cell_releases {
+            let position = index(released)?;
+            if parameters[position].is_none() {
+                return Err(format!(
+                    "quant-live-cell-equality: a guarded release of `{released}` states its kind \
+                     `descriptor`"
+                ));
+            }
+        }
+    }
     // Card CG23-RELATIONAL-POSTCONDITIONS: one parameter vector per exit
     // class, each finished by the same checks as a plain declaration.
     let relational_classes = if conditional.is_empty() {
@@ -2699,6 +2789,9 @@ fn load_function_in(
         && constructed_clauses.is_empty()
         && handoff_clauses.is_empty()
         && member_path_clauses.is_empty()
+        && cell_clauses.is_empty()
+        && cell_releases.is_empty()
+        && removal_guards.is_empty()
     {
         None
     } else {
@@ -2981,6 +3074,46 @@ fn load_function_in(
         }
         declared.handoff = handed;
         declared.member_paths = member_paths;
+        // Card MK-EVENT-DESCRIPTOR-QUANT (§C04.6.2, rule 38): the cells stand
+        // beside retentions, removals and plain predicates only.
+        let cells = descriptor_cell::declaration(
+            &cell_clauses,
+            &cell_releases,
+            &removal_guards,
+            declared.removals.len(),
+            &contract,
+            &parameter_types,
+            &names,
+            return_type,
+        )?;
+        if !cells.is_empty() {
+            if !declared.slot_moves.is_empty()
+                || !declared.derived_outs.is_empty()
+                || !declared.references.is_empty()
+                || !declared.callbacks.is_empty()
+                || declared.discriminant.is_some()
+                || !declared.arms.is_empty()
+                || !declared.constructed.is_empty()
+                || declared.handoff.is_some()
+                || !declared.member_paths.is_empty()
+                || !declared.path_retentions.is_empty()
+            {
+                return Err(
+                    "a descriptor cell stands only beside retentions, removals and plain \
+                     predicates"
+                        .into(),
+                );
+            }
+            if let Some(name) = qcore_schemas::handoff::RESERVED_KEYWORDS
+                .iter()
+                .find(|name| names.contains_key(**name))
+            {
+                return Err(format!(
+                    "`#{name}` is reserved in a `#` form: rename the parameter `{name}`"
+                ));
+            }
+        }
+        declared.descriptor_cells = cells;
         Some(declared)
     };
     if matches!(contract.result, ResourceReturnMode::Removed { .. })

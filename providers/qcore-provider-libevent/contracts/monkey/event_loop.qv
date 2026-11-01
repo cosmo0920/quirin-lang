@@ -58,19 +58,40 @@ module contract;
 //   every record the loop holds, poisoned or not.
 // * mk_event_channel_destroy (:193): removes and closes only when
 //   `event->fd == r_fd` (epoll backend :397); otherwise it returns -1 with
-//   the registration in place. No clause states that condition, so this
-//   declaration states no removal (a record of the event stays).
+//   the registration in place. Since card MK-EVENT-DESCRIPTOR-QUANT the
+//   removal and both closes are stated under that member-equality guard
+//   (decision D4); before it, the declaration stated no removal.
 // * mk_event_wait (:205): `epoll_wait` into the loop's own array; nothing
 //   is registered, removed or taken.
 //
-// ## The descriptors (premise mk_event_descriptors)
+// ## The descriptors (card MK-EVENT-DESCRIPTOR-QUANT, §C04.6.2, rule 38)
 //
-// The descriptors timeout_create and channel_create make live in the event
-// (`event->fd`) and in the caller's integer slots, which v1 custody does not
-// track (a descriptor has no out slot, and a member-held descriptor has no
-// identity, §C04.6); timeout_destroy and channel_destroy close them. These
-// declarations state no descriptor effect: each descriptor's lifecycle is the
-// named premise, so every verdict resting on one of them names it.
+// USER DIRECTION 2026-11-01 (verbatim): "We must decompose the premise into
+// quant like composed clauses." USER DECISION 2026-11-01 (verbatim): "I
+// approve the changes of D1-D5." The named premise `mk_event_descriptors` is
+// retired; each descriptor effect is a descriptor-cell state. Bodies read at
+// 66910c10, 046accf6 and 34155955 (`mk_event.c` byte-identical,
+// `8ef958d2…`; `mk_event_epoll.c` `0bbc8f00…` / `a2a16119…`, differing only by
+// `pthread_detach` in the pipe arm, which the build's MK_HAVE_TIMERFD_CREATE
+// leaves out):
+//
+// * timeout_create (epoll :190): -1 with `event->fd` untouched (clock,
+//   timerfd or settime failure); `event->fd = timer_fd` (:233), then on an
+//   `_mk_event_add` failure the descriptor is closed and -1 returned with the
+//   closed number left in the member (:240-243); otherwise `timer_fd` (>= 0)
+//   is returned. D1: the member names the new descriptor; the result is its
+//   witness.
+// * timeout_destroy (:341): NULL data does nothing; otherwise the removal,
+//   then `close(event->fd)` unconditionally, the member never written. D2:
+//   `#stale(descriptor)`.
+// * channel_create (:355): -1 with nothing written (pipe failure); the
+//   member written `fd[0]` (:371), then on an `_mk_event_add` failure both
+//   ends closed and -1 with the closed number in the member; on success
+//   `*r_fd = fd[0]`, `*w_fd = fd[1]`, 0. D3: the slots' pointees and the
+//   member's second name of the read end.
+// * channel_destroy (:389): when `event->fd != r_fd`, -1 and nothing touched;
+//   otherwise the removal (`_mk_event_del`), `close(r_fd)`, `close(w_fd)` and
+//   `_mk_event_del`'s result. D4: the member-equality guard.
 
 extern fn mk_event_add(loop: ptr<mut, u8>, fd: i32, type: i32, mask: u32, data: ptr<mut, u8>) -> i32
 contract {
@@ -87,24 +108,28 @@ contract {
 extern fn mk_event_timeout_create(loop: ptr<mut, u8>, sec: i64, nsec: i64, data: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
-    requires resource_premise(mk_event_descriptors, "P-MK-EVENT-DESCRIPTORS: the descriptor the call creates lives in the registered event (event->fd), which v1 custody does not track; mk_event_timeout_destroy closes it");
     ensures normal resource_borrowed(loop);
     ensures normal resource_borrowed(sec);
     ensures normal resource_borrowed(nsec);
     ensures normal resource_borrowed(data);
     ensures normal resource_retained_by(data, loop);
+    quant live #data: mk_event.fd |-> #fresh(descriptor) when #result != -1;
+    quant live #data: mk_event.fd |-> {#stale(descriptor), #kept} when #result == -1;
     ensures normal resource_return_none();
 };
 
 extern fn mk_event_channel_create(loop: ptr<mut, u8>, r_fd: ptr<mut, u8>, w_fd: ptr<mut, u8>, data: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
-    requires resource_premise(mk_event_descriptors, "P-MK-EVENT-DESCRIPTORS: the two descriptors the call creates are written through r_fd and w_fd, which v1 custody does not track (a descriptor has no out slot); mk_event_channel_destroy closes them");
     ensures normal resource_borrowed(loop);
     ensures normal resource_borrowed(r_fd);
     ensures normal resource_borrowed(w_fd);
     ensures normal resource_borrowed(data);
     ensures normal resource_retained_by(data, loop);
+    quant live #r_fd: #pointee |-> #fresh(descriptor) when #result == 0;
+    quant live #w_fd: #pointee |-> #fresh(descriptor) when #result == 0;
+    quant live #data: mk_event.fd |-> #same(r_fd) when #result == 0;
+    quant live #data: mk_event.fd |-> {#stale(descriptor), #kept} when #result != 0;
     ensures normal resource_return_none();
 };
 
@@ -120,10 +145,10 @@ contract {
 extern fn mk_event_timeout_destroy(loop: ptr<mut, u8>, data: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
-    requires resource_premise(mk_event_descriptors, "P-MK-EVENT-DESCRIPTORS: the call closes the descriptor held in the event (event->fd), which v1 custody does not track");
     ensures normal resource_borrowed(loop);
     ensures normal resource_borrowed(data);
     quant live #loop: #holds(data) |-> #absent;
+    quant live #data: mk_event.fd |-> #stale(descriptor);
     ensures normal resource_return_none();
 };
 
@@ -144,11 +169,13 @@ contract {
 extern fn mk_event_channel_destroy(loop: ptr<mut, u8>, r_fd: i32, w_fd: i32, data: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
-    requires resource_premise(mk_event_descriptors, "P-MK-EVENT-DESCRIPTORS: the call closes r_fd and w_fd only when the event's descriptor is r_fd; v1 custody tracks neither");
     ensures normal resource_borrowed(loop);
-    ensures normal resource_borrowed(r_fd);
-    ensures normal resource_borrowed(w_fd);
     ensures normal resource_borrowed(data);
+    ensures normal resource_kind(r_fd, descriptor);
+    ensures normal resource_kind(w_fd, descriptor);
+    ensures normal resource_released(r_fd, valid) when #data: mk_event.fd == #r_fd;
+    ensures normal resource_released(w_fd, valid) when #data: mk_event.fd == #r_fd;
+    quant live #loop: #holds(data) |-> #absent when #data: mk_event.fd == #r_fd;
     ensures normal resource_return_none();
 };
 
