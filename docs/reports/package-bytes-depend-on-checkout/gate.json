@@ -1,0 +1,645 @@
+{
+ "schema": "quirin-gate-scope/1",
+ "source": "git diff",
+ "base": "c82895503349a5b28f4ff86fe8c1bd4b5ce3bc3c",
+ "head": "1703471064179b36767046bc8bb7389184b3280c",
+ "committed": [
+  ".github/workflows/ci.yml",
+  "docs/agents/validation.md",
+  "docs/reports/package-bytes-depend-on-checkout/README.md",
+  "docs/reports/package-bytes-depend-on-checkout/digest_diff.py",
+  "docs/reports/package-bytes-depend-on-checkout/evidence/negative-control.diff",
+  "docs/reports/package-bytes-depend-on-checkout/evidence/negative-control.txt",
+  "docs/reports/package-bytes-depend-on-checkout/evidence/package-digests.txt",
+  "docs/reports/package-bytes-depend-on-checkout/evidence/reproduce-final.txt",
+  "docs/reports/package-bytes-depend-on-checkout/evidence/reproduce-tip.txt",
+  "docs/reports/package-bytes-depend-on-checkout/integration-amendments.json",
+  "providers/README.md",
+  "providers/package.py",
+  "scripts/tests/test_package_reproducible.py",
+  "scripts/tests/test_tracked_files.py"
+ ],
+ "uncommitted": [],
+ "scope": {
+  "paths": [
+   ".github/workflows/ci.yml",
+   "docs/agents/validation.md",
+   "docs/reports/package-bytes-depend-on-checkout/README.md",
+   "docs/reports/package-bytes-depend-on-checkout/digest_diff.py",
+   "docs/reports/package-bytes-depend-on-checkout/evidence/negative-control.diff",
+   "docs/reports/package-bytes-depend-on-checkout/evidence/negative-control.txt",
+   "docs/reports/package-bytes-depend-on-checkout/evidence/package-digests.txt",
+   "docs/reports/package-bytes-depend-on-checkout/evidence/reproduce-final.txt",
+   "docs/reports/package-bytes-depend-on-checkout/evidence/reproduce-tip.txt",
+   "docs/reports/package-bytes-depend-on-checkout/integration-amendments.json",
+   "providers/README.md",
+   "providers/package.py",
+   "scripts/tests/test_package_reproducible.py",
+   "scripts/tests/test_tracked_files.py"
+  ],
+  "attribution": {
+   ".github/workflows/ci.yml": [
+    "class prose"
+   ],
+   "docs/agents/validation.md": [
+    "class prose"
+   ],
+   "docs/reports/package-bytes-depend-on-checkout/README.md": [
+    "class prose"
+   ],
+   "docs/reports/package-bytes-depend-on-checkout/digest_diff.py": [
+    "class prose"
+   ],
+   "docs/reports/package-bytes-depend-on-checkout/evidence/negative-control.diff": [
+    "class prose"
+   ],
+   "docs/reports/package-bytes-depend-on-checkout/evidence/negative-control.txt": [
+    "class prose"
+   ],
+   "docs/reports/package-bytes-depend-on-checkout/evidence/package-digests.txt": [
+    "class prose"
+   ],
+   "docs/reports/package-bytes-depend-on-checkout/evidence/reproduce-final.txt": [
+    "class prose"
+   ],
+   "docs/reports/package-bytes-depend-on-checkout/evidence/reproduce-tip.txt": [
+    "class prose"
+   ],
+   "docs/reports/package-bytes-depend-on-checkout/integration-amendments.json": [
+    "class prose"
+   ],
+   "providers/README.md": [
+    "read by qcore-audit (runtime, crates/qcore-audit/src/pin_window.rs:60)",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/current_cli.rs:138)",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/dependency_graph.rs:92)",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/provider_selection.rs:620)",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/rule_switch_entry_points.rs:276)",
+    "read by qcore-contract (runtime, crates/qcore-contract/tests/bounds_contract.rs:159)",
+    "read by qcore-contract (runtime, crates/qcore-contract/tests/event_loop_clauses.rs:211)",
+    "read by qcore-contract (runtime, crates/qcore-contract/tests/production_symbolic_adoption.rs:389)",
+    "read by qcore-compiler (runtime, compiler/tests/contract_inherit_qcore_provider.rs:437)",
+    "read by qcore-compiler (runtime, compiler/tests/monkey_profile.rs:41)",
+    "read by qcore-compiler (runtime, compiler/tests/profile_loader.rs:65)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:254)",
+    "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/src/sides.rs:512)",
+    "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/tests/units.rs:298)",
+    "read by qcore-provider-conformance (runtime, providers/conformance/tests/composed_five_providers.rs:132)",
+    "read by qcore-provider-conformance (runtime, providers/conformance/tests/packages.rs:373)",
+    "class providers"
+   ],
+   "providers/package.py": [
+    "read by qcore-provider-conformance (runtime, providers/conformance/tests/cmetrics_unit.rs:22)",
+    "read by qcore-audit (runtime, crates/qcore-audit/src/pin_window.rs:60)",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/current_cli.rs:138)",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/dependency_graph.rs:92)",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/provider_selection.rs:620)",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/rule_switch_entry_points.rs:276)",
+    "read by qcore-contract (runtime, crates/qcore-contract/tests/bounds_contract.rs:159)",
+    "read by qcore-contract (runtime, crates/qcore-contract/tests/event_loop_clauses.rs:211)",
+    "read by qcore-contract (runtime, crates/qcore-contract/tests/production_symbolic_adoption.rs:389)",
+    "read by qcore-compiler (runtime, compiler/tests/contract_inherit_qcore_provider.rs:437)",
+    "read by qcore-compiler (runtime, compiler/tests/monkey_profile.rs:41)",
+    "read by qcore-compiler (runtime, compiler/tests/profile_loader.rs:65)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:254)",
+    "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/src/sides.rs:512)",
+    "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/tests/units.rs:298)",
+    "read by qcore-provider-conformance (runtime, providers/conformance/tests/composed_five_providers.rs:132)",
+    "read by qcore-provider-conformance (runtime, providers/conformance/tests/packages.rs:373)",
+    "class python"
+   ],
+   "scripts/tests/test_package_reproducible.py": [
+    "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/tests/support/mod.rs:197)",
+    "class python"
+   ],
+   "scripts/tests/test_tracked_files.py": [
+    "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/tests/support/mod.rs:197)",
+    "class python"
+   ]
+  },
+  "affected": {
+   "qcore-audit": [
+    "names providers in a string literal: providers/README.md (crates/qcore-audit/src/pin_window.rs:60)",
+    "names providers in a string literal: providers/README.md (crates/qcore-audit/tests/current_cli.rs:138)",
+    "names providers in a string literal: providers/README.md (crates/qcore-audit/tests/dependency_graph.rs:92)",
+    "names providers in a string literal: providers/README.md (crates/qcore-audit/tests/provider_selection.rs:620)",
+    "names providers in a string literal: providers/README.md (crates/qcore-audit/tests/rule_switch_entry_points.rs:276)",
+    "names providers in a string literal: providers/package.py (crates/qcore-audit/src/pin_window.rs:60)",
+    "names providers in a string literal: providers/package.py (crates/qcore-audit/tests/current_cli.rs:138)",
+    "names providers in a string literal: providers/package.py (crates/qcore-audit/tests/dependency_graph.rs:92)",
+    "names providers in a string literal: providers/package.py (crates/qcore-audit/tests/provider_selection.rs:620)",
+    "names providers in a string literal: providers/package.py (crates/qcore-audit/tests/rule_switch_entry_points.rs:276)"
+   ],
+   "qcore-c-gateway": [
+    "depends on qcore-contract"
+   ],
+   "qcore-compiler": [
+    "names providers in a string literal: providers/README.md (compiler/tests/contract_inherit_qcore_provider.rs:437)",
+    "names providers in a string literal: providers/README.md (compiler/tests/monkey_profile.rs:41)",
+    "names providers in a string literal: providers/README.md (compiler/tests/profile_loader.rs:65)",
+    "names providers in a string literal: providers/README.md (compiler/tests/workspace_layering.rs:254)",
+    "names providers in a string literal: providers/package.py (compiler/tests/contract_inherit_qcore_provider.rs:437)",
+    "names providers in a string literal: providers/package.py (compiler/tests/monkey_profile.rs:41)",
+    "names providers in a string literal: providers/package.py (compiler/tests/profile_loader.rs:65)",
+    "names providers in a string literal: providers/package.py (compiler/tests/workspace_layering.rs:254)"
+   ],
+   "qcore-contract": [
+    "names providers in a string literal: providers/README.md (crates/qcore-contract/tests/bounds_contract.rs:159)",
+    "names providers in a string literal: providers/README.md (crates/qcore-contract/tests/event_loop_clauses.rs:211)",
+    "names providers in a string literal: providers/README.md (crates/qcore-contract/tests/production_symbolic_adoption.rs:389)",
+    "names providers in a string literal: providers/package.py (crates/qcore-contract/tests/bounds_contract.rs:159)",
+    "names providers in a string literal: providers/package.py (crates/qcore-contract/tests/event_loop_clauses.rs:211)",
+    "names providers in a string literal: providers/package.py (crates/qcore-contract/tests/production_symbolic_adoption.rs:389)"
+   ],
+   "qcore-provider-conformance": [
+    "names providers in a string literal: providers/README.md (providers/conformance/tests/composed_five_providers.rs:132)",
+    "names providers in a string literal: providers/README.md (providers/conformance/tests/packages.rs:373)",
+    "names providers/package.py in a string literal: providers/package.py (providers/conformance/tests/cmetrics_unit.rs:22)",
+    "names providers in a string literal: providers/package.py (providers/conformance/tests/composed_five_providers.rs:132)",
+    "names providers in a string literal: providers/package.py (providers/conformance/tests/packages.rs:373)"
+   ],
+   "qcore-verification": [
+    "depends on qcore-contract"
+   ],
+   "qcorec": [
+    "depends on qcore-compiler"
+   ],
+   "quirin-audit-plugin-measure": [
+    "names providers in a string literal: providers/README.md (crates/quirin-audit-plugin-measure/src/sides.rs:512)",
+    "names providers in a string literal: providers/README.md (crates/quirin-audit-plugin-measure/tests/units.rs:298)",
+    "names providers in a string literal: providers/package.py (crates/quirin-audit-plugin-measure/src/sides.rs:512)",
+    "names providers in a string literal: providers/package.py (crates/quirin-audit-plugin-measure/tests/units.rs:298)",
+    "names scripts in a string literal: scripts/tests/test_package_reproducible.py (crates/quirin-audit-plugin-measure/tests/support/mod.rs:197)",
+    "names scripts in a string literal: scripts/tests/test_tracked_files.py (crates/quirin-audit-plugin-measure/tests/support/mod.rs:197)"
+   ],
+   "quirin-source-analysis": [
+    "depends on qcore-contract"
+   ]
+  },
+  "mode": "full",
+  "full_reasons": [
+   "the diff reaches qcore-contract"
+  ],
+  "rust_packages": [
+   "qcore-audit",
+   "qcore-c-gateway",
+   "qcore-compiler",
+   "qcore-contract",
+   "qcore-core",
+   "qcore-frontend",
+   "qcore-gateway-rule-api",
+   "qcore-schemas",
+   "qcore-verification",
+   "qcore-verifier-host",
+   "qcorec",
+   "quirin-audit-plugin",
+   "quirin-audit-plugin-libevent",
+   "quirin-audit-plugin-measure",
+   "quirin-source-analysis",
+   "rule-33-removed-selection",
+   "rule-34-element-destroyer",
+   "rule-35-literal-decay",
+   "rule-36-exact-formal-return",
+   "rule-37-result-constructors"
+  ],
+  "probes": true,
+  "lean": {
+   "mode": "none",
+   "reasons": [],
+   "modules": [],
+   "audits": []
+  },
+  "python_reasons": [
+   "docs/reports/package-bytes-depend-on-checkout/digest_diff.py: Python",
+   "providers/package.py: Python",
+   "scripts/tests/test_package_reproducible.py: Python",
+   "scripts/tests/test_tracked_files.py: Python"
+  ],
+  "provider_gate": true,
+  "provider_reasons": [
+   "providers/README.md: providers/ changed",
+   "providers/package.py: providers/ changed"
+  ],
+  "provider_members_reached_without_providers_change": [],
+  "unresolved_includes": [
+   {
+    "crate": "qcore-compiler",
+    "source": "compiler/tests/ct_corpus.rs:8069",
+    "literal": "include_str!(\\\"fixtures/ct/{id}/case.qr\\\")\");",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   }
+  ]
+ },
+ "planned_steps": [
+  {
+   "name": "submodules",
+   "argv": [
+    "git",
+    "-C",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a31053f59d6078bd7",
+    "submodule",
+    "status",
+    "--recursive"
+   ],
+   "slot": null
+  },
+  {
+   "name": "fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "slot": null
+  },
+  {
+   "name": "clippy",
+   "argv": [
+    "cargo",
+    "clippy",
+    "--all-targets",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "slot": null
+  },
+  {
+   "name": "rust-suite",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a31053f59d6078bd7/scripts/run_test_binaries.py",
+    "--log-dir",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a31053f59d6078bd7/private/gate/rust-suite"
+   ],
+   "slot": "rust-suite"
+  },
+  {
+   "name": "probe-reevaluation_probe",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a31053f59d6078bd7/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_probe"
+   ],
+   "slot": null
+  },
+  {
+   "name": "probe-reevaluation_followup",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a31053f59d6078bd7/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_followup"
+   ],
+   "slot": null
+  },
+  {
+   "name": "python",
+   "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+   ],
+   "slot": null
+  },
+  {
+   "name": "provider-package-build",
+   "argv": [
+    "/usr/bin/python3",
+    "providers/package.py",
+    "build",
+    "--output",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a31053f59d6078bd7/private/gate/provider-packages"
+   ],
+   "slot": null
+  },
+  {
+   "name": "provider-package-verify-all",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a31053f59d6078bd7/scripts/gate_scope.py",
+    "--verify-packages",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a31053f59d6078bd7/private/gate/provider-packages"
+   ],
+   "slot": null
+  },
+  {
+   "name": "provider-package-verify",
+   "argv": [
+    "/usr/bin/python3",
+    "providers/package.py",
+    "verify",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a31053f59d6078bd7/private/gate/provider-packages/qcore.libevent"
+   ],
+   "slot": null
+  },
+  {
+   "name": "provider-test",
+   "argv": [
+    "cargo",
+    "test",
+    "--manifest-path",
+    "providers/Cargo.toml",
+    "--workspace",
+    "--locked",
+    "--offline"
+   ],
+   "slot": "rust-suite"
+  },
+  {
+   "name": "provider-fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--manifest-path",
+    "providers/Cargo.toml",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "slot": null
+  },
+  {
+   "name": "provider-clippy",
+   "argv": [
+    "cargo",
+    "clippy",
+    "--manifest-path",
+    "providers/Cargo.toml",
+    "--workspace",
+    "--all-targets",
+    "--locked",
+    "--offline",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "slot": null
+  }
+ ],
+ "slots": true,
+ "started": "20261031T231006Z",
+ "ran": true,
+ "steps": [
+  {
+   "name": "submodules",
+   "argv": [
+    "git",
+    "-C",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a31053f59d6078bd7",
+    "submodule",
+    "status",
+    "--recursive"
+   ],
+   "exit": 0,
+   "seconds": 0.2,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a31053f59d6078bd7/private/gate/submodules.log",
+   "counts": {
+    "submodules": 1,
+    "not_checked_out_or_moved": []
+   }
+  },
+  {
+   "name": "fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "exit": 0,
+   "seconds": 21.2,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a31053f59d6078bd7/private/gate/fmt.log",
+   "counts": {}
+  },
+  {
+   "name": "clippy",
+   "argv": [
+    "cargo",
+    "clippy",
+    "--all-targets",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "exit": 0,
+   "seconds": 12.7,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a31053f59d6078bd7/private/gate/clippy.log",
+   "counts": {}
+  },
+  {
+   "name": "rust-suite",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a31053f59d6078bd7/scripts/gate_slot.py",
+    "rust-suite",
+    "--receipt",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a31053f59d6078bd7/private/gate/slots/rust-suite.json",
+    "--",
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a31053f59d6078bd7/scripts/run_test_binaries.py",
+    "--log-dir",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a31053f59d6078bd7/private/gate/rust-suite"
+   ],
+   "exit": 0,
+   "seconds": 1896.1,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a31053f59d6078bd7/private/gate/rust-suite.log",
+   "counts": {
+    "units": 585,
+    "passed": 8951,
+    "failed": 0,
+    "ignored": 15,
+    "measured": 0,
+    "filtered": 69,
+    "summaries": 618,
+    "packages": null,
+    "summary": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a31053f59d6078bd7/private/gate/rust-suite/summary.json",
+    "ok": true
+   },
+   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a31053f59d6078bd7/private/gate/slots/rust-suite.json"
+  },
+  {
+   "name": "probe-reevaluation_probe",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a31053f59d6078bd7/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_probe"
+   ],
+   "exit": 0,
+   "seconds": 0.2,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a31053f59d6078bd7/private/gate/probe-reevaluation_probe.log",
+   "counts": {}
+  },
+  {
+   "name": "probe-reevaluation_followup",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a31053f59d6078bd7/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_followup"
+   ],
+   "exit": 0,
+   "seconds": 0.5,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a31053f59d6078bd7/private/gate/probe-reevaluation_followup.log",
+   "counts": {}
+  },
+  {
+   "name": "python",
+   "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+   ],
+   "exit": 0,
+   "seconds": 56.6,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a31053f59d6078bd7/private/gate/python.log",
+   "counts": {
+    "tests": 577,
+    "skipped": 0,
+    "ok": true
+   }
+  },
+  {
+   "name": "provider-package-build",
+   "argv": [
+    "/usr/bin/python3",
+    "providers/package.py",
+    "build",
+    "--output",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a31053f59d6078bd7/private/gate/provider-packages"
+   ],
+   "exit": 0,
+   "seconds": 165.6,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a31053f59d6078bd7/private/gate/provider-package-build.log",
+   "counts": {}
+  },
+  {
+   "name": "provider-package-verify-all",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a31053f59d6078bd7/scripts/gate_scope.py",
+    "--verify-packages",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a31053f59d6078bd7/private/gate/provider-packages"
+   ],
+   "exit": 0,
+   "seconds": 1.3,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a31053f59d6078bd7/private/gate/provider-package-verify-all.log",
+   "counts": {}
+  },
+  {
+   "name": "provider-package-verify",
+   "argv": [
+    "/usr/bin/python3",
+    "providers/package.py",
+    "verify",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a31053f59d6078bd7/private/gate/provider-packages/qcore.libevent"
+   ],
+   "exit": 0,
+   "seconds": 0.2,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a31053f59d6078bd7/private/gate/provider-package-verify.log",
+   "counts": {}
+  },
+  {
+   "name": "provider-test",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a31053f59d6078bd7/scripts/gate_slot.py",
+    "rust-suite",
+    "--receipt",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a31053f59d6078bd7/private/gate/slots/provider-test.json",
+    "--",
+    "cargo",
+    "test",
+    "--manifest-path",
+    "providers/Cargo.toml",
+    "--workspace",
+    "--locked",
+    "--offline"
+   ],
+   "exit": 0,
+   "seconds": 2153.2,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a31053f59d6078bd7/private/gate/provider-test.log",
+   "counts": {
+    "summaries": 43,
+    "passed": 133,
+    "failed": 0,
+    "ignored": 1,
+    "measured": 0,
+    "filtered": 0
+   },
+   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a31053f59d6078bd7/private/gate/slots/provider-test.json"
+  },
+  {
+   "name": "provider-fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--manifest-path",
+    "providers/Cargo.toml",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "exit": 0,
+   "seconds": 4.9,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a31053f59d6078bd7/private/gate/provider-fmt.log",
+   "counts": {}
+  },
+  {
+   "name": "provider-clippy",
+   "argv": [
+    "cargo",
+    "clippy",
+    "--manifest-path",
+    "providers/Cargo.toml",
+    "--workspace",
+    "--all-targets",
+    "--locked",
+    "--offline",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "exit": 0,
+   "seconds": 1.4,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a31053f59d6078bd7/private/gate/provider-clippy.log",
+   "counts": {}
+  }
+ ],
+ "ok": true,
+ "finished": "20261101T002201Z"
+}

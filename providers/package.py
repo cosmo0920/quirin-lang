@@ -7,12 +7,14 @@ import importlib.util
 import io
 import json
 import os
+import posixpath
 import re
 from pathlib import Path, PurePosixPath
 import shutil
 import subprocess
 import sys
 import tarfile
+import tomllib
 
 ROOT = Path(__file__).resolve().parent
 REPO = ROOT.parent
@@ -438,20 +440,271 @@ def archive(package, output):
             zipped.write(buffer.getvalue())
 
 
-def build(output, target):
+# Card PACKAGE-BYTES-DEPEND-ON-CHECKOUT. The release build runs in a staged
+# copy of the provider workspace, so a package's bytes do not depend on where
+# the repository, CARGO_HOME, the target directory or the toolchain lie.
+#
+# Cargo's unit hash (`-C metadata`, which rustc turns into every crate's symbol
+# disambiguator) hashes a path package by its path relative to the workspace
+# root, or by its absolute path when it lies outside that root. The provider
+# workspace's root is `providers/`, and its path dependencies `qcore-schemas`
+# (and, for `conformance`, the analysis crates) lie in `../crates`, so their
+# hashes, and the symbols and code layout of every executable linking them,
+# took the checkout's absolute path. The stage puts the workspace root one level
+# up: `<stage>/Cargo.toml` is `providers/Cargo.toml` with its members and path
+# dependencies rebased under `providers/`, beside a copy of `providers/Cargo.lock`
+# and of every path package's directory at its repository-relative path, so
+# every path package lies inside the root. Then every remaining absolute path a
+# build embeds is remapped to a constant: the stage (to `/qcore`, so source
+# paths read `/qcore/providers/...` and `/qcore/crates/...` as before), the
+# target directory, CARGO_HOME (registry sources) and the toolchain's `rust-src`
+# (to rustc's own `/rustc/<commit-hash>`, the path a toolchain without
+# `rust-src` embeds). `build` refuses an executable that still contains any of
+# those paths, the repository's or the home directory, and `reproduce` builds a
+# second time from another checkout path with another CARGO_HOME and compares
+# the outputs byte for byte.
+STAGE_DIRECTORY = "qcore-package-source"
+STAGE_MEMBERS = "providers"
+SOURCE_PREFIX = "/qcore"
+TARGET_PREFIX = "/target"
+CARGO_HOME_PREFIX = "/cargo"
+WORKSPACE_KEYS = {"members", "resolver", "dependencies", "exclude"}
+MANIFEST_KEYS = {"workspace", "profile"}
+CRATES_IO = "registry+https://github.com/rust-lang/crates.io-index"
+
+
+def cargo_home(env):
+    """CARGO_HOME as cargo resolves it: the variable, else `~/.cargo`."""
+    value = env.get("CARGO_HOME")
+    return Path(os.path.abspath(value)) if value else Path.home() / ".cargo"
+
+
+def rustc_identity(env):
+    rustc = env.get("RUSTC", "rustc")
+    version = subprocess.check_output([rustc, "-vV"], text=True, env=env)
+    fields = dict(line.split(": ", 1) for line in version.splitlines() if ": " in line)
+    sysroot = Path(subprocess.check_output([rustc, "--print", "sysroot"], text=True,
+                                           env=env).strip())
+    commit = fields.get("commit-hash", "")
+    if not re.fullmatch(r"[0-9a-f]{40}", commit):
+        raise ValueError(f"rustc reports no commit hash to remap rust-src to: {commit!r}")
+    return version, sysroot, commit
+
+
+def relative_posix(path, root, what):
+    try:
+        relative = Path(path).relative_to(root)
+    except ValueError:
+        raise ValueError(f"{what} lies outside the repository: {path}") from None
+    if not relative.parts:
+        raise ValueError(f"{what} is the repository root itself: {path}")
+    return relative.as_posix()
+
+
+def workspace_path_packages(repo, env):
+    """The provider workspace's members and other path packages, as
+    repository-relative directories. A git or non-crates.io source is
+    refused: the stage and `reproduce` only know path and registry packages."""
+    metadata = json.loads(subprocess.check_output(
+        ["cargo", "metadata", "--format-version", "1", "--locked", "--offline",
+         "--manifest-path", str(repo / "providers" / "Cargo.toml")], env=env))
+    members = set(metadata["workspace_members"])
+    member_roots, other_roots = [], []
+    for package in metadata["packages"]:
+        source = package["source"]
+        if source is not None:
+            if source != CRATES_IO:
+                raise ValueError(f"package {package['name']} has an unsupported source {source}")
+            continue
+        root = relative_posix(Path(package["manifest_path"]).parent, repo,
+                              f"path package {package['name']}")
+        (member_roots if package["id"] in members else other_roots).append(root)
+    return sorted(member_roots), sorted(other_roots)
+
+
+def rebase(path, what):
+    rebased = posixpath.normpath(posixpath.join(STAGE_MEMBERS, path))
+    if posixpath.isabs(path) or rebased == ".." or rebased.startswith("../"):
+        raise ValueError(f"{what} path {path!r} leaves the repository")
+    return rebased
+
+
+def staged_manifest(manifest, excluded):
+    """`providers/Cargo.toml` rebased for a workspace root one level up.
+
+    Members and path dependencies get the `providers/` prefix; every path
+    package that is not a member is excluded, so it stays a dependency rather
+    than an automatic member. A key this function does not know is refused,
+    never copied unrebased."""
+    unknown = set(manifest) - MANIFEST_KEYS
+    workspace = manifest.get("workspace")
+    if unknown or not isinstance(workspace, dict) or set(workspace) - WORKSPACE_KEYS:
+        raise ValueError(f"provider manifest has keys the stage cannot rebase: "
+                         f"{sorted(unknown | set(workspace or {}) - WORKSPACE_KEYS)}")
+    staged = {}
+    for member in workspace["members"]:
+        if any(char in member for char in "*?[") or member != posixpath.normpath(member):
+            raise ValueError(f"provider workspace member {member!r} is not a plain path")
+    staged["members"] = [rebase(member, "member") for member in workspace["members"]]
+    staged["exclude"] = sorted(set(excluded) | {rebase(path, "exclude")
+                                                 for path in workspace.get("exclude", [])})
+    if "resolver" in workspace:
+        staged["resolver"] = workspace["resolver"]
+    dependencies = {}
+    for name, spec in workspace.get("dependencies", {}).items():
+        if isinstance(spec, dict) and "path" in spec:
+            spec = dict(spec, path=rebase(spec["path"], f"dependency {name}"))
+        dependencies[name] = spec
+    if dependencies:
+        staged["dependencies"] = dependencies
+    result = {"workspace": staged}
+    if "profile" in manifest:
+        result["profile"] = manifest["profile"]
+    return result
+
+
+def toml_key(key):
+    return key if re.fullmatch(r"[A-Za-z0-9_-]+", key) else json.dumps(key)
+
+
+def toml_value(value):
+    if isinstance(value, bool):
+        return "true" if value else "false"
+    if isinstance(value, int):
+        return str(value)
+    if isinstance(value, str):
+        return json.dumps(value)
+    if isinstance(value, list):
+        return "[" + ", ".join(toml_value(item) for item in value) + "]"
+    if isinstance(value, dict):
+        return "{ " + ", ".join(f"{toml_key(key)} = {toml_value(item)}"
+                                for key, item in value.items()) + " }"
+    raise ValueError(f"cannot write {type(value).__name__} value to the staged manifest")
+
+
+def toml_document(data):
+    """Write `data` as TOML; `stage` checks the result parses back to it."""
+    lines = []
+
+    def table(path, values):
+        scalars = {key: item for key, item in values.items() if not isinstance(item, dict)}
+        if scalars or not values:
+            if path:
+                lines.append(f"[{'.'.join(toml_key(key) for key in path)}]")
+            lines.extend(f"{toml_key(key)} = {toml_value(item)}" for key, item in scalars.items())
+            lines.append("")
+        for key, item in values.items():
+            if isinstance(item, dict):
+                table(path + [key], item)
+
+    table([], data)
+    return "\n".join(lines)
+
+
+def sync_tree(files, stage):
+    """Make `stage` hold exactly `files` (relative path -> source path or bytes).
+
+    A file whose bytes are unchanged keeps its modification time, so a reused
+    target directory rebuilds only what changed."""
+    for relative, source in files.items():
+        destination = stage / relative
+        data = source if isinstance(source, bytes) else source.read_bytes()
+        if destination.is_symlink() or destination.is_dir():
+            raise ValueError(f"stage entry is not a regular file: {destination}")
+        if not destination.exists() or destination.read_bytes() != data:
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            destination.write_bytes(data)
+    for directory, names, entries in os.walk(stage, topdown=False):
+        directory = Path(directory)
+        for name in entries:
+            path = directory / name
+            if path.relative_to(stage).as_posix() not in files:
+                path.unlink()
+        if directory != stage and not any(directory.iterdir()):
+            directory.rmdir()
+
+
+def package_files(repo, roots, skip):
+    """Every file under each package root, skipping `target` directories and
+    the paths in `skip` (the target directory, which may lie inside)."""
+    files = {}
+    for root in roots:
+        for directory, names, entries in os.walk(repo / root):
+            directory = Path(directory)
+            names[:] = sorted(name for name in names if name != "target"
+                              and (directory / name).resolve() not in skip)
+            for name in entries:
+                path = directory / name
+                files[path.relative_to(repo).as_posix()] = path
+    return files
+
+
+def stage(repo, target, env):
+    """Write the staged workspace under `target` and return its root."""
+    member_roots, other_roots = workspace_path_packages(repo, env)
+    manifest = tomllib.loads((repo / "providers" / "Cargo.toml").read_text())
+    staged = staged_manifest(manifest, other_roots)
+    if sorted(staged["workspace"]["members"]) != member_roots:
+        raise ValueError("staged members differ from the provider workspace's members")
+    text = toml_document(staged)
+    if tomllib.loads(text) != staged:
+        raise ValueError("staged manifest does not parse back to its rebased content")
+    root = target / STAGE_DIRECTORY
+    root.mkdir(parents=True, exist_ok=True)
+    files = package_files(repo, member_roots + other_roots, {target.resolve()})
+    files["Cargo.toml"] = text.encode()
+    files["Cargo.lock"] = repo / "providers" / "Cargo.lock"
+    sync_tree(files, root)
+    return root
+
+
+def remap_flags(stage_root, target, home, sysroot, commit):
+    """`--remap-path-prefix` flags; rustc applies the last one that matches,
+    so the more specific prefixes come later."""
+    pairs = [(sysroot / "lib" / "rustlib" / "src" / "rust", f"/rustc/{commit}"),
+             (home, CARGO_HOME_PREFIX), (target, TARGET_PREFIX), (stage_root, SOURCE_PREFIX)]
+    return [f"--remap-path-prefix={source}={replacement}" for source, replacement in pairs]
+
+
+def embedded_paths(executable_bytes, paths):
+    """The given absolute paths that occur in the executable's bytes."""
+    found = []
+    for path in paths:
+        text = str(path)
+        if len(Path(text).parts) > 1 and text.encode() in executable_bytes:
+            found.append(text)
+    return sorted(set(found))
+
+
+def build(output, target, checks=True):
     if output.exists():
         raise ValueError(f"output already exists: {output}")
     env = os.environ.copy()
     env.update(CARGO_INCREMENTAL="0", SOURCE_DATE_EPOCH="0")
     # Prevent ambient build flags from changing a supposedly identical package.
     env.pop("RUSTFLAGS", None)
-    env["CARGO_ENCODED_RUSTFLAGS"] = f"--remap-path-prefix={REPO}=/qcore"
-    subprocess.run([sys.executable, str(ROOT / "contracts.py"), "check"], check=True)
-    command = ["cargo", "build", "--manifest-path", str(ROOT / "Cargo.toml"),
+    if checks:
+        subprocess.run([sys.executable, str(ROOT / "contracts.py"), "check"], check=True)
+    version, sysroot, commit = rustc_identity(env)
+    home = cargo_home(env)
+    stage_root = stage(REPO, target, env)
+    env["CARGO_ENCODED_RUSTFLAGS"] = "\x1f".join(
+        remap_flags(stage_root, target, home, sysroot, commit))
+    command = ["cargo", "build", "--manifest-path", str(stage_root / "Cargo.toml"),
                "--locked", "--offline", "--release", "--target-dir", str(target), "-j", "2"]
     for template in templates():
         command += ["-p", template.parent.name]
     subprocess.run(command, check=True, env=env)
+    if (stage_root / "Cargo.lock").read_bytes() != (ROOT / "Cargo.lock").read_bytes():
+        raise ValueError("the staged build changed its copy of providers/Cargo.lock")
+    forbidden = [REPO, stage_root, target, home, sysroot, Path.home()]
+    forbidden += [path.resolve() for path in forbidden]
+    for template in templates():
+        executable = target / "release" / template.parent.name
+        leaked = embedded_paths(executable.read_bytes(), forbidden)
+        if leaked:
+            raise ValueError(f"{executable} embeds build-host paths {leaked}: its bytes "
+                             "would depend on the checkout")
     output.mkdir(parents=True)
     artifacts = []
     for template in templates():
@@ -466,7 +719,8 @@ def build(output, target):
         install_includes(package, json.loads((template.parent / "contracts.json").read_text()))
         manifest["package_digest"] = digest(package / "provider")
         (package / "verifier-plugin.json").write_text(json.dumps(manifest, indent=2) + "\n")
-        verify(package)
+        if checks:
+            verify(package)
         archive_path = output / (package.name + ".tar.gz")
         archive(package, archive_path)
         artifacts.append({"plugin_id": manifest["plugin_id"],
@@ -476,10 +730,126 @@ def build(output, target):
                           "archive_sha256": digest(archive_path)})
     record = {"schema_version": 1, "protocol_version": 1, "evidence_versions": [1, 2],
               "semantic_profile": "per_package_declared_profiles", "artifacts": artifacts,
-              "rustc": subprocess.check_output(["rustc", "-vV"], text=True),
+              "rustc": version,
               "lock_sha256": digest(ROOT / "Cargo.lock")}
     (output / "packages.json").write_text(json.dumps(record, indent=2) + "\n")
     print(json.dumps(record, indent=2))
+
+
+# The second build of `reproduce` copies the checkout's files except these
+# top-level directories: `docs/` (1.4 GB of reports; no build reads it) and the
+# submodule, which the provider build does not read either. Whatever else the
+# second build would need and lacks fails it, never passes it.
+REPRODUCE_SKIPPED = ("docs/", "third_party/")
+
+
+def checkout_files(repo):
+    """The checkout's tracked and untracked, not ignored, regular files."""
+    listed = subprocess.run(
+        ["git", "-C", str(repo), "ls-files", "-z", "--cached", "--others", "--exclude-standard"],
+        check=True, capture_output=True).stdout.decode().split("\0")
+    files = {}
+    for name in sorted(set(filter(None, listed))):
+        path = repo / name
+        if name.startswith(REPRODUCE_SKIPPED) or path.is_symlink() or not path.is_file():
+            continue
+        files[name] = path
+    return files
+
+
+def link_or_copy(source, destination):
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        os.link(source, destination)
+    except OSError:
+        shutil.copyfile(source, destination)
+
+
+def index_entry(name):
+    """A crate's path in a registry index (cargo's layout)."""
+    name = name.lower()
+    if len(name) <= 2:
+        return f"{len(name)}/{name}"
+    if len(name) == 3:
+        return f"3/{name[0]}/{name}"
+    return f"{name[:2]}/{name[2:4]}/{name}"
+
+
+def populate_cargo_home(source, destination, lock):
+    """A second CARGO_HOME holding exactly what an offline build of `lock`
+    reads: each registry package's `.crate` file and index entry, and the
+    cargo configuration files. Registry sources are unpacked there anew."""
+    packages = [package for package in tomllib.loads(lock.read_text())["package"]
+                if "source" in package]
+    for package in packages:
+        if package["source"] != CRATES_IO:
+            raise ValueError(f"package {package['name']} has an unsupported source "
+                             f"{package['source']}")
+    copied = 0
+    for name in ("config.toml", "config"):
+        if (source / name).is_file():
+            link_or_copy(source / name, destination / name)
+    for kind in ("cache", "index"):
+        for registry in sorted((source / "registry" / kind).glob("*")):
+            target = destination / "registry" / kind / registry.name
+            if kind == "index" and (registry / "config.json").is_file():
+                link_or_copy(registry / "config.json", target / "config.json")
+            for package in packages:
+                relative = (f"{package['name']}-{package['version']}.crate" if kind == "cache"
+                            else f".cache/{index_entry(package['name'])}")
+                if (registry / relative).is_file():
+                    link_or_copy(registry / relative, target / relative)
+                    copied += 1
+    return copied
+
+
+def tree_bytes(root):
+    return {path.relative_to(root).as_posix(): path.read_bytes()
+            for path in sorted(root.rglob("*")) if path.is_file()}
+
+
+def reproduce(output, target, work):
+    """Build the packages twice and require identical bytes.
+
+    The first build is `build` itself, into `output`. The second runs the
+    `package.py` of a copy of this checkout at another path (under `work`),
+    with another CARGO_HOME (also under `work`) and its own fresh target
+    directory. It skips only the checks, which write nothing: `contracts.py
+    check`, which the first build ran over the same sources, and each
+    package's `verify`, which the first build ran on bytes the second must
+    equal. (Both build root-workspace probes, which a second checkout would
+    rebuild from nothing.) Every file of the two outputs, `packages.json` and
+    the archives included, must be equal. After a match `work` and the first
+    build's stage are removed; after a difference both are kept."""
+    if work.exists():
+        raise ValueError(f"work directory already exists: {work}")
+    build(output, target)
+    checkout = work / "second-checkout"
+    for name, path in checkout_files(REPO).items():
+        destination = checkout / name
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        destination.write_bytes(path.read_bytes())
+    env = os.environ.copy()
+    home = work / "second-cargo-home"
+    populate_cargo_home(cargo_home(env), home, ROOT / "Cargo.lock")
+    env["CARGO_HOME"] = str(home)
+    second = work / "second-packages"
+    subprocess.run([sys.executable, str(checkout / "providers" / "package.py"), "build",
+                    "--output", str(second), "--target-dir", str(work / "second-target"),
+                    "--skip-checks"], check=True, env=env, stdout=subprocess.DEVNULL)
+    first, again = tree_bytes(output), tree_bytes(second)
+    differing = sorted(name for name in set(first) | set(again)
+                       if first.get(name) != again.get(name))
+    if differing:
+        raise ValueError(f"package bytes depend on the checkout: {differing} differ between "
+                         f"{output} and {second} (kept for inspection)")
+    shutil.rmtree(work)
+    # The first build's stage too (38 MB), so the target directory a check run
+    # leaves is the release build alone, as before the stage existed (CI's
+    # provider suite runs beside it); the next build writes the stage anew.
+    shutil.rmtree(target / STAGE_DIRECTORY)
+    print(f"reproduced {len(first)} files byte for byte from a second checkout path and "
+          f"CARGO_HOME", file=sys.stderr)
 
 
 def main():
@@ -488,11 +858,28 @@ def main():
     build_parser = sub.add_parser("build")
     build_parser.add_argument("--output", required=True, type=Path)
     build_parser.add_argument("--target-dir", type=Path, default=ROOT / "target" / "packaging")
+    # `reproduce`'s second build only: no contracts.py check, no verify.
+    build_parser.add_argument("--skip-checks", action="store_true",
+                              help=argparse.SUPPRESS)
+    reproduce_parser = sub.add_parser(
+        "reproduce", help="build, then build again from a second checkout path and "
+        "CARGO_HOME, and require byte-identical outputs")
+    reproduce_parser.add_argument("--output", required=True, type=Path)
+    reproduce_parser.add_argument("--target-dir", type=Path,
+                                  default=ROOT / "target" / "packaging")
+    reproduce_parser.add_argument("--work-dir", type=Path,
+                                  help="the second checkout, CARGO_HOME, target and output "
+                                  "(default: <output>.reproduce)")
     verify_parser = sub.add_parser("verify")
     verify_parser.add_argument("package", type=Path)
     args = parser.parse_args()
     if args.command == "build":
-        build(args.output.resolve(), args.target_dir.resolve())
+        build(args.output.resolve(), args.target_dir.resolve(),
+              checks=not args.skip_checks)
+    elif args.command == "reproduce":
+        output = args.output.resolve()
+        work = (args.work_dir or output.with_name(output.name + ".reproduce")).resolve()
+        reproduce(output, args.target_dir.resolve(), work)
     else:
         print(json.dumps(verify(args.package.resolve()), indent=2))
 

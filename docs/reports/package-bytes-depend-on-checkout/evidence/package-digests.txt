@@ -1,0 +1,55 @@
+evidence_versions: equal
+lock_sha256: equal
+protocol_version: equal
+rustc: equal
+schema_version: equal
+semantic_profile: equal
+
+qcore.chunkio
+  executable_sha256: 2884cde37a3e9d757cf5acac7214f1736c1e486b11fabff848ddf1a3c95b9f0d -> 401df12f7684b7137fdc0ed8fe0c13e4e3461311db86ea2473368de83043eb83
+  manifest_sha256: 773e7ceab35c1d234c2862d839ae976427a808a243a17d4fce07c1f297829dd2 -> 26758de0a756c47f93042ab9603d6475fa2a5de6ce2f1bf2721378a0889480b9
+  contracts_manifest_sha256: 7a9d426f81757f5db91eb7f8c2725d74737eb46499d9d778a9457f4369909554 (equal)
+  archive_sha256: c98d218b74b2754129a69fcd190c1dd3c38fb84eee7d12c593792768fe15f552 -> 01b6f3298af48d2d8e922fca775f2f66689207d3037aa2cf9a4562e6e7ee0ff4
+
+qcore.cmetrics
+  executable_sha256: 79d24c52da3e3faf591f26e7b64e6acd0fb285a565cfc590ba2d9094cdbf56a0 -> 07db6db600a4ccbc8379fab206d16b5b55d8cb5bd5f7cb0768c9c38ced73bb41
+  manifest_sha256: 91c43b52a92304a01ec1e1d4b3c435edd3af846d859329fe337f7673cf4146b9 -> c45757895ae1a8ed779e34bd94adeb8e2436d6caf034700ca49408656d4ab53c
+  contracts_manifest_sha256: c9ad0081f0971277220de05ed4ad037f33310a2b3262f5f5145a0e52de99682f (equal)
+  archive_sha256: 9ac7f5c78d5d99c46376928c27b53d742e9ddeaa00aa7ce3b475ac42fd891bd9 -> 775f1adc8da5013986ebe27d7b7d600f71d53564eb0120fdb12b686933135cdf
+
+qcore.ctraces
+  executable_sha256: 89b611f5c40894bb363ad2439cacf9ed7158aa887ed5cf140fef2d4df01b73da -> 3a994034a209e171c58b909d656a0db17a9bec9923973eaf6e87d4f260cf4cb8
+  manifest_sha256: ecfc8629015d63f7a2da400531e1a682aa5a60dfbe2a9d54402b2c2f3a50ce7b -> 312c9f9b6865b850bade980b9f384fa43994584ba30bc6e0ee21f6729622df8f
+  contracts_manifest_sha256: 586d457d2f6b9c33baaf4071d1234ae7775a0eee760df1a52a9cde866c53fb14 (equal)
+  archive_sha256: 95db5705e2fdc3d27aeeebddadae033689dbfea8ae9848000225b6df497d2916 -> 55fe1f65881bdf3c66b5797e2a6143d546380aa12500a367220789633261db8f
+
+qcore.libevent
+  executable_sha256: 63e9a6237e8ec782717f01f1226e36d5d3eaf60f9b8390fc4f6f9347aa39cac4 -> ad0eaeea65f0f2630bfaa31bb8fc03fa7a2d001f0adddab6a35f0a2d6ff1ddc0
+  manifest_sha256: 2f382f98b374b994f96ef1acc70059124aa8a30505f87d341911c4f0178997ca -> c4581884d503f8dafe6f43858fa3170a3aa87ae1207b3b78837a20e15c8cd55c
+  contracts_manifest_sha256: cccf6f348adde597053a4a3b34e60d012ff03fdf68037947db46f4ace50dce62 (equal)
+  archive_sha256: d9934a057b792eeb0759e9b9dd648b8f958af0c7519e47c7d65619478a5d91fb -> 5936738c66fd6220bc4afcec788286389d0481e2e3bcada8dcbbde35c0acf2e9
+
+qcore.librdkafka
+  executable_sha256: c1a4621cbf878bddb4ca88716a97baaf1f7b3722975ffaeb533321a455731841 -> 530d117e6bebe6b0768b01aeb9f9a6de3b84ea54bf956f24bd01bbc53f5b3605
+  manifest_sha256: c6b1a4fc998e3a1844ede4abf2ff35584bfdaa971e13bb5cd9efa16e8a444d92 -> 4592828017ab4d0441e5d30886b00242c1463dfb14f0e623b2103a15a958575e
+  contracts_manifest_sha256: a77078ee7484c46fa6b40b196e31eb97a010b8fc17d0753db6e8495342697800 (equal)
+  archive_sha256: ed6faa1fb82fcdae3b67445151390d06448b79391e79bd2d9412277d9e66d273 -> f78b8311b7f3e4f1b0ec01c276edf5d21fda3a45bcbf58a7b60573e62d85093f
+
+files: 112 and 112, same names: True
+differing files:
+  packages.json
+  qcore.chunkio.tar.gz
+  qcore.chunkio/provider
+  qcore.chunkio/verifier-plugin.json
+  qcore.cmetrics.tar.gz
+  qcore.cmetrics/provider
+  qcore.cmetrics/verifier-plugin.json
+  qcore.ctraces.tar.gz
+  qcore.ctraces/provider
+  qcore.ctraces/verifier-plugin.json
+  qcore.libevent.tar.gz
+  qcore.libevent/provider
+  qcore.libevent/verifier-plugin.json
+  qcore.librdkafka.tar.gz
+  qcore.librdkafka/provider
+  qcore.librdkafka/verifier-plugin.json

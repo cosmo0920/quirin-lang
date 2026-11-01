@@ -145,9 +145,30 @@ to overwrite an output directory. `--target-dir` selects a fresh build cache
 for reproducibility checks. The output contains five package directories,
 five deterministic `.tar.gz` archives, and `packages.json` with executable,
 manifest and archive SHA-256 values plus the compiler identity and lockfile
-hash. Reproducibility is relative to that recorded source, target, toolchain
-and lockfile; no cross-toolchain or cross-platform byte identity is claimed.
+hash. Reproducibility is relative to that recorded source, toolchain and
+lockfile; no cross-toolchain or cross-platform byte identity is claimed.
 No provider binary is checked into the source tree.
+
+The bytes do not depend on where the checkout, `CARGO_HOME`, the target
+directory or the toolchain lie (card
+[PACKAGE-BYTES-DEPEND-ON-CHECKOUT](../docs/reports/package-bytes-depend-on-checkout/README.md)).
+Cargo hashes a path package by its path relative to the workspace root, or by
+its absolute path when it lies outside, and `qcore-schemas` lies outside
+`providers/`. So the build compiles a staged copy under the target directory,
+`<target>/qcore-package-source/`: its `Cargo.toml` is this workspace's manifest
+with members and path dependencies rebased under `providers/`, beside a copy of
+`Cargo.lock` and of every path package at its repository-relative path. Unchanged
+files keep their modification times, so a reused target rebuilds only what
+changed. The stage, the target directory, `CARGO_HOME` and the toolchain's
+`rust-src` are remapped to `/qcore`, `/target`, `/cargo` and
+`/rustc/<commit-hash>`, and the build refuses an executable that still contains
+any of those paths, the repository's or the home directory.
+`python3 providers/package.py reproduce --output DIR` checks it: it builds into
+`DIR`, builds again by running the `package.py` of a copy of the checkout
+(without `docs/` and the submodule) at another path with another `CARGO_HOME`
+holding only the locked registry files, and fails unless every output file,
+`packages.json` included, is byte-identical; after a match it removes the
+second tree and the first build's stage. CI runs it in place of `build`.
 
 Each package contains `provider`, `verifier-plugin.json`, `contracts.json` and
 the provider-owned `contracts/` tree. Its

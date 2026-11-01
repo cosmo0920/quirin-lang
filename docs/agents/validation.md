@@ -238,7 +238,11 @@ arguments to every cargo command that builds the root workspace's tests:
   checkout (card `CI-RUST-JOB-PEAK`): **10.7 GB** at peak (11.0 GB before it
   shared the probes' and the quota step's units), during the
   provider suite, with the checkout (2.6 GB), both workspaces' targets and the
-  temporary directories counted.
+  temporary directories counted. Its package step runs `package.py
+  reproduce` (card `PACKAGE-BYTES-DEPEND-ON-CHECKOUT`): the second build's
+  copy of the checkout without `docs/`, its `CARGO_HOME`, target and output
+  (0.25 GB) and the first build's 38 MB stage exist only during that step,
+  and the release target the provider suite runs beside is the same 0.11 GB.
 
 The test set, the outcomes and the fail-closed rules are the same in every
 mode; only the bytes on disk differ. The root manifests,

@@ -1,0 +1,16 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "PACKAGE-BYTES-DEPEND-ON-CHECKOUT",
+  "base": "c82895503",
+  "measured_tip": "170347106",
+  "increment_paragraph": "**PACKAGE-BYTES-DEPEND-ON-CHECKOUT** (user decision of 2026-11-01: package bytes independent of the checkout, all five digests moving once; [report](../../reports/package-bytes-depend-on-checkout/README.md)). `providers/package.py build` now compiles a staged workspace, `<target>/qcore-package-source/`, whose root holds every path package: `providers/Cargo.toml` rebased one level up (members and path dependencies under `providers/`, non-member path packages excluded, unknown keys refused), a byte copy of `Cargo.lock` and each path package at its repository-relative path, synced so unchanged files keep their mtime. Cargo's unit hash of `qcore-schemas` and its dependents is therefore taken over a relative path, not the checkout's absolute one. The stage, target, `CARGO_HOME` and `rust-src` are remapped to `/qcore`, `/target`, `/cargo` and `/rustc/<commit-hash>`, and the build refuses an executable still holding a repository, stage, target, `CARGO_HOME`, sysroot or home path. `package.py reproduce` builds, rebuilds by running the `package.py` of a copy of the checkout (without `docs/` and the submodule) at another path with a `CARGO_HOME` holding only the locked registry files, and requires all 112 output files byte-identical; it passed on the tip, failed (16 files) on a negative control that built the unstaged workspace, and replaces `build` in CI's package step, whose extra 0.29 GB is removed before the provider suite, so the 10.69 GB peak is not raised. The symlink and move alternatives were rejected: `conformance`'s analysis crates name `crates/qcore-schemas`, so two path sources would collide in one lockfile. Digests moved once for that one reason (each `verifier-plugin.json` only in `package_digest`; contracts, `rustc`, lock hash equal); nothing in the tree pins a real package digest and the pinned corpus reads the frozen `provider-packages-wave20` mirror, so no lock and no published audit artifact changes. 9 new Python tests; card gate on 170347106 exit 0 (Rust 8,951 / 0 / 15, Python 577, providers 133 / 0 / 1). No analyzer, contract, verdict or Lean change.",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "PACKAGE-BYTES-DEPEND-ON-CHECKOUT",
+      "operation": "retire",
+      "why": "DISCHARGED by PACKAGE-BYTES-DEPEND-ON-CHECKOUT: providers/package.py build compiles a staged workspace whose root holds every path package (so cargo hashes qcore-schemas and its dependents by a relative path) and remaps the stage, target, CARGO_HOME and rust-src to constants, refusing an executable that still embeds a host path; `package.py reproduce` (run by CI) rebuilt all 112 files byte-identically from a second checkout path with a second CARGO_HOME and fails on a negative control; the five package digests moved once, with the reviewed diff in the report.",
+      "source": "docs/reports/package-bytes-depend-on-checkout/README.md"
+    }
+  ]
+}
