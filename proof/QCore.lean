@@ -52,6 +52,7 @@ import QCore.CarriedPublication
 import QCore.CastRepresentation
 import QCore.CastReturnEscape
 import QCore.CastSemantics
+import QCore.CellArraySlots
 import QCore.CertificateScope
 import QCore.CflAtomicEffects
 import QCore.ChainedAccess

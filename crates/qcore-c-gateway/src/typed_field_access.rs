@@ -218,6 +218,13 @@ struct RecordInfo {
     /// Rule 5g's flow-refusing scalar member store keeps its base domain of
     /// records read with every member (see [`scalar_member_store_base`]).
     function_pointer_members: bool,
+    /// Card **MK-EVENT-CELL-ARRAY-SLOTS** (rule 38a): members declared
+    /// `SPECIFIERS name [ N ]` — exactly one dimension, no `*`, no rejecting
+    /// qualifier, `N` a canonical decimal literal, and the specifier list an
+    /// integer type ([`TypedAccessModel::integer_class`]) — mapped to `N`.
+    /// Read only by the element actual of
+    /// `legacy_call_argument_access::element_read`.
+    integer_array_fields: BTreeMap<String, u64>,
 }
 
 /// What one `typedef` declaration of this unit names, as far as this reader is
@@ -259,6 +266,7 @@ struct RecordMembers {
     void_pointer_fields: BTreeSet<String>,
     non_pointer_fields: BTreeSet<String>,
     function_pointer_members: bool,
+    integer_array_fields: BTreeMap<String, u64>,
 }
 
 /// Declaration facts of one preprocessed translation unit.
@@ -869,6 +877,7 @@ impl TypedAccessModel {
                 entry.void_pointer_fields.clear();
                 entry.non_pointer_fields.clear();
                 entry.function_pointer_members = false;
+                entry.integer_array_fields.clear();
                 continue;
             }
             if entry.union_tag {
@@ -890,6 +899,7 @@ impl TypedAccessModel {
                 entry.void_pointer_fields = members.void_pointer_fields;
                 entry.non_pointer_fields = members.non_pointer_fields;
                 entry.function_pointer_members = members.function_pointer_members;
+                entry.integer_array_fields = members.integer_array_fields;
             }
         }
     }
@@ -922,6 +932,7 @@ impl TypedAccessModel {
         let mut void_pointer_fields = BTreeSet::new();
         let mut non_pointer_fields = BTreeSet::new();
         let mut function_pointer_members = false;
+        let mut integer_array_fields = BTreeMap::new();
         for member in body.split(|text| *text == ";") {
             if member.is_empty() {
                 continue;
@@ -935,18 +946,32 @@ impl TypedAccessModel {
             let mut groups = member.split(|text| *text == ",");
             let first = groups.next()?;
             let (specifiers, first_declarator) = split_declarator(first)?;
-            let mut declarators = vec![first_declarator];
+            let mut declarators = vec![(first, first_declarator)];
             for group in groups {
-                declarators.push(read_declarator(group)?);
+                declarators.push((group, read_declarator(group)?));
             }
             let qualified = specifiers
                 .iter()
                 .any(|text| REJECTING_QUALIFIERS.contains(text));
             let scalar_specifiers =
                 self.classify_specifiers(&specifiers, 0) == DeclaredType::Scalar;
-            for declarator in declarators {
+            for (group, declarator) in declarators {
                 let name = declarator.name?;
                 if declarator.array {
+                    // Card MK-EVENT-CELL-ARRAY-SLOTS (rule 38a): a
+                    // one-dimensional integer array of a literal length is
+                    // recorded with that length; it joins no other class.
+                    if declarator.dimensions == 1
+                        && declarator.stars == 0
+                        && !qualified
+                        && self.integer_class(&specifiers).is_some()
+                        && let [.., open, length, close] = group
+                        && *open == "["
+                        && *close == "]"
+                        && let Some(length) = canonical_decimal(length)
+                    {
+                        integer_array_fields.insert(name, length);
+                    }
                     continue;
                 }
                 // O04-B09B10: a member with no `*` is a sub-object of this
@@ -1016,6 +1041,7 @@ impl TypedAccessModel {
             void_pointer_fields,
             non_pointer_fields,
             function_pointer_members,
+            integer_array_fields,
         })
     }
 
@@ -1309,6 +1335,21 @@ impl TypedAccessModel {
         })
     }
 
+    /// Card **MK-EVENT-CELL-ARRAY-SLOTS** (rule 38a): the declared length `N`
+    /// when `tag`'s single complete non-union definition declares `field`
+    /// exactly `INTEGER-TYPE field [ N ]` (one dimension, no `*`, no
+    /// `volatile`/`_Atomic`, `N` a canonical decimal literal). `None` for
+    /// every other member: a pointer, a floating, `_Bool`, enumeration or
+    /// plain `char` element, a multi-dimensional or computed-length array.
+    pub(crate) fn integer_array_length(&self, tag: &str, field: &str) -> Option<u64> {
+        self.records
+            .get(tag)
+            .filter(|record| record.complete && !record.union_tag && record.definitions == 1)?
+            .integer_array_fields
+            .get(field)
+            .copied()
+    }
+
     /// Card **W45-SUB-OBJECT-STORES**: the `struct` tag a specifier list
     /// names, read through this unit's typedefs, including a typedef that
     /// itself defines `struct TAG { … }` (which [`Self::classify_specifiers`]
@@ -1369,6 +1410,17 @@ struct Declarator {
     /// Card **W43-INDIRECT-ACCESS-GENERAL**: how many trailing `[ … ]` groups
     /// the declarator carries. Read only by [`scalar_element`].
     dimensions: usize,
+}
+
+/// Card **MK-EVENT-CELL-ARRAY-SLOTS** (rule 38a): the value of a canonical
+/// decimal literal, `0` or a nonzero digit followed by digits, with no suffix.
+/// A leading `0` would be octal (C11 6.4.4.1), so `010` is refused rather
+/// than read as ten; a suffix, a sign or any expression is refused too.
+pub(crate) fn canonical_decimal(text: &str) -> Option<u64> {
+    let canonical = text == "0"
+        || (text.bytes().all(|byte| byte.is_ascii_digit())
+            && text.bytes().next().is_some_and(|first| first != b'0'));
+    if canonical { text.parse().ok() } else { None }
 }
 
 /// Split one declaration group into its specifiers and its first declarator.
