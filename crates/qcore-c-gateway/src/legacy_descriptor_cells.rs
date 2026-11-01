@@ -9,7 +9,9 @@
 //!
 //! 1. [`operands`] (asked by rule 12t's `retaining_call`): each state's
 //!    actual as spelled (a member cell: the `data` actual's object viewed as
-//!    `struct TAG`, checked against Clang's type of every actual of the call;
+//!    `struct TAG`, checked against Clang's type of every actual of the call,
+//!    or, card MK-EVENT-FIRST-MEMBER-CELL, a pointer to a record whose first
+//!    member is the `struct TAG`, read as that member;
 //!    a slot cell: `&L` or `&X->f[K]`), the guard's actuals, and the removals
 //!    the guard governs.
 //! 2. [`apply`] (the transfer of the call, after rule 12t's records): the
@@ -31,7 +33,7 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use qcore_schemas::descriptor_cell::{CellPlace, CellValue, DescriptorCells, WitnessGuard};
 use rule_38_descriptor_cells::cells::Key;
-use rule_38_descriptor_cells::{Equality, Refusal};
+use rule_38_descriptor_cells::{Equality, Record, Refusal, View};
 
 use super::retained_by_route::{HolderSpelling, RetainedSpelling};
 use super::{AbstractState, LegacyDiagnostic, LegacyDiagnosticKind};
@@ -199,6 +201,46 @@ fn place_steps(words: &[String]) -> Option<(String, Vec<String>)> {
     (!steps.is_empty()).then(|| (root.clone(), steps))
 }
 
+/// Card MK-EVENT-FIRST-MEMBER-CELL: a pointer-valued place `X (-> f | . f)*`
+/// read as its initial member, `& X ... -> member`: the words the direct
+/// reading of `&X->member` is given, so both readings key one cell. `None`
+/// for any other spelling (a call, a cast, an index, an operator).
+fn initial_member_words(words: &[String], member: &str) -> Option<Vec<String>> {
+    let (root, mut rest) = words.split_first()?;
+    if !is_identifier(root) {
+        return None;
+    }
+    while !rest.is_empty() {
+        match rest {
+            [access, name, tail @ ..]
+                if (access == "->" || access == ".") && is_identifier(name) =>
+            {
+                rest = tail;
+            }
+            _ => return None,
+        }
+    }
+    let mut out = Vec::with_capacity(words.len() + 3);
+    out.push("&".to_owned());
+    out.extend(words.iter().cloned());
+    out.push("->".to_owned());
+    out.push(member.to_owned());
+    Some(out)
+}
+
+/// Card MK-EVENT-FIRST-MEMBER-CELL: what the analysed unit holds for
+/// `struct name` (exactly one complete definition and its first member, or
+/// undecided).
+fn record_first_member(name: &str) -> Record {
+    crate::typed_access_path::with_indirect_call_unit(|unit| {
+        match unit.records().first_members.get(name).map(Vec::as_slice) {
+            Some([first]) => Record::Struct(first.clone()),
+            _ => Record::Undecided,
+        }
+    })
+    .unwrap_or(Record::Undecided)
+}
+
 /// Hook (rule 38): the operands of one call of `declaration`. `actual(i)`
 /// is the `i`th actual as spelled; `root(words)` reads a member cell's
 /// object actual as rule 12t reads a retained pointer; `formal(name)` says
@@ -230,18 +272,33 @@ pub(super) fn operands(
         match place {
             CellPlace::Member { parameter, member } => {
                 // The object is read through a pointer to `struct TAG`: every
-                // actual of the callee here must be one (Clang's type), so a
-                // record whose first member is the event refuses.
-                let view = format!("struct {} *", member.tag);
-                if pointee(*parameter).as_deref() != Some(view.as_str()) {
+                // actual of the callee here must be one (Clang's type), or,
+                // card MK-EVENT-FIRST-MEMBER-CELL, a pointer to a record whose
+                // first member is the `struct TAG`, read as that member
+                // (`X` as `&X->m`, the direct reading's own key).
+                let view = rule_38_descriptor_cells::initial_member::member_view(
+                    pointee(*parameter).as_deref(),
+                    &member.tag,
+                    &record_first_member,
+                );
+                let (words, why) = match &view {
+                    View::Direct => (Some(words), ""),
+                    View::InitialMember(first) => (
+                        initial_member_words(&words, first),
+                        "not a place its member can be taken of",
+                    ),
+                    View::Refused(why) => (None, *why),
+                };
+                let Some(words) = words else {
                     refused.get_or_insert_with(|| {
                         format!(
-                            "the actual `{text}` is not a `{view}` in every call here ({})",
-                            Refusal::Undecided.key()
+                            "the actual `{text}` is not a `struct {tag} *`, nor a pointer to a record whose first member is a `struct {tag}`, in every call here: {why} ({})",
+                            Refusal::Undecided.key(),
+                            tag = member.tag,
                         )
                     });
                     return CellSpelling::Unresolved(text);
-                }
+                };
                 let path = member
                     .path
                     .split('.')

@@ -273,6 +273,11 @@ pub(crate) struct RecordFacts {
     /// `struct`, `FieldDecl` id → (the struct's `RecordDecl` id, the member's
     /// name, empty for an unnamed one).
     pub(crate) struct_members: BTreeMap<String, (String, String)>,
+    /// Card MK-EVENT-FIRST-MEMBER-CELL (rule 38 (1)): a named `struct`'s tag
+    /// → one entry per complete definition, its first member's name (empty
+    /// for an unnamed one) and declared type (desugared), `None` when it has
+    /// no member. A reader admits only a tag with exactly one entry.
+    pub(crate) first_members: BTreeMap<String, Vec<Option<(String, String)>>>,
 }
 
 impl RecordFacts {
@@ -295,6 +300,27 @@ impl RecordFacts {
             && let Some(name) = record["name"].as_str().filter(|name| !name.is_empty())
         {
             self.names.insert(id.to_owned(), name.to_owned());
+        }
+        if tag == Some("struct")
+            && let Some(name) = record["name"].as_str().filter(|name| !name.is_empty())
+        {
+            let first = children(record)
+                .iter()
+                .find(|child| kind(child) == "FieldDecl")
+                .map(|field| {
+                    let declared = field["type"]["desugaredQualType"]
+                        .as_str()
+                        .or_else(|| field["type"]["qualType"].as_str())
+                        .unwrap_or("");
+                    (
+                        field["name"].as_str().unwrap_or("").to_owned(),
+                        declared.to_owned(),
+                    )
+                });
+            self.first_members
+                .entry(name.to_owned())
+                .or_default()
+                .push(first);
         }
         if tag == Some("struct") {
             for field in children(record)

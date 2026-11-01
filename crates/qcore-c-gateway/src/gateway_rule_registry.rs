@@ -251,6 +251,7 @@ pub const REGISTRY: &[RuleEntry] = &[
         placements: &[
             Placement { position: Position::Classification, order: None, arm: Some("descriptor-cell-release"), route: "cells::release" },
             Placement { position: Position::Classification, order: None, arm: Some("descriptor-cell-guard"), route: "cells::decide_equality" },
+            Placement { position: Position::Classification, order: None, arm: Some("descriptor-cell-initial-member"), route: "initial_member::member_view" },
         ],
         lean: &["QCore.DescriptorCells"],
         document: "docs/agents/rules/38.md",

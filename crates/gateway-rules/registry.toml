@@ -280,6 +280,9 @@ placements = [
 # package; the host (`legacy_descriptor_cells.rs`) asks it from rule 12t's
 # retaining call (the classifier's uncontracted fallback) and its transfer.
 # Two arms: a declared release through a cell, and the member-equality guard.
+# Card MK-EVENT-FIRST-MEMBER-CELL adds a third: the view of a member cell's
+# actual (direct, or a record pointer read as its first member, C11
+# 6.7.2.1p15).
 # Off, the host refuses every call of a declaration carrying a cell state (the
 # reading is not asked), which only removes admissions.
 [[rule]]
@@ -291,6 +294,7 @@ off = "refuses"
 placements = [
   { position = "classification", arm = "descriptor-cell-release", route = "cells::release" },
   { position = "classification", arm = "descriptor-cell-guard", route = "cells::decide_equality" },
+  { position = "classification", arm = "descriptor-cell-initial-member", route = "initial_member::member_view" },
 ]
 
 # --- The transfer (ROUTE-MAP section 10, added by card RULE34-PILOT): arms

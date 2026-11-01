@@ -933,6 +933,11 @@ impl IndirectCallUnit<'_> {
         &self.ast.indirect_tables
     }
 
+    /// Card MK-EVENT-FIRST-MEMBER-CELL (rule 38 (1)): the unit's record facts.
+    pub(crate) fn records(&self) -> &crate::union_bitfield::RecordFacts {
+        &self.ast.records
+    }
+
     /// Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12n): the unit's
     /// function-pointer member facts.
     pub(crate) fn member_facts(&self) -> &crate::callback_member_closure::MemberFacts {

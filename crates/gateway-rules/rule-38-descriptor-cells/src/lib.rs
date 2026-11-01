@@ -14,10 +14,17 @@
 //! `38`; with `38` in `QCORE_GATEWAY_RULES_OFF` the host refuses every call
 //! of a cell-bearing declaration (the reading is not asked). The Lean model
 //! is `QCore.DescriptorCells`, bound by [`cells::DECISION_VECTORS`].
+//!
+//! Card MK-EVENT-FIRST-MEMBER-CELL: [`initial_member`] decides which object a
+//! member cell's actual names, reading a pointer to a record whose first
+//! member is the event as that member (C11 6.7.2.1p15), bound by
+//! [`initial_member::INITIAL_MEMBER_VECTORS`].
 
 pub mod cells;
+pub mod initial_member;
 
 pub use cells::{Cells, Equality, Refusal, Released, Status};
+pub use initial_member::{Record, View};
 
 /// The package's registry id.
 pub const ID: &str = "38";
