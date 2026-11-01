@@ -69,6 +69,47 @@ an unresolved base identity. A path the analysis used to stop at the refused
 statement can reach later refusals. The contract sidecar, provider locks,
 digests and bounds identity are unchanged, because no contract is touched.
 
+## Amendment, before any measurement (commit after `7dc756613`)
+
+The status prediction is unchanged: **no row moves on any route**. Two
+things found during implementation narrow the scope and widen the set of
+touched rows.
+
+1. **Cell-bearing declarations only.** Rule 12t classifies a withheld call a
+   second time under a minted name (`qcore_retained__<callee>`). The W44
+   probe's admitted actuals were matched only under the plain name, so they
+   left the gate in the outer classification but not in the inner one. As a
+   result, every actual that no older route exempts kept the refusal. That
+   includes the Fluent Bit loop actuals `sched->evl`, `config->evl` and
+   `thi->evl`, which this body binds, as well as the elements. Rule 38a
+   matches the minted name, and admits the element, **only when the withheld
+   declaration carries a descriptor-cell state**:
+   `mk_event_timeout_create`, `mk_event_timeout_destroy`,
+   `mk_event_channel_create` and `mk_event_channel_destroy`. The
+   `flb_input_set_collector_event` row (`in_tail_init`) is therefore out of
+   scope. So is every other withheld declaration, such as `mk_event_add`.
+   The plain-name gap there is the follow-up
+   `RETAINING-CALL-MINTED-NAME-ACTUALS`.
+2. **Every gate leaf on a cell-bearing call can trade**, not only those with
+   element actuals, because the call's other W44-admitted actuals now leave
+   the inner gate as well. The rows were relisted at the same baseline:
+   every leaf on a call of the four declarations, any actual shape. The table
+   above loses `in_tail_init` and gains these rows:
+
+| Route | Row (×units) | Leaves | Cell calls refused at the gate | A leaf that stays |
+|---|---|---|---|---|
+| system | `src/flb_engine.c::flb_engine_flush_timer_reset` | 4 | timeout_create :325, :337 | :332 uncontracted `flb_utils_error` |
+| system | `src/flb_scheduler.c::flb_sched_timer_cb_create` | 7 | timeout_create :672 | :653 uncontracted `flb_sched_timer_create` |
+| system | `src/flb_scheduler.c::flb_sched_destroy` (as above) | 10 | timeout_destroy :843 too | :829 unresolved `request` |
+| slice | `src/flb_input.c::flb_input_collector_destroy` | 3 | timeout_destroy :3146 | :3150 gate refusal (no cell call) |
+| slice | `src/flb_input.c::flb_input_collector_resume` | 5 | :3248 | :3238 gate refusal (no cell call) |
+
+The rows `schedule_request_now`, `collector_start` and
+`flb_input_collector_pause` already pass the gate at their cell calls, so they
+are unchanged. Each listed row keeps a leaf that this card does not touch, on
+a statement before or beside the cell call, so none can become `Safe`. No
+base is released before its call, so none can become `Unsafe`.
+
 ```measure-prediction
 route corpus
 none
