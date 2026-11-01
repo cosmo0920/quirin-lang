@@ -6089,9 +6089,10 @@ own anchor here.
     paths as one loop without a derivation, or forward a retention into an
     ordinary summary. Declarations: Monkey's seven event-loop
     operations in `qcore-provider-libevent` (`monkey/event_loop.qv`, pinned
-    at 66910c10, 046accf6 and the 90978ac6 export; descriptor effects under
-    the named premise `mk_event_descriptors`), and the loop's create and
-    destroy. `QCore.RetentionPath`
+    at 66910c10, 046accf6 and the 90978ac6 export; since card
+    MK-EVENT-DESCRIPTOR-QUANT their descriptor effects are descriptor-cell
+    states, rule 38, and `mk_event_channel_destroy`'s removal holds under its
+    member-equality guard), and the loop's create and destroy. `QCore.RetentionPath`
     (`a_path_record_ends_only_by_its_own_removal_or_its_destroy`,
     `an_unresolved_path_never_decides`,
     `an_unmatched_removal_poisons_what_it_may_name`,
