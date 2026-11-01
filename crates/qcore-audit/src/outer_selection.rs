@@ -74,7 +74,7 @@ pub const NOT_CLOSED_WORLD: [&str; 9] = [
     "asserted_allocation",
     "nested_call_admission",
     "literal_argument",
-    "mk_event_descriptors",
+    "P-CELL-STATE-NOT-FORWARDED",
     "untracked_handback",
     "ingestion_active",
     "synchronous_output_reachability",

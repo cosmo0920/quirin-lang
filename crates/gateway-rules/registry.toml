@@ -276,6 +276,23 @@ placements = [
   { position = "classification", arm = "asserted-allocation-premise", route = "asserted_allocation::decide" },
 ]
 
+# Card MK-EVENT-DESCRIPTOR-QUANT: rule 38's cell table lives in its own
+# package; the host (`legacy_descriptor_cells.rs`) asks it from rule 12t's
+# retaining call (the classifier's uncontracted fallback) and its transfer.
+# Two arms: a declared release through a cell, and the member-equality guard.
+# Off, the host refuses every call of a declaration carrying a cell state (the
+# reading is not asked), which only removes admissions.
+[[rule]]
+id = "38"
+crate = "rule-38-descriptor-cells"
+lean = ["QCore.DescriptorCells"]
+document = "docs/agents/rules/38.md"
+off = "refuses"
+placements = [
+  { position = "classification", arm = "descriptor-cell-release", route = "cells::release" },
+  { position = "classification", arm = "descriptor-cell-guard", route = "cells::decide_equality" },
+]
+
 # --- The transfer (ROUTE-MAP section 10, added by card RULE34-PILOT): arms
 # --- that order one admitted contract call's declared container effects
 # --- around its own reading. Off, the arm is not asked; the host's guard then

@@ -515,7 +515,7 @@ ensures normal resource_return_kind(KIND);
 | Position | Admitted kinds |
 |---|---|
 | `resource_owned`, `resource_consumed`, `resource_released` parameter | every kind (an in-place kind: `resource_released` only, §C04.6.1) |
-| `resource_out` parameter | every pointer-carried kind, and an in-place kind as its initialiser (§C04.6.1); a descriptor has no out slot in this vocabulary |
+| `resource_out` parameter | every pointer-carried kind, and an in-place kind as its initialiser (§C04.6.1); a descriptor has an out slot only as a descriptor cell's lower level (§C04.6.2) |
 | `resource_return_owned` result | every kind except an in-place one |
 | `resource_borrowed` parameter | none — a borrowed position touches no obligation — except an in-place kind's use (§C04.6.1) |
 | `resource_stored`, `resource_removed` parameter; `resource_return_reallocated`, a derived or a `none` result | none — the owner cascade and the replacement relation were specified for heap allocations |
@@ -556,7 +556,7 @@ contract {
 
 **Versioning.** This is an addition to resource vocabulary version 1, exactly as the variadic data tail, the literal premise and the derived results were: the marker is unchanged, every module that loaded before loads to the same functions, and a loader that predates the clauses rejects a module using them as an unsupported predicate (`resource_kind`, `resource_return_kind`) or nullability (`sentinel`, `valid`) rather than misreading it. No new evidence version is minted: every verdict carries the exact module texts in `source_assumptions`, which name the declarations — and so the vocabulary — it rests on. The Lean model is `QCore.KindedCustody`.
 
-**Not in the vocabulary, deliberately.** A kinded stored/removed relation; a descriptor out slot (`pipe`, `socketpair` write an `int[2]`); a status-conditioned out slot (`getaddrinfo`'s list is valid on a zero return, which needs a status witness bound to the list); a command-dependent creator (`fcntl` creates a descriptor only for `F_DUPFD`/`F_DUPFD_CLOEXEC`, and one declaration carries one literal premise per parameter); a transfer that happens on success only (`fdopen` moves the descriptor into the stream only when it returns non-NULL); a pointer sentinel (`mmap`'s `MAP_FAILED`); a process stream released by `pclose`, not `fclose` (no audited unit calls `popen`). (The library-handle kind withheld here until the return route modelled `return (T *)handle;` was added by card CG25-RESOURCE-KINDS once card W44-LEAK-PIN-AUDIT repaired that route.)
+**Not in the vocabulary, deliberately.** A kinded stored/removed relation; a descriptor out slot outside a descriptor cell (§C04.6.2; `pipe`, `socketpair` write an `int[2]`); a status-conditioned out slot (`getaddrinfo`'s list is valid on a zero return, which needs a status witness bound to the list); a command-dependent creator (`fcntl` creates a descriptor only for `F_DUPFD`/`F_DUPFD_CLOEXEC`, and one declaration carries one literal premise per parameter); a transfer that happens on success only (`fdopen` moves the descriptor into the stream only when it returns non-NULL); a pointer sentinel (`mmap`'s `MAP_FAILED`); a process stream released by `pclose`, not `fclose` (no audited unit calls `popen`). (The library-handle kind withheld here until the return route modelled `return (T *)handle;` was added by card CG25-RESOURCE-KINDS once card W44-LEAK-PIN-AUDIT repaired that route.)
 
 #### C04.6.1. In-place kinds
 
@@ -580,6 +580,52 @@ An initialiser's result MUST be `i32` with `resource_return_none()` (the status)
 4. **Candidates** are those of §C04.6: a finaliser of another kind discharges nothing (`invalid_release` when it resolves), a second finaliser is `double_release`, a use after finalisation is `use_after_release`, and a certified object unfinalised at an exit is a `leak`.
 
 The Lean model is `QCore.ResourceKinds`.
+
+#### C04.6.2. Descriptor cells
+
+Card MK-EVENT-DESCRIPTOR-QUANT (gateway rule [38](agents/gateway.md#constraint-38), grammar [G05d](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g05d-null-dereference-checks); the [proposal](reports/mk-event-descriptor-quant/PROPOSAL.md) and [report](reports/mk-event-descriptor-quant/README.md)). It retires the named premise `mk_event_descriptors` of Monkey's timeout and channel operations.
+
+> **USER DIRECTION 2026-11-01** (verbatim): "We must decompose the premise into quant like composed clauses."
+>
+> **USER DECISION 2026-11-01** (verbatim, relayed by the integrator): "I approve the changes of D1-D5."
+
+The integrator's reading of the decision: D1 = 1A, D2 = 2A, D3 = 3A, D4 = 4A, D5 = the kind carried on the value with heap staying bare, each as the proposal's §2 and §6 state them.
+
+A **cell** is a place that holds a descriptor number: a member of the object a pointer formal designates (`#P: TAG.FIELD`, an integer member) or the `int` a slot formal points to (`#S: #pointee`). A descriptor is an **identity** and a cell is a **name** of it, as a plain name is (§C04.6 rule 4). A call's integer result guarding a cell state is its **witness** (the reading of §C04.6.1 rule 2): held by a plain, not address-taken name, it witnesses the creation's class until the name is written.
+
+```qcore
+// D1: the member names the new descriptor; the result is its witness.
+quant live #data: mk_event.fd |-> #fresh(descriptor) when #result != -1;
+quant live #data: mk_event.fd |-> {#stale(descriptor), #kept} when #result == -1;
+// D2: the descriptor the member names is closed; the member keeps the number.
+quant live #data: mk_event.fd |-> #stale(descriptor);
+// D3: two slots receive new descriptors; the member is a second name of the read end.
+quant live #r_fd: #pointee |-> #fresh(descriptor) when #result == 0;
+quant live #data: mk_event.fd |-> #same(r_fd) when #result == 0;
+// D4: the closes and the removal hold only when the member equals r_fd.
+ensures normal resource_released(w_fd, valid) when #data: mk_event.fd == #r_fd;
+quant live #loop: #holds(data) |-> #absent when #data: mk_event.fd == #r_fd;
+```
+
+**Values.** `#fresh(K)`: the call created one identity of kind `K`, named by the cell. `#stale(K)`: the identity the cell names is released, and the cell still holds its number (not `#absent`, which would claim the cell holds nothing; not `#released`, which would claim it reads cleared). `{#stale(K), #kept}`: the cell names no live identity; it is untouched or holds a number the call closed. `#same(S)`: the cell is a second name of the identity the slot `S`'s pointee receives (one identity, custody once). `K` is `descriptor`, the one integer-carried kind; a bare `#stale` and every value without a kind keep their heap meaning (§C04.19.6), so heap stays spelled by absence (D5).
+
+**Two levels.** Each shorthand elaborates into canonical parts, and the loader reads every spelling, and every agreeing mix, into one canonical set (a disagreeing overlap rejects the module):
+
+| Shorthand | Canonical parts |
+|---|---|
+| `#P: T.F |-> #fresh(K) when #result OP V` | `resource_member_kind(P, T.F, K)`; `resource_on_return(op, V, resource_member_out(P, T.F))` |
+| `#P: T.F |-> {#stale(K), #kept} when …` | `resource_member_kind(P, T.F, K)`; `resource_on_return(op, V, resource_member_stale_or_kept(P, T.F))` |
+| `#P: T.F |-> #stale(K)` | `resource_member_kind(P, T.F, K)`; `resource_member_released(P, T.F, stale)` |
+| `#P: T.F |-> #same(S) when …` | `resource_on_return(op, V, resource_member_alias(P, T.F, S))` (the kind is `S`'s) |
+| `#S: #pointee |-> #fresh(K) when #result == 0` | `resource_on_return(eq, 0, resource_out(S, nonnull))`; `resource_on_return(ne, 0, resource_borrowed(S))`; `resource_kind(S, K)`: §C04.6 and §C04.13's own words, the one relaxation being a descriptor out slot |
+
+The binder's own mode, `resource_borrowed(P)`, is the liveness part and is written in both levels.
+
+**Grammar** (G05d, total-or-reject). A cell's binder is a depth-one pointer formal, `resource_borrowed`, with no kind (a slot: `ptr<mut, u8>`, whose C type `int *` the consumer checks). A witness guard is `when #result OP V` with exactly the pairs `!= -1` / `== -1` (a descriptor-valued result) or `== 0` / `!= 0` (a status), over a signed integer result with `resource_return_none()`; every guard of a declaration's cells is of one pair; a cell is stated for every return or per class, never both, one state per class. A creation and `#same` are guarded. `#same(S)` names a slot stated `#fresh` in the same class. The member-equality guard `when #P: TAG.FIELD == #X` (`P` a borrowed depth-one pointer, `X` an `i32` formal the declaration releases under it) stands on a descriptor `resource_released(X, valid)`, whose formal states its `resource_kind(X, descriptor)` and no other mode (the custody contract reads it `resource_borrowed`), and on the `#holds` removal; a declaration states one such guard, and a guarded removal guards every removal. Cells stand beside retentions, removals and plain predicates only. `fresh`, `same` and `pointee` join the reserved keywords of a `#` form. Every violation rejects the whole module (`quant-live-cell-*`).
+
+**Meaning at a call** (rule 38). A member cell is read only where every actual of the callee in the calling function is a `struct TAG *` (Clang's type before the conversion to `void *`), so a record whose first member is the event refuses (follow-up `MK-EVENT-FIRST-MEMBER-CELL`); its object is read as rule 12t reads a retained pointer. A slot's actual is `&L` or `&X->f[K]`. A creation names a new identity, undecided until the witness's test decides its class: the class's edge makes it live, the other edge stale. A release of a live name stales every name of its identity; of a stale name refuses (`descriptor-cell-double-release`); of an undecided name, or through a key that may name a recorded cell it does not match, refuses (`descriptor-cell-undecided`); with no recorded cell it may name, it is the identity on custody, and every declaration carrying a cell state publishes the rule premise `P-CELL-STATE-NOT-FORWARDED` ("a state a call puts on a descriptor cell of an object this function does not track is not forwarded into its summary") with its rows (D2). The member-equality guard is equal when both sides name one live identity and distinct when they name two live ones (two open descriptors never share a number); otherwise the call refuses (`descriptor-cell-guard-undecided`), and a guarded removal keeps its record and poisons what it may name (§C04.14.3). At an exit a cell that may name a live descriptor refuses (`descriptor-cell-escapes`, never `Safe`: the cross-function reading is `FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME`'s), and so does the release of an object holding one (`descriptor-cell-owner-released`). Nothing here is `Unsafe`.
+
+**Checked, never trusted.** The four Monkey declarations are pinned at 66910c10, 046accf6 and the slice export (`lib/monkey/mk_core/mk_event.c` byte-identical at all three). Their bodies forward to the backend through `loop->data` and a `void *` cast, which no body check reads, so the states are declared assumptions (rules 13i–13k), never withdrawn. The Lean model is `QCore.DescriptorCells`.
 
 ### C04.7. Counted users
 
@@ -1932,7 +1978,7 @@ contract {
 
 **Loading.** Total-or-reject (C04), with named diagnostics (G05g): exactly one selector; exactly one header; at least one runtime condition; a binder that is a pointer formal of the loader, bound once; a guard only on an integer result; a member path `TAG.FIELD`; the values `#kept` and `#registered` only, and `#loaded` only with `#`; no envelope line on a citing declaration; no repeated envelope key; no other clause. Across a selection, a contract defined twice, or cited and never defined, rejects it. The provider probe loads a crate's outer modules together, so a citation is never probed apart from its definition.
 
-**Closed-world facts.** A conclusion the analysis draws because it saw every store or every registration in the run is a closed-world fact: a stable member (rule 14x, `stable:TAG.FIELD`), a declared non-null member (rule 14t, `member:TAG.FIELD`), a run-set member (rule 12n, `run_set_members`, premise P-CG22-MEMBER-CLOSED-WORLD), a constructor's stated member (rule 14e, `stated_members`, premise P-OPCTOR-STORES-SEEN) and every named premise (C04.18) except those stating a build fact, a reading rule or a tracking limit (`asserted_allocation`, `nested_call_admission`, `literal_argument`, `mk_event_descriptors`, `untracked_handback`, `ingestion_active`, `synchronous_output_reachability`, and rule 13e's two). A new premise is closed-world until it is listed among the exceptions. A row's closed-world facts are read from its dependency record (C06.5), which never omits a consultation.
+**Closed-world facts.** A conclusion the analysis draws because it saw every store or every registration in the run is a closed-world fact: a stable member (rule 14x, `stable:TAG.FIELD`), a declared non-null member (rule 14t, `member:TAG.FIELD`), a run-set member (rule 12n, `run_set_members`, premise P-CG22-MEMBER-CLOSED-WORLD), a constructor's stated member (rule 14e, `stated_members`, premise P-OPCTOR-STORES-SEEN) and every named premise (C04.18) except those stating a build fact, a reading rule or a tracking limit (`asserted_allocation`, `nested_call_admission`, `literal_argument`, `P-CELL-STATE-NOT-FORWARDED` (rule 38; card MK-EVENT-DESCRIPTOR-QUANT retired `mk_event_descriptors`), `untracked_handback`, `ingestion_active`, `synchronous_output_reachability`, and rule 13e's two). A new premise is closed-world until it is listed among the exceptions. A row's closed-world facts are read from its dependency record (C06.5), which never omits a consultation.
 
 **Meaning: two scopes from one run.** The **static** scope loads nothing: every verdict is the one published today, and the dependency record names the facts it rests on. The **runtime** scope is a projection of the same rows. Under a scenario (a set of loaded outer contracts), a fact on a record a contract's binders reach contributes `Pending`, reason `outer-contract` naming `NAME@DIGEST`, when the contract is in force (its pin) and an envelope line covers the fact (`#kept` covers a stable, declared or stated member and a run set; `#registered` a run set; `#premise NAME` the premise), and `Unknown` (`outer-uncovered`) otherwise; a premise is reached by every contract, and a fact on an unreached record contributes nothing. The runtime verdict is the join (`Safe < Pending < Unknown < Unsafe`, §L21.2) of the static verdict and every contribution: nothing is promoted, a row with no closed-world fact is unchanged, and an uncovered fact never leaves a row `Safe` or `Pending`. The `Pending` reason is the contract itself, not free text: a person resolves it by reviewing the loaded code against the contract's statement and envelope, or by a deployment that loads nothing (the static scope).
 

@@ -246,6 +246,18 @@ pub const REGISTRY: &[RuleEntry] = &[
         off: Off::Refuses,
     },
     RuleEntry {
+        id: "38",
+        crate_name: "rule-38-descriptor-cells",
+        placements: &[
+            Placement { position: Position::Classification, order: None, arm: Some("descriptor-cell-release"), route: "cells::release" },
+            Placement { position: Position::Classification, order: None, arm: Some("descriptor-cell-guard"), route: "cells::decide_equality" },
+        ],
+        lean: &["QCore.DescriptorCells"],
+        document: "docs/agents/rules/38.md",
+        reason_keys: &[],
+        off: Off::Refuses,
+    },
+    RuleEntry {
         id: "34",
         crate_name: "rule-34-element-destroyer",
         placements: &[

@@ -171,6 +171,37 @@ fn plain_assignments<'a>(body: &[&'a str]) -> Vec<(&'a str, Vec<&'a str>)> {
     found
 }
 
+/// Card **MK-EVENT-DESCRIPTOR-QUANT** (rule 38): the names of one body
+/// assigned the result of a declaration whose descriptor cells are guarded by
+/// a descriptor-valued witness (`#result != -1`). A validity test of such a
+/// name decides the creation's class; it is never a tracked identity (the
+/// result owns nothing), so the set feeds only the condition reader, never
+/// the custody predicates of [`DescriptorNames`].
+pub(crate) fn cell_witness_names(body: &[&str], contracts: &ResourceContracts) -> DescriptorNames {
+    let witnessed = contracts
+        .retaining()
+        .iter()
+        .filter(|(_, declaration)| {
+            declaration.descriptor_cells.states.iter().any(|state| {
+                state.value == qcore_schemas::descriptor_cell::CellValue::Fresh
+                    && state.guard.is_some_and(|guard| guard.is_validity())
+            })
+        })
+        .map(|(name, _)| name.as_str())
+        .collect::<BTreeSet<_>>();
+    if witnessed.is_empty() {
+        return DescriptorNames::default();
+    }
+    let names = plain_assignments(body)
+        .into_iter()
+        .filter(|(_, value)| {
+            called_after_cast(value).is_some_and(|callee| witnessed.contains(callee))
+        })
+        .map(|(destination, _)| destination.to_owned())
+        .collect();
+    DescriptorNames { names }
+}
+
 /// The callee of `VALUE` when it is `CALLEE ( … )`, optionally behind one
 /// parenthesised cast.
 fn called_after_cast<'a>(value: &[&'a str]) -> Option<&'a str> {

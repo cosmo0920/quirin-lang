@@ -295,6 +295,14 @@ pub struct RetainingContract {
     /// removals of one registration, in clause order. Omitted when empty.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub removals: Vec<Removal>,
+    /// Card **MK-EVENT-DESCRIPTOR-QUANT** (§C04.6.2, rule 38): the
+    /// declaration's descriptor cells, canonical. Omitted when empty, so every
+    /// retaining declaration before the card serializes as it did.
+    #[serde(
+        default,
+        skip_serializing_if = "crate::descriptor_cell::DescriptorCells::is_empty"
+    )]
+    pub descriptor_cells: crate::descriptor_cell::DescriptorCells,
     /// S3 scoped prerequisites and record-type lifetime protocols. Consumers
     /// without a scoped discharge must refuse, never use only custody modes.
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -332,6 +340,7 @@ impl RetainingContract {
             member_paths_withdrawn: false,
             path_retentions: Vec::new(),
             removals: Vec::new(),
+            descriptor_cells: crate::descriptor_cell::DescriptorCells::default(),
             lifetime: None,
         }
     }

@@ -92,6 +92,7 @@ pub(super) const PARSER_FIELDS: &[(&str, FieldClass)] = &[
     ("sizeof_operands", FieldClass::FunctionFact),
     ("element_lowerings", FieldClass::ProbeState),
     ("descriptor_names", FieldClass::FunctionFact),
+    ("cell_witness_names", FieldClass::FunctionFact),
     ("declared_callees", FieldClass::FunctionFact),
     ("in_place_names", FieldClass::FunctionFact),
     ("census_function", FieldClass::Census),
@@ -195,6 +196,7 @@ impl Parser<'_> {
             sizeof_operands: _,
             element_lowerings,
             descriptor_names: _,
+            cell_witness_names: _,
             declared_callees: _,
             in_place_names: _,
             #[cfg(feature = "indirect-census")]

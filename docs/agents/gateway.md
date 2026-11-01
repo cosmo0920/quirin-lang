@@ -6089,9 +6089,10 @@ own anchor here.
     paths as one loop without a derivation, or forward a retention into an
     ordinary summary. Declarations: Monkey's seven event-loop
     operations in `qcore-provider-libevent` (`monkey/event_loop.qv`, pinned
-    at 66910c10, 046accf6 and the 90978ac6 export; descriptor effects under
-    the named premise `mk_event_descriptors`), and the loop's create and
-    destroy. `QCore.RetentionPath`
+    at 66910c10, 046accf6 and the 90978ac6 export; since card
+    MK-EVENT-DESCRIPTOR-QUANT their descriptor effects are descriptor-cell
+    states, rule 38, and `mk_event_channel_destroy`'s removal holds under its
+    member-equality guard), and the loop's create and destroy. `QCore.RetentionPath`
     (`a_path_record_ends_only_by_its_own_removal_or_its_destroy`,
     `an_unresolved_path_never_decides`,
     `an_unmatched_removal_poisons_what_it_may_name`,
@@ -9192,5 +9193,62 @@ safety claim and no validation of the detach representation premise.
     `AuditResultConstructorSwitch.lean`);
     [report](../reports/w48-bu-rk-result-constructors/README.md),
     [migration](../reports/rule37-pilot/README.md).
+
+<a id="constraint-38"></a>
+
+38. **Descriptor cells are read only where the path decides them.** Card
+    MK-EVENT-DESCRIPTOR-QUANT (contract specification
+    [§C04.6.2](../QCORE_CONTRACT_SPEC_r0_3.md#c0462-descriptor-cells); USER
+    DECISION 2026-11-01, verbatim: "I approve the changes of D1-D5."). The
+    package `crates/gateway-rules/rule-38-descriptor-cells` holds the cell
+    table (`cells::Cells`); the host is `legacy_descriptor_cells.rs`, asked from
+    rule 12t's retaining call and its transfer. A cell is a **name** of a
+    descriptor identity; the table records, per path, each name's identity
+    and whether it is live, undecided (`Maybe`) or stale.
+
+    (1) **Keys.** A member cell's actual must be a `struct TAG *` in every call
+    of the callee in the calling function (Clang's type of the actual before
+    its conversion to `void *`), so a record whose first member is the event
+    refuses; its object is then read as rule 12t reads a retained pointer (a
+    caller's formal or interior, a tracked identity or its interior). A slot's
+    actual is `&L` (a local) or `&X->f[K]`. Anything else is no key.
+    (2) **Creation** (`#fresh(K)`) records a new identity under its key,
+    `Maybe` until the witness decides it; a key that may name a live
+    descriptor refuses (`descriptor-cell-overwritten`), and the same call
+    reached again while its identity is recorded refuses. `#same(S)` records
+    a second name of the slot's identity. (3) **The witness**: the call's
+    result held by a plain name, until the name is written; a validity test
+    of it (`!= -1` / `== -1` guards) or a null test (`== 0` / `!= 0`) makes the
+    creation's names live on the edge its class holds and stale on the other
+    (the failure class may leave a closed number in the cell); a test of
+    another kind decides nothing. (4) **Release** (`#stale(K)`, or a guarded
+    release through the cell an integer actual reads) of a live name stales
+    every name of its identity; of a stale name refuses
+    (`descriptor-cell-double-release`); of an undecided name, or through an
+    unresolved or unmatched key that may name a recorded cell, refuses
+    (`descriptor-cell-undecided`); with no cell this function records it may
+    name, it is the identity on custody, under the rule premise
+    `P-CELL-STATE-NOT-FORWARDED`, which every declaration carrying a cell
+    state publishes with its rows (a tracking limit, not a closed-world fact).
+    (5) **The member-equality guard** is equal only when both sides name the
+    same live identity and distinct only when they name two live ones (two
+    open descriptors never share a number); otherwise the call refuses
+    (`descriptor-cell-guard-undecided`) and a guarded removal keeps its record
+    and poisons what it may name (rule 12t). (6) **Exits and owners**: a name
+    that may be live at an exit refuses (`descriptor-cell-escapes`), and so
+    does the release of an object holding one
+    (`descriptor-cell-owner-released`). The join keeps only what both paths
+    agree on (a name live on one path only is `Maybe`); witnesses join by
+    intersection. With `38` in `QCORE_GATEWAY_RULES_OFF` every call of a
+    cell-bearing declaration refuses.
+
+    **Do not** read a cell from an actual of another type, decide a class
+    without its witness, release through a key that may name a recorded cell
+    it does not match, or present any refusal here as a finding. Premises
+    stated, not proved (trust boundary 28): the declarations' bodies
+    (declared assumptions, pinned at both revisions), that two open
+    descriptors never share a number, and `P-CELL-STATE-NOT-FORWARDED`. The
+    Lean model is `QCore.DescriptorCells`
+    ([report](../reports/mk-event-descriptor-quant/README.md)).
 
 <!-- generated:rules:end -->

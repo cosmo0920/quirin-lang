@@ -1,0 +1,12 @@
+[package]
+name = "rule-38-descriptor-cells"
+version = "0.1.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+description = "C gateway rule 38 (descriptor cells, card MK-EVENT-DESCRIPTOR-QUANT) as a rule package: the cell table a declared descriptor-cell state reads and writes at a call (creation, second name, release, witness, join, exit) and the member-equality guard's decision."
+
+# Plan docs/plans/pluggable-cards/README.md seam B: a rule package depends on
+# the rule API only, never on qcore-c-gateway or another rule package
+# (compiler/tests/workspace_layering.rs holds the set).
+[dependencies]
+qcore-gateway-rule-api = { path = "../../qcore-gateway-rule-api", version = "0.1.0" }

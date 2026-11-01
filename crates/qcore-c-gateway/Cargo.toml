@@ -48,6 +48,8 @@ rule-36-exact-formal-return = { path = "../gateway-rules/rule-36-exact-formal-re
 # Card RULE37-PILOT: rule 37's package (plan seam B), asked through the rule
 # interface at its two registered arms.
 rule-37-result-constructors = { path = "../gateway-rules/rule-37-result-constructors", version = "0.1.0" }
+# Card MK-EVENT-DESCRIPTOR-QUANT: rule 38's package (the descriptor-cell table).
+rule-38-descriptor-cells = { path = "../gateway-rules/rule-38-descriptor-cells", version = "0.1.0" }
 serde = { version = "1.0.229", features = ["derive"] }
 # `unbounded_depth` (no added crate): the typed dispatch reader streams
 # Clang's JSON AST, whose statement nesting exceeds the default limit.
