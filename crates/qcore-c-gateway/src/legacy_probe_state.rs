@@ -195,6 +195,7 @@ impl Parser<'_> {
             sizeof_operands: _,
             element_lowerings,
             descriptor_names: _,
+            cell_witness_names: _,
             declared_callees: _,
             in_place_names: _,
             #[cfg(feature = "indirect-census")]

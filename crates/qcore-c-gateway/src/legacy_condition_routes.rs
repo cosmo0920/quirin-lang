@@ -285,6 +285,24 @@ impl Parser<'_> {
                 });
             }
         }
+        // Card MK-EVENT-DESCRIPTOR-QUANT (rule 38): a validity test of a
+        // cell-creating call's witness decides the creation's class.
+        if !self.cell_witness_names.is_empty() {
+            let texts = condition
+                .iter()
+                .map(|token| token.text.as_str())
+                .collect::<Vec<_>>();
+            if supported_neutral_expression(condition)
+                && let Some(test) =
+                    descriptor_custody::validity_test(&texts, &self.cell_witness_names)
+            {
+                return Some(PointerNullCondition {
+                    source: test.source,
+                    true_is_null: false,
+                    validity: Some((test.when_true, test.when_false)),
+                });
+            }
+        }
         if let Some(existing) = pointer_null_condition(condition) {
             return Some(existing);
         }

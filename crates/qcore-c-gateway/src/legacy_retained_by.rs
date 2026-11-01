@@ -92,6 +92,11 @@ pub struct Operands {
     /// removal's `(retained, holder)` as spelled, `None` where the actual is
     /// not a spelling a record can be keyed on (the removal drops nothing).
     pub removals: Vec<(Option<RetainedSpelling>, Option<HolderSpelling>)>,
+    /// Card **MK-EVENT-DESCRIPTOR-QUANT** (rule 38): the descriptor-cell
+    /// operands ([`super::descriptor_cells_route`]); `None` (and not
+    /// serialized) for every call whose declaration states no cell.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub cells: Option<Box<super::descriptor_cells_route::CellOperands>>,
 }
 
 /// The derived form, with `callbacks` printed only when present, so every
@@ -112,6 +117,9 @@ impl std::fmt::Debug for Operands {
         }
         if !self.removals.is_empty() {
             out.field("removals", &self.removals);
+        }
+        if let Some(cells) = &self.cells {
+            out.field("cells", cells);
         }
         out.finish()
     }
@@ -608,6 +616,7 @@ impl Parser<'_> {
             references: Vec::new(),
             callbacks: None,
             removals: Vec::new(),
+            cells: None,
         };
         // Card REFCOUNT-RESOURCE-KIND (rules 13b, 13c): the reference
         // operands, or the refusal of a declaration withdrawn in this unit.
@@ -805,6 +814,38 @@ impl Parser<'_> {
             let held = holder(self, removal.holder).map(|(held, _)| held);
             operands.removals.push((retained, held));
         }
+        // Card MK-EVENT-DESCRIPTOR-QUANT (rule 38): the cell operands; a
+        // guarded removal moves under the cells' guard.
+        if !declaration.descriptor_cells.is_empty() {
+            let guarded = if declaration.descriptor_cells.guarded_removal {
+                std::mem::take(&mut operands.removals)
+            } else {
+                Vec::new()
+            };
+            let line = tokens.get(call_index).map_or(0, |token| token.line) as u64;
+            let identity = ((line << 20) | (call_index as u64 & 0xf_ffff)) << 4;
+            let owned = |index: usize| -> Option<Vec<String>> {
+                actual(index).map(|words| words.iter().map(|word| (*word).to_owned()).collect())
+            };
+            let root = |words: &[&str]| self.retained_spelling(Some(words));
+            let formal = |name: &str| self.caller_formals.contains(name);
+            let pointee = |index: usize| {
+                super::descriptor_cells_route::actual_pointee(
+                    &self.typed_path_function,
+                    function,
+                    index,
+                )
+            };
+            operands.cells = Some(Box::new(super::descriptor_cells_route::operands(
+                &declaration.descriptor_cells,
+                guarded,
+                identity,
+                &owned,
+                &root,
+                &formal,
+                &pointee,
+            )));
+        }
         for &reset in &declaration.resets {
             // A reset of a holder this body cannot name forgets nothing it
             // recorded, which is the identity: it keeps the borrowed reading.
@@ -863,7 +904,7 @@ impl Parser<'_> {
 
     /// A retained pointer's actual, as spelled (rule 12t), or `None` for a
     /// spelling no record can be keyed on.
-    fn retained_spelling(&self, actual: Option<&[&str]>) -> Option<RetainedSpelling> {
+    pub(super) fn retained_spelling(&self, actual: Option<&[&str]>) -> Option<RetainedSpelling> {
         match actual {
             // The lexer collapses a string literal to this placeholder
             // (premise P-RETAINED-LITERAL: at a pointer position it is a
@@ -1025,7 +1066,7 @@ pub(super) fn tracked(state: &AbstractState, name: &str) -> Option<usize> {
     .then_some(site)
 }
 
-fn holder_class(
+pub(super) fn holder_class(
     state: &AbstractState,
     holder: &HolderSpelling,
     destination: Option<&str>,
@@ -1115,14 +1156,7 @@ pub(super) fn apply(
     // it may name; an actual no record keys on is an undecided side, which
     // names more, never less.
     for (retained, holder) in &operands.removals {
-        let object = retained
-            .as_ref()
-            .map_or(Retained::Other, |retained| retained_class(state, retained));
-        let holder = holder.as_ref().map_or(Holder::Foreign, |holder| {
-            holder_class(state, holder, destination)
-        });
-        let key = removal_key(&object, &holder);
-        remove(&mut state.retained, &mut state.poisoned, &key);
+        apply_removal(state, retained.as_ref(), holder.as_ref(), destination);
     }
     for (index, (retained, retained_text, holder, holder_text)) in
         operands.retentions.iter().enumerate()
@@ -1180,6 +1214,36 @@ pub(super) fn apply(
             diagnostics,
         );
     }
+    // Card MK-EVENT-DESCRIPTOR-QUANT (rule 38): the descriptor cells.
+    if let Some(cells) = &operands.cells {
+        super::descriptor_cells_route::apply(
+            function,
+            line,
+            retained_callee(called).unwrap_or(called),
+            cells,
+            state,
+            diagnostics,
+        );
+    }
+}
+
+/// Card **RETENTION-UNMATCHED-REMOVAL-POISONS** (rule 12t): one removal over
+/// the path's records, each side decided against `state` (`None`: an actual
+/// no record keys on, which names more, never less). Card
+/// MK-EVENT-DESCRIPTOR-QUANT (rule 38) asks it for a guarded removal, with an
+/// undecided holder when the guard is undecided.
+pub(super) fn apply_removal(
+    state: &mut AbstractState,
+    retained: Option<&RetainedSpelling>,
+    holder: Option<&HolderSpelling>,
+    destination: Option<&str>,
+) {
+    let object = retained.map_or(Retained::Other, |retained| retained_class(state, retained));
+    let holder = holder.map_or(Holder::Foreign, |holder| {
+        holder_class(state, holder, destination)
+    });
+    let key = removal_key(&object, &holder);
+    remove(&mut state.retained, &mut state.poisoned, &key);
 }
 
 /// Hook (rule 12t): a release or transfer of `site` while a holder retains
@@ -1392,6 +1456,7 @@ mod forwarding_tests {
             references: Vec::new(),
             callbacks: None,
             removals: Vec::new(),
+            cells: None,
         };
         let mut diagnostics = BTreeSet::new();
         apply("f", 1, "add", &operands, None, &mut state, &mut diagnostics);

@@ -71,6 +71,11 @@ const ALLOWED: &[(&str, &[&str])] = &[
         "crates/gateway-rules/rule-32a-caller-frame-hold",
         &["qcore-gateway-rule-api"],
     ),
+    // Card MK-EVENT-DESCRIPTOR-QUANT: rule 38's package (the cell table).
+    (
+        "crates/gateway-rules/rule-38-descriptor-cells",
+        &["qcore-gateway-rule-api"],
+    ),
     (
         "crates/qcore-c-gateway",
         &[
@@ -87,6 +92,9 @@ const ALLOWED: &[(&str, &[&str])] = &[
             "rule-34-element-destroyer",
             // Card RULE32A-PILOT: the gateway hosts rule 32a's hold.
             "rule-32a-caller-frame-hold",
+            // Card MK-EVENT-DESCRIPTOR-QUANT: the gateway hosts rule 38's
+            // cell table.
+            "rule-38-descriptor-cells",
         ],
     ),
     (

@@ -1,0 +1,23 @@
+//! Gateway rule 38 (`docs/agents/rules/38.md`; card MK-EVENT-DESCRIPTOR-QUANT,
+//! contract specification §C04.6.2).
+//!
+//! USER DECISION 2026-11-01 (verbatim): "I approve the changes of D1-D5." A
+//! **descriptor cell** is a place that holds a descriptor number (the member
+//! of an object a formal designates, or the `int` a slot points to). A
+//! descriptor is an identity and a cell is a name of it: a release through any
+//! name discharges the identity once and leaves every other name stale. A
+//! call's integer result guarding a cell state is its **witness**.
+//!
+//! This package holds the cell table ([`cells::Cells`]) the host's route-G
+//! hook reads and writes, and decides nothing else: which actual a cell key
+//! is, and when a name is a witness, stay the host's. Its registry id is
+//! `38`; with `38` in `QCORE_GATEWAY_RULES_OFF` the host refuses every call
+//! of a cell-bearing declaration (the reading is not asked). The Lean model
+//! is `QCore.DescriptorCells`, bound by [`cells::DECISION_VECTORS`].
+
+pub mod cells;
+
+pub use cells::{Cells, Equality, Refusal, Released, Status};
+
+/// The package's registry id.
+pub const ID: &str = "38";

@@ -216,6 +216,7 @@ mod tests {
             rule_37_result_constructors::ID,
             "rule-37-result-constructors",
         ),
+        (rule_38_descriptor_cells::ID, "rule-38-descriptor-cells"),
     ];
 
     #[test]

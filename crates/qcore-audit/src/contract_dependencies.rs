@@ -79,6 +79,17 @@ const RESULT_HOLDER_PREMISES: [(&str, &str); 2] = [
     ),
 ];
 
+/// Card MK-EVENT-DESCRIPTOR-QUANT (rule 38): the declarations carrying a
+/// descriptor-cell state.
+fn cell_declarations(contracts: &ResourceContracts) -> BTreeSet<String> {
+    contracts
+        .retaining()
+        .iter()
+        .filter(|(_, declaration)| !declaration.descriptor_cells.states.is_empty())
+        .map(|(name, _)| name.clone())
+        .collect()
+}
+
 /// The analysed summary of a unit result, when it has rows.
 fn summary_of(
     result: &Result<UnrestrictedLegacyResult, impl Sized>,
@@ -326,6 +337,16 @@ fn cached_contract_premises(
             .extend(RESULT_HOLDER_PREMISES.iter().map(|(premise, statement)| {
                 json!({"name": premise, "statement": statement, "origin": "rule-13e"})
             }));
+    }
+    // Card MK-EVENT-DESCRIPTOR-QUANT (rule 38): every declaration carrying a
+    // descriptor-cell state publishes the rule's tracking-limit premise with
+    // the rows resting on it.
+    for name in cell_declarations(contracts) {
+        premises.entry(name).or_default().push(json!({
+            "name": qcore_schemas::descriptor_cell::NOT_FORWARDED_PREMISE,
+            "statement": qcore_schemas::descriptor_cell::NOT_FORWARDED_STATEMENT,
+            "origin": "rule-38",
+        }));
     }
     let replayed_graphs = qcore_contract::hypothesis::replay(assumptions)?;
     let mut graphs = replayed_graphs.clone();

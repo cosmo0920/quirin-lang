@@ -126,6 +126,7 @@ import QCore.DerivedOutSlot
 import QCore.DerivedResult
 import QCore.DerivedResultInference
 import QCore.DerivedTextAdmission
+import QCore.DescriptorCells
 import QCore.DescriptorCustody
 import QCore.DescriptorNativeObservation
 import QCore.DescriptorObservation

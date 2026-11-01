@@ -351,6 +351,10 @@ mod stream_line_order;
 // keeps, the release and exit refusals).
 #[path = "legacy_retained_by.rs"]
 pub(crate) mod retained_by_route;
+// Card MK-EVENT-DESCRIPTOR-QUANT (rule 38): descriptor cells (the operands,
+// the cell table's transfer, the witnesses, the exit and release refusals).
+#[path = "legacy_descriptor_cells.rs"]
+pub(crate) mod descriptor_cells_route;
 // Card W43-ABI-ENUM-AND-CONST-PP (rule 12w): guarded retention clauses.
 #[path = "legacy_retention_guard.rs"]
 pub(crate) mod retention_guard;
@@ -3907,6 +3911,17 @@ fn build_function_cfg_unscoped(
             descriptor_custody::DescriptorNames::read(&body, contracts, own_contract, &parameters)
         },
     );
+    // Card MK-EVENT-DESCRIPTOR-QUANT (rule 38).
+    let cell_witness_names = matching(tokens, body_start, "{", "}").map_or_else(
+        descriptor_custody::DescriptorNames::default,
+        |body_end| {
+            let body = tokens[body_start + 1..body_end]
+                .iter()
+                .map(|token| token.text.as_str())
+                .collect::<Vec<_>>();
+            descriptor_custody::cell_witness_names(&body, contracts)
+        },
+    );
     // Card CG25-RESOURCE-KINDS (rule 11v).
     let in_place_names = matching(tokens, body_start, "{", "}").map_or_else(
         in_place_custody::InPlaceNames::default,
@@ -3995,6 +4010,7 @@ fn build_function_cfg_unscoped(
         sizeof_operands,
         element_lowerings: 0,
         descriptor_names,
+        cell_witness_names,
         declared_callees,
         in_place_names,
         #[cfg(feature = "indirect-census")]
@@ -4792,6 +4808,10 @@ struct Parser<'a> {
     /// that declares no integer-kinded result, which makes every rule reading
     /// it the identity there.
     descriptor_names: descriptor_custody::DescriptorNames,
+    /// Card **MK-EVENT-DESCRIPTOR-QUANT** (rule 38): the names holding a
+    /// cell-creating call's descriptor-valued witness; read only by the
+    /// condition reader. Empty in every environment with no such declaration.
+    cell_witness_names: descriptor_custody::DescriptorNames,
     /// Card **W43-DESCRIPTOR-RESOURCE-TRACKING**: the callees a retained
     /// trusted text declares, as opposed to ones only a W4 summary covers.
     declared_callees: BTreeSet<String>,

@@ -317,6 +317,15 @@ pub(super) struct AbstractState {
     /// refuses as a double release. Joined by union; empty in every function
     /// that calls no such declaration, which keeps the join as it was.
     pub(super) member_path_taken: BTreeSet<usize>,
+    /// Card **MK-EVENT-DESCRIPTOR-QUANT** (rule 38): the descriptor cells of
+    /// this path. Empty in every function that calls no declaration with a
+    /// cell state, which keeps the join as it was.
+    pub(super) cells: rule_38_descriptor_cells::Cells<rule_38_descriptor_cells::cells::Key>,
+    /// Card **MK-EVENT-DESCRIPTOR-QUANT** (rule 38): a plain name holding a
+    /// cell-creating call's result, with the identities it witnesses and the
+    /// creation's class. Joined by intersection.
+    pub(super) cell_witnesses:
+        BTreeMap<String, (Vec<u64>, qcore_schemas::descriptor_cell::WitnessGuard)>,
 }
 
 /// The scalar facts one abstract state proves: a name bound to the null
@@ -467,6 +476,14 @@ impl AbstractState {
         super::constructed_route::join(&mut self.constructed, &incoming.constructed);
         self.member_path_taken
             .extend(incoming.member_path_taken.iter().copied());
+        // Card MK-EVENT-DESCRIPTOR-QUANT (rule 38).
+        if !self.cells.is_empty() || !incoming.cells.is_empty() {
+            self.cells.join(&incoming.cells);
+        }
+        super::descriptor_cells_route::join_witnesses(
+            &mut self.cell_witnesses,
+            &incoming.cell_witnesses,
+        );
         self.widened |= incoming.widened;
         self.unmodeled |= incoming.unmodeled;
         self.join_collections(&before, incoming);
@@ -1994,6 +2011,13 @@ fn analyze_cfg_with_entry_collected(
             );
             // Card CALLEE-RETENTION-CLASS1 (rule 12t).
             retained_by_route::report_exit(&cfg.function, node.line, &output, &mut diagnostics);
+            // Card MK-EVENT-DESCRIPTOR-QUANT (rule 38).
+            super::descriptor_cells_route::report_exit(
+                &cfg.function,
+                node.line,
+                &output,
+                &mut diagnostics,
+            );
             // Card REFCOUNT-RESOURCE-KIND (rule 13b): what each family owes.
             reference_route::report_exit(
                 &cfg.function,
@@ -2753,6 +2777,18 @@ pub(super) fn transfer(
     }
     in_place_custody::forget_witnesses(&node.instruction, &mut output, writes_scalar);
     in_place_custody::record_witness(&node.instruction, &mut output);
+    // Card MK-EVENT-DESCRIPTOR-QUANT (rule 38): the call's result witnesses
+    // its creations' class until the name is written.
+    super::descriptor_cells_route::forget_witnesses(&node.instruction, &mut output, writes_scalar);
+    if let LegacyInstruction::ContractCall {
+        retention: Some(retention),
+        destination,
+        ..
+    } = &node.instruction
+        && let Some(cells) = &retention.cells
+    {
+        super::descriptor_cells_route::record_witness(cells, destination.as_deref(), &mut output);
+    }
     output
 }
 
@@ -4905,6 +4941,13 @@ pub(super) fn apply_resource_action(
             site,
             state,
             diagnostics,
+        ) || super::descriptor_cells_route::refuse_release_of_holder(
+            function,
+            line,
+            source,
+            site,
+            state,
+            diagnostics,
         ) {
             let held = AbstractPointer {
                 targets: BTreeSet::from([site]),
@@ -5708,6 +5751,15 @@ pub(super) fn refine_edge<'a>(
             } else {
                 !*true_is_null
             };
+            // Card MK-EVENT-DESCRIPTOR-QUANT (rule 38): a null test of a
+            // cell-creating call's status witness decides its class.
+            if super::descriptor_cells_route::refine(
+                source,
+                super::descriptor_cells_route::EdgeFact::Zero(assume_null),
+                state,
+            ) {
+                return Some((source, PointerRefinement::Refined));
+            }
             // Card CG25-RESOURCE-KINDS (rule 11v): a null test of an in-place
             // initialiser's status witness decides its storage: zero is
             // success (the obligation is certain), nonzero is failure (none).
@@ -5725,6 +5777,23 @@ pub(super) fn refine_edge<'a>(
             when_false,
         } => {
             let fact = descriptor_custody::edge_fact(*when_true, *when_false, edge);
+            // Card MK-EVENT-DESCRIPTOR-QUANT (rule 38): a validity test of a
+            // cell-creating call's descriptor-valued witness decides its class.
+            if state.cell_witnesses.contains_key(source.as_str()) {
+                let valid = match fact {
+                    ValidityFact::Valid => Some(true),
+                    ValidityFact::Invalid => Some(false),
+                    ValidityFact::Unrefined => None,
+                };
+                if let Some(valid) = valid {
+                    super::descriptor_cells_route::refine(
+                        source,
+                        super::descriptor_cells_route::EdgeFact::Valid(valid),
+                        state,
+                    );
+                }
+                return Some((source, PointerRefinement::Refined));
+            }
             Some((source, refine_validity(state, source, fact, kinds)))
         }
         _ => None,
