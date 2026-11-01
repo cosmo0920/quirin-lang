@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 864
+  "named_followups": 865
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6809,7 +6809,7 @@
   }
  },
  "workspace": {
-  "cargo_workspace_members": 21,
+  "cargo_workspace_members": 22,
   "cargo_workspace_member_paths": [
    "compiler",
    "crates/gateway-rules/rule-32a-caller-frame-hold",
@@ -6818,6 +6818,7 @@
    "crates/gateway-rules/rule-35-literal-decay",
    "crates/gateway-rules/rule-36-exact-formal-return",
    "crates/gateway-rules/rule-37-result-constructors",
+   "crates/gateway-rules/rule-38-descriptor-cells",
    "crates/qcore-audit",
    "crates/qcore-c-gateway",
    "crates/qcore-contract",
@@ -6840,6 +6841,7 @@
    "crates/gateway-rules/rule-35-literal-decay",
    "crates/gateway-rules/rule-36-exact-formal-return",
    "crates/gateway-rules/rule-37-result-constructors",
+   "crates/gateway-rules/rule-38-descriptor-cells",
    "crates/qcore-audit",
    "crates/qcore-c-gateway",
    "crates/qcore-contract",
@@ -6878,7 +6880,7 @@
   "workspace_tests": 8927,
   "provider_tests": 133,
   "python_evidence_validator_tests": 568,
-  "lean_audits": 398,
+  "lean_audits": 399,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -7002,6 +7004,7 @@
    "AuditDerivedResult.lean",
    "AuditDerivedResultInference.lean",
    "AuditDerivedTextAdmission.lean",
+   "AuditDescriptorCells.lean",
    "AuditDescriptorNativeObservation.lean",
    "AuditDetachSameItem.lean",
    "AuditDialectTargetIdentity.lean",
@@ -12745,13 +12748,6 @@
    "recorded_by": "FB-EVENT-LOOP-RETENTION-AND-REGISTRATION"
   },
   {
-   "id": "MK-EVENT-DESCRIPTOR-CUSTODY",
-   "title": "The descriptors Monkey's timeout and channel operations create and close are a named premise",
-   "why": "Registered by FB-EVENT-LOOP-RETENTION-AND-REGISTRATION (binary ee617404 built from 70f4cff38 on base 8b360766c; corpus 66910c10 de6343c7 938/9/3,887 -> 1277df07 939/9/3,886, system 238bb021 -> 4c295a47 93/4/351 and slice f8b3c3b5 -> 5502fc27 52/1/347/4 Pending unchanged, the null property identical on all three routes). mk_event_timeout_create creates a timerfd (or a pipe and a detached worker) stored in the event and returned; mk_event_channel_create a pipe written through r_fd / w_fd; mk_event_timeout_destroy closes event->fd; mk_event_channel_destroy closes r_fd and w_fd only when event->fd == r_fd. v1 has no descriptor out slot and no identity for a member-held descriptor (C04.6), so the declarations state no descriptor effect and carry `requires resource_premise(mk_event_descriptors, ...)`; every verdict resting on them names it. DISCHARGE: a descriptor out slot or a member-held descriptor identity in v1, the four declarations restated with it (bodies read at both revisions, pinned), measured.",
-   "source": "docs/reports/fb-event-loop-retention/README.md",
-   "recorded_by": "FB-EVENT-LOOP-RETENTION-AND-REGISTRATION"
-  },
-  {
    "id": "FB-TEARDOWN-RELEASE-ACTUAL-IDENTITIES",
    "title": "Declared Fluent Bit destroyers decide nothing where the reported routes do not bind the released actual (a caller's formal, a list entry, a member read)",
    "why": "FB-TEARDOWN-DESTROY-DECLARATIONS declared fourteen teardown callees (fluent_bit/teardown_destroy.qv). Their calls traded `call to uncontracted function` for `unresolved resource identity` (system 80, slice 78), `indirect memory access` (system 16 and corpus 2, member-read actuals such as `ic->task`, `ins->singleplex_queue`) and, in flb_tail_config_create, `nullable resource ctx used by a non-null contract` (27): the actual is a list entry (mk_list_entry), a formal whose binding an earlier unmodelled step poisoned, or an object the analysis does not track, so no declaration decides the call and rule 30's direct-call reading fired nowhere on the three routes (one Safe gain, flb_sched_timer_cb_destroy, whose formal stays bound). Related: W45-FB-OR6-ELEMENT-IDENTITY (container elements have no identity), W45-FB-BACKLOG-REACHABLE-RELEASE. DISCHARGE: an identity for the released list entry or formal on these routes (or a container-ownership relation), re-measured on the system and slice routes with every moved row read.",
@@ -13267,6 +13263,20 @@
    "why": "scripts/gate_scope.py chooses the provider gate from paths under providers/ and from string-literal readers. The provider workspace also builds root crates by path (qcore-c-gateway, qcore-schemas and their dependencies), so a change to such a crate's Cargo.toml dependency set or to the root Cargo.lock can leave providers/Cargo.lock stale without the gate building a provider. That happened at the RULE32A-PILOT landing (62da8997d: rule-32a-caller-frame-hold added to qcore-c-gateway, provider lock not regenerated, every --locked provider build refused until b2b10e54d). DISCHARGE: gate_scope selects the provider gate, or at least a `cargo metadata --locked --manifest-path providers/Cargo.toml` step, whenever a changed manifest or lock belongs to a package in the provider workspace's path-dependency closure, with a test that replays the 62da8997d diff and selects it.",
    "source": "docs/reports/landing-provider-lock/README.md",
    "recorded_by": "LANDING-PROVIDER-LOCK"
+  },
+  {
+   "id": "MK-EVENT-FIRST-MEMBER-CELL",
+   "title": "A descriptor cell's object actual whose pointee is a record with struct mk_event as its first member refuses",
+   "why": "Registered by MK-EVENT-DESCRIPTOR-QUANT. Rule 38 reads a member cell (`#data: mk_event.fd`) only where every actual of the callee in the calling function is a `struct mk_event *` (Clang's type before the conversion to `void *`), so `ins` (struct flb_input_instance *, flb_input.c input_instance_channel_events_init; flb_output.c flb_output_init_all) and Monkey's `server_timeout` (struct mk_server_timeout *) refuse at the call (`descriptor-cell-undecided`). DISCHARGE: read the first member (C11 6.7.2.1p15: a pointer to a structure, suitably converted, points to its initial member) as the event's cell, with a test that a record whose first member is not the event still refuses, measured.",
+   "source": "docs/reports/mk-event-descriptor-quant/README.md",
+   "recorded_by": "MK-EVENT-DESCRIPTOR-QUANT"
+  },
+  {
+   "id": "MK-EVENT-CELL-ARRAY-SLOTS",
+   "title": "Array-element descriptor slots (&X->f[K], X->f[K]) never reach rule 38",
+   "why": "Registered by MK-EVENT-DESCRIPTOR-QUANT. Rule 38 keys a slot cell `&X->f[K]` and its by-value read `X->f[K]`, but the access gate refuses the array element's member read at a cell-bearing call before rule 38 is asked, so Fluent Bit's channel operations (`&sched->ch_events[0]`, `config->ch_self_events[0]`, ...) keep a gate refusal. DISCHARGE: the gate admits a constant-index element of an integer array member at a withheld declaration's borrowed position (as W44-INDIRECT-CALL-ARGUMENT-ACCESS admits a typed member read), with fixtures, measured.",
+   "source": "docs/reports/mk-event-descriptor-quant/README.md",
+   "recorded_by": "MK-EVENT-DESCRIPTOR-QUANT"
   }
  ],
  "updated": "Completed plugin premise integration; exact hand-maintained union retains810followups, borrowed measured-source8419Rust/354Lean/freshcard133provider, exact source equivalence checked; authoritative root committed-matrix Python confirmation in integration receipt. CMetrics map/opts API model specifications added at the explicit user request. Eight declared-model API contracts remain outside interpreted views, with CMT-MAP-OPTS-CONTRACT-ADOPTION and CMT-LABELED-HASH-ZERO-STATIC-STORAGE Open. No trusted API coverage is claimed; the source gate is recorded by this card alongside its separate initializer native checkpoint. W48-CMT-TRACKED-INTERIOR-SELF-INIT implements rule 36b's checked initializer effect transport for an exact live owned root or embedded record, retaining actual self writes, invalidating aliased member facts and preserving resource obligations; nondefault custody frames refuse and no ordinary summary is exported. The canonical CFL intrusive_list.qv declares matching audit preconditions/effects; two CMetrics .qv modules add six map and two opts lifecycle models, including transitive ownership, partial failure, borrowed results and uncleared cleanup fields. All remain outside interpreted views; checked API adoption and labeled zero-hash storage accounting have named Open follow-ups. Fresh BASE/planner precedes prediction f18d96065 and implementation; the later contract amendment 08da23123 precedes .qv edits. Native corpus BASE/TIP Safe/Unknown/Pending/provisional-Unsafe: 1009 / 3816 / 0 / 9 to 1011 / 3814 / 0 / 9; full system/slice, 5781 NULL dictionaries and runtime projections are compared, 241 semantic leaves accounted, zero unexplained leaves and no prior Safe loss. Gate 8654 Rust / 370 Lean / 374 Python, provider 133 Rust / 25 Python and all five package verifies pass. The actual deep source reader uses 328 KiB below 1 MiB. Full getter closure remains Open; W48-CMT-SELF-INIT-DISJOINT-FRAMES tracks the next bounded frame extension, and W48-EXACT-RETURN-WITNESS-PRECISION is unchanged. Native evidence is isolated to measured e92d8aef35a8bd14550e90219d19a56eb3b196e7; later source gate 2d0d85299b830aa24d7f200d63a308653582363f validates the added declared API models separately; see docs/reports/w48-cmt-tracked-interior-self-init/README.md."

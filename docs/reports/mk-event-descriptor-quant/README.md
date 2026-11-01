@@ -118,27 +118,30 @@ The integrator's reading, which this card implements:
 
 ## Measurement
 
-**Not run: blocked in this session.** The isolation guard of this worktree
-agent refuses every `quirin-audit measure` command line that names the
-prepared inputs in the main checkout
-(`--inputs-base /media/Data/GitHub/quirin-lang`), with "names git in a form
-too complex to verify that it stays inside the worktree". The tool's own
-default inputs base (this worktree) holds no prepared inputs: a probe exited 1
-at `build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json:
-No such file or directory`. The measurement was neither bypassed nor
-delegated. The command to run, from this worktree at its tip (base side
-`baseline:eb49bb6ce`, published 2026-11-01):
+The card's worktree agent could not run the measurement: its isolation guard
+refuses every `quirin-audit measure` command line naming the prepared inputs
+in the main checkout (`--inputs-base /media/Data/GitHub/quirin-lang`), and the
+worktree itself holds no prepared inputs. The integrator ran it from the main
+checkout on 2026-11-01 with release binaries built there:
 
 ```sh
-cargo build --release -p qcore-audit -p quirin-audit-plugin-measure
-target/release/quirin-audit --plugin-path target/release --output private/measure-1 \
+target/release/quirin-audit --plugin-path target/release \
+  --output private/measure/mk-event-descriptor-quant-20261101T050458Z \
   --timeout-ms 36000000 measure \
   --inputs crates/quirin-audit-plugin-measure/inputs/live.json \
   --inputs-base /media/Data/GitHub/quirin-lang \
-  --side base=baseline:eb49bb6ceb52c5a441dc26e68332065119993e99 --side tip=rev:<tip> \
+  --side base=baseline:eb49bb6ceb52c5a441dc26e68332065119993e99 \
+  --side tip=rev:3d3e3db93 \
   --declared docs/reports/mk-event-descriptor-quant/PREDICTION.md
 ```
 
+It exited 0 with status `complete` and no failures. The declared comparison
+`base->tip` is `match` on all three routes (corpus, slice, system), with no
+delta mismatches, no missing rows and no unpredicted rows. The record is
+[native-comparison.json](native-comparison.json)
+(sha256 `8c7501ef7e10eb0498c3853355e3b3ca2f613c10981ef39eab192571995bf77b`;
+PREDICTION.md sha256
+`8e47b9d84ca8c2b4046c0f1f70234a68bfc51b4c0d96760e5f921af320b97b49`).
 `--inputs` (not `--profile`) is used because of
 `MEASURE-BASELINE-ROUTE-SPELLING`.
 
@@ -147,7 +150,8 @@ The premise-carrying rows were relisted at `baseline:eb49bb6ce`, and the set
 is identical to the one at `98b1bb785` (PROPOSAL.md §4): 8 corpus rows, 18
 system row instances and 16 slice row instances. The one `Safe` row,
 `flb_sched_timer_cb_disable` (×2), is the shape of the fixture
-`a_destroy_of_a_callers_cell_is_the_identity`, which stays `Safe`.
+`a_destroy_of_a_callers_cell_is_the_identity`, which stays `Safe`. The
+measurement above confirms it.
 
 ## Card gate
 
@@ -204,3 +208,14 @@ the isolation guard refuses a redirect to the scratchpad path.
   closed by D4's guarded removal: an undecided guard poisons.
 - **The pipe arm of `_mk_event_timeout_create`.** It is not compiled, and is
   unchanged (PROPOSAL.md §5).
+
+## Landing gate
+
+The integrator merged the card onto main `64bbfd93e` (merge `ab25bbfb5`) and
+ran `python3 scripts/gate_scope.py --base 64bbfd93e` on the merged tree. Every
+step exited 0 except the Python suite (577 tests, 1 failure). The failure is
+`test_the_derived_facts_are_recomputed_rather_than_carried`, because the
+committed matrix carried 398 Lean audits and the tree has 399. The landing
+records regeneration fixes it, and the suite is rerun after the records
+commit. Rust: 590 units, 8,993 passed, 0 failed, 15 ignored. Lean: 399 audits.
+Provider tests: 133 passed, 1 ignored.

@@ -627,6 +627,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [member-prepass-other-routes](member-prepass-other-routes/README.md) | MEMBER-PREPASS-OTHER-ROUTES |
 
+| [mk-event-descriptor-quant](mk-event-descriptor-quant/README.md) | MK-EVENT-DESCRIPTOR-QUANT |
+
 | [monkey-vhost-property-custody](monkey-vhost-property-custody/README.md) | MONKEY-VHOST-PROPERTY-CUSTODY: `mk_string_dup` and the carried publication |
 
 | [msvc-abi-reader](msvc-abi-reader/README.md) | MSVC default-C ABI declarations |

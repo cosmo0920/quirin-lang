@@ -2,14 +2,14 @@
   "schema": "quirin-amendments/1",
   "card": "MK-EVENT-DESCRIPTOR-QUANT",
   "base": "eb49bb6ce",
-  "measured_tip": "eb49bb6ce",
-  "increment_paragraph": "**MK-EVENT-DESCRIPTOR-QUANT** (gateway rule 38, contract specification C04.6.2; USER DIRECTION 2026-11-01, \"We must decompose the premise into quant like composed clauses.\"; USER DECISION 2026-11-01, \"I approve the changes of D1-D5.\"): the named premise `mk_event_descriptors` of Monkey's `mk_event_timeout_create`, `mk_event_timeout_destroy`, `mk_event_channel_create` and `mk_event_channel_destroy` is retired and each descriptor effect is a descriptor-cell state: `quant live #data: mk_event.fd |-> #fresh(descriptor) when #result != -1;` (the member names the new descriptor, the result is its witness), `|-> {#stale(descriptor), #kept}` in the failure class, `|-> #stale(descriptor)` at the destroy, `#r_fd: #pointee |-> #fresh(descriptor)` slots with `|-> #same(r_fd)`, and the channel destroy's closes and removal under `when #data: mk_event.fd == #r_fd`; both levels load to one canonical set. The package `rule-38-descriptor-cells` holds the cell table (a release stales every name of an identity; undecided, double, escaping and owner-released cases refuse; the guard is decided only from live identities); `P-CELL-STATE-NOT-FORWARDED` is published with every row resting on a cell-bearing declaration. `QCore.DescriptorCells` (16 theorems). The live-route measurement was not run in the card's session (its isolation guard refused the main-checkout inputs path); the prediction is no status move on any route. Report: [docs/reports/mk-event-descriptor-quant/README.md](../../reports/mk-event-descriptor-quant/README.md).",
+  "measured_tip": "3d3e3db93",
+  "increment_paragraph": "**MK-EVENT-DESCRIPTOR-QUANT** (gateway rule 38, contract specification C04.6.2; USER DIRECTION 2026-11-01, \"We must decompose the premise into quant like composed clauses.\"; USER DECISION 2026-11-01, \"I approve the changes of D1-D5.\"): the named premise `mk_event_descriptors` of Monkey's `mk_event_timeout_create`, `mk_event_timeout_destroy`, `mk_event_channel_create` and `mk_event_channel_destroy` is retired and each descriptor effect is a descriptor-cell state: `quant live #data: mk_event.fd |-> #fresh(descriptor) when #result != -1;` (the member names the new descriptor, the result is its witness), `|-> {#stale(descriptor), #kept}` in the failure class, `|-> #stale(descriptor)` at the destroy, `#r_fd: #pointee |-> #fresh(descriptor)` slots with `|-> #same(r_fd)`, and the channel destroy's closes and removal under `when #data: mk_event.fd == #r_fd`; both levels load to one canonical set. The package `rule-38-descriptor-cells` holds the cell table (a release stales every name of an identity; undecided, double, escaping and owner-released cases refuse; the guard is decided only from live identities); `P-CELL-STATE-NOT-FORWARDED` is published with every row resting on a cell-bearing declaration. `QCore.DescriptorCells` (16 theorems). The integrator ran the live-route measurement (`baseline:eb49bb6ce` to `3d3e3db93`, declared): `match` on corpus, slice and system, no status moved. Report: [docs/reports/mk-event-descriptor-quant/README.md](../../reports/mk-event-descriptor-quant/README.md).",
   "status_paragraph": null,
   "ledger": [
     {
       "id": "MK-EVENT-DESCRIPTOR-CUSTODY",
       "operation": "retire",
-      "why": "Discharged by MK-EVENT-DESCRIPTOR-QUANT: a member-held descriptor identity and a descriptor out slot exist in v1 as descriptor cells (contract specification C04.6.2, gateway rule 38, USER DECISION 2026-11-01 \"I approve the changes of D1-D5.\"); the four declarations are restated with them, their bodies read at 66910c10, 046accf6 and the slice export and pinned at all three; the premise mk_event_descriptors is gone. The live-route measurement is to be run by the integrator (the card's session could not name the main-checkout inputs).",
+      "why": "Discharged by MK-EVENT-DESCRIPTOR-QUANT: a member-held descriptor identity and a descriptor out slot exist in v1 as descriptor cells (contract specification C04.6.2, gateway rule 38, USER DECISION 2026-11-01 \"I approve the changes of D1-D5.\"); the four declarations are restated with them, their bodies read at 66910c10, 046accf6 and the slice export and pinned at all three; the premise mk_event_descriptors is gone. The declared live-route measurement matched on all three routes (no status moved).",
       "source": "docs/reports/mk-event-descriptor-quant/README.md"
     },
     {
@@ -25,14 +25,6 @@
       "operation": "register",
       "title": "Array-element descriptor slots (&X->f[K], X->f[K]) never reach rule 38",
       "text": "Registered by MK-EVENT-DESCRIPTOR-QUANT. Rule 38 keys a slot cell `&X->f[K]` and its by-value read `X->f[K]`, but the access gate refuses the array element's member read at a cell-bearing call before rule 38 is asked, so Fluent Bit's channel operations (`&sched->ch_events[0]`, `config->ch_self_events[0]`, ...) keep a gate refusal. DISCHARGE: the gate admits a constant-index element of an integer array member at a withheld declaration's borrowed position (as W44-INDIRECT-CALL-ARGUMENT-ACCESS admits a typed member read), with fixtures, measured.",
-      "source": "docs/reports/mk-event-descriptor-quant/README.md",
-      "recorded_by": "MK-EVENT-DESCRIPTOR-QUANT"
-    },
-    {
-      "id": "MK-EVENT-DESCRIPTOR-QUANT-MEASUREMENT",
-      "operation": "register",
-      "title": "MK-EVENT-DESCRIPTOR-QUANT's live-route measurement is not yet run",
-      "text": "Registered by MK-EVENT-DESCRIPTOR-QUANT. The card's worktree agent could not run `quirin-audit measure` (its isolation guard refuses a command line naming the main checkout's prepared inputs); the prediction (PREDICTION.md) is no status move on any of the three live routes. DISCHARGE: `quirin-audit measure --inputs crates/quirin-audit-plugin-measure/inputs/live.json --inputs-base /media/Data/GitHub/quirin-lang --side base=baseline:eb49bb6ceb52c5a441dc26e68332065119993e99 --side tip=rev:<card tip> --declared docs/reports/mk-event-descriptor-quant/PREDICTION.md` exits 0, the record committed beside the report.",
       "source": "docs/reports/mk-event-descriptor-quant/README.md",
       "recorded_by": "MK-EVENT-DESCRIPTOR-QUANT"
     }
