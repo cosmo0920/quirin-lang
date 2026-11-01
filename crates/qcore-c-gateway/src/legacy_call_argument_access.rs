@@ -68,6 +68,25 @@
 //!
 //! Bounds, alignment and the liveness of objects the projection does not track
 //! are outside the property, exactly as for the typed scalar route.
+//!
+//! ## Cell-bearing calls (card MK-EVENT-CELL-ARRAY-SLOTS, gateway rule 38a)
+//!
+//! At a withheld declaration that carries a descriptor-cell state
+//! (§C04.6.2), two more things hold.
+//!
+//! * **The element actual.** At a `Borrowed` position, a constant-index
+//!   element of an integer array member is recognised as the member read of
+//!   its base ([`element_read`]): `X->f[K]`, `S.f[K]`, `&X->f[K]` or
+//!   `&S.f[K]`, with `K` a canonical decimal literal below the declared
+//!   length. It is asked only after every older route refused.
+//! * **The minted name.** The probe's admitted actuals are also found under
+//!   rule 12t's minted name for the callee (`AdmittedArgument::matches`).
+//!   Rule 12t classifies the call again under that name. Without the match,
+//!   an actual admitted here left the gate only in the outer classification,
+//!   and the inner one kept the refusal.
+//!
+//! Rule 38 then decides the cell. With rule 38 switched off, the call refuses
+//! as every cell call does.
 
 use qcore_schemas::contract::ResourceParameterMode;
 
@@ -426,6 +445,147 @@ fn member_address(
     }
 }
 
+/// Card **MK-EVENT-CELL-ARRAY-SLOTS** (gateway rule 38a): a constant-index
+/// element of an integer array member, read or addressed — `B -> F [ K ]`,
+/// `S . F [ K ]`, `& B -> F [ K ]`, `& S . F [ K ]` — spanning the whole actual
+/// (after enclosing parentheses).
+///
+/// `B` is declared `struct T *` and `S` `struct T`, exactly as for the typed
+/// member read `B -> F` this module already admits; `F` is declared
+/// `INTEGER-TYPE F [ N ]` in `T`'s single complete non-union definition
+/// ([`integer_array_length`]); `K` is a canonical decimal literal
+/// ([`canonical_decimal`]) with `K < N`, so the element is an object inside
+/// `F` (C11 6.5.2.1, 6.5.6p8) and the read is in bounds. The value read is an
+/// integer, and the address is a pointer to an integer element that holds no
+/// pointer, so the actual carries exactly the member read's obligation: `B`'s
+/// typed read (none for `S`, a record of this frame). A variable, negative,
+/// out-of-bounds or non-canonical index, a pointer member, a non-integer
+/// element and every other shape answer `None`.
+///
+/// `unit` is the translation unit's token texts, where the record definition
+/// is read. The caller asks this only at a `Borrowed` position of a
+/// cell-bearing withheld declaration, after every older route refused.
+pub(super) fn element_read(
+    argument: &[&str],
+    unit: &[&str],
+    model: &TypedAccessModel,
+    types: &FunctionTypes,
+) -> Option<ArgumentRead> {
+    let texts = strip_parentheses(argument);
+    let element = match texts {
+        ["&", rest @ ..] => rest,
+        _ => texts,
+    };
+    let in_bounds = |tag: &str, field: &str, index: &str| {
+        let length = integer_array_length(unit, model, tag, field)?;
+        let index = canonical_decimal(index)?;
+        (index < length).then_some(())
+    };
+    let mut read = ArgumentRead::default();
+    match element {
+        [base, "-", ">", field, "[", index, "]"] if is_name(base) && is_name(field) => {
+            let Some(DeclaredType::RecordPointer(tag)) = types.declared_type(base) else {
+                return None;
+            };
+            in_bounds(tag, field, index)?;
+            read.add_base(base, true);
+            Some(read)
+        }
+        [object, ".", field, "[", index, "]"] if is_name(object) && is_name(field) => {
+            let Some(DeclaredType::Record(tag)) = types.declared_type(object) else {
+                return None;
+            };
+            in_bounds(tag, field, index)?;
+            Some(read)
+        }
+        _ => None,
+    }
+}
+
+/// Card **MK-EVENT-CELL-ARRAY-SLOTS** (rule 38a): the value of a canonical
+/// decimal literal, `0` or a nonzero digit followed by digits, with no suffix.
+/// A leading `0` would be octal (C11 6.4.4.1), so `010` is refused rather
+/// than read as ten; a suffix, a sign or any expression is refused too.
+pub(super) fn canonical_decimal(text: &str) -> Option<u64> {
+    let canonical = text == "0"
+        || (text.bytes().all(|byte| byte.is_ascii_digit())
+            && text.bytes().next().is_some_and(|first| first != b'0'));
+    if canonical { text.parse().ok() } else { None }
+}
+
+/// Type qualifiers that keep a member out of the element class.
+const ELEMENT_REJECTING_QUALIFIERS: &[&str] = &["volatile", "_Atomic"];
+
+/// Card **MK-EVENT-CELL-ARRAY-SLOTS** (rule 38a): the declared length `N`
+/// when `tag`'s definition in `unit` declares `field` as exactly one member
+/// declaration `SPECIFIERS field [ N ] ;`, where:
+///
+/// * the declaration reader read `tag`'s single complete non-union definition
+///   ([`TypedAccessModel::record_definition_is_complete`]);
+/// * the declaration has one declarator, one dimension, no `*`, and `N` is a
+///   canonical decimal literal;
+/// * `SPECIFIERS` is an integer type ([`TypedAccessModel::integer_class`]: no
+///   floating, `_Bool`, enumeration or plain `char`) with no `volatile` or
+///   `_Atomic`.
+///
+/// `None` for every other member. The definition is the one occurrence of
+/// `struct tag {` in `unit` (single by the first premise). Read here rather
+/// than as a class of `typed_field_access.rs`, whose bytes are pinned whole by
+/// `docs/reports/libc-reading-site-evidence/bindings.json`.
+pub(super) fn integer_array_length(
+    unit: &[&str],
+    model: &TypedAccessModel,
+    tag: &str,
+    field: &str,
+) -> Option<u64> {
+    if !model.record_definition_is_complete(tag) {
+        return None;
+    }
+    let open = unit
+        .windows(3)
+        .position(|window| window == ["struct", tag, "{"])?
+        + 2;
+    let mut depth = 0usize;
+    let mut close = None;
+    for (index, text) in unit.iter().enumerate().skip(open) {
+        match *text {
+            "{" => depth += 1,
+            "}" => {
+                depth = depth.checked_sub(1)?;
+                if depth == 0 {
+                    close = Some(index);
+                    break;
+                }
+            }
+            _ => {}
+        }
+    }
+    let body = &unit[open + 1..close?];
+    let mut found = None;
+    for member in body.split(|text| *text == ";") {
+        let [specifiers @ .., name, "[", length, "]"] = member else {
+            continue;
+        };
+        if *name != field {
+            continue;
+        }
+        if found.is_some()
+            || specifiers.is_empty()
+            || specifiers
+                .iter()
+                .any(|text| matches!(*text, "*" | "," | "[" | "]" | "(" | ")"))
+            || specifiers
+                .iter()
+                .any(|text| ELEMENT_REJECTING_QUALIFIERS.contains(text))
+            || model.integer_class(specifiers).is_none()
+        {
+            return None;
+        }
+        found = Some(canonical_decimal(length)?);
+    }
+    found
+}
+
 /// Replace every `( NAME )` whose `NAME` this function declares as a variable
 /// by `NAME` alone.
 ///
@@ -543,11 +703,21 @@ pub(super) struct AdmittedArgument {
     /// true }` position by `member_release::admits_release`, not at a
     /// `Borrowed` position or a data tail.
     pub(super) release: bool,
+    /// Card MK-EVENT-CELL-ARRAY-SLOTS (rule 38a): the callee is a
+    /// cell-bearing withheld declaration, so the actual is also found under
+    /// the minted name rule 12t classifies the call under
+    /// ([`crate::retained_by::retained_name`]): the same call, the same
+    /// actuals and the same declared positions. Without it the probe's
+    /// admission left the gate only in the outer classification, and the
+    /// inner one refused every actual no older route exempts.
+    custody_contract: bool,
 }
 
 impl AdmittedArgument {
     fn matches(&self, callee: &str, index: usize, argument: &[&str]) -> bool {
-        self.callee == callee
+        (self.callee == callee
+            || (self.custody_contract
+                && crate::retained_by::retained_callee(callee) == Some(self.callee.as_str())))
             && self.index == index
             && self.texts.len() == argument.len()
             && self.texts.iter().zip(argument).all(|(a, b)| a == b)
@@ -781,14 +951,18 @@ impl Parser<'_> {
         // positions are read as the function map's are; what the call then
         // retains, removes or registers is its route-G hook's (rule 12t), and
         // a re-classification that is not a contracted call keeps the refusal.
-        let contract = self
-            .contracts
-            .contract(callee)
-            .or_else(|| {
-                self.contracts
-                    .retaining_contract(callee)
-                    .map(|declared| &declared.contract)
-            })
+        let direct = self.contracts.contract(callee);
+        // Card MK-EVENT-CELL-ARRAY-SLOTS (rule 38a): the withheld declaration
+        // in force, when it is one (asked exactly as before), and whether it
+        // carries a descriptor-cell state (§C04.6.2), which rule 38 decides.
+        let withheld = if direct.is_none() {
+            self.contracts.retaining_contract(callee)
+        } else {
+            None
+        };
+        let cell_bearing = withheld.is_some_and(|declared| !declared.descriptor_cells.is_empty());
+        let contract = direct
+            .or_else(|| withheld.map(|declared| &declared.contract))
             .or_else(|| {
                 self.contracts
                     .lifetime_summary(callee)
@@ -842,6 +1016,23 @@ impl Parser<'_> {
                         .or_else(|| {
                             self.static_address_argument(callee, index, argument, lines[start])
                         })
+                        // Card MK-EVENT-CELL-ARRAY-SLOTS (rule 38a): a
+                        // constant-index integer element, asked last and
+                        // only at a cell-bearing withheld declaration's
+                        // `Borrowed` position (never a data tail), so rule 38
+                        // decides the cell it names.
+                        .or_else(|| {
+                            if !cell_bearing || position != Position::Borrowed {
+                                return None;
+                            }
+                            let argument = unparenthesise_names(argument, &self.typed_types);
+                            let unit = self
+                                .tokens
+                                .iter()
+                                .map(|token| token.text.as_str())
+                                .collect::<Vec<_>>();
+                            element_read(&argument, &unit, &self.typed_model, &self.typed_types)
+                        })
                         .ok_or(refusal),
                     other => other,
                 }
@@ -862,6 +1053,7 @@ impl Parser<'_> {
                     read: read.clone(),
                     used: false,
                     release,
+                    custody_contract: cell_bearing,
                 });
             }
             facts.push(ArgumentFacts {
@@ -1013,6 +1205,7 @@ impl Parser<'_> {
                 read,
                 used: false,
                 release: false,
+                custody_contract: false,
             });
         }
         if admitted.is_empty() {
@@ -1358,6 +1551,62 @@ mod tests {
                 .bases
                 .is_empty()
         );
+    }
+
+    /// Card MK-EVENT-CELL-ARRAY-SLOTS (rule 38a): the element actual's shapes.
+    #[test]
+    fn element_reads_are_recognised_in_bounds_only() {
+        let unit = "struct ch { int fd [ 2 ] ; unsigned long n [ 3 ] ; int * p ; double d [ 2 ] ; \
+                    char k [ 2 ] ; int m [ 2 ] [ 2 ] ; volatile int v [ 2 ] ; int e [ 1 + 1 ] ; } ;";
+        let unit_texts = texts(unit);
+        let model = TypedAccessModel::read(&unit_texts);
+        let types = FunctionTypes::read(
+            &model,
+            &texts("struct ch * c , int i"),
+            &texts("struct ch s ;"),
+            &BTreeSet::new(),
+        );
+        let read =
+            |argument: &'static str| element_read(&texts(argument), &unit_texts, &model, &types);
+        for admitted in ["c -> fd [ 0 ]", "& c -> fd [ 1 ]", "( c -> n [ 2 ] )"] {
+            let read = read(admitted).unwrap_or_else(|| panic!("{admitted}"));
+            assert_eq!(read.bases, vec!["c"], "{admitted}");
+            assert_eq!(read.record_bases, vec!["c"], "{admitted}");
+            assert!(!read.pointer_valued, "{admitted}");
+        }
+        for admitted in ["s . fd [ 1 ]", "& s . n [ 0 ]"] {
+            let read = read(admitted).unwrap_or_else(|| panic!("{admitted}"));
+            assert!(read.bases.is_empty(), "{admitted}");
+        }
+        for refused in [
+            "c -> fd [ i ]",
+            "c -> fd [ 2 ]",
+            "c -> fd [ - 1 ]",
+            "c -> fd [ 00 ]",
+            "c -> fd [ 0x0 ]",
+            "c -> fd [ 0 + 0 ]",
+            "c -> p [ 0 ]",
+            "c -> d [ 0 ]",
+            "c -> k [ 0 ]",
+            "c -> m [ 0 ] [ 0 ]",
+            "c -> v [ 0 ]",
+            "c -> e [ 0 ]",
+            "c -> fd",
+            "& c -> fd [ 0 ] + 1",
+            "i -> fd [ 0 ]",
+        ] {
+            assert_eq!(read(refused), None, "{refused}");
+        }
+        assert_eq!(
+            integer_array_length(&unit_texts, &model, "ch", "fd"),
+            Some(2)
+        );
+        assert_eq!(integer_array_length(&unit_texts, &model, "ch", "e"), None);
+        assert_eq!(canonical_decimal("0"), Some(0));
+        assert_eq!(canonical_decimal("17"), Some(17));
+        for refused in ["", "00", "010", "1u", "0x1", "-1"] {
+            assert_eq!(canonical_decimal(refused), None);
+        }
     }
 
     #[test]
