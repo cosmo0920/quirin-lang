@@ -161,9 +161,49 @@ listed in PREDICTION.md with one leaf each that stays.
 
 ## Measurement
 
-The integrator runs the measurement from the main checkout. The worktree's
-isolation guard refuses command lines naming the prepared inputs there. The
-command is in the card's reply, and its record is added here at landing.
+The integrator ran the measurement from the main checkout, because the
+worktree's isolation guard refuses command lines naming the prepared inputs
+there. Two runs were made on 2026-11-01, both against
+`baseline:e589ee5a7248dfd4afbcefd5b542e0de339c31dd` with
+`--inputs crates/quirin-audit-plugin-measure/inputs/live.json --inputs-base /media/Data/GitHub/quirin-lang`.
+
+- **The card, declared** (`--side tip=rev:6066c25f0 --declared PREDICTION.md`,
+  `private/measure/mk-event-cell-array-slots-20261101T141439Z`). It exited 0
+  with status `complete` and no failures. The declared comparison is `match`
+  on corpus, slice and system, with no delta mismatches, no missing rows and
+  no unpredicted rows. The record is [native-comparison.json](native-comparison.json)
+  (sha256 `f6054038432a7e88ca65580204851b5b6570f0e7ef1cdb41b2f8cc243afe048a`;
+  PREDICTION.md sha256
+  `f12aeac017b1b7e0f3c3d840afb6e3b6e67b4a9b1d984485574cdeac9a2025d4`).
+- **The merged tree, undeclared** (`--side tip=rev:efb17a261`, this card
+  merged over MK-EVENT-FIRST-MEMBER-CELL at `1bcffebc8`,
+  `private/measure/mk-event-r4-merged-20261101T141439Z`). The card was
+  measured on a base without the first-member reading, so the combination
+  was measured separately. It exited 0 with status `complete` and no
+  failures. There are 0 status moves, 0 unit moves and 0 unmatched rows on
+  every route. Only leaves and dependencies change: 1 corpus row
+  (Monkey's `mk_server_worker_loop`, whose create now reaches rule 38 and
+  refuses `descriptor-cell-undecided` / `retention-undecided`), 6 slice rows
+  and 6 system rows. The record is
+  [native-comparison-merged.json](native-comparison-merged.json).
+
+## Integration with MK-EVENT-FIRST-MEMBER-CELL
+
+On the merged tree, two tests failed: this card's
+`a_record_passed_whole_never_keeps_the_gate_at_its_member_address` and the
+first-member card's `a_channel_through_its_first_member_record_is_safe`. Each
+asserted that a function spelling the caller's record both ways (`c` at one
+cell call, `&c->event` at the other) stays non-`Safe`. That held only while
+the other card's change was absent. Together, rule 38 (1) keys both
+spellings to one cell, and rule 38a lets `&c->event` leave the access gate.
+So each such cycle, including Fluent Bit's shape (`&c->ch[0]`, `&c->ch[1]`
+beside `c`), closes exactly what it created and is `Safe` with no
+diagnostics. A destroy through a record whose first member is not the event
+still refuses. The integrator's commit `dd534372f` changes those test
+expectations only, with no analyzer change. The landing gate on it
+(`gate_scope.py --base 1bcffebc8`) exited 0 on every step except the expected
+stale Lean count in the Python suite. Results: Rust 591 units, 9,018 passed,
+0 failed, 15 ignored; 400 Lean audits.
 
 ## Card gate
 

@@ -627,6 +627,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [member-prepass-other-routes](member-prepass-other-routes/README.md) | MEMBER-PREPASS-OTHER-ROUTES |
 
+| [mk-event-cell-array-slots](mk-event-cell-array-slots/README.md) | MK-EVENT-CELL-ARRAY-SLOTS |
+
 | [mk-event-descriptor-quant](mk-event-descriptor-quant/README.md) | MK-EVENT-DESCRIPTOR-QUANT |
 
 | [mk-event-first-member-cell](mk-event-first-member-cell/README.md) | MK-EVENT-FIRST-MEMBER-CELL |
