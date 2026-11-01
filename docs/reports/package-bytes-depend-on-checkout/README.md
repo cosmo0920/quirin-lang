@@ -203,4 +203,28 @@ wall time for both builds and the contracts check (probes already built).
 The output is identical (`diff -r`) to the earlier tip run's. Afterwards the
 target held only `release/` (113.19 MB) and the work directory was gone.
 
-The card gate is in `gate.json`, and the record commit names the gated commit.
+### Card gate
+
+The gate ran `python3 scripts/gate_scope.py --base c82895503` on `170347106`
+and exited 0 (`gate.json`, `gate-console.txt`). It ran in full mode, because
+`providers/README.md` is named by a string literal in `qcore-contract` tests.
+Results:
+
+- submodules 0 (one);
+- fmt 0;
+- Clippy 0;
+- Rust suite 0: 585 units, 618 summaries, 8,951 passed, 0 failed, 15 ignored;
+- both reevaluation examples 0;
+- Python 0, 577 tests;
+- provider package build 0, all five verified 0;
+- provider tests 0: 133 / 0 / 1;
+- provider fmt 0 and provider Clippy 0.
+
+Lean: none.
+
+The gate's package build in a third target directory gave output identical to
+the tip run's (`diff -r`).
+
+An earlier gate run on `bb98dbc30` failed only the Python suite. Rule 29's
+tripwire `test_tracked_files` flagged the two `rglob` walks of the new test's
+temporary directories. Commit `170347106` reviews them in `REVIEWED_WALKS`.
