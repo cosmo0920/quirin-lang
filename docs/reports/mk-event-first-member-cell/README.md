@@ -133,6 +133,16 @@ target/release/quirin-audit --plugin-path target/release \
   --declared docs/reports/mk-event-first-member-cell/PREDICTION.md
 ```
 
+**Result.** The integrator ran it on 2026-11-01, as
+`private/measure/mk-event-first-member-cell-20261101T115209Z`. It exited 0
+with status `complete` and no failures. The declared comparison `base->tip` is
+`match` on corpus, slice and system, with no delta mismatches, no missing rows
+and no unpredicted rows. The record is
+[native-comparison.json](native-comparison.json)
+(sha256 `fceb4c65a7b025dbb6f37d3416ffe57d06737f9e1d201572d3df18da34a5351c`;
+PREDICTION.md sha256
+`e9ed1171a954731609fccc94b11e00c5f87bfad1b12280d78fb07e7d6434e2fa`).
+
 ## Card gate
 
 The gate ran as `python3 scripts/gate_scope.py --base e589ee5a7 --out
