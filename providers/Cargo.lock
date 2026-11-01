@@ -111,6 +111,7 @@ dependencies = [
  "qcore-core",
  "qcore-gateway-rule-api",
  "qcore-schemas",
+ "rule-32a-caller-frame-hold",
  "rule-33-removed-selection",
  "rule-34-element-destroyer",
  "rule-35-literal-decay",
@@ -328,6 +329,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1fbf4db142a473a8d80c26bbf18454ed458bf8d26c8219c331daecfdbd079001"
 dependencies = [
  "proc-macro2",
+]
+
+[[package]]
+name = "rule-32a-caller-frame-hold"
+version = "0.1.0"
+dependencies = [
+ "qcore-gateway-rule-api",
 ]
 
 [[package]]
