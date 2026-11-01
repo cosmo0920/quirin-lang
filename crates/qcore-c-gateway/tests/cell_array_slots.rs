@@ -379,3 +379,54 @@ fn child_rule_38_off() {
         "the element still leaves the gate: {diagnostics:?}"
     );
 }
+
+// -- A record passed whole beside its member address -------------------------
+
+/// MK-EVENT-FIRST-MEMBER-CELL's `MK-EVENT-CELL-WHOLE-AND-MEMBER-ACTUALS`: a
+/// caller's record passed whole to one cell call and spelled `&c->event` at
+/// another kept the access gate's refusal at the member address. That
+/// refusal was the minted-name gap, so under rule 38a the member address
+/// leaves the gate and rule 38 answers. The assertions are kept free of
+/// rule 38's own wording, which the first-member reading changes. Fluent
+/// Bit's shape, `ins` whole beside `&ins->ch_events[0]` in one call, is
+/// covered too.
+#[test]
+fn a_record_passed_whole_never_keeps_the_gate_at_its_member_address() {
+    if !clang_available() {
+        return;
+    }
+    let channel = |create: &str, destroy: &str| {
+        format!(
+            "struct wrapper {{ struct mk_event event; int ch[2]; }};
+struct pair {{ int r; int w; }};
+int w(struct wrapper *c, struct pair *s) {{
+    struct mk_event_loop *loop = mk_event_loop_create(8);
+    if (!loop) {{ return -1; }}
+    int ret = mk_event_channel_create(loop, {create});
+    if (ret != 0) {{ mk_event_loop_destroy(loop); return -1; }}
+    mk_event_channel_destroy(loop, {destroy});
+    mk_event_loop_destroy(loop);
+    return 0;
+}}"
+        )
+    };
+    for (create, destroy) in [
+        ("&s->r, &s->w, c", "s->r, s->w, &c->event"),
+        ("&s->r, &s->w, &c->event", "s->r, s->w, c"),
+        ("&c->ch[0], &c->ch[1], c", "c->ch[0], c->ch[1], c"),
+    ] {
+        let body = channel(create, destroy);
+        let (status, diagnostics) = outcome(&body);
+        assert_ne!(status, "Safe", "{body}\n{diagnostics:?}");
+        assert!(
+            !diagnostics.iter().any(|diagnostic| diagnostic == GATE),
+            "{body}\n{diagnostics:?}"
+        );
+        assert!(
+            diagnostics
+                .iter()
+                .any(|diagnostic| diagnostic.contains("(descriptor-cell-")),
+            "{body}\n{diagnostics:?}"
+        );
+    }
+}

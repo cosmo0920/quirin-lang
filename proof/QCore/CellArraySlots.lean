@@ -7,8 +7,7 @@ import QCore.CallArgumentAccess
 The abstract rule implemented by `element_read`, the `cell_bearing` arm of
 `Parser::candidate_arguments` and `AdmittedArgument::matches` in
 `crates/qcore-c-gateway/src/legacy_call_argument_access.rs`, with the member
-class `TypedAccessModel::integer_array_length` and `canonical_decimal` of
-`typed_field_access.rs`.
+reader `integer_array_length` and `canonical_decimal` of the same file.
 
 The lexical access gate refuses a call actual that reads memory. Card
 W44-INDIRECT-CALL-ARGUMENT-ACCESS (`QCore.CallArgumentAccess`) admits typed

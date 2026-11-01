@@ -453,19 +453,21 @@ fn member_address(
 /// `B` is declared `struct T *` and `S` `struct T`, exactly as for the typed
 /// member read `B -> F` this module already admits; `F` is declared
 /// `INTEGER-TYPE F [ N ]` in `T`'s single complete non-union definition
-/// ([`TypedAccessModel::integer_array_length`]); `K` is a canonical decimal
-/// literal with `K < N`, so the element is an object inside `F` (C11 6.5.2.1,
-/// 6.5.6p8) and the read is in bounds. The value read is an integer, and the
-/// address is a pointer to an integer element that holds no pointer, so the
-/// actual carries exactly the member read's obligation: `B`'s typed read (none
-/// for `S`, a record of this frame). A variable, negative, out-of-bounds or
-/// non-canonical index, a pointer member, a non-integer element and every
-/// other shape answer `None`.
+/// ([`integer_array_length`]); `K` is a canonical decimal literal
+/// ([`canonical_decimal`]) with `K < N`, so the element is an object inside
+/// `F` (C11 6.5.2.1, 6.5.6p8) and the read is in bounds. The value read is an
+/// integer, and the address is a pointer to an integer element that holds no
+/// pointer, so the actual carries exactly the member read's obligation: `B`'s
+/// typed read (none for `S`, a record of this frame). A variable, negative,
+/// out-of-bounds or non-canonical index, a pointer member, a non-integer
+/// element and every other shape answer `None`.
 ///
-/// The caller asks this only at a `Borrowed` position of a withheld
-/// declaration, after every older route refused.
+/// `unit` is the translation unit's token texts, where the record definition
+/// is read. The caller asks this only at a `Borrowed` position of a
+/// cell-bearing withheld declaration, after every older route refused.
 pub(super) fn element_read(
     argument: &[&str],
+    unit: &[&str],
     model: &TypedAccessModel,
     types: &FunctionTypes,
 ) -> Option<ArgumentRead> {
@@ -475,8 +477,8 @@ pub(super) fn element_read(
         _ => texts,
     };
     let in_bounds = |tag: &str, field: &str, index: &str| {
-        let length = model.integer_array_length(tag, field)?;
-        let index = crate::typed_field_access::canonical_decimal(index)?;
+        let length = integer_array_length(unit, model, tag, field)?;
+        let index = canonical_decimal(index)?;
         (index < length).then_some(())
     };
     let mut read = ArgumentRead::default();
@@ -498,6 +500,90 @@ pub(super) fn element_read(
         }
         _ => None,
     }
+}
+
+/// Card **MK-EVENT-CELL-ARRAY-SLOTS** (rule 38a): the value of a canonical
+/// decimal literal, `0` or a nonzero digit followed by digits, with no suffix.
+/// A leading `0` would be octal (C11 6.4.4.1), so `010` is refused rather
+/// than read as ten; a suffix, a sign or any expression is refused too.
+pub(super) fn canonical_decimal(text: &str) -> Option<u64> {
+    let canonical = text == "0"
+        || (text.bytes().all(|byte| byte.is_ascii_digit())
+            && text.bytes().next().is_some_and(|first| first != b'0'));
+    if canonical { text.parse().ok() } else { None }
+}
+
+/// Type qualifiers that keep a member out of the element class.
+const ELEMENT_REJECTING_QUALIFIERS: &[&str] = &["volatile", "_Atomic"];
+
+/// Card **MK-EVENT-CELL-ARRAY-SLOTS** (rule 38a): the declared length `N`
+/// when `tag`'s definition in `unit` declares `field` as exactly one member
+/// declaration `SPECIFIERS field [ N ] ;`, where:
+///
+/// * the declaration reader read `tag`'s single complete non-union definition
+///   ([`TypedAccessModel::record_definition_is_complete`]);
+/// * the declaration has one declarator, one dimension, no `*`, and `N` is a
+///   canonical decimal literal;
+/// * `SPECIFIERS` is an integer type ([`TypedAccessModel::integer_class`]: no
+///   floating, `_Bool`, enumeration or plain `char`) with no `volatile` or
+///   `_Atomic`.
+///
+/// `None` for every other member. The definition is the one occurrence of
+/// `struct tag {` in `unit` (single by the first premise). Read here rather
+/// than as a class of `typed_field_access.rs`, whose bytes are pinned whole by
+/// `docs/reports/libc-reading-site-evidence/bindings.json`.
+pub(super) fn integer_array_length(
+    unit: &[&str],
+    model: &TypedAccessModel,
+    tag: &str,
+    field: &str,
+) -> Option<u64> {
+    if !model.record_definition_is_complete(tag) {
+        return None;
+    }
+    let open = unit
+        .windows(3)
+        .position(|window| window == ["struct", tag, "{"])?
+        + 2;
+    let mut depth = 0usize;
+    let mut close = None;
+    for (index, text) in unit.iter().enumerate().skip(open) {
+        match *text {
+            "{" => depth += 1,
+            "}" => {
+                depth = depth.checked_sub(1)?;
+                if depth == 0 {
+                    close = Some(index);
+                    break;
+                }
+            }
+            _ => {}
+        }
+    }
+    let body = &unit[open + 1..close?];
+    let mut found = None;
+    for member in body.split(|text| *text == ";") {
+        let [specifiers @ .., name, "[", length, "]"] = member else {
+            continue;
+        };
+        if *name != field {
+            continue;
+        }
+        if found.is_some()
+            || specifiers.is_empty()
+            || specifiers
+                .iter()
+                .any(|text| matches!(*text, "*" | "," | "[" | "]" | "(" | ")"))
+            || specifiers
+                .iter()
+                .any(|text| ELEMENT_REJECTING_QUALIFIERS.contains(text))
+            || model.integer_class(specifiers).is_none()
+        {
+            return None;
+        }
+        found = Some(canonical_decimal(length)?);
+    }
+    found
 }
 
 /// Replace every `( NAME )` whose `NAME` this function declares as a variable
@@ -940,7 +1026,12 @@ impl Parser<'_> {
                                 return None;
                             }
                             let argument = unparenthesise_names(argument, &self.typed_types);
-                            element_read(&argument, &self.typed_model, &self.typed_types)
+                            let unit = self
+                                .tokens
+                                .iter()
+                                .map(|token| token.text.as_str())
+                                .collect::<Vec<_>>();
+                            element_read(&argument, &unit, &self.typed_model, &self.typed_types)
                         })
                         .ok_or(refusal),
                     other => other,
@@ -1467,14 +1558,16 @@ mod tests {
     fn element_reads_are_recognised_in_bounds_only() {
         let unit = "struct ch { int fd [ 2 ] ; unsigned long n [ 3 ] ; int * p ; double d [ 2 ] ; \
                     char k [ 2 ] ; int m [ 2 ] [ 2 ] ; volatile int v [ 2 ] ; int e [ 1 + 1 ] ; } ;";
-        let model = TypedAccessModel::read(&texts(unit));
+        let unit_texts = texts(unit);
+        let model = TypedAccessModel::read(&unit_texts);
         let types = FunctionTypes::read(
             &model,
             &texts("struct ch * c , int i"),
             &texts("struct ch s ;"),
             &BTreeSet::new(),
         );
-        let read = |argument: &'static str| element_read(&texts(argument), &model, &types);
+        let read =
+            |argument: &'static str| element_read(&texts(argument), &unit_texts, &model, &types);
         for admitted in ["c -> fd [ 0 ]", "& c -> fd [ 1 ]", "( c -> n [ 2 ] )"] {
             let read = read(admitted).unwrap_or_else(|| panic!("{admitted}"));
             assert_eq!(read.bases, vec!["c"], "{admitted}");
@@ -1504,12 +1597,15 @@ mod tests {
         ] {
             assert_eq!(read(refused), None, "{refused}");
         }
-        assert_eq!(model.integer_array_length("ch", "fd"), Some(2));
-        assert_eq!(model.integer_array_length("ch", "e"), None);
-        assert_eq!(crate::typed_field_access::canonical_decimal("0"), Some(0));
-        assert_eq!(crate::typed_field_access::canonical_decimal("17"), Some(17));
+        assert_eq!(
+            integer_array_length(&unit_texts, &model, "ch", "fd"),
+            Some(2)
+        );
+        assert_eq!(integer_array_length(&unit_texts, &model, "ch", "e"), None);
+        assert_eq!(canonical_decimal("0"), Some(0));
+        assert_eq!(canonical_decimal("17"), Some(17));
         for refused in ["", "00", "010", "1u", "0x1", "-1"] {
-            assert_eq!(crate::typed_field_access::canonical_decimal(refused), None);
+            assert_eq!(canonical_decimal(refused), None);
         }
     }
 
