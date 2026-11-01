@@ -234,7 +234,7 @@
       "sha256": "89ffc2dfaae320c37341f4f6465b8b32c66a85134fff795bcd43364aec13c091"
     },
     "monkey/event_loop.qv": {
-      "clause_count": 56,
+      "clause_count": 62,
       "declaration_count": 10,
       "declarations": [
         {
@@ -242,11 +242,11 @@
           "name": "mk_event_add"
         },
         {
-          "clauses": 8,
+          "clauses": 9,
           "name": "mk_event_timeout_create"
         },
         {
-          "clauses": 8,
+          "clauses": 11,
           "name": "mk_event_channel_create"
         },
         {
@@ -262,7 +262,7 @@
           "name": "mk_event_timeout_disable"
         },
         {
-          "clauses": 7,
+          "clauses": 9,
           "name": "mk_event_channel_destroy"
         },
         {
@@ -280,33 +280,8 @@
       ],
       "inherits": [],
       "premise_bindings": [],
-      "premises": {
-        "mk_event_channel_create": [
-          {
-            "name": "mk_event_descriptors",
-            "origin": "declared"
-          }
-        ],
-        "mk_event_channel_destroy": [
-          {
-            "name": "mk_event_descriptors",
-            "origin": "declared"
-          }
-        ],
-        "mk_event_timeout_create": [
-          {
-            "name": "mk_event_descriptors",
-            "origin": "declared"
-          }
-        ],
-        "mk_event_timeout_destroy": [
-          {
-            "name": "mk_event_descriptors",
-            "origin": "declared"
-          }
-        ]
-      },
-      "sha256": "37d93252496bfedbf16a754973f179d64cee0bb26db0e38e4eafa010600dfe7e"
+      "premises": {},
+      "sha256": "8593b3517d2a8869abdfe4e18e9da2170d34c742b8fe8ee8573ca360ba778cee"
     },
     "monkey/event_payload.qv": {
       "clause_count": 47,

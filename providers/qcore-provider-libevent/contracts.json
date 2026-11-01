@@ -7,7 +7,7 @@
     "contracts/monkey/composition.qv": "ee16fa5d7b8bd36f355397045a7c12545db28392eaad113b454f862096215e73",
     "contracts/monkey/cycle18_composition.qv": "76a4fc17604702c7b3fc012d75011f0d2e4abefb57f1a77406843b0c6f13e97b",
     "contracts/monkey/descriptor_observation.qv": "89ffc2dfaae320c37341f4f6465b8b32c66a85134fff795bcd43364aec13c091",
-    "contracts/monkey/event_loop.qv": "37d93252496bfedbf16a754973f179d64cee0bb26db0e38e4eafa010600dfe7e",
+    "contracts/monkey/event_loop.qv": "8593b3517d2a8869abdfe4e18e9da2170d34c742b8fe8ee8573ca360ba778cee",
     "contracts/monkey/event_payload.qv": "560c499d6f968a30bd7253340eeabac6604daa0cece08928be289f2ce0e2047a",
     "contracts/monkey/intrusive_list.qv": "0c17d2fb756bed2580c62e3a94eef659e6ede10690854c9af179b09d7a181e3a",
     "contracts/monkey/logging.qv": "c9fdea74a8d0227836c3ed6260c413f2ee43a82bf6856b312ce49babd516e15b",
