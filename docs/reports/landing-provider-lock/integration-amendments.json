@@ -1,0 +1,18 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "LANDING-PROVIDER-LOCK",
+  "base": "eb49bb6ce",
+  "measured_tip": "b2b10e54d",
+  "increment_paragraph": "**LANDING-PROVIDER-LOCK** (integrator repair; [report](../../reports/landing-provider-lock/README.md)). The RULE32A-PILOT landing (`62da8997d`) made `rule-32a-caller-frame-hold` a dependency of `qcore-c-gateway` but left `providers/Cargo.lock` without it, so every `--locked` provider build on `62da8997d` and `eb49bb6ce` refused; the landing's `gate_scope.py` had chosen no provider gate. `b2b10e54d` adds the 8 missing lock lines; the landing gate `gate_scope.py --base eb49bb6ce` (provider gate yes, 13 steps) exited 0 (Rust 8,970 / 0 / 15, Python 577, five packages built and verified, providers 133 / 0 / 1) and `package.py reproduce` exited 0. Registered GATE-SCOPE-PROVIDER-LOCK for the scope hole.",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "GATE-SCOPE-PROVIDER-LOCK",
+      "operation": "register",
+      "title": "The scoped gate does not select the provider gate when a root crate the provider workspace builds changes its dependencies",
+      "text": "scripts/gate_scope.py chooses the provider gate from paths under providers/ and from string-literal readers. The provider workspace also builds root crates by path (qcore-c-gateway, qcore-schemas and their dependencies), so a change to such a crate's Cargo.toml dependency set or to the root Cargo.lock can leave providers/Cargo.lock stale without the gate building a provider. That happened at the RULE32A-PILOT landing (62da8997d: rule-32a-caller-frame-hold added to qcore-c-gateway, provider lock not regenerated, every --locked provider build refused until b2b10e54d). DISCHARGE: gate_scope selects the provider gate, or at least a `cargo metadata --locked --manifest-path providers/Cargo.toml` step, whenever a changed manifest or lock belongs to a package in the provider workspace's path-dependency closure, with a test that replays the 62da8997d diff and selects it.",
+      "source": "docs/reports/landing-provider-lock/README.md",
+      "recorded_by": "LANDING-PROVIDER-LOCK"
+    }
+  ]
+}
