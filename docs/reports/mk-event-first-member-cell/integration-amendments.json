@@ -1,0 +1,24 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "MK-EVENT-FIRST-MEMBER-CELL",
+  "base": "e589ee5a7",
+  "measured_tip": "cf149f861",
+  "increment_paragraph": "**MK-EVENT-FIRST-MEMBER-CELL** (gateway rule 38 (1), contract specification C04.6.2; the vocabulary of USER DECISION 2026-11-01, \"I approve the changes of D1-D5.\", no new clause spelling): a descriptor cell's object actual whose Clang type is `struct R *`, where the unit's one complete definition of `R` declares its first member `m` as `struct mk_event`, is read as `&X->m` (C11 6.7.2.1p15: a pointer to a structure, suitably converted, points to its initial member), the direct reading's own key, so a creation through the record and a release through `&X->m` (or the reverse) name one cell. A first member of any other type (a pointer or array of the event, a qualified event, another record, so a nested chain refuses), a later member, an empty, incomplete or doubly defined record, a union, a mix of actual types at one callee, an unknown type and an actual that is not a plain place keep `descriptor-cell-undecided`; off, rule 38 still refuses every cell call. The rule-38 package gains the arm `initial_member::member_view` with shared vectors; `RecordFacts` records each struct's first member. `QCore.DescriptorCells` gains the initial-member identification and the law that the cell table's results are unchanged under it (11 audited theorems). The one production caller that now reads a cell is Monkey's `mk_server_worker_loop` (`mk_event_timeout_destroy(evl, server_timeout)`, corpus), which loses one leaf and stays `Unknown`; Fluent Bit's `ins` channel creators and Monkey's `notif` keep the access gate's refusal (`MK-EVENT-CELL-ARRAY-SLOTS`). Prediction: no status moves on corpus, system or slice. Report: [docs/reports/mk-event-first-member-cell/README.md](../../reports/mk-event-first-member-cell/README.md).",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "MK-EVENT-FIRST-MEMBER-CELL",
+      "operation": "retire",
+      "why": "Discharged by MK-EVENT-FIRST-MEMBER-CELL: rule 38 (1) reads a pointer to a record whose one complete definition declares its first member as struct mk_event as that member (C11 6.7.2.1p15), with the direct reading's own key; every other record (first member not the event, pointer, array, qualified, nested), a union, an incomplete type, a mix and an unknown type still refuse, each with a fixture, and QCore.DescriptorCells proves the identification and the unchanged cell table. Bodies read at 66910c10 and 046accf6; the declared live-route measurement is the integrator's (prediction: no status moves).",
+      "source": "docs/reports/mk-event-first-member-cell/README.md"
+    },
+    {
+      "id": "MK-EVENT-CELL-WHOLE-AND-MEMBER-ACTUALS",
+      "operation": "register",
+      "title": "A cell call's member address of a formal that another actual passes whole keeps the access gate's refusal",
+      "text": "Registered by MK-EVENT-FIRST-MEMBER-CELL. In a function that passes a caller's record formal `c` whole as a cell call's actual (`mk_event_channel_create(loop, &s->r, &s->w, c)`), a cell call whose actual is a member address of that formal (`&c->event`, `&c->r`) keeps the access gate's refusal (`indirect memory access is outside the resource projection`), independent of rule 38 (it holds where rule 38 refuses the whole actual too); a member address of another formal is admitted (crates/qcore-c-gateway/tests/descriptor_cells.rs `a_channel_through_its_first_member_record_is_safe`). Fluent Bit's channel creators pass `ins` with `&ins->ch_events[0]`, so admitting the array slots (MK-EVENT-CELL-ARRAY-SLOTS) may still leave this refusal. DISCHARGE: name the gate premise that refuses the member address and either admit it where the whole actual is a borrowed cell object or record why it stays, with fixtures, measured.",
+      "source": "docs/reports/mk-event-first-member-cell/README.md",
+      "recorded_by": "MK-EVENT-FIRST-MEMBER-CELL"
+    }
+  ]
+}
