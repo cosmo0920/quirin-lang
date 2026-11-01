@@ -9206,12 +9206,23 @@ safety claim and no validation of the detach representation premise.
     descriptor identity; the table records, per path, each name's identity
     and whether it is live, undecided (`Maybe`) or stale.
 
-    (1) **Keys.** A member cell's actual must be a `struct TAG *` in every call
-    of the callee in the calling function (Clang's type of the actual before
-    its conversion to `void *`), so a record whose first member is the event
-    refuses; its object is then read as rule 12t reads a retained pointer (a
-    caller's formal or interior, a tracked identity or its interior). A slot's
-    actual is `&L` (a local) or `&X->f[K]`. Anything else is no key.
+    (1) **Keys.** A member cell's actual must have one Clang type in every
+    call of the callee in the calling function (its type before the
+    conversion to `void *`), and that type must be `struct TAG *`, or (card
+    MK-EVENT-FIRST-MEMBER-CELL, C11 6.7.2.1p15: a pointer to a structure,
+    suitably converted, points to its initial member) `struct R *` where the
+    unit's one complete definition of `R` declares its first member `m` with
+    type `struct TAG`. A place `X` of the second kind (a name followed by
+    member steps) is read as `&X->m`, the direct reading's own key, so a
+    creation through `X` and a release through `&X->m` meet. A first member
+    of any other type (a pointer or array of the event, a qualified event,
+    another record, so a nested chain refuses), a later member, a record with
+    no member, a union, an incomplete or doubly defined record, a mix of
+    types, an unknown type and any other spelling of the actual refuse
+    (`descriptor-cell-undecided`; package `initial_member::member_view`).
+    The object is then read as rule 12t reads a retained pointer (a caller's
+    formal or interior, a tracked identity or its interior). A slot's actual
+    is `&L` (a local) or `&X->f[K]`. Anything else is no key.
     (2) **Creation** (`#fresh(K)`) records a new identity under its key,
     `Maybe` until the witness decides it; a key that may name a live
     descriptor refuses (`descriptor-cell-overwritten`), and the same call
@@ -9242,13 +9253,15 @@ safety claim and no validation of the detach representation premise.
     intersection. With `38` in `QCORE_GATEWAY_RULES_OFF` every call of a
     cell-bearing declaration refuses.
 
-    **Do not** read a cell from an actual of another type, decide a class
+    **Do not** read a cell from an actual of another type (beyond the one
+    initial-member level of (1)), decide a class
     without its witness, release through a key that may name a recorded cell
     it does not match, or present any refusal here as a finding. Premises
     stated, not proved (trust boundary 28): the declarations' bodies
     (declared assumptions, pinned at both revisions), that two open
     descriptors never share a number, and `P-CELL-STATE-NOT-FORWARDED`. The
     Lean model is `QCore.DescriptorCells`
-    ([report](../reports/mk-event-descriptor-quant/README.md)).
+    ([report](../reports/mk-event-descriptor-quant/README.md); the initial
+    member: [report](../reports/mk-event-first-member-cell/README.md)).
 
 <!-- generated:rules:end -->

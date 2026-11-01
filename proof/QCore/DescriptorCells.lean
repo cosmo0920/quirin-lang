@@ -34,6 +34,18 @@ rule theorems, not an extraction of the Rust analyzer
   canonical set (`each_shorthand_and_its_parts_mean_the_same`,
   `both_levels_are_one_canonical_set`).
 * **Vectors.** `decision_vectors_hold` (Rust `cells::DECISION_VECTORS`).
+* **The initial member** (card MK-EVENT-FIRST-MEMBER-CELL, C11 6.7.2.1p15):
+  a pointer to a record whose first member is the event resolves to the
+  event's own place (`the_initial_member_is_the_event_cell`,
+  `the_initial_member_is_at_the_record_address`), so the cell table's results
+  are unchanged under it
+  (`the_cell_table_is_unchanged_under_the_initial_member`); every other
+  record, a nested chain, an empty or incomplete record, a mix and any other
+  type refuse (`every_other_record_refuses`, `a_nested_first_member_refuses`,
+  `a_non_event_first_member_refuses`, `an_empty_or_incomplete_record_refuses`,
+  `an_undecided_or_other_type_refuses`, `a_mixed_call_set_has_no_type`,
+  `a_refused_view_creates_nothing`); `initial_member_vectors_hold` (Rust
+  `initial_member::INITIAL_MEMBER_VECTORS`).
 -/
 
 namespace QCore.DescriptorCells
@@ -374,6 +386,217 @@ def decisionVectors : List (List Step × Outcome) := [
 
 theorem decision_vectors_hold :
     decisionVectors.all (fun (trace, o) => run trace (fun _ => none) == o) = true := by
+  decide
+
+/-! ## The initial member (card MK-EVENT-FIRST-MEMBER-CELL)
+
+Rule 38 (1). C11 6.7.2.1p15: a pointer to a structure object, suitably
+converted, points to its initial member, and a structure has no padding at
+its beginning. A member cell `#data: mk_event.fd` is read through a pointer
+to `struct mk_event`; a pointer to a record whose one complete definition
+declares its first member `struct mk_event m` is read as `&X->m`, the direct
+reading's own place, and nothing else is read (Rust
+`initial_member::member_view`). -/
+
+/-- Clang's type of a member cell's actual, before the `void *` conversion. -/
+inductive PtrType where
+  /-- `struct mk_event *`. -/
+  | event
+  /-- `struct R *`. -/
+  | record (r : Nat)
+  /-- A union, `void *`, a pointer to a pointer, anything else. -/
+  | other
+  deriving DecidableEq, Repr
+
+/-- A member's declared type. -/
+inductive FieldType where
+  /-- Exactly `struct mk_event`. -/
+  | event
+  /-- Another record (the next level of a nested chain). -/
+  | record (r : Nat)
+  /-- A pointer to or array of the event, a qualified event, an integer. -/
+  | other
+  deriving DecidableEq, Repr
+
+/-- The unit's record facts: the first member (name, declared type) of the one
+complete definition of each record, `some none` for a record with no member,
+`none` for an incomplete or ambiguous one. -/
+abbrev Layout := Nat → Option (Option (Nat × FieldType))
+
+/-- How a member cell's actual names its object. -/
+inductive View where
+  | direct
+  | initial (m : Nat)
+  | refused
+  deriving DecidableEq, Repr
+
+/-- The view of an actual whose calls agree on `actual` (`none`: they do not,
+or a type is unknown). -/
+def memberView (actual : Option PtrType) (layout : Layout) : View :=
+  match actual with
+  | none => .refused
+  | some .event => .direct
+  | some (.record r) =>
+    match layout r with
+    | some (some (m, .event)) => .initial m
+    | _ => .refused
+  | some .other => .refused
+
+/-- The one type every call of the callee in the function agrees on. -/
+def agreed : List PtrType → Option PtrType
+  | [] => none
+  | t :: ts => if ts.all (fun u => u == t) then some t else none
+
+/-- A pointer-valued place as spelled. -/
+inductive Place where
+  | name (n : Nat)
+  /-- `p->m`. -/
+  | member (p : Place) (m : Nat)
+  /-- `&p->m`. -/
+  | addr (p : Place) (m : Nat)
+  deriving DecidableEq, Repr
+
+/-- The place a cell is keyed on: the actual itself, its initial member, or
+nothing. -/
+def resolve : View → Place → Option Place
+  | .direct, p => some p
+  | .initial m, p => some (.addr p m)
+  | .refused, _ => none
+
+/-- A creation through a possibly unresolved key. -/
+def createAt (t : Table) (k : Option Key) (i : Nat) (w : Bool) : Except Refusal Table :=
+  match k with
+  | none => .error .undecided
+  | some k => create t k i w
+
+/-- A release through a possibly unresolved key (`others`: some recorded name
+may be the cell). -/
+def releaseAt (t : Table) (k : Option Key) (others : Bool) : Except Refusal Table :=
+  match k with
+  | none => if others then .error .undecided else .ok t
+  | some k => release t k others
+
+/-- What a possibly unresolved key names. -/
+def lookup (t : Table) : Option Key → Option (Nat × Status)
+  | none => none
+  | some k => t k
+
+/-- **The initial member is the event's cell**: a record pointer whose first
+member is the event resolves to the place `&p->m` resolves to directly. -/
+theorem the_initial_member_is_the_event_cell (layout : Layout) (r m : Nat) (p : Place)
+    (h : layout r = some (some (m, .event))) :
+    resolve (memberView (some (.record r)) layout) p =
+      resolve (memberView (some .event) layout) (.addr p m) := by
+  simp [memberView, resolve, h]
+
+/-- **The cell table's results are unchanged under it**: for every key
+encoding, a creation, a release, a second name and the guard's lookup through
+the record pointer give what they give through `&p->m`. -/
+theorem the_cell_table_is_unchanged_under_the_initial_member (enc : Place → Key)
+    (layout : Layout) (r m : Nat) (p : Place) (h : layout r = some (some (m, .event)))
+    (t : Table) (i : Nat) (w others : Bool) (against : Option Key) :
+    createAt t ((resolve (memberView (some (.record r)) layout) p).map enc) i w =
+        createAt t ((resolve (memberView (some .event) layout) (.addr p m)).map enc) i w ∧
+      releaseAt t ((resolve (memberView (some (.record r)) layout) p).map enc) others =
+        releaseAt t ((resolve (memberView (some .event) layout) (.addr p m)).map enc) others ∧
+      equality (lookup t ((resolve (memberView (some (.record r)) layout) p).map enc))
+          (lookup t against) =
+        equality (lookup t ((resolve (memberView (some .event) layout) (.addr p m)).map enc))
+          (lookup t against) ∧
+      (resolve (memberView (some (.record r)) layout) p).map enc = some (enc (.addr p m)) := by
+  have hk := congrArg (Option.map enc) (the_initial_member_is_the_event_cell layout r m p h)
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · rw [hk]
+  · rw [hk]
+  · rw [hk]
+  · rw [hk]; simp [memberView, resolve]
+
+/-- **Every other record refuses**: unless its first member is the event. -/
+theorem every_other_record_refuses (layout : Layout) (r : Nat)
+    (h : ∀ m, layout r ≠ some (some (m, .event))) :
+    memberView (some (.record r)) layout = .refused := by
+  cases hl : layout r with
+  | none => simp [memberView, hl]
+  | some first =>
+    cases first with
+    | none => simp [memberView, hl]
+    | some pair =>
+      obtain ⟨m, ft⟩ := pair
+      cases ft with
+      | event => exact absurd hl (h m)
+      | record s => simp [memberView, hl]
+      | other => simp [memberView, hl]
+
+/-- **A nested first-member chain refuses at its first level.** -/
+theorem a_nested_first_member_refuses (layout : Layout) (r m s : Nat)
+    (h : layout r = some (some (m, .record s))) :
+    memberView (some (.record r)) layout = .refused :=
+  every_other_record_refuses layout r (by intro m'; simp [h])
+
+/-- **A first member of another type refuses** (a pointer to or array of the
+event, a qualified event, an integer). -/
+theorem a_non_event_first_member_refuses (layout : Layout) (r m : Nat)
+    (h : layout r = some (some (m, .other))) :
+    memberView (some (.record r)) layout = .refused :=
+  every_other_record_refuses layout r (by intro m'; simp [h])
+
+/-- **A record with no member, or no one complete definition, refuses.** -/
+theorem an_empty_or_incomplete_record_refuses (layout : Layout) (r : Nat)
+    (h : layout r = some none ∨ layout r = none) :
+    memberView (some (.record r)) layout = .refused := by
+  apply every_other_record_refuses layout r
+  intro m'
+  rcases h with h | h <;> simp [h]
+
+/-- **An unknown type, a mix, a union or any other pointer refuses.** -/
+theorem an_undecided_or_other_type_refuses (layout : Layout) :
+    memberView none layout = .refused ∧ memberView (some .other) layout = .refused :=
+  ⟨rfl, rfl⟩
+
+/-- **A mix of types has no agreed type.** -/
+theorem a_mixed_call_set_has_no_type (t u : PtrType) (ts : List PtrType) (hu : u ∈ ts)
+    (hne : u ≠ t) : agreed (t :: ts) = none := by
+  simp only [agreed, ite_eq_right_iff, reduceCtorEq, imp_false, List.all_eq_true,
+    beq_iff_eq]
+  intro hall
+  exact hne (hall u hu)
+
+/-- **A refused view reads no cell**: the creation refuses. -/
+theorem a_refused_view_creates_nothing (enc : Place → Key) (p : Place) (t : Table) (i : Nat)
+    (w : Bool) : createAt t ((resolve .refused p).map enc) i w = .error .undecided := rfl
+
+/-- Member offsets of a record laid out from its beginning (name, size). -/
+def offsetOf : List (Nat × Nat) → Nat → Option Nat
+  | [], _ => none
+  | (n, size) :: rest, m => if n = m then some 0 else (offsetOf rest m).map (· + size)
+
+/-- **The initial member is at the record's address** (C11 6.7.2.1p15: no
+padding at the beginning), so the converted pointer and `&p->m` are one
+address. -/
+theorem the_initial_member_is_at_the_record_address (m size : Nat) (rest : List (Nat × Nat)) :
+    offsetOf ((m, size) :: rest) m = some 0 := by
+  simp [offsetOf]
+
+/-- Rust `INITIAL_MEMBER_VECTORS`, entry for entry (record `ins` is 1,
+`outer` 2; member `event` is 0, `fd` 1, `events` 2, `ins` 3). -/
+def initialMemberVectors : List (Option PtrType × Option (Option (Nat × FieldType)) × View) := [
+  (some .event, none, .direct),
+  (some (.record 1), some (some (0, .event)), .initial 0),
+  (some (.record 1), some (some (1, .other)), .refused),
+  (some (.record 1), some (some (0, .other)), .refused),
+  (some (.record 1), some (some (2, .other)), .refused),
+  (some (.record 1), some (some (0, .other)), .refused),
+  (some (.record 2), some (some (3, .record 1)), .refused),
+  (some (.record 1), some none, .refused),
+  (some (.record 1), none, .refused),
+  (some .other, none, .refused),
+  (some .other, none, .refused),
+  (some .other, none, .refused),
+  (none, none, .refused)
+]
+
+theorem initial_member_vectors_hold :
+    initialMemberVectors.all (fun (a, first, v) => memberView a (fun _ => first) == v) = true := by
   decide
 
 end QCore.DescriptorCells
