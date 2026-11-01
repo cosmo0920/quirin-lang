@@ -2185,7 +2185,10 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // four are in the function map): 96 -> 106.
     // EVENT-CALLER-REMOVAL adds one withheld removal declaration: 106 -> 107.
     // It must not become an ordinary borrow-only function-map entry.
-    assert_eq!(loaded.retaining().len(), 107);
+    // Card MK-EVENT-DESCRIPTOR-QUANT: `mk_event_channel_destroy` now carries
+    // descriptor-cell clauses (a guarded removal and guarded releases,
+    // C04.6.2) and leaves the function map: 107 -> 108.
+    assert_eq!(loaded.retaining().len(), 108);
     assert_eq!(
         loaded.functions().len()
             + loaded.pending_review().len()

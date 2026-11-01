@@ -92,6 +92,7 @@ pub(super) const PARSER_FIELDS: &[(&str, FieldClass)] = &[
     ("sizeof_operands", FieldClass::FunctionFact),
     ("element_lowerings", FieldClass::ProbeState),
     ("descriptor_names", FieldClass::FunctionFact),
+    ("cell_witness_names", FieldClass::FunctionFact),
     ("declared_callees", FieldClass::FunctionFact),
     ("in_place_names", FieldClass::FunctionFact),
     ("census_function", FieldClass::Census),
