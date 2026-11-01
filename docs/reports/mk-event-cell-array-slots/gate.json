@@ -1,0 +1,427 @@
+{
+ "schema": "quirin-gate-scope/1",
+ "source": "git diff",
+ "base": "e589ee5a7248dfd4afbcefd5b542e0de339c31dd",
+ "head": "6066c25f0336e138a164434282a1c44dac90f6aa",
+ "committed": [
+  "crates/qcore-c-gateway/src/legacy_call_argument_access.rs",
+  "crates/qcore-c-gateway/tests/cell_array_slots.rs",
+  "docs/agents/README.md",
+  "docs/agents/gateway.md",
+  "docs/agents/rules/38a.md",
+  "docs/reports/mk-event-cell-array-slots/PREDICTION.md",
+  "proof/AuditCellArraySlots.lean",
+  "proof/QCore.lean",
+  "proof/QCore/CellArraySlots.lean"
+ ],
+ "uncommitted": [
+  "docs/reports/mk-event-cell-array-slots/README.md",
+  "docs/reports/mk-event-cell-array-slots/integration-amendments.json"
+ ],
+ "scope": {
+  "paths": [
+   "crates/qcore-c-gateway/src/legacy_call_argument_access.rs",
+   "crates/qcore-c-gateway/tests/cell_array_slots.rs",
+   "docs/agents/README.md",
+   "docs/agents/gateway.md",
+   "docs/agents/rules/38a.md",
+   "docs/reports/mk-event-cell-array-slots/PREDICTION.md",
+   "docs/reports/mk-event-cell-array-slots/README.md",
+   "docs/reports/mk-event-cell-array-slots/integration-amendments.json",
+   "proof/AuditCellArraySlots.lean",
+   "proof/QCore.lean",
+   "proof/QCore/CellArraySlots.lean"
+  ],
+  "attribution": {
+   "crates/qcore-c-gateway/src/legacy_call_argument_access.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-c-gateway (path, crates/qcore-c-gateway/src/legacy_c.rs:137)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:80)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/tests/cell_array_slots.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:80)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "docs/agents/README.md": [
+    "class prose"
+   ],
+   "docs/agents/gateway.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/38a.md": [
+    "class prose"
+   ],
+   "docs/reports/mk-event-cell-array-slots/PREDICTION.md": [
+    "class prose"
+   ],
+   "docs/reports/mk-event-cell-array-slots/README.md": [
+    "class prose"
+   ],
+   "docs/reports/mk-event-cell-array-slots/integration-amendments.json": [
+    "class prose"
+   ],
+   "proof/AuditCellArraySlots.lean": [
+    "read by qcore-compiler (runtime, compiler/tests/float_ieee_vectors.rs:524)",
+    "read by qcore-compiler (runtime, compiler/tests/proof_leg_digests.rs:106)",
+    "class lean"
+   ],
+   "proof/QCore.lean": [
+    "read by qcore-compiler (runtime, compiler/tests/float_ieee_vectors.rs:524)",
+    "read by qcore-compiler (runtime, compiler/tests/proof_leg_digests.rs:106)",
+    "class lean"
+   ],
+   "proof/QCore/CellArraySlots.lean": [
+    "read by qcore-compiler (runtime, compiler/tests/float_ieee_vectors.rs:524)",
+    "read by qcore-compiler (runtime, compiler/tests/proof_leg_digests.rs:106)",
+    "class lean"
+   ]
+  },
+  "affected": {
+   "qcore-audit": [
+    "depends on qcore-c-gateway"
+   ],
+   "qcore-c-gateway": [
+    "owns crates/qcore-c-gateway/src/legacy_call_argument_access.rs",
+    "compiles it via #[path]: crates/qcore-c-gateway/src/legacy_call_argument_access.rs (crates/qcore-c-gateway/src/legacy_c.rs:137)",
+    "owns crates/qcore-c-gateway/tests/cell_array_slots.rs"
+   ],
+   "qcore-compiler": [
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/src/legacy_call_argument_access.rs (compiler/tests/workspace_layering.rs:80)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/tests/cell_array_slots.rs (compiler/tests/workspace_layering.rs:80)",
+    "names proof in a string literal: proof/AuditCellArraySlots.lean (compiler/tests/float_ieee_vectors.rs:524)",
+    "names proof in a string literal: proof/AuditCellArraySlots.lean (compiler/tests/proof_leg_digests.rs:106)",
+    "names proof in a string literal: proof/QCore.lean (compiler/tests/float_ieee_vectors.rs:524)",
+    "names proof in a string literal: proof/QCore.lean (compiler/tests/proof_leg_digests.rs:106)",
+    "names proof in a string literal: proof/QCore/CellArraySlots.lean (compiler/tests/float_ieee_vectors.rs:524)",
+    "names proof in a string literal: proof/QCore/CellArraySlots.lean (compiler/tests/proof_leg_digests.rs:106)"
+   ],
+   "qcore-provider-conformance": [
+    "depends on qcore-c-gateway"
+   ],
+   "qcore-verification": [
+    "names crates in a string literal: crates/qcore-c-gateway/src/legacy_call_argument_access.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/tests/cell_array_slots.rs (crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "qcorec": [
+    "depends on qcore-compiler"
+   ],
+   "quirin-source-analysis": [
+    "depends on qcore-c-gateway"
+   ]
+  },
+  "mode": "full",
+  "full_reasons": [
+   "the diff reaches qcore-c-gateway"
+  ],
+  "rust_packages": [
+   "qcore-audit",
+   "qcore-c-gateway",
+   "qcore-compiler",
+   "qcore-contract",
+   "qcore-core",
+   "qcore-frontend",
+   "qcore-gateway-rule-api",
+   "qcore-schemas",
+   "qcore-verification",
+   "qcore-verifier-host",
+   "qcorec",
+   "quirin-audit-plugin",
+   "quirin-audit-plugin-libevent",
+   "quirin-audit-plugin-measure",
+   "quirin-source-analysis",
+   "rule-32a-caller-frame-hold",
+   "rule-33-removed-selection",
+   "rule-34-element-destroyer",
+   "rule-35-literal-decay",
+   "rule-36-exact-formal-return",
+   "rule-37-result-constructors",
+   "rule-38-descriptor-cells"
+  ],
+  "probes": true,
+  "lean": {
+   "mode": "all",
+   "reasons": [
+    "proof/QCore.lean: a proof root changed"
+   ],
+   "modules": [],
+   "audits": []
+  },
+  "python_reasons": [],
+  "provider_gate": false,
+  "provider_reasons": [],
+  "provider_members_reached_without_providers_change": [
+   "qcore-provider-conformance"
+  ],
+  "unresolved_includes": [
+   {
+    "crate": "qcore-compiler",
+    "source": "compiler/tests/ct_corpus.rs:8069",
+    "literal": "include_str!(\\\"fixtures/ct/{id}/case.qr\\\")\");",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   }
+  ]
+ },
+ "planned_steps": [
+  {
+   "name": "submodules",
+   "argv": [
+    "git",
+    "-C",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a82a3f39650a2cad2",
+    "submodule",
+    "status",
+    "--recursive"
+   ],
+   "slot": null
+  },
+  {
+   "name": "fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "slot": null
+  },
+  {
+   "name": "clippy",
+   "argv": [
+    "cargo",
+    "clippy",
+    "--all-targets",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "slot": null
+  },
+  {
+   "name": "rust-suite",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a82a3f39650a2cad2/scripts/run_test_binaries.py",
+    "--log-dir",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a82a3f39650a2cad2/private/gate-2/rust-suite"
+   ],
+   "slot": "rust-suite"
+  },
+  {
+   "name": "probe-reevaluation_probe",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a82a3f39650a2cad2/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_probe"
+   ],
+   "slot": null
+  },
+  {
+   "name": "probe-reevaluation_followup",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a82a3f39650a2cad2/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_followup"
+   ],
+   "slot": null
+  },
+  {
+   "name": "lean",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a82a3f39650a2cad2/scripts/check_lean_audits.py"
+   ],
+   "slot": "lean"
+  },
+  {
+   "name": "python",
+   "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+   ],
+   "slot": null
+  }
+ ],
+ "slots": true,
+ "started": "20261101T121911Z",
+ "ran": true,
+ "steps": [
+  {
+   "name": "submodules",
+   "argv": [
+    "git",
+    "-C",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a82a3f39650a2cad2",
+    "submodule",
+    "status",
+    "--recursive"
+   ],
+   "exit": 0,
+   "seconds": 0.0,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a82a3f39650a2cad2/private/gate-2/submodules.log",
+   "counts": {
+    "submodules": 1,
+    "not_checked_out_or_moved": []
+   }
+  },
+  {
+   "name": "fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "exit": 0,
+   "seconds": 8.6,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a82a3f39650a2cad2/private/gate-2/fmt.log",
+   "counts": {}
+  },
+  {
+   "name": "clippy",
+   "argv": [
+    "cargo",
+    "clippy",
+    "--all-targets",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "exit": 0,
+   "seconds": 18.6,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a82a3f39650a2cad2/private/gate-2/clippy.log",
+   "counts": {}
+  },
+  {
+   "name": "rust-suite",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a82a3f39650a2cad2/scripts/gate_slot.py",
+    "rust-suite",
+    "--receipt",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a82a3f39650a2cad2/private/gate-2/slots/rust-suite.json",
+    "--",
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a82a3f39650a2cad2/scripts/run_test_binaries.py",
+    "--log-dir",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a82a3f39650a2cad2/private/gate-2/rust-suite"
+   ],
+   "exit": 0,
+   "seconds": 6696.2,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a82a3f39650a2cad2/private/gate-2/rust-suite.log",
+   "counts": {
+    "units": 591,
+    "passed": 9011,
+    "failed": 0,
+    "ignored": 15,
+    "measured": 0,
+    "filtered": 105,
+    "summaries": 631,
+    "packages": null,
+    "summary": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a82a3f39650a2cad2/private/gate-2/rust-suite/summary.json",
+    "ok": true
+   },
+   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a82a3f39650a2cad2/private/gate-2/slots/rust-suite.json"
+  },
+  {
+   "name": "probe-reevaluation_probe",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a82a3f39650a2cad2/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_probe"
+   ],
+   "exit": 0,
+   "seconds": 0.2,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a82a3f39650a2cad2/private/gate-2/probe-reevaluation_probe.log",
+   "counts": {}
+  },
+  {
+   "name": "probe-reevaluation_followup",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a82a3f39650a2cad2/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_followup"
+   ],
+   "exit": 0,
+   "seconds": 0.4,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a82a3f39650a2cad2/private/gate-2/probe-reevaluation_followup.log",
+   "counts": {}
+  },
+  {
+   "name": "lean",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a82a3f39650a2cad2/scripts/gate_slot.py",
+    "lean",
+    "--receipt",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a82a3f39650a2cad2/private/gate-2/slots/lean.json",
+    "--",
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a82a3f39650a2cad2/scripts/check_lean_audits.py"
+   ],
+   "exit": 0,
+   "seconds": 13.4,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a82a3f39650a2cad2/private/gate-2/lean.log",
+   "counts": {
+    "audits": 400
+   },
+   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a82a3f39650a2cad2/private/gate-2/slots/lean.json"
+  },
+  {
+   "name": "python",
+   "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+   ],
+   "exit": 1,
+   "seconds": 43.9,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a82a3f39650a2cad2/private/gate-2/python.log",
+   "counts": {
+    "tests": 577,
+    "skipped": 0,
+    "ok": false
+   }
+  }
+ ],
+ "ok": false,
+ "finished": "20261101T141212Z"
+}

@@ -69,7 +69,7 @@ an unresolved base identity. A path the analysis used to stop at the refused
 statement can reach later refusals. The contract sidecar, provider locks,
 digests and bounds identity are unchanged, because no contract is touched.
 
-## Amendment, before any measurement (commit after `7dc756613`)
+## Amendment, before any measurement (commit after `7dc756613`; superseded in part by the second amendment)
 
 The status prediction is unchanged: **no row moves on any route**. Two
 things found during implementation narrow the scope and widen the set of
@@ -118,3 +118,37 @@ none
 route slice
 none
 ```
+
+## Second amendment, before any measurement (commit after `6066c25f0`)
+
+The status prediction is unchanged: **no row moves on any route**.
+
+**The integer-array member reader moved.** It was a class of
+`typed_field_access.rs`, whose bytes
+`docs/reports/libc-reading-site-evidence/bindings.json` pins whole. The first
+card gate's `libc_reading_site_evidence` and `reading_site_domain` tests
+failed on that pin. The reader now reads the record definition from the
+unit's tokens in `legacy_call_argument_access.rs`, behind the declaration
+reader's completeness check. The admitted shapes are the same, except that
+the member's declaration must have exactly one declarator, which narrows the
+rule. Every Fluent Bit slot member is declared alone (`flb_pipefd_t
+ch_events[2];`).
+
+**`MK-EVENT-CELL-WHOLE-AND-MEMBER-ACTUALS`** (registered by
+MK-EVENT-FIRST-MEMBER-CELL). In a function that passes a caller's record `c`
+whole to one cell call, a member address `&c->event` at another cell call
+kept the access gate's refusal. This is the minted-name gap of the first
+amendment. With rule 38a's match switched off in the worktree, the gate
+refuses `&c->event`. With the match on, it leaves the gate and rule 38
+answers.
+
+**No channel row still refuses because of it.** Fluent Bit's
+`mk_event_channel_create(…, &ins->ch_events[0], &ins->ch_events[1], ins)` in
+`flb_output_init_all` and `input_instance_channel_events_init` passes the gate
+at this tip; only rule 38 refuses there. On this base, rule 38's first-member
+reading (MK-EVENT-FIRST-MEMBER-CELL) is not present, so `ins` is "not a
+`struct mk_event *`". The fixtures are in `tests/cell_array_slots.rs`
+(`a_record_passed_whole_never_keeps_the_gate_at_its_member_address`). Those
+two rows keep their other leaves (`flb_input_event_loop_get` uncontracted;
+`flb_output_init_all`'s 80-odd others), so the status prediction holds with
+or without that card.
