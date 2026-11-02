@@ -240,6 +240,19 @@ and (ii)** as one follow-up. That follow-up is
 The census changes no source, contract, lock, gateway path or Lean module.
 It reads the trees only. The census's own fail-closed checks are its tests.
 
+**Card gate.** `python3 scripts/gate_scope.py --base e3050fe46 --out
+private/gate` ran on `2e689174f`, with a clean tree. The scope selected no
+crate and no Lean module, and no provider change. Every step exited 0:
+
+| Step | Exit | Counts |
+|---|---|---|
+| submodules | 0 | 1 |
+| fmt | 0 | |
+| Python suite | 0 | 577 tests |
+
+The record is [gate.json](gate.json). The console log is
+`/tmp/claude-1000/-media-Data-GitHub-quirin-lang--claude-worktrees-launch-cards-clean-worktrees-5365ff/6fcd7fbd-1cae-4a40-a37d-5bce071c02c6/scratchpad/cgrr-gate-console.log`.
+
 ## 6. Observations (not findings)
 
 - **The provider comment names the wrong configuration.**
