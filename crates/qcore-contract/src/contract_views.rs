@@ -127,6 +127,7 @@ impl ViewDeclaration {
                         }
                     }
                     SourceContractClauseKind::QuantRegistered => "quant registered".into(),
+                    SourceContractClauseKind::QuantCell => "quant cell".into(),
                 },
                 expression: clause.value.expression_source.trim().to_owned(),
             })

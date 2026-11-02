@@ -495,6 +495,13 @@ pub(crate) fn combine(mut zero: LegacyCfg, mut nonzero: LegacyCfg) -> LegacyCfg 
         }
         super::offset_produced_sites(&mut node.instruction, site_offset);
     }
+    // Card MK-EVENT-CELL-CROSS-FUNCTION (rule 38c): each half's guard tests
+    // stay on their own branch nodes.
+    let shifted = std::mem::take(&mut nonzero.cell_tests)
+        .into_iter()
+        .map(|(node, step)| (node + node_offset, step))
+        .collect::<Vec<_>>();
+    zero.cell_tests.extend(shifted);
     let entries = vec![zero.entry, nonzero.entry + node_offset];
     // Both contexts are built from the same body, so their CTWIN-PUBLISH
     // destination sets agree; the union is taken rather than assumed so that a

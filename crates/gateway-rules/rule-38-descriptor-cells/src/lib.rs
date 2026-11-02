@@ -22,6 +22,7 @@
 
 pub mod cells;
 pub mod initial_member;
+pub mod protocol;
 
 pub use cells::{Cells, Equality, Refusal, Released, Status};
 pub use initial_member::{Record, View};

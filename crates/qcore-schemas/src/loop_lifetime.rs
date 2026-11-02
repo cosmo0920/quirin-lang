@@ -50,6 +50,11 @@ pub struct LoopLifetimeContract {
     pub bindings: Vec<ConditionBinding>,
     pub blocks: Vec<LocalBlock>,
     pub registered: Vec<RegisteredProtocol>,
+    /// Card MK-EVENT-CELL-CROSS-FUNCTION (rule 38c): `quant cell` record
+    /// protocols, one per record. Omitted when empty, so every declaration
+    /// before the card serializes as it did.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub cells: Vec<crate::descriptor_cell::CellProtocol>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]

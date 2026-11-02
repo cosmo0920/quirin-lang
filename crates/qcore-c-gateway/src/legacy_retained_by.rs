@@ -836,7 +836,7 @@ impl Parser<'_> {
                     index,
                 )
             };
-            operands.cells = Some(Box::new(super::descriptor_cells_route::operands(
+            let mut cells = super::descriptor_cells_route::operands(
                 &declaration.descriptor_cells,
                 guarded,
                 identity,
@@ -844,7 +844,14 @@ impl Parser<'_> {
                 &root,
                 &formal,
                 &pointee,
-            )));
+            );
+            // Card MK-EVENT-CELL-CROSS-FUNCTION (rule 38c): the actuals'
+            // records with a declared cell protocol.
+            let actuals = (0..declaration.contract.parameters.len())
+                .filter_map(owned)
+                .collect::<Vec<_>>();
+            cells.protocols = self.cell_operand_protocols(&actuals);
+            operands.cells = Some(Box::new(cells));
         }
         for &reset in &declaration.resets {
             // A reset of a holder this body cannot name forgets nothing it

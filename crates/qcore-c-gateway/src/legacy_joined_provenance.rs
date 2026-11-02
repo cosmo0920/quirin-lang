@@ -635,6 +635,7 @@ mod tests {
             conditional_names: BTreeSet::from(["p".to_string()]),
             tie_names: BTreeSet::new(),
             traversal: Default::default(),
+            cell_tests: Default::default(),
         }
     }
 
@@ -685,6 +686,7 @@ mod tests {
             conditional_names: BTreeSet::from(["p".to_string()]),
             tie_names: BTreeSet::new(),
             traversal: Default::default(),
+            cell_tests: Default::default(),
         }
     }
 
@@ -1078,6 +1080,7 @@ mod tests {
             conditional_names: BTreeSet::from(["p".to_string()]),
             tie_names: BTreeSet::new(),
             traversal: Default::default(),
+            cell_tests: Default::default(),
         };
         assert_eq!(
             derive(&cfg)[2].get(&7),

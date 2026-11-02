@@ -191,6 +191,7 @@ fn row(status: AnalysisStatus, diagnostics: Vec<LegacyDiagnostic>) -> LegacyFunc
             conditional_names: BTreeSet::new(),
             tie_names: BTreeSet::new(),
             traversal: Default::default(),
+            cell_tests: Default::default(),
         },
         exits: Vec::new(),
         counted_users: Vec::new(),

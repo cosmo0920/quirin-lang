@@ -326,6 +326,8 @@ pub(crate) fn admits_descriptor_read(
         | LegacyInstruction::Acquire { .. }
         | LegacyInstruction::BranchOnNull { .. }
         | LegacyInstruction::BranchOnDistinct { .. }
+        // Card MK-EVENT-CELL-CROSS-FUNCTION (rule 38c): refused as a read.
+        | LegacyInstruction::CellProtocolStep { .. }
         | LegacyInstruction::OpaqueValue { .. }
         // Card VA-LOOP-AND-POINTER-ARG (rule 12c): a caller's pointer.
         | LegacyInstruction::VaArgPointer { .. }

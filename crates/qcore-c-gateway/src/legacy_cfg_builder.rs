@@ -14,6 +14,9 @@ pub(super) struct CfgBuilder {
     pub(super) break_targets: Vec<LegacyNodeId>,
     pub(super) continue_targets: Vec<LegacyNodeId>,
     pub(super) switch_cases: Vec<SwitchTargets>,
+    /// Card MK-EVENT-CELL-CROSS-FUNCTION (rule 38c): the branch nodes whose
+    /// condition is a declared cell protocol's guard test.
+    pub(super) cell_tests: BTreeMap<LegacyNodeId, descriptor_cells_route::ProtocolStep>,
 }
 
 #[derive(Default)]
@@ -35,6 +38,7 @@ impl CfgBuilder {
             break_targets: Vec::new(),
             continue_targets: Vec::new(),
             switch_cases: Vec::new(),
+            cell_tests: BTreeMap::new(),
         };
         let exit = builder.push(LegacyInstruction::NoOp, Vec::new(), 0, true);
         let entry = builder.compile_sequence(statements, exit);
@@ -57,6 +61,7 @@ impl CfgBuilder {
             conditional_names: BTreeSet::new(),
             tie_names: BTreeSet::new(),
             traversal: TraversalNames::default(),
+            cell_tests: builder.cell_tests,
         }
     }
 
@@ -149,6 +154,7 @@ impl CfgBuilder {
                 distinct_condition,
                 element_condition,
                 condition_plan,
+                cell_test,
                 then_body,
                 else_body,
             } => {
@@ -157,7 +163,13 @@ impl CfgBuilder {
                 // Card W44-BRANCH-CONDITION-CALLS: present only where the arm
                 // below would have pushed the refusal.
                 if let Some(plan) = condition_plan {
-                    return self.compile_planned_if(plan, *line, then_entry, else_entry);
+                    return self.compile_planned_if_with_test(
+                        plan,
+                        *line,
+                        then_entry,
+                        else_entry,
+                        cell_test.as_deref(),
+                    );
                 }
                 let instruction = if let Some((base, index, true_is_null)) = element_condition {
                     // W43-INDEXED-RESOURCE-COLLECTIONS: the condition was
@@ -201,6 +213,11 @@ impl CfgBuilder {
                     }
                 };
                 let branch = self.push(instruction, vec![then_entry, else_entry], *line, false);
+                // Card MK-EVENT-CELL-CROSS-FUNCTION (rule 38c): the branch's
+                // edges read the protocol test; its instruction is unchanged.
+                if let Some(step) = cell_test {
+                    self.cell_tests.insert(branch, (**step).clone());
+                }
                 condition_call.as_ref().map_or(branch, |call| {
                     self.push((**call).clone(), vec![branch], *line, false)
                 })

@@ -348,6 +348,18 @@ fn cached_contract_premises(
             "origin": "rule-38",
         }));
     }
+    // Card MK-EVENT-CELL-CROSS-FUNCTION (rule 38c): every declaration stating
+    // a record's cell protocol publishes the protocol's declared-assumption
+    // premise with the rows resting on it.
+    for (hosts, _) in contracts.cell_protocols().into_values() {
+        for name in hosts {
+            premises.entry(name).or_default().push(json!({
+                "name": qcore_schemas::descriptor_cell::PROTOCOL_PREMISE,
+                "statement": qcore_schemas::descriptor_cell::PROTOCOL_STATEMENT,
+                "origin": "rule-38c",
+            }));
+        }
+    }
     let replayed_graphs = qcore_contract::hypothesis::replay(assumptions)?;
     let mut graphs = replayed_graphs.clone();
     for (name, records) in &premises {

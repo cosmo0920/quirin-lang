@@ -360,6 +360,7 @@ fn check_instruction_depth(cfg: &LegacyCfg) -> Result<(), String> {
                 | BranchOnNull { .. }
                 | BranchOnValidity { .. }
                 | BranchOnDistinct { .. }
+                | CellProtocolStep { .. }
                 | OpaqueValue { .. }
                 | VaArgPointer { .. }
                 | ForgetScalar { .. }

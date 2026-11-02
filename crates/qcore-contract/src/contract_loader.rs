@@ -1759,6 +1759,7 @@ fn load_function_in(
     if !lifetime.bindings.is_empty()
         || !lifetime.registered.is_empty()
         || !lifetime.blocks.is_empty()
+        || !lifetime.cells.is_empty()
     {
         if decl.parameters.iter().any(|p| p.usage.is_some()) {
             return Err(

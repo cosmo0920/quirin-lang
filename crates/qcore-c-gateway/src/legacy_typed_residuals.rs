@@ -102,6 +102,7 @@ impl Parser<'_> {
                 distinct_condition: None,
                 element_condition: None,
                 condition_plan: Some(Box::new(plan)),
+                cell_test: None,
                 then_body: Vec::new(),
                 else_body: Vec::new(),
             },

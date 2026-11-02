@@ -111,6 +111,7 @@ pub(super) const PARSER_FIELDS: &[(&str, FieldClass)] = &[
     // frame's protected names and links only.
     ("list_frames", FieldClass::MonotoneFact),
     ("caller_formals", FieldClass::FunctionFact),
+    ("cell_protocols", FieldClass::FunctionFact),
     // Admitted and pending bindings are probe state; `over_formal` is a
     // monotone fact ([`OriginsLowering`]).
     ("element_origins", FieldClass::ProbeState),
@@ -213,6 +214,7 @@ impl Parser<'_> {
             list_facts: _,
             list_frames,
             caller_formals: _,
+            cell_protocols: _,
             element_origins,
         } = self;
         ParserProbeState {

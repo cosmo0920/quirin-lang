@@ -38,6 +38,9 @@ pub enum Refusal {
     OwnerReleased,
     /// A member-equality guard the body does not decide.
     GuardUndecided,
+    /// Rule 38c: a record with a declared cell protocol does not keep it at
+    /// an exit or a call, or a store the protocol cannot read.
+    ProtocolBroken,
 }
 
 impl Refusal {
@@ -51,6 +54,7 @@ impl Refusal {
             Self::Escapes => "descriptor-cell-escapes",
             Self::OwnerReleased => "descriptor-cell-owner-released",
             Self::GuardUndecided => "descriptor-cell-guard-undecided",
+            Self::ProtocolBroken => "descriptor-cell-protocol-broken",
         }
     }
 }
@@ -159,6 +163,23 @@ impl<K: Ord + Clone> Cells<K> {
         };
         self.names.insert(key.clone(), (identity, status));
         Ok(())
+    }
+
+    /// Rule 38c: record a protocol's pending name under its key, as the
+    /// test that introduced it decided (a key already recorded is kept).
+    pub fn adopt(&mut self, key: K, identity: u64, status: Status) {
+        self.names.entry(key).or_insert((identity, status));
+    }
+
+    /// Rule 38c: drop every name `forget` selects (a record forwarded under
+    /// its protocol at a call: its cells are read again from the protocol).
+    pub fn forget(&mut self, forget: impl Fn(&K) -> bool) {
+        self.names.retain(|key, _| !forget(key));
+    }
+
+    /// Every recorded name with its identity and status.
+    pub fn entries(&self) -> impl Iterator<Item = (&K, &(u64, Status))> {
+        self.names.iter()
     }
 
     /// `#same(S)`: `key` becomes a second name of the identity `of` names.

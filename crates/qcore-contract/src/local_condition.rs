@@ -121,6 +121,233 @@ pub fn registered(source: &str) -> Result<RegisteredProtocol, String> {
         holder: right[1..].to_vec(),
     })
 }
+/// One `quant cell` clause as read: binder, record, cell path, `#same`
+/// target (`None` for `#fresh(descriptor)`), guard path and guard.
+type CellClause = (
+    String,
+    String,
+    Vec<String>,
+    Option<Vec<String>>,
+    Vec<String>,
+    qcore_schemas::descriptor_cell::ProtocolGuard,
+);
+
+/// A member path of a `quant cell` clause: identifiers joined by `.`, each
+/// segment carrying at most one `[K]` with `K` a canonical decimal.
+fn cell_path(ts: &[TokenKind]) -> Result<Vec<String>, String> {
+    let shape = || "quant-cell-path: expected `IDENT([K])(.IDENT([K]))*`".to_owned();
+    if ts.len() > 255 {
+        return Err("quant-cell-bound: path exceeds 64 member segments".into());
+    }
+    let mut out = Vec::new();
+    let mut at = 0;
+    loop {
+        let name = ts.get(at).and_then(word).ok_or_else(shape)?;
+        if matches!(name, "fresh" | "same" | "pointee" | "result") {
+            return Err(shape());
+        }
+        let mut segment = name.to_owned();
+        at += 1;
+        if ts.get(at).is_some_and(|t| symbol(t, Symbol::LeftBracket)) {
+            let Some(TokenKind::Integer(digits)) = ts.get(at + 1) else {
+                return Err(shape());
+            };
+            if !ts
+                .get(at + 2)
+                .is_some_and(|t| symbol(t, Symbol::RightBracket))
+                || digits.is_empty()
+                || !digits.bytes().all(|b| b.is_ascii_digit())
+                || (digits.len() > 1 && digits.starts_with('0'))
+            {
+                return Err(shape());
+            }
+            segment = format!("{segment}[{digits}]");
+            at += 3;
+        }
+        out.push(segment);
+        match ts.get(at) {
+            None => return Ok(out),
+            Some(t) if symbol(t, Symbol::Dot) => at += 1,
+            Some(_) => return Err(shape()),
+        }
+    }
+}
+
+/// Read one `quant cell #B: TAG.CELL |-> #fresh(descriptor) when #B.GUARD OP V;`
+/// or `… |-> #same(CELL2) when …` (card MK-EVENT-CELL-CROSS-FUNCTION, grammar
+/// G05e). Total or reject.
+fn cell(source: &str) -> Result<CellClause, String> {
+    use qcore_schemas::descriptor_cell::ProtocolGuard;
+    let ts = tokens(source)?;
+    let shape = || {
+        "quant-cell-shape: write `quant cell #B: TAG.CELL |-> #fresh(descriptor) when #B.GUARD OP V;` or `|-> #same(CELL2) when …`".to_owned()
+    };
+    if ts.len() < 4 || !symbol(&ts[0], Symbol::Hash) || !symbol(&ts[2], Symbol::Colon) {
+        return Err(shape());
+    }
+    let binder = word(&ts[1]).ok_or_else(shape)?.to_owned();
+    if matches!(
+        binder.as_str(),
+        "result"
+            | "outer"
+            | "loaded"
+            | "holds"
+            | "absent"
+            | "registered"
+            | "fresh"
+            | "same"
+            | "pointee"
+            | "cell"
+    ) {
+        return Err("quant-cell-binder: a reserved `#` word is no binder".into());
+    }
+    let maps = ts
+        .iter()
+        .position(|t| symbol(t, Symbol::MapsTo))
+        .ok_or_else(shape)?;
+    let record = word(ts.get(3).ok_or_else(shape)?)
+        .ok_or_else(shape)?
+        .to_owned();
+    if !ts.get(4).is_some_and(|t| symbol(t, Symbol::Dot)) || maps <= 5 {
+        return Err(shape());
+    }
+    let path = cell_path(&ts[5..maps])?;
+    let when = ts
+        .iter()
+        .position(|t| word(t) == Some("when"))
+        .ok_or_else(|| "quant-cell-guard: a protocol cell is stated under its guard".to_owned())?;
+    let value = &ts[maps + 1..when];
+    let same = match value {
+        [
+            TokenKind::Symbol(Symbol::Hash),
+            TokenKind::Word(fresh),
+            TokenKind::Symbol(Symbol::LeftParen),
+            TokenKind::Word(kind),
+            TokenKind::Symbol(Symbol::RightParen),
+        ] if fresh == "fresh" => {
+            if kind != "descriptor" {
+                return Err("quant-cell-kind: a protocol cell is a `descriptor`".into());
+            }
+            None
+        }
+        [
+            TokenKind::Symbol(Symbol::Hash),
+            TokenKind::Word(same),
+            TokenKind::Symbol(Symbol::LeftParen),
+            inner @ ..,
+            TokenKind::Symbol(Symbol::RightParen),
+        ] if same == "same" => Some(cell_path(inner)?),
+        _ => {
+            return Err(
+                "quant-cell-value: the value is `#fresh(descriptor)` or `#same(CELL)`".into(),
+            );
+        }
+    };
+    let guard = &ts[when + 1..];
+    let op_at = guard
+        .iter()
+        .position(|t| {
+            matches!(
+                t,
+                TokenKind::Symbol(Symbol::NotEqual | Symbol::EqualEqual | Symbol::Greater)
+            )
+        })
+        .ok_or_else(|| {
+            "quant-cell-guard: write `when #B.GUARD != -1`, `> 0` or `== 1`".to_owned()
+        })?;
+    if guard.len() < 4
+        || !symbol(&guard[0], Symbol::Hash)
+        || word(&guard[1]) != Some(binder.as_str())
+        || !symbol(&guard[2], Symbol::Dot)
+    {
+        return Err("quant-cell-guard: the guard is a member of the clause's own binder".into());
+    }
+    let guard_path = cell_path(&guard[3..op_at])?;
+    let op = match &guard[op_at] {
+        TokenKind::Symbol(Symbol::NotEqual) => "!=",
+        TokenKind::Symbol(Symbol::EqualEqual) => "==",
+        _ => ">",
+    };
+    let literal = match &guard[op_at + 1..] {
+        [TokenKind::Integer(digits)] => digits.parse::<i64>().ok(),
+        [TokenKind::Symbol(Symbol::Minus), TokenKind::Integer(digits)] => {
+            digits.parse::<i64>().ok().map(|v| -v)
+        }
+        _ => None,
+    };
+    let op = literal
+        .and_then(|value| ProtocolGuard::from_spelling(op, value))
+        .ok_or_else(|| {
+            "quant-cell-guard: the admitted guards are `!= -1`, `> 0` and `== 1`".to_owned()
+        })?;
+    Ok((binder, record, path, same, guard_path, op))
+}
+
+/// Group a declaration's `quant cell` clauses into one protocol per record,
+/// rejecting every disagreement (G05e).
+fn cell_protocols(
+    clauses: Vec<CellClause>,
+) -> Result<Vec<qcore_schemas::descriptor_cell::CellProtocol>, String> {
+    use qcore_schemas::descriptor_cell::{CellProtocol, ProtocolCell};
+    let mut records: BTreeMap<String, (String, CellProtocol)> = BTreeMap::new();
+    for (binder, record, path, same, guard, op) in clauses {
+        let entry = records.entry(record.clone()).or_insert_with(|| {
+            (
+                binder.clone(),
+                CellProtocol {
+                    record: record.clone(),
+                    cells: Vec::new(),
+                    guard: guard.clone(),
+                    op,
+                },
+            )
+        });
+        if entry.0 != binder {
+            return Err("quant-cell-binder: one binder per record".into());
+        }
+        if entry.1.guard != guard || entry.1.op != op {
+            return Err("quant-cell-guard: every cell of a record states the same guard".into());
+        }
+        if entry.1.cells.iter().any(|cell| cell.path == path) {
+            return Err("quant-cell-duplicate: one state per cell".into());
+        }
+        entry.1.cells.push(ProtocolCell { path, same });
+    }
+    let mut out = Vec::new();
+    for (_, (_, mut protocol)) in records {
+        let fresh = |path: &Vec<String>| {
+            protocol
+                .cells
+                .iter()
+                .any(|cell| &cell.path == path && cell.same.is_none())
+        };
+        if !protocol.cells.iter().any(|cell| cell.same.is_none()) {
+            return Err("quant-cell-fresh: a protocol states at least one `#fresh` cell".into());
+        }
+        if protocol
+            .cells
+            .iter()
+            .any(|cell| cell.same.as_ref().is_some_and(|target| !fresh(target)))
+        {
+            return Err("quant-cell-same: `#same` names a `#fresh` cell of its record".into());
+        }
+        let guard_is_fresh = fresh(&protocol.guard);
+        let guard_is_cell = protocol
+            .cells
+            .iter()
+            .any(|cell| cell.path == protocol.guard);
+        if protocol.op.is_sentinel() && !guard_is_fresh {
+            return Err("quant-cell-guard: a `!= -1` or `> 0` guard is a `#fresh` cell".into());
+        }
+        if !protocol.op.is_sentinel() && guard_is_cell {
+            return Err("quant-cell-guard: a `== 1` guard is a flag, no cell".into());
+        }
+        protocol.cells.sort();
+        out.push(protocol);
+    }
+    Ok(out)
+}
+
 /// Structural identity of the supported named premise predicate. This does
 /// not establish the premise; a body/use consumer must bind its guarded entry
 /// context and preserve the corresponding caller obligation.
@@ -208,6 +435,7 @@ pub fn read(decl: &SourceDeclaration) -> Result<LoopLifetimeContract, String> {
         .collect::<BTreeSet<_>>();
     let mut blocks = BTreeSet::new();
     let mut footprints = BTreeSet::new();
+    let mut cell_clauses = Vec::new();
     for c in &contract.clauses {
         match &c.value.kind {
             SourceContractClauseKind::QuantRegistered => {
@@ -254,9 +482,13 @@ pub fn read(decl: &SourceDeclaration) -> Result<LoopLifetimeContract, String> {
                     clauses: inner,
                 });
             }
+            SourceContractClauseKind::QuantCell => {
+                cell_clauses.push(cell(&c.value.expression_source)?);
+            }
             _ => {}
         }
     }
+    out.cells = cell_protocols(cell_clauses)?;
     if out
         .bindings
         .iter()
@@ -310,9 +542,11 @@ pub(crate) fn without_local(
                         }
                     }
                     SourceContractClauseKind::QuantRegistered if keep_local => "quant registered",
+                    SourceContractClauseKind::QuantCell if keep_local => "quant cell",
                     SourceContractClauseKind::QuantConditionBinding
                     | SourceContractClauseKind::QuantConditionBlock { .. }
-                    | SourceContractClauseKind::QuantRegistered => continue,
+                    | SourceContractClauseKind::QuantRegistered
+                    | SourceContractClauseKind::QuantCell => continue,
                     _ => {
                         return Err(
                             "local-condition-contract: unsupported clause beside local conditions"
@@ -355,4 +589,96 @@ pub(crate) fn without_local(
         .next()
         .ok_or("local-condition-signature: missing declaration")?
         .value)
+}
+
+/// Card MK-EVENT-CELL-CROSS-FUNCTION (grammar G05e): the `quant cell` reader,
+/// total or reject.
+#[cfg(test)]
+mod cell_protocol_tests {
+    use std::collections::BTreeMap;
+
+    use qcore_schemas::descriptor_cell::ProtocolGuard;
+
+    fn host(clauses: &str) -> String {
+        format!(
+            "module contract;\nextern fn host(c: ptr<mut, u8>) -> unit\ncontract {{ requires resource_contract_v1; ensures normal resource_borrowed(c); ensures normal resource_return_none();\n{clauses} }};"
+        )
+    }
+
+    fn load(
+        modules: &[(&str, String)],
+    ) -> Result<qcore_schemas::contract::ResourceContracts, String> {
+        crate::contract_loader::load_resource_contract_sources(
+            &modules
+                .iter()
+                .map(|(name, text)| ((*name).to_owned(), text.clone()))
+                .collect::<BTreeMap<_, _>>(),
+        )
+        .map_err(|e| format!("{e:?}"))
+    }
+
+    const SCHED: &str = "quant cell #s: flb_sched.ch_events[0] |-> #fresh(descriptor) when #s.ch_events[0] != -1;\n\
+         quant cell #s: flb_sched.ch_events[1] |-> #fresh(descriptor) when #s.ch_events[0] != -1;\n\
+         quant cell #s: flb_sched.event.fd |-> #same(ch_events[0]) when #s.ch_events[0] != -1;";
+
+    #[test]
+    fn the_decided_candidate_loads_to_one_protocol() {
+        let env = load(&[("a.qv", host(SCHED))]).expect("loads");
+        let protocols = env.cell_protocols();
+        let (hosts, protocol) = &protocols["flb_sched"];
+        assert_eq!(hosts.iter().collect::<Vec<_>>(), ["host"]);
+        assert_eq!(protocol.op, ProtocolGuard::NotMinusOne);
+        assert_eq!(protocol.guard, ["ch_events[0]"]);
+        assert_eq!(protocol.cells.len(), 3);
+        assert_eq!(
+            protocol.group(&["event".into(), "fd".into()]),
+            Some(&["ch_events[0]".to_owned()][..])
+        );
+        // The host is withheld, as a `quant registered` host is.
+        assert!(env.contract("host").is_none());
+    }
+
+    #[test]
+    fn every_other_spelling_rejects_the_module() {
+        for clauses in [
+            // a guard outside the three pairs
+            "quant cell #s: t.a[0] |-> #fresh(descriptor) when #s.a[0] != 0;",
+            "quant cell #s: t.a[0] |-> #fresh(descriptor) when #s.a[0] >= 0;",
+            // no guard
+            "quant cell #s: t.a[0] |-> #fresh(descriptor);",
+            // another kind
+            "quant cell #s: t.a[0] |-> #fresh(heap) when #s.a[0] != -1;",
+            // a sentinel guard that is no `#fresh` cell
+            "quant cell #s: t.a[0] |-> #fresh(descriptor) when #s.b != -1;",
+            // a flag guard that is a cell
+            "quant cell #s: t.a[0] |-> #fresh(descriptor) when #s.a[0] == 1;",
+            // `#same` of no `#fresh` cell
+            "quant cell #s: t.a[0] |-> #fresh(descriptor) when #s.a[0] != -1;\nquant cell #s: t.m |-> #same(b) when #s.a[0] != -1;",
+            // only `#same`
+            "quant cell #s: t.m |-> #same(m) when #s.on == 1;",
+            // two guards for one record
+            "quant cell #s: t.a[0] |-> #fresh(descriptor) when #s.a[0] != -1;\nquant cell #s: t.a[1] |-> #fresh(descriptor) when #s.a[0] > 0;",
+            // a duplicate cell
+            "quant cell #s: t.a[0] |-> #fresh(descriptor) when #s.a[0] != -1;\nquant cell #s: t.a[0] |-> #fresh(descriptor) when #s.a[0] != -1;",
+            // a non-canonical index, a guard of another binder, a reserved binder
+            "quant cell #s: t.a[01] |-> #fresh(descriptor) when #s.a[01] != -1;",
+            "quant cell #s: t.a[0] |-> #fresh(descriptor) when #r.a[0] != -1;",
+            "quant cell #result: t.a[0] |-> #fresh(descriptor) when #result.a[0] != -1;",
+        ] {
+            assert!(load(&[("a.qv", host(clauses))]).is_err(), "{clauses}");
+        }
+    }
+
+    #[test]
+    fn two_declarations_that_disagree_leave_the_record_without_a_protocol() {
+        let other = host(
+            "quant cell #s: flb_sched.ch_events[0] |-> #fresh(descriptor) when #s.ch_events[0] > 0;",
+        )
+        .replace("host(", "other(");
+        let env = load(&[("a.qv", host(SCHED)), ("b.qv", other)]).expect("loads");
+        assert!(!env.cell_protocols().contains_key("flb_sched"));
+        let same = host(SCHED).replace("host(", "again(");
+        let env = load(&[("a.qv", host(SCHED)), ("b.qv", same)]).expect("loads");
+        assert_eq!(env.cell_protocols()["flb_sched"].0.len(), 2);
+    }
 }

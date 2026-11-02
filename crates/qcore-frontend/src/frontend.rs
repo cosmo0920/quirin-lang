@@ -186,6 +186,12 @@ pub enum SourceContractClauseKind {
     },
     /// A declared lifetime footprint at a record type, checked by its reader.
     QuantRegistered,
+    /// Card MK-EVENT-CELL-CROSS-FUNCTION (USER DECISION 2026-11-02, "B as
+    /// recommended"; grammar G05e, gateway rule 38c): `quant cell #B:
+    /// TAG.CELL |-> #fresh(descriptor) when #B.GUARD OP V;`, a declared
+    /// descriptor-cell protocol at a record type. Read only by the S3
+    /// lifetime loader; every other consumer skips or rejects it.
+    QuantCell,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -1379,6 +1385,8 @@ impl<'a> SourceParser<'a> {
                 (SourceContractClauseKind::QuantDeref, cursor + 2)
             } else if self.word(cursor, "quant") && self.word(cursor + 1, "registered") {
                 (SourceContractClauseKind::QuantRegistered, cursor + 2)
+            } else if self.word(cursor, "quant") && self.word(cursor + 1, "cell") {
+                (SourceContractClauseKind::QuantCell, cursor + 2)
             } else if self.word(cursor, "quant")
                 && self.symbol(cursor + 1, Symbol::Hash)
                 && self.symbol(cursor + 3, Symbol::Equal)

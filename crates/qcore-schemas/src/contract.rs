@@ -1209,6 +1209,38 @@ impl ResourceContracts {
             .chain(&self.guarded_retaining)
             .filter(|(_, c)| c.lifetime.is_some())
     }
+    /// Card **MK-EVENT-CELL-CROSS-FUNCTION** (gateway rule 38c, §C04.6.3):
+    /// every record's declared cell protocol with the declarations stating
+    /// it. Two declarations stating different protocols for one record leave
+    /// that record out: no protocol is read for it (fail-closed).
+    #[must_use]
+    pub fn cell_protocols(
+        &self,
+    ) -> BTreeMap<String, (BTreeSet<String>, crate::descriptor_cell::CellProtocol)> {
+        let mut out: BTreeMap<String, (BTreeSet<String>, crate::descriptor_cell::CellProtocol)> =
+            BTreeMap::new();
+        let mut conflicting = BTreeSet::new();
+        for (host, declaration) in self.lifetime_declarations() {
+            for protocol in declaration.lifetime.iter().flat_map(|l| &l.cells) {
+                match out.get_mut(&protocol.record) {
+                    Some((hosts, stated)) if stated == protocol => {
+                        hosts.insert(host.clone());
+                    }
+                    Some(_) => {
+                        conflicting.insert(protocol.record.clone());
+                    }
+                    None => {
+                        out.insert(
+                            protocol.record.clone(),
+                            (BTreeSet::from([host.clone()]), protocol.clone()),
+                        );
+                    }
+                }
+            }
+        }
+        out.retain(|record, _| !conflicting.contains(record));
+        out
+    }
     /// Enforce the partition even for deserialized inputs, before any legacy
     /// prepass can read the raw retaining table.
     pub fn validate_lifetime_partition(&self) -> Result<(), String> {

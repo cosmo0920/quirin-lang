@@ -145,6 +145,12 @@ pub struct CellOperands {
     /// Set when rule 38 is switched off or a member cell's view does not
     /// match Clang's type of the actual: the call refuses.
     pub refused: Option<String>,
+    /// Card MK-EVENT-CELL-CROSS-FUNCTION (rule 38c): each root name of a
+    /// cell actual declared `struct TAG *` for a record with a declared cell
+    /// protocol, whether it is an unrebound formal, and the protocol.
+    /// Omitted when empty.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub protocols: Vec<(String, bool, ProtocolSpec)>,
 }
 
 fn is_identifier(text: &str) -> bool {
@@ -339,6 +345,7 @@ pub(super) fn operands(
         witness: None,
         guard: None,
         refused: None,
+        protocols: Vec::new(),
     };
     for state in &declaration.states {
         let spelled = cell(&state.place);
@@ -479,7 +486,19 @@ fn release(
         return;
     }
     let key = key(state, spelled);
+    let identity = key
+        .as_ref()
+        .and_then(|key| state.cells.get(key))
+        .map(|(identity, _)| identity);
     let outcome = rule_38_descriptor_cells::cells::release(&mut state.cells, key.as_ref());
+    // Rule 38c: the identity's pending names a protocol test introduced are
+    // stale too.
+    if let (Ok(rule_38_descriptor_cells::Released::Identity), Some(identity)) = (&outcome, identity)
+    {
+        for hosted in state.cell_protocols.values_mut() {
+            hosted.fact.stale_identity(identity);
+        }
+    }
     if let Err(refusal) = outcome {
         refuse(
             function,
@@ -512,6 +531,65 @@ pub(super) fn apply(
         });
         state.unmodeled = true;
         return;
+    }
+    // Rule 38c: a record with a declared protocol keeps a fact on this path;
+    // each cell this call reads is adopted from it first.
+    if !operands.protocols.is_empty() {
+        for (root, formal, spec) in &operands.protocols {
+            if let Some(root) = protocol_root(state, root, *formal) {
+                state.cell_protocols.entry(root).or_insert_with(|| {
+                    HostedFact::new(rule_38_descriptor_cells::protocol::Fact::reached(
+                        &spec.package(),
+                    ))
+                });
+            }
+        }
+        let mut spelled_cells: Vec<&CellSpelling> = Vec::new();
+        spelled_cells.extend(operands.creations.iter().map(|(spelled, _)| spelled));
+        for (spelled, slot) in &operands.aliases {
+            spelled_cells.push(spelled);
+            spelled_cells.push(slot);
+        }
+        spelled_cells.extend(&operands.releases);
+        spelled_cells.extend(&operands.maybe_released);
+        if let Some(guard) = &operands.guard {
+            spelled_cells.push(&guard.member);
+            spelled_cells.push(&guard.against);
+            spelled_cells.extend(&guard.releases);
+        }
+        for spelled in spelled_cells {
+            if let Some(cell) = cell_key(state, spelled) {
+                adopt(state, &cell);
+            }
+        }
+        // A creation into a protocol cell overwrites whatever the record
+        // held: admitted only where the path knows no cell of it is live
+        // (the guard said dead) or the cell itself is recorded.
+        for (spelled, _) in &operands.creations {
+            let Some(cell) = cell_key(state, spelled) else {
+                continue;
+            };
+            let Some((root, path)) = cell_root_path(&cell) else {
+                continue;
+            };
+            let Some(hosted) = state.cell_protocols.get(&root) else {
+                continue;
+            };
+            let unknown = hosted.fact.protocol.is_cell(&path)
+                && state.cells.get(&cell.table()).is_none()
+                && hosted.fact.guard != Some(rule_38_descriptor_cells::protocol::GuardFact::Dead);
+            if unknown {
+                refuse(
+                    function,
+                    line,
+                    callee,
+                    &spelled.text(),
+                    Refusal::Undecided,
+                    state,
+                    diagnostics,
+                );
+            }
+        }
     }
     for spelled in &operands.releases {
         release(function, line, callee, spelled, state, diagnostics);
@@ -703,7 +781,20 @@ pub(super) fn report_exit(
     state: &AbstractState,
     diagnostics: &mut BTreeSet<LegacyDiagnostic>,
 ) {
+    // Rule 38c: a record that keeps its declared protocol forwards its cells
+    // under it; one that does not refuses, and its cells still escape.
+    let mut forwarded = BTreeSet::new();
+    for (root, hosted) in &state.cell_protocols {
+        if hosted.holds(state) {
+            forwarded.extend(hosted.keys.values().cloned());
+        } else {
+            report_broken(function, line, root, hosted, diagnostics);
+        }
+    }
     for key in state.cells.escaping() {
+        if forwarded.contains(key) {
+            continue;
+        }
         diagnostics.insert(LegacyDiagnostic {
             function: function.to_owned(),
             line,
@@ -728,7 +819,12 @@ pub(super) fn refuse_release_of_holder(
     state: &AbstractState,
     diagnostics: &mut BTreeSet<LegacyDiagnostic>,
 ) -> bool {
-    let held = state.cells.holds(|key| key.site == Some(site));
+    // Rule 38c: a pending name a protocol test introduced counts too.
+    let held = state.cells.holds(|key| key.site == Some(site))
+        || state
+            .cell_protocols
+            .get(&ProtocolRoot::Site(site))
+            .is_some_and(|hosted| hosted.may_hold_live(state));
     if held {
         diagnostics.insert(LegacyDiagnostic {
             function: function.to_owned(),
@@ -813,5 +909,809 @@ fn unconverted_type(node: &serde_json::Value) -> Option<String> {
             continue;
         }
         return Some(here);
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Rule 38c (card MK-EVENT-CELL-CROSS-FUNCTION, contract spec §C04.6.3,
+// grammar G05e; USER DECISION 2026-11-02, verbatim: "B as recommended"):
+// declared record-type cell protocols. Every hook below is the identity in an
+// environment that declares no `quant cell` clause: the parser emits no step
+// and no cell operand carries a protocol, so no path holds a fact.
+// ---------------------------------------------------------------------------
+
+/// A declared protocol as the parser embeds it in a step, with the
+/// declarations stating it (the rows that read it depend on them).
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+pub struct ProtocolSpec {
+    pub record: String,
+    /// Each cell path with the `#fresh` cell whose identity it names.
+    pub cells: Vec<(String, String)>,
+    pub guard: String,
+    pub op: qcore_schemas::descriptor_cell::ProtocolGuard,
+    pub hosts: Vec<String>,
+}
+
+impl ProtocolSpec {
+    fn from_schema(
+        hosts: &BTreeSet<String>,
+        protocol: &qcore_schemas::descriptor_cell::CellProtocol,
+    ) -> Self {
+        Self {
+            record: protocol.record.clone(),
+            cells: protocol
+                .cells
+                .iter()
+                .map(|cell| {
+                    (
+                        cell.path.join("."),
+                        cell.same.as_ref().unwrap_or(&cell.path).join("."),
+                    )
+                })
+                .collect(),
+            guard: protocol.guard.join("."),
+            op: protocol.op,
+            hosts: hosts.iter().cloned().collect(),
+        }
+    }
+
+    /// The package's reading of the protocol.
+    #[must_use]
+    pub fn package(&self) -> rule_38_descriptor_cells::protocol::Protocol {
+        use qcore_schemas::descriptor_cell::ProtocolGuard;
+        use rule_38_descriptor_cells::protocol::Guard;
+        rule_38_descriptor_cells::protocol::Protocol {
+            record: self.record.clone(),
+            cells: self.cells.clone(),
+            guard: self.guard.clone(),
+            op: match self.op {
+                ProtocolGuard::NotMinusOne => Guard::NotMinusOne,
+                ProtocolGuard::Positive => Guard::Positive,
+                ProtocolGuard::EqualOne => Guard::EqualOne,
+            },
+        }
+    }
+
+    /// Note that the work relies on the declarations stating it.
+    fn relied(&self) {
+        for host in &self.hosts {
+            crate::contract_dependencies::relied(host);
+        }
+    }
+}
+
+/// Every record's protocol in `contracts`, keyed by record tag.
+pub(crate) fn protocol_specs(
+    contracts: &qcore_schemas::contract::ResourceContracts,
+) -> BTreeMap<String, ProtocolSpec> {
+    contracts
+        .cell_protocols()
+        .into_iter()
+        .map(|(record, (hosts, protocol))| (record, ProtocolSpec::from_schema(&hosts, &protocol)))
+        .collect()
+}
+
+/// One statement rule 38c reads.
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+pub enum ProtocolStep {
+    /// `if (r->GUARD OP V)` (or its complement): the edge the guard holds on
+    /// is `live_when_true`'s.
+    Test {
+        root: String,
+        formal: bool,
+        spec: ProtocolSpec,
+        live_when_true: bool,
+        identity: u64,
+    },
+    /// `r->PATH = V;` (`value` is `None` for anything but an integer literal).
+    Store {
+        root: String,
+        formal: bool,
+        spec: ProtocolSpec,
+        path: String,
+        value: Option<i64>,
+    },
+    /// `close(r->CELL);` (decision Q3: the cell's `#stale`).
+    Close {
+        root: String,
+        formal: bool,
+        spec: ProtocolSpec,
+        path: String,
+    },
+}
+
+impl ProtocolStep {
+    /// The same test read on a branch whose first edge is the false one.
+    #[must_use]
+    pub fn flipped(&self) -> Self {
+        let mut out = self.clone();
+        if let Self::Test { live_when_true, .. } = &mut out {
+            *live_when_true = !*live_when_true;
+        }
+        out
+    }
+}
+
+/// The object a fact is about.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum ProtocolRoot {
+    /// A caller's object (an unrebound formal).
+    Name(String),
+    /// A tracked identity.
+    Site(usize),
+}
+
+/// A record's fact on this path, with the table keys its cells are recorded
+/// under.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct HostedFact {
+    pub fact: rule_38_descriptor_cells::protocol::Fact,
+    pub keys: BTreeMap<String, Key>,
+}
+
+impl HostedFact {
+    fn new(fact: rule_38_descriptor_cells::protocol::Fact) -> Self {
+        Self {
+            fact,
+            keys: BTreeMap::new(),
+        }
+    }
+
+    fn status(
+        &self,
+        state: &AbstractState,
+    ) -> impl Fn(&str) -> Option<(u64, rule_38_descriptor_cells::Status)> + use<> {
+        let statuses = self
+            .keys
+            .iter()
+            .filter_map(|(path, key)| state.cells.get(key).map(|status| (path.clone(), status)))
+            .collect::<BTreeMap<_, _>>();
+        move |path: &str| statuses.get(path).copied()
+    }
+
+    fn holds(&self, state: &AbstractState) -> bool {
+        self.fact.holds(self.status(state))
+    }
+
+    fn may_hold_live(&self, state: &AbstractState) -> bool {
+        self.fact.may_hold_live(self.status(state))
+    }
+}
+
+/// The object `root` names on this path, when a fact can be about it.
+fn protocol_root(state: &AbstractState, root: &str, formal: bool) -> Option<ProtocolRoot> {
+    let spelled = if formal {
+        RetainedSpelling::Formal(root.to_owned())
+    } else {
+        RetainedSpelling::Name(root.to_owned())
+    };
+    match super::retained_by_route::retained_class(state, &spelled) {
+        crate::retained_by::Retained::CallerObject(name) => Some(ProtocolRoot::Name(name)),
+        crate::retained_by::Retained::Tracked(site) => Some(ProtocolRoot::Site(site)),
+        _ => None,
+    }
+}
+
+/// The record and the member path from it a cell key names.
+fn cell_root_path(cell: &CellKey) -> Option<(ProtocolRoot, String)> {
+    let CellKey::Object(object, _, path) = cell else {
+        return None;
+    };
+    let (root, mut full) = match object {
+        HeldObject::Name(name) => {
+            let mut parts = name.split('.').map(str::to_owned);
+            let base = parts.next()?;
+            (ProtocolRoot::Name(base), parts.collect::<Vec<_>>())
+        }
+        HeldObject::Site(site) => (ProtocolRoot::Site(*site), Vec::new()),
+        HeldObject::SiteInterior(site, fields) => (ProtocolRoot::Site(*site), fields.clone()),
+    };
+    full.extend(path.iter().cloned());
+    Some((root, full.join(".")))
+}
+
+/// A cell an operation reads: recorded under its record's fact, and its
+/// pending identity adopted into the table.
+fn adopt(state: &mut AbstractState, cell: &CellKey) {
+    let Some((root, path)) = cell_root_path(cell) else {
+        return;
+    };
+    let key = cell.table();
+    let recorded = state.cells.get(&key).is_some();
+    let Some(hosted) = state.cell_protocols.get_mut(&root) else {
+        return;
+    };
+    if !hosted.fact.protocol.is_cell(&path) {
+        return;
+    }
+    hosted.keys.insert(path.clone(), key.clone());
+    let pending = hosted.fact.adopt(&path);
+    if !recorded && let Some((identity, status)) = pending {
+        state.cells.adopt(key, identity, status);
+    }
+}
+
+fn root_text(root: &ProtocolRoot) -> String {
+    match root {
+        ProtocolRoot::Name(name) => name.clone(),
+        ProtocolRoot::Site(_) => "an object this body tracks".to_owned(),
+    }
+}
+
+fn report_broken(
+    function: &str,
+    line: usize,
+    root: &ProtocolRoot,
+    hosted: &HostedFact,
+    diagnostics: &mut BTreeSet<LegacyDiagnostic>,
+) {
+    diagnostics.insert(LegacyDiagnostic {
+        function: function.to_owned(),
+        line,
+        kind: LegacyDiagnosticKind::Unsupported {
+            description: format!(
+                "`{}` (a `struct {}`) does not keep its declared cell protocol here ({})",
+                root_text(root),
+                hosted.fact.protocol.record,
+                Refusal::ProtocolBroken.key()
+            ),
+        },
+    });
+}
+
+/// Hook (rule 38c): a guard test's edge. Read only where the path holds no
+/// fact of the record: the live edge introduces the caller's identities,
+/// the other edge none.
+pub(super) fn refine_protocol(step: &ProtocolStep, edge: usize, state: &mut AbstractState) {
+    let ProtocolStep::Test {
+        root,
+        formal,
+        spec,
+        live_when_true,
+        identity,
+    } = step
+    else {
+        return;
+    };
+    if !crate::gateway_rules::enabled(rule_38_descriptor_cells::ID) {
+        return;
+    }
+    let Some(root) = protocol_root(state, root, *formal) else {
+        return;
+    };
+    if state.cell_protocols.contains_key(&root) {
+        return;
+    }
+    let live = (edge == 0) == *live_when_true;
+    state.cell_protocols.insert(
+        root,
+        HostedFact::new(rule_38_descriptor_cells::protocol::Fact::introduced(
+            &spec.package(),
+            live,
+            *identity,
+        )),
+    );
+}
+
+fn refuse_step(
+    function: &str,
+    line: usize,
+    what: &str,
+    refusal: Refusal,
+    state: &mut AbstractState,
+    diagnostics: &mut BTreeSet<LegacyDiagnostic>,
+) {
+    diagnostics.insert(LegacyDiagnostic {
+        function: function.to_owned(),
+        line,
+        kind: LegacyDiagnosticKind::Unsupported {
+            description: format!(
+                "descriptor cell `{what}` is not decided ({})",
+                refusal.key()
+            ),
+        },
+    });
+    state.unmodeled = true;
+}
+
+/// Hook (rule 38c): a store to, or a close of, a protocol member, after the
+/// statement's own lowering.
+pub(super) fn apply_step(
+    function: &str,
+    line: usize,
+    step: &ProtocolStep,
+    state: &mut AbstractState,
+    diagnostics: &mut BTreeSet<LegacyDiagnostic>,
+) {
+    if !crate::gateway_rules::enabled(rule_38_descriptor_cells::ID) {
+        return;
+    }
+    match step {
+        ProtocolStep::Test { .. } => {}
+        ProtocolStep::Store {
+            root,
+            formal,
+            spec,
+            path,
+            value,
+        } => {
+            let Some(object) = protocol_root(state, root, *formal) else {
+                return;
+            };
+            let what = format!("{root}->{path}");
+            let mut hosted = state.cell_protocols.remove(&object).unwrap_or_else(|| {
+                HostedFact::new(rule_38_descriptor_cells::protocol::Fact::reached(
+                    &spec.package(),
+                ))
+            });
+            let status = hosted.status(state);
+            let outcome = hosted.fact.store(path, *value, status);
+            state.cell_protocols.insert(object, hosted);
+            if let Err(refusal) = outcome {
+                refuse_step(function, line, &what, refusal, state, diagnostics);
+            }
+        }
+        ProtocolStep::Close {
+            root,
+            formal,
+            spec: _,
+            path,
+        } => {
+            // Only a caller's record: its member read needs no live-identity
+            // check, and a tracked one keeps the statement's own reading.
+            let Some(object @ ProtocolRoot::Name(_)) = protocol_root(state, root, *formal) else {
+                return;
+            };
+            if !state.cell_protocols.contains_key(&object) {
+                return;
+            }
+            let what = format!("{root}->{path}");
+            let ProtocolRoot::Name(name) = &object else {
+                return;
+            };
+            let cell = CellKey::Object(
+                HeldObject::Name(name.clone()),
+                SLOT_VIEW.to_owned(),
+                vec![path.clone()],
+            );
+            adopt(state, &cell);
+            let key = cell.table();
+            match state.cells.get(&key) {
+                Some((identity, rule_38_descriptor_cells::Status::Live))
+                    if identity != rule_38_descriptor_cells::cells::JOINED =>
+                {
+                    let outcome =
+                        rule_38_descriptor_cells::cells::release(&mut state.cells, Some(&key));
+                    match outcome {
+                        Ok(_) => {
+                            for hosted in state.cell_protocols.values_mut() {
+                                hosted.fact.stale_identity(identity);
+                            }
+                        }
+                        Err(refusal) => {
+                            refuse_step(function, line, &what, refusal, state, diagnostics);
+                        }
+                    }
+                }
+                Some((_, rule_38_descriptor_cells::Status::Stale)) => refuse_step(
+                    function,
+                    line,
+                    &what,
+                    Refusal::DoubleRelease,
+                    state,
+                    diagnostics,
+                ),
+                _ => refuse_step(
+                    function,
+                    line,
+                    &what,
+                    Refusal::Undecided,
+                    state,
+                    diagnostics,
+                ),
+            }
+        }
+    }
+}
+
+/// Hook (rule 38c): a call that may reach a record with a fact forwards it
+/// under its protocol when it keeps it (the callee reads the record again
+/// from the protocol, and so does this body after the call), and refuses
+/// when it does not. A cell-bearing call is rule 38's, never this.
+pub(super) fn touch(
+    function: &str,
+    line: usize,
+    may_reach: impl Fn(&ProtocolRoot) -> bool,
+    state: &mut AbstractState,
+    diagnostics: &mut BTreeSet<LegacyDiagnostic>,
+) {
+    if state.cell_protocols.is_empty() {
+        return;
+    }
+    let roots = state
+        .cell_protocols
+        .keys()
+        .filter(|root| may_reach(root))
+        .cloned()
+        .collect::<Vec<_>>();
+    for root in roots {
+        let Some(hosted) = state.cell_protocols.get(&root) else {
+            continue;
+        };
+        if hosted.holds(state) {
+            let keys = hosted.keys.values().cloned().collect::<BTreeSet<_>>();
+            state.cells.forget(|key| keys.contains(key));
+            state.cell_protocols.remove(&root);
+        } else {
+            let hosted = hosted.clone();
+            report_broken(function, line, &root, &hosted, diagnostics);
+            state.unmodeled = true;
+        }
+    }
+}
+
+/// Join the arriving path's facts: a record that keeps its protocol on both
+/// paths keeps it (untouched); otherwise the guard where both agree, else a
+/// conflict, so a touched record that disagrees refuses at its exit.
+pub(super) fn join_protocols(current: &mut AbstractState, incoming: &AbstractState) {
+    if current.cell_protocols.is_empty() && incoming.cell_protocols.is_empty() {
+        return;
+    }
+    let roots = current
+        .cell_protocols
+        .keys()
+        .chain(incoming.cell_protocols.keys())
+        .cloned()
+        .collect::<BTreeSet<_>>();
+    let mut joined = BTreeMap::new();
+    for root in roots {
+        let left = current.cell_protocols.get(&root);
+        let right = incoming.cell_protocols.get(&root);
+        let protocol = left.or(right).map(|hosted| hosted.fact.protocol.clone());
+        let Some(protocol) = protocol else {
+            continue;
+        };
+        let untouched = || rule_38_descriptor_cells::protocol::Fact {
+            protocol: protocol.clone(),
+            guard: None,
+            touched: false,
+            entry: BTreeMap::new(),
+        };
+        let left_holds = left.is_none_or(|hosted| hosted.holds(current));
+        let right_holds = right.is_none_or(|hosted| hosted.holds(incoming));
+        let mut keys = BTreeMap::new();
+        for hosted in left.into_iter().chain(right) {
+            keys.extend(hosted.keys.clone());
+        }
+        let fact = match (left, right) {
+            (Some(l), Some(r)) if l == r => l.fact.clone(),
+            _ if left_holds && right_holds => untouched(),
+            _ => {
+                let l = left.map_or_else(untouched, |hosted| hosted.fact.clone());
+                let r = right.map_or_else(untouched, |hosted| hosted.fact.clone());
+                l.join(&r)
+            }
+        };
+        joined.insert(root, HostedFact { fact, keys });
+    }
+    current.cell_protocols = joined;
+}
+
+// ----- Parser-side readers (pure, over the statement's words) -----
+
+/// Words with the two-character operators the reader needs rejoined.
+fn operator_words(words: &[&str]) -> Vec<String> {
+    let mut out: Vec<String> = Vec::with_capacity(words.len());
+    let mut at = 0;
+    while at < words.len() {
+        let pair = (words[at], words.get(at + 1).copied());
+        let joined = match pair {
+            ("-", Some(">")) => Some("->"),
+            ("!", Some("=")) => Some("!="),
+            ("=", Some("=")) => Some("=="),
+            ("<", Some("=")) => Some("<="),
+            (">", Some("=")) => Some(">="),
+            _ => None,
+        };
+        if let Some(joined) = joined {
+            out.push(joined.to_owned());
+            at += 2;
+        } else {
+            out.push(words[at].to_owned());
+            at += 1;
+        }
+    }
+    out
+}
+
+fn without_parentheses(mut words: &[String]) -> &[String] {
+    while words.len() >= 2
+        && words.first().map(String::as_str) == Some("(")
+        && words.last().map(String::as_str) == Some(")")
+        && matching_close(words) == Some(words.len() - 1)
+    {
+        words = &words[1..words.len() - 1];
+    }
+    words
+}
+
+fn matching_close(words: &[String]) -> Option<usize> {
+    let mut depth = 0usize;
+    for (index, word) in words.iter().enumerate() {
+        match word.as_str() {
+            "(" => depth += 1,
+            ")" => {
+                depth = depth.checked_sub(1)?;
+                if depth == 0 {
+                    return Some(index);
+                }
+            }
+            _ => {}
+        }
+    }
+    None
+}
+
+/// `X -> f([K])? (. g([K])?)*`: the root and the member path.
+fn member_place(words: &[String]) -> Option<(String, String)> {
+    let words = without_parentheses(words);
+    let (root, rest) = words.split_first()?;
+    if !is_identifier(root) || rest.first().map(String::as_str) != Some("->") {
+        return None;
+    }
+    let mut rest = &rest[1..];
+    let mut segments = Vec::new();
+    loop {
+        let (name, tail) = rest.split_first()?;
+        if !is_identifier(name) {
+            return None;
+        }
+        let mut segment = name.clone();
+        rest = tail;
+        if let [open, digits, close, tail @ ..] = rest
+            && open == "["
+            && close == "]"
+            && !digits.is_empty()
+            && digits.bytes().all(|byte| byte.is_ascii_digit())
+            && (digits.len() == 1 || !digits.starts_with('0'))
+        {
+            segment = format!("{segment}[{digits}]");
+            rest = tail;
+        }
+        segments.push(segment);
+        match rest {
+            [] => return Some((root.clone(), segments.join("."))),
+            [dot, tail @ ..] if dot == "." => rest = tail,
+            _ => return None,
+        }
+    }
+}
+
+/// An integer literal `K`, `-K`, possibly parenthesized.
+fn integer_literal(words: &[String]) -> Option<i64> {
+    match without_parentheses(words) {
+        [digits] => digits.parse::<i64>().ok(),
+        [minus, digits] if minus == "-" => digits.parse::<i64>().ok().map(|v| -v),
+        _ => None,
+    }
+}
+
+/// The protocol of `root`'s declared record, when it has one.
+fn root_protocol<'a>(
+    root: &str,
+    record_of: &dyn Fn(&str) -> Option<String>,
+    specs: &'a BTreeMap<String, ProtocolSpec>,
+) -> Option<&'a ProtocolSpec> {
+    specs.get(&record_of(root)?)
+}
+
+/// A branch condition rule 38c reads: exactly `r->GUARD OP V` or its
+/// complement, `r` declared `struct TAG *` for a record with a protocol.
+pub(crate) fn test_step(
+    condition: &[&str],
+    line: usize,
+    record_of: &dyn Fn(&str) -> Option<String>,
+    formal: &dyn Fn(&str) -> bool,
+    specs: &BTreeMap<String, ProtocolSpec>,
+) -> Option<ProtocolStep> {
+    use qcore_schemas::descriptor_cell::ProtocolGuard;
+    if specs.is_empty() {
+        return None;
+    }
+    let words = operator_words(condition);
+    let words = without_parentheses(&words);
+    let comparisons = words
+        .iter()
+        .enumerate()
+        .filter(|(_, word)| {
+            matches!(
+                word.as_str(),
+                "!=" | "==" | ">" | "<=" | "<" | ">=" | "&&" | "||" | "&" | "|"
+            )
+        })
+        .collect::<Vec<_>>();
+    let [(at, op)] = comparisons.as_slice() else {
+        return None;
+    };
+    let (root, path) = member_place(&words[..*at])?;
+    let value = integer_literal(&words[at + 1..])?;
+    let spec = root_protocol(&root, record_of, specs)?;
+    if path != spec.guard {
+        return None;
+    }
+    let live_when_true = match (spec.op, op.as_str(), value) {
+        (ProtocolGuard::NotMinusOne, "!=", -1)
+        | (ProtocolGuard::Positive, ">", 0)
+        | (ProtocolGuard::EqualOne, "==", 1) => true,
+        (ProtocolGuard::NotMinusOne, "==", -1)
+        | (ProtocolGuard::Positive, "<=", 0)
+        | (ProtocolGuard::EqualOne, "!=", 1) => false,
+        _ => return None,
+    };
+    spec.relied();
+    Some(ProtocolStep::Test {
+        formal: formal(&root),
+        root,
+        spec: spec.clone(),
+        live_when_true,
+        identity: (1 << 62) | ((line as u64 & 0xff_ffff) << 8),
+    })
+}
+
+/// A statement rule 38c reads: `r->PATH = V` (a store to the guard or a
+/// cell; `V` any expression) or `close(r->CELL)` for a one-segment cell.
+pub(crate) fn statement_step(
+    statement: &[&str],
+    record_of: &dyn Fn(&str) -> Option<String>,
+    formal: &dyn Fn(&str) -> bool,
+    specs: &BTreeMap<String, ProtocolSpec>,
+) -> Option<ProtocolStep> {
+    if specs.is_empty() {
+        return None;
+    }
+    let mut words = operator_words(statement);
+    if words.last().map(String::as_str) == Some(";") {
+        words.pop();
+    }
+    if let [callee, open, inner @ .., close] = words.as_slice()
+        && callee == "close"
+        && open == "("
+        && close == ")"
+        && let Some((root, path)) = member_place(inner)
+        && let Some(spec) = root_protocol(&root, record_of, specs)
+        && spec.cells.iter().any(|(cell, _)| *cell == path)
+        && !path.contains('.')
+    {
+        spec.relied();
+        return Some(ProtocolStep::Close {
+            formal: formal(&root),
+            root,
+            spec: spec.clone(),
+            path,
+        });
+    }
+    let at = words.iter().position(|word| word == "=")?;
+    let compound = at > 0
+        && matches!(
+            words[at - 1].as_str(),
+            "+" | "-" | "*" | "/" | "%" | "&" | "|" | "^" | "<" | ">"
+        );
+    let place = if compound {
+        &words[..at - 1]
+    } else {
+        &words[..at]
+    };
+    let (root, path) = member_place(place)?;
+    let spec = root_protocol(&root, record_of, specs)?;
+    if path != spec.guard && !spec.cells.iter().any(|(cell, _)| *cell == path) {
+        return None;
+    }
+    let value = if compound {
+        None
+    } else {
+        integer_literal(&words[at + 1..])
+    };
+    spec.relied();
+    Some(ProtocolStep::Store {
+        formal: formal(&root),
+        root,
+        spec: spec.clone(),
+        path,
+        value,
+    })
+}
+
+/// The protocol roots of a cell-bearing call's actuals: the root name of
+/// each actual (`&r->…`, `r->…`, `r`), with its record's protocol.
+pub(crate) fn operand_protocols(
+    actuals: &[Vec<String>],
+    record_of: &dyn Fn(&str) -> Option<String>,
+    formal: &dyn Fn(&str) -> bool,
+    specs: &BTreeMap<String, ProtocolSpec>,
+) -> Vec<(String, bool, ProtocolSpec)> {
+    let mut out: Vec<(String, bool, ProtocolSpec)> = Vec::new();
+    if specs.is_empty() {
+        return out;
+    }
+    for words in actuals {
+        let words = words.iter().map(String::as_str).collect::<Vec<_>>();
+        let words = operator_words(&words);
+        let words = without_parentheses(&words);
+        let root = match words {
+            [amp, root, ..] if amp == "&" => root,
+            [root, ..] => root,
+            [] => continue,
+        };
+        if !is_identifier(root) || out.iter().any(|(seen, ..)| seen == root) {
+            continue;
+        }
+        if let Some(spec) = root_protocol(root, record_of, specs) {
+            spec.relied();
+            out.push((root.clone(), formal(root), spec.clone()));
+        }
+    }
+    out
+}
+
+impl super::Parser<'_> {
+    /// The record tag a name of this function is declared a pointer to.
+    fn protocol_record_of(&self, name: &str) -> Option<String> {
+        match self.typed_types.declared_type(name) {
+            Some(crate::typed_field_access::DeclaredType::RecordPointer(tag)) => Some(tag.clone()),
+            _ => None,
+        }
+    }
+
+    /// Rule 38c: the guard test a branch condition is, if any.
+    pub(super) fn cell_test_step(
+        &self,
+        condition: &[super::Token],
+        line: usize,
+    ) -> Option<Box<ProtocolStep>> {
+        if self.cell_protocols.is_empty() {
+            return None;
+        }
+        let words = condition
+            .iter()
+            .map(|t| t.text.as_str())
+            .collect::<Vec<_>>();
+        test_step(
+            &words,
+            line,
+            &|name| self.protocol_record_of(name),
+            &|name| self.caller_formals.contains(name),
+            &self.cell_protocols,
+        )
+        .map(Box::new)
+    }
+
+    /// Rule 38c: the store or close a statement is, if any.
+    pub(super) fn cell_statement_step(&self, tokens: &[super::Token]) -> Option<ProtocolStep> {
+        if self.cell_protocols.is_empty() {
+            return None;
+        }
+        let words = tokens.iter().map(|t| t.text.as_str()).collect::<Vec<_>>();
+        statement_step(
+            &words,
+            &|name| self.protocol_record_of(name),
+            &|name| self.caller_formals.contains(name),
+            &self.cell_protocols,
+        )
+    }
+
+    /// Rule 38c: the protocol roots of a cell-bearing call's actuals.
+    pub(super) fn cell_operand_protocols(
+        &self,
+        actuals: &[Vec<String>],
+    ) -> Vec<(String, bool, ProtocolSpec)> {
+        if self.cell_protocols.is_empty() {
+            return Vec::new();
+        }
+        operand_protocols(
+            actuals,
+            &|name| self.protocol_record_of(name),
+            &|name| self.caller_formals.contains(name),
+            &self.cell_protocols,
+        )
     }
 }

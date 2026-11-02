@@ -97,6 +97,7 @@ pub(super) fn called(instruction: &LegacyInstruction, out: &mut Vec<String>) {
         | LegacyInstruction::BranchOnNull { .. }
         | LegacyInstruction::BranchOnValidity { .. }
         | LegacyInstruction::BranchOnDistinct { .. }
+        | LegacyInstruction::CellProtocolStep { .. }
         | LegacyInstruction::OpaqueValue { .. }
         | LegacyInstruction::VaArgPointer { .. }
         | LegacyInstruction::ForgetScalar { .. }

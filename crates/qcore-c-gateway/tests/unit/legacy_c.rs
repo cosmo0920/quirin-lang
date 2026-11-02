@@ -1282,6 +1282,7 @@ fn alias_cfg(nodes: Vec<LegacyCfgNode>) -> LegacyCfg {
         conditional_names: BTreeSet::new(),
         tie_names: BTreeSet::new(),
         traversal: Default::default(),
+        cell_tests: Default::default(),
     }
 }
 

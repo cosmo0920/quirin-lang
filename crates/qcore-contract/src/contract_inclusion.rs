@@ -744,6 +744,7 @@ fn clauses_of(declaration: &SourceDeclaration) -> Vec<Clause> {
                             }
                         }
                         SourceContractClauseKind::QuantRegistered => "quant registered".into(),
+                        SourceContractClauseKind::QuantCell => "quant cell".into(),
                     };
                     (introducer, clause.value.expression_source.clone())
                 })

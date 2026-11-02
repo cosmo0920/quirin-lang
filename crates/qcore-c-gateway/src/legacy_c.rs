@@ -577,6 +577,14 @@ pub enum LegacyInstruction {
         source: String,
         true_is_null: bool,
     },
+    /// Card **MK-EVENT-CELL-CROSS-FUNCTION** (rule 38c): a store to, or a
+    /// close of, a member of a record with a declared cell protocol, read
+    /// after the statement's own lowering (a separate node: the statement's
+    /// instruction is unchanged). Emitted only in an environment declaring
+    /// a `quant cell` protocol.
+    CellProtocolStep {
+        step: Box<descriptor_cells_route::ProtocolStep>,
+    },
     /// Card **W43-DESCRIPTOR-RESOURCE-TRACKING**: a branch on the validity of
     /// a name that may hold an integer-carried identity (`fd < 0`,
     /// `fd == -1`, `fd >= 0`, …). It is the integer counterpart of
@@ -1210,6 +1218,11 @@ pub struct LegacyCfg {
     /// Card **W43-INDEX-TRAVERSAL**: the declared scalar and single-level
     /// pointer names the traversal transfer rules key on. Derived from source.
     pub traversal: TraversalNames,
+    /// Card **MK-EVENT-CELL-CROSS-FUNCTION** (rule 38c): the branch nodes
+    /// whose condition is a declared cell protocol's guard test. Empty (and
+    /// omitted) in every environment declaring no `quant cell` protocol.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub cell_tests: BTreeMap<LegacyNodeId, descriptor_cells_route::ProtocolStep>,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -4027,6 +4040,7 @@ fn build_function_cfg_unscoped(
         list_facts,
         list_frames: Vec::new(),
         caller_formals,
+        cell_protocols: descriptor_cells_route::protocol_specs(contracts),
         element_origins: container_publication::ForeignOrigins::default(),
         typed_path_index: std::cell::OnceCell::new(),
         typed_path_function: function.to_owned(),
@@ -4545,6 +4559,9 @@ enum Statement {
         /// Card **W44-BRANCH-CONDITION-CALLS**: the desugared calls and
         /// branch edges of a call-bearing condition every route above refused.
         condition_plan: Option<Box<condition_desugar::ConditionPlan>>,
+        /// Card **MK-EVENT-CELL-CROSS-FUNCTION** (rule 38c): the condition is
+        /// a declared cell protocol's guard test; its edges read it.
+        cell_test: Option<Box<descriptor_cells_route::ProtocolStep>>,
         then_body: Vec<Statement>,
         else_body: Vec<Statement>,
     },
@@ -4868,6 +4885,9 @@ struct Parser<'a> {
     /// only roots a publication's container may be reached from
     /// ([`container_publication::CallerFormals`]).
     caller_formals: container_publication::CallerFormals,
+    /// Card MK-EVENT-CELL-CROSS-FUNCTION (rule 38c): every record's declared
+    /// cell protocol; empty in every environment declaring none.
+    cell_protocols: BTreeMap<String, descriptor_cells_route::ProtocolSpec>,
     /// Card **W45-CONTAINER-ROOT-REACH**: the element bindings rule 5l
     /// admitted, for the foreign unlink ([`container_publication::ForeignOrigins`]).
     element_origins: container_publication::ForeignOrigins,
@@ -5113,6 +5133,10 @@ impl Parser<'_> {
                             && distinct_condition.is_none(),
                     ),
                 };
+                // Card MK-EVENT-CELL-CROSS-FUNCTION (rule 38c): a guard test
+                // of a record with a declared cell protocol; a desugared plan
+                // reads it on its one deciding node.
+                let cell_test = self.cell_test_step(&condition, line);
                 let then_body = self.parse_statement_body()?;
                 let else_body = if self.text() == Some("else") {
                     self.cursor += 1;
@@ -5129,6 +5153,7 @@ impl Parser<'_> {
                     null_condition,
                     distinct_condition,
                     element_condition,
+                    cell_test,
                     condition_plan,
                     then_body,
                     else_body,
@@ -5624,6 +5649,30 @@ impl Parser<'_> {
     /// `origin` is the run's first token in the stream, `None` for a piece
     /// (card CG10's occurrence identity is then not asked).
     fn expression_statement(
+        &mut self,
+        tokens: &[Token],
+        line: usize,
+        origin: Option<usize>,
+    ) -> Statement {
+        let statement = self.expression_statement_lowered(tokens, line, origin);
+        // Card MK-EVENT-CELL-CROSS-FUNCTION (rule 38c): a store to, or a
+        // close of, a member of a record with a declared cell protocol is
+        // read after the statement's own lowering, which is unchanged.
+        match self.cell_statement_step(tokens) {
+            Some(step) => Statement::Block(vec![
+                statement,
+                Statement::Instruction(
+                    LegacyInstruction::CellProtocolStep {
+                        step: Box::new(step),
+                    },
+                    line,
+                ),
+            ]),
+            None => statement,
+        }
+    }
+
+    fn expression_statement_lowered(
         &mut self,
         tokens: &[Token],
         line: usize,

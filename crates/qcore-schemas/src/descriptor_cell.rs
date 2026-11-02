@@ -220,3 +220,103 @@ impl DescriptorCells {
         self.states.iter().any(|state| state.guard.is_some())
     }
 }
+
+/// Card **MK-EVENT-CELL-CROSS-FUNCTION** (contract spec §C04.6.3, grammar
+/// G05e, gateway rule 38c; USER DECISION 2026-11-02, verbatim: "B as
+/// recommended"): the guard of a record-type cell protocol, `#B.GUARD OP V`.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ProtocolGuard {
+    /// `!= -1`: a sentinel cell; a live descriptor is never `-1`.
+    NotMinusOne,
+    /// `> 0`: a sentinel cell; a creation never establishes it (descriptor
+    /// `0` exists).
+    Positive,
+    /// `== 1`: a flag member that is no cell.
+    EqualOne,
+}
+
+impl ProtocolGuard {
+    /// The guard of `OP V`, `None` outside the three admitted pairs.
+    #[must_use]
+    pub fn from_spelling(op: &str, value: i64) -> Option<Self> {
+        match (op, value) {
+            ("!=", -1) => Some(Self::NotMinusOne),
+            (">", 0) => Some(Self::Positive),
+            ("==", 1) => Some(Self::EqualOne),
+            _ => None,
+        }
+    }
+
+    /// The spelling after the guard path.
+    #[must_use]
+    pub const fn spelling(self) -> &'static str {
+        match self {
+            Self::NotMinusOne => "!= -1",
+            Self::Positive => "> 0",
+            Self::EqualOne => "== 1",
+        }
+    }
+
+    /// Whether the guard is one of the protocol's cells (a sentinel) rather
+    /// than a flag.
+    #[must_use]
+    pub const fn is_sentinel(self) -> bool {
+        !matches!(self, Self::EqualOne)
+    }
+
+    /// Whether a stored integer `value` makes the guard say live (`true`) or
+    /// dead (`false`).
+    #[must_use]
+    pub const fn says_live(self, value: i64) -> bool {
+        match self {
+            Self::NotMinusOne => value != -1,
+            Self::Positive => value > 0,
+            Self::EqualOne => value == 1,
+        }
+    }
+}
+
+/// One cell of a protocol: a member path of the record (segments such as
+/// `ch_events[0]`, `event`, `fd`), stated `#fresh(descriptor)` or, with
+/// `same`, `#same(CELL2)`.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+pub struct ProtocolCell {
+    pub path: Vec<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub same: Option<Vec<String>>,
+}
+
+/// A record type's declared cell protocol: whenever the guard holds, each
+/// `#fresh` cell names its own live descriptor and each `#same` cell its
+/// target's; otherwise no cell names a live one. A declared assumption
+/// (rule 13i), read by gateway rule 38c only.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+pub struct CellProtocol {
+    pub record: String,
+    pub cells: Vec<ProtocolCell>,
+    pub guard: Vec<String>,
+    pub op: ProtocolGuard,
+}
+
+impl CellProtocol {
+    /// The `#fresh` cell whose identity `path` names, `None` for a path that
+    /// is no cell of the protocol.
+    #[must_use]
+    pub fn group(&self, path: &[String]) -> Option<&[String]> {
+        let cell = self.cells.iter().find(|cell| cell.path == path)?;
+        Some(cell.same.as_deref().unwrap_or(&cell.path))
+    }
+
+    /// Whether `path` is the guard or one of the cells.
+    #[must_use]
+    pub fn names(&self, path: &[String]) -> bool {
+        self.guard == path || self.cells.iter().any(|cell| cell.path == path)
+    }
+}
+
+/// The rule premise a protocol's host publishes with the rows resting on it.
+pub const PROTOCOL_PREMISE: &str = "P-CELL-PROTOCOL-DECLARED";
+
+/// Its statement.
+pub const PROTOCOL_STATEMENT: &str = "a declared descriptor-cell protocol (quant cell) holds of every object of its record type at every store gateway rule 38c does not read: it is a declared assumption (rule 13i), never a checked closure";

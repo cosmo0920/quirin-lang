@@ -166,6 +166,7 @@ pub(in crate::legacy_c) fn bare<'a>(
         list_facts: Default::default(),
         list_frames: Vec::new(),
         caller_formals: Default::default(),
+        cell_protocols: Default::default(),
         element_origins: Default::default(),
     }
 }

@@ -347,6 +347,7 @@ impl Parser<'_> {
             distinct_condition: decision.distinct_condition,
             element_condition: decision.element_condition,
             condition_plan: decision.condition_plan,
+            cell_test: None,
             then_body: vec![then_body],
             else_body: vec![else_body],
         })

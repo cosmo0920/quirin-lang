@@ -326,6 +326,13 @@ pub(super) struct AbstractState {
     /// creation's class. Joined by intersection.
     pub(super) cell_witnesses:
         BTreeMap<String, (Vec<u64>, qcore_schemas::descriptor_cell::WitnessGuard)>,
+    /// Card **MK-EVENT-CELL-CROSS-FUNCTION** (rule 38c): the facts of the
+    /// records with a declared cell protocol this path read. Empty in every
+    /// environment that declares no protocol, which keeps the join as it was.
+    pub(super) cell_protocols: BTreeMap<
+        super::descriptor_cells_route::ProtocolRoot,
+        super::descriptor_cells_route::HostedFact,
+    >,
 }
 
 /// The scalar facts one abstract state proves: a name bound to the null
@@ -476,6 +483,9 @@ impl AbstractState {
         super::constructed_route::join(&mut self.constructed, &incoming.constructed);
         self.member_path_taken
             .extend(incoming.member_path_taken.iter().copied());
+        // Card MK-EVENT-CELL-CROSS-FUNCTION (rule 38c), read against each
+        // side's own table before the tables join.
+        super::descriptor_cells_route::join_protocols(self, incoming);
         // Card MK-EVENT-DESCRIPTOR-QUANT (rule 38).
         if !self.cells.is_empty() || !incoming.cells.is_empty() {
             self.cells.join(&incoming.cells);
@@ -2029,6 +2039,11 @@ fn analyze_cfg_with_entry_collected(
         }
         for (edge, &successor) in node.successors.iter().enumerate() {
             let mut edge_output = output.clone();
+            // Card MK-EVENT-CELL-CROSS-FUNCTION (rule 38c): a guard test's
+            // edge introduces what the protocol says on it.
+            if let Some(step) = cfg.cell_tests.get(&node_id) {
+                super::descriptor_cells_route::refine_protocol(step, edge, &mut edge_output);
+            }
             if let Some((source, refinement)) = refine_edge(
                 &node.instruction,
                 edge,
@@ -2768,6 +2783,39 @@ pub(super) fn transfer(
         diagnostics,
     );
     slot_move_route::after(node, &mut output);
+    // Card MK-EVENT-CELL-CROSS-FUNCTION (rule 38c): a call that may reach a
+    // record with a fact forwards it under its protocol, or refuses. A
+    // cell-bearing call is rule 38's own.
+    if !output.cell_protocols.is_empty()
+        && let LegacyInstruction::ContractCall {
+            arguments,
+            nested,
+            retention,
+            ..
+        } = &node.instruction
+        && retention.as_ref().is_none_or(|r| r.cells.is_none())
+    {
+        let unread = !nested.is_empty() || arguments.iter().any(Option::is_none);
+        let named = arguments.iter().flatten().cloned().collect::<Vec<_>>();
+        let probe = output.clone();
+        super::descriptor_cells_route::touch(
+            function,
+            node.line,
+            |root| {
+                unread
+                    || named.iter().any(|name| match root {
+                        super::descriptor_cells_route::ProtocolRoot::Name(formal) => name == formal,
+                        super::descriptor_cells_route::ProtocolRoot::Site(site) => {
+                            probe.pointers.get(name).is_none_or(|pointer| {
+                                pointer.unknown || pointer.targets.contains(site)
+                            })
+                        }
+                    })
+            },
+            &mut output,
+            diagnostics,
+        );
+    }
     if context.lookup_tracking {
         lookup_route::after(node, &mut output, lookup_result, lookup_store);
     }
@@ -4435,6 +4483,16 @@ pub(super) fn transfer_base(
         LegacyInstruction::BranchOnNull { .. }
         | LegacyInstruction::BranchOnValidity { .. }
         | LegacyInstruction::BranchOnDistinct { .. } => {}
+        // Card MK-EVENT-CELL-CROSS-FUNCTION (rule 38c).
+        LegacyInstruction::CellProtocolStep { step } => {
+            super::descriptor_cells_route::apply_step(
+                function,
+                node.line,
+                step,
+                &mut state,
+                diagnostics,
+            );
+        }
         LegacyInstruction::Unknown {
             description,
             writes,
