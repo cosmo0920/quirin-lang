@@ -1,0 +1,30 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "RETAINING-CALL-MINTED-NAME-ACTUALS",
+  "base": "a9f7bebbe",
+  "measured_tip": "e8b507b90",
+  "increment_paragraph": "**RETAINING-CALL-MINTED-NAME-ACTUALS** (gateway rule 38b; user direction 2026-11-02 \"We need to launch these cards.\"): rule 12t classifies a withheld call a second time under its minted `qcore_retained__<callee>` name, and W44-INDIRECT-CALL-ARGUMENT-ACCESS's probe keyed its admitted actuals by the plain callee, matching the minted name only at the four cell-bearing declarations (rule 38a). The probe now matches the minted name at every withheld declaration (`minted_admission`): for the call's own callee only, for an actual it admitted at a declared `Borrowed` position, never a rule-1 release; and an actual that left the gate under the minted name must still sit at a `Borrowed` position of the classified call (`minted_positions_borrowed`: rule 13u's callback requirement read as `resource_owned` keeps the refusal). Matching rather than classifying under the plain name, because the plain name has no contract in force where rule 12t's route is reached. A custody position, a release, an uncontracted or function-map callee, an actual the probe refused, and every call rule 12t's route itself refuses keep the gate's refusal byte for byte; rule 38a's element admission stays cell-bearing. `QCore.RetainingCallMintedName` (26 theorems: the minted name admits exactly the plain-name set, never more; the decision table shared with Rust), `tests/retaining_call_minted_name.rs` (17 tests across Monkey event calls, the collector setters, msgpack and librdkafka queues; `in_tail_init`'s `flb_input_set_collector_event(in, cb, ctx->ch_manager[0], config)` shape is now `Safe`), one `tests/cell_array_slots.rs` and one `tests/function_pointer_declarators.rs` expectation updated. Predicted before implementation at `baseline:a9f7bebbe` (332 corpus, 4 system, 10 slice rows relisted): no status move on any route. RETAINING-CALL-MEMBER-ACTUAL's discharge now holds in full for every withheld declaration's borrowed positions; inferred lifetime summaries are RETAINING-CALL-MINTED-NAME-LIFETIME-SUMMARIES. Report: [docs/reports/retaining-call-minted-name-actuals/README.md](../../reports/retaining-call-minted-name-actuals/README.md).",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "RETAINING-CALL-MINTED-NAME-ACTUALS",
+      "operation": "retire",
+      "why": "Discharged by RETAINING-CALL-MINTED-NAME-ACTUALS (gateway rule 38b): W44's probe matches rule 12t's minted name at every withheld declaration, for the call's own callee and an actual it admitted at a declared Borrowed position (never a rule-1 release), and requires every such actual to stay at a Borrowed position of the classified call; fixtures per declaration family (Monkey event calls, collector setters, msgpack, librdkafka queues) and for each refusal; QCore.RetainingCallMintedName proves the minted name admits exactly the plain-name set; declared prediction committed before implementation, measured by the integrator.",
+      "source": "docs/reports/retaining-call-minted-name-actuals/README.md"
+    },
+    {
+      "id": "RETAINING-CALL-MINTED-NAME-LIFETIME-SUMMARIES",
+      "operation": "register",
+      "title": "W44 admissions at a call of an inferred lifetime summary leave only the outer classification's gate",
+      "text": "Registered by RETAINING-CALL-MINTED-NAME-ACTUALS. Rule 12t's route also classifies a call of an inferred lifetime summary (a same-unit helper or a replayed import, `ResourceContracts::lifetime_summary`) under its minted name (`retaining_environment`), and W44's probe reads that summary's contract for the call's positions, but the summary is not a retaining declaration, so rule 38b does not mint its entries: an actual the probe admitted leaves the gate in the outer classification and is refused again in the inner one unless an older route exempts it there. In MK-EVENT-CELL-CROSS-FUNCTION's area (the lifetime summaries). DISCHARGE: mint the entries of a lifetime-summary callee at its Borrowed positions under rule 38b's conditions, with fixtures and a declared measurement.",
+      "source": "docs/reports/retaining-call-minted-name-actuals/README.md",
+      "recorded_by": "RETAINING-CALL-MINTED-NAME-ACTUALS"
+    },
+    {
+      "id": "REFCOUNT-FAMILY-NON-CALLEE-BREAKERS",
+      "operation": "append",
+      "text": "RETAINING-CALL-MINTED-NAME-ACTUALS (rule 38b) lets the access gate's admitted actuals of a withheld call out of rule 12t's inner classification too, so the 13 withdrawers at an acquiring rd_kafka_q_new(X->f) (rd_kafka_q_new0) are now classified wherever the route accepts the call; scripts/withdrawers.py was not re-run on that card's measurement (the integrator's), so the count is not re-measured.",
+      "source": "docs/reports/retaining-call-minted-name-actuals/README.md"
+    }
+  ]
+}
