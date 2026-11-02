@@ -1,0 +1,4487 @@
+{
+ "contract_failure_class": {
+  "mk_event_channel_create": "#result != 0",
+  "mk_event_timeout_create": "#result == -1"
+ },
+ "schema": "cell-guard-result-range-census/1",
+ "tally": {
+  "046accf6": {
+   "body_only": {
+    "exact": 23,
+    "untested": 1,
+    "wrong": 14
+   },
+   "libc": {
+    "exact": 23,
+    "redundant": 13,
+    "untested": 1,
+    "wrong": 1
+   },
+   "stored": {
+    "exact": 5,
+    "outside": 4,
+    "wrong": 20
+   }
+  },
+  "34155955": {
+   "body_only": {
+    "exact": 23,
+    "untested": 1,
+    "wrong": 14
+   },
+   "libc": {
+    "exact": 23,
+    "redundant": 13,
+    "untested": 1,
+    "wrong": 1
+   },
+   "stored": {
+    "exact": 5,
+    "outside": 4,
+    "wrong": 20
+   }
+  },
+  "66910c10": {
+   "body_only": {
+    "exact": 19,
+    "untested": 1,
+    "wrong": 12
+   },
+   "libc": {
+    "exact": 19,
+    "redundant": 11,
+    "untested": 1,
+    "wrong": 1
+   },
+   "stored": {
+    "exact": 5,
+    "outside": 4,
+    "wrong": 20
+   }
+  },
+  "monkey-66910c10": {
+   "body_only": {
+    "exact": 2,
+    "redundant": 1,
+    "untested": 1,
+    "wrong": 2
+   },
+   "libc": {
+    "exact": 2,
+    "redundant": 2,
+    "untested": 1,
+    "wrong": 1
+   },
+   "stored": {
+    "wrong": 3
+   }
+  }
+ },
+ "trees": {
+  "046accf6": {
+   "bodies": [
+    {
+     "file": "mk_event.c",
+     "function": "mk_event_timeout_create",
+     "line": 156,
+     "ordinal": 0,
+     "reading": "mk_event.c:mk_event_timeout_create@dad7efcf6c37f851",
+     "sha256": "dad7efcf6c37f851aff65a568eab3804943afb6e9731aacb3faa1b46901e4f8f"
+    },
+    {
+     "file": "mk_event.c",
+     "function": "mk_event_channel_create",
+     "line": 181,
+     "ordinal": 0,
+     "reading": "mk_event.c:mk_event_channel_create@c5be5f86f082b1f6",
+     "sha256": "c5be5f86f082b1f63352916256b070cf03be73b8e9802820e45546f5a664de15"
+    },
+    {
+     "file": "mk_event_epoll.c",
+     "function": "_mk_event_add",
+     "line": 101,
+     "ordinal": 0,
+     "reading": "mk_event_epoll.c:_mk_event_add@d380da2cb2af49b5",
+     "sha256": "d380da2cb2af49b5992acd1b46f8d79edaee5797249fc7e386d0f9071e80da4d"
+    },
+    {
+     "file": "mk_event_epoll.c",
+     "function": "_mk_event_timeout_create",
+     "line": 190,
+     "ordinal": 0,
+     "reading": "mk_event_epoll.c:_mk_event_timeout_create@5fea786972292c2c",
+     "sha256": "5fea786972292c2cc2143c55c200758af77d769ac42b2869029a2f7d9ac216dd"
+    },
+    {
+     "file": "mk_event_epoll.c",
+     "function": "_mk_event_timeout_create",
+     "line": 291,
+     "ordinal": 1,
+     "reading": "mk_event_epoll.c:_mk_event_timeout_create@72c04f09994d60cd",
+     "sha256": "72c04f09994d60cd4977ef9496c47c95eb2599748ce4fd65c0fb418ab0d1dd95"
+    },
+    {
+     "file": "mk_event_epoll.c",
+     "function": "_mk_event_channel_create",
+     "line": 355,
+     "ordinal": 0,
+     "reading": "mk_event_epoll.c:_mk_event_channel_create@a763434883a42c8f",
+     "sha256": "a763434883a42c8fade7f340151d5a529668872830828f3e5b125016cf7c071a"
+    },
+    {
+     "file": "mk_event_kqueue.c",
+     "function": "_mk_event_add",
+     "line": 71,
+     "ordinal": 0,
+     "reading": "mk_event_kqueue.c:_mk_event_add@72e6b32edf609f12",
+     "sha256": "72e6b32edf609f12a9311d491afc65e81feb802429d97aa083bed62b517d972f"
+    },
+    {
+     "file": "mk_event_kqueue.c",
+     "function": "_mk_event_timeout_create",
+     "line": 184,
+     "ordinal": 0,
+     "reading": "mk_event_kqueue.c:_mk_event_timeout_create@9c072ab0fce784fa",
+     "sha256": "9c072ab0fce784fa0cc411be34c0d0a5d8bc2925fb9fdec9486ea801dd305977"
+    },
+    {
+     "file": "mk_event_kqueue.c",
+     "function": "_mk_event_channel_create",
+     "line": 279,
+     "ordinal": 0,
+     "reading": "mk_event_kqueue.c:_mk_event_channel_create@a763434883a42c8f",
+     "sha256": "a763434883a42c8fade7f340151d5a529668872830828f3e5b125016cf7c071a"
+    },
+    {
+     "file": "mk_event_select.c",
+     "function": "_mk_event_add",
+     "line": 98,
+     "ordinal": 0,
+     "reading": "mk_event_select.c:_mk_event_add@f7add58ff4edf964",
+     "sha256": "f7add58ff4edf964621fc3ab95ddc391dd567181b9e2c67a1ccfd6be729e030f"
+    },
+    {
+     "file": "mk_event_select.c",
+     "function": "_mk_event_timeout_create",
+     "line": 228,
+     "ordinal": 0,
+     "reading": "mk_event_select.c:_mk_event_timeout_create@b84883104a01a745",
+     "sha256": "b84883104a01a745a39efe3f9c59939a3dff48ad98472876676125c6ab8e6859"
+    },
+    {
+     "file": "mk_event_select.c",
+     "function": "_mk_event_channel_create",
+     "line": 300,
+     "ordinal": 0,
+     "reading": "mk_event_select.c:_mk_event_channel_create@13f8bcb466b7a27c",
+     "sha256": "13f8bcb466b7a27c41a75caa9fc5980e3a79509c059d73b03d45f8f31d25d688"
+    },
+    {
+     "file": "mk_event_poll.c",
+     "function": "_mk_event_add",
+     "line": 106,
+     "ordinal": 0,
+     "reading": "mk_event_poll.c:_mk_event_add@df6ddcf1bce88a41",
+     "sha256": "df6ddcf1bce88a41260088b0e7f2d5e6503a442d60d5f25c1575dfc722ab3201"
+    },
+    {
+     "file": "mk_event_poll.c",
+     "function": "_mk_event_timeout_create",
+     "line": 272,
+     "ordinal": 0,
+     "reading": "mk_event_poll.c:_mk_event_timeout_create@e752e59857b42d41",
+     "sha256": "e752e59857b42d414c9f03ec2a2fbaa378ef88706b93acb3cd28bb61756328f4"
+    },
+    {
+     "file": "mk_event_poll.c",
+     "function": "_mk_event_channel_create",
+     "line": 378,
+     "ordinal": 0,
+     "reading": "mk_event_poll.c:_mk_event_channel_create@a763434883a42c8f",
+     "sha256": "a763434883a42c8fade7f340151d5a529668872830828f3e5b125016cf7c071a"
+    },
+    {
+     "file": "mk_event_libevent.c",
+     "function": "mk_event_libevent_socketpair",
+     "line": 44,
+     "ordinal": 0,
+     "reading": "mk_event_libevent.c:mk_event_libevent_socketpair@d9d09928fa63870b",
+     "sha256": "d9d09928fa63870bfdeb37db1bd1661984e8fd3355997ac4d7599a593c931b57"
+    },
+    {
+     "file": "mk_event_libevent.c",
+     "function": "_mk_event_update",
+     "line": 159,
+     "ordinal": 0,
+     "reading": "mk_event_libevent.c:_mk_event_update@683e3339ce330527",
+     "sha256": "683e3339ce33052745cba42bb8144efef185355674ffa64f54390407b3afbff0"
+    },
+    {
+     "file": "mk_event_libevent.c",
+     "function": "_mk_event_add",
+     "line": 204,
+     "ordinal": 0,
+     "reading": "mk_event_libevent.c:_mk_event_add@a40496e57ec680ea",
+     "sha256": "a40496e57ec680eaf46c56b6b8f25cd5b63bd3ec9cc76fae5d7fb0d9f0ea8afa"
+    },
+    {
+     "file": "mk_event_libevent.c",
+     "function": "_mk_event_timeout_create",
+     "line": 335,
+     "ordinal": 0,
+     "reading": "mk_event_libevent.c:_mk_event_timeout_create@74abf5da0f9439c4",
+     "sha256": "74abf5da0f9439c41072a2aa9c9e4ca4ea08d30cfdee8e40e5fb5c8691b0650b"
+    },
+    {
+     "file": "mk_event_libevent.c",
+     "function": "_mk_event_channel_create",
+     "line": 402,
+     "ordinal": 0,
+     "reading": "mk_event_libevent.c:_mk_event_channel_create@fe187ba2d7b6bcfa",
+     "sha256": "fe187ba2d7b6bcfa95e00c06786eb514ae86034979d5858b63196b0155a2ad95"
+    }
+   ],
+   "configured_backend": "epoll",
+   "event_files": {
+    "mk_event.c": "8ef958d26545ef52865f69cde0abf86cfdbeceb925557ff37af41031297b2382",
+    "mk_event_epoll.c": "a2a161195fb8b417bad2a6c5410b6508f8f188debeaf9246fe65935c8c23d258",
+    "mk_event_kqueue.c": "cecd550548cf8c2c077824761f59fb5170dee0ee838eb299ec49505d0c10a627",
+    "mk_event_libevent.c": "25df48e0974032a0e1482535daafee931bfafb3d2a28bad015b46f048a68cf1c",
+    "mk_event_poll.c": "e9666fa69d71a73a419d59336c8f12e46a9cff28603ab77b7ca8fbbb5800ebf3",
+    "mk_event_select.c": "0d5875ae33952e64f89bb8618c352ae32ba497ab5e437d64a38f54966aa2b5d9"
+   },
+   "files_read": 4936,
+   "result_sets": {
+    "mk_event_channel_create": {
+     "epoll": {
+      "body_only": "int",
+      "libc": "[-1,0]"
+     },
+     "kqueue": {
+      "body_only": "[MIN,0]",
+      "libc": "[-1,0]"
+     },
+     "libevent": {
+      "body_only": "[-1,0]",
+      "libc": "[-1,0]"
+     },
+     "poll": {
+      "body_only": "[MIN,0]",
+      "libc": "[-1,0]"
+     },
+     "select": {
+      "body_only": "[MIN,0]",
+      "libc": "[-1,0]"
+     }
+    },
+    "mk_event_timeout_create": {
+     "epoll": {
+      "body_only": "int",
+      "libc": "[-1,MAX]"
+     },
+     "kqueue": {
+      "body_only": "int",
+      "libc": "[-1,MAX]"
+     },
+     "libevent": {
+      "body_only": "int",
+      "libc": "[-1,MAX]"
+     },
+     "poll": {
+      "body_only": "int",
+      "libc": "[-1,MAX]"
+     },
+     "select": {
+      "body_only": "int",
+      "libc": "[-1,MAX]"
+     }
+    }
+   },
+   "site_files": {
+    "lib/monkey/mk_server/mk_scheduler.c": "9a515fa6d0cc79ee8e70457e5e26e65a9ab82c8febd0bb383c88d35bcc1aedda",
+    "lib/monkey/mk_server/mk_server.c": "07a15b43f175df357109d21ebf29deeb9fdc5b5de3bf8f9db703e9214fdbdcdd",
+    "lib/monkey/mk_server/monkey.c": "6a42bbd04882e05b35c10533e6fb147e988960729050b7b43342087f4969afba",
+    "lib/monkey/test/event_timeout.c": "1b0c5cb9a46ff9f15b030e08542025f99b765f34286771ef391cc3b6d463b922",
+    "lib/monkey/test/lib_server.c": "e9245b8265f4f8f84e60cfb0b429bb4cd7b3e7b0bc2be4ffbc39fff3d0242540",
+    "lib/monkey/test/wasm/events.c": "69289b9666d112ad23d1a9d361cbff51721c97458b55ae8fe96b5cad58c1ec1a",
+    "plugins/in_exec/in_exec.c": "a63b53826432da7bc48140ca54c32a87689b0304843a7bbcccabbf3f17431ab5",
+    "plugins/in_exec_wasi/in_exec_wasi.c": "6cae44bea1e5ef57775b5c6642574d09b4d5a66d1ee1cace9e00b566affb7a07",
+    "src/flb_config.c": "289b881eae456e93ea18916b2c25c61434fb0a51b6d3e2b2943a51a2c2c3ff92",
+    "src/flb_downstream_worker.c": "eef1192e8246284cbe76e58c9b711908869f11a17db329ed7ea2f7feb78eb920",
+    "src/flb_engine.c": "2f70e703eb8f8bd853b436d50b51214c89402bc93b79b5e979024dd2ab578683",
+    "src/flb_input.c": "92a0917b89dd61ff92d098dffcf56ddae1060d7588874a3fc0e8e27f45544122",
+    "src/flb_input_thread.c": "ac3517f13136d96f7e490fed15dca9ff1b1b9fcc30469b6ad2925ca324d7a40c",
+    "src/flb_lib.c": "93113329f2a3e4b815d55c57a6d14b1a746adb6381b73b3f9fc6690fe0e37e89",
+    "src/flb_metrics_exporter.c": "65e0de81f51313c5431eb09edf0b1696cbe5577f61d736dbfd9eb8e2f4aacd72",
+    "src/flb_output.c": "2d31e29a14f432716732d40a7c0f0276fc86d8daef7a5d2a0831307c18ba8fed",
+    "src/flb_output_thread.c": "b6d1e7ad71b909557eb5fc0d59396585573c9d84d24c183d5ecd2121e19b2b16",
+    "src/flb_scheduler.c": "5e2c36c2d741689e4a9a2e5b3bffdd40fee422e84c280a87129895091b242f49",
+    "src/stream_processor/flb_sp.c": "22b716c18d0a68d0fa90770cdaf6a89a08cdae49a553e3e6544bb417c27e8c46"
+   },
+   "sites": [
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "wrong",
+      "body_only_detail": {
+       "failure_treated_as_success": "[1,MAX]"
+      },
+      "libc": "redundant"
+     },
+     "decides_today": false,
+     "failure_edge": "true",
+     "file": "lib/monkey/mk_server/mk_scheduler.c",
+     "function": "mk_sched_launch_worker_loop",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "lib/monkey/mk_server/mk_scheduler.c|mk_sched_launch_worker_loop|mk_event_channel_create|name|ret|ret < 0",
+     "line": 365,
+     "parsed": [
+      "<",
+      0
+     ],
+     "reading": "worker loop setup: a failed channel exits the process (exit(EXIT_FAILURE))",
+     "test": "ret < 0",
+     "test_line": 369
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "wrong",
+      "body_only_detail": {
+       "success_treated_as_failure": "[MIN,-2] | 0"
+      },
+      "libc": "wrong",
+      "libc_detail": {
+       "success_treated_as_failure": "0"
+      }
+     },
+     "decides_today": false,
+     "failure_edge": "false",
+     "file": "lib/monkey/mk_server/mk_server.c",
+     "function": "mk_server_worker_loop",
+     "holder": "timeout_fd",
+     "holder_kind": "name",
+     "key": "lib/monkey/mk_server/mk_server.c|mk_server_worker_loop|mk_event_timeout_create|name|timeout_fd|timeout_fd > 0",
+     "line": 502,
+     "parsed": [
+      ">",
+      0
+     ],
+     "reading": "the result is never tested where it is created (:502); the first test is :585, `timeout_fd > 0` before mk_event_timeout_destroy on MK_SCHED_SIGNAL_FREE_ALL: a timer whose descriptor is 0 is treated as absent and never destroyed",
+     "test": "timeout_fd > 0",
+     "test_line": 585
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "lib/monkey/mk_server/monkey.c",
+     "function": "mk_server_create",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "lib/monkey/mk_server/monkey.c|mk_server_create|mk_event_channel_create|name|ret|ret != 0",
+     "line": 115,
+     "parsed": [
+      "!=",
+      0
+     ],
+     "reading": "library-mode channels: failure destroys the loops and frees the server",
+     "test": "ret != 0",
+     "test_line": 120
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "lib/monkey/mk_server/monkey.c",
+     "function": "mk_server_create",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "lib/monkey/mk_server/monkey.c|mk_server_create|mk_event_channel_create|name|ret|ret != 0",
+     "line": 136,
+     "parsed": [
+      "!=",
+      0
+     ],
+     "reading": "library-mode channels: failure destroys the loops and frees the server",
+     "test": "ret != 0",
+     "test_line": 141
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "wrong",
+      "body_only_detail": {
+       "success_treated_as_failure": "[MIN,-2]"
+      },
+      "libc": "redundant"
+     },
+     "decides_today": true,
+     "failure_edge": "false",
+     "file": "lib/monkey/test/event_timeout.c",
+     "function": "test_timeout_tick_destroy",
+     "holder": "fd",
+     "holder_kind": "name",
+     "key": "lib/monkey/test/event_timeout.c|test_timeout_tick_destroy|mk_event_timeout_create|name|fd|fd >= 0",
+     "line": 47,
+     "parsed": [
+      ">=",
+      0
+     ],
+     "reading": "Monkey test program (TEST_ASSERT); not built into Fluent Bit",
+     "test": "fd >= 0",
+     "test_line": 48
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "untested",
+      "libc": "untested"
+     },
+     "file": "lib/monkey/test/lib_server.c",
+     "function": "run_server_test",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "lib/monkey/test/lib_server.c|run_server_test|mk_event_channel_create|name|ret|",
+     "line": 160,
+     "parsed": null,
+     "reading": "Monkey test program: ret is overwritten by mk_utils_worker_spawn (:167) before any test, so a failed channel goes unnoticed and complete_ch[1] (never written on failure) is handed to the workers",
+     "test": null,
+     "test_line": null
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "lib/monkey/test/wasm/events.c",
+     "function": "main",
+     "holder": null,
+     "holder_kind": "condition",
+     "key": "lib/monkey/test/wasm/events.c|main|mk_event_timeout_create|condition||mk_event_timeout_create(loop, 0, 0, &timer) == -1",
+     "line": 57,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "Monkey emscripten test (poll backend): asserts a zero interval fails",
+     "test": "mk_event_timeout_create(loop, 0, 0, &timer) == -1",
+     "test_line": 57
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "lib/monkey/test/wasm/events.c",
+     "function": "main",
+     "holder": null,
+     "holder_kind": "condition",
+     "key": "lib/monkey/test/wasm/events.c|main|mk_event_timeout_create|condition||mk_event_timeout_create(loop, 0, 1000000000L, &timer) == -1",
+     "line": 58,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "Monkey emscripten test: asserts an out-of-range nsec fails",
+     "test": "mk_event_timeout_create(loop, 0, 1000000000L, &timer) == -1",
+     "test_line": 58
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "wrong",
+      "body_only_detail": {
+       "success_treated_as_failure": "[MIN,-2]"
+      },
+      "libc": "redundant"
+     },
+     "decides_today": true,
+     "failure_edge": "false",
+     "file": "lib/monkey/test/wasm/events.c",
+     "function": "main",
+     "holder": null,
+     "holder_kind": "condition",
+     "key": "lib/monkey/test/wasm/events.c|main|mk_event_timeout_create|condition||mk_event_timeout_create(loop, 0, 20000000, &timer) >= 0",
+     "line": 59,
+     "parsed": [
+      ">=",
+      0
+     ],
+     "reading": "Monkey emscripten test: asserts success",
+     "test": "mk_event_timeout_create(loop, 0, 20000000, &timer) >= 0",
+     "test_line": 59
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "false",
+     "file": "lib/monkey/test/wasm/events.c",
+     "function": "main",
+     "holder": null,
+     "holder_kind": "condition",
+     "key": "lib/monkey/test/wasm/events.c|main|mk_event_channel_create|condition||mk_event_channel_create(loop, &reader, &writer, &channel) == 0",
+     "line": 60,
+     "parsed": [
+      "==",
+      0
+     ],
+     "reading": "Monkey emscripten test: asserts success",
+     "test": "mk_event_channel_create(loop, &reader, &writer, &channel) == 0",
+     "test_line": 60
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "lib/monkey/test/wasm/events.c",
+     "function": "main",
+     "holder": null,
+     "holder_kind": "condition",
+     "key": "lib/monkey/test/wasm/events.c|main|mk_event_timeout_create|condition||mk_event_timeout_create(loop, 0, 1000000, &overflow) == -1",
+     "line": 61,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "Monkey emscripten test: asserts the third registration overflows a size-2 loop",
+     "test": "mk_event_timeout_create(loop, 0, 1000000, &overflow) == -1",
+     "test_line": 61
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "wrong",
+      "body_only_detail": {
+       "success_treated_as_failure": "[MIN,-2]"
+      },
+      "libc": "redundant"
+     },
+     "decides_today": true,
+     "failure_edge": "false",
+     "file": "lib/monkey/test/wasm/events.c",
+     "function": "main",
+     "holder": "reader",
+     "holder_kind": "name",
+     "key": "lib/monkey/test/wasm/events.c|main|mk_event_timeout_create|name|reader|reader >= 0",
+     "line": 94,
+     "parsed": [
+      ">=",
+      0
+     ],
+     "reading": "Monkey emscripten test: asserts success",
+     "test": "reader >= 0",
+     "test_line": 95
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/flb_downstream_worker.c",
+     "function": "downstream_worker_thread",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "src/flb_downstream_worker.c|downstream_worker_thread|mk_event_channel_create|name|ret|ret != 0",
+     "line": 248,
+     "parsed": [
+      "!=",
+      0
+     ],
+     "reading": "worker control channel: failure sets ret = -1 and signals the starter",
+     "test": "ret != 0",
+     "test_line": 252
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/flb_engine.c",
+     "function": "flb_engine_flush_timer_reset",
+     "holder": "config->flush_fd",
+     "holder_kind": "member",
+     "key": "src/flb_engine.c|flb_engine_flush_timer_reset|mk_event_timeout_create|member|config->flush_fd|config->flush_fd == -1",
+     "line": 325,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "flush timer: the result is held in config->flush_fd (a member, no plain-name witness); failure retries with the fallback interval, then returns -1",
+     "test": "config->flush_fd == -1",
+     "test_line": 331
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/flb_engine.c",
+     "function": "flb_engine_flush_timer_reset",
+     "holder": "config->flush_fd",
+     "holder_kind": "member",
+     "key": "src/flb_engine.c|flb_engine_flush_timer_reset|mk_event_timeout_create|member|config->flush_fd|config->flush_fd == -1",
+     "line": 337,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "flush timer: the result is held in config->flush_fd (a member, no plain-name witness); failure retries with the fallback interval, then returns -1",
+     "test": "config->flush_fd == -1",
+     "test_line": 344
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "wrong",
+      "body_only_detail": {
+       "failure_treated_as_success": "[MIN,-2] | [1,MAX]"
+      },
+      "libc": "redundant"
+     },
+     "decides_today": false,
+     "failure_edge": "true",
+     "file": "src/flb_engine.c",
+     "function": "flb_engine_start",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "src/flb_engine.c|flb_engine_start|mk_event_channel_create|name|ret|ret == -1",
+     "line": 1168,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "ch_self_events (:1168) and notification_channels (:1246): failure logs and returns -1",
+     "test": "ret == -1",
+     "test_line": 1172
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/flb_engine.c",
+     "function": "flb_engine_start",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "src/flb_engine.c|flb_engine_start|mk_event_channel_create|name|ret|ret != 0",
+     "line": 1237,
+     "parsed": [
+      "!=",
+      0
+     ],
+     "reading": "ch_manager (:1237): failure logs and returns -1",
+     "test": "ret != 0",
+     "test_line": 1241
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "wrong",
+      "body_only_detail": {
+       "failure_treated_as_success": "[MIN,-2] | [1,MAX]"
+      },
+      "libc": "redundant"
+     },
+     "decides_today": false,
+     "failure_edge": "true",
+     "file": "src/flb_engine.c",
+     "function": "flb_engine_start",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "src/flb_engine.c|flb_engine_start|mk_event_channel_create|name|ret|ret == -1",
+     "line": 1246,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "ch_self_events (:1168) and notification_channels (:1246): failure logs and returns -1",
+     "test": "ret == -1",
+     "test_line": 1250
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/flb_engine.c",
+     "function": "flb_engine_start",
+     "holder": "config->shutdown_fd",
+     "holder_kind": "member",
+     "key": "src/flb_engine.c|flb_engine_start|mk_event_timeout_create|member|config->shutdown_fd|config->shutdown_fd == -1",
+     "line": 1498,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "shutdown timer: held in config->shutdown_fd; created only when `config->shutdown_fd <= 0` (:1497), a guard that reads an earlier timer on descriptor 0 as absent (a test of the stored result, not of this call)",
+     "test": "config->shutdown_fd == -1",
+     "test_line": 1503
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/flb_input.c",
+     "function": "input_instance_channel_events_init",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "src/flb_input.c|input_instance_channel_events_init|mk_event_channel_create|name|ret|ret != 0",
+     "line": 1380,
+     "parsed": [
+      "!=",
+      0
+     ],
+     "reading": "input event channel: failure logs and returns -1",
+     "test": "ret != 0",
+     "test_line": 1384
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/flb_input.c",
+     "function": "collector_start",
+     "holder": "fd",
+     "holder_kind": "name",
+     "key": "src/flb_input.c|collector_start|mk_event_timeout_create|name|fd|fd == -1",
+     "line": 2351,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "COLLECT_TIME registration: failure clears running and returns -1",
+     "test": "fd == -1",
+     "test_line": 2353
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/flb_input.c",
+     "function": "flb_input_collector_resume",
+     "holder": "fd",
+     "holder_kind": "name",
+     "key": "src/flb_input.c|flb_input_collector_resume|mk_event_timeout_create|name|fd|fd == -1",
+     "line": 3248,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "COLLECT_TIME resume: failure returns -1",
+     "test": "fd == -1",
+     "test_line": 3250
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "wrong",
+      "body_only_detail": {
+       "failure_treated_as_success": "[MIN,-2] | [1,MAX]"
+      },
+      "libc": "redundant"
+     },
+     "decides_today": false,
+     "failure_edge": "true",
+     "file": "src/flb_input_thread.c",
+     "function": "input_thread_instance_create",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "src/flb_input_thread.c|input_thread_instance_create|mk_event_channel_create|name|ret|ret == -1",
+     "line": 262,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "ch_parent_events, ch_thread_events, notification_channels: failure destroys thi and returns NULL",
+     "test": "ret == -1",
+     "test_line": 266
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "wrong",
+      "body_only_detail": {
+       "failure_treated_as_success": "[MIN,-2] | [1,MAX]"
+      },
+      "libc": "redundant"
+     },
+     "decides_today": false,
+     "failure_edge": "true",
+     "file": "src/flb_input_thread.c",
+     "function": "input_thread_instance_create",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "src/flb_input_thread.c|input_thread_instance_create|mk_event_channel_create|name|ret|ret == -1",
+     "line": 275,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "ch_parent_events, ch_thread_events, notification_channels: failure destroys thi and returns NULL",
+     "test": "ret == -1",
+     "test_line": 279
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "wrong",
+      "body_only_detail": {
+       "failure_treated_as_success": "[MIN,-2] | [1,MAX]"
+      },
+      "libc": "redundant"
+     },
+     "decides_today": false,
+     "failure_edge": "true",
+     "file": "src/flb_input_thread.c",
+     "function": "input_thread_instance_create",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "src/flb_input_thread.c|input_thread_instance_create|mk_event_channel_create|name|ret|ret == -1",
+     "line": 287,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "ch_parent_events, ch_thread_events, notification_channels: failure destroys thi and returns NULL",
+     "test": "ret == -1",
+     "test_line": 291
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/flb_lib.c",
+     "function": "flb_create",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "src/flb_lib.c|flb_create|mk_event_channel_create|name|ret|ret != 0",
+     "line": 209,
+     "parsed": [
+      "!=",
+      0
+     ],
+     "reading": "library notification channel: failure stops and destroys the context",
+     "test": "ret != 0",
+     "test_line": 213
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/flb_metrics_exporter.c",
+     "function": "flb_me_create",
+     "holder": "fd",
+     "holder_kind": "name",
+     "key": "src/flb_metrics_exporter.c|flb_me_create|mk_event_timeout_create|name|fd|fd == -1",
+     "line": 234,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "metrics timer: failure frees me and returns NULL",
+     "test": "fd == -1",
+     "test_line": 235
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/flb_output.c",
+     "function": "flb_output_init_all",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "src/flb_output.c|flb_output_init_all|mk_event_channel_create|name|ret|ret != 0",
+     "line": 1545,
+     "parsed": [
+      "!=",
+      0
+     ],
+     "reading": "output event channel: failure destroys the instance and returns -1",
+     "test": "ret != 0",
+     "test_line": 1549
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "wrong",
+      "body_only_detail": {
+       "failure_treated_as_success": "[MIN,-2] | [1,MAX]"
+      },
+      "libc": "redundant"
+     },
+     "decides_today": false,
+     "failure_edge": "true",
+     "file": "src/flb_output_thread.c",
+     "function": "output_thread",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "src/flb_output_thread.c|output_thread|mk_event_channel_create|name|ret|ret == -1",
+     "line": 238,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "thread-local event channel: failure clears the event loop and returns",
+     "test": "ret == -1",
+     "test_line": 242
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "wrong",
+      "body_only_detail": {
+       "failure_treated_as_success": "[MIN,-2] | [1,MAX]"
+      },
+      "libc": "redundant"
+     },
+     "decides_today": false,
+     "failure_edge": "true",
+     "file": "src/flb_output_thread.c",
+     "function": "flb_output_thread_pool_create",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "src/flb_output_thread.c|flb_output_thread_pool_create|mk_event_channel_create|name|ret|ret == -1",
+     "line": 537,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "ch_parent_events and notification_channels: failure tears the thread instance down",
+     "test": "ret == -1",
+     "test_line": 541
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "wrong",
+      "body_only_detail": {
+       "failure_treated_as_success": "[MIN,-2] | [1,MAX]"
+      },
+      "libc": "redundant"
+     },
+     "decides_today": false,
+     "failure_edge": "true",
+     "file": "src/flb_output_thread.c",
+     "function": "flb_output_thread_pool_create",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "src/flb_output_thread.c|flb_output_thread_pool_create|mk_event_channel_create|name|ret|ret == -1",
+     "line": 553,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "ch_parent_events and notification_channels: failure tears the thread instance down",
+     "test": "ret == -1",
+     "test_line": 557
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/flb_scheduler.c",
+     "function": "schedule_request_now",
+     "holder": "fd",
+     "holder_kind": "name",
+     "key": "src/flb_scheduler.c|schedule_request_now|mk_event_timeout_create|name|fd|fd == -1",
+     "line": 133,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "request timer: failure returns -1",
+     "test": "fd == -1",
+     "test_line": 135
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/flb_scheduler.c",
+     "function": "flb_sched_timer_cb_create",
+     "holder": "fd",
+     "holder_kind": "name",
+     "key": "src/flb_scheduler.c|flb_sched_timer_cb_create|mk_event_timeout_create|name|fd|fd == -1",
+     "line": 672,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "timer callback: failure destroys the timer and returns -1",
+     "test": "fd == -1",
+     "test_line": 674
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/flb_scheduler.c",
+     "function": "flb_sched_create",
+     "holder": "fd",
+     "holder_kind": "name",
+     "key": "src/flb_scheduler.c|flb_sched_create|mk_event_timeout_create|name|fd|fd == -1",
+     "line": 783,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "frame timer: failure destroys the timer, frees sched and returns NULL",
+     "test": "fd == -1",
+     "test_line": 786
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "wrong",
+      "body_only_detail": {
+       "failure_treated_as_success": "[MIN,-2] | [1,MAX]"
+      },
+      "libc": "redundant"
+     },
+     "decides_today": false,
+     "failure_edge": "true",
+     "file": "src/flb_scheduler.c",
+     "function": "flb_sched_create",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "src/flb_scheduler.c|flb_sched_create|mk_event_channel_create|name|ret|ret == -1",
+     "line": 794,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "sched->ch_events: failure destroys sched and returns NULL",
+     "test": "ret == -1",
+     "test_line": 798
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/stream_processor/flb_sp.c",
+     "function": "flb_sp_task_create",
+     "holder": "fd",
+     "holder_kind": "name",
+     "key": "src/stream_processor/flb_sp.c|flb_sp_task_create|mk_event_timeout_create|name|fd|fd == -1",
+     "line": 519,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "window and hop timers: failure frees the task and returns NULL",
+     "test": "fd == -1",
+     "test_line": 522
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/stream_processor/flb_sp.c",
+     "function": "flb_sp_task_create",
+     "holder": "fd",
+     "holder_kind": "name",
+     "key": "src/stream_processor/flb_sp.c|flb_sp_task_create|mk_event_timeout_create|name|fd|fd == -1",
+     "line": 535,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "window and hop timers: failure frees the task and returns NULL",
+     "test": "fd == -1",
+     "test_line": 538
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/stream_processor/flb_sp.c",
+     "function": "flb_sp_fd_event",
+     "holder": "fd_timeout",
+     "holder_kind": "name",
+     "key": "src/stream_processor/flb_sp.c|flb_sp_fd_event|mk_event_timeout_create|name|fd_timeout|fd_timeout == -1",
+     "line": 2194,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "window timer re-arm: failure returns -1",
+     "test": "fd_timeout == -1",
+     "test_line": 2197
+    }
+   ],
+   "stored_result_tests": [
+    {
+     "class": "wrong",
+     "file": "lib/monkey/mk_server/mk_server.c",
+     "function": "mk_server_worker_loop",
+     "key": "lib/monkey/mk_server/mk_server.c|mk_server_worker_loop|timeout_fd > 0",
+     "line": 585,
+     "reading": "a timer created on descriptor 0 is never destroyed at MK_SCHED_SIGNAL_FREE_ALL; the -1 failure is read correctly",
+     "test": "timeout_fd > 0"
+    },
+    {
+     "class": "wrong",
+     "file": "lib/monkey/mk_server/mk_server.c",
+     "function": "mk_server_lib_notify_event_loop_break",
+     "key": "lib/monkey/mk_server/mk_server.c|mk_server_lib_notify_event_loop_break|sched->signal_channel_w <= 0",
+     "line": 630,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent: a write end on descriptor 0 is reported as no channel (the notification is dropped)",
+     "test": "sched->signal_channel_w <= 0"
+    },
+    {
+     "class": "wrong",
+     "file": "lib/monkey/mk_server/mk_server.c",
+     "function": "mk_server_lib_notify_started",
+     "key": "lib/monkey/mk_server/mk_server.c|mk_server_lib_notify_started|server->lib_ch_start[1] <= 0",
+     "line": 648,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent: a start channel write end on descriptor 0 is reported as no channel",
+     "test": "server->lib_ch_start[1] <= 0"
+    },
+    {
+     "class": "outside",
+     "file": "plugins/in_exec/in_exec.c",
+     "function": "delete_exec_config",
+     "key": "plugins/in_exec/in_exec.c|delete_exec_config|ctx->ch_manager[0] > -1",
+     "line": 486,
+     "reading": "a different record (the plugin context) whose ch_manager comes from flb_pipe_create, not from a Monkey creator",
+     "test": "ctx->ch_manager[0] > -1"
+    },
+    {
+     "class": "outside",
+     "file": "plugins/in_exec/in_exec.c",
+     "function": "delete_exec_config",
+     "key": "plugins/in_exec/in_exec.c|delete_exec_config|ctx->ch_manager[1] > -1",
+     "line": 490,
+     "reading": "a different record (the plugin context) whose ch_manager comes from flb_pipe_create, not from a Monkey creator",
+     "test": "ctx->ch_manager[1] > -1"
+    },
+    {
+     "class": "outside",
+     "file": "plugins/in_exec_wasi/in_exec_wasi.c",
+     "function": "delete_exec_wasi_config",
+     "key": "plugins/in_exec_wasi/in_exec_wasi.c|delete_exec_wasi_config|ctx->ch_manager[0] > -1",
+     "line": 284,
+     "reading": "a different record (the plugin context) whose ch_manager comes from flb_pipe_create, not from a Monkey creator",
+     "test": "ctx->ch_manager[0] > -1"
+    },
+    {
+     "class": "outside",
+     "file": "plugins/in_exec_wasi/in_exec_wasi.c",
+     "function": "delete_exec_wasi_config",
+     "key": "plugins/in_exec_wasi/in_exec_wasi.c|delete_exec_wasi_config|ctx->ch_manager[1] > -1",
+     "line": 288,
+     "reading": "a different record (the plugin context) whose ch_manager comes from flb_pipe_create, not from a Monkey creator",
+     "test": "ctx->ch_manager[1] > -1"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_config.c",
+     "function": "flb_config_exit",
+     "key": "src/flb_config.c|flb_config_exit|config->ch_manager[0] > 0",
+     "line": 617,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent: the manager channel (flb_engine_start) is never closed if its read end is 0",
+     "test": "config->ch_manager[0] > 0"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_config.c",
+     "function": "flb_config_exit",
+     "key": "src/flb_config.c|flb_config_exit|config->ch_notif[0] > 0",
+     "line": 625,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent: the library notification channel (flb_create) is never closed if its read end is 0",
+     "test": "config->ch_notif[0] > 0"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_config.c",
+     "function": "flb_config_exit",
+     "key": "src/flb_config.c|flb_config_exit|config->ch_notif[1] > 0",
+     "line": 627,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent: the write end is not closed if it is 0",
+     "test": "config->ch_notif[1] > 0"
+    },
+    {
+     "class": "exact",
+     "file": "src/flb_engine.c",
+     "function": "flb_engine_flush_timer_reset",
+     "key": "src/flb_engine.c|flb_engine_flush_timer_reset|config->flush_fd == -1",
+     "line": 331,
+     "reading": "the immediate test of the call's result (part 3)",
+     "test": "config->flush_fd == -1"
+    },
+    {
+     "class": "exact",
+     "file": "src/flb_engine.c",
+     "function": "flb_engine_flush_timer_reset",
+     "key": "src/flb_engine.c|flb_engine_flush_timer_reset|config->flush_fd == -1",
+     "line": 344,
+     "reading": "the immediate test of the call's result (part 3)",
+     "test": "config->flush_fd == -1"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_engine.c",
+     "function": "flb_engine_started",
+     "key": "src/flb_engine.c|flb_engine_started|config->ch_notif[1] <= 0",
+     "line": 1034,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent: a write end on 0 is reported as no channel and STARTED is never sent",
+     "test": "config->ch_notif[1] <= 0"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_engine.c",
+     "function": "flb_engine_failed",
+     "key": "src/flb_engine.c|flb_engine_failed|config->ch_notif[1] <= 0",
+     "line": 1048,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent: a write end on 0 is reported as no channel and FAILED is never sent",
+     "test": "config->ch_notif[1] <= 0"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_engine.c",
+     "function": "flb_engine_start",
+     "key": "src/flb_engine.c|flb_engine_start|config->shutdown_fd <= 0",
+     "line": 1497,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent: a shutdown timer on descriptor 0 is created again on the next pass (the first is leaked and stays registered)",
+     "test": "config->shutdown_fd <= 0"
+    },
+    {
+     "class": "exact",
+     "file": "src/flb_engine.c",
+     "function": "flb_engine_start",
+     "key": "src/flb_engine.c|flb_engine_start|config->shutdown_fd == -1",
+     "line": 1503,
+     "reading": "the immediate test of the call's result (part 3)",
+     "test": "config->shutdown_fd == -1"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_engine.c",
+     "function": "flb_engine_start",
+     "key": "src/flb_engine.c|flb_engine_start|config->shutdown_fd > 0",
+     "line": 1563,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent: a shutdown timer on descriptor 0 is never destroyed",
+     "test": "config->shutdown_fd > 0"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_input.c",
+     "function": "flb_input_instance_destroy",
+     "key": "src/flb_input.c|flb_input_instance_destroy|ins->ch_events[0] > 0",
+     "line": 1311,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent (the round-6 census reads this destroyer as breaking any protocol)",
+     "test": "ins->ch_events[0] > 0"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_input.c",
+     "function": "flb_input_instance_destroy",
+     "key": "src/flb_input.c|flb_input_instance_destroy|ins->ch_events[1] > 0",
+     "line": 1315,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent (the round-6 census reads this destroyer as breaking any protocol)",
+     "test": "ins->ch_events[1] > 0"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_input.c",
+     "function": "flb_input_collector_destroy",
+     "key": "src/flb_input.c|flb_input_collector_destroy|coll->fd_timer > 0",
+     "line": 3145,
+     "reading": "the holder's absent value is -1 (flb_input.c `coll->fd_timer = -1` at creation and pause), so the guard is not even the sentinel's: a COLLECT_TIME timer on descriptor 0 is never destroyed, and the collector holding its event is freed while the loop still holds the registration",
+     "test": "coll->fd_timer > 0"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_input_thread.c",
+     "function": "input_thread_instance_destroy",
+     "key": "src/flb_input_thread.c|input_thread_instance_destroy|thi->ch_parent_events[0] > 0",
+     "line": 210,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent",
+     "test": "thi->ch_parent_events[0] > 0"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_input_thread.c",
+     "function": "input_thread_instance_destroy",
+     "key": "src/flb_input_thread.c|input_thread_instance_destroy|thi->ch_parent_events[1] > 0",
+     "line": 213,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent",
+     "test": "thi->ch_parent_events[1] > 0"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_input_thread.c",
+     "function": "input_thread_instance_destroy",
+     "key": "src/flb_input_thread.c|input_thread_instance_destroy|thi->ch_thread_events[0] > 0",
+     "line": 218,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent",
+     "test": "thi->ch_thread_events[0] > 0"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_input_thread.c",
+     "function": "input_thread_instance_destroy",
+     "key": "src/flb_input_thread.c|input_thread_instance_destroy|thi->ch_thread_events[1] > 0",
+     "line": 221,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent",
+     "test": "thi->ch_thread_events[1] > 0"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_output.c",
+     "function": "flb_output_instance_destroy",
+     "key": "src/flb_output.c|flb_output_instance_destroy|ins->ch_events[0] > 0",
+     "line": 615,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent (the round-6 census reads this destroyer as breaking any protocol)",
+     "test": "ins->ch_events[0] > 0"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_output.c",
+     "function": "flb_output_instance_destroy",
+     "key": "src/flb_output.c|flb_output_instance_destroy|ins->ch_events[1] > 0",
+     "line": 619,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent (the round-6 census reads this destroyer as breaking any protocol)",
+     "test": "ins->ch_events[1] > 0"
+    },
+    {
+     "class": "exact",
+     "file": "src/flb_scheduler.c",
+     "function": "flb_sched_timer_cb_disable",
+     "key": "src/flb_scheduler.c|flb_sched_timer_cb_disable|timer->timer_fd != -1",
+     "line": 722,
+     "reading": "the holder's absent value is -1 (stored at :724 and at timer creation)",
+     "test": "timer->timer_fd != -1"
+    },
+    {
+     "class": "exact",
+     "file": "src/flb_scheduler.c",
+     "function": "flb_sched_destroy",
+     "key": "src/flb_scheduler.c|flb_sched_destroy|sched->ch_events[0] != -1",
+     "line": 855,
+     "reading": "the holder's absent value is -1 (flb_sched_create stores -1 before the creation, and a failed creation writes no end)",
+     "test": "sched->ch_events[0] != -1"
+    },
+    {
+     "class": "wrong",
+     "file": "src/stream_processor/flb_sp.c",
+     "function": "flb_sp_window_destroy",
+     "key": "src/stream_processor/flb_sp.c|flb_sp_window_destroy|task->window.fd > 0",
+     "line": 670,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent: a window timer on descriptor 0 is never closed",
+     "test": "task->window.fd > 0"
+    }
+   ],
+   "tree_sha256": "07e7d39d9fec0cad310915e403946a210943ff5affd62506edc28a534bac372e"
+  },
+  "34155955": {
+   "bodies": [
+    {
+     "file": "mk_event.c",
+     "function": "mk_event_timeout_create",
+     "line": 156,
+     "ordinal": 0,
+     "reading": "mk_event.c:mk_event_timeout_create@dad7efcf6c37f851",
+     "sha256": "dad7efcf6c37f851aff65a568eab3804943afb6e9731aacb3faa1b46901e4f8f"
+    },
+    {
+     "file": "mk_event.c",
+     "function": "mk_event_channel_create",
+     "line": 181,
+     "ordinal": 0,
+     "reading": "mk_event.c:mk_event_channel_create@c5be5f86f082b1f6",
+     "sha256": "c5be5f86f082b1f63352916256b070cf03be73b8e9802820e45546f5a664de15"
+    },
+    {
+     "file": "mk_event_epoll.c",
+     "function": "_mk_event_add",
+     "line": 101,
+     "ordinal": 0,
+     "reading": "mk_event_epoll.c:_mk_event_add@d380da2cb2af49b5",
+     "sha256": "d380da2cb2af49b5992acd1b46f8d79edaee5797249fc7e386d0f9071e80da4d"
+    },
+    {
+     "file": "mk_event_epoll.c",
+     "function": "_mk_event_timeout_create",
+     "line": 190,
+     "ordinal": 0,
+     "reading": "mk_event_epoll.c:_mk_event_timeout_create@5fea786972292c2c",
+     "sha256": "5fea786972292c2cc2143c55c200758af77d769ac42b2869029a2f7d9ac216dd"
+    },
+    {
+     "file": "mk_event_epoll.c",
+     "function": "_mk_event_timeout_create",
+     "line": 291,
+     "ordinal": 1,
+     "reading": "mk_event_epoll.c:_mk_event_timeout_create@72c04f09994d60cd",
+     "sha256": "72c04f09994d60cd4977ef9496c47c95eb2599748ce4fd65c0fb418ab0d1dd95"
+    },
+    {
+     "file": "mk_event_epoll.c",
+     "function": "_mk_event_channel_create",
+     "line": 355,
+     "ordinal": 0,
+     "reading": "mk_event_epoll.c:_mk_event_channel_create@a763434883a42c8f",
+     "sha256": "a763434883a42c8fade7f340151d5a529668872830828f3e5b125016cf7c071a"
+    },
+    {
+     "file": "mk_event_kqueue.c",
+     "function": "_mk_event_add",
+     "line": 71,
+     "ordinal": 0,
+     "reading": "mk_event_kqueue.c:_mk_event_add@72e6b32edf609f12",
+     "sha256": "72e6b32edf609f12a9311d491afc65e81feb802429d97aa083bed62b517d972f"
+    },
+    {
+     "file": "mk_event_kqueue.c",
+     "function": "_mk_event_timeout_create",
+     "line": 184,
+     "ordinal": 0,
+     "reading": "mk_event_kqueue.c:_mk_event_timeout_create@9c072ab0fce784fa",
+     "sha256": "9c072ab0fce784fa0cc411be34c0d0a5d8bc2925fb9fdec9486ea801dd305977"
+    },
+    {
+     "file": "mk_event_kqueue.c",
+     "function": "_mk_event_channel_create",
+     "line": 279,
+     "ordinal": 0,
+     "reading": "mk_event_kqueue.c:_mk_event_channel_create@a763434883a42c8f",
+     "sha256": "a763434883a42c8fade7f340151d5a529668872830828f3e5b125016cf7c071a"
+    },
+    {
+     "file": "mk_event_select.c",
+     "function": "_mk_event_add",
+     "line": 98,
+     "ordinal": 0,
+     "reading": "mk_event_select.c:_mk_event_add@f7add58ff4edf964",
+     "sha256": "f7add58ff4edf964621fc3ab95ddc391dd567181b9e2c67a1ccfd6be729e030f"
+    },
+    {
+     "file": "mk_event_select.c",
+     "function": "_mk_event_timeout_create",
+     "line": 228,
+     "ordinal": 0,
+     "reading": "mk_event_select.c:_mk_event_timeout_create@b84883104a01a745",
+     "sha256": "b84883104a01a745a39efe3f9c59939a3dff48ad98472876676125c6ab8e6859"
+    },
+    {
+     "file": "mk_event_select.c",
+     "function": "_mk_event_channel_create",
+     "line": 300,
+     "ordinal": 0,
+     "reading": "mk_event_select.c:_mk_event_channel_create@13f8bcb466b7a27c",
+     "sha256": "13f8bcb466b7a27c41a75caa9fc5980e3a79509c059d73b03d45f8f31d25d688"
+    },
+    {
+     "file": "mk_event_poll.c",
+     "function": "_mk_event_add",
+     "line": 106,
+     "ordinal": 0,
+     "reading": "mk_event_poll.c:_mk_event_add@df6ddcf1bce88a41",
+     "sha256": "df6ddcf1bce88a41260088b0e7f2d5e6503a442d60d5f25c1575dfc722ab3201"
+    },
+    {
+     "file": "mk_event_poll.c",
+     "function": "_mk_event_timeout_create",
+     "line": 272,
+     "ordinal": 0,
+     "reading": "mk_event_poll.c:_mk_event_timeout_create@e752e59857b42d41",
+     "sha256": "e752e59857b42d414c9f03ec2a2fbaa378ef88706b93acb3cd28bb61756328f4"
+    },
+    {
+     "file": "mk_event_poll.c",
+     "function": "_mk_event_channel_create",
+     "line": 378,
+     "ordinal": 0,
+     "reading": "mk_event_poll.c:_mk_event_channel_create@a763434883a42c8f",
+     "sha256": "a763434883a42c8fade7f340151d5a529668872830828f3e5b125016cf7c071a"
+    },
+    {
+     "file": "mk_event_libevent.c",
+     "function": "mk_event_libevent_socketpair",
+     "line": 44,
+     "ordinal": 0,
+     "reading": "mk_event_libevent.c:mk_event_libevent_socketpair@d9d09928fa63870b",
+     "sha256": "d9d09928fa63870bfdeb37db1bd1661984e8fd3355997ac4d7599a593c931b57"
+    },
+    {
+     "file": "mk_event_libevent.c",
+     "function": "_mk_event_update",
+     "line": 159,
+     "ordinal": 0,
+     "reading": "mk_event_libevent.c:_mk_event_update@683e3339ce330527",
+     "sha256": "683e3339ce33052745cba42bb8144efef185355674ffa64f54390407b3afbff0"
+    },
+    {
+     "file": "mk_event_libevent.c",
+     "function": "_mk_event_add",
+     "line": 204,
+     "ordinal": 0,
+     "reading": "mk_event_libevent.c:_mk_event_add@a40496e57ec680ea",
+     "sha256": "a40496e57ec680eaf46c56b6b8f25cd5b63bd3ec9cc76fae5d7fb0d9f0ea8afa"
+    },
+    {
+     "file": "mk_event_libevent.c",
+     "function": "_mk_event_timeout_create",
+     "line": 335,
+     "ordinal": 0,
+     "reading": "mk_event_libevent.c:_mk_event_timeout_create@74abf5da0f9439c4",
+     "sha256": "74abf5da0f9439c41072a2aa9c9e4ca4ea08d30cfdee8e40e5fb5c8691b0650b"
+    },
+    {
+     "file": "mk_event_libevent.c",
+     "function": "_mk_event_channel_create",
+     "line": 402,
+     "ordinal": 0,
+     "reading": "mk_event_libevent.c:_mk_event_channel_create@fe187ba2d7b6bcfa",
+     "sha256": "fe187ba2d7b6bcfa95e00c06786eb514ae86034979d5858b63196b0155a2ad95"
+    }
+   ],
+   "configured_backend": "epoll",
+   "event_files": {
+    "mk_event.c": "8ef958d26545ef52865f69cde0abf86cfdbeceb925557ff37af41031297b2382",
+    "mk_event_epoll.c": "a2a161195fb8b417bad2a6c5410b6508f8f188debeaf9246fe65935c8c23d258",
+    "mk_event_kqueue.c": "cecd550548cf8c2c077824761f59fb5170dee0ee838eb299ec49505d0c10a627",
+    "mk_event_libevent.c": "25df48e0974032a0e1482535daafee931bfafb3d2a28bad015b46f048a68cf1c",
+    "mk_event_poll.c": "e9666fa69d71a73a419d59336c8f12e46a9cff28603ab77b7ca8fbbb5800ebf3",
+    "mk_event_select.c": "0d5875ae33952e64f89bb8618c352ae32ba497ab5e437d64a38f54966aa2b5d9"
+   },
+   "files_read": 4940,
+   "result_sets": {
+    "mk_event_channel_create": {
+     "epoll": {
+      "body_only": "int",
+      "libc": "[-1,0]"
+     },
+     "kqueue": {
+      "body_only": "[MIN,0]",
+      "libc": "[-1,0]"
+     },
+     "libevent": {
+      "body_only": "[-1,0]",
+      "libc": "[-1,0]"
+     },
+     "poll": {
+      "body_only": "[MIN,0]",
+      "libc": "[-1,0]"
+     },
+     "select": {
+      "body_only": "[MIN,0]",
+      "libc": "[-1,0]"
+     }
+    },
+    "mk_event_timeout_create": {
+     "epoll": {
+      "body_only": "int",
+      "libc": "[-1,MAX]"
+     },
+     "kqueue": {
+      "body_only": "int",
+      "libc": "[-1,MAX]"
+     },
+     "libevent": {
+      "body_only": "int",
+      "libc": "[-1,MAX]"
+     },
+     "poll": {
+      "body_only": "int",
+      "libc": "[-1,MAX]"
+     },
+     "select": {
+      "body_only": "int",
+      "libc": "[-1,MAX]"
+     }
+    }
+   },
+   "site_files": {
+    "lib/monkey/mk_server/mk_scheduler.c": "9a515fa6d0cc79ee8e70457e5e26e65a9ab82c8febd0bb383c88d35bcc1aedda",
+    "lib/monkey/mk_server/mk_server.c": "07a15b43f175df357109d21ebf29deeb9fdc5b5de3bf8f9db703e9214fdbdcdd",
+    "lib/monkey/mk_server/monkey.c": "6a42bbd04882e05b35c10533e6fb147e988960729050b7b43342087f4969afba",
+    "lib/monkey/test/event_timeout.c": "1b0c5cb9a46ff9f15b030e08542025f99b765f34286771ef391cc3b6d463b922",
+    "lib/monkey/test/lib_server.c": "e9245b8265f4f8f84e60cfb0b429bb4cd7b3e7b0bc2be4ffbc39fff3d0242540",
+    "lib/monkey/test/wasm/events.c": "69289b9666d112ad23d1a9d361cbff51721c97458b55ae8fe96b5cad58c1ec1a",
+    "plugins/in_exec/in_exec.c": "a63b53826432da7bc48140ca54c32a87689b0304843a7bbcccabbf3f17431ab5",
+    "plugins/in_exec_wasi/in_exec_wasi.c": "6cae44bea1e5ef57775b5c6642574d09b4d5a66d1ee1cace9e00b566affb7a07",
+    "src/flb_config.c": "289b881eae456e93ea18916b2c25c61434fb0a51b6d3e2b2943a51a2c2c3ff92",
+    "src/flb_downstream_worker.c": "eef1192e8246284cbe76e58c9b711908869f11a17db329ed7ea2f7feb78eb920",
+    "src/flb_engine.c": "2f70e703eb8f8bd853b436d50b51214c89402bc93b79b5e979024dd2ab578683",
+    "src/flb_input.c": "92a0917b89dd61ff92d098dffcf56ddae1060d7588874a3fc0e8e27f45544122",
+    "src/flb_input_thread.c": "ac3517f13136d96f7e490fed15dca9ff1b1b9fcc30469b6ad2925ca324d7a40c",
+    "src/flb_lib.c": "93113329f2a3e4b815d55c57a6d14b1a746adb6381b73b3f9fc6690fe0e37e89",
+    "src/flb_metrics_exporter.c": "65e0de81f51313c5431eb09edf0b1696cbe5577f61d736dbfd9eb8e2f4aacd72",
+    "src/flb_output.c": "2d31e29a14f432716732d40a7c0f0276fc86d8daef7a5d2a0831307c18ba8fed",
+    "src/flb_output_thread.c": "b6d1e7ad71b909557eb5fc0d59396585573c9d84d24c183d5ecd2121e19b2b16",
+    "src/flb_scheduler.c": "5e2c36c2d741689e4a9a2e5b3bffdd40fee422e84c280a87129895091b242f49",
+    "src/stream_processor/flb_sp.c": "22b716c18d0a68d0fa90770cdaf6a89a08cdae49a553e3e6544bb417c27e8c46"
+   },
+   "sites": [
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "wrong",
+      "body_only_detail": {
+       "failure_treated_as_success": "[1,MAX]"
+      },
+      "libc": "redundant"
+     },
+     "decides_today": false,
+     "failure_edge": "true",
+     "file": "lib/monkey/mk_server/mk_scheduler.c",
+     "function": "mk_sched_launch_worker_loop",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "lib/monkey/mk_server/mk_scheduler.c|mk_sched_launch_worker_loop|mk_event_channel_create|name|ret|ret < 0",
+     "line": 365,
+     "parsed": [
+      "<",
+      0
+     ],
+     "reading": "worker loop setup: a failed channel exits the process (exit(EXIT_FAILURE))",
+     "test": "ret < 0",
+     "test_line": 369
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "wrong",
+      "body_only_detail": {
+       "success_treated_as_failure": "[MIN,-2] | 0"
+      },
+      "libc": "wrong",
+      "libc_detail": {
+       "success_treated_as_failure": "0"
+      }
+     },
+     "decides_today": false,
+     "failure_edge": "false",
+     "file": "lib/monkey/mk_server/mk_server.c",
+     "function": "mk_server_worker_loop",
+     "holder": "timeout_fd",
+     "holder_kind": "name",
+     "key": "lib/monkey/mk_server/mk_server.c|mk_server_worker_loop|mk_event_timeout_create|name|timeout_fd|timeout_fd > 0",
+     "line": 502,
+     "parsed": [
+      ">",
+      0
+     ],
+     "reading": "the result is never tested where it is created (:502); the first test is :585, `timeout_fd > 0` before mk_event_timeout_destroy on MK_SCHED_SIGNAL_FREE_ALL: a timer whose descriptor is 0 is treated as absent and never destroyed",
+     "test": "timeout_fd > 0",
+     "test_line": 585
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "lib/monkey/mk_server/monkey.c",
+     "function": "mk_server_create",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "lib/monkey/mk_server/monkey.c|mk_server_create|mk_event_channel_create|name|ret|ret != 0",
+     "line": 115,
+     "parsed": [
+      "!=",
+      0
+     ],
+     "reading": "library-mode channels: failure destroys the loops and frees the server",
+     "test": "ret != 0",
+     "test_line": 120
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "lib/monkey/mk_server/monkey.c",
+     "function": "mk_server_create",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "lib/monkey/mk_server/monkey.c|mk_server_create|mk_event_channel_create|name|ret|ret != 0",
+     "line": 136,
+     "parsed": [
+      "!=",
+      0
+     ],
+     "reading": "library-mode channels: failure destroys the loops and frees the server",
+     "test": "ret != 0",
+     "test_line": 141
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "wrong",
+      "body_only_detail": {
+       "success_treated_as_failure": "[MIN,-2]"
+      },
+      "libc": "redundant"
+     },
+     "decides_today": true,
+     "failure_edge": "false",
+     "file": "lib/monkey/test/event_timeout.c",
+     "function": "test_timeout_tick_destroy",
+     "holder": "fd",
+     "holder_kind": "name",
+     "key": "lib/monkey/test/event_timeout.c|test_timeout_tick_destroy|mk_event_timeout_create|name|fd|fd >= 0",
+     "line": 47,
+     "parsed": [
+      ">=",
+      0
+     ],
+     "reading": "Monkey test program (TEST_ASSERT); not built into Fluent Bit",
+     "test": "fd >= 0",
+     "test_line": 48
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "untested",
+      "libc": "untested"
+     },
+     "file": "lib/monkey/test/lib_server.c",
+     "function": "run_server_test",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "lib/monkey/test/lib_server.c|run_server_test|mk_event_channel_create|name|ret|",
+     "line": 160,
+     "parsed": null,
+     "reading": "Monkey test program: ret is overwritten by mk_utils_worker_spawn (:167) before any test, so a failed channel goes unnoticed and complete_ch[1] (never written on failure) is handed to the workers",
+     "test": null,
+     "test_line": null
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "lib/monkey/test/wasm/events.c",
+     "function": "main",
+     "holder": null,
+     "holder_kind": "condition",
+     "key": "lib/monkey/test/wasm/events.c|main|mk_event_timeout_create|condition||mk_event_timeout_create(loop, 0, 0, &timer) == -1",
+     "line": 57,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "Monkey emscripten test (poll backend): asserts a zero interval fails",
+     "test": "mk_event_timeout_create(loop, 0, 0, &timer) == -1",
+     "test_line": 57
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "lib/monkey/test/wasm/events.c",
+     "function": "main",
+     "holder": null,
+     "holder_kind": "condition",
+     "key": "lib/monkey/test/wasm/events.c|main|mk_event_timeout_create|condition||mk_event_timeout_create(loop, 0, 1000000000L, &timer) == -1",
+     "line": 58,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "Monkey emscripten test: asserts an out-of-range nsec fails",
+     "test": "mk_event_timeout_create(loop, 0, 1000000000L, &timer) == -1",
+     "test_line": 58
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "wrong",
+      "body_only_detail": {
+       "success_treated_as_failure": "[MIN,-2]"
+      },
+      "libc": "redundant"
+     },
+     "decides_today": true,
+     "failure_edge": "false",
+     "file": "lib/monkey/test/wasm/events.c",
+     "function": "main",
+     "holder": null,
+     "holder_kind": "condition",
+     "key": "lib/monkey/test/wasm/events.c|main|mk_event_timeout_create|condition||mk_event_timeout_create(loop, 0, 20000000, &timer) >= 0",
+     "line": 59,
+     "parsed": [
+      ">=",
+      0
+     ],
+     "reading": "Monkey emscripten test: asserts success",
+     "test": "mk_event_timeout_create(loop, 0, 20000000, &timer) >= 0",
+     "test_line": 59
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "false",
+     "file": "lib/monkey/test/wasm/events.c",
+     "function": "main",
+     "holder": null,
+     "holder_kind": "condition",
+     "key": "lib/monkey/test/wasm/events.c|main|mk_event_channel_create|condition||mk_event_channel_create(loop, &reader, &writer, &channel) == 0",
+     "line": 60,
+     "parsed": [
+      "==",
+      0
+     ],
+     "reading": "Monkey emscripten test: asserts success",
+     "test": "mk_event_channel_create(loop, &reader, &writer, &channel) == 0",
+     "test_line": 60
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "lib/monkey/test/wasm/events.c",
+     "function": "main",
+     "holder": null,
+     "holder_kind": "condition",
+     "key": "lib/monkey/test/wasm/events.c|main|mk_event_timeout_create|condition||mk_event_timeout_create(loop, 0, 1000000, &overflow) == -1",
+     "line": 61,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "Monkey emscripten test: asserts the third registration overflows a size-2 loop",
+     "test": "mk_event_timeout_create(loop, 0, 1000000, &overflow) == -1",
+     "test_line": 61
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "wrong",
+      "body_only_detail": {
+       "success_treated_as_failure": "[MIN,-2]"
+      },
+      "libc": "redundant"
+     },
+     "decides_today": true,
+     "failure_edge": "false",
+     "file": "lib/monkey/test/wasm/events.c",
+     "function": "main",
+     "holder": "reader",
+     "holder_kind": "name",
+     "key": "lib/monkey/test/wasm/events.c|main|mk_event_timeout_create|name|reader|reader >= 0",
+     "line": 94,
+     "parsed": [
+      ">=",
+      0
+     ],
+     "reading": "Monkey emscripten test: asserts success",
+     "test": "reader >= 0",
+     "test_line": 95
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/flb_downstream_worker.c",
+     "function": "downstream_worker_thread",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "src/flb_downstream_worker.c|downstream_worker_thread|mk_event_channel_create|name|ret|ret != 0",
+     "line": 248,
+     "parsed": [
+      "!=",
+      0
+     ],
+     "reading": "worker control channel: failure sets ret = -1 and signals the starter",
+     "test": "ret != 0",
+     "test_line": 252
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/flb_engine.c",
+     "function": "flb_engine_flush_timer_reset",
+     "holder": "config->flush_fd",
+     "holder_kind": "member",
+     "key": "src/flb_engine.c|flb_engine_flush_timer_reset|mk_event_timeout_create|member|config->flush_fd|config->flush_fd == -1",
+     "line": 325,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "flush timer: the result is held in config->flush_fd (a member, no plain-name witness); failure retries with the fallback interval, then returns -1",
+     "test": "config->flush_fd == -1",
+     "test_line": 331
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/flb_engine.c",
+     "function": "flb_engine_flush_timer_reset",
+     "holder": "config->flush_fd",
+     "holder_kind": "member",
+     "key": "src/flb_engine.c|flb_engine_flush_timer_reset|mk_event_timeout_create|member|config->flush_fd|config->flush_fd == -1",
+     "line": 337,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "flush timer: the result is held in config->flush_fd (a member, no plain-name witness); failure retries with the fallback interval, then returns -1",
+     "test": "config->flush_fd == -1",
+     "test_line": 344
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "wrong",
+      "body_only_detail": {
+       "failure_treated_as_success": "[MIN,-2] | [1,MAX]"
+      },
+      "libc": "redundant"
+     },
+     "decides_today": false,
+     "failure_edge": "true",
+     "file": "src/flb_engine.c",
+     "function": "flb_engine_start",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "src/flb_engine.c|flb_engine_start|mk_event_channel_create|name|ret|ret == -1",
+     "line": 1168,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "ch_self_events (:1168) and notification_channels (:1246): failure logs and returns -1",
+     "test": "ret == -1",
+     "test_line": 1172
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/flb_engine.c",
+     "function": "flb_engine_start",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "src/flb_engine.c|flb_engine_start|mk_event_channel_create|name|ret|ret != 0",
+     "line": 1237,
+     "parsed": [
+      "!=",
+      0
+     ],
+     "reading": "ch_manager (:1237): failure logs and returns -1",
+     "test": "ret != 0",
+     "test_line": 1241
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "wrong",
+      "body_only_detail": {
+       "failure_treated_as_success": "[MIN,-2] | [1,MAX]"
+      },
+      "libc": "redundant"
+     },
+     "decides_today": false,
+     "failure_edge": "true",
+     "file": "src/flb_engine.c",
+     "function": "flb_engine_start",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "src/flb_engine.c|flb_engine_start|mk_event_channel_create|name|ret|ret == -1",
+     "line": 1246,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "ch_self_events (:1168) and notification_channels (:1246): failure logs and returns -1",
+     "test": "ret == -1",
+     "test_line": 1250
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/flb_engine.c",
+     "function": "flb_engine_start",
+     "holder": "config->shutdown_fd",
+     "holder_kind": "member",
+     "key": "src/flb_engine.c|flb_engine_start|mk_event_timeout_create|member|config->shutdown_fd|config->shutdown_fd == -1",
+     "line": 1498,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "shutdown timer: held in config->shutdown_fd; created only when `config->shutdown_fd <= 0` (:1497), a guard that reads an earlier timer on descriptor 0 as absent (a test of the stored result, not of this call)",
+     "test": "config->shutdown_fd == -1",
+     "test_line": 1503
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/flb_input.c",
+     "function": "input_instance_channel_events_init",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "src/flb_input.c|input_instance_channel_events_init|mk_event_channel_create|name|ret|ret != 0",
+     "line": 1380,
+     "parsed": [
+      "!=",
+      0
+     ],
+     "reading": "input event channel: failure logs and returns -1",
+     "test": "ret != 0",
+     "test_line": 1384
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/flb_input.c",
+     "function": "collector_start",
+     "holder": "fd",
+     "holder_kind": "name",
+     "key": "src/flb_input.c|collector_start|mk_event_timeout_create|name|fd|fd == -1",
+     "line": 2351,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "COLLECT_TIME registration: failure clears running and returns -1",
+     "test": "fd == -1",
+     "test_line": 2353
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/flb_input.c",
+     "function": "flb_input_collector_resume",
+     "holder": "fd",
+     "holder_kind": "name",
+     "key": "src/flb_input.c|flb_input_collector_resume|mk_event_timeout_create|name|fd|fd == -1",
+     "line": 3248,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "COLLECT_TIME resume: failure returns -1",
+     "test": "fd == -1",
+     "test_line": 3250
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "wrong",
+      "body_only_detail": {
+       "failure_treated_as_success": "[MIN,-2] | [1,MAX]"
+      },
+      "libc": "redundant"
+     },
+     "decides_today": false,
+     "failure_edge": "true",
+     "file": "src/flb_input_thread.c",
+     "function": "input_thread_instance_create",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "src/flb_input_thread.c|input_thread_instance_create|mk_event_channel_create|name|ret|ret == -1",
+     "line": 262,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "ch_parent_events, ch_thread_events, notification_channels: failure destroys thi and returns NULL",
+     "test": "ret == -1",
+     "test_line": 266
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "wrong",
+      "body_only_detail": {
+       "failure_treated_as_success": "[MIN,-2] | [1,MAX]"
+      },
+      "libc": "redundant"
+     },
+     "decides_today": false,
+     "failure_edge": "true",
+     "file": "src/flb_input_thread.c",
+     "function": "input_thread_instance_create",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "src/flb_input_thread.c|input_thread_instance_create|mk_event_channel_create|name|ret|ret == -1",
+     "line": 275,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "ch_parent_events, ch_thread_events, notification_channels: failure destroys thi and returns NULL",
+     "test": "ret == -1",
+     "test_line": 279
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "wrong",
+      "body_only_detail": {
+       "failure_treated_as_success": "[MIN,-2] | [1,MAX]"
+      },
+      "libc": "redundant"
+     },
+     "decides_today": false,
+     "failure_edge": "true",
+     "file": "src/flb_input_thread.c",
+     "function": "input_thread_instance_create",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "src/flb_input_thread.c|input_thread_instance_create|mk_event_channel_create|name|ret|ret == -1",
+     "line": 287,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "ch_parent_events, ch_thread_events, notification_channels: failure destroys thi and returns NULL",
+     "test": "ret == -1",
+     "test_line": 291
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/flb_lib.c",
+     "function": "flb_create",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "src/flb_lib.c|flb_create|mk_event_channel_create|name|ret|ret != 0",
+     "line": 209,
+     "parsed": [
+      "!=",
+      0
+     ],
+     "reading": "library notification channel: failure stops and destroys the context",
+     "test": "ret != 0",
+     "test_line": 213
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/flb_metrics_exporter.c",
+     "function": "flb_me_create",
+     "holder": "fd",
+     "holder_kind": "name",
+     "key": "src/flb_metrics_exporter.c|flb_me_create|mk_event_timeout_create|name|fd|fd == -1",
+     "line": 234,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "metrics timer: failure frees me and returns NULL",
+     "test": "fd == -1",
+     "test_line": 235
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/flb_output.c",
+     "function": "flb_output_init_all",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "src/flb_output.c|flb_output_init_all|mk_event_channel_create|name|ret|ret != 0",
+     "line": 1545,
+     "parsed": [
+      "!=",
+      0
+     ],
+     "reading": "output event channel: failure destroys the instance and returns -1",
+     "test": "ret != 0",
+     "test_line": 1549
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "wrong",
+      "body_only_detail": {
+       "failure_treated_as_success": "[MIN,-2] | [1,MAX]"
+      },
+      "libc": "redundant"
+     },
+     "decides_today": false,
+     "failure_edge": "true",
+     "file": "src/flb_output_thread.c",
+     "function": "output_thread",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "src/flb_output_thread.c|output_thread|mk_event_channel_create|name|ret|ret == -1",
+     "line": 238,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "thread-local event channel: failure clears the event loop and returns",
+     "test": "ret == -1",
+     "test_line": 242
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "wrong",
+      "body_only_detail": {
+       "failure_treated_as_success": "[MIN,-2] | [1,MAX]"
+      },
+      "libc": "redundant"
+     },
+     "decides_today": false,
+     "failure_edge": "true",
+     "file": "src/flb_output_thread.c",
+     "function": "flb_output_thread_pool_create",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "src/flb_output_thread.c|flb_output_thread_pool_create|mk_event_channel_create|name|ret|ret == -1",
+     "line": 537,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "ch_parent_events and notification_channels: failure tears the thread instance down",
+     "test": "ret == -1",
+     "test_line": 541
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "wrong",
+      "body_only_detail": {
+       "failure_treated_as_success": "[MIN,-2] | [1,MAX]"
+      },
+      "libc": "redundant"
+     },
+     "decides_today": false,
+     "failure_edge": "true",
+     "file": "src/flb_output_thread.c",
+     "function": "flb_output_thread_pool_create",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "src/flb_output_thread.c|flb_output_thread_pool_create|mk_event_channel_create|name|ret|ret == -1",
+     "line": 553,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "ch_parent_events and notification_channels: failure tears the thread instance down",
+     "test": "ret == -1",
+     "test_line": 557
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/flb_scheduler.c",
+     "function": "schedule_request_now",
+     "holder": "fd",
+     "holder_kind": "name",
+     "key": "src/flb_scheduler.c|schedule_request_now|mk_event_timeout_create|name|fd|fd == -1",
+     "line": 133,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "request timer: failure returns -1",
+     "test": "fd == -1",
+     "test_line": 135
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/flb_scheduler.c",
+     "function": "flb_sched_timer_cb_create",
+     "holder": "fd",
+     "holder_kind": "name",
+     "key": "src/flb_scheduler.c|flb_sched_timer_cb_create|mk_event_timeout_create|name|fd|fd == -1",
+     "line": 672,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "timer callback: failure destroys the timer and returns -1",
+     "test": "fd == -1",
+     "test_line": 674
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/flb_scheduler.c",
+     "function": "flb_sched_create",
+     "holder": "fd",
+     "holder_kind": "name",
+     "key": "src/flb_scheduler.c|flb_sched_create|mk_event_timeout_create|name|fd|fd == -1",
+     "line": 783,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "frame timer: failure destroys the timer, frees sched and returns NULL",
+     "test": "fd == -1",
+     "test_line": 786
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "wrong",
+      "body_only_detail": {
+       "failure_treated_as_success": "[MIN,-2] | [1,MAX]"
+      },
+      "libc": "redundant"
+     },
+     "decides_today": false,
+     "failure_edge": "true",
+     "file": "src/flb_scheduler.c",
+     "function": "flb_sched_create",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "src/flb_scheduler.c|flb_sched_create|mk_event_channel_create|name|ret|ret == -1",
+     "line": 794,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "sched->ch_events: failure destroys sched and returns NULL",
+     "test": "ret == -1",
+     "test_line": 798
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/stream_processor/flb_sp.c",
+     "function": "flb_sp_task_create",
+     "holder": "fd",
+     "holder_kind": "name",
+     "key": "src/stream_processor/flb_sp.c|flb_sp_task_create|mk_event_timeout_create|name|fd|fd == -1",
+     "line": 519,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "window and hop timers: failure frees the task and returns NULL",
+     "test": "fd == -1",
+     "test_line": 522
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/stream_processor/flb_sp.c",
+     "function": "flb_sp_task_create",
+     "holder": "fd",
+     "holder_kind": "name",
+     "key": "src/stream_processor/flb_sp.c|flb_sp_task_create|mk_event_timeout_create|name|fd|fd == -1",
+     "line": 535,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "window and hop timers: failure frees the task and returns NULL",
+     "test": "fd == -1",
+     "test_line": 538
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/stream_processor/flb_sp.c",
+     "function": "flb_sp_fd_event",
+     "holder": "fd_timeout",
+     "holder_kind": "name",
+     "key": "src/stream_processor/flb_sp.c|flb_sp_fd_event|mk_event_timeout_create|name|fd_timeout|fd_timeout == -1",
+     "line": 2194,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "window timer re-arm: failure returns -1",
+     "test": "fd_timeout == -1",
+     "test_line": 2197
+    }
+   ],
+   "stored_result_tests": [
+    {
+     "class": "wrong",
+     "file": "lib/monkey/mk_server/mk_server.c",
+     "function": "mk_server_worker_loop",
+     "key": "lib/monkey/mk_server/mk_server.c|mk_server_worker_loop|timeout_fd > 0",
+     "line": 585,
+     "reading": "a timer created on descriptor 0 is never destroyed at MK_SCHED_SIGNAL_FREE_ALL; the -1 failure is read correctly",
+     "test": "timeout_fd > 0"
+    },
+    {
+     "class": "wrong",
+     "file": "lib/monkey/mk_server/mk_server.c",
+     "function": "mk_server_lib_notify_event_loop_break",
+     "key": "lib/monkey/mk_server/mk_server.c|mk_server_lib_notify_event_loop_break|sched->signal_channel_w <= 0",
+     "line": 630,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent: a write end on descriptor 0 is reported as no channel (the notification is dropped)",
+     "test": "sched->signal_channel_w <= 0"
+    },
+    {
+     "class": "wrong",
+     "file": "lib/monkey/mk_server/mk_server.c",
+     "function": "mk_server_lib_notify_started",
+     "key": "lib/monkey/mk_server/mk_server.c|mk_server_lib_notify_started|server->lib_ch_start[1] <= 0",
+     "line": 648,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent: a start channel write end on descriptor 0 is reported as no channel",
+     "test": "server->lib_ch_start[1] <= 0"
+    },
+    {
+     "class": "outside",
+     "file": "plugins/in_exec/in_exec.c",
+     "function": "delete_exec_config",
+     "key": "plugins/in_exec/in_exec.c|delete_exec_config|ctx->ch_manager[0] > -1",
+     "line": 486,
+     "reading": "a different record (the plugin context) whose ch_manager comes from flb_pipe_create, not from a Monkey creator",
+     "test": "ctx->ch_manager[0] > -1"
+    },
+    {
+     "class": "outside",
+     "file": "plugins/in_exec/in_exec.c",
+     "function": "delete_exec_config",
+     "key": "plugins/in_exec/in_exec.c|delete_exec_config|ctx->ch_manager[1] > -1",
+     "line": 490,
+     "reading": "a different record (the plugin context) whose ch_manager comes from flb_pipe_create, not from a Monkey creator",
+     "test": "ctx->ch_manager[1] > -1"
+    },
+    {
+     "class": "outside",
+     "file": "plugins/in_exec_wasi/in_exec_wasi.c",
+     "function": "delete_exec_wasi_config",
+     "key": "plugins/in_exec_wasi/in_exec_wasi.c|delete_exec_wasi_config|ctx->ch_manager[0] > -1",
+     "line": 284,
+     "reading": "a different record (the plugin context) whose ch_manager comes from flb_pipe_create, not from a Monkey creator",
+     "test": "ctx->ch_manager[0] > -1"
+    },
+    {
+     "class": "outside",
+     "file": "plugins/in_exec_wasi/in_exec_wasi.c",
+     "function": "delete_exec_wasi_config",
+     "key": "plugins/in_exec_wasi/in_exec_wasi.c|delete_exec_wasi_config|ctx->ch_manager[1] > -1",
+     "line": 288,
+     "reading": "a different record (the plugin context) whose ch_manager comes from flb_pipe_create, not from a Monkey creator",
+     "test": "ctx->ch_manager[1] > -1"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_config.c",
+     "function": "flb_config_exit",
+     "key": "src/flb_config.c|flb_config_exit|config->ch_manager[0] > 0",
+     "line": 617,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent: the manager channel (flb_engine_start) is never closed if its read end is 0",
+     "test": "config->ch_manager[0] > 0"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_config.c",
+     "function": "flb_config_exit",
+     "key": "src/flb_config.c|flb_config_exit|config->ch_notif[0] > 0",
+     "line": 625,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent: the library notification channel (flb_create) is never closed if its read end is 0",
+     "test": "config->ch_notif[0] > 0"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_config.c",
+     "function": "flb_config_exit",
+     "key": "src/flb_config.c|flb_config_exit|config->ch_notif[1] > 0",
+     "line": 627,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent: the write end is not closed if it is 0",
+     "test": "config->ch_notif[1] > 0"
+    },
+    {
+     "class": "exact",
+     "file": "src/flb_engine.c",
+     "function": "flb_engine_flush_timer_reset",
+     "key": "src/flb_engine.c|flb_engine_flush_timer_reset|config->flush_fd == -1",
+     "line": 331,
+     "reading": "the immediate test of the call's result (part 3)",
+     "test": "config->flush_fd == -1"
+    },
+    {
+     "class": "exact",
+     "file": "src/flb_engine.c",
+     "function": "flb_engine_flush_timer_reset",
+     "key": "src/flb_engine.c|flb_engine_flush_timer_reset|config->flush_fd == -1",
+     "line": 344,
+     "reading": "the immediate test of the call's result (part 3)",
+     "test": "config->flush_fd == -1"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_engine.c",
+     "function": "flb_engine_started",
+     "key": "src/flb_engine.c|flb_engine_started|config->ch_notif[1] <= 0",
+     "line": 1034,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent: a write end on 0 is reported as no channel and STARTED is never sent",
+     "test": "config->ch_notif[1] <= 0"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_engine.c",
+     "function": "flb_engine_failed",
+     "key": "src/flb_engine.c|flb_engine_failed|config->ch_notif[1] <= 0",
+     "line": 1048,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent: a write end on 0 is reported as no channel and FAILED is never sent",
+     "test": "config->ch_notif[1] <= 0"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_engine.c",
+     "function": "flb_engine_start",
+     "key": "src/flb_engine.c|flb_engine_start|config->shutdown_fd <= 0",
+     "line": 1497,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent: a shutdown timer on descriptor 0 is created again on the next pass (the first is leaked and stays registered)",
+     "test": "config->shutdown_fd <= 0"
+    },
+    {
+     "class": "exact",
+     "file": "src/flb_engine.c",
+     "function": "flb_engine_start",
+     "key": "src/flb_engine.c|flb_engine_start|config->shutdown_fd == -1",
+     "line": 1503,
+     "reading": "the immediate test of the call's result (part 3)",
+     "test": "config->shutdown_fd == -1"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_engine.c",
+     "function": "flb_engine_start",
+     "key": "src/flb_engine.c|flb_engine_start|config->shutdown_fd > 0",
+     "line": 1563,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent: a shutdown timer on descriptor 0 is never destroyed",
+     "test": "config->shutdown_fd > 0"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_input.c",
+     "function": "flb_input_instance_destroy",
+     "key": "src/flb_input.c|flb_input_instance_destroy|ins->ch_events[0] > 0",
+     "line": 1311,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent (the round-6 census reads this destroyer as breaking any protocol)",
+     "test": "ins->ch_events[0] > 0"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_input.c",
+     "function": "flb_input_instance_destroy",
+     "key": "src/flb_input.c|flb_input_instance_destroy|ins->ch_events[1] > 0",
+     "line": 1315,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent (the round-6 census reads this destroyer as breaking any protocol)",
+     "test": "ins->ch_events[1] > 0"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_input.c",
+     "function": "flb_input_collector_destroy",
+     "key": "src/flb_input.c|flb_input_collector_destroy|coll->fd_timer > 0",
+     "line": 3145,
+     "reading": "the holder's absent value is -1 (flb_input.c `coll->fd_timer = -1` at creation and pause), so the guard is not even the sentinel's: a COLLECT_TIME timer on descriptor 0 is never destroyed, and the collector holding its event is freed while the loop still holds the registration",
+     "test": "coll->fd_timer > 0"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_input_thread.c",
+     "function": "input_thread_instance_destroy",
+     "key": "src/flb_input_thread.c|input_thread_instance_destroy|thi->ch_parent_events[0] > 0",
+     "line": 210,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent",
+     "test": "thi->ch_parent_events[0] > 0"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_input_thread.c",
+     "function": "input_thread_instance_destroy",
+     "key": "src/flb_input_thread.c|input_thread_instance_destroy|thi->ch_parent_events[1] > 0",
+     "line": 213,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent",
+     "test": "thi->ch_parent_events[1] > 0"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_input_thread.c",
+     "function": "input_thread_instance_destroy",
+     "key": "src/flb_input_thread.c|input_thread_instance_destroy|thi->ch_thread_events[0] > 0",
+     "line": 218,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent",
+     "test": "thi->ch_thread_events[0] > 0"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_input_thread.c",
+     "function": "input_thread_instance_destroy",
+     "key": "src/flb_input_thread.c|input_thread_instance_destroy|thi->ch_thread_events[1] > 0",
+     "line": 221,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent",
+     "test": "thi->ch_thread_events[1] > 0"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_output.c",
+     "function": "flb_output_instance_destroy",
+     "key": "src/flb_output.c|flb_output_instance_destroy|ins->ch_events[0] > 0",
+     "line": 615,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent (the round-6 census reads this destroyer as breaking any protocol)",
+     "test": "ins->ch_events[0] > 0"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_output.c",
+     "function": "flb_output_instance_destroy",
+     "key": "src/flb_output.c|flb_output_instance_destroy|ins->ch_events[1] > 0",
+     "line": 619,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent (the round-6 census reads this destroyer as breaking any protocol)",
+     "test": "ins->ch_events[1] > 0"
+    },
+    {
+     "class": "exact",
+     "file": "src/flb_scheduler.c",
+     "function": "flb_sched_timer_cb_disable",
+     "key": "src/flb_scheduler.c|flb_sched_timer_cb_disable|timer->timer_fd != -1",
+     "line": 722,
+     "reading": "the holder's absent value is -1 (stored at :724 and at timer creation)",
+     "test": "timer->timer_fd != -1"
+    },
+    {
+     "class": "exact",
+     "file": "src/flb_scheduler.c",
+     "function": "flb_sched_destroy",
+     "key": "src/flb_scheduler.c|flb_sched_destroy|sched->ch_events[0] != -1",
+     "line": 855,
+     "reading": "the holder's absent value is -1 (flb_sched_create stores -1 before the creation, and a failed creation writes no end)",
+     "test": "sched->ch_events[0] != -1"
+    },
+    {
+     "class": "wrong",
+     "file": "src/stream_processor/flb_sp.c",
+     "function": "flb_sp_window_destroy",
+     "key": "src/stream_processor/flb_sp.c|flb_sp_window_destroy|task->window.fd > 0",
+     "line": 670,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent: a window timer on descriptor 0 is never closed",
+     "test": "task->window.fd > 0"
+    }
+   ],
+   "tree_sha256": "d9214d148f3cf6e7b131cbad035da62bc61429d9de45d145914b9ecf5e5a4bff"
+  },
+  "66910c10": {
+   "bodies": [
+    {
+     "file": "mk_event.c",
+     "function": "mk_event_timeout_create",
+     "line": 156,
+     "ordinal": 0,
+     "reading": "mk_event.c:mk_event_timeout_create@dad7efcf6c37f851",
+     "sha256": "dad7efcf6c37f851aff65a568eab3804943afb6e9731aacb3faa1b46901e4f8f"
+    },
+    {
+     "file": "mk_event.c",
+     "function": "mk_event_channel_create",
+     "line": 181,
+     "ordinal": 0,
+     "reading": "mk_event.c:mk_event_channel_create@c5be5f86f082b1f6",
+     "sha256": "c5be5f86f082b1f63352916256b070cf03be73b8e9802820e45546f5a664de15"
+    },
+    {
+     "file": "mk_event_epoll.c",
+     "function": "_mk_event_add",
+     "line": 101,
+     "ordinal": 0,
+     "reading": "mk_event_epoll.c:_mk_event_add@d380da2cb2af49b5",
+     "sha256": "d380da2cb2af49b5992acd1b46f8d79edaee5797249fc7e386d0f9071e80da4d"
+    },
+    {
+     "file": "mk_event_epoll.c",
+     "function": "_mk_event_timeout_create",
+     "line": 190,
+     "ordinal": 0,
+     "reading": "mk_event_epoll.c:_mk_event_timeout_create@5fea786972292c2c",
+     "sha256": "5fea786972292c2cc2143c55c200758af77d769ac42b2869029a2f7d9ac216dd"
+    },
+    {
+     "file": "mk_event_epoll.c",
+     "function": "_mk_event_timeout_create",
+     "line": 291,
+     "ordinal": 1,
+     "reading": "mk_event_epoll.c:_mk_event_timeout_create@735b53b6ede3eb16",
+     "sha256": "735b53b6ede3eb16758b1ff9b92280880568dc58b395ad2fa0fba9e66825b6a6"
+    },
+    {
+     "file": "mk_event_epoll.c",
+     "function": "_mk_event_channel_create",
+     "line": 354,
+     "ordinal": 0,
+     "reading": "mk_event_epoll.c:_mk_event_channel_create@a763434883a42c8f",
+     "sha256": "a763434883a42c8fade7f340151d5a529668872830828f3e5b125016cf7c071a"
+    },
+    {
+     "file": "mk_event_kqueue.c",
+     "function": "_mk_event_add",
+     "line": 71,
+     "ordinal": 0,
+     "reading": "mk_event_kqueue.c:_mk_event_add@72e6b32edf609f12",
+     "sha256": "72e6b32edf609f12a9311d491afc65e81feb802429d97aa083bed62b517d972f"
+    },
+    {
+     "file": "mk_event_kqueue.c",
+     "function": "_mk_event_timeout_create",
+     "line": 184,
+     "ordinal": 0,
+     "reading": "mk_event_kqueue.c:_mk_event_timeout_create@9c072ab0fce784fa",
+     "sha256": "9c072ab0fce784fa0cc411be34c0d0a5d8bc2925fb9fdec9486ea801dd305977"
+    },
+    {
+     "file": "mk_event_kqueue.c",
+     "function": "_mk_event_channel_create",
+     "line": 279,
+     "ordinal": 0,
+     "reading": "mk_event_kqueue.c:_mk_event_channel_create@a763434883a42c8f",
+     "sha256": "a763434883a42c8fade7f340151d5a529668872830828f3e5b125016cf7c071a"
+    },
+    {
+     "file": "mk_event_select.c",
+     "function": "_mk_event_add",
+     "line": 98,
+     "ordinal": 0,
+     "reading": "mk_event_select.c:_mk_event_add@f7add58ff4edf964",
+     "sha256": "f7add58ff4edf964621fc3ab95ddc391dd567181b9e2c67a1ccfd6be729e030f"
+    },
+    {
+     "file": "mk_event_select.c",
+     "function": "_mk_event_timeout_create",
+     "line": 228,
+     "ordinal": 0,
+     "reading": "mk_event_select.c:_mk_event_timeout_create@b84883104a01a745",
+     "sha256": "b84883104a01a745a39efe3f9c59939a3dff48ad98472876676125c6ab8e6859"
+    },
+    {
+     "file": "mk_event_select.c",
+     "function": "_mk_event_channel_create",
+     "line": 300,
+     "ordinal": 0,
+     "reading": "mk_event_select.c:_mk_event_channel_create@13f8bcb466b7a27c",
+     "sha256": "13f8bcb466b7a27c41a75caa9fc5980e3a79509c059d73b03d45f8f31d25d688"
+    },
+    {
+     "file": "mk_event_poll.c",
+     "function": "_mk_event_add",
+     "line": 83,
+     "ordinal": 0,
+     "reading": "mk_event_poll.c:_mk_event_add@381ea70d214c1040",
+     "sha256": "381ea70d214c10404182f36360f869e709d69dffcc605cc80fea33dd181b4996"
+    },
+    {
+     "file": "mk_event_poll.c",
+     "function": "_mk_event_timeout_create",
+     "line": 223,
+     "ordinal": 0,
+     "reading": "mk_event_poll.c:_mk_event_timeout_create@125d684e366579d9",
+     "sha256": "125d684e366579d935ed1d9026f0287abd28ecc0472c789fc53c070b733e42da"
+    },
+    {
+     "file": "mk_event_poll.c",
+     "function": "_mk_event_channel_create",
+     "line": 289,
+     "ordinal": 0,
+     "reading": "mk_event_poll.c:_mk_event_channel_create@a763434883a42c8f",
+     "sha256": "a763434883a42c8fade7f340151d5a529668872830828f3e5b125016cf7c071a"
+    },
+    {
+     "file": "mk_event_libevent.c",
+     "function": "mk_event_libevent_socketpair",
+     "line": 44,
+     "ordinal": 0,
+     "reading": "mk_event_libevent.c:mk_event_libevent_socketpair@d9d09928fa63870b",
+     "sha256": "d9d09928fa63870bfdeb37db1bd1661984e8fd3355997ac4d7599a593c931b57"
+    },
+    {
+     "file": "mk_event_libevent.c",
+     "function": "_mk_event_update",
+     "line": 159,
+     "ordinal": 0,
+     "reading": "mk_event_libevent.c:_mk_event_update@683e3339ce330527",
+     "sha256": "683e3339ce33052745cba42bb8144efef185355674ffa64f54390407b3afbff0"
+    },
+    {
+     "file": "mk_event_libevent.c",
+     "function": "_mk_event_add",
+     "line": 204,
+     "ordinal": 0,
+     "reading": "mk_event_libevent.c:_mk_event_add@a40496e57ec680ea",
+     "sha256": "a40496e57ec680eaf46c56b6b8f25cd5b63bd3ec9cc76fae5d7fb0d9f0ea8afa"
+    },
+    {
+     "file": "mk_event_libevent.c",
+     "function": "_mk_event_timeout_create",
+     "line": 335,
+     "ordinal": 0,
+     "reading": "mk_event_libevent.c:_mk_event_timeout_create@74abf5da0f9439c4",
+     "sha256": "74abf5da0f9439c41072a2aa9c9e4ca4ea08d30cfdee8e40e5fb5c8691b0650b"
+    },
+    {
+     "file": "mk_event_libevent.c",
+     "function": "_mk_event_channel_create",
+     "line": 402,
+     "ordinal": 0,
+     "reading": "mk_event_libevent.c:_mk_event_channel_create@fe187ba2d7b6bcfa",
+     "sha256": "fe187ba2d7b6bcfa95e00c06786eb514ae86034979d5858b63196b0155a2ad95"
+    }
+   ],
+   "configured_backend": "epoll",
+   "event_files": {
+    "mk_event.c": "8ef958d26545ef52865f69cde0abf86cfdbeceb925557ff37af41031297b2382",
+    "mk_event_epoll.c": "0bbc8f00c2abee0010b5869e0eb94da0ef998ada7835826f12804704dc579a27",
+    "mk_event_kqueue.c": "cecd550548cf8c2c077824761f59fb5170dee0ee838eb299ec49505d0c10a627",
+    "mk_event_libevent.c": "25df48e0974032a0e1482535daafee931bfafb3d2a28bad015b46f048a68cf1c",
+    "mk_event_poll.c": "bd61a1e7b85624d36649a71440a96eac2d7f1e69d11401cd03653dbab3b53a58",
+    "mk_event_select.c": "0d5875ae33952e64f89bb8618c352ae32ba497ab5e437d64a38f54966aa2b5d9"
+   },
+   "files_read": 4927,
+   "result_sets": {
+    "mk_event_channel_create": {
+     "epoll": {
+      "body_only": "int",
+      "libc": "[-1,0]"
+     },
+     "kqueue": {
+      "body_only": "[MIN,0]",
+      "libc": "[-1,0]"
+     },
+     "libevent": {
+      "body_only": "[-1,0]",
+      "libc": "[-1,0]"
+     },
+     "poll": {
+      "body_only": "[MIN,0]",
+      "libc": "[-1,0]"
+     },
+     "select": {
+      "body_only": "[MIN,0]",
+      "libc": "[-1,0]"
+     }
+    },
+    "mk_event_timeout_create": {
+     "epoll": {
+      "body_only": "int",
+      "libc": "[-1,MAX]"
+     },
+     "kqueue": {
+      "body_only": "int",
+      "libc": "[-1,MAX]"
+     },
+     "libevent": {
+      "body_only": "int",
+      "libc": "[-1,MAX]"
+     },
+     "poll": {
+      "body_only": "int",
+      "libc": "[-1,MAX]"
+     },
+     "select": {
+      "body_only": "int",
+      "libc": "[-1,MAX]"
+     }
+    }
+   },
+   "site_files": {
+    "lib/monkey/mk_server/mk_scheduler.c": "9a515fa6d0cc79ee8e70457e5e26e65a9ab82c8febd0bb383c88d35bcc1aedda",
+    "lib/monkey/mk_server/mk_server.c": "07a15b43f175df357109d21ebf29deeb9fdc5b5de3bf8f9db703e9214fdbdcdd",
+    "lib/monkey/mk_server/monkey.c": "821fe95aa0d812ef85015764dfe4a880686c0abbeaa5e527b5b68845430791b5",
+    "lib/monkey/test/event_timeout.c": "3dfbe08f91278f19be731365bf546433a3fe066990343209cfda962a319f4751",
+    "lib/monkey/test/lib_server.c": "071fdf344c99c98764f464ff4d97aac6325ff6497e816362ef541e1428db8361",
+    "plugins/in_exec/in_exec.c": "a63b53826432da7bc48140ca54c32a87689b0304843a7bbcccabbf3f17431ab5",
+    "plugins/in_exec_wasi/in_exec_wasi.c": "6cae44bea1e5ef57775b5c6642574d09b4d5a66d1ee1cace9e00b566affb7a07",
+    "src/flb_config.c": "1b7cc310ce3e3758a3df774ae5eb76584c11668dfcbae68a8f5eec56f77b3560",
+    "src/flb_downstream_worker.c": "eef1192e8246284cbe76e58c9b711908869f11a17db329ed7ea2f7feb78eb920",
+    "src/flb_engine.c": "8a941d363c5cbc083addb8e1792fa817f39ba67396812824862ea45dec1d7f33",
+    "src/flb_input.c": "2056b5856e4c2405ed959bf72f211c5d03fe7cc520f5ed174837ffd5d329ebd7",
+    "src/flb_input_thread.c": "ac3517f13136d96f7e490fed15dca9ff1b1b9fcc30469b6ad2925ca324d7a40c",
+    "src/flb_lib.c": "93113329f2a3e4b815d55c57a6d14b1a746adb6381b73b3f9fc6690fe0e37e89",
+    "src/flb_metrics_exporter.c": "65e0de81f51313c5431eb09edf0b1696cbe5577f61d736dbfd9eb8e2f4aacd72",
+    "src/flb_output.c": "2f6cde94c61380243e5a3f183bac01894763468d9f61539f90acdd983d2cc819",
+    "src/flb_output_thread.c": "932ed57899416bc8db9780328865fd5cdac45f4ec73cff6e006b90fb93258647",
+    "src/flb_scheduler.c": "5e2c36c2d741689e4a9a2e5b3bffdd40fee422e84c280a87129895091b242f49",
+    "src/stream_processor/flb_sp.c": "0f83849469c2f1570de65e21eba26522c3fc48e607e648f721433f7512b983b5"
+   },
+   "sites": [
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "wrong",
+      "body_only_detail": {
+       "failure_treated_as_success": "[1,MAX]"
+      },
+      "libc": "redundant"
+     },
+     "decides_today": false,
+     "failure_edge": "true",
+     "file": "lib/monkey/mk_server/mk_scheduler.c",
+     "function": "mk_sched_launch_worker_loop",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "lib/monkey/mk_server/mk_scheduler.c|mk_sched_launch_worker_loop|mk_event_channel_create|name|ret|ret < 0",
+     "line": 365,
+     "parsed": [
+      "<",
+      0
+     ],
+     "reading": "worker loop setup: a failed channel exits the process (exit(EXIT_FAILURE))",
+     "test": "ret < 0",
+     "test_line": 369
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "wrong",
+      "body_only_detail": {
+       "success_treated_as_failure": "[MIN,-2] | 0"
+      },
+      "libc": "wrong",
+      "libc_detail": {
+       "success_treated_as_failure": "0"
+      }
+     },
+     "decides_today": false,
+     "failure_edge": "false",
+     "file": "lib/monkey/mk_server/mk_server.c",
+     "function": "mk_server_worker_loop",
+     "holder": "timeout_fd",
+     "holder_kind": "name",
+     "key": "lib/monkey/mk_server/mk_server.c|mk_server_worker_loop|mk_event_timeout_create|name|timeout_fd|timeout_fd > 0",
+     "line": 502,
+     "parsed": [
+      ">",
+      0
+     ],
+     "reading": "the result is never tested where it is created (:502); the first test is :585, `timeout_fd > 0` before mk_event_timeout_destroy on MK_SCHED_SIGNAL_FREE_ALL: a timer whose descriptor is 0 is treated as absent and never destroyed",
+     "test": "timeout_fd > 0",
+     "test_line": 585
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "lib/monkey/mk_server/monkey.c",
+     "function": "mk_server_create",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "lib/monkey/mk_server/monkey.c|mk_server_create|mk_event_channel_create|name|ret|ret != 0",
+     "line": 115,
+     "parsed": [
+      "!=",
+      0
+     ],
+     "reading": "library-mode channels: failure destroys the loops and frees the server",
+     "test": "ret != 0",
+     "test_line": 120
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "lib/monkey/mk_server/monkey.c",
+     "function": "mk_server_create",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "lib/monkey/mk_server/monkey.c|mk_server_create|mk_event_channel_create|name|ret|ret != 0",
+     "line": 136,
+     "parsed": [
+      "!=",
+      0
+     ],
+     "reading": "library-mode channels: failure destroys the loops and frees the server",
+     "test": "ret != 0",
+     "test_line": 141
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "wrong",
+      "body_only_detail": {
+       "success_treated_as_failure": "[MIN,-2]"
+      },
+      "libc": "redundant"
+     },
+     "decides_today": true,
+     "failure_edge": "false",
+     "file": "lib/monkey/test/event_timeout.c",
+     "function": "test_timeout_tick_destroy",
+     "holder": "fd",
+     "holder_kind": "name",
+     "key": "lib/monkey/test/event_timeout.c|test_timeout_tick_destroy|mk_event_timeout_create|name|fd|fd >= 0",
+     "line": 47,
+     "parsed": [
+      ">=",
+      0
+     ],
+     "reading": "Monkey test program (TEST_ASSERT); not built into Fluent Bit",
+     "test": "fd >= 0",
+     "test_line": 48
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "untested",
+      "libc": "untested"
+     },
+     "file": "lib/monkey/test/lib_server.c",
+     "function": "run_server_test",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "lib/monkey/test/lib_server.c|run_server_test|mk_event_channel_create|name|ret|",
+     "line": 160,
+     "parsed": null,
+     "reading": "Monkey test program: ret is overwritten by mk_utils_worker_spawn (:167) before any test, so a failed channel goes unnoticed and complete_ch[1] (never written on failure) is handed to the workers",
+     "test": null,
+     "test_line": null
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/flb_downstream_worker.c",
+     "function": "downstream_worker_thread",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "src/flb_downstream_worker.c|downstream_worker_thread|mk_event_channel_create|name|ret|ret != 0",
+     "line": 248,
+     "parsed": [
+      "!=",
+      0
+     ],
+     "reading": "worker control channel: failure sets ret = -1 and signals the starter",
+     "test": "ret != 0",
+     "test_line": 252
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/flb_engine.c",
+     "function": "flb_engine_flush_timer_reset",
+     "holder": "config->flush_fd",
+     "holder_kind": "member",
+     "key": "src/flb_engine.c|flb_engine_flush_timer_reset|mk_event_timeout_create|member|config->flush_fd|config->flush_fd == -1",
+     "line": 314,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "flush timer: the result is held in config->flush_fd (a member, no plain-name witness); failure retries with the fallback interval, then returns -1",
+     "test": "config->flush_fd == -1",
+     "test_line": 320
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/flb_engine.c",
+     "function": "flb_engine_flush_timer_reset",
+     "holder": "config->flush_fd",
+     "holder_kind": "member",
+     "key": "src/flb_engine.c|flb_engine_flush_timer_reset|mk_event_timeout_create|member|config->flush_fd|config->flush_fd == -1",
+     "line": 326,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "flush timer: the result is held in config->flush_fd (a member, no plain-name witness); failure retries with the fallback interval, then returns -1",
+     "test": "config->flush_fd == -1",
+     "test_line": 333
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "wrong",
+      "body_only_detail": {
+       "failure_treated_as_success": "[MIN,-2] | [1,MAX]"
+      },
+      "libc": "redundant"
+     },
+     "decides_today": false,
+     "failure_edge": "true",
+     "file": "src/flb_engine.c",
+     "function": "flb_engine_start",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "src/flb_engine.c|flb_engine_start|mk_event_channel_create|name|ret|ret == -1",
+     "line": 1152,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "ch_self_events (:1168) and notification_channels (:1246): failure logs and returns -1",
+     "test": "ret == -1",
+     "test_line": 1156
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/flb_engine.c",
+     "function": "flb_engine_start",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "src/flb_engine.c|flb_engine_start|mk_event_channel_create|name|ret|ret != 0",
+     "line": 1201,
+     "parsed": [
+      "!=",
+      0
+     ],
+     "reading": "ch_manager (:1237): failure logs and returns -1",
+     "test": "ret != 0",
+     "test_line": 1205
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "wrong",
+      "body_only_detail": {
+       "failure_treated_as_success": "[MIN,-2] | [1,MAX]"
+      },
+      "libc": "redundant"
+     },
+     "decides_today": false,
+     "failure_edge": "true",
+     "file": "src/flb_engine.c",
+     "function": "flb_engine_start",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "src/flb_engine.c|flb_engine_start|mk_event_channel_create|name|ret|ret == -1",
+     "line": 1210,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "ch_self_events (:1168) and notification_channels (:1246): failure logs and returns -1",
+     "test": "ret == -1",
+     "test_line": 1214
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/flb_engine.c",
+     "function": "flb_engine_start",
+     "holder": "config->shutdown_fd",
+     "holder_kind": "member",
+     "key": "src/flb_engine.c|flb_engine_start|mk_event_timeout_create|member|config->shutdown_fd|config->shutdown_fd == -1",
+     "line": 1462,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "shutdown timer: held in config->shutdown_fd; created only when `config->shutdown_fd <= 0` (:1497), a guard that reads an earlier timer on descriptor 0 as absent (a test of the stored result, not of this call)",
+     "test": "config->shutdown_fd == -1",
+     "test_line": 1467
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/flb_input.c",
+     "function": "input_instance_channel_events_init",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "src/flb_input.c|input_instance_channel_events_init|mk_event_channel_create|name|ret|ret != 0",
+     "line": 1372,
+     "parsed": [
+      "!=",
+      0
+     ],
+     "reading": "input event channel: failure logs and returns -1",
+     "test": "ret != 0",
+     "test_line": 1376
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/flb_input.c",
+     "function": "collector_start",
+     "holder": "fd",
+     "holder_kind": "name",
+     "key": "src/flb_input.c|collector_start|mk_event_timeout_create|name|fd|fd == -1",
+     "line": 2333,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "COLLECT_TIME registration: failure clears running and returns -1",
+     "test": "fd == -1",
+     "test_line": 2335
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/flb_input.c",
+     "function": "flb_input_collector_resume",
+     "holder": "fd",
+     "holder_kind": "name",
+     "key": "src/flb_input.c|flb_input_collector_resume|mk_event_timeout_create|name|fd|fd == -1",
+     "line": 3228,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "COLLECT_TIME resume: failure returns -1",
+     "test": "fd == -1",
+     "test_line": 3230
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "wrong",
+      "body_only_detail": {
+       "failure_treated_as_success": "[MIN,-2] | [1,MAX]"
+      },
+      "libc": "redundant"
+     },
+     "decides_today": false,
+     "failure_edge": "true",
+     "file": "src/flb_input_thread.c",
+     "function": "input_thread_instance_create",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "src/flb_input_thread.c|input_thread_instance_create|mk_event_channel_create|name|ret|ret == -1",
+     "line": 262,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "ch_parent_events, ch_thread_events, notification_channels: failure destroys thi and returns NULL",
+     "test": "ret == -1",
+     "test_line": 266
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "wrong",
+      "body_only_detail": {
+       "failure_treated_as_success": "[MIN,-2] | [1,MAX]"
+      },
+      "libc": "redundant"
+     },
+     "decides_today": false,
+     "failure_edge": "true",
+     "file": "src/flb_input_thread.c",
+     "function": "input_thread_instance_create",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "src/flb_input_thread.c|input_thread_instance_create|mk_event_channel_create|name|ret|ret == -1",
+     "line": 275,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "ch_parent_events, ch_thread_events, notification_channels: failure destroys thi and returns NULL",
+     "test": "ret == -1",
+     "test_line": 279
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "wrong",
+      "body_only_detail": {
+       "failure_treated_as_success": "[MIN,-2] | [1,MAX]"
+      },
+      "libc": "redundant"
+     },
+     "decides_today": false,
+     "failure_edge": "true",
+     "file": "src/flb_input_thread.c",
+     "function": "input_thread_instance_create",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "src/flb_input_thread.c|input_thread_instance_create|mk_event_channel_create|name|ret|ret == -1",
+     "line": 287,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "ch_parent_events, ch_thread_events, notification_channels: failure destroys thi and returns NULL",
+     "test": "ret == -1",
+     "test_line": 291
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/flb_lib.c",
+     "function": "flb_create",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "src/flb_lib.c|flb_create|mk_event_channel_create|name|ret|ret != 0",
+     "line": 209,
+     "parsed": [
+      "!=",
+      0
+     ],
+     "reading": "library notification channel: failure stops and destroys the context",
+     "test": "ret != 0",
+     "test_line": 213
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/flb_metrics_exporter.c",
+     "function": "flb_me_create",
+     "holder": "fd",
+     "holder_kind": "name",
+     "key": "src/flb_metrics_exporter.c|flb_me_create|mk_event_timeout_create|name|fd|fd == -1",
+     "line": 234,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "metrics timer: failure frees me and returns NULL",
+     "test": "fd == -1",
+     "test_line": 235
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/flb_output.c",
+     "function": "flb_output_init_all",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "src/flb_output.c|flb_output_init_all|mk_event_channel_create|name|ret|ret != 0",
+     "line": 1463,
+     "parsed": [
+      "!=",
+      0
+     ],
+     "reading": "output event channel: failure destroys the instance and returns -1",
+     "test": "ret != 0",
+     "test_line": 1467
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "wrong",
+      "body_only_detail": {
+       "failure_treated_as_success": "[MIN,-2] | [1,MAX]"
+      },
+      "libc": "redundant"
+     },
+     "decides_today": false,
+     "failure_edge": "true",
+     "file": "src/flb_output_thread.c",
+     "function": "output_thread",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "src/flb_output_thread.c|output_thread|mk_event_channel_create|name|ret|ret == -1",
+     "line": 238,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "thread-local event channel: failure clears the event loop and returns",
+     "test": "ret == -1",
+     "test_line": 242
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "wrong",
+      "body_only_detail": {
+       "failure_treated_as_success": "[MIN,-2] | [1,MAX]"
+      },
+      "libc": "redundant"
+     },
+     "decides_today": false,
+     "failure_edge": "true",
+     "file": "src/flb_output_thread.c",
+     "function": "flb_output_thread_pool_create",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "src/flb_output_thread.c|flb_output_thread_pool_create|mk_event_channel_create|name|ret|ret == -1",
+     "line": 530,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "ch_parent_events and notification_channels: failure tears the thread instance down",
+     "test": "ret == -1",
+     "test_line": 534
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "wrong",
+      "body_only_detail": {
+       "failure_treated_as_success": "[MIN,-2] | [1,MAX]"
+      },
+      "libc": "redundant"
+     },
+     "decides_today": false,
+     "failure_edge": "true",
+     "file": "src/flb_output_thread.c",
+     "function": "flb_output_thread_pool_create",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "src/flb_output_thread.c|flb_output_thread_pool_create|mk_event_channel_create|name|ret|ret == -1",
+     "line": 546,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "ch_parent_events and notification_channels: failure tears the thread instance down",
+     "test": "ret == -1",
+     "test_line": 550
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/flb_scheduler.c",
+     "function": "schedule_request_now",
+     "holder": "fd",
+     "holder_kind": "name",
+     "key": "src/flb_scheduler.c|schedule_request_now|mk_event_timeout_create|name|fd|fd == -1",
+     "line": 133,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "request timer: failure returns -1",
+     "test": "fd == -1",
+     "test_line": 135
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/flb_scheduler.c",
+     "function": "flb_sched_timer_cb_create",
+     "holder": "fd",
+     "holder_kind": "name",
+     "key": "src/flb_scheduler.c|flb_sched_timer_cb_create|mk_event_timeout_create|name|fd|fd == -1",
+     "line": 672,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "timer callback: failure destroys the timer and returns -1",
+     "test": "fd == -1",
+     "test_line": 674
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/flb_scheduler.c",
+     "function": "flb_sched_create",
+     "holder": "fd",
+     "holder_kind": "name",
+     "key": "src/flb_scheduler.c|flb_sched_create|mk_event_timeout_create|name|fd|fd == -1",
+     "line": 783,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "frame timer: failure destroys the timer, frees sched and returns NULL",
+     "test": "fd == -1",
+     "test_line": 786
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "wrong",
+      "body_only_detail": {
+       "failure_treated_as_success": "[MIN,-2] | [1,MAX]"
+      },
+      "libc": "redundant"
+     },
+     "decides_today": false,
+     "failure_edge": "true",
+     "file": "src/flb_scheduler.c",
+     "function": "flb_sched_create",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "src/flb_scheduler.c|flb_sched_create|mk_event_channel_create|name|ret|ret == -1",
+     "line": 794,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "sched->ch_events: failure destroys sched and returns NULL",
+     "test": "ret == -1",
+     "test_line": 798
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/stream_processor/flb_sp.c",
+     "function": "flb_sp_task_create",
+     "holder": "fd",
+     "holder_kind": "name",
+     "key": "src/stream_processor/flb_sp.c|flb_sp_task_create|mk_event_timeout_create|name|fd|fd == -1",
+     "line": 519,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "window and hop timers: failure frees the task and returns NULL",
+     "test": "fd == -1",
+     "test_line": 522
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/stream_processor/flb_sp.c",
+     "function": "flb_sp_task_create",
+     "holder": "fd",
+     "holder_kind": "name",
+     "key": "src/stream_processor/flb_sp.c|flb_sp_task_create|mk_event_timeout_create|name|fd|fd == -1",
+     "line": 535,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "window and hop timers: failure frees the task and returns NULL",
+     "test": "fd == -1",
+     "test_line": 538
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "src/stream_processor/flb_sp.c",
+     "function": "flb_sp_fd_event",
+     "holder": "fd_timeout",
+     "holder_kind": "name",
+     "key": "src/stream_processor/flb_sp.c|flb_sp_fd_event|mk_event_timeout_create|name|fd_timeout|fd_timeout == -1",
+     "line": 2159,
+     "parsed": [
+      "==",
+      -1
+     ],
+     "reading": "window timer re-arm: failure returns -1",
+     "test": "fd_timeout == -1",
+     "test_line": 2162
+    }
+   ],
+   "stored_result_tests": [
+    {
+     "class": "wrong",
+     "file": "lib/monkey/mk_server/mk_server.c",
+     "function": "mk_server_worker_loop",
+     "key": "lib/monkey/mk_server/mk_server.c|mk_server_worker_loop|timeout_fd > 0",
+     "line": 585,
+     "reading": "a timer created on descriptor 0 is never destroyed at MK_SCHED_SIGNAL_FREE_ALL; the -1 failure is read correctly",
+     "test": "timeout_fd > 0"
+    },
+    {
+     "class": "wrong",
+     "file": "lib/monkey/mk_server/mk_server.c",
+     "function": "mk_server_lib_notify_event_loop_break",
+     "key": "lib/monkey/mk_server/mk_server.c|mk_server_lib_notify_event_loop_break|sched->signal_channel_w <= 0",
+     "line": 630,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent: a write end on descriptor 0 is reported as no channel (the notification is dropped)",
+     "test": "sched->signal_channel_w <= 0"
+    },
+    {
+     "class": "wrong",
+     "file": "lib/monkey/mk_server/mk_server.c",
+     "function": "mk_server_lib_notify_started",
+     "key": "lib/monkey/mk_server/mk_server.c|mk_server_lib_notify_started|server->lib_ch_start[1] <= 0",
+     "line": 648,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent: a start channel write end on descriptor 0 is reported as no channel",
+     "test": "server->lib_ch_start[1] <= 0"
+    },
+    {
+     "class": "outside",
+     "file": "plugins/in_exec/in_exec.c",
+     "function": "delete_exec_config",
+     "key": "plugins/in_exec/in_exec.c|delete_exec_config|ctx->ch_manager[0] > -1",
+     "line": 486,
+     "reading": "a different record (the plugin context) whose ch_manager comes from flb_pipe_create, not from a Monkey creator",
+     "test": "ctx->ch_manager[0] > -1"
+    },
+    {
+     "class": "outside",
+     "file": "plugins/in_exec/in_exec.c",
+     "function": "delete_exec_config",
+     "key": "plugins/in_exec/in_exec.c|delete_exec_config|ctx->ch_manager[1] > -1",
+     "line": 490,
+     "reading": "a different record (the plugin context) whose ch_manager comes from flb_pipe_create, not from a Monkey creator",
+     "test": "ctx->ch_manager[1] > -1"
+    },
+    {
+     "class": "outside",
+     "file": "plugins/in_exec_wasi/in_exec_wasi.c",
+     "function": "delete_exec_wasi_config",
+     "key": "plugins/in_exec_wasi/in_exec_wasi.c|delete_exec_wasi_config|ctx->ch_manager[0] > -1",
+     "line": 284,
+     "reading": "a different record (the plugin context) whose ch_manager comes from flb_pipe_create, not from a Monkey creator",
+     "test": "ctx->ch_manager[0] > -1"
+    },
+    {
+     "class": "outside",
+     "file": "plugins/in_exec_wasi/in_exec_wasi.c",
+     "function": "delete_exec_wasi_config",
+     "key": "plugins/in_exec_wasi/in_exec_wasi.c|delete_exec_wasi_config|ctx->ch_manager[1] > -1",
+     "line": 288,
+     "reading": "a different record (the plugin context) whose ch_manager comes from flb_pipe_create, not from a Monkey creator",
+     "test": "ctx->ch_manager[1] > -1"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_config.c",
+     "function": "flb_config_exit",
+     "key": "src/flb_config.c|flb_config_exit|config->ch_manager[0] > 0",
+     "line": 616,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent: the manager channel (flb_engine_start) is never closed if its read end is 0",
+     "test": "config->ch_manager[0] > 0"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_config.c",
+     "function": "flb_config_exit",
+     "key": "src/flb_config.c|flb_config_exit|config->ch_notif[0] > 0",
+     "line": 624,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent: the library notification channel (flb_create) is never closed if its read end is 0",
+     "test": "config->ch_notif[0] > 0"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_config.c",
+     "function": "flb_config_exit",
+     "key": "src/flb_config.c|flb_config_exit|config->ch_notif[1] > 0",
+     "line": 626,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent: the write end is not closed if it is 0",
+     "test": "config->ch_notif[1] > 0"
+    },
+    {
+     "class": "exact",
+     "file": "src/flb_engine.c",
+     "function": "flb_engine_flush_timer_reset",
+     "key": "src/flb_engine.c|flb_engine_flush_timer_reset|config->flush_fd == -1",
+     "line": 320,
+     "reading": "the immediate test of the call's result (part 3)",
+     "test": "config->flush_fd == -1"
+    },
+    {
+     "class": "exact",
+     "file": "src/flb_engine.c",
+     "function": "flb_engine_flush_timer_reset",
+     "key": "src/flb_engine.c|flb_engine_flush_timer_reset|config->flush_fd == -1",
+     "line": 333,
+     "reading": "the immediate test of the call's result (part 3)",
+     "test": "config->flush_fd == -1"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_engine.c",
+     "function": "flb_engine_started",
+     "key": "src/flb_engine.c|flb_engine_started|config->ch_notif[1] <= 0",
+     "line": 1018,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent: a write end on 0 is reported as no channel and STARTED is never sent",
+     "test": "config->ch_notif[1] <= 0"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_engine.c",
+     "function": "flb_engine_failed",
+     "key": "src/flb_engine.c|flb_engine_failed|config->ch_notif[1] <= 0",
+     "line": 1032,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent: a write end on 0 is reported as no channel and FAILED is never sent",
+     "test": "config->ch_notif[1] <= 0"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_engine.c",
+     "function": "flb_engine_start",
+     "key": "src/flb_engine.c|flb_engine_start|config->shutdown_fd <= 0",
+     "line": 1461,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent: a shutdown timer on descriptor 0 is created again on the next pass (the first is leaked and stays registered)",
+     "test": "config->shutdown_fd <= 0"
+    },
+    {
+     "class": "exact",
+     "file": "src/flb_engine.c",
+     "function": "flb_engine_start",
+     "key": "src/flb_engine.c|flb_engine_start|config->shutdown_fd == -1",
+     "line": 1467,
+     "reading": "the immediate test of the call's result (part 3)",
+     "test": "config->shutdown_fd == -1"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_engine.c",
+     "function": "flb_engine_start",
+     "key": "src/flb_engine.c|flb_engine_start|config->shutdown_fd > 0",
+     "line": 1527,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent: a shutdown timer on descriptor 0 is never destroyed",
+     "test": "config->shutdown_fd > 0"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_input.c",
+     "function": "flb_input_instance_destroy",
+     "key": "src/flb_input.c|flb_input_instance_destroy|ins->ch_events[0] > 0",
+     "line": 1303,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent (the round-6 census reads this destroyer as breaking any protocol)",
+     "test": "ins->ch_events[0] > 0"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_input.c",
+     "function": "flb_input_instance_destroy",
+     "key": "src/flb_input.c|flb_input_instance_destroy|ins->ch_events[1] > 0",
+     "line": 1307,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent (the round-6 census reads this destroyer as breaking any protocol)",
+     "test": "ins->ch_events[1] > 0"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_input.c",
+     "function": "flb_input_collector_destroy",
+     "key": "src/flb_input.c|flb_input_collector_destroy|coll->fd_timer > 0",
+     "line": 3125,
+     "reading": "the holder's absent value is -1 (flb_input.c `coll->fd_timer = -1` at creation and pause), so the guard is not even the sentinel's: a COLLECT_TIME timer on descriptor 0 is never destroyed, and the collector holding its event is freed while the loop still holds the registration",
+     "test": "coll->fd_timer > 0"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_input_thread.c",
+     "function": "input_thread_instance_destroy",
+     "key": "src/flb_input_thread.c|input_thread_instance_destroy|thi->ch_parent_events[0] > 0",
+     "line": 210,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent",
+     "test": "thi->ch_parent_events[0] > 0"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_input_thread.c",
+     "function": "input_thread_instance_destroy",
+     "key": "src/flb_input_thread.c|input_thread_instance_destroy|thi->ch_parent_events[1] > 0",
+     "line": 213,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent",
+     "test": "thi->ch_parent_events[1] > 0"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_input_thread.c",
+     "function": "input_thread_instance_destroy",
+     "key": "src/flb_input_thread.c|input_thread_instance_destroy|thi->ch_thread_events[0] > 0",
+     "line": 218,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent",
+     "test": "thi->ch_thread_events[0] > 0"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_input_thread.c",
+     "function": "input_thread_instance_destroy",
+     "key": "src/flb_input_thread.c|input_thread_instance_destroy|thi->ch_thread_events[1] > 0",
+     "line": 221,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent",
+     "test": "thi->ch_thread_events[1] > 0"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_output.c",
+     "function": "flb_output_instance_destroy",
+     "key": "src/flb_output.c|flb_output_instance_destroy|ins->ch_events[0] > 0",
+     "line": 537,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent (the round-6 census reads this destroyer as breaking any protocol)",
+     "test": "ins->ch_events[0] > 0"
+    },
+    {
+     "class": "wrong",
+     "file": "src/flb_output.c",
+     "function": "flb_output_instance_destroy",
+     "key": "src/flb_output.c|flb_output_instance_destroy|ins->ch_events[1] > 0",
+     "line": 541,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent (the round-6 census reads this destroyer as breaking any protocol)",
+     "test": "ins->ch_events[1] > 0"
+    },
+    {
+     "class": "exact",
+     "file": "src/flb_scheduler.c",
+     "function": "flb_sched_timer_cb_disable",
+     "key": "src/flb_scheduler.c|flb_sched_timer_cb_disable|timer->timer_fd != -1",
+     "line": 722,
+     "reading": "the holder's absent value is -1 (stored at :724 and at timer creation)",
+     "test": "timer->timer_fd != -1"
+    },
+    {
+     "class": "exact",
+     "file": "src/flb_scheduler.c",
+     "function": "flb_sched_destroy",
+     "key": "src/flb_scheduler.c|flb_sched_destroy|sched->ch_events[0] != -1",
+     "line": 855,
+     "reading": "the holder's absent value is -1 (flb_sched_create stores -1 before the creation, and a failed creation writes no end)",
+     "test": "sched->ch_events[0] != -1"
+    },
+    {
+     "class": "wrong",
+     "file": "src/stream_processor/flb_sp.c",
+     "function": "flb_sp_window_destroy",
+     "key": "src/stream_processor/flb_sp.c|flb_sp_window_destroy|task->window.fd > 0",
+     "line": 670,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent: a window timer on descriptor 0 is never closed",
+     "test": "task->window.fd > 0"
+    }
+   ],
+   "tree_sha256": "97197d3e24462cd6af3748f65e22df5965baf961c4cd26b835754fb061b87888"
+  },
+  "monkey-66910c10": {
+   "bodies": [
+    {
+     "file": "mk_event.c",
+     "function": "mk_event_timeout_create",
+     "line": 156,
+     "ordinal": 0,
+     "reading": "mk_event.c:mk_event_timeout_create@dad7efcf6c37f851",
+     "sha256": "dad7efcf6c37f851aff65a568eab3804943afb6e9731aacb3faa1b46901e4f8f"
+    },
+    {
+     "file": "mk_event.c",
+     "function": "mk_event_channel_create",
+     "line": 181,
+     "ordinal": 0,
+     "reading": "mk_event.c:mk_event_channel_create@c5be5f86f082b1f6",
+     "sha256": "c5be5f86f082b1f63352916256b070cf03be73b8e9802820e45546f5a664de15"
+    },
+    {
+     "file": "mk_event_epoll.c",
+     "function": "_mk_event_add",
+     "line": 101,
+     "ordinal": 0,
+     "reading": "mk_event_epoll.c:_mk_event_add@d380da2cb2af49b5",
+     "sha256": "d380da2cb2af49b5992acd1b46f8d79edaee5797249fc7e386d0f9071e80da4d"
+    },
+    {
+     "file": "mk_event_epoll.c",
+     "function": "_mk_event_timeout_create",
+     "line": 190,
+     "ordinal": 0,
+     "reading": "mk_event_epoll.c:_mk_event_timeout_create@5fea786972292c2c",
+     "sha256": "5fea786972292c2cc2143c55c200758af77d769ac42b2869029a2f7d9ac216dd"
+    },
+    {
+     "file": "mk_event_epoll.c",
+     "function": "_mk_event_timeout_create",
+     "line": 291,
+     "ordinal": 1,
+     "reading": "mk_event_epoll.c:_mk_event_timeout_create@735b53b6ede3eb16",
+     "sha256": "735b53b6ede3eb16758b1ff9b92280880568dc58b395ad2fa0fba9e66825b6a6"
+    },
+    {
+     "file": "mk_event_epoll.c",
+     "function": "_mk_event_channel_create",
+     "line": 354,
+     "ordinal": 0,
+     "reading": "mk_event_epoll.c:_mk_event_channel_create@a763434883a42c8f",
+     "sha256": "a763434883a42c8fade7f340151d5a529668872830828f3e5b125016cf7c071a"
+    },
+    {
+     "file": "mk_event_kqueue.c",
+     "function": "_mk_event_add",
+     "line": 71,
+     "ordinal": 0,
+     "reading": "mk_event_kqueue.c:_mk_event_add@72e6b32edf609f12",
+     "sha256": "72e6b32edf609f12a9311d491afc65e81feb802429d97aa083bed62b517d972f"
+    },
+    {
+     "file": "mk_event_kqueue.c",
+     "function": "_mk_event_timeout_create",
+     "line": 184,
+     "ordinal": 0,
+     "reading": "mk_event_kqueue.c:_mk_event_timeout_create@9c072ab0fce784fa",
+     "sha256": "9c072ab0fce784fa0cc411be34c0d0a5d8bc2925fb9fdec9486ea801dd305977"
+    },
+    {
+     "file": "mk_event_kqueue.c",
+     "function": "_mk_event_channel_create",
+     "line": 279,
+     "ordinal": 0,
+     "reading": "mk_event_kqueue.c:_mk_event_channel_create@a763434883a42c8f",
+     "sha256": "a763434883a42c8fade7f340151d5a529668872830828f3e5b125016cf7c071a"
+    },
+    {
+     "file": "mk_event_select.c",
+     "function": "_mk_event_add",
+     "line": 98,
+     "ordinal": 0,
+     "reading": "mk_event_select.c:_mk_event_add@f7add58ff4edf964",
+     "sha256": "f7add58ff4edf964621fc3ab95ddc391dd567181b9e2c67a1ccfd6be729e030f"
+    },
+    {
+     "file": "mk_event_select.c",
+     "function": "_mk_event_timeout_create",
+     "line": 228,
+     "ordinal": 0,
+     "reading": "mk_event_select.c:_mk_event_timeout_create@b84883104a01a745",
+     "sha256": "b84883104a01a745a39efe3f9c59939a3dff48ad98472876676125c6ab8e6859"
+    },
+    {
+     "file": "mk_event_select.c",
+     "function": "_mk_event_channel_create",
+     "line": 300,
+     "ordinal": 0,
+     "reading": "mk_event_select.c:_mk_event_channel_create@13f8bcb466b7a27c",
+     "sha256": "13f8bcb466b7a27c41a75caa9fc5980e3a79509c059d73b03d45f8f31d25d688"
+    },
+    {
+     "file": "mk_event_poll.c",
+     "function": "_mk_event_add",
+     "line": 83,
+     "ordinal": 0,
+     "reading": "mk_event_poll.c:_mk_event_add@381ea70d214c1040",
+     "sha256": "381ea70d214c10404182f36360f869e709d69dffcc605cc80fea33dd181b4996"
+    },
+    {
+     "file": "mk_event_poll.c",
+     "function": "_mk_event_timeout_create",
+     "line": 223,
+     "ordinal": 0,
+     "reading": "mk_event_poll.c:_mk_event_timeout_create@125d684e366579d9",
+     "sha256": "125d684e366579d935ed1d9026f0287abd28ecc0472c789fc53c070b733e42da"
+    },
+    {
+     "file": "mk_event_poll.c",
+     "function": "_mk_event_channel_create",
+     "line": 289,
+     "ordinal": 0,
+     "reading": "mk_event_poll.c:_mk_event_channel_create@a763434883a42c8f",
+     "sha256": "a763434883a42c8fade7f340151d5a529668872830828f3e5b125016cf7c071a"
+    },
+    {
+     "file": "mk_event_libevent.c",
+     "function": "mk_event_libevent_socketpair",
+     "line": 44,
+     "ordinal": 0,
+     "reading": "mk_event_libevent.c:mk_event_libevent_socketpair@d9d09928fa63870b",
+     "sha256": "d9d09928fa63870bfdeb37db1bd1661984e8fd3355997ac4d7599a593c931b57"
+    },
+    {
+     "file": "mk_event_libevent.c",
+     "function": "_mk_event_update",
+     "line": 159,
+     "ordinal": 0,
+     "reading": "mk_event_libevent.c:_mk_event_update@683e3339ce330527",
+     "sha256": "683e3339ce33052745cba42bb8144efef185355674ffa64f54390407b3afbff0"
+    },
+    {
+     "file": "mk_event_libevent.c",
+     "function": "_mk_event_add",
+     "line": 204,
+     "ordinal": 0,
+     "reading": "mk_event_libevent.c:_mk_event_add@a40496e57ec680ea",
+     "sha256": "a40496e57ec680eaf46c56b6b8f25cd5b63bd3ec9cc76fae5d7fb0d9f0ea8afa"
+    },
+    {
+     "file": "mk_event_libevent.c",
+     "function": "_mk_event_timeout_create",
+     "line": 335,
+     "ordinal": 0,
+     "reading": "mk_event_libevent.c:_mk_event_timeout_create@74abf5da0f9439c4",
+     "sha256": "74abf5da0f9439c41072a2aa9c9e4ca4ea08d30cfdee8e40e5fb5c8691b0650b"
+    },
+    {
+     "file": "mk_event_libevent.c",
+     "function": "_mk_event_channel_create",
+     "line": 402,
+     "ordinal": 0,
+     "reading": "mk_event_libevent.c:_mk_event_channel_create@fe187ba2d7b6bcfa",
+     "sha256": "fe187ba2d7b6bcfa95e00c06786eb514ae86034979d5858b63196b0155a2ad95"
+    }
+   ],
+   "configured_backend": "libevent",
+   "event_files": {
+    "mk_event.c": "8ef958d26545ef52865f69cde0abf86cfdbeceb925557ff37af41031297b2382",
+    "mk_event_epoll.c": "0bbc8f00c2abee0010b5869e0eb94da0ef998ada7835826f12804704dc579a27",
+    "mk_event_kqueue.c": "cecd550548cf8c2c077824761f59fb5170dee0ee838eb299ec49505d0c10a627",
+    "mk_event_libevent.c": "25df48e0974032a0e1482535daafee931bfafb3d2a28bad015b46f048a68cf1c",
+    "mk_event_poll.c": "bd61a1e7b85624d36649a71440a96eac2d7f1e69d11401cd03653dbab3b53a58",
+    "mk_event_select.c": "0d5875ae33952e64f89bb8618c352ae32ba497ab5e437d64a38f54966aa2b5d9"
+   },
+   "files_read": 492,
+   "result_sets": {
+    "mk_event_channel_create": {
+     "epoll": {
+      "body_only": "int",
+      "libc": "[-1,0]"
+     },
+     "kqueue": {
+      "body_only": "[MIN,0]",
+      "libc": "[-1,0]"
+     },
+     "libevent": {
+      "body_only": "[-1,0]",
+      "libc": "[-1,0]"
+     },
+     "poll": {
+      "body_only": "[MIN,0]",
+      "libc": "[-1,0]"
+     },
+     "select": {
+      "body_only": "[MIN,0]",
+      "libc": "[-1,0]"
+     }
+    },
+    "mk_event_timeout_create": {
+     "epoll": {
+      "body_only": "int",
+      "libc": "[-1,MAX]"
+     },
+     "kqueue": {
+      "body_only": "int",
+      "libc": "[-1,MAX]"
+     },
+     "libevent": {
+      "body_only": "int",
+      "libc": "[-1,MAX]"
+     },
+     "poll": {
+      "body_only": "int",
+      "libc": "[-1,MAX]"
+     },
+     "select": {
+      "body_only": "int",
+      "libc": "[-1,MAX]"
+     }
+    }
+   },
+   "site_files": {
+    "mk_server/mk_scheduler.c": "9a515fa6d0cc79ee8e70457e5e26e65a9ab82c8febd0bb383c88d35bcc1aedda",
+    "mk_server/mk_server.c": "07a15b43f175df357109d21ebf29deeb9fdc5b5de3bf8f9db703e9214fdbdcdd",
+    "mk_server/monkey.c": "821fe95aa0d812ef85015764dfe4a880686c0abbeaa5e527b5b68845430791b5",
+    "test/event_timeout.c": "3dfbe08f91278f19be731365bf546433a3fe066990343209cfda962a319f4751",
+    "test/lib_server.c": "071fdf344c99c98764f464ff4d97aac6325ff6497e816362ef541e1428db8361"
+   },
+   "sites": [
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "redundant",
+      "libc": "redundant"
+     },
+     "decides_today": false,
+     "failure_edge": "true",
+     "file": "mk_server/mk_scheduler.c",
+     "function": "mk_sched_launch_worker_loop",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "mk_server/mk_scheduler.c|mk_sched_launch_worker_loop|mk_event_channel_create|name|ret|ret < 0",
+     "line": 365,
+     "parsed": [
+      "<",
+      0
+     ],
+     "reading": "worker loop setup: a failed channel exits the process (exit(EXIT_FAILURE))",
+     "test": "ret < 0",
+     "test_line": 369
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "wrong",
+      "body_only_detail": {
+       "success_treated_as_failure": "[MIN,-2] | 0"
+      },
+      "libc": "wrong",
+      "libc_detail": {
+       "success_treated_as_failure": "0"
+      }
+     },
+     "decides_today": false,
+     "failure_edge": "false",
+     "file": "mk_server/mk_server.c",
+     "function": "mk_server_worker_loop",
+     "holder": "timeout_fd",
+     "holder_kind": "name",
+     "key": "mk_server/mk_server.c|mk_server_worker_loop|mk_event_timeout_create|name|timeout_fd|timeout_fd > 0",
+     "line": 502,
+     "parsed": [
+      ">",
+      0
+     ],
+     "reading": "the result is never tested where it is created (:502); the first test is :585, `timeout_fd > 0` before mk_event_timeout_destroy on MK_SCHED_SIGNAL_FREE_ALL: a timer whose descriptor is 0 is treated as absent and never destroyed",
+     "test": "timeout_fd > 0",
+     "test_line": 585
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "mk_server/monkey.c",
+     "function": "mk_server_create",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "mk_server/monkey.c|mk_server_create|mk_event_channel_create|name|ret|ret != 0",
+     "line": 115,
+     "parsed": [
+      "!=",
+      0
+     ],
+     "reading": "library-mode channels: failure destroys the loops and frees the server",
+     "test": "ret != 0",
+     "test_line": 120
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "exact",
+      "libc": "exact"
+     },
+     "decides_today": true,
+     "failure_edge": "true",
+     "file": "mk_server/monkey.c",
+     "function": "mk_server_create",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "mk_server/monkey.c|mk_server_create|mk_event_channel_create|name|ret|ret != 0",
+     "line": 136,
+     "parsed": [
+      "!=",
+      0
+     ],
+     "reading": "library-mode channels: failure destroys the loops and frees the server",
+     "test": "ret != 0",
+     "test_line": 141
+    },
+    {
+     "callee": "mk_event_timeout_create",
+     "class": {
+      "body_only": "wrong",
+      "body_only_detail": {
+       "success_treated_as_failure": "[MIN,-2]"
+      },
+      "libc": "redundant"
+     },
+     "decides_today": true,
+     "failure_edge": "false",
+     "file": "test/event_timeout.c",
+     "function": "test_timeout_tick_destroy",
+     "holder": "fd",
+     "holder_kind": "name",
+     "key": "test/event_timeout.c|test_timeout_tick_destroy|mk_event_timeout_create|name|fd|fd >= 0",
+     "line": 47,
+     "parsed": [
+      ">=",
+      0
+     ],
+     "reading": "Monkey test program (TEST_ASSERT); not built into Fluent Bit",
+     "test": "fd >= 0",
+     "test_line": 48
+    },
+    {
+     "callee": "mk_event_channel_create",
+     "class": {
+      "body_only": "untested",
+      "libc": "untested"
+     },
+     "file": "test/lib_server.c",
+     "function": "run_server_test",
+     "holder": "ret",
+     "holder_kind": "name",
+     "key": "test/lib_server.c|run_server_test|mk_event_channel_create|name|ret|",
+     "line": 160,
+     "parsed": null,
+     "reading": "Monkey test program: ret is overwritten by mk_utils_worker_spawn (:167) before any test, so a failed channel goes unnoticed and complete_ch[1] (never written on failure) is handed to the workers",
+     "test": null,
+     "test_line": null
+    }
+   ],
+   "stored_result_tests": [
+    {
+     "class": "wrong",
+     "file": "mk_server/mk_server.c",
+     "function": "mk_server_worker_loop",
+     "key": "mk_server/mk_server.c|mk_server_worker_loop|timeout_fd > 0",
+     "line": 585,
+     "reading": "a timer created on descriptor 0 is never destroyed at MK_SCHED_SIGNAL_FREE_ALL; the -1 failure is read correctly",
+     "test": "timeout_fd > 0"
+    },
+    {
+     "class": "wrong",
+     "file": "mk_server/mk_server.c",
+     "function": "mk_server_lib_notify_event_loop_break",
+     "key": "mk_server/mk_server.c|mk_server_lib_notify_event_loop_break|sched->signal_channel_w <= 0",
+     "line": 630,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent: a write end on descriptor 0 is reported as no channel (the notification is dropped)",
+     "test": "sched->signal_channel_w <= 0"
+    },
+    {
+     "class": "wrong",
+     "file": "mk_server/mk_server.c",
+     "function": "mk_server_lib_notify_started",
+     "key": "mk_server/mk_server.c|mk_server_lib_notify_started|server->lib_ch_start[1] <= 0",
+     "line": 648,
+     "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent: a start channel write end on descriptor 0 is reported as no channel",
+     "test": "server->lib_ch_start[1] <= 0"
+    }
+   ],
+   "tree_sha256": "f23d3edb3c91b859bbef5c4aaba30aecc99014e206dd08452c7f7fc4c27e02e5"
+  }
+ }
+}

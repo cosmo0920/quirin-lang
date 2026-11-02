@@ -1,0 +1,211 @@
+{
+ "meaning": "Each body's returns read twice: body_only (a call's result is its C type's range unless an in-unit helper's reading here bounds it; a test already passed narrows it) and libc (the C library's documented result sets, each named in rests_on). Keyed by file, function and the digest of the body's normalised text, so a changed body is unread. Sets: 'int' is every int, '[a,b]' an interval, '|' a union, MIN and MAX the int bounds.",
+ "libc_result_sets": {
+  "pipe": "POSIX: 0 on success, -1 on error; on success both descriptors are >= 0",
+  "epoll_ctl": "Linux epoll_ctl(2): 0 on success, -1 on error",
+  "kevent": "BSD kevent(2) with nevents 0: 0 on success, -1 on error",
+  "open": "POSIX: a descriptor >= 0, or -1",
+  "timerfd_create": "Linux timerfd_create(2): a descriptor >= 0, or -1",
+  "evutil_socketpair": "libevent: 0 on success, -1 on error; on success both descriptors are >= 0",
+  "mk_win32_socketpair": "Monkey's Windows socketpair (mk_win32_socketpair.c), not read: the arm is _WIN32 only, outside every analysed build"
+ },
+ "configured_arm": {
+  "mk_event_timeout_create": {
+   "epoll": 0
+  }
+ },
+ "bodies": {
+  "mk_event.c:mk_event_channel_create@c5be5f86f082b1f6": {
+   "returns": [
+    {"expr": "_mk_event_channel_create(ctx, r_fd, w_fd, data)", "body_only": "int", "libc": "int", "note": "the configured backend's _mk_event_channel_create, a static function of the same unit (the backend file is #included at mk_event.c:31-52); its set is the backend reading's (part 2)"}
+   ],
+   "result": {"body_only": "int", "libc": "int"},
+   "forwards": "_mk_event_channel_create"
+  },
+  "mk_event.c:mk_event_timeout_create@dad7efcf6c37f851": {
+   "returns": [
+    {"expr": "_mk_event_timeout_create(ctx, sec, nsec, data)", "body_only": "int", "libc": "int", "note": "the configured backend's _mk_event_timeout_create (part 2)"}
+   ],
+   "result": {"body_only": "int", "libc": "int"},
+   "forwards": "_mk_event_timeout_create"
+  },
+  "mk_event_epoll.c:_mk_event_add@d380da2cb2af49b5": {
+   "returns": [
+    {"expr": "-1", "body_only": "-1", "libc": "-1", "note": "epoll_ctl < 0 (:139-142)"},
+    {"expr": "ret", "body_only": "[0,MAX]", "libc": "0", "rests_on": ["epoll_ctl"], "note": "epoll_ctl's result after `ret < 0` failed (:152): the body alone gives every non-negative int"}
+   ],
+   "result": {"body_only": "-1|[0,MAX]", "libc": "[-1,0]"}
+  },
+  "mk_event_epoll.c:_mk_event_timeout_create@5fea786972292c2c": {
+   "returns": [
+    {"expr": "-1", "body_only": "-1", "libc": "-1", "note": "clock_gettime failed"},
+    {"expr": "-1", "body_only": "-1", "libc": "-1", "note": "timerfd_create returned -1"},
+    {"expr": "-1", "body_only": "-1", "libc": "-1", "note": "timerfd_settime < 0; timer_fd closed, event->fd untouched"},
+    {"expr": "ret", "body_only": "-1|[1,MAX]", "libc": "-1", "rests_on": ["epoll_ctl"], "note": "_mk_event_add's result when != 0 (the epoll _mk_event_add reading); timer_fd closed with the number left in event->fd (:240-243)"},
+    {"expr": "timer_fd", "body_only": "[MIN,-2]|[0,MAX]", "libc": "[0,MAX]", "rests_on": ["timerfd_create"], "note": "timerfd_create's result after `== -1` failed"}
+   ],
+   "result": {"body_only": "int", "libc": "[-1,MAX]"},
+   "configuration": "MK_HAVE_TIMERFD_CREATE (every analysed build defines it)"
+  },
+  "mk_event_epoll.c:_mk_event_timeout_create@735b53b6ede3eb16": {
+   "returns": [
+    {"expr": "-1", "body_only": "-1", "libc": "-1", "note": "mk_mem_alloc failed"},
+    {"expr": "ret", "body_only": "[MIN,-1]", "libc": "-1", "rests_on": ["pipe"], "note": "pipe < 0"},
+    {"expr": "-1", "body_only": "-1", "libc": "-1", "note": "worker spawn failed; both ends closed"},
+    {"expr": "fd[0]", "body_only": "int", "libc": "[0,MAX]", "rests_on": ["pipe"], "note": "_mk_event_add's result is ignored (:319): a failed registration still returns the descriptor"}
+   ],
+   "result": {"body_only": "int", "libc": "[-1,MAX]"},
+   "configuration": "the !MK_HAVE_TIMERFD_CREATE arm, compiled in no analysed build"
+  },
+  "mk_event_epoll.c:_mk_event_timeout_create@72c04f09994d60cd": {
+   "returns": [
+    {"expr": "-1", "body_only": "-1", "libc": "-1", "note": "mk_mem_alloc failed"},
+    {"expr": "ret", "body_only": "[MIN,-1]", "libc": "-1", "rests_on": ["pipe"], "note": "pipe < 0"},
+    {"expr": "-1", "body_only": "-1", "libc": "-1", "note": "worker spawn failed"},
+    {"expr": "fd[0]", "body_only": "int", "libc": "[0,MAX]", "rests_on": ["pipe"], "note": "as at 66910c10 plus pthread_detach(tid); _mk_event_add's result still ignored"}
+   ],
+   "result": {"body_only": "int", "libc": "[-1,MAX]"},
+   "configuration": "the !MK_HAVE_TIMERFD_CREATE arm, compiled in no analysed build"
+  },
+  "mk_event_epoll.c:_mk_event_channel_create@a763434883a42c8f": {
+   "returns": [
+    {"expr": "ret", "body_only": "[MIN,-1]", "libc": "-1", "rests_on": ["pipe"], "note": "pipe < 0 (:363-367); nothing written"},
+    {"expr": "ret", "body_only": "-1|[1,MAX]", "libc": "-1", "rests_on": ["epoll_ctl"], "note": "epoll _mk_event_add's result when != 0; both ends closed, the closed read end left in event->fd"},
+    {"expr": "0", "body_only": "0", "libc": "0", "note": "*r_fd = fd[0], *w_fd = fd[1]"}
+   ],
+   "result": {"body_only": "int", "libc": "[-1,0]"}
+  },
+  "mk_event_kqueue.c:_mk_event_add@72e6b32edf609f12": {
+   "returns": [
+    {"expr": "ret", "body_only": "[MIN,-1]", "libc": "-1", "rests_on": ["kevent"], "note": "kevent < 0 (read filter)"},
+    {"expr": "ret", "body_only": "[MIN,-1]", "libc": "-1", "rests_on": ["kevent"], "note": "kevent < 0 (write filter)"},
+    {"expr": "0", "body_only": "0", "libc": "0"}
+   ],
+   "result": {"body_only": "[MIN,0]", "libc": "[-1,0]"}
+  },
+  "mk_event_kqueue.c:_mk_event_timeout_create@9c072ab0fce784fa": {
+   "returns": [
+    {"expr": "-1", "body_only": "-1", "libc": "-1", "note": "open returned -1"},
+    {"expr": "-1", "body_only": "-1", "libc": "-1", "note": "kevent < 0; fd closed"},
+    {"expr": "fd", "body_only": "[MIN,-2]|[0,MAX]", "libc": "[0,MAX]", "rests_on": ["open"]}
+   ],
+   "result": {"body_only": "int", "libc": "[-1,MAX]"}
+  },
+  "mk_event_kqueue.c:_mk_event_channel_create@a763434883a42c8f": {
+   "returns": [
+    {"expr": "ret", "body_only": "[MIN,-1]", "libc": "-1", "rests_on": ["pipe"], "note": "pipe < 0"},
+    {"expr": "ret", "body_only": "[MIN,-1]", "libc": "-1", "rests_on": ["kevent"], "note": "kqueue _mk_event_add's result when != 0"},
+    {"expr": "0", "body_only": "0", "libc": "0"}
+   ],
+   "result": {"body_only": "[MIN,0]", "libc": "[-1,0]"}
+  },
+  "mk_event_select.c:_mk_event_add@f7add58ff4edf964": {
+   "returns": [
+    {"expr": "-1", "body_only": "-1", "libc": "-1", "note": "fd > FD_SETSIZE"},
+    {"expr": "0", "body_only": "0", "libc": "0"}
+   ],
+   "result": {"body_only": "[-1,0]", "libc": "[-1,0]"}
+  },
+  "mk_event_select.c:_mk_event_timeout_create@b84883104a01a745": {
+   "returns": [
+    {"expr": "-1", "body_only": "-1", "libc": "-1", "note": "mk_mem_alloc failed"},
+    {"expr": "ret", "body_only": "[MIN,-1]", "libc": "-1", "rests_on": ["pipe"], "note": "pipe < 0"},
+    {"expr": "-1", "body_only": "-1", "libc": "-1", "note": "worker spawn failed"},
+    {"expr": "fd[0]", "body_only": "int", "libc": "[0,MAX]", "rests_on": ["pipe"], "note": "_mk_event_add's result ignored (:253)"}
+   ],
+   "result": {"body_only": "int", "libc": "[-1,MAX]"}
+  },
+  "mk_event_select.c:_mk_event_channel_create@13f8bcb466b7a27c": {
+   "returns": [
+    {"expr": "ret", "body_only": "[MIN,-1]", "libc": "-1", "rests_on": ["pipe"], "note": "pipe < 0"},
+    {"expr": "ret", "body_only": "-1", "libc": "-1", "note": "select _mk_event_add's result when != 0"},
+    {"expr": "0", "body_only": "0", "libc": "0"}
+   ],
+   "result": {"body_only": "[MIN,0]", "libc": "[-1,0]"}
+  },
+  "mk_event_poll.c:_mk_event_add@381ea70d214c1040": {
+   "returns": [
+    {"expr": "-1", "body_only": "-1", "libc": "-1", "note": "no free slot"},
+    {"expr": "0", "body_only": "0", "libc": "0"}
+   ],
+   "result": {"body_only": "[-1,0]", "libc": "[-1,0]"}
+  },
+  "mk_event_poll.c:_mk_event_add@df6ddcf1bce88a41": {
+   "returns": [
+    {"expr": "-1", "body_only": "-1", "libc": "-1", "note": "no free slot"},
+    {"expr": "0", "body_only": "0", "libc": "0", "note": "as at 66910c10 plus an __EMSCRIPTEN__ timer flag loop"}
+   ],
+   "result": {"body_only": "[-1,0]", "libc": "[-1,0]"}
+  },
+  "mk_event_poll.c:_mk_event_timeout_create@125d684e366579d9": {
+   "returns": [
+    {"expr": "-1", "body_only": "-1", "libc": "-1", "note": "mk_mem_alloc failed"},
+    {"expr": "ret", "body_only": "[MIN,-1]", "libc": "-1", "rests_on": ["pipe"], "note": "pipe < 0"},
+    {"expr": "-1", "body_only": "-1", "libc": "-1", "note": "worker spawn failed"},
+    {"expr": "fd[0]", "body_only": "int", "libc": "[0,MAX]", "rests_on": ["pipe"], "note": "_mk_event_add's result ignored (:252)"}
+   ],
+   "result": {"body_only": "int", "libc": "[-1,MAX]"}
+  },
+  "mk_event_poll.c:_mk_event_timeout_create@e752e59857b42d41": {
+   "returns": [
+    {"expr": "-1", "body_only": "-1", "libc": "-1", "note": "__EMSCRIPTEN__ only: an invalid interval (EINVAL)"},
+    {"expr": "-1", "body_only": "-1", "libc": "-1", "note": "mk_mem_alloc failed"},
+    {"expr": "ret", "body_only": "[MIN,-1]", "libc": "-1", "rests_on": ["pipe"], "note": "pipe < 0"},
+    {"expr": "-1", "body_only": "-1", "libc": "-1", "note": "_mk_event_add != 0, both ends closed (new at 046accf6)"},
+    {"expr": "-1", "body_only": "-1", "libc": "-1", "note": "worker spawn failed"},
+    {"expr": "fd[0]", "body_only": "int", "libc": "[0,MAX]", "rests_on": ["pipe"]}
+   ],
+   "result": {"body_only": "int", "libc": "[-1,MAX]"}
+  },
+  "mk_event_poll.c:_mk_event_channel_create@a763434883a42c8f": {
+   "returns": [
+    {"expr": "ret", "body_only": "[MIN,-1]", "libc": "-1", "rests_on": ["pipe"], "note": "pipe < 0"},
+    {"expr": "ret", "body_only": "-1", "libc": "-1", "note": "poll _mk_event_add's result when != 0"},
+    {"expr": "0", "body_only": "0", "libc": "0"}
+   ],
+   "result": {"body_only": "[MIN,0]", "libc": "[-1,0]"}
+  },
+  "mk_event_libevent.c:mk_event_libevent_socketpair@d9d09928fa63870b": {
+   "returns": [
+    {"expr": "ret", "body_only": "[MIN,-1]|[1,MAX]", "libc": "[MIN,-1]|[1,MAX]", "rests_on": ["mk_win32_socketpair"], "note": "_WIN32 only: a nonzero result of mk_win32_socketpair"},
+    {"expr": "0", "body_only": "0", "libc": "0", "note": "_WIN32 only"},
+    {"expr": "evutil_socketpair(AF_UNIX, SOCK_STREAM, 0, fd)", "body_only": "int", "libc": "[-1,0]", "rests_on": ["evutil_socketpair"]}
+   ],
+   "result": {"body_only": "int", "libc": "int"},
+   "note": "its callers test `== -1` and return the constant -1, so its range never reaches a creator's result"
+  },
+  "mk_event_libevent.c:_mk_event_update@683e3339ce330527": {
+   "returns": [
+    {"expr": "-1", "body_only": "-1", "libc": "-1", "note": "event_new returned NULL"},
+    {"expr": "-1", "body_only": "-1", "libc": "-1", "note": "event_add < 0"},
+    {"expr": "0", "body_only": "0", "libc": "0"}
+   ],
+   "result": {"body_only": "[-1,0]", "libc": "[-1,0]"}
+  },
+  "mk_event_libevent.c:_mk_event_add@a40496e57ec680ea": {
+   "returns": [
+    {"expr": "_mk_event_update(ctx, fd, type, events, data)", "body_only": "[-1,0]", "libc": "[-1,0]", "note": "the libevent _mk_event_update reading (a static helper of the unit)"},
+    {"expr": "-1", "body_only": "-1", "libc": "-1", "note": "ev_map allocation failed"},
+    {"expr": "-1", "body_only": "-1", "libc": "-1", "note": "event_add < 0"},
+    {"expr": "0", "body_only": "0", "libc": "0"}
+   ],
+   "result": {"body_only": "[-1,0]", "libc": "[-1,0]"}
+  },
+  "mk_event_libevent.c:_mk_event_timeout_create@74abf5da0f9439c4": {
+   "returns": [
+    {"expr": "-1", "body_only": "-1", "libc": "-1", "note": "socketpair == -1"},
+    {"expr": "-1", "body_only": "-1", "libc": "-1", "note": "ev_map allocation failed (the socketpair is not closed)"},
+    {"expr": "fd[0]", "body_only": "int", "libc": "[0,MAX]", "rests_on": ["evutil_socketpair"], "note": "event_add's and _mk_event_add's results are ignored (:369, :375): a failed registration still returns the descriptor"}
+   ],
+   "result": {"body_only": "int", "libc": "[-1,MAX]"}
+  },
+  "mk_event_libevent.c:_mk_event_channel_create@fe187ba2d7b6bcfa": {
+   "returns": [
+    {"expr": "-1", "body_only": "-1", "libc": "-1", "note": "socketpair == -1"},
+    {"expr": "ret", "body_only": "-1", "libc": "-1", "note": "libevent _mk_event_add's result when != 0 (its reading is [-1,0] from the body alone)"},
+    {"expr": "0", "body_only": "0", "libc": "0"}
+   ],
+   "result": {"body_only": "[-1,0]", "libc": "[-1,0]"}
+  }
+ }
+}

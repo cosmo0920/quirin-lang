@@ -1,0 +1,281 @@
+{
+ "stored": {
+  "lib/monkey/mk_server/mk_server.c|mk_server_lib_notify_event_loop_break|sched->signal_channel_w <= 0": {
+   "class": "wrong",
+   "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent: a write end on descriptor 0 is reported as no channel (the notification is dropped)"
+  },
+  "lib/monkey/mk_server/mk_server.c|mk_server_lib_notify_started|server->lib_ch_start[1] <= 0": {
+   "class": "wrong",
+   "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent: a start channel write end on descriptor 0 is reported as no channel"
+  },
+  "lib/monkey/mk_server/mk_server.c|mk_server_worker_loop|timeout_fd > 0": {
+   "class": "wrong",
+   "reading": "a timer created on descriptor 0 is never destroyed at MK_SCHED_SIGNAL_FREE_ALL; the -1 failure is read correctly"
+  },
+  "mk_server/mk_server.c|mk_server_lib_notify_event_loop_break|sched->signal_channel_w <= 0": {
+   "class": "wrong",
+   "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent: a write end on descriptor 0 is reported as no channel (the notification is dropped)"
+  },
+  "mk_server/mk_server.c|mk_server_lib_notify_started|server->lib_ch_start[1] <= 0": {
+   "class": "wrong",
+   "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent: a start channel write end on descriptor 0 is reported as no channel"
+  },
+  "mk_server/mk_server.c|mk_server_worker_loop|timeout_fd > 0": {
+   "class": "wrong",
+   "reading": "a timer created on descriptor 0 is never destroyed at MK_SCHED_SIGNAL_FREE_ALL; the -1 failure is read correctly"
+  },
+  "plugins/in_exec/in_exec.c|delete_exec_config|ctx->ch_manager[0] > -1": {
+   "class": "outside",
+   "reading": "a different record (the plugin context) whose ch_manager comes from flb_pipe_create, not from a Monkey creator"
+  },
+  "plugins/in_exec/in_exec.c|delete_exec_config|ctx->ch_manager[1] > -1": {
+   "class": "outside",
+   "reading": "a different record (the plugin context) whose ch_manager comes from flb_pipe_create, not from a Monkey creator"
+  },
+  "plugins/in_exec_wasi/in_exec_wasi.c|delete_exec_wasi_config|ctx->ch_manager[0] > -1": {
+   "class": "outside",
+   "reading": "a different record (the plugin context) whose ch_manager comes from flb_pipe_create, not from a Monkey creator"
+  },
+  "plugins/in_exec_wasi/in_exec_wasi.c|delete_exec_wasi_config|ctx->ch_manager[1] > -1": {
+   "class": "outside",
+   "reading": "a different record (the plugin context) whose ch_manager comes from flb_pipe_create, not from a Monkey creator"
+  },
+  "src/flb_config.c|flb_config_exit|config->ch_manager[0] > 0": {
+   "class": "wrong",
+   "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent: the manager channel (flb_engine_start) is never closed if its read end is 0"
+  },
+  "src/flb_config.c|flb_config_exit|config->ch_notif[0] > 0": {
+   "class": "wrong",
+   "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent: the library notification channel (flb_create) is never closed if its read end is 0"
+  },
+  "src/flb_config.c|flb_config_exit|config->ch_notif[1] > 0": {
+   "class": "wrong",
+   "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent: the write end is not closed if it is 0"
+  },
+  "src/flb_engine.c|flb_engine_failed|config->ch_notif[1] <= 0": {
+   "class": "wrong",
+   "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent: a write end on 0 is reported as no channel and FAILED is never sent"
+  },
+  "src/flb_engine.c|flb_engine_flush_timer_reset|config->flush_fd == -1": {
+   "class": "exact",
+   "reading": "the immediate test of the call's result (part 3)"
+  },
+  "src/flb_engine.c|flb_engine_started|config->ch_notif[1] <= 0": {
+   "class": "wrong",
+   "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent: a write end on 0 is reported as no channel and STARTED is never sent"
+  },
+  "src/flb_engine.c|flb_engine_start|config->shutdown_fd <= 0": {
+   "class": "wrong",
+   "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent: a shutdown timer on descriptor 0 is created again on the next pass (the first is leaked and stays registered)"
+  },
+  "src/flb_engine.c|flb_engine_start|config->shutdown_fd == -1": {
+   "class": "exact",
+   "reading": "the immediate test of the call's result (part 3)"
+  },
+  "src/flb_engine.c|flb_engine_start|config->shutdown_fd > 0": {
+   "class": "wrong",
+   "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent: a shutdown timer on descriptor 0 is never destroyed"
+  },
+  "src/flb_input.c|flb_input_collector_destroy|coll->fd_timer > 0": {
+   "class": "wrong",
+   "reading": "the holder's absent value is -1 (flb_input.c `coll->fd_timer = -1` at creation and pause), so the guard is not even the sentinel's: a COLLECT_TIME timer on descriptor 0 is never destroyed, and the collector holding its event is freed while the loop still holds the registration"
+  },
+  "src/flb_input.c|flb_input_instance_destroy|ins->ch_events[0] > 0": {
+   "class": "wrong",
+   "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent (the round-6 census reads this destroyer as breaking any protocol)"
+  },
+  "src/flb_input.c|flb_input_instance_destroy|ins->ch_events[1] > 0": {
+   "class": "wrong",
+   "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent (the round-6 census reads this destroyer as breaking any protocol)"
+  },
+  "src/flb_input_thread.c|input_thread_instance_destroy|thi->ch_parent_events[0] > 0": {
+   "class": "wrong",
+   "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent"
+  },
+  "src/flb_input_thread.c|input_thread_instance_destroy|thi->ch_parent_events[1] > 0": {
+   "class": "wrong",
+   "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent"
+  },
+  "src/flb_input_thread.c|input_thread_instance_destroy|thi->ch_thread_events[0] > 0": {
+   "class": "wrong",
+   "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent"
+  },
+  "src/flb_input_thread.c|input_thread_instance_destroy|thi->ch_thread_events[1] > 0": {
+   "class": "wrong",
+   "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent"
+  },
+  "src/flb_output.c|flb_output_instance_destroy|ins->ch_events[0] > 0": {
+   "class": "wrong",
+   "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent (the round-6 census reads this destroyer as breaking any protocol)"
+  },
+  "src/flb_output.c|flb_output_instance_destroy|ins->ch_events[1] > 0": {
+   "class": "wrong",
+   "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent (the round-6 census reads this destroyer as breaking any protocol)"
+  },
+  "src/flb_scheduler.c|flb_sched_destroy|sched->ch_events[0] != -1": {
+   "class": "exact",
+   "reading": "the holder's absent value is -1 (flb_sched_create stores -1 before the creation, and a failed creation writes no end)"
+  },
+  "src/flb_scheduler.c|flb_sched_timer_cb_disable|timer->timer_fd != -1": {
+   "class": "exact",
+   "reading": "the holder's absent value is -1 (stored at :724 and at timer creation)"
+  },
+  "src/stream_processor/flb_sp.c|flb_sp_window_destroy|task->window.fd > 0": {
+   "class": "wrong",
+   "reading": "the holder's absent value is the allocation's zero; descriptor 0 is a success value of the creator ([0,MAX] under the C library's result sets), which this guard reads as absent: a window timer on descriptor 0 is never closed"
+  }
+ },
+ "meaning": "Each caller site of a creator (keyed by file, enclosing function, callee, holder kind, holder and test text): the edge on which the caller treats the call as failed (`true` / `false` of the first test; `none` when untested) and a short reading. `backend` overrides the configured backend (the emscripten test builds the poll backend). The census computes each class from this edge, the test and the body-derived result set.",
+ "sites": {
+  "lib/monkey/mk_server/mk_scheduler.c|mk_sched_launch_worker_loop|mk_event_channel_create|name|ret|ret < 0": {
+   "failure_edge": "true",
+   "reading": "worker loop setup: a failed channel exits the process (exit(EXIT_FAILURE))"
+  },
+  "lib/monkey/mk_server/mk_server.c|mk_server_worker_loop|mk_event_timeout_create|name|timeout_fd|timeout_fd > 0": {
+   "failure_edge": "false",
+   "reading": "the result is never tested where it is created (:502); the first test is :585, `timeout_fd > 0` before mk_event_timeout_destroy on MK_SCHED_SIGNAL_FREE_ALL: a timer whose descriptor is 0 is treated as absent and never destroyed"
+  },
+  "lib/monkey/mk_server/monkey.c|mk_server_create|mk_event_channel_create|name|ret|ret != 0": {
+   "failure_edge": "true",
+   "reading": "library-mode channels: failure destroys the loops and frees the server"
+  },
+  "lib/monkey/test/event_timeout.c|test_timeout_tick_destroy|mk_event_timeout_create|name|fd|fd >= 0": {
+   "failure_edge": "false",
+   "reading": "Monkey test program (TEST_ASSERT); not built into Fluent Bit"
+  },
+  "lib/monkey/test/lib_server.c|run_server_test|mk_event_channel_create|name|ret|": {
+   "failure_edge": "none",
+   "reading": "Monkey test program: ret is overwritten by mk_utils_worker_spawn (:167) before any test, so a failed channel goes unnoticed and complete_ch[1] (never written on failure) is handed to the workers"
+  },
+  "lib/monkey/test/wasm/events.c|main|mk_event_channel_create|condition||mk_event_channel_create(loop, &reader, &writer, &channel) == 0": {
+   "failure_edge": "false",
+   "reading": "Monkey emscripten test: asserts success",
+   "backend": "poll"
+  },
+  "lib/monkey/test/wasm/events.c|main|mk_event_timeout_create|condition||mk_event_timeout_create(loop, 0, 0, &timer) == -1": {
+   "failure_edge": "true",
+   "reading": "Monkey emscripten test (poll backend): asserts a zero interval fails",
+   "backend": "poll"
+  },
+  "lib/monkey/test/wasm/events.c|main|mk_event_timeout_create|condition||mk_event_timeout_create(loop, 0, 1000000, &overflow) == -1": {
+   "failure_edge": "true",
+   "reading": "Monkey emscripten test: asserts the third registration overflows a size-2 loop",
+   "backend": "poll"
+  },
+  "lib/monkey/test/wasm/events.c|main|mk_event_timeout_create|condition||mk_event_timeout_create(loop, 0, 1000000000L, &timer) == -1": {
+   "failure_edge": "true",
+   "reading": "Monkey emscripten test: asserts an out-of-range nsec fails",
+   "backend": "poll"
+  },
+  "lib/monkey/test/wasm/events.c|main|mk_event_timeout_create|condition||mk_event_timeout_create(loop, 0, 20000000, &timer) >= 0": {
+   "failure_edge": "false",
+   "reading": "Monkey emscripten test: asserts success",
+   "backend": "poll"
+  },
+  "lib/monkey/test/wasm/events.c|main|mk_event_timeout_create|name|reader|reader >= 0": {
+   "failure_edge": "false",
+   "reading": "Monkey emscripten test: asserts success",
+   "backend": "poll"
+  },
+  "mk_server/mk_scheduler.c|mk_sched_launch_worker_loop|mk_event_channel_create|name|ret|ret < 0": {
+   "failure_edge": "true",
+   "reading": "worker loop setup: a failed channel exits the process (exit(EXIT_FAILURE))"
+  },
+  "mk_server/mk_server.c|mk_server_worker_loop|mk_event_timeout_create|name|timeout_fd|timeout_fd > 0": {
+   "failure_edge": "false",
+   "reading": "the result is never tested where it is created (:502); the first test is :585, `timeout_fd > 0` before mk_event_timeout_destroy on MK_SCHED_SIGNAL_FREE_ALL: a timer whose descriptor is 0 is treated as absent and never destroyed"
+  },
+  "mk_server/monkey.c|mk_server_create|mk_event_channel_create|name|ret|ret != 0": {
+   "failure_edge": "true",
+   "reading": "library-mode channels: failure destroys the loops and frees the server"
+  },
+  "src/flb_downstream_worker.c|downstream_worker_thread|mk_event_channel_create|name|ret|ret != 0": {
+   "failure_edge": "true",
+   "reading": "worker control channel: failure sets ret = -1 and signals the starter"
+  },
+  "src/flb_engine.c|flb_engine_flush_timer_reset|mk_event_timeout_create|member|config->flush_fd|config->flush_fd == -1": {
+   "failure_edge": "true",
+   "reading": "flush timer: the result is held in config->flush_fd (a member, no plain-name witness); failure retries with the fallback interval, then returns -1"
+  },
+  "src/flb_engine.c|flb_engine_start|mk_event_channel_create|name|ret|ret != 0": {
+   "failure_edge": "true",
+   "reading": "ch_manager (:1237): failure logs and returns -1"
+  },
+  "src/flb_engine.c|flb_engine_start|mk_event_channel_create|name|ret|ret == -1": {
+   "failure_edge": "true",
+   "reading": "ch_self_events (:1168) and notification_channels (:1246): failure logs and returns -1"
+  },
+  "src/flb_engine.c|flb_engine_start|mk_event_timeout_create|member|config->shutdown_fd|config->shutdown_fd == -1": {
+   "failure_edge": "true",
+   "reading": "shutdown timer: held in config->shutdown_fd; created only when `config->shutdown_fd <= 0` (:1497), a guard that reads an earlier timer on descriptor 0 as absent (a test of the stored result, not of this call)"
+  },
+  "src/flb_input.c|collector_start|mk_event_timeout_create|name|fd|fd == -1": {
+   "failure_edge": "true",
+   "reading": "COLLECT_TIME registration: failure clears running and returns -1"
+  },
+  "src/flb_input.c|flb_input_collector_resume|mk_event_timeout_create|name|fd|fd == -1": {
+   "failure_edge": "true",
+   "reading": "COLLECT_TIME resume: failure returns -1"
+  },
+  "src/flb_input.c|input_instance_channel_events_init|mk_event_channel_create|name|ret|ret != 0": {
+   "failure_edge": "true",
+   "reading": "input event channel: failure logs and returns -1"
+  },
+  "src/flb_input_thread.c|input_thread_instance_create|mk_event_channel_create|name|ret|ret == -1": {
+   "failure_edge": "true",
+   "reading": "ch_parent_events, ch_thread_events, notification_channels: failure destroys thi and returns NULL"
+  },
+  "src/flb_lib.c|flb_create|mk_event_channel_create|name|ret|ret != 0": {
+   "failure_edge": "true",
+   "reading": "library notification channel: failure stops and destroys the context"
+  },
+  "src/flb_metrics_exporter.c|flb_me_create|mk_event_timeout_create|name|fd|fd == -1": {
+   "failure_edge": "true",
+   "reading": "metrics timer: failure frees me and returns NULL"
+  },
+  "src/flb_output.c|flb_output_init_all|mk_event_channel_create|name|ret|ret != 0": {
+   "failure_edge": "true",
+   "reading": "output event channel: failure destroys the instance and returns -1"
+  },
+  "src/flb_output_thread.c|flb_output_thread_pool_create|mk_event_channel_create|name|ret|ret == -1": {
+   "failure_edge": "true",
+   "reading": "ch_parent_events and notification_channels: failure tears the thread instance down"
+  },
+  "src/flb_output_thread.c|output_thread|mk_event_channel_create|name|ret|ret == -1": {
+   "failure_edge": "true",
+   "reading": "thread-local event channel: failure clears the event loop and returns"
+  },
+  "src/flb_scheduler.c|flb_sched_create|mk_event_channel_create|name|ret|ret == -1": {
+   "failure_edge": "true",
+   "reading": "sched->ch_events: failure destroys sched and returns NULL"
+  },
+  "src/flb_scheduler.c|flb_sched_create|mk_event_timeout_create|name|fd|fd == -1": {
+   "failure_edge": "true",
+   "reading": "frame timer: failure destroys the timer, frees sched and returns NULL"
+  },
+  "src/flb_scheduler.c|flb_sched_timer_cb_create|mk_event_timeout_create|name|fd|fd == -1": {
+   "failure_edge": "true",
+   "reading": "timer callback: failure destroys the timer and returns -1"
+  },
+  "src/flb_scheduler.c|schedule_request_now|mk_event_timeout_create|name|fd|fd == -1": {
+   "failure_edge": "true",
+   "reading": "request timer: failure returns -1"
+  },
+  "src/stream_processor/flb_sp.c|flb_sp_fd_event|mk_event_timeout_create|name|fd_timeout|fd_timeout == -1": {
+   "failure_edge": "true",
+   "reading": "window timer re-arm: failure returns -1"
+  },
+  "src/stream_processor/flb_sp.c|flb_sp_task_create|mk_event_timeout_create|name|fd|fd == -1": {
+   "failure_edge": "true",
+   "reading": "window and hop timers: failure frees the task and returns NULL"
+  },
+  "test/event_timeout.c|test_timeout_tick_destroy|mk_event_timeout_create|name|fd|fd >= 0": {
+   "failure_edge": "false",
+   "reading": "Monkey test program (TEST_ASSERT); not built into Fluent Bit"
+  },
+  "test/lib_server.c|run_server_test|mk_event_channel_create|name|ret|": {
+   "failure_edge": "none",
+   "reading": "Monkey test program: ret is overwritten by mk_utils_worker_spawn (:167) before any test, so a failed channel goes unnoticed and complete_ch[1] (never written on failure) is handed to the workers"
+  }
+ }
+}
