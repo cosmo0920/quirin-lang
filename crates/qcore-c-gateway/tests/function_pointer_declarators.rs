@@ -18,7 +18,8 @@ use qcore_contract::contract_loader::load_resource_contract_sources;
 
 /// `fcoll` is the collector's shape: a function-pointer member beside the
 /// loop, the event and plain scalars. `facoll` has an array of function
-/// pointers instead, which the reader still refuses whole.
+/// pointers instead, which the lexical reader still refuses whole (rule 10k's
+/// Clang-typed actual reads it).
 const PRELUDE: &str = "\
 struct ev_loop; struct obj { int x; };
 struct fcoll { int id; struct ev_loop *evl; struct obj event; int (*cb_collect)(void *, int); long seconds; struct fcoll *next; };
@@ -168,18 +169,27 @@ fn stores_through_a_handed_formal_keep_their_base_route() {
     assert!(init.safe(), "{init:?}");
 }
 
-/// Any other parenthesised member still refuses the whole record: an array
-/// of function pointers keeps the access gate's refusal.
+/// Any other parenthesised member still refuses the whole record in the
+/// lexical reader (an array of function pointers), so the lexical recogniser
+/// admits no member read of `facoll`. Rule 10k's Clang-typed actual does
+/// admit `coll->evl`. Until card RETAINING-CALL-MINTED-NAME-ACTUALS (rule
+/// 38b) that admission left only the outer classification of rule 12t's
+/// withheld `ev_add` / `ev_del`, and the inner one kept the access gate's
+/// refusal. It now leaves both, so the cycle decides as `fcoll`'s does, and
+/// the registration alone reaches rule 12t.
 #[test]
-fn an_array_of_function_pointers_still_refuses_the_record() {
+fn an_array_of_function_pointers_is_read_through_the_typed_actual() {
     if !clang_available() {
         return;
     }
     let cycle = row(
         "void cycle_array(struct facoll *coll) { ev_add(coll->evl, &coll->event); ev_del(coll->evl, &coll->event); }",
     );
-    assert!(!cycle.safe(), "{cycle:?}");
-    assert!(cycle.refused_with(INDIRECT), "{cycle:?}");
+    assert!(cycle.safe(), "{cycle:?}");
+    let start = row("void start_array(struct facoll *coll) { ev_add(coll->evl, &coll->event); }");
+    assert!(!start.safe(), "{start:?}");
+    assert!(start.refused_with("retention-undecided"), "{start:?}");
+    assert!(!start.refused_with(INDIRECT), "{start:?}");
 }
 
 /// `flb_sched_timer_cb_create`'s and `collector_create`'s shape: a function
