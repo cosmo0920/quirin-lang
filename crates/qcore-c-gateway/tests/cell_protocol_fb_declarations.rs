@@ -404,7 +404,9 @@ fn the_production_result_test_does_not_establish_the_cells() {
             "unsupported:descriptor cell `thi->notification_channels_initialized` is not decided (descriptor-cell-protocol-broken)",
             &escapes("(thi as int).notification_channels[0] [Name(\"thi\") as int]"),
             &escapes("(thi as int).notification_channels[1] [Name(\"thi\") as int]"),
-            &escapes("(thi.notification_event as mk_event).fd [Name(\"thi.notification_event\") as mk_event]"),
+            &escapes(
+                "(thi.notification_event as mk_event).fd [Name(\"thi.notification_event\") as mk_event]",
+            ),
         ],
     );
 }
@@ -514,9 +516,17 @@ fn withheld_protocols_reading() {
     );
     let mut readings = Vec::new();
     for (label, entry, body) in [
-        ("teardown alone", "sched_teardown", SCHED_TEARDOWN.to_owned()),
+        (
+            "teardown alone",
+            "sched_teardown",
+            SCHED_TEARDOWN.to_owned(),
+        ),
         ("after the timer loop", "sched_teardown", after_loop),
-        ("engine shutdown", "shutdown_teardown", SHUTDOWN_TEARDOWN.to_owned()),
+        (
+            "engine shutdown",
+            "shutdown_teardown",
+            SHUTDOWN_TEARDOWN.to_owned(),
+        ),
     ] {
         let reading = outcome(entry, &body, true);
         eprintln!("{label}: {}", reading.0);
