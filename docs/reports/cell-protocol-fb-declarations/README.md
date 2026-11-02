@@ -296,6 +296,38 @@ runs it from the main checkout (§ reply). `<tip>` is the last code commit,
   `flb_output_instance_destroy`, `flb_config_exit`, and the thread instance's
   `ch_parent_events`/`ch_thread_events`. No protocol declares their cells.
 
+**Measured.** The integrator ran both measurements from the main checkout on
+2026-11-02.
+
+- **This card alone**, `baseline:0ac169180` → `rev:e598aff65` with
+  `--declared PREDICTION.md`, output
+  `private/measure/cell-protocol-fb-declarations-20261102T145253Z`. It
+  exited 0 with status `complete` and no failures. The declared comparison
+  is `match` on corpus, slice and system, with no delta mismatches, no
+  missing rows and no unpredicted rows. There are 0 status moves, 0 unit
+  moves and 0 unmatched rows on every route. Corpus and system have no
+  content change. The slice has four, all `Unknown` → `Unknown`:
+  - `input_thread_instance_destroy` (units 0 and 1) loses
+    `descriptor-cell-guard-undecided` (origin :197) and `unresolved
+    resource identity thi` (origin :202). It gains no leaf, as predicted.
+  - `input_thread_instance_create` and `input_thread_instance_destroy`
+    (units 0 and 1) both now list `flb_config_set_program_name`, the host
+    of the protocol, among their contract dependencies. No leaf of
+    `input_thread_instance_create` changes.
+
+  The record is [native-comparison.json](native-comparison.json) (sha256
+  `354acd049e1a1558ca7d690bb4e7fbfbe016eb2dce3dbd775513fd9c930504eb`;
+  PREDICTION.md sha256
+  `d3adc250bc0424db199ac0932dcd9a75bd44ad315d48e472bdd7e8f98994a351`).
+- **The merged round-6 tree** (this card plus CELL-PROTOCOL-CLOSE-ACTUAL),
+  `baseline:86b26e5b2` → `rev:eed10570c`, undeclared, output
+  `private/measure/cell-protocol-r6-merged-20261102T145253Z`. It exited 0
+  with status `complete`. It has 0 status moves, 0 unit moves and 0
+  unmatched rows on every route. The slice has the same four content
+  changes and no others, as stated above. The record is
+  [native-comparison-merged.json](native-comparison-merged.json) (sha256
+  `77d52fec2d5f93d529411c874eb618370e631eeec5243d08430e38d16ac275e1`).
+
 ## 6. Tests
 
 `crates/qcore-c-gateway/tests/cell_protocol_fb_declarations.rs` holds 9 tests
@@ -361,7 +393,9 @@ That run was stopped while its Rust suite was still waiting for a slot.
   38c's reached fact to actuals that name a protocol member. Then declare
   `flb_sched` and `flb_config` (§3) and measure. The expected yield is leaf
   trades at `flb_sched_destroy` :856 and `flb_engine_shutdown` :1718.
-- **`CELL-PROTOCOL-POSITIVE-SENTINEL-DESTROYERS`** (registered). The `> 0`
+- **`CELL-PROTOCOL-PER-END-GUARDS`** (amended). This card registered it as
+  `CELL-PROTOCOL-POSITIVE-SENTINEL-DESTROYERS`. The round-6 landing merged it
+  into CELL-PROTOCOL-CLOSE-ACTUAL's registration of the same ends. The `> 0`
   channels are not declarable as G05i stands.
   - Their destroyers close without restoring the sentinel and use the record
     before releasing it.
@@ -372,4 +406,5 @@ That run was stopped while its Rust suite was still waiting for a slot.
 - **Amended into `FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME`.**
   - The creators' `ret == -1` tests do not establish the cells
     (`#result == 0`).
+    The round-6 landing registered this as `CELL-GUARD-RESULT-RANGE`.
   - The §4 readings.

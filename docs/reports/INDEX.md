@@ -103,6 +103,10 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cast-formalization](cast-formalization/README.md) | CAST-FORMALIZATION: one formal cast semantics for route G |
 
+| [cell-protocol-close-actual](cell-protocol-close-actual/README.md) | CELL-PROTOCOL-CLOSE-ACTUAL |
+
+| [cell-protocol-fb-declarations](cell-protocol-fb-declarations/README.md) | CELL-PROTOCOL-FB-DECLARATIONS |
+
 | [certificate-context-binding](certificate-context-binding/README.md) | Certificate context binding |
 
 | [cfg-release](cfg-release/README.md) | CFG-RELEASE: release the projection result after its last full-record consumer |

@@ -237,6 +237,23 @@ target/release/quirin-audit --plugin-path target/release \
   --declared docs/reports/cell-protocol-close-actual/PREDICTION.md
 ```
 
+The integrator ran it from the main checkout on 2026-11-02, with output in
+`private/measure/cell-protocol-close-actual-20261102T101941Z`. It exited 0
+with status `complete` and no failures. The declared comparison is `match`
+on corpus, slice and system, with no delta mismatches, no missing rows and
+no unpredicted rows. There are 0 status moves, 0 unit moves, 0 unmatched
+rows and 0 content changes on every route. The record is
+[native-comparison.json](native-comparison.json) (sha256
+`0be29943902399a348e7aad81db4045f25c77500d0e7814a897a1dfd4352e65d`;
+PREDICTION.md sha256
+`c7a65599201a21833ccce41ab028a17d0f6cfd71621850c1024d7a65017effc3`).
+
+The merged round-6 tree `eed10570c` (this card plus
+CELL-PROTOCOL-FB-DECLARATIONS) was measured against `baseline:86b26e5b2`.
+It has 0 status moves on every route. Its only content changes are that
+card's slice rows, as it predicted. That record is in
+[CELL-PROTOCOL-FB-DECLARATIONS](../cell-protocol-fb-declarations/README.md#5-prediction-and-measurement).
+
 ## Card gate
 
 The gate ran as `python3 scripts/gate_scope.py --base 86b26e5b2 --out
