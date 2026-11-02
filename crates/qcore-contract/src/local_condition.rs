@@ -175,7 +175,7 @@ fn cell_path(ts: &[TokenKind]) -> Result<Vec<String>, String> {
 
 /// Read one `quant cell #B: TAG.CELL |-> #fresh(descriptor) when #B.GUARD OP V;`
 /// or `… |-> #same(CELL2) when …` (card MK-EVENT-CELL-CROSS-FUNCTION, grammar
-/// G05e). Total or reject.
+/// G05i). Total or reject.
 fn cell(source: &str) -> Result<CellClause, String> {
     use qcore_schemas::descriptor_cell::ProtocolGuard;
     let ts = tokens(source)?;
@@ -284,7 +284,7 @@ fn cell(source: &str) -> Result<CellClause, String> {
 }
 
 /// Group a declaration's `quant cell` clauses into one protocol per record,
-/// rejecting every disagreement (G05e).
+/// rejecting every disagreement (G05i).
 fn cell_protocols(
     clauses: Vec<CellClause>,
 ) -> Result<Vec<qcore_schemas::descriptor_cell::CellProtocol>, String> {
@@ -591,7 +591,7 @@ pub(crate) fn without_local(
         .value)
 }
 
-/// Card MK-EVENT-CELL-CROSS-FUNCTION (grammar G05e): the `quant cell` reader,
+/// Card MK-EVENT-CELL-CROSS-FUNCTION (grammar G05i): the `quant cell` reader,
 /// total or reject.
 #[cfg(test)]
 mod cell_protocol_tests {

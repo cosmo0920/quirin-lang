@@ -16,7 +16,7 @@ measured no status move on any route.
 ## What this card changes
 
 It adds the record-type cell protocol of decision B (`quant cell`, rule 38c,
-§C04.6.3, grammar G05e) and its route-G reading:
+§C04.6.3, grammar G05i) and its route-G reading:
 
 - the loader and the canonical schema;
 - the guard test that introduces a protocol record's cells on its live edge;

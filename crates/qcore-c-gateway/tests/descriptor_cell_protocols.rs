@@ -1,5 +1,5 @@
 //! Card MK-EVENT-CELL-CROSS-FUNCTION (gateway rule 38c, contract
-//! specification §C04.6.3, grammar G05e; USER DECISION 2026-11-02, verbatim:
+//! specification §C04.6.3, grammar G05i; USER DECISION 2026-11-02, verbatim:
 //! "B as recommended"): declared record-type cell protocols, read on route G
 //! under the provider's own Monkey declarations
 //! (`providers/qcore-provider-libevent/contracts/monkey/event_loop.qv`) and the

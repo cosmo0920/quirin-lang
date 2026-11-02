@@ -222,7 +222,7 @@ impl DescriptorCells {
 }
 
 /// Card **MK-EVENT-CELL-CROSS-FUNCTION** (contract spec §C04.6.3, grammar
-/// G05e, gateway rule 38c; USER DECISION 2026-11-02, verbatim: "B as
+/// G05i, gateway rule 38c; USER DECISION 2026-11-02, verbatim: "B as
 /// recommended"): the guard of a record-type cell protocol, `#B.GUARD OP V`.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]

@@ -627,6 +627,40 @@ The binder's own mode, `resource_borrowed(P)`, is the liveness part and is writt
 
 **Checked, never trusted.** The four Monkey declarations are pinned at 66910c10, 046accf6 and the slice export (`lib/monkey/mk_core/mk_event.c` byte-identical at all three). Their bodies forward to the backend through `loop->data` and a `void *` cast, which no body check reads, so the states are declared assumptions (rules 13i–13k), never withdrawn. The Lean model is `QCore.DescriptorCells`.
 
+#### C04.6.3. Declared cell protocols
+
+Card MK-EVENT-CELL-CROSS-FUNCTION (gateway rule [38c](agents/gateway.md#constraint-38c), grammar [G05i](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g05i-declared-cell-protocols); the [proposal](reports/mk-event-cell-cross-function/PROPOSAL.md) and [report](reports/mk-event-cell-cross-function/README.md)). It narrows `FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME` for descriptor cells. Under D1/D5 ("S3 declared protocols"), a record type declares the protocol its cells keep.
+
+> **USER DECISION 2026-11-02** (verbatim, relayed by the coordinator): "B as recommended".
+
+```qcore
+quant cell #s: flb_sched.ch_events[0] |-> #fresh(descriptor) when #s.ch_events[0] != -1;
+quant cell #s: flb_sched.ch_events[1] |-> #fresh(descriptor) when #s.ch_events[0] != -1;
+quant cell #s: flb_sched.event.fd |-> #same(ch_events[0]) when #s.ch_events[0] != -1;
+```
+
+**Meaning.** Whenever the guard holds, each `#fresh` cell names its own live descriptor and each `#same` cell names its target's. Otherwise no cell of the object names a live descriptor.
+
+- **The guards.** `!= -1` and `> 0` are sentinel cells, and the guard must be one of the `#fresh` cells. `== 1` is a flag member that is no cell.
+- **Where it may stand.** The clause stands in any extern declaration's contract, beside its other clauses, and adds nothing to that declaration's own contract. Like `quant registered`, it makes the host a withheld lifetime declaration.
+- **Assumption, not proof.** The protocol is a declared assumption (rule 13i, premise `P-CELL-PROTOCOL-DECLARED`), and it is published with every row that reads it. No run-wide store census checks it. Two declarations stating different protocols for one record leave the record without one.
+
+**Meaning at a body** (rule 38c).
+
+- **The test.** A test of exactly `r->GUARD OP V`, or its complement, on a name declared `struct TAG *` that the path holds no fact of, is read as follows:
+  - on its live edge it introduces the caller's identities;
+  - on the other edge it records that no cell is live.
+- **Stores.**
+  - A store never overwrites a cell that may be live.
+  - A sentinel is stored only at its dead value.
+  - A flag is stored at `1` only over live cells, and at another value only over none.
+- **Creations.** A creation into a protocol cell is admitted only where the guard was read dead or the cell is recorded. Only a `!= -1` guard is established by a creation, because descriptor 0 exists.
+- **Closes.** `close(r->CELL)` is that cell's `#stale` (decision Q3). Copied numbers are not names (Q4).
+- **Exits and calls.** At an exit, and at a call that may reach the record, a record that keeps the protocol is forwarded under it instead of `descriptor-cell-escapes`. A record that does not keep it refuses (`descriptor-cell-protocol-broken`).
+- **What is never claimed.** Nothing is `Unsafe`. An unresolved forward never decides. A forwarded cell ends only by its own close or by its holder's release.
+
+The Lean model is `QCore.DescriptorCellProtocol`.
+
 ### C04.7. Counted users
 
 Card W45-FB-RETRY-LIFETIME adds a **quantitative** clause family (C09) to vocabulary version 1: a counted reference an object holds on itself through a counter member, such as a task's `users`.

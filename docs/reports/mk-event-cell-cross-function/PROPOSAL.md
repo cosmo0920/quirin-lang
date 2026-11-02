@@ -418,7 +418,9 @@ The coordinator's reading accepts §6 as written:
 - **Q3** is yes: a close of a declared cell member is its `#stale`.
 - **Q4** is no: copied numbers are not declared.
 
-### The grammar, finalized (G05e, total or reject)
+### The grammar, finalized (G05i, total or reject)
+
+The grammar document numbers it G05i, because G05e to G05h were already taken.
 
 ```qcore
 quant cell #B: TAG.CELL |-> #fresh(descriptor) when #B.GUARD OP V;

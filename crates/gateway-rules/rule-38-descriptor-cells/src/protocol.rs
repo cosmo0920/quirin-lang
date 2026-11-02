@@ -1,6 +1,6 @@
 //! Gateway rule 38c (`docs/agents/rules/38c.md`; card
 //! MK-EVENT-CELL-CROSS-FUNCTION, contract specification §C04.6.3, grammar
-//! G05e). USER DECISION 2026-11-02 (verbatim): "B as recommended".
+//! G05i). USER DECISION 2026-11-02 (verbatim): "B as recommended".
 //!
 //! A record type's declared **cell protocol** says: whenever the guard holds,
 //! each `#fresh` cell names its own live descriptor and each `#same` cell its

@@ -914,7 +914,7 @@ fn unconverted_type(node: &serde_json::Value) -> Option<String> {
 
 // ---------------------------------------------------------------------------
 // Rule 38c (card MK-EVENT-CELL-CROSS-FUNCTION, contract spec §C04.6.3,
-// grammar G05e; USER DECISION 2026-11-02, verbatim: "B as recommended"):
+// grammar G05i; USER DECISION 2026-11-02, verbatim: "B as recommended"):
 // declared record-type cell protocols. Every hook below is the identity in an
 // environment that declares no `quant cell` clause: the parser emits no step
 // and no cell operand carries a protocol, so no path holds a fact.

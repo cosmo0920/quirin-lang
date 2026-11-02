@@ -187,7 +187,7 @@ pub enum SourceContractClauseKind {
     /// A declared lifetime footprint at a record type, checked by its reader.
     QuantRegistered,
     /// Card MK-EVENT-CELL-CROSS-FUNCTION (USER DECISION 2026-11-02, "B as
-    /// recommended"; grammar G05e, gateway rule 38c): `quant cell #B:
+    /// recommended"; grammar G05i, gateway rule 38c): `quant cell #B:
     /// TAG.CELL |-> #fresh(descriptor) when #B.GUARD OP V;`, a declared
     /// descriptor-cell protocol at a record type. Read only by the S3
     /// lifetime loader; every other consumer skips or rejects it.

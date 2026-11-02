@@ -4585,6 +4585,48 @@ text. Current source discharge for active prerequisites is the exact guarded
 named-entry-premise subset; other active obligations remain Unknown. These
 local contexts are distinct from G05g's runtime/static outer scenarios.
 
+## G05i. Declared cell protocols
+
+Card MK-EVENT-CELL-CROSS-FUNCTION (USER DECISION 2026-11-02, verbatim: "B as
+recommended"), contract specification
+[C04.6.3](QCORE_CONTRACT_SPEC_r0_3.md#c0463-declared-cell-protocols), gateway
+rule [38c](agents/gateway.md#constraint-38c). One more `resource_clause`
+alternative, read by `crates/qcore-contract/src/local_condition.rs` (`cell`,
+`cell_protocols`):
+
+```ebnf
+cell_clause = "quant", "cell", "#", IDENT, ":", IDENT, ".", cell_path, MAPS_TO,
+              ( "#", "fresh", "(", "descriptor", ")" | "#", "same", "(", cell_path, ")" ),
+              "when", "#", IDENT, ".", cell_path, cell_guard, ";" ;
+cell_path   = cell_segment, { ".", cell_segment } ;
+cell_segment = IDENT, [ "[", DECIMAL, "]" ] ;      (* canonical: no leading zero *)
+cell_guard  = "!=", "-", "1" | ">", "0" | "==", "1" ;
+```
+
+The structural parser (G01) reads `quant cell` as its own clause kind
+(`SourceContractClauseKind::QuantCell`). Before this card it was a parse error,
+so no previously accepted text changes meaning.
+
+Static conditions. Each one rejects the whole module (`quant-cell-*`):
+
+- **Binder.** The binder is no reserved `#` word, and one record uses one
+  binder.
+- **Guard.** The guard's binder is the clause's own. Every clause of a record
+  states the same guard.
+- **Kind.** `#fresh` takes exactly `descriptor`.
+- **Cells.** Each cell is stated once. At least one cell is `#fresh`. A
+  `#same` target is a `#fresh` cell of the same record.
+- **Guard and cells.**
+  - A `!= -1` or `> 0` guard is a `#fresh` cell.
+  - A `== 1` guard is no cell.
+- **Size.** A path has at most 64 segments.
+
+The clauses of one declaration load to one canonical `CellProtocol` per record
+(`LoopLifetimeContract::cells`, omitted when empty). The host becomes a
+withheld lifetime declaration, as with G05h's registered clauses. Across
+declarations, `ResourceContracts::cell_protocols` keeps a record's protocol
+only when every declaration states the same one.
+
 ## G06. Observation predicate grammar
 
 ```ebnf
