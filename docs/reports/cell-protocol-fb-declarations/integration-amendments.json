@@ -1,0 +1,38 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "CELL-PROTOCOL-FB-DECLARATIONS",
+  "base": "86b26e5b2",
+  "measured_tip": "e598aff65",
+  "increment_paragraph": "**CELL-PROTOCOL-FB-DECLARATIONS** (gateway rule 38c, contract specification C04.6.3, grammar G05i; USER DECISION 2026-11-02, verbatim: \"B as recommended\"): the first production `quant cell` declaration, `struct flb_input_thread_instance`'s notification channel (`notification_channels_initialized == 1` over `notification_channels[0..1]`, `notification_event.fd` `#same`), a declared assumption hosted on `flb_config_set_program_name` in `fluent_bit/teardown_destroy.qv` (called and defined by no audited unit; pinned at 66910c10, 046accf6 and 34155955; inventory lock one declaration, seven clauses). A reproducible store census (`census/census.py --check`, bound to each tree's digest, 58 annotated non-read sites) finds the flag protocol and `flb_sched`'s `ch_events[0] != -1` and `flb_config`'s flag protocol kept by every store, and the `> 0` channels of the input/output instances, the thread instance and the config broken by their destroyers (closed without restoring the sentinel, record used before its release; G05i also states one guard per record). `flb_sched` and `flb_config` are withheld: rule 38c's host gives a record a fact at any cell-bearing call with an actual rooted at it (`sched->evl`, `config->evl`), so their destroyers' guard tests are not read and would gain wrong `descriptor-cell-protocol-broken` refusals (follow-up CELL-PROTOCOL-NONCELL-ACTUAL-REACHES-RECORD). Declared prediction `none` on corpus, system and slice; the slice's `input_thread_instance_destroy` (two units) trades its :197 guard leaf and one identity leaf, staying Unknown. The census also reads C2's failed-start path (calloc'd zeros reach `mk_event_channel_destroy`, closing descriptor 0 twice under epoll) and `flb_config_exit`'s double close of the manager read end, as source readings only. Fixtures `tests/cell_protocol_fb_declarations.rs` (9, one ignored record of the withheld reading); corpus loader counts 498 -> 499 v1, 108 -> 109 retaining. Report: [docs/reports/cell-protocol-fb-declarations/README.md](../../reports/cell-protocol-fb-declarations/README.md).",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "CELL-PROTOCOL-FB-DECLARATIONS",
+      "operation": "retire",
+      "why": "DISCHARGED by CELL-PROTOCOL-FB-DECLARATIONS (docs/reports/cell-protocol-fb-declarations/README.md): the store census of every candidate at 66910c10, 046accf6 and 34155955 (census/census.py --check, digest-bound), the declaration of the one protocol the census keeps and rule 38c reads correctly (flb_input_thread_instance's notification flag, host flb_config_set_program_name, pinned, lock diff reviewed), fixtures for the forwarded, broken and unprotocolled readings, and the declared measurement (prediction none on every route; input_thread_instance_destroy trades its :197 guard leaf). flb_sched and flb_config, kept by every store, move with their declaration text to CELL-PROTOCOL-NONCELL-ACTUAL-REACHES-RECORD; the > 0 channels, broken by their destroyers, to CELL-PROTOCOL-POSITIVE-SENTINEL-DESTROYERS.",
+      "source": "docs/reports/cell-protocol-fb-declarations/README.md"
+    },
+    {
+      "id": "CELL-PROTOCOL-NONCELL-ACTUAL-REACHES-RECORD",
+      "operation": "register",
+      "title": "A cell-bearing call over a protocol record's non-protocol member gives the record a fact",
+      "text": "Registered by CELL-PROTOCOL-FB-DECLARATIONS. Rule 38c's host (legacy_descriptor_cells.rs::apply, operand_protocols) gives a protocol record a reached fact (touched, guard unknown) at every cell-bearing call whose actual is rooted at it, including actuals that name no protocol member (`mk_event_timeout_destroy(sched->evl, &timer->event)` in flb_sched_destroy's timer loop; C2's `mk_event_channel_destroy(config->evl, config->ch_self_events...)` in flb_engine_shutdown). The later guard test is then not read, and a record that keeps its protocol is reported broken (`descriptor-cell-protocol-broken`, `-overwritten`, `-escapes`; tests/cell_protocol_fb_declarations.rs `withheld_protocols_reading`, ignored). That is why the census-kept protocols of flb_sched (`ch_events[0] != -1`, ch_events[0..1], event.fd #same) and flb_config (`notification_channels_initialized == 1`, notification_channels[0..1], notification_event.fd #same) are not declared; their text is in the report's section 3. DISCHARGE: a protocol record gains a fact at a cell-bearing call only through an actual naming one of its protocol members (with Lean parity), the two declarations, fixtures, and a declared measurement (expected: leaf trades at flb_sched_destroy :856 and flb_engine_shutdown :1718, no status move).",
+      "source": "docs/reports/cell-protocol-fb-declarations/README.md",
+      "recorded_by": "CELL-PROTOCOL-FB-DECLARATIONS"
+    },
+    {
+      "id": "CELL-PROTOCOL-POSITIVE-SENTINEL-DESTROYERS",
+      "operation": "register",
+      "title": "The `> 0` channel records are not declarable: their destroyers close without restoring the sentinel",
+      "text": "Registered by CELL-PROTOCOL-FB-DECLARATIONS. flb_input_instance_destroy (flb_input.c:1311-1316) and flb_output_instance_destroy (flb_output.c:615-620) close `ch_events[0..1]` under `> 0`, input_thread_instance_destroy closes `ch_parent_events`/`ch_thread_events` (:210-222) and flb_config_exit closes `ch_manager`/`ch_notif` (flb_config.c:607-630), each without restoring the sentinel and each using the record before releasing it, so the claim `guard > 0 iff the cells are live` is false in a reachable state; no creation establishes `> 0` (descriptor 0 exists); and G05i states one guard per record, so the thread instance and the config could carry none beside their flag protocols. DISCHARGE: a decided reading in which the holder's release ends a protocol (and several protocols per record), or an upstream sentinel reset, then the declarations with their census and a declared measurement.",
+      "source": "docs/reports/cell-protocol-fb-declarations/README.md",
+      "recorded_by": "CELL-PROTOCOL-FB-DECLARATIONS"
+    },
+    {
+      "id": "FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME",
+      "operation": "amend",
+      "text": "AMENDED (CELL-PROTOCOL-FB-DECLARATIONS, 2026-11-02): the first production cell protocol is declared (flb_input_thread_instance's notification flag); the production creators test the channel creation as `ret == -1` (flb_input_thread.c:291, flb_engine.c:1252, flb_scheduler.c:798) while the Monkey declaration states the cells under `#result == 0`, so a creator over a resolved record still does not establish them; source readings, not findings: C2's failed-start path (config->evl set, a return before the ch_self_events creation, then flb_engine_shutdown's `if (config->evl)` destroy over calloc's zeros, event_thread_init not MK_EVENT_ZERO'd) closes descriptor 0 twice under epoll, and flb_config_exit closes the manager channel's read end twice (ch_event.fd, then ch_manager[0]).",
+      "source": "docs/reports/cell-protocol-fb-declarations/README.md"
+    }
+  ]
+}
