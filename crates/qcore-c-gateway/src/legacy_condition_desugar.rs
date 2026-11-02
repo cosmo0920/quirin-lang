@@ -1406,44 +1406,8 @@ impl CfgBuilder {
         then_entry: LegacyNodeId,
         else_entry: LegacyNodeId,
     ) -> LegacyNodeId {
-        self.compile_planned_if_with_test(plan, line, then_entry, else_entry, None)
-    }
-
-    /// Card MK-EVENT-CELL-CROSS-FUNCTION (rule 38c): as
-    /// [`Self::compile_planned_if`], with a guard test read on the one plan
-    /// node that branches to both exits (none when there is not exactly one).
-    pub(super) fn compile_planned_if_with_test(
-        &mut self,
-        plan: &ConditionPlan,
-        line: usize,
-        then_entry: LegacyNodeId,
-        else_entry: LegacyNodeId,
-        test: Option<&super::descriptor_cells_route::ProtocolStep>,
-    ) -> LegacyNodeId {
         let ids = self.allocate_plan(plan, line);
         self.connect_plan(plan, &ids, &[then_entry], Some(else_entry), false);
-        if let Some(test) = test {
-            let deciding = plan
-                .nodes
-                .iter()
-                .enumerate()
-                .filter(|(_, node)| {
-                    node.successors.iter().any(|t| matches!(t, Target::True))
-                        || node.successors.iter().any(|t| matches!(t, Target::False))
-                })
-                .collect::<Vec<_>>();
-            if let [(index, node)] = deciding.as_slice() {
-                match node.successors.as_slice() {
-                    [Target::True, Target::False] => {
-                        self.cell_tests.insert(ids[*index], test.clone());
-                    }
-                    [Target::False, Target::True] => {
-                        self.cell_tests.insert(ids[*index], test.flipped());
-                    }
-                    _ => {}
-                }
-            }
-        }
         ids[plan.entry]
     }
 

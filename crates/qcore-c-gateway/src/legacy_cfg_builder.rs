@@ -163,13 +163,37 @@ impl CfgBuilder {
                 // Card W44-BRANCH-CONDITION-CALLS: present only where the arm
                 // below would have pushed the refusal.
                 if let Some(plan) = condition_plan {
-                    return self.compile_planned_if_with_test(
-                        plan,
-                        *line,
-                        then_entry,
-                        else_entry,
-                        cell_test.as_deref(),
-                    );
+                    // The plan's nodes are pushed in order from here.
+                    let first = self.nodes.len();
+                    let entry = self.compile_planned_if(plan, *line, then_entry, else_entry);
+                    // Card MK-EVENT-CELL-CROSS-FUNCTION (rule 38c): a guard
+                    // test is read on the plan's one node that branches to
+                    // both exits (none when there is not exactly one).
+                    if let Some(step) = cell_test {
+                        use condition_desugar::Target;
+                        let deciding = plan
+                            .nodes
+                            .iter()
+                            .enumerate()
+                            .filter(|(_, node)| {
+                                node.successors
+                                    .iter()
+                                    .any(|t| matches!(t, Target::True | Target::False))
+                            })
+                            .collect::<Vec<_>>();
+                        if let [(index, node)] = deciding.as_slice() {
+                            match node.successors.as_slice() {
+                                [Target::True, Target::False] => {
+                                    self.cell_tests.insert(first + index, (**step).clone());
+                                }
+                                [Target::False, Target::True] => {
+                                    self.cell_tests.insert(first + index, step.flipped());
+                                }
+                                _ => {}
+                            }
+                        }
+                    }
+                    return entry;
                 }
                 let instruction = if let Some((base, index, true_is_null)) = element_condition {
                     // W43-INDEXED-RESOURCE-COLLECTIONS: the condition was
