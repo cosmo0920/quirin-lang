@@ -1,0 +1,295 @@
+{
+ "schema": "cell-protocol-store-annotations/1",
+ "sites": [
+  {
+   "key": "flb_config|src/flb_config.c|flb_config_init|address|ch_event|MK_EVENT_ZERO(&config->ch_event);",
+   "keeps": "outside",
+   "reason": "MK_EVENT_ZERO of the manager channel's event (not declared)"
+  },
+  {
+   "key": "flb_config|src/flb_config.c|flb_config_init|alloc|<record>|config = flb_calloc(1, sizeof(struct flb_config));",
+   "keeps": "keeps",
+   "reason": "flb_calloc: the flag is 0 (dead), no cell holds an identity"
+  },
+  {
+   "key": "flb_config|src/flb_engine.c|flb_engine_failed|store|ch_notif[1]|config->ch_notif[1] = -1;",
+   "keeps": "outside",
+   "reason": "the library notification channel (C10, `> 0`): not declared (one guard per record)"
+  },
+  {
+   "key": "flb_config|src/flb_engine.c|flb_engine_start|address|ch_self_events[0]|&config->ch_self_events[0],",
+   "keeps": "outside",
+   "reason": "the engine thread channel (C2): no sentinel or flag guards its destroy (`if (config->evl)`), so no protocol states it"
+  },
+  {
+   "key": "flb_config|src/flb_engine.c|flb_engine_start|address|ch_self_events[1]|&config->ch_self_events[1],",
+   "keeps": "outside",
+   "reason": "the engine thread channel (C2): no sentinel or flag guards its destroy (`if (config->evl)`), so no protocol states it"
+  },
+  {
+   "key": "flb_config|src/flb_engine.c|flb_engine_start|address|event_thread_init|&config->event_thread_init);",
+   "keeps": "outside",
+   "reason": "the engine thread channel (C2): no sentinel or flag guards its destroy (`if (config->evl)`), so no protocol states it"
+  },
+  {
+   "key": "flb_config|src/flb_engine.c|flb_engine_start|store|event_thread_init.type|config->event_thread_init.type = FLB_ENGINE_EV_THREAD_ENGINE;",
+   "keeps": "outside",
+   "reason": "C2's event fields, no cell"
+  },
+  {
+   "key": "flb_config|src/flb_engine.c|flb_engine_start|store|event_thread_init.priority|config->event_thread_init.priority = FLB_ENGINE_PRIORITY_THREAD;",
+   "keeps": "outside",
+   "reason": "C2's event fields, no cell"
+  },
+  {
+   "key": "flb_config|src/flb_engine.c|flb_engine_start|address|ch_manager[0]|&config->ch_manager[0],",
+   "keeps": "outside",
+   "reason": "the manager channel (C3, `> 0`): not declared (one guard per record; flb_config_exit closes it at :607-621 without restoring the sentinel, and closes ch_event.fd and ch_manager[0], one descriptor, twice)"
+  },
+  {
+   "key": "flb_config|src/flb_engine.c|flb_engine_start|address|ch_manager[1]|&config->ch_manager[1],",
+   "keeps": "outside",
+   "reason": "the manager channel (C3, `> 0`): not declared (one guard per record; flb_config_exit closes it at :607-621 without restoring the sentinel, and closes ch_event.fd and ch_manager[0], one descriptor, twice)"
+  },
+  {
+   "key": "flb_config|src/flb_engine.c|flb_engine_start|address|ch_event|&config->ch_event);",
+   "keeps": "outside",
+   "reason": "the manager channel (C3, `> 0`): not declared (one guard per record; flb_config_exit closes it at :607-621 without restoring the sentinel, and closes ch_event.fd and ch_manager[0], one descriptor, twice)"
+  },
+  {
+   "key": "flb_config|src/flb_engine.c|flb_engine_start|address|notification_channels[0]|&config->notification_channels[0],",
+   "keeps": "keeps",
+   "reason": "the creation runs with the flag 0 (nothing else stores it before; flb_engine_start creates the channel once per config); on success :1256 stores the flag before any call; on failure it returns -1 with the flag 0 and no end written"
+  },
+  {
+   "key": "flb_config|src/flb_engine.c|flb_engine_start|address|notification_channels[1]|&config->notification_channels[1],",
+   "keeps": "keeps",
+   "reason": "the write end of the same creation"
+  },
+  {
+   "key": "flb_config|src/flb_engine.c|flb_engine_start|address|notification_event|&config->notification_event);",
+   "keeps": "keeps",
+   "reason": "the creation's event"
+  },
+  {
+   "key": "flb_config|src/flb_engine.c|flb_engine_start|store|notification_channels_initialized|config->notification_channels_initialized = FLB_TRUE;",
+   "keeps": "keeps",
+   "reason": "FLB_TRUE (1) right after the successful creation: the flag says live over live cells"
+  },
+  {
+   "key": "flb_config|src/flb_engine.c|flb_engine_start|store|notification_event.type|config->notification_event.type = FLB_ENGINE_EV_NOTIFICATION;",
+   "keeps": "keeps",
+   "reason": "the event's type, no cell"
+  },
+  {
+   "key": "flb_config|src/flb_engine.c|flb_engine_shutdown|address|event_thread_init|&config->event_thread_init);",
+   "keeps": "outside",
+   "reason": "C2's destroy under `if (config->evl)` alone (not declared; see the report on the failed-start path)"
+  },
+  {
+   "key": "flb_config|src/flb_engine.c|flb_engine_shutdown|address|notification_event|&config->notification_event);",
+   "keeps": "keeps",
+   "reason": "mk_event_channel_destroy under the flag: both ends close"
+  },
+  {
+   "key": "flb_config|src/flb_engine.c|flb_engine_shutdown|store|notification_channels_initialized|config->notification_channels_initialized = FLB_FALSE;",
+   "keeps": "keeps",
+   "reason": "FLB_FALSE (0) after the close; a second flb_engine_shutdown reads the flag dead"
+  },
+  {
+   "key": "flb_input_instance|src/flb_input.c|input_instance_channel_events_init|address|ch_events[0]|&ins->ch_events[0],",
+   "keeps": "outside",
+   "reason": "`flb_input_instance` is not declared: flb_input_instance_destroy closes both ends under `ch_events[K] > 0` without restoring the sentinel and keeps using the record before releasing it, so the guard says live over closed descriptors (and no creation establishes `> 0`, descriptor 0 existing)"
+  },
+  {
+   "key": "flb_input_instance|src/flb_input.c|input_instance_channel_events_init|address|ch_events[1]|&ins->ch_events[1],",
+   "keeps": "outside",
+   "reason": "`flb_input_instance` is not declared: flb_input_instance_destroy closes both ends under `ch_events[K] > 0` without restoring the sentinel and keeps using the record before releasing it, so the guard says live over closed descriptors (and no creation establishes `> 0`, descriptor 0 existing)"
+  },
+  {
+   "key": "flb_input_instance|src/flb_input.c|input_instance_channel_events_init|store|event.type|ins->event.type = FLB_ENGINE_EV_INPUT;",
+   "keeps": "outside",
+   "reason": "`flb_input_instance` is not declared: flb_input_instance_destroy closes both ends under `ch_events[K] > 0` without restoring the sentinel and keeps using the record before releasing it, so the guard says live over closed descriptors (and no creation establishes `> 0`, descriptor 0 existing)"
+  },
+  {
+   "key": "flb_input_instance|src/flb_input.c|input_instance_channel_events_init|address|event|ret = mk_event_channel_create(evl,",
+   "keeps": "outside",
+   "reason": "`flb_input_instance` is not declared: flb_input_instance_destroy closes both ends under `ch_events[K] > 0` without restoring the sentinel and keeps using the record before releasing it, so the guard says live over closed descriptors (and no creation establishes `> 0`, descriptor 0 existing)"
+  },
+  {
+   "key": "flb_input_instance|src/flb_input.c|flb_input_new|alloc|<record>|instance = flb_calloc(1, sizeof(struct flb_input_instance));",
+   "keeps": "outside",
+   "reason": "`flb_input_instance` is not declared: flb_input_instance_destroy closes both ends under `ch_events[K] > 0` without restoring the sentinel and keeps using the record before releasing it, so the guard says live over closed descriptors (and no creation establishes `> 0`, descriptor 0 existing)"
+  },
+  {
+   "key": "flb_input_thread_instance|src/flb_input_thread.c|input_thread_instance_destroy|address|notification_event|&thi->notification_event);",
+   "keeps": "keeps",
+   "reason": "mk_event_channel_destroy under the flag: both ends close"
+  },
+  {
+   "key": "flb_input_thread_instance|src/flb_input_thread.c|input_thread_instance_destroy|store|notification_channels_initialized|thi->notification_channels_initialized = FLB_FALSE;",
+   "keeps": "keeps",
+   "reason": "FLB_FALSE (0) after the close: the flag says dead over closed cells"
+  },
+  {
+   "key": "flb_input_thread_instance|src/flb_input_thread.c|input_thread_instance_create|address|ch_parent_events[0]|&thi->ch_parent_events[0],",
+   "keeps": "outside",
+   "reason": "a `> 0` channel of the record: not declared (G05i states one guard per record, and input_thread_instance_destroy closes both ends at :210-222 without restoring the sentinel)"
+  },
+  {
+   "key": "flb_input_thread_instance|src/flb_input_thread.c|input_thread_instance_create|address|ch_parent_events[1]|&thi->ch_parent_events[1],",
+   "keeps": "outside",
+   "reason": "a `> 0` channel of the record: not declared (G05i states one guard per record, and input_thread_instance_destroy closes both ends at :210-222 without restoring the sentinel)"
+  },
+  {
+   "key": "flb_input_thread_instance|src/flb_input_thread.c|input_thread_instance_create|address|event|&thi->event);",
+   "keeps": "outside",
+   "reason": "a `> 0` channel of the record: not declared (G05i states one guard per record, and input_thread_instance_destroy closes both ends at :210-222 without restoring the sentinel)"
+  },
+  {
+   "key": "flb_input_thread_instance|src/flb_input_thread.c|input_thread_instance_create|store|event.type|thi->event.type = FLB_ENGINE_EV_INPUT;",
+   "keeps": "outside",
+   "reason": "the type of an undeclared channel's event, no cell"
+  },
+  {
+   "key": "flb_input_thread_instance|src/flb_input_thread.c|input_thread_instance_create|address|ch_thread_events[0]|&thi->ch_thread_events[0],",
+   "keeps": "outside",
+   "reason": "a `> 0` channel of the record: not declared (G05i states one guard per record, and input_thread_instance_destroy closes both ends at :210-222 without restoring the sentinel)"
+  },
+  {
+   "key": "flb_input_thread_instance|src/flb_input_thread.c|input_thread_instance_create|address|ch_thread_events[1]|&thi->ch_thread_events[1],",
+   "keeps": "outside",
+   "reason": "a `> 0` channel of the record: not declared (G05i states one guard per record, and input_thread_instance_destroy closes both ends at :210-222 without restoring the sentinel)"
+  },
+  {
+   "key": "flb_input_thread_instance|src/flb_input_thread.c|input_thread_instance_create|address|event_local|&thi->event_local);",
+   "keeps": "outside",
+   "reason": "a `> 0` channel of the record: not declared (G05i states one guard per record, and input_thread_instance_destroy closes both ends at :210-222 without restoring the sentinel)"
+  },
+  {
+   "key": "flb_input_thread_instance|src/flb_input_thread.c|input_thread_instance_create|store|event_local.type|thi->event_local.type = FLB_ENGINE_EV_THREAD_INPUT;",
+   "keeps": "outside",
+   "reason": "the type of an undeclared channel's event, no cell"
+  },
+  {
+   "key": "flb_input_thread_instance|src/flb_input_thread.c|input_thread_instance_create|address|notification_channels[0]|&thi->notification_channels[0],",
+   "keeps": "keeps",
+   "reason": "the creation runs with the flag still 0 from flb_calloc (every earlier failure arm destroys and returns); on success the cells are live and :300 stores the flag; on failure input_thread_instance_destroy reads the flag dead and no end was written"
+  },
+  {
+   "key": "flb_input_thread_instance|src/flb_input_thread.c|input_thread_instance_create|address|notification_channels[1]|&thi->notification_channels[1],",
+   "keeps": "keeps",
+   "reason": "the write end of the same creation"
+  },
+  {
+   "key": "flb_input_thread_instance|src/flb_input_thread.c|input_thread_instance_create|address|notification_event|&thi->notification_event);",
+   "keeps": "keeps",
+   "reason": "the creation's event: event.fd names the read end on success"
+  },
+  {
+   "key": "flb_input_thread_instance|src/flb_input_thread.c|input_thread_instance_create|store|notification_channels_initialized|thi->notification_channels_initialized = FLB_TRUE;",
+   "keeps": "keeps",
+   "reason": "FLB_TRUE (1) right after the successful creation: the flag says live over live cells"
+  },
+  {
+   "key": "flb_input_thread_instance|src/flb_input_thread.c|input_thread_instance_create|store|notification_event.type|thi->notification_event.type = FLB_ENGINE_EV_NOTIFICATION;",
+   "keeps": "keeps",
+   "reason": "the event's type, no cell"
+  },
+  {
+   "key": "flb_input_thread_instance|src/flb_input_thread.c|input_thread_instance_create|alloc|<record>|thi = flb_calloc(1, sizeof(struct flb_input_thread_instance));",
+   "keeps": "keeps",
+   "reason": "flb_calloc: the flag is 0 (dead) and no cell holds an identity of the record"
+  },
+  {
+   "key": "flb_config|src/flb_lib.c|flb_create|address|ch_notif[0]|&config->ch_notif[0],",
+   "keeps": "outside",
+   "reason": "the library notification channel (C10): not declared"
+  },
+  {
+   "key": "flb_config|src/flb_lib.c|flb_create|address|ch_notif[1]|&config->ch_notif[1],",
+   "keeps": "outside",
+   "reason": "the library notification channel (C10): not declared"
+  },
+  {
+   "key": "flb_output_instance|src/flb_output.c|flb_output_init_all|address|ch_events[0]|&ins->ch_events[0],",
+   "keeps": "outside",
+   "reason": "`flb_output_instance` is not declared: flb_output_instance_destroy closes both ends under `ch_events[K] > 0` without restoring the sentinel and keeps using the record before releasing it, so the guard says live over closed descriptors (and no creation establishes `> 0`, descriptor 0 existing)"
+  },
+  {
+   "key": "flb_output_instance|src/flb_output.c|flb_output_init_all|address|ch_events[1]|&ins->ch_events[1],",
+   "keeps": "outside",
+   "reason": "`flb_output_instance` is not declared: flb_output_instance_destroy closes both ends under `ch_events[K] > 0` without restoring the sentinel and keeps using the record before releasing it, so the guard says live over closed descriptors (and no creation establishes `> 0`, descriptor 0 existing)"
+  },
+  {
+   "key": "flb_output_instance|src/flb_output.c|flb_output_init_all|store|event.type|ins->event.type = FLB_ENGINE_EV_OUTPUT;",
+   "keeps": "outside",
+   "reason": "`flb_output_instance` is not declared: flb_output_instance_destroy closes both ends under `ch_events[K] > 0` without restoring the sentinel and keeps using the record before releasing it, so the guard says live over closed descriptors (and no creation establishes `> 0`, descriptor 0 existing)"
+  },
+  {
+   "key": "flb_output_instance|src/flb_output.c|flb_output_init_all|address|event|ret = mk_event_channel_create(config->evl,",
+   "keeps": "outside",
+   "reason": "`flb_output_instance` is not declared: flb_output_instance_destroy closes both ends under `ch_events[K] > 0` without restoring the sentinel and keeps using the record before releasing it, so the guard says live over closed descriptors (and no creation establishes `> 0`, descriptor 0 existing)"
+  },
+  {
+   "key": "flb_output_instance|src/flb_output.c|flb_output_new|alloc|<record>|instance = flb_calloc(1, sizeof(struct flb_output_instance));",
+   "keeps": "outside",
+   "reason": "`flb_output_instance` is not declared: flb_output_instance_destroy closes both ends under `ch_events[K] > 0` without restoring the sentinel and keeps using the record before releasing it, so the guard says live over closed descriptors (and no creation establishes `> 0`, descriptor 0 existing)"
+  },
+  {
+   "key": "flb_sched|src/flb_scheduler.c|flb_sched_create|store|ch_events[0]|sched->ch_events[0] = -1;",
+   "keeps": "keeps",
+   "reason": "the dead value -1: guard dead, no cell live"
+  },
+  {
+   "key": "flb_sched|src/flb_scheduler.c|flb_sched_create|store|ch_events[1]|sched->ch_events[1] = -1;",
+   "keeps": "keeps",
+   "reason": "the dead value -1 of a cell: no cell live"
+  },
+  {
+   "key": "flb_sched|src/flb_scheduler.c|flb_sched_create|address|event|MK_EVENT_ZERO(&sched->event);",
+   "keeps": "keeps",
+   "reason": "MK_EVENT_ZERO: event.fd = -1 (MK_EVENT_INIT(e, -1, ...)), no cell live"
+  },
+  {
+   "key": "flb_sched|src/flb_scheduler.c|flb_sched_create|address|ch_events[0]|&sched->ch_events[0],",
+   "keeps": "keeps",
+   "reason": "mk_event_channel_create over a dead record (both ends -1): on success the two ends are live and event.fd names the read end (backend: event->fd = fd[0]; *r_fd = fd[0]); on failure no end is written (pipe failure returns first; a failed registration closes both and returns before *r_fd/*w_fd), so the guard stays -1 and event.fd holds at most a closed number"
+  },
+  {
+   "key": "flb_sched|src/flb_scheduler.c|flb_sched_create|address|ch_events[1]|&sched->ch_events[1],",
+   "keeps": "keeps",
+   "reason": "the write end of the same creation (see ch_events[0])"
+  },
+  {
+   "key": "flb_sched|src/flb_scheduler.c|flb_sched_create|address|event|&sched->event);",
+   "keeps": "keeps",
+   "reason": "the creation's event: event.fd names the read end on success"
+  },
+  {
+   "key": "flb_sched|src/flb_scheduler.c|flb_sched_create|store|event.type|sched->event.type = FLB_ENGINE_EV_SCHED_CORO;",
+   "keeps": "keeps",
+   "reason": "the event's type, no cell"
+  },
+  {
+   "key": "flb_sched|src/flb_scheduler.c|flb_sched_destroy|address|event|&sched->event);",
+   "keeps": "keeps",
+   "reason": "mk_event_channel_destroy under `sched->ch_events[0] != -1`: the protocol makes event.fd equal the read end, so the backend's `event->fd != r_fd` early return is not taken and both ends close"
+  },
+  {
+   "key": "flb_sched|src/flb_scheduler.c|flb_sched_destroy|store|ch_events[0]|sched->ch_events[0] = -1;",
+   "keeps": "keeps",
+   "reason": "-1 after the close: guard dead over closed cells"
+  },
+  {
+   "key": "flb_sched|src/flb_scheduler.c|flb_sched_destroy|store|ch_events[1]|sched->ch_events[1] = -1;",
+   "keeps": "keeps",
+   "reason": "-1 after the close: no cell live"
+  },
+  {
+   "key": "flb_sched|src/flb_scheduler.c|flb_sched_create|alloc|<record>|sched = flb_calloc(1, sizeof(struct flb_sched));",
+   "keeps": "keeps",
+   "reason": "flb_calloc: the zero bytes make the guard say live with no cell, but the pointer is still local and the two -1 stores at the next statements but two (:754-755) restore the dead reading before any call or read of the record; no other code can observe the window"
+  }
+ ]
+}
