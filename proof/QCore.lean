@@ -338,6 +338,7 @@ import QCore.ResourceKinds
 import QCore.ResultConstructorSwitch
 import QCore.ResultConstructors
 import QCore.RetainedBy
+import QCore.RetainingCallMintedName
 import QCore.RetentionGuard
 import QCore.RetentionPath
 import QCore.ReturnCallActuals

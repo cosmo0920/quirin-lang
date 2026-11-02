@@ -9318,6 +9318,11 @@ safety claim and no validation of the detach representation premise.
     Rule 38 then decides the cell. With `38` in `QCORE_GATEWAY_RULES_OFF`,
     an admitted element's call refuses as every cell call does.
 
+    **Amended by rule 38b** (card RETAINING-CALL-MINTED-NAME-ACTUALS): part
+    (2), the minted-name match, now applies at every withheld declaration's
+    `Borrowed` position, not only at a cell-bearing one. Part (1), the
+    element, stays cell-bearing.
+
     **Do not** admit an element at a declaration that is not cell-bearing, or
     accept a non-canonical index. Rule 38 keys the index as spelled, so `010`
     and `8` would be two keys of one slot. Do not read an element with a
@@ -9331,5 +9336,81 @@ safety claim and no validation of the detach representation premise.
 
     The Lean model is `QCore.CellArraySlots`
     ([report](../reports/mk-event-cell-array-slots/README.md)).
+
+<a id="constraint-38b"></a>
+
+38b. **A withheld call's admitted actuals leave the gate in both of rule 12t's
+    classifications.** Card RETAINING-CALL-MINTED-NAME-ACTUALS (discharging
+    the follow-up of that name, registered by MK-EVENT-CELL-ARRAY-SLOTS). The
+    code is in `legacy_call_argument_access.rs` (`minted_admission`,
+    `AdmittedArgument::matched`, `minted_positions_borrowed`).
+
+    Rule 12t classifies a withheld call a second time, under
+    `qcore_retained__<callee>`. W44-INDIRECT-CALL-ARGUMENT-ACCESS's probe
+    keyed its admitted actuals by the plain callee. Rule 38a matched the
+    minted name only at a cell-bearing declaration. So at every other
+    withheld declaration, an actual the probe admitted left the gate in the
+    outer classification and was refused again in the inner one, unless an
+    older route exempted it there. Examples are `mk_event_add(loop, c->ch[0],
+    …)` over a record this body allocates, and `in_tail_init`'s
+    `flb_input_set_collector_event(in, cb, ctx->ch_manager[0], config)`.
+
+    (1) **The match.** An entry is also found under the minted name when
+    `minted_admission` holds, and then only as its own callee, at the same
+    index and with the same tokens:
+
+    - at a cell-bearing declaration, every admitted actual (rule 38a,
+      unchanged);
+    - at any other withheld declaration, an actual admitted at a declared
+      `Borrowed` position that is not a rule-1 release
+      (`member_release::admits_release`).
+
+    A withheld declaration never has a variadic data tail (the loader refuses
+    one beside a retention clause). A function-map callee is never classified
+    under a minted name, so its entries are never minted. The minted name is
+    matched rather than the call classified under the plain name: rule 12t
+    reaches its route as the classifier's uncontracted fallback, so the
+    plain name has no contract in force, and the custody contract installed
+    under the minted name differs from the declaration only in its result
+    (`custody_contract`).
+
+    (2) **The position in force.** Hook (a) records that an actual left the
+    gate under the minted name (`minted_used`). The probe then admits the
+    call only if each such actual sits at a `Borrowed` position of the
+    classified call (`minted_positions_borrowed`). Rule 12t's route reads a
+    callback's requirement as `resource_owned` on the call's own position
+    after the inner classification (rule 13u). That is not a read, so the
+    call keeps the gate's refusal.
+
+    Everything else keeps the refusal byte for byte:
+
+    - a custody-taking position or a rule-1 release at a withheld
+      declaration;
+    - an uncontracted callee;
+    - an actual the probe refused;
+    - a statement whose re-classification is not a contracted call, so
+      wherever rule 12t's route itself refuses (an undecided retention
+      spelling, a registry holder the body does not name, an open callback
+      set).
+
+    Rule 38a's element admission (`element_read`) stays limited to
+    cell-bearing declarations. A by-value element `X->f[K]` that W44 already
+    reads as a typed scalar (at `mk_event_add`'s `fd`) is admitted as that
+    scalar, never as a cell.
+
+    **Do not** match the minted name of another callee, admit under the
+    minted name what the probe did not admit under the plain one, mint a
+    custody position or a release, or let an admitted actual stand at a
+    position the call in force reads as custody.
+
+    Premises stated, not proved (trust boundary 28):
+
+    - the reserved prefix is escaped in source, so a plain name is never a
+      minted one;
+    - the minted name stands for the same call, actuals and declared
+      positions.
+
+    The Lean model is `QCore.RetainingCallMintedName`
+    ([report](../../reports/retaining-call-minted-name-actuals/README.md)).
 
 <!-- generated:rules:end -->

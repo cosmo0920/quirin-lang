@@ -321,15 +321,25 @@ fn a_function_map_callee_keeps_the_refusal() {
     );
 }
 
+/// Card RETAINING-CALL-MINTED-NAME-ACTUALS (rule 38b): at a withheld
+/// declaration without cells the element is never read as a cell (rule 38a
+/// stays cell-bearing), but the by-value `c->ch[0]` is W44's typed scalar
+/// read, which now also leaves the inner classification's gate. So the call
+/// reaches rule 12t, which refuses the retention of `&c->event` in `loop`.
+/// Before that card this was the gate's refusal.
 #[test]
-fn a_withheld_declaration_without_cells_keeps_the_refusal() {
+fn a_withheld_declaration_without_cells_reads_the_element_value_as_a_scalar() {
     expect(
         "`mk_event_add(loop, c->ch[0], …)`: withheld, but no descriptor-cell state",
         "int w(struct mk_event_loop *loop) { struct chan *c = ev_alloc(sizeof(struct chan)); \
          if (!c) { return -1; } mk_event_add(loop, c->ch[0], 0, 0, &c->event); \
          mk_event_del(loop, &c->event); ev_free(c); return 0; }",
         "Unknown",
-        &["unknown_alias:c", GATE],
+        &[
+            "unknown_alias:c",
+            "unsupported:call to `mk_event_add` retains `& c - > event` in `loop`, whose \
+             lifetime this body does not decide against it (retention-undecided)",
+        ],
     );
 }
 

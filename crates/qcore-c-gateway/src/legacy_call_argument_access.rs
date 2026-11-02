@@ -87,6 +87,19 @@
 //!
 //! Rule 38 then decides the cell. With rule 38 switched off, the call refuses
 //! as every cell call does.
+//!
+//! ## Every withheld declaration (card RETAINING-CALL-MINTED-NAME-ACTUALS, gateway rule 38b)
+//!
+//! The minted-name match is not limited to cell-bearing declarations. At
+//! every withheld declaration (rule 12t), an actual the probe admitted at a
+//! declared `Borrowed` position is also found under the minted name, for its
+//! own callee only ([`minted_admission`]). A rule-1 release actual is not:
+//! its position takes custody. The element actual stays limited to
+//! cell-bearing declarations. After classification, every actual that left
+//! the gate under the minted name must sit at a `Borrowed` position of the
+//! call in force ([`minted_positions_borrowed`]); rule 12t's route reads a
+//! callback's requirement as `resource_owned` after the inner pass, and such
+//! a call keeps the refusal.
 
 use qcore_schemas::contract::ResourceParameterMode;
 
@@ -703,25 +716,125 @@ pub(super) struct AdmittedArgument {
     /// true }` position by `member_release::admits_release`, not at a
     /// `Borrowed` position or a data tail.
     pub(super) release: bool,
-    /// Card MK-EVENT-CELL-ARRAY-SLOTS (rule 38a): the callee is a
-    /// cell-bearing withheld declaration, so the actual is also found under
-    /// the minted name rule 12t classifies the call under
-    /// ([`crate::retained_by::retained_name`]): the same call, the same
-    /// actuals and the same declared positions. Without it the probe's
-    /// admission left the gate only in the outer classification, and the
-    /// inner one refused every actual no older route exempts.
-    custody_contract: bool,
+    /// Whether the actual is also found under the minted name rule 12t
+    /// classifies the call under ([`crate::retained_by::retained_name`]):
+    /// the same call, the same actuals and the same declared positions.
+    /// Without it the probe's admission left the gate only in the outer
+    /// classification, and the inner one refused every actual no older route
+    /// exempts. Card MK-EVENT-CELL-ARRAY-SLOTS (rule 38a) set it at a
+    /// cell-bearing withheld declaration; card
+    /// RETAINING-CALL-MINTED-NAME-ACTUALS (rule 38b) sets it at every
+    /// withheld declaration's `Borrowed` position ([`minted_admission`]).
+    minted: bool,
+    /// Card RETAINING-CALL-MINTED-NAME-ACTUALS (rule 38b): set by hook (a)
+    /// when the actual left the gate under the minted name, not the plain
+    /// one. [`minted_positions_borrowed`] then requires the position in
+    /// force at the classified call to be `Borrowed` still.
+    minted_used: bool,
 }
 
+/// Card RETAINING-CALL-MINTED-NAME-ACTUALS (rule 38b): whether an admitted
+/// actual is also found under rule 12t's minted name for its callee. At a
+/// cell-bearing withheld declaration every admitted actual is (rule 38a, as
+/// before); at any other withheld declaration, an actual the probe admitted
+/// at a declared `Borrowed` position, never a rule-1 release. A function-map
+/// callee (`withheld` false) never is: rule 12t never classifies it under a
+/// minted name.
+pub(super) const fn minted_admission(
+    withheld: bool,
+    cell_bearing: bool,
+    position: Position,
+    release: bool,
+) -> bool {
+    cell_bearing || (withheld && matches!(position, Position::Borrowed) && !release)
+}
+
+/// Card RETAINING-CALL-MINTED-NAME-ACTUALS: [`minted_admission`]'s decision
+/// table, `(withheld, cell_bearing, position, release, minted)`, shared with
+/// `QCore.RetainingCallMintedName.mintedAdmissionVectors` entry for entry.
+/// The position's custody kind is spelled as `Position::Custody`'s word.
+#[cfg(test)]
+pub(super) const MINTED_ADMISSION_VECTORS: &[(bool, bool, Position, bool, bool)] = &[
+    // Every withheld declaration's `Borrowed` read (rule 38b).
+    (true, false, Position::Borrowed, false, true),
+    // A rule-1 release, a custody position, a data tail, beyond the vector.
+    (true, false, Position::Borrowed, true, false),
+    (true, false, Position::Custody("released"), true, false),
+    (true, false, Position::Custody("consumed"), false, false),
+    (true, false, Position::Custody("owned"), false, false),
+    (true, false, Position::Tail, false, false),
+    (true, false, Position::Beyond, false, false),
+    // Rule 38a, unchanged: every admitted actual of a cell-bearing call.
+    (true, true, Position::Borrowed, false, true),
+    (true, true, Position::Borrowed, true, true),
+    (true, true, Position::Custody("released"), true, true),
+    // A function-map callee and an uncontracted one.
+    (false, false, Position::Borrowed, false, false),
+    (false, false, Position::Tail, false, false),
+    (false, false, Position::Custody("released"), true, false),
+    (false, false, Position::Uncontracted, false, false),
+];
+
 impl AdmittedArgument {
-    fn matches(&self, callee: &str, index: usize, argument: &[&str]) -> bool {
-        (self.callee == callee
-            || (self.custody_contract
-                && crate::retained_by::retained_callee(callee) == Some(self.callee.as_str())))
-            && self.index == index
+    /// `Some(true)` when the actual matches under the minted name,
+    /// `Some(false)` under the plain one, `None` when it does not match.
+    fn matched(&self, callee: &str, index: usize, argument: &[&str]) -> Option<bool> {
+        let minted = if self.callee == callee {
+            false
+        } else if self.minted
+            && crate::retained_by::retained_callee(callee) == Some(self.callee.as_str())
+        {
+            true
+        } else {
+            return None;
+        };
+        (self.index == index
             && self.texts.len() == argument.len()
-            && self.texts.iter().zip(argument).all(|(a, b)| a == b)
+            && self.texts.iter().zip(argument).all(|(a, b)| a == b))
+        .then_some(minted)
     }
+
+    fn matches(&self, callee: &str, index: usize, argument: &[&str]) -> bool {
+        self.matched(callee, index, argument).is_some()
+    }
+}
+
+/// Card RETAINING-CALL-MINTED-NAME-ACTUALS (rule 38b): every actual that left
+/// the gate under the minted name sits, in the call the statement was
+/// classified as, at a `Borrowed` position of its own callee. Rule 12t's
+/// route reads some positions as `resource_owned` after the inner
+/// classification (a callback's requirement, rule 13u), which is not a read;
+/// such a call keeps the gate's refusal.
+pub(super) fn minted_positions_borrowed(
+    result: &LegacyInstruction,
+    used: &[AdmittedArgument],
+) -> bool {
+    let minted = used
+        .iter()
+        .filter(|entry| entry.minted_used)
+        .collect::<Vec<_>>();
+    if minted.is_empty() {
+        return true;
+    }
+    let call = match result {
+        LegacyInstruction::ElementStore {
+            call: Some(call), ..
+        } => call.as_ref(),
+        other => other,
+    };
+    let LegacyInstruction::ContractCall {
+        function, contract, ..
+    } = call
+    else {
+        return false;
+    };
+    minted.iter().all(|entry| {
+        entry.callee == *function
+            && matches!(
+                contract.parameters.get(entry.index),
+                Some(ResourceParameterMode::Borrowed)
+            )
+    })
 }
 
 /// The probe state one statement's re-classification reads. Empty outside
@@ -759,13 +872,14 @@ impl Parser<'_> {
                 continue;
             }
             let argument = &texts[start..end];
-            if let Some(entry) = self
-                .argument_probe
-                .admitted
-                .iter_mut()
-                .find(|entry| entry.matches(callee, index, argument))
+            if let Some((entry, minted)) =
+                self.argument_probe.admitted.iter_mut().find_map(|entry| {
+                    let minted = entry.matched(callee, index, argument)?;
+                    Some((entry, minted))
+                })
             {
                 entry.used = true;
+                entry.minted_used |= minted;
                 admitted.push((start, end));
             }
         }
@@ -1053,7 +1167,8 @@ impl Parser<'_> {
                     read: read.clone(),
                     used: false,
                     release,
-                    custody_contract: cell_bearing,
+                    minted: minted_admission(withheld.is_some(), cell_bearing, position, release),
+                    minted_used: false,
                 });
             }
             facts.push(ArgumentFacts {
@@ -1125,7 +1240,11 @@ impl Parser<'_> {
             }
             // Card W45-CALLEE-SUMMARY-CASCADE: a rule-1 actual only in a plain
             // contracted call at its nullable release position.
-            && super::member_release::released_positions_rewritable(&result, &used);
+            && super::member_release::released_positions_rewritable(&result, &used)
+            // Card RETAINING-CALL-MINTED-NAME-ACTUALS (rule 38b): an actual
+            // admitted under the minted name only where the call in force
+            // still reads it at a `Borrowed` position.
+            && minted_positions_borrowed(&result, &used);
         #[cfg(feature = "indirect-census")]
         self.census_call_arguments(
             tokens,
@@ -1205,7 +1324,8 @@ impl Parser<'_> {
                 read,
                 used: false,
                 release: false,
-                custody_contract: false,
+                minted: false,
+                minted_used: false,
             });
         }
         if admitted.is_empty() {
@@ -1456,6 +1576,58 @@ mod tests {
     use std::collections::BTreeSet;
 
     use super::*;
+
+    /// Card RETAINING-CALL-MINTED-NAME-ACTUALS (rule 38b): the decision table
+    /// `QCore.RetainingCallMintedName` checks, entry for entry.
+    #[test]
+    fn minted_admission_vectors_hold() {
+        for &(withheld, cell_bearing, position, release, minted) in MINTED_ADMISSION_VECTORS {
+            assert_eq!(
+                minted_admission(withheld, cell_bearing, position, release),
+                minted,
+                "{withheld} {cell_bearing} {position:?} {release}"
+            );
+        }
+    }
+
+    /// Rule 38b: the minted name matches an entry only when it is minted and
+    /// only as its own callee; a match under it is reported as minted, and
+    /// the plain name is unchanged.
+    #[test]
+    fn the_minted_name_matches_exactly_the_plain_admission() {
+        let entry = |minted| AdmittedArgument {
+            callee: "mk_event_add".to_owned(),
+            index: 1,
+            texts: vec!["c".into(), "->".into(), "fd".into()],
+            read: ArgumentRead::default(),
+            used: false,
+            release: false,
+            minted,
+            minted_used: false,
+        };
+        let actual = ["c", "->", "fd"];
+        let minted_name = crate::retained_by::retained_name("mk_event_add");
+        for minted in [false, true] {
+            let e = entry(minted);
+            assert_eq!(e.matched("mk_event_add", 1, &actual), Some(false));
+            assert_eq!(
+                e.matched(&minted_name, 1, &actual),
+                minted.then_some(true),
+                "minted {minted}"
+            );
+            assert_eq!(e.matched(&minted_name, 2, &actual), None);
+            assert_eq!(e.matched(&minted_name, 1, &["c", "->", "ch"]), None);
+            assert_eq!(
+                e.matched(
+                    &crate::retained_by::retained_name("mk_event_del"),
+                    1,
+                    &actual
+                ),
+                None
+            );
+            assert_eq!(e.matched("mk_event_del", 1, &actual), None);
+        }
+    }
 
     fn texts(source: &str) -> Vec<&str> {
         let bytes = source.as_bytes();
