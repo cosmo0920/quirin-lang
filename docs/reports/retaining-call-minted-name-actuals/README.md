@@ -181,15 +181,15 @@ A declaration under a scoped (conditional) lifetime is outside
 `retaining_contract`. The probe reads it as uncontracted and keeps the
 refusal, as before.
 
-## Measurement (the integrator's)
+## Measurement
 
-The worktree's isolation guard refuses command lines naming the main
-checkout's prepared inputs, so this card did not run the measurement. The
-command, from the main checkout:
+The integrator ran the measurement from the main checkout, because the
+worktree's isolation guard refuses command lines naming the prepared inputs
+there. One run was made on 2026-11-02:
 
 ```sh
 target/release/quirin-audit --plugin-path target/release \
-  --output private/measure/retaining-call-minted-name-actuals-<stamp> \
+  --output private/measure/retaining-call-minted-name-actuals-20261102T032109Z \
   --timeout-ms 36000000 measure \
   --inputs crates/quirin-audit-plugin-measure/inputs/live.json \
   --inputs-base /media/Data/GitHub/quirin-lang \
@@ -197,6 +197,20 @@ target/release/quirin-audit --plugin-path target/release \
   --side tip=rev:e8b507b90 \
   --declared docs/reports/retaining-call-minted-name-actuals/PREDICTION.md
 ```
+
+It exited 0 with status `complete` and no failures. The declared comparison
+is `match` on corpus, slice and system, with no delta mismatches, no missing
+rows and no unpredicted rows. There are 0 status moves, 0 unit moves and 0
+unmatched rows on every route, so `rd_kafka_broker_request_supported` (the
+least certain prediction) stays where it was. Only leaves and contract
+dependencies change: on 40 corpus rows and 6 slice rows, each keeping its
+status; no system row changes. The record is
+[native-comparison.json](native-comparison.json) (sha256
+`eab4afcf986611ce098e63cc03f4b64ad49e2182a51f579a2df9dd18a2570a06`;
+PREDICTION.md sha256
+`33257a2947a8f14600257f711f1845dfa29fc8c3b8024314c9e3afeac565855a`).
+`e8b507b90` is the card's last code commit; `ac406b81e` adds only this
+report, its gate record and its amendments.
 
 ## Card gate
 
