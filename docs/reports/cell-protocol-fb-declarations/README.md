@@ -329,10 +329,31 @@ under rule 38c's existing model (`QCore.DescriptorCellProtocol`).
 
 ## 7. Card gate
 
-See [gate.json](gate.json) and the reply. The gate ran as
-`python3 scripts/gate_scope.py --base 86b26e5b2 --out private/gate` on
-`e598aff65`. The console log is outside the worktree, at
-`/tmp/claude-1000/-media-Data-GitHub-quirin-lang--claude-worktrees-launch-cards-clean-worktrees-5365ff/6fcd7fbd-1cae-4a40-a37d-5bce071c02c6/scratchpad/cpfd-gate-console.log`.
+The gate ran as `python3 scripts/gate_scope.py --base 86b26e5b2 --out
+private/gate2` on `015a7fb00`, with a clean tree. That commit is the last
+code commit, `e598aff65`, plus this report and the amendments; only
+[gate.json](gate.json) was added after it. The scope was full: the diff
+reaches `qcore-c-gateway`. Lean was out of scope (no `proof/` change), and
+the provider gate applied.
+
+| Step | Exit | Counts |
+|---|---|---|
+| submodules | 0 | 1 checked |
+| fmt, clippy | 0 | |
+| Rust suite | 0 | 594 units; 9,068 passed, 0 failed, 16 ignored, 109 filtered |
+| `reevaluation_probe`, `reevaluation_followup` | 0 | |
+| Python suite | 0 | 577 tests |
+| provider package build, verify-all, verify `qcore.libevent` | 0 | |
+| provider `cargo test` | 0 | 43 summaries; 133 passed, 0 failed, 1 ignored |
+| provider fmt, clippy | 0 | |
+
+**Logs.** The logs are under `private/gate2/` in the worktree. The console
+log is outside it, at
+`/tmp/claude-1000/-media-Data-GitHub-quirin-lang--claude-worktrees-launch-cards-clean-worktrees-5365ff/6fcd7fbd-1cae-4a40-a37d-5bce071c02c6/scratchpad/cpfd-gate2-console.log`.
+
+**The earlier attempt** (`private/gate`, on `221ef565c`) exited 1 at fmt.
+The new fixture file was not rustfmt-formatted, and `e598aff65` formats it.
+That run was stopped while its Rust suite was still waiting for a slot.
 
 ## 8. Follow-ups
 
