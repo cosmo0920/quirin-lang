@@ -233,13 +233,45 @@ target/release/quirin-audit --plugin-path target/release \
   --inputs crates/quirin-audit-plugin-measure/inputs/live.json \
   --inputs-base /media/Data/GitHub/quirin-lang \
   --side base=baseline:0ac169180f549406ec2f4aef9effb7ad2eb63df0 \
-  --side tip=rev:a86bfdd4d \
+  --side tip=rev:a86bfdd4d4a82a387a067ae62ac3407a911aa9b4 \
   --declared docs/reports/cell-protocol-close-actual/PREDICTION.md
 ```
 
 ## Card gate
 
-GATE-PLACEHOLDER
+The gate ran as `python3 scripts/gate_scope.py --base 86b26e5b2 --out
+private/gate-2` on `a73c4748e` with a clean tree. The last code commit is
+`a86bfdd4d`; after it came only the merge of the landed records and this
+report's draft and amendments. Only this section and [gate.json](gate.json)
+were added after the gate. The scope was full: the diff reaches
+`qcore-c-gateway`, a proof root changed so every Lean audit ran, and the
+provider gate did not apply.
+
+| Step | Exit | Counts |
+|---|---|---|
+| submodules | 0 | 1 checked |
+| fmt | 0 | |
+| clippy | 0 | |
+| Rust suite | 0 | 594 units; 9,092 passed, 0 failed, 15 ignored, 135 filtered |
+| `reevaluation_probe` | 0 | |
+| `reevaluation_followup` | 0 | |
+| Lean audits | 0 | 403 |
+| Python suite | **1** | 577 tests, 1 failure |
+
+**The Python failure** is the expected stale record:
+`test_build_matrix_sections.test_the_derived_facts_are_recomputed_rather_than_carried`.
+The matrix's derived `lean_audits` is 402, and the tree now gives 403 (the
+new `AuditCellProtocolCloseActual`). The integrator regenerates the matrix at
+landing.
+
+**An earlier attempt**, `private/gate` (with `--base aa55f2235`), was stopped
+in the Rust suite when main landed and the gate was to run on the new base.
+Its submodules, fmt and clippy steps had exited 0, and no test had failed.
+
+The logs are under `private/gate-2/` in the worktree. The console logs are
+outside it, at
+`/tmp/claude-1000/-media-Data-GitHub-quirin-lang--claude-worktrees-launch-cards-clean-worktrees-5365ff/6fcd7fbd-1cae-4a40-a37d-5bce071c02c6/scratchpad/close-actual-gate-2-console.log`
+(and `-gate-1-` for the stopped run).
 
 ## Observations and follow-ups
 
