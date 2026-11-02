@@ -1,0 +1,32 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "MK-EVENT-CELL-CROSS-FUNCTION",
+  "base": "0ac169180",
+  "measured_tip": "3bb265c64",
+  "increment_paragraph": "**MK-EVENT-CELL-CROSS-FUNCTION** (gateway rule 38c, contract specification C04.6.3, grammar G05i; USER DECISION 2026-11-02, verbatim: \"B as recommended\", accepting the proposal's Q1 B, Q2 the `quant cell` spelling, Q3 a close of a cell member is its `#stale`, Q4 copied numbers are not names): a record type may declare a descriptor-cell protocol (`quant cell #s: TAG.CELL |-> #fresh(descriptor) when #s.GUARD OP V;`, `#same(CELL2)`, guards `!= -1`, `> 0`, `== 1`), a declared assumption (rule 13i, premise `P-CELL-PROTOCOL-DECLARED`) its host publishes with every row that reads it. Route G reads it only at an exact guard test of a `struct TAG *` name with no fact on the path (the live edge introduces the caller's identities, adopted into rule 38's table when a cell is read), at stores to its members, at `close(r->CELL)`, and at exits and calls: a record that keeps the protocol is forwarded under it instead of `descriptor-cell-escapes`, one that does not refuses (`descriptor-cell-protocol-broken`); a creation into a protocol cell needs the guard read dead first; nothing is `Unsafe`. Census of every create/destroy pair across functions at 66910c10, 046accf6 and 34155955 in the proposal. No production declaration carries a protocol in this card, so no row moves on any route (declared prediction `none` on corpus, system and slice). `QCore.DescriptorCellProtocol` (13 theorems), `tests/descriptor_cell_protocols.rs` (16 tests), loader tests in `local_condition.rs` (3). Report: [docs/reports/mk-event-cell-cross-function/README.md](../../reports/mk-event-cell-cross-function/README.md).",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME",
+      "operation": "amend",
+      "text": "AMENDED (MK-EVENT-CELL-CROSS-FUNCTION, 2026-11-02, docs/reports/mk-event-cell-cross-function/README.md; USER DECISION 2026-11-02 \"B as recommended\"): descriptor cells now cross a function boundary under a declared record-type cell protocol (`quant cell`, gateway rule 38c, C04.6.3, grammar G05i), a declared assumption checked only at the stores, closes, creations and exits route G reads; a guard test's live edge introduces the caller's identities, a record that keeps its protocol is forwarded under it at an exit or a call, a broken one refuses, and an unresolved forward never decides (Rust and audited Lean QCore.DescriptorCellProtocol, shared vectors). LEFT for descriptor cells: the production declarations (CELL-PROTOCOL-FB-DECLARATIONS); the access gate's refusal of an integer member at close's custody position, which ends the path before Q3's close is read (CELL-PROTOCOL-CLOSE-ACTUAL); a run-wide store census that could validate or withdraw a protocol (today every protocol is a declared assumption); a member store into a record the body allocates still refuses before the creation (flb_sched_create's `sched->ch_events[0] = -1`), and a creator relying on calloc's zero (input_thread_instance_create's flag) has no dead reading; records reached through lists (sched->timers), threads (input_thread, output_thread, the pipeline thread) and numeric copies (frame_fd, timer_fd, flush_fd, ins->notification_channel; Q4) stay refused; flb_engine_shutdown's ch_self_events guard (`if (config->evl)`) is no cell sentinel and stays guard-undecided; Monkey's process-lifetime channels are never closed and stay refused.",
+      "source": "docs/reports/mk-event-cell-cross-function/README.md"
+    },
+    {
+      "id": "CELL-PROTOCOL-FB-DECLARATIONS",
+      "operation": "register",
+      "title": "Fluent Bit's channel records carry no declared cell protocol yet",
+      "text": "Registered by MK-EVENT-CELL-CROSS-FUNCTION. Rule 38c reads a `quant cell` protocol only where a declaration states one; no production declaration does. The census (docs/reports/mk-event-cell-cross-function/PROPOSAL.md section 1) names the candidates: `flb_sched` (`ch_events[0] != -1`, cells ch_events[0..1] and event.fd #same), `flb_input_thread_instance` (`notification_channels_initialized == 1` over notification_channels[0..1] and notification_event.fd; `ch_parent_events`, `ch_thread_events` with `> 0`), `flb_config` (`notification_channels_initialized == 1`; `ch_manager`, `ch_notif` with `> 0`), and `flb_input_instance` / `flb_output_instance` (`ch_events[0] > 0`). Each needs a host declaration in quirin-provider-fluent-bit (with providers/contracts.py sync and the reviewed lock diff) and a reading of every store of the members at 66910c10, 046accf6 and 34155955. Expected yield: leaf trades at flb_sched_destroy :856, input_thread_instance_destroy :197 and flb_engine_shutdown :1718, no status move. DISCHARGE: the declarations with their store census, fixtures, and a declared measurement with every moved row read.",
+      "source": "docs/reports/mk-event-cell-cross-function/README.md",
+      "recorded_by": "MK-EVENT-CELL-CROSS-FUNCTION"
+    },
+    {
+      "id": "CELL-PROTOCOL-CLOSE-ACTUAL",
+      "operation": "register",
+      "title": "close(r->CELL) of a protocol cell keeps the access gate's custody-position refusal",
+      "text": "Registered by MK-EVENT-CELL-CROSS-FUNCTION. Decision Q3 reads `close(r->CELL)` of a declared protocol cell as that cell's `#stale` (rule 38c, `ProtocolStep::Close`), but the access gate refuses an integer member actual at close's custody position (W44-INDIRECT-CALL-ARGUMENT-ACCESS premise 1) first, and the refusal ends the path, so no Fluent Bit end of the C3, C5, C6, C8, C9 or C10 shapes is read (tests/descriptor_cell_protocols.rs `a_close_of_a_protocol_cell_keeps_the_access_gate_refusal`). DISCHARGE: admit at the gate exactly an integer member read of a protocol record's one-segment cell at a descriptor-kind release position of a function-map callee, with rule 38c's close as its custody effect, fixtures for the admitted and refused shapes, and a declared measurement.",
+      "source": "docs/reports/mk-event-cell-cross-function/README.md",
+      "recorded_by": "MK-EVENT-CELL-CROSS-FUNCTION"
+    }
+  ]
+}
