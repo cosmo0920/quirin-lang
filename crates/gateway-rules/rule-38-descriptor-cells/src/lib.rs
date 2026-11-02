@@ -19,8 +19,14 @@
 //! member cell's actual names, reading a pointer to a record whose first
 //! member is the event as that member (C11 6.7.2.1p15), bound by
 //! [`initial_member::INITIAL_MEMBER_VECTORS`].
+//!
+//! Card CELL-PROTOCOL-CLOSE-ACTUAL (rule 38d): [`close_actual`] decides which
+//! refused `close(r->CELL)` actual the access gate admits, and what rule 38c's
+//! close makes of it on one path, bound by
+//! [`close_actual::ADMISSION_VECTORS`] and [`close_actual::READING_VECTORS`].
 
 pub mod cells;
+pub mod close_actual;
 pub mod initial_member;
 pub mod protocol;
 

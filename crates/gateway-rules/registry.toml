@@ -282,19 +282,22 @@ placements = [
 # Two arms: a declared release through a cell, and the member-equality guard.
 # Card MK-EVENT-FIRST-MEMBER-CELL adds a third: the view of a member cell's
 # actual (direct, or a record pointer read as its first member, C11
-# 6.7.2.1p15).
+# 6.7.2.1p15). Card CELL-PROTOCOL-CLOSE-ACTUAL (rule 38d) adds a fourth: the
+# access gate's admission of a declared cell's `close` actual for rule 38c's
+# close.
 # Off, the host refuses every call of a declaration carrying a cell state (the
 # reading is not asked), which only removes admissions.
 [[rule]]
 id = "38"
 crate = "rule-38-descriptor-cells"
-lean = ["QCore.DescriptorCells"]
+lean = ["QCore.DescriptorCells", "QCore.CellProtocolCloseActual"]
 document = "docs/agents/rules/38.md"
 off = "refuses"
 placements = [
   { position = "classification", arm = "descriptor-cell-release", route = "cells::release" },
   { position = "classification", arm = "descriptor-cell-guard", route = "cells::decide_equality" },
   { position = "classification", arm = "descriptor-cell-initial-member", route = "initial_member::member_view" },
+  { position = "classification", arm = "descriptor-cell-close-actual", route = "close_actual::admits" },
 ]
 
 # --- The transfer (ROUTE-MAP section 10, added by card RULE34-PILOT): arms

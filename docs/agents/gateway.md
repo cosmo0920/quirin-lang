@@ -9470,13 +9470,73 @@ safety claim and no validation of the detach representation premise.
     already holds a fact of, a copied number (Q4), a multi-segment close or a
     close on a tracked record, or decide a guard from a protocol a call may
     have changed. With `38` in `QCORE_GATEWAY_RULES_OFF` nothing here is
-    read. Nothing here is `Unsafe`. The access gate still refuses an integer
-    member at `close`'s custody position (W44 premise 1), and that refusal
-    ends the path first. Premises stated, not proved (trust boundary 28):
+    read. Nothing here is `Unsafe`. The access gate refuses an integer
+    member at `close`'s custody position (W44 premise 1) except the close's
+    own cell actual, which rule [38d](#constraint-38d) admits for this
+    close. Premises stated, not proved (trust boundary 28):
     the declared protocol at every store this rule does not read (other
     units, other threads, writes through other names or by uncontracted
     callees), and those of rule 38. The Lean model is
     `QCore.DescriptorCellProtocol`
     ([report](../reports/mk-event-cell-cross-function/README.md)).
+
+<a id="constraint-38d"></a>
+
+38d. **A declared cell's close actual leaves the access gate only for rule
+    38c's close.** Card CELL-PROTOCOL-CLOSE-ACTUAL (registered by
+    MK-EVENT-CELL-CROSS-FUNCTION; USER DECISION 2026-11-02, verbatim: "B as
+    recommended", whose Q3 reads a close of a declared cell member as that
+    cell's `#stale`). The decisions are
+    `crates/gateway-rules/rule-38-descriptor-cells/src/close_actual.rs`
+    (`admits`, `reading`, `ADMISSION_VECTORS`, `READING_VECTORS`); the host is
+    `legacy_call_argument_access.rs` (`cell_close_actual`, `cell_read`,
+    `integer_member`), asked from `legacy_c.rs`'s `expression_statement` after
+    the statement's own lowering, and rule 38c's close step in
+    `legacy_descriptor_cells.rs` (`ProtocolStep::Close { admitted }`).
+
+    (1) **The admission.** Only for a statement whose own lowering is exactly
+    the gate's refusal (`indirect memory access is outside the resource
+    projection`) and that reads no tracked descriptor (W44 premise 2), and
+    only when all of these hold: rule 38 is in force; the statement is rule
+    38c's close step, `close(r->CELL)` with `r` declared `struct TAG *`, `TAG`
+    a record whose declared protocol names the one-segment `CELL`; the
+    callee's contract in force is a function-map contract whose one actual
+    sits at a `resource_released` position of kind `descriptor`; and the
+    actual is exactly `r->F` with `F` an integer member, or `r->F[K]` with
+    `F` an integer array member and `K` a canonical constant below its length
+    (rule 38a's element read), of `TAG`'s single complete definition without
+    nested definitions. The statement is classified again with that actual
+    admitted and must be the plain contracted call to the callee, with no
+    destination and no nested call.
+    (2) **The lowering.** The actual's typed read of `r` and its second
+    obligation (W44 premises 3 and 4, as every admitted actual), the call
+    with its released position read as `Borrowed` (the number read is no
+    identity the projection tracks, as rule 1 reads a member release), and
+    rule 38c's close of the cell marked admitted. The close is the
+    statement's whole custody effect.
+    (3) **The reading.** On a path holding a fact of `r`'s caller object, a
+    cell naming a live single identity is released once through rule 38's
+    table and the record's pending names of it are staled (Q3; `#same` names
+    with it). A stale cell refuses (`descriptor-cell-double-release`), and a
+    cell that is maybe live, live under a join's identity or not recorded
+    (the guard's dead edge) refuses (`descriptor-cell-undecided`). Where the
+    path holds no fact of a caller's record (no guard test, a call that
+    forwarded the record, a tracked record, a released formal), rule 38c
+    reads nothing and the gate's refusal stands. With `38` in
+    `QCORE_GATEWAY_RULES_OFF` nothing is admitted, and an admitted close
+    would refuse at the gate.
+
+    **Do not** admit an undeclared record, a member that is not a declared
+    cell, a multi-segment cell (`event.fd`), a copied number (Q4), a used
+    result (`r = close(…)`, `return close(…)`), a parenthesised or computed
+    actual, a non-release custody position, a non-descriptor kind, a
+    withheld or uncontracted callee (Windows `closesocket` has no contract),
+    or any statement whose lowering is not exactly the gate's refusal. The
+    read end's registration is left to the loop's destroy (rule 12t), as Q3
+    states. Nothing here is `Unsafe`. Premises stated, not proved (trust
+    boundary 28): rule 38c's declared protocol (`P-CELL-PROTOCOL-DECLARED`)
+    and the callee's declared release of a descriptor. The Lean model is
+    `QCore.CellProtocolCloseActual`
+    ([report](../reports/cell-protocol-close-actual/README.md)).
 
 <!-- generated:rules:end -->

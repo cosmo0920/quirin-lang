@@ -18,7 +18,8 @@ use qcore_contract::contract_loader::load_resource_contract_sources;
 
 /// Synthetic callees and the protocol hosts: `struct chan` carries a `!= -1`
 /// sentinel protocol (C1's shape), `struct flag_chan` a `== 1` flag (C4, C7),
-/// `struct pos_chan` a `> 0` sentinel closed with `close` (C5, C8, C9).
+/// `struct pos_chan` a `> 0` sentinel closed with `close` (C5, C8, C9; rule
+/// 38d admits the close's actual).
 const CONTRACTS: &str = "\
 module contract;\n\
 extern fn ev_alloc(n: usize) -> ptr<mut, u8>\n\
@@ -376,19 +377,20 @@ fn a_flag_creator_keeps_the_protocol() {
 // -- C5, C8, C9: a `> 0` sentinel closed with `close` (Q3) -------------------
 
 /// `flb_input_instance_destroy`'s ends. Rule 38c reads each `close` of a
-/// cell as its `#stale` (decision Q3; the package vector `release`), but the
-/// access gate refuses an integer member at `close`'s custody position
-/// (W44 premise 1) before that, and the refusal ends the path. This rests
-/// on the gate's refusal, not on rule 38c: admitting the actual there is
-/// the follow-up recorded in the report.
+/// cell as its `#stale` (decision Q3; the package vector `release`). The
+/// access gate used to refuse the integer member at `close`'s custody
+/// position first (W44 premise 1); card CELL-PROTOCOL-CLOSE-ACTUAL (rule 38d)
+/// admits exactly this actual for rule 38c's close, so the closes and the
+/// sentinel store keep the protocol. Every other shape, and an admitted close
+/// rule 38c does not decide, is `tests/cell_protocol_close_actual.rs`'s.
 #[test]
-fn a_close_of_a_protocol_cell_keeps_the_access_gate_refusal() {
+fn a_close_of_a_protocol_cell_leaves_the_access_gate() {
     expect(
         "C8 closes",
         "int d(struct pos_chan *s) { if (s->e[0] > 0) { close(s->e[0]); close(s->e[1]); \
          s->e[0] = -1; } return 0; }",
-        "Unknown",
-        &["unsupported:indirect memory access is outside the resource projection"],
+        "Safe",
+        &[],
     );
 }
 

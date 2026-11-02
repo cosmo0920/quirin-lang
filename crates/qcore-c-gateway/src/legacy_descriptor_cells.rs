@@ -1017,6 +1017,13 @@ pub enum ProtocolStep {
         formal: bool,
         spec: ProtocolSpec,
         path: String,
+        /// Card CELL-PROTOCOL-CLOSE-ACTUAL (rule 38d): the access gate admitted
+        /// the actual for this close, so the close is the statement's whole
+        /// custody effect and must be read: where rule 38c reads nothing the
+        /// gate's refusal stands, and where it does not decide it refuses.
+        /// Omitted when false, so a step serializes as before.
+        #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+        admitted: bool,
     },
 }
 
@@ -1224,6 +1231,11 @@ pub(super) fn apply_step(
     diagnostics: &mut BTreeSet<LegacyDiagnostic>,
 ) {
     if !crate::gateway_rules::enabled(rule_38_descriptor_cells::ID) {
+        // Rule 38d admits nothing with rule 38 off; an admitted close is
+        // never read as a silent release.
+        if let ProtocolStep::Close { admitted: true, .. } = step {
+            refuse_at_gate(function, line, state, diagnostics);
+        }
         return;
     }
     match step {
@@ -1256,33 +1268,44 @@ pub(super) fn apply_step(
             formal,
             spec: _,
             path,
+            admitted,
         } => {
-            // Only a caller's record: its member read needs no live-identity
-            // check, and a tracked one keeps the statement's own reading.
-            let Some(object @ ProtocolRoot::Name(_)) = protocol_root(state, root, *formal) else {
-                return;
+            use rule_38_descriptor_cells::close_actual::{Cell, Reading, reading};
+            // Only a caller's record with a fact: its member read needs no
+            // live-identity check, and a tracked one keeps the statement's own
+            // reading.
+            let name = match protocol_root(state, root, *formal) {
+                Some(ProtocolRoot::Name(name))
+                    if state
+                        .cell_protocols
+                        .contains_key(&ProtocolRoot::Name(name.clone())) =>
+                {
+                    Some(name)
+                }
+                _ => None,
             };
-            if !state.cell_protocols.contains_key(&object) {
-                return;
-            }
             let what = format!("{root}->{path}");
-            let ProtocolRoot::Name(name) = &object else {
+            let Some(name) = name else {
+                // Rule 38d: an admitted close rule 38c does not read keeps the
+                // gate's refusal; any other close is the statement's own.
+                if *admitted {
+                    refuse_at_gate(function, line, state, diagnostics);
+                }
                 return;
             };
             let cell = CellKey::Object(
-                HeldObject::Name(name.clone()),
+                HeldObject::Name(name),
                 SLOT_VIEW.to_owned(),
                 vec![path.clone()],
             );
             adopt(state, &cell);
             let key = cell.table();
-            match state.cells.get(&key) {
-                Some((identity, rule_38_descriptor_cells::Status::Live))
-                    if identity != rule_38_descriptor_cells::cells::JOINED =>
-                {
-                    let outcome =
-                        rule_38_descriptor_cells::cells::release(&mut state.cells, Some(&key));
-                    match outcome {
+            let entry = state.cells.get(&key);
+            match reading(true, Cell::of(entry)) {
+                Reading::Stale => {
+                    let identity =
+                        entry.map_or(rule_38_descriptor_cells::cells::JOINED, |(i, _)| i);
+                    match rule_38_descriptor_cells::cells::release(&mut state.cells, Some(&key)) {
                         Ok(_) => {
                             for hosted in state.cell_protocols.values_mut() {
                                 hosted.fact.stale_identity(identity);
@@ -1293,25 +1316,31 @@ pub(super) fn apply_step(
                         }
                     }
                 }
-                Some((_, rule_38_descriptor_cells::Status::Stale)) => refuse_step(
-                    function,
-                    line,
-                    &what,
-                    Refusal::DoubleRelease,
-                    state,
-                    diagnostics,
-                ),
-                _ => refuse_step(
-                    function,
-                    line,
-                    &what,
-                    Refusal::Undecided,
-                    state,
-                    diagnostics,
-                ),
+                Reading::Refused(refusal) => {
+                    refuse_step(function, line, &what, refusal, state, diagnostics);
+                }
+                Reading::Gate => refuse_at_gate(function, line, state, diagnostics),
             }
         }
     }
+}
+
+/// Rule 38d: the access gate's own refusal, where rule 38c reads nothing of
+/// an admitted close (the gate admitted it only for rule 38c's reading).
+fn refuse_at_gate(
+    function: &str,
+    line: usize,
+    state: &mut AbstractState,
+    diagnostics: &mut BTreeSet<LegacyDiagnostic>,
+) {
+    diagnostics.insert(LegacyDiagnostic {
+        function: function.to_owned(),
+        line,
+        kind: LegacyDiagnosticKind::Unsupported {
+            description: super::call_argument_access::GATE_REFUSAL.to_owned(),
+        },
+    });
+    state.unmodeled = true;
 }
 
 /// Hook (rule 38c): a call that may reach a record with a fact forwards it
@@ -1588,6 +1617,7 @@ pub(crate) fn statement_step(
             root,
             spec: spec.clone(),
             path,
+            admitted: false,
         });
     }
     let at = words.iter().position(|word| word == "=")?;

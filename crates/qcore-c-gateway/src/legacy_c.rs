@@ -5658,7 +5658,15 @@ impl Parser<'_> {
         // Card MK-EVENT-CELL-CROSS-FUNCTION (rule 38c): a store to, or a
         // close of, a member of a record with a declared cell protocol is
         // read after the statement's own lowering, which is unchanged.
-        match self.cell_statement_step(tokens) {
+        let step = self.cell_statement_step(tokens);
+        // Card CELL-PROTOCOL-CLOSE-ACTUAL (rule 38d): a close the gate
+        // refused, whose actual it admits for rule 38c's close.
+        if let Some(step) = &step
+            && let Some(admitted) = self.cell_close_actual(tokens, line, &statement, step)
+        {
+            return admitted;
+        }
+        match step {
             Some(step) => Statement::Block(vec![
                 statement,
                 Statement::Instruction(

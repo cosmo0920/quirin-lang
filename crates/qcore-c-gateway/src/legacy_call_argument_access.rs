@@ -100,6 +100,22 @@
 //! call in force ([`minted_positions_borrowed`]); rule 12t's route reads a
 //! callback's requirement as `resource_owned` after the inner pass, and such
 //! a call keeps the refusal.
+//!
+//! ## A declared cell's close (card CELL-PROTOCOL-CLOSE-ACTUAL, gateway rule 38d)
+//!
+//! Premise 1 has one exception, asked only after the statement's whole
+//! lowering refused at the gate ([`Parser::cell_close_actual`]): a statement
+//! that is exactly rule 38c's `close(r->CELL);` of a declared protocol
+//! record's one-segment cell, whose callee's function-map contract releases
+//! its one actual with kind `descriptor`, and whose actual is exactly the
+//! integer member read `r->F` or `r->F[K]` of that cell
+//! ([`integer_member`], [`element_read`]). It lowers to the actual's typed
+//! read and second obligation, the call with the released position read as
+//! `Borrowed`, and rule 38c's close marked admitted, which is the
+//! statement's whole custody effect: where rule 38c reads nothing the gate's
+//! refusal stands, and where it does not decide it refuses. The decision is
+//! `rule_38_descriptor_cells::close_actual::admits`; everything else keeps the
+//! gate's refusal byte for byte.
 
 use qcore_schemas::contract::ResourceParameterMode;
 
@@ -599,6 +615,82 @@ pub(super) fn integer_array_length(
     found
 }
 
+/// Card **CELL-PROTOCOL-CLOSE-ACTUAL** (rule 38d): whether `tag`'s definition
+/// in `unit` declares `field` as exactly one member declaration
+/// `SPECIFIERS field ;` with one declarator, no `*`, no dimension, no
+/// bit-field, `SPECIFIERS` an integer type
+/// ([`TypedAccessModel::integer_class`]) with no `volatile` or `_Atomic`, in
+/// the single complete non-union definition the declaration reader read.
+/// The scalar counterpart of [`integer_array_length`], read the same way.
+pub(super) fn integer_member(
+    unit: &[&str],
+    model: &TypedAccessModel,
+    tag: &str,
+    field: &str,
+) -> bool {
+    if !model.record_definition_is_complete(tag) {
+        return false;
+    }
+    let Some(open) = unit
+        .windows(3)
+        .position(|window| window == ["struct", tag, "{"])
+        .map(|at| at + 2)
+    else {
+        return false;
+    };
+    let mut depth = 0usize;
+    let mut close = None;
+    for (index, text) in unit.iter().enumerate().skip(open) {
+        match *text {
+            "{" => depth += 1,
+            "}" => {
+                let Some(next) = depth.checked_sub(1) else {
+                    return false;
+                };
+                depth = next;
+                if depth == 0 {
+                    close = Some(index);
+                    break;
+                }
+            }
+            _ => {}
+        }
+    }
+    let Some(close) = close else {
+        return false;
+    };
+    // A nested definition's members are not `tag`'s: refuse the record.
+    if unit[open + 1..close].contains(&"{") {
+        return false;
+    }
+    let mut found = false;
+    for member in unit[open + 1..close].split(|text| *text == ";") {
+        if !member.contains(&field) {
+            continue;
+        }
+        // `field` spelled anywhere but last (an array, a bit-field, a second
+        // declarator, a type name): not this shape, and the record refuses.
+        let [specifiers @ .., name] = member else {
+            return false;
+        };
+        if *name != field
+            || found
+            || specifiers.is_empty()
+            || specifiers
+                .iter()
+                .any(|text| matches!(*text, "*" | "," | "[" | "]" | "(" | ")" | ":" | "{" | "}"))
+            || specifiers
+                .iter()
+                .any(|text| ELEMENT_REJECTING_QUALIFIERS.contains(text))
+            || model.integer_class(specifiers).is_none()
+        {
+            return false;
+        }
+        found = true;
+    }
+    found
+}
+
 /// Replace every `( NAME )` whose `NAME` this function declares as a variable
 /// by `NAME` alone.
 ///
@@ -938,6 +1030,17 @@ impl Parser<'_> {
         // Card W45-CALLEE-SUMMARY-CASCADE: the object a rule-1 actual releases
         // is outside the projection, so its position is read as `Borrowed`.
         super::member_release::rewrite_released_positions(&mut probe.result, &probe.used);
+        Some(self.admitted_read_sequence(&probe.used, probe.result))
+    }
+
+    /// The block an admitted call lowers to: the typed read of every base the
+    /// used actuals dereference (premise 3), their second obligation (premise
+    /// 4), then the call `result`.
+    fn admitted_read_sequence(
+        &self,
+        used: &[AdmittedArgument],
+        result: LegacyInstruction,
+    ) -> Vec<LegacyInstruction> {
         let mut bases = Vec::<String>::new();
         let mut record_bases = Vec::<String>::new();
         let mut chains = Vec::<crate::indirect_chain_access::AccessChain>::new();
@@ -949,7 +1052,7 @@ impl Parser<'_> {
                 list.push(name.to_owned());
             }
         };
-        for entry in &probe.used {
+        for entry in used {
             for base in &entry.read.bases {
                 push(&mut bases, base);
             }
@@ -1013,8 +1116,196 @@ impl Parser<'_> {
                 pointer_places,
             });
         }
-        sequence.push(probe.result);
-        Some(sequence)
+        sequence.push(result);
+        sequence
+    }
+
+    /// Card **CELL-PROTOCOL-CLOSE-ACTUAL** (gateway rule 38d): the lowering of
+    /// a statement the gate refused that is exactly rule 38c's close `step`,
+    /// with its integer member actual admitted at `close`'s release position.
+    /// `None` keeps the refusal (`lowered`, the statement's own lowering).
+    ///
+    /// Admitted exactly where [`rule_38_descriptor_cells::close_actual::admits`]
+    /// holds: rule 38 in force; the statement `close(r->CELL)` with `r`
+    /// declared a pointer to a record whose declared protocol names the
+    /// one-segment `CELL` (the parser's step); a function-map callee whose
+    /// only actual sits at a `resource_released` position of kind
+    /// `descriptor`; the actual exactly the integer member read `r->CELL` (or
+    /// a constant in-bounds element `r->F[K]` of an integer array member,
+    /// [`element_read`]). The statement is classified again with that actual
+    /// admitted; the classification must be the plain contracted call. It
+    /// lowers to the actual's typed read and second obligation (premises 3
+    /// and 4, as every admitted actual), the call with its released position
+    /// read as `Borrowed` (the number read is no identity the projection
+    /// tracks), and rule 38c's close marked admitted: that close is the
+    /// statement's whole custody effect, so where rule 38c reads nothing the
+    /// gate's refusal stands and where it does not decide it refuses.
+    pub(super) fn cell_close_actual(
+        &mut self,
+        tokens: &[Token],
+        line: usize,
+        lowered: &super::Statement,
+        step: &super::descriptor_cells_route::ProtocolStep,
+    ) -> Option<super::Statement> {
+        use rule_38_descriptor_cells::close_actual as rule;
+        let super::Statement::Instruction(LegacyInstruction::Unknown { description, .. }, _) =
+            lowered
+        else {
+            return None;
+        };
+        let super::descriptor_cells_route::ProtocolStep::Close { root, path, .. } = step else {
+            return None;
+        };
+        if description != GATE_REFUSAL || super::contains_braces(tokens) {
+            return None;
+        }
+        let texts = tokens
+            .iter()
+            .map(|token| token.text.as_str())
+            .collect::<Vec<_>>();
+        if !self.descriptor_names.is_empty()
+            && super::descriptor_custody::statement_reads_descriptor(&texts, &self.descriptor_names)
+                .is_some()
+        {
+            return None;
+        }
+        let (call_index, callee) = find_call(&texts)?;
+        let spans = call_argument_spans(&texts, call_index)?;
+        let [(start, end)] = spans.as_slice() else {
+            return None;
+        };
+        let argument = unparenthesise_names(&texts[*start..*end], &self.typed_types);
+        let direct = self.contracts.contract(callee);
+        let callee_class = if direct.is_some() {
+            rule::Callee::FunctionMap
+        } else if self.contracts.retaining_contract(callee).is_some()
+            || self.contracts.lifetime_summary(callee).is_some()
+        {
+            rule::Callee::Withheld
+        } else {
+            rule::Callee::Uncontracted
+        };
+        let position = match direct.and_then(|contract| contract.parameters.first()) {
+            Some(ResourceParameterMode::Released { .. }) => rule::Position::Release,
+            Some(ResourceParameterMode::Borrowed) => rule::Position::Borrowed,
+            Some(_) => rule::Position::OtherCustody,
+            None => rule::Position::Beyond,
+        };
+        let kind = if direct.is_some_and(|contract| {
+            contract.parameter_kind(0) == qcore_schemas::contract::ResourceKind::Descriptor
+        }) {
+            rule::Kind::Descriptor
+        } else {
+            rule::Kind::Other
+        };
+        let read = self.cell_read(&argument, root, path);
+        let site = rule::Site {
+            rule_on: crate::gateway_rules::enabled(rule_38_descriptor_cells::ID),
+            statement: rule::Statement::ProtocolClose,
+            callee: callee_class,
+            position,
+            kind,
+            actual: if read.is_some() {
+                rule::Actual::CellRead
+            } else {
+                rule::Actual::Other
+            },
+        };
+        if !rule::admits(site) {
+            return None;
+        }
+        let admitted = AdmittedArgument {
+            callee: callee.to_owned(),
+            index: 0,
+            texts: texts[*start..*end]
+                .iter()
+                .map(|text| (*text).to_owned())
+                .collect(),
+            read: read?,
+            used: false,
+            release: false,
+            minted: false,
+            minted_used: false,
+        };
+        let saved = self.probe_state();
+        self.argument_probe = ArgumentProbe {
+            admitted: vec![admitted],
+            rerun: true,
+        };
+        let mut result = self.classify_simple(tokens);
+        let probe = std::mem::take(&mut self.argument_probe);
+        let used = probe
+            .admitted
+            .into_iter()
+            .filter(|entry| entry.used)
+            .collect::<Vec<_>>();
+        let plain_call = used.len() == 1
+            && matches!(&result, LegacyInstruction::ContractCall {
+                function,
+                destination: None,
+                contract,
+                nested,
+                ..
+            } if function == callee
+                && nested.is_empty()
+                && matches!(contract.parameters.as_slice(), [ResourceParameterMode::Released { .. }])
+                && contract.parameter_kind(0) == qcore_schemas::contract::ResourceKind::Descriptor);
+        if !plain_call {
+            self.restore_probe_state(&saved);
+            return None;
+        }
+        if let LegacyInstruction::ContractCall { contract, .. } = &mut result
+            && let Some(mode) = contract.parameters.get_mut(0)
+        {
+            *mode = ResourceParameterMode::Borrowed;
+        }
+        let mut close = step.clone();
+        if let super::descriptor_cells_route::ProtocolStep::Close { admitted, .. } = &mut close {
+            *admitted = true;
+        }
+        let mut sequence = self.admitted_read_sequence(&used, result);
+        sequence.push(LegacyInstruction::CellProtocolStep {
+            step: Box::new(close),
+        });
+        Some(super::Statement::Block(
+            sequence
+                .into_iter()
+                .map(|instruction| super::Statement::Instruction(instruction, line))
+                .collect(),
+        ))
+    }
+
+    /// Rule 38d: the actual as the integer member read of the close step's
+    /// own cell, `root -> path` with `path` one segment `F` or `F[K]`: `F` an
+    /// integer member (or `F[K]` a constant in-bounds element of an integer
+    /// array member) of the single complete definition of the record `root`
+    /// is declared a pointer to. Its only base, and record base, is `root`.
+    fn cell_read(&self, argument: &[&str], root: &str, path: &str) -> Option<ArgumentRead> {
+        let Some(DeclaredType::RecordPointer(tag)) = self.typed_types.declared_type(root) else {
+            return None;
+        };
+        let unit = self
+            .tokens
+            .iter()
+            .map(|token| token.text.as_str())
+            .collect::<Vec<_>>();
+        let read = match argument {
+            [base, "-", ">", field] if *base == root && *field == path => {
+                integer_member(&unit, &self.typed_model, tag, field).then(|| {
+                    let mut read = ArgumentRead::default();
+                    read.add_base(root, true);
+                    read
+                })?
+            }
+            [base, "-", ">", field, "[", index, "]"]
+                if *base == root && format!("{field}[{index}]") == path =>
+            {
+                element_read(argument, &unit, &self.typed_model, &self.typed_types)?
+            }
+            _ => return None,
+        };
+        (read.bases == [root] && read.record_bases == [root] && !read.pointer_valued)
+            .then_some(read)
     }
 
     /// Card W45-SR5-SOUNDNESS: the gate's refusal of a statement whose call

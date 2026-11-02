@@ -655,7 +655,7 @@ quant cell #s: flb_sched.event.fd |-> #same(ch_events[0]) when #s.ch_events[0] !
   - A sentinel is stored only at its dead value.
   - A flag is stored at `1` only over live cells, and at another value only over none.
 - **Creations.** A creation into a protocol cell is admitted only where the guard was read dead or the cell is recorded. Only a `!= -1` guard is established by a creation, because descriptor 0 exists.
-- **Closes.** `close(r->CELL)` is that cell's `#stale` (decision Q3). Copied numbers are not names (Q4).
+- **Closes.** `close(r->CELL)` is that cell's `#stale` (decision Q3). Copied numbers are not names (Q4). The access gate admits the close's integer member actual at the descriptor-kind release position of a function-map callee for exactly this reading (rule [38d](agents/gateway.md#constraint-38d), card CELL-PROTOCOL-CLOSE-ACTUAL); where rule 38c reads nothing of it the gate's refusal stands, and where it does not decide it refuses.
 - **Exits and calls.** At an exit, and at a call that may reach the record, a record that keeps the protocol is forwarded under it instead of `descriptor-cell-escapes`. A record that does not keep it refuses (`descriptor-cell-protocol-broken`).
 - **What is never claimed.** Nothing is `Unsafe`. An unresolved forward never decides. A forwarded cell ends only by its own close or by its holder's release.
 
