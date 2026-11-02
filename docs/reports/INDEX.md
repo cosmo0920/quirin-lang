@@ -629,6 +629,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [mk-event-cell-array-slots](mk-event-cell-array-slots/README.md) | MK-EVENT-CELL-ARRAY-SLOTS |
 
+| [mk-event-cell-cross-function](mk-event-cell-cross-function/README.md) | MK-EVENT-CELL-CROSS-FUNCTION |
+
 | [mk-event-descriptor-quant](mk-event-descriptor-quant/README.md) | MK-EVENT-DESCRIPTOR-QUANT |
 
 | [mk-event-first-member-cell](mk-event-first-member-cell/README.md) | MK-EVENT-FIRST-MEMBER-CELL |

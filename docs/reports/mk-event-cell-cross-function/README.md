@@ -178,7 +178,8 @@ baseline was not yet published. It has been relisted since at the published
 with the same leaf counts.
 
 The worktree's isolation guard refuses the live measurement, so the integrator
-runs it, from the main checkout:
+ran it from the main checkout on 2026-11-02, with output in
+`private/measure/mk-event-cell-cross-function-20261102T074352Z`:
 
 ```sh
 target/release/quirin-audit --plugin-path target/release \
@@ -190,6 +191,18 @@ target/release/quirin-audit --plugin-path target/release \
   --side tip=rev:3bb265c64b70ba9ee50d20ff3d8e018dc107ac14 \
   --declared docs/reports/mk-event-cell-cross-function/PREDICTION.md
 ```
+
+It exited 0 with status `complete` and no failures. The declared comparison
+is `match` on corpus, slice and system, with no delta mismatches, no missing
+rows and no unpredicted rows. There are 0 status moves, 0 unit moves, 0
+unmatched rows and 0 content changes on every route: the new code is the
+identity where no protocol is declared. The record is
+[native-comparison.json](native-comparison.json) (sha256
+`726fa7636f0a4f3171c0e9520f5c239330074ca3b00a7f04ae69d05a88e99916`;
+PREDICTION.md sha256
+`a5ff0444e21eddc21aeb8ae55db36bb42ebdbad7241615e344551678dafc81cc`).
+`3bb265c64` is the card's last code commit; `aa55f2235` adds only this report,
+its gate record and its amendments.
 
 ## Card gate
 
