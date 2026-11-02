@@ -2132,9 +2132,13 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // EVENT-CALLER-REMOVAL adds the exact mk_event_timeout_disable removal
     // declaration to the existing Monkey event-loop module: 497 -> 498.
     // Selected modules and rejected declarations are unchanged.
+    // CELL-PROTOCOL-FB-DECLARATIONS adds the cell-protocol host
+    // `flb_config_set_program_name` to the existing
+    // `fluent_bit/teardown_destroy.qv`: 498 -> 499; selected modules and
+    // rejected declarations unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (66, 498, 365)
+        (66, 499, 365)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every
@@ -2188,7 +2192,10 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // Card MK-EVENT-DESCRIPTOR-QUANT: `mk_event_channel_destroy` now carries
     // descriptor-cell clauses (a guarded removal and guarded releases,
     // C04.6.2) and leaves the function map: 107 -> 108.
-    assert_eq!(loaded.retaining().len(), 108);
+    // Card CELL-PROTOCOL-FB-DECLARATIONS: the `quant cell` host
+    // `flb_config_set_program_name` is a withheld lifetime declaration
+    // (C04.6.3): 108 -> 109.
+    assert_eq!(loaded.retaining().len(), 109);
     assert_eq!(
         loaded.functions().len()
             + loaded.pending_review().len()

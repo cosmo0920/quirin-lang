@@ -296,3 +296,60 @@ contract {
     quant live #config: flb_tail_config.ignored_file_sizes |-> #released;
     quant live #config: flb_tail_config.aged_out_file_inodes |-> #released;
 };
+
+// ## The input thread instance's notification-channel protocol
+//
+// Card CELL-PROTOCOL-FB-DECLARATIONS (gateway rule 38c, contract
+// specification C04.6.3, grammar G05i; USER DECISION 2026-11-02, verbatim:
+// "B as recommended"). A `quant cell` clause states a record type's
+// descriptor-cell protocol. It adds nothing to its host's own contract (the
+// host becomes a withheld lifetime declaration, as every lifetime host does),
+// and it is a DECLARED ASSUMPTION (premise P-CELL-PROTOCOL-DECLARED): every
+// row that reads it names the host as a dependency. No audit checks it
+// against the run's stores; the card's store census does, by hand, at
+// 66910c10, 046accf6 and 34155955
+// (docs/reports/cell-protocol-fb-declarations/census/, `census.py --check`).
+//
+// The protocol: `notification_channels_initialized == 1` (FLB_TRUE, `true`,
+// 1 after preprocessing) exactly when both ends of the notification channel
+// are live and `notification_event.fd` names the read end. The census found
+// four stores and two channel operations of these members, all in
+// src/flb_input_thread.c and byte-identical at the three trees:
+// `flb_calloc` (:235, flag 0, no cell); the creation (:287-290, run with the
+// flag still 0, writing no end on failure); the flag set to FLB_TRUE right
+// after it succeeds (:300); and `input_thread_instance_destroy`'s
+// `mk_event_channel_destroy` under the flag (:196-200), then FLB_FALSE (:202).
+// `ins->notification_channel = thi->notification_channels[1]` (:303) is a
+// copied number, not a name (decision Q4).
+//
+// Not declared, with the census's reasons:
+// * the record's `> 0` channels (`ch_parent_events`, `ch_thread_events`).
+//   G05i states one guard per record, and `input_thread_instance_destroy`
+//   closes both ends (:210-222) without restoring the sentinel, then keeps
+//   using the record (`flb_tp_destroy(thi->tp)`) before releasing it;
+// * `flb_input_instance` and `flb_output_instance` (`ch_events[0] > 0`),
+//   whose destroyers close the same way and never restore the sentinel;
+// * `flb_sched` (`ch_events[0] != -1`) and `flb_config`'s flag protocol.
+//   Their stores keep the protocol, but rule 38c's reading would refuse at
+//   their own destroyers: a cell-bearing call with an actual rooted at the
+//   record (`mk_event_timeout_destroy(sched->evl, …)`, C2's channel destroy
+//   over `config->evl`) marks it reached before the guard test, so the test
+//   is not read (follow-up CELL-PROTOCOL-NONCELL-ACTUAL-REACHES-RECORD).
+//
+// The host is a vehicle chosen so the declaration changes no call reading.
+// `flb_config_set_program_name` (src/flb_config.c:956-966 at 046accf6 and
+// 34155955, :955-965 at 66910c10, the same body) is called only from
+// src/fluent-bit.c, and no audited unit defines or calls it. Its own clauses
+// are what its body does: `config->program_name = flb_sds_create(name)`
+// stores a copy of `name` in a member, and the result is a status (-1 or 0).
+// `config` stays the caller's, and `name` is read and not kept.
+extern fn flb_config_set_program_name(config: ptr<mut, u8>, name: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(config);
+    ensures normal resource_borrowed(name);
+    ensures normal resource_return_none();
+    quant cell #t: flb_input_thread_instance.notification_channels[0] |-> #fresh(descriptor) when #t.notification_channels_initialized == 1;
+    quant cell #t: flb_input_thread_instance.notification_channels[1] |-> #fresh(descriptor) when #t.notification_channels_initialized == 1;
+    quant cell #t: flb_input_thread_instance.notification_event.fd |-> #same(notification_channels[0]) when #t.notification_channels_initialized == 1;
+};
