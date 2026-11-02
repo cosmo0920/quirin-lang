@@ -405,3 +405,90 @@ where no forwarded record exists. PREDICTION.md will relist these rows at
    `ins->notification_channel` may be declared as further names
    (`#same`). Recommendation: not in this card. They stay refused, and
    rows T2 and T5 keep their current readings.
+
+## 7. Decision (2026-11-02)
+
+> **USER DECISION 2026-11-02** (verbatim, relayed by the coordinator): "B as
+> recommended".
+
+The coordinator's reading accepts §6 as written:
+
+- **Q1** is B: declared record-type cell protocols, with exact transport.
+- **Q2** is the §3 B candidate.
+- **Q3** is yes: a close of a declared cell member is its `#stale`.
+- **Q4** is no: copied numbers are not declared.
+
+### The grammar, finalized (G05e, total or reject)
+
+```qcore
+quant cell #B: TAG.CELL |-> #fresh(descriptor) when #B.GUARD OP V;
+quant cell #B: TAG.CELL |-> #same(CELL2) when #B.GUARD OP V;
+```
+
+The parts:
+
+- `#B` is a binder local to the clause, as in `quant registered`. It is not
+  a formal of the host and not a reserved `#` word. One binder is used per
+  record in a declaration.
+- `TAG` is a record tag.
+- `CELL`, `CELL2` and `GUARD` are member paths: identifiers joined by `.`,
+  where a segment may carry one `[K]`, with `K` a canonical decimal.
+  Examples are `ch_events[0]`, `event.fd` and
+  `notification_channels_initialized`.
+- `OP V` is exactly one of three pairs:
+  - `!= -1`, a sentinel cell;
+  - `> 0`, a sentinel cell;
+  - `== 1`, a flag member. `FLB_TRUE` is `true`, which is `1` after
+    preprocessing.
+
+The rules for one record's clauses, all in one declaration:
+
+- Every clause has the same guard.
+- At least one clause is `#fresh`.
+- The cells are distinct.
+- A `#same(CELL2)` names a cell stated `#fresh` in the same record.
+- Under `!= -1` and `> 0`, the guard is one of the `#fresh` cells.
+- Under `== 1`, the guard is no cell.
+
+Two declarations stating different protocols for one record leave that
+record without a protocol, so rule 38c reads none (fail-closed). Every
+other spelling rejects the whole module (`quant-cell-*`). The clause adds
+nothing to the host's own contract. Like `quant registered`, it makes the
+host a withheld lifetime declaration.
+
+### Meaning (rule 38c)
+
+A record's protocol is a declared assumption (rule 13i), and every row that
+reads it names its host as a dependency.
+
+- **Its claim.** Whenever a `struct TAG` object's guard satisfies `OP V`,
+  each `#fresh` cell names its own live descriptor, and each `#same` cell
+  names the same descriptor as its target. Otherwise, no cell of it names a
+  live descriptor.
+- **The guard test.** Route G reads a test of exactly `r->GUARD OP V`, or
+  its complement, where `r` is a caller's record-pointer formal of type
+  `struct TAG *` that this body has not touched. On the live edge the test
+  introduces the cells as the caller's live identities. On the other edge
+  it records that none is live.
+- **What a test, a store, a creation, a release or a close of such a cell
+  must leave.** At an exit, and at a call that passes the record on, the
+  record must again satisfy the claim:
+  - every cell is live under its group's identity and the guard says live;
+    or
+  - no cell is live and the guard says dead.
+
+  A record that satisfies it is forwarded under the protocol, in place of
+  `descriptor-cell-escapes`. Any other state refuses
+  (`descriptor-cell-protocol-broken`).
+- **Guard values and stores.**
+  - A creation into the guard cell of a `!= -1` protocol makes the guard
+    say live. A live descriptor is never `-1`.
+  - Nothing a creation does establishes `> 0`, because a descriptor may be
+    0.
+  - Under `== 1`, only a store of `1` makes the guard say live, and only
+    when every cell is live. A store of the dead value is admitted only
+    when no cell is live.
+- **Q3.** A `close` of `r->CELL`, after the protocol has been read for `r`,
+  is that cell's `#stale`.
+- **Nothing is accused.** Rule 38c never yields `Unsafe`, and with `38` in
+  `QCORE_GATEWAY_RULES_OFF` it reads nothing.
