@@ -731,3 +731,83 @@ pub fn select_for_route(
     let (sources, _) = selected_sources(&manifest)?;
     install(contracts, record, sources)
 }
+
+#[cfg(test)]
+mod result_range_tests {
+    //! Card CELL-GUARD-RESULT-RANGE-CHECKED (rule 38e): only a derived,
+    //! unheld range is in force for rule 38; a derivation whose C library
+    //! sets changed or went is stale.
+    use super::*;
+    use crate::contract_revision::{RestedOn, ResultDerivation};
+    use qcore_schemas::result_range::ResultRangeStanding;
+
+    const RANGE: &str = "module contract;
+extern fn f(x: i32) -> i32
+contract {
+    requires bounds_contract_v1;
+    ensures normal nonnull_result_range(-1, 0);
+};
+";
+
+    fn contracts() -> BoundsContracts {
+        load_bounds_contract_sources(&BTreeMap::from([(
+            "qcore-provider-libevent:monkey/r.qv".to_owned(),
+            RANGE.to_owned(),
+        )]))
+        .unwrap()
+    }
+
+    fn record(derived: bool) -> Value {
+        let mut outcome = json!({"function": "f"});
+        if derived {
+            outcome["derivation"] = json!({"result_set": "[-1, 0]"});
+        }
+        json!({"pins": {"outcomes": [outcome]}})
+    }
+
+    #[test]
+    fn only_a_derived_unheld_range_is_in_force() {
+        let table = result_ranges_of(&contracts(), &record(true));
+        assert_eq!(table["f"].standing, ResultRangeStanding::InForce);
+        assert_eq!(table["f"].intervals, vec![(-1, 0)]);
+        assert_eq!(
+            table["f"].universe,
+            (i64::from(i32::MIN), i64::from(i32::MAX))
+        );
+        let table = result_ranges_of(&contracts(), &record(false));
+        assert_eq!(table["f"].standing, ResultRangeStanding::Unchecked);
+        let mut held = contracts();
+        held.hold_for_pin_mismatch("f", "source-changed", "test")
+            .unwrap();
+        let table = result_ranges_of(&held, &record(true));
+        assert_eq!(table["f"].standing, ResultRangeStanding::Held);
+    }
+
+    #[test]
+    fn a_changed_or_missing_c_library_set_is_stale() {
+        let derivation = ResultDerivation {
+            result_set: "[-1, 0]".into(),
+            helpers: vec![],
+            rests_on: vec![RestedOn {
+                function: "pipe".into(),
+                module: "quirin-provider-libc:libc/result_sets.qv".into(),
+                contract_sha256: "a".into(),
+            }],
+        };
+        let view = |sha: &str| {
+            BTreeMap::from([(
+                "pipe".to_owned(),
+                (
+                    "quirin-provider-libc:libc/result_sets.qv".to_owned(),
+                    sha.to_owned(),
+                ),
+            )])
+        };
+        assert_eq!(stale_rest(&derivation, &view("a")), None);
+        assert!(stale_rest(&derivation, &view("b")).is_some_and(|why| why.contains("changed")));
+        assert!(
+            stale_rest(&derivation, &BTreeMap::new())
+                .is_some_and(|why| why.contains("not in force"))
+        );
+    }
+}

@@ -290,7 +290,7 @@ placements = [
 [[rule]]
 id = "38"
 crate = "rule-38-descriptor-cells"
-lean = ["QCore.DescriptorCells", "QCore.CellProtocolCloseActual"]
+lean = ["QCore.DescriptorCells", "QCore.CellProtocolCloseActual", "QCore.ResultSet"]
 document = "docs/agents/rules/38.md"
 off = "refuses"
 placements = [

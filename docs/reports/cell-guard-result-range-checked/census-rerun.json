@@ -1,0 +1,92 @@
+{
+ "meaning": "CELL-GUARD-RESULT-RANGE-CHECKED: the caller-test census of CELL-GUARD-RESULT-RANGE (docs/reports/cell-guard-result-range/census/) rerun with --check at the pinned trees after this card's implementation; it reads source only, so its readings and totals are unchanged, and its C library result sets now each equal a declared quirin-provider-libc result_set (pipe and epoll_ctl [-1, 0]; open and timerfd_create [-1, MAX]); kevent and evutil_socketpair, read only by backends no audited build configures (kqueue, libevent), stay undeclared.",
+ "command": "python3 -I docs/reports/cell-guard-result-range/census/census.py --root 66910c10=/media/Data/GitHub/quirin-lang/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source --root 046accf6=/media/Data/GitHub/quirin-lang/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source --root 34155955=/media/Data/GitHub/quirin-lang/private/w47-tail/attempt-1/prep/fluent-bit-clang-source --root monkey-66910c10=/media/Data/GitHub/quirin-lang/build/cycle19/c-gateway-wave-pin/monkey/monkey-source --check docs/reports/cell-guard-result-range/census/census.json",
+ "exit": 0,
+ "problems": 0,
+ "census_sha256": "4c22ec16ea4699095deba8ebd0c16235e71026b9531073bb10ecc7f327dcb44f",
+ "totals": {
+  "66910c10": {
+   "body_only": {
+    "exact": 19,
+    "untested": 1,
+    "wrong": 12
+   },
+   "libc": {
+    "exact": 19,
+    "redundant": 11,
+    "untested": 1,
+    "wrong": 1
+   },
+   "stored": {
+    "exact": 5,
+    "outside": 4,
+    "wrong": 20
+   }
+  },
+  "046accf6": {
+   "body_only": {
+    "exact": 23,
+    "untested": 1,
+    "wrong": 14
+   },
+   "libc": {
+    "exact": 23,
+    "redundant": 13,
+    "untested": 1,
+    "wrong": 1
+   },
+   "stored": {
+    "exact": 5,
+    "outside": 4,
+    "wrong": 20
+   }
+  },
+  "34155955": {
+   "body_only": {
+    "exact": 23,
+    "untested": 1,
+    "wrong": 14
+   },
+   "libc": {
+    "exact": 23,
+    "redundant": 13,
+    "untested": 1,
+    "wrong": 1
+   },
+   "stored": {
+    "exact": 5,
+    "outside": 4,
+    "wrong": 20
+   }
+  },
+  "monkey-66910c10": {
+   "body_only": {
+    "exact": 2,
+    "redundant": 1,
+    "untested": 1,
+    "wrong": 2
+   },
+   "libc": {
+    "exact": 2,
+    "redundant": 2,
+    "untested": 1,
+    "wrong": 1
+   },
+   "stored": {
+    "wrong": 3
+   }
+  }
+ },
+ "declared_c_library_sets": {
+  "pipe": "[-1, 0]",
+  "epoll_ctl": "[-1, 0]",
+  "open": "[-1, MAX]",
+  "timerfd_create": "[-1, MAX]"
+ },
+ "rule_38e_readings": {
+  "ret != 0 (5 Fluent Bit sites, Monkey monkey.c:115/:136)": "exact on every int: decides with or without the derived set",
+  "ret == -1 (9 Fluent Bit sites)": "redundant: decides under the derived set [-1, 0] in force; every site's creation is refused at the access gate first, so nothing is read today",
+  "ret < 0 (Monkey mk_scheduler.c:365)": "redundant: decides under the derived set; refused at the access gate first",
+  "timeout_fd > 0 (Monkey mk_server.c:502/:585)": "wrong: the timer declares no range here (its callers' `== -1` is exact); never decided"
+ }
+}

@@ -254,7 +254,7 @@ pub const REGISTRY: &[RuleEntry] = &[
             Placement { position: Position::Classification, order: None, arm: Some("descriptor-cell-initial-member"), route: "initial_member::member_view" },
             Placement { position: Position::Classification, order: None, arm: Some("descriptor-cell-close-actual"), route: "close_actual::admits" },
         ],
-        lean: &["QCore.DescriptorCells", "QCore.CellProtocolCloseActual"],
+        lean: &["QCore.DescriptorCells", "QCore.CellProtocolCloseActual", "QCore.ResultSet"],
         document: "docs/agents/rules/38.md",
         reason_keys: &[],
         off: Off::Refuses,
