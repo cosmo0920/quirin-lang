@@ -11,12 +11,21 @@ Card brief: `private/integrator-briefs/cell-guard-result-range.md` and
 > pay attention for the assertions and actual returning values of Fluent Bit
 > functions."
 
-**Status: stopped at a user decision (§4), after the census.** No contract,
-gateway, Lean or test code has changed. The census answers the user's
-question (§1–§2) and found the decision the brief's rules leave open: a
-range of Monkey's channel creator can be body-checked for the configuration
-Fluent Bit builds only with the C library's result sets, and no route that
-holds a Fluent Bit caller analyses that body.
+> **USER DECISION 2026-11-03** (verbatim, relayed by the coordinator): "Yes,
+> as recommended". It accepts §4's three recommendations: Q1 (a), Q2 (ii) and
+> Q3, landing the census now.
+
+**Status: a census-only card.** The census answers the user's question
+(§1–§2). It also found a decision the brief's rules left open: Monkey's
+channel creator has a body-checked range in the configuration Fluent Bit
+builds only with the C library's result sets, and no route that holds a
+Fluent Bit caller analyses that body. The user decided it (§4). The
+implementation moves to `CELL-GUARD-RESULT-RANGE-CHECKED`
+([integration-amendments.json](integration-amendments.json)).
+
+No contract, lock, gateway path, Lean module or test changed, and nothing
+the audit analyses changed. So this card needs no PREDICTION.md and no
+measurement.
 
 ## 1. Why the contract and the callers differ
 
@@ -176,12 +185,24 @@ Every creation the brief names is refused before rule 38 reads its result
   :502 tests nothing, so it keeps `descriptor-cell-undecided`.
 
 So under every option below no status moves, and no leaf at these creators
-changes, until the access gate admits these creations. The integrator's
-`baseline:e3050fe46` relisting (PREDICTION.md) is not done: it was not yet
-published when this stop was reached, and the prediction depends on the
-decision.
+changes, until the access gate admits these creations.
 
-## 4. The decision (the user's)
+## 4. The decision
+
+> **USER DECISION 2026-11-03** (verbatim): "Yes, as recommended".
+
+**What was chosen:**
+
+- **Q1: (a).** The C library's result sets become flexible libc contracts
+  under `libc-c-standard-abi`. The range check reads a call's result through
+  a declared range and through an in-unit helper.
+- **Q2: (ii).** The range is derived at `pin --bounds` time from the
+  configured backend's body chain, and the helper chain's sites are recorded
+  in the lock.
+- **Q3.** This card lands the census and the answer now. The implementation
+  is queued as `CELL-GUARD-RESULT-RANGE-CHECKED`.
+
+The question as it was put to the user follows.
 
 The brief's rules are: state the range "only as a body-checked range", and
 "a range out of force (withdrawn, unchecked, refuted) changes nothing". Two
@@ -210,8 +231,9 @@ in the libevent configuration, whose standing says nothing about epoll.
 
 - **(i)** Add Fluent Bit's `lib/monkey/mk_core/mk_event.c` (epoll) to the
   system and slice selections. Their figures then change (one new unit
-  each, whose rows are new), measured separately. A run-wide standing must then be known before the
-  callers are analysed, which is a phase like C06.4's.
+  each, whose rows are new), measured separately. A run-wide standing must
+  then be known before the callers are analysed, which is a phase like
+  C06.4's.
 - **(ii) Recommended.** A pin-time derivation. `quirin-audit pin --bounds`
   derives the range from the configured backend's body chain at each
   reviewed revision. The lock records the sites of every helper the
@@ -232,13 +254,30 @@ in the libevent configuration, whose standing says nothing about epoll.
   access-gate refusal at the creators.
 
 **Recommended: land the census now, and queue the implementation with (a)
-and (ii)** as one follow-up. That follow-up is
-`CELL-GUARD-RESULT-RANGE-CHECKED` or this card resumed.
+and (ii)** as one follow-up, `CELL-GUARD-RESULT-RANGE-CHECKED`.
 
-## 5. Not changed
+## 5. Not changed, and the records
 
-The census changes no source, contract, lock, gateway path or Lean module.
-It reads the trees only. The census's own fail-closed checks are its tests.
+The census changes no source, contract, lock, gateway path or Lean module,
+and reads the trees only. Its own fail-closed checks are its tests. Nothing
+analysed changes, so there is no PREDICTION.md and no measurement.
+
+[integration-amendments.json](integration-amendments.json) makes these
+ledger changes:
+
+- **Retires** `CELL-GUARD-RESULT-RANGE`.
+- **Registers** `CELL-GUARD-RESULT-RANGE-CHECKED`, the implementation under
+  (a) and (ii).
+- **Registers** `CELL-GUARD-DESCRIPTOR-ZERO-READ-AS-ABSENT`, the candidate
+  defects of §2 not tracked elsewhere.
+- **Registers** `EVENT-LOOP-QV-ANALYSED-CONFIGURATION-COMMENT` (§6).
+- **Registers** `RULE-38-VALIDITY-READING-RESULT-SET` (§6).
+- **Appends** the census's readings to three existing entries:
+  - `CELL-PROTOCOL-PER-END-GUARDS`: the channel destroyers' `> 0` ends;
+  - `W43-DESC-FLB-CONFIG-DATA-PIPE-ZERO-GUARD`: the same guard class at
+    `flb_config_exit`'s `ch_manager`/`ch_notif`;
+  - `FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME`: what the `ret == -1` mismatch
+    is.
 
 **Card gate.** `python3 scripts/gate_scope.py --base e3050fe46 --out
 private/gate` ran on `2e689174f`, with a clean tree. The scope selected no
