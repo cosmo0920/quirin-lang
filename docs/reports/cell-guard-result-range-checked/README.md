@@ -302,7 +302,42 @@ The measurement is the integrator's. The command is in the hand-back.
 
 ## 9. The card gate
 
-See [gate.json](gate.json) and the hand-back.
+`python3 scripts/gate_scope.py --base 1d94f0995 --out private/gate` ran on
+`05e5b6d51` with a clean tree ([gate.json](gate.json)). The scope selected the
+whole Rust suite (the diff reaches `qcore-core`, `qcore-contract`,
+`qcore-c-gateway` and `qcore-schemas`), all Lean (a proof root changed), the
+provider gate and the Python suite.
+
+| Step | Exit | Counts |
+|---|---|---|
+| submodules | 0 | 1 |
+| fmt | 0 | |
+| clippy | 0 | |
+| Rust suite | 0 | 600 units, 641 summaries; 9,126 passed, 0 failed, 16 ignored |
+| reevaluation probe and followup | 0, 0 | |
+| Lean | 0 | 404 audits |
+| Python suite | 1 | 577 tests; 1 failure (see below) |
+| provider package build, verify-all, verify | 0, 0, 0 | |
+| provider tests | 0 | 43 summaries; 133 passed, 0 failed, 1 ignored |
+| provider fmt, clippy | 0, 0 | |
+
+The one Python failure is
+`test_build_matrix_sections.test_the_derived_facts_are_recomputed_rather_than_carried`:
+`['24.0.0', 403] != ['24.0.0', 404]`. That is the stale Lean-audit count in
+the committed matrix. This card adds one audit (`AuditResultSet.lean`), and the
+integrator regenerates the records.
+
+The console log is
+`/tmp/claude-1000/-media-Data-GitHub-quirin-lang--claude-worktrees-launch-cards-clean-worktrees-5365ff/6fcd7fbd-1cae-4a40-a37d-5bce071c02c6/scratchpad/cgrrc/gate3-console.log`.
+
+Two earlier runs failed and were fixed:
+
+* The first run, on `475deea8e`, failed on a Clippy collapsible match, an
+  example's exhaustive match, the libc placement test (`timerfd_create`) and
+  the corpus module count. Its provider test also tripped because the tree
+  changed during that run.
+* The second run, on `1ef1e40e5`, failed on three Rust count assertions:
+  corpus modules 146, tracked bounds modules 8, and view relations 27.
 
 ## 10. Follow-ups and observations
 
