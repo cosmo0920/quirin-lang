@@ -298,7 +298,17 @@ compares such a result with a value the set excludes. The census of the
 analysed `pipe`/`epoll_ctl` calls found none. If the measurement shows a null
 move, it comes from this reading.
 
-The measurement is the integrator's. The command is in the hand-back.
+The integrator ran the declared measurement from the main checkout on
+2026-11-03, `baseline:e3050fe46` → `rev:05e5b6d51`, with output in
+`private/measure/cgrr-checked-20261103T061416Z`. It exited 0 with status
+`complete` and no failures. The declared comparison is `match` on corpus,
+slice and system, with no delta mismatches, no missing rows and no
+unpredicted rows. There are 0 status moves, 0 unit moves, 0 unmatched rows
+and 0 content changes on every route; in particular no null row moves. The
+record is [native-comparison.json](native-comparison.json) (sha256
+`37159f5dd70658640ab9aa1e2a4c6ccc8e7cf0d9e6d8b9f68ccfb1983174140b`;
+PREDICTION.md sha256 `2e7687d68d8873ed9477c70328902cc946b0ab95190a595f2e91b90bf9075b83`). `05e5b6d51` is the card's last code
+commit; the commits after it change only this report and its records.
 
 ## 9. The card gate
 

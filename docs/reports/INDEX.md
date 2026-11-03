@@ -105,6 +105,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cell-guard-result-range](cell-guard-result-range/README.md) | CELL-GUARD-RESULT-RANGE |
 
+| [cell-guard-result-range-checked](cell-guard-result-range-checked/README.md) | CELL-GUARD-RESULT-RANGE-CHECKED |
+
 | [cell-protocol-close-actual](cell-protocol-close-actual/README.md) | CELL-PROTOCOL-CLOSE-ACTUAL |
 
 | [cell-protocol-fb-declarations](cell-protocol-fb-declarations/README.md) | CELL-PROTOCOL-FB-DECLARATIONS |
