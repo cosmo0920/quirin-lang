@@ -187,10 +187,11 @@ fn the_reserved_spellings_are_unused_by_tracked_contracts() {
     // Card NULL-SAFETY-PROPERTY adds three: the `quant null-deref` modules of
     // cmetrics, librdkafka and fluent-bit (C09.3).
     // Card NULL-TRIAGE-UNRESOLVED-PATHS adds cfl's (`cfl_list_size`'s result
-    // range, G05e).
+    // range, G05e). Card CELL-GUARD-RESULT-RANGE-CHECKED adds two: libc's
+    // `libc/result_sets.qv` (G05j) and libevent's `monkey/result_range.qv`.
     assert_eq!(
         bounds_modules.len(),
-        6,
+        8,
         "tracked bounds modules: {bounds_modules:?}"
     );
     let mut names = bounds_modules
@@ -214,7 +215,9 @@ fn the_reserved_spellings_are_unused_by_tracked_contracts() {
             "chunkio/meta_len_bounds.qv",
             "cmetrics/null_deref.qv",
             "fluent_bit/null_deref.qv",
+            "libc/result_sets.qv",
             "librdkafka/null_deref.qv",
+            "monkey/result_range.qv",
         ]
     );
 }

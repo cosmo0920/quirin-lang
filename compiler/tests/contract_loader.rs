@@ -1770,7 +1770,11 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // Two additional declared CMetrics map/opts lifecycle model modules.
     // The CFL hash model is already present on main; typed quant conditions
     // preserve it, and cfl/atomic.qv adds one further model module.
-    assert_eq!(modules.len(), 144, "corpus module count");
+    // 144 -> 146: card CELL-GUARD-RESULT-RANGE-CHECKED adds bounds contract v1
+    // value sets, `libc/result_sets.qv` (three C library result sets) and
+    // `monkey/result_range.qv` (one derived range); resource-v1 rejects all
+    // four declarations.
+    assert_eq!(modules.len(), 146, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
@@ -2136,9 +2140,11 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // `flb_config_set_program_name` to the existing
     // `fluent_bit/teardown_destroy.qv`: 498 -> 499; selected modules and
     // rejected declarations unchanged.
+    // CELL-GUARD-RESULT-RANGE-CHECKED's two bounds value-set modules add four
+    // rejected declarations: 365 -> 369; selected modules and v1 unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (66, 499, 365)
+        (66, 499, 369)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every
