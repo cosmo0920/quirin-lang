@@ -1,0 +1,31 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "CELL-GUARD-RESULT-RANGE-CHECKED",
+ "base": "1d94f0995",
+ "measured_tip": "fda0a2a7e",
+ "increment_paragraph": "**CELL-GUARD-RESULT-RANGE-CHECKED** (gateway rule 38e, rule 12r amended; contract specification C09.4, grammar G05j; USER DECISIONS 2026-11-03, verbatim: \"Yes, as recommended\", \"This should be needed to use here.\", \"C: a new result-set form that allows unions, such as result_set(-1 | [0, MAX]). [...] I choose this because we must not loosen the custody of the contracts if we cannot select other options.\" and \"Also, we need to use mathematical symbols on them and we can use XOR or AND or OR with the normal symbols of programming languages.\"): a value-set-only bounds clause `ensures normal result_set(SET);` (literals, `[a, b]`, `MIN`/`MAX` of the result type, `|` union, `&` intersection, `^` symmetric difference, C precedence, ASCII only, empty or contradictory sets refused, one canonical serialization) admitted only beside `requires bounds_revision(flexible);` from quirin-provider-libc (rule 12r's one flexible bounds declaration, under `libc-c-standard-abi`); the C library's documented result sets written first (`libc/result_sets.qv`: `pipe` and `epoll_ctl` [-1, 0], `open` and `timerfd_create` -1 | [0, MAX], each citing POSIX or the Linux man page; no custody clause added or changed); `mk_event_channel_create`'s `nonnull_result_range(-1, 0)` derived by `quirin-audit pin --bounds --derive-results --compile-database FILE` through Clang over Fluent Bit's configured epoll unit at 66910c10, 046accf6 and 34155955 ([-1, 0], helpers `_mk_event_add` and `_mk_event_channel_create` whose sites join every identity, resting on libc's `pipe` and `epoll_ctl` with recorded digests; from the bodies alone every int); rule 38 reads a status witness's exact comparison (`ret == -1`, `ret < 0`) through the derived set only while it is in force (`BranchOnResult`, `qcore_core::result_set::test_class`), and a held, unchecked, stale or absent set, a constant outside the set or a misclassifying test decides nothing; the null property's range check reads a declared set in force and an in-unit helper's derived set. Lean `QCore.ResultSet` (operator meanings, the class equivalence and narrowing, an out-of-force set never deciding beyond an exact test; set, member and class vectors bound to the Rust). The caller-test census reran with `--check` unchanged (046accf6: 23 exact, 13 redundant, 1 wrong, 1 untested; 20 wrong stored-result tests); no row is predicted to move: every named creation is still refused at the access gate first. Report: [docs/reports/cell-guard-result-range-checked/README.md](../../reports/cell-guard-result-range-checked/README.md).",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "CELL-GUARD-RESULT-RANGE-CHECKED",
+   "operation": "retire",
+   "why": "DISCHARGED by CELL-GUARD-RESULT-RANGE-CHECKED (docs/reports/cell-guard-result-range-checked/README.md): (a) the C library's result sets declared in quirin-provider-libc as flexible `result_set` value sets under libc-c-standard-abi (pipe, epoll_ctl [-1, 0]; open, timerfd_create -1 | [0, MAX]; kevent and evutil_socketpair are read by no configured backend), USER DECISION 2026-11-03 option C, and the range check reading a call result through a declared set in force and an in-unit helper's derived set (locals assigned only such values); (ii) `nonnull_result_range(-1, 0)` on mk_event_channel_create derived at `pin --bounds --derive-results` from the configured epoll body chain at 66910c10, 046accf6 and 34155955, the lock recording the helpers (_mk_event_add, _mk_event_channel_create) whose sites join every identity and the libc declarations it rested on; contracts.py sync and the lock diffs in the same commits; rule 38's result-guard reading using the set only while in force; Lean QCore.ResultSet with shared vectors; fixtures for both caller spellings, a refuted (held) range, a range out of force and an out-of-range test constant; the census rerun with --check; PREDICTION.md before implementation (measurement by the integrator).",
+   "source": "docs/reports/cell-guard-result-range-checked/README.md"
+  },
+  {
+   "id": "CELL-GUARD-RESULT-RANGE-CORPUS-MONKEY-IDENTITY",
+   "operation": "register",
+   "title": "The corpus applies Fluent Bit-tree pins, now including the derived channel range, to standalone Monkey units",
+   "text": "Registered by CELL-GUARD-RESULT-RANGE-CHECKED. The corpus route evaluates every pin over its Fluent Bit source root (`lib/monkey/...` sites), while its Monkey units come from Monkey's standalone libevent build (`mk_core/...`). A pinned declaration of a Monkey function, now including mk_event_channel_create's pin-derived `nonnull_result_range(-1, 0)` (derived over Fluent Bit's epoll unit), is therefore in force at the corpus's Monkey callers on the strength of another tree's body. The range also holds for the libevent backend from its body alone (census part 1), and no corpus creator is read today (mk_sched_launch_worker_loop :365 and mk_server_create :115/:136 are refused at the access gate first). DISCHARGE: pins of Monkey functions evaluated over the tree the analysed unit comes from (a Monkey-tree identity, or a derivation at the corpus's Monkey compile database), or held for units outside the pinned tree, with a measurement showing the corpus's rows.",
+   "source": "docs/reports/cell-guard-result-range-checked/README.md",
+   "recorded_by": "CELL-GUARD-RESULT-RANGE-CHECKED"
+  },
+  {
+   "id": "RULE-38-VALIDITY-READING-RESULT-SET",
+   "operation": "amend",
+   "text": "AMENDED (CELL-GUARD-RESULT-RANGE-CHECKED, 2026-11-03): the C library result sets this reading needs are now declared contracts (quirin-provider-libc libc/result_sets.qv: open and timerfd_create -1 | [0, MAX], pipe and epoll_ctl [-1, 0], flexible under libc-c-standard-abi, USER DECISION 2026-11-03 option C), and the pin-time derivation (rule 38e) can derive a timer result set from them. What remains: a derived `mk_event_timeout_create` set and the validity witness read through it (rule 38e's exact class reading in place of W43's `facts` table at a cell witness).",
+   "source": "docs/reports/cell-guard-result-range-checked/README.md"
+  }
+ ],
+ "profiles": []
+}
