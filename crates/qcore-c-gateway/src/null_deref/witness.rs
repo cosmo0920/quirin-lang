@@ -1457,9 +1457,11 @@ impl<'a, 'e> Run<'a, 'e> {
     /// by this unit's validated summary of the callee's body.
     fn result_bound(&mut self, callee: &str, (lo, hi): (i128, i128)) -> (i128, i128) {
         let (mut lo, mut hi) = (lo, hi);
+        // Card CELL-GUARD-RESULT-RANGE-CHECKED: a C library result set binds
+        // only a call of the declared result type (its signature).
         if let Some(declared) = self.env.ranges.get(callee)
-            && declared.held.is_none()
-            && !declared.refuted
+            && declared.in_force()
+            && (!declared.flexible || declared.set.universe() == (lo, hi))
             && declared.lo.max(lo) <= declared.hi.min(hi)
         {
             lo = lo.max(declared.lo);

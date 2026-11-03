@@ -72,6 +72,7 @@ use crate::typed_c_ast::kind;
 
 mod ast;
 mod range;
+pub use range::Derived as ResultDerivation;
 mod scope;
 mod walk;
 mod witness;
@@ -783,21 +784,25 @@ fn analyze_on_stack(
     // each checked against this unit's own body of the function (a refuting
     // body takes it out of force here; the run's fold withdraws it), and this
     // unit's validated summaries of integer result ranges.
-    let mut ranges = range::declared_ranges(bounds);
+    // Card CELL-GUARD-RESULT-RANGE-CHECKED (C09.4): a C library result set
+    // is among them, unbound where this unit defines the name.
+    let mut ranges = range::declared_ranges(bounds, &read);
     let mut range_evidence = BTreeMap::new();
-    for (name, decl) in &mut ranges {
-        if let Some(definition) = read.definitions.get(name) {
-            let evidence = range::evidence(definition, &read, decl);
-            decl.refuted = evidence == qcore_core::null_triage::ResultEvidence::Refuted;
+    let names = ranges.keys().cloned().collect::<Vec<_>>();
+    for name in names {
+        if let Some(definition) = read.definitions.get(&name) {
+            let decl = ranges[&name].clone();
+            let evidence = range::evidence(&name, definition, &read, &ranges, &decl);
+            if let Some(entry) = ranges.get_mut(&name) {
+                entry.refuted = evidence == qcore_core::null_triage::ResultEvidence::Refuted;
+            }
             range_evidence.insert(name.clone(), range::evidence_name(evidence));
         }
     }
     let range_summaries = read
         .definitions
-        .iter()
-        .filter_map(|(name, definition)| {
-            range::summary(definition, &read).map(|range| (name.clone(), range))
-        })
+        .keys()
+        .filter_map(|name| range::summary(name, &read, &ranges).map(|range| (name.clone(), range)))
         .collect::<BTreeMap<_, _>>();
     let mut summaries = BTreeMap::new();
     let mut rows = BTreeMap::new();
@@ -895,6 +900,51 @@ pub fn analyze_null_preprocessed(
             .map_err(|error| format!("cannot start the null reader: {error}"))?
             .join()
             .map_err(|_| "the null reader panicked".to_owned())?
+    })
+}
+
+/// Card **CELL-GUARD-RESULT-RANGE-CHECKED** (contract specification C09.4,
+/// gateway rule 38e): the result set of `function`'s body in the configured
+/// unit, derived as the null property's summaries are, reading only the C
+/// library's result sets (the flexible `result_set` declarations of `bounds`)
+/// and the unit's own helpers. `quirin-audit pin --bounds --derive-results`
+/// reads it; nothing here runs during an audit.
+///
+/// # Errors
+///
+/// The unit does not validate or preprocess, Clang's AST cannot be read, or
+/// the unit defines no `function` with an integer result.
+pub fn derive_result_set_c11(
+    unit: &C11TranslationUnit<'_>,
+    function: &str,
+    bounds: &BoundsContracts,
+) -> Result<ResultDerivation, String> {
+    let preprocessed =
+        crate::legacy_c::validate_unrestricted_c11(unit).map_err(|e| format!("{e:?}"))?;
+    std::thread::scope(|scope| {
+        std::thread::Builder::new()
+            .stack_size(ANALYSIS_STACK)
+            .spawn_scoped(scope, || {
+                use serde::de::DeserializeSeed;
+                let mut read = ast::Unit::default();
+                crate::typed_c_ast::translation_unit_ast_with(&preprocessed, unit, |bytes| {
+                    let mut deserializer = serde_json::Deserializer::from_slice(bytes);
+                    deserializer.disable_recursion_limit();
+                    TopSeed { unit: &mut read }.deserialize(&mut deserializer)
+                })?;
+                let mut declared = range::declared_ranges(bounds, &read);
+                declared.retain(|_, decl| decl.flexible);
+                range::Deriver::new(&read, &declared)
+                    .derive(function)
+                    .ok_or_else(|| {
+                        format!(
+                            "the unit defines no `{function}` whose integer result set can be derived"
+                        )
+                    })
+            })
+            .map_err(|error| format!("cannot start the result derivation: {error}"))?
+            .join()
+            .map_err(|_| "the result derivation panicked".to_owned())?
     })
 }
 
