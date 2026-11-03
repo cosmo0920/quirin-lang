@@ -1,0 +1,171 @@
+{
+ "card": "CELL-PROTOCOL-PER-END-GUARDS",
+ "note": "One reading per non-read site of a declared (or withheld) end, keyed by revision-independent text. `keeps`: whether the site keeps the per-end claim (> 0: live; <= 0: absent or descriptor 0); `outside`: no cell.",
+ "sites": [
+  {
+   "key": "flb_config|src/flb_config.c|flb_config_init|address|ch_event|MK_EVENT_ZERO(&config->ch_event);",
+   "keeps": true,
+   "reading": "`MK_EVENT_ZERO` stores -1 in `ch_event.fd`, the absent value of the `#same` name of `ch_manager[0]` (flb_config, withheld)"
+  },
+  {
+   "key": "flb_config|src/flb_config.c|flb_config_init|alloc|<record>|config = flb_calloc(1, sizeof(struct flb_config));",
+   "keeps": true,
+   "reading": "calloc's zero bytes: every end holds 0, its absent value and also descriptor 0's number; no end is live yet. A `> 0` sentinel reads 0 as absent-or-descriptor-0, so the per-end claim holds"
+  },
+  {
+   "key": "flb_config|src/flb_engine.c|flb_engine_failed|store|ch_notif[1]|config->ch_notif[1] = -1;",
+   "keeps": true,
+   "reading": "the absent value -1 after `mk_event_closesocket(config->ch_notif[1])` under `ch_notif[1] != ch_notif[0]`: the sentinel's dead value, so the closed end keeps the claim (flb_config, withheld)"
+  },
+  {
+   "key": "flb_config|src/flb_engine.c|flb_engine_start|address|ch_event|&config->ch_event);",
+   "keeps": true,
+   "reading": "the record handed as its first-member event: `event.fd` is the `#same` name of the read end, written with it; a creation: on success the creator writes the pipe's descriptors (each may be 0), on failure no end (epoll backend; CELL-GUARD-RESULT-RANGE census). The per-end claim (> 0: live; <= 0: absent or descriptor 0) holds after it; a creation never establishes `> 0` (rule 38f)"
+  },
+  {
+   "key": "flb_config|src/flb_engine.c|flb_engine_start|address|ch_manager[0]|&config->ch_manager[0],",
+   "keeps": true,
+   "reading": "a creation: on success the creator writes the pipe's descriptors (each may be 0), on failure no end (epoll backend; CELL-GUARD-RESULT-RANGE census). The per-end claim (> 0: live; <= 0: absent or descriptor 0) holds after it; a creation never establishes `> 0` (rule 38f)"
+  },
+  {
+   "key": "flb_config|src/flb_engine.c|flb_engine_start|address|ch_manager[1]|&config->ch_manager[1],",
+   "keeps": true,
+   "reading": "a creation: on success the creator writes the pipe's descriptors (each may be 0), on failure no end (epoll backend; CELL-GUARD-RESULT-RANGE census). The per-end claim (> 0: live; <= 0: absent or descriptor 0) holds after it; a creation never establishes `> 0` (rule 38f)"
+  },
+  {
+   "key": "flb_config|src/flb_lib.c|flb_create|address|ch_notif[0]|&config->ch_notif[0],",
+   "keeps": true,
+   "reading": "a creation: on success the creator writes the pipe's descriptors (each may be 0), on failure no end (epoll backend; CELL-GUARD-RESULT-RANGE census). The per-end claim (> 0: live; <= 0: absent or descriptor 0) holds after it; a creation never establishes `> 0` (rule 38f)"
+  },
+  {
+   "key": "flb_config|src/flb_lib.c|flb_create|address|ch_notif[1]|&config->ch_notif[1],",
+   "keeps": true,
+   "reading": "a creation: on success the creator writes the pipe's descriptors (each may be 0), on failure no end (epoll backend; CELL-GUARD-RESULT-RANGE census). The per-end claim (> 0: live; <= 0: absent or descriptor 0) holds after it; a creation never establishes `> 0` (rule 38f)"
+  },
+  {
+   "key": "flb_input_instance|src/flb_input.c|flb_input_new|alloc|<record>|instance = flb_calloc(1, sizeof(struct flb_input_instance));",
+   "keeps": true,
+   "reading": "calloc's zero bytes: every end holds 0, its absent value and also descriptor 0's number; no end is live yet. A `> 0` sentinel reads 0 as absent-or-descriptor-0, so the per-end claim holds"
+  },
+  {
+   "key": "flb_input_instance|src/flb_input.c|flb_input_new|store|ingress_queue_channels[0]|instance->ingress_queue_channels[0] = -1;",
+   "keeps": true,
+   "reading": "the absent value -1 right after the allocation (flb_input_new), before the record is published: `ingress_queue_channels`' absent value"
+  },
+  {
+   "key": "flb_input_instance|src/flb_input.c|flb_input_new|store|ingress_queue_channels[1]|instance->ingress_queue_channels[1] = -1;",
+   "keeps": true,
+   "reading": "the absent value -1 right after the allocation (flb_input_new), before the record is published: `ingress_queue_channels`' absent value"
+  },
+  {
+   "key": "flb_input_instance|src/flb_input.c|input_instance_channel_events_init|address|ch_events[0]|&ins->ch_events[0],",
+   "keeps": true,
+   "reading": "a creation: on success the creator writes the pipe's descriptors (each may be 0), on failure no end (epoll backend; CELL-GUARD-RESULT-RANGE census). The per-end claim (> 0: live; <= 0: absent or descriptor 0) holds after it; a creation never establishes `> 0` (rule 38f)"
+  },
+  {
+   "key": "flb_input_instance|src/flb_input.c|input_instance_channel_events_init|address|ch_events[1]|&ins->ch_events[1],",
+   "keeps": true,
+   "reading": "a creation: on success the creator writes the pipe's descriptors (each may be 0), on failure no end (epoll backend; CELL-GUARD-RESULT-RANGE census). The per-end claim (> 0: live; <= 0: absent or descriptor 0) holds after it; a creation never establishes `> 0` (rule 38f)"
+  },
+  {
+   "key": "flb_input_instance|src/flb_input.c|input_instance_channel_events_init|address|event|ret = mk_event_channel_create(evl,",
+   "keeps": true,
+   "reading": "the record handed as its first-member event: `event.fd` is the `#same` name of the read end, written with it; a creation: on success the creator writes the pipe's descriptors (each may be 0), on failure no end (epoll backend; CELL-GUARD-RESULT-RANGE census). The per-end claim (> 0: live; <= 0: absent or descriptor 0) holds after it; a creation never establishes `> 0` (rule 38f)"
+  },
+  {
+   "key": "flb_input_instance|src/flb_input.c|input_instance_channel_events_init|store|event.type|ins->event.type = FLB_ENGINE_EV_INPUT;",
+   "keeps": "outside",
+   "reading": "outside: `event.type` is no cell"
+  },
+  {
+   "key": "flb_input_instance|src/flb_input_ingest.c|flb_input_ingress_enable|array|ingress_queue_channels|flb_pipe_destroy(ins->ingress_queue_channels);",
+   "keeps": true,
+   "reading": "closes both ends; the next two lines store the absent value -1"
+  },
+  {
+   "key": "flb_input_instance|src/flb_input_ingest.c|flb_input_ingress_enable|array|ingress_queue_channels|result = flb_pipe_create(ins->ingress_queue_channels);",
+   "keeps": true,
+   "reading": "a creation through `flb_pipe_create` (`pipe`): both ends written on success, each >= 0 (may be 0), none on failure (the `-1` stays)"
+  },
+  {
+   "key": "flb_input_instance|src/flb_input_ingest.c|flb_input_ingress_enable|store|ingress_queue_channels[0]|ins->ingress_queue_channels[0] = -1;",
+   "keeps": true,
+   "reading": "the absent value -1 after `flb_pipe_destroy(ins->ingress_queue_channels)` on a failed registration: both ends closed, then the dead value"
+  },
+  {
+   "key": "flb_input_instance|src/flb_input_ingest.c|flb_input_ingress_enable|store|ingress_queue_channels[1]|ins->ingress_queue_channels[1] = -1;",
+   "keeps": true,
+   "reading": "the absent value -1 after `flb_pipe_destroy(ins->ingress_queue_channels)` on a failed registration: both ends closed, then the dead value"
+  },
+  {
+   "key": "flb_input_thread_instance|src/flb_input_thread.c|input_thread_instance_create|address|ch_parent_events[0]|&thi->ch_parent_events[0],",
+   "keeps": true,
+   "reading": "a creation: on success the creator writes the pipe's descriptors (each may be 0), on failure no end (epoll backend; CELL-GUARD-RESULT-RANGE census). The per-end claim (> 0: live; <= 0: absent or descriptor 0) holds after it; a creation never establishes `> 0` (rule 38f)"
+  },
+  {
+   "key": "flb_input_thread_instance|src/flb_input_thread.c|input_thread_instance_create|address|ch_parent_events[1]|&thi->ch_parent_events[1],",
+   "keeps": true,
+   "reading": "a creation: on success the creator writes the pipe's descriptors (each may be 0), on failure no end (epoll backend; CELL-GUARD-RESULT-RANGE census). The per-end claim (> 0: live; <= 0: absent or descriptor 0) holds after it; a creation never establishes `> 0` (rule 38f)"
+  },
+  {
+   "key": "flb_input_thread_instance|src/flb_input_thread.c|input_thread_instance_create|address|ch_thread_events[0]|&thi->ch_thread_events[0],",
+   "keeps": true,
+   "reading": "a creation: on success the creator writes the pipe's descriptors (each may be 0), on failure no end (epoll backend; CELL-GUARD-RESULT-RANGE census). The per-end claim (> 0: live; <= 0: absent or descriptor 0) holds after it; a creation never establishes `> 0` (rule 38f)"
+  },
+  {
+   "key": "flb_input_thread_instance|src/flb_input_thread.c|input_thread_instance_create|address|ch_thread_events[1]|&thi->ch_thread_events[1],",
+   "keeps": true,
+   "reading": "a creation: on success the creator writes the pipe's descriptors (each may be 0), on failure no end (epoll backend; CELL-GUARD-RESULT-RANGE census). The per-end claim (> 0: live; <= 0: absent or descriptor 0) holds after it; a creation never establishes `> 0` (rule 38f)"
+  },
+  {
+   "key": "flb_input_thread_instance|src/flb_input_thread.c|input_thread_instance_create|address|event_local|&thi->event_local);",
+   "keeps": true,
+   "reading": "the record handed as its first-member event: `event.fd` is the `#same` name of the read end, written with it; a creation: on success the creator writes the pipe's descriptors (each may be 0), on failure no end (epoll backend; CELL-GUARD-RESULT-RANGE census). The per-end claim (> 0: live; <= 0: absent or descriptor 0) holds after it; a creation never establishes `> 0` (rule 38f)"
+  },
+  {
+   "key": "flb_input_thread_instance|src/flb_input_thread.c|input_thread_instance_create|address|event|&thi->event);",
+   "keeps": true,
+   "reading": "the record handed as its first-member event: `event.fd` is the `#same` name of the read end, written with it; a creation: on success the creator writes the pipe's descriptors (each may be 0), on failure no end (epoll backend; CELL-GUARD-RESULT-RANGE census). The per-end claim (> 0: live; <= 0: absent or descriptor 0) holds after it; a creation never establishes `> 0` (rule 38f)"
+  },
+  {
+   "key": "flb_input_thread_instance|src/flb_input_thread.c|input_thread_instance_create|alloc|<record>|thi = flb_calloc(1, sizeof(struct flb_input_thread_instance));",
+   "keeps": true,
+   "reading": "calloc's zero bytes: every end holds 0, its absent value and also descriptor 0's number; no end is live yet. A `> 0` sentinel reads 0 as absent-or-descriptor-0, so the per-end claim holds"
+  },
+  {
+   "key": "flb_input_thread_instance|src/flb_input_thread.c|input_thread_instance_create|store|event.type|thi->event.type = FLB_ENGINE_EV_INPUT;",
+   "keeps": "outside",
+   "reading": "outside: `event.type` is no cell"
+  },
+  {
+   "key": "flb_input_thread_instance|src/flb_input_thread.c|input_thread_instance_create|store|event_local.type|thi->event_local.type = FLB_ENGINE_EV_THREAD_INPUT;",
+   "keeps": "outside",
+   "reading": "outside: `event.type` is no cell"
+  },
+  {
+   "key": "flb_output_instance|src/flb_output.c|flb_output_init_all|address|ch_events[0]|&ins->ch_events[0],",
+   "keeps": true,
+   "reading": "a creation: on success the creator writes the pipe's descriptors (each may be 0), on failure no end (epoll backend; CELL-GUARD-RESULT-RANGE census). The per-end claim (> 0: live; <= 0: absent or descriptor 0) holds after it; a creation never establishes `> 0` (rule 38f)"
+  },
+  {
+   "key": "flb_output_instance|src/flb_output.c|flb_output_init_all|address|ch_events[1]|&ins->ch_events[1],",
+   "keeps": true,
+   "reading": "a creation: on success the creator writes the pipe's descriptors (each may be 0), on failure no end (epoll backend; CELL-GUARD-RESULT-RANGE census). The per-end claim (> 0: live; <= 0: absent or descriptor 0) holds after it; a creation never establishes `> 0` (rule 38f)"
+  },
+  {
+   "key": "flb_output_instance|src/flb_output.c|flb_output_init_all|address|event|ret = mk_event_channel_create(config->evl,",
+   "keeps": true,
+   "reading": "the record handed as its first-member event: `event.fd` is the `#same` name of the read end, written with it; a creation: on success the creator writes the pipe's descriptors (each may be 0), on failure no end (epoll backend; CELL-GUARD-RESULT-RANGE census). The per-end claim (> 0: live; <= 0: absent or descriptor 0) holds after it; a creation never establishes `> 0` (rule 38f)"
+  },
+  {
+   "key": "flb_output_instance|src/flb_output.c|flb_output_init_all|store|event.type|ins->event.type = FLB_ENGINE_EV_OUTPUT;",
+   "keeps": "outside",
+   "reading": "outside: `event.type` is no cell"
+  },
+  {
+   "key": "flb_output_instance|src/flb_output.c|flb_output_new|alloc|<record>|instance = flb_calloc(1, sizeof(struct flb_output_instance));",
+   "keeps": true,
+   "reading": "calloc's zero bytes: every end holds 0, its absent value and also descriptor 0's number; no end is live yet. A `> 0` sentinel reads 0 as absent-or-descriptor-0, so the per-end claim holds"
+  }
+ ]
+}
