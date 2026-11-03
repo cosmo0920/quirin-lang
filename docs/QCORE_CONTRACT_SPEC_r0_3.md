@@ -642,14 +642,22 @@ quant cell #s: flb_sched.event.fd |-> #same(ch_events[0]) when #s.ch_events[0] !
 **Meaning.** Whenever the guard holds, each `#fresh` cell names its own live descriptor and each `#same` cell names its target's. Otherwise no cell of the object names a live descriptor.
 
 - **The guards.** `!= -1` and `> 0` are sentinel cells, and the guard must be one of the `#fresh` cells. `== 1` is a flag member that is no cell.
+- **Per-end sentinels** (card CELL-PROTOCOL-PER-END-GUARDS, gateway rule [38f](agents/gateway.md#constraint-38f); USER DECISION 2026-11-03, verbatim: "Per-end sentinels"). Each channel end may carry its own sentinel, a guard over exactly that `#fresh` cell (its `#same` names with it), beside at most one record guard of the form above. A record with several channel pairs states one per end, not several record-level protocols:
+
+  ```qcore
+  quant cell #o: flb_output_instance.ch_events[0] |-> #fresh(descriptor) when #o.ch_events[0] > 0;
+  quant cell #o: flb_output_instance.ch_events[1] |-> #fresh(descriptor) when #o.ch_events[1] > 0;
+  quant cell #o: flb_output_instance.event.fd |-> #same(ch_events[0]) when #o.ch_events[0] > 0;
+  ```
+- **What `> 0` claims.** A value above 0 names the end's live descriptor; a value at or below 0 is the absent value or descriptor 0, a success value of every creator (USER DIRECTION 2026-11-03: a sentinel's meaning comes from the creator's result set and the absent value the stores write, never from the test a caller writes). So `> 0`'s dead edge never decides that the end is absent; only `!= -1`'s does.
 - **Where it may stand.** The clause stands in any extern declaration's contract, beside its other clauses, and adds nothing to that declaration's own contract. Like `quant registered`, it makes the host a withheld lifetime declaration.
 - **Assumption, not proof.** The protocol is a declared assumption (rule 13i, premise `P-CELL-PROTOCOL-DECLARED`), and it is published with every row that reads it. No run-wide store census checks it. Two declarations stating different protocols for one record leave the record without one.
 
 **Meaning at a body** (rule 38c).
 
-- **The test.** A test of exactly `r->GUARD OP V`, or its complement, on a name declared `struct TAG *` that the path holds no fact of, is read as follows:
+- **The test.** A test of exactly `r->GUARD OP V`, or its complement, on a name declared `struct TAG *` that the path holds no fact of (of that guard: one fact per guard, rule 38f), is read as follows:
   - on its live edge it introduces the caller's identities;
-  - on the other edge it records that no cell is live.
+  - on the other edge it records that no cell is live, except a `> 0` guard's, which leaves its cells undecided (descriptor 0).
 - **Stores.**
   - A store never overwrites a cell that may be live.
   - A sentinel is stored only at its dead value.
@@ -657,9 +665,10 @@ quant cell #s: flb_sched.event.fd |-> #same(ch_events[0]) when #s.ch_events[0] !
 - **Creations.** A creation into a protocol cell is admitted only where the guard was read dead or the cell is recorded. Only a `!= -1` guard is established by a creation, because descriptor 0 exists.
 - **Closes.** `close(r->CELL)` is that cell's `#stale` (decision Q3). Copied numbers are not names (Q4). The access gate admits the close's integer member actual at the descriptor-kind release position of a function-map callee for exactly this reading (rule [38d](agents/gateway.md#constraint-38d), card CELL-PROTOCOL-CLOSE-ACTUAL); where rule 38c reads nothing of it the gate's refusal stands, and where it does not decide it refuses.
 - **Exits and calls.** At an exit, and at a call that may reach the record, a record that keeps the protocol is forwarded under it instead of `descriptor-cell-escapes`. A record that does not keep it refuses (`descriptor-cell-protocol-broken`).
-- **What is never claimed.** Nothing is `Unsafe`. An unresolved forward never decides. A forwarded cell ends only by its own close or by its holder's release.
+- **The holder's release** (rule 38f) ends the record's protocols where no cell may be live; otherwise it refuses (`descriptor-cell-zero-undecided` where a `> 0` dead edge left an end undecided: a candidate defect, never `Unsafe`). Between a close that stores no sentinel and that release, a call that may reach the record refuses.
+- **What is never claimed.** Nothing is `Unsafe`. An unresolved forward never decides. A forwarded cell ends only by its own close or by its holder's release. A join never drops a name that may be live.
 
-The Lean model is `QCore.DescriptorCellProtocol`.
+The Lean models are `QCore.DescriptorCellProtocol` and (per-end sentinels) `QCore.CellProtocolPerEnd`.
 
 ### C04.7. Counted users
 

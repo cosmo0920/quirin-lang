@@ -9445,7 +9445,10 @@ safety claim and no validation of the detach representation premise.
     live edge introduces the caller's identities: one per `#fresh` cell, a
     `#same` cell sharing its target's. They stay pending until an operation
     reads the cell, and are then adopted into rule 38's table. The other edge
-    records that no cell is live.
+    records that no cell is live, except a `> 0` guard's: it holds descriptor
+    0, so its cells stay undecided (rule [38f](#constraint-38f), card
+    CELL-PROTOCOL-PER-END-GUARDS, which also adds per-end sentinels beside
+    the one record guard, one fact per guard, and the holder's release).
     (3) **Stores and closes.**
     - A store `r->PATH = V` to the guard or a cell never overwrites a cell
       that may be live (`descriptor-cell-overwritten`).
@@ -9604,5 +9607,82 @@ safety claim and no validation of the detach representation premise.
     (`libc-c-standard-abi`), Clang's AST of the configured unit, and the
     lexical site scanner's identity of the helpers. The Lean model is
     `QCore.ResultSet` ([report](../reports/cell-guard-result-range-checked/README.md)).
+
+<a id="constraint-38f"></a>
+
+38f. **Each end is its own guard, and descriptor 0 is never read as an
+    absent end.** Card CELL-PROTOCOL-PER-END-GUARDS (registered by
+    CELL-PROTOCOL-CLOSE-ACTUAL; contract specification
+    [§C04.6.3](../QCORE_CONTRACT_SPEC_r0_3.md#c0463-declared-cell-protocols),
+    grammar G05i as amended). USER DECISION 2026-11-03 (verbatim, on "a
+    sentinel on each channel end, or several protocols per record"):
+    "Per-end sentinels". USER DIRECTION 2026-11-03 (standing, verbatim): "The
+    Fluent Bit's caller tests sometimes check the incorrect assertions so we
+    need to pay attention for the assertions and actual returning values of
+    Fluent Bit functions." The package model is
+    `crates/gateway-rules/rule-38-descriptor-cells/src/protocol.rs`
+    (`Guard::dead_edge_decides`, `Protocol::per_end`, `Fact::introduced`,
+    `Fact::join`, `Fact::normalize`, `Fact::release_holder`, `PER_END_VECTORS`)
+    and `cells.rs` (`Cells::join_keeping_stale`); the host is
+    `legacy_descriptor_cells.rs` (`FactKey`, `apply`, `touch`, `join_cells`,
+    `refuse_release_of_holder`); the loader is `local_condition.rs`
+    (`cell_protocols`) and the table `ResourceContracts::cell_protocols`.
+
+    (1) **Per-end sentinels.** A record's `quant cell` clauses are grouped by
+    guard. A per-end sentinel is a `!= -1` or `> 0` guard over exactly one
+    `#fresh` cell, that cell itself (`when #B.END > 0` on the end's own
+    clause), with its `#same` names under the same guard. A record states at
+    most one other guard (rule 38c's record guard: a flag, or a sentinel over
+    several cells); every other guard is a per-end sentinel. This replaces
+    "one guard per record", not "one protocol per record": the record's
+    groups load and are compared as one value, and two declarations stating
+    different groups leave the record without a protocol.
+    (2) **One fact per guard.** A path holds a fact per (record object,
+    guard). A test of exactly `r->G OP V` (or its complement) is read for the
+    group whose guard is `G` where the path holds no fact of that group;
+    stores, closes, exits and calls read the group whose cell or guard they
+    name. At a cell-bearing call a per-end group gains a fact only through a
+    cell of its own the call spells (a cell-bearing call's effect is its
+    declared states); a record guard keeps rule 38c's reading (every actual
+    rooted at the record; follow-up CELL-PROTOCOL-NONCELL-ACTUAL-REACHES-RECORD).
+    (3) **The `> 0` dead edge.** A sentinel's dead edge decides that no cell of
+    it is live only when no possible descriptor is on it (rule 38's premise:
+    a live descriptor is never `-1`). `!= -1`'s dead edge holds only `-1` and
+    decides; `> 0`'s holds descriptor 0, a success value of every creator and
+    calloc's absent value at once, so it never decides: its cells are
+    introduced undecided (`Maybe`, the fact marked `zero`). Its live edge
+    decides, since the dead set holds no value above 0. A close there refuses
+    (`descriptor-cell-undecided`), a store over such a cell refuses
+    (`descriptor-cell-overwritten`), and a touched record holding one does not
+    keep its protocol at an exit, its cells escaping. Rule 38c's `> 0`
+    record guard reads the same.
+    (4) **Joins.** A join never drops a name that may be live: each path's
+    pending names whose cell either path recorded go into its own table first
+    (`Fact::normalize`); a pending name live or undecided on one path is
+    undecided in the join; and a protocol cell both paths left stale stays
+    stale whatever identities they name (`join_keeping_stale`). Two holding
+    paths join untouched, keeping their undecided names.
+    (5) **The holder's release ends the protocol.** A call that releases the
+    record (an actual naming it at a `resource_released` position) ends every
+    fact of it and forgets its cells. Where some cell may still be live the
+    release refuses: `descriptor-cell-zero-undecided` when a `> 0` dead edge
+    left it undecided (the end may be descriptor 0, a candidate defect only,
+    never `Unsafe`, nothing filed upstream), else
+    `descriptor-cell-owner-released`; a tracked holder's release refuses as
+    before (rule 38 (6)). Between a close that stores no sentinel and that
+    release, a call that may reach the record refuses
+    (`descriptor-cell-protocol-broken`): the closed end still looks live.
+
+    **Do not** read a destroyer's `> 0` (or `<= 0`) test as the end's absence,
+    take a sentinel's meaning from the test a caller writes rather than from
+    the creator's result set and the absent value the stores write, give a
+    per-end group a fact through an actual that names none of its cells, drop
+    a possibly live name at a join, end a protocol at a release while a cell
+    may be live without refusing, or present any refusal here as a finding.
+    With `38` in `QCORE_GATEWAY_RULES_OFF` nothing here is read. Premises
+    stated, not proved (trust boundary 28): rule 38c's declared protocol
+    (`P-CELL-PROTOCOL-DECLARED`) and rule 38's premise that a live descriptor
+    is never `-1`. The Lean model is `QCore.CellProtocolPerEnd`
+    ([report](../reports/cell-protocol-per-end-guards/README.md)).
 
 <!-- generated:rules:end -->

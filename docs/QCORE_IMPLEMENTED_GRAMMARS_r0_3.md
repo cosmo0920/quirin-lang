@@ -4611,21 +4611,32 @@ Static conditions. Each one rejects the whole module (`quant-cell-*`):
 
 - **Binder.** The binder is no reserved `#` word, and one record uses one
   binder.
-- **Guard.** The guard's binder is the clause's own. Every clause of a record
-  states the same guard.
+- **Guard.** The guard's binder is the clause's own. Every clause of a guard
+  states the same `OP V`. Card CELL-PROTOCOL-PER-END-GUARDS (USER DECISION
+  2026-11-03, verbatim: "Per-end sentinels"; gateway rule
+  [38f](agents/gateway.md#constraint-38f)) amends "every clause of a record
+  states the same guard": a record's clauses are grouped by guard, and a
+  record states at most one guard that is not a **per-end sentinel** (a
+  `!= -1` or `> 0` guard over exactly one `#fresh` cell, that cell itself,
+  with its `#same` names). So each channel end may carry its own sentinel
+  (`when #B.END > 0` on the end's own clause) beside one record guard.
 - **Kind.** `#fresh` takes exactly `descriptor`.
-- **Cells.** Each cell is stated once. At least one cell is `#fresh`. A
-  `#same` target is a `#fresh` cell of the same record.
+- **Cells.** Each cell is stated once in the record. Every guard has at
+  least one `#fresh` cell. A `#same` target is a `#fresh` cell of the same
+  guard.
 - **Guard and cells.**
-  - A `!= -1` or `> 0` guard is a `#fresh` cell.
-  - A `== 1` guard is no cell.
+  - A `!= -1` or `> 0` guard is a `#fresh` cell of its own guard.
+  - A `== 1` guard is no cell of the record.
 - **Size.** A path has at most 64 segments.
 
-The clauses of one declaration load to one canonical `CellProtocol` per record
-(`LoopLifetimeContract::cells`, omitted when empty). The host becomes a
-withheld lifetime declaration, as with G05h's registered clauses. Across
-declarations, `ResourceContracts::cell_protocols` keeps a record's protocol
-only when every declaration states the same one.
+The clauses of one declaration load to one canonical `CellProtocol` per guard
+(`LoopLifetimeContract::cells`, sorted, omitted when empty; a record with one
+guard loads as before). The host becomes a withheld lifetime declaration, as
+with G05h's registered clauses. Across declarations,
+`ResourceContracts::cell_protocols` keeps a record's protocols only when
+every declaration states the same set. The first per-end declarations are
+`providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv`'s
+(`flb_input_instance`, `flb_output_instance`, `flb_input_thread_instance`).
 
 ## G05j. C library result sets
 

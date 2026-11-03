@@ -12,6 +12,17 @@
 //! test, a store or a close, stay the host's. Every case it cannot decide
 //! refuses; nothing here is `Unsafe`. The Lean model is
 //! `QCore.DescriptorCellProtocol`, bound by [`PROTOCOL_VECTORS`].
+//!
+//! Gateway rule 38f (`docs/agents/rules/38f.md`; card
+//! CELL-PROTOCOL-PER-END-GUARDS). USER DECISION 2026-11-03 (verbatim):
+//! "Per-end sentinels". A record's protocol is one [`Protocol`] per guard:
+//! at most one record guard and any number of per-end sentinels
+//! ([`Protocol::per_end`]). A `> 0` guard's dead edge holds descriptor 0 and
+//! never decides ([`Guard::dead_edge_decides`]); a join never drops a name
+//! that may be live ([`Fact::join`], [`Fact::normalize`]); the holder's
+//! release ends the protocol only where no cell may be live
+//! ([`Fact::release_holder`]). The Lean model is `QCore.CellProtocolPerEnd`,
+//! bound by [`PER_END_VECTORS`].
 
 use std::collections::BTreeMap;
 
