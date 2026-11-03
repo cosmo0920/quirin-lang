@@ -1,5 +1,5 @@
 {
- "meaning": "CELL-GUARD-RESULT-RANGE-CHECKED: the caller-test census of CELL-GUARD-RESULT-RANGE (docs/reports/cell-guard-result-range/census/) rerun with --check at the pinned trees after this card's implementation; it reads source only, so its readings and totals are unchanged, and its C library result sets now each equal a declared quirin-provider-libc result_set (pipe and epoll_ctl [-1, 0]; open and timerfd_create [-1, MAX]); kevent and evutil_socketpair, read only by backends no audited build configures (kqueue, libevent), stay undeclared.",
+ "meaning": "CELL-GUARD-RESULT-RANGE-CHECKED: the caller-test census of CELL-GUARD-RESULT-RANGE (docs/reports/cell-guard-result-range/census/) rerun with --check at the pinned trees after this card's implementation; it reads source only, so its readings and totals are unchanged, and its C library result sets now each equal a declared quirin-provider-libc result_set (pipe and epoll_ctl [-1, 0]; open [-1, MAX]); timerfd_create (the epoll timer arm, not the channel chain) is not in the generated libc name list and stays undeclared (follow-up); kevent and evutil_socketpair, read only by backends no audited build configures (kqueue, libevent), stay undeclared.",
  "command": "python3 -I docs/reports/cell-guard-result-range/census/census.py --root 66910c10=/media/Data/GitHub/quirin-lang/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source --root 046accf6=/media/Data/GitHub/quirin-lang/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source --root 34155955=/media/Data/GitHub/quirin-lang/private/w47-tail/attempt-1/prep/fluent-bit-clang-source --root monkey-66910c10=/media/Data/GitHub/quirin-lang/build/cycle19/c-gateway-wave-pin/monkey/monkey-source --check docs/reports/cell-guard-result-range/census/census.json",
  "exit": 0,
  "problems": 0,
@@ -80,8 +80,7 @@
  "declared_c_library_sets": {
   "pipe": "[-1, 0]",
   "epoll_ctl": "[-1, 0]",
-  "open": "[-1, MAX]",
-  "timerfd_create": "[-1, MAX]"
+  "open": "[-1, MAX]"
  },
  "rule_38e_readings": {
   "ret != 0 (5 Fluent Bit sites, Monkey monkey.c:115/:136)": "exact on every int: decides with or without the derived set",

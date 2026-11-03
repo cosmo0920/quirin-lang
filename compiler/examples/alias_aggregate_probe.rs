@@ -238,6 +238,11 @@ fn instruction(instruction: &LegacyInstruction) -> String {
             when_true,
             when_false,
         } => format!("BranchOnValidity {source} true={when_true:?} false={when_false:?}"),
+        LegacyInstruction::BranchOnResult {
+            source,
+            comparison,
+            literal,
+        } => format!("BranchOnResult {source} {comparison:?} {literal}"),
         LegacyInstruction::BranchOnDistinct { .. } => "BranchOnDistinct".to_owned(),
         LegacyInstruction::CellProtocolStep { .. } => "CellProtocolStep".to_owned(),
         LegacyInstruction::OpaqueValue {

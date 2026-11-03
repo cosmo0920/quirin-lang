@@ -29,6 +29,14 @@ module contract;
 // NOT CLAIMED: `errno`, which error, or anything about the descriptors'
 // lifetimes. `-1 | [0, MAX]` is the set {-1} ∪ [0, INT_MAX] (canonical
 // `[-1, MAX]`).
+//
+// Deliberately NOT declared here: `timerfd_create` (Linux timerfd_create(2):
+// a new descriptor, or -1), which epoll's timer arm reads. No pinned corpus
+// unit declares it (`libc-names.txt`, the generated placement list, does not
+// list it), so the placement test refuses it until that list is regenerated
+// over a build that includes <sys/timerfd.h>; it is not on the channel
+// chain. `kevent` (kqueue) and `evutil_socketpair` (libevent's) are read by
+// no backend an audited build configures.
 
 // POSIX.1-2017 pipe(): "Upon successful completion, 0 shall be returned;
 // otherwise, -1 shall be returned and errno set to indicate the error."
@@ -58,17 +66,6 @@ contract {
 // ...) __nonnull ((1));`, <fcntl.h>.) The variadic `mode` is not a parameter
 // of this declaration; a result set says nothing about any actual.
 extern fn open(file: ptr<const, u8>, oflag: i32) -> i32
-contract {
-    requires bounds_contract_v1;
-    requires bounds_revision(flexible);
-    ensures normal result_set(-1 | [0, MAX]);
-};
-
-// Linux timerfd_create(2), RETURN VALUE: "On success, timerfd_create()
-// returns a new file descriptor. On error, -1 is returned and errno is set to
-// indicate the error." (`extern int timerfd_create (__clockid_t __clock_id,
-// int __flags) __THROW;`, <sys/timerfd.h>; `__clockid_t` is `int`.)
-extern fn timerfd_create(clock_id: i32, flags: i32) -> i32
 contract {
     requires bounds_contract_v1;
     requires bounds_revision(flexible);

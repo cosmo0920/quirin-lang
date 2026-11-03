@@ -48,7 +48,6 @@ fn the_libc_result_sets_load_as_flexible_value_sets() {
     assert_eq!(canonical("pipe"), "[-1, 0]");
     assert_eq!(canonical("epoll_ctl"), "[-1, 0]");
     assert_eq!(canonical("open"), "[-1, MAX]");
-    assert_eq!(canonical("timerfd_create"), "[-1, MAX]");
     // Only the null property and the result-set derivation read it: the
     // bounds consumer's view drops every declaration of the module.
     assert!(contracts.for_bounds().functions.is_empty());

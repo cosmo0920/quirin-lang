@@ -24,12 +24,6 @@
       "module": "libc/result_sets.qv",
       "contract_sha256": "fa1db104bc6a4018d825dc6c2bebed9a174af8f78ec8fb58455a60c0fee80a70",
       "pinned_at": "2026-11-03T12:00:00Z"
-    },
-    {
-      "function": "timerfd_create",
-      "module": "libc/result_sets.qv",
-      "contract_sha256": "e46ac76ac78f905e925ba9fcf58d68dfafc0c46627ef33fbbf8ccef021ecef32",
-      "pinned_at": "2026-11-03T12:00:00Z"
     }
   ]
 }

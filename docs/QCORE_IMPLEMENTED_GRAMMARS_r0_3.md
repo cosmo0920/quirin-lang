@@ -4666,7 +4666,7 @@ Both words were absent from every tracked contract module when introduced and
 are reserved. Only the null property and the result derivation read the
 clause (`for_bounds()` removes it); `resource_*` consumers reject the module.
 The first tracked use is `providers/quirin-provider-libc/contracts/libc/result_sets.qv`
-(`pipe`, `epoll_ctl`, `open`, `timerfd_create`), the libc crate's bounds view.
+(`pipe`, `epoll_ctl`, `open`), the libc crate's bounds view.
 
 ## G06. Observation predicate grammar
 

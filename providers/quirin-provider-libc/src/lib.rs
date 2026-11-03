@@ -5,7 +5,7 @@
 //! `<sys/stat.h>`, threads and signals, `<time.h>` and `<unistd.h>`, and (card
 //! W43-LIBC-RESTRICT-PROTOTYPES) `<regex.h>`, and (card
 //! CELL-GUARD-RESULT-RANGE-CHECKED) the documented result sets of `pipe`,
-//! `epoll_ctl`, `open` and `timerfd_create` (`libc/result_sets.qv`, bounds
+//! `epoll_ctl` and `open` (`libc/result_sets.qv`, bounds
 //! contract v1 value sets, flexible, no custody).
 //!
 //! The `.qcore` sources under this crate's `contracts/` are canonical: the

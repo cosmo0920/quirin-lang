@@ -47,18 +47,21 @@ include or inherit parents (no dependencies).
 | `pipe` | the channel chain, every backend but libevent | none (declined for custody, `unistd.qv`: no out slot) | no | `result_set(-1 \| 0)`, POSIX |
 | `epoll_ctl` | epoll `_mk_event_add` | none | no | `result_set(-1 \| 0)`, Linux epoll_ctl(2) |
 | `open` | the timer chain | `unistd.qv`, resource v1 (`resource_return_owned(sentinel)`), unchanged | only as custody | `result_set(-1 \| [0, MAX])`, POSIX |
-| `timerfd_create` | epoll's timer arm | none | no | `result_set(-1 \| [0, MAX])`, Linux timerfd_create(2) |
+| `timerfd_create` | epoll's timer arm (not the channel chain) | none | no | **not declared**: the generated placement list `libc-names.txt` (names visible to the 185 pinned corpus units) does not list it, so the placement test refuses it; follow-up |
 | `kevent` | kqueue only | none (no audited unit's header declares it) | no | not declared: no audited build configures kqueue |
 | `evutil_socketpair` | libevent; its result is tested and a constant returned | libevent provider (legacy form) | no | not needed: its result never reaches a `return` |
 | `clock_gettime`, `timerfd_settime` | tested, then a constant returned | `clock_gettime` custody only | no | not needed |
 
-The four declarations are in
+The three declarations are in
 [`libc/result_sets.qv`](../../../providers/quirin-provider-libc/contracts/libc/result_sets.qv),
 the libc crate's first bounds view. Each one states a value set and nothing
 else. They were committed in their own step, `86d93cf98`, with
 `providers/contracts.py sync` (load path, inventory lock) and the libc
-`bounds-contracts.lock` (four flexible entries). This was before the
-prediction (`74db04a0c`) and before the derivation.
+`bounds-contracts.lock`. This was before the prediction (`74db04a0c`) and
+before the derivation. That step also declared `timerfd_create`. The card
+gate's Python suite refused it (`test_libc_functions_are_declared_only_in_the_libc_crate`,
+because the name is not in the generated list), so a later commit removed it
+with its lock entry. The prediction's text still names it.
 
 ## 2. The form (C09.4, grammar G05j)
 

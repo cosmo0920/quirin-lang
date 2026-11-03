@@ -414,15 +414,14 @@ impl<'a> Deriver<'a> {
                         out.push(rhs);
                     }
                 }
-                "UnaryOperator" if matches!(node["opcode"].as_str(), Some("++" | "--")) => {
-                    if kids(node).next().is_some_and(|operand| names(operand, id)) {
-                        *ok = false;
-                    }
+                "UnaryOperator"
+                    if matches!(node["opcode"].as_str(), Some("++" | "--"))
+                        && kids(node).next().is_some_and(|operand| names(operand, id)) =>
+                {
+                    *ok = false;
                 }
-                "CompoundAssignOperator" => {
-                    if kids(node).next().is_some_and(|lhs| names(lhs, id)) {
-                        *ok = false;
-                    }
+                "CompoundAssignOperator" if kids(node).next().is_some_and(|lhs| names(lhs, id)) => {
+                    *ok = false;
                 }
                 _ => {}
             }
