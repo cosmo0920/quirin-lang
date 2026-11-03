@@ -530,6 +530,7 @@ fn decision_vectors_match_lean() {
                 sites: identity(*n),
             })
             .collect(),
+        derivation: None,
     };
     let lock = |entries: Vec<PinnedEntry>| ContractLock {
         lock_version: LOCK_VERSION,

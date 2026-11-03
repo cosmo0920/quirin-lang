@@ -163,6 +163,9 @@ pub const RESERVED_SPELLINGS: [&str; 19] = [
     BOUNDS_REVISION,
 ];
 
+/// Card CELL-GUARD-RESULT-RANGE-CHECKED: the set a `result_set` states.
+pub use qcore_core::result_set::ResultSet;
+
 /// Card CELL-GUARD-RESULT-RANGE-CHECKED (C09.4, grammar G05j): the result-set
 /// clause, `ensures normal result_set(SET);`.
 pub const RESULT_SET: &str = "result_set";

@@ -333,6 +333,7 @@ pub(super) fn null_condition_text(texts: &[&str]) -> Option<PointerNullCondition
             source,
             true_is_null: false,
             validity: None,
+            result_test: None,
         });
     }
     let mut depth = 0usize;
@@ -354,6 +355,7 @@ pub(super) fn null_condition_text(texts: &[&str]) -> Option<PointerNullCondition
                     source,
                     true_is_null: texts[index] == "=",
                     validity: None,
+                    result_test: None,
                 });
             }
             _ => {}

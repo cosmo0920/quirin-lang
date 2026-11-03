@@ -359,6 +359,7 @@ fn check_instruction_depth(cfg: &LegacyCfg) -> Result<(), String> {
                 | ContractCall { .. }
                 | BranchOnNull { .. }
                 | BranchOnValidity { .. }
+                | BranchOnResult { .. }
                 | BranchOnDistinct { .. }
                 | CellProtocolStep { .. }
                 | OpaqueValue { .. }

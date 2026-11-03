@@ -324,8 +324,7 @@ pub(super) struct AbstractState {
     /// Card **MK-EVENT-DESCRIPTOR-QUANT** (rule 38): a plain name holding a
     /// cell-creating call's result, with the identities it witnesses and the
     /// creation's class. Joined by intersection.
-    pub(super) cell_witnesses:
-        BTreeMap<String, (Vec<u64>, qcore_schemas::descriptor_cell::WitnessGuard)>,
+    pub(super) cell_witnesses: BTreeMap<String, super::descriptor_cells_route::CellWitness>,
     /// Card **MK-EVENT-CELL-CROSS-FUNCTION** (rule 38c): the facts of the
     /// records with a declared cell protocol this path read. Empty in every
     /// environment that declares no protocol, which keeps the join as it was.
@@ -4482,6 +4481,7 @@ pub(super) fn transfer_base(
         }
         LegacyInstruction::BranchOnNull { .. }
         | LegacyInstruction::BranchOnValidity { .. }
+        | LegacyInstruction::BranchOnResult { .. }
         | LegacyInstruction::BranchOnDistinct { .. } => {}
         // Card MK-EVENT-CELL-CROSS-FUNCTION (rule 38c).
         LegacyInstruction::CellProtocolStep { step } => {
@@ -5828,6 +5828,25 @@ pub(super) fn refine_edge<'a>(
                 return None;
             }
             Some((source, refine_pointer_null(state, source, assume_null)))
+        }
+        // Card CELL-GUARD-RESULT-RANGE-CHECKED (rule 38e): a comparison of a
+        // status witness refines only the creation's class; every other
+        // edge is a scalar condition's (nothing refined).
+        LegacyInstruction::BranchOnResult {
+            source,
+            comparison,
+            literal,
+        } => {
+            super::descriptor_cells_route::refine(
+                source,
+                super::descriptor_cells_route::EdgeFact::Compared(
+                    comparison.cmp(),
+                    *literal,
+                    edge == 0,
+                ),
+                state,
+            );
+            Some((source, PointerRefinement::Refined))
         }
         LegacyInstruction::BranchOnValidity {
             source,

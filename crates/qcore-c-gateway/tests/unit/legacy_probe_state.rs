@@ -150,6 +150,7 @@ pub(in crate::legacy_c) fn bare<'a>(
         element_lowerings: 2,
         descriptor_names: Default::default(),
         cell_witness_names: Default::default(),
+        result_witness_names: Default::default(),
         declared_callees: BTreeSet::new(),
         in_place_names: Default::default(),
         #[cfg(feature = "indirect-census")]

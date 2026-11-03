@@ -39,8 +39,8 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use qcore_contract::bounds_contract::BoundsContracts;
-use qcore_core::result_set::ResultSet;
 use qcore_core::null_triage::ResultEvidence;
+use qcore_core::result_set::ResultSet;
 use serde_json::Value;
 
 use super::ast::{self, kids, ty};
@@ -353,8 +353,7 @@ impl<'a> Deriver<'a> {
                 }
                 match self.declared.get(&callee) {
                     Some(decl)
-                        if decl.in_force()
-                            && int_range(ty(inner)) == Some(decl.set.universe()) =>
+                        if decl.in_force() && int_range(ty(inner)) == Some(decl.set.universe()) =>
                     {
                         self.rests_on.insert(callee);
                         Some(clip(decl.set.clone()))

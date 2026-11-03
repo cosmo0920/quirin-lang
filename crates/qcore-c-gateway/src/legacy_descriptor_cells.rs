@@ -151,6 +151,11 @@ pub struct CellOperands {
     /// Omitted when empty.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub protocols: Vec<(String, bool, ProtocolSpec)>,
+    /// Card CELL-GUARD-RESULT-RANGE-CHECKED (rule 38e): the callee's
+    /// pin-derived result set, for a status-witnessed creation, while it is
+    /// in force. Omitted otherwise.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub result_range: Option<qcore_schemas::result_range::ResultRangeFact>,
 }
 
 fn is_identifier(text: &str) -> bool {
@@ -346,6 +351,7 @@ pub(super) fn operands(
         guard: None,
         refused: None,
         protocols: Vec::new(),
+        result_range: None,
     };
     for state in &declaration.states {
         let spelled = cell(&state.place);
@@ -697,6 +703,14 @@ pub(super) fn apply(
     }
 }
 
+/// A witness: the identities it decides, the creation's class, and (card
+/// CELL-GUARD-RESULT-RANGE-CHECKED) the callee's result set in force.
+pub(super) type CellWitness = (
+    Vec<u64>,
+    WitnessGuard,
+    Option<qcore_schemas::result_range::ResultRangeFact>,
+);
+
 /// Hook (rule 38): the call's result held by a plain name witnesses its
 /// creations' class. Asked after [`forget_witnesses`].
 pub(super) fn record_witness(
@@ -713,9 +727,10 @@ pub(super) fn record_witness(
     let identities = (0..operands.creations.len())
         .map(|offset| operands.identity + offset as u64)
         .collect::<Vec<_>>();
-    state
-        .cell_witnesses
-        .insert(destination.to_owned(), (identities, guard));
+    state.cell_witnesses.insert(
+        destination.to_owned(),
+        (identities, guard, operands.result_range.clone()),
+    );
 }
 
 /// Hook (rule 38): a name the instruction writes witnesses nothing any more.
@@ -739,15 +754,56 @@ pub(super) enum EdgeFact {
     Zero(bool),
     /// `v >= 0` / `v == -1` under a descriptor's value set (a validity test).
     Valid(bool),
+    /// Card CELL-GUARD-RESULT-RANGE-CHECKED (rule 38e): `v OP K` holds
+    /// (`true`) or fails on this edge, read through the witness's result set.
+    Compared(qcore_core::result_set::Cmp, i128, bool),
+}
+
+/// Card CELL-GUARD-RESULT-RANGE-CHECKED (rule 38e): the class a comparison
+/// edge reads of a status witness's creation, through its callee's derived
+/// result set; `None` without a set in force (the comparison then reads only
+/// what it reads on every `int`, which for a comparison other than a null
+/// test is nothing) or when the test does not classify the set exactly.
+fn compared_class(
+    guard: WitnessGuard,
+    range: Option<&qcore_schemas::result_range::ResultRangeFact>,
+    cmp: qcore_core::result_set::Cmp,
+    literal: i128,
+    holds: bool,
+) -> Option<bool> {
+    use qcore_core::result_set::{ResultSet, comparison_set, edge, test_class};
+    let range = range?;
+    let universe = (i128::from(range.universe.0), i128::from(range.universe.1));
+    let within = ResultSet::from_intervals(
+        universe,
+        &range
+            .intervals
+            .iter()
+            .map(|(a, b)| (i128::from(*a), i128::from(*b)))
+            .collect::<Vec<_>>(),
+    );
+    let class = match guard {
+        WitnessGuard::Zero => ResultSet::interval(universe, 0, 0),
+        WitnessGuard::NonZero => ResultSet::interval(universe, 0, 0).complement(),
+        WitnessGuard::NotSentinel => ResultSet::interval(universe, -1, -1).complement(),
+        WitnessGuard::Sentinel => ResultSet::interval(universe, -1, -1),
+    };
+    let test = comparison_set(universe, cmp, literal);
+    edge(test_class(&within, &test, &class), holds)
 }
 
 /// Hook (rule 38): refine the witness `source` on an edge. `true` when the
 /// name is a witness (the edge is then read here, whatever it decided).
 pub(super) fn refine(source: &str, fact: EdgeFact, state: &mut AbstractState) -> bool {
-    let Some((identities, guard)) = state.cell_witnesses.get(source).cloned() else {
+    let Some((identities, guard, range)) = state.cell_witnesses.get(source).cloned() else {
         return false;
     };
     let holds = match (guard, fact) {
+        // Card CELL-GUARD-RESULT-RANGE-CHECKED (rule 38e): only a set in
+        // force decides, and only an exact test of it.
+        (_, EdgeFact::Compared(cmp, literal, holds)) => {
+            compared_class(guard, range.as_ref(), cmp, literal, holds)
+        }
         (WitnessGuard::Zero, EdgeFact::Zero(zero)) => Some(zero),
         (WitnessGuard::NonZero, EdgeFact::Zero(zero)) => Some(!zero),
         (WitnessGuard::NotSentinel, EdgeFact::Valid(valid)) => Some(valid),
@@ -766,8 +822,8 @@ pub(super) fn refine(source: &str, fact: EdgeFact, state: &mut AbstractState) ->
 
 /// Join the witnesses: a witness survives only where both paths agree.
 pub(super) fn join_witnesses(
-    current: &mut BTreeMap<String, (Vec<u64>, WitnessGuard)>,
-    incoming: &BTreeMap<String, (Vec<u64>, WitnessGuard)>,
+    current: &mut BTreeMap<String, CellWitness>,
+    incoming: &BTreeMap<String, CellWitness>,
 ) {
     current.retain(|name, witness| incoming.get(name) == Some(witness));
 }

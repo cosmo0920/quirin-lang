@@ -851,6 +851,11 @@ impl Parser<'_> {
                 .filter_map(owned)
                 .collect::<Vec<_>>();
             cells.protocols = self.cell_operand_protocols(&actuals);
+            // Card CELL-GUARD-RESULT-RANGE-CHECKED (rule 38e): a status
+            // witness reads its callee's derived result set while in force.
+            if cells.witness.is_some_and(|guard| !guard.is_validity()) {
+                cells.result_range = self.contracts.result_range_in_force(function).cloned();
+            }
             operands.cells = Some(Box::new(cells));
         }
         for &reset in &declaration.resets {

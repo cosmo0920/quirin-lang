@@ -648,6 +648,7 @@ fn mutation(instruction: &LegacyInstruction) -> Mutation {
         | LegacyInstruction::ExactFormalReturn { .. }
         | LegacyInstruction::BranchOnNull { .. }
         | LegacyInstruction::BranchOnValidity { .. }
+        | LegacyInstruction::BranchOnResult { .. }
         | LegacyInstruction::BranchOnDistinct { .. }
         | LegacyInstruction::ForgetScalar { .. }
         | LegacyInstruction::VaArgPointer { .. }

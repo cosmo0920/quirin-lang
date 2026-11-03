@@ -35,6 +35,8 @@ pub mod reason;
 pub mod reference_count;
 // Card CG23-RELATIONAL-POSTCONDITIONS: return-code dispositions.
 pub mod relational_post;
+// Card CELL-GUARD-RESULT-RANGE-CHECKED (C09.4, gateway rule 38e).
+pub mod result_range;
 pub mod retained_by;
 // Card SLOT-MOVE-AND-INTERIOR-BORROW: slot moves and derived out slots.
 pub mod slot_move;

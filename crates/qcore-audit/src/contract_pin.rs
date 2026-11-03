@@ -87,8 +87,8 @@ use qcore_schemas::contract_revision::RevisionMode;
 
 use crate::c_identity::{NORMALISATION, SourceTree};
 use crate::contract_revision::{
-    ContractLock, FlexibleEntry, LOCK_FILE, LOCK_VERSION, PinStanding, PinnedEntry, ReviewedSource,
-    pin_standing,
+    ContractLock, FlexibleEntry, LOCK_FILE, LOCK_VERSION, PinStanding, PinnedEntry, RestedOn,
+    ResultDerivation, ReviewedSource, pin_standing, with_helper_sites,
 };
 use crate::contract_tip::{
     NoticeStanding, TipEntry, TipRepository, TipResolver, TipReview, git_output, is_repository,
@@ -140,6 +140,12 @@ struct Arguments {
     bounds: bool,
     /// Card OUTER-CONTRACT: act on the outer contract locks.
     outer: bool,
+    /// Card CELL-GUARD-RESULT-RANGE-CHECKED (rule 38e): derive every chosen
+    /// pinned `nonnull_result_range` from the configured unit's body chain
+    /// (`--compile-database`) and record the derivation.
+    derive_results: bool,
+    /// The compile database the derivation reads the configured unit from.
+    compile_database: Option<PathBuf>,
     /// Card CONTRACT-SUPERSESSION: the review stamp of this run.
     pinned_at: Option<String>,
     /// Card CONTRACT-SUPERSESSION: stamp unstamped entries, nothing else.
@@ -182,6 +188,10 @@ fn parse(arguments: Vec<String>) -> Result<Arguments, String> {
             "--repository-url" => parsed.repository_url = Some(value("--repository-url")?),
             "--release-label" => parsed.release_label = Some(value("--release-label")?),
             "--bounds" => parsed.bounds = true,
+            "--derive-results" => parsed.derive_results = true,
+            "--compile-database" => {
+                parsed.compile_database = Some(PathBuf::from(value("--compile-database")?));
+            }
             "--outer" => parsed.outer = true,
             "--pinned-at" => parsed.pinned_at = Some(value("--pinned-at")?),
             "--stamp-only" => parsed.stamp_only = true,
@@ -303,6 +313,24 @@ fn parse(arguments: Vec<String>) -> Result<Arguments, String> {
                 .into(),
         );
     }
+    // Card CELL-GUARD-RESULT-RANGE-CHECKED: a derivation is a bounds pin of a
+    // reviewed checkout, read through its configured compile database.
+    if (parsed.derive_results || parsed.compile_database.is_some())
+        && (!parsed.bounds
+            || !parsed.derive_results
+            || parsed.compile_database.is_none()
+            || parsed.check
+            || parsed.revision.is_some()
+            || parsed.stamp_only
+            || parsed.track_tip.is_some()
+            || parsed.untrack_tip
+            || parsed.drop_revision.is_some())
+    {
+        return Err(
+            "--derive-results and --compile-database go together, with --bounds and a pin of              --source-root (no --check, --revision, --stamp-only, --track-tip, --untrack-tip or              --drop-revision)"
+                .into(),
+        );
+    }
     if parsed.bounds && (parsed.modules.is_some() || parsed.verify_contracts) {
         return Err(
             "--bounds pins the bounds views of load-path crates: no --modules or \
@@ -332,6 +360,8 @@ fn clone_arguments(a: &Arguments) -> Arguments {
         release_label: a.release_label.clone(),
         bounds: a.bounds,
         outer: a.outer,
+        derive_results: a.derive_results,
+        compile_database: a.compile_database.clone(),
         pinned_at: a.pinned_at.clone(),
         stamp_only: a.stamp_only,
         window: a.window.clone(),
@@ -356,6 +386,8 @@ fn arguments_equal(a: &Arguments, b: &Arguments) -> bool {
         && a.release_label == b.release_label
         && a.bounds == b.bounds
         && a.outer == b.outer
+        && a.derive_results == b.derive_results
+        && a.compile_database == b.compile_database
         && a.pinned_at == b.pinned_at
         && a.stamp_only == b.stamp_only
         && a.window == b.window
@@ -461,6 +493,12 @@ struct Target {
     /// `@` names its declaration spells, whose enumerations join its
     /// identity.
     c_names: BTreeMap<String, BTreeSet<String>>,
+    /// Card CELL-GUARD-RESULT-RANGE-CHECKED: each pinned bounds declaration
+    /// stating a `nonnull_result_range`, with its declared set.
+    ranges: BTreeMap<String, qcore_contract::bounds_contract::ResultSet>,
+    /// Card CELL-GUARD-RESULT-RANGE-CHECKED: the derivations this run
+    /// computed (`--derive-results`), by function.
+    derivations: BTreeMap<String, ResultDerivation>,
 }
 
 impl Target {
@@ -477,6 +515,8 @@ impl Target {
             c_names: qcore_contract::contract_revision::declaration_c_names(
                 contracts.source_assumptions(),
             )?,
+            ranges: BTreeMap::new(),
+            derivations: BTreeMap::new(),
         })
     }
 }
@@ -552,12 +592,22 @@ fn bounds_targets(
                 )
             })
             .collect();
+        let ranges = contracts
+            .functions
+            .iter()
+            .filter(|(_, contract)| !contract.flexible)
+            .filter_map(|(function, contract)| {
+                contract.result_values().map(|set| (function.clone(), set))
+            })
+            .collect();
         targets.push(Target {
             label: format!("{name} (bounds)"),
             owner: name.clone(),
             lock: root.join(crate::bounds_selection::BOUNDS_LOCK_FILE),
             declared,
             c_names: BTreeMap::new(),
+            ranges,
+            derivations: BTreeMap::new(),
         });
     }
     Ok(targets)
@@ -628,6 +678,8 @@ fn outer_targets(load_path: &Path, crates: &[String], strict: bool) -> Result<Ve
             lock: root.join(crate::outer_selection::OUTER_LOCK_FILE),
             declared,
             c_names: BTreeMap::new(),
+            ranges: BTreeMap::new(),
+            derivations: BTreeMap::new(),
         });
     }
     Ok(targets)
@@ -810,6 +862,115 @@ fn replaced_stamp<'a>(replaced: Option<&'a ContractLock>, function: &str) -> Opt
         .max()
 }
 
+/// Card CELL-GUARD-RESULT-RANGE-CHECKED (contract specification C09.4,
+/// gateway rule 38e): derive every chosen pinned `nonnull_result_range` of
+/// `target` from the body chain of its one defining unit in the configured
+/// compile database, reading only the C library's result sets (the flexible
+/// `result_set` declarations of `quirin-provider-libc` on the load path).
+/// The derived set must lie inside the declared range; anything else
+/// refuses, and nothing is pinned.
+fn derive_results(
+    target: &mut Target,
+    tree: &SourceTree,
+    root: &Path,
+    functions: &BTreeSet<String>,
+    database: &Path,
+    load_path: &Path,
+) -> Result<(), String> {
+    let chosen = target
+        .ranges
+        .keys()
+        .filter(|name| functions.is_empty() || functions.contains(*name))
+        .cloned()
+        .collect::<BTreeSet<_>>();
+    if chosen.is_empty() {
+        return Ok(());
+    }
+    let manifest = load_contract_load_path_manifest(
+        &load_path
+            .canonicalize()
+            .map_err(|error| format!("{}: {error}", load_path.display()))?,
+    )?;
+    let (mut environment, _) = crate::bounds_selection::load_views(&manifest)?;
+    environment.functions.retain(|_, contract| {
+        contract.flexible
+            && contract
+                .module
+                .starts_with(&format!("{}:", crate::contract_revision::LIBC_CRATE))
+    });
+    let text =
+        fs::read_to_string(database).map_err(|error| format!("{}: {error}", database.display()))?;
+    let entries = crate::compile_db::compile_entries(&text)?;
+    let sites = tree.sites(&chosen);
+    for name in chosen {
+        let definitions = sites
+            .get(&name)
+            .into_iter()
+            .flatten()
+            .filter(|site| site.kind == crate::c_identity::SiteKind::Definition)
+            .map(|site| site.path.clone())
+            .collect::<BTreeSet<_>>();
+        let [path] = definitions.iter().collect::<Vec<_>>()[..] else {
+            return Err(format!(
+                "`{name}`: a result derivation needs exactly one defining file in the source \
+                 tree, found {}",
+                definitions.len()
+            ));
+        };
+        let file = root.join(path);
+        let entry = crate::compile_db::select_unique_configuration(&entries, &file)
+            .map_err(|why| format!("`{name}`: {why}"))?;
+        let source = fs::read_to_string(&entry.file)
+            .map_err(|error| format!("{}: {error}", entry.file.display()))?;
+        let unit = crate::member_prepass::c_unit(entry, &source)?;
+        let derived =
+            qcore_c_gateway::null_deref::derive_result_set_c11(&unit, &name, &environment)
+                .map_err(|why| format!("`{name}`: {why}"))?;
+        let declared = &target.ranges[&name];
+        if derived.set.universe() != declared.universe() || !derived.set.is_subset(declared) {
+            return Err(format!(
+                "`{name}`: its body chain returns {} (helpers {}; C library sets {}), not inside \
+                 the declared {}; nothing is pinned",
+                derived.set.canonical(),
+                derived
+                    .helpers
+                    .iter()
+                    .cloned()
+                    .collect::<Vec<_>>()
+                    .join(", "),
+                derived
+                    .rests_on
+                    .iter()
+                    .cloned()
+                    .collect::<Vec<_>>()
+                    .join(", "),
+                declared.canonical()
+            ));
+        }
+        let rests_on = derived
+            .rests_on
+            .iter()
+            .map(|function| {
+                let contract = &environment.functions[function];
+                RestedOn {
+                    function: function.clone(),
+                    module: contract.module.clone(),
+                    contract_sha256: contract.text_sha256.clone(),
+                }
+            })
+            .collect();
+        target.derivations.insert(
+            name,
+            ResultDerivation {
+                result_set: derived.set.canonical(),
+                helpers: derived.helpers.into_iter().collect(),
+                rests_on,
+            },
+        );
+    }
+    Ok(())
+}
+
 /// Add or refresh the identities `tree` gives: every current declaration (or
 /// only `functions`) is recorded at the tree's source. Identities reviewed at
 /// other sources are kept, unless the contract text changed, which voids
@@ -859,10 +1020,16 @@ fn update(
         .filter(|(name, (_, _, mode))| *mode == RevisionMode::Pinned && chosen(name))
         .map(|(name, _)| name.clone())
         .collect::<BTreeSet<_>>();
-    let sites = tree.sites(&crate::c_identity::identity_names(
-        &pinned_names,
-        &target.c_names,
-    ));
+    // Card CELL-GUARD-RESULT-RANGE-CHECKED: a derivation's helpers' sites
+    // join their function's identity.
+    let mut scanned = crate::c_identity::identity_names(&pinned_names, &target.c_names);
+    scanned.extend(
+        target
+            .derivations
+            .values()
+            .flat_map(|derivation| derivation.helpers.iter().cloned()),
+    );
+    let sites = tree.sites(&scanned);
     let old = existing.cloned().unwrap_or_else(|| empty_lock(target));
     let mut lock = ContractLock {
         pinned: Vec::new(),
@@ -912,7 +1079,32 @@ fn update(
         }
         match mode {
             RevisionMode::Pinned => {
+                // Card CELL-GUARD-RESULT-RANGE-CHECKED (rule 38e): an entry
+                // that carries a derivation is re-pinned only with one.
+                let derivation = target.derivations.get(name);
+                let old_derivation = old_pinned(name).and_then(|e| e.derivation.as_ref());
+                if derivation.is_none() && old_derivation.is_some() {
+                    return Err(format!(
+                        "`{name}` carries a result derivation (rule 38e): pin it again with \
+                         --derive-results --compile-database FILE"
+                    ));
+                }
                 let mut entry = match old_pinned(name) {
+                    Some(entry)
+                        if derivation.is_some()
+                            && old_derivation.is_some()
+                            && old_derivation != derivation
+                            && entry.contract_sha256 == *digest =>
+                    {
+                        lines.push(format!(
+                            "! {name}: result derivation changed; {} earlier identit(ies) voided",
+                            entry.identities.len()
+                        ));
+                        PinnedEntry {
+                            identities: Vec::new(),
+                            ..entry.clone()
+                        }
+                    }
                     Some(entry) if entry.contract_sha256 == *digest => entry.clone(),
                     Some(entry) => {
                         lines.push(format!(
@@ -932,6 +1124,7 @@ fn update(
                             contract_sha256: digest.clone(),
                             pinned_at: None,
                             identities: Vec::new(),
+                            derivation: None,
                         }
                     }
                 };
@@ -942,8 +1135,27 @@ fn update(
                 // Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF (rule 13l): the
                 // enumerations of its `@` names join the identity; an `@`
                 // name the tree does not declare refuses the pin.
-                let identity = crate::c_identity::identity_sites(&sites, name, &target.c_names)
+                let mut identity = crate::c_identity::identity_sites(&sites, name, &target.c_names)
                     .map_err(|why| format!("`{name}`: {why} at {}", source.label()))?;
+                if let Some(derivation) = derivation {
+                    identity = with_helper_sites(&sites, identity, &derivation.helpers)
+                        .map_err(|why| format!("`{name}`: {why} at {}", source.label()))?;
+                    if old_derivation != Some(derivation) {
+                        lines.push(format!(
+                            "~ {name}: result set {} derived at {} (helpers {}; rests on {})",
+                            derivation.result_set,
+                            source.label(),
+                            derivation.helpers.join(", "),
+                            derivation
+                                .rests_on
+                                .iter()
+                                .map(|rested| rested.function.as_str())
+                                .collect::<Vec<_>>()
+                                .join(", ")
+                        ));
+                    }
+                }
+                entry.derivation = derivation.cloned();
                 entry.record(&source, identity);
                 if before != entry.identities && old_pinned(name).is_some() {
                     let joined = entry
@@ -979,6 +1191,7 @@ fn update(
                     old.module == entry.module
                         && old.contract_sha256 == entry.contract_sha256
                         && old.identities == entry.identities
+                        && old.derivation == entry.derivation
                 });
                 if !same || entry.pinned_at.is_none() {
                     entry.pinned_at =
@@ -1245,6 +1458,38 @@ fn drop_revision(
     (lock, touched, named)
 }
 
+/// Card CELL-GUARD-RESULT-RANGE-CHECKED: every derivation of `lock` rests on
+/// C library declarations whose text is still the one it read.
+fn derivation_problems(lock: &ContractLock, load_path: &Path) -> Result<Vec<String>, String> {
+    let manifest = load_contract_load_path_manifest(
+        &load_path
+            .canonicalize()
+            .map_err(|error| format!("{}: {error}", load_path.display()))?,
+    )?;
+    let (environment, _) = crate::bounds_selection::load_views(&manifest)?;
+    let mut problems = Vec::new();
+    for entry in &lock.pinned {
+        for rested in entry.derivation.iter().flat_map(|d| &d.rests_on) {
+            let current = environment
+                .functions
+                .get(&rested.function)
+                .filter(|contract| {
+                    contract.flexible
+                        && contract.module == rested.module
+                        && contract.text_sha256 == rested.contract_sha256
+                });
+            if current.is_none() {
+                problems.push(format!(
+                    "`{}`'s result derivation rests on `{}` ({}), whose declaration changed or \
+                     went: derive it again",
+                    entry.function, rested.function, rested.module
+                ));
+            }
+        }
+    }
+    Ok(problems)
+}
+
 /// Whether a lock lists exactly the current declarations, modes and contract
 /// digests (sites are not compared: no source is read).
 fn contracts_agree(
@@ -1309,10 +1554,17 @@ fn check(
         .filter(|(name, (_, _, mode))| *mode == RevisionMode::Pinned && chosen(name))
         .map(|(name, _)| name.clone())
         .collect::<BTreeSet<_>>();
-    let sites = tree.sites(&crate::c_identity::identity_names(
-        &pinned_names,
-        &target.c_names,
-    ));
+    let helpers_of = |name: &str| {
+        lock.and_then(|lock| lock.pinned.iter().find(|e| e.function == name))
+            .and_then(|entry| entry.derivation.as_ref())
+            .map(|derivation| derivation.helpers.clone())
+            .unwrap_or_default()
+    };
+    let mut scanned = crate::c_identity::identity_names(&pinned_names, &target.c_names);
+    for name in &pinned_names {
+        scanned.extend(helpers_of(name));
+    }
+    let sites = tree.sites(&scanned);
     let mut tips = TipResolver::from_environment()?;
     let (mut recorded, mut via_other, mut via_tip, mut out, mut stale) = (0, 0, 0, 0, 0);
     let mut lines = Vec::new();
@@ -1326,6 +1578,14 @@ fn check(
                 // enumeration: a mismatch, never in force.
                 let found = crate::c_identity::identity_sites(&sites, name, &target.c_names)
                     .unwrap_or_else(|_| sites.get(name).cloned().unwrap_or_default());
+                // Card CELL-GUARD-RESULT-RANGE-CHECKED: and the derivation's
+                // helpers (a missing helper is a mismatch, never in force).
+                let helpers = helpers_of(name);
+                let found = if helpers.is_empty() {
+                    found
+                } else {
+                    with_helper_sites(&sites, found.clone(), &helpers).unwrap_or(found)
+                };
                 let standing = pin_standing(lock, name, digest, &found, module, &mut tips);
                 let notice = standing.notice(name);
                 match standing {
@@ -1622,6 +1882,15 @@ fn run(arguments: Arguments) -> Result<bool, String> {
                 Some(lock) => {
                     let mut problems = contracts_agree(lock, &declared);
                     problems.extend(stamp_problems(lock));
+                    // Card CELL-GUARD-RESULT-RANGE-CHECKED: a derivation
+                    // rests on the C library declarations it read.
+                    if lock.pinned.iter().any(|entry| entry.derivation.is_some()) {
+                        let load_path = arguments
+                            .load_path
+                            .as_deref()
+                            .unwrap_or_else(|| Path::new(DEFAULT_LOAD_PATH));
+                        problems.extend(derivation_problems(lock, load_path)?);
+                    }
                     problems
                 }
                 None => vec![format!(
@@ -1803,6 +2072,29 @@ fn run(arguments: Arguments) -> Result<bool, String> {
         Some(revision) => SourceTree::read_revision(root, revision)?,
         None => SourceTree::read(root)?,
     };
+    // Card CELL-GUARD-RESULT-RANGE-CHECKED (rule 38e): the result derivations,
+    // computed before any lock is written.
+    let mut targets = targets;
+    if let Some(database) = arguments
+        .compile_database
+        .as_deref()
+        .filter(|_| arguments.derive_results)
+    {
+        let load_path = arguments
+            .load_path
+            .as_deref()
+            .unwrap_or_else(|| Path::new(DEFAULT_LOAD_PATH));
+        for target in &mut targets {
+            derive_results(
+                target,
+                &tree,
+                root,
+                &arguments.functions,
+                database,
+                load_path,
+            )?;
+        }
+    }
     let mut clean = true;
     let mut tips = TipResolver::from_environment()?;
     // Card PIN-REGENERATE-STAMP-MONOTONICITY: every lock is computed before

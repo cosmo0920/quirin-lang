@@ -711,6 +711,7 @@ pub(super) fn after(
         | LegacyInstruction::BranchOnNull { .. }
         | LegacyInstruction::BranchOnDistinct { .. }
         | LegacyInstruction::BranchOnValidity { .. }
+        | LegacyInstruction::BranchOnResult { .. }
         | LegacyInstruction::ArgumentReads { .. } => false,
         // New/unrecognized operations, wrapper instructions and indirect
         // stores fail closed; no black-list default can retain stale links.

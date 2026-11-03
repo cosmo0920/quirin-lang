@@ -329,6 +329,7 @@ fn custody_bearing(instruction: &LegacyInstruction) -> bool {
         | ForgetScalar { .. }
         | BranchOnNull { .. }
         | BranchOnValidity { .. }
+        | BranchOnResult { .. }
         | BranchOnDistinct { .. }
         | CountedLoopHeader { .. }
         | CountedLoopStep { .. }
@@ -421,6 +422,7 @@ pub(super) fn settle_volatile(cfg: &mut LegacyCfg, facts: &FunctionFacts, functi
             }
             LegacyInstruction::BranchOnNull { source, .. }
             | LegacyInstruction::BranchOnValidity { source, .. }
+            | LegacyInstruction::BranchOnResult { source, .. }
                 if facts.is_volatile(source) =>
             {
                 debug_assert_eq!(decide(Form::VolatileRefinement), Disposition::Unrefined);

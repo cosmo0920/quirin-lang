@@ -774,6 +774,13 @@ pub struct ResourceContracts {
     /// any table; every call relying on one is held (`contract-conflict`).
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     contract_conflict: BTreeMap<String, crate::contract_supersession::ContractConflict>,
+    /// Card CELL-GUARD-RESULT-RANGE-CHECKED (contract spec C09.4, gateway rule
+    /// 38e): the pin-derived integer result sets of the bounds environment an
+    /// audit route installed, with their standing; rule 38 reads one only
+    /// while it is in force. Omitted when empty, so every environment without
+    /// one serializes byte for byte as before.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    result_ranges: BTreeMap<String, crate::result_range::ResultRangeFact>,
 }
 
 impl ResourceContracts {
@@ -801,7 +808,35 @@ impl ResourceContracts {
             lifetime_imports: BTreeMap::new(),
             superseded: BTreeMap::new(),
             contract_conflict: BTreeMap::new(),
+            result_ranges: BTreeMap::new(),
         }
+    }
+
+    /// Card CELL-GUARD-RESULT-RANGE-CHECKED (rule 38e): the pin-derived result
+    /// sets the route installed, with their standing.
+    #[must_use]
+    pub fn result_ranges(&self) -> &BTreeMap<String, crate::result_range::ResultRangeFact> {
+        &self.result_ranges
+    }
+
+    /// Card CELL-GUARD-RESULT-RANGE-CHECKED: `name`'s result set while it is
+    /// in force; `None` for one held, withdrawn, unchecked or absent.
+    #[must_use]
+    pub fn result_range_in_force(
+        &self,
+        name: &str,
+    ) -> Option<&crate::result_range::ResultRangeFact> {
+        self.result_ranges
+            .get(name)
+            .filter(|fact| fact.standing == crate::result_range::ResultRangeStanding::InForce)
+    }
+
+    /// Card CELL-GUARD-RESULT-RANGE-CHECKED: install the route's result sets.
+    pub fn set_result_ranges(
+        &mut self,
+        ranges: BTreeMap<String, crate::result_range::ResultRangeFact>,
+    ) {
+        self.result_ranges = ranges;
     }
 
     /// Card CONTRACT-SUPERSESSION (contract spec §C06.6): the declarations
@@ -1356,6 +1391,13 @@ impl ResourceContracts {
         for (name, contract) in &from.relational {
             if !withdrawn(name) {
                 self.relational.insert(name.clone(), contract.clone());
+            }
+        }
+        // Card CELL-GUARD-RESULT-RANGE-CHECKED: the route's derived result
+        // sets travel with the side tables.
+        for (name, fact) in &from.result_ranges {
+            if !withdrawn(name) {
+                self.result_ranges.insert(name.clone(), fact.clone());
             }
         }
         for (name, contract) in from.retaining.iter().chain(&from.guarded_retaining) {

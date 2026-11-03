@@ -282,6 +282,7 @@ impl Parser<'_> {
                     source: test.source,
                     true_is_null: false,
                     validity: Some((test.when_true, test.when_false)),
+                    result_test: None,
                 });
             }
         }
@@ -300,6 +301,26 @@ impl Parser<'_> {
                     source: test.source,
                     true_is_null: false,
                     validity: Some((test.when_true, test.when_false)),
+                    result_test: None,
+                });
+            }
+        }
+        // Card CELL-GUARD-RESULT-RANGE-CHECKED (rule 38e): an exact comparison
+        // of a status witness whose callee's derived result set is in force.
+        if !self.result_witness_names.is_empty() {
+            let texts = condition
+                .iter()
+                .map(|token| token.text.as_str())
+                .collect::<Vec<_>>();
+            if supported_neutral_expression(condition)
+                && let Some((source, comparison, literal)) =
+                    descriptor_custody::result_test(&texts, &self.result_witness_names)
+            {
+                return Some(PointerNullCondition {
+                    source,
+                    true_is_null: false,
+                    validity: None,
+                    result_test: Some((comparison, literal)),
                 });
             }
         }
@@ -328,6 +349,7 @@ impl Parser<'_> {
                 source: place,
                 true_is_null: false,
                 validity: None,
+                result_test: None,
             });
         }
         for index in 0..texts.len().saturating_sub(1) {
@@ -347,6 +369,7 @@ impl Parser<'_> {
                 source,
                 true_is_null: texts[index] == "=",
                 validity: None,
+                result_test: None,
             });
         }
         None

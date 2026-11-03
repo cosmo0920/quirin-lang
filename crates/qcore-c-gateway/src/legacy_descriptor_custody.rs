@@ -202,6 +202,97 @@ pub(crate) fn cell_witness_names(body: &[&str], contracts: &ResourceContracts) -
     DescriptorNames { names }
 }
 
+/// Card **CELL-GUARD-RESULT-RANGE-CHECKED** (rule 38e): the names of one
+/// body assigned the result of a declaration whose descriptor cells are
+/// guarded by a status witness (`#result == 0` / `!= 0`) and whose callee's
+/// pin-derived result set is in force in `contracts`. A comparison of such a
+/// name is read exactly through that set; every other name keeps its
+/// reading. Empty wherever no derived set is in force, which keeps every
+/// condition's lowering as it was.
+pub(crate) fn result_witness_names(
+    body: &[&str],
+    contracts: &ResourceContracts,
+) -> DescriptorNames {
+    if contracts.result_ranges().is_empty() {
+        return DescriptorNames::default();
+    }
+    let witnessed = contracts
+        .retaining()
+        .iter()
+        .filter(|(name, declaration)| {
+            contracts.result_range_in_force(name).is_some()
+                && declaration.descriptor_cells.states.iter().any(|state| {
+                    state.value == qcore_schemas::descriptor_cell::CellValue::Fresh
+                        && state.guard.is_some_and(|guard| !guard.is_validity())
+                })
+        })
+        .map(|(name, _)| name.as_str())
+        .collect::<BTreeSet<_>>();
+    if witnessed.is_empty() {
+        return DescriptorNames::default();
+    }
+    let names = plain_assignments(body)
+        .into_iter()
+        .filter(|(_, value)| {
+            called_after_cast(value).is_some_and(|callee| witnessed.contains(callee))
+        })
+        .map(|(destination, _)| destination.to_owned())
+        .collect();
+    DescriptorNames { names }
+}
+
+/// Card CELL-GUARD-RESULT-RANGE-CHECKED (rule 38e): a condition that is
+/// exactly `NAME OP K` (or `K OP NAME`) of a name `names` lists, `K` a
+/// canonical decimal literal, optionally negative, in matched parentheses.
+/// A null test (`NAME == 0`, `NAME != 0`) is not one: the null reading keeps
+/// it.
+pub(crate) fn result_test(
+    condition: &[&str],
+    names: &DescriptorNames,
+) -> Option<(String, qcore_core::result_set::Cmp, i128)> {
+    use qcore_core::result_set::{Cmp, canonical_literal};
+    if names.is_empty() {
+        return None;
+    }
+    let condition = strip_parentheses(condition);
+    let literal = |tokens: &[&str]| -> Option<i128> {
+        match strip_parentheses(tokens) {
+            ["-", digits] => canonical_literal(&format!("-{digits}")),
+            [digits] => canonical_literal(digits),
+            _ => None,
+        }
+    };
+    for (index, text) in condition.iter().enumerate() {
+        let (cmp, width) = match (*text, condition.get(index + 1).copied()) {
+            ("=", Some("=")) => (Cmp::Eq, 2),
+            ("!", Some("=")) => (Cmp::Ne, 2),
+            ("<", Some("=")) => (Cmp::Le, 2),
+            (">", Some("=")) => (Cmp::Ge, 2),
+            ("<", Some(next)) if next != "<" && (index == 0 || condition[index - 1] != "<") => {
+                (Cmp::Lt, 1)
+            }
+            (">", Some(next))
+                if next != ">" && (index == 0 || !matches!(condition[index - 1], ">" | "-")) =>
+            {
+                (Cmp::Gt, 1)
+            }
+            _ => continue,
+        };
+        let left = strip_parentheses(&condition[..index]);
+        let right = strip_parentheses(&condition[index + width..]);
+        let (name, cmp, k) = match (left, right) {
+            ([name], other) if names.contains(name) => (*name, cmp, literal(other)?),
+            (other, [name]) if names.contains(name) => (*name, cmp.mirrored(), literal(other)?),
+            _ => return None,
+        };
+        if k == 0 && matches!(cmp, Cmp::Eq | Cmp::Ne) {
+            return None;
+        }
+        return Some((name.to_owned(), cmp, k));
+    }
+    None
+}
+
 /// The callee of `VALUE` when it is `CALLEE ( … )`, optionally behind one
 /// parenthesised cast.
 fn called_after_cast<'a>(value: &[&'a str]) -> Option<&'a str> {
@@ -373,6 +464,9 @@ pub(crate) fn admits_descriptor_read(
         // descriptor on its line.
         | LegacyInstruction::PointerStore { .. }
         | LegacyInstruction::TrackedSelfInit { .. }
+        // Card CELL-GUARD-RESULT-RANGE-CHECKED: a status witness's test reads
+        // no descriptor; never a descriptor read's statement.
+        | LegacyInstruction::BranchOnResult { .. }
         | LegacyInstruction::NoOp => false,
     }
 }

@@ -13,9 +13,8 @@ use qcore_c_gateway::legacy_c::C11TranslationUnit;
 use qcore_c_gateway::null_deref::derive_result_set_c11;
 use qcore_contract::bounds_contract::{BoundsContracts, load_bounds_contract_sources};
 
-const LIBC: &str = include_str!(
-    "../../../providers/quirin-provider-libc/contracts/libc/result_sets.qv"
-);
+const LIBC: &str =
+    include_str!("../../../providers/quirin-provider-libc/contracts/libc/result_sets.qv");
 
 const EPOLL: &str = "\
 struct mk_event { int fd; int mask; };
@@ -84,7 +83,11 @@ fn bounds(text: &str) -> BoundsContracts {
     .expect("the libc result sets load")
 }
 
-fn derive(source: &str, function: &str, contracts: &BoundsContracts) -> (String, Vec<String>, Vec<String>) {
+fn derive(
+    source: &str,
+    function: &str,
+    contracts: &BoundsContracts,
+) -> (String, Vec<String>, Vec<String>) {
     let unit = C11TranslationUnit {
         source,
         ..Default::default()
@@ -113,7 +116,11 @@ fn from_the_bodies_alone_the_chain_returns_every_int() {
     if !clang_available() {
         return;
     }
-    let (set, _, rests_on) = derive(EPOLL, "mk_event_channel_create", &BoundsContracts::default());
+    let (set, _, rests_on) = derive(
+        EPOLL,
+        "mk_event_channel_create",
+        &BoundsContracts::default(),
+    );
     assert_eq!(set, "[MIN, MAX]");
     assert!(rests_on.is_empty());
 }

@@ -199,6 +199,68 @@ pub struct PinnedEntry {
     /// appears in two identities and no two identities have equal sites. An
     /// entry whose identities were all dropped has none and is never in force.
     pub identities: Vec<ReviewedIdentity>,
+    /// Card CELL-GUARD-RESULT-RANGE-CHECKED (C09.4, rule 38e): the result
+    /// derivation `pin --bounds --derive-results` checked the declaration's
+    /// range against, when it did. Its helpers' sites are part of every
+    /// identity's sites. Omitted otherwise, so every other lock is
+    /// byte-identical.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub derivation: Option<ResultDerivation>,
+}
+
+/// Card CELL-GUARD-RESULT-RANGE-CHECKED (contract specification C09.4,
+/// gateway rule 38e): a pinned `nonnull_result_range` derived at pin time
+/// from the configured unit's body chain.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ResultDerivation {
+    /// The derived set's canonical spelling (G05j), inside the declared range.
+    pub result_set: String,
+    /// The in-unit helpers whose bodies the derivation read, sorted; the
+    /// definition and declaration sites of each join every identity's sites,
+    /// so the range is in force only where they are the reviewed ones.
+    pub helpers: Vec<String>,
+    /// The C library result sets the derivation rested on, sorted by
+    /// function; a changed or missing one holds the range.
+    pub rests_on: Vec<RestedOn>,
+}
+
+/// One C library result set a derivation read.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct RestedOn {
+    pub function: String,
+    /// The declaring module, `crate:module`.
+    pub module: String,
+    /// The declaration's normalised text digest at derivation time.
+    pub contract_sha256: String,
+}
+
+/// Card CELL-GUARD-RESULT-RANGE-CHECKED: `function`'s identity extended by
+/// the sites of every helper its result derivation read, sorted and without
+/// duplicates.
+///
+/// # Errors
+///
+/// A helper with no site in the tree (the derivation read a body this tree
+/// does not have).
+pub fn with_helper_sites(
+    found: &BTreeMap<String, Vec<SourceSite>>,
+    mut sites: Vec<SourceSite>,
+    helpers: &[String],
+) -> Result<Vec<SourceSite>, String> {
+    for helper in helpers {
+        let helper_sites = found.get(helper).cloned().unwrap_or_default();
+        if helper_sites.is_empty() {
+            return Err(format!(
+                "the result derivation's helper `{helper}` has no site in the source tree"
+            ));
+        }
+        sites.extend(helper_sites);
+    }
+    sites.sort();
+    sites.dedup();
+    Ok(sites)
 }
 
 /// One flexible declaration.
@@ -280,6 +342,7 @@ impl LockV1 {
                         }],
                         sites: entry.sites,
                     }],
+                    derivation: None,
                 })
                 .collect(),
             flexible: self.flexible,

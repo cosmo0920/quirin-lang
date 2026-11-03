@@ -96,6 +96,7 @@ pub(super) fn called(instruction: &LegacyInstruction, out: &mut Vec<String>) {
         | LegacyInstruction::ExactFormalReturn { .. }
         | LegacyInstruction::BranchOnNull { .. }
         | LegacyInstruction::BranchOnValidity { .. }
+        | LegacyInstruction::BranchOnResult { .. }
         | LegacyInstruction::BranchOnDistinct { .. }
         | LegacyInstruction::CellProtocolStep { .. }
         | LegacyInstruction::OpaqueValue { .. }

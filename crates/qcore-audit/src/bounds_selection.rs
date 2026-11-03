@@ -71,6 +71,9 @@ pub const SELECTION: &str = "all-bounds-views";
 pub const RULE: &str = "with QCORE_BOUNDS_PROPERTY set, the pinned and configured routes load every bounds view on the load path their resource manifest names (each crate's owned modules the bounds contract v1 loader accepts, generated and checked by providers/contracts.py, disjoint from its resource view), compare each declaration with its crate's bounds-contracts.lock over the audited source (C06.2: in force only where the contract text is the pinned one and the audited sites equal a reviewed identity), hold every declaration not in force (contract-pin-mismatch: Pending at most, never Safe, never accusing), and analyse every unit's bounds rows under that environment";
 
 struct Installed {
+    /// Card CELL-GUARD-RESULT-RANGE-CHECKED: the derived result sets rule 38
+    /// reads, with their standing.
+    result_ranges: BTreeMap<String, qcore_schemas::result_range::ResultRangeFact>,
     /// The bounds consumer's view (null-deref clauses removed).
     contracts: Arc<BoundsContracts>,
     /// Card NULL-SAFETY-PROPERTY: the environment as loaded and pinned, the
@@ -114,6 +117,81 @@ pub(crate) fn null_hypothesis_sources() -> Result<BTreeMap<String, String>, Stri
         .as_ref()
         .map(|i| i.hypothesis_sources.clone())
         .unwrap_or_default())
+}
+
+/// Card CELL-GUARD-RESULT-RANGE-CHECKED (contract specification C09.4,
+/// gateway rule 38e): the pinned result sets of the installed environment,
+/// for the resource environment rule 38 reads (empty when nothing is
+/// installed, so the resource environment is unchanged).
+#[must_use]
+pub fn result_range_table() -> BTreeMap<String, qcore_schemas::result_range::ResultRangeFact> {
+    INSTALLED
+        .read()
+        .ok()
+        .and_then(|installed| installed.as_ref().map(|i| i.result_ranges.clone()))
+        .unwrap_or_default()
+}
+
+/// Every pinned declaration stating a result set: in force only when it is
+/// not held and its lock carries a current derivation (rule 38e); held when
+/// held; unchecked when never derived.
+fn result_ranges_of(
+    contracts: &BoundsContracts,
+    record: &Value,
+) -> BTreeMap<String, qcore_schemas::result_range::ResultRangeFact> {
+    use qcore_schemas::result_range::{ResultRangeFact, ResultRangeStanding};
+    let derivations = record["pins"]["outcomes"]
+        .as_array()
+        .into_iter()
+        .flatten()
+        .filter_map(|outcome| {
+            Some((
+                outcome["function"].as_str()?.to_owned(),
+                outcome.get("derivation")?.clone(),
+            ))
+        })
+        .collect::<BTreeMap<_, _>>();
+    let mut out = BTreeMap::new();
+    for (name, contract) in &contracts.functions {
+        if contract.flexible {
+            continue;
+        }
+        let Some(set) = contract.result_values() else {
+            continue;
+        };
+        let fits = |value: i128| i64::try_from(value).ok();
+        let (Some(lo), Some(hi)) = (fits(set.universe().0), fits(set.universe().1)) else {
+            continue;
+        };
+        let Some(intervals) = set
+            .intervals()
+            .iter()
+            .map(|(a, b)| Some((fits(*a)?, fits(*b)?)))
+            .collect::<Option<Vec<_>>>()
+        else {
+            continue;
+        };
+        let (standing, detail) = if contract.held() {
+            (ResultRangeStanding::Held, contract.holds().join("; "))
+        } else if let Some(derivation) = derivations.get(name) {
+            (ResultRangeStanding::InForce, derivation.to_string())
+        } else {
+            (
+                ResultRangeStanding::Unchecked,
+                "the lock records no result derivation (rule 38e)".to_owned(),
+            )
+        };
+        out.insert(
+            name.clone(),
+            ResultRangeFact {
+                intervals,
+                universe: (lo, hi),
+                standing,
+                detail,
+            },
+        );
+    }
+    out
 }
 
 /// The selection record of the installed environment, if any.
@@ -170,7 +248,9 @@ fn install(
     let mut slot = INSTALLED
         .write()
         .map_err(|_| "the bounds environment lock is poisoned".to_owned())?;
+    let result_ranges = result_ranges_of(&contracts, &record);
     *slot = Some(Installed {
+        result_ranges,
         contracts: Arc::new(contracts.for_bounds()),
         full: Arc::new(contracts),
         hypothesis_sources: sources,
@@ -306,10 +386,52 @@ pub fn apply_bounds_pins(
         })
         .cloned()
         .collect::<BTreeSet<_>>();
-    let scan = SourceTree::read_sites(source_root, &wanted)?;
+    // Card CELL-GUARD-RESULT-RANGE-CHECKED (rule 38e): a derived range's
+    // helpers' sites join its identity.
+    let helpers_of = |name: &str| -> Vec<String> {
+        lock_of
+            .get(name)
+            .and_then(Option::as_ref)
+            .and_then(|path| locks.get(path))
+            .and_then(|lock| lock.pinned.iter().find(|entry| entry.function == name))
+            .and_then(|entry| entry.derivation.as_ref())
+            .map(|derivation| derivation.helpers.clone())
+            .unwrap_or_default()
+    };
+    let mut scanned = wanted.clone();
+    for name in &wanted {
+        scanned.extend(helpers_of(name));
+    }
+    let scan = SourceTree::read_sites(source_root, &scanned)?;
     let mut tips = TipResolver::from_environment()?;
     let mut outcomes = Vec::new();
     let mut holds = Vec::new();
+    // The C library result sets a derivation may rest on: the libc crate's
+    // flexible declarations listed in its lock (a held one rests nothing).
+    let rest_view = contracts
+        .functions
+        .iter()
+        .filter(|(name, contract)| {
+            contract.flexible
+                && !contract.held()
+                && contract.module.starts_with(&format!("{LIBC_CRATE}:"))
+                && lock_of[*name]
+                    .as_ref()
+                    .and_then(|path| locks.get(path))
+                    .is_some_and(|lock| {
+                        lock.flexible.iter().any(|entry| {
+                            &entry.function == *name
+                                && entry.contract_sha256 == contract.text_sha256
+                        })
+                    })
+        })
+        .map(|(name, contract)| {
+            (
+                name.clone(),
+                (contract.module.clone(), contract.text_sha256.clone()),
+            )
+        })
+        .collect::<BTreeMap<_, _>>();
     let mut tip_records = Vec::new();
     for (name, contract) in &contracts.functions {
         let lock_file = lock_of[name].as_ref();
@@ -357,6 +479,13 @@ pub fn apply_bounds_pins(
             continue;
         }
         let sites = scan.sites.get(name).cloned().unwrap_or_default();
+        let helpers = helpers_of(name);
+        let sites = if helpers.is_empty() {
+            sites
+        } else {
+            crate::contract_revision::with_helper_sites(&scan.sites, sites.clone(), &helpers)
+                .unwrap_or(sites)
+        };
         let standing = pin_standing(
             lock,
             name,
@@ -378,6 +507,19 @@ pub fn apply_bounds_pins(
                 (Some(reason.as_str()), detail, Vec::new())
             }
         };
+        // Card CELL-GUARD-RESULT-RANGE-CHECKED (rule 38e): a derived range
+        // rests on the C library sets it read; a changed, missing or held one
+        // holds it (`contract-changed`).
+        let derivation = lock
+            .and_then(|lock| lock.pinned.iter().find(|entry| &entry.function == name))
+            .and_then(|entry| entry.derivation.clone());
+        let (reason, detail) = match (&reason, &derivation) {
+            (None, Some(derivation)) => match stale_rest(derivation, &rest_view) {
+                Some(why) => (Some("contract-changed"), why),
+                None => (reason, detail),
+            },
+            _ => (reason, detail),
+        };
         if let Some(reason) = reason {
             holds.push((name.clone(), reason.to_owned(), detail.clone()));
         }
@@ -398,6 +540,11 @@ pub fn apply_bounds_pins(
             "reviewed_at": matched,
             "sites": sites,
         });
+        // Card CELL-GUARD-RESULT-RANGE-CHECKED: the derivation an in-force
+        // range rests on.
+        if let Some(derivation) = &derivation {
+            outcome["derivation"] = serde_json::to_value(derivation).map_err(|e| e.to_string())?;
+        }
         if let (Some(tip), Some(notice)) = (tip, notice) {
             outcome["tip"] = serde_json::to_value(&tip).map_err(|e| e.to_string())?;
             outcome["notice"] = serde_json::to_value(&notice).map_err(|e| e.to_string())?;
@@ -418,6 +565,29 @@ pub fn apply_bounds_pins(
     });
     add_tip_tracking(&mut section, &tip_records)?;
     Ok(section)
+}
+
+/// Card CELL-GUARD-RESULT-RANGE-CHECKED: why a derivation no longer rests on
+/// what it read, if it does not.
+fn stale_rest(
+    derivation: &crate::contract_revision::ResultDerivation,
+    view: &BTreeMap<String, (String, String)>,
+) -> Option<String> {
+    derivation.rests_on.iter().find_map(|rested| {
+        match view.get(&rested.function) {
+            Some((module, sha)) if *module == rested.module && *sha == rested.contract_sha256 => {
+                None
+            }
+            Some(_) => Some(format!(
+                "the C library result set of `{}` the derivation rested on changed since it was derived",
+                rested.function
+            )),
+            None => Some(format!(
+                "the C library result set of `{}` the derivation rested on is not in force",
+                rested.function
+            )),
+        }
+    })
 }
 
 /// Card CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS (rule 14i): C06.2's tip

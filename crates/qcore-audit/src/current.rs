@@ -256,6 +256,13 @@ impl CurrentAudit {
             &checkout,
             &contracts,
         )?;
+        // Card CELL-GUARD-RESULT-RANGE-CHECKED (rule 38e): the pin-derived result
+        // sets of the installed bounds environment, read by rule 38 while in force.
+        let contracts = {
+            let mut contracts = contracts;
+            contracts.set_result_ranges(crate::bounds_selection::result_range_table());
+            contracts
+        };
         // Card OUTER-CONTRACT (rule 31): the outer environment.
         crate::outer_selection::select_for_route(
             "configured",
@@ -434,6 +441,13 @@ impl CurrentAudit {
             &self.checkout,
             &contracts,
         )?;
+        // Card CELL-GUARD-RESULT-RANGE-CHECKED (rule 38e): the pin-derived result
+        // sets of the installed bounds environment, read by rule 38 while in force.
+        let contracts = {
+            let mut contracts = contracts;
+            contracts.set_result_ranges(crate::bounds_selection::result_range_table());
+            contracts
+        };
         crate::outer_selection::select_for_route(
             "configured",
             slice_input.manifest_path(),

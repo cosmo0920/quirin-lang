@@ -599,6 +599,17 @@ pub enum LegacyInstruction {
         when_true: ValidityFact,
         when_false: ValidityFact,
     },
+    /// Card **CELL-GUARD-RESULT-RANGE-CHECKED** (gateway rule 38e): a branch
+    /// on `source OP literal` where `source` is a cell-creating call's status
+    /// witness whose callee's pin-derived result set is in force. It refines
+    /// nothing but the creation's class, and only where the test reads that
+    /// class exactly within the set; every other edge carries the state
+    /// unchanged, as a scalar condition does.
+    BranchOnResult {
+        source: String,
+        comparison: ResultComparison,
+        literal: i128,
+    },
     /// A branch on `LEFT == RIGHT` or `LEFT != RIGHT` between two plain names
     /// this function declares with the same record-pointer type (C02-P-ALIAS).
     ///
@@ -3935,6 +3946,17 @@ fn build_function_cfg_unscoped(
             descriptor_custody::cell_witness_names(&body, contracts)
         },
     );
+    // Card CELL-GUARD-RESULT-RANGE-CHECKED (rule 38e).
+    let result_witness_names = matching(tokens, body_start, "{", "}").map_or_else(
+        descriptor_custody::DescriptorNames::default,
+        |body_end| {
+            let body = tokens[body_start + 1..body_end]
+                .iter()
+                .map(|token| token.text.as_str())
+                .collect::<Vec<_>>();
+            descriptor_custody::result_witness_names(&body, contracts)
+        },
+    );
     // Card CG25-RESOURCE-KINDS (rule 11v).
     let in_place_names = matching(tokens, body_start, "{", "}").map_or_else(
         in_place_custody::InPlaceNames::default,
@@ -4024,6 +4046,7 @@ fn build_function_cfg_unscoped(
         element_lowerings: 0,
         descriptor_names,
         cell_witness_names,
+        result_witness_names,
         declared_callees,
         in_place_names,
         #[cfg(feature = "indirect-census")]
@@ -4694,6 +4717,46 @@ enum Statement {
     },
 }
 
+/// Card CELL-GUARD-RESULT-RANGE-CHECKED: a comparison operator of
+/// [`LegacyInstruction::BranchOnResult`] (serialisable).
+#[derive(Clone, Copy, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+pub enum ResultComparison {
+    Eq,
+    Ne,
+    Lt,
+    Le,
+    Gt,
+    Ge,
+}
+
+impl ResultComparison {
+    fn of(cmp: qcore_core::result_set::Cmp) -> Self {
+        use qcore_core::result_set::Cmp;
+        match cmp {
+            Cmp::Eq => Self::Eq,
+            Cmp::Ne => Self::Ne,
+            Cmp::Lt => Self::Lt,
+            Cmp::Le => Self::Le,
+            Cmp::Gt => Self::Gt,
+            Cmp::Ge => Self::Ge,
+        }
+    }
+
+    /// The comparison of the set algebra.
+    #[must_use]
+    pub fn cmp(self) -> qcore_core::result_set::Cmp {
+        use qcore_core::result_set::Cmp;
+        match self {
+            Self::Eq => Cmp::Eq,
+            Self::Ne => Cmp::Ne,
+            Self::Lt => Cmp::Lt,
+            Self::Le => Cmp::Le,
+            Self::Gt => Cmp::Gt,
+            Self::Ge => Cmp::Ge,
+        }
+    }
+}
+
 #[derive(Clone, Debug)]
 struct PointerNullCondition {
     source: String,
@@ -4702,11 +4765,23 @@ struct PointerNullCondition {
     /// when the condition is a validity test of a descriptor name, which
     /// compiles to [`LegacyInstruction::BranchOnValidity`] instead.
     validity: Option<(ValidityFact, ValidityFact)>,
+    /// Card CELL-GUARD-RESULT-RANGE-CHECKED (rule 38e): `Some((OP, K))` when
+    /// the condition is exactly `NAME OP K` of a status witness whose callee's
+    /// derived result set is in force, which compiles to
+    /// [`LegacyInstruction::BranchOnResult`] instead.
+    result_test: Option<(qcore_core::result_set::Cmp, i128)>,
 }
 
 impl PointerNullCondition {
     /// The branch instruction this condition compiles to.
     fn branch(&self) -> LegacyInstruction {
+        if let Some((comparison, literal)) = self.result_test {
+            return LegacyInstruction::BranchOnResult {
+                source: self.source.clone(),
+                comparison: ResultComparison::of(comparison),
+                literal,
+            };
+        }
         match self.validity {
             Some((when_true, when_false)) => LegacyInstruction::BranchOnValidity {
                 source: self.source.clone(),
@@ -4829,6 +4904,10 @@ struct Parser<'a> {
     /// cell-creating call's descriptor-valued witness; read only by the
     /// condition reader. Empty in every environment with no such declaration.
     cell_witness_names: descriptor_custody::DescriptorNames,
+    /// Card **CELL-GUARD-RESULT-RANGE-CHECKED** (rule 38e): the names holding
+    /// a status witness whose callee's derived result set is in force; read
+    /// only by the condition reader. Empty wherever none is in force.
+    result_witness_names: descriptor_custody::DescriptorNames,
     /// Card **W43-DESCRIPTOR-RESOURCE-TRACKING**: the callees a retained
     /// trusted text declares, as opposed to ones only a W4 summary covers.
     declared_callees: BTreeSet<String>,
