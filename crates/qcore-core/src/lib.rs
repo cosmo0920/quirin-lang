@@ -60,6 +60,8 @@ pub mod ownership;
 pub mod prelude;
 // Card CG29-EXECUTION-COVERAGE-AND-RECLAMATION (gateway rule 11z).
 pub mod reclamation;
+// Card CELL-GUARD-RESULT-RANGE-CHECKED (C09.4, G05j, gateway rule 38e).
+pub mod result_set;
 pub mod research_closure;
 pub mod resource_calls;
 pub mod resource_calls_c_emit;
