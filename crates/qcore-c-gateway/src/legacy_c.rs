@@ -4966,7 +4966,7 @@ struct Parser<'a> {
     caller_formals: container_publication::CallerFormals,
     /// Card MK-EVENT-CELL-CROSS-FUNCTION (rule 38c): every record's declared
     /// cell protocol; empty in every environment declaring none.
-    cell_protocols: BTreeMap<String, descriptor_cells_route::ProtocolSpec>,
+    cell_protocols: BTreeMap<String, Vec<descriptor_cells_route::ProtocolSpec>>,
     /// Card **W45-CONTAINER-ROOT-REACH**: the element bindings rule 5l
     /// admitted, for the foreign unlink ([`container_publication::ForeignOrigins`]).
     element_origins: container_publication::ForeignOrigins,

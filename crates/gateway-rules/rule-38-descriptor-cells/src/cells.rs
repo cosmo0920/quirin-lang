@@ -41,6 +41,11 @@ pub enum Refusal {
     /// Rule 38c: a record with a declared cell protocol does not keep it at
     /// an exit or a call, or a store the protocol cannot read.
     ProtocolBroken,
+    /// Rule 38f (card CELL-PROTOCOL-PER-END-GUARDS): the holder of a cell a
+    /// `> 0` test's dead edge left undecided is released, or does not keep
+    /// its protocol at an exit: the end may be descriptor 0, a success value
+    /// the test read as absent (a candidate defect, never `Unsafe`).
+    ZeroUndecided,
 }
 
 impl Refusal {
@@ -55,6 +60,7 @@ impl Refusal {
             Self::OwnerReleased => "descriptor-cell-owner-released",
             Self::GuardUndecided => "descriptor-cell-guard-undecided",
             Self::ProtocolBroken => "descriptor-cell-protocol-broken",
+            Self::ZeroUndecided => "descriptor-cell-zero-undecided",
         }
     }
 }

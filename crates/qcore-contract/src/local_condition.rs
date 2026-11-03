@@ -283,67 +283,92 @@ fn cell(source: &str) -> Result<CellClause, String> {
     Ok((binder, record, path, same, guard_path, op))
 }
 
-/// Group a declaration's `quant cell` clauses into one protocol per record,
-/// rejecting every disagreement (G05i).
+/// Group a declaration's `quant cell` clauses into one protocol per guard of
+/// each record, rejecting every disagreement (G05i).
+///
+/// Card CELL-PROTOCOL-PER-END-GUARDS (USER DECISION 2026-11-03, verbatim:
+/// "Per-end sentinels"): a record's clauses are grouped by guard. Besides the
+/// one record guard G05i had (a flag, or a sentinel over several `#fresh`
+/// cells), each `#fresh` cell may carry its own sentinel (`when #B.CELL > 0`
+/// or `!= -1` on the clause's own cell), and a `#same` cell takes its
+/// target's guard. A record keeps at most one guard that is not such a
+/// per-end sentinel. One protocol is emitted per guard, sorted.
 fn cell_protocols(
     clauses: Vec<CellClause>,
 ) -> Result<Vec<qcore_schemas::descriptor_cell::CellProtocol>, String> {
     use qcore_schemas::descriptor_cell::{CellProtocol, ProtocolCell};
-    let mut records: BTreeMap<String, (String, CellProtocol)> = BTreeMap::new();
+    type Groups = BTreeMap<Vec<String>, CellProtocol>;
+    let mut records: BTreeMap<String, (String, Groups)> = BTreeMap::new();
     for (binder, record, path, same, guard, op) in clauses {
-        let entry = records.entry(record.clone()).or_insert_with(|| {
-            (
-                binder.clone(),
-                CellProtocol {
-                    record: record.clone(),
-                    cells: Vec::new(),
-                    guard: guard.clone(),
-                    op,
-                },
-            )
-        });
+        let entry = records
+            .entry(record.clone())
+            .or_insert_with(|| (binder.clone(), BTreeMap::new()));
         if entry.0 != binder {
             return Err("quant-cell-binder: one binder per record".into());
         }
-        if entry.1.guard != guard || entry.1.op != op {
-            return Err("quant-cell-guard: every cell of a record states the same guard".into());
-        }
-        if entry.1.cells.iter().any(|cell| cell.path == path) {
+        if entry
+            .1
+            .values()
+            .any(|group| group.cells.iter().any(|cell| cell.path == path))
+        {
             return Err("quant-cell-duplicate: one state per cell".into());
         }
-        entry.1.cells.push(ProtocolCell { path, same });
+        let group = entry
+            .1
+            .entry(guard.clone())
+            .or_insert_with(|| CellProtocol {
+                record: record.clone(),
+                cells: Vec::new(),
+                guard: guard.clone(),
+                op,
+            });
+        if group.op != op {
+            return Err("quant-cell-guard: every cell of a record states the same guard".into());
+        }
+        group.cells.push(ProtocolCell { path, same });
     }
     let mut out = Vec::new();
-    for (_, (_, mut protocol)) in records {
-        let fresh = |path: &Vec<String>| {
-            protocol
+    for (_, (_, groups)) in records {
+        let mut record_guards = 0usize;
+        let cells_of_record = groups
+            .values()
+            .flat_map(|group| group.cells.iter().map(|cell| cell.path.clone()))
+            .collect::<Vec<_>>();
+        for (_, mut protocol) in groups {
+            let fresh = |path: &Vec<String>| {
+                protocol
+                    .cells
+                    .iter()
+                    .any(|cell| &cell.path == path && cell.same.is_none())
+            };
+            if !protocol.cells.iter().any(|cell| cell.same.is_none()) {
+                return Err(
+                    "quant-cell-fresh: a protocol states at least one `#fresh` cell".into(),
+                );
+            }
+            if protocol
                 .cells
                 .iter()
-                .any(|cell| &cell.path == path && cell.same.is_none())
-        };
-        if !protocol.cells.iter().any(|cell| cell.same.is_none()) {
-            return Err("quant-cell-fresh: a protocol states at least one `#fresh` cell".into());
+                .any(|cell| cell.same.as_ref().is_some_and(|target| !fresh(target)))
+            {
+                return Err("quant-cell-same: `#same` names a `#fresh` cell of its record".into());
+            }
+            let guard_is_fresh = fresh(&protocol.guard);
+            if protocol.op.is_sentinel() && !guard_is_fresh {
+                return Err("quant-cell-guard: a `!= -1` or `> 0` guard is a `#fresh` cell".into());
+            }
+            if !protocol.op.is_sentinel() && cells_of_record.contains(&protocol.guard) {
+                return Err("quant-cell-guard: a `== 1` guard is a flag, no cell".into());
+            }
+            if !protocol.per_end() {
+                record_guards += 1;
+            }
+            protocol.cells.sort();
+            out.push(protocol);
         }
-        if protocol
-            .cells
-            .iter()
-            .any(|cell| cell.same.as_ref().is_some_and(|target| !fresh(target)))
-        {
-            return Err("quant-cell-same: `#same` names a `#fresh` cell of its record".into());
+        if record_guards > 1 {
+            return Err("quant-cell-guard: a record states one record guard; every other guard is its own cell's sentinel".into());
         }
-        let guard_is_fresh = fresh(&protocol.guard);
-        let guard_is_cell = protocol
-            .cells
-            .iter()
-            .any(|cell| cell.path == protocol.guard);
-        if protocol.op.is_sentinel() && !guard_is_fresh {
-            return Err("quant-cell-guard: a `!= -1` or `> 0` guard is a `#fresh` cell".into());
-        }
-        if !protocol.op.is_sentinel() && guard_is_cell {
-            return Err("quant-cell-guard: a `== 1` guard is a flag, no cell".into());
-        }
-        protocol.cells.sort();
-        out.push(protocol);
     }
     Ok(out)
 }
@@ -625,7 +650,10 @@ mod cell_protocol_tests {
     fn the_decided_candidate_loads_to_one_protocol() {
         let env = load(&[("a.qv", host(SCHED))]).expect("loads");
         let protocols = env.cell_protocols();
-        let (hosts, protocol) = &protocols["flb_sched"];
+        let (hosts, protocols) = &protocols["flb_sched"];
+        let [protocol] = protocols.as_slice() else {
+            panic!("one guard: {protocols:?}");
+        };
         assert_eq!(hosts.iter().collect::<Vec<_>>(), ["host"]);
         assert_eq!(protocol.op, ProtocolGuard::NotMinusOne);
         assert_eq!(protocol.guard, ["ch_events[0]"]);
@@ -656,8 +684,17 @@ mod cell_protocol_tests {
             "quant cell #s: t.a[0] |-> #fresh(descriptor) when #s.a[0] != -1;\nquant cell #s: t.m |-> #same(b) when #s.a[0] != -1;",
             // only `#same`
             "quant cell #s: t.m |-> #same(m) when #s.on == 1;",
-            // two guards for one record
+            // one guard stated two ways
             "quant cell #s: t.a[0] |-> #fresh(descriptor) when #s.a[0] != -1;\nquant cell #s: t.a[1] |-> #fresh(descriptor) when #s.a[0] > 0;",
+            // card CELL-PROTOCOL-PER-END-GUARDS: two record guards (two
+            // guards over several cells, or a flag beside one)
+            "quant cell #s: t.a[0] |-> #fresh(descriptor) when #s.a[0] != -1;\nquant cell #s: t.a[1] |-> #fresh(descriptor) when #s.a[0] != -1;\nquant cell #s: t.b[0] |-> #fresh(descriptor) when #s.b[0] > 0;\nquant cell #s: t.b[1] |-> #fresh(descriptor) when #s.b[0] > 0;",
+            "quant cell #s: t.a[0] |-> #fresh(descriptor) when #s.on == 1;\nquant cell #s: t.b[0] |-> #fresh(descriptor) when #s.a[0] > 0;",
+            "quant cell #s: t.n[0] |-> #fresh(descriptor) when #s.on == 1;\nquant cell #s: t.m[0] |-> #fresh(descriptor) when #s.off == 1;",
+            // a `#same` under another end's guard
+            "quant cell #s: t.a[0] |-> #fresh(descriptor) when #s.a[0] > 0;\nquant cell #s: t.a[1] |-> #fresh(descriptor) when #s.a[1] > 0;\nquant cell #s: t.m |-> #same(a[0]) when #s.a[1] > 0;",
+            // a per-end guard naming another binder's cell
+            "quant cell #s: t.a[0] |-> #fresh(descriptor) when #s.a[0] > 0;\nquant cell #r: t.a[1] |-> #fresh(descriptor) when #r.a[1] > 0;",
             // a duplicate cell
             "quant cell #s: t.a[0] |-> #fresh(descriptor) when #s.a[0] != -1;\nquant cell #s: t.a[0] |-> #fresh(descriptor) when #s.a[0] != -1;",
             // a non-canonical index, a guard of another binder, a reserved binder
@@ -667,6 +704,40 @@ mod cell_protocol_tests {
         ] {
             assert!(load(&[("a.qv", host(clauses))]).is_err(), "{clauses}");
         }
+    }
+
+    /// Card CELL-PROTOCOL-PER-END-GUARDS (USER DECISION 2026-11-03,
+    /// verbatim: "Per-end sentinels"): each end its own sentinel, a `#same`
+    /// cell under its target's, beside one record guard.
+    #[test]
+    fn per_end_sentinels_load_one_protocol_per_guard() {
+        const PER_END: &str = "quant cell #t: thi.ch[0] |-> #fresh(descriptor) when #t.ch[0] > 0;\n\
+             quant cell #t: thi.ch[1] |-> #fresh(descriptor) when #t.ch[1] > 0;\n\
+             quant cell #t: thi.event.fd |-> #same(ch[0]) when #t.ch[0] > 0;\n\
+             quant cell #t: thi.q[0] |-> #fresh(descriptor) when #t.q[0] != -1;\n\
+             quant cell #t: thi.n[0] |-> #fresh(descriptor) when #t.on == 1;\n\
+             quant cell #t: thi.n[1] |-> #fresh(descriptor) when #t.on == 1;";
+        let env = load(&[("a.qv", host(PER_END))]).expect("loads");
+        let protocols = env.cell_protocols();
+        let (_, protocols) = &protocols["thi"];
+        let guards = protocols
+            .iter()
+            .map(|p| (p.guard.join("."), p.op, p.cells.len(), p.per_end()))
+            .collect::<Vec<_>>();
+        assert_eq!(
+            guards,
+            [
+                ("ch[0]".to_owned(), ProtocolGuard::Positive, 2, true),
+                ("ch[1]".to_owned(), ProtocolGuard::Positive, 1, true),
+                ("on".to_owned(), ProtocolGuard::EqualOne, 2, false),
+                ("q[0]".to_owned(), ProtocolGuard::NotMinusOne, 1, true),
+            ]
+        );
+        // A second declaration stating only some of the guards disagrees.
+        let part = host("quant cell #t: thi.ch[0] |-> #fresh(descriptor) when #t.ch[0] > 0;")
+            .replace("host(", "other(");
+        let env = load(&[("a.qv", host(PER_END)), ("b.qv", part)]).expect("loads");
+        assert!(!env.cell_protocols().contains_key("thi"));
     }
 
     #[test]

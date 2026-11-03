@@ -322,13 +322,46 @@ contract {
 // `ins->notification_channel = thi->notification_channels[1]` (:303) is a
 // copied number, not a name (decision Q4).
 //
+// ## Per-end sentinels of the `> 0` channels
+//
+// Card CELL-PROTOCOL-PER-END-GUARDS (gateway rule 38f, grammar G05i as
+// amended; USER DECISION 2026-11-03, verbatim: "Per-end sentinels"). Each
+// channel end carries its own sentinel: `when #B.END > 0` on the end's own
+// clause, and the event's `#same` name under its target's. These replace the
+// earlier "one guard per record": a record with several channel pairs states
+// one sentinel per end, beside at most one record guard (the thread
+// instance's flag above).
+//
+// What `> 0` claims, and what it does not. A value above 0 names the end's
+// live descriptor. A value at or below 0 is the absent value (calloc's 0;
+// `ingress_queue_channels`' -1) OR descriptor 0, a success value of every
+// creator: `mk_event_channel_create` and `flb_pipe_create` write the
+// pipe's descriptors, and POSIX's lowest free descriptor is 0 when standard
+// input is closed. So the destroyers' `> 0` tests (flb_output.c:615/:619,
+// flb_input.c:1311/:1315/:1319/:1323, flb_input_thread.c:210/:213/:218/:221
+// at 046accf6) are WRONG against the creators' result sets (USER DIRECTION
+// 2026-11-03, standing; census in
+// docs/reports/cell-protocol-per-end-guards/census/). Rule 38f reads their
+// live edge (the end is live, its close decided) and never reads their dead
+// edge as "the end is absent": an end there stays undecided, and a holder
+// released with it refuses (`descriptor-cell-zero-undecided`), a candidate
+// defect only. Nothing is filed upstream.
+//
+// The destroyers store no sentinel after the close and keep using the
+// record before `flb_free`: a call that reaches the record in that window
+// refuses (`descriptor-cell-protocol-broken`), and the holder's release ends
+// the protocol (rule 38f). The store census reads every store of these
+// members at the three trees: calloc's zero (no end), the creations, the
+// `-1` stores of `ingress_queue_channels` (flb_input.c:549-550,
+// flb_input_ingest.c:493-494), the closes, and copied numbers (decision Q4).
+//
 // Not declared, with the census's reasons:
-// * the record's `> 0` channels (`ch_parent_events`, `ch_thread_events`).
-//   G05i states one guard per record, and `input_thread_instance_destroy`
-//   closes both ends (:210-222) without restoring the sentinel, then keeps
-//   using the record (`flb_tp_destroy(thi->tp)`) before releasing it;
-// * `flb_input_instance` and `flb_output_instance` (`ch_events[0] > 0`),
-//   whose destroyers close the same way and never restore the sentinel;
+// * `flb_config`'s `> 0` channels (`ch_manager`, `ch_notif`). Declared
+//   alone they would put the Safe row `flb_engine_started` (its
+//   `ch_notif[1] <= 0` test) on this declaration while reading nothing
+//   there, and the record's guard is its flag protocol, withheld below. They
+//   are declared with it in that follow-up; the per-end text is in the
+//   card's report;
 // * `flb_sched` (`ch_events[0] != -1`) and `flb_config`'s flag protocol.
 //   Their stores keep the protocol, but rule 38c's reading would refuse at
 //   their own destroyers: a cell-bearing call with an actual rooted at the
@@ -352,4 +385,18 @@ contract {
     quant cell #t: flb_input_thread_instance.notification_channels[0] |-> #fresh(descriptor) when #t.notification_channels_initialized == 1;
     quant cell #t: flb_input_thread_instance.notification_channels[1] |-> #fresh(descriptor) when #t.notification_channels_initialized == 1;
     quant cell #t: flb_input_thread_instance.notification_event.fd |-> #same(notification_channels[0]) when #t.notification_channels_initialized == 1;
+    quant cell #t: flb_input_thread_instance.ch_parent_events[0] |-> #fresh(descriptor) when #t.ch_parent_events[0] > 0;
+    quant cell #t: flb_input_thread_instance.ch_parent_events[1] |-> #fresh(descriptor) when #t.ch_parent_events[1] > 0;
+    quant cell #t: flb_input_thread_instance.event.fd |-> #same(ch_parent_events[0]) when #t.ch_parent_events[0] > 0;
+    quant cell #t: flb_input_thread_instance.ch_thread_events[0] |-> #fresh(descriptor) when #t.ch_thread_events[0] > 0;
+    quant cell #t: flb_input_thread_instance.ch_thread_events[1] |-> #fresh(descriptor) when #t.ch_thread_events[1] > 0;
+    quant cell #t: flb_input_thread_instance.event_local.fd |-> #same(ch_thread_events[0]) when #t.ch_thread_events[0] > 0;
+    quant cell #i: flb_input_instance.ch_events[0] |-> #fresh(descriptor) when #i.ch_events[0] > 0;
+    quant cell #i: flb_input_instance.ch_events[1] |-> #fresh(descriptor) when #i.ch_events[1] > 0;
+    quant cell #i: flb_input_instance.event.fd |-> #same(ch_events[0]) when #i.ch_events[0] > 0;
+    quant cell #i: flb_input_instance.ingress_queue_channels[0] |-> #fresh(descriptor) when #i.ingress_queue_channels[0] > 0;
+    quant cell #i: flb_input_instance.ingress_queue_channels[1] |-> #fresh(descriptor) when #i.ingress_queue_channels[1] > 0;
+    quant cell #o: flb_output_instance.ch_events[0] |-> #fresh(descriptor) when #o.ch_events[0] > 0;
+    quant cell #o: flb_output_instance.ch_events[1] |-> #fresh(descriptor) when #o.ch_events[1] > 0;
+    quant cell #o: flb_output_instance.event.fd |-> #same(ch_events[0]) when #o.ch_events[0] > 0;
 };

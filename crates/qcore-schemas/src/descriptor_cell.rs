@@ -230,7 +230,10 @@ pub enum ProtocolGuard {
     /// `!= -1`: a sentinel cell; a live descriptor is never `-1`.
     NotMinusOne,
     /// `> 0`: a sentinel cell; a creation never establishes it (descriptor
-    /// `0` exists).
+    /// `0` exists). Card CELL-PROTOCOL-PER-END-GUARDS (gateway rule 38f): its
+    /// dead edge (`<= 0`) holds descriptor 0, a success value of every
+    /// creator and calloc's absent value at once, so it is never read as
+    /// "no cell is live".
     Positive,
     /// `== 1`: a flag member that is no cell.
     EqualOne,
@@ -290,7 +293,13 @@ pub struct ProtocolCell {
 /// A record type's declared cell protocol: whenever the guard holds, each
 /// `#fresh` cell names its own live descriptor and each `#same` cell its
 /// target's; otherwise no cell names a live one. A declared assumption
-/// (rule 13i), read by gateway rule 38c only.
+/// (rule 13i), read by gateway rules 38c and 38f only.
+///
+/// Card CELL-PROTOCOL-PER-END-GUARDS (USER DECISION 2026-11-03, verbatim:
+/// "Per-end sentinels"): one value per guard. A record states at most one
+/// record guard (a flag, or a sentinel over several `#fresh` cells) and any
+/// number of per-end sentinels ([`Self::per_end`]), so a record may carry
+/// several of these, one per guard.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 pub struct CellProtocol {
     pub record: String,
@@ -312,6 +321,17 @@ impl CellProtocol {
     #[must_use]
     pub fn names(&self, path: &[String]) -> bool {
         self.guard == path || self.cells.iter().any(|cell| cell.path == path)
+    }
+
+    /// Card CELL-PROTOCOL-PER-END-GUARDS: whether this is a per-end
+    /// sentinel, a sentinel guard over exactly one `#fresh` cell, the guard
+    /// itself (its `#same` names aside).
+    #[must_use]
+    pub fn per_end(&self) -> bool {
+        let mut fresh = self.cells.iter().filter(|cell| cell.same.is_none());
+        self.op.is_sentinel()
+            && fresh.next().is_some_and(|cell| cell.path == self.guard)
+            && fresh.next().is_none()
     }
 }
 

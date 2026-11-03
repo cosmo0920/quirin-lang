@@ -1245,30 +1245,38 @@ impl ResourceContracts {
             .filter(|(_, c)| c.lifetime.is_some())
     }
     /// Card **MK-EVENT-CELL-CROSS-FUNCTION** (gateway rule 38c, §C04.6.3):
-    /// every record's declared cell protocol with the declarations stating
-    /// it. Two declarations stating different protocols for one record leave
-    /// that record out: no protocol is read for it (fail-closed).
+    /// every record's declared cell protocols with the declarations stating
+    /// them. Two declarations stating different protocols for one record leave
+    /// that record out: no protocol is read for it (fail-closed). Card
+    /// **CELL-PROTOCOL-PER-END-GUARDS** (rule 38f): a record's protocols are
+    /// one per guard, compared as a whole, in the loader's sorted order.
     #[must_use]
     pub fn cell_protocols(
         &self,
-    ) -> BTreeMap<String, (BTreeSet<String>, crate::descriptor_cell::CellProtocol)> {
-        let mut out: BTreeMap<String, (BTreeSet<String>, crate::descriptor_cell::CellProtocol)> =
-            BTreeMap::new();
+    ) -> BTreeMap<String, (BTreeSet<String>, Vec<crate::descriptor_cell::CellProtocol>)> {
+        type Stated = (BTreeSet<String>, Vec<crate::descriptor_cell::CellProtocol>);
+        let mut out: BTreeMap<String, Stated> = BTreeMap::new();
         let mut conflicting = BTreeSet::new();
         for (host, declaration) in self.lifetime_declarations() {
+            let mut stated: BTreeMap<String, Vec<crate::descriptor_cell::CellProtocol>> =
+                BTreeMap::new();
             for protocol in declaration.lifetime.iter().flat_map(|l| &l.cells) {
-                match out.get_mut(&protocol.record) {
-                    Some((hosts, stated)) if stated == protocol => {
+                stated
+                    .entry(protocol.record.clone())
+                    .or_default()
+                    .push(protocol.clone());
+            }
+            for (record, mut protocols) in stated {
+                protocols.sort();
+                match out.get_mut(&record) {
+                    Some((hosts, known)) if *known == protocols => {
                         hosts.insert(host.clone());
                     }
                     Some(_) => {
-                        conflicting.insert(protocol.record.clone());
+                        conflicting.insert(record);
                     }
                     None => {
-                        out.insert(
-                            protocol.record.clone(),
-                            (BTreeSet::from([host.clone()]), protocol.clone()),
-                        );
+                        out.insert(record, (BTreeSet::from([host.clone()]), protocols));
                     }
                 }
             }

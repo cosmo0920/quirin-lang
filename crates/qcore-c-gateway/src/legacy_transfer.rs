@@ -328,10 +328,10 @@ pub(super) struct AbstractState {
     /// Card **MK-EVENT-CELL-CROSS-FUNCTION** (rule 38c): the facts of the
     /// records with a declared cell protocol this path read. Empty in every
     /// environment that declares no protocol, which keeps the join as it was.
-    pub(super) cell_protocols: BTreeMap<
-        super::descriptor_cells_route::ProtocolRoot,
-        super::descriptor_cells_route::HostedFact,
-    >,
+    /// Card **CELL-PROTOCOL-PER-END-GUARDS** (rule 38f): one fact per guard
+    /// of a record.
+    pub(super) cell_protocols:
+        BTreeMap<super::descriptor_cells_route::FactKey, super::descriptor_cells_route::HostedFact>,
 }
 
 /// The scalar facts one abstract state proves: a name bound to the null
@@ -483,12 +483,9 @@ impl AbstractState {
         self.member_path_taken
             .extend(incoming.member_path_taken.iter().copied());
         // Card MK-EVENT-CELL-CROSS-FUNCTION (rule 38c), read against each
-        // side's own table before the tables join.
-        super::descriptor_cells_route::join_protocols(self, incoming);
-        // Card MK-EVENT-DESCRIPTOR-QUANT (rule 38).
-        if !self.cells.is_empty() || !incoming.cells.is_empty() {
-            self.cells.join(&incoming.cells);
-        }
+        // side's own table before the tables join (rule 38), which card
+        // CELL-PROTOCOL-PER-END-GUARDS (rule 38f) does in the same hook.
+        super::descriptor_cells_route::join_cells(self, incoming);
         super::descriptor_cells_route::join_witnesses(
             &mut self.cell_witnesses,
             &incoming.cell_witnesses,
@@ -2790,27 +2787,51 @@ pub(super) fn transfer(
             arguments,
             nested,
             retention,
+            contract,
             ..
         } = &node.instruction
         && retention.as_ref().is_none_or(|r| r.cells.is_none())
     {
         let unread = !nested.is_empty() || arguments.iter().any(Option::is_none);
         let named = arguments.iter().flatten().cloned().collect::<Vec<_>>();
+        // Card CELL-PROTOCOL-PER-END-GUARDS (rule 38f): the actuals at a
+        // released position name the holders this call releases.
+        let released = arguments
+            .iter()
+            .enumerate()
+            .filter(|(index, _)| {
+                matches!(
+                    contract.parameters.get(*index),
+                    Some(ResourceParameterMode::Released { .. })
+                )
+            })
+            .filter_map(|(_, name)| name.clone())
+            .collect::<Vec<_>>();
         let probe = output.clone();
+        let names = |root: &super::descriptor_cells_route::ProtocolRoot, name: &String| match root {
+            super::descriptor_cells_route::ProtocolRoot::Name(formal) => name == formal,
+            super::descriptor_cells_route::ProtocolRoot::Site(site) => probe
+                .pointers
+                .get(name)
+                .is_none_or(|pointer| pointer.unknown || pointer.targets.contains(site)),
+        };
+        let releases = |root: &super::descriptor_cells_route::ProtocolRoot| {
+            released.iter().any(|name| match root {
+                super::descriptor_cells_route::ProtocolRoot::Name(formal) => name == formal,
+                super::descriptor_cells_route::ProtocolRoot::Site(site) => {
+                    probe.pointers.get(name).is_some_and(|pointer| {
+                        !pointer.unknown
+                            && pointer.targets.len() == 1
+                            && pointer.targets.contains(site)
+                    })
+                }
+            })
+        };
         super::descriptor_cells_route::touch(
             function,
             node.line,
-            |root| {
-                unread
-                    || named.iter().any(|name| match root {
-                        super::descriptor_cells_route::ProtocolRoot::Name(formal) => name == formal,
-                        super::descriptor_cells_route::ProtocolRoot::Site(site) => {
-                            probe.pointers.get(name).is_none_or(|pointer| {
-                                pointer.unknown || pointer.targets.contains(site)
-                            })
-                        }
-                    })
-            },
+            |root| unread || named.iter().any(|name| names(root, name)),
+            releases,
             &mut output,
             diagnostics,
         );

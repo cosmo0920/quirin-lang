@@ -8,6 +8,10 @@
 //! position of a function-map callee, with rule 38c's close as its custody
 //! effect. Every other shape keeps the gate's refusal byte for byte, and an
 //! admitted close rule 38c does not decide refuses (never a silent release).
+//! Card CELL-PROTOCOL-PER-END-GUARDS (rule 38f) changed the `> 0` vectors
+//! here: that guard's dead edge leaves its cells undecided (descriptor 0),
+//! so a touched record joined with it is broken and its cells escape; a
+//! holder's release with a live cell refuses. Every change adds a refusal.
 //! One fixture per admitted and refused shape; each asserts the complete
 //! diagnostic vector, and every `Safe` certificate is rechecked. The hosts are
 //! synthetic: a `Safe` here is `Safe` over the declared protocol (rule 13i,
@@ -223,6 +227,14 @@ fn double_release(line: usize, place: &str) -> String {
     )
 }
 
+/// Card CELL-PROTOCOL-PER-END-GUARDS (rule 38f): a cell that may still name
+/// a live descriptor when its record does not keep its protocol at the exit.
+fn escapes(line: usize, root: &str, cell: &str) -> String {
+    format!(
+        "{line}:unsupported:the descriptor in cell `({root} as int).{cell} [Name(\"{root}\") as int]` may outlive this function's frame (descriptor-cell-escapes)"
+    )
+}
+
 fn broken(line: usize, root: &str, record: &str) -> String {
     format!(
         "{line}:unsupported:`{root}` (a `struct {record}`) does not keep its declared cell protocol here (descriptor-cell-protocol-broken)"
@@ -326,14 +338,23 @@ fn fluent_bits_output_instance_ends_refuse_after_admission() {
          mk_event_closesocket(s->ch_events[0]); } if (s->ch_events[1] > 0) { \
          mk_event_closesocket(s->ch_events[1]); } return 0; }",
         "Unknown",
-        &[&broken(L, "s", "fb_chan"), &undecided(L, "s->ch_events[1]")],
+        &[
+            &broken(L, "s", "fb_chan"),
+            &undecided(L, "s->ch_events[1]"),
+            // Rule 38f: the first test's dead edge leaves both ends undecided
+            // (either may be descriptor 0), and the record is broken, so
+            // they escape.
+            &escapes(L, "s", "ch_events[0]"),
+            &escapes(L, "s", "ch_events[1]"),
+        ],
     );
 }
 
 /// A close through a record the body already released refuses: releasing a
 /// caller's record is an unresolved identity, after which `s` names no
 /// caller's object with a fact, so rule 38c reads nothing and the gate's
-/// refusal stands.
+/// refusal stands. Card CELL-PROTOCOL-PER-END-GUARDS (rule 38f): the release
+/// ends the record's protocol, and since its cells are live there it refuses.
 #[test]
 fn a_close_through_a_released_record_refuses() {
     expect(
@@ -341,7 +362,11 @@ fn a_close_through_a_released_record_refuses() {
         "int d(struct pos_chan *s) { if (s->e[0] > 0) { ev_free(s); close(s->e[0]); } \
          return 0; }",
         "Unknown",
-        &["12:unknown_alias:s", &gate(L)],
+        &[
+            "12:unknown_alias:s",
+            "12:unsupported:`s` is released while a cell of it may name a live descriptor (descriptor-cell-owner-released)",
+            &gate(L),
+        ],
     );
 }
 
@@ -356,18 +381,30 @@ fn a_close_on_the_dead_edge_refuses() {
         "int d(struct pos_chan *s) { if (s->e[0] > 0) { close(s->e[0]); } \
          if (s->e[1] > 0) { close(s->e[1]); } return 0; }",
         "Unknown",
-        &[&broken(L, "s", "pos_chan"), &undecided(L, "s->e[1]")],
+        &[
+            &broken(L, "s", "pos_chan"),
+            &undecided(L, "s->e[1]"),
+            &escapes(L, "s", "e[0]"),
+            &escapes(L, "s", "e[1]"),
+        ],
     );
 }
 
-/// A close under the complement edge: no cell is live there.
+/// A close under the complement edge. Card CELL-PROTOCOL-PER-END-GUARDS
+/// (rule 38f): the `<= 0` edge holds descriptor 0, so its cells are
+/// undecided, not absent: the close refuses, and the record, touched, is
+/// broken with its undecided cell escaping.
 #[test]
 fn a_close_under_the_dead_guard_refuses() {
     expect(
         "close where the guard says dead",
         "int d(struct pos_chan *s) { if (s->e[0] <= 0) { close(s->e[0]); } return 0; }",
         "Unknown",
-        &[&undecided(L, "s->e[0]")],
+        &[
+            &broken(L, "s", "pos_chan"),
+            &undecided(L, "s->e[0]"),
+            &escapes(L, "s", "e[0]"),
+        ],
     );
 }
 
@@ -380,7 +417,11 @@ fn a_second_close_refuses() {
         "int d(struct pos_chan *s) { if (s->e[0] > 0) { close(s->e[0]); close(s->e[0]); \
          s->e[0] = -1; } return 0; }",
         "Unknown",
-        &[&double_release(L, "s->e[0]")],
+        &[
+            &broken(L, "s", "pos_chan"),
+            &double_release(L, "s->e[0]"),
+            &escapes(L, "s", "e[0]"),
+        ],
     );
 }
 
@@ -392,7 +433,11 @@ fn closes_that_leave_the_sentinel_break_the_protocol() {
         "int d(struct pos_chan *s) { if (s->e[0] > 0) { close(s->e[0]); close(s->e[1]); } \
          return 0; }",
         "Unknown",
-        &[&broken(L, "s", "pos_chan")],
+        &[
+            &broken(L, "s", "pos_chan"),
+            &escapes(L, "s", "e[0]"),
+            &escapes(L, "s", "e[1]"),
+        ],
     );
 }
 
@@ -507,7 +552,11 @@ fn a_non_release_position_keeps_the_gate_refusal() {
         "close consumes",
         "int d(struct pos_chan *s) { if (s->e[0] > 0) { close(s->e[0]); } return 0; }",
         "Unknown",
-        &[&broken(L, "s", "pos_chan"), &gate(L)],
+        &[
+            &broken(L, "s", "pos_chan"),
+            &gate(L),
+            &escapes(L, "s", "e[0]"),
+        ],
     );
 }
 
@@ -536,6 +585,7 @@ fn an_uncontracted_close_keeps_the_gate_refusal() {
         &[
             &broken(L, "s", "pos_chan"),
             "12:unsupported:call to uncontracted function `close`",
+            &escapes(L, "s", "e[0]"),
         ],
     );
 }

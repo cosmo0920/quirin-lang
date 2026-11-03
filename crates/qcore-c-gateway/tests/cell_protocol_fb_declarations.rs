@@ -259,18 +259,29 @@ static void input_thread_instance_destroy(struct flb_input_thread_instance *thi)
 }
 "#;
 
-/// The production module states exactly one protocol: the thread instance's
-/// notification channel, hosted by `flb_config_set_program_name`, which
-/// leaves the function map for the lifetime table.
+/// The production module states the thread instance's notification-channel
+/// protocol (its one record guard), hosted by `flb_config_set_program_name`,
+/// which leaves the function map for the lifetime table. Card
+/// CELL-PROTOCOL-PER-END-GUARDS added the per-end sentinels of the same
+/// record and of the input and output instances
+/// (`tests/cell_protocol_per_end_guards.rs`).
 #[test]
-fn the_production_module_declares_the_thread_instance_protocol_only() {
+fn the_production_module_declares_the_thread_instance_flag_protocol() {
     let contracts = environment(false);
     let protocols = contracts.cell_protocols();
     assert_eq!(
         protocols.keys().map(String::as_str).collect::<Vec<_>>(),
-        ["flb_input_thread_instance"]
+        [
+            "flb_input_instance",
+            "flb_input_thread_instance",
+            "flb_output_instance"
+        ]
     );
-    let (hosts, protocol) = &protocols["flb_input_thread_instance"];
+    let (hosts, protocols) = &protocols["flb_input_thread_instance"];
+    let protocol = protocols
+        .iter()
+        .find(|protocol| !protocol.per_end())
+        .expect("the flag guard");
     assert_eq!(
         hosts.iter().map(String::as_str).collect::<Vec<_>>(),
         ["flb_config_set_program_name"]

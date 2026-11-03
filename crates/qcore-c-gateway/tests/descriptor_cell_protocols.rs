@@ -253,7 +253,10 @@ fn a_record_without_a_protocol_is_unchanged() {
 }
 
 /// The teardown on one arm only, without its sentinel store, joins with the
-/// untouched arm into a conflict: refused at the exit.
+/// untouched arm into a conflict: refused at the exit. Card
+/// CELL-PROTOCOL-PER-END-GUARDS (rule 38f): the join keeps the untouched
+/// arm's live names, undecided, so the broken record's cells also escape (the
+/// join no longer drops a name that may be live).
 #[test]
 fn a_conditional_teardown_that_breaks_the_protocol_refuses() {
     expect(
@@ -261,7 +264,12 @@ fn a_conditional_teardown_that_breaks_the_protocol_refuses() {
         "int d(struct chan *s, int k) { if (s->ch[0] != -1) { if (k) { \
          mk_event_channel_destroy(s->evl, s->ch[0], s->ch[1], &s->event); } } return 0; }",
         "Unknown",
-        &[&broken("s", "chan")],
+        &[
+            &broken("s", "chan"),
+            "unsupported:the descriptor in cell `(s as int).ch[0] [Name(\"s\") as int]` may outlive this function's frame (descriptor-cell-escapes)",
+            "unsupported:the descriptor in cell `(s as int).ch[1] [Name(\"s\") as int]` may outlive this function's frame (descriptor-cell-escapes)",
+            "unsupported:the descriptor in cell `(s.event as mk_event).fd [Name(\"s.event\") as mk_event]` may outlive this function's frame (descriptor-cell-escapes)",
+        ],
     );
 }
 
@@ -308,7 +316,10 @@ fn a_tracked_record_creator_keeps_the_member_store_refusal() {
 /// Without the dead stores the allocated record's prior state is unknown,
 /// so the creation may overwrite a live descriptor and refuses
 /// (`descriptor-cell-undecided`); the failure arm's release of the record
-/// and the exit then refuse too. Nothing here is `Safe`.
+/// then refuses too. Nothing here is `Safe`. Card
+/// CELL-PROTOCOL-PER-END-GUARDS (rule 38f): that release ends the record's
+/// protocol (refused, since a cell may be live there), so the call no longer
+/// also reports the record broken.
 #[test]
 fn a_creator_that_does_not_kill_the_sentinel_first_refuses() {
     expect(
@@ -319,7 +330,6 @@ fn a_creator_that_does_not_kill_the_sentinel_first_refuses() {
          if (ret != 0) { ev_free(c); return 0; } return c; }",
         "Unknown",
         &[
-            &broken("an object this body tracks", "chan"),
             "unsupported:`c` is released while a cell of it may name a live descriptor (descriptor-cell-owner-released)",
             "unsupported:call to `mk_event_channel_create` retains `& c - > event` in `loop`, whose lifetime this body does not decide against it (retention-undecided)",
             "unsupported:call to `mk_event_channel_create`: descriptor cell `(Name(\"c\") as int).ch[0]` is not decided (descriptor-cell-undecided)",

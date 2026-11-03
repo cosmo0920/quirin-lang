@@ -32,6 +32,19 @@ pub enum Guard {
 }
 
 impl Guard {
+    /// Card CELL-PROTOCOL-PER-END-GUARDS (gateway rule 38f): whether the
+    /// guard's dead edge decides that no cell of it is live. A flag is no
+    /// cell, and `!= -1`'s dead edge holds only `-1`, which no live
+    /// descriptor is (rule 38's premise). `> 0`'s dead edge holds `0`:
+    /// descriptor 0 is a success value of every creator and calloc's absent
+    /// value at once, so that edge never decides (USER DECISION 2026-11-03,
+    /// standing: the `> 0` end tests are wrong against the creator's result
+    /// set, and their dead edge is never read as "the end is absent").
+    #[must_use]
+    pub const fn dead_edge_decides(self) -> bool {
+        !matches!(self, Self::Positive)
+    }
+
     /// Whether a stored integer makes the guard say live.
     #[must_use]
     pub const fn says_live(self, value: i64) -> bool {
@@ -69,6 +82,16 @@ impl Protocol {
             .filter(|(cell, group)| cell == group)
             .map(|(cell, _)| cell.as_str())
     }
+
+    /// Card CELL-PROTOCOL-PER-END-GUARDS (rule 38f): a per-end sentinel, a
+    /// sentinel guard over exactly one `#fresh` cell, the guard itself.
+    #[must_use]
+    pub fn per_end(&self) -> bool {
+        let mut groups = self.groups();
+        self.op != Guard::EqualOne
+            && groups.next() == Some(self.guard.as_str())
+            && groups.next().is_none()
+    }
 }
 
 /// What the guard says on this path.
@@ -94,20 +117,29 @@ pub struct Fact {
     /// operation first reads it, [`Self::adopt`]); a release through another
     /// name of the identity stales them ([`Self::stale_identity`]).
     pub entry: BTreeMap<String, (u64, Status)>,
+    /// Card CELL-PROTOCOL-PER-END-GUARDS (rule 38f): whether a `> 0` test's
+    /// dead edge was read on this path, so a cell left undecided may be
+    /// descriptor 0. It names the refusal ([`Refusal::ZeroUndecided`]) and
+    /// decides nothing.
+    pub zero: bool,
 }
 
 impl Fact {
     /// The fact a guard test introduces on one edge: on the live edge each
-    /// `#fresh` cell's identity (`base + i`) and its `#same` names, on the
-    /// other edge none.
+    /// `#fresh` cell's identity (`base + i`) and its `#same` names, live; on
+    /// the other edge none, unless the guard's dead edge does not decide
+    /// ([`Guard::dead_edge_decides`], rule 38f), where the same names are
+    /// introduced undecided (`Maybe`): the end may be descriptor 0.
     #[must_use]
     pub fn introduced(protocol: &Protocol, live: bool, base: u64) -> Self {
         let mut entry = BTreeMap::new();
-        if live {
+        let undecided = !live && !protocol.op.dead_edge_decides();
+        if live || undecided {
+            let status = if live { Status::Live } else { Status::Maybe };
             let groups = protocol.groups().map(str::to_owned).collect::<Vec<_>>();
             for (cell, group) in &protocol.cells {
                 if let Some(index) = groups.iter().position(|g| g == group) {
-                    entry.insert(cell.clone(), (base + index as u64, Status::Live));
+                    entry.insert(cell.clone(), (base + index as u64, status));
                 }
             }
         }
@@ -120,6 +152,7 @@ impl Fact {
             }),
             touched: false,
             entry,
+            zero: undecided,
         }
     }
 
@@ -132,6 +165,48 @@ impl Fact {
             guard: None,
             touched: true,
             entry: BTreeMap::new(),
+            zero: false,
+        }
+    }
+
+    /// Card CELL-PROTOCOL-PER-END-GUARDS (rule 38f): the release of the
+    /// record holding the cells ends its protocol. Admitted only where no
+    /// cell may name a live descriptor; otherwise the release refuses, named
+    /// [`Refusal::ZeroUndecided`] when a `> 0` dead edge left the end
+    /// undecided (it may be descriptor 0) and [`Refusal::OwnerReleased`]
+    /// else.
+    ///
+    /// # Errors
+    /// As stated.
+    pub fn release_holder(
+        &self,
+        table: impl Fn(&str) -> Option<(u64, Status)>,
+    ) -> Result<(), Refusal> {
+        if !self.may_hold_live(table) {
+            return Ok(());
+        }
+        Err(if self.zero {
+            Refusal::ZeroUndecided
+        } else {
+            Refusal::OwnerReleased
+        })
+    }
+
+    /// Card CELL-PROTOCOL-PER-END-GUARDS (rule 38f): before a join, record
+    /// in `cells` every pending name whose cell `keys` knows (from either
+    /// path), so the tables' join reads it and never takes a name one path
+    /// left pending for one the other path adopted. `touched` is unchanged.
+    pub fn normalize<K: Ord + Clone>(
+        &mut self,
+        cells: &mut crate::cells::Cells<K>,
+        keys: &BTreeMap<String, K>,
+    ) {
+        for (path, key) in keys {
+            if cells.get(key).is_none()
+                && let Some((identity, status)) = self.entry.remove(path)
+            {
+                cells.adopt(key.clone(), identity, status);
+            }
         }
     }
 
@@ -267,7 +342,10 @@ impl Fact {
     }
 
     /// Join an arriving path's fact of the same record: the guard where both
-    /// agree (else `Conflict`), the pending names both share.
+    /// agree (else `Conflict`), the pending names both share, and (card
+    /// CELL-PROTOCOL-PER-END-GUARDS, rule 38f) every pending name either path
+    /// says may be live, undecided (`Maybe`; [`JOINED`] where the paths name
+    /// different identities): a join never drops a name that may be live.
     #[must_use]
     pub fn join(&self, other: &Self) -> Self {
         let guard = if self.guard == other.guard {
@@ -275,17 +353,34 @@ impl Fact {
         } else {
             Some(GuardFact::Conflict)
         };
+        let may_live = |named: Option<&(u64, Status)>| {
+            matches!(named, Some((_, Status::Live | Status::Maybe)))
+        };
         let entry = self
             .entry
-            .iter()
-            .filter(|(path, named)| other.entry.get(*path) == Some(*named))
-            .map(|(path, named)| (path.clone(), *named))
+            .keys()
+            .chain(other.entry.keys())
+            .filter_map(|path| {
+                let (left, right) = (self.entry.get(path), other.entry.get(path));
+                if left == right {
+                    return left.map(|named| (path.clone(), *named));
+                }
+                if !may_live(left) && !may_live(right) {
+                    return None;
+                }
+                let identity = match (left, right) {
+                    (Some((l, _)), Some((r, _))) if l == r => *l,
+                    _ => JOINED,
+                };
+                Some((path.clone(), (identity, Status::Maybe)))
+            })
             .collect();
         Self {
             protocol: self.protocol.clone(),
             guard,
             touched: self.touched || other.touched,
             entry,
+            zero: self.zero || other.zero,
         }
     }
 }
@@ -417,9 +512,205 @@ pub fn run_protocol_vector(trace: &str) -> &'static str {
     }
 }
 
+/// Card CELL-PROTOCOL-PER-END-GUARDS (`QCore.CellProtocolPerEnd.per_end_vectors_hold`):
+/// a trace over one per-end sentinel protocol, the cell `c` its own guard
+/// and `m` (`#same(c)`), under `pos:` (`> 0`) or `nm1:` (`!= -1`), and
+/// whether it ends with the protocol kept (`holds`) or refuses. Steps: `test
+/// live` / `test dead` (introduce), `close c` / `close m` (rule 38c's close),
+/// `store c V`, `join` (with the same test's other edge, untouched), `call`
+/// (a call reaching the record: forwarded when it keeps the protocol, else
+/// `broken`), `free` (the holder's release, ending the protocol).
+pub const PER_END_VECTORS: &[(&str, &str)] = &[
+    ("pos: test live; close c; store c 0", "holds"),
+    ("pos: test live; close c", "broken"),
+    ("pos: test live; close c; free", "holds"),
+    ("pos: test dead", "holds"),
+    ("pos: test dead; free", "zero-undecided"),
+    ("pos: test dead; close c", "undecided"),
+    ("pos: test live; close c; join", "broken"),
+    ("pos: test live; close c; join; free", "zero-undecided"),
+    ("nm1: test live; close c; join; free", "holds"),
+    ("nm1: test dead; free", "holds"),
+    ("pos: test live; close c; call", "broken"),
+    ("pos: test live; close c; close m", "double-release"),
+    ("pos: test live; store c 0", "overwritten"),
+    ("pos: test dead; store c 0", "overwritten"),
+    ("nm1: test dead; store c -1", "holds"),
+    ("pos: test live; free", "owner-released"),
+    ("pos: test live; call", "holds"),
+];
+
+/// The per-end protocol the vectors run over.
+#[must_use]
+pub fn per_end_protocol(op: Guard) -> Protocol {
+    Protocol {
+        record: "end".to_owned(),
+        cells: vec![
+            ("c".to_owned(), "c".to_owned()),
+            ("m".to_owned(), "c".to_owned()),
+        ],
+        guard: "c".to_owned(),
+        op,
+    }
+}
+
+/// A read of `cells` as the fact's table.
+fn table_of(cells: &crate::cells::Cells<String>) -> impl Fn(&str) -> Option<(u64, Status)> + use<> {
+    let cells = cells.clone();
+    move |path: &str| cells.get(&path.to_owned())
+}
+
+/// Run one per-end vector; the outcome word.
+#[must_use]
+pub fn run_per_end_vector(trace: &str) -> &'static str {
+    use crate::cells::Cells;
+    let Some((op, trace)) = trace.split_once(':') else {
+        return "malformed";
+    };
+    let op = match op {
+        "pos" => Guard::Positive,
+        "nm1" => Guard::NotMinusOne,
+        _ => return "malformed",
+    };
+    let protocol = per_end_protocol(op);
+    let mut cells: Cells<String> = Cells::default();
+    let mut fact: Option<Fact> = None;
+    let mut live_edge: Option<bool> = None;
+    for step in trace.split(';').map(str::trim) {
+        let outcome: Result<(), Refusal> =
+            match step.split_whitespace().collect::<Vec<_>>().as_slice() {
+                ["test", edge] => {
+                    let live = *edge == "live";
+                    live_edge = Some(live);
+                    fact = Some(Fact::introduced(&protocol, live, 100));
+                    Ok(())
+                }
+                ["close", cell] => {
+                    let fact = fact.get_or_insert_with(|| Fact::reached(&protocol));
+                    adopt(&mut cells, fact, cell);
+                    let key = (*cell).to_owned();
+                    match cells.get(&key) {
+                        None => Err(Refusal::Undecided),
+                        Some((identity, _)) => {
+                            let released = cells.release(Some(&key), |_| true).map(|_| ());
+                            if released.is_ok() {
+                                fact.stale_identity(identity);
+                            }
+                            released
+                        }
+                    }
+                }
+                ["store", cell, value] => {
+                    let fact = fact.get_or_insert_with(|| Fact::reached(&protocol));
+                    fact.store(cell, value.parse::<i64>().ok(), table_of(&cells))
+                }
+                ["join"] => {
+                    let (Some(current), Some(live)) = (fact.as_mut(), live_edge) else {
+                        return "malformed";
+                    };
+                    let mut other = Fact::introduced(&protocol, !live, 100);
+                    let mut other_cells: Cells<String> = Cells::default();
+                    let keys = protocol
+                        .cells
+                        .iter()
+                        .filter(|(cell, _)| cells.get(cell).is_some())
+                        .map(|(cell, _)| (cell.clone(), cell.clone()))
+                        .collect::<BTreeMap<_, _>>();
+                    current.normalize(&mut cells, &keys);
+                    other.normalize(&mut other_cells, &keys);
+                    *current = current.join(&other);
+                    cells.join(&other_cells);
+                    Ok(())
+                }
+                ["call"] => match fact.take() {
+                    Some(current) if !current.holds(table_of(&cells)) => {
+                        Err(Refusal::ProtocolBroken)
+                    }
+                    // Forwarded: read again from the protocol after the call.
+                    _ => {
+                        cells = Cells::default();
+                        Ok(())
+                    }
+                },
+                ["free"] => fact
+                    .take()
+                    .map_or(Ok(()), |current| current.release_holder(table_of(&cells))),
+                _ => return "malformed",
+            };
+        if let Err(refusal) = outcome {
+            return per_end_word(refusal);
+        }
+    }
+    match &fact {
+        Some(fact) if !fact.holds(table_of(&cells)) => "broken",
+        _ => "holds",
+    }
+}
+
+const fn per_end_word(refusal: Refusal) -> &'static str {
+    match refusal {
+        Refusal::OwnerReleased => "owner-released",
+        Refusal::ZeroUndecided => "zero-undecided",
+        other => outcome_word(other),
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn the_per_end_vectors_hold() {
+        for (trace, expected) in PER_END_VECTORS {
+            assert_eq!(run_per_end_vector(trace), *expected, "{trace}");
+        }
+    }
+
+    #[test]
+    fn only_the_positive_dead_edge_leaves_its_cells_undecided() {
+        for op in [Guard::NotMinusOne, Guard::Positive, Guard::EqualOne] {
+            let mut protocol = vector_protocol();
+            protocol.op = op;
+            let dead = Fact::introduced(&protocol, false, 7);
+            assert_eq!(dead.zero, op == Guard::Positive, "{op:?}");
+            assert_eq!(
+                dead.may_hold_live(|_| None),
+                op == Guard::Positive,
+                "{op:?}"
+            );
+            assert!(dead.holds(|_| None), "untouched: {op:?}");
+        }
+    }
+
+    #[test]
+    fn a_join_never_drops_a_name_that_may_be_live() {
+        let protocol = per_end_protocol(Guard::Positive);
+        let live = Fact::introduced(&protocol, true, 7);
+        let mut stale = live.clone();
+        stale.stale_identity(7);
+        let dead = Fact::introduced(&protocol, false, 7);
+        assert!(stale.join(&dead).may_hold_live(|_| None));
+        assert!(dead.join(&stale).may_hold_live(|_| None));
+        assert!(stale.join(&dead).zero);
+        let nm1 = per_end_protocol(Guard::NotMinusOne);
+        let mut closed = Fact::introduced(&nm1, true, 7);
+        closed.stale_identity(7);
+        assert!(
+            !closed
+                .join(&Fact::introduced(&nm1, false, 7))
+                .may_hold_live(|_| None)
+        );
+    }
+
+    #[test]
+    fn per_end_is_one_fresh_cell_guarding_itself() {
+        assert!(per_end_protocol(Guard::Positive).per_end());
+        assert!(per_end_protocol(Guard::NotMinusOne).per_end());
+        assert!(!vector_protocol().per_end());
+        let mut flag = per_end_protocol(Guard::EqualOne);
+        flag.guard = "on".to_owned();
+        assert!(!flag.per_end());
+    }
 
     #[test]
     fn the_shared_protocol_vectors_hold() {
