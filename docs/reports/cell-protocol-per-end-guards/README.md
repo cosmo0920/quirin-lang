@@ -297,6 +297,27 @@ target/release/quirin-audit --plugin-path target/release \
   --declared docs/reports/cell-protocol-per-end-guards/PREDICTION.md
 ```
 
+**Measurement (integrator, 2026-11-04).** Run from the main checkout at
+`1b859bdc9` with the command above, `--side tip=rev:22b4c8fa5229de43fb0b7e9a126530aa83a6b7e8`,
+output `private/measure/per-end-guards-20261103T152652Z`; exit 0. The
+declared prediction matches on every route (corpus, system, slice: `match`).
+Moves 0, unit moves 0, unmatched 0 on each route; content changes: corpus 0,
+system 2, slice 8, all of the predicted kinds:
+
+- system `flb_output_instance_destroy` (units 0, 1): leaves at :616 and :620
+  removed; leaves at :631 and :638 added; the host joins the dependencies.
+- slice `flb_input_instance_destroy` (units 0, 1): leaves at :1312, :1316,
+  :1320, :1324 removed; leaves at :1330, :1340, :1353 added; the host joins
+  the dependencies.
+- slice `input_thread_instance_destroy` (units 0, 1): leaves at :211, :214,
+  :219, :222 removed; `descriptor-cell-zero-undecided` at :226 added.
+- slice `input_instance_channel_events_init` (units 0, 1): leaves added at
+  :1380 (two), :1387 and :1401; the host joins the dependencies.
+- slice `flb_input_new` (units 0, 1): dependencies only.
+
+[native-comparison.json](native-comparison.json) (sha256
+`0575438386f5b044101556dd77b5b429048cc686b7f07d7c0a17641161a69922`).
+
 ## 8. Card gate
 
 `python3 scripts/gate_scope.py --base 1b859bdc9 --out private/gate` ran on
