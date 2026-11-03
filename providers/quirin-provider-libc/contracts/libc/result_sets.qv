@@ -1,0 +1,76 @@
+module contract;
+
+// Card CELL-GUARD-RESULT-RANGE-CHECKED (contract specification C09.4, grammar
+// G05j, gateway rule 38e). USER DECISION 2026-11-03 (verbatim): "C: a new
+// result-set form that allows unions, such as result_set(-1 | [0, MAX]). It
+// is the only option that can also state open's and timerfd_create's results
+// (needed by RULE-38-VALIDITY-READING-RESULT-SET). It is also the largest
+// grammar change. I choose this because we must not loosen the custody of
+// the contracts if we cannot select other options."
+//
+// The C library's documented result sets, as bounds contract v1 result sets.
+// Each declaration is a VALUE SET ONLY: it states which integers the call
+// returns and nothing about custody. It is not a resource declaration: it
+// neither creates, releases, transfers nor borrows anything, so `pipe` stays
+// undeclared for custody (`unistd.qv`: a descriptor has no out slot in that
+// vocabulary) and `open`'s resource v1 declaration in `unistd.qv` is
+// unchanged; this module's `open` stands beside it and adds no custody
+// (relation `null_deref_beside`). The resource loader rejects this module and
+// the bounds consumer never reads a result set (`for_bounds`).
+//
+// Every declaration is `requires bounds_revision(flexible);`: it binds by
+// name and declared signature at any revision of the audited project (C06.2's
+// flexible mode), under the one standing libc assumption
+// `libc-c-standard-abi`; no libc body is analysed. Which C library is in use
+// is the build's provenance. The set is read only while the declaration is in
+// force (not held, not withdrawn, the call bound to the C library's function:
+// no analysed body of the same name); a set out of force is never read.
+//
+// NOT CLAIMED: `errno`, which error, or anything about the descriptors'
+// lifetimes. `-1 | [0, MAX]` is the set {-1} ∪ [0, INT_MAX] (canonical
+// `[-1, MAX]`).
+
+// POSIX.1-2017 pipe(): "Upon successful completion, 0 shall be returned;
+// otherwise, -1 shall be returned and errno set to indicate the error."
+// (`extern int pipe (int __pipedes[2]) __THROW __wur;`, <unistd.h>.)
+extern fn pipe(pipedes: ptr<mut, u8>) -> i32
+contract {
+    requires bounds_contract_v1;
+    requires bounds_revision(flexible);
+    ensures normal result_set(-1 | 0);
+};
+
+// Linux epoll_ctl(2), RETURN VALUE: "When successful, epoll_ctl() returns
+// zero. When an error occurs, epoll_ctl() returns -1 and errno is set to
+// indicate the error." (`extern int epoll_ctl (int __epfd, int __op, int
+// __fd, struct epoll_event *__event) __THROW;`, <sys/epoll.h>.)
+extern fn epoll_ctl(epfd: i32, op: i32, fd: i32, event: ptr<mut, u8>) -> i32
+contract {
+    requires bounds_contract_v1;
+    requires bounds_revision(flexible);
+    ensures normal result_set(-1 | 0);
+};
+
+// POSIX.1-2017 open(): "Upon successful completion, these functions shall
+// open the file and return a non-negative integer representing the file
+// descriptor. Otherwise, these functions shall return -1 and set errno to
+// indicate the error." (`extern int open (const char *__file, int __oflag,
+// ...) __nonnull ((1));`, <fcntl.h>.) The variadic `mode` is not a parameter
+// of this declaration; a result set says nothing about any actual.
+extern fn open(file: ptr<const, u8>, oflag: i32) -> i32
+contract {
+    requires bounds_contract_v1;
+    requires bounds_revision(flexible);
+    ensures normal result_set(-1 | [0, MAX]);
+};
+
+// Linux timerfd_create(2), RETURN VALUE: "On success, timerfd_create()
+// returns a new file descriptor. On error, -1 is returned and errno is set to
+// indicate the error." (`extern int timerfd_create (__clockid_t __clock_id,
+// int __flags) __THROW;`, <sys/timerfd.h>; `__clockid_t` is `int`.)
+extern fn timerfd_create(clock_id: i32, flags: i32) -> i32
+contract {
+    requires bounds_contract_v1;
+    requires bounds_revision(flexible);
+    ensures normal result_set(-1 | [0, MAX]);
+};

@@ -85,6 +85,8 @@ pub fn clause_kind(clause: &BoundsClause) -> ClauseKind {
         }
         // Card NULL-TRIAGE-UNRESOLVED-PATHS: likewise the result range.
         BoundsClause::NonnullResultRange { .. } => ClauseKind::Preserves,
+        // Card CELL-GUARD-RESULT-RANGE-CHECKED: likewise a C library result set.
+        BoundsClause::ResultSet { .. } => ClauseKind::Preserves,
         // Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER: likewise a member fact's
         // named premise.
         BoundsClause::Premise { .. } => ClauseKind::Preserves,

@@ -56,7 +56,9 @@ use qcore_schemas::sha256_hex;
 use serde_json::{Value, json};
 
 use crate::c_identity::SourceTree;
-use crate::contract_revision::{ContractLock, PinStanding, ReviewedSource, pin_standing};
+use crate::contract_revision::{
+    ContractLock, LIBC_CRATE, PinStanding, ReviewedSource, pin_standing,
+};
 use crate::contract_tip::TipResolver;
 
 /// The bounds lock's file name, beside a provider crate's `Cargo.toml`.
@@ -290,7 +292,9 @@ pub fn apply_bounds_pins(
     }
     let wanted = contracts
         .functions
-        .keys()
+        .iter()
+        .filter(|(_, contract)| !contract.flexible)
+        .map(|(name, _)| name)
         .filter(|name| {
             lock_of[*name]
                 .as_ref()
@@ -310,6 +314,48 @@ pub fn apply_bounds_pins(
     for (name, contract) in &contracts.functions {
         let lock_file = lock_of[name].as_ref();
         let lock = lock_file.and_then(|path| locks.get(path));
+        // Card CELL-GUARD-RESULT-RANGE-CHECKED (C09.4): a C library result
+        // set is flexible: in force by name and declared signature under the
+        // standing libc assumption, never pinned; admitted only from the libc
+        // provider, held anywhere else.
+        if contract.flexible {
+            let libc = contract.module.starts_with(&format!("{LIBC_CRATE}:"));
+            let listed = lock.is_some_and(|lock| {
+                lock.flexible.iter().any(|entry| {
+                    &entry.function == name && entry.contract_sha256 == contract.text_sha256
+                })
+            });
+            let (reason, detail) = if !libc {
+                (
+                    Some("not-in-lock"),
+                    format!(
+                        "a flexible bounds declaration is admitted only in {LIBC_CRATE} (C09.4)"
+                    ),
+                )
+            } else if !listed {
+                (
+                    Some("not-in-lock"),
+                    "the libc bounds lock lists no flexible entry with this contract text"
+                        .to_owned(),
+                )
+            } else {
+                (None, String::new())
+            };
+            if let Some(reason) = reason {
+                holds.push((name.clone(), reason.to_owned(), detail.clone()));
+            }
+            outcomes.push(json!({
+                "function": name,
+                "module": contract.module,
+                "lock": lock_file.map(|path| path.display().to_string()),
+                "contract_sha256": contract.text_sha256,
+                "standing": if reason.is_some() { "not-in-force" } else { "flexible" },
+                "reason": reason,
+                "detail": detail,
+                "assumption": crate::contract_revision::LIBC_ASSUMPTION,
+            }));
+            continue;
+        }
         let sites = scan.sites.get(name).cloned().unwrap_or_default();
         let standing = pin_standing(
             lock,

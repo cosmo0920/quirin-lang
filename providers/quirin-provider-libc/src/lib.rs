@@ -3,7 +3,10 @@
 //! (card W43-LIBC-CONTRACTS) `<dlfcn.h>`, `<math.h>`,
 //! process/regex/rlimit helpers, sockets, `<stdio.h>`, `<stdlib.h>`, `<string.h>`,
 //! `<sys/stat.h>`, threads and signals, `<time.h>` and `<unistd.h>`, and (card
-//! W43-LIBC-RESTRICT-PROTOTYPES) `<regex.h>`.
+//! W43-LIBC-RESTRICT-PROTOTYPES) `<regex.h>`, and (card
+//! CELL-GUARD-RESULT-RANGE-CHECKED) the documented result sets of `pipe`,
+//! `epoll_ctl`, `open` and `timerfd_create` (`libc/result_sets.qv`, bounds
+//! contract v1 value sets, flexible, no custody).
 //!
 //! The `.qcore` sources under this crate's `contracts/` are canonical: the
 //! corpus index `contract/corpus.json` names that directory as one of its
@@ -59,6 +62,10 @@ pub const CONTRACTS: &[(&str, &str)] = &[
         include_str!("../contracts/libc/pthread_sync.qv"),
     ),
     ("libc/regex.qv", include_str!("../contracts/libc/regex.qv")),
+    (
+        "libc/result_sets.qv",
+        include_str!("../contracts/libc/result_sets.qv"),
+    ),
     (
         "libc/socket.qv",
         include_str!("../contracts/libc/socket.qv"),

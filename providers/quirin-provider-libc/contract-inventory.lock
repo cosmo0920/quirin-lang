@@ -1,5 +1,7 @@
 {
-  "bounds_view": [],
+  "bounds_view": [
+    "libc/result_sets.qv"
+  ],
   "contracts": "quirin-provider-libc/contracts",
   "crate": "quirin-provider-libc",
   "files": {
@@ -225,6 +227,32 @@
       "premise_bindings": [],
       "premises": {},
       "sha256": "3e98107559c67866747fd39f6d68d56fa6efe2378de3382a6209c220816180fa"
+    },
+    "libc/result_sets.qv": {
+      "clause_count": 12,
+      "declaration_count": 4,
+      "declarations": [
+        {
+          "clauses": 3,
+          "name": "pipe"
+        },
+        {
+          "clauses": 3,
+          "name": "epoll_ctl"
+        },
+        {
+          "clauses": 3,
+          "name": "open"
+        },
+        {
+          "clauses": 3,
+          "name": "timerfd_create"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "1a97c2da8a1aa9ccbac6f22a1854830b77c04fedf669b9719f48b9c43022d555"
     },
     "libc/socket.qv": {
       "clause_count": 67,

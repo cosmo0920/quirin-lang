@@ -3392,6 +3392,90 @@ this abstraction of its paths is a review premise (trust boundary 28). The decom
 `crates/qcore-contract/tests/deref_parts.rs` and
 `crates/qcore-c-gateway/tests/deref_parts_null.rs`.
 
+### C09.4. Declared C library result sets
+
+Card CELL-GUARD-RESULT-RANGE-CHECKED (grammar
+[G05j](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g05j-c-library-result-sets), gateway
+rule [38e](agents/gateway.md#constraint-38e)).
+
+> **USER DECISION 2026-11-03** (verbatim): "C: a new result-set form that
+> allows unions, such as result_set(-1 | [0, MAX]). It is the only option that
+> can also state open's and timerfd_create's results (needed by
+> RULE-38-VALIDITY-READING-RESULT-SET). It is also the largest grammar
+> change. I choose this because we must not loosen the custody of the
+> contracts if we cannot select other options."
+>
+> **USER DIRECTION 2026-11-03** (verbatim): "Also, we need to use
+> mathematical symbols on them and we can use XOR or AND or OR with the normal
+> symbols of programming languages."
+
+`ensures normal result_set(SET);` in a bounds contract v1 declaration states
+that the function's integer result is a member of `SET`. It is a **value set
+only**: it states no custody, no lifetime and no error, and it never makes a
+resource declaration loadable or changes one (`pipe` stays undeclared for
+custody; `open`'s resource v1 declaration stands as it was, the result set
+beside it as a registered `null_deref_beside` relation).
+
+* *Meaning.* Over the integers of the declared result type's universe
+  (`MIN..MAX` of the C type the contract type spells: `i32` is `int`), a
+  literal `k` is `{k}`, `[a, b]` the closed interval (`a <= b`), `MIN`/`MAX` the
+  universe's bounds, and three operators with C's precedence and left
+  associativity: `&` intersection (∩, tightest), `^` symmetric difference (△),
+  `|` union (∪, loosest); parentheses group. The mathematical symbols are this
+  section's notation only: source spells the programming-language operators,
+  and a non-ASCII operator is a lexical error (one spelling, no aliases, as the
+  `nonnull_` decisions of 2026-10-11 and 2026-10-16). Every spelling of one set
+  loads to the same set, whose canonical serialization (maximal intervals in
+  increasing order, `|`-joined, a singleton as its literal, `MIN`/`MAX` at the
+  universe's bounds; `-1 | [0, MAX]` is `[-1, MAX]`) is the clause's canonical
+  text and enters the canonical digest; the pin and lock digest, as for every
+  clause, is over the text as written.
+* *Refusals.* A literal outside the universe (`result-set-outside-type`), an
+  interval with reversed bounds, and any operand or whole set denoting the
+  empty set (`result-set-empty`: an empty or contradictory set is never
+  loaded) refuse the module, as does any other shape (`result-set-shape`).
+* *Libc only, flexible.* A result set is admitted only on a declaration that
+  carries `requires bounds_revision(flexible);` and states nothing else
+  (`result-set-needs-flexible`, `bounds-revision-flexible-scope`); such a
+  declaration is admitted only from `quirin-provider-libc` (an audit route
+  holds one from any other crate) and is C06.2's flexible mode for bounds
+  contract v1: it binds by name and declared signature at any revision under
+  the standing assumption `libc-c-standard-abi`, and its lock lists it as a
+  flexible entry. Every other bounds declaration stays pinned (rule 12r).
+* *Composition with `nonnull_result_range`.* The two stay separate clauses with
+  no alias and no migration. A pinned `nonnull_result_range(LO, HI)` (C09.3) of
+  an audited function is read as the set `[LO, HI]`; a `result_set` is the C
+  library's statement. One declaration states at most one of them.
+* *Reading.* A set is read only while in force: not held, its declaration
+  loaded with the digest the reading recorded, and the call bound to the C
+  library (no analysed body of the same name in the unit). A set out of force
+  is replaced by the whole universe and decides nothing (Lean
+  `out_of_force_reads_the_universe`). Its readers are the null property's
+  bound of a call result (C09.3) and the result derivation of rule 38e.
+
+**Pin-time result derivation** (rule 38e). `quirin-audit pin --bounds
+--derive-results` derives a pinned `nonnull_result_range` from the body chain
+of the configured build (one compile command, Clang's AST): every `return`'s
+value set, where a constant is itself, a call to an in-unit helper is that
+helper's derived set, a call to a C library function is its result set in
+force, and a local assigned only such values (its address never taken, every
+write a plain assignment) is the union of what it is assigned (a read before
+the first store is undefined, C11 6.3.2.1p2). The derived set must lie inside
+the declared range, or nothing is pinned. The lock entry records the
+derivation: its set, every helper it read (whose definition sites join every
+identity's sites, so the range is in force exactly where the audited source of
+the function and its helpers matches) and every C library declaration it
+rested on (function, module and text digest; a changed or missing one holds
+the range, `contract-changed`). A range is read by rule 38 only through such a
+derivation.
+
+Lean: `QCore.ResultSet` (`denote_or`, `denote_and`, `denote_xor`,
+`holds_true_edge`, `fails_false_edge`, `narrowing_keeps_holds`,
+`out_of_force_reads_the_universe`,
+`a_decision_out_of_force_is_exact_on_every_value`, `set_vectors_hold`,
+`member_vectors_hold`, `class_vectors_hold`), audited in
+`proof/AuditResultSet.lean`, vectors bound to `qcore_core::result_set`.
+
 ## C10. Cleanup and OS endpoint contracts
 
 Cleanup must distinguish invocation, attempted release, observed return, actual release and residual custody. An OS endpoint is identified by its kind, acquisition generation and lifetime, not by a numeric descriptor or virtual address alone. Numeric reuse after an earlier epoch has ended is permitted and must not merge the epochs.

@@ -1032,6 +1032,12 @@ fn check_null_deref_only(
                 // bounds loader's check).
                 || (clause.kind == "requires"
                     && clause.expression.starts_with("resource_premise("))
+                // Card CELL-GUARD-RESULT-RANGE-CHECKED (C09.4, G05j): a C
+                // library result set and its flexible marker, a value set
+                // that states no custody.
+                || (clause.kind == "requires"
+                    && clause.expression.replace(' ', "") == "bounds_revision(flexible)")
+                || (clause.kind == "normal" && clause.expression.starts_with("result_set("))
         });
     if only {
         Ok(())
@@ -1533,6 +1539,17 @@ pub const REGISTERED_RELATIONS: &[RegisteredRelation] = &[
         function: "cfl_list_size",
         detailed: "cfl/null_deref.qv",
         view: "cfl/sds_lifetime.qv",
+        check: RelationCheck::NullDerefBeside,
+        assumed_premises: &[],
+        finding: None,
+    },
+    // Card CELL-GUARD-RESULT-RANGE-CHECKED (C09.4): `open`'s C library
+    // result set (a value set, no custody) beside its resource-v1
+    // declaration, which it leaves exactly as it is.
+    RegisteredRelation {
+        function: "open",
+        detailed: "libc/result_sets.qv",
+        view: "libc/unistd.qv",
         check: RelationCheck::NullDerefBeside,
         assumed_premises: &[],
         finding: None,

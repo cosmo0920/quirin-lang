@@ -4627,6 +4627,47 @@ withheld lifetime declaration, as with G05h's registered clauses. Across
 declarations, `ResourceContracts::cell_protocols` keeps a record's protocol
 only when every declaration states the same one.
 
+## G05j. C library result sets
+
+Card CELL-GUARD-RESULT-RANGE-CHECKED, contract specification
+[C09.4](QCORE_CONTRACT_SPEC_r0_3.md#c094-declared-c-library-result-sets),
+gateway rule [38e](agents/gateway.md#constraint-38e) (USER DECISION
+2026-11-03, option C; USER DIRECTION 2026-11-03, the programming-language
+operators). Two more clauses of G05b, read by
+`crates/qcore-contract/src/bounds_contract.rs` (`result_set_clause`,
+`BoundsClause::ResultSet`, `BoundsFunctionContract::flexible`) and
+`crates/qcore-core/src/result_set.rs` (`parse`, `SetExpr::eval`):
+
+```ebnf
+bounds_pre  = … | "bounds_revision", "(", "flexible", ")" ;
+bounds_post = … | "result_set", "(", set, ")" ;
+set         = xor_set, { "|", xor_set } ;          (* union, loosest *)
+xor_set     = and_set, { "^", and_set } ;          (* symmetric difference *)
+and_set     = atom, { "&", atom } ;                (* intersection, tightest *)
+atom        = bound | "[", bound, ",", bound, "]" | "(", set, ")" ;
+bound       = signed | "MIN" | "MAX" ;
+signed      = ["-"], DIGITS ;                      (* canonical: no leading zero, never -0 *)
+```
+
+The operators are left associative with C's precedence; `||`, `&&`, `[|`,
+`|]` and every non-ASCII character are not part of a set. The frontend's
+operator gate (`Q038`) admits `|`, `&` and `^` inside a `result_set(…)`
+clause and nowhere else in a contract module
+(`crates/qcore-frontend/src/pipe.rs`, `result_set_spans`). Static conditions,
+each rejecting the whole module: an integer result
+(`result-set-integer`); a literal inside the result type
+(`result-set-outside-type`); every operand and the whole set non-empty, every
+interval's bounds in order (`result-set-empty`); an `ensures normal`
+postcondition (`result-set-ensures`); `bounds_revision` only as
+`(flexible)`, at most once (`bounds-revision-shape`); a result set only with
+the marker (`result-set-needs-flexible`) and the marker only on a declaration
+whose one clause is an unheld result set (`bounds-revision-flexible-scope`).
+Both words were absent from every tracked contract module when introduced and
+are reserved. Only the null property and the result derivation read the
+clause (`for_bounds()` removes it); `resource_*` consumers reject the module.
+The first tracked use is `providers/quirin-provider-libc/contracts/libc/result_sets.qv`
+(`pipe`, `epoll_ctl`, `open`, `timerfd_create`), the libc crate's bounds view.
+
 ## G06. Observation predicate grammar
 
 ```ebnf

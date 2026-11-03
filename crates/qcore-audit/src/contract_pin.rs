@@ -43,7 +43,10 @@
 //! flexible mode). `--verify-contracts` verifies the resource and the bounds
 //! locks. Card **CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS** (rule 14i):
 //! `--bounds --track-tip REF` and `--bounds --untrack-tip` record and turn back
-//! tip entries in the bounds locks exactly as in the resource locks.
+//! tip entries in the bounds locks exactly as in the resource locks. Card
+//! **CELL-GUARD-RESULT-RANGE-CHECKED**: a C library result set (`requires
+//! bounds_revision(flexible);`, C09.4) is the one flexible bounds declaration
+//! and is listed in its lock's `flexible` entries.
 //!
 //! Card **OUTER-CONTRACT** (rule 31): `--outer` selects the outer contract
 //! locks (`outer-contracts.lock`, one per crate with a non-empty outer view,
@@ -537,7 +540,14 @@ fn bounds_targets(
                     (
                         module_name(&contract.module),
                         contract.text_sha256.clone(),
-                        RevisionMode::Pinned,
+                        // Card CELL-GUARD-RESULT-RANGE-CHECKED: a C library
+                        // result set is flexible (C09.4), listed so that a
+                        // change of mode is a change of the lock.
+                        if contract.flexible {
+                            RevisionMode::Flexible
+                        } else {
+                            RevisionMode::Pinned
+                        },
                     ),
                 )
             })

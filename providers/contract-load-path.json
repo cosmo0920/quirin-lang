@@ -312,6 +312,7 @@
         "libc/pthread_mutex.qv",
         "libc/pthread_sync.qv",
         "libc/regex.qv",
+        "libc/result_sets.qv",
         "libc/socket.qv",
         "libc/stdio.qv",
         "libc/stdlib.qv",
@@ -344,7 +345,9 @@
         "libc/time.qv",
         "libc/unistd.qv"
       ],
-      "bounds_view": [],
+      "bounds_view": [
+        "libc/result_sets.qv"
+      ],
       "outer_view": []
     },
     {

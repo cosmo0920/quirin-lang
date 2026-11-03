@@ -177,6 +177,10 @@
 //! | `&&` | `AndAnd` | **logical and**, same, binding tighter than `\|\|` |
 //! | `\|` / `&` / `^` | `Pipe` / `Ampersand` / `Caret` | reserved for bitwise or/and/xor; `Q038` everywhere |
 //!
+//! (Card BITWISE-CONDITIONS spent the three in an `if` condition; card
+//! CELL-GUARD-RESULT-RANGE-CHECKED admits them as the set operators of an
+//! `ensures normal result_set(SET);` contract clause, G05j, and nowhere else.)
+//!
 //! This **supersedes** card `PIPE-OPERATOR`'s table, in which the single `|`
 //! was logical or and `||` was refused as a misspelling of it, by explicit user
 //! direction. The single characters are freed so a future `BITWISE-OPERATORS`
@@ -957,6 +961,35 @@ fn quant_check_spans(program: &SourceProgram) -> Vec<Span> {
         .collect()
 }
 
+/// Card CELL-GUARD-RESULT-RANGE-CHECKED (contract specification C09.4,
+/// grammar G05j): the expression spans of every `ensures normal
+/// result_set(SET);` clause. Its `|`, `&` and `^` are the set operators of
+/// G05j (union, intersection, symmetric difference), read literally by the
+/// bounds reader (`qcore_contract::bounds_contract`), not integer expressions
+/// of this tier: nothing lowers the clause and no other consumer reads it.
+fn result_set_spans(program: &SourceProgram) -> Vec<Span> {
+    program
+        .declarations
+        .iter()
+        .filter_map(|declaration| declaration.value.function_contract.as_ref())
+        .flat_map(|contract| &contract.clauses)
+        .filter(|clause| {
+            matches!(
+                clause.value.kind,
+                SourceContractClauseKind::Ensures(
+                    crate::frontend::SourceContractExitSelector::Normal
+                )
+            ) && clause
+                .value
+                .expression_source
+                .trim_start()
+                .strip_prefix("result_set")
+                .is_some_and(|rest| rest.trim_start().starts_with('('))
+        })
+        .map(|clause| clause.value.expression_span)
+        .collect()
+}
+
 /// Raise the operator refusals recorded for one input file.
 ///
 /// Called per input file before name/type checking, beside
@@ -990,6 +1023,12 @@ pub fn check_source_operators(program: &SourceProgram) -> Result<(), Vec<SourceD
     let conditions = condition_spans(program);
     let in_condition = |span: Span| {
         conditions
+            .iter()
+            .any(|extent| extent.start <= span.start && span.end <= extent.end)
+    };
+    let result_sets = result_set_spans(program);
+    let in_result_set = |span: Span| {
+        result_sets
             .iter()
             .any(|extent| extent.start <= span.start && span.end <= extent.end)
     };
@@ -1028,6 +1067,13 @@ pub fn check_source_operators(program: &SourceProgram) -> Result<(), Vec<SourceD
                 continue;
             }
             TokenKind::Symbol(Symbol::Pipe | Symbol::PipePipe) if closure_bar(token.span) => {
+                continue;
+            }
+            // Card CELL-GUARD-RESULT-RANGE-CHECKED: a result set's own
+            // operators (G05j).
+            TokenKind::Symbol(Symbol::Pipe | Symbol::Ampersand | Symbol::Caret)
+                if in_result_set(token.span) =>
+            {
                 continue;
             }
             TokenKind::Symbol(Symbol::Pipe | Symbol::PipePipe)

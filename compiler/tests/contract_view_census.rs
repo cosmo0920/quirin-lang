@@ -102,6 +102,9 @@ const EXPECTED_MULTI_MODULE: &[(&str, &[&str])] = &[
         "mk_list_del",
         &["chunkio/list_unlink.qv", "monkey/intrusive_list.qv"],
     ),
+    // Card CELL-GUARD-RESULT-RANGE-CHECKED: `open`'s C library result set
+    // (no custody) beside its resource-v1 declaration.
+    ("open", &["libc/result_sets.qv", "libc/unistd.qv"]),
     // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES: the op destroyer's
     // resource-v1 declaration beside its `quant null-deref #rko`.
     (
@@ -190,10 +193,11 @@ fn every_multi_module_declaration_is_a_registered_checked_relation() {
     // `rd_kafka_op_destroy`: twenty-one functions, twenty-three pairs;
     // FB-PLUGIN-DESCRIPTOR-NONNULL-SCOPE `flb_input_new`'s stable descriptor
     // and `flb_input_thread_instance_exit`'s scope entry: twenty-three
-    // functions, twenty-five pairs).
-    assert_eq!(census_pairs(&report.census).len(), 25);
-    assert_eq!(REGISTERED_RELATIONS.len(), 25);
-    assert_eq!(report.relations.len(), 25);
+    // functions, twenty-five pairs; CELL-GUARD-RESULT-RANGE-CHECKED `open`'s
+    // C library result set: twenty-four functions, twenty-six pairs).
+    assert_eq!(census_pairs(&report.census).len(), 26);
+    assert_eq!(REGISTERED_RELATIONS.len(), 26);
+    assert_eq!(report.relations.len(), 26);
 }
 
 /// The library's own corpus reader and this test's discovery agree module for

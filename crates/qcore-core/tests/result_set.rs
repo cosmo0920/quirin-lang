@@ -89,7 +89,11 @@ fn set_vectors_hold_and_match_lean() {
         match expr.eval(INT) {
             Ok(set) => {
                 assert_eq!(set.canonical(), *expected, "{written}");
-                rows.push(format!("({}, some {})", lean_expr(&expr), lean_intervals(&set)));
+                rows.push(format!(
+                    "({}, some {})",
+                    lean_expr(&expr),
+                    lean_intervals(&set)
+                ));
             }
             Err(error) => {
                 assert!(
@@ -123,7 +127,10 @@ fn class_vectors_hold_and_match_lean() {
             (ResultSet::full(INT), "none".to_owned())
         } else {
             let expr = parse_text(within).unwrap();
-            (expr.eval(INT).unwrap(), format!("some ({})", lean_expr(&expr)))
+            (
+                expr.eval(INT).unwrap(),
+                format!("some ({})", lean_expr(&expr)),
+            )
         };
         let class_expr = parse_text(class).unwrap();
         let class_set = class_expr.eval(INT).unwrap();
@@ -148,8 +155,15 @@ fn class_vectors_hold_and_match_lean() {
 /// test and class and a family of sets.
 #[test]
 fn narrowing_never_takes_a_decision_away() {
-    let sets = ["[MIN, MAX]", "-1 | [0, MAX]", "-1 | 0", "0", "-1", "[-5, 5]"]
-        .map(|text| parse_text(text).unwrap().eval(INT).unwrap());
+    let sets = [
+        "[MIN, MAX]",
+        "-1 | [0, MAX]",
+        "-1 | 0",
+        "0",
+        "-1",
+        "[-5, 5]",
+    ]
+    .map(|text| parse_text(text).unwrap().eval(INT).unwrap());
     for (_, cmp, k, class, _) in CLASS_VECTORS {
         let class = parse_text(class).unwrap().eval(INT).unwrap();
         let test = comparison_set(INT, *cmp, *k);
@@ -167,10 +181,15 @@ fn narrowing_never_takes_a_decision_away() {
 fn precedence_and_refusals() {
     let a = parse_text("1 | 2 ^ 3 & 4").unwrap();
     assert_eq!(a.to_string(), "1 | 2 ^ 3 & 4");
-    assert_eq!(lean_expr(&a), ".or (.val (.lit 1)) (.xor (.val (.lit 2)) (.and (.val (.lit 3)) (.val (.lit 4))))");
+    assert_eq!(
+        lean_expr(&a),
+        ".or (.val (.lit 1)) (.xor (.val (.lit 2)) (.and (.val (.lit 3)) (.val (.lit 4))))"
+    );
     let b = parse_text("(1 | 2) & 2").unwrap();
     assert_eq!(b.to_string(), "(1 | 2) & 2");
-    for refused in ["", "1 |", "[1, 2", "[1 2]", "01", "-0", "x", "1 || 2", "1 ∪ 2", "(1", "1)"] {
+    for refused in [
+        "", "1 |", "[1, 2", "[1 2]", "01", "-0", "x", "1 || 2", "1 ∪ 2", "(1", "1)",
+    ] {
         assert!(parse_text(refused).is_err(), "{refused}");
     }
 }

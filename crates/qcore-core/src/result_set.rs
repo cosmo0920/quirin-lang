@@ -482,7 +482,9 @@ impl SetParser<'_> {
             Some(SetToken::Literal(value)) => Ok(Bound::Literal(*value)),
             Some(SetToken::Word(word)) if word == "MIN" => Ok(Bound::Min),
             Some(SetToken::Word(word)) if word == "MAX" => Ok(Bound::Max),
-            _ => Err(shape("a bound is a canonical decimal literal, `MIN` or `MAX`")),
+            _ => Err(shape(
+                "a bound is a canonical decimal literal, `MIN` or `MAX`",
+            )),
         }
     }
 
@@ -746,9 +748,27 @@ pub const CLASS_VECTORS: &[(&str, Cmp, i128, &str, Class)] = &[
     ("-1 | 0", Cmp::Eq, -2, "0", Class::Undecided),
     ("-1 | 0", Cmp::Ne, -2, "0", Class::Undecided),
     // `timeout_fd > 0` reads 0 (a success) as failure: undecided.
-    ("-1 | [0, MAX]", Cmp::Gt, 0, "[MIN, -2] | [0, MAX]", Class::Undecided),
-    ("-1 | [0, MAX]", Cmp::Ge, 0, "[MIN, -2] | [0, MAX]", Class::Holds),
-    ("-1 | [0, MAX]", Cmp::Lt, 0, "[MIN, -2] | [0, MAX]", Class::Fails),
+    (
+        "-1 | [0, MAX]",
+        Cmp::Gt,
+        0,
+        "[MIN, -2] | [0, MAX]",
+        Class::Undecided,
+    ),
+    (
+        "-1 | [0, MAX]",
+        Cmp::Ge,
+        0,
+        "[MIN, -2] | [0, MAX]",
+        Class::Holds,
+    ),
+    (
+        "-1 | [0, MAX]",
+        Cmp::Lt,
+        0,
+        "[MIN, -2] | [0, MAX]",
+        Class::Fails,
+    ),
     ("", Cmp::Eq, -1, "[MIN, -2] | [0, MAX]", Class::Fails),
     ("", Cmp::Lt, 0, "[MIN, -2] | [0, MAX]", Class::Undecided),
 ];

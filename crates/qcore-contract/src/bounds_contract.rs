@@ -135,7 +135,7 @@ pub const REWRITE_BEFORE_ACCEPTANCE: &str = "rewrite_before_acceptance";
 
 /// Every identifier this vocabulary reserves (the source-spelling census
 /// checks them against the contract roots).
-pub const RESERVED_SPELLINGS: [&str; 17] = [
+pub const RESERVED_SPELLINGS: [&str; 19] = [
     BOUNDS_CONTRACT_MARKER,
     BOUNDS_REVIEW_MARKER,
     "bounds_extent",
@@ -158,7 +158,17 @@ pub const RESERVED_SPELLINGS: [&str; 17] = [
     "nonnull_member_scope",
     // Card NULL-TRIAGE-UNRESOLVED-PATHS (G05e).
     "nonnull_result_range",
+    // Card CELL-GUARD-RESULT-RANGE-CHECKED (G05j).
+    RESULT_SET,
+    BOUNDS_REVISION,
 ];
+
+/// Card CELL-GUARD-RESULT-RANGE-CHECKED (C09.4, grammar G05j): the result-set
+/// clause, `ensures normal result_set(SET);`.
+pub const RESULT_SET: &str = "result_set";
+/// Card CELL-GUARD-RESULT-RANGE-CHECKED: the revision marker of a C library
+/// result set, `requires bounds_revision(flexible);`.
+pub const BOUNDS_REVISION: &str = "bounds_revision";
 
 const SCALAR_TYPES: [&str; 11] = [
     "bool", "i8", "i16", "i32", "i64", "isize", "u8", "u16", "u32", "u64", "usize",
@@ -309,6 +319,19 @@ pub enum BoundsClause {
         lo: i128,
         hi: i128,
     },
+    /// Card CELL-GUARD-RESULT-RANGE-CHECKED (C09.4, grammar G05j, rule 38e;
+    /// USER DECISION 2026-11-03, option C): `ensures normal result_set(SET);`
+    /// -- the C library function's integer result is a member of `SET`
+    /// (literals, `[a, b]`, `MIN`/`MAX` of the result type, `|` union, `&`
+    /// intersection, `^` symmetric difference). A value set only: it states
+    /// no custody, and is admitted only on a flexible declaration
+    /// (`requires bounds_revision(flexible);`) whose one clause it is. Read
+    /// where it is in force by the null property's bound of a call result and
+    /// by the result-set derivation (rule 38e); the bounds consumer never
+    /// reads it.
+    ResultSet {
+        set: qcore_core::result_set::ResultSet,
+    },
     /// Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER (contract specification
     /// C09.3, USER DECISION 2026-10-15, "Only nonnull_member* need it"):
     /// `requires resource_premise(NAME, "STATEMENT");` beside a
@@ -336,6 +359,7 @@ impl BoundsClause {
                 | Self::NonnullMemberStable { .. }
                 | Self::NonnullMemberScope { .. }
                 | Self::NonnullResultRange { .. }
+                | Self::ResultSet { .. }
                 | Self::Premise { .. }
         )
     }
@@ -400,6 +424,14 @@ pub struct BoundsFunctionContract {
     /// Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS: set when an audit route found
     /// the declaration's pin not in force; it is then held.
     pub pin_hold: Option<PinHold>,
+    /// Card CELL-GUARD-RESULT-RANGE-CHECKED (C09.4): `requires
+    /// bounds_revision(flexible);` -- a C library result set, bound by name
+    /// and declared signature at any revision (C06.2's flexible mode, under
+    /// the standing assumption `libc-c-standard-abi`), never pinned. Only a
+    /// declaration whose one clause is a `result_set` carries it.
+    pub flexible: bool,
+    /// The declared result type's spelling (`i32`, …), `None` for `unit`.
+    pub result_type: Option<String>,
 }
 
 /// Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS: why a declaration's pin is not in
@@ -494,6 +526,21 @@ impl BoundsFunctionContract {
                 _ => None,
             })
             .collect()
+    }
+
+    /// Card CELL-GUARD-RESULT-RANGE-CHECKED: the result set the declaration
+    /// states: a `result_set`, or a `nonnull_result_range(LO, HI)` read as the
+    /// interval `[LO, HI]` of the result type. `None` for any other
+    /// declaration or a result type with no integer universe.
+    pub fn result_values(&self) -> Option<qcore_core::result_set::ResultSet> {
+        let universe = qcore_core::result_set::universe(self.result_type.as_deref()?)?;
+        self.clauses.iter().find_map(|entry| match &entry.clause {
+            BoundsClause::ResultSet { set } => Some(set.clone()),
+            BoundsClause::NonnullResultRange { lo, hi } => Some(
+                qcore_core::result_set::ResultSet::interval(universe, *lo, *hi),
+            ),
+            _ => None,
+        })
     }
 
     /// Card CG24: the parameters a `bounds_return_derived` names, in order.
@@ -1143,6 +1190,72 @@ impl Reader<'_> {
     }
 }
 
+/// Card CELL-GUARD-RESULT-RANGE-CHECKED (G05j): read `result_set(SET)` in
+/// the result type's universe. `None` when the clause has another head.
+fn result_set_clause(
+    tokens: &[TokenKind],
+    result_type: Option<&str>,
+) -> Option<Result<qcore_core::result_set::ResultSet, String>> {
+    use qcore_core::result_set::{SetToken, canonical_literal, parse, universe};
+    if !matches!(tokens.first(), Some(TokenKind::Word(w)) if w == RESULT_SET) {
+        return None;
+    }
+    let shape = |detail: &str| {
+        format!(
+            "result-set-shape: {detail}; write `result_set(SET)` with literals, `[a, b]`, `MIN`, `MAX`, `|` (union), `^` (symmetric difference), `&` (intersection) and parentheses"
+        )
+    };
+    Some((|| {
+        let Some(universe) = result_type.and_then(universe) else {
+            return Err(
+                "result-set-integer: a result set needs an integer result (`i32`, `i64`, `usize`, …)"
+                    .to_owned(),
+            );
+        };
+        if tokens.get(1) != Some(&TokenKind::Symbol(Symbol::LeftParen))
+            || tokens.last() != Some(&TokenKind::Symbol(Symbol::RightParen))
+            || tokens.len() < 4
+        {
+            return Err(shape("the clause is `result_set(SET)`"));
+        }
+        let inner = &tokens[2..tokens.len() - 1];
+        let mut set_tokens = Vec::new();
+        let mut index = 0;
+        while index < inner.len() {
+            let token = match &inner[index] {
+                TokenKind::Symbol(Symbol::Minus) => match inner.get(index + 1) {
+                    Some(TokenKind::Integer(digits)) => {
+                        index += 1;
+                        SetToken::Literal(
+                            canonical_literal(&format!("-{digits}"))
+                                .ok_or_else(|| shape("a literal is a canonical decimal"))?,
+                        )
+                    }
+                    _ => return Err(shape("`-` stands only before a literal")),
+                },
+                TokenKind::Integer(digits) => SetToken::Literal(
+                    canonical_literal(digits)
+                        .ok_or_else(|| shape("a literal is a canonical decimal"))?,
+                ),
+                TokenKind::Word(word) => SetToken::Word(word.clone()),
+                TokenKind::Symbol(Symbol::Pipe) => SetToken::Or,
+                TokenKind::Symbol(Symbol::Ampersand) => SetToken::And,
+                TokenKind::Symbol(Symbol::Caret) => SetToken::Xor,
+                TokenKind::Symbol(Symbol::LeftBracket) => SetToken::LeftBracket,
+                TokenKind::Symbol(Symbol::RightBracket) => SetToken::RightBracket,
+                TokenKind::Symbol(Symbol::LeftParen) => SetToken::LeftParen,
+                TokenKind::Symbol(Symbol::RightParen) => SetToken::RightParen,
+                TokenKind::Symbol(Symbol::Comma) => SetToken::Comma,
+                other => return Err(shape(&format!("`{other:?}` is not part of a set"))),
+            };
+            set_tokens.push(token);
+            index += 1;
+        }
+        let expr = parse(&set_tokens)?;
+        expr.eval(universe).map_err(|error| error.to_string())
+    })())
+}
+
 fn load_function(path: &str, decl: &SourceDeclaration) -> Result<BoundsFunctionContract, String> {
     if decl.kind != DeclarationKind::ExternFunction || decl.c_ffi.is_some() {
         return Err("bounds modules accept only extern functions".into());
@@ -1168,6 +1281,12 @@ fn load_function(path: &str, decl: &SourceDeclaration) -> Result<BoundsFunctionC
         Some(source) => Some(type_kind(source)?),
         None => return Err("a bounds declaration states its result type".into()),
     };
+    let result_type = decl
+        .result_type
+        .as_ref()
+        .map(|r| r.source.trim().to_owned())
+        .filter(|source| source != "unit");
+    let mut flexible = 0usize;
     let contract = decl
         .function_contract
         .as_ref()
@@ -1275,6 +1394,33 @@ fn load_function(path: &str, decl: &SourceDeclaration) -> Result<BoundsFunctionC
             selectors += 1;
             continue;
         }
+        // Card CELL-GUARD-RESULT-RANGE-CHECKED (C09.4): the flexible marker of
+        // a C library result set.
+        if let Some((BOUNDS_REVISION, groups)) = call(&tokens) {
+            if !requires || !matches!(groups.as_slice(), [[TokenKind::Word(w)]] if w == "flexible")
+            {
+                return Err(format!(
+                    "bounds-revision-shape: the only revision marker of a bounds declaration is `requires {BOUNDS_REVISION}(flexible);`"
+                ));
+            }
+            flexible += 1;
+            continue;
+        }
+        // Card CELL-GUARD-RESULT-RANGE-CHECKED (G05j): the result set.
+        if let Some(set) = result_set_clause(&tokens, result_type.as_deref()) {
+            if requires {
+                return Err(
+                    "result-set-ensures: a result set is an `ensures normal` postcondition".into(),
+                );
+            }
+            let set = set?;
+            clauses.push(BoundsClauseEntry {
+                text: format!("{RESULT_SET}({})", set.canonical()),
+                clause: BoundsClause::ResultSet { set },
+                review: None,
+            });
+            continue;
+        }
         // Graph-v2 attachments are reference metadata, never bounds/null facts.
         // Full declaration validation below checks the original premise target.
         if crate::premise_flow::is_clause(&clause.expression_source)
@@ -1355,6 +1501,27 @@ fn load_function(path: &str, decl: &SourceDeclaration) -> Result<BoundsFunctionC
             "a bounds declaration carries exactly one `requires {BOUNDS_CONTRACT_MARKER};`"
         ));
     }
+    // Card CELL-GUARD-RESULT-RANGE-CHECKED (C09.4): a result set is a C library
+    // fact, flexible, and the declaration's one clause; the flexible marker
+    // stands on nothing else (no other bounds or null clause, no custody).
+    let states_set = clauses
+        .iter()
+        .any(|entry| matches!(entry.clause, BoundsClause::ResultSet { .. }));
+    if flexible > 1 {
+        return Err(format!(
+            "bounds-revision-shape: duplicate `requires {BOUNDS_REVISION}(flexible);`"
+        ));
+    }
+    if states_set && flexible == 0 {
+        return Err(format!(
+            "result-set-needs-flexible: a `result_set` states a C library function's results and is admitted only on a declaration carrying `requires {BOUNDS_REVISION}(flexible);`"
+        ));
+    }
+    if flexible == 1 && !(clauses.len() == 1 && states_set && clauses[0].review.is_none()) {
+        return Err(format!(
+            "bounds-revision-flexible-scope: `requires {BOUNDS_REVISION}(flexible);` stands only on a declaration whose one clause is a `result_set`"
+        ));
+    }
     // Static conditions: at most one fact per position.
     let mut seen = std::collections::BTreeSet::new();
     for entry in &clauses {
@@ -1380,6 +1547,7 @@ fn load_function(path: &str, decl: &SourceDeclaration) -> Result<BoundsFunctionC
                 parameter,
             } => format!("nonnull-member-scope {parameter} {tag}.{field}"),
             BoundsClause::NonnullResultRange { .. } => "nonnull-result-range".into(),
+            BoundsClause::ResultSet { .. } => "result-set".into(),
             BoundsClause::Premise { name, .. } => format!("premise {name}"),
         };
         if !seen.insert(key.clone()) {
@@ -1458,6 +1626,8 @@ fn load_function(path: &str, decl: &SourceDeclaration) -> Result<BoundsFunctionC
         text_sha256: sha256_hex(normalised.join(";\n").as_bytes()),
         canonical_sha256,
         pin_hold: None,
+        flexible: flexible == 1,
+        result_type,
     })
 }
 
