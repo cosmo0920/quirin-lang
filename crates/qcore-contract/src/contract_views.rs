@@ -1543,6 +1543,16 @@ pub const REGISTERED_RELATIONS: &[RegisteredRelation] = &[
         assumed_premises: &[],
         finding: None,
     },
+    // Card CELL-GUARD-RESULT-RANGE-CHECKED (rule 38e): the channel creator's
+    // pin-derived result range beside its resource-v1 declaration.
+    RegisteredRelation {
+        function: "mk_event_channel_create",
+        detailed: "monkey/result_range.qv",
+        view: "monkey/event_loop.qv",
+        check: RelationCheck::NullDerefBeside,
+        assumed_premises: &[],
+        finding: None,
+    },
     // Card CELL-GUARD-RESULT-RANGE-CHECKED (C09.4): `open`'s C library
     // result set (a value set, no custody) beside its resource-v1
     // declaration, which it leaves exactly as it is.

@@ -138,6 +138,7 @@
         "monkey/logging.qv",
         "monkey/memory.qv",
         "monkey/native_platform_matrix.qv",
+        "monkey/result_range.qv",
         "monkey/scalar_observation.qv",
         "monkey/string.qv",
         "monkey/timeout_teardown.qv",
@@ -157,7 +158,9 @@
         "monkey/string.qv",
         "monkey/vhost_set.qv"
       ],
-      "bounds_view": [],
+      "bounds_view": [
+        "monkey/result_range.qv"
+      ],
       "outer_view": []
     },
     {

@@ -1,0 +1,32 @@
+module contract;
+
+// Card CELL-GUARD-RESULT-RANGE-CHECKED (contract specification C09.4, gateway
+// rule 38e). USER DECISION 2026-11-03 (verbatim): "Yes, as recommended" (Q1
+// (a), the C library's result sets as flexible libc contracts; Q2 (ii), the
+// range derived at `quirin-audit pin --bounds` time from the configured
+// backend's body chain), and on (a): "This should be needed to use here."
+//
+// `mk_event_channel_create` returns -1 or 0. A bounds contract v1 value range
+// only (the null property and rule 38's result-guard reading read it; the
+// bounds consumer and every custody reader do not): its resource v1
+// declaration in `event_loop.qv` is unchanged (relation `null_deref_beside`).
+//
+// The range is DERIVED, not assumed: `quirin-audit pin --bounds
+// --derive-results --compile-database FILE` reads the configured unit
+// (`lib/monkey/mk_core/mk_event.c` of Fluent Bit's build, whose
+// `mk_event.c:44` includes the epoll backend) through Clang and derives
+// `return _mk_event_channel_create(…)` over the backend's body chain
+// (`_mk_event_channel_create`, `_mk_event_add` in `mk_event_epoll.c`) with
+// the C library's declared result sets of `pipe` and `epoll_ctl`
+// (`quirin-provider-libc`'s `libc/result_sets.qv`, flexible, under
+// `libc-c-standard-abi`). From the bodies alone the result is every `int`
+// (census `docs/reports/cell-guard-result-range/census/`). The lock records
+// the derivation: the derived set, the helpers whose definition sites join
+// every reviewed identity, and the C library declarations (with digests) it
+// rested on; a changed helper, body or C library set takes the range out of
+// force, and rule 38 never reads a range that is not derived.
+extern fn mk_event_channel_create(loop: ptr<mut, u8>, r_fd: ptr<mut, u8>, w_fd: ptr<mut, u8>, data: ptr<mut, u8>) -> i32
+contract {
+    requires bounds_contract_v1;
+    ensures normal nonnull_result_range(-1, 0);
+};

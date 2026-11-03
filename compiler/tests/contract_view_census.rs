@@ -97,6 +97,12 @@ const EXPECTED_MULTI_MODULE: &[(&str, &[&str])] = &[
         "flb_malloc",
         &["fluent_bit/memory.qv", "fluent_bit/resource_memory.qv"],
     ),
+    // Card CELL-GUARD-RESULT-RANGE-CHECKED: the channel creator's derived
+    // result range beside its resource-v1 declaration.
+    (
+        "mk_event_channel_create",
+        &["monkey/event_loop.qv", "monkey/result_range.qv"],
+    ),
     // Card W45-FB-RETRY-LIFETIME: the resource-v1 view of the unlink.
     (
         "mk_list_del",
@@ -194,10 +200,11 @@ fn every_multi_module_declaration_is_a_registered_checked_relation() {
     // FB-PLUGIN-DESCRIPTOR-NONNULL-SCOPE `flb_input_new`'s stable descriptor
     // and `flb_input_thread_instance_exit`'s scope entry: twenty-three
     // functions, twenty-five pairs; CELL-GUARD-RESULT-RANGE-CHECKED `open`'s
-    // C library result set: twenty-four functions, twenty-six pairs).
-    assert_eq!(census_pairs(&report.census).len(), 26);
-    assert_eq!(REGISTERED_RELATIONS.len(), 26);
-    assert_eq!(report.relations.len(), 26);
+    // C library result set and `mk_event_channel_create`'s derived range:
+    // twenty-five functions, twenty-seven pairs).
+    assert_eq!(census_pairs(&report.census).len(), 27);
+    assert_eq!(REGISTERED_RELATIONS.len(), 27);
+    assert_eq!(report.relations.len(), 27);
 }
 
 /// The library's own corpus reader and this test's discovery agree module for
