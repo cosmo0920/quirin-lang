@@ -1,0 +1,959 @@
+{
+ "schema": "quirin-gate-scope/1",
+ "source": "git diff",
+ "base": "1b859bdc9ad16759428d4a99628aa08d75f13101",
+ "head": "22b4c8fa5229de43fb0b7e9a126530aa83a6b7e8",
+ "committed": [
+  "crates/gateway-rules/registry.toml",
+  "crates/gateway-rules/rule-38-descriptor-cells/src/cells.rs",
+  "crates/gateway-rules/rule-38-descriptor-cells/src/protocol.rs",
+  "crates/qcore-c-gateway/src/gateway_rule_registry.rs",
+  "crates/qcore-c-gateway/src/legacy_c.rs",
+  "crates/qcore-c-gateway/src/legacy_descriptor_cells.rs",
+  "crates/qcore-c-gateway/src/legacy_transfer.rs",
+  "crates/qcore-c-gateway/tests/cell_protocol_close_actual.rs",
+  "crates/qcore-c-gateway/tests/cell_protocol_fb_declarations.rs",
+  "crates/qcore-c-gateway/tests/cell_protocol_per_end_guards.rs",
+  "crates/qcore-c-gateway/tests/descriptor_cell_protocols.rs",
+  "crates/qcore-contract/src/local_condition.rs",
+  "crates/qcore-schemas/src/contract.rs",
+  "crates/qcore-schemas/src/descriptor_cell.rs",
+  "docs/QCORE_CONTRACT_SPEC_r0_3.md",
+  "docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md",
+  "docs/agents/README.md",
+  "docs/agents/gateway.md",
+  "docs/agents/rules/38c.md",
+  "docs/agents/rules/38f.md",
+  "docs/reports/cell-protocol-per-end-guards/PREDICTION.md",
+  "docs/reports/cell-protocol-per-end-guards/census/annotations.json",
+  "docs/reports/cell-protocol-per-end-guards/census/census.json",
+  "docs/reports/cell-protocol-per-end-guards/census/census.py",
+  "proof/AuditCellProtocolPerEnd.lean",
+  "proof/QCore.lean",
+  "proof/QCore/CellProtocolPerEnd.lean",
+  "providers/quirin-provider-fluent-bit/contract-inventory.lock",
+  "providers/quirin-provider-fluent-bit/contracts.lock",
+  "providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv"
+ ],
+ "uncommitted": [],
+ "scope": {
+  "paths": [
+   "crates/gateway-rules/registry.toml",
+   "crates/gateway-rules/rule-38-descriptor-cells/src/cells.rs",
+   "crates/gateway-rules/rule-38-descriptor-cells/src/protocol.rs",
+   "crates/qcore-c-gateway/src/gateway_rule_registry.rs",
+   "crates/qcore-c-gateway/src/legacy_c.rs",
+   "crates/qcore-c-gateway/src/legacy_descriptor_cells.rs",
+   "crates/qcore-c-gateway/src/legacy_transfer.rs",
+   "crates/qcore-c-gateway/tests/cell_protocol_close_actual.rs",
+   "crates/qcore-c-gateway/tests/cell_protocol_fb_declarations.rs",
+   "crates/qcore-c-gateway/tests/cell_protocol_per_end_guards.rs",
+   "crates/qcore-c-gateway/tests/descriptor_cell_protocols.rs",
+   "crates/qcore-contract/src/local_condition.rs",
+   "crates/qcore-schemas/src/contract.rs",
+   "crates/qcore-schemas/src/descriptor_cell.rs",
+   "docs/QCORE_CONTRACT_SPEC_r0_3.md",
+   "docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md",
+   "docs/agents/README.md",
+   "docs/agents/gateway.md",
+   "docs/agents/rules/38c.md",
+   "docs/agents/rules/38f.md",
+   "docs/reports/cell-protocol-per-end-guards/PREDICTION.md",
+   "docs/reports/cell-protocol-per-end-guards/census/annotations.json",
+   "docs/reports/cell-protocol-per-end-guards/census/census.json",
+   "docs/reports/cell-protocol-per-end-guards/census/census.py",
+   "proof/AuditCellProtocolPerEnd.lean",
+   "proof/QCore.lean",
+   "proof/QCore/CellProtocolPerEnd.lean",
+   "providers/quirin-provider-fluent-bit/contract-inventory.lock",
+   "providers/quirin-provider-fluent-bit/contracts.lock",
+   "providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv"
+  ],
+  "attribution": {
+   "crates/gateway-rules/registry.toml": [
+    "read by rule-32a-caller-frame-hold (include_str, crates/gateway-rules/rule-32a-caller-frame-hold/tests/unit/hold.rs:121)",
+    "read by rule-32a-caller-frame-hold (runtime, crates/gateway-rules/rule-32a-caller-frame-hold/tests/unit/hold.rs:121)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:219)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/gateway-rules/rule-38-descriptor-cells/src/cells.rs": [
+    "owned by rule-38-descriptor-cells",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:76)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:219)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/gateway-rules/rule-38-descriptor-cells/src/protocol.rs": [
+    "owned by rule-38-descriptor-cells",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:76)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:219)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/src/gateway_rule_registry.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-c-gateway (path, crates/qcore-c-gateway/src/gateway_rules.rs:32)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:80)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/src/legacy_c.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-c-gateway (include_str, crates/qcore-c-gateway/tests/unit/legacy_probe_state.rs:28)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:80)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/src/legacy_descriptor_cells.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-c-gateway (path, crates/qcore-c-gateway/src/legacy_c.rs:356)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:80)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/src/legacy_transfer.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-c-gateway (path, crates/qcore-c-gateway/src/legacy_c.rs:5991)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:80)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/tests/cell_protocol_close_actual.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:80)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/tests/cell_protocol_fb_declarations.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:80)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/tests/cell_protocol_per_end_guards.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:80)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/tests/descriptor_cell_protocols.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:80)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-contract/src/local_condition.rs": [
+    "owned by qcore-contract",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:20)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-schemas/src/contract.rs": [
+    "owned by qcore-schemas",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:14)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-schemas/src/descriptor_cell.rs": [
+    "owned by qcore-schemas",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:14)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "docs/QCORE_CONTRACT_SPEC_r0_3.md": [
+    "class prose"
+   ],
+   "docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md": [
+    "class prose"
+   ],
+   "docs/agents/README.md": [
+    "class prose"
+   ],
+   "docs/agents/gateway.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/38c.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/38f.md": [
+    "class prose"
+   ],
+   "docs/reports/cell-protocol-per-end-guards/PREDICTION.md": [
+    "class prose"
+   ],
+   "docs/reports/cell-protocol-per-end-guards/census/annotations.json": [
+    "class prose"
+   ],
+   "docs/reports/cell-protocol-per-end-guards/census/census.json": [
+    "class prose"
+   ],
+   "docs/reports/cell-protocol-per-end-guards/census/census.py": [
+    "class prose"
+   ],
+   "proof/AuditCellProtocolPerEnd.lean": [
+    "read by qcore-compiler (runtime, compiler/tests/float_ieee_vectors.rs:524)",
+    "read by qcore-compiler (runtime, compiler/tests/proof_leg_digests.rs:106)",
+    "class lean"
+   ],
+   "proof/QCore.lean": [
+    "read by qcore-compiler (runtime, compiler/tests/float_ieee_vectors.rs:524)",
+    "read by qcore-compiler (runtime, compiler/tests/proof_leg_digests.rs:106)",
+    "class lean"
+   ],
+   "proof/QCore/CellProtocolPerEnd.lean": [
+    "read by rule-38-descriptor-cells (include_str, crates/gateway-rules/rule-38-descriptor-cells/src/protocol.rs:684)",
+    "read by rule-38-descriptor-cells (runtime, crates/gateway-rules/rule-38-descriptor-cells/src/protocol.rs:684)",
+    "read by qcore-compiler (runtime, compiler/tests/float_ieee_vectors.rs:524)",
+    "read by qcore-compiler (runtime, compiler/tests/proof_leg_digests.rs:106)",
+    "class lean"
+   ],
+   "providers/quirin-provider-fluent-bit/contract-inventory.lock": [
+    "owned by quirin-provider-fluent-bit",
+    "read by qcore-audit (runtime, crates/qcore-audit/src/pin_window.rs:60)",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/current_cli.rs:138)",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/dependency_graph.rs:92)",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/provider_selection.rs:620)",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/rule_switch_entry_points.rs:276)",
+    "read by qcore-contract (runtime, crates/qcore-contract/tests/bounds_contract.rs:159)",
+    "read by qcore-contract (runtime, crates/qcore-contract/tests/descriptor_cells.rs:280)",
+    "read by qcore-contract (runtime, crates/qcore-contract/tests/event_loop_clauses.rs:211)",
+    "read by qcore-contract (runtime, crates/qcore-contract/tests/production_symbolic_adoption.rs:389)",
+    "read by qcore-compiler (runtime, compiler/tests/contract_inherit_qcore_provider.rs:437)",
+    "read by qcore-compiler (runtime, compiler/tests/monkey_profile.rs:41)",
+    "read by qcore-compiler (runtime, compiler/tests/profile_loader.rs:65)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:270)",
+    "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/src/sides.rs:512)",
+    "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/tests/units.rs:298)",
+    "read by qcore-provider-conformance (runtime, providers/conformance/tests/composed_five_providers.rs:132)",
+    "read by qcore-provider-conformance (runtime, providers/conformance/tests/packages.rs:373)"
+   ],
+   "providers/quirin-provider-fluent-bit/contracts.lock": [
+    "owned by quirin-provider-fluent-bit",
+    "read by qcore-audit (runtime, crates/qcore-audit/src/pin_window.rs:60)",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/current_cli.rs:138)",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/dependency_graph.rs:92)",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/provider_selection.rs:620)",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/rule_switch_entry_points.rs:276)",
+    "read by qcore-contract (runtime, crates/qcore-contract/tests/bounds_contract.rs:159)",
+    "read by qcore-contract (runtime, crates/qcore-contract/tests/descriptor_cells.rs:280)",
+    "read by qcore-contract (runtime, crates/qcore-contract/tests/event_loop_clauses.rs:211)",
+    "read by qcore-contract (runtime, crates/qcore-contract/tests/production_symbolic_adoption.rs:389)",
+    "read by qcore-compiler (runtime, compiler/tests/contract_inherit_qcore_provider.rs:437)",
+    "read by qcore-compiler (runtime, compiler/tests/monkey_profile.rs:41)",
+    "read by qcore-compiler (runtime, compiler/tests/profile_loader.rs:65)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:270)",
+    "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/src/sides.rs:512)",
+    "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/tests/units.rs:298)",
+    "read by qcore-provider-conformance (runtime, providers/conformance/tests/composed_five_providers.rs:132)",
+    "read by qcore-provider-conformance (runtime, providers/conformance/tests/packages.rs:373)"
+   ],
+   "providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv": [
+    "owned by quirin-provider-fluent-bit",
+    "read by qcore-c-gateway (include_str, crates/qcore-c-gateway/tests/cell_protocol_fb_declarations.rs:29)",
+    "read by qcore-c-gateway (include_str, crates/qcore-c-gateway/tests/cell_protocol_per_end_guards.rs:36)",
+    "read by quirin-provider-fluent-bit (include_str, providers/quirin-provider-fluent-bit/src/lib.rs:122)",
+    "read by qcore-c-gateway (runtime, crates/qcore-c-gateway/tests/cell_protocol_fb_declarations.rs:30)",
+    "read by qcore-c-gateway (runtime, crates/qcore-c-gateway/tests/cell_protocol_per_end_guards.rs:37)",
+    "read by qcore-audit (runtime, crates/qcore-audit/src/pin_window.rs:60)",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/current_cli.rs:138)",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/dependency_graph.rs:92)",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/provider_selection.rs:620)",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/rule_switch_entry_points.rs:276)",
+    "read by qcore-contract (runtime, crates/qcore-contract/tests/bounds_contract.rs:159)",
+    "read by qcore-contract (runtime, crates/qcore-contract/tests/descriptor_cells.rs:280)",
+    "read by qcore-contract (runtime, crates/qcore-contract/tests/event_loop_clauses.rs:211)",
+    "read by qcore-contract (runtime, crates/qcore-contract/tests/production_symbolic_adoption.rs:389)",
+    "read by qcore-compiler (runtime, compiler/tests/contract_inherit_qcore_provider.rs:437)",
+    "read by qcore-compiler (runtime, compiler/tests/monkey_profile.rs:41)",
+    "read by qcore-compiler (runtime, compiler/tests/profile_loader.rs:65)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:270)",
+    "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/src/sides.rs:512)",
+    "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/tests/units.rs:298)",
+    "read by qcore-provider-conformance (runtime, providers/conformance/tests/composed_five_providers.rs:132)",
+    "read by qcore-provider-conformance (runtime, providers/conformance/tests/packages.rs:373)"
+   ]
+  },
+  "affected": {
+   "qcore-audit": [
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contract-inventory.lock (crates/qcore-audit/src/pin_window.rs:60)",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contract-inventory.lock (crates/qcore-audit/tests/current_cli.rs:138)",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contract-inventory.lock (crates/qcore-audit/tests/dependency_graph.rs:92)",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contract-inventory.lock (crates/qcore-audit/tests/provider_selection.rs:620)",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contract-inventory.lock (crates/qcore-audit/tests/rule_switch_entry_points.rs:276)",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contracts.lock (crates/qcore-audit/src/pin_window.rs:60)",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contracts.lock (crates/qcore-audit/tests/current_cli.rs:138)",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contracts.lock (crates/qcore-audit/tests/dependency_graph.rs:92)",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contracts.lock (crates/qcore-audit/tests/provider_selection.rs:620)",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contracts.lock (crates/qcore-audit/tests/rule_switch_entry_points.rs:276)",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv (crates/qcore-audit/src/pin_window.rs:60)",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv (crates/qcore-audit/tests/current_cli.rs:138)",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv (crates/qcore-audit/tests/dependency_graph.rs:92)",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv (crates/qcore-audit/tests/provider_selection.rs:620)",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv (crates/qcore-audit/tests/rule_switch_entry_points.rs:276)"
+   ],
+   "qcore-c-gateway": [
+    "owns crates/qcore-c-gateway/src/gateway_rule_registry.rs",
+    "compiles it via #[path]: crates/qcore-c-gateway/src/gateway_rule_registry.rs (crates/qcore-c-gateway/src/gateway_rules.rs:32)",
+    "owns crates/qcore-c-gateway/src/legacy_c.rs",
+    "reads it with include_str!: crates/qcore-c-gateway/src/legacy_c.rs (crates/qcore-c-gateway/tests/unit/legacy_probe_state.rs:28)",
+    "owns crates/qcore-c-gateway/src/legacy_descriptor_cells.rs",
+    "compiles it via #[path]: crates/qcore-c-gateway/src/legacy_descriptor_cells.rs (crates/qcore-c-gateway/src/legacy_c.rs:356)",
+    "owns crates/qcore-c-gateway/src/legacy_transfer.rs",
+    "compiles it via #[path]: crates/qcore-c-gateway/src/legacy_transfer.rs (crates/qcore-c-gateway/src/legacy_c.rs:5991)",
+    "owns crates/qcore-c-gateway/tests/cell_protocol_close_actual.rs",
+    "owns crates/qcore-c-gateway/tests/cell_protocol_fb_declarations.rs",
+    "owns crates/qcore-c-gateway/tests/cell_protocol_per_end_guards.rs",
+    "owns crates/qcore-c-gateway/tests/descriptor_cell_protocols.rs",
+    "reads it with include_str!: providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv (crates/qcore-c-gateway/tests/cell_protocol_fb_declarations.rs:29)",
+    "reads it with include_str!: providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv (crates/qcore-c-gateway/tests/cell_protocol_per_end_guards.rs:36)",
+    "names providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv in a string literal: providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv (crates/qcore-c-gateway/tests/cell_protocol_fb_declarations.rs:30)",
+    "names providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv in a string literal: providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv (crates/qcore-c-gateway/tests/cell_protocol_per_end_guards.rs:37)"
+   ],
+   "qcore-compiler": [
+    "names crates/gateway-rules in a string literal: crates/gateway-rules/registry.toml (compiler/tests/workspace_layering.rs:219)",
+    "names crates/gateway-rules/rule-38-descriptor-cells in a string literal: crates/gateway-rules/rule-38-descriptor-cells/src/cells.rs (compiler/tests/workspace_layering.rs:76)",
+    "names crates/gateway-rules in a string literal: crates/gateway-rules/rule-38-descriptor-cells/src/cells.rs (compiler/tests/workspace_layering.rs:219)",
+    "names crates/gateway-rules/rule-38-descriptor-cells in a string literal: crates/gateway-rules/rule-38-descriptor-cells/src/protocol.rs (compiler/tests/workspace_layering.rs:76)",
+    "names crates/gateway-rules in a string literal: crates/gateway-rules/rule-38-descriptor-cells/src/protocol.rs (compiler/tests/workspace_layering.rs:219)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/src/gateway_rule_registry.rs (compiler/tests/workspace_layering.rs:80)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/src/legacy_c.rs (compiler/tests/workspace_layering.rs:80)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/src/legacy_descriptor_cells.rs (compiler/tests/workspace_layering.rs:80)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/src/legacy_transfer.rs (compiler/tests/workspace_layering.rs:80)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/tests/cell_protocol_close_actual.rs (compiler/tests/workspace_layering.rs:80)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/tests/cell_protocol_fb_declarations.rs (compiler/tests/workspace_layering.rs:80)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/tests/cell_protocol_per_end_guards.rs (compiler/tests/workspace_layering.rs:80)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/tests/descriptor_cell_protocols.rs (compiler/tests/workspace_layering.rs:80)",
+    "names crates/qcore-contract in a string literal: crates/qcore-contract/src/local_condition.rs (compiler/tests/workspace_layering.rs:20)",
+    "names crates/qcore-schemas in a string literal: crates/qcore-schemas/src/contract.rs (compiler/tests/workspace_layering.rs:14)",
+    "names crates/qcore-schemas in a string literal: crates/qcore-schemas/src/descriptor_cell.rs (compiler/tests/workspace_layering.rs:14)",
+    "names proof in a string literal: proof/AuditCellProtocolPerEnd.lean (compiler/tests/float_ieee_vectors.rs:524)",
+    "names proof in a string literal: proof/AuditCellProtocolPerEnd.lean (compiler/tests/proof_leg_digests.rs:106)",
+    "names proof in a string literal: proof/QCore.lean (compiler/tests/float_ieee_vectors.rs:524)",
+    "names proof in a string literal: proof/QCore.lean (compiler/tests/proof_leg_digests.rs:106)",
+    "names proof in a string literal: proof/QCore/CellProtocolPerEnd.lean (compiler/tests/float_ieee_vectors.rs:524)",
+    "names proof in a string literal: proof/QCore/CellProtocolPerEnd.lean (compiler/tests/proof_leg_digests.rs:106)",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contract-inventory.lock (compiler/tests/contract_inherit_qcore_provider.rs:437)",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contract-inventory.lock (compiler/tests/monkey_profile.rs:41)",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contract-inventory.lock (compiler/tests/profile_loader.rs:65)",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contract-inventory.lock (compiler/tests/workspace_layering.rs:270)",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contracts.lock (compiler/tests/contract_inherit_qcore_provider.rs:437)",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contracts.lock (compiler/tests/monkey_profile.rs:41)",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contracts.lock (compiler/tests/profile_loader.rs:65)",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contracts.lock (compiler/tests/workspace_layering.rs:270)",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv (compiler/tests/contract_inherit_qcore_provider.rs:437)",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv (compiler/tests/monkey_profile.rs:41)",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv (compiler/tests/profile_loader.rs:65)",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv (compiler/tests/workspace_layering.rs:270)"
+   ],
+   "qcore-contract": [
+    "owns crates/qcore-contract/src/local_condition.rs",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contract-inventory.lock (crates/qcore-contract/tests/bounds_contract.rs:159)",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contract-inventory.lock (crates/qcore-contract/tests/descriptor_cells.rs:280)",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contract-inventory.lock (crates/qcore-contract/tests/event_loop_clauses.rs:211)",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contract-inventory.lock (crates/qcore-contract/tests/production_symbolic_adoption.rs:389)",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contracts.lock (crates/qcore-contract/tests/bounds_contract.rs:159)",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contracts.lock (crates/qcore-contract/tests/descriptor_cells.rs:280)",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contracts.lock (crates/qcore-contract/tests/event_loop_clauses.rs:211)",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contracts.lock (crates/qcore-contract/tests/production_symbolic_adoption.rs:389)",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv (crates/qcore-contract/tests/bounds_contract.rs:159)",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv (crates/qcore-contract/tests/descriptor_cells.rs:280)",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv (crates/qcore-contract/tests/event_loop_clauses.rs:211)",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv (crates/qcore-contract/tests/production_symbolic_adoption.rs:389)"
+   ],
+   "qcore-frontend": [
+    "depends on qcore-schemas"
+   ],
+   "qcore-gateway-rule-api": [
+    "depends on qcore-schemas"
+   ],
+   "qcore-provider-chunkio": [
+    "depends on qcore-schemas"
+   ],
+   "qcore-provider-cmetrics": [
+    "depends on qcore-schemas"
+   ],
+   "qcore-provider-conformance": [
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contract-inventory.lock (providers/conformance/tests/composed_five_providers.rs:132)",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contract-inventory.lock (providers/conformance/tests/packages.rs:373)",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contracts.lock (providers/conformance/tests/composed_five_providers.rs:132)",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contracts.lock (providers/conformance/tests/packages.rs:373)",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv (providers/conformance/tests/composed_five_providers.rs:132)",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv (providers/conformance/tests/packages.rs:373)"
+   ],
+   "qcore-provider-ctraces": [
+    "depends on qcore-schemas"
+   ],
+   "qcore-provider-libevent": [
+    "depends on qcore-schemas"
+   ],
+   "qcore-provider-librdkafka": [
+    "depends on qcore-schemas"
+   ],
+   "qcore-schemas": [
+    "owns crates/qcore-schemas/src/contract.rs",
+    "owns crates/qcore-schemas/src/descriptor_cell.rs"
+   ],
+   "qcore-verification": [
+    "names crates in a string literal: crates/gateway-rules/registry.toml (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/gateway-rules/rule-38-descriptor-cells/src/cells.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/gateway-rules/rule-38-descriptor-cells/src/protocol.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/src/gateway_rule_registry.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/src/legacy_c.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/src/legacy_descriptor_cells.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/src/legacy_transfer.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/tests/cell_protocol_close_actual.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/tests/cell_protocol_fb_declarations.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/tests/cell_protocol_per_end_guards.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/tests/descriptor_cell_protocols.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-contract/src/local_condition.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-schemas/src/contract.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-schemas/src/descriptor_cell.rs (crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "qcore-verifier-host": [
+    "depends on qcore-schemas"
+   ],
+   "qcorec": [
+    "depends on qcore-compiler"
+   ],
+   "quirin-audit-plugin": [
+    "depends on qcore-schemas"
+   ],
+   "quirin-audit-plugin-libevent": [
+    "depends on qcore-schemas"
+   ],
+   "quirin-audit-plugin-measure": [
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contract-inventory.lock (crates/quirin-audit-plugin-measure/src/sides.rs:512)",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contract-inventory.lock (crates/quirin-audit-plugin-measure/tests/units.rs:298)",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contracts.lock (crates/quirin-audit-plugin-measure/src/sides.rs:512)",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contracts.lock (crates/quirin-audit-plugin-measure/tests/units.rs:298)",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv (crates/quirin-audit-plugin-measure/src/sides.rs:512)",
+    "names providers in a string literal: providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv (crates/quirin-audit-plugin-measure/tests/units.rs:298)"
+   ],
+   "quirin-provider-fluent-bit": [
+    "owns providers/quirin-provider-fluent-bit/contract-inventory.lock",
+    "owns providers/quirin-provider-fluent-bit/contracts.lock",
+    "owns providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv",
+    "reads it with include_str!: providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv (providers/quirin-provider-fluent-bit/src/lib.rs:122)"
+   ],
+   "quirin-provider-plugin": [
+    "depends on qcore-schemas"
+   ],
+   "quirin-provider-shared": [
+    "depends on qcore-schemas"
+   ],
+   "quirin-source-analysis": [
+    "depends on qcore-c-gateway"
+   ],
+   "rule-32a-caller-frame-hold": [
+    "reads it with include_str!: crates/gateway-rules/registry.toml (crates/gateway-rules/rule-32a-caller-frame-hold/tests/unit/hold.rs:121)",
+    "names crates/gateway-rules/registry.toml in a string literal: crates/gateway-rules/registry.toml (crates/gateway-rules/rule-32a-caller-frame-hold/tests/unit/hold.rs:121)"
+   ],
+   "rule-33-removed-selection": [
+    "depends on qcore-gateway-rule-api"
+   ],
+   "rule-34-element-destroyer": [
+    "depends on qcore-gateway-rule-api"
+   ],
+   "rule-35-literal-decay": [
+    "depends on qcore-gateway-rule-api"
+   ],
+   "rule-36-exact-formal-return": [
+    "depends on qcore-gateway-rule-api"
+   ],
+   "rule-37-result-constructors": [
+    "depends on qcore-gateway-rule-api"
+   ],
+   "rule-38-descriptor-cells": [
+    "owns crates/gateway-rules/rule-38-descriptor-cells/src/cells.rs",
+    "owns crates/gateway-rules/rule-38-descriptor-cells/src/protocol.rs",
+    "reads it with include_str!: proof/QCore/CellProtocolPerEnd.lean (crates/gateway-rules/rule-38-descriptor-cells/src/protocol.rs:684)",
+    "names proof/QCore/CellProtocolPerEnd.lean in a string literal: proof/QCore/CellProtocolPerEnd.lean (crates/gateway-rules/rule-38-descriptor-cells/src/protocol.rs:684)"
+   ]
+  },
+  "mode": "full",
+  "full_reasons": [
+   "the diff reaches qcore-c-gateway",
+   "the diff reaches qcore-contract",
+   "the diff reaches qcore-schemas"
+  ],
+  "rust_packages": [
+   "qcore-audit",
+   "qcore-c-gateway",
+   "qcore-compiler",
+   "qcore-contract",
+   "qcore-core",
+   "qcore-frontend",
+   "qcore-gateway-rule-api",
+   "qcore-schemas",
+   "qcore-verification",
+   "qcore-verifier-host",
+   "qcorec",
+   "quirin-audit-plugin",
+   "quirin-audit-plugin-libevent",
+   "quirin-audit-plugin-measure",
+   "quirin-source-analysis",
+   "rule-32a-caller-frame-hold",
+   "rule-33-removed-selection",
+   "rule-34-element-destroyer",
+   "rule-35-literal-decay",
+   "rule-36-exact-formal-return",
+   "rule-37-result-constructors",
+   "rule-38-descriptor-cells"
+  ],
+  "probes": true,
+  "lean": {
+   "mode": "all",
+   "reasons": [
+    "proof/QCore.lean: a proof root changed"
+   ],
+   "modules": [],
+   "audits": []
+  },
+  "python_reasons": [
+   "docs/reports/cell-protocol-per-end-guards/census/census.py: Python"
+  ],
+  "provider_gate": true,
+  "provider_reasons": [
+   "providers/quirin-provider-fluent-bit/contract-inventory.lock: providers/ changed",
+   "providers/quirin-provider-fluent-bit/contracts.lock: providers/ changed",
+   "providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv: providers/ changed"
+  ],
+  "provider_members_reached_without_providers_change": [],
+  "unresolved_includes": [
+   {
+    "crate": "qcore-compiler",
+    "source": "compiler/tests/ct_corpus.rs:8069",
+    "literal": "include_str!(\\\"fixtures/ct/{id}/case.qr\\\")\");",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   }
+  ]
+ },
+ "planned_steps": [
+  {
+   "name": "submodules",
+   "argv": [
+    "git",
+    "-C",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8c41b5be8989cdb0",
+    "submodule",
+    "status",
+    "--recursive"
+   ],
+   "slot": null
+  },
+  {
+   "name": "fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "slot": null
+  },
+  {
+   "name": "clippy",
+   "argv": [
+    "cargo",
+    "clippy",
+    "--all-targets",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "slot": null
+  },
+  {
+   "name": "rust-suite",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8c41b5be8989cdb0/scripts/run_test_binaries.py",
+    "--log-dir",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8c41b5be8989cdb0/private/gate/rust-suite"
+   ],
+   "slot": "rust-suite"
+  },
+  {
+   "name": "probe-reevaluation_probe",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8c41b5be8989cdb0/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_probe"
+   ],
+   "slot": null
+  },
+  {
+   "name": "probe-reevaluation_followup",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8c41b5be8989cdb0/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_followup"
+   ],
+   "slot": null
+  },
+  {
+   "name": "lean",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8c41b5be8989cdb0/scripts/check_lean_audits.py"
+   ],
+   "slot": "lean"
+  },
+  {
+   "name": "python",
+   "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+   ],
+   "slot": null
+  },
+  {
+   "name": "provider-package-build",
+   "argv": [
+    "/usr/bin/python3",
+    "providers/package.py",
+    "build",
+    "--output",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8c41b5be8989cdb0/private/gate/provider-packages"
+   ],
+   "slot": null
+  },
+  {
+   "name": "provider-package-verify-all",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8c41b5be8989cdb0/scripts/gate_scope.py",
+    "--verify-packages",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8c41b5be8989cdb0/private/gate/provider-packages"
+   ],
+   "slot": null
+  },
+  {
+   "name": "provider-package-verify",
+   "argv": [
+    "/usr/bin/python3",
+    "providers/package.py",
+    "verify",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8c41b5be8989cdb0/private/gate/provider-packages/qcore.libevent"
+   ],
+   "slot": null
+  },
+  {
+   "name": "provider-test",
+   "argv": [
+    "cargo",
+    "test",
+    "--manifest-path",
+    "providers/Cargo.toml",
+    "--workspace",
+    "--locked",
+    "--offline"
+   ],
+   "slot": "rust-suite"
+  },
+  {
+   "name": "provider-fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--manifest-path",
+    "providers/Cargo.toml",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "slot": null
+  },
+  {
+   "name": "provider-clippy",
+   "argv": [
+    "cargo",
+    "clippy",
+    "--manifest-path",
+    "providers/Cargo.toml",
+    "--workspace",
+    "--all-targets",
+    "--locked",
+    "--offline",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "slot": null
+  }
+ ],
+ "slots": true,
+ "started": "20261103T142205Z",
+ "ran": true,
+ "steps": [
+  {
+   "name": "submodules",
+   "argv": [
+    "git",
+    "-C",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8c41b5be8989cdb0",
+    "submodule",
+    "status",
+    "--recursive"
+   ],
+   "exit": 0,
+   "seconds": 0.0,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8c41b5be8989cdb0/private/gate/submodules.log",
+   "counts": {
+    "submodules": 1,
+    "not_checked_out_or_moved": []
+   }
+  },
+  {
+   "name": "fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "exit": 0,
+   "seconds": 4.1,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8c41b5be8989cdb0/private/gate/fmt.log",
+   "counts": {}
+  },
+  {
+   "name": "clippy",
+   "argv": [
+    "cargo",
+    "clippy",
+    "--all-targets",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "exit": 0,
+   "seconds": 42.1,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8c41b5be8989cdb0/private/gate/clippy.log",
+   "counts": {}
+  },
+  {
+   "name": "rust-suite",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8c41b5be8989cdb0/scripts/gate_slot.py",
+    "rust-suite",
+    "--receipt",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8c41b5be8989cdb0/private/gate/slots/rust-suite.json",
+    "--",
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8c41b5be8989cdb0/scripts/run_test_binaries.py",
+    "--log-dir",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8c41b5be8989cdb0/private/gate/rust-suite"
+   ],
+   "exit": 0,
+   "seconds": 1147.1,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8c41b5be8989cdb0/private/gate/rust-suite.log",
+   "counts": {
+    "units": 601,
+    "passed": 9147,
+    "failed": 0,
+    "ignored": 16,
+    "measured": 0,
+    "filtered": 135,
+    "summaries": 642,
+    "packages": null,
+    "summary": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8c41b5be8989cdb0/private/gate/rust-suite/summary.json",
+    "ok": true
+   },
+   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8c41b5be8989cdb0/private/gate/slots/rust-suite.json"
+  },
+  {
+   "name": "probe-reevaluation_probe",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8c41b5be8989cdb0/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_probe"
+   ],
+   "exit": 0,
+   "seconds": 0.2,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8c41b5be8989cdb0/private/gate/probe-reevaluation_probe.log",
+   "counts": {}
+  },
+  {
+   "name": "probe-reevaluation_followup",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8c41b5be8989cdb0/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_followup"
+   ],
+   "exit": 0,
+   "seconds": 0.5,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8c41b5be8989cdb0/private/gate/probe-reevaluation_followup.log",
+   "counts": {}
+  },
+  {
+   "name": "lean",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8c41b5be8989cdb0/scripts/gate_slot.py",
+    "lean",
+    "--receipt",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8c41b5be8989cdb0/private/gate/slots/lean.json",
+    "--",
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8c41b5be8989cdb0/scripts/check_lean_audits.py"
+   ],
+   "exit": 0,
+   "seconds": 116.8,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8c41b5be8989cdb0/private/gate/lean.log",
+   "counts": {
+    "audits": 405
+   },
+   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8c41b5be8989cdb0/private/gate/slots/lean.json"
+  },
+  {
+   "name": "python",
+   "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+   ],
+   "exit": 1,
+   "seconds": 44.7,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8c41b5be8989cdb0/private/gate/python.log",
+   "counts": {
+    "tests": 577,
+    "skipped": 0,
+    "ok": false
+   }
+  },
+  {
+   "name": "provider-package-build",
+   "argv": [
+    "/usr/bin/python3",
+    "providers/package.py",
+    "build",
+    "--output",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8c41b5be8989cdb0/private/gate/provider-packages"
+   ],
+   "exit": 0,
+   "seconds": 162.3,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8c41b5be8989cdb0/private/gate/provider-package-build.log",
+   "counts": {}
+  },
+  {
+   "name": "provider-package-verify-all",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8c41b5be8989cdb0/scripts/gate_scope.py",
+    "--verify-packages",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8c41b5be8989cdb0/private/gate/provider-packages"
+   ],
+   "exit": 0,
+   "seconds": 0.9,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8c41b5be8989cdb0/private/gate/provider-package-verify-all.log",
+   "counts": {}
+  },
+  {
+   "name": "provider-package-verify",
+   "argv": [
+    "/usr/bin/python3",
+    "providers/package.py",
+    "verify",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8c41b5be8989cdb0/private/gate/provider-packages/qcore.libevent"
+   ],
+   "exit": 0,
+   "seconds": 0.1,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8c41b5be8989cdb0/private/gate/provider-package-verify.log",
+   "counts": {}
+  },
+  {
+   "name": "provider-test",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8c41b5be8989cdb0/scripts/gate_slot.py",
+    "rust-suite",
+    "--receipt",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8c41b5be8989cdb0/private/gate/slots/provider-test.json",
+    "--",
+    "cargo",
+    "test",
+    "--manifest-path",
+    "providers/Cargo.toml",
+    "--workspace",
+    "--locked",
+    "--offline"
+   ],
+   "exit": 0,
+   "seconds": 2264.1,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8c41b5be8989cdb0/private/gate/provider-test.log",
+   "counts": {
+    "summaries": 43,
+    "passed": 133,
+    "failed": 0,
+    "ignored": 1,
+    "measured": 0,
+    "filtered": 0
+   },
+   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8c41b5be8989cdb0/private/gate/slots/provider-test.json"
+  },
+  {
+   "name": "provider-fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--manifest-path",
+    "providers/Cargo.toml",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "exit": 0,
+   "seconds": 4.4,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8c41b5be8989cdb0/private/gate/provider-fmt.log",
+   "counts": {}
+  },
+  {
+   "name": "provider-clippy",
+   "argv": [
+    "cargo",
+    "clippy",
+    "--manifest-path",
+    "providers/Cargo.toml",
+    "--workspace",
+    "--all-targets",
+    "--locked",
+    "--offline",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "exit": 0,
+   "seconds": 28.4,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8c41b5be8989cdb0/private/gate/provider-clippy.log",
+   "counts": {}
+  }
+ ],
+ "ok": false,
+ "finished": "20261103T152541Z"
+}

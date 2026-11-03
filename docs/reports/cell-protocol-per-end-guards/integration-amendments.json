@@ -1,0 +1,42 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "CELL-PROTOCOL-PER-END-GUARDS",
+ "base": "1b859bdc9",
+ "measured_tip": "22b4c8fa5",
+ "increment_paragraph": "**CELL-PROTOCOL-PER-END-GUARDS** (gateway rule 38f, grammar G05i amended, contract specification C04.6.3; registered by CELL-PROTOCOL-CLOSE-ACTUAL; USER DECISION 2026-11-03, verbatim: \"Per-end sentinels\"; USER DIRECTION 2026-11-03, standing: Fluent Bit's caller tests can be wrong against the functions' actual results): each channel end may carry its own sentinel (a `!= -1` or `> 0` guard over exactly its own `#fresh` cell, `#same` names with it) beside at most one record guard; a path holds one fact per (record, guard), and a per-end group gains a fact at a cell-bearing call only through its own cells. A sentinel's dead edge decides \"no cell is live\" only when no possible descriptor is on it: `!= -1`'s does, `> 0`'s holds descriptor 0 (a success value of every creator and calloc's absent value) and leaves its cells undecided, so a Fluent Bit `> 0` end test is never read as the end's absence. A join keeps every name that may be live (pending names normalized into each path's table, two stale protocol cells joined stale), and the holder's release ends the record's protocols, refusing where a cell may be live (`descriptor-cell-zero-undecided` for a `> 0` dead edge, a candidate defect, never `Unsafe`). Declared on the host `flb_config_set_program_name` (re-pinned at 046accf6, 34155955, 66910c10; inventory 147 -> 161 clauses): per-end `> 0` sentinels of `flb_output_instance` and `flb_input_instance` (`ch_events`, `ingress_queue_channels`) and `flb_input_thread_instance` (`ch_parent_events`, `ch_thread_events`); `flb_config`'s withheld with its flag protocol. Census (`census.py --check`, three trees): 33 stores keep the per-end claim; 16 end tests per tree, 0 exact, 0 redundant, 16 wrong (descriptor 0 read as absent; `ch_event.fd`'s -1 read as live). Package `protocol.rs`/`cells.rs`, host `legacy_descriptor_cells.rs`; Lean `QCore.CellProtocolPerEnd` (14 theorems, vectors bound to the Rust text); 15 fixtures (`tests/cell_protocol_per_end_guards.rs`); ten existing `> 0`/join fixture vectors change, nine gaining refusals and one losing a redundant `protocol-broken` at a refused release. Predicted `none` on every route; expected leaf trades at the Fluent Bit destroyers (gate refusals at the closes replaced by `zero-undecided` at `flb_free`). Report: docs/reports/cell-protocol-per-end-guards/README.md.",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "CELL-PROTOCOL-PER-END-GUARDS",
+   "operation": "retire",
+   "why": "DISCHARGED by CELL-PROTOCOL-PER-END-GUARDS (gateway rule 38f, docs/reports/cell-protocol-per-end-guards/README.md; USER DECISION 2026-11-03, verbatim: \"Per-end sentinels\"): G05i admits a per-end sentinel per channel end beside at most one record guard, one fact per guard; a `> 0` dead edge leaves its end undecided (descriptor 0) and is never read as absent; the holder's release ends the protocol, refusing `descriptor-cell-zero-undecided` where a `> 0` dead edge left an end; a call reaching the record between a close with no sentinel store and the release refuses (`descriptor-cell-protocol-broken`); Lean QCore.CellProtocolPerEnd; fixtures for every Fluent Bit end; the declarations of flb_output_instance, flb_input_instance and flb_input_thread_instance with their store and end-test census; the declared measurement is the integrator's. Residuals moved: the window before the release (CELL-PROTOCOL-RELEASE-WINDOW-FRAMES), the wrong end tests (CELL-GUARD-DESCRIPTOR-ZERO-READ-AS-ABSENT), flb_config's ends (CELL-PROTOCOL-NONCELL-ACTUAL-REACHES-RECORD).",
+   "source": "docs/reports/cell-protocol-per-end-guards/README.md"
+  },
+  {
+   "id": "CELL-GUARD-DESCRIPTOR-ZERO-READ-AS-ABSENT",
+   "operation": "amend",
+   "text": "AMENDED (CELL-PROTOCOL-PER-END-GUARDS, 2026-11-03, docs/reports/cell-protocol-per-end-guards/README.md): rehomed from the retired CELL-PROTOCOL-PER-END-GUARDS, the channel destroyers' `> 0` end tests (flb_output.c:615/:619, flb_input.c:1311/:1315/:1319/:1323, flb_input_thread.c:210/:213/:218/:221, flb_config.c:617/:625/:627 at 046accf6), and from that card's end-test census `flb_config_exit`'s `if (config->ch_event.fd)` (:607, the absent -1 of `MK_EVENT_ZERO` read as live and descriptor 0 as absent) and `ch_notif[1] <= 0` in flb_engine_started/flb_engine_failed (:1034/:1048): 16 end tests per tree, every one wrong. Rule 38f reads none of them as an end's absence: the analyzer now names an end left on the `> 0` dead edge at its holder's release (`descriptor-cell-zero-undecided`, Unknown) wherever the record resolves. Source readings; nothing filed upstream.",
+   "source": "docs/reports/cell-protocol-per-end-guards/README.md"
+  },
+  {
+   "id": "CELL-PROTOCOL-NONCELL-ACTUAL-REACHES-RECORD",
+   "operation": "amend",
+   "text": "AMENDED (CELL-PROTOCOL-PER-END-GUARDS, 2026-11-03, docs/reports/cell-protocol-per-end-guards/README.md): a per-end sentinel group (rule 38f) already gains a fact at a cell-bearing call only through a cell of its own the call spells; the record guard keeps the reading this entry describes. flb_config's per-end `> 0` text (ch_manager[0..1], ch_event.fd #same(ch_manager[0]), ch_notif[0..1]; the report's section 3) is withheld to be declared with its flag protocol under this entry's DISCHARGE (declared alone it would put the Safe row flb_engine_started on the declaration while reading nothing there).",
+   "source": "docs/reports/cell-protocol-per-end-guards/README.md"
+  },
+  {
+   "id": "FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME",
+   "operation": "amend",
+   "text": "AMENDED (CELL-PROTOCOL-PER-END-GUARDS, 2026-11-03, docs/reports/cell-protocol-per-end-guards/README.md; USER DECISION 2026-11-03, verbatim: \"Per-end sentinels\"): the `> 0` channel records are declared, each end its own sentinel (flb_output_instance, flb_input_instance incl. ingress_queue_channels, flb_input_thread_instance beside its flag), read by rule 38f: a `> 0` dead edge never decides an end absent, the holder's release ends the protocol. LEFT: flb_config's ends (CELL-PROTOCOL-NONCELL-ACTUAL-REACHES-RECORD) and the window between a close and the release (CELL-PROTOCOL-RELEASE-WINDOW-FRAMES).",
+   "source": "docs/reports/cell-protocol-per-end-guards/README.md"
+  },
+  {
+   "id": "CELL-PROTOCOL-RELEASE-WINDOW-FRAMES",
+   "operation": "register",
+   "title": "A call reaching a record between an end's close and the holder's release refuses",
+   "text": "Registered by CELL-PROTOCOL-PER-END-GUARDS (rule 38f). Fluent Bit's destroyers close an end without storing its sentinel and keep using the record before flb_free (flb_output_free_properties(ins), mk_list_del(&ins->_head), flb_storage_input_destroy(ins), flb_tp_destroy(thi->tp)); in that window the closed end still looks live, so a contracted call that may reach the record refuses (`descriptor-cell-protocol-broken`), and the holder's release then ends the protocol. Options: (a) callee frame declarations (a declared or body-checked clause that the callee reads no end member); (b) a member-actual narrowing (an actual such as `ins->processor` reaches no end), unsound under container_of; (c) keep the refusal. Recommended (c) until an end test reads the holder's own sentinel, then (a): today every Fluent Bit release of these records refuses `descriptor-cell-zero-undecided` first, so no row moves under any option. DISCHARGE: a user decision among the options, its reading with Lean parity, fixtures and a declared measurement.",
+   "source": "docs/reports/cell-protocol-per-end-guards/README.md",
+   "recorded_by": "CELL-PROTOCOL-PER-END-GUARDS"
+  }
+ ]
+}
