@@ -280,8 +280,10 @@ ledger changes:
     is.
 
 **Card gate.** `python3 scripts/gate_scope.py --base e3050fe46 --out
-private/gate` ran on `2e689174f`, with a clean tree. The scope selected no
-crate and no Lean module, and no provider change. Every step exited 0:
+private/gate2` ran on `da3fb519b` (the decision and amendments), with a clean
+tree. That commit is the census commit `2e689174f` plus report text and the
+amendments file. The scope selected no crate and no Lean module, and no
+provider change. Every step exited 0:
 
 | Step | Exit | Counts |
 |---|---|---|
@@ -290,7 +292,7 @@ crate and no Lean module, and no provider change. Every step exited 0:
 | Python suite | 0 | 577 tests |
 
 The record is [gate.json](gate.json). The console log is
-`/tmp/claude-1000/-media-Data-GitHub-quirin-lang--claude-worktrees-launch-cards-clean-worktrees-5365ff/6fcd7fbd-1cae-4a40-a37d-5bce071c02c6/scratchpad/cgrr-gate-console.log`.
+`/tmp/claude-1000/-media-Data-GitHub-quirin-lang--claude-worktrees-launch-cards-clean-worktrees-5365ff/6fcd7fbd-1cae-4a40-a37d-5bce071c02c6/scratchpad/cgrr-gate2-console.log`. The first run (`private/gate`, on `2e689174f`) also exited 0 at every step (577 tests).
 
 ## 6. Observations (not findings)
 

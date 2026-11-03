@@ -2,13 +2,15 @@
  "schema": "quirin-gate-scope/1",
  "source": "git diff",
  "base": "e3050fe4691a6b55103e1cd51314837213e9f0e2",
- "head": "2e689174fbdf8fc16b20927dcebd66cb13dddc72",
+ "head": "da3fb519b99577739861bd9549e9a0ab1aa3bbb6",
  "committed": [
   "docs/reports/cell-guard-result-range/README.md",
   "docs/reports/cell-guard-result-range/census/bodies.json",
   "docs/reports/cell-guard-result-range/census/census.json",
   "docs/reports/cell-guard-result-range/census/census.py",
-  "docs/reports/cell-guard-result-range/census/sites.json"
+  "docs/reports/cell-guard-result-range/census/sites.json",
+  "docs/reports/cell-guard-result-range/gate.json",
+  "docs/reports/cell-guard-result-range/integration-amendments.json"
  ],
  "uncommitted": [],
  "scope": {
@@ -17,7 +19,9 @@
    "docs/reports/cell-guard-result-range/census/bodies.json",
    "docs/reports/cell-guard-result-range/census/census.json",
    "docs/reports/cell-guard-result-range/census/census.py",
-   "docs/reports/cell-guard-result-range/census/sites.json"
+   "docs/reports/cell-guard-result-range/census/sites.json",
+   "docs/reports/cell-guard-result-range/gate.json",
+   "docs/reports/cell-guard-result-range/integration-amendments.json"
   ],
   "attribution": {
    "docs/reports/cell-guard-result-range/README.md": [
@@ -33,6 +37,12 @@
     "class prose"
    ],
    "docs/reports/cell-guard-result-range/census/sites.json": [
+    "class prose"
+   ],
+   "docs/reports/cell-guard-result-range/gate.json": [
+    "class prose"
+   ],
+   "docs/reports/cell-guard-result-range/integration-amendments.json": [
     "class prose"
    ]
   },
@@ -100,7 +110,7 @@
   }
  ],
  "slots": true,
- "started": "20261102T194838Z",
+ "started": "20261103T012858Z",
  "ran": true,
  "steps": [
   {
@@ -115,7 +125,7 @@
    ],
    "exit": 0,
    "seconds": 0.0,
-   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8b5c45fa16e81975/private/gate/submodules.log",
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8b5c45fa16e81975/private/gate2/submodules.log",
    "counts": {
     "submodules": 1,
     "not_checked_out_or_moved": []
@@ -131,8 +141,8 @@
     "--check"
    ],
    "exit": 0,
-   "seconds": 4.1,
-   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8b5c45fa16e81975/private/gate/fmt.log",
+   "seconds": 3.9,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8b5c45fa16e81975/private/gate2/fmt.log",
    "counts": {}
   },
   {
@@ -146,8 +156,8 @@
     "scripts/tests"
    ],
    "exit": 0,
-   "seconds": 50.3,
-   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8b5c45fa16e81975/private/gate/python.log",
+   "seconds": 44.3,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a8b5c45fa16e81975/private/gate2/python.log",
    "counts": {
     "tests": 577,
     "skipped": 0,
@@ -156,5 +166,5 @@
   }
  ],
  "ok": true,
- "finished": "20261102T194932Z"
+ "finished": "20261103T012946Z"
 }
