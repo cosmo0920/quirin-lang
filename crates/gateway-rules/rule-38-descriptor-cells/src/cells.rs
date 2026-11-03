@@ -298,6 +298,31 @@ impl<K: Ord + Clone> Cells<K> {
         }
     }
 
+    /// Card CELL-PROTOCOL-PER-END-GUARDS (rule 38f): [`Self::join`], except
+    /// that a name `keep` selects (a declared protocol's cell) that both paths
+    /// left stale stays stale, whatever identities the paths name: neither
+    /// path leaves a live descriptor in it.
+    pub fn join_keeping_stale(&mut self, incoming: &Self, keep: impl Fn(&K) -> bool) {
+        let both = self
+            .names
+            .iter()
+            .filter(|(key, (_, status))| {
+                *status == Status::Stale
+                    && keep(key)
+                    && matches!(incoming.names.get(*key), Some((_, Status::Stale)))
+            })
+            .map(|(key, _)| key.clone())
+            .collect::<Vec<_>>();
+        self.join(incoming);
+        for key in both {
+            if let Some(named) = self.names.get_mut(&key)
+                && named.1 != Status::Stale
+            {
+                *named = (JOINED, Status::Stale);
+            }
+        }
+    }
+
     /// The names that may still be live: at an exit each refuses
     /// ([`Refusal::Escapes`]).
     pub fn escaping(&self) -> impl Iterator<Item = &K> {

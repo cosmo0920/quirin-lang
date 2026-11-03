@@ -619,7 +619,7 @@ pub fn run_per_end_vector(trace: &str) -> &'static str {
                     current.normalize(&mut cells, &keys);
                     other.normalize(&mut other_cells, &keys);
                     *current = current.join(&other);
-                    cells.join(&other_cells);
+                    cells.join_keeping_stale(&other_cells, |_| true);
                     Ok(())
                 }
                 ["call"] => match fact.take() {
@@ -664,6 +664,64 @@ mod tests {
         for (trace, expected) in PER_END_VECTORS {
             assert_eq!(run_per_end_vector(trace), *expected, "{trace}");
         }
+    }
+
+    /// The Lean vectors (`QCore.CellProtocolPerEnd.perEndVectors`) are the
+    /// Rust ones, entry for entry.
+    #[test]
+    fn the_per_end_vectors_are_the_lean_ones() {
+        const LEAN: &str = include_str!("../../../../proof/QCore/CellProtocolPerEnd.lean");
+        let block = LEAN
+            .split("def perEndVectors")
+            .nth(1)
+            .and_then(|rest| rest.split("\n]").next())
+            .expect("the Lean vectors");
+        let lean = block
+            .lines()
+            .map(str::trim)
+            .filter(|line| line.starts_with("(."))
+            .map(|line| line.trim_end_matches(',').to_owned())
+            .collect::<Vec<_>>();
+        let rust = PER_END_VECTORS
+            .iter()
+            .map(|(trace, outcome)| {
+                let (op, steps) = trace.split_once(':').expect("an op");
+                let op = if op == "pos" {
+                    "positive"
+                } else {
+                    "notMinusOne"
+                };
+                let steps = steps
+                    .split(';')
+                    .map(
+                        |step| match step.split_whitespace().collect::<Vec<_>>().as_slice() {
+                            ["test", "live"] => ".testLive".to_owned(),
+                            ["test", "dead"] => ".testDead".to_owned(),
+                            ["close", cell] => format!(".close {}", usize::from(*cell == "m")),
+                            ["store", cell, value] => {
+                                let value = if value.starts_with('-') {
+                                    format!("({value})")
+                                } else {
+                                    (*value).to_owned()
+                                };
+                                format!(".store {} {value}", usize::from(*cell == "m"))
+                            }
+                            [word] => format!(".{word}"),
+                            other => panic!("{other:?}"),
+                        },
+                    )
+                    .collect::<Vec<_>>()
+                    .join(", ");
+                let outcome = match *outcome {
+                    "double-release" => "doubleRelease",
+                    "owner-released" => "ownerReleased",
+                    "zero-undecided" => "zeroUndecided",
+                    other => other,
+                };
+                format!("(.{op}, [{steps}], .{outcome})")
+            })
+            .collect::<Vec<_>>();
+        assert_eq!(lean, rust);
     }
 
     #[test]

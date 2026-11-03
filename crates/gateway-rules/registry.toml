@@ -284,13 +284,15 @@ placements = [
 # actual (direct, or a record pointer read as its first member, C11
 # 6.7.2.1p15). Card CELL-PROTOCOL-CLOSE-ACTUAL (rule 38d) adds a fourth: the
 # access gate's admission of a declared cell's `close` actual for rule 38c's
-# close.
+# close. Card CELL-PROTOCOL-PER-END-GUARDS (rule 38f) adds no arm: its
+# per-end facts, the `> 0` dead edge and the holder's release are the protocol
+# model's (`protocol::Fact`), whose Lean module is listed here.
 # Off, the host refuses every call of a declaration carrying a cell state (the
 # reading is not asked), which only removes admissions.
 [[rule]]
 id = "38"
 crate = "rule-38-descriptor-cells"
-lean = ["QCore.DescriptorCells", "QCore.CellProtocolCloseActual", "QCore.ResultSet"]
+lean = ["QCore.DescriptorCells", "QCore.CellProtocolCloseActual", "QCore.ResultSet", "QCore.CellProtocolPerEnd"]
 document = "docs/agents/rules/38.md"
 off = "refuses"
 placements = [

@@ -1645,30 +1645,15 @@ pub(super) fn join_cells(current: &mut AbstractState, incoming: &AbstractState) 
     // A protocol cell both paths left stale names no live descriptor,
     // whatever identities the paths name (the table's own join reads two
     // different stale identities as undecided).
-    let stale = |cells: &rule_38_descriptor_cells::Cells<Key>, key: &Key| {
-        matches!(
-            cells.get(key),
-            Some((_, rule_38_descriptor_cells::Status::Stale))
-        )
-    };
-    let both_stale = joined
+    let protocol_keys = joined
         .values()
         .flat_map(|hosted| hosted.keys.values())
-        .filter(|key| stale(&current.cells, key) && stale(&incoming_state.cells, key))
         .cloned()
         .collect::<BTreeSet<_>>();
     current.cell_protocols = joined;
-    current.cells.join(&incoming_state.cells);
-    for key in both_stale {
-        if !stale(&current.cells, &key) {
-            current.cells.forget(|recorded| *recorded == key);
-            current.cells.adopt(
-                key,
-                rule_38_descriptor_cells::cells::JOINED,
-                rule_38_descriptor_cells::Status::Stale,
-            );
-        }
-    }
+    current
+        .cells
+        .join_keeping_stale(&incoming_state.cells, |key| protocol_keys.contains(key));
 }
 
 // ----- Parser-side readers (pure, over the statement's words) -----

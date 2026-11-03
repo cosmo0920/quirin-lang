@@ -99,8 +99,8 @@
     {
       "function": "flb_config_set_program_name",
       "module": "fluent_bit/teardown_destroy.qv",
-      "contract_sha256": "487f280205e3b17fcd19040dfb6a95f6aab3ae158e5b3b0f03c2cf04a56da4aa",
-      "pinned_at": "2026-11-02T09:30:35Z",
+      "contract_sha256": "7f2109e9b29fc615efa4dee30a70d056a39f811c5b3e65cd2f8378e7355e4bb5",
+      "pinned_at": "2026-11-03T14:15:01Z",
       "identities": [
         {
           "reviewed_at": [
