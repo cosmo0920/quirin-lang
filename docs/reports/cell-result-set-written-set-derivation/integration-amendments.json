@@ -1,0 +1,36 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "CELL-RESULT-SET-WRITTEN-SET-DERIVATION",
+ "base": "c8c7edf21",
+ "measured_tip": "864519c36",
+ "increment_paragraph": "**CELL-RESULT-SET-WRITTEN-SET-DERIVATION** (gateway rule 38e amended, rule 38f amended, contract specification C09.4; the user launched it on 2026-11-04, verbatim: \"CELL-RESULT-SET-WRITTEN-SET-DERIVATION.\"; USER DECISIONS 2026-11-04, verbatim: \"Basically, Q1(a) and Q2(i) But we must not handle descriptor 0 as a valid handle. So, we need to exclude the 0 descriptor like: written_set(pipedes, [1, MAX]); a live descriptor is in [1, MAX]\" and \"Write [1, MAX]\"): `quirin-audit pin --bounds --derive-results` now derives every declared `written_set(SLOT[K], SET) when #result == C` of a pinned declaration from the configured body chain, path by path (`qcore_c_gateway::null_deref::derive_written_sets_c11`, `null_deref/written.rs`; the C-free rule `qcore_core::written_set`): forwarding `return G(.., P, ..)` reads G's written set of that position, a store `*P = A[k]` after `ret = G(.., A, ..)` reads G's written set of the one class a test narrows `ret` to (a `return ret` whose narrowed set excludes the class constrains nothing), and anything else derives nothing (an unwritten or unknown slot on a path that may return the class, a call or foreign store after the slot store, an address-taken local, an out array handed to an undeclared callee, a loop); every configuration of the defining file is read (each configuration's body decides its own set) and each derived set must lie inside the declared one, recorded in the lock as `written_sets`; the route keys an in-force one `FUNCTION#P[K]==C` and rule 38f's creation check reads only the class the cell's `#fresh` state holds in. Pinned with derivations at 66910c10, 34155955 and 046accf6: `mk_event_channel_create`'s `r_fd[0]`/`w_fd[0]` [1, MAX] when it returns 0 (`monkey/result_range.qv`; epoll chain, helpers `_mk_event_add`, `_mk_event_channel_create`, resting on `epoll_ctl` and `pipe`) and `flb_pipe_create`'s `pipefd[0..1]` [1, MAX] (`fluent_bit/result_range.qv`, a new module of the Fluent Bit bounds view; forwarding to `pipe`, both static and shared configurations); libevent's channel body and the Windows `flb_pipe_create` derive nothing. Every set rests on pipe's DECLARED [1, MAX], not POSIX's [0, MAX], under which the chain derives [0, MAX] and nothing is pinned (CELL-RESULT-SET-DESCRIPTOR-ZERO-POLICY). Lean `QCore.WrittenSetDerivation` (`combine_sound`, `narrow_sound`, `resolve_sound`, `after_store_sound`, `forwarding_sound`, the bound's attribution, vectors bound to the Rust). Predicted: no status move; the slice's `input_instance_channel_events_init` creations at :1380 refuse `descriptor-cell-undecided` in place of `descriptor-cell-live-set-unproved`. Report: [docs/reports/cell-result-set-written-set-derivation/README.md](../../reports/cell-result-set-written-set-derivation/README.md).",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "CELL-RESULT-SET-WRITTEN-SET-DERIVATION",
+   "operation": "retire",
+   "why": "DISCHARGED by CELL-RESULT-SET-WRITTEN-SET-DERIVATION (docs/reports/cell-result-set-written-set-derivation/README.md): the slot derivation at `pin --bounds --derive-results` (forwarding, a store after the C library call's failure exit with the returned local narrowed, every configuration read, fail-closed otherwise) with fixtures for each shape and the refusing ones (libevent backend, Windows flb_pipe_create, a store before the failure exit, an unnarrowed local, a callee with no written set, a loop); mk_event_channel_create r_fd[0]/w_fd[0] and flb_pipe_create pipefd[0..1] [1, MAX] when #result == 0 pinned and derived at 66910c10, 34155955 and 046accf6 with their lock records (providers/contracts.py sync and the lock diffs in one commit); the route's `FUNCTION#P[K]==C` written sets read by rule 38f for the cell state's class; Lean QCore.WrittenSetDerivation; PREDICTION.md before implementation (measurement by the integrator). Every set rests on pipe's declared [1, MAX] (CELL-RESULT-SET-DESCRIPTOR-ZERO-POLICY).",
+   "source": "docs/reports/cell-result-set-written-set-derivation/README.md"
+  },
+  {
+   "id": "FLB-PIPE-CREATE-CELL-DECLARATION",
+   "operation": "register",
+   "title": "flb_pipe_create's pinned written sets are read by no route: it declares no cells",
+   "text": "Registered by CELL-RESULT-SET-WRITTEN-SET-DERIVATION. `flb_pipe_create`'s `written_set(pipefd[0|1], [1, MAX]) when #result == 0` is pinned and derived at 66910c10, 34155955 and 046accf6 (fluent_bit/result_range.qv), but the function has no resource v1 declaration and no cell states, so its callers (flb_create's `ch_data`, flb_lib.c:181; flb_input_channel_init, flb_input.c:2219; the ingress channels, flb_input_ingest.c:488) stay `call to uncontracted function `flb_pipe_create`` and rule 38f never reads the sets. A slot cell names `#pointee` (element 0) only, so `pipefd[1]` needs a per-element slot place (G05d). DISCHARGE: a cell declaration of flb_pipe_create's two ends read through these written sets, with fixtures and a measurement; every reading it decides is attributed to the declared bound (CELL-RESULT-SET-DESCRIPTOR-ZERO-POLICY).",
+   "source": "docs/reports/cell-result-set-written-set-derivation/README.md",
+   "recorded_by": "CELL-RESULT-SET-WRITTEN-SET-DERIVATION"
+  },
+  {
+   "id": "CELL-RESULT-SET-DESCRIPTOR-ZERO-POLICY",
+   "operation": "amend",
+   "text": "AMENDED (CELL-RESULT-SET-WRITTEN-SET-DERIVATION, 2026-11-04, docs/reports/cell-result-set-written-set-derivation/README.md): the pin-derived written sets of mk_event_channel_create (r_fd[0], w_fd[0]) and flb_pipe_create (pipefd[0..1]), [1, MAX] when #result == 0, rest on pipe's declared [1, MAX]; under POSIX's [0, MAX] the same bodies derive [0, MAX] and nothing is pinned. The slice's input_instance_channel_events_init creations at flb_input.c:1380 (34155955, units 0 and 1) pass the live-set check only through that bound (`descriptor-cell-undecided` in place of `descriptor-cell-live-set-unproved`).",
+   "source": "docs/reports/cell-result-set-written-set-derivation/README.md"
+  },
+  {
+   "id": "CELL-GUARD-RESULT-RANGE-CORPUS-MONKEY-IDENTITY",
+   "operation": "amend",
+   "text": "AMENDED (CELL-RESULT-SET-WRITTEN-SET-DERIVATION, 2026-11-04, docs/reports/cell-result-set-written-set-derivation/README.md): mk_event_channel_create's pin now also carries derived written sets (r_fd[0], w_fd[0] [1, MAX] when #result == 0, derived over each Fluent Bit tree's configured epoll unit). The corpus's standalone Monkey units are a libevent build, whose body derives nothing (evutil_socketpair states no written set; fixture a_backend_whose_call_states_no_written_set_derives_nothing), yet read the Fluent Bit-tree pin; no corpus Monkey unit creates into a cell with a declared live set, so nothing reads them there today. The same holds for a build configured with another backend than the derivation's (the identity's sites are lexical): the discharge should key a derivation to the configuration it read.",
+   "source": "docs/reports/cell-result-set-written-set-derivation/README.md"
+  }
+ ]
+}
