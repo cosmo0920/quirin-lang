@@ -462,5 +462,6 @@ import QCore.WholeProgram
 import QCore.WriteLend
 import QCore.WriteLendTasks
 import QCore.WriteLendTasksExercise
+import QCore.WrittenSetDerivation
 
 /-! The executable formal core of QCore-C revision 0.1. -/

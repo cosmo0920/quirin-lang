@@ -288,11 +288,13 @@ placements = [
 # per-end facts, the `> 0` dead edge and the holder's release are the protocol
 # model's (`protocol::Fact`), whose Lean module is listed here.
 # Off, the host refuses every call of a declaration carrying a cell state (the
-# reading is not asked), which only removes admissions.
+# reading is not asked), which only removes admissions. Card
+# CELL-RESULT-SET-WRITTEN-SET-DERIVATION (rule 38e as amended) adds no arm: the
+# slot derivation runs at pin time, and its Lean module is listed here.
 [[rule]]
 id = "38"
 crate = "rule-38-descriptor-cells"
-lean = ["QCore.DescriptorCells", "QCore.CellProtocolCloseActual", "QCore.ResultSet", "QCore.CellProtocolPerEnd", "QCore.CellResultSet"]
+lean = ["QCore.DescriptorCells", "QCore.CellProtocolCloseActual", "QCore.ResultSet", "QCore.CellProtocolPerEnd", "QCore.CellResultSet", "QCore.WrittenSetDerivation"]
 document = "docs/agents/rules/38.md"
 off = "refuses"
 placements = [
