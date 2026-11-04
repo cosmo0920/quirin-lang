@@ -1,0 +1,257 @@
+{
+  "crates": {
+    "qcore-provider-chunkio": {
+      "bounds_view": [
+        "chunkio/file_st_bounds.qv",
+        "chunkio/meta_len_bounds.qv"
+      ],
+      "outer_view": [],
+      "refused": {
+        "chunkio/chunk_destructor.qv": "<repository>/providers/qcore-provider-chunkio/contracts/chunkio/chunk_destructor.qv: Chunk at byte 144: resource modules accept only extern functions",
+        "chunkio/constructor_failure_observation.qv": "<repository>/providers/qcore-provider-chunkio/contracts/chunkio/constructor_failure_observation.qv: native_constructor_failure_observation at byte 171: unsupported or duplicate requirement `controlled_allocation_failure`",
+        "chunkio/context_destructor.qv": "<repository>/providers/qcore-provider-chunkio/contracts/chunkio/context_destructor.qv: ChunkContext at byte 125: resource modules accept only extern functions",
+        "chunkio/counters.qv": "<repository>/providers/qcore-provider-chunkio/contracts/chunkio/counters.qv: cio_chunk_counter_total_add at byte 401: unsupported parameter type or usage annotation",
+        "chunkio/error_frame.qv": "<repository>/providers/qcore-provider-chunkio/contracts/chunkio/error_frame.qv: cio_error_reset at byte 245: unsupported parameter type or usage annotation",
+        "chunkio/error_state.qv": "<repository>/providers/qcore-provider-chunkio/contracts/chunkio/error_state.qv: cio_error_reset at byte 324: unsupported parameter type or usage annotation",
+        "chunkio/file_close.qv": "<repository>/providers/qcore-provider-chunkio/contracts/chunkio/file_close.qv: file_close_no_delete at byte 252: unsupported or duplicate requirement `live_exclusive_chunk_with_nullable_owned_file_backend`",
+        "chunkio/file_close_delete.qv": "<repository>/providers/qcore-provider-chunkio/contracts/chunkio/file_close_delete.qv: file_close_delete at byte 319: unsupported or duplicate requirement `inherited_no_delete_custody_frame_and_abi_premises`",
+        "chunkio/file_st_bounds.qv": "<repository>/providers/qcore-provider-chunkio/contracts/chunkio/file_st_bounds.qv: cio_file_st_get_hash at byte 1110: unsupported or duplicate requirement `bounds_contract_v1`",
+        "chunkio/filesystem_attempts.qv": "<repository>/providers/qcore-provider-chunkio/contracts/chunkio/filesystem_attempts.qv: file_close_result_use at byte 244: unsupported or duplicate requirement `source_has_cleanup_attempts`",
+        "chunkio/filesystem_chunk_close.qv": "<repository>/providers/qcore-provider-chunkio/contracts/chunkio/filesystem_chunk_close.qv: filesystem_chunk_close at byte 258: unsupported or duplicate requirement `nullable_owned_filesystem_chunk_and_live_name`",
+        "chunkio/filesystem_constructor_failure_observation.qv": "<repository>/providers/qcore-provider-chunkio/contracts/chunkio/filesystem_constructor_failure_observation.qv: native_file_constructor_failure_observation at byte 171: unsupported or duplicate requirement `compiled_source_and_build_recorded`",
+        "chunkio/filesystem_delete.qv": "<repository>/providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete.qv: native_delete_outcomes at byte 1320: unsupported or duplicate requirement `nonnull_live_exclusive_record`",
+        "chunkio/filesystem_delete_attempt.qv": "<repository>/providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete_attempt.qv: native_delete_result_use at byte 256: unsupported or duplicate requirement `source_has_cleanup_attempts`",
+        "chunkio/filesystem_delete_observation.qv": "<repository>/providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete_observation.qv: native_delete_observation at byte 250: unsupported or duplicate requirement `exclusive_nonnull_live_record_and_terminated_path`",
+        "chunkio/filesystem_descriptor_failure_observation.qv": "<repository>/providers/qcore-provider-chunkio/contracts/chunkio/filesystem_descriptor_failure_observation.qv: native_file_descriptor_failure_observation at byte 175: unsupported or duplicate requirement `compiled_source_and_build_recorded`",
+        "chunkio/filesystem_existing_observation.qv": "<repository>/providers/qcore-provider-chunkio/contracts/chunkio/filesystem_existing_observation.qv: native_file_existing_observation at byte 173: unsupported or duplicate requirement `compiled_source_and_build_recorded`",
+        "chunkio/filesystem_integrity_observation.qv": "<repository>/providers/qcore-provider-chunkio/contracts/chunkio/filesystem_integrity_observation.qv: native_file_integrity_observation at byte 453: unsupported or duplicate requirement `compiled_source_and_build_recorded`",
+        "chunkio/filesystem_observation.qv": "<repository>/providers/qcore-provider-chunkio/contracts/chunkio/filesystem_observation.qv: native_cleanup_observation at byte 248: unsupported or duplicate requirement `controlled_returning_syscall_hooks`",
+        "chunkio/filesystem_os_constructor_observation.qv": "<repository>/providers/qcore-provider-chunkio/contracts/chunkio/filesystem_os_constructor_observation.qv: native_file_os_constructor_observation at byte 177: unsupported or duplicate requirement `compiled_source_and_build_recorded`",
+        "chunkio/filesystem_os_observation.qv": "<repository>/providers/qcore-provider-chunkio/contracts/chunkio/filesystem_os_observation.qv: native_os_cleanup_observation at byte 174: unsupported or duplicate requirement `exclusive_linux_fixture`",
+        "chunkio/filesystem_outcomes.qv": "<repository>/providers/qcore-provider-chunkio/contracts/chunkio/filesystem_outcomes.qv: native_close_outcomes at byte 1632: unsupported or duplicate requirement `nullable_live_exclusive_record`",
+        "chunkio/filesystem_reopen_failure_observation.qv": "<repository>/providers/qcore-provider-chunkio/contracts/chunkio/filesystem_reopen_failure_observation.qv: native_file_reopen_failure_observation at byte 292: unsupported or duplicate requirement `compiled_source_and_build_recorded`",
+        "chunkio/filesystem_sync_failure_observation.qv": "<repository>/providers/qcore-provider-chunkio/contracts/chunkio/filesystem_sync_failure_observation.qv: native_file_sync_failure_observation at byte 172: unsupported or duplicate requirement `compiled_source_and_build_recorded`",
+        "chunkio/filesystem_teardown_observation.qv": "<repository>/providers/qcore-provider-chunkio/contracts/chunkio/filesystem_teardown_observation.qv: native_file_teardown_observation at byte 177: unsupported or duplicate requirement `compiled_source_and_build_recorded`",
+        "chunkio/filesystem_transition_observation.qv": "<repository>/providers/qcore-provider-chunkio/contracts/chunkio/filesystem_transition_observation.qv: native_file_transition_observation at byte 168: unsupported or duplicate requirement `compiled_source_and_build_recorded`",
+        "chunkio/filesystem_unmap_failure_observation.qv": "<repository>/providers/qcore-provider-chunkio/contracts/chunkio/filesystem_unmap_failure_observation.qv: native_file_unmap_failure_observation at byte 170: unsupported or duplicate requirement `compiled_source_and_build_recorded`",
+        "chunkio/import_composition.qv": "<repository>/providers/qcore-provider-chunkio/contracts/chunkio/import_composition.qv: ChunkImportError at byte 180: resource modules accept only extern functions",
+        "chunkio/list_unlink.qv": "<repository>/providers/qcore-provider-chunkio/contracts/chunkio/list_unlink.qv: __mk_list_del at byte 411: unsupported parameter type or usage annotation",
+        "chunkio/lock_state.qv": "<repository>/providers/qcore-provider-chunkio/contracts/chunkio/lock_state.qv: cio_chunk_is_locked at byte 238: unsupported parameter type or usage annotation",
+        "chunkio/memory_backend.qv": "<repository>/providers/qcore-provider-chunkio/contracts/chunkio/memory_backend.qv: cio_memfs_close at byte 493: unsupported parameter type or usage annotation",
+        "chunkio/memory_close.qv": "<repository>/providers/qcore-provider-chunkio/contracts/chunkio/memory_close.qv: cio_chunk_close at byte 408: unsupported parameter type or usage annotation",
+        "chunkio/meta_len_bounds.qv": "<repository>/providers/qcore-provider-chunkio/contracts/chunkio/meta_len_bounds.qv: cio_file_st_get_meta_len at byte 1441: unsupported error, any-exit, or quantitative clause",
+        "chunkio/nested_cleanup.qv": "<repository>/providers/qcore-provider-chunkio/contracts/chunkio/nested_cleanup.qv: nested_cleanup at byte 98: unsupported or duplicate requirement `all_source_component_and_child_case_entry_outcome_premises`",
+        "chunkio/nested_memory_teardown.qv": "<repository>/providers/qcore-provider-chunkio/contracts/chunkio/nested_memory_teardown.qv: nested_memory_teardown at byte 94: unsupported or duplicate requirement `all_component_source_contract_premises`",
+        "chunkio/parent_teardown.qv": "<repository>/providers/qcore-provider-chunkio/contracts/chunkio/parent_teardown.qv: parent_teardown at byte 175: unsupported or duplicate requirement `nullable_owned_parent_and_distinct_nullable_owned_fields`",
+        "chunkio/stream_destructor.qv": "<repository>/providers/qcore-provider-chunkio/contracts/chunkio/stream_destructor.qv: ChunkStream at byte 130: resource modules accept only extern functions",
+        "chunkio/teardown_observation.qv": "<repository>/providers/qcore-provider-chunkio/contracts/chunkio/teardown_observation.qv: native_teardown_observation at byte 256: unsupported or duplicate requirement `observed_memory_profile`",
+        "chunkio/teardown_traversal.qv": "<repository>/providers/qcore-provider-chunkio/contracts/chunkio/teardown_traversal.qv: teardown_traversal at byte 170: unsupported or duplicate requirement `finite_exclusive_reciprocal_ring_with_live_sentinel`",
+        "chunkio/unmap_wrapper.qv": "<repository>/providers/qcore-provider-chunkio/contracts/chunkio/unmap_wrapper.qv: unmap_file_outcomes at byte 331: unsupported or duplicate requirement `live_exclusive_chunk_and_nullable_owned_file_backend`",
+        "chunkio/unsupported_close.qv": "<repository>/providers/qcore-provider-chunkio/contracts/chunkio/unsupported_close.qv: unsupported_chunk_close at byte 100: unsupported or duplicate requirement `nonnull_live_chunk_and_stream_with_unrecognized_int_backend`",
+        "chunkio/unsupported_constructor_observation.qv": "<repository>/providers/qcore-provider-chunkio/contracts/chunkio/unsupported_constructor_observation.qv: native_unsupported_constructor at byte 98: unsupported or duplicate requirement `selected_unsupported_int_case`",
+        "fluent_bit/busy_state.qv": "<repository>/providers/qcore-provider-chunkio/contracts/fluent_bit/busy_state.qv: flb_input_chunk_release_lock at byte 379: unsupported parameter type or usage annotation"
+      },
+      "resource_view": [
+        "chunkio/chunk_residency.qv",
+        "chunkio/chunk_sizes.qv",
+        "chunkio/resource_open_close.qv"
+      ]
+    },
+    "qcore-provider-cmetrics": {
+      "bounds_view": [
+        "cmetrics/null_deref.qv"
+      ],
+      "outer_view": [],
+      "refused": {
+        "cmetrics/counter_reset.qv": "<repository>/providers/qcore-provider-cmetrics/contracts/cmetrics/counter_reset.qv: cmt_counter_allow_reset at byte 254: unsupported parameter type or usage annotation",
+        "cmetrics/map_lifetime.qv": "<repository>/providers/qcore-provider-cmetrics/contracts/cmetrics/map_lifetime.qv: CmtMap at byte 959: resource modules accept only extern functions",
+        "cmetrics/metric_setters.qv": "<repository>/providers/qcore-provider-cmetrics/contracts/cmetrics/metric_setters.qv: cmt_metric_set at byte 1338: unsupported error, any-exit, or quantitative clause",
+        "cmetrics/null_deref.qv": "<repository>/providers/qcore-provider-cmetrics/contracts/cmetrics/null_deref.qv: cmt_destroy at byte 1160: unsupported error, any-exit, or quantitative clause",
+        "cmetrics/opts_lifetime.qv": "<repository>/providers/qcore-provider-cmetrics/contracts/cmetrics/opts_lifetime.qv: CmtOptsContents at byte 795: resource modules accept only extern functions",
+        "cmetrics/typed_setters.qv": "<repository>/providers/qcore-provider-cmetrics/contracts/cmetrics/typed_setters.qv: cmt_counter_set at byte 1156: unsupported error, any-exit, or quantitative clause"
+      },
+      "resource_view": [
+        "cmetrics/context_lifetime.qv",
+        "cmetrics/metric_values.qv",
+        "cmetrics/mpack_utils.qv"
+      ]
+    },
+    "qcore-provider-ctraces": {
+      "bounds_view": [],
+      "outer_view": [],
+      "refused": {},
+      "resource_view": [
+        "ctraces/context_lifetime.qv"
+      ]
+    },
+    "qcore-provider-libevent": {
+      "bounds_view": [
+        "monkey/result_range.qv"
+      ],
+      "outer_view": [],
+      "refused": {
+        "monkey/callback_binding.qv": "<repository>/providers/qcore-provider-libevent/contracts/monkey/callback_binding.qv: binding_scope at byte 400: unsupported predicate `created < enter`",
+        "monkey/callback_task_handoff.qv": "<repository>/providers/qcore-provider-libevent/contracts/monkey/callback_task_handoff.qv: selected_callbacks at byte 174: unsupported predicate `source_revision == \"66910c10a4d7eafa810b84229cf2dcf7b0f26f97\"`",
+        "monkey/composition.qv": "<repository>/providers/qcore-provider-libevent/contracts/monkey/composition.qv: MonkeyCompositionError at byte 240: resource modules accept only extern functions",
+        "monkey/cycle18_composition.qv": "<repository>/providers/qcore-provider-libevent/contracts/monkey/cycle18_composition.qv: callback_inventory at byte 401: unsupported predicate `callback_names == \"cb_event,cb_timeout,cb_wait_2_timeout\"`",
+        "monkey/descriptor_observation.qv": "<repository>/providers/qcore-provider-libevent/contracts/monkey/descriptor_observation.qv: observation_socketpair at byte 242: unsupported predicate `result == -1 or result == 0`",
+        "monkey/event_payload.qv": "<repository>/providers/qcore-provider-libevent/contracts/monkey/event_payload.qv: cb_event_source_projection at byte 401: unsupported predicate `function == \"cb_event\"`",
+        "monkey/native_platform_matrix.qv": "<repository>/providers/qcore-provider-libevent/contracts/monkey/native_platform_matrix.qv: native_platform_source_identity at byte 18: unsupported predicate `libevent_revision == \"d82464a277d0f42703702c4dfd9af6af38595a83\"`",
+        "monkey/result_range.qv": "<repository>/providers/qcore-provider-libevent/contracts/monkey/result_range.qv: mk_event_channel_create at byte 1708: unsupported or duplicate requirement `bounds_contract_v1`",
+        "monkey/timeout_teardown.qv": "<repository>/providers/qcore-provider-libevent/contracts/monkey/timeout_teardown.qv: cb_timeout_source at byte 592: unsupported predicate `(signature == \"void (int, short, void *)\") or (signature == \"void (evutil_socket_t, short, void *)\")`",
+        "monkey/wait_failure_policy.qv": "<repository>/providers/qcore-provider-libevent/contracts/monkey/wait_failure_policy.qv: loop_init_failure at byte 311: unsupported predicate `source_bound == 1`",
+        "monkey/wait_identity_policy.qv": "<repository>/providers/qcore-provider-libevent/contracts/monkey/wait_identity_policy.qv: wait_identity_context at byte 395: unsupported predicate `semantic_profile == \"cycle18.timed_wait.single_dispatcher.v1\"`",
+        "monkey/wait_source_policy.qv": "<repository>/providers/qcore-provider-libevent/contracts/monkey/wait_source_policy.qv: source_identity at byte 406: unsupported predicate `source_revision == \"66910c10a4d7eafa810b84229cf2dcf7b0f26f97\"`",
+        "monkey/wrapper_paths.qv": "<repository>/providers/qcore-provider-libevent/contracts/monkey/wrapper_paths.qv: mk_event_libevent_socketpair at byte 474: unsupported parameter type or usage annotation"
+      },
+      "resource_view": [
+        "monkey/event_loop.qv",
+        "monkey/intrusive_list.qv",
+        "monkey/logging.qv",
+        "monkey/memory.qv",
+        "monkey/scalar_observation.qv",
+        "monkey/string.qv",
+        "monkey/vhost_set.qv"
+      ]
+    },
+    "qcore-provider-librdkafka": {
+      "bounds_view": [
+        "librdkafka/null_deref.qv"
+      ],
+      "outer_view": [
+        "librdkafka/outer.qv"
+      ],
+      "refused": {
+        "librdkafka/null_deref.qv": "<repository>/providers/qcore-provider-librdkafka/contracts/librdkafka/null_deref.qv: rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause",
+        "librdkafka/outer.qv": "<repository>/providers/qcore-provider-librdkafka/contracts/librdkafka/outer.qv: rd_kafka_plugin_new at byte 718: unsupported error, any-exit, or quantitative clause",
+        "librdkafka/queue_destructor.qv": "<repository>/providers/qcore-provider-librdkafka/contracts/librdkafka/queue_destructor.qv: KafkaQueueOwner at byte 284: resource modules accept only extern functions",
+        "librdkafka/refcount.qv": "<repository>/providers/qcore-provider-librdkafka/contracts/librdkafka/refcount.qv: KafkaReference at byte 137: resource modules accept only extern functions",
+        "librdkafka/typed_queue.qv": "<repository>/providers/qcore-provider-librdkafka/contracts/librdkafka/typed_queue.qv: KafkaQueue at byte 158: resource modules accept only extern functions"
+      },
+      "resource_view": [
+        "librdkafka/cjson.qv",
+        "librdkafka/client.qv",
+        "librdkafka/kafka_mem.qv",
+        "librdkafka/log_caller_frame.qv",
+        "librdkafka/logging.qv",
+        "librdkafka/lz4_stream.qv",
+        "librdkafka/memory.qv",
+        "librdkafka/topic_partition.qv"
+      ]
+    },
+    "quirin-provider-cfl": {
+      "bounds_view": [
+        "cfl/null_deref.qv"
+      ],
+      "outer_view": [],
+      "refused": {
+        "cfl/arena_lifetime.qv": "<repository>/providers/quirin-provider-cfl/contracts/cfl/arena_lifetime.qv: ArenaCreateError at byte 119: resource modules accept only extern functions",
+        "cfl/atomic.qv": "<repository>/providers/quirin-provider-cfl/contracts/cfl/atomic.qv: cfl_atomic_initialize at byte 616: unsupported error, any-exit, or quantitative clause",
+        "cfl/hash_state.qv": "<repository>/providers/quirin-provider-cfl/contracts/cfl/hash_state.qv: CflHashState at byte 451: resource modules accept only extern functions",
+        "cfl/intrusive_list.qv": "<repository>/providers/quirin-provider-cfl/contracts/cfl/intrusive_list.qv: CflListEntry at byte 122: resource modules accept only extern functions",
+        "cfl/null_deref.qv": "<repository>/providers/quirin-provider-cfl/contracts/cfl/null_deref.qv: cfl_list_size at byte 1249: unsupported or duplicate requirement `bounds_contract_v1`"
+      },
+      "resource_view": [
+        "cfl/sds_lifetime.qv",
+        "cfl/time.qv"
+      ]
+    },
+    "quirin-provider-fluent-bit": {
+      "bounds_view": [
+        "fluent_bit/null_deref.qv"
+      ],
+      "outer_view": [
+        "fluent_bit/outer.qv"
+      ],
+      "refused": {
+        "fluent_bit/memory.qv": "<repository>/providers/quirin-provider-fluent-bit/contracts/fluent_bit/memory.qv: flb_malloc at byte 400: unsupported or duplicate requirement `ordinary_allocator_profile == 1`",
+        "fluent_bit/null_deref.qv": "<repository>/providers/quirin-provider-fluent-bit/contracts/fluent_bit/null_deref.qv: flb_output_set_context at byte 1080: unsupported error, any-exit, or quantitative clause",
+        "fluent_bit/outer.qv": "<repository>/providers/quirin-provider-fluent-bit/contracts/fluent_bit/outer.qv: flb_plugin_load at byte 2251: unsupported error, any-exit, or quantitative clause"
+      },
+      "resource_view": [
+        "fluent_bit/hash_table_publication.qv",
+        "fluent_bit/input_chunk_destroy.qv",
+        "fluent_bit/input_chunk_destroy_direct_routes.qv",
+        "fluent_bit/input_chunk_helpers.qv",
+        "fluent_bit/input_chunk_is_up.qv",
+        "fluent_bit/input_chunk_name.qv",
+        "fluent_bit/input_chunk_sizes.qv",
+        "fluent_bit/input_chunk_total_size.qv",
+        "fluent_bit/input_collector_registration.qv",
+        "fluent_bit/input_instance.qv",
+        "fluent_bit/lib_engine_thread.qv",
+        "fluent_bit/logging.qv",
+        "fluent_bit/loop_owner.qv",
+        "fluent_bit/output_flush_id.qv",
+        "fluent_bit/output_singleplex.qv",
+        "fluent_bit/resource_memory.qv",
+        "fluent_bit/resource_string.qv",
+        "fluent_bit/routes_mask.qv",
+        "fluent_bit/storage_backlog.qv",
+        "fluent_bit/task_route_queries.qv",
+        "fluent_bit/task_users.qv",
+        "fluent_bit/teardown_destroy.qv",
+        "fluent_bit/time.qv"
+      ]
+    },
+    "quirin-provider-libc": {
+      "bounds_view": [
+        "libc/result_sets.qv"
+      ],
+      "outer_view": [],
+      "refused": {
+        "libc/result_sets.qv": "<repository>/providers/quirin-provider-libc/contracts/libc/result_sets.qv: pipe at byte 4215: unsupported or duplicate requirement `bounds_contract_v1`"
+      },
+      "resource_view": [
+        "libc/dirent.qv",
+        "libc/dlfcn.qv",
+        "libc/errno.qv",
+        "libc/math.qv",
+        "libc/memory.qv",
+        "libc/process.qv",
+        "libc/pthread_mutex.qv",
+        "libc/pthread_sync.qv",
+        "libc/regex.qv",
+        "libc/socket.qv",
+        "libc/stdio.qv",
+        "libc/stdlib.qv",
+        "libc/string.qv",
+        "libc/sys_stat.qv",
+        "libc/threads.qv",
+        "libc/time.qv",
+        "libc/unistd.qv"
+      ]
+    },
+    "quirin-provider-mpack": {
+      "bounds_view": [],
+      "outer_view": [],
+      "refused": {},
+      "resource_view": [
+        "mpack/writer.qv"
+      ]
+    },
+    "quirin-provider-msgpack": {
+      "bounds_view": [],
+      "outer_view": [],
+      "refused": {},
+      "resource_view": [
+        "msgpack/packer.qv"
+      ]
+    },
+    "quirin-provider-shared": {
+      "bounds_view": [],
+      "outer_view": [],
+      "refused": {
+        "language/quantified_indices.qv": "<repository>/providers/quirin-provider-shared/contracts/language/quantified_indices.qv: chunks at byte 172: resource modules accept only extern functions",
+        "library/custody_evidence.qv": "<repository>/providers/quirin-provider-shared/contracts/library/custody_evidence.qv: CustodyEvidenceError at byte 245: resource modules accept only extern functions",
+        "library/descriptor_native_observation.qv": "<repository>/providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv: descriptor_generation_fresh at byte 810: unsupported predicate `not already_live`",
+        "library/source_projection.qv": "<repository>/providers/quirin-provider-shared/contracts/library/source_projection.qv: source_enum_value at byte 256: unsupported predicate `evaluated_constant`"
+      },
+      "resource_view": []
+    }
+  },
+  "load_path": "<repository>/providers/contract-load-path.json",
+  "load_path_sha256": "a99bacbae7df42afde7200fb28651fbe1567078c6a1543c3707647f918af6c1c",
+  "rule": "a module is in its crate's resource view exactly when quirin-audit's NAME:MODULE selection of it, lowered and loaded by the unchanged resource-contract manifest loader, is accepted; each view, and all views together, must also load; a module is in its crate's bounds view exactly when the bounds contract v1 loader accepts it alone, and all bounds views must load together",
+  "schema_version": 1
+}
