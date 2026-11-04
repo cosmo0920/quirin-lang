@@ -1,0 +1,94 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "CFL-MPACK-EXTERNAL-DECLARATIONS",
+ "base": "c8c7edf21",
+ "measured_tip": "c8c7edf21",
+ "increment_paragraph": "**CFL-MPACK-EXTERNAL-DECLARATIONS** (USER REQUEST 2026-11-05, verbatim: \"Now, we're still needed to fill the gap of the missing contracts.\"; round 14, card 3 of the contract-gap queue): new resource-v1 declarations for the external CFL and mpack callees that the user's `quirin-audit current` run at Fluent Bit 046accf6 reports as uncontracted (78 `cfl_`/`mpack_` callees, 306 pairs; report sha256 e965950e...d017f). Each one is read from the callee's body; none is adopted from bounds or model text (card 1's lesson). 55 callees (197 pairs) are declared and pinned at 66910c10, 046accf6 and 34155955. `lib/cfl` and the cmetrics/ctraces/cprofiles mpack copies are byte-identical at all three, except the generated cfl_info.h, and the amalgamation copy was read for every name it defines. 30 CFL names are appended to `cfl/sds_lifetime.qv`: owned nullable constructors (sds, kvlist, array, scalar/string variants, cfl_utils_split); nullable releases with cascading destruction as a trusted model (kvlist, array, variant, split_free); `cfl_sds_cat` as a reallocation; `cfl_sds_printf` as a slot move with no tail, because the loader refuses a variadic tail beside a slot clause, so argument-carrying calls stay refused by the arity gate; `cfl_kvlist_fetch` as a result borrowed from the list; four return-code dispositions (`cfl_kvlist_insert`, `cfl_array_append`, `_append_array`, `_append_kvlist`: eq 0 consumed, ne 0 owned); the bytes insert/append under the literal premise `referenced = 0`, the copying arm; and borrowed copying inserts, appends and sds length setters. 25 mpack names are appended to `mpack/writer.qv`: writer primitives, the error-flag setter, tag accessors and reader primitives, all borrowed. Each mpack primitive's error state is stated (it stores the code once, makes later operations no-ops and calls an installed `error_fn`, changing no caller custody), with the callback boundary: the audited trees install no mpack callback and compile no mpack unit with tracking. Left undeclared, with the missing form named: `mpack_read_tag`/`mpack_peek_tag` (a structure result by value), `mpack_writer_init_growable` (a depth-two retention with a deferred, status-conditioned out slot), `mpack_read_bytes_inplace`/`mpack_reader_remaining` (a pointer into the buffer the reader references, not owns), and `cfl_variant_create_from_array`/`_kvlist` (a hand-off keyed on the result's nullness). Owned elsewhere: the CFL list (W45-SUB-OBJECT-STORE-FORMAL-VALUE) and arena (W47-ARENA-POOL-RESULT-MODE) callees. Not CFL: nine `cfl_variant_*_to_otlp_*` helpers, which are static functions of cmt_encode_opentelemetry.c with their bodies in the run. Controls: `crates/qcore-c-gateway/tests/cfl_mpack_external_declarations.rs` (9 tests) loads the production modules byte for byte. It checks: correct use is Safe; an unreleased owned result leaks; a borrowed position releases nothing; untested dispositions, borrowed results at custody positions, non-zero `referenced` and printf with arguments are refused; and every accepting body is uncontracted without the card. No analyser or Lean change. Prediction (committed before the contracts): corpus +7 Safe (`pack_summary_metric`, `ctr_attributes_create`, five `convert_*_value`); system and slice no move; on the user's run, 55 callees and 197 pairs leave the uncontracted list, eight functions leave the 508 only-uncontracted set, and no unit changes status. Report and census: docs/reports/cfl-mpack-external-declarations/README.md.",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "CFL-MPACK-EXTERNAL-DECLARATIONS",
+   "operation": "register",
+   "title": "Declare the external CFL and mpack callees the current route reports as uncontracted",
+   "text": "Registered by its own card at landing (USER REQUEST 2026-11-05, verbatim: \"Now, we're still needed to fill the gap of the missing contracts.\"; card 3 of the round's contract-gap queue); retired by the next entry.",
+   "source": "docs/reports/cfl-mpack-external-declarations/README.md",
+   "recorded_by": "CFL-MPACK-EXTERNAL-DECLARATIONS"
+  },
+  {
+   "id": "CFL-MPACK-EXTERNAL-DECLARATIONS",
+   "operation": "retire",
+   "why": "DISCHARGED by CFL-MPACK-EXTERNAL-DECLARATIONS (docs/reports/cfl-mpack-external-declarations/README.md): every one of the 78 in-scope callees (306 pairs) of the user's current run at 046accf6 is classified. 55 are declared from their bodies and pinned at 66910c10, 046accf6 and 34155955; 7 are left undeclared with the missing form registered (MPACK-STRUCT-RESULT-BY-VALUE, MPACK-GROWABLE-WRITER-DEFERRED-OUT-SLOT, MPACK-READER-REFERENCED-BUFFER-RESULT, CFL-RESULT-NULLNESS-HANDOFF), and cfl_sds_printf's partial declaration is CFL-SDS-PRINTF-SLOT-MOVE-FORMS; 7 are owned by W45-SUB-OBJECT-STORE-FORMAL-VALUE and W47-ARENA-POOL-RESULT-MODE; and 9 are not CFL.",
+   "source": "docs/reports/cfl-mpack-external-declarations/README.md"
+  },
+  {
+   "id": "CFL-SDS-PRINTF-SLOT-MOVE-FORMS",
+   "operation": "register",
+   "title": "cfl_sds_printf is declared as a slot move without its borrowed tail, and its result has no mode",
+   "text": "Registered by CFL-MPACK-EXTERNAL-DECLARATIONS. cfl_sds_printf(cfl_sds_t *sds, const char *fmt, ...) (lib/cfl/src/cfl_sds.c:391-452, identical at 66910c10, 046accf6 and 34155955) may move *sds through cfl_sds_increase. It is declared resource_slot_moved(sds, nullable) in quirin-provider-cfl cfl/sds_lifetime.qv. Two forms are missing. (1) The trailing arguments are read by vsnprintf only, which is resource_variadic_borrowed_tail(), but the loader refuses the tail beside a slot clause (a slot or retention clause stands only beside plain parameter and result predicates, C04.14/C04.15). So the declaration names no tail, and the arity gate refuses all 23 argument-carrying calls in the audited trees: 6 in ctr_encode_text.c, and 17 in Fluent Bit's HTTP client and server, in_blob and out_azure_blob. (2) The result is *sds after the call, or NULL. No v1 result mode states the pointee of a slot (the derived modes need a depth-one base, C04.3.1), so the result is resource_return_none(). That is exact for the 10 covered calls, which discard it; the 16 calls that bind it all pass arguments. DISCHARGE: admit a variadic tail beside a slot move, and a result equal to the slot's pointee after the move (or NULL), in the loader, gateway rule 12x and QCore.SlotMove with Lean parity. Then re-declare and measure.",
+   "source": "docs/reports/cfl-mpack-external-declarations/README.md",
+   "recorded_by": "CFL-MPACK-EXTERNAL-DECLARATIONS"
+  },
+  {
+   "id": "CFL-RESULT-NULLNESS-HANDOFF",
+   "operation": "register",
+   "title": "cfl_variant_create_from_array/_kvlist hand the caller's container to the result exactly when it is non-NULL",
+   "text": "Registered by CFL-MPACK-EXTERNAL-DECLARATIONS. cfl_variant_create_from_array(value) and _kvlist(value) (lib/cfl/src/cfl_variant.c:354-390) claim value for a new variant: cfl_container_claim_* sets value->owner, and cfl_variant_destroy then destroys value. They return the variant, or NULL with value untouched when the allocation or claim fails. Custody of value therefore moves into the result exactly when the result is non-NULL. v1 has no disposition keyed on a pointer result's nullness (C04.13). resource_consumed would hide the failure arm's obligation, and resource_owned would deny the hand-off, so both stay undeclared. On the user's current run at 046accf6 they hold 1 pair each, in cmt_decode_opentelemetry.c. DISCHARGE: a result-nullness disposition (a pointer result's NULL and non-NULL classes, like C04.13's integer classes) with gateway and Lean parity, then the two declarations, pinned and measured.",
+   "source": "docs/reports/cfl-mpack-external-declarations/README.md",
+   "recorded_by": "CFL-MPACK-EXTERNAL-DECLARATIONS"
+  },
+  {
+   "id": "MPACK-STRUCT-RESULT-BY-VALUE",
+   "operation": "register",
+   "title": "mpack_read_tag and mpack_peek_tag return an mpack_tag_t structure by value, which v1 cannot spell",
+   "text": "Registered by CFL-MPACK-EXTERNAL-DECLARATIONS. mpack_read_tag(reader) and mpack_peek_tag(reader) (mpack.c:2992-3033, :3035-3048 in every vendored copy) return mpack_tag_t, a structure, by value. v1's result vocabulary is scalars, pointers and unit (C04.1), so neither can be declared. The tag accessors that read the caller's tag are now declared (mpack_tag_type, _int_value, _uint_value, _double_value, _array_count, _map_count, _str_length, _bin_length). On the user's current run at 046accf6, mpack_read_tag holds 14 pairs and mpack_peek_tag 4, in the cmetrics/ctraces mpack decoders. DISCHARGE: an aggregate-result projection carrying no custody (its fields scalar), with the ABI comparison reading the structure, gateway and Lean parity; then the two declarations, pinned and measured.",
+   "source": "docs/reports/cfl-mpack-external-declarations/README.md",
+   "recorded_by": "CFL-MPACK-EXTERNAL-DECLARATIONS"
+  },
+  {
+   "id": "MPACK-GROWABLE-WRITER-DEFERRED-OUT-SLOT",
+   "operation": "register",
+   "title": "mpack_writer_init_growable keeps the caller's char ** slot and delivers an owned buffer through it at mpack_writer_destroy, on success only",
+   "text": "Registered by CFL-MPACK-EXTERNAL-DECLARATIONS. mpack_writer_init_growable(writer, target_data, target_size) (mpack.c:1127-1151) sets *target_data = NULL, stores target_data and target_size in the writer's reserved space, and MPACK_MALLOCs the buffer. The growable teardown that mpack_writer_destroy runs (:1090-1125) writes the buffer through the stored slot when the writer has no error, and frees it otherwise. This is a retention of a depth-two slot (C04.14 admits depth-one pointers) and a deferred, status-conditioned out slot; v1 has neither, so the initialiser stays undeclared. mpack_writer_destroy is undeclared too. On the user's current run at 046accf6 it holds 3 pairs (cmt_encode_msgpack.c, cmt_encode_cloudwatch_emf.c, ctr_encode_msgpack.c); Fluent Bit's cm_utils.c calls it as well. DISCHARGE: a writer-holder vocabulary (the slot held by the writer, delivered at its destroy under the error status), gateway and Lean parity, then both declarations, pinned and measured.",
+   "source": "docs/reports/cfl-mpack-external-declarations/README.md",
+   "recorded_by": "CFL-MPACK-EXTERNAL-DECLARATIONS"
+  },
+  {
+   "id": "MPACK-READER-REFERENCED-BUFFER-RESULT",
+   "operation": "register",
+   "title": "mpack_read_bytes_inplace and mpack_reader_remaining hand back a pointer into the buffer the reader references, not owns",
+   "text": "Registered by CFL-MPACK-EXTERNAL-DECLARATIONS. mpack_read_bytes_inplace(reader, count) (mpack.c:2631-2634) returns a pointer into the input buffer the reader was given by mpack_reader_init_data. mpack_reader_remaining(reader, data) (:2266-2278) writes that same pointer through data when data is non-NULL. The reader does not own the buffer. The derived modes (C04.3.1, C04.3.4, C04.16) tie the pointer to a parameter's own object, which here is the wrong object, and mpack_reader_init_data's retention of the buffer is itself undeclared. Both audited calls of mpack_reader_remaining pass NULL, but a literal premise cannot select them: NULL expands to a cast (C04.5.1). On the user's current run at 046accf6 they hold 1 and 2 pairs. DISCHARGE: mpack_reader_init_data declared retaining its data in the reader (C04.14), plus a result or out-slot mode derived from storage a holder retains, with gateway and Lean parity; or a null-pointer-constant premise that admits NULL; then the declarations, pinned and measured.",
+   "source": "docs/reports/cfl-mpack-external-declarations/README.md",
+   "recorded_by": "CFL-MPACK-EXTERNAL-DECLARATIONS"
+  },
+  {
+   "id": "BORROW-CREATED-INSERTED-CHILD",
+   "operation": "amend",
+   "text": "AMENDED (CFL-MPACK-EXTERNAL-DECLARATIONS, 2026-11-05): the first half of the discharge is done. cfl_kvlist_fetch is declared resource_return_borrowed_from(list, nullable) in quirin-provider-cfl cfl/sds_lifetime.qv (body lib/cfl/src/cfl_kvlist.c:681-696, :525-545; pinned at 66910c10, 046accf6 and 34155955). The body-check extension to a disposition-transferred child stays open.",
+   "source": "docs/reports/cfl-mpack-external-declarations/README.md"
+  },
+  {
+   "id": "W44-CALLEE-EXTERNAL-INLINE-DEFINITION",
+   "operation": "amend",
+   "text": "AMENDED (CFL-MPACK-EXTERNAL-DECLARATIONS, 2026-11-05): the second discharge arm is taken for 14 more MPACK_INLINE names, declared in quirin-provider-mpack mpack/writer.qv and pinned at 66910c10, 046accf6 and 34155955 after reading every vendored copy: mpack_write_int, mpack_write_uint, the eight mpack_tag_* accessors, and mpack_done_array/_map/_str/_bin. The non-inline mpack callees on the current run are declared beside them, except mpack_read_tag, mpack_peek_tag, mpack_writer_init_growable, mpack_read_bytes_inplace and mpack_reader_remaining (MPACK-STRUCT-RESULT-BY-VALUE, MPACK-GROWABLE-WRITER-DEFERRED-OUT-SLOT, MPACK-READER-REFERENCED-BUFFER-RESULT).",
+   "source": "docs/reports/cfl-mpack-external-declarations/README.md"
+  },
+  {
+   "id": "W44-CALLEE-NO-CORPUS-BODY",
+   "operation": "amend",
+   "text": "AMENDED (CFL-MPACK-EXTERNAL-DECLARATIONS, 2026-11-05): of the CFL and mpack callees with no corpus body, 55 that the user's current run at 046accf6 reports are now declared from their bodies in quirin-provider-cfl and quirin-provider-mpack (197 pairs; including cfl_sds_create_size, cfl_kvlist_fetch, mpack_start_map, mpack_write_nil and mpack_start_array). The rest are named in docs/reports/cfl-mpack-external-declarations/census/census.md.",
+   "source": "docs/reports/cfl-mpack-external-declarations/README.md"
+  },
+  {
+   "id": "W46-METRIC-TRACE-CALLBACK-PREMISES",
+   "operation": "amend",
+   "text": "AMENDED (CFL-MPACK-EXTERNAL-DECLARATIONS, 2026-11-05): the 25 mpack reader, writer and tag declarations added to quirin-provider-mpack mpack/writer.qv, like the nine before them, rest on the same callback boundary. Their bodies reach the object's flush, fill, skip, error_fn and teardown fields. The census (docs/reports/cfl-mpack-external-declarations/census/bodies.py) finds no installer of these callbacks outside the mpack copies at 66910c10, 046accf6 and 34155955: writers are initialised only with mpack_writer_init_growable and readers only with mpack_reader_init_data. The module states the boundary rather than naming it as a premise.",
+   "source": "docs/reports/cfl-mpack-external-declarations/README.md"
+  },
+  {
+   "id": "W48-CALLEE-DECISION-TABLE",
+   "operation": "amend",
+   "text": "AMENDED (CFL-MPACK-EXTERNAL-DECLARATIONS, 2026-11-05): the copying arm of cfl_kvlist_insert_bytes and cfl_array_append_bytes is declared borrowed under the literal premise referenced = 0 (contract spec C04.5) in quirin-provider-cfl cfl/sds_lifetime.qv; every audited call passes CFL_FALSE. The retaining arm (referenced != 0: the variant keeps the caller's buffer) stays undeclared in class 1, since a guarded retention cannot test != 0 (C04.14.1).",
+   "source": "docs/reports/cfl-mpack-external-declarations/README.md"
+  }
+ ]
+}
