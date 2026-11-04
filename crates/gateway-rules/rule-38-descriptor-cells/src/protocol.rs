@@ -915,6 +915,77 @@ mod tests {
         }
     }
 
+    /// The Lean set vectors (`QCore.CellResultSet.setVectors`) are the Rust
+    /// ones, entry for entry.
+    #[test]
+    fn the_set_vectors_are_the_lean_ones() {
+        const LEAN: &str = include_str!("../../../../proof/QCore/CellResultSet.lean");
+        let block = LEAN
+            .split("def setVectors")
+            .nth(1)
+            .and_then(|rest| rest.split("\n]").next())
+            .expect("the Lean vectors");
+        let lean = block
+            .lines()
+            .map(str::trim)
+            .filter(|line| line.starts_with("(⟨"))
+            .map(|line| line.trim_end_matches(',').to_owned())
+            .collect::<Vec<_>>();
+        let rust = PER_END_SET_VECTORS
+            .iter()
+            .map(|(trace, outcome)| {
+                let (spec, steps) = trace.split_once(':').expect("a spec");
+                let mut parts = spec.split('/');
+                let op = match parts.next() {
+                    Some("pos") => "positive",
+                    _ => "notMinusOne",
+                };
+                let (mut live, mut absent) = ("none", "none");
+                for part in parts {
+                    match part {
+                        "L1" => live = "some fromOne",
+                        "L0" => live = "some fromZero",
+                        "Lm5" => live = "some minusFive",
+                        "A0" => absent = "some absZero",
+                        "Am1" => absent = "some absMinusOne",
+                        "A0m1" => absent = "some absBoth",
+                        other => panic!("{other}"),
+                    }
+                }
+                let steps = steps
+                    .split(';')
+                    .map(
+                        |step| match step.split_whitespace().collect::<Vec<_>>().as_slice() {
+                            ["test", "live"] => ".testLive".to_owned(),
+                            ["test", "dead"] => ".testDead".to_owned(),
+                            ["close", cell] => format!(".close {}", usize::from(*cell == "m")),
+                            ["store", cell, value] => {
+                                let value = if value.starts_with('-') {
+                                    format!("({value})")
+                                } else {
+                                    (*value).to_owned()
+                                };
+                                format!(".store {} {value}", usize::from(*cell == "m"))
+                            }
+                            [word] => format!(".{word}"),
+                            other => panic!("{other:?}"),
+                        },
+                    )
+                    .collect::<Vec<_>>()
+                    .join(", ");
+                let outcome = match *outcome {
+                    "double-release" => "doubleRelease",
+                    "owner-released" => "ownerReleased",
+                    "zero-undecided" => "zeroUndecided",
+                    "edge-undecided" => "edgeUndecided",
+                    other => other,
+                };
+                format!("(⟨.{op}, {live}, {absent}⟩, [{steps}], .{outcome})")
+            })
+            .collect::<Vec<_>>();
+        assert_eq!(lean, rust);
+    }
+
     /// Without declared sets the general reading is rule 38f's, guard for
     /// guard (parity with CELL-PROTOCOL-PER-END-GUARDS).
     #[test]
