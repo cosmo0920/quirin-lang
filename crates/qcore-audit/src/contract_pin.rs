@@ -1015,8 +1015,7 @@ fn derive_results(
                 let derived =
                     qcore_c_gateway::null_deref::derive_result_set_c11(&unit, &name, &environment)
                         .map_err(|why| format!("`{name}`: {why}"))?;
-                if derived.set.universe() != declared.universe()
-                    || !derived.set.is_subset(declared)
+                if derived.set.universe() != declared.universe() || !derived.set.is_subset(declared)
                 {
                     return Err(format!(
                         "`{name}`: its body chain returns {} (helpers {}; C library sets {}), not \

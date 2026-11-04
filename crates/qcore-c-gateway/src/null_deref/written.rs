@@ -539,7 +539,10 @@ impl Walker<'_, '_> {
                 let id = node["referencedDecl"]["id"].as_str().unwrap_or("");
                 if self.narrowable(node) {
                     Place::Local(id.to_owned())
-                } else if self.automatic.contains(id) && !self.taken.contains(id) && id != self.slot_id {
+                } else if self.automatic.contains(id)
+                    && !self.taken.contains(id)
+                    && id != self.slot_id
+                {
                     Place::Plain
                 } else {
                     Place::Memory
@@ -817,9 +820,7 @@ impl Walker<'_, '_> {
             "UnaryOperator" if node["opcode"] == "!" => {
                 Some((self.narrowed_local(kids(node).next()?)?, Cmp::Eq, 0))
             }
-            "DeclRefExpr" | "ImplicitCastExpr" => {
-                Some((self.narrowed_local(node)?, Cmp::Ne, 0))
-            }
+            "DeclRefExpr" | "ImplicitCastExpr" => Some((self.narrowed_local(node)?, Cmp::Ne, 0)),
             _ => None,
         }
     }
@@ -927,9 +928,7 @@ impl Walker<'_, '_> {
             | "ContinueStmt" | "IndirectGotoStmt" | "AttributedStmt" => {
                 Err(format!("a `{}`", kind(node)))
             }
-            other if other.ends_with("Stmt") => {
-                Err(format!("a `{other}` the walk does not read"))
-            }
+            other if other.ends_with("Stmt") => Err(format!("a `{other}` the walk does not read")),
             _ => {
                 // An expression statement.
                 self.effects(node, &mut paths)?;

@@ -171,13 +171,16 @@ fn bounds(text: &str) -> BoundsContracts {
     .expect("the libc result sets load")
 }
 
+/// A derived set, its helpers and the C library declarations it rested on.
+type Derived = (String, Vec<String>, Vec<String>);
+
 /// `Ok((set, helpers, rests_on))` or the refusal, per requested slot.
 fn derive(
     source: &str,
     function: &str,
     slots: &[(usize, u32, i128)],
     contracts: &BoundsContracts,
-) -> Vec<Result<(String, Vec<String>, Vec<String>), String>> {
+) -> Vec<Result<Derived, String>> {
     let unit = C11TranslationUnit {
         source,
         ..Default::default()

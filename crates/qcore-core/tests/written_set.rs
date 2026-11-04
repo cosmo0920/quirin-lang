@@ -42,9 +42,8 @@ fn the_combine_vectors_are_the_lean_ones() {
             let ends = ends
                 .iter()
                 .map(|(returns, slot)| {
-                    let slot = slot.map_or_else(|| "none".to_owned(), |s| {
-                        format!("some {}", intervals(s))
-                    });
+                    let slot = slot
+                        .map_or_else(|| "none".to_owned(), |s| format!("some {}", intervals(s)));
                     format!("({}, {slot})", intervals(returns))
                 })
                 .collect::<Vec<_>>()

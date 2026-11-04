@@ -132,7 +132,12 @@ pub fn resolve(
 /// slot not yet known stays unknown.
 #[must_use]
 pub fn after_store(slot: Option<&ResultSet>, stored: &ResultSet) -> Option<ResultSet> {
-    slot.map(|slot| slot.union(&ResultSet::from_intervals(slot.universe(), stored.intervals())))
+    slot.map(|slot| {
+        slot.union(&ResultSet::from_intervals(
+            slot.universe(),
+            stored.intervals(),
+        ))
+    })
 }
 
 /// `int`'s universe.
@@ -144,16 +149,24 @@ const MAX: i128 = INT.1;
 /// One path end of a vector: the returned set and the slot's set.
 pub type VectorEnd = (&'static [Interval], Option<&'static [Interval]>);
 
+/// One combine vector: the path ends, the class, and the written set or the
+/// refusal's code.
+pub type CombineVector = (
+    &'static [VectorEnd],
+    i128,
+    Result<&'static [Interval], &'static str>,
+);
+
 /// `(path ends, class, written set or the refusal's code)` in `int`, shared
 /// with `QCore.WrittenSetDerivation.combineVectors` entry for entry. Rows:
 /// the epoll channel creator's three exits (pipe's failure exit narrowed to
 /// -1, `_mk_event_add`'s narrowed to -1, the store after both); its
 /// forwarding caller; an unnarrowed failure exit (it may return 0 with the
 /// slot unwritten); a store before the failure exit (the slot holds every
-/// `int`, which no declared bound contains); a
-/// later aliasing store; no path returning the class; and the POSIX
-/// contrast, where pipe's `[0, MAX]` gives `[0, MAX]`.
-pub const COMBINE_VECTORS: &[(&[VectorEnd], i128, Result<&[Interval], &str>)] = &[
+/// `int`, which no declared bound contains); a later aliasing store; no path
+/// returning the class; and the POSIX contrast, where pipe's `[0, MAX]`
+/// gives `[0, MAX]`.
+pub const COMBINE_VECTORS: &[CombineVector] = &[
     (
         &[
             (&[(-1, -1)], None),
@@ -171,7 +184,10 @@ pub const COMBINE_VECTORS: &[(&[VectorEnd], i128, Result<&[Interval], &str>)] = 
     ),
     (&[(&[(0, 0)], Some(&[INT]))], 0, Ok(&[INT])),
     (
-        &[(&[(0, 0)], Some(&[(1, MAX)])), (&[(0, 0)], Some(&[(-1, -1)]))],
+        &[
+            (&[(0, 0)], Some(&[(1, MAX)])),
+            (&[(0, 0)], Some(&[(-1, -1)])),
+        ],
         0,
         Ok(&[(-1, -1), (1, MAX)]),
     ),
@@ -196,7 +212,13 @@ pub type ResolveVector = (
 /// classes), a narrowing outside the callee's set (infeasible), and a
 /// callee that states nothing for the class (unknown).
 pub const RESOLVE_VECTORS: &[ResolveVector] = &[
-    (&[(0, MAX)], &[(-1, 0)], 0, &[(1, MAX)], Some(Some(&[(1, MAX)]))),
+    (
+        &[(0, MAX)],
+        &[(-1, 0)],
+        0,
+        &[(1, MAX)],
+        Some(Some(&[(1, MAX)])),
+    ),
     (&[(INT.0, -1)], &[(-1, 0)], 0, &[(1, MAX)], Some(None)),
     (&[INT], &[(-1, 0)], 0, &[(1, MAX)], Some(None)),
     (&[(1, MAX)], &[(-1, 0)], 0, &[(1, MAX)], None),
@@ -218,7 +240,7 @@ mod tests {
                 .iter()
                 .map(|(returns, slot)| PathEnd {
                     returns: set(returns),
-                    slot: slot.map(|s| set(s)),
+                    slot: slot.map(set),
                 })
                 .collect::<Vec<_>>();
             let got = combine(INT, *class, &ends);

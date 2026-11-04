@@ -188,13 +188,9 @@ fn summary_of(outcome: &UnrestrictedLegacyResult) -> Option<&LegacyProgramSummar
 const BODY_LINE_ONE: usize = 44;
 
 /// The entry row's status and its sorted diagnostics (`line:kind:text`,
-/// the line counted from the body's first line, 1-based).
-fn outcome(body: &str) -> (String, Vec<String>) {
-    outcome_in(body, &environment())
-}
-
-/// [`outcome`] under a given environment (card
-/// CELL-RESULT-SET-WRITTEN-SET-DERIVATION: the route's written sets).
+/// the line counted from the body's first line, 1-based), under a given
+/// environment (card CELL-RESULT-SET-WRITTEN-SET-DERIVATION: the route's
+/// written sets).
 fn outcome_in(body: &str, contracts: &ResourceContracts) -> (String, Vec<String>) {
     let text = format!("{PRELUDE}\n{body}\n");
     let entry = body
@@ -724,7 +720,10 @@ fn with_written(set: (i64, i64), class: i64, standing: ResultRangeStanding) -> R
             written_set_key("mk_event_channel_create", 1, 0, class),
             fact.clone(),
         ),
-        (written_set_key("mk_event_channel_create", 2, 0, class), fact),
+        (
+            written_set_key("mk_event_channel_create", 2, 0, class),
+            fact,
+        ),
     ]));
     contracts
 }

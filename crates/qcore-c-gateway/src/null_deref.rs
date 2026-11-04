@@ -987,9 +987,8 @@ pub fn derive_written_sets_c11(
                 Ok(slots
                     .iter()
                     .map(|(parameter, element, class)| {
-                        written::WrittenDeriver::new(&read, &declared, &stated).derive(
-                            function, *parameter, *element, *class,
-                        )
+                        written::WrittenDeriver::new(&read, &declared, &stated)
+                            .derive(function, *parameter, *element, *class)
                     })
                     .collect())
             })
