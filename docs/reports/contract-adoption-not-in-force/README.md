@@ -301,3 +301,9 @@ semantic choice here needs the user.
 [PREDICTION.md](PREDICTION.md) was committed before anything else changed.
 It predicts no move on any route. The card gate is recorded in
 [gate.json](gate.json).
+
+**Measurement (integrator, 2026-11-05).** Not run. The card changes only
+files under `docs/` (the census, this report and its records). It changes no
+crate, provider contract, lock, load path, view or input the routes read, so
+`base` and `tip` analyse identical trees and the declared prediction (`none`
+on every route) holds by construction. Landed on `d0dae815f`.
