@@ -20,6 +20,16 @@
 //! holder's release refuses (`descriptor-cell-zero-undecided`): a candidate
 //! defect, never `Unsafe`, nothing filed upstream.
 //!
+//! Card CELL-RESULT-SET-ALIGNMENT (USER DECISIONS 2026-11-04: "Write [1,
+//! MAX]", Q3 "(α) live_set suffix"): the production ends now declare
+//! `live_set([1, MAX])` and their pinned `absent_set`, so every `> 0` dead
+//! edge below decides "absent" under that DECLARED bound (POSIX's set is
+//! [0, MAX]; descriptor 0 is observed natively): the zero readings at the
+//! releases are gone, a close on the `<= 0` edge refuses for an unrecorded
+//! cell only, and a creation refuses until the creator's written set is in
+//! force (`descriptor-cell-live-set-unproved`). The POSIX contrast is
+//! `tests/cell_result_set_alignment.rs`.
+//!
 //! A `Safe` here is `Safe` over the declared assumptions, the protocol
 //! included (`P-CELL-PROTOCOL-DECLARED`), and promotes nothing. Every test
 //! asserts the complete diagnostic vector with lines.
@@ -368,7 +378,6 @@ fn the_output_instance_destroyer_names_descriptor_zero_at_the_release() {
         "Unknown",
         &[
             &broken(8, "ins", "flb_output_instance"),
-            &zero(9, "ins"),
             "9:unknown_alias:ins",
         ],
     );
@@ -391,7 +400,7 @@ fn the_output_ends_released_at_once_refuse_only_for_descriptor_zero() {
          return 0;\n\
          }",
         "Unknown",
-        &[&zero(8, "ins"), "8:unknown_alias:ins"],
+        &["8:unknown_alias:ins"],
     );
 }
 
@@ -421,8 +430,6 @@ fn the_output_ends_after_an_opaque_call_are_still_read() {
             "3:unknown_alias:ins",
             "6:unknown_alias:ins",
             &broken(9, "ins", "flb_output_instance"),
-            "9:the descriptor in cell `(ins as int).ch_events[0] [Name(\"ins\") as int]` may outlive this function's frame (descriptor-cell-escapes)",
-            "9:the descriptor in cell `(ins as int).ch_events[1] [Name(\"ins\") as int]` may outlive this function's frame (descriptor-cell-escapes)",
         ],
     );
 }
@@ -463,11 +470,7 @@ fn a_close_on_a_positive_dead_edge_refuses() {
          return 0;\n\
          }",
         "Unknown",
-        &[
-            &undecided(3, "ins->ch_events[1]"),
-            &broken(5, "ins", "flb_output_instance"),
-            "5:the descriptor in cell `(ins as int).ch_events[1] [Name(\"ins\") as int]` may outlive this function's frame (descriptor-cell-escapes)",
-        ],
+        &[&undecided(3, "ins->ch_events[1]")],
     );
 }
 
@@ -500,7 +503,6 @@ fn the_input_instance_destroyer_reads_four_ends() {
         "Unknown",
         &[
             &broken(14, "ins", "flb_input_instance"),
-            &zero(15, "ins"),
             "15:unknown_alias:ins",
         ],
     );
@@ -554,7 +556,6 @@ fn the_thread_instance_destroyer_reads_its_flag_and_four_ends() {
         "Unknown",
         &[
             &broken(18, "thi", "flb_input_thread_instance"),
-            &zero(19, "thi"),
             "19:unknown_alias:thi",
         ],
     );
@@ -583,7 +584,6 @@ fn the_thread_ends_after_the_gate_refusal_are_read() {
             &format!("3:{GATE}"),
             "5:unknown_alias:thi",
             "8:call to uncontracted function `flb_tp_destroy`",
-            &zero(9, "thi"),
             "9:unknown_alias:thi",
         ],
     );
@@ -674,13 +674,9 @@ fn a_creator_never_establishes_a_positive_sentinel() {
         "Unknown",
         &[
             "3:call to `mk_event_channel_create` retains `ins` in `evl`, whose lifetime this body does not decide against it (retention-undecided)",
-            "3:call to `mk_event_channel_create`: descriptor cell `(Formal(\"ins\") as int).ch_events[0]` is not decided (descriptor-cell-undecided)",
-            "3:call to `mk_event_channel_create`: descriptor cell `(Formal(\"ins\") as int).ch_events[1]` is not decided (descriptor-cell-undecided)",
+            "3:call to `mk_event_channel_create`: descriptor cell `(Formal(\"ins\") as int).ch_events[0]` is not decided (descriptor-cell-live-set-unproved)",
+            "3:call to `mk_event_channel_create`: descriptor cell `(Formal(\"ins\") as int).ch_events[1]` is not decided (descriptor-cell-live-set-unproved)",
             &broken(5, "ins", "flb_input_instance"),
-            &broken(7, "ins", "flb_input_instance"),
-            "7:the descriptor in cell `(ins as int).ch_events[0] [Name(\"ins\") as int]` may outlive this function's frame (descriptor-cell-escapes)",
-            "7:the descriptor in cell `(ins as int).ch_events[1] [Name(\"ins\") as int]` may outlive this function's frame (descriptor-cell-escapes)",
-            "7:the descriptor in cell `(ins.event as mk_event).fd [Name(\"ins.event\") as mk_event]` may outlive this function's frame (descriptor-cell-escapes)",
         ],
     );
 }

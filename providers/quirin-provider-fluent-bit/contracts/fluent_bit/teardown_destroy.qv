@@ -369,6 +369,28 @@ contract {
 //   over `config->evl`) marks it reached before the guard test, so the test
 //   is not read (follow-up CELL-PROTOCOL-NONCELL-ACTUAL-REACHES-RECORD).
 //
+// ## The ends' value sets (card CELL-RESULT-SET-ALIGNMENT)
+//
+// Each per-end sentinel states its live set and its absent set (grammar
+// G05i as amended; gateway rule 38f as generalised):
+// * `live_set([1, MAX])`. USER DECISIONS 2026-11-04 (verbatim): "Basically,
+//   Q1(a) and Q2(i) But we must not handle descriptor 0 as a valid handle. So,
+//   we need to exclude the 0 descriptor like: written_set(pipedes, [1, MAX]);
+//   a live descriptor is in [1, MAX]"; "Write [1, MAX]"; Q3 "(α) live_set
+//   suffix". This is a DECLARED POLICY, not POSIX's set ([0, MAX]):
+//   descriptor 0 is observed natively on `ch_data` with stdin closed
+//   (W43-DESC-FLB-CONFIG-DATA-PIPE-ZERO-GUARD). Under it a `> 0` test's dead
+//   edge reads "absent", and every row that reading moves is attributed to
+//   this bound (follow-up CELL-RESULT-SET-DESCRIPTOR-ZERO-POLICY). A creation
+//   into these cells is admitted only where the creator's pin-derived
+//   written set of its slot is in force inside [1, MAX].
+// * `absent_set(...)`: what the holders' stores write at the pinned trees
+//   (the inventory census, docs/reports/cell-result-set-alignment/census/):
+//   calloc's 0 for every `ch_*` end; `0 | -1` for `ingress_queue_channels`
+//   (calloc's 0 and the -1 stores at flb_input.c:549-550 and
+//   flb_input_ingest.c:493-494 at 046accf6). The loader refuses an absent set
+//   that meets the guard's live edge or the live set.
+//
 // The host is a vehicle chosen so the declaration changes no call reading.
 // `flb_config_set_program_name` (src/flb_config.c:956-966 at 046accf6 and
 // 34155955, :955-965 at 66910c10, the same body) is called only from
@@ -385,18 +407,18 @@ contract {
     quant cell #t: flb_input_thread_instance.notification_channels[0] |-> #fresh(descriptor) when #t.notification_channels_initialized == 1;
     quant cell #t: flb_input_thread_instance.notification_channels[1] |-> #fresh(descriptor) when #t.notification_channels_initialized == 1;
     quant cell #t: flb_input_thread_instance.notification_event.fd |-> #same(notification_channels[0]) when #t.notification_channels_initialized == 1;
-    quant cell #t: flb_input_thread_instance.ch_parent_events[0] |-> #fresh(descriptor) when #t.ch_parent_events[0] > 0;
-    quant cell #t: flb_input_thread_instance.ch_parent_events[1] |-> #fresh(descriptor) when #t.ch_parent_events[1] > 0;
+    quant cell #t: flb_input_thread_instance.ch_parent_events[0] |-> #fresh(descriptor) when #t.ch_parent_events[0] > 0 live_set([1, MAX]) absent_set(0);
+    quant cell #t: flb_input_thread_instance.ch_parent_events[1] |-> #fresh(descriptor) when #t.ch_parent_events[1] > 0 live_set([1, MAX]) absent_set(0);
     quant cell #t: flb_input_thread_instance.event.fd |-> #same(ch_parent_events[0]) when #t.ch_parent_events[0] > 0;
-    quant cell #t: flb_input_thread_instance.ch_thread_events[0] |-> #fresh(descriptor) when #t.ch_thread_events[0] > 0;
-    quant cell #t: flb_input_thread_instance.ch_thread_events[1] |-> #fresh(descriptor) when #t.ch_thread_events[1] > 0;
+    quant cell #t: flb_input_thread_instance.ch_thread_events[0] |-> #fresh(descriptor) when #t.ch_thread_events[0] > 0 live_set([1, MAX]) absent_set(0);
+    quant cell #t: flb_input_thread_instance.ch_thread_events[1] |-> #fresh(descriptor) when #t.ch_thread_events[1] > 0 live_set([1, MAX]) absent_set(0);
     quant cell #t: flb_input_thread_instance.event_local.fd |-> #same(ch_thread_events[0]) when #t.ch_thread_events[0] > 0;
-    quant cell #i: flb_input_instance.ch_events[0] |-> #fresh(descriptor) when #i.ch_events[0] > 0;
-    quant cell #i: flb_input_instance.ch_events[1] |-> #fresh(descriptor) when #i.ch_events[1] > 0;
+    quant cell #i: flb_input_instance.ch_events[0] |-> #fresh(descriptor) when #i.ch_events[0] > 0 live_set([1, MAX]) absent_set(0);
+    quant cell #i: flb_input_instance.ch_events[1] |-> #fresh(descriptor) when #i.ch_events[1] > 0 live_set([1, MAX]) absent_set(0);
     quant cell #i: flb_input_instance.event.fd |-> #same(ch_events[0]) when #i.ch_events[0] > 0;
-    quant cell #i: flb_input_instance.ingress_queue_channels[0] |-> #fresh(descriptor) when #i.ingress_queue_channels[0] > 0;
-    quant cell #i: flb_input_instance.ingress_queue_channels[1] |-> #fresh(descriptor) when #i.ingress_queue_channels[1] > 0;
-    quant cell #o: flb_output_instance.ch_events[0] |-> #fresh(descriptor) when #o.ch_events[0] > 0;
-    quant cell #o: flb_output_instance.ch_events[1] |-> #fresh(descriptor) when #o.ch_events[1] > 0;
+    quant cell #i: flb_input_instance.ingress_queue_channels[0] |-> #fresh(descriptor) when #i.ingress_queue_channels[0] > 0 live_set([1, MAX]) absent_set(0 | -1);
+    quant cell #i: flb_input_instance.ingress_queue_channels[1] |-> #fresh(descriptor) when #i.ingress_queue_channels[1] > 0 live_set([1, MAX]) absent_set(0 | -1);
+    quant cell #o: flb_output_instance.ch_events[0] |-> #fresh(descriptor) when #o.ch_events[0] > 0 live_set([1, MAX]) absent_set(0);
+    quant cell #o: flb_output_instance.ch_events[1] |-> #fresh(descriptor) when #o.ch_events[1] > 0 live_set([1, MAX]) absent_set(0);
     quant cell #o: flb_output_instance.event.fd |-> #same(ch_events[0]) when #o.ch_events[0] > 0;
 };
