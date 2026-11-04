@@ -62,6 +62,7 @@ impl CfgBuilder {
             tie_names: BTreeSet::new(),
             traversal: TraversalNames::default(),
             cell_tests: builder.cell_tests,
+            cell_frames: Default::default(),
         }
     }
 

@@ -355,6 +355,10 @@ pub(crate) mod retained_by_route;
 // the cell table's transfer, the witnesses, the exit and release refusals).
 #[path = "legacy_descriptor_cells.rs"]
 pub(crate) mod descriptor_cells_route;
+// Card CELL-PROTOCOL-RELEASE-WINDOW-FRAMES (rule 38g): callee frames over a
+// record's declared cell protocol, read in its release window.
+#[path = "legacy_cell_frames.rs"]
+pub(crate) mod cell_frames_route;
 // Card W43-ABI-ENUM-AND-CONST-PP (rule 12w): guarded retention clauses.
 #[path = "legacy_retention_guard.rs"]
 pub(crate) mod retention_guard;
@@ -1234,6 +1238,14 @@ pub struct LegacyCfg {
     /// omitted) in every environment declaring no `quant cell` protocol.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     pub cell_tests: BTreeMap<LegacyNodeId, descriptor_cells_route::ProtocolStep>,
+    /// Card **CELL-PROTOCOL-RELEASE-WINDOW-FRAMES** (rule 38g): the standing
+    /// in this unit of every declared frame of a callee this body calls.
+    /// Empty (and omitted) in every environment declaring no frame.
+    #[serde(
+        default,
+        skip_serializing_if = "cell_frames_route::CellFrames::is_empty"
+    )]
+    pub cell_frames: cell_frames_route::CellFrames,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -4167,6 +4179,9 @@ fn build_function_cfg_unscoped(
     // Card W45-CALLEE-SUMMARY-CASCADE: the sub-custody guard before every call
     // to a function this unit defines (`member_release`, rule 3).
     member_release::guard_unit_callees(&mut cfg, tokens, contracts);
+    // Card CELL-PROTOCOL-RELEASE-WINDOW-FRAMES (rule 38g): the standing of
+    // every declared frame of a callee this body calls.
+    cell_frames_route::settle_frames(&mut cfg, contracts);
     // Card W45-CALLEE-SUMMARY-CASCADE (`AGGREGATE-NULL-TEST-AFTER-RELEASE`):
     // a null test of a member place keeps the dereference obligation of
     // every pointer it reads through.

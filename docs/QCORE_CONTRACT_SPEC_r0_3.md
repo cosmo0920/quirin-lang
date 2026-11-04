@@ -681,6 +681,26 @@ quant cell #o: flb_output_instance.ch_events[0] |-> #fresh(descriptor) when #o.c
 
 The Lean models are `QCore.DescriptorCellProtocol`, (per-end sentinels) `QCore.CellProtocolPerEnd` and (declared sets) `QCore.CellResultSet`.
 
+#### C04.6.4. Callee frames over a declared cell protocol
+
+Card CELL-PROTOCOL-RELEASE-WINDOW-FRAMES (gateway rule [38g](agents/gateway.md#constraint-38g), grammar [G05k](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g05k-callee-frames-over-a-declared-cell-protocol); the [report](reports/cell-protocol-release-window-frames/README.md)).
+
+> **USER DECISION 2026-11-04** (verbatim, on the options (a) callee frame declarations, (b) a member-actual narrowing, (c) keep the refusal): "(a) Callee frames".
+
+A destroyer that closes an end without storing its sentinel and keeps using the record before releasing it holds a **release window**: the closed end still looks live, so a call that may reach the record refuses (§C04.6.3, "The holder's release"). A **callee frame** decides that call:
+
+```qcore
+quant cell mk_list_del: flb_output_instance |-> #untouched;
+```
+
+- **Meaning.** The callee, with everything it calls, neither reads nor writes any member a declared protocol of `struct TAG` names (the first member of each cell and guard), on every object of the type, however it reaches the object. It is a frame over the record's type, not over the call's actuals: a member actual such as `&ins->_head` reaches `ins` by `container_of`, which is why option (b) was not chosen. "Reads no end member" is read with writes included, the stronger claim.
+- **Where it may stand.** Beside the record's protocol, on the declaration stating it, adding nothing to that declaration's own contract. A record keeps its frames only where it keeps its protocol and every declaration stating the protocol states the same callees.
+- **Checked, or declared for review.** In a unit that defines the callee's body and every body it calls, the frame is **checked** when no body names a protocol member and every construct is one the reader reads (rule 38g (2) lists the rest), and **refuted** when a body names one. Otherwise it is **declared**: a deferred-review contract (§C06.1), never a premise. A call it would admit is held (`awaiting-human-review`), so a row resting on it is `Pending`, never `Safe`, and the analysis with every held declaration in force reads it accepted.
+- **Meaning at a call** (rule 38g). Only where the call would refuse a record that does not keep its protocol: checked, the record's fact passes the call unchanged; declared, it passes and the call is held; refuted, the call refuses (`descriptor-cell-frame-refuted`); no frame, the call refuses as before. A record that keeps its protocol is read as before.
+- **What is never claimed.** Nothing here is `Unsafe`, and a frame never discharges an end: the holder's release still ends the protocol only where no cell may be live.
+
+The Lean model is `QCore.CellProtocolReleaseWindowFrames`.
+
 ### C04.7. Counted users
 
 Card W45-FB-RETRY-LIFETIME adds a **quantitative** clause family (C09) to vocabulary version 1: a counted reference an object holds on itself through a counter member, such as a task's `users`.

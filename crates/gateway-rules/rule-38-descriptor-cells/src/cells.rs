@@ -55,6 +55,11 @@ pub enum Refusal {
     /// creation into a cell with a declared live set whose creator has no
     /// in-force derived written set of that slot inside it.
     LiveSetUnproved,
+    /// Card CELL-PROTOCOL-RELEASE-WINDOW-FRAMES (rule 38g): a call that may
+    /// reach a record not keeping its protocol, whose declared frame over the
+    /// record's type a body the unit analyses refutes (it names a protocol
+    /// member).
+    FrameRefuted,
 }
 
 impl Refusal {
@@ -72,6 +77,7 @@ impl Refusal {
             Self::ZeroUndecided => "descriptor-cell-zero-undecided",
             Self::EdgeUndecided => "descriptor-cell-edge-undecided",
             Self::LiveSetUnproved => "descriptor-cell-live-set-unproved",
+            Self::FrameRefuted => "descriptor-cell-frame-refuted",
         }
     }
 }

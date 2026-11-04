@@ -673,7 +673,7 @@
       "sha256": "cc07429255f69df182831ae2cf0246bafd71c3f6038173cbfcd194ea51da9f18"
     },
     "fluent_bit/teardown_destroy.qv": {
-      "clause_count": 161,
+      "clause_count": 164,
       "declaration_count": 15,
       "declarations": [
         {
@@ -733,14 +733,14 @@
           "name": "flb_tail_config_destroy"
         },
         {
-          "clauses": 21,
+          "clauses": 24,
           "name": "flb_config_set_program_name"
         }
       ],
       "inherits": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "03e4d1b697b715f17d4665604483b56932694d0aa243e745cff0d62eade5464e"
+      "sha256": "9c912b7dd2f44cbe2b7b35b1cf8253d2b72a7aaa59e03de58eb963dba499feea"
     },
     "fluent_bit/time.qv": {
       "clause_count": 2,

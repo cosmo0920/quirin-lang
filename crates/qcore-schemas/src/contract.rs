@@ -764,6 +764,12 @@ pub struct ResourceContracts {
     /// Gateway admission replays the exact home before consuming these records.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     lifetime_imports: BTreeMap<String, crate::loop_lifetime::InferredLifetimeSummary>,
+    /// Card CELL-PROTOCOL-RELEASE-WINDOW-FRAMES (gateway rule 38g, C06.1):
+    /// set only by [`Self::with_human_holds_in_force`], the environment a
+    /// human act would produce by accepting every declared callee frame as
+    /// written. Omitted when false, so every environment serializes as before.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    cell_frames_accepted: bool,
     /// Card CONTRACT-SUPERSESSION (contract spec §C06.6): per function, the
     /// declarations a newer-stamped declaration superseded, retained with
     /// their texts. The declaration in force is the function's ordinary entry.
@@ -806,6 +812,7 @@ impl ResourceContracts {
             declared_guarded: BTreeSet::new(),
             inferred_lifetimes: BTreeMap::new(),
             lifetime_imports: BTreeMap::new(),
+            cell_frames_accepted: false,
             superseded: BTreeMap::new(),
             contract_conflict: BTreeMap::new(),
             result_ranges: BTreeMap::new(),
@@ -1123,10 +1130,14 @@ impl ResourceContracts {
     /// refutation table is kept as it is: a name it lists stays held.
     #[must_use]
     pub fn with_human_holds_in_force(&self) -> Option<Self> {
-        if self.pending_review.is_empty() && self.pin_mismatch.is_empty() {
+        // Card CELL-PROTOCOL-RELEASE-WINDOW-FRAMES (rule 38g): a declared
+        // callee frame holds the calls it would admit for a human act too.
+        let frames_held = !self.cell_frames_accepted && !self.cell_frames().is_empty();
+        if self.pending_review.is_empty() && self.pin_mismatch.is_empty() && !frames_held {
             return None;
         }
         let mut resolved = self.clone();
+        resolved.cell_frames_accepted = true;
         for (name, pending) in std::mem::take(&mut resolved.pending_review) {
             resolved.functions.insert(name, pending.contract);
         }
@@ -1284,6 +1295,55 @@ impl ResourceContracts {
         out.retain(|record, _| !conflicting.contains(record));
         out
     }
+    /// Card **CELL-PROTOCOL-RELEASE-WINDOW-FRAMES** (gateway rule 38g,
+    /// §C04.6.4): every record's declared callee frames with the declarations
+    /// stating them. A declaration states a record's frames beside its
+    /// protocol, so the frames are compared as the protocols are: a record
+    /// keeps its frames only where it keeps its protocol
+    /// ([`Self::cell_protocols`]) and every declaration stating that protocol
+    /// states the same callees (fail-closed: otherwise none).
+    #[must_use]
+    pub fn cell_frames(&self) -> BTreeMap<String, BTreeSet<String>> {
+        let protocols = self.cell_protocols();
+        let mut out: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
+        let mut seen = BTreeSet::new();
+        let mut conflicting = BTreeSet::new();
+        for (_, declaration) in self.lifetime_declarations() {
+            let Some(lifetime) = &declaration.lifetime else {
+                continue;
+            };
+            let records = lifetime
+                .cells
+                .iter()
+                .map(|protocol| protocol.record.clone())
+                .collect::<BTreeSet<_>>();
+            for record in records {
+                let callees = lifetime
+                    .frames
+                    .iter()
+                    .filter(|frame| frame.record == record)
+                    .map(|frame| frame.callee.clone())
+                    .collect::<BTreeSet<_>>();
+                if seen.insert(record.clone()) {
+                    out.insert(record, callees);
+                } else if out.get(&record) != Some(&callees) {
+                    conflicting.insert(record);
+                }
+            }
+        }
+        out.retain(|record, callees| {
+            !conflicting.contains(record) && protocols.contains_key(record) && !callees.is_empty()
+        });
+        out
+    }
+
+    /// Whether a human act's acceptance of every declared callee frame is in
+    /// force (rule 38g; only [`Self::with_human_holds_in_force`] sets it).
+    #[must_use]
+    pub fn cell_frames_accepted(&self) -> bool {
+        self.cell_frames_accepted
+    }
+
     /// Enforce the partition even for deserialized inputs, before any legacy
     /// prepass can read the raw retaining table.
     pub fn validate_lifetime_partition(&self) -> Result<(), String> {

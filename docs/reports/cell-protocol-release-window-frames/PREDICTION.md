@@ -8,7 +8,38 @@ in the main checkout).
 > frame declarations, (b) a member-actual narrowing, (c) keep the refusal):
 > "(a) Callee frames".
 
-## What the card will change
+## Amendment (committed before the measurement; the block below is unchanged)
+
+This section supersedes the row table below where they differ. Two
+implementation findings changed the expected content, not the status:
+
+1. **Option (b)'s narrowing was already in the host, and is removed.** Rule
+   38c's host read a call as reaching a record only through an actual naming
+   it (`ins`, `&ins->...`); a member value (`ins->processor`, `thi->tp`) or
+   another pointer (`collector`) was read as reaching nothing, which is
+   option (b), unsound under `container_of` and back pointers. Under "(a)
+   Callee frames" plus fail-closed, a record that does not keep its protocol
+   (the window) is now reached by every contracted call that does not
+   release it, except a call handed only the record's own cell numbers (rule
+   38c's close, `close(r->CELL)`, which carries no pointer).
+2. **Production frames.** Besides `mk_list_del`'s (checked),
+   `flb_input_collector_destroy`'s frame over `flb_input_instance` is
+   declared (its body, `src/flb_input.c:3140-3156`, calls Monkey out of the
+   unit, so the unit cannot check it). `flb_task_queue_destroy(ins->singleplex_queue)`
+   (flb_output.c:628) is refused at the access gate first (the baseline's
+   :628 leaf), so it states no frame.
+
+| Route | Row (units) | Baseline | Predicted |
+|---|---|---|---|
+| system | `flb_output_instance_destroy` (×2) | Unknown, 26 | **Unknown, 25.** `protocol-broken` at :631 goes (checked frame); :628's gate refusal stays. |
+| slice | `flb_input_instance_destroy` (×2) | Unknown, 61 | **Unknown, 60.** `protocol-broken` at :1330 and :1340 go (checked frame); a held call (`awaiting-human-review`, the declared frame) is added at :1331 (`flb_input_collector_destroy(collector)`, which the baseline read as reaching nothing). |
+| slice | `input_instance_channel_events_init` (×2) | Unknown, 8 | **Unknown.** :1387 unchanged; possibly `protocol-broken` added at a later contracted call on the success edge (`flb_debug`, :1390) if the record does not keep its protocol there, since its member-value actuals now reach it. |
+| slice | `input_thread_instance_destroy` (×2) | Unknown, 7 | **Unchanged.** |
+
+No status move: every reached row keeps `Unknown` leaves of its own, and a
+held call is `Pending` only in a row with no other reason.
+
+## What the card will change (original prediction)
 
 1. **A callee frame clause** (grammar G05k, new; contract specification
    C04.6.4, new). Hosted beside a record's `quant cell` protocol:

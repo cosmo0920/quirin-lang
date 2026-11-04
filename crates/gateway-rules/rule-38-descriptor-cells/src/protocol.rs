@@ -625,7 +625,7 @@ const fn outcome_word(refusal: Refusal) -> &'static str {
 
 /// Adopt `cell`'s pending identity into the table, as the host does when an
 /// operation first reads a cell of a record with a fact.
-fn adopt(cells: &mut crate::cells::Cells<String>, fact: &mut Fact, cell: &str) {
+pub(crate) fn adopt(cells: &mut crate::cells::Cells<String>, fact: &mut Fact, cell: &str) {
     if cells.get(&cell.to_owned()).is_none()
         && let Some((identity, status)) = fact.adopt(cell)
     {
@@ -798,7 +798,9 @@ pub fn vector_spec(spec: &str) -> Option<Protocol> {
 }
 
 /// A read of `cells` as the fact's table.
-fn table_of(cells: &crate::cells::Cells<String>) -> impl Fn(&str) -> Option<(u64, Status)> + use<> {
+pub(crate) fn table_of(
+    cells: &crate::cells::Cells<String>,
+) -> impl Fn(&str) -> Option<(u64, Status)> + use<> {
     let cells = cells.clone();
     move |path: &str| cells.get(&path.to_owned())
 }
@@ -887,7 +889,7 @@ pub fn run_per_end_vector(trace: &str) -> &'static str {
     }
 }
 
-const fn per_end_word(refusal: Refusal) -> &'static str {
+pub(crate) const fn per_end_word(refusal: Refusal) -> &'static str {
     match refusal {
         Refusal::OwnerReleased => "owner-released",
         Refusal::ZeroUndecided => "zero-undecided",
