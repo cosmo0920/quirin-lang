@@ -148,6 +148,22 @@ target/release/quirin-audit --plugin-path target/release \
   --declared docs/reports/cell-result-set-written-set-derivation/PREDICTION.md
 ```
 
+**Measurement (integrator, 2026-11-05).** Run from the main checkout at
+`c8c7edf21` with the command above, output
+`private/measure/written-set-derivation-20261104T151649Z`; exit 0. The
+declared prediction matches on every route (corpus, system, slice: `match`).
+Moves 0, unit moves 0, unmatched 0 on each route; content changes: corpus 0,
+system 0, slice 2:
+
+- slice `input_instance_channel_events_init` (units 0, 1): the two
+  `descriptor-cell-live-set-unproved` leaves at :1380 are replaced by two
+  `descriptor-cell-undecided` leaves; the :1401 leaves did not return. The row
+  stays Unknown. The change is attributed to the declared bound
+  (CELL-RESULT-SET-DESCRIPTOR-ZERO-POLICY).
+
+[native-comparison.json](native-comparison.json) (sha256
+`c11907dd6f06bf55616e6cfff01cf2de16588ff92574a7f063f61a5688a74033`).
+
 ## 7. Card gate
 
 The card gate was `python3 scripts/gate_scope.py --base c8c7edf21 --out private/gate2`. It ran on `864519c36`, the last code commit; this report, its amendments and `gate.json` were untracked prose at the time. The full record is [gate.json](gate.json).

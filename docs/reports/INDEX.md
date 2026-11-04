@@ -115,6 +115,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cell-result-set-alignment](cell-result-set-alignment/README.md) | CELL-RESULT-SET-ALIGNMENT |
 
+| [cell-result-set-written-set-derivation](cell-result-set-written-set-derivation/README.md) | CELL-RESULT-SET-WRITTEN-SET-DERIVATION |
+
 | [certificate-context-binding](certificate-context-binding/README.md) | Certificate context binding |
 
 | [cfg-release](cfg-release/README.md) | CFG-RELEASE: release the projection result after its last full-record consumer |
