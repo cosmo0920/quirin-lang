@@ -312,3 +312,370 @@ contract {
     ensures normal resource_borrowed(count);
     ensures normal resource_return_none();
 };
+
+// # Card CFL-MPACK-EXTERNAL-DECLARATIONS (round 14, 2026-11-05)
+//
+// USER REQUEST 2026-11-05 (verbatim): "Now, we're still needed to fill the
+// gap of the missing contracts." The user's `quirin-audit current` run at
+// 046accf6 reports these mpack callees as uncontracted. Each declaration
+// below is NEW resource-v1 text read from the callee's body. None is adopted
+// from another vocabulary (card CONTRACT-ADOPTION-NOT-IN-FORCE §5).
+//
+// The bodies were read in the cmetrics copy and compared with the others.
+// The cmetrics, ctraces and cprofiles copies of `mpack.c`/`mpack.h` are
+// byte-identical to one another and across 66910c10, 046accf6 and the slice
+// export 34155955. The amalgamation copy (`lib/mpack-amalgamation-1.1.1`) was
+// read for every name it defines. Fluent Bit's own units (`flb_mp.c`,
+// `cm_utils.c`) include it. Line numbers are the cmetrics copy's at 046accf6.
+// The census is `docs/reports/cfl-mpack-external-declarations/`. The reader
+// primitives sit in this module, the crate's one selected module, so that
+// the selection manifest, the load path and the module counts do not move.
+//
+// ## The error state, stated
+//
+// Every reader and writer primitive below may set the object's error. A
+// writer does so through `mpack_writer_flag_error` (`mpack.c:1214-1222`):
+// after a failed growth (`mpack_writer_ensure`, `:1256-1284`, and the
+// growable flush's `realloc`, `:1072-1076`), a writer without a flush
+// function, or a tracking error. A reader does so through
+// `mpack_reader_flag_error` (`:2280-2289`): after truncated input with no
+// fill function (`:2387-2391`, `:2330-2333`), an unexpected type, or a
+// string longer than its buffer. Setting the error does the following and
+// nothing else:
+//
+//   * It stores the error code in the object, once (a set error is never
+//     overwritten).
+//   * For a reader, it also clamps `reader->end` to `reader->data`, so every
+//     later read sees no data, zero-fills its output and returns.
+//   * For a writer, every later write is a no-op.
+//   * It calls the object's `error_fn` callback when one is installed.
+//
+// Nothing the caller holds is allocated, freed, stored or moved by it. The
+// writer's buffer stays the writer's: `mpack_writer_destroy`'s growable
+// teardown (`:1090-1125`) frees it on an error and hands it to the
+// initialiser's target only on success. That custody effect belongs to
+// `mpack_writer_init_growable`/`mpack_writer_destroy`, which stay
+// undeclared (below). The error state is therefore custody-neutral at every
+// primitive here, and the declarations carry it as `resource_borrowed` of
+// the object.
+//
+// ## The callbacks the bodies can reach
+//
+// A writer calls `writer->flush`, `writer->error_fn` and (at destroy)
+// `writer->teardown`. A reader calls `reader->fill`, `reader->skip`,
+// `reader->error_fn` and (at destroy) `reader->teardown`. These are fields
+// of the borrowed object, installed only by the `mpack_*_set_*` setters and
+// the stream/file initialisers. The census (`census/bodies.py`) finds no call
+// of any of those in Fluent Bit's `src`, `include` and `plugins`, or in the
+// cmetrics, ctraces and cprofiles sources, at any of the three revisions.
+// The audited code initialises writers only with `mpack_writer_init_growable`
+// (flush and teardown: the growable pair above, which touch the writer's own
+// buffer and the initialiser's target) and readers only with
+// `mpack_reader_init_data` (no callback). The declarations are true of
+// objects so initialised. An object carrying a user callback is outside what
+// they state. No premise names this: v1's premises are metadata. The
+// boundary joins W46-METRIC-TRACE-CALLBACK-PREMISES, which already names
+// the mpack fill and error callbacks.
+//
+// ## Tracking is off in every audited unit
+//
+// `MPACK_READ_TRACKING`/`MPACK_WRITE_TRACKING` follow `MPACK_DEBUG`, which
+// follows `DEBUG`/`_DEBUG` (`mpack.h:225-288`). No audited compile database
+// defines either for a unit that includes mpack. The census lists the one
+// unit that does, `lib/lwrb/dev/main.c`. So the tracking pushes, pops and
+// destroys compile to nothing. Where tracking is on, they grow or free a
+// stack inside the object, which is still the object's own state.
+
+// ## More writer primitives
+//
+//   * `mpack_start_map(writer, count)` and `mpack_start_array(writer, count)`
+//     (`:1863-1875`, `:1849-1861`) write a map or array header, sized by
+//     `count`, into the writer's buffer, and push a tracking frame. The
+//     amalgamation copy (`:2104-2109`, `:2097-2102`) also pushes a builder
+//     compound. A builder page is `MPACK_MALLOC`ed into the writer's own
+//     builder list (`:2446-2461`) and is the writer's state.
+//   * `mpack_write_nil` (`:1398-1400`), `mpack_write_u32` (`:1679-1694`),
+//     `mpack_write_u64` (`:1696-1710`) and `mpack_write_i32` (`:1748-1772`)
+//     encode one value into the writer's buffer, which may grow (see
+//     `MPACK-WRITER-INTERIOR-REALLOC`). The amalgamation copies (`:1598`,
+//     `:1893`, `:1910`, `:1962`) differ only in their constant names.
+//   * `mpack_write_int` and `mpack_write_uint` are `MPACK_INLINE` header
+//     definitions (`mpack.h:2790-2792`, `:2807-2809`; amalgamation `:3589`,
+//     `:3606`) that call `mpack_write_i64` (declared above) and
+//     `mpack_write_u64`. They are of external linkage, so no unit's body is
+//     admitted for them (W44-CALLEE-EXTERNAL-INLINE-DEFINITION). This
+//     declaration is that entry's second discharge arm for these two names.
+//   * `mpack_writer_flag_error(writer, error)` (`:1214-1222`; amalgamation
+//     `:1317-1325`) is the error-state setter described above.
+//
+// `writer` is `resource_borrowed`; every scalar is `resource_borrowed`; every
+// result is `void`. Prototypes `mpack.h:2738`, `:2784`, `:2801`, `:2804`,
+// `:2836`, `:2892`, `:2906`. `mpack_error_t` is an enumeration with no
+// negative constant (`:1380-1391`), so it projects to `u32` (rule 12u).
+// The gateway asks Clang for that type in each unit. `int32_t` is `i32`,
+// `int64_t` `i64`, `uint32_t` `u32`, `uint64_t` `u64`.
+//
+// LEFT UNDECLARED: `mpack_writer_init_growable(writer, target_data,
+// target_size)` (`:1127-1151`). It stores the caller's two slots in the
+// writer (`growable_writer->target_data = target_data`, `:1138`) and
+// `MPACK_MALLOC`s the buffer. `mpack_writer_destroy` later writes an owned
+// buffer through the stored slot, on a non-error state only (`:1115`). This
+// is a retention of a depth-two slot (C04.14 admits depth-one pointers only)
+// and a deferred, status-conditioned out slot. v1 has neither. Follow-up:
+// `MPACK-GROWABLE-WRITER-DEFERRED-OUT-SLOT`.
+
+extern fn mpack_start_map(writer: ptr<mut, u8>, count: u32) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(writer);
+    ensures normal resource_borrowed(count);
+    ensures normal resource_return_none();
+};
+
+extern fn mpack_start_array(writer: ptr<mut, u8>, count: u32) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(writer);
+    ensures normal resource_borrowed(count);
+    ensures normal resource_return_none();
+};
+
+extern fn mpack_write_nil(writer: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(writer);
+    ensures normal resource_return_none();
+};
+
+extern fn mpack_write_u64(writer: ptr<mut, u8>, value: u64) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(writer);
+    ensures normal resource_borrowed(value);
+    ensures normal resource_return_none();
+};
+
+extern fn mpack_write_u32(writer: ptr<mut, u8>, value: u32) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(writer);
+    ensures normal resource_borrowed(value);
+    ensures normal resource_return_none();
+};
+
+extern fn mpack_write_i32(writer: ptr<mut, u8>, value: i32) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(writer);
+    ensures normal resource_borrowed(value);
+    ensures normal resource_return_none();
+};
+
+extern fn mpack_write_int(writer: ptr<mut, u8>, value: i64) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(writer);
+    ensures normal resource_borrowed(value);
+    ensures normal resource_return_none();
+};
+
+extern fn mpack_write_uint(writer: ptr<mut, u8>, value: u64) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(writer);
+    ensures normal resource_borrowed(value);
+    ensures normal resource_return_none();
+};
+
+extern fn mpack_writer_flag_error(writer: ptr<mut, u8>, error: u32) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(writer);
+    ensures normal resource_borrowed(error);
+    ensures normal resource_return_none();
+};
+
+// ## Tag accessors (`mpack.h`)
+//
+// `mpack_tag_type` (`:1629-1631`), `mpack_tag_int_value` (`:1658-1661`),
+// `mpack_tag_uint_value` (`:1676-1679`), `mpack_tag_double_value`
+// (`:1708-1711`), `mpack_tag_array_count` (`:1721-1724`),
+// `mpack_tag_map_count` (`:1734-1737`), `mpack_tag_str_length`
+// (`:1747-1750`) and `mpack_tag_bin_length` (`:1760-1763`) are `MPACK_INLINE`
+// definitions. Each reads one field of the caller's `mpack_tag_t` (an
+// assertion of the tag's type compiles out without `MPACK_DEBUG`) and
+// returns it by value. The amalgamation copies (`:2273`, `:2302`, `:2320`,
+// `:2377`, `:2390`, `:2403`, `:2416`) are the same; it has no
+// `mpack_tag_double_value`. `tag` is `resource_borrowed`. Each result is a
+// scalar, `resource_return_none()`. `mpack_type_t` has no negative constant
+// (`:1406-1427`), so it is `u32`.
+//
+// LEFT UNDECLARED: `mpack_read_tag` and `mpack_peek_tag` (`mpack.c:2992-3033`,
+// `:3035-3048`) return an `mpack_tag_t` structure by value. v1's result
+// vocabulary is scalars, pointers and `unit` (C04.1). Follow-up:
+// `MPACK-STRUCT-RESULT-BY-VALUE`.
+
+extern fn mpack_tag_type(tag: ptr<mut, u8>) -> u32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(tag);
+    ensures normal resource_return_none();
+};
+
+extern fn mpack_tag_int_value(tag: ptr<mut, u8>) -> i64
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(tag);
+    ensures normal resource_return_none();
+};
+
+extern fn mpack_tag_uint_value(tag: ptr<mut, u8>) -> u64
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(tag);
+    ensures normal resource_return_none();
+};
+
+extern fn mpack_tag_double_value(tag: ptr<mut, u8>) -> f64
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(tag);
+    ensures normal resource_return_none();
+};
+
+extern fn mpack_tag_array_count(tag: ptr<mut, u8>) -> u32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(tag);
+    ensures normal resource_return_none();
+};
+
+extern fn mpack_tag_map_count(tag: ptr<mut, u8>) -> u32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(tag);
+    ensures normal resource_return_none();
+};
+
+extern fn mpack_tag_str_length(tag: ptr<mut, u8>) -> u32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(tag);
+    ensures normal resource_return_none();
+};
+
+extern fn mpack_tag_bin_length(tag: ptr<mut, u8>) -> u32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(tag);
+    ensures normal resource_return_none();
+};
+
+// ## Reader primitives
+//
+//   * `mpack_done_array`, `_map`, `_str` and `_bin` (`mpack.h:4150-4185`)
+//     are `MPACK_INLINE` calls of `mpack_done_type`. Without tracking, that
+//     function is the `MPACK_UNUSED` no-op at `:4139-4142` (amalgamation
+//     `:5067-5070`). With tracking, it pops the reader's tracking stack
+//     (amalgamation `mpack.c:3848-3851`).
+//   * `mpack_reader_destroy(reader)` (`mpack.c:2252-2264`; amalgamation
+//     `:2951-2963`) runs `reader->teardown` when one is set, clears it, and
+//     returns the reader's error. `mpack_reader_init_data` zeroes the reader
+//     and sets no teardown (`:2124-2137`), so in the audited code it frees
+//     nothing. The reader object is the caller's own storage (a local) and
+//     is not released. `resource_borrowed`. The `mpack_error_t` result is
+//     `u32`.
+//   * `mpack_expect_nil(reader)` (`:3605-3608`) reads one type byte and sets
+//     the error when it is not nil.
+//   * `mpack_read_bytes(reader, p, count)` (`:2508-2512`) copies `count`
+//     bytes from the reader's data into the caller's buffer `p`
+//     (`mpack_read_native`, `mpack.h:4307-4316`). On error or truncated
+//     input, it zero-fills `p` (`:2361-2429`).
+//   * `mpack_read_cstr(reader, buf, buffer_size, byte_count)` (`:2543-2551`,
+//     through `:2523-2541`) copies `byte_count` bytes into `buf` and
+//     NUL-terminates it. It sets the error, and writes `buf[0] = 0`, when the
+//     string does not fit or holds a NUL byte.
+//
+// Every pointer is `resource_borrowed`: the reader and the caller's
+// destination buffers are written, never freed, stored or returned. Every
+// count is `resource_borrowed`. Prototypes `mpack.h:3663`, `:3906`, `:3959`,
+// `:4877`. The amalgamation copies of the reader primitives (`:3207`,
+// `:3242`, `:4357`) are the same.
+//
+// NOT CLAIMED: that the reader's data is still live. It points into the
+// buffer `mpack_reader_init_data` was given, and no declaration ties the two
+// (that initialiser is undeclared). Nor that `count`/`byte_count` fit `p`/`buf`.
+//
+// LEFT UNDECLARED: `mpack_read_bytes_inplace(reader, count)`
+// (`mpack.c:2631-2634` and `mpack_read_bytes_inplace_notrack`) returns a
+// pointer into the input buffer the reader references. That buffer is the
+// one `mpack_reader_init_data` was given; the reader does not own it.
+// `mpack_reader_remaining(reader, data)` (`:2266-2278`) writes that same
+// pointer through `data` when `data` is non-NULL. No v1 result or out-slot
+// mode is derived from storage a holder references. The derived modes
+// (C04.3.1, C04.3.4, C04.16) tie the pointer to the release of a parameter's
+// own object, and here that is the wrong object. Both audited calls of
+// `mpack_reader_remaining` pass `NULL`, but a literal premise cannot select
+// them: `NULL` is a cast (C04.5.1). Follow-up:
+// `MPACK-READER-REFERENCED-BUFFER-RESULT`.
+
+extern fn mpack_done_array(reader: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(reader);
+    ensures normal resource_return_none();
+};
+
+extern fn mpack_done_map(reader: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(reader);
+    ensures normal resource_return_none();
+};
+
+extern fn mpack_done_str(reader: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(reader);
+    ensures normal resource_return_none();
+};
+
+extern fn mpack_done_bin(reader: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(reader);
+    ensures normal resource_return_none();
+};
+
+extern fn mpack_reader_destroy(reader: ptr<mut, u8>) -> u32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(reader);
+    ensures normal resource_return_none();
+};
+
+extern fn mpack_expect_nil(reader: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(reader);
+    ensures normal resource_return_none();
+};
+
+extern fn mpack_read_bytes(reader: ptr<mut, u8>, p: ptr<mut, u8>, count: usize) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(reader);
+    ensures normal resource_borrowed(p);
+    ensures normal resource_borrowed(count);
+    ensures normal resource_return_none();
+};
+
+extern fn mpack_read_cstr(reader: ptr<mut, u8>, buf: ptr<mut, u8>, buffer_size: usize, byte_count: usize) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(reader);
+    ensures normal resource_borrowed(buf);
+    ensures normal resource_borrowed(buffer_size);
+    ensures normal resource_borrowed(byte_count);
+    ensures normal resource_return_none();
+};

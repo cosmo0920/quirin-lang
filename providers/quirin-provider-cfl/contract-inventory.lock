@@ -108,8 +108,8 @@
       "sha256": "c68e18526615780b6ae38587b813ae06393b77387d96ced45b5454da87747d2e"
     },
     "cfl/sds_lifetime.qv": {
-      "clause_count": 55,
-      "declaration_count": 12,
+      "clause_count": 178,
+      "declaration_count": 42,
       "declarations": [
         {
           "clauses": 3,
@@ -158,12 +158,132 @@
         {
           "clauses": 3,
           "name": "cfl_list_size"
+        },
+        {
+          "clauses": 3,
+          "name": "cfl_sds_create_size"
+        },
+        {
+          "clauses": 4,
+          "name": "cfl_sds_create_len"
+        },
+        {
+          "clauses": 3,
+          "name": "cfl_sds_create"
+        },
+        {
+          "clauses": 4,
+          "name": "cfl_sds_set_len"
+        },
+        {
+          "clauses": 4,
+          "name": "cfl_sds_len_set"
+        },
+        {
+          "clauses": 5,
+          "name": "cfl_sds_cat"
+        },
+        {
+          "clauses": 5,
+          "name": "cfl_sds_printf"
+        },
+        {
+          "clauses": 2,
+          "name": "cfl_kvlist_create"
+        },
+        {
+          "clauses": 3,
+          "name": "cfl_kvlist_destroy"
+        },
+        {
+          "clauses": 4,
+          "name": "cfl_kvlist_fetch"
+        },
+        {
+          "clauses": 5,
+          "name": "cfl_kvlist_insert_uint64"
+        },
+        {
+          "clauses": 8,
+          "name": "cfl_kvlist_insert_bytes"
+        },
+        {
+          "clauses": 6,
+          "name": "cfl_kvlist_insert"
+        },
+        {
+          "clauses": 3,
+          "name": "cfl_array_create"
+        },
+        {
+          "clauses": 3,
+          "name": "cfl_array_destroy"
+        },
+        {
+          "clauses": 5,
+          "name": "cfl_array_append"
+        },
+        {
+          "clauses": 4,
+          "name": "cfl_array_append_string"
+        },
+        {
+          "clauses": 7,
+          "name": "cfl_array_append_bytes"
+        },
+        {
+          "clauses": 4,
+          "name": "cfl_array_append_bool"
+        },
+        {
+          "clauses": 4,
+          "name": "cfl_array_append_int64"
+        },
+        {
+          "clauses": 4,
+          "name": "cfl_array_append_double"
+        },
+        {
+          "clauses": 5,
+          "name": "cfl_array_append_array"
+        },
+        {
+          "clauses": 5,
+          "name": "cfl_array_append_kvlist"
+        },
+        {
+          "clauses": 3,
+          "name": "cfl_variant_create_from_bool"
+        },
+        {
+          "clauses": 3,
+          "name": "cfl_variant_create_from_int64"
+        },
+        {
+          "clauses": 3,
+          "name": "cfl_variant_create_from_double"
+        },
+        {
+          "clauses": 3,
+          "name": "cfl_variant_create_from_string"
+        },
+        {
+          "clauses": 3,
+          "name": "cfl_variant_destroy"
+        },
+        {
+          "clauses": 5,
+          "name": "cfl_utils_split"
+        },
+        {
+          "clauses": 3,
+          "name": "cfl_utils_split_free"
         }
       ],
       "inherits": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "a3684cfe27ec6d829b825e939f2574c67754fd3505a406143215a05ba44ebc56"
+      "sha256": "c367487328bb0311974088adeca7c000aff108c0c7af610a94788be3f4a24be9"
     },
     "cfl/time.qv": {
       "clause_count": 2,
