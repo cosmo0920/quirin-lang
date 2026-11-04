@@ -262,13 +262,42 @@ target/release/quirin-audit --plugin-path target/release \
   --inputs crates/quirin-audit-plugin-measure/inputs/live.json \
   --inputs-base /media/Data/GitHub/quirin-lang \
   --side base=baseline:c8c7edf2165a2065c234f3a63b4eed23e937ced6 \
-  --side tip=rev:<last code commit> \
+  --side tip=rev:731599d8072cfa138a31b8332945e078fecb6841 \
   --declared docs/reports/cell-protocol-release-window-frames/PREDICTION.md
 ```
 
 ## 9. Card gate
 
-GATE_PLACEHOLDER
+`python3 scripts/gate_scope.py --base c8c7edf21 --out private/gate` ran on
+`731599d80`, the last code commit, with a clean tree ([gate.json](gate.json),
+`uncommitted: []`). Only this report's README, its amendments and gate.json
+were added after it. The scope was full: the diff reaches `qcore-c-gateway`,
+`qcore-schemas` and `qcore-contract`, a proof root changed (all Lean), and
+`providers/` changed (provider gate).
+
+| Step | Exit | Counts |
+|---|---|---|
+| submodules | 0 | 1 |
+| fmt, clippy | 0, 0 | |
+| Rust suite | 0 | 603 units, 644 summaries; 9,184 passed, 0 failed, 16 ignored, 135 filtered |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| Lean | 0 | 407 audits |
+| Python suite | **1** | 577 tests, 1 failure (below) |
+| provider package build, verify-all, verify `qcore.libevent` | 0, 0, 0 | |
+| provider `cargo test` | 0 | 43 summaries; 133 passed, 0 failed, 1 ignored |
+| provider fmt, clippy | 0, 0 | |
+
+The one Python failure is the expected stale record:
+`test_build_matrix_sections.test_the_derived_facts_are_recomputed_rather_than_carried`,
+`['24.0.0', 406] != ['24.0.0', 407]`: the committed matrix's Lean-audit count;
+this card adds `AuditCellProtocolReleaseWindowFrames.lean`. The integrator
+regenerates the records.
+
+An earlier run on `c6680f3db` was stopped by me during its build to fold in
+`731599d80` (the frame table carried only on a CFG that can hold a fact). The
+logs are under `private/gate/` in the worktree; the console log is outside
+it, at
+`/tmp/claude-1000/-media-Data-GitHub-quirin-lang--claude-worktrees-launch-cards-clean-worktrees-5365ff/6fcd7fbd-1cae-4a40-a37d-5bce071c02c6/scratchpad/gate-console.log`.
 
 ## 10. Follow-ups
 
