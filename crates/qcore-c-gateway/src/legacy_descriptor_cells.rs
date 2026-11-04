@@ -156,6 +156,11 @@ pub struct CellOperands {
     /// in force. Omitted otherwise.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub result_range: Option<qcore_schemas::result_range::ResultRangeFact>,
+    /// Card CELL-RESULT-SET-ALIGNMENT (rule 38e as amended): per creation,
+    /// the callee's pin-derived written set of its slot while in force.
+    /// Omitted when none is.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub written_sets: Vec<Option<Vec<(i64, i64)>>>,
 }
 
 impl CellOperands {
@@ -372,6 +377,7 @@ pub(super) fn operands(
         refused: None,
         protocols: Vec::new(),
         result_range: None,
+        written_sets: Vec::new(),
     };
     for state in &declaration.states {
         let spelled = cell(&state.place);
@@ -609,7 +615,7 @@ pub(super) fn apply(
         // A creation into a protocol cell overwrites whatever the record
         // held: admitted only where the path knows no cell of it is live
         // (the guard said dead) or the cell itself is recorded.
-        for (spelled, _) in &operands.creations {
+        for (index, (spelled, _)) in operands.creations.iter().enumerate() {
             let Some(cell) = cell_key(state, spelled) else {
                 continue;
             };
@@ -624,6 +630,31 @@ pub(super) fn apply(
             else {
                 continue;
             };
+            // Card CELL-RESULT-SET-ALIGNMENT (USER DECISION 2026-11-04, Q3
+            // "(α) live_set suffix"): a creation into a cell with a declared
+            // live set is admitted only where the creator's derived written
+            // set of that slot is in force and lies inside it.
+            if let Some(live) = &hosted.fact.protocol.live_set {
+                let proved = operands
+                    .written_sets
+                    .get(index)
+                    .and_then(Option::as_ref)
+                    .is_some_and(|written| {
+                        rule_38_descriptor_cells::protocol::subset(written, live)
+                    });
+                if !proved {
+                    refuse(
+                        function,
+                        line,
+                        callee,
+                        &spelled.text(),
+                        Refusal::LiveSetUnproved,
+                        state,
+                        diagnostics,
+                    );
+                    continue;
+                }
+            }
             let unknown = state.cells.get(&cell.table()).is_none()
                 && hosted.fact.guard != Some(rule_38_descriptor_cells::protocol::GuardFact::Dead);
             if unknown {
@@ -931,6 +962,8 @@ pub(super) fn refuse_release_of_holder(
     if held {
         let refusal = if protocols.contains(&Refusal::ZeroUndecided) {
             Refusal::ZeroUndecided
+        } else if protocols.contains(&Refusal::EdgeUndecided) {
+            Refusal::EdgeUndecided
         } else {
             Refusal::OwnerReleased
         };
@@ -950,6 +983,11 @@ fn released_description(source: &str, refusal: Refusal) -> String {
     if refusal == Refusal::ZeroUndecided {
         format!(
             "`{source}` is released while a cell of it may hold descriptor 0, which a `> 0` test read as absent ({})",
+            refusal.key()
+        )
+    } else if refusal == Refusal::EdgeUndecided {
+        format!(
+            "`{source}` is released while a cell of it may hold a live value a test's edge left undecided ({})",
             refusal.key()
         )
     } else {
@@ -1050,6 +1088,12 @@ pub struct ProtocolSpec {
     pub guard: String,
     pub op: qcore_schemas::descriptor_cell::ProtocolGuard,
     pub hosts: Vec<String>,
+    /// Card CELL-RESULT-SET-ALIGNMENT: the declared live and absent sets
+    /// (omitted when not declared, so a step serializes as before).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub live_set: Option<Vec<(i64, i64)>>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub absent_set: Option<Vec<(i64, i64)>>,
 }
 
 impl ProtocolSpec {
@@ -1072,6 +1116,8 @@ impl ProtocolSpec {
             guard: protocol.guard.join("."),
             op: protocol.op,
             hosts: hosts.iter().cloned().collect(),
+            live_set: protocol.live_set.clone(),
+            absent_set: protocol.absent_set.clone(),
         }
     }
 
@@ -1089,6 +1135,8 @@ impl ProtocolSpec {
                 ProtocolGuard::Positive => Guard::Positive,
                 ProtocolGuard::EqualOne => Guard::EqualOne,
             },
+            live_set: self.live_set.clone(),
+            absent_set: self.absent_set.clone(),
         }
     }
 
@@ -1521,7 +1569,9 @@ pub(super) fn touch(
         };
         if let Err(refusal) = hosted.release_holder(state) {
             let entry = refusals.entry(key.0.clone()).or_insert(refusal);
-            if refusal == Refusal::ZeroUndecided {
+            if refusal == Refusal::ZeroUndecided
+                || (refusal == Refusal::EdgeUndecided && *entry == Refusal::OwnerReleased)
+            {
                 *entry = refusal;
             }
         }

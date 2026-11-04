@@ -46,6 +46,15 @@ pub enum Refusal {
     /// its protocol at an exit: the end may be descriptor 0, a success value
     /// the test read as absent (a candidate defect, never `Unsafe`).
     ZeroUndecided,
+    /// Card CELL-RESULT-SET-ALIGNMENT: the holder of a cell a test's edge left
+    /// undecided for a value other than 0 (a `>= 0` dead edge without a
+    /// declared live set, or a live edge that meets a declared absent set)
+    /// is released (a candidate defect, never `Unsafe`).
+    EdgeUndecided,
+    /// Card CELL-RESULT-SET-ALIGNMENT (USER DECISION 2026-11-04, Q3 (α)): a
+    /// creation into a cell with a declared live set whose creator has no
+    /// in-force derived written set of that slot inside it.
+    LiveSetUnproved,
 }
 
 impl Refusal {
@@ -61,6 +70,8 @@ impl Refusal {
             Self::GuardUndecided => "descriptor-cell-guard-undecided",
             Self::ProtocolBroken => "descriptor-cell-protocol-broken",
             Self::ZeroUndecided => "descriptor-cell-zero-undecided",
+            Self::EdgeUndecided => "descriptor-cell-edge-undecided",
+            Self::LiveSetUnproved => "descriptor-cell-live-set-unproved",
         }
     }
 }

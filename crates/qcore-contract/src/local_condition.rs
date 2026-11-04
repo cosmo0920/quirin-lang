@@ -122,7 +122,8 @@ pub fn registered(source: &str) -> Result<RegisteredProtocol, String> {
     })
 }
 /// One `quant cell` clause as read: binder, record, cell path, `#same`
-/// target (`None` for `#fresh(descriptor)`), guard path and guard.
+/// target (`None` for `#fresh(descriptor)`), guard path, guard, and (card
+/// CELL-RESULT-SET-ALIGNMENT) the declared live and absent sets.
 type CellClause = (
     String,
     String,
@@ -130,7 +131,62 @@ type CellClause = (
     Option<Vec<String>>,
     Vec<String>,
     qcore_schemas::descriptor_cell::ProtocolGuard,
+    CellSets,
 );
+
+/// A cell clause's `live_set(SET)` and `absent_set(SET)`, canonical intervals
+/// over `int`.
+type CellSets = (Option<Vec<(i64, i64)>>, Option<Vec<(i64, i64)>>);
+
+/// Card CELL-RESULT-SET-ALIGNMENT (USER DECISIONS 2026-11-04, Q2 (i) and Q3):
+/// split a guard's tokens at its `live_set(SET)` / `absent_set(SET)`
+/// suffixes (each at most once, in that order), returning the guard tokens
+/// and the sets in `int`'s universe.
+fn cell_sets(guard: &[TokenKind]) -> Result<(&[TokenKind], CellSets), String> {
+    let int = (i128::from(i32::MIN), i128::from(i32::MAX));
+    let shape = || {
+        "quant-cell-set: write `live_set(SET)` and then `absent_set(SET)` after the guard, each at most once".to_owned()
+    };
+    let at = |name: &str| guard.iter().position(|t| word(t) == Some(name));
+    let (live_at, absent_at) = (at("live_set"), at("absent_set"));
+    let end = live_at.or(absent_at).unwrap_or(guard.len());
+    let read = |from: usize, to: usize| -> Result<Vec<(i64, i64)>, String> {
+        let run = &guard[from..to];
+        if run.len() < 4
+            || !symbol(&run[1], Symbol::LeftParen)
+            || !symbol(&run[run.len() - 1], Symbol::RightParen)
+        {
+            return Err(shape());
+        }
+        let set = crate::bounds_contract::set_of_tokens(&run[2..run.len() - 1], int)?;
+        Ok(set
+            .intervals()
+            .iter()
+            .map(|(lo, hi)| {
+                (
+                    i64::try_from(*lo).unwrap_or(i64::MIN),
+                    i64::try_from(*hi).unwrap_or(i64::MAX),
+                )
+            })
+            .collect())
+    };
+    let sets = match (live_at, absent_at) {
+        (None, None) => (None, None),
+        (Some(l), None) => (Some(read(l, guard.len())?), None),
+        (None, Some(a)) => (None, Some(read(a, guard.len())?)),
+        (Some(l), Some(a)) if l < a => (Some(read(l, a)?), Some(read(a, guard.len())?)),
+        _ => return Err(shape()),
+    };
+    if guard
+        .iter()
+        .filter(|t| matches!(word(t), Some("live_set" | "absent_set")))
+        .count()
+        > usize::from(live_at.is_some()) + usize::from(absent_at.is_some())
+    {
+        return Err(shape());
+    }
+    Ok((&guard[..end], sets))
+}
 
 /// A member path of a `quant cell` clause: identifiers joined by `.`, each
 /// segment carrying at most one `[K]` with `K` a canonical decimal.
@@ -243,7 +299,7 @@ fn cell(source: &str) -> Result<CellClause, String> {
             );
         }
     };
-    let guard = &ts[when + 1..];
+    let (guard, sets) = cell_sets(&ts[when + 1..])?;
     let op_at = guard
         .iter()
         .position(|t| {
@@ -280,7 +336,47 @@ fn cell(source: &str) -> Result<CellClause, String> {
         .ok_or_else(|| {
             "quant-cell-guard: the admitted guards are `!= -1`, `> 0` and `== 1`".to_owned()
         })?;
-    Ok((binder, record, path, same, guard_path, op))
+    if (sets.0.is_some() || sets.1.is_some()) && (same.is_some() || guard_path != path) {
+        return Err(
+            "quant-cell-set: `live_set` / `absent_set` stand on a per-end sentinel's own `#fresh` clause"
+                .into(),
+        );
+    }
+    Ok((binder, record, path, same, guard_path, op, sets))
+}
+
+/// Card CELL-RESULT-SET-ALIGNMENT (USER DECISION 2026-11-04, Q2 (i)): the
+/// loader's refusals over a per-end sentinel's declared sets. An absent set
+/// that meets the guard's live edge would read a never-created value as a
+/// live descriptor (a `> 0` guard over a stored 1); a live set that meets the
+/// absent set leaves no test exact and is refused too.
+fn check_cell_sets(
+    op: qcore_schemas::descriptor_cell::ProtocolGuard,
+    sets: &CellSets,
+) -> Result<(), String> {
+    let meets = |set: &[(i64, i64)], f: &dyn Fn(i64) -> bool| {
+        set.iter().any(|(lo, hi)| {
+            [*lo, *hi, -1, 0, 1]
+                .into_iter()
+                .any(|v| *lo <= v && v <= *hi && f(v))
+        })
+    };
+    if let Some(absent) = &sets.1
+        && meets(absent, &|v| op.says_live(v))
+    {
+        return Err(format!(
+            "quant-cell-absent-set: the absent set meets the guard's live edge (`{}`)",
+            op.spelling()
+        ));
+    }
+    if let (Some(live), Some(absent)) = &sets
+        && live
+            .iter()
+            .any(|(lo, hi)| absent.iter().any(|(a, b)| lo.max(a) <= hi.min(b)))
+    {
+        return Err("quant-cell-live-set: the live set meets the absent set".into());
+    }
+    Ok(())
 }
 
 /// Group a declaration's `quant cell` clauses into one protocol per guard of
@@ -299,7 +395,8 @@ fn cell_protocols(
     use qcore_schemas::descriptor_cell::{CellProtocol, ProtocolCell};
     type Groups = BTreeMap<Vec<String>, CellProtocol>;
     let mut records: BTreeMap<String, (String, Groups)> = BTreeMap::new();
-    for (binder, record, path, same, guard, op) in clauses {
+    for (binder, record, path, same, guard, op, sets) in clauses {
+        check_cell_sets(op, &sets)?;
         let entry = records
             .entry(record.clone())
             .or_insert_with(|| (binder.clone(), BTreeMap::new()));
@@ -321,9 +418,17 @@ fn cell_protocols(
                 cells: Vec::new(),
                 guard: guard.clone(),
                 op,
+                live_set: None,
+                absent_set: None,
             });
         if group.op != op {
             return Err("quant-cell-guard: every cell of a record states the same guard".into());
+        }
+        if sets.0.is_some() {
+            group.live_set = sets.0;
+        }
+        if sets.1.is_some() {
+            group.absent_set = sets.1;
         }
         group.cells.push(ProtocolCell { path, same });
     }
@@ -362,6 +467,12 @@ fn cell_protocols(
             }
             if !protocol.per_end() {
                 record_guards += 1;
+                if protocol.live_set.is_some() || protocol.absent_set.is_some() {
+                    return Err(
+                        "quant-cell-set: `live_set` / `absent_set` stand on a per-end sentinel"
+                            .into(),
+                    );
+                }
             }
             protocol.cells.sort();
             out.push(protocol);

@@ -974,17 +974,25 @@ fn result_set_spans(program: &SourceProgram) -> Vec<Span> {
         .filter_map(|declaration| declaration.value.function_contract.as_ref())
         .flat_map(|contract| &contract.clauses)
         .filter(|clause| {
-            matches!(
+            let source = clause.value.expression_source.trim_start();
+            let headed = |head: &str| {
+                source
+                    .strip_prefix(head)
+                    .is_some_and(|rest| rest.trim_start().starts_with('('))
+            };
+            // Card CELL-RESULT-SET-ALIGNMENT (USER DECISIONS 2026-11-04):
+            // `written_set(SLOT, SET)` beside `result_set`, and a `quant cell`
+            // clause's `live_set(SET)` / `absent_set(SET)` suffixes; the
+            // loaders read every other placement of the operators as a
+            // refusal of their own.
+            (matches!(
                 clause.value.kind,
                 SourceContractClauseKind::Ensures(
                     crate::frontend::SourceContractExitSelector::Normal
                 )
-            ) && clause
-                .value
-                .expression_source
-                .trim_start()
-                .strip_prefix("result_set")
-                .is_some_and(|rest| rest.trim_start().starts_with('('))
+            ) && (headed("result_set") || headed("written_set")))
+                || (matches!(clause.value.kind, SourceContractClauseKind::QuantCell)
+                    && (source.contains("live_set") || source.contains("absent_set")))
         })
         .map(|clause| clause.value.expression_span)
         .collect()

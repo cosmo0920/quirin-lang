@@ -230,7 +230,8 @@ pub enum ProtocolGuard {
     /// `!= -1`: a sentinel cell; a live descriptor is never `-1`.
     NotMinusOne,
     /// `> 0`: a sentinel cell; a creation never establishes it (descriptor
-    /// `0` exists). Card CELL-PROTOCOL-PER-END-GUARDS (gateway rule 38f): its
+    /// `0` exists) unless a declared live set excludes 0 (card
+    /// CELL-RESULT-SET-ALIGNMENT). Card CELL-PROTOCOL-PER-END-GUARDS (gateway rule 38f): its
     /// dead edge (`<= 0`) holds descriptor 0, a success value of every
     /// creator and calloc's absent value at once, so it is never read as
     /// "no cell is live".
@@ -306,6 +307,18 @@ pub struct CellProtocol {
     pub cells: Vec<ProtocolCell>,
     pub guard: Vec<String>,
     pub op: ProtocolGuard,
+    /// Card CELL-RESULT-SET-ALIGNMENT (USER DECISIONS 2026-11-04): a per-end
+    /// sentinel's declared live set (`live_set(SET)`), the values a creator
+    /// puts in the cell, as canonical closed intervals over `int`. Omitted
+    /// when not declared: rule 38's premise (every `int` but `-1`) stands in.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub live_set: Option<Vec<(i64, i64)>>,
+    /// The declared absent set (`absent_set(SET)`, USER DECISION 2026-11-04
+    /// Q2 (i)): the values the holder's own stores write when the cell names
+    /// no descriptor. Omitted when not declared: the guard's dead set stands
+    /// in.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub absent_set: Option<Vec<(i64, i64)>>,
 }
 
 impl CellProtocol {

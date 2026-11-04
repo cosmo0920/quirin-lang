@@ -1199,7 +1199,7 @@ fn result_set_clause(
     tokens: &[TokenKind],
     result_type: Option<&str>,
 ) -> Option<Result<qcore_core::result_set::ResultSet, String>> {
-    use qcore_core::result_set::{SetToken, canonical_literal, parse, universe};
+    use qcore_core::result_set::universe;
     if !matches!(tokens.first(), Some(TokenKind::Word(w)) if w == RESULT_SET) {
         return None;
     }
@@ -1221,7 +1221,28 @@ fn result_set_clause(
         {
             return Err(shape("the clause is `result_set(SET)`"));
         }
-        let inner = &tokens[2..tokens.len() - 1];
+        set_of_tokens(&tokens[2..tokens.len() - 1], universe)
+    })())
+}
+
+/// The set a G05j token run denotes in `universe` (shared with the cell
+/// clauses' `live_set(SET)` / `absent_set(SET)`, card
+/// CELL-RESULT-SET-ALIGNMENT).
+///
+/// # Errors
+///
+/// `result-set-shape` / `result-set-empty` / `result-set-outside-type`.
+pub(crate) fn set_of_tokens(
+    inner: &[TokenKind],
+    universe: qcore_core::result_set::Interval,
+) -> Result<qcore_core::result_set::ResultSet, String> {
+    use qcore_core::result_set::{SetToken, canonical_literal, parse};
+    let shape = |detail: &str| {
+        format!(
+            "result-set-shape: {detail}; write literals, `[a, b]`, `MIN`, `MAX`, `|` (union), `^` (symmetric difference), `&` (intersection) and parentheses"
+        )
+    };
+    {
         let mut set_tokens = Vec::new();
         let mut index = 0;
         while index < inner.len() {
@@ -1256,7 +1277,7 @@ fn result_set_clause(
         }
         let expr = parse(&set_tokens)?;
         expr.eval(universe).map_err(|error| error.to_string())
-    })())
+    }
 }
 
 fn load_function(path: &str, decl: &SourceDeclaration) -> Result<BoundsFunctionContract, String> {

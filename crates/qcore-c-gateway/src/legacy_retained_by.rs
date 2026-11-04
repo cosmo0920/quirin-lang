@@ -856,6 +856,33 @@ impl Parser<'_> {
             if cells.witness.is_some_and(|guard| !guard.is_validity()) {
                 cells.result_range = self.contracts.result_range_in_force(function).cloned();
             }
+            // Card CELL-RESULT-SET-ALIGNMENT (USER DECISIONS 2026-11-04, Q1 (a)
+            // and Q3 (α)): each slot creation's pin-derived written set
+            // (`FUNCTION#SLOT` in the route's table) while in force; a creation
+            // into a cell with a declared live set reads it.
+            if !cells.protocols.is_empty() {
+                cells.written_sets = declaration
+                    .descriptor_cells
+                    .states
+                    .iter()
+                    .filter(|state| {
+                        matches!(
+                            state.value,
+                            qcore_schemas::descriptor_cell::CellValue::Fresh
+                        )
+                    })
+                    .map(|state| match &state.place {
+                        qcore_schemas::descriptor_cell::CellPlace::Slot { parameter } => self
+                            .contracts
+                            .result_range_in_force(&format!("{function}#{parameter}"))
+                            .map(|fact| fact.intervals.clone()),
+                        _ => None,
+                    })
+                    .collect();
+                if cells.written_sets.iter().all(Option::is_none) {
+                    cells.written_sets.clear();
+                }
+            }
             operands.cells = Some(Box::new(cells));
         }
         for &reset in &declaration.resets {

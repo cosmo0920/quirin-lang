@@ -42,18 +42,121 @@ pub enum Guard {
     EqualOne,
 }
 
+/// Card CELL-RESULT-SET-ALIGNMENT: a value set over `int`, as canonical
+/// closed intervals (sorted, disjoint, not adjacent).
+pub type ValueSet = Vec<(i64, i64)>;
+
+/// `int`'s bounds, the universe of every cell's value set.
+pub const INT_MIN: i64 = i32::MIN as i64;
+pub const INT_MAX: i64 = i32::MAX as i64;
+
+fn canonical(mut set: ValueSet) -> ValueSet {
+    set.retain(|(lo, hi)| lo <= hi);
+    set.sort_unstable();
+    let mut out: ValueSet = Vec::new();
+    for (lo, hi) in set {
+        match out.last_mut() {
+            Some(last) if lo <= last.1.saturating_add(1) => last.1 = last.1.max(hi),
+            _ => out.push((lo, hi)),
+        }
+    }
+    out
+}
+
+/// `a ∩ b`.
+#[must_use]
+pub fn intersection(a: &[(i64, i64)], b: &[(i64, i64)]) -> ValueSet {
+    canonical(
+        a.iter()
+            .flat_map(|(lo, hi)| b.iter().map(move |(l, h)| ((*lo).max(*l), (*hi).min(*h))))
+            .collect(),
+    )
+}
+
+/// `a ∪ b`.
+#[must_use]
+pub fn union(a: &[(i64, i64)], b: &[(i64, i64)]) -> ValueSet {
+    canonical(a.iter().chain(b).copied().collect())
+}
+
+/// `int ∖ a`.
+#[must_use]
+pub fn complement(a: &[(i64, i64)]) -> ValueSet {
+    let mut out = Vec::new();
+    let mut next = INT_MIN;
+    for (lo, hi) in canonical(a.to_vec()) {
+        if lo > next {
+            out.push((next, lo - 1));
+        }
+        next = hi.saturating_add(1);
+    }
+    if next <= INT_MAX {
+        out.push((next, INT_MAX));
+    }
+    out
+}
+
+/// `a ⊆ b`.
+#[must_use]
+pub fn subset(a: &[(i64, i64)], b: &[(i64, i64)]) -> bool {
+    intersection(a, &complement(b)).is_empty()
+}
+
+/// Rule 38's premise as a live set: a live descriptor is never `-1`.
+#[must_use]
+pub fn premise_live() -> ValueSet {
+    complement(&[(-1, -1)])
+}
+
 impl Guard {
+    /// Card CELL-RESULT-SET-ALIGNMENT: the values on which the guard says
+    /// live (its live edge).
+    #[must_use]
+    pub fn live_edge(self) -> ValueSet {
+        match self {
+            Self::NotMinusOne => premise_live(),
+            Self::Positive => vec![(1, INT_MAX)],
+            Self::EqualOne => vec![(1, 1)],
+        }
+    }
+
+    /// The values on its dead edge.
+    #[must_use]
+    pub fn dead_edge(self) -> ValueSet {
+        complement(&self.live_edge())
+    }
+
+    /// Card CELL-RESULT-SET-ALIGNMENT (step 4, one reading for every guard):
+    /// the dead edge decides "absent" only when its values meet the live set
+    /// nowhere and, over the cell's values (`live | absent`), lie inside the
+    /// absent set.
+    #[must_use]
+    pub fn dead_edge_reads_absent(self, live: &[(i64, i64)], absent: &[(i64, i64)]) -> bool {
+        let dead = self.dead_edge();
+        intersection(&dead, live).is_empty()
+            && subset(&intersection(&dead, &union(live, absent)), absent)
+    }
+
+    /// The live edge decides "live" only when its values meet the absent set
+    /// nowhere.
+    #[must_use]
+    pub fn live_edge_reads_live(self, absent: &[(i64, i64)]) -> bool {
+        intersection(&self.live_edge(), absent).is_empty()
+    }
+
     /// Card CELL-PROTOCOL-PER-END-GUARDS (gateway rule 38f): whether the
-    /// guard's dead edge decides that no cell of it is live. A flag is no
+    /// guard's dead edge decides that no cell of it is live, under rule 38's
+    /// premise and the guard's own dead set (no declared set). A flag is no
     /// cell, and `!= -1`'s dead edge holds only `-1`, which no live
     /// descriptor is (rule 38's premise). `> 0`'s dead edge holds `0`:
     /// descriptor 0 is a success value of every creator and calloc's absent
     /// value at once, so that edge never decides (USER DECISION 2026-11-03,
     /// standing: the `> 0` end tests are wrong against the creator's result
-    /// set, and their dead edge is never read as "the end is absent").
+    /// set, and their dead edge is never read as "the end is absent"). Card
+    /// CELL-RESULT-SET-ALIGNMENT generalises this to declared sets
     #[must_use]
-    pub const fn dead_edge_decides(self) -> bool {
-        !matches!(self, Self::Positive)
+    pub fn dead_edge_decides(self) -> bool {
+        self == Self::EqualOne || self.dead_edge_reads_absent(&premise_live(), &self.dead_edge())
     }
 
     /// Whether a stored integer makes the guard say live.
@@ -77,9 +180,67 @@ pub struct Protocol {
     pub cells: Vec<(String, String)>,
     pub guard: String,
     pub op: Guard,
+    /// Card CELL-RESULT-SET-ALIGNMENT: the declared live set (`live_set`),
+    /// `None` for rule 38's premise.
+    pub live_set: Option<ValueSet>,
+    /// The declared absent set (`absent_set`), `None` for the guard's dead
+    /// set.
+    pub absent_set: Option<ValueSet>,
 }
 
 impl Protocol {
+    /// Card CELL-RESULT-SET-ALIGNMENT: the cell's live set, declared or
+    /// rule 38's premise.
+    #[must_use]
+    pub fn live(&self) -> ValueSet {
+        self.live_set.clone().unwrap_or_else(premise_live)
+    }
+
+    /// The cell's absent set, declared or the guard's dead set.
+    #[must_use]
+    pub fn absent(&self) -> ValueSet {
+        self.absent_set
+            .clone()
+            .unwrap_or_else(|| self.op.dead_edge())
+    }
+
+    /// Whether a test's dead edge decides that no cell is live (a flag's
+    /// always does).
+    #[must_use]
+    pub fn dead_edge_decides(&self) -> bool {
+        self.op == Guard::EqualOne || self.op.dead_edge_reads_absent(&self.live(), &self.absent())
+    }
+
+    /// Whether a test's live edge decides that the cells are live (a flag's
+    /// always does).
+    #[must_use]
+    pub fn live_edge_decides(&self) -> bool {
+        self.op == Guard::EqualOne || self.op.live_edge_reads_live(&self.absent())
+    }
+
+    /// Whether the sentinel says live whenever its cell holds a live value
+    /// (the live set lies inside the live edge): then a creation establishes
+    /// the guard. Under rule 38's premise only `!= -1` does.
+    #[must_use]
+    pub fn guard_follows_live(&self) -> bool {
+        self.op != Guard::EqualOne && subset(&self.live(), &self.op.live_edge())
+    }
+
+    /// The refusal that names an edge left undecided: the zero reading when
+    /// 0 is a live value on the dead edge (or an absent value on the live
+    /// edge), else the generic one.
+    #[must_use]
+    pub fn undecided_refusal(&self) -> Refusal {
+        let zero = [(0, 0)];
+        let on_dead = intersection(&intersection(&self.op.dead_edge(), &self.live()), &zero);
+        let on_live = intersection(&intersection(&self.op.live_edge(), &self.absent()), &zero);
+        if on_dead.is_empty() && on_live.is_empty() {
+            Refusal::EdgeUndecided
+        } else {
+            Refusal::ZeroUndecided
+        }
+    }
+
     /// Whether `path` is one of the cells.
     #[must_use]
     pub fn is_cell(&self, path: &str) -> bool {
@@ -144,9 +305,20 @@ impl Fact {
     #[must_use]
     pub fn introduced(protocol: &Protocol, live: bool, base: u64) -> Self {
         let mut entry = BTreeMap::new();
-        let undecided = !live && !protocol.op.dead_edge_decides();
+        // Card CELL-RESULT-SET-ALIGNMENT: each edge decides from the cell's
+        // live and absent sets; an edge that does not decide introduces the
+        // names undecided.
+        let undecided = if live {
+            !protocol.live_edge_decides()
+        } else {
+            !protocol.dead_edge_decides()
+        };
         if live || undecided {
-            let status = if live { Status::Live } else { Status::Maybe };
+            let status = if live && !undecided {
+                Status::Live
+            } else {
+                Status::Maybe
+            };
             let groups = protocol.groups().map(str::to_owned).collect::<Vec<_>>();
             for (cell, group) in &protocol.cells {
                 if let Some(index) = groups.iter().position(|g| g == group) {
@@ -197,7 +369,7 @@ impl Fact {
             return Ok(());
         }
         Err(if self.zero {
-            Refusal::ZeroUndecided
+            self.protocol.undecided_refusal()
         } else {
             Refusal::OwnerReleased
         })
@@ -284,7 +456,7 @@ impl Fact {
             return true;
         }
         let live = self.all_live(&table)
-            && (self.protocol.op == Guard::NotMinusOne || self.guard == Some(GuardFact::Live));
+            && (self.protocol.guard_follows_live() || self.guard == Some(GuardFact::Live));
         let dead = self.none_live(&table) && self.guard == Some(GuardFact::Dead);
         live || dead
     }
@@ -327,8 +499,9 @@ impl Fact {
         let live = self.protocol.op.says_live(value);
         if self.protocol.is_cell(path) {
             // A sentinel cell then holds a number no descriptor of the
-            // protocol names: only its dead value keeps the protocol.
-            if live {
+            // protocol names: only its dead value keeps the protocol (card
+            // CELL-RESULT-SET-ALIGNMENT: a value of its absent set).
+            if live || !subset(&[(value, value)], &self.protocol.absent()) {
                 self.guard = Some(GuardFact::Conflict);
                 return Err(Refusal::ProtocolBroken);
             }
@@ -435,6 +608,8 @@ pub fn vector_protocol() -> Protocol {
         ],
         guard: "r".to_owned(),
         op: Guard::NotMinusOne,
+        live_set: None,
+        absent_set: None,
     }
 }
 
@@ -551,6 +726,35 @@ pub const PER_END_VECTORS: &[(&str, &str)] = &[
     ("pos: test live; call", "holds"),
 ];
 
+/// Card CELL-RESULT-SET-ALIGNMENT (`QCore.CellResultSet.setVectors`): the
+/// per-end traces of [`PER_END_VECTORS`] under declared live and absent sets
+/// ([`vector_spec`] spells them). USER DECISION
+/// 2026-11-04 (verbatim): "Write [1, MAX]" (`L1`); POSIX's `[0, MAX]` (`L0`)
+/// is the contrast.
+pub const PER_END_SET_VECTORS: &[(&str, &str)] = &[
+    ("pos/L1/A0: test dead; free", "holds"),
+    ("pos/L1: test dead; free", "holds"),
+    ("pos/L0: test dead; free", "zero-undecided"),
+    ("pos/L1/A0: test dead; close c", "undecided"),
+    ("pos/L1/A0: test live; close c; join; free", "holds"),
+    ("pos/L0: test live; close c; join; free", "zero-undecided"),
+    ("pos/L1/A0: test dead; store c 0", "holds"),
+    ("pos/L1/A0: test dead; store c -1", "broken"),
+    ("pos/L1/A0: test live; call", "holds"),
+    ("pos/L1/Am1: test dead; free", "holds"),
+    ("pos/L1/A0m1: test dead; free", "holds"),
+    ("pos/L1/Am1: test live; close c; store c -1", "holds"),
+    ("pos/L1/Am1: test live; close c; store c 0", "broken"),
+    (
+        "pos/L1/Am1: test live; close c; store c -1; join; free",
+        "holds",
+    ),
+    ("pos/L1/A0m1: test dead; store c -1", "holds"),
+    ("pos/Lm5: test dead; free", "edge-undecided"),
+    ("nm1/A0: test live; free", "zero-undecided"),
+    ("nm1/Am1: test dead; free", "holds"),
+];
+
 /// The per-end protocol the vectors run over.
 #[must_use]
 pub fn per_end_protocol(op: Guard) -> Protocol {
@@ -562,7 +766,35 @@ pub fn per_end_protocol(op: Guard) -> Protocol {
         ],
         guard: "c".to_owned(),
         op,
+        live_set: None,
+        absent_set: None,
     }
+}
+
+/// Card CELL-RESULT-SET-ALIGNMENT: a vector's guard and declared sets,
+/// spelled `OP[/L1|/L0|/Lm5][/A0|/Am1|/A0m1]` (`pos` `> 0`, `nm1` `!= -1`;
+/// `L1` the live set `[1, MAX]` of USER DECISION 2026-11-04, `L0` POSIX's
+/// `[0, MAX]`; `A0` the absent set `0`, `Am1` the absent set `-1`).
+#[must_use]
+pub fn vector_spec(spec: &str) -> Option<Protocol> {
+    let mut parts = spec.split('/');
+    let mut protocol = per_end_protocol(match parts.next()? {
+        "pos" => Guard::Positive,
+        "nm1" => Guard::NotMinusOne,
+        _ => return None,
+    });
+    for part in parts {
+        match part {
+            "L1" => protocol.live_set = Some(vec![(1, INT_MAX)]),
+            "L0" => protocol.live_set = Some(vec![(0, INT_MAX)]),
+            "A0" => protocol.absent_set = Some(vec![(0, 0)]),
+            "Am1" => protocol.absent_set = Some(vec![(-1, -1)]),
+            "A0m1" => protocol.absent_set = Some(vec![(-1, 0)]),
+            "Lm5" => protocol.live_set = Some(vec![(-5, -5), (1, INT_MAX)]),
+            _ => return None,
+        }
+    }
+    Some(protocol)
 }
 
 /// A read of `cells` as the fact's table.
@@ -578,12 +810,9 @@ pub fn run_per_end_vector(trace: &str) -> &'static str {
     let Some((op, trace)) = trace.split_once(':') else {
         return "malformed";
     };
-    let op = match op {
-        "pos" => Guard::Positive,
-        "nm1" => Guard::NotMinusOne,
-        _ => return "malformed",
+    let Some(protocol) = vector_spec(op) else {
+        return "malformed";
     };
-    let protocol = per_end_protocol(op);
     let mut cells: Cells<String> = Cells::default();
     let mut fact: Option<Fact> = None;
     let mut live_edge: Option<bool> = None;
@@ -662,6 +891,7 @@ const fn per_end_word(refusal: Refusal) -> &'static str {
     match refusal {
         Refusal::OwnerReleased => "owner-released",
         Refusal::ZeroUndecided => "zero-undecided",
+        Refusal::EdgeUndecided => "edge-undecided",
         other => outcome_word(other),
     }
 }
@@ -675,6 +905,57 @@ mod tests {
         for (trace, expected) in PER_END_VECTORS {
             assert_eq!(run_per_end_vector(trace), *expected, "{trace}");
         }
+    }
+
+    /// Card CELL-RESULT-SET-ALIGNMENT: the set vectors hold.
+    #[test]
+    fn the_set_vectors_hold() {
+        for (trace, expected) in PER_END_SET_VECTORS {
+            assert_eq!(run_per_end_vector(trace), *expected, "{trace}");
+        }
+    }
+
+    /// Without declared sets the general reading is rule 38f's, guard for
+    /// guard (parity with CELL-PROTOCOL-PER-END-GUARDS).
+    #[test]
+    fn without_declared_sets_the_reading_is_rule_38f() {
+        assert!(Guard::NotMinusOne.dead_edge_decides());
+        assert!(!Guard::Positive.dead_edge_decides());
+        assert!(Guard::EqualOne.dead_edge_decides());
+        for op in [Guard::NotMinusOne, Guard::Positive] {
+            let protocol = per_end_protocol(op);
+            assert!(protocol.live_edge_decides(), "{op:?}");
+            assert_eq!(protocol.dead_edge_decides(), op == Guard::NotMinusOne);
+            assert_eq!(protocol.guard_follows_live(), op == Guard::NotMinusOne);
+        }
+    }
+
+    /// USER DECISION 2026-11-04 ("Write [1, MAX]"): under the declared live
+    /// set `> 0` decides both edges; under POSIX's `[0, MAX]` its dead edge
+    /// still holds descriptor 0.
+    #[test]
+    fn the_declared_bound_decides_the_positive_dead_edge() {
+        let declared = vector_spec("pos/L1/A0").expect("spec");
+        assert!(declared.dead_edge_decides() && declared.live_edge_decides());
+        assert!(declared.guard_follows_live());
+        let posix = vector_spec("pos/L0").expect("spec");
+        assert!(!posix.dead_edge_decides());
+        assert_eq!(posix.undecided_refusal(), Refusal::ZeroUndecided);
+        let negative = vector_spec("pos/Lm5").expect("spec");
+        assert_eq!(negative.undecided_refusal(), Refusal::EdgeUndecided);
+    }
+
+    #[test]
+    fn the_set_operations_are_exact() {
+        assert_eq!(complement(&[(-1, -1)]), vec![(INT_MIN, -2), (0, INT_MAX)]);
+        assert_eq!(complement(&[(INT_MIN, INT_MAX)]), Vec::<(i64, i64)>::new());
+        assert_eq!(union(&[(0, 0)], &[(-1, -1)]), vec![(-1, 0)]);
+        assert_eq!(
+            intersection(&[(INT_MIN, 0)], &[(1, INT_MAX)]),
+            Vec::<(i64, i64)>::new()
+        );
+        assert!(subset(&[(1, 5)], &[(0, INT_MAX)]));
+        assert!(!subset(&[(-1, 5)], &[(0, INT_MAX)]));
     }
 
     /// The Lean vectors (`QCore.CellProtocolPerEnd.perEndVectors`) are the
