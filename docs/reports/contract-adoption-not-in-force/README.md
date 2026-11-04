@@ -113,7 +113,7 @@ uncontracted call left:
 - `cio_stream_destroy_all` (class B);
 - the two `cJSON_Parse*` wrappers (class C);
 - `write_init_header` (class A, the bounds-only `cio_file_st_set_content_len`);
-- four librdkafka functions (class A).
+- five librdkafka functions (class A).
 
 ## 3. Census table
 
@@ -290,7 +290,7 @@ The named owners were read. None is duplicated. The amendments do this:
 The 473 pairs will not close by adoption. They close by new contract text
 plus the vocabulary and route work their owners name. By pairs, the next
 lever is the librdkafka broker family in class A: 286 pairs, though only
-four functions are freed alone. By freed functions, it is the nine Monkey
+five functions are freed alone. By freed functions, it is the nine Monkey
 `_mk_event_*` backends: nine functions, but `wrapper_paths.qv` records
 their failure paths as findings, so each needs a truthful projection rather
 than a neutral one. Both are in DECLARED-NAMES-RESOURCE-V1-PROJECTIONS. No

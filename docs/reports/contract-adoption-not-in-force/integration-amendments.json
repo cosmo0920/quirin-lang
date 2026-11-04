@@ -1,0 +1,44 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "CONTRACT-ADOPTION-NOT-IN-FORCE",
+ "base": "c8c7edf21",
+ "measured_tip": "c36922684",
+ "increment_paragraph": "**CONTRACT-ADOPTION-NOT-IN-FORCE** (USER REQUEST 2026-11-05, verbatim: \"Now, we're still needed to fill the gap of the missing contracts.\"; then \"Launch 1 and 2\"): a census of the 107 callees that the user's `quirin-audit current` run at Fluent Bit 046accf6 reports as uncontracted although a provider module declares them (473 blocked function/callee pairs; report sha256 e965950e...d017f, recomputed exactly: 2,790 uncontracted callees, 7,264 pairs). Every one is explained, and none mechanically. Class A, 66 callees and 290 pairs: the only declaration is a bounds-v1 null-deref contract (`librdkafka/null_deref.qv` 63, `fluent_bit/null_deref.qv` 2, `chunkio/file_st_bounds.qv` 1), pinned at 046accf6 and 66910c10, which states no resource effect. Class B, 39 callees and 180 pairs: declared models and typed-language modules (CFL list and arena, CMetrics map/opts/setters, ChunkIO frame/counter/destructor modules, Monkey wrapper and wait-policy modules, librdkafka typed_queue) that the resource loader refuses by vocabulary and that grant no interpreted call permission. Class C, 2 callees and 3 pairs: resource-v1 declarations in view and pinned, withdrawn in the calling unit (`sb_release_output_queue_space` by C06.3, its body sb.c being in none of the run's 186 configurations; `cJSON_ParseWithLengthOpts` by rule 13a in cJSON.c). The loader's own probe reproduces the committed views, the route manifest equals the union of the resource views, and no tracked module outside a resource view holds a `requires resource_contract_v1;` declaration, so no load-path, view, pin, name or lookup fix exists to make. Step 2 adopts nothing: a resource contract for any of these callees is a new v1 module stated from the body, which the loader's selector rule requires and the card's scope excludes. Ceiling: all 107 in force would leave 20 of the run's 508 only-uncontracted functions with no uncontracted call (nine Monkey `mk_event_*` wrappers among them). No code, contract, view or lock changes; predicted and expected: no move on corpus, system or slice, and the `current` run unchanged. Records: DECLARED-NAMES-RESOURCE-V1-PROJECTIONS registered (82 callees, 313 pairs); CMT-MAP-OPTS-CONTRACT-ADOPTION and W45-SUB-OBJECT-STORE-FORMAL-VALUE amended with their measured pairs. Census and table: docs/reports/contract-adoption-not-in-force/README.md.",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "CONTRACT-ADOPTION-NOT-IN-FORCE",
+   "operation": "register",
+   "title": "Diagnose and adopt the provider declarations the current route reports as uncontracted",
+   "text": "Registered by its own card at landing (USER REQUEST 2026-11-05, verbatim: \"Now, we're still needed to fill the gap of the missing contracts.\"; \"Launch 1 and 2\"); retired by the next entry.",
+   "source": "docs/reports/contract-adoption-not-in-force/README.md",
+   "recorded_by": "CONTRACT-ADOPTION-NOT-IN-FORCE"
+  },
+  {
+   "id": "CONTRACT-ADOPTION-NOT-IN-FORCE",
+   "operation": "retire",
+   "why": "DISCHARGED by CONTRACT-ADOPTION-NOT-IN-FORCE (docs/reports/contract-adoption-not-in-force/README.md): the per-callee census of all 107 declared-but-uncontracted callees (473 pairs) at 046accf6 with its reason class, and step 2 found no mechanical case to adopt. Class A, 66: bounds-v1 only. Class B, 39: vocabulary the resource loader refuses. Class C, 2: withdrawn in the calling unit by C06.3 or rule 13a. The resource sides are tracked by DECLARED-NAMES-RESOURCE-V1-PROJECTIONS (new), CMT-MAP-OPTS-CONTRACT-ADOPTION and W45-SUB-OBJECT-STORE-FORMAL-VALUE (amended), and W44-CALLEE-CROSS-UNIT-SUMMARY, W47-ARENA-POOL-RESULT-MODE, W45-FB-BACKLOG-REACHABLE-RELEASE and CLASS1-UNDECLARABLE-RETAINERS (unchanged).",
+   "source": "docs/reports/contract-adoption-not-in-force/README.md"
+  },
+  {
+   "id": "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS",
+   "operation": "register",
+   "title": "82 callees declared only as bounds-v1 or as declared/typed models have no resource-v1 declaration: 313 blocked pairs on the current route",
+   "text": "Registered by CONTRACT-ADOPTION-NOT-IN-FORCE (census of the user's `quirin-audit current` run at Fluent Bit 046accf6, docs/reports/contract-adoption-not-in-force/census/census.json). The first group, 66 callees and 290 pairs, has only a pinned bounds-v1 null-deref declaration: librdkafka/null_deref.qv 63 (rd_kafka_broker_destroy_final 51 pairs, rd_kafka_op_throttle_time 46, rd_kafka_topic_partition_list_add 35, rd_kafka_buf_new_request0 30, rd_kafka_topic_name 16, rd_kafka_destroy 14, rd_kafka_broker_set_state 10, ...), fluent_bit/null_deref.qv 2 (flb_input_pause, flb_input_resume) and chunkio/file_st_bounds.qv 1 (cio_file_st_set_content_len). The second group, 16 callees and 23 pairs, is declared only in typed or declared-model modules that no other entry tracks: monkey/wrapper_paths.qv and wait_source_policy.qv (_mk_event_add, _channel_create/_destroy, _del, _inject, _loop_create/_destroy, _timeout_create/_destroy, _wait_2), librdkafka/typed_queue.qv (rd_kafka_q_deq0, 6), chunkio/counters.qv (cio_chunk_counter_total_up_add/_sub), context_destructor.qv (cio_destroy), stream_destructor.qv (cio_stream_destroy) and memory_backend.qv (cio_memfs_close). The resource loader refuses all of these by vocabulary, and its selector rule (contract_loader.rs, Interpreter selection) forbids inferring a resource projection by dropping predicates it cannot check. Together they alone block 16 of the run's 508 only-uncontracted functions: nine Monkey mk_event_* wrappers, cio_stream_destroy_all, write_init_header and five librdkafka functions (rd_kafka_broker_session_update, rd_kafka_broker_session_update_toppars_in_session, rd_kafka_topic_partition_list_add_range, rd_kafka_ListOffsetRequest_buf_new, rd_kafka_sasl_auth_done). DISCHARGE: per callee, a resource-v1 module stated from the body at 66910c10, 34155955 and 046accf6, never from the bounds or model text. Its custody effect (for example the release in rd_kafka_broker_destroy_final, or the failure paths wrapper_paths.qv records for the Monkey backends) must be truthful or the declaration stays absent. Pin it with quirin-audit pin and regenerate the locks with providers/contracts.py sync. Measure it with a declared prediction, ranked by pairs and freed functions. A callee no resource-v1 form can state stays Unknown with the missing vocabulary named.",
+   "source": "docs/reports/contract-adoption-not-in-force/README.md",
+   "recorded_by": "CONTRACT-ADOPTION-NOT-IN-FORCE"
+  },
+  {
+   "id": "CMT-MAP-OPTS-CONTRACT-ADOPTION",
+   "operation": "amend",
+   "text": "AMENDED (CONTRACT-ADOPTION-NOT-IN-FORCE, 2026-11-05): the cost on the user's `quirin-audit current` run at Fluent Bit 046accf6 is 17 of these declared-model callees reported uncontracted, with 68 blocked function/callee pairs. map_lifetime.qv has 6 callees and 36 pairs (cmt_map_metric_get 14, cmt_map_create 8, cmt_map_destroy 8, cmt_map_metric_get_val 3, cmt_map_metric_destroy 2, cmt_map_metrics_expire 1); opts_lifetime.qv has 2 and 12 (cmt_opts_init 6, cmt_opts_exit 6); metric_setters.qv has 9 and 20 (cmt_metric_set 5, ...). Alone they block cmt_expire and cmt_map_metric_get_val. The resource loader refuses the three modules by vocabulary (a `resource type` item, or an error, any-exit or quantitative clause), so no view or load-path change can adopt them. Discharge unchanged.",
+   "source": "docs/reports/contract-adoption-not-in-force/README.md"
+  },
+  {
+   "id": "W45-SUB-OBJECT-STORE-FORMAL-VALUE",
+   "operation": "amend",
+   "text": "AMENDED (CONTRACT-ADOPTION-NOT-IN-FORCE, 2026-11-05): on the user's `quirin-audit current` run at Fluent Bit 046accf6, the CFL list callees declared only in rule 36b's declared model cfl/intrusive_list.qv (which grants no ordinary call summary) are reported uncontracted in 69 function/callee pairs: cfl_list_add 43 (the derived Stored mode this entry tracks), cfl_list_del 24 (its inverse, a removal from a derived container, which no mode states either) and cfl_list_init 2 (the self store rule 10v admits with the summary withheld). Discharge unchanged; cfl_list_del's removal belongs to the same derived-container mode.",
+   "source": "docs/reports/contract-adoption-not-in-force/README.md"
+  }
+ ]
+}
