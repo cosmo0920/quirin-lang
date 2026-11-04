@@ -229,11 +229,11 @@
       "sha256": "3e98107559c67866747fd39f6d68d56fa6efe2378de3382a6209c220816180fa"
     },
     "libc/result_sets.qv": {
-      "clause_count": 9,
+      "clause_count": 11,
       "declaration_count": 3,
       "declarations": [
         {
-          "clauses": 3,
+          "clauses": 5,
           "name": "pipe"
         },
         {
@@ -248,7 +248,7 @@
       "inherits": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "d15535fba4fa3da0cd5c35ad118bd087cd65576f8b0ac03d9c899f97eb74d751"
+      "sha256": "e2fe4ff5cf249b8c90b23df44867f8495f5cbc3b48eb479b00f9b5f15f123012"
     },
     "libc/socket.qv": {
       "clause_count": 67,

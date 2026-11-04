@@ -41,11 +41,36 @@ module contract;
 // POSIX.1-2017 pipe(): "Upon successful completion, 0 shall be returned;
 // otherwise, -1 shall be returned and errno set to indicate the error."
 // (`extern int pipe (int __pipedes[2]) __THROW __wur;`, <unistd.h>.)
+//
+// The written sets (card CELL-RESULT-SET-ALIGNMENT, grammar G05j as amended,
+// gateway rule 38e as amended): on a return of 0, the descriptor `pipe`
+// stored at `pipedes[0]` and at `pipedes[1]` is in [1, MAX].
+//
+// USER DECISION 2026-11-04 (verbatim): "Basically, Q1(a) and Q2(i) But we
+// must not handle descriptor 0 as a valid handle. So, we need to exclude the
+// 0 descriptor like: written_set(pipedes, [1, MAX]); a live descriptor is in
+// [1, MAX]".
+// USER DECISION 2026-11-04 (verbatim, after the counter-evidence below was
+// put to the user): "Write [1, MAX]".
+//
+// THIS IS A DECLARED POLICY, NOT POSIX'S SET. POSIX allocates the lowest
+// free descriptor, so `pipe` returns descriptor 0 whenever 0 is free:
+// POSIX's written set is [0, MAX]. It was observed natively: started with
+// standard input closed, Fluent Bit 046accf6 (and master 49592c4fd with the
+// user's third patch) creates `config->ch_data` as `pipe2([0, 3])`
+// (W43-DESC-FLB-CONFIG-DATA-PIPE-ZERO-GUARD; CELL-RESULT-SET-ALIGNMENT step-6
+// traces, docs/reports/cell-result-set-alignment/). Under this declaration
+// every reading that rests on it treats descriptor 0 as never live, so a
+// `> 0` test's dead edge reads "absent"; where descriptor 0 is in fact a
+// live end that reading is wrong. Every row it moves is attributed to this
+// bound (follow-up CELL-RESULT-SET-DESCRIPTOR-ZERO-POLICY).
 extern fn pipe(pipedes: ptr<mut, u8>) -> i32
 contract {
     requires bounds_contract_v1;
     requires bounds_revision(flexible);
     ensures normal result_set(-1 | 0);
+    ensures normal written_set(pipedes[0], [1, MAX]) when #result == 0;
+    ensures normal written_set(pipedes[1], [1, MAX]) when #result == 0;
 };
 
 // Linux epoll_ctl(2), RETURN VALUE: "When successful, epoll_ctl() returns

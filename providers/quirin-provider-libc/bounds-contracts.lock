@@ -22,8 +22,8 @@
     {
       "function": "pipe",
       "module": "libc/result_sets.qv",
-      "contract_sha256": "fa1db104bc6a4018d825dc6c2bebed9a174af8f78ec8fb58455a60c0fee80a70",
-      "pinned_at": "2026-11-03T12:00:00Z"
+      "contract_sha256": "6735a17310c8cab0cbc6c750e78eeb5747fe7d9f1885af3c8a22828b072a4462",
+      "pinned_at": "2026-11-04T06:22:15Z"
     }
   ]
 }

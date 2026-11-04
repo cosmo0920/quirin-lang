@@ -135,7 +135,7 @@ pub const REWRITE_BEFORE_ACCEPTANCE: &str = "rewrite_before_acceptance";
 
 /// Every identifier this vocabulary reserves (the source-spelling census
 /// checks them against the contract roots).
-pub const RESERVED_SPELLINGS: [&str; 19] = [
+pub const RESERVED_SPELLINGS: [&str; 20] = [
     BOUNDS_CONTRACT_MARKER,
     BOUNDS_REVIEW_MARKER,
     "bounds_extent",
@@ -161,6 +161,8 @@ pub const RESERVED_SPELLINGS: [&str; 19] = [
     // Card CELL-GUARD-RESULT-RANGE-CHECKED (G05j).
     RESULT_SET,
     BOUNDS_REVISION,
+    // Card CELL-RESULT-SET-ALIGNMENT (G05j as amended).
+    WRITTEN_SET,
 ];
 
 /// Card CELL-GUARD-RESULT-RANGE-CHECKED: the set a `result_set` states.
@@ -172,6 +174,10 @@ pub const RESULT_SET: &str = "result_set";
 /// Card CELL-GUARD-RESULT-RANGE-CHECKED: the revision marker of a C library
 /// result set, `requires bounds_revision(flexible);`.
 pub const BOUNDS_REVISION: &str = "bounds_revision";
+/// Card CELL-RESULT-SET-ALIGNMENT (G05j as amended; USER DECISIONS
+/// 2026-11-04): a slot's written set, `ensures normal written_set(SLOT[K],
+/// SET) when #result == C;`.
+pub const WRITTEN_SET: &str = "written_set";
 
 const SCALAR_TYPES: [&str; 11] = [
     "bool", "i8", "i16", "i32", "i64", "isize", "u8", "u16", "u32", "u64", "usize",
@@ -335,6 +341,22 @@ pub enum BoundsClause {
     ResultSet {
         set: qcore_core::result_set::ResultSet,
     },
+    /// Card CELL-RESULT-SET-ALIGNMENT (G05j as amended; USER DECISIONS
+    /// 2026-11-04: "Basically, Q1(a) and Q2(i) ...", "Write [1, MAX]", and the
+    /// per-element and per-class refinements):
+    /// `ensures normal written_set(SLOT[K], SET) when #result == C;` -- on a
+    /// return of `C`, the `int` the call stored at `SLOT[K]` is a member of
+    /// `SET`. A value set only, no custody. On a flexible C library
+    /// declaration beside its `result_set` it is the C library's statement;
+    /// on a pinned declaration it is read only where `pin --bounds
+    /// --derive-results` derived it from the body chain (rule 38e as
+    /// amended). The bounds consumer never reads it.
+    WrittenSet {
+        parameter: String,
+        index: u32,
+        set: qcore_core::result_set::ResultSet,
+        class: i128,
+    },
     /// Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER (contract specification
     /// C09.3, USER DECISION 2026-10-15, "Only nonnull_member* need it"):
     /// `requires resource_premise(NAME, "STATEMENT");` beside a
@@ -363,6 +385,7 @@ impl BoundsClause {
                 | Self::NonnullMemberScope { .. }
                 | Self::NonnullResultRange { .. }
                 | Self::ResultSet { .. }
+                | Self::WrittenSet { .. }
                 | Self::Premise { .. }
         )
     }
@@ -1225,6 +1248,104 @@ fn result_set_clause(
     })())
 }
 
+/// Card CELL-RESULT-SET-ALIGNMENT (G05j as amended; USER DECISIONS
+/// 2026-11-04, Q1 (a) with its refinements): read `written_set(SLOT[K], SET)
+/// when #result == C` (`SLOT` alone is `SLOT[0]`). `None` for another head.
+fn written_set_clause(
+    tokens: &[TokenKind],
+    parameters: &[BoundsParameter],
+) -> Option<Result<(String, u32, qcore_core::result_set::ResultSet, i128), String>> {
+    if !matches!(tokens.first(), Some(TokenKind::Word(w)) if w == WRITTEN_SET) {
+        return None;
+    }
+    let shape = || {
+        format!(
+            "written-set-shape: write `{WRITTEN_SET}(SLOT[K], SET) when #result == C` over a pointer parameter"
+        )
+    };
+    Some((|| {
+        if tokens.get(1) != Some(&TokenKind::Symbol(Symbol::LeftParen)) {
+            return Err(shape());
+        }
+        let mut depth = 0usize;
+        let mut close = None;
+        for (at, token) in tokens.iter().enumerate().skip(1) {
+            match token {
+                TokenKind::Symbol(Symbol::LeftParen) => depth += 1,
+                TokenKind::Symbol(Symbol::RightParen) => {
+                    depth -= 1;
+                    if depth == 0 {
+                        close = Some(at);
+                        break;
+                    }
+                }
+                _ => {}
+            }
+        }
+        let close = close.ok_or_else(shape)?;
+        let Some(TokenKind::Word(parameter)) = tokens.get(2) else {
+            return Err(shape());
+        };
+        if !parameters
+            .iter()
+            .any(|p| &p.name == parameter && p.kind == ParameterKind::Pointer)
+        {
+            return Err(format!(
+                "written-set-slot: `{parameter}` is no pointer parameter of the declaration"
+            ));
+        }
+        let (index, comma) = match &tokens[3..] {
+            [
+                TokenKind::Symbol(Symbol::LeftBracket),
+                TokenKind::Integer(digits),
+                TokenKind::Symbol(Symbol::RightBracket),
+                TokenKind::Symbol(Symbol::Comma),
+                ..,
+            ] if digits == "0" || !digits.starts_with('0') => {
+                (digits.parse::<u32>().map_err(|_| shape())?, 6)
+            }
+            [TokenKind::Symbol(Symbol::Comma), ..] => (0, 3),
+            _ => return Err(shape()),
+        };
+        if comma + 1 >= close {
+            return Err(shape());
+        }
+        let int = (i128::from(i32::MIN), i128::from(i32::MAX));
+        let set = set_of_tokens(&tokens[comma + 1..close], int)?;
+        let class = match &tokens[close + 1..] {
+            [
+                TokenKind::Word(when),
+                TokenKind::Symbol(Symbol::Hash),
+                TokenKind::Word(result),
+                TokenKind::Symbol(Symbol::EqualEqual),
+                value @ ..,
+            ] if when == "when" && result == "result" => match value {
+                [TokenKind::Integer(digits)] => canonical_class(digits, false),
+                [TokenKind::Symbol(Symbol::Minus), TokenKind::Integer(digits)] => {
+                    canonical_class(digits, true)
+                }
+                _ => None,
+            },
+            _ => None,
+        }
+        .ok_or_else(|| {
+            format!(
+                "written-set-class: a written set states its success class, `when #result == C`"
+            )
+        })?;
+        Ok((parameter.clone(), index, set, class))
+    })())
+}
+
+fn canonical_class(digits: &str, negative: bool) -> Option<i128> {
+    let spelled = if negative {
+        format!("-{digits}")
+    } else {
+        digits.to_owned()
+    };
+    qcore_core::result_set::canonical_literal(&spelled)
+}
+
 /// The set a G05j token run denotes in `universe` (shared with the cell
 /// clauses' `live_set(SET)` / `absent_set(SET)`, card
 /// CELL-RESULT-SET-ALIGNMENT).
@@ -1445,6 +1566,30 @@ fn load_function(path: &str, decl: &SourceDeclaration) -> Result<BoundsFunctionC
             });
             continue;
         }
+        // Card CELL-RESULT-SET-ALIGNMENT (G05j as amended): a slot's written set.
+        if let Some(written) = written_set_clause(&tokens, &parameters) {
+            if requires {
+                return Err(
+                    "written-set-ensures: a written set is an `ensures normal` postcondition"
+                        .into(),
+                );
+            }
+            let (parameter, index, set, class) = written?;
+            clauses.push(BoundsClauseEntry {
+                text: format!(
+                    "{WRITTEN_SET}({parameter}[{index}], {}) when #result == {class}",
+                    set.canonical()
+                ),
+                clause: BoundsClause::WrittenSet {
+                    parameter,
+                    index,
+                    set,
+                    class,
+                },
+                review: None,
+            });
+            continue;
+        }
         // Graph-v2 attachments are reference metadata, never bounds/null facts.
         // Full declaration validation below checks the original premise target.
         if crate::premise_flow::is_clause(&clause.expression_source)
@@ -1541,9 +1686,18 @@ fn load_function(path: &str, decl: &SourceDeclaration) -> Result<BoundsFunctionC
             "result-set-needs-flexible: a `result_set` states a C library function's results and is admitted only on a declaration carrying `requires {BOUNDS_REVISION}(flexible);`"
         ));
     }
-    if flexible == 1 && !(clauses.len() == 1 && states_set && clauses[0].review.is_none()) {
+    // Card CELL-RESULT-SET-ALIGNMENT: a flexible declaration states its one
+    // `result_set` and, beside it, the slots' written sets; nothing else.
+    let value_sets_only = clauses.iter().all(|entry| {
+        entry.review.is_none()
+            && matches!(
+                entry.clause,
+                BoundsClause::ResultSet { .. } | BoundsClause::WrittenSet { .. }
+            )
+    });
+    if flexible == 1 && !(states_set && value_sets_only) {
         return Err(format!(
-            "bounds-revision-flexible-scope: `requires {BOUNDS_REVISION}(flexible);` stands only on a declaration whose one clause is a `result_set`"
+            "bounds-revision-flexible-scope: `requires {BOUNDS_REVISION}(flexible);` stands only on a declaration whose clauses are one `result_set` and its slots' `written_set`s"
         ));
     }
     // Static conditions: at most one fact per position.
@@ -1572,6 +1726,9 @@ fn load_function(path: &str, decl: &SourceDeclaration) -> Result<BoundsFunctionC
             } => format!("nonnull-member-scope {parameter} {tag}.{field}"),
             BoundsClause::NonnullResultRange { .. } => "nonnull-result-range".into(),
             BoundsClause::ResultSet { .. } => "result-set".into(),
+            BoundsClause::WrittenSet {
+                parameter, index, ..
+            } => format!("written-set {parameter}[{index}]"),
             BoundsClause::Premise { name, .. } => format!("premise {name}"),
         };
         if !seen.insert(key.clone()) {

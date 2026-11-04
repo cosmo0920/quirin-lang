@@ -10,7 +10,7 @@
       "function": "mk_event_channel_create",
       "module": "monkey/result_range.qv",
       "contract_sha256": "d2d11a00445f7e50c2c0defe4255fcfab95ec767e572e64f7cb43fedd82aa94c",
-      "pinned_at": "2026-11-03T13:00:02Z",
+      "pinned_at": "2026-11-04T06:27:38Z",
       "identities": [
         {
           "reviewed_at": [
@@ -194,7 +194,7 @@
           {
             "function": "pipe",
             "module": "quirin-provider-libc:libc/result_sets.qv",
-            "contract_sha256": "fa1db104bc6a4018d825dc6c2bebed9a174af8f78ec8fb58455a60c0fee80a70"
+            "contract_sha256": "6735a17310c8cab0cbc6c750e78eeb5747fe7d9f1885af3c8a22828b072a4462"
           }
         ]
       }
