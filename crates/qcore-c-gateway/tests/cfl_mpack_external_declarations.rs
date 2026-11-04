@@ -173,7 +173,10 @@ impl Row {
         self.kinds.iter().any(|kind| kind.contains(key))
     }
     fn leaks(&self) -> usize {
-        self.kinds.iter().filter(|kind| kind.starts_with("Leak")).count()
+        self.kinds
+            .iter()
+            .filter(|kind| kind.starts_with("Leak"))
+            .count()
     }
 }
 
@@ -422,9 +425,18 @@ fn a_bytes_insert_or_append_that_may_keep_the_pointer_is_undeclared() {
     // `referenced` other than the literal 0 is outside the premise: the
     // referenced arm keeps the caller's buffer, which no declaration states.
     for (call, callee) in [
-        ("cfl_kvlist_insert_bytes(l, \"k\", d, 4, 1)", "cfl_kvlist_insert_bytes"),
-        ("cfl_kvlist_insert_bytes(l, \"k\", d, 4, r)", "cfl_kvlist_insert_bytes"),
-        ("cfl_array_append_bytes(x, d, 4, 1)", "cfl_array_append_bytes"),
+        (
+            "cfl_kvlist_insert_bytes(l, \"k\", d, 4, 1)",
+            "cfl_kvlist_insert_bytes",
+        ),
+        (
+            "cfl_kvlist_insert_bytes(l, \"k\", d, 4, r)",
+            "cfl_kvlist_insert_bytes",
+        ),
+        (
+            "cfl_array_append_bytes(x, d, 4, 1)",
+            "cfl_array_append_bytes",
+        ),
     ] {
         let body = format!(
             "int p(struct cfl_kvlist *l, struct cfl_array *x, char *d, int r) {{ return {call}; }}"
