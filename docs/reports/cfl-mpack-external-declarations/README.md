@@ -253,4 +253,37 @@ it.
 
 ## 6. Gate
 
-GATE_SECTION
+`python3 scripts/gate_scope.py --base c8c7edf21 --out private/gate-run1` ran
+on `8735e36a9` (full mode: the diff reaches `qcore-c-gateway` and
+`qcore-contract`) and exited 0 with 13 of 13 steps passing. The record is
+[gate.json](gate.json).
+
+| Step | Exit | Counts |
+|---|---|---|
+| submodules, fmt, clippy | 0 | |
+| Rust suite (`run_test_binaries.py`) | 0 | 603 units, 9,170 passed, 0 failed, 16 ignored |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| Python suite | 0 | 577 tests |
+| provider package build, verify-all, verify `qcore.libevent` | 0, 0, 0 | |
+| provider `cargo test` | 0 | 133 passed, 0 failed, 1 ignored |
+| provider fmt, clippy | 0, 0 | |
+| Lean | none selected | no `proof/` change |
+
+Other checks:
+
+- **New controls.** The 9 tests of
+  `crates/qcore-c-gateway/tests/cfl_mpack_external_declarations.rs` pass,
+  inside the suite and alone.
+- **Contract records.** `providers/contracts.py sync` exits 0. `quirin-audit
+  pin` exits 0 per crate and revision. Run at each revision, `pin --check`
+  records 43 CFL and 34 mpack entries, all in force. It still exits 1 there.
+  The failing entries are in locks this card leaves byte-unchanged:
+  `mk_vhost_set`'s tip tracking (libevent), and three Fluent Bit entries
+  (`flb_config_set_program_name`, `flb_tail_config_destroy`,
+  `flb_tail_file_remove`).
+- **Outside the gate.** `python3 -m unittest discover -s providers/tests`
+  fails one test, `test_the_real_workspace_manifest_is_current`. Its literal
+  bounds-view table lacks the `monkey/result_range.qv` view that the base's
+  `providers/contract-load-path.json` already carries (lines 141 and 162 at
+  `c8c7edf21`). This card changes neither file. The failure belongs to the
+  result-range landing.
