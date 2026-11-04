@@ -1038,6 +1038,10 @@ fn check_null_deref_only(
                 || (clause.kind == "requires"
                     && clause.expression.replace(' ', "") == "bounds_revision(flexible)")
                 || (clause.kind == "normal" && clause.expression.starts_with("result_set("))
+                // Card CELL-RESULT-SET-WRITTEN-SET-DERIVATION (G05j as
+                // amended): a slot's written set, a value set that states no
+                // custody (a pinned creator's, derived at pin time).
+                || (clause.kind == "normal" && clause.expression.starts_with("written_set("))
         });
     if only {
         Ok(())

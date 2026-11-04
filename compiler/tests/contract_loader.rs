@@ -2145,9 +2145,11 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // rejected declarations unchanged.
     // CELL-GUARD-RESULT-RANGE-CHECKED's two bounds value-set modules add four
     // rejected declarations: 365 -> 369; selected modules and v1 unchanged.
+    // CELL-RESULT-SET-WRITTEN-SET-DERIVATION's `fluent_bit/result_range.qv`
+    // (`flb_pipe_create`'s written sets) adds one: 369 -> 370.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (66, 499, 369)
+        (66, 499, 370)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every
