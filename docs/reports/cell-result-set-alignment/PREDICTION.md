@@ -1,5 +1,65 @@
 # CELL-RESULT-SET-ALIGNMENT prediction
 
+## Amendment (2026-11-04, committed before the declarations that move rows)
+
+This section supersedes the sections below where they differ. They were
+committed at `7f6d7209c`, before the user's decisions. The decisions,
+verbatim:
+
+- Q1/Q2: "Basically, Q1(a) and Q2(i) But we must not handle descriptor 0
+  as a valid handle. So, we need to exclude the 0 descriptor like:
+  written_set(pipedes, [1, MAX]); a live descriptor is in [1, MAX]".
+- After the stdin-closed counter-evidence was put to the user: "Write
+  [1, MAX]".
+- Q3: "(α) live_set suffix".
+
+The `>= 0` guard of step 9 is not added. Step 10, the third patch version,
+went back to `> 0`.
+
+**What moves rows.** The in-force per-end declarations in
+`fluent_bit/teardown_destroy.qv` keep `> 0` and gain two suffixes:
+- `live_set([1, MAX])`, the declared bound;
+- `absent_set(...)`, read from the pinned stores: calloc's `0` for the
+  `ch_*` ends, and `0 | -1` for `ingress_queue_channels`.
+
+Under the live set [1, MAX], a `> 0` dead edge `[MIN, 0]` meets the live set
+nowhere, so it decides "absent". **Every move below is attributed to that
+declared bound, not to POSIX.** POSIX's set is [0, MAX], and descriptor 0 was
+observed natively on `ch_data` (`pipe2([0, 3])` with stdin closed). The
+creation check of Q3 (α) refuses a creation into such a cell unless the
+creator's derived written set is in force inside the live set.
+
+| Route | Row (units) | Baseline | Predicted (cause) |
+|---|---|---|---|
+| system | `flb_output_instance_destroy` (×2) | Unknown, 27 | **Unknown, 26.** `descriptor-cell-zero-undecided` at :638 goes. The `ch_events[0..1] > 0` dead edges now decide "absent" (the [1, MAX] bound). Every other leaf stays, :631's `protocol-broken` included. |
+| slice | `flb_input_instance_destroy` (×2) | Unknown, 62 | **Unknown, 61.** `zero-undecided` at :1353 goes (the [1, MAX] bound). |
+| slice | `input_thread_instance_destroy` (×2) | Unknown, 8 | **Unknown, 7.** `zero-undecided` at :226 goes (the [1, MAX] bound). |
+| slice | `input_instance_channel_events_init` (×2) | Unknown, 12 | **Unknown.** The two creations at :1380 refuse `descriptor-cell-live-set-unproved`, in place of `descriptor-cell-undecided`, unless the creator's written sets are in force at the slice route. The escapes and `protocol-broken` at :1387/:1401 may change with the creation's refusal. |
+| slice | `flb_input_new` (×2) | Unknown, 178 | **Unchanged.** The `-1` stores lie in `absent_set(0 \| -1)`. |
+| slice | `input_thread_instance_create` (×2), system `flb_output_init_all` (×2) | Unknown | **Unchanged.** Their creations are refused at the access gate first. |
+| system | `flb_engine_started` (×2) | Safe | **Safe, unchanged.** `flb_config` stays withheld. |
+
+- **No `Safe` move.** Each moved row keeps leaves of its own, such as
+  uncontracted calls, the access gate and unresolved identities.
+- **No `Unsafe` move.**
+- The host's text changes, so rows depending on
+  `flb_config_set_program_name` show a changed contract digest.
+- The re-derived `mk_event_channel_create` range rests on `pipe`'s new
+  digest and stays `[-1, 0]` and in force.
+
+```measure-prediction
+route corpus
+none
+route system
+none
+route slice
+none
+```
+
+(No status move on any route; the content changes are the ones listed.)
+
+## Original prediction (7f6d7209c)
+
 Committed before any implementation, on base `32169290d` (origin/main), after
 the inventory census (`census/`, commit `725647541`). The rows are relisted
 at `baseline:32169290d` (`private/baselines/32169290de211435f4741d10dc7e35ed625e8634/`
