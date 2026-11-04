@@ -175,6 +175,7 @@
       "modules": [
         "librdkafka/cjson.qv",
         "librdkafka/client.qv",
+        "librdkafka/header_inlines.qv",
         "librdkafka/kafka_mem.qv",
         "librdkafka/log_caller_frame.qv",
         "librdkafka/logging.qv",
@@ -191,6 +192,7 @@
       "resource_view": [
         "librdkafka/cjson.qv",
         "librdkafka/client.qv",
+        "librdkafka/header_inlines.qv",
         "librdkafka/kafka_mem.qv",
         "librdkafka/log_caller_frame.qv",
         "librdkafka/logging.qv",

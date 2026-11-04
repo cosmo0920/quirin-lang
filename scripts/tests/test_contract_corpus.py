@@ -76,8 +76,10 @@ class CanonicalCorpus(unittest.TestCase):
         # qcore-provider-libevent (88 -> 89).
         # 146 -> 147: CELL-RESULT-SET-WRITTEN-SET-DERIVATION's
         # fluent_bit/result_range.qv in quirin-provider-fluent-bit (57 -> 58).
-        self.assertEqual(len(modules), 147)
-        self.assertEqual(sum(any(part.startswith("qcore-provider-") for part in path.parts) for path in modules.values()), 89)
+        # 147 -> 148: LIBRDKAFKA-HEADER-INLINES's librdkafka/header_inlines.qv
+        # in qcore-provider-librdkafka (89 -> 90).
+        self.assertEqual(len(modules), 148)
+        self.assertEqual(sum(any(part.startswith("qcore-provider-") for part in path.parts) for path in modules.values()), 90)
         self.assertEqual(sum(any(part.startswith("quirin-provider-") for part in path.parts) for path in modules.values()), 58)
         libc = [path for name, path in modules.items() if name.startswith("libc/")]
         self.assertTrue(libc and all("quirin-provider-libc" in path.parts for path in libc))

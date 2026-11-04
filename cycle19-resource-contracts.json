@@ -37,6 +37,7 @@
     "qcore-provider-librdkafka:librdkafka/memory.qv",
     "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
     "providers/qcore-provider-librdkafka/contracts/librdkafka/client.qv",
+    "providers/qcore-provider-librdkafka/contracts/librdkafka/header_inlines.qv",
     "providers/qcore-provider-librdkafka/contracts/librdkafka/kafka_mem.qv",
     "providers/qcore-provider-librdkafka/contracts/librdkafka/log_caller_frame.qv",
     "providers/qcore-provider-librdkafka/contracts/librdkafka/logging.qv",
