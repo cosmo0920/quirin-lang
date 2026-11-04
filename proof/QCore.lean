@@ -227,6 +227,7 @@ import QCore.Lowering
 import QCore.MayAlias
 import QCore.MemberAddress
 import QCore.MemberAddressReader
+import QCore.MemberFormalType
 import QCore.MemberPathDirectCall
 import QCore.MemberPathRelease
 import QCore.MemberPathUnitHelpers

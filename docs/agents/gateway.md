@@ -5682,6 +5682,29 @@ own anchor here.
     `vectors_hold`); `VECTORS`; `tests/event_loop_retention.rs`;
     [report](../reports/fb-event-loop-retention/README.md).
 
+    **A function pointer is a pointer to a function type** (card
+    LOG-PRINT-BODY-CONTRACTS, a fail-closed repair).
+    `MemberFacts::function_pointer` and the typedef reading accept a type
+    spelling as a function pointer only with a parameter list after `(*)`
+    (`spells_function_pointer`; a function typedef only from a function type,
+    `spells_function_type`). Clang keeps a declarator's parentheses as sugar,
+    so `void (*f)` (a `void *`) is spelled `void (*)` and an array pointer
+    `int (*)[N]`, and both were read as function pointers: a `void *` formal
+    stored into a member forwarded only its callers' function-pointer
+    actuals, which a `void *` actual never records, and closed the member
+    (empty in the fixture; chunkio's `cio_set_log_callback(struct cio_ctx *ctx,
+    void (*log_cb))`, `chunkio.c:316-319`, storing into
+    `cio_options.log_cb`). Such a formal now opens the member ("a formal that
+    is not a function pointer"), as a formal spelled `void *` always did; the
+    repair only opens member sets. **Do not** read a function pointer from
+    `(*)` alone. `QCore.MemberFormalType`
+    (`a_non_function_formal_store_is_open`,
+    `an_open_unit_keeps_the_member_open`,
+    `a_non_function_formal_store_never_decides`,
+    `the_defect_would_close_the_member_empty`);
+    `tests/log_print_member_contracts.rs`;
+    [report](../reports/log-print-body-contracts/README.md).
+
 <a id="constraint-12o"></a>
 
 12o. **A type-switched release reads, under an undecided discriminant, the

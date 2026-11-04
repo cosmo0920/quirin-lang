@@ -526,6 +526,20 @@
       "premises": {},
       "sha256": "7ac90bd79bcd41857639eecc79e79d15353eb3e62302fa0f13c18f4327bc4fe6"
     },
+    "chunkio/logging.qv": {
+      "clause_count": 8,
+      "declaration_count": 1,
+      "declarations": [
+        {
+          "clauses": 8,
+          "name": "cio_log_print"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "fa3f8db53f1f427838272976c854b1dc376035f1452d646e1f0ae95f0111091a"
+    },
     "chunkio/memory_backend.qv": {
       "clause_count": 22,
       "declaration_count": 1,
@@ -740,6 +754,7 @@
   "resource_view": [
     "chunkio/chunk_residency.qv",
     "chunkio/chunk_sizes.qv",
+    "chunkio/logging.qv",
     "chunkio/resource_open_close.qv"
   ],
   "schema_version": 1

@@ -37,6 +37,20 @@
       "premises": {},
       "sha256": "68ddff8762494737f99a1d99ef9078211490e9f72047b2b5096fb0b2ba324194"
     },
+    "cmetrics/logging.qv": {
+      "clause_count": 8,
+      "declaration_count": 1,
+      "declarations": [
+        {
+          "clauses": 8,
+          "name": "cmt_log_print"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "29c18ae97bf227a73d1af3e25f5006757cc1aa9f9662026f6292cee299c12781"
+    },
     "cmetrics/map_lifetime.qv": {
       "clause_count": 79,
       "declaration_count": 6,
@@ -316,6 +330,7 @@
   "regenerate": "python3 providers/contracts.py sync",
   "resource_view": [
     "cmetrics/context_lifetime.qv",
+    "cmetrics/logging.qv",
     "cmetrics/metric_values.qv",
     "cmetrics/mpack_utils.qv"
   ],

@@ -582,6 +582,26 @@ fn strip_qualifiers(text: &str) -> &str {
     }
 }
 
+/// Card LOG-PRINT-BODY-CONTRACTS (rule 12n, a fail-closed repair): whether a
+/// type spelling is a pointer to a function, `R (*)(P...)`. Clang keeps a
+/// declarator's parentheses as sugar, so `void (*log_cb)` (chunkio's
+/// `cio_set_log_callback` formal, a `void *`) is spelled `void (*)` and an
+/// array pointer `int (*)[4]`; neither is a function pointer. Reading one as
+/// such recorded a `void *` formal as a function-pointer formal, whose values
+/// are only its callers' function-pointer actuals, so a store of it closed a
+/// member over values a `void *` actual never contributes. Only a parameter
+/// list after `(*)` makes a function pointer.
+pub(crate) fn spells_function_pointer(text: &str) -> bool {
+    text.contains("(*)(")
+}
+
+/// Whether a type spelling is a function type `R (P...)` (a typedef of one):
+/// a parameter list and no pointer declarator, so neither `void (*)` nor
+/// `int (*)[4]`.
+fn spells_function_type(text: &str) -> bool {
+    !text.contains("(*)") && text.trim_end().ends_with(')')
+}
+
 pub(crate) fn strip(mut node: &Value) -> &Value {
     loop {
         match kind(node) {
@@ -627,7 +647,7 @@ impl MemberFacts {
     /// to a function typedef, or a typedef of a function pointer).
     pub(crate) fn function_pointer(&self, node: &Value) -> bool {
         for text in [type_text(node), qual_text(node)] {
-            if text.contains("(*)") {
+            if spells_function_pointer(text) {
                 return true;
             }
             let bare = strip_qualifiers(text);
@@ -1605,9 +1625,9 @@ impl MemberFacts {
                 };
                 let text = qual_text(node);
                 let desugared = type_text(node);
-                if text.contains("(*)") || desugared.contains("(*)") {
+                if spells_function_pointer(text) || spells_function_pointer(desugared) {
                     self.pointer_typedefs.insert(name.to_owned());
-                } else if text.contains('(') || desugared.contains('(') {
+                } else if spells_function_type(text) || spells_function_type(desugared) {
                     self.function_typedefs.insert(name.to_owned());
                 } else if let Some(record) = spelled_record(strip_qualifiers(desugared))
                     .filter(|_| !desugared.contains('*'))
