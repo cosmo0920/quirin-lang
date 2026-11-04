@@ -1,0 +1,5418 @@
+{
+ "card": "CONTRACT-ADOPTION-NOT-IN-FORCE",
+ "report_sha256": "e965950e18bfe7147cf500835d613a0e7315ae62329a4ec1ba6f29e53b4d017f",
+ "report_fluent_bit_revision": "046accf6aded7906f66a1baf0202da349e521736",
+ "uncontracted_callees": 2790,
+ "uncontracted_pairs": 7264,
+ "declared_and_uncontracted_callees": 107,
+ "declared_and_uncontracted_pairs": 473,
+ "by_class_callees": {
+  "A": 66,
+  "B": 39,
+  "C": 2
+ },
+ "by_class_pairs": {
+  "A": 290,
+  "B": 180,
+  "C": 3
+ },
+ "resource_v1_declarations_outside_resource_views": [],
+ "route_manifest_equals_union_of_resource_views": true,
+ "rows": [
+  {
+   "callee": "rd_kafka_broker_destroy_final",
+   "pairs": 51,
+   "sites": 70,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka.c",
+     "rd_kafka_share_fetch_fanout_op"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka.c",
+     "rd_kafka_share_fetch_reply_op"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka.c",
+     "rd_kafka_share_select_broker"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka.c",
+     "rd_kafka_thread_main"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+     "rd_kafka_admin_worker"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_assignment.c",
+     "rd_kafka_assignment_serve_pending"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_fail"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_monitor_del"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_op_serve"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_random0"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_thread_main"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_update"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_weighted"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_connect_any"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_find_or_add_broker"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_buf.c",
+     "rd_kafka_buf_destroy_final"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+     "rd_kafka_cgrp_coord_clear_broker"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+     "rd_kafka_cgrp_coord_query"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+     "rd_kafka_cgrp_coord_update"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+     "rd_kafka_cgrp_terminated"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_coord.c",
+     "rd_kafka_coord_cache_add"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_coord.c",
+     "rd_kafka_coord_cache_entry_destroy"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_coord.c",
+     "rd_kafka_coord_req_destroy"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_coord.c",
+     "rd_kafka_coord_req_fsm"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_coord.c",
+     "rd_kafka_coord_req_handle_FindCoordinator"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+     "rd_kafka_fetch_preferred_replica_handle"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_idempotence.c",
+     "rd_kafka_idemp_pid_fsm"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_metadata.c",
+     "rd_kafka_metadata"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_metadata.c",
+     "rd_kafka_metadata_refresh_all"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_metadata.c",
+     "rd_kafka_metadata_refresh_topic_ids"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_metadata.c",
+     "rd_kafka_metadata_refresh_topics"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_metadata.c",
+     "rd_kafka_metadata_request"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_metadata.c",
+     "rd_kafka_metadata_update_op"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+     "rd_kafka_topic_partition_list_get_leaders"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+     "rd_kafka_toppar_broker_delegate"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+     "rd_kafka_toppar_broker_migrate"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+     "rd_kafka_toppar_destroy_final"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+     "unittest_idempotent_producer"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c",
+     "rd_kafka_share_ack_batch_resolve_leader_or_fail_acks"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c",
+     "rd_kafka_share_segregate_acks_by_leader"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c",
+     "rd_kafka_share_segregate_sync_acks_by_leader"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_telemetry.c",
+     "rd_kafka_telemetry_clear"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_topic.c",
+     "rd_kafka_topic_metadata_update"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_topic.c",
+     "rd_kafka_topic_partition_available"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_topic.c",
+     "rd_kafka_toppar_delegate_to_leader"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_topic.c",
+     "rd_kafka_toppar_forget_leader"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_topic.c",
+     "rd_kafka_toppar_leader_update"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c",
+     "rd_kafka_txn_coord_query"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c",
+     "rd_kafka_txn_coord_set"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c",
+     "rd_kafka_txn_handle_FindCoordinator"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c",
+     "rd_kafka_txns_term"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_op_throttle_time",
+   "pairs": 46,
+   "sites": 46,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+     "rd_kafka_AlterConfigsResponse_parse"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+     "rd_kafka_AlterUserScramCredentialsResponse_parse"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+     "rd_kafka_ConsumerGroupDescribeResponse_parse"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+     "rd_kafka_CreateAclsResponse_parse"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+     "rd_kafka_CreatePartitionsResponse_parse"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+     "rd_kafka_CreateTopicsResponse_parse"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+     "rd_kafka_DeleteAclsResponse_parse"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+     "rd_kafka_DeleteGroupsResponse_parse"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+     "rd_kafka_DeleteRecordsResponse_parse"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+     "rd_kafka_DeleteTopicsResponse_parse"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+     "rd_kafka_DescribeAclsResponse_parse"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+     "rd_kafka_DescribeConfigsResponse_parse"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+     "rd_kafka_DescribeConsumerGroupsResponse_parse"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+     "rd_kafka_DescribeUserScramCredentialsResponse_parse"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+     "rd_kafka_ElectLeadersResponse_parse"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+     "rd_kafka_IncrementalAlterConfigsResponse_parse"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+     "rd_kafka_ListConsumerGroupsResponse_parse"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+     "rd_kafka_OffsetDeleteResponse_parse"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+     "rd_kafka_cgrp_handle_ConsumerGroupHeartbeat"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+     "rd_kafka_cgrp_handle_ConsumerGroupHeartbeat_leave"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+     "rd_kafka_cgrp_handle_FindCoordinator"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+     "rd_kafka_cgrp_handle_Heartbeat"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+     "rd_kafka_cgrp_handle_JoinGroup"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+     "rd_kafka_cgrp_handle_LeaveGroup"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+     "rd_kafka_cgrp_handle_ShareGroupHeartbeat"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+     "rd_kafka_cgrp_handle_ShareGroupHeartbeat_leave"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+     "rd_kafka_cgrp_handle_SyncGroup"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_coord.c",
+     "rd_kafka_coord_req_handle_FindCoordinator"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+     "rd_kafka_fetch_reply_handle"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+     "rd_kafka_share_acknowledge_reply_handle"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+     "rd_kafka_share_fetch_reply_handle"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_metadata.c",
+     "rd_kafka_parse_Metadata0"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+     "rd_kafka_handle_ApiVersion"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+     "rd_kafka_handle_GetTelemetrySubscriptions"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+     "rd_kafka_handle_InitProducerId"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+     "rd_kafka_handle_OffsetCommit"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+     "rd_kafka_handle_OffsetFetch"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+     "rd_kafka_handle_OffsetForLeaderEpoch"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+     "rd_kafka_handle_Produce_parse"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+     "rd_kafka_handle_PushTelemetry"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+     "rd_kafka_parse_ListOffsets"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c",
+     "rd_kafka_txn_handle_AddOffsetsToTxn"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c",
+     "rd_kafka_txn_handle_AddPartitionsToTxn"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c",
+     "rd_kafka_txn_handle_EndTxn"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c",
+     "rd_kafka_txn_handle_FindCoordinator"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c",
+     "rd_kafka_txn_handle_TxnOffsetCommit"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_list_add",
+   "pairs": 43,
+   "sites": 45,
+   "caller_libraries": [
+    "cmetrics",
+    "ctraces"
+   ],
+   "class": "B: declared model / typed module the resource loader refuses; no resource-v1 declaration",
+   "owner": [
+    "W45-SUB-OBJECT-STORE-FORMAL-VALUE"
+   ],
+   "declarations": [
+    {
+     "crate": "quirin-provider-cfl",
+     "module": "cfl/intrusive_list.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": false,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [],
+     "pinned_reviewed_at": null,
+     "resource_loader_refusal": "CflListEntry at byte 122: resource modules accept only extern functions"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_counter.c",
+     "cmt_counter_create"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_msgpack.c",
+     "append_unpacked_counter_to_metrics_context"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_msgpack.c",
+     "append_unpacked_exp_histogram_to_metrics_context"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_msgpack.c",
+     "append_unpacked_gauge_to_metrics_context"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_msgpack.c",
+     "append_unpacked_histogram_to_metrics_context"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_msgpack.c",
+     "append_unpacked_summary_to_metrics_context"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_msgpack.c",
+     "append_unpacked_untyped_to_metrics_context"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_msgpack.c",
+     "unpack_label"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_msgpack.c",
+     "unpack_static_label"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "append_new_map_label_key"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "append_new_metric_label_value"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "decode_exponential_histogram_data_point"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "decode_histogram_data_point"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "decode_numerical_data_point"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "decode_scope_metrics_entry"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "decode_summary_data_point"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_prometheus_remote_write.c",
+     "append_new_map_label_key"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_prometheus_remote_write.c",
+     "append_new_metric_label_value"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_prometheus_remote_write.c",
+     "decode_histogram_points"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_prometheus_remote_write.c",
+     "decode_numerical_samples"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_statsd.c",
+     "append_new_map_label_key"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_statsd.c",
+     "append_new_metric_label_value"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_statsd.c",
+     "decode_numerical_message"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_prometheus.c",
+     "initialize_temporary_metric"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_prometheus_remote_write.c",
+     "pack_complex_metric_sample"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_prometheus_remote_write.c",
+     "pack_complex_type"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_prometheus_remote_write.c",
+     "pack_metric_metadata"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_prometheus_remote_write.c",
+     "set_up_time_series_for_label_set"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_splunk_hec.c",
+     "initialize_temporary_metric"
+    ],
+    [
+     "lib/cmetrics/src/cmt_exp_histogram.c",
+     "cmt_exp_histogram_create"
+    ],
+    [
+     "lib/cmetrics/src/cmt_gauge.c",
+     "cmt_gauge_create"
+    ],
+    [
+     "lib/cmetrics/src/cmt_histogram.c",
+     "cmt_histogram_create"
+    ],
+    [
+     "lib/cmetrics/src/cmt_label.c",
+     "cmt_labels_add_kv"
+    ],
+    [
+     "lib/cmetrics/src/cmt_map.c",
+     "cmt_map_create"
+    ],
+    [
+     "lib/cmetrics/src/cmt_map.c",
+     "map_metric_create"
+    ],
+    [
+     "lib/cmetrics/src/cmt_map.c",
+     "map_metric_get_unlocked"
+    ],
+    [
+     "lib/cmetrics/src/cmt_summary.c",
+     "cmt_summary_create"
+    ],
+    [
+     "lib/cmetrics/src/cmt_untyped.c",
+     "cmt_untyped_create"
+    ],
+    [
+     "lib/ctraces/src/ctr_link.c",
+     "ctr_link_create"
+    ],
+    [
+     "lib/ctraces/src/ctr_resource.c",
+     "ctr_resource_span_create"
+    ],
+    [
+     "lib/ctraces/src/ctr_scope.c",
+     "ctr_scope_span_create"
+    ],
+    [
+     "lib/ctraces/src/ctr_span.c",
+     "ctr_span_create"
+    ],
+    [
+     "lib/ctraces/src/ctr_span.c",
+     "ctr_span_event_add_ts"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_topic_partition_list_add",
+   "pairs": 35,
+   "sites": 42,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka.c",
+     "rd_kafka_query_watermark_offsets"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_assignor.c",
+     "ut_init_member_internal"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_assignor.c",
+     "ut_init_member_with_rack"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+     "rd_kafka_cgrp_calculate_subscribe_revoking_partitions"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+     "rd_kafka_cgrp_get_unsubscribing_topics"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+     "rd_kafka_cooperative_protocol_adjust_assignment"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+     "rd_kafka_group_MemberMetadata_consumer_read"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+     "unittest_list_to_map"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+     "unittest_member_metadata_serdes"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+     "ut_topic_partitions"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c",
+     "rd_kafka_mock_cgrp_consumer_target_assignment_calculate_range"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+     "rd_kafka_mock_handle_ConsumerGroupHeartbeat"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+     "rd_kafka_mock_handle_Metadata"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+     "rd_kafka_mock_handle_ShareAcknowledge"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+     "rd_kafka_mock_handle_ShareFetch"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_mock_sharegrp.c",
+     "rd_kafka_mock_sharegroup_assign_topic_partitions"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_offset.c",
+     "rd_kafka_offset_broker_commit"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_offset.c",
+     "rd_kafka_offset_validate"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+     "rd_kafka_topic_partition_list_add_range"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+     "rd_kafka_topic_partition_list_upsert"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+     "rd_kafka_toppar_consumer_lag_req"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+     "rd_kafka_toppar_offset_request"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+     "rd_kafka_buf_read_topic_partitions_nullable"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+     "rd_kafka_handle_OffsetFetch"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+     "rd_kafka_parse_ListOffsets"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_roundrobin_assignor.c",
+     "rd_kafka_roundrobin_assignor_assign_cb"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c",
+     "PartitionMovements_addPartitionMovementRecord"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c",
+     "populatePotentialMaps"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c",
+     "prepopulateCurrentAssignments"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c",
+     "sortPartitions"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c",
+     "ut_create_topic_partition_lists"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c",
+     "ut_populate_member_owned_partitions_generation"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c",
+     "ut_testReassignmentAfterOneConsumerAdded"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c",
+     "ut_testReassignmentAfterOneConsumerLeaves"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c",
+     "ut_testSameSubscriptions"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_buf_new_request0",
+   "pairs": 30,
+   "sites": 30,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+     "rd_kafka_AlterUserScramCredentialsRequest"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+     "rd_kafka_DescribeUserScramCredentialsRequest"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+     "rd_kafka_ShareAcknowledgeRequest"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+     "rd_kafka_ShareFetchRequest"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+     "rd_kafka_broker_fetch_toppars"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+     "rd_kafka_AddOffsetsToTxnRequest"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+     "rd_kafka_AddPartitionsToTxnRequest"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+     "rd_kafka_ApiVersionRequest"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+     "rd_kafka_ConsumerGroupDescribeRequest"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+     "rd_kafka_ConsumerGroupHeartbeatRequest"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+     "rd_kafka_CreateAclsRequest"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+     "rd_kafka_DeleteAclsRequest"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+     "rd_kafka_DeleteRecordsRequest"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+     "rd_kafka_DescribeAclsRequest"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+     "rd_kafka_ElectLeadersRequest"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+     "rd_kafka_EndTxnRequest"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+     "rd_kafka_FindCoordinatorRequest"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+     "rd_kafka_GetTelemetrySubscriptionsRequest"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+     "rd_kafka_InitProducerIdRequest"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+     "rd_kafka_LeaveGroupRequest"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+     "rd_kafka_ListOffsetRequest_buf_new"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+     "rd_kafka_MetadataRequest0"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+     "rd_kafka_OffsetCommitRequest"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+     "rd_kafka_OffsetFetchRequest"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+     "rd_kafka_OffsetForLeaderEpochRequest"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+     "rd_kafka_PushTelemetryRequest"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+     "rd_kafka_SaslAuthenticateRequest"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+     "rd_kafka_SaslHandshakeRequest"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+     "rd_kafka_ShareGroupHeartbeatRequest"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c",
+     "rd_kafka_txn_send_TxnOffsetCommitRequest"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_list_del",
+   "pairs": 24,
+   "sites": 31,
+   "caller_libraries": [
+    "cmetrics",
+    "ctraces"
+   ],
+   "class": "B: declared model / typed module the resource loader refuses; no resource-v1 declaration",
+   "owner": [
+    "W45-SUB-OBJECT-STORE-FORMAL-VALUE"
+   ],
+   "declarations": [
+    {
+     "crate": "quirin-provider-cfl",
+     "module": "cfl/intrusive_list.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": false,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [],
+     "pinned_reviewed_at": null,
+     "resource_loader_refusal": "CflListEntry at byte 122: resource modules accept only extern functions"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_cat.c",
+     "cmt_cat"
+    ],
+    [
+     "lib/cmetrics/src/cmt_counter.c",
+     "cmt_counter_destroy"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "destroy_context_list"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_prometheus_remote_write.c",
+     "decode_histogram_points"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_prometheus.c",
+     "destroy_temporary_metric_labels"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_prometheus_remote_write.c",
+     "cmt_destroy_prometheus_remote_write_context"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_prometheus_remote_write.c",
+     "pack_complex_metric_sample"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_prometheus_remote_write.c",
+     "pack_complex_type"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_splunk_hec.c",
+     "destroy_temporary_metric_labels"
+    ],
+    [
+     "lib/cmetrics/src/cmt_exp_histogram.c",
+     "cmt_exp_histogram_destroy"
+    ],
+    [
+     "lib/cmetrics/src/cmt_gauge.c",
+     "cmt_gauge_destroy"
+    ],
+    [
+     "lib/cmetrics/src/cmt_histogram.c",
+     "cmt_histogram_destroy"
+    ],
+    [
+     "lib/cmetrics/src/cmt_label.c",
+     "cmt_labels_destroy"
+    ],
+    [
+     "lib/cmetrics/src/cmt_map.c",
+     "cmt_map_destroy"
+    ],
+    [
+     "lib/cmetrics/src/cmt_map.c",
+     "destroy_label_list"
+    ],
+    [
+     "lib/cmetrics/src/cmt_map.c",
+     "map_metric_destroy_unlocked"
+    ],
+    [
+     "lib/cmetrics/src/cmt_map.c",
+     "metric_index_resize"
+    ],
+    [
+     "lib/cmetrics/src/cmt_summary.c",
+     "cmt_summary_destroy"
+    ],
+    [
+     "lib/cmetrics/src/cmt_untyped.c",
+     "cmt_untyped_destroy"
+    ],
+    [
+     "lib/ctraces/src/ctr_link.c",
+     "ctr_link_destroy"
+    ],
+    [
+     "lib/ctraces/src/ctr_resource.c",
+     "ctr_resource_span_destroy"
+    ],
+    [
+     "lib/ctraces/src/ctr_scope.c",
+     "ctr_scope_span_destroy"
+    ],
+    [
+     "lib/ctraces/src/ctr_span.c",
+     "ctr_span_destroy"
+    ],
+    [
+     "lib/ctraces/src/ctr_span.c",
+     "ctr_span_event_delete"
+    ]
+   ]
+  },
+  {
+   "callee": "cio_error_reset",
+   "pairs": 18,
+   "sites": 18,
+   "caller_libraries": [
+    "chunkio"
+   ],
+   "class": "B: declared model / typed module the resource loader refuses; no resource-v1 declaration",
+   "owner": [
+    "W44-CALLEE-CROSS-UNIT-SUMMARY"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-chunkio",
+     "module": "chunkio/error_frame.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": false,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [],
+     "pinned_reviewed_at": null,
+     "resource_loader_refusal": "cio_error_reset at byte 245: unsupported parameter type or usage annotation"
+    },
+    {
+     "crate": "qcore-provider-chunkio",
+     "module": "chunkio/error_state.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": false,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [],
+     "pinned_reviewed_at": null,
+     "resource_loader_refusal": "cio_error_reset at byte 324: unsupported parameter type or usage annotation"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/chunkio/src/cio_chunk.c",
+     "cio_chunk_close"
+    ],
+    [
+     "lib/chunkio/src/cio_chunk.c",
+     "cio_chunk_down"
+    ],
+    [
+     "lib/chunkio/src/cio_chunk.c",
+     "cio_chunk_get_content"
+    ],
+    [
+     "lib/chunkio/src/cio_chunk.c",
+     "cio_chunk_get_content_copy"
+    ],
+    [
+     "lib/chunkio/src/cio_chunk.c",
+     "cio_chunk_get_content_end_pos"
+    ],
+    [
+     "lib/chunkio/src/cio_chunk.c",
+     "cio_chunk_get_content_size"
+    ],
+    [
+     "lib/chunkio/src/cio_chunk.c",
+     "cio_chunk_get_real_size"
+    ],
+    [
+     "lib/chunkio/src/cio_chunk.c",
+     "cio_chunk_lock"
+    ],
+    [
+     "lib/chunkio/src/cio_chunk.c",
+     "cio_chunk_open"
+    ],
+    [
+     "lib/chunkio/src/cio_chunk.c",
+     "cio_chunk_sync"
+    ],
+    [
+     "lib/chunkio/src/cio_chunk.c",
+     "cio_chunk_tx_begin"
+    ],
+    [
+     "lib/chunkio/src/cio_chunk.c",
+     "cio_chunk_tx_commit"
+    ],
+    [
+     "lib/chunkio/src/cio_chunk.c",
+     "cio_chunk_tx_rollback"
+    ],
+    [
+     "lib/chunkio/src/cio_chunk.c",
+     "cio_chunk_unlock"
+    ],
+    [
+     "lib/chunkio/src/cio_chunk.c",
+     "cio_chunk_up"
+    ],
+    [
+     "lib/chunkio/src/cio_chunk.c",
+     "cio_chunk_up_force"
+    ],
+    [
+     "lib/chunkio/src/cio_chunk.c",
+     "cio_chunk_write"
+    ],
+    [
+     "lib/chunkio/src/cio_chunk.c",
+     "cio_chunk_write_at"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_topic_name",
+   "pairs": 16,
+   "sites": 17,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c",
+     "ut_case_acknowledge_accept"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c",
+     "ut_case_acknowledge_multiple_partitions"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c",
+     "ut_case_acknowledge_type_reject"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c",
+     "ut_case_acknowledge_type_release"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c",
+     "ut_case_bsearch_boundary_offsets"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c",
+     "ut_case_bsearch_empty_entries"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c",
+     "ut_case_bsearch_first_entry"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c",
+     "ut_case_bsearch_last_entry"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c",
+     "ut_case_bsearch_middle_entries"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c",
+     "ut_case_bsearch_not_found_after"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c",
+     "ut_case_bsearch_not_found_before"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c",
+     "ut_case_bsearch_not_found_gap"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c",
+     "ut_case_error_gap_record"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c",
+     "ut_case_error_invalid_type"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c",
+     "ut_case_reacknowledge_delivered"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c",
+     "ut_case_unacked_count"
+    ]
+   ]
+  },
+  {
+   "callee": "cmt_map_metric_get",
+   "pairs": 14,
+   "sites": 14,
+   "caller_libraries": [
+    "cmetrics"
+   ],
+   "class": "B: declared model / typed module the resource loader refuses; no resource-v1 declaration",
+   "owner": [
+    "CMT-MAP-OPTS-CONTRACT-ADOPTION"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-cmetrics",
+     "module": "cmetrics/map_lifetime.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": false,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [],
+     "pinned_reviewed_at": null,
+     "resource_loader_refusal": "CmtMap at byte 959: resource modules accept only extern functions"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_cat.c",
+     "cmt_cat_copy_map"
+    ],
+    [
+     "lib/cmetrics/src/cmt_counter.c",
+     "cmt_counter_add"
+    ],
+    [
+     "lib/cmetrics/src/cmt_counter.c",
+     "cmt_counter_inc"
+    ],
+    [
+     "lib/cmetrics/src/cmt_counter.c",
+     "cmt_counter_set"
+    ],
+    [
+     "lib/cmetrics/src/cmt_exp_histogram.c",
+     "exp_histogram_get_metric"
+    ],
+    [
+     "lib/cmetrics/src/cmt_gauge.c",
+     "cmt_gauge_add"
+    ],
+    [
+     "lib/cmetrics/src/cmt_gauge.c",
+     "cmt_gauge_dec"
+    ],
+    [
+     "lib/cmetrics/src/cmt_gauge.c",
+     "cmt_gauge_inc"
+    ],
+    [
+     "lib/cmetrics/src/cmt_gauge.c",
+     "cmt_gauge_set"
+    ],
+    [
+     "lib/cmetrics/src/cmt_gauge.c",
+     "cmt_gauge_sub"
+    ],
+    [
+     "lib/cmetrics/src/cmt_histogram.c",
+     "histogram_get_metric"
+    ],
+    [
+     "lib/cmetrics/src/cmt_map.c",
+     "cmt_map_metric_get_val"
+    ],
+    [
+     "lib/cmetrics/src/cmt_summary.c",
+     "cmt_summary_set_default"
+    ],
+    [
+     "lib/cmetrics/src/cmt_untyped.c",
+     "cmt_untyped_set"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_destroy",
+   "pairs": 14,
+   "sites": 14,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka.c",
+     "rd_kafka_share_destroy"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_assignor.c",
+     "ut_assignors"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+     "ut_cgrp_consumer_member_next_assignment0"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+     "ut_mock_txn_aborted_range_recorded"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+     "ut_mock_txn_control_batch_written"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+     "ut_mock_txn_get_creates_and_reuses"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+     "ut_mock_txn_lso_calculation"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+     "ut_mock_txn_offset_is_aborted"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+     "ut_mock_txn_partition_add_and_clear"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_range_assignor.c",
+     "rd_kafka_range_assignor_unittest"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+     "unittest_handle_GetTelemetrySubscriptions"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+     "unittest_idempotent_producer"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c",
+     "rd_kafka_sticky_assignor_unittest"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_telemetry.c",
+     "unit_test_telemetry_match_requested_metrics_no_duplicates"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_broker_set_state",
+   "pairs": 10,
+   "sites": 14,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_buf_enq0"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_connect"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_connect_auth"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_connect_done"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_connect_up"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_fail"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_op_serve"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_ops_io_serve"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_thread_main"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_transport.c",
+     "rd_kafka_transport_connected"
+    ]
+   ]
+  },
+  {
+   "callee": "cmt_map_create",
+   "pairs": 8,
+   "sites": 13,
+   "caller_libraries": [
+    "cmetrics"
+   ],
+   "class": "B: declared model / typed module the resource loader refuses; no resource-v1 declaration",
+   "owner": [
+    "CMT-MAP-OPTS-CONTRACT-ADOPTION"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-cmetrics",
+     "module": "cmetrics/map_lifetime.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": false,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [],
+     "pinned_reviewed_at": null,
+     "resource_loader_refusal": "CmtMap at byte 959: resource modules accept only extern functions"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_counter.c",
+     "cmt_counter_create"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_msgpack.c",
+     "unpack_basic_type"
+    ],
+    [
+     "lib/cmetrics/src/cmt_exp_histogram.c",
+     "cmt_exp_histogram_create"
+    ],
+    [
+     "lib/cmetrics/src/cmt_filter.c",
+     "filter_context_label_key_value"
+    ],
+    [
+     "lib/cmetrics/src/cmt_gauge.c",
+     "cmt_gauge_create"
+    ],
+    [
+     "lib/cmetrics/src/cmt_histogram.c",
+     "cmt_histogram_create"
+    ],
+    [
+     "lib/cmetrics/src/cmt_summary.c",
+     "cmt_summary_create"
+    ],
+    [
+     "lib/cmetrics/src/cmt_untyped.c",
+     "cmt_untyped_create"
+    ]
+   ]
+  },
+  {
+   "callee": "cmt_map_destroy",
+   "pairs": 8,
+   "sites": 26,
+   "caller_libraries": [
+    "cmetrics"
+   ],
+   "class": "B: declared model / typed module the resource loader refuses; no resource-v1 declaration",
+   "owner": [
+    "CMT-MAP-OPTS-CONTRACT-ADOPTION"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-cmetrics",
+     "module": "cmetrics/map_lifetime.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": false,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [],
+     "pinned_reviewed_at": null,
+     "resource_loader_refusal": "CmtMap at byte 959: resource modules accept only extern functions"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_counter.c",
+     "cmt_counter_destroy"
+    ],
+    [
+     "lib/cmetrics/src/cmt_exp_histogram.c",
+     "cmt_exp_histogram_destroy"
+    ],
+    [
+     "lib/cmetrics/src/cmt_filter.c",
+     "filter_context_label_key_value"
+    ],
+    [
+     "lib/cmetrics/src/cmt_gauge.c",
+     "cmt_gauge_destroy"
+    ],
+    [
+     "lib/cmetrics/src/cmt_histogram.c",
+     "cmt_histogram_destroy"
+    ],
+    [
+     "lib/cmetrics/src/cmt_map.c",
+     "cmt_map_create"
+    ],
+    [
+     "lib/cmetrics/src/cmt_summary.c",
+     "cmt_summary_destroy"
+    ],
+    [
+     "lib/cmetrics/src/cmt_untyped.c",
+     "cmt_untyped_destroy"
+    ]
+   ]
+  },
+  {
+   "callee": "cmt_opts_exit",
+   "pairs": 6,
+   "sites": 6,
+   "caller_libraries": [
+    "cmetrics"
+   ],
+   "class": "B: declared model / typed module the resource loader refuses; no resource-v1 declaration",
+   "owner": [
+    "CMT-MAP-OPTS-CONTRACT-ADOPTION"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-cmetrics",
+     "module": "cmetrics/opts_lifetime.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": false,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [],
+     "pinned_reviewed_at": null,
+     "resource_loader_refusal": "CmtOptsContents at byte 795: resource modules accept only extern functions"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_counter.c",
+     "cmt_counter_destroy"
+    ],
+    [
+     "lib/cmetrics/src/cmt_exp_histogram.c",
+     "cmt_exp_histogram_destroy"
+    ],
+    [
+     "lib/cmetrics/src/cmt_gauge.c",
+     "cmt_gauge_destroy"
+    ],
+    [
+     "lib/cmetrics/src/cmt_histogram.c",
+     "cmt_histogram_destroy"
+    ],
+    [
+     "lib/cmetrics/src/cmt_summary.c",
+     "cmt_summary_destroy"
+    ],
+    [
+     "lib/cmetrics/src/cmt_untyped.c",
+     "cmt_untyped_destroy"
+    ]
+   ]
+  },
+  {
+   "callee": "cmt_opts_init",
+   "pairs": 6,
+   "sites": 6,
+   "caller_libraries": [
+    "cmetrics"
+   ],
+   "class": "B: declared model / typed module the resource loader refuses; no resource-v1 declaration",
+   "owner": [
+    "CMT-MAP-OPTS-CONTRACT-ADOPTION"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-cmetrics",
+     "module": "cmetrics/opts_lifetime.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": false,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [],
+     "pinned_reviewed_at": null,
+     "resource_loader_refusal": "CmtOptsContents at byte 795: resource modules accept only extern functions"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_counter.c",
+     "cmt_counter_create"
+    ],
+    [
+     "lib/cmetrics/src/cmt_exp_histogram.c",
+     "cmt_exp_histogram_create"
+    ],
+    [
+     "lib/cmetrics/src/cmt_gauge.c",
+     "cmt_gauge_create"
+    ],
+    [
+     "lib/cmetrics/src/cmt_histogram.c",
+     "cmt_histogram_create"
+    ],
+    [
+     "lib/cmetrics/src/cmt_summary.c",
+     "cmt_summary_create"
+    ],
+    [
+     "lib/cmetrics/src/cmt_untyped.c",
+     "cmt_untyped_create"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_q_deq0",
+   "pairs": 6,
+   "sites": 6,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "B: declared model / typed module the resource loader refuses; no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/typed_queue.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": false,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [],
+     "pinned_reviewed_at": null,
+     "resource_loader_refusal": "KafkaQueue at byte 158: resource modules accept only extern functions"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+     "rd_kafka_op_offset_commit_timeout_check"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_queue.c",
+     "rd_kafka_op_filter"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_queue.c",
+     "rd_kafka_q_pop_serve0"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_queue.c",
+     "rd_kafka_q_serve0"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_queue.c",
+     "rd_kafka_q_serve_rkmessages"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_queue.c",
+     "rd_kafka_q_serve_share_rkmessages"
+    ]
+   ]
+  },
+  {
+   "callee": "cmt_metric_set",
+   "pairs": 5,
+   "sites": 8,
+   "caller_libraries": [
+    "cmetrics"
+   ],
+   "class": "B: declared model / typed module the resource loader refuses; no resource-v1 declaration",
+   "owner": [
+    "CMT-MAP-OPTS-CONTRACT-ADOPTION"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-cmetrics",
+     "module": "cmetrics/metric_setters.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": false,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [],
+     "pinned_reviewed_at": null,
+     "resource_loader_refusal": "cmt_metric_set at byte 1338: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_counter.c",
+     "cmt_counter_set"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_prometheus_remote_write.c",
+     "decode_numerical_samples"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_prometheus_remote_write.c",
+     "pack_complex_metric_sample"
+    ],
+    [
+     "lib/cmetrics/src/cmt_gauge.c",
+     "cmt_gauge_set"
+    ],
+    [
+     "lib/cmetrics/src/cmt_untyped.c",
+     "cmt_untyped_set"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_topic_new0",
+   "pairs": 5,
+   "sites": 5,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_msg.c",
+     "rd_kafka_producev"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_msg.c",
+     "rd_kafka_produceva"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+     "rd_kafka_toppar_get2"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_topic.c",
+     "rd_kafka_topic_new"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_topic.c",
+     "rd_kafka_topic_proper"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_broker_connect_auth",
+   "pairs": 4,
+   "sites": 4,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_connect_done"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_handle_ApiVersion"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_handle_SaslHandshake"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_thread_main"
+    ]
+   ]
+  },
+  {
+   "callee": "cmt_map_metric_get_val",
+   "pairs": 3,
+   "sites": 3,
+   "caller_libraries": [
+    "cmetrics"
+   ],
+   "class": "B: declared model / typed module the resource loader refuses; no resource-v1 declaration",
+   "owner": [
+    "CMT-MAP-OPTS-CONTRACT-ADOPTION"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-cmetrics",
+     "module": "cmetrics/map_lifetime.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": false,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [],
+     "pinned_reviewed_at": null,
+     "resource_loader_refusal": "CmtMap at byte 959: resource modules accept only extern functions"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_counter.c",
+     "cmt_counter_get_val"
+    ],
+    [
+     "lib/cmetrics/src/cmt_gauge.c",
+     "cmt_gauge_get_val"
+    ],
+    [
+     "lib/cmetrics/src/cmt_untyped.c",
+     "cmt_untyped_get_val"
+    ]
+   ]
+  },
+  {
+   "callee": "cmt_metric_hist_count_set",
+   "pairs": 3,
+   "sites": 3,
+   "caller_libraries": [
+    "cmetrics"
+   ],
+   "class": "B: declared model / typed module the resource loader refuses; no resource-v1 declaration",
+   "owner": [
+    "CMT-MAP-OPTS-CONTRACT-ADOPTION"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-cmetrics",
+     "module": "cmetrics/metric_setters.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": false,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [],
+     "pinned_reviewed_at": null,
+     "resource_loader_refusal": "cmt_metric_set at byte 1338: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "decode_histogram_data_point"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_prometheus_remote_write.c",
+     "decode_histogram_points"
+    ],
+    [
+     "lib/cmetrics/src/cmt_histogram.c",
+     "cmt_histogram_set_default"
+    ]
+   ]
+  },
+  {
+   "callee": "cmt_metric_hist_sum_set",
+   "pairs": 3,
+   "sites": 3,
+   "caller_libraries": [
+    "cmetrics"
+   ],
+   "class": "B: declared model / typed module the resource loader refuses; no resource-v1 declaration",
+   "owner": [
+    "CMT-MAP-OPTS-CONTRACT-ADOPTION"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-cmetrics",
+     "module": "cmetrics/metric_setters.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": false,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [],
+     "pinned_reviewed_at": null,
+     "resource_loader_refusal": "cmt_metric_set at byte 1338: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "decode_histogram_data_point"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_prometheus_remote_write.c",
+     "decode_histogram_points"
+    ],
+    [
+     "lib/cmetrics/src/cmt_histogram.c",
+     "cmt_histogram_set_default"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_broker_buf_enq0",
+   "pairs": 3,
+   "sites": 3,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_buf_enq1"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_buf_enq2"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_retry_bufs_move"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_broker_retry_bufs_move",
+   "pairs": 3,
+   "sites": 3,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_consumer_serve"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_producer_serve"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_share_consumer_serve"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_broker_set_nodename",
+   "pairs": 3,
+   "sites": 3,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+     "rd_kafka_cgrp_coord_clear_broker"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+     "rd_kafka_cgrp_coord_set_broker"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c",
+     "rd_kafka_txn_coord_set"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_broker_share_fetch_session_clear",
+   "pairs": 3,
+   "sites": 3,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_op_serve"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+     "rd_kafka_broker_share_acknowledge_reply"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+     "rd_kafka_broker_share_fetch_session_leave"
+    ]
+   ]
+  },
+  {
+   "callee": "_mk_event_loop_destroy",
+   "pairs": 2,
+   "sites": 3,
+   "caller_libraries": [
+    "monkey-libevent"
+   ],
+   "class": "B: declared model / typed module the resource loader refuses; no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-libevent",
+     "module": "monkey/wait_source_policy.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": false,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [],
+     "pinned_reviewed_at": null,
+     "resource_loader_refusal": "source_identity at byte 406: unsupported predicate `source_revision == \"66910c10a4d7eafa810b84229cf2dcf7b0f26f97\"`"
+    },
+    {
+     "crate": "qcore-provider-libevent",
+     "module": "monkey/wrapper_paths.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": false,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [],
+     "pinned_reviewed_at": null,
+     "resource_loader_refusal": "mk_event_libevent_socketpair at byte 474: unsupported parameter type or usage annotation"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/monkey/mk_core/mk_event.c",
+     "mk_event_loop_create"
+    ],
+    [
+     "lib/monkey/mk_core/mk_event.c",
+     "mk_event_loop_destroy"
+    ]
+   ]
+  },
+  {
+   "callee": "_mk_event_wait_2",
+   "pairs": 2,
+   "sites": 2,
+   "caller_libraries": [
+    "monkey-libevent"
+   ],
+   "class": "B: declared model / typed module the resource loader refuses; no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-libevent",
+     "module": "monkey/wait_source_policy.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": false,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [],
+     "pinned_reviewed_at": null,
+     "resource_loader_refusal": "source_identity at byte 406: unsupported predicate `source_revision == \"66910c10a4d7eafa810b84229cf2dcf7b0f26f97\"`"
+    },
+    {
+     "crate": "qcore-provider-libevent",
+     "module": "monkey/wrapper_paths.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": false,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [],
+     "pinned_reviewed_at": null,
+     "resource_loader_refusal": "mk_event_libevent_socketpair at byte 474: unsupported parameter type or usage annotation"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/monkey/mk_core/mk_event.c",
+     "mk_event_wait"
+    ],
+    [
+     "lib/monkey/mk_core/mk_event.c",
+     "mk_event_wait_2"
+    ]
+   ]
+  },
+  {
+   "callee": "cJSON_ParseWithLengthOpts",
+   "pairs": 2,
+   "sites": 2,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "C: resource-v1 in view and pinned, withdrawn in the calling unit (failed:13a, withdrawn:13a)",
+   "owner": [
+    "CLASS1-UNDECLARABLE-RETAINERS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/cjson.qv",
+     "in_module_list": true,
+     "resource_view": true,
+     "bounds_view": false,
+     "outer_view": false,
+     "in_route_manifest": true,
+     "selectors": [
+      "resource_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": null
+    }
+   ],
+   "body_evidence_in_calling_units": {
+    "lib/librdkafka-2.15.0/src/cJSON.c": [
+     "failed:13a",
+     "withdrawn:13a"
+    ]
+   },
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/cJSON.c",
+     "cJSON_ParseWithLength"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/cJSON.c",
+     "cJSON_ParseWithOpts"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_list_init",
+   "pairs": 2,
+   "sites": 3,
+   "caller_libraries": [
+    "cmetrics"
+   ],
+   "class": "B: declared model / typed module the resource loader refuses; no resource-v1 declaration",
+   "owner": [
+    "W45-SUB-OBJECT-STORE-FORMAL-VALUE"
+   ],
+   "declarations": [
+    {
+     "crate": "quirin-provider-cfl",
+     "module": "cfl/intrusive_list.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": false,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [],
+     "pinned_reviewed_at": null,
+     "resource_loader_refusal": "CflListEntry at byte 122: resource modules accept only extern functions"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "cmt_decode_opentelemetry_create"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_prometheus_remote_write.c",
+     "cmt_encode_prometheus_remote_write_create"
+    ]
+   ]
+  },
+  {
+   "callee": "cio_file_st_set_content_len",
+   "pairs": 2,
+   "sites": 3,
+   "caller_libraries": [
+    "chunkio"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-chunkio",
+     "module": "chunkio/file_st_bounds.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "cio_file_st_get_hash at byte 1110: unsupported or duplicate requirement `bounds_contract_v1`"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/chunkio/src/cio_file.c",
+     "cio_file_write"
+    ],
+    [
+     "lib/chunkio/src/cio_file.c",
+     "write_init_header"
+    ]
+   ]
+  },
+  {
+   "callee": "cmt_map_metric_destroy",
+   "pairs": 2,
+   "sites": 2,
+   "caller_libraries": [
+    "cmetrics"
+   ],
+   "class": "B: declared model / typed module the resource loader refuses; no resource-v1 declaration",
+   "owner": [
+    "CMT-MAP-OPTS-CONTRACT-ADOPTION"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-cmetrics",
+     "module": "cmetrics/map_lifetime.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": false,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [],
+     "pinned_reviewed_at": null,
+     "resource_loader_refusal": "CmtMap at byte 959: resource modules accept only extern functions"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_filter.c",
+     "metrics_map_drop_label_value_pairs"
+    ],
+    [
+     "lib/cmetrics/src/cmt_map.c",
+     "cmt_map_destroy"
+    ]
+   ]
+  },
+  {
+   "callee": "cmt_metric_hist_set",
+   "pairs": 2,
+   "sites": 3,
+   "caller_libraries": [
+    "cmetrics"
+   ],
+   "class": "B: declared model / typed module the resource loader refuses; no resource-v1 declaration",
+   "owner": [
+    "CMT-MAP-OPTS-CONTRACT-ADOPTION"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-cmetrics",
+     "module": "cmetrics/metric_setters.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": false,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [],
+     "pinned_reviewed_at": null,
+     "resource_loader_refusal": "cmt_metric_set at byte 1338: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_decode_prometheus_remote_write.c",
+     "decode_histogram_points"
+    ],
+    [
+     "lib/cmetrics/src/cmt_histogram.c",
+     "cmt_histogram_set_default"
+    ]
+   ]
+  },
+  {
+   "callee": "cmt_metric_set_exp_hist_count",
+   "pairs": 2,
+   "sites": 2,
+   "caller_libraries": [
+    "cmetrics"
+   ],
+   "class": "B: declared model / typed module the resource loader refuses; no resource-v1 declaration",
+   "owner": [
+    "CMT-MAP-OPTS-CONTRACT-ADOPTION"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-cmetrics",
+     "module": "cmetrics/metric_setters.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": false,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [],
+     "pinned_reviewed_at": null,
+     "resource_loader_refusal": "cmt_metric_set at byte 1338: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "decode_exponential_histogram_data_point"
+    ],
+    [
+     "lib/cmetrics/src/cmt_exp_histogram.c",
+     "cmt_exp_histogram_set_default"
+    ]
+   ]
+  },
+  {
+   "callee": "cmt_metric_set_exp_hist_sum",
+   "pairs": 2,
+   "sites": 2,
+   "caller_libraries": [
+    "cmetrics"
+   ],
+   "class": "B: declared model / typed module the resource loader refuses; no resource-v1 declaration",
+   "owner": [
+    "CMT-MAP-OPTS-CONTRACT-ADOPTION"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-cmetrics",
+     "module": "cmetrics/metric_setters.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": false,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [],
+     "pinned_reviewed_at": null,
+     "resource_loader_refusal": "cmt_metric_set at byte 1338: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "decode_exponential_histogram_data_point"
+    ],
+    [
+     "lib/cmetrics/src/cmt_exp_histogram.c",
+     "cmt_exp_histogram_set_default"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_ShareAcknowledgeRequest",
+   "pairs": 2,
+   "sites": 2,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+     "rd_kafka_broker_share_fetch_session_leave"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+     "rd_kafka_broker_share_rpc"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_broker_active_toppar_del",
+   "pairs": 2,
+   "sites": 2,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_op_serve"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+     "rd_kafka_toppar_fetch_decide"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_broker_buf_retry",
+   "pairs": 2,
+   "sites": 2,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_op_serve"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_buf.c",
+     "rd_kafka_buf_retry"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_broker_conn_closed",
+   "pairs": 2,
+   "sites": 3,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_recv"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_transport.c",
+     "rd_kafka_transport_io_event"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_broker_connect_up",
+   "pairs": 2,
+   "sites": 2,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_connect_auth"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_sasl.c",
+     "rd_kafka_sasl_auth_done"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_broker_session_reset",
+   "pairs": 2,
+   "sites": 2,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+     "rd_kafka_broker_share_acknowledge_reply"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+     "rd_kafka_broker_share_fetch_reply"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_broker_set_api_versions",
+   "pairs": 2,
+   "sites": 2,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_connect_done"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_handle_ApiVersion"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_broker_toppar_msgq_scan",
+   "pairs": 2,
+   "sites": 2,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_toppars_timeout_scan"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_toppar_producer_serve"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_broker_wakeup",
+   "pairs": 2,
+   "sites": 2,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_all_brokers_wakeup"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+     "rd_kafka_toppar_set_fetch_state"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_idemp_request_pid_failed",
+   "pairs": 2,
+   "sites": 2,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_idempotence.c",
+     "rd_kafka_idemp_pid_update"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+     "rd_kafka_handle_InitProducerId"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_queue_destroy",
+   "pairs": 2,
+   "sites": 4,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+     "unittest_idempotent_producer"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_sasl.c",
+     "rd_kafka_sasl_background_callbacks_enable"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_ssl_hmac",
+   "pairs": 2,
+   "sites": 2,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+     "rd_kafka_AlterUserScramCredentialsRequest_salted_password"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c",
+     "rd_kafka_sasl_scram_Hi"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_transport_new",
+   "pairs": 2,
+   "sites": 2,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+     "rd_kafka_mock_connection_new"
+    ],
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_transport.c",
+     "rd_kafka_transport_connect"
+    ]
+   ]
+  },
+  {
+   "callee": "_mk_event_add",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "monkey-libevent"
+   ],
+   "class": "B: declared model / typed module the resource loader refuses; no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-libevent",
+     "module": "monkey/wrapper_paths.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": false,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [],
+     "pinned_reviewed_at": null,
+     "resource_loader_refusal": "mk_event_libevent_socketpair at byte 474: unsupported parameter type or usage annotation"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/monkey/mk_core/mk_event.c",
+     "mk_event_add"
+    ]
+   ]
+  },
+  {
+   "callee": "_mk_event_channel_create",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "monkey-libevent"
+   ],
+   "class": "B: declared model / typed module the resource loader refuses; no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-libevent",
+     "module": "monkey/wrapper_paths.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": false,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [],
+     "pinned_reviewed_at": null,
+     "resource_loader_refusal": "mk_event_libevent_socketpair at byte 474: unsupported parameter type or usage annotation"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/monkey/mk_core/mk_event.c",
+     "mk_event_channel_create"
+    ]
+   ]
+  },
+  {
+   "callee": "_mk_event_channel_destroy",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "monkey-libevent"
+   ],
+   "class": "B: declared model / typed module the resource loader refuses; no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-libevent",
+     "module": "monkey/wrapper_paths.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": false,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [],
+     "pinned_reviewed_at": null,
+     "resource_loader_refusal": "mk_event_libevent_socketpair at byte 474: unsupported parameter type or usage annotation"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/monkey/mk_core/mk_event.c",
+     "mk_event_channel_destroy"
+    ]
+   ]
+  },
+  {
+   "callee": "_mk_event_del",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "monkey-libevent"
+   ],
+   "class": "B: declared model / typed module the resource loader refuses; no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-libevent",
+     "module": "monkey/wrapper_paths.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": false,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [],
+     "pinned_reviewed_at": null,
+     "resource_loader_refusal": "mk_event_libevent_socketpair at byte 474: unsupported parameter type or usage annotation"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/monkey/mk_core/mk_event.c",
+     "mk_event_del"
+    ]
+   ]
+  },
+  {
+   "callee": "_mk_event_inject",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "monkey-libevent"
+   ],
+   "class": "B: declared model / typed module the resource loader refuses; no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-libevent",
+     "module": "monkey/wrapper_paths.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": false,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [],
+     "pinned_reviewed_at": null,
+     "resource_loader_refusal": "mk_event_libevent_socketpair at byte 474: unsupported parameter type or usage annotation"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/monkey/mk_core/mk_event.c",
+     "mk_event_inject"
+    ]
+   ]
+  },
+  {
+   "callee": "_mk_event_loop_create",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "monkey-libevent"
+   ],
+   "class": "B: declared model / typed module the resource loader refuses; no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-libevent",
+     "module": "monkey/wait_source_policy.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": false,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [],
+     "pinned_reviewed_at": null,
+     "resource_loader_refusal": "source_identity at byte 406: unsupported predicate `source_revision == \"66910c10a4d7eafa810b84229cf2dcf7b0f26f97\"`"
+    },
+    {
+     "crate": "qcore-provider-libevent",
+     "module": "monkey/wrapper_paths.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": false,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [],
+     "pinned_reviewed_at": null,
+     "resource_loader_refusal": "mk_event_libevent_socketpair at byte 474: unsupported parameter type or usage annotation"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/monkey/mk_core/mk_event.c",
+     "mk_event_loop_create"
+    ]
+   ]
+  },
+  {
+   "callee": "_mk_event_timeout_create",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "monkey-libevent"
+   ],
+   "class": "B: declared model / typed module the resource loader refuses; no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-libevent",
+     "module": "monkey/wrapper_paths.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": false,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [],
+     "pinned_reviewed_at": null,
+     "resource_loader_refusal": "mk_event_libevent_socketpair at byte 474: unsupported parameter type or usage annotation"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/monkey/mk_core/mk_event.c",
+     "mk_event_timeout_create"
+    ]
+   ]
+  },
+  {
+   "callee": "_mk_event_timeout_destroy",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "monkey-libevent"
+   ],
+   "class": "B: declared model / typed module the resource loader refuses; no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-libevent",
+     "module": "monkey/wrapper_paths.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": false,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [],
+     "pinned_reviewed_at": null,
+     "resource_loader_refusal": "mk_event_libevent_socketpair at byte 474: unsupported parameter type or usage annotation"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/monkey/mk_core/mk_event.c",
+     "mk_event_timeout_destroy"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_arena_create_with_options",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "cmetrics"
+   ],
+   "class": "B: declared model / typed module the resource loader refuses; no resource-v1 declaration",
+   "owner": [
+    "W47-ARENA-POOL-RESULT-MODE"
+   ],
+   "declarations": [
+    {
+     "crate": "quirin-provider-cfl",
+     "module": "cfl/arena_lifetime.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": false,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [],
+     "pinned_reviewed_at": null,
+     "resource_loader_refusal": "ArenaCreateError at byte 119: resource modules accept only extern functions"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+     "create_encoder_arena"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_arena_destroy",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "cmetrics"
+   ],
+   "class": "B: declared model / typed module the resource loader refuses; no resource-v1 declaration",
+   "owner": [
+    "W47-ARENA-POOL-RESULT-MODE"
+   ],
+   "declarations": [
+    {
+     "crate": "quirin-provider-cfl",
+     "module": "cfl/arena_lifetime.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": false,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [],
+     "pinned_reviewed_at": null,
+     "resource_loader_refusal": "ArenaCreateError at byte 119: resource modules accept only extern functions"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+     "destroy_opentelemetry_context"
+    ]
+   ]
+  },
+  {
+   "callee": "cio_chunk_counter_total_up_add",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "chunkio"
+   ],
+   "class": "B: declared model / typed module the resource loader refuses; no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-chunkio",
+     "module": "chunkio/counters.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": false,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [],
+     "pinned_reviewed_at": null,
+     "resource_loader_refusal": "cio_chunk_counter_total_add at byte 401: unsupported parameter type or usage annotation"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/chunkio/src/cio_file.c",
+     "mmap_file"
+    ]
+   ]
+  },
+  {
+   "callee": "cio_chunk_counter_total_up_sub",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "chunkio"
+   ],
+   "class": "B: declared model / typed module the resource loader refuses; no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-chunkio",
+     "module": "chunkio/counters.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": false,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [],
+     "pinned_reviewed_at": null,
+     "resource_loader_refusal": "cio_chunk_counter_total_add at byte 401: unsupported parameter type or usage annotation"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/chunkio/src/cio_file.c",
+     "munmap_file"
+    ]
+   ]
+  },
+  {
+   "callee": "cio_destroy",
+   "pairs": 1,
+   "sites": 3,
+   "caller_libraries": [
+    "chunkio"
+   ],
+   "class": "B: declared model / typed module the resource loader refuses; no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-chunkio",
+     "module": "chunkio/context_destructor.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": false,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [],
+     "pinned_reviewed_at": null,
+     "resource_loader_refusal": "ChunkContext at byte 125: resource modules accept only extern functions"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/chunkio/src/chunkio.c",
+     "cio_create"
+    ]
+   ]
+  },
+  {
+   "callee": "cio_memfs_close",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "chunkio"
+   ],
+   "class": "B: declared model / typed module the resource loader refuses; no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-chunkio",
+     "module": "chunkio/memory_backend.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": false,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [],
+     "pinned_reviewed_at": null,
+     "resource_loader_refusal": "cio_memfs_close at byte 493: unsupported parameter type or usage annotation"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/chunkio/src/cio_chunk.c",
+     "cio_chunk_close"
+    ]
+   ]
+  },
+  {
+   "callee": "cio_stream_destroy",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "chunkio"
+   ],
+   "class": "B: declared model / typed module the resource loader refuses; no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-chunkio",
+     "module": "chunkio/stream_destructor.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": false,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [],
+     "pinned_reviewed_at": null,
+     "resource_loader_refusal": "ChunkStream at byte 130: resource modules accept only extern functions"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/chunkio/src/cio_stream.c",
+     "cio_stream_destroy_all"
+    ]
+   ]
+  },
+  {
+   "callee": "cmt_map_metrics_expire",
+   "pairs": 1,
+   "sites": 6,
+   "caller_libraries": [
+    "cmetrics"
+   ],
+   "class": "B: declared model / typed module the resource loader refuses; no resource-v1 declaration",
+   "owner": [
+    "CMT-MAP-OPTS-CONTRACT-ADOPTION"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-cmetrics",
+     "module": "cmetrics/map_lifetime.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": false,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [],
+     "pinned_reviewed_at": null,
+     "resource_loader_refusal": "CmtMap at byte 959: resource modules accept only extern functions"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/cmetrics/src/cmetrics.c",
+     "cmt_expire"
+    ]
+   ]
+  },
+  {
+   "callee": "cmt_summary_count_set",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "cmetrics"
+   ],
+   "class": "B: declared model / typed module the resource loader refuses; no resource-v1 declaration",
+   "owner": [
+    "CMT-MAP-OPTS-CONTRACT-ADOPTION"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-cmetrics",
+     "module": "cmetrics/metric_setters.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": false,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [],
+     "pinned_reviewed_at": null,
+     "resource_loader_refusal": "cmt_metric_set at byte 1338: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "decode_summary_data_point"
+    ]
+   ]
+  },
+  {
+   "callee": "cmt_summary_quantile_set",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "cmetrics"
+   ],
+   "class": "B: declared model / typed module the resource loader refuses; no resource-v1 declaration",
+   "owner": [
+    "CMT-MAP-OPTS-CONTRACT-ADOPTION"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-cmetrics",
+     "module": "cmetrics/metric_setters.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": false,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [],
+     "pinned_reviewed_at": null,
+     "resource_loader_refusal": "cmt_metric_set at byte 1338: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "decode_summary_data_point"
+    ]
+   ]
+  },
+  {
+   "callee": "cmt_summary_sum_set",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "cmetrics"
+   ],
+   "class": "B: declared model / typed module the resource loader refuses; no resource-v1 declaration",
+   "owner": [
+    "CMT-MAP-OPTS-CONTRACT-ADOPTION"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-cmetrics",
+     "module": "cmetrics/metric_setters.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": false,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [],
+     "pinned_reviewed_at": null,
+     "resource_loader_refusal": "cmt_metric_set at byte 1338: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "decode_summary_data_point"
+    ]
+   ]
+  },
+  {
+   "callee": "flb_input_pause",
+   "pairs": 1,
+   "sites": 4,
+   "caller_libraries": [
+    "fluent-bit-chunk"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "quirin-provider-fluent-bit",
+     "module": "fluent_bit/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "flb_output_set_context at byte 1080: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "src/flb_input_chunk.c",
+     "flb_input_chunk_protect"
+    ]
+   ]
+  },
+  {
+   "callee": "flb_input_resume",
+   "pairs": 1,
+   "sites": 2,
+   "caller_libraries": [
+    "fluent-bit-chunk"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "quirin-provider-fluent-bit",
+     "module": "fluent_bit/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "flb_output_set_context at byte 1080: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "src/flb_input_chunk.c",
+     "flb_input_chunk_set_limits"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_broker_active_toppar_add",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_op_serve"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_broker_add",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_add_logical"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_broker_connect",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_thread_main"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_broker_connect_done",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_transport.c",
+     "rd_kafka_transport_connect_done"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_broker_consumer_serve",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_serve"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_broker_feature_disable",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_fail"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_broker_feature_enable",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_connect_done"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_broker_features_set",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_set_api_versions"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_broker_fetch_backoff",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+     "rd_kafka_broker_fetch_reply"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_broker_fetch_toppars",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_consumer_serve"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_broker_handle_purge_queues",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_op_serve"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_broker_idle_check",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_serve"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_broker_internal_serve",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_serve"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_broker_produce_toppars",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_producer_serve"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_broker_serve",
+   "pairs": 1,
+   "sites": 8,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_thread_main"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_broker_session_add_partition_to_toppars_in_session",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+     "rd_kafka_broker_session_update_toppars_in_session"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_broker_session_remove_partition_from_toppars_in_session",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+     "rd_kafka_broker_session_update_toppars_in_session"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_broker_session_update_epoch",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+     "rd_kafka_broker_session_update"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_broker_session_update_partitions",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+     "rd_kafka_broker_session_update"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_broker_share_fetch_session_leave",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_op_serve"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_broker_share_rpc",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_op_serve"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_broker_share_session_toppar_add",
+   "pairs": 1,
+   "sites": 2,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_op_serve"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_broker_timeout_scan",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_ops_io_serve"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_buf_retry",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_coord.c",
+     "rd_kafka_coord_req_handle_FindCoordinator"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_bufq_purge",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_fail"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_dr_implicit_ack",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+     "rd_kafka_handle_idempotent_Produce_success"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_features_check",
+   "pairs": 1,
+   "sites": 6,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_feature.c",
+     "rd_ut_features_check"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_fetch_reply_handle_partition_error",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+     "rd_kafka_fetch_reply_handle_partition"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_group_MemberMetadata_consumer_read",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+     "unittest_member_metadata_serdes"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_handle_Produce_metadata_update",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+     "rd_kafka_handle_Produce_parse"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_message_destroy",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka.c",
+     "rd_kafka_messages_destroy"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_msgbatch_handle_Produce_result",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+     "rd_kafka_handle_Produce"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_outq_len",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+     "unittest_idempotent_producer"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_req_response",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_recv"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_sasl_broker_init",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_add"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafka_sasl_broker_term",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+     "rd_kafka_broker_destroy_final"
+    ]
+   ]
+  },
+  {
+   "callee": "rd_kafkap_share_leader_changes_apply",
+   "pairs": 1,
+   "sites": 1,
+   "caller_libraries": [
+    "librdkafka"
+   ],
+   "class": "A: bounds-v1 only (bounds view); no resource-v1 declaration",
+   "owner": [
+    "DECLARED-NAMES-RESOURCE-V1-PROJECTIONS"
+   ],
+   "declarations": [
+    {
+     "crate": "qcore-provider-librdkafka",
+     "module": "librdkafka/null_deref.qv",
+     "in_module_list": true,
+     "resource_view": false,
+     "bounds_view": true,
+     "outer_view": false,
+     "in_route_manifest": false,
+     "selectors": [
+      "bounds_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": "rd_kafka_destroy at byte 12469: unsupported error, any-exit, or quantitative clause"
+    }
+   ],
+   "body_evidence_in_calling_units": {},
+   "callers": [
+    [
+     "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+     "rd_kafka_share_acknowledge_reply_handle"
+    ]
+   ]
+  },
+  {
+   "callee": "sb_release_output_queue_space",
+   "pairs": 1,
+   "sites": 2,
+   "caller_libraries": [
+    "fluent-bit-chunk"
+   ],
+   "class": "C: resource-v1 in view and pinned, withdrawn in the calling unit (withdrawn:C06.3-no-body)",
+   "owner": [
+    "W45-FB-BACKLOG-REACHABLE-RELEASE"
+   ],
+   "declarations": [
+    {
+     "crate": "quirin-provider-fluent-bit",
+     "module": "fluent_bit/storage_backlog.qv",
+     "in_module_list": true,
+     "resource_view": true,
+     "bounds_view": false,
+     "outer_view": false,
+     "in_route_manifest": true,
+     "selectors": [
+      "resource_body_checked",
+      "resource_contract_v1"
+     ],
+     "pinned_reviewed_at": [
+      "046accf6",
+      "66910c10"
+     ],
+     "resource_loader_refusal": null
+    }
+   ],
+   "body_evidence_in_calling_units": {
+    "src/flb_input_chunk.c": [
+     "withdrawn:C06.3-no-body"
+    ]
+   },
+   "callers": [
+    [
+     "src/flb_input_chunk.c",
+     "flb_input_chunk_release_space_compound"
+    ]
+   ]
+  }
+ ]
+}
