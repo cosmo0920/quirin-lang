@@ -1,0 +1,448 @@
+{
+ "card": "CELL-RESULT-SET-ALIGNMENT",
+ "note": "The cells the inventory covers, the records and members the reader resolves, and each creator's live set with where it comes from. A `declared` or `pin-derived` set names a tracked contract file and the exact clause text; the inventory parses the set from that text. A `MISSING` set names what no contract states and the set this card proposes for it; nothing is read from a MISSING set but the census class, marked as resting on the proposal.",
+ "trees": {
+  "fluent-bit": {
+   "scan": [
+    "src",
+    "include",
+    "plugins",
+    "lib/monkey/include",
+    "lib/monkey/mk_server"
+   ],
+   "skip": "^plugins/.*/deps/"
+  },
+  "monkey": {
+   "scan": [
+    "include",
+    "mk_server"
+   ],
+   "skip": null
+  }
+ },
+ "records": {
+  "flb_output_instance": [
+   "ch_events",
+   "event"
+  ],
+  "flb_input_instance": [
+   "ch_events",
+   "ingress_queue_channels",
+   "event"
+  ],
+  "flb_input_thread_instance": [
+   "ch_parent_events",
+   "ch_thread_events",
+   "notification_channels",
+   "event",
+   "event_local",
+   "notification_event"
+  ],
+  "flb_config": [
+   "ch_manager",
+   "ch_notif",
+   "ch_event",
+   "ch_data",
+   "notification_channels",
+   "notification_event",
+   "shutdown_fd",
+   "flush_fd"
+  ],
+  "flb_sched": [
+   "ch_events",
+   "event"
+  ],
+  "flb_sched_timer": [
+   "timer_fd"
+  ],
+  "flb_input_collector": [
+   "fd_timer"
+  ],
+  "flb_sp_task": [
+   "window"
+  ],
+  "mk_sched_worker": [
+   "signal_channel_r",
+   "signal_channel_w"
+  ],
+  "mk_server": [
+   "lib_ch_start"
+  ]
+ },
+ "struct_members": [
+  "event",
+  "event_local",
+  "notification_event",
+  "ch_event",
+  "window"
+ ],
+ "specific": [
+  "ch_events",
+  "ingress_queue_channels",
+  "ch_parent_events",
+  "ch_thread_events",
+  "ch_manager",
+  "ch_notif",
+  "ch_data",
+  "notification_channels",
+  "fd_timer",
+  "shutdown_fd",
+  "signal_channel_w",
+  "signal_channel_r",
+  "lib_ch_start"
+ ],
+ "arrays": [
+  "ch_events",
+  "ingress_queue_channels",
+  "ch_parent_events",
+  "ch_thread_events",
+  "notification_channels",
+  "ch_manager",
+  "ch_notif",
+  "ch_data",
+  "lib_ch_start"
+ ],
+ "typedefs": {
+  "flb_ctx_t": "flb_lib_ctx"
+ },
+ "locals": [
+  {
+   "file": "mk_server/mk_server.c",
+   "function": "mk_server_worker_loop",
+   "name": "timeout_fd"
+  }
+ ],
+ "creators": {
+  "mk_event_channel_create": {
+   "status": "MISSING",
+   "why": "The cells receive the values the creator stores through its slots `*r_fd` / `*w_fd` on `#result == 0` (event_loop.qv D3). On every Fluent Bit build (epoll) those are `pipe`'s descriptors. libc/result_sets.qv declares `pipe`'s RESULT (`-1 | 0`) only; no contract states the values `pipe` writes to `pipedes[0..1]`, and no form of G05j states an out slot's value set. monkey/result_range.qv's pin-derived `nonnull_result_range(-1, 0)` is the creator's status result, not the descriptors.",
+   "proposed": "[0, MAX] (POSIX.1-2017 pipe(): fildes[0] and fildes[1] are file descriptors, non-negative)"
+  },
+  "flb_pipe_create": {
+   "status": "MISSING",
+   "why": "flb_pipe.c forwards `pipe(pipefd)` (Linux). Its slot values are `pipe`'s descriptors; no contract states them (as for mk_event_channel_create).",
+   "proposed": "[0, MAX] (POSIX.1-2017 pipe())"
+  },
+  "mk_event_timeout_create": {
+   "status": "MISSING",
+   "why": "The cell holds the creator's result on `#result != -1` (event_loop.qv D1). Its result set rests on `timerfd_create` (epoll with MK_HAVE_TIMERFD_CREATE), which no libc contract declares (libc-names.txt does not list it, RULE-38-VALIDITY-READING-RESULT-SET), and no derived mk_event_timeout_create range is pinned.",
+   "proposed": "[0, MAX] (the `!= -1` class of `-1 | [0, MAX]`, Linux timerfd_create(2))"
+  }
+ },
+ "cells": [
+  {
+   "tree": "fluent-bit",
+   "record": "flb_output_instance",
+   "path": "ch_events[0]",
+   "protocol": "declared per-end `> 0` (teardown_destroy.qv)",
+   "proposed_live": "[0, MAX]"
+  },
+  {
+   "tree": "fluent-bit",
+   "record": "flb_output_instance",
+   "path": "ch_events[1]",
+   "protocol": "declared per-end `> 0` (teardown_destroy.qv)",
+   "proposed_live": "[0, MAX]"
+  },
+  {
+   "tree": "fluent-bit",
+   "record": "flb_output_instance",
+   "path": "event.fd",
+   "aliases": [
+    "event"
+   ],
+   "protocol": "declared `#same(ch_events[0])` under `ch_events[0] > 0`",
+   "proposed_live": "[0, MAX]"
+  },
+  {
+   "tree": "fluent-bit",
+   "record": "flb_input_instance",
+   "path": "ch_events[0]",
+   "protocol": "declared per-end `> 0` (teardown_destroy.qv)",
+   "proposed_live": "[0, MAX]"
+  },
+  {
+   "tree": "fluent-bit",
+   "record": "flb_input_instance",
+   "path": "ch_events[1]",
+   "protocol": "declared per-end `> 0` (teardown_destroy.qv)",
+   "proposed_live": "[0, MAX]"
+  },
+  {
+   "tree": "fluent-bit",
+   "record": "flb_input_instance",
+   "path": "event.fd",
+   "aliases": [
+    "event"
+   ],
+   "protocol": "declared `#same(ch_events[0])` under `ch_events[0] > 0`",
+   "proposed_live": "[0, MAX]"
+  },
+  {
+   "tree": "fluent-bit",
+   "record": "flb_input_instance",
+   "path": "ingress_queue_channels[0]",
+   "protocol": "declared per-end `> 0` (teardown_destroy.qv)",
+   "proposed_live": "[0, MAX]"
+  },
+  {
+   "tree": "fluent-bit",
+   "record": "flb_input_instance",
+   "path": "ingress_queue_channels[1]",
+   "protocol": "declared per-end `> 0` (teardown_destroy.qv)",
+   "proposed_live": "[0, MAX]"
+  },
+  {
+   "tree": "fluent-bit",
+   "record": "flb_input_thread_instance",
+   "path": "ch_parent_events[0]",
+   "protocol": "declared per-end `> 0` (teardown_destroy.qv)",
+   "proposed_live": "[0, MAX]"
+  },
+  {
+   "tree": "fluent-bit",
+   "record": "flb_input_thread_instance",
+   "path": "ch_parent_events[1]",
+   "protocol": "declared per-end `> 0` (teardown_destroy.qv)",
+   "proposed_live": "[0, MAX]"
+  },
+  {
+   "tree": "fluent-bit",
+   "record": "flb_input_thread_instance",
+   "path": "event.fd",
+   "aliases": [
+    "event"
+   ],
+   "protocol": "declared `#same(ch_parent_events[0])` under `ch_parent_events[0] > 0`",
+   "proposed_live": "[0, MAX]"
+  },
+  {
+   "tree": "fluent-bit",
+   "record": "flb_input_thread_instance",
+   "path": "ch_thread_events[0]",
+   "protocol": "declared per-end `> 0` (teardown_destroy.qv)",
+   "proposed_live": "[0, MAX]"
+  },
+  {
+   "tree": "fluent-bit",
+   "record": "flb_input_thread_instance",
+   "path": "ch_thread_events[1]",
+   "protocol": "declared per-end `> 0` (teardown_destroy.qv)",
+   "proposed_live": "[0, MAX]"
+  },
+  {
+   "tree": "fluent-bit",
+   "record": "flb_input_thread_instance",
+   "path": "event_local.fd",
+   "aliases": [
+    "event_local"
+   ],
+   "protocol": "declared `#same(ch_thread_events[0])` under `ch_thread_events[0] > 0`",
+   "proposed_live": "[0, MAX]"
+  },
+  {
+   "tree": "fluent-bit",
+   "record": "flb_input_thread_instance",
+   "path": "notification_channels[0]",
+   "protocol": "declared flag `notification_channels_initialized == 1` (teardown_destroy.qv)",
+   "proposed_live": "[0, MAX]"
+  },
+  {
+   "tree": "fluent-bit",
+   "record": "flb_input_thread_instance",
+   "path": "notification_channels[1]",
+   "protocol": "declared flag `notification_channels_initialized == 1` (teardown_destroy.qv)",
+   "proposed_live": "[0, MAX]"
+  },
+  {
+   "tree": "fluent-bit",
+   "record": "flb_input_thread_instance",
+   "path": "notification_event.fd",
+   "aliases": [
+    "notification_event"
+   ],
+   "protocol": "declared flag, `#same(notification_channels[0])`",
+   "proposed_live": "[0, MAX]"
+  },
+  {
+   "tree": "fluent-bit",
+   "record": "flb_config",
+   "path": "ch_manager[0]",
+   "protocol": "withheld per-end `> 0` (CELL-PROTOCOL-PER-END-GUARDS \u00a73)",
+   "proposed_live": "[0, MAX]"
+  },
+  {
+   "tree": "fluent-bit",
+   "record": "flb_config",
+   "path": "ch_manager[1]",
+   "protocol": "withheld per-end `> 0` (CELL-PROTOCOL-PER-END-GUARDS \u00a73)",
+   "proposed_live": "[0, MAX]"
+  },
+  {
+   "tree": "fluent-bit",
+   "record": "flb_config",
+   "path": "ch_event.fd",
+   "aliases": [
+    "ch_event"
+   ],
+   "protocol": "withheld `#same(ch_manager[0])` under `ch_manager[0] > 0`",
+   "proposed_live": "[0, MAX]"
+  },
+  {
+   "tree": "fluent-bit",
+   "record": "flb_config",
+   "path": "ch_notif[0]",
+   "protocol": "withheld per-end `> 0` (CELL-PROTOCOL-PER-END-GUARDS \u00a73)",
+   "proposed_live": "[0, MAX]"
+  },
+  {
+   "tree": "fluent-bit",
+   "record": "flb_config",
+   "path": "ch_notif[1]",
+   "protocol": "withheld per-end `> 0` (CELL-PROTOCOL-PER-END-GUARDS \u00a73)",
+   "proposed_live": "[0, MAX]"
+  },
+  {
+   "tree": "fluent-bit",
+   "record": "flb_config",
+   "path": "notification_channels[0]",
+   "protocol": "withheld flag `notification_channels_initialized == 1` (CELL-PROTOCOL-FB-DECLARATIONS \u00a73)",
+   "proposed_live": "[0, MAX]"
+  },
+  {
+   "tree": "fluent-bit",
+   "record": "flb_config",
+   "path": "notification_channels[1]",
+   "protocol": "withheld flag `notification_channels_initialized == 1` (CELL-PROTOCOL-FB-DECLARATIONS \u00a73)",
+   "proposed_live": "[0, MAX]"
+  },
+  {
+   "tree": "fluent-bit",
+   "record": "flb_config",
+   "path": "notification_event.fd",
+   "aliases": [
+    "notification_event"
+   ],
+   "protocol": "withheld flag, `#same(notification_channels[0])`",
+   "proposed_live": "[0, MAX]"
+  },
+  {
+   "tree": "fluent-bit",
+   "record": "flb_config",
+   "path": "ch_data[0]",
+   "protocol": "census-only (W43-DESC-FLB-CONFIG-DATA-PIPE-ZERO-GUARD; not in the per-end census)",
+   "proposed_live": "[0, MAX]"
+  },
+  {
+   "tree": "fluent-bit",
+   "record": "flb_config",
+   "path": "ch_data[1]",
+   "protocol": "census-only (W43-DESC-FLB-CONFIG-DATA-PIPE-ZERO-GUARD; not in the per-end census)",
+   "proposed_live": "[0, MAX]"
+  },
+  {
+   "tree": "fluent-bit",
+   "record": "flb_config",
+   "path": "shutdown_fd",
+   "protocol": "census-only (CELL-GUARD-RESULT-RANGE part 4)",
+   "proposed_live": "[0, MAX]"
+  },
+  {
+   "tree": "fluent-bit",
+   "record": "flb_config",
+   "path": "flush_fd",
+   "protocol": "census-only (CELL-GUARD-RESULT-RANGE part 4)",
+   "proposed_live": "[0, MAX]"
+  },
+  {
+   "tree": "fluent-bit",
+   "record": "flb_sched",
+   "path": "ch_events[0]",
+   "protocol": "withheld record sentinel `ch_events[0] != -1` (CELL-PROTOCOL-FB-DECLARATIONS \u00a73)",
+   "proposed_live": "[0, MAX]"
+  },
+  {
+   "tree": "fluent-bit",
+   "record": "flb_sched",
+   "path": "ch_events[1]",
+   "protocol": "withheld record sentinel `ch_events[0] != -1`",
+   "proposed_live": "[0, MAX]"
+  },
+  {
+   "tree": "fluent-bit",
+   "record": "flb_sched",
+   "path": "event.fd",
+   "aliases": [
+    "event"
+   ],
+   "protocol": "withheld `#same(ch_events[0])` under `ch_events[0] != -1`",
+   "proposed_live": "[0, MAX]"
+  },
+  {
+   "tree": "fluent-bit",
+   "record": "flb_sched_timer",
+   "path": "timer_fd",
+   "protocol": "census-only (CELL-GUARD-RESULT-RANGE part 4)",
+   "proposed_live": "[0, MAX]"
+  },
+  {
+   "tree": "fluent-bit",
+   "record": "flb_input_collector",
+   "path": "fd_timer",
+   "protocol": "census-only (CELL-GUARD-RESULT-RANGE part 4)",
+   "proposed_live": "[0, MAX]"
+  },
+  {
+   "tree": "fluent-bit",
+   "record": "flb_sp_task",
+   "path": "window.fd",
+   "protocol": "census-only (CELL-GUARD-RESULT-RANGE part 4)",
+   "proposed_live": "[0, MAX]"
+  },
+  {
+   "tree": "both",
+   "record": "mk_sched_worker",
+   "path": "signal_channel_r",
+   "protocol": "census-only (Monkey; CELL-GUARD-RESULT-RANGE part 4)",
+   "proposed_live": "[0, MAX]"
+  },
+  {
+   "tree": "both",
+   "record": "mk_sched_worker",
+   "path": "signal_channel_w",
+   "protocol": "census-only (Monkey; CELL-GUARD-RESULT-RANGE part 4)",
+   "proposed_live": "[0, MAX]"
+  },
+  {
+   "tree": "both",
+   "record": "mk_server",
+   "path": "lib_ch_start[0]",
+   "protocol": "census-only (Monkey; CELL-GUARD-RESULT-RANGE part 4)",
+   "proposed_live": "[0, MAX]"
+  },
+  {
+   "tree": "both",
+   "record": "mk_server",
+   "path": "lib_ch_start[1]",
+   "protocol": "census-only (Monkey; CELL-GUARD-RESULT-RANGE part 4)",
+   "proposed_live": "[0, MAX]"
+  },
+  {
+   "tree": "both",
+   "record": "<local>",
+   "path": "timeout_fd",
+   "protocol": "census-only (Monkey mk_server_worker_loop local; CELL-GUARD-RESULT-RANGE part 4)",
+   "proposed_live": "[0, MAX]"
+  }
+ ],
+ "witness_tests": [
+  {
+   "key": "flb_config|src/flb_engine.c|flb_engine_start|shutdown_fd|if (config->shutdown_fd == -1) {",
+   "why": "the immediate test of the creator result just stored in the cell (its witness, CELL-GUARD-RESULT-RANGE part 3: exact on the `== -1` failure class), not an end test of the stored cell"
+  },
+  {
+   "key": "flb_config|src/flb_engine.c|flb_engine_flush_timer_reset|flush_fd|if (config->flush_fd == -1) {",
+   "why": "the immediate test of the creator result just stored in the cell (its witness, CELL-GUARD-RESULT-RANGE part 3: exact on the `== -1` failure class), not an end test of the stored cell"
+  }
+ ]
+}

@@ -1,0 +1,613 @@
+{
+ "card": "CELL-RESULT-SET-ALIGNMENT",
+ "note": "One reading per non-read site of an inventoried cell, keyed by revision-independent text. `role`: alloc (value: the zero the allocation leaves), absent (an explicit absent store, value), creation (creator, cells it writes), close, declaration. The absent sets are the union of the alloc and absent values; nothing in inventory.py states them.",
+ "sites": [
+  {
+   "key": "<local>|lib/monkey/mk_server/mk_server.c|mk_server_worker_loop|declaration|timeout_fd|int timeout_fd;",
+   "role": "declaration",
+   "reading": "an uninitialised local: no value until the creation's store; no absent value is written"
+  },
+  {
+   "key": "<local>|lib/monkey/mk_server/mk_server.c|mk_server_worker_loop|store|timeout_fd|timeout_fd = mk_event_timeout_create(evl, server->timeout, 0, server_timeout);",
+   "role": "creation",
+   "creator": "mk_event_timeout_create",
+   "reading": "a creation: the cell holds mk_event_timeout_create's result; its `== -1` failure class is tested next (CELL-GUARD-RESULT-RANGE part 3) or, for the Monkey local, never tested"
+  },
+  {
+   "key": "<local>|mk_server/mk_server.c|mk_server_worker_loop|declaration|timeout_fd|int timeout_fd;",
+   "role": "declaration",
+   "reading": "an uninitialised local: no value until the creation's store; no absent value is written"
+  },
+  {
+   "key": "<local>|mk_server/mk_server.c|mk_server_worker_loop|store|timeout_fd|timeout_fd = mk_event_timeout_create(evl, server->timeout, 0, server_timeout);",
+   "role": "creation",
+   "creator": "mk_event_timeout_create",
+   "reading": "a creation: the cell holds mk_event_timeout_create's result; its `== -1` failure class is tested next (CELL-GUARD-RESULT-RANGE part 3) or, for the Monkey local, never tested"
+  },
+  {
+   "key": "flb_config|src/flb_config.c|flb_config_exit|array|ch_data|flb_pipe_destroy(config->ch_data);",
+   "role": "close",
+   "reading": "flb_pipe_destroy closes both ends (no store)"
+  },
+  {
+   "key": "flb_config|src/flb_config.c|flb_config_init|address|ch_event|MK_EVENT_ZERO(&config->ch_event);",
+   "role": "absent",
+   "value": -1,
+   "cells": [
+    "ch_event.fd"
+   ],
+   "reading": "MK_EVENT_ZERO stores -1 in `.fd` (MK_EVENT_INIT(e, -1, NULL, NULL)), the event's absent value"
+  },
+  {
+   "key": "flb_config|src/flb_config.c|flb_config_init|alloc|<record>|config = flb_calloc(1, sizeof(struct flb_config));",
+   "role": "alloc",
+   "value": 0,
+   "reading": "the holder's allocation zero-fills the record (config = flb_calloc(1, sizeof(struct flb_config));): every cell holds 0, an absent value that is also descriptor 0's number; ch_event.fd's zero is overwritten by MK_EVENT_ZERO's -1 before any return after the allocation (:297)",
+   "superseded": [
+    "ch_event.fd"
+   ]
+  },
+  {
+   "key": "flb_config|src/flb_engine.c|flb_engine_failed|store|ch_notif[1]|config->ch_notif[1] = -1;",
+   "role": "absent",
+   "value": -1,
+   "reading": "an explicit absent store of -1 (after mk_event_closesocket(ch_notif[1]) under ch_notif[1] != ch_notif[0])"
+  },
+  {
+   "key": "flb_config|src/flb_engine.c|flb_engine_flush_timer_reset|store|flush_fd|config->flush_fd = mk_event_timeout_create(config->evl,",
+   "role": "creation",
+   "creator": "mk_event_timeout_create",
+   "reading": "a creation: the cell holds mk_event_timeout_create's result; its `== -1` failure class is tested next (CELL-GUARD-RESULT-RANGE part 3) or, for the Monkey local, never tested"
+  },
+  {
+   "key": "flb_config|src/flb_engine.c|flb_engine_shutdown|address|notification_event|&config->notification_event);",
+   "role": "close",
+   "reading": "mk_event_channel_destroy's event argument: the read end's registration and both ends are closed (a close, not a store)"
+  },
+  {
+   "key": "flb_config|src/flb_engine.c|flb_engine_start|address|ch_event|&config->ch_event);",
+   "role": "creation",
+   "creator": "mk_event_channel_create",
+   "cells": [
+    "ch_event.fd"
+   ],
+   "reading": "a creation by mk_event_channel_create: on `#result == 0` it stores the pipe's descriptors through its slots (epoll; CELL-GUARD-RESULT-RANGE census), on failure it writes no end; the event argument's `.fd` is the read end (`#same`)"
+  },
+  {
+   "key": "flb_config|src/flb_engine.c|flb_engine_start|address|ch_manager[0]|&config->ch_manager[0],",
+   "role": "creation",
+   "creator": "mk_event_channel_create",
+   "cells": [
+    "ch_manager[0]"
+   ],
+   "reading": "a creation by mk_event_channel_create: on `#result == 0` it stores the pipe's descriptors through its slots (epoll; CELL-GUARD-RESULT-RANGE census), on failure it writes no end"
+  },
+  {
+   "key": "flb_config|src/flb_engine.c|flb_engine_start|address|ch_manager[1]|&config->ch_manager[1],",
+   "role": "creation",
+   "creator": "mk_event_channel_create",
+   "cells": [
+    "ch_manager[1]"
+   ],
+   "reading": "a creation by mk_event_channel_create: on `#result == 0` it stores the pipe's descriptors through its slots (epoll; CELL-GUARD-RESULT-RANGE census), on failure it writes no end"
+  },
+  {
+   "key": "flb_config|src/flb_engine.c|flb_engine_start|address|notification_channels[0]|&config->notification_channels[0],",
+   "role": "creation",
+   "creator": "mk_event_channel_create",
+   "cells": [
+    "notification_channels[0]"
+   ],
+   "reading": "a creation by mk_event_channel_create: on `#result == 0` it stores the pipe's descriptors through its slots (epoll; CELL-GUARD-RESULT-RANGE census), on failure it writes no end"
+  },
+  {
+   "key": "flb_config|src/flb_engine.c|flb_engine_start|address|notification_channels[1]|&config->notification_channels[1],",
+   "role": "creation",
+   "creator": "mk_event_channel_create",
+   "cells": [
+    "notification_channels[1]"
+   ],
+   "reading": "a creation by mk_event_channel_create: on `#result == 0` it stores the pipe's descriptors through its slots (epoll; CELL-GUARD-RESULT-RANGE census), on failure it writes no end"
+  },
+  {
+   "key": "flb_config|src/flb_engine.c|flb_engine_start|address|notification_event|&config->notification_event);",
+   "role": "creation",
+   "creator": "mk_event_channel_create",
+   "cells": [
+    "notification_event.fd"
+   ],
+   "reading": "a creation by mk_event_channel_create: on `#result == 0` it stores the pipe's descriptors through its slots (epoll; CELL-GUARD-RESULT-RANGE census), on failure it writes no end; the event argument's `.fd` is the read end (`#same`)"
+  },
+  {
+   "key": "flb_config|src/flb_engine.c|flb_engine_start|store|shutdown_fd|config->shutdown_fd = mk_event_timeout_create(evl,",
+   "role": "creation",
+   "creator": "mk_event_timeout_create",
+   "reading": "a creation: the cell holds mk_event_timeout_create's result; its `== -1` failure class is tested next (CELL-GUARD-RESULT-RANGE part 3) or, for the Monkey local, never tested"
+  },
+  {
+   "key": "flb_config|src/flb_lib.c|flb_create|address|ch_notif[0]|&config->ch_notif[0],",
+   "role": "creation",
+   "creator": "mk_event_channel_create",
+   "cells": [
+    "ch_notif[0]"
+   ],
+   "reading": "a creation by mk_event_channel_create: on `#result == 0` it stores the pipe's descriptors through its slots (epoll; CELL-GUARD-RESULT-RANGE census), on failure it writes no end"
+  },
+  {
+   "key": "flb_config|src/flb_lib.c|flb_create|address|ch_notif[1]|&config->ch_notif[1],",
+   "role": "creation",
+   "creator": "mk_event_channel_create",
+   "cells": [
+    "ch_notif[1]"
+   ],
+   "reading": "a creation by mk_event_channel_create: on `#result == 0` it stores the pipe's descriptors through its slots (epoll; CELL-GUARD-RESULT-RANGE census), on failure it writes no end"
+  },
+  {
+   "key": "flb_config|src/flb_lib.c|flb_create|array|ch_data|ret = flb_pipe_create(config->ch_data);",
+   "role": "creation",
+   "creator": "flb_pipe_create",
+   "cells": [
+    "ch_data[0]",
+    "ch_data[1]"
+   ],
+   "reading": "a creation by flb_pipe_create (pipe(pipefd) on Linux): on 0 both ends hold the pipe's descriptors, on -1 none is written"
+  },
+  {
+   "key": "flb_input_collector|src/flb_input.c|collector_create|alloc|<record>|coll = flb_calloc(1, sizeof(struct flb_input_collector));",
+   "role": "alloc",
+   "value": 0,
+   "reading": "the holder's allocation zero-fills the record (coll = flb_calloc(1, sizeof(struct flb_input_collector));): every cell holds 0, an absent value that is also descriptor 0's number; fd_timer's zero is overwritten by -1 before any return after the allocation (:2242)",
+   "superseded": [
+    "fd_timer"
+   ]
+  },
+  {
+   "key": "flb_input_collector|src/flb_input.c|collector_create|store|fd_timer|coll->fd_timer = -1;",
+   "role": "absent",
+   "value": -1,
+   "reading": "an explicit absent store of -1 (at the collector's creation)"
+  },
+  {
+   "key": "flb_input_collector|src/flb_input.c|collector_start|store|fd_timer|coll->fd_timer = fd;",
+   "role": "creation",
+   "creator": "mk_event_timeout_create",
+   "reading": "a creation by copy: the plain local `fd` holds mk_event_timeout_create's result, stored only after its `fd == -1` test returned (the live class)"
+  },
+  {
+   "key": "flb_input_collector|src/flb_input.c|flb_input_collector_pause|store|fd_timer|coll->fd_timer = -1;",
+   "role": "absent",
+   "value": -1,
+   "reading": "an explicit absent store of -1 (after the timer's destroy)"
+  },
+  {
+   "key": "flb_input_collector|src/flb_input.c|flb_input_collector_resume|store|fd_timer|coll->fd_timer = fd;",
+   "role": "creation",
+   "creator": "mk_event_timeout_create",
+   "reading": "a creation by copy: the plain local `fd` holds mk_event_timeout_create's result, stored only after its `fd == -1` test returned (the live class)"
+  },
+  {
+   "key": "flb_input_instance|src/flb_input.c|flb_input_new|alloc|<record>|instance = flb_calloc(1, sizeof(struct flb_input_instance));",
+   "role": "alloc",
+   "value": 0,
+   "reading": "the holder's allocation zero-fills the record (instance = flb_calloc(1, sizeof(struct flb_input_instance));): every cell holds 0, an absent value that is also descriptor 0's number; ingress_queue_channels' zero is overwritten by -1 (:549-550) before the instance is returned; every earlier return (:397-:547) frees the instance directly and never reaches flb_input_instance_destroy",
+   "superseded": [
+    "ingress_queue_channels[0]",
+    "ingress_queue_channels[1]"
+   ]
+  },
+  {
+   "key": "flb_input_instance|src/flb_input.c|flb_input_new|store|ingress_queue_channels[0]|instance->ingress_queue_channels[0] = -1;",
+   "role": "absent",
+   "value": -1,
+   "reading": "an explicit absent store of -1 (after the allocation, behind earlier early returns (flb_input.c:549-550 at 046accf6))"
+  },
+  {
+   "key": "flb_input_instance|src/flb_input.c|flb_input_new|store|ingress_queue_channels[1]|instance->ingress_queue_channels[1] = -1;",
+   "role": "absent",
+   "value": -1,
+   "reading": "an explicit absent store of -1 (after the allocation, behind earlier early returns (flb_input.c:549-550 at 046accf6))"
+  },
+  {
+   "key": "flb_input_instance|src/flb_input.c|input_instance_channel_events_init|address|ch_events[0]|&ins->ch_events[0],",
+   "role": "creation",
+   "creator": "mk_event_channel_create",
+   "cells": [
+    "ch_events[0]"
+   ],
+   "reading": "a creation by mk_event_channel_create: on `#result == 0` it stores the pipe's descriptors through its slots (epoll; CELL-GUARD-RESULT-RANGE census), on failure it writes no end"
+  },
+  {
+   "key": "flb_input_instance|src/flb_input.c|input_instance_channel_events_init|address|ch_events[1]|&ins->ch_events[1],",
+   "role": "creation",
+   "creator": "mk_event_channel_create",
+   "cells": [
+    "ch_events[1]"
+   ],
+   "reading": "a creation by mk_event_channel_create: on `#result == 0` it stores the pipe's descriptors through its slots (epoll; CELL-GUARD-RESULT-RANGE census), on failure it writes no end"
+  },
+  {
+   "key": "flb_input_instance|src/flb_input.c|input_instance_channel_events_init|address|event|ret = mk_event_channel_create(evl,",
+   "role": "creation",
+   "creator": "mk_event_channel_create",
+   "cells": [
+    "event.fd"
+   ],
+   "reading": "a creation by mk_event_channel_create: on `#result == 0` it stores the pipe's descriptors through its slots (epoll; CELL-GUARD-RESULT-RANGE census), on failure it writes no end; the event argument's `.fd` is the read end (`#same`)"
+  },
+  {
+   "key": "flb_input_instance|src/flb_input_ingest.c|flb_input_ingress_enable|array|ingress_queue_channels|flb_pipe_destroy(ins->ingress_queue_channels);",
+   "role": "close",
+   "reading": "flb_pipe_destroy closes both ends (no store)"
+  },
+  {
+   "key": "flb_input_instance|src/flb_input_ingest.c|flb_input_ingress_enable|array|ingress_queue_channels|result = flb_pipe_create(ins->ingress_queue_channels);",
+   "role": "creation",
+   "creator": "flb_pipe_create",
+   "cells": [
+    "ingress_queue_channels[0]",
+    "ingress_queue_channels[1]"
+   ],
+   "reading": "a creation by flb_pipe_create (pipe(pipefd) on Linux): on 0 both ends hold the pipe's descriptors, on -1 none is written"
+  },
+  {
+   "key": "flb_input_instance|src/flb_input_ingest.c|flb_input_ingress_enable|store|ingress_queue_channels[0]|ins->ingress_queue_channels[0] = -1;",
+   "role": "absent",
+   "value": -1,
+   "reading": "an explicit absent store of -1 (after flb_pipe_destroy of a failed registration)"
+  },
+  {
+   "key": "flb_input_instance|src/flb_input_ingest.c|flb_input_ingress_enable|store|ingress_queue_channels[1]|ins->ingress_queue_channels[1] = -1;",
+   "role": "absent",
+   "value": -1,
+   "reading": "an explicit absent store of -1 (after flb_pipe_destroy of a failed registration)"
+  },
+  {
+   "key": "flb_input_thread_instance|src/flb_input_thread.c|input_thread_instance_create|address|ch_parent_events[0]|&thi->ch_parent_events[0],",
+   "role": "creation",
+   "creator": "mk_event_channel_create",
+   "cells": [
+    "ch_parent_events[0]"
+   ],
+   "reading": "a creation by mk_event_channel_create: on `#result == 0` it stores the pipe's descriptors through its slots (epoll; CELL-GUARD-RESULT-RANGE census), on failure it writes no end"
+  },
+  {
+   "key": "flb_input_thread_instance|src/flb_input_thread.c|input_thread_instance_create|address|ch_parent_events[1]|&thi->ch_parent_events[1],",
+   "role": "creation",
+   "creator": "mk_event_channel_create",
+   "cells": [
+    "ch_parent_events[1]"
+   ],
+   "reading": "a creation by mk_event_channel_create: on `#result == 0` it stores the pipe's descriptors through its slots (epoll; CELL-GUARD-RESULT-RANGE census), on failure it writes no end"
+  },
+  {
+   "key": "flb_input_thread_instance|src/flb_input_thread.c|input_thread_instance_create|address|ch_thread_events[0]|&thi->ch_thread_events[0],",
+   "role": "creation",
+   "creator": "mk_event_channel_create",
+   "cells": [
+    "ch_thread_events[0]"
+   ],
+   "reading": "a creation by mk_event_channel_create: on `#result == 0` it stores the pipe's descriptors through its slots (epoll; CELL-GUARD-RESULT-RANGE census), on failure it writes no end"
+  },
+  {
+   "key": "flb_input_thread_instance|src/flb_input_thread.c|input_thread_instance_create|address|ch_thread_events[1]|&thi->ch_thread_events[1],",
+   "role": "creation",
+   "creator": "mk_event_channel_create",
+   "cells": [
+    "ch_thread_events[1]"
+   ],
+   "reading": "a creation by mk_event_channel_create: on `#result == 0` it stores the pipe's descriptors through its slots (epoll; CELL-GUARD-RESULT-RANGE census), on failure it writes no end"
+  },
+  {
+   "key": "flb_input_thread_instance|src/flb_input_thread.c|input_thread_instance_create|address|event|&thi->event);",
+   "role": "creation",
+   "creator": "mk_event_channel_create",
+   "cells": [
+    "event.fd"
+   ],
+   "reading": "a creation by mk_event_channel_create: on `#result == 0` it stores the pipe's descriptors through its slots (epoll; CELL-GUARD-RESULT-RANGE census), on failure it writes no end; the event argument's `.fd` is the read end (`#same`)"
+  },
+  {
+   "key": "flb_input_thread_instance|src/flb_input_thread.c|input_thread_instance_create|address|event_local|&thi->event_local);",
+   "role": "creation",
+   "creator": "mk_event_channel_create",
+   "cells": [
+    "event_local.fd"
+   ],
+   "reading": "a creation by mk_event_channel_create: on `#result == 0` it stores the pipe's descriptors through its slots (epoll; CELL-GUARD-RESULT-RANGE census), on failure it writes no end; the event argument's `.fd` is the read end (`#same`)"
+  },
+  {
+   "key": "flb_input_thread_instance|src/flb_input_thread.c|input_thread_instance_create|address|notification_channels[0]|&thi->notification_channels[0],",
+   "role": "creation",
+   "creator": "mk_event_channel_create",
+   "cells": [
+    "notification_channels[0]"
+   ],
+   "reading": "a creation by mk_event_channel_create: on `#result == 0` it stores the pipe's descriptors through its slots (epoll; CELL-GUARD-RESULT-RANGE census), on failure it writes no end"
+  },
+  {
+   "key": "flb_input_thread_instance|src/flb_input_thread.c|input_thread_instance_create|address|notification_channels[1]|&thi->notification_channels[1],",
+   "role": "creation",
+   "creator": "mk_event_channel_create",
+   "cells": [
+    "notification_channels[1]"
+   ],
+   "reading": "a creation by mk_event_channel_create: on `#result == 0` it stores the pipe's descriptors through its slots (epoll; CELL-GUARD-RESULT-RANGE census), on failure it writes no end"
+  },
+  {
+   "key": "flb_input_thread_instance|src/flb_input_thread.c|input_thread_instance_create|address|notification_event|&thi->notification_event);",
+   "role": "creation",
+   "creator": "mk_event_channel_create",
+   "cells": [
+    "notification_event.fd"
+   ],
+   "reading": "a creation by mk_event_channel_create: on `#result == 0` it stores the pipe's descriptors through its slots (epoll; CELL-GUARD-RESULT-RANGE census), on failure it writes no end; the event argument's `.fd` is the read end (`#same`)"
+  },
+  {
+   "key": "flb_input_thread_instance|src/flb_input_thread.c|input_thread_instance_create|alloc|<record>|thi = flb_calloc(1, sizeof(struct flb_input_thread_instance));",
+   "role": "alloc",
+   "value": 0,
+   "reading": "the holder's allocation zero-fills the record (thi = flb_calloc(1, sizeof(struct flb_input_thread_instance));): every cell holds 0, an absent value that is also descriptor 0's number"
+  },
+  {
+   "key": "flb_input_thread_instance|src/flb_input_thread.c|input_thread_instance_destroy|address|notification_event|&thi->notification_event);",
+   "role": "close",
+   "reading": "mk_event_channel_destroy's event argument: the read end's registration and both ends are closed (a close, not a store)"
+  },
+  {
+   "key": "flb_output_instance|src/flb_output.c|flb_output_init_all|address|ch_events[0]|&ins->ch_events[0],",
+   "role": "creation",
+   "creator": "mk_event_channel_create",
+   "cells": [
+    "ch_events[0]"
+   ],
+   "reading": "a creation by mk_event_channel_create: on `#result == 0` it stores the pipe's descriptors through its slots (epoll; CELL-GUARD-RESULT-RANGE census), on failure it writes no end"
+  },
+  {
+   "key": "flb_output_instance|src/flb_output.c|flb_output_init_all|address|ch_events[1]|&ins->ch_events[1],",
+   "role": "creation",
+   "creator": "mk_event_channel_create",
+   "cells": [
+    "ch_events[1]"
+   ],
+   "reading": "a creation by mk_event_channel_create: on `#result == 0` it stores the pipe's descriptors through its slots (epoll; CELL-GUARD-RESULT-RANGE census), on failure it writes no end"
+  },
+  {
+   "key": "flb_output_instance|src/flb_output.c|flb_output_init_all|address|event|ret = mk_event_channel_create(config->evl,",
+   "role": "creation",
+   "creator": "mk_event_channel_create",
+   "cells": [
+    "event.fd"
+   ],
+   "reading": "a creation by mk_event_channel_create: on `#result == 0` it stores the pipe's descriptors through its slots (epoll; CELL-GUARD-RESULT-RANGE census), on failure it writes no end; the event argument's `.fd` is the read end (`#same`)"
+  },
+  {
+   "key": "flb_output_instance|src/flb_output.c|flb_output_new|alloc|<record>|instance = flb_calloc(1, sizeof(struct flb_output_instance));",
+   "role": "alloc",
+   "value": 0,
+   "reading": "the holder's allocation zero-fills the record (instance = flb_calloc(1, sizeof(struct flb_output_instance));): every cell holds 0, an absent value that is also descriptor 0's number"
+  },
+  {
+   "key": "flb_sched|src/flb_scheduler.c|flb_sched_create|address|ch_events[0]|&sched->ch_events[0],",
+   "role": "creation",
+   "creator": "mk_event_channel_create",
+   "cells": [
+    "ch_events[0]"
+   ],
+   "reading": "a creation by mk_event_channel_create: on `#result == 0` it stores the pipe's descriptors through its slots (epoll; CELL-GUARD-RESULT-RANGE census), on failure it writes no end"
+  },
+  {
+   "key": "flb_sched|src/flb_scheduler.c|flb_sched_create|address|ch_events[1]|&sched->ch_events[1],",
+   "role": "creation",
+   "creator": "mk_event_channel_create",
+   "cells": [
+    "ch_events[1]"
+   ],
+   "reading": "a creation by mk_event_channel_create: on `#result == 0` it stores the pipe's descriptors through its slots (epoll; CELL-GUARD-RESULT-RANGE census), on failure it writes no end"
+  },
+  {
+   "key": "flb_sched|src/flb_scheduler.c|flb_sched_create|address|event|MK_EVENT_ZERO(&sched->event);",
+   "role": "absent",
+   "value": -1,
+   "cells": [
+    "event.fd"
+   ],
+   "reading": "MK_EVENT_ZERO stores -1 in `.fd` (MK_EVENT_INIT(e, -1, NULL, NULL)), the event's absent value"
+  },
+  {
+   "key": "flb_sched|src/flb_scheduler.c|flb_sched_create|address|event|&sched->event);",
+   "role": "creation",
+   "creator": "mk_event_channel_create",
+   "cells": [
+    "event.fd"
+   ],
+   "reading": "a creation by mk_event_channel_create: on `#result == 0` it stores the pipe's descriptors through its slots (epoll; CELL-GUARD-RESULT-RANGE census), on failure it writes no end; the event argument's `.fd` is the read end (`#same`)"
+  },
+  {
+   "key": "flb_sched|src/flb_scheduler.c|flb_sched_create|alloc|<record>|sched = flb_calloc(1, sizeof(struct flb_sched));",
+   "role": "alloc",
+   "value": 0,
+   "reading": "the holder's allocation zero-fills the record (sched = flb_calloc(1, sizeof(struct flb_sched));): every cell holds 0, an absent value that is also descriptor 0's number; the zero of ch_events[0..1] and event.fd is overwritten (-1 stores, MK_EVENT_ZERO) before the record leaves the function or any early return (flb_scheduler.c:754-756 at 046accf6)",
+   "superseded": [
+    "ch_events[0]",
+    "ch_events[1]",
+    "event.fd"
+   ]
+  },
+  {
+   "key": "flb_sched|src/flb_scheduler.c|flb_sched_create|store|ch_events[0]|sched->ch_events[0] = -1;",
+   "role": "absent",
+   "value": -1,
+   "reading": "an explicit absent store of -1 (before the creation)"
+  },
+  {
+   "key": "flb_sched|src/flb_scheduler.c|flb_sched_create|store|ch_events[1]|sched->ch_events[1] = -1;",
+   "role": "absent",
+   "value": -1,
+   "reading": "an explicit absent store of -1 (before the creation)"
+  },
+  {
+   "key": "flb_sched|src/flb_scheduler.c|flb_sched_destroy|address|event|&sched->event);",
+   "role": "close",
+   "reading": "mk_event_channel_destroy's event argument: the read end's registration and both ends are closed (a close, not a store)"
+  },
+  {
+   "key": "flb_sched|src/flb_scheduler.c|flb_sched_destroy|store|ch_events[0]|sched->ch_events[0] = -1;",
+   "role": "absent",
+   "value": -1,
+   "reading": "an explicit absent store of -1 (after mk_event_channel_destroy of both ends)"
+  },
+  {
+   "key": "flb_sched|src/flb_scheduler.c|flb_sched_destroy|store|ch_events[1]|sched->ch_events[1] = -1;",
+   "role": "absent",
+   "value": -1,
+   "reading": "an explicit absent store of -1 (after mk_event_channel_destroy of both ends)"
+  },
+  {
+   "key": "flb_sched_timer|src/flb_scheduler.c|flb_sched_timer_cb_create|store|timer_fd|timer->timer_fd = fd;",
+   "role": "creation",
+   "creator": "mk_event_timeout_create",
+   "reading": "a creation by copy: the plain local `fd` holds mk_event_timeout_create's result, stored only after its `fd == -1` test returned (the live class)"
+  },
+  {
+   "key": "flb_sched_timer|src/flb_scheduler.c|flb_sched_timer_cb_disable|store|timer_fd|timer->timer_fd = -1;",
+   "role": "absent",
+   "value": -1,
+   "reading": "an explicit absent store of -1 (after the timer's destroy)"
+  },
+  {
+   "key": "flb_sched_timer|src/flb_scheduler.c|flb_sched_timer_create|alloc|<record>|timer = flb_calloc(1, sizeof(struct flb_sched_timer));",
+   "role": "alloc",
+   "value": 0,
+   "reading": "the holder's allocation zero-fills the record (timer = flb_calloc(1, sizeof(struct flb_sched_timer));): every cell holds 0, an absent value that is also descriptor 0's number; timer_fd's zero is overwritten by -1 before any return after the allocation (:881)",
+   "superseded": [
+    "timer_fd"
+   ]
+  },
+  {
+   "key": "flb_sched_timer|src/flb_scheduler.c|flb_sched_timer_create|store|timer_fd|timer->timer_fd = -1;",
+   "role": "absent",
+   "value": -1,
+   "reading": "an explicit absent store of -1 (at the timer's allocation)"
+  },
+  {
+   "key": "flb_sched_timer|src/flb_scheduler.c|schedule_request_now|store|timer_fd|timer->timer_fd = fd;",
+   "role": "creation",
+   "creator": "mk_event_timeout_create",
+   "reading": "a creation by copy: the plain local `fd` holds mk_event_timeout_create's result, stored only after its `fd == -1` test returned (the live class)"
+  },
+  {
+   "key": "flb_sp_task|src/stream_processor/flb_sp.c|flb_sp_fd_event|store|window.fd|task->window.fd = fd_timeout;",
+   "role": "creation",
+   "creator": "mk_event_timeout_create",
+   "reading": "a creation by copy: the plain local `fd` holds mk_event_timeout_create's result, stored only after its `fd == -1` test returned (the live class)"
+  },
+  {
+   "key": "flb_sp_task|src/stream_processor/flb_sp.c|flb_sp_task_create|alloc|<record>|task = flb_calloc(1, sizeof(struct flb_sp_task));",
+   "role": "alloc",
+   "value": 0,
+   "reading": "the holder's allocation zero-fills the record (task = flb_calloc(1, sizeof(struct flb_sp_task));): every cell holds 0, an absent value that is also descriptor 0's number"
+  },
+  {
+   "key": "flb_sp_task|src/stream_processor/flb_sp.c|flb_sp_task_create|store|window.fd|task->window.fd = fd;",
+   "role": "creation",
+   "creator": "mk_event_timeout_create",
+   "reading": "a creation by copy: the plain local `fd` holds mk_event_timeout_create's result, stored only after its `fd == -1` test returned (the live class)"
+  },
+  {
+   "key": "mk_sched_worker|lib/monkey/mk_server/mk_scheduler.c|mk_sched_init|alloc|<record>|size = (sizeof(struct mk_sched_worker) * server->workers);",
+   "role": "alloc",
+   "value": 0,
+   "reading": "the holder's allocation zero-fills the record (size = (sizeof(struct mk_sched_worker) * server->workers);; memset to 0 after mk_mem_alloc): every cell holds 0, an absent value that is also descriptor 0's number"
+  },
+  {
+   "key": "mk_sched_worker|lib/monkey/mk_server/mk_scheduler.c|mk_sched_launch_worker_loop|address|signal_channel_r|&sched->signal_channel_r,",
+   "role": "creation",
+   "creator": "mk_event_channel_create",
+   "cells": [
+    "signal_channel_r"
+   ],
+   "reading": "a creation by mk_event_channel_create: on `#result == 0` it stores the pipe's descriptors through its slots (epoll; CELL-GUARD-RESULT-RANGE census), on failure it writes no end"
+  },
+  {
+   "key": "mk_sched_worker|lib/monkey/mk_server/mk_scheduler.c|mk_sched_launch_worker_loop|address|signal_channel_w|&sched->signal_channel_w,",
+   "role": "creation",
+   "creator": "mk_event_channel_create",
+   "cells": [
+    "signal_channel_w"
+   ],
+   "reading": "a creation by mk_event_channel_create: on `#result == 0` it stores the pipe's descriptors through its slots (epoll; CELL-GUARD-RESULT-RANGE census), on failure it writes no end"
+  },
+  {
+   "key": "mk_sched_worker|mk_server/mk_scheduler.c|mk_sched_init|alloc|<record>|size = (sizeof(struct mk_sched_worker) * server->workers);",
+   "role": "alloc",
+   "value": 0,
+   "reading": "the holder's allocation zero-fills the record (size = (sizeof(struct mk_sched_worker) * server->workers);; memset to 0 after mk_mem_alloc): every cell holds 0, an absent value that is also descriptor 0's number"
+  },
+  {
+   "key": "mk_sched_worker|mk_server/mk_scheduler.c|mk_sched_launch_worker_loop|address|signal_channel_r|&sched->signal_channel_r,",
+   "role": "creation",
+   "creator": "mk_event_channel_create",
+   "cells": [
+    "signal_channel_r"
+   ],
+   "reading": "a creation by mk_event_channel_create: on `#result == 0` it stores the pipe's descriptors through its slots (epoll; CELL-GUARD-RESULT-RANGE census), on failure it writes no end"
+  },
+  {
+   "key": "mk_sched_worker|mk_server/mk_scheduler.c|mk_sched_launch_worker_loop|address|signal_channel_w|&sched->signal_channel_w,",
+   "role": "creation",
+   "creator": "mk_event_channel_create",
+   "cells": [
+    "signal_channel_w"
+   ],
+   "reading": "a creation by mk_event_channel_create: on `#result == 0` it stores the pipe's descriptors through its slots (epoll; CELL-GUARD-RESULT-RANGE census), on failure it writes no end"
+  },
+  {
+   "key": "mk_server|lib/monkey/mk_server/monkey.c|mk_server_create|address|lib_ch_start[0]|&server->lib_ch_start[0],",
+   "role": "creation",
+   "creator": "mk_event_channel_create",
+   "cells": [
+    "lib_ch_start[0]"
+   ],
+   "reading": "a creation by mk_event_channel_create: on `#result == 0` it stores the pipe's descriptors through its slots (epoll; CELL-GUARD-RESULT-RANGE census), on failure it writes no end"
+  },
+  {
+   "key": "mk_server|lib/monkey/mk_server/monkey.c|mk_server_create|address|lib_ch_start[1]|&server->lib_ch_start[1],",
+   "role": "creation",
+   "creator": "mk_event_channel_create",
+   "cells": [
+    "lib_ch_start[1]"
+   ],
+   "reading": "a creation by mk_event_channel_create: on `#result == 0` it stores the pipe's descriptors through its slots (epoll; CELL-GUARD-RESULT-RANGE census), on failure it writes no end"
+  },
+  {
+   "key": "mk_server|lib/monkey/mk_server/monkey.c|mk_server_create|alloc|<record>|server = mk_mem_alloc_z(sizeof(struct mk_server));",
+   "role": "alloc",
+   "value": 0,
+   "reading": "the holder's allocation zero-fills the record (server = mk_mem_alloc_z(sizeof(struct mk_server));): every cell holds 0, an absent value that is also descriptor 0's number"
+  },
+  {
+   "key": "mk_server|mk_server/monkey.c|mk_server_create|address|lib_ch_start[0]|&server->lib_ch_start[0],",
+   "role": "creation",
+   "creator": "mk_event_channel_create",
+   "cells": [
+    "lib_ch_start[0]"
+   ],
+   "reading": "a creation by mk_event_channel_create: on `#result == 0` it stores the pipe's descriptors through its slots (epoll; CELL-GUARD-RESULT-RANGE census), on failure it writes no end"
+  },
+  {
+   "key": "mk_server|mk_server/monkey.c|mk_server_create|address|lib_ch_start[1]|&server->lib_ch_start[1],",
+   "role": "creation",
+   "creator": "mk_event_channel_create",
+   "cells": [
+    "lib_ch_start[1]"
+   ],
+   "reading": "a creation by mk_event_channel_create: on `#result == 0` it stores the pipe's descriptors through its slots (epoll; CELL-GUARD-RESULT-RANGE census), on failure it writes no end"
+  },
+  {
+   "key": "mk_server|mk_server/monkey.c|mk_server_create|alloc|<record>|server = mk_mem_alloc_z(sizeof(struct mk_server));",
+   "role": "alloc",
+   "value": 0,
+   "reading": "the holder's allocation zero-fills the record (server = mk_mem_alloc_z(sizeof(struct mk_server));): every cell holds 0, an absent value that is also descriptor 0's number"
+  }
+ ]
+}
