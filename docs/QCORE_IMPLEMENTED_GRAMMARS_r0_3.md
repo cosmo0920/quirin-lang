@@ -4629,6 +4629,28 @@ Static conditions. Each one rejects the whole module (`quant-cell-*`):
   - A `== 1` guard is no cell of the record.
 - **Size.** A path has at most 64 segments.
 
+Card CELL-RESULT-SET-ALIGNMENT (USER DECISIONS 2026-11-04, Q2 (i) and Q3
+"(α) live_set suffix"; contract specification C04.6.3, gateway rule 38f (6))
+adds two optional suffixes after the guard of a per-end sentinel's own
+`#fresh` clause, in this order, each at most once:
+
+```ebnf
+cell_clause = … , "when", "#", IDENT, ".", cell_path, cell_guard,
+              [ "live_set", "(", set, ")" ], [ "absent_set", "(", set, ")" ], ";" ;
+```
+
+`set` is G05j's, over `int`. Static conditions, each rejecting the whole
+module:
+- the absent set meets nothing on the guard's live edge (`quant-cell-absent-set`);
+- the live set and the absent set are disjoint (`quant-cell-live-set`);
+- the suffixes stand only on a per-end sentinel's own `#fresh` clause
+  (`quant-cell-set`).
+
+They load to `CellProtocol::live_set` / `absent_set` (canonical intervals,
+omitted when absent, so an older protocol serializes as before). The
+frontend's operator gate admits `|`, `&` and `^` in a `quant cell` clause that
+carries a suffix. `>= 0` is not admitted: the user's third patch uses `> 0`.
+
 The clauses of one declaration load to one canonical `CellProtocol` per guard
 (`LoopLifetimeContract::cells`, sorted, omitted when empty; a record with one
 guard loads as before). The host becomes a withheld lifetime declaration, as
@@ -4678,6 +4700,26 @@ are reserved. Only the null property and the result derivation read the
 clause (`for_bounds()` removes it); `resource_*` consumers reject the module.
 The first tracked use is `providers/quirin-provider-libc/contracts/libc/result_sets.qv`
 (`pipe`, `epoll_ctl`, `open`), the libc crate's bounds view.
+
+Card CELL-RESULT-SET-ALIGNMENT (USER DECISIONS 2026-11-04: Q1 (a), the
+per-element and per-class refinements, "Write [1, MAX]") adds a third clause:
+
+```ebnf
+bounds_post = … | "written_set", "(", IDENT, [ "[", DIGITS, "]" ], ",", set, ")",
+              "when", "#", "result", "==", signed ;
+```
+
+(`BoundsClause::WrittenSet`; `crates/qcore-contract/src/bounds_contract.rs`,
+`written_set_clause`). Static conditions:
+- `IDENT` is a pointer parameter (`written-set-slot`);
+- the clause is an `ensures normal` postcondition (`written-set-ensures`);
+- the class is stated (`written-set-class`);
+- at most one clause per slot element.
+
+A flexible declaration's clauses are its one `result_set` and its slots'
+written sets (`bounds-revision-flexible-scope`, amended). The word is
+reserved. Only the null and resource readers read it (`for_bounds()` removes
+it).
 
 ## G06. Observation predicate grammar
 

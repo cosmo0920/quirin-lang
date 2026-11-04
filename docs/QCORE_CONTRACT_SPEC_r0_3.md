@@ -668,7 +668,18 @@ quant cell #s: flb_sched.event.fd |-> #same(ch_events[0]) when #s.ch_events[0] !
 - **The holder's release** (rule 38f) ends the record's protocols where no cell may be live; otherwise it refuses (`descriptor-cell-zero-undecided` where a `> 0` dead edge left an end undecided: a candidate defect, never `Unsafe`). Between a close that stores no sentinel and that release, a call that may reach the record refuses.
 - **What is never claimed.** Nothing is `Unsafe`. An unresolved forward never decides. A forwarded cell ends only by its own close or by its holder's release. A join never drops a name that may be live.
 
-The Lean models are `QCore.DescriptorCellProtocol` and (per-end sentinels) `QCore.CellProtocolPerEnd`.
+**Declared value sets** (card CELL-RESULT-SET-ALIGNMENT, gateway rule 38f (6); USER DECISIONS 2026-11-04, verbatim: "Basically, Q1(a) and Q2(i) But we must not handle descriptor 0 as a valid handle. So, we need to exclude the 0 descriptor like: written_set(pipedes, [1, MAX]); a live descriptor is in [1, MAX]", "Write [1, MAX]", Q3 "(α) live_set suffix", "Accept the leak"). A per-end sentinel's own `#fresh` clause may end with `live_set(SET)` and then `absent_set(SET)` (C09.4's set notation):
+
+```qcore
+quant cell #o: flb_output_instance.ch_events[0] |-> #fresh(descriptor) when #o.ch_events[0] > 0 live_set([1, MAX]) absent_set(0);
+```
+
+- **Meaning.** The live set holds every value a creator puts in the cell; the absent set every value the holder's stores write when the cell names no descriptor. A test's dead edge decides "absent" only when it meets the live set nowhere, its live edge decides "live" only when it meets the absent set nowhere; otherwise the edge leaves the cell undecided. Undeclared, the live set is rule 38's premise (every `int` but `-1`) and the absent set the guard's dead set, which is the reading above.
+- **Refusals at load.** An absent set that meets the guard's live edge, a live set that meets the absent set, a set on a `#same` clause or on a record guard, and any other order or repetition reject the module (`quant-cell-absent-set`, `quant-cell-live-set`, `quant-cell-set`).
+- **Grounding.** A creation into a cell with a declared live set is admitted only where the creator's pin-derived written set of that slot (C09.4) is in force inside it (`descriptor-cell-live-set-unproved`). A store to the sentinel is admitted only at a value of the absent set.
+- **The declared bound is a policy.** The production ends declare `live_set([1, MAX])`, the user's choice, not POSIX's `[0, MAX]`: descriptor 0 is observed natively on `ch_data` with stdin closed. Under it a `> 0` dead edge decides "absent"; every reading it moves is attributed to the bound.
+
+The Lean models are `QCore.DescriptorCellProtocol`, (per-end sentinels) `QCore.CellProtocolPerEnd` and (declared sets) `QCore.CellResultSet`.
 
 ### C04.7. Counted users
 
@@ -3461,6 +3472,8 @@ beside it as a registered `null_deref_beside` relation).
   is replaced by the whole universe and decides nothing (Lean
   `out_of_force_reads_the_universe`). Its readers are the null property's
   bound of a call result (C09.3) and the result derivation of rule 38e.
+
+**Written sets** (card CELL-RESULT-SET-ALIGNMENT; USER DECISIONS 2026-11-04: Q1 (a), its per-element and per-class refinements, and "Write [1, MAX]"). `ensures normal written_set(SLOT[K], SET) when #result == C;` states that on a return of `C` the `int` the call stored at `SLOT[K]` (`SLOT` a pointer parameter, `SLOT` alone meaning `SLOT[0]`) is a member of `SET`. It is a value set only. On a flexible C library declaration it stands beside the declaration's `result_set`. `pipe` states `written_set(pipedes[0], [1, MAX]) when #result == 0` and the same for `[1]`. That is the user's declared policy, not POSIX's `[0, MAX]`: POSIX's lowest free descriptor is 0 when standard input is closed, which was observed natively. On a pinned declaration it is read only where `pin --bounds --derive-results` derived it. The route carries a derived written set as `FUNCTION#SLOT` in the result table, and rule 38f's live-set creation check reads it. The slot derivation is follow-up CELL-RESULT-SET-WRITTEN-SET-DERIVATION. Until it lands no creator's written set is in force.
 
 **Pin-time result derivation** (rule 38e). `quirin-audit pin --bounds
 --derive-results` derives a pinned `nonnull_result_range` from the body chain

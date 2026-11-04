@@ -9608,6 +9608,21 @@ safety claim and no validation of the detach representation premise.
     lexical site scanner's identity of the helpers. The Lean model is
     `QCore.ResultSet` ([report](../reports/cell-guard-result-range-checked/README.md)).
 
+    **Amended (card CELL-RESULT-SET-ALIGNMENT, USER DECISIONS 2026-11-04,
+    Q1 (a) with its refinements; "Write [1, MAX]").** A C library declaration
+    may state, beside its `result_set`, `ensures normal written_set(SLOT[K],
+    SET) when #result == C;` (G05j as amended): on a return of `C` the `int`
+    stored at `SLOT[K]` is in `SET`. `pipe` states `written_set(pipedes[0|1],
+    [1, MAX]) when #result == 0`, a declared policy, not POSIX's set. On a
+    pinned declaration the clause is read only where `pin --bounds
+    --derive-results` derived it, and the route carries it as
+    `FUNCTION#SLOT` in the result table; rule 38f's live-set creation check
+    reads it there. The slot derivation itself (forwarding, `*P = fd[k]`
+    after the C library call's failure exit) is follow-up
+    CELL-RESULT-SET-WRITTEN-SET-DERIVATION: until it lands no creator's
+    written set is in force and every creation into a declared live set
+    refuses (`descriptor-cell-live-set-unproved`).
+
 <a id="constraint-38f"></a>
 
 38f. **Each end is its own guard, and descriptor 0 is never read as an
@@ -9684,5 +9699,35 @@ safety claim and no validation of the detach representation premise.
     (`P-CELL-PROTOCOL-DECLARED`) and rule 38's premise that a live descriptor
     is never `-1`. The Lean model is `QCore.CellProtocolPerEnd`
     ([report](../reports/cell-protocol-per-end-guards/README.md)).
+
+    (6) **Declared value sets** (card CELL-RESULT-SET-ALIGNMENT; USER
+    DECISIONS 2026-11-04, verbatim: "Basically, Q1(a) and Q2(i) But we must
+    not handle descriptor 0 as a valid handle. So, we need to exclude the 0
+    descriptor like: written_set(pipedes, [1, MAX]); a live descriptor is in
+    [1, MAX]", "Write [1, MAX]", Q3 "(α) live_set suffix", "Accept the
+    leak"). A per-end sentinel may state `live_set(SET)` and `absent_set(SET)`
+    (G05i as amended). One reading serves every guard
+    (`Guard::dead_edge_reads_absent`, `Guard::live_edge_reads_live`,
+    `Protocol::dead_edge_decides`, `Protocol::live_edge_decides`): a dead edge
+    decides "absent" only when its values meet the live set nowhere (and,
+    over the cell's values live | absent, lie inside the absent set), a live
+    edge decides "live" only when its values meet the absent set nowhere;
+    otherwise the edge introduces its names undecided. Without a declared
+    live set the live set is rule 38's premise (every `int` but `-1`), without
+    a declared absent set the guard's dead set, which is (3) case for case.
+    A store to the sentinel is admitted only at a value of the absent set; the
+    guard follows its cells (a creation establishes it) only where the live
+    set lies inside its live edge; an undecided edge names its release
+    `descriptor-cell-zero-undecided` when 0 is the value it leaves open, else
+    `descriptor-cell-edge-undecided`. A creation into a cell with a declared
+    live set is admitted only where the creator's pin-derived written set of
+    that slot (rule 38e as amended) is in force inside it, else
+    `descriptor-cell-live-set-unproved`. The production ends declare
+    `live_set([1, MAX])`: a DECLARED POLICY, not POSIX's `[0, MAX]`
+    (descriptor 0 is observed natively on `ch_data`), under which a `> 0` dead
+    edge decides "absent"; every reading it moves is attributed to that bound
+    (follow-up CELL-RESULT-SET-DESCRIPTOR-ZERO-POLICY). The Lean model is
+    `QCore.CellResultSet`
+    ([report](../reports/cell-result-set-alignment/README.md)).
 
 <!-- generated:rules:end -->
