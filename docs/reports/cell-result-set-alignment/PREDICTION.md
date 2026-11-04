@@ -129,7 +129,7 @@ and `flb_sched` rows whose protocols stay withheld:
 - **No `Unsafe` move.** Rules 38c and 38f never accuse.
 - **No move away from `Safe`.**
 
-```measure-prediction
+```text
 route corpus
 none
 route system

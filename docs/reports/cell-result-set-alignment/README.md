@@ -199,6 +199,33 @@ target/release/quirin-audit --plugin-path target/release \
   --declared docs/reports/cell-result-set-alignment/PREDICTION.md
 ```
 
+**Measurement (integrator, 2026-11-04).** Run from the main checkout at
+`32169290d` with the command above, `--side tip=rev:2bf298712946618c6777c45628923916b2126fad`,
+output `private/measure/cell-result-set-alignment-20261104T090512Z-r2`; exit 0.
+The first run refused before measuring: PREDICTION.md carried two
+`measure-prediction` blocks (the original prediction was kept under "Original
+prediction"), and exactly one is read. The integrator relabelled that
+historical block's fence as `text`; both blocks predict `none` on every route,
+so the declaration is unchanged. The declared prediction matches on every
+route (corpus, system, slice: `match`). Moves 0, unit moves 0, unmatched 0 on
+each route; content changes: corpus 0, system 2, slice 6:
+
+- system `flb_output_instance_destroy` (units 0, 1): `descriptor-cell-zero-undecided`
+  at :638 removed.
+- slice `flb_input_instance_destroy` (units 0, 1): `zero-undecided` at :1353
+  removed.
+- slice `input_thread_instance_destroy` (units 0, 1): `zero-undecided` at :226
+  removed.
+- slice `input_instance_channel_events_init` (units 0, 1): two
+  `descriptor-cell-live-set-unproved` leaves at :1380 added in place of the two
+  `descriptor-cell-undecided` leaves; the `protocol-broken` leaf and the three
+  `escapes` leaves at :1401 removed (the row now refuses at the creation). The
+  row stays non-Safe.
+- No host-dependent row shows a contract-digest change.
+
+[native-comparison.json](native-comparison.json) (sha256
+`cf2e2e30e856a2293f2e79dbbbc6fca5c9d598e295f73e174536bb43b3758689`).
+
 ## 8. Card gate
 
 The card gate was `python3 scripts/gate_scope.py --base 32169290d --out private/gate4`. It ran on `2bf298712`, the last code commit, with a clean tree ([gate.json](gate.json)). Only this report's README, amendments, gate.json, pseudo contracts and patched-census files were added after it. The scope was full: the diff reaches `qcore-c-gateway`, `qcore-contract` and `qcore-schemas`, a proof root changed (all Lean), and `providers/` changed (provider gate).

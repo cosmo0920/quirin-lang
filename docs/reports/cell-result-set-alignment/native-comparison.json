@@ -1,0 +1,1780 @@
+{
+  "comparisons": [
+    {
+      "after": "tip",
+      "before": "base",
+      "comparison": "base->tip",
+      "routes": {
+        "corpus": {
+          "after_directory": "/media/Data/GitHub/quirin-lang/private/measure/cell-result-set-alignment-20261104T090512Z-r2/sides/tip/corpus",
+          "artifacts": {
+            "byte_identical_except_named_substitutions": false,
+            "differing": [
+              {
+                "after": "9e066ed506f2b731dcf2dfa583c9e6734aa20e357df1310b71ff3d8cc4e11abd",
+                "before": "6a29904690fdd26f5f36839b3ee419d4a71522d7b695644b59912868079c8bcf",
+                "file": "corpus-null.jsonl"
+              },
+              {
+                "after": "8ccf2bdfda1ec57419550f9c62b61e45b124d0ff5799afe790433b87564e3183",
+                "before": "adc5ddd7b3e000bf34241d3445ad117c07287bf0b76fdb0d5af0d165ba0b22a1",
+                "file": "corpus/resource-diagnostics.components.json"
+              },
+              {
+                "file": "corpus/resource-diagnostics.contracts.json",
+                "why": {
+                  "lifetime_keys_only_after": [],
+                  "lifetime_keys_only_before": []
+                }
+              },
+              {
+                "after": "13a3cca2632725453ea2c39baae78cffcfbe497cc25aaefdb1f1070f4585e7cd",
+                "before": "cf855b61e2f3eee38628edc1328b24bf0a06624bd78414c90d40954fe44cd9fe",
+                "file": "corpus/resource-diagnostics.json"
+              },
+              {
+                "after": "5e6466c75a4eae68eeb8e890b925d9f2aa991405ee64442c890fbf2ddbeba56b",
+                "before": "d47960b8bfa50dcd23f2f2fc5ac6b6fca0e9cd7c877786751f3b27d85c511d6d",
+                "file": "corpus/resource-diagnostics.source-effects.json"
+              }
+            ],
+            "identical": [
+              {
+                "file": "corpus-null.summary.json",
+                "sha256": "ba322c5bf52e7ab6616207f2c45a464d619a807dc056fcfe7074dc867d044fdb"
+              },
+              {
+                "file": "corpus-outer.json",
+                "sha256": "97636a7d747d65ca1af25166e9c3c3c92c852cc1242b70a00aed2feda55f08c7"
+              },
+              {
+                "file": "corpus/monkey-source.json",
+                "sha256": "ba459c8ab988fc3e97b1efd8a9edbb3ffbd5c4933f79a2b77ae2464ad9f7ff2f"
+              },
+              {
+                "file": "corpus/resource-diagnostics.chunk-contracts.json",
+                "sha256": "c56b0e2ac106ea57362cdc8d76a39a49ac4edcd02c1d46bfc0133b20c4f5cf88"
+              }
+            ],
+            "identical_after_named_substitution": {},
+            "only_after": [],
+            "only_before": [],
+            "records_not_compared": [
+              "console.log",
+              "corpus.exit",
+              "corpus/audit.log",
+              "corpus/run.json",
+              "invocation.json",
+              "stderr.log"
+            ]
+          },
+          "before_directory": "/media/Data/GitHub/quirin-lang/private/baselines/32169290de211435f4741d10dc7e35ed625e8634/eight-home/corpus",
+          "composition": {
+            "components": {
+              "after": 185,
+              "before": 185,
+              "union": 370
+            },
+            "conflicts": [],
+            "rows": 185
+          },
+          "conflicts": {
+            "after": [],
+            "before": []
+          },
+          "content_changes": [],
+          "environment_digest_fields": [
+            "assumptions",
+            "build_identity",
+            "environment_sha256",
+            "resource_contracts_sha256",
+            "id"
+          ],
+          "figures": {
+            "after": {
+              "null_rows": 4921,
+              "null_verdicts": {
+                "Safe": 2549,
+                "Unknown": 2355,
+                "Unsafe": 17
+              },
+              "null_verdicts_sha256": "5e3809dd6ee98d3205736824d7d2f1e932836e296d4fc47f16f614b7a158f493",
+              "row_statuses": {
+                "Safe": 1013,
+                "Unknown": 3811,
+                "Unsafe": 10
+              },
+              "row_verdicts_sha256": "6019562445f06309f8419ff7c644cd8b764c8258c7deb625a60ba4227f603f82",
+              "rows": 4834,
+              "unit_statuses": {
+                "Safe": 8,
+                "Unknown": 165,
+                "Unsafe": 8,
+                "data_only": 4
+              },
+              "unit_verdicts_sha256": "58c0d37734220a4427792bc8b13569468da6e48cfd2e2425c9c02a96226cb770",
+              "units": 185
+            },
+            "before": {
+              "null_rows": 4921,
+              "null_verdicts": {
+                "Safe": 2549,
+                "Unknown": 2355,
+                "Unsafe": 17
+              },
+              "null_verdicts_sha256": "5e3809dd6ee98d3205736824d7d2f1e932836e296d4fc47f16f614b7a158f493",
+              "row_statuses": {
+                "Safe": 1013,
+                "Unknown": 3811,
+                "Unsafe": 10
+              },
+              "row_verdicts_sha256": "6019562445f06309f8419ff7c644cd8b764c8258c7deb625a60ba4227f603f82",
+              "rows": 4834,
+              "unit_statuses": {
+                "Safe": 8,
+                "Unknown": 165,
+                "Unsafe": 8,
+                "data_only": 4
+              },
+              "unit_verdicts_sha256": "58c0d37734220a4427792bc8b13569468da6e48cfd2e2425c9c02a96226cb770",
+              "units": 185
+            }
+          },
+          "function_rows": {
+            "content_changed": 0,
+            "environment_only": 4834,
+            "identical": 0,
+            "moved": 0,
+            "unmatched": 0
+          },
+          "incomplete_because": [],
+          "moves": [],
+          "profile_baseline": {
+            "after": {
+              "exit": 0,
+              "lines": [
+                "eight-home: the run reproduces the baseline"
+              ],
+              "profile": "eight-home"
+            },
+            "before": {
+              "exit": 0,
+              "lines": [
+                "eight-home: the run reproduces the baseline"
+              ],
+              "profile": "eight-home"
+            }
+          },
+          "status": "complete",
+          "status_deltas": {
+            "Safe": 0,
+            "Unknown": 0,
+            "Unsafe": 0
+          },
+          "totals": {
+            "after": {
+              "conflicted_unit_rows": 0,
+              "diagnostic_counts": {
+                "leak": 41,
+                "summary_conflict": 3,
+                "unknown_alias": 10862,
+                "unsupported": 27287
+              },
+              "function_rows": 4834,
+              "function_status": {
+                "Safe": 1013,
+                "Unknown": 3811,
+                "Unsafe": 10
+              },
+              "row_source": "sidecar",
+              "unit_rows": 185,
+              "unit_verdict": {
+                "Safe": 12,
+                "Unknown": 165,
+                "Unsafe": 8
+              }
+            },
+            "before": {
+              "conflicted_unit_rows": 0,
+              "diagnostic_counts": {
+                "leak": 41,
+                "summary_conflict": 3,
+                "unknown_alias": 10862,
+                "unsupported": 27287
+              },
+              "function_rows": 4834,
+              "function_status": {
+                "Safe": 1013,
+                "Unknown": 3811,
+                "Unsafe": 10
+              },
+              "row_source": "sidecar",
+              "unit_rows": 185,
+              "unit_verdict": {
+                "Safe": 12,
+                "Unknown": 165,
+                "Unsafe": 8
+              }
+            }
+          },
+          "unit_field_differences": {
+            "chunkio::chunkio.c::unit#0::resource-custody.v1::chunkio": [
+              "cross_unit_link_resolution"
+            ],
+            "chunkio::cio_chunk.c::unit#0::resource-custody.v1::chunkio": [
+              "cross_unit_link_resolution",
+              "reading_site_environments"
+            ],
+            "chunkio::cio_error.c::unit#0::resource-custody.v1::chunkio": [
+              "cross_unit_link_resolution"
+            ],
+            "chunkio::cio_file.c::unit#0::resource-custody.v1::chunkio": [
+              "cross_unit_link_resolution",
+              "reading_site_environments"
+            ],
+            "chunkio::cio_file_unix.c::unit#0::resource-custody.v1::chunkio": [
+              "cross_unit_link_resolution",
+              "reading_site_environments"
+            ],
+            "chunkio::cio_log.c::unit#0::resource-custody.v1::chunkio": [
+              "cross_unit_link_resolution"
+            ],
+            "chunkio::cio_memfs.c::unit#0::resource-custody.v1::chunkio": [
+              "cross_unit_link_resolution",
+              "reading_site_environments"
+            ],
+            "chunkio::cio_meta.c::unit#0::resource-custody.v1::chunkio": [
+              "cross_unit_link_resolution",
+              "reading_site_environments"
+            ],
+            "chunkio::cio_os.c::unit#0::resource-custody.v1::chunkio": [
+              "cross_unit_link_resolution"
+            ],
+            "chunkio::cio_scan.c::unit#0::resource-custody.v1::chunkio": [
+              "cross_unit_link_resolution",
+              "reading_site_environments"
+            ],
+            "chunkio::cio_stats.c::unit#0::resource-custody.v1::chunkio": [
+              "cross_unit_link_resolution"
+            ],
+            "chunkio::cio_stream.c::unit#0::resource-custody.v1::chunkio": [
+              "cross_unit_link_resolution",
+              "reading_site_environments"
+            ],
+            "chunkio::cio_utils.c::unit#0::resource-custody.v1::chunkio": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmetrics.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_atomic_clang.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_cat.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_counter.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_decode_msgpack.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_decode_opentelemetry.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_decode_prometheus_remote_write.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_decode_statsd.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_encode_cloudwatch_emf.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_encode_influx.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_encode_msgpack.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_encode_opentelemetry.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_encode_opentelemetry_batch.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_encode_prometheus.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_encode_prometheus_remote_write.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_encode_splunk_hec.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_encode_text.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_exp_histogram.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_filter.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_gauge.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_histogram.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_label.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_log.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_map.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_metric.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_metric_histogram.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_mpack_utils.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_opts.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_summary.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_time.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_untyped.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "ctraces::ctr_attributes.c::unit#0::resource-custody.v1::ctraces": [
+              "cross_unit_link_resolution",
+              "reading_site_environments"
+            ],
+            "ctraces::ctr_decode_msgpack.c::unit#0::resource-custody.v1::ctraces": [
+              "cross_unit_link_resolution"
+            ],
+            "ctraces::ctr_decode_opentelemetry.c::unit#0::resource-custody.v1::ctraces": [
+              "cross_unit_link_resolution",
+              "reading_site_environments"
+            ],
+            "ctraces::ctr_encode_msgpack.c::unit#0::resource-custody.v1::ctraces": [
+              "cross_unit_link_resolution"
+            ],
+            "ctraces::ctr_encode_opentelemetry.c::unit#0::resource-custody.v1::ctraces": [
+              "cross_unit_link_resolution",
+              "reading_site_environments"
+            ],
+            "ctraces::ctr_encode_text.c::unit#0::resource-custody.v1::ctraces": [
+              "cross_unit_link_resolution"
+            ],
+            "ctraces::ctr_id.c::unit#0::resource-custody.v1::ctraces": [
+              "cross_unit_link_resolution",
+              "reading_site_environments"
+            ],
+            "ctraces::ctr_link.c::unit#0::resource-custody.v1::ctraces": [
+              "cross_unit_link_resolution",
+              "reading_site_environments"
+            ],
+            "ctraces::ctr_log.c::unit#0::resource-custody.v1::ctraces": [
+              "cross_unit_link_resolution"
+            ],
+            "ctraces::ctr_mpack_utils.c::unit#0::resource-custody.v1::ctraces": [
+              "cross_unit_link_resolution"
+            ],
+            "ctraces::ctr_random.c::unit#0::resource-custody.v1::ctraces": [
+              "cross_unit_link_resolution"
+            ],
+            "ctraces::ctr_resource.c::unit#0::resource-custody.v1::ctraces": [
+              "cross_unit_link_resolution",
+              "reading_site_environments"
+            ],
+            "ctraces::ctr_scope.c::unit#0::resource-custody.v1::ctraces": [
+              "cross_unit_link_resolution",
+              "reading_site_environments"
+            ],
+            "ctraces::ctr_span.c::unit#0::resource-custody.v1::ctraces": [
+              "cross_unit_link_resolution",
+              "reading_site_environments"
+            ],
+            "ctraces::ctr_utils.c::unit#0::resource-custody.v1::ctraces": [
+              "cross_unit_link_resolution"
+            ],
+            "ctraces::ctr_version.c::unit#0::resource-custody.v1::ctraces": [
+              "cross_unit_link_resolution"
+            ],
+            "ctraces::ctraces.c::unit#0::resource-custody.v1::ctraces": [
+              "cross_unit_link_resolution",
+              "reading_site_environments"
+            ],
+            "fluent-bit-chunk::flb_input_chunk.c::unit#0::resource-custody.v1::fluent-bit-chunk": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::cJSON.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::crc32c.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::lz4.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::lz4frame.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::lz4hc.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::nanopb/pb_common.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::nanopb/pb_decode.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::nanopb/pb_encode.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::opentelemetry/common.pb.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::opentelemetry/metrics.pb.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::opentelemetry/resource.pb.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdaddr.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdavl.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdbase64.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdbuf.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdcrc32.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rddl.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdfnv1a.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdgz.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdhdrhistogram.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdhttp.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_admin.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_assignment.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_assignor.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_aux.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_background.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_broker.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_buf.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_cert.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_cgrp.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_conf.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_coord.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_error.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_event.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_feature.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_fetcher.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_header.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_idempotence.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_interceptor.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_lz4.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_metadata.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_metadata_cache.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_mock.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_mock_cgrp.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_mock_handlers.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_mock_sharegrp.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_msg.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_msgset_reader.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_msgset_writer.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_offset.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_op.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_partition.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_pattern.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_plugin.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_queue.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_range_assignor.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_request.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_roundrobin_assignor.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_sasl.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_sasl_cyrus.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_sasl_oauthbearer.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_sasl_oauthbearer_oidc.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_sasl_plain.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_sasl_scram.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_share_acknowledgement.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_ssl.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_sticky_assignor.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_subscription.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_telemetry.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_telemetry_decode.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_telemetry_encode.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_timer.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_topic.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_transport.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_txnmgr.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_zstd.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdlist.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdlog.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdmap.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdmurmur2.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdports.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdrand.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdregex.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdstring.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdunittest.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdunittest_acknowledge.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdunittest_fetcher.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdunittest_msgset_errors.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdvarint.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdxxhash.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::snappy.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::tinycthread.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::tinycthread_extra.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_core/mk_event.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_core/mk_file.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_core/mk_iov.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_core/mk_memory.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_core/mk_rconf.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution",
+              "reading_site_environments"
+            ],
+            "monkey-libevent::mk_core/mk_string.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_core/mk_utils.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_server/mk_cache.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_server/mk_clock.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_server/mk_config.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_server/mk_fifo.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_server/mk_header.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_server/mk_http.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_server/mk_http_parser.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_server/mk_http_thread.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_server/mk_kernel.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_server/mk_lib.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_server/mk_mimetype.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_server/mk_net.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_server/mk_plugin.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_server/mk_scheduler.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_server/mk_server.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_server/mk_socket.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_server/mk_stream.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_server/mk_user.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_server/mk_utils.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_server/mk_vhost.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_server/monkey.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::tls/tls_stub.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ]
+          },
+          "unit_moves": [],
+          "unit_rows_environment_only": 0,
+          "unmatched": [],
+          "unmatched_units": []
+        },
+        "slice": {
+          "after_directory": "/media/Data/GitHub/quirin-lang/private/measure/cell-result-set-alignment-20261104T090512Z-r2/sides/tip/slice",
+          "artifacts": {
+            "byte_identical_except_named_substitutions": false,
+            "differing": [
+              {
+                "after": "419c9a154bff5f497c7e1e96b47896f85b6ddbe5b607affa3eb3b6451622bce1",
+                "before": "ae23075c43598898973e68482c1163e2cf4e92c7525e99cab1fbfaeb4358671f",
+                "file": "resource-diagnostics.components.json"
+              },
+              {
+                "file": "resource-diagnostics.contracts.json",
+                "why": {
+                  "lifetime_keys_only_after": [],
+                  "lifetime_keys_only_before": []
+                }
+              },
+              {
+                "after": "4e69733dd99aa667b9b70097ec5474fffe6a98fde382afa231ac8774f9ed537c",
+                "before": "32395706998fbf429a87ed9ea39b3af46246cb34bb6ba6078aa56ddb80fd6f19",
+                "file": "resource-diagnostics.json"
+              },
+              {
+                "after": "8c3ee23697be67d96632771b1020b52aee850a82b910875acc233e3bbf9a2fba",
+                "before": "7a9ec4c671f4f463775e298ad909b03175c0e7fafd5906b41a4bd313096ad328",
+                "file": "slice-null.jsonl"
+              }
+            ],
+            "identical": [
+              {
+                "file": "resource-diagnostics.chunk-contracts.json",
+                "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8"
+              },
+              {
+                "file": "resource-diagnostics.source-effects.json",
+                "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8"
+              },
+              {
+                "file": "slice-null.summary.json",
+                "sha256": "b2a1885e9fade7a0aff9c00b2099ed01cc2d433962fdabfe1b6b857d0fb2d1fb"
+              },
+              {
+                "file": "slice-outer.json",
+                "sha256": "2be877b836ef1df9ce09e58309cbf13515e3ae9ba866219ac5132cba356f428c"
+              }
+            ],
+            "identical_after_named_substitution": {},
+            "only_after": [],
+            "only_before": [],
+            "records_not_compared": [
+              "console.log",
+              "invocation.json",
+              "resource-diagnostics.invocation.json",
+              "slice.exit",
+              "stderr.log"
+            ]
+          },
+          "before_directory": "/media/Data/GitHub/quirin-lang/private/baselines/32169290de211435f4741d10dc7e35ed625e8634/fluent-bit-tail-pause/slice",
+          "composition": {
+            "components": {
+              "after": 16,
+              "before": 16,
+              "union": 32
+            },
+            "conflicts": [],
+            "rows": 16
+          },
+          "conflicts": {
+            "after": [],
+            "before": []
+          },
+          "content_changes": [
+            {
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unsupported",
+                  "description": "`ins` is released while a cell of it may hold descriptor 0, which a `> 0` test read as absent (descriptor-cell-zero-undecided)",
+                  "origin": "src/flb_input.c:1353"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "fluent-bit-tail-pause::src/flb_input.c::unit#0::resource-custody.v1::fluent-bit-tail-pause::flb_input_instance_destroy#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "call to `mk_event_channel_create`: descriptor cell `(Formal(\"ins\") as int).ch_events[0]` is not decided (descriptor-cell-live-set-unproved)",
+                  "origin": "src/flb_input.c:1380"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "call to `mk_event_channel_create`: descriptor cell `(Formal(\"ins\") as int).ch_events[1]` is not decided (descriptor-cell-live-set-unproved)",
+                  "origin": "src/flb_input.c:1380"
+                }
+              ],
+              "leaves_removed": [
+                {
+                  "category": "unsupported",
+                  "description": "`ins` (a `struct flb_input_instance`) does not keep its declared cell protocol here (descriptor-cell-protocol-broken)",
+                  "origin": "src/flb_input.c:1401"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "call to `mk_event_channel_create`: descriptor cell `(Formal(\"ins\") as int).ch_events[0]` is not decided (descriptor-cell-undecided)",
+                  "origin": "src/flb_input.c:1380"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "call to `mk_event_channel_create`: descriptor cell `(Formal(\"ins\") as int).ch_events[1]` is not decided (descriptor-cell-undecided)",
+                  "origin": "src/flb_input.c:1380"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "the descriptor in cell `(ins as int).ch_events[0] [Name(\"ins\") as int]` may outlive this function's frame (descriptor-cell-escapes)",
+                  "origin": "src/flb_input.c:1401"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "the descriptor in cell `(ins as int).ch_events[1] [Name(\"ins\") as int]` may outlive this function's frame (descriptor-cell-escapes)",
+                  "origin": "src/flb_input.c:1401"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "the descriptor in cell `(ins.event as mk_event).fd [Name(\"ins.event\") as mk_event]` may outlive this function's frame (descriptor-cell-escapes)",
+                  "origin": "src/flb_input.c:1401"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "fluent-bit-tail-pause::src/flb_input.c::unit#0::resource-custody.v1::fluent-bit-tail-pause::input_instance_channel_events_init#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unsupported",
+                  "description": "`ins` is released while a cell of it may hold descriptor 0, which a `> 0` test read as absent (descriptor-cell-zero-undecided)",
+                  "origin": "src/flb_input.c:1353"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "fluent-bit-tail-pause::src/flb_input.c::unit#1::resource-custody.v1::fluent-bit-tail-pause::flb_input_instance_destroy#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "call to `mk_event_channel_create`: descriptor cell `(Formal(\"ins\") as int).ch_events[0]` is not decided (descriptor-cell-live-set-unproved)",
+                  "origin": "src/flb_input.c:1380"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "call to `mk_event_channel_create`: descriptor cell `(Formal(\"ins\") as int).ch_events[1]` is not decided (descriptor-cell-live-set-unproved)",
+                  "origin": "src/flb_input.c:1380"
+                }
+              ],
+              "leaves_removed": [
+                {
+                  "category": "unsupported",
+                  "description": "`ins` (a `struct flb_input_instance`) does not keep its declared cell protocol here (descriptor-cell-protocol-broken)",
+                  "origin": "src/flb_input.c:1401"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "call to `mk_event_channel_create`: descriptor cell `(Formal(\"ins\") as int).ch_events[0]` is not decided (descriptor-cell-undecided)",
+                  "origin": "src/flb_input.c:1380"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "call to `mk_event_channel_create`: descriptor cell `(Formal(\"ins\") as int).ch_events[1]` is not decided (descriptor-cell-undecided)",
+                  "origin": "src/flb_input.c:1380"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "the descriptor in cell `(ins as int).ch_events[0] [Name(\"ins\") as int]` may outlive this function's frame (descriptor-cell-escapes)",
+                  "origin": "src/flb_input.c:1401"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "the descriptor in cell `(ins as int).ch_events[1] [Name(\"ins\") as int]` may outlive this function's frame (descriptor-cell-escapes)",
+                  "origin": "src/flb_input.c:1401"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "the descriptor in cell `(ins.event as mk_event).fd [Name(\"ins.event\") as mk_event]` may outlive this function's frame (descriptor-cell-escapes)",
+                  "origin": "src/flb_input.c:1401"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "fluent-bit-tail-pause::src/flb_input.c::unit#1::resource-custody.v1::fluent-bit-tail-pause::input_instance_channel_events_init#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unsupported",
+                  "description": "`thi` is released while a cell of it may hold descriptor 0, which a `> 0` test read as absent (descriptor-cell-zero-undecided)",
+                  "origin": "src/flb_input_thread.c:226"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "fluent-bit-tail-pause::src/flb_input_thread.c::unit#0::resource-custody.v1::fluent-bit-tail-pause::input_thread_instance_destroy#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unsupported",
+                  "description": "`thi` is released while a cell of it may hold descriptor 0, which a `> 0` test read as absent (descriptor-cell-zero-undecided)",
+                  "origin": "src/flb_input_thread.c:226"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "fluent-bit-tail-pause::src/flb_input_thread.c::unit#1::resource-custody.v1::fluent-bit-tail-pause::input_thread_instance_destroy#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            }
+          ],
+          "environment_digest_fields": [
+            "assumptions",
+            "build_identity",
+            "environment_sha256",
+            "resource_contracts_sha256",
+            "id"
+          ],
+          "figures": {
+            "after": {
+              "null_rows": 406,
+              "null_verdicts": {
+                "Safe": 190,
+                "Unknown": 216
+              },
+              "null_verdicts_sha256": "08e9b5da9fe871894264c1b276f846c4cd387a95be5e4704fb4ac49e1dac744b",
+              "row_statuses": {
+                "Pending": 4,
+                "Safe": 57,
+                "Unknown": 342,
+                "Unsafe": 1
+              },
+              "row_verdicts_sha256": "a84686d4fd6a52b090bac9ed9302c52f2d79c1439fc7dfbbf421589ff4dd8781",
+              "rows": 404,
+              "unit_statuses": {
+                "Unknown": 15,
+                "Unsafe": 1
+              },
+              "unit_verdicts_sha256": "54e95d5f88252a15b9dd02fb3878b6286b16eeea24a5a4cfd4fde8a08af830e5",
+              "units": 16
+            },
+            "before": {
+              "null_rows": 406,
+              "null_verdicts": {
+                "Safe": 190,
+                "Unknown": 216
+              },
+              "null_verdicts_sha256": "08e9b5da9fe871894264c1b276f846c4cd387a95be5e4704fb4ac49e1dac744b",
+              "row_statuses": {
+                "Pending": 4,
+                "Safe": 57,
+                "Unknown": 342,
+                "Unsafe": 1
+              },
+              "row_verdicts_sha256": "a84686d4fd6a52b090bac9ed9302c52f2d79c1439fc7dfbbf421589ff4dd8781",
+              "rows": 404,
+              "unit_statuses": {
+                "Unknown": 15,
+                "Unsafe": 1
+              },
+              "unit_verdicts_sha256": "54e95d5f88252a15b9dd02fb3878b6286b16eeea24a5a4cfd4fde8a08af830e5",
+              "units": 16
+            }
+          },
+          "function_rows": {
+            "content_changed": 6,
+            "environment_only": 398,
+            "identical": 0,
+            "moved": 0,
+            "unmatched": 0
+          },
+          "incomplete_because": [],
+          "moves": [],
+          "profile_baseline": {
+            "after": {
+              "exit": 0,
+              "lines": [
+                "fluent-bit-tail-pause: the run reproduces the baseline"
+              ],
+              "profile": "fluent-bit-tail-pause"
+            },
+            "before": {
+              "exit": 0,
+              "lines": [
+                "fluent-bit-tail-pause: the run reproduces the baseline"
+              ],
+              "profile": "fluent-bit-tail-pause"
+            }
+          },
+          "status": "complete",
+          "status_deltas": {
+            "Pending": 0,
+            "Safe": 0,
+            "Unknown": 0,
+            "Unsafe": 0
+          },
+          "totals": {
+            "after": {
+              "conflicted_unit_rows": 0,
+              "diagnostic_counts": {
+                "counted_user": 1,
+                "unknown_alias": 1090,
+                "unsupported": 2461
+              },
+              "function_rows": 404,
+              "function_status": {
+                "Pending": 4,
+                "Safe": 57,
+                "Unknown": 342,
+                "Unsafe": 1
+              },
+              "row_source": "sidecar",
+              "unit_rows": 16,
+              "unit_verdict": {
+                "Unknown": 15,
+                "Unsafe": 1
+              }
+            },
+            "before": {
+              "conflicted_unit_rows": 0,
+              "diagnostic_counts": {
+                "counted_user": 1,
+                "unknown_alias": 1090,
+                "unsupported": 2473
+              },
+              "function_rows": 404,
+              "function_status": {
+                "Pending": 4,
+                "Safe": 57,
+                "Unknown": 342,
+                "Unsafe": 1
+              },
+              "row_source": "sidecar",
+              "unit_rows": 16,
+              "unit_verdict": {
+                "Unknown": 15,
+                "Unsafe": 1
+              }
+            }
+          },
+          "unit_field_differences": {
+            "fluent-bit-tail-pause::plugins/in_tail/tail.c::unit#0::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration"
+            ],
+            "fluent-bit-tail-pause::plugins/in_tail/tail_config.c::unit#0::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration"
+            ],
+            "fluent-bit-tail-pause::plugins/in_tail/tail_db.c::unit#0::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration"
+            ],
+            "fluent-bit-tail-pause::plugins/in_tail/tail_dockermode.c::unit#0::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration"
+            ],
+            "fluent-bit-tail-pause::plugins/in_tail/tail_file.c::unit#0::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration"
+            ],
+            "fluent-bit-tail-pause::plugins/in_tail/tail_file_budget.c::unit#0::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration",
+              "reading_site_environments"
+            ],
+            "fluent-bit-tail-pause::plugins/in_tail/tail_fs_inotify.c::unit#0::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration"
+            ],
+            "fluent-bit-tail-pause::plugins/in_tail/tail_fs_stat.c::unit#0::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration"
+            ],
+            "fluent-bit-tail-pause::plugins/in_tail/tail_multiline.c::unit#0::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration"
+            ],
+            "fluent-bit-tail-pause::plugins/in_tail/tail_scan.c::unit#0::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration"
+            ],
+            "fluent-bit-tail-pause::src/flb_input.c::unit#0::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration",
+              "diagnostic_counts",
+              "reason"
+            ],
+            "fluent-bit-tail-pause::src/flb_input.c::unit#1::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration",
+              "diagnostic_counts",
+              "reason"
+            ],
+            "fluent-bit-tail-pause::src/flb_input_thread.c::unit#0::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration",
+              "diagnostic_counts",
+              "reason"
+            ],
+            "fluent-bit-tail-pause::src/flb_input_thread.c::unit#1::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration",
+              "diagnostic_counts",
+              "reason"
+            ],
+            "fluent-bit-tail-pause::src/flb_lib.c::unit#0::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration"
+            ],
+            "fluent-bit-tail-pause::src/flb_lib.c::unit#1::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration"
+            ]
+          },
+          "unit_moves": [],
+          "unit_rows_environment_only": 0,
+          "unmatched": [],
+          "unmatched_units": []
+        },
+        "system": {
+          "after_directory": "/media/Data/GitHub/quirin-lang/private/measure/cell-result-set-alignment-20261104T090512Z-r2/sides/tip/system",
+          "artifacts": {
+            "byte_identical_except_named_substitutions": false,
+            "differing": [
+              {
+                "after": "e1f568c5a703425c04f728a3183b0b71ad1fa829cc7267f7b6d2fa87241285e3",
+                "before": "ad85ca0cf48af3fe6dba59901a74b13c540f8a5f50565db467c45dd8845479b3",
+                "file": "resource-diagnostics.components.json"
+              },
+              {
+                "file": "resource-diagnostics.contracts.json",
+                "why": {
+                  "lifetime_keys_only_after": [],
+                  "lifetime_keys_only_before": []
+                }
+              },
+              {
+                "after": "a81b0ce7560448c5b6acf474bd4c04b75762def51de004504266f9ddc9c08761",
+                "before": "be41dd4f034a731f0892f862d480e2cf11d38a1018312a03bcbb3c7f438eb448",
+                "file": "resource-diagnostics.json"
+              },
+              {
+                "after": "db7e86e91faadc2842c0bc82456486bb7479fe37d58bd3d2a4537ebef6a9cd8d",
+                "before": "47c2532ad003809c7a54fcf3de5ce1dbe76ddb245161e9f1acf631e40d8527e1",
+                "file": "system-null.jsonl"
+              }
+            ],
+            "identical": [
+              {
+                "file": "resource-diagnostics.chunk-contracts.json",
+                "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922"
+              },
+              {
+                "file": "resource-diagnostics.source-effects.json",
+                "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922"
+              },
+              {
+                "file": "system-null.summary.json",
+                "sha256": "39da180a53a877553bbf42aab7a0e92ddf8cf511a749f85817004ecaccf495a0"
+              },
+              {
+                "file": "system-outer.json",
+                "sha256": "b1fb01c71fdc70390f4f9e2ff10ec1cf4ae41ee8abf0f590f00068297048f87c"
+              }
+            ],
+            "identical_after_named_substitution": {},
+            "only_after": [],
+            "only_before": [],
+            "records_not_compared": [
+              "console.log",
+              "invocation.json",
+              "resource-diagnostics.invocation.json",
+              "stderr.log",
+              "system.exit"
+            ]
+          },
+          "before_directory": "/media/Data/GitHub/quirin-lang/private/baselines/32169290de211435f4741d10dc7e35ed625e8634/fluent-bit-system/system",
+          "composition": {
+            "components": {
+              "after": 15,
+              "before": 15,
+              "union": 30
+            },
+            "conflicts": [],
+            "rows": 15
+          },
+          "conflicts": {
+            "after": [],
+            "before": []
+          },
+          "content_changes": [
+            {
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unsupported",
+                  "description": "`ins` is released while a cell of it may hold descriptor 0, which a `> 0` test read as absent (descriptor-cell-zero-undecided)",
+                  "origin": "src/flb_output.c:638"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_output.c::unit#0::resource-custody.v1::fluent-bit-system::flb_output_instance_destroy#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unsupported",
+                  "description": "`ins` is released while a cell of it may hold descriptor 0, which a `> 0` test read as absent (descriptor-cell-zero-undecided)",
+                  "origin": "src/flb_output.c:638"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_output.c::unit#1::resource-custody.v1::fluent-bit-system::flb_output_instance_destroy#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            }
+          ],
+          "environment_digest_fields": [
+            "assumptions",
+            "build_identity",
+            "environment_sha256",
+            "resource_contracts_sha256",
+            "id"
+          ],
+          "figures": {
+            "after": {
+              "null_rows": 454,
+              "null_verdicts": {
+                "Safe": 211,
+                "Unknown": 243
+              },
+              "null_verdicts_sha256": "18d3b6d0fee4bc3f929e5dac2474bfb88a2290f3163dc698dc2abc3ba94155b3",
+              "row_statuses": {
+                "Safe": 101,
+                "Unknown": 343,
+                "Unsafe": 4
+              },
+              "row_verdicts_sha256": "1d17077f4986f2ea53867a1a2854eb5d5c54c22d755520a7151c5a9c1c6f0003",
+              "rows": 448,
+              "unit_statuses": {
+                "Unknown": 13,
+                "Unsafe": 2
+              },
+              "unit_verdicts_sha256": "d326464ed189bac74776761057f9be31bd5197eea46563b8991137944ed2a01f",
+              "units": 15
+            },
+            "before": {
+              "null_rows": 454,
+              "null_verdicts": {
+                "Safe": 211,
+                "Unknown": 243
+              },
+              "null_verdicts_sha256": "18d3b6d0fee4bc3f929e5dac2474bfb88a2290f3163dc698dc2abc3ba94155b3",
+              "row_statuses": {
+                "Safe": 101,
+                "Unknown": 343,
+                "Unsafe": 4
+              },
+              "row_verdicts_sha256": "1d17077f4986f2ea53867a1a2854eb5d5c54c22d755520a7151c5a9c1c6f0003",
+              "rows": 448,
+              "unit_statuses": {
+                "Unknown": 13,
+                "Unsafe": 2
+              },
+              "unit_verdicts_sha256": "d326464ed189bac74776761057f9be31bd5197eea46563b8991137944ed2a01f",
+              "units": 15
+            }
+          },
+          "function_rows": {
+            "content_changed": 2,
+            "environment_only": 446,
+            "identical": 0,
+            "moved": 0,
+            "unmatched": 0
+          },
+          "incomplete_because": [],
+          "moves": [],
+          "profile_baseline": {
+            "after": {
+              "exit": 0,
+              "lines": [
+                "fluent-bit-system: the run reproduces the baseline"
+              ],
+              "profile": "fluent-bit-system"
+            },
+            "before": {
+              "exit": 0,
+              "lines": [
+                "fluent-bit-system: the run reproduces the baseline"
+              ],
+              "profile": "fluent-bit-system"
+            }
+          },
+          "status": "complete",
+          "status_deltas": {
+            "Safe": 0,
+            "Unknown": 0,
+            "Unsafe": 0
+          },
+          "totals": {
+            "after": {
+              "conflicted_unit_rows": 0,
+              "diagnostic_counts": {
+                "counted_user": 4,
+                "summary_conflict": 4,
+                "unknown_alias": 944,
+                "unsupported": 2400
+              },
+              "function_rows": 448,
+              "function_status": {
+                "Safe": 101,
+                "Unknown": 343,
+                "Unsafe": 4
+              },
+              "row_source": "sidecar",
+              "unit_rows": 15,
+              "unit_verdict": {
+                "Unknown": 13,
+                "Unsafe": 2
+              }
+            },
+            "before": {
+              "conflicted_unit_rows": 0,
+              "diagnostic_counts": {
+                "counted_user": 4,
+                "summary_conflict": 4,
+                "unknown_alias": 944,
+                "unsupported": 2402
+              },
+              "function_rows": 448,
+              "function_status": {
+                "Safe": 101,
+                "Unknown": 343,
+                "Unsafe": 4
+              },
+              "row_source": "sidecar",
+              "unit_rows": 15,
+              "unit_verdict": {
+                "Unknown": 13,
+                "Unsafe": 2
+              }
+            }
+          },
+          "unit_field_differences": {
+            "fluent-bit-system::plugins/in_storage_backlog/sb.c::unit#0::resource-custody.v1::fluent-bit-system": [
+              "compile_configuration"
+            ],
+            "fluent-bit-system::src/flb_engine.c::unit#0::resource-custody.v1::fluent-bit-system": [
+              "compile_configuration"
+            ],
+            "fluent-bit-system::src/flb_engine.c::unit#1::resource-custody.v1::fluent-bit-system": [
+              "compile_configuration"
+            ],
+            "fluent-bit-system::src/flb_engine_dispatch.c::unit#0::resource-custody.v1::fluent-bit-system": [
+              "compile_configuration"
+            ],
+            "fluent-bit-system::src/flb_engine_dispatch.c::unit#1::resource-custody.v1::fluent-bit-system": [
+              "compile_configuration"
+            ],
+            "fluent-bit-system::src/flb_input_chunk.c::unit#0::resource-custody.v1::fluent-bit-system": [
+              "compile_configuration"
+            ],
+            "fluent-bit-system::src/flb_input_chunk.c::unit#1::resource-custody.v1::fluent-bit-system": [
+              "compile_configuration"
+            ],
+            "fluent-bit-system::src/flb_output.c::unit#0::resource-custody.v1::fluent-bit-system": [
+              "compile_configuration",
+              "diagnostic_counts"
+            ],
+            "fluent-bit-system::src/flb_output.c::unit#1::resource-custody.v1::fluent-bit-system": [
+              "compile_configuration",
+              "diagnostic_counts"
+            ],
+            "fluent-bit-system::src/flb_scheduler.c::unit#0::resource-custody.v1::fluent-bit-system": [
+              "compile_configuration"
+            ],
+            "fluent-bit-system::src/flb_scheduler.c::unit#1::resource-custody.v1::fluent-bit-system": [
+              "compile_configuration"
+            ],
+            "fluent-bit-system::src/flb_storage.c::unit#0::resource-custody.v1::fluent-bit-system": [
+              "compile_configuration"
+            ],
+            "fluent-bit-system::src/flb_storage.c::unit#1::resource-custody.v1::fluent-bit-system": [
+              "compile_configuration"
+            ],
+            "fluent-bit-system::src/flb_task.c::unit#0::resource-custody.v1::fluent-bit-system": [
+              "compile_configuration",
+              "reading_site_environments"
+            ],
+            "fluent-bit-system::src/flb_task.c::unit#1::resource-custody.v1::fluent-bit-system": [
+              "compile_configuration",
+              "reading_site_environments"
+            ]
+          },
+          "unit_moves": [],
+          "unit_rows_environment_only": 0,
+          "unmatched": [],
+          "unmatched_units": []
+        }
+      }
+    }
+  ],
+  "contribution": {
+    "ledgers": [],
+    "rules": [],
+    "schema": "quirin-contribution-ledger/1"
+  },
+  "declared": {
+    "comparison": "base->tip",
+    "path": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r3/docs/reports/cell-result-set-alignment/PREDICTION.md",
+    "result": "match",
+    "routes": {
+      "corpus": {
+        "declared": true,
+        "delta_mismatches": [],
+        "missing": [],
+        "result": "match",
+        "unpredicted": []
+      },
+      "slice": {
+        "declared": true,
+        "delta_mismatches": [],
+        "missing": [],
+        "result": "match",
+        "unpredicted": []
+      },
+      "system": {
+        "declared": true,
+        "delta_mismatches": [],
+        "missing": [],
+        "result": "match",
+        "unpredicted": []
+      }
+    },
+    "sha256": "559ec86758cada0211fecbeff9144819e933d44dac904ba16e2be8ae9a9c96b5"
+  },
+  "failures": [],
+  "inputs_spelling": {
+    "canonical_prefix": "/media/Data/GitHub/quirin-lang",
+    "manifest": "/media/Data/GitHub/quirin-lang/private/measure/cell-result-set-alignment-20261104T090512Z-r2/mirror/manifest.json",
+    "manifest_sha256": "4a2e4a640870747052f76421ce2684b913fc5b82641344cde5fcd67d35e2f083",
+    "mode": "auto",
+    "spelled_prefix": "/home/cosmo/Documents/GitHub/qcore-c",
+    "spelling": "mirror"
+  },
+  "interactions": [],
+  "routes": [
+    {
+      "definition": {
+        "clang": "/usr/lib/llvm-21/bin/clang",
+        "compile_databases": [
+          {
+            "path": "c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json",
+            "sha256": "5e6868d9af26eaec97bc8020ed5f23496f2490abf44532443239bd4d365f7e78"
+          },
+          {
+            "path": "c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
+            "sha256": "85cc996712bbd35675340b8b863b6ebc716cb94552253f2a6ad0288db920f331"
+          }
+        ],
+        "inputs_root": "build/cycle19",
+        "kind": "pinned-corpus",
+        "link_map": {
+          "path": "docs/reports/w48-bu-single-leaf-bodies/link-map.corpus.json",
+          "sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3"
+        },
+        "mirror_trees": [
+          "c-gateway-wave-pin/fluent-bit-clang-source",
+          "c-gateway-wave-pin/monkey",
+          "provider-packages-wave20"
+        ],
+        "name": "corpus",
+        "profile": "eight-home",
+        "source_commit": "66910c10",
+        "tracked": [
+          "contract/profiles/fluent-bit/audit.json",
+          "contract/profiles/fluent-bit/profile.json",
+          "contract/profiles/fluent-bit/member-facts-scope.json"
+        ]
+      },
+      "digest": "7eb1e7ec179f8625ea54e2d3b3fb84c15fbf0cde7f3a28800a86cb064d0757ff",
+      "name": "corpus",
+      "profile": "eight-home"
+    },
+    {
+      "definition": {
+        "checkout": "private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source",
+        "clang": "/usr/lib/llvm-21/bin/clang",
+        "compile_database": {
+          "path": "private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-production/compile_commands.json",
+          "sha256": "2475e6374b14152538463f35a3457ffa98fbe30b2639d5df916ef9a216cb6876"
+        },
+        "kind": "configured-selection",
+        "link_map": {
+          "path": "docs/reports/w48-bu-single-leaf-bodies/link-map.corpus.json",
+          "sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3"
+        },
+        "name": "system",
+        "profile": "fluent-bit-system",
+        "profile_directory": "contract/profiles/fluent-bit",
+        "selection": "contract/profiles/fluent-bit/system-selection.json",
+        "tracked": [
+          "contract/profiles/fluent-bit/system-selection.json",
+          "contract/profiles/fluent-bit/profile.json",
+          "contract/profiles/fluent-bit/member-facts-scope.json"
+        ]
+      },
+      "digest": "062d37eec4d7a1b7db4eeb77fe1ddf22f8118fbe0fe9306df7ad68cf38bec6d5",
+      "name": "system",
+      "profile": "fluent-bit-system"
+    },
+    {
+      "definition": {
+        "checkout": "private/w47-tail/attempt-1/prep/fluent-bit-clang-source",
+        "clang": "/usr/lib/llvm-21/bin/clang",
+        "compile_database": {
+          "path": "private/w47-tail/attempt-1/prep/fluent-bit-clang-production/compile_commands.json",
+          "sha256": "faf446759b31f892c9ffe03c76719875e9910682515cdd9acc908dc5142f8157"
+        },
+        "kind": "configured-selection",
+        "link_map": {
+          "path": "docs/reports/w48-bu-single-leaf-bodies/link-map.corpus.json",
+          "sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3"
+        },
+        "name": "slice",
+        "profile": "fluent-bit-tail-pause",
+        "profile_directory": "contract/profiles/fluent-bit",
+        "selection": "contract/profiles/fluent-bit/tail-pause-selection.json",
+        "tracked": [
+          "contract/profiles/fluent-bit/tail-pause-selection.json",
+          "contract/profiles/fluent-bit/profile.json",
+          "contract/profiles/fluent-bit/member-facts-scope.json"
+        ]
+      },
+      "digest": "361fcfcbdd52d4f735e9ae78a1244b8acf8e963818cd7992123623b975e6047a",
+      "name": "slice",
+      "profile": "fluent-bit-tail-pause"
+    }
+  ],
+  "rules_off": [],
+  "schema": "quirin-native-comparison/1",
+  "sides": {
+    "base": {
+      "binary": null,
+      "build_commit": null,
+      "bundles": null,
+      "directory": "/media/Data/GitHub/quirin-lang/private/baselines/32169290de211435f4741d10dc7e35ed625e8634",
+      "inputs": {
+        "corpus": {
+          "canonical_prefix": "/media/Data/GitHub/quirin-lang",
+          "databases_as_spelled": {
+            "mirror/c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json": "162f27214282bb550851a4c72d4a05ad8773d5f08226ea6eacd55bdf3ef2476c",
+            "mirror/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json": "cc5f2e6b519f2e4b52c8b8a6e035fffcf541594180feaba50743f3e8b793d821"
+          },
+          "route_digest": "7eb1e7ec179f8625ea54e2d3b3fb84c15fbf0cde7f3a28800a86cb064d0757ff",
+          "source_date_epoch": 1767225600,
+          "spelled_prefix": "/home/cosmo/Documents/GitHub/qcore-c",
+          "spelling": "mirror"
+        },
+        "slice": {
+          "canonical_prefix": "/media/Data/GitHub/quirin-lang",
+          "databases_as_spelled": {
+            "mirror/slice-compile_commands.json": "30de8c85606675a324c4f218954bdbe9c0e36f84eb72483e17cad83a3ee5c318"
+          },
+          "route_digest": "361fcfcbdd52d4f735e9ae78a1244b8acf8e963818cd7992123623b975e6047a",
+          "source_date_epoch": 1767225600,
+          "spelled_prefix": "/home/cosmo/Documents/GitHub/qcore-c",
+          "spelling": "mirror"
+        },
+        "system": {
+          "canonical_prefix": "/media/Data/GitHub/quirin-lang",
+          "databases_as_spelled": {
+            "mirror/system-compile_commands.json": "fab8cadc9540a2cb1a674437558cecab5b437a64a50d490a8f7c3f54e2d950a9"
+          },
+          "route_digest": "062d37eec4d7a1b7db4eeb77fe1ddf22f8118fbe0fe9306df7ad68cf38bec6d5",
+          "source_date_epoch": 1767225600,
+          "spelled_prefix": "/home/cosmo/Documents/GitHub/qcore-c",
+          "spelling": "mirror"
+        }
+      },
+      "kind": "baseline",
+      "revision": "32169290de211435f4741d10dc7e35ed625e8634",
+      "run_json": {
+        "path": "/media/Data/GitHub/quirin-lang/private/measure/cell-result-set-alignment-20261104T090512Z-r2/sides/base/run.json",
+        "sha256": "d8cd90fd864ac261661857d372127a445780dc05e0abc3c15938b1de548d5b24"
+      },
+      "spec": "baseline:32169290de211435f4741d10dc7e35ed625e8634"
+    },
+    "tip": {
+      "binary": {
+        "path": "/media/Data/GitHub/quirin-lang/private/measure/cell-result-set-alignment-20261104T090512Z-r2/sides/tip/src/target/release/quirin-audit",
+        "path_as_run": "/tmp/quirin-measure/src/target/release/quirin-audit",
+        "sha256": "06e390b2e20ce1c10af7f6e2549c3b7fa132f8521a5af4970c6bbbaa93e1ab90"
+      },
+      "build_commit": "2bf298712946618c6777c45628923916b2126fad",
+      "bundles": {
+        "contract": "36fbb0fa617992426505ed9067c32541d6a2e022cc8ce77e298b1c291318fe53",
+        "providers/qcore-provider-chunkio/contracts": "6d25297b37c4f41bf63ad73acaef36732ae4d6a92805cc34ae38611f61fc8d13",
+        "providers/qcore-provider-cmetrics/contracts": "870ba620e5b1cb3b5f771793688ba5de3ccaddd1062e0d4347bbb7a71c0d0a04",
+        "providers/qcore-provider-ctraces/contracts": "e90eb34adf062a1a118226488ce68614d27a986d4dd12627d7458048974a80d1",
+        "providers/qcore-provider-libevent/contracts": "c957ae09c942a2ca1499ac437166ddf2e550b13268e88ed6b801e5d36420a5cc",
+        "providers/qcore-provider-librdkafka/contracts": "5fe62606dcc8ff4017a5d8ff03556ca60d26bd15a2519b756881e936a57e38a9",
+        "providers/quirin-provider-cfl/contracts": "2a55d7f5c586fac48704627331490074b3eb81730470bd36af1d78b09085aaf7",
+        "providers/quirin-provider-fluent-bit/contracts": "9eebab56d99bdeb31889ca7d95ede3b7475dca072c8d96a07171dab847e7e966",
+        "providers/quirin-provider-libc/contracts": "2bda62c60204dc91af9ec773a715e057c4e8595cc0caf6e7dd3dd73246d480f6",
+        "providers/quirin-provider-mpack/contracts": "14223b7f3b473e35df3b6468ef81ae4b3a074fe83d2d7f0d189301b28b0bdc10",
+        "providers/quirin-provider-msgpack/contracts": "e73fe57fc0d34045b4ee3eea73fa6838c15f08d0f1922b359e0682e30dfc15db",
+        "providers/quirin-provider-shared/contracts": "a4d40318b88bf388c0a7b38f7d83aa7f1dd38d5b9323056658b146cee14e4ba9"
+      },
+      "directory": "/media/Data/GitHub/quirin-lang/private/measure/cell-result-set-alignment-20261104T090512Z-r2/sides/tip",
+      "inputs": {
+        "corpus": {
+          "canonical_prefix": "/media/Data/GitHub/quirin-lang",
+          "databases_as_spelled": {
+            "mirror/c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json": "162f27214282bb550851a4c72d4a05ad8773d5f08226ea6eacd55bdf3ef2476c",
+            "mirror/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json": "cc5f2e6b519f2e4b52c8b8a6e035fffcf541594180feaba50743f3e8b793d821"
+          },
+          "route_digest": "7eb1e7ec179f8625ea54e2d3b3fb84c15fbf0cde7f3a28800a86cb064d0757ff",
+          "source_date_epoch": 1767225600,
+          "spelled_prefix": "/home/cosmo/Documents/GitHub/qcore-c",
+          "spelling": "mirror"
+        },
+        "slice": {
+          "canonical_prefix": "/media/Data/GitHub/quirin-lang",
+          "databases_as_spelled": {
+            "mirror/slice-compile_commands.json": "30de8c85606675a324c4f218954bdbe9c0e36f84eb72483e17cad83a3ee5c318"
+          },
+          "route_digest": "361fcfcbdd52d4f735e9ae78a1244b8acf8e963818cd7992123623b975e6047a",
+          "source_date_epoch": 1767225600,
+          "spelled_prefix": "/home/cosmo/Documents/GitHub/qcore-c",
+          "spelling": "mirror"
+        },
+        "system": {
+          "canonical_prefix": "/media/Data/GitHub/quirin-lang",
+          "databases_as_spelled": {
+            "mirror/system-compile_commands.json": "fab8cadc9540a2cb1a674437558cecab5b437a64a50d490a8f7c3f54e2d950a9"
+          },
+          "route_digest": "062d37eec4d7a1b7db4eeb77fe1ddf22f8118fbe0fe9306df7ad68cf38bec6d5",
+          "source_date_epoch": 1767225600,
+          "spelled_prefix": "/home/cosmo/Documents/GitHub/qcore-c",
+          "spelling": "mirror"
+        }
+      },
+      "kind": "rev",
+      "revision": "2bf298712946618c6777c45628923916b2126fad",
+      "run_json": {
+        "path": "/media/Data/GitHub/quirin-lang/private/measure/cell-result-set-alignment-20261104T090512Z-r2/sides/tip/run.json",
+        "sha256": "3154a050bb7f4abce8686f356755716b8a0612785561c388609811158f8bf5b3"
+      },
+      "spec": "rev:2bf298712946618c6777c45628923916b2126fad"
+    }
+  },
+  "source_date_epoch": 1767225600,
+  "status": "complete",
+  "tool": {
+    "name": "quirin-audit-measure",
+    "sha256": "91407bb643d31019a291b61739194f6f84bb43d5b71fc1d6c6147bdb6d9a58d7",
+    "version": "0.1.0"
+  }
+}
