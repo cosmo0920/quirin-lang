@@ -496,6 +496,10 @@ struct Target {
     /// Card CELL-GUARD-RESULT-RANGE-CHECKED: each pinned bounds declaration
     /// stating a `nonnull_result_range`, with its declared set.
     ranges: BTreeMap<String, qcore_contract::bounds_contract::ResultSet>,
+    /// Card CELL-RESULT-SET-WRITTEN-SET-DERIVATION: each pinned bounds
+    /// declaration's `written_set(SLOT[K], SET) when #result == C` clauses,
+    /// as (slot spelling, parameter position, K, C, declared set).
+    written: BTreeMap<String, Vec<DeclaredWritten>>,
     /// Card CELL-GUARD-RESULT-RANGE-CHECKED: the derivations this run
     /// computed (`--derive-results`), by function.
     derivations: BTreeMap<String, ResultDerivation>,
@@ -516,6 +520,7 @@ impl Target {
                 contracts.source_assumptions(),
             )?,
             ranges: BTreeMap::new(),
+            written: BTreeMap::new(),
             derivations: BTreeMap::new(),
         })
     }
@@ -600,6 +605,15 @@ fn bounds_targets(
                 contract.result_values().map(|set| (function.clone(), set))
             })
             .collect();
+        let written = contracts
+            .functions
+            .iter()
+            .filter(|(_, contract)| !contract.flexible)
+            .filter_map(|(function, contract)| {
+                let declared = declared_written(contract);
+                (!declared.is_empty()).then(|| (function.clone(), declared))
+            })
+            .collect();
         targets.push(Target {
             label: format!("{name} (bounds)"),
             owner: name.clone(),
@@ -607,6 +621,7 @@ fn bounds_targets(
             declared,
             c_names: BTreeMap::new(),
             ranges,
+            written,
             derivations: BTreeMap::new(),
         });
     }
@@ -679,6 +694,7 @@ fn outer_targets(load_path: &Path, crates: &[String], strict: bool) -> Result<Ve
             declared,
             c_names: BTreeMap::new(),
             ranges: BTreeMap::new(),
+            written: BTreeMap::new(),
             derivations: BTreeMap::new(),
         });
     }
@@ -862,13 +878,59 @@ fn replaced_stamp<'a>(replaced: Option<&'a ContractLock>, function: &str) -> Opt
         .max()
 }
 
+/// Card CELL-RESULT-SET-WRITTEN-SET-DERIVATION: one declared written set of
+/// a pinned bounds declaration.
+#[derive(Clone, Debug)]
+struct DeclaredWritten {
+    /// `PARAMETER[K]`.
+    slot: String,
+    position: usize,
+    index: u32,
+    class: i128,
+    set: qcore_contract::bounds_contract::ResultSet,
+}
+
+/// A declaration's `written_set` clauses.
+fn declared_written(
+    contract: &qcore_contract::bounds_contract::BoundsFunctionContract,
+) -> Vec<DeclaredWritten> {
+    contract
+        .clauses
+        .iter()
+        .filter_map(|entry| match &entry.clause {
+            qcore_contract::bounds_contract::BoundsClause::WrittenSet {
+                parameter,
+                index,
+                set,
+                class,
+            } => Some(DeclaredWritten {
+                slot: format!("{parameter}[{index}]"),
+                position: contract
+                    .parameters
+                    .iter()
+                    .position(|p| &p.name == parameter)?,
+                index: *index,
+                class: *class,
+                set: set.clone(),
+            }),
+            _ => None,
+        })
+        .collect()
+}
+
 /// Card CELL-GUARD-RESULT-RANGE-CHECKED (contract specification C09.4,
 /// gateway rule 38e): derive every chosen pinned `nonnull_result_range` of
 /// `target` from the body chain of its one defining unit in the configured
 /// compile database, reading only the C library's result sets (the flexible
 /// `result_set` declarations of `quirin-provider-libc` on the load path).
 /// The derived set must lie inside the declared range; anything else
-/// refuses, and nothing is pinned.
+/// refuses, and nothing is pinned. Card CELL-RESULT-SET-WRITTEN-SET-DERIVATION
+/// (rule 38e as amended): every declared `written_set(SLOT[K], SET) when
+/// #result == C` of a chosen declaration is derived the same way (forwarding,
+/// or a store after the C library call's failure exit with the returned
+/// local narrowed; `qcore_c_gateway::null_deref::derive_written_sets_c11`)
+/// and must lie inside the declared set; one that derives nothing, or
+/// something outside, refuses the whole run.
 fn derive_results(
     target: &mut Target,
     tree: &SourceTree,
@@ -880,6 +942,7 @@ fn derive_results(
     let chosen = target
         .ranges
         .keys()
+        .chain(target.written.keys())
         .filter(|name| functions.is_empty() || functions.contains(*name))
         .cloned()
         .collect::<BTreeSet<_>>();
@@ -923,32 +986,99 @@ fn derive_results(
         let source = fs::read_to_string(&entry.file)
             .map_err(|error| format!("{}: {error}", entry.file.display()))?;
         let unit = crate::member_prepass::c_unit(entry, &source)?;
-        let derived =
-            qcore_c_gateway::null_deref::derive_result_set_c11(&unit, &name, &environment)
-                .map_err(|why| format!("`{name}`: {why}"))?;
-        let declared = &target.ranges[&name];
-        if derived.set.universe() != declared.universe() || !derived.set.is_subset(declared) {
-            return Err(format!(
-                "`{name}`: its body chain returns {} (helpers {}; C library sets {}), not inside \
-                 the declared {}; nothing is pinned",
-                derived.set.canonical(),
-                derived
-                    .helpers
-                    .iter()
-                    .cloned()
-                    .collect::<Vec<_>>()
-                    .join(", "),
-                derived
-                    .rests_on
-                    .iter()
-                    .cloned()
-                    .collect::<Vec<_>>()
-                    .join(", "),
-                declared.canonical()
-            ));
+        let mut helpers = BTreeSet::new();
+        let mut rested = BTreeSet::new();
+        let result_set = match target.ranges.get(&name) {
+            Some(declared) => {
+                let derived =
+                    qcore_c_gateway::null_deref::derive_result_set_c11(&unit, &name, &environment)
+                        .map_err(|why| format!("`{name}`: {why}"))?;
+                if derived.set.universe() != declared.universe()
+                    || !derived.set.is_subset(declared)
+                {
+                    return Err(format!(
+                        "`{name}`: its body chain returns {} (helpers {}; C library sets {}), not \
+                         inside the declared {}; nothing is pinned",
+                        derived.set.canonical(),
+                        derived
+                            .helpers
+                            .iter()
+                            .cloned()
+                            .collect::<Vec<_>>()
+                            .join(", "),
+                        derived
+                            .rests_on
+                            .iter()
+                            .cloned()
+                            .collect::<Vec<_>>()
+                            .join(", "),
+                        declared.canonical()
+                    ));
+                }
+                helpers.extend(derived.helpers);
+                rested.extend(derived.rests_on);
+                Some(derived.set.canonical())
+            }
+            None => None,
+        };
+        let declared_written = target.written.get(&name).cloned().unwrap_or_default();
+        let slots = declared_written
+            .iter()
+            .map(|declared| (declared.position, declared.index, declared.class))
+            .collect::<Vec<_>>();
+        let mut written_sets = Vec::new();
+        if !slots.is_empty() {
+            let derived = qcore_c_gateway::null_deref::derive_written_sets_c11(
+                &unit,
+                &name,
+                &slots,
+                &environment,
+            )
+            .map_err(|why| format!("`{name}`: {why}"))?;
+            for (declared, derived) in declared_written.iter().zip(derived) {
+                let derived = derived.map_err(|why| {
+                    format!(
+                        "`{name}`: its written set of `{}` when it returns {} is not derived \
+                         ({why}); nothing is pinned",
+                        declared.slot, declared.class
+                    )
+                })?;
+                if derived.set.universe() != declared.set.universe()
+                    || !derived.set.is_subset(&declared.set)
+                {
+                    return Err(format!(
+                        "`{name}`: its body chain writes {} at `{}` when it returns {} (helpers \
+                         {}; C library sets {}), not inside the declared {}; nothing is pinned",
+                        derived.set.canonical(),
+                        declared.slot,
+                        declared.class,
+                        derived
+                            .helpers
+                            .iter()
+                            .cloned()
+                            .collect::<Vec<_>>()
+                            .join(", "),
+                        derived
+                            .rests_on
+                            .iter()
+                            .cloned()
+                            .collect::<Vec<_>>()
+                            .join(", "),
+                        declared.set.canonical()
+                    ));
+                }
+                helpers.extend(derived.helpers);
+                rested.extend(derived.rests_on);
+                written_sets.push(crate::contract_revision::WrittenDerivation {
+                    slot: declared.slot.clone(),
+                    class: i64::try_from(declared.class)
+                        .map_err(|_| format!("`{name}`: a class outside `i64`"))?,
+                    written_set: derived.set.canonical(),
+                });
+            }
+            written_sets.sort();
         }
-        let rests_on = derived
-            .rests_on
+        let rests_on = rested
             .iter()
             .map(|function| {
                 let contract = &environment.functions[function];
@@ -962,8 +1092,9 @@ fn derive_results(
         target.derivations.insert(
             name,
             ResultDerivation {
-                result_set: derived.set.canonical(),
-                helpers: derived.helpers.into_iter().collect(),
+                result_set,
+                written_sets,
+                helpers: helpers.into_iter().collect(),
                 rests_on,
             },
         );
@@ -1141,9 +1272,20 @@ fn update(
                     identity = with_helper_sites(&sites, identity, &derivation.helpers)
                         .map_err(|why| format!("`{name}`: {why} at {}", source.label()))?;
                     if old_derivation != Some(derivation) {
+                        let mut derived = derivation
+                            .result_set
+                            .iter()
+                            .map(|set| format!("result set {set}"))
+                            .collect::<Vec<_>>();
+                        derived.extend(derivation.written_sets.iter().map(|written| {
+                            format!(
+                                "written set {} of `{}` when it returns {}",
+                                written.written_set, written.slot, written.class
+                            )
+                        }));
                         lines.push(format!(
-                            "~ {name}: result set {} derived at {} (helpers {}; rests on {})",
-                            derivation.result_set,
+                            "~ {name}: {} derived at {} (helpers {}; rests on {})",
+                            derived.join(", "),
                             source.label(),
                             derivation.helpers.join(", "),
                             derivation

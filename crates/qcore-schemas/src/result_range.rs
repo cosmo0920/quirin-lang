@@ -29,3 +29,13 @@ pub struct ResultRangeFact {
     /// Why it is not in force, or the derivation it rests on.
     pub detail: String,
 }
+
+/// Card CELL-RESULT-SET-WRITTEN-SET-DERIVATION (rule 38e as amended): the
+/// route table's key of a pinned declaration's derived written set,
+/// `FUNCTION#P[K]==C` (`P` the parameter's position, `K` the element, `C` the
+/// class of `when #result == C`). Rule 38f's creation check reads a slot
+/// cell's `#fresh` state under `when #result == C` through it.
+#[must_use]
+pub fn written_set_key(function: &str, parameter: usize, index: u32, class: i64) -> String {
+    format!("{function}#{parameter}[{index}]=={class}")
+}

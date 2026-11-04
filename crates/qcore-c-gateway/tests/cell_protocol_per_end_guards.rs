@@ -41,6 +41,7 @@ use qcore_c_gateway::legacy_c::{
     UnrestrictedLegacyResult, analyze_unrestricted_c11, check_legacy_safety_certificate,
 };
 use qcore_contract::contract_loader::load_resource_contract_sources;
+use qcore_schemas::result_range::{ResultRangeFact, ResultRangeStanding, written_set_key};
 
 /// The production declarations.
 const TEARDOWN: &str = include_str!(
@@ -189,6 +190,12 @@ const BODY_LINE_ONE: usize = 44;
 /// The entry row's status and its sorted diagnostics (`line:kind:text`,
 /// the line counted from the body's first line, 1-based).
 fn outcome(body: &str) -> (String, Vec<String>) {
+    outcome_in(body, &environment())
+}
+
+/// [`outcome`] under a given environment (card
+/// CELL-RESULT-SET-WRITTEN-SET-DERIVATION: the route's written sets).
+fn outcome_in(body: &str, contracts: &ResourceContracts) -> (String, Vec<String>) {
     let text = format!("{PRELUDE}\n{body}\n");
     let entry = body
         .split('(')
@@ -203,7 +210,7 @@ fn outcome(body: &str) -> (String, Vec<String>) {
             ..Default::default()
         },
         &entry,
-        &environment(),
+        contracts,
     )
     .unwrap_or_else(|error| panic!("fixture rejected by Clang: {error:?}\n{text}"));
     if let UnrestrictedLegacyResult::Safe(certificate) = &result {
@@ -231,10 +238,20 @@ fn outcome(body: &str) -> (String, Vec<String>) {
 }
 
 fn expect(label: &str, body: &str, status: &str, diagnostics: &[&str]) {
+    expect_in(label, body, &environment(), status, diagnostics);
+}
+
+fn expect_in(
+    label: &str,
+    body: &str,
+    contracts: &ResourceContracts,
+    status: &str,
+    diagnostics: &[&str],
+) {
     if !clang_available() {
         return;
     }
-    let (actual_status, actual) = outcome(body);
+    let (actual_status, actual) = outcome_in(body, contracts);
     let mut wanted = diagnostics
         .iter()
         .map(|text| (*text).to_owned())
@@ -679,6 +696,98 @@ fn a_creator_never_establishes_a_positive_sentinel() {
             &broken(5, "ins", "flb_input_instance"),
         ],
     );
+}
+
+/// The creator's body, as `input_instance_channel_events_init` spells it.
+const CREATOR: &str = "int input_instance_channel_events_init(struct flb_input_instance *ins, struct mk_event_loop *evl) {\n\
+         int ret;\n\
+         ret = mk_event_channel_create(evl, &ins->ch_events[0], &ins->ch_events[1], ins);\n\
+         if (ret != 0) {\n\
+         return -1;\n\
+         }\n\
+         return 0;\n\
+         }";
+
+/// The environment with `mk_event_channel_create`'s written sets of `r_fd`
+/// and `w_fd` (positions 1 and 2) in the route's table, keyed as the route
+/// keys them (`FUNCTION#P[K]==C`).
+fn with_written(set: (i64, i64), class: i64, standing: ResultRangeStanding) -> ResourceContracts {
+    let mut contracts = environment();
+    let fact = ResultRangeFact {
+        intervals: vec![set],
+        universe: (i64::from(i32::MIN), i64::from(i32::MAX)),
+        standing,
+        detail: "fixture".to_owned(),
+    };
+    contracts.set_result_ranges(BTreeMap::from([
+        (
+            written_set_key("mk_event_channel_create", 1, 0, class),
+            fact.clone(),
+        ),
+        (written_set_key("mk_event_channel_create", 2, 0, class), fact),
+    ]));
+    contracts
+}
+
+/// Card CELL-RESULT-SET-WRITTEN-SET-DERIVATION (rule 38e as amended): with
+/// the pin-derived written sets in force inside the declared
+/// `live_set([1, MAX])`, the creation passes the live-set check and reads as
+/// rule 38f reads any creation: the path holds no dead reading of the ends,
+/// so each refuses `descriptor-cell-undecided`. The admission rests on
+/// pipe's DECLARED [1, MAX] (POSIX's set is [0, MAX]).
+#[test]
+fn a_creator_with_its_written_sets_in_force_passes_the_live_set_check() {
+    let in_force = with_written((1, i64::from(i32::MAX)), 0, ResultRangeStanding::InForce);
+    expect_in(
+        "input_instance_channel_events_init, written sets in force",
+        CREATOR,
+        &in_force,
+        "Unknown",
+        &[
+            "3:call to `mk_event_channel_create` retains `ins` in `evl`, whose lifetime this body does not decide against it (retention-undecided)",
+            "3:call to `mk_event_channel_create`: descriptor cell `(Formal(\"ins\") as int).ch_events[0]` is not decided (descriptor-cell-undecided)",
+            "3:call to `mk_event_channel_create`: descriptor cell `(Formal(\"ins\") as int).ch_events[1]` is not decided (descriptor-cell-undecided)",
+            &broken(5, "ins", "flb_input_instance"),
+        ],
+    );
+}
+
+/// A written set out of force (held, unchecked), of another class than the
+/// `#fresh` state's (`when #result == 0`), or outside the live set (POSIX's
+/// [0, MAX]) proves nothing: the creation still refuses.
+#[test]
+fn a_written_set_out_of_force_of_another_class_or_wider_proves_nothing() {
+    let unproved = [
+        "3:call to `mk_event_channel_create` retains `ins` in `evl`, whose lifetime this body does not decide against it (retention-undecided)",
+        "3:call to `mk_event_channel_create`: descriptor cell `(Formal(\"ins\") as int).ch_events[0]` is not decided (descriptor-cell-live-set-unproved)",
+        "3:call to `mk_event_channel_create`: descriptor cell `(Formal(\"ins\") as int).ch_events[1]` is not decided (descriptor-cell-live-set-unproved)",
+    ];
+    let broken = broken(5, "ins", "flb_input_instance");
+    let vector = unproved
+        .iter()
+        .copied()
+        .chain([broken.as_str()])
+        .collect::<Vec<_>>();
+    for (label, contracts) in [
+        (
+            "held",
+            with_written((1, i64::from(i32::MAX)), 0, ResultRangeStanding::Held),
+        ),
+        (
+            "unchecked",
+            with_written((1, i64::from(i32::MAX)), 0, ResultRangeStanding::Unchecked),
+        ),
+        (
+            "another class",
+            with_written((1, i64::from(i32::MAX)), -1, ResultRangeStanding::InForce),
+        ),
+        (
+            "POSIX's set",
+            with_written((0, i64::from(i32::MAX)), 0, ResultRangeStanding::InForce),
+        ),
+    ] {
+        expect_in(label, CREATOR, &contracts, "Unknown", &vector);
+    }
 }
 
 // -- The holder's release with a decided sentinel --------------------------------

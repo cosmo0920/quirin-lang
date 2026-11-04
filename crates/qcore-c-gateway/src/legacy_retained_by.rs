@@ -871,12 +871,28 @@ impl Parser<'_> {
                             qcore_schemas::descriptor_cell::CellValue::Fresh
                         )
                     })
-                    .map(|state| match &state.place {
-                        qcore_schemas::descriptor_cell::CellPlace::Slot { parameter } => self
-                            .contracts
-                            .result_range_in_force(&format!("{function}#{parameter}"))
-                            .map(|fact| fact.intervals.clone()),
-                        _ => None,
+                    .map(|state| {
+                        // Card CELL-RESULT-SET-WRITTEN-SET-DERIVATION: the
+                        // written set of the one class the `#fresh` state
+                        // holds in (`when #result == C`); a state under
+                        // `!= C`, or under every return, reads none.
+                        use qcore_schemas::descriptor_cell::WitnessGuard;
+                        let class = match state.guard {
+                            Some(WitnessGuard::Zero) => 0,
+                            Some(WitnessGuard::Sentinel) => -1,
+                            _ => return None,
+                        };
+                        match &state.place {
+                            qcore_schemas::descriptor_cell::CellPlace::Slot { parameter } => self
+                                .contracts
+                                .result_range_in_force(
+                                    &qcore_schemas::result_range::written_set_key(
+                                        function, *parameter, 0, class,
+                                    ),
+                                )
+                                .map(|fact| fact.intervals.clone()),
+                            _ => None,
+                        }
                     })
                     .collect();
                 if cells.written_sets.iter().all(Option::is_none) {

@@ -76,6 +76,8 @@ pub use range::Derived as ResultDerivation;
 mod scope;
 mod walk;
 mod witness;
+mod written;
+pub use written::WrittenDerived;
 
 use ast::kids;
 pub use scope::{NullPremise, PREMISE_DEPENDENCY, StableStore, member_fact_premises, premises_of};
@@ -945,6 +947,55 @@ pub fn derive_result_set_c11(
             .map_err(|error| format!("cannot start the result derivation: {error}"))?
             .join()
             .map_err(|_| "the result derivation panicked".to_owned())?
+    })
+}
+
+/// Card **CELL-RESULT-SET-WRITTEN-SET-DERIVATION** (contract specification
+/// C09.4, gateway rule 38e as amended): `function`'s written sets in the
+/// configured unit, one per requested `(parameter position, element,
+/// class)`, derived from its body chain reading only the C library's result
+/// and written sets (the flexible declarations of `bounds`) and the unit's
+/// own helpers ([`written`]'s module docs). `quirin-audit pin --bounds
+/// --derive-results` reads it; nothing here runs during an audit.
+///
+/// # Errors
+///
+/// The unit does not validate or preprocess, or Clang's AST cannot be read;
+/// a slot nothing is derived for is its own `Err` with the reason.
+pub fn derive_written_sets_c11(
+    unit: &C11TranslationUnit<'_>,
+    function: &str,
+    slots: &[(usize, u32, i128)],
+    bounds: &BoundsContracts,
+) -> Result<Vec<Result<WrittenDerived, String>>, String> {
+    let preprocessed =
+        crate::legacy_c::validate_unrestricted_c11(unit).map_err(|e| format!("{e:?}"))?;
+    std::thread::scope(|scope| {
+        std::thread::Builder::new()
+            .stack_size(ANALYSIS_STACK)
+            .spawn_scoped(scope, || {
+                use serde::de::DeserializeSeed;
+                let mut read = ast::Unit::default();
+                crate::typed_c_ast::translation_unit_ast_with(&preprocessed, unit, |bytes| {
+                    let mut deserializer = serde_json::Deserializer::from_slice(bytes);
+                    deserializer.disable_recursion_limit();
+                    TopSeed { unit: &mut read }.deserialize(&mut deserializer)
+                })?;
+                let mut declared = range::declared_ranges(bounds, &read);
+                declared.retain(|_, decl| decl.flexible);
+                let stated = written::declared_written(bounds, &declared);
+                Ok(slots
+                    .iter()
+                    .map(|(parameter, element, class)| {
+                        written::WrittenDeriver::new(&read, &declared, &stated).derive(
+                            function, *parameter, *element, *class,
+                        )
+                    })
+                    .collect())
+            })
+            .map_err(|error| format!("cannot start the written-set derivation: {error}"))?
+            .join()
+            .map_err(|_| "the written-set derivation panicked".to_owned())?
     })
 }
 

@@ -87,6 +87,8 @@ pub mod translation_validation;
 pub mod typed_errors;
 pub mod usage;
 pub mod weak_memory;
+// Card CELL-RESULT-SET-WRITTEN-SET-DERIVATION (C09.4, G05j, gateway rule 38e).
+pub mod written_set;
 
 pub use advanced_control::{
     AdvancedControlError, AdvancedExecution, AdvancedOp, AdvancedOutcome, AdvancedProgram,

@@ -214,8 +214,16 @@ pub struct PinnedEntry {
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct ResultDerivation {
-    /// The derived set's canonical spelling (G05j), inside the declared range.
-    pub result_set: String,
+    /// The derived set's canonical spelling (G05j), inside the declared range;
+    /// absent for a declaration that states no range (card
+    /// CELL-RESULT-SET-WRITTEN-SET-DERIVATION: written sets only).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub result_set: Option<String>,
+    /// Card CELL-RESULT-SET-WRITTEN-SET-DERIVATION (rule 38e as amended):
+    /// each declared `written_set(SLOT[K], SET) when #result == C` derived
+    /// from the body chain, sorted by slot and class.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub written_sets: Vec<WrittenDerivation>,
     /// The in-unit helpers whose bodies the derivation read, sorted; the
     /// definition and declaration sites of each join every identity's sites,
     /// so the range is in force only where they are the reviewed ones.
@@ -223,6 +231,18 @@ pub struct ResultDerivation {
     /// The C library result sets the derivation rested on, sorted by
     /// function; a changed or missing one holds the range.
     pub rests_on: Vec<RestedOn>,
+}
+
+/// Card CELL-RESULT-SET-WRITTEN-SET-DERIVATION: one derived written set.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct WrittenDerivation {
+    /// The declared slot, `PARAMETER[K]`.
+    pub slot: String,
+    /// The class `C` of `when #result == C`.
+    pub class: i64,
+    /// The derived set's canonical spelling, inside the declared one.
+    pub written_set: String,
 }
 
 /// One C library result set a derivation read.

@@ -134,7 +134,12 @@ pub fn result_range_table() -> BTreeMap<String, qcore_schemas::result_range::Res
 
 /// Every pinned declaration stating a result set: in force only when it is
 /// not held and its lock carries a current derivation (rule 38e); held when
-/// held; unchecked when never derived.
+/// held; unchecked when never derived. Card
+/// CELL-RESULT-SET-WRITTEN-SET-DERIVATION (rule 38e as amended): each of its
+/// `written_set(SLOT[K], SET) when #result == C` clauses is carried as
+/// [`qcore_schemas::result_range::written_set_key`], in force only when the
+/// declaration is not held and its lock's derivation derived that slot and
+/// class; held or unchecked otherwise, exactly as the range.
 fn result_ranges_of(
     contracts: &BoundsContracts,
     record: &Value,
@@ -156,6 +161,7 @@ fn result_ranges_of(
         if contract.flexible {
             continue;
         }
+        written_sets_of(name, contract, derivations.get(name), &mut out);
         let Some(set) = contract.result_values() else {
             continue;
         };
@@ -173,7 +179,10 @@ fn result_ranges_of(
         };
         let (standing, detail) = if contract.held() {
             (ResultRangeStanding::Held, contract.holds().join("; "))
-        } else if let Some(derivation) = derivations.get(name) {
+        } else if let Some(derivation) = derivations
+            .get(name)
+            .filter(|derivation| derivation.get("result_set").is_some_and(Value::is_string))
+        {
             (ResultRangeStanding::InForce, derivation.to_string())
         } else {
             (
@@ -192,6 +201,90 @@ fn result_ranges_of(
         );
     }
     out
+}
+
+/// Card CELL-RESULT-SET-WRITTEN-SET-DERIVATION: the table entries of one
+/// pinned declaration's written sets.
+fn written_sets_of(
+    name: &str,
+    contract: &qcore_contract::bounds_contract::BoundsFunctionContract,
+    derivation: Option<&Value>,
+    out: &mut BTreeMap<String, qcore_schemas::result_range::ResultRangeFact>,
+) {
+    use qcore_contract::bounds_contract::BoundsClause;
+    use qcore_schemas::result_range::{ResultRangeFact, ResultRangeStanding, written_set_key};
+    let derived = derivation
+        .and_then(|derivation| derivation.get("written_sets"))
+        .and_then(|written| {
+            serde_json::from_value::<Vec<crate::contract_revision::WrittenDerivation>>(
+                written.clone(),
+            )
+            .ok()
+        })
+        .unwrap_or_default();
+    for entry in &contract.clauses {
+        let BoundsClause::WrittenSet {
+            parameter,
+            index,
+            set,
+            class,
+        } = &entry.clause
+        else {
+            continue;
+        };
+        let Some(position) = contract
+            .parameters
+            .iter()
+            .position(|p| &p.name == parameter)
+        else {
+            continue;
+        };
+        let fits = |value: i128| i64::try_from(value).ok();
+        let (Some(lo), Some(hi), Some(class)) =
+            (fits(set.universe().0), fits(set.universe().1), fits(*class))
+        else {
+            continue;
+        };
+        let Some(intervals) = set
+            .intervals()
+            .iter()
+            .map(|(a, b)| Some((fits(*a)?, fits(*b)?)))
+            .collect::<Option<Vec<_>>>()
+        else {
+            continue;
+        };
+        let slot = format!("{parameter}[{index}]");
+        let found = derived
+            .iter()
+            .find(|written| written.slot == slot && written.class == class);
+        let (standing, detail) = if contract.held() {
+            (ResultRangeStanding::Held, contract.holds().join("; "))
+        } else if let (Some(found), Some(derivation)) = (found, derivation) {
+            (
+                ResultRangeStanding::InForce,
+                format!(
+                    "derived {} at `{slot}` when it returns {class}; {derivation}",
+                    found.written_set
+                ),
+            )
+        } else {
+            (
+                ResultRangeStanding::Unchecked,
+                format!(
+                    "the lock records no derivation of the written set of `{slot}` when it returns {class} (rule 38e)"
+                ),
+            )
+        };
+        out.insert(
+            written_set_key(name, position, *index, class),
+            ResultRangeFact {
+                intervals,
+                universe: (lo, hi),
+                standing,
+                detail,
+            },
+        );
+    }
 }
 
 /// The selection record of the installed environment, if any.
@@ -783,10 +876,61 @@ contract {
         assert_eq!(table["f"].standing, ResultRangeStanding::Held);
     }
 
+    const WRITTEN: &str = "module contract;
+extern fn g(r: ptr<mut, u8>, w: ptr<mut, u8>) -> i32
+contract {
+    requires bounds_contract_v1;
+    ensures normal written_set(r[0], [1, MAX]) when #result == 0;
+    ensures normal written_set(w, [1, MAX]) when #result == 0;
+};
+";
+
+    /// Card CELL-RESULT-SET-WRITTEN-SET-DERIVATION: a written set is in
+    /// force only where the lock derived that slot and class, keyed
+    /// `FUNCTION#P[K]==C`; a declaration with no range carries no range
+    /// entry.
+    #[test]
+    fn only_a_derived_unheld_written_set_is_in_force() {
+        use qcore_schemas::result_range::written_set_key;
+        let contracts = load_bounds_contract_sources(&BTreeMap::from([(
+            "quirin-provider-fluent-bit:fluent_bit/r.qv".to_owned(),
+            WRITTEN.to_owned(),
+        )]))
+        .unwrap();
+        let record = |written: Value| {
+            json!({"pins": {"outcomes": [{"function": "g", "derivation": {
+                "written_sets": written, "helpers": [], "rests_on": []}}]}})
+        };
+        let derived = record(json!([{"slot": "r[0]", "class": 0, "written_set": "[1, MAX]"}]));
+        let table = result_ranges_of(&contracts, &derived);
+        assert!(!table.contains_key("g"));
+        let r = &table[&written_set_key("g", 0, 0, 0)];
+        assert_eq!(r.standing, ResultRangeStanding::InForce);
+        assert_eq!(r.intervals, vec![(1, i64::from(i32::MAX))]);
+        // `w` was not derived; a different class is not the derived one.
+        assert_eq!(
+            table[&written_set_key("g", 1, 0, 0)].standing,
+            ResultRangeStanding::Unchecked
+        );
+        let other = record(json!([{"slot": "r[0]", "class": -1, "written_set": "[1, MAX]"}]));
+        assert_eq!(
+            result_ranges_of(&contracts, &other)[&written_set_key("g", 0, 0, 0)].standing,
+            ResultRangeStanding::Unchecked
+        );
+        let mut held = contracts.clone();
+        held.hold_for_pin_mismatch("g", "contract-changed", "test")
+            .unwrap();
+        assert_eq!(
+            result_ranges_of(&held, &derived)[&written_set_key("g", 0, 0, 0)].standing,
+            ResultRangeStanding::Held
+        );
+    }
+
     #[test]
     fn a_changed_or_missing_c_library_set_is_stale() {
         let derivation = ResultDerivation {
-            result_set: "[-1, 0]".into(),
+            result_set: Some("[-1, 0]".into()),
+            written_sets: vec![],
             helpers: vec![],
             rests_on: vec![RestedOn {
                 function: "pipe".into(),
