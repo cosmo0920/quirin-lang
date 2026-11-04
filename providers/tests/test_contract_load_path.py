@@ -603,7 +603,9 @@ class LoadPathManifest(unittest.TestCase):
         # Card NULL-SAFETY-PROPERTY adds the three `quant null-deref` modules
         # (bounds contract v1, read only by the null-dereference property).
         # Card NULL-TRIAGE-UNRESOLVED-PATHS adds cfl's first bounds view
-        # (`cfl_list_size`'s `nonnull_result_range`).
+        # (`cfl_list_size`'s `nonnull_result_range`). Card
+        # CELL-RESULT-SET-WRITTEN-SET-DERIVATION adds Fluent Bit's second,
+        # `fluent_bit/result_range.qv` (`flb_pipe_create`'s written sets).
         bounds = {c["name"]: c["bounds_view"] for c in manifest["crates"]}
         self.assertEqual({name: view for name, view in bounds.items() if view},
                          {"qcore-provider-chunkio": ["chunkio/file_st_bounds.qv",
@@ -611,7 +613,8 @@ class LoadPathManifest(unittest.TestCase):
                           "qcore-provider-cmetrics": ["cmetrics/null_deref.qv"],
                           "qcore-provider-librdkafka": ["librdkafka/null_deref.qv"],
                           "quirin-provider-cfl": ["cfl/null_deref.qv"],
-                          "quirin-provider-fluent-bit": ["fluent_bit/null_deref.qv"]})
+                          "quirin-provider-fluent-bit": ["fluent_bit/null_deref.qv",
+                                                         "fluent_bit/result_range.qv"]})
         self.assertNotIn("chunkio/meta_len_bounds.qv", views["qcore-provider-chunkio"])
         self.assertNotIn("chunkio/file_st_bounds.qv", views["qcore-provider-chunkio"])
         # The real inventories: exactly the two crates that inherit carry pins.

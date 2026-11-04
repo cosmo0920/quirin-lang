@@ -3473,7 +3473,7 @@ beside it as a registered `null_deref_beside` relation).
   `out_of_force_reads_the_universe`). Its readers are the null property's
   bound of a call result (C09.3) and the result derivation of rule 38e.
 
-**Written sets** (card CELL-RESULT-SET-ALIGNMENT; USER DECISIONS 2026-11-04: Q1 (a), its per-element and per-class refinements, and "Write [1, MAX]"). `ensures normal written_set(SLOT[K], SET) when #result == C;` states that on a return of `C` the `int` the call stored at `SLOT[K]` (`SLOT` a pointer parameter, `SLOT` alone meaning `SLOT[0]`) is a member of `SET`. It is a value set only. On a flexible C library declaration it stands beside the declaration's `result_set`. `pipe` states `written_set(pipedes[0], [1, MAX]) when #result == 0` and the same for `[1]`. That is the user's declared policy, not POSIX's `[0, MAX]`: POSIX's lowest free descriptor is 0 when standard input is closed, which was observed natively. On a pinned declaration it is read only where `pin --bounds --derive-results` derived it. The route carries a derived written set as `FUNCTION#SLOT` in the result table, and rule 38f's live-set creation check reads it. The slot derivation is follow-up CELL-RESULT-SET-WRITTEN-SET-DERIVATION. Until it lands no creator's written set is in force.
+**Written sets** (card CELL-RESULT-SET-ALIGNMENT; USER DECISIONS 2026-11-04: Q1 (a), its per-element and per-class refinements, and "Write [1, MAX]"). `ensures normal written_set(SLOT[K], SET) when #result == C;` states that on a return of `C` the `int` the call stored at `SLOT[K]` (`SLOT` a pointer parameter, `SLOT` alone meaning `SLOT[0]`) is a member of `SET`. It is a value set only. On a flexible C library declaration it stands beside the declaration's `result_set`. `pipe` states `written_set(pipedes[0], [1, MAX]) when #result == 0` and the same for `[1]`. That is the user's declared policy, not POSIX's `[0, MAX]`: POSIX's lowest free descriptor is 0 when standard input is closed, which was observed natively. On a pinned declaration it is read only where `pin --bounds --derive-results` derived it. The route carries a derived written set as `FUNCTION#P[K]==C` in the result table (`P` the parameter's position, `K` the element, `C` the class), and rule 38f's live-set creation check reads the one of the class its `#fresh` state holds in.
 
 **Pin-time result derivation** (rule 38e). `quirin-audit pin --bounds
 --derive-results` derives a pinned `nonnull_result_range` from the body chain
@@ -3490,6 +3490,45 @@ the function and its helpers matches) and every C library declaration it
 rested on (function, module and text digest; a changed or missing one holds
 the range, `contract-changed`). A range is read by rule 38 only through such a
 derivation.
+
+**Pin-time written-set derivation** (card CELL-RESULT-SET-WRITTEN-SET-DERIVATION,
+rule 38e as amended; the user launched the card on 2026-11-04, verbatim:
+"CELL-RESULT-SET-WRITTEN-SET-DERIVATION."). The same pin derives each declared
+`written_set(SLOT[K], SET) when #result == C` of a pinned declaration from the
+body chain, path by path. Each path ending at a `return` carries the values it
+may return, narrowed by every test `v OP k` of a local on it, and the values
+the slot holds there. The derived set is the union of the slot sets of the
+paths that may return `C`. A path that may return `C` with the slot unwritten
+or unknown derives nothing. Two shapes give a slot set:
+
+- **forwarding**, `return G(.., P, ..)`: `G`'s own written set of that
+  position for `C`, a C library declaration's or an in-unit helper's derived
+  one;
+- **a store after the C library call's failure exit**: `ret = G(.., A, ..)`
+  links `ret` to the out array `A`. Once a test narrows `ret`, within `G`'s
+  result set, to exactly one class `c`, `A[k]` holds `G`'s written set of
+  class `c`, and a later `*P = A[k]` stores it.
+
+An `int` store through any other pointer joins its value, and a call or any
+other store leaves the slot unknown. A local whose address is taken is never
+narrowed. An out array is read only when every call it is handed to is a C
+library declaration stating a written set of that position. A loop or a jump
+refuses.
+
+Every configuration of the defining file in the compile database is read: a
+file built into two libraries is read twice. Each derived set must lie inside
+the declared one, or nothing is pinned. The lock records them as `written_sets`
+beside the derivation's helpers and C library declarations. Each
+configuration's body decides its own set: a backend whose C library call
+states no written set, such as libevent's `evutil_socketpair`, derives
+nothing.
+
+Lean: `QCore.WrittenSetDerivation` (`combine_sound`, `narrow_sound`,
+`resolve_sound`, `after_store_sound`, `forwarding_sound`,
+`the_declared_bound_admits_the_creation`,
+`posix_s_set_derives_descriptor_zero`, `combine_vectors_hold`,
+`resolve_vectors_hold`), audited in `proof/AuditWrittenSetDerivation.lean`,
+vectors bound to `qcore_core::written_set`.
 
 Lean: `QCore.ResultSet` (`denote_or`, `denote_and`, `denote_xor`,
 `holds_true_edge`, `fails_false_edge`, `narrowing_keeps_holds`,

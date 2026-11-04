@@ -9617,11 +9617,41 @@ safety claim and no validation of the detach representation premise.
     pinned declaration the clause is read only where `pin --bounds
     --derive-results` derived it, and the route carries it as
     `FUNCTION#SLOT` in the result table; rule 38f's live-set creation check
-    reads it there. The slot derivation itself (forwarding, `*P = fd[k]`
-    after the C library call's failure exit) is follow-up
-    CELL-RESULT-SET-WRITTEN-SET-DERIVATION: until it lands no creator's
-    written set is in force and every creation into a declared live set
-    refuses (`descriptor-cell-live-set-unproved`).
+    reads it there.
+
+    **Amended (card CELL-RESULT-SET-WRITTEN-SET-DERIVATION; the user
+    launched it on 2026-11-04, verbatim: "CELL-RESULT-SET-WRITTEN-SET-DERIVATION.").**
+    The slot derivation is `qcore_c_gateway::null_deref::derive_written_sets_c11`
+    (`null_deref/written.rs`, `WrittenDeriver`), with its C-free rule in
+    `qcore_core::written_set` (`combine`, `narrow`, `resolve`, `after_store`).
+    It runs path by path over the configured unit's AST. A slot set comes
+    from forwarding `return G(.., P, ..)` (`G`'s written set of that position
+    for the class), or from a store `*P = A[k]` after `ret = G(.., A, ..)`
+    once a test narrows `ret`, within `G`'s result set, to exactly one class
+    (`G`'s written set of that class). A `return` whose narrowed set excludes
+    the class constrains nothing. A path that may return the class with the
+    slot unwritten or unknown derives nothing.
+
+    The pin reads every configuration of the defining file, and each derived
+    set must lie in the declared one. The lock's derivation records them
+    (`written_sets`). The route keys an in-force one `FUNCTION#P[K]==C`
+    (`qcore_schemas::result_range::written_set_key`), and rule 38f reads only
+    the class its `#fresh` state holds in.
+
+    Pinned: `mk_event_channel_create`'s `r_fd[0]`/`w_fd[0]` and
+    `flb_pipe_create`'s `pipefd[0..1]`, `[1, MAX]` when `#result == 0`, at
+    66910c10, 34155955 and 046accf6. Each rests on `pipe`'s DECLARED
+    `[1, MAX]`, not POSIX's `[0, MAX]`, under which the chain derives
+    `[0, MAX]` and nothing is pinned (follow-up
+    CELL-RESULT-SET-DESCRIPTOR-ZERO-POLICY).
+
+    **Do not** read a pinned written set the lock did not derive, read one
+    of another class, borrow another configuration's or another tree's body,
+    or narrow a local whose address is taken. Premises stated, not proved
+    (trust boundary 28): Clang's AST of each configuration, and the C library
+    declarations' documented written sets: a call writes its out array and
+    keeps no pointer to it. The Lean model is `QCore.WrittenSetDerivation`
+    ([report](../reports/cell-result-set-written-set-derivation/README.md)).
 
 <a id="constraint-38f"></a>
 
@@ -9722,7 +9752,10 @@ safety claim and no validation of the detach representation premise.
     `descriptor-cell-edge-undecided`. A creation into a cell with a declared
     live set is admitted only where the creator's pin-derived written set of
     that slot (rule 38e as amended) is in force inside it, else
-    `descriptor-cell-live-set-unproved`. The production ends declare
+    `descriptor-cell-live-set-unproved`. The written set read is the one of
+    the class the cell's `#fresh` state holds in (`when #result == C`; card
+    CELL-RESULT-SET-WRITTEN-SET-DERIVATION). A state under `!= C`, or under
+    every return, reads none. The production ends declare
     `live_set([1, MAX])`: a DECLARED POLICY, not POSIX's `[0, MAX]`
     (descriptor 0 is observed natively on `ch_data`), under which a `> 0` dead
     edge decides "absent"; every reading it moves is attributed to that bound

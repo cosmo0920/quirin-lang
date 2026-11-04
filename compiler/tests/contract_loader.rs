@@ -1774,7 +1774,10 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // value sets, `libc/result_sets.qv` (three C library result sets) and
     // `monkey/result_range.qv` (one derived range); resource-v1 rejects all
     // four declarations.
-    assert_eq!(modules.len(), 146, "corpus module count");
+    // 146 -> 147: card CELL-RESULT-SET-WRITTEN-SET-DERIVATION adds
+    // `fluent_bit/result_range.qv` (`flb_pipe_create`'s derived written sets,
+    // a bounds contract v1 value set); resource-v1 rejects its declaration.
+    assert_eq!(modules.len(), 147, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;

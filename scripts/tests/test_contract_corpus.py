@@ -74,9 +74,11 @@ class CanonicalCorpus(unittest.TestCase):
         # 144 -> 146: CELL-GUARD-RESULT-RANGE-CHECKED's libc/result_sets.qv in
         # quirin-provider-libc (56 -> 57) and monkey/result_range.qv in
         # qcore-provider-libevent (88 -> 89).
-        self.assertEqual(len(modules), 146)
+        # 146 -> 147: CELL-RESULT-SET-WRITTEN-SET-DERIVATION's
+        # fluent_bit/result_range.qv in quirin-provider-fluent-bit (57 -> 58).
+        self.assertEqual(len(modules), 147)
         self.assertEqual(sum(any(part.startswith("qcore-provider-") for part in path.parts) for path in modules.values()), 89)
-        self.assertEqual(sum(any(part.startswith("quirin-provider-") for part in path.parts) for path in modules.values()), 57)
+        self.assertEqual(sum(any(part.startswith("quirin-provider-") for part in path.parts) for path in modules.values()), 58)
         libc = [path for name, path in modules.items() if name.startswith("libc/")]
         self.assertTrue(libc and all("quirin-provider-libc" in path.parts for path in libc))
 
