@@ -1329,9 +1329,8 @@ fn written_set_clause(
             _ => None,
         }
         .ok_or_else(|| {
-            format!(
-                "written-set-class: a written set states its success class, `when #result == C`"
-            )
+            "written-set-class: a written set states its success class, `when #result == C`"
+                .to_owned()
         })?;
         Ok((parameter.clone(), index, set, class))
     })())

@@ -373,11 +373,11 @@ contract {
 //
 // Each per-end sentinel states its live set and its absent set (grammar
 // G05i as amended; gateway rule 38f as generalised):
-// * `live_set([1, MAX])`. USER DECISIONS 2026-11-04 (verbatim): "Basically,
-//   Q1(a) and Q2(i) But we must not handle descriptor 0 as a valid handle. So,
-//   we need to exclude the 0 descriptor like: written_set(pipedes, [1, MAX]);
-//   a live descriptor is in [1, MAX]"; "Write [1, MAX]"; Q3 "(α) live_set
-//   suffix". This is a DECLARED POLICY, not POSIX's set ([0, MAX]):
+// * `live_set([1, MAX])`. USER DECISIONS 2026-11-04 (quoted in full beside
+//   `pipe`'s declaration in quirin-provider-libc's bounds view,
+//   since that quote names a bounds clause word this resource module may not
+//   spell): "a live descriptor is in [1, MAX]"; "Write [1, MAX]"; Q3 "(α)
+//   live_set suffix". This is a DECLARED POLICY, not POSIX's set ([0, MAX]):
 //   descriptor 0 is observed natively on `ch_data` with stdin closed
 //   (W43-DESC-FLB-CONFIG-DATA-PIPE-ZERO-GUARD). Under it a `> 0` test's dead
 //   edge reads "absent", and every row that reading moves is attributed to

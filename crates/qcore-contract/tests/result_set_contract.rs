@@ -42,7 +42,23 @@ fn the_libc_result_sets_load_as_flexible_value_sets() {
         let contract = contracts.contract(name).expect(name);
         assert!(contract.flexible, "{name}");
         assert!(!contract.held(), "{name}");
-        assert_eq!(contract.clauses.len(), 1, "{name}");
+        // Card CELL-RESULT-SET-ALIGNMENT: `pipe` also states its two
+        // slots' written sets beside its result set.
+        let written = contract
+            .clauses
+            .iter()
+            .filter(|entry| {
+                matches!(
+                    entry.clause,
+                    qcore_contract::bounds_contract::BoundsClause::WrittenSet { .. }
+                )
+            })
+            .count();
+        assert_eq!(
+            (contract.clauses.len(), written),
+            if name == "pipe" { (3, 2) } else { (1, 0) },
+            "{name}"
+        );
         contract.result_values().expect(name).canonical()
     };
     assert_eq!(canonical("pipe"), "[-1, 0]");
