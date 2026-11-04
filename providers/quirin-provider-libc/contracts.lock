@@ -26,6 +26,12 @@
       "pinned_at": "2026-10-25T18:10:00Z"
     },
     {
+      "function": "abs",
+      "module": "libc/stdlib.qv",
+      "contract_sha256": "5ed9475b4f3d2b67824ad7637bd4914346cc182bb912afae55d58a1cec5884e4",
+      "pinned_at": "2026-11-04T16:14:29Z"
+    },
+    {
       "function": "access",
       "module": "libc/unistd.qv",
       "contract_sha256": "7dbf0fd618d56492ff935165e2183baea34e2b1bd91bd575e41d77845d18b59d",
@@ -54,6 +60,18 @@
       "module": "libc/math.qv",
       "contract_sha256": "3dd76e345b16abffd8dad9a62a975851341a0d57d76ec6a7302826f1c8f2043c",
       "pinned_at": "2026-10-25T18:10:00Z"
+    },
+    {
+      "function": "chmod",
+      "module": "libc/sys_stat.qv",
+      "contract_sha256": "4db44926e0699104540570f16fefcf10caeca7d54263df9377150e9dbf8522c3",
+      "pinned_at": "2026-11-04T16:14:29Z"
+    },
+    {
+      "function": "chown",
+      "module": "libc/unistd.qv",
+      "contract_sha256": "3d6876198c9de001f569d09aaf663c18a625c1964bfabaa197822c52b8745f30",
+      "pinned_at": "2026-11-04T16:14:29Z"
     },
     {
       "function": "clock_gettime",
@@ -164,6 +182,12 @@
       "pinned_at": "2026-10-25T18:10:00Z"
     },
     {
+      "function": "fread",
+      "module": "libc/stdio.qv",
+      "contract_sha256": "fe7c526694cddc77eeab75b20adef215f3ee506d6ff997e2509c9ade1bbb53ab",
+      "pinned_at": "2026-11-04T16:14:29Z"
+    },
+    {
       "function": "free",
       "module": "libc/memory.qv",
       "contract_sha256": "a1a483555e1fb7422588aa089e3dbf91a873905cbd573f823957dee3d15b6a22",
@@ -174,6 +198,12 @@
       "module": "libc/sys_stat.qv",
       "contract_sha256": "0d0c4d32e1207cdd00ddb6a264f89cd5c32f1dede617c846667749f9e769ef3e",
       "pinned_at": "2026-10-25T18:10:00Z"
+    },
+    {
+      "function": "ftruncate",
+      "module": "libc/unistd.qv",
+      "contract_sha256": "482ac2740ea1a7665bca0e7982872194ab21d6e380d35f7e8f9868b234e355d2",
+      "pinned_at": "2026-11-04T16:14:29Z"
     },
     {
       "function": "gai_strerror",
@@ -194,6 +224,12 @@
       "pinned_at": "2026-10-25T18:10:00Z"
     },
     {
+      "function": "getgrnam_r",
+      "module": "libc/process.qv",
+      "contract_sha256": "cf9821364f2d652c4e50c3ef628d59a8e5da563c9e8ead7261a5d703dcbf7240",
+      "pinned_at": "2026-11-04T16:14:29Z"
+    },
+    {
       "function": "getpagesize",
       "module": "libc/unistd.qv",
       "contract_sha256": "46b3d96f956014af04aa71dd79a3dd9dd636e43952a48fb2a993b301d7fbf01e",
@@ -204,6 +240,18 @@
       "module": "libc/socket.qv",
       "contract_sha256": "886a32d461d5b3175a62eeeb65f827ca8b6aca7d4ea0bc0761ac2ddb88a90484",
       "pinned_at": "2026-10-25T18:10:00Z"
+    },
+    {
+      "function": "getpwnam_r",
+      "module": "libc/process.qv",
+      "contract_sha256": "49f82c2eb9c5891bfcb48eaab926b15ea13d66358068aa0e2dabe8bf5ba5d5fc",
+      "pinned_at": "2026-11-04T16:14:29Z"
+    },
+    {
+      "function": "getrandom",
+      "module": "libc/unistd.qv",
+      "contract_sha256": "709693ff439cb7a1596ba1624d3e54341b8a1a57d02ac72f0e3d83f5f6b97b65",
+      "pinned_at": "2026-11-04T16:14:29Z"
     },
     {
       "function": "getrlimit",
@@ -246,6 +294,12 @@
       "module": "libc/time.qv",
       "contract_sha256": "a0b09836999b13f7f2705676d7d5e38cf59f443f416c8eae64be1de74f3cad5a",
       "pinned_at": "2026-10-25T18:10:00Z"
+    },
+    {
+      "function": "lseek",
+      "module": "libc/unistd.qv",
+      "contract_sha256": "0466dc9781af269416ea276e13a92b34352aac443592aba91a5ce1cc24e7b64e",
+      "pinned_at": "2026-11-04T16:14:29Z"
     },
     {
       "function": "lstat",
@@ -302,6 +356,12 @@
       "pinned_at": "2026-10-25T18:10:00Z"
     },
     {
+      "function": "msync",
+      "module": "libc/unistd.qv",
+      "contract_sha256": "67e9ccfa195de4c18087526cb1c184e690d668642c3653b6b6084fa08c676cb6",
+      "pinned_at": "2026-11-04T16:14:29Z"
+    },
+    {
       "function": "mtx_lock",
       "module": "libc/threads.qv",
       "contract_sha256": "3329d2e3428f720177ec9b1315dbac5103c2da41224fe6ae3782833f35287914",
@@ -338,6 +398,18 @@
       "pinned_at": "2026-10-25T18:10:00Z"
     },
     {
+      "function": "poll",
+      "module": "libc/socket.qv",
+      "contract_sha256": "8bae7424ff912a5f5e1fde811cf3e7414e6676519858b52726b01db05ce2bd08",
+      "pinned_at": "2026-11-04T16:14:29Z"
+    },
+    {
+      "function": "posix_fallocate",
+      "module": "libc/unistd.qv",
+      "contract_sha256": "e9eab16b96dd6c91488df89ac4baab111ba753b991ee790ff701d299ad1457bc",
+      "pinned_at": "2026-11-04T16:14:29Z"
+    },
+    {
       "function": "pow",
       "module": "libc/math.qv",
       "contract_sha256": "8aedff84e10aa80375f256cdb81b39bee9e0b3a1d49f5c5e1c7516d59602c7b3",
@@ -360,6 +432,12 @@
       "module": "libc/threads.qv",
       "contract_sha256": "9b1bce57ad14220dc0ee1c6418eedc599b6da2e983d90fb3fbc157faf9eac26e",
       "pinned_at": "2026-10-25T18:10:00Z"
+    },
+    {
+      "function": "pthread_cancel",
+      "module": "libc/threads.qv",
+      "contract_sha256": "d1202f17168503b47d18a6bbc4939a34ffd890b66c2fc8f8dda72485cfae7f88",
+      "pinned_at": "2026-11-04T16:14:29Z"
     },
     {
       "function": "pthread_cond_destroy",
@@ -390,6 +468,12 @@
       "module": "libc/pthread_sync.qv",
       "contract_sha256": "b37cb296050923ca642c162a06360f721e220d340e1e5e6ff50f265a005cdd74",
       "pinned_at": "2026-10-25T18:10:00Z"
+    },
+    {
+      "function": "pthread_getspecific",
+      "module": "libc/threads.qv",
+      "contract_sha256": "0664e3c41dd61593b011c494e9bc7f966656ac516745df251c69c7d6a599bc2b",
+      "pinned_at": "2026-11-04T16:14:29Z"
     },
     {
       "function": "pthread_join",
@@ -458,6 +542,12 @@
       "pinned_at": "2026-10-25T18:10:00Z"
     },
     {
+      "function": "pthread_setspecific",
+      "module": "libc/threads.qv",
+      "contract_sha256": "b57219a4d59114d8398f2b957040cf208d5a09214f28a9fa01bab825218054dc",
+      "pinned_at": "2026-11-04T16:14:29Z"
+    },
+    {
       "function": "pthread_sigmask",
       "module": "libc/threads.qv",
       "contract_sha256": "c699abe5a9342edd5307237672ae2370391f84742ede19c5070460cec663e1e4",
@@ -480,6 +570,12 @@
       "module": "libc/unistd.qv",
       "contract_sha256": "807198c5edc86ea3d3a87eadbc52b522566a8770ade01c9db0e18935fe69ec6b",
       "pinned_at": "2026-10-25T18:10:00Z"
+    },
+    {
+      "function": "readlink",
+      "module": "libc/unistd.qv",
+      "contract_sha256": "794b213bd0dab44966d96e81c3759cfb3032164f2f34cf62a7c906fe105c3c7c",
+      "pinned_at": "2026-11-04T16:14:29Z"
     },
     {
       "function": "recv",
@@ -530,6 +626,12 @@
       "pinned_at": "2026-10-25T18:10:00Z"
     },
     {
+      "function": "sendmsg",
+      "module": "libc/socket.qv",
+      "contract_sha256": "4813ed9c87bb65620b0de1cf1e83a002bcb5dc881692846d6c17f72664c1a168",
+      "pinned_at": "2026-11-04T16:14:29Z"
+    },
+    {
       "function": "setrlimit",
       "module": "libc/process.qv",
       "contract_sha256": "0c3eb64358b32dcf5080db856296c566855e43e5b6314c026861fa6a598f2b55",
@@ -548,10 +650,22 @@
       "pinned_at": "2026-10-25T18:10:00Z"
     },
     {
+      "function": "shutdown",
+      "module": "libc/socket.qv",
+      "contract_sha256": "7ef3cc13f06c8e4f18413fd2f2cd9957e7a2357a913646742ca2dac9db037499",
+      "pinned_at": "2026-11-04T16:14:29Z"
+    },
+    {
       "function": "sigaddset",
       "module": "libc/threads.qv",
       "contract_sha256": "9d834776a9cbaca2801a9085ce69b17b11f7753b64c8978711b883f48d8d22bb",
       "pinned_at": "2026-10-25T18:10:00Z"
+    },
+    {
+      "function": "sigdelset",
+      "module": "libc/threads.qv",
+      "contract_sha256": "3c0f6290a52f4517a007b8f38891f1f2d48acaeacb76b818ed684663ea0556ed",
+      "pinned_at": "2026-11-04T16:14:29Z"
     },
     {
       "function": "sigemptyset",
@@ -590,6 +704,12 @@
       "pinned_at": "2026-10-25T18:10:00Z"
     },
     {
+      "function": "sqrt",
+      "module": "libc/math.qv",
+      "contract_sha256": "65eeae10ea881017c4b117a84d7d65eacecf8039112e9286719691812105ea3f",
+      "pinned_at": "2026-11-04T16:14:29Z"
+    },
+    {
       "function": "srand",
       "module": "libc/stdlib.qv",
       "contract_sha256": "560f7b7f86f425094587a0c95f021bca9b14c353ec4f5d075cc16a0d995ecbc7",
@@ -612,6 +732,12 @@
       "module": "libc/string.qv",
       "contract_sha256": "07359f5076a948371c612eb159ce282cbb235e6af6d7ca317283793c6115e219",
       "pinned_at": "2026-10-25T18:10:00Z"
+    },
+    {
+      "function": "strcat",
+      "module": "libc/stdlib.qv",
+      "contract_sha256": "3e62783e133e633c0afb0eb70b073c3d06fcbcea221de34f1ca4d7a46e86a66a",
+      "pinned_at": "2026-11-04T16:14:29Z"
     },
     {
       "function": "strchr",
@@ -756,6 +882,18 @@
       "module": "libc/time.qv",
       "contract_sha256": "f3a3c13c3e507ccdab43747f545b7a7a674ed7e71b6d1fe194088592e78136e7",
       "pinned_at": "2026-10-25T18:10:00Z"
+    },
+    {
+      "function": "tolower",
+      "module": "libc/stdlib.qv",
+      "contract_sha256": "b4b0ee9e278b6a0b00e02f1ce370a8fb01a29fe9aa2146946fc03aa56759e0ca",
+      "pinned_at": "2026-11-04T16:14:29Z"
+    },
+    {
+      "function": "toupper",
+      "module": "libc/stdlib.qv",
+      "contract_sha256": "18b0b8c77f5010df96b65ee94c31c4605594944b9e3b38ba1493de01e596c611",
+      "pinned_at": "2026-11-04T16:14:29Z"
     },
     {
       "function": "umask",

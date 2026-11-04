@@ -92,3 +92,67 @@ contract {
     ensures normal resource_borrowed(rlimits);
     ensures normal resource_return_none();
 };
+
+// ## Card LIBC-GAP-DECLARATIONS: `getpwnam_r` and `getgrnam_r`
+//
+// TRUSTED ASSUMPTIONS (trust boundary 28), read from the prototypes on the
+// audited host (`/usr/include/pwd.h:153-157`, `/usr/include/grp.h:150-154`):
+//
+//   extern int getpwnam_r (const char *__restrict __name,
+//                          struct passwd *__restrict __resultbuf,
+//                          char *__restrict __buffer, size_t __buflen,
+//                          struct passwd **__restrict __result)
+//     __nonnull ((1, 2, 3, 5));
+//   extern int getgrnam_r (const char *__restrict __name,
+//                          struct group *__restrict __resultbuf,
+//                          char *__restrict __buffer, size_t __buflen,
+//                          struct group **__restrict __result)
+//     __nonnull ((1, 2, 3, 5));
+//
+// POSIX getpwnam_r()/getgrnam_r(): the entry is written into the caller's
+// record `__resultbuf`, and its strings into the caller's `__buffer`.
+// `*__result` is set to `__resultbuf` on success and to NULL when the entry
+// is not found or on error. Two statements follow, and both are needed:
+//
+// * The slot `__result` receives a pointer derived from `__resultbuf`, owning
+//   nothing, or NULL: `resource_out_derived(result, resultbuf, nonnull)`
+//   (contract specification C04.16; `nonnull` is the slot itself, which
+//   `__nonnull ((5))` requires).
+// * The record keeps pointers into `__buffer` (`pw_name`, `pw_dir`,
+//   `gr_name`, `gr_mem`, ...): `resource_retained_by(buffer, resultbuf)`
+//   (C04.14). The caller keeps custody of the buffer, but releasing it while
+//   the record still lives leaves the record dangling, so rule 12t refuses
+//   that release (`retention-released-while-held`), never `Safe` and never
+//   accused.
+//
+// Nothing is allocated, freed or taken into custody. The result is a
+// status. Nothing here says anything about `ERANGE`, which entry is found or
+// `errno`.
+
+extern fn getpwnam_r(name: ptr<const, u8>, resultbuf: ptr<mut, u8>, buffer: ptr<mut, u8>, buflen: usize, result: ptr<mut, ptr<mut, u8>>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(name);
+    ensures normal resource_borrowed(resultbuf);
+    ensures normal resource_borrowed(buffer);
+    ensures normal resource_borrowed(buflen);
+    ensures normal resource_borrowed(result);
+    ensures normal resource_retained_by(buffer, resultbuf);
+    ensures normal resource_out_derived(result, resultbuf, nonnull);
+    ensures normal resource_return_none();
+};
+
+extern fn getgrnam_r(name: ptr<const, u8>, resultbuf: ptr<mut, u8>, buffer: ptr<mut, u8>, buflen: usize, result: ptr<mut, ptr<mut, u8>>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(name);
+    ensures normal resource_borrowed(resultbuf);
+    ensures normal resource_borrowed(buffer);
+    ensures normal resource_borrowed(buflen);
+    ensures normal resource_borrowed(result);
+    ensures normal resource_retained_by(buffer, resultbuf);
+    ensures normal resource_out_derived(result, resultbuf, nonnull);
+    ensures normal resource_return_none();
+};

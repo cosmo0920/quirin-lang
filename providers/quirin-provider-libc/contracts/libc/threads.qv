@@ -54,7 +54,9 @@ module contract;
 //   recorded in the card report).
 //   `pthread_setspecific` RETAINS its
 //   pointer argument past the call, and `pthread_getspecific` returns that
-//   retained pointer -- an alias this vocabulary cannot state.
+//   retained pointer -- an alias this vocabulary cannot state. (Card
+//   LIBC-GAP-DECLARATIONS declares both at the end of this module: the
+//   retention as C04.14's `global` holder, and the result as owning nothing.)
 //   (`cnd_timedwait`, `pthread_sigmask` spell `T *__restrict p`, which this
 //   card's reader withdrew; card W43-LIBC-RESTRICT-PROTOTYPES declares both at
 //   the end of this module.)
@@ -274,5 +276,90 @@ extern fn thrd_current() -> u64
 contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
+    ensures normal resource_return_none();
+};
+
+// ## Card LIBC-GAP-DECLARATIONS: `sigdelset`, `pthread_cancel`, thread-specific data
+//
+// TRUSTED ASSUMPTIONS (trust boundary 28), read from the prototypes on the
+// audited host (`/usr/include/signal.h:208`, `/usr/include/pthread.h:528`,
+// `:1305-1310`):
+//
+//   extern int sigdelset (sigset_t *__set, int __signo) __THROW __nonnull ((1));
+//   extern int pthread_cancel (pthread_t __th);
+//   extern void *pthread_getspecific (pthread_key_t __key) __THROW;
+//   extern int pthread_setspecific (pthread_key_t __key,
+//                                   const void *__pointer)
+//     __THROW __attr_access_none (2);
+//
+// `pthread_t` is `unsigned long int` (`u64`); `pthread_key_t` is `unsigned
+// int` (`u32`, `bits/pthreadtypes.h:49`).
+//
+// `sigdelset` is `sigaddset` above with the member removed (POSIX
+// sigdelset()): a value write into the caller's signal set.
+//
+// `pthread_cancel` requests cancellation of the thread `__th` names (POSIX
+// pthread_cancel()). It takes a scalar and returns a status; nothing of the
+// caller's is allocated, freed or retained, which is `pthread_kill`'s
+// statement above. What the cancelled thread's own frames abandon is that
+// thread's, and nothing here says anything about it.
+//
+// `pthread_setspecific(key, value)` associates `value` with `key` in the
+// calling thread (POSIX pthread_setspecific(): "associate a thread-specific
+// value with a key"). The value is kept past the call in thread-specific
+// storage that no caller object denotes, and the call takes no custody: the
+// caller keeps whatever obligation `value` carries. That is exactly
+// `resource_retained_by(pointer, global)` (contract specification C04.14):
+// the declaration is withheld from the function map, and the route-G
+// consumer (rule 12t) decides the retention only for static storage (a
+// string literal). A heap object, a caller's object or any other actual is
+// `retention-undecided`, never `Safe`. A key's destructor may later release
+// the value at thread exit; no declaration here states that, so nothing is
+// discharged by it.
+//
+// `pthread_getspecific(key)` returns the value the calling thread last
+// associated with `key`, or NULL (POSIX). It returns no fresh custody: the
+// caller does not own the result through this call, so the result mode is
+// `resource_return_none()`, the `gai_strerror`/`__errno_location` statement.
+// The relation to the object an earlier `pthread_setspecific` retained is NOT
+// stated. The result therefore carries no identity on route G: a release of
+// it, a store of it into a custody position or any other custody use is
+// refused as an unresolved identity, never credited to an obligation and
+// never `Safe` (`libc_gap_declarations.rs` pins `free(pthread_getspecific(k))`
+// as refused). A retained-result relation stays open
+// (W43-RESULT-ALIAS-CONDITIONAL-AND-RETAINED, W46-FLUENT-TLS-RETAINED-RESULT).
+
+extern fn sigdelset(set: ptr<mut, u8>, signo: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(set);
+    ensures normal resource_borrowed(signo);
+    ensures normal resource_return_none();
+};
+
+extern fn pthread_cancel(thread: u64) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(thread);
+    ensures normal resource_return_none();
+};
+
+extern fn pthread_setspecific(key: u32, pointer: ptr<const, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(key);
+    ensures normal resource_borrowed(pointer);
+    ensures normal resource_retained_by(pointer, global);
+    ensures normal resource_return_none();
+};
+
+extern fn pthread_getspecific(key: u32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(key);
     ensures normal resource_return_none();
 };

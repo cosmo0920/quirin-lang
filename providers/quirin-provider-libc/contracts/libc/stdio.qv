@@ -305,3 +305,31 @@ contract {
     ensures normal resource_borrowed(arg);
     ensures normal resource_return_none();
 };
+
+// ## Card LIBC-GAP-DECLARATIONS: `fread`
+//
+// A TRUSTED ASSUMPTION, read from `/usr/include/stdio.h:732-734` on the
+// audited host:
+//
+//   extern size_t fread (void *__restrict __ptr, size_t __size,
+//                        size_t __n, FILE *__restrict __stream) __wur
+//     __nonnull((4));
+//
+// `fread` reads up to `__n` elements of `__size` bytes from the stream into
+// the caller's buffer and returns how many it read (C11 7.21.8.1). It is
+// `fflush`'s statement: the stream is USED, not opened or closed, and the
+// buffer is written, not retained. A stream (`stream` kind, `fopen` above)
+// handed to it is a use, so a use after its `fclose` is a `use_after_release`
+// candidate (contract specification C04.6 rule 6). Nothing here says anything
+// about short reads, end of file, errors or `errno`.
+
+extern fn fread(ptr: ptr<mut, u8>, size: usize, n: usize, stream: ptr<mut, u8>) -> usize
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(ptr);
+    ensures normal resource_borrowed(size);
+    ensures normal resource_borrowed(n);
+    ensures normal resource_borrowed(stream);
+    ensures normal resource_return_none();
+};
