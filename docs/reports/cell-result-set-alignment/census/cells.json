@@ -1,6 +1,6 @@
 {
  "card": "CELL-RESULT-SET-ALIGNMENT",
- "note": "The cells the inventory covers, the records and members the reader resolves, and each creator's live set with where it comes from. A `declared` or `pin-derived` set names a tracked contract file and the exact clause text; the inventory parses the set from that text. A `MISSING` set names what no contract states and the set this card proposes for it; nothing is read from a MISSING set but the census class, marked as resting on the proposal.",
+ "note": "The cells the inventory covers, the records and members the reader resolves, and each creator's live set with where it comes from. A `declared` or `pin-derived` set names a tracked contract file and the exact clause text; the inventory parses the set from that text. A `MISSING` set names what no contract states and the set this card proposes for it; nothing is read from a MISSING set but the census class, marked as resting on the proposal. The `class_posix` column of every end test is the same classification under POSIX's [0, MAX] (USER DECISION 2026-11-04, both columns kept).",
  "trees": {
   "fluent-bit": {
    "scan": [
@@ -114,14 +114,20 @@
  ],
  "creators": {
   "mk_event_channel_create": {
-   "status": "MISSING",
-   "why": "The cells receive the values the creator stores through its slots `*r_fd` / `*w_fd` on `#result == 0` (event_loop.qv D3). On every Fluent Bit build (epoll) those are `pipe`'s descriptors. libc/result_sets.qv declares `pipe`'s RESULT (`-1 | 0`) only; no contract states the values `pipe` writes to `pipedes[0..1]`, and no form of G05j states an out slot's value set. monkey/result_range.qv's pin-derived `nonnull_result_range(-1, 0)` is the creator's status result, not the descriptors.",
-   "proposed": "[0, MAX] (POSIX.1-2017 pipe(): fildes[0] and fildes[1] are file descriptors, non-negative)"
+   "status": "declared",
+   "why": "The cell receives the descriptor `pipe` stored at `pipedes[0|1]` on `#result == 0` (epoll's `_mk_event_channel_create`: `*r_fd = fd[0]` after `ret = pipe(fd); if (ret < 0) return ret;`; flb_pipe.c: `return pipe(pipefd);`). The C library's written set is declared (USER DECISIONS 2026-11-04, \"Write [1, MAX]\": a declared policy, not POSIX's [0, MAX]). The creator's own pin-derived written set is follow-up CELL-RESULT-SET-WRITTEN-SET-DERIVATION; until it lands the creation check refuses (descriptor-cell-live-set-unproved).",
+   "contract": {
+    "file": "providers/quirin-provider-libc/contracts/libc/result_sets.qv",
+    "clause": "ensures normal written_set(pipedes[0], [1, MAX]) when #result == 0;"
+   }
   },
   "flb_pipe_create": {
-   "status": "MISSING",
-   "why": "flb_pipe.c forwards `pipe(pipefd)` (Linux). Its slot values are `pipe`'s descriptors; no contract states them (as for mk_event_channel_create).",
-   "proposed": "[0, MAX] (POSIX.1-2017 pipe())"
+   "status": "declared",
+   "why": "The cell receives the descriptor `pipe` stored at `pipedes[0|1]` on `#result == 0` (epoll's `_mk_event_channel_create`: `*r_fd = fd[0]` after `ret = pipe(fd); if (ret < 0) return ret;`; flb_pipe.c: `return pipe(pipefd);`). The C library's written set is declared (USER DECISIONS 2026-11-04, \"Write [1, MAX]\": a declared policy, not POSIX's [0, MAX]). The creator's own pin-derived written set is follow-up CELL-RESULT-SET-WRITTEN-SET-DERIVATION; until it lands the creation check refuses (descriptor-cell-live-set-unproved).",
+   "contract": {
+    "file": "providers/quirin-provider-libc/contracts/libc/result_sets.qv",
+    "clause": "ensures normal written_set(pipedes[0], [1, MAX]) when #result == 0;"
+   }
   },
   "mk_event_timeout_create": {
    "status": "MISSING",

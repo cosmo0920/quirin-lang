@@ -186,6 +186,23 @@ def parse_set(text):
 
 
 UNIVERSE = [(INT_MIN, INT_MAX)]
+# The contrast column (USER DECISION 2026-11-04 "Write [1, MAX]" keeps POSIX's
+# set beside the declared one): POSIX's lowest free descriptor may be 0.
+POSIX_LIVE = [(0, INT_MAX)]
+TEARDOWN = "providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv"
+
+
+def declared_sets(record, path):
+    """The live_set / absent_set a production per-end clause declares for
+    the cell, read from the contract text (None when it states none)."""
+    text = (REPO / TEARDOWN).read_text()
+    m = re.search(r"quant cell #\w+: " + re.escape(record) + r"\." + re.escape(path)
+                  + r" \|-> #fresh\(descriptor\) when [^;]*?(?: live_set\(([^;]*?)\))?(?: absent_set\(([^;]*?)\))?;", text)
+    if not m or (m.group(1) is None and m.group(2) is None):
+        return None
+    return {"live_set": show(parse_set(m.group(1))) if m.group(1) else None,
+            "absent_set": show(parse_set(m.group(2))) if m.group(2) else None,
+            "contract": TEARDOWN}
 
 
 def test_set(op, k):
@@ -551,7 +568,7 @@ def creator_sets(spec, problems):
             if clause not in text:
                 problems.append(f"creator {name}: clause not in {entry['contract']['file']}: {clause}")
                 continue
-            m = re.search(r"result_set\((.*)\)|nonnull_result_range\((-?\d+),\s*(-?\d+|MAX)\)|slot_set\(\w+(?:\[\d\])?,\s*(.*)\)", clause)
+            m = re.search(r"\bresult_set\((.*)\)|nonnull_result_range\((-?\d+),\s*(-?\d+|MAX)\)|written_set\(\w+(?:\[\d\])?,\s*(.*)\) when", clause)
             if m.group(1) is not None:
                 whole = parse_set(m.group(1))
             elif m.group(4) is not None:
@@ -600,7 +617,9 @@ def reading(op, k, live, absent):
     true_set = test_set(op, k)
     false_set = minus(UNIVERSE, true_set)
     live_edge, dead_edge = (true_set, false_set) if op in (">", ">=", "!=") else (false_set, true_set)
-    dead = "decided" if (not inter(dead_edge, live) and subset(dead_edge, absent)) else "NOT decided"
+    # Over the cell's values (live | absent), as rule 38f (6) reads it.
+    dead = "decided" if (not inter(dead_edge, live)
+                         and subset(inter(dead_edge, merge(live + absent)), absent)) else "NOT decided"
     alive = "decided" if not inter(live_edge, absent) else "NOT decided"
     return {"dead_edge": show(dead_edge), "dead_edge_reads_absent": dead,
             "live_edge": show(live_edge), "live_edge_reads_live": alive}
@@ -673,6 +692,16 @@ def build(roots, write):
             absent = merge([(v, v) for v in {st["value"] for st in stores}])
             cell_out["absent_stores"] = stores
             cell_out["absent_set"] = show(absent)
+            # The production declaration's sets, checked against the census:
+            # every absent store inside the declared absent set, every
+            # creator's live set inside the declared live set.
+            sets_declared = declared_sets(cell["record"], cell["path"])
+            if sets_declared:
+                cell_out["declared"] = sets_declared
+                if sets_declared["absent_set"] and not subset(absent, parse_set(sets_declared["absent_set"])):
+                    problems.append(f"{revision}: {cell['record']}.{cell['path']}: absent stores {show(absent)} outside the declared {sets_declared['absent_set']}")
+                if sets_declared["live_set"] and not subset(live, parse_set(sets_declared["live_set"])):
+                    problems.append(f"{revision}: {cell['record']}.{cell['path']}: creators' live set {show(live)} outside the declared {sets_declared['live_set']}")
             tests = []
             for s in rev["sites"]:
                 if "test" not in s or s["record"] != cell["record"] or s["path"] not in names:
@@ -686,8 +715,10 @@ def build(roots, write):
                                   "class": "witness", "why": witnesses[wkey]})
                     continue
                 cls, why = classify(op, k, live, absent)
+                posix_cls, posix_why = classify(op, k, POSIX_LIVE, absent)
                 t = {"site": f"{s['file']}:{s['line']}", "function": s["function"],
-                     "test": f"{s['path']} {op} {k}", "text": s["text"], "class": cls, "why": why}
+                     "test": f"{s['path']} {op} {k}", "text": s["text"], "class": cls, "why": why,
+                     "class_posix": posix_cls, "why_posix": posix_why}
                 if missing:
                     t["class_basis"] = "proposed live set (MISSING)"
                     t["reading"] = {"dead_edge_reads_absent": "NOT decided (live set MISSING)",
@@ -716,7 +747,15 @@ def main():
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--write", type=pathlib.Path)
     group.add_argument("--check", type=pathlib.Path)
+    parser.add_argument("--declarations", default=None,
+                        help="the per-end declarations to check (default: the production teardown_destroy.qv; the planned patch module for a patched tree)")
+    parser.add_argument("--annotations", default=None, help="the site readings (default: annotations.json)")
     args = parser.parse_args()
+    global TEARDOWN, ANNOTATIONS, CELLS
+    if args.declarations:
+        TEARDOWN = args.declarations
+    if args.annotations:
+        ANNOTATIONS = pathlib.Path(args.annotations)
     roots = [tuple(r.split("=", 1)) for r in args.root]
     result, problems = build(roots, args.write)
     rendered = json.dumps(result, indent=1, sort_keys=True) + "\n"
@@ -727,13 +766,15 @@ def main():
     for p in problems:
         print(p, file=sys.stderr)
     for rev in result["revisions"]:
-        tally = {}
+        tally, posix = {}, {}
         for cell in rev["cells"]:
             for t in cell["end_tests"]:
                 tally[t["class"]] = tally.get(t["class"], 0) + 1
+                if "class_posix" in t:
+                    posix[t["class_posix"]] = posix.get(t["class_posix"], 0) + 1
         missing = sum(1 for c in rev["cells"] if c["live_set"]["status"] == "MISSING")
         print(f"{rev['revision']}: {rev['scanned_files']} files, {len(rev['sites'])} sites, "
-              f"{len(rev['cells'])} cells ({missing} with a MISSING live set); end tests {tally}")
+              f"{len(rev['cells'])} cells ({missing} with a MISSING live set); end tests {tally}; against POSIX's [0, MAX] {posix}")
     print(f"{len(problems)} problem(s)")
     return 1 if problems else 0
 

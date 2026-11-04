@@ -1,0 +1,52 @@
+module contract;
+
+// PLANNED-FIX CONTRACTS: evidence for the user's patch, NOT IN FORCE.
+//
+// Card CELL-RESULT-SET-ALIGNMENT, brief steps 8-10. This module is on no load
+// path and no route reads it (the pinned trees 66910c10, 046accf6 and
+// 34155955 are unpatched: there calloc's 0 is the absent value, which this
+// module's `absent_set(-1)` would misstate). It is bound to the user's third
+// patch, private/patches/cosmo0920-align-the-return-values-checks-for-boundary-conditions.patch
+// (sha256 c7cd578b4757a8c5d6cb46f79661b6a70c2f5fc0b7691ceb7ed7d71ceceee385),
+// applied to upstream master 49592c4fd in a scratch copy only; its stores
+// census is census/inventory-patched.json over that tree. No patched route is
+// added (the user's call).
+//
+// The format follows the patch: `FLB_UNINITIALIZED_SOCKET` (-1) stored after
+// each holder's allocation and after each close, live tests `> 0`.
+// USER DECISIONS 2026-11-04 (verbatim): "Write [1, MAX]"; "(α) live_set
+// suffix"; "Accept the leak" (patch v3 natively leaves descriptor 0 held by
+// ch_data unclosed when stdin is closed; a closed stdin is outside the
+// declared policy). The live set [1, MAX] is that declared policy, not
+// POSIX's [0, MAX].
+//
+// `flb_config` is declared here per end (its production text stays withheld,
+// CELL-PROTOCOL-NONCELL-ACTUAL-REACHES-RECORD).
+
+extern fn planned_patch_v3_ends(config: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(config);
+    ensures normal resource_return_none();
+    quant cell #o: flb_output_instance.ch_events[0] |-> #fresh(descriptor) when #o.ch_events[0] > 0 live_set([1, MAX]) absent_set(-1);
+    quant cell #o: flb_output_instance.ch_events[1] |-> #fresh(descriptor) when #o.ch_events[1] > 0 live_set([1, MAX]) absent_set(-1);
+    quant cell #o: flb_output_instance.event.fd |-> #same(ch_events[0]) when #o.ch_events[0] > 0;
+    quant cell #i: flb_input_instance.ch_events[0] |-> #fresh(descriptor) when #i.ch_events[0] > 0 live_set([1, MAX]) absent_set(-1);
+    quant cell #i: flb_input_instance.ch_events[1] |-> #fresh(descriptor) when #i.ch_events[1] > 0 live_set([1, MAX]) absent_set(-1);
+    quant cell #i: flb_input_instance.event.fd |-> #same(ch_events[0]) when #i.ch_events[0] > 0;
+    quant cell #i: flb_input_instance.ingress_queue_channels[0] |-> #fresh(descriptor) when #i.ingress_queue_channels[0] > 0 live_set([1, MAX]) absent_set(-1);
+    quant cell #i: flb_input_instance.ingress_queue_channels[1] |-> #fresh(descriptor) when #i.ingress_queue_channels[1] > 0 live_set([1, MAX]) absent_set(-1);
+    quant cell #t: flb_input_thread_instance.ch_parent_events[0] |-> #fresh(descriptor) when #t.ch_parent_events[0] > 0 live_set([1, MAX]) absent_set(-1);
+    quant cell #t: flb_input_thread_instance.ch_parent_events[1] |-> #fresh(descriptor) when #t.ch_parent_events[1] > 0 live_set([1, MAX]) absent_set(-1);
+    quant cell #t: flb_input_thread_instance.event.fd |-> #same(ch_parent_events[0]) when #t.ch_parent_events[0] > 0;
+    quant cell #t: flb_input_thread_instance.ch_thread_events[0] |-> #fresh(descriptor) when #t.ch_thread_events[0] > 0 live_set([1, MAX]) absent_set(-1);
+    quant cell #t: flb_input_thread_instance.ch_thread_events[1] |-> #fresh(descriptor) when #t.ch_thread_events[1] > 0 live_set([1, MAX]) absent_set(-1);
+    quant cell #t: flb_input_thread_instance.event_local.fd |-> #same(ch_thread_events[0]) when #t.ch_thread_events[0] > 0;
+    quant cell #c: flb_config.ch_data[0] |-> #fresh(descriptor) when #c.ch_data[0] > 0 live_set([1, MAX]) absent_set(-1);
+    quant cell #c: flb_config.ch_data[1] |-> #fresh(descriptor) when #c.ch_data[1] > 0 live_set([1, MAX]) absent_set(-1);
+    quant cell #c: flb_config.ch_manager[0] |-> #fresh(descriptor) when #c.ch_manager[0] > 0 live_set([1, MAX]) absent_set(-1);
+    quant cell #c: flb_config.ch_manager[1] |-> #fresh(descriptor) when #c.ch_manager[1] > 0 live_set([1, MAX]) absent_set(-1);
+    quant cell #c: flb_config.ch_event.fd |-> #same(ch_manager[0]) when #c.ch_manager[0] > 0;
+    quant cell #c: flb_config.ch_notif[0] |-> #fresh(descriptor) when #c.ch_notif[0] > 0 live_set([1, MAX]) absent_set(-1);
+    quant cell #c: flb_config.ch_notif[1] |-> #fresh(descriptor) when #c.ch_notif[1] > 0 live_set([1, MAX]) absent_set(-1);
+};

@@ -352,3 +352,40 @@ fn the_loader_refuses_inconsistent_sets() {
         .contains("quant-cell-guard")
     );
 }
+
+/// The planned-fix declarations for the user's third patch load, held off
+/// every route (they are read only here): every end is a per-end `> 0`
+/// sentinel with `live_set([1, MAX])` and `absent_set(-1)`, `flb_config`'s
+/// included.
+#[test]
+fn the_planned_patch_declarations_load_as_per_end_sentinels() {
+    const PLANNED: &str = include_str!(
+        "../../../docs/reports/cell-result-set-alignment/planned-contracts/teardown_destroy_patch_v3.qv"
+    );
+    let sources = BTreeMap::from([("planned.qv".to_owned(), PLANNED.to_owned())]);
+    let contracts = load_resource_contract_sources(&sources).expect("the planned module loads");
+    let protocols = contracts.cell_protocols();
+    let records = protocols.keys().cloned().collect::<Vec<_>>();
+    assert_eq!(
+        records,
+        [
+            "flb_config",
+            "flb_input_instance",
+            "flb_input_thread_instance",
+            "flb_output_instance"
+        ]
+    );
+    let ends = protocols
+        .values()
+        .flat_map(|(_, groups)| groups)
+        .collect::<Vec<_>>();
+    assert_eq!(ends.len(), 16);
+    for end in ends {
+        assert!(end.per_end(), "{end:?}");
+        assert_eq!(
+            end.live_set.as_deref(),
+            Some(&[(1, i64::from(i32::MAX))][..])
+        );
+        assert_eq!(end.absent_set.as_deref(), Some(&[(-1, -1)][..]));
+    }
+}
