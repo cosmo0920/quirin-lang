@@ -1,0 +1,52 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "LOG-PRINT-BODY-CONTRACTS",
+ "base": "945c0db1b",
+ "measured_tip": "fdb08b8c2",
+ "increment_paragraph": "**LOG-PRINT-BODY-CONTRACTS** (USER REQUEST 2026-11-05, verbatim: \"Now, we're still needed to fill the gap of the missing contracts.\"; card 4 of the contract-gap queue): `cmt_log_print` (cmetrics, 61 sites in 24 functions) and `cio_log_print` (chunkio, 55 in 23), reported uncontracted by the user's `quirin-audit current` run at Fluent Bit 046accf6 although their bodies are in the run. Diagnosis (committed first): no summary because W4 summaries stay in their unit (every caller is in another unit) and both home rows are Unknown at 046accf6 and 66910c10 on the context's `void *`-to-record binding, the member reads in the guards and, decisively, the indirect call `ctx->log_cb(ctx, level, file, line, buf)` (`cmt_log.c:56`, `cio_log.c:52`); no `va_list`, `vsnprintf` or global refusal. Neither callee is the only uncontracted callee of any function (the census's 13 and 4 are functions blocked only by uncontracted calls, each with another uncontracted callee). Change: two pinned resource-v1 declarations (`qcore-provider-cmetrics` `cmetrics/logging.qv`, `qcore-provider-chunkio` `chunkio/logging.qv`): the five fixed parameters `resource_borrowed`, `resource_callback_member_invoked(ctx, cmt.log_cb | cio_options.log_cb, ctx, level, file, line, _)` and `resource_return_none()`, read from bodies identical at 046accf6, 66910c10 and 34155955, pinned at 046accf6 and 66910c10, declared assumptions (rule 13i). The loader refuses a variadic tail beside a callback clause, so no tail is declared and a call with a tail actual keeps the arity refusal (VARIADIC-TAIL-BESIDE-CALLBACK-CLAUSES). Their fixture run found a fail-closed defect in rule 12n, repaired here: a spelling containing `(*)` was read as a function pointer, and Clang spells chunkio's setter formal `void (*log_cb)` (a `void *`) as `void (*)`, so the member closed empty where it must be open; a function pointer now needs a parameter list after `(*)` (Lean `QCore.MemberFormalType`; rule 12n amended). Nothing is decided today: on every route the member pre-pass leaves 36 units unread, which opens every member (S3-PREPASS-UNREAD-GRAPH-ISOLATION), so each call stays refused as `callback-member-open` or the arity refusal. Predicted: no status move on corpus, system or slice; on the `current` run both callees leave the uncontracted list (2,790 -> 2,788 callees, 7,264 -> 7,217 pairs) and 17 functions leave the only-uncontracted set (508 -> 491) with no status change. Report: docs/reports/log-print-body-contracts/README.md.",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "LOG-PRINT-BODY-CONTRACTS",
+   "operation": "register",
+   "title": "Contract the two log printers the current route reports as uncontracted although their bodies are in the run",
+   "text": "Registered by its own card at landing (USER REQUEST 2026-11-05, verbatim: \"Now, we're still needed to fill the gap of the missing contracts.\"; card 4 of the contract-gap queue); retired by the next entry.",
+   "source": "docs/reports/log-print-body-contracts/README.md",
+   "recorded_by": "LOG-PRINT-BODY-CONTRACTS"
+  },
+  {
+   "id": "LOG-PRINT-BODY-CONTRACTS",
+   "operation": "retire",
+   "why": "DISCHARGED by LOG-PRINT-BODY-CONTRACTS (docs/reports/log-print-body-contracts/README.md): the per-callee, per-pin diagnosis of cmt_log_print and cio_log_print (no cross-unit summary; Unknown home rows on the indirect call through the context's log callback member), two pinned resource-v1 declarations stating the fixed parameters borrowed and the callback member invoked, and the rule 12n repair of the function-pointer spelling test with fixtures and Lean QCore.MemberFormalType. What stays open is tracked by VARIADIC-TAIL-BESIDE-CALLBACK-CLAUSES, MEMBER-CLOSURE-VOID-POINTER-SETTER-FORMAL (new) and S3-PREPASS-UNREAD-GRAPH-ISOLATION, W46-METRIC-TRACE-CALLBACK-PREMISES and W46-FLUENT-METADATA-CALLBACK-EFFECT (amended).",
+   "source": "docs/reports/log-print-body-contracts/README.md"
+  },
+  {
+   "id": "VARIADIC-TAIL-BESIDE-CALLBACK-CLAUSES",
+   "operation": "register",
+   "title": "A variadic callee that invokes a callback cannot state its tail: the loader refuses a variadic tail beside a callback clause",
+   "text": "Registered by LOG-PRINT-BODY-CONTRACTS. The resource loader's retaining branch (contract_loader.rs) refuses `resource_variadic_borrowed_tail()` and `resource_variadic_data_tail()` beside any callback clause (\"a retention clause stands only beside plain parameter and result predicates\"). cmt_log_print and cio_log_print render their tail with vsnprintf into a local buffer and hand only that buffer to the context's log callback, so the truthful declaration has both clauses; the shipped ones state the five fixed parameters only, the refusing direction, and a call passing an actual after `fmt` keeps \"arguments beyond the declared parameters of `cmt_log_print` are outside the resource projection\". Size by source reading at 046accf6: 18 of 61 cmt_log_print sites and 38 chunkio log calls pass a tail actual. DISCHARGE: admit the tail clause beside member and synchronous invocations in the loader; apply rule 11w's per-site tail reading to such a declaration in route G (legacy_retained_by.rs), never dropping an excess actual; Lean parity (a borrowed tail composed with an identity callback invocation is the identity on the caller's state); controls and a measured re-pin of the two declarations.",
+   "source": "docs/reports/log-print-body-contracts/README.md",
+   "recorded_by": "LOG-PRINT-BODY-CONTRACTS"
+  },
+  {
+   "id": "MEMBER-CLOSURE-VOID-POINTER-SETTER-FORMAL",
+   "operation": "register",
+   "title": "A callback member stored from a setter's void * formal stays open (chunkio's cio_set_log_callback), and its candidates have no contracts",
+   "text": "Registered by LOG-PRINT-BODY-CONTRACTS. Rule 12n opens a member stored from a formal that is not a function pointer. chunkio's `void cio_set_log_callback(struct cio_ctx *ctx, void (*log_cb))` (`lib/chunkio/src/chunkio.c:316-319`, identical at 046accf6, 66910c10 and 34155955) stores its `void *` formal into `cio_options.log_cb`, so the run's set is open and every call of cio_log_print under its declaration is refused (`callback-member-open`). (Before this card's repair the spelling `void (*)` was read as a function pointer and closed the member.) The setter's only call, cio_create's `cio_set_log_callback(ctx, options->log_cb)` (chunkio.c:148), passes the member itself; the other stores are `opts.log_cb = log_cb;` in src/flb_storage.c:709, src/flb_fstore.c:492 and lib/chunkio/tools/cio.c:598 (three static functions named `log_cb`) and a null. DISCHARGE: forward a non-function formal's values soundly (every actual at that position of every call, with the address-taken rule, never only function-pointer-typed ones), Lean parity, controls; resource-v1 contracts for the three static `log_cb` candidates read from their bodies (the two Fluent Bit ones only log `str` and return 0); measured after S3-PREPASS-UNREAD-GRAPH-ISOLATION closes the run's sets.",
+   "source": "docs/reports/log-print-body-contracts/README.md",
+   "recorded_by": "LOG-PRINT-BODY-CONTRACTS"
+  },
+  {
+   "id": "W46-METRIC-TRACE-CALLBACK-PREMISES",
+   "operation": "amend",
+   "text": "AMENDED (LOG-PRINT-BODY-CONTRACTS, 2026-11-05): cmt_log_print's callback effect is now stated, not premised: `resource_callback_member_invoked(ctx, cmt.log_cb, ctx, level, file, line, _)` in qcore-provider-cmetrics `cmetrics/logging.qv`, pinned at 046accf6 and 66910c10, decided by rule 12n over the run's closed set (no unit stores into cmt.log_cb at the three pins). On the user's current run it has 61 sites in 24 functions. It decides nothing yet: every member is open on every route for S3-PREPASS-UNREAD-GRAPH-ISOLATION's 36 unread units, and the tail form is VARIADIC-TAIL-BESIDE-CALLBACK-CLAUSES. The cmetrics half of the discharge is those two; the ctr_mpack_consume_* half is unchanged.",
+   "source": "docs/reports/log-print-body-contracts/README.md"
+  },
+  {
+   "id": "W46-FLUENT-METADATA-CALLBACK-EFFECT",
+   "operation": "amend",
+   "text": "AMENDED (LOG-PRINT-BODY-CONTRACTS, 2026-11-05): the chunkio log callback is now stated on cio_log_print (`resource_callback_member_invoked(ctx, cio_options.log_cb, ctx, level, file, line, _)`, qcore-provider-chunkio `chunkio/logging.qv`, pinned at 046accf6 and 66910c10). Its member set stays open: MEMBER-CLOSURE-VOID-POINTER-SETTER-FORMAL (the setter's `void *` formal and the three static `log_cb` candidates) and S3-PREPASS-UNREAD-GRAPH-ISOLATION.",
+   "source": "docs/reports/log-print-body-contracts/README.md"
+  }
+ ]
+}
