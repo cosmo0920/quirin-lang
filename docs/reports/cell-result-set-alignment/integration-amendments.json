@@ -1,0 +1,84 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "CELL-RESULT-SET-ALIGNMENT",
+ "base": "32169290d",
+ "measured_tip": "2bf298712",
+ "increment_paragraph": "**CELL-RESULT-SET-ALIGNMENT** (gateway rules 38e and 38f amended, grammar G05i and G05j amended, contract specification C04.6.3 and C09.4; USER REQUEST 2026-11-04, verbatim: \"We need to write down a prompt to align the result set for our contracts.\"; USER DECISIONS 2026-11-04, verbatim: \"Basically, Q1(a) and Q2(i) But we must not handle descriptor 0 as a valid handle. So, we need to exclude the 0 descriptor like: written_set(pipedes, [1, MAX]); a live descriptor is in [1, MAX]\", \"Write [1, MAX]\", \"(α) live_set suffix\", \"Accept the leak\"): every per-end sentinel may state `live_set(SET)` and `absent_set(SET)` (G05i, loader refusals `quant-cell-absent-set`/`-live-set`/`-set`), and one set reading serves every end guard (a dead edge decides \"absent\" only where it meets the live set nowhere, a live edge \"live\" only where it meets the absent set nowhere; the defaults, rule 38's premise and the guard's dead set, reproduce rule 38f case for case). A creation into a cell with a declared live set needs the creator's in-force pin-derived written set inside it (`descriptor-cell-live-set-unproved`); G05j gains `written_set(SLOT[K], SET) when #result == C` and `pipe` states `written_set(pipedes[0|1], [1, MAX]) when #result == 0`, a DECLARED POLICY, not POSIX's [0, MAX] (descriptor 0 observed natively on ch_data with stdin closed). The production per-end declarations state `live_set([1, MAX])` and their pinned absent sets (0; `0 | -1` for ingress_queue_channels), so every `> 0` dead edge decides \"absent\" under the bound: the `descriptor-cell-zero-undecided` releases of flb_output_instance_destroy, flb_input_instance_destroy and input_thread_instance_destroy go, each attributed to the bound (no status move predicted). Inventory census (`census/inventory.py`, 66910c10, 046accf6, 34155955, corpus Monkey; 40 cells): per Fluent Bit tree 17 exact, 6 wrong, 3 redundant against the declared sets, 24 wrong, 2 redundant against POSIX's; the patched-tree census over master 49592c4fd plus the user's third patch passes the planned-fix declarations (held off every route). Lean `QCore.CellResultSet` (7 theorems, vectors bound to Rust); fixtures `tests/cell_result_set_alignment.rs` (9) and eight per-end fixture vectors updated. The slot derivation is follow-up CELL-RESULT-SET-WRITTEN-SET-DERIVATION. Report: docs/reports/cell-result-set-alignment/README.md.",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "CELL-RESULT-SET-ALIGNMENT",
+   "operation": "register",
+   "title": "Align every descriptor cell's live and absent sets with the creators' result sets",
+   "text": "Registered by its own card at landing (USER REQUEST 2026-11-04, verbatim: \"We need to write down a prompt to align the result set for our contracts.\"); retired by the next entry.",
+   "source": "docs/reports/cell-result-set-alignment/README.md",
+   "recorded_by": "CELL-RESULT-SET-ALIGNMENT"
+  },
+  {
+   "id": "CELL-RESULT-SET-ALIGNMENT",
+   "operation": "retire",
+   "why": "DISCHARGED by CELL-RESULT-SET-ALIGNMENT (docs/reports/cell-result-set-alignment/README.md): live_set/absent_set on per-end sentinels with loader refusals, one set reading for every end guard in Rust and Lean (QCore.CellResultSet), the written_set clause with pipe's declared [1, MAX] (a declared policy), the production per-end declarations carrying their sets, the inventory census and the patched-tree census, pseudo contracts with the planned-fix sections for the user's third patch, and the planned-fix declarations held off every route. Left: the slot derivation (CELL-RESULT-SET-WRITTEN-SET-DERIVATION).",
+   "source": "docs/reports/cell-result-set-alignment/README.md"
+  },
+  {
+   "id": "CELL-RESULT-SET-DESCRIPTOR-ZERO-POLICY",
+   "operation": "register",
+   "title": "The declared live set [1, MAX] reads every `> 0` dead edge as absent, while descriptor 0 occurs natively",
+   "text": "Registered by CELL-RESULT-SET-ALIGNMENT. USER DECISIONS 2026-11-04 (verbatim): \"Basically, Q1(a) and Q2(i) But we must not handle descriptor 0 as a valid handle. So, we need to exclude the 0 descriptor like: written_set(pipedes, [1, MAX]); a live descriptor is in [1, MAX]\"; after the counter-evidence: \"Write [1, MAX]\"; on patch v3's native leak: \"Accept the leak\" (a closed stdin is outside the declared policy). libc/result_sets.qv's `written_set(pipedes[0|1], [1, MAX])` and teardown_destroy.qv's `live_set([1, MAX])` are a declared policy, not POSIX's set ([0, MAX]). Every reading the bound decides is attributed to it: the `> 0` dead edges of flb_output_instance_destroy (flb_output.c:615/:619), flb_input_instance_destroy (flb_input.c:1311/:1315/:1319/:1323) and input_thread_instance_destroy (flb_input_thread.c:210/:213/:218/:221) at 046accf6, whose `descriptor-cell-zero-undecided` releases (:638, :1353, :226) no longer refuse. Recorded evidence that descriptor 0 occurs: W43-DESC-FLB-CONFIG-DATA-PIPE-ZERO-GUARD; the pinned 046accf6 binary with stdin closed creates ch_data as pipe2([0, 3]) and never closes it (CELL-RESULT-SET-ALIGNMENT native trace, pinned-closed.strace); master 49592c4fd plus the user's third patch (sha256 c7cd578b...e385), stdin closed, -Y, two SIGHUPs, SIGTERM: fd 0 held by ch_data is never closed at either reload or exit (v3-closed.strace). DISCHARGE: a recorded user decision revisiting the bound, or a pinned tree whose every creator provably avoids descriptor 0 (for example a startup reservation of descriptors 0-2), with a measurement.",
+   "source": "docs/reports/cell-result-set-alignment/README.md",
+   "recorded_by": "CELL-RESULT-SET-ALIGNMENT"
+  },
+  {
+   "id": "CELL-RESULT-SET-WRITTEN-SET-DERIVATION",
+   "operation": "register",
+   "title": "Derive the creators' slot written sets at pin time (mk_event_channel_create r_fd/w_fd, flb_pipe_create pipefd[0..1])",
+   "text": "Registered by CELL-RESULT-SET-ALIGNMENT (USER DECISION 2026-11-04 Q1 (a) with its accepted refinements: per-element `written_set(SLOT[K], SET) when #result == C`, creator sets pinned as bounds declarations derived at `pin --bounds --derive-results`). Landed: the clause, its loader, pipe's declared written sets, the route's `FUNCTION#SLOT` reading in the result table and rule 38f's creation check. Not landed: the derivation itself (forwarding `return G(.., P, ..)`, a store `*P = fd[k]` after the C library call's failure exit `if (ret < 0) return ...`, with narrowing of the returned local), the pinned creator declarations in monkey/result_range.qv and the Fluent Bit bounds view, and their pins at 046accf6, 34155955 and 66910c10. Until it lands no creator's written set is in force and every creation into a cell with a declared live set refuses `descriptor-cell-live-set-unproved` (fail-closed; input_instance_channel_events_init's two creations). DISCHARGE: the derivation with fixtures, the pins with their lock records, Lean parity of the derivation rule, and a declared measurement.",
+   "source": "docs/reports/cell-result-set-alignment/README.md",
+   "recorded_by": "CELL-RESULT-SET-ALIGNMENT"
+  },
+  {
+   "id": "FLB-PATCH-WIN64-INT-SLOT-HAZARD",
+   "operation": "register",
+   "title": "Source reading: on Win64 the user's patch's -1 stores leave the upper half of intptr_t channel fields set before mk_event_channel_create writes them through int *",
+   "text": "Registered by CELL-RESULT-SET-ALIGNMENT (source reading only, nothing compiled or run on Windows, nothing filed upstream). On _WIN32 flb_pipefd_t is evutil_socket_t = intptr_t (flb_pipe.h:27-28, libevent event2/util.h:322-323); mk_event_channel_create takes `int *r_fd, int *w_fd` (mk_event.h:159-160) and the libevent backend writes 4 bytes (`*r_fd = fd[0]`, mk_event_libevent.c:432-433). After the patch's FLB_UNINITIALIZED_SOCKET (-1) store, a created end on little-endian Win64 reads as s - 2^32, negative: `> 0` is false and the end is never closed, `ch_notif[1] <= 0` skips the STARTED/FAILED notification, and flb_pipe_w on ch_manager[1] sends to an invalid socket (ch_notif, ch_manager, instance and output ch_events, ch_parent_events/ch_thread_events; ch_data and ingress_queue_channels are written full width by flb_pipe_create). Before the patch calloc's zero upper half hid the truncation. Not examined: MSVC's treatment of the intptr_t* to int* argument. DISCHARGE: a Windows build of the patch with the channel ends traced, or a recorded user decision.",
+   "source": "docs/reports/cell-result-set-alignment/README.md",
+   "recorded_by": "CELL-RESULT-SET-ALIGNMENT"
+  },
+  {
+   "id": "CELL-GUARD-DESCRIPTOR-ZERO-READ-AS-ABSENT",
+   "operation": "amend",
+   "text": "AMENDED (CELL-RESULT-SET-ALIGNMENT, 2026-11-04, docs/reports/cell-result-set-alignment/README.md): the inventory census classifies every end test against the contracts' sets with both columns: under the declared live set [1, MAX] (USER DECISION 2026-11-04, \"Write [1, MAX]\", a declared policy) 17 exact, 6 wrong (flb_config.c:607 ch_event.fd's -1 read as live; flb_engine.c:1497/:1563 shutdown_fd; flb_input.c:3145 fd_timer; flb_sp.c:670 window.fd; mk_server.c:585 timeout_fd) and 3 redundant per Fluent Bit tree; under POSIX's [0, MAX] the 16 per-end tests and flb_config.c:612 ch_data[0] stay WRONG (24 wrong, 2 redundant). Pseudo contracts with the user's third patch's planned-fix sections: docs/reports/cell-result-set-alignment/pseudo-contracts/. Source readings; nothing filed upstream.",
+   "source": "docs/reports/cell-result-set-alignment/README.md"
+  },
+  {
+   "id": "W43-DESC-FLB-CONFIG-DATA-PIPE-ZERO-GUARD",
+   "operation": "amend",
+   "text": "AMENDED (CELL-RESULT-SET-ALIGNMENT, 2026-11-04, docs/reports/cell-result-set-alignment/README.md): re-observed natively at 046accf6 (stdin closed, -Y, two SIGHUPs, SIGTERM): ch_data is pipe2([0, 3]) and is never closed at either reload or exit; no later channel takes descriptor 0 (it stays held). The same on master 49592c4fd. The user's second patch version (`>= 0`) closed it once; the third (`> 0`) leaves fd 0 unclosed again, which the user accepted (USER DECISION 2026-11-04, verbatim: \"Accept the leak\"). Under the declared live set [1, MAX] the analyzer reads these `> 0` dead edges as absent (CELL-RESULT-SET-DESCRIPTOR-ZERO-POLICY). Evidence only; nothing filed upstream.",
+   "source": "docs/reports/cell-result-set-alignment/README.md"
+  },
+  {
+   "id": "W43-DESC-FLB-CONFIG-CHANNEL-DOUBLE-CLOSE",
+   "operation": "amend",
+   "text": "AMENDED (CELL-RESULT-SET-ALIGNMENT, 2026-11-04, docs/reports/cell-result-set-alignment/README.md): re-observed natively at 046accf6 and master 49592c4fd on every teardown (`close(13) = 0` then `close(13) = -1 EBADF`, the :607 alias of ch_manager[0] then :618). The flb_config.c:607 risk is this double close, not \"-1 read as live\". The user's patch (all three versions) removes the alias close and resets ch_event.fd; with the third version every teardown closes ch_manager once (v3-closed.strace). Evidence only.",
+   "source": "docs/reports/cell-result-set-alignment/README.md"
+  },
+  {
+   "id": "RULE-38-VALIDITY-READING-RESULT-SET",
+   "operation": "amend",
+   "text": "AMENDED (CELL-RESULT-SET-ALIGNMENT, 2026-11-04): the inventory marks the timer cells' live set MISSING (fd_timer, window.fd, shutdown_fd, flush_fd, timer_fd, Monkey's timeout_fd); timerfd_create stays undeclared (libc-names.txt).",
+   "source": "docs/reports/cell-result-set-alignment/README.md"
+  },
+  {
+   "id": "CELL-PROTOCOL-NONCELL-ACTUAL-REACHES-RECORD",
+   "operation": "amend",
+   "text": "AMENDED (CELL-RESULT-SET-ALIGNMENT, 2026-11-04): the planned-fix declarations for the user's third patch (docs/reports/cell-result-set-alignment/planned-contracts/teardown_destroy_patch_v3.qv, held off every route) state flb_config's ends per end with `live_set([1, MAX]) absent_set(-1)` (ch_data, ch_manager, ch_event.fd #same, ch_notif); the production text stays withheld under this entry.",
+   "source": "docs/reports/cell-result-set-alignment/README.md"
+  },
+  {
+   "id": "CELL-PROTOCOL-RELEASE-WINDOW-FRAMES",
+   "operation": "amend",
+   "text": "AMENDED (CELL-RESULT-SET-ALIGNMENT, 2026-11-04): under the declared live set [1, MAX] the releases no longer refuse `descriptor-cell-zero-undecided`, so the window's `descriptor-cell-protocol-broken` (flb_output.c:631, flb_input.c:1330/:1340) is now the destroyers' remaining cell refusal; the recommendation's condition for (a) (an end test reading the holder's own sentinel) is met under the bound.",
+   "source": "docs/reports/cell-result-set-alignment/README.md"
+  }
+ ]
+}
