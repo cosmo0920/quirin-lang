@@ -39,7 +39,7 @@ with `extern fn`. `realloc` and `fread` appear in other providers only in
 | `getaddrinfo` / `freeaddrinfo` | 4 / 4 | 1 / 1 | refused | the list is not heap: `free(res)` must not discharge it. Needs a list kind (W43-DESCRIPTOR-REFUSED-SHAPES) |
 | `pthread_mutex_init` | 3 | 0 | refused | in-place init through a member or global (CG25-IN-PLACE-RESIDUAL-PAIRS) |
 | `fread` | 3 | 0 | declared | a use of its stream |
-| `__builtin_va_arg` | 3 | 2 | **open (user)** | rule 11w's destination; §4 |
+| `__builtin_va_arg` | 3 | 2 | existing follow-up | `va_arg` inside a typed store (CG26-VA-PROTOCOL-PRECISION); §4 |
 | `__builtin_memmove` | 3 | 0 | **open (user)** | libc twin; §4 |
 | `sigaction` | 2 | 0 | refused | registers a handler the kernel keeps and invokes (W43-LIBC-CALLBACK-RETAIN) |
 | `pthread_attr_init` | 2 | 0 | refused | in-place lifecycle (CG25-IN-PLACE-RESIDUAL-PAIRS) |
@@ -77,5 +77,183 @@ with `extern fn`. `realloc` and `fread` appear in other providers only in
 | declared | 23 | 52 |
 | refused | 24 | 38 |
 | open, `realloc` | 1 | 6 |
-| open, builtins | 8 | 59 |
+| open, builtins | 7 | 56 |
+| builtin owned by an existing follow-up (`__builtin_va_arg`) | 1 | 3 |
 | **total** | **56** | **155** |
+
+The script is [`scripts/gap.py`](scripts/gap.py). The ranked list it printed
+for the run is [`census-046accf6.txt`](census-046accf6.txt).
+
+## 2. The declarations
+
+All 23 are in `quirin-provider-libc` and only there (the libc placement rule;
+every name is in `libc-names.txt`, which is unchanged). Each is
+`revision flexible` under the standing `libc-c-standard-abi` assumption. Each
+module's new section quotes the audited host's prototype and the C standard,
+POSIX or Linux text it states.
+
+| Module | Names | Custody statement |
+|---|---|---|
+| `stdlib.qv` | `abs`, `tolower`, `toupper` | scalar in, scalar out |
+| `stdlib.qv` | `strcat` | `resource_return_alias(dest, nonnull)` (C04.3.1). It stands outside `string.qv` because that module is published: its SHA-256 is pinned in `contract-load-path.json` and part of every inheriting contract's identity |
+| `math.qv` | `sqrt` | scalar |
+| `stdio.qv` | `fread` | a use of its stream (`fflush`'s statement) |
+| `threads.qv` | `sigdelset`, `pthread_cancel` | `sigaddset`'s and `pthread_kill`'s statements |
+| `threads.qv` | `pthread_setspecific` | `resource_retained_by(pointer, global)` (C04.14): withheld from the function map; rule 12t decides only static storage, so a heap or caller pointer is `retention-undecided` |
+| `threads.qv` | `pthread_getspecific` | `resource_return_none()`: the caller owns nothing through the call. The relation to the retained object is not stated, so every custody use of the result is refused as an unresolved identity |
+| `unistd.qv` | `lseek`, `ftruncate`, `posix_fallocate` | a use of a descriptor |
+| `unistd.qv` | `readlink`, `chown`, `msync`, `getrandom` | path, mapping and buffer uses |
+| `sys_stat.qv` | `chmod` | a path use |
+| `socket.qv` | `shutdown`, `sendmsg`, `poll` | descriptor uses; `shutdown` does not close |
+| `process.qv` | `getpwnam_r`, `getgrnam_r` | `resource_out_derived(result, resultbuf, nonnull)` (C04.16) and `resource_retained_by(buffer, resultbuf)` (C04.14) |
+
+**Locks.**
+- `providers/contracts.py sync` regenerated `contract-inventory.lock`. Nine
+  modules' digests and counts changed; no other crate's lock changed.
+- `quirin-audit pin --source-root <046accf6 checkout> --crate
+  quirin-provider-libc --function …` wrote the 23 flexible entries in
+  `contracts.lock`.
+- `contract-load-path.json` is unchanged: no published module moved.
+
+**Controls.** `crates/qcore-c-gateway/tests/libc_gap_declarations.rs` loads
+the production modules byte for byte and analyses units that include the
+audited host's glibc headers under `_GNU_SOURCE`. It has six tests:
+
+1. Every declaration agrees with its prototype (LOADER-ABI) and admits a
+   pass-through caller: `Safe`, no diagnostic.
+2. With the card's sections cut off, each of those calls keeps
+   `call to uncontracted function`.
+3. The card's sections declare exactly the 23 names.
+4. `fread` after `fclose` and `lseek` after `close` are use-after-close
+   candidates. Uses before the close are `Safe`.
+5. `pthread_setspecific` of a heap, caller or freed pointer is
+   `retention-undecided`. A release of `pthread_getspecific`'s result, once
+   or twice, is `Unknown`, never `Safe` and never accused.
+6. A `getpwnam_r`/`getgrnam_r` buffer freed while the record lives is
+   `retention-released-while-held`. A local buffer is `retention-undecided`.
+   A release of `strcat`'s alias is not `Safe`; a release of its base is.
+
+No route, loader or Lean definition changes. The readings are rules 12t
+(`QCore.RetainedBy`), 12z (`QCore.DerivedOutSlot`) and C04.3.1
+(`QCore.DerivedResult`), and the kinds of C04.6 (`QCore.KindedCustody`).
+
+## 3. `realloc`: a user choice (not declared)
+
+The brief asks for `realloc` with its failure keeping the old block. That is
+`resource_return_reallocated(ptr, nullable)` beside `resource_owned(ptr,
+nullable)`, librdkafka's `rd_realloc` statement. It is exact except for one
+arm:
+
+- **Size 0.** On glibc, `realloc(p, 0)` with `p` non-NULL frees `p` and
+  returns NULL (glibc realloc(3)). C17 7.22.3.5 makes the result
+  implementation-defined, and C23 makes the call undefined.
+- **What the declaration would say.** A NULL result keeps the old block owned.
+- **The consequence.** A caller that frees `p` on the NULL arm would be read
+  as `Safe` while it double-frees on glibc.
+
+No admitted clause restricts a declaration to a nonzero argument:
+`resource_literal_argument` (C04.5) is an equality with one literal, and the
+guard of C04.14.1 conditions only a retention. Under fail-closed the card does
+not declare it. The six sites (`batches_append`, `batch_add_resource`,
+`batch_add_scope`, `batch_add_metric`, `append_metric_to_timeseries`,
+`cio_memfs_write`) each reallocate a member, so a declaration would also meet
+the field-slot refusal (SLOT-MOVE-FIELD-SLOT) before deciding anything.
+
+Options:
+
+- **(A) Recommended: a nonzero-argument precondition.** For example
+  `requires resource_argument(size, != 0);`, a C04.5-style premise. The
+  declaration applies only where the actual is structurally decided nonzero
+  and is undeclared elsewhere. This matches C23. It needs a loader clause,
+  rule-12-style call-site reading and Lean parity. Most sites spell
+  `(count + 1) * sizeof(T)`, so they stay undecided unless arithmetic is read.
+- **(B) A declared policy.** Declare the reallocation reading and record size
+  0 as outside the policy, like the user's `[1, MAX]` decision for `pipe`.
+  It is optimistic on glibc for size 0, and every row it moves is attributed
+  to the policy.
+- **(C) A cautious failure arm.** A NULL result leaves the old block's custody
+  undecided, so any later release or use is refused. It is exact for C17,
+  but a caller that frees on failure is never `Safe`.
+- **(D) Keep it undeclared.**
+
+## 4. Builtins: decisions and a user choice
+
+`__builtin_*` names are compiler intrinsics. They have no owning provider
+crate, and the placement test does not list them. W48-CALLEE-DECISION-TABLE
+class 6 ("compiler builtins without an owning crate") has waited on a user
+decision since wave 48. Per name:
+
+- **`__builtin_va_arg` (3 pairs).** Not a new choice. The `va_list` protocol
+  is rule 11w. The three sites (`cmt_histogram_buckets_create`,
+  `rd_kafka_mock_push_request_errors`,
+  `rd_kafka_mock_partition_push_request_errors`) store a scalar `va_arg`
+  into an array element or a member. CG26-VA-PROTOCOL-PRECISION already
+  names exactly these three ("a scalar va_arg value inside a typed store");
+  it is amended with the 046accf6 measurement.
+- **`__builtin_memcpy` (8) and `__builtin_memmove` (3)**, all in
+  librdkafka's `lz4.c`/`lz4hc.c`. GCC and Clang give these the semantics of
+  the library functions they name, so the reading is settled. Where it lives
+  is the class-6 choice:
+  - **(1) Recommended.** The C gateway reads the call through the libc twin's
+    declaration in force (`memcpy`, `memmove`), compared against Clang's
+    builtin signature like any declaration (LOADER-ABI). No contract text
+    is duplicated, and the libc placement rule is untouched.
+  - **(2)** A data-only `quirin-provider-builtins` crate declaring
+    `extern fn __builtin_memcpy(...) contract inherit libc::memcpy;`. It
+    needs a new load-path crate and views.
+
+  No function would change status: every site's function has other
+  blockers (`LZ4_wildCopy8` 3, `LZ4_memcpy_using_offset` 1 and more).
+- **Value builtins: `__builtin_ctz`, `__builtin_ctzll` (`snappy.c`),
+  `__builtin_nanf` (`cJSON.c`) and `__builtin_prefetch` (`mk_plugin.c`).**
+  Each takes and returns scalars, or a pointer it only reads. With either
+  option above they are custody-neutral, and `find_lsb_set_non_zero`,
+  `find_lsb_set_non_zero64` and `cJSON_GetNumberValue` would have no other
+  blocker. `__builtin_ctz(0)` is undefined; that is a value property, not
+  custody.
+- **`__builtin_alloca` (41 pairs, 1 sole).** The brief's semantics: stack
+  storage that must never be freed and never escape the frame. No declaration
+  can state that.
+  - `resource_return_none()` would refuse a `free` of it, as an unresolved
+    identity. But it would never notice the escape: a returned or stored
+    alloca pointer is untracked data. So it is not the stated semantics.
+  - **(a) Recommended.** A gateway reading of the builtin as frame storage of
+    the calling function. It carries no obligation. A release of it is an
+    `invalid_release` candidate (C11 7.22.3.3p2: not an allocator's value).
+    A `return` of it, a store into anything that outlives the frame, or
+    hand-off to a retaining position is refused (`frame-storage-escapes`).
+    Its non-NULL result is already the null property's
+    (`null_deref/walk.rs`). It needs Lean parity (a `QCore.FrameStorage`
+    model) and one measurement.
+  - **(b)** Keep it refused.
+
+## 5. Measurement and gate
+
+The prediction is [PREDICTION.md](PREDICTION.md). The integrator runs the
+measurement:
+
+```sh
+target/release/quirin-audit --plugin-path target/release --output <dir> --timeout-ms 36000000 measure --inputs crates/quirin-audit-plugin-measure/inputs/live.json --inputs-base /media/Data/GitHub/quirin-lang --side base=baseline:c8c7edf2165a2065c234f3a63b4eed23e937ced6 --side tip=rev:<last code commit> --declared docs/reports/libc-gap-declarations/PREDICTION.md
+```
+
+The card gate's record is [gate/gate.json](gate/gate.json).
+
+## 6. Follow-ups
+
+Registered:
+- `LIBC-REALLOC-SIZE-ZERO`: §3's choice.
+- `BUILTIN-FRAME-STORAGE`: §4's alloca reading.
+
+Amended:
+- `W48-CALLEE-DECISION-TABLE` (class 6 options, sized at 046accf6)
+- `W43-RESULT-ALIAS-CONDITIONAL-AND-RETAINED`
+- `W43-LIBC-CALLBACK-RETAIN`
+- `W43-LIBC-OUT-POINTER-ALIAS`
+- `W43-DESCRIPTOR-REFUSED-SHAPES`
+- `W43-LIBC-GETPEERNAME-SOCKADDR-UNION`
+- `CG25-IN-PLACE-RESIDUAL-PAIRS`
+- `CG26-VA-PROTOCOL-PRECISION`
+
+Each amendment adds the 046accf6 sizes and what this card discharged.
+External libraries (OpenSSL, libcurl, zlib) appear in neither list: they are
+not libc, and the round brief leaves them to their plugin crates.

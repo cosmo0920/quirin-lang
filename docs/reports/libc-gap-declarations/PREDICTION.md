@@ -1,5 +1,11 @@
 # LIBC-GAP-DECLARATIONS prediction
 
+**Correction (after implementation; no row and no block change).** In the
+`current`-run paragraph below, "eight builtins (59 pairs), an open user
+choice" is seven builtins (56 pairs) waiting on a user choice, plus
+`__builtin_va_arg` (3 pairs), which already belongs to
+CG26-VA-PROTOCOL-PRECISION ([README](README.md) section 4).
+
 Committed before any contract changes, on base `c8c7edf21` (origin/main). The
 census is in [README.md](README.md), section 1. Affected rows are relisted at
 `baseline:c8c7edf21` (`private/baselines/c8c7edf2165a2065c234f3a63b4eed23e937ced6/`

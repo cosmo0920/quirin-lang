@@ -1,0 +1,88 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "LIBC-GAP-DECLARATIONS",
+  "base": "c8c7edf21",
+  "measured_tip": "b019deaea",
+  "increment_paragraph": "**LIBC-GAP-DECLARATIONS** (round 13, card 2; USER REQUEST 2026-11-05, verbatim: \"Now, we're still needed to fill the gap of the missing contracts.\", then \"Launch 1 and 2\"): the census of the user's `quirin-audit current` run at Fluent Bit 046accf6 finds 64 libc/builtin names reported `call to uncontracted function` (176 pairs). Eight are tinycthread.c's C11 bodies in the run, which leaves 56 names / 155 pairs. None is declared in any provider, so nothing passes to card 1. Twenty-three are declared in `quirin-provider-libc` only, revision flexible, under `libc-c-standard-abi`, with existing vocabulary (52 pairs): `abs`, `tolower`, `toupper`, `sqrt`, `sigdelset`, `pthread_cancel`, `fread`, `lseek`, `ftruncate`, `posix_fallocate`, `readlink`, `chown`, `chmod`, `msync`, `getrandom`, `shutdown`, `sendmsg` and `poll` borrow every argument; `strcat` returns its `dest` alias; `pthread_setspecific` is `resource_retained_by(pointer, global)` (rule 12t: a heap or caller pointer is `retention-undecided`, never Safe); `pthread_getspecific`'s result owns nothing (a release of it stays refused); `getpwnam_r`/`getgrnam_r` write a derived out slot and their record retains the buffer (a buffer freed while the record lives is `retention-released-while-held`). `strcat` sits in `stdlib.qv` because `string.qv` is published. Locks: `contract-inventory.lock` (sync) and 23 flexible `contracts.lock` entries (`quirin-audit pin` at 046accf6); `contract-load-path.json` unchanged. Twenty-four names stay refused on recorded grounds (in-place lifecycles, a list kind for `getaddrinfo`, the sockaddr transparent union, callbacks, `SCM_RIGHTS` creation, the `MAP_FAILED` sentinel, conditional aliases). `realloc` (its size-0 arm) and seven builtins wait on user choices with options and recommendations; `__builtin_va_arg` belongs to CG26-VA-PROTOCOL-PRECISION. No route, loader or Lean change. Controls: `crates/qcore-c-gateway/tests/libc_gap_declarations.rs` (6 tests over the production modules and the host's glibc headers). Predicted: corpus Unknown -> Safe for rd_kafka_transport_shutdown, cio_file_native_resize, cio_file_native_sync and mk_plugin_sched_get_thread_conf; system and slice no move. Report: docs/reports/libc-gap-declarations/README.md.",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "LIBC-GAP-DECLARATIONS",
+      "operation": "register",
+      "title": "Declare the libc names the 046accf6 current run reports uncontracted, exactly or not at all",
+      "text": "Registered by its own card at landing (USER REQUEST 2026-11-05, verbatim: \"Now, we're still needed to fill the gap of the missing contracts.\"; then \"Launch 1 and 2\"); retired by the next entry.",
+      "source": "docs/reports/libc-gap-declarations/README.md",
+      "recorded_by": "LIBC-GAP-DECLARATIONS"
+    },
+    {
+      "id": "LIBC-GAP-DECLARATIONS",
+      "operation": "retire",
+      "why": "DISCHARGED by LIBC-GAP-DECLARATIONS (docs/reports/libc-gap-declarations/README.md). Census of 56 names / 155 pairs; 23 declared with existing vocabulary (52 pairs); 24 refused on recorded grounds, filed against their existing follow-ups; realloc (LIBC-REALLOC-SIZE-ZERO) and seven builtins (W48-CALLEE-DECISION-TABLE class 6, BUILTIN-FRAME-STORAGE) left to user choices; __builtin_va_arg left to CG26-VA-PROTOCOL-PRECISION.",
+      "source": "docs/reports/libc-gap-declarations/README.md"
+    },
+    {
+      "id": "LIBC-REALLOC-SIZE-ZERO",
+      "operation": "register",
+      "title": "realloc is undeclared: its size-0 arm frees on glibc while a NULL result reads as the old block kept",
+      "text": "Registered by LIBC-GAP-DECLARATIONS. `resource_owned(ptr, nullable)` with `resource_return_reallocated(ptr, nullable)` (librdkafka's rd_realloc statement) is exact except at size 0: glibc's realloc(p, 0) frees p and returns NULL (C17 7.22.3.5 implementation-defined, C23 undefined), so a caller freeing p on the NULL arm would read Safe while double-freeing. No admitted clause restricts a declaration to a nonzero argument (C04.5 is equality with one literal; C04.14.1 guards only a retention), so it is not declared (fail-closed). Measured on the 046accf6 current run: 6 pairs (batches_append, batch_add_resource, batch_add_scope, batch_add_metric, append_metric_to_timeseries, cio_memfs_write), each reallocating a member and so also behind SLOT-MOVE-FIELD-SLOT. Options: (A, recommended) a nonzero-argument precondition such as `requires resource_argument(size, != 0);` read structurally at the call site, C23-aligned, with loader, gateway and Lean parity; (B) a declared policy placing size 0 outside it, attributed like the pipe [1, MAX] policy; (C) a cautious failure arm leaving the old block undecided on NULL; (D) keep undeclared. DISCHARGE: a user decision and the card it names, measured.",
+      "source": "docs/reports/libc-gap-declarations/README.md",
+      "recorded_by": "LIBC-GAP-DECLARATIONS"
+    },
+    {
+      "id": "BUILTIN-FRAME-STORAGE",
+      "operation": "register",
+      "title": "__builtin_alloca has no reading: frame storage that must never be released or escape its frame",
+      "text": "Registered by LIBC-GAP-DECLARATIONS. 41 (function, callee) pairs on the 046accf6 current run (55 sites, all librdkafka through rd_alloca; 1 function blocked only by uncontracted calls), the largest name of the libc/builtin gap. No declaration states it: `resource_return_none()` would refuse a release as an unresolved identity but would never see an escape (a returned or stored alloca pointer is untracked data). Recommended reading (a user choice, W48-CALLEE-DECISION-TABLE class 6): the C gateway reads the builtin as storage of the calling frame with no obligation; a release of it is an invalid_release candidate (C11 7.22.3.3p2), a return of it, a store into anything that outlives the frame or a retaining hand-off is refused (frame-storage-escapes); its non-NULL result is already the null property's (null_deref/walk.rs). DISCHARGE: that reading with Lean parity (a QCore.FrameStorage model) and a measurement, or a recorded decision to keep it refused.",
+      "source": "docs/reports/libc-gap-declarations/README.md",
+      "recorded_by": "LIBC-GAP-DECLARATIONS"
+    },
+    {
+      "id": "W48-CALLEE-DECISION-TABLE",
+      "operation": "amend",
+      "text": "AMENDED (LIBC-GAP-DECLARATIONS, 046accf6 current run): class 6 at that run is __builtin_alloca 41 pairs (BUILTIN-FRAME-STORAGE), __builtin_memcpy 8, __builtin_memmove 3, __builtin_ctz, __builtin_ctzll, __builtin_nanf and __builtin_prefetch 1 each; __builtin_va_arg's 3 pairs belong to CG26-VA-PROTOCOL-PRECISION. Options put to the user for the library twins and value builtins: (1, recommended) the C gateway reads __builtin_memcpy/__builtin_memmove through the libc twin's declaration in force, compared against Clang's builtin signature, and the value builtins as custody-neutral; (2) a data-only quirin-provider-builtins crate inheriting libc::memcpy/memmove. Under either, find_lsb_set_non_zero, find_lsb_set_non_zero64 and cJSON_GetNumberValue have no other blocker; the lz4 sites keep theirs. Class 1's pthread_setspecific is now declared as resource_retained_by(pointer, global) and pthread_getspecific with a result that owns nothing; class 2's pthread_key_create, pthread_rwlock_init/destroy and pthread_attr_init stay undeclared (CG25-IN-PLACE-RESIDUAL-PAIRS).",
+      "source": "docs/reports/libc-gap-declarations/README.md"
+    },
+    {
+      "id": "W43-RESULT-ALIAS-CONDITIONAL-AND-RETAINED",
+      "operation": "amend",
+      "text": "AMENDED (LIBC-GAP-DECLARATIONS): pthread_getspecific is declared in libc/threads.qv with resource_return_none(): the caller owns nothing through the call. The retained-result relation is still not stated, so every custody use of the result is refused as an unresolved identity (libc_gap_declarations.rs pins free(pthread_getspecific(k)) as Unknown); the retained-storage half stays open on its discharge condition. 046accf6 current run: pthread_getspecific 15 pairs, realpath 1 pair (mk_rconf_path_set, which passes a stack buffer: the derived arm, so a literal-premise fresh arm would decide nothing there).",
+      "source": "docs/reports/libc-gap-declarations/README.md"
+    },
+    {
+      "id": "W43-LIBC-CALLBACK-RETAIN",
+      "operation": "amend",
+      "text": "AMENDED (LIBC-GAP-DECLARATIONS): pthread_setspecific's retention is declared with C04.14's global holder (libc/threads.qv; rule 12t: a heap or caller pointer is retention-undecided, never Safe), which discharges its half. sigaction (2 pairs on the 046accf6 current run: rd_kafka_new, rd_kafka_background_thread_create) joins this entry: it installs a handler the kernel keeps and invokes asynchronously.",
+      "source": "docs/reports/libc-gap-declarations/README.md"
+    },
+    {
+      "id": "W43-LIBC-OUT-POINTER-ALIAS",
+      "operation": "amend",
+      "text": "AMENDED (LIBC-GAP-DECLARATIONS): getpwnam_r and getgrnam_r are declared in libc/process.qv with resource_out_derived(result, resultbuf, nonnull) (C04.16) and resource_retained_by(buffer, resultbuf) (C04.14): the record keeps pointers into the buffer, so a buffer freed while the record lives is retention-released-while-held (cio_file_native_lookup_user/_group). backtrace (1 pair on the 046accf6 current run, mk_utils_stacktrace) stays: it writes non-custody code addresses into a void *[] array, which no out-slot mode states.",
+      "source": "docs/reports/libc-gap-declarations/README.md"
+    },
+    {
+      "id": "W43-DESCRIPTOR-REFUSED-SHAPES",
+      "operation": "amend",
+      "text": "AMENDED (LIBC-GAP-DECLARATIONS, 046accf6 current run, pairs): getaddrinfo 4 and freeaddrinfo 4 stay undeclared. The status-conditioned out slot is expressible, but the list is not heap custody: with no kind, free(res) would discharge it and freeaddrinfo(malloc(...)) would too, so it needs a pointer kind of its own (C04.6). munmap 1 and mremap 1 (pointer sentinel MAP_FAILED), fts_open/fts_close 1 each, glob/globfree 1 each and accept4 1/accept 1 are unchanged. New shape: recvmsg 1 (rd_kafka_transport_socket_recvmsg) creates descriptors through SCM_RIGHTS ancillary data. Declared by this card as uses: lseek, ftruncate, posix_fallocate, shutdown, sendmsg, poll, msync.",
+      "source": "docs/reports/libc-gap-declarations/README.md"
+    },
+    {
+      "id": "W43-LIBC-GETPEERNAME-SOCKADDR-UNION",
+      "operation": "amend",
+      "text": "AMENDED (LIBC-GAP-DECLARATIONS, 046accf6 current run): the transparent-union reader gap keeps connect 2 pairs (mk_net_fd_connect, mk_socket_open), bind 1 (mk_socket_bind, blocked by it alone), accept4 1 (mk_socket_accept, blocked by it alone) and accept 1 (rd_kafka_mock_broker_listen_io) undeclared: under _GNU_SOURCE their address parameter is the transparent union the declared-ABI reader withdraws, as measured for getpeername.",
+      "source": "docs/reports/libc-gap-declarations/README.md"
+    },
+    {
+      "id": "CG25-IN-PLACE-RESIDUAL-PAIRS",
+      "operation": "amend",
+      "text": "AMENDED (LIBC-GAP-DECLARATIONS, 046accf6 current run, pairs): pthread_key_create 4, pthread_rwlock_init 1, pthread_rwlock_destroy 1, pthread_attr_init 2, glob/globfree 1 each, plus pthread_mutex_init 3 (mk_fifo_create, mk_sched_init, mk_server_create: storage reached through a member or a global), pthread_mutex_destroy 1 (mk_exit_all) and pthread_attr_destroy 1 (mk_utils_worker_spawn), all still undeclared on this entry's grounds. mtx_init/mtx_destroy appear there only as tinycthread.c bodies in the run.",
+      "source": "docs/reports/libc-gap-declarations/README.md"
+    },
+    {
+      "id": "CG26-VA-PROTOCOL-PRECISION",
+      "operation": "amend",
+      "text": "AMENDED (LIBC-GAP-DECLARATIONS): re-measured on the user's 046accf6 current run, the scalar va_arg inside a typed store still leaves exactly 3 `call to uncontracted function __builtin_va_arg` pairs: cmt_histogram_buckets_create (an array element of a calloc'd buffer), rd_kafka_mock_push_request_errors (an rd_alloca array element) and rd_kafka_mock_partition_push_request_errors (a member array element). It needs no product decision.",
+      "source": "docs/reports/libc-gap-declarations/README.md"
+    }
+  ]
+}
