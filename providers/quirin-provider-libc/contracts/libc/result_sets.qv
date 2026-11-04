@@ -52,6 +52,9 @@ module contract;
 // [1, MAX]".
 // USER DECISION 2026-11-04 (verbatim, after the counter-evidence below was
 // put to the user): "Write [1, MAX]".
+// USER DECISION 2026-11-04 (verbatim, after the user's third patch was
+// observed leaving descriptor 0 unclosed with stdin closed): "Accept the
+// leak". A closed standard input is outside this declared policy.
 //
 // THIS IS A DECLARED POLICY, NOT POSIX'S SET. POSIX allocates the lowest
 // free descriptor, so `pipe` returns descriptor 0 whenever 0 is free:

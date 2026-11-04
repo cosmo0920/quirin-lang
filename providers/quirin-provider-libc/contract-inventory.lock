@@ -248,7 +248,7 @@
       "inherits": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "e2fe4ff5cf249b8c90b23df44867f8495f5cbc3b48eb479b00f9b5f15f123012"
+      "sha256": "c38a15d828ede40ef468111f8d13f773c45cef6675cf5d199005828b7a33ac69"
     },
     "libc/socket.qv": {
       "clause_count": 67,
