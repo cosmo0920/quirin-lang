@@ -480,18 +480,18 @@
       "sha256": "0525b020bca19c28e2b59b57d55f6816f578aea39749cf0b5c7fe04bee2b81a2"
     },
     "monkey/result_range.qv": {
-      "clause_count": 2,
+      "clause_count": 4,
       "declaration_count": 1,
       "declarations": [
         {
-          "clauses": 2,
+          "clauses": 4,
           "name": "mk_event_channel_create"
         }
       ],
       "inherits": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "aa789f8cc970420d9cc02f63d05a2657f24c2bbd24cb4476a285774d2797a83e"
+      "sha256": "103438dc7ea69da822dbe887cb588c86aef8ce02782ca89534fa165c1c0376b3"
     },
     "monkey/scalar_observation.qv": {
       "clause_count": 26,

@@ -1,6 +1,7 @@
 {
   "bounds_view": [
-    "fluent_bit/null_deref.qv"
+    "fluent_bit/null_deref.qv",
+    "fluent_bit/result_range.qv"
   ],
   "contracts": "quirin-provider-fluent-bit/contracts",
   "crate": "quirin-provider-fluent-bit",
@@ -535,6 +536,20 @@
       "premise_bindings": [],
       "premises": {},
       "sha256": "96b8a3d7d096007699ea1d5970d19779b35c5c8f89a6cea67354725e90530ee1"
+    },
+    "fluent_bit/result_range.qv": {
+      "clause_count": 3,
+      "declaration_count": 1,
+      "declarations": [
+        {
+          "clauses": 3,
+          "name": "flb_pipe_create"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "13ac50b771dce0f0a726ad9c8096fd47ca55c046406271804dae3c28403b9fda"
     },
     "fluent_bit/routes_mask.qv": {
       "clause_count": 18,

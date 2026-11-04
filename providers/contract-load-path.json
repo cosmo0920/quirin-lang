@@ -259,6 +259,7 @@
         "fluent_bit/output_singleplex.qv",
         "fluent_bit/resource_memory.qv",
         "fluent_bit/resource_string.qv",
+        "fluent_bit/result_range.qv",
         "fluent_bit/routes_mask.qv",
         "fluent_bit/storage_backlog.qv",
         "fluent_bit/task_route_queries.qv",
@@ -293,7 +294,8 @@
         "fluent_bit/time.qv"
       ],
       "bounds_view": [
-        "fluent_bit/null_deref.qv"
+        "fluent_bit/null_deref.qv",
+        "fluent_bit/result_range.qv"
       ],
       "outer_view": [
         "fluent_bit/outer.qv"

@@ -689,6 +689,71 @@
       ]
     },
     {
+      "function": "flb_pipe_create",
+      "module": "fluent_bit/result_range.qv",
+      "contract_sha256": "9099508af6725f3a5c41e4e6b68e8195227ffd4568fbd0f5ee9bc79fd8ff10ff",
+      "pinned_at": "2026-11-04T13:34:34Z",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "include/fluent-bit/flb_pipe.h",
+              "kind": "declaration",
+              "declaration_sha256": "4afed0f5329f52cd970acd0f2a270bf325982574bab3bf41806c6c7c9133c208"
+            },
+            {
+              "path": "src/flb_pipe.c",
+              "kind": "definition",
+              "declaration_sha256": "4afed0f5329f52cd970acd0f2a270bf325982574bab3bf41806c6c7c9133c208",
+              "body_sha256": "ac2565fa2d8ecad1de49d2414210651072902ddd5e075a9c1e31fccd6576fda6"
+            },
+            {
+              "path": "src/flb_pipe.c",
+              "kind": "definition",
+              "declaration_sha256": "4afed0f5329f52cd970acd0f2a270bf325982574bab3bf41806c6c7c9133c208",
+              "body_sha256": "cc125d814f249eaeac7ec41608117849444ad57df97d7c499b464d885a1312a1"
+            }
+          ]
+        }
+      ],
+      "derivation": {
+        "written_sets": [
+          {
+            "slot": "pipefd[0]",
+            "class": 0,
+            "written_set": "[1, MAX]"
+          },
+          {
+            "slot": "pipefd[1]",
+            "class": 0,
+            "written_set": "[1, MAX]"
+          }
+        ],
+        "helpers": [],
+        "rests_on": [
+          {
+            "function": "pipe",
+            "module": "quirin-provider-libc:libc/result_sets.qv",
+            "contract_sha256": "6735a17310c8cab0cbc6c750e78eeb5747fe7d9f1885af3c8a22828b072a4462"
+          }
+        ]
+      }
+    },
+    {
       "function": "flb_processor_instance_create",
       "module": "fluent_bit/null_deref.qv",
       "contract_sha256": "3df688dccaeaa745d85dfb8cbb37c1955f902490b520bc4906b24644ec0656a9",

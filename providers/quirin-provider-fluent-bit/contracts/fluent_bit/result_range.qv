@@ -1,0 +1,40 @@
+module contract;
+
+// Card CELL-RESULT-SET-WRITTEN-SET-DERIVATION (contract specification C09.4,
+// grammar G05j as amended, gateway rule 38e as amended). The user launched
+// the card on 2026-11-04 (verbatim): "CELL-RESULT-SET-WRITTEN-SET-DERIVATION."
+//
+// USER DECISION 2026-11-04 (verbatim): "Basically, Q1(a) and Q2(i) But we
+// must not handle descriptor 0 as a valid handle. So, we need to exclude the
+// 0 descriptor like: written_set(pipedes, [1, MAX]); a live descriptor is in
+// [1, MAX]". USER DECISION 2026-11-04 (verbatim): "Write [1, MAX]".
+//
+// `flb_pipe_create` writes both descriptors of its pair in [1, MAX] when it
+// returns 0. A bounds contract v1 value set only (rule 38's creation check
+// reads it; the bounds consumer and every custody reader do not): no
+// custody is stated or changed, and `flb_pipe_create` stays without a
+// resource declaration, so no route reads these sets yet.
+//
+// The sets are DERIVED, not assumed: `quirin-audit pin --bounds
+// --derive-results --compile-database FILE` reads the configured unit
+// (`src/flb_pipe.c` of Fluent Bit's Linux build) through Clang and derives
+// the forwarding `return pipe(pipefd);` (`flb_pipe.c:100`) over the C
+// library's declared `pipe` written sets (`quirin-provider-libc`'s
+// `libc/result_sets.qv`). The Windows body of the same file (`flb_pipe.c:55`,
+// `evutil_socketpair`, which states no written set) derives nothing: each
+// configuration's body decides its own set, and the lock records the
+// configured unit's.
+//
+// THE BOUND IS A DECLARED POLICY, NOT POSIX'S SET. The derivation rests on
+// `pipe`'s `written_set(pipedes[0|1], [1, MAX])`, the user's declared policy;
+// POSIX's set is [0, MAX] and descriptor 0 is observed natively (`ch_data`
+// is `pipe2([0, 3])` with standard input closed). Under POSIX's set the same
+// body derives [0, MAX] for `pipefd[0]`, which this declaration does not
+// contain, and nothing is pinned. Every reading these sets decide is
+// attributed to the bound (follow-up CELL-RESULT-SET-DESCRIPTOR-ZERO-POLICY).
+extern fn flb_pipe_create(pipefd: ptr<mut, u8>) -> i32
+contract {
+    requires bounds_contract_v1;
+    ensures normal written_set(pipefd[0], [1, MAX]) when #result == 0;
+    ensures normal written_set(pipefd[1], [1, MAX]) when #result == 0;
+};

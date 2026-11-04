@@ -25,8 +25,37 @@ module contract;
 // every reviewed identity, and the C library declarations (with digests) it
 // rested on; a changed helper, body or C library set takes the range out of
 // force, and rule 38 never reads a range that is not derived.
+//
+// Card CELL-RESULT-SET-WRITTEN-SET-DERIVATION (grammar G05j as amended, rule
+// 38e as amended). The user launched the card on 2026-11-04 (verbatim):
+// "CELL-RESULT-SET-WRITTEN-SET-DERIVATION." USER DECISIONS 2026-11-04
+// (verbatim): "Basically, Q1(a) and Q2(i) But we must not handle descriptor
+// 0 as a valid handle. So, we need to exclude the 0 descriptor like:
+// written_set(pipedes, [1, MAX]); a live descriptor is in [1, MAX]"; "Write
+// [1, MAX]".
+//
+// When it returns 0, `mk_event_channel_create` has stored both ends in
+// [1, MAX] (`*r_fd`, `*w_fd`). DERIVED by the same pin from the configured
+// epoll chain: `return _mk_event_channel_create(…)` forwards the helper's
+// sets; the helper stores `*r_fd = fd[0]` and `*w_fd = fd[1]` after
+// `pipe`'s failure exit (`if (ret < 0) return ret;`, narrowing `ret` to -1
+// there and to 0 after it) and after `_mk_event_add`'s (`if (ret != 0)
+// return ret;`), so `fd[0..1]` hold `pipe`'s written set of class 0. Rule
+// 38f's creation into a cell with a declared live set reads them. Each
+// backend's body decides its own set: libevent's (`mk_event_libevent.c`,
+// `evutil_socketpair`, which states no written set) derives nothing, and the
+// lock records the configured unit's (epoll at every reviewed tree).
+//
+// THE BOUND IS A DECLARED POLICY, NOT POSIX'S SET. The derivation rests on
+// `pipe`'s `written_set(pipedes[0|1], [1, MAX])`, the user's declared
+// policy; POSIX's set is [0, MAX] and descriptor 0 is observed natively.
+// Under POSIX's set the chain derives [0, MAX], outside these declarations,
+// and nothing is pinned. Every creation these sets admit is attributed to
+// the bound (follow-up CELL-RESULT-SET-DESCRIPTOR-ZERO-POLICY).
 extern fn mk_event_channel_create(loop: ptr<mut, u8>, r_fd: ptr<mut, u8>, w_fd: ptr<mut, u8>, data: ptr<mut, u8>) -> i32
 contract {
     requires bounds_contract_v1;
     ensures normal nonnull_result_range(-1, 0);
+    ensures normal written_set(r_fd[0], [1, MAX]) when #result == 0;
+    ensures normal written_set(w_fd[0], [1, MAX]) when #result == 0;
 };

@@ -9,8 +9,8 @@
     {
       "function": "mk_event_channel_create",
       "module": "monkey/result_range.qv",
-      "contract_sha256": "d2d11a00445f7e50c2c0defe4255fcfab95ec767e572e64f7cb43fedd82aa94c",
-      "pinned_at": "2026-11-04T06:27:38Z",
+      "contract_sha256": "9e85b2e2f8792223464208ff90e7d1594921e6bb9cb88051fab9a503abe82184",
+      "pinned_at": "2026-11-04T13:32:33Z",
       "identities": [
         {
           "reviewed_at": [
@@ -181,6 +181,18 @@
       ],
       "derivation": {
         "result_set": "[-1, 0]",
+        "written_sets": [
+          {
+            "slot": "r_fd[0]",
+            "class": 0,
+            "written_set": "[1, MAX]"
+          },
+          {
+            "slot": "w_fd[0]",
+            "class": 0,
+            "written_set": "[1, MAX]"
+          }
+        ],
         "helpers": [
           "_mk_event_add",
           "_mk_event_channel_create"

@@ -33,15 +33,7 @@ pub fn select_unique_configuration<'a>(
     entries: &'a [CompileEntry],
     file: &Path,
 ) -> Result<&'a CompileEntry, String> {
-    let mut distinct = Vec::<&CompileEntry>::new();
-    // Card AUDIT-CANONICAL-PATHS: records match by located path, and two
-    // spellings of the file are refused (`input-path-alias`) rather than
-    // merged by `same_configuration` below.
-    for entry in crate::input_paths::select_exact(entries, file)? {
-        if !distinct.iter().any(|kept| same_configuration(kept, entry)) {
-            distinct.push(entry);
-        }
-    }
+    let distinct = select_configurations(entries, file)?;
     match distinct.as_slice() {
         [] => Err(format!(
             "compilation database contains no command for {}",
@@ -54,6 +46,29 @@ pub fn select_unique_configuration<'a>(
             file.display()
         )),
     }
+}
+
+/// Every distinct configuration of `file` in the database, in database
+/// order (card CELL-RESULT-SET-WRITTEN-SET-DERIVATION: a pin-time derivation
+/// reads each one, so no configuration is chosen over another).
+///
+/// # Errors
+///
+/// Two spellings of the file (`input-path-alias`).
+pub fn select_configurations<'a>(
+    entries: &'a [CompileEntry],
+    file: &Path,
+) -> Result<Vec<&'a CompileEntry>, String> {
+    let mut distinct = Vec::<&CompileEntry>::new();
+    // Card AUDIT-CANONICAL-PATHS: records match by located path, and two
+    // spellings of the file are refused (`input-path-alias`) rather than
+    // merged by `same_configuration` below.
+    for entry in crate::input_paths::select_exact(entries, file)? {
+        if !distinct.iter().any(|kept| same_configuration(kept, entry)) {
+            distinct.push(entry);
+        }
+    }
+    Ok(distinct)
 }
 
 /// Schema of the recorded compile-task identity.

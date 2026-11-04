@@ -102,6 +102,10 @@ pub const CONTRACTS: &[(&str, &str)] = &[
         include_str!("../contracts/fluent_bit/resource_string.qv"),
     ),
     (
+        "fluent_bit/result_range.qv",
+        include_str!("../contracts/fluent_bit/result_range.qv"),
+    ),
+    (
         "fluent_bit/routes_mask.qv",
         include_str!("../contracts/fluent_bit/routes_mask.qv"),
     ),

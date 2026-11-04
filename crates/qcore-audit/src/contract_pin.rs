@@ -981,15 +981,37 @@ fn derive_results(
             ));
         };
         let file = root.join(path);
-        let entry = crate::compile_db::select_unique_configuration(&entries, &file)
+        // Card CELL-RESULT-SET-WRITTEN-SET-DERIVATION: every configuration
+        // of the defining file decides its own sets (a file built into two
+        // libraries is read twice); each must lie inside the declaration, and
+        // the record is their union.
+        let configurations = crate::compile_db::select_configurations(&entries, &file)
             .map_err(|why| format!("`{name}`: {why}"))?;
-        let source = fs::read_to_string(&entry.file)
-            .map_err(|error| format!("{}: {error}", entry.file.display()))?;
-        let unit = crate::member_prepass::c_unit(entry, &source)?;
+        if configurations.is_empty() {
+            return Err(format!(
+                "`{name}`: compilation database contains no command for {}",
+                file.display()
+            ));
+        }
         let mut helpers = BTreeSet::new();
         let mut rested = BTreeSet::new();
-        let result_set = match target.ranges.get(&name) {
-            Some(declared) => {
+        let mut result_set: Option<qcore_contract::bounds_contract::ResultSet> = None;
+        let declared_written = target.written.get(&name).cloned().unwrap_or_default();
+        let slots = declared_written
+            .iter()
+            .map(|declared| (declared.position, declared.index, declared.class))
+            .collect::<Vec<_>>();
+        let mut written: Vec<Option<qcore_contract::bounds_contract::ResultSet>> =
+            vec![None; declared_written.len()];
+        let union = |acc: Option<qcore_contract::bounds_contract::ResultSet>,
+                     set: &qcore_contract::bounds_contract::ResultSet| {
+            Some(acc.map_or_else(|| set.clone(), |acc| acc.union(set)))
+        };
+        for entry in configurations {
+            let source = fs::read_to_string(&entry.file)
+                .map_err(|error| format!("{}: {error}", entry.file.display()))?;
+            let unit = crate::member_prepass::c_unit(entry, &source)?;
+            if let Some(declared) = target.ranges.get(&name) {
                 let derived =
                     qcore_c_gateway::null_deref::derive_result_set_c11(&unit, &name, &environment)
                         .map_err(|why| format!("`{name}`: {why}"))?;
@@ -1017,17 +1039,11 @@ fn derive_results(
                 }
                 helpers.extend(derived.helpers);
                 rested.extend(derived.rests_on);
-                Some(derived.set.canonical())
+                result_set = union(result_set, &derived.set);
             }
-            None => None,
-        };
-        let declared_written = target.written.get(&name).cloned().unwrap_or_default();
-        let slots = declared_written
-            .iter()
-            .map(|declared| (declared.position, declared.index, declared.class))
-            .collect::<Vec<_>>();
-        let mut written_sets = Vec::new();
-        if !slots.is_empty() {
+            if slots.is_empty() {
+                continue;
+            }
             let derived = qcore_c_gateway::null_deref::derive_written_sets_c11(
                 &unit,
                 &name,
@@ -1035,7 +1051,8 @@ fn derive_results(
                 &environment,
             )
             .map_err(|why| format!("`{name}`: {why}"))?;
-            for (declared, derived) in declared_written.iter().zip(derived) {
+            for ((declared, derived), acc) in declared_written.iter().zip(derived).zip(&mut written)
+            {
                 let derived = derived.map_err(|why| {
                     format!(
                         "`{name}`: its written set of `{}` when it returns {} is not derived \
@@ -1069,15 +1086,26 @@ fn derive_results(
                 }
                 helpers.extend(derived.helpers);
                 rested.extend(derived.rests_on);
-                written_sets.push(crate::contract_revision::WrittenDerivation {
-                    slot: declared.slot.clone(),
-                    class: i64::try_from(declared.class)
-                        .map_err(|_| format!("`{name}`: a class outside `i64`"))?,
-                    written_set: derived.set.canonical(),
-                });
+                *acc = union(acc.take(), &derived.set);
             }
-            written_sets.sort();
         }
+        let result_set = result_set.map(|set| set.canonical());
+        let mut written_sets = declared_written
+            .iter()
+            .zip(written)
+            .filter_map(|(declared, set)| {
+                let set = set?;
+                Some(i64::try_from(declared.class).map(|class| {
+                    crate::contract_revision::WrittenDerivation {
+                        slot: declared.slot.clone(),
+                        class,
+                        written_set: set.canonical(),
+                    }
+                }))
+            })
+            .collect::<Result<Vec<_>, _>>()
+            .map_err(|_| format!("`{name}`: a class outside `i64`"))?;
+        written_sets.sort();
         let rests_on = rested
             .iter()
             .map(|function| {
