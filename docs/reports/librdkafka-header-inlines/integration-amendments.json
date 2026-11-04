@@ -1,0 +1,82 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "LIBRDKAFKA-HEADER-INLINES",
+ "base": "945c0db1b",
+ "measured_tip": "68c8065e1",
+ "increment_paragraph": "**LIBRDKAFKA-HEADER-INLINES** (USER REQUEST 2026-11-05, verbatim: \"Now, we're still needed to fill the gap of the missing contracts.\"; round 16, card 5 of the contract-gap queue): a census of the uncontracted callees with no body in the user's `quirin-audit current` run at Fluent Bit 046accf6 that librdkafka units call (report sha256 e965950e...d017f): 260 callees, 1,014 pairs. 89 (629 pairs) are librdkafka's own `static` header definitions, byte-identical at 046accf6, 66910c10 and 34155955; all have internal linkage, so gateway constraint 4a already offers them to W4 and no linkage reading applies: their bodies do not validate (the writers reach the cross-unit rd_buf_write, the queues rd_kafka_op_destroy). The rest are owned elsewhere (libc/builtins 22, OpenSSL 68, libcurl 56, zstd 7, zlib 5, Cyrus SASL 4, function-pointer objects 8, one declared name). New resource-v1 module `librdkafka/header_inlines.qv` in qcore-provider-librdkafka: 59 declarations stated from the bodies and pinned at 66910c10 and 046accf6 (524 pairs): the request-buffer writers and updaters (borrowed buffer; its growth ends earlier borrows by C04.3.4), rd_kafkap_str_new/_bytes_new and rd_kafka_partition_leader_new (owned, nullable), rd_kafka_q_enq/_reenq and rd_kafka_msgq_enq (the op or message consumed: on every exit linked into a queue or destroyed, a disabled queue's reply-or-destroy included; no return-code split, since 1 can follow a destruction on a forward queue), five queue and seven message-queue helpers, accessors, borrowed results (rd_kafka_msgq_first/_last, rd_kafka_topic_partition_toppar, rd_tmpabuf_alloc0), rd_kafka_rkt_get_lw (alias or NULL) and utilities; twelve name rk_plugin_callback_closure per the plugin-premise census rerun on the module (eight rk-conf, four indirect). Undeclared with the missing form named: 27 callees, 84 pairs (member-path reference keeps and drops, structs by value, a removal from a borrowed container, rule 13a/13d body shapes, member releases); the rd_atomic32_* primitives (21 pairs) stay REFCOUNT-PLAIN-COUNTER-DECLARATION's. Selected modules 66 -> 67, v1 declarations 499 -> 558, corpus modules 147 -> 148; no analyzer or Lean change. Controls: crates/qcore-c-gateway/tests/librdkafka_header_inlines.rs. Predicted: corpus +6 Safe (rd_slice_crc32, rd_kafka_share_fetch_fanout_enqueue, rd_kafka_share_record_poll_start, rd_kafka_buf_upgrade_flexver_request, rd_kafka_queue_yield, rd_kafka_toppar_needs_query), system and slice none; on the current run 59 callees and 524 pairs leave the uncontracted list and the only-uncontracted rows go 508 -> 502, no unit status change. Records: LIBRDKAFKA-HEADER-INLINES-RESIDUAL and PROVIDER-TESTS-BOUNDS-VIEW-PIN-STALE registered; REFCOUNT-MEMBER-REFERENCE-DROP, REFCOUNT-PLAIN-COUNTER-DECLARATION, W46-HEADER-INLINE-DECLARED-UNCHECKED, W45-SUB-OBJECT-STORE-FORMAL-VALUE, W48-OPENSSL-CONTRACT-PLUGIN, W48-LIBCURL-CONTRACT-PLUGIN and W44-CALLEE-NO-CORPUS-BODY amended. Report: docs/reports/librdkafka-header-inlines/README.md.",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "LIBRDKAFKA-HEADER-INLINES",
+   "operation": "register",
+   "title": "Declare the librdkafka header definitions the current route reports as uncontracted with no body",
+   "text": "Registered by its own card at landing (USER REQUEST 2026-11-05, verbatim: \"Now, we're still needed to fill the gap of the missing contracts.\"; round 16, card 5 of the contract-gap queue); retired by the next entry.",
+   "source": "docs/reports/librdkafka-header-inlines/README.md",
+   "recorded_by": "LIBRDKAFKA-HEADER-INLINES"
+  },
+  {
+   "id": "LIBRDKAFKA-HEADER-INLINES",
+   "operation": "retire",
+   "why": "DISCHARGED by LIBRDKAFKA-HEADER-INLINES (docs/reports/librdkafka-header-inlines/README.md): the census of the 260 no-body callees librdkafka units call on the user's current run at 046accf6 (89 in scope, every one a static header definition identical at 046accf6, 66910c10 and 34155955, no linkage reading change), 59 of them declared in librdkafka/header_inlines.qv from their bodies and pinned at 66910c10 and 046accf6 (524 pairs), and every other one recorded with its owner: LIBRDKAFKA-HEADER-INLINES-RESIDUAL (new), REFCOUNT-MEMBER-REFERENCE-DROP, REFCOUNT-PLAIN-COUNTER-DECLARATION and W45-SUB-OBJECT-STORE-FORMAL-VALUE (amended), and the external-library and libc owners.",
+   "source": "docs/reports/librdkafka-header-inlines/README.md"
+  },
+  {
+   "id": "LIBRDKAFKA-HEADER-INLINES-RESIDUAL",
+   "operation": "register",
+   "title": "19 librdkafka header definitions stay undeclared behind a named vocabulary or body-check gap: 40 pairs on the current route",
+   "text": "Registered by LIBRDKAFKA-HEADER-INLINES (census of the user's `quirin-audit current` run at Fluent Bit 046accf6, docs/reports/librdkafka-header-inlines/census/). Each is a `static` header definition, identical at 046accf6, 66910c10 and 34155955, whose body the run publishes no summary for. A struct passed or returned by value, which no ABI projection admits (5 callees, 15 pairs): rd_kafka_idemp_get_pid0 7 (rd_kafka_pid_t), rd_kafka_replyq_make 3 (also a queue keep inside the struct), rd_kafka_offset_store0 3 (the parameter `const rd_kafka_fetch_pos_t pos`; it also replaces a member allocation), rd_kafka_topic_partition_get_fetch_pos 1, rd_slice_pos 1; this is the gap CFL-MPACK-EXTERNAL-DECLARATIONS registers as MPACK-STRUCT-RESULT-BY-VALUE, and these five move there when that card lands. A body shape the structural checks would withdraw in every including unit: rd_kafka_topic_partition_get_toppar 5 (a returned reference kept by a statement on a local assigned from rd_kafka_topic_partition_ensure_toppar; rule 13d), rd_segment_write_remains 3 (its out slot is null-tested before the write; rule 13a), rd_kafka_q_last 1 and rd_sockaddr_list_next 1 (a borrowed result found by a list walk or an array index; rule 13a reads member paths only). No v1 form: rd_avl_find 3 (an element the tree indexes but does not own), rd_getenv 2 (getenv's storage or the argument), rd_tmpabuf_destroy 1, rd_avg_destroy 1 and rd_avg_rollover 1 (a member released or replaced), rd_kafka_broker_active_toppar_next 1 (a retention by the caller's broker, retention-undecided at every call). Not declared on review: rd_file_mkstemp 2 (a stream result whose body leaks the mkstemp descriptor when fdopen fails), rd_kafka_q_io_event 1 (the queue event-callback invocation itself; its candidates need a C04.19 registry declaration), rd_tmpabuf_write0 1 and rd_tmpabuf_write_str0 2 (they forward rd_tmpabuf_alloc0's borrowed result, now declared, which W4 may infer under C04.3.4 rule 6; measure first). Also: the twelve new uses of rk_plugin_callback_closure in librdkafka/header_inlines.qv state the premise plainly, with no symbolic decomposition or binding-manifest metadata (premise-symbolic-adoption); adding it means extending crates/qcore-contract/tests/production_symbolic_adoption.rs's adoption records. DISCHARGE: per callee, the named form or check (with Lean where semantics change), or a resource-v1 declaration stated from the body and pinned, measured with a declared prediction; the premise metadata adopted for the twelve.",
+   "source": "docs/reports/librdkafka-header-inlines/README.md",
+   "recorded_by": "LIBRDKAFKA-HEADER-INLINES"
+  },
+  {
+   "id": "PROVIDER-TESTS-BOUNDS-VIEW-PIN-STALE",
+   "operation": "register",
+   "title": "providers/tests' real-manifest test fails at main and runs in no gate step",
+   "text": "Found by LIBRDKAFKA-HEADER-INLINES at base 945c0db1b: `python3 -m unittest discover -s providers/tests` fails one test, test_contract_load_path.LoadPathManifest.test_the_real_workspace_manifest_is_current (providers/tests/test_contract_load_path.py:610). Its literal table of non-empty bounds views omits qcore-provider-libevent's monkey/result_range.qv, which card CELL-GUARD-RESULT-RANGE-CHECKED added to that crate's bounds view. The card did not change any bounds view. Neither the scoped card gate (scripts/gate_scope.py: the Python step is `unittest discover -s scripts/tests`, and the provider gate is package build/verify plus the provider workspace's cargo test, fmt and clippy) nor the full gate runs providers/tests, so the stale pin went unseen; the same pattern was recorded once before in that test's own comment (PROVIDER-LOAD-PATH-VIEW-PIN-STALE). DISCHARGE: update the literal (or read it from the inventory locks, as the resource views already are), and put providers/tests into a gate step so a stale pin fails a landing.",
+   "source": "docs/reports/librdkafka-header-inlines/README.md",
+   "recorded_by": "LIBRDKAFKA-HEADER-INLINES"
+  },
+  {
+   "id": "REFCOUNT-MEMBER-REFERENCE-DROP",
+   "operation": "amend",
+   "text": "AMENDED (LIBRDKAFKA-HEADER-INLINES, 2026-11-05): librdkafka's reply-queue and enq-once header helpers are the same gap at a member path, 7 callees and 39 pairs on the user's current run at 046accf6, none declarable: rd_kafka_replyq_destroy 21 (drops the reference replyq->q holds; C04.17 drops only the object a parameter designates, and C04.19.6's #released releases the member's object rather than one reference of it), rd_kafka_op_set_replyq 7 (keeps a queue reference into rko->rko_replyq: a keep into a non-plain place is refused), rd_kafka_replyq_enq 3 (takes the member's reference over, enqueues, drops it), and rd_kafka_enq_once_del_source 3, _del_source_return 2, _disable 2, _destroy 1 (an eonce reference drop whose family has no declared constructor or keep, plus the member reply queue's drop; two hand back the op the eonce held). Discharge extended: a reference keep and drop at a member path of a parameter.",
+   "source": "docs/reports/librdkafka-header-inlines/README.md"
+  },
+  {
+   "id": "REFCOUNT-PLAIN-COUNTER-DECLARATION",
+   "operation": "amend",
+   "text": "AMENDED (LIBRDKAFKA-HEADER-INLINES, 2026-11-05): on the user's current run at 046accf6 the three primitives are header definitions with no summary, reported uncontracted in 21 pairs (rd_atomic32_add 10, rd_atomic32_sub 6, rd_atomic32_set 5); the card left them undeclared under C04.17 and declared only the 64-bit rd_atomic64_set beside rd_atomic64_add/_get (rd_refcnt_t is 32-bit).",
+   "source": "docs/reports/librdkafka-header-inlines/README.md"
+  },
+  {
+   "id": "W46-HEADER-INLINE-DECLARED-UNCHECKED",
+   "operation": "amend",
+   "text": "AMENDED (LIBRDKAFKA-HEADER-INLINES): 59 more such declarations in librdkafka/header_inlines.qv (qcore-provider-librdkafka), each a `static` header definition of librdkafka read at 046accf6, 66910c10 and 34155955 and pinned at 66910c10 and 046accf6 (the request-buffer writers, rd_kafka_q_enq, rd_kafkap_str_new, ...; 524 pairs on the user's current run). Where an including unit's W4 derivation validates a body, C06.4 checks the declaration against it; the borrowed results are checked structurally by rule 13a; otherwise each is an unchecked premise pinned to the header text.",
+   "source": "docs/reports/librdkafka-header-inlines/README.md"
+  },
+  {
+   "id": "W45-SUB-OBJECT-STORE-FORMAL-VALUE",
+   "operation": "amend",
+   "text": "AMENDED (LIBRDKAFKA-HEADER-INLINES, 2026-11-05): librdkafka's rd_kafka_msgq_deq (rdkafka_msg.h:372-385, 5 pairs on the user's current run at 046accf6) is the same removal side: it unlinks a message from a borrowed queue and hands it to the caller, which `resource_return_removed` (an owned parent) cannot state and an alias result would leave unowned; it stays undeclared. Its insert, rd_kafka_msgq_enq, is declared consuming the message.",
+   "source": "docs/reports/librdkafka-header-inlines/README.md"
+  },
+  {
+   "id": "W48-OPENSSL-CONTRACT-PLUGIN",
+   "operation": "amend",
+   "text": "AMENDED (LIBRDKAFKA-HEADER-INLINES, 2026-11-05): on the user's current run at Fluent Bit 046accf6, librdkafka units call 68 OpenSSL functions uncontracted, 99 pairs (X509_free 6, BIO_free 5, BIO_new_mem_buf 4, EVP_PKEY_free 4, ENGINE_free 3, ERR_clear_error 3, ...); census in docs/reports/librdkafka-header-inlines/census/census.json.",
+   "source": "docs/reports/librdkafka-header-inlines/README.md"
+  },
+  {
+   "id": "W48-LIBCURL-CONTRACT-PLUGIN",
+   "operation": "amend",
+   "text": "AMENDED (LIBRDKAFKA-HEADER-INLINES, 2026-11-05): on the user's current run at Fluent Bit 046accf6, librdkafka units call 56 libcurl names uncontracted, 169 pairs. 44 of them (152 pairs) are not runtime calls: Wcurl_easy_setopt_err_* and Wcurl_easy_getinfo_err_* are curl/typecheck-gcc.h's warning stubs, which the curl_easy_setopt/getinfo macros call only in branches the compiler proves dead; a reading of those stubs (or a build with CURL_DISABLE_TYPECHECK) is a separate question from the 12 real functions (curl_slist_append 3, curl_slist_free_all 3, curl_easy_setopt 2, ...).",
+   "source": "docs/reports/librdkafka-header-inlines/README.md"
+  },
+  {
+   "id": "W44-CALLEE-NO-CORPUS-BODY",
+   "operation": "amend",
+   "text": "AMENDED (LIBRDKAFKA-HEADER-INLINES, 2026-11-05): on the user's current run at Fluent Bit 046accf6, librdkafka units also call zstd (7 functions, 7 pairs), zlib (5, 5) and Cyrus SASL (4, 4) uncontracted with no body; each belongs to its own library's provider or plugin crate (user decision of 2026-09-28), never libc.",
+   "source": "docs/reports/librdkafka-header-inlines/README.md"
+  }
+ ]
+}
