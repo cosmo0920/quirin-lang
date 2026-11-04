@@ -127,9 +127,27 @@ pub fn call_standing<'a>(
     }))
 }
 
+/// Whether a path of `cfg` can hold a protocol fact: a guard test, a
+/// protocol store or close, or a cell-bearing call (the only places one is
+/// introduced). Every other CFG carries no frame table, so it serializes and
+/// reads Clang's AST as before.
+fn may_hold_a_fact(cfg: &LegacyCfg) -> bool {
+    !cfg.cell_tests.is_empty()
+        || cfg.nodes.iter().any(|node| match &node.instruction {
+            LegacyInstruction::CellProtocolStep { .. } => true,
+            LegacyInstruction::ContractCall { retention, .. } => {
+                retention.as_ref().is_some_and(|r| r.cells.is_some())
+            }
+            _ => false,
+        })
+}
+
 /// Hook 1: every declared protocol's cells, and the standing of every
-/// declared frame of a callee `cfg` calls.
+/// declared frame of a callee `cfg` calls, for a CFG that can hold a fact.
 pub(super) fn settle_frames(cfg: &mut LegacyCfg, contracts: &ResourceContracts) {
+    if !may_hold_a_fact(cfg) {
+        return;
+    }
     let specs = super::descriptor_cells_route::protocol_specs(contracts);
     for (record, specs) in &specs {
         cfg.cell_frames.cells.insert(
