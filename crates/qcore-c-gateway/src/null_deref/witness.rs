@@ -37,6 +37,16 @@
 //! the dereference NULL proves the candidate infeasible. A call's integer
 //! result is never free: its range is a bound (its type, a checked
 //! result-range contract, this unit's validated summary of the callee).
+//!
+//! Card **NULL-WITNESS-GUARD-CORRELATION** (gateway rule 39,
+//! [`qcore_core::null_lookup`]): a lookup's miss is a function of the state
+//! its arguments reach, so it is named only when feasible on the path. A
+//! lookup whose body (in the unit) is one read of a place over its
+//! parameters returns that place: NULL only where the path's own test fixed
+//! it. Any other lookup misses freely only over constants and formals or
+//! globals no earlier decision, store, assignment or call touched. A refused
+//! miss is a constrained value ending its path unresolved, so it validates no
+//! witness and proves no candidate infeasible.
 
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -95,6 +105,10 @@ enum Origin {
     Memory(String),
     Uncontracted(String),
     Other(String),
+    /// Card NULL-WITNESS-GUARD-CORRELATION (rule 39): a lookup's result
+    /// whose miss is not a NULL event on the path (the callee, the call's
+    /// line, why). Always held `constrained`.
+    Refused(String, usize, String),
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -290,6 +304,121 @@ struct Run<'a, 'e> {
     /// Card NULL-TRIAGE-UNRESOLVED-PATHS (rule 15r): the second phase, which
     /// explores inexact arms; the first (exact) phase ends a path at one.
     explore_inexact: bool,
+    /// Card NULL-WITNESS-GUARD-CORRELATION (rule 39): the searched function's
+    /// formals (declaration ids).
+    formal_ids: &'a BTreeSet<String>,
+    /// Rule 39: what the path did that a lookup's state may depend on:
+    /// memory spellings a pointer test read through an alias, the memory
+    /// spelling (and starting range) each integer atom was read from, the
+    /// stores (`None`: a place the search does not spell), the assignments
+    /// of followed variables and the calls, each with its line.
+    decided_reads: BTreeSet<String>,
+    atom_reads: BTreeMap<usize, (String, Option<(i128, i128)>)>,
+    stores: Vec<(usize, Option<String>)>,
+    assigned: Vec<(usize, String)>,
+    calls: Vec<(usize, String, Vec<String>)>,
+}
+
+/// Card NULL-WITNESS-GUARD-CORRELATION (rule 39): how a lookup's result is
+/// read on one path.
+enum LookupReading {
+    /// The miss is named (`null_lookup::MissEvent::Named`).
+    Named(P),
+    /// The miss is refused, with the reason.
+    Refused(String),
+}
+
+/// Rule 39: where a lookup argument is rooted.
+enum Rooted {
+    Constant,
+    Decl {
+        root: qcore_core::null_lookup::Root,
+        id: String,
+        name: String,
+        pointer: bool,
+    },
+    Unrooted(String),
+}
+
+/// Rule 39: the place a lookup's body ties its result to, spelled as the
+/// caller's own read of it would be (each parameter replaced by its
+/// argument's spelling): the unit holds the lookup's definition, its body is
+/// one `return` of a load of a place built only from the parameters, member
+/// accesses, `&`, `*` and casts.
+fn tied_place(env: &Env<'_>, callee: &str, arguments: &[&Value]) -> Option<String> {
+    let definition = env.unit.definitions.get(callee)?;
+    let parameters = kids(definition)
+        .filter(|c| kind(c) == "ParmVarDecl")
+        .map(|p| p["id"].as_str())
+        .collect::<Option<Vec<_>>>()?;
+    if parameters.len() != arguments.len() {
+        return None;
+    }
+    let body = kids(definition).find(|c| kind(c) == "CompoundStmt")?;
+    let mut statements = kids(body);
+    let only = statements.next()?;
+    if statements.next().is_some() || kind(only) != "ReturnStmt" {
+        return None;
+    }
+    let place = loaded_place(kids(only).next()?)?;
+    let substitution = parameters
+        .into_iter()
+        .zip(arguments.iter().map(|a| render(a)))
+        .collect::<BTreeMap<_, _>>();
+    tied_render(place, &substitution)
+}
+
+/// The place a returned expression loads: the value casts and parentheses
+/// stripped, a member access or a dereference.
+fn loaded_place(node: &Value) -> Option<&Value> {
+    let mut node = node;
+    loop {
+        match kind(node) {
+            "ParenExpr" => node = kids(node).next()?,
+            "ImplicitCastExpr"
+                if matches!(
+                    node["castKind"].as_str(),
+                    Some("LValueToRValue" | "NoOp" | "BitCast")
+                ) =>
+            {
+                node = kids(node).next()?;
+            }
+            "MemberExpr" => return Some(node),
+            "UnaryOperator" if node["opcode"] == "*" => return Some(node),
+            _ => return None,
+        }
+    }
+}
+
+/// `ast::render` of a place over the lookup's parameters, each parameter
+/// spelled as its argument; `None` for any other form.
+fn tied_render(node: &Value, substitution: &BTreeMap<&str, String>) -> Option<String> {
+    match kind(node) {
+        "ParenExpr" | "ImplicitCastExpr" => tied_render(kids(node).next()?, substitution),
+        "CStyleCastExpr" => Some(format!(
+            "({}){}",
+            node["q"].as_str().unwrap_or(""),
+            tied_render(kids(node).next()?, substitution)?
+        )),
+        "DeclRefExpr" => substitution
+            .get(node["referencedDecl"]["id"].as_str()?)
+            .cloned(),
+        "MemberExpr" => {
+            let base = tied_render(kids(node).next()?, substitution)?;
+            let op = if node["isArrow"] == true { "->" } else { "." };
+            Some(format!("{base}{op}{}", node["name"].as_str()?))
+        }
+        "UnaryOperator"
+            if node["isPostfix"] != true && matches!(node["opcode"].as_str(), Some("&" | "*")) =>
+        {
+            Some(format!(
+                "{}{}",
+                node["opcode"].as_str()?,
+                tied_render(kids(node).next()?, substitution)?
+            ))
+        }
+        _ => None,
+    }
 }
 
 fn strip(node: &Value) -> &Value {
@@ -571,7 +700,11 @@ impl<'a, 'e> Run<'a, 'e> {
             }
         } else {
             match self.int_range(spelled) {
-                Some(range) => V::Int(S::Atom(self.new_atom(Some(range), constrained))),
+                Some(range) => {
+                    let atom = self.new_atom(Some(range), constrained);
+                    self.atom_reads.insert(atom, (text.to_owned(), Some(range)));
+                    V::Int(S::Atom(atom))
+                }
                 None => V::Int(S::Opaque(format!("a value of type `{spelled}`"))),
             }
         };
@@ -647,17 +780,23 @@ impl<'a, 'e> Run<'a, 'e> {
         }
     }
 
-    fn write(&mut self, place: Option<PlaceKey>, value: V) {
+    fn write(&mut self, place: Option<PlaceKey>, value: V, at: &Value) {
+        let line = self.line(at);
         match place {
             Some(PlaceKey::Var(id)) => {
+                self.assigned.push((line, id.clone()));
                 self.forget_mentions(&id);
                 self.vars.insert(id, value);
             }
             Some(PlaceKey::Mem(text)) => {
+                self.stores.push((line, Some(text.clone())));
                 self.forget_memory();
                 self.memory.insert(text, value);
             }
-            None => self.forget_memory(),
+            None => {
+                self.stores.push((line, None));
+                self.forget_memory();
+            }
         }
     }
 
@@ -684,6 +823,14 @@ impl<'a, 'e> Run<'a, 'e> {
                     condition: format!("the lookup `{name}` at line {at} misses (returns NULL)"),
                     line: *at,
                 }),
+                // Card NULL-WITNESS-GUARD-CORRELATION (rule 39): a refused
+                // miss ends the path unresolved, never `Ended`, so it neither
+                // validates a witness nor proves the candidate infeasible.
+                P::Opaque(Origin::Refused(name, at, reason), _) => {
+                    return Err(End::Unresolved(format!(
+                        "the lookup `{name}` at line {at} reaches the dereference at line {line}, but its miss is not a NULL event on this path (rule 39): {reason}"
+                    )));
+                }
                 P::Uninit => {
                     let why =
                         format!("the pointer is uninitialised on a path reaching line {line}");
@@ -850,7 +997,7 @@ impl<'a, 'e> Run<'a, 'e> {
                     ),
                     _ => V::Int(S::Opaque("an updated value".into())),
                 };
-                self.write(place, updated.clone());
+                self.write(place, updated.clone(), node);
                 Ok(updated)
             }
             "ConditionalOperator" => {
@@ -1180,7 +1327,7 @@ impl<'a, 'e> Run<'a, 'e> {
                     }
                     V::Int(_) => V::Int(S::Opaque("an incremented value".into())),
                 };
-                self.write(place, updated.clone());
+                self.write(place, updated.clone(), node);
                 Ok(if node["isPostfix"] == true {
                     current
                 } else {
@@ -1228,7 +1375,7 @@ impl<'a, 'e> Run<'a, 'e> {
             "=" => {
                 let place = self.lvalue(lhs)?;
                 let value = self.eval(rhs)?;
-                self.write(place, value.clone());
+                self.write(place, value.clone(), node);
                 Ok(value)
             }
             "," => {
@@ -1346,6 +1493,21 @@ impl<'a, 'e> Run<'a, 'e> {
                 self.judge(argument, value.clone())?;
             }
         }
+        // Card NULL-WITNESS-GUARD-CORRELATION (rule 39): a lookup is read
+        // before the call forgets the cached memory values and before the
+        // call joins the path's record of calls.
+        let line = self.line(node);
+        let lookup = match &name {
+            Some(callee_name) if self.is_lookup(callee_name) => {
+                Some(self.read_lookup(callee_name, line, arguments))
+            }
+            _ => None,
+        };
+        self.calls.push((
+            line,
+            name.clone().unwrap_or_else(|| render(callee)),
+            arguments.iter().map(|a| render(a)).collect(),
+        ));
         self.forget_memory();
         if let Some(callee_name) = &name
             && (self.env.unit.no_return.contains(callee_name)
@@ -1353,7 +1515,6 @@ impl<'a, 'e> Run<'a, 'e> {
         {
             return Err(End::Ended);
         }
-        let line = self.line(node);
         let id = self.fresh_id();
         if !is_pointer(ty(node)) {
             // Card NULL-TRIAGE-UNRESOLVED-PATHS (rule 15q): a call's integer
@@ -1418,9 +1579,22 @@ impl<'a, 'e> Run<'a, 'e> {
                 self.consulted.insert(format!("declared:{callee_name}"));
                 P::NonNull
             }
-            Some(ResourceReturnMode::Derived { nullable: true, .. }) => {
-                P::Opaque(Origin::Lookup(callee_name, line), false)
-            }
+            // Rule 39: a lookup's miss is named only when it is feasible on
+            // the path by facts the search reads.
+            Some(ResourceReturnMode::Derived { nullable: true, .. }) => match lookup {
+                Some(LookupReading::Named(p)) => p,
+                Some(LookupReading::Refused(reason)) => {
+                    P::Opaque(Origin::Refused(callee_name, line, reason), true)
+                }
+                None => P::Opaque(
+                    Origin::Refused(
+                        callee_name,
+                        line,
+                        "the search did not read the lookup".into(),
+                    ),
+                    true,
+                ),
+            },
             Some(ResourceReturnMode::Derived {
                 nullable: false,
                 parameter,
@@ -1479,6 +1653,241 @@ impl<'a, 'e> Run<'a, 'e> {
     }
 
     // -------------------------------------------------------------------
+    // Lookups (card NULL-WITNESS-GUARD-CORRELATION, rule 39)
+    // -------------------------------------------------------------------
+
+    /// A callee whose declared result is borrowed from an argument and
+    /// nullable (the same reading the result's classification below makes).
+    fn is_lookup(&self, callee: &str) -> bool {
+        crate::contract_dependencies::unrecorded(|| {
+            self.env
+                .resource
+                .contract(callee)
+                .filter(|_| !self.env.checked_results.contains(callee))
+                .is_some_and(|c| {
+                    matches!(c.result, ResourceReturnMode::Derived { nullable: true, .. })
+                })
+        })
+    }
+
+    /// Whether the miss of the lookup `callee` at `line` is a NULL event on
+    /// this path: the body's tie when the unit holds one, otherwise the state
+    /// its arguments reach (`qcore_core::null_lookup`).
+    fn read_lookup(&self, callee: &str, line: usize, arguments: &[&Value]) -> LookupReading {
+        use qcore_core::null_lookup::{MissEvent, State, Tie, lookup_state, miss_event};
+        if let Some(place) = tied_place(self.env, callee, arguments) {
+            let cached = self.memory.get(&place);
+            let tie = match cached {
+                Some(V::Ptr(P::Null(_), _)) => Tie::DecidedNull,
+                _ => Tie::Other,
+            };
+            return match (miss_event(tie, State::Correlated), cached) {
+                (MissEvent::Named, Some(V::Ptr(P::Null(why), _))) => {
+                    LookupReading::Named(P::Null(NullWhy {
+                        allocation: why.allocation,
+                        condition: format!(
+                            "the lookup `{callee}` at line {line} returns `{place}` (its body), which is NULL on this path: {}",
+                            why.condition
+                        ),
+                        line,
+                    }))
+                }
+                _ => {
+                    let detail = match cached {
+                        Some(V::Ptr(P::NonNull, _)) => {
+                            "which the path already fixed non-null, so the miss is excluded"
+                        }
+                        _ if self.decided_texts.contains(&place)
+                            || self.decided_reads.contains(&place) =>
+                        {
+                            "which the path tested before a call or store: correlated"
+                        }
+                        _ => {
+                            "a memory value no condition on the path names NULL (rule 14r), not a miss of the lookup's own"
+                        }
+                    };
+                    LookupReading::Refused(format!("its body returns `{place}`, {detail}"))
+                }
+            };
+        }
+        let mut states = Vec::new();
+        let mut first_reason = None;
+        for argument in arguments {
+            let (state, reason) = self.argument_state(argument);
+            if state == State::Correlated && first_reason.is_none() {
+                first_reason = Some(format!(
+                    "it reads the state of `{}`: {}",
+                    render(argument),
+                    reason.unwrap_or_default()
+                ));
+            }
+            states.push(state);
+        }
+        match miss_event(Tie::None, lookup_state(&states)) {
+            MissEvent::Named => {
+                LookupReading::Named(P::Opaque(Origin::Lookup(callee.to_owned(), line), false))
+            }
+            MissEvent::Refused => LookupReading::Refused(
+                first_reason.unwrap_or_else(|| "a correlated argument".into()),
+            ),
+        }
+    }
+
+    /// The state one lookup argument contributes, with the reason when it is
+    /// correlated (`null_lookup::argument_state`).
+    fn argument_state(&self, argument: &Value) -> (qcore_core::null_lookup::State, Option<String>) {
+        use qcore_core::null_lookup::{Root, State, argument_state};
+        let (root, id, name, pointer) = match self.argument_root(argument) {
+            Rooted::Constant => return (State::Free, None),
+            Rooted::Unrooted(what) => {
+                return (
+                    State::Correlated,
+                    Some(format!(
+                        "an argument the search does not root at an entry value ({what})"
+                    )),
+                );
+            }
+            Rooted::Decl {
+                root,
+                id,
+                name,
+                pointer,
+            } => (root, id, name, pointer),
+        };
+        if root == Root::Local {
+            return (
+                State::Correlated,
+                Some(format!(
+                    "`{name}` is a local of this function, whose value or object the path establishes"
+                )),
+            );
+        }
+        let touched = self.touched(&id, &name, pointer);
+        let call_before = self
+            .calls
+            .first()
+            .map(|(line, callee, _)| (*line, callee.clone()));
+        let state = argument_state(root, touched.is_some(), call_before.is_some());
+        let reason = match (state, touched, call_before) {
+            (State::Free, _, _) => None,
+            (State::Correlated, Some(touched), _) => Some(touched),
+            (State::Correlated, None, Some((line, callee))) => Some(format!(
+                "the call `{callee}` at line {line} precedes it on the path and may write the global `{name}`"
+            )),
+            (State::Correlated, None, None) => Some(format!("`{name}` is correlated")),
+        };
+        (state, reason)
+    }
+
+    /// Whether an earlier decision, store, assignment or call on the path
+    /// read or wrote through the root `name` (declaration `id`); a NULL test
+    /// of a pointer root itself reads the pointer, not what it reaches.
+    fn touched(&self, id: &str, name: &str, pointer: bool) -> Option<String> {
+        let decided_atoms = self.atom_reads.iter().filter_map(|(atom, (text, start))| {
+            let info = &self.atoms[*atom];
+            (info.constrained || !info.holes.is_empty() || info.range != *start).then_some(text)
+        });
+        for text in self
+            .decided_texts
+            .iter()
+            .chain(self.decided_reads.iter())
+            .chain(decided_atoms)
+        {
+            if mentions(text, name) && !(pointer && text == name) {
+                return Some(format!(
+                    "the path tested `{text}`, which reads through `{name}`"
+                ));
+            }
+        }
+        for (line, text) in &self.stores {
+            match text {
+                None => {
+                    return Some(format!(
+                        "the path wrote a place the search does not spell at line {line}"
+                    ));
+                }
+                Some(text) if mentions(text, name) => {
+                    return Some(format!("the path stored `{text}` at line {line}"));
+                }
+                Some(_) => {}
+            }
+        }
+        if let Some((line, _)) = self.assigned.iter().find(|(_, var)| var == id) {
+            return Some(format!("the path assigned `{name}` at line {line}"));
+        }
+        for (line, callee, arguments) in &self.calls {
+            if let Some(argument) = arguments.iter().find(|a| mentions(a, name)) {
+                return Some(format!(
+                    "the call `{callee}` at line {line} received `{argument}`"
+                ));
+            }
+        }
+        None
+    }
+
+    /// Where a lookup argument is rooted: the variable its place or address
+    /// expression starts from.
+    fn argument_root(&self, node: &Value) -> Rooted {
+        use qcore_core::null_lookup::Root;
+        let node = strip(node);
+        match kind(node) {
+            "ImplicitCastExpr" | "CStyleCastExpr" | "MemberExpr" => match kids(node).next() {
+                Some(inner) => self.argument_root(inner),
+                None => Rooted::Unrooted(kind(node).to_owned()),
+            },
+            "UnaryOperator" if matches!(node["opcode"].as_str(), Some("&" | "*")) => {
+                match kids(node).next() {
+                    Some(inner) => self.argument_root(inner),
+                    None => Rooted::Unrooted("an operator".into()),
+                }
+            }
+            "ArraySubscriptExpr" => {
+                let parts = kids(node).collect::<Vec<_>>();
+                match (parts.first(), parts.get(1)) {
+                    (Some(base), Some(index)) if literal(index).is_some() => {
+                        self.argument_root(base)
+                    }
+                    _ => Rooted::Unrooted(format!(
+                        "`{}`, an element at an index the search does not fix",
+                        render(node)
+                    )),
+                }
+            }
+            "IntegerLiteral"
+            | "CharacterLiteral"
+            | "FloatingLiteral"
+            | "StringLiteral"
+            | "PredefinedExpr"
+            | "UnaryExprOrTypeTraitExpr"
+            | "OffsetOfExpr" => Rooted::Constant,
+            "DeclRefExpr" => {
+                let decl = &node["referencedDecl"];
+                match decl["kind"].as_str() {
+                    Some("EnumConstantDecl" | "FunctionDecl") => Rooted::Constant,
+                    Some("ParmVarDecl" | "VarDecl") => {
+                        let id = decl["id"].as_str().unwrap_or("").to_owned();
+                        let root = if self.formal_ids.contains(&id) {
+                            Root::Formal
+                        } else if self.env.unit.globals.contains(&id) {
+                            Root::Global
+                        } else {
+                            Root::Local
+                        };
+                        Rooted::Decl {
+                            root,
+                            id,
+                            name: decl["name"].as_str().unwrap_or("?").to_owned(),
+                            pointer: is_pointer(decl["t"].as_str().unwrap_or("")),
+                        }
+                    }
+                    _ => Rooted::Unrooted(format!("`{}`", render(node))),
+                }
+            }
+            other => Rooted::Unrooted(format!("`{}` ({other})", render(node))),
+        }
+    }
+
+    // -------------------------------------------------------------------
     // Conditions
     // -------------------------------------------------------------------
 
@@ -1512,7 +1921,21 @@ impl<'a, 'e> Run<'a, 'e> {
             P::NonNull => Ok(true),
             P::Uninit => Err(End::Unresolved("a test of an uninitialised pointer".into())),
             P::Opaque(origin, constrained) => {
-                let arm = if constrained {
+                // Card NULL-WITNESS-GUARD-CORRELATION (rule 39): a memory
+                // value tested through an alias is a read a lookup's state
+                // may depend on.
+                if let Origin::Memory(text) = &origin {
+                    self.decided_reads.insert(text.clone());
+                }
+                let arm = if let Origin::Refused(name, at, reason) = &origin {
+                    // Rule 39: a refused lookup's result is tested inexactly.
+                    self.inexact_take(
+                        node,
+                        format!(
+                            "a test at line {line} of the lookup `{name}`'s result (line {at}), whose miss is not a NULL event on this path (rule 39): {reason}"
+                        ),
+                    )?
+                } else if constrained {
                     // Card NULL-TRIAGE-UNRESOLVED-PATHS (rule 15r): explored
                     // on both arms, inexactly.
                     self.inexact_take(
@@ -1563,6 +1986,14 @@ impl<'a, 'e> Run<'a, 'e> {
                             false,
                             format!(
                                 "`{what}` ({other}) is NULL, as the test at line {line} admits"
+                            ),
+                        ),
+                        // Rule 39: reached only along the inexact arm above,
+                        // so never a witness.
+                        Origin::Refused(name, at, _) => (
+                            false,
+                            format!(
+                                "the lookup `{name}` at line {at} misses, as the test at line {line} admits (an inexact arm, rule 39)"
                             ),
                         ),
                     };
@@ -2098,6 +2529,9 @@ impl<'a, 'e> Run<'a, 'e> {
                 for child in kids(node) {
                     self.eval(child)?;
                 }
+                // Rule 39: an asm statement may write any place.
+                let line = self.line(node);
+                self.stores.push((line, None));
                 self.forget_memory();
                 Ok(Flow::Normal)
             }
@@ -2609,6 +3043,10 @@ fn phase(context: &Context<'_, '_>, explore_inexact: bool) -> Phase {
     let formals = kids(context.definition)
         .filter(|c| kind(c) == "ParmVarDecl")
         .collect::<Vec<_>>();
+    let formal_ids = formals
+        .iter()
+        .filter_map(|f| f["id"].as_str().map(str::to_owned))
+        .collect::<BTreeSet<_>>();
     let mut out = Phase {
         explored: qcore_core::null_paths::Explored {
             complete: true,
@@ -2647,6 +3085,12 @@ fn phase(context: &Context<'_, '_>, explore_inexact: bool) -> Phase {
             inexact: None,
             consulted: BTreeSet::new(),
             explore_inexact,
+            formal_ids: &formal_ids,
+            decided_reads: BTreeSet::new(),
+            atom_reads: BTreeMap::new(),
+            stores: Vec::new(),
+            assigned: Vec::new(),
+            calls: Vec::new(),
         };
         for (index, formal) in formals.iter().enumerate() {
             let id = formal["id"].as_str().unwrap_or("").to_owned();

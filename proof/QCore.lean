@@ -265,6 +265,7 @@ import QCore.NeutralPrefixPreservation
 import QCore.NoBuildScope
 import QCore.NullDeref
 import QCore.NullDerefGrade
+import QCore.NullLookupEvent
 import QCore.NullMemberPremise
 import QCore.NullMemberQualifier
 import QCore.NullMemberScope

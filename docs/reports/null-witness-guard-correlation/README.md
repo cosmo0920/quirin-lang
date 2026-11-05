@@ -60,3 +60,80 @@ So none of the seven is a validated reachable violation (AGENTS.md invariant
 2): one is excluded by the guard, three rest on an arena the function itself
 established, one on state a callee built, and two name an entry memory value
 as a lookup's miss.
+
+## 2. The rule: gateway rule 39
+
+[Rule 39](../../agents/rules/39.md) (rendered in
+[gateway](../../agents/gateway.md#constraint-39)); rule 14r's named-condition
+list now defers a lookup's miss to it, and contract specification C09.3 says
+the same. In the path search (`null_deref/witness.rs`, decisions in
+`qcore_core::null_lookup`), at a call whose declared result is
+`resource_return_borrowed_from(P, nullable)`:
+
+1. **Tie.** When the unit holds the callee's definition and its body is one
+   `return` of a load of a place built only from its parameters, member
+   accesses, `&`, `*` and casts, the result is that place, spelled as the
+   caller's own read of it (each parameter replaced by its argument's
+   spelling), read before the call forgets the cached memory values. NULL
+   there (the path's own test fixed it) names the miss: a finding whose
+   condition cites the test. Anything else (fixed non-null, tested before a
+   call or store, or an unconstrained memory value, which rule 14r never
+   names) refuses it.
+2. **State.** Otherwise the miss is named only when every argument is a
+   constant (literal, enumeration constant, `sizeof`, predefined name) or is
+   rooted at a formal no earlier decision, store, assignment or call on the
+   path read or wrote through (a NULL test of a pointer root itself
+   excepted), or at a global with, in addition, no call before. A local's
+   state (the arena a function initialised and sized), a call's result and
+   any form the search does not root are correlated. What a decision read
+   includes the spellings it tested, the memory value a tested alias came
+   from, and the memory spelling of every integer atom a decision narrowed
+   or constrained.
+3. **Refusal.** A refused miss is a constrained value
+   (`Origin::Refused`): reaching the dereference it ends the path
+   `unresolved` with its reason (never `Ended`), and a test of it is inexact
+   (rule 15r). So it validates no witness, proves no candidate infeasible and
+   makes nothing `Safe`; the tie is read only to name or refuse, never to
+   prove a result non-null.
+
+The six rows' refusals: `rd_kafka_msgq_allow_wakeup_at` by the tie (fixed
+non-null by the `:1819` test), `rd_kafka_ProduceRequest` and
+`rd_kafka_handle_idempotent_Produce_success` by the tie (entry or callee-built
+memory no condition names; `TAILQ_LAST`'s cast read too, or, failing the tie,
+the earlier `rd_kafka_msgq_first(&batch->msgq)` call), the three tmpabuf rows
+by state (`&tbuf` is rooted at a local).
+
+## 3. Lean parity
+
+`QCore.NullLookupEvent` ([module](../../../proof/QCore/NullLookupEvent.lean),
+audited by [`AuditNullLookupEvent.lean`](../../../proof/AuditNullLookupEvent.lean),
+placeholder-free, no project axioms): `missEvent`, `argumentState`,
+`lookupState`; theorems `a_named_miss_is_decided_or_free`,
+`a_tied_lookup_is_named_only_when_decided_null`,
+`a_correlated_untied_miss_is_refused`, `correlation_never_names`,
+`touching_never_frees`, `a_call_before_never_frees_a_global`,
+`a_local_or_unrooted_argument_is_correlated`,
+`one_correlated_argument_correlates`, `a_free_lookup_has_only_free_arguments`,
+`a_correlated_miss_never_contributes` (through
+`QCore.NullTriagePaths.a_call_result_never_contributes`: a correlated miss is
+a value the path chose, like a call result),
+`a_refused_miss_never_concludes_infeasible`,
+`a_refused_miss_is_never_a_finding`; `missVectors` (6) and `stateVectors` (9)
+bound to the Rust by `crates/qcore-core/tests/null_lookup.rs`, which reads
+them from the Lean text. That the search roots arguments, recognises a
+place-read body and sees the touching decisions, stores and calls as the Rust
+does is trust boundary 28, pinned by the fixtures below.
+
+## 4. Fixtures
+
+`crates/qcore-c-gateway/tests/null_witness_guard_correlation.rs`, each on a
+real Clang AST (fixture contracts are test assumptions): the guard the body
+ties to the result refuses (`allow_wakeup_at`'s shape); **true positive** a
+lookup used on the empty arm stays a `null-on-normal-path` finding; an
+accessor over entry memory is not a NULL event (`idempotent_Produce_success`);
+a test through the argument correlates an untied lookup (the length test's
+shape); control: an untied lookup over free state stays a finding (rule 14r
+unchanged); a local arena the path established refuses (`rd_tmpabuf`'s
+shape); **true positive** an arena received without size accounting stays a
+finding; a call that received the argument correlates; a test of a refused
+result is never a witness.

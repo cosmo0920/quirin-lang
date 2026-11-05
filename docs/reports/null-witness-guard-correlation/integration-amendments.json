@@ -1,0 +1,48 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "NULL-WITNESS-GUARD-CORRELATION",
+  "base": "13337d0af",
+  "measured_tip": "13337d0af",
+  "increment_paragraph": "**NULL-WITNESS-GUARD-CORRELATION** (round 22; integrator-found defect 2026-11-06, queued by the user next: \"Queue NULL-WITNESS-GUARD-CORRELATION as the next card\"; [report](../../reports/null-witness-guard-correlation/README.md)): `land.py publish` at 855b34ade measured the corpus null property's provisional Unsafe 17 -> 23. Diagnosis: LIBRDKAFKA-HEADER-INLINES declared `rd_kafka_msgq_first`, `rd_kafka_msgq_last` and `rd_tmpabuf_alloc0` with nullable borrowed-from results, which made their results strong `lookup` sources, and the path search (rule 14r) named a lookup's miss as the NULL event without reading whether the path allowed it: one witness was excluded by its own guard (`rd_kafka_msgq_allow_wakeup_at`), three rested on an arena the function initialised and sized, one on a queue a callee built, two named an entry memory value. Gateway rule 39 (`qcore_core::null_lookup`, `null_deref/witness.rs`): a lookup whose in-unit body is one read of a place over its parameters returns that place, named NULL only where the path's own test fixed it; any other lookup misses freely only over constants and formals or globals no earlier decision, store, assignment or call touched; a refused miss ends its path unresolved, so it validates no witness, removes no candidate and makes nothing Safe. Lean `QCore.NullLookupEvent` (12 theorems, `missVectors` and `stateVectors` bound to the Rust); fixtures `crates/qcore-c-gateway/tests/null_witness_guard_correlation.rs` (true positives kept: a lookup on the empty arm, an arena without size accounting). Predicted (base rev:13337d0af): the six librdkafka null rows Unsafe -> Unknown, corpus null Unsafe 23 -> 17 and Unknown 2,349 -> 2,355, combined Unsafe 34 -> 28; no custody, system or slice move.",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "NULL-WITNESS-GUARD-CORRELATION",
+      "operation": "register",
+      "title": "A null witness is validated only when its NULL event is feasible on the path",
+      "text": "Registered by its own card at landing (integrator-found defect 2026-11-06: corpus null Unsafe 17 -> 23 at 855b34ade); retired by the next entry.",
+      "source": "docs/reports/null-witness-guard-correlation/README.md",
+      "recorded_by": "NULL-WITNESS-GUARD-CORRELATION"
+    },
+    {
+      "id": "NULL-WITNESS-GUARD-CORRELATION",
+      "operation": "retire",
+      "why": "DISCHARGED by NULL-WITNESS-GUARD-CORRELATION (docs/reports/null-witness-guard-correlation/README.md): diagnosis of the seven findings (LIBRDKAFKA-HEADER-INLINES' nullable borrowed-from results made header lookups strong sources; the search named their miss unchecked); gateway rule 39 names a lookup's miss only through a place-read tie the path fixed NULL or over untouched entry state, a refusal ending its path unresolved; Lean QCore.NullLookupEvent; fixtures with both true positives kept.",
+      "source": "docs/reports/null-witness-guard-correlation/README.md"
+    },
+    {
+      "id": "NULL-LOOKUP-TIE-INFEASIBILITY",
+      "operation": "register",
+      "title": "A lookup tie that the path fixed non-null could prove the candidate infeasible: a decision held from rule 39",
+      "text": "Registered by NULL-WITNESS-GUARD-CORRELATION. Rule 39 reads a lookup's place-read body (`return TAILQ_FIRST(&q->rkmq_msgs);`) only to name or refuse its miss; where the path's own test fixed the tied place non-null (rd_kafka_msgq_allow_wakeup_at, rdkafka_msg.c:1819 -> :1826) the miss is excluded on that path, yet the path ends unresolved, so the candidate stays Unknown instead of being removed by rule 15t's infeasibility proof. The card was briefed never to make a row Safe; letting the tie return the cached non-null value would remove that candidate (its row resting on the inline body at the pinned revision and on `inferred:rd_kafka_msgq_first`). DISCHARGE: a user decision, then the change with fixtures, Lean parity (the tie's soundness for an infeasibility proof) and a measurement.",
+      "source": "docs/reports/null-witness-guard-correlation/README.md",
+      "recorded_by": "NULL-WITNESS-GUARD-CORRELATION"
+    },
+    {
+      "id": "NULL-LOOKUP-STATE-INVARIANTS",
+      "operation": "register",
+      "title": "Lookup misses the bodies exclude through data-structure invariants the search does not read",
+      "text": "Registered by NULL-WITNESS-GUARD-CORRELATION. Rule 39 refuses, as correlated, five corpus witnesses whose NULL event the bodies exclude only through an invariant: (1) the rd_tmpabuf arena discipline (rd_kafka_metadata_cache_entry_new, rd_kafka_topic_info_new_with_rack, rd_kafka_handle_Produce_metadata_update): `rd_tmpabuf_alloc0` returns NULL only when `tab->failed` (no tmpabuf body sets it non-zero) or `of + size > size`, where `assert_on_fail` asserts first; the callers size the arena with rd_tmpabuf_add_alloc over string lengths and loops, and the exclusion holds only while `NDEBUG` is undefined (the corpus compile database does not define it); (2) the message queue's count/list invariant (`rkmq_msg_cnt > 0` iff `tqh_first != NULL`) that rd_kafka_ProduceRequest's length read (`rd_dassert(cnt > 0)`) and its callee rd_kafka_msgset_create_ProduceRequest rely on. Both stay Unknown (candidate). DISCHARGE: checked invariant contracts (or body-derived arithmetic) for each, with the build-configuration dependence stated, fixtures, Lean parity and a measurement; never a caller test as evidence.",
+      "source": "docs/reports/null-witness-guard-correlation/README.md",
+      "recorded_by": "NULL-WITNESS-GUARD-CORRELATION"
+    },
+    {
+      "id": "NULL-LOOKUP-SOURCE-DEPENDENCY",
+      "operation": "register",
+      "title": "A null row resting on a declared allocation or lookup result does not list the declaration",
+      "text": "Registered by NULL-WITNESS-GUARD-CORRELATION. The null walk (`null_deref/walk.rs`) and the path search (`witness.rs`) read a callee's resource contract through `contract_dependencies::unrecorded` when they classify its result as an allocation or lookup source; so the six rows LIBRDKAFKA-HEADER-INLINES made provisional Unsafe listed the same contract dependencies at both sides, and no row's `contract_dependencies` names the declaration its strong source or finding rests on. DISCHARGE: the classification records a dependency (for example `declared:NAME`) on every row whose candidate source or finding rests on it, with fixtures and the measured dependency change.",
+      "source": "docs/reports/null-witness-guard-correlation/README.md",
+      "recorded_by": "NULL-WITNESS-GUARD-CORRELATION"
+    }
+  ]
+}

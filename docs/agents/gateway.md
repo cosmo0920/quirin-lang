@@ -7904,8 +7904,9 @@ safety claim and no validation of the detach representation premise.
     from an expression, another value it was compared with, a memory
     spelling decided before a call and read again after it) is correlated
     and the path is unresolved (`admit`). The NULL condition is named: an
-    allocation that fails, a lookup that misses, a null constant, the null
-    arm of the function's own test. Outcome per candidate (`triage` on the
+    allocation that fails, a lookup that misses (only when rule 39 admits the
+    miss on the path), a null constant, the null arm of the function's own
+    test. Outcome per candidate (`triage` on the
     row): `finding` (with its decisions, its NULL event and the
     dereference), `infeasible` (every path explored, none reaches it NULL
     under a named condition), `unresolved` (with the reason) or
@@ -9901,5 +9902,42 @@ safety claim and no validation of the detach representation premise.
     `no_ast_answer_keeps_the_refusal`, `a_new_admission_needs_every_fact`, the
     four keeping theorems, the `NoOp` lowering);
     [report](../reports/member-access-projection/README.md).
+
+<a id="constraint-39"></a>
+
+39. **A lookup's miss is the NULL event of a null witness only when it is
+    feasible on the path by facts the search reads.** Card
+    NULL-WITNESS-GUARD-CORRELATION (contract specification C09.3;
+    `null_deref/witness.rs`, `qcore_core::null_lookup`). A *lookup* is a call
+    whose declared result is `resource_return_borrowed_from(P, nullable)`;
+    unlike an allocation's failure, its miss is a function of the state its
+    arguments reach. In the path search (rule 14r):
+    (1) **tie**: when the unit holds the lookup's definition and its body is
+    one `return` of a load of a place built only from its parameters, member
+    accesses, `&`, `*` and casts, the result is that place, spelled as the
+    caller's own read of it: the miss is named only when the path's own test
+    fixed the place NULL (a finding, its condition naming the test); fixed
+    non-null, tested before a call or store, or an unconstrained memory
+    value (which rule 14r never names) refuses it;
+    (2) otherwise the miss is named only when every argument is a constant (a
+    literal, an enumeration constant, `sizeof`, a predefined name) or is
+    rooted at a formal that no earlier decision, store, assignment or call
+    on the path read or wrote through (a NULL test of a pointer root itself
+    excepted), or at a global with, in addition, no call before; an argument
+    rooted at a local (an arena the function initialised and sized), at a
+    call's result or at nothing the search roots is correlated;
+    (3) a refused miss is a constrained value: reaching the dereference it
+    ends the path **unresolved** with the reason, and a test of it is
+    inexact (rule 15r), so a refusal never validates a witness, never proves
+    a candidate infeasible and never makes a row `Safe`. The tie is read only
+    to name or refuse a miss, never to prove a result non-null.
+    **Do not** name a lookup's miss as a NULL condition when a guard the
+    path read, a state the path built or an entry memory value decides it.
+    `QCore.NullLookupEvent` (`a_named_miss_is_decided_or_free`,
+    `a_tied_lookup_is_named_only_when_decided_null`, `touching_never_frees`,
+    `one_correlated_argument_correlates`,
+    `a_correlated_miss_never_contributes`,
+    `a_refused_miss_never_concludes_infeasible`; `missVectors`,
+    `stateVectors`).
 
 <!-- generated:rules:end -->
