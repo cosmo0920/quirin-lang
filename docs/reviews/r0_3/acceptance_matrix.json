@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 893
+  "named_followups": 892
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -12972,12 +12972,6 @@
    "source": "docs/reports/w48-bu-cmt-map-metric-get/README.md"
   },
   {
-   "id": "GATE-SCOPE-RUNTIME-READS-HEURISTIC",
-   "title": "The scoped card gate finds run-time readers by a string-literal heuristic: it over-selects for broad walkers and cannot see data-derived paths or filtered whole-repository walks",
-   "why": "scripts/gate_scope.py (card GATE-ELASTIC) finds compile-time readers exactly (include_str!/include_bytes!/include!/#[path], 130 cross-crate rows, one unresolvable include that is text inside a string), but run-time readers only by string literals naming a tracked path or a parent directory. Measured consequence (docs/reports/gate-elastic/selection.json): workspace_layering.rs (.join(\"crates\")) and composition_bounds.rs (walks crates/) put qcore-compiler, qcore-verification and their dependents into the scope of every crate change (5-6 of 13 root members), and production_symbolic_adoption.rs (walks providers/) sends every providers/ change to qcore-contract and so the full suite. It cannot see a path a test computes from data (a manifest entry) or a whole-repository walk filtered afterwards (qcore-contract bounds_contract.rs, compiler tracked_inputs.rs), so the full gate per landing stays the arbiter. DISCHARGE: declare each repository walk's filter where it is made (for example a reviewed table of walker, root and extension the scoper reads, with a test that every tracked_files call outside a crate's own directory is listed), then measure the scope gain against selection.json. Requirement R1 of docs/plans/gate-time-reduction/README.md (2026-11-05): probe at 96a3efd3b, one libc .qv contract selects full mode through string-literal readers of providers/ in qcore-c-gateway and qcore-contract; `--reader-granularity file` is already the default, so the remaining defect is directory attribution of literals.",
-   "source": "docs/reports/gate-elastic/README.md, docs/plans/gate-time-reduction/README.md"
-  },
-  {
    "id": "PROVIDER-CONFORMANCE-CORE-DEPS-UNGATED",
    "title": "qcore-provider-conformance dev-depends on six core crates, but neither the full gate nor the scoped gate runs the provider suite on a core-only change",
    "why": "cargo metadata (card GATE-ELASTIC): providers/conformance dev-depends on qcore-audit, qcore-c-gateway, qcore-contract, qcore-core, qcore-verification and qcore-verifier-host, and every provider member depends on qcore-schemas. The full standing gate runs the provider gate only when providers/ changes (constraint 18, operations card briefs), and the scoped gate follows it, listing such members in gate.json under provider_members_reached_without_providers_change. A core change can therefore break provider conformance with every gate green until a later providers/ change. DISCHARGE: decide whether a diff reaching a provider member through a core dependency runs the provider gate (scoped gate and landing gate alike), and record the decision in validation.md.",
@@ -13010,8 +13004,8 @@
   {
    "id": "GATE-SCOPED-RUN-UNEXERCISED",
    "title": "No scoped (non-full) gate run, gate_lean.py against Lake, or live slot job has completed yet",
-   "why": "Card GATE-ELASTIC's own diff selects full mode, so its gate exercised gate_scope.py's full path only; the live demonstration of gate_slot.py rust-suite with run_test_binaries.py --packages qcorec,quirin-audit-plugin-libevent and of gate_slot.py lean with gate_lean.py waited about four hours behind legacy-lock jobs and was stopped (logs in that worktree's private/ge/demo*-attempt/). The restricted runner, slot accounting and gate_lean's refusals are covered by unit tests with real flock locks, not by a completed run. DISCHARGE: the first card that lands on the scoped gate in scoped mode with a Lean module step, under slots, publishes its gate.json and slot receipts, and its totals are checked against the units its --packages selection should build.",
-   "source": "docs/reports/gate-elastic/README.md"
+   "why": "Card GATE-ELASTIC's own diff selects full mode, so its gate exercised gate_scope.py's full path only; the live demonstration of gate_slot.py rust-suite with run_test_binaries.py --packages qcorec,quirin-audit-plugin-libevent and of gate_slot.py lean with gate_lean.py waited about four hours behind legacy-lock jobs and was stopped (logs in that worktree's private/ge/demo*-attempt/). The restricted runner, slot accounting and gate_lean's refusals are covered by unit tests with real flock locks, not by a completed run. DISCHARGE: the first card that lands on the scoped gate in scoped mode with a Lean module step, under slots, publishes its gate.json and slot receipts, and its totals are checked against the units its --packages selection should build. GATE-SCOPE-PRECISE-SELECTION (2026-11-05) supplies the selection-replay half of R9: 7 cards and 9 red commits were replayed through the old and the new scoper, and no failing unit was dropped. run_test_binaries.py --targets ran live under the rust-suite slot. That card's own gate is full mode (it changes the scoper), so the scoped landing this entry waits for is still to come.",
+   "source": "docs/reports/gate-elastic/README.md, docs/reports/gate-scope-precise-selection/README.md"
   },
   {
    "id": "CMT-MAP-OPTS-CONTRACT-ADOPTION",
@@ -13234,13 +13228,6 @@
    "recorded_by": "RULE36-PILOT"
   },
   {
-   "id": "CARD-GATE-NEW-AUDIT-MATRIX-COUNT",
-   "title": "A card adding a Lean audit fails its own gate on the stale matrix",
-   "why": "scripts/tests/test_build_matrix_sections.py pins the committed acceptance matrix's derived validation.lean_audits against the tree's Audit*.lean count. A card that adds an audit (RULE36-PILOT's round-1 gate: 390 committed against 391) fails the Python suite until the matrix is regenerated, which is the integrator's record, so the scoped card gate cannot be green for such a card. DISCHARGE: the card gate regenerates or ignores the matrix's derived counts on a card branch (the landing gate keeps the check), or cards are told to regenerate the derived fields, with the rule stated in validation.md.",
-   "source": "docs/reports/rule36-pilot/README.md",
-   "recorded_by": "RULE36-PILOT"
-  },
-  {
    "id": "GATEWAY-RULE-API-BODY-REWRITE-POSITION",
    "title": "No route-map position for CFG-build body rewrites or derivation row routes",
    "why": "ROUTE-MAP section 1 lists the per-CFG-build body rewrites (_Generic resolution, literal premises, 11r, and since rule 33 the removed-selection expansion) beside the token holds, and the custody derivation's function-row routes (rule 33's frame install and row under its selection entry, rule 37's checked-specification settlement) are not mapped at all. The only position of section 1 is token-hold, a hold, which forces not-switchable; so RULE33-PILOT registered its expansion arm at statement-rewrite and its entry-row arm at classification, by effect, as RULE37-PILOT did for its settlement arm. Placement by effect is unchecked: the generator and the route-map test cannot tell whether an arm sits where its host consults it. DISCHARGE: add non-hold positions for body rewrites and derivation rows to qcore-gateway-rule-api's Position and the route map, move the arms placed by effect there (an identity run per move), or record that placement by effect is the registry's policy.",
@@ -13267,13 +13254,6 @@
    "why": "ARM-OBLIGATIONS-UNIT-GRAIN notes every function's work and body in the unit frame's attribution in every run (contract_dependencies::within and body now open their scope whenever a frame is open, not only under the audit's recording) and computes a reach closure for units with an attributed admission. In its measurement the TIP corpus route (rev:051aef7f2) took 2 h 25 min and the BASE one (rev:3e53c34fe) 1 h 53 min, each measured once, in different measure runs, under different host load, so the difference is unattributed. Runs without a recording (unit tests, the certificate recheck) now open per-function consultation logs too. DISCHARGE: interleaved wall-time medians of BASE and TIP on the corpus route (or the analysis of the 54 carrying units alone), and an optimisation if the attribution costs measurably, or a record that it does not.",
    "source": "docs/reports/arm-obligations-unit-grain/README.md",
    "recorded_by": "ARM-OBLIGATIONS-UNIT-GRAIN"
-  },
-  {
-   "id": "GATE-SCOPE-PROVIDER-LOCK",
-   "title": "The scoped gate does not select the provider gate when a root crate the provider workspace builds changes its dependencies",
-   "why": "scripts/gate_scope.py chooses the provider gate from paths under providers/ and from string-literal readers. The provider workspace also builds root crates by path (qcore-c-gateway, qcore-schemas and their dependencies), so a change to such a crate's Cargo.toml dependency set or to the root Cargo.lock can leave providers/Cargo.lock stale without the gate building a provider. That happened at the RULE32A-PILOT landing (62da8997d: rule-32a-caller-frame-hold added to qcore-c-gateway, provider lock not regenerated, every --locked provider build refused until b2b10e54d). DISCHARGE: gate_scope selects the provider gate, or at least a `cargo metadata --locked --manifest-path providers/Cargo.toml` step, whenever a changed manifest or lock belongs to a package in the provider workspace's path-dependency closure, with a test that replays the 62da8997d diff and selects it.",
-   "source": "docs/reports/landing-provider-lock/README.md",
-   "recorded_by": "LANDING-PROVIDER-LOCK"
   },
   {
    "id": "RETAINING-CALL-MINTED-NAME-LIFETIME-SUMMARIES",
@@ -13409,13 +13389,6 @@
    "recorded_by": "LIBC-GAP-DECLARATIONS"
   },
   {
-   "id": "GATE-SCOPE-FULL-CRATES-TEST-ONLY",
-   "title": "A test-only edit inside a FULL_CRATES crate selects the full Rust suite",
-   "why": "scripts/gate_scope.py escalates to full mode whenever a diff reaches qcore-c-gateway, qcore-core, qcore-contract or qcore-schemas (FULL_CRATES, seam E), including a diff confined to that crate's tests/. Probe at 96a3efd3b: `--paths crates/qcore-c-gateway/tests/libc_gap_declarations.rs --plan` prints `mode: full` and 22 packages. DISCHARGE: a diff confined to crates/<crate>/tests/<binary>.rs and its fixtures selects that binary and its readers in scoped mode, with the selection replay of docs/plans/gate-time-reduction/README.md R9 showing no missed failure.",
-   "source": "docs/plans/gate-time-reduction/README.md",
-   "recorded_by": "GATE-TIME-REQUIREMENTS"
-  },
-  {
    "id": "CONTRACT-COUNT-PINS-OUTSIDE-LOCKS",
    "title": "Aggregate contract counts are literals in Rust tests every contract card edits",
    "why": "Besides the per-file contract-inventory.lock pins, compiler/tests/contract_loader.rs pins (66, 577, 370), retaining 113, pending review 11, relational 10 and 147 corpus modules, and `source_assumptions().len() == 66` recurs in contract_loader.rs, crates/qcore-audit/tests/provider_selection.rs, crates/qcore-c-gateway/tests/neighbours.rs and prod_contracts.rs. Every contract card edits them (37 commits touched contract_loader.rs since 2026-10-20) and concurrent contract cards conflict on them at merge (round 3: three cards). DISCHARGE: the aggregates are derived from the providers' contract-inventory.lock files and the load-path manifest, the per-file lock check in qcore_contract_corpus.rs is unchanged, and a declaration added to one provider changes no file outside providers/.",
@@ -13484,6 +13457,27 @@
    "why": "Registered by MEASURE-QUOTA-AND-INCREMENTAL. The subcommand host stops counting --timeout-ms while the plugin keeps quirin_audit_plugin::SLOT_WAIT_MARKER in its output; the host does not verify that the plugin's descendants wait for a gate slot. --slot-wait-limit-ms (default the quota) bounds it: a run never exceeds quota + limit. The quota is a resource bound and no verdict path reads the wait, but a plugin can spend the limit while working. gate_slot.py polls with non-blocking flock, so the kernel's waiter list does not show its waits. DISCHARGE: a wait the host verifies itself, or a recorded decision that the limit is the bound.",
    "source": "docs/reports/measure-quota-and-incremental/README.md",
    "recorded_by": "MEASURE-QUOTA-AND-INCREMENTAL"
+  },
+  {
+   "id": "GATE-SCOPE-LIB-UNIT-TEST-MODULES",
+   "title": "A library's #[cfg(test)] modules select the whole crate and its dependents",
+   "why": "Registered by GATE-SCOPE-PRECISE-SELECTION. Files a library compiles only under #[cfg(test)], such as crates/qcore-contract/tests/unit/*.rs and the gateway's tests/unit modules reached by #[path], change only that library's unit-test executable (PKG::lib::NAME). scripts/gate_scope.py still selects their crate as a whole with its reverse dependencies, because the file is in the library target's closure. This keeps the LIBC-GAP- and LOG-PRINT-shaped contract cards in full mode in the R9 replay (their .qv files are included by qcore-contract's and the gateway's library tests). DISCHARGE: the module closure records cfg(test) edges; a file reached only through them selects the library's unit-test unit alone (a new runner selection for --lib); the replay is re-run and shows no failing unit dropped.",
+   "source": "docs/reports/gate-scope-precise-selection/README.md",
+   "recorded_by": "GATE-SCOPE-PRECISE-SELECTION"
+  },
+  {
+   "id": "GATE-READ-CENSUS-REFRESH",
+   "title": "The run-time read census and its drafted walker entries describe one commit",
+   "why": "Registered by GATE-SCOPE-PRECISE-SELECTION. docs/reports/gate-scope-precise-selection/read-census.json was recorded at a9de4e8be by scripts/gate_read_census.py: strace of all 610 root units, about 25 minutes under the rust-suite slot. The census-backed entries of scripts/gate_scope_walkers.json were drafted from it, and test_gate_scope_census.py checks the model against it. A test that later reads a new path through data or a new walk is not seen until the census is recorded again; a directory literal it adds fails the census test, but a data-derived read does not. The provider workspace is not traced. DISCHARGE: the census is re-recorded at a stated cadence (or on every landing that adds a test target), or a per-unit tracer runs on the units a card gate selects and fails on an open the plan does not attribute.",
+   "source": "docs/reports/gate-scope-precise-selection/README.md",
+   "recorded_by": "GATE-SCOPE-PRECISE-SELECTION"
+  },
+  {
+   "id": "TEST-WRITES-INTO-CHECKOUT",
+   "title": "A qcore-audit test leaves retained audit products inside the checkout",
+   "why": "Registered by GATE-SCOPE-PRECISE-SELECTION. The read census (2026-11-05) saw qcore-audit::test::cycle19_current_command open crates/qcore-audit/private/audit-retained-products/<pid>-<n>/{pending,product}.qc in the worktree. These are untracked files under the crate directory, left by runs of the quirin-audit binary, which retains products relative to its working directory. They are ignored, so the result is unchanged (constraint 29), but they accumulate across runs and worktrees. DISCHARGE: the test points the retained-products directory at CARGO_TARGET_TMPDIR or a temporary directory it removes, and a check asserts nothing is written under the crate directory.",
+   "source": "docs/reports/gate-scope-precise-selection/README.md",
+   "recorded_by": "GATE-SCOPE-PRECISE-SELECTION"
   }
  ],
  "updated": "Completed plugin premise integration; exact hand-maintained union retains810followups, borrowed measured-source8419Rust/354Lean/freshcard133provider, exact source equivalence checked; authoritative root committed-matrix Python confirmation in integration receipt. CMetrics map/opts API model specifications added at the explicit user request. Eight declared-model API contracts remain outside interpreted views, with CMT-MAP-OPTS-CONTRACT-ADOPTION and CMT-LABELED-HASH-ZERO-STATIC-STORAGE Open. No trusted API coverage is claimed; the source gate is recorded by this card alongside its separate initializer native checkpoint. W48-CMT-TRACKED-INTERIOR-SELF-INIT implements rule 36b's checked initializer effect transport for an exact live owned root or embedded record, retaining actual self writes, invalidating aliased member facts and preserving resource obligations; nondefault custody frames refuse and no ordinary summary is exported. The canonical CFL intrusive_list.qv declares matching audit preconditions/effects; two CMetrics .qv modules add six map and two opts lifecycle models, including transitive ownership, partial failure, borrowed results and uncleared cleanup fields. All remain outside interpreted views; checked API adoption and labeled zero-hash storage accounting have named Open follow-ups. Fresh BASE/planner precedes prediction f18d96065 and implementation; the later contract amendment 08da23123 precedes .qv edits. Native corpus BASE/TIP Safe/Unknown/Pending/provisional-Unsafe: 1009 / 3816 / 0 / 9 to 1011 / 3814 / 0 / 9; full system/slice, 5781 NULL dictionaries and runtime projections are compared, 241 semantic leaves accounted, zero unexplained leaves and no prior Safe loss. Gate 8654 Rust / 370 Lean / 374 Python, provider 133 Rust / 25 Python and all five package verifies pass. The actual deep source reader uses 328 KiB below 1 MiB. Full getter closure remains Open; W48-CMT-SELF-INIT-DISJOINT-FRAMES tracks the next bounded frame extension, and W48-EXACT-RETURN-WITNESS-PRECISION is unchanged. Native evidence is isolated to measured e92d8aef35a8bd14550e90219d19a56eb3b196e7; later source gate 2d0d85299b830aa24d7f200d63a308653582363f validates the added declared API models separately; see docs/reports/w48-cmt-tracked-interior-self-init/README.md."
