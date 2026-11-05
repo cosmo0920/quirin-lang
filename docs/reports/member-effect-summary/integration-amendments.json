@@ -1,0 +1,58 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "MEMBER-EFFECT-SUMMARY",
+  "base": "855b34ade",
+  "measured_tip": "a86dddc1d",
+  "increment_paragraph": "**MEMBER-EFFECT-SUMMARY** (round 20; USER DECISION 2026-11-05, verbatim: \"Option 1 (rec.)\", a member-effect summary with option 3's re-attribution first): step 1 is gateway rule 38i, a re-attribution that moves no verdict: the lexical gate's refusal of a statement whose deciding access is member custody through an unrebound formal parent takes a name per premise, `member-release-through-formal` (`P->F` at a `Released` position) and `member-address-release-through-formal` (`&P->F[.G...]` there), each only where the reading with every memory-reading actual borrowed admits the call, and `member-store-through-formal` (`P->F` = a pointer name or a custody-returning call); estimated from the census on the 046accf6 current run at 72, 1 and 160 leaves (Lean `QCore.MemberCustodyAttribution`). Step 2 is gateway rule 38j, the member-release half of the summary: a body that releases members of a formal it keeps is checked like rule 5k's P1-P3 (the base never copied, one event per place with only null tests before and null stores after, no loop or goto) and states a may-effect per formal (`stale`, or `cleared` by a null store on every path), cascading through calls whose whole-base or `&B->F` actual names a member-effect function, whose characterised callee may touch no other released place; with a base release rule 5k's P4 discharges it in the body. The effect's validated contract never enters the ordinary W4 table (`ResourceContracts::member_effects`, installed in a function's parser under the reserved minted name `qcore_member_effect__F`), so records, cross-unit imports, callbacks and indirect calls see an uncontracted function; only the direct-call route lowers a whole-statement call under it, where the caller's own check admitted it, and refuses every other such call `member-effect-call-refused`. Lean `QCore.MemberEffectSummary` (`body_sound`, `cascade_sound`, the withheld-summary lemmas). Not done: the store half (MEMBER-EFFECT-STORES); the declared form for bodiless callees stops on a user choice (MEMBER-EFFECT-DECLARED-FORM: G05d member-path states, already in force with rule 30's reading, or a new clause). Predicted: corpus Unknown -> Safe for metric_release_storage, cmt_metric_exp_hist_snapshot_destroy, cmt_opts_exit and free_chunk_header; slice flb_tail_fs_stat_remove; system none. Report: docs/reports/member-effect-summary/README.md.",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "MEMBER-EFFECT-SUMMARY",
+      "operation": "register",
+      "title": "A member-effect summary for bodies that release or store into members of a formal they keep, after a verdict-neutral re-attribution",
+      "text": "Registered by its own card at landing (USER DECISION 2026-11-05, verbatim: \"Option 1 (rec.)\", answering MEMBER-CUSTODY-THROUGH-FORMAL-PARENT); retired by the next entry.",
+      "source": "docs/reports/member-effect-summary/README.md",
+      "recorded_by": "MEMBER-EFFECT-SUMMARY"
+    },
+    {
+      "id": "MEMBER-EFFECT-SUMMARY",
+      "operation": "retire",
+      "why": "DISCHARGED by MEMBER-EFFECT-SUMMARY (docs/reports/member-effect-summary/README.md): step 1 gateway rule 38i names the three member-custody premises of the indirect-access refusal (Lean QCore.MemberCustodyAttribution, no verdict moves); step 2 gateway rule 38j is the member-release half of the member-effect summary, withheld from the ordinary W4 table and read only by the direct-call route (Lean QCore.MemberEffectSummary). The store half and the declared form are registered as MEMBER-EFFECT-STORES and MEMBER-EFFECT-DECLARED-FORM.",
+      "source": "docs/reports/member-effect-summary/README.md"
+    },
+    {
+      "id": "MEMBER-EFFECT-DECLARED-FORM",
+      "operation": "register",
+      "title": "The declared form of a member effect for bodiless callees: G05d member-path states or a new clause (a user choice)",
+      "text": "Registered by MEMBER-EFFECT-SUMMARY (report section 4). Rule 38j derives member-release effects from bodies only. Two vocabularies already state a callee's effect on a formal's members: grammar G05d `quant live #P: TAG.PATH |-> #released|#moved|#stale|#kept;` (contract spec C04.19.6, rule 30), whose direct call affects only an object the caller linked at the path (an untracked member stays, P-B08-SHALLOW) and which is in force today (teardown_destroy.qv, the librdkafka callback candidates, #stale included); and the descriptor-cell lower form `resource_member_released(P, T.F, stale)` (rule 38), which owns that clause name. Options: (1, recommended) G05d is the declared form: a member-path declaration with no hand-off whose states are #stale or #released also enters the member-effect table, and its direct call is read through rule 38j's caller check where the actual is a formal's object, after re-measuring existing declarations (a direct call rule 30 read as `stays` may refuse); (2) a new resource clause with a new grammar id loaded only into the member-effect table, rule 30 unchanged (two vocabularies, two readings); (3) no declared form. DISCHARGE: a user decision and the card it names, with spec, grammar, loader, gateway, Lean parity and a measured arbiter.",
+      "source": "docs/reports/member-effect-summary/README.md",
+      "recorded_by": "MEMBER-EFFECT-SUMMARY"
+    },
+    {
+      "id": "MEMBER-EFFECT-STORES",
+      "operation": "register",
+      "title": "The store half of the member-effect summary: a body that stores a custody-carrying value into a member of a formal it keeps",
+      "text": "Registered by MEMBER-EFFECT-SUMMARY (report section 3). Statements `P->F = V` with `V` a pointer name or a custody-returning call into a member of an unrebound formal are named `member-store-through-formal` by rule 38i (about 160 leaves, 119 functions, 11 whose every access leaf it names on the 046accf6 current run, census estimate) and stay refused. Design carried forward: the body check reads the store like rule 13a's slot move (the place used only at that position; a formal value never used after), the effect states that `P->F` takes the value (a formal's custody, Stored-like, or a fresh call result), the summary is withheld from the W4 table as rule 38j's is, and at the call site a tracked parent gains a field link in CG11's owned-field model while an untracked member's old value must be established custody-free (fail closed otherwise); a formal parent cascades. Overlaps W44-CALL-RESULT-INDIRECT-DESTINATION (formal-parent half), W45-SUB-OBJECT-STORE-OWNED-VALUE and W43-INDIRECT-POINTER-VALUE-STORE. DISCHARGE: that card, with Lean parity and a measured arbiter.",
+      "source": "docs/reports/member-effect-summary/README.md",
+      "recorded_by": "MEMBER-EFFECT-SUMMARY"
+    },
+    {
+      "id": "MEMBER-CUSTODY-THROUGH-FORMAL-PARENT",
+      "operation": "amend",
+      "text": "AMENDED (MEMBER-EFFECT-SUMMARY): the user chose option 1 on 2026-11-05 (\"Option 1 (rec.)\"). Option 3's re-attribution is gateway rule 38i; the member-release half of option 1 is gateway rule 38j (derived bodies only); the store half is MEMBER-EFFECT-STORES and the declared form MEMBER-EFFECT-DECLARED-FORM. Element releases (`A[i]` of a formal array) and the `run_current_census.py` census remain open here.",
+      "source": "docs/reports/member-effect-summary/README.md"
+    },
+    {
+      "id": "W45-MEMBER-RELEASE-PREMISES",
+      "operation": "amend",
+      "text": "AMENDED (MEMBER-EFFECT-SUMMARY): the clear-style bodies are admitted by gateway rule 38j: a body that releases members of a formal it keeps, under rule 5k's P1-P3, states a member effect withheld from the W4 table and read only by the direct-call route, whose caller check is the same premises (Lean QCore.MemberEffectSummary body_sound, cascade_sound). Predicted on the corpus: metric_release_storage, cmt_metric_exp_hist_snapshot_destroy, cmt_opts_exit, free_chunk_header Unknown -> Safe. Still open here: releases inside loops, element releases (`A[i]`), non-null member releases, copies of the base, and typedef-spelled bases (W45-MEMBER-RELEASE-UNTYPED-DECLARATIONS).",
+      "source": "docs/reports/member-effect-summary/README.md"
+    },
+    {
+      "id": "W44-CALL-RESULT-INDIRECT-DESTINATION",
+      "operation": "amend",
+      "text": "AMENDED (MEMBER-EFFECT-SUMMARY): a custody-returning call result stored into a member of an unrebound formal is now named `member-store-through-formal` by gateway rule 38i (no verdict moves); its admission, the formal-parent half of this entry, is MEMBER-EFFECT-STORES.",
+      "source": "docs/reports/member-effect-summary/README.md"
+    }
+  ]
+}
