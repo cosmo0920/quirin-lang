@@ -30,7 +30,9 @@ the two already-selected modules: 30 CFL callees in `cfl/sds_lifetime.qv`
 Following card 1's lesson (CONTRACT-ADOPTION-NOT-IN-FORCE §5), every
 declaration is new resource-v1 text read from the body. None is adopted from
 a bounds or model declaration. No analyser, gateway or Lean code changes, so
-no semantics change and no Lean parity is due.
+no semantics change and no Lean parity is due. The integrator's measurement
+found one validated double release that a declaration exposed. It is a
+provisional Unsafe with its witness (§4.1).
 
 ## 1. Inputs and method
 
@@ -204,29 +206,126 @@ That set holds librdkafka, Fluent Bit, ChunkIO and Monkey names only.
 | owned elsewhere | 7 | 73 |
 | undeclared | 7 | 26 |
 
-## 4. Prediction
+## 4. Prediction and measurement
 
-[PREDICTION.md](PREDICTION.md) was committed (`19c39ce56`) before any
-contract changed. Its `measure-prediction` block predicts:
+[PREDICTION.md](PREDICTION.md) revision 1 was committed (`19c39ce56`) before
+any contract changed. It predicted:
 
-- **corpus:** +7 Safe. These are `pack_summary_metric`,
-  `ctr_attributes_create` and the five `convert_*_value` helpers of
-  `ctr_decode_opentelemetry.c`.
-- **system and slice:** no move.
+- corpus: +7 Safe (`pack_summary_metric`, `ctr_attributes_create` and the
+  five `convert_*_value` helpers of `ctr_decode_opentelemetry.c`);
+- system and slice: no move.
 
-On the user's `current` run it predicts:
+The integrator measured tip `25c143cbd` against `baseline:c8c7edf21`
+(`private/measure/cfl-mpack-20261104T220100Z/native-comparison.json`):
 
-- 55 callees and 197 pairs leave the uncontracted list.
-- Eight functions leave the 508 "only uncontracted" set: the seven above
-  plus `pack_uint64`.
-- No unit changes status.
+- **System and slice** matched.
+- **Corpus** had 16 moves and 2 unit moves. The 7 declared moves happened.
+  There were also 8 more Unknown -> Safe rows and one Unknown -> Unsafe row.
 
-One correction is known after the prediction. `cfl_sds_printf` lost its
-tail (§2), so its 6 argument-carrying call sites
-(`ctr_encode_text.c:409`, `:411`, `:413`, `:429`, `:449`, `:486`) are now
-arity refusals. They may still be counted under its name. The five
-functions that call it have other blockers, so no predicted move depends on
-it.
+Revision 1 had counted only rows whose sole leaves were in-scope
+uncontracted calls. The nine others also carried `unresolved resource
+identity` leaves on the value an uncontracted call returned (or on `out` and
+`attr`), or a `slot-move-undecided` leaf. Those leaves were artefacts of the
+uncontracted call, and the declarations removed them. Revision 2 (one
+`measure-prediction` block; revision 1's block kept as `text`) declares all 16
+moves: Safe +15, Unsafe +1.
+
+### 4.1 The new Unsafe: a validated double release (provisional)
+
+`cmetrics::cmt_decode_statsd.c::decode_statsd_message` carries the
+`double_release` leaf "repeated release of acquisition at
+cmt_decode_statsd.c:393", with origin `:490`. The body is byte-identical at
+66910c10, 046accf6 and 34155955 (`lib/cmetrics/src/cmt_decode_statsd.c:379-493`):
+
+```c
+metric_name = cfl_sds_create_len(m->bucket, m->bucket_len);       /* :393 */
+...
+case CMT_DECODE_STATSD_TYPE_COUNTER:
+    instance = cmt_counter_create(cmt, ..., metric_name, ...);
+    ...
+    result = decode_counter_entry(cmt, instance, m);
+    if (result) {
+        cfl_sds_destroy(metric_name);                               /* :417 */
+        cmt_counter_destroy(instance);
+    }
+    break;
+... (GAUGE :437, SET :458 and the TIMER observer :480 are the same) ...
+cfl_sds_destroy(metric_name);                                       /* :490 */
+```
+
+The double release is validated as follows. Every source file named is
+byte-identical at the three revisions.
+
+- **The name is copied, so the caller keeps custody of `metric_name`.**
+  `cmt_counter_create`, `cmt_gauge_create` and `cmt_untyped_create` pass
+  the name to `cmt_opts_init` (`cmt_opts.c:24-95`). It stores
+  `opts->name = cfl_sds_create(name)` (`:81`) and never keeps the pointer.
+- **The release is not idempotent.** `cfl_sds_destroy` frees the header of
+  a heap string (`free(head)`, `cfl_sds.c:260`). The string from
+  `cfl_sds_create_len` is a heap string (NULL arena). A second call frees
+  the same block again.
+- **The failure arm is reachable from input.**
+  - `decode_counter_entry` returns `decode_numerical_message`'s result
+    (`:319-337`). That function returns non-zero when `decode_labels` does
+    (`:291-301`).
+  - In `decode_labels` (`:98-266`), `label_found` and `label_index` are
+    initialised once and never reset between tags. Each new tag adds the
+    number of keys already in the map, then appends its own key. After
+    the k-th distinct tag, `label_index` is k(k-1)/2.
+  - At the 17th tag it is 136 > 127, so the function returns
+    `CMT_DECODE_STATSD_INVALID_ARGUMENT_ERROR` (`:205-222`).
+  - Witness input to `cmt_decode_statsd_create` (`:609`; `statsd_process_line`
+    parses `bucket:value|type|#tags`, `:512-567`):
+    `m:1|c|#k0:v,k1:v,k2:v,k3:v,k4:v,k5:v,k6:v,k7:v,k8:v,k9:v,k10:v,k11:v,k12:v,k13:v,k14:v,k15:v,k16:v`
+  - That line creates a fresh counter and fails in `decode_labels` at
+    `k16`. It then releases `metric_name` at `:417` and again at `:490`.
+  - Any other non-zero result (an allocation failure in `decode_labels`
+    or `decode_numerical_message`) takes the same path.
+  - Fluent Bit's `in_statsd` passes its received buffer to
+    `cmt_decode_statsd_create` (`plugins/in_statsd/statsd.c:232` at
+    046accf6).
+
+So the reading is right: the declaration of `cfl_sds_create_len` (an owned
+result, nullable) is exact, and nothing in it changes. Under invariant 2 the
+row remains a **provisional Unsafe** with this witness. It is not presented
+as an upstream defect, and nothing is filed.
+
+### 4.2 The eight unpredicted Safe rows
+
+Each row's tip `contract_dependencies` lists only this card's declarations
+and ones already in force. Bodies are at 66910c10.
+
+| Row | Body | What the Safe rests on |
+|---|---|---|
+| `fetch_metadata_int64_key` | `cmt_encode_opentelemetry.c:1509-1528` | `cfl_kvlist_fetch` borrowed result: NULL-tested, then its `type`/`data` fields read; scalar store into `*error_flag` |
+| `kvlist_fetch_bool`, `kvlist_fetch_double`, `kvlist_fetch_uint64` | `:263-288`, `:222-245`, `:200-220` | the same borrowed result (the `(char *) key` cast is at a borrowed position); scalar stores through `out` |
+| `resolve_data_point_start_timestamp` | `:247-261` | the declared `cmt_metric_has/get_start_timestamp` and `kvlist_fetch_uint64`'s new summary |
+| `double_to_string` | `cmt_encode_splunk_hec.c:34-57` | the owned `cfl_sds_create_size` result; borrowed `cfl_sds_len_set`; the existing `cfl_sds_cat_safe` slot move, now decided because `str` is a tracked local; the owned result is returned |
+| `ctr_id_to_lower_base16` | `ctr_id.c:128-154` | the owned `cfl_sds_create_size` result; stores into its own bytes; borrowed `cfl_sds_set_len`; returned |
+| `ctr_attributes_destroy` | `ctr_attributes.c:41-47` | `cfl_kvlist_destroy` releasing the member `attr->kv` under its `if (attr->kv)` test, then `free(attr)` |
+
+None of these rows rests on a premise. None reads a borrowed result after
+its list could have changed, and none uses a released string. The ninth
+row moving with them is the predicted `ctr_attributes_create`. Its unit,
+`ctr_attributes.c`, is then all Safe, which is the second unit move.
+
+### 4.3 The user's `current` run
+
+PREDICTION.md revision 2 restates the effect on the user's run:
+
+- 55 callees and 197 pairs still leave the uncontracted list.
+- Nine functions leave the 508 "only uncontracted" set: revision 1's
+  eight plus `resolve_data_point_start_timestamp`.
+- Sixteen rows move to Safe: the fifteen corpus rows plus `pack_uint64`.
+- `decode_statsd_message` moves to provisional Unsafe.
+- Two units move, `ctr_attributes.c` to Safe and `cmt_decode_statsd.c` to
+  provisional Unsafe. The units go from 8 / 7 / 167 / 4 to
+  9 Safe / 8 Unsafe / 165 Unknown / 4 data-only.
+
+One correction to revision 1 is also known. `cfl_sds_printf` lost its tail
+(§2), so its 6 argument-carrying calls (`ctr_encode_text.c:409`, `:411`,
+`:413`, `:429`, `:449`, `:486`) are arity refusals. They may still be counted
+under its name. No predicted move depends on them.
 
 ## 5. Records
 
