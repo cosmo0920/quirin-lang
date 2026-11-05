@@ -1,4 +1,853 @@
 {
  "schema": "quirin-gate-walkers/1",
- "walkers": []
+ "note": null,
+ "walkers": [
+  {
+   "source": "compiler/tests/qr_lexical_selector_census.rs",
+   "literal": "*",
+   "reads": [
+    "**/*.qr",
+    "**/*.qv",
+    "**/*.qcore",
+    "**/*.qcorelib"
+   ],
+   "why": "tracked_files(root) filtered to the extensions qr, qv, qcore, qcorelib (tracked_sources); every tracked Quirin source in the tree"
+  },
+  {
+   "source": "compiler/tests/qr_print_route_census.rs",
+   "literal": "*",
+   "reads": [
+    "**/*.qr",
+    "**/*.qv",
+    "**/*.qcore",
+    "**/*.qcorelib"
+   ],
+   "why": "tracked_files(root) filtered to the extensions qr, qv, qcore, qcorelib (tracked_sources); every tracked Quirin source in the tree"
+  },
+  {
+   "source": "compiler/tests/std_socket_inet.rs",
+   "literal": "*",
+   "reads": [
+    "**/*.qr",
+    "**/*.qv",
+    "**/*.qcore",
+    "**/*.qc"
+   ],
+   "why": "the corpus census: tracked_files(root) filtered to the extensions qcore, qc, qr, qv"
+  },
+  {
+   "source": "crates/qcore-audit/tests/rule_switch_entry_points.rs",
+   "literal": "*",
+   "reads": [
+    "Cargo.toml",
+    "providers/Cargo.toml",
+    "**/Cargo.toml",
+    "**/src/main.rs",
+    "**/src/bin/**/*.rs",
+    "**/examples/**/*.rs",
+    "**/tests/**/*.rs",
+    "**/benches/**/*.rs"
+   ],
+   "why": "reads both workspace manifests and every member's Cargo.toml, then names each member's entry points from the tracked listing (one-file .rs targets and */main.rs under src/bin, examples, tests, benches)"
+  },
+  {
+   "source": "crates/qcore-audit/tests/dependency_graph.rs",
+   "literal": "*",
+   "reads": [
+    "Cargo.lock",
+    "**/Cargo.toml"
+   ],
+   "why": "runs cargo metadata on the root workspace, which reads the lockfile and every member manifest"
+  },
+  {
+   "source": "crates/quirin-audit-plugin/tests/dependencies.rs",
+   "literal": "*",
+   "reads": [
+    "Cargo.lock",
+    "**/Cargo.toml"
+   ],
+   "why": "runs cargo metadata on the root workspace, which reads the lockfile and every member manifest"
+  },
+  {
+   "source": "compiler/tests/w3_evidence_v2.rs",
+   "literal": "*",
+   "reads": [
+    "compiler/tests/fixtures/w3/provider/**"
+   ],
+   "why": "builds the fixture provider crate with cargo (its Cargo.toml is the literal), which reads its lock and sources too"
+  },
+  {
+   "source": "crates/qcore-audit/src/pin_window.rs",
+   "literal": "providers",
+   "reads": [],
+   "why": "prose: the NOTE text names providers/; the library's provider reads go through DEFAULT_LOAD_PATH (providers/contract-load-path.json), which that literal and the manifest attribute"
+  },
+  {
+   "source": "compiler/tests/chunk_lifecycle_coverage.rs",
+   "literal": "docs/reports/w42-chunk-lifecycle-cert",
+   "reads": [
+    "docs/reports/w42-chunk-lifecycle-cert/**"
+   ],
+   "why": "census: its units open files under it and its source spells no filter covering them: the whole directory"
+  },
+  {
+   "source": "compiler/tests/chunk_lifecycle_coverage.rs",
+   "literal": "docs/reports/w43-chunk-source-profile",
+   "reads": [
+    "docs/reports/w43-chunk-source-profile/**"
+   ],
+   "why": "census: its units open files under it and its source spells no filter covering them: the whole directory"
+  },
+  {
+   "source": "compiler/tests/closures.rs",
+   "literal": "examples/threads",
+   "reads": [],
+   "why": "census: a base path: no unit compiling it opens a file under it that other literals, walkers or manifests do not already attribute"
+  },
+  {
+   "source": "compiler/tests/contract_inherit_qcore_provider.rs",
+   "literal": "providers",
+   "reads": [
+    "providers/**"
+   ],
+   "why": "census: its units list the directory (25 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "compiler/tests/contract_inherit_qcore_provider.rs",
+   "literal": "providers/quirin-provider-libc/contracts",
+   "reads": [
+    "providers/quirin-provider-libc/contracts/**"
+   ],
+   "why": "census: its units list the directory (3 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "compiler/tests/examples_suite.rs",
+   "literal": "examples",
+   "reads": [
+    "examples/**"
+   ],
+   "why": "census: its units list the directory (1 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "compiler/tests/ffi_struct_import.rs",
+   "literal": "examples/ffi",
+   "reads": [
+    "examples/ffi/**"
+   ],
+   "why": "census: its units open files under it and its source spells no filter covering them: the whole directory"
+  },
+  {
+   "source": "compiler/tests/float_ieee_vectors.rs",
+   "literal": "proof",
+   "reads": [
+    "proof/**"
+   ],
+   "why": "census: its units open files under it and its source spells no filter covering them: the whole directory"
+  },
+  {
+   "source": "compiler/tests/monkey_profile.rs",
+   "literal": "providers",
+   "reads": [],
+   "why": "census: a base path: no unit compiling it opens a file under it that other literals, walkers or manifests do not already attribute"
+  },
+  {
+   "source": "compiler/tests/profile_loader.rs",
+   "literal": "providers",
+   "reads": [],
+   "why": "census: a base path: no unit compiling it opens a file under it that other literals, walkers or manifests do not already attribute"
+  },
+  {
+   "source": "compiler/tests/proof_leg_digests.rs",
+   "literal": "proof",
+   "reads": [
+    "proof/**"
+   ],
+   "why": "census: its units list the directory (1 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "compiler/tests/proof_leg_digests.rs",
+   "literal": "tests",
+   "reads": [
+    "tests/**"
+   ],
+   "why": "census: its units list the directory (1 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "compiler/tests/task_record_captures.rs",
+   "literal": "examples/threads",
+   "reads": [],
+   "why": "census: a base path: no unit compiling it opens a file under it that other literals, walkers or manifests do not already attribute"
+  },
+  {
+   "source": "compiler/tests/tracked_inputs.rs",
+   "literal": "examples",
+   "reads": [
+    "examples/**"
+   ],
+   "why": "census: its units list the directory (1 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "compiler/tests/usable_records.rs",
+   "literal": "examples/ffi",
+   "reads": [
+    "examples/ffi/**"
+   ],
+   "why": "census: its units open files under it and its source spells no filter covering them: the whole directory"
+  },
+  {
+   "source": "compiler/tests/workspace_layering.rs",
+   "literal": "crates/gateway-rules",
+   "reads": [
+    "crates/gateway-rules/**"
+   ],
+   "why": "census: its units list the directory (1 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "compiler/tests/workspace_layering.rs",
+   "literal": "crates/gateway-rules/rule-32a-caller-frame-hold",
+   "reads": [
+    "crates/gateway-rules/rule-32a-caller-frame-hold/**"
+   ],
+   "why": "census: its units list the directory (1 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "compiler/tests/workspace_layering.rs",
+   "literal": "crates/gateway-rules/rule-33-removed-selection",
+   "reads": [
+    "crates/gateway-rules/rule-33-removed-selection/**"
+   ],
+   "why": "census: its units list the directory (1 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "compiler/tests/workspace_layering.rs",
+   "literal": "crates/gateway-rules/rule-34-element-destroyer",
+   "reads": [
+    "crates/gateway-rules/rule-34-element-destroyer/**"
+   ],
+   "why": "census: its units list the directory (1 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "compiler/tests/workspace_layering.rs",
+   "literal": "crates/gateway-rules/rule-35-literal-decay",
+   "reads": [
+    "crates/gateway-rules/rule-35-literal-decay/**"
+   ],
+   "why": "census: its units list the directory (1 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "compiler/tests/workspace_layering.rs",
+   "literal": "crates/gateway-rules/rule-36-exact-formal-return",
+   "reads": [
+    "crates/gateway-rules/rule-36-exact-formal-return/**"
+   ],
+   "why": "census: its units list the directory (1 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "compiler/tests/workspace_layering.rs",
+   "literal": "crates/gateway-rules/rule-37-result-constructors",
+   "reads": [
+    "crates/gateway-rules/rule-37-result-constructors/**"
+   ],
+   "why": "census: its units list the directory (1 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "compiler/tests/workspace_layering.rs",
+   "literal": "crates/gateway-rules/rule-38-descriptor-cells",
+   "reads": [
+    "crates/gateway-rules/rule-38-descriptor-cells/**"
+   ],
+   "why": "census: its units list the directory (1 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "compiler/tests/workspace_layering.rs",
+   "literal": "crates/qcore-audit",
+   "reads": [
+    "crates/qcore-audit/**"
+   ],
+   "why": "census: its units list the directory (1 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "compiler/tests/workspace_layering.rs",
+   "literal": "crates/qcore-c-gateway",
+   "reads": [
+    "crates/qcore-c-gateway/**"
+   ],
+   "why": "census: its units list the directory (1 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "compiler/tests/workspace_layering.rs",
+   "literal": "crates/qcore-contract",
+   "reads": [
+    "crates/qcore-contract/**"
+   ],
+   "why": "census: its units list the directory (1 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "compiler/tests/workspace_layering.rs",
+   "literal": "crates/qcore-core",
+   "reads": [
+    "crates/qcore-core/**"
+   ],
+   "why": "census: its units list the directory (1 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "compiler/tests/workspace_layering.rs",
+   "literal": "crates/qcore-frontend",
+   "reads": [
+    "crates/qcore-frontend/**"
+   ],
+   "why": "census: its units list the directory (1 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "compiler/tests/workspace_layering.rs",
+   "literal": "crates/qcore-gateway-rule-api",
+   "reads": [
+    "crates/qcore-gateway-rule-api/**"
+   ],
+   "why": "census: its units list the directory (1 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "compiler/tests/workspace_layering.rs",
+   "literal": "crates/qcore-schemas",
+   "reads": [
+    "crates/qcore-schemas/**"
+   ],
+   "why": "census: its units list the directory (1 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "compiler/tests/workspace_layering.rs",
+   "literal": "crates/qcore-verification",
+   "reads": [
+    "crates/qcore-verification/**"
+   ],
+   "why": "census: its units list the directory (1 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "compiler/tests/workspace_layering.rs",
+   "literal": "crates/qcore-verifier-host",
+   "reads": [
+    "crates/qcore-verifier-host/**"
+   ],
+   "why": "census: its units list the directory (1 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "compiler/tests/workspace_layering.rs",
+   "literal": "crates/qcorec",
+   "reads": [
+    "crates/qcorec/**"
+   ],
+   "why": "census: its units list the directory (1 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "compiler/tests/workspace_layering.rs",
+   "literal": "crates/quirin-audit-plugin",
+   "reads": [
+    "crates/quirin-audit-plugin/**"
+   ],
+   "why": "census: its units list the directory (1 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "compiler/tests/workspace_layering.rs",
+   "literal": "crates/quirin-audit-plugin-libevent",
+   "reads": [
+    "crates/quirin-audit-plugin-libevent/**"
+   ],
+   "why": "census: its units list the directory (1 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "compiler/tests/workspace_layering.rs",
+   "literal": "crates/quirin-audit-plugin-measure",
+   "reads": [
+    "crates/quirin-audit-plugin-measure/**"
+   ],
+   "why": "census: its units list the directory (1 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "compiler/tests/workspace_layering.rs",
+   "literal": "crates/quirin-source-analysis",
+   "reads": [
+    "crates/quirin-source-analysis/**"
+   ],
+   "why": "census: its units list the directory (1 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "compiler/tests/workspace_layering.rs",
+   "literal": "providers",
+   "reads": [
+    "providers/**"
+   ],
+   "why": "census: its units list the directory (1 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "crates/qcore-audit/src/prepare.rs",
+   "literal": "contract/profiles/cmetrics-counter",
+   "reads": [
+    "contract/profiles/cmetrics-counter/**"
+   ],
+   "why": "census: its units list the directory (1 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "crates/qcore-audit/src/prepare.rs",
+   "literal": "contract/profiles/fluent-bit",
+   "reads": [
+    "contract/profiles/fluent-bit/**"
+   ],
+   "why": "census: its units list the directory (1 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "crates/qcore-audit/tests/current_cli.rs",
+   "literal": "providers",
+   "reads": [
+    "providers/**"
+   ],
+   "why": "census: its units list the directory (24 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "crates/qcore-audit/tests/dependency_graph.rs",
+   "literal": "providers",
+   "reads": [],
+   "why": "census: a base path: no unit compiling it opens a file under it that other literals, walkers or manifests do not already attribute"
+  },
+  {
+   "source": "crates/qcore-audit/tests/provider_selection.rs",
+   "literal": "providers",
+   "reads": [
+    "providers/**"
+   ],
+   "why": "census: its units list the directory (24 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "crates/qcore-audit/tests/rule_switch_entry_points.rs",
+   "literal": "providers",
+   "reads": [
+    "providers/**"
+   ],
+   "why": "census: its units list the directory (1 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "crates/qcore-audit/tests/source_contract_config.rs",
+   "literal": "contract/profiles/cmetrics-counter",
+   "reads": [],
+   "why": "census: a base path: no unit compiling it opens a file under it that other literals, walkers or manifests do not already attribute"
+  },
+  {
+   "source": "crates/qcore-audit/tests/source_contract_config.rs",
+   "literal": "providers/qcore-provider-cmetrics",
+   "reads": [
+    "providers/qcore-provider-cmetrics/**"
+   ],
+   "why": "census: its units list the directory (2 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "crates/qcore-audit/tests/user_contract_plugins.rs",
+   "literal": "providers/quirin-provider-plugin/tests/fixtures/example-user-crate",
+   "reads": [
+    "providers/quirin-provider-plugin/tests/fixtures/example-user-crate/**"
+   ],
+   "why": "census: its units list the directory (5 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "crates/qcore-c-gateway/tests/bounds_body_evidence.rs",
+   "literal": "providers/qcore-provider-chunkio/contracts/chunkio",
+   "reads": [
+    "providers/qcore-provider-chunkio/contracts/chunkio/**"
+   ],
+   "why": "census: its units open files under it and its source spells no filter covering them: the whole directory"
+  },
+  {
+   "source": "crates/qcore-contract/tests/bounds_contract.rs",
+   "literal": "providers",
+   "reads": [
+    "providers/**"
+   ],
+   "why": "census: its units list the directory (1 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "crates/qcore-contract/tests/descriptor_cells.rs",
+   "literal": "providers",
+   "reads": [
+    "providers/**"
+   ],
+   "why": "census: its units open files under it and its source spells no filter covering them: the whole directory"
+  },
+  {
+   "source": "crates/qcore-contract/tests/event_loop_clauses.rs",
+   "literal": "providers",
+   "reads": [
+    "providers/**"
+   ],
+   "why": "census: its units open files under it and its source spells no filter covering them: the whole directory"
+  },
+  {
+   "source": "crates/qcore-contract/tests/guarded_decomposition.rs",
+   "literal": "docs/reports/premise-guarded-decomposition/applications",
+   "reads": [
+    "docs/reports/premise-guarded-decomposition/applications/**"
+   ],
+   "why": "census: its units open files under it and its source spells no filter covering them: the whole directory"
+  },
+  {
+   "source": "crates/qcore-contract/tests/guarded_decomposition.rs",
+   "literal": "docs/reports/quant-contract-hypotheses/plugin/before",
+   "reads": [
+    "docs/reports/quant-contract-hypotheses/plugin/before/**"
+   ],
+   "why": "census: its units open files under it and its source spells no filter covering them: the whole directory"
+  },
+  {
+   "source": "crates/qcore-contract/tests/production_symbolic_adoption.rs",
+   "literal": "docs/reports/quant-contract-hypotheses/plugin/bindings",
+   "reads": [
+    "docs/reports/quant-contract-hypotheses/plugin/bindings/**"
+   ],
+   "why": "census: its units list the directory (1 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "crates/qcore-contract/tests/production_symbolic_adoption.rs",
+   "literal": "providers",
+   "reads": [
+    "providers/**"
+   ],
+   "why": "census: its units list the directory (1 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "crates/qcore-verification/src/cycle18_composition.rs",
+   "literal": "contract/profiles",
+   "reads": [
+    "contract/profiles/**"
+   ],
+   "why": "census: its units list the directory (1 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "crates/qcore-verification/src/monkey_wait_projection.rs",
+   "literal": "contract/profiles",
+   "reads": [
+    "contract/profiles/**"
+   ],
+   "why": "census: its units list the directory (1 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "crates/qcore-verification/tests/callback_task_handoff.rs",
+   "literal": "contract/profiles",
+   "reads": [],
+   "why": "census: a base path: no unit compiling it opens a file under it that other literals, walkers or manifests do not already attribute"
+  },
+  {
+   "source": "crates/qcore-verification/tests/composition_bounds.rs",
+   "literal": "compiler/src",
+   "reads": [
+    "compiler/src/**"
+   ],
+   "why": "census: its units list the directory (1 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "crates/qcore-verification/tests/composition_bounds.rs",
+   "literal": "crates",
+   "reads": [
+    "crates/**"
+   ],
+   "why": "census: its units list the directory (1 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "crates/qcore-verification/tests/emit_cleanup_replay_fixtures.rs",
+   "literal": "providers/quirin-provider-shared/fixtures",
+   "reads": [],
+   "why": "census: a base path: no unit compiling it opens a file under it that other literals, walkers or manifests do not already attribute"
+  },
+  {
+   "source": "crates/qcore-verification/tests/event_payload.rs",
+   "literal": "contract/profiles",
+   "reads": [],
+   "why": "census: a base path: no unit compiling it opens a file under it that other literals, walkers or manifests do not already attribute"
+  },
+  {
+   "source": "crates/qcore-verification/tests/fixtures/boolean_source.rs",
+   "literal": "contract/profiles/fluent-bit",
+   "reads": [
+    "contract/profiles/fluent-bit/**"
+   ],
+   "why": "census: compiled into provider-workspace code, which the root census does not trace: the whole directory"
+  },
+  {
+   "source": "crates/qcore-verification/tests/fixtures/call_use_source.rs",
+   "literal": "contract/profiles/fluent-bit",
+   "reads": [
+    "contract/profiles/fluent-bit/**"
+   ],
+   "why": "census: compiled into provider-workspace code, which the root census does not trace: the whole directory"
+  },
+  {
+   "source": "crates/qcore-verification/tests/fixtures/cleanup_replay_source.rs",
+   "literal": "contract/profiles/fluent-bit",
+   "reads": [
+    "contract/profiles/fluent-bit/**"
+   ],
+   "why": "census: compiled into provider-workspace code, which the root census does not trace: the whole directory"
+  },
+  {
+   "source": "crates/qcore-verification/tests/fixtures/composition_source.rs",
+   "literal": "contract/profiles/fluent-bit",
+   "reads": [
+    "contract/profiles/fluent-bit/**"
+   ],
+   "why": "census: compiled into provider-workspace code, which the root census does not trace: the whole directory"
+  },
+  {
+   "source": "crates/qcore-verification/tests/fixtures/counter_source.rs",
+   "literal": "contract/profiles/fluent-bit",
+   "reads": [
+    "contract/profiles/fluent-bit/**"
+   ],
+   "why": "census: compiled into provider-workspace code, which the root census does not trace: the whole directory"
+  },
+  {
+   "source": "crates/qcore-verification/tests/fixtures/file_close_composition.rs",
+   "literal": "contract/profiles/fluent-bit",
+   "reads": [
+    "contract/profiles/fluent-bit/**"
+   ],
+   "why": "census: compiled into provider-workspace code, which the root census does not trace: the whole directory"
+  },
+  {
+   "source": "crates/qcore-verification/tests/fixtures/frame_source.rs",
+   "literal": "contract/profiles/fluent-bit",
+   "reads": [],
+   "why": "census: a base path: no unit compiling it opens a file under it that other literals, walkers or manifests do not already attribute"
+  },
+  {
+   "source": "crates/qcore-verification/tests/fixtures/memory_close_composition.rs",
+   "literal": "contract/profiles/fluent-bit",
+   "reads": [
+    "contract/profiles/fluent-bit/**"
+   ],
+   "why": "census: compiled into provider-workspace code, which the root census does not trace: the whole directory"
+  },
+  {
+   "source": "crates/qcore-verification/tests/fixtures/teardown_source.rs",
+   "literal": "contract/profiles/fluent-bit",
+   "reads": [
+    "contract/profiles/fluent-bit/**"
+   ],
+   "why": "census: compiled into provider-workspace code, which the root census does not trace: the whole directory"
+  },
+  {
+   "source": "crates/qcore-verification/tests/monkey_wait_projection.rs",
+   "literal": "contract/profiles",
+   "reads": [],
+   "why": "census: a base path: no unit compiling it opens a file under it that other literals, walkers or manifests do not already attribute"
+  },
+  {
+   "source": "crates/qcore-verification/tests/observed_wait_composition.rs",
+   "literal": "contract/profiles",
+   "reads": [],
+   "why": "census: a base path: no unit compiling it opens a file under it that other literals, walkers or manifests do not already attribute"
+  },
+  {
+   "source": "crates/qcore-verification/tests/source_effect.rs",
+   "literal": "contract/profiles/fluent-bit",
+   "reads": [],
+   "why": "census: a base path: no unit compiling it opens a file under it that other literals, walkers or manifests do not already attribute"
+  },
+  {
+   "source": "crates/qcore-verification/tests/source_effect_helper_target.rs",
+   "literal": "contract/profiles/fluent-bit",
+   "reads": [],
+   "why": "census: a base path: no unit compiling it opens a file under it that other literals, walkers or manifests do not already attribute"
+  },
+  {
+   "source": "crates/qcore-verification/tests/source_effect_mutations.rs",
+   "literal": "contract/profiles/fluent-bit",
+   "reads": [],
+   "why": "census: a base path: no unit compiling it opens a file under it that other literals, walkers or manifests do not already attribute"
+  },
+  {
+   "source": "crates/qcore-verification/tests/source_effect_obligations.rs",
+   "literal": "contract/profiles/fluent-bit",
+   "reads": [],
+   "why": "census: a base path: no unit compiling it opens a file under it that other literals, walkers or manifests do not already attribute"
+  },
+  {
+   "source": "crates/qcore-verification/tests/timeout_teardown.rs",
+   "literal": "contract/profiles",
+   "reads": [],
+   "why": "census: a base path: no unit compiling it opens a file under it that other literals, walkers or manifests do not already attribute"
+  },
+  {
+   "source": "crates/qcore-verification/tests/unit/cycle18_callback_obligations.rs",
+   "literal": "contract/profiles",
+   "reads": [
+    "contract/profiles/**"
+   ],
+   "why": "census: its units list the directory (1 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "crates/qcore-verification/tests/wait_failure_paths.rs",
+   "literal": "contract/profiles",
+   "reads": [],
+   "why": "census: a base path: no unit compiling it opens a file under it that other literals, walkers or manifests do not already attribute"
+  },
+  {
+   "source": "crates/qcorec/tests/cli.rs",
+   "literal": "compiler/tests/fixtures",
+   "reads": [
+    "compiler/tests/fixtures/**"
+   ],
+   "why": "census: its units open files under it and its source spells no filter covering them: the whole directory"
+  },
+  {
+   "source": "crates/qcorec/tests/cli.rs",
+   "literal": "compiler/tests/fixtures/apple-threads",
+   "reads": [],
+   "why": "census: a base path: no unit compiling it opens a file under it that other literals, walkers or manifests do not already attribute"
+  },
+  {
+   "source": "crates/qcorec/tests/cli.rs",
+   "literal": "compiler/tests/fixtures/ct/CT13",
+   "reads": [
+    "compiler/tests/fixtures/ct/CT13/**"
+   ],
+   "why": "census: its units open files under it and its source spells no filter covering them: the whole directory"
+  },
+  {
+   "source": "crates/qcorec/tests/examples_cli.rs",
+   "literal": "examples",
+   "reads": [
+    "examples/**"
+   ],
+   "why": "census: its units list the directory (1 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "crates/quirin-audit-plugin-libevent/src/lib.rs",
+   "literal": "contract/profiles/libevent-core",
+   "reads": [],
+   "why": "census: a base path: no unit compiling it opens a file under it that other literals, walkers or manifests do not already attribute"
+  },
+  {
+   "source": "crates/quirin-audit-plugin-measure/src/inputs.rs",
+   "literal": "contract/evaluations",
+   "reads": [
+    "contract/evaluations/**/*.json"
+   ],
+   "why": "census: its units open files under it, all *.json, the extension(s) its source spells"
+  },
+  {
+   "source": "crates/quirin-audit-plugin-measure/src/lib.rs",
+   "literal": "contract/evaluations",
+   "reads": [
+    "contract/evaluations/**"
+   ],
+   "why": "census: its units open files under it and its source spells no filter covering them: the whole directory"
+  },
+  {
+   "source": "crates/quirin-audit-plugin-measure/src/sides.rs",
+   "literal": "contract/profiles",
+   "reads": [],
+   "why": "census: a base path: no unit compiling it opens a file under it that other literals, walkers or manifests do not already attribute"
+  },
+  {
+   "source": "crates/quirin-audit-plugin-measure/src/sides.rs",
+   "literal": "providers",
+   "reads": [],
+   "why": "census: a base path: no unit compiling it opens a file under it that other literals, walkers or manifests do not already attribute"
+  },
+  {
+   "source": "crates/quirin-audit-plugin-measure/src/sides.rs",
+   "literal": "providers/quirin-provider-libc/contracts",
+   "reads": [],
+   "why": "census: a base path: no unit compiling it opens a file under it that other literals, walkers or manifests do not already attribute"
+  },
+  {
+   "source": "crates/quirin-audit-plugin-measure/tests/support/mod.rs",
+   "literal": "scripts",
+   "reads": [
+    "scripts/**"
+   ],
+   "why": "census: its units list the directory (1 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "crates/quirin-audit-plugin-measure/tests/units.rs",
+   "literal": "contract/evaluations",
+   "reads": [
+    "contract/evaluations/**"
+   ],
+   "why": "census: its units open files under it and its source spells no filter covering them: the whole directory"
+  },
+  {
+   "source": "crates/quirin-audit-plugin-measure/tests/units.rs",
+   "literal": "providers",
+   "reads": [],
+   "why": "census: a base path: no unit compiling it opens a file under it that other literals, walkers or manifests do not already attribute"
+  },
+  {
+   "source": "crates/quirin-source-analysis/src/source_profiles.rs",
+   "literal": "contract/profiles",
+   "reads": [],
+   "why": "census: a base path: no unit compiling it opens a file under it that other literals, walkers or manifests do not already attribute"
+  },
+  {
+   "source": "providers/conformance/tests/cmetrics_unit.rs",
+   "literal": "contract/profiles/cmetrics-counter",
+   "reads": [
+    "contract/profiles/cmetrics-counter/**"
+   ],
+   "why": "census: compiled into provider-workspace code, which the root census does not trace: the whole directory"
+  },
+  {
+   "source": "providers/conformance/tests/composed_five_providers.rs",
+   "literal": "contract/profiles/cmetrics-counter",
+   "reads": [
+    "contract/profiles/cmetrics-counter/**"
+   ],
+   "why": "census: compiled into provider-workspace code, which the root census does not trace: the whole directory"
+  },
+  {
+   "source": "providers/conformance/tests/composed_five_providers.rs",
+   "literal": "providers",
+   "reads": [
+    "providers/**"
+   ],
+   "why": "census: compiled into provider-workspace code, which the root census does not trace: the whole directory"
+  },
+  {
+   "source": "providers/conformance/tests/packages.rs",
+   "literal": "contract/profiles",
+   "reads": [
+    "contract/profiles/**"
+   ],
+   "why": "census: compiled into provider-workspace code, which the root census does not trace: the whole directory"
+  },
+  {
+   "source": "providers/conformance/tests/packages.rs",
+   "literal": "providers",
+   "reads": [
+    "providers/**"
+   ],
+   "why": "census: compiled into provider-workspace code, which the root census does not trace: the whole directory"
+  },
+  {
+   "source": "tests/support/windows_c.rs",
+   "literal": "compiler/tests/fixtures/compat-threads",
+   "reads": [],
+   "why": "census: a base path: no unit compiling it opens a file under it that other literals, walkers or manifests do not already attribute"
+  },
+  {
+   "source": "tests/support/windows_c.rs",
+   "literal": "crates/qcore-core/src",
+   "reads": [
+    "crates/qcore-core/src/**"
+   ],
+   "why": "census: its units list the directory (1 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  }
+ ],
+ "expansions": [
+  {
+   "file": "providers/contract-load-path.json",
+   "reads": [
+    "providers/*/contracts/**",
+    "providers/*/contracts.lock",
+    "providers/*/contract-inventory.lock"
+   ],
+   "why": "the load path lists each provider crate's contracts directory (modules and views under it); its readers in qcore-audit also check each listed crate's contracts.lock and inventory lock"
+  }
+ ]
 }

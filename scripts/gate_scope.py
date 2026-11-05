@@ -341,6 +341,8 @@ class Reader:
 
 WALKERS_FILE = SCRIPTS / "gate_scope_walkers.json"
 WALKERS_SCHEMA = "quirin-gate-walkers/1"
+# A walker entry with this literal attaches its reads to the source itself.
+OBSERVED_LITERAL = "*"
 
 
 def glob_regex(pattern: str) -> "re.Pattern[str]":
@@ -447,8 +449,11 @@ class Model:
         # (crate, file) pairs some non-test target compiles.
         self.file_units: dict[tuple[str, str], set[str]] = {}
         self.file_nontest: set[tuple[str, str]] = set()
+        # path -> the JSON files that name it (see _scan_json_manifests).
+        self.json_lists: dict[str, set[str]] = {}
         self._resolve_targets()
         self._scan()
+        self._scan_json_manifests()
 
     def owner(self, path: str) -> Optional[str]:
         for crate in self.by_depth:
@@ -591,6 +596,16 @@ class Model:
                             name, target, "path", f"{path}:{line_of(text, match.start())}", units))
                 if runtime_scanned(crate_dir, path):
                     self._scan_literals(name, crate_dir, path, directory, text, units)
+                    observed = self.walkers.get((path, OBSERVED_LITERAL))
+                    if observed is not None:
+                        # A read no literal shows (a whole-tree listing filtered
+                        # afterwards, a path computed from data): declared at
+                        # its source and held to the read census.
+                        self.walker_hits.add((path, OBSERVED_LITERAL))
+                        for pattern in observed["reads"]:
+                            self.walker_readers.append((Reader(
+                                name, f"{pattern} (declared reads of {path})", "walker",
+                                f"{path}:0", units), glob_regex(pattern)))
 
     def _scan_literals(self, name: str, crate_dir: str, path: str, directory: str,
                        text: str, units: Optional[frozenset] = None) -> None:
@@ -632,7 +647,11 @@ class Model:
         for match in STRING_RE.finditer(text):
             for chunk in PLACEHOLDER_RE.split(match.group(1)):
                 for piece in SPLIT_RE.split(chunk):
-                    if "/" in piece:
+                    # `path.rs::test_name` (a test id) names path.rs.
+                    piece = piece.split("::", 1)[0]
+                    if "/" in piece or (piece in self.file_set and "." in piece):
+                        # A bare name counts only as a tracked top-level file
+                        # (`cycle19-resource-contracts.json`), never a directory.
                         consider(piece, match.start())
         for match in JOIN_BARE_RE.finditer(text):
             consider(match.group(1), match.start())
@@ -642,6 +661,35 @@ class Model:
         return [entry for key, entry in sorted(self.walkers.items())
                 if key not in self.walker_hits]
 
+    def _scan_json_manifests(self) -> None:
+        """Data-derived reads: a tracked JSON file that names a tracked path (by
+        a string value, relative to its own directory or to the repository
+        root) lists it, and every reader of the JSON file reads what it lists.
+        Every tracked JSON file is scanned; one nothing reads lists for nobody."""
+        for path in self.files:
+            if not path.endswith(".json"):
+                continue
+            text = self._text(path)
+            if text is None:
+                continue
+            try:
+                document = json.loads(text)
+            except ValueError:
+                continue
+            base = posixpath.dirname(path)
+            stack = [document]
+            while stack:
+                value = stack.pop()
+                if isinstance(value, dict):
+                    stack.extend(value.values())
+                elif isinstance(value, list):
+                    stack.extend(value)
+                elif isinstance(value, str) and "/" in value and len(value) < 512:
+                    for candidate in (posixpath.join(base, value), value):
+                        target = inside_repo(candidate)
+                        if target and target in self.known and target != path:
+                            self.json_lists.setdefault(target, set()).add(path)
+
     def readers_of(self, path: str) -> list[Reader]:
         """Every reader of a path, including the readers of a manifest that lists it."""
         found = self._direct_readers(path)
@@ -649,8 +697,12 @@ class Model:
         queue = [path]
         while queue:
             current = queue.pop()
-            for manifest, regexes in self.expansions:
-                if manifest in seen or not any(regex.match(current) for regex in regexes):
+            manifests = [manifest for manifest, regexes in self.expansions
+                         if any(regex.match(current) for regex in regexes)]
+            for prefix in ancestors(current):
+                manifests += sorted(self.json_lists.get(prefix, ()))
+            for manifest in manifests:
+                if manifest in seen:
                     continue
                 seen.add(manifest)
                 queue.append(manifest)
@@ -691,7 +743,12 @@ class Model:
             return None
         selected = set(self.file_units.get((owner, path), set()))
         own = [reader for reader in readers if reader.crate == owner]
-        if not selected and not own:
+        # A literal naming one of its directories shows a test reads somewhere
+        # under it, not that this file has no other reader: narrowing needs a
+        # reader that names the file itself (or a target that compiles it).
+        exact = [reader for reader in own if not (reader.kind == "runtime"
+                                                  and reader.target != path)]
+        if not selected and not exact:
             return None
         for reader in own:
             if reader.units is None:
@@ -831,7 +888,7 @@ def describe_reader(reader: Reader, path: str) -> str:
 
 
 def plan(paths: Sequence[str], model: Model, *, force_full: bool = False,
-         exists=None, read_text=None) -> dict:
+         exists=None, read_text=None, lean: bool = True) -> dict:
     exists = exists or (lambda p: (REPO_ROOT / p).exists())
     read_text = read_text or model.read_text
     attribution: dict[str, list[str]] = {}
@@ -918,7 +975,8 @@ def plan(paths: Sequence[str], model: Model, *, force_full: bool = False,
         {name for name in affected if model.crates[name].workspace == "providers"
          and not any(r.startswith("owns ") for r in affected[name])}
         | {name for name in targets if model.crates[name].workspace == "providers"})
-    lean = plan_lean(paths, model.files, exists, read_text)
+    lean = plan_lean(paths, model.files, exists, read_text) if lean else \
+        {"mode": "not planned", "reasons": [], "modules": [], "audits": []}
     provider_gate = bool(provider_reasons)
     return {
         "paths": list(paths),

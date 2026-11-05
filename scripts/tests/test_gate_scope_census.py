@@ -54,7 +54,7 @@ class CensusAgreesWithTheModel(unittest.TestCase):
 
     def scope(self, path):
         if path not in self.cache:
-            self.cache[path] = scope_mod.plan([path], self.model)
+            self.cache[path] = scope_mod.plan([path], self.model, lean=False)
         return self.cache[path]
 
     def test_the_census_covers_the_suite(self):
@@ -84,10 +84,23 @@ class CensusAgreesWithTheModel(unittest.TestCase):
             crates = {name for (name, path) in self.model.file_units if path == entry["source"]}
             crates |= {name for (name, path) in self.model.file_nontest if path == entry["source"]}
             units = {uid for uid, crate in self.units.items() if crate in crates}
-            reads = {path for uid in units if uid in self.census["units"]
-                     for path in self.census["units"][uid]["read"]}
+            observed = [self.census["units"][uid] for uid in units if uid in self.census["units"]]
+            if not observed:
+                # Provider-workspace code: the census traces the root suite only.
+                self.assertTrue(all(self.model.crates[c].workspace == "providers"
+                                    for c in crates), entry)
+                continue
+            reads = {path for unit in observed for path in unit["read"]}
             regexes = [scope_mod.glob_regex(pattern) for pattern in entry["reads"]]
-            if not any(regex.match(path) for path in reads for regex in regexes):
+            literal = entry["literal"]
+            # A listing walks too: a directory opened at or under the literal,
+            # or a `git ls-files` whose pathspec covers it.
+            listed = any(d == literal or d.startswith(literal + "/")
+                         for unit in observed for d in unit["dirs"]) or any(
+                arg in (".", literal) or literal.startswith(arg.rstrip("/") + "/")
+                for unit in observed for spec in unit["ls_files"]
+                for arg in json.loads(spec) if not arg.startswith("-"))
+            if not listed and not any(regex.match(path) for path in reads for regex in regexes):
                 unwalked.append(f"{entry['source']} {entry['literal']}")
         self.assertEqual(unwalked, [], "walker entries no observed unit walks")
 

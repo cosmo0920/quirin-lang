@@ -17,10 +17,13 @@ configuration), then runs every captured unit under
 ``readlink``, ``execve``, ``chdir``).  The doc-test unit is not traced: a
 doc-test reads what rustdoc compiles, which the scoper attributes by ownership.
 ``reduce`` turns the per-process traces into ``CENSUS.json``: for every unit,
-the repository-relative paths it opened or probed (existing files,
-directories it opened, and paths it probed that did not exist), excluding
-``target/``, ``.git/`` and ``private/``, plus the pathspecs of every
-``git ls-files`` it ran (a name-only walk opens no file).
+the repository-relative files it opened (``read``: their content can change
+its result) and the directories it opened (``dirs``: a listing), with the
+number of other paths it only probed (stat family, ``access``, ``readlink``:
+a tracked-file listing stats every path it names) and of paths it probed that
+did not exist (``--full`` lists both), excluding ``target/``, ``.git/`` and
+``private/``, plus the pathspecs of every ``git ls-files`` it ran (a
+name-only walk opens no file).
 
 The census is evidence of one tree at one commit, not a proof: a code path a
 test does not take at that commit is not observed.  It is what the walker
@@ -33,6 +36,7 @@ reads are kept (a failure can only shorten what it read).
 from __future__ import annotations
 
 import argparse
+import concurrent.futures
 import json
 import os
 from pathlib import Path
@@ -59,7 +63,12 @@ LINE_RE = re.compile(r"^(?P<call>\w+)\((?P<args>.*)\)\s+=\s+(?P<ret>.*)$")
 STRING_RE = re.compile(r'"((?:[^"\\]|\\.)*)"')
 FD_PATH_RE = re.compile(r"^(?:-?\d+)<(?P<path>[^>]*)>")
 DIRFD_RE = re.compile(r"^\s*(?:AT_FDCWD|-?\d+)(?:<(?P<dir>[^>]*)>)?\s*,")
-ARRAY_RE = re.compile(r"\[(?P<items>(?:\s*\"(?:[^\"\\]|\\.)*\"\s*,?)*)\]")
+# A file's content is read only by an open (or by executing it); the stat
+# family, access and readlink probe its existence and metadata.
+OPENING_CALLS = ("open", "openat", "openat2", "execve")
+DIRFD_CALLS = ("openat(", "openat2(", "newfstatat(", "statx(", "faccessat(", "faccessat2(",
+               "readlinkat(")
+ARRAY_RE =re.compile(r"\[(?P<items>(?:\s*\"(?:[^\"\\]|\\.)*\"\s*,?)*)\]")
 
 
 def unescape(text: str) -> str:
@@ -124,11 +133,18 @@ def relative_to_repo(path: str, root: Path) -> Optional[str]:
 def reduce_process(lines: Iterable[str], cwd: str, root: Path) -> dict:
     """Paths one traced process reached: {read, dirs, missing, ls_files, outside}."""
     read: set[str] = set()
-    dirs: set[str] = set()
+    probed: set[str] = set()
     missing: set[str] = set()
     ls_files: list[list[str]] = []
     current = cwd
+    root_text = str(root)
     for line in lines:
+        # With -y every resolved path is absolute, so a line that never names
+        # the repository is outside it (a relative path's base is decoded too),
+        # unless the process is still somewhere under it by a relative chdir.
+        if root_text not in line and not line.startswith(("chdir", "execve")) and (
+                line.startswith(DIRFD_CALLS) or '("/' in line):
+            continue
         record = parse_trace_line(line)
         if record is None:
             continue
@@ -151,24 +167,31 @@ def reduce_process(lines: Iterable[str], cwd: str, root: Path) -> dict:
                 continue
             if not record["ok"]:
                 missing.add(relative)
-            elif (root / relative).is_dir():
-                dirs.add(relative)
-            else:
+            elif record["call"] in OPENING_CALLS:
                 read.add(relative)
-    return {"read": read, "dirs": dirs, "missing": missing - read - dirs, "ls_files": ls_files}
+            else:
+                probed.add(relative)
+    # An opened directory is a listing (read_dir); a probed one is a stat.
+    # Split once per path, not per call.
+    dirs = {path for path in read if (root / path).is_dir()}
+    read -= dirs
+    probed -= dirs | read
+    return {"read": read, "probed": probed, "dirs": dirs,
+            "missing": missing - read - probed - dirs, "ls_files": ls_files}
 
 
 def reduce_unit(trace_dir: Path, cwd: str, root: Path) -> dict:
-    merged = {"read": set(), "dirs": set(), "missing": set(), "ls_files": []}
+    keys = ("read", "probed", "dirs", "missing")
+    merged = {**{key: set() for key in keys}, "ls_files": []}
     for trace in sorted(trace_dir.glob("trace.*")):
         with open(trace, encoding="utf-8", errors="replace") as handle:
             part = reduce_process(handle, cwd, root)
-        for key in ("read", "dirs", "missing"):
+        for key in keys:
             merged[key] |= part[key]
         merged["ls_files"] += part["ls_files"]
-    merged["missing"] -= merged["read"] | merged["dirs"]
-    return {"read": sorted(merged["read"]), "dirs": sorted(merged["dirs"]),
-            "missing": sorted(merged["missing"]),
+    merged["probed"] -= merged["read"]
+    merged["missing"] -= merged["read"] | merged["probed"] | merged["dirs"]
+    return {**{key: sorted(merged[key]) for key in keys},
             "ls_files": sorted({json.dumps(spec) for spec in merged["ls_files"]})}
 
 
@@ -229,9 +252,17 @@ def reduce(args: argparse.Namespace) -> int:
     head = subprocess.run(["git", "-C", str(REPO_ROOT), "rev-parse", "HEAD"], capture_output=True,
                           text=True, check=True).stdout.strip()
     units = {}
-    for uid in sorted(plan):
-        reduced = reduce_unit(Path(plan[uid]["trace_dir"]), plan[uid]["cwd"], REPO_ROOT)
-        units[uid] = {**outcomes.get(uid, {}), **reduced}
+    uids = sorted(plan)
+    with concurrent.futures.ProcessPoolExecutor(max_workers=args.jobs) as pool:
+        reduced_all = pool.map(reduce_unit, [Path(plan[uid]["trace_dir"]) for uid in uids],
+                               [plan[uid]["cwd"] for uid in uids], [REPO_ROOT] * len(uids))
+        for uid, reduced in zip(uids, reduced_all):
+            if not args.full:
+                # Existence probes (a tracked-file listing stats every path it
+                # names) are counted, not listed; --full keeps them.
+                for key in ("probed", "missing"):
+                    reduced[f"{key}_count"] = len(reduced.pop(key))
+            units[uid] = {**outcomes.get(uid, {}), **reduced}
     document = {"schema": SCHEMA, "commit": head, "root": "the recording checkout",
                 "excluded": list(EXCLUDED_PREFIXES), "units": units}
     args.out.write_text(json.dumps(document, indent=0, sort_keys=True) + "\n", encoding="utf-8")
@@ -249,6 +280,9 @@ def main(argv: Optional[list[str]] = None) -> int:
     red = sub.add_parser("reduce")
     red.add_argument("--log-dir", type=Path, required=True)
     red.add_argument("--out", type=Path, required=True)
+    red.add_argument("--jobs", type=runner.positive_int, default=4)
+    red.add_argument("--full", action="store_true",
+                     help="list probed and missing paths too, not only their counts")
     args = parser.parse_args(argv)
     return record(args) if args.command == "record" else reduce(args)
 

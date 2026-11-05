@@ -1,0 +1,1207 @@
+{
+ "schema": "gate-scope-replay/1",
+ "rows": [
+  {
+   "card": "LIBC-GAP-DECLARATIONS",
+   "base": "c8c7edf21",
+   "commit": "aa5e4e6f8",
+   "kind": "tip",
+   "paths": 20,
+   "all_units": 602,
+   "old": {
+    "mode": "full",
+    "full_reasons": [
+     "the diff reaches qcore-c-gateway",
+     "the diff reaches qcore-contract"
+    ],
+    "packages": [
+     "qcore-audit",
+     "qcore-c-gateway",
+     "qcore-compiler",
+     "qcore-contract",
+     "qcore-core",
+     "qcore-frontend",
+     "qcore-gateway-rule-api",
+     "qcore-schemas",
+     "qcore-verification",
+     "qcore-verifier-host",
+     "qcorec",
+     "quirin-audit-plugin",
+     "quirin-audit-plugin-libevent",
+     "quirin-audit-plugin-measure",
+     "quirin-source-analysis",
+     "rule-32a-caller-frame-hold",
+     "rule-33-removed-selection",
+     "rule-34-element-destroyer",
+     "rule-35-literal-decay",
+     "rule-36-exact-formal-return",
+     "rule-37-result-constructors",
+     "rule-38-descriptor-cells"
+    ],
+    "targets": [],
+    "units": 602,
+    "provider_gate": true,
+    "provider_lock_check": false
+   },
+   "new": {
+    "mode": "full",
+    "full_reasons": [
+     "the diff reaches qcore-contract"
+    ],
+    "packages": [
+     "qcore-audit",
+     "qcore-c-gateway",
+     "qcore-compiler",
+     "qcore-contract",
+     "qcore-core",
+     "qcore-frontend",
+     "qcore-gateway-rule-api",
+     "qcore-schemas",
+     "qcore-verification",
+     "qcore-verifier-host",
+     "qcorec",
+     "quirin-audit-plugin",
+     "quirin-audit-plugin-libevent",
+     "quirin-audit-plugin-measure",
+     "quirin-source-analysis",
+     "rule-32a-caller-frame-hold",
+     "rule-33-removed-selection",
+     "rule-34-element-destroyer",
+     "rule-35-literal-decay",
+     "rule-36-exact-formal-return",
+     "rule-37-result-constructors",
+     "rule-38-descriptor-cells"
+    ],
+    "targets": [],
+    "units": 602,
+    "provider_gate": true,
+    "provider_lock_check": false
+   }
+  },
+  {
+   "card": "LIBC-GAP-DECLARATIONS",
+   "base": "c8c7edf21",
+   "commit": "fbca407e2",
+   "kind": "red",
+   "paths": 16,
+   "all_units": 602,
+   "old": {
+    "mode": "full",
+    "full_reasons": [
+     "the diff reaches qcore-c-gateway",
+     "the diff reaches qcore-contract"
+    ],
+    "packages": [
+     "qcore-audit",
+     "qcore-c-gateway",
+     "qcore-compiler",
+     "qcore-contract",
+     "qcore-core",
+     "qcore-frontend",
+     "qcore-gateway-rule-api",
+     "qcore-schemas",
+     "qcore-verification",
+     "qcore-verifier-host",
+     "qcorec",
+     "quirin-audit-plugin",
+     "quirin-audit-plugin-libevent",
+     "quirin-audit-plugin-measure",
+     "quirin-source-analysis",
+     "rule-32a-caller-frame-hold",
+     "rule-33-removed-selection",
+     "rule-34-element-destroyer",
+     "rule-35-literal-decay",
+     "rule-36-exact-formal-return",
+     "rule-37-result-constructors",
+     "rule-38-descriptor-cells"
+    ],
+    "targets": [],
+    "units": 602,
+    "provider_gate": true,
+    "provider_lock_check": false
+   },
+   "new": {
+    "mode": "full",
+    "full_reasons": [
+     "the diff reaches qcore-contract"
+    ],
+    "packages": [
+     "qcore-audit",
+     "qcore-c-gateway",
+     "qcore-compiler",
+     "qcore-contract",
+     "qcore-core",
+     "qcore-frontend",
+     "qcore-gateway-rule-api",
+     "qcore-schemas",
+     "qcore-verification",
+     "qcore-verifier-host",
+     "qcorec",
+     "quirin-audit-plugin",
+     "quirin-audit-plugin-libevent",
+     "quirin-audit-plugin-measure",
+     "quirin-source-analysis",
+     "rule-32a-caller-frame-hold",
+     "rule-33-removed-selection",
+     "rule-34-element-destroyer",
+     "rule-35-literal-decay",
+     "rule-36-exact-formal-return",
+     "rule-37-result-constructors",
+     "rule-38-descriptor-cells"
+    ],
+    "targets": [],
+    "units": 602,
+    "provider_gate": true,
+    "provider_lock_check": false
+   },
+   "evidence": "recorded: docs/reports/libc-gap-declarations/gate/attempt-1-gate.json (README: 2 tests of contract_loader)",
+   "failed": [
+    {
+     "uid": "qcore-compiler::test::contract_loader",
+     "old_ran": true,
+     "new_ran": true,
+     "new_attributed": true
+    }
+   ]
+  },
+  {
+   "card": "LIBC-GAP-DECLARATIONS",
+   "base": "c8c7edf21",
+   "commit": "b019deaea",
+   "kind": "red",
+   "paths": 15,
+   "all_units": 602,
+   "old": {
+    "mode": "full",
+    "full_reasons": [
+     "the diff reaches qcore-c-gateway",
+     "the diff reaches qcore-contract"
+    ],
+    "packages": [
+     "qcore-audit",
+     "qcore-c-gateway",
+     "qcore-compiler",
+     "qcore-contract",
+     "qcore-core",
+     "qcore-frontend",
+     "qcore-gateway-rule-api",
+     "qcore-schemas",
+     "qcore-verification",
+     "qcore-verifier-host",
+     "qcorec",
+     "quirin-audit-plugin",
+     "quirin-audit-plugin-libevent",
+     "quirin-audit-plugin-measure",
+     "quirin-source-analysis",
+     "rule-32a-caller-frame-hold",
+     "rule-33-removed-selection",
+     "rule-34-element-destroyer",
+     "rule-35-literal-decay",
+     "rule-36-exact-formal-return",
+     "rule-37-result-constructors",
+     "rule-38-descriptor-cells"
+    ],
+    "targets": [],
+    "units": 602,
+    "provider_gate": true,
+    "provider_lock_check": false
+   },
+   "new": {
+    "mode": "full",
+    "full_reasons": [
+     "the diff reaches qcore-contract"
+    ],
+    "packages": [
+     "qcore-audit",
+     "qcore-c-gateway",
+     "qcore-compiler",
+     "qcore-contract",
+     "qcore-core",
+     "qcore-frontend",
+     "qcore-gateway-rule-api",
+     "qcore-schemas",
+     "qcore-verification",
+     "qcore-verifier-host",
+     "qcorec",
+     "quirin-audit-plugin",
+     "quirin-audit-plugin-libevent",
+     "quirin-audit-plugin-measure",
+     "quirin-source-analysis",
+     "rule-32a-caller-frame-hold",
+     "rule-33-removed-selection",
+     "rule-34-element-destroyer",
+     "rule-35-literal-decay",
+     "rule-36-exact-formal-return",
+     "rule-37-result-constructors",
+     "rule-38-descriptor-cells"
+    ],
+    "targets": [],
+    "units": 602,
+    "provider_gate": true,
+    "provider_lock_check": false
+   },
+   "evidence": "inferred: e6a5288d0 edits only the contract_loader pins this commit's contracts move",
+   "failed": [
+    {
+     "uid": "qcore-compiler::test::contract_loader",
+     "old_ran": true,
+     "new_ran": true,
+     "new_attributed": true
+    }
+   ]
+  },
+  {
+   "card": "CELL-PROTOCOL-RELEASE-WINDOW-FRAMES",
+   "base": "c8c7edf21",
+   "commit": "8a36914e2",
+   "kind": "tip",
+   "paths": 42,
+   "all_units": 602,
+   "old": {
+    "mode": "full",
+    "full_reasons": [
+     "the diff reaches qcore-c-gateway",
+     "the diff reaches qcore-contract",
+     "the diff reaches qcore-schemas"
+    ],
+    "packages": [
+     "qcore-audit",
+     "qcore-c-gateway",
+     "qcore-compiler",
+     "qcore-contract",
+     "qcore-core",
+     "qcore-frontend",
+     "qcore-gateway-rule-api",
+     "qcore-schemas",
+     "qcore-verification",
+     "qcore-verifier-host",
+     "qcorec",
+     "quirin-audit-plugin",
+     "quirin-audit-plugin-libevent",
+     "quirin-audit-plugin-measure",
+     "quirin-source-analysis",
+     "rule-32a-caller-frame-hold",
+     "rule-33-removed-selection",
+     "rule-34-element-destroyer",
+     "rule-35-literal-decay",
+     "rule-36-exact-formal-return",
+     "rule-37-result-constructors",
+     "rule-38-descriptor-cells"
+    ],
+    "targets": [],
+    "units": 602,
+    "provider_gate": true,
+    "provider_lock_check": false
+   },
+   "new": {
+    "mode": "full",
+    "full_reasons": [
+     "the diff reaches qcore-c-gateway",
+     "the diff reaches qcore-contract",
+     "the diff reaches qcore-schemas"
+    ],
+    "packages": [
+     "qcore-audit",
+     "qcore-c-gateway",
+     "qcore-compiler",
+     "qcore-contract",
+     "qcore-core",
+     "qcore-frontend",
+     "qcore-gateway-rule-api",
+     "qcore-schemas",
+     "qcore-verification",
+     "qcore-verifier-host",
+     "qcorec",
+     "quirin-audit-plugin",
+     "quirin-audit-plugin-libevent",
+     "quirin-audit-plugin-measure",
+     "quirin-source-analysis",
+     "rule-32a-caller-frame-hold",
+     "rule-33-removed-selection",
+     "rule-34-element-destroyer",
+     "rule-35-literal-decay",
+     "rule-36-exact-formal-return",
+     "rule-37-result-constructors",
+     "rule-38-descriptor-cells"
+    ],
+    "targets": [],
+    "units": 602,
+    "provider_gate": true,
+    "provider_lock_check": false
+   }
+  },
+  {
+   "card": "CELL-PROTOCOL-RELEASE-WINDOW-FRAMES",
+   "base": "c8c7edf21",
+   "commit": "fa1c10b43",
+   "kind": "red",
+   "paths": 38,
+   "all_units": 602,
+   "old": {
+    "mode": "full",
+    "full_reasons": [
+     "the diff reaches qcore-c-gateway",
+     "the diff reaches qcore-contract",
+     "the diff reaches qcore-schemas"
+    ],
+    "packages": [
+     "qcore-audit",
+     "qcore-c-gateway",
+     "qcore-compiler",
+     "qcore-contract",
+     "qcore-core",
+     "qcore-frontend",
+     "qcore-gateway-rule-api",
+     "qcore-schemas",
+     "qcore-verification",
+     "qcore-verifier-host",
+     "qcorec",
+     "quirin-audit-plugin",
+     "quirin-audit-plugin-libevent",
+     "quirin-audit-plugin-measure",
+     "quirin-source-analysis",
+     "rule-32a-caller-frame-hold",
+     "rule-33-removed-selection",
+     "rule-34-element-destroyer",
+     "rule-35-literal-decay",
+     "rule-36-exact-formal-return",
+     "rule-37-result-constructors",
+     "rule-38-descriptor-cells"
+    ],
+    "targets": [],
+    "units": 602,
+    "provider_gate": true,
+    "provider_lock_check": false
+   },
+   "new": {
+    "mode": "full",
+    "full_reasons": [
+     "the diff reaches qcore-c-gateway",
+     "the diff reaches qcore-contract",
+     "the diff reaches qcore-schemas"
+    ],
+    "packages": [
+     "qcore-audit",
+     "qcore-c-gateway",
+     "qcore-compiler",
+     "qcore-contract",
+     "qcore-core",
+     "qcore-frontend",
+     "qcore-gateway-rule-api",
+     "qcore-schemas",
+     "qcore-verification",
+     "qcore-verifier-host",
+     "qcorec",
+     "quirin-audit-plugin",
+     "quirin-audit-plugin-libevent",
+     "quirin-audit-plugin-measure",
+     "quirin-source-analysis",
+     "rule-32a-caller-frame-hold",
+     "rule-33-removed-selection",
+     "rule-34-element-destroyer",
+     "rule-35-literal-decay",
+     "rule-36-exact-formal-return",
+     "rule-37-result-constructors",
+     "rule-38-descriptor-cells"
+    ],
+    "targets": [],
+    "units": 602,
+    "provider_gate": true,
+    "provider_lock_check": false
+   },
+   "evidence": "inferred: c6680f3db adds 'the last LegacyCfg test literal' to tests/contract_dependencies.rs (a struct field)",
+   "failed": [
+    {
+     "uid": "qcore-c-gateway::test::contract_dependencies",
+     "old_ran": true,
+     "new_ran": true,
+     "new_attributed": true
+    }
+   ]
+  },
+  {
+   "card": "CFL-MPACK-EXTERNAL-DECLARATIONS",
+   "base": "c8c7edf21",
+   "commit": "17e27141c",
+   "kind": "tip",
+   "paths": 22,
+   "all_units": 602,
+   "old": {
+    "mode": "full",
+    "full_reasons": [
+     "the diff reaches qcore-c-gateway",
+     "the diff reaches qcore-contract"
+    ],
+    "packages": [
+     "qcore-audit",
+     "qcore-c-gateway",
+     "qcore-compiler",
+     "qcore-contract",
+     "qcore-core",
+     "qcore-frontend",
+     "qcore-gateway-rule-api",
+     "qcore-schemas",
+     "qcore-verification",
+     "qcore-verifier-host",
+     "qcorec",
+     "quirin-audit-plugin",
+     "quirin-audit-plugin-libevent",
+     "quirin-audit-plugin-measure",
+     "quirin-source-analysis",
+     "rule-32a-caller-frame-hold",
+     "rule-33-removed-selection",
+     "rule-34-element-destroyer",
+     "rule-35-literal-decay",
+     "rule-36-exact-formal-return",
+     "rule-37-result-constructors",
+     "rule-38-descriptor-cells"
+    ],
+    "targets": [],
+    "units": 602,
+    "provider_gate": true,
+    "provider_lock_check": false
+   },
+   "new": {
+    "mode": "scoped",
+    "full_reasons": [],
+    "packages": [
+     "qcore-audit",
+     "qcore-compiler",
+     "qcorec"
+    ],
+    "targets": [
+     "qcore-c-gateway::test::cfl_mpack_external_declarations",
+     "qcore-c-gateway::test::w46_external_callee_contracts",
+     "qcore-c-gateway::test::w47_callee_closure_r2",
+     "qcore-contract::test::bounds_contract",
+     "qcore-contract::test::descriptor_cells",
+     "qcore-contract::test::event_loop_clauses",
+     "qcore-contract::test::production_symbolic_adoption",
+     "qcore-verification::test::composition_bounds"
+    ],
+    "units": 199,
+    "provider_gate": true,
+    "provider_lock_check": false
+   }
+  },
+  {
+   "card": "CFL-MPACK-EXTERNAL-DECLARATIONS",
+   "base": "c8c7edf21",
+   "commit": "58a95463d",
+   "kind": "red",
+   "paths": 18,
+   "all_units": 602,
+   "old": {
+    "mode": "full",
+    "full_reasons": [
+     "the diff reaches qcore-c-gateway",
+     "the diff reaches qcore-contract"
+    ],
+    "packages": [
+     "qcore-audit",
+     "qcore-c-gateway",
+     "qcore-compiler",
+     "qcore-contract",
+     "qcore-core",
+     "qcore-frontend",
+     "qcore-gateway-rule-api",
+     "qcore-schemas",
+     "qcore-verification",
+     "qcore-verifier-host",
+     "qcorec",
+     "quirin-audit-plugin",
+     "quirin-audit-plugin-libevent",
+     "quirin-audit-plugin-measure",
+     "quirin-source-analysis",
+     "rule-32a-caller-frame-hold",
+     "rule-33-removed-selection",
+     "rule-34-element-destroyer",
+     "rule-35-literal-decay",
+     "rule-36-exact-formal-return",
+     "rule-37-result-constructors",
+     "rule-38-descriptor-cells"
+    ],
+    "targets": [],
+    "units": 602,
+    "provider_gate": true,
+    "provider_lock_check": false
+   },
+   "new": {
+    "mode": "scoped",
+    "full_reasons": [],
+    "packages": [
+     "qcore-audit",
+     "qcore-compiler",
+     "qcorec"
+    ],
+    "targets": [
+     "qcore-c-gateway::test::cfl_mpack_external_declarations",
+     "qcore-c-gateway::test::w46_external_callee_contracts",
+     "qcore-c-gateway::test::w47_callee_closure_r2",
+     "qcore-contract::test::bounds_contract",
+     "qcore-contract::test::descriptor_cells",
+     "qcore-contract::test::event_loop_clauses",
+     "qcore-contract::test::production_symbolic_adoption",
+     "qcore-verification::test::composition_bounds"
+    ],
+    "units": 199,
+    "provider_gate": true,
+    "provider_lock_check": false
+   },
+   "evidence": "inferred: 25c143cbd edits the contract_loader counts and cfl_mpack_external_declarations.rs (rustfmt)",
+   "failed": [
+    {
+     "uid": "qcore-compiler::test::contract_loader",
+     "old_ran": true,
+     "new_ran": true,
+     "new_attributed": true
+    },
+    {
+     "uid": "qcore-c-gateway::test::cfl_mpack_external_declarations",
+     "old_ran": true,
+     "new_ran": true,
+     "new_attributed": true
+    }
+   ]
+  },
+  {
+   "card": "W45-AUDIT-SUBCOMMAND-PLUGINS",
+   "base": "37e1b82d9",
+   "commit": "52b35ae8a",
+   "kind": "tip",
+   "paths": 95,
+   "all_units": 317,
+   "old": {
+    "mode": "full",
+    "full_reasons": [
+     "Cargo.lock: workspace manifest or toolchain",
+     "Cargo.toml: workspace manifest or toolchain",
+     "scripts/run_test_binaries.py: the test runner or this scoper changed"
+    ],
+    "packages": [
+     "qcore-audit",
+     "qcore-c-gateway",
+     "qcore-compiler",
+     "qcore-contract",
+     "qcore-core",
+     "qcore-frontend",
+     "qcore-schemas",
+     "qcore-verification",
+     "qcore-verifier-host",
+     "qcorec",
+     "quirin-audit-plugin",
+     "quirin-audit-plugin-libevent"
+    ],
+    "targets": [],
+    "units": 317,
+    "provider_gate": true,
+    "provider_lock_check": false
+   },
+   "new": {
+    "mode": "full",
+    "full_reasons": [
+     "Cargo.lock: workspace manifest or toolchain",
+     "Cargo.toml: workspace manifest or toolchain",
+     "scripts/run_test_binaries.py: the test runner or this scoper changed"
+    ],
+    "packages": [
+     "qcore-audit",
+     "qcore-c-gateway",
+     "qcore-compiler",
+     "qcore-contract",
+     "qcore-core",
+     "qcore-frontend",
+     "qcore-schemas",
+     "qcore-verification",
+     "qcore-verifier-host",
+     "qcorec",
+     "quirin-audit-plugin",
+     "quirin-audit-plugin-libevent"
+    ],
+    "targets": [],
+    "units": 317,
+    "provider_gate": true,
+    "provider_lock_check": false
+   }
+  },
+  {
+   "card": "W45-AUDIT-SUBCOMMAND-PLUGINS",
+   "base": "37e1b82d9",
+   "commit": "d9df130a2",
+   "kind": "red",
+   "paths": 91,
+   "all_units": 317,
+   "old": {
+    "mode": "full",
+    "full_reasons": [
+     "Cargo.lock: workspace manifest or toolchain",
+     "Cargo.toml: workspace manifest or toolchain",
+     "scripts/run_test_binaries.py: the test runner or this scoper changed"
+    ],
+    "packages": [
+     "qcore-audit",
+     "qcore-c-gateway",
+     "qcore-compiler",
+     "qcore-contract",
+     "qcore-core",
+     "qcore-frontend",
+     "qcore-schemas",
+     "qcore-verification",
+     "qcore-verifier-host",
+     "qcorec",
+     "quirin-audit-plugin",
+     "quirin-audit-plugin-libevent"
+    ],
+    "targets": [],
+    "units": 317,
+    "provider_gate": false,
+    "provider_lock_check": false
+   },
+   "new": {
+    "mode": "full",
+    "full_reasons": [
+     "Cargo.lock: workspace manifest or toolchain",
+     "Cargo.toml: workspace manifest or toolchain",
+     "scripts/run_test_binaries.py: the test runner or this scoper changed"
+    ],
+    "packages": [
+     "qcore-audit",
+     "qcore-c-gateway",
+     "qcore-compiler",
+     "qcore-contract",
+     "qcore-core",
+     "qcore-frontend",
+     "qcore-schemas",
+     "qcore-verification",
+     "qcore-verifier-host",
+     "qcorec",
+     "quirin-audit-plugin",
+     "quirin-audit-plugin-libevent"
+    ],
+    "targets": [],
+    "units": 317,
+    "provider_gate": false,
+    "provider_lock_check": true
+   },
+   "evidence": "recorded: docs/reports/w45-audit-subcommand-plugins/README.md 'The discarded attempt' (workspace_layering; the provider lock failing the provider package build, test and clippy; constraint 16's vp04_vp07_vp08 row of cycle20_verifier_plugins under load)",
+   "failed": [
+    {
+     "uid": "qcore-compiler::test::workspace_layering",
+     "old_ran": true,
+     "new_ran": true,
+     "new_attributed": true
+    },
+    {
+     "uid": "qcore-compiler::test::cycle20_verifier_plugins",
+     "old_ran": true,
+     "new_ran": true,
+     "new_attributed": true
+    }
+   ],
+   "provider_gate_failed": {
+    "old": false,
+    "new": true
+   }
+  },
+  {
+   "card": "MEMBER-ACCESS-PROJECTION",
+   "base": "96a3efd3b",
+   "commit": "c077c4101",
+   "kind": "tip",
+   "paths": 28,
+   "all_units": 607,
+   "old": {
+    "mode": "full",
+    "full_reasons": [
+     "the diff reaches qcore-c-gateway"
+    ],
+    "packages": [
+     "qcore-audit",
+     "qcore-c-gateway",
+     "qcore-compiler",
+     "qcore-contract",
+     "qcore-core",
+     "qcore-frontend",
+     "qcore-gateway-rule-api",
+     "qcore-schemas",
+     "qcore-verification",
+     "qcore-verifier-host",
+     "qcorec",
+     "quirin-audit-plugin",
+     "quirin-audit-plugin-libevent",
+     "quirin-audit-plugin-measure",
+     "quirin-source-analysis",
+     "rule-32a-caller-frame-hold",
+     "rule-33-removed-selection",
+     "rule-34-element-destroyer",
+     "rule-35-literal-decay",
+     "rule-36-exact-formal-return",
+     "rule-37-result-constructors",
+     "rule-38-descriptor-cells"
+    ],
+    "targets": [],
+    "units": 607,
+    "provider_gate": false,
+    "provider_lock_check": false
+   },
+   "new": {
+    "mode": "full",
+    "full_reasons": [
+     "the diff reaches qcore-c-gateway"
+    ],
+    "packages": [
+     "qcore-audit",
+     "qcore-c-gateway",
+     "qcore-compiler",
+     "qcore-contract",
+     "qcore-core",
+     "qcore-frontend",
+     "qcore-gateway-rule-api",
+     "qcore-schemas",
+     "qcore-verification",
+     "qcore-verifier-host",
+     "qcorec",
+     "quirin-audit-plugin",
+     "quirin-audit-plugin-libevent",
+     "quirin-audit-plugin-measure",
+     "quirin-source-analysis",
+     "rule-32a-caller-frame-hold",
+     "rule-33-removed-selection",
+     "rule-34-element-destroyer",
+     "rule-35-literal-decay",
+     "rule-36-exact-formal-return",
+     "rule-37-result-constructors",
+     "rule-38-descriptor-cells"
+    ],
+    "targets": [],
+    "units": 607,
+    "provider_gate": false,
+    "provider_lock_check": false
+   }
+  },
+  {
+   "card": "LIBRDKAFKA-HEADER-INLINES",
+   "base": "945c0db1b",
+   "commit": "a58debf9b",
+   "kind": "tip",
+   "paths": 22,
+   "all_units": 604,
+   "old": {
+    "mode": "full",
+    "full_reasons": [
+     "the diff reaches qcore-c-gateway",
+     "the diff reaches qcore-contract"
+    ],
+    "packages": [
+     "qcore-audit",
+     "qcore-c-gateway",
+     "qcore-compiler",
+     "qcore-contract",
+     "qcore-core",
+     "qcore-frontend",
+     "qcore-gateway-rule-api",
+     "qcore-schemas",
+     "qcore-verification",
+     "qcore-verifier-host",
+     "qcorec",
+     "quirin-audit-plugin",
+     "quirin-audit-plugin-libevent",
+     "quirin-audit-plugin-measure",
+     "quirin-source-analysis",
+     "rule-32a-caller-frame-hold",
+     "rule-33-removed-selection",
+     "rule-34-element-destroyer",
+     "rule-35-literal-decay",
+     "rule-36-exact-formal-return",
+     "rule-37-result-constructors",
+     "rule-38-descriptor-cells"
+    ],
+    "targets": [],
+    "units": 604,
+    "provider_gate": true,
+    "provider_lock_check": false
+   },
+   "new": {
+    "mode": "scoped",
+    "full_reasons": [],
+    "packages": [
+     "qcore-audit",
+     "qcore-compiler",
+     "qcorec"
+    ],
+    "targets": [
+     "qcore-c-gateway::test::checked_allocator_constructors",
+     "qcore-c-gateway::test::constructor_residuals",
+     "qcore-c-gateway::test::librdkafka_header_inlines",
+     "qcore-c-gateway::test::neighbours",
+     "qcore-c-gateway::test::prod_contracts",
+     "qcore-c-gateway::test::rule37_switch",
+     "qcore-contract::test::bounds_contract",
+     "qcore-contract::test::descriptor_cells",
+     "qcore-contract::test::event_loop_clauses",
+     "qcore-contract::test::production_symbolic_adoption",
+     "qcore-verification::test::composition_bounds",
+     "quirin-audit-plugin-measure::test::host",
+     "quirin-audit-plugin-measure::test::measure",
+     "quirin-audit-plugin-measure::test::units"
+    ],
+    "units": 205,
+    "provider_gate": true,
+    "provider_lock_check": false
+   }
+  },
+  {
+   "card": "LIBRDKAFKA-HEADER-INLINES",
+   "base": "945c0db1b",
+   "commit": "68c8065e1",
+   "kind": "red",
+   "paths": 16,
+   "all_units": 604,
+   "old": {
+    "mode": "full",
+    "full_reasons": [
+     "the diff reaches qcore-c-gateway",
+     "the diff reaches qcore-contract"
+    ],
+    "packages": [
+     "qcore-audit",
+     "qcore-c-gateway",
+     "qcore-compiler",
+     "qcore-contract",
+     "qcore-core",
+     "qcore-frontend",
+     "qcore-gateway-rule-api",
+     "qcore-schemas",
+     "qcore-verification",
+     "qcore-verifier-host",
+     "qcorec",
+     "quirin-audit-plugin",
+     "quirin-audit-plugin-libevent",
+     "quirin-audit-plugin-measure",
+     "quirin-source-analysis",
+     "rule-32a-caller-frame-hold",
+     "rule-33-removed-selection",
+     "rule-34-element-destroyer",
+     "rule-35-literal-decay",
+     "rule-36-exact-formal-return",
+     "rule-37-result-constructors",
+     "rule-38-descriptor-cells"
+    ],
+    "targets": [],
+    "units": 604,
+    "provider_gate": true,
+    "provider_lock_check": false
+   },
+   "new": {
+    "mode": "scoped",
+    "full_reasons": [],
+    "packages": [
+     "qcore-audit",
+     "qcore-compiler",
+     "qcorec"
+    ],
+    "targets": [
+     "qcore-c-gateway::test::checked_allocator_constructors",
+     "qcore-c-gateway::test::constructor_residuals",
+     "qcore-c-gateway::test::librdkafka_header_inlines",
+     "qcore-c-gateway::test::neighbours",
+     "qcore-c-gateway::test::prod_contracts",
+     "qcore-c-gateway::test::rule37_switch",
+     "qcore-contract::test::bounds_contract",
+     "qcore-contract::test::descriptor_cells",
+     "qcore-contract::test::event_loop_clauses",
+     "qcore-contract::test::production_symbolic_adoption",
+     "qcore-verification::test::composition_bounds",
+     "quirin-audit-plugin-measure::test::host",
+     "quirin-audit-plugin-measure::test::measure",
+     "quirin-audit-plugin-measure::test::units"
+    ],
+    "units": 205,
+    "provider_gate": true,
+    "provider_lock_check": false
+   },
+   "evidence": "inferred: bf29932d3 and a58debf9b edit only the selected-module counts of these three tests",
+   "failed": [
+    {
+     "uid": "qcore-audit::test::provider_selection",
+     "old_ran": true,
+     "new_ran": true,
+     "new_attributed": true
+    },
+    {
+     "uid": "qcore-c-gateway::test::neighbours",
+     "old_ran": true,
+     "new_ran": true,
+     "new_attributed": true
+    },
+    {
+     "uid": "qcore-c-gateway::test::prod_contracts",
+     "old_ran": true,
+     "new_ran": true,
+     "new_attributed": true
+    }
+   ]
+  },
+  {
+   "card": "LIBRDKAFKA-HEADER-INLINES",
+   "base": "945c0db1b",
+   "commit": "bf29932d3",
+   "kind": "red",
+   "paths": 22,
+   "all_units": 604,
+   "old": {
+    "mode": "full",
+    "full_reasons": [
+     "the diff reaches qcore-c-gateway",
+     "the diff reaches qcore-contract"
+    ],
+    "packages": [
+     "qcore-audit",
+     "qcore-c-gateway",
+     "qcore-compiler",
+     "qcore-contract",
+     "qcore-core",
+     "qcore-frontend",
+     "qcore-gateway-rule-api",
+     "qcore-schemas",
+     "qcore-verification",
+     "qcore-verifier-host",
+     "qcorec",
+     "quirin-audit-plugin",
+     "quirin-audit-plugin-libevent",
+     "quirin-audit-plugin-measure",
+     "quirin-source-analysis",
+     "rule-32a-caller-frame-hold",
+     "rule-33-removed-selection",
+     "rule-34-element-destroyer",
+     "rule-35-literal-decay",
+     "rule-36-exact-formal-return",
+     "rule-37-result-constructors",
+     "rule-38-descriptor-cells"
+    ],
+    "targets": [],
+    "units": 604,
+    "provider_gate": true,
+    "provider_lock_check": false
+   },
+   "new": {
+    "mode": "scoped",
+    "full_reasons": [],
+    "packages": [
+     "qcore-audit",
+     "qcore-compiler",
+     "qcorec"
+    ],
+    "targets": [
+     "qcore-c-gateway::test::checked_allocator_constructors",
+     "qcore-c-gateway::test::constructor_residuals",
+     "qcore-c-gateway::test::librdkafka_header_inlines",
+     "qcore-c-gateway::test::neighbours",
+     "qcore-c-gateway::test::prod_contracts",
+     "qcore-c-gateway::test::rule37_switch",
+     "qcore-contract::test::bounds_contract",
+     "qcore-contract::test::descriptor_cells",
+     "qcore-contract::test::event_loop_clauses",
+     "qcore-contract::test::production_symbolic_adoption",
+     "qcore-verification::test::composition_bounds",
+     "quirin-audit-plugin-measure::test::host",
+     "quirin-audit-plugin-measure::test::measure",
+     "quirin-audit-plugin-measure::test::units"
+    ],
+    "units": 205,
+    "provider_gate": true,
+    "provider_lock_check": false
+   },
+   "evidence": "inferred: a58debf9b edits the fourth provider_selection count",
+   "failed": [
+    {
+     "uid": "qcore-audit::test::provider_selection",
+     "old_ran": true,
+     "new_ran": true,
+     "new_attributed": true
+    }
+   ]
+  },
+  {
+   "card": "LOG-PRINT-BODY-CONTRACTS",
+   "base": "945c0db1b",
+   "commit": "5e44bfa5a",
+   "kind": "tip",
+   "paths": 27,
+   "all_units": 604,
+   "old": {
+    "mode": "full",
+    "full_reasons": [
+     "the diff reaches qcore-c-gateway",
+     "the diff reaches qcore-contract"
+    ],
+    "packages": [
+     "qcore-audit",
+     "qcore-c-gateway",
+     "qcore-compiler",
+     "qcore-contract",
+     "qcore-core",
+     "qcore-frontend",
+     "qcore-gateway-rule-api",
+     "qcore-schemas",
+     "qcore-verification",
+     "qcore-verifier-host",
+     "qcorec",
+     "quirin-audit-plugin",
+     "quirin-audit-plugin-libevent",
+     "quirin-audit-plugin-measure",
+     "quirin-source-analysis",
+     "rule-32a-caller-frame-hold",
+     "rule-33-removed-selection",
+     "rule-34-element-destroyer",
+     "rule-35-literal-decay",
+     "rule-36-exact-formal-return",
+     "rule-37-result-constructors",
+     "rule-38-descriptor-cells"
+    ],
+    "targets": [],
+    "units": 604,
+    "provider_gate": true,
+    "provider_lock_check": false
+   },
+   "new": {
+    "mode": "full",
+    "full_reasons": [
+     "the diff reaches qcore-c-gateway"
+    ],
+    "packages": [
+     "qcore-audit",
+     "qcore-c-gateway",
+     "qcore-compiler",
+     "qcore-contract",
+     "qcore-core",
+     "qcore-frontend",
+     "qcore-gateway-rule-api",
+     "qcore-schemas",
+     "qcore-verification",
+     "qcore-verifier-host",
+     "qcorec",
+     "quirin-audit-plugin",
+     "quirin-audit-plugin-libevent",
+     "quirin-audit-plugin-measure",
+     "quirin-source-analysis",
+     "rule-32a-caller-frame-hold",
+     "rule-33-removed-selection",
+     "rule-34-element-destroyer",
+     "rule-35-literal-decay",
+     "rule-36-exact-formal-return",
+     "rule-37-result-constructors",
+     "rule-38-descriptor-cells"
+    ],
+    "targets": [],
+    "units": 604,
+    "provider_gate": true,
+    "provider_lock_check": false
+   }
+  },
+  {
+   "card": "LOG-PRINT-BODY-CONTRACTS",
+   "base": "945c0db1b",
+   "commit": "f04c3075d",
+   "kind": "red",
+   "paths": 20,
+   "all_units": 604,
+   "old": {
+    "mode": "full",
+    "full_reasons": [
+     "the diff reaches qcore-c-gateway",
+     "the diff reaches qcore-contract"
+    ],
+    "packages": [
+     "qcore-audit",
+     "qcore-c-gateway",
+     "qcore-compiler",
+     "qcore-contract",
+     "qcore-core",
+     "qcore-frontend",
+     "qcore-gateway-rule-api",
+     "qcore-schemas",
+     "qcore-verification",
+     "qcore-verifier-host",
+     "qcorec",
+     "quirin-audit-plugin",
+     "quirin-audit-plugin-libevent",
+     "quirin-audit-plugin-measure",
+     "quirin-source-analysis",
+     "rule-32a-caller-frame-hold",
+     "rule-33-removed-selection",
+     "rule-34-element-destroyer",
+     "rule-35-literal-decay",
+     "rule-36-exact-formal-return",
+     "rule-37-result-constructors",
+     "rule-38-descriptor-cells"
+    ],
+    "targets": [],
+    "units": 604,
+    "provider_gate": true,
+    "provider_lock_check": false
+   },
+   "new": {
+    "mode": "full",
+    "full_reasons": [
+     "the diff reaches qcore-c-gateway"
+    ],
+    "packages": [
+     "qcore-audit",
+     "qcore-c-gateway",
+     "qcore-compiler",
+     "qcore-contract",
+     "qcore-core",
+     "qcore-frontend",
+     "qcore-gateway-rule-api",
+     "qcore-schemas",
+     "qcore-verification",
+     "qcore-verifier-host",
+     "qcorec",
+     "quirin-audit-plugin",
+     "quirin-audit-plugin-libevent",
+     "quirin-audit-plugin-measure",
+     "quirin-source-analysis",
+     "rule-32a-caller-frame-hold",
+     "rule-33-removed-selection",
+     "rule-34-element-destroyer",
+     "rule-35-literal-decay",
+     "rule-36-exact-formal-return",
+     "rule-37-result-constructors",
+     "rule-38-descriptor-cells"
+    ],
+    "targets": [],
+    "units": 604,
+    "provider_gate": true,
+    "provider_lock_check": false
+   },
+   "evidence": "inferred: 73d59a294 edits only the pinned counts of these tests, test_contract_corpus.py and the cmetrics-counter profile's contracts.json digest",
+   "failed": [
+    {
+     "uid": "qcore-compiler::test::contract_loader",
+     "old_ran": true,
+     "new_ran": true,
+     "new_attributed": true
+    },
+    {
+     "uid": "qcore-audit::test::provider_selection",
+     "old_ran": true,
+     "new_ran": true,
+     "new_attributed": true
+    },
+    {
+     "uid": "qcore-c-gateway::test::neighbours",
+     "old_ran": true,
+     "new_ran": true,
+     "new_attributed": true
+    },
+    {
+     "uid": "qcore-c-gateway::test::prod_contracts",
+     "old_ran": true,
+     "new_ran": true,
+     "new_attributed": true
+    }
+   ]
+  }
+ ]
+}

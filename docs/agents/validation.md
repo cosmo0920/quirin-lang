@@ -127,37 +127,81 @@ and ChunkIO lock theorem remain usable. `docs/reports/w7-lean-ci/README.md`,
 ## Scoped card gate
 
 ```sh
-python3 scripts/gate_scope.py --base <card base>   # --plan previews; --no-slots under the legacy flock
+python3 scripts/gate_scope.py --base <card base>   # --plan previews; --no-slots under the legacy flock; --landing on a landing
 ```
 
 It maps `git diff --name-only --no-renames <base>...HEAD`, plus uncommitted and
-untracked paths, to crates of both workspaces through `cargo metadata`, closes
-over reverse dependencies, and gives a path to every crate that reads it: by
-`include_str!`/`include_bytes!`/`include!` or a `#[path]` module, where the read
-file's whole directory belongs to the reader (`CT-FIXTURE-EXTERNAL-READERS`;
-`--readers` prints the census), and by a string literal naming the path or a
-parent directory in code `cargo test` runs. The Rust suite is then
-`run_test_binaries.py --packages <affected root members>`, its `EXCLUSIVE` phase
-unchanged, or the whole suite when the diff reaches `qcore-c-gateway`,
-`qcore-core`, `qcore-contract` or `qcore-schemas`, a workspace manifest or
-lockfile, the runner, the scoper or the test-build configuration
-(`test_link_config.py`, `rustc_test_dylib.py`), or a path that no crate owns or reads and
-that is not prose, Python, Lean or provider tooling. Beside it: the submodule
-state, fmt, Clippy on the same crates, both reevaluation examples when
-`qcore-compiler` is affected, Lean (`scripts/gate_lean.py` on the changed
+untracked paths, to the crates and cargo targets of both workspaces through
+`cargo metadata`, and gives a path to every crate that reads it:
+
+- at compile time, by `include_str!`/`include_bytes!`/`include!` or a `#[path]`
+  module, claiming the file read (`--reader-granularity directory`: its whole
+  directory, `CT-FIXTURE-EXTERNAL-READERS`; `--readers` prints the census);
+- at run time, by a string literal in code `cargo test` runs. A literal naming
+  a tracked file claims exactly that file. A literal naming a directory claims
+  only what the walker table `scripts/gate_scope_walkers.json` declares for
+  that site: the globs of the files the site reads through it, or none for a
+  base path whose files are named by other literals (card
+  `GATE-SCOPE-PRECISE-SELECTION`, `GATE-SCOPE-RUNTIME-READS-HEURISTIC`). A
+  directory literal no entry declares still claims its whole directory
+  (fail-closed) and fails `scripts/tests/test_gate_scope_census.py` until it is
+  declared. The table's `expansions` give the files a manifest lists to every
+  reader of that manifest (`providers/contract-load-path.json` and its
+  contract roots). Each entry is held to the run-time read census
+  (`scripts/gate_read_census.py`: every root test executable under `strace`):
+  every tracked file a unit was seen reading must select that unit, and every
+  walker entry must be seen walked.
+
+A reader compiled only into integration-test targets (`tests/*.rs` and the
+modules they declare) claims for those targets alone, and nothing depends on a
+test target, so no reverse dependency follows. A path a crate owns selects only
+its test targets when it is a Rust file only test targets compile, or a
+non-Rust file whose readers in that crate are all test targets; its `src/`,
+`Cargo.toml`, `build.rs`, and any file nothing in the crate is seen reading
+select the whole crate and its reverse dependencies
+(`GATE-SCOPE-FULL-CRATES-TEST-ONLY`). The Rust suite is then
+`run_test_binaries.py --packages <root members reached whole> --targets
+<PKG::test::NAME,...>`, its `EXCLUSIVE` phase unchanged, or the whole suite when
+the diff reaches `qcore-c-gateway`, `qcore-core`, `qcore-contract` or
+`qcore-schemas` as a whole (a test-only reach is not full), a workspace
+manifest or lockfile, the runner, the scoper or the test-build configuration
+(`test_link_config.py`, `rustc_test_dylib.py`), or a path that no crate owns
+or reads and that is not prose, Python, Lean or provider tooling. Beside it:
+the submodule state, fmt, Clippy on the same packages (per crate with `--test`
+filters for a test-only reach), both reevaluation examples when
+`qcore-compiler` is reached whole, Lean (`scripts/gate_lean.py` on the changed
 `proof/QCore` modules, their importers and the audits importing them, or all of
 `check_lean_audits.py` when a `proof/` root, a deletion or the Lean runner
 changes), the Python suite always, and the provider gate when `providers/`
-changes. Every step's argv, exit, counts and log go into `gate.json` in the
-run's directory (`private/gate-scope/<stamp>-<pid>/`); commit it to the card's
-report with the selection it printed. Exit 0 needs every step at exit 0.
+changes. When the root `Cargo.toml` or `Cargo.lock`, or the `Cargo.toml` of a
+root crate the provider workspace builds by path (transitively), changes and
+the provider gate is not selected, a `cargo metadata --locked --offline
+--manifest-path providers/Cargo.toml` step checks that `providers/Cargo.lock`
+still resolves (`GATE-SCOPE-PROVIDER-LOCK`). Every step's argv, exit, counts
+and log go into `gate.json` in the run's directory
+(`private/gate-scope/<stamp>-<pid>/`); commit it to the card's report with the
+selection it printed. Exit 0 needs every step at exit 0.
 
-What the scope does not see, so the landing gate stays the arbiter: a path a test
-computes from data (a manifest entry) or a whole-repository walk filtered
-afterwards; cargo feature unification under `-p`, which can differ from
-`--workspace`; and provider-workspace members reached only through their
-dependencies on core crates, which `gate.json` lists but which, as in the full
-gate, get the provider gate only when `providers/` changes.
+The acceptance matrix's derived Lean-audit list is the integrator's record,
+regenerated at landing (`CARD-GATE-NEW-AUDIT-MATRIX-COUNT`). A card does not
+regenerate it: on a card gate the Python step gets the card's base in
+`QUIRIN_CARD_GATE_BASE`, and `test_build_matrix_sections.py` then accepts a
+committed list that differs from `proof/Audit*.lean` only by the audits the
+card adds or removes and by the drift its base already had. The standing gate
+and `gate_scope.py --landing` set no base and keep the exact check; a landing
+run through the scoper passes `--landing`.
+
+What the scope does not see, so the landing gate stays the arbiter: a path a
+test computes from data or a filtered walk that started after the read census
+was recorded (the census is one commit's observation; re-record it with
+`gate_read_census.py record` and `reduce` when the table is revised); a code
+path no test took when the census ran; cargo feature unification under `-p`,
+which can differ from `--workspace`; and provider-workspace members reached
+only through their dependencies on core crates, which `gate.json` lists but
+which, as in the full gate, get the provider gate only when `providers/`
+changes. A narrowing is accepted only with a replay showing that no unit that
+failed at a recorded red commit is dropped
+([evidence](../reports/gate-scope-precise-selection/README.md)).
 
 ## Gate slots
 
