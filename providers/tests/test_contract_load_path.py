@@ -606,15 +606,21 @@ class LoadPathManifest(unittest.TestCase):
         # (`cfl_list_size`'s `nonnull_result_range`). Card
         # CELL-RESULT-SET-WRITTEN-SET-DERIVATION adds Fluent Bit's second,
         # `fluent_bit/result_range.qv` (`flb_pipe_create`'s written sets).
+        # Card CELL-GUARD-RESULT-RANGE-CHECKED adds libevent's first,
+        # `monkey/result_range.qv`, and libc's first, `libc/result_sets.qv`;
+        # this pin was left stale (providers/tests
+        # is outside the scoped card gate).
         bounds = {c["name"]: c["bounds_view"] for c in manifest["crates"]}
         self.assertEqual({name: view for name, view in bounds.items() if view},
                          {"qcore-provider-chunkio": ["chunkio/file_st_bounds.qv",
                                                      "chunkio/meta_len_bounds.qv"],
                           "qcore-provider-cmetrics": ["cmetrics/null_deref.qv"],
+                          "qcore-provider-libevent": ["monkey/result_range.qv"],
                           "qcore-provider-librdkafka": ["librdkafka/null_deref.qv"],
                           "quirin-provider-cfl": ["cfl/null_deref.qv"],
                           "quirin-provider-fluent-bit": ["fluent_bit/null_deref.qv",
-                                                         "fluent_bit/result_range.qv"]})
+                                                         "fluent_bit/result_range.qv"],
+                          "quirin-provider-libc": ["libc/result_sets.qv"]})
         self.assertNotIn("chunkio/meta_len_bounds.qv", views["qcore-provider-chunkio"])
         self.assertNotIn("chunkio/file_st_bounds.qv", views["qcore-provider-chunkio"])
         # The real inventories: exactly the two crates that inherit carry pins.

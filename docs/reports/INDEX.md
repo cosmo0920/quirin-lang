@@ -113,6 +113,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cell-protocol-per-end-guards](cell-protocol-per-end-guards/README.md) | CELL-PROTOCOL-PER-END-GUARDS |
 
+| [cell-protocol-release-window-frames](cell-protocol-release-window-frames/README.md) | CELL-PROTOCOL-RELEASE-WINDOW-FRAMES |
+
 | [cell-result-set-alignment](cell-result-set-alignment/README.md) | CELL-RESULT-SET-ALIGNMENT |
 
 | [cell-result-set-written-set-derivation](cell-result-set-written-set-derivation/README.md) | CELL-RESULT-SET-WRITTEN-SET-DERIVATION |
@@ -120,6 +122,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [certificate-context-binding](certificate-context-binding/README.md) | Certificate context binding |
 
 | [cfg-release](cfg-release/README.md) | CFG-RELEASE: release the projection result after its last full-record consumer |
+
+| [cfl-mpack-external-declarations](cfl-mpack-external-declarations/README.md) | CFL-MPACK-EXTERNAL-DECLARATIONS |
 
 | [cg00-clang-gap-baseline](cg00-clang-gap-baseline/README.md) | CG00-CLANG-GAP-BASELINE: executed BEFORE controls for the Clang gap entries, and their corpus attribution |
 
@@ -609,6 +613,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [lexical-routes-typed-fallbacks](lexical-routes-typed-fallbacks/README.md) | LEXICAL-ROUTES-PREEMPT-TYPED-FALLBACKS |
 
 | [lexical-scalar-noop-alias-read](lexical-scalar-noop-alias-read/README.md) | LEXICAL-SCALAR-NOOP-ALIAS-READ |
+
+| [libc-gap-declarations](libc-gap-declarations/README.md) | LIBC-GAP-DECLARATIONS |
 
 | [libc-reading-site-evidence](libc-reading-site-evidence/README.md) | Libc reading-site evidence v1 |
 
