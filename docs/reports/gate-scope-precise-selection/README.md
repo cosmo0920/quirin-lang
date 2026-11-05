@@ -170,13 +170,38 @@ census test takes about 6 s of the Python suite.
 
 ## 7. Gate
 
-See [gate.json](gate.json) and section 8. Two Python failures belong to the
-base, not this card, and stay for the integrator: the base's committed matrix
-lists 408 Lean audits against 410 in the tree (strict mode; the card-mode check
-excuses exactly that base drift), and
-`test_gateway_registry.test_committed_tables_equal_generated`
-(`crates/qcore-c-gateway/src/gateway_rule_registry.rs` stale at `25508ccaf`;
-this diff touches neither the registry nor the gateway).
+`python3 scripts/gate_scope.py --base 25508ccaf --out <worktree>/private/gate`
+on `999cd632b`, a clean tree ([gate.json](gate.json)). Only this section and
+gate.json were added after it. The mode was full by design: the diff changes
+the scoper and the runner. There was no Lean, provider or provider-lock step,
+because nothing under `proof/`, `providers/` or a manifest changed.
+
+| Step | Exit | Counts |
+|---|---:|---|
+| submodules | 0 | 1, none moved |
+| fmt, Clippy | 0, 0 | |
+| Rust suite | 0 | 611 units, 652 summaries; 9,240 passed, 0 failed, 16 ignored, 135 filtered. Slot wait 6,853 s, behind another card's gate that held `rust-suite/0` while waiting for the integrator's measurement to release `audit/0`. Build 24 s, capture 8 s, run 1,101 s |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| Python suite | **1** | 623 tests, 1 failure (below), run with `QUIRIN_CARD_GATE_BASE=25508ccaf…` |
+
+The one Python failure belongs to the base:
+`test_gateway_registry.test_committed_tables_equal_generated`.
+`crates/qcore-c-gateway/src/gateway_rule_registry.rs` is stale at `25508ccaf`,
+and this diff touches neither the registry nor the gateway. The matrix check
+passed in card mode. The base's committed matrix lists 408 Lean audits
+against 410 in the tree, so the strict check (no base variable) fails at the
+base too. The card-mode rule excuses exactly that base drift, and the
+integrator's regeneration removes it.
+
+Outside the gate: `run_test_binaries.py --packages qcore-schemas --targets
+qcore-c-gateway::test::libc_gap_declarations,qcore-compiler::test::workspace_layering,qcore-compiler::test::cycle20_verifier_plugins`
+ran under the `rust-suite` slot (waited 7,153 s). It exited 0: 18 units,
+151 passed. The three targets were built with `-p … --test …` and
+`cycle20_verifier_plugins` ran alone as `EXCLUSIVE`. The logs are in the
+worktree's `private/r19a/targets-demo/`. The card's own scoper tests
+(test_gate_scope, test_gate_scope_precise, test_gate_scope_census,
+test_run_test_binaries) pass inside the suite. The console log is
+`/tmp/claude-1000/-media-Data-GitHub-quirin-lang--claude-worktrees-launch-cards-clean-worktrees-5365ff/6fcd7fbd-1cae-4a40-a37d-5bce071c02c6/scratchpad/r19a-logs/gate-console.log`.
 
 ## 8. Follow-ups
 

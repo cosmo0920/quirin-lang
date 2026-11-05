@@ -1,0 +1,452 @@
+{
+ "schema": "quirin-gate-scope/1",
+ "source": "git diff",
+ "base": "25508ccaf758e2eb9e6aecf79f81b46ca52bfda5",
+ "head": "999cd632b818e297835006580591c41399d40009",
+ "committed": [
+  "docs/agents/validation.md",
+  "docs/reports/INDEX.md",
+  "docs/reports/gate-scope-precise-selection/README.md",
+  "docs/reports/gate-scope-precise-selection/integration-amendments.json",
+  "docs/reports/gate-scope-precise-selection/probes.json",
+  "docs/reports/gate-scope-precise-selection/read-census.json",
+  "docs/reports/gate-scope-precise-selection/replay.json",
+  "docs/reports/gate-scope-precise-selection/scripts/draft_walkers.py",
+  "docs/reports/gate-scope-precise-selection/scripts/probes.py",
+  "docs/reports/gate-scope-precise-selection/scripts/replay.py",
+  "scripts/gate_read_census.py",
+  "scripts/gate_scope.py",
+  "scripts/gate_scope_walkers.json",
+  "scripts/run_test_binaries.py",
+  "scripts/tests/test_build_matrix_sections.py",
+  "scripts/tests/test_gate_scope.py",
+  "scripts/tests/test_gate_scope_census.py",
+  "scripts/tests/test_gate_scope_precise.py"
+ ],
+ "uncommitted": [],
+ "scope": {
+  "paths": [
+   "docs/agents/validation.md",
+   "docs/reports/INDEX.md",
+   "docs/reports/gate-scope-precise-selection/README.md",
+   "docs/reports/gate-scope-precise-selection/integration-amendments.json",
+   "docs/reports/gate-scope-precise-selection/probes.json",
+   "docs/reports/gate-scope-precise-selection/read-census.json",
+   "docs/reports/gate-scope-precise-selection/replay.json",
+   "docs/reports/gate-scope-precise-selection/scripts/draft_walkers.py",
+   "docs/reports/gate-scope-precise-selection/scripts/probes.py",
+   "docs/reports/gate-scope-precise-selection/scripts/replay.py",
+   "scripts/gate_read_census.py",
+   "scripts/gate_scope.py",
+   "scripts/gate_scope_walkers.json",
+   "scripts/run_test_binaries.py",
+   "scripts/tests/test_build_matrix_sections.py",
+   "scripts/tests/test_gate_scope.py",
+   "scripts/tests/test_gate_scope_census.py",
+   "scripts/tests/test_gate_scope_precise.py"
+  ],
+  "attribution": {
+   "docs/agents/validation.md": [
+    "class prose"
+   ],
+   "docs/reports/INDEX.md": [
+    "class prose"
+   ],
+   "docs/reports/gate-scope-precise-selection/README.md": [
+    "class prose"
+   ],
+   "docs/reports/gate-scope-precise-selection/integration-amendments.json": [
+    "class prose"
+   ],
+   "docs/reports/gate-scope-precise-selection/probes.json": [
+    "class prose"
+   ],
+   "docs/reports/gate-scope-precise-selection/read-census.json": [
+    "class prose"
+   ],
+   "docs/reports/gate-scope-precise-selection/replay.json": [
+    "class prose"
+   ],
+   "docs/reports/gate-scope-precise-selection/scripts/draft_walkers.py": [
+    "class prose"
+   ],
+   "docs/reports/gate-scope-precise-selection/scripts/probes.py": [
+    "class prose"
+   ],
+   "docs/reports/gate-scope-precise-selection/scripts/replay.py": [
+    "class prose"
+   ],
+   "scripts/gate_read_census.py": [
+    "read by quirin-audit-plugin-measure (walker, crates/quirin-audit-plugin-measure/tests/support/mod.rs:197) in quirin-audit-plugin-measure::test::host, quirin-audit-plugin-measure::test::measure, quirin-audit-plugin-measure::test::units",
+    "class python"
+   ],
+   "scripts/gate_scope.py": [
+    "read by quirin-audit-plugin-measure (walker, crates/quirin-audit-plugin-measure/tests/support/mod.rs:197) in quirin-audit-plugin-measure::test::host, quirin-audit-plugin-measure::test::measure, quirin-audit-plugin-measure::test::units",
+    "class python"
+   ],
+   "scripts/gate_scope_walkers.json": [
+    "read by quirin-audit-plugin-measure (walker, crates/quirin-audit-plugin-measure/tests/support/mod.rs:197) in quirin-audit-plugin-measure::test::host, quirin-audit-plugin-measure::test::measure, quirin-audit-plugin-measure::test::units",
+    "class python"
+   ],
+   "scripts/run_test_binaries.py": [
+    "read by quirin-audit-plugin-measure (walker, crates/quirin-audit-plugin-measure/tests/support/mod.rs:197) in quirin-audit-plugin-measure::test::host, quirin-audit-plugin-measure::test::measure, quirin-audit-plugin-measure::test::units",
+    "class python"
+   ],
+   "scripts/tests/test_build_matrix_sections.py": [
+    "read by quirin-audit-plugin-measure (walker, crates/quirin-audit-plugin-measure/tests/support/mod.rs:197) in quirin-audit-plugin-measure::test::host, quirin-audit-plugin-measure::test::measure, quirin-audit-plugin-measure::test::units",
+    "class python"
+   ],
+   "scripts/tests/test_gate_scope.py": [
+    "read by quirin-audit-plugin-measure (walker, crates/quirin-audit-plugin-measure/tests/support/mod.rs:197) in quirin-audit-plugin-measure::test::host, quirin-audit-plugin-measure::test::measure, quirin-audit-plugin-measure::test::units",
+    "class python"
+   ],
+   "scripts/tests/test_gate_scope_census.py": [
+    "read by quirin-audit-plugin-measure (walker, crates/quirin-audit-plugin-measure/tests/support/mod.rs:197) in quirin-audit-plugin-measure::test::host, quirin-audit-plugin-measure::test::measure, quirin-audit-plugin-measure::test::units",
+    "class python"
+   ],
+   "scripts/tests/test_gate_scope_precise.py": [
+    "read by quirin-audit-plugin-measure (walker, crates/quirin-audit-plugin-measure/tests/support/mod.rs:197) in quirin-audit-plugin-measure::test::host, quirin-audit-plugin-measure::test::measure, quirin-audit-plugin-measure::test::units",
+    "class python"
+   ]
+  },
+  "affected": {},
+  "targets": {
+   "quirin-audit-plugin-measure": {
+    "quirin-audit-plugin-measure::test::host": [
+     "walks scripts/** (walker of scripts): scripts/gate_read_census.py (crates/quirin-audit-plugin-measure/tests/support/mod.rs:197)",
+     "walks scripts/** (walker of scripts): scripts/gate_scope.py (crates/quirin-audit-plugin-measure/tests/support/mod.rs:197)",
+     "walks scripts/** (walker of scripts): scripts/gate_scope_walkers.json (crates/quirin-audit-plugin-measure/tests/support/mod.rs:197)",
+     "walks scripts/** (walker of scripts): scripts/run_test_binaries.py (crates/quirin-audit-plugin-measure/tests/support/mod.rs:197)",
+     "walks scripts/** (walker of scripts): scripts/tests/test_build_matrix_sections.py (crates/quirin-audit-plugin-measure/tests/support/mod.rs:197)",
+     "walks scripts/** (walker of scripts): scripts/tests/test_gate_scope.py (crates/quirin-audit-plugin-measure/tests/support/mod.rs:197)",
+     "walks scripts/** (walker of scripts): scripts/tests/test_gate_scope_census.py (crates/quirin-audit-plugin-measure/tests/support/mod.rs:197)",
+     "walks scripts/** (walker of scripts): scripts/tests/test_gate_scope_precise.py (crates/quirin-audit-plugin-measure/tests/support/mod.rs:197)"
+    ],
+    "quirin-audit-plugin-measure::test::measure": [
+     "walks scripts/** (walker of scripts): scripts/gate_read_census.py (crates/quirin-audit-plugin-measure/tests/support/mod.rs:197)",
+     "walks scripts/** (walker of scripts): scripts/gate_scope.py (crates/quirin-audit-plugin-measure/tests/support/mod.rs:197)",
+     "walks scripts/** (walker of scripts): scripts/gate_scope_walkers.json (crates/quirin-audit-plugin-measure/tests/support/mod.rs:197)",
+     "walks scripts/** (walker of scripts): scripts/run_test_binaries.py (crates/quirin-audit-plugin-measure/tests/support/mod.rs:197)",
+     "walks scripts/** (walker of scripts): scripts/tests/test_build_matrix_sections.py (crates/quirin-audit-plugin-measure/tests/support/mod.rs:197)",
+     "walks scripts/** (walker of scripts): scripts/tests/test_gate_scope.py (crates/quirin-audit-plugin-measure/tests/support/mod.rs:197)",
+     "walks scripts/** (walker of scripts): scripts/tests/test_gate_scope_census.py (crates/quirin-audit-plugin-measure/tests/support/mod.rs:197)",
+     "walks scripts/** (walker of scripts): scripts/tests/test_gate_scope_precise.py (crates/quirin-audit-plugin-measure/tests/support/mod.rs:197)"
+    ],
+    "quirin-audit-plugin-measure::test::units": [
+     "walks scripts/** (walker of scripts): scripts/gate_read_census.py (crates/quirin-audit-plugin-measure/tests/support/mod.rs:197)",
+     "walks scripts/** (walker of scripts): scripts/gate_scope.py (crates/quirin-audit-plugin-measure/tests/support/mod.rs:197)",
+     "walks scripts/** (walker of scripts): scripts/gate_scope_walkers.json (crates/quirin-audit-plugin-measure/tests/support/mod.rs:197)",
+     "walks scripts/** (walker of scripts): scripts/run_test_binaries.py (crates/quirin-audit-plugin-measure/tests/support/mod.rs:197)",
+     "walks scripts/** (walker of scripts): scripts/tests/test_build_matrix_sections.py (crates/quirin-audit-plugin-measure/tests/support/mod.rs:197)",
+     "walks scripts/** (walker of scripts): scripts/tests/test_gate_scope.py (crates/quirin-audit-plugin-measure/tests/support/mod.rs:197)",
+     "walks scripts/** (walker of scripts): scripts/tests/test_gate_scope_census.py (crates/quirin-audit-plugin-measure/tests/support/mod.rs:197)",
+     "walks scripts/** (walker of scripts): scripts/tests/test_gate_scope_precise.py (crates/quirin-audit-plugin-measure/tests/support/mod.rs:197)"
+    ]
+   }
+  },
+  "mode": "full",
+  "full_reasons": [
+   "scripts/gate_scope.py: the test runner or this scoper changed",
+   "scripts/run_test_binaries.py: the test runner or this scoper changed"
+  ],
+  "rust_packages": [
+   "qcore-audit",
+   "qcore-c-gateway",
+   "qcore-compiler",
+   "qcore-contract",
+   "qcore-core",
+   "qcore-frontend",
+   "qcore-gateway-rule-api",
+   "qcore-schemas",
+   "qcore-verification",
+   "qcore-verifier-host",
+   "qcorec",
+   "quirin-audit-plugin",
+   "quirin-audit-plugin-libevent",
+   "quirin-audit-plugin-measure",
+   "quirin-source-analysis",
+   "rule-32a-caller-frame-hold",
+   "rule-33-removed-selection",
+   "rule-34-element-destroyer",
+   "rule-35-literal-decay",
+   "rule-36-exact-formal-return",
+   "rule-37-result-constructors",
+   "rule-38-descriptor-cells"
+  ],
+  "rust_targets": [],
+  "probes": true,
+  "lean": {
+   "mode": "none",
+   "reasons": [],
+   "modules": [],
+   "audits": []
+  },
+  "python_reasons": [
+   "docs/reports/gate-scope-precise-selection/scripts/draft_walkers.py: Python",
+   "docs/reports/gate-scope-precise-selection/scripts/probes.py: Python",
+   "docs/reports/gate-scope-precise-selection/scripts/replay.py: Python",
+   "scripts/gate_read_census.py: Python",
+   "scripts/gate_scope.py: Python",
+   "scripts/gate_scope_walkers.json: Python",
+   "scripts/run_test_binaries.py: Python",
+   "scripts/tests/test_build_matrix_sections.py: Python",
+   "scripts/tests/test_gate_scope.py: Python",
+   "scripts/tests/test_gate_scope_census.py: Python",
+   "scripts/tests/test_gate_scope_precise.py: Python"
+  ],
+  "provider_gate": false,
+  "provider_reasons": [],
+  "provider_lock_check": false,
+  "provider_lock_reasons": [],
+  "provider_members_reached_without_providers_change": [],
+  "unresolved_includes": [
+   {
+    "crate": "qcore-compiler",
+    "source": "compiler/tests/ct_corpus.rs:8069",
+    "literal": "include_str!(\\\"fixtures/ct/{id}/case.qr\\\")\");",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   }
+  ],
+  "undeclared_directory_literals": [],
+  "stale_walkers": []
+ },
+ "planned_steps": [
+  {
+   "name": "submodules",
+   "argv": [
+    "git",
+    "-C",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-abb2920e6c3e7cf42",
+    "submodule",
+    "status",
+    "--recursive"
+   ],
+   "slot": null
+  },
+  {
+   "name": "fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "slot": null
+  },
+  {
+   "name": "clippy",
+   "argv": [
+    "cargo",
+    "clippy",
+    "--all-targets",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "slot": null
+  },
+  {
+   "name": "rust-suite",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-abb2920e6c3e7cf42/scripts/run_test_binaries.py",
+    "--log-dir",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-abb2920e6c3e7cf42/private/gate/rust-suite"
+   ],
+   "slot": "rust-suite"
+  },
+  {
+   "name": "probe-reevaluation_probe",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-abb2920e6c3e7cf42/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_probe"
+   ],
+   "slot": null
+  },
+  {
+   "name": "probe-reevaluation_followup",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-abb2920e6c3e7cf42/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_followup"
+   ],
+   "slot": null
+  },
+  {
+   "name": "python",
+   "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+   ],
+   "slot": null
+  }
+ ],
+ "slots": true,
+ "landing": false,
+ "card_base": "25508ccaf758e2eb9e6aecf79f81b46ca52bfda5",
+ "started": "20261105T114900Z",
+ "ran": true,
+ "steps": [
+  {
+   "name": "submodules",
+   "argv": [
+    "git",
+    "-C",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-abb2920e6c3e7cf42",
+    "submodule",
+    "status",
+    "--recursive"
+   ],
+   "exit": 0,
+   "seconds": 0.1,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-abb2920e6c3e7cf42/private/gate/submodules.log",
+   "counts": {
+    "submodules": 1,
+    "not_checked_out_or_moved": []
+   }
+  },
+  {
+   "name": "fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "exit": 0,
+   "seconds": 7.5,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-abb2920e6c3e7cf42/private/gate/fmt.log",
+   "counts": {}
+  },
+  {
+   "name": "clippy",
+   "argv": [
+    "cargo",
+    "clippy",
+    "--all-targets",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "exit": 0,
+   "seconds": 69.4,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-abb2920e6c3e7cf42/private/gate/clippy.log",
+   "counts": {}
+  },
+  {
+   "name": "rust-suite",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-abb2920e6c3e7cf42/scripts/gate_slot.py",
+    "rust-suite",
+    "--receipt",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-abb2920e6c3e7cf42/private/gate/slots/rust-suite.json",
+    "--",
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-abb2920e6c3e7cf42/scripts/run_test_binaries.py",
+    "--log-dir",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-abb2920e6c3e7cf42/private/gate/rust-suite"
+   ],
+   "exit": 0,
+   "seconds": 7986.1,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-abb2920e6c3e7cf42/private/gate/rust-suite.log",
+   "counts": {
+    "units": 611,
+    "passed": 9240,
+    "failed": 0,
+    "ignored": 16,
+    "measured": 0,
+    "filtered": 135,
+    "summaries": 652,
+    "packages": null,
+    "targets": null,
+    "summary": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-abb2920e6c3e7cf42/private/gate/rust-suite/summary.json",
+    "ok": true
+   },
+   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-abb2920e6c3e7cf42/private/gate/slots/rust-suite.json"
+  },
+  {
+   "name": "probe-reevaluation_probe",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-abb2920e6c3e7cf42/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_probe"
+   ],
+   "exit": 0,
+   "seconds": 0.2,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-abb2920e6c3e7cf42/private/gate/probe-reevaluation_probe.log",
+   "counts": {}
+  },
+  {
+   "name": "probe-reevaluation_followup",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-abb2920e6c3e7cf42/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_followup"
+   ],
+   "exit": 0,
+   "seconds": 0.5,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-abb2920e6c3e7cf42/private/gate/probe-reevaluation_followup.log",
+   "counts": {}
+  },
+  {
+   "name": "python",
+   "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+   ],
+   "exit": 1,
+   "seconds": 77.3,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-abb2920e6c3e7cf42/private/gate/python.log",
+   "counts": {
+    "tests": 623,
+    "skipped": 0,
+    "ok": false
+   },
+   "env": {
+    "QUIRIN_CARD_GATE_BASE": "25508ccaf758e2eb9e6aecf79f81b46ca52bfda5"
+   }
+  }
+ ],
+ "ok": false,
+ "finished": "20261105T140441Z"
+}
