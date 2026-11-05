@@ -8,12 +8,18 @@
 //! storing a formal or a fresh allocation into a member (`confval->name =
 //! name`, `map->unit = cfl_sds_create(unit)`), and an embedded list's address
 //! handed to a releasing callee.
+//!
+//! Step 2, gateway rule 38j: the member-release half of the member-effect
+//! summary. A body that releases members of a formal it keeps is `Safe`
+//! under rule 5k's P1-P3 and states its effect; its summary is withheld from
+//! the ordinary table, and a direct call is lowered under it only where the
+//! caller's own check reads the call as the release of each member.
 
 use std::collections::BTreeMap;
 
 use qcore_c_gateway::legacy_c::{
     AnalysisStatus, C11TranslationUnit, LegacyDiagnosticKind, ResourceContracts,
-    UnrestrictedLegacyResult, analyze_unrestricted_c11,
+    UnrestrictedLegacyResult, analyze_unrestricted_c11, check_legacy_safety_certificate,
 };
 use qcore_contract::contract_loader::load_resource_contract_sources;
 
@@ -88,6 +94,9 @@ fn leaves(entry: &str, body: &str) -> (AnalysisStatus, Vec<String>) {
         &contracts(),
     )
     .unwrap_or_else(|error| panic!("fixture rejected: {error:?}"));
+    if let UnrestrictedLegacyResult::Safe(certificate) = &outcome {
+        check_legacy_safety_certificate(certificate).expect("a Safe result rechecks");
+    }
     let summary = match &outcome {
         UnrestrictedLegacyResult::Safe(certificate) => &certificate.summary,
         UnrestrictedLegacyResult::Unsafe(summary) => summary,
@@ -148,11 +157,11 @@ fn a_member_release_through_a_kept_formal_is_named_and_stays_unknown() {
     if !clang_available() {
         return;
     }
-    // `cmt_opts_exit`: both members released, the parent kept.
+    // Twice the same member: step 2's body check refuses it, step 1 names it.
     assert_leaves(
-        "clear",
-        "void clear(struct o *opts) {\n  free(opts->a);\n  free(opts->b);\n}",
-        &[named("opts", "a"), named("opts", "b")],
+        "twice",
+        "void twice(struct o *opts) {\n  free(opts->a);\n  free(opts->a);\n}",
+        &[named("opts", "a"), named("opts", "a")],
     );
     // A non-null release.
     assert_leaves(
@@ -250,5 +259,188 @@ fn every_other_shape_keeps_its_refusal() {
         "callee",
         "void callee(struct o *c) {\n  uncontracted(c->a);\n}",
         &["call to uncontracted function `uncontracted`".to_owned()],
+    );
+}
+
+const CLEAR1: &str = "void clear1(struct o *opts) {\n  free(opts->a);\n}\n";
+
+fn refused_call(callee: &str) -> String {
+    format!(
+        "call to `{callee}`, whose summary releases members of an argument, outside the \
+         caller's member-effect premises (member-effect-call-refused)"
+    )
+}
+
+fn assert_refused(entry: &str, body: &str, callee: &str) {
+    let (status, descriptions) = leaves(entry, body);
+    assert_eq!(status, AnalysisStatus::Unknown, "{entry}: {descriptions:?}");
+    assert!(
+        descriptions.contains(&refused_call(callee)),
+        "{entry}: {descriptions:?}"
+    );
+}
+
+#[test]
+fn a_body_releasing_members_of_a_kept_formal_is_safe() {
+    if !clang_available() {
+        return;
+    }
+    // `cmt_opts_exit`: each member under its own null test, the parent kept.
+    assert_safe(
+        "opts_exit",
+        "void opts_exit(struct o *opts) {\n  if (opts->a) {\n    free(opts->a);\n  }\n  if (opts->b) {\n    free(opts->b);\n  }\n}",
+    );
+    // `metric_release_storage`: releases, then null stores.
+    assert_safe(
+        "release_storage",
+        "void release_storage(struct o *m) {\n  free(m->a);\n  free(m->b);\n  m->a = NULL;\n  m->b = NULL;\n}",
+    );
+    // `cmt_metric_exp_hist_snapshot_destroy`: a null test of the base first.
+    assert_safe(
+        "snapshot_destroy",
+        "void snapshot_destroy(struct o *s) {\n  if (s == NULL) {\n    return;\n  }\n  if (s->a != NULL) {\n    free(s->a);\n    s->a = NULL;\n  }\n}",
+    );
+}
+
+#[test]
+fn the_body_check_keeps_every_other_member_use_refused() {
+    if !clang_available() {
+        return;
+    }
+    // A use of the place after its release.
+    assert_not_safe(
+        "after",
+        "void after(struct o *opts) {\n  free(opts->a);\n  opts->b = opts->a;\n}",
+    );
+    // A release in a loop.
+    assert_not_safe(
+        "in_loop",
+        "void in_loop(struct o *opts, int n) {\n  int i;\n  for (i = 0; i < n; i++)\n    free(opts->a);\n}",
+    );
+    // The base copied.
+    assert_not_safe(
+        "copied",
+        "void copied(struct o *opts) {\n  struct o *c = opts;\n  free(opts->a);\n  c->n = 1;\n}",
+    );
+    // A non-null release: nothing establishes an untracked member non-null.
+    assert_leaves(
+        "nonnull",
+        "void nonnull(struct o *opts) {\n  obj_destroy(opts->a);\n}",
+        &[named("opts", "a")],
+    );
+}
+
+fn assert_not_safe(entry: &str, body: &str) {
+    let (status, descriptions) = leaves(entry, body);
+    assert_ne!(status, AnalysisStatus::Safe, "{entry}: {descriptions:?}");
+}
+
+#[test]
+fn a_caller_that_releases_the_parent_afterwards_reads_the_effect() {
+    if !clang_available() {
+        return;
+    }
+    // `cmt_counter_destroy`'s shape: the helper, then the parent's release.
+    assert_safe(
+        "destroy",
+        &format!("{CLEAR1}void destroy(struct o *x) {{\n  clear1(x);\n  free(x);\n}}"),
+    );
+    // The embedded options object of `cmt_counter_destroy`.
+    assert_safe(
+        "embedded",
+        &format!(
+            "struct w {{ struct o in; char *c; }};\n{CLEAR1}void embedded(struct w *w) {{\n  clear1(&w->in);\n  free(w);\n}}"
+        ),
+    );
+    // A non-null release of the parent afterwards.
+    assert_safe(
+        "then_destroy",
+        &format!("{CLEAR1}void then_destroy(struct o *x) {{\n  clear1(x);\n  obj_destroy(x);\n}}"),
+    );
+}
+
+#[test]
+fn a_caller_that_keeps_the_parent_states_the_effect_in_turn() {
+    if !clang_available() {
+        return;
+    }
+    let outer = format!("{CLEAR1}void outer(struct o *x) {{\n  clear1(x);\n}}\n");
+    assert_safe("outer", &outer);
+    assert_safe(
+        "top",
+        &format!("{outer}void top(struct o *y) {{\n  outer(y);\n  free(y);\n}}"),
+    );
+}
+
+#[test]
+fn a_released_member_is_never_used_or_released_again_by_a_caller() {
+    if !clang_available() {
+        return;
+    }
+    // A second release of the member the callee released.
+    assert_refused(
+        "again",
+        &format!("{CLEAR1}void again(struct o *x) {{\n  clear1(x);\n  free(x->a);\n  free(x);\n}}"),
+        "clear1",
+    );
+    // A read of it afterwards.
+    assert_refused(
+        "read_after",
+        &format!("{CLEAR1}void read_after(struct o *x) {{\n  clear1(x);\n  x->b = x->a;\n}}"),
+        "clear1",
+    );
+    // Through the cascade.
+    assert_refused(
+        "cascade_again",
+        &format!(
+            "{CLEAR1}void outer(struct o *x) {{\n  clear1(x);\n}}\nvoid cascade_again(struct o *y) {{\n  outer(y);\n  free(y->a);\n  free(y);\n}}"
+        ),
+        "outer",
+    );
+    // A member of the embedded sub-object.
+    assert_refused(
+        "embedded_again",
+        &format!(
+            "struct w {{ struct o in; char *c; }};\n{CLEAR1}void embedded_again(struct w *w) {{\n  clear1(&w->in);\n  free(w->in.a);\n  free(w);\n}}"
+        ),
+        "clear1",
+    );
+    // The same object at two positions of one call.
+    assert_refused(
+        "aliased",
+        "void pair(struct o *p, struct o *q) {\n  free(p->a);\n  free(q->a);\n}\nvoid aliased(struct o *x) {\n  pair(x, x);\n  free(x);\n}",
+        "pair",
+    );
+    // A callee that touches a member this body released before the call.
+    assert_refused(
+        "touched_after",
+        "void clear_a(struct o *p) {\n  free(p->a);\n  p->b = NULL;\n}\nvoid touched_after(struct o *x) {\n  free(x->b);\n  clear_a(x);\n}",
+        "clear_a",
+    );
+}
+
+#[test]
+fn every_other_reader_of_an_effect_function_sees_no_contract() {
+    if !clang_available() {
+        return;
+    }
+    // A local (tracked) parent: no formal, no admission.
+    assert_refused(
+        "local_parent",
+        &format!(
+            "{CLEAR1}void local_parent(void) {{\n  struct o *x = calloc(1, sizeof *x);\n  if (!x) return;\n  clear1(x);\n  free(x);\n}}"
+        ),
+        "clear1",
+    );
+    // A call through a pointer, and a call in a return.
+    assert_not_safe(
+        "through_pointer",
+        &format!(
+            "{CLEAR1}void through_pointer(struct o *x) {{\n  void (*fp)(struct o *) = clear1;\n  fp(x);\n  free(x);\n}}"
+        ),
+    );
+    assert_not_safe(
+        "in_return",
+        "int clear2(struct o *opts) {\n  free(opts->a);\n  return 0;\n}\nint in_return(struct o *x) {\n  return clear2(x);\n}",
     );
 }

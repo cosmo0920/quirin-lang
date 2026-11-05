@@ -410,6 +410,31 @@ pub(crate) fn derive_custody_summaries(
                     }
                     continue;
                 }
+                // Card MEMBER-EFFECT-SUMMARY (rule 38j): a body that releases
+                // members through a formal it keeps publishes no ordinary
+                // summary. Its validated contract goes, with its effect, to the
+                // member-effect table, which only the direct-call route reads;
+                // in a recursive component it publishes nothing at all.
+                if contracts.contract(&name).is_none()
+                    && let Some(effect) = crate::legacy_c::member_effect::published_effect(
+                        tokens,
+                        &name,
+                        &derivation.environment,
+                    )
+                {
+                    if component.len() == 1
+                        && derivation.environment.member_effect(&name).is_none()
+                        && let Some(contract) =
+                            infer_validated_summary(tokens, &name, &derivation.environment)
+                    {
+                        derivation.environment.insert_member_effect(
+                            name,
+                            qcore_schemas::member_effect::MemberEffectSummary { contract, effect },
+                        );
+                        installed = true;
+                    }
+                    continue;
+                }
                 match infer_validated_summary(tokens, &name, &derivation.environment) {
                     Some(contract) => {
                         match contracts.contract(&name) {

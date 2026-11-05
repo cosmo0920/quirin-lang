@@ -150,6 +150,11 @@ mod uncontracted_access;
 // re-attribution that never admits.
 #[path = "legacy_member_custody_attribution.rs"]
 mod member_custody_attribution;
+// Card MEMBER-EFFECT-SUMMARY step 2 (rule 38j): the member-release half of a
+// member-effect summary (body check, the summary's own table, the direct-call
+// route). Hooks name the card.
+#[path = "legacy_member_effect.rs"]
+pub(crate) mod member_effect;
 // Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 2 (rules 14a, 14b): one
 // contracted scalar call inside a typed scalar statement, and an interior
 // pointer into an untracked object; asked after the statement fallbacks.
@@ -3883,6 +3888,10 @@ fn build_function_cfg_unscoped(
     // identity on an environment with none.
     let retaining_environment = retained_by_route::retaining_environment(tokens, contracts);
     let contracts = retaining_environment.as_ref().unwrap_or(contracts);
+    // Card MEMBER-EFFECT-SUMMARY (rule 38j): every member-effect contract the
+    // stream names, under its minted name, read only by the direct-call route.
+    let member_effect_environment = member_effect::minted_environment(tokens, contracts);
+    let contracts = member_effect_environment.as_ref().unwrap_or(contracts);
     let normalized = out_alias::normalize(tokens, function, contracts);
     census_stage("out-alias", tokens, normalized.as_ref());
     let tokens = normalized.as_deref().unwrap_or(tokens);
@@ -4000,6 +4009,11 @@ fn build_function_cfg_unscoped(
     // Card W45-CALLEE-SUMMARY-CASCADE: rule 1's lexical premises, read once.
     let member_releases =
         member_release::AdmissibleReleases::read(tokens, body_start, &formal_parameters, contracts);
+    // Card MEMBER-EFFECT-SUMMARY (rule 38j): the member-effect body check; its
+    // release places join rule 1's admissible places.
+    let member_effect_reading =
+        member_effect::BodyReading::read(tokens, function, body_start, &parameters, contracts);
+    let member_releases = member_releases.with_places(&member_effect_reading.places);
     // Card W45-SUB-OBJECT-STORES: the record-typed roots.
     let sub_object_roots = match (
         function_parameter_range(tokens, function, body_start),
@@ -4078,6 +4092,7 @@ fn build_function_cfg_unscoped(
         admit_derived_returns,
         argument_probe: call_argument_access::ArgumentProbe::default(),
         member_releases,
+        member_effect_reading,
         desugar: condition_desugar::DesugarState::new(function),
         return_facts,
         sub_object_roots,
@@ -4966,6 +4981,8 @@ struct Parser<'a> {
     /// Card W45-CALLEE-SUMMARY-CASCADE: the member places rule 1 of
     /// `member_release` may admit in this body (its lexical premises).
     member_releases: member_release::AdmissibleReleases,
+    /// Card MEMBER-EFFECT-SUMMARY (rule 38j): this body's member-effect check.
+    member_effect_reading: member_effect::BodyReading,
     /// Card **W44-BRANCH-CONDITION-CALLS**: the enclosing function and the
     /// unit call graph the condition desugaring reads lazily.
     desugar: condition_desugar::DesugarState,
@@ -5882,6 +5899,12 @@ impl Parser<'_> {
             .set(origin.map(|origin| (origin, tokens.len())));
         let instruction = self.uncontracted_access_attribution(tokens, line, instruction);
         self.typed_place_origin.set(None);
+        // Card MEMBER-EFFECT-SUMMARY (rule 38j), asked last: a direct call to a
+        // function whose member-effect summary is in force, lowered under its
+        // contract where this body's check admitted it, else named.
+        if let Some(statement) = self.member_effect_call(tokens, line, &instruction) {
+            return statement;
+        }
         Statement::Instruction(instruction, line)
     }
 

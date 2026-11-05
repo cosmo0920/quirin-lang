@@ -209,6 +209,8 @@ impl Parser<'_> {
             admit_derived_returns: _,
             argument_probe,
             member_releases: _,
+            // Card MEMBER-EFFECT-SUMMARY: an immutable reading of the body.
+            member_effect_reading: _,
             desugar: _,
             return_facts: _,
             sub_object_roots: _,
