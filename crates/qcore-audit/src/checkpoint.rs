@@ -994,8 +994,7 @@ impl CheckpointReader {
         head.resize(PRELUDE_LEN + 4 + length as usize + 32, 0);
         file.read_exact(&mut head[PRELUDE_LEN + 4..])
             .map_err(|_| describe("truncated: the header is incomplete".into()))?;
-        let (header, _) =
-            parse_header_as(layout, &head, Some(file_length)).map_err(describe)?;
+        let (header, _) = parse_header_as(layout, &head, Some(file_length)).map_err(describe)?;
         Ok(Self {
             path: path.display().to_string(),
             file,

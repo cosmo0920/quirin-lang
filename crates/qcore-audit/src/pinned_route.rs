@@ -347,18 +347,18 @@ pub fn run_with_checkpoints(
             options,
         )?
     } else {
-    let dispatch = crate::parallel::heaviest_first(&weights);
-    let contexts = (0..plans.len())
-        .map(|_| OnceLock::new())
-        .collect::<Vec<OnceLock<Option<LibraryContext>>>>();
-    // Card W45-REFUTED-CONTRACT-WITHDRAWAL: one step's work under a given
-    // environment. Phase one runs every step under the loaded contracts;
-    // when a body refutes its own declaration, phase two analyses every unit
-    // again under the refutation table (each library's prelude context is
-    // reused), and only then is every outcome folded, in step order.
-    let work =
-        |step: Step<'_>, contracts: &ResourceContracts, homes: &[CrossUnitHomeEvidence]| match step
-        {
+        let dispatch = crate::parallel::heaviest_first(&weights);
+        let contexts = (0..plans.len())
+            .map(|_| OnceLock::new())
+            .collect::<Vec<OnceLock<Option<LibraryContext>>>>();
+        // Card W45-REFUTED-CONTRACT-WITHDRAWAL: one step's work under a given
+        // environment. Phase one runs every step under the loaded contracts;
+        // when a body refutes its own declaration, phase two analyses every unit
+        // again under the refutation table (each library's prelude context is
+        // reused), and only then is every outcome folded, in step order.
+        let work = |step: Step<'_>,
+                    contracts: &ResourceContracts,
+                    homes: &[CrossUnitHomeEvidence]| match step {
             Step::Prelude(index) => {
                 let plan = &plans[index];
                 let mut output = String::new();
@@ -406,106 +406,58 @@ pub fn run_with_checkpoints(
             Step::MonkeyGate => StepOutcome::MonkeyGate,
             Step::PlanningFailed(error) => StepOutcome::PlanningFailed(error),
         };
-    let stops = |outcome: &StepOutcome| match outcome {
-        StepOutcome::Prelude { result, .. } => result.is_err(),
-        StepOutcome::Unit { result, .. } => result.is_err(),
-        StepOutcome::PlanningFailed(_) => true,
-        StepOutcome::Finish(_)
-        | StepOutcome::MonkeyGate
-        | StepOutcome::StoredUnit(_)
-        | StepOutcome::Finished { .. } => false,
-    };
-    let table_of = |outcomes: &[StepOutcome]| {
-        crate::refuted_contracts::table(
+        let stops = |outcome: &StepOutcome| match outcome {
+            StepOutcome::Prelude { result, .. } => result.is_err(),
+            StepOutcome::Unit { result, .. } => result.is_err(),
+            StepOutcome::PlanningFailed(_) => true,
+            StepOutcome::Finish(_)
+            | StepOutcome::MonkeyGate
+            | StepOutcome::StoredUnit(_)
+            | StepOutcome::Finished { .. } => false,
+        };
+        let table_of = |outcomes: &[StepOutcome]| {
+            crate::refuted_contracts::table(
+                &outcomes
+                    .iter()
+                    .filter_map(|outcome| match outcome {
+                        StepOutcome::Unit { result, .. } => result.as_ref().as_ref().ok(),
+                        _ => None,
+                    })
+                    .flat_map(|products| products.report.unit_rows().iter().cloned())
+                    .collect::<Vec<_>>(),
+            )
+        };
+        let mut outcomes = Vec::new();
+        let stopped = run_ordered(
+            steps.clone(),
+            jobs,
+            Some(dispatch.clone()),
+            |step| work(step, &contracts, &[]),
+            |outcome| {
+                let stop = stops(&outcome);
+                outcomes.push(outcome);
+                if stop { Err(()) } else { Ok(()) }
+            },
+        )
+        .is_err();
+        let found = table_of(&outcomes);
+        // Card CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS (rule 14h): the
+        // bounds declarations phase one's bodies refute also call for phase two.
+        let bounds_found = crate::bounds_evidence::refutation_table(
             &outcomes
                 .iter()
                 .filter_map(|outcome| match outcome {
                     StepOutcome::Unit { result, .. } => result.as_ref().as_ref().ok(),
                     _ => None,
                 })
-                .flat_map(|products| products.report.unit_rows().iter().cloned())
+                .flat_map(|products| products.report.bounds_evidence().iter().cloned())
                 .collect::<Vec<_>>(),
-        )
-    };
-    let mut outcomes = Vec::new();
-    let stopped = run_ordered(
-        steps.clone(),
-        jobs,
-        Some(dispatch.clone()),
-        |step| work(step, &contracts, &[]),
-        |outcome| {
-            let stop = stops(&outcome);
-            outcomes.push(outcome);
-            if stop { Err(()) } else { Ok(()) }
-        },
-    )
-    .is_err();
-    let found = table_of(&outcomes);
-    // Card CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS (rule 14h): the
-    // bounds declarations phase one's bodies refute also call for phase two.
-    let bounds_found = crate::bounds_evidence::refutation_table(
-        &outcomes
-            .iter()
-            .filter_map(|outcome| match outcome {
-                StepOutcome::Unit { result, .. } => result.as_ref().as_ref().ok(),
-                _ => None,
-            })
-            .flat_map(|products| products.report.bounds_evidence().iter().cloned())
-            .collect::<Vec<_>>(),
-    );
-    let applied = if stopped || (found.is_empty() && bounds_found.is_empty()) {
-        qcore_schemas::contract_refutation::RefutationTable::new()
-    } else {
-        crate::bounds_selection::apply_refutation_table(&bounds_found);
-        let held = crate::refuted_contracts::with_table(&contracts, &found);
-        let units = steps
-            .iter()
-            .enumerate()
-            .filter(|(_, step)| matches!(step, Step::Unit(..)))
-            .map(|(index, step)| (index, step.clone()))
-            .collect::<Vec<_>>();
-        let unit_count = units.len();
-        let weights = units
-            .iter()
-            .map(|(_, step)| match step {
-                Step::Unit(_, entry) => source_weight(entry),
-                _ => 0,
-            })
-            .collect::<Vec<_>>();
-        let mut replaced = Vec::new();
-        let _ = run_ordered(
-            units,
-            jobs,
-            Some(crate::parallel::heaviest_first(&weights)),
-            |(index, step)| (index, work(step, &held, &[])),
-            |(index, outcome)| {
-                let stop = stops(&outcome);
-                replaced.push((index, outcome));
-                if stop { Err(()) } else { Ok(()) }
-            },
         );
-        // Phase one ran to its end, so every unit has its slot; a phase-two
-        // unit that failed ends the fold at its own position.
-        let complete = replaced.len() == unit_count;
-        let last = replaced.last().map(|(index, _)| *index);
-        for (index, outcome) in replaced {
-            outcomes[index] = outcome;
-        }
-        if !complete {
-            outcomes.truncate(last.map_or(outcomes.len(), |index| index + 1));
-        }
-        found
-    };
-    // A link map is a declared program-resolution premise, never inferred
-    // from the corpus. Export homes under the refutation table actually
-    // applied, then re-run caller units with only uniquely named imports.
-    let mut cross_unit_premise = None;
-    if let Some(links) = &cross_unit_links
-        && outcomes.len() == steps.len()
-    {
-        let held = crate::refuted_contracts::with_table(&contracts, &applied);
-        let (imported, homes) = select_homes(links, &plans, &held)?;
-        if !homes.is_empty() {
+        let applied = if stopped || (found.is_empty() && bounds_found.is_empty()) {
+            qcore_schemas::contract_refutation::RefutationTable::new()
+        } else {
+            crate::bounds_selection::apply_refutation_table(&bounds_found);
+            let held = crate::refuted_contracts::with_table(&contracts, &found);
             let units = steps
                 .iter()
                 .enumerate()
@@ -521,41 +473,89 @@ pub fn run_with_checkpoints(
                 })
                 .collect::<Vec<_>>();
             let mut replaced = Vec::new();
-            let stopped = run_ordered(
+            let _ = run_ordered(
                 units,
                 jobs,
                 Some(crate::parallel::heaviest_first(&weights)),
-                |(index, step)| (index, work(step, &imported, &homes)),
+                |(index, step)| (index, work(step, &held, &[])),
                 |(index, outcome)| {
                     let stop = stops(&outcome);
                     replaced.push((index, outcome));
                     if stop { Err(()) } else { Ok(()) }
                 },
-            )
-            .is_err();
-            let new_table = crate::refuted_contracts::table(
-                &replaced
-                    .iter()
-                    .filter_map(|(_, outcome)| match outcome {
-                        StepOutcome::Unit { result, .. } => result.as_ref().as_ref().ok(),
-                        _ => None,
-                    })
-                    .flat_map(|products| products.report.unit_rows().iter().cloned())
-                    .collect::<Vec<_>>(),
             );
-            if !stopped && replaced.len() == unit_count && new_table == applied {
-                for (index, outcome) in replaced {
-                    outcomes[index] = outcome;
-                }
-                cross_unit_premise = Some(cross_unit_premise_of(links, &homes));
-            } else {
-                println!(
-                    "cross-unit import phase refused: incomplete run or changed refutation table"
+            // Phase one ran to its end, so every unit has its slot; a phase-two
+            // unit that failed ends the fold at its own position.
+            let complete = replaced.len() == unit_count;
+            let last = replaced.last().map(|(index, _)| *index);
+            for (index, outcome) in replaced {
+                outcomes[index] = outcome;
+            }
+            if !complete {
+                outcomes.truncate(last.map_or(outcomes.len(), |index| index + 1));
+            }
+            found
+        };
+        // A link map is a declared program-resolution premise, never inferred
+        // from the corpus. Export homes under the refutation table actually
+        // applied, then re-run caller units with only uniquely named imports.
+        let mut cross_unit_premise = None;
+        if let Some(links) = &cross_unit_links
+            && outcomes.len() == steps.len()
+        {
+            let held = crate::refuted_contracts::with_table(&contracts, &applied);
+            let (imported, homes) = select_homes(links, &plans, &held)?;
+            if !homes.is_empty() {
+                let units = steps
+                    .iter()
+                    .enumerate()
+                    .filter(|(_, step)| matches!(step, Step::Unit(..)))
+                    .map(|(index, step)| (index, step.clone()))
+                    .collect::<Vec<_>>();
+                let unit_count = units.len();
+                let weights = units
+                    .iter()
+                    .map(|(_, step)| match step {
+                        Step::Unit(_, entry) => source_weight(entry),
+                        _ => 0,
+                    })
+                    .collect::<Vec<_>>();
+                let mut replaced = Vec::new();
+                let stopped = run_ordered(
+                    units,
+                    jobs,
+                    Some(crate::parallel::heaviest_first(&weights)),
+                    |(index, step)| (index, work(step, &imported, &homes)),
+                    |(index, outcome)| {
+                        let stop = stops(&outcome);
+                        replaced.push((index, outcome));
+                        if stop { Err(()) } else { Ok(()) }
+                    },
+                )
+                .is_err();
+                let new_table = crate::refuted_contracts::table(
+                    &replaced
+                        .iter()
+                        .filter_map(|(_, outcome)| match outcome {
+                            StepOutcome::Unit { result, .. } => result.as_ref().as_ref().ok(),
+                            _ => None,
+                        })
+                        .flat_map(|products| products.report.unit_rows().iter().cloned())
+                        .collect::<Vec<_>>(),
                 );
+                if !stopped && replaced.len() == unit_count && new_table == applied {
+                    for (index, outcome) in replaced {
+                        outcomes[index] = outcome;
+                    }
+                    cross_unit_premise = Some(cross_unit_premise_of(links, &homes));
+                } else {
+                    println!(
+                        "cross-unit import phase refused: incomplete run or changed refutation table"
+                    );
+                }
             }
         }
-    }
-    (outcomes, applied, cross_unit_premise)
+        (outcomes, applied, cross_unit_premise)
     };
     for outcome in outcomes {
         match outcome {

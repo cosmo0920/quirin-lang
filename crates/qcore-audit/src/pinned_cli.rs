@@ -79,10 +79,8 @@ pub fn main(arguments: Vec<OsString>) -> ExitCode {
         eprintln!("--resume requires --checkpoint-dir");
         return ExitCode::FAILURE;
     }
-    let checkpoints = checkpoint_directory.map(|directory| crate::pinned_route::CheckpointOptions {
-        directory,
-        resume,
-    });
+    let checkpoints = checkpoint_directory
+        .map(|directory| crate::pinned_route::CheckpointOptions { directory, resume });
     let mut arguments = positional.into_iter();
     let jobs = match crate::parallel::resolve_jobs(jobs.as_deref()) {
         Ok(jobs) => crate::parallel::effective_jobs(jobs),

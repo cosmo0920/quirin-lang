@@ -53,14 +53,14 @@ use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 
 use super::{
-    ChunkioCaptures, LibraryContext, LibraryPlan, PublishOnDrop, SourceContractConfiguration,
-    Step, StepOutcome, UnitProducts, audit_unit, cross_unit_premise_of, finish_library,
-    prepare_library, select_homes,
+    ChunkioCaptures, LibraryContext, LibraryPlan, PublishOnDrop, SourceContractConfiguration, Step,
+    StepOutcome, UnitProducts, audit_unit, cross_unit_premise_of, finish_library, prepare_library,
+    select_homes,
 };
 use crate::checkpoint::{
-    AnalyzerIdentity, BinaryValue, CategoryCount, CheckpointReader, CompilerIdentity,
-    CountsRecord, EnvironmentValue, Layout, LockDigest, PreparationFacts, assemble_as,
-    content_sha256_as, encode, json_sha256,
+    AnalyzerIdentity, BinaryValue, CategoryCount, CheckpointReader, CompilerIdentity, CountsRecord,
+    EnvironmentValue, Layout, LockDigest, PreparationFacts, assemble_as, content_sha256_as, encode,
+    json_sha256,
 };
 use crate::checkpoint_run::{status_kib, write_atomically};
 use crate::compile_db::{CompileEntry, compiler_options_compatibility as compiler_options};
@@ -534,6 +534,13 @@ fn seal(
     let Some((finish_output, Ok(teardown))) = &record.finish else {
         return Err("an incomplete group is never sealed".into());
     };
+    if units.units.len() != identity.group.units.len() {
+        return Err(format!(
+            "{} unit result(s) for {} fingerprinted unit(s)",
+            units.units.len(),
+            identity.group.units.len()
+        ));
+    }
     let finish = FinishSection {
         output: finish_output.clone(),
         teardown_results: teardown.clone(),
@@ -649,7 +656,10 @@ pub fn identity_difference(
                     .enumerate()
                     .find(|(_, (a, b))| a != b)
                     .map(|(index, (a, _))| {
-                        format!("{path}[{index}] ({})", a["file"].as_str().unwrap_or_default())
+                        format!(
+                            "{path}[{index}] ({})",
+                            a["file"].as_str().unwrap_or_default()
+                        )
                     })
             }
             _ => Some(path),
@@ -679,7 +689,8 @@ pub fn tree_sha256(directory: &Path) -> Result<String, String> {
             if metadata.is_dir() {
                 walk(root, &path, out)?;
             } else {
-                let bytes = fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))?;
+                let bytes =
+                    fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))?;
                 let relative = path
                     .strip_prefix(root)
                     .map_err(|error| error.to_string())?
@@ -1001,10 +1012,12 @@ struct Collector {
 /// The group's record from what its collector holds; with `finish`, its
 /// postlude runs when every step succeeded.
 fn assemble_record(label: &str, collector: &mut Collector, finish: bool) -> GroupRecord {
-    let (prelude_output, prelude) = collector
-        .prelude
-        .take()
-        .unwrap_or_else(|| (String::new(), Err(format!("{label}: library prelude did not run"))));
+    let (prelude_output, prelude) = collector.prelude.take().unwrap_or_else(|| {
+        (
+            String::new(),
+            Err(format!("{label}: library prelude did not run")),
+        )
+    });
     let mut captures = ChunkioCaptures::default();
     let mut every_unit = prelude.is_ok();
     let units = collector
@@ -1194,9 +1207,8 @@ fn run_stage(
                 let entry = &plan.selected[unit];
                 let mut output = String::new();
                 let result = match shared.contexts[index].wait() {
-                    Some(context) => qcore_c_gateway::member_run_facts::scoped(
-                        route.run_facts.cloned(),
-                        || {
+                    Some(context) => {
+                        qcore_c_gateway::member_run_facts::scoped(route.run_facts.cloned(), || {
                             audit_unit(
                                 plan,
                                 context,
@@ -1208,8 +1220,8 @@ fn run_stage(
                                 route.provider,
                                 &mut output,
                             )
-                        },
-                    ),
+                        })
+                    }
                     None => Err(format!("{}: library prelude failed", plan.library)),
                 };
                 let deposit = match result {
@@ -1357,11 +1369,8 @@ pub(super) fn run_phases<'a>(
         let (imported, homes) = select_homes(links, route.plans, &held)?;
         if !homes.is_empty() {
             let third = run_stage(&shared, Stage::Imported, &imported, &homes)?;
-            let complete = !third.stopped
-                && third.records.iter().all(GroupRecord::units_complete);
-            if complete
-                && crate::refuted_contracts::table(&rows_of(&third.records)?) == applied
-            {
+            let complete = !third.stopped && third.records.iter().all(GroupRecord::units_complete);
+            if complete && crate::refuted_contracts::table(&rows_of(&third.records)?) == applied {
                 records = third.records;
                 premise = Some(cross_unit_premise_of(links, &homes));
             } else {
