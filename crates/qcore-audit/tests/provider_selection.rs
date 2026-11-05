@@ -679,7 +679,8 @@ fn the_cycle19_provider_selection_is_the_cycle19_manifest_module_for_module() {
     // `fluent_bit/input_collector_registration.qv`.
     // 63 -> 64 by card FB-TEARDOWN-DESTROY-DECLARATIONS: `fluent_bit/teardown_destroy.qv`.
     // 65 -> 66 by card W48-RK-LOG-CALLER-FRAME: `librdkafka/log_caller_frame.qv`.
-    assert_eq!(from_selection.source_assumptions().len(), 66);
+    // 66 -> 67 by card LIBRDKAFKA-HEADER-INLINES: `librdkafka/header_inlines.qv`.
+    assert_eq!(from_selection.source_assumptions().len(), 67);
     for (module, text) in from_manifest.source_assumptions() {
         assert_eq!(
             from_selection.source_assumptions().get(module),
