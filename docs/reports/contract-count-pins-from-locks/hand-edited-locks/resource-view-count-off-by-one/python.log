@@ -1,0 +1,15 @@
+.......E.
+======================================================================
+ERROR: test_repository_has_one_canonical_copy_per_pinned_module (test_contract_corpus.CanonicalCorpus.test_repository_has_one_canonical_copy_per_pinned_module)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a/scripts/tests/test_contract_corpus.py", line 30, in test_repository_has_one_canonical_copy_per_pinned_module
+    totals = contract_corpus.lock_totals(root)
+  File "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a/scripts/contract_corpus.py", line 64, in lock_totals
+    raise ValueError(f"{name}: the lock's resource view is not the load path's")
+ValueError: quirin-provider-libc: the lock's resource view is not the load path's
+
+----------------------------------------------------------------------
+Ran 9 tests in 19.468s
+
+FAILED (errors=1)

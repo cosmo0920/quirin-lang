@@ -40,3 +40,76 @@ added, and the per-file and per-declaration pins of the locks themselves.
 Three quantities (rows 4's non-function part, 5, 6, 7) are stated by no lock.
 Rows 7 and 4 change often (20 and 18 times), so the card moves them into the
 lock (section 2) rather than leaving literals.
+
+## 2. Derivation
+
+**Where the counts now live.** Lock schema 2 (`providers/contracts.py`
+`INVENTORY_SCHEMA`, written by `sync` from `qcore-contract`'s example
+`contract_inventory`, refused by `check` when it differs by a byte) adds two
+fields, so every aggregate in the census is a sum of lock data:
+
+- per `extern fn`: `resource_table`, the table of the resource-contract
+  environment the declaration lands in when the v1 loader
+  (`qcore_contract::contract_loader::load_resource_contract_sources`) loads its
+  module alone: `functions`, `pending_review`, `relational` or `retaining`, or
+  `null` when the loader refuses the module. A name in no table or in two is a
+  probe error, never a guess.
+- per module: `other_declarations`, the names of its declarations that are not
+  `extern fn` (the 22 of census row 4: 14 `resource type`, 7 `error`, 1
+  `quant axis`).
+
+`sync` refuses a module whose resource-view membership (the provider probe's,
+`qcore_audit::providers::probe_resource_views`) disagrees with its tables, so
+the two loader probes must state one acceptance. The per-file pins (`sha256`,
+`declaration_count`, `clause_count`, each declaration's `clauses`,
+`inherits`, `premises`, `premise_bindings`) and the three views are unchanged,
+and `compiler/tests/qcore_contract_corpus.rs`'s per-file check keeps its force:
+it recomputes the whole lock from the tree, now including the two new fields
+with its own loader call, and compares byte for byte.
+
+**The reader.** One per language, the same fields and refusals:
+`tests/support/contract_locks.rs` (`lock_totals`, `try_lock_totals`) for the
+Rust tests and `scripts/contract_corpus.py` `lock_totals` for the Python
+suite. Both read `providers/contract-load-path.json`, then each crate's lock,
+and refuse (never sum) a lock of another schema or crate, a resource view
+differing from the load path's or naming no locked file, an unknown table, or
+a module whose view membership disagrees with its tables. Agreement is
+mechanical: `tests/support/contract_locks_cases.json` holds one fixture (two
+crates, the expected eleven totals) and eight refusals, and both
+`contract_loader.rs::lock_totals_agree_with_the_shared_cases` and
+`test_contract_corpus.py::test_lock_totals_agree_with_the_shared_cases` run it.
+
+| Census row | Now asserted against |
+|---|---|
+| 1, 2, 12, 13 (`source_assumptions().len()`) | `resource_view_modules` (Σ resource views) |
+| 8-11 (`provider_selection.rs`) | `resource_view_modules` |
+| 3 (`modules.len()`) | `corpus_modules` (Σ locked files) |
+| 4 (`(selected, v1, rejected)`) | `(resource_view_modules, v1_declarations, rejected_declarations)`: v1 = declarations with a table; rejected = declarations without one + `other_declarations` |
+| 5, 6, 7 and the function map | `pending_review`, `relational`, `retaining`, `functions` (declarations per table); the existing sum identity against the test's own marker count stays |
+| 14 (Python) | `corpus_modules`, `qcore_provider_modules`, `quirin_provider_modules` |
+
+At `25508ccaf` the locks give exactly the former literals: 150 modules (92 +
+58), 69 resource-view modules, 638 v1 and 370 rejected declarations, tables
+502 / 11 / 10 / 115. So the per-module loads sum to the manifest-wide
+environment's tables, which the test checks on every run.
+
+**Same strength.** Each test still compares what it loads or walks (the
+manifest's environment, the corpus walk, the marker count per declaration, the
+provider selection) with a number it does not compute itself, so a loaded set
+that disagrees with the locks fails. The locks are the reviewed record: the
+number moves only with a lock diff inside `providers/`, which `contracts.py
+check` and the per-file check refuse unless it is what `sync` writes from the
+tree (hard invariant 5). The per-card history comments that accompanied the
+literals are not repeated: they are in the five files at base `25508ccaf`, and
+each lock diff now carries the same information as data.
+
+**Boundaries.** A module mixing marked and unmarked declarations would fail
+the derived v1/rejected pair (the lock gives none of its declarations a table,
+while the test counts the marked ones), fail-closed, and needs a recorded
+decision then; none exists at this base (v1 equals Σ `declaration_count` over
+the views). Adding a new resource-v1 *module* still edits
+`cycle19-resource-contracts.json`, outside `providers/`: that is the Cycle 19
+selection, not a count pin (follow-up `CYCLE19-MANIFEST-FROM-VIEWS`). The
+load-path crate counts (11 crates, 5 `qcore-provider-*`;
+`provider_selection.rs`'s `crates.len() == 11`) stay literals: they count
+crates, not contracts, and move only with a new crate's workspace edit.

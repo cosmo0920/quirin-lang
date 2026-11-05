@@ -1,0 +1,92 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.02s
+     Running tests/provider_selection.rs (target/debug/deps/provider_selection-1141d066dacc55a0)
+
+running 17 tests
+test a_listed_module_missing_on_disk_refuses_the_whole_load_path ... ok
+test an_empty_view_contributes_nothing_and_a_selection_of_nothing_refuses ... ok
+test a_crate_without_a_declared_view_cannot_be_selected_whole ... ok
+test the_dependency_closure_is_resolved_and_recorded_but_not_selected ... ok
+test a_dependency_cycle_refuses_the_whole_load_path ... ok
+test all_loaded_selects_every_crate_whole_in_load_path_order ... ok
+test a_view_that_is_unsorted_or_names_an_unowned_module_refuses_the_load_path ... ok
+test a_namespace_conflict_refuses_the_whole_load_path ... ok
+test both_forms_agree_only_on_the_same_selection ... ok
+test unknown_providers_missing_modules_duplicates_and_empty_selections_refuse ... ok
+test the_quirin_only_guard_refuses_any_qcore_provider_in_the_closure ... ok
+test a_whole_crate_selects_its_modules_in_load_path_order_and_lowers_to_a_manifest ... ok
+test a_selection_loads_exactly_what_the_equal_hand_written_manifest_loads ... ok
+test a_whole_crate_selects_its_resource_view_not_every_owned_module ... ok
+test the_cycle19_provider_selection_is_the_cycle19_manifest_module_for_module ... ok
+test all_eleven_crates_whole_and_all_loaded_are_the_cycle19_manifest_environment ... ok
+test every_real_crate_selected_whole_is_its_loader_view has been running for over 60 seconds
+test every_real_crate_selected_whole_is_its_loader_view ... ok
+
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 197.77s
+
+     Running tests/neighbours.rs (target/debug/deps/neighbours-a1215c85ef509aca)
+
+running 12 tests
+test a_tracked_handle_is_never_admitted_where_the_projection_tracks_it ... ok
+test an_admitted_residency_shape_does_not_hide_a_leak ... ok
+test the_residency_modes_are_load_bearing_in_both_directions ... ok
+test the_residency_shape_is_admitted_end_to_end ... ok
+test a_certificate_resting_on_the_new_modules_is_rederived_from_its_own_sources ... ok
+test withdrawing_the_chained_tail_actual_decides_the_constructor ... ok
+test the_real_program_is_not_promoted_by_this_card ... ok
+test withdrawing_each_generic_declaration_restores_its_refusal ... ok
+test withdrawing_one_neighbour_still_reproduces_the_refusal ... ok
+test the_constructor_keeps_exactly_one_refusal_under_production_declarations ... ok
+test withdrawing_any_single_neighbour_leaves_the_constructor_refusing ... ok
+test the_modules_under_test_are_the_production_ones ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.29s
+
+     Running tests/prod_contracts.rs (target/debug/deps/prod_contracts-036d4c06f401063b)
+
+running 14 tests
+test an_admitted_logging_statement_does_not_hide_a_leak ... ok
+test the_expanded_logging_shape_is_admitted_end_to_end ... ok
+test withdrawing_the_gate_restores_the_branch_condition_refusal ... ok
+test the_routes_mask_mode_is_load_bearing_in_both_directions ... ok
+test the_accessor_result_mode_is_load_bearing ... ok
+test a_certificate_resting_on_the_tail_is_rederived_from_its_own_sources ... ok
+test the_declaration_covers_only_what_it_covers ... ok
+test withdrawing_the_tail_restores_the_refusal ... ok
+test the_real_caller_is_not_promoted_by_this_card ... ok
+test the_expanded_logging_statement_is_decided_on_the_real_caller ... ok
+test a_tail_actual_that_may_carry_an_identity_is_never_admitted ... ok
+test the_remaining_production_blocker_is_one_uncontracted_neighbour ... ok
+test withdrawing_each_production_declaration_restores_its_refusal ... ok
+test the_modules_under_test_are_the_production_ones ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.36s
+
+     Running tests/contract_loader.rs (target/debug/deps/contract_loader-2c7b8cb3dd1521d0)
+
+running 11 tests
+test duplicate_functions_are_withheld_and_duplicate_inputs_rejected ... ok
+test manifest_selection_rejects_unknown_schema_missing_inputs_and_traversal ... ok
+test lock_totals_agree_with_the_shared_cases ... ok
+test invalid_parameter_bindings_and_types_are_rejected ... ok
+test all_parameter_modes_are_explicit_and_indexed_by_declared_names ... ok
+test unsupported_or_incomplete_contracts_fail_atomically ... ok
+test every_abi_scalar_is_a_borrowed_only_projection ... ok
+test loaded_contract_changes_drive_custody_verdicts ... ok
+test production_contracts_preserve_the_previous_resource_modes ... ok
+test every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped ... ok
+test certificates_replay_exact_assumptions_and_reject_table_mutation ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 18.86s
+
+     Running tests/qcore_contract_corpus.rs (target/debug/deps/qcore_contract_corpus-d429ffed0c82c38c)
+
+running 6 tests
+test the_closesocket_error_arm_states_an_unresolved_endpoint ... ok
+test inherited_contracts_are_pinned_in_their_written_form ... ok
+test contract_surface_is_pinned_as_structured_clauses ... ok
+test every_module_reads_its_premises_and_the_model_contract_names_the_plugin_premise ... ok
+test every_contract_inventory_lock_equals_its_tree ... ok
+test every_qcore_contract_source_parses_round_trips_and_compiles ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 13.30s
+
