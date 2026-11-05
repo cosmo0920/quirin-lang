@@ -215,3 +215,85 @@ fn an_unknown_unit_keeps_its_own_reason() {
         other => panic!("expected an analysis-derived Unknown: {other:?}"),
     }
 }
+
+// ---------------------------------------------------------------------------
+// 4. Card CURRENT-RUN-DEFECTS: a unit whose every definition is compiled out
+// ---------------------------------------------------------------------------
+
+/// The `tinycthread.c` shape: every raw-source definition sits in a group the
+/// unit's own configuration does not select (`#if !WITH_C11THREADS` with the
+/// generated `config.h` defining it 1). The expansion attributes no definition
+/// to the main source, the completeness claim stands, and the raw scan keeps
+/// every name in the denominator (E01-F1 monotonicity). The inventory names
+/// that cause, classified as incomplete obligation coverage, which the audit
+/// publishes instead of the first raw name "not found"; it never makes the
+/// unit data-only or `Safe` (Cycle 19, E01-TAIL-EXCUSE).
+#[test]
+fn a_unit_whose_every_definition_is_compiled_out_names_that_cause() {
+    if !clang_available() {
+        return;
+    }
+    let source = concat!(
+        "#define WITH_C11THREADS 1\n",
+        "#if !WITH_C11THREADS\n",
+        "#if defined(_TTHREAD_WIN32_)\n",
+        "int _cnd_timedwait_win32(int *c, int t) { return t; }\n",
+        "#endif\n",
+        "int mtx_lock(int *m) { return *m; }\n",
+        "int thrd_yield(void) { return 0; }\n",
+        "#endif\n",
+        "static const int unused = 0;\n",
+    );
+    let inventory = enumerate_source_definitions(&unit(source));
+    assert_eq!(
+        inventory.definitions(),
+        ["_cnd_timedwait_win32", "mtx_lock", "thrd_yield"],
+        "every compiled-out definition stays in the denominator"
+    );
+    assert!(inventory.is_complete(), "{:?}", inventory.refusals());
+    assert!(inventory.build_excluded_only());
+    let reason = inventory.build_excluded_reason().expect("a stated cause");
+    assert!(reason.contains("3 raw-source definition(s)"), "{reason}");
+    assert!(reason.contains("first `_cnd_timedwait_win32`"), "{reason}");
+    assert!(reason.contains("build-excluded"), "{reason}");
+    assert_eq!(
+        qcore_schemas::reason::ReasonCategory::classify(&reason).unwrap(),
+        qcore_schemas::reason::ReasonCategory::IncompleteObligationCoverage,
+        "the stated cause keeps the coverage category the old reason had"
+    );
+    // The analysis itself is unchanged: its entry is not found, `Unknown`.
+    match analyze_unrestricted_c11(&unit(source), "_cnd_timedwait_win32", &contracts()) {
+        Err(LegacyCError::ProductionParserUnavailable(_)) => {}
+        Ok(UnrestrictedLegacyResult::Unknown {
+            reason, partial, ..
+        }) => {
+            assert_eq!(reason, "C function `_cnd_timedwait_win32` was not found");
+            assert!(partial.is_none());
+        }
+        other => panic!("a compiled-out entry is an Unknown unit: {other:?}"),
+    }
+}
+
+/// Precision: one live definition beside compiled-out ones, a unit with no
+/// definition at all, and a unit whose live definition exists only after
+/// expansion are not build-excluded-only.
+#[test]
+fn a_unit_with_a_live_definition_is_not_build_excluded_only() {
+    if !clang_available() {
+        return;
+    }
+    for source in [
+        "#if 0\nvoid hidden(void) { }\n#endif\nvoid subject(void) { return; }\n",
+        "static const int data_only = 1;\n",
+        "#if 0\nvoid hidden(void) { }\n#endif\n#define DEFN(n) int n(void) { return 0; }\nDEFN(live)\n",
+    ] {
+        let inventory = enumerate_source_definitions(&unit(source));
+        assert!(
+            inventory.is_complete(),
+            "{source}: {:?}",
+            inventory.refusals()
+        );
+        assert!(!inventory.build_excluded_only(), "{source}");
+        assert_eq!(inventory.build_excluded_reason(), None, "{source}");
+    }
+}

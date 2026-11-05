@@ -254,6 +254,13 @@ pub struct SourceDefinitionInventory {
     unanalyzable: Vec<UnanalyzableDefinition>,
     absent_from_raw_scan: Vec<String>,
     refusals: Vec<EnumerationRefusal>,
+    /// Card **CURRENT-RUN-DEFECTS**: how many definitions the line-marked
+    /// expansion attributed to the primary input (prototype-shaped and
+    /// identifier-list, deduplicated); zero when the expansion was not read.
+    /// Not serialized: it only names a refusal's cause, so every published
+    /// inventory keeps its bytes.
+    #[serde(skip)]
+    expanded: usize,
 }
 
 impl SourceDefinitionInventory {
@@ -325,6 +332,35 @@ impl SourceDefinitionInventory {
         self.is_complete() && self.unanalyzable.is_empty()
     }
 
+    /// Card **CURRENT-RUN-DEFECTS**: every enumerated definition is one the
+    /// raw scan read in a conditional group the unit's own compile command
+    /// does not select. The completeness claim stands and the line-marked
+    /// expansion attributes no definition at all to the primary input, yet the
+    /// raw scan (kept by monotonicity) names some. No implemented analysis has
+    /// a definition of this unit to read, so the unit stays `Unknown` (Cycle
+    /// 19: fail-closed, never data-only or `Safe`) with this as its stated
+    /// cause, never the first raw name reported as a missing function.
+    #[must_use]
+    pub fn build_excluded_only(&self) -> bool {
+        self.is_complete() && self.expanded == 0 && !self.definitions.is_empty()
+    }
+
+    /// The reason a build-excluded-only unit is `Unknown`
+    /// ([`Self::build_excluded_only`]); `None` for any other inventory.
+    #[must_use]
+    pub fn build_excluded_reason(&self) -> Option<String> {
+        self.build_excluded_only().then(|| {
+            format!(
+                "no main-source definition remains after preprocessing under the unit's own \
+                 compile command: its {} raw-source definition(s) (first `{}`) lie in \
+                 conditional groups the command does not select, so a definition to analyse \
+                 was not found (build-excluded, kept in the denominator)",
+                self.definitions.len(),
+                self.definitions[0]
+            )
+        })
+    }
+
     /// The reason a `Safe` unit verdict is withheld, if it is.
     #[must_use]
     pub fn withheld_safe_reason(&self) -> Option<String> {
@@ -350,6 +386,7 @@ impl SourceDefinitionInventory {
             unanalyzable: Vec::new(),
             absent_from_raw_scan: Vec::new(),
             refusals: refusals.into_iter().collect(),
+            expanded: 0,
         }
     }
 }
@@ -858,12 +895,14 @@ fn inventory_from_marked(raw: &RawHalf, marked: &str) -> SourceDefinitionInvento
             form: UnanalyzableForm::IdentifierListParameters,
         })
         .collect::<Vec<_>>();
+    let expanded = prototype.union(&identifier_list).count();
     definitions.extend(identifier_list);
     SourceDefinitionInventory {
         definitions: definitions.into_iter().collect(),
         unanalyzable,
         absent_from_raw_scan,
         refusals: refusals.into_iter().collect(),
+        expanded,
     }
 }
 

@@ -60,3 +60,13 @@ import QCore.SourceEnumeration
 #print axioms QCore.SourceEnumeration.the_knr_case_grows_the_denominator_and_withholds_safe
 #print axioms QCore.SourceEnumeration.a_compiled_out_definition_keeps_its_row
 #print axioms QCore.SourceEnumeration.an_unavailable_expansion_keeps_the_historical_scan
+
+-- Card CURRENT-RUN-DEFECTS: a unit whose every definition is compiled out
+-- keeps its raw rows (never data-only), analyses none and is never Safe or
+-- Unsafe; only its stated reason names the cause.
+#print axioms QCore.SourceEnumeration.build_excluded_only_is_the_raw_scan
+#print axioms QCore.SourceEnumeration.a_build_excluded_unit_is_never_data_only
+#print axioms QCore.SourceEnumeration.a_build_excluded_unit_has_only_raw_rows
+#print axioms QCore.SourceEnumeration.a_build_excluded_unit_is_never_safe
+#print axioms QCore.SourceEnumeration.a_build_excluded_unit_is_never_unsafe
+#print axioms QCore.SourceEnumeration.build_excluded_only_witnesses

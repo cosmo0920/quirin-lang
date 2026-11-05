@@ -564,4 +564,75 @@ theorem an_unavailable_expansion_keeps_the_historical_scan :
     (build ["plain"] [] [] [Refusal.expansionUnavailable]).supportsUnitSafe
       = false := by decide
 
+/-! ## Card CURRENT-RUN-DEFECTS: a unit whose every definition is compiled out
+
+`SourceDefinitionInventory::build_excluded_only`: the completeness claim
+stands, the expansion attributes no definition to the primary input, and the
+raw scan names some. librdkafka's `tinycthread.c` under `WITH_C11THREADS` is
+the instance. Its published reason states that cause; the theorems below say
+the stated cause moves no row: the denominator stays exactly the raw scan
+(never data-only), no row is analysed, and the unit verdict stays `Unknown`
+(Cycle 19, E01-TAIL-EXCUSE). -/
+
+/-- The Rust predicate over the enumeration's inputs. -/
+def buildExcludedOnly (raw prototype identifierList : List Name)
+    (refusals : List Refusal) : Bool :=
+  refusals.isEmpty && prototype.isEmpty && identifierList.isEmpty && !raw.isEmpty
+
+/-- The unit verdict the audit publishes for such a unit: the analysis has no
+definition to enter, so it is `Unknown`, whatever reason it states. -/
+def buildExcludedVerdict (_ : List Name) : Verdict := .unknown
+
+theorem build_excluded_only_is_the_raw_scan (raw : List Name) :
+    (build raw [] [] []).definitions = dedup raw := by
+  simp [build, dedup]
+
+/-- Never data-only: a non-empty raw scan keeps a non-empty denominator. -/
+theorem a_build_excluded_unit_is_never_data_only (raw prototype identifierList : List Name)
+    (refusals : List Refusal)
+    (excluded : buildExcludedOnly raw prototype identifierList refusals = true) :
+    (build raw prototype identifierList refusals).definitions ≠ [] := by
+  simp only [buildExcludedOnly, Bool.and_eq_true, Bool.not_eq_true',
+    List.isEmpty_eq_false_iff] at excluded
+  obtain ⟨⟨⟨_, _⟩, _⟩, nonempty⟩ := excluded
+  obtain ⟨name, rest, rfl⟩ := List.exists_cons_of_ne_nil nonempty
+  intro empty
+  have member := raw_is_kept (name :: rest) prototype identifierList refusals
+    (List.mem_cons_self)
+  rw [empty] at member
+  exact List.not_mem_nil member
+
+/-- Every row of such a unit is a raw-scan row the expansion does not have:
+none is unanalyzable and none is new, so each stays in `not_projected`. -/
+theorem a_build_excluded_unit_has_only_raw_rows (raw prototype identifierList : List Name)
+    (refusals : List Refusal)
+    (excluded : buildExcludedOnly raw prototype identifierList refusals = true) :
+    (build raw prototype identifierList refusals).unanalyzable = [] ∧
+      (build raw prototype identifierList refusals).absentFromRawScan = [] ∧
+      ∀ name ∈ (build raw prototype identifierList refusals).definitions,
+        name ∈ raw ∧ name ∉ prototype := by
+  simp only [buildExcludedOnly, Bool.and_eq_true, List.isEmpty_iff] at excluded
+  obtain ⟨⟨⟨rfl, rfl⟩, rfl⟩, _⟩ := excluded
+  refine ⟨by simp [build, dedup], by simp [build, dedup], ?_⟩
+  intro name member
+  rw [build_excluded_only_is_the_raw_scan] at member
+  exact ⟨(mem_dedup raw).mp member, List.not_mem_nil⟩
+
+theorem a_build_excluded_unit_is_never_safe (raw : List Name) :
+    buildExcludedVerdict raw ≠ Verdict.certifiedSafe := by
+  simp [buildExcludedVerdict]
+
+theorem a_build_excluded_unit_is_never_unsafe (raw : List Name) :
+    buildExcludedVerdict raw ≠ Verdict.provisionalUnsafe := by
+  simp [buildExcludedVerdict]
+
+/-- The `tinycthread.c` shape, and the precision cases: one live definition,
+no definition, a refused expansion. -/
+theorem build_excluded_only_witnesses :
+    buildExcludedOnly ["_cnd_timedwait_win32", "mtx_lock"] [] [] [] = true ∧
+    buildExcludedOnly ["hidden", "subject"] ["subject"] [] [] = false ∧
+    buildExcludedOnly [] [] [] [] = false ∧
+    buildExcludedOnly ["plain"] [] [] [Refusal.expansionUnavailable] = false := by
+  decide
+
 end QCore.SourceEnumeration
