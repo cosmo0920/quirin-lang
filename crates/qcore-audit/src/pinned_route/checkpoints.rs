@@ -463,7 +463,7 @@ pub(super) fn restore_unit(revision: &str, unit: &StoredUnit) -> Result<UnitProd
 
 /// One unit's outcome in a stage.
 enum UnitRecord {
-    Done(StoredUnit),
+    Done(Box<StoredUnit>),
     Failed { output: String, error: String },
 }
 
@@ -526,7 +526,7 @@ fn seal(
             .units
             .iter()
             .map(|unit| match unit {
-                Some(UnitRecord::Done(unit)) => Ok(unit),
+                Some(UnitRecord::Done(unit)) => Ok(unit.as_ref()),
                 _ => Err("an incomplete group is never sealed".to_owned()),
             })
             .collect::<Result<_, String>>()?,
@@ -608,7 +608,7 @@ fn load(path: &Path, identity: &PinnedIdentity) -> Result<(GroupRecord, String),
             units: units
                 .units
                 .into_iter()
-                .map(|unit| Some(UnitRecord::Done(unit)))
+                .map(|unit| Some(UnitRecord::Done(Box::new(unit))))
                 .collect(),
             finish: Some((finish.output, Ok(finish.teardown_results))),
         },
@@ -995,7 +995,7 @@ fn group_identities(
 
 /// One unit's deposit in its group's collector.
 enum Slot {
-    Done(StoredUnit, ChunkioCaptures),
+    Done(Box<StoredUnit>, Box<ChunkioCaptures>),
     Failed { output: String, error: String },
 }
 
@@ -1025,7 +1025,7 @@ fn assemble_record(label: &str, collector: &mut Collector, finish: bool) -> Grou
         .iter_mut()
         .map(|slot| match slot.take() {
             Some(Slot::Done(unit, captured)) => {
-                captures.absorb(captured);
+                captures.absorb(*captured);
                 Some(UnitRecord::Done(unit))
             }
             Some(Slot::Failed { output, error }) => {
@@ -1237,7 +1237,7 @@ fn run_stage(
                 };
                 let deposit = match result {
                     Ok(products) => match store_unit(output.clone(), products) {
-                        Ok((stored, captures)) => Slot::Done(stored, captures),
+                        Ok((stored, captures)) => Slot::Done(Box::new(stored), Box::new(captures)),
                         Err(error) => Slot::Failed { output, error },
                     },
                     Err(error) => Slot::Failed { output, error },
@@ -1435,7 +1435,7 @@ fn outcomes(steps: &[Step<'_>], records: Vec<GroupRecord>) -> Vec<StepOutcome> {
             }
             Step::Unit(index, _) => match groups[*index].1.next().flatten() {
                 Some(UnitRecord::Done(unit)) => {
-                    outcomes.push(StepOutcome::StoredUnit(Box::new(unit)));
+                    outcomes.push(StepOutcome::StoredUnit(unit));
                 }
                 Some(UnitRecord::Failed { output, error }) => {
                     outcomes.push(StepOutcome::Unit {

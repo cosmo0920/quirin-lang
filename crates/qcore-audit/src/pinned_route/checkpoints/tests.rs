@@ -121,8 +121,8 @@ fn complete_record() -> GroupRecord {
         prelude_output: "fixture prelude\n".into(),
         prelude: Ok(()),
         units: vec![
-            Some(UnitRecord::Done(stored_unit(1))),
-            Some(UnitRecord::Done(stored_unit(2))),
+            Some(UnitRecord::Done(Box::new(stored_unit(1)))),
+            Some(UnitRecord::Done(Box::new(stored_unit(2)))),
         ],
         finish: Some((
             "fixture postlude\n".into(),
