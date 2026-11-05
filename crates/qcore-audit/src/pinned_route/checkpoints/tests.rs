@@ -59,6 +59,7 @@ fn run_identity(environment: Vec<EnvironmentValue>) -> PinnedRunIdentity {
         },
         fluent_bit_root: "/fixture/fluent-bit".into(),
         fluent_bit_revision: "f".repeat(40),
+        working_directory: "/fixture/work".into(),
         source_profile_sha256: "p".repeat(64),
         source_contracts: SourceContractsIdentity {
             configuration: "/fixture/source-contracts.json".into(),
@@ -511,6 +512,9 @@ fn a_changed_input_of_each_kind_invalidates_exactly_the_groups_that_read_it() {
     let mut changed = run.clone();
     changed.compiler.version = "22".into();
     builds.push((changed, "run.compiler.version"));
+    let mut changed = run.clone();
+    changed.working_directory = "/elsewhere".into();
+    builds.push((changed, "run.working_directory"));
     for (changed, field) in builds {
         let changes = invalidated(&stored, &identities(&changed, &first, &groups));
         assert_eq!(labels(&changes), all, "{field}");

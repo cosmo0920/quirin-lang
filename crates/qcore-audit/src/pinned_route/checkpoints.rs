@@ -173,6 +173,10 @@ pub struct PinnedRunIdentity {
     /// The canonical Fluent Bit root and its verified pinned revision.
     pub fluent_bit_root: String,
     pub fluent_bit_revision: String,
+    /// The process's working directory: the pinned route binds it into
+    /// published rows (each function's `hypothesis_context.build_identity`
+    /// and the source-effect configuration digests), so it is an input.
+    pub working_directory: String,
     /// SHA-256 of every file of the source-set profile's directory
     /// (`profile.json`, `audit.json`, the member-facts scope, the direct
     /// source-contract policies, ...), by relative path.
@@ -819,6 +823,10 @@ fn run_identity(route: &Route<'_>) -> Result<PinnedRunIdentity, String> {
         },
         fluent_bit_root: route.root.display().to_string(),
         fluent_bit_revision: route.revision.to_owned(),
+        working_directory: std::env::current_dir()
+            .map_err(|error| error.to_string())?
+            .display()
+            .to_string(),
         source_profile_sha256: tree_sha256(route.profile.directory())?,
         source_contracts: SourceContractsIdentity {
             configuration: configuration.display().to_string(),
@@ -1304,12 +1312,38 @@ fn lock<T>(mutex: &Mutex<T>) -> std::sync::MutexGuard<'_, T> {
     mutex.lock().unwrap_or_else(PoisonError::into_inner)
 }
 
-fn rows_of(records: &[GroupRecord]) -> Result<Vec<Value>, String> {
-    records
-        .iter()
-        .flat_map(GroupRecord::rows)
-        .map(BinaryValue::to_json)
-        .collect()
+/// The refutation table of every completed unit's rows, one row restored at
+/// a time (the table is a duplicate-free union over rows, so the order and
+/// grouping of its insertions do not matter).
+fn refutation_table_of(
+    records: &[GroupRecord],
+) -> Result<qcore_schemas::contract_refutation::RefutationTable, String> {
+    let mut table = qcore_schemas::contract_refutation::RefutationTable::new();
+    for row in records.iter().flat_map(GroupRecord::rows) {
+        let row = row.to_json()?;
+        for (function, refutations) in crate::refuted_contracts::table_from_rows([&row]) {
+            for refutation in refutations {
+                qcore_schemas::contract_refutation::insert_refutation(
+                    &mut table, &function, refutation,
+                );
+            }
+        }
+    }
+    Ok(table)
+}
+
+/// The bounds refutation table of every completed unit's body evidence, one
+/// record restored at a time (a set union).
+fn bounds_refutation_table_of(
+    records: &[GroupRecord],
+) -> Result<std::collections::BTreeSet<String>, String> {
+    let mut table = std::collections::BTreeSet::new();
+    for evidence in records.iter().flat_map(GroupRecord::bounds_evidence) {
+        table.extend(crate::bounds_evidence::refutation_table(&[
+            evidence.to_json()?
+        ]));
+    }
+    Ok(table)
 }
 
 /// The checkpointed phases: the same stop rule, refutation table and
@@ -1349,18 +1383,12 @@ pub(super) fn run_phases<'a>(
     let found = if stopped {
         qcore_schemas::contract_refutation::RefutationTable::new()
     } else {
-        crate::refuted_contracts::table(&rows_of(&records)?)
+        refutation_table_of(&records)?
     };
     let bounds_found = if stopped {
         Default::default()
     } else {
-        crate::bounds_evidence::refutation_table(
-            &records
-                .iter()
-                .flat_map(GroupRecord::bounds_evidence)
-                .map(BinaryValue::to_json)
-                .collect::<Result<Vec<_>, String>>()?,
-        )
+        bounds_refutation_table_of(&records)?
     };
     let applied = if stopped || (found.is_empty() && bounds_found.is_empty()) {
         qcore_schemas::contract_refutation::RefutationTable::new()
@@ -1381,7 +1409,7 @@ pub(super) fn run_phases<'a>(
         if !homes.is_empty() {
             let third = run_stage(&shared, Stage::Imported, &imported, &homes)?;
             let complete = !third.stopped && third.records.iter().all(GroupRecord::units_complete);
-            if complete && crate::refuted_contracts::table(&rows_of(&third.records)?) == applied {
+            if complete && refutation_table_of(&third.records)? == applied {
                 records = third.records;
                 premise = Some(cross_unit_premise_of(links, &homes));
             } else {

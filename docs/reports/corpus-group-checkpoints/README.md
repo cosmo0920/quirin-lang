@@ -60,7 +60,7 @@ computed now (field list in the specification):
 
 | Part | Covers | Invalidates |
 |---|---|---|
-| run | analyzer build (binary SHA-256, build commit, profile); Fluent Bit root and verified revision; every file of the source-set profile directory; the source-contract configuration and the ChunkIO package's files; contract manifest, every lock read, the pin template; Clang identity; every `QCORE_*` variable except the job count, with the null, outer and member-prepass output paths reduced to `selected` and the link map to its content digest; the run's member facts | every group of every stage |
+| run | analyzer build (binary SHA-256, build commit, profile); Fluent Bit root and verified revision; the process working directory (§4.1); every file of the source-set profile directory; the source-contract configuration and the ChunkIO package's files; contract manifest, every lock read, the pin template; Clang identity; every `QCORE_*` variable except the job count, with the null, outer and member-prepass output paths reduced to `selected` and the link map to its content digest; the run's member facts | every group of every stage |
 | stage | the exact contract environment every unit of the stage is analysed under (its serde form: pins, holds, result ranges, the refutation table, imports, link resolution); the homes supplied to every unit; the bounds and null environments with the bounds refutation table | every group of that stage only |
 | group | per unit: the compile record `[file, directory, command]`, raw source digest, validated preprocessing digest, and the preparation facts (line-marked preprocessing digest or error, validation error) — three Clang runs per unit, no analysis | that group only |
 
