@@ -272,7 +272,7 @@ fn a_test_of_a_refused_result_is_never_a_witness() {
     }
     let row = subject(
         "int subject(struct q *q) {\n struct m *m;\n if (q->first == 0) return 0;\n \
-         m = q_first(q);\n if (!m) return m->v;\n return 1; }",
+         m = q_first(q);\n if (m) nd_use(m);\n return m->v; }",
     );
     assert_eq!(statuses(&row), vec![("unresolved", None)], "{row:#?}");
     let reason = reason(&row);
