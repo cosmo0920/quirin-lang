@@ -177,6 +177,11 @@ mod condition_desugar;
 #[path = "legacy_typed_positions.rs"]
 mod typed_positions;
 
+// Card MEMBER-ACCESS-PROJECTION (rule 38h): an uninitialized declaration the
+// lexical gate refuses, read from the Clang AST. The gate's hook is thin.
+#[path = "legacy_typed_declaration.rs"]
+mod typed_declaration_gate;
+
 // Card W47-TYPED-ROOT-DECLARATION-READER (rule 10l): the typed positions'
 // never-bound, `may_bind` and declared-local premises, from the Clang AST
 // where the lexical declaration reader answers nothing. Hooks are thin.

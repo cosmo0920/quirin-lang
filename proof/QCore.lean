@@ -433,6 +433,7 @@ import QCore.TypedAccessPathPositions
 import QCore.TypedAccessPathStatements
 import QCore.TypedConstPointerValue
 import QCore.TypedContractFacts
+import QCore.TypedDeclarationReading
 import QCore.TypedErrors
 import QCore.TypedFieldAccess
 import QCore.TypedPlace
