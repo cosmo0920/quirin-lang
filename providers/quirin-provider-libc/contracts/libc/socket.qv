@@ -219,3 +219,68 @@ contract {
     ensures normal resource_return_owned(sentinel);
     ensures normal resource_return_kind(descriptor);
 };
+
+// ## Card LIBC-GAP-DECLARATIONS: `shutdown`, `sendmsg` and `poll`
+//
+// TRUSTED ASSUMPTIONS (trust boundary 28), read from the prototypes on the
+// audited host (`/usr/include/x86_64-linux-gnu/sys/socket.h:174-175`,
+// `:324`; `sys/poll.h:54-55`):
+//
+//   extern ssize_t sendmsg (int __fd, const struct msghdr *__message,
+//                           int __flags);
+//   extern int shutdown (int __fd, int __how) __THROW;
+//   extern int poll (struct pollfd *__fds, nfds_t __nfds, int __timeout)
+//     __fortified_attr_access (__write_only__, 1, 2);
+//
+// `nfds_t` is `unsigned long int` (`u64`).
+//
+// * `shutdown` disables further sends and/or receives on a socket (POSIX
+//   shutdown()). It does NOT close the descriptor: `close` still releases it.
+//   So it is a use, like `send` above.
+// * `sendmsg` sends the data the caller's `msghdr` describes (POSIX
+//   sendmsg()). The kernel copies it and retains no caller pointer. Any
+//   descriptors the caller passes as `SCM_RIGHTS` ancillary data are
+//   duplicated into the receiver, so the sender's descriptors stay open and
+//   stay the sender's.
+// * `poll` reads the `pollfd` array and writes each entry's `revents`
+//   (POSIX poll()). The descriptors in it are read as data, never created or
+//   closed.
+//
+// Each is `resource_borrowed` on every parameter and
+// `resource_return_none()`.
+//
+// Deliberately NOT declared: `recvmsg`. With an `SCM_RIGHTS` control
+// buffer it CREATES descriptors in the caller (Linux unix(7)), which no
+// declaration here could state, and a neutral one would erase their
+// obligation. `accept`, `accept4` and the two address-taking calls above
+// stay undeclared for the transparent-union reader gap
+// (W43-LIBC-GETPEERNAME-SOCKADDR-UNION).
+
+extern fn shutdown(fd: i32, how: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(fd);
+    ensures normal resource_borrowed(how);
+    ensures normal resource_return_none();
+};
+
+extern fn sendmsg(fd: i32, message: ptr<const, u8>, flags: i32) -> isize
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(fd);
+    ensures normal resource_borrowed(message);
+    ensures normal resource_borrowed(flags);
+    ensures normal resource_return_none();
+};
+
+extern fn poll(fds: ptr<mut, u8>, nfds: u64, timeout: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(fds);
+    ensures normal resource_borrowed(nfds);
+    ensures normal resource_borrowed(timeout);
+    ensures normal resource_return_none();
+};

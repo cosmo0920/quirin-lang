@@ -61,3 +61,18 @@ contract {
     ensures normal resource_borrowed(y);
     ensures normal resource_return_none();
 };
+
+// ## Card LIBC-GAP-DECLARATIONS: `sqrt`
+//
+//   extern double sqrt (double __x) __THROW;   // bits/mathcalls.h
+//
+// A scalar in, a scalar out (C11 7.12.7.5), like `pow` above. Nothing about
+// domain errors or `errno`.
+
+extern fn sqrt(x: f64) -> f64
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(x);
+    ensures normal resource_return_none();
+};

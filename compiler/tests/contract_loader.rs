@@ -1121,6 +1121,46 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         ResourceFunctionContract::new([P::Borrowed, P::Borrowed, P::Borrowed], R::None),
     );
     old.insert_contract("thrd_current", ResourceFunctionContract::new([], R::None));
+    // Card LIBC-GAP-DECLARATIONS: eighteen libc calls that borrow every
+    // argument and return no custody, `pthread_getspecific`'s result that owns
+    // nothing, and `strcat`, `strcpy`'s exact alias of `dest`. Its retaining
+    // declarations (`pthread_setspecific`, `getpwnam_r`, `getgrnam_r`) are
+    // withheld below and have no plain mode.
+    for name in [
+        "abs",
+        "chmod",
+        "chown",
+        "fread",
+        "ftruncate",
+        "getrandom",
+        "lseek",
+        "msync",
+        "poll",
+        "posix_fallocate",
+        "pthread_cancel",
+        "pthread_getspecific",
+        "readlink",
+        "sendmsg",
+        "shutdown",
+        "sigdelset",
+        "sqrt",
+        "tolower",
+        "toupper",
+    ] {
+        old.insert_contract(name, ResourceFunctionContract::new([], R::None));
+    }
+    old.insert_contract(
+        "strcat",
+        ResourceFunctionContract::new(
+            vec![P::Borrowed; 2],
+            R::Derived {
+                parameter: 0,
+                extent: DerivedExtent::Exact,
+                nullable: false,
+                const_dropped: false,
+            },
+        ),
+    );
     // Checked same-item detach deliberately extends the production mode table:
     // the result restores item (formal 1) from parent (formal 0), never fresh.
     old.insert_contract(
@@ -2249,9 +2289,12 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // `cfl/sds_lifetime.qv` and 25 mpack declarations to `mpack/writer.qv`,
     // both already selected: 499 -> 554; selected modules and rejected
     // declarations unchanged.
+    // LIBC-GAP-DECLARATIONS adds 23 libc declarations to nine existing
+    // `quirin-provider-libc` modules: 554 -> 577; selected modules and
+    // rejected declarations unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (66, 554, 370)
+        (66, 577, 370)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every
@@ -2313,7 +2356,10 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // (C04.6.3): 108 -> 109.
     // Card CFL-MPACK-EXTERNAL-DECLARATIONS: the slot move `cfl_sds_printf`
     // (C04.15): 109 -> 110.
-    assert_eq!(loaded.retaining().len(), 110);
+    // Card LIBC-GAP-DECLARATIONS: `pthread_setspecific` (a `global`
+    // retention) and `getpwnam_r`/`getgrnam_r` (a record retaining its buffer,
+    // beside a derived out slot) are withheld: 110 -> 113.
+    assert_eq!(loaded.retaining().len(), 113);
     assert_eq!(
         loaded.functions().len()
             + loaded.pending_review().len()
