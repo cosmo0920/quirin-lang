@@ -11,14 +11,17 @@
       "declarations": [
         {
           "clauses": 5,
-          "name": "opendir"
+          "name": "opendir",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "closedir"
+          "name": "closedir",
+          "resource_table": "functions"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "f8fecf64f3670ea86d300791789e66d941fbb67c2ffd235e3bc98b1c324d3fa9"
@@ -29,22 +32,27 @@
       "declarations": [
         {
           "clauses": 3,
-          "name": "dlerror"
+          "name": "dlerror",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "dlsym"
+          "name": "dlsym",
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "dlopen"
+          "name": "dlopen",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "dlclose"
+          "name": "dlclose",
+          "resource_table": "functions"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "27ffa658847c32fa4bdc59a0d66420ae37ba70efe5a5e5999c066c1dadfb7671"
@@ -55,14 +63,17 @@
       "declarations": [
         {
           "clauses": 11,
-          "name": "__errno_location"
+          "name": "__errno_location",
+          "resource_table": "functions"
         },
         {
           "clauses": 16,
-          "name": "strerror"
+          "name": "strerror",
+          "resource_table": "functions"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {
         "__errno_location": [
@@ -86,26 +97,32 @@
       "declarations": [
         {
           "clauses": 4,
-          "name": "ceil"
+          "name": "ceil",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "floor"
+          "name": "floor",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "fabs"
+          "name": "fabs",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "pow"
+          "name": "pow",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "sqrt"
+          "name": "sqrt",
+          "resource_table": "functions"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "c52bceeec9a8f8ebed64e5c9eeef4dded0fa60405a6952f5810fd2e34869d6ff"
@@ -116,18 +133,22 @@
       "declarations": [
         {
           "clauses": 4,
-          "name": "malloc"
+          "name": "malloc",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "calloc"
+          "name": "calloc",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "free"
+          "name": "free",
+          "resource_table": "functions"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "dec99ab65e1abe68f8344e6a2fc45e31221f9015a5ed0285bae2ff384f2db34f"
@@ -138,26 +159,32 @@
       "declarations": [
         {
           "clauses": 6,
-          "name": "prctl"
+          "name": "prctl",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "getrlimit"
+          "name": "getrlimit",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "setrlimit"
+          "name": "setrlimit",
+          "resource_table": "functions"
         },
         {
           "clauses": 10,
-          "name": "getpwnam_r"
+          "name": "getpwnam_r",
+          "resource_table": "retaining"
         },
         {
           "clauses": 10,
-          "name": "getgrnam_r"
+          "name": "getgrnam_r",
+          "resource_table": "retaining"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "d7f88202c4ab68705375512a25ad684815da455622ac5c5f86be105d02a0bb44"
@@ -168,14 +195,17 @@
       "declarations": [
         {
           "clauses": 4,
-          "name": "pthread_mutex_lock"
+          "name": "pthread_mutex_lock",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "pthread_mutex_unlock"
+          "name": "pthread_mutex_unlock",
+          "resource_table": "functions"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "fb55d21dac8ae878a69b77df04f2cd5c920d58266cc9ecd6a54eec0a9bce6679"
@@ -186,30 +216,37 @@
       "declarations": [
         {
           "clauses": 6,
-          "name": "pthread_cond_init"
+          "name": "pthread_cond_init",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "pthread_cond_destroy"
+          "name": "pthread_cond_destroy",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "pthread_cond_signal"
+          "name": "pthread_cond_signal",
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "pthread_cond_wait"
+          "name": "pthread_cond_wait",
+          "resource_table": "functions"
         },
         {
           "clauses": 7,
-          "name": "pthread_cond_timedwait"
+          "name": "pthread_cond_timedwait",
+          "resource_table": "functions"
         },
         {
           "clauses": 7,
-          "name": "pthread_join"
+          "name": "pthread_join",
+          "resource_table": "functions"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "c1a2bbf313fa7010c5e06e9dff7307cb5d684a7696ae8ce43799703736a72909"
@@ -220,22 +257,27 @@
       "declarations": [
         {
           "clauses": 9,
-          "name": "regexec"
+          "name": "regexec",
+          "resource_table": "functions"
         },
         {
           "clauses": 8,
-          "name": "regerror"
+          "name": "regerror",
+          "resource_table": "functions"
         },
         {
           "clauses": 7,
-          "name": "regcomp"
+          "name": "regcomp",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "regfree"
+          "name": "regfree",
+          "resource_table": "functions"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "3e98107559c67866747fd39f6d68d56fa6efe2378de3382a6209c220816180fa"
@@ -246,18 +288,22 @@
       "declarations": [
         {
           "clauses": 5,
-          "name": "pipe"
+          "name": "pipe",
+          "resource_table": null
         },
         {
           "clauses": 3,
-          "name": "epoll_ctl"
+          "name": "epoll_ctl",
+          "resource_table": null
         },
         {
           "clauses": 3,
-          "name": "open"
+          "name": "open",
+          "resource_table": null
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "c38a15d828ede40ef468111f8d13f773c45cef6675cf5d199005828b7a33ac69"
@@ -268,62 +314,77 @@
       "declarations": [
         {
           "clauses": 8,
-          "name": "setsockopt"
+          "name": "setsockopt",
+          "resource_table": "functions"
         },
         {
           "clauses": 7,
-          "name": "send"
+          "name": "send",
+          "resource_table": "functions"
         },
         {
           "clauses": 7,
-          "name": "recv"
+          "name": "recv",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "listen"
+          "name": "listen",
+          "resource_table": "functions"
         },
         {
           "clauses": 7,
-          "name": "sendfile"
+          "name": "sendfile",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "htonl"
+          "name": "htonl",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "ntohl"
+          "name": "ntohl",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "gai_strerror"
+          "name": "gai_strerror",
+          "resource_table": "functions"
         },
         {
           "clauses": 8,
-          "name": "getsockopt"
+          "name": "getsockopt",
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "getpeername"
+          "name": "getpeername",
+          "resource_table": "functions"
         },
         {
           "clauses": 7,
-          "name": "socket"
+          "name": "socket",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "shutdown"
+          "name": "shutdown",
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "sendmsg"
+          "name": "sendmsg",
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "poll"
+          "name": "poll",
+          "resource_table": "functions"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "f644a776ec787a34307f9191799f613494a9a2176d757c77a263b422d5123f21"
@@ -334,58 +395,72 @@
       "declarations": [
         {
           "clauses": 4,
-          "name": "perror"
+          "name": "perror",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "fflush"
+          "name": "fflush",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "remove"
+          "name": "remove",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "printf"
+          "name": "printf",
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "fprintf"
+          "name": "fprintf",
+          "resource_table": "functions"
         },
         {
           "clauses": 7,
-          "name": "snprintf"
+          "name": "snprintf",
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "sprintf"
+          "name": "sprintf",
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "fopen"
+          "name": "fopen",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "fclose"
+          "name": "fclose",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "fileno"
+          "name": "fileno",
+          "resource_table": "functions"
         },
         {
           "clauses": 7,
-          "name": "vsnprintf"
+          "name": "vsnprintf",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "vprintf"
+          "name": "vprintf",
+          "resource_table": "functions"
         },
         {
           "clauses": 7,
-          "name": "fread"
+          "name": "fread",
+          "resource_table": "functions"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "3cb4c589206760d4f287751101bf4c950ac9a140b1a19b71546bb76fd12f22c5"
@@ -396,78 +471,97 @@
       "declarations": [
         {
           "clauses": 4,
-          "name": "atoi"
+          "name": "atoi",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "srand"
+          "name": "srand",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "rand_r"
+          "name": "rand_r",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "system"
+          "name": "system",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "abort"
+          "name": "abort",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "exit"
+          "name": "exit",
+          "resource_table": "functions"
         },
         {
           "clauses": 8,
-          "name": "__assert_fail"
+          "name": "__assert_fail",
+          "resource_table": "functions"
         },
         {
           "clauses": 7,
-          "name": "strtol"
+          "name": "strtol",
+          "resource_table": "retaining"
         },
         {
           "clauses": 7,
-          "name": "strtoll"
+          "name": "strtoll",
+          "resource_table": "retaining"
         },
         {
           "clauses": 7,
-          "name": "strtoul"
+          "name": "strtoul",
+          "resource_table": "retaining"
         },
         {
           "clauses": 7,
-          "name": "strtoull"
+          "name": "strtoull",
+          "resource_table": "retaining"
         },
         {
           "clauses": 6,
-          "name": "strtod"
+          "name": "strtod",
+          "resource_table": "retaining"
         },
         {
           "clauses": 9,
-          "name": "bsearch"
+          "name": "bsearch",
+          "resource_table": "retaining"
         },
         {
           "clauses": 8,
-          "name": "qsort"
+          "name": "qsort",
+          "resource_table": "retaining"
         },
         {
           "clauses": 4,
-          "name": "abs"
+          "name": "abs",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "tolower"
+          "name": "tolower",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "toupper"
+          "name": "toupper",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "strcat"
+          "name": "strcat",
+          "resource_table": "functions"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "c23ca4286bd50bbe51446871f52cd1e0a5b364fc38eea34119ffd52cc604993c"
@@ -478,86 +572,107 @@
       "declarations": [
         {
           "clauses": 5,
-          "name": "strcmp"
+          "name": "strcmp",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "strlen"
+          "name": "strlen",
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "memcmp"
+          "name": "memcmp",
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "strncmp"
+          "name": "strncmp",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "strnlen"
+          "name": "strnlen",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "strcasecmp"
+          "name": "strcasecmp",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "strdup"
+          "name": "strdup",
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "strerror_r"
+          "name": "strerror_r",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "strcpy"
+          "name": "strcpy",
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "strncpy"
+          "name": "strncpy",
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "memcpy"
+          "name": "memcpy",
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "memmove"
+          "name": "memmove",
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "memset"
+          "name": "memset",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "strchr"
+          "name": "strchr",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "strrchr"
+          "name": "strrchr",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "strstr"
+          "name": "strstr",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "strcasestr"
+          "name": "strcasestr",
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "memchr"
+          "name": "memchr",
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "memrchr"
+          "name": "memrchr",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "strndup"
+          "name": "strndup",
+          "resource_table": "functions"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "6c59574468efc24ccd5fbc1fe4570d225087ec4f43c9818f678d74a75c89cc7f"
@@ -568,30 +683,37 @@
       "declarations": [
         {
           "clauses": 5,
-          "name": "fstat"
+          "name": "fstat",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "mkdir"
+          "name": "mkdir",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "umask"
+          "name": "umask",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "stat"
+          "name": "stat",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "lstat"
+          "name": "lstat",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "chmod"
+          "name": "chmod",
+          "resource_table": "functions"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "07f767775853e3f7304f928fbac643b561bc64e25542e198ee186811234a044e"
@@ -602,94 +724,117 @@
       "declarations": [
         {
           "clauses": 4,
-          "name": "mtx_lock"
+          "name": "mtx_lock",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "mtx_unlock"
+          "name": "mtx_unlock",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "cnd_wait"
+          "name": "cnd_wait",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "pthread_rwlock_rdlock"
+          "name": "pthread_rwlock_rdlock",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "pthread_rwlock_wrlock"
+          "name": "pthread_rwlock_wrlock",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "pthread_rwlock_unlock"
+          "name": "pthread_rwlock_unlock",
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "pthread_self"
+          "name": "pthread_self",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "pthread_kill"
+          "name": "pthread_kill",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "pthread_setcancelstate"
+          "name": "pthread_setcancelstate",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "pthread_setcanceltype"
+          "name": "pthread_setcanceltype",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "pthread_attr_setdetachstate"
+          "name": "pthread_attr_setdetachstate",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "sigemptyset"
+          "name": "sigemptyset",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "sigfillset"
+          "name": "sigfillset",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "sigaddset"
+          "name": "sigaddset",
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "cnd_timedwait"
+          "name": "cnd_timedwait",
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "pthread_sigmask"
+          "name": "pthread_sigmask",
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "pthread_once"
+          "name": "pthread_once",
+          "resource_table": "retaining"
         },
         {
           "clauses": 3,
-          "name": "thrd_current"
+          "name": "thrd_current",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "sigdelset"
+          "name": "sigdelset",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "pthread_cancel"
+          "name": "pthread_cancel",
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "pthread_setspecific"
+          "name": "pthread_setspecific",
+          "resource_table": "retaining"
         },
         {
           "clauses": 4,
-          "name": "pthread_getspecific"
+          "name": "pthread_getspecific",
+          "resource_table": "functions"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "a1a0a2b55549f2e70c3d1e5aa6c5a8758f67e1557122cb11996d4c73f2c97689"
@@ -700,34 +845,42 @@
       "declarations": [
         {
           "clauses": 4,
-          "name": "time"
+          "name": "time",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "timegm"
+          "name": "timegm",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "gmtime_r"
+          "name": "gmtime_r",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "localtime_r"
+          "name": "localtime_r",
+          "resource_table": "functions"
         },
         {
           "clauses": 7,
-          "name": "strftime"
+          "name": "strftime",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "gettimeofday"
+          "name": "gettimeofday",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "clock_gettime"
+          "name": "clock_gettime",
+          "resource_table": "functions"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "cd8b5188b82d239d12b15bf1ebf81fdf0dc679a71605e43223f665cf58bfc986"
@@ -738,94 +891,117 @@
       "declarations": [
         {
           "clauses": 4,
-          "name": "sleep"
+          "name": "sleep",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "usleep"
+          "name": "usleep",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "sysconf"
+          "name": "sysconf",
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "getpagesize"
+          "name": "getpagesize",
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "geteuid"
+          "name": "geteuid",
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "getegid"
+          "name": "getegid",
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "setsid"
+          "name": "setsid",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "access"
+          "name": "access",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "unlink"
+          "name": "unlink",
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "read"
+          "name": "read",
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "write"
+          "name": "write",
+          "resource_table": "functions"
         },
         {
           "clauses": 7,
-          "name": "open"
+          "name": "open",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "close"
+          "name": "close",
+          "resource_table": "functions"
         },
         {
           "clauses": 7,
-          "name": "fcntl"
+          "name": "fcntl",
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "writev"
+          "name": "writev",
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "lseek"
+          "name": "lseek",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "ftruncate"
+          "name": "ftruncate",
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "posix_fallocate"
+          "name": "posix_fallocate",
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "readlink"
+          "name": "readlink",
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "chown"
+          "name": "chown",
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "msync"
+          "name": "msync",
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "getrandom"
+          "name": "getrandom",
+          "resource_table": "functions"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "f08fbd0a637e86798dfd4d80e6fc71bb7fa7f4a8f91ab998ca22d48dfcedc262"
@@ -852,5 +1028,5 @@
     "libc/time.qv",
     "libc/unistd.qv"
   ],
-  "schema_version": 1
+  "schema_version": 2
 }

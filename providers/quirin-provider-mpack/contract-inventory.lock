@@ -9,142 +9,177 @@
       "declarations": [
         {
           "clauses": 4,
-          "name": "mpack_write_cstr"
+          "name": "mpack_write_cstr",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "mpack_write_str"
+          "name": "mpack_write_str",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "mpack_write_i64"
+          "name": "mpack_write_i64",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "mpack_write_double"
+          "name": "mpack_write_double",
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "mpack_finish_map"
+          "name": "mpack_finish_map",
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "mpack_finish_array"
+          "name": "mpack_finish_array",
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "mpack_write_true"
+          "name": "mpack_write_true",
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "mpack_write_false"
+          "name": "mpack_write_false",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "mpack_write_bin"
+          "name": "mpack_write_bin",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "mpack_start_map"
+          "name": "mpack_start_map",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "mpack_start_array"
+          "name": "mpack_start_array",
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "mpack_write_nil"
+          "name": "mpack_write_nil",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "mpack_write_u64"
+          "name": "mpack_write_u64",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "mpack_write_u32"
+          "name": "mpack_write_u32",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "mpack_write_i32"
+          "name": "mpack_write_i32",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "mpack_write_int"
+          "name": "mpack_write_int",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "mpack_write_uint"
+          "name": "mpack_write_uint",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "mpack_writer_flag_error"
+          "name": "mpack_writer_flag_error",
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "mpack_tag_type"
+          "name": "mpack_tag_type",
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "mpack_tag_int_value"
+          "name": "mpack_tag_int_value",
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "mpack_tag_uint_value"
+          "name": "mpack_tag_uint_value",
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "mpack_tag_double_value"
+          "name": "mpack_tag_double_value",
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "mpack_tag_array_count"
+          "name": "mpack_tag_array_count",
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "mpack_tag_map_count"
+          "name": "mpack_tag_map_count",
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "mpack_tag_str_length"
+          "name": "mpack_tag_str_length",
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "mpack_tag_bin_length"
+          "name": "mpack_tag_bin_length",
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "mpack_done_array"
+          "name": "mpack_done_array",
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "mpack_done_map"
+          "name": "mpack_done_map",
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "mpack_done_str"
+          "name": "mpack_done_str",
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "mpack_done_bin"
+          "name": "mpack_done_bin",
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "mpack_reader_destroy"
+          "name": "mpack_reader_destroy",
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "mpack_expect_nil"
+          "name": "mpack_expect_nil",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "mpack_read_bytes"
+          "name": "mpack_read_bytes",
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "mpack_read_cstr"
+          "name": "mpack_read_cstr",
+          "resource_table": "functions"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "9bc7038b2f34a84bf900095fcca37fb20597b376e0a4ec9a8c2aad07cdc228c4"
@@ -155,5 +190,5 @@
   "resource_view": [
     "mpack/writer.qv"
   ],
-  "schema_version": 1
+  "schema_version": 2
 }

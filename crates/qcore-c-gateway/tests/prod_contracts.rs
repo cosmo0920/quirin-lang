@@ -55,6 +55,8 @@ use qcore_c_gateway::legacy_c::{
 };
 use qcore_contract::contract_loader::load_resource_contract_sources;
 
+#[path = "../../../tests/support/contract_locks.rs"]
+mod contract_locks;
 #[path = "support/text.rs"]
 mod text;
 use text::normalize_newlines;
@@ -858,84 +860,20 @@ fn the_modules_under_test_are_the_production_ones() {
             "{name} is not in force in the production manifest"
         );
     }
-    // 9 -> 12 by card NEIGHBOURS' deliberate addition of
-    // `fluent_bit/input_chunk_helpers.qv`, `fluent_bit/time.qv` and
-    // `chunkio/chunk_residency.qv`. This card's own five declarations, its
-    // three modules and every assertion above are unchanged: the pin moves
-    // because the manifest grew, not because anything measured here did.
-    // 12 -> 14 by card CONSTRUCTOR-RESIDUALS' deliberate addition of
-    // `libc/errno.qv` and `monkey/intrusive_list.qv`, for the same
-    // reason. That card also lands `flb_errno_print` in THIS module, retiring
-    // the "deliberately left undeclared" entry this card recorded for it: the
-    // blocker it named — the `flb_errno()` macro's dereference refusing the
-    // statement before any contract is consulted — no longer holds.
-    // 14 -> 15 by card CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF's deliberate addition
-    // of `libc/pthread_mutex.qv`, again for the same reason: the manifest
-    // grew, nothing measured here moved.
-    // 15 -> 16 by card ABI-TYPEDEF-ADDRESS-OF-MEMBER's deliberate addition of
-    // `msgpack/packer.qv`. That card retires the "measured payoff zero"
-    // entry the ABI-TYPEDEF card recorded for `msgpack_packer_init` on exactly
-    // this rule's own terms: the blocker it named — the address-of-a-member
-    // actual refusing the statement before any contract is consulted — no
-    // longer holds.
-    // 16 -> 17 by card ADDRESS-OF-MEMBER-DESTROY-UNDECLARED's deliberate
-    // addition of `fluent_bit/input_chunk_destroy.qv`, again because the
-    // manifest grew and nothing measured here moved. That declaration is this
-    // rule's own terms once more: the blocker the previous card named — the
-    // release through an uncontracted callee that its newly-bound summary
-    // exposed — is what the module removes.
+    // Card CONSTRUCTOR-RESIDUALS lands `flb_errno_print` in THIS module,
+    // retiring the "deliberately left undeclared" entry this card recorded
+    // for it: the `flb_errno()` macro's dereference no longer refuses the
+    // statement before any contract is consulted.
     assert!(LOGGING.contains("extern fn flb_errno_print("));
-    // 17 -> 18 by card AOM-DESTROY-SIBLINGS, which adds
-    // `fluent_bit/input_chunk_destroy_direct_routes.qv` — the sibling
-    // release the previous card deliberately left undeclared, read on its own
-    // terms and landed with a `nullable` release. 18 -> 19 by card
-    // W29-CORPUS-CONTRACTS, which adds `fluent_bit/input_chunk_sizes.qv` —
-    // two read-only size queries declared borrowed/none against their pinned
-    // bodies, again because the manifest grew and nothing measured here moved.
-    // 19 -> 21 by card W31-CORPUS-CONTRACTS-2, which adds
-    // `chunkio/chunk_sizes.qv` and
-    // `fluent_bit/input_chunk_total_size.qv` — the two size-sibling
-    // read-only queries its predecessor named and declined — on the same
-    // grounds.
-
-    // 21 -> 27 by card W36-CORPUS-CONTRACTS-3, six declarations chosen by
-    // function-cover yield over the 193 baseline functions blocked only by
-    // uncontracted-call leaves, each read against its own pinned body:
-    // `cfl/sds_lifetime.qv`, `cmetrics/context_lifetime.qv`,
-    // `ctraces/context_lifetime.qv`, `librdkafka/cjson.qv`,
-    // `librdkafka/kafka_mem.qv` and `monkey/logging.qv`.
-
-    // 27 -> 33 by card W37-CORPUS-CONTRACTS-4, six declarative modules chosen
-    // by function-cover yield over the 163 baseline functions blocked only by
-    // uncontracted-call leaves: `cfl/time.qv`,
-    // `cmetrics/metric_values.qv`, `cmetrics/mpack_utils.qv`,
-    // `mpack/writer.qv`, `librdkafka/lz4_stream.qv` and
-    // `librdkafka/topic_partition.qv`.
-    // 33 -> 44 by card W43-LIBC-CONTRACTS: eleven `libc/` modules owned by
-    // `providers/quirin-provider-libc` (55 trusted libc/POSIX declarations,
-    // each read from the prototype the pinned units declare).
-    // 44 -> 45 by card CONTRACT-INHERIT-ADOPTION: `fluent_bit/resource_string.qv`
-    // selected by `crate:module` reference (schema 2); `resource_memory.qcore`
-    // moved from a path entry to a reference without changing the count.
-    // 45 -> 46 by card W43-LIBC-RESTRICT-PROTOTYPES (`libc/regex.qv`).
-    // 46 -> 47 by card W43-DESCRIPTOR-RESOURCE-TRACKING: `libc/dirent.qv`.
-    // 47 -> 49 by card W45-FB-RETRY-LIFETIME: `fluent_bit/task_users.qv` and
-    // `fluent_bit/output_singleplex.qv`.
-    // 49 -> 50 by card W45-FB-BACKLOG-CUSTODY: `fluent_bit/storage_backlog.qv`
-    // (twelve checked specifications, contract spec C06.3).
-    // Combined W46 cards: 54 selected modules, 219 resource declarations, 118 corpus modules.
-    // 54 -> 55 by card W47-LOOP-OWNER-CONTRACTS: `fluent_bit/loop_owner.qv`.
-    // 55 -> 56 by card W47-CONDVAR-JOIN-PUBLICATION: `libc/pthread_sync.qv`.
-    // 56 -> 57 by card W47-CONDVAR-JOIN-STOP-PATHS: `fluent_bit/lib_engine_thread.qv` (five declarations awaiting review).
-    // 57 -> 58 by card W47-LOOP-OWNER-INSTANCE-FLOW: `fluent_bit/input_instance.qv`.
-    // 58 -> 59 by card CONTRACT-PIN-TIP-MODE: `monkey/vhost_set.qv`.
-    // 59 -> 60 by card MONKEY-VHOST-PROPERTY-CUSTODY: `monkey/string.qv`.
-    // 60 -> 61 by card W43-ABI-ENUM-AND-CONST-PP: `librdkafka/client.qv`.
-    // 61 -> 63 by card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION:
-    // `monkey/event_loop.qv` and `fluent_bit/input_collector_registration.qv`.
-    // 63 -> 64 by card FB-TEARDOWN-DESTROY-DECLARATIONS: `fluent_bit/teardown_destroy.qv`.
-    // 65 -> 66 by card W48-RK-LOG-CALLER-FRAME: `librdkafka/log_caller_frame.qv`.
-    // 66 -> 68 by card LOG-PRINT-BODY-CONTRACTS: `cmetrics/logging.qv` and `chunkio/logging.qv`.
-    // 68 -> 69 by card LIBRDKAFKA-HEADER-INLINES: `librdkafka/header_inlines.qv`.
-    assert_eq!(contracts.source_assumptions().len(), 69);
+    // Card CONTRACT-COUNT-PINS-FROM-LOCKS: the manifest-selected module count
+    // is the providers' resource views as their inventory locks state them
+    // (`tests/support/contract_locks.rs`); the former literal and its
+    // per-card history are in this file at base 25508ccaf. This card's five
+    // declarations, its three modules and every assertion above are pinned by
+    // name, so the count moving does not weaken what they pin.
+    let selected = contract_locks::lock_totals(
+        &std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../.."),
+    )
+    .resource_view_modules;
+    assert_eq!(contracts.source_assumptions().len(), selected);
 }

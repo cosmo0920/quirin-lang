@@ -11,14 +11,20 @@
       "declarations": [
         {
           "clauses": 5,
-          "name": "cfl_arena_create_with_options"
+          "name": "cfl_arena_create_with_options",
+          "resource_table": null
         },
         {
           "clauses": 5,
-          "name": "cfl_arena_destroy"
+          "name": "cfl_arena_destroy",
+          "resource_table": null
         }
       ],
       "inherits": [],
+      "other_declarations": [
+        "ArenaCreateError",
+        "CflArena"
+      ],
       "premise_bindings": [],
       "premises": {},
       "sha256": "75c95f0aec8b7a753158ce33557bf69b956009f56c5cf8292804aa646e3c54ae"
@@ -29,22 +35,27 @@
       "declarations": [
         {
           "clauses": 2,
-          "name": "cfl_atomic_initialize"
+          "name": "cfl_atomic_initialize",
+          "resource_table": null
         },
         {
           "clauses": 3,
-          "name": "cfl_atomic_store"
+          "name": "cfl_atomic_store",
+          "resource_table": null
         },
         {
           "clauses": 3,
-          "name": "cfl_atomic_load"
+          "name": "cfl_atomic_load",
+          "resource_table": null
         },
         {
           "clauses": 4,
-          "name": "cfl_atomic_compare_exchange"
+          "name": "cfl_atomic_compare_exchange",
+          "resource_table": null
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "7dc816d38dab8e3364c3a9f41d567db7a5c38c1eef939bcac3385c50213f9573"
@@ -55,18 +66,24 @@
       "declarations": [
         {
           "clauses": 3,
-          "name": "cfl_hash_64bits_reset"
+          "name": "cfl_hash_64bits_reset",
+          "resource_table": null
         },
         {
           "clauses": 5,
-          "name": "cfl_hash_64bits_update"
+          "name": "cfl_hash_64bits_update",
+          "resource_table": null
         },
         {
           "clauses": 5,
-          "name": "cfl_hash_64bits_digest"
+          "name": "cfl_hash_64bits_digest",
+          "resource_table": null
         }
       ],
       "inherits": [],
+      "other_declarations": [
+        "CflHashState"
+      ],
       "premise_bindings": [],
       "premises": {},
       "sha256": "bf69ba5ee465235cd5f244f03b0acbc28c039143cd11e4e14a2c5a9b828363b2"
@@ -77,18 +94,24 @@
       "declarations": [
         {
           "clauses": 4,
-          "name": "cfl_list_add"
+          "name": "cfl_list_add",
+          "resource_table": null
         },
         {
           "clauses": 5,
-          "name": "cfl_list_del"
+          "name": "cfl_list_del",
+          "resource_table": null
         },
         {
           "clauses": 28,
-          "name": "cfl_list_init"
+          "name": "cfl_list_init",
+          "resource_table": null
         }
       ],
       "inherits": [],
+      "other_declarations": [
+        "CflListEntry"
+      ],
       "premise_bindings": [],
       "premises": {},
       "sha256": "589e2fad71318ab9bfbc8be00eb50db4ea02582717e333f889de995fed527b02"
@@ -99,10 +122,12 @@
       "declarations": [
         {
           "clauses": 2,
-          "name": "cfl_list_size"
+          "name": "cfl_list_size",
+          "resource_table": null
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "c68e18526615780b6ae38587b813ae06393b77387d96ced45b5454da87747d2e"
@@ -113,174 +138,217 @@
       "declarations": [
         {
           "clauses": 3,
-          "name": "cfl_sds_destroy"
+          "name": "cfl_sds_destroy",
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "cfl_sds_len"
+          "name": "cfl_sds_len",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "cfl_arena_calloc"
+          "name": "cfl_arena_calloc",
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "cfl_kvlist_count"
+          "name": "cfl_kvlist_count",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "cfl_kvlist_insert_string"
+          "name": "cfl_kvlist_insert_string",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "cfl_kvlist_insert_bool"
+          "name": "cfl_kvlist_insert_bool",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "cfl_kvlist_insert_int64"
+          "name": "cfl_kvlist_insert_int64",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "cfl_kvlist_insert_double"
+          "name": "cfl_kvlist_insert_double",
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "cfl_kvlist_insert_array"
+          "name": "cfl_kvlist_insert_array",
+          "resource_table": "relational"
         },
         {
           "clauses": 6,
-          "name": "cfl_kvlist_insert_kvlist"
+          "name": "cfl_kvlist_insert_kvlist",
+          "resource_table": "relational"
         },
         {
           "clauses": 6,
-          "name": "cfl_sds_cat_safe"
+          "name": "cfl_sds_cat_safe",
+          "resource_table": "retaining"
         },
         {
           "clauses": 3,
-          "name": "cfl_list_size"
+          "name": "cfl_list_size",
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "cfl_sds_create_size"
+          "name": "cfl_sds_create_size",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "cfl_sds_create_len"
+          "name": "cfl_sds_create_len",
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "cfl_sds_create"
+          "name": "cfl_sds_create",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "cfl_sds_set_len"
+          "name": "cfl_sds_set_len",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "cfl_sds_len_set"
+          "name": "cfl_sds_len_set",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "cfl_sds_cat"
+          "name": "cfl_sds_cat",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "cfl_sds_printf"
+          "name": "cfl_sds_printf",
+          "resource_table": "retaining"
         },
         {
           "clauses": 2,
-          "name": "cfl_kvlist_create"
+          "name": "cfl_kvlist_create",
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "cfl_kvlist_destroy"
+          "name": "cfl_kvlist_destroy",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "cfl_kvlist_fetch"
+          "name": "cfl_kvlist_fetch",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "cfl_kvlist_insert_uint64"
+          "name": "cfl_kvlist_insert_uint64",
+          "resource_table": "functions"
         },
         {
           "clauses": 8,
-          "name": "cfl_kvlist_insert_bytes"
+          "name": "cfl_kvlist_insert_bytes",
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "cfl_kvlist_insert"
+          "name": "cfl_kvlist_insert",
+          "resource_table": "relational"
         },
         {
           "clauses": 3,
-          "name": "cfl_array_create"
+          "name": "cfl_array_create",
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "cfl_array_destroy"
+          "name": "cfl_array_destroy",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "cfl_array_append"
+          "name": "cfl_array_append",
+          "resource_table": "relational"
         },
         {
           "clauses": 4,
-          "name": "cfl_array_append_string"
+          "name": "cfl_array_append_string",
+          "resource_table": "functions"
         },
         {
           "clauses": 7,
-          "name": "cfl_array_append_bytes"
+          "name": "cfl_array_append_bytes",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "cfl_array_append_bool"
+          "name": "cfl_array_append_bool",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "cfl_array_append_int64"
+          "name": "cfl_array_append_int64",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "cfl_array_append_double"
+          "name": "cfl_array_append_double",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "cfl_array_append_array"
+          "name": "cfl_array_append_array",
+          "resource_table": "relational"
         },
         {
           "clauses": 5,
-          "name": "cfl_array_append_kvlist"
+          "name": "cfl_array_append_kvlist",
+          "resource_table": "relational"
         },
         {
           "clauses": 3,
-          "name": "cfl_variant_create_from_bool"
+          "name": "cfl_variant_create_from_bool",
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "cfl_variant_create_from_int64"
+          "name": "cfl_variant_create_from_int64",
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "cfl_variant_create_from_double"
+          "name": "cfl_variant_create_from_double",
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "cfl_variant_create_from_string"
+          "name": "cfl_variant_create_from_string",
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "cfl_variant_destroy"
+          "name": "cfl_variant_destroy",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "cfl_utils_split"
+          "name": "cfl_utils_split",
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "cfl_utils_split_free"
+          "name": "cfl_utils_split_free",
+          "resource_table": "functions"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "c367487328bb0311974088adeca7c000aff108c0c7af610a94788be3f4a24be9"
@@ -291,10 +359,12 @@
       "declarations": [
         {
           "clauses": 2,
-          "name": "cfl_time_now"
+          "name": "cfl_time_now",
+          "resource_table": "functions"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "1696e45592e854e29d6e0117ab9c037f46158c33c4a340027739558e9b137bb6"
@@ -306,5 +376,5 @@
     "cfl/sds_lifetime.qv",
     "cfl/time.qv"
   ],
-  "schema_version": 1
+  "schema_version": 2
 }

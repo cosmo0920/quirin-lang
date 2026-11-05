@@ -1,6 +1,7 @@
 """Canonical discovery must not hide missing roots or duplicate logical modules."""
 import json
 from pathlib import Path
+import re
 import tempfile
 import unittest
 import sys
@@ -22,70 +23,49 @@ class CanonicalCorpus(unittest.TestCase):
         root = Path(__file__).resolve().parents[2]
         self.assertFalse((root / "contract/qcore").exists())
         modules = contract_corpus.sources(root, tracked(root))
-        # 108 -> 109: W43-LIBC-RESTRICT-PROTOTYPES adds libc/regex.qv.
-        # 109 -> 110: W43-DESCRIPTOR-RESOURCE-TRACKING adds libc/dirent.qv.
-        # 110 -> 111: W43-DESCRIPTOR-NATIVE-CHECK's shared observation policy
-        # library/descriptor_native_observation.qv in quirin-provider-shared.
-        # 111 -> 113: W45-FB-RETRY-LIFETIME adds fluent_bit/task_users.qv and
-        # fluent_bit/output_singleplex.qv in quirin-provider-fluent-bit.
-        # 113 -> 114: W45-FB-BACKLOG-CUSTODY's fluent_bit/storage_backlog.qv
-        # (checked specifications) in quirin-provider-fluent-bit.
-        # 114 -> 118: the W46 contract cards add three Fluent Bit modules
-        # and one provider-owned Monkey/Libevent module.
-        # 118 -> 119: W47-LOOP-OWNER-CONTRACTS's fluent_bit/loop_owner.qv in
-        # quirin-provider-fluent-bit.
-        # 119 -> 120: W47-CONDVAR-JOIN-PUBLICATION's libc/pthread_sync.qv in
-        # quirin-provider-libc.
-        # 120 -> 121: W47-CONDVAR-JOIN-STOP-PATHS's fluent_bit/lib_engine_thread.qv
-        # 121 -> 122: W47-LOOP-OWNER-INSTANCE-FLOW's fluent_bit/input_instance.qv
-        # in quirin-provider-fluent-bit.
-        # 122 -> 123: CONTRACT-PIN-TIP-MODE's monkey/vhost_set.qv
-        # 123 -> 124: MONKEY-VHOST-PROPERTY-CUSTODY's monkey/string.qv
-        # 124 -> 125: CHUNKIO-META-LEN-BOUNDS-CONTRACTS's chunkio/meta_len_bounds.qv
-        # (a bounds contract v1 module) in qcore-provider-chunkio (75 -> 76).
-        # 125 -> 126: W43-ABI-ENUM-AND-CONST-PP's librdkafka/client.qv in
-        # qcore-provider-librdkafka (76 -> 77).
-        # 126 -> 127: CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS's
-        # chunkio/file_st_bounds.qv (a bounds contract v1 module) in
-        # qcore-provider-chunkio (77 -> 78).
-        # 127 -> 130: NULL-SAFETY-PROPERTY's three null_deref.qv modules (bounds
-        # contract v1): cmetrics and librdkafka in qcore-provider-* (78 -> 80),
-        # fluent_bit in quirin-provider-fluent-bit (49 -> 50).
-        # 130 -> 131: NULL-TRIAGE-UNRESOLVED-PATHS's cfl/null_deref.qv (a bounds
-        # contract v1 module) in quirin-provider-cfl (50 -> 51).
-        # 131 -> 133: FB-EVENT-LOOP-RETENTION-AND-REGISTRATION's
-        # monkey/event_loop.qv in qcore-provider-libevent (80 -> 81) and
-        # fluent_bit/input_collector_registration.qv in
-        # quirin-provider-fluent-bit (51 -> 52).
-        # 133 -> 134: FB-TEARDOWN-DESTROY-DECLARATIONS's
-        # fluent_bit/teardown_destroy.qv in quirin-provider-fluent-bit (52 -> 53).
-        # 134 -> 135: OUTER-CONTRACT's fluent_bit/outer.qv (an outer contract
-        # v1 module) in quirin-provider-fluent-bit (53 -> 54).
-        # 135 -> 136: RK-PLUGIN-LIBRARY-OUTER-ENVELOPE's librdkafka/outer.qv
-        # in qcore-provider-librdkafka (81 -> 82).
-        # Kafka callback placement adds librdkafka/logging.qv (82 -> 83 owned).
-        # 137 -> 138: W48-RK-LOG-CALLER-FRAME's librdkafka/log_caller_frame.qv
-        # in qcore-provider-librdkafka (83 -> 84 owned).
-        # Source-audited map/opts models add two CMetrics-owned modules.
-        # CMT-GETTER-OWNERSHIP-CLOSURE adds CFL's declared hash-state model.
-        # 143 -> 144: quant-contract-hypotheses (6ecb5498d) adds the CFL
-        # conditional own-event model cfl/atomic.qv in quirin-provider-cfl
-        # (55 -> 56); LANDING-REPAIR records the crate count it moved.
-        # 144 -> 146: CELL-GUARD-RESULT-RANGE-CHECKED's libc/result_sets.qv in
-        # quirin-provider-libc (56 -> 57) and monkey/result_range.qv in
-        # qcore-provider-libevent (88 -> 89).
-        # 146 -> 147: CELL-RESULT-SET-WRITTEN-SET-DERIVATION's
-        # fluent_bit/result_range.qv in quirin-provider-fluent-bit (57 -> 58).
-        # 147 -> 149: LOG-PRINT-BODY-CONTRACTS's cmetrics/logging.qv in
-        # qcore-provider-cmetrics and chunkio/logging.qv in
-        # qcore-provider-chunkio (89 -> 91).
-        # 149 -> 150: LIBRDKAFKA-HEADER-INLINES's librdkafka/header_inlines.qv
-        # in qcore-provider-librdkafka (91 -> 92).
-        self.assertEqual(len(modules), 150)
-        self.assertEqual(sum(any(part.startswith("qcore-provider-") for part in path.parts) for path in modules.values()), 92)
-        self.assertEqual(sum(any(part.startswith("quirin-provider-") for part in path.parts) for path in modules.values()), 58)
+        # Card CONTRACT-COUNT-PINS-FROM-LOCKS: the module counts are the
+        # providers' inventory locks' (contract_corpus.lock_totals, the reader
+        # tests/support/contract_locks.rs mirrors); the former literals and
+        # their per-card history are in this file at base 25508ccaf.
+        totals = contract_corpus.lock_totals(root)
+        self.assertEqual(len(modules), totals["corpus_modules"])
+        self.assertEqual(sum(any(part.startswith("qcore-provider-") for part in path.parts) for path in modules.values()),
+                         totals["qcore_provider_modules"])
+        self.assertEqual(sum(any(part.startswith("quirin-provider-") for part in path.parts) for path in modules.values()),
+                         totals["quirin_provider_modules"])
         libc = [path for name, path in modules.items() if name.startswith("libc/")]
         self.assertTrue(libc and all("quirin-provider-libc" in path.parts for path in libc))
+
+    def test_lock_totals_agree_with_the_shared_cases(self):
+        # Card CONTRACT-COUNT-PINS-FROM-LOCKS: tests/support/contract_locks_cases.json
+        # holds the cases both aggregate readers must agree on (the Rust reader
+        # runs the same file in compiler/tests/contract_loader.rs): the totals
+        # are sums of lock fields, and a lock inconsistent with the load path
+        # or with itself is refused, never summed.
+        repository = Path(__file__).resolve().parents[2]
+        cases = json.loads((repository / "tests/support/contract_locks_cases.json").read_text())
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+
+            def write(locks):
+                (root / "providers").mkdir(exist_ok=True)
+                (root / "providers/contract-load-path.json").write_text(
+                    json.dumps(cases["load_path"]))
+                for name, lock in locks.items():
+                    (root / "providers" / name).mkdir(exist_ok=True)
+                    (root / "providers" / name / "contract-inventory.lock").write_text(
+                        json.dumps(lock))
+
+            write(cases["locks"])
+            self.assertEqual(contract_corpus.lock_totals(root), cases["totals"])
+            self.assertEqual(list(cases["totals"]), list(contract_corpus.LOCK_TOTAL_FIELDS))
+            for refusal in cases["refusals"]:
+                with self.subTest(why=refusal["why"]):
+                    locks = dict(cases["locks"])
+                    locks[refusal["crate"]] = {**locks[refusal["crate"]], **refusal["replace"]}
+                    write(locks)
+                    with self.assertRaisesRegex(ValueError, re.escape(refusal["contains"])):
+                        contract_corpus.lock_totals(root)
 
     def test_libc_functions_are_declared_only_in_the_libc_crate(self):
         # Card W43-LIBC-CONTRACTS, user-directed placement rule: a libc/POSIX

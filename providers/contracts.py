@@ -336,13 +336,23 @@ def verify_locks(root, load_path_file):
 # as the load path records them. `sync` writes it; `check` refuses a lock that
 # differs by one byte. It is not the `contracts.lock` above, which `quirin-audit
 # pin` writes and whose format this card does not touch.
+# Card CONTRACT-COUNT-PINS-FROM-LOCKS (schema 2): each declaration also records
+# its `resource_table`, the resource-contract table it lands in when the v1
+# loader loads its module alone (`functions`, `pending_review`, `relational`,
+# `retaining`; null when the loader refuses the module), and each file its
+# `other_declarations`, the non-`extern fn` declaration names. The corpus
+# tests derive their aggregate counts from these locks
+# (`tests/support/contract_locks.rs`, `scripts/contract_corpus.py`
+# `lock_totals`) instead of pinning literals outside `providers/`.
 INVENTORY_LOCK = "contract-inventory.lock"
-INVENTORY_SCHEMA = 1
+INVENTORY_SCHEMA = 2
+RESOURCE_TABLES = ("functions", "pending_review", "relational", "retaining")
 
 
 def probe_inventories(root, load_path_file):
     """The parse-derived facts of every module on `load_path_file`: `{crate:
-    {module: {"declarations", "inherits", "premises", "premise_bindings"}}}`,
+    {module: {"declarations", "inherits", "premises", "premise_bindings",
+    "other_declarations"}}}`,
     from the probe example in the repository workspace, which parses,
     elaborates and reads premises with the loaders' own code. Any failure of
     the probe is an error, never an empty inventory."""
@@ -355,7 +365,7 @@ def probe_inventories(root, load_path_file):
         raise ValueError(f"contract inventory probe failed (exit {completed.returncode}): "
                          f"{completed.stderr.strip()}")
     probe = json.loads(completed.stdout)
-    if probe.get("schema_version") != 1:
+    if probe.get("schema_version") != 2:
         raise ValueError("contract inventory probe: unsupported schema")
     return {name: record["modules"] for name, record in probe["crates"].items()}
 
@@ -371,7 +381,14 @@ def inventory_lock(root, record, facts):
     entries = {}
     for name, path in modules.items():
         fact = facts[name]
-        declarations = [{"name": d["name"], "clauses": d["clauses"]} for d in fact["declarations"]]
+        declarations = [{"name": d["name"], "clauses": d["clauses"],
+                         "resource_table": d["resource_table"]} for d in fact["declarations"]]
+        # A module the v1 loader accepts gives every declaration a table; one
+        # it refuses gives none (contract_inventory's `resource_tables`).
+        tables = {d["resource_table"] for d in declarations}
+        if not tables <= {None, *RESOURCE_TABLES} or (None in tables and len(tables) > 1):
+            raise ValueError(f"{record['name']}:{name}: inventory probe gives resource tables "
+                             f"{sorted(map(str, tables))}")
         entries[name] = {
             "sha256": sha256(path),
             "declaration_count": len(declarations),
@@ -382,7 +399,15 @@ def inventory_lock(root, record, facts):
                          for function, premises in fact["premises"].items()},
             "premise_bindings": [{"declaration": b["declaration"], "premise": b["premise"],
                                   "sha256": b["sha256"]} for b in fact["premise_bindings"]],
+            "other_declarations": list(fact["other_declarations"]),
         }
+        # The resource view (the provider probe's) and the resource tables
+        # (the inventory probe's) must state one acceptance, or the readers
+        # of the aggregate counts would refuse the lock.
+        accepted = bool(declarations) and None not in tables and not fact["other_declarations"]
+        if (name in record[RESOURCE_VIEW]) != accepted:
+            raise ValueError(f"{record['name']}:{name}: the resource view and the inventory "
+                             "probe's resource tables disagree")
     return {
         "schema_version": INVENTORY_SCHEMA,
         "crate": record["name"],

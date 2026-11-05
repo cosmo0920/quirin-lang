@@ -28,7 +28,11 @@ mod contract_corpus;
 // The literal tables, with each row's provenance comment, are in this file at
 // base 6c4855745 and in the cards' reports.
 const INVENTORY_LOCK: &str = "contract-inventory.lock";
-const INVENTORY_SCHEMA: u64 = 1;
+// Card CONTRACT-COUNT-PINS-FROM-LOCKS: schema 2 adds each declaration's
+// `resource_table` and each file's `other_declarations`, from which the
+// aggregate counts are derived (`tests/support/contract_locks.rs`).
+const INVENTORY_SCHEMA: u64 = 2;
+const RESOURCE_TABLES: [&str; 4] = ["functions", "pending_review", "relational", "retaining"];
 const BINDING_MARKER: &str = "// qcore-premise-binding-manifest-v1 ";
 
 /// Every load-path crate's inventory lock, parsed: crate to document, and
@@ -130,6 +134,31 @@ fn tree_record(logical: &str, path: &Path) -> Value {
     let elaborated = contract_corpus::text(logical, path);
     let parsed =
         parse_source_program(&elaborated).unwrap_or_else(|error| panic!("{logical}: {error}"));
+    // Card CONTRACT-COUNT-PINS-FROM-LOCKS: the table each declaration lands in
+    // when the resource-contract v1 loader loads this module alone, or none
+    // when that loader refuses the module.
+    let loaded = qcore_contract::contract_loader::load_resource_contract_sources(&BTreeMap::from(
+        [(logical.to_owned(), elaborated.clone())],
+    ))
+    .ok();
+    let table_of = |name: &str| {
+        let contracts = loaded.as_ref()?;
+        let present = [
+            contracts.functions().contains_key(name),
+            contracts.pending_review().contains_key(name),
+            contracts.relational().contains_key(name),
+            contracts.retaining().contains_key(name),
+        ];
+        let tables = RESOURCE_TABLES
+            .iter()
+            .zip(present)
+            .filter_map(|(table, present)| present.then_some(*table))
+            .collect::<Vec<_>>();
+        let [table] = tables[..] else {
+            panic!("{logical}: {name} is in the resource tables {tables:?}");
+        };
+        Some(table)
+    };
     let declarations = parsed
         .declarations
         .iter()
@@ -140,8 +169,18 @@ fn tree_record(logical: &str, path: &Path) -> Value {
                 .function_contract
                 .as_ref()
                 .unwrap_or_else(|| panic!("{logical}: {} has no contract", d.value.name));
-            json!({"clauses": contract.clauses.len(), "name": d.value.name})
+            json!({
+                "clauses": contract.clauses.len(),
+                "name": d.value.name,
+                "resource_table": table_of(&d.value.name),
+            })
         })
+        .collect::<Vec<_>>();
+    let other_declarations = parsed
+        .declarations
+        .iter()
+        .filter(|d| d.value.kind != SourceDeclarationKind::ExternFunction)
+        .map(|d| d.value.name.clone())
         .collect::<Vec<_>>();
     let clause_count = declarations
         .iter()
@@ -179,6 +218,7 @@ fn tree_record(logical: &str, path: &Path) -> Value {
         "declaration_count": declarations.len(),
         "declarations": declarations,
         "inherits": inherits,
+        "other_declarations": other_declarations,
         "premise_bindings": bindings,
         "premises": premises,
         "sha256": qcore_schemas::digest::sha256_hex(&bytes),

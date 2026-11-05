@@ -32,6 +32,61 @@ def load_path(repository):
     return json.loads((index.parent / manifest["load_path"]).read_text())
 
 
+# Card CONTRACT-COUNT-PINS-FROM-LOCKS: the aggregate contract counts, derived
+# from the providers' inventory locks. `tests/support/contract_locks.rs` is the
+# same reader for the Rust tests: the same fields, the same refusals.
+LOCK_SCHEMA = 2
+RESOURCE_TABLES = ("functions", "pending_review", "relational", "retaining")
+LOCK_TOTAL_FIELDS = ("crates", "corpus_modules", "qcore_provider_modules",
+                     "quirin_provider_modules", "resource_view_modules", "v1_declarations",
+                     "rejected_declarations", *RESOURCE_TABLES)
+
+
+def lock_totals(repository):
+    """The aggregate counts of `repository`'s `contract-inventory.lock` files,
+    one per crate of `providers/contract-load-path.json`: locked modules (all,
+    and per `qcore-provider-*`/`quirin-provider-*` prefix), Σ resource views,
+    `extern fn` declarations with a resource table (v1) and per table, and the
+    rejected rest (declarations without a table plus every non-`extern fn`
+    declaration). Raises ValueError on a lock the load path does not state:
+    missing, another schema or crate, a view differing from the load path's or
+    naming no locked file, or a module whose view membership disagrees with
+    its declarations' tables."""
+    load_path_file = Path(repository) / "providers/contract-load-path.json"
+    totals = dict.fromkeys(LOCK_TOTAL_FIELDS, 0)
+    for record in json.loads(load_path_file.read_text())["crates"]:
+        name = record["name"]
+        lock_file = (load_path_file.parent / record["contracts"]).parent / "contract-inventory.lock"
+        lock = json.loads(lock_file.read_text())
+        if lock.get("schema_version") != LOCK_SCHEMA or lock.get("crate") != name:
+            raise ValueError(f"{lock_file}: not a schema {LOCK_SCHEMA} lock of {name}")
+        if lock["resource_view"] != record["resource_view"]:
+            raise ValueError(f"{name}: the lock's resource view is not the load path's")
+        files, view = lock["files"], set(lock["resource_view"])
+        if not view <= set(files):
+            raise ValueError(f"{name}: view modules {sorted(view - set(files))} are not locked")
+        totals["crates"] += 1
+        totals["corpus_modules"] += len(files)
+        for prefix in ("qcore-provider-", "quirin-provider-"):
+            if name.startswith(prefix):
+                totals[prefix.replace("-", "_").rstrip("_") + "_modules"] += len(files)
+        totals["resource_view_modules"] += len(view)
+        for logical, entry in files.items():
+            tables = [d["resource_table"] for d in entry["declarations"]]
+            if not set(tables) <= {None, *RESOURCE_TABLES}:
+                raise ValueError(f"{name}:{logical}: resource tables {tables}")
+            others = len(entry["other_declarations"])
+            accepted = bool(tables) and None not in tables and others == 0
+            if (logical in view) != accepted:
+                raise ValueError(f"{name}:{logical}: resource-view membership and resource "
+                                 "tables disagree")
+            totals["rejected_declarations"] += others + tables.count(None)
+            for table in RESOURCE_TABLES:
+                totals[table] += tables.count(table)
+                totals["v1_declarations"] += tables.count(table)
+    return totals
+
+
 def _walk(directory, tracked):
     """Every path under `directory`: the filesystem walk by default, or, when
     `tracked` is given (absolute paths of the repository's tracked files),

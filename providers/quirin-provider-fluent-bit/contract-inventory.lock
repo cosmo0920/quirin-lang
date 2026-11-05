@@ -12,14 +12,17 @@
       "declarations": [
         {
           "clauses": 8,
-          "name": "flb_hash_table_add"
+          "name": "flb_hash_table_add",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "flb_hash_table_del"
+          "name": "flb_hash_table_del",
+          "resource_table": "functions"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "209d0491da15604e7c31bb7e961fe97f3ad6dba73e5696024bc4190c5a81ae41"
@@ -30,10 +33,12 @@
       "declarations": [
         {
           "clauses": 4,
-          "name": "flb_input_chunk_destroy"
+          "name": "flb_input_chunk_destroy",
+          "resource_table": "functions"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "073c9206df21e37d18775bcd50bd0c57b0d8c70f2f0ee5ec50a5579f5eaff897"
@@ -44,10 +49,12 @@
       "declarations": [
         {
           "clauses": 4,
-          "name": "flb_input_chunk_destroy_direct_routes"
+          "name": "flb_input_chunk_destroy_direct_routes",
+          "resource_table": "functions"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "2ce152d343357466fe9ec5979362be28145f8fa707c20746ae49bc0599703974"
@@ -58,18 +65,22 @@
       "declarations": [
         {
           "clauses": 5,
-          "name": "generate_chunk_name"
+          "name": "generate_chunk_name",
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "input_chunk_write_header"
+          "name": "input_chunk_write_header",
+          "resource_table": "functions"
         },
         {
           "clauses": 11,
-          "name": "append_to_ring_buffer"
+          "name": "append_to_ring_buffer",
+          "resource_table": "retaining"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "be6f7f270596ec192b8798f69adfc88d34e4369a3ab336d0f9c0e1349cc8f44b"
@@ -80,22 +91,27 @@
       "declarations": [
         {
           "clauses": 4,
-          "name": "flb_input_chunk_is_up"
+          "name": "flb_input_chunk_is_up",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "input_chunk_has_magic_bytes"
+          "name": "input_chunk_has_magic_bytes",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "flb_input_chunk_is_mem_overlimit"
+          "name": "flb_input_chunk_is_mem_overlimit",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "flb_input_chunk_is_storage_overlimit"
+          "name": "flb_input_chunk_is_storage_overlimit",
+          "resource_table": "functions"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "5812a21ab91cd7e636bfa25df35a5141e96e0c017b27e153987db498e1c2b761"
@@ -106,10 +122,12 @@
       "declarations": [
         {
           "clauses": 4,
-          "name": "flb_input_chunk_get_name"
+          "name": "flb_input_chunk_get_name",
+          "resource_table": "functions"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {
         "flb_input_chunk_get_name": [
@@ -127,14 +145,17 @@
       "declarations": [
         {
           "clauses": 3,
-          "name": "flb_input_chunk_get_size"
+          "name": "flb_input_chunk_get_size",
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "flb_input_chunk_get_real_size"
+          "name": "flb_input_chunk_get_real_size",
+          "resource_table": "functions"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "ba8db67de28e9ee480165c21ca2c03f398433699d5af0dd57f4c225d0d74d0f8"
@@ -145,10 +166,12 @@
       "declarations": [
         {
           "clauses": 3,
-          "name": "flb_input_chunk_total_size"
+          "name": "flb_input_chunk_total_size",
+          "resource_table": "functions"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "f8a1ab9dcf7637174ae83849b2ebf3c2d11374842c5ef5e517280b22691392d8"
@@ -159,18 +182,22 @@
       "declarations": [
         {
           "clauses": 9,
-          "name": "flb_input_set_collector_time"
+          "name": "flb_input_set_collector_time",
+          "resource_table": "retaining"
         },
         {
           "clauses": 7,
-          "name": "flb_input_set_collector_event"
+          "name": "flb_input_set_collector_event",
+          "resource_table": "retaining"
         },
         {
           "clauses": 7,
-          "name": "flb_input_set_collector_socket"
+          "name": "flb_input_set_collector_socket",
+          "resource_table": "retaining"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "4cdabeffd70e4d5fdf3edd3a273b03e2ba6484375734a4fa34a8e10ecaf197a4"
@@ -181,26 +208,32 @@
       "declarations": [
         {
           "clauses": 2,
-          "name": "flb_create"
+          "name": "flb_create",
+          "resource_table": "pending_review"
         },
         {
           "clauses": 5,
-          "name": "flb_input"
+          "name": "flb_input",
+          "resource_table": "pending_review"
         },
         {
           "clauses": 6,
-          "name": "flb_input_new"
+          "name": "flb_input_new",
+          "resource_table": "pending_review"
         },
         {
           "clauses": 4,
-          "name": "flb_service_set"
+          "name": "flb_service_set",
+          "resource_table": "pending_review"
         },
         {
           "clauses": 5,
-          "name": "flb_config_set_property"
+          "name": "flb_config_set_property",
+          "resource_table": "pending_review"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "95ed00f8b44a8d751b1ecc06ee576f1845563dfb45e4ef3ab81962cbf92c2fac"
@@ -211,30 +244,37 @@
       "declarations": [
         {
           "clauses": 5,
-          "name": "flb_start"
+          "name": "flb_start",
+          "resource_table": "pending_review"
         },
         {
           "clauses": 5,
-          "name": "flb_stop"
+          "name": "flb_stop",
+          "resource_table": "pending_review"
         },
         {
           "clauses": 5,
-          "name": "flb_destroy"
+          "name": "flb_destroy",
+          "resource_table": "pending_review"
         },
         {
           "clauses": 4,
-          "name": "flb_input_thread_instance_exit"
+          "name": "flb_input_thread_instance_exit",
+          "resource_table": "pending_review"
         },
         {
           "clauses": 4,
-          "name": "flb_output_thread_pool_destroy"
+          "name": "flb_output_thread_pool_destroy",
+          "resource_table": "pending_review"
         },
         {
           "clauses": 4,
-          "name": "flb_downstream_worker_runtime_stop"
+          "name": "flb_downstream_worker_runtime_stop",
+          "resource_table": "pending_review"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "154ad0b2815f4207f690da1c1f04ee3c5adf0bc14f44bfdb89b41a5bef1e46aa"
@@ -245,18 +285,22 @@
       "declarations": [
         {
           "clauses": 3,
-          "name": "flb_log_check"
+          "name": "flb_log_check",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "flb_errno_print"
+          "name": "flb_errno_print",
+          "resource_table": "functions"
         },
         {
           "clauses": 7,
-          "name": "flb_log_print"
+          "name": "flb_log_print",
+          "resource_table": "functions"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "ac2b2522628425c05469dc184cfcdc4526abec7a9ee36b73f84991d69da9132c"
@@ -267,22 +311,27 @@
       "declarations": [
         {
           "clauses": 6,
-          "name": "flb_input_collector_running"
+          "name": "flb_input_collector_running",
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "flb_input_collector_pause"
+          "name": "flb_input_collector_pause",
+          "resource_table": "functions"
         },
         {
           "clauses": 7,
-          "name": "flb_input_collector_resume"
+          "name": "flb_input_collector_resume",
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "flb_input_collector_delete"
+          "name": "flb_input_collector_delete",
+          "resource_table": "functions"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {
         "flb_input_collector_resume": [
@@ -300,26 +349,32 @@
       "declarations": [
         {
           "clauses": 6,
-          "name": "flb_malloc"
+          "name": "flb_malloc",
+          "resource_table": null
         },
         {
           "clauses": 7,
-          "name": "flb_calloc"
+          "name": "flb_calloc",
+          "resource_table": null
         },
         {
           "clauses": 9,
-          "name": "flb_realloc"
+          "name": "flb_realloc",
+          "resource_table": null
         },
         {
           "clauses": 12,
-          "name": "flb_realloc_z"
+          "name": "flb_realloc_z",
+          "resource_table": null
         },
         {
           "clauses": 5,
-          "name": "flb_free"
+          "name": "flb_free",
+          "resource_table": null
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "b1c44c632efe193f75737be13058b30498bd471dd47c65dc5e431fcb02645aad"
@@ -330,82 +385,102 @@
       "declarations": [
         {
           "clauses": 2,
-          "name": "flb_output_set_context"
+          "name": "flb_output_set_context",
+          "resource_table": null
         },
         {
           "clauses": 2,
-          "name": "flb_output_net_default"
+          "name": "flb_output_net_default",
+          "resource_table": null
         },
         {
           "clauses": 2,
-          "name": "flb_output_name"
+          "name": "flb_output_name",
+          "resource_table": null
         },
         {
           "clauses": 2,
-          "name": "flb_output_set_property"
+          "name": "flb_output_set_property",
+          "resource_table": null
         },
         {
           "clauses": 2,
-          "name": "flb_input_chunk_get_name"
+          "name": "flb_input_chunk_get_name",
+          "resource_table": null
         },
         {
           "clauses": 2,
-          "name": "flb_input_new"
+          "name": "flb_input_new",
+          "resource_table": null
         },
         {
           "clauses": 2,
-          "name": "flb_output_new"
+          "name": "flb_output_new",
+          "resource_table": null
         },
         {
           "clauses": 2,
-          "name": "flb_filter_new"
+          "name": "flb_filter_new",
+          "resource_table": null
         },
         {
           "clauses": 2,
-          "name": "flb_processor_instance_create"
+          "name": "flb_processor_instance_create",
+          "resource_table": null
         },
         {
           "clauses": 2,
-          "name": "flb_input_plugin_pause"
+          "name": "flb_input_plugin_pause",
+          "resource_table": null
         },
         {
           "clauses": 2,
-          "name": "flb_input_plugin_resume"
+          "name": "flb_input_plugin_resume",
+          "resource_table": null
         },
         {
           "clauses": 2,
-          "name": "flb_input_pause"
+          "name": "flb_input_pause",
+          "resource_table": null
         },
         {
           "clauses": 2,
-          "name": "flb_input_resume"
+          "name": "flb_input_resume",
+          "resource_table": null
         },
         {
           "clauses": 2,
-          "name": "flb_input_instance_pre_run"
+          "name": "flb_input_instance_pre_run",
+          "resource_table": null
         },
         {
           "clauses": 2,
-          "name": "flb_input_instance_exit"
+          "name": "flb_input_instance_exit",
+          "resource_table": null
         },
         {
           "clauses": 2,
-          "name": "flb_input_thread_instance_pre_run"
+          "name": "flb_input_thread_instance_pre_run",
+          "resource_table": null
         },
         {
           "clauses": 2,
-          "name": "flb_input_thread_instance_pause"
+          "name": "flb_input_thread_instance_pause",
+          "resource_table": null
         },
         {
           "clauses": 2,
-          "name": "flb_input_thread_instance_resume"
+          "name": "flb_input_thread_instance_resume",
+          "resource_table": null
         },
         {
           "clauses": 2,
-          "name": "flb_input_thread_instance_exit"
+          "name": "flb_input_thread_instance_exit",
+          "resource_table": null
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "af4ba997339e36d60a19539a8373fed5bf1f552ebf8680b50064dc865b6a55ed"
@@ -416,14 +491,17 @@
       "declarations": [
         {
           "clauses": 85,
-          "name": "flb_plugin_load"
+          "name": "flb_plugin_load",
+          "resource_table": null
         },
         {
           "clauses": 3,
-          "name": "flb_plugin_proxy_create"
+          "name": "flb_plugin_proxy_create",
+          "resource_table": null
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "282408a08e6fc19b6f87d3cde8d2c12d2ab0627b002b2f2e2a914bb8460c133d"
@@ -434,10 +512,12 @@
       "declarations": [
         {
           "clauses": 4,
-          "name": "flb_output_flush_id_get"
+          "name": "flb_output_flush_id_get",
+          "resource_table": "functions"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "5161dfc52e7b06caaf41fcb3c00c8135f903101e11d9c262312e7f1893e425d3"
@@ -448,14 +528,17 @@
       "declarations": [
         {
           "clauses": 10,
-          "name": "flb_output_task_singleplex_enqueue"
+          "name": "flb_output_task_singleplex_enqueue",
+          "resource_table": "functions"
         },
         {
           "clauses": 7,
-          "name": "flb_output_task_flush"
+          "name": "flb_output_task_flush",
+          "resource_table": "functions"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {
         "flb_output_task_singleplex_enqueue": [
@@ -473,23 +556,28 @@
       "declarations": [
         {
           "clauses": 3,
-          "name": "flb_malloc"
+          "name": "flb_malloc",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "flb_calloc"
+          "name": "flb_calloc",
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "flb_free"
+          "name": "flb_free",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "flb_sds_create_len"
+          "name": "flb_sds_create_len",
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "flb_sds_destroy"
+          "name": "flb_sds_destroy",
+          "resource_table": "functions"
         }
       ],
       "inherits": [
@@ -506,6 +594,7 @@
           "parent": "libc::free"
         }
       ],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "f92199433b85460cecb19378502bde580905cbd78ece9cf3e77358038fd02731"
@@ -516,11 +605,13 @@
       "declarations": [
         {
           "clauses": 3,
-          "name": "flb_strdup"
+          "name": "flb_strdup",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "flb_strndup"
+          "name": "flb_strndup",
+          "resource_table": "functions"
         }
       ],
       "inherits": [
@@ -533,6 +624,7 @@
           "parent": "libc::strndup"
         }
       ],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "96b8a3d7d096007699ea1d5970d19779b35c5c8f89a6cea67354725e90530ee1"
@@ -543,10 +635,12 @@
       "declarations": [
         {
           "clauses": 3,
-          "name": "flb_pipe_create"
+          "name": "flb_pipe_create",
+          "resource_table": null
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "13ac50b771dce0f0a726ad9c8096fd47ca55c046406271804dae3c28403b9fda"
@@ -557,22 +651,27 @@
       "declarations": [
         {
           "clauses": 6,
-          "name": "flb_routes_mask_set_by_tag"
+          "name": "flb_routes_mask_set_by_tag",
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "flb_routes_mask_get_size"
+          "name": "flb_routes_mask_get_size",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "flb_routes_mask_get_slots"
+          "name": "flb_routes_mask_get_slots",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "flb_routes_mask_is_empty"
+          "name": "flb_routes_mask_is_empty",
+          "resource_table": "functions"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "3ea37c31e5fcf8d38aa7721312cfc333630fc8852f8dbcfad772c0726b82bc03"
@@ -583,54 +682,67 @@
       "declarations": [
         {
           "clauses": 6,
-          "name": "sb_allocate_chunk"
+          "name": "sb_allocate_chunk",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "sb_destroy_chunk"
+          "name": "sb_destroy_chunk",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "sb_destroy_backlog"
+          "name": "sb_destroy_backlog",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "sb_allocate_backlogs"
+          "name": "sb_allocate_backlogs",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "sb_destroy_backlogs"
+          "name": "sb_destroy_backlogs",
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "sb_remove_chunk_from_segregated_backlog"
+          "name": "sb_remove_chunk_from_segregated_backlog",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "sb_remove_chunk_from_segregated_backlogs"
+          "name": "sb_remove_chunk_from_segregated_backlogs",
+          "resource_table": "functions"
         },
         {
           "clauses": 7,
-          "name": "sb_append_chunk_to_segregated_backlog"
+          "name": "sb_append_chunk_to_segregated_backlog",
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "sb_append_chunk_to_segregated_backlogs"
+          "name": "sb_append_chunk_to_segregated_backlogs",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "sb_segregate_chunks"
+          "name": "sb_segregate_chunks",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "sb_release_output_queue_space"
+          "name": "sb_release_output_queue_space",
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "cb_queue_chunks"
+          "name": "cb_queue_chunks",
+          "resource_table": "functions"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "8bea72df56e4397c09c3bb21f71b579f069f8bd031cc4c3a0950532aa1691d83"
@@ -641,22 +753,27 @@
       "declarations": [
         {
           "clauses": 5,
-          "name": "flb_task_get_route_status"
+          "name": "flb_task_get_route_status",
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "flb_task_set_route_status"
+          "name": "flb_task_set_route_status",
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "flb_task_retry_count"
+          "name": "flb_task_retry_count",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "flb_task_running_count"
+          "name": "flb_task_running_count",
+          "resource_table": "functions"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "2ccd2ecece939836971e60168720e45e16bc1955820c10cff33b53dd605b1ca0"
@@ -667,22 +784,27 @@
       "declarations": [
         {
           "clauses": 4,
-          "name": "flb_task_users_inc"
+          "name": "flb_task_users_inc",
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "flb_task_users_dec"
+          "name": "flb_task_users_dec",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "flb_task_retry_destroy"
+          "name": "flb_task_retry_destroy",
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "flb_output_thread_pool_flush"
+          "name": "flb_output_thread_pool_flush",
+          "resource_table": "functions"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "cc07429255f69df182831ae2cf0246bafd71c3f6038173cbfcd194ea51da9f18"
@@ -693,66 +815,82 @@
       "declarations": [
         {
           "clauses": 3,
-          "name": "flb_sched_timer_destroy"
+          "name": "flb_sched_timer_destroy",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "flb_sched_request_destroy"
+          "name": "flb_sched_request_destroy",
+          "resource_table": "retaining"
         },
         {
           "clauses": 6,
-          "name": "flb_task_destroy"
+          "name": "flb_task_destroy",
+          "resource_table": "retaining"
         },
         {
           "clauses": 3,
-          "name": "flb_task_queue_destroy"
+          "name": "flb_task_queue_destroy",
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "flb_event_chunk_destroy"
+          "name": "flb_event_chunk_destroy",
+          "resource_table": "retaining"
         },
         {
           "clauses": 4,
-          "name": "flb_output_flush_destroy"
+          "name": "flb_output_flush_destroy",
+          "resource_table": "retaining"
         },
         {
           "clauses": 4,
-          "name": "flb_coro_destroy"
+          "name": "flb_coro_destroy",
+          "resource_table": "retaining"
         },
         {
           "clauses": 4,
-          "name": "flb_input_chunk_release_route"
+          "name": "flb_input_chunk_release_route",
+          "resource_table": "functions"
         },
         {
           "clauses": 34,
-          "name": "flb_output_instance_destroy"
+          "name": "flb_output_instance_destroy",
+          "resource_table": "retaining"
         },
         {
           "clauses": 34,
-          "name": "flb_input_instance_destroy"
+          "name": "flb_input_instance_destroy",
+          "resource_table": "retaining"
         },
         {
           "clauses": 4,
-          "name": "flb_input_coro_destroy"
+          "name": "flb_input_coro_destroy",
+          "resource_table": "retaining"
         },
         {
           "clauses": 3,
-          "name": "flb_input_collector_destroy"
+          "name": "flb_input_collector_destroy",
+          "resource_table": "functions"
         },
         {
           "clauses": 15,
-          "name": "flb_tail_file_remove"
+          "name": "flb_tail_file_remove",
+          "resource_table": "retaining"
         },
         {
           "clauses": 18,
-          "name": "flb_tail_config_destroy"
+          "name": "flb_tail_config_destroy",
+          "resource_table": "retaining"
         },
         {
           "clauses": 24,
-          "name": "flb_config_set_program_name"
+          "name": "flb_config_set_program_name",
+          "resource_table": "retaining"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "9c912b7dd2f44cbe2b7b35b1cf8253d2b72a7aaa59e03de58eb963dba499feea"
@@ -763,10 +901,12 @@
       "declarations": [
         {
           "clauses": 2,
-          "name": "flb_time_now"
+          "name": "flb_time_now",
+          "resource_table": "functions"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "e81170f7f36f50f1c93ed0d2a69b2a7f3e3e26714f6627ca3e9326fb87c10784"
@@ -801,5 +941,5 @@
     "fluent_bit/teardown_destroy.qv",
     "fluent_bit/time.qv"
   ],
-  "schema_version": 1
+  "schema_version": 2
 }

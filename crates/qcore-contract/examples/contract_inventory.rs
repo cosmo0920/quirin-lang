@@ -13,7 +13,19 @@
 //! - `premises`: `qcore_contract::contract_loader::module_premises` of the
 //!   elaborated text, function to premise names and origins in order;
 //! - `premise_bindings`: every `// qcore-premise-binding-manifest-v1
-//!   DECLARATION PREMISE SHA256` line of the written text, in order.
+//!   DECLARATION PREMISE SHA256` line of the written text, in order;
+//! - per declaration, `resource_table` (card CONTRACT-COUNT-PINS-FROM-LOCKS):
+//!   the table of the resource-contract environment the declaration lands in
+//!   when the resource-contract v1 loader loads the module alone
+//!   (`functions`, `pending_review`, `relational` or `retaining`), or `null`
+//!   when that loader refuses the module;
+//! - `other_declarations` (same card): the names of the module's
+//!   declarations that are not `extern fn` (`resource type`, `error`, `quant
+//!   axis`, ...), in source order.
+//!
+//! The aggregate counts the corpus tests used to pin as literals (modules,
+//! resource-v1 and rejected declarations, the loader's tables) are sums of
+//! these fields (`tests/support/contract_locks.rs`).
 //!
 //! A module that does not parse, elaborate or read its premises is an error,
 //! never an empty record.
@@ -21,7 +33,8 @@
 use std::{collections::BTreeMap, path::PathBuf};
 
 use qcore_contract::{
-    contract_inclusion::elaborate_contract_module, contract_loader::module_premises,
+    contract_inclusion::elaborate_contract_module,
+    contract_loader::{load_resource_contract_sources, module_premises},
     load_path_manifest::load_contract_load_path_manifest,
 };
 use qcore_frontend::{
@@ -31,6 +44,44 @@ use qcore_frontend::{
 use serde_json::{Value, json};
 
 const BINDING_MARKER: &str = "// qcore-premise-binding-manifest-v1 ";
+
+/// Card CONTRACT-COUNT-PINS-FROM-LOCKS: the resource-contract table each
+/// `extern fn` of a module lands in when the resource-contract v1 loader loads
+/// the module alone, or `None` when the loader refuses it. A declared name in
+/// no table or in two is an error, never a guess.
+fn resource_tables(
+    logical: &str,
+    text: &str,
+    names: &[String],
+) -> Result<Option<BTreeMap<String, &'static str>>, String> {
+    let Ok(contracts) =
+        load_resource_contract_sources(&BTreeMap::from([(logical.to_owned(), text.to_owned())]))
+    else {
+        return Ok(None);
+    };
+    let mut tables = BTreeMap::new();
+    for name in names {
+        let found = [
+            ("functions", contracts.functions().contains_key(name)),
+            (
+                "pending_review",
+                contracts.pending_review().contains_key(name),
+            ),
+            ("relational", contracts.relational().contains_key(name)),
+            ("retaining", contracts.retaining().contains_key(name)),
+        ]
+        .into_iter()
+        .filter_map(|(table, present)| present.then_some(table))
+        .collect::<Vec<_>>();
+        let [table] = found[..] else {
+            return Err(format!(
+                "{name} is in the resource tables {found:?}, not exactly one"
+            ));
+        };
+        tables.insert(name.clone(), table);
+    }
+    Ok(Some(tables))
+}
 
 fn module_record(
     load_path: &qcore_contract::contract_inclusion::ContractLoadPath,
@@ -48,8 +99,10 @@ fn module_record(
     };
     let parsed = parse_source_program(&text).map_err(|e| at(e.to_string()))?;
     let mut declarations = Vec::new();
+    let mut other_declarations = Vec::new();
     for declaration in &parsed.declarations {
         if declaration.value.kind != DeclarationKind::ExternFunction {
+            other_declarations.push(declaration.value.name.clone());
             continue;
         }
         let contract = declaration
@@ -57,11 +110,20 @@ fn module_record(
             .function_contract
             .as_ref()
             .ok_or_else(|| at(format!("{} has no contract", declaration.value.name)))?;
-        declarations.push(json!({
-            "name": declaration.value.name,
-            "clauses": contract.clauses.len(),
-        }));
+        declarations.push((declaration.value.name.clone(), contract.clauses.len()));
     }
+    let names = declarations
+        .iter()
+        .map(|(name, _)| name.clone())
+        .collect::<Vec<_>>();
+    let tables = resource_tables(logical, &text, &names).map_err(at)?;
+    let declarations = declarations
+        .into_iter()
+        .map(|(name, clauses)| {
+            let table = tables.as_ref().map(|tables| tables[&name]);
+            json!({"name": name, "clauses": clauses, "resource_table": table})
+        })
+        .collect::<Vec<_>>();
     let mut inherits = Vec::new();
     let syntax = scan_contract_inclusion(written).map_err(|e| at(e.to_string()))?;
     for site in &syntax.inherits {
@@ -108,6 +170,7 @@ fn module_record(
         "inherits": inherits,
         "premises": premises,
         "premise_bindings": bindings,
+        "other_declarations": other_declarations,
     }))
 }
 
@@ -133,7 +196,7 @@ fn main() -> Result<(), String> {
     }
     println!(
         "{}",
-        serde_json::to_string_pretty(&json!({"schema_version": 1, "crates": crates}))
+        serde_json::to_string_pretty(&json!({"schema_version": 2, "crates": crates}))
             .map_err(|error| error.to_string())?
     );
     Ok(())
