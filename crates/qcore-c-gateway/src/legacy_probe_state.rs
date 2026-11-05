@@ -101,6 +101,7 @@ pub(super) const PARSER_FIELDS: &[(&str, FieldClass)] = &[
     ("admit_derived_returns", FieldClass::FunctionFact),
     ("argument_probe", FieldClass::ProbeState),
     ("member_releases", FieldClass::FunctionFact),
+    ("member_effect_reading", FieldClass::FunctionFact),
     // The unit's definitions and call graph, read on first use.
     ("desugar", FieldClass::LazyCache),
     ("return_facts", FieldClass::FunctionFact),

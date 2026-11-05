@@ -83,9 +83,18 @@ fn pointer_store_and_union_still_refuse() {
         panic!("a custody-free record copy certifies: {result:?}");
     };
     check_legacy_safety_certificate(&certificate).expect("independent rederivation");
-    for source in [
-        "struct S { int *p; }; int subject(struct S *s, int *q) { s->p = q; return 0; }",
-        "typedef struct { int *x; } A; struct H { A value; }; int subject(struct H *h) { h->value = h->value; return 0; }",
+    // Card MEMBER-EFFECT-SUMMARY (rule 38i) re-pins this deliberately: the pointer store into a formal's
+    // member names its premise; still `Unknown`.
+    for (source, description) in [
+        (
+            "struct S { int *p; }; int subject(struct S *s, int *q) { s->p = q; return 0; }",
+            "store of a custody-carrying value into `s->p`, a member of the formal `s` \
+             (member-store-through-formal)",
+        ),
+        (
+            "typedef struct { int *x; } A; struct H { A value; }; int subject(struct H *h) { h->value = h->value; return 0; }",
+            "indirect memory access is outside the resource projection",
+        ),
     ] {
         let result = run(source);
         let UnrestrictedLegacyResult::Unknown {
@@ -100,8 +109,8 @@ fn pointer_store_and_union_still_refuse() {
                 .diagnostics
                 .iter()
                 .any(|diagnostic| {
-                    matches!(&diagnostic.kind, LegacyDiagnosticKind::Unsupported { description }
-                if description == "indirect memory access is outside the resource projection")
+                    matches!(&diagnostic.kind, LegacyDiagnosticKind::Unsupported { description: found }
+                if found == description)
                 })
         );
     }

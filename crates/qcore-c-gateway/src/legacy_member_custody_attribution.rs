@@ -23,7 +23,8 @@
 //! with no braces that reads no tracked descriptor. The base `P` below is a
 //! formal parameter no statement of the body writes or takes the address of
 //! (`CallerFormals`, rule 5j's reading: `P` designates the caller's object
-//! throughout the body), and the statement is one of:
+//! throughout the body) and whose declarator does not spell `union` (the
+//! census's `form:union`, rule 10w's), and the statement is one of:
 //!
 //! * **release** (`member-release-through-formal`): a whole-statement call
 //!   `R(..)` whose contract in force (no review or pin hold) states
@@ -278,7 +279,7 @@ impl Parser<'_> {
         if !is_name(base) || !is_name(member) {
             return (None, None);
         }
-        if !self.formal_parameters.contains(*base) {
+        if !self.formal_parameters.contains(*base) || self.union_formal(base) {
             return (None, None);
         }
         if !self.caller_formals.contains(base) {
@@ -368,7 +369,7 @@ impl Parser<'_> {
         let (Premise::Release { base, .. } | Premise::Address { base, .. }) = &premise else {
             unreachable!("a call actual is a release or an address");
         };
-        if !self.formal_parameters.contains(base.as_str()) {
+        if !self.formal_parameters.contains(base.as_str()) || self.union_formal(base) {
             return (None, None);
         }
         if !self.caller_formals.contains(base) {
@@ -381,6 +382,32 @@ impl Parser<'_> {
             Some(_) => (Some(premise), None),
             None => (None, Some("an actual neither reader recognises")),
         }
+    }
+
+    /// Whether `base`'s declarator in this function's parameter list spells
+    /// `union` (the census's `form:union`, rule 10w's ground), or cannot be
+    /// read: such a base is never named here.
+    fn union_formal(&self, base: &str) -> bool {
+        let function = self.typed_path_function.as_str();
+        let Some((body_start, _)) = super::find_function_body(self.tokens, function) else {
+            return true;
+        };
+        let Some((open, close)) =
+            super::function_parameter_range(self.tokens, function, body_start)
+        else {
+            return true;
+        };
+        let parameters = &self.tokens[open + 1..close];
+        let Some(at) = parameters.iter().position(|token| token.text == base) else {
+            return true;
+        };
+        let start = parameters[..at]
+            .iter()
+            .rposition(|token| token.text == ",")
+            .map_or(0, |comma| comma + 1);
+        parameters[start..at]
+            .iter()
+            .any(|token| token.text == "union")
     }
 
     /// Parity only: one row per consultation that reached a candidate.

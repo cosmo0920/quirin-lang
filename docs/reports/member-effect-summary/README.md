@@ -29,7 +29,27 @@ The node keeps its writes and stays a non-held `Unknown`: no verdict moves
 `the_status_of_a_function_is_unchanged`, `a_name_needs_every_premise` and
 fourteen more). Fixtures in `tests/member_effect_summary.rs` keep a local
 parent, a rebound formal, a value that reads memory, a chain below the member
-and an uncontracted callee (rule 12k's name) unnamed.
+and an uncontracted callee (rule 12k's name) unnamed. A formal declared as a
+pointer to a `union` is never named either (the census's `form:union`, rule
+10w's ground), which keeps `union_bitfield_places` and `clang_gap_phase2`
+unchanged.
+
+**Pins flipped deliberately** (the first card gate run, 16 failures, each a
+text change with the status unchanged, or rule 38j's admission):
+`access_path_position_residuals` (`c_seize(&q->lock)`),
+`access_path_statements` (`s->p = q`), `address_of_member`
+(`a_release(&hold->lock)`), `cell_protocol_close_actual` (`close(s->aux)`),
+`cell_protocol_fb_declarations` and `cell_protocol_per_end_guards`
+(`mk_event_loop_destroy(thi->evl)`), `cell_protocol_release_window_frames`
+(`flb_task_queue_destroy(ins->singleplex_queue)`),
+`indirect_access_sole_residuals` (`q_free(a->name)`), `indirect_scalar_access`
+(`r->next = s`), `sub_object_stores` (`h->name = x_dup(s)`),
+`typed_field_access` (`d->pane = n`), the unit `a_non_null_release_keeps_the_refusal`:
+all still `Unknown` under rule 38i's name. Rule 38j flips the unit
+`a_body_that_keeps_its_formal_gets_no_member_release`: `node_clear` is now
+`Safe` with a member effect, and its caller, whose actual is a tracked local,
+is refused `member-effect-call-refused`. The probe-state field table names
+the new parser field.
 
 **Re-attribution table on the user's `current` run (046accf6)**, estimated
 from MEMBER-ACCESS-PROJECTION's census

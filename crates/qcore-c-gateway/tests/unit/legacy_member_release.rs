@@ -78,14 +78,17 @@ fn a_destructor_body_validates_and_its_caller_certifies() {
 #[test]
 fn a_body_that_keeps_its_formal_gets_no_member_release() {
     // P4: a body that releases through a formal without releasing the formal
-    // gets no rule 1, so no summary its caller could rely on.
+    // gets no rule 1. Card MEMBER-EFFECT-SUMMARY (rule 38j) flips the body
+    // deliberately: it is admitted and states a member effect, which no
+    // ordinary reader sees; the caller's tracked local is no formal parent, so
+    // its call is refused by name and it stays non-`Safe`.
     let summary = analyze(
         "static void node_clear(struct node *n) { q_nullable_free(n->buf); }\n\
          void subject(void) { struct node *n = q_alloc(); node_clear(n); }\n",
     );
-    assert_ne!(status(&summary, "node_clear"), AnalysisStatus::Safe);
-    assert!(has(&summary, "node_clear", "indirect memory access"));
+    assert_eq!(status(&summary, "node_clear"), AnalysisStatus::Safe);
     assert_ne!(status(&summary, "subject"), AnalysisStatus::Safe);
+    assert!(has(&summary, "subject", "member-effect-call-refused"));
 }
 
 #[test]
@@ -362,7 +365,9 @@ fn a_member_read_through_a_released_base_is_refused() {
 fn a_non_null_release_keeps_the_refusal() {
     let summary = analyze("void subject(struct node *n) { q_free(n->buf); q_nullable_free(n); }\n");
     assert_ne!(status(&summary, "subject"), AnalysisStatus::Safe);
-    assert!(has(&summary, "subject", "indirect memory access"));
+    // Card MEMBER-EFFECT-SUMMARY (rule 38i) re-pins the text: the refusal
+    // names its premise.
+    assert!(has(&summary, "subject", "member-release-through-formal"));
 }
 
 #[test]
