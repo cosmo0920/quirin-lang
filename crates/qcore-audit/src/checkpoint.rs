@@ -70,6 +70,23 @@ pub const SECTIONS: [&str; 10] = [
 /// produced the file, never an input to identity or to a composed verdict.
 pub const PROVENANCE: &str = "provenance";
 
+/// One kind of checkpoint the container carries: its schema version and its
+/// sections in file order (card CORPUS-GROUP-CHECKPOINTS). A reader of one
+/// layout refuses a file of another: the header's schema version and section
+/// list must both be the layout's.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct Layout {
+    pub schema_version: u32,
+    pub sections: &'static [&'static str],
+}
+
+/// The `quirin-audit current` unit checkpoint (schema [`SCHEMA_VERSION`],
+/// [`SECTIONS`]).
+pub const CURRENT_LAYOUT: Layout = Layout {
+    schema_version: SCHEMA_VERSION,
+    sections: &SECTIONS,
+};
+
 /// Magic `QO`, then the format version (big-endian `u16`), then a line-ending
 /// and end-of-file guard that text-mode transfers would corrupt.
 const GUARD: [u8; 4] = *b"\r\n\x1a\n";
@@ -679,7 +696,7 @@ pub struct Checkpoint {
     pub provenance: ProvenanceSection,
 }
 
-fn encode<T: Serialize>(name: &str, value: &T) -> Result<Vec<u8>, String> {
+pub(crate) fn encode<T: Serialize>(name: &str, value: &T) -> Result<Vec<u8>, String> {
     postcard::to_stdvec(value)
         .map_err(|error| format!("could not encode section `{name}`: {error}"))
 }
@@ -805,14 +822,20 @@ fn validate_payloads(
 
 /// Assemble a file from encoded sections in [`SECTIONS`] order.
 pub fn assemble(sections: Vec<(&str, Vec<u8>)>) -> Result<Vec<u8>, String> {
+    assemble_as(CURRENT_LAYOUT, sections)
+}
+
+/// Assemble a file of `layout` from encoded sections in its order.
+pub fn assemble_as(layout: Layout, sections: Vec<(&str, Vec<u8>)>) -> Result<Vec<u8>, String> {
     let names = sections.iter().map(|(name, _)| *name).collect::<Vec<_>>();
-    if names != SECTIONS {
+    if names != layout.sections {
         return Err(format!(
-            "sections {names:?} are not the schema's {SECTIONS:?}"
+            "sections {names:?} are not the schema's {:?}",
+            layout.sections
         ));
     }
     let header = Header {
-        schema_version: SCHEMA_VERSION,
+        schema_version: layout.schema_version,
         sections: sections
             .iter()
             .map(|(name, bytes)| SectionEntry {
@@ -838,12 +861,20 @@ pub fn assemble(sections: Vec<(&str, Vec<u8>)>) -> Result<Vec<u8>, String> {
 /// The content digest of a manifest: SHA-256 over the postcard encoding of
 /// the schema version and every entry except `provenance`.
 pub fn content_sha256(manifest: &[SectionEntry]) -> Result<String, String> {
+    content_sha256_as(CURRENT_LAYOUT, manifest)
+}
+
+/// The content digest of a manifest of `layout`.
+pub fn content_sha256_as(layout: Layout, manifest: &[SectionEntry]) -> Result<String, String> {
     let content = manifest
         .iter()
         .filter(|entry| entry.name != PROVENANCE)
         .cloned()
         .collect::<Vec<_>>();
-    Ok(sha256_hex(&encode("content", &(SCHEMA_VERSION, content))?))
+    Ok(sha256_hex(&encode(
+        "content",
+        &(layout.schema_version, content),
+    )?))
 }
 
 /// Check the magic, the format version and the header length field; return
@@ -872,6 +903,14 @@ fn check_prelude(bytes: &[u8]) -> Result<u32, String> {
 /// the header declares (when `file_length` is known). Returns the header and
 /// the bytes after it that are present in `bytes`.
 fn parse_header(bytes: &[u8], file_length: Option<u64>) -> Result<(Header, &[u8]), String> {
+    parse_header_as(CURRENT_LAYOUT, bytes, file_length)
+}
+
+fn parse_header_as(
+    layout: Layout,
+    bytes: &[u8],
+    file_length: Option<u64>,
+) -> Result<(Header, &[u8]), String> {
     let length = check_prelude(bytes)?;
     let header_end = PRELUDE_LEN + 4 + length as usize;
     if bytes.len() < header_end + 32 {
@@ -881,10 +920,10 @@ fn parse_header(bytes: &[u8], file_length: Option<u64>) -> Result<(Header, &[u8]
         return Err("the header does not match its SHA-256 (tampered or corrupted)".into());
     }
     let header: Header = decode("header", &bytes[PRELUDE_LEN + 4..header_end])?;
-    if header.schema_version != SCHEMA_VERSION {
+    if header.schema_version != layout.schema_version {
         return Err(format!(
-            "unsupported checkpoint schema version {} (this build reads version {SCHEMA_VERSION})",
-            header.schema_version
+            "unsupported checkpoint schema version {} (this build reads version {})",
+            header.schema_version, layout.schema_version
         ));
     }
     let names = header
@@ -892,9 +931,10 @@ fn parse_header(bytes: &[u8], file_length: Option<u64>) -> Result<(Header, &[u8]
         .iter()
         .map(|entry| entry.name.as_str())
         .collect::<Vec<_>>();
-    if names != SECTIONS {
+    if names != layout.sections {
         return Err(format!(
-            "unexpected section list {names:?} (schema {SCHEMA_VERSION} has {SECTIONS:?})"
+            "unexpected section list {names:?} (schema {} has {:?})",
+            layout.schema_version, layout.sections
         ));
     }
     let body_length = header
@@ -929,10 +969,16 @@ pub struct CheckpointReader {
     file: File,
     header: Header,
     body_start: u64,
+    layout: Layout,
 }
 
 impl CheckpointReader {
     pub fn open(path: &Path) -> Result<Self, String> {
+        Self::open_as(path, CURRENT_LAYOUT)
+    }
+
+    /// Open a file of `layout`; a file of any other layout is refused.
+    pub fn open_as(path: &Path, layout: Layout) -> Result<Self, String> {
         let describe = |error: String| format!("{}: {error}", path.display());
         let mut file = File::open(path).map_err(|error| describe(error.to_string()))?;
         let file_length = file
@@ -948,12 +994,14 @@ impl CheckpointReader {
         head.resize(PRELUDE_LEN + 4 + length as usize + 32, 0);
         file.read_exact(&mut head[PRELUDE_LEN + 4..])
             .map_err(|_| describe("truncated: the header is incomplete".into()))?;
-        let (header, _) = parse_header(&head, Some(file_length)).map_err(describe)?;
+        let (header, _) =
+            parse_header_as(layout, &head, Some(file_length)).map_err(describe)?;
         Ok(Self {
             path: path.display().to_string(),
             file,
             header,
             body_start: head.len() as u64,
+            layout,
         })
     }
 
@@ -995,6 +1043,12 @@ impl CheckpointReader {
 
     /// Check every section's digest and decoding, one section at a time.
     pub fn verify(&mut self) -> Result<(), String> {
+        if self.layout != CURRENT_LAYOUT {
+            return Err(format!(
+                "{}: `verify` reads the current-route layout only",
+                self.path
+            ));
+        }
         self.section::<IdentitySection>("identity")?;
         self.section::<PlanSection>("plan")?;
         let global = self.section::<GlobalSection>("global")?;
@@ -1010,7 +1064,7 @@ impl CheckpointReader {
 
     /// The content digest of this file's manifest.
     pub fn content_sha256(&self) -> Result<String, String> {
-        content_sha256(&self.header.sections)
+        content_sha256_as(self.layout, &self.header.sections)
     }
 }
 

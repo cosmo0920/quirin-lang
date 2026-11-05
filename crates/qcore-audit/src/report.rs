@@ -166,6 +166,18 @@ enum ReportField<'a> {
     Json(&'a Value),
 }
 
+/// Card CORPUS-GROUP-CHECKPOINTS: what one unit's report fragment records,
+/// in unit order, as [`AuditReport::absorb`] appends it.
+pub(crate) struct FragmentParts {
+    pub units: Vec<Value>,
+    pub diagnostic_counts: BTreeMap<String, usize>,
+    pub bounds: Vec<Value>,
+    pub bounds_evidence: Vec<Value>,
+    pub null: Vec<Value>,
+    pub null_evidence: Vec<Value>,
+    pub callback_members: Vec<crate::callback_member_fold::UnitFacts>,
+}
+
 pub struct AuditReport {
     revision: String,
     units: Vec<Value>,
@@ -636,6 +648,68 @@ impl AuditReport {
             *self.diagnostic_counts.entry(category).or_default() += count;
         }
         Ok(())
+    }
+
+    /// Card CORPUS-GROUP-CHECKPOINTS: a per-unit fragment's contents, which
+    /// a pinned group checkpoint stores and [`Self::from_fragment_parts`]
+    /// restores. Refused for a fragment carrying whole-report data, exactly
+    /// as [`Self::absorb`] refuses it.
+    pub(crate) fn into_fragment_parts(self) -> Result<FragmentParts, String> {
+        let Self {
+            revision: _,
+            units,
+            diagnostic_counts,
+            source_contracts,
+            evidence,
+            plugin_links,
+            bounds,
+            bounds_evidence,
+            null,
+            null_evidence,
+            callback_members,
+            member_prepass,
+            contract_bundles: _,
+        } = self;
+        if source_contracts.is_some() || evidence.is_some() || member_prepass.is_some() {
+            return Err("a per-unit report fragment carries no whole-report data".into());
+        }
+        if plugin_links.is_some() {
+            return Err(
+                "a checkpointed fragment carries no checker links (no pinned-route binding)".into(),
+            );
+        }
+        Ok(FragmentParts {
+            units,
+            diagnostic_counts,
+            bounds,
+            bounds_evidence,
+            null,
+            null_evidence,
+            callback_members,
+        })
+    }
+
+    /// Card CORPUS-GROUP-CHECKPOINTS: the fragment [`Self::into_fragment_parts`]
+    /// took apart, over `revision`.
+    pub(crate) fn from_fragment_parts(revision: &str, parts: FragmentParts) -> Self {
+        let FragmentParts {
+            units,
+            diagnostic_counts,
+            bounds,
+            bounds_evidence,
+            null,
+            null_evidence,
+            callback_members,
+        } = parts;
+        let mut fragment = Self::new(revision);
+        fragment.units = units;
+        fragment.diagnostic_counts = diagnostic_counts;
+        fragment.bounds = bounds;
+        fragment.bounds_evidence = bounds_evidence;
+        fragment.null = null;
+        fragment.null_evidence = null_evidence;
+        fragment.callback_members = callback_members;
+        fragment
     }
 
     /// Every unit row recorded so far, in order (card

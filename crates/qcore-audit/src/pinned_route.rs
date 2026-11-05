@@ -68,6 +68,11 @@ macro_rules! say {
     }};
 }
 
+mod checkpoints;
+pub use checkpoints::{
+    LAYOUT as CHECKPOINT_LAYOUT, Options as CheckpointOptions, RUN_RECORD as CHECKPOINT_RUN_RECORD,
+};
+
 pub fn run(
     root: &Path,
     monkey_database: Option<&Path>,
@@ -77,6 +82,38 @@ pub fn run(
     contract_manifest: Option<&Path>,
     jobs: usize,
 ) -> Result<bool, String> {
+    run_with_checkpoints(
+        root,
+        monkey_database,
+        monkey_source_report,
+        diagnostic_report,
+        binding_directory,
+        contract_manifest,
+        jobs,
+        None,
+    )
+}
+
+/// Card CORPUS-GROUP-CHECKPOINTS: the pinned replay, or, with `checkpoints`,
+/// the same replay whose library groups are sealed into `.qo` checkpoints at
+/// every phase and reused on `--resume` when their identity is unchanged
+/// ([`checkpoints`]). Without `checkpoints` this is exactly [`run`].
+#[allow(clippy::too_many_arguments)]
+pub fn run_with_checkpoints(
+    root: &Path,
+    monkey_database: Option<&Path>,
+    monkey_source_report: Option<&Path>,
+    diagnostic_report: Option<&Path>,
+    binding_directory: Option<&Path>,
+    contract_manifest: Option<&Path>,
+    jobs: usize,
+    checkpoints: Option<&CheckpointOptions>,
+) -> Result<bool, String> {
+    // Card CORPUS-GROUP-CHECKPOINTS: an environment a checkpoint cannot stand
+    // for is refused before any work.
+    if checkpoints.is_some() {
+        checkpoints::refuse_unsupported()?;
+    }
     let cross_unit_links = crate::cross_unit_links::LinkMap::load_selected()?;
     // Explicit process selection is checked before any expensive source audit.
     let source_contracts = source_contract_configuration()?;
@@ -281,13 +318,39 @@ pub fn run(
             _ => 0,
         })
         .collect::<Vec<_>>();
+    let provider = Mutex::new(());
+    let mut library_counts = AuditCounts::default();
+    let mut captures = ChunkioCaptures::default();
+    // Card CORPUS-GROUP-CHECKPOINTS: the checkpointed phases produce the same
+    // step outcomes, refutation table and cross-unit premise, each library
+    // group reused or recomputed per phase; the fold below is shared.
+    let (outcomes, applied, cross_unit_premise) = if let Some(options) = checkpoints {
+        checkpoints::run_phases(
+            &checkpoints::Route {
+                plans: &plans,
+                steps: &steps,
+                planning_failed: steps
+                    .iter()
+                    .any(|step| matches!(step, Step::PlanningFailed(_))),
+                root: &root,
+                revision: &revision,
+                profile: &profile,
+                contract_manifest,
+                contracts: &contracts,
+                pins: &pins,
+                links: cross_unit_links.as_ref(),
+                run_facts: run_facts.as_ref(),
+                source_contracts: &source_contracts,
+                provider: &provider,
+                jobs,
+            },
+            options,
+        )?
+    } else {
     let dispatch = crate::parallel::heaviest_first(&weights);
     let contexts = (0..plans.len())
         .map(|_| OnceLock::new())
         .collect::<Vec<OnceLock<Option<LibraryContext>>>>();
-    let provider = Mutex::new(());
-    let mut library_counts = AuditCounts::default();
-    let mut captures = ChunkioCaptures::default();
     // Card W45-REFUTED-CONTRACT-WITHDRAWAL: one step's work under a given
     // environment. Phase one runs every step under the loaded contracts;
     // when a body refutes its own declaration, phase two analyses every unit
@@ -347,7 +410,10 @@ pub fn run(
         StepOutcome::Prelude { result, .. } => result.is_err(),
         StepOutcome::Unit { result, .. } => result.is_err(),
         StepOutcome::PlanningFailed(_) => true,
-        StepOutcome::Finish(_) | StepOutcome::MonkeyGate => false,
+        StepOutcome::Finish(_)
+        | StepOutcome::MonkeyGate
+        | StepOutcome::StoredUnit(_)
+        | StepOutcome::Finished { .. } => false,
     };
     let table_of = |outcomes: &[StepOutcome]| {
         crate::refuted_contracts::table(
@@ -438,58 +504,7 @@ pub fn run(
         && outcomes.len() == steps.len()
     {
         let held = crate::refuted_contracts::with_table(&contracts, &applied);
-        let mut exports = Vec::new();
-        let mut definitions = Vec::new();
-        let requested_names = links.requested();
-        let mut census_complete = true;
-        for plan in &plans {
-            for entry in &plan.selected {
-                let file = relative_within(&entry.file, &plan.source_root)
-                    .ok_or("cross-unit home outside library root")?;
-                let file = file.to_string_lossy();
-                let key = format!("{}/{file}", plan.library);
-                let requested = links.names_for(&key);
-                let source = fs::read_to_string(&entry.file).map_err(|error| error.to_string())?;
-                let options = compiler_options(entry)?;
-                let unit = C11TranslationUnit {
-                    source: &source,
-                    include_paths: options.include_paths,
-                    definitions: options.definitions,
-                    preprocessor_options: options.preprocessor_options,
-                    dialect: options.dialect,
-                    function_scope: LegacyFunctionScope::MainSourceDefinitions,
-                    input: options.input,
-                };
-                let prepared = prepare_translation_unit(&unit);
-                census_complete &= prepared.inventory().is_complete();
-                definitions.extend(
-                    prepared
-                        .inventory()
-                        .definitions()
-                        .iter()
-                        .filter(|name| requested_names.contains(*name))
-                        .map(|name| (key.clone(), name.clone())),
-                );
-                if !requested.is_empty() {
-                    exports.extend(
-                        qcore_c_gateway::legacy_c::export_cross_unit_homes(
-                            &prepared,
-                            &held,
-                            &requested,
-                            &links.digest,
-                        )?
-                        .into_iter()
-                        .map(|export| (key.clone(), export)),
-                    );
-                }
-            }
-        }
-        let (imported, homes) = if census_complete {
-            links.select(exports, definitions, &held)
-        } else {
-            println!("cross-unit import phase refused: incomplete definition census");
-            (held, Vec::new())
-        };
+        let (imported, homes) = select_homes(links, &plans, &held)?;
         if !homes.is_empty() {
             let units = steps
                 .iter()
@@ -532,18 +547,7 @@ pub fn run(
                 for (index, outcome) in replaced {
                     outcomes[index] = outcome;
                 }
-                cross_unit_premise = Some(serde_json::json!({
-                    "scope": "conditional: each external call to an imported symbol resolves to its named home definition with compatible function type and calling convention in the actual link and interposition environment",
-                    "premise": links.premise,
-                    "map_sha256": links.digest,
-                    "imported": homes.iter().map(|home| serde_json::json!({
-                        "function": home.function,
-                        "home_unit": links.home_for(&home.function),
-                        "home_raw_source_sha256": home.input_identity.raw_source_sha256,
-                        "home_preprocessed_source_sha256": home.input_identity.preprocessed_source_sha256,
-                        "home_environment_sha256": home.environment_sha256,
-                    })).collect::<Vec<_>>(),
-                }));
+                cross_unit_premise = Some(cross_unit_premise_of(links, &homes));
             } else {
                 println!(
                     "cross-unit import phase refused: incomplete run or changed refutation table"
@@ -551,6 +555,8 @@ pub fn run(
             }
         }
     }
+    (outcomes, applied, cross_unit_premise)
+    };
     for outcome in outcomes {
         match outcome {
             StepOutcome::Prelude { output, result } => {
@@ -559,7 +565,18 @@ pub fn run(
                 library_counts = AuditCounts::default();
                 captures = ChunkioCaptures::default();
             }
-            StepOutcome::Unit { output, result } => {
+            outcome @ (StepOutcome::Unit { .. } | StepOutcome::StoredUnit(_)) => {
+                // Card CORPUS-GROUP-CHECKPOINTS: a checkpointed unit is
+                // restored here, one at a time, into the products the
+                // whole run folds.
+                let (output, result) = match outcome {
+                    StepOutcome::Unit { output, result } => (output, *result),
+                    StepOutcome::StoredUnit(unit) => {
+                        let result = checkpoints::restore_unit(&revision, &unit);
+                        (unit.output, result)
+                    }
+                    _ => unreachable!("matched a unit outcome"),
+                };
                 print!("{output}");
                 let UnitProducts {
                     report: rows,
@@ -567,7 +584,7 @@ pub fn run(
                     native_results: native,
                     teardown_results: teardown,
                     captures: captured,
-                } = (*result)?;
+                } = result?;
                 report.absorb(rows)?;
                 library_counts.absorb(counts);
                 native_results.extend(native);
@@ -587,19 +604,24 @@ pub fn run(
                 result?;
                 let counts = std::mem::take(&mut library_counts);
                 failed |= counts.gateway_failures != 0;
-                println!(
-                    "{}: {} unit(s), {} source function(s), {} projected; {} data-only, {} Safe, {} Pending, {} Unsafe, {} Unknown, {} gateway failure(s)",
-                    plan.library,
-                    counts.units,
-                    counts.source_functions,
-                    counts.projected_functions,
-                    counts.data_only_units,
-                    counts.safe_units,
-                    counts.pending_units,
-                    counts.unsafe_units,
-                    counts.unknown_units,
-                    counts.gateway_failures
-                );
+                println!("{}", library_tally(&plan.library, &counts));
+            }
+            // Card CORPUS-GROUP-CHECKPOINTS: the library postlude a
+            // checkpointed phase ran when the group completed (the same
+            // `finish_library` over the same captures, in unit order), with
+            // the teardown results it appended.
+            StepOutcome::Finished {
+                index,
+                output,
+                result,
+            } => {
+                let plan = &plans[index];
+                print!("{output}");
+                teardown_results.extend(result?);
+                captures = ChunkioCaptures::default();
+                let counts = std::mem::take(&mut library_counts);
+                failed |= counts.gateway_failures != 0;
+                println!("{}", library_tally(&plan.library, &counts));
             }
             StepOutcome::MonkeyGate => {
                 audit_monkey_libevent_contract(&root)?;
@@ -713,6 +735,105 @@ pub fn run(
         println!("Resource diagnostics: {}", path.display());
     }
     Ok(failed)
+}
+
+/// One library's console tally after its postlude.
+fn library_tally(library: &str, counts: &AuditCounts) -> String {
+    format!(
+        "{}: {} unit(s), {} source function(s), {} projected; {} data-only, {} Safe, {} Pending, {} Unsafe, {} Unknown, {} gateway failure(s)",
+        library,
+        counts.units,
+        counts.source_functions,
+        counts.projected_functions,
+        counts.data_only_units,
+        counts.safe_units,
+        counts.pending_units,
+        counts.unsafe_units,
+        counts.unknown_units,
+        counts.gateway_failures
+    )
+}
+
+/// The cross-unit homes the link map selects under `held` (the contracts
+/// with the applied refutation table): every selected unit is prepared for
+/// the definition census, and each requested home exports its summary. A
+/// census that is not complete refuses the import phase (no homes).
+fn select_homes(
+    links: &crate::cross_unit_links::LinkMap,
+    plans: &[LibraryPlan],
+    held: &ResourceContracts,
+) -> Result<(ResourceContracts, Vec<CrossUnitHomeEvidence>), String> {
+    let mut exports = Vec::new();
+    let mut definitions = Vec::new();
+    let requested_names = links.requested();
+    let mut census_complete = true;
+    for plan in plans {
+        for entry in &plan.selected {
+            let file = relative_within(&entry.file, &plan.source_root)
+                .ok_or("cross-unit home outside library root")?;
+            let file = file.to_string_lossy();
+            let key = format!("{}/{file}", plan.library);
+            let requested = links.names_for(&key);
+            let source = fs::read_to_string(&entry.file).map_err(|error| error.to_string())?;
+            let options = compiler_options(entry)?;
+            let unit = C11TranslationUnit {
+                source: &source,
+                include_paths: options.include_paths,
+                definitions: options.definitions,
+                preprocessor_options: options.preprocessor_options,
+                dialect: options.dialect,
+                function_scope: LegacyFunctionScope::MainSourceDefinitions,
+                input: options.input,
+            };
+            let prepared = prepare_translation_unit(&unit);
+            census_complete &= prepared.inventory().is_complete();
+            definitions.extend(
+                prepared
+                    .inventory()
+                    .definitions()
+                    .iter()
+                    .filter(|name| requested_names.contains(*name))
+                    .map(|name| (key.clone(), name.clone())),
+            );
+            if !requested.is_empty() {
+                exports.extend(
+                    qcore_c_gateway::legacy_c::export_cross_unit_homes(
+                        &prepared,
+                        held,
+                        &requested,
+                        &links.digest,
+                    )?
+                    .into_iter()
+                    .map(|export| (key.clone(), export)),
+                );
+            }
+        }
+    }
+    Ok(if census_complete {
+        links.select(exports, definitions, held)
+    } else {
+        println!("cross-unit import phase refused: incomplete definition census");
+        (held.clone(), Vec::new())
+    })
+}
+
+/// The report's record of the cross-unit premise the import phase applied.
+fn cross_unit_premise_of(
+    links: &crate::cross_unit_links::LinkMap,
+    homes: &[CrossUnitHomeEvidence],
+) -> Value {
+    serde_json::json!({
+        "scope": "conditional: each external call to an imported symbol resolves to its named home definition with compatible function type and calling convention in the actual link and interposition environment",
+        "premise": links.premise,
+        "map_sha256": links.digest,
+        "imported": homes.iter().map(|home| serde_json::json!({
+            "function": home.function,
+            "home_unit": links.home_for(&home.function),
+            "home_raw_source_sha256": home.input_identity.raw_source_sha256,
+            "home_preprocessed_source_sha256": home.input_identity.preprocessed_source_sha256,
+            "home_environment_sha256": home.environment_sha256,
+        })).collect::<Vec<_>>(),
+    })
 }
 
 fn audit_library_summary_profiles(
@@ -896,7 +1017,17 @@ enum StepOutcome {
         output: String,
         result: Box<Result<UnitProducts, String>>,
     },
+    /// Card CORPUS-GROUP-CHECKPOINTS: a unit a checkpointed phase sealed or
+    /// reused, restored by the fold.
+    StoredUnit(Box<checkpoints::StoredUnit>),
     Finish(usize),
+    /// Card CORPUS-GROUP-CHECKPOINTS: a postlude a checkpointed phase ran,
+    /// with the teardown results it appended.
+    Finished {
+        index: usize,
+        output: String,
+        result: Result<Vec<Value>, String>,
+    },
     MonkeyGate,
     PlanningFailed(String),
 }
