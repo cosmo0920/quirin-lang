@@ -837,6 +837,12 @@
     "crates/qcore-core/src/**"
    ],
    "why": "census: its units list the directory (1 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "crates/quirin-audit-plugin-measure/tests/slot_wait.rs",
+   "literal": "scripts",
+   "reads": [],
+   "why": "a base path inside the test's scratch repository (directory.join(\"scripts\")); the one repository read, ../../scripts/gate_slot.py, is a file literal attributed exactly (added by the integrator at the MEASURE-QUOTA-AND-INCREMENTAL + GATE-SCOPE-PRECISE-SELECTION merge)"
   }
  ],
  "expansions": [
