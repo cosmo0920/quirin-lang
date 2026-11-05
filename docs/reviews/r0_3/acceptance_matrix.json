@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 882
+  "named_followups": 888
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -9695,8 +9695,8 @@
   {
    "id": "W44-TEST-CRITICAL-PATH-ROUTE-PARITY",
    "title": "`unsupported_close_route_parity` alone sets the end of the parallel test phase: 153-187 s of a 172-211 s run phase, 53.5 s when run serially",
-   "why": "Under scripts/run_test_binaries.py (card W44-TEST-SUITE-WALL-TIME), the heaviest binary starts first and finishes last in all three final runs, at 187.4, 183.2 and 153.0 s. The next-longest binary finishes 36-42 s earlier. Changing --jobs between 4 and 16 moves the run phase only between 172 and 219 s. Sharing the CPUs makes the binary run about 3x slower than its serial 53.5 s. The binary's longest test is `both_routes_refuse_the_same_body_mutations`. For each of its 12 rows, the retained route rebuilds the file-backend evidence over the unmutated `backend::SOURCE` with the full Clang pipeline, and so does the moved route's prerequisite derivation (docs/reports/w44-test-suite-wall-time/evidence/per-binary.json). DISCHARGE: a measured cut of this binary's longest test that keeps every forged row's own core evaluation. One option is a shared retained-backend fixture with a stated equivalence argument. Report the new critical path.",
-   "source": "docs/reports/w44-test-suite-wall-time/README.md",
+   "why": "Under scripts/run_test_binaries.py (card W44-TEST-SUITE-WALL-TIME), the heaviest binary starts first and finishes last in all three final runs, at 187.4, 183.2 and 153.0 s. The next-longest binary finishes 36-42 s earlier. Changing --jobs between 4 and 16 moves the run phase only between 172 and 219 s. Sharing the CPUs makes the binary run about 3x slower than its serial 53.5 s. The binary's longest test is `both_routes_refuse_the_same_body_mutations`. For each of its 12 rows, the retained route rebuilds the file-backend evidence over the unmutated `backend::SOURCE` with the full Clang pipeline, and so does the moved route's prerequisite derivation (docs/reports/w44-test-suite-wall-time/evidence/per-binary.json). DISCHARGE: a measured cut of this binary's longest test that keeps every forged row's own core evaluation. One option is a shared retained-backend fixture with a stated equivalence argument. Report the new critical path. Requirement R5 of docs/plans/gate-time-reduction/README.md (2026-11-05): the route-parity and composition-mutation binaries should be selected only when a route or composition seam changes, not for every change to their crate.",
+   "source": "docs/reports/w44-test-suite-wall-time/README.md, docs/plans/gate-time-reduction/README.md",
    "recorded_by": "W44-TEST-SUITE-WALL-TIME"
   },
   {
@@ -12972,8 +12972,8 @@
   {
    "id": "GATE-SCOPE-RUNTIME-READS-HEURISTIC",
    "title": "The scoped card gate finds run-time readers by a string-literal heuristic: it over-selects for broad walkers and cannot see data-derived paths or filtered whole-repository walks",
-   "why": "scripts/gate_scope.py (card GATE-ELASTIC) finds compile-time readers exactly (include_str!/include_bytes!/include!/#[path], 130 cross-crate rows, one unresolvable include that is text inside a string), but run-time readers only by string literals naming a tracked path or a parent directory. Measured consequence (docs/reports/gate-elastic/selection.json): workspace_layering.rs (.join(\"crates\")) and composition_bounds.rs (walks crates/) put qcore-compiler, qcore-verification and their dependents into the scope of every crate change (5-6 of 13 root members), and production_symbolic_adoption.rs (walks providers/) sends every providers/ change to qcore-contract and so the full suite. It cannot see a path a test computes from data (a manifest entry) or a whole-repository walk filtered afterwards (qcore-contract bounds_contract.rs, compiler tracked_inputs.rs), so the full gate per landing stays the arbiter. DISCHARGE: declare each repository walk's filter where it is made (for example a reviewed table of walker, root and extension the scoper reads, with a test that every tracked_files call outside a crate's own directory is listed), then measure the scope gain against selection.json.",
-   "source": "docs/reports/gate-elastic/README.md"
+   "why": "scripts/gate_scope.py (card GATE-ELASTIC) finds compile-time readers exactly (include_str!/include_bytes!/include!/#[path], 130 cross-crate rows, one unresolvable include that is text inside a string), but run-time readers only by string literals naming a tracked path or a parent directory. Measured consequence (docs/reports/gate-elastic/selection.json): workspace_layering.rs (.join(\"crates\")) and composition_bounds.rs (walks crates/) put qcore-compiler, qcore-verification and their dependents into the scope of every crate change (5-6 of 13 root members), and production_symbolic_adoption.rs (walks providers/) sends every providers/ change to qcore-contract and so the full suite. It cannot see a path a test computes from data (a manifest entry) or a whole-repository walk filtered afterwards (qcore-contract bounds_contract.rs, compiler tracked_inputs.rs), so the full gate per landing stays the arbiter. DISCHARGE: declare each repository walk's filter where it is made (for example a reviewed table of walker, root and extension the scoper reads, with a test that every tracked_files call outside a crate's own directory is listed), then measure the scope gain against selection.json. Requirement R1 of docs/plans/gate-time-reduction/README.md (2026-11-05): probe at 96a3efd3b, one libc .qv contract selects full mode through string-literal readers of providers/ in qcore-c-gateway and qcore-contract; `--reader-granularity file` is already the default, so the remaining defect is directory attribution of literals.",
+   "source": "docs/reports/gate-elastic/README.md, docs/plans/gate-time-reduction/README.md"
   },
   {
    "id": "PROVIDER-CONFORMANCE-CORE-DEPS-UNGATED",
@@ -13405,6 +13405,48 @@
    "why": "Registered by LIBC-GAP-DECLARATIONS. 41 (function, callee) pairs on the 046accf6 current run (55 sites, all librdkafka through rd_alloca; 1 function blocked only by uncontracted calls), the largest name of the libc/builtin gap. No declaration states it: `resource_return_none()` would refuse a release as an unresolved identity but would never see an escape (a returned or stored alloca pointer is untracked data). Recommended reading (a user choice, W48-CALLEE-DECISION-TABLE class 6): the C gateway reads the builtin as storage of the calling frame with no obligation; a release of it is an invalid_release candidate (C11 7.22.3.3p2), a return of it, a store into anything that outlives the frame or a retaining hand-off is refused (frame-storage-escapes); its non-NULL result is already the null property's (null_deref/walk.rs). DISCHARGE: that reading with Lean parity (a QCore.FrameStorage model) and a measurement, or a recorded decision to keep it refused.",
    "source": "docs/reports/libc-gap-declarations/README.md",
    "recorded_by": "LIBC-GAP-DECLARATIONS"
+  },
+  {
+   "id": "GATE-SCOPE-FULL-CRATES-TEST-ONLY",
+   "title": "A test-only edit inside a FULL_CRATES crate selects the full Rust suite",
+   "why": "scripts/gate_scope.py escalates to full mode whenever a diff reaches qcore-c-gateway, qcore-core, qcore-contract or qcore-schemas (FULL_CRATES, seam E), including a diff confined to that crate's tests/. Probe at 96a3efd3b: `--paths crates/qcore-c-gateway/tests/libc_gap_declarations.rs --plan` prints `mode: full` and 22 packages. DISCHARGE: a diff confined to crates/<crate>/tests/<binary>.rs and its fixtures selects that binary and its readers in scoped mode, with the selection replay of docs/plans/gate-time-reduction/README.md R9 showing no missed failure.",
+   "source": "docs/plans/gate-time-reduction/README.md",
+   "recorded_by": "GATE-TIME-REQUIREMENTS"
+  },
+  {
+   "id": "CONTRACT-COUNT-PINS-OUTSIDE-LOCKS",
+   "title": "Aggregate contract counts are literals in Rust tests every contract card edits",
+   "why": "Besides the per-file contract-inventory.lock pins, compiler/tests/contract_loader.rs pins (66, 577, 370), retaining 113, pending review 11, relational 10 and 147 corpus modules, and `source_assumptions().len() == 66` recurs in contract_loader.rs, crates/qcore-audit/tests/provider_selection.rs, crates/qcore-c-gateway/tests/neighbours.rs and prod_contracts.rs. Every contract card edits them (37 commits touched contract_loader.rs since 2026-10-20) and concurrent contract cards conflict on them at merge (round 3: three cards). DISCHARGE: the aggregates are derived from the providers' contract-inventory.lock files and the load-path manifest, the per-file lock check in qcore_contract_corpus.rs is unchanged, and a declaration added to one provider changes no file outside providers/.",
+   "source": "docs/plans/gate-time-reduction/README.md",
+   "recorded_by": "GATE-TIME-REQUIREMENTS"
+  },
+  {
+   "id": "GATEWAY-TESTS-CROSS-TREE-INCLUDES",
+   "title": "qcore-c-gateway tests include proof/ and providers/ files, so a Lean or .qv edit selects the full suite",
+   "why": "Tests under crates/qcore-c-gateway/tests/ read proof/QCore/*.lean and providers/**/*.qv with include_str!, which gate_scope.py correctly attributes to the gateway, a FULL_CRATES member. Probe at 96a3efd3b: one libc .qv contract and one Lean module (proof/QCore/WrittenSetDerivation.lean, via qcore-core) each select full mode. DISCHARGE: the Lean-correspondence and provider-text checks move to a leaf test target outside FULL_CRATES with the same assertions, and the probes select that target and the Lean or provider step instead of full mode.",
+   "source": "docs/plans/gate-time-reduction/README.md",
+   "recorded_by": "GATE-TIME-REQUIREMENTS"
+  },
+  {
+   "id": "MEASURE-SLOT-WAIT-OUTSIDE-QUOTA",
+   "title": "A declared measurement's wall-time quota counts its gate-slot waits",
+   "why": "quirin-audit measure takes the audit gate slots per profile, and `--timeout-ms` bounds the whole run, waits included; a measurement queued behind a rust-suite job (which holds every audit slot) spends quota while idle. Round 3 (2026-11-05): two measurements running beside gates took 3 h 58 min and 6 h 23 min of a 10 h quota. DISCHARGE: the quota counts analysis time only (slot waits recorded separately in the report), with a test of a run that waits for a held slot.",
+   "source": "docs/plans/gate-time-reduction/README.md",
+   "recorded_by": "GATE-TIME-REQUIREMENTS"
+  },
+  {
+   "id": "MEASURE-INCREMENTAL-BASELINE-COMPOSITION",
+   "title": "Every declared measurement re-audits all three profiles from scratch",
+   "why": "A card's measurement re-runs corpus, system and slice on the tip side even when only one provider's contracts changed (CFL-MPACK r2: 3 h 58 min; LIBC-GAP: 6 h 23 min). DISCHARGE: the tip side re-audits only translation units whose source, contract or .qo input digests differ from the published baseline and joins the baseline's unchanged components; the composed comparison is shown equal to a full run on a sample of landings before it replaces the full run, and any digest the join cannot verify falls back to a full re-audit of that unit (fail-closed). Related: W45-CHECKPOINT-PINNED-REPLAY-ROUTE, W45-CHECKPOINT-GROUPS-IN-FLIGHT, CORPUS-DISPATCH-BY-SOURCE-SIZE.",
+   "source": "docs/plans/gate-time-reduction/README.md",
+   "recorded_by": "GATE-TIME-REQUIREMENTS"
+  },
+  {
+   "id": "CORPUS-ROUTES-OUT-OF-HOST",
+   "title": "Corpus routes and source-analysis adapters are built into the qcore-audit host",
+   "why": "crates/qcore-audit links quirin-source-analysis and the pinned/current corpus routes (pinned_route.rs, current_route.rs), so host and gateway changes rebuild and retest corpus code and corpus changes select the host. DISCHARGE: the routes move behind an out-of-process quirin-audit subcommand plugin after W45-SUBCOMMAND-CERTIFICATE-ROUTE (plugin Safe/Unsafe admitted only through trusted-core certificate or witness replay, with Lean parity) and W45-SUBCOMMAND-HOST-REPORT-TRUST are discharged, and the built-in routes are removed only after parity on all three profiles is archived under docs/reports/ (hard invariant 3).",
+   "source": "docs/plans/gate-time-reduction/README.md",
+   "recorded_by": "GATE-TIME-REQUIREMENTS"
   }
  ],
  "updated": "Completed plugin premise integration; exact hand-maintained union retains810followups, borrowed measured-source8419Rust/354Lean/freshcard133provider, exact source equivalence checked; authoritative root committed-matrix Python confirmation in integration receipt. CMetrics map/opts API model specifications added at the explicit user request. Eight declared-model API contracts remain outside interpreted views, with CMT-MAP-OPTS-CONTRACT-ADOPTION and CMT-LABELED-HASH-ZERO-STATIC-STORAGE Open. No trusted API coverage is claimed; the source gate is recorded by this card alongside its separate initializer native checkpoint. W48-CMT-TRACKED-INTERIOR-SELF-INIT implements rule 36b's checked initializer effect transport for an exact live owned root or embedded record, retaining actual self writes, invalidating aliased member facts and preserving resource obligations; nondefault custody frames refuse and no ordinary summary is exported. The canonical CFL intrusive_list.qv declares matching audit preconditions/effects; two CMetrics .qv modules add six map and two opts lifecycle models, including transitive ownership, partial failure, borrowed results and uncleared cleanup fields. All remain outside interpreted views; checked API adoption and labeled zero-hash storage accounting have named Open follow-ups. Fresh BASE/planner precedes prediction f18d96065 and implementation; the later contract amendment 08da23123 precedes .qv edits. Native corpus BASE/TIP Safe/Unknown/Pending/provisional-Unsafe: 1009 / 3816 / 0 / 9 to 1011 / 3814 / 0 / 9; full system/slice, 5781 NULL dictionaries and runtime projections are compared, 241 semantic leaves accounted, zero unexplained leaves and no prior Safe loss. Gate 8654 Rust / 370 Lean / 374 Python, provider 133 Rust / 25 Python and all five package verifies pass. The actual deep source reader uses 328 KiB below 1 MiB. Full getter closure remains Open; W48-CMT-SELF-INIT-DISJOINT-FRAMES tracks the next bounded frame extension, and W48-EXACT-RETURN-WITNESS-PRECISION is unchanged. Native evidence is isolated to measured e92d8aef35a8bd14550e90219d19a56eb3b196e7; later source gate 2d0d85299b830aa24d7f200d63a308653582363f validates the added declared API models separately; see docs/reports/w48-cmt-tracked-interior-self-init/README.md."

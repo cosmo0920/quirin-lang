@@ -1,0 +1,70 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "GATE-TIME-REQUIREMENTS",
+  "base": "96a3efd3b",
+  "measured_tip": "96a3efd3b",
+  "increment_paragraph": "**GATE-TIME-REQUIREMENTS** (integrator record; USER REQUEST 2026-11-05, verbatim: \"We need to record the requirements of saving gating time tasks.\"): docs/plans/gate-time-reduction/README.md records ten requirements for shortening card gates, landing gates and declared measurements, each checked against integrate/r3 96a3efd3b. Measured: the landing full gate took 49 min (Rust suite 43 min with its slot wait); the CFL-MPACK r2 and LIBC-GAP declared measurements took 3 h 58 min and 6 h 23 min. Scoper probes: one new gateway test file, one libc .qv contract and one Lean module each select full mode. Registered: GATE-SCOPE-FULL-CRATES-TEST-ONLY, CONTRACT-COUNT-PINS-OUTSIDE-LOCKS, GATEWAY-TESTS-CROSS-TREE-INCLUDES, MEASURE-SLOT-WAIT-OUTSIDE-QUOTA, MEASURE-INCREMENTAL-BASELINE-COMPOSITION, CORPUS-ROUTES-OUT-OF-HOST; amended GATE-SCOPE-RUNTIME-READS-HEURISTIC and W44-TEST-CRITICAL-PATH-ROUTE-PARITY. No code, contract or Lean change; no card started.",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "GATE-SCOPE-FULL-CRATES-TEST-ONLY",
+      "operation": "register",
+      "title": "A test-only edit inside a FULL_CRATES crate selects the full Rust suite",
+      "text": "scripts/gate_scope.py escalates to full mode whenever a diff reaches qcore-c-gateway, qcore-core, qcore-contract or qcore-schemas (FULL_CRATES, seam E), including a diff confined to that crate's tests/. Probe at 96a3efd3b: `--paths crates/qcore-c-gateway/tests/libc_gap_declarations.rs --plan` prints `mode: full` and 22 packages. DISCHARGE: a diff confined to crates/<crate>/tests/<binary>.rs and its fixtures selects that binary and its readers in scoped mode, with the selection replay of docs/plans/gate-time-reduction/README.md R9 showing no missed failure.",
+      "source": "docs/plans/gate-time-reduction/README.md",
+      "recorded_by": "GATE-TIME-REQUIREMENTS"
+    },
+    {
+      "id": "CONTRACT-COUNT-PINS-OUTSIDE-LOCKS",
+      "operation": "register",
+      "title": "Aggregate contract counts are literals in Rust tests every contract card edits",
+      "text": "Besides the per-file contract-inventory.lock pins, compiler/tests/contract_loader.rs pins (66, 577, 370), retaining 113, pending review 11, relational 10 and 147 corpus modules, and `source_assumptions().len() == 66` recurs in contract_loader.rs, crates/qcore-audit/tests/provider_selection.rs, crates/qcore-c-gateway/tests/neighbours.rs and prod_contracts.rs. Every contract card edits them (37 commits touched contract_loader.rs since 2026-10-20) and concurrent contract cards conflict on them at merge (round 3: three cards). DISCHARGE: the aggregates are derived from the providers' contract-inventory.lock files and the load-path manifest, the per-file lock check in qcore_contract_corpus.rs is unchanged, and a declaration added to one provider changes no file outside providers/.",
+      "source": "docs/plans/gate-time-reduction/README.md",
+      "recorded_by": "GATE-TIME-REQUIREMENTS"
+    },
+    {
+      "id": "GATEWAY-TESTS-CROSS-TREE-INCLUDES",
+      "operation": "register",
+      "title": "qcore-c-gateway tests include proof/ and providers/ files, so a Lean or .qv edit selects the full suite",
+      "text": "Tests under crates/qcore-c-gateway/tests/ read proof/QCore/*.lean and providers/**/*.qv with include_str!, which gate_scope.py correctly attributes to the gateway, a FULL_CRATES member. Probe at 96a3efd3b: one libc .qv contract and one Lean module (proof/QCore/WrittenSetDerivation.lean, via qcore-core) each select full mode. DISCHARGE: the Lean-correspondence and provider-text checks move to a leaf test target outside FULL_CRATES with the same assertions, and the probes select that target and the Lean or provider step instead of full mode.",
+      "source": "docs/plans/gate-time-reduction/README.md",
+      "recorded_by": "GATE-TIME-REQUIREMENTS"
+    },
+    {
+      "id": "MEASURE-SLOT-WAIT-OUTSIDE-QUOTA",
+      "operation": "register",
+      "title": "A declared measurement's wall-time quota counts its gate-slot waits",
+      "text": "quirin-audit measure takes the audit gate slots per profile, and `--timeout-ms` bounds the whole run, waits included; a measurement queued behind a rust-suite job (which holds every audit slot) spends quota while idle. Round 3 (2026-11-05): two measurements running beside gates took 3 h 58 min and 6 h 23 min of a 10 h quota. DISCHARGE: the quota counts analysis time only (slot waits recorded separately in the report), with a test of a run that waits for a held slot.",
+      "source": "docs/plans/gate-time-reduction/README.md",
+      "recorded_by": "GATE-TIME-REQUIREMENTS"
+    },
+    {
+      "id": "MEASURE-INCREMENTAL-BASELINE-COMPOSITION",
+      "operation": "register",
+      "title": "Every declared measurement re-audits all three profiles from scratch",
+      "text": "A card's measurement re-runs corpus, system and slice on the tip side even when only one provider's contracts changed (CFL-MPACK r2: 3 h 58 min; LIBC-GAP: 6 h 23 min). DISCHARGE: the tip side re-audits only translation units whose source, contract or .qo input digests differ from the published baseline and joins the baseline's unchanged components; the composed comparison is shown equal to a full run on a sample of landings before it replaces the full run, and any digest the join cannot verify falls back to a full re-audit of that unit (fail-closed). Related: W45-CHECKPOINT-PINNED-REPLAY-ROUTE, W45-CHECKPOINT-GROUPS-IN-FLIGHT, CORPUS-DISPATCH-BY-SOURCE-SIZE.",
+      "source": "docs/plans/gate-time-reduction/README.md",
+      "recorded_by": "GATE-TIME-REQUIREMENTS"
+    },
+    {
+      "id": "CORPUS-ROUTES-OUT-OF-HOST",
+      "operation": "register",
+      "title": "Corpus routes and source-analysis adapters are built into the qcore-audit host",
+      "text": "crates/qcore-audit links quirin-source-analysis and the pinned/current corpus routes (pinned_route.rs, current_route.rs), so host and gateway changes rebuild and retest corpus code and corpus changes select the host. DISCHARGE: the routes move behind an out-of-process quirin-audit subcommand plugin after W45-SUBCOMMAND-CERTIFICATE-ROUTE (plugin Safe/Unsafe admitted only through trusted-core certificate or witness replay, with Lean parity) and W45-SUBCOMMAND-HOST-REPORT-TRUST are discharged, and the built-in routes are removed only after parity on all three profiles is archived under docs/reports/ (hard invariant 3).",
+      "source": "docs/plans/gate-time-reduction/README.md",
+      "recorded_by": "GATE-TIME-REQUIREMENTS"
+    },
+    {
+      "id": "GATE-SCOPE-RUNTIME-READS-HEURISTIC",
+      "operation": "append",
+      "text": "Requirement R1 of docs/plans/gate-time-reduction/README.md (2026-11-05): probe at 96a3efd3b, one libc .qv contract selects full mode through string-literal readers of providers/ in qcore-c-gateway and qcore-contract; `--reader-granularity file` is already the default, so the remaining defect is directory attribution of literals.",
+      "source": "docs/plans/gate-time-reduction/README.md"
+    },
+    {
+      "id": "W44-TEST-CRITICAL-PATH-ROUTE-PARITY",
+      "operation": "append",
+      "text": "Requirement R5 of docs/plans/gate-time-reduction/README.md (2026-11-05): the route-parity and composition-mutation binaries should be selected only when a route or composition seam changes, not for every change to their crate.",
+      "source": "docs/plans/gate-time-reduction/README.md"
+    }
+  ]
+}

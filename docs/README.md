@@ -41,6 +41,7 @@ They are not interchangeable.
 | Component audit IR and a 6–7 GB audit budget | [AUDIT-IR implementation card](development/audit-ir-card.md) |
 | Prospective backlog, retry and engine cards | [Fluent Bit system coverage queue](plans/fluent-bit-system-coverage/README.md) |
 | Prospective coverage cards (typed access paths, callee closure) | [Unsupported coverage queue](plans/unsupported-coverage/README.md) |
+| Gate and measurement time requirements (scoper, count pins, incremental measurement) | [Gate time reduction](plans/gate-time-reduction/README.md) |
 | Prospective expression, place and core-connection cards from the Clang gap analysis | [Clang gap card queue](plans/clang-gap-cards/README.md) |
 | Atomic hypotheses below contract premises | [CONTRACT-HYPOTHESIS-GRAPH-V1](plans/contract-hypothesis-graph/README.md) |
 | Executed system audit investigations and resume queue | [Three Fluent Bit investigation cards](reports/fb-system-audit-cards/README.md) |
