@@ -1,5 +1,12 @@
 # MEMBER-ACCESS-PROJECTION prediction
 
+**Note (after implementation; no row and no block change).** Measured against
+`baseline:c8c7edf21`, the tip also carries integrate/r3's own predicted moves
+(LIBC-GAP-DECLARATIONS' four and CFL-MPACK-EXTERNAL-DECLARATIONS' corpus rows,
+as their `measure-prediction` blocks list them); they are theirs, not this
+card's. The fixture `the_predicted_crc32c_rows` confirms the three corpus
+moves on the librdkafka bodies.
+
 Committed before any gateway change, on base `96a3efd3b` (integrate/r3). The
 census is [README.md](README.md) section 1. Rows are relisted at
 `baseline:c8c7edf21` (`private/baselines/c8c7edf2165a2065c234f3a63b4eed23e937ced6/`
