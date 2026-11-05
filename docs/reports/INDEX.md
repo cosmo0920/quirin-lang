@@ -647,6 +647,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [main-guard-removal](main-guard-removal/README.md) | MAIN-GUARD-REMOVAL |
 
+| [measure-quota-and-incremental](measure-quota-and-incremental/README.md) | MEASURE-QUOTA-AND-INCREMENTAL |
+
 | [measure-tool](measure-tool/README.md) | MEASURE-TOOL |
 
 | [measure-tool-landing-publish](measure-tool-landing-publish/README.md) | MEASURE-TOOL-LANDING-PUBLISH |
