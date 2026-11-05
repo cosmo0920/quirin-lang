@@ -433,7 +433,7 @@ class CommandLine(unittest.TestCase):
             receipt = json.loads((root / "r.json").read_text())
             self.assertEqual(receipt["slot_record"]["waited_seconds"],
                              admitted["waited_seconds"])
-            self.assertEqual(list(root.glob(".wait.json.*.partial")), [])
+            self.assertFalse((root / f".wait.json.{process.pid}.partial").exists())
 
     def test_a_nested_job_is_admitted_at_once_in_its_wait_record(self):
         with tempfile.TemporaryDirectory() as directory:
