@@ -251,3 +251,117 @@ contract {
     ensures normal resource_borrowed(iovcnt);
     ensures normal resource_return_none();
 };
+
+// ## Card LIBC-GAP-DECLARATIONS: descriptor, path and buffer uses
+//
+// TRUSTED ASSUMPTIONS (trust boundary 28), read from the prototypes on the
+// audited host, where no audited unit defines `_FILE_OFFSET_BITS` (so no
+// `__REDIRECT` to a `*64` name applies and `__off_t` is `long int`, `i64`):
+//
+//   extern __off_t lseek (int __fd, __off_t __offset, int __whence) __THROW;
+//   extern int ftruncate (int __fd, __off_t __length) __THROW __wur;
+//   extern ssize_t readlink (const char *__restrict __path,
+//                            char *__restrict __buf, size_t __len)
+//     __THROW __nonnull ((1, 2)) __wur;
+//   extern int chown (const char *__file, __uid_t __owner, __gid_t __group)
+//     __THROW __nonnull ((1)) __wur;
+//   extern int posix_fallocate (int __fd, off_t __offset, off_t __len);
+//   extern int msync (void *__addr, size_t __len, int __flags);
+//   extern ssize_t getrandom (void *__buffer, size_t __length,
+//                             unsigned int __flags) __wur;
+//
+// (`unistd.h:339`, `:1049`, `:838-841`, `:493-494`; `fcntl.h:324`;
+// `sys/mman.h:89`; `sys/random.h`.) `__uid_t`, `__gid_t` and `unsigned int`
+// are `u32`; `ssize_t` is `isize`.
+//
+// ## The custody statements
+//
+// Each USES what it is handed and creates, closes, frees or retains nothing,
+// so every parameter is `resource_borrowed` and every result
+// `resource_return_none()`, `read`'s statement above:
+//
+// * `lseek`, `ftruncate` and `posix_fallocate` use an open descriptor
+//   (POSIX): they move its offset or change its file's size, and the
+//   descriptor stays open. A tracked descriptor handed to them is a use, so a
+//   use after its `close` is a `use_after_release` candidate (contract
+//   specification C04.6 rule 6).
+// * `readlink` reads a path and writes at most `__len` bytes into the
+//   caller's buffer; `chown` reads a path.
+// * `msync` writes back a mapping the caller keeps (POSIX msync()). The
+//   mapping's own lifecycle (`mmap`/`munmap`, whose failure value is the
+//   pointer sentinel `MAP_FAILED`) is not declared, so no mapping is tracked
+//   and the address is borrowed data.
+// * `getrandom` writes at most `__length` bytes into the caller's buffer
+//   (Linux getrandom(2)).
+//
+// Nothing here says anything about errors, `errno`, short transfers, file
+// sizes or permissions.
+
+extern fn lseek(fd: i32, offset: i64, whence: i32) -> i64
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(fd);
+    ensures normal resource_borrowed(offset);
+    ensures normal resource_borrowed(whence);
+    ensures normal resource_return_none();
+};
+
+extern fn ftruncate(fd: i32, length: i64) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(fd);
+    ensures normal resource_borrowed(length);
+    ensures normal resource_return_none();
+};
+
+extern fn posix_fallocate(fd: i32, offset: i64, len: i64) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(fd);
+    ensures normal resource_borrowed(offset);
+    ensures normal resource_borrowed(len);
+    ensures normal resource_return_none();
+};
+
+extern fn readlink(path: ptr<const, u8>, buf: ptr<mut, u8>, len: usize) -> isize
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(path);
+    ensures normal resource_borrowed(buf);
+    ensures normal resource_borrowed(len);
+    ensures normal resource_return_none();
+};
+
+extern fn chown(file: ptr<const, u8>, owner: u32, group: u32) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(file);
+    ensures normal resource_borrowed(owner);
+    ensures normal resource_borrowed(group);
+    ensures normal resource_return_none();
+};
+
+extern fn msync(addr: ptr<mut, u8>, len: usize, flags: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(addr);
+    ensures normal resource_borrowed(len);
+    ensures normal resource_borrowed(flags);
+    ensures normal resource_return_none();
+};
+
+extern fn getrandom(buffer: ptr<mut, u8>, length: usize, flags: u32) -> isize
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(buffer);
+    ensures normal resource_borrowed(length);
+    ensures normal resource_borrowed(flags);
+    ensures normal resource_return_none();
+};

@@ -259,3 +259,63 @@ contract {
     ensures normal resource_callback_invoked(compar, _, _);
     ensures normal resource_return_none();
 };
+
+// ## Card LIBC-GAP-DECLARATIONS: `abs`, `<ctype.h>` case mapping and `strcat`
+//
+// TRUSTED ASSUMPTIONS (trust boundary 28), read from the prototypes on the
+// audited host (`/usr/include/stdlib.h:1008`, `/usr/include/ctype.h:122-125`,
+// `/usr/include/string.h:164-165`):
+//
+//   extern int abs (int __x) __THROW __attribute__ ((__const__)) __wur;
+//   extern int tolower (int __c) __THROW;
+//   extern int toupper (int __c) __THROW;
+//   extern char *strcat (char *__restrict __dest, const char *__restrict __src)
+//     __THROW __nonnull ((1, 2));
+//
+// `abs`, `tolower` and `toupper` map an `int` to an `int` (C11 7.22.6.1,
+// 7.4.2.1, 7.4.2.2): no pointer anywhere, so `resource_borrowed` and
+// `resource_return_none()` are the only faithful modes. Nothing here says
+// anything about `abs(INT_MIN)` or an argument outside `unsigned char`/`EOF`.
+//
+// `strcat` appends a copy of `src` to the string at `dest` and returns `dest`
+// (C11 7.24.3.1): the exact alias of argument 1, `strcpy`'s statement in
+// `libc/string.qv` (`resource_return_alias(dest, nonnull)`, contract
+// specification C04.3.1). It allocates, frees and retains nothing. It stands
+// in this module and not in `libc/string.qv` because that module is
+// published: its SHA-256 is pinned in `providers/contract-load-path.json` and
+// is part of the identity of every contract that inherits from it, which a
+// new declaration there would change for no semantic reason. Nothing here
+// says anything about the destination's capacity or overlap.
+
+extern fn abs(x: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(x);
+    ensures normal resource_return_none();
+};
+
+extern fn tolower(c: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(c);
+    ensures normal resource_return_none();
+};
+
+extern fn toupper(c: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(c);
+    ensures normal resource_return_none();
+};
+
+extern fn strcat(dest: ptr<mut, u8>, src: ptr<const, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(dest);
+    ensures normal resource_borrowed(src);
+    ensures normal resource_return_alias(dest, nonnull);
+};

@@ -4,8 +4,8 @@
   "crate": "quirin-provider-mpack",
   "files": {
     "mpack/writer.qv": {
-      "clause_count": 34,
-      "declaration_count": 9,
+      "clause_count": 122,
+      "declaration_count": 34,
       "declarations": [
         {
           "clauses": 4,
@@ -42,12 +42,112 @@
         {
           "clauses": 5,
           "name": "mpack_write_bin"
+        },
+        {
+          "clauses": 4,
+          "name": "mpack_start_map"
+        },
+        {
+          "clauses": 4,
+          "name": "mpack_start_array"
+        },
+        {
+          "clauses": 3,
+          "name": "mpack_write_nil"
+        },
+        {
+          "clauses": 4,
+          "name": "mpack_write_u64"
+        },
+        {
+          "clauses": 4,
+          "name": "mpack_write_u32"
+        },
+        {
+          "clauses": 4,
+          "name": "mpack_write_i32"
+        },
+        {
+          "clauses": 4,
+          "name": "mpack_write_int"
+        },
+        {
+          "clauses": 4,
+          "name": "mpack_write_uint"
+        },
+        {
+          "clauses": 4,
+          "name": "mpack_writer_flag_error"
+        },
+        {
+          "clauses": 3,
+          "name": "mpack_tag_type"
+        },
+        {
+          "clauses": 3,
+          "name": "mpack_tag_int_value"
+        },
+        {
+          "clauses": 3,
+          "name": "mpack_tag_uint_value"
+        },
+        {
+          "clauses": 3,
+          "name": "mpack_tag_double_value"
+        },
+        {
+          "clauses": 3,
+          "name": "mpack_tag_array_count"
+        },
+        {
+          "clauses": 3,
+          "name": "mpack_tag_map_count"
+        },
+        {
+          "clauses": 3,
+          "name": "mpack_tag_str_length"
+        },
+        {
+          "clauses": 3,
+          "name": "mpack_tag_bin_length"
+        },
+        {
+          "clauses": 3,
+          "name": "mpack_done_array"
+        },
+        {
+          "clauses": 3,
+          "name": "mpack_done_map"
+        },
+        {
+          "clauses": 3,
+          "name": "mpack_done_str"
+        },
+        {
+          "clauses": 3,
+          "name": "mpack_done_bin"
+        },
+        {
+          "clauses": 3,
+          "name": "mpack_reader_destroy"
+        },
+        {
+          "clauses": 3,
+          "name": "mpack_expect_nil"
+        },
+        {
+          "clauses": 5,
+          "name": "mpack_read_bytes"
+        },
+        {
+          "clauses": 6,
+          "name": "mpack_read_cstr"
         }
       ],
       "inherits": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "b85a05457c61d4be42f34882e9c2a9e2a5348e46ec055e3ca5a7f83a5bbf2c16"
+      "sha256": "9bc7038b2f34a84bf900095fcca37fb20597b376e0a4ec9a8c2aad07cdc228c4"
     }
   },
   "outer_view": [],

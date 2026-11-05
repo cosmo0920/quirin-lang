@@ -1,0 +1,54 @@
+mode: full
+  full because the diff reaches qcore-c-gateway
+  full because the diff reaches qcore-contract
+affected crates (18):
+  qcore-audit: names providers in a string literal: providers/quirin-provider-libc/contract-inventory.lock (crates/qcore-audit/src/pin_window.rs:60); names providers in a string literal: providers/quirin-provider-libc/contract-inventory.lock (crates/qcore-audit/tests/current_cli.rs:138); names providers in a string literal: providers/quirin-provider-libc/contract-inventory.lock (crates/qcore-audit/tests/dependency_graph.rs:92); ... 47 more
+  qcore-c-gateway: owns crates/qcore-c-gateway/tests/libc_gap_declarations.rs; reads it with include_str!: providers/quirin-provider-libc/contracts/libc/math.qv (crates/qcore-c-gateway/tests/libc_gap_declarations.rs:34); names providers/quirin-provider-libc/contracts/libc/math.qv in a string literal: providers/quirin-provider-libc/contracts/libc/math.qv (crates/qcore-c-gateway/tests/libc_gap_declarations.rs:34); ... 38 more
+  qcore-compiler: owns compiler/tests/contract_loader.rs; names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/tests/libc_gap_declarations.rs (compiler/tests/workspace_layering.rs:80); names providers in a string literal: providers/quirin-provider-libc/contract-inventory.lock (compiler/tests/contract_inherit_qcore_provider.rs:437); ... 47 more
+  qcore-contract: names providers in a string literal: providers/quirin-provider-libc/contract-inventory.lock (crates/qcore-contract/tests/bounds_contract.rs:159); names providers in a string literal: providers/quirin-provider-libc/contract-inventory.lock (crates/qcore-contract/tests/descriptor_cells.rs:280); names providers in a string literal: providers/quirin-provider-libc/contract-inventory.lock (crates/qcore-contract/tests/event_loop_clauses.rs:211); ... 43 more
+  qcore-provider-chunkio: depends on quirin-provider-shared
+  qcore-provider-cmetrics: depends on quirin-provider-shared
+  qcore-provider-conformance: names providers in a string literal: providers/quirin-provider-libc/contract-inventory.lock (providers/conformance/tests/composed_five_providers.rs:132); names providers in a string literal: providers/quirin-provider-libc/contract-inventory.lock (providers/conformance/tests/packages.rs:373); names providers in a string literal: providers/quirin-provider-libc/contracts.lock (providers/conformance/tests/composed_five_providers.rs:132); ... 17 more
+  qcore-provider-ctraces: depends on quirin-provider-shared
+  qcore-provider-libevent: depends on quirin-provider-libc
+  qcore-provider-librdkafka: depends on quirin-provider-libc
+  qcore-verification: names crates in a string literal: crates/qcore-c-gateway/tests/libc_gap_declarations.rs (crates/qcore-verification/tests/composition_bounds.rs:288)
+  qcorec: depends on qcore-compiler
+  quirin-audit-plugin-measure: names providers in a string literal: providers/quirin-provider-libc/contract-inventory.lock (crates/quirin-audit-plugin-measure/src/sides.rs:512); names providers in a string literal: providers/quirin-provider-libc/contract-inventory.lock (crates/quirin-audit-plugin-measure/tests/units.rs:298); names providers in a string literal: providers/quirin-provider-libc/contracts.lock (crates/quirin-audit-plugin-measure/src/sides.rs:512); ... 25 more
+  quirin-provider-fluent-bit: depends on quirin-provider-libc
+  quirin-provider-libc: owns providers/quirin-provider-libc/contract-inventory.lock; owns providers/quirin-provider-libc/contracts.lock; owns providers/quirin-provider-libc/contracts/libc/math.qv; ... 15 more
+  quirin-provider-plugin: depends on quirin-provider-shared
+  quirin-provider-shared: depends on quirin-provider-libc
+  quirin-source-analysis: depends on qcore-c-gateway
+rust suite packages: qcore-audit, qcore-c-gateway, qcore-compiler, qcore-contract, qcore-core, qcore-frontend, qcore-gateway-rule-api, qcore-schemas, qcore-verification, qcore-verifier-host, qcorec, quirin-audit-plugin, quirin-audit-plugin-libevent, quirin-audit-plugin-measure, quirin-source-analysis, rule-32a-caller-frame-hold, rule-33-removed-selection, rule-34-element-destroyer, rule-35-literal-decay, rule-36-exact-formal-return, rule-37-result-constructors, rule-38-descriptor-cells
+lean: none
+provider gate: yes
+python suite: always
+[submodules] $ git -C /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1bc26e3c7e5195a5 submodule status --recursive
+[submodules] exit 0 in 0.0s {"submodules": 1, "not_checked_out_or_moved": []}
+[fmt] $ cargo fmt --all -- --check
+[fmt] exit 0 in 4.3s 
+[clippy] $ cargo clippy --all-targets -- -D warnings
+[clippy] exit 0 in 4.1s 
+[rust-suite] $ /usr/bin/python3 /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1bc26e3c7e5195a5/scripts/gate_slot.py rust-suite --receipt /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1bc26e3c7e5195a5/private/gate/slots/rust-suite.json -- /usr/bin/python3 /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1bc26e3c7e5195a5/scripts/run_test_binaries.py --log-dir /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1bc26e3c7e5195a5/private/gate/rust-suite
+[rust-suite] exit 0 in 11386.0s {"units": 603, "passed": 9167, "failed": 0, "ignored": 16, "measured": 0, "filtered": 135, "summaries": 644, "packages": null, "summary": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1bc26e3c7e5195a5/private/gate/rust-suite/summary.json", "ok": true}
+[probe-reevaluation_probe] $ cargo run --config build.incremental=false --config build.rustc-wrapper="/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1bc26e3c7e5195a5/scripts/rustc_test_dylib.py" -p qcore-compiler --example reevaluation_probe
+[probe-reevaluation_probe] exit 0 in 0.2s 
+[probe-reevaluation_followup] $ cargo run --config build.incremental=false --config build.rustc-wrapper="/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1bc26e3c7e5195a5/scripts/rustc_test_dylib.py" -p qcore-compiler --example reevaluation_followup
+[probe-reevaluation_followup] exit 0 in 0.5s 
+[python] $ /usr/bin/python3 -m unittest discover -s scripts/tests
+[python] exit 0 in 63.4s {"tests": 577, "skipped": 0, "ok": true}
+[provider-package-build] $ /usr/bin/python3 providers/package.py build --output /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1bc26e3c7e5195a5/private/gate/provider-packages
+[provider-package-build] exit 0 in 227.6s 
+[provider-package-verify-all] $ /usr/bin/python3 /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1bc26e3c7e5195a5/scripts/gate_scope.py --verify-packages /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1bc26e3c7e5195a5/private/gate/provider-packages
+[provider-package-verify-all] exit 0 in 1.6s 
+[provider-package-verify] $ /usr/bin/python3 providers/package.py verify /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1bc26e3c7e5195a5/private/gate/provider-packages/qcore.libevent
+[provider-package-verify] exit 0 in 0.2s 
+[provider-test] $ /usr/bin/python3 /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1bc26e3c7e5195a5/scripts/gate_slot.py rust-suite --receipt /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1bc26e3c7e5195a5/private/gate/slots/provider-test.json -- cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline
+[provider-test] exit 0 in 10916.0s {"summaries": 43, "passed": 133, "failed": 0, "ignored": 1, "measured": 0, "filtered": 0}
+[provider-fmt] $ cargo fmt --manifest-path providers/Cargo.toml --all -- --check
+[provider-fmt] exit 0 in 6.8s 
+[provider-clippy] $ cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --locked --offline -- -D warnings
+[provider-clippy] exit 0 in 1.8s 
+gate.json: /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1bc26e3c7e5195a5/private/gate/gate.json
+gate_scope: 13 steps passed

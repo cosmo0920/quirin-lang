@@ -81,8 +81,8 @@
       "sha256": "6ff8c805b9e701d07a198c0d79478cba56555c548d9a4942d53b88e07e97c84f"
     },
     "libc/math.qv": {
-      "clause_count": 17,
-      "declaration_count": 4,
+      "clause_count": 21,
+      "declaration_count": 5,
       "declarations": [
         {
           "clauses": 4,
@@ -99,12 +99,16 @@
         {
           "clauses": 5,
           "name": "pow"
+        },
+        {
+          "clauses": 4,
+          "name": "sqrt"
         }
       ],
       "inherits": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "4015f9b71721b861129cde42e64fa4335518e0ecdd33ee953f2ab1fa8ddf2214"
+      "sha256": "c52bceeec9a8f8ebed64e5c9eeef4dded0fa60405a6952f5810fd2e34869d6ff"
     },
     "libc/memory.qv": {
       "clause_count": 13,
@@ -129,8 +133,8 @@
       "sha256": "dec99ab65e1abe68f8344e6a2fc45e31221f9015a5ed0285bae2ff384f2db34f"
     },
     "libc/process.qv": {
-      "clause_count": 16,
-      "declaration_count": 3,
+      "clause_count": 36,
+      "declaration_count": 5,
       "declarations": [
         {
           "clauses": 6,
@@ -143,12 +147,20 @@
         {
           "clauses": 5,
           "name": "setrlimit"
+        },
+        {
+          "clauses": 10,
+          "name": "getpwnam_r"
+        },
+        {
+          "clauses": 10,
+          "name": "getgrnam_r"
         }
       ],
       "inherits": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "654a9058c95960eb49324a731d26edb307f0e76e386d2dae9016f36e078d6555"
+      "sha256": "d7f88202c4ab68705375512a25ad684815da455622ac5c5f86be105d02a0bb44"
     },
     "libc/pthread_mutex.qv": {
       "clause_count": 8,
@@ -251,8 +263,8 @@
       "sha256": "c38a15d828ede40ef468111f8d13f773c45cef6675cf5d199005828b7a33ac69"
     },
     "libc/socket.qv": {
-      "clause_count": 67,
-      "declaration_count": 11,
+      "clause_count": 84,
+      "declaration_count": 14,
       "declarations": [
         {
           "clauses": 8,
@@ -297,16 +309,28 @@
         {
           "clauses": 7,
           "name": "socket"
+        },
+        {
+          "clauses": 5,
+          "name": "shutdown"
+        },
+        {
+          "clauses": 6,
+          "name": "sendmsg"
+        },
+        {
+          "clauses": 6,
+          "name": "poll"
         }
       ],
       "inherits": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "00e22e461721db5669d15336fff0e3cbc0385d9045d31dfa1e8975b095bb2eea"
+      "sha256": "f644a776ec787a34307f9191799f613494a9a2176d757c77a263b422d5123f21"
     },
     "libc/stdio.qv": {
-      "clause_count": 63,
-      "declaration_count": 12,
+      "clause_count": 70,
+      "declaration_count": 13,
       "declarations": [
         {
           "clauses": 4,
@@ -355,16 +379,20 @@
         {
           "clauses": 5,
           "name": "vprintf"
+        },
+        {
+          "clauses": 7,
+          "name": "fread"
         }
       ],
       "inherits": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "6e772eb0890e5a0a63414576d963a859bec451f1286f7ed52504dc5cbac5dbf8"
+      "sha256": "3cb4c589206760d4f287751101bf4c950ac9a140b1a19b71546bb76fd12f22c5"
     },
     "libc/stdlib.qv": {
-      "clause_count": 84,
-      "declaration_count": 14,
+      "clause_count": 101,
+      "declaration_count": 18,
       "declarations": [
         {
           "clauses": 4,
@@ -421,12 +449,28 @@
         {
           "clauses": 8,
           "name": "qsort"
+        },
+        {
+          "clauses": 4,
+          "name": "abs"
+        },
+        {
+          "clauses": 4,
+          "name": "tolower"
+        },
+        {
+          "clauses": 4,
+          "name": "toupper"
+        },
+        {
+          "clauses": 5,
+          "name": "strcat"
         }
       ],
       "inherits": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "111503b7e38a3e5abdf6e3c17876cb8946470b7120858ca3af579e786d9f4293"
+      "sha256": "c23ca4286bd50bbe51446871f52cd1e0a5b364fc38eea34119ffd52cc604993c"
     },
     "libc/string.qv": {
       "clause_count": 107,
@@ -519,8 +563,8 @@
       "sha256": "6c59574468efc24ccd5fbc1fe4570d225087ec4f43c9818f678d74a75c89cc7f"
     },
     "libc/sys_stat.qv": {
-      "clause_count": 24,
-      "declaration_count": 5,
+      "clause_count": 29,
+      "declaration_count": 6,
       "declarations": [
         {
           "clauses": 5,
@@ -541,16 +585,20 @@
         {
           "clauses": 5,
           "name": "lstat"
+        },
+        {
+          "clauses": 5,
+          "name": "chmod"
         }
       ],
       "inherits": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "f11ab5fddc48c3ca44ff4ce588bf7f43816f32c4f70fa630d1c2c52c0e87c261"
+      "sha256": "07f767775853e3f7304f928fbac643b561bc64e25542e198ee186811234a044e"
     },
     "libc/threads.qv": {
-      "clause_count": 82,
-      "declaration_count": 18,
+      "clause_count": 101,
+      "declaration_count": 22,
       "declarations": [
         {
           "clauses": 4,
@@ -623,12 +671,28 @@
         {
           "clauses": 3,
           "name": "thrd_current"
+        },
+        {
+          "clauses": 5,
+          "name": "sigdelset"
+        },
+        {
+          "clauses": 4,
+          "name": "pthread_cancel"
+        },
+        {
+          "clauses": 6,
+          "name": "pthread_setspecific"
+        },
+        {
+          "clauses": 4,
+          "name": "pthread_getspecific"
         }
       ],
       "inherits": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "febd75c6f2877ca7f4bccdf932d52d91c016a39a85d0d6602a54928f9a4e8da8"
+      "sha256": "a1a0a2b55549f2e70c3d1e5aa6c5a8758f67e1557122cb11996d4c73f2c97689"
     },
     "libc/time.qv": {
       "clause_count": 35,
@@ -669,8 +733,8 @@
       "sha256": "cd8b5188b82d239d12b15bf1ebf81fdf0dc679a71605e43223f665cf58bfc986"
     },
     "libc/unistd.qv": {
-      "clause_count": 70,
-      "declaration_count": 15,
+      "clause_count": 111,
+      "declaration_count": 22,
       "declarations": [
         {
           "clauses": 4,
@@ -731,12 +795,40 @@
         {
           "clauses": 6,
           "name": "writev"
+        },
+        {
+          "clauses": 6,
+          "name": "lseek"
+        },
+        {
+          "clauses": 5,
+          "name": "ftruncate"
+        },
+        {
+          "clauses": 6,
+          "name": "posix_fallocate"
+        },
+        {
+          "clauses": 6,
+          "name": "readlink"
+        },
+        {
+          "clauses": 6,
+          "name": "chown"
+        },
+        {
+          "clauses": 6,
+          "name": "msync"
+        },
+        {
+          "clauses": 6,
+          "name": "getrandom"
         }
       ],
       "inherits": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "2d7606f2235d324105952f5fbc123995da6589b327b931ac012eb6ad7083f3c5"
+      "sha256": "f08fbd0a637e86798dfd4d80e6fc71bb7fa7f4a8f91ab998ca22d48dfcedc262"
     }
   },
   "outer_view": [],

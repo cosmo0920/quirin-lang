@@ -105,3 +105,20 @@ contract {
     ensures normal resource_borrowed(buf);
     ensures normal resource_return_none();
 };
+
+// ## Card LIBC-GAP-DECLARATIONS: `chmod`
+//
+//   extern int chmod (const char *__file, __mode_t __mode)
+//     __THROW __nonnull ((1));                // sys/stat.h:352; mode_t is u32
+//
+// Reads a path and changes its file's mode bits (POSIX chmod()); `mkdir`'s
+// statement above. Nothing about permissions or errors.
+
+extern fn chmod(file: ptr<const, u8>, mode: u32) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(file);
+    ensures normal resource_borrowed(mode);
+    ensures normal resource_return_none();
+};

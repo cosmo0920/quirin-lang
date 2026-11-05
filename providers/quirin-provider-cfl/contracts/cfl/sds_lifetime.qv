@@ -486,3 +486,535 @@ contract {
     ensures normal resource_borrowed(head);
     ensures normal resource_return_none();
 };
+
+// # Card CFL-MPACK-EXTERNAL-DECLARATIONS (round 14, 2026-11-05)
+//
+// USER REQUEST 2026-11-05 (verbatim): "Now, we're still needed to fill the
+// gap of the missing contracts." The user's `quirin-audit current` run at
+// 046accf6 reports these CFL callees as uncontracted. CFL has no body in
+// any analysed unit, so each needs a declaration. Each one below is NEW
+// resource-v1 text read from the callee's body. None is adopted from a
+// bounds or model declaration (card CONTRACT-ADOPTION-NOT-IN-FORCE §5).
+//
+// Every body was read at the three audited revisions. `lib/cfl/src` and
+// `lib/cfl/include` are byte-identical at 66910c10, 046accf6 and the slice
+// export 34155955. The one exception is the CMake-generated
+// `cfl/cfl_info.h`, which no body below reads. Line numbers are the 046accf6
+// tree's. The census is `docs/reports/cfl-mpack-external-declarations/`.
+// These declarations sit in this module, the crate's selected resource
+// module, for the reason the kvlist inserts above give. A new module would
+// also move the selection manifest, the load path and the module counts
+// that a concurrent card is changing.
+//
+// ## Kinds: the heap kind, by absence
+//
+// Every constructor below returns `malloc`/`calloc` storage, since the
+// non-arena form passes a NULL arena. Every destructor below `free`s it
+// after releasing what it contains. A CFL object therefore has the heap kind,
+// as `cfl_sds_destroy` above already does. v1 has no CFL kind. So
+// `free(cfl_kvlist_create())` would discharge here even though it leaks the
+// list's pairs. The same holds for `free(cfl_sds_create(...))`, an invalid
+// free of an interior pointer. This is the boundary every heap pair in the
+// corpus shares (`cJSON_New_Item`/`cJSON_Delete`); it is stated, not hidden.
+//
+// ## Containers: cascading destruction is a trusted model
+//
+// `cfl_kvlist_destroy`, `cfl_array_destroy` and `cfl_variant_destroy`
+// release every child the container owns: pairs, keys, variants, nested
+// arrays and kvlists. Contract spec C04.2 calls such a declaration "a trusted
+// model of cascading destruction, not a proof". A caller must own what it
+// releases. Destroying a child that a container still links (`owner != NULL`)
+// leaves the container dangling. That is a release of an object the caller
+// does not own, which the custody positions refuse.
+
+// ## The dynamic-string constructors (`cfl_sds.c`)
+//
+// `sds_alloc(NULL, size)` (`:63-130`) returns NULL when `size` overflows the
+// header arithmetic or `malloc` fails. Otherwise it returns `head->buf`, an
+// empty, NUL-terminated string with capacity `size`. The caller owns the
+// block and releases it with `cfl_sds_destroy` (above). Acquisition and
+// release use the same interior-pointer coordinate, as that declaration
+// states.
+//
+//   * `cfl_sds_create_size(size)` (`:354-357`) is `sds_alloc(NULL, size)`.
+//   * `cfl_sds_create_len(str, len)` (`:202-205`) is
+//     `cfl_sds_create_len_in(NULL, str, len)` (`:207-230`). It returns NULL
+//     for `len < 0` or a failed allocation. Otherwise it copies `len` bytes
+//     of `str` when `str` is non-NULL. `str` is read, never stored or freed.
+//   * `cfl_sds_create(str)` (`:232-247`) takes `strlen(str)`, or 0 for a NULL
+//     `str`, returns NULL above `INT_MAX`, and calls `cfl_sds_create_len`.
+//
+// Each result is `resource_return_owned(nullable)`. Every input is
+// `resource_borrowed`. Prototypes `cfl_sds.h:70`, `:73`, `:76`;
+// `cfl_sds_t` is `char *` (`:32`), so the projections are `ptr<mut, u8>`,
+// `ptr<const, u8>`, `usize` and `i32`.
+
+extern fn cfl_sds_create_size(size: usize) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(size);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn cfl_sds_create_len(str: ptr<const, u8>, len: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(str);
+    ensures normal resource_borrowed(len);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn cfl_sds_create(str: ptr<const, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(str);
+    ensures normal resource_return_owned(nullable);
+};
+
+// ## Setting a string's length in place
+//
+// `cfl_sds_set_len(s, len)` (`cfl_sds.c:359-374`) and the header's
+// `static inline cfl_sds_len_set(s, len)` (`cfl_sds.h:50-65`) have the same
+// body. Each returns for a NULL `s` or for `len` above the allocation. It
+// otherwise writes `head->len = len` and `s[len] = '\0'`. These are writes
+// into the borrowed string's own header and buffer. Nothing is allocated,
+// freed, stored or moved, so `s` is `resource_borrowed`. Prototype
+// `cfl_sds.h:77`. `cfl_sds_len_set` is defined in every unit that includes
+// the header, so each such unit checks this declaration against its body
+// (rule 13g). It calls the undeclared `cfl_sds_alloc`, so no summary
+// validates it, and the declaration stays a declared assumption there.
+//
+// NOT CLAIMED: that `len` is within the string's initialised bytes (a
+// bounds fact), or anything about the string's contents.
+
+extern fn cfl_sds_set_len(s: ptr<mut, u8>, len: usize) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(s);
+    ensures normal resource_borrowed(len);
+    ensures normal resource_return_none();
+};
+
+extern fn cfl_sds_len_set(s: ptr<mut, u8>, len: usize) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(s);
+    ensures normal resource_borrowed(len);
+    ensures normal resource_return_none();
+};
+
+// ## `cfl_sds_cat`: a reallocation (`cfl_sds.c:277-352`)
+//
+// The function returns NULL, leaving `s` as it was, in these cases:
+//
+//   * `s` or `str` is NULL, or `len < 0`;
+//   * the length would overflow;
+//   * a source inside `s` does not fit;
+//   * `cfl_sds_increase` (`:141-191`) fails.
+//
+// For `len == 0` it returns `s` itself. Otherwise it may grow `s` through
+// `cfl_sds_increase`: `realloc(head, ...)` for a heap string, or a new
+// arena string plus `cfl_sds_destroy(s)` for an arena one. In both cases the
+// old pointer is consumed and the returned one replaces it. The NULL return
+// at `:342-344` follows a successful growth, so `s` would already be gone
+// there. It cannot fire: `:301-304` already returned NULL when
+// `head->len > SIZE_MAX - append_len - 1`, the growth keeps `head->len`,
+// and on LP64 `SIZE_MAX == UINT64_MAX`. That is exactly
+// `resource_return_reallocated(s, nullable)` with `s` `resource_owned`, the
+// declaration libc `realloc` carries. `str` is copied (`memmove`) and never
+// kept. Prototype `cfl_sds.h:75`.
+
+extern fn cfl_sds_cat(s: ptr<mut, u8>, str: ptr<const, u8>, len: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_owned(s, nullable);
+    ensures normal resource_borrowed(str);
+    ensures normal resource_borrowed(len);
+    ensures normal resource_return_reallocated(s, nullable);
+};
+
+// ## `cfl_sds_printf`: a slot move, without its tail (`cfl_sds.c:391-452`)
+//
+// The function returns NULL and changes nothing when `sds`, `*sds` or `fmt`
+// is NULL. Otherwise it formats into the free space of `*sds`. When that
+// space is short, it restores the terminator and grows through
+// `cfl_sds_increase`, which may move the object, and stores the new pointer
+// in `*sds` (`:440`) before trying again. A later failure (`:418-421`) or a
+// failed growth (`:436-438`) returns NULL. The slot then holds whichever
+// object it holds at that point, and still owns exactly one. This is
+// `resource_slot_moved(sds, nullable)`, the reading `cfl_sds_cat_safe`
+// above carries (contract spec C04.15).
+//
+// The trailing arguments are read by `vsnprintf` only, which is
+// `resource_variadic_borrowed_tail()`. The loader refuses that tail beside a
+// slot move: a slot clause stands only beside plain parameter and result
+// predicates (C04.14, C04.15). So the declaration names no tail. A C
+// variadic function declared without one is not an ABI disagreement
+// (LOADER-ABI). The arity gate refuses every call that passes a trailing
+// argument, so the declaration covers exactly the calls with no argument
+// after the format, which is the refusing direction.
+//
+// The result is `*sds` after the call, or NULL. v1 has no result mode for
+// the pointee of a slot: the derived modes need a depth-one base (C04.3.1),
+// and the result owns nothing. So the result is `resource_return_none()`.
+// That is exact for every call the declaration covers. The audited trees
+// have 33 calls. The 10 with no trailing argument are statements in
+// `ctr_encode_text.c` that discard the result. Every call that binds it
+// (Fluent Bit's HTTP client and server, `in_blob`) passes arguments, so the
+// arity gate keeps it outside. A caller that binds the result would hold a
+// pointer this projection does not track. Both missing forms are
+// `CFL-SDS-PRINTF-SLOT-MOVE-FORMS`. Prototype `cfl_sds.h:79`; `cfl_sds_t *`
+// is `ptr<mut, ptr<mut, u8>>`.
+
+extern fn cfl_sds_printf(sds: ptr<mut, ptr<mut, u8>>, fmt: ptr<const, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(sds);
+    ensures normal resource_borrowed(fmt);
+    ensures normal resource_slot_moved(sds, nullable);
+    ensures normal resource_return_none();
+};
+
+// ## The kvlist: constructor, destructor and lookup (`cfl_kvlist.c`)
+//
+//   * `cfl_kvlist_create()` (`:89-92`) is `cfl_kvlist_create_in(NULL)`
+//     (`:94-116`). It returns a `malloc`ed, empty list, or NULL.
+//     `resource_return_owned(nullable)`. The header spells the empty list
+//     `()` (`cfl_kvlist.h:54`). A declaration naming no parameter and no
+//     tail is the one admitted against an unspecified list (LOADER-ABI).
+//   * `cfl_kvlist_destroy(list)` (`:127-160`) returns for NULL. Otherwise,
+//     for each pair, it destroys the key (`cfl_sds_destroy`) and the value
+//     (`cfl_variant_destroy`, which cascades), unlinks the pair and frees it,
+//     then frees the list. `resource_released(list, nullable)` (`:57`).
+//   * `cfl_kvlist_fetch(list, key)` (`:681-685`, through `:687-696` and
+//     `:525-545`) returns NULL for a NULL argument or a missing key.
+//     Otherwise it returns `pair->val`, the variant the list owns through
+//     its pair, after the first case-insensitive key match. It allocates
+//     and frees nothing. The result is a child the list owns and keeps:
+//     `resource_return_borrowed_from(list, nullable)` (contract spec
+//     C04.3.4). It is valid while the list lives and is not otherwise
+//     mutated, and the caller may never release it. `key` is read (`strlen`,
+//     `tolower` compares). Prototype `:102`; `char *key` is
+//     `ptr<mut, u8>`. This is the first half of BORROW-CREATED-INSERTED-CHILD's
+//     discharge.
+
+extern fn cfl_kvlist_create() -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn cfl_kvlist_destroy(list: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(list, nullable);
+    ensures normal resource_return_none();
+};
+
+extern fn cfl_kvlist_fetch(list: ptr<mut, u8>, key: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(list);
+    ensures normal resource_borrowed(key);
+    ensures normal resource_return_borrowed_from(list, nullable);
+};
+
+// ## Three more kvlist inserts
+//
+// `cfl_kvlist_insert_uint64(list, key, value)` (`:621-629`, `_s` at
+// `:299-324`) has exactly the shape of `cfl_kvlist_insert_int64` above. It
+// NULL-tests `list` and `key`, creates a new variant holding the scalar, and
+// hands it to `cfl_kvlist_insert_s` (`:439-496`). That function copies `key`
+// (`cfl_sds_create_len_in`, `:465`) and links a new pair into the list. Any
+// failure frees what was allocated. Every argument is `resource_borrowed`.
+// Prototype `cfl_kvlist.h:83-84`.
+//
+// `cfl_kvlist_insert_bytes(list, key, value, length, referenced)`
+// (`:580-589`, `_s` at `:190-216`) builds its variant with
+// `cfl_variant_create_from_bytes_in` (`cfl_variant.c:484-495`, through
+// `:437-473`). When `referenced` is non-zero, the variant STORES `value`
+// itself (`instance->data.as_string = value`, `:455`) and never frees it
+// (`cfl_variant_destroy` skips a referenced string, `:625`). That is a
+// retention of the caller's buffer by the list. When it is zero, the bytes
+// are copied (`cfl_sds_create_len_in`, `:462`). v1 cannot guard a retention
+// by a non-zero test: C04.14.1 admits no `!=`, and a parameter is retained
+// at most once. So the declaration states the copying arm only, under
+// `resource_literal_argument(referenced, 0)` (C04.5). At every other call
+// site the callee stays undeclared. Every audited call passes `CFL_FALSE`,
+// which is `0` after preprocessing (`cfl.h:23`). The retaining arm stays
+// where the note above left it, with W48-CALLEE-DECISION-TABLE class 1, and
+// this declaration does not state it. Prototype `:69-72`; the header names
+// the length `value_length`, the definition `length`, and this declaration
+// follows the definition.
+//
+// `cfl_kvlist_insert(list, key, value)` (`:671-679`) inserts the caller's
+// own variant. It returns -1 for a NULL argument, and otherwise returns
+// `cfl_kvlist_insert_s(list, key, strlen(key), value)`. That function
+// returns:
+//
+//   * -1 for an arena mismatch, a failed pair allocation, or
+//     `cfl_container_move_variant_to_kvlist` refusing (`cfl_container.c:526-575`:
+//     a variant already `owned`, or a cycle). Nothing of `value` changed.
+//   * -2 when the key copy fails. Nothing of `value` changed.
+//   * 0 after the pair, now owning `value`, is linked into the list.
+//     `cfl_kvlist_destroy` then destroys it.
+//
+// This is the custody-taking-insert shape of `cfl_kvlist_insert_array`
+// above, and it has the same disposition: `eq 0` consumed, `ne 0` owned,
+// nullable.
+
+extern fn cfl_kvlist_insert_uint64(list: ptr<mut, u8>, key: ptr<mut, u8>, value: u64) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(list);
+    ensures normal resource_borrowed(key);
+    ensures normal resource_borrowed(value);
+    ensures normal resource_return_none();
+};
+
+extern fn cfl_kvlist_insert_bytes(list: ptr<mut, u8>, key: ptr<mut, u8>, value: ptr<mut, u8>, length: usize, referenced: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_literal_argument(referenced, 0);
+    ensures normal resource_borrowed(list);
+    ensures normal resource_borrowed(key);
+    ensures normal resource_borrowed(value);
+    ensures normal resource_borrowed(length);
+    ensures normal resource_borrowed(referenced);
+    ensures normal resource_return_none();
+};
+
+extern fn cfl_kvlist_insert(list: ptr<mut, u8>, key: ptr<mut, u8>, value: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(list);
+    ensures normal resource_borrowed(key);
+    ensures normal resource_on_return(eq, 0, resource_consumed(value, nullable));
+    ensures normal resource_on_return(ne, 0, resource_owned(value, nullable));
+    ensures normal resource_return_none();
+};
+
+// ## The array (`cfl_array.c`)
+//
+//   * `cfl_array_create(slot_count)` (`:29-32`, `_in` at `:34-86`) returns
+//     NULL on overflow or a failed allocation. On the second failure it
+//     frees the array first. Otherwise it returns a `malloc`ed array with a
+//     `calloc`ed entry table. `resource_return_owned(nullable)`
+//     (`cfl_array.h:43`).
+//   * `cfl_array_destroy(array)` (`:98-120`) returns for NULL. Otherwise it
+//     destroys every entry's variant (cascading), then frees the table and
+//     the array. `resource_released(array, nullable)` (`:48`).
+//   * `cfl_array_append(array, value)` (`:180-254`) appends the caller's own
+//     variant. It returns -1, with `value` untouched, in these cases: a NULL
+//     argument, an arena mismatch, a full array that may not grow, a failed
+//     growth (`realloc` of the table only), or
+//     `cfl_container_move_variant_to_array` refusing
+//     (`cfl_container.c:475-524`: an `owned` variant, or a cycle). It
+//     returns 0 after storing `value` in the table, and the array's destroy
+//     then destroys it. So it has the disposition of `cfl_kvlist_insert`:
+//     `eq 0` consumed, `ne 0` owned (`:79`).
+//   * `cfl_array_append_string`, `_bool`, `_int64` and `_double` (`:256-275`,
+//     `:347-368`, `:370-390`, `:415-436`) each create a new variant holding a
+//     COPY of the value. The string goes through
+//     `cfl_variant_create_from_string_s_in(..., CFL_FALSE)`, which copies
+//     with `cfl_sds_create_len_in` (`cfl_variant.c:462`). Each then calls
+//     `cfl_array_append` and destroys the variant if that fails. Nothing the
+//     caller holds changes hands, so every argument is `resource_borrowed`
+//     (`:80`, `:84`, `:85`, `:87`).
+//   * `cfl_array_append_bytes(array, value, length, referenced)` (`:298-322`)
+//     has `cfl_kvlist_insert_bytes`'s two arms. It is declared under the same
+//     literal premise, `referenced = 0`, which is the copying arm (`:82`).
+//   * `cfl_array_append_array(array, value)` (`:458-486`) and
+//     `cfl_array_append_kvlist(array, value)` (`:512-536`) wrap the caller's
+//     container in a new variant that claims it
+//     (`cfl_variant_create_from_array_in`/`_kvlist_in`,
+//     `cfl_variant.c:573-613`). Their returns are:
+//       * -1 for a NULL argument, `array == value`, an arena mismatch, a
+//         failed allocation, or a claim refused because another variant owns
+//         `value` (`cfl_container.c:424-454`). Nothing of `value` changed.
+//       * -2 when the append fails. The body calls
+//         `cfl_container_release_variant` (`:577-601`), which sets the
+//         container's `owner` back to NULL, clears `data`, and destroys the
+//         variant only. `value` is the caller's again.
+//       * 0 once the array owns the variant that owns `value`.
+//     This is `cfl_kvlist_insert_array`'s disposition (`:89`, `:91`).
+
+extern fn cfl_array_create(slot_count: usize) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(slot_count);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn cfl_array_destroy(array: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(array, nullable);
+    ensures normal resource_return_none();
+};
+
+extern fn cfl_array_append(array: ptr<mut, u8>, value: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(array);
+    ensures normal resource_on_return(eq, 0, resource_consumed(value, nullable));
+    ensures normal resource_on_return(ne, 0, resource_owned(value, nullable));
+    ensures normal resource_return_none();
+};
+
+extern fn cfl_array_append_string(array: ptr<mut, u8>, value: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(array);
+    ensures normal resource_borrowed(value);
+    ensures normal resource_return_none();
+};
+
+extern fn cfl_array_append_bytes(array: ptr<mut, u8>, value: ptr<mut, u8>, length: usize, referenced: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_literal_argument(referenced, 0);
+    ensures normal resource_borrowed(array);
+    ensures normal resource_borrowed(value);
+    ensures normal resource_borrowed(length);
+    ensures normal resource_borrowed(referenced);
+    ensures normal resource_return_none();
+};
+
+extern fn cfl_array_append_bool(array: ptr<mut, u8>, value: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(array);
+    ensures normal resource_borrowed(value);
+    ensures normal resource_return_none();
+};
+
+extern fn cfl_array_append_int64(array: ptr<mut, u8>, value: i64) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(array);
+    ensures normal resource_borrowed(value);
+    ensures normal resource_return_none();
+};
+
+extern fn cfl_array_append_double(array: ptr<mut, u8>, value: f64) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(array);
+    ensures normal resource_borrowed(value);
+    ensures normal resource_return_none();
+};
+
+extern fn cfl_array_append_array(array: ptr<mut, u8>, value: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(array);
+    ensures normal resource_on_return(eq, 0, resource_consumed(value, nullable));
+    ensures normal resource_on_return(ne, 0, resource_owned(value, nullable));
+    ensures normal resource_return_none();
+};
+
+extern fn cfl_array_append_kvlist(array: ptr<mut, u8>, value: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(array);
+    ensures normal resource_on_return(eq, 0, resource_consumed(value, nullable));
+    ensures normal resource_on_return(ne, 0, resource_owned(value, nullable));
+    ensures normal resource_return_none();
+};
+
+// ## The variant (`cfl_variant.c`)
+//
+//   * `cfl_variant_create_from_bool`, `_int64` and `_double` (`:290-301`,
+//     `:303-314`, `:329-340`) `calloc` a variant through
+//     `cfl_variant_create` (`:405-418`) and store the scalar. NULL when the
+//     allocation fails. `resource_return_owned(nullable)`.
+//   * `cfl_variant_create_from_string(value)` (`:246-253`) returns NULL for a
+//     NULL `value`. Otherwise it is `cfl_variant_create_from_string_s(value,
+//     strlen(value), CFL_FALSE)` (`:209-244`), which copies the string with
+//     `cfl_sds_create_len_in` and frees the variant if the copy fails.
+//     `value` is read only. `resource_return_owned(nullable)`.
+//   * `cfl_variant_destroy(instance)` (`:615-637`) returns for NULL.
+//     Otherwise it clears the owner of a contained array or kvlist
+//     (`cfl_container_release_variant`) and destroys what the variant owns:
+//     a non-referenced string or bytes (`cfl_sds_destroy`), an array
+//     (`cfl_array_destroy`) or a kvlist (`cfl_kvlist_destroy`). It then
+//     frees the variant (`variant_instance_release`, `:26-39`).
+//     `resource_released(instance, nullable)`.
+//
+// Prototypes `cfl_variant.h:79`, `:82`, `:83`, `:85`, `:117`.
+//
+// LEFT UNDECLARED: `cfl_variant_create_from_array` and `_kvlist` (`:354-390`)
+// move custody of `value` into the returned variant exactly when the result
+// is non-NULL. The claim (`cfl_container_claim_*`) makes the variant's
+// destroy destroy `value`. On a NULL result, `value` is untouched. v1 has no
+// disposition keyed on a pointer result's nullness (C04.13, "Not in this
+// clause"). `resource_consumed` would hide the failure arm's obligation,
+// and `resource_owned` would deny the hand-off. Follow-up:
+// `CFL-RESULT-NULLNESS-HANDOFF`.
+
+extern fn cfl_variant_create_from_bool(value: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(value);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn cfl_variant_create_from_int64(value: i64) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(value);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn cfl_variant_create_from_double(value: f64) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(value);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn cfl_variant_create_from_string(value: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(value);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn cfl_variant_destroy(instance: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(instance, nullable);
+    ensures normal resource_return_none();
+};
+
+// ## Splitting a line (`cfl_utils.c`)
+//
+// `cfl_utils_split(line, separator, max_split)` (`:310-313`) is
+// `split(line, separator, max_split, CFL_FALSE)` (`:219-303`). It returns
+// NULL for a NULL `line`, a failed allocation or a line longer than
+// `INT_MAX`. On a failure after the list exists, it first frees the partial
+// list with `cfl_utils_split_free`. Otherwise it returns a `calloc`ed list
+// head linking `calloc`ed entries. Each entry's `value` is a fresh copy of
+// one token. `line` is read only. `resource_return_owned(nullable)`.
+//
+// `cfl_utils_split_free(list)` (`:327-343`) returns for NULL. Otherwise it
+// unlinks and frees each entry and its value (`cfl_utils_split_free_entry`,
+// `:316-325`), then frees the head. `resource_released(list, nullable)`.
+// Prototypes `cfl_utils.h:18`, `:20`.
+
+extern fn cfl_utils_split(line: ptr<const, u8>, separator: i32, max_split: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(line);
+    ensures normal resource_borrowed(separator);
+    ensures normal resource_borrowed(max_split);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn cfl_utils_split_free(list: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(list, nullable);
+    ensures normal resource_return_none();
+};

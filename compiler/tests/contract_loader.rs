@@ -1122,6 +1122,46 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         ResourceFunctionContract::new([P::Borrowed, P::Borrowed, P::Borrowed], R::None),
     );
     old.insert_contract("thrd_current", ResourceFunctionContract::new([], R::None));
+    // Card LIBC-GAP-DECLARATIONS: eighteen libc calls that borrow every
+    // argument and return no custody, `pthread_getspecific`'s result that owns
+    // nothing, and `strcat`, `strcpy`'s exact alias of `dest`. Its retaining
+    // declarations (`pthread_setspecific`, `getpwnam_r`, `getgrnam_r`) are
+    // withheld below and have no plain mode.
+    for name in [
+        "abs",
+        "chmod",
+        "chown",
+        "fread",
+        "ftruncate",
+        "getrandom",
+        "lseek",
+        "msync",
+        "poll",
+        "posix_fallocate",
+        "pthread_cancel",
+        "pthread_getspecific",
+        "readlink",
+        "sendmsg",
+        "shutdown",
+        "sigdelset",
+        "sqrt",
+        "tolower",
+        "toupper",
+    ] {
+        old.insert_contract(name, ResourceFunctionContract::new([], R::None));
+    }
+    old.insert_contract(
+        "strcat",
+        ResourceFunctionContract::new(
+            vec![P::Borrowed; 2],
+            R::Derived {
+                parameter: 0,
+                extent: DerivedExtent::Exact,
+                nullable: false,
+                const_dropped: false,
+            },
+        ),
+    );
     // Checked same-item detach deliberately extends the production mode table:
     // the result restores item (formal 1) from parent (formal 0), never fresh.
     old.insert_contract(
@@ -1145,6 +1185,104 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     for name in ["rd_kafka_log0", "rd_kafka_log_buf"] {
         old.insert_contract(name, ResourceFunctionContract::new([], R::None));
     }
+    // Card CFL-MPACK-EXTERNAL-DECLARATIONS: fifty plain declarations read off
+    // the CFL and mpack bodies at 66910c10, 046accf6 and 34155955 (the four
+    // return-code dispositions and the `cfl_sds_printf` slot move are withheld
+    // into their own tables and skipped below). Owned results are the
+    // nullable heap constructors; releases are the nullable destructors;
+    // `cfl_sds_cat` is `realloc`'s reallocation of its owned formal 0;
+    // `cfl_kvlist_fetch` is borrowed from its list (formal 0).
+    for (name, parameters) in [
+        ("cfl_sds_create_size", 1),
+        ("cfl_sds_create_len", 2),
+        ("cfl_sds_create", 1),
+        ("cfl_kvlist_create", 0),
+        ("cfl_array_create", 1),
+        ("cfl_variant_create_from_bool", 1),
+        ("cfl_variant_create_from_int64", 1),
+        ("cfl_variant_create_from_double", 1),
+        ("cfl_variant_create_from_string", 1),
+        ("cfl_utils_split", 3),
+    ] {
+        old.insert_contract(
+            name,
+            ResourceFunctionContract::new(
+                vec![P::Borrowed; parameters],
+                R::Owned { nullable: true },
+            ),
+        );
+    }
+    for name in [
+        "cfl_kvlist_destroy",
+        "cfl_array_destroy",
+        "cfl_variant_destroy",
+        "cfl_utils_split_free",
+    ] {
+        old.insert_contract(
+            name,
+            ResourceFunctionContract::new([P::Released { nullable: true }], R::None),
+        );
+    }
+    for name in [
+        "cfl_sds_set_len",
+        "cfl_sds_len_set",
+        "cfl_kvlist_insert_uint64",
+        "cfl_kvlist_insert_bytes",
+        "cfl_array_append_string",
+        "cfl_array_append_bytes",
+        "cfl_array_append_bool",
+        "cfl_array_append_int64",
+        "cfl_array_append_double",
+        "mpack_start_map",
+        "mpack_start_array",
+        "mpack_write_nil",
+        "mpack_write_u64",
+        "mpack_write_u32",
+        "mpack_write_i32",
+        "mpack_write_int",
+        "mpack_write_uint",
+        "mpack_writer_flag_error",
+        "mpack_tag_type",
+        "mpack_tag_int_value",
+        "mpack_tag_uint_value",
+        "mpack_tag_double_value",
+        "mpack_tag_array_count",
+        "mpack_tag_map_count",
+        "mpack_tag_str_length",
+        "mpack_tag_bin_length",
+        "mpack_done_array",
+        "mpack_done_map",
+        "mpack_done_str",
+        "mpack_done_bin",
+        "mpack_reader_destroy",
+        "mpack_expect_nil",
+        "mpack_read_bytes",
+        "mpack_read_cstr",
+    ] {
+        old.insert_contract(name, ResourceFunctionContract::new([], R::None));
+    }
+    old.insert_contract(
+        "cfl_sds_cat",
+        ResourceFunctionContract::new(
+            [P::Owned { nullable: true }, P::Borrowed],
+            R::Reallocated {
+                parameter: 0,
+                nullable: true,
+            },
+        ),
+    );
+    old.insert_contract(
+        "cfl_kvlist_fetch",
+        ResourceFunctionContract::new(
+            vec![P::Borrowed; 2],
+            R::Derived {
+                parameter: 0,
+                extent: DerivedExtent::Borrowed,
+                nullable: true,
+                const_dropped: false,
+            },
+        ),
+    );
     // Rule 37 deliberately replaces only these nullable inherited modes.
     // Their stronger result is a body-checked specification under the named
     // allocation premise; it must never become an unchecked non-null fact.
@@ -2154,9 +2292,16 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // LOG-PRINT-BODY-CONTRACTS adds `cmetrics/logging.qv` and
     // `chunkio/logging.qv`, one v1 declaration each: 66 -> 68 selected,
     // 499 -> 501 v1; rejected declarations unchanged.
+    // CFL-MPACK-EXTERNAL-DECLARATIONS appends 30 CFL declarations to
+    // `cfl/sds_lifetime.qv` and 25 mpack declarations to `mpack/writer.qv`,
+    // both already selected: 501 -> 556; selected modules and rejected
+    // declarations unchanged.
+    // LIBC-GAP-DECLARATIONS adds 23 libc declarations to nine existing
+    // `quirin-provider-libc` modules: 556 -> 579; selected modules and
+    // rejected declarations unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (68, 501, 370)
+        (68, 579, 370)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every
@@ -2188,7 +2333,10 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // synchronous callback invocation, is withheld into the same table: 44 -> 45.
     // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES: the six queue serving
     // declarations and `rd_kafka_op_destroy` (C04.19.1-C04.19.3): 45 -> 52.
-    assert_eq!(loaded.relational().len(), 6);
+    // Card CFL-MPACK-EXTERNAL-DECLARATIONS: four return-code dispositions
+    // (`cfl_kvlist_insert`, `cfl_array_append`, `_append_array`,
+    // `_append_kvlist`): relational 6 -> 10.
+    assert_eq!(loaded.relational().len(), 10);
     // Card OP-CONSTRUCTOR-DECLARATIONS: the two op constructors (a result
     // state, C04.19.4) and the three requests (member invocations): 52 -> 57.
     // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB: the seventeen setters (member
@@ -2216,7 +2364,12 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // Card LOG-PRINT-BODY-CONTRACTS: the two log printers' member
     // invocations (`cmt_log_print`, `cio_log_print`, C04.19.3) are withheld
     // from the function map: 109 -> 111.
-    assert_eq!(loaded.retaining().len(), 111);
+    // Card CFL-MPACK-EXTERNAL-DECLARATIONS: the slot move `cfl_sds_printf`
+    // (C04.15): 111 -> 112.
+    // Card LIBC-GAP-DECLARATIONS: `pthread_setspecific` (a `global`
+    // retention) and `getpwnam_r`/`getgrnam_r` (a record retaining its buffer,
+    // beside a derived out slot) are withheld: 112 -> 115.
+    assert_eq!(loaded.retaining().len(), 115);
     assert_eq!(
         loaded.functions().len()
             + loaded.pending_review().len()
