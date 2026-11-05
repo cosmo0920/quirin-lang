@@ -1158,11 +1158,7 @@ fn run_stage(
         })
         .collect::<Vec<_>>();
     // A completed group's postlude and seal, by the worker that completed it.
-    let complete = |index: usize, collector: &mut Collector| {
-        collector.remaining -= 1;
-        if collector.remaining != 0 {
-            return;
-        }
+    let finalize = |index: usize, collector: &mut Collector| {
         let label = &route.plans[index].library;
         let record = assemble_record(label, collector, true);
         if record.complete()
@@ -1182,6 +1178,21 @@ fn run_stage(
         }
         collector.record = Some(record);
     };
+    let complete = |index: usize, collector: &mut Collector| {
+        collector.remaining -= 1;
+        if collector.remaining == 0 {
+            finalize(index, collector);
+        }
+    };
+    // A recomputed group with no task in this stage (its prelude ran in an
+    // earlier stage and it selects no unit) completes now.
+    for (index, collector) in collectors.iter().enumerate() {
+        if let Some(collector) = lock(collector).as_mut()
+            && collector.remaining == 0
+        {
+            finalize(index, collector);
+        }
+    }
     let work = |task: Task| -> bool {
         match task {
             Task::Prelude(index) => {
@@ -1433,10 +1444,25 @@ fn outcomes(steps: &[Step<'_>], records: Vec<GroupRecord>) -> Vec<StepOutcome> {
                     });
                     break;
                 }
-                None => break,
+                // Unreachable: a stage runs every step before its first
+                // failure. Fail closed rather than end the fold silently.
+                None => {
+                    outcomes.push(StepOutcome::Unit {
+                        output: String::new(),
+                        result: Box::new(Err(
+                            "checkpointed stage holds no result for a planned unit".into(),
+                        )),
+                    });
+                    break;
+                }
             },
             Step::Finish(index) => {
                 let Some((output, result)) = groups[*index].2.take() else {
+                    outcomes.push(StepOutcome::Finished {
+                        index: *index,
+                        output: String::new(),
+                        result: Err("checkpointed stage holds no postlude result".into()),
+                    });
                     break;
                 };
                 outcomes.push(StepOutcome::Finished {
