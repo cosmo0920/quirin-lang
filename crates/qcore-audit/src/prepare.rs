@@ -55,6 +55,49 @@ pub const USAGE: &str = "usage: quirin-audit prepare [--fluent-bit DIR] [--revis
 /// Files Monkey's CMake configuration writes into its source directory.
 const GENERATED_SOURCE_FILES: [&str; 2] = ["include/monkey/mk_static_plugins.h", "monkey.service"];
 
+/// Card **CURRENT-RUN-DEFECTS**: the CMake targets that generate, at build
+/// time, sources and headers units of the compile database read. Without
+/// them a configured-only build leaves 34 of Fluent Bit 046accf6's 1,419
+/// units unpreprocessable: LuaJIT's buildvm outputs (`lj_vm.S`, `lj_bcdef.h`,
+/// `lj_ffdef.h`, `lj_libdef.h`, `lj_recdef.h`, `lj_folddef.h`,
+/// `buildvm_arch.h`, `luajit.h`), the flex/bison outputs of the record
+/// accessor, stream processor and SQL processor grammars, and libbacktrace's
+/// installed `backtrace.h`. The member-facts pre-pass (rule 12n) cannot read
+/// such a unit, so it opens every invoked member. Only the targets the
+/// configuration defines are built (a build without LuaJIT, a parser or
+/// libbacktrace has no unit needing them); the step changes no compile
+/// command and no tracked source file.
+const GENERATED_INPUT_TARGETS: [&str; 8] = [
+    "buildvm_arch_h",
+    "lj_gen_headers",
+    "lj_gen_folddef",
+    "libluajit",
+    "flb-ra-parser",
+    "flb-sp-parser",
+    "processor-sql-parser",
+    "backtrace",
+];
+
+/// The [`GENERATED_INPUT_TARGETS`] a build's `help` target lists, in that
+/// order. Reads both generators' listings: the Makefile generator's
+/// `... NAME` lines and Ninja's `NAME: phony` lines.
+fn generated_input_targets(help: &str) -> Vec<&'static str> {
+    let listed = help
+        .lines()
+        .filter_map(|line| {
+            let line = line.trim();
+            let name = line.strip_prefix("... ").unwrap_or(line);
+            name.split([':', ' '])
+                .next()
+                .filter(|name| !name.is_empty())
+        })
+        .collect::<BTreeSet<_>>();
+    GENERATED_INPUT_TARGETS
+        .into_iter()
+        .filter(|target| listed.contains(target))
+        .collect()
+}
+
 const CLANG_BUILD_SCOPE: &str = "Unmodified Clang GNU17 CMake command; bounded C resource/function audit, not GCC, code generation, executable-stack or whole-library safety equivalence.";
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -405,6 +448,28 @@ fn prepare_clang_build(request: &ClangBuildRequest) -> Result<ClangBuildPrepared
         "-j2".into(),
     ];
     logged(&native, &build.join("native-build.log"))?;
+    // Card CURRENT-RUN-DEFECTS: the build-time generated inputs, so every
+    // unit of the database preprocesses under its own command.
+    let build_text = text(&build)?;
+    let help = capture(
+        &request.tools.cmake,
+        &["--build", build_text, "--target", "help"],
+    )?;
+    let generated_targets = generated_input_targets(&help);
+    let generated = (!generated_targets.is_empty()).then(|| {
+        let mut command: Vec<String> = vec![
+            request.tools.cmake.clone(),
+            "--build".into(),
+            build_text.into(),
+            "--target".into(),
+        ];
+        command.extend(generated_targets.iter().map(|target| (*target).to_owned()));
+        command.push("-j2".into());
+        command
+    });
+    if let Some(command) = &generated {
+        logged(command, &build.join("generated-inputs-build.log"))?;
+    }
     let database = build.join("compile_commands.json");
     let entries = PyJson::parse(&read_text(&database)?)
         .map_err(|error| format!("{}: {error}", database.display()))?;
@@ -482,6 +547,10 @@ fn prepare_clang_build(request: &ClangBuildRequest) -> Result<ClangBuildPrepared
             PyJson::strings(configure.clone()),
         ),
         ("native_build_command".into(), PyJson::strings(native)),
+        (
+            "generated_inputs_build_command".into(),
+            generated.map_or(PyJson::Null, PyJson::strings),
+        ),
         (
             "compile_database_sha256".into(),
             PyJson::string(digest(&database)?),
@@ -1274,6 +1343,41 @@ mod tests {
 
     fn args(values: &[&str]) -> Vec<String> {
         values.iter().map(|value| (*value).to_owned()).collect()
+    }
+
+    /// Card CURRENT-RUN-DEFECTS: the generated-input targets a build defines,
+    /// read from either generator's `help` listing, in the fixed order;
+    /// a target the configuration does not define is never asked for.
+    #[test]
+    fn generated_input_targets_are_the_listed_ones() {
+        let make = "The following are some of the valid targets for this Makefile:\n\
+                    ... all (the default if no target is provided)\n\
+                    ... clean\n\
+                    ... backtrace\n\
+                    ... flb-ra-parser\n\
+                    ... libluajit\n\
+                    ... lj_gen_headers\n\
+                    ... lj_gen_folddef\n\
+                    ... buildvm_arch_h\n\
+                    ... lj_vm.o\n";
+        assert_eq!(
+            generated_input_targets(make),
+            [
+                "buildvm_arch_h",
+                "lj_gen_headers",
+                "lj_gen_folddef",
+                "libluajit",
+                "flb-ra-parser",
+                "backtrace"
+            ]
+        );
+        let ninja = "all: phony\nflb-sp-parser: phony\nprocessor-sql-parser: phony\n\
+                     libluajit.a: phony\n";
+        assert_eq!(
+            generated_input_targets(ninja),
+            ["flb-sp-parser", "processor-sql-parser"]
+        );
+        assert!(generated_input_targets("... cmetrics-static\n... libluajit-extra\n").is_empty());
     }
 
     #[test]
