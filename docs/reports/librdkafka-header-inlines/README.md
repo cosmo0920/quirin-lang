@@ -314,3 +314,38 @@ The integrator runs the measurement. Its command is the hand-back's.
   - No gate step runs `providers/tests`.
 
   The ledger registers it as `PROVIDER-TESTS-BOUNDS-VIEW-PIN-STALE`.
+
+**Measurement (integrator, 2026-11-05, combined).** This card was merged by
+the user together with CELL-PROTOCOL-RELEASE-WINDOW-FRAMES,
+CFL-MPACK-EXTERNAL-DECLARATIONS, LIBC-GAP-DECLARATIONS,
+LOG-PRINT-BODY-CONTRACTS, LIBRDKAFKA-HEADER-INLINES,
+MEMBER-ACCESS-PROJECTION and CURRENT-RUN-DEFECTS (main `25508ccaf`, records
+`8531b005b`, full gate passed), so one undeclared measurement covers them:
+tip `rev:8531b005b` against `baseline:c8c7edf21`, output
+`private/measure/integrate-r4-20261105T111129Z`, exit 0, 145 min. System
+and slice: 0 moves. Corpus: 38 moves (Safe +37, Unsafe +1), 2 unit moves
+(`ctr_attributes.c` -> Safe, `cmt_decode_statsd.c` -> provisional Unsafe), 0
+unmatched. Every move declared by a merged card's PREDICTION.md happened. 29
+moves are declared there; `_rd_strcasestr` is LIBC-GAP's recorded extra; 8
+are cascades no single-card prediction counted, each with no leaf left at
+the tip:
+- `crc32c_init_hw` (crc32c.c): its only base leaves were the two calls to
+  `crc32c_zeros`, which MEMBER-ACCESS-PROJECTION makes Safe (in-unit summary).
+- `rd_kafka_mock_Produce_reply_tags_partition_write`,
+  `rd_kafka_msgset_writer_write_MessageSet_v2_header`,
+  `rd_kafka_msgset_writer_write_Produce_header`: base leaves were calls to
+  the `rd_kafka_buf_write_*` writers this card declares, plus `unresolved
+  resource identity` and member-store `indirect memory access` leaves on
+  their results (`msetw->msetw_of_start = rd_kafka_buf_write_i64(rkbuf, 0)`,
+  a scalar offset) that were artefacts of the undeclared call.
+- `rd_kafka_msg_partitioner_consistent` (`rd_crc32_init`/`rd_crc32_update` in
+  its return expression), `rd_kafka_outq_len` and `rd_kafka_queue_length`
+  (`rd_kafka_q_len(rkqu->rkqu_q)` in a return): the return-expression and
+  argument-member leaves were on calls this card declares borrowing.
+- `rd_kafka_partition_leader_destroy_free(void *ptr)`: passes its formal (as
+  `leader = ptr`) to `rd_kafka_partition_leader_destroy`, declared here
+  `resource_released(leader, nonnull)`: a release of its own formal, as the
+  base's `unresolved resource identity ptr` leaf could not read.
+[integrate-r4-native-comparison.json](../librdkafka-header-inlines/integrate-r4-native-comparison.json)
+(sha256 `01ab43b871fb84afdc0710b3326a00c5dc67ea785daad61d2a22f0d7519eb9f5`).
+
