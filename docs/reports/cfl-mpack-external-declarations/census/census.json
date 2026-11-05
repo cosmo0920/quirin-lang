@@ -1,0 +1,1948 @@
+{
+ "card": "CFL-MPACK-EXTERNAL-DECLARATIONS",
+ "report_sha256": "e965950e18bfe7147cf500835d613a0e7315ae62329a4ec1ba6f29e53b4d017f",
+ "report_fluent_bit_revision": "046accf6aded7906f66a1baf0202da349e521736",
+ "in_scope_callees": 78,
+ "in_scope_pairs": 306,
+ "by_class_callees": {
+  "declared": 55,
+  "not CFL": 9,
+  "owned elsewhere": 7,
+  "undeclared": 7
+ },
+ "by_class_pairs": {
+  "declared": 197,
+  "not CFL": 10,
+  "owned elsewhere": 73,
+  "undeclared": 26
+ },
+ "declared_but_absent_from_run": [],
+ "rows": [
+  {
+   "callee": "cfl_list_add",
+   "pairs": 43,
+   "sites": 45,
+   "class": "owned elsewhere",
+   "detail": "W45-SUB-OBJECT-STORE-FORMAL-VALUE (brief: out of scope)",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_counter.c",
+     "cmt_counter_create"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_msgpack.c",
+     "append_unpacked_counter_to_metrics_context"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_msgpack.c",
+     "append_unpacked_exp_histogram_to_metrics_context"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_msgpack.c",
+     "append_unpacked_gauge_to_metrics_context"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_msgpack.c",
+     "append_unpacked_histogram_to_metrics_context"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_msgpack.c",
+     "append_unpacked_summary_to_metrics_context"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_msgpack.c",
+     "append_unpacked_untyped_to_metrics_context"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_msgpack.c",
+     "unpack_label"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_msgpack.c",
+     "unpack_static_label"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "append_new_map_label_key"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "append_new_metric_label_value"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "decode_exponential_histogram_data_point"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "decode_histogram_data_point"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "decode_numerical_data_point"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "decode_scope_metrics_entry"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "decode_summary_data_point"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_prometheus_remote_write.c",
+     "append_new_map_label_key"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_prometheus_remote_write.c",
+     "append_new_metric_label_value"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_prometheus_remote_write.c",
+     "decode_histogram_points"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_prometheus_remote_write.c",
+     "decode_numerical_samples"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_statsd.c",
+     "append_new_map_label_key"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_statsd.c",
+     "append_new_metric_label_value"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_statsd.c",
+     "decode_numerical_message"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_prometheus.c",
+     "initialize_temporary_metric"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_prometheus_remote_write.c",
+     "pack_complex_metric_sample"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_prometheus_remote_write.c",
+     "pack_complex_type"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_prometheus_remote_write.c",
+     "pack_metric_metadata"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_prometheus_remote_write.c",
+     "set_up_time_series_for_label_set"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_splunk_hec.c",
+     "initialize_temporary_metric"
+    ],
+    [
+     "lib/cmetrics/src/cmt_exp_histogram.c",
+     "cmt_exp_histogram_create"
+    ],
+    [
+     "lib/cmetrics/src/cmt_gauge.c",
+     "cmt_gauge_create"
+    ],
+    [
+     "lib/cmetrics/src/cmt_histogram.c",
+     "cmt_histogram_create"
+    ],
+    [
+     "lib/cmetrics/src/cmt_label.c",
+     "cmt_labels_add_kv"
+    ],
+    [
+     "lib/cmetrics/src/cmt_map.c",
+     "cmt_map_create"
+    ],
+    [
+     "lib/cmetrics/src/cmt_map.c",
+     "map_metric_create"
+    ],
+    [
+     "lib/cmetrics/src/cmt_map.c",
+     "map_metric_get_unlocked"
+    ],
+    [
+     "lib/cmetrics/src/cmt_summary.c",
+     "cmt_summary_create"
+    ],
+    [
+     "lib/cmetrics/src/cmt_untyped.c",
+     "cmt_untyped_create"
+    ],
+    [
+     "lib/ctraces/src/ctr_link.c",
+     "ctr_link_create"
+    ],
+    [
+     "lib/ctraces/src/ctr_resource.c",
+     "ctr_resource_span_create"
+    ],
+    [
+     "lib/ctraces/src/ctr_scope.c",
+     "ctr_scope_span_create"
+    ],
+    [
+     "lib/ctraces/src/ctr_span.c",
+     "ctr_span_create"
+    ],
+    [
+     "lib/ctraces/src/ctr_span.c",
+     "ctr_span_event_add_ts"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_list_del",
+   "pairs": 24,
+   "sites": 31,
+   "class": "owned elsewhere",
+   "detail": "W45-SUB-OBJECT-STORE-FORMAL-VALUE (brief: out of scope)",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_cat.c",
+     "cmt_cat"
+    ],
+    [
+     "lib/cmetrics/src/cmt_counter.c",
+     "cmt_counter_destroy"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "destroy_context_list"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_prometheus_remote_write.c",
+     "decode_histogram_points"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_prometheus.c",
+     "destroy_temporary_metric_labels"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_prometheus_remote_write.c",
+     "cmt_destroy_prometheus_remote_write_context"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_prometheus_remote_write.c",
+     "pack_complex_metric_sample"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_prometheus_remote_write.c",
+     "pack_complex_type"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_splunk_hec.c",
+     "destroy_temporary_metric_labels"
+    ],
+    [
+     "lib/cmetrics/src/cmt_exp_histogram.c",
+     "cmt_exp_histogram_destroy"
+    ],
+    [
+     "lib/cmetrics/src/cmt_gauge.c",
+     "cmt_gauge_destroy"
+    ],
+    [
+     "lib/cmetrics/src/cmt_histogram.c",
+     "cmt_histogram_destroy"
+    ],
+    [
+     "lib/cmetrics/src/cmt_label.c",
+     "cmt_labels_destroy"
+    ],
+    [
+     "lib/cmetrics/src/cmt_map.c",
+     "cmt_map_destroy"
+    ],
+    [
+     "lib/cmetrics/src/cmt_map.c",
+     "destroy_label_list"
+    ],
+    [
+     "lib/cmetrics/src/cmt_map.c",
+     "map_metric_destroy_unlocked"
+    ],
+    [
+     "lib/cmetrics/src/cmt_map.c",
+     "metric_index_resize"
+    ],
+    [
+     "lib/cmetrics/src/cmt_summary.c",
+     "cmt_summary_destroy"
+    ],
+    [
+     "lib/cmetrics/src/cmt_untyped.c",
+     "cmt_untyped_destroy"
+    ],
+    [
+     "lib/ctraces/src/ctr_link.c",
+     "ctr_link_destroy"
+    ],
+    [
+     "lib/ctraces/src/ctr_resource.c",
+     "ctr_resource_span_destroy"
+    ],
+    [
+     "lib/ctraces/src/ctr_scope.c",
+     "ctr_scope_span_destroy"
+    ],
+    [
+     "lib/ctraces/src/ctr_span.c",
+     "ctr_span_destroy"
+    ],
+    [
+     "lib/ctraces/src/ctr_span.c",
+     "ctr_span_event_delete"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_sds_create_size",
+   "pairs": 18,
+   "sites": 19,
+   "class": "declared",
+   "detail": "owned(nullable) result",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_encode_influx.c",
+     "cmt_encode_influx_create"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+     "render_opentelemetry_context_to_sds"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_opentelemetry_batch.c",
+     "append_original_payload"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_opentelemetry_batch.c",
+     "batch_pack"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_prometheus.c",
+     "bucket_value_to_string"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_prometheus.c",
+     "cmt_encode_prometheus_create"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_prometheus_remote_write.c",
+     "render_remote_write_context_to_sds"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_splunk_hec.c",
+     "cmt_encode_splunk_hec_create"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_splunk_hec.c",
+     "double_to_string"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_splunk_hec.c",
+     "format_metric_name"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_text.c",
+     "cmt_encode_text_create"
+    ],
+    [
+     "lib/cmetrics/src/cmt_mpack_utils.c",
+     "cmt_mpack_consume_string_tag"
+    ],
+    [
+     "lib/ctraces/src/ctr_encode_opentelemetry.c",
+     "ctr_encode_opentelemetry_create"
+    ],
+    [
+     "lib/ctraces/src/ctr_encode_text.c",
+     "ctr_encode_text_create"
+    ],
+    [
+     "lib/ctraces/src/ctr_id.c",
+     "ctr_id_from_base16"
+    ],
+    [
+     "lib/ctraces/src/ctr_id.c",
+     "ctr_id_to_lower_base16"
+    ],
+    [
+     "lib/ctraces/src/ctr_mpack_utils.c",
+     "ctr_mpack_consume_binary_tag"
+    ],
+    [
+     "lib/ctraces/src/ctr_mpack_utils.c",
+     "ctr_mpack_consume_string_tag"
+    ]
+   ]
+  },
+  {
+   "callee": "mpack_start_map",
+   "pairs": 17,
+   "sites": 27,
+   "class": "declared",
+   "detail": "borrowed, none",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_encode_cloudwatch_emf.c",
+     "pack_basic_header"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_cloudwatch_emf.c",
+     "pack_histogram_metric"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_cloudwatch_emf.c",
+     "pack_metric"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_cloudwatch_emf.c",
+     "pack_summary_metric"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_msgpack.c",
+     "pack_basic_type"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_msgpack.c",
+     "pack_context"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_msgpack.c",
+     "pack_context_header"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_msgpack.c",
+     "pack_header"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_msgpack.c",
+     "pack_metric"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_msgpack.c",
+     "pack_static_processing_section"
+    ],
+    [
+     "lib/ctraces/src/ctr_encode_msgpack.c",
+     "ctr_encode_msgpack_create"
+    ],
+    [
+     "lib/ctraces/src/ctr_encode_msgpack.c",
+     "pack_events"
+    ],
+    [
+     "lib/ctraces/src/ctr_encode_msgpack.c",
+     "pack_instrumentation_scope"
+    ],
+    [
+     "lib/ctraces/src/ctr_encode_msgpack.c",
+     "pack_kvlist"
+    ],
+    [
+     "lib/ctraces/src/ctr_encode_msgpack.c",
+     "pack_links"
+    ],
+    [
+     "lib/ctraces/src/ctr_encode_msgpack.c",
+     "pack_scope_spans"
+    ],
+    [
+     "lib/ctraces/src/ctr_encode_msgpack.c",
+     "pack_span"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_kvlist_destroy",
+   "pairs": 14,
+   "sites": 26,
+   "class": "declared",
+   "detail": "released(nullable)",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmetrics.c",
+     "cmt_create"
+    ],
+    [
+     "lib/cmetrics/src/cmetrics.c",
+     "cmt_destroy"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_msgpack.c",
+     "unpack_context_external_metadata"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_msgpack.c",
+     "unpack_context_internal_metadata"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "clone_exemplars_to_kvlist"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "clone_variant"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "get_or_create_external_metadata_kvlist"
+    ],
+    [
+     "lib/ctraces/src/ctr_attributes.c",
+     "ctr_attributes_destroy"
+    ],
+    [
+     "lib/ctraces/src/ctr_decode_msgpack.c",
+     "unpack_event_attributes"
+    ],
+    [
+     "lib/ctraces/src/ctr_decode_msgpack.c",
+     "unpack_instrumentation_scope_attributes"
+    ],
+    [
+     "lib/ctraces/src/ctr_decode_msgpack.c",
+     "unpack_link_attributes"
+    ],
+    [
+     "lib/ctraces/src/ctr_decode_msgpack.c",
+     "unpack_resource_attributes"
+    ],
+    [
+     "lib/ctraces/src/ctr_decode_msgpack.c",
+     "unpack_span_attributes"
+    ],
+    [
+     "lib/ctraces/src/ctr_decode_opentelemetry.c",
+     "convert_kvlist_value"
+    ]
+   ]
+  },
+  {
+   "callee": "mpack_read_tag",
+   "pairs": 14,
+   "sites": 14,
+   "class": "undeclared",
+   "detail": "an `mpack_tag_t` structure result by value; v1 results are scalars, pointers and unit (C04.1) -> `MPACK-STRUCT-RESULT-BY-VALUE`",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_mpack_utils.c",
+     "cmt_mpack_consume_double_tag"
+    ],
+    [
+     "lib/cmetrics/src/cmt_mpack_utils.c",
+     "cmt_mpack_consume_int_tag"
+    ],
+    [
+     "lib/cmetrics/src/cmt_mpack_utils.c",
+     "cmt_mpack_consume_string_tag"
+    ],
+    [
+     "lib/cmetrics/src/cmt_mpack_utils.c",
+     "cmt_mpack_consume_uint_tag"
+    ],
+    [
+     "lib/cmetrics/src/cmt_mpack_utils.c",
+     "cmt_mpack_unpack_array"
+    ],
+    [
+     "lib/cmetrics/src/cmt_mpack_utils.c",
+     "cmt_mpack_unpack_map"
+    ],
+    [
+     "lib/ctraces/src/ctr_mpack_utils.c",
+     "ctr_mpack_consume_binary_tag"
+    ],
+    [
+     "lib/ctraces/src/ctr_mpack_utils.c",
+     "ctr_mpack_consume_double_tag"
+    ],
+    [
+     "lib/ctraces/src/ctr_mpack_utils.c",
+     "ctr_mpack_consume_int_tag"
+    ],
+    [
+     "lib/ctraces/src/ctr_mpack_utils.c",
+     "ctr_mpack_consume_nil_tag"
+    ],
+    [
+     "lib/ctraces/src/ctr_mpack_utils.c",
+     "ctr_mpack_consume_string_tag"
+    ],
+    [
+     "lib/ctraces/src/ctr_mpack_utils.c",
+     "ctr_mpack_consume_uint_tag"
+    ],
+    [
+     "lib/ctraces/src/ctr_mpack_utils.c",
+     "ctr_mpack_unpack_array"
+    ],
+    [
+     "lib/ctraces/src/ctr_mpack_utils.c",
+     "ctr_mpack_unpack_map"
+    ]
+   ]
+  },
+  {
+   "callee": "mpack_start_array",
+   "pairs": 14,
+   "sites": 23,
+   "class": "declared",
+   "detail": "borrowed, none",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_encode_cloudwatch_emf.c",
+     "pack_basic_header"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_cloudwatch_emf.c",
+     "pack_context_metrics"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_cloudwatch_emf.c",
+     "pack_metric"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_msgpack.c",
+     "pack_basic_type"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_msgpack.c",
+     "pack_context_metrics"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_msgpack.c",
+     "pack_header"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_msgpack.c",
+     "pack_metric"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_msgpack.c",
+     "pack_static_labels"
+    ],
+    [
+     "lib/ctraces/src/ctr_encode_msgpack.c",
+     "ctr_encode_msgpack_create"
+    ],
+    [
+     "lib/ctraces/src/ctr_encode_msgpack.c",
+     "pack_array"
+    ],
+    [
+     "lib/ctraces/src/ctr_encode_msgpack.c",
+     "pack_events"
+    ],
+    [
+     "lib/ctraces/src/ctr_encode_msgpack.c",
+     "pack_links"
+    ],
+    [
+     "lib/ctraces/src/ctr_encode_msgpack.c",
+     "pack_scope_spans"
+    ],
+    [
+     "lib/ctraces/src/ctr_encode_msgpack.c",
+     "pack_spans"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_kvlist_fetch",
+   "pairs": 13,
+   "sites": 16,
+   "class": "declared",
+   "detail": "borrowed_from(list, nullable) result",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "get_or_create_external_metadata_kvlist"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+     "create_exemplar_from_kvlist"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+     "fetch_metadata_array_key"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+     "fetch_metadata_int64_key"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+     "fetch_metadata_kvlist_key"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+     "fetch_metadata_string_key"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+     "initialize_exemplars_from_metadata"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+     "kvlist_fetch_bool"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+     "kvlist_fetch_double"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+     "kvlist_fetch_string"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+     "kvlist_fetch_uint64"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_text.c",
+     "append_metric_exemplars"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_text.c",
+     "fetch_metadata_kvlist_key"
+    ]
+   ]
+  },
+  {
+   "callee": "mpack_write_nil",
+   "pairs": 10,
+   "sites": 22,
+   "class": "declared",
+   "detail": "borrowed, none",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_encode_msgpack.c",
+     "pack_header"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_msgpack.c",
+     "pack_metric"
+    ],
+    [
+     "lib/ctraces/src/ctr_encode_msgpack.c",
+     "ctr_encode_msgpack_create"
+    ],
+    [
+     "lib/ctraces/src/ctr_encode_msgpack.c",
+     "pack_events"
+    ],
+    [
+     "lib/ctraces/src/ctr_encode_msgpack.c",
+     "pack_id"
+    ],
+    [
+     "lib/ctraces/src/ctr_encode_msgpack.c",
+     "pack_instrumentation_scope"
+    ],
+    [
+     "lib/ctraces/src/ctr_encode_msgpack.c",
+     "pack_links"
+    ],
+    [
+     "lib/ctraces/src/ctr_encode_msgpack.c",
+     "pack_scope_spans"
+    ],
+    [
+     "lib/ctraces/src/ctr_encode_msgpack.c",
+     "pack_span"
+    ],
+    [
+     "lib/ctraces/src/ctr_encode_msgpack.c",
+     "pack_variant"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_sds_create",
+   "pairs": 8,
+   "sites": 13,
+   "class": "declared",
+   "detail": "owned(nullable) result",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_decode_statsd.c",
+     "decode_labels"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+     "fetch_metadata_string_key"
+    ],
+    [
+     "lib/ctraces/src/ctr_encode_text.c",
+     "format_span"
+    ],
+    [
+     "lib/ctraces/src/ctr_link.c",
+     "ctr_link_set_trace_state"
+    ],
+    [
+     "lib/ctraces/src/ctr_resource.c",
+     "ctr_resource_span_set_schema_url"
+    ],
+    [
+     "lib/ctraces/src/ctr_scope.c",
+     "ctr_scope_span_set_schema_url"
+    ],
+    [
+     "lib/ctraces/src/ctr_span.c",
+     "ctr_span_set_schema_url"
+    ],
+    [
+     "lib/ctraces/src/ctr_span.c",
+     "ctr_span_set_status"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_kvlist_create",
+   "pairs": 5,
+   "sites": 7,
+   "class": "declared",
+   "detail": "owned(nullable) result",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmetrics.c",
+     "cmt_create"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "clone_exemplars_to_kvlist"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "clone_variant"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "get_or_create_external_metadata_kvlist"
+    ],
+    [
+     "lib/ctraces/src/ctr_attributes.c",
+     "ctr_attributes_create"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_sds_create_len",
+   "pairs": 5,
+   "sites": 7,
+   "class": "declared",
+   "detail": "owned(nullable) result",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_decode_statsd.c",
+     "decode_labels"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_statsd.c",
+     "decode_statsd_message"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_prometheus_remote_write.c",
+     "pack_complex_metric_sample"
+    ],
+    [
+     "lib/ctraces/src/ctr_id.c",
+     "ctr_id_set"
+    ],
+    [
+     "lib/ctraces/src/ctr_span.c",
+     "ctr_span_set_trace_state"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_sds_len_set",
+   "pairs": 5,
+   "sites": 11,
+   "class": "declared",
+   "detail": "borrowed, none",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_encode_opentelemetry_batch.c",
+     "append_original_payload"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_opentelemetry_batch.c",
+     "batch_pack"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_prometheus.c",
+     "bucket_value_to_string"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_prometheus_remote_write.c",
+     "pack_complex_metric_sample"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_splunk_hec.c",
+     "double_to_string"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_sds_printf",
+   "pairs": 5,
+   "sites": 14,
+   "class": "declared",
+   "detail": "slot_moved(sds, nullable); none; no tail (refused beside a slot move)",
+   "callers": [
+    [
+     "lib/ctraces/src/ctr_encode_text.c",
+     "ctr_encode_text_create"
+    ],
+    [
+     "lib/ctraces/src/ctr_encode_text.c",
+     "format_instrumentation_scope"
+    ],
+    [
+     "lib/ctraces/src/ctr_encode_text.c",
+     "format_resource"
+    ],
+    [
+     "lib/ctraces/src/ctr_encode_text.c",
+     "format_scope_spans"
+    ],
+    [
+     "lib/ctraces/src/ctr_encode_text.c",
+     "format_spans"
+    ]
+   ]
+  },
+  {
+   "callee": "mpack_write_u32",
+   "pairs": 5,
+   "sites": 10,
+   "class": "declared",
+   "detail": "borrowed, none",
+   "callers": [
+    [
+     "lib/ctraces/src/ctr_encode_msgpack.c",
+     "ctr_encode_msgpack_create"
+    ],
+    [
+     "lib/ctraces/src/ctr_encode_msgpack.c",
+     "pack_events"
+    ],
+    [
+     "lib/ctraces/src/ctr_encode_msgpack.c",
+     "pack_instrumentation_scope"
+    ],
+    [
+     "lib/ctraces/src/ctr_encode_msgpack.c",
+     "pack_links"
+    ],
+    [
+     "lib/ctraces/src/ctr_encode_msgpack.c",
+     "pack_span"
+    ]
+   ]
+  },
+  {
+   "callee": "mpack_write_u64",
+   "pairs": 5,
+   "sites": 6,
+   "class": "declared",
+   "detail": "borrowed, none",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_encode_cloudwatch_emf.c",
+     "pack_basic_header"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_msgpack.c",
+     "pack_metric"
+    ],
+    [
+     "lib/ctraces/src/ctr_encode_msgpack.c",
+     "pack_events"
+    ],
+    [
+     "lib/ctraces/src/ctr_encode_msgpack.c",
+     "pack_span"
+    ],
+    [
+     "lib/ctraces/src/ctr_encode_msgpack.c",
+     "pack_uint64"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_kvlist_insert_uint64",
+   "pairs": 4,
+   "sites": 8,
+   "class": "declared",
+   "detail": "borrowed, none",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "decode_exponential_histogram_data_point"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "decode_histogram_data_point"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "decode_numerical_data_point"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "decode_summary_data_point"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_sds_set_len",
+   "pairs": 4,
+   "sites": 4,
+   "class": "declared",
+   "detail": "borrowed, none",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+     "render_opentelemetry_context_to_sds"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_prometheus_remote_write.c",
+     "render_remote_write_context_to_sds"
+    ],
+    [
+     "lib/ctraces/src/ctr_encode_opentelemetry.c",
+     "ctr_encode_opentelemetry_create"
+    ],
+    [
+     "lib/ctraces/src/ctr_id.c",
+     "ctr_id_to_lower_base16"
+    ]
+   ]
+  },
+  {
+   "callee": "mpack_peek_tag",
+   "pairs": 4,
+   "sites": 4,
+   "class": "undeclared",
+   "detail": "an `mpack_tag_t` structure result by value; v1 results are scalars, pointers and unit (C04.1) -> `MPACK-STRUCT-RESULT-BY-VALUE`",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_decode_msgpack.c",
+     "unpack_label"
+    ],
+    [
+     "lib/cmetrics/src/cmt_mpack_utils.c",
+     "cmt_mpack_peek_array_length"
+    ],
+    [
+     "lib/ctraces/src/ctr_mpack_utils.c",
+     "ctr_mpack_peek_array_length"
+    ],
+    [
+     "lib/ctraces/src/ctr_mpack_utils.c",
+     "ctr_mpack_peek_type"
+    ]
+   ]
+  },
+  {
+   "callee": "mpack_tag_array_count",
+   "pairs": 4,
+   "sites": 4,
+   "class": "declared",
+   "detail": "borrowed, none",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_mpack_utils.c",
+     "cmt_mpack_peek_array_length"
+    ],
+    [
+     "lib/cmetrics/src/cmt_mpack_utils.c",
+     "cmt_mpack_unpack_array"
+    ],
+    [
+     "lib/ctraces/src/ctr_mpack_utils.c",
+     "ctr_mpack_peek_array_length"
+    ],
+    [
+     "lib/ctraces/src/ctr_mpack_utils.c",
+     "ctr_mpack_unpack_array"
+    ]
+   ]
+  },
+  {
+   "callee": "mpack_tag_uint_value",
+   "pairs": 4,
+   "sites": 4,
+   "class": "declared",
+   "detail": "borrowed, none",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_mpack_utils.c",
+     "cmt_mpack_consume_int_tag"
+    ],
+    [
+     "lib/cmetrics/src/cmt_mpack_utils.c",
+     "cmt_mpack_consume_uint_tag"
+    ],
+    [
+     "lib/ctraces/src/ctr_mpack_utils.c",
+     "ctr_mpack_consume_int_tag"
+    ],
+    [
+     "lib/ctraces/src/ctr_mpack_utils.c",
+     "ctr_mpack_consume_uint_tag"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_array_destroy",
+   "pairs": 3,
+   "sites": 13,
+   "class": "declared",
+   "detail": "released(nullable)",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "clone_exemplars_to_kvlist"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "clone_variant"
+    ],
+    [
+     "lib/ctraces/src/ctr_decode_opentelemetry.c",
+     "convert_array_value"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_variant_destroy",
+   "pairs": 3,
+   "sites": 4,
+   "class": "declared",
+   "detail": "released(nullable)",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "clone_array_entry"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "clone_kvlist_entry"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "clone_variant"
+    ]
+   ]
+  },
+  {
+   "callee": "mpack_tag_int_value",
+   "pairs": 3,
+   "sites": 3,
+   "class": "declared",
+   "detail": "borrowed, none",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_mpack_utils.c",
+     "cmt_mpack_consume_int_tag"
+    ],
+    [
+     "lib/ctraces/src/ctr_mpack_utils.c",
+     "ctr_mpack_consume_int_tag"
+    ],
+    [
+     "lib/ctraces/src/ctr_mpack_utils.c",
+     "ctr_mpack_consume_uint_tag"
+    ]
+   ]
+  },
+  {
+   "callee": "mpack_write_int",
+   "pairs": 3,
+   "sites": 8,
+   "class": "declared",
+   "detail": "borrowed, none",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_encode_cloudwatch_emf.c",
+     "pack_metric"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_msgpack.c",
+     "pack_header"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_msgpack.c",
+     "pack_metric"
+    ]
+   ]
+  },
+  {
+   "callee": "mpack_writer_init_growable",
+   "pairs": 3,
+   "sites": 3,
+   "class": "undeclared",
+   "detail": "stores the caller's `char **` slot in the writer and writes an owned buffer through it at `mpack_writer_destroy` on success only: a depth-two retention and a deferred, status-conditioned out slot -> `MPACK-GROWABLE-WRITER-DEFERRED-OUT-SLOT`",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_encode_cloudwatch_emf.c",
+     "cmt_encode_cloudwatch_emf_create"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_msgpack.c",
+     "cmt_encode_msgpack_create"
+    ],
+    [
+     "lib/ctraces/src/ctr_encode_msgpack.c",
+     "ctr_encode_msgpack_create"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_array_create",
+   "pairs": 2,
+   "sites": 2,
+   "class": "declared",
+   "detail": "owned(nullable) result",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "clone_exemplars_to_kvlist"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "clone_variant"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_list_init",
+   "pairs": 2,
+   "sites": 3,
+   "class": "owned elsewhere",
+   "detail": "W45-SUB-OBJECT-STORE-FORMAL-VALUE (brief: out of scope)",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "cmt_decode_opentelemetry_create"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_prometheus_remote_write.c",
+     "cmt_encode_prometheus_remote_write_create"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_utils_split",
+   "pairs": 2,
+   "sites": 2,
+   "class": "declared",
+   "detail": "owned(nullable) result",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_decode_statsd.c",
+     "decode_labels"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_statsd.c",
+     "decode_metrics_lines"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_utils_split_free",
+   "pairs": 2,
+   "sites": 5,
+   "class": "declared",
+   "detail": "released(nullable)",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_decode_statsd.c",
+     "decode_labels"
+    ],
+    [
+     "lib/cmetrics/src/cmt_decode_statsd.c",
+     "decode_metrics_lines"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_variant_kvpair_to_otlp_kvpair",
+   "pairs": 2,
+   "sites": 2,
+   "class": "not CFL",
+   "detail": "static helper of cmt_encode_opentelemetry.c with its body in the run",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+     "cfl_kvlist_to_otlp_kvpair_list"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+     "cfl_variant_kvlist_to_otlp_any_value"
+    ]
+   ]
+  },
+  {
+   "callee": "mpack_done_array",
+   "pairs": 2,
+   "sites": 2,
+   "class": "declared",
+   "detail": "borrowed, none",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_mpack_utils.c",
+     "cmt_mpack_unpack_array"
+    ],
+    [
+     "lib/ctraces/src/ctr_mpack_utils.c",
+     "ctr_mpack_unpack_array"
+    ]
+   ]
+  },
+  {
+   "callee": "mpack_done_map",
+   "pairs": 2,
+   "sites": 2,
+   "class": "declared",
+   "detail": "borrowed, none",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_mpack_utils.c",
+     "cmt_mpack_unpack_map"
+    ],
+    [
+     "lib/ctraces/src/ctr_mpack_utils.c",
+     "ctr_mpack_unpack_map"
+    ]
+   ]
+  },
+  {
+   "callee": "mpack_done_str",
+   "pairs": 2,
+   "sites": 2,
+   "class": "declared",
+   "detail": "borrowed, none",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_mpack_utils.c",
+     "cmt_mpack_consume_string_tag"
+    ],
+    [
+     "lib/ctraces/src/ctr_mpack_utils.c",
+     "ctr_mpack_consume_string_tag"
+    ]
+   ]
+  },
+  {
+   "callee": "mpack_reader_destroy",
+   "pairs": 2,
+   "sites": 2,
+   "class": "declared",
+   "detail": "borrowed, none",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_decode_msgpack.c",
+     "cmt_decode_msgpack_create"
+    ],
+    [
+     "lib/ctraces/src/ctr_decode_msgpack.c",
+     "ctr_decode_msgpack_create"
+    ]
+   ]
+  },
+  {
+   "callee": "mpack_reader_remaining",
+   "pairs": 2,
+   "sites": 2,
+   "class": "undeclared",
+   "detail": "writes the same referenced-buffer pointer through `data` when non-NULL; both calls pass `NULL`, a cast no literal premise selects (C04.5.1) -> `MPACK-READER-REFERENCED-BUFFER-RESULT`",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_decode_msgpack.c",
+     "cmt_decode_msgpack_create"
+    ],
+    [
+     "lib/ctraces/src/ctr_decode_msgpack.c",
+     "ctr_decode_msgpack_create"
+    ]
+   ]
+  },
+  {
+   "callee": "mpack_tag_double_value",
+   "pairs": 2,
+   "sites": 2,
+   "class": "declared",
+   "detail": "borrowed, none",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_mpack_utils.c",
+     "cmt_mpack_consume_double_tag"
+    ],
+    [
+     "lib/ctraces/src/ctr_mpack_utils.c",
+     "ctr_mpack_consume_double_tag"
+    ]
+   ]
+  },
+  {
+   "callee": "mpack_tag_map_count",
+   "pairs": 2,
+   "sites": 2,
+   "class": "declared",
+   "detail": "borrowed, none",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_mpack_utils.c",
+     "cmt_mpack_unpack_map"
+    ],
+    [
+     "lib/ctraces/src/ctr_mpack_utils.c",
+     "ctr_mpack_unpack_map"
+    ]
+   ]
+  },
+  {
+   "callee": "mpack_tag_str_length",
+   "pairs": 2,
+   "sites": 2,
+   "class": "declared",
+   "detail": "borrowed, none",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_mpack_utils.c",
+     "cmt_mpack_consume_string_tag"
+    ],
+    [
+     "lib/ctraces/src/ctr_mpack_utils.c",
+     "ctr_mpack_consume_string_tag"
+    ]
+   ]
+  },
+  {
+   "callee": "mpack_write_uint",
+   "pairs": 2,
+   "sites": 14,
+   "class": "declared",
+   "detail": "borrowed, none",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_encode_msgpack.c",
+     "pack_header"
+    ],
+    [
+     "lib/cmetrics/src/cmt_encode_msgpack.c",
+     "pack_metric"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_arena_create_with_options",
+   "pairs": 1,
+   "sites": 1,
+   "class": "owned elsewhere",
+   "detail": "W47-ARENA-POOL-RESULT-MODE (the arena pool kind; card 1 class B)",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+     "create_encoder_arena"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_arena_destroy",
+   "pairs": 1,
+   "sites": 1,
+   "class": "owned elsewhere",
+   "detail": "W47-ARENA-POOL-RESULT-MODE (the arena pool kind; card 1 class B)",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+     "destroy_opentelemetry_context"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_arena_options_init",
+   "pairs": 1,
+   "sites": 1,
+   "class": "owned elsewhere",
+   "detail": "W47-ARENA-POOL-RESULT-MODE / W48-CALLEE-DECISION-TABLE class 4 (the arena constructor pair)",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+     "create_encoder_arena"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_arena_strndup",
+   "pairs": 1,
+   "sites": 1,
+   "class": "owned elsewhere",
+   "detail": "W47-ARENA-POOL-RESULT-MODE (an arena result; the interior reading is the user's interim decision for cfl_arena_calloc only)",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+     "initialize_string_attribute"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_array_append",
+   "pairs": 1,
+   "sites": 1,
+   "class": "declared",
+   "detail": "eq 0 consumed / ne 0 owned",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "clone_array_entry"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_array_append_array",
+   "pairs": 1,
+   "sites": 1,
+   "class": "declared",
+   "detail": "eq 0 consumed / ne 0 owned",
+   "callers": [
+    [
+     "lib/ctraces/src/ctr_decode_opentelemetry.c",
+     "convert_array_value"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_array_append_bool",
+   "pairs": 1,
+   "sites": 1,
+   "class": "declared",
+   "detail": "borrowed, none",
+   "callers": [
+    [
+     "lib/ctraces/src/ctr_decode_opentelemetry.c",
+     "convert_bool_value"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_array_append_bytes",
+   "pairs": 1,
+   "sites": 1,
+   "class": "declared",
+   "detail": "borrowed, none; premise referenced = 0",
+   "callers": [
+    [
+     "lib/ctraces/src/ctr_decode_opentelemetry.c",
+     "convert_bytes_value"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_array_append_double",
+   "pairs": 1,
+   "sites": 1,
+   "class": "declared",
+   "detail": "borrowed, none",
+   "callers": [
+    [
+     "lib/ctraces/src/ctr_decode_opentelemetry.c",
+     "convert_double_value"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_array_append_int64",
+   "pairs": 1,
+   "sites": 1,
+   "class": "declared",
+   "detail": "borrowed, none",
+   "callers": [
+    [
+     "lib/ctraces/src/ctr_decode_opentelemetry.c",
+     "convert_int_value"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_array_append_kvlist",
+   "pairs": 1,
+   "sites": 1,
+   "class": "declared",
+   "detail": "eq 0 consumed / ne 0 owned",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "clone_exemplars_to_kvlist"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_array_append_string",
+   "pairs": 1,
+   "sites": 1,
+   "class": "declared",
+   "detail": "borrowed, none",
+   "callers": [
+    [
+     "lib/ctraces/src/ctr_decode_opentelemetry.c",
+     "convert_string_value"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_kvlist_insert",
+   "pairs": 1,
+   "sites": 1,
+   "class": "declared",
+   "detail": "eq 0 consumed / ne 0 owned",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "clone_kvlist_entry"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_kvlist_insert_bytes",
+   "pairs": 1,
+   "sites": 2,
+   "class": "declared",
+   "detail": "borrowed, none; premise referenced = 0",
+   "callers": [
+    [
+     "lib/ctraces/src/ctr_decode_opentelemetry.c",
+     "convert_bytes_value"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_sds_cat",
+   "pairs": 1,
+   "sites": 2,
+   "class": "declared",
+   "detail": "owned s; reallocated(s, nullable) result",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_opts.c",
+     "cmt_opts_init"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_variant_array_to_otlp_any_value",
+   "pairs": 1,
+   "sites": 1,
+   "class": "not CFL",
+   "detail": "static helper of cmt_encode_opentelemetry.c with its body in the run",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+     "cfl_variant_to_otlp_any_value"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_variant_binary_to_otlp_any_value",
+   "pairs": 1,
+   "sites": 1,
+   "class": "not CFL",
+   "detail": "static helper of cmt_encode_opentelemetry.c with its body in the run",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+     "cfl_variant_to_otlp_any_value"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_variant_boolean_to_otlp_any_value",
+   "pairs": 1,
+   "sites": 1,
+   "class": "not CFL",
+   "detail": "static helper of cmt_encode_opentelemetry.c with its body in the run",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+     "cfl_variant_to_otlp_any_value"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_variant_create_from_array",
+   "pairs": 1,
+   "sites": 1,
+   "class": "undeclared",
+   "detail": "custody of `value` moves into the result exactly when it is non-NULL; v1 has no result-nullness disposition (C04.13) -> `CFL-RESULT-NULLNESS-HANDOFF`",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "clone_variant"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_variant_create_from_bool",
+   "pairs": 1,
+   "sites": 1,
+   "class": "declared",
+   "detail": "owned(nullable) result",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "clone_variant"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_variant_create_from_double",
+   "pairs": 1,
+   "sites": 1,
+   "class": "declared",
+   "detail": "owned(nullable) result",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "clone_variant"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_variant_create_from_int64",
+   "pairs": 1,
+   "sites": 1,
+   "class": "declared",
+   "detail": "owned(nullable) result",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "clone_variant"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_variant_create_from_kvlist",
+   "pairs": 1,
+   "sites": 1,
+   "class": "undeclared",
+   "detail": "custody of `value` moves into the result exactly when it is non-NULL; v1 has no result-nullness disposition (C04.13) -> `CFL-RESULT-NULLNESS-HANDOFF`",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "clone_variant"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_variant_create_from_string",
+   "pairs": 1,
+   "sites": 2,
+   "class": "declared",
+   "detail": "owned(nullable) result",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+     "clone_variant"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_variant_double_to_otlp_any_value",
+   "pairs": 1,
+   "sites": 1,
+   "class": "not CFL",
+   "detail": "static helper of cmt_encode_opentelemetry.c with its body in the run",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+     "cfl_variant_to_otlp_any_value"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_variant_int64_to_otlp_any_value",
+   "pairs": 1,
+   "sites": 1,
+   "class": "not CFL",
+   "detail": "static helper of cmt_encode_opentelemetry.c with its body in the run",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+     "cfl_variant_to_otlp_any_value"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_variant_kvlist_to_otlp_any_value",
+   "pairs": 1,
+   "sites": 1,
+   "class": "not CFL",
+   "detail": "static helper of cmt_encode_opentelemetry.c with its body in the run",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+     "cfl_variant_to_otlp_any_value"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_variant_string_to_otlp_any_value",
+   "pairs": 1,
+   "sites": 2,
+   "class": "not CFL",
+   "detail": "static helper of cmt_encode_opentelemetry.c with its body in the run",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+     "cfl_variant_to_otlp_any_value"
+    ]
+   ]
+  },
+  {
+   "callee": "cfl_variant_to_otlp_any_value",
+   "pairs": 1,
+   "sites": 1,
+   "class": "not CFL",
+   "detail": "static helper of cmt_encode_opentelemetry.c with its body in the run",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+     "cfl_variant_array_to_otlp_any_value"
+    ]
+   ]
+  },
+  {
+   "callee": "mpack_done_bin",
+   "pairs": 1,
+   "sites": 1,
+   "class": "declared",
+   "detail": "borrowed, none",
+   "callers": [
+    [
+     "lib/ctraces/src/ctr_mpack_utils.c",
+     "ctr_mpack_consume_binary_tag"
+    ]
+   ]
+  },
+  {
+   "callee": "mpack_expect_nil",
+   "pairs": 1,
+   "sites": 1,
+   "class": "declared",
+   "detail": "borrowed, none",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_decode_msgpack.c",
+     "unpack_label"
+    ]
+   ]
+  },
+  {
+   "callee": "mpack_read_bytes",
+   "pairs": 1,
+   "sites": 1,
+   "class": "declared",
+   "detail": "borrowed, none",
+   "callers": [
+    [
+     "lib/ctraces/src/ctr_mpack_utils.c",
+     "ctr_mpack_consume_binary_tag"
+    ]
+   ]
+  },
+  {
+   "callee": "mpack_read_bytes_inplace",
+   "pairs": 1,
+   "sites": 1,
+   "class": "undeclared",
+   "detail": "returns a pointer into the input buffer the reader references (not owns); no derived mode ties a pointer to storage a holder references -> `MPACK-READER-REFERENCED-BUFFER-RESULT`",
+   "callers": [
+    [
+     "lib/cmetrics/src/cmt_mpack_utils.c",
+     "cmt_mpack_consume_string_tag"
+    ]
+   ]
+  },
+  {
+   "callee": "mpack_read_cstr",
+   "pairs": 1,
+   "sites": 1,
+   "class": "declared",
+   "detail": "borrowed, none",
+   "callers": [
+    [
+     "lib/ctraces/src/ctr_mpack_utils.c",
+     "ctr_mpack_consume_string_tag"
+    ]
+   ]
+  },
+  {
+   "callee": "mpack_tag_bin_length",
+   "pairs": 1,
+   "sites": 1,
+   "class": "declared",
+   "detail": "borrowed, none",
+   "callers": [
+    [
+     "lib/ctraces/src/ctr_mpack_utils.c",
+     "ctr_mpack_consume_binary_tag"
+    ]
+   ]
+  },
+  {
+   "callee": "mpack_tag_type",
+   "pairs": 1,
+   "sites": 1,
+   "class": "declared",
+   "detail": "borrowed, none",
+   "callers": [
+    [
+     "lib/ctraces/src/ctr_mpack_utils.c",
+     "ctr_mpack_peek_type"
+    ]
+   ]
+  },
+  {
+   "callee": "mpack_write_i32",
+   "pairs": 1,
+   "sites": 1,
+   "class": "declared",
+   "detail": "borrowed, none",
+   "callers": [
+    [
+     "lib/ctraces/src/ctr_encode_msgpack.c",
+     "pack_span"
+    ]
+   ]
+  },
+  {
+   "callee": "mpack_writer_flag_error",
+   "pairs": 1,
+   "sites": 2,
+   "class": "declared",
+   "detail": "borrowed, none",
+   "callers": [
+    [
+     "lib/ctraces/src/ctr_encode_msgpack.c",
+     "pack_variant"
+    ]
+   ]
+  }
+ ]
+}

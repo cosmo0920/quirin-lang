@@ -1,0 +1,9 @@
+library files 66910c10 vs 046accf6: 51 files; differ: ['lib/cfl/include/cfl/cfl_info.h'] (generated, ignored: ['lib/cfl/include/cfl/cfl_info.h'])
+library files 66910c10 vs 34155955: 51 files; differ: ['lib/cfl/include/cfl/cfl_info.h'] (generated, ignored: ['lib/cfl/include/cfl/cfl_info.h'])
+66910c10: callback installers outside the mpack copies: []
+046accf6: callback installers outside the mpack copies: []
+34155955: callback installers outside the mpack copies: []
+<main checkout>/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json: units defining a tracking flag: [('lib/lwrb/dev/main.c', ['_DEBUG'])]
+<main checkout>/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-production/compile_commands.json: units defining a tracking flag: [('lib/lwrb/dev/main.c', ['_DEBUG'])]
+<main checkout>/private/w47-tail/attempt-1/prep/fluent-bit-clang-production/compile_commands.json: units defining a tracking flag: [('lib/lwrb/dev/main.c', ['_DEBUG'])]
+<main checkout>/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-production/compile_commands.json: units defining a tracking flag: [('lib/lwrb/dev/main.c', ['_DEBUG'])]

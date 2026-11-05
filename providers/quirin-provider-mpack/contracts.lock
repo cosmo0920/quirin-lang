@@ -7,6 +7,276 @@
   "fluent_bit_revision": "046accf6aded7906f66a1baf0202da349e521736",
   "pinned": [
     {
+      "function": "mpack_done_array",
+      "module": "mpack/writer.qv",
+      "contract_sha256": "df7f75392e74f07fd6a5852f15eed88b3f7ada77a91ce5ddeaffd4f5c96631c5",
+      "pinned_at": "2026-11-04T16:38:57Z",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/cmetrics/lib/mpack/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "0121a3b9a8e8d4d1fbb40fd41848e444166543c1be449b66d959264f630f04de",
+              "body_sha256": "9147410f3fc3f3e780b31bf0375b834957b9e55f5b49addfb23407cc6f77f335"
+            },
+            {
+              "path": "lib/cprofiles/lib/mpack/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "0121a3b9a8e8d4d1fbb40fd41848e444166543c1be449b66d959264f630f04de",
+              "body_sha256": "9147410f3fc3f3e780b31bf0375b834957b9e55f5b49addfb23407cc6f77f335"
+            },
+            {
+              "path": "lib/ctraces/lib/mpack/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "0121a3b9a8e8d4d1fbb40fd41848e444166543c1be449b66d959264f630f04de",
+              "body_sha256": "9147410f3fc3f3e780b31bf0375b834957b9e55f5b49addfb23407cc6f77f335"
+            },
+            {
+              "path": "lib/mpack-amalgamation-1.1.1/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "0121a3b9a8e8d4d1fbb40fd41848e444166543c1be449b66d959264f630f04de",
+              "body_sha256": "9147410f3fc3f3e780b31bf0375b834957b9e55f5b49addfb23407cc6f77f335"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "mpack_done_bin",
+      "module": "mpack/writer.qv",
+      "contract_sha256": "ef3a65da530946c7c6f68b3095a4a6541d47d4ff63198719a48d1439d773ec76",
+      "pinned_at": "2026-11-04T16:38:57Z",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/cmetrics/lib/mpack/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "c753c4c8ed1c69e96a8746ace7469f755196f50d6650eda216679fa048b30a00",
+              "body_sha256": "d0ece0ecd0a227ce29bfb3a052ecabee10935ae1eccbc7f804470c34b6ca7eb9"
+            },
+            {
+              "path": "lib/cprofiles/lib/mpack/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "c753c4c8ed1c69e96a8746ace7469f755196f50d6650eda216679fa048b30a00",
+              "body_sha256": "d0ece0ecd0a227ce29bfb3a052ecabee10935ae1eccbc7f804470c34b6ca7eb9"
+            },
+            {
+              "path": "lib/ctraces/lib/mpack/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "c753c4c8ed1c69e96a8746ace7469f755196f50d6650eda216679fa048b30a00",
+              "body_sha256": "d0ece0ecd0a227ce29bfb3a052ecabee10935ae1eccbc7f804470c34b6ca7eb9"
+            },
+            {
+              "path": "lib/mpack-amalgamation-1.1.1/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "c753c4c8ed1c69e96a8746ace7469f755196f50d6650eda216679fa048b30a00",
+              "body_sha256": "d0ece0ecd0a227ce29bfb3a052ecabee10935ae1eccbc7f804470c34b6ca7eb9"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "mpack_done_map",
+      "module": "mpack/writer.qv",
+      "contract_sha256": "7956bda502288d83d561ed4fd81ea77000cf039b96c870c1bf7b8701c30ba265",
+      "pinned_at": "2026-11-04T16:38:57Z",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/cmetrics/lib/mpack/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "11594db6153e28baeb63404edf3f569b7607c421ee809adf5e2c00068a3b6028",
+              "body_sha256": "fa05c5d669a7fe6e10120be5c91d9f6966dc9f4fe7e86716624b8d87d98eac9c"
+            },
+            {
+              "path": "lib/cprofiles/lib/mpack/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "11594db6153e28baeb63404edf3f569b7607c421ee809adf5e2c00068a3b6028",
+              "body_sha256": "fa05c5d669a7fe6e10120be5c91d9f6966dc9f4fe7e86716624b8d87d98eac9c"
+            },
+            {
+              "path": "lib/ctraces/lib/mpack/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "11594db6153e28baeb63404edf3f569b7607c421ee809adf5e2c00068a3b6028",
+              "body_sha256": "fa05c5d669a7fe6e10120be5c91d9f6966dc9f4fe7e86716624b8d87d98eac9c"
+            },
+            {
+              "path": "lib/mpack-amalgamation-1.1.1/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "11594db6153e28baeb63404edf3f569b7607c421ee809adf5e2c00068a3b6028",
+              "body_sha256": "fa05c5d669a7fe6e10120be5c91d9f6966dc9f4fe7e86716624b8d87d98eac9c"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "mpack_done_str",
+      "module": "mpack/writer.qv",
+      "contract_sha256": "68dbcf8413d3c53a36302529c198ffdedd486e16deac868b0ba04bb9fbef4298",
+      "pinned_at": "2026-11-04T16:38:57Z",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/cmetrics/lib/mpack/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "e41c1bc8d132d676be19c378b9d9a54f7b03a330fce0820433a9c33dd434b477",
+              "body_sha256": "ce3d2670c233ec4e47483907e36f1a48511c83229dbecadacf8a55fa3e99e0a0"
+            },
+            {
+              "path": "lib/cprofiles/lib/mpack/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "e41c1bc8d132d676be19c378b9d9a54f7b03a330fce0820433a9c33dd434b477",
+              "body_sha256": "ce3d2670c233ec4e47483907e36f1a48511c83229dbecadacf8a55fa3e99e0a0"
+            },
+            {
+              "path": "lib/ctraces/lib/mpack/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "e41c1bc8d132d676be19c378b9d9a54f7b03a330fce0820433a9c33dd434b477",
+              "body_sha256": "ce3d2670c233ec4e47483907e36f1a48511c83229dbecadacf8a55fa3e99e0a0"
+            },
+            {
+              "path": "lib/mpack-amalgamation-1.1.1/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "e41c1bc8d132d676be19c378b9d9a54f7b03a330fce0820433a9c33dd434b477",
+              "body_sha256": "ce3d2670c233ec4e47483907e36f1a48511c83229dbecadacf8a55fa3e99e0a0"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "mpack_expect_nil",
+      "module": "mpack/writer.qv",
+      "contract_sha256": "165581e233287323b1c63bfdb7572183af8eb7b197b5e89a47c2e4372f1b30b9",
+      "pinned_at": "2026-11-04T16:38:57Z",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/cmetrics/lib/mpack/src/mpack/mpack.c",
+              "kind": "definition",
+              "declaration_sha256": "272d9c9888b31b5816805e23d834334fbbda53b1b665740bb15a659ebbabcd56",
+              "body_sha256": "c033af9673e966b0a81547ebf652fe9fa32864bf19e8478a08e965c20a55c4ec"
+            },
+            {
+              "path": "lib/cmetrics/lib/mpack/src/mpack/mpack.h",
+              "kind": "declaration",
+              "declaration_sha256": "272d9c9888b31b5816805e23d834334fbbda53b1b665740bb15a659ebbabcd56"
+            },
+            {
+              "path": "lib/cprofiles/lib/mpack/src/mpack/mpack.c",
+              "kind": "definition",
+              "declaration_sha256": "272d9c9888b31b5816805e23d834334fbbda53b1b665740bb15a659ebbabcd56",
+              "body_sha256": "c033af9673e966b0a81547ebf652fe9fa32864bf19e8478a08e965c20a55c4ec"
+            },
+            {
+              "path": "lib/cprofiles/lib/mpack/src/mpack/mpack.h",
+              "kind": "declaration",
+              "declaration_sha256": "272d9c9888b31b5816805e23d834334fbbda53b1b665740bb15a659ebbabcd56"
+            },
+            {
+              "path": "lib/ctraces/lib/mpack/src/mpack/mpack.c",
+              "kind": "definition",
+              "declaration_sha256": "272d9c9888b31b5816805e23d834334fbbda53b1b665740bb15a659ebbabcd56",
+              "body_sha256": "c033af9673e966b0a81547ebf652fe9fa32864bf19e8478a08e965c20a55c4ec"
+            },
+            {
+              "path": "lib/ctraces/lib/mpack/src/mpack/mpack.h",
+              "kind": "declaration",
+              "declaration_sha256": "272d9c9888b31b5816805e23d834334fbbda53b1b665740bb15a659ebbabcd56"
+            },
+            {
+              "path": "lib/mpack-amalgamation-1.1.1/src/mpack/mpack.c",
+              "kind": "definition",
+              "declaration_sha256": "272d9c9888b31b5816805e23d834334fbbda53b1b665740bb15a659ebbabcd56",
+              "body_sha256": "c033af9673e966b0a81547ebf652fe9fa32864bf19e8478a08e965c20a55c4ec"
+            },
+            {
+              "path": "lib/mpack-amalgamation-1.1.1/src/mpack/mpack.h",
+              "kind": "declaration",
+              "declaration_sha256": "272d9c9888b31b5816805e23d834334fbbda53b1b665740bb15a659ebbabcd56"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "mpack_finish_array",
       "module": "mpack/writer.qv",
       "contract_sha256": "e4613eadf70d4a6e0a0f60099a16f0c6c6c0327689925599e99d301ebf367c38",
@@ -93,6 +363,756 @@
               "kind": "definition",
               "declaration_sha256": "3bc420d5af7ad357ef8913036d2cc78728422fede66a8dfc5e9a8cc69be1bff9",
               "body_sha256": "5d8db5be0a4beaefb2ec05d6419ebf83ec6270cb6e1d584aeb45cf2a2597f305"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "mpack_read_bytes",
+      "module": "mpack/writer.qv",
+      "contract_sha256": "f34157084a39644d5d172f260c547702b468615aa477b7c10e8e7e99aebbc860",
+      "pinned_at": "2026-11-04T16:38:57Z",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/cmetrics/lib/mpack/src/mpack/mpack.c",
+              "kind": "definition",
+              "declaration_sha256": "714eb620739586e355117ebaf5a1025eea9d5722d5a247c3c8d9d3205522366e",
+              "body_sha256": "db0aef6c9a7fb6c0e4339d7d06ac944c3125a08f43c603f314ad8249a4afb6a3"
+            },
+            {
+              "path": "lib/cmetrics/lib/mpack/src/mpack/mpack.h",
+              "kind": "declaration",
+              "declaration_sha256": "714eb620739586e355117ebaf5a1025eea9d5722d5a247c3c8d9d3205522366e"
+            },
+            {
+              "path": "lib/cprofiles/lib/mpack/src/mpack/mpack.c",
+              "kind": "definition",
+              "declaration_sha256": "714eb620739586e355117ebaf5a1025eea9d5722d5a247c3c8d9d3205522366e",
+              "body_sha256": "db0aef6c9a7fb6c0e4339d7d06ac944c3125a08f43c603f314ad8249a4afb6a3"
+            },
+            {
+              "path": "lib/cprofiles/lib/mpack/src/mpack/mpack.h",
+              "kind": "declaration",
+              "declaration_sha256": "714eb620739586e355117ebaf5a1025eea9d5722d5a247c3c8d9d3205522366e"
+            },
+            {
+              "path": "lib/ctraces/lib/mpack/src/mpack/mpack.c",
+              "kind": "definition",
+              "declaration_sha256": "714eb620739586e355117ebaf5a1025eea9d5722d5a247c3c8d9d3205522366e",
+              "body_sha256": "db0aef6c9a7fb6c0e4339d7d06ac944c3125a08f43c603f314ad8249a4afb6a3"
+            },
+            {
+              "path": "lib/ctraces/lib/mpack/src/mpack/mpack.h",
+              "kind": "declaration",
+              "declaration_sha256": "714eb620739586e355117ebaf5a1025eea9d5722d5a247c3c8d9d3205522366e"
+            },
+            {
+              "path": "lib/mpack-amalgamation-1.1.1/src/mpack/mpack.c",
+              "kind": "definition",
+              "declaration_sha256": "714eb620739586e355117ebaf5a1025eea9d5722d5a247c3c8d9d3205522366e",
+              "body_sha256": "db0aef6c9a7fb6c0e4339d7d06ac944c3125a08f43c603f314ad8249a4afb6a3"
+            },
+            {
+              "path": "lib/mpack-amalgamation-1.1.1/src/mpack/mpack.h",
+              "kind": "declaration",
+              "declaration_sha256": "714eb620739586e355117ebaf5a1025eea9d5722d5a247c3c8d9d3205522366e"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "mpack_read_cstr",
+      "module": "mpack/writer.qv",
+      "contract_sha256": "a8cba1e37e8ad99cbf2067a77aefc5974ac8cdbc7e221a5abdb684dec429e214",
+      "pinned_at": "2026-11-04T16:38:57Z",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/cmetrics/lib/mpack/src/mpack/mpack.c",
+              "kind": "definition",
+              "declaration_sha256": "4ff063bee02e870e1dec92c437a230c0c7b9c204fb1e85e066efdebc41dc36ab",
+              "body_sha256": "15c6aafc9ca1b1597d12b0db9715e17ea5ba61af824759ad67eb3849e5a6ecb8"
+            },
+            {
+              "path": "lib/cmetrics/lib/mpack/src/mpack/mpack.h",
+              "kind": "declaration",
+              "declaration_sha256": "4ff063bee02e870e1dec92c437a230c0c7b9c204fb1e85e066efdebc41dc36ab"
+            },
+            {
+              "path": "lib/cprofiles/lib/mpack/src/mpack/mpack.c",
+              "kind": "definition",
+              "declaration_sha256": "4ff063bee02e870e1dec92c437a230c0c7b9c204fb1e85e066efdebc41dc36ab",
+              "body_sha256": "15c6aafc9ca1b1597d12b0db9715e17ea5ba61af824759ad67eb3849e5a6ecb8"
+            },
+            {
+              "path": "lib/cprofiles/lib/mpack/src/mpack/mpack.h",
+              "kind": "declaration",
+              "declaration_sha256": "4ff063bee02e870e1dec92c437a230c0c7b9c204fb1e85e066efdebc41dc36ab"
+            },
+            {
+              "path": "lib/ctraces/lib/mpack/src/mpack/mpack.c",
+              "kind": "definition",
+              "declaration_sha256": "4ff063bee02e870e1dec92c437a230c0c7b9c204fb1e85e066efdebc41dc36ab",
+              "body_sha256": "15c6aafc9ca1b1597d12b0db9715e17ea5ba61af824759ad67eb3849e5a6ecb8"
+            },
+            {
+              "path": "lib/ctraces/lib/mpack/src/mpack/mpack.h",
+              "kind": "declaration",
+              "declaration_sha256": "4ff063bee02e870e1dec92c437a230c0c7b9c204fb1e85e066efdebc41dc36ab"
+            },
+            {
+              "path": "lib/mpack-amalgamation-1.1.1/src/mpack/mpack.c",
+              "kind": "definition",
+              "declaration_sha256": "4ff063bee02e870e1dec92c437a230c0c7b9c204fb1e85e066efdebc41dc36ab",
+              "body_sha256": "15c6aafc9ca1b1597d12b0db9715e17ea5ba61af824759ad67eb3849e5a6ecb8"
+            },
+            {
+              "path": "lib/mpack-amalgamation-1.1.1/src/mpack/mpack.h",
+              "kind": "declaration",
+              "declaration_sha256": "4ff063bee02e870e1dec92c437a230c0c7b9c204fb1e85e066efdebc41dc36ab"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "mpack_reader_destroy",
+      "module": "mpack/writer.qv",
+      "contract_sha256": "2c911f01f5c0b06ed63f1ced6d9c30861ecd65bf9a9fa862baae7d021ac33c12",
+      "pinned_at": "2026-11-04T16:38:57Z",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/cmetrics/lib/mpack/src/mpack/mpack.c",
+              "kind": "definition",
+              "declaration_sha256": "27cd8f1d61b5bc666221d8d39d9c8b0d6e9b74e9cf88e6b088649179b476cadf",
+              "body_sha256": "8e6f1c349ac672cfc69bfef41a4e4c62921d0c51033d0e0dd02f1298133bd864"
+            },
+            {
+              "path": "lib/cmetrics/lib/mpack/src/mpack/mpack.h",
+              "kind": "declaration",
+              "declaration_sha256": "27cd8f1d61b5bc666221d8d39d9c8b0d6e9b74e9cf88e6b088649179b476cadf"
+            },
+            {
+              "path": "lib/cprofiles/lib/mpack/src/mpack/mpack.c",
+              "kind": "definition",
+              "declaration_sha256": "27cd8f1d61b5bc666221d8d39d9c8b0d6e9b74e9cf88e6b088649179b476cadf",
+              "body_sha256": "8e6f1c349ac672cfc69bfef41a4e4c62921d0c51033d0e0dd02f1298133bd864"
+            },
+            {
+              "path": "lib/cprofiles/lib/mpack/src/mpack/mpack.h",
+              "kind": "declaration",
+              "declaration_sha256": "27cd8f1d61b5bc666221d8d39d9c8b0d6e9b74e9cf88e6b088649179b476cadf"
+            },
+            {
+              "path": "lib/ctraces/lib/mpack/src/mpack/mpack.c",
+              "kind": "definition",
+              "declaration_sha256": "27cd8f1d61b5bc666221d8d39d9c8b0d6e9b74e9cf88e6b088649179b476cadf",
+              "body_sha256": "8e6f1c349ac672cfc69bfef41a4e4c62921d0c51033d0e0dd02f1298133bd864"
+            },
+            {
+              "path": "lib/ctraces/lib/mpack/src/mpack/mpack.h",
+              "kind": "declaration",
+              "declaration_sha256": "27cd8f1d61b5bc666221d8d39d9c8b0d6e9b74e9cf88e6b088649179b476cadf"
+            },
+            {
+              "path": "lib/mpack-amalgamation-1.1.1/src/mpack/mpack.c",
+              "kind": "definition",
+              "declaration_sha256": "27cd8f1d61b5bc666221d8d39d9c8b0d6e9b74e9cf88e6b088649179b476cadf",
+              "body_sha256": "8e6f1c349ac672cfc69bfef41a4e4c62921d0c51033d0e0dd02f1298133bd864"
+            },
+            {
+              "path": "lib/mpack-amalgamation-1.1.1/src/mpack/mpack.h",
+              "kind": "declaration",
+              "declaration_sha256": "27cd8f1d61b5bc666221d8d39d9c8b0d6e9b74e9cf88e6b088649179b476cadf"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "mpack_start_array",
+      "module": "mpack/writer.qv",
+      "contract_sha256": "18998047975e16fd12765971dd16621415ab23474b6628822080c42e9a658f96",
+      "pinned_at": "2026-11-04T16:38:57Z",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/cmetrics/lib/mpack/src/mpack/mpack.c",
+              "kind": "definition",
+              "declaration_sha256": "8a83d9239177fdbcec807a91493305723bf21cebd35b44849d4146228b325bc1",
+              "body_sha256": "24d8c2e3b06960a4d3b4526de113f843681df8e10f7e5d3770cd232c7d107f75"
+            },
+            {
+              "path": "lib/cmetrics/lib/mpack/src/mpack/mpack.h",
+              "kind": "declaration",
+              "declaration_sha256": "8a83d9239177fdbcec807a91493305723bf21cebd35b44849d4146228b325bc1"
+            },
+            {
+              "path": "lib/cprofiles/lib/mpack/src/mpack/mpack.c",
+              "kind": "definition",
+              "declaration_sha256": "8a83d9239177fdbcec807a91493305723bf21cebd35b44849d4146228b325bc1",
+              "body_sha256": "24d8c2e3b06960a4d3b4526de113f843681df8e10f7e5d3770cd232c7d107f75"
+            },
+            {
+              "path": "lib/cprofiles/lib/mpack/src/mpack/mpack.h",
+              "kind": "declaration",
+              "declaration_sha256": "8a83d9239177fdbcec807a91493305723bf21cebd35b44849d4146228b325bc1"
+            },
+            {
+              "path": "lib/ctraces/lib/mpack/src/mpack/mpack.c",
+              "kind": "definition",
+              "declaration_sha256": "8a83d9239177fdbcec807a91493305723bf21cebd35b44849d4146228b325bc1",
+              "body_sha256": "24d8c2e3b06960a4d3b4526de113f843681df8e10f7e5d3770cd232c7d107f75"
+            },
+            {
+              "path": "lib/ctraces/lib/mpack/src/mpack/mpack.h",
+              "kind": "declaration",
+              "declaration_sha256": "8a83d9239177fdbcec807a91493305723bf21cebd35b44849d4146228b325bc1"
+            },
+            {
+              "path": "lib/mpack-amalgamation-1.1.1/src/mpack/mpack.c",
+              "kind": "definition",
+              "declaration_sha256": "8a83d9239177fdbcec807a91493305723bf21cebd35b44849d4146228b325bc1",
+              "body_sha256": "ea3bcc6555a6d887a438eb0b0e3c028ff26ea1a81807e7dcd910911e2d72a57a"
+            },
+            {
+              "path": "lib/mpack-amalgamation-1.1.1/src/mpack/mpack.h",
+              "kind": "declaration",
+              "declaration_sha256": "8a83d9239177fdbcec807a91493305723bf21cebd35b44849d4146228b325bc1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "mpack_start_map",
+      "module": "mpack/writer.qv",
+      "contract_sha256": "95985962809a839e4ba714cf31f11c1e3b2339459503eddf01838e8d2f5a6fe6",
+      "pinned_at": "2026-11-04T16:38:57Z",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/cmetrics/lib/mpack/src/mpack/mpack.c",
+              "kind": "definition",
+              "declaration_sha256": "06178aa4eb9e9bff9d3d45da603b1f003b461d517820811944af89c9e3ee3387",
+              "body_sha256": "29d0e351fedabd82b509b367ead4d92214f2679dbb6f2373ce70da3a74b36701"
+            },
+            {
+              "path": "lib/cmetrics/lib/mpack/src/mpack/mpack.h",
+              "kind": "declaration",
+              "declaration_sha256": "06178aa4eb9e9bff9d3d45da603b1f003b461d517820811944af89c9e3ee3387"
+            },
+            {
+              "path": "lib/cprofiles/lib/mpack/src/mpack/mpack.c",
+              "kind": "definition",
+              "declaration_sha256": "06178aa4eb9e9bff9d3d45da603b1f003b461d517820811944af89c9e3ee3387",
+              "body_sha256": "29d0e351fedabd82b509b367ead4d92214f2679dbb6f2373ce70da3a74b36701"
+            },
+            {
+              "path": "lib/cprofiles/lib/mpack/src/mpack/mpack.h",
+              "kind": "declaration",
+              "declaration_sha256": "06178aa4eb9e9bff9d3d45da603b1f003b461d517820811944af89c9e3ee3387"
+            },
+            {
+              "path": "lib/ctraces/lib/mpack/src/mpack/mpack.c",
+              "kind": "definition",
+              "declaration_sha256": "06178aa4eb9e9bff9d3d45da603b1f003b461d517820811944af89c9e3ee3387",
+              "body_sha256": "29d0e351fedabd82b509b367ead4d92214f2679dbb6f2373ce70da3a74b36701"
+            },
+            {
+              "path": "lib/ctraces/lib/mpack/src/mpack/mpack.h",
+              "kind": "declaration",
+              "declaration_sha256": "06178aa4eb9e9bff9d3d45da603b1f003b461d517820811944af89c9e3ee3387"
+            },
+            {
+              "path": "lib/mpack-amalgamation-1.1.1/src/mpack/mpack.c",
+              "kind": "definition",
+              "declaration_sha256": "06178aa4eb9e9bff9d3d45da603b1f003b461d517820811944af89c9e3ee3387",
+              "body_sha256": "8d98fde92fc8a6f53307595e4fcd9df029d1d8943e0f9a846b3c60c48735af67"
+            },
+            {
+              "path": "lib/mpack-amalgamation-1.1.1/src/mpack/mpack.h",
+              "kind": "declaration",
+              "declaration_sha256": "06178aa4eb9e9bff9d3d45da603b1f003b461d517820811944af89c9e3ee3387"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "mpack_tag_array_count",
+      "module": "mpack/writer.qv",
+      "contract_sha256": "d3cc1a593860e0c5984fad891c35a5a10a04f56ca35dfef566cdbe5a39deb7d9",
+      "pinned_at": "2026-11-04T16:38:57Z",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/cmetrics/lib/mpack/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "3a2ea00efaf1552218ac94bfdd02fd3931470d654881dc4559ab61d7c534db04",
+              "body_sha256": "8d72a776ff4347baecb893c888b817213e9dbbc8432209f6634e6d3faeeb12ab"
+            },
+            {
+              "path": "lib/cprofiles/lib/mpack/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "3a2ea00efaf1552218ac94bfdd02fd3931470d654881dc4559ab61d7c534db04",
+              "body_sha256": "8d72a776ff4347baecb893c888b817213e9dbbc8432209f6634e6d3faeeb12ab"
+            },
+            {
+              "path": "lib/ctraces/lib/mpack/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "3a2ea00efaf1552218ac94bfdd02fd3931470d654881dc4559ab61d7c534db04",
+              "body_sha256": "8d72a776ff4347baecb893c888b817213e9dbbc8432209f6634e6d3faeeb12ab"
+            },
+            {
+              "path": "lib/mpack-amalgamation-1.1.1/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "3a2ea00efaf1552218ac94bfdd02fd3931470d654881dc4559ab61d7c534db04",
+              "body_sha256": "8d72a776ff4347baecb893c888b817213e9dbbc8432209f6634e6d3faeeb12ab"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "mpack_tag_bin_length",
+      "module": "mpack/writer.qv",
+      "contract_sha256": "17340e41cc13b846b9b2d2c1e4d46e22a9f015e827ad2298463da38d5ff164cb",
+      "pinned_at": "2026-11-04T16:38:57Z",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/cmetrics/lib/mpack/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "4b6fca4a1b3a271a952889f2e2d52c1cfa9e2c5e41d0b490cec3195db81b1887",
+              "body_sha256": "e418765205ae3c165f33f937c0c299f7a8bf312379bd618647d4a4a3dc5339f7"
+            },
+            {
+              "path": "lib/cprofiles/lib/mpack/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "4b6fca4a1b3a271a952889f2e2d52c1cfa9e2c5e41d0b490cec3195db81b1887",
+              "body_sha256": "e418765205ae3c165f33f937c0c299f7a8bf312379bd618647d4a4a3dc5339f7"
+            },
+            {
+              "path": "lib/ctraces/lib/mpack/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "4b6fca4a1b3a271a952889f2e2d52c1cfa9e2c5e41d0b490cec3195db81b1887",
+              "body_sha256": "e418765205ae3c165f33f937c0c299f7a8bf312379bd618647d4a4a3dc5339f7"
+            },
+            {
+              "path": "lib/mpack-amalgamation-1.1.1/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "4b6fca4a1b3a271a952889f2e2d52c1cfa9e2c5e41d0b490cec3195db81b1887",
+              "body_sha256": "e418765205ae3c165f33f937c0c299f7a8bf312379bd618647d4a4a3dc5339f7"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "mpack_tag_double_value",
+      "module": "mpack/writer.qv",
+      "contract_sha256": "1288eb88ca52a8328336e9c75f7e0dcdec56e2fa50fe4268c5dc0d68040380b9",
+      "pinned_at": "2026-11-04T16:38:57Z",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/cmetrics/lib/mpack/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "cf6950f83a1bea88aa5a5dffbffca82e53074a058d346b072811007403be452c",
+              "body_sha256": "08d32c356c3645f2ac15756e45ff883e819c0649640f34eaffb93a747be18653"
+            },
+            {
+              "path": "lib/cprofiles/lib/mpack/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "cf6950f83a1bea88aa5a5dffbffca82e53074a058d346b072811007403be452c",
+              "body_sha256": "08d32c356c3645f2ac15756e45ff883e819c0649640f34eaffb93a747be18653"
+            },
+            {
+              "path": "lib/ctraces/lib/mpack/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "cf6950f83a1bea88aa5a5dffbffca82e53074a058d346b072811007403be452c",
+              "body_sha256": "08d32c356c3645f2ac15756e45ff883e819c0649640f34eaffb93a747be18653"
+            },
+            {
+              "path": "lib/mpack-amalgamation-1.1.1/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "ed389e8eb251675f1b27c4b5aa102cfcf171589f8763ae9b9e3b43198a722d83",
+              "body_sha256": "08d32c356c3645f2ac15756e45ff883e819c0649640f34eaffb93a747be18653"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "mpack_tag_int_value",
+      "module": "mpack/writer.qv",
+      "contract_sha256": "b4073cac5667f1258b404a7544f0d69f5c48b11a549a659b5ae0a2b07c5c4f24",
+      "pinned_at": "2026-11-04T16:38:57Z",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/cmetrics/lib/mpack/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "36b0b94c2faea797352098a7feff1ae9a3bc5413d407c13c62946626cef4e2de",
+              "body_sha256": "9768401ae661ffb1dbeb17b8c4ef0614b45702a25cf2bfb24f50bcaef8d50053"
+            },
+            {
+              "path": "lib/cprofiles/lib/mpack/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "36b0b94c2faea797352098a7feff1ae9a3bc5413d407c13c62946626cef4e2de",
+              "body_sha256": "9768401ae661ffb1dbeb17b8c4ef0614b45702a25cf2bfb24f50bcaef8d50053"
+            },
+            {
+              "path": "lib/ctraces/lib/mpack/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "36b0b94c2faea797352098a7feff1ae9a3bc5413d407c13c62946626cef4e2de",
+              "body_sha256": "9768401ae661ffb1dbeb17b8c4ef0614b45702a25cf2bfb24f50bcaef8d50053"
+            },
+            {
+              "path": "lib/mpack-amalgamation-1.1.1/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "36b0b94c2faea797352098a7feff1ae9a3bc5413d407c13c62946626cef4e2de",
+              "body_sha256": "9768401ae661ffb1dbeb17b8c4ef0614b45702a25cf2bfb24f50bcaef8d50053"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "mpack_tag_map_count",
+      "module": "mpack/writer.qv",
+      "contract_sha256": "fcd259de837f25d96bf1bf8a3750b4058050f1e5bfd8d8b688714b6079feab87",
+      "pinned_at": "2026-11-04T16:38:57Z",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/cmetrics/lib/mpack/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "1a233b700181b6e361c53e0d9bfb702b1915ea3fb312d388dd56cfdfd45ff150",
+              "body_sha256": "61922788c6096625a8a794c7563457711de27786facb4725492d94c9fba84106"
+            },
+            {
+              "path": "lib/cprofiles/lib/mpack/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "1a233b700181b6e361c53e0d9bfb702b1915ea3fb312d388dd56cfdfd45ff150",
+              "body_sha256": "61922788c6096625a8a794c7563457711de27786facb4725492d94c9fba84106"
+            },
+            {
+              "path": "lib/ctraces/lib/mpack/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "1a233b700181b6e361c53e0d9bfb702b1915ea3fb312d388dd56cfdfd45ff150",
+              "body_sha256": "61922788c6096625a8a794c7563457711de27786facb4725492d94c9fba84106"
+            },
+            {
+              "path": "lib/mpack-amalgamation-1.1.1/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "1a233b700181b6e361c53e0d9bfb702b1915ea3fb312d388dd56cfdfd45ff150",
+              "body_sha256": "61922788c6096625a8a794c7563457711de27786facb4725492d94c9fba84106"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "mpack_tag_str_length",
+      "module": "mpack/writer.qv",
+      "contract_sha256": "982fcf8d29d81a046a4b35809fa2572d891e494fff46e4f932cc80ea28dcfa2e",
+      "pinned_at": "2026-11-04T16:38:57Z",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/cmetrics/lib/mpack/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "15fbca9ada23aef9641627344af2b32511f97c8a0b7939706a97dd680d4bafac",
+              "body_sha256": "0a777da7011204f5b36528d396248454bcecc30c8431f104f57b849d36c24388"
+            },
+            {
+              "path": "lib/cprofiles/lib/mpack/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "15fbca9ada23aef9641627344af2b32511f97c8a0b7939706a97dd680d4bafac",
+              "body_sha256": "0a777da7011204f5b36528d396248454bcecc30c8431f104f57b849d36c24388"
+            },
+            {
+              "path": "lib/ctraces/lib/mpack/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "15fbca9ada23aef9641627344af2b32511f97c8a0b7939706a97dd680d4bafac",
+              "body_sha256": "0a777da7011204f5b36528d396248454bcecc30c8431f104f57b849d36c24388"
+            },
+            {
+              "path": "lib/mpack-amalgamation-1.1.1/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "15fbca9ada23aef9641627344af2b32511f97c8a0b7939706a97dd680d4bafac",
+              "body_sha256": "0a777da7011204f5b36528d396248454bcecc30c8431f104f57b849d36c24388"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "mpack_tag_type",
+      "module": "mpack/writer.qv",
+      "contract_sha256": "a3de837f5a4295a39bcdf7da896352944f1a74427d26d3894a430ee3621391a0",
+      "pinned_at": "2026-11-04T16:38:57Z",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/cmetrics/lib/mpack/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "abb43615388106ff259ca663725fd4f9f7c96ba7017f77deb761e43a3829293d",
+              "body_sha256": "0b6a4d60d7bc5cb20af70ddd5cad7e7573a2619695e6b3762ca44eb29f3430bc"
+            },
+            {
+              "path": "lib/cprofiles/lib/mpack/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "abb43615388106ff259ca663725fd4f9f7c96ba7017f77deb761e43a3829293d",
+              "body_sha256": "0b6a4d60d7bc5cb20af70ddd5cad7e7573a2619695e6b3762ca44eb29f3430bc"
+            },
+            {
+              "path": "lib/ctraces/lib/mpack/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "abb43615388106ff259ca663725fd4f9f7c96ba7017f77deb761e43a3829293d",
+              "body_sha256": "0b6a4d60d7bc5cb20af70ddd5cad7e7573a2619695e6b3762ca44eb29f3430bc"
+            },
+            {
+              "path": "lib/mpack-amalgamation-1.1.1/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "abb43615388106ff259ca663725fd4f9f7c96ba7017f77deb761e43a3829293d",
+              "body_sha256": "0b6a4d60d7bc5cb20af70ddd5cad7e7573a2619695e6b3762ca44eb29f3430bc"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "mpack_tag_uint_value",
+      "module": "mpack/writer.qv",
+      "contract_sha256": "49e37e65d7fdb04ba9ccecabba98026fb6113275c93f2cf0c6f0fd526b8dc9e6",
+      "pinned_at": "2026-11-04T16:38:57Z",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/cmetrics/lib/mpack/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "2e3f0ce9ec3af02f5de7473b92122242a0ed0a760daff2e00e37404c3692ecc2",
+              "body_sha256": "b89cc4a426845e8127ddb06fa75900037532b238b158a7df9e2e08976a055974"
+            },
+            {
+              "path": "lib/cprofiles/lib/mpack/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "2e3f0ce9ec3af02f5de7473b92122242a0ed0a760daff2e00e37404c3692ecc2",
+              "body_sha256": "b89cc4a426845e8127ddb06fa75900037532b238b158a7df9e2e08976a055974"
+            },
+            {
+              "path": "lib/ctraces/lib/mpack/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "2e3f0ce9ec3af02f5de7473b92122242a0ed0a760daff2e00e37404c3692ecc2",
+              "body_sha256": "b89cc4a426845e8127ddb06fa75900037532b238b158a7df9e2e08976a055974"
+            },
+            {
+              "path": "lib/mpack-amalgamation-1.1.1/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "2e3f0ce9ec3af02f5de7473b92122242a0ed0a760daff2e00e37404c3692ecc2",
+              "body_sha256": "b89cc4a426845e8127ddb06fa75900037532b238b158a7df9e2e08976a055974"
             }
           ]
         }
@@ -363,6 +1383,76 @@
       ]
     },
     {
+      "function": "mpack_write_i32",
+      "module": "mpack/writer.qv",
+      "contract_sha256": "6b1128bee7a891bc993f5dc8ad9a8a4d8ee5429819e0f3f8d35e1ababa1d302f",
+      "pinned_at": "2026-11-04T16:38:57Z",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/cmetrics/lib/mpack/src/mpack/mpack.c",
+              "kind": "definition",
+              "declaration_sha256": "88cd14379faf026ea714f6237af5f91c18d510ec80dc5f994e32adf849990b27",
+              "body_sha256": "0317a4b745d91f3cfa00cbd59cc9e07dcb9d183645a19ceefc4df8e4af3df0eb"
+            },
+            {
+              "path": "lib/cmetrics/lib/mpack/src/mpack/mpack.h",
+              "kind": "declaration",
+              "declaration_sha256": "88cd14379faf026ea714f6237af5f91c18d510ec80dc5f994e32adf849990b27"
+            },
+            {
+              "path": "lib/cprofiles/lib/mpack/src/mpack/mpack.c",
+              "kind": "definition",
+              "declaration_sha256": "88cd14379faf026ea714f6237af5f91c18d510ec80dc5f994e32adf849990b27",
+              "body_sha256": "0317a4b745d91f3cfa00cbd59cc9e07dcb9d183645a19ceefc4df8e4af3df0eb"
+            },
+            {
+              "path": "lib/cprofiles/lib/mpack/src/mpack/mpack.h",
+              "kind": "declaration",
+              "declaration_sha256": "88cd14379faf026ea714f6237af5f91c18d510ec80dc5f994e32adf849990b27"
+            },
+            {
+              "path": "lib/ctraces/lib/mpack/src/mpack/mpack.c",
+              "kind": "definition",
+              "declaration_sha256": "88cd14379faf026ea714f6237af5f91c18d510ec80dc5f994e32adf849990b27",
+              "body_sha256": "0317a4b745d91f3cfa00cbd59cc9e07dcb9d183645a19ceefc4df8e4af3df0eb"
+            },
+            {
+              "path": "lib/ctraces/lib/mpack/src/mpack/mpack.h",
+              "kind": "declaration",
+              "declaration_sha256": "88cd14379faf026ea714f6237af5f91c18d510ec80dc5f994e32adf849990b27"
+            },
+            {
+              "path": "lib/mpack-amalgamation-1.1.1/src/mpack/mpack.c",
+              "kind": "definition",
+              "declaration_sha256": "88cd14379faf026ea714f6237af5f91c18d510ec80dc5f994e32adf849990b27",
+              "body_sha256": "ca4a3c3e9baf27633e95b731dde624459a4eedc15a49bad4872229c1360c0588"
+            },
+            {
+              "path": "lib/mpack-amalgamation-1.1.1/src/mpack/mpack.h",
+              "kind": "declaration",
+              "declaration_sha256": "88cd14379faf026ea714f6237af5f91c18d510ec80dc5f994e32adf849990b27"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "mpack_write_i64",
       "module": "mpack/writer.qv",
       "contract_sha256": "d57d75c66cb5d00a6dab7d24d8cc233e1e75de30de501e8361a3ed68d7229237",
@@ -423,6 +1513,126 @@
               "path": "lib/mpack-amalgamation-1.1.1/src/mpack/mpack.h",
               "kind": "declaration",
               "declaration_sha256": "7b32d9b502d00635dfb8319189b1759483809d0a9565b9ba2e06a60232befa7c"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "mpack_write_int",
+      "module": "mpack/writer.qv",
+      "contract_sha256": "733d1e55e4feaa020d3e531bd1fe849809e25072a5c9398d88d34132726925f0",
+      "pinned_at": "2026-11-04T16:38:57Z",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/cmetrics/lib/mpack/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "2189cfad3944b1158944c750d5420fff80ef018e600143bbb2b18428786909ee",
+              "body_sha256": "5dc9187f919c4f9985f92ebd469c92291e72d1d8d03e1da36448ee829da12769"
+            },
+            {
+              "path": "lib/cprofiles/lib/mpack/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "2189cfad3944b1158944c750d5420fff80ef018e600143bbb2b18428786909ee",
+              "body_sha256": "5dc9187f919c4f9985f92ebd469c92291e72d1d8d03e1da36448ee829da12769"
+            },
+            {
+              "path": "lib/ctraces/lib/mpack/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "2189cfad3944b1158944c750d5420fff80ef018e600143bbb2b18428786909ee",
+              "body_sha256": "5dc9187f919c4f9985f92ebd469c92291e72d1d8d03e1da36448ee829da12769"
+            },
+            {
+              "path": "lib/mpack-amalgamation-1.1.1/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "2189cfad3944b1158944c750d5420fff80ef018e600143bbb2b18428786909ee",
+              "body_sha256": "5dc9187f919c4f9985f92ebd469c92291e72d1d8d03e1da36448ee829da12769"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "mpack_write_nil",
+      "module": "mpack/writer.qv",
+      "contract_sha256": "456b21f341a2aac989ebcae67b57e0ea1824c1f1d6643b1f34fce3e6abf6e81e",
+      "pinned_at": "2026-11-04T16:38:57Z",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/cmetrics/lib/mpack/src/mpack/mpack.c",
+              "kind": "definition",
+              "declaration_sha256": "e22c4d3b894e90ed500017207fd6b44e3a14371385a3e9445878bce9da1bd88c",
+              "body_sha256": "a25e3840042a03429a5f405daa4ff6d43c1f465cb6a7bd90546be6fe2826303e"
+            },
+            {
+              "path": "lib/cmetrics/lib/mpack/src/mpack/mpack.h",
+              "kind": "declaration",
+              "declaration_sha256": "e22c4d3b894e90ed500017207fd6b44e3a14371385a3e9445878bce9da1bd88c"
+            },
+            {
+              "path": "lib/cprofiles/lib/mpack/src/mpack/mpack.c",
+              "kind": "definition",
+              "declaration_sha256": "e22c4d3b894e90ed500017207fd6b44e3a14371385a3e9445878bce9da1bd88c",
+              "body_sha256": "a25e3840042a03429a5f405daa4ff6d43c1f465cb6a7bd90546be6fe2826303e"
+            },
+            {
+              "path": "lib/cprofiles/lib/mpack/src/mpack/mpack.h",
+              "kind": "declaration",
+              "declaration_sha256": "e22c4d3b894e90ed500017207fd6b44e3a14371385a3e9445878bce9da1bd88c"
+            },
+            {
+              "path": "lib/ctraces/lib/mpack/src/mpack/mpack.c",
+              "kind": "definition",
+              "declaration_sha256": "e22c4d3b894e90ed500017207fd6b44e3a14371385a3e9445878bce9da1bd88c",
+              "body_sha256": "a25e3840042a03429a5f405daa4ff6d43c1f465cb6a7bd90546be6fe2826303e"
+            },
+            {
+              "path": "lib/ctraces/lib/mpack/src/mpack/mpack.h",
+              "kind": "declaration",
+              "declaration_sha256": "e22c4d3b894e90ed500017207fd6b44e3a14371385a3e9445878bce9da1bd88c"
+            },
+            {
+              "path": "lib/mpack-amalgamation-1.1.1/src/mpack/mpack.c",
+              "kind": "definition",
+              "declaration_sha256": "e22c4d3b894e90ed500017207fd6b44e3a14371385a3e9445878bce9da1bd88c",
+              "body_sha256": "a25e3840042a03429a5f405daa4ff6d43c1f465cb6a7bd90546be6fe2826303e"
+            },
+            {
+              "path": "lib/mpack-amalgamation-1.1.1/src/mpack/mpack.h",
+              "kind": "declaration",
+              "declaration_sha256": "e22c4d3b894e90ed500017207fd6b44e3a14371385a3e9445878bce9da1bd88c"
             }
           ]
         }
@@ -555,6 +1765,266 @@
               "path": "lib/mpack-amalgamation-1.1.1/src/mpack/mpack.h",
               "kind": "declaration",
               "declaration_sha256": "48e993a5b32012b7f110d16ee921853e3eb0c554a6227c4d68afd627793b20ba"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "mpack_write_u32",
+      "module": "mpack/writer.qv",
+      "contract_sha256": "d2f565035a782106bae6e9ba0a121543b5d0f1277f2b99bd7486533ef312d766",
+      "pinned_at": "2026-11-04T16:38:57Z",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/cmetrics/lib/mpack/src/mpack/mpack.c",
+              "kind": "definition",
+              "declaration_sha256": "1db96ed5f29185ddc4abe3ad829668b7f7d33887f39d1db3b3f26d30dc340aa0",
+              "body_sha256": "936e31170d9f944ba0892c0a0b2ebce52d96e1cd3e29af5226735378e7e9fc23"
+            },
+            {
+              "path": "lib/cmetrics/lib/mpack/src/mpack/mpack.h",
+              "kind": "declaration",
+              "declaration_sha256": "1db96ed5f29185ddc4abe3ad829668b7f7d33887f39d1db3b3f26d30dc340aa0"
+            },
+            {
+              "path": "lib/cprofiles/lib/mpack/src/mpack/mpack.c",
+              "kind": "definition",
+              "declaration_sha256": "1db96ed5f29185ddc4abe3ad829668b7f7d33887f39d1db3b3f26d30dc340aa0",
+              "body_sha256": "936e31170d9f944ba0892c0a0b2ebce52d96e1cd3e29af5226735378e7e9fc23"
+            },
+            {
+              "path": "lib/cprofiles/lib/mpack/src/mpack/mpack.h",
+              "kind": "declaration",
+              "declaration_sha256": "1db96ed5f29185ddc4abe3ad829668b7f7d33887f39d1db3b3f26d30dc340aa0"
+            },
+            {
+              "path": "lib/ctraces/lib/mpack/src/mpack/mpack.c",
+              "kind": "definition",
+              "declaration_sha256": "1db96ed5f29185ddc4abe3ad829668b7f7d33887f39d1db3b3f26d30dc340aa0",
+              "body_sha256": "936e31170d9f944ba0892c0a0b2ebce52d96e1cd3e29af5226735378e7e9fc23"
+            },
+            {
+              "path": "lib/ctraces/lib/mpack/src/mpack/mpack.h",
+              "kind": "declaration",
+              "declaration_sha256": "1db96ed5f29185ddc4abe3ad829668b7f7d33887f39d1db3b3f26d30dc340aa0"
+            },
+            {
+              "path": "lib/mpack-amalgamation-1.1.1/src/mpack/mpack.c",
+              "kind": "definition",
+              "declaration_sha256": "1db96ed5f29185ddc4abe3ad829668b7f7d33887f39d1db3b3f26d30dc340aa0",
+              "body_sha256": "65bbc80ad9b4e976be0d29aee8bcc7f21483a0393f28cf64fe32204d0ef073e0"
+            },
+            {
+              "path": "lib/mpack-amalgamation-1.1.1/src/mpack/mpack.h",
+              "kind": "declaration",
+              "declaration_sha256": "1db96ed5f29185ddc4abe3ad829668b7f7d33887f39d1db3b3f26d30dc340aa0"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "mpack_write_u64",
+      "module": "mpack/writer.qv",
+      "contract_sha256": "b4bb8bf358ebbe93ebb39e056a6b091c0943c3705bb83720b75a0227438c4099",
+      "pinned_at": "2026-11-04T16:38:57Z",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/cmetrics/lib/mpack/src/mpack/mpack.c",
+              "kind": "definition",
+              "declaration_sha256": "c31e270b8fdd07170946c3b355b931cb0c621c03367f5ab3a5773f9bc1fa7c57",
+              "body_sha256": "9de5b835db2cebcd1daaef1ad5986b9d33fd9cc3cc4dc5f5e16e78fbf4baec5b"
+            },
+            {
+              "path": "lib/cmetrics/lib/mpack/src/mpack/mpack.h",
+              "kind": "declaration",
+              "declaration_sha256": "c31e270b8fdd07170946c3b355b931cb0c621c03367f5ab3a5773f9bc1fa7c57"
+            },
+            {
+              "path": "lib/cprofiles/lib/mpack/src/mpack/mpack.c",
+              "kind": "definition",
+              "declaration_sha256": "c31e270b8fdd07170946c3b355b931cb0c621c03367f5ab3a5773f9bc1fa7c57",
+              "body_sha256": "9de5b835db2cebcd1daaef1ad5986b9d33fd9cc3cc4dc5f5e16e78fbf4baec5b"
+            },
+            {
+              "path": "lib/cprofiles/lib/mpack/src/mpack/mpack.h",
+              "kind": "declaration",
+              "declaration_sha256": "c31e270b8fdd07170946c3b355b931cb0c621c03367f5ab3a5773f9bc1fa7c57"
+            },
+            {
+              "path": "lib/ctraces/lib/mpack/src/mpack/mpack.c",
+              "kind": "definition",
+              "declaration_sha256": "c31e270b8fdd07170946c3b355b931cb0c621c03367f5ab3a5773f9bc1fa7c57",
+              "body_sha256": "9de5b835db2cebcd1daaef1ad5986b9d33fd9cc3cc4dc5f5e16e78fbf4baec5b"
+            },
+            {
+              "path": "lib/ctraces/lib/mpack/src/mpack/mpack.h",
+              "kind": "declaration",
+              "declaration_sha256": "c31e270b8fdd07170946c3b355b931cb0c621c03367f5ab3a5773f9bc1fa7c57"
+            },
+            {
+              "path": "lib/mpack-amalgamation-1.1.1/src/mpack/mpack.c",
+              "kind": "definition",
+              "declaration_sha256": "c31e270b8fdd07170946c3b355b931cb0c621c03367f5ab3a5773f9bc1fa7c57",
+              "body_sha256": "498e7c50693983b5a1691326eac2a51df214e40cc42b3f255c7684c6f2f4ee18"
+            },
+            {
+              "path": "lib/mpack-amalgamation-1.1.1/src/mpack/mpack.h",
+              "kind": "declaration",
+              "declaration_sha256": "c31e270b8fdd07170946c3b355b931cb0c621c03367f5ab3a5773f9bc1fa7c57"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "mpack_write_uint",
+      "module": "mpack/writer.qv",
+      "contract_sha256": "bb217dfa36af0ce6b48d60851e493af752789aba5b7b26fdd0c9d152125763cb",
+      "pinned_at": "2026-11-04T16:38:57Z",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/cmetrics/lib/mpack/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "425789c5e15f46c47f20f5802db7bbabefc8df7811b13572ac278ce702c94052",
+              "body_sha256": "fb66f98a5cdbffe9548e36e9341d4cfd96e61d39a0b7a53983fec7e5aedf9d31"
+            },
+            {
+              "path": "lib/cprofiles/lib/mpack/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "425789c5e15f46c47f20f5802db7bbabefc8df7811b13572ac278ce702c94052",
+              "body_sha256": "fb66f98a5cdbffe9548e36e9341d4cfd96e61d39a0b7a53983fec7e5aedf9d31"
+            },
+            {
+              "path": "lib/ctraces/lib/mpack/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "425789c5e15f46c47f20f5802db7bbabefc8df7811b13572ac278ce702c94052",
+              "body_sha256": "fb66f98a5cdbffe9548e36e9341d4cfd96e61d39a0b7a53983fec7e5aedf9d31"
+            },
+            {
+              "path": "lib/mpack-amalgamation-1.1.1/src/mpack/mpack.h",
+              "kind": "definition",
+              "declaration_sha256": "425789c5e15f46c47f20f5802db7bbabefc8df7811b13572ac278ce702c94052",
+              "body_sha256": "fb66f98a5cdbffe9548e36e9341d4cfd96e61d39a0b7a53983fec7e5aedf9d31"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "mpack_writer_flag_error",
+      "module": "mpack/writer.qv",
+      "contract_sha256": "d777b0476c33886c53ce997ec90bcd7cccb9ca901bb25ee621f45992b5a5a379",
+      "pinned_at": "2026-11-04T16:38:57Z",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/cmetrics/lib/mpack/src/mpack/mpack.c",
+              "kind": "definition",
+              "declaration_sha256": "7146f5d7936fef1f44fcadf491c3768462fe52c7e31fe16437b2fa5c3f0eafc4",
+              "body_sha256": "ac7a4562c07f8cefe5564dad57c4d628773d0baed1826c967f108cd596c33a31"
+            },
+            {
+              "path": "lib/cmetrics/lib/mpack/src/mpack/mpack.h",
+              "kind": "declaration",
+              "declaration_sha256": "7146f5d7936fef1f44fcadf491c3768462fe52c7e31fe16437b2fa5c3f0eafc4"
+            },
+            {
+              "path": "lib/cprofiles/lib/mpack/src/mpack/mpack.c",
+              "kind": "definition",
+              "declaration_sha256": "7146f5d7936fef1f44fcadf491c3768462fe52c7e31fe16437b2fa5c3f0eafc4",
+              "body_sha256": "ac7a4562c07f8cefe5564dad57c4d628773d0baed1826c967f108cd596c33a31"
+            },
+            {
+              "path": "lib/cprofiles/lib/mpack/src/mpack/mpack.h",
+              "kind": "declaration",
+              "declaration_sha256": "7146f5d7936fef1f44fcadf491c3768462fe52c7e31fe16437b2fa5c3f0eafc4"
+            },
+            {
+              "path": "lib/ctraces/lib/mpack/src/mpack/mpack.c",
+              "kind": "definition",
+              "declaration_sha256": "7146f5d7936fef1f44fcadf491c3768462fe52c7e31fe16437b2fa5c3f0eafc4",
+              "body_sha256": "ac7a4562c07f8cefe5564dad57c4d628773d0baed1826c967f108cd596c33a31"
+            },
+            {
+              "path": "lib/ctraces/lib/mpack/src/mpack/mpack.h",
+              "kind": "declaration",
+              "declaration_sha256": "7146f5d7936fef1f44fcadf491c3768462fe52c7e31fe16437b2fa5c3f0eafc4"
+            },
+            {
+              "path": "lib/mpack-amalgamation-1.1.1/src/mpack/mpack.c",
+              "kind": "definition",
+              "declaration_sha256": "7146f5d7936fef1f44fcadf491c3768462fe52c7e31fe16437b2fa5c3f0eafc4",
+              "body_sha256": "ac7a4562c07f8cefe5564dad57c4d628773d0baed1826c967f108cd596c33a31"
+            },
+            {
+              "path": "lib/mpack-amalgamation-1.1.1/src/mpack/mpack.h",
+              "kind": "declaration",
+              "declaration_sha256": "7146f5d7936fef1f44fcadf491c3768462fe52c7e31fe16437b2fa5c3f0eafc4"
             }
           ]
         }
