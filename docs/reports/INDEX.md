@@ -317,6 +317,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [ct47-copy-capture](ct47-copy-capture/README.md) | CT47-COPY-CAPTURE — the boundary refuses by the judgment, not the backend |
 
+| [current-run-defects](current-run-defects/README.md) | CURRENT-RUN-DEFECTS |
+
 | [cycle18-broader-composition](cycle18-broader-composition/README.md) | Cycle 18 broader callback composition |
 
 | [cycle18-broader-integration](cycle18-broader-integration/README.md) | Cycle 18 broader acceptance integration |
@@ -618,6 +620,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [libc-reading-site-evidence](libc-reading-site-evidence/README.md) | Libc reading-site evidence v1 |
 
+| [librdkafka-header-inlines](librdkafka-header-inlines/README.md) | LIBRDKAFKA-HEADER-INLINES |
+
 | [librdkafka-plugin-premise](librdkafka-plugin-premise/README.md) | LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED: the plugin premise on every dependent declaration |
 
 | [librdkafka-plugin-premise-remainder](librdkafka-plugin-premise-remainder/README.md) | LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER: the plugin premise on member facts, the crash path and a model contract |
@@ -646,6 +650,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [measure-tool](measure-tool/README.md) | MEASURE-TOOL |
 
 | [measure-tool-landing-publish](measure-tool-landing-publish/README.md) | MEASURE-TOOL-LANDING-PUBLISH |
+
+| [member-access-projection](member-access-projection/README.md) | MEMBER-ACCESS-PROJECTION |
 
 | [member-path-unit-helpers](member-path-unit-helpers/README.md) | MEMBER-PATH-STATES-THROUGH-UNIT-HELPERS: rule 30's body check through the unit's helpers |
 
