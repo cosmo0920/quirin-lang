@@ -1,0 +1,78 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "GATE-SCOPE-PRECISE-SELECTION",
+ "base": "25508ccaf",
+ "measured_tip": "a7680ffa5",
+ "increment_paragraph": "**GATE-SCOPE-PRECISE-SELECTION** (round 19 card A; USER REQUEST 2026-11-05, verbatim: \"Launch three cards of gate-time reductions.\"; requirements R1, R2, R6 and R9 of docs/plans/gate-time-reduction/README.md; [report](../../reports/gate-scope-precise-selection/README.md)). scripts/gate_scope.py now selects at cargo-target granularity. A reader compiled only into integration-test targets claims for those targets, with no reverse dependencies. A crate's own path narrows to its test targets only when only test targets compile it, or name it and are its only readers; src/, Cargo.toml, build.rs and unread files stay crate-wide. A FULL_CRATES member forces full mode only when reached whole. run_test_binaries.py gains --targets PKG::test::NAME, fail-closed. A directory literal claims only what scripts/gate_scope_walkers.json declares for its site (109 entries: 74 whole directories, 27 base paths, 1 extension filter, 7 sourced reads with no literal); an undeclared one keeps its whole directory and fails the census test. A tracked JSON file lists the paths it names, so its readers read them (profiles, cycle19-resource-contracts.json, the load path). The census is scripts/gate_read_census.py: every root test executable run under strace, 610 units, 9,825 opens, recorded at a9de4e8be. scripts/tests/test_gate_scope_census.py holds the model to it: every observed open selects its unit, and every entry is walked, declared and not stale. A root manifest or lock change the provider workspace builds adds `cargo metadata --locked --offline` on providers/Cargo.toml (the RULE32A landing's paths select it). A card gate passes its base to the Python suite, whose matrix check then excuses only the card's own Lean audits and the base's drift; --landing and the standing gate keep the exact check. Probes: a gateway test file, a libc .qv and a Lean module, all full before, are scoped (8 targets; 6 packages and 16 targets; 3 targets). Replay of 7 cards and 9 red commits: no failing unit dropped. CFL-MPACK and LIBRDKAFKA go from full (602/604 units) to 199/205, and the W45 red commit gains the provider lock check its stale lock needed. Tooling and tests only: no analyzer, contract or Lean change.",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "GATE-SCOPE-PRECISE-SELECTION",
+   "operation": "register",
+   "title": "The scoped gate selects test targets, declared walkers and manifests, the provider lock, and a card's own matrix drift",
+   "text": "Registered by its own card at landing (round 19 card A, requirements R1, R2, R6 and R9 of docs/plans/gate-time-reduction/README.md); retired by the next entry.",
+   "source": "docs/reports/gate-scope-precise-selection/README.md",
+   "recorded_by": "GATE-SCOPE-PRECISE-SELECTION"
+  },
+  {
+   "id": "GATE-SCOPE-PRECISE-SELECTION",
+   "operation": "retire",
+   "why": "DISCHARGED by GATE-SCOPE-PRECISE-SELECTION (docs/reports/gate-scope-precise-selection/README.md): target-granular selection, the walker table with its census test, JSON manifests, run_test_binaries.py --targets, the provider lock step and the card-gate audit drift, with the section 1 probes and the R9 replay recorded.",
+   "source": "docs/reports/gate-scope-precise-selection/README.md"
+  },
+  {
+   "id": "GATE-SCOPE-RUNTIME-READS-HEURISTIC",
+   "operation": "retire",
+   "why": "DISCHARGED by GATE-SCOPE-PRECISE-SELECTION (docs/reports/gate-scope-precise-selection/README.md). Each repository walk's filter is declared where it is made: scripts/gate_scope_walkers.json gives each directory literal the files it reads, and a literal '*' covers a whole-tree listing filtered afterwards or a path computed from data. A tracked JSON file's readers read the paths it names (the load path and its contract roots, the profiles). scripts/tests/test_gate_scope_census.py holds this against a strace census of all 610 root test units (scripts/gate_read_census.py): every observed open selects its unit, every entry is walked, every directory literal is declared (an undeclared one keeps its whole directory) and none is stale. Probe at this tree: the libc .qv selects neither qcore-c-gateway nor qcore-contract as a crate, only their test targets that read it. The R9 replay drops no failing unit.",
+   "source": "docs/reports/gate-scope-precise-selection/README.md"
+  },
+  {
+   "id": "GATE-SCOPE-FULL-CRATES-TEST-ONLY",
+   "operation": "retire",
+   "why": "DISCHARGED by GATE-SCOPE-PRECISE-SELECTION (docs/reports/gate-scope-precise-selection/README.md). A path only integration-test targets compile, or a fixture only they name, selects those targets and their readers. This holds for FULL_CRATES members, which force full mode only when reached as a whole; src/, Cargo.toml and build.rs stay full. `--paths crates/qcore-c-gateway/tests/libc_gap_declarations.rs --plan` is scoped with 8 test targets, where 22 packages ran before; run_test_binaries.py --targets runs exactly those executables. The R9 replay (7 cards, 9 red commits) drops no failing unit.",
+   "source": "docs/reports/gate-scope-precise-selection/README.md"
+  },
+  {
+   "id": "GATE-SCOPE-PROVIDER-LOCK",
+   "operation": "retire",
+   "why": "DISCHARGED by GATE-SCOPE-PRECISE-SELECTION (docs/reports/gate-scope-precise-selection/README.md). A change to the root Cargo.toml or Cargo.lock, or to the Cargo.toml of a root crate in the provider workspace's transitive path-dependency closure, adds `cargo metadata --locked --offline --format-version 1 --manifest-path providers/Cargo.toml` when the provider gate is not already selected. scripts/tests/test_gate_scope_precise.py replays the RULE32A landing's paths (c82895503..62da8997d) and selects it, and the R9 replay of W45's red commit d9df130a2 (its provider steps failed on a stale lock) now selects it.",
+   "source": "docs/reports/gate-scope-precise-selection/README.md"
+  },
+  {
+   "id": "CARD-GATE-NEW-AUDIT-MATRIX-COUNT",
+   "operation": "retire",
+   "why": "DISCHARGED by GATE-SCOPE-PRECISE-SELECTION (docs/reports/gate-scope-precise-selection/README.md), with the rule stated in docs/agents/validation.md. gate_scope.py gives a card's Python step QUIRIN_CARD_GATE_BASE=<base>. test_build_matrix_sections.py then accepts a committed Lean-audit list that differs from proof/Audit*.lean only by the audits the card adds or removes and the drift its base had (CardGateAuditDrift tests both directions and the refusals). The standing gate and `gate_scope.py --landing` set no base and keep the exact check.",
+   "source": "docs/reports/gate-scope-precise-selection/README.md"
+  },
+  {
+   "id": "GATE-SCOPED-RUN-UNEXERCISED",
+   "operation": "append",
+   "text": "GATE-SCOPE-PRECISE-SELECTION (2026-11-05) supplies the selection-replay half of R9: 7 cards and 9 red commits were replayed through the old and the new scoper, and no failing unit was dropped. run_test_binaries.py --targets ran live under the rust-suite slot. That card's own gate is full mode (it changes the scoper), so the scoped landing this entry waits for is still to come.",
+   "source": "docs/reports/gate-scope-precise-selection/README.md"
+  },
+  {
+   "id": "GATE-SCOPE-LIB-UNIT-TEST-MODULES",
+   "operation": "register",
+   "title": "A library's #[cfg(test)] modules select the whole crate and its dependents",
+   "text": "Registered by GATE-SCOPE-PRECISE-SELECTION. Files a library compiles only under #[cfg(test)], such as crates/qcore-contract/tests/unit/*.rs and the gateway's tests/unit modules reached by #[path], change only that library's unit-test executable (PKG::lib::NAME). scripts/gate_scope.py still selects their crate as a whole with its reverse dependencies, because the file is in the library target's closure. This keeps the LIBC-GAP- and LOG-PRINT-shaped contract cards in full mode in the R9 replay (their .qv files are included by qcore-contract's and the gateway's library tests). DISCHARGE: the module closure records cfg(test) edges; a file reached only through them selects the library's unit-test unit alone (a new runner selection for --lib); the replay is re-run and shows no failing unit dropped.",
+   "source": "docs/reports/gate-scope-precise-selection/README.md",
+   "recorded_by": "GATE-SCOPE-PRECISE-SELECTION"
+  },
+  {
+   "id": "GATE-READ-CENSUS-REFRESH",
+   "operation": "register",
+   "title": "The run-time read census and its drafted walker entries describe one commit",
+   "text": "Registered by GATE-SCOPE-PRECISE-SELECTION. docs/reports/gate-scope-precise-selection/read-census.json was recorded at a9de4e8be by scripts/gate_read_census.py: strace of all 610 root units, about 25 minutes under the rust-suite slot. The census-backed entries of scripts/gate_scope_walkers.json were drafted from it, and test_gate_scope_census.py checks the model against it. A test that later reads a new path through data or a new walk is not seen until the census is recorded again; a directory literal it adds fails the census test, but a data-derived read does not. The provider workspace is not traced. DISCHARGE: the census is re-recorded at a stated cadence (or on every landing that adds a test target), or a per-unit tracer runs on the units a card gate selects and fails on an open the plan does not attribute.",
+   "source": "docs/reports/gate-scope-precise-selection/README.md",
+   "recorded_by": "GATE-SCOPE-PRECISE-SELECTION"
+  },
+  {
+   "id": "TEST-WRITES-INTO-CHECKOUT",
+   "operation": "register",
+   "title": "A qcore-audit test leaves retained audit products inside the checkout",
+   "text": "Registered by GATE-SCOPE-PRECISE-SELECTION. The read census (2026-11-05) saw qcore-audit::test::cycle19_current_command open crates/qcore-audit/private/audit-retained-products/<pid>-<n>/{pending,product}.qc in the worktree. These are untracked files under the crate directory, left by runs of the quirin-audit binary, which retains products relative to its working directory. They are ignored, so the result is unchanged (constraint 29), but they accumulate across runs and worktrees. DISCHARGE: the test points the retained-products directory at CARGO_TARGET_TMPDIR or a temporary directory it removes, and a check asserts nothing is written under the crate directory.",
+   "source": "docs/reports/gate-scope-precise-selection/README.md",
+   "recorded_by": "GATE-SCOPE-PRECISE-SELECTION"
+  }
+ ]
+}
