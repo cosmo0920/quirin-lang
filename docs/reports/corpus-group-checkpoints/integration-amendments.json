@@ -1,0 +1,68 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "CORPUS-GROUP-CHECKPOINTS",
+  "base": "13337d0af",
+  "measured_tip": "2c9c7645e",
+  "increment_paragraph": "**CORPUS-GROUP-CHECKPOINTS** (round 21, R8 option D; USER DECISION 2026-11-06, verbatim: \"D then A (rec.)\", the button being \"R8: option D first (per-group checkpoints for the pinned corpus route), then option A (gateway publishes per-unit lookups including missed ones; reuse only for contract-only diffs with matching cross-unit facts). I approve using that lookup record as a reuse input once it is published and checked.\"): `quirin-audit pinned --checkpoint-dir DIR [--resume]` seals every library group of every phase the pinned corpus route runs (`first`, `refuted`, `imported`) into `DIR/<library>.<stage>.qo` as soon as the group completes and reuses a group only when its whole identity is unchanged: the run inputs (analyzer build, root and revision, source profile and source-contract package files, manifest, locks, pin template, Clang, the QCORE_* environment with the null/outer output paths reduced to `selected` and the link map to its content digest, member facts), the stage's whole-run facts (the exact contract environment with its refutation table and imports, the cross-unit homes, the bounds and null environments) and the group's units (compile record, raw source, preparation digests). The .qo container gains a `Layout` (the pinned layout is schema 1, five sections; each reader refuses the other's files); the whole-run fold is shared and restores stored units one at a time; census, parity, IR, unit-timing, bounds-selection and QCORE_SOURCE_CONTRACTS runs are refused. Lean QCore.StagedCheckpoints (6 theorems) proves staged reuse and that the staged checkpointed run is the whole run. Evidence: E. Fixtures: a changed input of each kind invalidates exactly the groups that read it. No analyzer, contract or verdict change; no measurement. Report: docs/reports/corpus-group-checkpoints/README.md.",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "CORPUS-GROUP-CHECKPOINTS",
+      "operation": "register",
+      "title": "Per-group .qo checkpoints for the pinned corpus route (R8 option D)",
+      "text": "Registered by its own card at landing (round 21; USER DECISION 2026-11-06, verbatim: \"D then A (rec.)\", the button being \"R8: option D first (per-group checkpoints for the pinned corpus route), then option A (gateway publishes per-unit lookups including missed ones; reuse only for contract-only diffs with matching cross-unit facts). I approve using that lookup record as a reuse input once it is published and checked.\"); retired by the next entry.",
+      "source": "docs/reports/corpus-group-checkpoints/README.md",
+      "recorded_by": "CORPUS-GROUP-CHECKPOINTS"
+    },
+    {
+      "id": "CORPUS-GROUP-CHECKPOINTS",
+      "operation": "retire",
+      "why": "DONE by CORPUS-GROUP-CHECKPOINTS (docs/reports/corpus-group-checkpoints/README.md): pinned-route group checkpoints per stage with identity, fixtures, Lean QCore.StagedCheckpoints and the corpus evidence; option A is MEASURE-LOOKUP-RECORD-REUSE (registered below).",
+      "source": "docs/reports/corpus-group-checkpoints/README.md"
+    },
+    {
+      "id": "W45-CHECKPOINT-PINNED-REPLAY-ROUTE",
+      "operation": "retire",
+      "why": "DISCHARGED by CORPUS-GROUP-CHECKPOINTS (docs/reports/corpus-group-checkpoints/README.md): the pinned route has per-group, per-stage .qo checkpoints whose composition (the shared whole-run fold) wrote every published artifact byte-identical to the whole run's at the same revision: E.",
+      "source": "docs/reports/corpus-group-checkpoints/README.md"
+    },
+    {
+      "id": "MEASURE-INCREMENTAL-BASELINE-COMPOSITION",
+      "operation": "amend",
+      "text": "AMENDED (CORPUS-GROUP-CHECKPOINTS, docs/reports/corpus-group-checkpoints/README.md): option D is done (the user chose \"D then A\"): pinned-route group checkpoints reuse within one revision; across revisions the analyzer build and the stage's whole contract environment differ, so every group recomputes. Option A is MEASURE-LOOKUP-RECORD-REUSE. DISCHARGE unchanged.",
+      "source": "docs/reports/corpus-group-checkpoints/README.md"
+    },
+    {
+      "id": "MEASURE-LOOKUP-RECORD-REUSE",
+      "operation": "register",
+      "title": "R8 option A: reuse units across revisions behind the published per-unit lookup record",
+      "text": "Registered by CORPUS-GROUP-CHECKPOINTS (docs/reports/corpus-group-checkpoints/README.md section 6; USER DECISION 2026-11-06, verbatim: \"D then A (rec.)\", the button being \"R8: option D first (per-group checkpoints for the pinned corpus route), then option A (gateway publishes per-unit lookups including missed ones; reuse only for contract-only diffs with matching cross-unit facts). I approve using that lookup record as a reuse input once it is published and checked.\"). The gateway publishes per unit every name looked up (found and missed), the relied callback candidates and a whole-map-read flag; then the pinned group identity's stage.environment_sha256 (today the whole contract environment) becomes the digest of the environment restricted to the group's units' closures (with include/inherit resolution), plus the refutation entries and homes meeting it, and the analyzer build is accepted from the base side only for a diff confined to contract data (providers/*/contracts/**, their locks, contract/**), recorded in the reuse decision; everything else in the identity stays. DISCHARGE: a contract-only card's measurement reuses unaffected groups (and units on the configured routes), with the composed comparison shown equal to a full run on sampled landings, fail-closed on any unverifiable input.",
+      "source": "docs/reports/corpus-group-checkpoints/README.md",
+      "recorded_by": "CORPUS-GROUP-CHECKPOINTS"
+    },
+    {
+      "id": "CORPUS-CHECKPOINT-BOUNDS-SELECTION",
+      "operation": "register",
+      "title": "Pinned checkpoints refuse the bounds selection",
+      "text": "Registered by CORPUS-GROUP-CHECKPOINTS (docs/reports/corpus-group-checkpoints/README.md). quirin-audit pinned --checkpoint-dir refuses QCORE_BOUNDS_PROPERTY. The stored fragments already carry bounds rows and body evidence and the stage identity the bounds environment with its refutation table. DISCHARGE: a bounds-selected corpus run checkpointed, resumed and compared byte for byte with the whole run, then the refusal lifted.",
+      "source": "docs/reports/corpus-group-checkpoints/README.md",
+      "recorded_by": "CORPUS-GROUP-CHECKPOINTS"
+    },
+    {
+      "id": "PINNED-CHECKPOINT-INSPECTION",
+      "operation": "register",
+      "title": "quirin-audit checkpoint commands read current-route .qo files only",
+      "text": "Registered by CORPUS-GROUP-CHECKPOINTS (docs/reports/corpus-group-checkpoints/README.md). checkpoint verify|decompose|recompose open the current-route layout and refuse pinned group files (schema 1 of the pinned layout). DISCHARGE: the same commands for the pinned layout, or a recorded decision that the route's own --resume check is the only reader.",
+      "source": "docs/reports/corpus-group-checkpoints/README.md",
+      "recorded_by": "CORPUS-GROUP-CHECKPOINTS"
+    },
+    {
+      "id": "PINNED-RESUME-FIXED-COSTS",
+      "operation": "register",
+      "title": "A fully reused pinned run still runs its whole-run steps",
+      "text": "Registered by CORPUS-GROUP-CHECKPOINTS (docs/reports/corpus-group-checkpoints/README.md). F.",
+      "source": "docs/reports/corpus-group-checkpoints/README.md",
+      "recorded_by": "CORPUS-GROUP-CHECKPOINTS"
+    }
+  ]
+}
