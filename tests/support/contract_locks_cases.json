@@ -1,17 +1,21 @@
 {
-  "about": "Card CONTRACT-COUNT-PINS-FROM-LOCKS: the cases both aggregate-count readers (tests/support/contract_locks.rs and scripts/contract_corpus.py lock_totals) must agree on. Each refusal replaces top-level fields of the named crate's lock and must be refused with a message containing `contains`.",
+  "about": "Card CONTRACT-COUNT-PINS-FROM-LOCKS: the cases both aggregate-count readers (tests/support/contract_locks.rs and scripts/contract_corpus.py lock_totals) must agree on, plus the function-map modes the Rust reader returns (`function_modes`). Each refusal replaces top-level fields of the named crate's lock and must be refused with a message containing `contains`.",
   "load_path": {
     "schema_version": 1,
     "crates": [
       {
         "name": "quirin-provider-app",
         "contracts": "quirin-provider-app/contracts",
-        "resource_view": ["app/a.qv"]
+        "resource_view": [
+          "app/a.qv"
+        ]
       },
       {
         "name": "qcore-provider-lib",
         "contracts": "qcore-provider-lib/contracts",
-        "resource_view": ["lib/c.qv"]
+        "resource_view": [
+          "lib/c.qv"
+        ]
       }
     ]
   },
@@ -20,22 +24,47 @@
       "schema_version": 2,
       "crate": "quirin-provider-app",
       "contracts": "quirin-provider-app/contracts",
-      "resource_view": ["app/a.qv"],
+      "resource_view": [
+        "app/a.qv"
+      ],
       "bounds_view": [],
       "outer_view": [],
       "files": {
         "app/a.qv": {
           "declarations": [
-            {"name": "f", "clauses": 2, "resource_table": "functions"},
-            {"name": "g", "clauses": 3, "resource_table": "retaining"}
+            {
+              "name": "f",
+              "clauses": 2,
+              "resource_table": "functions",
+              "resource_mode": {
+                "parameters": [
+                  "borrowed"
+                ],
+                "result": "none"
+              }
+            },
+            {
+              "name": "g",
+              "clauses": 3,
+              "resource_table": "retaining",
+              "resource_mode": null
+            }
           ],
           "other_declarations": []
         },
         "app/b.qv": {
           "declarations": [
-            {"name": "h", "clauses": 1, "resource_table": null}
+            {
+              "name": "h",
+              "clauses": 1,
+              "resource_table": null,
+              "resource_mode": null
+            }
           ],
-          "other_declarations": ["Kind", "Error"]
+          "other_declarations": [
+            "Kind",
+            "Error"
+          ]
         }
       }
     },
@@ -43,15 +72,37 @@
       "schema_version": 2,
       "crate": "qcore-provider-lib",
       "contracts": "qcore-provider-lib/contracts",
-      "resource_view": ["lib/c.qv"],
+      "resource_view": [
+        "lib/c.qv"
+      ],
       "bounds_view": [],
       "outer_view": [],
       "files": {
         "lib/c.qv": {
           "declarations": [
-            {"name": "p", "clauses": 2, "resource_table": "pending_review"},
-            {"name": "q", "clauses": 2, "resource_table": "relational"},
-            {"name": "r", "clauses": 2, "resource_table": "functions"}
+            {
+              "name": "p",
+              "clauses": 2,
+              "resource_table": "pending_review",
+              "resource_mode": null
+            },
+            {
+              "name": "q",
+              "clauses": 2,
+              "resource_table": "relational",
+              "resource_mode": null
+            },
+            {
+              "name": "r",
+              "clauses": 2,
+              "resource_table": "functions",
+              "resource_mode": {
+                "parameters": [
+                  "borrowed"
+                ],
+                "result": "none"
+              }
+            }
           ],
           "other_declarations": []
         }
@@ -75,50 +126,273 @@
     {
       "why": "another schema",
       "crate": "quirin-provider-app",
-      "replace": {"schema_version": 1},
+      "replace": {
+        "schema_version": 1
+      },
       "contains": "not a schema 2 lock of quirin-provider-app"
     },
     {
       "why": "another crate",
       "crate": "qcore-provider-lib",
-      "replace": {"crate": "qcore-provider-other"},
+      "replace": {
+        "crate": "qcore-provider-other"
+      },
       "contains": "not a schema 2 lock of qcore-provider-lib"
     },
     {
       "why": "a view the load path does not state",
       "crate": "quirin-provider-app",
-      "replace": {"resource_view": []},
+      "replace": {
+        "resource_view": []
+      },
       "contains": "not the load path's"
     },
     {
       "why": "a view module the lock does not list",
       "crate": "quirin-provider-app",
-      "replace": {"files": {"app/b.qv": {"declarations": [{"name": "h", "clauses": 1, "resource_table": null}], "other_declarations": ["Kind", "Error"]}}},
+      "replace": {
+        "files": {
+          "app/b.qv": {
+            "declarations": [
+              {
+                "name": "h",
+                "clauses": 1,
+                "resource_table": null,
+                "resource_mode": null
+              }
+            ],
+            "other_declarations": [
+              "Kind",
+              "Error"
+            ]
+          }
+        }
+      },
       "contains": "are not locked"
     },
     {
       "why": "a module outside the view with tabled declarations",
       "crate": "quirin-provider-app",
-      "replace": {"files": {"app/a.qv": {"declarations": [{"name": "f", "clauses": 2, "resource_table": "functions"}, {"name": "g", "clauses": 3, "resource_table": "retaining"}], "other_declarations": []}, "app/b.qv": {"declarations": [{"name": "h", "clauses": 1, "resource_table": "functions"}], "other_declarations": []}}},
+      "replace": {
+        "files": {
+          "app/a.qv": {
+            "declarations": [
+              {
+                "name": "f",
+                "clauses": 2,
+                "resource_table": "functions",
+                "resource_mode": {
+                  "parameters": [
+                    "borrowed"
+                  ],
+                  "result": "none"
+                }
+              },
+              {
+                "name": "g",
+                "clauses": 3,
+                "resource_table": "retaining",
+                "resource_mode": null
+              }
+            ],
+            "other_declarations": []
+          },
+          "app/b.qv": {
+            "declarations": [
+              {
+                "name": "h",
+                "clauses": 1,
+                "resource_table": "functions",
+                "resource_mode": {
+                  "parameters": [
+                    "borrowed"
+                  ],
+                  "result": "none"
+                }
+              }
+            ],
+            "other_declarations": []
+          }
+        }
+      },
       "contains": "disagree"
     },
     {
       "why": "a view module with an untabled declaration",
       "crate": "qcore-provider-lib",
-      "replace": {"files": {"lib/c.qv": {"declarations": [{"name": "p", "clauses": 2, "resource_table": "pending_review"}, {"name": "q", "clauses": 2, "resource_table": null}], "other_declarations": []}}},
+      "replace": {
+        "files": {
+          "lib/c.qv": {
+            "declarations": [
+              {
+                "name": "p",
+                "clauses": 2,
+                "resource_table": "pending_review",
+                "resource_mode": null
+              },
+              {
+                "name": "q",
+                "clauses": 2,
+                "resource_table": null,
+                "resource_mode": null
+              }
+            ],
+            "other_declarations": []
+          }
+        }
+      },
       "contains": "disagree"
     },
     {
       "why": "a view module with a non-function declaration",
       "crate": "qcore-provider-lib",
-      "replace": {"files": {"lib/c.qv": {"declarations": [{"name": "p", "clauses": 2, "resource_table": "functions"}], "other_declarations": ["Kind"]}}},
+      "replace": {
+        "files": {
+          "lib/c.qv": {
+            "declarations": [
+              {
+                "name": "p",
+                "clauses": 2,
+                "resource_table": "functions",
+                "resource_mode": {
+                  "parameters": [
+                    "borrowed"
+                  ],
+                  "result": "none"
+                }
+              }
+            ],
+            "other_declarations": [
+              "Kind"
+            ]
+          }
+        }
+      },
       "contains": "disagree"
     },
     {
       "why": "an unknown table",
       "crate": "qcore-provider-lib",
-      "replace": {"files": {"lib/c.qv": {"declarations": [{"name": "p", "clauses": 2, "resource_table": "function"}], "other_declarations": []}}},
+      "replace": {
+        "files": {
+          "lib/c.qv": {
+            "declarations": [
+              {
+                "name": "p",
+                "clauses": 2,
+                "resource_table": "function",
+                "resource_mode": null
+              }
+            ],
+            "other_declarations": []
+          }
+        }
+      },
       "contains": "resource tables"
+    },
+    {
+      "why": "a function-map declaration without its mode",
+      "crate": "quirin-provider-app",
+      "replace": {
+        "files": {
+          "app/a.qv": {
+            "declarations": [
+              {
+                "name": "f",
+                "clauses": 2,
+                "resource_table": "functions",
+                "resource_mode": null
+              },
+              {
+                "name": "g",
+                "clauses": 3,
+                "resource_table": "retaining",
+                "resource_mode": null
+              }
+            ],
+            "other_declarations": []
+          },
+          "app/b.qv": {
+            "declarations": [
+              {
+                "name": "h",
+                "clauses": 1,
+                "resource_table": null,
+                "resource_mode": null
+              }
+            ],
+            "other_declarations": [
+              "Kind",
+              "Error"
+            ]
+          }
+        }
+      },
+      "contains": "a resource mode outside the function map, or none inside it"
+    },
+    {
+      "why": "a mode outside the function map",
+      "crate": "quirin-provider-app",
+      "replace": {
+        "files": {
+          "app/a.qv": {
+            "declarations": [
+              {
+                "name": "f",
+                "clauses": 2,
+                "resource_table": "functions",
+                "resource_mode": {
+                  "parameters": [
+                    "borrowed"
+                  ],
+                  "result": "none"
+                }
+              },
+              {
+                "name": "g",
+                "clauses": 3,
+                "resource_table": "retaining",
+                "resource_mode": {
+                  "parameters": [
+                    "borrowed"
+                  ],
+                  "result": "none"
+                }
+              }
+            ],
+            "other_declarations": []
+          },
+          "app/b.qv": {
+            "declarations": [
+              {
+                "name": "h",
+                "clauses": 1,
+                "resource_table": null,
+                "resource_mode": null
+              }
+            ],
+            "other_declarations": [
+              "Kind",
+              "Error"
+            ]
+          }
+        }
+      },
+      "contains": "a resource mode outside the function map, or none inside it"
     }
-  ]
+  ],
+  "function_modes": {
+    "f": {
+      "parameters": [
+        "borrowed"
+      ],
+      "result": "none"
+    },
+    "r": {
+      "parameters": [
+        "borrowed"
+      ],
+      "result": "none"
+    }
+  }
 }

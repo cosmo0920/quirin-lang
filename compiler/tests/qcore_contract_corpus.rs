@@ -169,9 +169,15 @@ fn tree_record(logical: &str, path: &Path) -> Value {
                 .function_contract
                 .as_ref()
                 .unwrap_or_else(|| panic!("{logical}: {} has no contract", d.value.name));
+            let mode = loaded
+                .as_ref()
+                .and_then(|contracts| contracts.functions().get(&d.value.name))
+                .map(|contract| serde_json::to_value(contract).unwrap())
+                .unwrap_or(Value::Null);
             json!({
                 "clauses": contract.clauses.len(),
                 "name": d.value.name,
+                "resource_mode": mode,
                 "resource_table": table_of(&d.value.name),
             })
         })

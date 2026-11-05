@@ -12,76 +12,91 @@
         {
           "clauses": 8,
           "name": "binding_scope",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 3,
           "name": "binding_memory",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 3,
           "name": "binding_execution",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 1,
           "name": "binding_select_path",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 4,
           "name": "binding_send",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 2,
           "name": "binding_errno_location",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 1,
           "name": "binding_perror",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 1,
           "name": "binding_evutil_closesocket",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 1,
           "name": "binding_event_del",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 1,
           "name": "binding_event_free",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 3,
           "name": "binding_mk_mem_free",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 2,
           "name": "binding_symbol",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 2,
           "name": "binding_call_arguments",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 3,
           "name": "binding_call_interval",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 2,
           "name": "binding_runtime_effect",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -98,61 +113,73 @@
         {
           "clauses": 4,
           "name": "selected_callbacks",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 6,
           "name": "selected_callback_identity",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 3,
           "name": "effect_errno_location",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 3,
           "name": "effect_event_del",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 3,
           "name": "effect_event_free",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 3,
           "name": "effect_evutil_closesocket",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 3,
           "name": "effect_mk_mem_free",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 3,
           "name": "effect_perror",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 3,
           "name": "effect_send",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 7,
           "name": "bounded_no_task_observation",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 16,
           "name": "taskful_fixture_source",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 12,
           "name": "taskful_fixture_primitives",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -169,36 +196,43 @@
         {
           "clauses": 3,
           "name": "evutil_socketpair",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 2,
           "name": "evutil_socket_geterror",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 8,
           "name": "evutil_closesocket",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 3,
           "name": "cb_event",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 4,
           "name": "cb_timeout",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 2,
           "name": "cb_wait_2_timeout",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 13,
           "name": "check_monkey_composition",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -220,31 +254,37 @@
         {
           "clauses": 18,
           "name": "callback_inventory",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 6,
           "name": "context_identity_join",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 2,
           "name": "wait_failure_source_join",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 41,
           "name": "evidence_join",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 8,
           "name": "caller_size_bound",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 11,
           "name": "aggregate_acceptance",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -261,26 +301,31 @@
         {
           "clauses": 4,
           "name": "observation_socketpair",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 4,
           "name": "observation_acquire",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 1,
           "name": "observation_use",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 2,
           "name": "observation_close",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 8,
           "name": "observation_complete",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -297,51 +342,84 @@
         {
           "clauses": 8,
           "name": "mk_event_add",
+          "resource_mode": null,
           "resource_table": "retaining"
         },
         {
           "clauses": 9,
           "name": "mk_event_timeout_create",
+          "resource_mode": null,
           "resource_table": "retaining"
         },
         {
           "clauses": 11,
           "name": "mk_event_channel_create",
+          "resource_mode": null,
           "resource_table": "retaining"
         },
         {
           "clauses": 5,
           "name": "mk_event_del",
+          "resource_mode": null,
           "resource_table": "retaining"
         },
         {
           "clauses": 6,
           "name": "mk_event_timeout_destroy",
+          "resource_mode": null,
           "resource_table": "retaining"
         },
         {
           "clauses": 5,
           "name": "mk_event_timeout_disable",
+          "resource_mode": null,
           "resource_table": "retaining"
         },
         {
           "clauses": 9,
           "name": "mk_event_channel_destroy",
+          "resource_mode": null,
           "resource_table": "retaining"
         },
         {
           "clauses": 3,
           "name": "mk_event_wait",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 3,
           "name": "mk_event_loop_create",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            }
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 3,
           "name": "mk_event_loop_destroy",
+          "resource_mode": {
+            "parameters": [
+              {
+                "released": {
+                  "nullable": false
+                }
+              }
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         }
       ],
@@ -358,26 +436,31 @@
         {
           "clauses": 12,
           "name": "cb_event_source_projection",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 1,
           "name": "contextual_payload_boundary",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 13,
           "name": "contextual_authority",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 8,
           "name": "native_allocation",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 13,
           "name": "contextual_payload_access",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -394,21 +477,71 @@
         {
           "clauses": 5,
           "name": "mk_list_add",
+          "resource_mode": {
+            "container_effects": {
+              "0": {
+                "container_parameter": 1,
+                "effect": "published"
+              }
+            },
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "mk_list_del",
+          "resource_mode": {
+            "container_effects": {
+              "0": {
+                "effect": "unpublished"
+              }
+            },
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "mk_fifo_queue_destroy",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              {
+                "released": {
+                  "nullable": false
+                }
+              }
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 12,
           "name": "mk_http_thread_destroy",
+          "resource_mode": {
+            "container_effects": {
+              "0": {
+                "effect": "unpublished"
+              }
+            },
+            "parameters": [
+              {
+                "released": {
+                  "nullable": false
+                }
+              }
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         }
       ],
@@ -460,11 +593,26 @@
         {
           "clauses": 5,
           "name": "mk_print",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "mk_utils_libc_error",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         }
       ],
@@ -481,16 +629,46 @@
         {
           "clauses": 3,
           "name": "mk_mem_alloc",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            }
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 3,
           "name": "mk_mem_alloc_z",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            }
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 3,
           "name": "mk_mem_free",
+          "resource_mode": {
+            "parameters": [
+              {
+                "released": {
+                  "nullable": true
+                }
+              }
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         }
       ],
@@ -520,51 +698,61 @@
         {
           "clauses": 3,
           "name": "native_platform_source_identity",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 7,
           "name": "linux_epoll_asan_profile",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 7,
           "name": "linux_poll_asan_profile",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 7,
           "name": "linux_select_asan_profile",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 7,
           "name": "macos_kqueue_asan_profile",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 7,
           "name": "windows_win32_asan_profile",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 7,
           "name": "windows_iocp_asan_profile",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 7,
           "name": "linux_epoll_tsan_profile",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 14,
           "name": "observed_row",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 4,
           "name": "unknown_row",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -581,6 +769,7 @@
         {
           "clauses": 4,
           "name": "mk_event_channel_create",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -597,36 +786,81 @@
         {
           "clauses": 6,
           "name": "_mk_string_search",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "mk_string_char_search",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "mk_string_char_search_r",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 3,
           "name": "MK_EVENT_NEW",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 3,
           "name": "event_base_get_features",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 2,
           "name": "event_get_struct_event_size",
+          "resource_mode": {
+            "parameters": [],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 2,
           "name": "event_get_version_number",
+          "resource_mode": {
+            "parameters": [],
+            "result": "none"
+          },
           "resource_table": "functions"
         }
       ],
@@ -643,6 +877,16 @@
         {
           "clauses": 3,
           "name": "mk_string_dup",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            }
+          },
           "resource_table": "functions"
         }
       ],
@@ -659,21 +903,25 @@
         {
           "clauses": 7,
           "name": "cb_timeout_source",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 1,
           "name": "cb_timeout_teardown_path",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 5,
           "name": "libevent_self_teardown",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 21,
           "name": "teardown_obligations",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -690,6 +938,13 @@
         {
           "clauses": 5,
           "name": "mk_vhost_set",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         }
       ],
@@ -706,41 +961,49 @@
         {
           "clauses": 6,
           "name": "loop_init_failure",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 7,
           "name": "context_allocation_failure",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 8,
           "name": "base_creation_failure",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 10,
           "name": "fired_allocation_failure",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 9,
           "name": "timer_creation_failure",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 10,
           "name": "timer_registration_failure",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 10,
           "name": "success_observation",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 6,
           "name": "loop_size_bounds",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -757,16 +1020,19 @@
         {
           "clauses": 23,
           "name": "wait_identity_context",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 1,
           "name": "wait_identity_entry",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 5,
           "name": "wait_observed_profile",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -783,66 +1049,79 @@
         {
           "clauses": 4,
           "name": "source_identity",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 4,
           "name": "wait_projection_identity",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 9,
           "name": "cb_wait_2_timeout",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 9,
           "name": "contract_cb_wait_2_timeout",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 9,
           "name": "_mk_event_loop_create",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 9,
           "name": "contract__mk_event_loop_create",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 9,
           "name": "_mk_event_wait_with_flags",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 9,
           "name": "contract__mk_event_wait_with_flags",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 9,
           "name": "_mk_event_wait_2",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 9,
           "name": "contract__mk_event_wait_2",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 9,
           "name": "_mk_event_loop_destroy",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 9,
           "name": "contract__mk_event_loop_destroy",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 4,
           "name": "artifact_set",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -859,76 +1138,91 @@
         {
           "clauses": 3,
           "name": "mk_event_libevent_socketpair",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 3,
           "name": "_mk_event_init",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 5,
           "name": "_mk_event_loop_create",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 4,
           "name": "_mk_event_loop_destroy",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 5,
           "name": "_mk_event_update",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 7,
           "name": "_mk_event_add",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 7,
           "name": "_mk_event_del",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 7,
           "name": "_mk_event_timeout_create",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 4,
           "name": "_mk_event_timeout_destroy",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 5,
           "name": "_mk_event_channel_create",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 4,
           "name": "_mk_event_channel_destroy",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 6,
           "name": "_mk_event_inject",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 4,
           "name": "_mk_event_wait_with_flags",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 5,
           "name": "_mk_event_wait_2",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 3,
           "name": "_mk_event_backend",
+          "resource_mode": null,
           "resource_table": null
         }
       ],

@@ -339,7 +339,9 @@ def verify_locks(root, load_path_file):
 # Card CONTRACT-COUNT-PINS-FROM-LOCKS (schema 2): each declaration also records
 # its `resource_table`, the resource-contract table it lands in when the v1
 # loader loads its module alone (`functions`, `pending_review`, `relational`,
-# `retaining`; null when the loader refuses the module), and each file its
+# `retaining`; null when the loader refuses the module) with, for a
+# `functions` declaration, its `resource_mode` (the loaded contract,
+# serialized; the function-map mode pin), and each file its
 # `other_declarations`, the non-`extern fn` declaration names. The corpus
 # tests derive their aggregate counts from these locks
 # (`tests/support/contract_locks.rs`, `scripts/contract_corpus.py`
@@ -382,13 +384,19 @@ def inventory_lock(root, record, facts):
     for name, path in modules.items():
         fact = facts[name]
         declarations = [{"name": d["name"], "clauses": d["clauses"],
-                         "resource_table": d["resource_table"]} for d in fact["declarations"]]
+                         "resource_table": d["resource_table"],
+                         "resource_mode": d["resource_mode"]} for d in fact["declarations"]]
         # A module the v1 loader accepts gives every declaration a table; one
         # it refuses gives none (contract_inventory's `resource_tables`).
         tables = {d["resource_table"] for d in declarations}
         if not tables <= {None, *RESOURCE_TABLES} or (None in tables and len(tables) > 1):
             raise ValueError(f"{record['name']}:{name}: inventory probe gives resource tables "
                              f"{sorted(map(str, tables))}")
+        # A function-map declaration carries its loaded mode; no other does.
+        if any((d["resource_mode"] is None) == (d["resource_table"] == "functions")
+               for d in declarations):
+            raise ValueError(f"{record['name']}:{name}: inventory probe gives a resource mode "
+                             "outside the function map, or none inside it")
         entries[name] = {
             "sha256": sha256(path),
             "declaration_count": len(declarations),

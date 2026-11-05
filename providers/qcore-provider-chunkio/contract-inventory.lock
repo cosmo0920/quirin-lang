@@ -13,11 +13,13 @@
         {
           "clauses": 10,
           "name": "cio_chunk_close",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 5,
           "name": "cio_chunk_delete",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -36,26 +38,59 @@
         {
           "clauses": 3,
           "name": "cio_chunk_is_up",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 3,
           "name": "cio_chunk_up_force",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 3,
           "name": "cio_chunk_down",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "_cio_file_up",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "cio_errno_print",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         }
       ],
@@ -72,16 +107,35 @@
         {
           "clauses": 3,
           "name": "cio_chunk_get_content_size",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "cio_file_native_get_size",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 3,
           "name": "cio_stream_size_chunks_up",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         }
       ],
@@ -98,6 +152,7 @@
         {
           "clauses": 11,
           "name": "native_constructor_failure_observation",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -114,6 +169,7 @@
         {
           "clauses": 7,
           "name": "cio_destroy",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -132,21 +188,25 @@
         {
           "clauses": 10,
           "name": "cio_chunk_counter_total_add",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 10,
           "name": "cio_chunk_counter_total_sub",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 10,
           "name": "cio_chunk_counter_total_up_add",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 10,
           "name": "cio_chunk_counter_total_up_sub",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -163,6 +223,7 @@
         {
           "clauses": 5,
           "name": "cio_error_reset",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -179,6 +240,7 @@
         {
           "clauses": 5,
           "name": "cio_error_reset",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -195,6 +257,7 @@
         {
           "clauses": 17,
           "name": "file_close_no_delete",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -211,6 +274,7 @@
         {
           "clauses": 13,
           "name": "file_close_delete",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -227,16 +291,19 @@
         {
           "clauses": 3,
           "name": "cio_file_st_get_hash",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 3,
           "name": "cio_file_st_infer_content_len",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 3,
           "name": "cio_file_st_set_content_len",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -253,21 +320,25 @@
         {
           "clauses": 6,
           "name": "file_close_result_use",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 3,
           "name": "file_unmap_result_use",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 3,
           "name": "native_close_result_use",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 3,
           "name": "native_unmap_result_use",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -284,6 +355,7 @@
         {
           "clauses": 22,
           "name": "filesystem_chunk_close",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -300,6 +372,7 @@
         {
           "clauses": 16,
           "name": "native_file_constructor_failure_observation",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -316,6 +389,7 @@
         {
           "clauses": 25,
           "name": "native_delete_outcomes",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -332,6 +406,7 @@
         {
           "clauses": 3,
           "name": "native_delete_result_use",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -348,6 +423,7 @@
         {
           "clauses": 12,
           "name": "native_delete_observation",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -364,6 +440,7 @@
         {
           "clauses": 20,
           "name": "native_file_descriptor_failure_observation",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -380,6 +457,7 @@
         {
           "clauses": 17,
           "name": "native_file_existing_observation",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -396,6 +474,7 @@
         {
           "clauses": 21,
           "name": "native_file_integrity_observation",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -412,6 +491,7 @@
         {
           "clauses": 14,
           "name": "native_cleanup_observation",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -428,6 +508,7 @@
         {
           "clauses": 17,
           "name": "native_file_os_constructor_observation",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -444,6 +525,7 @@
         {
           "clauses": 13,
           "name": "native_os_cleanup_observation",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -460,11 +542,13 @@
         {
           "clauses": 26,
           "name": "native_close_outcomes",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 29,
           "name": "native_unmap_outcomes",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -481,6 +565,7 @@
         {
           "clauses": 28,
           "name": "native_file_reopen_failure_observation",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -497,6 +582,7 @@
         {
           "clauses": 18,
           "name": "native_file_sync_failure_observation",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -513,6 +599,7 @@
         {
           "clauses": 16,
           "name": "native_file_teardown_observation",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -529,6 +616,7 @@
         {
           "clauses": 16,
           "name": "native_file_transition_observation",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -545,6 +633,7 @@
         {
           "clauses": 19,
           "name": "native_file_unmap_failure_observation",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -561,6 +650,7 @@
         {
           "clauses": 7,
           "name": "check_imported_chunk_program",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -579,11 +669,13 @@
         {
           "clauses": 6,
           "name": "__mk_list_del",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 12,
           "name": "mk_list_del",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -600,11 +692,13 @@
         {
           "clauses": 7,
           "name": "cio_chunk_is_locked",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 8,
           "name": "cio_chunk_unlock",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -621,6 +715,7 @@
         {
           "clauses": 8,
           "name": "cio_log_print",
+          "resource_mode": null,
           "resource_table": "retaining"
         }
       ],
@@ -637,6 +732,7 @@
         {
           "clauses": 22,
           "name": "cio_memfs_close",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -653,6 +749,7 @@
         {
           "clauses": 19,
           "name": "cio_chunk_close",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -669,11 +766,13 @@
         {
           "clauses": 3,
           "name": "cio_file_st_get_meta_len",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 3,
           "name": "cio_file_st_set_meta_len",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -690,6 +789,7 @@
         {
           "clauses": 12,
           "name": "nested_cleanup",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -706,6 +806,7 @@
         {
           "clauses": 10,
           "name": "nested_memory_teardown",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -722,6 +823,7 @@
         {
           "clauses": 11,
           "name": "parent_teardown",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -738,11 +840,37 @@
         {
           "clauses": 8,
           "name": "cio_chunk_open",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            }
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "cio_chunk_close",
+          "resource_mode": {
+            "parameters": [
+              {
+                "released": {
+                  "nullable": false
+                }
+              },
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         }
       ],
@@ -759,11 +887,13 @@
         {
           "clauses": 6,
           "name": "cio_stream_destroy",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 5,
           "name": "cio_stream_delete",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -782,6 +912,7 @@
         {
           "clauses": 11,
           "name": "native_teardown_observation",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -798,6 +929,7 @@
         {
           "clauses": 11,
           "name": "teardown_traversal",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -814,6 +946,7 @@
         {
           "clauses": 17,
           "name": "unmap_file_outcomes",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -830,6 +963,7 @@
         {
           "clauses": 12,
           "name": "unsupported_chunk_close",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -846,6 +980,7 @@
         {
           "clauses": 11,
           "name": "native_unsupported_constructor",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -862,6 +997,7 @@
         {
           "clauses": 7,
           "name": "flb_input_chunk_release_lock",
+          "resource_mode": null,
           "resource_table": null
         }
       ],

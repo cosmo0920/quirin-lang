@@ -12,11 +12,13 @@
         {
           "clauses": 5,
           "name": "cfl_arena_create_with_options",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 5,
           "name": "cfl_arena_destroy",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -36,21 +38,25 @@
         {
           "clauses": 2,
           "name": "cfl_atomic_initialize",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 3,
           "name": "cfl_atomic_store",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 3,
           "name": "cfl_atomic_load",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 4,
           "name": "cfl_atomic_compare_exchange",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -67,16 +73,19 @@
         {
           "clauses": 3,
           "name": "cfl_hash_64bits_reset",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 5,
           "name": "cfl_hash_64bits_update",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 5,
           "name": "cfl_hash_64bits_digest",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -95,16 +104,19 @@
         {
           "clauses": 4,
           "name": "cfl_list_add",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 5,
           "name": "cfl_list_del",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 28,
           "name": "cfl_list_init",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -123,6 +135,7 @@
         {
           "clauses": 2,
           "name": "cfl_list_size",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -139,211 +152,535 @@
         {
           "clauses": 3,
           "name": "cfl_sds_destroy",
+          "resource_mode": {
+            "parameters": [
+              {
+                "released": {
+                  "nullable": true
+                }
+              }
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 3,
           "name": "cfl_sds_len",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "cfl_arena_calloc",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "derived": {
+                "const_dropped": false,
+                "extent": "interior",
+                "nullable": true,
+                "parameter": 0
+              }
+            }
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 3,
           "name": "cfl_kvlist_count",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "cfl_kvlist_insert_string",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "cfl_kvlist_insert_bool",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "cfl_kvlist_insert_int64",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "cfl_kvlist_insert_double",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 6,
           "name": "cfl_kvlist_insert_array",
+          "resource_mode": null,
           "resource_table": "relational"
         },
         {
           "clauses": 6,
           "name": "cfl_kvlist_insert_kvlist",
+          "resource_mode": null,
           "resource_table": "relational"
         },
         {
           "clauses": 6,
           "name": "cfl_sds_cat_safe",
+          "resource_mode": null,
           "resource_table": "retaining"
         },
         {
           "clauses": 3,
           "name": "cfl_list_size",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 3,
           "name": "cfl_sds_create_size",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            }
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "cfl_sds_create_len",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            }
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 3,
           "name": "cfl_sds_create",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            }
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "cfl_sds_set_len",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "cfl_sds_len_set",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "cfl_sds_cat",
+          "resource_mode": {
+            "parameters": [
+              {
+                "owned": {
+                  "nullable": true
+                }
+              },
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "reallocated": {
+                "nullable": true,
+                "parameter": 0
+              }
+            }
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "cfl_sds_printf",
+          "resource_mode": null,
           "resource_table": "retaining"
         },
         {
           "clauses": 2,
           "name": "cfl_kvlist_create",
+          "resource_mode": {
+            "parameters": [],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            }
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 3,
           "name": "cfl_kvlist_destroy",
+          "resource_mode": {
+            "parameters": [
+              {
+                "released": {
+                  "nullable": true
+                }
+              }
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "cfl_kvlist_fetch",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "derived": {
+                "const_dropped": false,
+                "extent": "borrowed",
+                "nullable": true,
+                "parameter": 0
+              }
+            }
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "cfl_kvlist_insert_uint64",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 8,
           "name": "cfl_kvlist_insert_bytes",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 6,
           "name": "cfl_kvlist_insert",
+          "resource_mode": null,
           "resource_table": "relational"
         },
         {
           "clauses": 3,
           "name": "cfl_array_create",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            }
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 3,
           "name": "cfl_array_destroy",
+          "resource_mode": {
+            "parameters": [
+              {
+                "released": {
+                  "nullable": true
+                }
+              }
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "cfl_array_append",
+          "resource_mode": null,
           "resource_table": "relational"
         },
         {
           "clauses": 4,
           "name": "cfl_array_append_string",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 7,
           "name": "cfl_array_append_bytes",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "cfl_array_append_bool",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "cfl_array_append_int64",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "cfl_array_append_double",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "cfl_array_append_array",
+          "resource_mode": null,
           "resource_table": "relational"
         },
         {
           "clauses": 5,
           "name": "cfl_array_append_kvlist",
+          "resource_mode": null,
           "resource_table": "relational"
         },
         {
           "clauses": 3,
           "name": "cfl_variant_create_from_bool",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            }
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 3,
           "name": "cfl_variant_create_from_int64",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            }
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 3,
           "name": "cfl_variant_create_from_double",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            }
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 3,
           "name": "cfl_variant_create_from_string",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            }
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 3,
           "name": "cfl_variant_destroy",
+          "resource_mode": {
+            "parameters": [
+              {
+                "released": {
+                  "nullable": true
+                }
+              }
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "cfl_utils_split",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            }
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 3,
           "name": "cfl_utils_split_free",
+          "resource_mode": {
+            "parameters": [
+              {
+                "released": {
+                  "nullable": true
+                }
+              }
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         }
       ],
@@ -360,6 +697,10 @@
         {
           "clauses": 2,
           "name": "cfl_time_now",
+          "resource_mode": {
+            "parameters": [],
+            "result": "none"
+          },
           "resource_table": "functions"
         }
       ],

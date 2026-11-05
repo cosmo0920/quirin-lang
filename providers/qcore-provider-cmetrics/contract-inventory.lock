@@ -12,11 +12,25 @@
         {
           "clauses": 3,
           "name": "cmt_destroy",
+          "resource_mode": {
+            "parameters": [
+              {
+                "released": {
+                  "nullable": false
+                }
+              }
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 2,
           "name": "cmt_atomic_initialize",
+          "resource_mode": {
+            "parameters": [],
+            "result": "none"
+          },
           "resource_table": "functions"
         }
       ],
@@ -33,6 +47,7 @@
         {
           "clauses": 4,
           "name": "cmt_counter_allow_reset",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -49,6 +64,7 @@
         {
           "clauses": 8,
           "name": "cmt_log_print",
+          "resource_mode": null,
           "resource_table": "retaining"
         }
       ],
@@ -65,31 +81,37 @@
         {
           "clauses": 11,
           "name": "cmt_map_create",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 18,
           "name": "cmt_map_metric_get",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 17,
           "name": "cmt_map_metric_get_val",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 10,
           "name": "cmt_map_metric_destroy",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 11,
           "name": "cmt_map_metrics_expire",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 12,
           "name": "cmt_map_destroy",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -108,46 +130,55 @@
         {
           "clauses": 6,
           "name": "cmt_metric_set",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 5,
           "name": "cmt_metric_set_exp_hist_count",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 5,
           "name": "cmt_metric_set_exp_hist_sum",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 4,
           "name": "cmt_metric_hist_count_set",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 4,
           "name": "cmt_metric_hist_sum_set",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 6,
           "name": "cmt_metric_hist_set",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 6,
           "name": "cmt_summary_quantile_set",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 4,
           "name": "cmt_summary_sum_set",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 4,
           "name": "cmt_summary_count_set",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -164,121 +195,278 @@
         {
           "clauses": 3,
           "name": "cmt_metric_get_timestamp",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "cmt_metric_set_double",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 3,
           "name": "cmt_metric_get_value",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 3,
           "name": "cmt_metric_get_value_type",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 3,
           "name": "cmt_metric_get_int64_value",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 3,
           "name": "cmt_metric_get_uint64_value",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "cmt_metric_set_int64",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "cmt_metric_set_uint64",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "cmt_metric_set_timestamp",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "cmt_metric_set_start_timestamp",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 3,
           "name": "cmt_metric_unset_start_timestamp",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 3,
           "name": "cmt_metric_has_start_timestamp",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 3,
           "name": "cmt_metric_get_start_timestamp",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 3,
           "name": "cmt_math_d64_to_uint64",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 3,
           "name": "cmt_math_uint64_to_d64",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "cmt_metric_hist_get_value",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 3,
           "name": "cmt_metric_hist_get_count_value",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 3,
           "name": "cmt_metric_hist_get_sum_value",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "cmt_summary_quantile_get_value",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 3,
           "name": "cmt_summary_get_sum_value",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 3,
           "name": "cmt_summary_get_count_value",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 3,
           "name": "cmt_atomic_load",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "cmt_atomic_store",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "cmt_atomic_compare_exchange",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         }
       ],
@@ -295,16 +483,25 @@
         {
           "clauses": 4,
           "name": "cmt_mpack_consume_uint_tag",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 6,
           "name": "cmt_mpack_unpack_array",
+          "resource_mode": null,
           "resource_table": "retaining"
         },
         {
           "clauses": 6,
           "name": "cmt_mpack_unpack_map",
+          "resource_mode": null,
           "resource_table": "retaining"
         }
       ],
@@ -321,6 +518,7 @@
         {
           "clauses": 2,
           "name": "cmt_destroy",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -337,11 +535,13 @@
         {
           "clauses": 15,
           "name": "cmt_opts_init",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 13,
           "name": "cmt_opts_exit",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -360,31 +560,37 @@
         {
           "clauses": 23,
           "name": "cmt_counter_set",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 21,
           "name": "cmt_gauge_set",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 21,
           "name": "cmt_untyped_set",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 27,
           "name": "cmt_histogram_set_default",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 36,
           "name": "cmt_summary_set_default",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 44,
           "name": "cmt_exp_histogram_set_default",
+          "resource_mode": null,
           "resource_table": null
         }
       ],

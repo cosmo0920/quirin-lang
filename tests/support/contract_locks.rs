@@ -21,7 +21,11 @@
 //! disagrees with its declarations' tables.
 #![allow(dead_code)]
 
-use std::{collections::BTreeSet, fs, path::Path};
+use std::{
+    collections::{BTreeMap, BTreeSet},
+    fs,
+    path::Path,
+};
 
 use serde_json::Value;
 
@@ -105,6 +109,24 @@ pub fn lock_totals(repository: &Path) -> LockTotals {
 /// The aggregate counts of `repository`'s inventory locks, one per crate of
 /// `providers/contract-load-path.json`, or the refusal.
 pub fn try_lock_totals(repository: &Path) -> Result<LockTotals, String> {
+    try_lock_contents(repository).map(|(totals, _)| totals)
+}
+
+/// The function-map mode each lock records (`resource_mode`, the serialized
+/// `ResourceFunctionContract` of a `functions` declaration), by function name,
+/// panicking on a lock [`try_lock_totals`] refuses. A function-map name in
+/// two locked modules is refused too.
+pub fn function_modes(repository: &Path) -> BTreeMap<String, Value> {
+    try_lock_contents(repository)
+        .map(|(_, modes)| modes)
+        .unwrap_or_else(|error| panic!("{error}"))
+}
+
+/// The totals and the function-map modes, or the refusal.
+pub fn try_lock_contents(
+    repository: &Path,
+) -> Result<(LockTotals, BTreeMap<String, Value>), String> {
+    let mut modes = BTreeMap::new();
     let load_path_file = repository.join("providers/contract-load-path.json");
     let load_path = read_json(&load_path_file)?;
     let base = load_path_file.parent().unwrap();
@@ -163,7 +185,7 @@ pub fn try_lock_totals(repository: &Path) -> Result<LockTotals, String> {
                 .as_array()
                 .ok_or_else(|| format!("{name}:{logical}: no declarations"))?
             {
-                tables.push(match &declaration["resource_table"] {
+                let table = match &declaration["resource_table"] {
                     Value::Null => None,
                     Value::String(table) if RESOURCE_TABLES.contains(&table.as_str()) => {
                         Some(table.as_str())
@@ -171,7 +193,27 @@ pub fn try_lock_totals(repository: &Path) -> Result<LockTotals, String> {
                     other => {
                         return Err(format!("{name}:{logical}: resource tables [{other}]"));
                     }
-                });
+                };
+                // A function-map declaration carries its loaded mode; no
+                // other does.
+                let mode = &declaration["resource_mode"];
+                if mode.is_null() == (table == Some("functions")) {
+                    return Err(format!(
+                        "{name}:{logical}: a resource mode outside the function map, or none \
+                         inside it"
+                    ));
+                }
+                if table == Some("functions") {
+                    let function = declaration["name"]
+                        .as_str()
+                        .ok_or_else(|| format!("{name}:{logical}: a declaration names nothing"))?;
+                    if modes.insert(function.to_owned(), mode.clone()).is_some() {
+                        return Err(format!(
+                            "{name}:{logical}: {function} is in the function map twice"
+                        ));
+                    }
+                }
+                tables.push(table);
             }
             let others = strings(&file["other_declarations"], "other_declarations")?.len();
             let accepted = !tables.is_empty() && tables.iter().all(Option::is_some) && others == 0;
@@ -196,5 +238,5 @@ pub fn try_lock_totals(repository: &Path) -> Result<LockTotals, String> {
             }
         }
     }
-    Ok(totals)
+    Ok((totals, modes))
 }

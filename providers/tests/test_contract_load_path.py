@@ -108,7 +108,9 @@ def inventory_like(root, load_path_file):
                     clauses = parent_clauses
                 else:
                     clauses = chunk.count("requires ") + chunk.count("ensures ")
-                declarations.append({"name": name, "clauses": clauses, "resource_table": table})
+                mode = {"parameters": [], "result": "none"} if table else None
+                declarations.append({"name": name, "clauses": clauses, "resource_table": table,
+                                     "resource_mode": mode})
             modules[module] = {"declarations": declarations, "inherits": inherits,
                                "premises": {}, "premise_bindings": [],
                                "other_declarations": []}
@@ -490,7 +492,8 @@ class LoadPathManifest(unittest.TestCase):
                 "sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
                 "declaration_count": 1, "clause_count": 3,
                 "declarations": [{"name": "wrap_free", "clauses": 3,
-                                  "resource_table": "functions"}],
+                                  "resource_table": "functions",
+                                  "resource_mode": {"parameters": [], "result": "none"}}],
                 "inherits": [{"child": "wrap_free", "parent": "libc::free"}],
                 "premises": {}, "premise_bindings": [], "other_declarations": []})
             self.assertEqual(lock_file.read_text(), contracts.canonical(lock))
@@ -548,12 +551,13 @@ class LoadPathManifest(unittest.TestCase):
             # Card CONTRACT-COUNT-PINS-FROM-LOCKS: the inventory probe's tables
             # must agree with the provider probe's resource view, one table set
             # per module, and name only the loader's four tables.
-            def tables(*values):
+            def tables(*values, mode=None):
                 def probe(root, load_path_file):
                     facts = inventory_like(root, load_path_file)
                     declarations = facts["quirin-provider-app"]["app/wrap.qcore"]["declarations"]
                     for declaration, value in zip(declarations, values):
                         declaration["resource_table"] = value
+                        declaration["resource_mode"] = mode
                     return facts
                 return probe
 
@@ -568,6 +572,9 @@ class LoadPathManifest(unittest.TestCase):
                 contracts.maintain_inventory_locks(tree.root, load_path, probe=missing_crate)
             for probe, message in [(tables(None), "resource view and the inventory probe"),
                                    (tables("function"), "inventory probe gives resource tables"),
+                                   (tables("functions"), "resource mode outside the function map"),
+                                   (tables("retaining", mode={"parameters": []}),
+                                    "resource mode outside the function map"),
                                    (other_declaration, "resource view and the inventory probe")]:
                 with self.subTest(message=message):
                     with self.assertRaisesRegex(ValueError, message):

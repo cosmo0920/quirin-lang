@@ -12,11 +12,35 @@
         {
           "clauses": 5,
           "name": "opendir",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            },
+            "result_kind": "directory"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "closedir",
+          "resource_mode": {
+            "parameter_kinds": {
+              "0": "directory"
+            },
+            "parameters": [
+              {
+                "released": {
+                  "nullable": false
+                }
+              }
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         }
       ],
@@ -33,21 +57,57 @@
         {
           "clauses": 3,
           "name": "dlerror",
+          "resource_mode": {
+            "parameters": [],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "dlsym",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 6,
           "name": "dlopen",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            },
+            "result_kind": "dynamic_library"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "dlclose",
+          "resource_mode": {
+            "parameter_kinds": {
+              "0": "dynamic_library"
+            },
+            "parameters": [
+              {
+                "released": {
+                  "nullable": false
+                }
+              }
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         }
       ],
@@ -64,11 +124,21 @@
         {
           "clauses": 11,
           "name": "__errno_location",
+          "resource_mode": {
+            "parameters": [],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 16,
           "name": "strerror",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         }
       ],
@@ -98,26 +168,57 @@
         {
           "clauses": 4,
           "name": "ceil",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "floor",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "fabs",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "pow",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "sqrt",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         }
       ],
@@ -134,16 +235,47 @@
         {
           "clauses": 4,
           "name": "malloc",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            }
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "calloc",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            }
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "free",
+          "resource_mode": {
+            "parameters": [
+              {
+                "released": {
+                  "nullable": true
+                }
+              }
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         }
       ],
@@ -160,26 +292,48 @@
         {
           "clauses": 6,
           "name": "prctl",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "getrlimit",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "setrlimit",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 10,
           "name": "getpwnam_r",
+          "resource_mode": null,
           "resource_table": "retaining"
         },
         {
           "clauses": 10,
           "name": "getgrnam_r",
+          "resource_mode": null,
           "resource_table": "retaining"
         }
       ],
@@ -196,11 +350,23 @@
         {
           "clauses": 4,
           "name": "pthread_mutex_lock",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "pthread_mutex_unlock",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         }
       ],
@@ -217,31 +383,72 @@
         {
           "clauses": 6,
           "name": "pthread_cond_init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "pthread_cond_destroy",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "pthread_cond_signal",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 6,
           "name": "pthread_cond_wait",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 7,
           "name": "pthread_cond_timedwait",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 7,
           "name": "pthread_join",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         }
       ],
@@ -258,21 +465,74 @@
         {
           "clauses": 9,
           "name": "regexec",
+          "resource_mode": {
+            "parameter_kinds": {
+              "0": "regex"
+            },
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 8,
           "name": "regerror",
+          "resource_mode": {
+            "parameter_kinds": {
+              "1": "regex"
+            },
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 7,
           "name": "regcomp",
+          "resource_mode": {
+            "parameter_kinds": {
+              "0": "regex"
+            },
+            "parameters": [
+              {
+                "out": {
+                  "nullable": true
+                }
+              },
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "regfree",
+          "resource_mode": {
+            "parameter_kinds": {
+              "0": "regex"
+            },
+            "parameters": [
+              {
+                "released": {
+                  "nullable": false
+                }
+              }
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         }
       ],
@@ -289,16 +549,19 @@
         {
           "clauses": 5,
           "name": "pipe",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 3,
           "name": "epoll_ctl",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 3,
           "name": "open",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -315,71 +578,187 @@
         {
           "clauses": 8,
           "name": "setsockopt",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 7,
           "name": "send",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 7,
           "name": "recv",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "listen",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 7,
           "name": "sendfile",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "htonl",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "ntohl",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "gai_strerror",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 8,
           "name": "getsockopt",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 6,
           "name": "getpeername",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 7,
           "name": "socket",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            },
+            "result_kind": "descriptor"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "shutdown",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 6,
           "name": "sendmsg",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 6,
           "name": "poll",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         }
       ],
@@ -396,66 +775,168 @@
         {
           "clauses": 4,
           "name": "perror",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "fflush",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "remove",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "printf",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 6,
           "name": "fprintf",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 7,
           "name": "snprintf",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 6,
           "name": "sprintf",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 6,
           "name": "fopen",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            },
+            "result_kind": "stream"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "fclose",
+          "resource_mode": {
+            "parameter_kinds": {
+              "0": "stream"
+            },
+            "parameters": [
+              {
+                "released": {
+                  "nullable": false
+                }
+              }
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "fileno",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 7,
           "name": "vsnprintf",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "vprintf",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 7,
           "name": "fread",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         }
       ],
@@ -472,91 +953,173 @@
         {
           "clauses": 4,
           "name": "atoi",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "srand",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "rand_r",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "system",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "abort",
+          "resource_mode": {
+            "parameters": [],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "exit",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 8,
           "name": "__assert_fail",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 7,
           "name": "strtol",
+          "resource_mode": null,
           "resource_table": "retaining"
         },
         {
           "clauses": 7,
           "name": "strtoll",
+          "resource_mode": null,
           "resource_table": "retaining"
         },
         {
           "clauses": 7,
           "name": "strtoul",
+          "resource_mode": null,
           "resource_table": "retaining"
         },
         {
           "clauses": 7,
           "name": "strtoull",
+          "resource_mode": null,
           "resource_table": "retaining"
         },
         {
           "clauses": 6,
           "name": "strtod",
+          "resource_mode": null,
           "resource_table": "retaining"
         },
         {
           "clauses": 9,
           "name": "bsearch",
+          "resource_mode": null,
           "resource_table": "retaining"
         },
         {
           "clauses": 8,
           "name": "qsort",
+          "resource_mode": null,
           "resource_table": "retaining"
         },
         {
           "clauses": 4,
           "name": "abs",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "tolower",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "toupper",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "strcat",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "derived": {
+                "const_dropped": false,
+                "extent": "exact",
+                "nullable": false,
+                "parameter": 0
+              }
+            }
+          },
           "resource_table": "functions"
         }
       ],
@@ -573,101 +1136,333 @@
         {
           "clauses": 5,
           "name": "strcmp",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "strlen",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 6,
           "name": "memcmp",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 6,
           "name": "strncmp",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "strnlen",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "strcasecmp",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "strdup",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            }
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 6,
           "name": "strerror_r",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "strcpy",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "derived": {
+                "const_dropped": false,
+                "extent": "exact",
+                "nullable": false,
+                "parameter": 0
+              }
+            }
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 6,
           "name": "strncpy",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "derived": {
+                "const_dropped": false,
+                "extent": "exact",
+                "nullable": false,
+                "parameter": 0
+              }
+            }
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 6,
           "name": "memcpy",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "derived": {
+                "const_dropped": false,
+                "extent": "exact",
+                "nullable": false,
+                "parameter": 0
+              }
+            }
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 6,
           "name": "memmove",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "derived": {
+                "const_dropped": false,
+                "extent": "exact",
+                "nullable": false,
+                "parameter": 0
+              }
+            }
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 6,
           "name": "memset",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "derived": {
+                "const_dropped": false,
+                "extent": "exact",
+                "nullable": false,
+                "parameter": 0
+              }
+            }
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "strchr",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "derived": {
+                "const_dropped": true,
+                "extent": "interior",
+                "nullable": true,
+                "parameter": 0
+              }
+            }
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "strrchr",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "derived": {
+                "const_dropped": true,
+                "extent": "interior",
+                "nullable": true,
+                "parameter": 0
+              }
+            }
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "strstr",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "derived": {
+                "const_dropped": true,
+                "extent": "interior",
+                "nullable": true,
+                "parameter": 0
+              }
+            }
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "strcasestr",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "derived": {
+                "const_dropped": true,
+                "extent": "interior",
+                "nullable": true,
+                "parameter": 0
+              }
+            }
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 6,
           "name": "memchr",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "derived": {
+                "const_dropped": true,
+                "extent": "interior",
+                "nullable": true,
+                "parameter": 0
+              }
+            }
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 6,
           "name": "memrchr",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "derived": {
+                "const_dropped": true,
+                "extent": "interior",
+                "nullable": true,
+                "parameter": 0
+              }
+            }
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "strndup",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            }
+          },
           "resource_table": "functions"
         }
       ],
@@ -684,31 +1479,72 @@
         {
           "clauses": 5,
           "name": "fstat",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "mkdir",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "umask",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "stat",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "lstat",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "chmod",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         }
       ],
@@ -725,111 +1561,240 @@
         {
           "clauses": 4,
           "name": "mtx_lock",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "mtx_unlock",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "cnd_wait",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "pthread_rwlock_rdlock",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "pthread_rwlock_wrlock",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "pthread_rwlock_unlock",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 3,
           "name": "pthread_self",
+          "resource_mode": {
+            "parameters": [],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "pthread_kill",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "pthread_setcancelstate",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "pthread_setcanceltype",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "pthread_attr_setdetachstate",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "sigemptyset",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "sigfillset",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "sigaddset",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 6,
           "name": "cnd_timedwait",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 6,
           "name": "pthread_sigmask",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 6,
           "name": "pthread_once",
+          "resource_mode": null,
           "resource_table": "retaining"
         },
         {
           "clauses": 3,
           "name": "thrd_current",
+          "resource_mode": {
+            "parameters": [],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "sigdelset",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "pthread_cancel",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 6,
           "name": "pthread_setspecific",
+          "resource_mode": null,
           "resource_table": "retaining"
         },
         {
           "clauses": 4,
           "name": "pthread_getspecific",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         }
       ],
@@ -846,36 +1811,99 @@
         {
           "clauses": 4,
           "name": "time",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "timegm",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "gmtime_r",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "derived": {
+                "const_dropped": false,
+                "extent": "exact",
+                "nullable": true,
+                "parameter": 1
+              }
+            }
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "localtime_r",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "derived": {
+                "const_dropped": false,
+                "extent": "exact",
+                "nullable": true,
+                "parameter": 1
+              }
+            }
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 7,
           "name": "strftime",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "gettimeofday",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "clock_gettime",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         }
       ],
@@ -892,111 +1920,269 @@
         {
           "clauses": 4,
           "name": "sleep",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "usleep",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "sysconf",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 3,
           "name": "getpagesize",
+          "resource_mode": {
+            "parameters": [],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 3,
           "name": "geteuid",
+          "resource_mode": {
+            "parameters": [],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 3,
           "name": "getegid",
+          "resource_mode": {
+            "parameters": [],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 3,
           "name": "setsid",
+          "resource_mode": {
+            "parameters": [],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "access",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "unlink",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 6,
           "name": "read",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 6,
           "name": "write",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 7,
           "name": "open",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            },
+            "result_kind": "descriptor"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "close",
+          "resource_mode": {
+            "parameter_kinds": {
+              "0": "descriptor"
+            },
+            "parameters": [
+              {
+                "released": {
+                  "nullable": false
+                }
+              }
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 7,
           "name": "fcntl",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 6,
           "name": "writev",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 6,
           "name": "lseek",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "ftruncate",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 6,
           "name": "posix_fallocate",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 6,
           "name": "readlink",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 6,
           "name": "chown",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 6,
           "name": "msync",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 6,
           "name": "getrandom",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         }
       ],

@@ -75,6 +75,11 @@ def lock_totals(repository):
             tables = [d["resource_table"] for d in entry["declarations"]]
             if not set(tables) <= {None, *RESOURCE_TABLES}:
                 raise ValueError(f"{name}:{logical}: resource tables {tables}")
+            # A function-map declaration carries its loaded mode; no other does.
+            if any((d.get("resource_mode") is None) == (d["resource_table"] == "functions")
+                   for d in entry["declarations"]):
+                raise ValueError(f"{name}:{logical}: a resource mode outside the function "
+                                 "map, or none inside it")
             others = len(entry["other_declarations"])
             accepted = bool(tables) and None not in tables and others == 0
             if (logical in view) != accepted:

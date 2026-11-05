@@ -10,6 +10,7 @@
         {
           "clauses": 7,
           "name": "msgpack_packer_init",
+          "resource_mode": null,
           "resource_table": "retaining"
         }
       ],

@@ -18,7 +18,9 @@
 //!   the table of the resource-contract environment the declaration lands in
 //!   when the resource-contract v1 loader loads the module alone
 //!   (`functions`, `pending_review`, `relational` or `retaining`), or `null`
-//!   when that loader refuses the module;
+//!   when that loader refuses the module; and `resource_mode`, the loaded
+//!   function-map contract (serialized `ResourceFunctionContract`) of a
+//!   `functions` declaration, `null` for every other;
 //! - `other_declarations` (same card): the names of the module's
 //!   declarations that are not `extern fn` (`resource type`, `error`, `quant
 //!   axis`, ...), in source order.
@@ -45,15 +47,20 @@ use serde_json::{Value, json};
 
 const BINDING_MARKER: &str = "// qcore-premise-binding-manifest-v1 ";
 
+/// A declaration's resource table and, in the function map, its mode.
+type TableAndMode = (&'static str, Value);
+
 /// Card CONTRACT-COUNT-PINS-FROM-LOCKS: the resource-contract table each
 /// `extern fn` of a module lands in when the resource-contract v1 loader loads
-/// the module alone, or `None` when the loader refuses it. A declared name in
-/// no table or in two is an error, never a guess.
+/// the module alone, with its function-map mode (the loaded
+/// `ResourceFunctionContract`, serialized) when that table is `functions`; or
+/// `None` when the loader refuses the module. A declared name in no table or
+/// in two is an error, never a guess.
 fn resource_tables(
     logical: &str,
     text: &str,
     names: &[String],
-) -> Result<Option<BTreeMap<String, &'static str>>, String> {
+) -> Result<Option<BTreeMap<String, TableAndMode>>, String> {
     let Ok(contracts) =
         load_resource_contract_sources(&BTreeMap::from([(logical.to_owned(), text.to_owned())]))
     else {
@@ -78,7 +85,11 @@ fn resource_tables(
                 "{name} is in the resource tables {found:?}, not exactly one"
             ));
         };
-        tables.insert(name.clone(), table);
+        let mode = match contracts.functions().get(name) {
+            Some(contract) => serde_json::to_value(contract).map_err(|e| e.to_string())?,
+            None => Value::Null,
+        };
+        tables.insert(name.clone(), (table, mode));
     }
     Ok(Some(tables))
 }
@@ -120,8 +131,16 @@ fn module_record(
     let declarations = declarations
         .into_iter()
         .map(|(name, clauses)| {
-            let table = tables.as_ref().map(|tables| tables[&name]);
-            json!({"name": name, "clauses": clauses, "resource_table": table})
+            let (table, mode) = match tables.as_ref() {
+                Some(tables) => (Some(tables[&name].0), tables[&name].1.clone()),
+                None => (None, Value::Null),
+            };
+            json!({
+                "name": name,
+                "clauses": clauses,
+                "resource_table": table,
+                "resource_mode": mode,
+            })
         })
         .collect::<Vec<_>>();
     let mut inherits = Vec::new();

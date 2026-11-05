@@ -1361,6 +1361,13 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         }
         contract
     }
+    // Card CONTRACT-COUNT-PINS-FROM-LOCKS: `old` is the literal table of the
+    // modes the function map held when this test was last edited by hand
+    // (every name in it at base 25508ccaf, and each still compared with it
+    // below). A function-map declaration added since has no previous mode: its
+    // mode is pinned by its lock's `resource_mode` instead, so a contract card
+    // adds it to its provider's lock, not to this file.
+    let locked_modes = contract_locks::function_modes(manifest().parent().unwrap());
     for source in contracts.source_assumptions().values() {
         for declaration in qcore_compiler::parse_source_program(source)
             .unwrap()
@@ -1384,13 +1391,23 @@ fn production_contracts_preserve_the_previous_resource_modes() {
                 assert!(contracts.contract(&name).is_none(), "{name}");
                 continue;
             }
+            let loaded = contracts.contract(&name).unwrap().clone();
             assert_eq!(
-                canonical(contracts.contract(&name).unwrap().clone()),
-                canonical(old.contract(&name).unwrap().clone()),
-                "{name}"
+                Some(&serde_json::to_value(&loaded).unwrap()),
+                locked_modes.get(&name),
+                "{name}: the loaded mode is not the one its inventory lock records"
             );
+            if let Some(previous) = old.contract(&name) {
+                assert_eq!(canonical(loaded), canonical(previous.clone()), "{name}");
+            }
         }
     }
+    // Every function-map mode a lock records is loaded: the map is exactly
+    // the locks'.
+    assert_eq!(
+        contracts.functions().keys().collect::<Vec<_>>(),
+        locked_modes.keys().collect::<Vec<_>>()
+    );
 }
 
 #[test]
@@ -1941,7 +1958,11 @@ fn lock_totals_agree_with_the_shared_cases() {
     };
     let locks = cases["locks"].as_object().unwrap();
     write(locks);
-    let totals = contract_locks::try_lock_totals(&root).unwrap();
+    let (totals, modes) = contract_locks::try_lock_contents(&root).unwrap();
+    assert_eq!(
+        serde_json::to_value(&modes).unwrap(),
+        cases["function_modes"]
+    );
     let expected = cases["totals"].as_object().unwrap();
     assert_eq!(
         totals

@@ -13,11 +13,28 @@
         {
           "clauses": 8,
           "name": "flb_hash_table_add",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "flb_hash_table_del",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         }
       ],
@@ -34,6 +51,17 @@
         {
           "clauses": 4,
           "name": "flb_input_chunk_destroy",
+          "resource_mode": {
+            "parameters": [
+              {
+                "released": {
+                  "nullable": false
+                }
+              },
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         }
       ],
@@ -50,6 +78,17 @@
         {
           "clauses": 4,
           "name": "flb_input_chunk_destroy_direct_routes",
+          "resource_mode": {
+            "parameters": [
+              {
+                "released": {
+                  "nullable": true
+                }
+              },
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         }
       ],
@@ -66,16 +105,34 @@
         {
           "clauses": 5,
           "name": "generate_chunk_name",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 6,
           "name": "input_chunk_write_header",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 11,
           "name": "append_to_ring_buffer",
+          "resource_mode": null,
           "resource_table": "retaining"
         }
       ],
@@ -92,21 +149,58 @@
         {
           "clauses": 4,
           "name": "flb_input_chunk_is_up",
+          "resource_mode": {
+            "counted_users": {
+              "neutral": true
+            },
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "input_chunk_has_magic_bytes",
+          "resource_mode": {
+            "counted_users": {
+              "neutral": true
+            },
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "flb_input_chunk_is_mem_overlimit",
+          "resource_mode": {
+            "counted_users": {
+              "neutral": true
+            },
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "flb_input_chunk_is_storage_overlimit",
+          "resource_mode": {
+            "counted_users": {
+              "neutral": true
+            },
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         }
       ],
@@ -123,6 +217,12 @@
         {
           "clauses": 4,
           "name": "flb_input_chunk_get_name",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         }
       ],
@@ -146,11 +246,23 @@
         {
           "clauses": 3,
           "name": "flb_input_chunk_get_size",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 3,
           "name": "flb_input_chunk_get_real_size",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         }
       ],
@@ -167,6 +279,12 @@
         {
           "clauses": 3,
           "name": "flb_input_chunk_total_size",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         }
       ],
@@ -183,16 +301,19 @@
         {
           "clauses": 9,
           "name": "flb_input_set_collector_time",
+          "resource_mode": null,
           "resource_table": "retaining"
         },
         {
           "clauses": 7,
           "name": "flb_input_set_collector_event",
+          "resource_mode": null,
           "resource_table": "retaining"
         },
         {
           "clauses": 7,
           "name": "flb_input_set_collector_socket",
+          "resource_mode": null,
           "resource_table": "retaining"
         }
       ],
@@ -209,26 +330,31 @@
         {
           "clauses": 2,
           "name": "flb_create",
+          "resource_mode": null,
           "resource_table": "pending_review"
         },
         {
           "clauses": 5,
           "name": "flb_input",
+          "resource_mode": null,
           "resource_table": "pending_review"
         },
         {
           "clauses": 6,
           "name": "flb_input_new",
+          "resource_mode": null,
           "resource_table": "pending_review"
         },
         {
           "clauses": 4,
           "name": "flb_service_set",
+          "resource_mode": null,
           "resource_table": "pending_review"
         },
         {
           "clauses": 5,
           "name": "flb_config_set_property",
+          "resource_mode": null,
           "resource_table": "pending_review"
         }
       ],
@@ -245,31 +371,37 @@
         {
           "clauses": 5,
           "name": "flb_start",
+          "resource_mode": null,
           "resource_table": "pending_review"
         },
         {
           "clauses": 5,
           "name": "flb_stop",
+          "resource_mode": null,
           "resource_table": "pending_review"
         },
         {
           "clauses": 5,
           "name": "flb_destroy",
+          "resource_mode": null,
           "resource_table": "pending_review"
         },
         {
           "clauses": 4,
           "name": "flb_input_thread_instance_exit",
+          "resource_mode": null,
           "resource_table": "pending_review"
         },
         {
           "clauses": 4,
           "name": "flb_output_thread_pool_destroy",
+          "resource_mode": null,
           "resource_table": "pending_review"
         },
         {
           "clauses": 4,
           "name": "flb_downstream_worker_runtime_stop",
+          "resource_mode": null,
           "resource_table": "pending_review"
         }
       ],
@@ -286,16 +418,39 @@
         {
           "clauses": 3,
           "name": "flb_log_check",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "flb_errno_print",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 7,
           "name": "flb_log_print",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         }
       ],
@@ -312,21 +467,61 @@
         {
           "clauses": 6,
           "name": "flb_input_collector_running",
+          "resource_mode": {
+            "counted_users": {
+              "neutral": true
+            },
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 6,
           "name": "flb_input_collector_pause",
+          "resource_mode": {
+            "counted_users": {
+              "neutral": true
+            },
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 7,
           "name": "flb_input_collector_resume",
+          "resource_mode": {
+            "counted_users": {
+              "neutral": true
+            },
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 6,
           "name": "flb_input_collector_delete",
+          "resource_mode": {
+            "counted_users": {
+              "neutral": true
+            },
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         }
       ],
@@ -350,26 +545,31 @@
         {
           "clauses": 6,
           "name": "flb_malloc",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 7,
           "name": "flb_calloc",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 9,
           "name": "flb_realloc",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 12,
           "name": "flb_realloc_z",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 5,
           "name": "flb_free",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -386,96 +586,115 @@
         {
           "clauses": 2,
           "name": "flb_output_set_context",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 2,
           "name": "flb_output_net_default",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 2,
           "name": "flb_output_name",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 2,
           "name": "flb_output_set_property",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 2,
           "name": "flb_input_chunk_get_name",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 2,
           "name": "flb_input_new",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 2,
           "name": "flb_output_new",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 2,
           "name": "flb_filter_new",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 2,
           "name": "flb_processor_instance_create",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 2,
           "name": "flb_input_plugin_pause",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 2,
           "name": "flb_input_plugin_resume",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 2,
           "name": "flb_input_pause",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 2,
           "name": "flb_input_resume",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 2,
           "name": "flb_input_instance_pre_run",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 2,
           "name": "flb_input_instance_exit",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 2,
           "name": "flb_input_thread_instance_pre_run",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 2,
           "name": "flb_input_thread_instance_pause",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 2,
           "name": "flb_input_thread_instance_resume",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 2,
           "name": "flb_input_thread_instance_exit",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -492,11 +711,13 @@
         {
           "clauses": 85,
           "name": "flb_plugin_load",
+          "resource_mode": null,
           "resource_table": null
         },
         {
           "clauses": 3,
           "name": "flb_plugin_proxy_create",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -513,6 +734,15 @@
         {
           "clauses": 4,
           "name": "flb_output_flush_id_get",
+          "resource_mode": {
+            "counted_users": {
+              "neutral": true
+            },
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         }
       ],
@@ -529,11 +759,61 @@
         {
           "clauses": 10,
           "name": "flb_output_task_singleplex_enqueue",
+          "resource_mode": {
+            "counted_users": {
+              "exits": [
+                {
+                  "delta": 0,
+                  "parameter": 2,
+                  "returned": -1
+                },
+                {
+                  "delta": 1,
+                  "parameter": 2,
+                  "returned": 0
+                }
+              ]
+            },
+            "parameters": [
+              "borrowed",
+              {
+                "consumed": {
+                  "nullable": true
+                }
+              },
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 7,
           "name": "flb_output_task_flush",
+          "resource_mode": {
+            "counted_users": {
+              "exits": [
+                {
+                  "delta": 0,
+                  "parameter": 0,
+                  "returned": -1
+                },
+                {
+                  "delta": 1,
+                  "parameter": 0,
+                  "returned": 0
+                }
+              ]
+            },
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         }
       ],
@@ -557,26 +837,78 @@
         {
           "clauses": 3,
           "name": "flb_malloc",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            }
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "flb_calloc",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            }
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 3,
           "name": "flb_free",
+          "resource_mode": {
+            "parameters": [
+              {
+                "released": {
+                  "nullable": true
+                }
+              }
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "flb_sds_create_len",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            }
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 3,
           "name": "flb_sds_destroy",
+          "resource_mode": {
+            "parameters": [
+              {
+                "released": {
+                  "nullable": true
+                }
+              }
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         }
       ],
@@ -606,11 +938,32 @@
         {
           "clauses": 3,
           "name": "flb_strdup",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            }
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "flb_strndup",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            }
+          },
           "resource_table": "functions"
         }
       ],
@@ -636,6 +989,7 @@
         {
           "clauses": 3,
           "name": "flb_pipe_create",
+          "resource_mode": null,
           "resource_table": null
         }
       ],
@@ -652,21 +1006,55 @@
         {
           "clauses": 6,
           "name": "flb_routes_mask_set_by_tag",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 3,
           "name": "flb_routes_mask_get_size",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "flb_routes_mask_get_slots",
+          "resource_mode": {
+            "counted_users": {
+              "neutral": true
+            },
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "flb_routes_mask_is_empty",
+          "resource_mode": {
+            "counted_users": {
+              "neutral": true
+            },
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         }
       ],
@@ -683,61 +1071,155 @@
         {
           "clauses": 6,
           "name": "sb_allocate_chunk",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            }
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "sb_destroy_chunk",
+          "resource_mode": {
+            "parameters": [
+              {
+                "released": {
+                  "nullable": false
+                }
+              }
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "sb_destroy_backlog",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "sb_allocate_backlogs",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "sb_destroy_backlogs",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 6,
           "name": "sb_remove_chunk_from_segregated_backlog",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "sb_remove_chunk_from_segregated_backlogs",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 7,
           "name": "sb_append_chunk_to_segregated_backlog",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 6,
           "name": "sb_append_chunk_to_segregated_backlogs",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "sb_segregate_chunks",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "sb_release_output_queue_space",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 6,
           "name": "cb_queue_chunks",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         }
       ],
@@ -754,21 +1236,61 @@
         {
           "clauses": 5,
           "name": "flb_task_get_route_status",
+          "resource_mode": {
+            "counted_users": {
+              "neutral": true
+            },
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 6,
           "name": "flb_task_set_route_status",
+          "resource_mode": {
+            "counted_users": {
+              "neutral": true
+            },
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 5,
           "name": "flb_task_retry_count",
+          "resource_mode": {
+            "counted_users": {
+              "neutral": true
+            },
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "flb_task_running_count",
+          "resource_mode": {
+            "counted_users": {
+              "neutral": true
+            },
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         }
       ],
@@ -785,21 +1307,74 @@
         {
           "clauses": 4,
           "name": "flb_task_users_inc",
+          "resource_mode": {
+            "counted_users": {
+              "effects": {
+                "0": {
+                  "counter": "users",
+                  "effect": "added"
+                }
+              }
+            },
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 6,
           "name": "flb_task_users_dec",
+          "resource_mode": {
+            "counted_users": {
+              "effects": {
+                "0": {
+                  "counter": "users",
+                  "effect": "dropped"
+                }
+              }
+            },
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "flb_task_retry_destroy",
+          "resource_mode": {
+            "counted_users": {
+              "neutral": true
+            },
+            "parameters": [
+              {
+                "released": {
+                  "nullable": false
+                }
+              }
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 6,
           "name": "flb_output_thread_pool_flush",
+          "resource_mode": {
+            "counted_users": {
+              "neutral": true
+            },
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         }
       ],
@@ -816,76 +1391,124 @@
         {
           "clauses": 3,
           "name": "flb_sched_timer_destroy",
+          "resource_mode": {
+            "parameters": [
+              {
+                "released": {
+                  "nullable": false
+                }
+              }
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "flb_sched_request_destroy",
+          "resource_mode": null,
           "resource_table": "retaining"
         },
         {
           "clauses": 6,
           "name": "flb_task_destroy",
+          "resource_mode": null,
           "resource_table": "retaining"
         },
         {
           "clauses": 3,
           "name": "flb_task_queue_destroy",
+          "resource_mode": {
+            "parameters": [
+              {
+                "released": {
+                  "nullable": false
+                }
+              }
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 4,
           "name": "flb_event_chunk_destroy",
+          "resource_mode": null,
           "resource_table": "retaining"
         },
         {
           "clauses": 4,
           "name": "flb_output_flush_destroy",
+          "resource_mode": null,
           "resource_table": "retaining"
         },
         {
           "clauses": 4,
           "name": "flb_coro_destroy",
+          "resource_mode": null,
           "resource_table": "retaining"
         },
         {
           "clauses": 4,
           "name": "flb_input_chunk_release_route",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 34,
           "name": "flb_output_instance_destroy",
+          "resource_mode": null,
           "resource_table": "retaining"
         },
         {
           "clauses": 34,
           "name": "flb_input_instance_destroy",
+          "resource_mode": null,
           "resource_table": "retaining"
         },
         {
           "clauses": 4,
           "name": "flb_input_coro_destroy",
+          "resource_mode": null,
           "resource_table": "retaining"
         },
         {
           "clauses": 3,
           "name": "flb_input_collector_destroy",
+          "resource_mode": {
+            "parameters": [
+              {
+                "released": {
+                  "nullable": false
+                }
+              }
+            ],
+            "result": "none"
+          },
           "resource_table": "functions"
         },
         {
           "clauses": 15,
           "name": "flb_tail_file_remove",
+          "resource_mode": null,
           "resource_table": "retaining"
         },
         {
           "clauses": 18,
           "name": "flb_tail_config_destroy",
+          "resource_mode": null,
           "resource_table": "retaining"
         },
         {
           "clauses": 24,
           "name": "flb_config_set_program_name",
+          "resource_mode": null,
           "resource_table": "retaining"
         }
       ],
@@ -902,6 +1525,10 @@
         {
           "clauses": 2,
           "name": "flb_time_now",
+          "resource_mode": {
+            "parameters": [],
+            "result": "none"
+          },
           "resource_table": "functions"
         }
       ],
