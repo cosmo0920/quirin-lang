@@ -9862,9 +9862,10 @@ safety claim and no validation of the detach representation premise.
     evaluated size). On all five the statement is admitted and lowered
     exactly as the keyword spelling is; on any other answer, or no unique
     node, the refusal stays byte for byte. **Do not** read an initialized
-    declarator here (the 78 `char *p = NULL, *q = NULL;` leaves stay with
-    their own follow-up), a `static`, `extern`, `register` or thread-local
-    object, a variably modified type, a declaration of anything but objects,
+    declarator here (`char *p = NULL, *q = NULL;` stays with
+    W46-LEXICAL-GATE-NON-ACCESS and CG14-DECLARATION-FORMS), a `static`,
+    `extern`, `register` or thread-local object, a variably modified type, a
+    declaration of anything but objects,
     or a statement the old gate admitted. Premises stated, not proved:
     faithful Clang extraction of declarations, storage classes and types
     (trust boundary 28); C11 6.2.4p6, 6.7.9p10 and 6.8p3 (an automatic object

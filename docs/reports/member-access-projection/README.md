@@ -45,9 +45,11 @@ refused, the callee's mode at the actual's position) are in the
 `indirect-census` build's streams (`QCORE_CALL_ARGUMENT_CENSUS`,
 `QCORE_TYPED_PATH_PARITY`); the census run of that build
 ([`scripts/run_current_census.py`](scripts/run_current_census.py)) waited for
-an audit slot behind the integrator's measurements for the whole card (§5).
-Where a premise below needs the callee's mode, the probe fixtures of §2 stand
-in, and "uncontracted" is the run's own list of uncontracted callees.
+an audit slot behind the integrator's measurements and the rust-suite queue
+for an hour and a half and was withdrawn so the card gate could take the slot; it was
+never started. Where a premise below needs the callee's mode or a route's
+answer, the probe fixtures of §2 stand in, and "uncontracted" is the run's own
+list of uncontracted callees. The script is ready for the next card (§4).
 
 ### 1.1 Leaves by premise
 
@@ -118,9 +120,9 @@ every leaf with its typed paths in `census/premises.jsonl.gz`.
   functions, 12 whose every indirect-access leaf is one, 2 sole-blocker
   (`crc32c_zeros_op`, `ut_testConflictingPreviousAssignments`). The keyword
   path admits exactly these declarations; the type is Clang's. **This is the
-  first fix (§2).** The rest: 78 initialized multi-declarators
-  (`char *p = NULL, *q = NULL;`, 2 sole), 40 call statements whose only
-  lexical access is a cast address actual (`(char **) &labels`) and 25
+  first fix (§2).** The other 86: 40 call statements whose only lexical
+  access is a cast address actual (`(char **) &labels`), and 46 initialized
+  multi-declarators (`char *p = NULL, *q = NULL;`, 2 sole) and
   `cfl_list_entry` / curl macro statements: follow-ups (§4).
 - **`read:pointer-member`, reading (b)** (2,395). In the sole-blocker set the
   shape decides: 25 functions release a member or an element of a
@@ -166,3 +168,136 @@ every leaf with its typed paths in `census/premises.jsonl.gz`.
   (`rd_kafka_dbg` and `rd_rkb_dbg` mostly as `address:sub-object`
   `&rk->rk_conf` and `read:pointer-member` log names; `cmt_errno()` as
   `root:call-result` `*__errno_location()`).
+
+## 2. Step 2: what the card reads, and what it does not
+
+### 2.1 Probe fixtures (base `96a3efd3b`)
+
+Before changing anything, the census shapes were run through the production
+analysis (`analyze_unrestricted_c11`, libc contracts, one statement per line):
+
+| shape | base answer |
+|---|---|
+| `strlen(st->name);`, `r = q_serve(rk->rk_rep, t);` (formal root, `Borrowed`) | Safe |
+| `len = strlen(ctx->options.root_path);` | Safe |
+| `len = strlen(a->p) + strlen(b->q) + 2;` | indirect-access refusal |
+| `p->a = a; p->b = 2;` on a fresh `calloc` | Safe |
+| `list_init(&c->list);` (formal root, and on a fresh `calloc`) | Safe |
+| `free(opts->name); free(opts);` (`struct o5 *opts`) | Safe (rule 5k) |
+| the same with `typedef char *sds` member or `o2_t *opts` base | indirect-access refusal |
+| `free(opts->a); free(opts->b);` (parent kept) | indirect-access refusal |
+| `struct mc *a, *b;`, `mb_t *a;`, `struct m6 members[19];`, `char *p = NULL;` | Safe |
+| `m_t *a, *b;`, `m5_t members[19];`, `char *p = NULL, *q = NULL;` | indirect-access refusal |
+
+So readings (a), (b) and (d) already hold where a route can type the root and
+the position is custody-free; what the census's custody-free and
+non-releasing rows still hit is another premise of the same statement, not a
+missing member reading. Two refusals are reading defects in the brief's sense
+(the AST has the facts and an existing route's premises hold): the
+uninitialized typedef-specified declaration (fixed here) and the
+typedef-spelled base or member at a `Released` position under rule 5k
+(W45-MEMBER-RELEASE-UNTYPED-DECLARATIONS, left as the next fix: it frees no
+sole-blocker function of this run, §1.2, and needs 5k's own Lean premise
+model reopened).
+
+### 2.2 Rule 38h: an uninitialized declaration from the Clang AST
+
+[Rule 38h](../../agents/rules/38h.md). Where the lexical gate refuses a
+statement with no `=` that its own declaration-prefix test accepts, the
+statement's unique Clang node (line and exact tokens, occurrence as rule 10t)
+must be one `DeclStmt` of `VarDecl`s only, none initialized, none with a
+storage class or thread-local marker, every array extent as written and
+desugared a decimal constant. Then the statement takes the keyword branch's
+admission and the classifier's unchanged `NoOp`; otherwise the refusal stays
+byte for byte, and no admitted statement is consulted.
+
+- Admits: `rd_segment_t *seg, *tmp;`, `uint32_t odd[32];`,
+  `rd_kafka_group_member_t members[2];`, `char buf[1024 * 3];`,
+  `char varint_NameLen[RD_UVARINT_ENC_SIZEOF(int32_t)];`.
+- Refuses (unchanged): an initialized declarator (`char *p = NULL, *q = NULL;`),
+  a variably modified array, `static`/`extern`/`register`/thread-local
+  objects, a declaration of a function, typedef or record, and every
+  statement Clang does not show as one declaration.
+- Code: `crates/qcore-c-gateway/src/typed_declaration.rs` (facts and
+  decision), `legacy_typed_declaration.rs` (the hook, with a
+  `typed-declaration` parity row), two calls in `legacy_classify.rs`.
+- Lean: `QCore.TypedDeclarationReading` (`proof/AuditTypedDeclarationReading.lean`):
+  `vectors_match` (132 decision vectors, the Rust table's, checked by
+  `typed_declaration::tests::refusal_vectors_are_the_lean_vectors`),
+  `an_old_admission_stays`, `no_ast_answer_keeps_the_refusal`,
+  `a_non_declaration_keeps_its_answer`, `a_new_admission_needs_every_fact`,
+  the four keeping theorems (initializer, variably modified, non-automatic,
+  non-object) and the three `NoOp` lowering theorems. No axioms, no
+  placeholders.
+- Fixtures: `crates/qcore-c-gateway/tests/member_access_projection.rs`
+  (admitted shapes; the initialized and VLA refusals; a double release and a
+  loop re-acquisition after an admitted declaration stay non-Safe; the
+  librdkafka `crc32c.c` bodies, where `crc32c_zeros_op` and, through its
+  in-unit summary, `crc32c_zeros` are Safe), and the decision's unit tests
+  over Clang's JSON shapes.
+
+## 3. Stop: member custody through a formal parent (user choice)
+
+The rest of the sole-blocker mass is custody, not typing (§1.2): 25 functions
+release a member or element of a **formal** parent and keep the parent
+(`cmt_opts_exit`, `metric_release_storage`, `free_chunk_header`,
+`rd_kafka_metadata_partition_clear`, the twelve `*_destroy_array` helpers),
+50 store a pointer that may carry an identity into a member
+(`map->unit = cfl_sds_create(unit)`, `confval->name = name`), and 5 hand an
+embedded list's address to a releasing helper (`rd_list_destroy(&conf->…)`).
+Fail-closed does not settle whether such a body may be admitted: the caller
+holds the parent, so whatever the body does to `P->F` is an effect on the
+caller's object that no summary mode states (rule 5k admits a member release
+only when the body also releases the parent, P4; W45-MEMBER-RELEASE-PREMISES).
+This is the brief's own example ("whether a pointer member read through a
+borrowed parent may be passed to a releasing callee").
+
+Options:
+
+1. **A member-effect summary (recommended).** A body's summary states, per
+   formal, the members it releases (`P->F` released, nullable or not) and the
+   members it stores a custody-carrying value into (`P->F` takes the value),
+   checked against the body (each place used only at those positions, as rule
+   5k's P1–P3 and rule 13a check slot moves), and applied at the call site to
+   the caller's own place map: a released member's later use or release is
+   refused or accused as rule 5k's caller guard does today, a stored member
+   becomes a field link (CG11's owned-field model). Contract specification
+   and grammar for the declared form, loader, gateway, Lean parity. Frees the
+   clear-style helpers and the setters' callers in a cascade; it discharges
+   W45-MEMBER-RELEASE-PREMISES and the formal-parent half of
+   W44-CALL-RESULT-INDIRECT-DESTINATION.
+2. **A borrowed parent's member is never released** (decision class 8 read
+   strictly): a pointer member read through a borrowed parent is an interior
+   borrow, so its release is refused by name (`interior-borrow-released`), and
+   a store into a borrowed parent's member is refused by name. No verdict
+   moves; the 9,996-leaf family shrinks into named custody refusals that the
+   census can rank.
+3. **Admit only where the body also releases the parent** (rule 5k as it
+   stands), and re-attribute the rest to a named refusal (as rule 12k does for
+   uncontracted callees). No verdict moves.
+
+Recommendation: 1, with 3's re-attribution first as a cheap, verdict-neutral
+step so the next census names the blocker. Option 2 closes the door option 1
+needs.
+
+## 4. Follow-ups
+
+- **MEMBER-CUSTODY-THROUGH-FORMAL-PARENT** (registered): §3's choice, with
+  the census numbers; its card should first run
+  [`scripts/run_current_census.py`](scripts/run_current_census.py) (the
+  `indirect-census` build's call-argument and parity streams) to name each
+  refused actual's position and route answer, which this card could not.
+- W45-MEMBER-RELEASE-UNTYPED-DECLARATIONS (amended): the typedef-spelled base
+  or member at a `Released` position is still refused at `96a3efd3b`
+  (probe, §2.1); the next reading-defect fix.
+- W46-LEXICAL-GATE-NON-ACCESS (amended): rule 38h reads the uninitialized
+  declarations; on the 046accf6 run 86 non-access leaves remain (40
+  cast-address call statements; 46 initialized multi-declarators and
+  `cfl_list_entry`/curl macro statements), overlapping CG14-DECLARATION-FORMS
+  and CG08-CAST-AND-QUERY-RESIDUALS.
+- W44-CALL-RESULT-INDIRECT-DESTINATION (amended): 424 call-result stores into
+  members on the 046accf6 run, 19 sole-blocker functions.
+- Two calls in one statement (`strlen(a->p) + strlen(b->q)`): each call alone
+  is admitted; the statement is refused. Recorded under
+  MEMBER-CUSTODY-THROUGH-FORMAL-PARENT's census note for the next census to
+  size, not registered on its own.

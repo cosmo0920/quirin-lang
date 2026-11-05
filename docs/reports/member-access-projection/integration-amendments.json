@@ -1,0 +1,62 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "MEMBER-ACCESS-PROJECTION",
+  "base": "96a3efd3b",
+  "measured_tip": "0758fd0c7",
+  "increment_paragraph": "**MEMBER-ACCESS-PROJECTION** (round 18; USER REQUEST 2026-11-05, verbatim: \"We're still needed to handle tons of unsupported instructions on our corpus...\", then \"Member access first\"): the census of the user's `quirin-audit current` run at Fluent Bit 046accf6 binds every one of its 9,996 `indirect memory access is outside the resource projection` leaves (2,346 functions, 162 units, 267 sole-blocker functions) to the Clang AST of the unit's own analysed text (186 of 186 preprocessed texts reproduced with matching SHA-256) and gives each one refusal premise: pointer member read 2,395, uncontracted callee 1,888, sub-object address 1,778, union 749, pointer stored into a member 1,814, no evaluated access 227, custody-free read or store 342, the rest forms and roots outside every typed reader. Probes on the base show readings (a), (b) and (d) already hold where a route types the root at a custody-free position; the sole-blocker mass is member custody through a formal parent (25 functions release a formal's member or element and keep the parent, 50 store an identity-carrying pointer into a member), which no summary mode states, so the card stops there on a user choice (MEMBER-CUSTODY-THROUGH-FORMAL-PARENT: a member-effect summary recommended). The one reading defect fixed is gateway rule 38h: a declaration with no `=` that the lexical gate refused (a typedef specifier, so `rd_segment_t *seg, *tmp;` read its second `*` as a dereference; a constant-expression bound) takes the keyword branch's admission and unchanged `NoOp` only when its unique Clang node is one `DeclStmt` of automatic, uninitialized, constant-typed `VarDecl`s; every other answer keeps the refusal and nothing the gate admitted is consulted (141 leaves on the 046accf6 run). Lean `QCore.TypedDeclarationReading` (132 decision vectors bound to the Rust table, the keeping theorems, the `NoOp` lowering); fixtures `crates/qcore-c-gateway/tests/member_access_projection.rs`. Predicted: corpus Unknown -> Safe for crc32c_zeros_op, ut_testConflictingPreviousAssignments and crc32c_zeros; system and slice no move. Report: docs/reports/member-access-projection/README.md.",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "MEMBER-ACCESS-PROJECTION",
+      "operation": "register",
+      "title": "Read member accesses the indirect-access refusal covers, in the order fail-closed allows",
+      "text": "Registered by its own card at landing (USER REQUEST 2026-11-05, verbatim: \"We're still needed to handle tons of unsupported instructions on our corpus...\"; then \"Member access first\"); retired by the next entry.",
+      "source": "docs/reports/member-access-projection/README.md",
+      "recorded_by": "MEMBER-ACCESS-PROJECTION"
+    },
+    {
+      "id": "MEMBER-ACCESS-PROJECTION",
+      "operation": "retire",
+      "why": "DISCHARGED by MEMBER-ACCESS-PROJECTION (docs/reports/member-access-projection/README.md): step-1 census of the 9,996 indirect-access leaves of the 046accf6 current run by AST premise; the reading defect it found fixed as gateway rule 38h (uninitialized declarations from the Clang AST, Lean QCore.TypedDeclarationReading); readings (a), (b), (d) shown already admitted where a route types the root at a custody-free position; member custody through a formal parent left to the user choice MEMBER-CUSTODY-THROUGH-FORMAL-PARENT.",
+      "source": "docs/reports/member-access-projection/README.md"
+    },
+    {
+      "id": "MEMBER-CUSTODY-THROUGH-FORMAL-PARENT",
+      "operation": "register",
+      "title": "A body that releases or stores into a member of a formal parent it keeps has no summary mode: a user choice",
+      "text": "Registered by MEMBER-ACCESS-PROJECTION (046accf6 current run, census in docs/reports/member-access-projection/census/). Of the 267 functions the indirect-access refusal alone blocks, 25 release a member or element of a formal parent and keep the parent (cmt_opts_exit, metric_release_storage, free_chunk_header, rd_kafka_metadata_partition_clear, the twelve *_destroy_array helpers), 50 store a pointer that may carry an identity into a member (map->unit = cfl_sds_create(unit), confval->name = name) and 5 hand an embedded list's address to a releasing helper (rd_list_destroy(&conf->...)); across the run 2,395 pointer-member-read and 1,814 pointer-store leaves. Rule 5k admits a member release only when the body also releases the parent (P4); otherwise the effect is on the caller's object and no summary mode states it. Options: (1, recommended) a member-effect summary: per formal, the members a body releases and the members it stores a custody-carrying value into, checked against the body like rule 5k's P1-P3 and rule 13a, applied at the call site to the caller's place map (a released member's later use refused or accused as 5k's caller guard does; a stored member a field link in CG11's owned-field model), with contract-spec grammar, loader, gateway and Lean parity; (2) class 8 read strictly: a borrowed parent's member is an interior borrow, its release and stores into it refused by name, no verdict moves; (3) keep rule 5k as it stands and re-attribute the rest to a named refusal like rule 12k, no verdict moves. Recommended: 1, with 3's re-attribution first. The card that takes it should first run docs/reports/member-access-projection/scripts/run_current_census.py (the indirect-census build's call-argument and parity streams), which names each refused actual's position and route answer; it should also size statements with two calls (strlen(a->p) + strlen(b->q) is refused while each call alone is admitted). DISCHARGE: a user decision and the card it names, measured.",
+      "source": "docs/reports/member-access-projection/README.md",
+      "recorded_by": "MEMBER-ACCESS-PROJECTION"
+    },
+    {
+      "id": "W45-MEMBER-RELEASE-UNTYPED-DECLARATIONS",
+      "operation": "amend",
+      "text": "AMENDED (MEMBER-ACCESS-PROJECTION, base 96a3efd3b): still open. A probe of the production analysis keeps `free(opts->ns); free(opts);` refused as an indirect access when the member is `typedef char *sds` or the base is `o2_t *` (a typedef of the record pointer), while the struct spelling is Safe under rule 5k: a reading defect (Clang types both) and the next fix after rule 38h. It frees no sole-blocker function of the 046accf6 current run, whose member releases of a formal all keep the parent (MEMBER-CUSTODY-THROUGH-FORMAL-PARENT).",
+      "source": "docs/reports/member-access-projection/README.md"
+    },
+    {
+      "id": "W46-LEXICAL-GATE-NON-ACCESS",
+      "operation": "amend",
+      "text": "AMENDED (MEMBER-ACCESS-PROJECTION): gateway rule 38h reads an uninitialized declaration the gate refused (typedef specifier, constant-expression bound) from the Clang AST: 141 leaves on the 046accf6 current run. 86 indirect-access leaves with no evaluated access remain there: 40 call statements whose only lexical access is a cast address actual (`(char **) &labels`), and 46 initialized multi-declarators (`char *p = NULL, *q = NULL;`) and cfl_list_entry/curl macro statements.",
+      "source": "docs/reports/member-access-projection/README.md"
+    },
+    {
+      "id": "CG14-DECLARATION-FORMS",
+      "operation": "amend",
+      "text": "AMENDED (MEMBER-ACCESS-PROJECTION): the uninitialized several-declarator and constant-array forms are read by gateway rule 38h (the keyword branch's NoOp); initialized several-declarator statements (`char *p = NULL, *q = NULL;`) remain this entry's per-declarator lowering.",
+      "source": "docs/reports/member-access-projection/README.md"
+    },
+    {
+      "id": "W44-CALL-RESULT-INDIRECT-DESTINATION",
+      "operation": "amend",
+      "text": "AMENDED (MEMBER-ACCESS-PROJECTION, 046accf6 current run, AST census): 424 call-result stores into members (premise store:pointer-call-result), 259 functions, 19 sole-blocker functions; the formal-parent half is MEMBER-CUSTODY-THROUGH-FORMAL-PARENT's choice.",
+      "source": "docs/reports/member-access-projection/README.md"
+    },
+    {
+      "id": "W45-MEMBER-RELEASE-PREMISES",
+      "operation": "amend",
+      "text": "AMENDED (MEMBER-ACCESS-PROJECTION, 046accf6 current run): 25 sole-blocker functions release a member or element of a formal parent and keep it (11 members, 12 elements, 2 both); the summary form this entry's discharge names is option 1 of MEMBER-CUSTODY-THROUGH-FORMAL-PARENT, put to the user.",
+      "source": "docs/reports/member-access-projection/README.md"
+    }
+  ]
+}
