@@ -236,7 +236,37 @@ measurement:
 target/release/quirin-audit --plugin-path target/release --output <dir> --timeout-ms 36000000 measure --inputs crates/quirin-audit-plugin-measure/inputs/live.json --inputs-base /media/Data/GitHub/quirin-lang --side base=baseline:c8c7edf2165a2065c234f3a63b4eed23e937ced6 --side tip=rev:<last code commit> --declared docs/reports/libc-gap-declarations/PREDICTION.md
 ```
 
-The card gate's record is [gate/gate.json](gate/gate.json).
+**Card gate.** The command was `python3 scripts/gate_scope.py --base
+c8c7edf21 --out private/gate`, at head `a3dc75a94`, and it exited 0. The
+record is [gate/gate.json](gate/gate.json) and its printed selection is
+[gate/selection.log](gate/selection.log). The scope was full, because the
+diff reaches `qcore-c-gateway`. Lean: none.
+
+| Step | Exit | Counts |
+|---|---:|---|
+| submodules | 0 | 1 |
+| fmt | 0 | |
+| Clippy | 0 | |
+| Rust suite | 0 | 603 units: 9,167 passed, 0 failed, 16 ignored, 135 filtered |
+| reevaluation probe | 0 | |
+| reevaluation follow-up | 0 | |
+| Python | 0 | 577 tests |
+| provider package build | 0 | |
+| provider package verify (all) | 0 | |
+| provider package verify | 0 | |
+| provider test | 0 | 133 passed, 0 failed, 1 ignored |
+| provider fmt | 0 | |
+| provider Clippy | 0 | |
+
+**The earlier attempt** ([gate/attempt-1-gate.json](gate/attempt-1-gate.json),
+head `fbca407e2`) failed only in `qcore-compiler::test::contract_loader`, 2
+tests:
+- the pinned v1 declaration count, 499 against the new 522;
+- the previous-modes table, which lacked the new names.
+
+`e6a5288d0` updates both pins: v1 declarations 499 -> 522, withheld
+declarations 109 -> 112, and the 20 plain modes added to the table. Every
+other step of that attempt exited 0.
 
 ## 6. Follow-ups
 
