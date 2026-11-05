@@ -616,6 +616,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [librdkafka-plugin-premise-remainder](librdkafka-plugin-premise-remainder/README.md) | LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER: the plugin premise on member facts, the crash path and a model contract |
 
+| [log-print-body-contracts](log-print-body-contracts/README.md) | LOG-PRINT-BODY-CONTRACTS |
+
 | [logger-effect-contracts](logger-effect-contracts/README.md) | Logger effect contracts |
 
 | [loop-unroll-budget](loop-unroll-budget/README.md) | LOOP-UNROLL-BUDGET — the three-layer unrolling budget (wave 26) |

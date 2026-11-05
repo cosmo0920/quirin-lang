@@ -76,8 +76,11 @@ class CanonicalCorpus(unittest.TestCase):
         # qcore-provider-libevent (88 -> 89).
         # 146 -> 147: CELL-RESULT-SET-WRITTEN-SET-DERIVATION's
         # fluent_bit/result_range.qv in quirin-provider-fluent-bit (57 -> 58).
-        self.assertEqual(len(modules), 147)
-        self.assertEqual(sum(any(part.startswith("qcore-provider-") for part in path.parts) for path in modules.values()), 89)
+        # 147 -> 149: LOG-PRINT-BODY-CONTRACTS's cmetrics/logging.qv in
+        # qcore-provider-cmetrics and chunkio/logging.qv in
+        # qcore-provider-chunkio (89 -> 91).
+        self.assertEqual(len(modules), 149)
+        self.assertEqual(sum(any(part.startswith("qcore-provider-") for part in path.parts) for path in modules.values()), 91)
         self.assertEqual(sum(any(part.startswith("quirin-provider-") for part in path.parts) for path in modules.values()), 58)
         libc = [path for name, path in modules.items() if name.startswith("libc/")]
         self.assertTrue(libc and all("quirin-provider-libc" in path.parts for path in libc))

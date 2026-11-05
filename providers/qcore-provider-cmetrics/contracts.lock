@@ -268,6 +268,39 @@
       ]
     },
     {
+      "function": "cmt_log_print",
+      "module": "cmetrics/logging.qv",
+      "contract_sha256": "395972047733006e8cbcea797f225b0ce6fa951423752e6f6e89165a08595ad6",
+      "pinned_at": "2026-11-04T20:17:11Z",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/cmetrics/include/cmetrics/cmt_log.h",
+              "kind": "declaration",
+              "declaration_sha256": "898731951b7c08b26a5761692bc805affb252809752f6dbaf3cc7e3b81bb4f62"
+            },
+            {
+              "path": "lib/cmetrics/src/cmt_log.c",
+              "kind": "definition",
+              "declaration_sha256": "898731951b7c08b26a5761692bc805affb252809752f6dbaf3cc7e3b81bb4f62",
+              "body_sha256": "b23c704ddf77562d2c57bd1122c203053604c2e54044fd72a6908e3520063f67"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "cmt_math_d64_to_uint64",
       "module": "cmetrics/metric_values.qv",
       "contract_sha256": "012e9bdec13ae5165ea01426561c123960063e08798207093ce54d1447d20c3b",

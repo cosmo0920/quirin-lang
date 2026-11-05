@@ -34,6 +34,7 @@
     "contracts/chunkio/import_composition.qv": "6db984f530c236f38736a41d82a9ea590030f69d05fcec3a04ae7451ab8005a0",
     "contracts/chunkio/list_unlink.qv": "363f03b566ba8ec92a4f2ce33c6c1812ae2c6b6c74181152b4bde6749c7d3da2",
     "contracts/chunkio/lock_state.qv": "7ac90bd79bcd41857639eecc79e79d15353eb3e62302fa0f13c18f4327bc4fe6",
+    "contracts/chunkio/logging.qv": "fa3f8db53f1f427838272976c854b1dc376035f1452d646e1f0ae95f0111091a",
     "contracts/chunkio/memory_backend.qv": "e74af40022bc05152618d435798265cd846158ba77c522414fd012426dd5c233",
     "contracts/chunkio/memory_close.qv": "61db735502775fae6cfd875f3bd6c4d3c137c16b3cf34114eaef246ecca348fc",
     "contracts/chunkio/meta_len_bounds.qv": "e999709a8db5ff2a65d36757c68d7440c8d6e6af05139b47f262b93d0aa96554",

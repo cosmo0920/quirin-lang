@@ -305,6 +305,39 @@
       ]
     },
     {
+      "function": "cio_log_print",
+      "module": "chunkio/logging.qv",
+      "contract_sha256": "43ff2b900bd21a2c5103b4cddc022e1c8d363482f0dd0eff0a2ca4fcb24a8216",
+      "pinned_at": "2026-11-04T20:17:12Z",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/chunkio/include/chunkio/cio_log.h",
+              "kind": "declaration",
+              "declaration_sha256": "0a106b0627cf5936bfa3749d7c491fdee20ebddc5bee0973a46508958d7ca06e"
+            },
+            {
+              "path": "lib/chunkio/src/cio_log.c",
+              "kind": "definition",
+              "declaration_sha256": "0a106b0627cf5936bfa3749d7c491fdee20ebddc5bee0973a46508958d7ca06e",
+              "body_sha256": "b8973590bcb4da08294df259e4ff866adf857a93576524bde1305470929e0041"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "cio_stream_size_chunks_up",
       "module": "chunkio/chunk_sizes.qv",
       "contract_sha256": "e2312d911b12a290e0f22fba6a664c31bb6aad96359a45cc00121e5c9bc03c78",

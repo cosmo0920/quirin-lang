@@ -9,7 +9,7 @@
       "provider": "qcore.cmetrics",
       "contract": {
         "manifest": "../../../providers/qcore-provider-cmetrics/contracts.json",
-        "sha256": "c9ad0081f0971277220de05ed4ad037f33310a2b3262f5f5145a0e52de99682f",
+        "sha256": "5b193802aeb4f562bf089b85d67492aa39fb05da3b62283ad02a6374ccfa4dfe",
         "owner": "qcore.cmetrics",
         "path": "contracts/cmetrics/counter_reset.qv"
       }

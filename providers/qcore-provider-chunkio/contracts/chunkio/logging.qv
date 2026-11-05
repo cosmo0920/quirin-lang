@@ -1,0 +1,93 @@
+module contract;
+
+// Chunk I/O diagnostic logging — resource-projection vocabulary version 1.
+//
+// Card LOG-PRINT-BODY-CONTRACTS (round 15, 2026-11-05; USER REQUEST, verbatim:
+// "Now, we're still needed to fill the gap of the missing contracts."). ONE
+// TRUSTED ASSUMPTION about one upstream function, pinned (C06.2). Any verdict
+// that rests on it is relative to this declaration, never a proof of the C.
+//
+// ## The body, `lib/chunkio/src/cio_log.c:28-53`
+//
+// Byte-identical at Fluent Bit 046accf6, 66910c10 and 34155955:
+//
+//     void cio_log_print(void *ctx, int level, const char *file, int line,
+//                        const char *fmt, ...)
+//     {
+//         int ret;
+//         char buf[CIO_LOG_BUF_SIZE];
+//         va_list args;
+//         struct cio_ctx *cio = ctx;
+//
+//         if (!cio->options.log_cb) {
+//            return;
+//         }
+//         if (level > cio->options.log_level) {
+//             return;
+//         }
+//         va_start(args, fmt);
+//         ret = vsnprintf(buf, CIO_LOG_BUF_SIZE - 1, fmt, args);
+//         if (ret >= 0) {
+//             buf[ret] = '\0';
+//         }
+//         va_end(args);
+//
+//         cio->options.log_cb(ctx, level, file, line, buf);
+//     }
+//
+//   * `ctx` (`void *`, read as `struct cio_ctx *`): its embedded options'
+//     `log_cb` and `log_level` are read, and it is handed to the callback.
+//     Never freed, stored or returned: `resource_borrowed`.
+//   * `level` and `line` are `int`s by value; `file` is handed to the
+//     callback and `fmt` only to `vsnprintf`: each `resource_borrowed`.
+//   * The callback: the function pointer in the member `log_cb` of the
+//     context's embedded `struct cio_options` is called at most once with
+//     `(ctx, level, file, line, buf)`, `buf` this function's own local
+//     buffer (`_`). The member is keyed by its innermost named record
+//     (rule 12n): `cio_options.log_cb`. A consumer decides the call over the
+//     run's closed set of the member's stores with C04.19's loop-safe
+//     composition, and refuses it otherwise (`callback-member-open`).
+//     At the three pins the stores are Fluent Bit's
+//     `opts.log_cb = log_cb;` (`src/flb_storage.c:709`, `src/flb_fstore.c:492`),
+//     the chunkio tool's (`lib/chunkio/tools/cio.c:598`), a null
+//     (`chunkio.c:78`) and the setter `cio_set_log_callback`
+//     (`chunkio.c:316-319`), whose formal is a `void *`: rule 12n opens a
+//     member stored from a formal that is not a function pointer (card
+//     LOG-PRINT-BODY-CONTRACTS repaired its reading of the spelling
+//     `void (*)`), so the run's set is open and every call stays refused
+//     under this declaration (MEMBER-CLOSURE-VOID-POINTER-SETTER-FORMAL;
+//     the 36 unread units of S3-PREPASS-UNREAD-GRAPH-ISOLATION open it as
+//     well). The candidates, once closed, are the three static `log_cb`
+//     functions, which need their own contracts. Nothing here assumes the
+//     callback benign.
+//   * The result is `void`: `resource_return_none()`.
+//
+// ## The variadic tail is NOT declared
+//
+// As in `cmetrics/logging.qv`: the tail reaches `vsnprintf` only, but the
+// resource loader refuses `resource_variadic_borrowed_tail()` beside a
+// callback clause (VARIADIC-TAIL-BESIDE-CALLBACK-CLAUSES), so the fixed
+// parameters are declared alone, the refusing direction: a call passing an
+// actual after `fmt` is refused by the call-site arity gate as before.
+//
+// ## Body evidence
+//
+// The body is in the run (`cio_log.c`), but no body evidence covers this
+// declaration: a member invocation is a declared assumption (rule 13i), and
+// the body's own row is Unknown.
+//
+// ## NOT CLAIMED
+//
+//   * Nothing about a `ctx` that is not a live `struct cio_ctx`; custody only.
+//   * Nothing about the tail, truncation, or the message.
+extern fn cio_log_print(ctx: ptr<mut, u8>, level: i32, file: ptr<const, u8>, line: i32, fmt: ptr<const, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_borrowed(level);
+    ensures normal resource_borrowed(file);
+    ensures normal resource_borrowed(line);
+    ensures normal resource_borrowed(fmt);
+    ensures normal resource_callback_member_invoked(ctx, cio_options.log_cb, ctx, level, file, line, _);
+    ensures normal resource_return_none();
+};

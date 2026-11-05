@@ -1,0 +1,97 @@
+module contract;
+
+// CMetrics diagnostic logging — resource-projection vocabulary version 1.
+//
+// Card LOG-PRINT-BODY-CONTRACTS (round 15, 2026-11-05; USER REQUEST, verbatim:
+// "Now, we're still needed to fill the gap of the missing contracts."). ONE
+// TRUSTED ASSUMPTION about one upstream function, pinned (C06.2). Any verdict
+// that rests on it is relative to this declaration, never a proof of the C.
+//
+// ## The body, `lib/cmetrics/src/cmt_log.c:32-57`
+//
+// Byte-identical at Fluent Bit 046accf6, 66910c10 and 34155955:
+//
+//     void cmt_log_print(void *ctx, int level, const char *file, int line,
+//                        const char *fmt, ...)
+//     {
+//         int ret;
+//         char buf[CMT_LOG_BUF_SIZE];
+//         va_list args;
+//         struct cmt *cmt = ctx;
+//
+//         if (!cmt->log_cb) {
+//            return;
+//         }
+//         if (level > cmt->log_level) {
+//             return;
+//         }
+//         va_start(args, fmt);
+//         ret = vsnprintf(buf, CMT_LOG_BUF_SIZE - 1, fmt, args);
+//         if (ret >= 0) {
+//             buf[ret] = '\0';
+//         }
+//         va_end(args);
+//
+//         cmt->log_cb(ctx, level, file, line, buf);
+//     }
+//
+//   * `ctx` (`void *`, read as `struct cmt *`): its `log_cb` and `log_level`
+//     members are read, and it is handed to the callback. Never freed, stored
+//     or returned: `resource_borrowed`.
+//   * `level` and `line` are `int`s by value: `resource_borrowed`.
+//   * `file` is handed to the callback, `fmt` only to `vsnprintf`: each READ,
+//     never freed or stored: `resource_borrowed`.
+//   * The callback: the function pointer `struct cmt`'s member `log_cb` holds
+//     is called at most once, with `(ctx, level, file, line, buf)`, `buf`
+//     being this function's own local buffer (`_`):
+//     `resource_callback_member_invoked(ctx, cmt.log_cb, ctx, level, file, line, _)`
+//     (C04.19.3, rule 12n). A consumer decides it over the run's closed set
+//     of the member's stores (premise P-CG22-MEMBER-CLOSED-WORLD) with
+//     C04.19's loop-safe composition. At the three pins no unit stores into
+//     `cmt.log_cb` (`cmt_create` allocates the context with `calloc`, and no
+//     setter exists), so over a run's closed set the call invokes nothing.
+//     A run whose set is open or non-empty decides the call over that set,
+//     or refuses it; nothing here assumes the callback benign. On the
+//     routes at this card's base every member is open, because the member
+//     pre-pass leaves 36 units unread (S3-PREPASS-UNREAD-GRAPH-ISOLATION),
+//     so every call is refused (`callback-member-open`) until that closes.
+//   * The result is `void`: `resource_return_none()`.
+//
+// ## The variadic tail is NOT declared
+//
+// The tail is read by `vsnprintf` only, and its rendering, not any tail
+// pointer, reaches the callback. The truthful statement would add
+// `resource_variadic_borrowed_tail()`, but the resource loader refuses a
+// variadic tail beside a callback clause ("a retention clause stands only
+// beside plain parameter and result predicates"), so the declaration states
+// the five fixed parameters only. That is the refusing direction
+// (`legacy_declared_abi.rs`: a variadic C function whose declaration carries
+// no tail clause is no ABI disagreement): a call passing an actual after
+// `fmt` is refused by the call-site arity gate exactly as it is without this
+// declaration, and only the calls that pass none are decided. The missing
+// form is VARIADIC-TAIL-BESIDE-CALLBACK-CLAUSES.
+//
+// ## Body evidence
+//
+// The body is in the run (`cmt_log.c`), but no body evidence covers this
+// declaration: a member invocation is a declared assumption (rule 13i), and
+// the body's own row is Unknown (the indirect call at `cmt_log.c:56` and the
+// context reads around it). Every row resting on it names it.
+//
+// ## NOT CLAIMED
+//
+//   * Nothing about a `ctx` that is not a live `struct cmt` (null-dereference
+//     is the bounds property's `null-deref:cmt_log_print:...:cmt` premise);
+//     custody only.
+//   * Nothing about the tail (see above), truncation, or the message.
+extern fn cmt_log_print(ctx: ptr<mut, u8>, level: i32, file: ptr<const, u8>, line: i32, fmt: ptr<const, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_borrowed(level);
+    ensures normal resource_borrowed(file);
+    ensures normal resource_borrowed(line);
+    ensures normal resource_borrowed(fmt);
+    ensures normal resource_callback_member_invoked(ctx, cmt.log_cb, ctx, level, file, line, _);
+    ensures normal resource_return_none();
+};

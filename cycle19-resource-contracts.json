@@ -24,6 +24,7 @@
     "providers/qcore-provider-cmetrics/contracts/cmetrics/context_lifetime.qv",
     "providers/qcore-provider-cmetrics/contracts/cmetrics/metric_values.qv",
     "providers/qcore-provider-cmetrics/contracts/cmetrics/mpack_utils.qv",
+    "providers/qcore-provider-cmetrics/contracts/cmetrics/logging.qv",
     "providers/qcore-provider-ctraces/contracts/ctraces/context_lifetime.qv",
     "providers/qcore-provider-libevent/contracts/monkey/event_loop.qv",
     "providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qv",
@@ -67,6 +68,7 @@
     "providers/quirin-provider-fluent-bit/contracts/fluent_bit/time.qv",
     "providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qv",
     "providers/qcore-provider-chunkio/contracts/chunkio/chunk_sizes.qv",
-    "providers/qcore-provider-chunkio/contracts/chunkio/resource_open_close.qv"
+    "providers/qcore-provider-chunkio/contracts/chunkio/resource_open_close.qv",
+    "providers/qcore-provider-chunkio/contracts/chunkio/logging.qv"
   ]
 }

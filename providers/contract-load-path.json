@@ -42,6 +42,7 @@
         "chunkio/import_composition.qv",
         "chunkio/list_unlink.qv",
         "chunkio/lock_state.qv",
+        "chunkio/logging.qv",
         "chunkio/memory_backend.qv",
         "chunkio/memory_close.qv",
         "chunkio/meta_len_bounds.qv",
@@ -61,6 +62,7 @@
       "resource_view": [
         "chunkio/chunk_residency.qv",
         "chunkio/chunk_sizes.qv",
+        "chunkio/logging.qv",
         "chunkio/resource_open_close.qv"
       ],
       "bounds_view": [
@@ -80,6 +82,7 @@
       "modules": [
         "cmetrics/context_lifetime.qv",
         "cmetrics/counter_reset.qv",
+        "cmetrics/logging.qv",
         "cmetrics/map_lifetime.qv",
         "cmetrics/metric_setters.qv",
         "cmetrics/metric_values.qv",
@@ -91,6 +94,7 @@
       "published": {},
       "resource_view": [
         "cmetrics/context_lifetime.qv",
+        "cmetrics/logging.qv",
         "cmetrics/metric_values.qv",
         "cmetrics/mpack_utils.qv"
       ],
