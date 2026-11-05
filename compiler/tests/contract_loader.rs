@@ -97,7 +97,8 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     // Kafka callback placement adds librdkafka/logging.qv to the selected sources.
     // 65 -> 66 by card W48-RK-LOG-CALLER-FRAME: `librdkafka/log_caller_frame.qv`.
     // 66 -> 68 by card LOG-PRINT-BODY-CONTRACTS: `cmetrics/logging.qv` and `chunkio/logging.qv`.
-    assert_eq!(contracts.source_assumptions().len(), 68);
+    // 68 -> 69 by card LIBRDKAFKA-HEADER-INLINES: `librdkafka/header_inlines.qv`.
+    assert_eq!(contracts.source_assumptions().len(), 69);
     check_source_assumptions(&contracts).unwrap();
     let mut old = ResourceContracts::default();
     for name in [
@@ -1301,6 +1302,107 @@ fn production_contracts_preserve_the_previous_resource_modes() {
             ResourceFunctionContract::new([], R::Owned { nullable: false }),
         );
     }
+    // Card LIBRDKAFKA-HEADER-INLINES: the 59 librdkafka header definitions of
+    // `librdkafka/header_inlines.qv` had no previous reading; each is its
+    // plain v1 mode, read off its body at 66910c10 and 046accf6.
+    for name in [
+        "rd_kafka_buf_write",
+        "rd_kafka_buf_write_i8",
+        "rd_kafka_buf_write_i16",
+        "rd_kafka_buf_write_i32",
+        "rd_kafka_buf_write_i64",
+        "rd_kafka_buf_write_bool",
+        "rd_kafka_buf_write_uvarint",
+        "rd_kafka_buf_write_varint",
+        "rd_kafka_buf_write_arraycnt",
+        "rd_kafka_buf_write_str",
+        "rd_kafka_buf_write_kstr",
+        "rd_kafka_buf_write_kbytes",
+        "rd_kafka_buf_write_bytes",
+        "rd_kafka_buf_write_uuid",
+        "rd_kafka_buf_update_i8",
+        "rd_kafka_buf_update_i16",
+        "rd_kafka_buf_update_i32",
+        "rd_kafka_buf_update_u32",
+        "rd_kafka_buf_update_i64",
+        "rd_kafka_buf_finalize_arraycnt",
+        "rd_kafka_buf_crc_init",
+        "rd_kafka_set_last_error",
+        "rd_kafka_q_len",
+        "rd_kafka_q_yield",
+        "rd_kafka_q_reset",
+        "rd_kafka_q_concat0",
+        "rd_kafka_q_prepend0",
+        "rd_kafka_msgq_init",
+        "rd_kafka_msgq_concat",
+        "rd_kafka_msgq_move",
+        "rd_kafka_msgq_purge",
+        "rd_kafka_broker_get_state",
+        "rd_kafka_topic_get_error",
+        "rd_kafka_op_version_outdated",
+        "rd_kafka_app_poll_start",
+        "rd_kafka_app_polled",
+        "rd_kafka_curr_msgs_add",
+        "rd_kafka_curr_msgs_wait_zero",
+        "rd_kafka_txn_add_partition",
+        "rd_atomic64_set",
+        "rd_usleep",
+        "rd_crc32_init",
+        "rd_crc32_update",
+        "rd_buf_write_pos",
+        "rd_slice_read_varint",
+        "rd_varint_dec_i64",
+        "rd_avl_remove_elm",
+    ] {
+        old.insert_contract(name, ResourceFunctionContract::new([], R::None));
+    }
+    // An op (or message) leaves its caller's custody on every exit: linked
+    // into a queue or destroyed.
+    for name in ["rd_kafka_q_enq", "rd_kafka_q_reenq", "rd_kafka_msgq_enq"] {
+        old.insert_contract(
+            name,
+            ResourceFunctionContract::new([P::Borrowed, P::Consumed { nullable: false }], R::None),
+        );
+    }
+    for name in [
+        "rd_kafkap_str_new",
+        "rd_kafkap_bytes_new",
+        "rd_kafka_partition_leader_new",
+    ] {
+        old.insert_contract(
+            name,
+            ResourceFunctionContract::new([], R::Owned { nullable: true }),
+        );
+    }
+    old.insert_contract(
+        "rd_kafka_partition_leader_destroy",
+        ResourceFunctionContract::new([P::Released { nullable: false }], R::None),
+    );
+    for (name, parameter, extent, const_dropped) in [
+        ("rd_kafka_msgq_first", 0, DerivedExtent::Borrowed, true),
+        ("rd_kafka_msgq_last", 0, DerivedExtent::Borrowed, true),
+        (
+            "rd_kafka_topic_partition_toppar",
+            1,
+            DerivedExtent::Borrowed,
+            true,
+        ),
+        ("rd_kafka_rkt_get_lw", 0, DerivedExtent::Exact, false),
+        ("rd_tmpabuf_alloc0", 2, DerivedExtent::Borrowed, false),
+    ] {
+        old.insert_contract(
+            name,
+            ResourceFunctionContract::new(
+                [],
+                R::Derived {
+                    parameter,
+                    extent,
+                    nullable: true,
+                    const_dropped,
+                },
+            ),
+        );
+    }
     // Explicitly borrowed trailing arguments were implicit in the old table.
     fn canonical(mut contract: ResourceFunctionContract) -> ResourceFunctionContract {
         while contract.parameters.last() == Some(&P::Borrowed) {
@@ -1631,7 +1733,8 @@ fn certificates_replay_exact_assumptions_and_reject_table_mutation() {
     // 63 -> 64 by card FB-TEARDOWN-DESTROY-DECLARATIONS: `fluent_bit/teardown_destroy.qv`.
     // 65 -> 66 by card W48-RK-LOG-CALLER-FRAME: `librdkafka/log_caller_frame.qv`.
     // 66 -> 68 by card LOG-PRINT-BODY-CONTRACTS: `cmetrics/logging.qv` and `chunkio/logging.qv`.
-    assert_eq!(certificate.contracts.source_assumptions().len(), 68);
+    // 68 -> 69 by card LIBRDKAFKA-HEADER-INLINES: `librdkafka/header_inlines.qv`.
+    assert_eq!(certificate.contracts.source_assumptions().len(), 69);
     certificate
         .contracts
         .insert("malloc", ResourceApiKind::Neutral);
@@ -1919,7 +2022,9 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // a bounds contract v1 value set); resource-v1 rejects its declaration.
     // 147 -> 149: card LOG-PRINT-BODY-CONTRACTS adds `cmetrics/logging.qv`
     // and `chunkio/logging.qv`, both resource-v1 (selected, not rejected).
-    assert_eq!(modules.len(), 149, "corpus module count");
+    // 149 -> 150: card LIBRDKAFKA-HEADER-INLINES adds
+    // `librdkafka/header_inlines.qv`, entirely v1 and manifest-selected.
+    assert_eq!(modules.len(), 150, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
@@ -2299,9 +2404,13 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // LIBC-GAP-DECLARATIONS adds 23 libc declarations to nine existing
     // `quirin-provider-libc` modules: 556 -> 579; selected modules and
     // rejected declarations unchanged.
+    // 68 -> 69 selected and 579 -> 638 v1 declarations by card
+    // LIBRDKAFKA-HEADER-INLINES: `librdkafka/header_inlines.qv`, 59 plain
+    // declarations of librdkafka header definitions, all in the function map.
+    // Rejected declarations unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (68, 579, 370)
+        (69, 638, 370)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every

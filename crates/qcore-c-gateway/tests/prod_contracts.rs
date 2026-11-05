@@ -936,5 +936,6 @@ fn the_modules_under_test_are_the_production_ones() {
     // 63 -> 64 by card FB-TEARDOWN-DESTROY-DECLARATIONS: `fluent_bit/teardown_destroy.qv`.
     // 65 -> 66 by card W48-RK-LOG-CALLER-FRAME: `librdkafka/log_caller_frame.qv`.
     // 66 -> 68 by card LOG-PRINT-BODY-CONTRACTS: `cmetrics/logging.qv` and `chunkio/logging.qv`.
-    assert_eq!(contracts.source_assumptions().len(), 68);
+    // 68 -> 69 by card LIBRDKAFKA-HEADER-INLINES: `librdkafka/header_inlines.qv`.
+    assert_eq!(contracts.source_assumptions().len(), 69);
 }

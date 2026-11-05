@@ -1709,6 +1709,325 @@
       },
       "sha256": "cb0a8525793d5e7a74c78c1b359ce0a19fff69c1825031eb68441f4126bec07f"
     },
+    "librdkafka/header_inlines.qv": {
+      "clause_count": 253,
+      "declaration_count": 59,
+      "declarations": [
+        {
+          "clauses": 5,
+          "name": "rd_kafka_buf_write"
+        },
+        {
+          "clauses": 4,
+          "name": "rd_kafka_buf_write_i8"
+        },
+        {
+          "clauses": 4,
+          "name": "rd_kafka_buf_write_i16"
+        },
+        {
+          "clauses": 4,
+          "name": "rd_kafka_buf_write_i32"
+        },
+        {
+          "clauses": 4,
+          "name": "rd_kafka_buf_write_i64"
+        },
+        {
+          "clauses": 4,
+          "name": "rd_kafka_buf_write_bool"
+        },
+        {
+          "clauses": 4,
+          "name": "rd_kafka_buf_write_uvarint"
+        },
+        {
+          "clauses": 4,
+          "name": "rd_kafka_buf_write_varint"
+        },
+        {
+          "clauses": 4,
+          "name": "rd_kafka_buf_write_arraycnt"
+        },
+        {
+          "clauses": 5,
+          "name": "rd_kafka_buf_write_str"
+        },
+        {
+          "clauses": 4,
+          "name": "rd_kafka_buf_write_kstr"
+        },
+        {
+          "clauses": 4,
+          "name": "rd_kafka_buf_write_kbytes"
+        },
+        {
+          "clauses": 5,
+          "name": "rd_kafka_buf_write_bytes"
+        },
+        {
+          "clauses": 4,
+          "name": "rd_kafka_buf_write_uuid"
+        },
+        {
+          "clauses": 5,
+          "name": "rd_kafka_buf_update_i8"
+        },
+        {
+          "clauses": 5,
+          "name": "rd_kafka_buf_update_i16"
+        },
+        {
+          "clauses": 5,
+          "name": "rd_kafka_buf_update_i32"
+        },
+        {
+          "clauses": 5,
+          "name": "rd_kafka_buf_update_u32"
+        },
+        {
+          "clauses": 5,
+          "name": "rd_kafka_buf_update_i64"
+        },
+        {
+          "clauses": 6,
+          "name": "rd_kafka_buf_finalize_arraycnt"
+        },
+        {
+          "clauses": 3,
+          "name": "rd_kafka_buf_crc_init"
+        },
+        {
+          "clauses": 4,
+          "name": "rd_kafkap_str_new"
+        },
+        {
+          "clauses": 4,
+          "name": "rd_kafkap_bytes_new"
+        },
+        {
+          "clauses": 4,
+          "name": "rd_kafka_set_last_error"
+        },
+        {
+          "clauses": 5,
+          "name": "rd_kafka_q_enq"
+        },
+        {
+          "clauses": 5,
+          "name": "rd_kafka_q_reenq"
+        },
+        {
+          "clauses": 4,
+          "name": "rd_kafka_q_len"
+        },
+        {
+          "clauses": 4,
+          "name": "rd_kafka_q_yield"
+        },
+        {
+          "clauses": 3,
+          "name": "rd_kafka_q_reset"
+        },
+        {
+          "clauses": 6,
+          "name": "rd_kafka_q_concat0"
+        },
+        {
+          "clauses": 6,
+          "name": "rd_kafka_q_prepend0"
+        },
+        {
+          "clauses": 4,
+          "name": "rd_kafka_msgq_enq"
+        },
+        {
+          "clauses": 3,
+          "name": "rd_kafka_msgq_init"
+        },
+        {
+          "clauses": 3,
+          "name": "rd_kafka_msgq_first"
+        },
+        {
+          "clauses": 3,
+          "name": "rd_kafka_msgq_last"
+        },
+        {
+          "clauses": 4,
+          "name": "rd_kafka_msgq_concat"
+        },
+        {
+          "clauses": 4,
+          "name": "rd_kafka_msgq_move"
+        },
+        {
+          "clauses": 5,
+          "name": "rd_kafka_msgq_purge"
+        },
+        {
+          "clauses": 3,
+          "name": "rd_kafka_broker_get_state"
+        },
+        {
+          "clauses": 3,
+          "name": "rd_kafka_topic_get_error"
+        },
+        {
+          "clauses": 4,
+          "name": "rd_kafka_op_version_outdated"
+        },
+        {
+          "clauses": 3,
+          "name": "rd_kafka_rkt_get_lw"
+        },
+        {
+          "clauses": 4,
+          "name": "rd_kafka_topic_partition_toppar"
+        },
+        {
+          "clauses": 6,
+          "name": "rd_kafka_app_poll_start"
+        },
+        {
+          "clauses": 5,
+          "name": "rd_kafka_app_polled"
+        },
+        {
+          "clauses": 7,
+          "name": "rd_kafka_curr_msgs_add"
+        },
+        {
+          "clauses": 5,
+          "name": "rd_kafka_curr_msgs_wait_zero"
+        },
+        {
+          "clauses": 4,
+          "name": "rd_kafka_txn_add_partition"
+        },
+        {
+          "clauses": 4,
+          "name": "rd_atomic64_set"
+        },
+        {
+          "clauses": 4,
+          "name": "rd_usleep"
+        },
+        {
+          "clauses": 2,
+          "name": "rd_crc32_init"
+        },
+        {
+          "clauses": 5,
+          "name": "rd_crc32_update"
+        },
+        {
+          "clauses": 3,
+          "name": "rd_buf_write_pos"
+        },
+        {
+          "clauses": 4,
+          "name": "rd_slice_read_varint"
+        },
+        {
+          "clauses": 5,
+          "name": "rd_varint_dec_i64"
+        },
+        {
+          "clauses": 5,
+          "name": "rd_avl_remove_elm"
+        },
+        {
+          "clauses": 6,
+          "name": "rd_tmpabuf_alloc0"
+        },
+        {
+          "clauses": 3,
+          "name": "rd_kafka_partition_leader_new"
+        },
+        {
+          "clauses": 4,
+          "name": "rd_kafka_partition_leader_destroy"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {
+        "rd_avl_remove_elm": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_app_polled": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_buf_finalize_arraycnt": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_msgq_purge": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_partition_leader_destroy": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_q_concat0": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_q_enq": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_q_len": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_q_prepend0": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_q_reenq": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_q_yield": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_txn_add_partition": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ]
+      },
+      "sha256": "07e53e44f6ccca7ed10f0679041bc8b33030eb6464445ee837d2fb0fdf98d276"
+    },
     "librdkafka/kafka_mem.qv": {
       "clause_count": 53,
       "declaration_count": 8,
@@ -3254,6 +3573,7 @@
   "resource_view": [
     "librdkafka/cjson.qv",
     "librdkafka/client.qv",
+    "librdkafka/header_inlines.qv",
     "librdkafka/kafka_mem.qv",
     "librdkafka/log_caller_frame.qv",
     "librdkafka/logging.qv",

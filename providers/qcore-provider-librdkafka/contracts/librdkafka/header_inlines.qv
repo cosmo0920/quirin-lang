@@ -1,0 +1,707 @@
+module contract;
+
+// # librdkafka header definitions the run has no summary for
+//
+// Card LIBRDKAFKA-HEADER-INLINES (round 16, 2026-11-05; USER REQUEST,
+// verbatim: "Now, we're still needed to fill the gap of the missing
+// contracts."). Every function below is a `static` (almost always
+// `static RD_INLINE`) definition in a librdkafka header, so every unit that
+// includes the header carries its body and gateway constraint 4a offers it to
+// the W4 derivation; the user's `current` run at Fluent Bit 046accf6
+// published no validated summary for any of them, so each call was
+// `call to uncontracted function` (census:
+// docs/reports/librdkafka-header-inlines/census/).
+//
+// Each declaration is stated from the body, read at 046accf6, 66910c10 and
+// 34155955 (byte-identical at all three; census `body_sha256`). Each is a
+// trusted assumption pinned to its header text (contract spec C06.2): where an
+// including unit's W4 derivation validates the body, C06.4 checks the
+// declaration against it; where it does not, the declaration is the unchecked
+// premise W46-HEADER-INLINE-DECLARED-UNCHECKED tracks.
+//
+// ABI (constraint 8, C04.1): every object pointer is one `ptr<mut|const, u8>`
+// level; `size_t` is `usize`; `int`, `int32_t` and `rd_kafka_resp_err_t`
+// (it has negative values) are `i32`; `rd_bool_t` is `uint8_t`
+// (`rdtypes.h:49`), `u8`; `rd_crc32_t` is `uint32_t`; `rd_ts_t` is `int64_t`;
+// `rd_kafka_broker_state_t` has no negative value, `u32`. `RD_INLINE` and
+// `RD_UNUSED` are `inline` and an unused attribute: neither changes a type.
+//
+// Premise (user decision U2, 2026-10-14: "List it in every dependent
+// verdict"). The twelve declarations whose body may run a callback name
+// `rk_plugin_callback_closure` with the text every other librdkafka
+// declaration uses: eight reach an rk_conf or interceptor callback through
+// direct calls (`rd_kafka_op_destroy`, `rd_kafka_q_destroy0`,
+// `rd_kafka_log0`, ...), four reach only an unresolved indirect call (the
+// queue's `rkq_qio->event_cb`, a segment's `seg_free`, an AVL tree's
+// `ravl_cmp`) and take it as LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED's
+// conservative label. The census of every declaration below is
+// docs/reports/librdkafka-header-inlines/census/premise-reach.json (that
+// card's over-approximating call graph, rerun on this module at 66910c10 and
+// 046accf6, identical at both). The premise is stated plainly; its symbolic
+// decomposition and binding metadata are not written here.
+
+// ## Request buffer writers and updaters (`rdkafka_buf.h`)
+//
+// `rd_kafka_buf_write(rkbuf, data, len)` (`:1071-1082`):
+// `r = rd_buf_write(&rkbuf->rkbuf_buf, data, len)`, then, when the buffer
+// computes a CRC, `rkbuf->rkbuf_crc = rd_crc32_update(rkbuf->rkbuf_crc,
+// data, len)`; returns `r`, the write offset. `rd_buf_write` (`rdbuf.c:448`)
+// copies `len` bytes of `data` (`memcpy`) into the buffer's segments,
+// allocating new segments (`rd_buf_write_ensure` -> `rd_buf_alloc_segment`)
+// that the buffer owns and frees with itself: the buffer grows inside, it is
+// never replaced, and no pointer to `data` is kept. So `rkbuf` and `data`
+// are borrowed and the offset is a scalar. A pointer the caller took into the
+// buffer earlier is ended at the call by the borrowed-position rule (C04.3.4
+// rule 2: every call naming the parent ends its borrows), which is the
+// truthful reading of the growth.
+//
+// Every other writer encodes its value and writes it through
+// `rd_kafka_buf_write`, so each is the same statement:
+//   `_i8` (`:1105-1107`), `_i16` (`:1122-1126`, `htobe16`), `_i32`
+//   (`:1142-1146`, `htobe32`), `_i64` (`:1271-1275`, `htobe64`), `_bool`
+//   (`:1447-1450`, through `_i8`), `_uvarint` and `_varint` (`:1172-1193`,
+//   encoded into a local array first), `_arraycnt` (`:1203-1214`, `_i32` or
+//   `_uvarint` by the buffer's FLEXVER flag), `_str` (`:1338-1371`: a length,
+//   then the bytes of `str` when it is not NULL; `strlen` when `len` is
+//   `(size_t)-1`), `_kstr` (`:1294-1329`) and `_kbytes` (`:1390-1426`: the
+//   serialised form or the length and bytes of a `rd_kafkap_str_t` /
+//   `rd_kafkap_bytes_t`, NULL written as the null length), `_bytes`
+//   (`:1431-1441`) and `_uuid` (`:1519-1523`, `static`, two `_i64` writes of
+//   the UUID's halves, `void`).
+// The updaters overwrite bytes already written, in place:
+//   `rd_kafka_buf_update_i8`/`_i16`/`_i32`/`_u32`/`_i64` (`:1114-1166`,
+//   `:1282-1285`) call `rd_kafka_buf_update` (`:1094-1100`:
+//   `rd_kafka_assert(NULL, ...)` then `rd_buf_write_update`), and
+//   `rd_kafka_buf_finalize_arraycnt` (`:1237-1264`) updates the count in place
+//   and, for a FLEXVER buffer, erases the unused bytes (`rd_buf_erase`, which
+//   moves data inside the buffer and frees nothing the caller holds).
+// `rd_kafka_buf_crc_init` (`:1474-1478`) sets the CRC flag and seed.
+// None keeps, frees or hands back anything the caller passed.
+
+extern fn rd_kafka_buf_write(rkbuf: ptr<mut, u8>, data: ptr<const, u8>, len: usize) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkbuf);
+    ensures normal resource_borrowed(data);
+    ensures normal resource_borrowed(len);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_buf_write_i8(rkbuf: ptr<mut, u8>, v: i8) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkbuf);
+    ensures normal resource_borrowed(v);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_buf_write_i16(rkbuf: ptr<mut, u8>, v: i16) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkbuf);
+    ensures normal resource_borrowed(v);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_buf_write_i32(rkbuf: ptr<mut, u8>, v: i32) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkbuf);
+    ensures normal resource_borrowed(v);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_buf_write_i64(rkbuf: ptr<mut, u8>, v: i64) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkbuf);
+    ensures normal resource_borrowed(v);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_buf_write_bool(rkbuf: ptr<mut, u8>, v: u8) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkbuf);
+    ensures normal resource_borrowed(v);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_buf_write_uvarint(rkbuf: ptr<mut, u8>, v: u64) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkbuf);
+    ensures normal resource_borrowed(v);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_buf_write_varint(rkbuf: ptr<mut, u8>, v: i64) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkbuf);
+    ensures normal resource_borrowed(v);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_buf_write_arraycnt(rkbuf: ptr<mut, u8>, cnt: usize) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkbuf);
+    ensures normal resource_borrowed(cnt);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_buf_write_str(rkbuf: ptr<mut, u8>, str: ptr<const, u8>, len: usize) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkbuf);
+    ensures normal resource_borrowed(str);
+    ensures normal resource_borrowed(len);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_buf_write_kstr(rkbuf: ptr<mut, u8>, kstr: ptr<const, u8>) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkbuf);
+    ensures normal resource_borrowed(kstr);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_buf_write_kbytes(rkbuf: ptr<mut, u8>, kbytes: ptr<const, u8>) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkbuf);
+    ensures normal resource_borrowed(kbytes);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_buf_write_bytes(rkbuf: ptr<mut, u8>, payload: ptr<const, u8>, size: usize) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkbuf);
+    ensures normal resource_borrowed(payload);
+    ensures normal resource_borrowed(size);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_buf_write_uuid(rkbuf: ptr<mut, u8>, uuid: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkbuf);
+    ensures normal resource_borrowed(uuid);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_buf_update_i8(rkbuf: ptr<mut, u8>, of: usize, v: i8) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkbuf);
+    ensures normal resource_borrowed(of);
+    ensures normal resource_borrowed(v);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_buf_update_i16(rkbuf: ptr<mut, u8>, of: usize, v: i16) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkbuf);
+    ensures normal resource_borrowed(of);
+    ensures normal resource_borrowed(v);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_buf_update_i32(rkbuf: ptr<mut, u8>, of: usize, v: i32) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkbuf);
+    ensures normal resource_borrowed(of);
+    ensures normal resource_borrowed(v);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_buf_update_u32(rkbuf: ptr<mut, u8>, of: usize, v: u32) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkbuf);
+    ensures normal resource_borrowed(of);
+    ensures normal resource_borrowed(v);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_buf_update_i64(rkbuf: ptr<mut, u8>, of: usize, v: i64) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkbuf);
+    ensures normal resource_borrowed(of);
+    ensures normal resource_borrowed(v);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_buf_finalize_arraycnt(rkbuf: ptr<mut, u8>, of: usize, cnt: usize) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    ensures normal resource_borrowed(rkbuf);
+    ensures normal resource_borrowed(of);
+    ensures normal resource_borrowed(cnt);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_buf_crc_init(rkbuf: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkbuf);
+    ensures normal resource_return_none();
+};
+
+// ## Protocol string and bytes constructors (`rdkafka_proto.h`)
+//
+// `rd_kafkap_str_new(str, len)` (`:308-336`) measures `str` (`strlen` when
+// `len` is -1; the null length when `str` is NULL), allocates the header,
+// the serialised 2-byte length and a copy of the string in ONE `rd_malloc`
+// block, copies (`memcpy`) and returns the block. `rd_kafkap_bytes_new(bytes,
+// len)` (`:440-463`) is the same with a 4-byte length (no copy when `bytes`
+// is NULL). Nothing the caller passed is kept. The block is a fresh heap
+// object the caller owns and releases with `rd_kafkap_str_destroy` /
+// `rd_kafkap_bytes_destroy` (`rd_free`). `rd_malloc` (`rd.h:145-149`) asserts
+// its result; this crate reads it through libc `malloc`'s nullable owned
+// result (`memory.qv`), the reading for an assert-disabled build, and the
+// constructors are stated the same way: owned, nullable.
+
+extern fn rd_kafkap_str_new(str: ptr<const, u8>, len: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(str);
+    ensures normal resource_borrowed(len);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn rd_kafkap_bytes_new(bytes: ptr<const, u8>, len: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(bytes);
+    ensures normal resource_borrowed(len);
+    ensures normal resource_return_owned(nullable);
+};
+
+// ## Thread-local error state (`rdkafka_int.h:1251-1264`)
+//
+// `rd_kafka_set_last_error(err, errnox)` sets `errno` when `errnox` is
+// non-zero (`rd_set_errno`), stores `err` in the thread-local
+// `rd_kafka_last_error_code` and returns `err`. Scalars only.
+
+extern fn rd_kafka_set_last_error(err: i32, errnox: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(err);
+    ensures normal resource_borrowed(errnox);
+    ensures normal resource_return_none();
+};
+
+// ## Op queues (`rdkafka_queue.h`)
+//
+// `rd_kafka_q_enq(rkq, rko)` (`:484-487`) is `rd_kafka_q_enq1(rkq, rko, rkq,
+// 0, 1)`; `rd_kafka_q_reenq(rkq, rko)` (`:501-504`) is `rd_kafka_q_enq1(rkq,
+// rko, rkq, 1, 0)` (at head, the caller holding the lock). `rd_kafka_q_enq1`
+// (`:425-470`) has three exits, and on each the caller's op leaves its
+// custody:
+//   * the queue is disabled (`!(rkq_flags & RD_KAFKA_Q_F_READY)`): it returns
+//     `rd_kafka_op_reply(rko, RD_KAFKA_RESP_ERR__DESTROY)`
+//     (`rdkafka_op.c:804-816`), which DESTROYS the op (`rd_kafka_op_destroy`)
+//     and returns 0 when the op has no reply queue, and otherwise enqueues the
+//     op on its reply queue (`rd_kafka_replyq_enq`, returning that
+//     enqueue's 1 or 0, 0 again meaning destroyed);
+//   * the queue is not forwarded: the op is linked into the queue
+//     (`rd_kafka_q_enq0`), the queue's condition is signalled and its I/O
+//     event raised (`rd_kafka_q_io_event`, which may run the queue's event
+//     callback); it returns 1;
+//   * the queue is forwarded: the op is enqueued on the forward queue by the
+//     same function (whose own result is ignored: the op may have been
+//     destroyed there), the forward queue's reference is dropped, and it
+//     returns 1.
+// So on every exit the op is either linked into a queue or destroyed, and the
+// caller holds nothing of it afterwards: `rko` is `resource_consumed`, which
+// claims neither that it was destroyed nor that it was linked (a consumption
+// is not a proof of destruction, C04.2). A return code does not decide the
+// custody (1 can follow a destruction on the forward queue), so no
+// `resource_on_return` split is stated. `rkq` is borrowed: every reference
+// the body takes on a forward queue it drops itself. The body dereferences
+// `rko` on every path, so `nonnull`.
+
+extern fn rd_kafka_q_enq(rkq: ptr<mut, u8>, rko: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_consumed(rko, nonnull);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_q_reenq(rkq: ptr<mut, u8>, rko: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_consumed(rko, nonnull);
+    ensures normal resource_return_none();
+};
+
+// `rd_kafka_q_len(rkq)` (`:638-651`) reads the length under the queue lock,
+// following a forward queue (whose reference it takes and drops itself).
+// `rd_kafka_q_yield(rkq)` (`:366-391`) sets the yield flag and wakes the
+// queue (or its forward queue), raising the I/O event when empty.
+// `rd_kafka_q_reset(rkq)` (`:263-268`) re-initialises the list head and
+// zeroes the counters: it forgets the links, it frees nothing (its callers
+// have moved the ops first). `rd_kafka_q_concat0(rkq, srcq, do_lock)`
+// (`:550-593`) and `rd_kafka_q_prepend0(rkq, srcq, do_lock)` (`:609-631`)
+// move every op of `srcq` into `rkq` (resolving forward queues) and reset
+// `srcq`; `concat0` returns 0, or -1 without moving anything when `rkq` is
+// disabled. The ops move between two queues the caller does not own through
+// these calls; the caller's custody of either queue is unchanged.
+
+extern fn rd_kafka_q_len(rkq: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_q_yield(rkq: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_q_reset(rkq: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_q_concat0(rkq: ptr<mut, u8>, srcq: ptr<mut, u8>, do_lock: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_borrowed(srcq);
+    ensures normal resource_borrowed(do_lock);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_q_prepend0(rkq: ptr<mut, u8>, srcq: ptr<mut, u8>, do_lock: i32) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_borrowed(srcq);
+    ensures normal resource_borrowed(do_lock);
+    ensures normal resource_return_none();
+};
+
+// ## Message queues (`rdkafka_msg.h`)
+//
+// `rd_kafka_msgq_enq(rkmq, rkm)` (`:530-535`) links the message at the tail
+// of the queue, adds its sizes and returns the new count: the message's
+// custody passes to the queue (it is freed with the queue's purge or by its
+// delivery), so `rkm` is consumed; the body dereferences it. `_init`
+// (`:283-287`) initialises an empty queue in place. `_first` and `_last`
+// (`:404-416`) return the head or tail message of the queue, or NULL: a
+// message the queue holds, borrowed from it. `_concat(dst, src)` and
+// `_move(dst, src)` (`:312-332`) move every message of `src` to `dst` and
+// re-initialise `src`. `_purge(rk, rkmq)` (`:352-365`) destroys every message
+// the queue holds (`rd_kafka_msg_destroy`) and re-initialises it: the queue's
+// own messages, not the caller's.
+
+extern fn rd_kafka_msgq_enq(rkmq: ptr<mut, u8>, rkm: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkmq);
+    ensures normal resource_consumed(rkm, nonnull);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_msgq_init(rkmq: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkmq);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_msgq_first(rkmq: ptr<const, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkmq);
+    ensures normal resource_return_borrowed_from(rkmq, nullable);
+};
+
+extern fn rd_kafka_msgq_last(rkmq: ptr<const, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkmq);
+    ensures normal resource_return_borrowed_from(rkmq, nullable);
+};
+
+extern fn rd_kafka_msgq_concat(dst: ptr<mut, u8>, src: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(dst);
+    ensures normal resource_borrowed(src);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_msgq_move(dst: ptr<mut, u8>, src: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(dst);
+    ensures normal resource_borrowed(src);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_msgq_purge(rk: ptr<mut, u8>, rkmq: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(rkmq);
+    ensures normal resource_return_none();
+};
+
+// ## Accessors and state updates
+//
+// `rd_kafka_broker_get_state(rkb)` (`rdkafka_broker.h:513-519`) reads the
+// state under the broker lock. `rd_kafka_topic_get_error(rkt)`
+// (`rdkafka_topic.h:296-303`) reads the error under the topic's read lock.
+// `rd_kafka_op_version_outdated(rko, version)` (`rdkafka_partition.h:
+// 1095-1107`) compares versions (an atomic read of the op's toppar version).
+// `rd_kafka_rkt_get_lw(rkt)` (`rdkafka_topic.h:70-74`) returns `rkt` itself,
+// cast (`rd_kafka_rkt_lw`, `:55`), when its magic marks a lightweight topic,
+// else NULL: the argument's own value or NULL.
+// `rd_kafka_topic_partition_toppar(rk, rktpar)` (`rdkafka_partition.h:
+// 909-917`) returns the toppar the partition's private part holds
+// (`rktpar->_private->rktp`), or NULL; it takes no reference: a pointer the
+// partition holds, borrowed from it.
+// `rd_kafka_app_poll_start(rk, rkq, now, is_blocking)` (`rdkafka_int.h:
+// 1366-1392`) and `rd_kafka_app_polled(rk, rkq)` (`:1402-1422`) update poll
+// timestamps and averages (and, for a consumer past its poll interval,
+// expedite the group heartbeat). `rd_kafka_curr_msgs_add(rk, cnt, size,
+// block, rdlock)` (`:975-1009`) adds to the producer's message counters,
+// waiting on its condition variable (and releasing and retaking the caller's
+// `rdlock` while it waits) when blocking. `rd_kafka_curr_msgs_wait_zero(rk,
+// timeout_ms, curr_msgsp)` (`:1079-1096`) waits for the count to reach zero
+// and stores the last count through `curr_msgsp` (a scalar).
+// `rd_kafka_txn_add_partition(rktp)` (`rdkafka_txnmgr.h:96-137`) links the
+// toppar into the client's pending-transaction list with a reference of its
+// own (`rd_kafka_toppar_keep`), which the list owns: the caller's reference
+// is untouched.
+
+extern fn rd_kafka_broker_get_state(rkb: ptr<mut, u8>) -> u32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkb);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_topic_get_error(rkt: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkt);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_op_version_outdated(rko: ptr<mut, u8>, version: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rko);
+    ensures normal resource_borrowed(version);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_rkt_get_lw(rkt: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkt);
+    ensures normal resource_return_alias(rkt, nullable);
+};
+
+extern fn rd_kafka_topic_partition_toppar(rk: ptr<mut, u8>, rktpar: ptr<const, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(rktpar);
+    ensures normal resource_return_borrowed_from(rktpar, nullable);
+};
+
+extern fn rd_kafka_app_poll_start(rk: ptr<mut, u8>, rkq: ptr<mut, u8>, now: i64, is_blocking: u8) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_borrowed(now);
+    ensures normal resource_borrowed(is_blocking);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_app_polled(rk: ptr<mut, u8>, rkq: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_curr_msgs_add(rk: ptr<mut, u8>, cnt: u32, size: usize, block: i32, rdlock: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(cnt);
+    ensures normal resource_borrowed(size);
+    ensures normal resource_borrowed(block);
+    ensures normal resource_borrowed(rdlock);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_curr_msgs_wait_zero(rk: ptr<mut, u8>, timeout_ms: i32, curr_msgsp: ptr<mut, u8>) -> u8
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(timeout_ms);
+    ensures normal resource_borrowed(curr_msgsp);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_txn_add_partition(rktp: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    ensures normal resource_borrowed(rktp);
+    ensures normal resource_return_none();
+};
+
+// ## Utility headers
+//
+// `rd_atomic64_set(ra, v)` (`rdatomic.h:208-224`) exchanges a 64-bit counter
+// and returns the old value, beside the already declared `rd_atomic64_add`
+// and `rd_atomic64_get` (`memory.qv`): `rd_refcnt_t` is a 32-bit
+// `rd_atomic32_t` (`rd.h:298`), so a 64-bit counter is never a reference
+// count. `rd_usleep(usec, terminate)` (`rdposix.h:144-151`) sleeps
+// (`nanosleep`, retried on `EINTR` unless `*terminate` is set).
+// `rd_crc32_init()` and `rd_crc32_update(crc, data, data_len)`
+// (`rdcrc32.h:98-140`) compute a CRC over `data` (zlib's `crc32` or the
+// table). `rd_buf_write_pos(rbuf)` (`rdbuf.h:132-145`) reads the write
+// offset. `rd_slice_read_varint(slice, nump)` (`rdbuf.h:323-335`) reads a
+// varint from the slice and stores the decoded integer through `nump`;
+// `rd_varint_dec_i64(src, srcsize, nump)` (`rdvarint.h:135-146`) decodes one
+// from `src`. `rd_avl_remove_elm(ravl, elm)` (`rdavl.h:220-225`) unlinks the
+// tree node of `elm` under the tree's write lock; the tree indexes elements it
+// does not own and frees nothing.
+// `rd_tmpabuf_alloc0(func, line, tab, size)` (`rdkafka_buf.h:104-126`,
+// `static`) returns `tab->buf + tab->of` and advances `tab->of`, or NULL when
+// the arena failed or is full (after printing and asserting when
+// `assert_on_fail`): a pointer into the arena block `tab` owns, borrowed from
+// `tab`.
+
+extern fn rd_atomic64_set(ra: ptr<mut, u8>, v: i64) -> i64
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ra);
+    ensures normal resource_borrowed(v);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_usleep(usec: i32, terminate: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(usec);
+    ensures normal resource_borrowed(terminate);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_crc32_init() -> u32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_return_none();
+};
+
+extern fn rd_crc32_update(crc: u32, data: ptr<const, u8>, data_len: usize) -> u32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(crc);
+    ensures normal resource_borrowed(data);
+    ensures normal resource_borrowed(data_len);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_buf_write_pos(rbuf: ptr<const, u8>) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rbuf);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_slice_read_varint(slice: ptr<mut, u8>, nump: ptr<mut, u8>) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(slice);
+    ensures normal resource_borrowed(nump);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_varint_dec_i64(src: ptr<const, u8>, srcsize: usize, nump: ptr<mut, u8>) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(src);
+    ensures normal resource_borrowed(srcsize);
+    ensures normal resource_borrowed(nump);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_avl_remove_elm(ravl: ptr<mut, u8>, elm: ptr<const, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    ensures normal resource_borrowed(ravl);
+    ensures normal resource_borrowed(elm);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_tmpabuf_alloc0(func: ptr<const, u8>, line: i32, tab: ptr<mut, u8>, size: usize) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(func);
+    ensures normal resource_borrowed(line);
+    ensures normal resource_borrowed(tab);
+    ensures normal resource_borrowed(size);
+    ensures normal resource_return_borrowed_from(tab, nullable);
+};
+
+// ## Partition leaders (`rdkafka_partition.h:1126-1141`, `static`)
+//
+// `rd_kafka_partition_leader_new(rkb)` allocates a leader (`rd_malloc`, read
+// as nullable like the constructors above), stores `rkb` in it with a broker
+// reference of the leader's own (`rd_kafka_broker_keep`) and a fresh empty
+// partition list, and returns it: a fresh heap object the caller owns; the
+// caller's broker reference is untouched. `rd_kafka_partition_leader_destroy
+// (leader)` drops the leader's broker reference, destroys its partition list
+// and frees the leader (`rd_free`): it releases the object
+// `rd_kafka_partition_leader_new` returned, children included.
+
+extern fn rd_kafka_partition_leader_new(rkb: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkb);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn rd_kafka_partition_leader_destroy(leader: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    ensures normal resource_released(leader, nonnull);
+    ensures normal resource_return_none();
+};

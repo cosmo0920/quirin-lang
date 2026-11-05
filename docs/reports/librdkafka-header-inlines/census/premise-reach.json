@@ -1,0 +1,3496 @@
+{
+ "tags": [
+  "66910c10",
+  "046accf6"
+ ],
+ "rk_conf_members": [
+  "background_event_cb",
+  "cert_verify_cb",
+  "closesocket_cb",
+  "connect_cb",
+  "consume_cb",
+  "dr_cb",
+  "dr_msg_cb",
+  "error_cb",
+  "handle_ProduceResponse",
+  "log_cb",
+  "offset_commit_cb",
+  "open_cb",
+  "rebalance_cb",
+  "resolve_cb",
+  "socket_cb",
+  "stats_cb",
+  "throttle_cb",
+  "token_refresh_cb"
+ ],
+ "rows": [
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_buf_write",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+      1073,
+      "3e76312fe656e93ccd7caa75bcc1cd3f193409d3d4f6ca1420d4569eb6ced2f1"
+     ]
+    ],
+    "reachable_functions": 13,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 0,
+    "first_indirect": null,
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [
+     "__assert_fail",
+     "__assert_single_arg",
+     "crc32",
+     "malloc",
+     "memcpy",
+     "memset"
+    ],
+    "class": "none"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+      1073,
+      "3e76312fe656e93ccd7caa75bcc1cd3f193409d3d4f6ca1420d4569eb6ced2f1"
+     ]
+    ],
+    "class": "none"
+   },
+   "identical_at_both": true,
+   "class": "none"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_buf_write_i8",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+      1105,
+      "a7976cbef3ec7dab6af44abf9d016252fa3f20e357f106f3901917abcd1a7957"
+     ]
+    ],
+    "reachable_functions": 14,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 0,
+    "first_indirect": null,
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [
+     "__assert_fail",
+     "__assert_single_arg",
+     "crc32",
+     "malloc",
+     "memcpy",
+     "memset"
+    ],
+    "class": "none"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+      1105,
+      "a7976cbef3ec7dab6af44abf9d016252fa3f20e357f106f3901917abcd1a7957"
+     ]
+    ],
+    "class": "none"
+   },
+   "identical_at_both": true,
+   "class": "none"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_buf_write_i16",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+      1123,
+      "21688108297201310b3d816f66c23197fa85084b34329c93f358742bf7f6ad51"
+     ]
+    ],
+    "reachable_functions": 15,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 0,
+    "first_indirect": null,
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [
+     "__assert_fail",
+     "__assert_single_arg",
+     "crc32",
+     "malloc",
+     "memcpy",
+     "memset"
+    ],
+    "class": "none"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+      1123,
+      "21688108297201310b3d816f66c23197fa85084b34329c93f358742bf7f6ad51"
+     ]
+    ],
+    "class": "none"
+   },
+   "identical_at_both": true,
+   "class": "none"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_buf_write_i32",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+      1143,
+      "ceca706fc567100a7948896477698082955ac1cc5db2b3b093a9ef2c6123ffaa"
+     ]
+    ],
+    "reachable_functions": 15,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 0,
+    "first_indirect": null,
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [
+     "__assert_fail",
+     "__assert_single_arg",
+     "crc32",
+     "malloc",
+     "memcpy",
+     "memset"
+    ],
+    "class": "none"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+      1143,
+      "ceca706fc567100a7948896477698082955ac1cc5db2b3b093a9ef2c6123ffaa"
+     ]
+    ],
+    "class": "none"
+   },
+   "identical_at_both": true,
+   "class": "none"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_buf_write_i64",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+      1272,
+      "a8dafa72e370b2786db3507fd1e9ba59aa4a68c8430a5c733554e4c48d90d9a9"
+     ]
+    ],
+    "reachable_functions": 15,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 0,
+    "first_indirect": null,
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [
+     "__assert_fail",
+     "__assert_single_arg",
+     "crc32",
+     "malloc",
+     "memcpy",
+     "memset"
+    ],
+    "class": "none"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+      1272,
+      "a8dafa72e370b2786db3507fd1e9ba59aa4a68c8430a5c733554e4c48d90d9a9"
+     ]
+    ],
+    "class": "none"
+   },
+   "identical_at_both": true,
+   "class": "none"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_buf_write_bool",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+      1448,
+      "5958bc142ea645e6c0504063fc0c1970f247b266e6bed5a95795914d7428fe6a"
+     ]
+    ],
+    "reachable_functions": 15,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 0,
+    "first_indirect": null,
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [
+     "__assert_fail",
+     "__assert_single_arg",
+     "crc32",
+     "malloc",
+     "memcpy",
+     "memset"
+    ],
+    "class": "none"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+      1448,
+      "5958bc142ea645e6c0504063fc0c1970f247b266e6bed5a95795914d7428fe6a"
+     ]
+    ],
+    "class": "none"
+   },
+   "identical_at_both": true,
+   "class": "none"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_buf_write_uvarint",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+      1186,
+      "b77c99298863c2512384ce8f209e77d180de805ea90c3e0e11f65d3fc8dedf99"
+     ]
+    ],
+    "reachable_functions": 15,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 0,
+    "first_indirect": null,
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [
+     "__assert_fail",
+     "__assert_single_arg",
+     "crc32",
+     "malloc",
+     "memcpy",
+     "memset"
+    ],
+    "class": "none"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+      1186,
+      "b77c99298863c2512384ce8f209e77d180de805ea90c3e0e11f65d3fc8dedf99"
+     ]
+    ],
+    "class": "none"
+   },
+   "identical_at_both": true,
+   "class": "none"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_buf_write_varint",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+      1173,
+      "5ad4aca27fc82a23d1dd6f24ed010e19fcaa0b874ff1584086aa88f6b6bbcf5a"
+     ]
+    ],
+    "reachable_functions": 16,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 0,
+    "first_indirect": null,
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [
+     "__assert_fail",
+     "__assert_single_arg",
+     "crc32",
+     "malloc",
+     "memcpy",
+     "memset"
+    ],
+    "class": "none"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+      1173,
+      "5ad4aca27fc82a23d1dd6f24ed010e19fcaa0b874ff1584086aa88f6b6bbcf5a"
+     ]
+    ],
+    "class": "none"
+   },
+   "identical_at_both": true,
+   "class": "none"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_buf_write_arraycnt",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+      1203,
+      "056a99e062ae6c2f1dc822256633fc0db4ba75ab2af53359a1de91205fe52c54"
+     ]
+    ],
+    "reachable_functions": 18,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 0,
+    "first_indirect": null,
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [
+     "__assert_fail",
+     "__assert_single_arg",
+     "crc32",
+     "malloc",
+     "memcpy",
+     "memset"
+    ],
+    "class": "none"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+      1203,
+      "056a99e062ae6c2f1dc822256633fc0db4ba75ab2af53359a1de91205fe52c54"
+     ]
+    ],
+    "class": "none"
+   },
+   "identical_at_both": true,
+   "class": "none"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_buf_write_str",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+      1340,
+      "19174dc3dae40bd6086240686109e979152f8d8acfe19bfc1ef629f662763a88"
+     ]
+    ],
+    "reachable_functions": 18,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 0,
+    "first_indirect": null,
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [
+     "__assert_fail",
+     "__assert_single_arg",
+     "crc32",
+     "malloc",
+     "memcpy",
+     "memset",
+     "strlen"
+    ],
+    "class": "none"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+      1340,
+      "19174dc3dae40bd6086240686109e979152f8d8acfe19bfc1ef629f662763a88"
+     ]
+    ],
+    "class": "none"
+   },
+   "identical_at_both": true,
+   "class": "none"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_buf_write_kstr",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+      1295,
+      "1f4e487bc5edacf9c915eac1fa5f0886256e3faa03c776310b5a2e33e01c8f8a"
+     ]
+    ],
+    "reachable_functions": 18,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 0,
+    "first_indirect": null,
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [
+     "__assert_fail",
+     "__assert_single_arg",
+     "crc32",
+     "malloc",
+     "memcpy",
+     "memset"
+    ],
+    "class": "none"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+      1295,
+      "1f4e487bc5edacf9c915eac1fa5f0886256e3faa03c776310b5a2e33e01c8f8a"
+     ]
+    ],
+    "class": "none"
+   },
+   "identical_at_both": true,
+   "class": "none"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_buf_write_kbytes",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+      1391,
+      "734bfb1ab2de7692ee36b3f8572ee78117e42ba9bff662a369554d500997e0a0"
+     ]
+    ],
+    "reachable_functions": 18,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 0,
+    "first_indirect": null,
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [
+     "__assert_fail",
+     "__assert_single_arg",
+     "crc32",
+     "malloc",
+     "memcpy",
+     "memset"
+    ],
+    "class": "none"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+      1391,
+      "734bfb1ab2de7692ee36b3f8572ee78117e42ba9bff662a369554d500997e0a0"
+     ]
+    ],
+    "class": "none"
+   },
+   "identical_at_both": true,
+   "class": "none"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_buf_write_bytes",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+      1433,
+      "080e4ac788a9bcbbc515df52d18effaaabf0122e3cee8da2bbd368d5f2d231ce"
+     ]
+    ],
+    "reachable_functions": 16,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 0,
+    "first_indirect": null,
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [
+     "__assert_fail",
+     "__assert_single_arg",
+     "crc32",
+     "malloc",
+     "memcpy",
+     "memset"
+    ],
+    "class": "none"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+      1433,
+      "080e4ac788a9bcbbc515df52d18effaaabf0122e3cee8da2bbd368d5f2d231ce"
+     ]
+    ],
+    "class": "none"
+   },
+   "identical_at_both": true,
+   "class": "none"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_buf_write_uuid",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+      1520,
+      "3c17a36c3f6c5bbc80c96e6259e29f740a528482db0fdbd73842748bd1a941bb"
+     ]
+    ],
+    "reachable_functions": 16,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 0,
+    "first_indirect": null,
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [
+     "__assert_fail",
+     "__assert_single_arg",
+     "crc32",
+     "malloc",
+     "memcpy",
+     "memset"
+    ],
+    "class": "none"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+      1520,
+      "3c17a36c3f6c5bbc80c96e6259e29f740a528482db0fdbd73842748bd1a941bb"
+     ]
+    ],
+    "class": "none"
+   },
+   "identical_at_both": true,
+   "class": "none"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_buf_update_i8",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+      1114,
+      "6237e43301dc57439e4751e45a1b74d89d429a906608c0fab3a5d14f5f80bd28"
+     ]
+    ],
+    "reachable_functions": 6,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 0,
+    "first_indirect": null,
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [
+     "__assert_fail",
+     "__assert_single_arg",
+     "abort",
+     "memcpy"
+    ],
+    "class": "none"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+      1114,
+      "6237e43301dc57439e4751e45a1b74d89d429a906608c0fab3a5d14f5f80bd28"
+     ]
+    ],
+    "class": "none"
+   },
+   "identical_at_both": true,
+   "class": "none"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_buf_update_i16",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+      1133,
+      "c4bcf6db9efa4be9158a7fe607bd4f1783ffff3f4eaa065bea637e8908d55be6"
+     ]
+    ],
+    "reachable_functions": 7,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 0,
+    "first_indirect": null,
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [
+     "__assert_fail",
+     "__assert_single_arg",
+     "abort",
+     "memcpy"
+    ],
+    "class": "none"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+      1133,
+      "c4bcf6db9efa4be9158a7fe607bd4f1783ffff3f4eaa065bea637e8908d55be6"
+     ]
+    ],
+    "class": "none"
+   },
+   "identical_at_both": true,
+   "class": "none"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_buf_update_i32",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+      1153,
+      "535523dd032604af3239b20745c6bb5d06fb28e8fa338383da0a4d5c13ae8e64"
+     ]
+    ],
+    "reachable_functions": 7,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 0,
+    "first_indirect": null,
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [
+     "__assert_fail",
+     "__assert_single_arg",
+     "abort",
+     "memcpy"
+    ],
+    "class": "none"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+      1153,
+      "535523dd032604af3239b20745c6bb5d06fb28e8fa338383da0a4d5c13ae8e64"
+     ]
+    ],
+    "class": "none"
+   },
+   "identical_at_both": true,
+   "class": "none"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_buf_update_u32",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+      1163,
+      "40ac032590bd2bc4a341a12b432ddb2eb4aefaa6d7befcff0a5573e5679d20f3"
+     ]
+    ],
+    "reachable_functions": 7,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 0,
+    "first_indirect": null,
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [
+     "__assert_fail",
+     "__assert_single_arg",
+     "abort",
+     "memcpy"
+    ],
+    "class": "none"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+      1163,
+      "40ac032590bd2bc4a341a12b432ddb2eb4aefaa6d7befcff0a5573e5679d20f3"
+     ]
+    ],
+    "class": "none"
+   },
+   "identical_at_both": true,
+   "class": "none"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_buf_update_i64",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+      1282,
+      "e8246f900b35786e57448a3d086ee6446365c71e93a54a125c52700926e6ff99"
+     ]
+    ],
+    "reachable_functions": 7,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 0,
+    "first_indirect": null,
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [
+     "__assert_fail",
+     "__assert_single_arg",
+     "abort",
+     "memcpy"
+    ],
+    "class": "none"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+      1282,
+      "e8246f900b35786e57448a3d086ee6446365c71e93a54a125c52700926e6ff99"
+     ]
+    ],
+    "class": "none"
+   },
+   "identical_at_both": true,
+   "class": "none"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_buf_finalize_arraycnt",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+      1237,
+      "975b9c33f7575d7c992b0a76e7c6f826b21e545b3853415ad54d12b149c4265a"
+     ]
+    ],
+    "reachable_functions": 13,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 1,
+    "first_indirect": {
+     "call": "seg->seg_free(",
+     "path": [
+      "rd_kafka_buf_finalize_arraycnt",
+      "rd_buf_erase",
+      "rd_buf_destroy_segment",
+      "rd_segment_destroy"
+     ]
+    },
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [
+     "__assert_fail",
+     "__assert_single_arg",
+     "abort",
+     "fprintf",
+     "free",
+     "memcpy",
+     "memmove"
+    ],
+    "class": "indirect"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+      1237,
+      "975b9c33f7575d7c992b0a76e7c6f826b21e545b3853415ad54d12b149c4265a"
+     ]
+    ],
+    "class": "indirect"
+   },
+   "identical_at_both": true,
+   "class": "indirect"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_buf_crc_init",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+      1474,
+      "280f7e8b5c3062966668e1254f9168a2498cbb3070d825ef4eba3c9dea2bdd98"
+     ]
+    ],
+    "reachable_functions": 2,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 0,
+    "first_indirect": null,
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [
+     "abort",
+     "crc32"
+    ],
+    "class": "none"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+      1474,
+      "280f7e8b5c3062966668e1254f9168a2498cbb3070d825ef4eba3c9dea2bdd98"
+     ]
+    ],
+    "class": "none"
+   },
+   "identical_at_both": true,
+   "class": "none"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafkap_str_new",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_proto.h",
+      309,
+      "2b94e61ad9076097851125071525eb4d59787cc3e88dd9c1b961b206f0f049b7"
+     ]
+    ],
+    "reachable_functions": 3,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 0,
+    "first_indirect": null,
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [
+     "__assert_fail",
+     "__assert_single_arg",
+     "malloc",
+     "memcpy",
+     "strlen"
+    ],
+    "class": "none"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_proto.h",
+      309,
+      "2b94e61ad9076097851125071525eb4d59787cc3e88dd9c1b961b206f0f049b7"
+     ]
+    ],
+    "class": "none"
+   },
+   "identical_at_both": true,
+   "class": "none"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafkap_bytes_new",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_proto.h",
+      440,
+      "708d8be3e8fd59a62a85e9a23ee8e9b7da3923506d7cb7704e96fa03419f8943"
+     ]
+    ],
+    "reachable_functions": 3,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 0,
+    "first_indirect": null,
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [
+     "__assert_fail",
+     "__assert_single_arg",
+     "malloc",
+     "memcpy"
+    ],
+    "class": "none"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_proto.h",
+      440,
+      "708d8be3e8fd59a62a85e9a23ee8e9b7da3923506d7cb7704e96fa03419f8943"
+     ]
+    ],
+    "class": "none"
+   },
+   "identical_at_both": true,
+   "class": "none"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_set_last_error",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_int.h",
+      1251,
+      "b595b82979a27cc7daf623f43c9c79d90134d2e9b93c476b17c3057c6da9166c"
+     ]
+    ],
+    "reachable_functions": 1,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 0,
+    "first_indirect": null,
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [
+     "__errno_location"
+    ],
+    "class": "none"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_int.h",
+      1251,
+      "b595b82979a27cc7daf623f43c9c79d90134d2e9b93c476b17c3057c6da9166c"
+     ]
+    ],
+    "class": "none"
+   },
+   "identical_at_both": true,
+   "class": "none"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_q_enq",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_queue.h",
+      485,
+      "715ec197662be3924e52f782b26c6578a3e7a248df7dabb0bfad6dc4f1975050"
+     ]
+    ],
+    "reachable_functions": 119,
+    "rk_conf_sinks": {
+     "interceptor:on_response_received": [
+      "rd_kafka_q_enq",
+      "rd_kafka_q_enq1",
+      "rd_kafka_op_reply",
+      "rd_kafka_op_destroy",
+      "rd_kafka_buf_handle_op",
+      "rd_kafka_buf_callback",
+      "rd_kafka_interceptors_on_response_received"
+     ],
+     "interceptor:on_conf_destroy": [
+      "rd_kafka_q_enq",
+      "rd_kafka_q_enq1",
+      "rd_kafka_op_reply",
+      "rd_kafka_op_destroy",
+      "rd_kafka_topic_destroy0",
+      "rd_kafka_topic_destroy_final",
+      "rd_kafka_anyconf_destroy",
+      "rd_kafka_interceptors_on_conf_destroy"
+     ],
+     "rk-conf:log_cb": [
+      "rd_kafka_q_enq",
+      "rd_kafka_q_enq1",
+      "rd_kafka_op_reply",
+      "rd_kafka_op_destroy",
+      "rd_kafka_toppar_destroy0",
+      "rd_kafka_toppar_destroy_final",
+      "rd_kafka_log0",
+      "rd_kafka_log_buf"
+     ],
+     "interceptor:on_acknowledgement": [
+      "rd_kafka_q_enq",
+      "rd_kafka_q_enq1",
+      "rd_kafka_op_reply",
+      "rd_kafka_op_destroy",
+      "rd_kafka_toppar_destroy0",
+      "rd_kafka_toppar_destroy_final",
+      "rd_kafka_dr_msgq0",
+      "rd_kafka_interceptors_on_acknowledgement_queue",
+      "rd_kafka_interceptors_on_acknowledgement"
+     ]
+    },
+    "indirect_calls_reached": 9,
+    "first_indirect": {
+     "call": "rkq->rkq_qio->event_cb(",
+     "path": [
+      "rd_kafka_q_enq",
+      "rd_kafka_q_enq1",
+      "rd_kafka_q_io_event"
+     ]
+    },
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {
+     "interceptor:on_response_received": [
+      "rd_kafka_q_enq",
+      "rd_kafka_q_enq1",
+      "rd_kafka_op_reply",
+      "rd_kafka_op_destroy",
+      "rd_kafka_buf_handle_op",
+      "rd_kafka_buf_callback",
+      "rd_kafka_interceptors_on_response_received"
+     ],
+     "interceptor:on_conf_destroy": [
+      "rd_kafka_q_enq",
+      "rd_kafka_q_enq1",
+      "rd_kafka_op_reply",
+      "rd_kafka_op_destroy",
+      "rd_kafka_topic_destroy0",
+      "rd_kafka_topic_destroy_final",
+      "rd_kafka_anyconf_destroy",
+      "rd_kafka_interceptors_on_conf_destroy"
+     ],
+     "rk-conf:log_cb": [
+      "rd_kafka_q_enq",
+      "rd_kafka_q_enq1",
+      "rd_kafka_op_reply",
+      "rd_kafka_op_destroy",
+      "rd_kafka_toppar_destroy0",
+      "rd_kafka_toppar_destroy_final",
+      "rd_kafka_log0",
+      "rd_kafka_log_buf"
+     ],
+     "interceptor:on_acknowledgement": [
+      "rd_kafka_q_enq",
+      "rd_kafka_q_enq1",
+      "rd_kafka_op_reply",
+      "rd_kafka_op_destroy",
+      "rd_kafka_toppar_destroy0",
+      "rd_kafka_toppar_destroy_final",
+      "rd_kafka_dr_msgq0",
+      "rd_kafka_interceptors_on_acknowledgement_queue",
+      "rd_kafka_interceptors_on_acknowledgement"
+     ]
+    },
+    "externals_reached": [
+     "__assert_fail",
+     "__assert_single_arg",
+     "__errno_location",
+     "abort",
+     "calloc",
+     "clock_gettime",
+     "close",
+     "cnd_broadcast",
+     "cnd_destroy",
+     "cnd_signal",
+     "fprintf",
+     "free",
+     "memcmp",
+     "memcpy",
+     "memset",
+     "mtx_destroy",
+     "mtx_lock",
+     "mtx_unlock",
+     "pthread_rwlock_destroy",
+     "pthread_rwlock_rdlock",
+     "pthread_rwlock_unlock",
+     "pthread_rwlock_wrlock",
+     "pthread_self",
+     "regfree",
+     "snprintf",
+     "strcmp",
+     "strdup",
+     "strlen",
+     "vsnprintf",
+     "write"
+    ],
+    "class": "rk-conf"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_queue.h",
+      485,
+      "715ec197662be3924e52f782b26c6578a3e7a248df7dabb0bfad6dc4f1975050"
+     ]
+    ],
+    "class": "rk-conf"
+   },
+   "identical_at_both": true,
+   "class": "rk-conf"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_q_reenq",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_queue.h",
+      502,
+      "2511256189133e830611ec1e029fb6d4dd62b3abd9522c5de18ffa77fcddfbf0"
+     ]
+    ],
+    "reachable_functions": 120,
+    "rk_conf_sinks": {
+     "interceptor:on_response_received": [
+      "rd_kafka_q_reenq",
+      "rd_kafka_q_enq1",
+      "rd_kafka_op_reply",
+      "rd_kafka_op_destroy",
+      "rd_kafka_buf_handle_op",
+      "rd_kafka_buf_callback",
+      "rd_kafka_interceptors_on_response_received"
+     ],
+     "interceptor:on_conf_destroy": [
+      "rd_kafka_q_reenq",
+      "rd_kafka_q_enq1",
+      "rd_kafka_op_reply",
+      "rd_kafka_op_destroy",
+      "rd_kafka_topic_destroy0",
+      "rd_kafka_topic_destroy_final",
+      "rd_kafka_anyconf_destroy",
+      "rd_kafka_interceptors_on_conf_destroy"
+     ],
+     "rk-conf:log_cb": [
+      "rd_kafka_q_reenq",
+      "rd_kafka_q_enq1",
+      "rd_kafka_op_reply",
+      "rd_kafka_op_destroy",
+      "rd_kafka_toppar_destroy0",
+      "rd_kafka_toppar_destroy_final",
+      "rd_kafka_log0",
+      "rd_kafka_log_buf"
+     ],
+     "interceptor:on_acknowledgement": [
+      "rd_kafka_q_reenq",
+      "rd_kafka_q_enq1",
+      "rd_kafka_op_reply",
+      "rd_kafka_op_destroy",
+      "rd_kafka_toppar_destroy0",
+      "rd_kafka_toppar_destroy_final",
+      "rd_kafka_dr_msgq0",
+      "rd_kafka_interceptors_on_acknowledgement_queue",
+      "rd_kafka_interceptors_on_acknowledgement"
+     ]
+    },
+    "indirect_calls_reached": 9,
+    "first_indirect": {
+     "call": "rkq->rkq_qio->event_cb(",
+     "path": [
+      "rd_kafka_q_reenq",
+      "rd_kafka_q_enq1",
+      "rd_kafka_q_io_event"
+     ]
+    },
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {
+     "interceptor:on_response_received": [
+      "rd_kafka_q_reenq",
+      "rd_kafka_q_enq1",
+      "rd_kafka_op_reply",
+      "rd_kafka_op_destroy",
+      "rd_kafka_buf_handle_op",
+      "rd_kafka_buf_callback",
+      "rd_kafka_interceptors_on_response_received"
+     ],
+     "interceptor:on_conf_destroy": [
+      "rd_kafka_q_reenq",
+      "rd_kafka_q_enq1",
+      "rd_kafka_op_reply",
+      "rd_kafka_op_destroy",
+      "rd_kafka_topic_destroy0",
+      "rd_kafka_topic_destroy_final",
+      "rd_kafka_anyconf_destroy",
+      "rd_kafka_interceptors_on_conf_destroy"
+     ],
+     "rk-conf:log_cb": [
+      "rd_kafka_q_reenq",
+      "rd_kafka_q_enq1",
+      "rd_kafka_op_reply",
+      "rd_kafka_op_destroy",
+      "rd_kafka_toppar_destroy0",
+      "rd_kafka_toppar_destroy_final",
+      "rd_kafka_log0",
+      "rd_kafka_log_buf"
+     ],
+     "interceptor:on_acknowledgement": [
+      "rd_kafka_q_reenq",
+      "rd_kafka_q_enq1",
+      "rd_kafka_op_reply",
+      "rd_kafka_op_destroy",
+      "rd_kafka_toppar_destroy0",
+      "rd_kafka_toppar_destroy_final",
+      "rd_kafka_dr_msgq0",
+      "rd_kafka_interceptors_on_acknowledgement_queue",
+      "rd_kafka_interceptors_on_acknowledgement"
+     ]
+    },
+    "externals_reached": [
+     "__assert_fail",
+     "__assert_single_arg",
+     "__errno_location",
+     "abort",
+     "calloc",
+     "clock_gettime",
+     "close",
+     "cnd_broadcast",
+     "cnd_destroy",
+     "cnd_signal",
+     "fprintf",
+     "free",
+     "memcmp",
+     "memcpy",
+     "memset",
+     "mtx_destroy",
+     "mtx_lock",
+     "mtx_unlock",
+     "pthread_rwlock_destroy",
+     "pthread_rwlock_rdlock",
+     "pthread_rwlock_unlock",
+     "pthread_rwlock_wrlock",
+     "pthread_self",
+     "regfree",
+     "snprintf",
+     "strcmp",
+     "strdup",
+     "strlen",
+     "vsnprintf",
+     "write"
+    ],
+    "class": "rk-conf"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_queue.h",
+      502,
+      "2511256189133e830611ec1e029fb6d4dd62b3abd9522c5de18ffa77fcddfbf0"
+     ]
+    ],
+    "class": "rk-conf"
+   },
+   "identical_at_both": true,
+   "class": "rk-conf"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_q_len",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_queue.h",
+      638,
+      "a020890a45108302352b54d9d62cacf02622d2120e307977842441195a41b16a"
+     ]
+    ],
+    "reachable_functions": 119,
+    "rk_conf_sinks": {
+     "interceptor:on_response_received": [
+      "rd_kafka_q_len",
+      "rd_kafka_q_destroy0",
+      "rd_kafka_q_purge0",
+      "rd_kafka_op_destroy",
+      "rd_kafka_buf_handle_op",
+      "rd_kafka_buf_callback",
+      "rd_kafka_interceptors_on_response_received"
+     ],
+     "interceptor:on_conf_destroy": [
+      "rd_kafka_q_len",
+      "rd_kafka_q_destroy0",
+      "rd_kafka_q_purge0",
+      "rd_kafka_op_destroy",
+      "rd_kafka_topic_destroy0",
+      "rd_kafka_topic_destroy_final",
+      "rd_kafka_anyconf_destroy",
+      "rd_kafka_interceptors_on_conf_destroy"
+     ],
+     "rk-conf:log_cb": [
+      "rd_kafka_q_len",
+      "rd_kafka_q_destroy0",
+      "rd_kafka_q_purge0",
+      "rd_kafka_op_destroy",
+      "rd_kafka_toppar_destroy0",
+      "rd_kafka_toppar_destroy_final",
+      "rd_kafka_log0",
+      "rd_kafka_log_buf"
+     ],
+     "interceptor:on_acknowledgement": [
+      "rd_kafka_q_len",
+      "rd_kafka_q_destroy0",
+      "rd_kafka_q_purge0",
+      "rd_kafka_op_destroy",
+      "rd_kafka_toppar_destroy0",
+      "rd_kafka_toppar_destroy_final",
+      "rd_kafka_dr_msgq0",
+      "rd_kafka_interceptors_on_acknowledgement_queue",
+      "rd_kafka_interceptors_on_acknowledgement"
+     ]
+    },
+    "indirect_calls_reached": 9,
+    "first_indirect": {
+     "call": "rko->rko_op_cb(",
+     "path": [
+      "rd_kafka_q_len",
+      "rd_kafka_q_destroy0",
+      "rd_kafka_q_purge0",
+      "rd_kafka_op_destroy"
+     ]
+    },
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {
+     "interceptor:on_response_received": [
+      "rd_kafka_q_len",
+      "rd_kafka_q_destroy0",
+      "rd_kafka_q_purge0",
+      "rd_kafka_op_destroy",
+      "rd_kafka_buf_handle_op",
+      "rd_kafka_buf_callback",
+      "rd_kafka_interceptors_on_response_received"
+     ],
+     "interceptor:on_conf_destroy": [
+      "rd_kafka_q_len",
+      "rd_kafka_q_destroy0",
+      "rd_kafka_q_purge0",
+      "rd_kafka_op_destroy",
+      "rd_kafka_topic_destroy0",
+      "rd_kafka_topic_destroy_final",
+      "rd_kafka_anyconf_destroy",
+      "rd_kafka_interceptors_on_conf_destroy"
+     ],
+     "rk-conf:log_cb": [
+      "rd_kafka_q_len",
+      "rd_kafka_q_destroy0",
+      "rd_kafka_q_purge0",
+      "rd_kafka_op_destroy",
+      "rd_kafka_toppar_destroy0",
+      "rd_kafka_toppar_destroy_final",
+      "rd_kafka_log0",
+      "rd_kafka_log_buf"
+     ],
+     "interceptor:on_acknowledgement": [
+      "rd_kafka_q_len",
+      "rd_kafka_q_destroy0",
+      "rd_kafka_q_purge0",
+      "rd_kafka_op_destroy",
+      "rd_kafka_toppar_destroy0",
+      "rd_kafka_toppar_destroy_final",
+      "rd_kafka_dr_msgq0",
+      "rd_kafka_interceptors_on_acknowledgement_queue",
+      "rd_kafka_interceptors_on_acknowledgement"
+     ]
+    },
+    "externals_reached": [
+     "__assert_fail",
+     "__assert_single_arg",
+     "__errno_location",
+     "abort",
+     "calloc",
+     "clock_gettime",
+     "close",
+     "cnd_broadcast",
+     "cnd_destroy",
+     "cnd_signal",
+     "fprintf",
+     "free",
+     "memcmp",
+     "memcpy",
+     "memset",
+     "mtx_destroy",
+     "mtx_lock",
+     "mtx_unlock",
+     "pthread_rwlock_destroy",
+     "pthread_rwlock_rdlock",
+     "pthread_rwlock_unlock",
+     "pthread_rwlock_wrlock",
+     "pthread_self",
+     "regfree",
+     "snprintf",
+     "strcmp",
+     "strdup",
+     "strlen",
+     "vsnprintf",
+     "write"
+    ],
+    "class": "rk-conf"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_queue.h",
+      638,
+      "a020890a45108302352b54d9d62cacf02622d2120e307977842441195a41b16a"
+     ]
+    ],
+    "class": "rk-conf"
+   },
+   "identical_at_both": true,
+   "class": "rk-conf"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_q_yield",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_queue.h",
+      366,
+      "c63600a780ae3258964ec321281b56b134aab295c6889f7563b1eada67c242ab"
+     ]
+    ],
+    "reachable_functions": 120,
+    "rk_conf_sinks": {
+     "interceptor:on_response_received": [
+      "rd_kafka_q_yield",
+      "rd_kafka_q_destroy0",
+      "rd_kafka_q_purge0",
+      "rd_kafka_op_destroy",
+      "rd_kafka_buf_handle_op",
+      "rd_kafka_buf_callback",
+      "rd_kafka_interceptors_on_response_received"
+     ],
+     "interceptor:on_conf_destroy": [
+      "rd_kafka_q_yield",
+      "rd_kafka_q_destroy0",
+      "rd_kafka_q_purge0",
+      "rd_kafka_op_destroy",
+      "rd_kafka_topic_destroy0",
+      "rd_kafka_topic_destroy_final",
+      "rd_kafka_anyconf_destroy",
+      "rd_kafka_interceptors_on_conf_destroy"
+     ],
+     "rk-conf:log_cb": [
+      "rd_kafka_q_yield",
+      "rd_kafka_q_destroy0",
+      "rd_kafka_q_purge0",
+      "rd_kafka_op_destroy",
+      "rd_kafka_toppar_destroy0",
+      "rd_kafka_toppar_destroy_final",
+      "rd_kafka_log0",
+      "rd_kafka_log_buf"
+     ],
+     "interceptor:on_acknowledgement": [
+      "rd_kafka_q_yield",
+      "rd_kafka_q_destroy0",
+      "rd_kafka_q_purge0",
+      "rd_kafka_op_destroy",
+      "rd_kafka_toppar_destroy0",
+      "rd_kafka_toppar_destroy_final",
+      "rd_kafka_dr_msgq0",
+      "rd_kafka_interceptors_on_acknowledgement_queue",
+      "rd_kafka_interceptors_on_acknowledgement"
+     ]
+    },
+    "indirect_calls_reached": 9,
+    "first_indirect": {
+     "call": "rkq->rkq_qio->event_cb(",
+     "path": [
+      "rd_kafka_q_yield",
+      "rd_kafka_q_io_event"
+     ]
+    },
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {
+     "interceptor:on_response_received": [
+      "rd_kafka_q_yield",
+      "rd_kafka_q_destroy0",
+      "rd_kafka_q_purge0",
+      "rd_kafka_op_destroy",
+      "rd_kafka_buf_handle_op",
+      "rd_kafka_buf_callback",
+      "rd_kafka_interceptors_on_response_received"
+     ],
+     "interceptor:on_conf_destroy": [
+      "rd_kafka_q_yield",
+      "rd_kafka_q_destroy0",
+      "rd_kafka_q_purge0",
+      "rd_kafka_op_destroy",
+      "rd_kafka_topic_destroy0",
+      "rd_kafka_topic_destroy_final",
+      "rd_kafka_anyconf_destroy",
+      "rd_kafka_interceptors_on_conf_destroy"
+     ],
+     "rk-conf:log_cb": [
+      "rd_kafka_q_yield",
+      "rd_kafka_q_destroy0",
+      "rd_kafka_q_purge0",
+      "rd_kafka_op_destroy",
+      "rd_kafka_toppar_destroy0",
+      "rd_kafka_toppar_destroy_final",
+      "rd_kafka_log0",
+      "rd_kafka_log_buf"
+     ],
+     "interceptor:on_acknowledgement": [
+      "rd_kafka_q_yield",
+      "rd_kafka_q_destroy0",
+      "rd_kafka_q_purge0",
+      "rd_kafka_op_destroy",
+      "rd_kafka_toppar_destroy0",
+      "rd_kafka_toppar_destroy_final",
+      "rd_kafka_dr_msgq0",
+      "rd_kafka_interceptors_on_acknowledgement_queue",
+      "rd_kafka_interceptors_on_acknowledgement"
+     ]
+    },
+    "externals_reached": [
+     "__assert_fail",
+     "__assert_single_arg",
+     "__errno_location",
+     "abort",
+     "calloc",
+     "clock_gettime",
+     "close",
+     "cnd_broadcast",
+     "cnd_destroy",
+     "cnd_signal",
+     "fprintf",
+     "free",
+     "memcmp",
+     "memcpy",
+     "memset",
+     "mtx_destroy",
+     "mtx_lock",
+     "mtx_unlock",
+     "pthread_rwlock_destroy",
+     "pthread_rwlock_rdlock",
+     "pthread_rwlock_unlock",
+     "pthread_rwlock_wrlock",
+     "pthread_self",
+     "regfree",
+     "snprintf",
+     "strcmp",
+     "strdup",
+     "strlen",
+     "vsnprintf",
+     "write"
+    ],
+    "class": "rk-conf"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_queue.h",
+      366,
+      "c63600a780ae3258964ec321281b56b134aab295c6889f7563b1eada67c242ab"
+     ]
+    ],
+    "class": "rk-conf"
+   },
+   "identical_at_both": true,
+   "class": "rk-conf"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_q_reset",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_queue.h",
+      263,
+      "24ab1864d4a7238ac6ad0d7c2afef73f64cda0ceebc25192b30a0924487c0248"
+     ]
+    ],
+    "reachable_functions": 1,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 0,
+    "first_indirect": null,
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [],
+    "class": "none"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_queue.h",
+      263,
+      "24ab1864d4a7238ac6ad0d7c2afef73f64cda0ceebc25192b30a0924487c0248"
+     ]
+    ],
+    "class": "none"
+   },
+   "identical_at_both": true,
+   "class": "none"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_q_concat0",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_queue.h",
+      550,
+      "67a0016e944b8e9663e1bd3ab526ea6506e8e9071a0a54ba3718f71b7f5e13ee"
+     ]
+    ],
+    "reachable_functions": 5,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 1,
+    "first_indirect": {
+     "call": "rkq->rkq_qio->event_cb(",
+     "path": [
+      "rd_kafka_q_concat0",
+      "rd_kafka_q_io_event"
+     ]
+    },
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [
+     "cnd_signal",
+     "mtx_lock",
+     "mtx_unlock",
+     "write"
+    ],
+    "class": "indirect"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_queue.h",
+      550,
+      "67a0016e944b8e9663e1bd3ab526ea6506e8e9071a0a54ba3718f71b7f5e13ee"
+     ]
+    ],
+    "class": "indirect"
+   },
+   "identical_at_both": true,
+   "class": "indirect"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_q_prepend0",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_queue.h",
+      609,
+      "d74f682b1f8e50e3e0658ea347f4cd3834419dd49960604806241125c0ecc413"
+     ]
+    ],
+    "reachable_functions": 4,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 1,
+    "first_indirect": {
+     "call": "rkq->rkq_qio->event_cb(",
+     "path": [
+      "rd_kafka_q_prepend0",
+      "rd_kafka_q_io_event"
+     ]
+    },
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [
+     "mtx_lock",
+     "mtx_unlock",
+     "write"
+    ],
+    "class": "indirect"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_queue.h",
+      609,
+      "d74f682b1f8e50e3e0658ea347f4cd3834419dd49960604806241125c0ecc413"
+     ]
+    ],
+    "class": "indirect"
+   },
+   "identical_at_both": true,
+   "class": "indirect"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_msgq_enq",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_msg.h",
+      531,
+      "06546554808241ad49a124205c399f12f528f294bd2cc4a793c20e83c19a1140"
+     ]
+    ],
+    "reachable_functions": 1,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 0,
+    "first_indirect": null,
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [],
+    "class": "none"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_msg.h",
+      531,
+      "06546554808241ad49a124205c399f12f528f294bd2cc4a793c20e83c19a1140"
+     ]
+    ],
+    "class": "none"
+   },
+   "identical_at_both": true,
+   "class": "none"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_msgq_init",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_msg.h",
+      283,
+      "259942da7d3aa6ed2ae26aaef2ca42b93efc6bbb47ffd1185cd4558f70d7163d"
+     ]
+    ],
+    "reachable_functions": 1,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 0,
+    "first_indirect": null,
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [],
+    "class": "none"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_msg.h",
+      283,
+      "259942da7d3aa6ed2ae26aaef2ca42b93efc6bbb47ffd1185cd4558f70d7163d"
+     ]
+    ],
+    "class": "none"
+   },
+   "identical_at_both": true,
+   "class": "none"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_msgq_first",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_msg.h",
+      404,
+      "2b5c2415501b5843405bd11ea43d24543322742e6d4edf8e8491839934aae21f"
+     ]
+    ],
+    "reachable_functions": 1,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 0,
+    "first_indirect": null,
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [],
+    "class": "none"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_msg.h",
+      404,
+      "2b5c2415501b5843405bd11ea43d24543322742e6d4edf8e8491839934aae21f"
+     ]
+    ],
+    "class": "none"
+   },
+   "identical_at_both": true,
+   "class": "none"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_msgq_last",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_msg.h",
+      414,
+      "0e276d7cf9f04f55144114d6f3054906897dcd5a7e61214a878ba8062fd8f5ae"
+     ]
+    ],
+    "reachable_functions": 1,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 0,
+    "first_indirect": null,
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [],
+    "class": "none"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_msg.h",
+      414,
+      "0e276d7cf9f04f55144114d6f3054906897dcd5a7e61214a878ba8062fd8f5ae"
+     ]
+    ],
+    "class": "none"
+   },
+   "identical_at_both": true,
+   "class": "none"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_msgq_concat",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_msg.h",
+      313,
+      "c1d47b6acf5e87162c31cf98fabb9a6f35947772c549aa3495a8d99f194da145"
+     ]
+    ],
+    "reachable_functions": 2,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 0,
+    "first_indirect": null,
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [],
+    "class": "none"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_msg.h",
+      313,
+      "c1d47b6acf5e87162c31cf98fabb9a6f35947772c549aa3495a8d99f194da145"
+     ]
+    ],
+    "class": "none"
+   },
+   "identical_at_both": true,
+   "class": "none"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_msgq_move",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_msg.h",
+      326,
+      "d7bca466fb18a2b9447e961686456e11ebf485c6daa6317fc7958bfaf432c210"
+     ]
+    ],
+    "reachable_functions": 2,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 0,
+    "first_indirect": null,
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [],
+    "class": "none"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_msg.h",
+      326,
+      "d7bca466fb18a2b9447e961686456e11ebf485c6daa6317fc7958bfaf432c210"
+     ]
+    ],
+    "class": "none"
+   },
+   "identical_at_both": true,
+   "class": "none"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_msgq_purge",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_msg.h",
+      353,
+      "a706d22c78cb942773ba94daf5f007282a34417fd3e57304b8a8626d6ddba704"
+     ]
+    ],
+    "reachable_functions": 119,
+    "rk_conf_sinks": {
+     "interceptor:on_conf_destroy": [
+      "rd_kafka_msgq_purge",
+      "rd_kafka_msg_destroy",
+      "rd_kafka_topic_destroy0",
+      "rd_kafka_topic_destroy_final",
+      "rd_kafka_anyconf_destroy",
+      "rd_kafka_interceptors_on_conf_destroy"
+     ],
+     "interceptor:on_response_received": [
+      "rd_kafka_msgq_purge",
+      "rd_kafka_msg_destroy",
+      "rd_kafka_topic_destroy0",
+      "rd_kafka_topic_destroy_final",
+      "rd_kafka_crash",
+      "rd_kafka_dump0",
+      "rd_kafka_q_len",
+      "rd_kafka_q_destroy0",
+      "rd_kafka_q_purge0",
+      "rd_kafka_op_destroy",
+      "rd_kafka_buf_handle_op",
+      "rd_kafka_buf_callback",
+      "rd_kafka_interceptors_on_response_received"
+     ],
+     "rk-conf:log_cb": [
+      "rd_kafka_msgq_purge",
+      "rd_kafka_msg_destroy",
+      "rd_kafka_topic_destroy0",
+      "rd_kafka_topic_destroy_final",
+      "rd_kafka_crash",
+      "rd_kafka_dump0",
+      "rd_kafka_q_len",
+      "rd_kafka_q_destroy0",
+      "rd_kafka_q_purge0",
+      "rd_kafka_op_destroy",
+      "rd_kafka_toppar_destroy0",
+      "rd_kafka_toppar_destroy_final",
+      "rd_kafka_log0",
+      "rd_kafka_log_buf"
+     ],
+     "interceptor:on_acknowledgement": [
+      "rd_kafka_msgq_purge",
+      "rd_kafka_msg_destroy",
+      "rd_kafka_topic_destroy0",
+      "rd_kafka_topic_destroy_final",
+      "rd_kafka_crash",
+      "rd_kafka_dump0",
+      "rd_kafka_q_len",
+      "rd_kafka_q_destroy0",
+      "rd_kafka_q_purge0",
+      "rd_kafka_op_destroy",
+      "rd_kafka_toppar_destroy0",
+      "rd_kafka_toppar_destroy_final",
+      "rd_kafka_dr_msgq0",
+      "rd_kafka_interceptors_on_acknowledgement_queue",
+      "rd_kafka_interceptors_on_acknowledgement"
+     ]
+    },
+    "indirect_calls_reached": 9,
+    "first_indirect": {
+     "call": "rl->rl_free_cb(",
+     "path": [
+      "rd_kafka_msgq_purge",
+      "rd_kafka_msg_destroy",
+      "rd_kafka_headers_destroy",
+      "rd_list_destroy",
+      "rd_list_destroy_elems"
+     ]
+    },
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {
+     "interceptor:on_conf_destroy": [
+      "rd_kafka_msgq_purge",
+      "rd_kafka_msg_destroy",
+      "rd_kafka_topic_destroy0",
+      "rd_kafka_topic_destroy_final",
+      "rd_kafka_anyconf_destroy",
+      "rd_kafka_interceptors_on_conf_destroy"
+     ]
+    },
+    "externals_reached": [
+     "__assert_fail",
+     "__assert_single_arg",
+     "__errno_location",
+     "abort",
+     "calloc",
+     "clock_gettime",
+     "close",
+     "cnd_broadcast",
+     "cnd_destroy",
+     "cnd_signal",
+     "fprintf",
+     "free",
+     "memcmp",
+     "memcpy",
+     "memset",
+     "mtx_destroy",
+     "mtx_lock",
+     "mtx_unlock",
+     "pthread_rwlock_destroy",
+     "pthread_rwlock_rdlock",
+     "pthread_rwlock_unlock",
+     "pthread_rwlock_wrlock",
+     "pthread_self",
+     "regfree",
+     "snprintf",
+     "strcmp",
+     "strdup",
+     "strlen",
+     "vsnprintf",
+     "write"
+    ],
+    "class": "rk-conf"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_msg.h",
+      353,
+      "a706d22c78cb942773ba94daf5f007282a34417fd3e57304b8a8626d6ddba704"
+     ]
+    ],
+    "class": "rk-conf"
+   },
+   "identical_at_both": true,
+   "class": "rk-conf"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_broker_get_state",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_broker.h",
+      513,
+      "7e3ecc22e54769b59eeece2c4ae1539b63fb9ff13667d01b95f936306b45527c"
+     ]
+    ],
+    "reachable_functions": 1,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 0,
+    "first_indirect": null,
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [
+     "mtx_lock",
+     "mtx_unlock"
+    ],
+    "class": "none"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_broker.h",
+      513,
+      "7e3ecc22e54769b59eeece2c4ae1539b63fb9ff13667d01b95f936306b45527c"
+     ]
+    ],
+    "class": "none"
+   },
+   "identical_at_both": true,
+   "class": "none"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_topic_get_error",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_topic.h",
+      296,
+      "6a10d1696fa6caa104ecca6f8b7a5713ae90a0f9dde6d1d5b2e293d71be275f5"
+     ]
+    ],
+    "reachable_functions": 3,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 0,
+    "first_indirect": null,
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [
+     "__assert_fail",
+     "__assert_single_arg",
+     "pthread_rwlock_rdlock",
+     "pthread_rwlock_unlock"
+    ],
+    "class": "none"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_topic.h",
+      296,
+      "6a10d1696fa6caa104ecca6f8b7a5713ae90a0f9dde6d1d5b2e293d71be275f5"
+     ]
+    ],
+    "class": "none"
+   },
+   "identical_at_both": true,
+   "class": "none"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_op_version_outdated",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_partition.h",
+      1096,
+      "72dcc810efa8c366e73655e3ace7ad5172a53b50b3496131c2c5adaf27d32f8f"
+     ]
+    ],
+    "reachable_functions": 2,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 0,
+    "first_indirect": null,
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [],
+    "class": "none"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_partition.h",
+      1096,
+      "72dcc810efa8c366e73655e3ace7ad5172a53b50b3496131c2c5adaf27d32f8f"
+     ]
+    ],
+    "class": "none"
+   },
+   "identical_at_both": true,
+   "class": "none"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_rkt_get_lw",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_topic.h",
+      70,
+      "24b86a58b30cad3556a3bb8544d76948a09dbaac023dfc4896da2e3a28ed961a"
+     ]
+    ],
+    "reachable_functions": 2,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 0,
+    "first_indirect": null,
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [
+     "memcmp"
+    ],
+    "class": "none"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_topic.h",
+      70,
+      "24b86a58b30cad3556a3bb8544d76948a09dbaac023dfc4896da2e3a28ed961a"
+     ]
+    ],
+    "class": "none"
+   },
+   "identical_at_both": true,
+   "class": "none"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_topic_partition_toppar",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_partition.h",
+      910,
+      "f2bfdd263651ccec8c4777df5e96508e64298a7a833302f23d49016986c70e8e"
+     ]
+    ],
+    "reachable_functions": 1,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 0,
+    "first_indirect": null,
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [],
+    "class": "none"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_partition.h",
+      910,
+      "f2bfdd263651ccec8c4777df5e96508e64298a7a833302f23d49016986c70e8e"
+     ]
+    ],
+    "class": "none"
+   },
+   "identical_at_both": true,
+   "class": "none"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_app_poll_start",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_int.h",
+      1369,
+      "da0f68b9c944e9597d9242dd23dbf8414917544d40a36ab02727dc8b82d704bb"
+     ]
+    ],
+    "reachable_functions": 10,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 0,
+    "first_indirect": null,
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [
+     "clock_gettime",
+     "mtx_lock",
+     "mtx_unlock"
+    ],
+    "class": "none"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_int.h",
+      1369,
+      "da0f68b9c944e9597d9242dd23dbf8414917544d40a36ab02727dc8b82d704bb"
+     ]
+    ],
+    "class": "none"
+   },
+   "identical_at_both": true,
+   "class": "none"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_app_polled",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_int.h",
+      1403,
+      "16cc75957add169f71f96f32ab7061c28891c5211049ee3529a37f21fa94ab7b"
+     ]
+    ],
+    "reachable_functions": 138,
+    "rk_conf_sinks": {
+     "rk-conf:log_cb": [
+      "rd_kafka_app_polled",
+      "rd_kafka_cgrp_consumer_expedite_next_heartbeat",
+      "rd_kafka_log0",
+      "rd_kafka_log_buf"
+     ],
+     "interceptor:on_response_received": [
+      "rd_kafka_app_polled",
+      "rd_kafka_cgrp_consumer_expedite_next_heartbeat",
+      "rd_kafka_log0",
+      "rd_kafka_log_buf",
+      "rd_kafka_q_enq",
+      "rd_kafka_q_enq1",
+      "rd_kafka_op_reply",
+      "rd_kafka_op_destroy",
+      "rd_kafka_buf_handle_op",
+      "rd_kafka_buf_callback",
+      "rd_kafka_interceptors_on_response_received"
+     ],
+     "interceptor:on_conf_destroy": [
+      "rd_kafka_app_polled",
+      "rd_kafka_cgrp_consumer_expedite_next_heartbeat",
+      "rd_kafka_log0",
+      "rd_kafka_log_buf",
+      "rd_kafka_q_enq",
+      "rd_kafka_q_enq1",
+      "rd_kafka_op_reply",
+      "rd_kafka_op_destroy",
+      "rd_kafka_topic_destroy0",
+      "rd_kafka_topic_destroy_final",
+      "rd_kafka_anyconf_destroy",
+      "rd_kafka_interceptors_on_conf_destroy"
+     ],
+     "interceptor:on_acknowledgement": [
+      "rd_kafka_app_polled",
+      "rd_kafka_cgrp_consumer_expedite_next_heartbeat",
+      "rd_kafka_log0",
+      "rd_kafka_log_buf",
+      "rd_kafka_q_enq",
+      "rd_kafka_q_enq1",
+      "rd_kafka_op_reply",
+      "rd_kafka_op_destroy",
+      "rd_kafka_toppar_destroy0",
+      "rd_kafka_toppar_destroy_final",
+      "rd_kafka_dr_msgq0",
+      "rd_kafka_interceptors_on_acknowledgement_queue",
+      "rd_kafka_interceptors_on_acknowledgement"
+     ]
+    },
+    "indirect_calls_reached": 9,
+    "first_indirect": {
+     "call": "rkq->rkq_qio->event_cb(",
+     "path": [
+      "rd_kafka_app_polled",
+      "rd_kafka_cgrp_consumer_expedite_next_heartbeat",
+      "rd_kafka_log0",
+      "rd_kafka_log_buf",
+      "rd_kafka_q_enq",
+      "rd_kafka_q_enq1",
+      "rd_kafka_q_io_event"
+     ]
+    },
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {
+     "rk-conf:log_cb": [
+      "rd_kafka_app_polled",
+      "rd_kafka_cgrp_consumer_expedite_next_heartbeat",
+      "rd_kafka_log0",
+      "rd_kafka_log_buf"
+     ],
+     "interceptor:on_response_received": [
+      "rd_kafka_app_polled",
+      "rd_kafka_cgrp_consumer_expedite_next_heartbeat",
+      "rd_kafka_log0",
+      "rd_kafka_log_buf",
+      "rd_kafka_q_enq",
+      "rd_kafka_q_enq1",
+      "rd_kafka_op_reply",
+      "rd_kafka_op_destroy",
+      "rd_kafka_buf_handle_op",
+      "rd_kafka_buf_callback",
+      "rd_kafka_interceptors_on_response_received"
+     ],
+     "interceptor:on_conf_destroy": [
+      "rd_kafka_app_polled",
+      "rd_kafka_cgrp_consumer_expedite_next_heartbeat",
+      "rd_kafka_log0",
+      "rd_kafka_log_buf",
+      "rd_kafka_q_enq",
+      "rd_kafka_q_enq1",
+      "rd_kafka_op_reply",
+      "rd_kafka_op_destroy",
+      "rd_kafka_topic_destroy0",
+      "rd_kafka_topic_destroy_final",
+      "rd_kafka_anyconf_destroy",
+      "rd_kafka_interceptors_on_conf_destroy"
+     ],
+     "interceptor:on_acknowledgement": [
+      "rd_kafka_app_polled",
+      "rd_kafka_cgrp_consumer_expedite_next_heartbeat",
+      "rd_kafka_log0",
+      "rd_kafka_log_buf",
+      "rd_kafka_q_enq",
+      "rd_kafka_q_enq1",
+      "rd_kafka_op_reply",
+      "rd_kafka_op_destroy",
+      "rd_kafka_toppar_destroy0",
+      "rd_kafka_toppar_destroy_final",
+      "rd_kafka_dr_msgq0",
+      "rd_kafka_interceptors_on_acknowledgement_queue",
+      "rd_kafka_interceptors_on_acknowledgement"
+     ]
+    },
+    "externals_reached": [
+     "RAND_priv_bytes",
+     "__assert_fail",
+     "__assert_single_arg",
+     "__errno_location",
+     "abort",
+     "calloc",
+     "clock_gettime",
+     "close",
+     "cnd_broadcast",
+     "cnd_destroy",
+     "cnd_signal",
+     "fprintf",
+     "free",
+     "getentropy",
+     "gettimeofday",
+     "memcmp",
+     "memcpy",
+     "memset",
+     "mtx_destroy",
+     "mtx_lock",
+     "mtx_unlock",
+     "nanosleep",
+     "pthread_rwlock_destroy",
+     "pthread_rwlock_rdlock",
+     "pthread_rwlock_unlock",
+     "pthread_rwlock_wrlock",
+     "pthread_self",
+     "rand_r",
+     "regfree",
+     "snprintf",
+     "strcmp",
+     "strdup",
+     "strlen",
+     "thrd_current",
+     "vsnprintf",
+     "write"
+    ],
+    "class": "rk-conf"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_int.h",
+      1403,
+      "16cc75957add169f71f96f32ab7061c28891c5211049ee3529a37f21fa94ab7b"
+     ]
+    ],
+    "class": "rk-conf"
+   },
+   "identical_at_both": true,
+   "class": "rk-conf"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_curr_msgs_add",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_int.h",
+      979,
+      "e476afc440f6f1fa19999ce43d980f40a9bd4de7d428288c59c3e3627abbd676"
+     ]
+    ],
+    "reachable_functions": 3,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 0,
+    "first_indirect": null,
+    "local_indirect": [
+     "(unsigned long long)("
+    ],
+    "resolved": {
+     "(unsigned long long)(": {
+      "candidates": [],
+      "reason": "a cast, not a call (rdkafka_int.h:1186)"
+     }
+    },
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [
+     "__assert_fail",
+     "__assert_single_arg",
+     "cnd_wait",
+     "mtx_lock",
+     "mtx_unlock",
+     "pthread_rwlock_rdlock",
+     "pthread_rwlock_unlock"
+    ],
+    "class": "none"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_int.h",
+      979,
+      "e476afc440f6f1fa19999ce43d980f40a9bd4de7d428288c59c3e3627abbd676"
+     ]
+    ],
+    "class": "none"
+   },
+   "identical_at_both": true,
+   "class": "none"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_curr_msgs_wait_zero",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_int.h",
+      1081,
+      "b5f403d5cb55202a2a99d7065b1ee3a34afa79a76168a7a2cc862016a334a649"
+     ]
+    ],
+    "reachable_functions": 10,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 0,
+    "first_indirect": null,
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [
+     "clock_gettime",
+     "cnd_timedwait",
+     "cnd_wait",
+     "gettimeofday",
+     "mtx_lock",
+     "mtx_unlock"
+    ],
+    "class": "none"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_int.h",
+      1081,
+      "b5f403d5cb55202a2a99d7065b1ee3a34afa79a76168a7a2cc862016a334a649"
+     ]
+    ],
+    "class": "none"
+   },
+   "identical_at_both": true,
+   "class": "none"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_txn_add_partition",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.h",
+      96,
+      "d8bf25102c73f39f13bc92a25723c5261d97421511bc7ffc78d306950fd3f482"
+     ]
+    ],
+    "reachable_functions": 128,
+    "rk_conf_sinks": {
+     "rk-conf:log_cb": [
+      "rd_kafka_txn_add_partition",
+      "rd_kafka_log0",
+      "rd_kafka_log_buf"
+     ],
+     "interceptor:on_response_received": [
+      "rd_kafka_txn_add_partition",
+      "rd_kafka_log0",
+      "rd_kafka_log_buf",
+      "rd_kafka_q_enq",
+      "rd_kafka_q_enq1",
+      "rd_kafka_op_reply",
+      "rd_kafka_op_destroy",
+      "rd_kafka_buf_handle_op",
+      "rd_kafka_buf_callback",
+      "rd_kafka_interceptors_on_response_received"
+     ],
+     "interceptor:on_conf_destroy": [
+      "rd_kafka_txn_add_partition",
+      "rd_kafka_log0",
+      "rd_kafka_log_buf",
+      "rd_kafka_q_enq",
+      "rd_kafka_q_enq1",
+      "rd_kafka_op_reply",
+      "rd_kafka_op_destroy",
+      "rd_kafka_topic_destroy0",
+      "rd_kafka_topic_destroy_final",
+      "rd_kafka_anyconf_destroy",
+      "rd_kafka_interceptors_on_conf_destroy"
+     ],
+     "interceptor:on_acknowledgement": [
+      "rd_kafka_txn_add_partition",
+      "rd_kafka_log0",
+      "rd_kafka_log_buf",
+      "rd_kafka_q_enq",
+      "rd_kafka_q_enq1",
+      "rd_kafka_op_reply",
+      "rd_kafka_op_destroy",
+      "rd_kafka_toppar_destroy0",
+      "rd_kafka_toppar_destroy_final",
+      "rd_kafka_dr_msgq0",
+      "rd_kafka_interceptors_on_acknowledgement_queue",
+      "rd_kafka_interceptors_on_acknowledgement"
+     ]
+    },
+    "indirect_calls_reached": 9,
+    "first_indirect": {
+     "call": "rkq->rkq_qio->event_cb(",
+     "path": [
+      "rd_kafka_txn_add_partition",
+      "rd_kafka_log0",
+      "rd_kafka_log_buf",
+      "rd_kafka_q_enq",
+      "rd_kafka_q_enq1",
+      "rd_kafka_q_io_event"
+     ]
+    },
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {
+     "rk-conf:log_cb": [
+      "rd_kafka_txn_add_partition",
+      "rd_kafka_log0",
+      "rd_kafka_log_buf"
+     ],
+     "interceptor:on_response_received": [
+      "rd_kafka_txn_add_partition",
+      "rd_kafka_log0",
+      "rd_kafka_log_buf",
+      "rd_kafka_q_enq",
+      "rd_kafka_q_enq1",
+      "rd_kafka_op_reply",
+      "rd_kafka_op_destroy",
+      "rd_kafka_buf_handle_op",
+      "rd_kafka_buf_callback",
+      "rd_kafka_interceptors_on_response_received"
+     ],
+     "interceptor:on_conf_destroy": [
+      "rd_kafka_txn_add_partition",
+      "rd_kafka_log0",
+      "rd_kafka_log_buf",
+      "rd_kafka_q_enq",
+      "rd_kafka_q_enq1",
+      "rd_kafka_op_reply",
+      "rd_kafka_op_destroy",
+      "rd_kafka_topic_destroy0",
+      "rd_kafka_topic_destroy_final",
+      "rd_kafka_anyconf_destroy",
+      "rd_kafka_interceptors_on_conf_destroy"
+     ],
+     "interceptor:on_acknowledgement": [
+      "rd_kafka_txn_add_partition",
+      "rd_kafka_log0",
+      "rd_kafka_log_buf",
+      "rd_kafka_q_enq",
+      "rd_kafka_q_enq1",
+      "rd_kafka_op_reply",
+      "rd_kafka_op_destroy",
+      "rd_kafka_toppar_destroy0",
+      "rd_kafka_toppar_destroy_final",
+      "rd_kafka_dr_msgq0",
+      "rd_kafka_interceptors_on_acknowledgement_queue",
+      "rd_kafka_interceptors_on_acknowledgement"
+     ]
+    },
+    "externals_reached": [
+     "__assert_fail",
+     "__assert_single_arg",
+     "__errno_location",
+     "abort",
+     "calloc",
+     "clock_gettime",
+     "close",
+     "cnd_broadcast",
+     "cnd_destroy",
+     "cnd_signal",
+     "fprintf",
+     "free",
+     "memcmp",
+     "memcpy",
+     "memset",
+     "mtx_destroy",
+     "mtx_lock",
+     "mtx_unlock",
+     "pthread_rwlock_destroy",
+     "pthread_rwlock_rdlock",
+     "pthread_rwlock_unlock",
+     "pthread_rwlock_wrlock",
+     "pthread_self",
+     "regfree",
+     "snprintf",
+     "strcmp",
+     "strdup",
+     "strlen",
+     "vsnprintf",
+     "write"
+    ],
+    "class": "rk-conf"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.h",
+      96,
+      "d8bf25102c73f39f13bc92a25723c5261d97421511bc7ffc78d306950fd3f482"
+     ]
+    ],
+    "class": "rk-conf"
+   },
+   "identical_at_both": true,
+   "class": "rk-conf"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_atomic64_set",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdatomic.h",
+      209,
+      "cfcb5a2ff9c3f4721c50786fbc41c2caded4a4fbb543fa5c272f39fc6a973e43"
+     ]
+    ],
+    "reachable_functions": 1,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 0,
+    "first_indirect": null,
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [],
+    "class": "none"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdatomic.h",
+      209,
+      "cfcb5a2ff9c3f4721c50786fbc41c2caded4a4fbb543fa5c272f39fc6a973e43"
+     ]
+    ],
+    "class": "none"
+   },
+   "identical_at_both": true,
+   "class": "none"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_usleep",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdposix.h",
+      144,
+      "093ac80555b60d96b67023865ed5b65197141c94d3075577a41fb59ae7cd767c"
+     ]
+    ],
+    "reachable_functions": 2,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 0,
+    "first_indirect": null,
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [
+     "__errno_location",
+     "nanosleep"
+    ],
+    "class": "none"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdposix.h",
+      144,
+      "093ac80555b60d96b67023865ed5b65197141c94d3075577a41fb59ae7cd767c"
+     ]
+    ],
+    "class": "none"
+   },
+   "identical_at_both": true,
+   "class": "none"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_crc32_init",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdcrc32.h",
+      98,
+      "219e2030276a9244fbec67e296a56f01b3432983d875deb3fa1ab06ed8f6c1b6"
+     ]
+    ],
+    "reachable_functions": 1,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 0,
+    "first_indirect": null,
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [
+     "crc32"
+    ],
+    "class": "none"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdcrc32.h",
+      98,
+      "219e2030276a9244fbec67e296a56f01b3432983d875deb3fa1ab06ed8f6c1b6"
+     ]
+    ],
+    "class": "none"
+   },
+   "identical_at_both": true,
+   "class": "none"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_crc32_update",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdcrc32.h",
+      125,
+      "ea6387eb336a822afb3c29e4e3f540af107df94a25184d0aa8a87a02f12049a9"
+     ]
+    ],
+    "reachable_functions": 1,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 0,
+    "first_indirect": null,
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [
+     "__assert_fail",
+     "__assert_single_arg",
+     "crc32"
+    ],
+    "class": "none"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdcrc32.h",
+      125,
+      "ea6387eb336a822afb3c29e4e3f540af107df94a25184d0aa8a87a02f12049a9"
+     ]
+    ],
+    "class": "none"
+   },
+   "identical_at_both": true,
+   "class": "none"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_buf_write_pos",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdbuf.h",
+      132,
+      "6697e72e20f04324e4bed6a118b8a22903674582a0f47d861406e14f7e89ffa8"
+     ]
+    ],
+    "reachable_functions": 1,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 0,
+    "first_indirect": null,
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [],
+    "class": "none"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdbuf.h",
+      132,
+      "6697e72e20f04324e4bed6a118b8a22903674582a0f47d861406e14f7e89ffa8"
+     ]
+    ],
+    "class": "none"
+   },
+   "identical_at_both": true,
+   "class": "none"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_slice_read_varint",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdbuf.h",
+      324,
+      "9043512480299068b97d53f931ea2680a126de2aa3c881a1f61ac7e04b6611bc"
+     ]
+    ],
+    "reachable_functions": 2,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 0,
+    "first_indirect": null,
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [],
+    "class": "none"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdbuf.h",
+      324,
+      "9043512480299068b97d53f931ea2680a126de2aa3c881a1f61ac7e04b6611bc"
+     ]
+    ],
+    "class": "none"
+   },
+   "identical_at_both": true,
+   "class": "none"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_varint_dec_i64",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdvarint.h",
+      137,
+      "c2d41b355f5889ea86a31eae56a475bf9728afaad693cf8b0e520e5e4a285534"
+     ]
+    ],
+    "reachable_functions": 2,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 0,
+    "first_indirect": null,
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [],
+    "class": "none"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdvarint.h",
+      137,
+      "c2d41b355f5889ea86a31eae56a475bf9728afaad693cf8b0e520e5e4a285534"
+     ]
+    ],
+    "class": "none"
+   },
+   "identical_at_both": true,
+   "class": "none"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_avl_remove_elm",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdavl.h",
+      221,
+      "b0e2402667987bae38b1fd29134e992845817f2447d7eeac2807e0c725f68ee6"
+     ]
+    ],
+    "reachable_functions": 10,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 1,
+    "first_indirect": {
+     "call": "ravl->ravl_cmp(",
+     "path": [
+      "rd_avl_remove_elm",
+      "rd_avl_remove_elm0"
+     ]
+    },
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [
+     "__assert_fail",
+     "__assert_single_arg",
+     "pthread_rwlock_unlock",
+     "pthread_rwlock_wrlock"
+    ],
+    "class": "indirect"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdavl.h",
+      221,
+      "b0e2402667987bae38b1fd29134e992845817f2447d7eeac2807e0c725f68ee6"
+     ]
+    ],
+    "class": "indirect"
+   },
+   "identical_at_both": true,
+   "class": "indirect"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_tmpabuf_alloc0",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+      104,
+      "47b63562e5e29c2d54695712433a3e86a8c64b96820d840603a62b5dd25b456c"
+     ]
+    ],
+    "reachable_functions": 1,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 0,
+    "first_indirect": null,
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [
+     "__assert_fail",
+     "__assert_single_arg",
+     "fprintf"
+    ],
+    "class": "none"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+      104,
+      "47b63562e5e29c2d54695712433a3e86a8c64b96820d840603a62b5dd25b456c"
+     ]
+    ],
+    "class": "none"
+   },
+   "identical_at_both": true,
+   "class": "none"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_partition_leader_new",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_partition.h",
+      1135,
+      "e784cd597dbeb340a61f337d9c8819a9fe4e69a04b151a85522087a3e6913abe"
+     ]
+    ],
+    "reachable_functions": 7,
+    "rk_conf_sinks": {},
+    "indirect_calls_reached": 0,
+    "first_indirect": null,
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {},
+    "externals_reached": [
+     "__assert_fail",
+     "__assert_single_arg",
+     "calloc",
+     "malloc",
+     "realloc"
+    ],
+    "class": "none"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_partition.h",
+      1135,
+      "e784cd597dbeb340a61f337d9c8819a9fe4e69a04b151a85522087a3e6913abe"
+     ]
+    ],
+    "class": "none"
+   },
+   "identical_at_both": true,
+   "class": "none"
+  },
+  {
+   "module": "header_inlines.qv",
+   "function": "rd_kafka_partition_leader_destroy",
+   "has_premise": false,
+   "custody_scope": true,
+   "66910c10": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_partition.h",
+      1126,
+      "824aff8ea8ee02e29d80679518552df45af2bfd06470568d2312398ea44cfc67"
+     ]
+    ],
+    "reachable_functions": 120,
+    "rk_conf_sinks": {
+     "interceptor:on_response_received": [
+      "rd_kafka_partition_leader_destroy",
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_q_purge0",
+      "rd_kafka_op_destroy",
+      "rd_kafka_buf_handle_op",
+      "rd_kafka_buf_callback",
+      "rd_kafka_interceptors_on_response_received"
+     ],
+     "interceptor:on_conf_destroy": [
+      "rd_kafka_partition_leader_destroy",
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_q_purge0",
+      "rd_kafka_op_destroy",
+      "rd_kafka_topic_destroy0",
+      "rd_kafka_topic_destroy_final",
+      "rd_kafka_anyconf_destroy",
+      "rd_kafka_interceptors_on_conf_destroy"
+     ],
+     "rk-conf:log_cb": [
+      "rd_kafka_partition_leader_destroy",
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_buf_destroy_final",
+      "rd_kafka_msgbatch_destroy",
+      "rd_kafka_toppar_destroy0",
+      "rd_kafka_toppar_destroy_final",
+      "rd_kafka_log0",
+      "rd_kafka_log_buf"
+     ],
+     "interceptor:on_acknowledgement": [
+      "rd_kafka_partition_leader_destroy",
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_buf_destroy_final",
+      "rd_kafka_msgbatch_destroy",
+      "rd_kafka_toppar_destroy0",
+      "rd_kafka_toppar_destroy_final",
+      "rd_kafka_dr_msgq0",
+      "rd_kafka_interceptors_on_acknowledgement_queue",
+      "rd_kafka_interceptors_on_acknowledgement"
+     ]
+    },
+    "indirect_calls_reached": 9,
+    "first_indirect": {
+     "call": "provider->broker_term(",
+     "path": [
+      "rd_kafka_partition_leader_destroy",
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_sasl_broker_term"
+     ]
+    },
+    "local_indirect": [],
+    "resolved": {},
+    "rk_conf_sinks_avoiding_rd_kafka_crash": {
+     "interceptor:on_response_received": [
+      "rd_kafka_partition_leader_destroy",
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_q_purge0",
+      "rd_kafka_op_destroy",
+      "rd_kafka_buf_handle_op",
+      "rd_kafka_buf_callback",
+      "rd_kafka_interceptors_on_response_received"
+     ],
+     "interceptor:on_conf_destroy": [
+      "rd_kafka_partition_leader_destroy",
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_q_purge0",
+      "rd_kafka_op_destroy",
+      "rd_kafka_topic_destroy0",
+      "rd_kafka_topic_destroy_final",
+      "rd_kafka_anyconf_destroy",
+      "rd_kafka_interceptors_on_conf_destroy"
+     ],
+     "rk-conf:log_cb": [
+      "rd_kafka_partition_leader_destroy",
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_buf_destroy_final",
+      "rd_kafka_msgbatch_destroy",
+      "rd_kafka_toppar_destroy0",
+      "rd_kafka_toppar_destroy_final",
+      "rd_kafka_log0",
+      "rd_kafka_log_buf"
+     ],
+     "interceptor:on_acknowledgement": [
+      "rd_kafka_partition_leader_destroy",
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_buf_destroy_final",
+      "rd_kafka_msgbatch_destroy",
+      "rd_kafka_toppar_destroy0",
+      "rd_kafka_toppar_destroy_final",
+      "rd_kafka_dr_msgq0",
+      "rd_kafka_interceptors_on_acknowledgement_queue",
+      "rd_kafka_interceptors_on_acknowledgement"
+     ]
+    },
+    "externals_reached": [
+     "__assert_fail",
+     "__assert_single_arg",
+     "__errno_location",
+     "abort",
+     "calloc",
+     "clock_gettime",
+     "close",
+     "cnd_broadcast",
+     "cnd_destroy",
+     "cnd_signal",
+     "fprintf",
+     "free",
+     "memcmp",
+     "memcpy",
+     "memset",
+     "mtx_destroy",
+     "mtx_lock",
+     "mtx_unlock",
+     "pthread_rwlock_destroy",
+     "pthread_rwlock_rdlock",
+     "pthread_rwlock_unlock",
+     "pthread_rwlock_wrlock",
+     "pthread_self",
+     "regfree",
+     "snprintf",
+     "strcmp",
+     "strdup",
+     "strlen",
+     "vsnprintf",
+     "write"
+    ],
+    "class": "rk-conf"
+   },
+   "046accf6": {
+    "defined": true,
+    "sites": [
+     [
+      "lib/librdkafka-2.15.0/src/rdkafka_partition.h",
+      1126,
+      "824aff8ea8ee02e29d80679518552df45af2bfd06470568d2312398ea44cfc67"
+     ]
+    ],
+    "class": "rk-conf"
+   },
+   "identical_at_both": true,
+   "class": "rk-conf"
+  }
+ ]
+}

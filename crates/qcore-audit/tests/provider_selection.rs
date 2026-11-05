@@ -647,7 +647,8 @@ fn the_cycle19_provider_selection_is_the_cycle19_manifest_module_for_module() {
     // 63 -> 64 by card FB-TEARDOWN-DESTROY-DECLARATIONS: `fluent_bit/teardown_destroy.qv`.
     // 65 -> 66 by card W48-RK-LOG-CALLER-FRAME: `librdkafka/log_caller_frame.qv`.
     // 66 -> 68 by card LOG-PRINT-BODY-CONTRACTS: `cmetrics/logging.qv` and `chunkio/logging.qv`.
-    assert_eq!(entries.len(), 68);
+    // 68 -> 69 by card LIBRDKAFKA-HEADER-INLINES: `librdkafka/header_inlines.qv`.
+    assert_eq!(entries.len(), 69);
     let resolved = resolve_providers(
         &repository.join("providers/contract-load-path.json"),
         &entries,
@@ -680,7 +681,8 @@ fn the_cycle19_provider_selection_is_the_cycle19_manifest_module_for_module() {
     // 63 -> 64 by card FB-TEARDOWN-DESTROY-DECLARATIONS: `fluent_bit/teardown_destroy.qv`.
     // 65 -> 66 by card W48-RK-LOG-CALLER-FRAME: `librdkafka/log_caller_frame.qv`.
     // 66 -> 68 by card LOG-PRINT-BODY-CONTRACTS: `cmetrics/logging.qv` and `chunkio/logging.qv`.
-    assert_eq!(from_selection.source_assumptions().len(), 68);
+    // 68 -> 69 by card LIBRDKAFKA-HEADER-INLINES: `librdkafka/header_inlines.qv`.
+    assert_eq!(from_selection.source_assumptions().len(), 69);
     for (module, text) in from_manifest.source_assumptions() {
         assert_eq!(
             from_selection.source_assumptions().get(module),
@@ -808,7 +810,8 @@ fn every_real_crate_selected_whole_is_its_loader_view() {
     // 63 -> 64 by card FB-TEARDOWN-DESTROY-DECLARATIONS: `fluent_bit/teardown_destroy.qv`.
     // 65 -> 66 by card W48-RK-LOG-CALLER-FRAME: `librdkafka/log_caller_frame.qv`.
     // 66 -> 68 by card LOG-PRINT-BODY-CONTRACTS: `cmetrics/logging.qv` and `chunkio/logging.qv`.
-    assert_eq!(total, 68);
+    // 68 -> 69 by card LIBRDKAFKA-HEADER-INLINES: `librdkafka/header_inlines.qv`.
+    assert_eq!(total, 69);
 }
 
 #[test]
@@ -851,7 +854,8 @@ fn all_eleven_crates_whole_and_all_loaded_are_the_cycle19_manifest_environment()
     // 63 -> 64 by card FB-TEARDOWN-DESTROY-DECLARATIONS: `fluent_bit/teardown_destroy.qv`.
     // 65 -> 66 by card W48-RK-LOG-CALLER-FRAME: `librdkafka/log_caller_frame.qv`.
     // 66 -> 68 by card LOG-PRINT-BODY-CONTRACTS: `cmetrics/logging.qv` and `chunkio/logging.qv`.
-    assert_eq!(entries(&manifest_text).1.len(), 68);
+    // 68 -> 69 by card LIBRDKAFKA-HEADER-INLINES: `librdkafka/header_inlines.qv`.
+    assert_eq!(entries(&manifest_text).1.len(), 69);
     assert_eq!(all.manifest_path().parent(), manifest_path.parent());
     // Elaborated byte for byte as the manifest: every module key and text,
     // the inclusion evidence and the loaded function table.
