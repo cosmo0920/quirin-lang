@@ -47,6 +47,7 @@ pub mod mirror;
 pub mod rows;
 pub mod sides;
 pub mod util;
+pub mod waits;
 
 use inputs::Route;
 use mirror::Mode;
@@ -333,7 +334,11 @@ struct Resolved {
 
 #[allow(clippy::too_many_lines)]
 fn measure(request: &Request, options: &Options) -> Result<Response, String> {
+    let started = std::time::Instant::now();
     let output = canonical(&request.output_directory())?;
+    // Idle stretches (every route in flight waiting for its slot) are
+    // declared to the host through the marker in the output (R7).
+    let tracker = waits::Tracker::new(Some(&output));
     let repository = canonical(&absolute(
         request,
         options.repository.as_deref().unwrap_or("."),
@@ -596,13 +601,17 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
         }
     }
     // Run every route of every running side; the slots bound concurrency.
+    // Every job is begun here, before any can wait, so the tracker never
+    // takes a run whose other routes are still starting for an idle one.
     let jobs: Vec<(usize, &Route)> = (0..built.len())
         .flat_map(|side| routes.iter().map(move |route| (side, route)))
         .collect();
+    let begun: Vec<waits::Job> = jobs.iter().map(|_| tracker.begin()).collect();
     let results: Vec<(usize, String, Result<Value, String>)> = std::thread::scope(|scope| {
         let handles: Vec<_> = jobs
             .iter()
-            .map(|&(side, route)| {
+            .zip(begun)
+            .map(|(&(side, route), mut job)| {
                 let built = &built;
                 let spelled = &spelled;
                 let context = &context;
@@ -624,7 +633,9 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
                             .as_ref()
                             .map(|(real, fixed)| (real.as_path(), fixed.as_path())),
                         &context,
+                        &mut job,
                     );
+                    drop(job);
                     (side, route.name.clone(), result)
                 })
             })
@@ -980,6 +991,27 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
         json!({"schema": ledger::LEDGER_SCHEMA, "rules": rules_off, "ledgers": [],
                "refused": error})
     });
+    failures.extend(tracker.errors());
+    let route_times: BTreeMap<String, BTreeMap<String, Value>> = built
+        .iter()
+        .map(|side| {
+            let routes = routes
+                .iter()
+                .map(|route| {
+                    let recorded = &side.record["routes"][&route.name];
+                    (
+                        route.name.clone(),
+                        json!({"profile": route.profile,
+                               "wall_time_ms": recorded["wall_time_ms"],
+                               "slot_wait_ms": recorded["slot_wait_ms"],
+                               "analysis_time_ms": recorded["analysis_time_ms"]}),
+                    )
+                })
+                .collect();
+            (side.name.clone(), routes)
+        })
+        .collect();
+    let timing = waits::timing(started.elapsed(), &tracker, &json!(route_times));
     let complete = failures.is_empty();
     let record = json!({
         "schema": COMPARISON_SCHEMA,
@@ -996,6 +1028,7 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
         "rules_off": rules_off,
         "source_date_epoch": source_date_epoch,
         "contribution": contribution,
+        "timing": timing,
     });
     let record_path = output.join("native-comparison.json");
     write_json(&record_path, &record)?;

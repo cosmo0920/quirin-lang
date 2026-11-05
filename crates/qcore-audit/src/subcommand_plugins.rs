@@ -29,6 +29,11 @@
 //!   a process group and of the artifacts the host accepts, **not an OS
 //!   sandbox** (standing constraint 26): nothing stops the plugin writing
 //!   elsewhere, and a descendant that leaves the group escapes the kill.
+//!   The wall-time quota counts analysis time: time during which the plugin
+//!   keeps the [`SLOT_WAIT_MARKER`] in its output (all its work waits for a
+//!   gate slot) is excluded, up to `--slot-wait-limit-ms` (default the quota;
+//!   `0` counts every wait), and both are recorded (card
+//!   MEASURE-QUOTA-AND-INCREMENTAL, requirement R7).
 //! * **Firewall.** Each claim is classified as a checker plugin's answer is
 //!   ([`qcore_verifier_host::PluginClaim`]): the command line has no trusted
 //!   checker for a subcommand plugin's certificate or witness, so an uncertified
@@ -67,14 +72,15 @@ use qcore_verifier_host::{PluginClaim, PluginDiagnostic};
 use quirin_audit_plugin::{
     AuditIdentity, ENVIRONMENT_ALLOW_LIST, EXECUTABLE_PREFIX, FileIdentity, Outcome,
     PLUGIN_PATH_VARIABLE, PROTOCOL_VERSION, ProposedVerdict, Quotas, Request, Response,
-    VerdictClaim, VerifiedArtifact, parse_response, verify_artifacts,
+    SLOT_WAIT_MARKER, VerdictClaim, VerifiedArtifact, parse_response, verify_artifacts,
 };
 use serde_json::{Value, json};
 
 /// Usage text of the external-subcommand route.
 pub const USAGE: &str = "usage: quirin-audit [--plugin-path DIR]... --output DIR [--report FILE] \
 [--audit-report FILE] [--qo FILE]... [--load-path FILE] [--provider NAME]... [--timeout-ms N] \
-[--stdout-limit-bytes N] [--stderr-limit-bytes N] [--plugin-env NAME]... NAME [ARGUMENTS...]
+[--slot-wait-limit-ms N] [--stdout-limit-bytes N] [--stderr-limit-bytes N] [--plugin-env NAME]... \
+NAME [ARGUMENTS...]
        quirin-audit [--plugin-path DIR]... --list-plugins";
 
 /// Every built-in subcommand of `quirin-audit` (`src/main.rs`). An external
@@ -102,7 +108,7 @@ pub const BUILTINS: [&str; 18] = [
 ];
 
 /// The host options that take a value, all before `NAME`.
-const VALUE_OPTIONS: [&str; 11] = [
+const VALUE_OPTIONS: [&str; 12] = [
     "--plugin-path",
     "--output",
     "--report",
@@ -111,6 +117,7 @@ const VALUE_OPTIONS: [&str; 11] = [
     "--load-path",
     "--provider",
     "--timeout-ms",
+    "--slot-wait-limit-ms",
     "--stdout-limit-bytes",
     "--stderr-limit-bytes",
     "--plugin-env",
@@ -158,6 +165,9 @@ pub struct HostOptions {
     pub load_path: Option<PathBuf>,
     pub providers: Vec<String>,
     pub timeout_ms: Option<u64>,
+    /// How much declared slot-wait time ([`SLOT_WAIT_MARKER`]) the wall-time
+    /// quota excludes; `0` counts every wait (default: the quota itself).
+    pub slot_wait_limit: Option<u64>,
     pub stdout_limit: Option<u64>,
     pub stderr_limit: Option<u64>,
     pub plugin_env: Vec<String>,
@@ -218,6 +228,14 @@ pub fn parse(arguments: &[String]) -> Result<HostOptions, String> {
             "--qo" => options.checkpoints.push(PathBuf::from(&value)),
             "--provider" => options.providers.push(value.clone()),
             "--timeout-ms" => number(&mut options.timeout_ms)?,
+            "--slot-wait-limit-ms" => {
+                let parsed = value
+                    .parse::<u64>()
+                    .map_err(|_| format!("{flag} requires a non-negative integer"))?;
+                if options.slot_wait_limit.replace(parsed).is_some() {
+                    return Err(format!("{flag} is given twice"));
+                }
+            }
             "--stdout-limit-bytes" => number(&mut options.stdout_limit)?,
             "--stderr-limit-bytes" => number(&mut options.stderr_limit)?,
             "--plugin-env" => options.plugin_env.push(value.clone()),
@@ -399,6 +417,8 @@ pub struct Prepared {
     pub stderr_log: PathBuf,
     pub environment: Vec<(String, OsString)>,
     pub host: BTreeMap<String, ReasonedVerdict>,
+    /// The most declared slot-wait time the wall-time quota excludes.
+    pub slot_wait_limit_ms: u64,
 }
 
 fn read(path: &Path) -> Result<Vec<u8>, String> {
@@ -568,6 +588,9 @@ pub fn prepare(
         report: report.display().to_string(),
         ..Request::new(name, options.arguments.clone(), cwd, &output)
     };
+    let slot_wait_limit_ms = options
+        .slot_wait_limit
+        .unwrap_or(request.quotas.wall_time_ms);
     Ok(Prepared {
         name: name.to_owned(),
         executable,
@@ -577,6 +600,7 @@ pub fn prepare(
         stderr_log,
         environment,
         host,
+        slot_wait_limit_ms,
     })
 }
 
@@ -746,6 +770,45 @@ struct Supervised {
     stdout: Vec<u8>,
     stderr_bytes: u64,
     wall_time_ms: u64,
+    /// Wall time the plugin declared as waiting for a gate slot
+    /// ([`SLOT_WAIT_MARKER`]) and the quota excluded, at most the limit.
+    slot_wait_ms: u64,
+}
+
+/// The declared slot-wait time a supervised run accrues: the time between
+/// two of the host's polls counts when the marker existed at both, never more
+/// than the limit in all. The wall-time deadline is the start plus the quota
+/// plus what has accrued.
+#[cfg(unix)]
+#[derive(Debug)]
+struct SlotWaits {
+    marker: PathBuf,
+    limit: Duration,
+    accrued: Duration,
+    waiting_since: Option<Instant>,
+}
+
+#[cfg(unix)]
+impl SlotWaits {
+    fn new(output: &Path, limit_ms: u64) -> Self {
+        Self {
+            marker: output.join(SLOT_WAIT_MARKER),
+            limit: Duration::from_millis(limit_ms),
+            accrued: Duration::ZERO,
+            waiting_since: None,
+        }
+    }
+
+    /// Observe the marker at `now`.
+    fn poll(&mut self, now: Instant) {
+        let waiting = self.marker.exists();
+        if let Some(since) = self.waiting_since.take() {
+            self.accrued = (self.accrued + now.saturating_duration_since(since)).min(self.limit);
+        }
+        if waiting && self.accrued < self.limit {
+            self.waiting_since = Some(now);
+        }
+    }
 }
 
 #[cfg(unix)]
@@ -822,8 +885,19 @@ fn supervise(prepared: &Prepared, request: &[u8]) -> Supervised {
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .stderr(Stdio::from(stderr_file));
+    // A marker left in a reused output must not excuse this run's time.
+    let mut waits = SlotWaits::new(
+        Path::new(&prepared.request.output),
+        prepared.slot_wait_limit_ms,
+    );
+    if let Err(error) = fs::remove_file(&waits.marker)
+        && error.kind() != std::io::ErrorKind::NotFound
+    {
+        observed.spawn_error = Some(format!("{}: {error}", waits.marker.display()));
+        return observed;
+    }
     let start = Instant::now();
-    let deadline = start + Duration::from_millis(quotas.wall_time_ms);
+    let quota = Duration::from_millis(quotas.wall_time_ms);
     let mut child = match command.spawn() {
         Ok(child) => child,
         Err(error) => {
@@ -876,11 +950,13 @@ fn supervise(prepared: &Prepared, request: &[u8]) -> Supervised {
                 break;
             }
         }
+        let now = Instant::now();
+        waits.poll(now);
         let breach = if over.load(Ordering::SeqCst) {
             Some(Breach::Stdout)
         } else if stderr_size() > quotas.stderr_bytes {
             Some(Breach::Stderr)
-        } else if Instant::now() >= deadline {
+        } else if now >= start + quota + waits.accrued {
             Some(Breach::Timeout)
         } else {
             None
@@ -920,6 +996,7 @@ fn supervise(prepared: &Prepared, request: &[u8]) -> Supervised {
     }
     observed.stderr_bytes = stderr_size();
     observed.wall_time_ms = u64::try_from(start.elapsed().as_millis()).unwrap_or(u64::MAX);
+    observed.slot_wait_ms = u64::try_from(waits.accrued.as_millis()).unwrap_or(u64::MAX);
     observed
 }
 
@@ -957,7 +1034,11 @@ fn classify_run(
                 None,
                 fail(
                     "plugin-timeout",
-                    format!("exceeded the wall-time quota of {} ms", quotas.wall_time_ms),
+                    format!(
+                        "exceeded the wall-time quota of {} ms ({} ms of declared slot waits \
+                         excluded, limit {} ms)",
+                        quotas.wall_time_ms, observed.slot_wait_ms, prepared.slot_wait_limit_ms
+                    ),
                 ),
             );
         }
@@ -1129,6 +1210,8 @@ pub fn execute(
         "exit_code": observed.exit_code,
         "signal": observed.signal,
         "wall_time_ms": observed.wall_time_ms,
+        "slot_wait_ms": observed.slot_wait_ms,
+        "analysis_time_ms": observed.wall_time_ms.saturating_sub(observed.slot_wait_ms),
         "stdout_bytes": observed.stdout.len(),
         "stderr_bytes": observed.stderr_bytes,
         "stderr_log": prepared.stderr_log.display().to_string(),
@@ -1174,6 +1257,7 @@ pub fn execute(
             "passed": prepared.environment.iter().map(|(name, _)| name.clone()).collect::<Vec<_>>(),
         },
         "quotas": prepared.request.quotas,
+        "slot_wait_limit_ms": prepared.slot_wait_limit_ms,
         "output": prepared.request.output,
         "stderr_log": prepared.stderr_log.display().to_string(),
         "request_sha256": sha256_hex(&request_bytes),
@@ -1260,6 +1344,10 @@ mod tests {
         assert!(parse(&["--output".into(), "o".into()]).is_err());
         assert!(parse(&["--list-plugins".into(), "x".into()]).is_err());
         assert!(parse(&["--timeout-ms".into(), "0".into(), "x".into()]).is_err());
+        // A slot-wait limit of 0 is meaningful: every wait counts.
+        let counted = parse(&["--slot-wait-limit-ms".into(), "0".into(), "x".into()]).unwrap();
+        assert_eq!(counted.slot_wait_limit, Some(0));
+        assert!(parse(&["--slot-wait-limit-ms".into(), "-1".into(), "x".into()]).is_err());
         assert!(parse(&["--bogus".into(), "x".into()]).is_err());
     }
 

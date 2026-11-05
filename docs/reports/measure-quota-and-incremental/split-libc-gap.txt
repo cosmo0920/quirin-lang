@@ -1,0 +1,7 @@
+host run: {'outcome': 'failed', 'wall_time_ms': 22981153}
+base   corpus  eight-home             wall   104.7 min  slot wait     0.0 min  run   104.7 min  started 2026-11-04T10:57:09Z
+base   slice   fluent-bit-tail-pause  wall    11.9 min  slot wait     0.0 min  run    11.9 min  started 2026-11-04T10:57:09Z
+base   system  fluent-bit-system      wall    13.5 min  slot wait     0.0 min  run    13.5 min  started 2026-11-04T10:57:09Z
+tip    corpus  eight-home             wall   336.5 min  slot wait   218.8 min  run   117.7 min  started 2026-11-05T03:49:07Z
+tip    slice   fluent-bit-tail-pause  wall   372.6 min  slot wait   354.4 min  run    18.3 min  started 2026-11-05T03:49:08Z
+tip    system  fluent-bit-system      wall   374.8 min  slot wait   354.4 min  run    20.4 min  started 2026-11-05T03:49:08Z

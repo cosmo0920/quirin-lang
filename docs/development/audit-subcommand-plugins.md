@@ -28,7 +28,8 @@ verbatim.
 | `--audit-report FILE` | An existing audit report whose unit statuses are the host's verdicts (below) |
 | `--qo FILE` | A `.qo` checkpoint, verified whole and passed by content digest; all must come from one run; repeatable |
 | `--load-path FILE`, `--provider NAME` | A contract load path, validated, and crates on it; passed to the plugin |
-| `--timeout-ms N` | Wall-time quota (default 30 minutes) |
+| `--timeout-ms N` | Wall-time quota (default 30 minutes), counting analysis time: declared gate-slot waits are excluded (below) |
+| `--slot-wait-limit-ms N` | The most declared slot-wait time the quota excludes (default: the quota itself; `0` counts every wait) |
 | `--stdout-limit-bytes N`, `--stderr-limit-bytes N` | Output quotas (default 16 MiB each) |
 | `--plugin-env NAME` | Pass one more environment variable by name; repeatable |
 
@@ -56,6 +57,18 @@ SHA-256 it declares. This is containment of a process group and of what the
 host accepts, **not an operating-system sandbox**: nothing stops a plugin
 writing elsewhere, and a descendant that leaves the group escapes the kill
 (standing constraint 26).
+
+**Slot waits outside the quota** (card MEASURE-QUOTA-AND-INCREMENTAL,
+requirement R7 of [gate-time reduction](../plans/gate-time-reduction/README.md)).
+While the file `.quirin-audit-slot-wait` (`quirin_audit_plugin::SLOT_WAIT_MARKER`)
+exists in the output, the plugin declares that all its work waits for a gate
+slot (`scripts/gate_slot.py`); the host polls for it and does not count that
+time against `--timeout-ms`, up to `--slot-wait-limit-ms`. The run record
+(`run` in the report) gives `wall_time_ms`, `slot_wait_ms` and
+`analysis_time_ms`, and the invocation record the limit. The declaration is
+the plugin's own, so the limit is what bounds it: a run never exceeds the
+quota plus the limit. The host removes a marker left in the output before it
+spawns the plugin.
 
 **Exit status.** 0: the plugin completed and the report is written. 1: the run
 failed (the report is written, and its verdict is `Unknown`). 2: a usage error
@@ -183,7 +196,17 @@ It claims no verdict; a failed side, a refused baseline, a route that cannot be
 compared or a declared-versus-measured mismatch fails the run (exit 1,
 `Unknown`). Measurements take hours, so raise the host's wall-time quota, and
 do not wrap the command in `gate_slot.py`: each route takes its own `audit`
-slot.
+slot. Each route's slot script keeps a live wait record
+(`sides/<side>/<route>.slot-wait.json`, `gate_slot.py --wait-record`); while
+every route in flight waits for its slot, the measurement declares the
+host's slot-wait marker, so the quota counts analysis time only (R7). The
+record's `timing` slot gives the measurement's `wall_time_ms`, the declared
+`slot_wait_ms` and the `analysis_time_ms`, and per side and route (with its
+profile) the route's own wait and run time, which each route's `run.json`
+entry also carries. One route waiting while another runs is not a wait: the
+measurement is making progress. Slot variables (`QUIRIN_GATE_DIR`,
+`QUIRIN_GATE_LEGACY_LOCK`, `QUIRIN_GATE_MEMINFO`) reach the routes only when
+the host passes them with `--plugin-env`.
 
 ```sh
 cargo build --release -p qcore-audit -p quirin-audit-plugin-measure

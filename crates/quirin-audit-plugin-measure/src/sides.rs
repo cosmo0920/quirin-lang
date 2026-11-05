@@ -56,6 +56,17 @@ pub const SOURCE_DATE_EPOCH: &str = "SOURCE_DATE_EPOCH";
 /// The default `SOURCE_DATE_EPOCH`: 2026-01-01T00:00:00Z.
 pub const DEFAULT_SOURCE_DATE_EPOCH: u64 = 1_767_225_600;
 
+/// The slot script's location variables (`scripts/gate_slot.py`), passed to
+/// every route when the plugin received them.
+pub const GATE_VARIABLES: [&str; 3] = [
+    "QUIRIN_GATE_DIR",
+    "QUIRIN_GATE_LEGACY_LOCK",
+    "QUIRIN_GATE_MEMINFO",
+];
+
+/// How often a running route's slot-wait record is read.
+const WAIT_POLL: std::time::Duration = std::time::Duration::from_millis(100);
+
 /// The `audit` slot budget every route takes (`gate_slot.py --memory-budget
 /// 7G`), in the audit's MiB planning units.
 pub const SLOT_BUDGET_MIB: u32 = 7168;
@@ -569,6 +580,7 @@ pub fn run_route(
     spelled: &Spelled,
     mirror: Option<(&Path, &Path)>,
     context: &Context,
+    job: &mut crate::waits::Job,
 ) -> Result<Value, String> {
     let out = side.directory.join(&route.name);
     fs::create_dir(&out)
@@ -606,6 +618,13 @@ pub fn run_route(
     }
     if let Some(epoch) = context.source_date_epoch {
         environment.insert(SOURCE_DATE_EPOCH.into(), epoch.to_string());
+    }
+    // The slot script's own locations, when the host passed them
+    // (`--plugin-env`): a test's scratch gate, never the host's real one.
+    for name in GATE_VARIABLES {
+        if let Ok(value) = std::env::var(name) {
+            environment.insert(name.into(), value);
+        }
     }
     let jobs = context.jobs.to_string();
     let command: Vec<String> = match &route.kind {
@@ -684,6 +703,9 @@ pub fn run_route(
     }
     let mut argv = namespaced(&binds, &work, &command);
     let receipt = side.directory.join(format!("{}.slot.json", route.name));
+    let wait_record = side
+        .directory
+        .join(format!("{}.slot-wait.json", route.name));
     if let Some(script) = &context.slot_script {
         let mut slotted = vec![
             "python3".to_owned(),
@@ -693,6 +715,8 @@ pub fn run_route(
             "7G".into(),
             "--receipt".into(),
             receipt.display().to_string(),
+            "--wait-record".into(),
+            wait_record.display().to_string(),
             "--".into(),
         ];
         slotted.extend(argv);
@@ -722,7 +746,8 @@ pub fn run_route(
         "route_digest": route.digest(),
         "command": argv,
         "environment": environment.iter()
-            .filter(|(name, _)| name.starts_with("QCORE_") || *name == SOURCE_DATE_EPOCH)
+            .filter(|(name, _)| name.starts_with("QCORE_") || *name == SOURCE_DATE_EPOCH
+                || GATE_VARIABLES.contains(&name.as_str()))
             .collect::<BTreeMap<_, _>>(),
         "working_directory": work.display().to_string(),
         "jobs": context.jobs,
@@ -736,13 +761,30 @@ pub fn run_route(
     write_json(&out.join("invocation.json"), &record)?;
     let stdout = fs::File::create(out.join("console.log")).map_err(|error| error.to_string())?;
     let stderr = fs::File::create(out.join("stderr.log")).map_err(|error| error.to_string())?;
-    let status = command_of(&argv, &environment)
+    let started = std::time::Instant::now();
+    let mut child = command_of(&argv, &environment)
         .current_dir(&work)
         .stdin(std::process::Stdio::null())
         .stdout(stdout)
         .stderr(stderr)
-        .status()
+        .spawn()
         .map_err(|error| format!("{}: {error}", argv[0]))?;
+    // While the slot script says `waiting`, this job waits (R7); a record
+    // that is missing or unreadable counts as running.
+    let status = loop {
+        if let Some(status) = child
+            .try_wait()
+            .map_err(|error| format!("{}: {error}", argv[0]))?
+        {
+            break status;
+        }
+        if context.slot_script.is_some() {
+            job.set_waiting(crate::waits::read_state(&wait_record) == Some(true));
+        }
+        std::thread::sleep(WAIT_POLL);
+    };
+    job.set_waiting(false);
+    let wall = started.elapsed();
     let mut code = status.code().unwrap_or(-1);
     let identity_after = tree_identity(&side.source_real, &NOT_INPUTS)?;
     let externals_after = digests(&externals)?;
@@ -782,6 +824,14 @@ pub fn run_route(
     record["stable"] = json!(stable);
     if receipt.is_file() {
         record["slot_receipt"] = json!(receipt.display().to_string());
+    }
+    let waited = crate::waits::waited_ms(&wait_record);
+    let wall = crate::waits::millis(wall);
+    record["wall_time_ms"] = json!(wall);
+    record["slot_wait_ms"] = json!(waited);
+    record["analysis_time_ms"] = json!(wall.saturating_sub(waited));
+    if wait_record.is_file() {
+        record["slot_wait_record"] = json!(wait_record.display().to_string());
     }
     write_json(&out.join("invocation.json"), &record)?;
     fs::write(

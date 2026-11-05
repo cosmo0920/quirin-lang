@@ -63,6 +63,18 @@ pub const PLUGIN_PATH_VARIABLE: &str = "QUIRIN_AUDIT_PLUGIN_PATH";
 pub const ENVIRONMENT_ALLOW_LIST: [&str; 7] =
     ["PATH", "HOME", "TMPDIR", "LANG", "LC_ALL", "LC_CTYPE", "TZ"];
 
+/// The slot-wait marker (card MEASURE-QUOTA-AND-INCREMENTAL, requirement R7
+/// of `docs/plans/gate-time-reduction/README.md`): while a file of this name
+/// exists in the plugin's output directory (its working directory), the
+/// plugin declares that all of its work is waiting for a gate slot
+/// (`scripts/gate_slot.py`). The host does not count that time against the
+/// wall-time quota, up to its slot-wait limit (`--slot-wait-limit-ms`,
+/// default the wall-time quota itself), and records it apart from the
+/// analysis time. The declaration is the plugin's, so the limit bounds what
+/// it can buy: the run's wall time never exceeds the quota plus the limit.
+/// The host removes a stale marker before it spawns the plugin.
+pub const SLOT_WAIT_MARKER: &str = ".quirin-audit-slot-wait";
+
 /// Default wall-time quota: thirty minutes.
 pub const DEFAULT_WALL_TIME_MS: u64 = 30 * 60 * 1000;
 

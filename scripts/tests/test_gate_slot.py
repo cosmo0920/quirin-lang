@@ -6,6 +6,7 @@ from pathlib import Path
 import subprocess
 import sys
 import tempfile
+import time
 import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -387,6 +388,64 @@ class CommandLine(unittest.TestCase):
             document = json.loads(receipt.read_text())
             self.assertEqual(document["nested_under"], ["rust-suite/0", "audit/0"])
             self.assertEqual(document["budget"]["memory_budget_mib"], 7168)
+
+    def test_the_wait_record_says_waiting_until_the_slot_is_held(self):
+        """Card MEASURE-QUOTA-AND-INCREMENTAL (R7): a real exclusive flock on the
+        audit admission lock, as a rust-suite job holds it, keeps an audit job
+        waiting; its live record says so, then says admitted, with the wait,
+        before the command runs."""
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            admission = root / "gate" / "audit" / "admission"
+            admission.parent.mkdir(parents=True)
+            fd = os.open(admission, os.O_RDWR | os.O_CREAT, 0o666)
+            fcntl.flock(fd, fcntl.LOCK_EX)
+            record = root / "wait.json"
+            env = dict(os.environ, QUIRIN_GATE_DIR=str(root / "gate"),
+                       QUIRIN_GATE_LEGACY_LOCK=str(root / "legacy.lock"),
+                       QUIRIN_GATE_MEMINFO=str(meminfo(root, 30)))
+            env.pop(slot_mod.HELD_ENV, None)
+            probe = f"import json; print(json.load(open({str(record)!r}))['state'])"
+            process = subprocess.Popen(
+                [sys.executable, str(SCRIPT), "audit", "--poll", "0.02", "--receipt",
+                 str(root / "r.json"), "--wait-record", str(record), "--",
+                 sys.executable, "-c", probe],
+                env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            try:
+                deadline = time.monotonic() + 30
+                while not record.exists() and time.monotonic() < deadline:
+                    time.sleep(0.01)
+                waiting = json.loads(record.read_text())
+                self.assertEqual(waiting["schema"], "quirin-gate-wait/1")
+                self.assertEqual(waiting["state"], "waiting")
+                self.assertEqual(waiting["class"], "audit")
+                time.sleep(0.5)
+                self.assertEqual(json.loads(record.read_text())["state"], "waiting")
+            finally:
+                fcntl.flock(fd, fcntl.LOCK_UN)
+                os.close(fd)
+            stdout, stderr = process.communicate(timeout=60)
+            self.assertEqual(process.returncode, 0, stderr)
+            self.assertEqual(stdout.split(), ["admitted"])
+            admitted = json.loads(record.read_text())
+            self.assertEqual(admitted["state"], "admitted")
+            self.assertGreaterEqual(admitted["waited_seconds"], 0.5)
+            receipt = json.loads((root / "r.json").read_text())
+            self.assertEqual(receipt["slot_record"]["waited_seconds"],
+                             admitted["waited_seconds"])
+            self.assertFalse((root / f".wait.json.{process.pid}.partial").exists())
+
+    def test_a_nested_job_is_admitted_at_once_in_its_wait_record(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            record = root / "wait.json"
+            completed = self.run_slot(root, "audit", "--wait-record", str(record),
+                                      "--receipt", str(root / "r.json"), "--",
+                                      sys.executable, "-c", "pass",
+                                      extra_env={slot_mod.HELD_ENV: "rust-suite/0,audit/0"})
+            self.assertEqual(completed.returncode, 0, completed.stderr)
+            document = json.loads(record.read_text())
+            self.assertEqual((document["state"], document["waited_seconds"]), ("admitted", 0.0))
 
     def test_a_signal_is_reported_as_128_plus_n(self):
         with tempfile.TemporaryDirectory() as directory:
