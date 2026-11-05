@@ -96,7 +96,8 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     // 63 -> 64 by card FB-TEARDOWN-DESTROY-DECLARATIONS: `fluent_bit/teardown_destroy.qv`.
     // Kafka callback placement adds librdkafka/logging.qv to the selected sources.
     // 65 -> 66 by card W48-RK-LOG-CALLER-FRAME: `librdkafka/log_caller_frame.qv`.
-    assert_eq!(contracts.source_assumptions().len(), 66);
+    // 66 -> 68 by card LOG-PRINT-BODY-CONTRACTS: `cmetrics/logging.qv` and `chunkio/logging.qv`.
+    assert_eq!(contracts.source_assumptions().len(), 68);
     check_source_assumptions(&contracts).unwrap();
     let mut old = ResourceContracts::default();
     for name in [
@@ -1491,7 +1492,8 @@ fn certificates_replay_exact_assumptions_and_reject_table_mutation() {
     // `monkey/event_loop.qv` and `fluent_bit/input_collector_registration.qv`.
     // 63 -> 64 by card FB-TEARDOWN-DESTROY-DECLARATIONS: `fluent_bit/teardown_destroy.qv`.
     // 65 -> 66 by card W48-RK-LOG-CALLER-FRAME: `librdkafka/log_caller_frame.qv`.
-    assert_eq!(certificate.contracts.source_assumptions().len(), 66);
+    // 66 -> 68 by card LOG-PRINT-BODY-CONTRACTS: `cmetrics/logging.qv` and `chunkio/logging.qv`.
+    assert_eq!(certificate.contracts.source_assumptions().len(), 68);
     certificate
         .contracts
         .insert("malloc", ResourceApiKind::Neutral);
@@ -1777,7 +1779,9 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 146 -> 147: card CELL-RESULT-SET-WRITTEN-SET-DERIVATION adds
     // `fluent_bit/result_range.qv` (`flb_pipe_create`'s derived written sets,
     // a bounds contract v1 value set); resource-v1 rejects its declaration.
-    assert_eq!(modules.len(), 147, "corpus module count");
+    // 147 -> 149: card LOG-PRINT-BODY-CONTRACTS adds `cmetrics/logging.qv`
+    // and `chunkio/logging.qv`, both resource-v1 (selected, not rejected).
+    assert_eq!(modules.len(), 149, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
@@ -2147,9 +2151,12 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // rejected declarations: 365 -> 369; selected modules and v1 unchanged.
     // CELL-RESULT-SET-WRITTEN-SET-DERIVATION's `fluent_bit/result_range.qv`
     // (`flb_pipe_create`'s written sets) adds one: 369 -> 370.
+    // LOG-PRINT-BODY-CONTRACTS adds `cmetrics/logging.qv` and
+    // `chunkio/logging.qv`, one v1 declaration each: 66 -> 68 selected,
+    // 499 -> 501 v1; rejected declarations unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (66, 499, 370)
+        (68, 501, 370)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every
@@ -2206,7 +2213,10 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // Card CELL-PROTOCOL-FB-DECLARATIONS: the `quant cell` host
     // `flb_config_set_program_name` is a withheld lifetime declaration
     // (C04.6.3): 108 -> 109.
-    assert_eq!(loaded.retaining().len(), 109);
+    // Card LOG-PRINT-BODY-CONTRACTS: the two log printers' member
+    // invocations (`cmt_log_print`, `cio_log_print`, C04.19.3) are withheld
+    // from the function map: 109 -> 111.
+    assert_eq!(loaded.retaining().len(), 111);
     assert_eq!(
         loaded.functions().len()
             + loaded.pending_review().len()
