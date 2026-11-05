@@ -1,0 +1,483 @@
+[
+ {
+  "base": {
+   "combined": "Unknown",
+   "contract_dependencies": [
+    "inferred:rd_tmpabuf_alloc0",
+    "inferred:rd_tmpabuf_new",
+    "inferred:rd_tmpabuf_write0",
+    "inferred:rd_tmpabuf_write_str0"
+   ],
+   "null": "Unknown",
+   "outcome": "candidate",
+   "sources": [
+    "uncontracted-result:rd_tmpabuf_alloc0"
+   ]
+  },
+  "check": 27,
+  "file": "rdkafka_metadata_cache.c",
+  "function": "rd_kafka_metadata_cache_entry_new",
+  "library": "librdkafka",
+  "origin": "rdkafka_metadata_cache.c:308",
+  "subject": "rkmce",
+  "tip": {
+   "combined": "Unsafe",
+   "contract_dependencies": [
+    "inferred:rd_tmpabuf_alloc0",
+    "inferred:rd_tmpabuf_new",
+    "inferred:rd_tmpabuf_write0",
+    "inferred:rd_tmpabuf_write_str0"
+   ],
+   "custody": "Unknown",
+   "null": "Unsafe",
+   "outcome": "finding",
+   "sources": [
+    "lookup:rd_tmpabuf_alloc0"
+   ]
+  },
+  "witness": {
+   "class": "null-on-normal-path",
+   "condition": "the lookup `rd_tmpabuf_alloc0` at line 20254 misses (returns NULL)",
+   "path": [
+    {
+     "line": 20244,
+     "origin": "rdkafka_metadata_cache.c:289",
+     "step": "decision",
+     "text": "`include_racks` is false"
+    },
+    {
+     "line": 20254,
+     "origin": "rdkafka_metadata_cache.c:306",
+     "step": "null-event",
+     "text": "the lookup `rd_tmpabuf_alloc0` at line 20254 misses (returns NULL)"
+    },
+    {
+     "line": 20255,
+     "origin": "rdkafka_metadata_cache.c:308",
+     "step": "dereference",
+     "text": "rkmce->rkmce_mtopic"
+    }
+   ]
+  }
+ },
+ {
+  "base": {
+   "combined": "Unknown",
+   "contract_dependencies": [
+    "inferred:rd_kafka_msgq_first",
+    "inferred:rd_kafka_msgq_len",
+    "inferred:rd_kafka_msgq_size"
+   ],
+   "null": "Unknown",
+   "outcome": "candidate",
+   "sources": [
+    "uncontracted-result:rd_kafka_msgq_first"
+   ]
+  },
+  "check": 15,
+  "file": "rdkafka_msg.c",
+  "function": "rd_kafka_msgq_allow_wakeup_at",
+  "library": "librdkafka",
+  "origin": "rdkafka_msg.c:1830",
+  "subject": "rkm",
+  "tip": {
+   "combined": "Unsafe",
+   "contract_dependencies": [
+    "inferred:rd_kafka_msgq_first",
+    "inferred:rd_kafka_msgq_len",
+    "inferred:rd_kafka_msgq_size"
+   ],
+   "custody": "Unknown",
+   "null": "Unsafe",
+   "outcome": "finding",
+   "sources": [
+    "lookup:rd_kafka_msgq_first"
+   ]
+  },
+  "witness": {
+   "class": "null-on-normal-path",
+   "condition": "the lookup `rd_kafka_msgq_first` at line 20841 misses (returns NULL)",
+   "path": [
+    {
+     "line": 20835,
+     "origin": "rdkafka_msg.c:1819",
+     "step": "decision",
+     "text": "`&dest_rkmq->rkmq_msgs->tqh_first` is true"
+    },
+    {
+     "line": 20841,
+     "origin": "rdkafka_msg.c:1826",
+     "step": "null-event",
+     "text": "the lookup `rd_kafka_msgq_first` at line 20841 misses (returns NULL)"
+    },
+    {
+     "line": 20843,
+     "origin": "rdkafka_msg.c:1830",
+     "step": "dereference",
+     "text": "rkm->rkm_u"
+    }
+   ]
+  }
+ },
+ {
+  "base": {
+   "combined": "Unknown",
+   "contract_dependencies": [
+    "cross-unit-inferred:rd_kafka_broker_buf_enq_replyq",
+    "cross-unit-inferred:rd_kafka_msgset_create_ProduceRequest",
+    "inferred:rd_avg_add",
+    "inferred:rd_kafka_buf_set_abs_timeout0",
+    "inferred:rd_kafka_msgq_first",
+    "inferred:rd_kafka_msgq_len",
+    "member:rd_kafka_toppar_s.rktp_rkt",
+    "premise:rk_plugin_callback_closure"
+   ],
+   "null": "Unknown",
+   "outcome": "candidate",
+   "sources": [
+    "uncontracted-result:rd_kafka_msgq_first"
+   ]
+  },
+  "check": 16,
+  "file": "rdkafka_request.c",
+  "function": "rd_kafka_ProduceRequest",
+  "library": "librdkafka",
+  "origin": "rdkafka_request.c:5099",
+  "subject": "rd_kafka_msgq_first(&rkbuf->rkbuf_u.Produce.batch.msgq)",
+  "tip": {
+   "combined": "Unsafe",
+   "contract_dependencies": [
+    "cross-unit-inferred:rd_kafka_broker_buf_enq_replyq",
+    "cross-unit-inferred:rd_kafka_msgset_create_ProduceRequest",
+    "inferred:rd_avg_add",
+    "inferred:rd_kafka_buf_set_abs_timeout0",
+    "inferred:rd_kafka_msgq_first",
+    "inferred:rd_kafka_msgq_len",
+    "member:rd_kafka_toppar_s.rktp_rkt",
+    "premise:rk_plugin_callback_closure"
+   ],
+   "custody": "Unknown",
+   "null": "Unsafe",
+   "outcome": "finding",
+   "sources": [
+    "lookup:rd_kafka_msgq_first"
+   ]
+  },
+  "witness": {
+   "class": "null-on-normal-path",
+   "condition": "the lookup `rd_kafka_msgq_first` at line 23206 misses (returns NULL)",
+   "path": [
+    {
+     "line": 23196,
+     "origin": "rdkafka_request.c:5084",
+     "step": "decision",
+     "text": "`rkbuf` is true"
+    },
+    {
+     "line": 23202,
+     "origin": "rdkafka_request.c:5093",
+     "step": "decision",
+     "text": "`rkt->rkt_conf.required_acks` is false"
+    },
+    {
+     "line": 23206,
+     "origin": "rdkafka_request.c:5099",
+     "step": "null-event",
+     "text": "the lookup `rd_kafka_msgq_first` at line 23206 misses (returns NULL)"
+    },
+    {
+     "line": 23206,
+     "origin": "rdkafka_request.c:5099",
+     "step": "dereference",
+     "text": "rd_kafka_msgq_first(&rkbuf->rkbuf_u.Produce.batch.msgq)->rkm_u"
+    }
+   ]
+  }
+ },
+ {
+  "base": {
+   "combined": "Unknown",
+   "contract_dependencies": [
+    "cross-unit-result:rd_kafka_op_new0",
+    "inferred:rd_kafka_op_cmp_prio",
+    "inferred:rd_kafka_q_destroy0",
+    "inferred:rd_kafka_q_disable0",
+    "inferred:rd_kafka_q_enq",
+    "inferred:rd_kafka_q_enq0",
+    "inferred:rd_kafka_q_enq1",
+    "inferred:rd_kafka_q_fwd_get",
+    "inferred:rd_kafka_q_io_event",
+    "inferred:rd_kafka_q_keep",
+    "inferred:rd_kafkap_leader_discovery_metadata_init",
+    "inferred:rd_kafkap_leader_discovery_set_CurrentLeader",
+    "inferred:rd_kafkap_leader_discovery_set_brokers",
+    "inferred:rd_kafkap_leader_discovery_set_topic",
+    "inferred:rd_kafkap_leader_discovery_set_topic_cnt",
+    "inferred:rd_kafkap_leader_discovery_tmpabuf_add_alloc_brokers",
+    "inferred:rd_kafkap_leader_discovery_tmpabuf_add_alloc_topic",
+    "inferred:rd_kafkap_leader_discovery_tmpabuf_add_alloc_topics",
+    "inferred:rd_tmpabuf_alloc0",
+    "inferred:rd_tmpabuf_new",
+    "premise:rk_plugin_callback_closure",
+    "rd_kafka_handle_Produce_metadata_update",
+    "stable:rd_kafka_broker_s.rkb_rk"
+   ],
+   "null": "Unknown",
+   "outcome": "candidate",
+   "sources": [
+    "uncontracted-result:rd_tmpabuf_alloc0"
+   ]
+  },
+  "check": 19,
+  "file": "rdkafka_request.c",
+  "function": "rd_kafka_handle_Produce_metadata_update",
+  "library": "librdkafka",
+  "origin": "rdkafka_request.c:3900",
+  "subject": "mdi at inferred `rd_kafkap_leader_discovery_metadata_init` quant null-deref #mdi",
+  "tip": {
+   "combined": "Unsafe",
+   "contract_dependencies": [
+    "cross-unit-result:rd_kafka_op_new0",
+    "inferred:rd_kafka_op_cmp_prio",
+    "inferred:rd_kafka_q_destroy0",
+    "inferred:rd_kafka_q_disable0",
+    "inferred:rd_kafka_q_enq",
+    "inferred:rd_kafka_q_enq0",
+    "inferred:rd_kafka_q_enq1",
+    "inferred:rd_kafka_q_fwd_get",
+    "inferred:rd_kafka_q_io_event",
+    "inferred:rd_kafka_q_keep",
+    "inferred:rd_kafkap_leader_discovery_metadata_init",
+    "inferred:rd_kafkap_leader_discovery_set_CurrentLeader",
+    "inferred:rd_kafkap_leader_discovery_set_brokers",
+    "inferred:rd_kafkap_leader_discovery_set_topic",
+    "inferred:rd_kafkap_leader_discovery_set_topic_cnt",
+    "inferred:rd_kafkap_leader_discovery_tmpabuf_add_alloc_brokers",
+    "inferred:rd_kafkap_leader_discovery_tmpabuf_add_alloc_topic",
+    "inferred:rd_kafkap_leader_discovery_tmpabuf_add_alloc_topics",
+    "inferred:rd_tmpabuf_alloc0",
+    "inferred:rd_tmpabuf_new",
+    "premise:rk_plugin_callback_closure",
+    "rd_kafka_handle_Produce_metadata_update",
+    "stable:rd_kafka_broker_s.rkb_rk"
+   ],
+   "custody": "Unknown",
+   "null": "Unsafe",
+   "outcome": "finding",
+   "sources": [
+    "lookup:rd_tmpabuf_alloc0"
+   ]
+  },
+  "witness": {
+   "class": "null-on-normal-path",
+   "condition": "the lookup `rd_tmpabuf_alloc0` at line 22680 misses (returns NULL)",
+   "path": [
+    {
+     "line": 22662,
+     "origin": "rdkafka_request.c:3876",
+     "step": "decision",
+     "text": "`ProduceTags->leader_change_cnt` is true"
+    },
+    {
+     "line": 22680,
+     "origin": "rdkafka_request.c:3897",
+     "step": "null-event",
+     "text": "the lookup `rd_tmpabuf_alloc0` at line 22680 misses (returns NULL)"
+    },
+    {
+     "line": 22682,
+     "origin": "rdkafka_request.c:3900",
+     "step": "dereference",
+     "text": "mdi"
+    }
+   ]
+  }
+ },
+ {
+  "base": {
+   "combined": "Unknown",
+   "contract_dependencies": [
+    "cross-unit-inferred:rd_kafka_dr_implicit_ack",
+    "inferred:rd_kafka_msgq_first",
+    "inferred:rd_kafka_msgq_last",
+    "inferred:rd_kafka_msgq_len",
+    "member:rd_kafka_topic_s.rkt_topic",
+    "member:rd_kafka_toppar_s.rktp_rkt",
+    "premise:rk_plugin_callback_closure",
+    "rd_kafka_dr_implicit_ack"
+   ],
+   "null": "Unknown",
+   "outcome": "candidate",
+   "sources": [
+    "uncontracted-result:rd_kafka_msgq_first"
+   ]
+  },
+  "check": 9,
+  "file": "rdkafka_request.c",
+  "function": "rd_kafka_handle_idempotent_Produce_success",
+  "library": "librdkafka",
+  "origin": "rdkafka_request.c:4789",
+  "subject": "rd_kafka_msgq_first(&batch->msgq)",
+  "tip": {
+   "combined": "Unsafe",
+   "contract_dependencies": [
+    "cross-unit-inferred:rd_kafka_dr_implicit_ack",
+    "inferred:rd_kafka_msgq_first",
+    "inferred:rd_kafka_msgq_last",
+    "inferred:rd_kafka_msgq_len",
+    "member:rd_kafka_topic_s.rkt_topic",
+    "member:rd_kafka_toppar_s.rktp_rkt",
+    "premise:rk_plugin_callback_closure",
+    "rd_kafka_dr_implicit_ack"
+   ],
+   "custody": "Unknown",
+   "null": "Unsafe",
+   "outcome": "finding",
+   "sources": [
+    "lookup:rd_kafka_msgq_first"
+   ]
+  },
+  "witness": {
+   "class": "null-on-normal-path",
+   "condition": "the lookup `rd_kafka_msgq_first` at line 23053 misses (returns NULL)",
+   "path": [
+    {
+     "line": 23053,
+     "origin": "rdkafka_request.c:4789",
+     "step": "null-event",
+     "text": "the lookup `rd_kafka_msgq_first` at line 23053 misses (returns NULL)"
+    },
+    {
+     "line": 23053,
+     "origin": "rdkafka_request.c:4789",
+     "step": "dereference",
+     "text": "rd_kafka_msgq_first(&batch->msgq)->rkm_u"
+    }
+   ]
+  }
+ },
+ {
+  "base": {
+   "combined": "Unknown",
+   "contract_dependencies": [
+    "cross-unit-inferred:rd_kafka_dr_implicit_ack",
+    "inferred:rd_kafka_msgq_first",
+    "inferred:rd_kafka_msgq_last",
+    "inferred:rd_kafka_msgq_len",
+    "member:rd_kafka_topic_s.rkt_topic",
+    "member:rd_kafka_toppar_s.rktp_rkt",
+    "premise:rk_plugin_callback_closure",
+    "rd_kafka_dr_implicit_ack"
+   ],
+   "null": "Unknown",
+   "outcome": "candidate",
+   "sources": [
+    "uncontracted-result:rd_kafka_msgq_last"
+   ]
+  },
+  "check": 11,
+  "file": "rdkafka_request.c",
+  "function": "rd_kafka_handle_idempotent_Produce_success",
+  "library": "librdkafka",
+  "origin": "rdkafka_request.c:4790",
+  "subject": "rd_kafka_msgq_last(&batch->msgq)",
+  "tip": {
+   "combined": "Unsafe",
+   "contract_dependencies": [
+    "cross-unit-inferred:rd_kafka_dr_implicit_ack",
+    "inferred:rd_kafka_msgq_first",
+    "inferred:rd_kafka_msgq_last",
+    "inferred:rd_kafka_msgq_len",
+    "member:rd_kafka_topic_s.rkt_topic",
+    "member:rd_kafka_toppar_s.rktp_rkt",
+    "premise:rk_plugin_callback_closure",
+    "rd_kafka_dr_implicit_ack"
+   ],
+   "custody": "Unknown",
+   "null": "Unsafe",
+   "outcome": "finding",
+   "sources": [
+    "lookup:rd_kafka_msgq_last"
+   ]
+  },
+  "witness": {
+   "class": "null-on-normal-path",
+   "condition": "the lookup `rd_kafka_msgq_last` at line 23054 misses (returns NULL)",
+   "path": [
+    {
+     "line": 23054,
+     "origin": "rdkafka_request.c:4790",
+     "step": "null-event",
+     "text": "the lookup `rd_kafka_msgq_last` at line 23054 misses (returns NULL)"
+    },
+    {
+     "line": 23054,
+     "origin": "rdkafka_request.c:4790",
+     "step": "dereference",
+     "text": "rd_kafka_msgq_last(&batch->msgq)->rkm_u"
+    }
+   ]
+  }
+ },
+ {
+  "base": {
+   "combined": "Unknown",
+   "contract_dependencies": [
+    "inferred:rd_tmpabuf_alloc0",
+    "inferred:rd_tmpabuf_new",
+    "inferred:rd_tmpabuf_write0",
+    "inferred:rd_tmpabuf_write_str0"
+   ],
+   "null": "Unknown",
+   "outcome": "candidate",
+   "sources": [
+    "uncontracted-result:rd_tmpabuf_alloc0"
+   ]
+  },
+  "check": 20,
+  "file": "rdkafka_topic.c",
+  "function": "rd_kafka_topic_info_new_with_rack",
+  "library": "librdkafka",
+  "origin": "rdkafka_topic.c:2201",
+  "subject": "ti",
+  "tip": {
+   "combined": "Unsafe",
+   "contract_dependencies": [
+    "inferred:rd_tmpabuf_alloc0",
+    "inferred:rd_tmpabuf_new",
+    "inferred:rd_tmpabuf_write0",
+    "inferred:rd_tmpabuf_write_str0"
+   ],
+   "custody": "Unknown",
+   "null": "Unsafe",
+   "outcome": "finding",
+   "sources": [
+    "lookup:rd_tmpabuf_alloc0"
+   ]
+  },
+  "witness": {
+   "class": "null-on-normal-path",
+   "condition": "the lookup `rd_tmpabuf_alloc0` at line 20948 misses (returns NULL)",
+   "path": [
+    {
+     "line": 20933,
+     "origin": "rdkafka_topic.c:2175",
+     "step": "decision",
+     "text": "`i < partition_cnt` is false"
+    },
+    {
+     "line": 20948,
+     "origin": "rdkafka_topic.c:2200",
+     "step": "null-event",
+     "text": "the lookup `rd_tmpabuf_alloc0` at line 20948 misses (returns NULL)"
+    },
+    {
+     "line": 20949,
+     "origin": "rdkafka_topic.c:2201",
+     "step": "dereference",
+     "text": "ti->topic"
+    }
+   ]
+  }
+ }
+]
