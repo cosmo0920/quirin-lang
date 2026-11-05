@@ -132,6 +132,7 @@ fn row(function: &str, applied: &[&str]) -> LegacyFunctionSummary {
             tie_names: BTreeSet::new(),
             traversal: Default::default(),
             cell_tests: Default::default(),
+            cell_frames: Default::default(),
         },
         exits: Vec::new(),
         counted_users: Vec::new(),

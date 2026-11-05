@@ -55,6 +55,11 @@ pub struct LoopLifetimeContract {
     /// before the card serializes as it did.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub cells: Vec<crate::descriptor_cell::CellProtocol>,
+    /// Card CELL-PROTOCOL-RELEASE-WINDOW-FRAMES (rule 38g): `quant cell
+    /// CALLEE: TAG |-> #untouched;` callee frames, sorted. Omitted when
+    /// empty, so every declaration before the card serializes as it did.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub frames: Vec<crate::descriptor_cell::CellFrame>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]

@@ -1,0 +1,750 @@
+{
+ "trees": {
+  "046accf6": {
+   "src/flb_input.c": "92a0917b89dd61ff92d098dffcf56ddae1060d7588874a3fc0e8e27f45544122",
+   "src/flb_input_thread.c": "ac3517f13136d96f7e490fed15dca9ff1b1b9fcc30469b6ad2925ca324d7a40c",
+   "src/flb_output.c": "2d31e29a14f432716732d40a7c0f0276fc86d8daef7a5d2a0831307c18ba8fed"
+  },
+  "34155955": {
+   "src/flb_input.c": "92a0917b89dd61ff92d098dffcf56ddae1060d7588874a3fc0e8e27f45544122",
+   "src/flb_input_thread.c": "ac3517f13136d96f7e490fed15dca9ff1b1b9fcc30469b6ad2925ca324d7a40c",
+   "src/flb_output.c": "2d31e29a14f432716732d40a7c0f0276fc86d8daef7a5d2a0831307c18ba8fed"
+  },
+  "66910c10": {
+   "src/flb_input.c": "2056b5856e4c2405ed959bf72f211c5d03fe7cc520f5ed174837ffd5d329ebd7",
+   "src/flb_input_thread.c": "ac3517f13136d96f7e490fed15dca9ff1b1b9fcc30469b6ad2925ca324d7a40c",
+   "src/flb_output.c": "2f6cde94c61380243e5a3f183bac01894763468d9f61539f90acdd983d2cc819"
+  }
+ },
+ "windows": [
+  {
+   "calls": [
+    {
+     "callee": "mk_event_closesocket",
+     "contracted": "yes (close, libc)",
+     "frame": "n/a",
+     "line": 538,
+     "reading": "rule 38c/38d's close of a declared end, handed only the record's cell number: not a window call",
+     "statement": "mk_event_closesocket(ins->ch_events[0]);"
+    },
+    {
+     "callee": "mk_event_closesocket",
+     "contracted": "yes (close, libc)",
+     "frame": "n/a",
+     "line": 542,
+     "reading": "rule 38c/38d's close of a declared end, handed only the record's cell number: not a window call",
+     "statement": "mk_event_closesocket(ins->ch_events[1]);"
+    },
+    {
+     "callee": "flb_output_free_properties",
+     "contracted": "no",
+     "frame": "none in production (fixture: declared; the static body is in flb_output.c's unit but calls flb_kv_release out of it)",
+     "line": 546,
+     "reading": "refuses as an uncontracted call; rule 38g is not read",
+     "statement": "flb_output_free_properties(ins);"
+    },
+    {
+     "callee": "flb_task_queue_destroy",
+     "contracted": "yes (teardown_destroy.qv), released member value",
+     "frame": "none: the access gate refuses the member-value release first, so no frame would be read (body src/flb_task.c:962-980 names no flb_output_instance member)",
+     "line": 550,
+     "reading": "refuses at the access gate (indirect memory access) as at the baseline; rule 38g is not read",
+     "statement": "flb_task_queue_destroy(ins->singleplex_queue);"
+    },
+    {
+     "callee": "mk_list_del",
+     "contracted": "yes (monkey/intrusive_list.qv)",
+     "frame": "checked: lib/monkey/include/monkey/mk_core/mk_list.h:139-150 names only struct mk_list's prev/next and is in the unit",
+     "line": 553,
+     "reading": "passes: the record's fact is the same after the call (:631)",
+     "statement": "mk_list_del(&ins->_head);"
+    },
+    {
+     "callee": "flb_processor_destroy",
+     "contracted": "no",
+     "frame": "none",
+     "line": 557,
+     "reading": "refuses as an uncontracted call; rule 38g is not read",
+     "statement": "flb_processor_destroy(ins->processor);"
+    },
+    {
+     "callee": "flb_free",
+     "contracted": "yes (libc-inheriting wrapper)",
+     "frame": "n/a",
+     "line": 560,
+     "reading": "the holder's release: ends the protocol (rule 38f (5)); not a window call",
+     "statement": "flb_free(ins);"
+    }
+   ],
+   "destroyer": "flb_output_instance_destroy",
+   "opens": 538,
+   "record": "flb_output_instance",
+   "release": 560,
+   "tree": "66910c10"
+  },
+  {
+   "calls": [
+    {
+     "callee": "mk_event_closesocket",
+     "contracted": "yes (close, libc)",
+     "frame": "n/a",
+     "line": 1304,
+     "reading": "rule 38c/38d's close of a declared end, handed only the record's cell number: not a window call",
+     "statement": "mk_event_closesocket(ins->ch_events[0]);"
+    },
+    {
+     "callee": "mk_event_closesocket",
+     "contracted": "yes (close, libc)",
+     "frame": "n/a",
+     "line": 1308,
+     "reading": "rule 38c/38d's close of a declared end, handed only the record's cell number: not a window call",
+     "statement": "mk_event_closesocket(ins->ch_events[1]);"
+    },
+    {
+     "callee": "mk_event_closesocket",
+     "contracted": "yes (close, libc)",
+     "frame": "n/a",
+     "line": 1312,
+     "reading": "rule 38c/38d's close of a declared end, handed only the record's cell number: not a window call",
+     "statement": "mk_event_closesocket(ins->ingress_queue_channels[0]);"
+    },
+    {
+     "callee": "mk_event_closesocket",
+     "contracted": "yes (close, libc)",
+     "frame": "n/a",
+     "line": 1316,
+     "reading": "rule 38c/38d's close of a declared end, handed only the record's cell number: not a window call",
+     "statement": "mk_event_closesocket(ins->ingress_queue_channels[1]);"
+    },
+    {
+     "callee": "mk_list_del",
+     "contracted": "yes (monkey/intrusive_list.qv)",
+     "frame": "checked: lib/monkey/include/monkey/mk_core/mk_list.h:139-150 names only struct mk_list's prev/next and is in the unit",
+     "line": 1322,
+     "reading": "passes: the record's fact is the same after the call (both :1330 and :1340)",
+     "statement": "mk_list_del(&collector->_head);"
+    },
+    {
+     "callee": "flb_input_collector_destroy",
+     "contracted": "yes (teardown_destroy.qv)",
+     "frame": "declared: src/flb_input.c:3140-3156 (3120-3136 at 66910c10) reads coll->instance->config, removes the collector's own event (mk_event_del / mk_event_timeout_destroy on &coll->event) and frees it; it calls Monkey out of the unit, so the unit cannot check it",
+     "line": 1323,
+     "reading": "handed `collector` (not the record): read as reaching it (container_of, back pointer); held for review (awaiting-human-review)",
+     "statement": "flb_input_collector_destroy(collector);"
+    },
+    {
+     "callee": "pthread_mutex_destroy",
+     "contracted": "no",
+     "frame": "none",
+     "line": 1326,
+     "reading": "refuses as an uncontracted call; rule 38g is not read",
+     "statement": "pthread_mutex_destroy(&ins->ingress_queue_lock);"
+    },
+    {
+     "callee": "pthread_cond_destroy",
+     "contracted": "yes, held by its thread-synchronization obligation",
+     "frame": "none",
+     "line": 1327,
+     "reading": "refuses outside its declared obligation first; rule 38g is not read",
+     "statement": "pthread_cond_destroy(&ins->ingress_queue_space_available);"
+    },
+    {
+     "callee": "flb_storage_input_destroy",
+     "contracted": "no",
+     "frame": "none in production (fixture: declared; body src/flb_storage.c:625-639 is not in flb_input.c's unit)",
+     "line": 1330,
+     "reading": "refuses as an uncontracted call; rule 38g is not read",
+     "statement": "flb_storage_input_destroy(ins);"
+    },
+    {
+     "callee": "mk_list_del",
+     "contracted": "yes (monkey/intrusive_list.qv)",
+     "frame": "checked: lib/monkey/include/monkey/mk_core/mk_list.h:139-150 names only struct mk_list's prev/next and is in the unit",
+     "line": 1332,
+     "reading": "passes: the record's fact is the same after the call (both :1330 and :1340)",
+     "statement": "mk_list_del(&ins->_head);"
+    },
+    {
+     "callee": "flb_input_chunk_ring_buffer_cleanup",
+     "contracted": "no",
+     "frame": "none",
+     "line": 1336,
+     "reading": "refuses as an uncontracted call; rule 38g is not read",
+     "statement": "flb_input_chunk_ring_buffer_cleanup(ins);"
+    },
+    {
+     "callee": "flb_ring_buffer_destroy",
+     "contracted": "no",
+     "frame": "none",
+     "line": 1337,
+     "reading": "refuses as an uncontracted call; rule 38g is not read",
+     "statement": "flb_ring_buffer_destroy(ins->rb);"
+    },
+    {
+     "callee": "flb_processor_destroy",
+     "contracted": "no",
+     "frame": "none",
+     "line": 1342,
+     "reading": "refuses as an uncontracted call; rule 38g is not read",
+     "statement": "flb_processor_destroy(ins->processor);"
+    },
+    {
+     "callee": "flb_free",
+     "contracted": "yes (libc-inheriting wrapper)",
+     "frame": "n/a",
+     "line": 1345,
+     "reading": "the holder's release: ends the protocol (rule 38f (5)); not a window call",
+     "statement": "flb_free(ins);"
+    }
+   ],
+   "destroyer": "flb_input_instance_destroy",
+   "opens": 1304,
+   "record": "flb_input_instance",
+   "release": 1345,
+   "tree": "66910c10"
+  },
+  {
+   "calls": [
+    {
+     "callee": "mk_event_closesocket",
+     "contracted": "yes (close, libc)",
+     "frame": "n/a",
+     "line": 211,
+     "reading": "rule 38c/38d's close of a declared end, handed only the record's cell number: not a window call",
+     "statement": "mk_event_closesocket(thi->ch_parent_events[0]);"
+    },
+    {
+     "callee": "mk_event_closesocket",
+     "contracted": "yes (close, libc)",
+     "frame": "n/a",
+     "line": 214,
+     "reading": "rule 38c/38d's close of a declared end, handed only the record's cell number: not a window call",
+     "statement": "mk_event_closesocket(thi->ch_parent_events[1]);"
+    },
+    {
+     "callee": "mk_event_closesocket",
+     "contracted": "yes (close, libc)",
+     "frame": "n/a",
+     "line": 219,
+     "reading": "rule 38c/38d's close of a declared end, handed only the record's cell number: not a window call",
+     "statement": "mk_event_closesocket(thi->ch_thread_events[0]);"
+    },
+    {
+     "callee": "mk_event_closesocket",
+     "contracted": "yes (close, libc)",
+     "frame": "n/a",
+     "line": 222,
+     "reading": "rule 38c/38d's close of a declared end, handed only the record's cell number: not a window call",
+     "statement": "mk_event_closesocket(thi->ch_thread_events[1]);"
+    },
+    {
+     "callee": "flb_tp_destroy",
+     "contracted": "no",
+     "frame": "none in production (fixture: declared; body src/flb_thread_pool.c:48-61 is not in flb_input_thread.c's unit)",
+     "line": 225,
+     "reading": "refuses as an uncontracted call; rule 38g is not read",
+     "statement": "flb_tp_destroy(thi->tp);"
+    },
+    {
+     "callee": "flb_free",
+     "contracted": "yes (libc-inheriting wrapper)",
+     "frame": "n/a",
+     "line": 226,
+     "reading": "the holder's release: ends the protocol (rule 38f (5)); not a window call",
+     "statement": "flb_free(thi);"
+    }
+   ],
+   "destroyer": "input_thread_instance_destroy",
+   "opens": 211,
+   "record": "flb_input_thread_instance",
+   "release": 226,
+   "tree": "66910c10"
+  },
+  {
+   "calls": [
+    {
+     "callee": "mk_event_closesocket",
+     "contracted": "yes (close, libc)",
+     "frame": "n/a",
+     "line": 616,
+     "reading": "rule 38c/38d's close of a declared end, handed only the record's cell number: not a window call",
+     "statement": "mk_event_closesocket(ins->ch_events[0]);"
+    },
+    {
+     "callee": "mk_event_closesocket",
+     "contracted": "yes (close, libc)",
+     "frame": "n/a",
+     "line": 620,
+     "reading": "rule 38c/38d's close of a declared end, handed only the record's cell number: not a window call",
+     "statement": "mk_event_closesocket(ins->ch_events[1]);"
+    },
+    {
+     "callee": "flb_output_free_properties",
+     "contracted": "no",
+     "frame": "none in production (fixture: declared; the static body is in flb_output.c's unit but calls flb_kv_release out of it)",
+     "line": 624,
+     "reading": "refuses as an uncontracted call; rule 38g is not read",
+     "statement": "flb_output_free_properties(ins);"
+    },
+    {
+     "callee": "flb_task_queue_destroy",
+     "contracted": "yes (teardown_destroy.qv), released member value",
+     "frame": "none: the access gate refuses the member-value release first, so no frame would be read (body src/flb_task.c:962-980 names no flb_output_instance member)",
+     "line": 628,
+     "reading": "refuses at the access gate (indirect memory access) as at the baseline; rule 38g is not read",
+     "statement": "flb_task_queue_destroy(ins->singleplex_queue);"
+    },
+    {
+     "callee": "mk_list_del",
+     "contracted": "yes (monkey/intrusive_list.qv)",
+     "frame": "checked: lib/monkey/include/monkey/mk_core/mk_list.h:139-150 names only struct mk_list's prev/next and is in the unit",
+     "line": 631,
+     "reading": "passes: the record's fact is the same after the call (:631)",
+     "statement": "mk_list_del(&ins->_head);"
+    },
+    {
+     "callee": "flb_processor_destroy",
+     "contracted": "no",
+     "frame": "none",
+     "line": 635,
+     "reading": "refuses as an uncontracted call; rule 38g is not read",
+     "statement": "flb_processor_destroy(ins->processor);"
+    },
+    {
+     "callee": "flb_free",
+     "contracted": "yes (libc-inheriting wrapper)",
+     "frame": "n/a",
+     "line": 638,
+     "reading": "the holder's release: ends the protocol (rule 38f (5)); not a window call",
+     "statement": "flb_free(ins);"
+    }
+   ],
+   "destroyer": "flb_output_instance_destroy",
+   "opens": 616,
+   "record": "flb_output_instance",
+   "release": 638,
+   "tree": "046accf6"
+  },
+  {
+   "calls": [
+    {
+     "callee": "mk_event_closesocket",
+     "contracted": "yes (close, libc)",
+     "frame": "n/a",
+     "line": 1312,
+     "reading": "rule 38c/38d's close of a declared end, handed only the record's cell number: not a window call",
+     "statement": "mk_event_closesocket(ins->ch_events[0]);"
+    },
+    {
+     "callee": "mk_event_closesocket",
+     "contracted": "yes (close, libc)",
+     "frame": "n/a",
+     "line": 1316,
+     "reading": "rule 38c/38d's close of a declared end, handed only the record's cell number: not a window call",
+     "statement": "mk_event_closesocket(ins->ch_events[1]);"
+    },
+    {
+     "callee": "mk_event_closesocket",
+     "contracted": "yes (close, libc)",
+     "frame": "n/a",
+     "line": 1320,
+     "reading": "rule 38c/38d's close of a declared end, handed only the record's cell number: not a window call",
+     "statement": "mk_event_closesocket(ins->ingress_queue_channels[0]);"
+    },
+    {
+     "callee": "mk_event_closesocket",
+     "contracted": "yes (close, libc)",
+     "frame": "n/a",
+     "line": 1324,
+     "reading": "rule 38c/38d's close of a declared end, handed only the record's cell number: not a window call",
+     "statement": "mk_event_closesocket(ins->ingress_queue_channels[1]);"
+    },
+    {
+     "callee": "mk_list_del",
+     "contracted": "yes (monkey/intrusive_list.qv)",
+     "frame": "checked: lib/monkey/include/monkey/mk_core/mk_list.h:139-150 names only struct mk_list's prev/next and is in the unit",
+     "line": 1330,
+     "reading": "passes: the record's fact is the same after the call (both :1330 and :1340)",
+     "statement": "mk_list_del(&collector->_head);"
+    },
+    {
+     "callee": "flb_input_collector_destroy",
+     "contracted": "yes (teardown_destroy.qv)",
+     "frame": "declared: src/flb_input.c:3140-3156 (3120-3136 at 66910c10) reads coll->instance->config, removes the collector's own event (mk_event_del / mk_event_timeout_destroy on &coll->event) and frees it; it calls Monkey out of the unit, so the unit cannot check it",
+     "line": 1331,
+     "reading": "handed `collector` (not the record): read as reaching it (container_of, back pointer); held for review (awaiting-human-review)",
+     "statement": "flb_input_collector_destroy(collector);"
+    },
+    {
+     "callee": "pthread_mutex_destroy",
+     "contracted": "no",
+     "frame": "none",
+     "line": 1334,
+     "reading": "refuses as an uncontracted call; rule 38g is not read",
+     "statement": "pthread_mutex_destroy(&ins->ingress_queue_lock);"
+    },
+    {
+     "callee": "pthread_cond_destroy",
+     "contracted": "yes, held by its thread-synchronization obligation",
+     "frame": "none",
+     "line": 1335,
+     "reading": "refuses outside its declared obligation first; rule 38g is not read",
+     "statement": "pthread_cond_destroy(&ins->ingress_queue_space_available);"
+    },
+    {
+     "callee": "flb_storage_input_destroy",
+     "contracted": "no",
+     "frame": "none in production (fixture: declared; body src/flb_storage.c:625-639 is not in flb_input.c's unit)",
+     "line": 1338,
+     "reading": "refuses as an uncontracted call; rule 38g is not read",
+     "statement": "flb_storage_input_destroy(ins);"
+    },
+    {
+     "callee": "mk_list_del",
+     "contracted": "yes (monkey/intrusive_list.qv)",
+     "frame": "checked: lib/monkey/include/monkey/mk_core/mk_list.h:139-150 names only struct mk_list's prev/next and is in the unit",
+     "line": 1340,
+     "reading": "passes: the record's fact is the same after the call (both :1330 and :1340)",
+     "statement": "mk_list_del(&ins->_head);"
+    },
+    {
+     "callee": "flb_input_chunk_ring_buffer_cleanup",
+     "contracted": "no",
+     "frame": "none",
+     "line": 1344,
+     "reading": "refuses as an uncontracted call; rule 38g is not read",
+     "statement": "flb_input_chunk_ring_buffer_cleanup(ins);"
+    },
+    {
+     "callee": "flb_ring_buffer_destroy",
+     "contracted": "no",
+     "frame": "none",
+     "line": 1345,
+     "reading": "refuses as an uncontracted call; rule 38g is not read",
+     "statement": "flb_ring_buffer_destroy(ins->rb);"
+    },
+    {
+     "callee": "flb_processor_destroy",
+     "contracted": "no",
+     "frame": "none",
+     "line": 1350,
+     "reading": "refuses as an uncontracted call; rule 38g is not read",
+     "statement": "flb_processor_destroy(ins->processor);"
+    },
+    {
+     "callee": "flb_free",
+     "contracted": "yes (libc-inheriting wrapper)",
+     "frame": "n/a",
+     "line": 1353,
+     "reading": "the holder's release: ends the protocol (rule 38f (5)); not a window call",
+     "statement": "flb_free(ins);"
+    }
+   ],
+   "destroyer": "flb_input_instance_destroy",
+   "opens": 1312,
+   "record": "flb_input_instance",
+   "release": 1353,
+   "tree": "046accf6"
+  },
+  {
+   "calls": [
+    {
+     "callee": "mk_event_closesocket",
+     "contracted": "yes (close, libc)",
+     "frame": "n/a",
+     "line": 211,
+     "reading": "rule 38c/38d's close of a declared end, handed only the record's cell number: not a window call",
+     "statement": "mk_event_closesocket(thi->ch_parent_events[0]);"
+    },
+    {
+     "callee": "mk_event_closesocket",
+     "contracted": "yes (close, libc)",
+     "frame": "n/a",
+     "line": 214,
+     "reading": "rule 38c/38d's close of a declared end, handed only the record's cell number: not a window call",
+     "statement": "mk_event_closesocket(thi->ch_parent_events[1]);"
+    },
+    {
+     "callee": "mk_event_closesocket",
+     "contracted": "yes (close, libc)",
+     "frame": "n/a",
+     "line": 219,
+     "reading": "rule 38c/38d's close of a declared end, handed only the record's cell number: not a window call",
+     "statement": "mk_event_closesocket(thi->ch_thread_events[0]);"
+    },
+    {
+     "callee": "mk_event_closesocket",
+     "contracted": "yes (close, libc)",
+     "frame": "n/a",
+     "line": 222,
+     "reading": "rule 38c/38d's close of a declared end, handed only the record's cell number: not a window call",
+     "statement": "mk_event_closesocket(thi->ch_thread_events[1]);"
+    },
+    {
+     "callee": "flb_tp_destroy",
+     "contracted": "no",
+     "frame": "none in production (fixture: declared; body src/flb_thread_pool.c:48-61 is not in flb_input_thread.c's unit)",
+     "line": 225,
+     "reading": "refuses as an uncontracted call; rule 38g is not read",
+     "statement": "flb_tp_destroy(thi->tp);"
+    },
+    {
+     "callee": "flb_free",
+     "contracted": "yes (libc-inheriting wrapper)",
+     "frame": "n/a",
+     "line": 226,
+     "reading": "the holder's release: ends the protocol (rule 38f (5)); not a window call",
+     "statement": "flb_free(thi);"
+    }
+   ],
+   "destroyer": "input_thread_instance_destroy",
+   "opens": 211,
+   "record": "flb_input_thread_instance",
+   "release": 226,
+   "tree": "046accf6"
+  },
+  {
+   "calls": [
+    {
+     "callee": "mk_event_closesocket",
+     "contracted": "yes (close, libc)",
+     "frame": "n/a",
+     "line": 616,
+     "reading": "rule 38c/38d's close of a declared end, handed only the record's cell number: not a window call",
+     "statement": "mk_event_closesocket(ins->ch_events[0]);"
+    },
+    {
+     "callee": "mk_event_closesocket",
+     "contracted": "yes (close, libc)",
+     "frame": "n/a",
+     "line": 620,
+     "reading": "rule 38c/38d's close of a declared end, handed only the record's cell number: not a window call",
+     "statement": "mk_event_closesocket(ins->ch_events[1]);"
+    },
+    {
+     "callee": "flb_output_free_properties",
+     "contracted": "no",
+     "frame": "none in production (fixture: declared; the static body is in flb_output.c's unit but calls flb_kv_release out of it)",
+     "line": 624,
+     "reading": "refuses as an uncontracted call; rule 38g is not read",
+     "statement": "flb_output_free_properties(ins);"
+    },
+    {
+     "callee": "flb_task_queue_destroy",
+     "contracted": "yes (teardown_destroy.qv), released member value",
+     "frame": "none: the access gate refuses the member-value release first, so no frame would be read (body src/flb_task.c:962-980 names no flb_output_instance member)",
+     "line": 628,
+     "reading": "refuses at the access gate (indirect memory access) as at the baseline; rule 38g is not read",
+     "statement": "flb_task_queue_destroy(ins->singleplex_queue);"
+    },
+    {
+     "callee": "mk_list_del",
+     "contracted": "yes (monkey/intrusive_list.qv)",
+     "frame": "checked: lib/monkey/include/monkey/mk_core/mk_list.h:139-150 names only struct mk_list's prev/next and is in the unit",
+     "line": 631,
+     "reading": "passes: the record's fact is the same after the call (:631)",
+     "statement": "mk_list_del(&ins->_head);"
+    },
+    {
+     "callee": "flb_processor_destroy",
+     "contracted": "no",
+     "frame": "none",
+     "line": 635,
+     "reading": "refuses as an uncontracted call; rule 38g is not read",
+     "statement": "flb_processor_destroy(ins->processor);"
+    },
+    {
+     "callee": "flb_free",
+     "contracted": "yes (libc-inheriting wrapper)",
+     "frame": "n/a",
+     "line": 638,
+     "reading": "the holder's release: ends the protocol (rule 38f (5)); not a window call",
+     "statement": "flb_free(ins);"
+    }
+   ],
+   "destroyer": "flb_output_instance_destroy",
+   "opens": 616,
+   "record": "flb_output_instance",
+   "release": 638,
+   "tree": "34155955"
+  },
+  {
+   "calls": [
+    {
+     "callee": "mk_event_closesocket",
+     "contracted": "yes (close, libc)",
+     "frame": "n/a",
+     "line": 1312,
+     "reading": "rule 38c/38d's close of a declared end, handed only the record's cell number: not a window call",
+     "statement": "mk_event_closesocket(ins->ch_events[0]);"
+    },
+    {
+     "callee": "mk_event_closesocket",
+     "contracted": "yes (close, libc)",
+     "frame": "n/a",
+     "line": 1316,
+     "reading": "rule 38c/38d's close of a declared end, handed only the record's cell number: not a window call",
+     "statement": "mk_event_closesocket(ins->ch_events[1]);"
+    },
+    {
+     "callee": "mk_event_closesocket",
+     "contracted": "yes (close, libc)",
+     "frame": "n/a",
+     "line": 1320,
+     "reading": "rule 38c/38d's close of a declared end, handed only the record's cell number: not a window call",
+     "statement": "mk_event_closesocket(ins->ingress_queue_channels[0]);"
+    },
+    {
+     "callee": "mk_event_closesocket",
+     "contracted": "yes (close, libc)",
+     "frame": "n/a",
+     "line": 1324,
+     "reading": "rule 38c/38d's close of a declared end, handed only the record's cell number: not a window call",
+     "statement": "mk_event_closesocket(ins->ingress_queue_channels[1]);"
+    },
+    {
+     "callee": "mk_list_del",
+     "contracted": "yes (monkey/intrusive_list.qv)",
+     "frame": "checked: lib/monkey/include/monkey/mk_core/mk_list.h:139-150 names only struct mk_list's prev/next and is in the unit",
+     "line": 1330,
+     "reading": "passes: the record's fact is the same after the call (both :1330 and :1340)",
+     "statement": "mk_list_del(&collector->_head);"
+    },
+    {
+     "callee": "flb_input_collector_destroy",
+     "contracted": "yes (teardown_destroy.qv)",
+     "frame": "declared: src/flb_input.c:3140-3156 (3120-3136 at 66910c10) reads coll->instance->config, removes the collector's own event (mk_event_del / mk_event_timeout_destroy on &coll->event) and frees it; it calls Monkey out of the unit, so the unit cannot check it",
+     "line": 1331,
+     "reading": "handed `collector` (not the record): read as reaching it (container_of, back pointer); held for review (awaiting-human-review)",
+     "statement": "flb_input_collector_destroy(collector);"
+    },
+    {
+     "callee": "pthread_mutex_destroy",
+     "contracted": "no",
+     "frame": "none",
+     "line": 1334,
+     "reading": "refuses as an uncontracted call; rule 38g is not read",
+     "statement": "pthread_mutex_destroy(&ins->ingress_queue_lock);"
+    },
+    {
+     "callee": "pthread_cond_destroy",
+     "contracted": "yes, held by its thread-synchronization obligation",
+     "frame": "none",
+     "line": 1335,
+     "reading": "refuses outside its declared obligation first; rule 38g is not read",
+     "statement": "pthread_cond_destroy(&ins->ingress_queue_space_available);"
+    },
+    {
+     "callee": "flb_storage_input_destroy",
+     "contracted": "no",
+     "frame": "none in production (fixture: declared; body src/flb_storage.c:625-639 is not in flb_input.c's unit)",
+     "line": 1338,
+     "reading": "refuses as an uncontracted call; rule 38g is not read",
+     "statement": "flb_storage_input_destroy(ins);"
+    },
+    {
+     "callee": "mk_list_del",
+     "contracted": "yes (monkey/intrusive_list.qv)",
+     "frame": "checked: lib/monkey/include/monkey/mk_core/mk_list.h:139-150 names only struct mk_list's prev/next and is in the unit",
+     "line": 1340,
+     "reading": "passes: the record's fact is the same after the call (both :1330 and :1340)",
+     "statement": "mk_list_del(&ins->_head);"
+    },
+    {
+     "callee": "flb_input_chunk_ring_buffer_cleanup",
+     "contracted": "no",
+     "frame": "none",
+     "line": 1344,
+     "reading": "refuses as an uncontracted call; rule 38g is not read",
+     "statement": "flb_input_chunk_ring_buffer_cleanup(ins);"
+    },
+    {
+     "callee": "flb_ring_buffer_destroy",
+     "contracted": "no",
+     "frame": "none",
+     "line": 1345,
+     "reading": "refuses as an uncontracted call; rule 38g is not read",
+     "statement": "flb_ring_buffer_destroy(ins->rb);"
+    },
+    {
+     "callee": "flb_processor_destroy",
+     "contracted": "no",
+     "frame": "none",
+     "line": 1350,
+     "reading": "refuses as an uncontracted call; rule 38g is not read",
+     "statement": "flb_processor_destroy(ins->processor);"
+    },
+    {
+     "callee": "flb_free",
+     "contracted": "yes (libc-inheriting wrapper)",
+     "frame": "n/a",
+     "line": 1353,
+     "reading": "the holder's release: ends the protocol (rule 38f (5)); not a window call",
+     "statement": "flb_free(ins);"
+    }
+   ],
+   "destroyer": "flb_input_instance_destroy",
+   "opens": 1312,
+   "record": "flb_input_instance",
+   "release": 1353,
+   "tree": "34155955"
+  },
+  {
+   "calls": [
+    {
+     "callee": "mk_event_closesocket",
+     "contracted": "yes (close, libc)",
+     "frame": "n/a",
+     "line": 211,
+     "reading": "rule 38c/38d's close of a declared end, handed only the record's cell number: not a window call",
+     "statement": "mk_event_closesocket(thi->ch_parent_events[0]);"
+    },
+    {
+     "callee": "mk_event_closesocket",
+     "contracted": "yes (close, libc)",
+     "frame": "n/a",
+     "line": 214,
+     "reading": "rule 38c/38d's close of a declared end, handed only the record's cell number: not a window call",
+     "statement": "mk_event_closesocket(thi->ch_parent_events[1]);"
+    },
+    {
+     "callee": "mk_event_closesocket",
+     "contracted": "yes (close, libc)",
+     "frame": "n/a",
+     "line": 219,
+     "reading": "rule 38c/38d's close of a declared end, handed only the record's cell number: not a window call",
+     "statement": "mk_event_closesocket(thi->ch_thread_events[0]);"
+    },
+    {
+     "callee": "mk_event_closesocket",
+     "contracted": "yes (close, libc)",
+     "frame": "n/a",
+     "line": 222,
+     "reading": "rule 38c/38d's close of a declared end, handed only the record's cell number: not a window call",
+     "statement": "mk_event_closesocket(thi->ch_thread_events[1]);"
+    },
+    {
+     "callee": "flb_tp_destroy",
+     "contracted": "no",
+     "frame": "none in production (fixture: declared; body src/flb_thread_pool.c:48-61 is not in flb_input_thread.c's unit)",
+     "line": 225,
+     "reading": "refuses as an uncontracted call; rule 38g is not read",
+     "statement": "flb_tp_destroy(thi->tp);"
+    },
+    {
+     "callee": "flb_free",
+     "contracted": "yes (libc-inheriting wrapper)",
+     "frame": "n/a",
+     "line": 226,
+     "reading": "the holder's release: ends the protocol (rule 38f (5)); not a window call",
+     "statement": "flb_free(thi);"
+    }
+   ],
+   "destroyer": "input_thread_instance_destroy",
+   "opens": 211,
+   "record": "flb_input_thread_instance",
+   "release": 226,
+   "tree": "34155955"
+  }
+ ]
+}

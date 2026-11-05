@@ -254,6 +254,7 @@ fn cell(source: &str) -> Result<CellClause, String> {
             | "same"
             | "pointee"
             | "cell"
+            | "untouched"
     ) {
         return Err("quant-cell-binder: a reserved `#` word is no binder".into());
     }
@@ -343,6 +344,59 @@ fn cell(source: &str) -> Result<CellClause, String> {
         );
     }
     Ok((binder, record, path, same, guard_path, op, sets))
+}
+
+/// Card CELL-PROTOCOL-RELEASE-WINDOW-FRAMES (grammar G05k): whether a `quant
+/// cell` clause is a callee frame, `quant cell CALLEE: TAG |-> #untouched;`,
+/// rather than a protocol cell, which opens with its `#` binder.
+fn is_frame(source: &str) -> Result<bool, String> {
+    Ok(tokens(source)?.first().and_then(word).is_some())
+}
+
+/// Read one `quant cell CALLEE: TAG |-> #untouched;` (card
+/// CELL-PROTOCOL-RELEASE-WINDOW-FRAMES, grammar G05k; USER DECISION
+/// 2026-11-04, verbatim: "(a) Callee frames"). Total or reject.
+fn frame(source: &str) -> Result<qcore_schemas::descriptor_cell::CellFrame, String> {
+    let ts = tokens(source)?;
+    match ts.as_slice() {
+        [
+            TokenKind::Word(callee),
+            TokenKind::Symbol(Symbol::Colon),
+            TokenKind::Word(record),
+            TokenKind::Symbol(Symbol::MapsTo),
+            TokenKind::Symbol(Symbol::Hash),
+            TokenKind::Word(untouched),
+        ] if untouched == "untouched" => Ok(qcore_schemas::descriptor_cell::CellFrame {
+            callee: callee.clone(),
+            record: record.clone(),
+        }),
+        _ => Err("quant-frame-shape: write `quant cell CALLEE: TAG |-> #untouched;`".to_owned()),
+    }
+}
+
+/// A declaration's callee frames, sorted (G05k): each names a record whose
+/// protocol the same declaration states (`quant-frame-record`), and each
+/// (callee, record) pair is stated once (`quant-frame-duplicate`).
+fn cell_frames(
+    frames: Vec<qcore_schemas::descriptor_cell::CellFrame>,
+    protocols: &[qcore_schemas::descriptor_cell::CellProtocol],
+) -> Result<Vec<qcore_schemas::descriptor_cell::CellFrame>, String> {
+    let mut seen = BTreeSet::new();
+    for frame in &frames {
+        if !protocols
+            .iter()
+            .any(|protocol| protocol.record == frame.record)
+        {
+            return Err(format!(
+                "quant-frame-record: `{}` states no protocol in this declaration",
+                frame.record
+            ));
+        }
+        if !seen.insert(frame.clone()) {
+            return Err("quant-frame-duplicate: one frame per callee and record".into());
+        }
+    }
+    Ok(seen.into_iter().collect())
 }
 
 /// Card CELL-RESULT-SET-ALIGNMENT (USER DECISION 2026-11-04, Q2 (i)): the
@@ -572,6 +626,7 @@ pub fn read(decl: &SourceDeclaration) -> Result<LoopLifetimeContract, String> {
     let mut blocks = BTreeSet::new();
     let mut footprints = BTreeSet::new();
     let mut cell_clauses = Vec::new();
+    let mut frame_clauses = Vec::new();
     for c in &contract.clauses {
         match &c.value.kind {
             SourceContractClauseKind::QuantRegistered => {
@@ -619,12 +674,19 @@ pub fn read(decl: &SourceDeclaration) -> Result<LoopLifetimeContract, String> {
                 });
             }
             SourceContractClauseKind::QuantCell => {
-                cell_clauses.push(cell(&c.value.expression_source)?);
+                // Card CELL-PROTOCOL-RELEASE-WINDOW-FRAMES (G05k): a clause
+                // that opens with a name, not a `#` binder, is a callee frame.
+                if is_frame(&c.value.expression_source)? {
+                    frame_clauses.push(frame(&c.value.expression_source)?);
+                } else {
+                    cell_clauses.push(cell(&c.value.expression_source)?);
+                }
             }
             _ => {}
         }
     }
     out.cells = cell_protocols(cell_clauses)?;
+    out.frames = cell_frames(frame_clauses, &out.cells)?;
     if out
         .bindings
         .iter()
@@ -862,5 +924,63 @@ mod cell_protocol_tests {
         let same = host(SCHED).replace("host(", "again(");
         let env = load(&[("a.qv", host(SCHED)), ("b.qv", same)]).expect("loads");
         assert_eq!(env.cell_protocols()["flb_sched"].0.len(), 2);
+    }
+
+    /// Card CELL-PROTOCOL-RELEASE-WINDOW-FRAMES (grammar G05k; USER DECISION
+    /// 2026-11-04, verbatim: "(a) Callee frames"): a callee frame stands
+    /// beside its record's protocol and loads to the record's frame set.
+    #[test]
+    fn callee_frames_load_beside_their_protocol() {
+        let clauses = format!(
+            "{SCHED}\nquant cell mk_list_del: flb_sched |-> #untouched;\n\
+             quant cell flb_tp_destroy: flb_sched |-> #untouched;"
+        );
+        let env = load(&[("a.qv", host(&clauses))]).expect("loads");
+        let frames = env.cell_frames();
+        assert_eq!(
+            frames["flb_sched"].iter().collect::<Vec<_>>(),
+            ["flb_tp_destroy", "mk_list_del"]
+        );
+        assert!(!env.cell_frames_accepted());
+        let resolved = env.with_human_holds_in_force().expect("frames are held");
+        assert!(resolved.cell_frames_accepted());
+        assert!(resolved.with_human_holds_in_force().is_none());
+        // Without a frame nothing is held for it.
+        let env = load(&[("a.qv", host(SCHED))]).expect("loads");
+        assert!(env.cell_frames().is_empty());
+        assert!(env.with_human_holds_in_force().is_none());
+    }
+
+    #[test]
+    fn every_other_frame_spelling_rejects_the_module() {
+        for frame in [
+            // no protocol of the record in this declaration
+            "quant cell mk_list_del: other |-> #untouched;",
+            // a duplicate
+            "quant cell mk_list_del: flb_sched |-> #untouched;\nquant cell mk_list_del: flb_sched |-> #untouched;",
+            // another value, a member path, a missing value, a binder
+            "quant cell mk_list_del: flb_sched |-> #fresh(descriptor);",
+            "quant cell mk_list_del: flb_sched.ch_events[0] |-> #untouched;",
+            "quant cell mk_list_del: flb_sched;",
+            "quant cell mk_list_del: flb_sched |-> #untouched when #s.ch_events[0] != -1;",
+            "quant cell #untouched: flb_sched.ch_events[1] |-> #fresh(descriptor) when #untouched.ch_events[1] > 0;",
+        ] {
+            let clauses = format!("{SCHED}\n{frame}");
+            assert!(load(&[("a.qv", host(&clauses))]).is_err(), "{frame}");
+        }
+    }
+
+    /// Two declarations stating one record's protocol with different frames
+    /// leave the record without frames (its protocol stays).
+    #[test]
+    fn two_declarations_that_disagree_leave_the_record_without_frames() {
+        let framed = format!("{SCHED}\nquant cell mk_list_del: flb_sched |-> #untouched;");
+        let other = host(SCHED).replace("host(", "other(");
+        let env = load(&[("a.qv", host(&framed)), ("b.qv", other)]).expect("loads");
+        assert!(env.cell_protocols().contains_key("flb_sched"));
+        assert!(env.cell_frames().is_empty());
+        let same = host(&framed).replace("host(", "again(");
+        let env = load(&[("a.qv", host(&framed)), ("b.qv", same)]).expect("loads");
+        assert_eq!(env.cell_frames()["flb_sched"].len(), 1);
     }
 }

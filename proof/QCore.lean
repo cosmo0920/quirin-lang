@@ -55,6 +55,7 @@ import QCore.CastSemantics
 import QCore.CellArraySlots
 import QCore.CellProtocolCloseActual
 import QCore.CellProtocolPerEnd
+import QCore.CellProtocolReleaseWindowFrames
 import QCore.CellResultSet
 import QCore.CertificateScope
 import QCore.CflAtomicEffects

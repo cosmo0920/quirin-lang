@@ -1528,6 +1528,16 @@ fn refuse_at_gate(
     state.unmodeled = true;
 }
 
+/// Card CELL-PROTOCOL-RELEASE-WINDOW-FRAMES (rule 38g): what a call's
+/// callees' frames say of a record type (`standing`), the callee a refusal
+/// names, and whether the call is handed only a record's own cell numbers
+/// (`cell_numbers_only`, rule 38c's close).
+pub(super) struct CallFrames<'a, S, C> {
+    pub callee: &'a str,
+    pub standing: S,
+    pub cell_numbers_only: C,
+}
+
 /// Hook (rule 38c): a call that may reach a record with a fact forwards it
 /// under its protocol when it keeps it (the callee reads the record again
 /// from the protocol, and so does this body after the call), and refuses
@@ -1538,22 +1548,47 @@ fn refuse_at_gate(
 /// live a caller's record refuses (`descriptor-cell-zero-undecided` when a
 /// `> 0` dead edge left it undecided, else `descriptor-cell-owner-released`;
 /// a tracked one refused at its release already); either way the facts end.
+///
+/// Card CELL-PROTOCOL-RELEASE-WINDOW-FRAMES (rule 38g; USER DECISION
+/// 2026-11-04, verbatim: "(a) Callee frames"): where a record does not keep
+/// its protocol, `frames` (the callee and its frame's standing over a record
+/// type) decides instead of the refusal: a checked or accepted frame passes
+/// the fact through the call unchanged, a declared one passes it and holds
+/// the call for review (`Pending`), a refuted one refuses
+/// (`descriptor-cell-frame-refuted`), and none refuses as before.
 pub(super) fn touch(
     function: &str,
     line: usize,
     may_reach: impl Fn(&ProtocolRoot) -> bool,
     releases: impl Fn(&ProtocolRoot) -> bool,
+    frames: CallFrames<
+        '_,
+        impl Fn(&str) -> rule_38_descriptor_cells::frame::Standing,
+        impl Fn(&ProtocolRoot, &str) -> bool,
+    >,
     state: &mut AbstractState,
     diagnostics: &mut BTreeSet<LegacyDiagnostic>,
 ) {
     if state.cell_protocols.is_empty() {
         return;
     }
+    // Card CELL-PROTOCOL-RELEASE-WINDOW-FRAMES (rule 38g): a record that
+    // does not keep its protocol is in its release window, where a call
+    // reaches it through any pointer it is handed (`container_of`, a back
+    // pointer), not only through an actual naming it: option (b)'s narrowing
+    // is not read, so only the callee's frame admits the call. A call handed
+    // only the record's own cell numbers (rule 38c's close) is the one
+    // exception.
     let keys = state
         .cell_protocols
-        .keys()
-        .filter(|(root, _)| may_reach(root) || releases(root))
-        .cloned()
+        .iter()
+        .filter(|((root, _), hosted)| {
+            may_reach(root)
+                || releases(root)
+                || (!hosted.holds(state)
+                    && !(frames.cell_numbers_only)(root, &hosted.fact.protocol.record))
+        })
+        .map(|(key, _)| key.clone())
         .collect::<Vec<_>>();
     // The holder's release: every fact of a released record ends, its cells
     // with it; one refusal per record where a cell may still be live.
@@ -1603,10 +1638,46 @@ pub(super) fn touch(
             let keys = hosted.keys.values().cloned().collect::<BTreeSet<_>>();
             state.cells.forget(|key| keys.contains(key));
             state.cell_protocols.remove(&key);
-        } else {
-            let hosted = hosted.clone();
-            report_broken(function, line, &key.0, &hosted, diagnostics);
-            state.unmodeled = true;
+            continue;
+        }
+        use rule_38_descriptor_cells::frame::{Reading, window};
+        let hosted = hosted.clone();
+        let record = hosted.fact.protocol.record.clone();
+        match window((frames.standing)(&record)) {
+            // The callee touches no protocol member of any `struct TAG`: the
+            // fact is the same after the call.
+            Reading::Pass => {}
+            Reading::Held => {
+                diagnostics.insert(LegacyDiagnostic {
+                    function: function.to_owned(),
+                    line,
+                    kind: LegacyDiagnosticKind::Unsupported {
+                        description: super::cell_frames_route::frame_hold_description(
+                            frames.callee,
+                            &record,
+                        ),
+                    },
+                });
+            }
+            Reading::Refused(Refusal::FrameRefuted) => {
+                diagnostics.insert(LegacyDiagnostic {
+                    function: function.to_owned(),
+                    line,
+                    kind: LegacyDiagnosticKind::Unsupported {
+                        description: format!(
+                            "`{}` (a `struct {record}`) does not keep its declared cell protocol here, and a body this unit analyses refutes the declared frame of `{}` over it ({})",
+                            root_text(&key.0),
+                            frames.callee,
+                            Refusal::FrameRefuted.key()
+                        ),
+                    },
+                });
+                state.unmodeled = true;
+            }
+            Reading::Refused(_) => {
+                report_broken(function, line, &key.0, &hosted, diagnostics);
+                state.unmodeled = true;
+            }
         }
     }
 }

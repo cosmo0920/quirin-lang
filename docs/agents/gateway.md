@@ -9716,7 +9716,9 @@ safety claim and no validation of the detach representation premise.
     `descriptor-cell-owner-released`; a tracked holder's release refuses as
     before (rule 38 (6)). Between a close that stores no sentinel and that
     release, a call that may reach the record refuses
-    (`descriptor-cell-protocol-broken`): the closed end still looks live.
+    (`descriptor-cell-protocol-broken`): the closed end still looks live,
+    unless its callee's frame over the record's type stands (rule
+    [38g](#constraint-38g), card CELL-PROTOCOL-RELEASE-WINDOW-FRAMES).
 
     **Do not** read a destroyer's `> 0` (or `<= 0`) test as the end's absence,
     take a sentinel's meaning from the test a caller writes rather than from
@@ -9762,5 +9764,77 @@ safety claim and no validation of the detach representation premise.
     (follow-up CELL-RESULT-SET-DESCRIPTOR-ZERO-POLICY). The Lean model is
     `QCore.CellResultSet`
     ([report](../reports/cell-result-set-alignment/README.md)).
+
+<a id="constraint-38g"></a>
+
+38g. **A call in a record's release window passes only under the callee's
+    frame.** Card CELL-PROTOCOL-RELEASE-WINDOW-FRAMES (registered by
+    CELL-PROTOCOL-PER-END-GUARDS; contract specification
+    [§C04.6.4](../QCORE_CONTRACT_SPEC_r0_3.md#c0464-callee-frames-over-a-declared-cell-protocol),
+    grammar G05k). USER DECISION 2026-11-04 (verbatim, on the options (a)
+    callee frame declarations, (b) a member-actual narrowing, (c) keep the
+    refusal): "(a) Callee frames". The package model is
+    `crates/gateway-rules/rule-38-descriptor-cells/src/frame.rs`
+    (`body_check`, `standing`, `window`, `protocol_members`, `BODY_VECTORS`,
+    `WINDOW_VECTORS`); the host is `legacy_cell_frames.rs` (`settle_frames`,
+    `read_body`, `call_standing`, `frame_hold_description`,
+    `frame_held_call`) and rule 38c's `touch` in `legacy_descriptor_cells.rs`;
+    the loader is `local_condition.rs` (`frame`, `cell_frames`) and the table
+    `ResourceContracts::cell_frames`.
+
+    (1) **The clause.** `quant cell CALLEE: TAG |-> #untouched;` stands
+    beside `TAG`'s protocol on the declaration stating it. It states that
+    `CALLEE`, with everything it calls, neither reads nor writes any member a
+    declared protocol of `struct TAG` names (the first member of each cell
+    and each guard: `ch_events`, `event`, a flag), on every object of that
+    type, however the callee reaches it. It is a frame over the record's
+    type, never over the call's actuals: a callee handed `&ins->_head`
+    recovers `ins` by `container_of` (option (b)'s unsoundness), and the
+    clause still covers it. "Reads no end member" is read with writes
+    included, the stronger claim (fail-closed). A record keeps its frames
+    only where it keeps its protocol and every declaration stating that
+    protocol states the same callees.
+    (2) **Its standing in a unit.** After the parser builds a body's CFG,
+    each declared frame of a contracted callee the body calls (nested calls
+    included) is checked against Clang's AST of the unit: **checked** where
+    the unit defines the callee's body and every body it calls, none names a
+    protocol member of `TAG`, and none uses a construct the reader does not
+    read (a call through a pointer or out of the unit, recursion, a pointer
+    reinterpreted as anything but a record or `void` pointer, an integer read
+    as a pointer, a whole-record read or store, a scalar read through a
+    pointer, `offsetof`, inline assembly, `__builtin_bit_cast`, atomic
+    builtins); **refuted** where a body reached names a protocol member;
+    otherwise **declared**. The standing travels on the CFG, so certificate
+    rederivation reproduces it.
+    (3) **Its reading.** Only where a call that may reach a record (rule 38c
+    (4)) would refuse because the record does not keep its protocol (rule
+    38f (5)'s window: an end closed, its sentinel not stored), and the call
+    does not release the record: the call's standing is the weakest of its
+    callees' (the call's own and its nested calls'). Checked: the record's
+    fact passes the call unchanged. Declared: the fact passes and the call is
+    held for review, ``call to `CALLEE` reaching a `struct TAG` that does not
+    keep its cell protocol rests on its declared frame, which awaits human
+    review (awaiting-human-review)``, a held call (`Pending`, never `Safe`;
+    rule 10i, C06.1); the analysis with every held declaration in force
+    (`ResourceContracts::with_human_holds_in_force`) reads it accepted, so a
+    `Pending` row with another reason is `Unknown`. Refuted: the call refuses
+    (`descriptor-cell-frame-refuted`). No frame: the call refuses
+    `descriptor-cell-protocol-broken` as before. A record that keeps its
+    protocol at the call is read as rule 38c reads it, whatever its frames.
+
+    **Do not** read a frame from the call's actuals (a member actual such as
+    `ins->processor` or `&ins->_head` reaching no end), take a frame from a
+    body the unit does not analyse as checked, lift a refutation by
+    acceptance, read a frame where the record keeps its protocol, or present
+    any refusal or hold here as a finding. With `38` in
+    `QCORE_GATEWAY_RULES_OFF` nothing here is read. Nothing here is `Unsafe`.
+    Premises stated, not proved (trust boundary 28): rule 38c's declared
+    protocol (`P-CELL-PROTOCOL-DECLARED`); Clang's AST of the configured unit;
+    C11 6.5p7 (an `int` cell is accessed only through an lvalue naming its
+    member, a whole-record access or a reinterpreted pointer) and 6.5.6p8
+    (pointer arithmetic stays inside the object it points into). A declared
+    frame is a deferred-review contract, never a premise. The Lean model is
+    `QCore.CellProtocolReleaseWindowFrames`
+    ([report](../reports/cell-protocol-release-window-frames/README.md)).
 
 <!-- generated:rules:end -->

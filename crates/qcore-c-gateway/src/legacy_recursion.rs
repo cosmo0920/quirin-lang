@@ -502,6 +502,10 @@ pub(crate) fn combine(mut zero: LegacyCfg, mut nonzero: LegacyCfg) -> LegacyCfg 
         .map(|(node, step)| (node + node_offset, step))
         .collect::<Vec<_>>();
     zero.cell_tests.extend(shifted);
+    // Card CELL-PROTOCOL-RELEASE-WINDOW-FRAMES (rule 38g): both halves read
+    // one body, so their frame standings agree; the union is kept.
+    zero.cell_frames
+        .extend(std::mem::take(&mut nonzero.cell_frames));
     let entries = vec![zero.entry, nonzero.entry + node_offset];
     // Both contexts are built from the same body, so their CTWIN-PUBLISH
     // destination sets agree; the union is taken rather than assumed so that a

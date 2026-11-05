@@ -4660,6 +4660,40 @@ every declaration states the same set. The first per-end declarations are
 `providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv`'s
 (`flb_input_instance`, `flb_output_instance`, `flb_input_thread_instance`).
 
+## G05k. Callee frames over a declared cell protocol
+
+Card CELL-PROTOCOL-RELEASE-WINDOW-FRAMES (USER DECISION 2026-11-04, verbatim:
+"(a) Callee frames"), contract specification
+[C04.6.4](QCORE_CONTRACT_SPEC_r0_3.md#c0464-callee-frames-over-a-declared-cell-protocol),
+gateway rule [38g](agents/gateway.md#constraint-38g). One more spelling of
+G05i's `quant cell` clause, read by `crates/qcore-contract/src/local_condition.rs`
+(`frame`, `cell_frames`):
+
+```ebnf
+frame_clause = "quant", "cell", IDENT, ":", IDENT, MAPS_TO, "#", "untouched", ";" ;
+```
+
+The first `IDENT` is the callee, the second the record tag. A `quant cell`
+clause that opens with a name, not G05i's `#` binder, is a frame; before this
+card it was refused (`quant-cell-shape`), so no previously accepted text
+changes meaning. Static conditions, each rejecting the whole module:
+
+- **Shape.** Exactly the form above (`quant-frame-shape`).
+- **Record.** The same declaration states a protocol of the record
+  (`quant-frame-record`).
+- **Once.** One clause per callee and record (`quant-frame-duplicate`).
+- **Binder.** `untouched` joins the reserved `#` words a G05i binder may not
+  be.
+
+The clauses load to `LoopLifetimeContract::frames` (sorted, omitted when
+empty, so an older declaration serializes as before) and, across
+declarations, to `ResourceContracts::cell_frames`: a record keeps its frames
+only where it keeps its protocol and every declaration stating the protocol
+states the same callees. The clause adds nothing to its host's own contract.
+The first declarations are `mk_list_del`'s frames over `flb_input_instance`
+and `flb_output_instance` in
+`providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv`.
+
 ## G05j. C library result sets
 
 Card CELL-GUARD-RESULT-RANGE-CHECKED, contract specification
