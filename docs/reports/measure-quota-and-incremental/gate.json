@@ -1,0 +1,503 @@
+{
+ "schema": "quirin-gate-scope/1",
+ "source": "git diff",
+ "base": "25508ccaf758e2eb9e6aecf79f81b46ca52bfda5",
+ "head": "cffb3e4e1adb5243a0e0bb4796748a03e5ee41a2",
+ "committed": [
+  "crates/qcore-audit/src/subcommand_plugins.rs",
+  "crates/qcore-audit/tests/subcommand_plugins.rs",
+  "crates/quirin-audit-plugin-measure/src/lib.rs",
+  "crates/quirin-audit-plugin-measure/src/sides.rs",
+  "crates/quirin-audit-plugin-measure/src/waits.rs",
+  "crates/quirin-audit-plugin-measure/tests/slot_wait.rs",
+  "crates/quirin-audit-plugin/src/lib.rs",
+  "docs/QCORE_CONTRACT_SPEC_r0_3.md",
+  "docs/development/audit-subcommand-plugins.md",
+  "docs/reports/measure-quota-and-incremental/README.md",
+  "docs/reports/measure-quota-and-incremental/depkeys-system-c8c7edf21.txt",
+  "docs/reports/measure-quota-and-incremental/integration-amendments.json",
+  "docs/reports/measure-quota-and-incremental/r7-held-slot.json",
+  "docs/reports/measure-quota-and-incremental/scripts/depkeys.py",
+  "docs/reports/measure-quota-and-incremental/scripts/evidence.py",
+  "docs/reports/measure-quota-and-incremental/scripts/split.py",
+  "docs/reports/measure-quota-and-incremental/split-cfl-mpack-r2.txt",
+  "docs/reports/measure-quota-and-incremental/split-libc-gap.txt",
+  "scripts/gate_slot.py",
+  "scripts/tests/test_gate_slot.py"
+ ],
+ "uncommitted": [],
+ "scope": {
+  "paths": [
+   "crates/qcore-audit/src/subcommand_plugins.rs",
+   "crates/qcore-audit/tests/subcommand_plugins.rs",
+   "crates/quirin-audit-plugin-measure/src/lib.rs",
+   "crates/quirin-audit-plugin-measure/src/sides.rs",
+   "crates/quirin-audit-plugin-measure/src/waits.rs",
+   "crates/quirin-audit-plugin-measure/tests/slot_wait.rs",
+   "crates/quirin-audit-plugin/src/lib.rs",
+   "docs/QCORE_CONTRACT_SPEC_r0_3.md",
+   "docs/development/audit-subcommand-plugins.md",
+   "docs/reports/measure-quota-and-incremental/README.md",
+   "docs/reports/measure-quota-and-incremental/depkeys-system-c8c7edf21.txt",
+   "docs/reports/measure-quota-and-incremental/integration-amendments.json",
+   "docs/reports/measure-quota-and-incremental/r7-held-slot.json",
+   "docs/reports/measure-quota-and-incremental/scripts/depkeys.py",
+   "docs/reports/measure-quota-and-incremental/scripts/evidence.py",
+   "docs/reports/measure-quota-and-incremental/scripts/split.py",
+   "docs/reports/measure-quota-and-incremental/split-cfl-mpack-r2.txt",
+   "docs/reports/measure-quota-and-incremental/split-libc-gap.txt",
+   "scripts/gate_slot.py",
+   "scripts/tests/test_gate_slot.py"
+  ],
+  "attribution": {
+   "crates/qcore-audit/src/subcommand_plugins.rs": [
+    "owned by qcore-audit",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:141)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-audit/tests/subcommand_plugins.rs": [
+    "owned by qcore-audit",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:141)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/quirin-audit-plugin-measure/src/lib.rs": [
+    "owned by quirin-audit-plugin-measure",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:164)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/quirin-audit-plugin-measure/src/sides.rs": [
+    "owned by quirin-audit-plugin-measure",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:164)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/quirin-audit-plugin-measure/src/waits.rs": [
+    "owned by quirin-audit-plugin-measure",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:164)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/quirin-audit-plugin-measure/tests/slot_wait.rs": [
+    "owned by quirin-audit-plugin-measure",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:164)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/quirin-audit-plugin/src/lib.rs": [
+    "owned by quirin-audit-plugin",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:156)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "docs/QCORE_CONTRACT_SPEC_r0_3.md": [
+    "class prose"
+   ],
+   "docs/development/audit-subcommand-plugins.md": [
+    "class prose"
+   ],
+   "docs/reports/measure-quota-and-incremental/README.md": [
+    "class prose"
+   ],
+   "docs/reports/measure-quota-and-incremental/depkeys-system-c8c7edf21.txt": [
+    "class prose"
+   ],
+   "docs/reports/measure-quota-and-incremental/integration-amendments.json": [
+    "class prose"
+   ],
+   "docs/reports/measure-quota-and-incremental/r7-held-slot.json": [
+    "class prose"
+   ],
+   "docs/reports/measure-quota-and-incremental/scripts/depkeys.py": [
+    "class prose"
+   ],
+   "docs/reports/measure-quota-and-incremental/scripts/evidence.py": [
+    "class prose"
+   ],
+   "docs/reports/measure-quota-and-incremental/scripts/split.py": [
+    "class prose"
+   ],
+   "docs/reports/measure-quota-and-incremental/split-cfl-mpack-r2.txt": [
+    "class prose"
+   ],
+   "docs/reports/measure-quota-and-incremental/split-libc-gap.txt": [
+    "class prose"
+   ],
+   "scripts/gate_slot.py": [
+    "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/src/lib.rs:396)",
+    "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/tests/slot_wait.rs:50)",
+    "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/tests/slot_wait.rs:108)",
+    "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/tests/support/mod.rs:197)",
+    "class python"
+   ],
+   "scripts/tests/test_gate_slot.py": [
+    "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/tests/slot_wait.rs:108)",
+    "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/tests/support/mod.rs:197)",
+    "class python"
+   ]
+  },
+  "affected": {
+   "qcore-audit": [
+    "owns crates/qcore-audit/src/subcommand_plugins.rs",
+    "owns crates/qcore-audit/tests/subcommand_plugins.rs"
+   ],
+   "qcore-compiler": [
+    "names crates/qcore-audit in a string literal: crates/qcore-audit/src/subcommand_plugins.rs (compiler/tests/workspace_layering.rs:141)",
+    "names crates/qcore-audit in a string literal: crates/qcore-audit/tests/subcommand_plugins.rs (compiler/tests/workspace_layering.rs:141)",
+    "names crates/quirin-audit-plugin-measure in a string literal: crates/quirin-audit-plugin-measure/src/lib.rs (compiler/tests/workspace_layering.rs:164)",
+    "names crates/quirin-audit-plugin-measure in a string literal: crates/quirin-audit-plugin-measure/src/sides.rs (compiler/tests/workspace_layering.rs:164)",
+    "names crates/quirin-audit-plugin-measure in a string literal: crates/quirin-audit-plugin-measure/src/waits.rs (compiler/tests/workspace_layering.rs:164)",
+    "names crates/quirin-audit-plugin-measure in a string literal: crates/quirin-audit-plugin-measure/tests/slot_wait.rs (compiler/tests/workspace_layering.rs:164)",
+    "names crates/quirin-audit-plugin in a string literal: crates/quirin-audit-plugin/src/lib.rs (compiler/tests/workspace_layering.rs:156)"
+   ],
+   "qcore-provider-conformance": [
+    "depends on qcore-audit"
+   ],
+   "qcore-verification": [
+    "names crates in a string literal: crates/qcore-audit/src/subcommand_plugins.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-audit/tests/subcommand_plugins.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/quirin-audit-plugin-measure/src/lib.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/quirin-audit-plugin-measure/src/sides.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/quirin-audit-plugin-measure/src/waits.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/quirin-audit-plugin-measure/tests/slot_wait.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/quirin-audit-plugin/src/lib.rs (crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "qcorec": [
+    "depends on qcore-compiler"
+   ],
+   "quirin-audit-plugin": [
+    "owns crates/quirin-audit-plugin/src/lib.rs"
+   ],
+   "quirin-audit-plugin-libevent": [
+    "depends on quirin-audit-plugin"
+   ],
+   "quirin-audit-plugin-measure": [
+    "owns crates/quirin-audit-plugin-measure/src/lib.rs",
+    "owns crates/quirin-audit-plugin-measure/src/sides.rs",
+    "owns crates/quirin-audit-plugin-measure/src/waits.rs",
+    "owns crates/quirin-audit-plugin-measure/tests/slot_wait.rs",
+    "names scripts/gate_slot.py in a string literal: scripts/gate_slot.py (crates/quirin-audit-plugin-measure/src/lib.rs:396)",
+    "names scripts/gate_slot.py in a string literal: scripts/gate_slot.py (crates/quirin-audit-plugin-measure/tests/slot_wait.rs:50)",
+    "names scripts in a string literal: scripts/gate_slot.py (crates/quirin-audit-plugin-measure/tests/slot_wait.rs:108)",
+    "names scripts in a string literal: scripts/gate_slot.py (crates/quirin-audit-plugin-measure/tests/support/mod.rs:197)",
+    "names scripts in a string literal: scripts/tests/test_gate_slot.py (crates/quirin-audit-plugin-measure/tests/slot_wait.rs:108)",
+    "names scripts in a string literal: scripts/tests/test_gate_slot.py (crates/quirin-audit-plugin-measure/tests/support/mod.rs:197)"
+   ],
+   "quirin-source-analysis": [
+    "depends on qcore-verification"
+   ]
+  },
+  "mode": "scoped",
+  "full_reasons": [],
+  "rust_packages": [
+   "qcore-audit",
+   "qcore-compiler",
+   "qcore-verification",
+   "qcorec",
+   "quirin-audit-plugin",
+   "quirin-audit-plugin-libevent",
+   "quirin-audit-plugin-measure",
+   "quirin-source-analysis"
+  ],
+  "probes": true,
+  "lean": {
+   "mode": "none",
+   "reasons": [],
+   "modules": [],
+   "audits": []
+  },
+  "python_reasons": [
+   "docs/reports/measure-quota-and-incremental/scripts/depkeys.py: Python",
+   "docs/reports/measure-quota-and-incremental/scripts/evidence.py: Python",
+   "docs/reports/measure-quota-and-incremental/scripts/split.py: Python",
+   "scripts/gate_slot.py: Python",
+   "scripts/tests/test_gate_slot.py: Python"
+  ],
+  "provider_gate": false,
+  "provider_reasons": [],
+  "provider_members_reached_without_providers_change": [
+   "qcore-provider-conformance"
+  ],
+  "unresolved_includes": [
+   {
+    "crate": "qcore-compiler",
+    "source": "compiler/tests/ct_corpus.rs:8069",
+    "literal": "include_str!(\\\"fixtures/ct/{id}/case.qr\\\")\");",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   }
+  ]
+ },
+ "planned_steps": [
+  {
+   "name": "submodules",
+   "argv": [
+    "git",
+    "-C",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac8cd4c979f6fa458",
+    "submodule",
+    "status",
+    "--recursive"
+   ],
+   "slot": null
+  },
+  {
+   "name": "fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "slot": null
+  },
+  {
+   "name": "clippy",
+   "argv": [
+    "cargo",
+    "clippy",
+    "-p",
+    "qcore-audit",
+    "-p",
+    "qcore-compiler",
+    "-p",
+    "qcore-verification",
+    "-p",
+    "qcorec",
+    "-p",
+    "quirin-audit-plugin",
+    "-p",
+    "quirin-audit-plugin-libevent",
+    "-p",
+    "quirin-audit-plugin-measure",
+    "-p",
+    "quirin-source-analysis",
+    "--all-targets",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "slot": null
+  },
+  {
+   "name": "rust-suite",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac8cd4c979f6fa458/scripts/run_test_binaries.py",
+    "--packages",
+    "qcore-audit,qcore-compiler,qcore-verification,qcorec,quirin-audit-plugin,quirin-audit-plugin-libevent,quirin-audit-plugin-measure,quirin-source-analysis",
+    "--log-dir",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac8cd4c979f6fa458/private/gate/rust-suite"
+   ],
+   "slot": "rust-suite"
+  },
+  {
+   "name": "probe-reevaluation_probe",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac8cd4c979f6fa458/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_probe"
+   ],
+   "slot": null
+  },
+  {
+   "name": "probe-reevaluation_followup",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac8cd4c979f6fa458/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_followup"
+   ],
+   "slot": null
+  },
+  {
+   "name": "python",
+   "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+   ],
+   "slot": null
+  }
+ ],
+ "slots": true,
+ "started": "20261105T114151Z",
+ "ran": true,
+ "steps": [
+  {
+   "name": "submodules",
+   "argv": [
+    "git",
+    "-C",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac8cd4c979f6fa458",
+    "submodule",
+    "status",
+    "--recursive"
+   ],
+   "exit": 0,
+   "seconds": 0.0,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac8cd4c979f6fa458/private/gate/submodules.log",
+   "counts": {
+    "submodules": 1,
+    "not_checked_out_or_moved": []
+   }
+  },
+  {
+   "name": "fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "exit": 0,
+   "seconds": 6.2,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac8cd4c979f6fa458/private/gate/fmt.log",
+   "counts": {}
+  },
+  {
+   "name": "clippy",
+   "argv": [
+    "cargo",
+    "clippy",
+    "-p",
+    "qcore-audit",
+    "-p",
+    "qcore-compiler",
+    "-p",
+    "qcore-verification",
+    "-p",
+    "qcorec",
+    "-p",
+    "quirin-audit-plugin",
+    "-p",
+    "quirin-audit-plugin-libevent",
+    "-p",
+    "quirin-audit-plugin-measure",
+    "-p",
+    "quirin-source-analysis",
+    "--all-targets",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "exit": 0,
+   "seconds": 5.6,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac8cd4c979f6fa458/private/gate/clippy.log",
+   "counts": {}
+  },
+  {
+   "name": "rust-suite",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac8cd4c979f6fa458/scripts/gate_slot.py",
+    "rust-suite",
+    "--receipt",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac8cd4c979f6fa458/private/gate/slots/rust-suite.json",
+    "--",
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac8cd4c979f6fa458/scripts/run_test_binaries.py",
+    "--packages",
+    "qcore-audit,qcore-compiler,qcore-verification,qcorec,quirin-audit-plugin,quirin-audit-plugin-libevent,quirin-audit-plugin-measure,quirin-source-analysis",
+    "--log-dir",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac8cd4c979f6fa458/private/gate/rust-suite"
+   ],
+   "exit": 0,
+   "seconds": 7280.4,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac8cd4c979f6fa458/private/gate/rust-suite.log",
+   "counts": {
+    "units": 264,
+    "passed": 3358,
+    "failed": 0,
+    "ignored": 5,
+    "measured": 0,
+    "filtered": 0,
+    "summaries": 270,
+    "packages": [
+     "qcore-audit",
+     "qcore-compiler",
+     "qcore-verification",
+     "qcorec",
+     "quirin-audit-plugin",
+     "quirin-audit-plugin-libevent",
+     "quirin-audit-plugin-measure",
+     "quirin-source-analysis"
+    ],
+    "summary": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac8cd4c979f6fa458/private/gate/rust-suite/summary.json",
+    "ok": true
+   },
+   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac8cd4c979f6fa458/private/gate/slots/rust-suite.json"
+  },
+  {
+   "name": "probe-reevaluation_probe",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac8cd4c979f6fa458/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_probe"
+   ],
+   "exit": 0,
+   "seconds": 0.2,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac8cd4c979f6fa458/private/gate/probe-reevaluation_probe.log",
+   "counts": {}
+  },
+  {
+   "name": "probe-reevaluation_followup",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac8cd4c979f6fa458/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_followup"
+   ],
+   "exit": 0,
+   "seconds": 0.4,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac8cd4c979f6fa458/private/gate/probe-reevaluation_followup.log",
+   "counts": {}
+  },
+  {
+   "name": "python",
+   "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+   ],
+   "exit": 1,
+   "seconds": 48.2,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac8cd4c979f6fa458/private/gate/python.log",
+   "counts": {
+    "tests": 579,
+    "skipped": 0,
+    "ok": false
+   }
+  }
+ ],
+ "ok": false,
+ "finished": "20261105T134412Z"
+}

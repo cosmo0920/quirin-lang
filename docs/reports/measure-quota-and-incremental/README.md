@@ -44,7 +44,7 @@ a run never exceeds quota + limit (by default twice the quota). The quota is a
 resource bound; a breach is `Unknown`, and no verdict path reads the wait.
 Recorded as follow-up `SLOT-WAIT-DECLARED-BY-PLUGIN`.
 
-### Tests (all pass at `efcdf323b`)
+### Tests (all pass in the card gate at `cffb3e4e1`)
 
 - `crates/quirin-audit-plugin-measure/tests/slot_wait.rs`: a real `flock`,
   held by `gate_slot.py rust-suite -- sleep 6` in a scratch gate directory,
@@ -173,8 +173,24 @@ sampled landings holds, as the brief says. R7 already takes the idle waits
 
 ## 3. Gate
 
-Scoped card gate on the final code commit; see `gate.json` in this directory
-and the hand-back for commands, exits, counts and log paths.
+`python3 scripts/gate_scope.py --base 25508ccaf --out <worktree>/private/gate`
+on `cffb3e4e1` ([gate.json](gate.json)): scoped mode, eight packages
+(qcore-audit, qcore-compiler, qcore-verification, qcorec, quirin-audit-plugin,
+quirin-audit-plugin-libevent, quirin-audit-plugin-measure,
+quirin-source-analysis); no Lean, no provider gate.
+
+| Step | Exit | Counts |
+|---|---:|---|
+| submodules | 0 | 1 submodule |
+| fmt | 0 | |
+| Clippy (eight packages) | 0 | |
+| Rust suite (`rust-suite` slot) | 0 | 264 units, 270 summaries, 3,358 passed, 0 failed, 5 ignored; 6,826.7 s slot wait behind another card, then 7.5 min |
+| reevaluation probe / follow-up | 0 / 0 | |
+| Python suite | 1 | 579 tests, 2 failures, both outside this diff and present at the base: `test_build_matrix_sections` (the stale matrix Lean-audit count, 408 committed against 410) and `test_gateway_registry` (`crates/qcore-c-gateway/src/gateway_rule_registry.rs` stale against its generator); this card touches neither the matrix, `crates/gateway-rules` nor the gateway |
+
+A first attempt on `6a7a80c85` had a third Python failure of this card's own:
+the wait-record test listed a temporary directory with `glob`, which rule 29's
+tripwire refuses; `cffb3e4e1` checks the one path instead.
 
 ## 4. Follow-ups
 
