@@ -261,6 +261,108 @@ fn a_version_mismatch_is_unknown_with_a_named_reason() {
     assert_unknown(&directory, "old", &output, "protocol-version-mismatch");
 }
 
+/// Card MEASURE-QUOTA-AND-INCREMENTAL (R7): time the plugin declares as a
+/// gate-slot wait (the marker in its output) is not counted against the
+/// wall-time quota, up to the slot-wait limit; a limit of 0 counts every
+/// wait, a limit below the wait still times out, and a stale marker left in
+/// the output excuses nothing.
+#[test]
+fn declared_slot_waits_are_outside_the_wall_time_quota_up_to_the_limit() {
+    let _serial = serial();
+    let marker = quirin_audit_plugin::SLOT_WAIT_MARKER;
+    let body = format!(
+        "touch {marker}\nsleep 2\nrm {marker}\n{}",
+        emit(&response(&json!([]), &json!([])))
+    );
+    let directory = scratch("slot-wait");
+    plugin(&directory, "waiting", &body);
+    let output = run(
+        &directory,
+        &["--timeout-ms", "1000", "--slot-wait-limit-ms", "10000"],
+        "waiting",
+        &[],
+    );
+    assert!(
+        output.status.success(),
+        "{}{}",
+        stderr(&output),
+        String::from_utf8_lossy(&output.stdout)
+    );
+    let run_record = &report(&directory, "waiting")["run"];
+    assert_eq!(run_record["outcome"], "completed");
+    let wall = run_record["wall_time_ms"].as_u64().unwrap();
+    let waited = run_record["slot_wait_ms"].as_u64().unwrap();
+    assert!(wall >= 2000 && waited >= 1500, "{run_record}");
+    assert_eq!(run_record["analysis_time_ms"].as_u64(), Some(wall - waited));
+    assert!(wall - waited < 1000, "{run_record}");
+    assert_eq!(
+        invocation(&directory, "waiting")["slot_wait_limit_ms"],
+        10000
+    );
+
+    // By default the limit is the quota itself: a 1.2 s wait under an 800 ms
+    // quota completes.
+    let directory = scratch("slot-wait-default");
+    plugin(
+        &directory,
+        "waiting",
+        &format!(
+            "touch {marker}\nsleep 1.2\nrm {marker}\n{}",
+            emit(&response(&json!([]), &json!([])))
+        ),
+    );
+    let output = run(&directory, &["--timeout-ms", "800"], "waiting", &[]);
+    assert!(
+        output.status.success(),
+        "{}{}",
+        stderr(&output),
+        String::from_utf8_lossy(&output.stdout)
+    );
+    assert_eq!(invocation(&directory, "waiting")["slot_wait_limit_ms"], 800);
+
+    // The same plugin with waits counted, as every run was before R7.
+    let directory = scratch("slot-wait-counted");
+    plugin(&directory, "waiting", &body);
+    let output = run(
+        &directory,
+        &["--timeout-ms", "1000", "--slot-wait-limit-ms", "0"],
+        "waiting",
+        &[],
+    );
+    assert_unknown(&directory, "waiting", &output, "plugin-timeout");
+
+    // A limit below the wait: the run stops at quota + limit.
+    let directory = scratch("slot-wait-limited");
+    plugin(&directory, "waiting", &body);
+    let output = run(
+        &directory,
+        &["--timeout-ms", "1000", "--slot-wait-limit-ms", "300"],
+        "waiting",
+        &[],
+    );
+    assert_unknown(&directory, "waiting", &output, "plugin-timeout");
+    let run_record = &report(&directory, "waiting")["run"];
+    assert!(run_record["slot_wait_ms"].as_u64().unwrap() <= 300);
+    assert!(
+        run_record["reason"]
+            .as_str()
+            .unwrap()
+            .contains("declared slot waits excluded, limit 300 ms"),
+        "{run_record}"
+    );
+
+    // A marker the plugin did not write is removed before the spawn.
+    let directory = scratch("slot-wait-stale");
+    plugin(
+        &directory,
+        "idle",
+        &format!("sleep 2\n{}", emit(&response(&json!([]), &json!([])))),
+    );
+    std::fs::write(directory.join("out").join(marker), "").unwrap();
+    let output = run(&directory, &["--timeout-ms", "1000"], "idle", &[]);
+    assert_unknown(&directory, "idle", &output, "plugin-timeout");
+}
+
 #[test]
 fn a_timeout_is_unknown_and_kills_the_process_group() {
     let _serial = serial();

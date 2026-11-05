@@ -4,7 +4,7 @@
 Card GATE-ELASTIC (seam E of docs/plans/pluggable-cards/README.md; user
 decision 5 of 2026-10-24).  Usage::
 
-    gate_slot.py <class> [--memory-budget 7G|5G|4G] [--receipt PATH] -- <cmd> [args...]
+    gate_slot.py <class> [--memory-budget 7G|5G|4G] [--receipt PATH] [--wait-record PATH] -- <cmd> [args...]
 
 Slots are ``flock(2)`` locks on files ``<gate dir>/<class>/<n>`` (default gate
 dir ``/tmp/quirin-gate``).  Classes:
@@ -34,6 +34,15 @@ job, while slot jobs share the legacy lock with one another.
 The command's exit code is this script's exit code (128 + N for a signal).
 A receipt (class, slots held, budget, admission budget, memory reading, waits,
 argv as run, exit, the child's peak resident set) is written to ``--receipt`` or ``private/gate-slot/<stamp>-<pid>-<class>.json``.
+The receipt lands when the command ends; ``--wait-record PATH`` also keeps a
+live record of the wait (``quirin-gate-wait/1``): ``{"state": "waiting"}`` from
+the moment the script asks for its slot, then ``{"state": "admitted",
+"waited_seconds": ...}`` once the slot is held and before the command starts,
+each replaced whole by a rename, so a reader never sees a partial record.
+``quirin-audit measure`` reads it to tell a route that waits for a slot from
+one that runs (card MEASURE-QUOTA-AND-INCREMENTAL, requirement R7 of
+docs/plans/gate-time-reduction/README.md).  A nested job covered by its
+parent's slot is admitted at once, ``waited_seconds`` 0.
 Exit 2 is a refusal before anything ran (bad class or budget, a budget the
 command would override, a nested slot the parent does not cover).
 """
@@ -470,6 +479,22 @@ def run_child(argv: Sequence[str], env: dict[str, str]) -> tuple[int, int]:
     return (128 - code if code < 0 else code), usage.ru_maxrss
 
 
+WAIT_SCHEMA = "quirin-gate-wait/1"
+
+
+def write_wait_record(path: Optional[Path], state: str, cls: str, **fields) -> None:
+    """Replace the live wait record whole: write a sibling, then rename it."""
+    if path is None:
+        return
+    document = dict(fields, schema=WAIT_SCHEMA, state=state, pid=os.getpid(),
+                    at=utc_now())
+    document["class"] = cls
+    path.parent.mkdir(parents=True, exist_ok=True)
+    partial = path.with_name(f".{path.name}.{os.getpid()}.partial")
+    partial.write_text(json.dumps(document, sort_keys=True) + "\n", encoding="utf-8")
+    os.replace(partial, path)
+
+
 def default_receipt(cls: str) -> Path:
     stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     return REPO_ROOT / "private" / "gate-slot" / f"{stamp}-{os.getpid()}-{cls}.json"
@@ -490,6 +515,9 @@ def parse_args(argv: Sequence[str]) -> argparse.Namespace:
     parser.add_argument("--receipt", type=Path,
                         help="where the JSON receipt goes "
                              "(default private/gate-slot/<stamp>-<pid>-<class>.json)")
+    parser.add_argument("--wait-record", type=Path,
+                        help="keep a live record of the slot wait here (waiting, then "
+                             "admitted with waited_seconds)")
     parser.add_argument("--wait-timeout", type=float,
                         help="give up (exit 75) after this many seconds without a slot")
     parser.add_argument("--poll", type=float, default=2.0, help=argparse.SUPPRESS)
@@ -540,11 +568,14 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         return 2
 
     gate = Gate(gate_dir, legacy, meminfo, poll=args.poll)
+    wait_record = args.wait_record.resolve() if args.wait_record else None
     if held:
         receipt["nested_under"] = held
         receipt["slot_record"] = {"class": args.cls, "covered_by_parent": True}
+        write_wait_record(wait_record, "admitted", args.cls, waited_seconds=0.0)
     else:
         try:
+            write_wait_record(wait_record, "waiting", args.cls)
             holder = {"argv": args.command[:6], "cwd": os.getcwd(), "since": utc_now()}
             if admission_mib is not None:
                 holder["admission_mib"] = admission_mib
@@ -560,6 +591,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             print(f"gate_slot: refused: {error}", file=sys.stderr)
             return 2
         env[HELD_ENV] = ",".join(gate.record["held"][1:])  # slots, not the legacy lock
+        write_wait_record(wait_record, "admitted", args.cls,
+                          waited_seconds=gate.record["waited_seconds"])
     env["QUIRIN_GATE_CLASS"] = args.cls
     receipt["argv_run"] = argv_run
     receipt["started"] = utc_now()
