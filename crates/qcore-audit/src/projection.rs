@@ -667,6 +667,7 @@ pub fn project_unit_into_with_cross_unit(
             homes,
         )
     };
+    let result = state_build_exclusion(inventory, &source_functions[0], result);
     let dependencies = recording.finish();
     // Card GATEWAY-C-LOCATION: the original `file:line` every diagnostic of
     // this unit is presented at. Derived only where there is a diagnostic to
@@ -887,6 +888,7 @@ pub fn project_prepared_unit_into_with_cross_unit(
             homes,
         )
     };
+    let result = state_build_exclusion(inventory, &source_functions[0], result);
     let dependencies = recording.finish();
     let result = match result {
         Ok(UnrestrictedLegacyResult::Safe(certificate)) => {
@@ -981,6 +983,37 @@ pub fn project_prepared_unit_into_with_cross_unit(
         counts,
         out,
     )
+}
+
+/// Card **CURRENT-RUN-DEFECTS**: a unit whose every raw-scan definition is
+/// build-excluded (librdkafka's `tinycthread.c` under `WITH_C11THREADS`) has
+/// no definition for the analysis to enter, so its entry, the first raw name,
+/// is not found. The unit stays `Unknown` with no partial summary, as Cycle 19
+/// decided (fail-closed, never data-only or `Safe`), and its rows stay in
+/// `not_projected`; only the reason changes, from that first name reported as
+/// a missing function to the stated cause. Any other result is returned as it
+/// is.
+fn state_build_exclusion(
+    inventory: &SourceDefinitionInventory,
+    entry: &str,
+    result: Result<UnrestrictedLegacyResult, LegacyCError>,
+) -> Result<UnrestrictedLegacyResult, LegacyCError> {
+    let Some(stated) = inventory.build_excluded_reason() else {
+        return result;
+    };
+    let missing = LegacyCError::FunctionNotFound(entry.to_owned()).to_string();
+    match result {
+        Ok(UnrestrictedLegacyResult::Unknown {
+            preprocessed_source,
+            reason,
+            partial: None,
+        }) if reason == missing => Ok(UnrestrictedLegacyResult::Unknown {
+            preprocessed_source,
+            reason: stated,
+            partial: None,
+        }),
+        other => other,
+    }
 }
 
 /// Count one analysed unit under its published verdict (card
