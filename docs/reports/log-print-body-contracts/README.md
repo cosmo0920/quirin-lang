@@ -159,7 +159,14 @@ The brief's `quirin-provider-cmetrics`/`-chunkio` are the existing
 `contracts.lock` at both revisions (sites: the `cmt_log.h`/`cio_log.h`
 declarations and the bodies). The route manifest
 `cycle19-resource-contracts.json` lists both modules, so it again equals the
-union of the resource views.
+union of the resource views. Pinned counts moved deliberately, each with its
+comment: selected resource modules 66 -> 68 and v1 declarations 499 -> 501
+(`compiler/tests/contract_loader.rs`, `crates/qcore-audit/tests/provider_selection.rs`,
+`crates/qcore-c-gateway/tests/{prod_contracts,neighbours}.rs`), withheld
+(retaining) declarations 109 -> 111, corpus modules 147 -> 149 (qcore-provider
+modules 89 -> 91, `scripts/tests/test_contract_corpus.py`), and the
+`cmetrics-counter` profile's pinned digest of the crate's `contracts.json`
+(`contract/profiles/cmetrics-counter/source-contracts.json`).
 
 - **Body-checked or declared?** Declared. Both bodies are in the reviewed
   compile database, but rule 13i lets no body evidence cover a member
