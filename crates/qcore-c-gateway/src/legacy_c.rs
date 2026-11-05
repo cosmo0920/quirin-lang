@@ -145,6 +145,11 @@ mod return_call_access;
 // last, a re-attribution that never admits.
 #[path = "legacy_uncontracted_access.rs"]
 mod uncontracted_access;
+// Card MEMBER-EFFECT-SUMMARY step 1 (rule 38i): the gate's refusal of member
+// custody through a formal parent names its premise; asked last, a
+// re-attribution that never admits.
+#[path = "legacy_member_custody_attribution.rs"]
+mod member_custody_attribution;
 // Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 2 (rules 14a, 14b): one
 // contracted scalar call inside a typed scalar statement, and an interior
 // pointer into an untracked object; asked after the statement fallbacks.
@@ -5765,6 +5770,10 @@ impl Parser<'_> {
         {
             return admitted;
         }
+        // Card MEMBER-EFFECT-SUMMARY step 1 (rule 38i). Asked last, after rule
+        // 38d: the gate's refusal of member custody through a formal parent
+        // names its premise; the node and its writes are unchanged.
+        let statement = self.member_custody_attribution(tokens, line, statement);
         match step {
             Some(step) => Statement::Block(vec![
                 statement,

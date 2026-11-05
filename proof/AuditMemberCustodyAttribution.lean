@@ -1,0 +1,21 @@
+import QCore.MemberCustodyAttribution
+
+/-! Audited companion to MEMBER-EFFECT-SUMMARY step 1 (gateway rule 38i). -/
+
+#print axioms QCore.MemberCustodyAttribution.only_the_gate_refusal_is_read
+#print axioms QCore.MemberCustodyAttribution.the_result_is_the_gate_refusal_or_a_name
+#print axioms QCore.MemberCustodyAttribution.the_writes_are_kept
+#print axioms QCore.MemberCustodyAttribution.a_refusal_stays_a_refusal
+#print axioms QCore.MemberCustodyAttribution.the_verdict_of_every_node_is_unchanged
+#print axioms QCore.MemberCustodyAttribution.the_status_of_a_function_is_unchanged
+#print axioms QCore.MemberCustodyAttribution.a_name_needs_every_premise
+#print axioms QCore.MemberCustodyAttribution.an_excluded_statement_keeps_the_gate_refusal
+#print axioms QCore.MemberCustodyAttribution.a_non_formal_base_keeps_the_gate_refusal
+#print axioms QCore.MemberCustodyAttribution.a_rebound_formal_keeps_the_gate_refusal
+#print axioms QCore.MemberCustodyAttribution.an_unrecognised_shape_keeps_the_gate_refusal
+#print axioms QCore.MemberCustodyAttribution.a_refusing_reading_keeps_a_call_shape_unnamed
+#print axioms QCore.MemberCustodyAttribution.no_reading_keeps_a_call_shape_unnamed
+#print axioms QCore.MemberCustodyAttribution.a_release_needs_a_released_position
+#print axioms QCore.MemberCustodyAttribution.a_store_needs_a_custody_value
+#print axioms QCore.MemberCustodyAttribution.a_named_leaf_is_never_pending
+#print axioms QCore.MemberCustodyAttribution.the_attribution_is_idempotent
