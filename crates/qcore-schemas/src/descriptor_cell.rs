@@ -348,6 +348,21 @@ impl CellProtocol {
     }
 }
 
+/// Card CELL-PROTOCOL-RELEASE-WINDOW-FRAMES (gateway rule 38g, grammar G05k,
+/// contract specification C04.6.4; USER DECISION 2026-11-04, verbatim: "(a)
+/// Callee frames"): `quant cell CALLEE: TAG |-> #untouched;` states that
+/// `callee`, with everything it calls, neither reads nor writes any member a
+/// declared protocol of `struct record` names (its cells and its guards), on
+/// every object of that type however the callee reaches it. A declared
+/// assumption until a unit's body check establishes it; read by rule 38g
+/// only, where a call would otherwise refuse a record that does not keep its
+/// protocol.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+pub struct CellFrame {
+    pub callee: String,
+    pub record: String,
+}
+
 /// The rule premise a protocol's host publishes with the rows resting on it.
 pub const PROTOCOL_PREMISE: &str = "P-CELL-PROTOCOL-DECLARED";
 

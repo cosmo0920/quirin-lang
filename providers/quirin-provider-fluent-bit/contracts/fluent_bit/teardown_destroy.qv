@@ -391,6 +391,45 @@ contract {
 //   flb_input_ingest.c:493-494 at 046accf6). The loader refuses an absent set
 //   that meets the guard's live edge or the live set.
 //
+// ## Callee frames in the release window (card CELL-PROTOCOL-RELEASE-WINDOW-FRAMES)
+//
+// USER DECISION 2026-11-04 (verbatim, on the options (a) callee frame
+// declarations, (b) a member-actual narrowing, (c) keep the refusal): "(a)
+// Callee frames". `quant cell CALLEE: TAG |-> #untouched;` (grammar G05k,
+// gateway rule 38g) states that CALLEE, with everything it calls, neither
+// reads nor writes a member the record's protocol names (its cells and
+// guards), on every object of the type however it is reached
+// (`container_of` included). The destroyers close an end without storing its
+// sentinel and keep using the record before `flb_free`; a contracted call
+// there refuses (`descriptor-cell-protocol-broken`) unless its callee's frame
+// stands. A frame is checked where the audited unit defines the callee's
+// body and every body it calls; elsewhere it is a deferred-review contract
+// (`awaiting-human-review`, Pending), never a premise. In the window every
+// call handed a pointer is read as reaching the record, whatever it names
+// (option (b)'s member-actual narrowing is not read).
+//
+// The window's contracted callees on the audited routes, with the bodies
+// read at 66910c10, 046accf6 and 34155955 (byte-identical at the three):
+// * `mk_list_del` (flb_output.c:631, flb_input.c:1330 and :1340 at 046accf6 /
+//   34155955): lib/monkey/include/monkey/mk_core/mk_list.h:139-150
+//   (`__mk_list_del` stores `prev->next` and `next->prev`; `mk_list_del`
+//   calls it and stores NULL into `entry->prev` and `entry->next`). It names
+//   only `struct mk_list`'s members; the static inline body is in every unit
+//   that calls it, so the frame is CHECKED there.
+// * `flb_input_collector_destroy` (flb_input.c:1331):
+//   src/flb_input.c:3140-3156 (:3120-3136 at 66910c10) reads
+//   `coll->instance->config` (not a protocol member), removes the
+//   collector's own event from `config->evl` (`mk_event_del` /
+//   `mk_event_timeout_destroy` on `&coll->event`) and frees the collector.
+//   It calls Monkey out of the unit: DECLARED (held for review).
+// The window's other callees state no frame, since none would be read:
+// `flb_task_queue_destroy(ins->singleplex_queue)` (flb_output.c:628) refuses
+// at the access gate first (a member value at a release position), and
+// `flb_output_free_properties`, `flb_processor_destroy`,
+// `flb_storage_input_destroy`, the ring-buffer cleanup and `flb_tp_destroy`
+// are uncontracted on these routes, so their calls refuse as uncontracted
+// whatever a frame says. The card's census lists each.
+//
 // The host is a vehicle chosen so the declaration changes no call reading.
 // `flb_config_set_program_name` (src/flb_config.c:956-966 at 046accf6 and
 // 34155955, :955-965 at 66910c10, the same body) is called only from
@@ -421,4 +460,7 @@ contract {
     quant cell #o: flb_output_instance.ch_events[0] |-> #fresh(descriptor) when #o.ch_events[0] > 0 live_set([1, MAX]) absent_set(0);
     quant cell #o: flb_output_instance.ch_events[1] |-> #fresh(descriptor) when #o.ch_events[1] > 0 live_set([1, MAX]) absent_set(0);
     quant cell #o: flb_output_instance.event.fd |-> #same(ch_events[0]) when #o.ch_events[0] > 0;
+    quant cell flb_input_collector_destroy: flb_input_instance |-> #untouched;
+    quant cell mk_list_del: flb_input_instance |-> #untouched;
+    quant cell mk_list_del: flb_output_instance |-> #untouched;
 };

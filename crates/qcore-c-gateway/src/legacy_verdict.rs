@@ -57,7 +57,11 @@ impl AnalysisStatus {
 /// contract is withheld awaiting review or for a pin mismatch.
 #[must_use]
 pub fn is_held_call(description: &str) -> bool {
-    review_hold::held_call(description).is_some() || pin_hold::held_call(description).is_some()
+    review_hold::held_call(description).is_some()
+        || pin_hold::held_call(description).is_some()
+        // Card CELL-PROTOCOL-RELEASE-WINDOW-FRAMES (rule 38g): a call a
+        // declared, unestablished callee frame holds for review.
+        || super::cell_frames_route::frame_held_call(description).is_some()
 }
 
 /// The verdict one diagnostic contributes to its function.

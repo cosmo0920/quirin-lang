@@ -636,6 +636,7 @@ mod tests {
             tie_names: BTreeSet::new(),
             traversal: Default::default(),
             cell_tests: Default::default(),
+            cell_frames: Default::default(),
         }
     }
 
@@ -687,6 +688,7 @@ mod tests {
             tie_names: BTreeSet::new(),
             traversal: Default::default(),
             cell_tests: Default::default(),
+            cell_frames: Default::default(),
         }
     }
 
@@ -1081,6 +1083,7 @@ mod tests {
             tie_names: BTreeSet::new(),
             traversal: Default::default(),
             cell_tests: Default::default(),
+            cell_frames: Default::default(),
         };
         assert_eq!(
             derive(&cfg)[2].get(&7),

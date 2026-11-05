@@ -24,9 +24,15 @@
 //! refused `close(r->CELL)` actual the access gate admits, and what rule 38c's
 //! close makes of it on one path, bound by
 //! [`close_actual::ADMISSION_VECTORS`] and [`close_actual::READING_VECTORS`].
+//!
+//! Card CELL-PROTOCOL-RELEASE-WINDOW-FRAMES (rule 38g): [`frame`] decides a
+//! callee frame's standing from a unit's bodies and what a call that may
+//! reach a record not keeping its protocol makes of it, bound by
+//! [`frame::BODY_VECTORS`] and [`frame::WINDOW_VECTORS`].
 
 pub mod cells;
 pub mod close_actual;
+pub mod frame;
 pub mod initial_member;
 pub mod protocol;
 

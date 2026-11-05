@@ -1,0 +1,32 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "CELL-PROTOCOL-RELEASE-WINDOW-FRAMES",
+ "base": "c8c7edf21",
+ "measured_tip": "731599d80",
+ "increment_paragraph": "**CELL-PROTOCOL-RELEASE-WINDOW-FRAMES** (gateway rule 38g, new; rule 38f (5) amended; grammar G05k, new; contract specification C04.6.4, new; USER DECISION 2026-11-04, verbatim, on the options (a) callee frame declarations, (b) a member-actual narrowing, (c) keep the refusal: \"(a) Callee frames\"): a callee frame `quant cell CALLEE: TAG |-> #untouched;` stands beside a record's protocol and states that the callee, with everything it calls, neither reads nor writes a member the protocol names, on every object of the type (loader refusals `quant-frame-shape`/`-record`/`-duplicate`; `ResourceContracts::cell_frames`). Where a contracted call would refuse a record that does not keep its protocol (the release window), a frame the unit's bodies establish (Clang AST, `legacy_cell_frames.rs`, `frame::body_check`) passes the record's fact through the call unchanged, a declared one passes it and holds the call (`awaiting-human-review`, Pending; accepted in the analysis with every held declaration in force), a refuted one refuses (`descriptor-cell-frame-refuted`), and none refuses as before. Option (b)'s narrowing, already in rule 38c's host (a member value or another pointer read as reaching nothing), is no longer read in the window: every contracted call there reaches the record except rule 38c's close (handed only cell numbers). Production (teardown_destroy.qv, host flb_config_set_program_name re-pinned at 046accf6, 34155955 and 66910c10, 161 -> 164 clauses): `mk_list_del` over the input and output instances (checked: mk_list.h's bodies are in every calling unit) and `flb_input_collector_destroy` over the input instance (declared). Window-call census over the three destroyers at the three trees (9 windows, 81 calls, 0 problems). Lean `QCore.CellProtocolReleaseWindowFrames` (13 theorems, vectors bound to Rust). Prediction `none` on every route; expected content: system flb_output_instance_destroy :631 and slice flb_input_instance_destroy :1330/:1340 lose `protocol-broken`, the slice row gains the hold at :1331. Follow-ups CELL-PROTOCOL-HOLDING-REACH-NARROWING and CELL-FRAME-REVIEW-REPORTING. [Report](../../reports/cell-protocol-release-window-frames/README.md).",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "CELL-PROTOCOL-RELEASE-WINDOW-FRAMES",
+   "operation": "retire",
+   "why": "DISCHARGED by CELL-PROTOCOL-RELEASE-WINDOW-FRAMES (docs/reports/cell-protocol-release-window-frames/README.md; USER DECISION 2026-11-04, verbatim: \"(a) Callee frames\"): the callee frame clause (G05k, C04.6.4) and its reading (rule 38g) with body checking against the unit's Clang AST and Lean parity (QCore.CellProtocolReleaseWindowFrames); declared frames hold their calls for review (Pending, never Safe); option (b)'s narrowing is no longer read in the window; production frames for mk_list_del (checked) and flb_input_collector_destroy (declared); fixtures for every window callee; the window-call census; a declared measurement (PREDICTION.md, none on every route).",
+   "source": "docs/reports/cell-protocol-release-window-frames/README.md"
+  },
+  {
+   "id": "CELL-PROTOCOL-HOLDING-REACH-NARROWING",
+   "operation": "register",
+   "title": "Outside the release window a call reaches a record only through an actual naming it",
+   "text": "Registered by CELL-PROTOCOL-RELEASE-WINDOW-FRAMES. Rule 38c's host (legacy_transfer.rs, the `touch` call's `names`) reads a contracted call as reaching a record with a fact only through an actual naming it (`r`) or an unread actual (`&r->m`, a nested call); a member value (`r->processor`) or another pointer (`collector`, which reaches the instance through `collector->instance`) reaches nothing. Rule 38g removed that narrowing (option (b), which the user did not choose: \"(a) Callee frames\") for a record that does not keep its protocol. A record that keeps it is still forwarded past such a call with its fact: under the declared protocol it still keeps it after the call, but the caller's identities would be stale if the callee closed and reset an end. DISCHARGE: read every call handed a pointer as reaching a holding record too (forgetting its fact), or a frame clause for it, with the measured row changes.",
+   "source": "docs/reports/cell-protocol-release-window-frames/README.md",
+   "recorded_by": "CELL-PROTOCOL-RELEASE-WINDOW-FRAMES"
+  },
+  {
+   "id": "CELL-FRAME-REVIEW-REPORTING",
+   "operation": "register",
+   "title": "A held callee frame is not listed with the review markers it stands beside",
+   "text": "Registered by CELL-PROTOCOL-RELEASE-WINDOW-FRAMES. A declared, unestablished callee frame (rule 38g) holds the window calls it would admit with ``call to `CALLEE` reaching a `struct TAG` that does not keep its cell protocol rests on its declared frame, which awaits human review (awaiting-human-review)``, read as Pending by `verdict::is_held_call`. The audit's `pending_human_review` section and the rows' `review_holds` member (C06.1, rule 10i) list `resource_review_pending` markers only, so a row Pending on a frame names its act in the refusal alone. No production frame is held in a row that could be Pending today. DISCHARGE: list each declared frame and the calls it holds in the section, and its review entry in `review_holds`.",
+   "source": "docs/reports/cell-protocol-release-window-frames/README.md",
+   "recorded_by": "CELL-PROTOCOL-RELEASE-WINDOW-FRAMES"
+  }
+ ]
+}

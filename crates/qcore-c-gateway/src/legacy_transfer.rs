@@ -1840,6 +1840,9 @@ pub(super) struct TransferContext<'a> {
     /// Card **DETACH-RESULT-WRAPPER-COMPOSITION** (rule 33): the selection
     /// entry's facts; `None` in every other analysis.
     pub(super) selection: Option<selection_route::SelectionEntry>,
+    /// Card **CELL-PROTOCOL-RELEASE-WINDOW-FRAMES** (rule 38g): the CFG's
+    /// callee frame standings; empty (every frame absent) elsewhere.
+    pub(super) cell_frames: super::cell_frames_route::CellFrames,
 }
 
 /// The kind of `site` under `kinds`: heap unless recorded otherwise.
@@ -1941,6 +1944,7 @@ fn analyze_cfg_with_entry_collected(
         derived_bases: entry_custody.derived_bases.keys().copied().collect(),
         exact_return_bases: entry_custody.derived_bases.clone(),
         selection: entry_custody.selection.clone(),
+        cell_frames: cfg.cell_frames.clone(),
         traversal: cfg.traversal.clone(),
         site_kinds: descriptor_custody::site_kinds(cfg.nodes.iter().map(|node| &node.instruction))
             .into_iter()
@@ -2784,6 +2788,7 @@ pub(super) fn transfer(
     // cell-bearing call is rule 38's own.
     if !output.cell_protocols.is_empty()
         && let LegacyInstruction::ContractCall {
+            function: callee,
             arguments,
             nested,
             retention,
@@ -2827,11 +2832,52 @@ pub(super) fn transfer(
                 }
             })
         };
+        // Card CELL-PROTOCOL-RELEASE-WINDOW-FRAMES (rule 38g): the frame
+        // over a record of every callee the call runs.
+        let callees = std::iter::once(callee.as_str())
+            .chain(nested.iter().map(|call| call.function.as_str()))
+            .collect::<Vec<_>>();
+        let frame_of = |record: &str| {
+            super::cell_frames_route::call_standing(
+                &context.cell_frames,
+                callees.iter().copied(),
+                record,
+            )
+        };
+        // A call handed only the record's own cell numbers (rule 38c's
+        // close, `close(r->CELL)`) is handed no pointer that could reach it.
+        let names_exactly =
+            |root: &super::descriptor_cells_route::ProtocolRoot, base: &str| match root {
+                super::descriptor_cells_route::ProtocolRoot::Name(formal) => base == formal,
+                super::descriptor_cells_route::ProtocolRoot::Site(site) => {
+                    probe.pointers.get(base).is_some_and(|pointer| {
+                        !pointer.unknown
+                            && pointer.targets.len() == 1
+                            && pointer.targets.contains(site)
+                    })
+                }
+            };
+        let cell_numbers_only = |root: &super::descriptor_cells_route::ProtocolRoot,
+                                 record: &str| {
+            let cells = context.cell_frames.cells.get(record);
+            !unread
+                && !arguments.is_empty()
+                && arguments.iter().flatten().all(|actual| {
+                    actual.split_once("->").is_some_and(|(base, path)| {
+                        names_exactly(root, base) && cells.is_some_and(|cells| cells.contains(path))
+                    })
+                })
+        };
         super::descriptor_cells_route::touch(
             function,
             node.line,
             |root| unread || named.iter().any(|name| names(root, name)),
             releases,
+            super::descriptor_cells_route::CallFrames {
+                callee,
+                standing: frame_of,
+                cell_numbers_only,
+            },
             &mut output,
             diagnostics,
         );
