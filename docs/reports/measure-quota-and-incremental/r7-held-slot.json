@@ -1,0 +1,58 @@
+{
+ "holder": "gate_slot.py rust-suite -- sleep 6",
+ "quota_ms": 4000,
+ "runs": {
+  "counted": {
+   "host_run": {
+    "analysis_time_ms": 4001,
+    "code": "plugin-timeout",
+    "outcome": "failed",
+    "reason": "exceeded the wall-time quota of 4000 ms (0 ms of declared slot waits excluded, limit 0 ms)",
+    "slot_wait_ms": 0,
+    "verdict": "Unknown",
+    "wall_time_ms": 4001
+   },
+   "quotas": {
+    "stderr_bytes": 16777216,
+    "stdout_bytes": 16777216,
+    "wall_time_ms": 4000
+   },
+   "slot_wait_limit_ms": 0
+  },
+  "excluded": {
+   "host_run": {
+    "analysis_time_ms": 133,
+    "code": null,
+    "outcome": "completed",
+    "reason": null,
+    "slot_wait_ms": 6010,
+    "verdict": "Safe",
+    "wall_time_ms": 6143
+   },
+   "quotas": {
+    "stderr_bytes": 16777216,
+    "stdout_bytes": 16777216,
+    "wall_time_ms": 4000
+   },
+   "slot_wait_limit_ms": 60000,
+   "timing": {
+    "analysis_time_ms": 122,
+    "sides": {
+     "tip": {
+      "slice": {
+       "analysis_time_ms": 109,
+       "profile": "fixture-profile",
+       "slot_wait_ms": 6002,
+       "wall_time_ms": 6111
+      }
+     }
+    },
+    "slot_wait_meaning": "wall time during which every route in flight waited for its gate slot; the host's --timeout-ms does not count it (card MEASURE-QUOTA-AND-INCREMENTAL, R7)",
+    "slot_wait_ms": 6010,
+    "wall_time_ms": 6132
+   }
+  }
+ },
+ "schema": "measure-quota-r7-evidence/1",
+ "test": "crates/quirin-audit-plugin-measure/tests/slot_wait.rs::a_measurement_waiting_for_a_held_slot_is_not_killed_for_waiting"
+}

@@ -1,0 +1,4 @@
+rows 448 units 15
+row dependency keys ['declarations', 'held', 'hypothesis_dependencies', 'null_premises', 'summaries', 'withdrawn']
+report keys ['diagnostic_counts', 'enumeration_meaning', 'fluent_bit_revision', 'line_coordinates', 'not_projected_meaning', 'origin_meaning', 'reason_code_meaning', 'schema_version', 'scope', 'units']
+contracts sidecar keys ['callback_member_declarations', 'callback_members', 'configuration_count', 'contract_dependencies', 'contract_inclusion', 'contract_manifest', 'contract_premises', 'contract_revision', 'contracts', 'historical_evidence', 'pending_human_review', 'profile', 'profile_pin_role', 'refuted_contracts', 'schema_version', 'scope', 'source_file_count', 'source_revision', 'source_revision_policy', 'unit_selection']

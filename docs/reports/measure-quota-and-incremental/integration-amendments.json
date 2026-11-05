@@ -1,0 +1,44 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "MEASURE-QUOTA-AND-INCREMENTAL",
+  "base": "25508ccaf",
+  "measured_tip": "efcdf323b",
+  "increment_paragraph": "**MEASURE-QUOTA-AND-INCREMENTAL** (round 19, card C; USER REQUEST 2026-11-05, verbatim: \"We need to record the requirements of saving gating time tasks.\", then \"Launch three cards of gate-time reductions.\"): requirement R7 of docs/plans/gate-time-reduction/README.md is done and R8 stops with options. R7: `scripts/gate_slot.py --wait-record` keeps a live waiting/admitted record; the measure plugin begins every route job before any can wait and, while every job in flight waits for its slot, keeps the host's slot-wait marker (`quirin_audit_plugin::SLOT_WAIT_MARKER`) in its output; the subcommand host excludes that time from `--timeout-ms` up to the new `--slot-wait-limit-ms` (default the quota; 0 counts every wait) and records wall, slot-wait and analysis time; the comparison record's `timing` slot and each route's run.json entry give the waits per side and profile. The quota limit, not the host, bounds the plugin's declaration (follow-up SLOT-WAIT-DECLARED-BY-PLUGIN). The host lives in crates/qcore-audit, outside the brief's file list, because the quota is enforced there. Tests: a real held rust-suite slot through the real host (slot_wait.rs: killed at 4,001 ms with waits counted; completed with 6,010 ms of wait excluded and 133 ms counted), the host's marker accounting, default, limit and stale marker (subcommand_plugins.rs), and the wait record (test_gate_slot.py). From the recorded receipts, LIBC-GAP's quota would have counted 164.2 of 383.0 minutes and CFL-MPACK r2's 148.7 of 238.1. R8: with today's records every contract card re-audits every profile fail-closed (every profile records the same twelve bundles; published rows omit missed lookups, so an added declaration's reach is not recorded; the refutation table, cross-unit link homes and pin evaluation are run-wide; the pinned corpus route, 80-83 % of the analysis, has no unit seam), so no reuse rule was built; options A (published consultation closure, recommended with D), B (profile reuse), C (advisory spelled-name reuse) and D (corpus checkpoints first) are in the report. No analyzer, contract or Lean change; no measurement. Report: docs/reports/measure-quota-and-incremental/README.md.",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "MEASURE-QUOTA-AND-INCREMENTAL",
+      "operation": "register",
+      "title": "Measurement quota excludes slot waits (R7); incremental baseline composition (R8)",
+      "text": "Registered by its own card at landing (round 19, card C; USER REQUEST 2026-11-05, verbatim: \"We need to record the requirements of saving gating time tasks.\", then \"Launch three cards of gate-time reductions.\"); retired by the next entry.",
+      "source": "docs/reports/measure-quota-and-incremental/README.md",
+      "recorded_by": "MEASURE-QUOTA-AND-INCREMENTAL"
+    },
+    {
+      "id": "MEASURE-QUOTA-AND-INCREMENTAL",
+      "operation": "retire",
+      "why": "DONE by MEASURE-QUOTA-AND-INCREMENTAL (docs/reports/measure-quota-and-incremental/README.md): R7 implemented and tested (MEASURE-SLOT-WAIT-OUTSIDE-QUOTA retired below); R8 stopped with options on a user decision, tracked by MEASURE-INCREMENTAL-BASELINE-COMPOSITION (amended below).",
+      "source": "docs/reports/measure-quota-and-incremental/README.md"
+    },
+    {
+      "id": "MEASURE-SLOT-WAIT-OUTSIDE-QUOTA",
+      "operation": "retire",
+      "why": "DISCHARGED by MEASURE-QUOTA-AND-INCREMENTAL (docs/reports/measure-quota-and-incremental/README.md): the subcommand host's wall-time quota excludes the time the measure plugin declares as every route in flight waiting for its gate slot (gate_slot.py --wait-record, the SLOT_WAIT_MARKER in the output), up to --slot-wait-limit-ms (default the quota); host report, comparison record timing slot and run.json record wall, slot-wait and analysis time per side and profile; crates/quirin-audit-plugin-measure/tests/slot_wait.rs runs a measurement behind a real held rust-suite slot through the real host: killed with waits counted, completed with them excluded.",
+      "source": "docs/reports/measure-quota-and-incremental/README.md"
+    },
+    {
+      "id": "MEASURE-INCREMENTAL-BASELINE-COMPOSITION",
+      "operation": "amend",
+      "text": "AMENDED (MEASURE-QUOTA-AND-INCREMENTAL, read against 25508ccaf): fail-closed with today's records, every contract card re-audits every profile, so no reuse rule was built. Every live profile's baseline records the same twelve contract bundles; a published row lists only declarations (declarations, held, withdrawn), not the missed lookups the gateway notes (qcore_schemas::contract_consultation::Consulted.missed), so an added declaration's reach is unrecorded, and the record is evidence-only with callback candidates (relied) that need not be spelled; the refutation table (phase two holds call sites in every unit), the cross-unit link homes (QCORE_CROSS_UNIT_LINK_MAP, set by every measure route) and the pin evaluation are run-wide; current-route .qo checkpoints refuse QCORE_NULL_PROPERTY and QCORE_OUTER_PROJECTION and name the analyzer build commit; the pinned corpus route (80-83 % of tip analysis time on LIBC-GAP and CFL-MPACK r2) has no unit seam (W45-CHECKPOINT-PINNED-REPLAY-ROUTE). Options: (A, recommended with D) the gateway publishes per unit every name looked up (found and missed), the relied candidates and a whole-map-read flag, a new baseline carries it, and the measure tool reuses a unit only when the revision diff is contract data alone, no changed declaration meets the unit's closure, the tip's refutation table, link-home evidence and pin template equal the baseline's (fixpoint over re-audited units, else full) and the unit fingerprint matches; needs the user's approval to use an evidence-only record as a reuse input, a Lean locality statement and a gateway card; saves about 30-35 of 150-165 analysis minutes (system and slice). (B) profile reuse when no analyzer path or bundle changed: sound, no saving for contract cards. (C) advisory reuse by spelled names, never for a landing: unsound as a claim. (D) pinned-route group checkpoints first, then A on the corpus: the large saving. DISCHARGE unchanged, after that decision.",
+      "source": "docs/reports/measure-quota-and-incremental/README.md"
+    },
+    {
+      "id": "SLOT-WAIT-DECLARED-BY-PLUGIN",
+      "operation": "register",
+      "title": "The host excludes slot waits a subcommand plugin declares, bounded only by the slot-wait limit",
+      "text": "Registered by MEASURE-QUOTA-AND-INCREMENTAL. The subcommand host stops counting --timeout-ms while the plugin keeps quirin_audit_plugin::SLOT_WAIT_MARKER in its output; the host does not verify that the plugin's descendants wait for a gate slot. --slot-wait-limit-ms (default the quota) bounds it: a run never exceeds quota + limit. The quota is a resource bound and no verdict path reads the wait, but a plugin can spend the limit while working. gate_slot.py polls with non-blocking flock, so the kernel's waiter list does not show its waits. DISCHARGE: a wait the host verifies itself, or a recorded decision that the limit is the bound.",
+      "source": "docs/reports/measure-quota-and-incremental/README.md",
+      "recorded_by": "MEASURE-QUOTA-AND-INCREMENTAL"
+    }
+  ]
+}
