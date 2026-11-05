@@ -327,6 +327,15 @@ One correction to revision 1 is also known. `cfl_sds_printf` lost its tail
 `:413`, `:429`, `:449`, `:486`) are arity refusals. They may still be counted
 under its name. No predicted move depends on them.
 
+**Measurement (integrator, 2026-11-05).** Revision 2 was run from the main
+checkout, tip `rev:25c143cbd` against `baseline:c8c7edf21`, output
+`private/measure/cfl-mpack-r2-20261105T023115Z`; exit 0. The declared
+prediction matches on every route (corpus, system, slice: `match`). Corpus:
+16 moves, 2 unit moves, 0 unmatched, 127 content changes; system and slice: 0
+moves, 0 content changes.
+[native-comparison.json](native-comparison.json) (sha256
+`a327d96cda1ba7947c503580d24b499b8c1535e738ade69063feeca6ca8cecd7`).
+
 ## 5. Records
 
 - **Registered:**

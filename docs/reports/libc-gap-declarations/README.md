@@ -268,6 +268,25 @@ tests:
 declarations 109 -> 112, and the 20 plain modes added to the table. Every
 other step of that attempt exited 0.
 
+**Measurement (integrator, 2026-11-05).** Run from the main checkout, tip
+`rev:e6a5288d0` against `baseline:c8c7edf21`, with the command above, output
+`private/measure/libc-gap-20261105T034105Z`; exit 1 (declared mismatch).
+System and slice match (0 moves; slice has 6 content changes). Corpus: 5
+moves, 0 unit moves, 0 unmatched, 65 content changes. The 4 declared moves
+happened. One more row moved Unknown -> Safe that the prediction missed:
+`librdkafka::rdstring.c::_rd_strcasestr`. At the base its only leaves
+were "unmodeled call, aggregate or indirect access in for-loop condition"
+(`rdstring.c:348`) and "... in do-while condition" (`:358`). The only call in
+either condition is `tolower((int)*h)` / `tolower((int)*n)`. This card declares
+`tolower` as `int -> int` with `resource_borrowed(c)` and no pointer
+(§2). With the declaration the conditions are modelled and the row has no leaf.
+Its declaration dependencies are `strcasecmp`, `strlen` and `tolower`. Its result is
+`haystack` or `NULL`, as at the base. The move is justified. The prediction
+counted only rows with a `call to uncontracted function` leaf and missed
+callee calls that sit in loop conditions. No row moved to Unsafe.
+[native-comparison.json](native-comparison.json) (sha256
+`fd63c6d56f2a800d9cdbee5c83d5d6eade86e764841348bd05b23f03d5dd8982`).
+
 ## 6. Follow-ups
 
 Registered:
