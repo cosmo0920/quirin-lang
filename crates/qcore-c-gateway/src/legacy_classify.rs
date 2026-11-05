@@ -1189,9 +1189,19 @@ impl Parser<'_> {
             // acquires nothing and evaluates nothing, so it is custody-neutral;
             // every other bracketed or dotted declaration still needs an
             // importer we do not have.
-            (texts.contains(&"[") && !constant_array_declaration(&texts)) || texts.contains(&".")
+            let old = (texts.contains(&"[") && !constant_array_declaration(&texts))
+                || texts.contains(&".");
+            // Card MEMBER-ACCESS-PROJECTION (rule 38h): or Clang's AST shows
+            // the same declaration with a constant-expression bound.
+            self.typed_declaration_gate(tokens, old, declaration_like)
         } else {
-            contains_unmodeled_access(&gate_view(0))
+            // Rule 38h: a typedef-specified declaration the token test reads
+            // as an access, when Clang's AST shows it is one.
+            self.typed_declaration_gate(
+                tokens,
+                contains_unmodeled_access(&gate_view(0)),
+                declaration_like,
+            )
         };
         // Card W45-CONTRACT-DEFERRED-REVIEW: a held call is refused before the
         // lexical access gate too, and ahead of every withdrawal, so the

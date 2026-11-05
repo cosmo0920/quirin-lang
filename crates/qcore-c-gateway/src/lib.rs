@@ -197,6 +197,9 @@ mod function_reading_reuse;
 mod typed_access_positions;
 // Card W47-ACCESS-PATH-POSITION-RESIDUALS (rule 10n).
 mod typed_position_shapes;
+// Card MEMBER-ACCESS-PROJECTION (rule 38h): an uninitialized declaration the
+// lexical gate refuses, read from the Clang AST.
+mod typed_declaration;
 // Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 2 (rules 14a-14d).
 mod residual_access_reading;
 // Card RULE35-PILOT: the host of the rule packages under
