@@ -99,6 +99,8 @@ LEAN_ROOT_FILES = ("proof/QCore.lean", "proof/AuditAll.lean")
 PROBES = ("reevaluation_probe", "reevaluation_followup")
 GRANULARITIES = ("directory", "file")
 PROBE_CRATE = "qcore-compiler"
+# The card's base, given to the Python suite on a card gate (not --landing).
+CARD_GATE_BASE_ENV = "QUIRIN_CARD_GATE_BASE"
 
 # The provider gate: providers/README.md "Build, verify and reproduce", with the
 # package output in this run's own directory (package.py refuses an existing
@@ -171,6 +173,25 @@ def tracked_files(root: Path = REPO_ROOT) -> list[str]:
     return [p for p in git("ls-files", "-z", root=root).split("\0") if p]
 
 
+@dataclasses.dataclass(frozen=True)
+class Target:
+    """One cargo target of a crate (``cargo metadata``'s ``targets[]``)."""
+
+    name: str
+    kinds: tuple[str, ...]
+    src_path: str  # repository-relative, posix
+
+    @property
+    def is_test(self) -> bool:
+        """A ``tests/``-style integration test: its own executable, depended on by nothing."""
+        return self.kinds == ("test",)
+
+
+def unit_uid(crate: str, target: Target) -> str:
+    """The unit id ``scripts/run_test_binaries.py`` gives this target's executable."""
+    return f"{crate}::{'+'.join(target.kinds)}::{target.name}"
+
+
 @dataclasses.dataclass
 class Crate:
     name: str
@@ -178,6 +199,8 @@ class Crate:
     directory: str  # repository-relative, posix
     deps: set[str]  # names of path dependencies (any kind)
     has_lib: bool = True
+    # None: inferred from cargo's auto-discovery layout (synthetic models in tests).
+    targets: Optional[list[Target]] = None
 
 
 def cargo_metadata(manifest: Optional[str], root: Path = REPO_ROOT) -> dict:
@@ -203,9 +226,65 @@ def crates_from_metadata(document: dict, workspace: str, root: Path = REPO_ROOT)
             raise ScopeError(f"{package['name']} lies outside the repository: {directory}") from None
         deps = {dep["name"] for dep in package["dependencies"] if dep.get("path")}
         kinds = {kind for target in package["targets"] for kind in target["kind"]}
+        targets = []
+        for target in package["targets"]:
+            source = Path(target["src_path"]).resolve()
+            try:
+                src_path = source.relative_to(root.resolve()).as_posix()
+            except ValueError:
+                raise ScopeError(f"{package['name']} target {target['name']} lies outside the "
+                                 f"repository: {source}") from None
+            targets.append(Target(target["name"], tuple(target["kind"]), src_path))
         crates.append(Crate(package["name"], workspace, relative, deps,
-                            has_lib=bool(kinds & {"lib", "rlib", "proc-macro"})))
+                            has_lib=bool(kinds & {"lib", "rlib", "proc-macro"}),
+                            targets=targets))
     return crates
+
+
+def infer_targets(crate: Crate, files: Iterable[str]) -> list[Target]:
+    """Cargo's auto-discovered targets, for a crate given without metadata."""
+    directory = crate.directory
+    targets = []
+    for path in sorted(files):
+        if not path.startswith(directory + "/") or not path.endswith(".rs"):
+            continue
+        relative = path[len(directory) + 1:]
+        parts = relative.split("/")
+        stem = posixpath.splitext(parts[-1])[0]
+        if relative == "src/lib.rs":
+            targets.append(Target(crate.name.replace("-", "_"), ("lib",), path))
+        elif relative == "src/main.rs":
+            targets.append(Target(crate.name, ("bin",), path))
+        elif relative == "build.rs":
+            targets.append(Target("build-script-build", ("custom-build",), path))
+        elif len(parts) == 2 and parts[0] in ("tests", "examples", "benches"):
+            kind = {"tests": "test", "examples": "example", "benches": "bench"}[parts[0]]
+            targets.append(Target(stem, (kind,), path))
+        elif len(parts) == 3 and parts[0] in ("tests", "examples", "benches") \
+                and parts[2] == "main.rs":
+            kind = {"tests": "test", "examples": "example", "benches": "bench"}[parts[0]]
+            targets.append(Target(parts[1], (kind,), path))
+        elif len(parts) == 3 and parts[:2] == ["src", "bin"]:
+            targets.append(Target(stem, ("bin",), path))
+    return targets
+
+
+def provider_path_closure(crates: Sequence[Crate]) -> set[str]:
+    """Root-workspace crates the provider workspace builds by path, transitively
+    (GATE-SCOPE-PROVIDER-LOCK): a change to their dependency set can leave
+    ``providers/Cargo.lock`` stale."""
+    by_name = {crate.name: crate for crate in crates}
+    queue = sorted({dep for crate in crates if crate.workspace == "providers"
+                    for dep in crate.deps if dep in by_name
+                    and by_name[dep].workspace == "root"})
+    closure = set(queue)
+    while queue:
+        current = queue.pop()
+        for dep in sorted(by_name[current].deps):
+            if dep in by_name and by_name[dep].workspace == "root" and dep not in closure:
+                closure.add(dep)
+                queue.append(dep)
+    return closure
 
 
 def load_crates(root: Path = REPO_ROOT) -> list[Crate]:
@@ -249,8 +328,79 @@ def line_of(text: str, offset: int) -> int:
 class Reader:
     crate: str
     target: str  # a file (compile time) or a path prefix (run time)
-    kind: str  # "include_str" | "include_bytes" | "include" | "path" | "runtime"
+    kind: str  # "include_str" | "include_bytes" | "include" | "path" | "runtime" | "walker"
     source: str  # file:line
+    # The test targets (unit ids) whose executables contain the reading source,
+    # when it is compiled into test targets only; None: the crate as a whole
+    # (its library, a binary, a build script or an example reads it, or the
+    # reading file is in no target the scanner could resolve).
+    units: Optional[frozenset] = None
+
+
+# --- the walker table (R1) -------------------------------------------------------
+
+WALKERS_FILE = SCRIPTS / "gate_scope_walkers.json"
+WALKERS_SCHEMA = "quirin-gate-walkers/1"
+
+
+def glob_regex(pattern: str) -> "re.Pattern[str]":
+    """A repository glob: `*` and `?` within one path segment, `**/` any depth."""
+    out, index = "", 0
+    while index < len(pattern):
+        if pattern.startswith("**/", index):
+            out, index = out + "(?:[^/]+/)*", index + 3
+        elif pattern.startswith("**", index):
+            out, index = out + ".*", index + 2
+        elif pattern[index] == "*":
+            out, index = out + "[^/]*", index + 1
+        elif pattern[index] == "?":
+            out, index = out + "[^/]", index + 1
+        else:
+            out, index = out + re.escape(pattern[index]), index + 1
+    return re.compile(out + r"\Z")
+
+
+def _check_entry(entry: dict, keys: Sequence[str], table: str) -> None:
+    for key in keys:
+        if not isinstance(entry.get(key), str) or not entry[key]:
+            raise ScopeError(f"{table}: entry {entry} needs a non-empty {key!r}")
+    if not isinstance(entry.get("reads"), list) or \
+            not all(isinstance(p, str) and p for p in entry["reads"]):
+        raise ScopeError(f"{table}: entry {entry} needs a list of globs in 'reads'")
+
+
+def load_table(path: Path = WALKERS_FILE) -> dict:
+    """The walker table: ``walkers`` (a literal at a source site, and the files
+    that site reads through it) and ``expansions`` (a file whose readers also
+    read the files it lists).  A malformed table refuses (nothing runs)."""
+    try:
+        document = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as error:
+        raise ScopeError(f"walker table {path}: {error}") from None
+    if document.get("schema") != WALKERS_SCHEMA:
+        raise ScopeError(f"walker table {path}: schema must be {WALKERS_SCHEMA}")
+    unknown = set(document) - {"schema", "note", "walkers", "expansions"}
+    if unknown:
+        raise ScopeError(f"walker table {path}: unknown keys {sorted(unknown)}")
+    seen: set[tuple[str, str]] = set()
+    for entry in document.get("walkers", []):
+        _check_entry(entry, ("source", "literal", "why"), "walker table")
+        key = (entry["source"], entry["literal"])
+        if key in seen:
+            raise ScopeError(f"walker table: {key} is declared twice")
+        seen.add(key)
+    files: set[str] = set()
+    for entry in document.get("expansions", []):
+        _check_entry(entry, ("file", "why"), "walker table expansions")
+        if entry["file"] in files:
+            raise ScopeError(f"walker table: expansion of {entry['file']} is declared twice")
+        files.add(entry["file"])
+    return {"walkers": list(document.get("walkers", [])),
+            "expansions": list(document.get("expansions", []))}
+
+
+def load_walkers(path: Path = WALKERS_FILE) -> list[dict]:
+    return load_table(path)["walkers"]
 
 
 class Model:
@@ -259,24 +409,45 @@ class Model:
     def __init__(self, crates: Sequence[Crate], files: Sequence[str],
                  read_text=lambda path: (REPO_ROOT / path).read_text(encoding="utf-8",
                                                                      errors="replace"),
-                 granularity: str = "file"):
+                 granularity: str = "file", walkers: Sequence[dict] = (),
+                 expansions: Sequence[dict] = ()):
         if granularity not in GRANULARITIES:
             raise ScopeError(f"reader granularity must be one of {GRANULARITIES}")
         self.granularity = granularity
         self.crates = {crate.name: crate for crate in crates}
         self.by_depth = sorted(crates, key=lambda c: -len(c.directory))
         self.files = list(files)
+        self.file_set = set(files)
         self.read_text = read_text
         self.known = known_paths(files)
         self.compile_readers: dict[str, list[Reader]] = {}
         self.compile_dirs: dict[str, dict[str, list[Reader]]] = {}
         self.runtime_readers: dict[str, list[Reader]] = {}
+        # A crate's run-time literals naming its own paths: they decide which of
+        # its test targets a change to one of its own non-Rust files selects.
+        self.own_readers: dict[str, list[Reader]] = {}
+        self.walker_readers: list[tuple[Reader, "re.Pattern[str]"]] = []
+        self.walkers = {(entry["source"], entry["literal"]): entry for entry in walkers}
+        self.walker_hits: set[tuple[str, str]] = set()
+        # A file whose every reader also reads the files it lists (a manifest).
+        self.expansions = [(entry["file"], [glob_regex(p) for p in entry["reads"]])
+                           for entry in expansions]
+        # Directory literals no walker entry declares: still attributed by
+        # directory (fail-closed), and listed so a test can require a declaration.
+        self.undeclared: list[dict] = []
         self.unresolved: list[dict] = []
         self.reverse: dict[str, set[str]] = {name: set() for name in self.crates}
         for crate in crates:
             for dep in crate.deps:
                 if dep in self.reverse:
                     self.reverse[dep].add(crate.name)
+        self.provider_closure = provider_path_closure(crates)
+        self.targets: dict[str, list[Target]] = {}
+        # (crate, file) -> unit ids of the test targets compiling it; and the
+        # (crate, file) pairs some non-test target compiles.
+        self.file_units: dict[tuple[str, str], set[str]] = {}
+        self.file_nontest: set[tuple[str, str]] = set()
+        self._resolve_targets()
         self._scan()
 
     def owner(self, path: str) -> Optional[str]:
@@ -284,6 +455,56 @@ class Model:
             if path == crate.directory or path.startswith(crate.directory + "/"):
                 return crate.name
         return None
+
+    def _module_children(self, path: str, text: str, is_root: bool) -> list[str]:
+        """Files a source declares as modules: `#[path]` (relative to its directory)
+        and `mod x;` (beside a crate root or `mod.rs`, else under its stem)."""
+        directory = posixpath.dirname(path)
+        stem = posixpath.splitext(posixpath.basename(path))[0]
+        base = directory if is_root or stem == "mod" else posixpath.join(directory, stem)
+        children = []
+        for match in PATH_ATTR_RE.finditer(text):
+            target = inside_repo(posixpath.join(directory, match.group(1)))
+            if target:
+                children.append(target)
+        for match in MOD_RE.finditer(text):
+            for candidate in (f"{base}/{match.group(1)}.rs", f"{base}/{match.group(1)}/mod.rs"):
+                candidate = inside_repo(candidate)
+                if candidate:
+                    children.append(candidate)
+        return children
+
+    def _resolve_targets(self) -> None:
+        """Each target's module closure, from its root file."""
+        rs_set = {path for path in self.files if path.endswith(".rs")}
+        for name, crate in self.crates.items():
+            targets = crate.targets if crate.targets is not None \
+                else infer_targets(crate, self.files)
+            self.targets[name] = list(targets)
+            for target in targets:
+                closure = {target.src_path}
+                queue = [(target.src_path, True)]
+                while queue:
+                    path, is_root = queue.pop()
+                    text = self._text(path)
+                    if text is None:
+                        continue
+                    for child in self._module_children(path, text, is_root):
+                        if child in rs_set and child not in closure:
+                            closure.add(child)
+                            queue.append((child, False))
+                for path in closure:
+                    if target.is_test:
+                        self.file_units.setdefault((name, path), set()).add(unit_uid(name, target))
+                    else:
+                        self.file_nontest.add((name, path))
+
+    def reader_units(self, crate: str, path: str) -> Optional[frozenset]:
+        """The test targets a reading source belongs to, or None for the crate."""
+        if (crate, path) in self.file_nontest:
+            return None
+        units = self.file_units.get((crate, path))
+        return frozenset(units) if units else None
 
     def _compiled_files(self) -> dict[str, set[str]]:
         """Every tracked .rs file each crate compiles: its own, plus #[path] and
@@ -324,7 +545,7 @@ class Model:
     def _text(self, path: str) -> Optional[str]:
         try:
             return self.read_text(path)
-        except OSError:
+        except (OSError, KeyError):
             return None  # deleted in the working tree; its readers are scanned elsewhere
 
     def _add(self, table: dict[str, list[Reader]], reader: Reader) -> None:
@@ -340,6 +561,7 @@ class Model:
                 text = self._text(path)
                 if text is None:
                     continue
+                units = self.reader_units(name, path)
                 directory = posixpath.dirname(path)
                 resolved_spans = []
                 for regex, base in ((INCLUDE_RE, directory), (INCLUDE_CONCAT_RE, crate_dir)):
@@ -354,7 +576,8 @@ class Model:
                                                     "literal": match.group(2), "why": "outside the repository"})
                             continue
                         self._add(self.compile_readers, Reader(
-                            name, target, match.group(1), f"{path}:{line_of(text, match.start())}"))
+                            name, target, match.group(1), f"{path}:{line_of(text, match.start())}",
+                            units))
                 for match in INCLUDE_ANY_RE.finditer(text):
                     if match.start() not in resolved_spans:
                         self.unresolved.append({
@@ -365,12 +588,12 @@ class Model:
                     target = inside_repo(posixpath.join(directory, match.group(1)))
                     if target is not None:
                         self._add(self.compile_readers, Reader(
-                            name, target, "path", f"{path}:{line_of(text, match.start())}"))
+                            name, target, "path", f"{path}:{line_of(text, match.start())}", units))
                 if runtime_scanned(crate_dir, path):
-                    self._scan_literals(name, crate_dir, path, directory, text)
+                    self._scan_literals(name, crate_dir, path, directory, text, units)
 
     def _scan_literals(self, name: str, crate_dir: str, path: str, directory: str,
-                       text: str) -> None:
+                       text: str, units: Optional[frozenset] = None) -> None:
         seen: set[str] = set()
 
         def consider(piece: str, offset: int) -> None:
@@ -384,11 +607,27 @@ class Model:
                 target = inside_repo(candidate)
                 if target is None or target not in self.known or target in seen:
                     continue
-                if target == crate_dir or target.startswith(crate_dir + "/"):
-                    continue  # its own files: already attributed by ownership
                 seen.add(target)
-                self._add(self.runtime_readers, Reader(
-                    name, target, "runtime", f"{path}:{line_of(text, offset)}"))
+                source = f"{path}:{line_of(text, offset)}"
+                if target == crate_dir or target.startswith(crate_dir + "/"):
+                    # Its own files: the crate owns them; this only says which
+                    # of its test targets read them.
+                    self._add(self.own_readers, Reader(name, target, "runtime", source, units))
+                    continue
+                walker = self.walkers.get((path, target))
+                if walker is not None:
+                    self.walker_hits.add((path, target))
+                    for pattern in walker["reads"]:
+                        self.walker_readers.append((Reader(
+                            name, f"{pattern} (walker of {target})", "walker", source, units),
+                            glob_regex(pattern)))
+                if target in self.file_set:
+                    # A literal naming a file attributes exactly that file.
+                    self._add(self.runtime_readers, Reader(name, target, "runtime", source, units))
+                elif walker is None:
+                    # A directory no walker declares: the whole directory, fail-closed.
+                    self.undeclared.append({"crate": name, "source": source, "literal": target})
+                    self._add(self.runtime_readers, Reader(name, target, "runtime", source, units))
 
         for match in STRING_RE.finditer(text):
             for chunk in PLACEHOLDER_RE.split(match.group(1)):
@@ -398,7 +637,29 @@ class Model:
         for match in JOIN_BARE_RE.finditer(text):
             consider(match.group(1), match.start())
 
+    def stale_walkers(self) -> list[dict]:
+        """Walker entries whose site the scanner no longer finds."""
+        return [entry for key, entry in sorted(self.walkers.items())
+                if key not in self.walker_hits]
+
     def readers_of(self, path: str) -> list[Reader]:
+        """Every reader of a path, including the readers of a manifest that lists it."""
+        found = self._direct_readers(path)
+        seen = {path}
+        queue = [path]
+        while queue:
+            current = queue.pop()
+            for manifest, regexes in self.expansions:
+                if manifest in seen or not any(regex.match(current) for regex in regexes):
+                    continue
+                seen.add(manifest)
+                queue.append(manifest)
+                for reader in self._direct_readers(manifest):
+                    found.append(Reader(reader.crate, f"{reader.target}, which lists {path}",
+                                        "expansion", reader.source, reader.units))
+        return found
+
+    def _direct_readers(self, path: str) -> list[Reader]:
         if self.granularity == "file":
             found = list(self.compile_readers.get(path, []))
         else:
@@ -409,7 +670,34 @@ class Model:
                      for reader in readers]
         for prefix in ancestors(path):
             found += self.runtime_readers.get(prefix, [])
+            found += self.own_readers.get(prefix, [])
+        found += [reader for reader, regex in self.walker_readers if regex.match(path)]
         return found
+
+    def owned_units(self, path: str, owner: str, readers: Sequence[Reader]) -> Optional[frozenset]:
+        """The test targets of its owner a path selects, or None for the whole crate
+        (GATE-SCOPE-FULL-CRATES-TEST-ONLY).
+
+        Narrowed only for a path in no library, binary, build-script or example:
+        a Rust file only test targets compile, or a non-Rust file whose readers
+        in its crate are all test targets.  The crate's manifest, build script and
+        ``src/`` stay crate-wide, and so does a file nothing in the crate is found
+        reading (fail-closed)."""
+        directory = self.crates[owner].directory
+        relative = path[len(directory) + 1:] if path.startswith(directory + "/") else ""
+        if relative in ("", "Cargo.toml", "Cargo.lock", "build.rs") or relative.startswith("src/"):
+            return None
+        if (owner, path) in self.file_nontest:
+            return None
+        selected = set(self.file_units.get((owner, path), set()))
+        own = [reader for reader in readers if reader.crate == owner]
+        if not selected and not own:
+            return None
+        for reader in own:
+            if reader.units is None:
+                return None
+            selected |= reader.units
+        return frozenset(selected)
 
     def reverse_closure(self, names: Iterable[str]) -> dict[str, str]:
         """{crate: the crate it depends on that put it in} for every reverse dependency."""
@@ -424,6 +712,13 @@ class Model:
                     reasons[dependent] = current
                     queue.append(dependent)
         return reasons
+
+
+def real_model(granularity: str = "file", root: Path = REPO_ROOT) -> Model:
+    """This repository's model: both workspaces, tracked files and the walker table."""
+    table = load_table()
+    return Model(load_crates(root), tracked_files(root), granularity=granularity,
+                 walkers=table["walkers"], expansions=table["expansions"])
 
 
 # --- Lean ----------------------------------------------------------------------
@@ -522,31 +817,58 @@ def classify(path: str) -> Optional[str]:
     return None
 
 
+def describe_reader(reader: Reader, path: str) -> str:
+    if reader.kind == "runtime":
+        return f"names {reader.target} in a string literal"
+    if reader.kind == "walker":
+        return f"walks {reader.target}"
+    if reader.kind == "expansion":
+        return f"reads {reader.target}"
+    verb = "compiles" if reader.kind == "path" else "reads"
+    what = "it" if reader.target == path else f"{reader.target} in its directory"
+    return (f"{verb} {what} via #[path]" if reader.kind == "path"
+            else f"{verb} {what} with {reader.kind}!")
+
+
 def plan(paths: Sequence[str], model: Model, *, force_full: bool = False,
          exists=None, read_text=None) -> dict:
     exists = exists or (lambda p: (REPO_ROOT / p).exists())
     read_text = read_text or model.read_text
     attribution: dict[str, list[str]] = {}
+    # Crate-wide reasons (the crate and its reverse dependencies), and reasons
+    # that reach only some of a crate's test targets (no reverse dependencies:
+    # nothing depends on a test target).
     direct: dict[str, list[str]] = {}
+    unit_reasons: dict[str, dict[str, list[str]]] = {}
     full_reasons: list[str] = ["requested with --full"] if force_full else []
     provider_reasons: list[str] = []
+    provider_lock_reasons: list[str] = []
     python_reasons: list[str] = []
+
+    def reach(crate: str, units: Optional[frozenset], reason: str) -> None:
+        if units is None:
+            direct.setdefault(crate, []).append(reason)
+        else:
+            for uid in sorted(units):
+                unit_reasons.setdefault(crate, {}).setdefault(uid, []).append(reason)
+
     for path in paths:
         notes: list[str] = []
         owner = model.owner(path)
+        readers = model.readers_of(path)
         if owner:
-            direct.setdefault(owner, []).append(f"owns {path}")
-            notes.append(f"owned by {owner}")
-        for reader in model.readers_of(path):
-            if reader.kind == "runtime":
-                how = f"names {reader.target} in a string literal"
-            else:
-                verb = "compiles" if reader.kind == "path" else "reads"
-                what = "it" if reader.target == path else f"{reader.target} in its directory"
-                how = (f"{verb} {what} via #[path]" if reader.kind == "path"
-                       else f"{verb} {what} with {reader.kind}!")
-            direct.setdefault(reader.crate, []).append(f"{how}: {path} ({reader.source})")
-            notes.append(f"read by {reader.crate} ({reader.kind}, {reader.source})")
+            units = model.owned_units(path, owner, readers)
+            reach(owner, units, f"owns {path}")
+            notes.append(f"owned by {owner}" + ("" if units is None else
+                                                 f" (test targets {', '.join(sorted(units))})"))
+        for reader in readers:
+            if reader.crate == owner:
+                continue  # decided by owned_units above
+            reach(reader.crate, reader.units, f"{describe_reader(reader, path)}: {path} "
+                                              f"({reader.source})")
+            notes.append(f"read by {reader.crate} ({reader.kind}, {reader.source})"
+                         + ("" if reader.units is None else
+                            f" in {', '.join(sorted(reader.units))}"))
         cls = classify(path) if owner is None else None
         if path in WORKSPACE_FILES or path.startswith(WORKSPACE_PREFIXES):
             full_reasons.append(f"{path}: workspace manifest or toolchain")
@@ -554,11 +876,17 @@ def plan(paths: Sequence[str], model: Model, *, force_full: bool = False,
             full_reasons.append(f"{path}: the test runner or this scoper changed")
         if path.startswith("providers/"):
             provider_reasons.append(f"{path}: providers/ changed")
+        if path in ("Cargo.toml", "Cargo.lock") or (
+                owner in model.provider_closure
+                and path == f"{model.crates[owner].directory}/Cargo.toml"):
+            provider_lock_reasons.append(
+                f"{path}: a manifest or lock the provider workspace builds by path "
+                "(GATE-SCOPE-PROVIDER-LOCK)")
         if cls == "python" or path.endswith(".py"):
             python_reasons.append(f"{path}: Python")
         if path.startswith(PYTHON_RECORD_PREFIXES):
             python_reasons.append(f"{path}: a record the Python suite checks")
-        if owner is None and cls is None and not model.readers_of(path) \
+        if owner is None and cls is None and not readers \
                 and path not in WORKSPACE_FILES and not path.startswith(WORKSPACE_PREFIXES):
             full_reasons.append(f"{path}: no crate owns or reads it and it is not prose, "
                                 "Python, Lean or provider tooling, or a Python-checked "
@@ -575,30 +903,52 @@ def plan(paths: Sequence[str], model: Model, *, force_full: bool = False,
     for name, via in rdeps.items():
         if name not in affected:
             affected[name] = [f"depends on {via}"]
+    # A crate reached as a whole runs every target; otherwise only its targets.
+    targets: dict[str, dict[str, list[str]]] = {
+        name: {uid: reasons for uid, reasons in sorted(units.items())}
+        for name, units in sorted(unit_reasons.items()) if name not in affected}
     root_members = sorted(name for name, crate in model.crates.items() if crate.workspace == "root")
     full = bool(full_reasons)
     rust_packages = root_members if full else sorted(
         name for name in affected if model.crates[name].workspace == "root")
-    provider_via_core = sorted(name for name in affected
-                               if model.crates[name].workspace == "providers"
-                               and not any(r.startswith("owns ") for r in affected[name]))
+    rust_targets = [] if full else sorted(
+        uid for name, units in targets.items() if model.crates[name].workspace == "root"
+        for uid in units)
+    provider_via_core = sorted(
+        {name for name in affected if model.crates[name].workspace == "providers"
+         and not any(r.startswith("owns ") for r in affected[name])}
+        | {name for name in targets if model.crates[name].workspace == "providers"})
     lean = plan_lean(paths, model.files, exists, read_text)
+    provider_gate = bool(provider_reasons)
     return {
         "paths": list(paths),
         "attribution": attribution,
         "affected": {name: affected[name] for name in sorted(affected)},
+        "targets": targets,
         "mode": "full" if full else "scoped",
         "full_reasons": full_reasons,
         "rust_packages": rust_packages,
+        "rust_targets": rust_targets,
         "probes": full or PROBE_CRATE in affected,
         "lean": lean,
         "python_reasons": python_reasons,
-        "provider_gate": bool(provider_reasons),
+        "provider_gate": provider_gate,
         "provider_reasons": provider_reasons,
+        # The provider gate's --locked steps already resolve the lock.
+        "provider_lock_check": bool(provider_lock_reasons) and not provider_gate,
+        "provider_lock_reasons": provider_lock_reasons,
         "provider_members_reached_without_providers_change": [] if provider_reasons
         else provider_via_core,
         "unresolved_includes": model.unresolved,
+        "undeclared_directory_literals": model.undeclared,
+        "stale_walkers": model.stale_walkers(),
     }
+
+
+def selects(scope: dict, uid: str) -> bool:
+    """Whether a plan's attribution (not its full-mode escalation) runs this unit."""
+    crate = uid.split("::", 1)[0]
+    return crate in scope["affected"] or uid in scope["targets"].get(crate, {})
 
 
 # --- running -------------------------------------------------------------------
@@ -612,9 +962,11 @@ class Step:
     counts: str = ""  # how to read counts: rust-summary | libtest | unittest | lean
     cwd: Optional[str] = None
     note: str = ""
+    env: Optional[dict] = None  # added to the inherited environment
 
 
-def steps_for(scope: dict, out: Path, python: str = sys.executable) -> list[Step]:
+def steps_for(scope: dict, out: Path, python: str = sys.executable,
+              card_base: Optional[str] = None) -> list[Step]:
     steps = [Step("submodules", ["git", "-C", str(REPO_ROOT), "submodule", "status", "--recursive"],
                   counts="submodules")]
     steps.append(Step("fmt", ["cargo", "fmt", "--all", "--", "--check"]))
@@ -624,14 +976,33 @@ def steps_for(scope: dict, out: Path, python: str = sys.executable) -> list[Step
         steps.append(Step("rust-suite", [python, str(SCRIPTS / "run_test_binaries.py"),
                                          "--log-dir", str(out / "rust-suite")],
                           slot="rust-suite", counts="rust-summary"))
-    elif packages:
-        selection = [arg for name in packages for arg in ("-p", name)]
-        steps.append(Step("clippy", ["cargo", "clippy", *selection, "--all-targets", "--", "-D",
-                                     "warnings"]))
-        steps.append(Step("rust-suite", [python, str(SCRIPTS / "run_test_binaries.py"),
-                                         "--packages", ",".join(packages),
-                                         "--log-dir", str(out / "rust-suite")],
+    elif packages or scope.get("rust_targets"):
+        targets = scope.get("rust_targets", [])
+        if packages:
+            selection = [arg for name in packages for arg in ("-p", name)]
+            steps.append(Step("clippy", ["cargo", "clippy", *selection, "--all-targets", "--",
+                                         "-D", "warnings"]))
+        by_crate: dict[str, list[str]] = {}
+        for uid in targets:
+            crate, _, name = uid.split("::", 2)
+            by_crate.setdefault(crate, []).append(name)
+        for crate, names in sorted(by_crate.items()):
+            filters = [arg for name in names for arg in ("--test", name)]
+            steps.append(Step(f"clippy-{crate}", ["cargo", "clippy", "-p", crate, *filters, "--",
+                                                  "-D", "warnings"]))
+        argv = [python, str(SCRIPTS / "run_test_binaries.py")]
+        if packages:
+            argv += ["--packages", ",".join(packages)]
+        if targets:
+            argv += ["--targets", ",".join(targets)]
+        steps.append(Step("rust-suite", [*argv, "--log-dir", str(out / "rust-suite")],
                           slot="rust-suite", counts="rust-summary"))
+    if scope.get("provider_lock_check"):
+        # GATE-SCOPE-PROVIDER-LOCK: resolving the provider workspace under
+        # --locked fails when its lock no longer matches a root manifest.
+        steps.append(Step("provider-lock", ["cargo", "metadata", "--locked", "--offline",
+                                            "--format-version", "1", "--manifest-path",
+                                            str(REPO_ROOT / "providers" / "Cargo.toml")]))
     if scope["probes"]:
         # The test-build configuration (card TEST-STORAGE-BUDGET), so the
         # examples reuse the suite's build instead of rebuilding every crate.
@@ -650,8 +1021,13 @@ def steps_for(scope: dict, out: Path, python: str = sys.executable) -> list[Step
         for audit in lean["audits"]:
             argv += ["--audit", audit]
         steps.append(Step("lean", argv, slot="lean", counts="lean"))
+    # CARD-GATE-NEW-AUDIT-MATRIX-COUNT: on a card's gate the Python suite is
+    # told the card's base, so the committed matrix's derived Lean-audit list
+    # may lag the tree by exactly the audits the card adds or removes; the
+    # landing gate (the standing gate, or --landing here) keeps the exact check.
     steps.append(Step("python", [python, "-m", "unittest", "discover", "-s", "scripts/tests"],
-                      counts="unittest"))
+                      counts="unittest",
+                      env={CARD_GATE_BASE_ENV: card_base} if card_base else None))
     if scope["provider_gate"]:
         packages_dir = str(out / "provider-packages")
         for index, command in enumerate(PROVIDER_COMMANDS):
@@ -679,6 +1055,7 @@ def read_counts(step: Step, log: Path, out: Path) -> dict:
             document = json.loads(summary.read_text(encoding="utf-8"))
             totals = dict(document["totals"])
             return {"units": document["units_run"], **totals, "packages": document.get("packages"),
+                    "targets": document.get("targets"),
                     "summary": str(summary), "ok": document["ok"]}
         return {"summary": None}
     if step.counts == "libtest":
@@ -717,8 +1094,10 @@ def run_steps(steps: Sequence[Step], out: Path, use_slots: bool, echo=print) -> 
         started = time.monotonic()
         with open(log, "wb") as handle:
             try:
+                env = {**os.environ, **step.env} if step.env else None
                 code = subprocess.run(argv, cwd=step.cwd or REPO_ROOT, stdin=subprocess.DEVNULL,
-                                      stdout=handle, stderr=subprocess.STDOUT).returncode
+                                      stdout=handle, stderr=subprocess.STDOUT,
+                                      env=env).returncode
             except OSError as error:
                 handle.write(f"cannot run: {error}\n".encode())
                 code = 127
@@ -728,6 +1107,8 @@ def run_steps(steps: Sequence[Step], out: Path, use_slots: bool, echo=print) -> 
             code = code or 1  # an uninitialised or moved submodule fails the gate
         record = {"name": step.name, "argv": argv, "exit": code, "seconds": seconds,
                   "log": str(log), "counts": counts}
+        if step.env:
+            record["env"] = dict(step.env)
         if receipt is not None:
             record["slot_receipt"] = str(receipt)
         records.append(record)
@@ -776,7 +1157,29 @@ def describe(scope: dict, echo=print) -> None:
     for name, reasons in scope["affected"].items():
         shown = reasons[:3] + ([f"... {len(reasons) - 3} more"] if len(reasons) > 3 else [])
         echo(f"  {name}: {'; '.join(shown)}")
+    if scope["targets"]:
+        echo(f"crates reached only in test targets ({len(scope['targets'])}):")
+        for name, units in scope["targets"].items():
+            for uid, reasons in units.items():
+                shown = reasons[:2] + ([f"... {len(reasons) - 2} more"] if len(reasons) > 2
+                                       else [])
+                echo(f"  {uid}: {'; '.join(shown)}")
     echo(f"rust suite packages: {', '.join(scope['rust_packages']) or '(none)'}")
+    if scope["rust_targets"]:
+        echo(f"rust suite test targets ({len(scope['rust_targets'])}): "
+             f"{', '.join(scope['rust_targets'])}")
+    if scope["provider_lock_check"]:
+        echo("provider lock check: yes (cargo metadata --locked on providers/Cargo.toml)")
+        for reason in scope["provider_lock_reasons"]:
+            echo(f"  {reason}")
+    undeclared = scope["undeclared_directory_literals"]
+    if undeclared:
+        echo(f"undeclared directory literals: {len(undeclared)} (each attributes its whole "
+             "directory, fail-closed; declare them in scripts/gate_scope_walkers.json)")
+        for site in undeclared[:3]:
+            echo(f"  {site['literal']} ({site['source']})")
+    for entry in scope["stale_walkers"][:10]:
+        echo(f"  stale walker entry: {entry['source']} {entry['literal']}")
     lean = scope["lean"]
     echo(f"lean: {lean['mode']}" + (f" ({len(lean['modules'])} modules, "
                                    f"{len(lean['audits'])} audits)" if lean["mode"] == "modules" else ""))
@@ -806,13 +1209,16 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
                              "directory (CT-FIXTURE-EXTERNAL-READERS, more conservative)")
     parser.add_argument("--readers", action="store_true",
                         help="print the cross-crate compile-time readers found and exit")
+    parser.add_argument("--landing", action="store_true",
+                        help="a landing run: the Python suite keeps the exact derived-matrix "
+                             "checks (no card base is passed; CARD-GATE-NEW-AUDIT-MATRIX-COUNT)")
     parser.add_argument("--verify-packages", type=Path, help=argparse.SUPPRESS)
     args = parser.parse_args(argv)
     if args.verify_packages:
         return verify_packages(args.verify_packages)
     if args.readers:
         try:
-            model = Model(load_crates(), tracked_files())
+            model = real_model()
         except ScopeError as error:
             print(f"gate_scope: {error}", file=sys.stderr)
             return 2
@@ -820,6 +1226,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         return 0
     if not args.base and not args.paths:
         parser.error("--base or --paths is required")
+    card_base = None
     try:
         if args.paths:
             source = {"source": "explicit --paths"}
@@ -829,7 +1236,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             source = {"source": "git diff", "base": base_sha, "head": head_sha,
                       "committed": committed, "uncommitted": uncommitted}
             paths = sorted(set(committed) | set(uncommitted))
-        model = Model(load_crates(), tracked_files(), granularity=args.reader_granularity)
+            card_base = None if args.landing else base_sha
+        model = real_model(args.reader_granularity)
         scope = plan(paths, model, force_full=args.full)
     except ScopeError as error:
         print(f"gate_scope: {error}", file=sys.stderr)
@@ -838,10 +1246,11 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     out = (args.out or REPO_ROOT / "private" / "gate-scope" / f"{stamp}-{os.getpid()}").resolve()
     out.mkdir(parents=True, exist_ok=False)
     describe(scope)
-    steps = steps_for(scope, out)
+    steps = steps_for(scope, out, card_base=card_base)
     document = {"schema": "quirin-gate-scope/1", **source, "scope": scope,
                 "planned_steps": [{"name": s.name, "argv": s.argv, "slot": s.slot} for s in steps],
-                "slots": not args.no_slots, "started": stamp}
+                "slots": not args.no_slots, "landing": args.landing,
+                "card_base": card_base, "started": stamp}
     gate_json = out / "gate.json"
     if args.plan:
         document["ran"] = False

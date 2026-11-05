@@ -106,34 +106,46 @@ class OwnershipAndReverseDependencies(unittest.TestCase):
         self.assertFalse(scope["probes"])
 
 
+READS_FIXTURE = "gamma::test::reads_fixture"
+
+
 class FixtureReaders(unittest.TestCase):
     def test_a_fixture_read_by_include_str_belongs_to_the_reading_crate(self):
         scope = plan(["crates/alpha/tests/fixtures/ct07/case.qr"])
-        self.assertIn("gamma", scope["affected"])
-        reasons = " ".join(scope["affected"]["gamma"])
+        # The reader is one of gamma's integration tests (card
+        # GATE-SCOPE-PRECISE-SELECTION): that target runs, not all of gamma.
+        self.assertIn(READS_FIXTURE, scope["rust_targets"])
+        self.assertNotIn("gamma", scope["affected"])
+        reasons = " ".join(scope["targets"]["gamma"][READS_FIXTURE])
         self.assertIn("include_str!", reasons)
         self.assertIn("crates/gamma/tests/reads_fixture.rs:1", reasons)
-        # ...and its reverse dependencies follow.
-        self.assertIn("delta", scope["affected"])
+        # Nothing depends on a test target, so gamma's reverse dependencies stay out.
+        self.assertNotIn("delta", scope["affected"])
+        # The fixture's owner reads it nowhere itself: alpha runs whole (fail-closed).
+        self.assertIn("alpha", scope["affected"])
 
     def test_the_read_directory_belongs_to_the_reader_by_default(self):
         sibling = "crates/alpha/tests/fixtures/ct07/expected.json"
-        self.assertIn("gamma", plan([sibling])["affected"])
-        self.assertNotIn("gamma", plan([sibling], granularity="file")["affected"])
+        self.assertIn(READS_FIXTURE, plan([sibling])["rust_targets"])
+        self.assertNotIn(READS_FIXTURE, plan([sibling], granularity="file")["rust_targets"])
 
     def test_a_path_module_and_its_own_includes_belong_to_the_compiling_crate(self):
         scope = plan(["tests/support/helper.rs"])
-        self.assertIn("compiles it via #[path]", " ".join(scope["affected"]["gamma"]))
-        # helper.rs is compiled by gamma, so its include_str! is gamma's read.
+        self.assertIn("compiles it via #[path]",
+                      " ".join(scope["targets"]["gamma"][READS_FIXTURE]))
+        # helper.rs is compiled by gamma's test, so its include_str! is that test's read.
         scope = plan(["tests/support/helper.json"], granularity="file")
-        self.assertIn("gamma", scope["affected"])
+        self.assertEqual(scope["rust_targets"], [READS_FIXTURE])
         self.assertEqual(scope["mode"], "scoped")
 
     def test_a_runtime_join_names_a_directory(self):
         scope = plan(["examples/hello.qr"])
-        self.assertIn("qcore-compiler", scope["affected"])
+        self.assertIn("qcore-compiler::test::examples", scope["rust_targets"])
         self.assertIn('names examples in a string literal',
-                      " ".join(scope["affected"]["qcore-compiler"]))
+                      " ".join(scope["targets"]["qcore-compiler"]["qcore-compiler::test::examples"]))
+        # No walker declares it, so the whole directory is attributed (fail-closed).
+        self.assertIn("examples", [site["literal"]
+                                   for site in scope["undeclared_directory_literals"]])
 
     def test_an_example_s_runtime_literal_is_not_a_test_read(self):
         scope = plan(["docs/reports/x/README.md"])
@@ -196,7 +208,8 @@ class PythonCheckedRecords(unittest.TestCase):
                      'env!("CARGO_MANIFEST_DIR")).join("../../contract/evaluations") }\n')}
         scope = plan([self.RECORD], files=files)
         self.assertEqual(scope["mode"], "scoped")
-        self.assertEqual(scope["rust_packages"], ["delta"])
+        self.assertEqual(scope["rust_packages"], [])
+        self.assertEqual(scope["rust_targets"], ["delta::test::reads_records"])
         self.assertIn(f"{self.RECORD}: a record the Python suite checks", scope["python_reasons"])
 
     def test_contribution_ledgers_are_python_checked_records(self):

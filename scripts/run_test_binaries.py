@@ -46,6 +46,16 @@ A restricted run is the scoped card gate's suite (``scripts/gate_scope.py``),
 never the standing gate's: ``summary.json`` and the totals line name the
 selection.
 
+``--targets PKG::test::NAME,...`` (card GATE-SCOPE-PRECISE-SELECTION) adds
+integration-test targets of members ``--packages`` does not run whole: each
+such member is built and captured with cargo's own ``-p PKG --test NAME``
+filters, so exactly those executables run (``EXCLUSIVE`` ones alone, as
+always), and no doc-test unit runs for it.  It refuses before building a
+malformed id, a non-member, a name that is not an integration test of that
+member, a member also named by ``--packages`` and ``--batch-size``; the run
+fails closed if a named target is not built and launched, or if anything
+outside the selection is.
+
 Every cargo command it runs carries the test-build configuration of
 ``scripts/test_link_config.py`` (card TEST-STORAGE-BUDGET): no incremental
 state, and on Linux dynamically linked test executables, binaries and
@@ -407,6 +417,40 @@ def parse_packages(values: Optional[Sequence[str]]) -> Optional[list[str]]:
     return names
 
 
+def parse_targets(values: Optional[Sequence[str]], document: dict,
+                  packages: Optional[Sequence[str]]) -> Optional[dict[str, list[str]]]:
+    """`--targets a::test::x,b::test::y` -> {package: [test names]}; None = none named.
+
+    Refuses (ValueError) a malformed id, a non-member, a name that is not an
+    integration-test target of that member, and a member --packages already
+    runs whole: a misspelt target must not shrink the suite."""
+    if values is None:
+        return None
+    uids = sorted({uid.strip() for value in values for uid in value.split(",") if uid.strip()})
+    if not uids:
+        raise ValueError("--targets names no target")
+    tests = {
+        package["name"]: {target["name"] for target in package["targets"]
+                          if target["kind"] == ["test"]}
+        for package in document["packages"]
+    }
+    whole = set(packages or ())
+    selected: dict[str, list[str]] = {}
+    for uid in uids:
+        parts = uid.split("::")
+        if len(parts) != 3 or parts[1] != "test":
+            raise ValueError(f"--targets takes PKG::test::NAME unit ids, not {uid!r}")
+        package, _, name = parts
+        if package not in tests:
+            raise ValueError(f"--targets names a non-member of the workspace: {package}")
+        if name not in tests[package]:
+            raise ValueError(f"--targets: {package} has no integration-test target {name!r}")
+        if package in whole:
+            raise ValueError(f"--targets: {package} already runs whole under --packages")
+        selected.setdefault(package, []).append(name)
+    return selected
+
+
 def selection_args(packages: Optional[Sequence[str]]) -> list[str]:
     """cargo package selection: the whole workspace, or `-p` per selected member."""
     if packages is None:
@@ -701,6 +745,7 @@ def write_summary(
     packages: Optional[Sequence[str]] = None,
     link: Optional[dict] = None,
     batches: Optional[list[dict]] = None,
+    targets: Optional[Sequence[str]] = None,
 ) -> dict:
     total = totals(results)
     failed_units = sorted(r.uid for r in results if not r.ok)
@@ -714,6 +759,9 @@ def write_summary(
         "batches": batches,
         # None: the whole workspace (the standing gate); a list: a scoped run.
         "packages": list(packages) if packages is not None else None,
+        # None: no --targets; a list: integration-test targets run beside the
+        # whole members of "packages" (the scoped gate's test-only selection).
+        "targets": list(targets) if targets is not None else None,
         "phases_seconds": phases,
         "problems": list(problems),
         "totals": total,
@@ -776,6 +824,10 @@ def parse_args(argv: Sequence[str]) -> argparse.Namespace:
     parser.add_argument("--packages", action="append", metavar="A,B",
                         help="restrict the run to these workspace members (repeatable, "
                              "comma-separated); the scoped card gate, NOT the standing gate")
+    parser.add_argument("--targets", action="append", metavar="PKG::test::NAME,...",
+                        help="also run these integration-test targets of members not named "
+                             "by --packages (repeatable, comma-separated unit ids); the scoped "
+                             "card gate's test-only selection, NOT the standing gate")
     parser.add_argument("--link", choices=test_link_config.LINK_MODES,
                         default=test_link_config.default_link(),
                         help="how test executables link the workspace libraries "
@@ -819,6 +871,18 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             print(f"error: --packages names non-members of the workspace: {', '.join(unknown)}",
                   file=sys.stderr)
             return 2
+    try:
+        targets = parse_targets(args.targets, document_meta, packages)
+    except ValueError as error:
+        print(f"error: {error}", file=sys.stderr)
+        return 2
+    if targets is not None:
+        if args.batch_size:
+            print("error: --targets is not supported with --batch-size", file=sys.stderr)
+            return 2
+        # Only the named targets of these members, and every member of
+        # --packages whole (none when --packages is not given).
+        packages = packages or []
     stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     log_dir = (args.log_dir or REPO_ROOT / "private" / "test-binaries" / f"{stamp}-{os.getpid()}")
     # Absolute: the capture runner is launched by cargo from each package root.
@@ -826,7 +890,13 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     log_dir.mkdir(parents=True, exist_ok=False)
     print(f"logs: {log_dir}", flush=True)
     if packages is not None:
-        print(f"packages: {', '.join(packages)} (scoped run, not the standing gate)", flush=True)
+        print(f"packages: {', '.join(packages) or '(none whole)'} (scoped run, not the standing "
+              "gate)", flush=True)
+    target_uids = sorted(f"{package}::test::{name}" for package, names in (targets or {}).items()
+                         for name in names)
+    if target_uids:
+        print(f"test targets: {', '.join(target_uids)} (scoped run, not the standing gate)",
+              flush=True)
     print(f"link: {args.link} ({shlex.join(config)})", flush=True)
     phases: dict[str, float] = {}
     problems: list[str] = []
@@ -837,30 +907,59 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         return run_batched(args, cargo, extra, log_dir, packages, selected, document_meta,
                            doc_unit, link)
 
-    t0 = time.monotonic()
-    code, executables = build(cargo, extra, log_dir, packages)
-    phases["build"] = round(time.monotonic() - t0, 3)
-    if code != 0:
-        problems.append(f"build failed with exit {code}")
-        write_summary(log_dir, [], problems, phases, args.jobs, None, packages, link)
-        print(f"error: build failed (exit {code})", file=sys.stderr)
-        return 101
-
-    t0 = time.monotonic()
-    code, records = capture(cargo, extra, log_dir, packages)
-    phases["capture"] = round(time.monotonic() - t0, 3)
-    if code != 0:
-        problems.append(f"capture pass failed with exit {code}")
+    # One build and capture for the members run whole (none when only
+    # --targets names anything), then one per member of --targets, restricted
+    # to its named integration tests with cargo's own `--test NAME` filters.
+    groups: list[tuple[str, Optional[Sequence[str]], list[str]]] = []
+    if packages is None or packages:
+        groups.append(("", packages, []))
+    for package, names in sorted((targets or {}).items()):
+        groups.append((f"-targets-{safe_name(package)}", [package],
+                       [arg for name in sorted(names) for arg in ("--test", name)]))
+    executables: dict[str, str] = {}
+    records: list[dict] = []
+    phases["build"] = phases["capture"] = 0.0
+    for label, selection, filters in groups:
+        t0 = time.monotonic()
+        code, built = build(cargo, extra, log_dir, selection, filters, label)
+        phases["build"] = round(phases["build"] + time.monotonic() - t0, 3)
+        if code != 0:
+            problems.append(f"build{label} failed with exit {code}")
+            write_summary(log_dir, [], problems, phases, args.jobs, None, packages, link,
+                          targets=target_uids)
+            print(f"error: build{label} failed (exit {code})", file=sys.stderr)
+            return 101
+        twice = sorted(set(executables.values()) & set(built.values()))
+        problems += [f"built by two selections: {uid}" for uid in twice]
+        executables.update(built)
+        t0 = time.monotonic()
+        code, captured = capture(cargo, extra, log_dir, selection, filters, label)
+        phases["capture"] = round(phases["capture"] + time.monotonic() - t0, 3)
+        if code != 0:
+            problems.append(f"capture pass{label} failed with exit {code}")
+        records += captured
+    records.sort(key=lambda record: record["sequence"])
 
     units, plan_problems = plan_units(
-        executables, records, selected, load_weights(args.weights), doc_unit
+        executables, records, selected, load_weights(args.weights), doc_unit,
+        check_exclusive=targets is None,
     )
     problems += plan_problems
+    if targets is not None:
+        present = {unit.uid for unit in units}
+        problems += stale_exclusive(selected, present)
+        problems += [f"named test target was never built and launched: {uid}"
+                     for uid in target_uids if uid not in present]
+        named = set(target_uids)
+        problems += [f"built a unit outside the selection: {uid}" for uid in sorted(present)
+                     if uid != "doc-tests" and uid not in named
+                     and uid.split("::", 1)[0] not in selected]
     for problem in problems:
         print(f"error: {problem}", file=sys.stderr)
     if problems:
         # Fail closed before running anything: the plan is not the suite.
-        write_summary(log_dir, [], problems, phases, args.jobs, None, packages, link)
+        write_summary(log_dir, [], problems, phases, args.jobs, None, packages, link,
+                      targets=target_uids)
         print("error: the test plan is not trustworthy; nothing was run", file=sys.stderr)
         return 101
     exclusive_count = sum(1 for unit in units if unit.exclusive)
@@ -878,7 +977,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         print("interrupted", file=sys.stderr)
         return 130
     phases["run"] = round(time.monotonic() - t0, 3)
-    document = write_summary(log_dir, results, problems, phases, args.jobs, runner, packages, link)
+    document = write_summary(log_dir, results, problems, phases, args.jobs, runner, packages, link,
+                             targets=target_uids if targets is not None else None)
     return report(args, document, results, phases, log_dir)
 
 

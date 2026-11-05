@@ -18,6 +18,7 @@ Everything runs into a scratch file; the committed matrix is never written.
 """
 
 import json
+import os
 import pathlib
 import shutil
 import subprocess
@@ -99,6 +100,68 @@ CLANG_BANNER = "Ubuntu clang version 21.1.8 (6ubuntu1)"
 
 def lean_audits_on_disk():
     return len(list((ROOT / "proof").glob("Audit*.lean")))
+
+
+# CARD-GATE-NEW-AUDIT-MATRIX-COUNT (card GATE-SCOPE-PRECISE-SELECTION):
+# scripts/gate_scope.py gives a card's Python suite the card's base in this
+# variable; the standing gate and `gate_scope.py --landing` never set it.
+CARD_GATE_BASE_ENV = "QUIRIN_CARD_GATE_BASE"
+
+
+def git_at(*args):
+    finished = subprocess.run(["git", "-C", str(ROOT), *args], capture_output=True, text=True)
+    if finished.returncode != 0:
+        raise AssertionError(f"git {' '.join(args)}: {finished.stderr.strip()}")
+    return finished.stdout
+
+
+def audit_drift(base_tree, base_committed, committed_files, produced_files):
+    """(drift, allowed): the audit names a card's gate finds between the
+    committed matrix and the tree, and the ones it may excuse -- the drift its
+    base already had, plus the audits the card itself adds or removes. Nothing
+    else: a card that drops an audit from the matrix, or leaves a stale matrix
+    of its own making, still fails."""
+    drift = set(produced_files) ^ set(committed_files)
+    allowed = (set(base_tree) ^ set(base_committed)) | (set(produced_files) ^ set(base_tree))
+    return drift, allowed
+
+
+def lean_audit_drift_allowed_on_a_card(base, committed_files, produced_files):
+    base_tree = sorted(
+        name for name in git_at("ls-tree", "--name-only", f"{base}:proof").splitlines()
+        if name.startswith("Audit") and name.endswith(".lean"))
+    base_matrix = json.loads(git_at("show", f"{base}:docs/reviews/r0_3/acceptance_matrix.json"))
+    return audit_drift(base_tree, base_matrix["validation"]["lean_audit_files"],
+                       committed_files, produced_files)
+
+
+class CardGateAuditDrift(unittest.TestCase):
+    """CARD-GATE-NEW-AUDIT-MATRIX-COUNT: what a card gate excuses, and what not."""
+
+    def excused(self, base_tree, base_committed, committed, produced):
+        drift, allowed = audit_drift(base_tree, base_committed, committed, produced)
+        return drift <= allowed
+
+    def test_a_card_adding_an_audit_passes_its_own_gate(self):
+        self.assertTrue(self.excused(["A"], ["A"], ["A"], ["A", "X"]))
+
+    def test_a_card_removing_an_audit_passes_its_own_gate(self):
+        self.assertTrue(self.excused(["A", "B"], ["A", "B"], ["A", "B"], ["A"]))
+
+    def test_the_base_s_own_drift_is_not_the_card_s(self):
+        self.assertTrue(self.excused(["A", "B"], ["A"], ["A"], ["A", "B"]))
+
+    def test_a_matrix_edit_that_drops_an_unchanged_audit_fails(self):
+        self.assertFalse(self.excused(["A", "B"], ["A", "B"], ["A"], ["A", "B"]))
+
+    def test_a_matrix_naming_an_audit_nobody_has_fails(self):
+        self.assertFalse(self.excused(["A"], ["A"], ["A", "Z"], ["A"]))
+
+    def test_the_base_is_read_from_git_and_a_bad_base_fails_closed(self):
+        if shutil.which("git") is None:
+            self.skipTest("git is not installed")
+        with self.assertRaises(AssertionError):
+            lean_audit_drift_allowed_on_a_card("no-such-revision-r19a", [], [])
 
 
 def write_gate(scratch, lean_audits=None, clang=None, recording=CLANG_BANNER, exit_code="0",
@@ -222,10 +285,26 @@ class BuildMatrixSections(unittest.TestCase):
         # asserted the committed values were stale, which was true only until
         # the wave-9 consolidation adopted the regenerated output; the steady
         # state after adoption is agreement, pinned here.
-        self.assertEqual(
-            [committed["versions"]["qcore_schemas_rust_api"], committed["validation"]["lean_audits"]],
-            [produced["versions"]["qcore_schemas_rust_api"], produced["validation"]["lean_audits"]],
-        )
+        base = os.environ.get(CARD_GATE_BASE_ENV)
+        if not base:
+            self.assertEqual(
+                [committed["versions"]["qcore_schemas_rust_api"],
+                 committed["validation"]["lean_audits"]],
+                [produced["versions"]["qcore_schemas_rust_api"],
+                 produced["validation"]["lean_audits"]],
+            )
+            return
+        # A card's gate: the matrix is the integrator's record, regenerated at
+        # landing, so it may lag the tree by the card's own audits (and by the
+        # drift its base had); the landing gate keeps the exact check above.
+        self.assertEqual(committed["versions"]["qcore_schemas_rust_api"],
+                         produced["versions"]["qcore_schemas_rust_api"])
+        committed_files = committed["validation"]["lean_audit_files"]
+        self.assertEqual(committed["validation"]["lean_audits"], len(committed_files))
+        drift, allowed = lean_audit_drift_allowed_on_a_card(
+            base, committed_files, produced["validation"]["lean_audit_files"])
+        self.assertLessEqual(drift, allowed,
+                             f"audit names the card gate cannot excuse: {sorted(drift - allowed)}")
 
     def test_gate_numbers_are_supplied_or_labelled_as_carried(self):
         with tempfile.TemporaryDirectory(prefix="qcore-matrix-") as scratch:
