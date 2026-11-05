@@ -1,0 +1,662 @@
+{
+ "schema": "quirin-gate-scope/1",
+ "source": "git diff",
+ "base": "f336ef8baf5c00425bf2f398e4f87a8e533ce0e7",
+ "head": "83aab9fc9648269bbd31a4da9c7e40dfb2959db5",
+ "committed": [
+  "providers/quirin-provider-mpack/contract-inventory.lock",
+  "providers/quirin-provider-mpack/contracts.lock",
+  "providers/quirin-provider-mpack/contracts/mpack/writer.qv"
+ ],
+ "uncommitted": [],
+ "scope": {
+  "paths": [
+   "providers/quirin-provider-mpack/contract-inventory.lock",
+   "providers/quirin-provider-mpack/contracts.lock",
+   "providers/quirin-provider-mpack/contracts/mpack/writer.qv"
+  ],
+  "attribution": {
+   "providers/quirin-provider-mpack/contract-inventory.lock": [
+    "owned by quirin-provider-mpack",
+    "read by qcore-audit (runtime, crates/qcore-audit/src/pin_window.rs:60)",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/current_cli.rs:138)",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/dependency_graph.rs:92)",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/provider_selection.rs:623)",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/rule_switch_entry_points.rs:276)",
+    "read by qcore-contract (runtime, crates/qcore-contract/tests/bounds_contract.rs:159)",
+    "read by qcore-contract (runtime, crates/qcore-contract/tests/descriptor_cells.rs:280)",
+    "read by qcore-contract (runtime, crates/qcore-contract/tests/event_loop_clauses.rs:211)",
+    "read by qcore-contract (runtime, crates/qcore-contract/tests/production_symbolic_adoption.rs:389)",
+    "read by qcore-compiler (runtime, compiler/tests/contract_inherit_qcore_provider.rs:437)",
+    "read by qcore-compiler (runtime, compiler/tests/contract_loader.rs:1942)",
+    "read by qcore-compiler (runtime, compiler/tests/monkey_profile.rs:41)",
+    "read by qcore-compiler (runtime, compiler/tests/profile_loader.rs:65)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:270)",
+    "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/src/sides.rs:512)",
+    "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/tests/units.rs:298)",
+    "read by qcore-provider-conformance (runtime, providers/conformance/tests/composed_five_providers.rs:132)",
+    "read by qcore-provider-conformance (runtime, providers/conformance/tests/packages.rs:373)"
+   ],
+   "providers/quirin-provider-mpack/contracts.lock": [
+    "owned by quirin-provider-mpack",
+    "read by qcore-audit (runtime, crates/qcore-audit/src/pin_window.rs:60)",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/current_cli.rs:138)",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/dependency_graph.rs:92)",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/provider_selection.rs:623)",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/rule_switch_entry_points.rs:276)",
+    "read by qcore-contract (runtime, crates/qcore-contract/tests/bounds_contract.rs:159)",
+    "read by qcore-contract (runtime, crates/qcore-contract/tests/descriptor_cells.rs:280)",
+    "read by qcore-contract (runtime, crates/qcore-contract/tests/event_loop_clauses.rs:211)",
+    "read by qcore-contract (runtime, crates/qcore-contract/tests/production_symbolic_adoption.rs:389)",
+    "read by qcore-compiler (runtime, compiler/tests/contract_inherit_qcore_provider.rs:437)",
+    "read by qcore-compiler (runtime, compiler/tests/contract_loader.rs:1942)",
+    "read by qcore-compiler (runtime, compiler/tests/monkey_profile.rs:41)",
+    "read by qcore-compiler (runtime, compiler/tests/profile_loader.rs:65)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:270)",
+    "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/src/sides.rs:512)",
+    "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/tests/units.rs:298)",
+    "read by qcore-provider-conformance (runtime, providers/conformance/tests/composed_five_providers.rs:132)",
+    "read by qcore-provider-conformance (runtime, providers/conformance/tests/packages.rs:373)"
+   ],
+   "providers/quirin-provider-mpack/contracts/mpack/writer.qv": [
+    "owned by quirin-provider-mpack",
+    "read by qcore-c-gateway (include_str, crates/qcore-c-gateway/tests/cfl_mpack_external_declarations.rs:36)",
+    "read by qcore-c-gateway (include_str, crates/qcore-c-gateway/tests/w46_external_callee_contracts.rs:39)",
+    "read by quirin-provider-mpack (include_str, providers/quirin-provider-mpack/src/lib.rs:25)",
+    "read by qcore-c-gateway (runtime, crates/qcore-c-gateway/tests/cfl_mpack_external_declarations.rs:36)",
+    "read by qcore-c-gateway (runtime, crates/qcore-c-gateway/tests/w46_external_callee_contracts.rs:39)",
+    "read by qcore-audit (runtime, crates/qcore-audit/src/pin_window.rs:60)",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/current_cli.rs:138)",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/dependency_graph.rs:92)",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/provider_selection.rs:623)",
+    "read by qcore-audit (runtime, crates/qcore-audit/tests/rule_switch_entry_points.rs:276)",
+    "read by qcore-contract (runtime, crates/qcore-contract/tests/bounds_contract.rs:159)",
+    "read by qcore-contract (runtime, crates/qcore-contract/tests/descriptor_cells.rs:280)",
+    "read by qcore-contract (runtime, crates/qcore-contract/tests/event_loop_clauses.rs:211)",
+    "read by qcore-contract (runtime, crates/qcore-contract/tests/production_symbolic_adoption.rs:389)",
+    "read by qcore-compiler (runtime, compiler/tests/contract_inherit_qcore_provider.rs:437)",
+    "read by qcore-compiler (runtime, compiler/tests/contract_loader.rs:1942)",
+    "read by qcore-compiler (runtime, compiler/tests/monkey_profile.rs:41)",
+    "read by qcore-compiler (runtime, compiler/tests/profile_loader.rs:65)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:270)",
+    "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/src/sides.rs:512)",
+    "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/tests/units.rs:298)",
+    "read by qcore-provider-conformance (runtime, providers/conformance/tests/composed_five_providers.rs:132)",
+    "read by qcore-provider-conformance (runtime, providers/conformance/tests/packages.rs:373)"
+   ]
+  },
+  "affected": {
+   "qcore-audit": [
+    "names providers in a string literal: providers/quirin-provider-mpack/contract-inventory.lock (crates/qcore-audit/src/pin_window.rs:60)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contract-inventory.lock (crates/qcore-audit/tests/current_cli.rs:138)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contract-inventory.lock (crates/qcore-audit/tests/dependency_graph.rs:92)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contract-inventory.lock (crates/qcore-audit/tests/provider_selection.rs:623)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contract-inventory.lock (crates/qcore-audit/tests/rule_switch_entry_points.rs:276)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contracts.lock (crates/qcore-audit/src/pin_window.rs:60)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contracts.lock (crates/qcore-audit/tests/current_cli.rs:138)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contracts.lock (crates/qcore-audit/tests/dependency_graph.rs:92)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contracts.lock (crates/qcore-audit/tests/provider_selection.rs:623)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contracts.lock (crates/qcore-audit/tests/rule_switch_entry_points.rs:276)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contracts/mpack/writer.qv (crates/qcore-audit/src/pin_window.rs:60)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contracts/mpack/writer.qv (crates/qcore-audit/tests/current_cli.rs:138)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contracts/mpack/writer.qv (crates/qcore-audit/tests/dependency_graph.rs:92)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contracts/mpack/writer.qv (crates/qcore-audit/tests/provider_selection.rs:623)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contracts/mpack/writer.qv (crates/qcore-audit/tests/rule_switch_entry_points.rs:276)"
+   ],
+   "qcore-c-gateway": [
+    "reads it with include_str!: providers/quirin-provider-mpack/contracts/mpack/writer.qv (crates/qcore-c-gateway/tests/cfl_mpack_external_declarations.rs:36)",
+    "reads it with include_str!: providers/quirin-provider-mpack/contracts/mpack/writer.qv (crates/qcore-c-gateway/tests/w46_external_callee_contracts.rs:39)",
+    "names providers/quirin-provider-mpack/contracts/mpack/writer.qv in a string literal: providers/quirin-provider-mpack/contracts/mpack/writer.qv (crates/qcore-c-gateway/tests/cfl_mpack_external_declarations.rs:36)",
+    "names providers/quirin-provider-mpack/contracts/mpack/writer.qv in a string literal: providers/quirin-provider-mpack/contracts/mpack/writer.qv (crates/qcore-c-gateway/tests/w46_external_callee_contracts.rs:39)"
+   ],
+   "qcore-compiler": [
+    "names providers in a string literal: providers/quirin-provider-mpack/contract-inventory.lock (compiler/tests/contract_inherit_qcore_provider.rs:437)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contract-inventory.lock (compiler/tests/contract_loader.rs:1942)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contract-inventory.lock (compiler/tests/monkey_profile.rs:41)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contract-inventory.lock (compiler/tests/profile_loader.rs:65)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contract-inventory.lock (compiler/tests/workspace_layering.rs:270)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contracts.lock (compiler/tests/contract_inherit_qcore_provider.rs:437)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contracts.lock (compiler/tests/contract_loader.rs:1942)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contracts.lock (compiler/tests/monkey_profile.rs:41)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contracts.lock (compiler/tests/profile_loader.rs:65)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contracts.lock (compiler/tests/workspace_layering.rs:270)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contracts/mpack/writer.qv (compiler/tests/contract_inherit_qcore_provider.rs:437)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contracts/mpack/writer.qv (compiler/tests/contract_loader.rs:1942)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contracts/mpack/writer.qv (compiler/tests/monkey_profile.rs:41)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contracts/mpack/writer.qv (compiler/tests/profile_loader.rs:65)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contracts/mpack/writer.qv (compiler/tests/workspace_layering.rs:270)"
+   ],
+   "qcore-contract": [
+    "names providers in a string literal: providers/quirin-provider-mpack/contract-inventory.lock (crates/qcore-contract/tests/bounds_contract.rs:159)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contract-inventory.lock (crates/qcore-contract/tests/descriptor_cells.rs:280)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contract-inventory.lock (crates/qcore-contract/tests/event_loop_clauses.rs:211)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contract-inventory.lock (crates/qcore-contract/tests/production_symbolic_adoption.rs:389)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contracts.lock (crates/qcore-contract/tests/bounds_contract.rs:159)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contracts.lock (crates/qcore-contract/tests/descriptor_cells.rs:280)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contracts.lock (crates/qcore-contract/tests/event_loop_clauses.rs:211)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contracts.lock (crates/qcore-contract/tests/production_symbolic_adoption.rs:389)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contracts/mpack/writer.qv (crates/qcore-contract/tests/bounds_contract.rs:159)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contracts/mpack/writer.qv (crates/qcore-contract/tests/descriptor_cells.rs:280)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contracts/mpack/writer.qv (crates/qcore-contract/tests/event_loop_clauses.rs:211)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contracts/mpack/writer.qv (crates/qcore-contract/tests/production_symbolic_adoption.rs:389)"
+   ],
+   "qcore-provider-chunkio": [
+    "depends on quirin-provider-shared"
+   ],
+   "qcore-provider-cmetrics": [
+    "depends on quirin-provider-shared"
+   ],
+   "qcore-provider-conformance": [
+    "names providers in a string literal: providers/quirin-provider-mpack/contract-inventory.lock (providers/conformance/tests/composed_five_providers.rs:132)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contract-inventory.lock (providers/conformance/tests/packages.rs:373)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contracts.lock (providers/conformance/tests/composed_five_providers.rs:132)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contracts.lock (providers/conformance/tests/packages.rs:373)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contracts/mpack/writer.qv (providers/conformance/tests/composed_five_providers.rs:132)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contracts/mpack/writer.qv (providers/conformance/tests/packages.rs:373)"
+   ],
+   "qcore-provider-ctraces": [
+    "depends on quirin-provider-shared"
+   ],
+   "qcore-provider-libevent": [
+    "depends on quirin-provider-shared"
+   ],
+   "qcore-provider-librdkafka": [
+    "depends on quirin-provider-shared"
+   ],
+   "qcore-verification": [
+    "depends on qcore-c-gateway"
+   ],
+   "qcorec": [
+    "depends on qcore-compiler"
+   ],
+   "quirin-audit-plugin-measure": [
+    "names providers in a string literal: providers/quirin-provider-mpack/contract-inventory.lock (crates/quirin-audit-plugin-measure/src/sides.rs:512)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contract-inventory.lock (crates/quirin-audit-plugin-measure/tests/units.rs:298)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contracts.lock (crates/quirin-audit-plugin-measure/src/sides.rs:512)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contracts.lock (crates/quirin-audit-plugin-measure/tests/units.rs:298)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contracts/mpack/writer.qv (crates/quirin-audit-plugin-measure/src/sides.rs:512)",
+    "names providers in a string literal: providers/quirin-provider-mpack/contracts/mpack/writer.qv (crates/quirin-audit-plugin-measure/tests/units.rs:298)"
+   ],
+   "quirin-provider-mpack": [
+    "owns providers/quirin-provider-mpack/contract-inventory.lock",
+    "owns providers/quirin-provider-mpack/contracts.lock",
+    "owns providers/quirin-provider-mpack/contracts/mpack/writer.qv",
+    "reads it with include_str!: providers/quirin-provider-mpack/contracts/mpack/writer.qv (providers/quirin-provider-mpack/src/lib.rs:25)"
+   ],
+   "quirin-provider-plugin": [
+    "depends on quirin-provider-shared"
+   ],
+   "quirin-provider-shared": [
+    "depends on quirin-provider-mpack"
+   ],
+   "quirin-source-analysis": [
+    "depends on qcore-c-gateway"
+   ]
+  },
+  "mode": "full",
+  "full_reasons": [
+   "the diff reaches qcore-c-gateway",
+   "the diff reaches qcore-contract"
+  ],
+  "rust_packages": [
+   "qcore-audit",
+   "qcore-c-gateway",
+   "qcore-compiler",
+   "qcore-contract",
+   "qcore-core",
+   "qcore-frontend",
+   "qcore-gateway-rule-api",
+   "qcore-schemas",
+   "qcore-verification",
+   "qcore-verifier-host",
+   "qcorec",
+   "quirin-audit-plugin",
+   "quirin-audit-plugin-libevent",
+   "quirin-audit-plugin-measure",
+   "quirin-source-analysis",
+   "rule-32a-caller-frame-hold",
+   "rule-33-removed-selection",
+   "rule-34-element-destroyer",
+   "rule-35-literal-decay",
+   "rule-36-exact-formal-return",
+   "rule-37-result-constructors",
+   "rule-38-descriptor-cells"
+  ],
+  "probes": true,
+  "lean": {
+   "mode": "none",
+   "reasons": [],
+   "modules": [],
+   "audits": []
+  },
+  "python_reasons": [],
+  "provider_gate": true,
+  "provider_reasons": [
+   "providers/quirin-provider-mpack/contract-inventory.lock: providers/ changed",
+   "providers/quirin-provider-mpack/contracts.lock: providers/ changed",
+   "providers/quirin-provider-mpack/contracts/mpack/writer.qv: providers/ changed"
+  ],
+  "provider_members_reached_without_providers_change": [],
+  "unresolved_includes": [
+   {
+    "crate": "qcore-compiler",
+    "source": "compiler/tests/ct_corpus.rs:8069",
+    "literal": "include_str!(\\\"fixtures/ct/{id}/case.qr\\\")\");",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   }
+  ]
+ },
+ "planned_steps": [
+  {
+   "name": "submodules",
+   "argv": [
+    "git",
+    "-C",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a",
+    "submodule",
+    "status",
+    "--recursive"
+   ],
+   "slot": null
+  },
+  {
+   "name": "fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "slot": null
+  },
+  {
+   "name": "clippy",
+   "argv": [
+    "cargo",
+    "clippy",
+    "--all-targets",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "slot": null
+  },
+  {
+   "name": "rust-suite",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a/scripts/run_test_binaries.py",
+    "--log-dir",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a/private/gate-scratch2/rust-suite"
+   ],
+   "slot": "rust-suite"
+  },
+  {
+   "name": "probe-reevaluation_probe",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_probe"
+   ],
+   "slot": null
+  },
+  {
+   "name": "probe-reevaluation_followup",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_followup"
+   ],
+   "slot": null
+  },
+  {
+   "name": "python",
+   "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+   ],
+   "slot": null
+  },
+  {
+   "name": "provider-package-build",
+   "argv": [
+    "/usr/bin/python3",
+    "providers/package.py",
+    "build",
+    "--output",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a/private/gate-scratch2/provider-packages"
+   ],
+   "slot": null
+  },
+  {
+   "name": "provider-package-verify-all",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a/scripts/gate_scope.py",
+    "--verify-packages",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a/private/gate-scratch2/provider-packages"
+   ],
+   "slot": null
+  },
+  {
+   "name": "provider-package-verify",
+   "argv": [
+    "/usr/bin/python3",
+    "providers/package.py",
+    "verify",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a/private/gate-scratch2/provider-packages/qcore.libevent"
+   ],
+   "slot": null
+  },
+  {
+   "name": "provider-test",
+   "argv": [
+    "cargo",
+    "test",
+    "--manifest-path",
+    "providers/Cargo.toml",
+    "--workspace",
+    "--locked",
+    "--offline"
+   ],
+   "slot": "rust-suite"
+  },
+  {
+   "name": "provider-fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--manifest-path",
+    "providers/Cargo.toml",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "slot": null
+  },
+  {
+   "name": "provider-clippy",
+   "argv": [
+    "cargo",
+    "clippy",
+    "--manifest-path",
+    "providers/Cargo.toml",
+    "--workspace",
+    "--all-targets",
+    "--locked",
+    "--offline",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "slot": null
+  }
+ ],
+ "slots": true,
+ "started": "20261105T151429Z",
+ "ran": true,
+ "steps": [
+  {
+   "name": "submodules",
+   "argv": [
+    "git",
+    "-C",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a",
+    "submodule",
+    "status",
+    "--recursive"
+   ],
+   "exit": 0,
+   "seconds": 0.1,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a/private/gate-scratch2/submodules.log",
+   "counts": {
+    "submodules": 1,
+    "not_checked_out_or_moved": []
+   }
+  },
+  {
+   "name": "fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "exit": 0,
+   "seconds": 4.5,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a/private/gate-scratch2/fmt.log",
+   "counts": {}
+  },
+  {
+   "name": "clippy",
+   "argv": [
+    "cargo",
+    "clippy",
+    "--all-targets",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "exit": 0,
+   "seconds": 4.2,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a/private/gate-scratch2/clippy.log",
+   "counts": {}
+  },
+  {
+   "name": "rust-suite",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a/scripts/gate_slot.py",
+    "rust-suite",
+    "--receipt",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a/private/gate-scratch2/slots/rust-suite.json",
+    "--",
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a/scripts/run_test_binaries.py",
+    "--log-dir",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a/private/gate-scratch2/rust-suite"
+   ],
+   "exit": 0,
+   "seconds": 6937.6,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a/private/gate-scratch2/rust-suite.log",
+   "counts": {
+    "units": 611,
+    "passed": 9241,
+    "failed": 0,
+    "ignored": 16,
+    "measured": 0,
+    "filtered": 135,
+    "summaries": 652,
+    "packages": null,
+    "summary": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a/private/gate-scratch2/rust-suite/summary.json",
+    "ok": true
+   },
+   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a/private/gate-scratch2/slots/rust-suite.json"
+  },
+  {
+   "name": "probe-reevaluation_probe",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_probe"
+   ],
+   "exit": 0,
+   "seconds": 0.3,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a/private/gate-scratch2/probe-reevaluation_probe.log",
+   "counts": {}
+  },
+  {
+   "name": "probe-reevaluation_followup",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_followup"
+   ],
+   "exit": 0,
+   "seconds": 0.5,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a/private/gate-scratch2/probe-reevaluation_followup.log",
+   "counts": {}
+  },
+  {
+   "name": "python",
+   "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+   ],
+   "exit": 1,
+   "seconds": 70.0,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a/private/gate-scratch2/python.log",
+   "counts": {
+    "tests": 578,
+    "skipped": 0,
+    "ok": false
+   }
+  },
+  {
+   "name": "provider-package-build",
+   "argv": [
+    "/usr/bin/python3",
+    "providers/package.py",
+    "build",
+    "--output",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a/private/gate-scratch2/provider-packages"
+   ],
+   "exit": 0,
+   "seconds": 486.3,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a/private/gate-scratch2/provider-package-build.log",
+   "counts": {}
+  },
+  {
+   "name": "provider-package-verify-all",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a/scripts/gate_scope.py",
+    "--verify-packages",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a/private/gate-scratch2/provider-packages"
+   ],
+   "exit": 0,
+   "seconds": 2.3,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a/private/gate-scratch2/provider-package-verify-all.log",
+   "counts": {}
+  },
+  {
+   "name": "provider-package-verify",
+   "argv": [
+    "/usr/bin/python3",
+    "providers/package.py",
+    "verify",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a/private/gate-scratch2/provider-packages/qcore.libevent"
+   ],
+   "exit": 0,
+   "seconds": 0.5,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a/private/gate-scratch2/provider-package-verify.log",
+   "counts": {}
+  },
+  {
+   "name": "provider-test",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a/scripts/gate_slot.py",
+    "rust-suite",
+    "--receipt",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a/private/gate-scratch2/slots/provider-test.json",
+    "--",
+    "cargo",
+    "test",
+    "--manifest-path",
+    "providers/Cargo.toml",
+    "--workspace",
+    "--locked",
+    "--offline"
+   ],
+   "exit": 0,
+   "seconds": 3125.4,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a/private/gate-scratch2/provider-test.log",
+   "counts": {
+    "summaries": 43,
+    "passed": 133,
+    "failed": 0,
+    "ignored": 1,
+    "measured": 0,
+    "filtered": 0
+   },
+   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a/private/gate-scratch2/slots/provider-test.json"
+  },
+  {
+   "name": "provider-fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--manifest-path",
+    "providers/Cargo.toml",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "exit": 0,
+   "seconds": 6.3,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a/private/gate-scratch2/provider-fmt.log",
+   "counts": {}
+  },
+  {
+   "name": "provider-clippy",
+   "argv": [
+    "cargo",
+    "clippy",
+    "--manifest-path",
+    "providers/Cargo.toml",
+    "--workspace",
+    "--all-targets",
+    "--locked",
+    "--offline",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "exit": 0,
+   "seconds": 46.9,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a/private/gate-scratch2/provider-clippy.log",
+   "counts": {}
+  }
+ ],
+ "ok": false,
+ "finished": "20261105T181233Z"
+}

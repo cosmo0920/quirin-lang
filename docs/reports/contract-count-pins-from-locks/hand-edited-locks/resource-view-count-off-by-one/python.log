@@ -10,6 +10,6 @@ Traceback (most recent call last):
 ValueError: quirin-provider-libc: the lock's resource view is not the load path's
 
 ----------------------------------------------------------------------
-Ran 9 tests in 19.468s
+Ran 9 tests in 18.200s
 
 FAILED (errors=1)

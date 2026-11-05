@@ -144,8 +144,14 @@
       ],
       "exit": 101,
       "failed": [
+        "all_eleven_crates_whole_and_all_loaded_are_the_cycle19_manifest_environment",
+        "certificates_replay_exact_assumptions_and_reject_table_mutation",
         "every_contract_inventory_lock_equals_its_tree",
-        "every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped"
+        "every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped",
+        "every_real_crate_selected_whole_is_its_loader_view",
+        "production_contracts_preserve_the_previous_resource_modes",
+        "the_cycle19_provider_selection_is_the_cycle19_manifest_module_for_module",
+        "the_modules_under_test_are_the_production_ones"
       ],
       "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a/docs/reports/contract-count-pins-from-locks/hand-edited-locks/retaining-count-off-by-one/rust.log"
     },
@@ -170,8 +176,10 @@
         "-p",
         "test_contract_corpus.py"
       ],
-      "exit": 0,
-      "failed": [],
+      "exit": 1,
+      "failed": [
+        "test_repository_has_one_canonical_copy_per_pinned_module"
+      ],
       "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a/docs/reports/contract-count-pins-from-locks/hand-edited-locks/retaining-count-off-by-one/python.log"
     }
   },
@@ -241,6 +249,66 @@
         "test_repository_has_one_canonical_copy_per_pinned_module"
       ],
       "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a/docs/reports/contract-count-pins-from-locks/hand-edited-locks/resource-view-count-off-by-one/python.log"
+    }
+  },
+  "function-mode-parameter-dropped": {
+    "rust": {
+      "argv": [
+        "cargo",
+        "test",
+        "--config",
+        "build.incremental=false",
+        "--config",
+        "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a/scripts/rustc_test_dylib.py\"",
+        "--no-fail-fast",
+        "-p",
+        "qcore-compiler",
+        "--test",
+        "contract_loader",
+        "--test",
+        "qcore_contract_corpus",
+        "-p",
+        "qcore-c-gateway",
+        "--test",
+        "neighbours",
+        "--test",
+        "prod_contracts",
+        "-p",
+        "qcore-audit",
+        "--test",
+        "provider_selection"
+      ],
+      "exit": 101,
+      "failed": [
+        "every_contract_inventory_lock_equals_its_tree",
+        "production_contracts_preserve_the_previous_resource_modes"
+      ],
+      "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a/docs/reports/contract-count-pins-from-locks/hand-edited-locks/function-mode-parameter-dropped/rust.log"
+    },
+    "lock_check": {
+      "argv": [
+        "/usr/bin/python3",
+        "providers/contracts.py",
+        "check"
+      ],
+      "exit": 1,
+      "failed": [],
+      "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a/docs/reports/contract-count-pins-from-locks/hand-edited-locks/function-mode-parameter-dropped/contracts-check.log"
+    },
+    "python": {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests",
+        "-p",
+        "test_contract_corpus.py"
+      ],
+      "exit": 0,
+      "failed": [],
+      "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a/docs/reports/contract-count-pins-from-locks/hand-edited-locks/function-mode-parameter-dropped/python.log"
     }
   },
   "baseline-after": {

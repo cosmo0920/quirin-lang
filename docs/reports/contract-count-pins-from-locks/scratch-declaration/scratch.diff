@@ -1,0 +1,119 @@
+diff --git a/providers/quirin-provider-mpack/contract-inventory.lock b/providers/quirin-provider-mpack/contract-inventory.lock
+index eaed099fb..00bf85475 100644
+--- a/providers/quirin-provider-mpack/contract-inventory.lock
++++ b/providers/quirin-provider-mpack/contract-inventory.lock
+@@ -4,8 +4,8 @@
+   "crate": "quirin-provider-mpack",
+   "files": {
+     "mpack/writer.qv": {
+-      "clause_count": 122,
+-      "declaration_count": 34,
++      "clause_count": 130,
++      "declaration_count": 36,
+       "declarations": [
+         {
+           "clauses": 4,
+@@ -400,13 +400,30 @@
+             "result": "none"
+           },
+           "resource_table": "functions"
++        },
++        {
++          "clauses": 3,
++          "name": "qcore_scratch_count_probe_borrow",
++          "resource_mode": {
++            "parameters": [
++              "borrowed"
++            ],
++            "result": "none"
++          },
++          "resource_table": "functions"
++        },
++        {
++          "clauses": 5,
++          "name": "qcore_scratch_count_probe_retain",
++          "resource_mode": null,
++          "resource_table": "retaining"
+         }
+       ],
+       "inherits": [],
+       "other_declarations": [],
+       "premise_bindings": [],
+       "premises": {},
+-      "sha256": "9bc7038b2f34a84bf900095fcca37fb20597b376e0a4ec9a8c2aad07cdc228c4"
++      "sha256": "80c6acd654e736c81df5b1301efab7b6e215400fec7961d1ab7e64ec92cdd4e1"
+     }
+   },
+   "outer_view": [],
+diff --git a/providers/quirin-provider-mpack/contracts.lock b/providers/quirin-provider-mpack/contracts.lock
+index 2ce21e569..61175d80c 100644
+--- a/providers/quirin-provider-mpack/contracts.lock
++++ b/providers/quirin-provider-mpack/contracts.lock
+@@ -2029,6 +2029,40 @@
+           ]
+         }
+       ]
++    },
++    {
++      "function": "qcore_scratch_count_probe_borrow",
++      "module": "mpack/writer.qv",
++      "contract_sha256": "19032931ae4dbaaab9aa7057fbb5fac35763133c2e1d7e480d00368c4703b261",
++      "pinned_at": "2026-11-05T15:07:58Z",
++      "identities": [
++        {
++          "reviewed_at": [
++            {
++              "kind": "git",
++              "revision": "046accf6aded7906f66a1baf0202da349e521736"
++            }
++          ],
++          "sites": []
++        }
++      ]
++    },
++    {
++      "function": "qcore_scratch_count_probe_retain",
++      "module": "mpack/writer.qv",
++      "contract_sha256": "16c86f193bfc028d3e2ba07ebd3b7c6ae7737e5bf395be66038ab3e64ecb8076",
++      "pinned_at": "2026-11-05T15:07:58Z",
++      "identities": [
++        {
++          "reviewed_at": [
++            {
++              "kind": "git",
++              "revision": "046accf6aded7906f66a1baf0202da349e521736"
++            }
++          ],
++          "sites": []
++        }
++      ]
+     }
+   ],
+   "flexible": []
+diff --git a/providers/quirin-provider-mpack/contracts/mpack/writer.qv b/providers/quirin-provider-mpack/contracts/mpack/writer.qv
+index ec33d87f8..12c65379a 100644
+--- a/providers/quirin-provider-mpack/contracts/mpack/writer.qv
++++ b/providers/quirin-provider-mpack/contracts/mpack/writer.qv
+@@ -679,3 +679,22 @@ contract {
+     ensures normal resource_borrowed(byte_count);
+     ensures normal resource_return_none();
+ };
++
++// CONTRACT-COUNT-PINS-FROM-LOCKS acceptance scratch, throwaway branch only:
++// one plain borrow (the function map) and one global retention (the
++// retaining table), added to an already selected module.
++extern fn qcore_scratch_count_probe_borrow(p: ptr<mut, u8>) -> unit
++contract {
++    requires resource_contract_v1;
++    ensures normal resource_borrowed(p);
++    ensures normal resource_return_none();
++};
++
++extern fn qcore_scratch_count_probe_retain(key: u32, pointer: ptr<const, u8>) -> i32
++contract {
++    requires resource_contract_v1;
++    ensures normal resource_borrowed(key);
++    ensures normal resource_borrowed(pointer);
++    ensures normal resource_retained_by(pointer, global);
++    ensures normal resource_return_none();
++};

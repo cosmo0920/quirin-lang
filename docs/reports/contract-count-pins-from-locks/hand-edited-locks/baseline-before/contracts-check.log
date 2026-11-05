@@ -28,77 +28,77 @@
       "files": 47,
       "declarations": 68,
       "clauses": 717,
-      "inventory_lock_sha256": "4459278194d665d55a542b7d0192aa47e4eefcc21097c5ddbd0d6758fc3caf2b"
+      "inventory_lock_sha256": "b5cc1e64a9bb413dc82d8ca3dc1739fb58a142a7fac7924d6bad337bd7dc1c4b"
     },
     {
       "crate": "qcore-provider-cmetrics",
       "files": 10,
       "declarations": 55,
       "clauses": 443,
-      "inventory_lock_sha256": "d179fa2a9bbd153927969da061cf4e49b71fce6c1f23cc6691f669df61fee8bf"
+      "inventory_lock_sha256": "5604075de4b05dafc0bb2be0961ad506d67d470a9bd4c597dc4a27279495d57f"
     },
     {
       "crate": "qcore-provider-ctraces",
       "files": 1,
       "declarations": 19,
       "clauses": 88,
-      "inventory_lock_sha256": "0cd75d3e258dbc483a8ec73c3f78a13f5d522ac4fe9d9cc95d13926fb806eaf8"
+      "inventory_lock_sha256": "75423d253ba2aedcbfc7c1ed33afcaea5a7089384014d26200fc97d5eb0c8f2f"
     },
     {
       "crate": "qcore-provider-libevent",
       "files": 20,
       "declarations": 132,
       "clauses": 807,
-      "inventory_lock_sha256": "d32074c7be14b9ad1febe93b3b0fc191f002eb23cc7d280e7113570e1097b795"
+      "inventory_lock_sha256": "7472abf8ebde4073319bfb86eb2ae7f8e15486bd27805fa5f940bb93a114d0ee"
     },
     {
       "crate": "qcore-provider-librdkafka",
       "files": 14,
       "declarations": 324,
       "clauses": 4609,
-      "inventory_lock_sha256": "e5d06db86527173781983fe1b46411cc5714b165aac2b9d789526e3e8e673806"
+      "inventory_lock_sha256": "34e3f13dce7d2918c17f4e35ccf836bea60bff988b5868577e1523bd8db81c69"
     },
     {
       "crate": "quirin-provider-cfl",
       "files": 7,
       "declarations": 56,
       "clauses": 254,
-      "inventory_lock_sha256": "05dd639c746620943ec47e08e71d97511afc94e299d7680d072de7c1ed5fbfda"
+      "inventory_lock_sha256": "115afc85a7f05938fd2909fa4198cfb6bd6216ad793e3716984594388032824a"
     },
     {
       "crate": "quirin-provider-fluent-bit",
       "files": 27,
       "declarations": 113,
       "clauses": 683,
-      "inventory_lock_sha256": "7f183a20385fd92d85327f008253b6d48ae1078d0d5ff0a233a9c8a8dc37849c"
+      "inventory_lock_sha256": "76d02d9a4d64615e951d2f2a36c6836c7ffdfaf23bc89e7d131ac2aca78919d6"
     },
     {
       "crate": "quirin-provider-libc",
       "files": 18,
       "declarations": 158,
       "clauses": 848,
-      "inventory_lock_sha256": "0f6504dff819f8c58427532378f1e219a7ff1c591c6b1d09093b5d2e2f7a4f97"
+      "inventory_lock_sha256": "a7d975dc4936bd314e3817dadc7898430ddd58898d6c8e4974262ac13c278b5c"
     },
     {
       "crate": "quirin-provider-mpack",
       "files": 1,
       "declarations": 34,
       "clauses": 122,
-      "inventory_lock_sha256": "ee93f753ecf9c38b9ca43adb7e673030719a7055e796a46dca01082f5c601734"
+      "inventory_lock_sha256": "3cf54e461f2c1fbd7c7237f4ca4361b2aec607f25ab0de72c4ce8d52cfcf20a9"
     },
     {
       "crate": "quirin-provider-msgpack",
       "files": 1,
       "declarations": 1,
       "clauses": 7,
-      "inventory_lock_sha256": "d9cd73a141e9caeee5bfd12911055784df4260accb0ebdb65f4b26254627eb4f"
+      "inventory_lock_sha256": "5e8a3f782b9596ebfa56fab845abaab0962f81b9f5bbade799db0bb487a1a80e"
     },
     {
       "crate": "quirin-provider-shared",
       "files": 4,
       "declarations": 26,
       "clauses": 68,
-      "inventory_lock_sha256": "bdb9ab48fcdd500d7c1ae15ef4686d2a958377ae89b4260d5743d20fedaabb89"
+      "inventory_lock_sha256": "e24117298595709e47999c2bb35e57949a18d37e5eec1f5ec44f785e9aadec9f"
     }
   ],
   "providers": [

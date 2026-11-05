@@ -45,10 +45,23 @@ def resource_view_entry_removed(text):
     return json.dumps(document, indent=2, sort_keys=True, ensure_ascii=True) + "\n"
 
 
+def function_mode_parameter_dropped(text):
+    document = json.loads(text)
+    for declaration in document["files"]["libc/stdlib.qv"]["declarations"]:
+        mode = declaration["resource_mode"]
+        if mode and mode["parameters"]:
+            mode["parameters"].pop()
+            break
+    else:
+        raise AssertionError("no function-map declaration with a parameter")
+    return json.dumps(document, indent=2, sort_keys=True, ensure_ascii=True) + "\n"
+
+
 MUTATIONS = [
     ("declaration-count-off-by-one", off_by_one_declaration_count),
     ("retaining-count-off-by-one", retaining_declaration_moved_to_functions),
     ("resource-view-count-off-by-one", resource_view_entry_removed),
+    ("function-mode-parameter-dropped", function_mode_parameter_dropped),
 ]
 
 

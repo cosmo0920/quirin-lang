@@ -1,0 +1,44 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "CONTRACT-COUNT-PINS-FROM-LOCKS",
+  "base": "25508ccaf",
+  "measured_tip": "f336ef8ba",
+  "increment_paragraph": "**CONTRACT-COUNT-PINS-FROM-LOCKS** (round 19, card B; USER REQUEST 2026-11-05, verbatim: \"We need to record the requirements of saving gating time tasks.\", then \"Launch three cards of gate-time reductions.\"; gate-time requirement R3): the census at 25508ccaf finds fourteen aggregate contract-count literals outside providers/ (contract_loader.rs's (69, 638, 370), pending review 11, relational 10, retaining 115, corpus 150 and two 69 source-assumption pins; provider_selection.rs four 69s; neighbours.rs and prod_contracts.rs one 69 each; test_contract_corpus.py 150/92/58), changed by 83 distinct commits since 2026-10-01. The loader's tables and the 22 non-extern-fn declarations were stated by no lock, and acceptance 1 found a per-declaration pin too (the literal function-map mode table of production_contracts_preserve_the_previous_resource_modes), so contract-inventory.lock goes to schema 2: each extern fn records its resource_table (where the v1 loader puts it when its module loads alone, null when refused), each function-map declaration its resource_mode (the loaded contract, serialized; the literal table keeps every name it held at the base) and each module its other_declarations; sync refuses tables that disagree with the resource view, and qcore_contract_corpus.rs's per-file check recomputes both fields (per-file pins unchanged). One reader per language (tests/support/contract_locks.rs, scripts/contract_corpus.py lock_totals), held to the same cases (tests/support/contract_locks_cases.json), replaces every literal; at the base the locks give exactly the former values. Acceptance: two scratch declarations in mpack/writer.qv on a throwaway branch change only three providers/ files (the module, its inventory lock, its contracts.lock pin) and the scoped gate passes but for the base's two Python failures (stale matrix Lean-audit count, gateway registry order); four hand-edited locks (three counts off by one, one mode) each fail the Rust binaries and contracts.py check. No analyzer, contract or Lean semantics change. Report: docs/reports/contract-count-pins-from-locks/README.md.",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "CONTRACT-COUNT-PINS-FROM-LOCKS",
+      "operation": "register",
+      "title": "Derive the aggregate contract counts asserted outside providers/ from the inventory locks",
+      "text": "Registered by its own card at landing (round 19 card B; USER REQUEST 2026-11-05, verbatim: \"We need to record the requirements of saving gating time tasks.\", then \"Launch three cards of gate-time reductions.\"); retired by the next entry.",
+      "source": "docs/reports/contract-count-pins-from-locks/README.md",
+      "recorded_by": "CONTRACT-COUNT-PINS-FROM-LOCKS"
+    },
+    {
+      "id": "CONTRACT-COUNT-PINS-FROM-LOCKS",
+      "operation": "retire",
+      "why": "DISCHARGED by CONTRACT-COUNT-PINS-FROM-LOCKS (docs/reports/contract-count-pins-from-locks/README.md): census of fourteen literal sites, lock schema 2, one reader per language with shared cases, every literal derived, both acceptance demonstrations recorded.",
+      "source": "docs/reports/contract-count-pins-from-locks/README.md"
+    },
+    {
+      "id": "CONTRACT-COUNT-PINS-OUTSIDE-LOCKS",
+      "operation": "retire",
+      "why": "DISCHARGED by CONTRACT-COUNT-PINS-FROM-LOCKS (docs/reports/contract-count-pins-from-locks/README.md): the aggregates (corpus modules, resource-view modules and source assumptions, v1 and rejected declarations, the loader's four tables) are derived from the providers' contract-inventory.lock files (schema 2) and providers/contract-load-path.json by tests/support/contract_locks.rs and scripts/contract_corpus.py lock_totals; per-declaration function-map modes added after the base are pinned by the lock's resource_mode rather than contract_loader.rs's literal table; qcore_contract_corpus.rs's per-file check keeps its force (it recomputes the new fields too); two scratch declarations added to quirin-provider-mpack on a throwaway branch changed only providers/ files and the scoped gate passed, and hand-edited off-by-one locks fail. A new resource-v1 module still edits cycle19-resource-contracts.json (a selection, not a count): CYCLE19-MANIFEST-FROM-VIEWS.",
+      "source": "docs/reports/contract-count-pins-from-locks/README.md"
+    },
+    {
+      "id": "CYCLE19-MANIFEST-FROM-VIEWS",
+      "operation": "register",
+      "title": "A new resource-v1 provider module still edits cycle19-resource-contracts.json outside providers/",
+      "text": "Registered by CONTRACT-COUNT-PINS-FROM-LOCKS. The Cycle 19 manifest lists every module of the providers' resource views (provider_selection.rs asserts the all-loaded selection equals it, module for module), so a contract card that adds a resource-v1 module, rather than a declaration, must also add the module to the root manifest; concurrent such cards conflict there. It is the selection, not a count pin, so that card left it. DISCHARGE: the manifest is generated from the views (or the production routes read the all-loaded selection directly) with the manifest digest identity the audits record kept or deliberately re-pinned, or a recorded decision that the explicit selection stays a reviewed root edit.",
+      "source": "docs/reports/contract-count-pins-from-locks/README.md",
+      "recorded_by": "CONTRACT-COUNT-PINS-FROM-LOCKS"
+    },
+    {
+      "id": "GATE-SCOPE-RUNTIME-READS-HEURISTIC",
+      "operation": "append",
+      "text": "OBSERVED (CONTRACT-COUNT-PINS-FROM-LOCKS): tests/support/contract_locks.rs (included by contract_loader.rs, neighbours.rs, prod_contracts.rs and provider_selection.rs) and scripts/contract_corpus.py lock_totals read every providers/<crate>/contract-inventory.lock through a path computed from providers/contract-load-path.json, so no string literal names the lock; an exact-reader scoper must declare these readers of the locks, or a lock-only diff would select none of the four binaries.",
+      "source": "docs/reports/contract-count-pins-from-locks/README.md"
+    }
+  ]
+}
