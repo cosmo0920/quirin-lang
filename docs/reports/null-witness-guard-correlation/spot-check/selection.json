@@ -1,0 +1,17 @@
+{
+ "schema_version": 1,
+ "name": "null-witness-spot",
+ "description": "NULL-WITNESS-GUARD-CORRELATION spot check: the four librdkafka units holding the six rows.",
+ "groups": [
+  {
+   "library": "librdkafka",
+   "label": "null-witness-spot",
+   "files": [
+    "lib/librdkafka-2.15.0/src/rdkafka_msg.c",
+    "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+    "lib/librdkafka-2.15.0/src/rdkafka_metadata_cache.c",
+    "lib/librdkafka-2.15.0/src/rdkafka_topic.c"
+   ]
+  }
+ ]
+}

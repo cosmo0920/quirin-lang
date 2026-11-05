@@ -137,3 +137,65 @@ unchanged); a local arena the path established refuses (`rd_tmpabuf`'s
 shape); **true positive** an arena received without size accounting stays a
 finding; a call that received the argument correlates; a test of a refused
 result is never a witness.
+
+Against the base search (`witness.rs` at `13337d0af`, the fixtures
+unchanged) the six refusal fixtures are `null-on-normal-path` findings and
+both controls pass: the defect reproduced in miniature
+(`private/logs/fixtures-at-base-search.log`, card-private).
+
+## 5. Spot check on the real units (not the measurement)
+
+[`spot-check/run.py`](spot-check/run.py): the card's release `quirin-audit`
+(tree `635291591`) on `current`, the corpus checkout
+`build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source` (66910c10) and its
+compile database, selecting only the four librdkafka units of the six rows
+([`selection.json`](spot-check/selection.json)), with the null property
+(`spot-null.jsonl`, SHA-256 `115ea019…a04a432`, card-private). The units'
+preprocessed lines are the corpus run's, so every check keeps its id and
+line. [`compare.txt`](spot-check/compare.txt): all seven former findings are
+`unresolved` with rule 39's reason (the tie's "already fixed non-null" for
+`allow_wakeup_at`; an unnamed memory value for `ProduceRequest` and both
+`idempotent_Produce_success` checks, `TAILQ_LAST`'s cast read included; the
+local `tbuf` for the three tmpabuf rows); the six rows are null `Unknown`,
+combined `Unknown`; the units' 6 already-unresolved triage records stay
+unresolved. Three other rows differ from the corpus run
+(`rd_kafka_group_MemberState_consumer_write` Safe -> Unknown,
+`rd_kafka_metadata_cache_propagate_changes` and `rd_kafka_topic_new` Unknown
+-> Safe): none has a triage record; each rests on cross-unit travel
+(`cross-unit-result:` / `cross-unit-inferred:`), which a four-unit selection
+lacks. They are route artifacts of the spot check, not predictions; the
+corpus measurement is the integrator's.
+
+## 6. Prediction, measurement and records
+
+[PREDICTION.md](PREDICTION.md) (committed before the fix, base
+`rev:13337d0af`): the six rows back to `Unknown`, corpus null Unsafe 23 -> 17
+and Unknown 2,349 -> 2,355, combined Unsafe 34 -> 28, no custody, system or
+slice move. The restored null counts equal the `eight-home` baseline record's
+(`contract/evaluations/eight-home/baseline.json`: Safe 2,549, Unknown 2,355,
+Unsafe 17); its `null_verdicts_sha256` will still differ, because 38 null rows
+carry custody (and 15 combined) values other cards of this round moved.
+
+Follow-ups (registered through
+[`integration-amendments.json`](integration-amendments.json)):
+`NULL-LOOKUP-TIE-INFEASIBILITY` (a tie the path fixed non-null could remove
+the candidate; held because this card never makes a row Safe),
+`NULL-LOOKUP-STATE-INVARIANTS` (the tmpabuf arena discipline, `NDEBUG`
+dependent, and the message queue's count/list invariant),
+`NULL-LOOKUP-SOURCE-DEPENDENCY` (rows do not list the declaration a strong
+source or finding rests on).
+
+## 7. Card gate
+
+`python3 scripts/gate_scope.py --base 13337d0af --out <worktree>/private/gate`
+on head `635291591` (record [`gate.json`](gate.json); logs card-private under
+`private/gate/`): mode **full** (the diff reaches `qcore-c-gateway` and
+`qcore-core`); submodules exit 0; `cargo fmt --check` exit 0; `cargo clippy
+--all-targets -D warnings` exit 0; Rust suite exit 0, **614 units, 9,256
+passed, 0 failed, 16 ignored**; both reevaluation probes exit 0; Lean
+`check_lean_audits.py` exit 0, **411 audits**; Python suite exit 0, **625
+tests**. No provider path changed. The rust-suite slot was held by another
+card's suite for about two hours; while it waited, the new fixtures ran once
+outside the slot (`cargo test -p qcore-c-gateway --test
+null_witness_guard_correlation`, `-p qcore-core --test null_lookup`: 9 and 4
+passed), then the gate ran them under its slot.
