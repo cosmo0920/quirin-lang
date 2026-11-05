@@ -1,0 +1,654 @@
+{
+ "schema": "quirin-gate-scope/1",
+ "source": "git diff",
+ "base": "855b34adef125604a6a94535ef15b1dcd7791d0e",
+ "head": "a86dddc1de209515dad2f12f7cd5f96773c475ca",
+ "committed": [
+  "crates/qcore-c-gateway/src/contract_dependencies.rs",
+  "crates/qcore-c-gateway/src/legacy_c.rs",
+  "crates/qcore-c-gateway/src/legacy_member_custody_attribution.rs",
+  "crates/qcore-c-gateway/src/legacy_member_effect.rs",
+  "crates/qcore-c-gateway/src/legacy_member_release.rs",
+  "crates/qcore-c-gateway/src/legacy_probe_state.rs",
+  "crates/qcore-c-gateway/src/legacy_reserved_spelling.rs",
+  "crates/qcore-c-gateway/src/legacy_summary.rs",
+  "crates/qcore-c-gateway/tests/member_effect_summary.rs",
+  "crates/qcore-c-gateway/tests/unit/legacy_probe_state.rs",
+  "crates/qcore-schemas/src/contract.rs",
+  "crates/qcore-schemas/src/lib.rs",
+  "crates/qcore-schemas/src/member_effect.rs",
+  "docs/agents/README.md",
+  "docs/agents/gateway.md",
+  "docs/agents/rules/38i.md",
+  "docs/agents/rules/38j.md",
+  "docs/agents/rules/5k.md",
+  "docs/reports/member-effect-summary/PREDICTION.md",
+  "docs/reports/member-effect-summary/scripts/candidates_step2.py",
+  "docs/reports/member-effect-summary/scripts/estimate_step1.py",
+  "proof/AuditMemberCustodyAttribution.lean",
+  "proof/AuditMemberEffectSummary.lean",
+  "proof/QCore.lean",
+  "proof/QCore/MemberCustodyAttribution.lean",
+  "proof/QCore/MemberEffectSummary.lean"
+ ],
+ "uncommitted": [],
+ "scope": {
+  "paths": [
+   "crates/qcore-c-gateway/src/contract_dependencies.rs",
+   "crates/qcore-c-gateway/src/legacy_c.rs",
+   "crates/qcore-c-gateway/src/legacy_member_custody_attribution.rs",
+   "crates/qcore-c-gateway/src/legacy_member_effect.rs",
+   "crates/qcore-c-gateway/src/legacy_member_release.rs",
+   "crates/qcore-c-gateway/src/legacy_probe_state.rs",
+   "crates/qcore-c-gateway/src/legacy_reserved_spelling.rs",
+   "crates/qcore-c-gateway/src/legacy_summary.rs",
+   "crates/qcore-c-gateway/tests/member_effect_summary.rs",
+   "crates/qcore-c-gateway/tests/unit/legacy_probe_state.rs",
+   "crates/qcore-schemas/src/contract.rs",
+   "crates/qcore-schemas/src/lib.rs",
+   "crates/qcore-schemas/src/member_effect.rs",
+   "docs/agents/README.md",
+   "docs/agents/gateway.md",
+   "docs/agents/rules/38i.md",
+   "docs/agents/rules/38j.md",
+   "docs/agents/rules/5k.md",
+   "docs/reports/member-effect-summary/PREDICTION.md",
+   "docs/reports/member-effect-summary/scripts/candidates_step2.py",
+   "docs/reports/member-effect-summary/scripts/estimate_step1.py",
+   "proof/AuditMemberCustodyAttribution.lean",
+   "proof/AuditMemberEffectSummary.lean",
+   "proof/QCore.lean",
+   "proof/QCore/MemberCustodyAttribution.lean",
+   "proof/QCore/MemberEffectSummary.lean"
+  ],
+  "attribution": {
+   "crates/qcore-c-gateway/src/contract_dependencies.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:80)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/src/legacy_c.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-c-gateway (include_str, crates/qcore-c-gateway/tests/unit/legacy_probe_state.rs:28)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:80)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/src/legacy_member_custody_attribution.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-c-gateway (path, crates/qcore-c-gateway/src/legacy_c.rs:151)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:80)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/src/legacy_member_effect.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-c-gateway (path, crates/qcore-c-gateway/src/legacy_c.rs:156)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:80)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/src/legacy_member_release.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-c-gateway (path, crates/qcore-c-gateway/src/legacy_c.rs:167)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:80)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/src/legacy_probe_state.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-c-gateway (path, crates/qcore-c-gateway/src/legacy_c.rs:446)",
+    "read by qcore-c-gateway (include_str, crates/qcore-c-gateway/tests/unit/legacy_probe_state.rs:39)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:80)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/src/legacy_reserved_spelling.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-c-gateway (path, crates/qcore-c-gateway/src/legacy_c.rs:105)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:80)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/src/legacy_summary.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:80)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/tests/member_effect_summary.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:80)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-c-gateway/tests/unit/legacy_probe_state.rs": [
+    "owned by qcore-c-gateway",
+    "read by qcore-c-gateway (path, crates/qcore-c-gateway/src/legacy_probe_state.rs:291)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:80)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-schemas/src/contract.rs": [
+    "owned by qcore-schemas",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:14)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-schemas/src/lib.rs": [
+    "owned by qcore-schemas",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:14)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-schemas/src/member_effect.rs": [
+    "owned by qcore-schemas",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:14)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "docs/agents/README.md": [
+    "class prose"
+   ],
+   "docs/agents/gateway.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/38i.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/38j.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/5k.md": [
+    "class prose"
+   ],
+   "docs/reports/member-effect-summary/PREDICTION.md": [
+    "class prose"
+   ],
+   "docs/reports/member-effect-summary/scripts/candidates_step2.py": [
+    "class prose"
+   ],
+   "docs/reports/member-effect-summary/scripts/estimate_step1.py": [
+    "class prose"
+   ],
+   "proof/AuditMemberCustodyAttribution.lean": [
+    "read by qcore-compiler (runtime, compiler/tests/float_ieee_vectors.rs:524)",
+    "read by qcore-compiler (runtime, compiler/tests/proof_leg_digests.rs:106)",
+    "class lean"
+   ],
+   "proof/AuditMemberEffectSummary.lean": [
+    "read by qcore-compiler (runtime, compiler/tests/float_ieee_vectors.rs:524)",
+    "read by qcore-compiler (runtime, compiler/tests/proof_leg_digests.rs:106)",
+    "class lean"
+   ],
+   "proof/QCore.lean": [
+    "read by qcore-compiler (runtime, compiler/tests/float_ieee_vectors.rs:524)",
+    "read by qcore-compiler (runtime, compiler/tests/proof_leg_digests.rs:106)",
+    "class lean"
+   ],
+   "proof/QCore/MemberCustodyAttribution.lean": [
+    "read by qcore-compiler (runtime, compiler/tests/float_ieee_vectors.rs:524)",
+    "read by qcore-compiler (runtime, compiler/tests/proof_leg_digests.rs:106)",
+    "class lean"
+   ],
+   "proof/QCore/MemberEffectSummary.lean": [
+    "read by qcore-compiler (runtime, compiler/tests/float_ieee_vectors.rs:524)",
+    "read by qcore-compiler (runtime, compiler/tests/proof_leg_digests.rs:106)",
+    "class lean"
+   ]
+  },
+  "affected": {
+   "qcore-audit": [
+    "depends on qcore-c-gateway"
+   ],
+   "qcore-c-gateway": [
+    "owns crates/qcore-c-gateway/src/contract_dependencies.rs",
+    "owns crates/qcore-c-gateway/src/legacy_c.rs",
+    "reads it with include_str!: crates/qcore-c-gateway/src/legacy_c.rs (crates/qcore-c-gateway/tests/unit/legacy_probe_state.rs:28)",
+    "owns crates/qcore-c-gateway/src/legacy_member_custody_attribution.rs",
+    "compiles it via #[path]: crates/qcore-c-gateway/src/legacy_member_custody_attribution.rs (crates/qcore-c-gateway/src/legacy_c.rs:151)",
+    "owns crates/qcore-c-gateway/src/legacy_member_effect.rs",
+    "compiles it via #[path]: crates/qcore-c-gateway/src/legacy_member_effect.rs (crates/qcore-c-gateway/src/legacy_c.rs:156)",
+    "owns crates/qcore-c-gateway/src/legacy_member_release.rs",
+    "compiles it via #[path]: crates/qcore-c-gateway/src/legacy_member_release.rs (crates/qcore-c-gateway/src/legacy_c.rs:167)",
+    "owns crates/qcore-c-gateway/src/legacy_probe_state.rs",
+    "compiles it via #[path]: crates/qcore-c-gateway/src/legacy_probe_state.rs (crates/qcore-c-gateway/src/legacy_c.rs:446)",
+    "reads it with include_str!: crates/qcore-c-gateway/src/legacy_probe_state.rs (crates/qcore-c-gateway/tests/unit/legacy_probe_state.rs:39)",
+    "owns crates/qcore-c-gateway/src/legacy_reserved_spelling.rs",
+    "compiles it via #[path]: crates/qcore-c-gateway/src/legacy_reserved_spelling.rs (crates/qcore-c-gateway/src/legacy_c.rs:105)",
+    "owns crates/qcore-c-gateway/src/legacy_summary.rs",
+    "owns crates/qcore-c-gateway/tests/member_effect_summary.rs",
+    "owns crates/qcore-c-gateway/tests/unit/legacy_probe_state.rs",
+    "compiles it via #[path]: crates/qcore-c-gateway/tests/unit/legacy_probe_state.rs (crates/qcore-c-gateway/src/legacy_probe_state.rs:291)"
+   ],
+   "qcore-compiler": [
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/src/contract_dependencies.rs (compiler/tests/workspace_layering.rs:80)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/src/legacy_c.rs (compiler/tests/workspace_layering.rs:80)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/src/legacy_member_custody_attribution.rs (compiler/tests/workspace_layering.rs:80)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/src/legacy_member_effect.rs (compiler/tests/workspace_layering.rs:80)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/src/legacy_member_release.rs (compiler/tests/workspace_layering.rs:80)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/src/legacy_probe_state.rs (compiler/tests/workspace_layering.rs:80)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/src/legacy_reserved_spelling.rs (compiler/tests/workspace_layering.rs:80)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/src/legacy_summary.rs (compiler/tests/workspace_layering.rs:80)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/tests/member_effect_summary.rs (compiler/tests/workspace_layering.rs:80)",
+    "names crates/qcore-c-gateway in a string literal: crates/qcore-c-gateway/tests/unit/legacy_probe_state.rs (compiler/tests/workspace_layering.rs:80)",
+    "names crates/qcore-schemas in a string literal: crates/qcore-schemas/src/contract.rs (compiler/tests/workspace_layering.rs:14)",
+    "names crates/qcore-schemas in a string literal: crates/qcore-schemas/src/lib.rs (compiler/tests/workspace_layering.rs:14)",
+    "names crates/qcore-schemas in a string literal: crates/qcore-schemas/src/member_effect.rs (compiler/tests/workspace_layering.rs:14)",
+    "names proof in a string literal: proof/AuditMemberCustodyAttribution.lean (compiler/tests/float_ieee_vectors.rs:524)",
+    "names proof in a string literal: proof/AuditMemberCustodyAttribution.lean (compiler/tests/proof_leg_digests.rs:106)",
+    "names proof in a string literal: proof/AuditMemberEffectSummary.lean (compiler/tests/float_ieee_vectors.rs:524)",
+    "names proof in a string literal: proof/AuditMemberEffectSummary.lean (compiler/tests/proof_leg_digests.rs:106)",
+    "names proof in a string literal: proof/QCore.lean (compiler/tests/float_ieee_vectors.rs:524)",
+    "names proof in a string literal: proof/QCore.lean (compiler/tests/proof_leg_digests.rs:106)",
+    "names proof in a string literal: proof/QCore/MemberCustodyAttribution.lean (compiler/tests/float_ieee_vectors.rs:524)",
+    "names proof in a string literal: proof/QCore/MemberCustodyAttribution.lean (compiler/tests/proof_leg_digests.rs:106)",
+    "names proof in a string literal: proof/QCore/MemberEffectSummary.lean (compiler/tests/float_ieee_vectors.rs:524)",
+    "names proof in a string literal: proof/QCore/MemberEffectSummary.lean (compiler/tests/proof_leg_digests.rs:106)"
+   ],
+   "qcore-contract": [
+    "depends on qcore-schemas"
+   ],
+   "qcore-frontend": [
+    "depends on qcore-schemas"
+   ],
+   "qcore-gateway-rule-api": [
+    "depends on qcore-schemas"
+   ],
+   "qcore-provider-chunkio": [
+    "depends on qcore-schemas"
+   ],
+   "qcore-provider-cmetrics": [
+    "depends on qcore-schemas"
+   ],
+   "qcore-provider-conformance": [
+    "depends on qcore-c-gateway"
+   ],
+   "qcore-provider-ctraces": [
+    "depends on qcore-schemas"
+   ],
+   "qcore-provider-libevent": [
+    "depends on qcore-schemas"
+   ],
+   "qcore-provider-librdkafka": [
+    "depends on qcore-schemas"
+   ],
+   "qcore-schemas": [
+    "owns crates/qcore-schemas/src/contract.rs",
+    "owns crates/qcore-schemas/src/lib.rs",
+    "owns crates/qcore-schemas/src/member_effect.rs"
+   ],
+   "qcore-verification": [
+    "names crates in a string literal: crates/qcore-c-gateway/src/contract_dependencies.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/src/legacy_c.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/src/legacy_member_custody_attribution.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/src/legacy_member_effect.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/src/legacy_member_release.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/src/legacy_probe_state.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/src/legacy_reserved_spelling.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/src/legacy_summary.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/tests/member_effect_summary.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-c-gateway/tests/unit/legacy_probe_state.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-schemas/src/contract.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-schemas/src/lib.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-schemas/src/member_effect.rs (crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "qcore-verifier-host": [
+    "depends on qcore-schemas"
+   ],
+   "qcorec": [
+    "depends on qcore-compiler"
+   ],
+   "quirin-audit-plugin": [
+    "depends on qcore-schemas"
+   ],
+   "quirin-audit-plugin-libevent": [
+    "depends on qcore-schemas"
+   ],
+   "quirin-audit-plugin-measure": [
+    "depends on qcore-schemas"
+   ],
+   "quirin-provider-plugin": [
+    "depends on qcore-schemas"
+   ],
+   "quirin-provider-shared": [
+    "depends on qcore-schemas"
+   ],
+   "quirin-source-analysis": [
+    "depends on qcore-c-gateway"
+   ],
+   "rule-32a-caller-frame-hold": [
+    "depends on qcore-gateway-rule-api"
+   ],
+   "rule-33-removed-selection": [
+    "depends on qcore-gateway-rule-api"
+   ],
+   "rule-34-element-destroyer": [
+    "depends on qcore-gateway-rule-api"
+   ],
+   "rule-35-literal-decay": [
+    "depends on qcore-gateway-rule-api"
+   ],
+   "rule-36-exact-formal-return": [
+    "depends on qcore-gateway-rule-api"
+   ],
+   "rule-37-result-constructors": [
+    "depends on qcore-gateway-rule-api"
+   ],
+   "rule-38-descriptor-cells": [
+    "depends on qcore-gateway-rule-api"
+   ]
+  },
+  "mode": "full",
+  "full_reasons": [
+   "the diff reaches qcore-c-gateway",
+   "the diff reaches qcore-schemas"
+  ],
+  "rust_packages": [
+   "qcore-audit",
+   "qcore-c-gateway",
+   "qcore-compiler",
+   "qcore-contract",
+   "qcore-core",
+   "qcore-frontend",
+   "qcore-gateway-rule-api",
+   "qcore-schemas",
+   "qcore-verification",
+   "qcore-verifier-host",
+   "qcorec",
+   "quirin-audit-plugin",
+   "quirin-audit-plugin-libevent",
+   "quirin-audit-plugin-measure",
+   "quirin-source-analysis",
+   "rule-32a-caller-frame-hold",
+   "rule-33-removed-selection",
+   "rule-34-element-destroyer",
+   "rule-35-literal-decay",
+   "rule-36-exact-formal-return",
+   "rule-37-result-constructors",
+   "rule-38-descriptor-cells"
+  ],
+  "probes": true,
+  "lean": {
+   "mode": "all",
+   "reasons": [
+    "proof/QCore.lean: a proof root changed"
+   ],
+   "modules": [],
+   "audits": []
+  },
+  "python_reasons": [
+   "docs/reports/member-effect-summary/scripts/candidates_step2.py: Python",
+   "docs/reports/member-effect-summary/scripts/estimate_step1.py: Python"
+  ],
+  "provider_gate": false,
+  "provider_reasons": [],
+  "provider_members_reached_without_providers_change": [
+   "qcore-provider-chunkio",
+   "qcore-provider-cmetrics",
+   "qcore-provider-conformance",
+   "qcore-provider-ctraces",
+   "qcore-provider-libevent",
+   "qcore-provider-librdkafka",
+   "quirin-provider-plugin",
+   "quirin-provider-shared"
+  ],
+  "unresolved_includes": [
+   {
+    "crate": "qcore-compiler",
+    "source": "compiler/tests/ct_corpus.rs:8069",
+    "literal": "include_str!(\\\"fixtures/ct/{id}/case.qr\\\")\");",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   }
+  ]
+ },
+ "planned_steps": [
+  {
+   "name": "submodules",
+   "argv": [
+    "git",
+    "-C",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1e6e16ff3be85c73",
+    "submodule",
+    "status",
+    "--recursive"
+   ],
+   "slot": null
+  },
+  {
+   "name": "fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "slot": null
+  },
+  {
+   "name": "clippy",
+   "argv": [
+    "cargo",
+    "clippy",
+    "--all-targets",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "slot": null
+  },
+  {
+   "name": "rust-suite",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1e6e16ff3be85c73/scripts/run_test_binaries.py",
+    "--log-dir",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1e6e16ff3be85c73/private/gate/rust-suite"
+   ],
+   "slot": "rust-suite"
+  },
+  {
+   "name": "probe-reevaluation_probe",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1e6e16ff3be85c73/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_probe"
+   ],
+   "slot": null
+  },
+  {
+   "name": "probe-reevaluation_followup",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1e6e16ff3be85c73/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_followup"
+   ],
+   "slot": null
+  },
+  {
+   "name": "lean",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1e6e16ff3be85c73/scripts/check_lean_audits.py"
+   ],
+   "slot": "lean"
+  },
+  {
+   "name": "python",
+   "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+   ],
+   "slot": null
+  }
+ ],
+ "slots": true,
+ "started": "20261105T143703Z",
+ "ran": true,
+ "steps": [
+  {
+   "name": "submodules",
+   "argv": [
+    "git",
+    "-C",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1e6e16ff3be85c73",
+    "submodule",
+    "status",
+    "--recursive"
+   ],
+   "exit": 0,
+   "seconds": 0.0,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1e6e16ff3be85c73/private/gate/submodules.log",
+   "counts": {
+    "submodules": 1,
+    "not_checked_out_or_moved": []
+   }
+  },
+  {
+   "name": "fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "exit": 0,
+   "seconds": 5.1,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1e6e16ff3be85c73/private/gate/fmt.log",
+   "counts": {}
+  },
+  {
+   "name": "clippy",
+   "argv": [
+    "cargo",
+    "clippy",
+    "--all-targets",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "exit": 0,
+   "seconds": 50.1,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1e6e16ff3be85c73/private/gate/clippy.log",
+   "counts": {}
+  },
+  {
+   "name": "rust-suite",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1e6e16ff3be85c73/scripts/gate_slot.py",
+    "rust-suite",
+    "--receipt",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1e6e16ff3be85c73/private/gate/slots/rust-suite.json",
+    "--",
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1e6e16ff3be85c73/scripts/run_test_binaries.py",
+    "--log-dir",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1e6e16ff3be85c73/private/gate/rust-suite"
+   ],
+   "exit": 101,
+   "seconds": 10323.4,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1e6e16ff3be85c73/private/gate/rust-suite.log",
+   "counts": {
+    "units": 612,
+    "passed": 9239,
+    "failed": 16,
+    "ignored": 16,
+    "measured": 0,
+    "filtered": 135,
+    "summaries": 653,
+    "packages": null,
+    "summary": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1e6e16ff3be85c73/private/gate/rust-suite/summary.json",
+    "ok": false
+   },
+   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1e6e16ff3be85c73/private/gate/slots/rust-suite.json"
+  },
+  {
+   "name": "probe-reevaluation_probe",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1e6e16ff3be85c73/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_probe"
+   ],
+   "exit": 0,
+   "seconds": 0.3,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1e6e16ff3be85c73/private/gate/probe-reevaluation_probe.log",
+   "counts": {}
+  },
+  {
+   "name": "probe-reevaluation_followup",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1e6e16ff3be85c73/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_followup"
+   ],
+   "exit": 0,
+   "seconds": 0.5,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1e6e16ff3be85c73/private/gate/probe-reevaluation_followup.log",
+   "counts": {}
+  },
+  {
+   "name": "lean",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1e6e16ff3be85c73/scripts/gate_slot.py",
+    "lean",
+    "--receipt",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1e6e16ff3be85c73/private/gate/slots/lean.json",
+    "--",
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1e6e16ff3be85c73/scripts/check_lean_audits.py"
+   ],
+   "exit": 0,
+   "seconds": 152.3,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1e6e16ff3be85c73/private/gate/lean.log",
+   "counts": {
+    "audits": 412
+   },
+   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1e6e16ff3be85c73/private/gate/slots/lean.json"
+  },
+  {
+   "name": "python",
+   "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+   ],
+   "exit": 1,
+   "seconds": 48.6,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1e6e16ff3be85c73/private/gate/python.log",
+   "counts": {
+    "tests": 577,
+    "skipped": 0,
+    "ok": false
+   }
+  }
+ ],
+ "ok": false,
+ "finished": "20261105T173323Z"
+}

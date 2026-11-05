@@ -191,9 +191,27 @@ Options:
 
 ## 5. Gate and measurement
 
-Card gate: `python3 scripts/gate_scope.py --base 855b34ade --out
-private/gate` (results in the hand-back and `gate.json` beside this report
-once committed). Measurement (integrator): `quirin-audit measure` against
+Card gate, `python3 scripts/gate_scope.py --base 855b34ade` (selection: the
+whole Rust suite, since `qcore-c-gateway` and `qcore-schemas` change; all of
+Lean, since a proof root changes; Python; no provider gate):
+
+- Run 1 at `a86dddc1d` ([gate-run1.json](gate-run1.json)): submodules, fmt,
+  Clippy, both reevaluation examples and Lean (412 audits) exit 0; Rust suite
+  exit 101, 612 units, 9,239 passed, 16 failed (the pins of section 1);
+  Python exit 1.
+- Run 2 at `4444f818c` ([gate-run2.json](gate-run2.json)): submodules, fmt,
+  both examples exit 0; **Rust suite exit 0, 612 units, 9,255 passed, 0
+  failed, 16 ignored**; Lean exit 0 (412 audits); Clippy exit 101 (a test
+  constant the re-pin left unused in `indirect_scalar_access.rs`); Python
+  exit 1, 577 tests, the one failure the stale matrix Lean-audit count
+  (`test_build_matrix_sections`: 410 recorded, 412 now, this card's two
+  audits), expected until the integrator applies the records.
+- After run 2, the unused constant removed (the last commit of the card): `cargo fmt
+  --all -- --check` exit 0, `cargo clippy --all-targets -- -D warnings`
+  exit 0 (log `private/gate2/clippy-rerun.log`), `indirect_scalar_access`
+  24 passed. No code outside that test file changed after run 2.
+
+Measurement (integrator): `quirin-audit measure` against
 `baseline:c8c7edf21` with `--declared docs/reports/member-effect-summary/PREDICTION.md`.
 
 ## 6. Follow-ups

@@ -158,8 +158,6 @@ fn expect(label: &str, body: &str, status: &str, vector: &[&str]) {
     );
 }
 
-const INDIRECT: &str = "unsupported:indirect memory access is outside the resource projection";
-
 // -- Admitted: unbound bases -------------------------------------------------
 
 #[test]
