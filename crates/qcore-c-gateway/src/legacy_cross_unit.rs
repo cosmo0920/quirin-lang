@@ -462,7 +462,7 @@ pub(super) fn check_imports(
             .map(|row| row.name.clone())
             .collect::<Vec<_>>();
         let replay = replayed(home, &scope.input_identity, &names, &tokens)?;
-        let record = match replay.get(&home.function) {
+        let record = match replay.0.get(&home.function) {
             None | Some(Replayed::NoRow) => {
                 return Err(format!("cross-unit `{}` home has no row", home.function));
             }
@@ -551,7 +551,15 @@ enum RemovalTrace {
     Differs,
 }
 
-type ReplayTable = Result<Arc<BTreeMap<String, Replayed>>, String>;
+/// A home unit's replay: what each function reads, and what the replay
+/// recorded (for [`crate::contract_dependencies::absorb_record`]).
+type ReplayTable = Result<
+    Arc<(
+        BTreeMap<String, Replayed>,
+        crate::contract_dependencies::UnitRecord,
+    )>,
+    String,
+>;
 
 /// Card **CURRENT-RUN-WORKER-SPIN** (rule 4c, amended): the replay of one
 /// home unit, run once per process and read by every check that holds one
@@ -564,15 +572,17 @@ type ReplayTable = Result<Arc<BTreeMap<String, Replayed>>, String>;
 /// and the request digest), the environment digest this check recomputed,
 /// the dialect and the names, so equal keys are equal inputs (SHA-256).
 /// The requested entry fills only the summary's `entry`, which no check
-/// reads. The replay runs with the caller's recording suspended
-/// ([`crate::contract_dependencies::unrecorded`]): a home's consultations
-/// and body evidence are not the caller unit's (rule 13f/13g).
+/// reads. The replay is recorded once in a fresh recording
+/// ([`crate::contract_dependencies::captured`]) and that record is written
+/// into the caller's recording at every check that reads it, so a caller's
+/// rule 13f dependencies and evidence are what a replay inside its own
+/// recording wrote.
 fn replayed(
     home: &CrossUnitHomeEvidence,
     input: &LegacyCertificateInputIdentity,
     names: &[String],
     tokens: &[super::Token],
-) -> Result<Arc<BTreeMap<String, Replayed>>, String> {
+) -> ReplayTable {
     static REPLAYS: OnceLock<Mutex<HashMap<String, Arc<OnceLock<ReplayTable>>>>> = OnceLock::new();
     let key = qcore_schemas::sha256_hex(
         format!(
@@ -588,8 +598,8 @@ fn replayed(
             .unwrap_or_else(std::sync::PoisonError::into_inner);
         table.entry(key).or_default().clone()
     };
-    cell.get_or_init(|| {
-        crate::contract_dependencies::unrecorded(|| {
+    let table = cell.get_or_init(|| {
+        let (replay, record) = crate::contract_dependencies::captured(|| {
             let result = super::analyze_legacy_c_translation_unit_selected_partial(
                 &home.preprocessed_source,
                 &home.function,
@@ -652,11 +662,14 @@ fn replayed(
                     };
                     (name.clone(), reading)
                 })
-                .collect();
-            Ok(Arc::new(functions))
-        })
-    })
-    .clone()
+                .collect::<BTreeMap<_, _>>();
+            Ok::<_, String>(functions)
+        });
+        replay.map(|functions| Arc::new((functions, record)))
+    });
+    let table = table.clone()?;
+    crate::contract_dependencies::absorb_record(&table.1);
+    Ok(table)
 }
 
 /// A prior file-scope declaration may confer internal or C99 inline semantics
