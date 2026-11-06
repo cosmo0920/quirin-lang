@@ -180,6 +180,13 @@ census; the experiment that would measure it did not finish):
 - No unit status is predicted to change. Every affected unit has other
   Unknown rows.
 
+**User decision** (verbatim, 2026-11-06, on the integrator's question "How
+should cross-unit calls on `current` get their link standing?"): "Option A
+(rec.)". Derive the link resolution from the linked Fluent Bit executable and
+feed rule 4c unchanged, with C (declared, body-checked contracts) as the
+stopgap for the 7 cross-unit sole-blocked functions. Prerequisites, in order:
+CURRENT-RUN-WORKER-SPIN closed; the production prepare links `fluent-bit`.
+
 ## Observed defect: the rule 4c route did not finish on 165 homes
 
 The experiment (`link-map-experiment.json`, labelled EXPERIMENT ONLY, never
