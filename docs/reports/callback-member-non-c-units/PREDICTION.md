@@ -75,3 +75,8 @@ none
 route slice
 none
 ```
+
+**Correction (after the change, prose only; the block above is unchanged):**
+the run invokes 10 `rd_kafka_s.rk_conf` members, not 11 (`background_event_cb`,
+`consume_cb`, `dr_cb`, `dr_msg_cb`, `error_cb`, `log_cb`, `rebalance_cb`,
+`sasl.oauthbearer.token_refresh_cb`, `stats_cb`, `throttle_cb`).
