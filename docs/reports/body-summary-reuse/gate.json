@@ -1,0 +1,187 @@
+{
+ "schema": "quirin-gate-scope/1",
+ "source": "git diff",
+ "base": "13337d0af358bd7a02ad2f5509b6a9512327c4aa",
+ "head": "3da958e95a62f7412139c50626eee1ca7db20181",
+ "committed": [
+  "docs/reports/body-summary-reuse/PREDICTION.md",
+  "docs/reports/body-summary-reuse/README.md",
+  "docs/reports/body-summary-reuse/census.json",
+  "docs/reports/body-summary-reuse/integration-amendments.json",
+  "docs/reports/body-summary-reuse/link-map-experiment.json",
+  "docs/reports/body-summary-reuse/scripts/classify.py",
+  "docs/reports/body-summary-reuse/scripts/mkmap.py",
+  "docs/reports/body-summary-reuse/scripts/run_current.sh"
+ ],
+ "uncommitted": [],
+ "scope": {
+  "paths": [
+   "docs/reports/body-summary-reuse/PREDICTION.md",
+   "docs/reports/body-summary-reuse/README.md",
+   "docs/reports/body-summary-reuse/census.json",
+   "docs/reports/body-summary-reuse/integration-amendments.json",
+   "docs/reports/body-summary-reuse/link-map-experiment.json",
+   "docs/reports/body-summary-reuse/scripts/classify.py",
+   "docs/reports/body-summary-reuse/scripts/mkmap.py",
+   "docs/reports/body-summary-reuse/scripts/run_current.sh"
+  ],
+  "attribution": {
+   "docs/reports/body-summary-reuse/PREDICTION.md": [
+    "class prose"
+   ],
+   "docs/reports/body-summary-reuse/README.md": [
+    "class prose"
+   ],
+   "docs/reports/body-summary-reuse/census.json": [
+    "class prose"
+   ],
+   "docs/reports/body-summary-reuse/integration-amendments.json": [
+    "class prose"
+   ],
+   "docs/reports/body-summary-reuse/link-map-experiment.json": [
+    "class prose"
+   ],
+   "docs/reports/body-summary-reuse/scripts/classify.py": [
+    "class prose"
+   ],
+   "docs/reports/body-summary-reuse/scripts/mkmap.py": [
+    "class prose"
+   ],
+   "docs/reports/body-summary-reuse/scripts/run_current.sh": [
+    "class prose"
+   ]
+  },
+  "affected": {},
+  "targets": {},
+  "mode": "scoped",
+  "full_reasons": [],
+  "rust_packages": [],
+  "rust_targets": [],
+  "probes": false,
+  "lean": {
+   "mode": "none",
+   "reasons": [],
+   "modules": [],
+   "audits": []
+  },
+  "python_reasons": [
+   "docs/reports/body-summary-reuse/scripts/classify.py: Python",
+   "docs/reports/body-summary-reuse/scripts/mkmap.py: Python"
+  ],
+  "provider_gate": false,
+  "provider_reasons": [],
+  "provider_lock_check": false,
+  "provider_lock_reasons": [],
+  "provider_members_reached_without_providers_change": [],
+  "unresolved_includes": [
+   {
+    "crate": "qcore-compiler",
+    "source": "compiler/tests/ct_corpus.rs:8069",
+    "literal": "include_str!(\\\"fixtures/ct/{id}/case.qr\\\")\");",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   }
+  ],
+  "undeclared_directory_literals": [],
+  "stale_walkers": []
+ },
+ "planned_steps": [
+  {
+   "name": "submodules",
+   "argv": [
+    "git",
+    "-C",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a57f3507d9d7199a0",
+    "submodule",
+    "status",
+    "--recursive"
+   ],
+   "slot": null
+  },
+  {
+   "name": "fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "slot": null
+  },
+  {
+   "name": "python",
+   "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+   ],
+   "slot": null
+  }
+ ],
+ "slots": true,
+ "landing": false,
+ "card_base": "13337d0af358bd7a02ad2f5509b6a9512327c4aa",
+ "started": "20261106T113115Z",
+ "ran": true,
+ "steps": [
+  {
+   "name": "submodules",
+   "argv": [
+    "git",
+    "-C",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a57f3507d9d7199a0",
+    "submodule",
+    "status",
+    "--recursive"
+   ],
+   "exit": 0,
+   "seconds": 0.2,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a57f3507d9d7199a0/private/gate/submodules.log",
+   "counts": {
+    "submodules": 1,
+    "not_checked_out_or_moved": []
+   }
+  },
+  {
+   "name": "fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "exit": 0,
+   "seconds": 17.3,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a57f3507d9d7199a0/private/gate/fmt.log",
+   "counts": {}
+  },
+  {
+   "name": "python",
+   "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+   ],
+   "exit": 0,
+   "seconds": 210.7,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a57f3507d9d7199a0/private/gate/python.log",
+   "counts": {
+    "tests": 625,
+    "skipped": 0,
+    "ok": true
+   },
+   "env": {
+    "QUIRIN_CARD_GATE_BASE": "13337d0af358bd7a02ad2f5509b6a9512327c4aa"
+   }
+  }
+ ],
+ "ok": true,
+ "finished": "20261106T113503Z"
+}
