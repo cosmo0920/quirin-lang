@@ -1,31 +1,31 @@
 {
   "schema": "quirin-evaluation-baseline/1",
   "profile": "eight-home",
-  "measured_revision": "b403cd4deddaab711f446f383270363aca39a2af",
-  "source": "docs/reports/cmt-getter-landing/README.md",
+  "measured_revision": "777fba16efa49c67634fd9eec0b3db12051b0edd",
+  "source": "docs/reports/landing-777fba16e/README.md",
   "figures": {
     "units": 185,
     "unit_statuses": {
-      "Safe": 8,
-      "Unknown": 165,
-      "Unsafe": 8,
+      "Safe": 9,
+      "Unknown": 163,
+      "Unsafe": 9,
       "data_only": 4
     },
-    "unit_verdicts_sha256": "58c0d37734220a4427792bc8b13569468da6e48cfd2e2425c9c02a96226cb770",
+    "unit_verdicts_sha256": "69a893bf71563bc5d19e902e3cbc4292f57cd2db0ea0eeabbf17ae1465e55817",
     "rows": 4834,
     "row_statuses": {
-      "Safe": 1013,
-      "Unknown": 3811,
-      "Unsafe": 10
+      "Safe": 1054,
+      "Unknown": 3769,
+      "Unsafe": 11
     },
-    "row_verdicts_sha256": "6019562445f06309f8419ff7c644cd8b764c8258c7deb625a60ba4227f603f82",
+    "row_verdicts_sha256": "824917a753a385c505157e6770f424105d77233f9837a42bdaf0397e11e73bac",
     "null_rows": 4921,
     "null_verdicts": {
       "Safe": 2549,
       "Unknown": 2355,
       "Unsafe": 17
     },
-    "null_verdicts_sha256": "5e3809dd6ee98d3205736824d7d2f1e932836e296d4fc47f16f614b7a158f493"
+    "null_verdicts_sha256": "e07d36740c3b2d423c9137f3c6f181b7796c4240fac089fa13201b0192e14d42"
   },
   "artifacts": []
 }
