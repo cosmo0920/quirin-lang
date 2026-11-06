@@ -5,7 +5,8 @@
 //! body's W4 result and binds the exact imported contract; a caller must also
 //! bind the premise to its independently held link-map identity.
 
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::{BTreeMap, BTreeSet, HashMap};
+use std::sync::{Arc, Mutex, OnceLock};
 
 use qcore_schemas::contract::{
     CrossUnitImportIdentity, ResourceContracts, ResourceFunctionContract,
@@ -375,17 +376,6 @@ pub(super) fn check_imports(
     let mut validated = BTreeMap::<String, ResourceFunctionContract>::new();
     let mut validated_lifetimes = BTreeMap::new();
     let mut validated_identities = BTreeMap::<String, CrossUnitImportIdentity>::new();
-    // Card CURRENT-RUN-WORKER-SPIN: homes of one home unit share one replay.
-    // The analysis reads only the home's preprocessed source, its verified
-    // environment, the selected names re-derived from its raw and marked
-    // source, its dialect and its request; the requested entry names only the
-    // summary's `entry`, which nothing below reads. Every per-home check
-    // still runs for every home.
-    let mut replays: Vec<(
-        &CrossUnitHomeEvidence,
-        Vec<String>,
-        super::PartialTranslationUnitAnalysis,
-    )> = Vec::new();
     for home in homes {
         if !sha256_spelling(&home.link_resolution_sha256) {
             return Err(format!(
@@ -471,69 +461,45 @@ pub(super) fn check_imports(
             .iter()
             .map(|row| row.name.clone())
             .collect::<Vec<_>>();
-        let shared = replays.iter().position(|(replayed, replayed_names, _)| {
-            replayed.preprocessed_source == home.preprocessed_source
-                && replayed.environment_sha256 == home.environment_sha256
-                && replayed.dialect == home.dialect
-                && replayed.request == home.request
-                && *replayed_names == names
-        });
-        let index = match shared {
-            Some(index) => index,
-            None => {
-                let result = super::analyze_legacy_c_translation_unit_selected_partial(
-                    &home.preprocessed_source,
-                    &home.function,
-                    &home.environment,
-                    Some(&names),
-                    (home.dialect, Some(&home.request)),
-                )
-                .map_err(|error| format!("cross-unit home cannot be reanalysed: {error}"))?;
-                replays.push((home, names, result));
-                replays.len() - 1
+        let replay = replayed(home, &scope.input_identity, &names, &tokens)?;
+        let record = match replay.get(&home.function) {
+            None | Some(Replayed::NoRow) => {
+                return Err(format!("cross-unit `{}` home has no row", home.function));
             }
+            Some(Replayed::NotSafe) => {
+                return Err(format!("cross-unit `{}` home is not Safe", home.function));
+            }
+            Some(Replayed::NoSummary) => {
+                return Err(format!(
+                    "cross-unit `{}` home has no validated W4 summary",
+                    home.function
+                ));
+            }
+            Some(Replayed::EffectsDiffer) => {
+                return Err(format!(
+                    "cross-unit `{}` lifetime effects differ from its Safe row",
+                    home.function
+                ));
+            }
+            Some(Replayed::Valid { record, removals }) => (record, removals),
         };
-        let result = &replays[index].2;
-        let Some(row) = result.summary.functions.get(&home.function) else {
-            return Err(format!("cross-unit `{}` home has no row", home.function));
-        };
-        if row.status != AnalysisStatus::Safe || !row.diagnostics.is_empty() {
-            return Err(format!("cross-unit `{}` home is not Safe", home.function));
-        }
-        let Some(record) = result
-            .summaries
-            .iter()
-            .find(|record| record.function == home.function)
-        else {
-            return Err(format!(
-                "cross-unit `{}` home has no validated W4 summary",
-                home.function
-            ));
-        };
-        if record
-            .lifetime_effects
-            .iter()
-            .cloned()
-            .collect::<BTreeSet<_>>()
-            != row.lifetime_effects
-        {
-            return Err(format!(
-                "cross-unit `{}` lifetime effects differ from its Safe row",
-                home.function
-            ));
-        }
+        let (record, removals) = record;
         if validated.contains_key(&home.function)
             || validated_lifetimes.contains_key(&home.function)
         {
             return Err(format!("cross-unit `{}` has multiple homes", home.function));
         }
         if !record.lifetime_removals.is_empty() {
-            let parameters = super::function_parameters(&tokens, &home.function)
-                .ok_or("removal home has no formal inventory")?;
-            if crate::legacy_summary::ordered_removals(&row.cfg, &parameters).as_ref()
-                != Some(&record.lifetime_removals)
-            {
-                return Err("cross-unit ordered removal trace differs from replayed home".into());
+            match removals {
+                RemovalTrace::NoFormals => {
+                    return Err("removal home has no formal inventory".into());
+                }
+                RemovalTrace::Differs => {
+                    return Err(
+                        "cross-unit ordered removal trace differs from replayed home".into(),
+                    );
+                }
+                RemovalTrace::Agrees => {}
             }
         }
         if record.lifetime_effects.is_empty() && record.lifetime_removals.is_empty() {
@@ -561,6 +527,136 @@ pub(super) fn check_imports(
         return Err("cross-unit imported home identities differ from replayed homes".into());
     }
     Ok(())
+}
+
+/// Card CURRENT-RUN-WORKER-SPIN: what [`check_imports`] reads of one
+/// function in a replayed home unit.
+#[derive(Clone, Debug)]
+enum Replayed {
+    NoRow,
+    NotSafe,
+    NoSummary,
+    EffectsDiffer,
+    Valid {
+        record: qcore_schemas::contract::ResourceSummaryRecord,
+        removals: RemovalTrace,
+    },
+}
+
+/// Whether a W4 record's ordered removals equal the replayed row's trace.
+#[derive(Clone, Copy, Debug)]
+enum RemovalTrace {
+    Agrees,
+    NoFormals,
+    Differs,
+}
+
+type ReplayTable = Result<Arc<BTreeMap<String, Replayed>>, String>;
+
+/// Card **CURRENT-RUN-WORKER-SPIN** (rule 4c, amended): the replay of one
+/// home unit, run once per process and read by every check that holds one
+/// of its homes.
+///
+/// The replay reads only the home's preprocessed source, its environment,
+/// the selected names re-derived from its raw and marked source, its dialect
+/// and its request. The key is the identity this check recomputed from the
+/// home's own bytes (`input`: raw, preprocessed and scope-evidence digests
+/// and the request digest), the environment digest this check recomputed,
+/// the dialect and the names, so equal keys are equal inputs (SHA-256).
+/// The requested entry fills only the summary's `entry`, which no check
+/// reads. The replay runs with the caller's recording suspended
+/// ([`crate::contract_dependencies::unrecorded`]): a home's consultations
+/// and body evidence are not the caller unit's (rule 13f/13g).
+fn replayed(
+    home: &CrossUnitHomeEvidence,
+    input: &LegacyCertificateInputIdentity,
+    names: &[String],
+    tokens: &[super::Token],
+) -> Result<Arc<BTreeMap<String, Replayed>>, String> {
+    static REPLAYS: OnceLock<Mutex<HashMap<String, Arc<OnceLock<ReplayTable>>>>> = OnceLock::new();
+    let key = qcore_schemas::sha256_hex(
+        format!(
+            "{input:?}\0{}\0{:?}\0{names:?}",
+            home.environment_sha256, home.dialect
+        )
+        .as_bytes(),
+    );
+    let cell = {
+        let mut table = REPLAYS
+            .get_or_init(Default::default)
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
+        table.entry(key).or_default().clone()
+    };
+    cell.get_or_init(|| {
+        crate::contract_dependencies::unrecorded(|| {
+            let result = super::analyze_legacy_c_translation_unit_selected_partial(
+                &home.preprocessed_source,
+                &home.function,
+                &home.environment,
+                Some(names),
+                (home.dialect, Some(&home.request)),
+            )
+            .map_err(|error| format!("cross-unit home cannot be reanalysed: {error}"))?;
+            let functions = names
+                .iter()
+                .map(|name| {
+                    let reading = match result.summary.functions.get(name) {
+                        None => Replayed::NoRow,
+                        Some(row)
+                            if row.status != AnalysisStatus::Safe
+                                || !row.diagnostics.is_empty() =>
+                        {
+                            Replayed::NotSafe
+                        }
+                        Some(row) => {
+                            match result
+                                .summaries
+                                .iter()
+                                .find(|record| &record.function == name)
+                            {
+                                None => Replayed::NoSummary,
+                                Some(record)
+                                    if record
+                                        .lifetime_effects
+                                        .iter()
+                                        .cloned()
+                                        .collect::<BTreeSet<_>>()
+                                        != row.lifetime_effects =>
+                                {
+                                    Replayed::EffectsDiffer
+                                }
+                                Some(record) => Replayed::Valid {
+                                    removals: if record.lifetime_removals.is_empty() {
+                                        RemovalTrace::Agrees
+                                    } else {
+                                        match super::function_parameters(tokens, name) {
+                                            None => RemovalTrace::NoFormals,
+                                            Some(parameters)
+                                                if crate::legacy_summary::ordered_removals(
+                                                    &row.cfg,
+                                                    &parameters,
+                                                )
+                                                .as_ref()
+                                                    == Some(&record.lifetime_removals) =>
+                                            {
+                                                RemovalTrace::Agrees
+                                            }
+                                            Some(_) => RemovalTrace::Differs,
+                                        }
+                                    },
+                                    record: record.clone(),
+                                },
+                            }
+                        }
+                    };
+                    (name.clone(), reading)
+                })
+                .collect();
+            Ok(Arc::new(functions))
+        })
+    })
+    .clone()
 }
 
 /// A prior file-scope declaration may confer internal or C99 inline semantics
