@@ -265,6 +265,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [core-concurrency-prelude](core-concurrency-prelude/README.md) | Core concurrency prelude — 2026-09-08 |
 
+| [corpus-group-checkpoints](corpus-group-checkpoints/README.md) | CORPUS-GROUP-CHECKPOINTS |
+
 | [corpus-repin](corpus-repin/README.md) | CORPUS-REPIN — re-measurement and deliberate re-pin of the four 185-unit artifacts |
 
 | [ct-composed-native](ct-composed-native/README.md) | Wave-32 CT lane — the composed-epoch native runner (CT-COMPOSED-NATIVE) |
