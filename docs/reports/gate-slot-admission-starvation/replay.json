@@ -1,0 +1,578 @@
+{
+ "gate_slot": "scripts/gate_slot.py",
+ "jobs": {
+  "queued-audit": {
+   "ended_after_seconds": 3.62,
+   "exit": 0,
+   "receipt": {
+    "argv_requested": [
+     "/usr/bin/python3",
+     "-c",
+     "print('queued audit ran')"
+    ],
+    "argv_run": [
+     "/usr/bin/python3",
+     "-c",
+     "print('queued audit ran')"
+    ],
+    "budget": {
+     "QCORE_AUDIT_JOBS": {
+      "after": "3",
+      "before": null
+     },
+     "admission_mib": 7168,
+     "jobs_cap": 3,
+     "label": "7G",
+     "mechanism": "QCORE_AUDIT_JOBS",
+     "memory_budget_mib": 7168,
+     "route_class": null
+    },
+    "class": "audit",
+    "cwd": "<repo>",
+    "exit": 0,
+    "finished": "2026-11-06T14:54:43+00:00",
+    "limits": {
+     "deadline_from": "default",
+     "deadline_seconds": null,
+     "stall_timeout_from": "default",
+     "stall_timeout_seconds": 7200.0,
+     "stop_grace_seconds": 60.0
+    },
+    "max_rss_kib": 22304,
+    "max_rss_within_admission": true,
+    "monitor": {
+     "admission_mib": 7168,
+     "deadline_seconds": null,
+     "peak_tree_rss_kib": 0,
+     "progress_file": null,
+     "sample_errors": 0,
+     "sample_interval_seconds": 10.0,
+     "samples": 0,
+     "samples_unmeasured": 0,
+     "stall_timeout_seconds": 7200.0,
+     "stop_grace_seconds": 60.0
+    },
+    "pid": 1405079,
+    "schema": "quirin-gate-slot/1",
+    "slot_record": {
+     "admitted_at": "2026-11-06T14:54:43+00:00",
+     "audit_slot_ceiling": 15,
+     "class": "audit",
+     "gate_dir": "<scratch>/gate",
+     "held": [
+      "legacy",
+      "audit/1"
+     ],
+     "legacy_lock": {
+      "mode": "shared",
+      "path": "<scratch>/legacy.lock"
+     },
+     "mem_available_kib": 15728640,
+     "mem_total_kib": 62914560,
+     "slot": 1,
+     "slot_count": 2,
+     "waited_seconds": 1.534
+    },
+    "started": "2026-11-06T14:54:43+00:00"
+   },
+   "stderr": [
+    "gate_slot: waiting for an audit slot",
+    "gate_slot: audit slot 1, budget 7168 MiB, admitted at 7168 MiB; stall timeout 2h, deadline none",
+    "gate_slot: exit 0; receipt <scratch>/queued-audit.json"
+   ],
+   "stdout": [
+    "queued audit ran"
+   ]
+  },
+  "rust-suite": {
+   "ended_after_seconds": 5.19,
+   "exit": 0,
+   "receipt": {
+    "argv_requested": [
+     "/usr/bin/python3",
+     "-c",
+     "print('suite ran')"
+    ],
+    "argv_run": [
+     "/usr/bin/python3",
+     "-c",
+     "print('suite ran')"
+    ],
+    "class": "rust-suite",
+    "cwd": "<repo>",
+    "exit": 0,
+    "finished": "2026-11-06T14:54:45+00:00",
+    "limits": {
+     "deadline_from": "default",
+     "deadline_seconds": null,
+     "drain_attempts": 0,
+     "drain_backoff_seconds": 1.5,
+     "drain_timeout_from": "flag",
+     "drain_timeout_seconds": 2.0,
+     "stall_timeout_from": "default",
+     "stall_timeout_seconds": null,
+     "stop_grace_seconds": 60.0
+    },
+    "max_rss_kib": 23280,
+    "monitor": {
+     "admission_mib": null,
+     "deadline_seconds": null,
+     "peak_tree_rss_kib": 0,
+     "progress_file": null,
+     "sample_errors": 0,
+     "sample_interval_seconds": 10.0,
+     "samples": 0,
+     "samples_unmeasured": 0,
+     "stall_timeout_seconds": null,
+     "stop_grace_seconds": 60.0
+    },
+    "pid": 1404734,
+    "schema": "quirin-gate-slot/1",
+    "slot_record": {
+     "admitted_at": "2026-11-06T14:54:45+00:00",
+     "audit_slot_ceiling": 15,
+     "audit_slots_held": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14
+     ],
+     "class": "rust-suite",
+     "drain": {
+      "attempts": [
+       {
+        "admission_closed_at": "2026-11-06T14:54:41+00:00",
+        "blockers": [
+         {
+          "admission_mib": 7168,
+          "argv": [
+           "/usr/bin/python3",
+           "-c",
+           "while True: pass"
+          ],
+          "cwd": "<repo>",
+          "during_wait": {
+           "cpu_seconds": 0.76,
+           "io": {
+            "rchar": 0,
+            "read_bytes": 0,
+            "syscr": 0,
+            "syscw": 0,
+            "wchar": 0,
+            "write_bytes": 0
+           },
+           "io_unreadable": [],
+           "processes": 1,
+           "tree_rss_kib": 9948,
+           "window_seconds": 2.003
+          },
+          "held_seconds": 3.6,
+          "held_since": "2026-11-06T14:54:40+00:00",
+          "pid": 1404109,
+          "requested_at": "2026-11-06T14:54:40+00:00",
+          "rss_over_admission": false,
+          "slot": "audit/0",
+          "tree_rss_kib": 9948
+         }
+        ],
+        "outcome": "gave up",
+        "reopened_at": "2026-11-06T14:54:43+00:00",
+        "waited_seconds": 2.08
+       },
+       {
+        "admission_closed_at": "2026-11-06T14:54:45+00:00",
+        "outcome": "drained",
+        "waited_seconds": 0.094
+       }
+      ],
+      "attempts_allowed": null,
+      "backoff_seconds": 1.5,
+      "timeout_seconds": 2.0
+     },
+     "gate_dir": "<scratch>/gate",
+     "held": [
+      "legacy",
+      "rust-suite/0",
+      "audit/admission",
+      "audit/0",
+      "audit/1",
+      "audit/2",
+      "audit/3",
+      "audit/4",
+      "audit/5",
+      "audit/6",
+      "audit/7",
+      "audit/8",
+      "audit/9",
+      "audit/10",
+      "audit/11",
+      "audit/12",
+      "audit/13",
+      "audit/14"
+     ],
+     "legacy_lock": {
+      "mode": "shared",
+      "path": "<scratch>/legacy.lock"
+     },
+     "mem_available_kib": 15728640,
+     "mem_total_kib": 62914560,
+     "slot": 0,
+     "slot_count": 1,
+     "waited_seconds": 3.679
+    },
+    "started": "2026-11-06T14:54:45+00:00"
+   },
+   "stderr": [
+    "gate_slot: waiting for slot audit/0",
+    "gate_slot: audit drain gave up after 2.1s; admission reopened and every slot released; blocked by audit/0 pid 1404109 (/usr/bin/python3 -c while True: pass; held 3.6s; over the 2.0s wait: CPU 0.76s, rchar +0, wchar +0, read_bytes +0, write_bytes +0; RSS 9948 KiB against 7168 MiB admitted); retrying in 1.5s",
+    "gate_slot: rust-suite slot 0; stall timeout none, deadline none",
+    "gate_slot: exit 0; receipt <scratch>/rust-suite.json"
+   ],
+   "stdout": [
+    "suite ran"
+   ]
+  },
+  "spinning-audit": {
+   "ended_after_seconds": 4.93,
+   "exit": 124,
+   "receipt": {
+    "argv_requested": [
+     "/usr/bin/python3",
+     "-c",
+     "while True: pass"
+    ],
+    "argv_run": [
+     "/usr/bin/python3",
+     "-c",
+     "while True: pass"
+    ],
+    "budget": {
+     "QCORE_AUDIT_JOBS": {
+      "after": "3",
+      "before": null
+     },
+     "admission_mib": 7168,
+     "jobs_cap": 3,
+     "label": "7G",
+     "mechanism": "QCORE_AUDIT_JOBS",
+     "memory_budget_mib": 7168,
+     "route_class": null
+    },
+    "child_exit": 143,
+    "class": "audit",
+    "cwd": "<repo>",
+    "exit": 124,
+    "finished": "2026-11-06T14:54:44+00:00",
+    "limits": {
+     "deadline_from": "default",
+     "deadline_seconds": null,
+     "stall_timeout_from": "flag",
+     "stall_timeout_seconds": 4.0,
+     "stop_grace_seconds": 2.0
+    },
+    "max_rss_kib": 22252,
+    "max_rss_within_admission": true,
+    "monitor": {
+     "admission_mib": 7168,
+     "breach": {
+      "at": "2026-11-06T14:54:44+00:00",
+      "cpu_seconds_since_progress": 1.49,
+      "killed": [],
+      "kind": "stall",
+      "last_progress_at": "2026-11-06T14:54:40+00:00",
+      "processes": [
+       {
+        "argv": [
+         "/usr/bin/python3",
+         "-c",
+         "while True: pass"
+        ],
+        "comm": "python3",
+        "pid": 1404231,
+        "state": "R"
+       }
+      ],
+      "run_seconds": 4.6,
+      "seconds_without_progress": 4.0,
+      "signals": [
+       {
+        "at": "2026-11-06T14:54:44+00:00",
+        "pid": 1404231,
+        "signal": 15
+       }
+      ],
+      "tree_rss_kib": 9948
+     },
+     "deadline_seconds": null,
+     "last_sample": {
+      "admission_mib": 7168,
+      "at": "2026-11-06T14:54:44+00:00",
+      "cpu_seconds": 1.65,
+      "deadline_seconds": null,
+      "io": {
+       "rchar": 88183,
+       "read_bytes": 0,
+       "syscr": 39,
+       "syscw": 0,
+       "wchar": 0,
+       "write_bytes": 0
+      },
+      "last_progress_at": "2026-11-06T14:54:40+00:00",
+      "peak_tree_rss_kib": 9948,
+      "processes": 1,
+      "stall_timeout_seconds": 4.0,
+      "tree_rss_kib": 9948
+     },
+     "peak_at": "2026-11-06T14:54:40+00:00",
+     "peak_tree_rss_kib": 9948,
+     "progress_file": null,
+     "sample_errors": 0,
+     "sample_interval_seconds": 0.5,
+     "samples": 9,
+     "samples_unmeasured": 0,
+     "stall_timeout_seconds": 4.0,
+     "stop_grace_seconds": 2.0
+    },
+    "pid": 1404109,
+    "schema": "quirin-gate-slot/1",
+    "slot_record": {
+     "admitted_at": "2026-11-06T14:54:40+00:00",
+     "audit_slot_ceiling": 15,
+     "class": "audit",
+     "gate_dir": "<scratch>/gate",
+     "held": [
+      "legacy",
+      "audit/0"
+     ],
+     "legacy_lock": {
+      "mode": "shared",
+      "path": "<scratch>/legacy.lock"
+     },
+     "mem_available_kib": 15728640,
+     "mem_total_kib": 62914560,
+     "slot": 0,
+     "slot_count": 2,
+     "waited_seconds": 0.001
+    },
+    "started": "2026-11-06T14:54:40+00:00",
+    "stopped": "stall"
+   },
+   "stderr": [
+    "gate_slot: audit slot 0, budget 7168 MiB, admitted at 7168 MiB; stall timeout 4s, deadline none",
+    "gate_slot: stopping its own command, pid 1404231: no progress for 4.0s (no output, no progress-file change and no I/O by its 1 process(es) since 2026-11-06T14:54:40+00:00; CPU 1.49s in that window) against --stall-timeout 4s; SIGTERM to its process tree now, SIGKILL after 2s; receipt <scratch>/spinning-audit.json",
+    "gate_slot: exit 124 (stopped: stall; the command's own exit 143); receipt <scratch>/spinning-audit.json"
+   ],
+   "stdout": []
+  }
+ },
+ "scale": "the incident's hours shrunk to seconds through the flags",
+ "schema": "r11-incident-replay/1",
+ "status_while_draining": {
+  "at": "2026-11-06T14:54:43+00:00",
+  "audit_slot_ceiling": 15,
+  "gate_dir": "<scratch>/gate",
+  "interval_seconds": 0.5,
+  "jobs": [
+   {
+    "admission_mib": 7168,
+    "admitted_at": "2026-11-06T14:54:40+00:00",
+    "alive": true,
+    "argv": [
+     "/usr/bin/python3",
+     "-c",
+     "while True: pass"
+    ],
+    "class": "audit",
+    "cpu_seconds": 1.17,
+    "cwd": "<repo>",
+    "held_seconds": 3.6,
+    "holds": [
+     {
+      "lock": "audit/0",
+      "mode": "exclusive"
+     },
+     {
+      "lock": "legacy",
+      "mode": "shared"
+     }
+    ],
+    "largest_rss_kib": 9948,
+    "live": {
+     "admission_mib": 7168,
+     "at": "2026-11-06T14:54:43+00:00",
+     "cpu_seconds": 1.12,
+     "deadline_seconds": null,
+     "io": {
+      "rchar": 88183,
+      "read_bytes": 0,
+      "syscr": 39,
+      "syscw": 0,
+      "wchar": 0,
+      "write_bytes": 0
+     },
+     "last_progress_at": "2026-11-06T14:54:40+00:00",
+     "peak_tree_rss_kib": 9948,
+     "processes": 1,
+     "stall_timeout_seconds": 4.0,
+     "tree_rss_kib": 9948
+    },
+    "over_interval": {
+     "cpu_seconds": 0.21,
+     "io": {
+      "rchar": 0,
+      "read_bytes": 0,
+      "syscr": 0,
+      "syscw": 0,
+      "wchar": 0,
+      "write_bytes": 0
+     },
+     "io_unreadable": [],
+     "processes": 1,
+     "tree_rss_kib": 9948,
+     "window_seconds": 0.559
+    },
+    "pid": 1404109,
+    "process_started_at": "2026-11-06T14:54:40+00:00",
+    "processes": 1,
+    "queued_for": [],
+    "requested_at": "2026-11-06T14:54:40+00:00",
+    "role": "holder",
+    "rss_over_admission": false,
+    "slots": [
+     "audit/0"
+    ],
+    "tree_rss_kib": 9948,
+    "waited_seconds": 0.0
+   },
+   {
+    "admission_mib": null,
+    "admitted_at": "2026-11-06T14:54:41+00:00",
+    "alive": true,
+    "argv": [
+     "/usr/bin/python3",
+     "-c",
+     "print('suite ran')"
+    ],
+    "blocked_by": [
+     {
+      "lock": "audit/0",
+      "pids": [
+       1404109
+      ]
+     }
+    ],
+    "class": "rust-suite",
+    "cpu_seconds": 0.0,
+    "cwd": "<repo>",
+    "held_seconds": 2.6,
+    "holds": [
+     {
+      "lock": "audit/admission",
+      "mode": "exclusive"
+     },
+     {
+      "lock": "rust-suite/0",
+      "mode": "exclusive"
+     },
+     {
+      "lock": "legacy",
+      "mode": "shared"
+     }
+    ],
+    "largest_rss_kib": 0,
+    "over_interval": {
+     "cpu_seconds": 0.0,
+     "io": {
+      "rchar": 0,
+      "read_bytes": 0,
+      "syscr": 0,
+      "syscw": 0,
+      "wchar": 0,
+      "write_bytes": 0
+     },
+     "io_unreadable": [],
+     "processes": 0,
+     "tree_rss_kib": 0,
+     "window_seconds": 0.555
+    },
+    "pid": 1404734,
+    "process_started_at": "2026-11-06T14:54:41+00:00",
+    "processes": 0,
+    "queued_for": [],
+    "requested_at": "2026-11-06T14:54:41+00:00",
+    "role": "draining (holds audit admission, waits for running audits)",
+    "slots": [
+     "audit/admission",
+     "rust-suite/0"
+    ],
+    "tree_rss_kib": 0,
+    "waited_seconds": 2.6
+   },
+   {
+    "alive": true,
+    "argv": [
+     "/usr/bin/python3",
+     "<repo>/scripts/gate_slot.py",
+     "audit",
+     "--poll",
+     "0.05",
+     "--receipt",
+     "<scratch>/queued-audit.json",
+     "--",
+     "/usr/bin/python3",
+     "-c",
+     "print('queued audit ran')"
+    ],
+    "class": "audit",
+    "cpu_seconds": 0.0,
+    "cwd": null,
+    "holds": [
+     {
+      "lock": "legacy",
+      "mode": "shared"
+     }
+    ],
+    "largest_rss_kib": 0,
+    "over_interval": {
+     "cpu_seconds": 0.0,
+     "io": {
+      "rchar": 0,
+      "read_bytes": 0,
+      "syscr": 0,
+      "syscw": 0,
+      "wchar": 0,
+      "write_bytes": 0
+     },
+     "io_unreadable": [],
+     "processes": 0,
+     "tree_rss_kib": 0,
+     "window_seconds": 0.559
+    },
+    "pid": 1405079,
+    "process_started_at": "2026-11-06T14:54:41+00:00",
+    "processes": 0,
+    "queued_for": [],
+    "requested_at": "2026-11-06T14:54:41+00:00",
+    "role": "waiting for a slot",
+    "slots": [],
+    "tree_rss_kib": 0,
+    "waited_seconds": 2.6
+   }
+  ],
+  "legacy_lock": "<scratch>/legacy.lock",
+  "mem_available_kib": 15728640,
+  "mem_total_kib": 62914560,
+  "schema": "quirin-gate-status/1"
+ }
+}
