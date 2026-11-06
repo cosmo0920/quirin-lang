@@ -185,5 +185,17 @@ fn a_contracted_callee_at_a_custody_position_keeps_the_gate_refusal() {
         return;
     }
     // `q_free` is contracted: W44 decides, rule 12k is not asked.
-    assert_keeps_the_gate("void subject(struct S *a) { q_free(a->name); }");
+    // Card MEMBER-EFFECT-SUMMARY (rule 38i) re-pins this deliberately: the non-null release of a formal's member
+    // names its premise; still `Unknown`.
+    let source = "void subject(struct S *a) { q_free(a->name); }";
+    let run = run(source);
+    assert_eq!(run.status, AnalysisStatus::Unknown, "{source}\n{run:?}");
+    assert_eq!(
+        run.descriptions,
+        vec![
+            "release of `a->name`, a member of the formal `a` (member-release-through-formal)"
+                .to_owned()
+        ],
+        "{source}\n{run:?}"
+    );
 }

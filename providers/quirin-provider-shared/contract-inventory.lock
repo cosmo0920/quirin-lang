@@ -9,10 +9,15 @@
       "declarations": [
         {
           "clauses": 2,
-          "name": "preserve_five_chunk_credits"
+          "name": "preserve_five_chunk_credits",
+          "resource_mode": null,
+          "resource_table": null
         }
       ],
       "inherits": [],
+      "other_declarations": [
+        "chunks"
+      ],
       "premise_bindings": [],
       "premises": {},
       "sha256": "f1a4a6d8a4113bfa94700f9aab35b6326394bca3f7bc40bdd1dcd13e224da8be"
@@ -23,26 +28,40 @@
       "declarations": [
         {
           "clauses": 6,
-          "name": "publish_library_resource"
+          "name": "publish_library_resource",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 6,
-          "name": "handoff_library_resource"
+          "name": "handoff_library_resource",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 6,
-          "name": "reclaim_library_resource"
+          "name": "reclaim_library_resource",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 7,
-          "name": "check_imported_library_custody"
+          "name": "check_imported_library_custody",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 3,
-          "name": "release_library_resource"
+          "name": "release_library_resource",
+          "resource_mode": null,
+          "resource_table": null
         }
       ],
       "inherits": [],
+      "other_declarations": [
+        "CustodyEvidenceError",
+        "LibraryResource"
+      ],
       "premise_bindings": [],
       "premises": {},
       "sha256": "630e28d65a6c11d3e7a32aeaa2d3ba6657fd0476fe6f8d86b120915bbc656b4f"
@@ -53,46 +72,67 @@
       "declarations": [
         {
           "clauses": 3,
-          "name": "descriptor_generation_fresh"
+          "name": "descriptor_generation_fresh",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 3,
-          "name": "descriptor_counted_reference"
+          "name": "descriptor_counted_reference",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 5,
-          "name": "descriptor_sentinel_validity"
+          "name": "descriptor_sentinel_validity",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 1,
-          "name": "descriptor_release_at_most_once"
+          "name": "descriptor_release_at_most_once",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 2,
-          "name": "descriptor_release_matches_kind"
+          "name": "descriptor_release_matches_kind",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 1,
-          "name": "descriptor_no_use_after_release"
+          "name": "descriptor_no_use_after_release",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 1,
-          "name": "descriptor_operand_identity_valid"
+          "name": "descriptor_operand_identity_valid",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 1,
-          "name": "descriptor_relation_holds"
+          "name": "descriptor_relation_holds",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 1,
-          "name": "descriptor_mapping_extent"
+          "name": "descriptor_mapping_extent",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 3,
-          "name": "descriptor_leak_set_well_defined"
+          "name": "descriptor_leak_set_well_defined",
+          "resource_mode": null,
+          "resource_table": null
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "f08202feb0590dd4b1d288c24d13d47cdd179a22fc32ac806b8c41cc82dcf625"
@@ -103,46 +143,67 @@
       "declarations": [
         {
           "clauses": 2,
-          "name": "source_enum_value"
+          "name": "source_enum_value",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 3,
-          "name": "source_scan_effects"
+          "name": "source_scan_effects",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 2,
-          "name": "source_scan_initial"
+          "name": "source_scan_initial",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 1,
-          "name": "source_type_match"
+          "name": "source_type_match",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 1,
-          "name": "source_symbol"
+          "name": "source_symbol",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 1,
-          "name": "source_loop_index"
+          "name": "source_loop_index",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 1,
-          "name": "source_scan_region"
+          "name": "source_scan_region",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 2,
-          "name": "frame_write"
+          "name": "frame_write",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 2,
-          "name": "frame_declaration"
+          "name": "frame_declaration",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 2,
-          "name": "frame_dependency"
+          "name": "frame_dependency",
+          "resource_mode": null,
+          "resource_table": null
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "47246f3e2e782f5d334fcf235e0bb6b542aa3af019053b2a5865ae78dbe26e23"
@@ -151,5 +212,5 @@
   "outer_view": [],
   "regenerate": "python3 providers/contracts.py sync",
   "resource_view": [],
-  "schema_version": 1
+  "schema_version": 2
 }

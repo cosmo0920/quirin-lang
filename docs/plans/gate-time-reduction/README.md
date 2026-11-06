@@ -132,6 +132,22 @@ host verdicts are read only from a report bound to a verified audit identity
 (W45-SUBCOMMAND-HOST-REPORT-TRUST), with Lean parity for the admission rule;
 then parity before deletion. Tracked by CORPUS-ROUTES-OUT-OF-HOST.
 
+**R11. One audit cannot starve the host.** Added 2026-11-06 (user, verbatim,
+on the integrator's question whether to register the gap: "Register it
+(rec.)"). Observed on 2026-11-06: a `quirin-audit current` experiment
+(CURRENT-RUN-WORKER-SPIN) spun 10 h 18 min in `audit/3` with zero I/O; a
+card's `rust-suite` job had closed `audit/admission` to drain the audit slots
+and waited 10.1 h for that one slot, so every queued audit (a declared
+measurement, two checkpoint runs, a census probe) waited behind it. Holders
+were found only by matching `/tmp/quirin-gate/*` inodes against
+`/proc/locks`. Requirements: an audit slot job carries a stated wall-clock or
+progress deadline and is reported (never silently killed) when it stops
+making progress; a `rust-suite` drain has a bounded wait after which it
+reopens admission and reports the blocking holder; `gate_slot.py` can list
+live holders, waiters, their wait time and their CPU/I/O progress; peak RSS
+above the admission budget is reported while running, not only at exit.
+Tracked by GATE-SLOT-ADMISSION-STARVATION.
+
 Suggested order: R1, R2, R3 and R7 first (scoper and test changes, no
 semantics); R9 alongside; R4 and R5 next; R8 after them; R10 last.
 

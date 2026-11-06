@@ -1,0 +1,154 @@
+{
+ "schema": "gate-scope-depinfo/1",
+ "libraries": {
+  "qcore-audit": {
+   "uid": "qcore-audit::lib::qcore_audit",
+   "plain_reads": 72,
+   "test_only_reads": 4,
+   "test_only_narrowed_to_unit": 2,
+   "test_only_kept_crate_wide": 2
+  },
+  "qcore-c-gateway": {
+   "uid": "qcore-c-gateway::lib::qcore_c_gateway",
+   "plain_reads": 264,
+   "test_only_reads": 143,
+   "test_only_narrowed_to_unit": 142,
+   "test_only_kept_crate_wide": 1
+  },
+  "qcore-compiler": {
+   "uid": "qcore-compiler::lib::qcore_compiler",
+   "plain_reads": 46,
+   "test_only_reads": 13,
+   "test_only_narrowed_to_unit": 10,
+   "test_only_kept_crate_wide": 3
+  },
+  "qcore-contract": {
+   "uid": "qcore-contract::lib::qcore_contract",
+   "plain_reads": 51,
+   "test_only_reads": 16,
+   "test_only_narrowed_to_unit": 16,
+   "test_only_kept_crate_wide": 0
+  },
+  "qcore-core": {
+   "uid": "qcore-core::lib::qcore_core",
+   "plain_reads": 103,
+   "test_only_reads": 56,
+   "test_only_narrowed_to_unit": 56,
+   "test_only_kept_crate_wide": 0
+  },
+  "qcore-frontend": {
+   "uid": "qcore-frontend::lib::qcore_frontend",
+   "plain_reads": 45,
+   "test_only_reads": 7,
+   "test_only_narrowed_to_unit": 7,
+   "test_only_kept_crate_wide": 0
+  },
+  "qcore-gateway-rule-api": {
+   "uid": "qcore-gateway-rule-api::lib::qcore_gateway_rule_api",
+   "plain_reads": 10,
+   "test_only_reads": 1,
+   "test_only_narrowed_to_unit": 0,
+   "test_only_kept_crate_wide": 1
+  },
+  "qcore-schemas": {
+   "uid": "qcore-schemas::lib::qcore_schemas",
+   "plain_reads": 42,
+   "test_only_reads": 3,
+   "test_only_narrowed_to_unit": 3,
+   "test_only_kept_crate_wide": 0
+  },
+  "qcore-verification": {
+   "uid": "qcore-verification::lib::qcore_verification",
+   "plain_reads": 52,
+   "test_only_reads": 7,
+   "test_only_narrowed_to_unit": 7,
+   "test_only_kept_crate_wide": 0
+  },
+  "qcore-verifier-host": {
+   "uid": "qcore-verifier-host::lib::qcore_verifier_host",
+   "plain_reads": 9,
+   "test_only_reads": 0,
+   "test_only_narrowed_to_unit": 0,
+   "test_only_kept_crate_wide": 0
+  },
+  "quirin-audit-plugin": {
+   "uid": "quirin-audit-plugin::lib::quirin_audit_plugin",
+   "plain_reads": 3,
+   "test_only_reads": 0,
+   "test_only_narrowed_to_unit": 0,
+   "test_only_kept_crate_wide": 0
+  },
+  "quirin-audit-plugin-libevent": {
+   "uid": "quirin-audit-plugin-libevent::lib::quirin_audit_plugin_libevent",
+   "plain_reads": 2,
+   "test_only_reads": 0,
+   "test_only_narrowed_to_unit": 0,
+   "test_only_kept_crate_wide": 0
+  },
+  "quirin-audit-plugin-measure": {
+   "uid": "quirin-audit-plugin-measure::lib::quirin_audit_plugin_measure",
+   "plain_reads": 11,
+   "test_only_reads": 0,
+   "test_only_narrowed_to_unit": 0,
+   "test_only_kept_crate_wide": 0
+  },
+  "quirin-source-analysis": {
+   "uid": "quirin-source-analysis::lib::quirin_source_analysis",
+   "plain_reads": 61,
+   "test_only_reads": 32,
+   "test_only_narrowed_to_unit": 29,
+   "test_only_kept_crate_wide": 3
+  },
+  "rule-32a-caller-frame-hold": {
+   "uid": "rule-32a-caller-frame-hold::lib::rule_32a_caller_frame_hold",
+   "plain_reads": 2,
+   "test_only_reads": 3,
+   "test_only_narrowed_to_unit": 3,
+   "test_only_kept_crate_wide": 0
+  },
+  "rule-33-removed-selection": {
+   "uid": "rule-33-removed-selection::lib::rule_33_removed_selection",
+   "plain_reads": 2,
+   "test_only_reads": 2,
+   "test_only_narrowed_to_unit": 1,
+   "test_only_kept_crate_wide": 1
+  },
+  "rule-34-element-destroyer": {
+   "uid": "rule-34-element-destroyer::lib::rule_34_element_destroyer",
+   "plain_reads": 2,
+   "test_only_reads": 2,
+   "test_only_narrowed_to_unit": 2,
+   "test_only_kept_crate_wide": 0
+  },
+  "rule-35-literal-decay": {
+   "uid": "rule-35-literal-decay::lib::rule_35_literal_decay",
+   "plain_reads": 3,
+   "test_only_reads": 4,
+   "test_only_narrowed_to_unit": 4,
+   "test_only_kept_crate_wide": 0
+  },
+  "rule-36-exact-formal-return": {
+   "uid": "rule-36-exact-formal-return::lib::rule_36_exact_formal_return",
+   "plain_reads": 4,
+   "test_only_reads": 1,
+   "test_only_narrowed_to_unit": 1,
+   "test_only_kept_crate_wide": 0
+  },
+  "rule-37-result-constructors": {
+   "uid": "rule-37-result-constructors::lib::rule_37_result_constructors",
+   "plain_reads": 3,
+   "test_only_reads": 1,
+   "test_only_narrowed_to_unit": 0,
+   "test_only_kept_crate_wide": 1
+  },
+  "rule-38-descriptor-cells": {
+   "uid": "rule-38-descriptor-cells::lib::rule_38_descriptor_cells",
+   "plain_reads": 6,
+   "test_only_reads": 3,
+   "test_only_narrowed_to_unit": 3,
+   "test_only_kept_crate_wide": 0
+  }
+ },
+ "unsound": [],
+ "unattributed": []
+}

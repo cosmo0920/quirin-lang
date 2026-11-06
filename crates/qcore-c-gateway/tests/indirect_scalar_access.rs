@@ -158,8 +158,6 @@ fn expect(label: &str, body: &str, status: &str, vector: &[&str]) {
     );
 }
 
-const INDIRECT: &str = "unsupported:indirect memory access is outside the resource projection";
-
 // -- Admitted: unbound bases -------------------------------------------------
 
 #[test]
@@ -361,7 +359,12 @@ fn a_pointer_member_store_stays_refused() {
         "`r->next = s` stores a pointer member",
         "void w(struct x_rec *r, struct x_rec *s) { r->next = s; r->next->count = 1; }",
         "Unknown",
-        &[INDIRECT],
+        // Card MEMBER-EFFECT-SUMMARY (rule 38i) re-pins this deliberately: the pointer store into a formal's member
+        // names its premise; still `Unknown`.
+        &[
+            "unsupported:store of a custody-carrying value into `r->next`, a member of the \
+           formal `r` (member-store-through-formal)",
+        ],
     );
 }
 

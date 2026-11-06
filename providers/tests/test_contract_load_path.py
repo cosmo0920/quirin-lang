@@ -86,7 +86,10 @@ def inventory_like(root, load_path_file):
     one declaration per `extern fn`, its clauses the `requires`/`ensures`
     lines up to the next declaration (an inheriting child gets its parent's
     count, as elaboration would give it), `contract inherit` edges as written,
-    no premises and no binding pins."""
+    no premises and no binding pins. Card CONTRACT-COUNT-PINS-FROM-LOCKS: a
+    module in its crate's recorded resource view puts every declaration in the
+    `functions` table, any other module none; no declaration is anything but
+    `extern fn`."""
     load_path_file = Path(load_path_file)
     manifest = json.loads(load_path_file.read_text())
     parent_clauses = PARENT.count("requires ") + PARENT.count("ensures ")
@@ -95,6 +98,7 @@ def inventory_like(root, load_path_file):
         modules = {}
         for module in record["modules"]:
             text = (load_path_file.parent / record["contracts"] / module).read_text()
+            table = "functions" if module in record.get("resource_view", []) else None
             declarations, inherits = [], []
             for chunk in text.split("extern fn ")[1:]:
                 name = chunk.split("(", 1)[0]
@@ -104,9 +108,12 @@ def inventory_like(root, load_path_file):
                     clauses = parent_clauses
                 else:
                     clauses = chunk.count("requires ") + chunk.count("ensures ")
-                declarations.append({"name": name, "clauses": clauses})
+                mode = {"parameters": [], "result": "none"} if table else None
+                declarations.append({"name": name, "clauses": clauses, "resource_table": table,
+                                     "resource_mode": mode})
             modules[module] = {"declarations": declarations, "inherits": inherits,
-                               "premises": {}, "premise_bindings": []}
+                               "premises": {}, "premise_bindings": [],
+                               "other_declarations": []}
         result[record["name"]] = modules
     return result
 
@@ -484,9 +491,11 @@ class LoadPathManifest(unittest.TestCase):
             self.assertEqual(lock["files"]["app/wrap.qcore"], {
                 "sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
                 "declaration_count": 1, "clause_count": 3,
-                "declarations": [{"name": "wrap_free", "clauses": 3}],
+                "declarations": [{"name": "wrap_free", "clauses": 3,
+                                  "resource_table": "functions",
+                                  "resource_mode": {"parameters": [], "result": "none"}}],
                 "inherits": [{"child": "wrap_free", "parent": "libc::free"}],
-                "premises": {}, "premise_bindings": []})
+                "premises": {}, "premise_bindings": [], "other_declarations": []})
             self.assertEqual(lock_file.read_text(), contracts.canonical(lock))
             contracts.maintain_inventory_locks(tree.root, load_path, probe=inventory_like)
 
@@ -495,6 +504,9 @@ class LoadPathManifest(unittest.TestCase):
                 (source, good_source + b"// a comment changes the digest\n",
                  r"stale contract inventory lock: .*app/wrap.qcore differs in \['sha256'\]"),
                 (lock_file, good_lock.replace(b'"clauses": 3', b'"clauses": 4'),
+                 r"app/wrap.qcore differs in \['declarations'\]"),
+                (lock_file, good_lock.replace(b'"resource_table": "functions"',
+                                              b'"resource_table": "retaining"'),
                  r"app/wrap.qcore differs in \['declarations'\]"),
                 (lock_file, good_lock.replace(b'"libc::free"', b'"libc::malloc"'),
                  r"app/wrap.qcore differs in \['inherits'\]"),
@@ -536,10 +548,37 @@ class LoadPathManifest(unittest.TestCase):
                 facts.pop("qcore-provider-exe")
                 return facts
 
+            # Card CONTRACT-COUNT-PINS-FROM-LOCKS: the inventory probe's tables
+            # must agree with the provider probe's resource view, one table set
+            # per module, and name only the loader's four tables.
+            def tables(*values, mode=None):
+                def probe(root, load_path_file):
+                    facts = inventory_like(root, load_path_file)
+                    declarations = facts["quirin-provider-app"]["app/wrap.qcore"]["declarations"]
+                    for declaration, value in zip(declarations, values):
+                        declaration["resource_table"] = value
+                        declaration["resource_mode"] = mode
+                    return facts
+                return probe
+
+            def other_declaration(root, load_path_file):
+                facts = inventory_like(root, load_path_file)
+                facts["quirin-provider-app"]["app/wrap.qcore"]["other_declarations"] = ["Kind"]
+                return facts
+
             with self.assertRaisesRegex(ValueError, "not the contract files"):
                 contracts.maintain_inventory_locks(tree.root, load_path, probe=missing_module)
             with self.assertRaisesRegex(ValueError, "not the load path's"):
                 contracts.maintain_inventory_locks(tree.root, load_path, probe=missing_crate)
+            for probe, message in [(tables(None), "resource view and the inventory probe"),
+                                   (tables("function"), "inventory probe gives resource tables"),
+                                   (tables("functions"), "resource mode outside the function map"),
+                                   (tables("retaining", mode={"parameters": []}),
+                                    "resource mode outside the function map"),
+                                   (other_declaration, "resource view and the inventory probe")]:
+                with self.subTest(message=message):
+                    with self.assertRaisesRegex(ValueError, message):
+                        contracts.maintain_inventory_locks(tree.root, load_path, probe=probe)
             contracts.maintain_inventory_locks(tree.root, load_path, probe=inventory_like)
 
     def test_the_real_workspace_manifest_is_current(self):

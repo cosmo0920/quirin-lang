@@ -228,6 +228,8 @@ import QCore.Lowering
 import QCore.MayAlias
 import QCore.MemberAddress
 import QCore.MemberAddressReader
+import QCore.MemberCustodyAttribution
+import QCore.MemberEffectSummary
 import QCore.MemberFormalType
 import QCore.MemberPathDirectCall
 import QCore.MemberPathRelease
@@ -265,6 +267,7 @@ import QCore.NeutralPrefixPreservation
 import QCore.NoBuildScope
 import QCore.NullDeref
 import QCore.NullDerefGrade
+import QCore.NullLookupEvent
 import QCore.NullMemberPremise
 import QCore.NullMemberQualifier
 import QCore.NullMemberScope

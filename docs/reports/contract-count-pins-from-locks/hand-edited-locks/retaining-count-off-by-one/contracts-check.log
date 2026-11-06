@@ -1,0 +1,1 @@
+provider contracts: stale contract inventory lock: /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9eeb3088599a342a/providers/quirin-provider-libc/contract-inventory.lock; libc/threads.qv differs in ['declarations']; review the contracts, then run `python3 providers/contracts.py sync`

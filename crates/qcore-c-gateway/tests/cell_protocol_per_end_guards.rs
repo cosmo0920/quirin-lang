@@ -594,7 +594,9 @@ fn the_thread_ends_after_the_gate_refusal_are_read() {
          }",
         "Unknown",
         &[
-            &format!("3:{GATE}"),
+            // Card MEMBER-EFFECT-SUMMARY (rule 38i) re-pins this deliberately: the member release names its premise.
+            "3:release of `thi->evl`, a member of the formal `thi` \
+             (member-release-through-formal)",
             "5:unknown_alias:thi",
             "8:call to uncontracted function `flb_tp_destroy`",
             "9:unknown_alias:thi",

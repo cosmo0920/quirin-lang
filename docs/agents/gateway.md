@@ -651,6 +651,10 @@ admission and scalar forgetting; [report](../reports/w48-bottom-up-batch5/README
     one-sided link as partial, never as a silent unresolved effect, and the
     escape cascade refuses a possibly-live child it does not carry on every
     path.
+    Amended by [rule 38j](#constraint-38j): a body that keeps the base may
+    release its members under P1-P3 when it states the release as a member
+    effect, whose contract only the direct-call route reads; P4 still governs
+    every body that releases the base.
 
 <a id="constraint-5l"></a>
 
@@ -7904,8 +7908,9 @@ safety claim and no validation of the detach representation premise.
     from an expression, another value it was compared with, a memory
     spelling decided before a call and read again after it) is correlated
     and the path is unresolved (`admit`). The NULL condition is named: an
-    allocation that fails, a lookup that misses, a null constant, the null
-    arm of the function's own test. Outcome per candidate (`triage` on the
+    allocation that fails, a lookup that misses (only when rule 39 admits the
+    miss on the path), a null constant, the null arm of the function's own
+    test. Outcome per candidate (`triage` on the
     row): `finding` (with its decisions, its NULL event and the
     dereference), `infeasible` (every path explored, none reaches it NULL
     under a named condition), `unresolved` (with the reason) or
@@ -9901,5 +9906,146 @@ safety claim and no validation of the detach representation premise.
     `no_ast_answer_keeps_the_refusal`, `a_new_admission_needs_every_fact`, the
     four keeping theorems, the `NoOp` lowering);
     [report](../reports/member-access-projection/README.md).
+
+<a id="constraint-38i"></a>
+
+38i. **The gate's refusal of member custody through a formal parent names
+    its premise: a re-attribution, never an admission.** Card
+    MEMBER-EFFECT-SUMMARY step 1 (`legacy_member_custody_attribution.rs`; one
+    hook in `legacy_c.rs::expression_statement`, after rule 38d's close
+    admission, the last consultation of a statement), on the user's decision
+    of 2026-11-05 ("Option 1 (rec.)": option 3's re-attribution first).
+    MEMBER-ACCESS-PROJECTION's census found the sole-blocker mass of
+    `indirect memory access is outside the resource projection` to be
+    custody through a formal's members, which the leaf did not name. For
+    exactly the gate's refusal of a statement with no braces that reads no
+    tracked descriptor, whose base `P` is a formal no statement of the body
+    writes or takes the address of (`CallerFormals`) and whose declarator
+    does not spell `union` (the census's `form:union`): a whole-statement
+    call `R(..)` whose contract in force (no review or pin hold) states
+    `Released` at the position of an actual spelled exactly `P->F` takes `release of `P->F`, a member of the
+    formal `P` (member-release-through-formal)`, and one spelled
+    `&P->F[.G…]` takes `… (member-address-release-through-formal)`, each
+    only when the statement classified again with every memory-reading actual
+    read as at a `Borrowed` position (rule 12k's reading) **admits** the
+    call; `P->F = V` with `V` a plain name the lexical reader declares a
+    pointer, or a whole call whose actuals read no memory and whose contract
+    in force (no hold) returns `Owned` or `Reallocated` custody, takes `store
+    of a custody-carrying value into `P->F`, a member of the formal `P`
+    (member-store-through-formal)`. Rule 5k is unchanged (a member release is
+    admitted only when the body also releases the parent, P4). **Do not** let
+    the reading lower anything, name a held call (its refusal is `Pending`),
+    a second released member actual, a rebound or non-formal base, a store
+    whose value reads memory, or ask the rule before any older route
+    (hard invariant 3). The node stays `Unknown` with the same writes, so no
+    verdict moves; parity runs record each consultation (`position:
+    "member-custody"`). Twelve gateway pins that asserted the gate's text
+    on such a statement were flipped deliberately to the name, each still
+    `Unknown` (report section 1). `QCore.MemberCustodyAttribution`
+    (`the_verdict_of_every_node_is_unchanged`,
+    `the_status_of_a_function_is_unchanged`, `the_writes_are_kept`,
+    `a_name_needs_every_premise`, `a_refusing_reading_keeps_a_call_shape_unnamed`,
+    `a_store_needs_a_custody_value` and eleven more), bound by
+    `tests/member_effect_summary.rs`;
+    [report](../reports/member-effect-summary/README.md).
+
+<a id="constraint-38j"></a>
+
+38j. **A member release through a formal the body keeps is a member effect:
+    checked like rule 5k, stated beside the contract, and read only where the
+    caller's own check reads it.** Card MEMBER-EFFECT-SUMMARY step 2
+    (`legacy_member_effect.rs`; schema `qcore_schemas::member_effect`,
+    `ResourceContracts::{member_effect, member_effects,
+    insert_member_effect}`; hooks: `BodyReading::read` beside rule 5k's
+    `AdmissibleReleases` in `build_function_cfg_with`, whose release places
+    join rule 1's; `minted_environment` after rule 12t's retaining
+    environment; `Parser::member_effect_call` last in
+    `expression_statement_lowered`; `published_effect` in
+    `derive_custody_summaries`; the minted prefix `qcore_member_effect__` in
+    `reserved_spelling` and `contract_dependencies`), on the user's decision
+    of 2026-11-05 ("Option 1 (rec.)"). Over a body without `goto`/`setjmp`,
+    per formal `B`: a release event is `B->F` whole at a `Released {
+    nullable: true }` position; a call event is `B`, or `&B->F`, whole at a
+    position whose member-effect summary is in force (an event on each named
+    member, the address form on `F` with paths `F.G`). **P1** every other
+    occurrence of `B` is `B->G`, a null test of `B`, or `R(B)` with `R`
+    releasing its only parameter; **P2** each place has one event, its other
+    occurrences null tests before it or null-constant stores after it;
+    **P3** no loop around the event; each call event's callee is
+    characterised (rule 5k's W45-SR5 reading) and, for a whole-base actual,
+    touches no other place this body has an event on. With an `R(B)` every
+    event needs rule 5k's P4 and an `R` that does not touch the place, and
+    nothing is published; with none the body keeps `B` and states, at `B`'s
+    position, each released path `stale`, or `cleared` when a null store
+    follows the release in its block with no `return`/`break`/`continue`
+    between. The effect is a may-effect. A body that states an effect and is
+    declared (its source text declares it) states none and keeps every
+    refusal (P-B08-SHALLOW). **Where the summary lives:** a body with an
+    effect publishes no ordinary W4 summary (no record, no cross-unit export,
+    no callback or indirect reading: each sees an uncontracted function); its
+    validated contract and effect go to `member_effects` (a singleton
+    component only; a recursive one publishes nothing). A whole-statement
+    call to such a function, refused as uncontracted, is classified again
+    with the callee renamed to its minted name (rule W44's actual reading
+    where the gate refuses `&B->F`) and the function renamed back, only when
+    this body's check admitted that `(callee, line)`; otherwise it is refused
+    `call to `g`, whose summary releases members of an argument, outside the
+    caller's member-effect premises (member-effect-call-refused)`. **Do not**
+    publish an effect function's contract in the function table, admit a
+    `nonnull` member release, a call event in a return, condition or nested
+    position, a local (non-formal) parent, the same object at two positions
+    of one call, or a callee that reaches a place this body released. Not
+    in this rule: the store half of the member effect, a declared form for
+    bodiless callees (a user choice, report section 4), typedef-spelled
+    bases (W45-MEMBER-RELEASE-UNTYPED-DECLARATIONS). Premises stated, not
+    proved: rule 5k's (distinct members own distinct objects; a stored pointer
+    is tracked only through a bound place or sub-custody) and the lexical
+    reading (trust boundary 28). `QCore.MemberEffectSummary` (`body_sound`:
+    every path of a checked body is free of use after release and double
+    release of the place; `cascade_sound`: replacing each call event by its
+    callee's trace keeps that, given the callee's stated effect, its
+    characterised touches and its own `body_sound`;
+    `an_ordinary_reader_sees_no_contract`; `two_releases_are_refused`,
+    `a_use_after_a_call_is_refused`,
+    `a_callee_touching_a_released_place_is_refused` and seven more), bound by
+    `tests/member_effect_summary.rs`;
+    [report](../reports/member-effect-summary/README.md).
+
+<a id="constraint-39"></a>
+
+39. **A lookup's miss is the NULL event of a null witness only when it is
+    feasible on the path by facts the search reads.** Card
+    NULL-WITNESS-GUARD-CORRELATION (contract specification C09.3;
+    `null_deref/witness.rs`, `qcore_core::null_lookup`). A *lookup* is a call
+    whose declared result is `resource_return_borrowed_from(P, nullable)`;
+    unlike an allocation's failure, its miss is a function of the state its
+    arguments reach. In the path search (rule 14r):
+    (1) **tie**: when the unit holds the lookup's definition and its body is
+    one `return` of a load of a place built only from its parameters, member
+    accesses, `&`, `*` and casts, the result is that place, spelled as the
+    caller's own read of it: the miss is named only when the path's own test
+    fixed the place NULL (a finding, its condition naming the test); fixed
+    non-null, tested before a call or store, or an unconstrained memory
+    value (which rule 14r never names) refuses it;
+    (2) otherwise the miss is named only when every argument is a constant (a
+    literal, an enumeration constant, `sizeof`, a predefined name) or is
+    rooted at a formal that no earlier decision, store, assignment or call
+    on the path read or wrote through (a NULL test of a pointer root itself
+    excepted), or at a global with, in addition, no call before; an argument
+    rooted at a local (an arena the function initialised and sized), at a
+    call's result or at nothing the search roots is correlated;
+    (3) a refused miss is a constrained value: reaching the dereference it
+    ends the path **unresolved** with the reason, and a test of it is
+    inexact (rule 15r), so a refusal never validates a witness, never proves
+    a candidate infeasible and never makes a row `Safe`. The tie is read only
+    to name or refuse a miss, never to prove a result non-null.
+    **Do not** name a lookup's miss as a NULL condition when a guard the
+    path read, a state the path built or an entry memory value decides it.
+    `QCore.NullLookupEvent` (`a_named_miss_is_decided_or_free`,
+    `a_tied_lookup_is_named_only_when_decided_null`, `touching_never_frees`,
+    `one_correlated_argument_correlates`,
+    `a_correlated_miss_never_contributes`,
+    `a_refused_miss_never_concludes_infeasible`; `missVectors`,
+    `stateVectors`).
 
 <!-- generated:rules:end -->

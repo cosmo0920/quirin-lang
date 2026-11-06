@@ -392,6 +392,13 @@ impl AdmissibleReleases {
         }
     }
 
+    /// Card MEMBER-EFFECT-SUMMARY (rule 38j): these places together with the
+    /// release places the member-effect body check admitted.
+    pub(super) fn with_places(mut self, places: &BTreeSet<(String, String)>) -> Self {
+        self.places.extend(places.iter().cloned());
+        self
+    }
+
     pub(super) fn read(
         tokens: &[Token],
         body_start: usize,
@@ -449,7 +456,7 @@ pub(super) fn callee_double_releases(cfg: &LegacyCfg) -> Vec<super::LegacyDiagno
         .collect()
 }
 
-const NON_LOCAL_JUMPS: &[&str] = &[
+pub(super) const NON_LOCAL_JUMPS: &[&str] = &[
     "goto",
     "setjmp",
     "longjmp",
@@ -459,7 +466,7 @@ const NON_LOCAL_JUMPS: &[&str] = &[
 ];
 
 /// Whether `contract` releases its only parameter.
-fn releases_its_only_parameter(contract: Option<&ResourceFunctionContract>) -> bool {
+pub(super) fn releases_its_only_parameter(contract: Option<&ResourceFunctionContract>) -> bool {
     contract.is_some_and(|contract| {
         contract.parameters.len() == 1
             && matches!(
@@ -471,7 +478,7 @@ fn releases_its_only_parameter(contract: Option<&ResourceFunctionContract>) -> b
 
 /// Every call argument of `texts` that is exactly `B -> F` (parenthesised or
 /// not): the index of `B` mapped to (callee, argument index).
-fn member_actuals<'a>(texts: &[&'a str]) -> BTreeMap<usize, (&'a str, usize)> {
+pub(super) fn member_actuals<'a>(texts: &[&'a str]) -> BTreeMap<usize, (&'a str, usize)> {
     let mut actuals = BTreeMap::new();
     for at in 0..texts.len() {
         if !is_name(texts[at]) || texts.get(at + 1) != Some(&"(") || NOT_CALLS.contains(&texts[at])
@@ -507,7 +514,7 @@ fn releases_position(contracts: &ResourceContracts, callee: &str, index: usize) 
 /// Card W45-SR5-SOUNDNESS: what a callee this unit defines may do to the
 /// members of its only formal (module documentation, section 4).
 #[derive(Clone, Debug, PartialEq, Eq)]
-enum MemberEffect {
+pub(super) enum MemberEffect {
     /// Every use of the formal `p` is a member access `p->G`, a null test of
     /// `p`, or the whole single actual of `R(p)` where `R` has no body here
     /// (its declaration governs, P-B08-SHALLOW) or a characterised one.
@@ -525,7 +532,7 @@ enum MemberEffect {
 
 /// The member effect of `callee`'s body, or `None` when this unit defines no
 /// body for it. `visiting` breaks cycles, which are [`MemberEffect::Unknown`].
-fn member_effect(
+pub(super) fn member_effect(
     tokens: &[Token],
     callee: &str,
     contracts: &ResourceContracts,
@@ -750,7 +757,7 @@ fn admissible_places(
 }
 
 /// The brace depth of every token, 0 in the body's own block.
-fn brace_depths(texts: &[&str]) -> Vec<usize> {
+pub(super) fn brace_depths(texts: &[&str]) -> Vec<usize> {
     let mut depth = 0usize;
     texts
         .iter()
@@ -796,7 +803,7 @@ fn enclosing_block_end(texts: &[&str], depth: &[usize], at: usize) -> usize {
 
 /// Every loop's token span, over-approximated where the body is braceless.
 /// `do { … } while ( 0 )` is not a loop (constraint 5c).
-fn loop_spans(texts: &[&str], depth: &[usize]) -> Vec<(usize, usize)> {
+pub(super) fn loop_spans(texts: &[&str], depth: &[usize]) -> Vec<(usize, usize)> {
     let mut spans = Vec::new();
     for at in 0..texts.len() {
         match texts[at] {
@@ -848,7 +855,7 @@ fn loop_spans(texts: &[&str], depth: &[usize]) -> Vec<(usize, usize)> {
 /// null test of it inside an `if` condition: its only neighbours up to that
 /// condition's parentheses are `(`, `)`, `!`, `&&`, `||`, a comparison with a
 /// null pointer constant, or `__builtin_expect ( … , constant )`.
-fn is_null_test(texts: &[&str], at: usize, length: usize) -> bool {
+pub(super) fn is_null_test(texts: &[&str], at: usize, length: usize) -> bool {
     let Some((condition_open, condition_close)) = (0..at).rev().find_map(|keyword| {
         (texts[keyword] == "if" && texts.get(keyword + 1) == Some(&"("))
             .then(|| close_of(texts, keyword + 1, "(", ")").map(|close| (keyword + 1, close)))
@@ -990,7 +997,7 @@ fn insert_before(cfg: &mut LegacyCfg, id: usize, instruction: LegacyInstruction,
     }
 }
 
-const NOT_CALLS: &[&str] = &[
+pub(super) const NOT_CALLS: &[&str] = &[
     "if", "while", "for", "switch", "return", "sizeof", "_Alignof",
 ];
 

@@ -1,0 +1,19 @@
+spot rows 237 base rows 237 common 237
+rd_kafka_metadata_cache_entry_new base Unsafe -> spot Unknown Unknown
+    27 unresolved the lookup `rd_tmpabuf_alloc0` at line 20254 reaches the dereference at line 20255, but its miss is not a NULL event on this path (rule 39): it reads the state of `&tbuf`: `tbuf` is a local of this function, whose value or object the path establishes
+rd_kafka_msgq_allow_wakeup_at base Unsafe -> spot Unknown Unknown
+    15 unresolved the lookup `rd_kafka_msgq_first` at line 20841 reaches the dereference at line 20843, but its miss is not a NULL event on this path (rule 39): its body returns `&dest_rkmq->rkmq_msgs->tqh_first`, which the path already fixed non-null, so the miss is excluded
+rd_kafka_ProduceRequest base Unsafe -> spot Unknown Unknown
+    16 unresolved the lookup `rd_kafka_msgq_first` at line 23206 reaches the dereference at line 23206, but its miss is not a NULL event on this path (rule 39): its body returns `&&rkbuf->rkbuf_u.Produce.batch.msgq->rkmq_msgs->tqh_first`, a memory value no condition on the path names NULL (rule 14r), not a miss of th
+rd_kafka_handle_Produce_metadata_update base Unsafe -> spot Unknown Unknown
+    19 unresolved the lookup `rd_tmpabuf_alloc0` at line 22680 reaches the dereference at line 22682, but its miss is not a NULL event on this path (rule 39): it reads the state of `&tbuf`: `tbuf` is a local of this function, whose value or object the path establishes
+rd_kafka_handle_idempotent_Produce_success base Unsafe -> spot Unknown Unknown
+    9 unresolved the lookup `rd_kafka_msgq_first` at line 23053 reaches the dereference at line 23053, but its miss is not a NULL event on this path (rule 39): its body returns `&&batch->msgq->rkmq_msgs->tqh_first`, a memory value no condition on the path names NULL (rule 14r), not a miss of the lookup's own
+    11 unresolved the lookup `rd_kafka_msgq_last` at line 23054 reaches the dereference at line 23054, but its miss is not a NULL event on this path (rule 39): its body returns `*(struct rd_kafka_msgs_head_s *)&&batch->msgq->rkmq_msgs->tqh_last->tqh_last`, a memory value no condition on the path names NULL (rule 14r)
+rd_kafka_topic_info_new_with_rack base Unsafe -> spot Unknown Unknown
+    20 unresolved the lookup `rd_tmpabuf_alloc0` at line 20948 reaches the dereference at line 20949, but its miss is not a NULL event on this path (rule 39): it reads the state of `&tbuf`: `tbuf` is a local of this function, whose value or object the path establishes
+OTHER MOVE ('rdkafka_request.c', 'rd_kafka_group_MemberState_consumer_write') Safe -> Unknown
+OTHER MOVE ('rdkafka_metadata_cache.c', 'rd_kafka_metadata_cache_propagate_changes') Unknown -> Safe
+OTHER MOVE ('rdkafka_topic.c', 'rd_kafka_topic_new') Unknown -> Safe
+Counter({('Unsafe', 'Unknown'): 6, ('Unknown', 'Safe'): 2, ('Safe', 'Unknown'): 1})
+triage spot Counter({'unresolved': 13}) base Counter({'finding': 7, 'unresolved': 6})

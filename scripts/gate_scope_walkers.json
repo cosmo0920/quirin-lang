@@ -529,8 +529,10 @@
   {
    "source": "crates/qcore-verification/tests/callback_task_handoff.rs",
    "literal": "contract/profiles",
-   "reads": [],
-   "why": "census: a base path: no unit compiling it opens a file under it that other literals, walkers or manifests do not already attribute"
+   "reads": [
+    "contract/profiles/**"
+   ],
+   "why": "census: its units, or its reverse dependencies' units, open files under it and its source spells no filter covering them: the whole directory"
   },
   {
    "source": "crates/qcore-verification/tests/composition_bounds.rs",
@@ -557,8 +559,10 @@
   {
    "source": "crates/qcore-verification/tests/event_payload.rs",
    "literal": "contract/profiles",
-   "reads": [],
-   "why": "census: a base path: no unit compiling it opens a file under it that other literals, walkers or manifests do not already attribute"
+   "reads": [
+    "contract/profiles/**"
+   ],
+   "why": "census: its units, or its reverse dependencies' units, open files under it and its source spells no filter covering them: the whole directory"
   },
   {
    "source": "crates/qcore-verification/tests/fixtures/boolean_source.rs",
@@ -611,8 +615,10 @@
   {
    "source": "crates/qcore-verification/tests/fixtures/frame_source.rs",
    "literal": "contract/profiles/fluent-bit",
-   "reads": [],
-   "why": "census: a base path: no unit compiling it opens a file under it that other literals, walkers or manifests do not already attribute"
+   "reads": [
+    "contract/profiles/fluent-bit/**"
+   ],
+   "why": "census: its units, or its reverse dependencies' units, open files under it and its source spells no filter covering them: the whole directory"
   },
   {
    "source": "crates/qcore-verification/tests/fixtures/memory_close_composition.rs",
@@ -633,14 +639,18 @@
   {
    "source": "crates/qcore-verification/tests/monkey_wait_projection.rs",
    "literal": "contract/profiles",
-   "reads": [],
-   "why": "census: a base path: no unit compiling it opens a file under it that other literals, walkers or manifests do not already attribute"
+   "reads": [
+    "contract/profiles/**"
+   ],
+   "why": "census: its units, or its reverse dependencies' units, open files under it and its source spells no filter covering them: the whole directory"
   },
   {
    "source": "crates/qcore-verification/tests/observed_wait_composition.rs",
    "literal": "contract/profiles",
-   "reads": [],
-   "why": "census: a base path: no unit compiling it opens a file under it that other literals, walkers or manifests do not already attribute"
+   "reads": [
+    "contract/profiles/**"
+   ],
+   "why": "census: its units, or its reverse dependencies' units, open files under it and its source spells no filter covering them: the whole directory"
   },
   {
    "source": "crates/qcore-verification/tests/source_effect.rs",
@@ -651,8 +661,10 @@
   {
    "source": "crates/qcore-verification/tests/source_effect_helper_target.rs",
    "literal": "contract/profiles/fluent-bit",
-   "reads": [],
-   "why": "census: a base path: no unit compiling it opens a file under it that other literals, walkers or manifests do not already attribute"
+   "reads": [
+    "contract/profiles/fluent-bit/**"
+   ],
+   "why": "census: its units, or its reverse dependencies' units, open files under it and its source spells no filter covering them: the whole directory"
   },
   {
    "source": "crates/qcore-verification/tests/source_effect_mutations.rs",
@@ -669,8 +681,10 @@
   {
    "source": "crates/qcore-verification/tests/timeout_teardown.rs",
    "literal": "contract/profiles",
-   "reads": [],
-   "why": "census: a base path: no unit compiling it opens a file under it that other literals, walkers or manifests do not already attribute"
+   "reads": [
+    "contract/profiles/**"
+   ],
+   "why": "census: its units, or its reverse dependencies' units, open files under it and its source spells no filter covering them: the whole directory"
   },
   {
    "source": "crates/qcore-verification/tests/unit/cycle18_callback_obligations.rs",
@@ -683,8 +697,10 @@
   {
    "source": "crates/qcore-verification/tests/wait_failure_paths.rs",
    "literal": "contract/profiles",
-   "reads": [],
-   "why": "census: a base path: no unit compiling it opens a file under it that other literals, walkers or manifests do not already attribute"
+   "reads": [
+    "contract/profiles/**"
+   ],
+   "why": "census: its units, or its reverse dependencies' units, open files under it and its source spells no filter covering them: the whole directory"
   },
   {
    "source": "crates/qcorec/tests/cli.rs",
@@ -781,8 +797,10 @@
   {
    "source": "crates/quirin-source-analysis/src/source_profiles.rs",
    "literal": "contract/profiles",
-   "reads": [],
-   "why": "census: a base path: no unit compiling it opens a file under it that other literals, walkers or manifests do not already attribute"
+   "reads": [
+    "contract/profiles/**"
+   ],
+   "why": "census: its units, or its reverse dependencies' units, open files under it and its source spells no filter covering them: the whole directory"
   },
   {
    "source": "providers/conformance/tests/cmetrics_unit.rs",
@@ -843,6 +861,12 @@
    "literal": "scripts",
    "reads": [],
    "why": "a base path inside the test's scratch repository (directory.join(\"scripts\")); the one repository read, ../../scripts/gate_slot.py, is a file literal attributed exactly (added by the integrator at the MEASURE-QUOTA-AND-INCREMENTAL + GATE-SCOPE-PRECISE-SELECTION merge)"
+  },
+  {
+   "source": "compiler/tests/contract_loader.rs",
+   "literal": "providers",
+   "reads": [],
+   "why": "a base path inside the test's scratch directory under std::env::temp_dir() (lock_totals_agree_with_the_shared_cases writes providers/contract-load-path.json and per-crate locks there from tests/support/contract_locks_cases.json); the repository's locks are read by tests/support/contract_locks.rs through providers/contract-load-path.json, which the plan attributes exactly (added by the integrator at the CONTRACT-COUNT-PINS-FROM-LOCKS merge)"
   }
  ],
  "expansions": [

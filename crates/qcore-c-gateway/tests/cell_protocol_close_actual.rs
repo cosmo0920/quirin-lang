@@ -501,7 +501,12 @@ fn a_non_cell_member_keeps_the_gate_refusal() {
         "close of `aux`",
         "int d(struct pos_chan *s) { if (s->e[0] > 0) { close(s->aux); } return 0; }",
         "Unknown",
-        &[&gate(L)],
+        // Card MEMBER-EFFECT-SUMMARY (rule 38i) re-pins this deliberately: the release of a formal's member names
+        // its premise; still `Unknown`.
+        &[&format!(
+            "{L}:unsupported:release of `s->aux`, a member of the formal `s` \
+             (member-release-through-formal)"
+        )],
     );
 }
 

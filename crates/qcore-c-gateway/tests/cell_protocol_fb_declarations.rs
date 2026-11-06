@@ -311,7 +311,9 @@ fn the_thread_instance_teardown_decides_its_guard() {
         &[
             "unknown_alias:thi",
             "unsupported:call to uncontracted function `flb_tp_destroy`",
-            "unsupported:indirect memory access is outside the resource projection",
+            // Card MEMBER-EFFECT-SUMMARY (rule 38i) re-pins this deliberately: the member release names its premise.
+            "unsupported:release of `thi->evl`, a member of the formal `thi` \
+             (member-release-through-formal)",
         ],
     );
 }

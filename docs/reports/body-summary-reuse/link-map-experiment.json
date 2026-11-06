@@ -1,0 +1,666 @@
+{
+ "schema_version": 1,
+ "premise": "EXPERIMENT ONLY (card BODY-SUMMARY-REUSE census, not adopted): for the selected linked program and each selected compilation configuration, every external call to each listed symbol has a compatible function type and calling convention and resolves to its listed external definition.",
+ "symbols": [
+  {
+   "function": "LZ4_decompress_safe_usingDict",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/lz4.c"
+  },
+  {
+   "function": "LZ4_sizeofState",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/lz4.c"
+  },
+  {
+   "function": "LZ4_sizeofStateHC",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/lz4hc.c"
+  },
+  {
+   "function": "cJSON_CreateObject",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/cJSON.c"
+  },
+  {
+   "function": "cJSON_GetObjectItem",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/cJSON.c"
+  },
+  {
+   "function": "cJSON_PrintUnformatted",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/cJSON.c"
+  },
+  {
+   "function": "cio_chunk_counter_total_up_add",
+   "home_unit": "chunkio/lib/chunkio/src/cio_chunk.c"
+  },
+  {
+   "function": "cio_chunk_counter_total_up_sub",
+   "home_unit": "chunkio/lib/chunkio/src/cio_chunk.c"
+  },
+  {
+   "function": "cio_error_reset",
+   "home_unit": "chunkio/lib/chunkio/src/cio_error.c"
+  },
+  {
+   "function": "cio_error_set",
+   "home_unit": "chunkio/lib/chunkio/src/cio_error.c"
+  },
+  {
+   "function": "cio_file_hash",
+   "home_unit": "chunkio/lib/chunkio/src/cio_file.c"
+  },
+  {
+   "function": "cio_file_is_up",
+   "home_unit": "chunkio/lib/chunkio/src/cio_file.c"
+  },
+  {
+   "function": "cio_file_native_compose_path",
+   "home_unit": "chunkio/lib/chunkio/src/cio_file_unix.c"
+  },
+  {
+   "function": "cio_file_native_delete",
+   "home_unit": "chunkio/lib/chunkio/src/cio_file_unix.c"
+  },
+  {
+   "function": "cio_file_native_delete_by_path",
+   "home_unit": "chunkio/lib/chunkio/src/cio_file_unix.c"
+  },
+  {
+   "function": "cio_file_native_filename_check",
+   "home_unit": "chunkio/lib/chunkio/src/cio_file_unix.c"
+  },
+  {
+   "function": "cio_file_native_resize",
+   "home_unit": "chunkio/lib/chunkio/src/cio_file_unix.c"
+  },
+  {
+   "function": "cio_file_native_sync",
+   "home_unit": "chunkio/lib/chunkio/src/cio_file_unix.c"
+  },
+  {
+   "function": "cio_file_real_size",
+   "home_unit": "chunkio/lib/chunkio/src/cio_file.c"
+  },
+  {
+   "function": "cio_file_up",
+   "home_unit": "chunkio/lib/chunkio/src/cio_file.c"
+  },
+  {
+   "function": "cio_file_up_force",
+   "home_unit": "chunkio/lib/chunkio/src/cio_file.c"
+  },
+  {
+   "function": "cio_getpagesize",
+   "home_unit": "chunkio/lib/chunkio/src/cio_utils.c"
+  },
+  {
+   "function": "cio_memfs_scan_dump",
+   "home_unit": "chunkio/lib/chunkio/src/cio_memfs.c"
+  },
+  {
+   "function": "cio_options_init",
+   "home_unit": "chunkio/lib/chunkio/src/chunkio.c"
+  },
+  {
+   "function": "cio_os_isdir",
+   "home_unit": "chunkio/lib/chunkio/src/cio_os.c"
+  },
+  {
+   "function": "cmt_encode_opentelemetry_destroy",
+   "home_unit": "cmetrics/lib/cmetrics/src/cmt_encode_opentelemetry.c"
+  },
+  {
+   "function": "cmt_histogram_buckets_destroy",
+   "home_unit": "cmetrics/lib/cmetrics/src/cmt_histogram.c"
+  },
+  {
+   "function": "cmt_labels_count",
+   "home_unit": "cmetrics/lib/cmetrics/src/cmt_label.c"
+  },
+  {
+   "function": "cmt_metric_add",
+   "home_unit": "cmetrics/lib/cmetrics/src/cmt_metric.c"
+  },
+  {
+   "function": "cmt_metric_exp_hist_lock",
+   "home_unit": "cmetrics/lib/cmetrics/src/cmt_metric.c"
+  },
+  {
+   "function": "cmt_metric_exp_hist_unlock",
+   "home_unit": "cmetrics/lib/cmetrics/src/cmt_metric.c"
+  },
+  {
+   "function": "cmt_metric_hist_count_inc",
+   "home_unit": "cmetrics/lib/cmetrics/src/cmt_metric_histogram.c"
+  },
+  {
+   "function": "cmt_metric_hist_count_set",
+   "home_unit": "cmetrics/lib/cmetrics/src/cmt_metric_histogram.c"
+  },
+  {
+   "function": "cmt_metric_hist_inc",
+   "home_unit": "cmetrics/lib/cmetrics/src/cmt_metric_histogram.c"
+  },
+  {
+   "function": "cmt_metric_hist_set",
+   "home_unit": "cmetrics/lib/cmetrics/src/cmt_metric_histogram.c"
+  },
+  {
+   "function": "cmt_metric_hist_sum_add",
+   "home_unit": "cmetrics/lib/cmetrics/src/cmt_metric_histogram.c"
+  },
+  {
+   "function": "cmt_metric_hist_sum_set",
+   "home_unit": "cmetrics/lib/cmetrics/src/cmt_metric_histogram.c"
+  },
+  {
+   "function": "cmt_metric_inc",
+   "home_unit": "cmetrics/lib/cmetrics/src/cmt_metric.c"
+  },
+  {
+   "function": "cmt_metric_set",
+   "home_unit": "cmetrics/lib/cmetrics/src/cmt_metric.c"
+  },
+  {
+   "function": "cmt_metric_set_exp_hist_count",
+   "home_unit": "cmetrics/lib/cmetrics/src/cmt_metric.c"
+  },
+  {
+   "function": "cmt_metric_set_exp_hist_sum",
+   "home_unit": "cmetrics/lib/cmetrics/src/cmt_metric.c"
+  },
+  {
+   "function": "cmt_metric_sub",
+   "home_unit": "cmetrics/lib/cmetrics/src/cmt_metric.c"
+  },
+  {
+   "function": "cmt_summary_count_set",
+   "home_unit": "cmetrics/lib/cmetrics/src/cmt_summary.c"
+  },
+  {
+   "function": "cmt_summary_quantile_set",
+   "home_unit": "cmetrics/lib/cmetrics/src/cmt_summary.c"
+  },
+  {
+   "function": "cmt_summary_sum_set",
+   "home_unit": "cmetrics/lib/cmetrics/src/cmt_summary.c"
+  },
+  {
+   "function": "cmt_time_from_ns",
+   "home_unit": "cmetrics/lib/cmetrics/src/cmt_time.c"
+  },
+  {
+   "function": "ctr_attributes_count",
+   "home_unit": "ctraces/lib/ctraces/src/ctr_attributes.c"
+  },
+  {
+   "function": "ctr_attributes_create",
+   "home_unit": "ctraces/lib/ctraces/src/ctr_attributes.c"
+  },
+  {
+   "function": "ctr_attributes_destroy",
+   "home_unit": "ctraces/lib/ctraces/src/ctr_attributes.c"
+  },
+  {
+   "function": "ctr_create",
+   "home_unit": "ctraces/lib/ctraces/src/ctraces.c"
+  },
+  {
+   "function": "ctr_id_get_buf",
+   "home_unit": "ctraces/lib/ctraces/src/ctr_id.c"
+  },
+  {
+   "function": "ctr_id_to_lower_base16",
+   "home_unit": "ctraces/lib/ctraces/src/ctr_id.c"
+  },
+  {
+   "function": "ctr_link_set_dropped_attr_count",
+   "home_unit": "ctraces/lib/ctraces/src/ctr_link.c"
+  },
+  {
+   "function": "ctr_link_set_flags",
+   "home_unit": "ctraces/lib/ctraces/src/ctr_link.c"
+  },
+  {
+   "function": "ctr_mpack_consume_int32_tag",
+   "home_unit": "ctraces/lib/ctraces/src/ctr_mpack_utils.c"
+  },
+  {
+   "function": "ctr_mpack_consume_uint32_tag",
+   "home_unit": "ctraces/lib/ctraces/src/ctr_mpack_utils.c"
+  },
+  {
+   "function": "ctr_mpack_consume_uint64_tag",
+   "home_unit": "ctraces/lib/ctraces/src/ctr_mpack_utils.c"
+  },
+  {
+   "function": "ctr_random_get",
+   "home_unit": "ctraces/lib/ctraces/src/ctr_random.c"
+  },
+  {
+   "function": "ctr_resource_set_dropped_attr_count",
+   "home_unit": "ctraces/lib/ctraces/src/ctr_resource.c"
+  },
+  {
+   "function": "ctr_resource_span_get_resource",
+   "home_unit": "ctraces/lib/ctraces/src/ctr_resource.c"
+  },
+  {
+   "function": "ctr_span_end_ts",
+   "home_unit": "ctraces/lib/ctraces/src/ctr_span.c"
+  },
+  {
+   "function": "ctr_span_event_set_dropped_attributes_count",
+   "home_unit": "ctraces/lib/ctraces/src/ctr_span.c"
+  },
+  {
+   "function": "ctr_span_start_ts",
+   "home_unit": "ctraces/lib/ctraces/src/ctr_span.c"
+  },
+  {
+   "function": "mk_config_sanity_check",
+   "home_unit": "monkey-libevent/lib/monkey/mk_server/mk_config.c"
+  },
+  {
+   "function": "mk_config_signature",
+   "home_unit": "monkey-libevent/lib/monkey/mk_server/mk_config.c"
+  },
+  {
+   "function": "mk_core_init",
+   "home_unit": "monkey-libevent/lib/monkey/mk_core/mk_utils.c"
+  },
+  {
+   "function": "mk_event_init",
+   "home_unit": "monkey-libevent/lib/monkey/mk_core/mk_event.c"
+  },
+  {
+   "function": "mk_fifo_send",
+   "home_unit": "monkey-libevent/lib/monkey/mk_server/mk_fifo.c"
+  },
+  {
+   "function": "mk_header_set_http_status",
+   "home_unit": "monkey-libevent/lib/monkey/mk_server/mk_header.c"
+  },
+  {
+   "function": "mk_iov_send",
+   "home_unit": "monkey-libevent/lib/monkey/mk_core/mk_iov.c"
+  },
+  {
+   "function": "mk_kernel_features",
+   "home_unit": "monkey-libevent/lib/monkey/mk_server/mk_kernel.c"
+  },
+  {
+   "function": "mk_net_init",
+   "home_unit": "monkey-libevent/lib/monkey/mk_server/mk_net.c"
+  },
+  {
+   "function": "mk_net_transport_default",
+   "home_unit": "monkey-libevent/lib/monkey/mk_server/mk_net.c"
+  },
+  {
+   "function": "mk_plugin_exit_worker",
+   "home_unit": "monkey-libevent/lib/monkey/mk_server/mk_plugin.c"
+  },
+  {
+   "function": "mk_plugin_lookup",
+   "home_unit": "monkey-libevent/lib/monkey/mk_server/mk_plugin.c"
+  },
+  {
+   "function": "mk_rconf_section_get",
+   "home_unit": "monkey-libevent/lib/monkey/mk_core/mk_rconf.c"
+  },
+  {
+   "function": "mk_sched_broadcast_signal",
+   "home_unit": "monkey-libevent/lib/monkey/mk_server/mk_scheduler.c"
+  },
+  {
+   "function": "mk_sched_get_connection",
+   "home_unit": "monkey-libevent/lib/monkey/mk_server/mk_scheduler.c"
+  },
+  {
+   "function": "mk_sched_handler_cap",
+   "home_unit": "monkey-libevent/lib/monkey/mk_server/mk_scheduler.c"
+  },
+  {
+   "function": "mk_sched_threads_destroy_conn",
+   "home_unit": "monkey-libevent/lib/monkey/mk_server/mk_scheduler.c"
+  },
+  {
+   "function": "mk_sched_worker_cb_free",
+   "home_unit": "monkey-libevent/lib/monkey/mk_server/mk_scheduler.c"
+  },
+  {
+   "function": "mk_socket_create",
+   "home_unit": "monkey-libevent/lib/monkey/mk_server/mk_socket.c"
+  },
+  {
+   "function": "mk_string_copy_substr",
+   "home_unit": "monkey-libevent/lib/monkey/mk_core/mk_string.c"
+  },
+  {
+   "function": "mk_string_search_n",
+   "home_unit": "monkey-libevent/lib/monkey/mk_core/mk_string.c"
+  },
+  {
+   "function": "mk_tls_exit",
+   "home_unit": "monkey-libevent/lib/monkey/tls/tls_stub.c"
+  },
+  {
+   "function": "mk_tls_init",
+   "home_unit": "monkey-libevent/lib/monkey/tls/tls_stub.c"
+  },
+  {
+   "function": "mk_tls_thread_init",
+   "home_unit": "monkey-libevent/lib/monkey/tls/tls_stub.c"
+  },
+  {
+   "function": "mk_tls_transport",
+   "home_unit": "monkey-libevent/lib/monkey/tls/tls_stub.c"
+  },
+  {
+   "function": "mk_utils_worker_rename",
+   "home_unit": "monkey-libevent/lib/monkey/mk_core/mk_utils.c"
+  },
+  {
+   "function": "rd_http_error_destroy",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdhttp.c"
+  },
+  {
+   "function": "rd_kafka_ElectLeadersResult_partitions",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_admin.c"
+  },
+  {
+   "function": "rd_kafka_Produce_result_new",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_msg.c"
+  },
+  {
+   "function": "rd_kafka_acl_result_new",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_aux.c"
+  },
+  {
+   "function": "rd_kafka_admin_result_ret_acl_bindings",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_admin.c"
+  },
+  {
+   "function": "rd_kafka_admin_result_ret_acl_results",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_admin.c"
+  },
+  {
+   "function": "rd_kafka_admin_result_ret_delete_acl_result_responses",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_admin.c"
+  },
+  {
+   "function": "rd_kafka_brokers_get_state_version",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_broker.c"
+  },
+  {
+   "function": "rd_kafka_brokers_wait_state_change",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_broker.c"
+  },
+  {
+   "function": "rd_kafka_buf_calc_timeout",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_buf.c"
+  },
+  {
+   "function": "rd_kafka_buf_upgrade_flexver_request",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_buf.c"
+  },
+  {
+   "function": "rd_kafka_bufq_init",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_buf.c"
+  },
+  {
+   "function": "rd_kafka_confval_get_int",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_conf.c"
+  },
+  {
+   "function": "rd_kafka_consumer_group_metadata_destroy",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_cgrp.c"
+  },
+  {
+   "function": "rd_kafka_consumer_group_state_code",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka.c"
+  },
+  {
+   "function": "rd_kafka_consumer_group_state_name",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka.c"
+  },
+  {
+   "function": "rd_kafka_consumer_group_type_code",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka.c"
+  },
+  {
+   "function": "rd_kafka_consumer_group_type_name",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka.c"
+  },
+  {
+   "function": "rd_kafka_coord_reqs_init",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_coord.c"
+  },
+  {
+   "function": "rd_kafka_error_code",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_error.c"
+  },
+  {
+   "function": "rd_kafka_error_destroy",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_error.c"
+  },
+  {
+   "function": "rd_kafka_error_is_fatal",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_error.c"
+  },
+  {
+   "function": "rd_kafka_error_set_fatal",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_error.c"
+  },
+  {
+   "function": "rd_kafka_error_set_retriable",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_error.c"
+  },
+  {
+   "function": "rd_kafka_error_set_txn_requires_abort",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_error.c"
+  },
+  {
+   "function": "rd_kafka_handle_OffsetFetch_err_action",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_request.c"
+  },
+  {
+   "function": "rd_kafka_mem_malloc",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka.c"
+  },
+  {
+   "function": "rd_kafka_message_new",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_msg.c"
+  },
+  {
+   "function": "rd_kafka_messages_new",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_msg.c"
+  },
+  {
+   "function": "rd_kafka_metadata_cache_wait_change",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_metadata_cache.c"
+  },
+  {
+   "function": "rd_kafka_metadata_destroy",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_metadata.c"
+  },
+  {
+   "function": "rd_kafka_mock_cgrp_classic_check_state",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c"
+  },
+  {
+   "function": "rd_kafka_mock_cgrp_classic_member_active",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c"
+  },
+  {
+   "function": "rd_kafka_mock_connection_set_blocking",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_mock.c"
+  },
+  {
+   "function": "rd_kafka_mock_partition_leader_epoch_check",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_mock.c"
+  },
+  {
+   "function": "rd_kafka_mock_sharegroup_member_active",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_mock_sharegrp.c"
+  },
+  {
+   "function": "rd_kafka_mock_sharegrps_init",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_mock_sharegrp.c"
+  },
+  {
+   "function": "rd_kafka_msgbatch_set_first_msg",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_msg.c"
+  },
+  {
+   "function": "rd_kafka_op_get_offset",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_op.c"
+  },
+  {
+   "function": "rd_kafka_outq_len",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka.c"
+  },
+  {
+   "function": "rd_kafka_set_thread_name",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka.c"
+  },
+  {
+   "function": "rd_kafka_share_ensure_all_acknowledged_if_explicit",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c"
+  },
+  {
+   "function": "rd_kafka_ssl_init",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_ssl.c"
+  },
+  {
+   "function": "rd_kafka_ssl_term",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_ssl.c"
+  },
+  {
+   "function": "rd_kafka_timer_next",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_timer.c"
+  },
+  {
+   "function": "rd_kafka_topic_partition_destroy",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_partition.c"
+  },
+  {
+   "function": "rd_kafka_topic_partition_list_destroy_free",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_partition.c"
+  },
+  {
+   "function": "rd_kafka_topic_partition_list_get_err",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_partition.c"
+  },
+  {
+   "function": "rd_kafka_topic_partition_list_reset_offsets",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_partition.c"
+  },
+  {
+   "function": "rd_kafka_topic_partition_list_set_err",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_partition.c"
+  },
+  {
+   "function": "rd_kafka_topic_partition_set_current_leader_epoch",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_partition.c"
+  },
+  {
+   "function": "rd_kafka_topic_partition_set_leader_epoch",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_partition.c"
+  },
+  {
+   "function": "rd_kafka_topic_partition_set_topic_id",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_partition.c"
+  },
+  {
+   "function": "rd_kafka_topic_result_destroy",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_aux.c"
+  },
+  {
+   "function": "rd_kafka_toppar_purge_and_disable_queues",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_partition.c"
+  },
+  {
+   "function": "rd_kafka_transport_init",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_transport.c"
+  },
+  {
+   "function": "rd_kafka_transport_poll_set",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_transport.c"
+  },
+  {
+   "function": "rd_kafka_transport_shutdown",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_transport.c"
+  },
+  {
+   "function": "rd_kafkap_leader_discovery_metadata_init",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_request.c"
+  },
+  {
+   "function": "rd_kafkap_leader_discovery_tmpabuf_add_alloc_topic",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_request.c"
+  },
+  {
+   "function": "rd_kafkap_leader_discovery_tmpabuf_add_alloc_topics",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_request.c"
+  },
+  {
+   "function": "rd_list_last",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdlist.c"
+  },
+  {
+   "function": "rd_list_set_cnt",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdlist.c"
+  },
+  {
+   "function": "rd_regex_match",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdregex.c"
+  },
+  {
+   "function": "rd_slice_crc32",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdbuf.c"
+  },
+  {
+   "function": "rd_sockaddr_list_destroy",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdaddr.c"
+  },
+  {
+   "function": "rd_strcmp",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdstring.c"
+  },
+  {
+   "function": "rd_string_hash",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdstring.c"
+  },
+  {
+   "function": "rd_strtup_destroy",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdstring.c"
+  },
+  {
+   "function": "resolve_data_point_start_timestamp",
+   "home_unit": "cmetrics/lib/cmetrics/src/cmt_encode_opentelemetry.c"
+  },
+  {
+   "function": "rwlock_rdlock",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/tinycthread_extra.c"
+  },
+  {
+   "function": "rwlock_rdunlock",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/tinycthread_extra.c"
+  },
+  {
+   "function": "rwlock_wrlock",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/tinycthread_extra.c"
+  },
+  {
+   "function": "rwlock_wrunlock",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/tinycthread_extra.c"
+  },
+  {
+   "function": "sched_thread_cleanup",
+   "home_unit": "monkey-libevent/lib/monkey/mk_server/mk_scheduler.c"
+  },
+  {
+   "function": "thrd_current_id",
+   "home_unit": "librdkafka/lib/librdkafka-2.15.0/src/tinycthread_extra.c"
+  }
+ ]
+}

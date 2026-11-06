@@ -1,0 +1,3688 @@
+{
+ "total": {
+  "callees": 165,
+  "sites": 456,
+  "functions": 307,
+  "sole_blocked": 13
+ },
+ "table": {
+  "cross-unit": {
+   "sites": 438,
+   "callees": 156,
+   "functions": 295,
+   "sole_blocked": 7
+  },
+  "same-unit-external": {
+   "sites": 7,
+   "callees": 5,
+   "functions": 7,
+   "sole_blocked": 0
+  },
+  "same-unit-internal": {
+   "sites": 11,
+   "callees": 6,
+   "functions": 7,
+   "sole_blocked": 6
+  }
+ },
+ "shapes": {
+  "assignment-or-initializer": 168,
+  "return": 24,
+  "statement-call": 246,
+  "nested-in-call-or-expression": 7,
+  "macro-or-other-line": 8,
+  "other-expression": 3
+ },
+ "imported": [],
+ "moves": null,
+ "sites": [
+  {
+   "callee": "LZ4_decompress_safe_usingDict",
+   "unit": "lib/librdkafka-2.15.0/src/lz4frame.c",
+   "function": "LZ4F_decompress",
+   "origin": "lib/librdkafka-2.15.0/src/lz4frame.c:1844",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "LZ4_sizeofState",
+   "unit": "lib/librdkafka-2.15.0/src/lz4frame.c",
+   "function": "ctxTypeID_to_size",
+   "origin": "lib/librdkafka-2.15.0/src/lz4frame.c:663",
+   "shape": "return",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "LZ4_sizeofStateHC",
+   "unit": "lib/librdkafka-2.15.0/src/lz4frame.c",
+   "function": "ctxTypeID_to_size",
+   "origin": "lib/librdkafka-2.15.0/src/lz4frame.c:665",
+   "shape": "return",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cJSON_CreateObject",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "rd_kafka_oidc_assertion_create",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c:406",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cJSON_CreateObject",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "rd_kafka_oidc_assertion_create",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c:407",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cJSON_GetObjectItem",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "rd_kafka_oidc_assertion_parse_template_file",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c:298",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cJSON_GetObjectItem",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "rd_kafka_oidc_assertion_parse_template_file",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c:299",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cJSON_GetObjectItem",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "rd_kafka_oidc_token_try_validate",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c:687",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cJSON_GetObjectItem",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "rd_kafka_oidc_token_try_validate",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c:717",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cJSON_GetObjectItem",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "rd_kafka_oidc_token_try_validate",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c:735",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cJSON_GetObjectItem",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c:1669",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cJSON_GetObjectItem",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c:1676",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cJSON_GetObjectItem",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c:1682",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cJSON_GetObjectItem",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_should_succeed",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c:1216",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cJSON_GetObjectItem",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_with_empty_key",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c:1270",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cJSON_PrintUnformatted",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "rd_kafka_oidc_assertion_create",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c:454",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cJSON_PrintUnformatted",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "rd_kafka_oidc_assertion_create",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c:455",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cio_chunk_counter_total_up_add",
+   "unit": "lib/chunkio/src/cio_file.c",
+   "function": "mmap_file",
+   "origin": "lib/chunkio/src/cio_file.c:490",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cio_chunk_counter_total_up_sub",
+   "unit": "lib/chunkio/src/cio_file.c",
+   "function": "munmap_file",
+   "origin": "lib/chunkio/src/cio_file.c:336",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cio_error_reset",
+   "unit": "lib/chunkio/src/cio_chunk.c",
+   "function": "cio_chunk_close",
+   "origin": "lib/chunkio/src/cio_chunk.c:120",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cio_error_reset",
+   "unit": "lib/chunkio/src/cio_chunk.c",
+   "function": "cio_chunk_down",
+   "origin": "lib/chunkio/src/cio_chunk.c:561",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cio_error_reset",
+   "unit": "lib/chunkio/src/cio_chunk.c",
+   "function": "cio_chunk_get_content",
+   "origin": "lib/chunkio/src/cio_chunk.c:251",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cio_error_reset",
+   "unit": "lib/chunkio/src/cio_chunk.c",
+   "function": "cio_chunk_get_content_copy",
+   "origin": "lib/chunkio/src/cio_chunk.c:280",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cio_error_reset",
+   "unit": "lib/chunkio/src/cio_chunk.c",
+   "function": "cio_chunk_get_content_end_pos",
+   "origin": "lib/chunkio/src/cio_chunk.c:300",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cio_error_reset",
+   "unit": "lib/chunkio/src/cio_chunk.c",
+   "function": "cio_chunk_get_content_size",
+   "origin": "lib/chunkio/src/cio_chunk.c:321",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cio_error_reset",
+   "unit": "lib/chunkio/src/cio_chunk.c",
+   "function": "cio_chunk_get_real_size",
+   "origin": "lib/chunkio/src/cio_chunk.c:342",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cio_error_reset",
+   "unit": "lib/chunkio/src/cio_chunk.c",
+   "function": "cio_chunk_lock",
+   "origin": "lib/chunkio/src/cio_chunk.c:386",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cio_error_reset",
+   "unit": "lib/chunkio/src/cio_chunk.c",
+   "function": "cio_chunk_open",
+   "origin": "lib/chunkio/src/cio_chunk.c:77",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cio_error_reset",
+   "unit": "lib/chunkio/src/cio_chunk.c",
+   "function": "cio_chunk_sync",
+   "origin": "lib/chunkio/src/cio_chunk.c:234",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cio_error_reset",
+   "unit": "lib/chunkio/src/cio_chunk.c",
+   "function": "cio_chunk_tx_begin",
+   "origin": "lib/chunkio/src/cio_chunk.c:429",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cio_error_reset",
+   "unit": "lib/chunkio/src/cio_chunk.c",
+   "function": "cio_chunk_tx_commit",
+   "origin": "lib/chunkio/src/cio_chunk.c:463",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cio_error_reset",
+   "unit": "lib/chunkio/src/cio_chunk.c",
+   "function": "cio_chunk_tx_rollback",
+   "origin": "lib/chunkio/src/cio_chunk.c:482",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cio_error_reset",
+   "unit": "lib/chunkio/src/cio_chunk.c",
+   "function": "cio_chunk_unlock",
+   "origin": "lib/chunkio/src/cio_chunk.c:403",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cio_error_reset",
+   "unit": "lib/chunkio/src/cio_chunk.c",
+   "function": "cio_chunk_up",
+   "origin": "lib/chunkio/src/cio_chunk.c:578",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cio_error_reset",
+   "unit": "lib/chunkio/src/cio_chunk.c",
+   "function": "cio_chunk_up_force",
+   "origin": "lib/chunkio/src/cio_chunk.c:595",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cio_error_reset",
+   "unit": "lib/chunkio/src/cio_chunk.c",
+   "function": "cio_chunk_write",
+   "origin": "lib/chunkio/src/cio_chunk.c:216",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cio_error_reset",
+   "unit": "lib/chunkio/src/cio_chunk.c",
+   "function": "cio_chunk_write_at",
+   "origin": "lib/chunkio/src/cio_chunk.c:191",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cio_error_set",
+   "unit": "lib/chunkio/src/cio_file.c",
+   "function": "cio_file_format_check",
+   "origin": "lib/chunkio/src/cio_file.c:207",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cio_error_set",
+   "unit": "lib/chunkio/src/cio_file.c",
+   "function": "cio_file_format_check",
+   "origin": "lib/chunkio/src/cio_file.c:215",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cio_error_set",
+   "unit": "lib/chunkio/src/cio_file.c",
+   "function": "cio_file_format_check",
+   "origin": "lib/chunkio/src/cio_file.c:233",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cio_error_set",
+   "unit": "lib/chunkio/src/cio_file.c",
+   "function": "cio_file_format_check",
+   "origin": "lib/chunkio/src/cio_file.c:247",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cio_error_set",
+   "unit": "lib/chunkio/src/cio_file.c",
+   "function": "cio_file_format_check",
+   "origin": "lib/chunkio/src/cio_file.c:261",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cio_error_set",
+   "unit": "lib/chunkio/src/cio_file.c",
+   "function": "cio_file_format_check",
+   "origin": "lib/chunkio/src/cio_file.c:284",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cio_error_set",
+   "unit": "lib/chunkio/src/cio_file.c",
+   "function": "mmap_file",
+   "origin": "lib/chunkio/src/cio_file.c:391",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cio_error_set",
+   "unit": "lib/chunkio/src/cio_file.c",
+   "function": "mmap_file",
+   "origin": "lib/chunkio/src/cio_file.c:452",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cio_file_hash",
+   "unit": "lib/chunkio/src/cio_chunk.c",
+   "function": "cio_chunk_hash",
+   "origin": "lib/chunkio/src/cio_chunk.c:378",
+   "shape": "return",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cio_file_is_up",
+   "unit": "lib/chunkio/src/cio_chunk.c",
+   "function": "cio_chunk_is_up",
+   "origin": "lib/chunkio/src/cio_chunk.c:520",
+   "shape": "return",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cio_file_native_compose_path",
+   "unit": "lib/chunkio/src/cio_file.c",
+   "function": "cio_file_delete",
+   "origin": "lib/chunkio/src/cio_file.c:800",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cio_file_native_compose_path",
+   "unit": "lib/chunkio/src/cio_file.c",
+   "function": "cio_file_open",
+   "origin": "lib/chunkio/src/cio_file.c:657",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cio_file_native_delete",
+   "unit": "lib/chunkio/src/cio_file.c",
+   "function": "cio_file_close",
+   "origin": "lib/chunkio/src/cio_file.c:980",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cio_file_native_delete_by_path",
+   "unit": "lib/chunkio/src/cio_file.c",
+   "function": "cio_file_delete",
+   "origin": "lib/chunkio/src/cio_file.c:805",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cio_file_native_filename_check",
+   "unit": "lib/chunkio/src/cio_file.c",
+   "function": "cio_file_delete",
+   "origin": "lib/chunkio/src/cio_file.c:793",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cio_file_native_filename_check",
+   "unit": "lib/chunkio/src/cio_file.c",
+   "function": "cio_file_open",
+   "origin": "lib/chunkio/src/cio_file.c:650",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cio_file_native_resize",
+   "unit": "lib/chunkio/src/cio_file.c",
+   "function": "cio_file_resize",
+   "origin": "lib/chunkio/src/cio_file.c:1272",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cio_file_native_sync",
+   "unit": "lib/chunkio/src/cio_file.c",
+   "function": "cio_file_sync",
+   "origin": "lib/chunkio/src/cio_file.c:1232",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cio_file_real_size",
+   "unit": "lib/chunkio/src/cio_chunk.c",
+   "function": "cio_chunk_get_real_size",
+   "origin": "lib/chunkio/src/cio_chunk.c:354",
+   "shape": "return",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cio_file_up",
+   "unit": "lib/chunkio/src/cio_chunk.c",
+   "function": "cio_chunk_up",
+   "origin": "lib/chunkio/src/cio_chunk.c:582",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cio_file_up_force",
+   "unit": "lib/chunkio/src/cio_chunk.c",
+   "function": "cio_chunk_up_force",
+   "origin": "lib/chunkio/src/cio_chunk.c:599",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cio_getpagesize",
+   "unit": "lib/chunkio/src/chunkio.c",
+   "function": "cio_create",
+   "origin": "lib/chunkio/src/chunkio.c:126",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cio_memfs_scan_dump",
+   "unit": "lib/chunkio/src/cio_scan.c",
+   "function": "cio_scan_dump",
+   "origin": "lib/chunkio/src/cio_scan.c:185",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cio_options_init",
+   "unit": "lib/chunkio/src/chunkio.c",
+   "function": "cio_create",
+   "origin": "lib/chunkio/src/chunkio.c:91",
+   "shape": "statement-call",
+   "reason": "same-unit-external"
+  },
+  {
+   "callee": "cio_os_isdir",
+   "unit": "lib/chunkio/src/chunkio.c",
+   "function": "check_root_path",
+   "origin": "lib/chunkio/src/chunkio.c:53",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cio_os_isdir",
+   "unit": "lib/chunkio/src/cio_stream.c",
+   "function": "check_stream_path",
+   "origin": "lib/chunkio/src/cio_stream.c:78",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_encode_opentelemetry_destroy",
+   "unit": "lib/cmetrics/src/cmt_encode_opentelemetry_batch.c",
+   "function": "cmt_encode_opentelemetry_create_batches",
+   "origin": "lib/cmetrics/src/cmt_encode_opentelemetry_batch.c:794",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_encode_opentelemetry_destroy",
+   "unit": "lib/cmetrics/src/cmt_encode_opentelemetry_batch.c",
+   "function": "cmt_encode_opentelemetry_create_batches",
+   "origin": "lib/cmetrics/src/cmt_encode_opentelemetry_batch.c:802",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_histogram_buckets_destroy",
+   "unit": "lib/cmetrics/src/cmt_decode_prometheus_remote_write.c",
+   "function": "decode_metrics_entry",
+   "origin": "lib/cmetrics/src/cmt_decode_prometheus_remote_write.c:834",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_labels_count",
+   "unit": "lib/cmetrics/src/cmt_encode_cloudwatch_emf.c",
+   "function": "pack_basic_header",
+   "origin": "lib/cmetrics/src/cmt_encode_cloudwatch_emf.c:68",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_labels_count",
+   "unit": "lib/cmetrics/src/cmt_encode_cloudwatch_emf.c",
+   "function": "pack_metric",
+   "origin": "lib/cmetrics/src/cmt_encode_cloudwatch_emf.c:265",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_labels_count",
+   "unit": "lib/cmetrics/src/cmt_encode_influx.c",
+   "function": "format_metric",
+   "origin": "lib/cmetrics/src/cmt_encode_influx.c:308",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_labels_count",
+   "unit": "lib/cmetrics/src/cmt_encode_prometheus.c",
+   "function": "format_metric",
+   "origin": "lib/cmetrics/src/cmt_encode_prometheus.c:320",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_labels_count",
+   "unit": "lib/cmetrics/src/cmt_encode_splunk_hec.c",
+   "function": "format_metric_labels",
+   "origin": "lib/cmetrics/src/cmt_encode_splunk_hec.c:287",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_labels_count",
+   "unit": "lib/cmetrics/src/cmt_encode_text.c",
+   "function": "format_metric",
+   "origin": "lib/cmetrics/src/cmt_encode_text.c:530",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_metric_add",
+   "unit": "lib/cmetrics/src/cmt_counter.c",
+   "function": "cmt_counter_add",
+   "origin": "lib/cmetrics/src/cmt_counter.c:133",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_metric_add",
+   "unit": "lib/cmetrics/src/cmt_gauge.c",
+   "function": "cmt_gauge_add",
+   "origin": "lib/cmetrics/src/cmt_gauge.c:159",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_metric_exp_hist_lock",
+   "unit": "lib/cmetrics/src/cmt_cat.c",
+   "function": "cat_exp_histogram_values",
+   "origin": "lib/cmetrics/src/cmt_cat.c:228",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_metric_exp_hist_lock",
+   "unit": "lib/cmetrics/src/cmt_cat.c",
+   "function": "cat_exp_histogram_values",
+   "origin": "lib/cmetrics/src/cmt_cat.c:231",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_metric_exp_hist_lock",
+   "unit": "lib/cmetrics/src/cmt_decode_msgpack.c",
+   "function": "unpack_metric_exp_histogram",
+   "origin": "lib/cmetrics/src/cmt_decode_msgpack.c:1174",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_metric_exp_hist_lock",
+   "unit": "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+   "function": "decode_exponential_histogram_data_point",
+   "origin": "lib/cmetrics/src/cmt_decode_opentelemetry.c:1364",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_metric_exp_hist_lock",
+   "unit": "lib/cmetrics/src/cmt_exp_histogram.c",
+   "function": "cmt_exp_histogram_set_default",
+   "origin": "lib/cmetrics/src/cmt_exp_histogram.c:171",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_metric_exp_hist_unlock",
+   "unit": "lib/cmetrics/src/cmt_cat.c",
+   "function": "cat_exp_histogram_values",
+   "origin": "lib/cmetrics/src/cmt_cat.c:438",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_metric_exp_hist_unlock",
+   "unit": "lib/cmetrics/src/cmt_cat.c",
+   "function": "cat_exp_histogram_values",
+   "origin": "lib/cmetrics/src/cmt_cat.c:440",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_metric_exp_hist_unlock",
+   "unit": "lib/cmetrics/src/cmt_decode_msgpack.c",
+   "function": "unpack_metric_exp_histogram",
+   "origin": "lib/cmetrics/src/cmt_decode_msgpack.c:1176",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_metric_exp_hist_unlock",
+   "unit": "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+   "function": "decode_exponential_histogram_data_point",
+   "origin": "lib/cmetrics/src/cmt_decode_opentelemetry.c:1389",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_metric_exp_hist_unlock",
+   "unit": "lib/cmetrics/src/cmt_exp_histogram.c",
+   "function": "cmt_exp_histogram_set_default",
+   "origin": "lib/cmetrics/src/cmt_exp_histogram.c:190",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_metric_hist_count_inc",
+   "unit": "lib/cmetrics/src/cmt_histogram.c",
+   "function": "cmt_histogram_observe",
+   "origin": "lib/cmetrics/src/cmt_histogram.c:363",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_metric_hist_count_set",
+   "unit": "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+   "function": "decode_histogram_data_point",
+   "origin": "lib/cmetrics/src/cmt_decode_opentelemetry.c:1105",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_metric_hist_count_set",
+   "unit": "lib/cmetrics/src/cmt_decode_prometheus_remote_write.c",
+   "function": "decode_histogram_points",
+   "origin": "lib/cmetrics/src/cmt_decode_prometheus_remote_write.c:610",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_metric_hist_count_set",
+   "unit": "lib/cmetrics/src/cmt_histogram.c",
+   "function": "cmt_histogram_set_default",
+   "origin": "lib/cmetrics/src/cmt_histogram.c:400",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_metric_hist_inc",
+   "unit": "lib/cmetrics/src/cmt_histogram.c",
+   "function": "cmt_histogram_observe",
+   "origin": "lib/cmetrics/src/cmt_histogram.c:356",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_metric_hist_inc",
+   "unit": "lib/cmetrics/src/cmt_histogram.c",
+   "function": "cmt_histogram_observe",
+   "origin": "lib/cmetrics/src/cmt_histogram.c:360",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_metric_hist_set",
+   "unit": "lib/cmetrics/src/cmt_decode_prometheus_remote_write.c",
+   "function": "decode_histogram_points",
+   "origin": "lib/cmetrics/src/cmt_decode_prometheus_remote_write.c:580",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_metric_hist_set",
+   "unit": "lib/cmetrics/src/cmt_decode_prometheus_remote_write.c",
+   "function": "decode_histogram_points",
+   "origin": "lib/cmetrics/src/cmt_decode_prometheus_remote_write.c:587",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_metric_hist_set",
+   "unit": "lib/cmetrics/src/cmt_histogram.c",
+   "function": "cmt_histogram_set_default",
+   "origin": "lib/cmetrics/src/cmt_histogram.c:396",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_metric_hist_sum_add",
+   "unit": "lib/cmetrics/src/cmt_histogram.c",
+   "function": "cmt_histogram_observe",
+   "origin": "lib/cmetrics/src/cmt_histogram.c:366",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_metric_hist_sum_set",
+   "unit": "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+   "function": "decode_histogram_data_point",
+   "origin": "lib/cmetrics/src/cmt_decode_opentelemetry.c:1103",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_metric_hist_sum_set",
+   "unit": "lib/cmetrics/src/cmt_decode_prometheus_remote_write.c",
+   "function": "decode_histogram_points",
+   "origin": "lib/cmetrics/src/cmt_decode_prometheus_remote_write.c:608",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_metric_hist_sum_set",
+   "unit": "lib/cmetrics/src/cmt_histogram.c",
+   "function": "cmt_histogram_set_default",
+   "origin": "lib/cmetrics/src/cmt_histogram.c:399",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_metric_inc",
+   "unit": "lib/cmetrics/src/cmt_counter.c",
+   "function": "cmt_counter_inc",
+   "origin": "lib/cmetrics/src/cmt_counter.c:115",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_metric_inc",
+   "unit": "lib/cmetrics/src/cmt_gauge.c",
+   "function": "cmt_gauge_inc",
+   "origin": "lib/cmetrics/src/cmt_gauge.c:125",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_metric_set",
+   "unit": "lib/cmetrics/src/cmt_counter.c",
+   "function": "cmt_counter_set",
+   "origin": "lib/cmetrics/src/cmt_counter.c:159",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_metric_set",
+   "unit": "lib/cmetrics/src/cmt_decode_prometheus_remote_write.c",
+   "function": "decode_numerical_samples",
+   "origin": "lib/cmetrics/src/cmt_decode_prometheus_remote_write.c:300",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_metric_set",
+   "unit": "lib/cmetrics/src/cmt_encode_prometheus_remote_write.c",
+   "function": "pack_complex_metric_sample",
+   "origin": "lib/cmetrics/src/cmt_encode_prometheus_remote_write.c:898",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_metric_set",
+   "unit": "lib/cmetrics/src/cmt_encode_prometheus_remote_write.c",
+   "function": "pack_complex_metric_sample",
+   "origin": "lib/cmetrics/src/cmt_encode_prometheus_remote_write.c:924",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_metric_set",
+   "unit": "lib/cmetrics/src/cmt_encode_prometheus_remote_write.c",
+   "function": "pack_complex_metric_sample",
+   "origin": "lib/cmetrics/src/cmt_encode_prometheus_remote_write.c:1035",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_metric_set",
+   "unit": "lib/cmetrics/src/cmt_encode_prometheus_remote_write.c",
+   "function": "pack_complex_metric_sample",
+   "origin": "lib/cmetrics/src/cmt_encode_prometheus_remote_write.c:1071",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_metric_set",
+   "unit": "lib/cmetrics/src/cmt_gauge.c",
+   "function": "cmt_gauge_set",
+   "origin": "lib/cmetrics/src/cmt_gauge.c:107",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_metric_set",
+   "unit": "lib/cmetrics/src/cmt_untyped.c",
+   "function": "cmt_untyped_set",
+   "origin": "lib/cmetrics/src/cmt_untyped.c:115",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_metric_set_exp_hist_count",
+   "unit": "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+   "function": "decode_exponential_histogram_data_point",
+   "origin": "lib/cmetrics/src/cmt_decode_opentelemetry.c:1384",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_metric_set_exp_hist_count",
+   "unit": "lib/cmetrics/src/cmt_exp_histogram.c",
+   "function": "cmt_exp_histogram_set_default",
+   "origin": "lib/cmetrics/src/cmt_exp_histogram.c:186",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_metric_set_exp_hist_sum",
+   "unit": "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+   "function": "decode_exponential_histogram_data_point",
+   "origin": "lib/cmetrics/src/cmt_decode_opentelemetry.c:1385",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_metric_set_exp_hist_sum",
+   "unit": "lib/cmetrics/src/cmt_exp_histogram.c",
+   "function": "cmt_exp_histogram_set_default",
+   "origin": "lib/cmetrics/src/cmt_exp_histogram.c:187",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_metric_sub",
+   "unit": "lib/cmetrics/src/cmt_gauge.c",
+   "function": "cmt_gauge_sub",
+   "origin": "lib/cmetrics/src/cmt_gauge.c:176",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_summary_count_set",
+   "unit": "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+   "function": "decode_summary_data_point",
+   "origin": "lib/cmetrics/src/cmt_decode_opentelemetry.c:954",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_summary_quantile_set",
+   "unit": "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+   "function": "decode_summary_data_point",
+   "origin": "lib/cmetrics/src/cmt_decode_opentelemetry.c:949",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_summary_sum_set",
+   "unit": "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+   "function": "decode_summary_data_point",
+   "origin": "lib/cmetrics/src/cmt_decode_opentelemetry.c:953",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_time_from_ns",
+   "unit": "lib/cmetrics/src/cmt_encode_splunk_hec.c",
+   "function": "format_context_common",
+   "origin": "lib/cmetrics/src/cmt_encode_splunk_hec.c:198",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "cmt_time_from_ns",
+   "unit": "lib/cmetrics/src/cmt_encode_text.c",
+   "function": "format_metric",
+   "origin": "lib/cmetrics/src/cmt_encode_text.c:517",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_attributes_count",
+   "unit": "lib/ctraces/src/ctr_encode_opentelemetry.c",
+   "function": "set_event",
+   "origin": "lib/ctraces/src/ctr_encode_opentelemetry.c:721",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_attributes_create",
+   "unit": "lib/ctraces/src/ctr_decode_msgpack.c",
+   "function": "unpack_instrumentation_scope_attributes",
+   "origin": "lib/ctraces/src/ctr_decode_msgpack.c:111",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_attributes_create",
+   "unit": "lib/ctraces/src/ctr_resource.c",
+   "function": "ctr_resource_create",
+   "origin": "lib/ctraces/src/ctr_resource.c:34",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_attributes_create",
+   "unit": "lib/ctraces/src/ctr_span.c",
+   "function": "ctr_span_create",
+   "origin": "lib/ctraces/src/ctr_span.c:57",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_attributes_create",
+   "unit": "lib/ctraces/src/ctr_span.c",
+   "function": "ctr_span_event_add_ts",
+   "origin": "lib/ctraces/src/ctr_span.c:471",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_attributes_destroy",
+   "unit": "lib/ctraces/src/ctr_decode_msgpack.c",
+   "function": "unpack_instrumentation_scope_attributes",
+   "origin": "lib/ctraces/src/ctr_decode_msgpack.c:123",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_attributes_destroy",
+   "unit": "lib/ctraces/src/ctr_decode_msgpack.c",
+   "function": "unpack_instrumentation_scope_attributes",
+   "origin": "lib/ctraces/src/ctr_decode_msgpack.c:128",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_attributes_destroy",
+   "unit": "lib/ctraces/src/ctr_decode_opentelemetry.c",
+   "function": "convert_otel_attrs",
+   "origin": "lib/ctraces/src/ctr_decode_opentelemetry.c:430",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_attributes_destroy",
+   "unit": "lib/ctraces/src/ctr_decode_opentelemetry.c",
+   "function": "convert_otel_attrs",
+   "origin": "lib/ctraces/src/ctr_decode_opentelemetry.c:454",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_attributes_destroy",
+   "unit": "lib/ctraces/src/ctr_decode_opentelemetry.c",
+   "function": "ctr_scope_span_set_scope",
+   "origin": "lib/ctraces/src/ctr_decode_opentelemetry.c:556",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_attributes_destroy",
+   "unit": "lib/ctraces/src/ctr_decode_opentelemetry.c",
+   "function": "span_set_attributes",
+   "origin": "lib/ctraces/src/ctr_decode_opentelemetry.c:476",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_attributes_destroy",
+   "unit": "lib/ctraces/src/ctr_link.c",
+   "function": "ctr_link_destroy",
+   "origin": "lib/ctraces/src/ctr_link.c:144",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_attributes_destroy",
+   "unit": "lib/ctraces/src/ctr_link.c",
+   "function": "ctr_link_set_attributes",
+   "origin": "lib/ctraces/src/ctr_link.c:112",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_attributes_destroy",
+   "unit": "lib/ctraces/src/ctr_resource.c",
+   "function": "ctr_resource_destroy",
+   "origin": "lib/ctraces/src/ctr_resource.c:83",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_attributes_destroy",
+   "unit": "lib/ctraces/src/ctr_resource.c",
+   "function": "ctr_resource_set_attributes",
+   "origin": "lib/ctraces/src/ctr_resource.c:68",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_attributes_destroy",
+   "unit": "lib/ctraces/src/ctr_scope.c",
+   "function": "ctr_instrumentation_scope_destroy",
+   "origin": "lib/ctraces/src/ctr_scope.c:146",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_attributes_destroy",
+   "unit": "lib/ctraces/src/ctr_span.c",
+   "function": "ctr_span_destroy",
+   "origin": "lib/ctraces/src/ctr_span.c:416",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_attributes_destroy",
+   "unit": "lib/ctraces/src/ctr_span.c",
+   "function": "ctr_span_event_delete",
+   "origin": "lib/ctraces/src/ctr_span.c:559",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_attributes_destroy",
+   "unit": "lib/ctraces/src/ctr_span.c",
+   "function": "ctr_span_event_set_attributes",
+   "origin": "lib/ctraces/src/ctr_span.c:541",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_attributes_destroy",
+   "unit": "lib/ctraces/src/ctr_span.c",
+   "function": "ctr_span_set_attributes",
+   "origin": "lib/ctraces/src/ctr_span.c:224",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_create",
+   "unit": "lib/ctraces/src/ctr_decode_opentelemetry.c",
+   "function": "ctr_decode_opentelemetry_create",
+   "origin": "lib/ctraces/src/ctr_decode_opentelemetry.c:663",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_id_get_buf",
+   "unit": "lib/ctraces/src/ctr_encode_opentelemetry.c",
+   "function": "otel_span_set_links",
+   "origin": "lib/ctraces/src/ctr_encode_opentelemetry.c:862",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_id_get_buf",
+   "unit": "lib/ctraces/src/ctr_encode_opentelemetry.c",
+   "function": "otel_span_set_links",
+   "origin": "lib/ctraces/src/ctr_encode_opentelemetry.c:870",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_id_get_buf",
+   "unit": "lib/ctraces/src/ctr_encode_opentelemetry.c",
+   "function": "otel_span_set_parent_span_id",
+   "origin": "lib/ctraces/src/ctr_encode_opentelemetry.c:652",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_id_get_buf",
+   "unit": "lib/ctraces/src/ctr_encode_opentelemetry.c",
+   "function": "otel_span_set_span_id",
+   "origin": "lib/ctraces/src/ctr_encode_opentelemetry.c:635",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_id_get_buf",
+   "unit": "lib/ctraces/src/ctr_encode_opentelemetry.c",
+   "function": "otel_span_set_trace_id",
+   "origin": "lib/ctraces/src/ctr_encode_opentelemetry.c:618",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_id_get_buf",
+   "unit": "lib/ctraces/src/ctr_link.c",
+   "function": "ctr_link_create_with_cid",
+   "origin": "lib/ctraces/src/ctr_link.c:71",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_id_get_buf",
+   "unit": "lib/ctraces/src/ctr_link.c",
+   "function": "ctr_link_create_with_cid",
+   "origin": "lib/ctraces/src/ctr_link.c:76",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_id_to_lower_base16",
+   "unit": "lib/ctraces/src/ctr_encode_msgpack.c",
+   "function": "pack_id",
+   "origin": "lib/ctraces/src/ctr_encode_msgpack.c:202",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_id_to_lower_base16",
+   "unit": "lib/ctraces/src/ctr_encode_text.c",
+   "function": "format_span",
+   "origin": "lib/ctraces/src/ctr_encode_text.c:228",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_id_to_lower_base16",
+   "unit": "lib/ctraces/src/ctr_encode_text.c",
+   "function": "format_span",
+   "origin": "lib/ctraces/src/ctr_encode_text.c:239",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_id_to_lower_base16",
+   "unit": "lib/ctraces/src/ctr_encode_text.c",
+   "function": "format_span",
+   "origin": "lib/ctraces/src/ctr_encode_text.c:250",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_id_to_lower_base16",
+   "unit": "lib/ctraces/src/ctr_encode_text.c",
+   "function": "format_span",
+   "origin": "lib/ctraces/src/ctr_encode_text.c:347",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_id_to_lower_base16",
+   "unit": "lib/ctraces/src/ctr_encode_text.c",
+   "function": "format_span",
+   "origin": "lib/ctraces/src/ctr_encode_text.c:358",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_link_set_dropped_attr_count",
+   "unit": "lib/ctraces/src/ctr_decode_opentelemetry.c",
+   "function": "ctr_span_set_links",
+   "origin": "lib/ctraces/src/ctr_decode_opentelemetry.c:604",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_link_set_flags",
+   "unit": "lib/ctraces/src/ctr_decode_opentelemetry.c",
+   "function": "ctr_span_set_links",
+   "origin": "lib/ctraces/src/ctr_decode_opentelemetry.c:605",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_mpack_consume_int32_tag",
+   "unit": "lib/ctraces/src/ctr_decode_msgpack.c",
+   "function": "unpack_span_kind",
+   "origin": "lib/ctraces/src/ctr_decode_msgpack.c:514",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_mpack_consume_int32_tag",
+   "unit": "lib/ctraces/src/ctr_decode_msgpack.c",
+   "function": "unpack_span_status_code",
+   "origin": "lib/ctraces/src/ctr_decode_msgpack.c:598",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_mpack_consume_uint32_tag",
+   "unit": "lib/ctraces/src/ctr_decode_msgpack.c",
+   "function": "unpack_event_dropped_attributes_count",
+   "origin": "lib/ctraces/src/ctr_decode_msgpack.c:227",
+   "shape": "return",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_mpack_consume_uint32_tag",
+   "unit": "lib/ctraces/src/ctr_decode_msgpack.c",
+   "function": "unpack_instrumentation_scope_dropped_attribute_count",
+   "origin": "lib/ctraces/src/ctr_decode_msgpack.c:96",
+   "shape": "return",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_mpack_consume_uint32_tag",
+   "unit": "lib/ctraces/src/ctr_decode_msgpack.c",
+   "function": "unpack_link_dropped_attributes_count",
+   "origin": "lib/ctraces/src/ctr_decode_msgpack.c:306",
+   "shape": "return",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_mpack_consume_uint32_tag",
+   "unit": "lib/ctraces/src/ctr_decode_msgpack.c",
+   "function": "unpack_link_flags",
+   "origin": "lib/ctraces/src/ctr_decode_msgpack.c:313",
+   "shape": "return",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_mpack_consume_uint32_tag",
+   "unit": "lib/ctraces/src/ctr_decode_msgpack.c",
+   "function": "unpack_resource_dropped_attributes_count",
+   "origin": "lib/ctraces/src/ctr_decode_msgpack.c:33",
+   "shape": "return",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_mpack_consume_uint32_tag",
+   "unit": "lib/ctraces/src/ctr_decode_msgpack.c",
+   "function": "unpack_span_dropped_attributes_count",
+   "origin": "lib/ctraces/src/ctr_decode_msgpack.c:564",
+   "shape": "return",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_mpack_consume_uint32_tag",
+   "unit": "lib/ctraces/src/ctr_decode_msgpack.c",
+   "function": "unpack_span_dropped_events_count",
+   "origin": "lib/ctraces/src/ctr_decode_msgpack.c:571",
+   "shape": "return",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_mpack_consume_uint32_tag",
+   "unit": "lib/ctraces/src/ctr_decode_msgpack.c",
+   "function": "unpack_span_dropped_links_count",
+   "origin": "lib/ctraces/src/ctr_decode_msgpack.c:578",
+   "shape": "return",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_mpack_consume_uint32_tag",
+   "unit": "lib/ctraces/src/ctr_decode_msgpack.c",
+   "function": "unpack_span_flags",
+   "origin": "lib/ctraces/src/ctr_decode_msgpack.c:487",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_mpack_consume_uint64_tag",
+   "unit": "lib/ctraces/src/ctr_decode_msgpack.c",
+   "function": "unpack_event_time_unix_nano",
+   "origin": "lib/ctraces/src/ctr_decode_msgpack.c:196",
+   "shape": "return",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_mpack_consume_uint64_tag",
+   "unit": "lib/ctraces/src/ctr_decode_msgpack.c",
+   "function": "unpack_span_end_time_unix_nano",
+   "origin": "lib/ctraces/src/ctr_decode_msgpack.c:533",
+   "shape": "return",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_mpack_consume_uint64_tag",
+   "unit": "lib/ctraces/src/ctr_decode_msgpack.c",
+   "function": "unpack_span_start_time_unix_nano",
+   "origin": "lib/ctraces/src/ctr_decode_msgpack.c:526",
+   "shape": "return",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_random_get",
+   "unit": "lib/ctraces/src/ctr_id.c",
+   "function": "ctr_id_create_random",
+   "origin": "lib/ctraces/src/ctr_id.c:39",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_resource_set_dropped_attr_count",
+   "unit": "lib/ctraces/src/ctr_decode_opentelemetry.c",
+   "function": "ctr_decode_opentelemetry_create",
+   "origin": "lib/ctraces/src/ctr_decode_opentelemetry.c:698",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_resource_set_dropped_attr_count",
+   "unit": "lib/ctraces/src/ctr_decode_opentelemetry.c",
+   "function": "resource_set_data",
+   "origin": "lib/ctraces/src/ctr_decode_opentelemetry.c:536",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_resource_span_get_resource",
+   "unit": "lib/ctraces/src/ctr_decode_opentelemetry.c",
+   "function": "ctr_decode_opentelemetry_create",
+   "origin": "lib/ctraces/src/ctr_decode_opentelemetry.c:692",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_span_end_ts",
+   "unit": "lib/ctraces/src/ctr_decode_opentelemetry.c",
+   "function": "ctr_decode_opentelemetry_create",
+   "origin": "lib/ctraces/src/ctr_decode_opentelemetry.c:783",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_span_event_set_dropped_attributes_count",
+   "unit": "lib/ctraces/src/ctr_decode_opentelemetry.c",
+   "function": "span_set_events",
+   "origin": "lib/ctraces/src/ctr_decode_opentelemetry.c:518",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "ctr_span_start_ts",
+   "unit": "lib/ctraces/src/ctr_decode_opentelemetry.c",
+   "function": "ctr_decode_opentelemetry_create",
+   "origin": "lib/ctraces/src/ctr_decode_opentelemetry.c:782",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_config_sanity_check",
+   "unit": "lib/monkey/mk_server/monkey.c",
+   "function": "mk_server_setup",
+   "origin": "lib/monkey/mk_server/monkey.c:228",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_config_signature",
+   "unit": "lib/monkey/mk_server/monkey.c",
+   "function": "mk_server_setup",
+   "origin": "lib/monkey/mk_server/monkey.c:205",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_core_init",
+   "unit": "lib/monkey/mk_server/monkey.c",
+   "function": "mk_server_create",
+   "origin": "lib/monkey/mk_server/monkey.c:158",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_event_init",
+   "unit": "lib/monkey/mk_server/monkey.c",
+   "function": "mk_server_create",
+   "origin": "lib/monkey/mk_server/monkey.c:101",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_fifo_send",
+   "unit": "lib/monkey/mk_server/mk_lib.c",
+   "function": "mk_mq_send",
+   "origin": "lib/monkey/mk_server/mk_lib.c:788",
+   "shape": "return",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_header_set_http_status",
+   "unit": "lib/monkey/mk_server/mk_http.c",
+   "function": "mk_http_directory_redirect_check",
+   "origin": "lib/monkey/mk_server/mk_http.c:591",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_header_set_http_status",
+   "unit": "lib/monkey/mk_server/mk_http.c",
+   "function": "mk_http_error",
+   "origin": "lib/monkey/mk_server/mk_http.c:1276",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_header_set_http_status",
+   "unit": "lib/monkey/mk_server/mk_http.c",
+   "function": "mk_http_init",
+   "origin": "lib/monkey/mk_server/mk_http.c:960",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_header_set_http_status",
+   "unit": "lib/monkey/mk_server/mk_http.c",
+   "function": "mk_http_init",
+   "origin": "lib/monkey/mk_server/mk_http.c:1018",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_header_set_http_status",
+   "unit": "lib/monkey/mk_server/mk_http.c",
+   "function": "mk_http_init",
+   "origin": "lib/monkey/mk_server/mk_http.c:1054",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_header_set_http_status",
+   "unit": "lib/monkey/mk_server/mk_http.c",
+   "function": "mk_http_request_prepare",
+   "origin": "lib/monkey/mk_server/mk_http.c:214",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_iov_send",
+   "unit": "lib/monkey/mk_server/mk_net.c",
+   "function": "net_plain_writev",
+   "origin": "lib/monkey/mk_server/mk_net.c:64",
+   "shape": "return",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_kernel_features",
+   "unit": "lib/monkey/mk_server/monkey.c",
+   "function": "mk_server_create",
+   "origin": "lib/monkey/mk_server/monkey.c:165",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_net_init",
+   "unit": "lib/monkey/mk_server/mk_socket.c",
+   "function": "mk_socket_server",
+   "origin": "lib/monkey/mk_server/mk_socket.c:302",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_net_init",
+   "unit": "lib/monkey/mk_server/monkey.c",
+   "function": "mk_server_create",
+   "origin": "lib/monkey/mk_server/monkey.c:100",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_net_transport_default",
+   "unit": "lib/monkey/mk_server/mk_server.c",
+   "function": "mk_server_listen_init",
+   "origin": "lib/monkey/mk_server/mk_server.c:237",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_plugin_exit_worker",
+   "unit": "lib/monkey/mk_server/mk_scheduler.c",
+   "function": "mk_sched_worker_free",
+   "origin": "lib/monkey/mk_server/mk_scheduler.c:132",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_plugin_lookup",
+   "unit": "lib/monkey/mk_server/mk_vhost.c",
+   "function": "mk_vhost_map_handlers",
+   "origin": "lib/monkey/mk_server/mk_vhost.c:578",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_rconf_section_get",
+   "unit": "lib/monkey/mk_server/mk_config.c",
+   "function": "mk_config_read_files",
+   "origin": "lib/monkey/mk_server/mk_config.c:324",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_rconf_section_get",
+   "unit": "lib/monkey/mk_server/mk_mimetype.c",
+   "function": "mk_mimetype_read_config",
+   "origin": "lib/monkey/mk_server/mk_mimetype.c:173",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_rconf_section_get",
+   "unit": "lib/monkey/mk_server/mk_plugin.c",
+   "function": "mk_plugin_load_all",
+   "origin": "lib/monkey/mk_server/mk_plugin.c:476",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_rconf_section_get",
+   "unit": "lib/monkey/mk_server/mk_vhost.c",
+   "function": "mk_vhost_read",
+   "origin": "lib/monkey/mk_server/mk_vhost.c:370",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_rconf_section_get",
+   "unit": "lib/monkey/mk_server/mk_vhost.c",
+   "function": "mk_vhost_read",
+   "origin": "lib/monkey/mk_server/mk_vhost.c:461",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_rconf_section_get",
+   "unit": "lib/monkey/mk_server/mk_vhost.c",
+   "function": "mk_vhost_read",
+   "origin": "lib/monkey/mk_server/mk_vhost.c:500",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_sched_broadcast_signal",
+   "unit": "lib/monkey/mk_server/mk_server.c",
+   "function": "mk_server_loop",
+   "origin": "lib/monkey/mk_server/mk_server.c:674",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_sched_broadcast_signal",
+   "unit": "lib/monkey/mk_server/monkey.c",
+   "function": "mk_exit_all",
+   "origin": "lib/monkey/mk_server/monkey.c:245",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_sched_get_connection",
+   "unit": "lib/monkey/mk_server/mk_plugin.c",
+   "function": "mk_plugin_sched_remove_client",
+   "origin": "lib/monkey/mk_server/mk_plugin.c:730",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_sched_handler_cap",
+   "unit": "lib/monkey/mk_server/mk_server.c",
+   "function": "mk_server_listen_init",
+   "origin": "lib/monkey/mk_server/mk_server.c:219",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_sched_threads_destroy_conn",
+   "unit": "lib/monkey/mk_server/mk_scheduler.c",
+   "function": "mk_sched_drop_connection",
+   "origin": "lib/monkey/mk_server/mk_scheduler.c:577",
+   "shape": "statement-call",
+   "reason": "same-unit-external"
+  },
+  {
+   "callee": "mk_sched_worker_cb_free",
+   "unit": "lib/monkey/mk_server/mk_scheduler.c",
+   "function": "mk_sched_exit",
+   "origin": "lib/monkey/mk_server/mk_scheduler.c:509",
+   "shape": "statement-call",
+   "reason": "same-unit-external"
+  },
+  {
+   "callee": "mk_socket_create",
+   "unit": "lib/monkey/mk_server/mk_net.c",
+   "function": "mk_net_conn_create",
+   "origin": "lib/monkey/mk_server/mk_net.c:253",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_socket_create",
+   "unit": "lib/monkey/mk_server/mk_socket.c",
+   "function": "mk_socket_connect",
+   "origin": "lib/monkey/mk_server/mk_socket.c:202",
+   "shape": "assignment-or-initializer",
+   "reason": "same-unit-external"
+  },
+  {
+   "callee": "mk_socket_create",
+   "unit": "lib/monkey/mk_server/mk_socket.c",
+   "function": "mk_socket_open",
+   "origin": "lib/monkey/mk_server/mk_socket.c:148",
+   "shape": "assignment-or-initializer",
+   "reason": "same-unit-external"
+  },
+  {
+   "callee": "mk_socket_create",
+   "unit": "lib/monkey/mk_server/mk_socket.c",
+   "function": "mk_socket_server",
+   "origin": "lib/monkey/mk_server/mk_socket.c:311",
+   "shape": "assignment-or-initializer",
+   "reason": "same-unit-external"
+  },
+  {
+   "callee": "mk_string_copy_substr",
+   "unit": "lib/monkey/mk_core/mk_rconf.c",
+   "function": "mk_rconf_meta_add",
+   "origin": "lib/monkey/mk_core/mk_rconf.c:165",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_string_copy_substr",
+   "unit": "lib/monkey/mk_core/mk_rconf.c",
+   "function": "mk_rconf_meta_add",
+   "origin": "lib/monkey/mk_core/mk_rconf.c:168",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_string_copy_substr",
+   "unit": "lib/monkey/mk_core/mk_rconf.c",
+   "function": "mk_rconf_read",
+   "origin": "lib/monkey/mk_core/mk_rconf.c:341",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_string_copy_substr",
+   "unit": "lib/monkey/mk_core/mk_rconf.c",
+   "function": "mk_rconf_read",
+   "origin": "lib/monkey/mk_core/mk_rconf.c:370",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_string_copy_substr",
+   "unit": "lib/monkey/mk_core/mk_rconf.c",
+   "function": "mk_rconf_read",
+   "origin": "lib/monkey/mk_core/mk_rconf.c:396",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_string_copy_substr",
+   "unit": "lib/monkey/mk_core/mk_rconf.c",
+   "function": "mk_rconf_read",
+   "origin": "lib/monkey/mk_core/mk_rconf.c:397",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_string_copy_substr",
+   "unit": "lib/monkey/mk_server/mk_http.c",
+   "function": "mk_http_range_parse",
+   "origin": "lib/monkey/mk_server/mk_http.c:493",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_string_copy_substr",
+   "unit": "lib/monkey/mk_server/mk_http.c",
+   "function": "mk_http_range_parse",
+   "origin": "lib/monkey/mk_server/mk_http.c:500",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_string_copy_substr",
+   "unit": "lib/monkey/mk_server/mk_http.c",
+   "function": "mk_http_range_parse",
+   "origin": "lib/monkey/mk_server/mk_http.c:516",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_string_copy_substr",
+   "unit": "lib/monkey/mk_server/mk_kernel.c",
+   "function": "mk_kernel_version",
+   "origin": "lib/monkey/mk_server/mk_kernel.c:60",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_string_copy_substr",
+   "unit": "lib/monkey/mk_server/mk_kernel.c",
+   "function": "mk_kernel_version",
+   "origin": "lib/monkey/mk_server/mk_kernel.c:73",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_string_search_n",
+   "unit": "lib/monkey/mk_server/mk_http_parser.c",
+   "function": "header_lookup",
+   "origin": "lib/monkey/mk_server/mk_http_parser.c:365",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_string_search_n",
+   "unit": "lib/monkey/mk_server/mk_http_parser.c",
+   "function": "header_lookup",
+   "origin": "lib/monkey/mk_server/mk_http_parser.c:374",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_string_search_n",
+   "unit": "lib/monkey/mk_server/mk_http_parser.c",
+   "function": "header_lookup",
+   "origin": "lib/monkey/mk_server/mk_http_parser.c:389",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_string_search_n",
+   "unit": "lib/monkey/mk_server/mk_http_parser.c",
+   "function": "header_lookup",
+   "origin": "lib/monkey/mk_server/mk_http_parser.c:398",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_string_search_n",
+   "unit": "lib/monkey/mk_server/mk_http_parser.c",
+   "function": "header_lookup",
+   "origin": "lib/monkey/mk_server/mk_http_parser.c:407",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_string_search_n",
+   "unit": "lib/monkey/mk_server/mk_http_parser.c",
+   "function": "header_lookup",
+   "origin": "lib/monkey/mk_server/mk_http_parser.c:416",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_string_search_n",
+   "unit": "lib/monkey/mk_server/mk_http_parser.c",
+   "function": "header_lookup",
+   "origin": "lib/monkey/mk_server/mk_http_parser.c:425",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_string_search_n",
+   "unit": "lib/monkey/mk_server/mk_http_parser.c",
+   "function": "http_parser_transfer_encoding_chunked",
+   "origin": "lib/monkey/mk_server/mk_http_parser.c:584",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_tls_exit",
+   "unit": "lib/monkey/mk_server/monkey.c",
+   "function": "mk_exit_all",
+   "origin": "lib/monkey/mk_server/monkey.c:252",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_tls_init",
+   "unit": "lib/monkey/mk_server/monkey.c",
+   "function": "mk_server_setup",
+   "origin": "lib/monkey/mk_server/monkey.c:206",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_tls_thread_init",
+   "unit": "lib/monkey/mk_server/mk_scheduler.c",
+   "function": "mk_sched_launch_worker_loop",
+   "origin": "lib/monkey/mk_server/mk_scheduler.c:394",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_tls_transport",
+   "unit": "lib/monkey/mk_server/mk_server.c",
+   "function": "mk_server_listen_init",
+   "origin": "lib/monkey/mk_server/mk_server.c:244",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_utils_worker_rename",
+   "unit": "lib/monkey/mk_server/mk_clock.c",
+   "function": "mk_clock_worker_init",
+   "origin": "lib/monkey/mk_server/mk_clock.c:111",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_utils_worker_rename",
+   "unit": "lib/monkey/mk_server/mk_scheduler.c",
+   "function": "mk_sched_launch_worker_loop",
+   "origin": "lib/monkey/mk_server/mk_scheduler.c:389",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "mk_utils_worker_rename",
+   "unit": "lib/monkey/mk_server/mk_server.c",
+   "function": "mk_server_loop",
+   "origin": "lib/monkey/mk_server/mk_server.c:666",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_http_error_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "rd_kafka_oidc_token_client_credentials_refresh_cb",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c:973",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_http_error_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "rd_kafka_oidc_token_jwt_bearer_refresh_cb",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c:853",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_http_error_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "rd_kafka_oidc_token_metadata_azure_imds_refresh_cb",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c:1091",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_http_error_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_should_succeed",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c:1227",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_http_error_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_with_empty_key",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c:1276",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_ElectLeadersResult_partitions",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_ElectLeaders_result_partitions",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:9661",
+   "shape": "return",
+   "reason": "same-unit-internal"
+  },
+  {
+   "callee": "rd_kafka_Produce_result_new",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+   "function": "rd_kafka_handle_Produce",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_request.c:5038",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_Produce_result_new",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+   "function": "unittest_idempotent_producer",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_request.c:6995",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_acl_result_new",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_CreateAclsResponse_parse",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:5467",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_admin_result_ret_acl_bindings",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_DescribeAcls_result_acls",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:6508",
+   "shape": "return",
+   "reason": "same-unit-internal"
+  },
+  {
+   "callee": "rd_kafka_admin_result_ret_acl_results",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_CreateAcls_result_acls",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:5524",
+   "shape": "return",
+   "reason": "same-unit-internal"
+  },
+  {
+   "callee": "rd_kafka_admin_result_ret_delete_acl_result_responses",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_DeleteAcls_result_responses",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:6565",
+   "shape": "return",
+   "reason": "same-unit-internal"
+  },
+  {
+   "callee": "rd_kafka_brokers_get_state_version",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka.c",
+   "function": "rd_kafka_committed",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka.c:5398",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_brokers_get_state_version",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka.c",
+   "function": "rd_kafka_controllerid",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka.c:6374",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_brokers_get_state_version",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka.c",
+   "function": "rd_kafka_list_groups",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka.c:6931",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_brokers_wait_state_change",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka.c",
+   "function": "rd_kafka_controllerid",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka.c:6398",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_buf_calc_timeout",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "function": "rd_kafka_broker_buf_enq0",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_broker.c:1186",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_buf_upgrade_flexver_request",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+   "function": "rd_kafka_make_ListOffsetsRequest",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_request.c:832",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_bufq_init",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "function": "rd_kafka_broker_fail",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_broker.c:691",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_bufq_init",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "function": "rd_kafka_broker_fail",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_broker.c:692",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_confval_get_int",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_ListConsumerGroupOffsetsRequest",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:7101",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_confval_get_int",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_ListConsumerGroupOffsetsRequest",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:7102",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_confval_get_int",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_admin_ConsumerGroupDescribeRequest",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:8235",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_confval_get_int",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_admin_DescribeClusterRequest",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:9498",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_confval_get_int",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_admin_DescribeConsumerGroupsRequest",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:8189",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_confval_get_int",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_admin_DescribeTopicsRequest",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:9185",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_confval_get_int",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+   "function": "rd_kafka_AlterConfigsRequest",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_request.c:5617",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_confval_get_int",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+   "function": "rd_kafka_CreateAclsRequest",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_request.c:5989",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_confval_get_int",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+   "function": "rd_kafka_CreatePartitionsRequest",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_request.c:5519",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_confval_get_int",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+   "function": "rd_kafka_CreateTopicsRequest",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_request.c:5268",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_confval_get_int",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+   "function": "rd_kafka_DeleteAclsRequest",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_request.c:6219",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_confval_get_int",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+   "function": "rd_kafka_DeleteRecordsRequest",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_request.c:5414",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_confval_get_int",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+   "function": "rd_kafka_DeleteTopicsRequest",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_request.c:5344",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_confval_get_int",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+   "function": "rd_kafka_DescribeAclsRequest",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_request.c:6100",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_confval_get_int",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+   "function": "rd_kafka_DescribeConfigsRequest",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_request.c:5803",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_confval_get_int",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+   "function": "rd_kafka_ElectLeadersRequest",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_request.c:6307",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_confval_get_int",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+   "function": "rd_kafka_IncrementalAlterConfigsRequest",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_request.c:5703",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_consumer_group_metadata_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_AlterConsumerGroupOffsetsRequest",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:6865",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_consumer_group_state_code",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_ListConsumerGroupsResponse_parse",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:7526",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_consumer_group_state_name",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_admin_ListConsumerGroupsRequest",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:7421",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_consumer_group_type_code",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_ListConsumerGroupsResponse_parse",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:7531",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_consumer_group_type_name",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_admin_ListConsumerGroupsRequest",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:7431",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_coord_reqs_init",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka.c",
+   "function": "rd_kafka_new",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka.c:2633",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_code",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka.c",
+   "function": "rd_kafka_share_consumer_closed_err",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka.c:3835",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_code",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_admin_ConsumerGroupDescribeRequest",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:8245",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_code",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_admin_DescribeConsumerGroupsRequest",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:8200",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_code",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_admin_ListConsumerGroupsRequest",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:7450",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_code",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c",
+   "function": "rd_kafka_share_acknowledge_offset",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c:1053",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_code",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c",
+   "function": "rd_kafka_share_acknowledge_type",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c:1019",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_code",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_subscription.c",
+   "function": "rd_kafka_assign",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_subscription.c:247",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_code",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_subscription.c",
+   "function": "rd_kafka_share_subscribe",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_subscription.c:154",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_code",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_subscription.c",
+   "function": "rd_kafka_share_subscription",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_subscription.c:382",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_code",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_subscription.c",
+   "function": "rd_kafka_share_unsubscribe",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_subscription.c:58",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka.c",
+   "function": "rd_kafka_ListGroups_resp_cb",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka.c:6896",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka.c",
+   "function": "rd_kafka_consumer_close",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka.c:5328",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka.c",
+   "function": "rd_kafka_destroy_app",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka.c:1226",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka.c",
+   "function": "rd_kafka_list_groups",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka.c:6978",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka.c",
+   "function": "rd_kafka_share_consumer_closed_err",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka.c:3836",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_AclBinding_destroy",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:5401",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_AlterUserScramCredentials_result_response_destroy",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:6145",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_AlterUserScramCredentials_result_response_set_error",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:6158",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_ConsumerGroupDescribeResponse_parse",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:8656",
+   "shape": "nested-in-call-or-expression",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_ConsumerGroupDescribeResponse_parse",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:8676",
+   "shape": "nested-in-call-or-expression",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_ConsumerGroupDescription_destroy",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:8080",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_DeleteAcls_result_response_destroy",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:6545",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_DescribeConsumerGroupsResponse_parse",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:8438",
+   "shape": "nested-in-call-or-expression",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_DescribeConsumerGroupsResponse_parse",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:8466",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_DescribeConsumerGroups_response_merge",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:8762",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_DescribeTopicsResponse_parse",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:9255",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_TopicDescription_destroy",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:9070",
+   "shape": "nested-in-call-or-expression",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_UserScramCredentailsDescription_set_error",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:5766",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_UserScramCredentialsDescription_destroy",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:5752",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_admin_ConsumerGroupDescribeRequest",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:8246",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_admin_DescribeConsumerGroupsRequest",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:8201",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_admin_ListConsumerGroupsRequest",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:7451",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_aux.c",
+   "function": "rd_kafka_acl_result_destroy",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_aux.c:216",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_aux.c",
+   "function": "rd_kafka_group_result_destroy",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_aux.c:178",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_aux.c",
+   "function": "rd_kafka_topic_partition_result_destroy",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_aux.c:373",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+   "function": "rd_kafka_rebalance_op",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c:1511",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+   "function": "rd_kafka_rebalance_op_incr",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c:1390",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_op.c",
+   "function": "rd_kafka_op_destroy",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_op.c:610",
+   "shape": "nested-in-call-or-expression",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_op.c",
+   "function": "rd_kafka_op_error_reply",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_op.c:831",
+   "shape": "nested-in-call-or-expression",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c",
+   "function": "rd_kafka_share_acknowledge_offset",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c:1054",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c",
+   "function": "rd_kafka_share_acknowledge_type",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c:1020",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_subscription.c",
+   "function": "rd_kafka_assign",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_subscription.c:248",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_subscription.c",
+   "function": "rd_kafka_share_subscribe",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_subscription.c:155",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_subscription.c",
+   "function": "rd_kafka_share_subscription",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_subscription.c:383",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_subscription.c",
+   "function": "rd_kafka_share_unsubscribe",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_subscription.c:59",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c",
+   "function": "rd_kafka_init_transactions",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c:1380",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c",
+   "function": "rd_kafka_txn_curr_api_return0",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c:621",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c",
+   "function": "rd_kafka_txn_curr_api_set_result0",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c:658",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c",
+   "function": "rd_kafka_txn_curr_api_set_result0",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c:689",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c",
+   "function": "rd_kafka_txn_register_partitions",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c:1113",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c",
+   "function": "rd_kafka_txns_term",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c:3200",
+   "shape": "nested-in-call-or-expression",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_is_fatal",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka.c",
+   "function": "rd_kafka_consumer_close",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka.c:5326",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_set_fatal",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c",
+   "function": "rd_kafka_txn_curr_api_set_result0",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c:696",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_set_retriable",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c",
+   "function": "rd_kafka_txn_curr_api_set_result0",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c:700",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_set_txn_requires_abort",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c",
+   "function": "rd_kafka_txn_curr_api_set_result0",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c:698",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_error_set_txn_requires_abort",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c",
+   "function": "rd_kafka_txn_require_states0",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c:130",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_handle_OffsetFetch_err_action",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+   "function": "rd_kafka_toppar_op_serve",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_partition.c:2261",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_mem_malloc",
+   "unit": "lib/librdkafka-2.15.0/src/lz4.c",
+   "function": "LZ4_createStream",
+   "origin": "lib/librdkafka-2.15.0/src/lz4.c:1493",
+   "shape": "macro-or-other-line",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_mem_malloc",
+   "unit": "lib/librdkafka-2.15.0/src/lz4hc.c",
+   "function": "LZ4HC_compress_optimal",
+   "origin": "lib/librdkafka-2.15.0/src/lz4hc.c:1345",
+   "shape": "macro-or-other-line",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_mem_malloc",
+   "unit": "lib/librdkafka-2.15.0/src/lz4hc.c",
+   "function": "LZ4_compress_HC",
+   "origin": "lib/librdkafka-2.15.0/src/lz4hc.c:962",
+   "shape": "macro-or-other-line",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_message_new",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka.c",
+   "function": "rd_kafka_consumer_poll",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka.c:5138",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_messages_new",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_queue.c",
+   "function": "rd_kafka_q_serve_share_rkmessages",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_queue.c:935",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_metadata_cache_wait_change",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka.c",
+   "function": "rd_kafka_clusterid",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka.c:6354",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_metadata_cache_wait_change",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+   "function": "rd_kafka_topic_partition_list_query_leaders",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_partition.c:4298",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_metadata_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_assignor.c",
+   "function": "ut_destroy_metadata",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_assignor.c:907",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_mock_cgrp_classic_check_state",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_Heartbeat",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c:1740",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_mock_cgrp_classic_check_state",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_LeaveGroup",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c:1810",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_mock_cgrp_classic_check_state",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_OffsetCommit",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c:1063",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_mock_cgrp_classic_check_state",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_SyncGroup",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c:1887",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_mock_cgrp_classic_member_active",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_Heartbeat",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c:1744",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_mock_cgrp_classic_member_active",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_SyncGroup",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c:1891",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_mock_connection_set_blocking",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_classic_elect_leader",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c:386",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_mock_connection_set_blocking",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_classic_member_sync_set",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c:247",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_mock_connection_set_blocking",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_classic_sync_done",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c:192",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_mock_connection_set_blocking",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_JoinGroup",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c:1657",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_mock_partition_leader_epoch_check",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_Fetch",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c:505",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_mock_partition_leader_epoch_check",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_ListOffsets",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c:783",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_mock_partition_leader_epoch_check",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_OffsetCommit",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c:1143",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_mock_partition_leader_epoch_check",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_OffsetForLeaderEpoch",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c:2631",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_mock_partition_leader_epoch_check",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_TxnOffsetCommit",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c:2406",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_mock_sharegroup_member_active",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_ShareGroupHeartbeat",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c:3278",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_mock_sharegroup_member_active",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_ShareGroupHeartbeat",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c:3292",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_mock_sharegrps_init",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+   "function": "rd_kafka_mock_cluster_new",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_mock.c:3338",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_msgbatch_set_first_msg",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_msgset_writer.c",
+   "function": "rd_kafka_msgset_writer_write_msgq",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_msgset_writer.c:838",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_op_get_offset",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+   "function": "rd_kafka_op_offset_cmp",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c:966",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_op_get_offset",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+   "function": "rd_kafka_op_offset_cmp",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c:967",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_op_get_offset",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+   "function": "rd_kafka_share_build_response_rko",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c:1087",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_op_get_offset",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+   "function": "rd_kafka_share_filter_acquired_records_and_update_ack_type",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c:902",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_op_get_offset",
+   "unit": "lib/librdkafka-2.15.0/src/rdunittest_fetcher.c",
+   "function": "unittest_filter_disjoint_ranges",
+   "origin": "lib/librdkafka-2.15.0/src/rdunittest_fetcher.c:262",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_op_get_offset",
+   "unit": "lib/librdkafka-2.15.0/src/rdunittest_fetcher.c",
+   "function": "unittest_filter_partial_range",
+   "origin": "lib/librdkafka-2.15.0/src/rdunittest_fetcher.c:223",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_op_get_offset",
+   "unit": "lib/librdkafka-2.15.0/src/rdunittest_fetcher.c",
+   "function": "unittest_filter_sparse_offsets",
+   "origin": "lib/librdkafka-2.15.0/src/rdunittest_fetcher.c:354",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_outq_len",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+   "function": "unittest_idempotent_producer",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_request.c:7190",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_set_thread_name",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka.c",
+   "function": "rd_kafka_thread_main",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka.c:2390",
+   "shape": "statement-call",
+   "reason": "same-unit-external"
+  },
+  {
+   "callee": "rd_kafka_set_thread_name",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_background.c",
+   "function": "rd_kafka_background_thread_main",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_background.c:112",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_set_thread_name",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+   "function": "rd_kafka_mock_cluster_thread_main",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_mock.c:1794",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_share_ensure_all_acknowledged_if_explicit",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka.c",
+   "function": "rd_kafka_share_poll",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka.c:3979",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_ssl_init",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka.c",
+   "function": "rd_kafka_global_cnt_incr",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka.c:235",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_ssl_init",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka.c",
+   "function": "rd_kafka_global_init0",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka.c:195",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_ssl_term",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka.c",
+   "function": "rd_kafka_global_cnt_decr",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka.c:253",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_timer_next",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_metadata.c",
+   "function": "rd_kafka_metadata_fast_leader_query",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_metadata.c:1947",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_topic_partition_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_ListOffsetsResultInfo_destroy",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:4145",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_topic_partition_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_ListOffsets_response_merge",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:4187",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_topic_partition_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_aux.c",
+   "function": "rd_kafka_topic_partition_result_destroy",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_aux.c:372",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_topic_partition_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+   "function": "unittest_list_to_map",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c:8213",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_topic_partition_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+   "function": "unittest_list_to_map",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c:8217",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_topic_partition_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+   "function": "unittest_set_intersect",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c:8107",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_topic_partition_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+   "function": "unittest_set_subtract",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c:8159",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_topic_partition_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+   "function": "rd_kafka_parse_ListOffsets",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_request.c:785",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_topic_partition_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c",
+   "function": "rd_kafka_share_ack_batches_destroy",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c:140",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_topic_partition_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c",
+   "function": "rd_kafka_share_build_ack_details",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c:833",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_topic_partition_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c",
+   "function": "rd_kafka_share_find_ack_entry",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c:940",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_topic_partition_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c",
+   "function": "rd_kafka_share_partition_offsets_destroy",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c:1102",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_topic_partition_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c",
+   "function": "ut_ack_get_type",
+   "origin": "lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c:205",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_topic_partition_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c",
+   "function": "ut_ack_set_gap",
+   "origin": "lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c:175",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_topic_partition_list_destroy_free",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_subscribe",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c:6276",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_topic_partition_list_get_err",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c",
+   "function": "rd_kafka_txn_handle_TxnOffsetCommit",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c:1508",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_topic_partition_list_reset_offsets",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka.c",
+   "function": "rd_kafka_committed",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka.c:5391",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_topic_partition_list_set_err",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_DeleteRecords",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:4548",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_topic_partition_list_set_err",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_consumer_defer_offset_commit",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c:4264",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_topic_partition_set_current_leader_epoch",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_offset.c",
+   "function": "rd_kafka_offset_validate",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_offset.c:1209",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_topic_partition_set_current_leader_epoch",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+   "function": "rd_kafka_buf_read_topic_partitions_nullable",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_request.c:350",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_topic_partition_set_leader_epoch",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_offset.c",
+   "function": "rd_kafka_offset_validate",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_offset.c:1207",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_topic_partition_set_leader_epoch",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+   "function": "rd_kafka_buf_read_topic_partitions_nullable",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_request.c:347",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_topic_partition_set_leader_epoch",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+   "function": "rd_kafka_handle_OffsetFetch",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_request.c:1297",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_topic_partition_set_leader_epoch",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+   "function": "rd_kafka_parse_ListOffsets",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_request.c:772",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_topic_partition_set_leader_epoch",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+   "function": "rd_kafka_parse_ListOffsets",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_request.c:779",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_topic_partition_set_topic_id",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_consumer_target_assignment_calculate_range",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c:948",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_topic_partition_set_topic_id",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_ConsumerGroupHeartbeat",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c:2979",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_topic_partition_set_topic_id",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_Metadata",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c:1382",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_topic_partition_set_topic_id",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_ShareAcknowledge",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c:4820",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_topic_partition_set_topic_id",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_ShareFetch",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c:4066",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_topic_partition_set_topic_id",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_ShareFetch",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c:4094",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_topic_partition_set_topic_id",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_ShareFetch",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c:4239",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_topic_result_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_CreatePartitionsResponse_parse",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:2658",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_topic_result_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_CreatePartitionsResponse_parse",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:2668",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_topic_result_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_CreateTopicsResponse_parse",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:2161",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_topic_result_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_CreateTopicsResponse_parse",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:2171",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_topic_result_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_DeleteTopicsResponse_parse",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:2371",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_topic_result_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_DeleteTopicsResponse_parse",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:2381",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_toppar_purge_and_disable_queues",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_topic.c",
+   "function": "rd_kafka_topic_partitions_remove",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_topic.c:1804",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_transport_init",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka.c",
+   "function": "rd_kafka_global_cnt_incr",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka.c:233",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_transport_poll_set",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "function": "rd_kafka_broker_connect_done",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_broker.c:2687",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_transport_poll_set",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_sasl.c",
+   "function": "rd_kafka_sasl_client_new",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl.c:280",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_transport_poll_set",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c",
+   "function": "rd_kafka_transport_ssl_io_update",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c:227",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_transport_poll_set",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c",
+   "function": "rd_kafka_transport_ssl_io_update",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c:232",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafka_transport_shutdown",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+   "function": "rd_kafka_mock_next_request_error",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_mock.c:2322",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafkap_leader_discovery_metadata_init",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+   "function": "rd_kafka_handle_Fetch_metadata_update",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c:451",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafkap_leader_discovery_tmpabuf_add_alloc_topic",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+   "function": "rd_kafka_handle_Fetch_metadata_update",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c:441",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_kafkap_leader_discovery_tmpabuf_add_alloc_topics",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+   "function": "rd_kafka_handle_Fetch_metadata_update",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c:435",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_list_last",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c",
+   "function": "prepopulateCurrentAssignments",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c:1469",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_list_last",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c",
+   "function": "sortPartitions",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c:1705",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_list_set_cnt",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "function": "rd_kafka_brokers_get_nodeids_async",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_broker.c:1810",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_regex_match",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+   "function": "rd_kafka_topic_partition_match",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_partition.c:3637",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_regex_match",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_topic.c",
+   "function": "rd_kafka_topic_match",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_topic.c:2255",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_slice_crc32",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_msgset_reader.c",
+   "function": "rd_kafka_msgset_reader_msg_v0_1",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_msgset_reader.c:661",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_sockaddr_list_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "function": "rd_kafka_broker_destroy_final",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_broker.c:5165",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_sockaddr_list_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "function": "rd_kafka_broker_resolve",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_broker.c:1135",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_sockaddr_list_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "function": "rd_kafka_brokers_add0",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_broker.c:5903",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_strcmp",
+   "unit": "lib/librdkafka-2.15.0/src/rdhttp.c",
+   "function": "rd_http_ssl_configure",
+   "origin": "lib/librdkafka-2.15.0/src/rdhttp.c:223",
+   "shape": "other-expression",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_strcmp",
+   "unit": "lib/librdkafka-2.15.0/src/rdhttp.c",
+   "function": "rd_http_ssl_ctx_function",
+   "origin": "lib/librdkafka-2.15.0/src/rdhttp.c:153",
+   "shape": "other-expression",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_string_hash",
+   "unit": "lib/librdkafka-2.15.0/src/rdmap.c",
+   "function": "rd_map_str_hash",
+   "origin": "lib/librdkafka-2.15.0/src/rdmap.c:237",
+   "shape": "return",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rd_strtup_destroy",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_ConfigEntry_destroy",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:2751",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "resolve_data_point_start_timestamp",
+   "unit": "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+   "function": "apply_data_point_metadata_from_otlp_context",
+   "origin": "lib/cmetrics/src/cmt_encode_opentelemetry.c:622",
+   "shape": "assignment-or-initializer",
+   "reason": "same-unit-internal"
+  },
+  {
+   "callee": "resolve_data_point_start_timestamp",
+   "unit": "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+   "function": "apply_data_point_metadata_from_otlp_context",
+   "origin": "lib/cmetrics/src/cmt_encode_opentelemetry.c:671",
+   "shape": "assignment-or-initializer",
+   "reason": "same-unit-internal"
+  },
+  {
+   "callee": "resolve_data_point_start_timestamp",
+   "unit": "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+   "function": "apply_data_point_metadata_from_otlp_context",
+   "origin": "lib/cmetrics/src/cmt_encode_opentelemetry.c:688",
+   "shape": "assignment-or-initializer",
+   "reason": "same-unit-internal"
+  },
+  {
+   "callee": "resolve_data_point_start_timestamp",
+   "unit": "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+   "function": "apply_data_point_metadata_from_otlp_context",
+   "origin": "lib/cmetrics/src/cmt_encode_opentelemetry.c:734",
+   "shape": "assignment-or-initializer",
+   "reason": "same-unit-internal"
+  },
+  {
+   "callee": "rwlock_rdlock",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c",
+   "function": "rd_kafka_oauthbearer_has_token",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c:241",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rwlock_rdunlock",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c",
+   "function": "rd_kafka_oauthbearer_has_token",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c:243",
+   "shape": "statement-call",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rwlock_wrlock",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_group_assignment_set",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c:5310",
+   "shape": "macro-or-other-line",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rwlock_wrlock",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_topic.c",
+   "function": "rd_kafka_topic_metadata_update2",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_topic.c:1724",
+   "shape": "macro-or-other-line",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rwlock_wrunlock",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_group_assignment_set",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c:5313",
+   "shape": "macro-or-other-line",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rwlock_wrunlock",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_topic.c",
+   "function": "rd_kafka_topic_metadata_update2",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_topic.c:1741",
+   "shape": "macro-or-other-line",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "rwlock_wrunlock",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_topic.c",
+   "function": "rd_kafka_topic_metadata_update2",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_topic.c:1747",
+   "shape": "macro-or-other-line",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "sched_thread_cleanup",
+   "unit": "lib/monkey/mk_server/mk_scheduler.c",
+   "function": "mk_sched_threads_destroy_all",
+   "origin": "lib/monkey/mk_server/mk_scheduler.c:645",
+   "shape": "assignment-or-initializer",
+   "reason": "same-unit-internal"
+  },
+  {
+   "callee": "sched_thread_cleanup",
+   "unit": "lib/monkey/mk_server/mk_scheduler.c",
+   "function": "mk_sched_threads_destroy_all",
+   "origin": "lib/monkey/mk_server/mk_scheduler.c:646",
+   "shape": "assignment-or-initializer",
+   "reason": "same-unit-internal"
+  },
+  {
+   "callee": "sched_thread_cleanup",
+   "unit": "lib/monkey/mk_server/mk_scheduler.c",
+   "function": "mk_sched_threads_purge",
+   "origin": "lib/monkey/mk_server/mk_scheduler.c:637",
+   "shape": "assignment-or-initializer",
+   "reason": "same-unit-internal"
+  },
+  {
+   "callee": "thrd_current_id",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka.c",
+   "function": "rd_kafka_share_acquire",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka.c:3186",
+   "shape": "other-expression",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "thrd_current_id",
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c",
+   "function": "rd_kafka_transport_ssl_threadid_cb",
+   "origin": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c:2048",
+   "shape": "return",
+   "reason": "cross-unit"
+  },
+  {
+   "callee": "thrd_current_id",
+   "unit": "lib/librdkafka-2.15.0/src/rdrand.c",
+   "function": "rd_seed",
+   "origin": "lib/librdkafka-2.15.0/src/rdrand.c:55",
+   "shape": "assignment-or-initializer",
+   "reason": "cross-unit"
+  }
+ ]
+}

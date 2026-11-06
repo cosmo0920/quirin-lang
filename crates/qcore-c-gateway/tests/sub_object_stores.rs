@@ -289,7 +289,12 @@ fn an_owned_call_result_stored_into_a_caller_visible_record_keeps_its_refusal() 
         "`h->name = x_dup(s)`",
         "void w(struct x_holder *h, const char *s) { h->name = x_dup(s); }",
         "Unknown",
-        &[GATE],
+        // Card MEMBER-EFFECT-SUMMARY (rule 38i) re-pins this deliberately: the owned result stored into a formal's
+        // member names its premise; still `Unknown`.
+        &[
+            "unsupported:store of a custody-carrying value into `h->name`, a member of the \
+           formal `h` (member-store-through-formal)",
+        ],
     );
 }
 
