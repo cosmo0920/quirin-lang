@@ -1,0 +1,55 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "BODY-SUMMARY-REUSE",
+  "base": "13337d0af",
+  "measured_tip": "13337d0af",
+  "increment_paragraph": "**BODY-SUMMARY-REUSE** (census; stopped on a semantic choice; [report](../../reports/body-summary-reuse/README.md)) classifies why a callee whose body is Safe in every configuration still reads as `call to uncontracted function` on the user's `current` run (Fluent Bit 046accf6), re-measured with a `13337d0af` binary whose report equals the user's fresh run row for row: 165 callees, 456 sites, 307 functions, 13 sole-blocked. 438 sites (156 callees, 295 functions, 7 sole-blocked) call an external-linkage body in another unit, which rule 4c's existing import route reads only under a linked-program resolution premise that `current` does not set; 7 sites call a same-unit external-linkage body that rule 4a keeps out of W4's scope; 11 sites (6 sole-blocked) call a same-unit static body whose effects a W4 summary does not carry (a derived result with an out store; a container-element release, rule 10f(3)). Every callee has one defining configuration. The reading needs a standing for external-linkage calls that fail-closed does not settle, so the card stops with options (derive the link resolution from the linked executable, recommended; a stated link map; declared body-checked contracts; none) and changes no analyzer, contract or Lean file. An experiment run with a 165-home link map did not finish (three workers at 100 % CPU with no I/O for hours, RSS 14.4 GiB) and was stopped: CURRENT-RUN-WORKER-SPIN.",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "BODY-SUMMARY-REUSE",
+      "operation": "register",
+      "title": "A callee body Safe in every configuration yields no call summary on the current route",
+      "text": "Round 23 card B (refilled under the user's three-card rule); census in docs/reports/body-summary-reuse/.",
+      "source": "docs/reports/body-summary-reuse/README.md",
+      "recorded_by": "BODY-SUMMARY-REUSE"
+    },
+    {
+      "id": "BODY-SUMMARY-REUSE",
+      "operation": "retire",
+      "why": "CENSUS DONE, READING STOPPED (BODY-SUMMARY-REUSE, 2026-11-06, base 13337d0af): 165 callees / 456 sites / 307 functions / 13 sole-blocked, classified by reason (cross-unit external linkage 438/156/295/7; same-unit external linkage 7/5/7/0; same-unit static with effects W4 does not state 11/6/7/6) in docs/reports/body-summary-reuse/census.json. The reading itself is the existing rule 4 / 4c routes; what is missing is a standing for external-linkage calls on `current`, a user choice now tracked by BODY-SUMMARY-REUSE-LINK-STANDING; the same-unit effect vocabulary is BODY-SUMMARY-SAME-UNIT-EFFECTS; the experiment's hang is CURRENT-RUN-WORKER-SPIN.",
+      "source": "docs/reports/body-summary-reuse/README.md"
+    },
+    {
+      "id": "BODY-SUMMARY-REUSE-LINK-STANDING",
+      "operation": "register",
+      "title": "On what standing may a call to an external-linkage function be read through its analysed Safe body on the current route",
+      "text": "Measured by BODY-SUMMARY-REUSE on the user's current run (Fluent Bit 046accf6, binary 13337d0af, report equal to the user's run of 2026-11-06 row for row): 445 of the 456 sites whose callee body is Safe in every configuration involve external linkage (438 cross-unit over 156 callees and 295 functions, 7 sole-blocked: ctxTypeID_to_size, cio_chunk_hash, cio_chunk_is_up, mk_mq_send, rd_kafka_share_consumer_closed_err, net_plain_writev, rd_kafka_transport_ssl_threadid_cb; 7 same-unit external). Rule 4a refuses them on every route but rule 4c's stated link premise, which `current` does not set (the pinned corpus profile sets the eight-home map, which already names 7 of these callees at 56 sites). Options put to the user: (A, recommended) derive the resolution from the linked Fluent Bit executable (one strong global definition from the home unit's object, an executable not a shared object, Clang's call type equal to the home definition) and feed rule 4c unchanged, with Lean QCore.CrossUnitSummary extended to a derived resolution; needs the prepare step to link the executable (it links nothing today) and CURRENT-RUN-WORKER-SPIN closed; (B) a stated link map on current naming the 156 homes, conditional Safe rows, against the standing 'never new named premises' decision unless the user overrides it for link resolution; (C) declared body-checked contracts for the reachable callees (rule 13g), the CG10 precedent, out of scope for a summary card; (D) none. Upper bound on current under A or B: 438 sites, 7 functions freed of their only blocker; under C also the 7 same-unit external sites. DISCHARGE: the user's choice, implemented and measured on the current route.",
+      "source": "docs/reports/body-summary-reuse/README.md",
+      "recorded_by": "BODY-SUMMARY-REUSE"
+    },
+    {
+      "id": "BODY-SUMMARY-SAME-UNIT-EFFECTS",
+      "operation": "register",
+      "title": "Static same-unit callees with Safe bodies publish no summary for a derived result with an out store or a container-element release",
+      "text": "BODY-SUMMARY-REUSE: 11 sites, 6 callees, 7 functions, 6 sole-blocked, independent of any link question. Read from the source (a parity probe was stopped): rd_kafka_admin_result_ret_acl_results, _acl_bindings, _delete_acl_result_responses and rd_kafka_ElectLeadersResult_partitions store a count through an out-parameter and return an interior pointer of a formal (rl_elems), called as `return CALL(cast or nested actual)` from rd_kafka_CreateAcls_result_acls, rd_kafka_DescribeAcls_result_acls, rd_kafka_DeleteAcls_result_responses and rd_kafka_ElectLeaders_result_partitions; sched_thread_cleanup destroys every element of a formal's list (rule 10f(3): no summary) for mk_sched_threads_purge and mk_sched_threads_destroy_all; resolve_data_point_start_timestamp (4 sites, not sole-blocked) stores through its out-parameter and forwards it. DISCHARGE: confirm each reason with a summary-premises parity probe (QCORE_TYPED_PATH_PARITY on a two-unit selection), then either a W4 summary vocabulary for a borrowed derived result plus a scalar out store (with Lean parity, related to W43-DESCRIPTOR-W4-SUMMARIES and rule 12y) or a record that these stay refused; the 10f(3) case stays refused by rule.",
+      "source": "docs/reports/body-summary-reuse/README.md",
+      "recorded_by": "BODY-SUMMARY-REUSE"
+    },
+    {
+      "id": "CURRENT-RUN-WORKER-SPIN",
+      "operation": "register",
+      "title": "Three workers spin with no I/O after the member-facts pre-pass on a current run with a 165-home cross-unit link map",
+      "text": "BODY-SUMMARY-REUSE's experiment: quirin-audit current with the user's arguments (Fluent Bit 046accf6, --jobs 8, audit slot 7 GiB so three workers), a binary built from 13337d0af (SHA-256 cecc9a8d2df0edacc894ab635bd216c2686e706b1a7a1a4be7ca9b99db6a33c4) and QCORE_CROSS_UNIT_LINK_MAP naming 165 homes (docs/reports/body-summary-reuse/link-map-experiment.json, experiment only). Integrator's observation (2026-11-06 ~11:30 UTC): elapsed 10 h 18 min, 25.6 h CPU, console stopped after 'member facts pre-pass: 1448 unit(s), 1095 read, 2 unread', three worker threads at 100 % CPU for 7-8 h, zero rchar/wchar change over 30 s, zero major faults, VmSwap 0, RSS 14.4 GiB against its 7168 MiB admission; it held audit slot 3 while a rust-suite gate drained admission, blocking every queued audit. Stopped by its captured PID (exit 143; /proc io at stop rchar 230,970,537,276, wchar 217,222,863,036). Not reproduced without the map: the same binary and arguments with no map completed in 1 h 39 min on one worker (peak RSS 7.5 GiB), and the user's own run of the same code in under 50 min with --jobs 8. Since the route prints nothing until every phase ends, whether this is a spin or rule 4c's two-phase home replay scaling badly (W44-CALLEE-CROSS-UNIT-SUMMARY measured it costly at five homes) is undetermined. DISCHARGE: reproduce on a smaller map with per-phase progress lines and a wall-clock limit, find the hot loop, fix or bound it (a spin is a defect; a cost needs a per-home budget reported as Unknown on exhaustion, never Safe), with a test; and a peak-RSS figure for the opt-in route against the slot admission.",
+      "source": "docs/reports/body-summary-reuse/README.md",
+      "recorded_by": "BODY-SUMMARY-REUSE"
+    },
+    {
+      "id": "W44-CALLEE-CROSS-UNIT-SUMMARY",
+      "operation": "append",
+      "text": "RE-MEASURED (BODY-SUMMARY-REUSE, user's current run at Fluent Bit 046accf6, binary 13337d0af): on `current`, which sets no link map, 438 cross-unit sites over 156 callees whose home body is Safe in every configuration stay uncontracted (295 functions, 7 sole-blocked); the standing question is now BODY-SUMMARY-REUSE-LINK-STANDING, and a 165-home map did not finish (CURRENT-RUN-WORKER-SPIN).",
+      "source": "docs/reports/body-summary-reuse/README.md"
+    }
+  ],
+  "profiles": []
+}
