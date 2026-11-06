@@ -1,0 +1,129 @@
+{
+  "fingerprint_wall_time_ms": 15509,
+  "groups": [
+    {
+      "content_sha256": "62cf59f14eb659e790454cb60cd4aba4cb18e9db0f29b44382ea132c035d3c00",
+      "decision": "reused",
+      "group": "cmetrics",
+      "reason": "identity equal",
+      "stage": "first"
+    },
+    {
+      "content_sha256": "d283e2d14409464e6cc6c358483b0d947d8ccd7e2cf432c0621f6208e9db7b91",
+      "decision": "reused",
+      "group": "ctraces",
+      "reason": "identity equal",
+      "stage": "first"
+    },
+    {
+      "content_sha256": "0d85f0a37d32428f112fcf7b9edf065aeb24172c54618dbc4de41869b2903f65",
+      "decision": "reused",
+      "group": "librdkafka",
+      "reason": "identity equal",
+      "stage": "first"
+    },
+    {
+      "content_sha256": "7dae45ec467255ba1c8c4fb549c3b016fb86b5994a32ddeeee79383602cfe80e",
+      "decision": "reused",
+      "group": "chunkio",
+      "reason": "identity equal",
+      "stage": "first"
+    },
+    {
+      "content_sha256": "d76443703d271956db2d4415b28a8020b4efd9e41281fac1e37a3b715cca645c",
+      "decision": "reused",
+      "group": "fluent-bit-chunk",
+      "reason": "identity equal",
+      "stage": "first"
+    },
+    {
+      "content_sha256": "e421e895423e11892be48892e2a2ef514f8172e08ef983301e46e718c441bca7",
+      "decision": "reused",
+      "group": "monkey-libevent",
+      "reason": "identity equal",
+      "stage": "first"
+    },
+    {
+      "stage": "first",
+      "stopped": false,
+      "wall_time_ms": 1565
+    },
+    {
+      "content_sha256": "f481a81dbd6d90d29c61d32c5bb97be067176280f07062edb4e8f269c688b187",
+      "decision": "reused",
+      "group": "cmetrics",
+      "reason": "identity equal",
+      "stage": "imported"
+    },
+    {
+      "decision": "recomputed",
+      "group": "ctraces",
+      "reason": "no checkpoint",
+      "stage": "imported"
+    },
+    {
+      "decision": "recomputed",
+      "group": "librdkafka",
+      "reason": "no checkpoint",
+      "stage": "imported"
+    },
+    {
+      "decision": "recomputed",
+      "group": "chunkio",
+      "reason": "no checkpoint",
+      "stage": "imported"
+    },
+    {
+      "decision": "recomputed",
+      "group": "fluent-bit-chunk",
+      "reason": "no checkpoint",
+      "stage": "imported"
+    },
+    {
+      "decision": "recomputed",
+      "group": "monkey-libevent",
+      "reason": "no checkpoint",
+      "stage": "imported"
+    },
+    {
+      "content_sha256": "188092947d3992735d1e32646abb5132a029812d886d675849bfeab9f95491a3",
+      "decision": "sealed",
+      "group": "ctraces",
+      "stage": "imported"
+    },
+    {
+      "content_sha256": "d3c299ab6e92d1f6e11fdaa257efb5664ad778ac434554e626a0870d0bed3356",
+      "decision": "sealed",
+      "group": "librdkafka",
+      "stage": "imported"
+    },
+    {
+      "content_sha256": "43298854b5c34defd119327c0604ea473314f2822d0652e828dfa5c7369f6098",
+      "decision": "sealed",
+      "group": "chunkio",
+      "stage": "imported"
+    },
+    {
+      "content_sha256": "2f072e47792c38786cd511b0391ac47084189d7d02382083d31a2a31e417bf42",
+      "decision": "sealed",
+      "group": "fluent-bit-chunk",
+      "stage": "imported"
+    },
+    {
+      "content_sha256": "b328310c2e99d777ca01b8bff07070594942b96c82cb91c4677aef3755be9162",
+      "decision": "sealed",
+      "group": "monkey-libevent",
+      "stage": "imported"
+    },
+    {
+      "stage": "imported",
+      "stopped": false,
+      "wall_time_ms": 5134100
+    }
+  ],
+  "jobs": 3,
+  "phases_wall_time_ms": 5223350,
+  "process_peak_rss_kib": 15846976,
+  "schema_version": 1,
+  "scope": "provenance of one checkpointed pinned run: per stage, which library groups were reused or recomputed and why, the content digest of each file sealed or reused, and measured wall times; not an input to any verdict"
+}

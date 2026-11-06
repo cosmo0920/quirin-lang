@@ -2,8 +2,8 @@
   "schema": "quirin-amendments/1",
   "card": "CORPUS-GROUP-CHECKPOINTS",
   "base": "13337d0af",
-  "measured_tip": "2c9c7645e",
-  "increment_paragraph": "**CORPUS-GROUP-CHECKPOINTS** (round 21, R8 option D; USER DECISION 2026-11-06, verbatim: \"D then A (rec.)\", the button being \"R8: option D first (per-group checkpoints for the pinned corpus route), then option A (gateway publishes per-unit lookups including missed ones; reuse only for contract-only diffs with matching cross-unit facts). I approve using that lookup record as a reuse input once it is published and checked.\"): `quirin-audit pinned --checkpoint-dir DIR [--resume]` seals every library group of every phase the pinned corpus route runs (`first`, `refuted`, `imported`) into `DIR/<library>.<stage>.qo` as soon as the group completes and reuses a group only when its whole identity is unchanged: the run inputs (analyzer build, root and revision, source profile and source-contract package files, manifest, locks, pin template, Clang, the QCORE_* environment with the null/outer output paths reduced to `selected` and the link map to its content digest, member facts), the stage's whole-run facts (the exact contract environment with its refutation table and imports, the cross-unit homes, the bounds and null environments) and the group's units (compile record, raw source, preparation digests). The .qo container gains a `Layout` (the pinned layout is schema 1, five sections; each reader refuses the other's files); the whole-run fold is shared and restores stored units one at a time; census, parity, IR, unit-timing, bounds-selection and QCORE_SOURCE_CONTRACTS runs are refused. Lean QCore.StagedCheckpoints (6 theorems) proves staged reuse and that the staged checkpointed run is the whole run. Evidence: E. Fixtures: a changed input of each kind invalidates exactly the groups that read it. No analyzer, contract or verdict change; no measurement. Report: docs/reports/corpus-group-checkpoints/README.md.",
+  "measured_tip": "cf04b717c",
+  "increment_paragraph": "**CORPUS-GROUP-CHECKPOINTS** (round 21, R8 option D; USER DECISION 2026-11-06, verbatim: \"D then A (rec.)\", the button being \"R8: option D first (per-group checkpoints for the pinned corpus route), then option A (gateway publishes per-unit lookups including missed ones; reuse only for contract-only diffs with matching cross-unit facts). I approve using that lookup record as a reuse input once it is published and checked.\"): `quirin-audit pinned --checkpoint-dir DIR [--resume]` seals every library group of every phase the pinned corpus route runs (`first`, `refuted`, `imported`) into `DIR/<library>.<stage>.qo` as soon as the group completes and reuses a group only when its whole identity is unchanged: the run inputs (analyzer build, root and revision, source profile and source-contract package files, manifest, locks, pin template, Clang, the QCORE_* environment with the null/outer output paths reduced to `selected` and the link map to its content digest, member facts), the stage's whole-run facts (the exact contract environment with its refutation table and imports, the cross-unit homes, the bounds and null environments) and the group's units (compile record, raw source, preparation digests). The .qo container gains a `Layout` (the pinned layout is schema 1, five sections; each reader refuses the other's files); the whole-run fold is shared and restores stored units one at a time; census, parity, IR, unit-timing, bounds-selection and QCORE_SOURCE_CONTRACTS runs are refused. Lean QCore.StagedCheckpoints (6 theorems) proves staged reuse and that the staged checkpointed run is the whole run. Evidence: interrupted (kill -9 after seven of twelve stage files were sealed) then resumed, 1:11:14 + 1:37:32, byte-identical to the uninterrupted whole run (2:44:22) in all nine artifacts and the console; a second resume reused all twelve stage files in 14 min 25 s with identical outputs (peak 15.8 GB against 10.98 GB whole, PINNED-CHECKPOINT-PEAK-MEMORY); a first attempt found that the route's rows bind the process working directory, now in the identity (PINNED-ROWS-BIND-WORKING-DIRECTORY). Fixtures: a changed input of each kind invalidates exactly the groups that read it. No analyzer, contract or verdict change; no measurement. Report: docs/reports/corpus-group-checkpoints/README.md.",
   "status_paragraph": null,
   "ledger": [
     {
@@ -23,7 +23,7 @@
     {
       "id": "W45-CHECKPOINT-PINNED-REPLAY-ROUTE",
       "operation": "retire",
-      "why": "DISCHARGED by CORPUS-GROUP-CHECKPOINTS (docs/reports/corpus-group-checkpoints/README.md): the pinned route has per-group, per-stage .qo checkpoints whose composition (the shared whole-run fold) wrote every published artifact byte-identical to the whole run's at the same revision: E.",
+      "why": "DISCHARGED by CORPUS-GROUP-CHECKPOINTS (docs/reports/corpus-group-checkpoints/README.md): the pinned route has per-group, per-stage .qo checkpoints whose composition (the shared whole-run fold) wrote every published artifact byte-identical to the whole run's at the same revision: interrupted (kill -9 after seven of twelve stage files were sealed) then resumed, 1:11:14 + 1:37:32, byte-identical to the uninterrupted whole run (2:44:22) in all nine artifacts and the console; a second resume reused all twelve stage files in 14 min 25 s with identical outputs (peak 15.8 GB against 10.98 GB whole, PINNED-CHECKPOINT-PEAK-MEMORY); a first attempt found that the route's rows bind the process working directory, now in the identity (PINNED-ROWS-BIND-WORKING-DIRECTORY).",
       "source": "docs/reports/corpus-group-checkpoints/README.md"
     },
     {
@@ -60,7 +60,23 @@
       "id": "PINNED-RESUME-FIXED-COSTS",
       "operation": "register",
       "title": "A fully reused pinned run still runs its whole-run steps",
-      "text": "Registered by CORPUS-GROUP-CHECKPOINTS (docs/reports/corpus-group-checkpoints/README.md). F.",
+      "text": "Registered by CORPUS-GROUP-CHECKPOINTS (docs/reports/corpus-group-checkpoints/README.md). quirin-audit pinned --checkpoint-dir --resume with every group of both stages reused took 14 min 25 s, of which the checkpointed phases were 90.8 s (fingerprinting 15.5 s, file loading 3.2 s, the sequential definition census and home export about 72 s); the rest is whole-run steps every run repeats (member-facts pre-pass over the 1,444-unit production database, outer reach, pin and bounds evaluations, fold and sidecars). DISCHARGE: each step's cost measured and each either checkpointed under its own identity or recorded as the floor of a reused run.",
+      "source": "docs/reports/corpus-group-checkpoints/README.md",
+      "recorded_by": "CORPUS-GROUP-CHECKPOINTS"
+    },
+    {
+      "id": "PINNED-CHECKPOINT-PEAK-MEMORY",
+      "operation": "register",
+      "title": "Checkpointed pinned runs peak above the corpus slot admission",
+      "text": "Registered by CORPUS-GROUP-CHECKPOINTS (docs/reports/corpus-group-checkpoints/README.md section 4). quirin-audit pinned --checkpoint-dir peaked at 15.8 GB in every run (fresh, interrupted, resumed and fully reused, which analyses nothing) against 10.98 GB for the whole run, above the pinned corpus's 11 GiB gate_slot admission: the in-memory group records (typed binary rows of both stages; the first stage's kept until the import stage is accepted). DISCHARGE: the records held more compactly or the first stage's dropped and reloaded only on an import-stage refusal, with the peak measured at or under the admission, or the admission raised for checkpointed runs with the measurement.",
+      "source": "docs/reports/corpus-group-checkpoints/README.md",
+      "recorded_by": "CORPUS-GROUP-CHECKPOINTS"
+    },
+    {
+      "id": "PINNED-ROWS-BIND-WORKING-DIRECTORY",
+      "operation": "register",
+      "title": "Pinned-route rows bind the process working directory",
+      "text": "Registered by CORPUS-GROUP-CHECKPOINTS (docs/reports/corpus-group-checkpoints/README.md section 4.1). The pinned projection digests (unit, std::env::current_dir(), Clang) into every row's hypothesis_context.build_identity (crates/qcore-audit/src/projection.rs) and the Boolean-field source import digests the directory into its configuration (crates/qcore-c-gateway/src/boolean_source.rs), so two corpus runs from different directories publish different reports, null rows and sidecars; pinned checkpoints therefore record the directory and reuse only from the same one, and measurement runs (a fresh work-<route> each) never reuse each other's groups. DISCHARGE: those digests bound to the unit's compile record instead of the process directory, with the pinned baselines moved deliberately, or a fixed measurement working directory recorded as the decision.",
       "source": "docs/reports/corpus-group-checkpoints/README.md",
       "recorded_by": "CORPUS-GROUP-CHECKPOINTS"
     }

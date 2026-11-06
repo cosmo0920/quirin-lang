@@ -1,0 +1,23 @@
+	Command being timed: "env -u QCORE_SOURCE_CONTRACTS QCORE_CLANG=/usr/bin/clang QCORE_CHUNKIO_PACKAGE=/media/Data/GitHub/quirin-lang/build/cycle19/provider-packages-wave20/qcore.chunkio QCORE_PROFILES=/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a50c061771c033423/contract/profiles QCORE_CROSS_UNIT_LINK_MAP=/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a50c061771c033423/docs/reports/w48-bu-single-leaf-bodies/link-map.corpus.json QCORE_NULL_PROPERTY=/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a50c061771c033423/private/evidence/resumed/corpus-null.jsonl QCORE_OUTER_PROJECTION=/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a50c061771c033423/private/evidence/resumed/corpus-outer.json SOURCE_DATE_EPOCH=1767225600 /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a50c061771c033423/private/bin/quirin-audit pinned --jobs 3 --checkpoint-dir /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a50c061771c033423/private/evidence/qo-one --resume /media/Data/GitHub/quirin-lang/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source /media/Data/GitHub/quirin-lang/build/cycle19/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a50c061771c033423/private/evidence/resumed/monkey-source.json /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a50c061771c033423/private/evidence/resumed/resource-diagnostics.json"
+	User time (seconds): 11567.72
+	System time (seconds): 457.30
+	Percent of CPU this job got: 205%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:37:32
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 15846976
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 3005
+	Minor (reclaiming a frame) page faults: 145876097
+	Voluntary context switches: 37137230
+	Involuntary context switches: 787200
+	Swaps: 0
+	File system inputs: 192368
+	File system outputs: 1123712
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
