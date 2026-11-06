@@ -317,12 +317,17 @@ class RunnerTargets(unittest.TestCase):
         self.assertIsNone(runner_mod.parse_targets(None, self.DOCUMENT, None))
         self.assertEqual(runner_mod.parse_targets(["a::test::y,b::test::z", "a::test::x"],
                                                   self.DOCUMENT, None),
-                         {"a": ["x", "y"], "b": ["z"]})
+                         {"a": [("test", "x"), ("test", "y")], "b": [("test", "z")]})
 
     def test_a_bad_target_refuses(self):
+        # A library's unit-test executable (a::lib::a) is accepted since card
+        # GATE-SCOPE-LIB-UNIT-TEST-MODULES; a binary's, a wrong library name or
+        # kind, and a test named as a library still refuse.
         for values, packages in ((["a::test::nope"], None), (["c::test::x"], None),
-                                 (["a::lib::a"], None), (["a::x"], None), ([" , "], None),
-                                 (["a::test::x"], ["a"])):
+                                 (["a::lib::wrong"], None), (["b::bin::b"], None),
+                                 (["a::rlib::a"], None), (["a::lib::x"], None),
+                                 (["a::x"], None), ([" , "], None),
+                                 (["a::test::x"], ["a"]), (["a::lib::a"], ["a"])):
             with self.assertRaises(ValueError, msg=(values, packages)):
                 runner_mod.parse_targets(values, self.DOCUMENT, packages)
 

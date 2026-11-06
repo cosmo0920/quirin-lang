@@ -26,7 +26,12 @@ per landing, run by the integrator).  Usage::
      (a manifest entry) or a whole-repository walk filtered afterwards.
 
    The crates reached are closed over reverse dependencies (normal, dev and
-   build edges; across the two workspaces).
+   build edges; across the two workspaces).  A read compiled only into test
+   executables claims those alone, with no reverse dependency: an integration
+   test (``PKG::test::NAME``), or a library's unit-test executable
+   (``PKG::lib::NAME``) for a module reached only through ``#[cfg(test)]``
+   declarations and an include or literal inside a ``#[cfg(test)]`` item
+   (GATE-SCOPE-LIB-UNIT-TEST-MODULES; ``cfg_test_spans``).
 3. **Mode.**  The Rust suite runs whole (``full``) when the diff reaches
    ``qcore-c-gateway``, ``qcore-core``, ``qcore-contract`` or ``qcore-schemas``,
    a workspace manifest or lockfile, the test runner or this scoper, or any path
@@ -121,13 +126,239 @@ INCLUDE_CONCAT_RE = re.compile(
     r'\b(include_str|include_bytes|include)!\s*\(\s*concat!\s*\(\s*env!\s*\(\s*"CARGO_MANIFEST_DIR"'
     r'\s*\)\s*,\s*"((?:[^"\\\n]|\\.)*)"\s*,?\s*\)\s*,?\s*\)')
 INCLUDE_ANY_RE = re.compile(r'\b(?:include_str|include_bytes|include)!\s*\(')
-PATH_ATTR_RE = re.compile(r'#\[path\s*=\s*"((?:[^"\\\n]|\\.)*)"\s*\]\s*(?:pub(?:\([^)]*\))?\s+)?mod\s+(\w+)')
+# Other outer attributes may sit between `#[path]` and the `mod` (`#[cfg_attr(..)]`).
+PATH_ATTR_RE = re.compile(r'#\[path\s*=\s*"((?:[^"\\\n]|\\.)*)"\s*\]\s*(?:#\[[^\]"]*\]\s*)*'
+                          r'(?:pub(?:\([^)]*\))?\s+)?mod\s+(\w+)')
 MOD_RE = re.compile(r'^\s*(?:pub(?:\([^)]*\))?\s+)?mod\s+(\w+)\s*;', re.M)
 STRING_RE = re.compile(r'"((?:[^"\\\n]|\\.)*)"')
 JOIN_BARE_RE = re.compile(r'\.join\(\s*"([^"/\\\n]+)"\s*\)')
 PLACEHOLDER_RE = re.compile(r'\{[^{}]*\}')
 SPLIT_RE = re.compile(r'[\s,;\'`()<>|*\[\]]+')
 PARENT_ONLY_RE = re.compile(r'^(?:\.\.?/?)+$')
+
+
+# --- #[cfg(test)] items (GATE-SCOPE-LIB-UNIT-TEST-MODULES) ---------------------
+#
+# A library's code under a test-only `#[cfg(...)]` is compiled into that
+# library's unit-test executable alone: dependents link the library built
+# without `cfg(test)`, and doc-tests too.  The scanner finds the spans of such
+# items so a module edge, an include or a literal inside one is attributed to
+# that executable.  Anything it cannot classify is treated as ordinary code
+# (the crate as a whole, as before): an inner `#![cfg(test)]`, a predicate
+# other than `test` / `all(.., test, ..)` / `any` of test-only predicates, an
+# attribute on something that is not an item or a `let`, and an item whose end
+# it cannot find.
+
+# Crate-wide markers of module structure the scanner cannot see: a generated
+# or included module tree (`include!` of Rust code, a `mod $name` in a macro,
+# `cfg_attr(.., path = ..)`).  A crate whose library shows one keeps today's
+# selection for every file.
+OPAQUE_MODULES_RE = re.compile(r'\binclude!\s*\(|\bmod\s+\$|\bcfg_attr\s*\([^\]]*\bpath\s*=')
+ITEM_KEYWORDS = frozenset({"fn", "mod", "impl", "trait", "struct", "enum", "union", "type",
+                           "const", "static", "use", "extern", "unsafe", "async",
+                           "macro_rules", "let"})
+SEMICOLON_ITEMS = frozenset({"const", "static", "use", "type", "let"})
+OPEN = {"(": ")", "[": "]", "{": "}"}
+CLOSE = frozenset(OPEN.values())
+
+
+def rust_tokens(text: str) -> list[tuple[str, int, str]]:
+    """(kind, offset, text) tokens: ``ident``, ``punct`` (one character),
+    ``literal`` (strings, characters, numbers) and ``lifetime``; comments and
+    whitespace dropped.  Unterminated strings or comments end the token list
+    (the rest of the file then holds no span)."""
+    tokens: list[tuple[str, int, str]] = []
+    index, size = 0, len(text)
+    while index < size:
+        char = text[index]
+        if char.isspace():
+            index += 1
+            continue
+        if text.startswith("//", index):
+            end = text.find("\n", index)
+            index = size if end < 0 else end + 1
+            continue
+        if text.startswith("/*", index):
+            depth, index = 1, index + 2
+            while index < size and depth:
+                if text.startswith("/*", index):
+                    depth, index = depth + 1, index + 2
+                elif text.startswith("*/", index):
+                    depth, index = depth - 1, index + 2
+                else:
+                    index += 1
+            if depth:
+                return tokens
+            continue
+        start = index
+        raw = re.match(r'(?:b|c)?r(#*)"', text[index:index + 260])
+        if raw:
+            closing = '"' + raw.group(1)
+            end = text.find(closing, index + raw.end())
+            if end < 0:
+                return tokens
+            index = end + len(closing)
+            tokens.append(("literal", start, text[start:index]))
+            continue
+        if char == '"' or (char in "bc" and text.startswith('"', index + 1)):
+            index = index + 1 if char == '"' else index + 2
+            while index < size and text[index] != '"':
+                index += 2 if text[index] == "\\" else 1
+            if index >= size:
+                return tokens
+            index += 1
+            tokens.append(("literal", start, text[start:index]))
+            continue
+        if char == "'" or (char == "b" and text.startswith("'", index + 1)):
+            quote = index if char == "'" else index + 1
+            if text.startswith("\\", quote + 1):
+                end = quote + 2
+                while end < size and text[end] != "'" and text[end] != "\n":
+                    end += 1
+                if end >= size or text[end] != "'":
+                    return tokens
+                index = end + 1
+                tokens.append(("literal", start, text[start:index]))
+                continue
+            if quote + 2 < size and text[quote + 2] == "'":
+                index = quote + 3
+                tokens.append(("literal", start, text[start:index]))
+                continue
+            if char == "'":
+                match = re.match(r"'[A-Za-z_][A-Za-z0-9_]*", text[index:index + 260])
+                index += match.end() if match else 1
+                tokens.append(("lifetime", start, text[start:index]))
+                continue
+        if char == "r" and text.startswith("#", index + 1) and \
+                re.match(r"[A-Za-z_]", text[index + 2:index + 3]):
+            match = re.match(r"r#[A-Za-z_][A-Za-z0-9_]*", text[index:index + 260])
+            index += match.end()
+            tokens.append(("ident", start, text[start:index]))
+            continue
+        if char.isalnum() or char == "_" or ord(char) > 127:
+            while index < size and (text[index].isalnum() or text[index] == "_"
+                                    or ord(text[index]) > 127):
+                index += 1
+            kind = "literal" if char.isdigit() else "ident"
+            tokens.append((kind, start, text[start:index]))
+            continue
+        tokens.append(("punct", start, char))
+        index += 1
+    return tokens
+
+
+def _group_end(tokens, index: int) -> Optional[int]:
+    """The index of the bracket closing the one at ``index``, or None."""
+    stack = []
+    for position in range(index, len(tokens)):
+        kind, _, value = tokens[position]
+        if kind != "punct":
+            continue
+        if value in OPEN:
+            stack.append(OPEN[value])
+        elif value in CLOSE:
+            if not stack or stack.pop() != value:
+                return None
+            if not stack:
+                return position
+    return None
+
+
+def _split_args(tokens) -> list[list]:
+    """Top-level comma-separated arguments of a token list."""
+    args, current, depth = [], [], 0
+    for token in tokens:
+        if token[0] == "punct" and token[2] in OPEN:
+            depth += 1
+        elif token[0] == "punct" and token[2] in CLOSE:
+            depth -= 1
+        if depth == 0 and token[0] == "punct" and token[2] == ",":
+            args.append(current)
+            current = []
+        else:
+            current.append(token)
+    if current:
+        args.append(current)
+    return args
+
+
+def cfg_test_only(predicate) -> bool:
+    """Whether a `cfg` predicate (tokens) holds only when `test` does."""
+    values = [token[2] for token in predicate]
+    if values == ["test"]:
+        return True
+    if len(values) >= 3 and values[0] in ("all", "any") and values[1] == "(" \
+            and values[-1] == ")" and _group_end(predicate, 1) == len(predicate) - 1:
+        args = _split_args(predicate[2:-1])
+        if values[0] == "all":
+            return any(cfg_test_only(arg) for arg in args)
+        return bool(args) and all(cfg_test_only(arg) for arg in args)
+    return False
+
+
+def _item_end(tokens, index: int) -> Optional[int]:
+    """The index of the last token of the item starting at ``index``, or None."""
+    position = index
+    if position < len(tokens) and tokens[position][2] == "pub":
+        position += 1
+        if position < len(tokens) and tokens[position][2] == "(":
+            group = _group_end(tokens, position)
+            if group is None:
+                return None
+            position = group + 1
+    if position >= len(tokens) or tokens[position][0] != "ident" \
+            or tokens[position][2] not in ITEM_KEYWORDS:
+        return None
+    keyword = tokens[position][2]
+    following = tokens[position + 1][2] if position + 1 < len(tokens) else ""
+    semicolon_only = keyword in SEMICOLON_ITEMS and not (
+        keyword == "const" and following in ("fn", "unsafe", "async", "extern"))
+    depth = 0
+    for current in range(position, len(tokens)):
+        kind, _, value = tokens[current]
+        if kind != "punct":
+            continue
+        if value in OPEN:
+            depth += 1
+        elif value in CLOSE:
+            depth -= 1
+            if depth < 0:
+                return None  # the enclosing group closed first: not an item
+            if depth == 0 and value == "}" and not semicolon_only:
+                return current
+        elif value == ";" and depth == 0:
+            return current
+    return None
+
+
+def cfg_test_spans(text: str) -> list[tuple[int, int]]:
+    """Character spans ``[start, end)`` of the items a test-only ``#[cfg]``
+    gates, each from its first outer attribute to its last character."""
+    tokens = rust_tokens(text)
+    spans: list[tuple[int, int]] = []
+    index = 0
+    while index < len(tokens):
+        if not (tokens[index][2] == "#" and index + 1 < len(tokens)
+                and tokens[index + 1][2] == "["):
+            index += 1
+            continue
+        run_start, test_only, position = index, False, index
+        while position + 1 < len(tokens) and tokens[position][2] == "#" \
+                and tokens[position + 1][2] == "[":
+            close = _group_end(tokens, position + 1)
+            if close is None:
+                return spans
+            body = tokens[position + 2:close]
+            if len(body) >= 3 and body[0][2] == "cfg" and body[1][2] == "(" \
+                    and _group_end(body, 1) == len(body) - 1 and cfg_test_only(body[2:-1]):
+                test_only = True
+            position = close + 1
+        if test_only:
+            end = _item_end(tokens, position)
+            if end is not None:
+                spans.append((tokens[run_start][1], tokens[end][1] + len(tokens[end][2])))
+        index = position
+    return spans
 
 
 def runtime_scanned(crate_dir: str, path: str) -> bool:
@@ -180,11 +411,19 @@ class Target:
     name: str
     kinds: tuple[str, ...]
     src_path: str  # repository-relative, posix
+    # cargo's `test` flag: whether `cargo test` builds and runs this target's
+    # unit-test executable (a library's is `PKG::lib::NAME`).
+    test: bool = True
 
     @property
     def is_test(self) -> bool:
         """A ``tests/``-style integration test: its own executable, depended on by nothing."""
         return self.kinds == ("test",)
+
+    @property
+    def is_library(self) -> bool:
+        return bool(set(self.kinds) & {"lib", "rlib", "dylib", "cdylib", "staticlib",
+                                       "proc-macro"})
 
 
 def unit_uid(crate: str, target: Target) -> str:
@@ -234,7 +473,8 @@ def crates_from_metadata(document: dict, workspace: str, root: Path = REPO_ROOT)
             except ValueError:
                 raise ScopeError(f"{package['name']} target {target['name']} lies outside the "
                                  f"repository: {source}") from None
-            targets.append(Target(target["name"], tuple(target["kind"]), src_path))
+            targets.append(Target(target["name"], tuple(target["kind"]), src_path,
+                                  bool(target.get("test", True))))
         crates.append(Crate(package["name"], workspace, relative, deps,
                             has_lib=bool(kinds & {"lib", "rlib", "proc-macro"}),
                             targets=targets))
@@ -431,6 +671,9 @@ class Model:
         self.walker_readers: list[tuple[Reader, "re.Pattern[str]"]] = []
         self.walkers = {(entry["source"], entry["literal"]): entry for entry in walkers}
         self.walker_hits: set[tuple[str, str]] = set()
+        # (source, literal) -> {(crate, units)}: who runs each declared site,
+        # also for a base path that attributes nothing (for table tooling).
+        self.walker_sites: dict[tuple[str, str], set[tuple[str, Optional[frozenset]]]] = {}
         # A file whose every reader also reads the files it lists (a manifest).
         self.expansions = [(entry["file"], [glob_regex(p) for p in entry["reads"]])
                            for entry in expansions]
@@ -449,6 +692,13 @@ class Model:
         # (crate, file) pairs some non-test target compiles.
         self.file_units: dict[tuple[str, str], set[str]] = {}
         self.file_nontest: set[tuple[str, str]] = set()
+        # (crate, file) -> [(target, reached by a path of ordinary edges)]
+        # for every target whose module closure holds the file.
+        self.file_contexts: dict[tuple[str, str], list[tuple[Target, bool]]] = {}
+        # Crates whose library shows module structure the scanner cannot see
+        # (OPAQUE_MODULES_RE): no cfg(test) narrowing for them.
+        self.opaque: dict[str, str] = {}
+        self._spans: dict[str, list[tuple[int, int]]] = {}
         # path -> the JSON files that name it (see _scan_json_manifests).
         self.json_lists: dict[str, set[str]] = {}
         self._resolve_targets()
@@ -461,9 +711,20 @@ class Model:
                 return crate.name
         return None
 
-    def _module_children(self, path: str, text: str, is_root: bool) -> list[str]:
+    def test_spans(self, path: str) -> list[tuple[int, int]]:
+        """The `#[cfg(test)]` item spans of a source (cached; none if unreadable)."""
+        if path not in self._spans:
+            text = self._text(path)
+            self._spans[path] = cfg_test_spans(text) if text is not None else []
+        return self._spans[path]
+
+    def in_test_item(self, path: str, offset: int) -> bool:
+        return any(start <= offset < end for start, end in self.test_spans(path))
+
+    def _module_children(self, path: str, text: str, is_root: bool) -> list[tuple[str, bool]]:
         """Files a source declares as modules: `#[path]` (relative to its directory)
-        and `mod x;` (beside a crate root or `mod.rs`, else under its stem)."""
+        and `mod x;` (beside a crate root or `mod.rs`, else under its stem), each
+        with whether the declaration sits in a `#[cfg(test)]` item."""
         directory = posixpath.dirname(path)
         stem = posixpath.splitext(posixpath.basename(path))[0]
         base = directory if is_root or stem == "mod" else posixpath.join(directory, stem)
@@ -471,41 +732,79 @@ class Model:
         for match in PATH_ATTR_RE.finditer(text):
             target = inside_repo(posixpath.join(directory, match.group(1)))
             if target:
-                children.append(target)
+                children.append((target, self.in_test_item(path, match.start())))
         for match in MOD_RE.finditer(text):
+            test_only = self.in_test_item(path, match.start(1))
             for candidate in (f"{base}/{match.group(1)}.rs", f"{base}/{match.group(1)}/mod.rs"):
                 candidate = inside_repo(candidate)
                 if candidate:
-                    children.append(candidate)
+                    children.append((candidate, test_only))
         return children
 
     def _resolve_targets(self) -> None:
-        """Each target's module closure, from its root file."""
+        """Each target's module closure, from its root file: every file it
+        reaches, and the files it reaches through ordinary (non-test) edges."""
         rs_set = {path for path in self.files if path.endswith(".rs")}
         for name, crate in self.crates.items():
             targets = crate.targets if crate.targets is not None \
                 else infer_targets(crate, self.files)
             self.targets[name] = list(targets)
             for target in targets:
+                # (path, is_root, reached through ordinary edges only)
+                ordinary = {target.src_path}
                 closure = {target.src_path}
-                queue = [(target.src_path, True)]
+                queue = [(target.src_path, True, True)]
                 while queue:
-                    path, is_root = queue.pop()
+                    path, is_root, plain = queue.pop()
                     text = self._text(path)
                     if text is None:
                         continue
-                    for child in self._module_children(path, text, is_root):
-                        if child in rs_set and child not in closure:
+                    if target.is_library and name not in self.opaque:
+                        found = OPAQUE_MODULES_RE.search(text)
+                        if found:
+                            self.opaque[name] = f"{path}:{line_of(text, found.start())}"
+                    for child, test_only in self._module_children(path, text, is_root):
+                        if child not in rs_set:
+                            continue
+                        child_plain = plain and not test_only
+                        if child_plain and child not in ordinary:
+                            ordinary.add(child)
                             closure.add(child)
-                            queue.append((child, False))
+                            queue.append((child, False, True))
+                        elif child not in closure:
+                            closure.add(child)
+                            queue.append((child, False, False))
                 for path in closure:
-                    if target.is_test:
-                        self.file_units.setdefault((name, path), set()).add(unit_uid(name, target))
-                    else:
-                        self.file_nontest.add((name, path))
+                    self.file_contexts.setdefault((name, path), []).append(
+                        (target, path in ordinary))
+        for (name, path), contexts in self.file_contexts.items():
+            for target, plain in contexts:
+                if target.is_test:
+                    self.file_units.setdefault((name, path), set()).add(unit_uid(name, target))
+                elif not plain and self.lib_unit(name, target):
+                    # Compiled only into the library's unit-test executable.
+                    self.file_units.setdefault((name, path), set()).add(unit_uid(name, target))
+                else:
+                    self.file_nontest.add((name, path))
 
-    def reader_units(self, crate: str, path: str) -> Optional[frozenset]:
-        """The test targets a reading source belongs to, or None for the crate."""
+    def lib_unit(self, crate: str, target: Target) -> bool:
+        """Whether this target's `cfg(test)` code is narrowed to its unit-test
+        executable: a library cargo tests, of a crate with no opaque modules."""
+        return target.is_library and target.test and crate not in self.opaque
+
+    def reader_units(self, crate: str, path: str,
+                     offset: Optional[int] = None) -> Optional[frozenset]:
+        """The test executables a reading source at ``offset`` is compiled into,
+        or None for the crate as a whole."""
+        if offset is not None and crate not in self.opaque and self.in_test_item(path, offset):
+            contexts = self.file_contexts.get((crate, path), [])
+            units = set()
+            for target, _ in contexts:
+                if target.is_test or self.lib_unit(crate, target):
+                    units.add(unit_uid(crate, target))
+                else:
+                    return None  # a binary, example or build script compiles it
+            return frozenset(units) if units else None
         if (crate, path) in self.file_nontest:
             return None
         units = self.file_units.get((crate, path))
@@ -567,6 +866,12 @@ class Model:
                 if text is None:
                     continue
                 units = self.reader_units(name, path)
+
+                def units_at(offset: int, name=name, path=path) -> Optional[frozenset]:
+                    # A read inside a #[cfg(test)] item is compiled into the
+                    # unit-test executables of the targets holding the file.
+                    return self.reader_units(name, path, offset)
+
                 directory = posixpath.dirname(path)
                 resolved_spans = []
                 for regex, base in ((INCLUDE_RE, directory), (INCLUDE_CONCAT_RE, crate_dir)):
@@ -582,7 +887,7 @@ class Model:
                             continue
                         self._add(self.compile_readers, Reader(
                             name, target, match.group(1), f"{path}:{line_of(text, match.start())}",
-                            units))
+                            units_at(match.start())))
                 for match in INCLUDE_ANY_RE.finditer(text):
                     if match.start() not in resolved_spans:
                         self.unresolved.append({
@@ -593,9 +898,10 @@ class Model:
                     target = inside_repo(posixpath.join(directory, match.group(1)))
                     if target is not None:
                         self._add(self.compile_readers, Reader(
-                            name, target, "path", f"{path}:{line_of(text, match.start())}", units))
+                            name, target, "path", f"{path}:{line_of(text, match.start())}",
+                            units_at(match.start())))
                 if runtime_scanned(crate_dir, path):
-                    self._scan_literals(name, crate_dir, path, directory, text, units)
+                    self._scan_literals(name, crate_dir, path, directory, text, units_at)
                     observed = self.walkers.get((path, OBSERVED_LITERAL))
                     if observed is not None:
                         # A read no literal shows (a whole-tree listing filtered
@@ -608,21 +914,24 @@ class Model:
                                 f"{path}:0", units), glob_regex(pattern)))
 
     def _scan_literals(self, name: str, crate_dir: str, path: str, directory: str,
-                       text: str, units: Optional[frozenset] = None) -> None:
-        seen: set[str] = set()
+                       text: str, units_at=lambda offset: None) -> None:
+        # Keyed by the units too: a literal in a #[cfg(test)] item must not
+        # hide the same literal in ordinary code (which reaches the crate).
+        seen: set[tuple[str, Optional[frozenset]]] = set()
 
         def consider(piece: str, offset: int) -> None:
             piece = piece.rstrip("/")
             if not piece or PARENT_ONLY_RE.match(piece):
                 return
             stripped = re.sub(r"^(?:\.\./|\./|/)+", "", piece)
+            units = units_at(offset)
             for candidate in (posixpath.join(crate_dir, piece.lstrip("/")),
                               posixpath.join(directory, piece.lstrip("/")),
                               stripped):
                 target = inside_repo(candidate)
-                if target is None or target not in self.known or target in seen:
+                if target is None or target not in self.known or (target, units) in seen:
                     continue
-                seen.add(target)
+                seen.add((target, units))
                 source = f"{path}:{line_of(text, offset)}"
                 if target == crate_dir or target.startswith(crate_dir + "/"):
                     # Its own files: the crate owns them; this only says which
@@ -632,6 +941,7 @@ class Model:
                 walker = self.walkers.get((path, target))
                 if walker is not None:
                     self.walker_hits.add((path, target))
+                    self.walker_sites.setdefault((path, target), set()).add((name, units))
                     for pattern in walker["reads"]:
                         self.walker_readers.append((Reader(
                             name, f"{pattern} (walker of {target})", "walker", source, units),
@@ -730,18 +1040,24 @@ class Model:
         """The test targets of its owner a path selects, or None for the whole crate
         (GATE-SCOPE-FULL-CRATES-TEST-ONLY).
 
-        Narrowed only for a path in no library, binary, build-script or example:
-        a Rust file only test targets compile, or a non-Rust file whose readers
-        in its crate are all test targets.  The crate's manifest, build script and
-        ``src/`` stay crate-wide, and so does a file nothing in the crate is found
-        reading (fail-closed)."""
+        Narrowed only for a path in no library, binary, build-script or example
+        outside `#[cfg(test)]`: a Rust file only test executables compile (an
+        integration test's module, or a module the library declares only under
+        `#[cfg(test)]`, whose unit is ``PKG::lib::NAME``), or a non-Rust file whose
+        readers in its crate are all in test executables.  The crate's manifest,
+        build script and the rest of ``src/`` stay crate-wide, and so does a file
+        nothing in the crate is found reading (fail-closed)."""
         directory = self.crates[owner].directory
         relative = path[len(directory) + 1:] if path.startswith(directory + "/") else ""
-        if relative in ("", "Cargo.toml", "Cargo.lock", "build.rs") or relative.startswith("src/"):
+        if relative in ("", "Cargo.toml", "Cargo.lock", "build.rs"):
             return None
         if (owner, path) in self.file_nontest:
             return None
         selected = set(self.file_units.get((owner, path), set()))
+        # Under src/, only a Rust module the library reaches through
+        # #[cfg(test)] edges alone (GATE-SCOPE-LIB-UNIT-TEST-MODULES) narrows.
+        if relative.startswith("src/") and not (path.endswith(".rs") and selected):
+            return None
         own = [reader for reader in readers if reader.crate == owner]
         # A literal naming one of its directories shows a test reads somewhere
         # under it, not that this file has no other reader: narrowing needs a
@@ -1041,13 +1357,23 @@ def steps_for(scope: dict, out: Path, python: str = sys.executable,
             steps.append(Step("clippy", ["cargo", "clippy", *selection, "--all-targets", "--",
                                          "-D", "warnings"]))
         by_crate: dict[str, list[str]] = {}
+        lib_crates: set[str] = set()
         for uid in targets:
-            crate, _, name = uid.split("::", 2)
-            by_crate.setdefault(crate, []).append(name)
+            crate, kind, name = uid.split("::", 2)
+            if kind == "test":
+                by_crate.setdefault(crate, []).append(name)
+            else:
+                lib_crates.add(crate)  # PKG::lib::NAME, the library's unit tests
         for crate, names in sorted(by_crate.items()):
             filters = [arg for name in names for arg in ("--test", name)]
             steps.append(Step(f"clippy-{crate}", ["cargo", "clippy", "-p", crate, *filters, "--",
                                                   "-D", "warnings"]))
+        for crate in sorted(lib_crates):
+            # `--profile test` checks the library as its unit-test executable
+            # compiles it (cfg(test) on); plain `--lib` would skip that code.
+            steps.append(Step(f"clippy-{crate}-lib", ["cargo", "clippy", "-p", crate, "--lib",
+                                                      "--profile", "test", "--", "-D",
+                                                      "warnings"]))
         argv = [python, str(SCRIPTS / "run_test_binaries.py")]
         if packages:
             argv += ["--packages", ",".join(packages)]
