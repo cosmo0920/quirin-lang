@@ -37,6 +37,13 @@
       "recorded_by": "MEMBER-EFFECT-SUMMARY"
     },
     {
+      "id": "MEMBER-EFFECT-COMPONENT-SCOPE",
+      "operation": "register",
+      "title": "A member-release effect is not admitted for a body whose row scope is a multi-function component",
+      "text": "Registered by the integrator from MEMBER-EFFECT-SUMMARY's measurement (report section 5, 2026-11-06). cmt_opts.c::cmt_opts_exit was predicted Unknown -> Safe but stayed Unknown: its five cfl_sds_destroy releases of opts->ns, subsystem, name, description and fqname are still refused as member-release-through-formal, and its row's scope is the component [cmt_opts_exit, cmt_opts_init]. rd_kafka_metadata_partition_clear, a single-function scope of the same shape, did move. Fail-closed, so no soundness defect. DISCHARGE: diagnose why rule 38j's body check does not run (or is refused) inside a component scope; either admit it with the component's premises stated and Lean parity, or record the premise that keeps it refused; measured.",
+      "source": "docs/reports/member-effect-summary/README.md"
+    },
+    {
       "id": "MEMBER-CUSTODY-THROUGH-FORMAL-PARENT",
       "operation": "amend",
       "text": "AMENDED (MEMBER-EFFECT-SUMMARY): the user chose option 1 on 2026-11-05 (\"Option 1 (rec.)\"). Option 3's re-attribution is gateway rule 38i; the member-release half of option 1 is gateway rule 38j (derived bodies only); the store half is MEMBER-EFFECT-STORES and the declared form MEMBER-EFFECT-DECLARED-FORM. Element releases (`A[i]` of a formal array) and the `run_current_census.py` census remain open here.",

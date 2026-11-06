@@ -211,8 +211,36 @@ Lean, since a proof root changes; Python; no provider gate):
   exit 0 (log `private/gate2/clippy-rerun.log`), `indirect_scalar_access`
   24 passed. No code outside that test file changed after run 2.
 
-Measurement (integrator): `quirin-audit measure` against
-`baseline:c8c7edf21` with `--declared docs/reports/member-effect-summary/PREDICTION.md`.
+Measurement (integrator, 2026-11-06): `quirin-audit measure --side
+base=rev:855b34ade --side tip=rev:f420061ac --declared
+docs/reports/member-effect-summary/PREDICTION.md`, run directory
+`private/measure/member-effect-20261105T185335Z` (main checkout), wall time
+8 h 56 min (shared with gates and another measurement). The base side is the
+card's own base, not `baseline:c8c7edf21`, so this round's earlier merges
+cancel out. Copy: [native-comparison.json](native-comparison.json), sha256
+`404c0f87…c5aa5`. Exit 1, declared-versus-measured mismatch:
+
+| Route | Moves | Delta | Declared |
+|---|---|---|---|
+| corpus | 4 rows, 0 units | Safe +4, Unknown -4 | mismatch: 1 missing, 1 unpredicted |
+| slice | `flb_tail_fs_stat_remove` Unknown -> Safe | Safe +1 | match |
+| system | none | 0 | match |
+
+- Unpredicted, justified: `rdkafka_metadata.c::rd_kafka_metadata_partition_clear`
+  Unknown -> Safe. Its body is `RD_IF_FREE(rkmp->isrs, rd_free);
+  RD_IF_FREE(rkmp->replicas, rd_free);`, two null-guarded releases of members
+  of the formal `rkmp`: the member-release effect of rule 38j, the same shape
+  as the predicted rows. The two removed leaves are its two indirect-access
+  sites (`rdkafka_metadata.c:81`, `:82`).
+- Missing, fail-closed (concern recorded, not a soundness defect):
+  `cmt_opts.c::cmt_opts_exit` stays Unknown. Its five releases (`opts->ns`,
+  `subsystem`, `name`, `description`, `fqname` via `cfl_sds_destroy`) are
+  still refused as `member-release-through-formal`; its row's scope is the
+  component `[cmt_opts_exit, cmt_opts_init]`. The prediction assumed the
+  summary applies inside that component; it does not. Tracked as
+  MEMBER-EFFECT-COMPONENT-SCOPE.
+- The corpus delta (Safe +4) equals the declared delta; no row moved to
+  `Unsafe`.
 
 ## 6. Follow-ups
 
