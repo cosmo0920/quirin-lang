@@ -6,29 +6,29 @@ Each live evaluation profile's total comes from a real run (its baseline record 
 
 ## eight-home
 
-Real-run total (baseline `d609aa16e9e6`, measured at `b403cd4dedda`): Safe 1013, Unknown 3811, Unsafe 10.
+Real-run total (baseline `83e9bd86d219`, measured at `777fba16efa4`): Safe 1054, Unknown 3769, Unsafe 11.
 
-Measurement `3f505732cabd` (docs/reports/rule35-pilot/native-comparison.json), rules 35 switched off in one binary (`555bd17db877`), current:
+Measurement `3f505732cabd` (docs/reports/rule35-pilot/native-comparison.json), rules 35 switched off in one binary (`555bd17db877`), stale:
 
 - base (rules 35 off): Safe 1001, Unknown 3823, Unsafe 10
 - rule 35: 12 rows under no named premise; Unknown→Safe 12; 104 touched rows stay Unknown; leaves traded −123 +8
 - interactions of rule 35 with other rules: not measured (switched alone)
-- consistency: base + contributions + interactions = Safe 1013, Unknown 3811, Unsafe 10 = the real-run total
+- stale: measured on baseline `d609aa16e9e6`; the profile's baseline has moved since. Not counted; re-measure with `quirin-audit measure --rules-off`.
 
-Measurement `93035654cecf` (docs/reports/rule36-pilot/native-comparison.json), rules 33, 34, 36 switched off in one binary (`62c8e461cf00`), current:
+Measurement `93035654cecf` (docs/reports/rule36-pilot/native-comparison.json), rules 33, 34, 36 switched off in one binary (`62c8e461cf00`), stale:
 
 - base (rules 33, 34, 36 off): Safe 1009, Unknown 3815, Unsafe 10
 - rule 33: two rows under one premise (`detach_list_representation`); Unknown→Safe 2
 - rule 36: no rows
 - rule 34: two rows under eight premises (`scheduler_borrowed_chain_live`, `scheduler_callback_footprint`, `scheduler_callee_live`, `scheduler_exact_parent_embedding`, `scheduler_no_later_alias_use`, `scheduler_tls_params_owned`, `scheduler_valgrind_request_neutral`, `scheduler_valid_membership`); Unknown→Safe 2
-- consistency: base + contributions + interactions = Safe 1013, Unknown 3811, Unsafe 10 = the real-run total
+- stale: measured on baseline `d609aa16e9e6`; the profile's baseline has moved since. Not counted; re-measure with `quirin-audit measure --rules-off`.
 
-Measurement `78a83e75ed31` (docs/reports/rule37-pilot/native-comparison.json), rules 37 switched off in one binary (`6b6a3a438d89`), current:
+Measurement `78a83e75ed31` (docs/reports/rule37-pilot/native-comparison.json), rules 37 switched off in one binary (`6b6a3a438d89`), stale:
 
 - base (rules 37 off): Safe 1008, Unknown 3816, Unsafe 10
 - rule 37: five rows under one premise (`asserted_allocation`); Unknown→Safe 5; 260 touched rows stay Unknown; leaves traded −36 +22
 - interactions of rule 37 with other rules: not measured (switched alone)
-- consistency: base + contributions + interactions = Safe 1013, Unknown 3811, Unsafe 10 = the real-run total
+- stale: measured on baseline `d609aa16e9e6`; the profile's baseline has moved since. Not counted; re-measure with `quirin-audit measure --rules-off`.
 
 ## fluent-bit-system
 
@@ -58,26 +58,26 @@ Measurement `78a83e75ed31` (docs/reports/rule37-pilot/native-comparison.json), r
 
 ## fluent-bit-tail-pause
 
-Real-run total (baseline `dce03b504b89`, measured at `710021bd713b`): Pending 4, Safe 57, Unknown 342, Unsafe 1.
+Real-run total (baseline `1b44f0b526f7`, measured at `777fba16efa4`): Pending 4, Safe 58, Unknown 341, Unsafe 1.
 
-Measurement `3f505732cabd` (docs/reports/rule35-pilot/native-comparison.json), rules 35 switched off in one binary (`555bd17db877`), current:
+Measurement `3f505732cabd` (docs/reports/rule35-pilot/native-comparison.json), rules 35 switched off in one binary (`555bd17db877`), stale:
 
 - base (rules 35 off): Pending 4, Safe 57, Unknown 342, Unsafe 1
 - rule 35: no rows; 9 touched rows stay Unknown; leaves traded −11 +3
 - interactions of rule 35 with other rules: not measured (switched alone)
-- consistency: base + contributions + interactions = Pending 4, Safe 57, Unknown 342, Unsafe 1 = the real-run total
+- stale: measured on baseline `dce03b504b89`; the profile's baseline has moved since. Not counted; re-measure with `quirin-audit measure --rules-off`.
 
-Measurement `93035654cecf` (docs/reports/rule36-pilot/native-comparison.json), rules 33, 34, 36 switched off in one binary (`62c8e461cf00`), current:
+Measurement `93035654cecf` (docs/reports/rule36-pilot/native-comparison.json), rules 33, 34, 36 switched off in one binary (`62c8e461cf00`), stale:
 
 - base (rules 33, 34, 36 off): Pending 4, Safe 57, Unknown 342, Unsafe 1
 - rule 33: no rows
 - rule 36: no rows
 - rule 34: no rows
-- consistency: base + contributions + interactions = Pending 4, Safe 57, Unknown 342, Unsafe 1 = the real-run total
+- stale: measured on baseline `dce03b504b89`; the profile's baseline has moved since. Not counted; re-measure with `quirin-audit measure --rules-off`.
 
-Measurement `78a83e75ed31` (docs/reports/rule37-pilot/native-comparison.json), rules 37 switched off in one binary (`6b6a3a438d89`), current:
+Measurement `78a83e75ed31` (docs/reports/rule37-pilot/native-comparison.json), rules 37 switched off in one binary (`6b6a3a438d89`), stale:
 
 - base (rules 37 off): Pending 4, Safe 57, Unknown 342, Unsafe 1
 - rule 37: no rows
 - interactions of rule 37 with other rules: not measured (switched alone)
-- consistency: base + contributions + interactions = Pending 4, Safe 57, Unknown 342, Unsafe 1 = the real-run total
+- stale: measured on baseline `dce03b504b89`; the profile's baseline has moved since. Not counted; re-measure with `quirin-audit measure --rules-off`.

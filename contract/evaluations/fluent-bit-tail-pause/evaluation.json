@@ -69,7 +69,7 @@
   },
   "baseline": {
     "path": "contract/evaluations/fluent-bit-tail-pause/baseline.json",
-    "sha256": "dce03b504b8967c470bc17d17ab9ccb03bac5a3a5bb6030a338b35241df3f2dc"
+    "sha256": "1b44f0b526f7462a8d604e0eb86fcd9dbd134e5d4ea73fb12a4e9aae758fd60f"
   },
   "baseline_history": [
     {
@@ -77,10 +77,16 @@
       "measured_revision": "710021bd713b90037e803d4a1f87d95eba6476c9",
       "reason": "first published baseline of the live profile: BASE 710021bd7 measured by card EVALUATION-PROFILES with the AUDIT-CANONICAL-PATHS route driver on the original pinned inputs",
       "source": "docs/reports/evaluation-profiles/README.md"
+    },
+    {
+      "sha256": "1b44f0b526f7462a8d604e0eb86fcd9dbd134e5d4ea73fb12a4e9aae758fd60f",
+      "measured_revision": "777fba16efa49c67634fd9eec0b3db12051b0edd",
+      "reason": "Landing 777fba16e against published c8c7edf21: flb_tail_fs_stat_remove Unknown to Safe, the measured move of MEMBER-EFFECT-SUMMARY; no NULL verdict moves (digest changes with content only).",
+      "source": "docs/reports/landing-777fba16e/README.md"
     }
   ],
   "evidence_version": {
-    "analyzer_revision": "710021bd713b90037e803d4a1f87d95eba6476c9",
+    "analyzer_revision": "777fba16efa49c67634fd9eec0b3db12051b0edd",
     "semantic_evidence": "v2 (unchanged)"
   }
 }

@@ -76,7 +76,7 @@
   },
   "baseline": {
     "path": "contract/evaluations/eight-home/baseline.json",
-    "sha256": "d609aa16e9e650e412398fc4352ef3b462765d5da5ad84dda1560a7507fe9dc8"
+    "sha256": "83e9bd86d2194e0e0e2df71a3f32f6d6ebd5f9d7ff9cbc3bf99ee64df5e40105"
   },
   "baseline_history": [
     {
@@ -90,10 +90,16 @@
       "measured_revision": "b403cd4deddaab711f446f383270363aca39a2af",
       "reason": "CMT-GETTER-OWNERSHIP-CLOSURE landing: canonical NULL expansion exposes exactly the validated hash-zero getter storage leak (Unknown to provisional Unsafe); NULL verdicts are unchanged, with only its custody/combined carrier join changing.",
       "source": "docs/reports/cmt-getter-landing/README.md"
+    },
+    {
+      "sha256": "83e9bd86d2194e0e0e2df71a3f32f6d6ebd5f9d7ff9cbc3bf99ee64df5e40105",
+      "measured_revision": "777fba16efa49c67634fd9eec0b3db12051b0edd",
+      "reason": "Landing 777fba16e against published c8c7edf21: 41 Unknown-to-Safe rows and units ctr_attributes.c to Safe, decode_statsd_message and unit cmt_decode_statsd.c to provisional Unsafe, each the measured move of LIBC-GAP-DECLARATIONS, CFL-MPACK-EXTERNAL-DECLARATIONS, LIBRDKAFKA-HEADER-INLINES or MEMBER-EFFECT-SUMMARY; no NULL verdict moves (digest changes with content only).",
+      "source": "docs/reports/landing-777fba16e/README.md"
     }
   ],
   "evidence_version": {
-    "analyzer_revision": "b403cd4deddaab711f446f383270363aca39a2af",
+    "analyzer_revision": "777fba16efa49c67634fd9eec0b3db12051b0edd",
     "semantic_evidence": "v2 (unchanged)"
   }
 }

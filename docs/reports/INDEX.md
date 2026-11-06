@@ -608,6 +608,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | Card directory | Original report title |
 |---|---|
 
+| [landing-777fba16e](landing-777fba16e/README.md) | Landing checkpoint 777fba16e |
+
 | [landing-provider-lock](landing-provider-lock/README.md) | Landing repair: provider workspace lock (2026-11-01) |
 
 | [landing-publish-completion](landing-publish-completion/README.md) | LANDING-PUBLISH-COMPLETION |
