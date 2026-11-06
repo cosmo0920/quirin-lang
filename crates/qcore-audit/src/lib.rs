@@ -73,6 +73,8 @@ pub mod report;
 // Card AUDIT-COMPOSITION: per-row components and the derived report rows.
 pub mod report_components;
 pub mod revision_compare;
+// Card CURRENT-RUN-WORKER-SPIN: per-phase and per-unit progress lines.
+pub mod route_progress;
 mod source_audit;
 pub mod source_contract;
 pub mod timeout_teardown;

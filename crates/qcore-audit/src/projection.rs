@@ -603,16 +603,23 @@ pub fn project_unit_into_with_cross_unit(
                 let mut environment = contracts.clone();
                 environment.set_inferred_imports(Default::default());
                 environment.set_lifetime_imports(Default::default());
-                (environment, Vec::new())
+                qcore_c_gateway::legacy_c::CrossUnitCallerImports {
+                    environment,
+                    homes: Vec::new(),
+                    reachable: 0,
+                    named_only: 0,
+                    withheld: None,
+                }
             }
         })
     };
     let contracts = scoped
         .as_ref()
-        .map_or(contracts, |(environment, _)| environment);
+        .map_or(contracts, |scoped| &scoped.environment);
     let homes = scoped
         .as_ref()
-        .map_or(&[][..], |(_, homes)| homes.as_slice());
+        .map_or(&[][..], |scoped| scoped.homes.as_slice());
+    crate::route_progress::cross_unit_scope(library, file, scoped.as_ref());
     record_inventory(inventory, counts);
     let source_functions = inventory.definitions();
     if source_functions.is_empty() {
@@ -735,7 +742,23 @@ pub fn project_unit_into_with_cross_unit(
         report,
         counts,
         out,
-    )
+    )?;
+    record_withheld(scoped.as_ref(), report, out);
+    Ok(())
+}
+
+/// Card **CURRENT-RUN-WORKER-SPIN** (rule 4c, amended): a caller whose
+/// reachable homes exceeded the per-unit replay budget held no import; its
+/// unit row and console line name why.
+fn record_withheld(
+    scoped: Option<&qcore_c_gateway::legacy_c::CrossUnitCallerImports>,
+    report: &mut AuditReport,
+    out: &mut String,
+) {
+    if let Some(reason) = scoped.and_then(|scoped| scoped.withheld.as_deref()) {
+        report.record_cross_unit_withheld(reason);
+        say!(out, "    {reason}");
+    }
 }
 
 /// Project a unit from the preparation already used for compile-task identity,
@@ -812,10 +835,11 @@ pub fn project_prepared_unit_into_with_cross_unit(
     };
     let contracts = scoped
         .as_ref()
-        .map_or(contracts, |(environment, _)| environment);
+        .map_or(contracts, |scoped| &scoped.environment);
     let homes = scoped
         .as_ref()
-        .map_or(&[][..], |(_, homes)| homes.as_slice());
+        .map_or(&[][..], |scoped| scoped.homes.as_slice());
+    crate::route_progress::cross_unit_scope(library, file, scoped.as_ref());
     let PreparedAuditCertificateContext {
         compile_task_identity,
         source_profile_sha256,
@@ -982,7 +1006,9 @@ pub fn project_prepared_unit_into_with_cross_unit(
         report,
         counts,
         out,
-    )
+    )?;
+    record_withheld(scoped.as_ref(), report, out);
+    Ok(())
 }
 
 /// Card **CURRENT-RUN-DEFECTS**: a unit whose every raw-scan definition is

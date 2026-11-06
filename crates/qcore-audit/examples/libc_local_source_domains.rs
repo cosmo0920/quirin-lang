@@ -587,11 +587,12 @@ fn main() -> Result<(), String> {
                     pp,
                 )
                 .map_err(|e| e.to_string())?;
-                let (caller_contracts, _) = qcore_c_gateway::legacy_c::cross_unit_for_caller(
+                let caller_contracts = qcore_c_gateway::legacy_c::cross_unit_for_caller(
                     pp,
                     &run_contracts,
                     &run_homes,
-                );
+                )
+                .environment;
                 let held = HeldDomain {
                     source: pp,
                     raw_source: &source_bytes,

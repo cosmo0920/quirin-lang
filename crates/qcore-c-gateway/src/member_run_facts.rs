@@ -40,6 +40,8 @@ pub struct RunMemberFacts {
     pub unread: BTreeMap<String, String>,
     /// The units' stores by normal key, built once.
     prepared: OnceLock<Prepared>,
+    /// Every function the facts name as a value, built once.
+    named_functions: OnceLock<BTreeSet<String>>,
 }
 
 impl RunMemberFacts {
@@ -50,7 +52,39 @@ impl RunMemberFacts {
             units,
             unread,
             prepared: OnceLock::new(),
+            named_functions: OnceLock::new(),
         }
+    }
+
+    /// Card **CURRENT-RUN-WORKER-SPIN** (rule 4c, amended): every function
+    /// the run's facts name as a value (a unit's address-taken functions and
+    /// every function designator stored into a member or passed as a
+    /// function-pointer actual, the declarations' stated defaults
+    /// included). A member invocation's run closure can only deliver one of
+    /// these, so a function outside this set and unspelled in a unit is never
+    /// a candidate of that unit's member invocations.
+    #[must_use]
+    pub fn named_functions(&self) -> &BTreeSet<String> {
+        self.named_functions.get_or_init(|| {
+            let mut names = BTreeSet::new();
+            let mut flow = |flow: &Flow| {
+                if let Flow::Function { name } = flow {
+                    names.insert(name.clone());
+                }
+            };
+            for unit in &self.units {
+                unit.stores.values().flatten().for_each(&mut flow);
+                unit.calls
+                    .values()
+                    .flat_map(BTreeMap::values)
+                    .flatten()
+                    .for_each(&mut flow);
+            }
+            for unit in &self.units {
+                names.extend(unit.address_taken.iter().cloned());
+            }
+            names
+        })
     }
 
     fn prepared(&self) -> &Prepared {

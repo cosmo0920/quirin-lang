@@ -161,28 +161,121 @@ pub fn export_homes(
     Ok(exports)
 }
 
-/// Restrict a run-wide import table to names with no definition in this
-/// caller's preprocessed unit. A header static always takes local precedence.
+/// Card **CURRENT-RUN-WORKER-SPIN** (rule 4c, amended): the most homes one
+/// caller unit holds. Certificate issue and the certificate check each replay
+/// every home the caller holds (a whole-unit W4 analysis of the home), so a
+/// caller's import work is bounded by this many home analyses per check. A
+/// caller that may reach more holds none: its calls to those names stay
+/// uncontracted (`Unknown`), and [`CallerImports::withheld`] names why.
+pub const REPLAY_BUDGET_PER_UNIT: usize = 24;
+
+/// What one caller unit holds of a run's cross-unit imports.
+#[derive(Clone, Debug)]
+pub struct CallerImports {
+    /// The run environment with only the held imports.
+    pub environment: ResourceContracts,
+    /// The held homes, replayed at certificate issue and check.
+    pub homes: Vec<CrossUnitHomeEvidence>,
+    /// Run homes the caller may reach: no definition in the caller, and the
+    /// name spelled in the caller's preprocessed unit or named as a value by
+    /// the run's member facts.
+    pub reachable: usize,
+    /// Of `reachable`, the homes the caller never uses and only the run's
+    /// member facts name.
+    pub named_only: usize,
+    /// Set when `reachable` exceeds [`REPLAY_BUDGET_PER_UNIT`]: the caller
+    /// then holds no import.
+    pub withheld: Option<String>,
+}
+
+/// Every identifier the unit uses outside a file-scope declarator: inside
+/// any brace (a function body, a record or enumeration body, an aggregate
+/// initializer) or after a file-scope `=` (a scalar initializer). A
+/// file-scope prototype, which a header spells for every function of its
+/// library, is not a use: the analysis reads a callee only from a body.
+fn used_identifiers(tokens: &[super::Token]) -> BTreeSet<&str> {
+    let mut used = BTreeSet::new();
+    let mut depth = 0usize;
+    let mut initializer = false;
+    for token in tokens {
+        match token.text.as_str() {
+            "{" => depth += 1,
+            "}" => depth = depth.saturating_sub(1),
+            ";" if depth == 0 => initializer = false,
+            "=" if depth == 0 => initializer = true,
+            text => {
+                if depth > 0 || initializer {
+                    used.insert(text);
+                }
+            }
+        }
+    }
+    used
+}
+
+/// Restrict a run-wide import table to the homes this caller may reach. A
+/// name defined in the caller's preprocessed unit takes local precedence (a
+/// header static always does). A name neither used in the caller's unit
+/// (outside a file-scope prototype, [`used_identifiers`]) nor named as a
+/// value by the run's installed member facts
+/// ([`crate::member_run_facts::RunMemberFacts::named_functions`]) is never
+/// looked up by the caller's analysis, so its home is not held and not
+/// replayed. Holding fewer imports can only leave a call uncontracted, never
+/// supply a summary (fail-closed); a caller that may reach more than
+/// [`REPLAY_BUDGET_PER_UNIT`] homes holds none.
 pub fn for_caller(
     preprocessed: &str,
     run_environment: &ResourceContracts,
     run_homes: &[CrossUnitHomeEvidence],
-) -> (ResourceContracts, Vec<CrossUnitHomeEvidence>) {
+) -> CallerImports {
     let (tokens, conditionals) = tokenize_with_conditionals(preprocessed);
     let local = function_names(&tokens, &conditionals)
         .definitions
         .into_iter()
         .collect::<BTreeSet<_>>();
-    let mut environment = run_environment.clone();
-    let homes = run_homes
+    let spelled = used_identifiers(&tokens);
+    let run_facts = crate::member_run_facts::installed();
+    let names = run_homes
         .iter()
-        .filter(|home| !local.contains(&home.function))
-        .cloned()
+        .map(|home| home.function.as_str())
         .collect::<Vec<_>>();
+    let named = |name: &str| {
+        run_facts
+            .as_ref()
+            .is_some_and(|facts| facts.named_functions().contains(name))
+    };
+    let scope = scope(
+        &names,
+        |name| local.contains(name),
+        |name| spelled.contains(name),
+        named,
+        REPLAY_BUDGET_PER_UNIT,
+    );
+    let named_only = names
+        .iter()
+        .filter(|name| !local.contains(**name) && !spelled.contains(**name) && named(name))
+        .count();
+    let withheld = scope.exhausted.then(|| {
+        format!(
+            "cross-unit replay budget exhausted: {} reachable home(s) exceed the per-unit \
+             budget of {REPLAY_BUDGET_PER_UNIT}; no import held",
+            scope.reachable
+        )
+    });
+    let homes = scope
+        .held
+        .iter()
+        .map(|&index| run_homes[index].clone())
+        .collect::<Vec<_>>();
+    let held = homes
+        .iter()
+        .map(|home| home.function.as_str())
+        .collect::<BTreeSet<_>>();
+    let mut environment = run_environment.clone();
     let imports = environment
         .inferred_imports()
         .iter()
-        .filter(|(name, _)| !local.contains(*name))
+        .filter(|(name, _)| held.contains(name.as_str()))
         .map(|(name, contract)| (name.clone(), contract.clone()))
         .collect();
     environment.set_inferred_imports(imports);
@@ -190,18 +283,59 @@ pub fn for_caller(
         environment
             .lifetime_imports()
             .iter()
-            .filter(|(name, _)| !local.contains(*name))
+            .filter(|(name, _)| held.contains(name.as_str()))
             .map(|(name, summary)| (name.clone(), summary.clone()))
             .collect(),
     );
     let identities = environment
         .cross_unit_import_identities()
         .iter()
-        .filter(|(name, _)| !local.contains(*name))
+        .filter(|(name, _)| held.contains(name.as_str()))
         .map(|(name, identity)| (name.clone(), identity.clone()))
         .collect();
     environment.set_cross_unit_import_identities(identities);
-    (environment, homes)
+    CallerImports {
+        environment,
+        homes,
+        reachable: scope.reachable,
+        named_only,
+        withheld,
+    }
+}
+
+/// The pure scope decision of [`for_caller`]
+/// (`QCore.CrossUnitReplayBudget.held`): the indices of the homes a caller
+/// holds, how many it may reach, and whether the budget is exhausted.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(crate) struct Scope {
+    pub(crate) held: Vec<usize>,
+    pub(crate) reachable: usize,
+    pub(crate) exhausted: bool,
+}
+
+/// A home is reachable when the caller does not define its name and either
+/// spells it or the run's member facts name it as a value; the caller holds
+/// every reachable home when they fit the budget, and none otherwise.
+pub(crate) fn scope(
+    homes: &[&str],
+    local: impl Fn(&str) -> bool,
+    spelled: impl Fn(&str) -> bool,
+    named: impl Fn(&str) -> bool,
+    budget: usize,
+) -> Scope {
+    let reachable = homes
+        .iter()
+        .enumerate()
+        .filter(|(_, name)| !local(name) && (spelled(name) || named(name)))
+        .map(|(index, _)| index)
+        .collect::<Vec<_>>();
+    let count = reachable.len();
+    let exhausted = count > budget;
+    Scope {
+        held: if exhausted { Vec::new() } else { reachable },
+        reachable: count,
+        exhausted,
+    }
 }
 
 fn digest_environment(environment: &ResourceContracts) -> Result<String, String> {
@@ -228,11 +362,30 @@ pub(super) fn check_imports(
     {
         return Ok(());
     }
+    // Card CURRENT-RUN-WORKER-SPIN: the check replays every home it is
+    // given, so it refuses more than the per-unit budget before any replay.
+    if homes.len() > REPLAY_BUDGET_PER_UNIT {
+        return Err(format!(
+            "{} cross-unit homes exceed the per-unit replay budget of {REPLAY_BUDGET_PER_UNIT}",
+            homes.len()
+        ));
+    }
     let (caller_tokens, caller_conditionals) = tokenize_with_conditionals(caller_source);
     let caller_definitions = function_names(&caller_tokens, &caller_conditionals).definitions;
     let mut validated = BTreeMap::<String, ResourceFunctionContract>::new();
     let mut validated_lifetimes = BTreeMap::new();
     let mut validated_identities = BTreeMap::<String, CrossUnitImportIdentity>::new();
+    // Card CURRENT-RUN-WORKER-SPIN: homes of one home unit share one replay.
+    // The analysis reads only the home's preprocessed source, its verified
+    // environment, the selected names re-derived from its raw and marked
+    // source, its dialect and its request; the requested entry names only the
+    // summary's `entry`, which nothing below reads. Every per-home check
+    // still runs for every home.
+    let mut replays: Vec<(
+        &CrossUnitHomeEvidence,
+        Vec<String>,
+        super::PartialTranslationUnitAnalysis,
+    )> = Vec::new();
     for home in homes {
         if !sha256_spelling(&home.link_resolution_sha256) {
             return Err(format!(
@@ -318,14 +471,29 @@ pub(super) fn check_imports(
             .iter()
             .map(|row| row.name.clone())
             .collect::<Vec<_>>();
-        let result = super::analyze_legacy_c_translation_unit_selected_partial(
-            &home.preprocessed_source,
-            &home.function,
-            &home.environment,
-            Some(&names),
-            (home.dialect, Some(&home.request)),
-        )
-        .map_err(|error| format!("cross-unit home cannot be reanalysed: {error}"))?;
+        let shared = replays.iter().position(|(replayed, replayed_names, _)| {
+            replayed.preprocessed_source == home.preprocessed_source
+                && replayed.environment_sha256 == home.environment_sha256
+                && replayed.dialect == home.dialect
+                && replayed.request == home.request
+                && *replayed_names == names
+        });
+        let index = match shared {
+            Some(index) => index,
+            None => {
+                let result = super::analyze_legacy_c_translation_unit_selected_partial(
+                    &home.preprocessed_source,
+                    &home.function,
+                    &home.environment,
+                    Some(&names),
+                    (home.dialect, Some(&home.request)),
+                )
+                .map_err(|error| format!("cross-unit home cannot be reanalysed: {error}"))?;
+                replays.push((home, names, result));
+                replays.len() - 1
+            }
+        };
+        let result = &replays[index].2;
         let Some(row) = result.summary.functions.get(&home.function) else {
             return Err(format!("cross-unit `{}` home has no row", home.function));
         };
@@ -421,4 +589,74 @@ fn linkage_sensitive_declaration(tokens: &[super::Token], function: &str) -> boo
         }
     }
     false
+}
+
+/// `SCOPE_VECTORS` (`QCore.CrossUnitReplayBudget.scopeVectors`): run homes,
+/// the caller's local definitions, its spellings, the run's member-fact
+/// names and the budget, then the held homes, the reachable count and
+/// whether the budget is exhausted.
+#[cfg(test)]
+#[allow(clippy::type_complexity)]
+pub(crate) const SCOPE_VECTORS: &[(
+    &[&str],
+    &[&str],
+    &[&str],
+    &[&str],
+    usize,
+    &[&str],
+    usize,
+    bool,
+)] = &[
+    (&["a", "b", "c"], &[], &["a", "x"], &[], 4, &["a"], 1, false),
+    (
+        &["a", "b", "c"],
+        &[],
+        &["a"],
+        &["c"],
+        4,
+        &["a", "c"],
+        2,
+        false,
+    ),
+    (&["a", "b"], &["a"], &["a", "b"], &[], 4, &["b"], 1, false),
+    (&["a", "b"], &[], &["a", "b"], &[], 2, &["a", "b"], 2, false),
+    (
+        &["a", "b", "c"],
+        &[],
+        &["a", "b", "c"],
+        &[],
+        2,
+        &[],
+        3,
+        true,
+    ),
+    (&["a"], &[], &[], &[], 0, &[], 0, false),
+];
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn scope_vectors_hold() {
+        for (homes, local, spelled, named, budget, held, reachable, exhausted) in SCOPE_VECTORS {
+            let scope = scope(
+                homes,
+                |name| local.contains(&name),
+                |name| spelled.contains(&name),
+                |name| named.contains(&name),
+                *budget,
+            );
+            let names = scope
+                .held
+                .iter()
+                .map(|&index| homes[index])
+                .collect::<Vec<_>>();
+            assert_eq!(names, *held, "{homes:?} {spelled:?} {named:?}");
+            assert_eq!(scope.reachable, *reachable);
+            assert_eq!(scope.exhausted, *exhausted);
+            assert!(scope.held.len() <= *budget);
+        }
+        assert_eq!(SCOPE_VECTORS.len(), 6);
+    }
 }

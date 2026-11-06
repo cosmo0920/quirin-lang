@@ -109,6 +109,7 @@ import QCore.ContractViewProjection
 import QCore.ControlFlow
 import QCore.CountedUsers
 import QCore.CounterSource
+import QCore.CrossUnitReplayBudget
 import QCore.CrossUnitSummary
 import QCore.Ct01OwnedTransfer
 import QCore.Ct03ReadShares
