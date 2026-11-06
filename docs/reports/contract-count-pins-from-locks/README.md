@@ -203,9 +203,26 @@ refusal; its logs are replaced by this run's.
 ## 4. Card gate
 
 `python3 scripts/gate_scope.py --base 25508ccaf --out <worktree>/private/gate`
-on the card tip; its `gate.json` is `gate/gate.json` here, summarized in the
-hand-back. The diff reaches `qcore-contract` (its example) and the providers,
-so the scoper selects full mode and the provider gate.
+on the card tip `8bed758f9` (`gate/gate.json`; logs under the worktree's
+`private/gate/`). The diff reaches `qcore-contract` (its example) and the
+providers, so the scoper selected full mode (22 packages), no Lean step, and
+the provider gate.
+
+| Step | Exit | Counts |
+|---|---:|---|
+| submodules, fmt, Clippy | 0 | |
+| Rust suite (`run_test_binaries.py`) | 0 | 611 units, 652 summaries; 9,241 passed, 0 failed, 16 ignored, 135 filtered |
+| reevaluation probe, followup | 0 | |
+| Python suite | 1 | 578 tests, 2 failures: the base's two (section 3) |
+| provider package build, verify-all, verify `qcore.libevent` | 0 | |
+| provider workspace tests | 0 | 43 summaries; 133 passed, 0 failed, 1 ignored |
+| provider fmt, Clippy | 0 | |
+
+Wall time 5 h 35 min, almost all of it slot waits (the Rust suite step 2 h 31
+min and the provider tests 3 h 00 min including their `rust-suite`/`audit`
+waits behind other cards' gates and measurements; the Rust suite itself ran
+18 min). The two Python failures are present without this card's diff: neither
+test reads a path the diff touches.
 
 ## 5. Follow-ups and boundaries
 
