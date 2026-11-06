@@ -35,9 +35,9 @@
       "recorded_by": "CONTRACT-COUNT-PINS-FROM-LOCKS"
     },
     {
-      "id": "GATE-SCOPE-RUNTIME-READS-HEURISTIC",
+      "id": "GATE-READ-CENSUS-REFRESH",
       "operation": "append",
-      "text": "OBSERVED (CONTRACT-COUNT-PINS-FROM-LOCKS): tests/support/contract_locks.rs (included by contract_loader.rs, neighbours.rs, prod_contracts.rs and provider_selection.rs) and scripts/contract_corpus.py lock_totals read every providers/<crate>/contract-inventory.lock through a path computed from providers/contract-load-path.json, so no string literal names the lock; an exact-reader scoper must declare these readers of the locks, or a lock-only diff would select none of the four binaries.",
+      "text": "OBSERVED (CONTRACT-COUNT-PINS-FROM-LOCKS): tests/support/contract_locks.rs (included by contract_loader.rs, neighbours.rs, prod_contracts.rs and provider_selection.rs) and scripts/contract_corpus.py lock_totals read every providers/<crate>/contract-inventory.lock through a path computed from providers/contract-load-path.json, so no string literal names the lock; the walker table and read census must declare these readers of the locks, or a lock-only diff would select none of the four binaries. (Redirected by the integrator: GATE-SCOPE-RUNTIME-READS-HEURISTIC was retired by GATE-SCOPE-PRECISE-SELECTION before this card landed.)",
       "source": "docs/reports/contract-count-pins-from-locks/README.md"
     }
   ]
