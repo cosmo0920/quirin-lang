@@ -322,6 +322,24 @@ retains at most three sets (the live one and up to two archived under
 a re-base adds a set and retires the oldest, and a fourth is refused. Never
 edit a stamp, a tie or the window by hand. [Report](../reports/contract-supersession/README.md).
 
+Amended by card CONTRACT-COUNT-PINS-FROM-LOCKS (gate-time requirement R3): the
+inventory locks are schema 2. Each `extern fn` also records its
+`resource_table` (`functions`, `pending_review`, `relational` or `retaining`:
+where the resource-contract v1 loader puts it when its module loads alone;
+`null` when that loader refuses the module), a function-map declaration also
+its `resource_mode` (the loaded contract, serialized), and each module its
+`other_declarations` (the non-`extern fn` names); `sync` refuses tables that
+disagree with the crate's resource view. The function-map modes added after
+base 25508ccaf are pinned by `resource_mode` alone; the literal mode table in
+`contract_loader.rs` keeps every name it held then. The aggregate contract counts the
+Rust and Python tests assert (corpus modules, resource-view modules and source
+assumptions, v1 and rejected declarations, the loader's four tables) are sums
+of these locks, read by one reader per language held to shared cases
+(`tests/support/contract_locks.rs`, `scripts/contract_corpus.py`
+`lock_totals`, `tests/support/contract_locks_cases.json`), never literals
+outside `providers/`: a contract card's count movement is its lock diff.
+[Report](../reports/contract-count-pins-from-locks/README.md).
+
 <a id="constraint-19"></a>
 
 <!-- preserved:constraint-19:start -->

@@ -1,0 +1,4 @@
+ .../quirin-provider-mpack/contract-inventory.lock  | 23 +++++++++++++--
+ providers/quirin-provider-mpack/contracts.lock     | 34 ++++++++++++++++++++++
+ .../contracts/mpack/writer.qv                      | 19 ++++++++++++
+ 3 files changed, 73 insertions(+), 3 deletions(-)

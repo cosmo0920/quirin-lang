@@ -24,6 +24,9 @@ use qcore_contract::contract_loader::{inclusion_provenance, load_resource_contra
 use qcore_schemas::sha256_hex;
 use serde_json::{Value, json};
 
+#[path = "../../../tests/support/contract_locks.rs"]
+mod contract_locks;
+
 static NEXT: AtomicUsize = AtomicUsize::new(0);
 
 const HEAP: &str = "module contract;\n\
@@ -633,22 +636,11 @@ fn cycle19_selection(repository: &Path) -> Vec<String> {
 fn the_cycle19_provider_selection_is_the_cycle19_manifest_module_for_module() {
     let repository = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
     let entries = cycle19_selection(&repository);
-    // 49 -> 50: W45-FB-BACKLOG-CUSTODY's `fluent_bit/storage_backlog.qv`.
-    // Combined W46 cards: 54 selected modules, 219 resource declarations, 118 corpus modules.
-    // 54 -> 55 by card W47-LOOP-OWNER-CONTRACTS: `fluent_bit/loop_owner.qv`.
-    // 55 -> 56 by card W47-CONDVAR-JOIN-PUBLICATION: `libc/pthread_sync.qv`.
-    // 56 -> 57 by card W47-CONDVAR-JOIN-STOP-PATHS: `fluent_bit/lib_engine_thread.qv` (five declarations awaiting review).
-    // 57 -> 58 by card W47-LOOP-OWNER-INSTANCE-FLOW: `fluent_bit/input_instance.qv`.
-    // 58 -> 59 by card CONTRACT-PIN-TIP-MODE: `monkey/vhost_set.qv`.
-    // 59 -> 60 by card MONKEY-VHOST-PROPERTY-CUSTODY: `monkey/string.qv`.
-    // 60 -> 61 by card W43-ABI-ENUM-AND-CONST-PP: `librdkafka/client.qv`.
-    // 61 -> 63 by card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION: `monkey/event_loop.qv` and
-    // `fluent_bit/input_collector_registration.qv`.
-    // 63 -> 64 by card FB-TEARDOWN-DESTROY-DECLARATIONS: `fluent_bit/teardown_destroy.qv`.
-    // 65 -> 66 by card W48-RK-LOG-CALLER-FRAME: `librdkafka/log_caller_frame.qv`.
-    // 66 -> 68 by card LOG-PRINT-BODY-CONTRACTS: `cmetrics/logging.qv` and `chunkio/logging.qv`.
-    // 68 -> 69 by card LIBRDKAFKA-HEADER-INLINES: `librdkafka/header_inlines.qv`.
-    assert_eq!(entries.len(), 69);
+    // Card CONTRACT-COUNT-PINS-FROM-LOCKS: the selected module count is the
+    // providers' resource views as their inventory locks state them
+    // (`tests/support/contract_locks.rs`); the former literal and its
+    // per-card history are in this file at base 25508ccaf.
+    assert_eq!(entries.len(), locked_resource_view_modules(&repository));
     let resolved = resolve_providers(
         &repository.join("providers/contract-load-path.json"),
         &entries,
@@ -668,21 +660,14 @@ fn the_cycle19_provider_selection_is_the_cycle19_manifest_module_for_module() {
     assert_eq!(resolved.manifest_path().parent(), manifest_path.parent());
     let from_manifest = load_resource_contract_manifest(&manifest_path).unwrap();
     let from_selection = ContractInput::providers(&resolved, None).load().unwrap();
-    // Combined W46 cards: 54 selected modules, 219 resource declarations, 118 corpus modules.
-    // 54 -> 55 by card W47-LOOP-OWNER-CONTRACTS: `fluent_bit/loop_owner.qv`.
-    // 55 -> 56 by card W47-CONDVAR-JOIN-PUBLICATION: `libc/pthread_sync.qv`.
-    // 56 -> 57 by card W47-CONDVAR-JOIN-STOP-PATHS: `fluent_bit/lib_engine_thread.qv` (five declarations awaiting review).
-    // 57 -> 58 by card W47-LOOP-OWNER-INSTANCE-FLOW: `fluent_bit/input_instance.qv`.
-    // 58 -> 59 by card CONTRACT-PIN-TIP-MODE: `monkey/vhost_set.qv`.
-    // 59 -> 60 by card MONKEY-VHOST-PROPERTY-CUSTODY: `monkey/string.qv`.
-    // 60 -> 61 by card W43-ABI-ENUM-AND-CONST-PP: `librdkafka/client.qv`.
-    // 61 -> 63 by card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION: `monkey/event_loop.qv` and
-    // `fluent_bit/input_collector_registration.qv`.
-    // 63 -> 64 by card FB-TEARDOWN-DESTROY-DECLARATIONS: `fluent_bit/teardown_destroy.qv`.
-    // 65 -> 66 by card W48-RK-LOG-CALLER-FRAME: `librdkafka/log_caller_frame.qv`.
-    // 66 -> 68 by card LOG-PRINT-BODY-CONTRACTS: `cmetrics/logging.qv` and `chunkio/logging.qv`.
-    // 68 -> 69 by card LIBRDKAFKA-HEADER-INLINES: `librdkafka/header_inlines.qv`.
-    assert_eq!(from_selection.source_assumptions().len(), 69);
+    // Card CONTRACT-COUNT-PINS-FROM-LOCKS: the selected module count is the
+    // providers' resource views as their inventory locks state them
+    // (`tests/support/contract_locks.rs`); the former literal and its
+    // per-card history are in this file at base 25508ccaf.
+    assert_eq!(
+        from_selection.source_assumptions().len(),
+        locked_resource_view_modules(&repository)
+    );
     for (module, text) in from_manifest.source_assumptions() {
         assert_eq!(
             from_selection.source_assumptions().get(module),
@@ -726,6 +711,11 @@ fn the_cycle19_provider_selection_is_the_cycle19_manifest_module_for_module() {
         )
         .is_err()
     );
+}
+
+/// Σ of the providers' resource views, as their inventory locks state them.
+fn locked_resource_view_modules(repository: &Path) -> usize {
+    contract_locks::lock_totals(repository).resource_view_modules
 }
 
 fn repository() -> PathBuf {
@@ -797,21 +787,11 @@ fn every_real_crate_selected_whole_is_its_loader_view() {
         let contracts = ContractInput::providers(&resolved, None).load().unwrap();
         assert_eq!(contracts.source_assumptions().len(), view.len(), "{name}");
     }
-    // Combined W46 cards: 54 selected modules, 219 resource declarations, 118 corpus modules.
-    // 54 -> 55 by card W47-LOOP-OWNER-CONTRACTS: `fluent_bit/loop_owner.qv`.
-    // 55 -> 56 by card W47-CONDVAR-JOIN-PUBLICATION: `libc/pthread_sync.qv`.
-    // 56 -> 57 by card W47-CONDVAR-JOIN-STOP-PATHS: `fluent_bit/lib_engine_thread.qv` (five declarations awaiting review).
-    // 57 -> 58 by card W47-LOOP-OWNER-INSTANCE-FLOW: `fluent_bit/input_instance.qv`.
-    // 58 -> 59 by card CONTRACT-PIN-TIP-MODE: `monkey/vhost_set.qv`.
-    // 59 -> 60 by card MONKEY-VHOST-PROPERTY-CUSTODY: `monkey/string.qv`.
-    // 60 -> 61 by card W43-ABI-ENUM-AND-CONST-PP: `librdkafka/client.qv`.
-    // 61 -> 63 by card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION: `monkey/event_loop.qv` and
-    // `fluent_bit/input_collector_registration.qv`.
-    // 63 -> 64 by card FB-TEARDOWN-DESTROY-DECLARATIONS: `fluent_bit/teardown_destroy.qv`.
-    // 65 -> 66 by card W48-RK-LOG-CALLER-FRAME: `librdkafka/log_caller_frame.qv`.
-    // 66 -> 68 by card LOG-PRINT-BODY-CONTRACTS: `cmetrics/logging.qv` and `chunkio/logging.qv`.
-    // 68 -> 69 by card LIBRDKAFKA-HEADER-INLINES: `librdkafka/header_inlines.qv`.
-    assert_eq!(total, 69);
+    // Card CONTRACT-COUNT-PINS-FROM-LOCKS: the selected module count is the
+    // providers' resource views as their inventory locks state them
+    // (`tests/support/contract_locks.rs`); the former literal and its
+    // per-card history are in this file at base 25508ccaf.
+    assert_eq!(total, locked_resource_view_modules(&repository));
 }
 
 #[test]
@@ -841,21 +821,14 @@ fn all_eleven_crates_whole_and_all_loaded_are_the_cycle19_manifest_environment()
     };
     let manifest_text = fs::read_to_string(&manifest_path).unwrap();
     assert_eq!(entries(all.manifest_text()), entries(&manifest_text));
-    // Combined W46 cards: 54 selected modules, 219 resource declarations, 118 corpus modules.
-    // 54 -> 55 by card W47-LOOP-OWNER-CONTRACTS: `fluent_bit/loop_owner.qv`.
-    // 55 -> 56 by card W47-CONDVAR-JOIN-PUBLICATION: `libc/pthread_sync.qv`.
-    // 56 -> 57 by card W47-CONDVAR-JOIN-STOP-PATHS: `fluent_bit/lib_engine_thread.qv` (five declarations awaiting review).
-    // 57 -> 58 by card W47-LOOP-OWNER-INSTANCE-FLOW: `fluent_bit/input_instance.qv`.
-    // 58 -> 59 by card CONTRACT-PIN-TIP-MODE: `monkey/vhost_set.qv`.
-    // 59 -> 60 by card MONKEY-VHOST-PROPERTY-CUSTODY: `monkey/string.qv`.
-    // 60 -> 61 by card W43-ABI-ENUM-AND-CONST-PP: `librdkafka/client.qv`.
-    // 61 -> 63 by card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION: `monkey/event_loop.qv` and
-    // `fluent_bit/input_collector_registration.qv`.
-    // 63 -> 64 by card FB-TEARDOWN-DESTROY-DECLARATIONS: `fluent_bit/teardown_destroy.qv`.
-    // 65 -> 66 by card W48-RK-LOG-CALLER-FRAME: `librdkafka/log_caller_frame.qv`.
-    // 66 -> 68 by card LOG-PRINT-BODY-CONTRACTS: `cmetrics/logging.qv` and `chunkio/logging.qv`.
-    // 68 -> 69 by card LIBRDKAFKA-HEADER-INLINES: `librdkafka/header_inlines.qv`.
-    assert_eq!(entries(&manifest_text).1.len(), 69);
+    // Card CONTRACT-COUNT-PINS-FROM-LOCKS: the selected module count is the
+    // providers' resource views as their inventory locks state them
+    // (`tests/support/contract_locks.rs`); the former literal and its
+    // per-card history are in this file at base 25508ccaf.
+    assert_eq!(
+        entries(&manifest_text).1.len(),
+        locked_resource_view_modules(&repository)
+    );
     assert_eq!(all.manifest_path().parent(), manifest_path.parent());
     // Elaborated byte for byte as the manifest: every module key and text,
     // the inclusion evidence and the loaded function table.

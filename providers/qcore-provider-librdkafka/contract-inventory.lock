@@ -11,38 +11,118 @@
       "declarations": [
         {
           "clauses": 3,
-          "name": "cJSON_Delete"
+          "name": "cJSON_Delete",
+          "resource_mode": {
+            "parameters": [
+              {
+                "released": {
+                  "nullable": true
+                }
+              }
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "cJSON_New_Item"
+          "name": "cJSON_New_Item",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            }
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "add_item_to_array"
+          "name": "add_item_to_array",
+          "resource_mode": null,
+          "resource_table": "relational"
         },
         {
           "clauses": 7,
-          "name": "replace_item_in_object"
+          "name": "replace_item_in_object",
+          "resource_mode": null,
+          "resource_table": "relational"
         },
         {
           "clauses": 5,
-          "name": "get_object_item"
+          "name": "get_object_item",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "derived": {
+                "const_dropped": true,
+                "extent": "borrowed",
+                "nullable": true,
+                "parameter": 0
+              }
+            }
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 8,
-          "name": "cJSON_ParseWithLengthOpts"
+          "name": "cJSON_ParseWithLengthOpts",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 6,
-          "name": "print"
+          "name": "print",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            }
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 43,
-          "name": "cJSON_DetachItemViaPointer"
+          "name": "cJSON_DetachItemViaPointer",
+          "resource_mode": {
+            "parameters": [
+              {
+                "owned": {
+                  "nullable": false
+                }
+              },
+              {
+                "removed": {
+                  "nullable": true,
+                  "owner_parameter": 0
+                }
+              }
+            ],
+            "result": {
+              "removed": {
+                "nullable": true,
+                "parameter": 1
+              }
+            }
+          },
+          "resource_table": "functions"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [
         {
           "declaration": "cJSON_DetachItemViaPointer",
@@ -84,518 +164,1348 @@
       "declarations": [
         {
           "clauses": 5,
-          "name": "rd_kafka_error_new_v"
+          "name": "rd_kafka_error_new_v",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            }
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "rd_kafka_error_new"
+          "name": "rd_kafka_error_new",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            }
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 23,
-          "name": "rd_kafka_err_action"
+          "name": "rd_kafka_err_action",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 21,
-          "name": "rd_kafka_oauthbearer_set_token_failure"
+          "name": "rd_kafka_oauthbearer_set_token_failure",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 24,
-          "name": "rd_kafka_toppars_pause_resume"
+          "name": "rd_kafka_toppars_pause_resume",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 11,
-          "name": "rd_kafka_AclBinding_new0"
+          "name": "rd_kafka_AclBinding_new0",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            }
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 12,
-          "name": "rd_kafka_ConsumerGroupDescription_new"
+          "name": "rd_kafka_ConsumerGroupDescription_new",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            }
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "rd_kafka_admin_add_config0"
+          "name": "rd_kafka_admin_add_config0",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 7,
-          "name": "rd_kafka_anyconf_dump"
+          "name": "rd_kafka_anyconf_dump",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            }
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 8,
-          "name": "rd_kafka_confval_set_type"
+          "name": "rd_kafka_confval_set_type",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 8,
-          "name": "rd_kafka_interceptor_method_add"
+          "name": "rd_kafka_interceptor_method_add",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 6,
-          "name": "rd_flags2str"
+          "name": "rd_flags2str",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "derived": {
+                "const_dropped": false,
+                "extent": "exact",
+                "nullable": false,
+                "parameter": 0
+              }
+            }
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "rd_kafka_admin_result_ret_topics"
+          "name": "rd_kafka_admin_result_ret_topics",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "derived": {
+                "const_dropped": true,
+                "extent": "borrowed",
+                "nullable": true,
+                "parameter": 0
+              }
+            }
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "rd_kafka_admin_result_ret_resources"
+          "name": "rd_kafka_admin_result_ret_resources",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "derived": {
+                "const_dropped": true,
+                "extent": "borrowed",
+                "nullable": true,
+                "parameter": 0
+              }
+            }
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "rd_kafka_admin_result_ret_groups"
+          "name": "rd_kafka_admin_result_ret_groups",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "derived": {
+                "const_dropped": true,
+                "extent": "borrowed",
+                "nullable": true,
+                "parameter": 0
+              }
+            }
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "rd_kafka_topic_partition_get_private"
+          "name": "rd_kafka_topic_partition_get_private",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": {
+              "derived": {
+                "const_dropped": false,
+                "extent": "borrowed",
+                "nullable": false,
+                "parameter": 0
+              }
+            }
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "rd_slice_reader0"
+          "name": "rd_slice_reader0",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 6,
-          "name": "rd_kafka_toppar_keep0"
+          "name": "rd_kafka_toppar_keep0",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 4,
-          "name": "rd_kafka_q_keep"
+          "name": "rd_kafka_q_keep",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 4,
-          "name": "rd_kafka_q_keep_nolock"
+          "name": "rd_kafka_q_keep_nolock",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 4,
-          "name": "rd_kafka_topic_keep"
+          "name": "rd_kafka_topic_keep",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 23,
-          "name": "rd_kafka_toppar_destroy0"
+          "name": "rd_kafka_toppar_destroy0",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 22,
-          "name": "rd_kafka_q_destroy0"
+          "name": "rd_kafka_q_destroy0",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 21,
-          "name": "rd_kafka_q_destroy_owner"
+          "name": "rd_kafka_q_destroy_owner",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 21,
-          "name": "rd_kafka_topic_destroy0"
+          "name": "rd_kafka_topic_destroy0",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 23,
-          "name": "rd_kafka_enq_once_trigger"
+          "name": "rd_kafka_enq_once_trigger",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 5,
-          "name": "rd_kafka_queue_new0"
+          "name": "rd_kafka_queue_new0",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 20,
-          "name": "rd_kafka_topic_partition_list_destroy"
+          "name": "rd_kafka_topic_partition_list_destroy",
+          "resource_mode": {
+            "parameters": [
+              {
+                "released": {
+                  "nullable": false
+                }
+              }
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 22,
-          "name": "rd_kafka_topic_partition_destroy0"
+          "name": "rd_kafka_topic_partition_destroy0",
+          "resource_mode": {
+            "parameters": [
+              {
+                "released": {
+                  "nullable": false
+                }
+              },
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 20,
-          "name": "rd_kafka_AlterConsumerGroupOffsets_destroy"
+          "name": "rd_kafka_AlterConsumerGroupOffsets_destroy",
+          "resource_mode": {
+            "parameters": [
+              {
+                "released": {
+                  "nullable": false
+                }
+              }
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 20,
-          "name": "rd_kafka_DeleteConsumerGroupOffsets_destroy"
+          "name": "rd_kafka_DeleteConsumerGroupOffsets_destroy",
+          "resource_mode": {
+            "parameters": [
+              {
+                "released": {
+                  "nullable": false
+                }
+              }
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 20,
-          "name": "rd_kafka_ListConsumerGroupOffsets_destroy"
+          "name": "rd_kafka_ListConsumerGroupOffsets_destroy",
+          "resource_mode": {
+            "parameters": [
+              {
+                "released": {
+                  "nullable": false
+                }
+              }
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 20,
-          "name": "rd_kafka_topic_partition_result_destroy"
+          "name": "rd_kafka_topic_partition_result_destroy",
+          "resource_mode": {
+            "parameters": [
+              {
+                "released": {
+                  "nullable": false
+                }
+              }
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 8,
-          "name": "rd_kafka_toppar_get0"
+          "name": "rd_kafka_toppar_get0",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            },
+            "result_kind": "reference"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "rd_kafka_toppar_desired_get"
+          "name": "rd_kafka_toppar_desired_get",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            },
+            "result_kind": "reference"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 25,
-          "name": "rd_kafka_toppar_new0"
+          "name": "rd_kafka_toppar_new0",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": false
+              }
+            },
+            "result_kind": "reference"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 23,
-          "name": "rd_kafka_toppar_desired_add"
+          "name": "rd_kafka_toppar_desired_add",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": false
+              }
+            },
+            "result_kind": "reference"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 25,
-          "name": "rd_kafka_toppar_get2"
+          "name": "rd_kafka_toppar_get2",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            },
+            "result_kind": "reference"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 24,
-          "name": "rd_kafka_toppar_get_avail"
+          "name": "rd_kafka_toppar_get_avail",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            },
+            "result_kind": "reference"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 10,
-          "name": "rd_kafka_q_new0"
+          "name": "rd_kafka_q_new0",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 23,
-          "name": "ut_create_mock_toppar"
+          "name": "ut_create_mock_toppar",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            },
+            "result_kind": "reference"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "ut_create_mock_queue"
+          "name": "ut_create_mock_queue",
+          "resource_mode": {
+            "parameters": [],
+            "result": {
+              "owned": {
+                "nullable": false
+              }
+            },
+            "result_kind": "reference"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 21,
-          "name": "ut_destroy_mock_queue"
+          "name": "ut_destroy_mock_queue",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 22,
-          "name": "rd_kafka_q_wait_result"
+          "name": "rd_kafka_q_wait_result",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 22,
-          "name": "rd_kafka_q_purge0"
+          "name": "rd_kafka_q_purge0",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "rd_kafka_toppar_needs_query"
+          "name": "rd_kafka_toppar_needs_query",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 22,
-          "name": "rd_kafka_toppar_fetch_backoff"
+          "name": "rd_kafka_toppar_fetch_backoff",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "rd_list_init"
+          "name": "rd_list_init",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 5,
-          "name": "rd_list_new"
+          "name": "rd_list_new",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 5,
-          "name": "rd_list_add"
+          "name": "rd_list_add",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 7,
-          "name": "rd_list_destroy"
+          "name": "rd_list_destroy",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 5,
-          "name": "rd_list_clear"
+          "name": "rd_list_clear",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 6,
-          "name": "pb_write"
+          "name": "pb_write",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 5,
-          "name": "pb_encode_varint"
+          "name": "pb_encode_varint",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 3,
-          "name": "rd_kafka_AclBinding_destroy"
+          "name": "rd_kafka_AclBinding_destroy",
+          "resource_mode": {
+            "parameters": [
+              {
+                "released": {
+                  "nullable": false
+                }
+              }
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "rd_kafka_ConfigResource_destroy"
+          "name": "rd_kafka_ConfigResource_destroy",
+          "resource_mode": {
+            "parameters": [
+              {
+                "released": {
+                  "nullable": false
+                }
+              }
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "rd_kafka_NewPartitions_destroy"
+          "name": "rd_kafka_NewPartitions_destroy",
+          "resource_mode": {
+            "parameters": [
+              {
+                "released": {
+                  "nullable": false
+                }
+              }
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "rd_kafka_NewTopic_destroy"
+          "name": "rd_kafka_NewTopic_destroy",
+          "resource_mode": {
+            "parameters": [
+              {
+                "released": {
+                  "nullable": false
+                }
+              }
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "rd_kafka_UserScramCredentialAlteration_destroy"
+          "name": "rd_kafka_UserScramCredentialAlteration_destroy",
+          "resource_mode": {
+            "parameters": [
+              {
+                "released": {
+                  "nullable": true
+                }
+              }
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 30,
-          "name": "unit_test_telemetry"
+          "name": "unit_test_telemetry",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 29,
-          "name": "rd_kafka_q_serve0"
+          "name": "rd_kafka_q_serve0",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 28,
-          "name": "rd_kafka_q_serve"
+          "name": "rd_kafka_q_serve",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 28,
-          "name": "rd_kafka_q_serve_maybe_consume"
+          "name": "rd_kafka_q_serve_maybe_consume",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 29,
-          "name": "rd_kafka_q_pop_serve0"
+          "name": "rd_kafka_q_pop_serve0",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 28,
-          "name": "rd_kafka_q_pop_serve"
+          "name": "rd_kafka_q_pop_serve",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 28,
-          "name": "rd_kafka_q_pop_serve_maybe_consume"
+          "name": "rd_kafka_q_pop_serve_maybe_consume",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 192,
-          "name": "rd_kafka_op_destroy"
+          "name": "rd_kafka_op_destroy",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 7,
-          "name": "rd_kafka_op_new0"
+          "name": "rd_kafka_op_new0",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 9,
-          "name": "rd_kafka_op_new_cb"
+          "name": "rd_kafka_op_new_cb",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 25,
-          "name": "rd_kafka_op_req0"
+          "name": "rd_kafka_op_req0",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 24,
-          "name": "rd_kafka_op_req"
+          "name": "rd_kafka_op_req",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 23,
-          "name": "rd_kafka_op_req2"
+          "name": "rd_kafka_op_req2",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 23,
-          "name": "rd_kafka_broker_monitor_op_cb"
+          "name": "rd_kafka_broker_monitor_op_cb",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 23,
-          "name": "rd_kafka_cgrp_assignor_handle_Metadata_op"
+          "name": "rd_kafka_cgrp_assignor_handle_Metadata_op",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 22,
-          "name": "rd_kafka_cgrp_consumer_handle_Metadata_op"
+          "name": "rd_kafka_cgrp_consumer_handle_Metadata_op",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 22,
-          "name": "rd_kafka_cgrp_handle_Metadata_op"
+          "name": "rd_kafka_cgrp_handle_Metadata_op",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 22,
-          "name": "rd_kafka_offset_reset_op_cb"
+          "name": "rd_kafka_offset_reset_op_cb",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 22,
-          "name": "rd_kafka_offset_validate_op_cb"
+          "name": "rd_kafka_offset_validate_op_cb",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 22,
-          "name": "rd_kafka_share_ack_commit_cb_register_op"
+          "name": "rd_kafka_share_ack_commit_cb_register_op",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 22,
-          "name": "rd_kafka_share_fetch_reply_op_cb"
+          "name": "rd_kafka_share_fetch_reply_op_cb",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 22,
-          "name": "rd_kafka_txn_op_init_transactions"
+          "name": "rd_kafka_txn_op_init_transactions",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 22,
-          "name": "rd_kafka_txn_op_ack_init_transactions"
+          "name": "rd_kafka_txn_op_ack_init_transactions",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 22,
-          "name": "rd_kafka_txn_op_begin_transaction"
+          "name": "rd_kafka_txn_op_begin_transaction",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 22,
-          "name": "rd_kafka_txn_op_begin_commit"
+          "name": "rd_kafka_txn_op_begin_commit",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 22,
-          "name": "rd_kafka_txn_op_commit_transaction"
+          "name": "rd_kafka_txn_op_commit_transaction",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 22,
-          "name": "rd_kafka_txn_op_commit_transaction_ack"
+          "name": "rd_kafka_txn_op_commit_transaction_ack",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 22,
-          "name": "rd_kafka_txn_op_begin_abort"
+          "name": "rd_kafka_txn_op_begin_abort",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 22,
-          "name": "rd_kafka_txn_op_abort_transaction"
+          "name": "rd_kafka_txn_op_abort_transaction",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 22,
-          "name": "rd_kafka_txn_op_abort_transaction_ack"
+          "name": "rd_kafka_txn_op_abort_transaction_ack",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 24,
-          "name": "rd_kafka_cgrp_op_serve"
+          "name": "rd_kafka_cgrp_op_serve",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              {
+                "consumed": {
+                  "nullable": false
+                }
+              },
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 24,
-          "name": "rd_kafka_mock_cluster_op_serve"
+          "name": "rd_kafka_mock_cluster_op_serve",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              {
+                "consumed": {
+                  "nullable": false
+                }
+              },
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 23,
-          "name": "rd_kafka_conf_set_background_event_cb"
+          "name": "rd_kafka_conf_set_background_event_cb",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 23,
-          "name": "rd_kafka_conf_set_dr_cb"
+          "name": "rd_kafka_conf_set_dr_cb",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 23,
-          "name": "rd_kafka_conf_set_dr_msg_cb"
+          "name": "rd_kafka_conf_set_dr_msg_cb",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 23,
-          "name": "rd_kafka_conf_set_consume_cb"
+          "name": "rd_kafka_conf_set_consume_cb",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 23,
-          "name": "rd_kafka_conf_set_rebalance_cb"
+          "name": "rd_kafka_conf_set_rebalance_cb",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 23,
-          "name": "rd_kafka_conf_set_offset_commit_cb"
+          "name": "rd_kafka_conf_set_offset_commit_cb",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 23,
-          "name": "rd_kafka_conf_set_error_cb"
+          "name": "rd_kafka_conf_set_error_cb",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 23,
-          "name": "rd_kafka_conf_set_throttle_cb"
+          "name": "rd_kafka_conf_set_throttle_cb",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 23,
-          "name": "rd_kafka_conf_set_log_cb"
+          "name": "rd_kafka_conf_set_log_cb",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 23,
-          "name": "rd_kafka_conf_set_stats_cb"
+          "name": "rd_kafka_conf_set_stats_cb",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 23,
-          "name": "rd_kafka_conf_set_oauthbearer_token_refresh_cb"
+          "name": "rd_kafka_conf_set_oauthbearer_token_refresh_cb",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 23,
-          "name": "rd_kafka_conf_set_socket_cb"
+          "name": "rd_kafka_conf_set_socket_cb",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 23,
-          "name": "rd_kafka_conf_set_connect_cb"
+          "name": "rd_kafka_conf_set_connect_cb",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 23,
-          "name": "rd_kafka_conf_set_closesocket_cb"
+          "name": "rd_kafka_conf_set_closesocket_cb",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 23,
-          "name": "rd_kafka_conf_set_open_cb"
+          "name": "rd_kafka_conf_set_open_cb",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 23,
-          "name": "rd_kafka_conf_set_resolve_cb"
+          "name": "rd_kafka_conf_set_resolve_cb",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 23,
-          "name": "rd_kafka_conf_set_ssl_cert_verify_cb"
+          "name": "rd_kafka_conf_set_ssl_cert_verify_cb",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 24,
-          "name": "rd_kafka_conf_new"
+          "name": "rd_kafka_conf_new",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 25,
-          "name": "rd_kafka_consume_cb"
+          "name": "rd_kafka_consume_cb",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 33,
-          "name": "rd_kafka_background_queue_serve"
+          "name": "rd_kafka_background_queue_serve",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 23,
-          "name": "rd_kafka_oauthbearer_refresh_op"
+          "name": "rd_kafka_oauthbearer_refresh_op",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 6,
-          "name": "rd_kafka_log_print"
+          "name": "rd_kafka_log_print",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 22,
-          "name": "rd_kafka_oauthbearer_unsecured_token"
+          "name": "rd_kafka_oauthbearer_unsecured_token",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 22,
-          "name": "rd_kafka_oidc_token_jwt_bearer_refresh_cb"
+          "name": "rd_kafka_oidc_token_jwt_bearer_refresh_cb",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 22,
-          "name": "rd_kafka_oidc_token_client_credentials_refresh_cb"
+          "name": "rd_kafka_oidc_token_client_credentials_refresh_cb",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 22,
-          "name": "rd_kafka_oidc_token_metadata_azure_imds_refresh_cb"
+          "name": "rd_kafka_oidc_token_metadata_azure_imds_refresh_cb",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 22,
-          "name": "rd_kafka_oidc_token_metadata_aws_iam_refresh_cb"
+          "name": "rd_kafka_oidc_token_metadata_aws_iam_refresh_cb",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 37,
-          "name": "rd_kafka_poll_cb"
+          "name": "rd_kafka_poll_cb",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 23,
-          "name": "rd_kafka_txn_op_send_offsets_to_transaction"
+          "name": "rd_kafka_txn_op_send_offsets_to_transaction",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 27,
-          "name": "rd_kafka_admin_worker"
+          "name": "rd_kafka_admin_worker",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 27,
-          "name": "rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb"
+          "name": "rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 23,
-          "name": "rd_kafka_admin_fanout_worker"
+          "name": "rd_kafka_admin_fanout_worker",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 23,
-          "name": "rd_kafka_DeleteRecords_leaders_queried_cb"
+          "name": "rd_kafka_DeleteRecords_leaders_queried_cb",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 23,
-          "name": "rd_kafka_ListOffsets_leaders_queried_cb"
+          "name": "rd_kafka_ListOffsets_leaders_queried_cb",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 23,
-          "name": "rd_kafka_share_commit_async_fanout_op"
+          "name": "rd_kafka_share_commit_async_fanout_op",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 24,
-          "name": "rd_kafka_share_fetch_fanout_op"
+          "name": "rd_kafka_share_fetch_fanout_op",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 25,
-          "name": "rd_kafka_share_commit_sync_fanout_op"
+          "name": "rd_kafka_share_commit_sync_fanout_op",
+          "resource_mode": null,
+          "resource_table": "retaining"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [
         {
           "declaration": "rd_kafka_AlterConsumerGroupOffsets_destroy",
@@ -1715,242 +2625,782 @@
       "declarations": [
         {
           "clauses": 5,
-          "name": "rd_kafka_buf_write"
+          "name": "rd_kafka_buf_write",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "rd_kafka_buf_write_i8"
+          "name": "rd_kafka_buf_write_i8",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "rd_kafka_buf_write_i16"
+          "name": "rd_kafka_buf_write_i16",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "rd_kafka_buf_write_i32"
+          "name": "rd_kafka_buf_write_i32",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "rd_kafka_buf_write_i64"
+          "name": "rd_kafka_buf_write_i64",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "rd_kafka_buf_write_bool"
+          "name": "rd_kafka_buf_write_bool",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "rd_kafka_buf_write_uvarint"
+          "name": "rd_kafka_buf_write_uvarint",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "rd_kafka_buf_write_varint"
+          "name": "rd_kafka_buf_write_varint",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "rd_kafka_buf_write_arraycnt"
+          "name": "rd_kafka_buf_write_arraycnt",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "rd_kafka_buf_write_str"
+          "name": "rd_kafka_buf_write_str",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "rd_kafka_buf_write_kstr"
+          "name": "rd_kafka_buf_write_kstr",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "rd_kafka_buf_write_kbytes"
+          "name": "rd_kafka_buf_write_kbytes",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "rd_kafka_buf_write_bytes"
+          "name": "rd_kafka_buf_write_bytes",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "rd_kafka_buf_write_uuid"
+          "name": "rd_kafka_buf_write_uuid",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "rd_kafka_buf_update_i8"
+          "name": "rd_kafka_buf_update_i8",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "rd_kafka_buf_update_i16"
+          "name": "rd_kafka_buf_update_i16",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "rd_kafka_buf_update_i32"
+          "name": "rd_kafka_buf_update_i32",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "rd_kafka_buf_update_u32"
+          "name": "rd_kafka_buf_update_u32",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "rd_kafka_buf_update_i64"
+          "name": "rd_kafka_buf_update_i64",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "rd_kafka_buf_finalize_arraycnt"
+          "name": "rd_kafka_buf_finalize_arraycnt",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "rd_kafka_buf_crc_init"
+          "name": "rd_kafka_buf_crc_init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "rd_kafkap_str_new"
+          "name": "rd_kafkap_str_new",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            }
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "rd_kafkap_bytes_new"
+          "name": "rd_kafkap_bytes_new",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            }
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "rd_kafka_set_last_error"
+          "name": "rd_kafka_set_last_error",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "rd_kafka_q_enq"
+          "name": "rd_kafka_q_enq",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              {
+                "consumed": {
+                  "nullable": false
+                }
+              }
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "rd_kafka_q_reenq"
+          "name": "rd_kafka_q_reenq",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              {
+                "consumed": {
+                  "nullable": false
+                }
+              }
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "rd_kafka_q_len"
+          "name": "rd_kafka_q_len",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "rd_kafka_q_yield"
+          "name": "rd_kafka_q_yield",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "rd_kafka_q_reset"
+          "name": "rd_kafka_q_reset",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "rd_kafka_q_concat0"
+          "name": "rd_kafka_q_concat0",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "rd_kafka_q_prepend0"
+          "name": "rd_kafka_q_prepend0",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "rd_kafka_msgq_enq"
+          "name": "rd_kafka_msgq_enq",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              {
+                "consumed": {
+                  "nullable": false
+                }
+              }
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "rd_kafka_msgq_init"
+          "name": "rd_kafka_msgq_init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "rd_kafka_msgq_first"
+          "name": "rd_kafka_msgq_first",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": {
+              "derived": {
+                "const_dropped": true,
+                "extent": "borrowed",
+                "nullable": true,
+                "parameter": 0
+              }
+            }
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "rd_kafka_msgq_last"
+          "name": "rd_kafka_msgq_last",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": {
+              "derived": {
+                "const_dropped": true,
+                "extent": "borrowed",
+                "nullable": true,
+                "parameter": 0
+              }
+            }
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "rd_kafka_msgq_concat"
+          "name": "rd_kafka_msgq_concat",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "rd_kafka_msgq_move"
+          "name": "rd_kafka_msgq_move",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "rd_kafka_msgq_purge"
+          "name": "rd_kafka_msgq_purge",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "rd_kafka_broker_get_state"
+          "name": "rd_kafka_broker_get_state",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "rd_kafka_topic_get_error"
+          "name": "rd_kafka_topic_get_error",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "rd_kafka_op_version_outdated"
+          "name": "rd_kafka_op_version_outdated",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "rd_kafka_rkt_get_lw"
+          "name": "rd_kafka_rkt_get_lw",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": {
+              "derived": {
+                "const_dropped": false,
+                "extent": "exact",
+                "nullable": true,
+                "parameter": 0
+              }
+            }
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "rd_kafka_topic_partition_toppar"
+          "name": "rd_kafka_topic_partition_toppar",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "derived": {
+                "const_dropped": true,
+                "extent": "borrowed",
+                "nullable": true,
+                "parameter": 1
+              }
+            }
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "rd_kafka_app_poll_start"
+          "name": "rd_kafka_app_poll_start",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "rd_kafka_app_polled"
+          "name": "rd_kafka_app_polled",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 7,
-          "name": "rd_kafka_curr_msgs_add"
+          "name": "rd_kafka_curr_msgs_add",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "rd_kafka_curr_msgs_wait_zero"
+          "name": "rd_kafka_curr_msgs_wait_zero",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "rd_kafka_txn_add_partition"
+          "name": "rd_kafka_txn_add_partition",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "rd_atomic64_set"
+          "name": "rd_atomic64_set",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "rd_usleep"
+          "name": "rd_usleep",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 2,
-          "name": "rd_crc32_init"
+          "name": "rd_crc32_init",
+          "resource_mode": {
+            "parameters": [],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "rd_crc32_update"
+          "name": "rd_crc32_update",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "rd_buf_write_pos"
+          "name": "rd_buf_write_pos",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "rd_slice_read_varint"
+          "name": "rd_slice_read_varint",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "rd_varint_dec_i64"
+          "name": "rd_varint_dec_i64",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "rd_avl_remove_elm"
+          "name": "rd_avl_remove_elm",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "rd_tmpabuf_alloc0"
+          "name": "rd_tmpabuf_alloc0",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "derived": {
+                "const_dropped": false,
+                "extent": "borrowed",
+                "nullable": true,
+                "parameter": 2
+              }
+            }
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "rd_kafka_partition_leader_new"
+          "name": "rd_kafka_partition_leader_new",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            }
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "rd_kafka_partition_leader_destroy"
+          "name": "rd_kafka_partition_leader_destroy",
+          "resource_mode": {
+            "parameters": [
+              {
+                "released": {
+                  "nullable": false
+                }
+              }
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {
         "rd_avl_remove_elm": [
@@ -2034,38 +3484,119 @@
       "declarations": [
         {
           "clauses": 4,
-          "name": "rd_kafka_mem_free"
+          "name": "rd_kafka_mem_free",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              {
+                "released": {
+                  "nullable": true
+                }
+              }
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "load_descriptor_values"
+          "name": "load_descriptor_values",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "rd_kafka_aborted_txns_next_offset"
+          "name": "rd_kafka_aborted_txns_next_offset",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "rd_kafka_anyconf_desensitize"
+          "name": "rd_kafka_anyconf_desensitize",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 22,
-          "name": "rd_kafka_dump0"
+          "name": "rd_kafka_dump0",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "rd_kafka_metadata_copy_internal"
+          "name": "rd_kafka_metadata_copy_internal",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            }
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "rd_bytes_hash"
+          "name": "rd_bytes_hash",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "rd_kafka_mem_calloc"
+          "name": "rd_kafka_mem_calloc",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            }
+          },
+          "resource_table": "functions"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [
         {
           "declaration": "rd_kafka_dump0",
@@ -2089,14 +3620,40 @@
       "declarations": [
         {
           "clauses": 11,
-          "name": "rd_kafka_log_buf"
+          "name": "rd_kafka_log_buf",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 13,
-          "name": "rd_kafka_log0"
+          "name": "rd_kafka_log0",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {
         "rd_kafka_log0": [
@@ -2136,18 +3693,47 @@
       "declarations": [
         {
           "clauses": 22,
-          "name": "cb_kafka_msg"
+          "name": "cb_kafka_msg",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 23,
-          "name": "cb_kafka_logger"
+          "name": "cb_kafka_logger",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 22,
-          "name": "oauthbearer_token_refresh_cb"
+          "name": "oauthbearer_token_refresh_cb",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [
         {
           "declaration": "cb_kafka_logger",
@@ -2193,42 +3779,106 @@
       "declarations": [
         {
           "clauses": 3,
-          "name": "LZ4_resetStream"
+          "name": "LZ4_resetStream",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 7,
-          "name": "LZ4_compress_HC"
+          "name": "LZ4_compress_HC",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 8,
-          "name": "LZ4_decompress_unsafe_generic"
+          "name": "LZ4_decompress_unsafe_generic",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 11,
-          "name": "LZ4_decompress_generic"
+          "name": "LZ4_decompress_generic",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "LZ4_compress_default"
+          "name": "LZ4_compress_default",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 9,
-          "name": "LZ4_compress_HC_extStateHC"
+          "name": "LZ4_compress_HC_extStateHC",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 8,
-          "name": "LZ4_compress_HC_continue"
+          "name": "LZ4_compress_HC_continue",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 9,
-          "name": "LZ4_compress_fast_continue"
+          "name": "LZ4_compress_fast_continue",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 10,
-          "name": "LZ4_compress_fast_extState"
+          "name": "LZ4_compress_fast_extState",
+          "resource_mode": null,
+          "resource_table": "retaining"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "0b3c92fc7476d1f0a0d11d5954a9445882c66897d2409eda55e9efbd6db8ce74"
@@ -2239,55 +3889,192 @@
       "declarations": [
         {
           "clauses": 3,
-          "name": "rd_malloc"
+          "name": "rd_malloc",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            }
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "rd_calloc"
+          "name": "rd_calloc",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": false
+              }
+            }
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "rd_strdup"
+          "name": "rd_strdup",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": false
+              }
+            }
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "rd_strndup"
+          "name": "rd_strndup",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            }
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "rd_free"
+          "name": "rd_free",
+          "resource_mode": {
+            "parameters": [
+              {
+                "released": {
+                  "nullable": true
+                }
+              }
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "rd_realloc"
+          "name": "rd_realloc",
+          "resource_mode": {
+            "parameters": [
+              {
+                "owned": {
+                  "nullable": true
+                }
+              },
+              "borrowed"
+            ],
+            "result": {
+              "reallocated": {
+                "nullable": true,
+                "parameter": 0
+              }
+            }
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "rd_atomic32_get"
+          "name": "rd_atomic32_get",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "rd_file_read"
+          "name": "rd_file_read",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            }
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 25,
-          "name": "rd_kafka_crash"
+          "name": "rd_kafka_crash",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "cnd_timedwait_ms"
+          "name": "cnd_timedwait_ms",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "rd_hdr_histogram_record"
+          "name": "rd_hdr_histogram_record",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "rd_atomic64_add"
+          "name": "rd_atomic64_add",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "rd_atomic64_get"
+          "name": "rd_atomic64_get",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         }
       ],
       "inherits": [
@@ -2304,6 +4091,7 @@
           "parent": "libc::free"
         }
       ],
+      "other_declarations": [],
       "premise_bindings": [
         {
           "declaration": "rd_kafka_crash",
@@ -2339,350 +4127,523 @@
       "declarations": [
         {
           "clauses": 2,
-          "name": "rd_kafka_destroy"
+          "name": "rd_kafka_destroy",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 2,
-          "name": "rd_kafka_topic_partition_list_destroy"
+          "name": "rd_kafka_topic_partition_list_destroy",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 2,
-          "name": "rd_kafka_topic_partition_list_add"
+          "name": "rd_kafka_topic_partition_list_add",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 2,
-          "name": "rd_list_destroy"
+          "name": "rd_list_destroy",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 2,
-          "name": "rd_list_add"
+          "name": "rd_list_add",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 2,
-          "name": "rd_kafka_queue_destroy"
+          "name": "rd_kafka_queue_destroy",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 2,
-          "name": "rd_kafka_message_destroy"
+          "name": "rd_kafka_message_destroy",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_toppar_new0"
+          "name": "rd_kafka_toppar_new0",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 20,
-          "name": "rd_kafka_topic_new0"
+          "name": "rd_kafka_topic_new0",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_cgrp_new"
+          "name": "rd_kafka_cgrp_new",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_transport_new"
-        },
-        {
-          "clauses": 2,
-          "name": "rd_kafka_topic_keep"
-        },
-        {
-          "clauses": 2,
-          "name": "rd_kafka_flush"
-        },
-        {
-          "clauses": 2,
-          "name": "rd_kafka_message_errstr"
+          "name": "rd_kafka_transport_new",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 2,
-          "name": "rd_kafka_queue_poll"
+          "name": "rd_kafka_topic_keep",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 2,
-          "name": "rd_kafka_event_error"
+          "name": "rd_kafka_flush",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 2,
-          "name": "rd_kafka_outq_len"
+          "name": "rd_kafka_message_errstr",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 2,
-          "name": "rd_kafka_op_destroy"
+          "name": "rd_kafka_queue_poll",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 2,
-          "name": "rd_kafka_topic_name"
+          "name": "rd_kafka_event_error",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
+          "clauses": 2,
+          "name": "rd_kafka_outq_len",
+          "resource_mode": null,
+          "resource_table": null
+        },
+        {
+          "clauses": 2,
+          "name": "rd_kafka_op_destroy",
+          "resource_mode": null,
+          "resource_table": null
+        },
+        {
+          "clauses": 2,
+          "name": "rd_kafka_topic_name",
+          "resource_mode": null,
+          "resource_table": null
+        },
+        {
           "clauses": 19,
-          "name": "rd_kafka_broker_add"
+          "name": "rd_kafka_broker_add",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_ShareAcknowledgeRequest"
+          "name": "rd_kafka_ShareAcknowledgeRequest",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_broker_active_toppar_add"
+          "name": "rd_kafka_broker_active_toppar_add",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_broker_active_toppar_del"
+          "name": "rd_kafka_broker_active_toppar_del",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_broker_buf_enq0"
+          "name": "rd_kafka_broker_buf_enq0",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_broker_buf_retry"
+          "name": "rd_kafka_broker_buf_retry",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_broker_bufq_timeout_scan"
+          "name": "rd_kafka_broker_bufq_timeout_scan",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_broker_conn_closed"
+          "name": "rd_kafka_broker_conn_closed",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_broker_connect"
+          "name": "rd_kafka_broker_connect",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_broker_connect_auth"
+          "name": "rd_kafka_broker_connect_auth",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_broker_connect_done"
+          "name": "rd_kafka_broker_connect_done",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_broker_connect_up"
+          "name": "rd_kafka_broker_connect_up",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_broker_consumer_serve"
+          "name": "rd_kafka_broker_consumer_serve",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_broker_destroy_final"
+          "name": "rd_kafka_broker_destroy_final",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_broker_feature_disable"
+          "name": "rd_kafka_broker_feature_disable",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_broker_feature_enable"
+          "name": "rd_kafka_broker_feature_enable",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_broker_features_set"
+          "name": "rd_kafka_broker_features_set",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_broker_fetch_backoff"
+          "name": "rd_kafka_broker_fetch_backoff",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_broker_fetch_toppars"
+          "name": "rd_kafka_broker_fetch_toppars",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_broker_handle_purge_queues"
+          "name": "rd_kafka_broker_handle_purge_queues",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_broker_idle_check"
+          "name": "rd_kafka_broker_idle_check",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_broker_internal_serve"
+          "name": "rd_kafka_broker_internal_serve",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_broker_needs_connection"
+          "name": "rd_kafka_broker_needs_connection",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_broker_produce_toppars"
+          "name": "rd_kafka_broker_produce_toppars",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_broker_resolve"
+          "name": "rd_kafka_broker_resolve",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_broker_retry_bufs_move"
+          "name": "rd_kafka_broker_retry_bufs_move",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_broker_serve"
+          "name": "rd_kafka_broker_serve",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_broker_session_add_partition_to_toppars_in_session"
+          "name": "rd_kafka_broker_session_add_partition_to_toppars_in_session",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_broker_session_remove_partition_from_toppars_in_session"
+          "name": "rd_kafka_broker_session_remove_partition_from_toppars_in_session",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_broker_session_reset"
+          "name": "rd_kafka_broker_session_reset",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_broker_session_update_epoch"
+          "name": "rd_kafka_broker_session_update_epoch",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_broker_session_update_partitions"
+          "name": "rd_kafka_broker_session_update_partitions",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_broker_set_api_versions"
+          "name": "rd_kafka_broker_set_api_versions",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_broker_set_nodename"
+          "name": "rd_kafka_broker_set_nodename",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_broker_set_state"
+          "name": "rd_kafka_broker_set_state",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_broker_share_fetch_session_clear"
+          "name": "rd_kafka_broker_share_fetch_session_clear",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_broker_share_fetch_session_leave"
+          "name": "rd_kafka_broker_share_fetch_session_leave",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_broker_share_rpc"
+          "name": "rd_kafka_broker_share_rpc",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_broker_share_session_toppar_add"
+          "name": "rd_kafka_broker_share_session_toppar_add",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_broker_timeout_scan"
+          "name": "rd_kafka_broker_timeout_scan",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_broker_toppar_msgq_scan"
+          "name": "rd_kafka_broker_toppar_msgq_scan",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_broker_wakeup"
+          "name": "rd_kafka_broker_wakeup",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_buf_new_request0"
+          "name": "rd_kafka_buf_new_request0",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_buf_retry"
+          "name": "rd_kafka_buf_retry",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_bufq_connection_reset"
+          "name": "rd_kafka_bufq_connection_reset",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_bufq_dump"
+          "name": "rd_kafka_bufq_dump",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_bufq_purge"
+          "name": "rd_kafka_bufq_purge",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_dr_implicit_ack"
+          "name": "rd_kafka_dr_implicit_ack",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_features_check"
+          "name": "rd_kafka_features_check",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_fetch_reply_handle_partition_error"
+          "name": "rd_kafka_fetch_reply_handle_partition_error",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_group_MemberMetadata_consumer_read"
+          "name": "rd_kafka_group_MemberMetadata_consumer_read",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_handle_Produce_metadata_update"
+          "name": "rd_kafka_handle_Produce_metadata_update",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_idemp_request_pid_failed"
+          "name": "rd_kafka_idemp_request_pid_failed",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_msgbatch_handle_Produce_result"
+          "name": "rd_kafka_msgbatch_handle_Produce_result",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_op_throttle_time"
+          "name": "rd_kafka_op_throttle_time",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_parse_Metadata_update_topic"
+          "name": "rd_kafka_parse_Metadata_update_topic",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_recv"
+          "name": "rd_kafka_recv",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_req_response"
+          "name": "rd_kafka_req_response",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_sasl_broker_init"
+          "name": "rd_kafka_sasl_broker_init",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_sasl_broker_term"
+          "name": "rd_kafka_sasl_broker_term",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_send"
+          "name": "rd_kafka_send",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_ssl_hmac"
+          "name": "rd_kafka_ssl_hmac",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_toppar_fetch_backoff"
+          "name": "rd_kafka_toppar_fetch_backoff",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_transport_connect"
+          "name": "rd_kafka_transport_connect",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_transport_ssl_connect"
+          "name": "rd_kafka_transport_ssl_connect",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafka_waitresp_find"
+          "name": "rd_kafka_waitresp_find",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 19,
-          "name": "rd_kafkap_share_leader_changes_apply"
+          "name": "rd_kafkap_share_leader_changes_apply",
+          "resource_mode": null,
+          "resource_table": null
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [
         {
           "declaration": "rd_kafka_ShareAcknowledgeRequest",
@@ -3476,10 +5437,13 @@
       "declarations": [
         {
           "clauses": 81,
-          "name": "rd_kafka_plugin_new"
+          "name": "rd_kafka_plugin_new",
+          "resource_mode": null,
+          "resource_table": null
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "ca88ccbf79699b9fd1033a69b958ec1a116cb24c040f0829299c5e65e797704a"
@@ -3490,10 +5454,15 @@
       "declarations": [
         {
           "clauses": 23,
-          "name": "rd_kafka_q_destroy_final"
+          "name": "rd_kafka_q_destroy_final",
+          "resource_mode": null,
+          "resource_table": null
         }
       ],
       "inherits": [],
+      "other_declarations": [
+        "KafkaQueueOwner"
+      ],
       "premise_bindings": [
         {
           "declaration": "rd_kafka_q_destroy_final",
@@ -3517,18 +5486,27 @@
       "declarations": [
         {
           "clauses": 4,
-          "name": "rd_refcnt_add0"
+          "name": "rd_refcnt_add0",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 4,
-          "name": "rd_refcnt_sub0"
+          "name": "rd_refcnt_sub0",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 3,
-          "name": "rd_refcnt_destroy_final"
+          "name": "rd_refcnt_destroy_final",
+          "resource_mode": null,
+          "resource_table": null
         }
       ],
       "inherits": [],
+      "other_declarations": [
+        "KafkaReference"
+      ],
       "premise_bindings": [],
       "premises": {},
       "sha256": "725fcf995116042cde3a92a547f2e889d1a5503aa2ef230f2c5e6576034fc0bb"
@@ -3539,10 +5517,13 @@
       "declarations": [
         {
           "clauses": 6,
-          "name": "rd_kafka_topic_partition_list_sort"
+          "name": "rd_kafka_topic_partition_list_sort",
+          "resource_mode": null,
+          "resource_table": "retaining"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "c7e28fa40acff1c6d80fea924af68c7e0f0395faa3ef473156afbbb57db758e2"
@@ -3553,14 +5534,23 @@
       "declarations": [
         {
           "clauses": 5,
-          "name": "rd_kafka_q_enq0"
+          "name": "rd_kafka_q_enq0",
+          "resource_mode": null,
+          "resource_table": null
         },
         {
           "clauses": 5,
-          "name": "rd_kafka_q_deq0"
+          "name": "rd_kafka_q_deq0",
+          "resource_mode": null,
+          "resource_table": null
         }
       ],
       "inherits": [],
+      "other_declarations": [
+        "KafkaQueue",
+        "KafkaQueueEntry",
+        "QueueEmpty"
+      ],
       "premise_bindings": [],
       "premises": {},
       "sha256": "cf9ff32d3b65d8ef38c6d7c95a91396899a99f89ca5ebd2a5cb89022c0af63b5"
@@ -3581,5 +5571,5 @@
     "librdkafka/memory.qv",
     "librdkafka/topic_partition.qv"
   ],
-  "schema_version": 1
+  "schema_version": 2
 }

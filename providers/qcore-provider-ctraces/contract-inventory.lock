@@ -9,82 +9,212 @@
       "declarations": [
         {
           "clauses": 3,
-          "name": "ctr_destroy"
+          "name": "ctr_destroy",
+          "resource_mode": {
+            "parameters": [
+              {
+                "released": {
+                  "nullable": false
+                }
+              }
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "ctr_id_cmp"
+          "name": "ctr_id_cmp",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 3,
-          "name": "ctr_id_get_len"
+          "name": "ctr_id_get_len",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "ctr_span_set_flags"
+          "name": "ctr_span_set_flags",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "ctr_span_set_dropped_events_count"
+          "name": "ctr_span_set_dropped_events_count",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "ctr_span_set_dropped_links_count"
+          "name": "ctr_span_set_dropped_links_count",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "ctr_span_set_dropped_attributes_count"
+          "name": "ctr_span_set_dropped_attributes_count",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "ctr_mpack_consume_uint_tag"
+          "name": "ctr_mpack_consume_uint_tag",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 4,
-          "name": "ctr_mpack_consume_int_tag"
+          "name": "ctr_mpack_consume_int_tag",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "ctr_attributes_set_string"
+          "name": "ctr_attributes_set_string",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "ctr_attributes_set_bool"
+          "name": "ctr_attributes_set_bool",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "ctr_attributes_set_int64"
+          "name": "ctr_attributes_set_int64",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 5,
-          "name": "ctr_attributes_set_double"
+          "name": "ctr_attributes_set_double",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "ctr_attributes_set_array"
+          "name": "ctr_attributes_set_array",
+          "resource_mode": null,
+          "resource_table": "relational"
         },
         {
           "clauses": 6,
-          "name": "ctr_attributes_set_kvlist"
+          "name": "ctr_attributes_set_kvlist",
+          "resource_mode": null,
+          "resource_table": "relational"
         },
         {
           "clauses": 5,
-          "name": "sds_cat_safe"
+          "name": "sds_cat_safe",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 5,
-          "name": "ctr_errno_print"
+          "name": "ctr_errno_print",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         },
         {
           "clauses": 6,
-          "name": "ctr_mpack_unpack_array"
+          "name": "ctr_mpack_unpack_array",
+          "resource_mode": null,
+          "resource_table": "retaining"
         },
         {
           "clauses": 6,
-          "name": "ctr_mpack_unpack_map"
+          "name": "ctr_mpack_unpack_map",
+          "resource_mode": null,
+          "resource_table": "retaining"
         }
       ],
       "inherits": [],
+      "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
       "sha256": "9fd62aa72fb062548298bf9725dfff048c261a5d7f019fd0e8c524b6417a15f1"
@@ -95,5 +225,5 @@
   "resource_view": [
     "ctraces/context_lifetime.qv"
   ],
-  "schema_version": 1
+  "schema_version": 2
 }
