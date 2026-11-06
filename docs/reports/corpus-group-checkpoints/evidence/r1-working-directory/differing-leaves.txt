@@ -1,0 +1,5 @@
+resource-diagnostics.json {'build_identity': 4969, 'end': 155, 'start': 155, 'id': 135, 'environment_sha256': 53, 'outer-position-borrowed-or-declared-tail': 2, 'inner-arity-and-data-actuals-accepted': 2, 'dereferenced': 2, 'enclosing-call-final-local-checks-accepted': 2, 'function': 2, 'declared-no-custody-result': 2, 'declared-no-result-or-container-effect': 2}
+corpus-null.jsonl {'build_identity': 4834}
+resource-diagnostics.contracts.json {'build_identity': 10224}
+resource-diagnostics.source-effects.json {'paths': 6, 'kind': 6, 'build_digest': 6, 'observed_runs_only': 6, 'configuration_digest': 5, 'obligation_id': 3, 'coverage[]': 3, 'task_digest': 3, 'qcore:boolean-field-import:v1': 3}
+resource-diagnostics.components.json {'build_identity': 4969, 'end': 155, 'start': 155, 'id': 135, 'environment_sha256': 53, 'single-level-scalar-pointer-declaration': 2, 'in-force-loaded-contract': 2, 'route': 2, 'ordinary-instantiation-succeeded': 2, 'one-level-no-inner-call': 2, 'inner-arity-and-data-actuals-accepted': 2, 'outer-position-borrowed-or-declared-tail': 2}

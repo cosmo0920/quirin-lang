@@ -1,0 +1,3 @@
+gate_slot: waiting for an audit slot
+gate_slot: audit slot 1, budget 7168 MiB, admitted at 11264 MiB
+gate_slot: exit 0; receipt /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a50c061771c033423/private/evidence/plain/slot.json

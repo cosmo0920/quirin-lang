@@ -402,6 +402,7 @@ import QCore.SourceRecord
 import QCore.SourceRootAdmission
 import QCore.SourceValidation
 import QCore.Sr5Soundness
+import QCore.StagedCheckpoints
 import QCore.StatementExpressions
 import QCore.StdBuffer
 import QCore.StdEvent

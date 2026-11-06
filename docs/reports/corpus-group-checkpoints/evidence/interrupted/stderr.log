@@ -1,0 +1,23 @@
+gate_slot: waiting for an audit slot
+gate_slot: audit slot 0, budget 7168 MiB, admitted at 11264 MiB
+checkpoint cmetrics.first: recomputed (resume not requested)
+checkpoint ctraces.first: recomputed (resume not requested)
+checkpoint librdkafka.first: recomputed (resume not requested)
+checkpoint chunkio.first: recomputed (resume not requested)
+checkpoint fluent-bit-chunk.first: recomputed (resume not requested)
+checkpoint monkey-libevent.first: recomputed (resume not requested)
+checkpoint ready: /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a50c061771c033423/private/evidence/qo-one/cmetrics.first.qo
+checkpoint ready: /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a50c061771c033423/private/evidence/qo-one/ctraces.first.qo
+checkpoint ready: /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a50c061771c033423/private/evidence/qo-one/librdkafka.first.qo
+checkpoint ready: /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a50c061771c033423/private/evidence/qo-one/chunkio.first.qo
+checkpoint ready: /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a50c061771c033423/private/evidence/qo-one/fluent-bit-chunk.first.qo
+checkpoint ready: /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a50c061771c033423/private/evidence/qo-one/monkey-libevent.first.qo
+checkpoint cmetrics.imported: recomputed (resume not requested)
+checkpoint ctraces.imported: recomputed (resume not requested)
+checkpoint librdkafka.imported: recomputed (resume not requested)
+checkpoint chunkio.imported: recomputed (resume not requested)
+checkpoint fluent-bit-chunk.imported: recomputed (resume not requested)
+checkpoint monkey-libevent.imported: recomputed (resume not requested)
+checkpoint ready: /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a50c061771c033423/private/evidence/qo-one/cmetrics.imported.qo
+gate_slot: peak resident set 15850644 KiB exceeds the admission budget 11264 MiB
+gate_slot: exit 137; receipt /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a50c061771c033423/private/evidence/fresh/slot.json

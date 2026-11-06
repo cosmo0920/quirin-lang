@@ -135,14 +135,23 @@ established.
 
 ## `quirin-audit pinned`: historical Fluent Bit replay
 
-`quirin-audit pinned [--jobs N] [fluent-bit-root] [monkey-database]
-[monkey-source-report] [resource-diagnostics] [native-observation-directory]
-[resource-contract-manifest]` checks the declared source, contract and Libevent
-pins before replaying the Cycle 19 evidence. An unmatched pin refuses the run.
-For the persistent 185-unit corpus inputs, build the release binary and use
+`quirin-audit pinned [--jobs N] [--checkpoint-dir D [--resume]] [fluent-bit-root]
+[monkey-database] [monkey-source-report] [resource-diagnostics]
+[native-observation-directory] [resource-contract-manifest]` checks the declared
+source, contract and Libevent pins before replaying the Cycle 19 evidence. An
+unmatched pin refuses the run. For the persistent 185-unit corpus inputs, build
+the release binary and use
 [`scripts/run_pinned_audit.py`](../../scripts/run_pinned_audit.py) with a fresh
 output directory and `--inputs-root` when the inputs are held by another
 checkout. The runner records the command, binary digest, environment and exit.
+
+With `--checkpoint-dir D` (card CORPUS-GROUP-CHECKPOINTS) every library group
+of every phase the replay runs (`first`, `refuted`, `imported`) is sealed into
+`D/<library>.<phase>.qo` as soon as the group completes, and `--resume` reuses
+a group whose identity (run inputs, the phase's whole-run facts, the group's
+units) is unchanged; the published outputs are byte-identical to the whole
+run's. The [specification](../../docs/development/audit-checkpoints.md#the-pinned-corpus-route)
+lists the identity and the environments it refuses.
 
 ## `quirin-audit current`: the configured current-revision route
 
