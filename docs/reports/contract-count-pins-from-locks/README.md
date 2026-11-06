@@ -122,6 +122,10 @@ clause counts (user decision 1 of 2026-10-24): the pin is a generated,
 reviewed diff inside `providers/`, refused by `check` and by the per-file check
 when it is not what the loader gives for the tree.
 
+User decision (verbatim, 2026-11-06, on the integrator's question whether to
+keep this move or revert `f336ef8ba`): "Keep it (rec.)". New function-map
+modes are pinned in the locks.
+
 **Boundaries.** A module mixing marked and unmarked declarations would fail
 the derived v1/rejected pair (the lock gives none of its declarations a table,
 while the test counts the marked ones), fail-closed, and needs a recorded
