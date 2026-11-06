@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 901
+  "named_followups": 904
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -13538,10 +13538,32 @@
    "recorded_by": "NULL-WITNESS-GUARD-CORRELATION"
   },
   {
-   "id": "GATE-SLOT-ADMISSION-STARVATION",
-   "title": "A single runaway audit holds its slot indefinitely and a rust-suite drain behind it starves every queued audit",
-   "why": "Registered by the integrator (plans/gate-time-reduction R11; user decision 2026-11-06, verbatim: \"Register it (rec.)\"). Observed 2026-11-06: BODY-SUMMARY-REUSE's `quirin-audit current` run with a 165-home link map (CURRENT-RUN-WORKER-SPIN) spun 10 h 18 min in audit/3 (three threads at 100% CPU, zero rchar/wchar, zero major faults, RSS 14.4 GiB against a 7168 MiB admission). GATE-SCOPE-LIB-UNIT-TEST-MODULES' rust-suite job closed audit/admission and waited 36,326 s for audit/3 (scripts/gate_slot.py drains every audit slot with no bound), so NULL-WITNESS-GUARD-CORRELATION's declared measurement, CORPUS-GROUP-CHECKPOINTS' two runs and a census probe queued 8-14 h. The integrator found the holders only by matching /tmp/quirin-gate/* inodes against /proc/locks. DISCHARGE: (1) every audit slot job states a wall-clock or progress deadline (e.g. no stdout/stderr/progress-file and no I/O for N minutes) and, on breach, is reported with its receipt and stopped by its own gate_slot process, never silently; (2) a rust-suite drain waits a bounded time, then reopens admission, releases what it holds and fails with the blocking holder named (or yields and retries), so audits are never closed out indefinitely; (3) `gate_slot.py status` lists live holders and waiters from the kernel locks with wait time, CPU and I/O deltas; (4) peak RSS above the admission budget is reported while the job runs; tests for each, and docs/agents/validation.md states the rule.",
-   "source": "docs/plans/gate-time-reduction/README.md"
+   "id": "GATE-SLOT-DRAIN-DEFAULTS-REVIEW",
+   "title": "Review the slot deadline and drain defaults against the receipts",
+   "why": "Registered by GATE-SLOT-ADMISSION-STARVATION. The defaults (audit stall 2 h, rust-suite drain 2 h, back-off 5 min, stop grace 60 s) were chosen from one measured pinned-corpus route (1 h 56 min with steady I/O) and the 2026-11-06 incident (10 h 18 min with zero I/O), not from a census. Before the card a drain admitted nothing until it finished; now each back-off lets queued audits start, so behind back-to-back long audits a rust-suite job can wait longer than the longest single audit. The receipts now record `limits`, `monitor` (samples, last progress, peak tree RSS, breach) and `slot_record.drain.attempts`. DISCHARGE: a review of a period of receipts (stalls, drains given up, rust-suite waits) with the defaults kept or changed by a recorded decision.",
+   "source": "docs/reports/gate-slot-admission-starvation/README.md",
+   "recorded_by": "GATE-SLOT-ADMISSION-STARVATION"
+  },
+  {
+   "id": "GATE-SLOT-DEADLINE-OVERRIDE-THROUGH-MEASURE",
+   "title": "A declared measurement cannot override its routes' slot deadlines",
+   "why": "Registered by GATE-SLOT-ADMISSION-STARVATION. The measure plugin clears each route's environment and passes only QUIRIN_GATE_DIR, QUIRIN_GATE_LEGACY_LOCK and QUIRIN_GATE_MEMINFO (crates/quirin-audit-plugin-measure/src/sides.rs GATE_VARIABLES), and runs `gate_slot.py audit` with fixed flags, so every route runs under the audit defaults (2 h stall, no wall-clock deadline) and a measurement whose route legitimately goes quiet longer has no override. DISCHARGE: the plugin forwards QUIRIN_GATE_STALL_TIMEOUT and QUIRIN_GATE_DEADLINE (or takes a flag) to gate_slot.py, records them in the route's run record, with a test.",
+   "source": "docs/reports/gate-slot-admission-starvation/README.md",
+   "recorded_by": "GATE-SLOT-ADMISSION-STARVATION"
+  },
+  {
+   "id": "GATE-SLOT-STATUS-UNLOCKED-WAITERS",
+   "title": "gate_slot.py status does not list waiters that hold no gate lock",
+   "why": "Registered by GATE-SLOT-ADMISSION-STARVATION. `gate_slot.py status` lists processes with a /proc/locks entry on a gate file: audit waiters show because they hold the legacy lock shared while they poll, and untimed legacy waiters are queued in the kernel. A job in a timed wait for the legacy lock (--wait-timeout while a `flock` legacy job holds it exclusive) holds nothing, and a nested job runs inside its parent's slot without a lock, so neither is listed. DISCHARGE: each slot job holds a lock on a per-job file under the gate directory from its first wait to its exit (or an equivalent the status reads), listed by status, with a test.",
+   "source": "docs/reports/gate-slot-admission-starvation/README.md",
+   "recorded_by": "GATE-SLOT-ADMISSION-STARVATION"
+  },
+  {
+   "id": "GATE-SLOT-DEADLINES-WITHOUT-PROC",
+   "title": "Slot stall, resident-set and status readings need /proc",
+   "why": "Registered by GATE-SLOT-ADMISSION-STARVATION. The stall timeout, the resident-set report, `gate_slot.py status` and the drain's blocker CPU/I/O read /proc (/proc/<pid>/stat, io, cmdline, /proc/locks). Without it (macOS) the script says so and only the wall-clock deadline applies; status exits 1. Separately, the receipt's existing `max_rss_kib` reads wait4's ru_maxrss as KiB, which macOS reports in bytes. DISCHARGE: macOS readings (process tree, I/O and resident set through the platform's APIs, ru_maxrss scaled) with tests on that platform, or a recorded decision that the gate slots are Linux-only.",
+   "source": "docs/reports/gate-slot-admission-starvation/README.md",
+   "recorded_by": "GATE-SLOT-ADMISSION-STARVATION"
   }
  ],
  "updated": "Completed plugin premise integration; exact hand-maintained union retains810followups, borrowed measured-source8419Rust/354Lean/freshcard133provider, exact source equivalence checked; authoritative root committed-matrix Python confirmation in integration receipt. CMetrics map/opts API model specifications added at the explicit user request. Eight declared-model API contracts remain outside interpreted views, with CMT-MAP-OPTS-CONTRACT-ADOPTION and CMT-LABELED-HASH-ZERO-STATIC-STORAGE Open. No trusted API coverage is claimed; the source gate is recorded by this card alongside its separate initializer native checkpoint. W48-CMT-TRACKED-INTERIOR-SELF-INIT implements rule 36b's checked initializer effect transport for an exact live owned root or embedded record, retaining actual self writes, invalidating aliased member facts and preserving resource obligations; nondefault custody frames refuse and no ordinary summary is exported. The canonical CFL intrusive_list.qv declares matching audit preconditions/effects; two CMetrics .qv modules add six map and two opts lifecycle models, including transitive ownership, partial failure, borrowed results and uncleared cleanup fields. All remain outside interpreted views; checked API adoption and labeled zero-hash storage accounting have named Open follow-ups. Fresh BASE/planner precedes prediction f18d96065 and implementation; the later contract amendment 08da23123 precedes .qv edits. Native corpus BASE/TIP Safe/Unknown/Pending/provisional-Unsafe: 1009 / 3816 / 0 / 9 to 1011 / 3814 / 0 / 9; full system/slice, 5781 NULL dictionaries and runtime projections are compared, 241 semantic leaves accounted, zero unexplained leaves and no prior Safe loss. Gate 8654 Rust / 370 Lean / 374 Python, provider 133 Rust / 25 Python and all five package verifies pass. The actual deep source reader uses 328 KiB below 1 MiB. Full getter closure remains Open; W48-CMT-SELF-INIT-DISJOINT-FRAMES tracks the next bounded frame extension, and W48-EXACT-RETURN-WITNESS-PRECISION is unchanged. Native evidence is isolated to measured e92d8aef35a8bd14550e90219d19a56eb3b196e7; later source gate 2d0d85299b830aa24d7f200d63a308653582363f validates the added declared API models separately; see docs/reports/w48-cmt-tracked-interior-self-init/README.md."
