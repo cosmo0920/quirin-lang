@@ -57,31 +57,48 @@ impl RunMemberFacts {
     }
 
     /// Card **CURRENT-RUN-WORKER-SPIN** (rule 4c, amended): every function
-    /// the run's facts name as a value (a unit's address-taken functions and
-    /// every function designator stored into a member or passed as a
-    /// function-pointer actual, the declarations' stated defaults
-    /// included). A member invocation's run closure can only deliver one of
-    /// these, so a function outside this set and unspelled in a unit is never
-    /// a candidate of that unit's member invocations.
+    /// any member's run closure can deliver. A closure reads a member's
+    /// stores (every unit's, the declarations' stated defaults included) and,
+    /// for a stored formal of a setter, that setter's actuals at the same
+    /// position at every call, transitively through further formals
+    /// ([`crate::callback_member_closure::closure`]'s `Member` and `Formal`
+    /// nodes). This set is the union of every such reading over every member
+    /// and every unit, ignoring the closure's scope and opening conditions,
+    /// so it holds every candidate of every closure: a function outside it
+    /// and unspelled in a unit is never a candidate of that unit's member
+    /// invocations.
     #[must_use]
     pub fn named_functions(&self) -> &BTreeSet<String> {
         self.named_functions.get_or_init(|| {
             let mut names = BTreeSet::new();
-            let mut flow = |flow: &Flow| {
-                if let Flow::Function { name } = flow {
+            let mut formals = Vec::new();
+            let mut seen = BTreeSet::new();
+            let mut read = |flow: &Flow, formals: &mut Vec<(String, usize)>| match flow {
+                Flow::Function { name } => {
                     names.insert(name.clone());
                 }
+                Flow::Formal { function, index } => {
+                    formals.push((function.clone(), *index));
+                }
+                Flow::Null | Flow::Member { .. } | Flow::Open { .. } => {}
             };
             for unit in &self.units {
-                unit.stores.values().flatten().for_each(&mut flow);
-                unit.calls
-                    .values()
-                    .flat_map(BTreeMap::values)
-                    .flatten()
-                    .for_each(&mut flow);
+                for flow in unit.stores.values().flatten() {
+                    read(flow, &mut formals);
+                }
             }
-            for unit in &self.units {
-                names.extend(unit.address_taken.iter().cloned());
+            while let Some(formal) = formals.pop() {
+                if !seen.insert(formal.clone()) {
+                    continue;
+                }
+                let (function, index) = formal;
+                for unit in &self.units {
+                    if let Some(flows) = unit.calls.get(&function).and_then(|at| at.get(&index)) {
+                        for flow in flows {
+                            read(flow, &mut formals);
+                        }
+                    }
+                }
             }
             names
         })

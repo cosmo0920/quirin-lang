@@ -310,7 +310,15 @@ mod tests {
         // A function the run's member facts name as a value is reachable
         // though the caller never spells it.
         let mut facts = qcore_c_gateway::callback_member_closure::MemberFacts::default();
-        facts.address_taken.insert("f2".into());
+        facts.stores.insert(
+            "T.cb".into(),
+            BTreeSet::from([qcore_c_gateway::callback_member_closure::Flow::Function {
+                name: "f2".into(),
+            }]),
+        );
+        // An address-taken function no store or setter actual names is no
+        // closure's candidate.
+        facts.address_taken.insert("f1".into());
         let run = std::sync::Arc::new(qcore_c_gateway::member_run_facts::RunMemberFacts::new(
             vec![facts],
             BTreeMap::new(),
