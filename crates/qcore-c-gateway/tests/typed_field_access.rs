@@ -363,8 +363,16 @@ fn ambiguous_accesses_keep_their_existing_unknown_and_diagnostic() {
             !reasons.is_empty(),
             "{case}: an ambiguous access must retain an unsupported diagnostic"
         );
+        // Card MEMBER-EFFECT-SUMMARY (rule 38i) re-pins this deliberately: the pointer field's store into a formal's
+        // member names its premise; still refused.
+        let expected = if *case == "pointer field" {
+            "store of a custody-carrying value into `d->pane`, a member of the formal `d` \
+             (member-store-through-formal)"
+        } else {
+            INDIRECT
+        };
         assert!(
-            reasons.iter().any(|reason| reason == INDIRECT),
+            reasons.iter().any(|reason| reason == expected),
             "{case}: expected the existing indirect-access diagnostic, got {reasons:?}"
         );
     }

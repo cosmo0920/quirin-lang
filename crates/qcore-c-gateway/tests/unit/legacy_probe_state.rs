@@ -160,6 +160,7 @@ pub(in crate::legacy_c) fn bare<'a>(
         admit_derived_returns: false,
         argument_probe: Default::default(),
         member_releases: Default::default(),
+        member_effect_reading: Default::default(),
         desugar: super::super::condition_desugar::DesugarState::new("subject"),
         return_facts: Default::default(),
         sub_object_roots: Default::default(),

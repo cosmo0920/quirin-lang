@@ -165,9 +165,14 @@ fn an_address_keeps_every_custody_and_root_refusal() {
     if !clang_available() {
         return;
     }
+    // Card MEMBER-EFFECT-SUMMARY (rule 38i) re-pins this deliberately: the address of a formal's member at a
+    // release position names its premise; still `Unknown`.
     assert_eq!(
         outcome("void w(struct c_q *q) { c_seize(&q->lock); }"),
-        unknown(&[GATE])
+        unknown(&[
+            "unsupported:release of `&q->lock`, an address inside the formal `q` \
+             (member-address-release-through-formal)"
+        ])
     );
     let uncontracted = outcome("void w(struct c_q *q) { c_free_lock(&q->lock); }");
     assert_eq!(uncontracted.0, "Unknown");

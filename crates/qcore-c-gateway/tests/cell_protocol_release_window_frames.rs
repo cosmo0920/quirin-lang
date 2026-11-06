@@ -599,7 +599,12 @@ fn flb_task_queue_destroy_refuses_at_the_gate_first() {
          return 0;\n\
          }",
         "Unknown",
-        &["4:indirect memory access is outside the resource projection"],
+        // Card MEMBER-EFFECT-SUMMARY (rule 38i) re-pins this deliberately: the gate still refuses first, and the
+        // refusal names its premise.
+        &[
+            "4:release of `ins->singleplex_queue`, a member of the formal `ins` \
+           (member-release-through-formal)",
+        ],
     );
 }
 

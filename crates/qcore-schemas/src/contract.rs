@@ -787,6 +787,13 @@ pub struct ResourceContracts {
     /// one serializes byte for byte as before.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     result_ranges: BTreeMap<String, crate::result_range::ResultRangeFact>,
+    /// Card MEMBER-EFFECT-SUMMARY (gateway rule 38j): the validated contracts
+    /// of the bodies that release members through a formal they keep, each
+    /// with its member effect. Never in [`Self::functions`]: only the
+    /// direct-call route that applies the effect reads one. Omitted when
+    /// empty, so every environment without one serializes as before.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    member_effects: BTreeMap<String, crate::member_effect::MemberEffectSummary>,
 }
 
 impl ResourceContracts {
@@ -816,7 +823,37 @@ impl ResourceContracts {
             superseded: BTreeMap::new(),
             contract_conflict: BTreeMap::new(),
             result_ranges: BTreeMap::new(),
+            member_effects: BTreeMap::new(),
         }
+    }
+
+    /// Card MEMBER-EFFECT-SUMMARY (rule 38j): `name`'s validated contract
+    /// with its member effect, if it has one.
+    #[must_use]
+    pub fn member_effect(&self, name: &str) -> Option<&crate::member_effect::MemberEffectSummary> {
+        self.member_effects.get(name)
+    }
+
+    /// Card MEMBER-EFFECT-SUMMARY: every member-effect summary in force.
+    #[must_use]
+    pub fn member_effects(&self) -> &BTreeMap<String, crate::member_effect::MemberEffectSummary> {
+        &self.member_effects
+    }
+
+    /// Card MEMBER-EFFECT-SUMMARY: install `name`'s member-effect summary. A
+    /// name the ordinary table or a guarded interface already holds keeps
+    /// that entry and gets none: a declaration is never replaced by an
+    /// inference.
+    pub fn insert_member_effect(
+        &mut self,
+        name: impl Into<String>,
+        summary: crate::member_effect::MemberEffectSummary,
+    ) {
+        let name = name.into();
+        if self.functions.contains_key(&name) || self.has_guarded_interface(&name) {
+            return;
+        }
+        self.member_effects.insert(name, summary);
     }
 
     /// Card CELL-GUARD-RESULT-RANGE-CHECKED (rule 38e): the pin-derived result

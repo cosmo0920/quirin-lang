@@ -157,6 +157,11 @@ fn borrowing_body(argument: &str) -> String {
 /// Assert that a shape keeps its pre-card answer: `Unknown`, carrying the
 /// existing indirect-access diagnostic, and never `Safe`.
 fn refused(label: &str, body: &str) {
+    refused_as(label, body, INDIRECT);
+}
+
+/// [`refused`], carrying `description`.
+fn refused_as(label: &str, body: &str, description: &str) {
     let result = analyze(body, "w");
     assert!(
         !matches!(result, UnrestrictedLegacyResult::Safe(_)),
@@ -167,7 +172,7 @@ fn refused(label: &str, body: &str) {
     assert!(
         w.diagnostics.iter().any(|diagnostic| matches!(
             &diagnostic.kind,
-            LegacyDiagnosticKind::Unsupported { description } if description == INDIRECT
+            LegacyDiagnosticKind::Unsupported { description: found } if found == description
         )),
         "{label}: the existing diagnostic must be retained, got {:?}",
         w.diagnostics
@@ -295,12 +300,18 @@ fn a_custody_bearing_position_never_admits_a_member_address() {
     if !clang_available() {
         return;
     }
-    for callee in ["a_adopt", "a_release"] {
-        refused(
-            "a custody-bearing position never admits a member address",
-            &format!("void w(struct a_holder *hold) {{ {callee}(&hold->lock); }}"),
-        );
-    }
+    refused(
+        "a custody-bearing position never admits a member address",
+        "void w(struct a_holder *hold) { a_adopt(&hold->lock); }",
+    );
+    // Card MEMBER-EFFECT-SUMMARY (rule 38i) re-pins this deliberately: at a release position the address of a
+    // formal's member names its premise; still `Unknown`, never `Safe`.
+    refused_as(
+        "a custody-bearing position never admits a member address",
+        "void w(struct a_holder *hold) { a_release(&hold->lock); }",
+        "release of `&hold->lock`, an address inside the formal `hold` \
+         (member-address-release-through-formal)",
+    );
 }
 
 /// A callee with no contract in force never admits an actual, whatever the
