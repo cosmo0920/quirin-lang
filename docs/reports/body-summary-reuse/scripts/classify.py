@@ -37,6 +37,33 @@ def static_linkage(src_root, unit_file, name):
     return re.search(r"(^|\n)\s*static\b[^;{]*\b" + re.escape(name) + r"\s*\(", text) is not None
 
 
+def shape(src_root, origin, callee):
+    """The source form of the call's statement, read from its origin line."""
+    if not origin or ':' not in origin:
+        return 'unknown'
+    path, line = origin.rsplit(':', 1)
+    try:
+        text = open(f"{src_root}/{path}", errors='replace').read().split('\n')
+        stmt = ' '.join(t.strip() for t in text[int(line) - 1:int(line) + 3])
+    except (OSError, ValueError, IndexError):
+        return 'unknown'
+    pos = stmt.find(callee + '(')
+    if pos < 0:
+        pos = stmt.find(callee)
+    if pos < 0:
+        return 'macro-or-other-line'
+    head = stmt[:pos].strip()
+    if head.startswith('return'):
+        return 'return' if head == 'return' or head.endswith(')') else 'return-expression'
+    if head == '' or head.endswith(';') or head.endswith('{') or head.endswith('}'):
+        return 'statement-call'
+    if head.endswith('='):
+        return 'assignment-or-initializer'
+    if head.endswith('(') or head.endswith(','):
+        return 'nested-in-call-or-expression'
+    return 'other-expression'
+
+
 def main():
     base_path = sys.argv[1]
     exp_path = sys.argv[2] if len(sys.argv) > 3 else None
@@ -50,8 +77,10 @@ def main():
         for f in u.get('functions', []):
             if f['status'] == 'Safe':
                 continue
-            for c in uncontracted(f):
-                sites[c].append((u['file'], f['function']))
+            for x in f.get('diagnostics', []):
+                m = PAT.match(x.get('description', ''))
+                if m:
+                    sites[m.group(1)].append((u['file'], f['function'], x.get('origin')))
     pop = {c for c in sites if rows.get(c) and all(s == 'Safe' for _, s in rows[c])}
     exp = exp_idx = None
     imported = set()
@@ -63,7 +92,7 @@ def main():
     per_site = []
     for c in sorted(pop):
         homes = {u for u, _ in rows[c]}
-        for (unit, fn) in sites[c]:
+        for (unit, fn, origin) in sites[c]:
             if unit in homes:
                 st = static_linkage(src_root, unit, c)
                 reason = 'same-unit-internal' if st else 'same-unit-external'
@@ -77,7 +106,8 @@ def main():
                 after = exp_idx.get((unit, fn))
                 still = after is not None and c in uncontracted(after)
                 reason = 'cross-unit-imported-still-refused' if still else 'cross-unit-imported-cleared'
-            per_site.append({'callee': c, 'unit': unit, 'function': fn, 'reason': reason})
+            per_site.append({'callee': c, 'unit': unit, 'function': fn, 'origin': origin,
+                             'shape': shape(src_root, origin, c), 'reason': reason})
     # sole blocker: every leaf of the function is a population uncontracted call
     sole_fns = set()
     for (unit, fn) in {(s['unit'], s['function']) for s in per_site}:
@@ -107,11 +137,13 @@ def main():
                 moves[f"{f['status']}->{a['status']}"] += 1
                 moved.append({'unit': k[0], 'function': k[1], 'before': f['status'], 'after': a['status']})
         moves = {'counts': dict(moves), 'rows': moved}
-    json.dump({'total': total, 'table': table, 'imported': sorted(imported),
+    shapes = collections.Counter(s['shape'] for s in per_site)
+    json.dump({'total': total, 'table': table, 'shapes': dict(shapes), 'imported': sorted(imported),
                'moves': moves, 'sites': per_site}, open(out_path, 'w'), indent=1)
     print(json.dumps(total))
     for r, v in table.items():
         print(f"{v['sites']:5d} {v['callees']:4d} {v['functions']:4d} {v['sole_blocked']:3d}  {r}")
+    print(dict(shapes))
     if moves:
         print(moves['counts'])
 
