@@ -1,0 +1,17 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "GATE-TIME-REQUIREMENTS-R11",
+ "base": "13337d0af",
+ "measured_tip": "13337d0af",
+ "increment_paragraph": "**GATE-TIME-REQUIREMENTS-R11** (integrator record; USER DECISION 2026-11-06, verbatim: \"Register it (rec.)\"): docs/plans/gate-time-reduction/README.md gains R11, one audit cannot starve the host. Observed the same day: a spinning `quirin-audit current` experiment held audit slot 3 for 10 h 18 min with zero I/O while a card's rust-suite job, having closed audit admission, waited 10.1 h for it, and every queued audit waited behind both. Registered GATE-SLOT-ADMISSION-STARVATION. No code, contract or Lean change.",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "GATE-SLOT-ADMISSION-STARVATION",
+   "operation": "register",
+   "title": "A single runaway audit holds its slot indefinitely and a rust-suite drain behind it starves every queued audit",
+   "text": "Registered by the integrator (plans/gate-time-reduction R11; user decision 2026-11-06, verbatim: \"Register it (rec.)\"). Observed 2026-11-06: BODY-SUMMARY-REUSE's `quirin-audit current` run with a 165-home link map (CURRENT-RUN-WORKER-SPIN) spun 10 h 18 min in audit/3 (three threads at 100% CPU, zero rchar/wchar, zero major faults, RSS 14.4 GiB against a 7168 MiB admission). GATE-SCOPE-LIB-UNIT-TEST-MODULES' rust-suite job closed audit/admission and waited 36,326 s for audit/3 (scripts/gate_slot.py drains every audit slot with no bound), so NULL-WITNESS-GUARD-CORRELATION's declared measurement, CORPUS-GROUP-CHECKPOINTS' two runs and a census probe queued 8-14 h. The integrator found the holders only by matching /tmp/quirin-gate/* inodes against /proc/locks. DISCHARGE: (1) every audit slot job states a wall-clock or progress deadline (e.g. no stdout/stderr/progress-file and no I/O for N minutes) and, on breach, is reported with its receipt and stopped by its own gate_slot process, never silently; (2) a rust-suite drain waits a bounded time, then reopens admission, releases what it holds and fails with the blocking holder named (or yields and retries), so audits are never closed out indefinitely; (3) `gate_slot.py status` lists live holders and waiters from the kernel locks with wait time, CPU and I/O deltas; (4) peak RSS above the admission budget is reported while the job runs; tests for each, and docs/agents/validation.md states the rule.",
+   "source": "docs/plans/gate-time-reduction/README.md"
+  }
+ ]
+}
