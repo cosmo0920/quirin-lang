@@ -246,7 +246,24 @@ composed run with a full one exactly as §4 does.
 
 ## 7. Gate
 
-GATE_PLACEHOLDER
+`python3 scripts/gate_scope.py --base 13337d0af --out <worktree>/private/gate`
+on `1096cd312` ([gate.json](gate.json)), exit 0: scoped mode, four packages
+whole (qcore-audit, qcore-compiler, qcorec, quirin-audit-plugin-measure) and
+the test target `qcore-verification::test::composition_bounds`; Lean all (a
+proof root changed); no provider gate.
+
+| Step | Exit | Counts |
+|---|---:|---|
+| submodules | 0 | 1 submodule |
+| fmt | 0 | |
+| Clippy (and the qcore-verification test target) | 0 / 0 | |
+| Rust suite (`rust-suite` slot) | 0 | 200 units, 202 summaries, 2,627 passed, 0 failed, 4 ignored; 7,294.7 s slot wait behind other cards' audits, then 9 min 44 s |
+| reevaluation probe / follow-up | 0 / 0 | |
+| Lean (`check_lean_audits.py`) | 0 | 411 audits |
+| Python suite | 0 | 625 tests |
+
+An earlier gate on `193269b7e` failed Clippy (`large_enum_variant` on the stored
+unit and captures, boxed in `28a0c3ecc`); every other step passed there.
 
 ## 8. Follow-ups
 
