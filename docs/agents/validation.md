@@ -152,23 +152,40 @@ untracked paths, to the crates and cargo targets of both workspaces through
   every tracked file a unit was seen reading must select that unit, and every
   walker entry must be seen walked.
 
-A reader compiled only into integration-test targets (`tests/*.rs` and the
-modules they declare) claims for those targets alone, and nothing depends on a
-test target, so no reverse dependency follows. A path a crate owns selects only
-its test targets when it is a Rust file only test targets compile, or a
-non-Rust file whose readers in that crate are all test targets; its `src/`,
+A reader compiled only into test executables claims for those alone, and
+nothing depends on a test executable, so no reverse dependency follows. They
+are integration-test targets (`tests/*.rs` and the modules they declare,
+`PKG::test::NAME`) and a library's unit-test executable (`PKG::lib::NAME`) for
+the library's `#[cfg(test)]` code, which dependents and doc-tests never build:
+a module the library declares only under a test-only `#[cfg]` (`test`,
+`all(.., test, ..)`, or `any` of test-only predicates) and the modules below
+it, and an include, `#[path]` or literal inside a `#[cfg(test)]` item
+(`GATE-SCOPE-LIB-UNIT-TEST-MODULES`). A file the library also reaches by an
+ordinary module edge stays the crate's. What the scanner cannot classify
+keeps the crate whole: an inner `#![cfg(test)]` (adding one takes a module out
+of dependents' build), any other predicate, an attribute on something that is
+not an item or a `let`, an item whose end it cannot find, a binary's
+`cfg(test)` code, a library with `test = false`, and every file of a crate
+whose library shows `include!` of Rust code, a `mod $name` in a macro or
+`cfg_attr(.., path = ..)`. A path a crate owns selects only its test
+executables when it is a Rust file only test executables compile (a `src/`
+module declared only under `#[cfg(test)]` included), or a non-Rust file whose
+readers in that crate are all in test executables; the rest of its `src/`,
 `Cargo.toml`, `build.rs`, and any file nothing in the crate is seen reading
 select the whole crate and its reverse dependencies
 (`GATE-SCOPE-FULL-CRATES-TEST-ONLY`). The Rust suite is then
 `run_test_binaries.py --packages <root members reached whole> --targets
-<PKG::test::NAME,...>`, its `EXCLUSIVE` phase unchanged, or the whole suite when
+<PKG::test::NAME,PKG::lib::NAME,...>` (cargo's `--test NAME` and `--lib`
+filters), its `EXCLUSIVE` phase unchanged, or the whole suite when
 the diff reaches `qcore-c-gateway`, `qcore-core`, `qcore-contract` or
 `qcore-schemas` as a whole (a test-only reach is not full), a workspace
 manifest or lockfile, the runner, the scoper or the test-build configuration
 (`test_link_config.py`, `rustc_test_dylib.py`), or a path that no crate owns
 or reads and that is not prose, Python, Lean or provider tooling. Beside it:
 the submodule state, fmt, Clippy on the same packages (per crate with `--test`
-filters for a test-only reach), both reevaluation examples when
+filters for a test-only reach, and `--lib --profile test`, which lints the
+library as its unit-test executable compiles it, for a library unit), both
+reevaluation examples when
 `qcore-compiler` is reached whole, Lean (`scripts/gate_lean.py` on the changed
 `proof/QCore` modules, their importers and the audits importing them, or all of
 `check_lean_audits.py` when a `proof/` root, a deletion or the Lean runner
@@ -201,7 +218,8 @@ only through their dependencies on core crates, which `gate.json` lists but
 which, as in the full gate, get the provider gate only when `providers/`
 changes. A narrowing is accepted only with a replay showing that no unit that
 failed at a recorded red commit is dropped
-([evidence](../reports/gate-scope-precise-selection/README.md)).
+([evidence](../reports/gate-scope-precise-selection/README.md),
+[library units](../reports/gate-scope-lib-unit-test-modules/README.md)).
 
 ## Gate slots
 

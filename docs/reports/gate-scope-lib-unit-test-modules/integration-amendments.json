@@ -1,0 +1,28 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "GATE-SCOPE-LIB-UNIT-TEST-MODULES",
+ "base": "13337d0af",
+ "measured_tip": "3ae556489",
+ "increment_paragraph": "**GATE-SCOPE-LIB-UNIT-TEST-MODULES** (round 23 card A; USER REQUEST 2026-11-05, verbatim: \"Launch three cards of gate-time reductions.\"; the follow-up GATE-SCOPE-PRECISE-SELECTION registered; [report](../../reports/gate-scope-lib-unit-test-modules/README.md)). scripts/gate_scope.py tokenizes Rust sources and finds the items a test-only #[cfg] gates (test, all(.., test, ..), any of test-only predicates). Each target's module closure records which files it reaches only through mod or #[path] declarations inside such items. A file a library reaches only that way, and an include, #[path] or literal inside a #[cfg(test)] item, selects the library's unit-test executable PKG::lib::NAME alone, with no reverse dependency: dependents and doc-tests build the library without cfg(test). Fail-closed as before: inner #![cfg(test)], other predicates, attributes on non-items, unfound item ends, binaries' cfg(test) code, test = false libraries, and crates whose library shows include! of Rust code, mod $name or cfg_attr path. #[path] now tolerates attributes before mod (two modules were outside every closure). run_test_binaries.py --targets accepts PKG::lib::NAME (cargo --lib), fail-closed; the scoper lints it with clippy --lib --profile test. The census test exposed nine walker base paths whose reads were attributed only by qcore-verification's cfg(test) walkers read crate-wide; they widen to their directories (widen_walkers.py charges a library site with its reverse dependencies' units). 178 files now select only a library unit. Probes: tests/unit modules of qcore-contract, the gateway and qcore-core, a gateway fixture .qv and proof/QCore/NullDeref.lean, all full before, are scoped; the plan page's four probes keep their selection. Replay of 8 cards and 15 red runs (CONTRACT-COUNT-PINS-FROM-LOCKS added): no failing unit dropped, none added; LIBC-GAP goes from full 602 to 264 units. Tooling, tests and the walker table only.",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "GATE-SCOPE-LIB-UNIT-TEST-MODULES",
+   "operation": "retire",
+   "why": "DISCHARGED by GATE-SCOPE-LIB-UNIT-TEST-MODULES (docs/reports/gate-scope-lib-unit-test-modules/README.md). The module closure records cfg(test) edges (#[path] and mod declared inside test-only #[cfg] items, cfg_test_spans), and includes and literals inside cfg(test) items claim for the unit-test executables holding them. A file reached only through such edges selects PKG::lib::NAME alone, a file also reached by an ordinary edge keeps the crate, and anything unclassified stays crate-wide (scripts/tests/test_gate_scope_lib_units.py, 33 tests). run_test_binaries.py --targets PKG::lib::NAME builds and captures it with cargo's --lib filter. The census test holds the narrowed model to every observed read after nine walker entries widened. The replay (GATE-SCOPE-PRECISE-SELECTION's set plus CONTRACT-COUNT-PINS-FROM-LOCKS, 23 rows) drops and adds no failing unit, and LIBC-GAP leaves full mode (602 -> 264 units).",
+   "source": "docs/reports/gate-scope-lib-unit-test-modules/README.md"
+  },
+  {
+   "id": "GATE-READ-CENSUS-REFRESH",
+   "operation": "append",
+   "text": "GATE-SCOPE-LIB-UNIT-TEST-MODULES (2026-11-06): a re-draft must charge a directory-literal site in ordinary library code with the units of the crate's reverse dependencies too (docs/reports/gate-scope-lib-unit-test-modules/scripts/widen_walkers.py). draft_walkers.py charged only the site's own crate, so nine base-path entries rested on qcore-verification's cfg(test) walkers being read crate-wide; narrowing those exposed them and the census test failed until they widened.",
+   "source": "docs/reports/gate-scope-lib-unit-test-modules/README.md"
+  },
+  {
+   "id": "GATEWAY-TESTS-CROSS-TREE-INCLUDES",
+   "operation": "amend",
+   "text": "GATE-SCOPE-LIB-UNIT-TEST-MODULES (2026-11-06): an include_str! of proof/ or providers/ from a #[cfg(test)] module of the gateway library (src/*.rs test modules, tests/unit/*.rs) now selects qcore-c-gateway::lib::qcore_c_gateway, not full mode: proof/QCore/NullDeref.lean probes scoped (4 targets, Lean 13 modules and 13 audits). Includes from the gateway's integration tests already selected only those tests; the leaf target is still needed for what remains crate-wide.",
+   "source": "docs/reports/gate-scope-lib-unit-test-modules/README.md"
+  }
+ ]
+}

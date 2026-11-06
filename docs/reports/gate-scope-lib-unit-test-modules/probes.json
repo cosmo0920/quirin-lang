@@ -1,0 +1,632 @@
+{
+ "schema": "gate-scope-probes/2",
+ "old_rev": "13337d0af",
+ "rows": [
+  {
+   "path": "crates/qcore-c-gateway/tests/libc_gap_declarations.rs",
+   "old": {
+    "mode": "scoped",
+    "full_reasons": [],
+    "packages": [],
+    "targets": [
+     "qcore-audit::test::rule_switch_entry_points",
+     "qcore-c-gateway::test::libc_gap_declarations",
+     "qcore-compiler::test::ct_corpus",
+     "qcore-compiler::test::workspace_layering",
+     "qcore-verification::test::composition_bounds",
+     "quirin-audit-plugin-measure::test::host",
+     "quirin-audit-plugin-measure::test::measure",
+     "quirin-audit-plugin-measure::test::slot_wait",
+     "quirin-audit-plugin-measure::test::units"
+    ],
+    "lib_units": [],
+    "full_crates_reached_whole": [],
+    "lean": "none",
+    "lean_modules": 0,
+    "lean_audits": 0,
+    "provider_gate": false
+   },
+   "new": {
+    "mode": "scoped",
+    "full_reasons": [],
+    "packages": [],
+    "targets": [
+     "qcore-audit::test::rule_switch_entry_points",
+     "qcore-c-gateway::test::libc_gap_declarations",
+     "qcore-compiler::test::ct_corpus",
+     "qcore-compiler::test::workspace_layering",
+     "qcore-verification::test::composition_bounds",
+     "quirin-audit-plugin-measure::test::host",
+     "quirin-audit-plugin-measure::test::measure",
+     "quirin-audit-plugin-measure::test::slot_wait",
+     "quirin-audit-plugin-measure::test::units"
+    ],
+    "lib_units": [],
+    "full_crates_reached_whole": [],
+    "lean": "none",
+    "lean_modules": 0,
+    "lean_audits": 0,
+    "provider_gate": false
+   }
+  },
+  {
+   "path": "providers/quirin-provider-libc/contracts/libc/stdlib.qv",
+   "old": {
+    "mode": "scoped",
+    "full_reasons": [],
+    "packages": [
+     "qcore-audit",
+     "qcore-compiler",
+     "qcore-verification",
+     "qcorec",
+     "quirin-audit-plugin-measure",
+     "quirin-source-analysis"
+    ],
+    "targets": [
+     "qcore-c-gateway::test::cg21_call_exits",
+     "qcore-c-gateway::test::checked_allocator_constructors",
+     "qcore-c-gateway::test::constructor_residuals",
+     "qcore-c-gateway::test::declared_entry_check",
+     "qcore-c-gateway::test::deep_unit_ast",
+     "qcore-c-gateway::test::gapo_return_correctness",
+     "qcore-c-gateway::test::libc_gap_declarations",
+     "qcore-c-gateway::test::literal_decay_readings",
+     "qcore-c-gateway::test::neighbours",
+     "qcore-c-gateway::test::prod_contracts",
+     "qcore-c-gateway::test::rule37_switch",
+     "qcore-contract::test::bounds_contract",
+     "qcore-contract::test::contract_views",
+     "qcore-contract::test::descriptor_cells",
+     "qcore-contract::test::event_loop_clauses",
+     "qcore-contract::test::production_symbolic_adoption"
+    ],
+    "lib_units": [],
+    "full_crates_reached_whole": [],
+    "lean": "none",
+    "lean_modules": 0,
+    "lean_audits": 0,
+    "provider_gate": true
+   },
+   "new": {
+    "mode": "scoped",
+    "full_reasons": [],
+    "packages": [
+     "qcore-audit",
+     "qcore-compiler",
+     "qcorec",
+     "quirin-audit-plugin-measure",
+     "quirin-source-analysis"
+    ],
+    "targets": [
+     "qcore-c-gateway::test::cg21_call_exits",
+     "qcore-c-gateway::test::checked_allocator_constructors",
+     "qcore-c-gateway::test::constructor_residuals",
+     "qcore-c-gateway::test::declared_entry_check",
+     "qcore-c-gateway::test::deep_unit_ast",
+     "qcore-c-gateway::test::gapo_return_correctness",
+     "qcore-c-gateway::test::libc_gap_declarations",
+     "qcore-c-gateway::test::literal_decay_readings",
+     "qcore-c-gateway::test::neighbours",
+     "qcore-c-gateway::test::prod_contracts",
+     "qcore-c-gateway::test::rule37_switch",
+     "qcore-contract::test::bounds_contract",
+     "qcore-contract::test::contract_views",
+     "qcore-contract::test::descriptor_cells",
+     "qcore-contract::test::event_loop_clauses",
+     "qcore-contract::test::production_symbolic_adoption",
+     "qcore-verification::lib::qcore_verification",
+     "qcore-verification::test::call_use_dependents",
+     "qcore-verification::test::call_use_source",
+     "qcore-verification::test::callback_task_handoff",
+     "qcore-verification::test::cleanup_replay_mutations",
+     "qcore-verification::test::cleanup_replay_source",
+     "qcore-verification::test::composition_bounds",
+     "qcore-verification::test::composition_mutations",
+     "qcore-verification::test::composition_source",
+     "qcore-verification::test::counter_source",
+     "qcore-verification::test::emit_cleanup_replay_fixtures",
+     "qcore-verification::test::event_payload",
+     "qcore-verification::test::file_close_composition_mutations",
+     "qcore-verification::test::file_close_composition_source",
+     "qcore-verification::test::filesystem_chunk_close_composition_mutations",
+     "qcore-verification::test::filesystem_chunk_close_composition_source",
+     "qcore-verification::test::frame_source",
+     "qcore-verification::test::frame_source_mutations",
+     "qcore-verification::test::memory_close_composition_mutations",
+     "qcore-verification::test::memory_close_composition_source",
+     "qcore-verification::test::monkey_wait_projection",
+     "qcore-verification::test::observed_wait_composition",
+     "qcore-verification::test::source_effect",
+     "qcore-verification::test::source_effect_helper_target",
+     "qcore-verification::test::source_effect_mutations",
+     "qcore-verification::test::source_effect_obligations",
+     "qcore-verification::test::teardown_prerequisites",
+     "qcore-verification::test::teardown_source",
+     "qcore-verification::test::timeout_teardown",
+     "qcore-verification::test::unsupported_close_composition_mutations",
+     "qcore-verification::test::unsupported_close_composition_source",
+     "qcore-verification::test::wait_failure_paths"
+    ],
+    "lib_units": [
+     "qcore-verification::lib::qcore_verification"
+    ],
+    "full_crates_reached_whole": [],
+    "lean": "none",
+    "lean_modules": 0,
+    "lean_audits": 0,
+    "provider_gate": true
+   }
+  },
+  {
+   "path": "proof/QCore/WrittenSetDerivation.lean",
+   "old": {
+    "mode": "scoped",
+    "full_reasons": [],
+    "packages": [],
+    "targets": [
+     "qcore-compiler::test::float_ieee_vectors",
+     "qcore-compiler::test::proof_leg_digests",
+     "qcore-core::test::written_set"
+    ],
+    "lib_units": [],
+    "full_crates_reached_whole": [],
+    "lean": "modules",
+    "lean_modules": 1,
+    "lean_audits": 1,
+    "provider_gate": false
+   },
+   "new": {
+    "mode": "scoped",
+    "full_reasons": [],
+    "packages": [],
+    "targets": [
+     "qcore-compiler::test::float_ieee_vectors",
+     "qcore-compiler::test::proof_leg_digests",
+     "qcore-core::test::written_set"
+    ],
+    "lib_units": [],
+    "full_crates_reached_whole": [],
+    "lean": "modules",
+    "lean_modules": 1,
+    "lean_audits": 1,
+    "provider_gate": false
+   }
+  },
+  {
+   "path": "compiler/tests/contract_loader.rs",
+   "old": {
+    "mode": "scoped",
+    "full_reasons": [],
+    "packages": [],
+    "targets": [
+     "qcore-audit::test::rule_switch_entry_points",
+     "qcore-compiler::test::contract_loader",
+     "qcore-compiler::test::proof_leg_digests"
+    ],
+    "lib_units": [],
+    "full_crates_reached_whole": [],
+    "lean": "none",
+    "lean_modules": 0,
+    "lean_audits": 0,
+    "provider_gate": false
+   },
+   "new": {
+    "mode": "scoped",
+    "full_reasons": [],
+    "packages": [],
+    "targets": [
+     "qcore-audit::test::rule_switch_entry_points",
+     "qcore-compiler::test::contract_loader",
+     "qcore-compiler::test::proof_leg_digests"
+    ],
+    "lib_units": [],
+    "full_crates_reached_whole": [],
+    "lean": "none",
+    "lean_modules": 0,
+    "lean_audits": 0,
+    "provider_gate": false
+   }
+  },
+  {
+   "path": "crates/qcore-contract/tests/unit/contract_observation.rs",
+   "old": {
+    "mode": "full",
+    "full_reasons": [
+     "the diff reaches qcore-contract"
+    ],
+    "packages": [
+     "qcore-audit",
+     "qcore-c-gateway",
+     "qcore-compiler",
+     "qcore-contract",
+     "qcore-core",
+     "qcore-frontend",
+     "qcore-gateway-rule-api",
+     "qcore-schemas",
+     "qcore-verification",
+     "qcore-verifier-host",
+     "qcorec",
+     "quirin-audit-plugin",
+     "quirin-audit-plugin-libevent",
+     "quirin-audit-plugin-measure",
+     "quirin-source-analysis",
+     "rule-32a-caller-frame-hold",
+     "rule-33-removed-selection",
+     "rule-34-element-destroyer",
+     "rule-35-literal-decay",
+     "rule-36-exact-formal-return",
+     "rule-37-result-constructors",
+     "rule-38-descriptor-cells"
+    ],
+    "targets": [],
+    "lib_units": [],
+    "full_crates_reached_whole": [
+     "qcore-c-gateway",
+     "qcore-contract"
+    ],
+    "lean": "none",
+    "lean_modules": 0,
+    "lean_audits": 0,
+    "provider_gate": false
+   },
+   "new": {
+    "mode": "scoped",
+    "full_reasons": [],
+    "packages": [],
+    "targets": [
+     "qcore-audit::test::rule_switch_entry_points",
+     "qcore-compiler::test::ct_corpus",
+     "qcore-compiler::test::workspace_layering",
+     "qcore-contract::lib::qcore_contract",
+     "qcore-verification::test::composition_bounds",
+     "quirin-audit-plugin-measure::test::host",
+     "quirin-audit-plugin-measure::test::measure",
+     "quirin-audit-plugin-measure::test::slot_wait",
+     "quirin-audit-plugin-measure::test::units"
+    ],
+    "lib_units": [
+     "qcore-contract::lib::qcore_contract"
+    ],
+    "full_crates_reached_whole": [],
+    "lean": "none",
+    "lean_modules": 0,
+    "lean_audits": 0,
+    "provider_gate": false
+   }
+  },
+  {
+   "path": "crates/qcore-c-gateway/tests/unit/legacy_c.rs",
+   "old": {
+    "mode": "full",
+    "full_reasons": [
+     "the diff reaches qcore-c-gateway"
+    ],
+    "packages": [
+     "qcore-audit",
+     "qcore-c-gateway",
+     "qcore-compiler",
+     "qcore-contract",
+     "qcore-core",
+     "qcore-frontend",
+     "qcore-gateway-rule-api",
+     "qcore-schemas",
+     "qcore-verification",
+     "qcore-verifier-host",
+     "qcorec",
+     "quirin-audit-plugin",
+     "quirin-audit-plugin-libevent",
+     "quirin-audit-plugin-measure",
+     "quirin-source-analysis",
+     "rule-32a-caller-frame-hold",
+     "rule-33-removed-selection",
+     "rule-34-element-destroyer",
+     "rule-35-literal-decay",
+     "rule-36-exact-formal-return",
+     "rule-37-result-constructors",
+     "rule-38-descriptor-cells"
+    ],
+    "targets": [],
+    "lib_units": [],
+    "full_crates_reached_whole": [
+     "qcore-c-gateway"
+    ],
+    "lean": "none",
+    "lean_modules": 0,
+    "lean_audits": 0,
+    "provider_gate": false
+   },
+   "new": {
+    "mode": "scoped",
+    "full_reasons": [],
+    "packages": [],
+    "targets": [
+     "qcore-audit::test::rule_switch_entry_points",
+     "qcore-c-gateway::lib::qcore_c_gateway",
+     "qcore-compiler::test::ct_corpus",
+     "qcore-compiler::test::workspace_layering",
+     "qcore-verification::test::composition_bounds",
+     "quirin-audit-plugin-measure::test::host",
+     "quirin-audit-plugin-measure::test::measure",
+     "quirin-audit-plugin-measure::test::slot_wait",
+     "quirin-audit-plugin-measure::test::units"
+    ],
+    "lib_units": [
+     "qcore-c-gateway::lib::qcore_c_gateway"
+    ],
+    "full_crates_reached_whole": [],
+    "lean": "none",
+    "lean_modules": 0,
+    "lean_audits": 0,
+    "provider_gate": false
+   }
+  },
+  {
+   "path": "crates/qcore-c-gateway/tests/fixtures/contracts/q_base.qv",
+   "old": {
+    "mode": "full",
+    "full_reasons": [
+     "the diff reaches qcore-c-gateway"
+    ],
+    "packages": [
+     "qcore-audit",
+     "qcore-c-gateway",
+     "qcore-compiler",
+     "qcore-contract",
+     "qcore-core",
+     "qcore-frontend",
+     "qcore-gateway-rule-api",
+     "qcore-schemas",
+     "qcore-verification",
+     "qcore-verifier-host",
+     "qcorec",
+     "quirin-audit-plugin",
+     "quirin-audit-plugin-libevent",
+     "quirin-audit-plugin-measure",
+     "quirin-source-analysis",
+     "rule-32a-caller-frame-hold",
+     "rule-33-removed-selection",
+     "rule-34-element-destroyer",
+     "rule-35-literal-decay",
+     "rule-36-exact-formal-return",
+     "rule-37-result-constructors",
+     "rule-38-descriptor-cells"
+    ],
+    "targets": [],
+    "lib_units": [],
+    "full_crates_reached_whole": [
+     "qcore-c-gateway"
+    ],
+    "lean": "none",
+    "lean_modules": 0,
+    "lean_audits": 0,
+    "provider_gate": false
+   },
+   "new": {
+    "mode": "scoped",
+    "full_reasons": [],
+    "packages": [
+     "qcore-compiler",
+     "qcorec"
+    ],
+    "targets": [
+     "qcore-c-gateway::lib::qcore_c_gateway",
+     "qcore-c-gateway::test::atomic_source_route",
+     "qcore-c-gateway::test::atomic_weak_memory_events",
+     "qcore-c-gateway::test::bound_untracked_roots",
+     "qcore-c-gateway::test::bounds_body_evidence",
+     "qcore-c-gateway::test::branch_condition_calls",
+     "qcore-c-gateway::test::c03_neutral_frame_recursion_probe",
+     "qcore-c-gateway::test::callee_retention_class1",
+     "qcore-c-gateway::test::cast_formalization",
+     "qcore-c-gateway::test::cg02_elaboration",
+     "qcore-c-gateway::test::cg03_call_instantiation",
+     "qcore-c-gateway::test::cg05_elaborator_call_footprints",
+     "qcore-c-gateway::test::cg05_nested_call_effects",
+     "qcore-c-gateway::test::cg06_connective_footprints",
+     "qcore-c-gateway::test::cg06_value_connectives",
+     "qcore-c-gateway::test::cg07_statement_expressions",
+     "qcore-c-gateway::test::cg08_casts_and_type_queries",
+     "qcore-c-gateway::test::cg11_pointer_stores",
+     "qcore-c-gateway::test::cg12_void_view_readback",
+     "qcore-c-gateway::test::cg14_aggregate_values",
+     "qcore-c-gateway::test::cg16_index_extents",
+     "qcore-c-gateway::test::cg21_call_exits",
+     "qcore-c-gateway::test::cg22_indirect_calls",
+     "qcore-c-gateway::test::cg24_frames_and_relations",
+     "qcore-c-gateway::test::cg26_tail_residual_actuals",
+     "qcore-c-gateway::test::cg26_variadics",
+     "qcore-c-gateway::test::cg30_dialects_flags_types",
+     "qcore-c-gateway::test::chunkio_meta_len_bounds",
+     "qcore-c-gateway::test::clang_gap_phase1",
+     "qcore-c-gateway::test::clang_gap_phase2",
+     "qcore-c-gateway::test::clang_gap_phase3",
+     "qcore-c-gateway::test::clang_gap_phase4",
+     "qcore-c-gateway::test::condition_acquisition",
+     "qcore-c-gateway::test::condition_call_desugar",
+     "qcore-c-gateway::test::constant_do_while",
+     "qcore-c-gateway::test::container_root_reach",
+     "qcore-c-gateway::test::contextual_recursion",
+     "qcore-c-gateway::test::contract_noreturn_borrowed_tails",
+     "qcore-c-gateway::test::custody_summary_regression",
+     "qcore-c-gateway::test::e01_denominator_coverage",
+     "qcore-c-gateway::test::element_destroyer",
+     "qcore-c-gateway::test::footprint_connection",
+     "qcore-c-gateway::test::gapo_return_correctness",
+     "qcore-c-gateway::test::indirect_access_sole_blockers",
+     "qcore-c-gateway::test::indirect_access_sole_residuals",
+     "qcore-c-gateway::test::indirect_access_sole_residuals_r2",
+     "qcore-c-gateway::test::intrusive_list_iteration",
+     "qcore-c-gateway::test::layout_extents",
+     "qcore-c-gateway::test::loop_site_generations",
+     "qcore-c-gateway::test::loop_switch_condition_calls",
+     "qcore-c-gateway::test::loops_recursion_budgets",
+     "qcore-c-gateway::test::neutral_expression_positions",
+     "qcore-c-gateway::test::neutral_frame_recursion",
+     "qcore-c-gateway::test::neutral_reach_census",
+     "qcore-c-gateway::test::null_premise_custody",
+     "qcore-c-gateway::test::parenthesised_callee",
+     "qcore-c-gateway::test::prepared_translation_unit",
+     "qcore-c-gateway::test::quant_index_checks",
+     "qcore-c-gateway::test::reach_gate_positions",
+     "qcore-c-gateway::test::refused_call_hand_on",
+     "qcore-c-gateway::test::refuted_contract_foreign_unlink",
+     "qcore-c-gateway::test::relational_postconditions",
+     "qcore-c-gateway::test::return_position_modeled_call",
+     "qcore-c-gateway::test::return_position_pointer_leaf",
+     "qcore-c-gateway::test::return_refused_call_lowering",
+     "qcore-c-gateway::test::scalar_noop_alias",
+     "qcore-c-gateway::test::scalar_precedence",
+     "qcore-c-gateway::test::scalar_read_identity",
+     "qcore-c-gateway::test::scalar_route_exit_edge",
+     "qcore-c-gateway::test::sr5_soundness",
+     "qcore-c-gateway::test::storage_duration_volatile",
+     "qcore-c-gateway::test::typed_field_access",
+     "qcore-c-gateway::test::union_bitfield_places",
+     "qcore-c-gateway::test::va_loop_pointer_arg",
+     "qcore-verification::test::composition_bounds",
+     "quirin-audit-plugin-measure::test::host",
+     "quirin-audit-plugin-measure::test::measure",
+     "quirin-audit-plugin-measure::test::slot_wait",
+     "quirin-audit-plugin-measure::test::units"
+    ],
+    "lib_units": [
+     "qcore-c-gateway::lib::qcore_c_gateway"
+    ],
+    "full_crates_reached_whole": [],
+    "lean": "none",
+    "lean_modules": 0,
+    "lean_audits": 0,
+    "provider_gate": false
+   }
+  },
+  {
+   "path": "crates/qcore-core/tests/unit/usage.rs",
+   "old": {
+    "mode": "full",
+    "full_reasons": [
+     "the diff reaches qcore-core"
+    ],
+    "packages": [
+     "qcore-audit",
+     "qcore-c-gateway",
+     "qcore-compiler",
+     "qcore-contract",
+     "qcore-core",
+     "qcore-frontend",
+     "qcore-gateway-rule-api",
+     "qcore-schemas",
+     "qcore-verification",
+     "qcore-verifier-host",
+     "qcorec",
+     "quirin-audit-plugin",
+     "quirin-audit-plugin-libevent",
+     "quirin-audit-plugin-measure",
+     "quirin-source-analysis",
+     "rule-32a-caller-frame-hold",
+     "rule-33-removed-selection",
+     "rule-34-element-destroyer",
+     "rule-35-literal-decay",
+     "rule-36-exact-formal-return",
+     "rule-37-result-constructors",
+     "rule-38-descriptor-cells"
+    ],
+    "targets": [],
+    "lib_units": [],
+    "full_crates_reached_whole": [
+     "qcore-c-gateway",
+     "qcore-core",
+     "qcore-contract"
+    ],
+    "lean": "none",
+    "lean_modules": 0,
+    "lean_audits": 0,
+    "provider_gate": false
+   },
+   "new": {
+    "mode": "scoped",
+    "full_reasons": [],
+    "packages": [],
+    "targets": [
+     "qcore-audit::test::rule_switch_entry_points",
+     "qcore-compiler::test::ct_corpus",
+     "qcore-compiler::test::workspace_layering",
+     "qcore-core::lib::qcore_core",
+     "qcore-verification::test::composition_bounds",
+     "quirin-audit-plugin-measure::test::host",
+     "quirin-audit-plugin-measure::test::measure",
+     "quirin-audit-plugin-measure::test::slot_wait",
+     "quirin-audit-plugin-measure::test::units"
+    ],
+    "lib_units": [
+     "qcore-core::lib::qcore_core"
+    ],
+    "full_crates_reached_whole": [],
+    "lean": "none",
+    "lean_modules": 0,
+    "lean_audits": 0,
+    "provider_gate": false
+   }
+  },
+  {
+   "path": "proof/QCore/NullDeref.lean",
+   "old": {
+    "mode": "full",
+    "full_reasons": [
+     "the diff reaches qcore-c-gateway"
+    ],
+    "packages": [
+     "qcore-audit",
+     "qcore-c-gateway",
+     "qcore-compiler",
+     "qcore-contract",
+     "qcore-core",
+     "qcore-frontend",
+     "qcore-gateway-rule-api",
+     "qcore-schemas",
+     "qcore-verification",
+     "qcore-verifier-host",
+     "qcorec",
+     "quirin-audit-plugin",
+     "quirin-audit-plugin-libevent",
+     "quirin-audit-plugin-measure",
+     "quirin-source-analysis",
+     "rule-32a-caller-frame-hold",
+     "rule-33-removed-selection",
+     "rule-34-element-destroyer",
+     "rule-35-literal-decay",
+     "rule-36-exact-formal-return",
+     "rule-37-result-constructors",
+     "rule-38-descriptor-cells"
+    ],
+    "targets": [],
+    "lib_units": [],
+    "full_crates_reached_whole": [
+     "qcore-c-gateway"
+    ],
+    "lean": "modules",
+    "lean_modules": 13,
+    "lean_audits": 13,
+    "provider_gate": false
+   },
+   "new": {
+    "mode": "scoped",
+    "full_reasons": [],
+    "packages": [],
+    "targets": [
+     "qcore-c-gateway::lib::qcore_c_gateway",
+     "qcore-compiler::test::float_ieee_vectors",
+     "qcore-compiler::test::proof_leg_digests",
+     "qcore-core::test::null_deref"
+    ],
+    "lib_units": [
+     "qcore-c-gateway::lib::qcore_c_gateway"
+    ],
+    "full_crates_reached_whole": [],
+    "lean": "modules",
+    "lean_modules": 13,
+    "lean_audits": 13,
+    "provider_gate": false
+   }
+  }
+ ]
+}

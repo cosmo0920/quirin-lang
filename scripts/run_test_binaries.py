@@ -54,7 +54,11 @@ always), and no doc-test unit runs for it.  It refuses before building a
 malformed id, a non-member, a name that is not an integration test of that
 member, a member also named by ``--packages`` and ``--batch-size``; the run
 fails closed if a named target is not built and launched, or if anything
-outside the selection is.
+outside the selection is.  A library's unit-test executable is named the same
+way, ``PKG::lib::NAME`` (card GATE-SCOPE-LIB-UNIT-TEST-MODULES): it is built and
+captured with cargo's ``--lib`` filter beside that member's ``--test`` filters,
+for a change only that library's ``#[cfg(test)]`` code compiles.  Only the
+library's own target is accepted (a library with ``test = false`` refuses).
 
 Every cargo command it runs carries the test-build configuration of
 ``scripts/test_link_config.py`` (card TEST-STORAGE-BUDGET): no incremental
@@ -418,37 +422,58 @@ def parse_packages(values: Optional[Sequence[str]]) -> Optional[list[str]]:
 
 
 def parse_targets(values: Optional[Sequence[str]], document: dict,
-                  packages: Optional[Sequence[str]]) -> Optional[dict[str, list[str]]]:
-    """`--targets a::test::x,b::test::y` -> {package: [test names]}; None = none named.
+                  packages: Optional[Sequence[str]]
+                  ) -> Optional[dict[str, list[tuple[str, str]]]]:
+    """`--targets a::test::x,b::lib::b` -> {package: [(kind, name)]}; None = none named.
 
-    Refuses (ValueError) a malformed id, a non-member, a name that is not an
-    integration-test target of that member, and a member --packages already
-    runs whole: a misspelt target must not shrink the suite."""
+    A unit id is ``PKG::test::NAME`` (an integration test) or the library's
+    unit-test executable ``PKG::KIND::NAME`` exactly as the build names it
+    (``KIND`` its target kinds joined by ``+``, usually ``lib``; card
+    GATE-SCOPE-LIB-UNIT-TEST-MODULES).  Refuses (ValueError) a malformed id, a
+    non-member, a name that is not such a target of that member (a library
+    cargo does not test included), and a member --packages already runs
+    whole: a misspelt target must not shrink the suite."""
     if values is None:
         return None
     uids = sorted({uid.strip() for value in values for uid in value.split(",") if uid.strip()})
     if not uids:
         raise ValueError("--targets names no target")
-    tests = {
-        package["name"]: {target["name"] for target in package["targets"]
-                          if target["kind"] == ["test"]}
-        for package in document["packages"]
-    }
+    tests: dict[str, set[str]] = {}
+    libraries: dict[str, tuple[str, str]] = {}
+    for package in document["packages"]:
+        tests[package["name"]] = {target["name"] for target in package["targets"]
+                                  if target["kind"] == ["test"]}
+        for target in package["targets"]:
+            if LIBRARY_KINDS & set(target["kind"]) and target.get("test", True):
+                libraries[package["name"]] = ("+".join(target["kind"]), target["name"])
     whole = set(packages or ())
-    selected: dict[str, list[str]] = {}
+    selected: dict[str, list[tuple[str, str]]] = {}
     for uid in uids:
         parts = uid.split("::")
-        if len(parts) != 3 or parts[1] != "test":
-            raise ValueError(f"--targets takes PKG::test::NAME unit ids, not {uid!r}")
-        package, _, name = parts
+        if len(parts) != 3:
+            raise ValueError(f"--targets takes PKG::test::NAME or PKG::lib::NAME unit ids, "
+                             f"not {uid!r}")
+        package, kind, name = parts
         if package not in tests:
             raise ValueError(f"--targets names a non-member of the workspace: {package}")
-        if name not in tests[package]:
-            raise ValueError(f"--targets: {package} has no integration-test target {name!r}")
+        if kind == "test":
+            if name not in tests[package]:
+                raise ValueError(f"--targets: {package} has no integration-test target {name!r}")
+        elif libraries.get(package) != (kind, name):
+            raise ValueError(f"--targets: {uid!r} is neither an integration test nor the "
+                             f"unit-test executable of {package}'s library")
         if package in whole:
             raise ValueError(f"--targets: {package} already runs whole under --packages")
-        selected.setdefault(package, []).append(name)
+        selected.setdefault(package, []).append((kind, name))
     return selected
+
+
+def target_filters(selection: Sequence[tuple[str, str]]) -> list[str]:
+    """cargo's own filters for (kind, name) pairs: ``--lib`` or ``--test NAME``."""
+    filters: list[str] = []
+    for kind, name in sorted(selection):
+        filters += ["--test", name] if kind == "test" else ["--lib"]
+    return filters
 
 
 def selection_args(packages: Optional[Sequence[str]]) -> list[str]:
@@ -825,9 +850,10 @@ def parse_args(argv: Sequence[str]) -> argparse.Namespace:
                         help="restrict the run to these workspace members (repeatable, "
                              "comma-separated); the scoped card gate, NOT the standing gate")
     parser.add_argument("--targets", action="append", metavar="PKG::test::NAME,...",
-                        help="also run these integration-test targets of members not named "
-                             "by --packages (repeatable, comma-separated unit ids); the scoped "
-                             "card gate's test-only selection, NOT the standing gate")
+                        help="also run these integration-test targets (PKG::test::NAME) or "
+                             "library unit-test executables (PKG::lib::NAME) of members not "
+                             "named by --packages (repeatable, comma-separated unit ids); the "
+                             "scoped card gate's test-only selection, NOT the standing gate")
     parser.add_argument("--link", choices=test_link_config.LINK_MODES,
                         default=test_link_config.default_link(),
                         help="how test executables link the workspace libraries "
@@ -892,8 +918,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     if packages is not None:
         print(f"packages: {', '.join(packages) or '(none whole)'} (scoped run, not the standing "
               "gate)", flush=True)
-    target_uids = sorted(f"{package}::test::{name}" for package, names in (targets or {}).items()
-                         for name in names)
+    target_uids = sorted(f"{package}::{kind}::{name}" for package, names in (targets or {}).items()
+                         for kind, name in names)
     if target_uids:
         print(f"test targets: {', '.join(target_uids)} (scoped run, not the standing gate)",
               flush=True)
@@ -914,8 +940,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     if packages is None or packages:
         groups.append(("", packages, []))
     for package, names in sorted((targets or {}).items()):
-        groups.append((f"-targets-{safe_name(package)}", [package],
-                       [arg for name in sorted(names) for arg in ("--test", name)]))
+        groups.append((f"-targets-{safe_name(package)}", [package], target_filters(names)))
     executables: dict[str, str] = {}
     records: list[dict] = []
     phases["build"] = phases["capture"] = 0.0
