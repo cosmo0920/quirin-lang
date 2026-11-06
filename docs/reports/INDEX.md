@@ -76,6 +76,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [base-type-reader-census](base-type-reader-census/README.md) | BASE-TYPE-READER-CENSUS — the reader beneath the member reader, measured |
 
+| [body-summary-reuse](body-summary-reuse/README.md) | BODY-SUMMARY-REUSE |
+
 ## C
 
 | Card directory | Original report title |
@@ -234,6 +236,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [contract-adoption-not-in-force](contract-adoption-not-in-force/README.md) | CONTRACT-ADOPTION-NOT-IN-FORCE |
 
 | [contract-check-load-path](contract-check-load-path/README.md) | CONTRACT-CHECK-LOAD-PATH |
+
+| [contract-count-pins-from-locks](contract-count-pins-from-locks/README.md) | CONTRACT-COUNT-PINS-FROM-LOCKS |
 
 | [contract-cycle4-integration](contract-cycle4-integration/README.md) | Contract implementation cycle4 integration |
 
@@ -555,6 +559,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [gate-elastic](gate-elastic/README.md) | GATE-ELASTIC |
 
+| [gate-scope-lib-unit-test-modules](gate-scope-lib-unit-test-modules/README.md) | GATE-SCOPE-LIB-UNIT-TEST-MODULES: a library's cfg(test) code selects its unit-test executable |
+
 | [gate-scope-precise-selection](gate-scope-precise-selection/README.md) | GATE-SCOPE-PRECISE-SELECTION: the scoped gate selects what a change reaches |
 
 | [gateway-analysis-path-optimization](gateway-analysis-path-optimization/README.md) | GATEWAY-ANALYSIS-PATH-OPTIMIZATION: the analysis paths mapped, made explicit and faster, verdict-identical |
@@ -657,6 +663,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [member-access-projection](member-access-projection/README.md) | MEMBER-ACCESS-PROJECTION |
 
+| [member-effect-summary](member-effect-summary/README.md) | MEMBER-EFFECT-SUMMARY |
+
 | [member-path-unit-helpers](member-path-unit-helpers/README.md) | MEMBER-PATH-STATES-THROUGH-UNIT-HELPERS: rule 30's body check through the unit's helpers |
 
 | [member-prepass-other-routes](member-prepass-other-routes/README.md) | MEMBER-PREPASS-OTHER-ROUTES |
@@ -703,6 +711,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [null-safety-property](null-safety-property/README.md) | NULL-SAFETY-PROPERTY |
 
 | [null-triage-unresolved-paths](null-triage-unresolved-paths/README.md) | NULL-TRIAGE-UNRESOLVED-PATHS |
+
+| [null-witness-guard-correlation](null-witness-guard-correlation/README.md) | NULL-WITNESS-GUARD-CORRELATION |
 
 ## O
 
