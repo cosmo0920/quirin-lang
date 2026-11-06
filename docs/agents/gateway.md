@@ -5522,7 +5522,32 @@ own anchor here.
     link lines above the unit's `CMakeCache.txt` name the archive and not
     the wrapper). An exclusion that does not hold or cannot be checked is
     dropped, recorded in the section's `scope.dropped`, and its unit read
-    like any other (an unreadable one opens every member).
+    like any other (an unreadable one opens every member). **An unread C++
+    unit is scoped to the members it names** (card
+    CALLBACK-MEMBER-NON-C-UNITS, amending this rule in place): a C++ unit
+    (`.cpp`, `.cc`, `.cxx`, `.cp`, `.c++`, `.C`) that names a final token but
+    is not read, whose `-E` text under its own command is the whole unit (no
+    `-include`, `-Xclang`, precompiled-header or module flag in its command,
+    no module declaration, import or `#pragma clang module` in its text),
+    opens only a member whose own closure-graph tokens its text names, or
+    one with a graph token it was not checked against
+    (`member_run_facts::RunMemberFacts::opens`, `scoped`, `checked`;
+    `member_prepass::scoped_cxx`). This is the skipping reading above
+    (C++, like C, reaches a member only through its record's definition,
+    which spells its tag or a typedef of it, and a function only through its
+    name), applied to each member's graph instead of the union of every
+    member's. A failed preprocessing, an assembly unit (which writes
+    through offsets and symbols no record names), a C unit whose AST is not
+    read, and a C++ unit whose text is not the whole unit still open every
+    member; the lifetime standing (S3) still reads every unread unit as a
+    declared assumption. The section's `non_c_units` lists each scoped
+    unit's tokens and the units opening each member; the facts digest
+    covers them. At Fluent Bit `046accf6` the current route's two unread
+    units are `lib/ripser-1.2.1/ripser.cpp` (names only libstdc++'s `event`,
+    an S3 lifetime token) and `src/simdutf/flb_simdutf_connector.cpp`
+    (names `cmt`, `event`, `evl`): the rk_conf members, `consume_ctx` and
+    `rko_serve` close, `cmt.log_cb` stays open on the connector.
+    [Report](../reports/callback-member-non-c-units/README.md).
     Measured (corpus `66910c10` on main `b7facc899`): 936 / 9 / 3,889 → 936
     / 9 / 3,889, 97 Unknown rows trade leaves; the pre-pass reads 845 of
     1,444 units, none unread; the rk_conf members close (`dr_msg_cb`
@@ -5537,7 +5562,10 @@ own anchor here.
     run's facts, promote a row in the
     fold, follow an address-taken function's formal, read a value the
     facts do not name as no candidate, treat a unit whose AST was not read
-    (or a unit absent from the run) as closed, or derive a member-invoking
+    (or a unit absent from the run) as closed (a scoped C++ unit keeps only
+    the members whose graph tokens it does not name; never an assembly unit,
+    a failed preprocessing or a text that is not the whole unit), scope a
+    unit by tokens it was not checked against, or derive a member-invoking
     caller before its closed candidates. `QCore.OpCallbacks`
     (`an_open_member_never_decides`, `an_open_run_demotes`,
     `a_kept_decision_covers_every_run_candidate`,
@@ -5575,6 +5603,15 @@ own anchor here.
     `a_run_decided_over_its_facts_composes`);
     `crates/qcore-audit/tests/member_prepass_routes.rs`;
     [report](../reports/member-prepass-other-routes/README.md).
+    `QCore.MemberNonCUnits`
+    (`an_undecided_unit_keeps_the_member_open`,
+    `a_named_graph_token_keeps_the_member_open`,
+    `an_unchecked_graph_token_keeps_the_member_open`,
+    `a_scoped_unit_naming_no_graph_token_holds_no_store`,
+    `a_scoped_unit_naming_no_graph_token_keeps_the_run_set`,
+    `the_closed_run_set_covers_every_store`, `scoped_vectors_hold`);
+    `member_run_facts`'s `SCOPED_VECTORS`;
+    `crates/qcore-audit/tests/callback_member_non_c_units.rs`.
     **A union's places by layout** (card RKO-OP-CB-RUN-SET-OPEN-THROUGH-UNION,
     C04.19.3 amended; the brief's second evidence, Clang's record layout, as
     the discriminant route needs a stated arm map and an op-type analysis
