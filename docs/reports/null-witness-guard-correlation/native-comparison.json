@@ -1,0 +1,977 @@
+{
+  "comparisons": [
+    {
+      "after": "tip",
+      "before": "base",
+      "comparison": "base->tip",
+      "routes": {
+        "corpus": {
+          "after_directory": "/media/Data/GitHub/quirin-lang/private/measure/null-witness-20261105T221201Z/sides/tip/corpus",
+          "artifacts": {
+            "byte_identical_except_named_substitutions": false,
+            "differing": [
+              {
+                "after": "b78565b4ccc2e8f7f6d00a329bb60b5e525b2cf2f67089686a6608d0345e41c2",
+                "before": "b28bc96f21befc3eae8748981f785f97f447a05be6237cc2d2ce1f2f959ee2d1",
+                "file": "corpus-null.jsonl"
+              },
+              {
+                "after": "6c3d9c9100c75a9e206be61d35ad1ac6fbf86560c3ca4d788f0a1bbb968ba5b6",
+                "before": "b54115a4437b636878839aabef75e87a4c6da868c424d7f0f1d8527bb641d2dc",
+                "file": "corpus-null.summary.json"
+              },
+              {
+                "after": "e3973f74bb6f9f0e57de4964adec3b742c6805f2426b47db2870d936fdc20b0d",
+                "before": "a4ab2337bf34cf1dbdd8650c9cb9da587bb31bccdac410c4d206f6937d7844aa",
+                "file": "corpus-outer.json"
+              },
+              {
+                "after": "05f4e4d6a606aff6f672240c83b8e3dac363d28957ff7dc989584010d5358cfe",
+                "before": "016e9bd21a46ac4673f925b6b780c6348662b0f99b6566aedd7e6cd8186c8c6d",
+                "file": "corpus/resource-diagnostics.components.json"
+              },
+              {
+                "file": "corpus/resource-diagnostics.contracts.json",
+                "why": {
+                  "lifetime_keys_only_after": [],
+                  "lifetime_keys_only_before": []
+                }
+              },
+              {
+                "after": "5255b9dd9cd2d2963003cafa1a2c1b6f933786200955c450bc7d151a70776c17",
+                "before": "efd8e38c1f47007f4464436c0ddb440e816e72ce87e8d83f0541f8686e5a6bf5",
+                "file": "corpus/resource-diagnostics.json"
+              },
+              {
+                "after": "6636d99cad6896195e1a13bc782bd63d4b2c4c1e0f5a922ea8fd5b93e874a838",
+                "before": "4f6ed8348b77f86798b3810e140aa4e7e7c4b97658a91dc3eb7296aafdc7fa5f",
+                "file": "corpus/resource-diagnostics.source-effects.json"
+              }
+            ],
+            "identical": [
+              {
+                "file": "corpus/monkey-source.json",
+                "sha256": "ba459c8ab988fc3e97b1efd8a9edbb3ffbd5c4933f79a2b77ae2464ad9f7ff2f"
+              },
+              {
+                "file": "corpus/resource-diagnostics.chunk-contracts.json",
+                "sha256": "c56b0e2ac106ea57362cdc8d76a39a49ac4edcd02c1d46bfc0133b20c4f5cf88"
+              }
+            ],
+            "identical_after_named_substitution": {},
+            "only_after": [],
+            "only_before": [],
+            "records_not_compared": [
+              "console.log",
+              "corpus.exit",
+              "corpus/audit.log",
+              "corpus/run.json",
+              "invocation.json",
+              "stderr.log"
+            ]
+          },
+          "before_directory": "/media/Data/GitHub/quirin-lang/private/measure/null-witness-20261105T221201Z/sides/base/corpus",
+          "composition": {
+            "components": {
+              "after": 185,
+              "before": 185,
+              "union": 370
+            },
+            "conflicts": [],
+            "rows": 185
+          },
+          "conflicts": {
+            "after": [],
+            "before": []
+          },
+          "content_changes": [],
+          "environment_digest_fields": [
+            "assumptions",
+            "build_identity",
+            "environment_sha256",
+            "resource_contracts_sha256",
+            "id"
+          ],
+          "figures": {
+            "after": {
+              "null_rows": 4921,
+              "null_verdicts": {
+                "Safe": 2549,
+                "Unknown": 2355,
+                "Unsafe": 17
+              },
+              "null_verdicts_sha256": "ec6b776c7bc38a0ded1ef62ef4cc1b20d3faa5b11fede1ea01552c22e3d12a3e",
+              "row_statuses": {
+                "Safe": 1050,
+                "Unknown": 3773,
+                "Unsafe": 11
+              },
+              "row_verdicts_sha256": "02d7e01ade19fbc18ba39a941dd608c915e937127fd807cd2e4f04dc34a28596",
+              "rows": 4834,
+              "unit_statuses": {
+                "Safe": 9,
+                "Unknown": 163,
+                "Unsafe": 9,
+                "data_only": 4
+              },
+              "unit_verdicts_sha256": "69a893bf71563bc5d19e902e3cbc4292f57cd2db0ea0eeabbf17ae1465e55817",
+              "units": 185
+            },
+            "before": {
+              "null_rows": 4921,
+              "null_verdicts": {
+                "Safe": 2549,
+                "Unknown": 2349,
+                "Unsafe": 23
+              },
+              "null_verdicts_sha256": "2091596eefc9fd210ee81485828e548ccf1e3f3c84a0e0789988b0ceb2f40432",
+              "row_statuses": {
+                "Safe": 1050,
+                "Unknown": 3773,
+                "Unsafe": 11
+              },
+              "row_verdicts_sha256": "02d7e01ade19fbc18ba39a941dd608c915e937127fd807cd2e4f04dc34a28596",
+              "rows": 4834,
+              "unit_statuses": {
+                "Safe": 9,
+                "Unknown": 163,
+                "Unsafe": 9,
+                "data_only": 4
+              },
+              "unit_verdicts_sha256": "69a893bf71563bc5d19e902e3cbc4292f57cd2db0ea0eeabbf17ae1465e55817",
+              "units": 185
+            }
+          },
+          "function_rows": {
+            "content_changed": 0,
+            "environment_only": 4834,
+            "identical": 0,
+            "moved": 0,
+            "unmatched": 0
+          },
+          "incomplete_because": [],
+          "moves": [],
+          "profile_baseline": {
+            "after": {
+              "exit": 1,
+              "lines": [
+                "null_verdicts_sha256: baseline '5e3809dd6ee98d3205736824d7d2f1e932836e296d4fc47f16f614b7a158f493', run 'ec6b776c7bc38a0ded1ef62ef4cc1b20d3faa5b11fede1ea01552c22e3d12a3e'",
+                "row_statuses: baseline {'Safe': 1013, 'Unknown': 3811, 'Unsafe': 10}, run {'Safe': 1050, 'Unknown': 3773, 'Unsafe': 11}",
+                "row_verdicts_sha256: baseline '6019562445f06309f8419ff7c644cd8b764c8258c7deb625a60ba4227f603f82', run '02d7e01ade19fbc18ba39a941dd608c915e937127fd807cd2e4f04dc34a28596'",
+                "unit_statuses: baseline {'Safe': 8, 'Unknown': 165, 'Unsafe': 8, 'data_only': 4}, run {'Safe': 9, 'Unknown': 163, 'Unsafe': 9, 'data_only': 4}",
+                "unit_verdicts_sha256: baseline '58c0d37734220a4427792bc8b13569468da6e48cfd2e2425c9c02a96226cb770', run '69a893bf71563bc5d19e902e3cbc4292f57cd2db0ea0eeabbf17ae1465e55817'",
+                "eight-home: results moved; record the new baseline with a reason in the same commit (record), or treat the move as a defect"
+              ],
+              "profile": "eight-home"
+            },
+            "before": {
+              "exit": 1,
+              "lines": [
+                "null_verdicts: baseline {'Safe': 2549, 'Unknown': 2355, 'Unsafe': 17}, run {'Safe': 2549, 'Unknown': 2349, 'Unsafe': 23}",
+                "null_verdicts_sha256: baseline '5e3809dd6ee98d3205736824d7d2f1e932836e296d4fc47f16f614b7a158f493', run '2091596eefc9fd210ee81485828e548ccf1e3f3c84a0e0789988b0ceb2f40432'",
+                "row_statuses: baseline {'Safe': 1013, 'Unknown': 3811, 'Unsafe': 10}, run {'Safe': 1050, 'Unknown': 3773, 'Unsafe': 11}",
+                "row_verdicts_sha256: baseline '6019562445f06309f8419ff7c644cd8b764c8258c7deb625a60ba4227f603f82', run '02d7e01ade19fbc18ba39a941dd608c915e937127fd807cd2e4f04dc34a28596'",
+                "unit_statuses: baseline {'Safe': 8, 'Unknown': 165, 'Unsafe': 8, 'data_only': 4}, run {'Safe': 9, 'Unknown': 163, 'Unsafe': 9, 'data_only': 4}",
+                "unit_verdicts_sha256: baseline '58c0d37734220a4427792bc8b13569468da6e48cfd2e2425c9c02a96226cb770', run '69a893bf71563bc5d19e902e3cbc4292f57cd2db0ea0eeabbf17ae1465e55817'",
+                "eight-home: results moved; record the new baseline with a reason in the same commit (record), or treat the move as a defect"
+              ],
+              "profile": "eight-home"
+            }
+          },
+          "status": "complete",
+          "status_deltas": {
+            "Safe": 0,
+            "Unknown": 0,
+            "Unsafe": 0
+          },
+          "totals": {
+            "after": {
+              "conflicted_unit_rows": 0,
+              "diagnostic_counts": {
+                "double_release": 1,
+                "leak": 41,
+                "summary_conflict": 3,
+                "unknown_alias": 11032,
+                "unsupported": 25866
+              },
+              "function_rows": 4834,
+              "function_status": {
+                "Safe": 1050,
+                "Unknown": 3773,
+                "Unsafe": 11
+              },
+              "row_source": "sidecar",
+              "unit_rows": 185,
+              "unit_verdict": {
+                "Safe": 13,
+                "Unknown": 163,
+                "Unsafe": 9
+              }
+            },
+            "before": {
+              "conflicted_unit_rows": 0,
+              "diagnostic_counts": {
+                "double_release": 1,
+                "leak": 41,
+                "summary_conflict": 3,
+                "unknown_alias": 11032,
+                "unsupported": 25866
+              },
+              "function_rows": 4834,
+              "function_status": {
+                "Safe": 1050,
+                "Unknown": 3773,
+                "Unsafe": 11
+              },
+              "row_source": "sidecar",
+              "unit_rows": 185,
+              "unit_verdict": {
+                "Safe": 13,
+                "Unknown": 163,
+                "Unsafe": 9
+              }
+            }
+          },
+          "unit_field_differences": {},
+          "unit_moves": [],
+          "unit_rows_environment_only": 0,
+          "unmatched": [],
+          "unmatched_units": []
+        },
+        "slice": {
+          "after_directory": "/media/Data/GitHub/quirin-lang/private/measure/null-witness-20261105T221201Z/sides/tip/slice",
+          "artifacts": {
+            "byte_identical_except_named_substitutions": false,
+            "differing": [
+              {
+                "after": "75ebee67c35282d3f7fe677d0e193e0343eca17f0faa2dff58fdb04c9508e012",
+                "before": "25d7ba4e33f589eaecad693485ac98a1949871ddcf823260b7267d583cf2231e",
+                "file": "resource-diagnostics.components.json"
+              },
+              {
+                "file": "resource-diagnostics.contracts.json",
+                "why": {
+                  "lifetime_keys_only_after": [],
+                  "lifetime_keys_only_before": []
+                }
+              },
+              {
+                "after": "632c78f99fc6a66efcbf929d30e6fc16d9a5a5b000c92fec3ef119e799adf660",
+                "before": "c5db280391531e81b3d7aa1d04a550c257a597ee1e1d65d4289d9bbe41ddb73c",
+                "file": "resource-diagnostics.json"
+              },
+              {
+                "after": "2c331b76a72914ff31b13d0aa0d810c57f7fac68b6494704d13919c2b1f3ed89",
+                "before": "665e6f59d957c466a7ac98d16c6290ac752a5c4e6c1ad5a44da040b92c23f3d7",
+                "file": "slice-null.jsonl"
+              }
+            ],
+            "identical": [
+              {
+                "file": "resource-diagnostics.chunk-contracts.json",
+                "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8"
+              },
+              {
+                "file": "resource-diagnostics.source-effects.json",
+                "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8"
+              },
+              {
+                "file": "slice-null.summary.json",
+                "sha256": "b2a1885e9fade7a0aff9c00b2099ed01cc2d433962fdabfe1b6b857d0fb2d1fb"
+              },
+              {
+                "file": "slice-outer.json",
+                "sha256": "1f818e19065aae88363144570c3dac809dd4ace715e7a4ab2b7db606f4ef0082"
+              }
+            ],
+            "identical_after_named_substitution": {},
+            "only_after": [],
+            "only_before": [],
+            "records_not_compared": [
+              "console.log",
+              "invocation.json",
+              "resource-diagnostics.invocation.json",
+              "slice.exit",
+              "stderr.log"
+            ]
+          },
+          "before_directory": "/media/Data/GitHub/quirin-lang/private/measure/null-witness-20261105T221201Z/sides/base/slice",
+          "composition": {
+            "components": {
+              "after": 16,
+              "before": 16,
+              "union": 32
+            },
+            "conflicts": [],
+            "rows": 16
+          },
+          "conflicts": {
+            "after": [],
+            "before": []
+          },
+          "content_changes": [],
+          "environment_digest_fields": [
+            "assumptions",
+            "build_identity",
+            "environment_sha256",
+            "resource_contracts_sha256",
+            "id"
+          ],
+          "figures": {
+            "after": {
+              "null_rows": 406,
+              "null_verdicts": {
+                "Safe": 190,
+                "Unknown": 216
+              },
+              "null_verdicts_sha256": "08e9b5da9fe871894264c1b276f846c4cd387a95be5e4704fb4ac49e1dac744b",
+              "row_statuses": {
+                "Pending": 4,
+                "Safe": 57,
+                "Unknown": 342,
+                "Unsafe": 1
+              },
+              "row_verdicts_sha256": "a84686d4fd6a52b090bac9ed9302c52f2d79c1439fc7dfbbf421589ff4dd8781",
+              "rows": 404,
+              "unit_statuses": {
+                "Unknown": 15,
+                "Unsafe": 1
+              },
+              "unit_verdicts_sha256": "54e95d5f88252a15b9dd02fb3878b6286b16eeea24a5a4cfd4fde8a08af830e5",
+              "units": 16
+            },
+            "before": {
+              "null_rows": 406,
+              "null_verdicts": {
+                "Safe": 190,
+                "Unknown": 216
+              },
+              "null_verdicts_sha256": "08e9b5da9fe871894264c1b276f846c4cd387a95be5e4704fb4ac49e1dac744b",
+              "row_statuses": {
+                "Pending": 4,
+                "Safe": 57,
+                "Unknown": 342,
+                "Unsafe": 1
+              },
+              "row_verdicts_sha256": "a84686d4fd6a52b090bac9ed9302c52f2d79c1439fc7dfbbf421589ff4dd8781",
+              "rows": 404,
+              "unit_statuses": {
+                "Unknown": 15,
+                "Unsafe": 1
+              },
+              "unit_verdicts_sha256": "54e95d5f88252a15b9dd02fb3878b6286b16eeea24a5a4cfd4fde8a08af830e5",
+              "units": 16
+            }
+          },
+          "function_rows": {
+            "content_changed": 0,
+            "environment_only": 404,
+            "identical": 0,
+            "moved": 0,
+            "unmatched": 0
+          },
+          "incomplete_because": [],
+          "moves": [],
+          "profile_baseline": {
+            "after": {
+              "exit": 0,
+              "lines": [
+                "fluent-bit-tail-pause: the run reproduces the baseline"
+              ],
+              "profile": "fluent-bit-tail-pause"
+            },
+            "before": {
+              "exit": 0,
+              "lines": [
+                "fluent-bit-tail-pause: the run reproduces the baseline"
+              ],
+              "profile": "fluent-bit-tail-pause"
+            }
+          },
+          "status": "complete",
+          "status_deltas": {
+            "Pending": 0,
+            "Safe": 0,
+            "Unknown": 0,
+            "Unsafe": 0
+          },
+          "totals": {
+            "after": {
+              "conflicted_unit_rows": 0,
+              "diagnostic_counts": {
+                "counted_user": 1,
+                "unknown_alias": 1089,
+                "unsupported": 2445
+              },
+              "function_rows": 404,
+              "function_status": {
+                "Pending": 4,
+                "Safe": 57,
+                "Unknown": 342,
+                "Unsafe": 1
+              },
+              "row_source": "sidecar",
+              "unit_rows": 16,
+              "unit_verdict": {
+                "Unknown": 15,
+                "Unsafe": 1
+              }
+            },
+            "before": {
+              "conflicted_unit_rows": 0,
+              "diagnostic_counts": {
+                "counted_user": 1,
+                "unknown_alias": 1089,
+                "unsupported": 2445
+              },
+              "function_rows": 404,
+              "function_status": {
+                "Pending": 4,
+                "Safe": 57,
+                "Unknown": 342,
+                "Unsafe": 1
+              },
+              "row_source": "sidecar",
+              "unit_rows": 16,
+              "unit_verdict": {
+                "Unknown": 15,
+                "Unsafe": 1
+              }
+            }
+          },
+          "unit_field_differences": {},
+          "unit_moves": [],
+          "unit_rows_environment_only": 0,
+          "unmatched": [],
+          "unmatched_units": []
+        },
+        "system": {
+          "after_directory": "/media/Data/GitHub/quirin-lang/private/measure/null-witness-20261105T221201Z/sides/tip/system",
+          "artifacts": {
+            "byte_identical_except_named_substitutions": false,
+            "differing": [
+              {
+                "after": "2275c58156e37dba07ae5d4b3bf7566f4b8b6521a61035796f0cef9df7e0c3fc",
+                "before": "f86440d7d1517284027253bd42703578b58502acbb3676a99efe5e1415b8eed8",
+                "file": "resource-diagnostics.components.json"
+              },
+              {
+                "file": "resource-diagnostics.contracts.json",
+                "why": {
+                  "lifetime_keys_only_after": [],
+                  "lifetime_keys_only_before": []
+                }
+              },
+              {
+                "after": "45dbb9a219e8c6723b6cd3cea03c76caa9da1f7905b505cb9835d7f22f133281",
+                "before": "07b6cf1a93853345a44800a1aa01ca293514d56b967ff479dac948fb0dd8ff14",
+                "file": "resource-diagnostics.json"
+              },
+              {
+                "after": "ac5bba6def7e374a2393bbbce9086641955e4a86f6f26ec5635de13ef50cf80c",
+                "before": "0f89bc4f70e35f74b0c2cbb4ca85e765d613100324b6693c0a749ddcc468d77c",
+                "file": "system-null.jsonl"
+              }
+            ],
+            "identical": [
+              {
+                "file": "resource-diagnostics.chunk-contracts.json",
+                "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922"
+              },
+              {
+                "file": "resource-diagnostics.source-effects.json",
+                "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922"
+              },
+              {
+                "file": "system-null.summary.json",
+                "sha256": "39da180a53a877553bbf42aab7a0e92ddf8cf511a749f85817004ecaccf495a0"
+              },
+              {
+                "file": "system-outer.json",
+                "sha256": "585af91d283fa4a03ae50dbd5e83d859326157e6320b6051e3ce7623caf28eba"
+              }
+            ],
+            "identical_after_named_substitution": {},
+            "only_after": [],
+            "only_before": [],
+            "records_not_compared": [
+              "console.log",
+              "invocation.json",
+              "resource-diagnostics.invocation.json",
+              "stderr.log",
+              "system.exit"
+            ]
+          },
+          "before_directory": "/media/Data/GitHub/quirin-lang/private/measure/null-witness-20261105T221201Z/sides/base/system",
+          "composition": {
+            "components": {
+              "after": 15,
+              "before": 15,
+              "union": 30
+            },
+            "conflicts": [],
+            "rows": 15
+          },
+          "conflicts": {
+            "after": [],
+            "before": []
+          },
+          "content_changes": [],
+          "environment_digest_fields": [
+            "assumptions",
+            "build_identity",
+            "environment_sha256",
+            "resource_contracts_sha256",
+            "id"
+          ],
+          "figures": {
+            "after": {
+              "null_rows": 454,
+              "null_verdicts": {
+                "Safe": 211,
+                "Unknown": 243
+              },
+              "null_verdicts_sha256": "18d3b6d0fee4bc3f929e5dac2474bfb88a2290f3163dc698dc2abc3ba94155b3",
+              "row_statuses": {
+                "Safe": 101,
+                "Unknown": 343,
+                "Unsafe": 4
+              },
+              "row_verdicts_sha256": "1d17077f4986f2ea53867a1a2854eb5d5c54c22d755520a7151c5a9c1c6f0003",
+              "rows": 448,
+              "unit_statuses": {
+                "Unknown": 13,
+                "Unsafe": 2
+              },
+              "unit_verdicts_sha256": "d326464ed189bac74776761057f9be31bd5197eea46563b8991137944ed2a01f",
+              "units": 15
+            },
+            "before": {
+              "null_rows": 454,
+              "null_verdicts": {
+                "Safe": 211,
+                "Unknown": 243
+              },
+              "null_verdicts_sha256": "18d3b6d0fee4bc3f929e5dac2474bfb88a2290f3163dc698dc2abc3ba94155b3",
+              "row_statuses": {
+                "Safe": 101,
+                "Unknown": 343,
+                "Unsafe": 4
+              },
+              "row_verdicts_sha256": "1d17077f4986f2ea53867a1a2854eb5d5c54c22d755520a7151c5a9c1c6f0003",
+              "rows": 448,
+              "unit_statuses": {
+                "Unknown": 13,
+                "Unsafe": 2
+              },
+              "unit_verdicts_sha256": "d326464ed189bac74776761057f9be31bd5197eea46563b8991137944ed2a01f",
+              "units": 15
+            }
+          },
+          "function_rows": {
+            "content_changed": 0,
+            "environment_only": 448,
+            "identical": 0,
+            "moved": 0,
+            "unmatched": 0
+          },
+          "incomplete_because": [],
+          "moves": [],
+          "profile_baseline": {
+            "after": {
+              "exit": 0,
+              "lines": [
+                "fluent-bit-system: the run reproduces the baseline"
+              ],
+              "profile": "fluent-bit-system"
+            },
+            "before": {
+              "exit": 0,
+              "lines": [
+                "fluent-bit-system: the run reproduces the baseline"
+              ],
+              "profile": "fluent-bit-system"
+            }
+          },
+          "status": "complete",
+          "status_deltas": {
+            "Safe": 0,
+            "Unknown": 0,
+            "Unsafe": 0
+          },
+          "totals": {
+            "after": {
+              "conflicted_unit_rows": 0,
+              "diagnostic_counts": {
+                "counted_user": 4,
+                "summary_conflict": 4,
+                "unknown_alias": 944,
+                "unsupported": 2396
+              },
+              "function_rows": 448,
+              "function_status": {
+                "Safe": 101,
+                "Unknown": 343,
+                "Unsafe": 4
+              },
+              "row_source": "sidecar",
+              "unit_rows": 15,
+              "unit_verdict": {
+                "Unknown": 13,
+                "Unsafe": 2
+              }
+            },
+            "before": {
+              "conflicted_unit_rows": 0,
+              "diagnostic_counts": {
+                "counted_user": 4,
+                "summary_conflict": 4,
+                "unknown_alias": 944,
+                "unsupported": 2396
+              },
+              "function_rows": 448,
+              "function_status": {
+                "Safe": 101,
+                "Unknown": 343,
+                "Unsafe": 4
+              },
+              "row_source": "sidecar",
+              "unit_rows": 15,
+              "unit_verdict": {
+                "Unknown": 13,
+                "Unsafe": 2
+              }
+            }
+          },
+          "unit_field_differences": {},
+          "unit_moves": [],
+          "unit_rows_environment_only": 0,
+          "unmatched": [],
+          "unmatched_units": []
+        }
+      }
+    }
+  ],
+  "contribution": {
+    "ledgers": [],
+    "rules": [],
+    "schema": "quirin-contribution-ledger/1"
+  },
+  "declared": {
+    "comparison": "base->tip",
+    "path": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ae1e0c71488222ce7/docs/reports/null-witness-guard-correlation/PREDICTION.md",
+    "result": "match",
+    "routes": {
+      "corpus": {
+        "declared": true,
+        "delta_mismatches": [],
+        "missing": [],
+        "result": "match",
+        "unpredicted": []
+      },
+      "slice": {
+        "declared": true,
+        "delta_mismatches": [],
+        "missing": [],
+        "result": "match",
+        "unpredicted": []
+      },
+      "system": {
+        "declared": true,
+        "delta_mismatches": [],
+        "missing": [],
+        "result": "match",
+        "unpredicted": []
+      }
+    },
+    "sha256": "d98d809d212713b443f5f1a2a0a2826c2e7cecbbafb2145f7e493fd70da8f2e0"
+  },
+  "failures": [],
+  "inputs_spelling": {
+    "canonical_prefix": "/media/Data/GitHub/quirin-lang",
+    "manifest": "/media/Data/GitHub/quirin-lang/private/measure/null-witness-20261105T221201Z/mirror/manifest.json",
+    "manifest_sha256": "c5223c6527d8bc9664ae7759c76fa9780b8d1e086051bec9bfe92223822b9ef8",
+    "mode": "auto",
+    "spelled_prefix": "/home/cosmo/Documents/GitHub/qcore-c",
+    "spelling": "mirror"
+  },
+  "interactions": [],
+  "routes": [
+    {
+      "definition": {
+        "clang": "/usr/lib/llvm-21/bin/clang",
+        "compile_databases": [
+          {
+            "path": "c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json",
+            "sha256": "5e6868d9af26eaec97bc8020ed5f23496f2490abf44532443239bd4d365f7e78"
+          },
+          {
+            "path": "c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
+            "sha256": "85cc996712bbd35675340b8b863b6ebc716cb94552253f2a6ad0288db920f331"
+          }
+        ],
+        "inputs_root": "build/cycle19",
+        "kind": "pinned-corpus",
+        "link_map": {
+          "path": "docs/reports/w48-bu-single-leaf-bodies/link-map.corpus.json",
+          "sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3"
+        },
+        "mirror_trees": [
+          "c-gateway-wave-pin/fluent-bit-clang-source",
+          "c-gateway-wave-pin/monkey",
+          "provider-packages-wave20"
+        ],
+        "name": "corpus",
+        "profile": "eight-home",
+        "source_commit": "66910c10",
+        "tracked": [
+          "contract/profiles/fluent-bit/audit.json",
+          "contract/profiles/fluent-bit/profile.json",
+          "contract/profiles/fluent-bit/member-facts-scope.json"
+        ]
+      },
+      "digest": "7eb1e7ec179f8625ea54e2d3b3fb84c15fbf0cde7f3a28800a86cb064d0757ff",
+      "name": "corpus",
+      "profile": "eight-home"
+    },
+    {
+      "definition": {
+        "checkout": "private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source",
+        "clang": "/usr/lib/llvm-21/bin/clang",
+        "compile_database": {
+          "path": "private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-production/compile_commands.json",
+          "sha256": "2475e6374b14152538463f35a3457ffa98fbe30b2639d5df916ef9a216cb6876"
+        },
+        "kind": "configured-selection",
+        "link_map": {
+          "path": "docs/reports/w48-bu-single-leaf-bodies/link-map.corpus.json",
+          "sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3"
+        },
+        "name": "system",
+        "profile": "fluent-bit-system",
+        "profile_directory": "contract/profiles/fluent-bit",
+        "selection": "contract/profiles/fluent-bit/system-selection.json",
+        "tracked": [
+          "contract/profiles/fluent-bit/system-selection.json",
+          "contract/profiles/fluent-bit/profile.json",
+          "contract/profiles/fluent-bit/member-facts-scope.json"
+        ]
+      },
+      "digest": "062d37eec4d7a1b7db4eeb77fe1ddf22f8118fbe0fe9306df7ad68cf38bec6d5",
+      "name": "system",
+      "profile": "fluent-bit-system"
+    },
+    {
+      "definition": {
+        "checkout": "private/w47-tail/attempt-1/prep/fluent-bit-clang-source",
+        "clang": "/usr/lib/llvm-21/bin/clang",
+        "compile_database": {
+          "path": "private/w47-tail/attempt-1/prep/fluent-bit-clang-production/compile_commands.json",
+          "sha256": "faf446759b31f892c9ffe03c76719875e9910682515cdd9acc908dc5142f8157"
+        },
+        "kind": "configured-selection",
+        "link_map": {
+          "path": "docs/reports/w48-bu-single-leaf-bodies/link-map.corpus.json",
+          "sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3"
+        },
+        "name": "slice",
+        "profile": "fluent-bit-tail-pause",
+        "profile_directory": "contract/profiles/fluent-bit",
+        "selection": "contract/profiles/fluent-bit/tail-pause-selection.json",
+        "tracked": [
+          "contract/profiles/fluent-bit/tail-pause-selection.json",
+          "contract/profiles/fluent-bit/profile.json",
+          "contract/profiles/fluent-bit/member-facts-scope.json"
+        ]
+      },
+      "digest": "361fcfcbdd52d4f735e9ae78a1244b8acf8e963818cd7992123623b975e6047a",
+      "name": "slice",
+      "profile": "fluent-bit-tail-pause"
+    }
+  ],
+  "rules_off": [],
+  "schema": "quirin-native-comparison/1",
+  "sides": {
+    "base": {
+      "binary": {
+        "path": "/media/Data/GitHub/quirin-lang/private/measure/null-witness-20261105T221201Z/sides/base/src/target/release/quirin-audit",
+        "path_as_run": "/tmp/quirin-measure/src/target/release/quirin-audit",
+        "sha256": "763995f5be807daf6d474b3f075f18b8d3fa050cedd1690a0ccd77fc7bed9076"
+      },
+      "build_commit": "13337d0af358bd7a02ad2f5509b6a9512327c4aa",
+      "bundles": {
+        "contract": "1eed4f1a0b5226d45db08b5227d3a49822017be3b53439ac785e33ca6221b489",
+        "providers/qcore-provider-chunkio/contracts": "6985ec556f594f82aaf17a0b5e30c4fdd488945890f003b66b66cbcbcffd12e8",
+        "providers/qcore-provider-cmetrics/contracts": "337ff92229e460dbe82f7bc7a1edfba696ee7804bf0d8caba0f252063d2ba07c",
+        "providers/qcore-provider-ctraces/contracts": "e90eb34adf062a1a118226488ce68614d27a986d4dd12627d7458048974a80d1",
+        "providers/qcore-provider-libevent/contracts": "511e523b260f675274f083026bf15e0ea8c1fe537f26c26d9dc34868180eca52",
+        "providers/qcore-provider-librdkafka/contracts": "828eddce73307ea9e076c69b18bb37e52adb103a6b95c428b61122f5653000ed",
+        "providers/quirin-provider-cfl/contracts": "e9c731e8237ec093dc54947cf69ee563a68951898dfbd7daa3e76e9aad24d4d9",
+        "providers/quirin-provider-fluent-bit/contracts": "f0c607882202d840803c5abbd9c03e5c073152339007b7a422edfc10186437e4",
+        "providers/quirin-provider-libc/contracts": "c67b2e76d3b1deed1ba24d1e92ac92d0880b721f71fe71520d28175787313139",
+        "providers/quirin-provider-mpack/contracts": "d50d11076bf1ca060dc996435f75506ce626851fbde0f192ad22ba9834c8ad80",
+        "providers/quirin-provider-msgpack/contracts": "e73fe57fc0d34045b4ee3eea73fa6838c15f08d0f1922b359e0682e30dfc15db",
+        "providers/quirin-provider-shared/contracts": "a4d40318b88bf388c0a7b38f7d83aa7f1dd38d5b9323056658b146cee14e4ba9"
+      },
+      "directory": "/media/Data/GitHub/quirin-lang/private/measure/null-witness-20261105T221201Z/sides/base",
+      "inputs": {
+        "corpus": {
+          "canonical_prefix": "/media/Data/GitHub/quirin-lang",
+          "databases_as_spelled": {
+            "mirror/c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json": "162f27214282bb550851a4c72d4a05ad8773d5f08226ea6eacd55bdf3ef2476c",
+            "mirror/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json": "cc5f2e6b519f2e4b52c8b8a6e035fffcf541594180feaba50743f3e8b793d821"
+          },
+          "route_digest": "7eb1e7ec179f8625ea54e2d3b3fb84c15fbf0cde7f3a28800a86cb064d0757ff",
+          "source_date_epoch": 1767225600,
+          "spelled_prefix": "/home/cosmo/Documents/GitHub/qcore-c",
+          "spelling": "mirror"
+        },
+        "slice": {
+          "canonical_prefix": "/media/Data/GitHub/quirin-lang",
+          "databases_as_spelled": {
+            "mirror/slice-compile_commands.json": "30de8c85606675a324c4f218954bdbe9c0e36f84eb72483e17cad83a3ee5c318"
+          },
+          "route_digest": "361fcfcbdd52d4f735e9ae78a1244b8acf8e963818cd7992123623b975e6047a",
+          "source_date_epoch": 1767225600,
+          "spelled_prefix": "/home/cosmo/Documents/GitHub/qcore-c",
+          "spelling": "mirror"
+        },
+        "system": {
+          "canonical_prefix": "/media/Data/GitHub/quirin-lang",
+          "databases_as_spelled": {
+            "mirror/system-compile_commands.json": "fab8cadc9540a2cb1a674437558cecab5b437a64a50d490a8f7c3f54e2d950a9"
+          },
+          "route_digest": "062d37eec4d7a1b7db4eeb77fe1ddf22f8118fbe0fe9306df7ad68cf38bec6d5",
+          "source_date_epoch": 1767225600,
+          "spelled_prefix": "/home/cosmo/Documents/GitHub/qcore-c",
+          "spelling": "mirror"
+        }
+      },
+      "kind": "rev",
+      "revision": "13337d0af358bd7a02ad2f5509b6a9512327c4aa",
+      "run_json": {
+        "path": "/media/Data/GitHub/quirin-lang/private/measure/null-witness-20261105T221201Z/sides/base/run.json",
+        "sha256": "66ee79313ab544fad68be0952e4b931cdef7f4ad678c84504ae8458c91f18828"
+      },
+      "spec": "rev:13337d0af358bd7a02ad2f5509b6a9512327c4aa"
+    },
+    "tip": {
+      "binary": {
+        "path": "/media/Data/GitHub/quirin-lang/private/measure/null-witness-20261105T221201Z/sides/tip/src/target/release/quirin-audit",
+        "path_as_run": "/tmp/quirin-measure/src/target/release/quirin-audit",
+        "sha256": "08eeb7e521f5214a57d9572456e13bea6750b78820e490f2d7aa118b314f7702"
+      },
+      "build_commit": "635291591364529341db1e2fba9e9ada5d94fa86",
+      "bundles": {
+        "contract": "1eed4f1a0b5226d45db08b5227d3a49822017be3b53439ac785e33ca6221b489",
+        "providers/qcore-provider-chunkio/contracts": "6985ec556f594f82aaf17a0b5e30c4fdd488945890f003b66b66cbcbcffd12e8",
+        "providers/qcore-provider-cmetrics/contracts": "337ff92229e460dbe82f7bc7a1edfba696ee7804bf0d8caba0f252063d2ba07c",
+        "providers/qcore-provider-ctraces/contracts": "e90eb34adf062a1a118226488ce68614d27a986d4dd12627d7458048974a80d1",
+        "providers/qcore-provider-libevent/contracts": "511e523b260f675274f083026bf15e0ea8c1fe537f26c26d9dc34868180eca52",
+        "providers/qcore-provider-librdkafka/contracts": "828eddce73307ea9e076c69b18bb37e52adb103a6b95c428b61122f5653000ed",
+        "providers/quirin-provider-cfl/contracts": "e9c731e8237ec093dc54947cf69ee563a68951898dfbd7daa3e76e9aad24d4d9",
+        "providers/quirin-provider-fluent-bit/contracts": "f0c607882202d840803c5abbd9c03e5c073152339007b7a422edfc10186437e4",
+        "providers/quirin-provider-libc/contracts": "c67b2e76d3b1deed1ba24d1e92ac92d0880b721f71fe71520d28175787313139",
+        "providers/quirin-provider-mpack/contracts": "d50d11076bf1ca060dc996435f75506ce626851fbde0f192ad22ba9834c8ad80",
+        "providers/quirin-provider-msgpack/contracts": "e73fe57fc0d34045b4ee3eea73fa6838c15f08d0f1922b359e0682e30dfc15db",
+        "providers/quirin-provider-shared/contracts": "a4d40318b88bf388c0a7b38f7d83aa7f1dd38d5b9323056658b146cee14e4ba9"
+      },
+      "directory": "/media/Data/GitHub/quirin-lang/private/measure/null-witness-20261105T221201Z/sides/tip",
+      "inputs": {
+        "corpus": {
+          "canonical_prefix": "/media/Data/GitHub/quirin-lang",
+          "databases_as_spelled": {
+            "mirror/c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json": "162f27214282bb550851a4c72d4a05ad8773d5f08226ea6eacd55bdf3ef2476c",
+            "mirror/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json": "cc5f2e6b519f2e4b52c8b8a6e035fffcf541594180feaba50743f3e8b793d821"
+          },
+          "route_digest": "7eb1e7ec179f8625ea54e2d3b3fb84c15fbf0cde7f3a28800a86cb064d0757ff",
+          "source_date_epoch": 1767225600,
+          "spelled_prefix": "/home/cosmo/Documents/GitHub/qcore-c",
+          "spelling": "mirror"
+        },
+        "slice": {
+          "canonical_prefix": "/media/Data/GitHub/quirin-lang",
+          "databases_as_spelled": {
+            "mirror/slice-compile_commands.json": "30de8c85606675a324c4f218954bdbe9c0e36f84eb72483e17cad83a3ee5c318"
+          },
+          "route_digest": "361fcfcbdd52d4f735e9ae78a1244b8acf8e963818cd7992123623b975e6047a",
+          "source_date_epoch": 1767225600,
+          "spelled_prefix": "/home/cosmo/Documents/GitHub/qcore-c",
+          "spelling": "mirror"
+        },
+        "system": {
+          "canonical_prefix": "/media/Data/GitHub/quirin-lang",
+          "databases_as_spelled": {
+            "mirror/system-compile_commands.json": "fab8cadc9540a2cb1a674437558cecab5b437a64a50d490a8f7c3f54e2d950a9"
+          },
+          "route_digest": "062d37eec4d7a1b7db4eeb77fe1ddf22f8118fbe0fe9306df7ad68cf38bec6d5",
+          "source_date_epoch": 1767225600,
+          "spelled_prefix": "/home/cosmo/Documents/GitHub/qcore-c",
+          "spelling": "mirror"
+        }
+      },
+      "kind": "rev",
+      "revision": "635291591364529341db1e2fba9e9ada5d94fa86",
+      "run_json": {
+        "path": "/media/Data/GitHub/quirin-lang/private/measure/null-witness-20261105T221201Z/sides/tip/run.json",
+        "sha256": "f94cc7c5d91243faa1189773dda9692a470a21ec1202f1a4b965da14b810abd3"
+      },
+      "spec": "rev:635291591364529341db1e2fba9e9ada5d94fa86"
+    }
+  },
+  "source_date_epoch": 1767225600,
+  "status": "complete",
+  "timing": {
+    "analysis_time_ms": 21505027,
+    "sides": {
+      "base": {
+        "corpus": {
+          "analysis_time_ms": 11269729,
+          "profile": "eight-home",
+          "slot_wait_ms": 8597151,
+          "wall_time_ms": 19866880
+        },
+        "slice": {
+          "analysis_time_ms": 1392912,
+          "profile": "fluent-bit-tail-pause",
+          "slot_wait_ms": 8597166,
+          "wall_time_ms": 9990078
+        },
+        "system": {
+          "analysis_time_ms": 1555346,
+          "profile": "fluent-bit-system",
+          "slot_wait_ms": 8599088,
+          "wall_time_ms": 10154434
+        }
+      },
+      "tip": {
+        "corpus": {
+          "analysis_time_ms": 9887039,
+          "profile": "eight-home",
+          "slot_wait_ms": 48869861,
+          "wall_time_ms": 58756900
+        },
+        "slice": {
+          "analysis_time_ms": 1386779,
+          "profile": "fluent-bit-tail-pause",
+          "slot_wait_ms": 8599133,
+          "wall_time_ms": 9985912
+        },
+        "system": {
+          "analysis_time_ms": 1551468,
+          "profile": "fluent-bit-system",
+          "slot_wait_ms": 8597154,
+          "wall_time_ms": 10148622
+        }
+      }
+    },
+    "slot_wait_meaning": "wall time during which every route in flight waited for its gate slot; the host's --timeout-ms does not count it (card MEASURE-QUOTA-AND-INCREMENTAL, R7)",
+    "slot_wait_ms": 37589496,
+    "wall_time_ms": 59094524
+  },
+  "tool": {
+    "name": "quirin-audit-measure",
+    "sha256": "943b41320d8f6211c6e69c825f48cafb13c6ea3a88660b6067a0011691ed2c47",
+    "version": "0.1.0"
+  }
+}

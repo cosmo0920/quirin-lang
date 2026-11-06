@@ -176,6 +176,18 @@ slice move. The restored null counts equal the `eight-home` baseline record's
 Unsafe 17); its `null_verdicts_sha256` will still differ, because 38 null rows
 carry custody (and 15 combined) values other cards of this round moved.
 
+Measurement (integrator, 2026-11-06): `quirin-audit measure --side
+base=rev:13337d0af --side tip=rev:635291591 --declared
+docs/reports/null-witness-guard-correlation/PREDICTION.md`, run directory
+`private/measure/null-witness-20261105T221201Z` (main checkout; most of its
+wall time was spent queued behind a spinning census run, see
+GATE-SLOT-ADMISSION-STARVATION). Exit 0, **declared match** on all three
+routes; copy [native-comparison.json](native-comparison.json), sha256
+`a14c27d4…d55b8`. Custody, slice and system: 0 moves. Corpus null
+(`corpus-null.summary.json`): Unknown 2,349 -> 2,355, Unsafe 23 -> 17;
+combined Safe 887 -> 887, Unknown 4,000 -> 4,006, Unsafe 34 -> 28; findings
+35 -> 28. Exactly the prediction; no row became Safe.
+
 Follow-ups (registered through
 [`integration-amendments.json`](integration-amendments.json)):
 `NULL-LOOKUP-TIE-INFEASIBILITY` (a tie the path fixed non-null could remove
