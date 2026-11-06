@@ -189,7 +189,12 @@ which is not a second authority.
     finds no summary and the call stays uncontracted. A caller that may reach more than
     `REPLAY_BUDGET_PER_UNIT` homes holds none, and its unit row names the
     exhausted budget (`cross_unit_imports_withheld`); the certificate check
-    refuses a home set above the budget before any replay. The budget is
+    refuses a home set above the budget before any replay. Every check
+    still verifies every held home, but a home unit's W4 re-run is shared
+    within one process by every check whose recomputed input and environment
+    identities, dialect and selected names equal its own, and it runs with
+    the caller's dependency recording suspended (a home's consultations and
+    body evidence are not the caller's, rules 13f and 13g). The budget is
     stated in the run's `cross_unit_link_resolution` assumption, and the
     `current` route prints per-phase and per-unit progress on standard error
     when the link map is selected. `QCore.CrossUnitReplayBudget`;
