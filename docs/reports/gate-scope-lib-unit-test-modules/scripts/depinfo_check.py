@@ -7,16 +7,18 @@ Card GATE-SCOPE-LIB-UNIT-TEST-MODULES.  Usage (repository root, after a full
     python3 docs/reports/gate-scope-lib-unit-test-modules/scripts/depinfo_check.py \
         BUILD_JSONL [BUILD_JSONL ...] > depinfo.json
 
-``BUILD_JSONL`` is the runner's ``build.stdout.jsonl`` (cargo's
-``compiler-artifact`` messages).  For every root-workspace library cargo tests,
+``BUILD_JSONL`` is cargo's ``--message-format=json`` output of a build or a
+check of the workspace's targets (the runner's ``build.stdout.jsonl``, or
+``cargo clippy --workspace --all-targets --message-format=json``).  For every root-workspace library cargo tests,
 rustc's dep-info file (``deps/<stem>.d`` beside the artifact) lists every
 source file and every ``include_str!``/``include_bytes!``/``include!`` file it
 read, once for the library as dependents link it (``profile.test`` false) and
 once for its unit-test executable (true).  The check:
 
 * **sound**: every tracked file the ordinary library reads selects the crate
-  as a whole (``plan([path])`` reaches it whole), so no narrowing hides a
-  change from the library's dependents;
+  as a whole (``plan([path])`` reaches it whole, or it is a workspace file,
+  which selects full mode), so no narrowing hides a change from the library's
+  dependents;
 * **attributed**: every tracked file only the unit-test build reads selects the
   library's unit (``PKG::lib::NAME``), as a whole crate or as that unit;
 * counted, not required: how many of those test-only files the scoper narrows
@@ -67,11 +69,12 @@ def artifacts(paths):
             test = bool(message["profile"]["test"])
             filename = Path(message.get("executable") or message["filenames"][0])
             stem = filename.name.split(".", 1)[0]
-            if not test and stem.startswith("lib"):
-                stem = stem[3:]
-            depinfo = filename.parent / f"{stem}.d"
-            if not depinfo.exists():
-                depinfo = filename.parent.parent / "deps" / f"{stem}.d"
+            candidates = [stem] + ([stem[3:]] if stem.startswith("lib") else [])
+            depinfo = next((directory / f"{name}.d" for name in candidates
+                            for directory in (filename.parent, filename.parent.parent / "deps")
+                            if (directory / f"{name}.d").exists()), None)
+            if depinfo is None:
+                continue
             found[(package_path, "+".join(target["kind"]), target["name"], test)] = depinfo
     return found
 
@@ -109,7 +112,9 @@ def main() -> int:
         only_test = sorted(test - plain)
         narrowed = 0
         for path in sorted(plain):
-            if crate not in scope(path)["affected"]:
+            # A workspace manifest (rustc lists the root Cargo.toml) selects
+            # full mode, which runs everything.
+            if crate not in scope(path)["affected"] and path not in scope_mod.WORKSPACE_FILES:
                 report["unsound"].append(f"{crate}: the ordinary library reads {path}, "
                                          "which does not select the crate whole")
         for path in only_test:

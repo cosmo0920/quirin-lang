@@ -185,12 +185,57 @@ CONTRACT-COUNT-PINS's tip an example of qcore-contract
 
 ## 6. Compile-time reads against rustc's dep-info
 
-GATE-SECTION-PENDING
+The read census observes run-time opens only. For compile-time reads,
+[scripts/depinfo_check.py](scripts/depinfo_check.py) reads rustc's own
+record: the dep-info file of each library build in the gate's
+`build.stdout.jsonl`. Each file lists every source and `include_*!` file
+rustc read, once for the library as dependents link it and once for its
+unit-test executable. [depinfo.json](depinfo.json): all 21 root libraries; 793
+tracked files the ordinary libraries read, every one selecting its crate whole
+(or full mode, for the root `Cargo.toml` rustc lists); 298 files only the
+unit-test builds read, every one selecting the library's unit, 286 of them as
+that unit alone. The other 12 stay crate-wide for another reader (a JSON
+manifest listing them, a binary, an example, a crate's own `Cargo.toml`). Exit 0:
+no ordinary-library read is narrowed, and no test-only read is unattributed.
+The same check over the clippy step's check-mode artifacts gave the same
+result before the gate ran.
 
 ## 7. Gate
 
-GATE-SECTION-PENDING
+`CARGO_BUILD_JOBS=6 python3 scripts/gate_scope.py --base 13337d0af --out <worktree>/private/gate`
+on `3ae556489`, a clean tree ([gate.json](gate.json)). The sections 6-8 text,
+depinfo.json, gate.json, the amendments and the dep-info script's artifact
+lookup were added after it. The mode was full by design: the diff changes the
+scoper and the runner. There was no Lean, provider or provider-lock step:
+nothing under `proof/`, `providers/` or a manifest changed.
+
+| Step | Exit | Counts |
+|---|---:|---|
+| submodules | 0 | 1, none moved |
+| fmt, Clippy | 0, 0 | |
+| Rust suite | 0 | 612 units, 653 summaries; 9,243 passed, 0 failed, 16 ignored, 135 filtered. Slot wait 36,326 s (10.1 h) behind an integrator measurement holding `audit/0` and then another card's audit census holding `audit/3`. Build 108 s, capture 8 s, run 1,366 s |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| Python suite | 0 | 658 tests, 0 failures, run with `QUIRIN_CARD_GATE_BASE=13337d0af…` |
+
+Logs: `<worktree>/private/gate/` (`rust-suite/summary.json`, `slots/rust-suite.json`).
+Console log outside the worktree:
+`/tmp/claude-1000/-media-Data-GitHub-quirin-lang--claude-worktrees-launch-cards-clean-worktrees-5365ff/6fcd7fbd-1cae-4a40-a37d-5bce071c02c6/scratchpad/r23a/gate-console.log`.
+The card's own tests (`test_gate_scope_lib_units`, `test_gate_scope_precise`,
+`test_gate_scope`, `test_gate_scope_census`, `test_run_test_binaries`) pass
+inside the Python suite.
 
 ## 8. Follow-ups
 
-GATE-SECTION-PENDING
+No new id. Recorded on existing entries through the amendments:
+
+- GATE-READ-CENSUS-REFRESH (append): a re-draft of the walker table must charge
+  a library site with its reverse dependencies' units (section 3), or it
+  rebuilds base paths that rest on accidental attribution.
+- GATEWAY-TESTS-CROSS-TREE-INCLUDES (amend): includes from the gateway's
+  `#[cfg(test)]` modules no longer force full mode; what remains crate-wide is
+  that entry's.
+
+Seen, not changed: a binary's `#[cfg(test)]` code (`PKG::bin::NAME`) still
+selects its crate whole (fail-closed; no runner selection for it); `mod` and
+`#[path]` inside inline modules resolve against the file, not the inline
+module path, as before (a module missed that way stays crate-wide).
