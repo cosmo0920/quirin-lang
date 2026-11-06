@@ -3207,7 +3207,14 @@ suppression:
   result, a null constant, an uninitialized local or a global is searched
   for a path from the function's entry that reaches it with the pointer NULL
   under a named condition (an allocation that fails, a lookup that misses, a
-  null constant, the null arm of the function's own test). A branch is taken
+  null constant, the null arm of the function's own test). A lookup's miss
+  is named only when it is feasible on the path (card
+  NULL-WITNESS-GUARD-CORRELATION, gateway rule
+  [39](agents/gateway.md#constraint-39)): a lookup whose body is one read of a
+  place over its parameters returns that place, NULL only where the path's
+  own test fixed it; any other lookup misses freely only over arguments
+  that are constants or formals and globals the path has not tested, written
+  or passed to a call; a refused miss leaves the path unresolved. A branch is taken
   only when the search decides its condition and agrees, or when every value
   it reads is unconstrained on the path; a condition over a value an earlier
   decision related is correlated and leaves the path unresolved. A validated

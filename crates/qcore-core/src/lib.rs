@@ -50,6 +50,8 @@ pub mod native_concurrency;
 pub mod native_library;
 pub mod native_library_header;
 pub mod null_deref;
+// Card NULL-WITNESS-GUARD-CORRELATION (gateway rule 39).
+pub mod null_lookup;
 // Card NULL-MEMBER-INVARIANT-SCOPE (gateway rules 14x-14z).
 pub mod null_member_scope;
 pub mod null_paths;
