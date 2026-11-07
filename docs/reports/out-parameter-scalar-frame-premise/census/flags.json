@@ -1,0 +1,2472 @@
+{
+ "build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-production/compile_commands.json": {
+  "entries": 1419,
+  "by_library": {
+   "lib/c-ares-1.34.6": {
+    "-O0": 91
+   },
+   "lib/cfl": {
+    "(none)": 15
+   },
+   "lib/chunkio": {
+    "(none)": 15
+   },
+   "lib/cmetrics": {
+    "(none)": 35
+   },
+   "lib/cprofiles": {
+    "(none)": 19
+   },
+   "lib/ctraces": {
+    "(none)": 17
+   },
+   "lib/fluent-otel-proto": {
+    "(none)": 13
+   },
+   "lib/jsmn": {
+    "(none)": 1
+   },
+   "lib/librdkafka-2.15.0": {
+    "(none)": 106
+   },
+   "lib/luajit-7152e154": {
+    "(none)": 76
+   },
+   "lib/luajit-cmake": {
+    "(none)": 1
+   },
+   "lib/lwrb": {
+    "(none)": 2
+   },
+   "lib/miniz": {
+    "(none)": 4
+   },
+   "lib/monkey": {
+    "(none)": 38
+   },
+   "lib/mpack-amalgamation-1.1.1": {
+    "(none)": 1
+   },
+   "lib/msgpack-c": {
+    "(none)": 5
+   },
+   "lib/nghttp2-1.65.0": {
+    "(none)": 26
+   },
+   "lib/onigmo": {
+    "(none)": 50
+   },
+   "lib/ripser-1.2.1": {
+    "(none)": 1
+   },
+   "lib/simdutf-amalgamation-5.5.0": {
+    "(none)": 1
+   },
+   "lib/snappy-fef67ac": {
+    "(none)": 1
+   },
+   "lib/sqlite-amalgamation-3510100": {
+    "(none)": 1
+   },
+   "lib/tutf8e": {
+    "-Os": 2
+   },
+   "lib/wasm-micro-runtime-WAMR-2.4.1": {
+    "(none)": 53
+   },
+   "lib/yyjson-0.12.0": {
+    "-Og": 1
+   },
+   "lib/zstd-1.5.7": {
+    "(none)": 50
+   },
+   "other": {
+    "(none)": 101
+   },
+   "plugins/custom_calyptia": {
+    "(none)": 1
+   },
+   "plugins/filter_alter_size": {
+    "(none)": 1
+   },
+   "plugins/filter_aws": {
+    "(none)": 1
+   },
+   "plugins/filter_checklist": {
+    "(none)": 1
+   },
+   "plugins/filter_ecs": {
+    "(none)": 1
+   },
+   "plugins/filter_expect": {
+    "(none)": 1
+   },
+   "plugins/filter_geoip2": {
+    "(none)": 39
+   },
+   "plugins/filter_grep": {
+    "(none)": 1
+   },
+   "plugins/filter_kubernetes": {
+    "(none)": 6
+   },
+   "plugins/filter_log_to_metrics": {
+    "(none)": 1
+   },
+   "plugins/filter_lua": {
+    "(none)": 2
+   },
+   "plugins/filter_modify": {
+    "(none)": 1
+   },
+   "plugins/filter_multiline": {
+    "(none)": 2
+   },
+   "plugins/filter_nest": {
+    "(none)": 1
+   },
+   "plugins/filter_nightfall": {
+    "(none)": 2
+   },
+   "plugins/filter_parser": {
+    "(none)": 1
+   },
+   "plugins/filter_record_modifier": {
+    "(none)": 1
+   },
+   "plugins/filter_rewrite_tag": {
+    "(none)": 1
+   },
+   "plugins/filter_stdout": {
+    "(none)": 1
+   },
+   "plugins/filter_sysinfo": {
+    "(none)": 2
+   },
+   "plugins/filter_throttle": {
+    "(none)": 2
+   },
+   "plugins/filter_type_converter": {
+    "(none)": 1
+   },
+   "plugins/filter_wasm": {
+    "(none)": 1
+   },
+   "plugins/in_blob": {
+    "(none)": 3
+   },
+   "plugins/in_calyptia_fleet": {
+    "(none)": 1
+   },
+   "plugins/in_collectd": {
+    "(none)": 4
+   },
+   "plugins/in_cpu": {
+    "(none)": 1
+   },
+   "plugins/in_disk": {
+    "(none)": 1
+   },
+   "plugins/in_docker": {
+    "(none)": 3
+   },
+   "plugins/in_docker_events": {
+    "(none)": 2
+   },
+   "plugins/in_dummy": {
+    "(none)": 1
+   },
+   "plugins/in_elasticsearch": {
+    "(none)": 3
+   },
+   "plugins/in_emitter": {
+    "(none)": 1
+   },
+   "plugins/in_event_test": {
+    "(none)": 1
+   },
+   "plugins/in_event_type": {
+    "(none)": 1
+   },
+   "plugins/in_exec": {
+    "(none)": 1
+   },
+   "plugins/in_exec_wasi": {
+    "(none)": 1
+   },
+   "plugins/in_fluentbit_logs": {
+    "(none)": 1
+   },
+   "plugins/in_fluentbit_metrics": {
+    "(none)": 1
+   },
+   "plugins/in_forward": {
+    "(none)": 4
+   },
+   "plugins/in_gpu_metrics": {
+    "(none)": 4
+   },
+   "plugins/in_head": {
+    "(none)": 1
+   },
+   "plugins/in_health": {
+    "(none)": 1
+   },
+   "plugins/in_http": {
+    "(none)": 3
+   },
+   "plugins/in_kafka": {
+    "(none)": 1
+   },
+   "plugins/in_kmsg": {
+    "(none)": 1
+   },
+   "plugins/in_kubernetes_events": {
+    "(none)": 2
+   },
+   "plugins/in_lib": {
+    "(none)": 1
+   },
+   "plugins/in_mem": {
+    "(none)": 2
+   },
+   "plugins/in_mqtt": {
+    "(none)": 4
+   },
+   "plugins/in_netif": {
+    "(none)": 1
+   },
+   "plugins/in_nginx_exporter_metrics": {
+    "(none)": 1
+   },
+   "plugins/in_node_exporter_metrics": {
+    "(none)": 24
+   },
+   "plugins/in_opentelemetry": {
+    "(none)": 7
+   },
+   "plugins/in_podman_metrics": {
+    "(none)": 2
+   },
+   "plugins/in_proc": {
+    "(none)": 1
+   },
+   "plugins/in_process_exporter_metrics": {
+    "(none)": 4
+   },
+   "plugins/in_prometheus_remote_write": {
+    "(none)": 3
+   },
+   "plugins/in_prometheus_scrape": {
+    "(none)": 1
+   },
+   "plugins/in_prometheus_textfile": {
+    "(none)": 1
+   },
+   "plugins/in_random": {
+    "(none)": 1
+   },
+   "plugins/in_serial": {
+    "(none)": 2
+   },
+   "plugins/in_splunk": {
+    "(none)": 3
+   },
+   "plugins/in_statsd": {
+    "(none)": 1
+   },
+   "plugins/in_stdin": {
+    "(none)": 1
+   },
+   "plugins/in_storage_backlog": {
+    "(none)": 1
+   },
+   "plugins/in_stream_processor": {
+    "(none)": 1
+   },
+   "plugins/in_syslog": {
+    "(none)": 5
+   },
+   "plugins/in_systemd": {
+    "(none)": 3
+   },
+   "plugins/in_tail": {
+    "(none)": 9
+   },
+   "plugins/in_tcp": {
+    "(none)": 3
+   },
+   "plugins/in_thermal": {
+    "(none)": 1
+   },
+   "plugins/in_udp": {
+    "(none)": 3
+   },
+   "plugins/out_arvancloud_cloudlogs": {
+    "(none)": 2
+   },
+   "plugins/out_azure": {
+    "(none)": 2
+   },
+   "plugins/out_azure_blob": {
+    "(none)": 8
+   },
+   "plugins/out_azure_kusto": {
+    "(none)": 5
+   },
+   "plugins/out_azure_logs_ingestion": {
+    "(none)": 2
+   },
+   "plugins/out_bigquery": {
+    "(none)": 2
+   },
+   "plugins/out_calyptia": {
+    "(none)": 1
+   },
+   "plugins/out_chronicle": {
+    "(none)": 2
+   },
+   "plugins/out_cloudwatch_logs": {
+    "(none)": 2
+   },
+   "plugins/out_counter": {
+    "(none)": 1
+   },
+   "plugins/out_datadog": {
+    "(none)": 3
+   },
+   "plugins/out_es": {
+    "(none)": 4
+   },
+   "plugins/out_exit": {
+    "(none)": 1
+   },
+   "plugins/out_file": {
+    "(none)": 2
+   },
+   "plugins/out_flowcounter": {
+    "(none)": 1
+   },
+   "plugins/out_forward": {
+    "(none)": 2
+   },
+   "plugins/out_gcs": {
+    "(none)": 2
+   },
+   "plugins/out_gelf": {
+    "(none)": 1
+   },
+   "plugins/out_http": {
+    "(none)": 2
+   },
+   "plugins/out_influxdb": {
+    "(none)": 2
+   },
+   "plugins/out_kafka": {
+    "(none)": 4
+   },
+   "plugins/out_kafka_rest": {
+    "(none)": 2
+   },
+   "plugins/out_kinesis_firehose": {
+    "(none)": 2
+   },
+   "plugins/out_kinesis_streams": {
+    "(none)": 2
+   },
+   "plugins/out_lib": {
+    "(none)": 1
+   },
+   "plugins/out_logdna": {
+    "(none)": 1
+   },
+   "plugins/out_loki": {
+    "(none)": 1
+   },
+   "plugins/out_nats": {
+    "(none)": 1
+   },
+   "plugins/out_nrlogs": {
+    "(none)": 1
+   },
+   "plugins/out_null": {
+    "(none)": 1
+   },
+   "plugins/out_opensearch": {
+    "(none)": 2
+   },
+   "plugins/out_opentelemetry": {
+    "(none)": 4
+   },
+   "plugins/out_oracle_log_analytics": {
+    "(none)": 2
+   },
+   "plugins/out_plot": {
+    "(none)": 1
+   },
+   "plugins/out_prometheus_exporter": {
+    "(none)": 2
+   },
+   "plugins/out_prometheus_remote_write": {
+    "(none)": 2
+   },
+   "plugins/out_s3": {
+    "(none)": 3
+   },
+   "plugins/out_skywalking": {
+    "(none)": 1
+   },
+   "plugins/out_slack": {
+    "(none)": 1
+   },
+   "plugins/out_splunk": {
+    "(none)": 2
+   },
+   "plugins/out_stackdriver": {
+    "(none)": 9
+   },
+   "plugins/out_stdout": {
+    "(none)": 1
+   },
+   "plugins/out_syslog": {
+    "(none)": 2
+   },
+   "plugins/out_tcp": {
+    "(none)": 2
+   },
+   "plugins/out_td": {
+    "(none)": 3
+   },
+   "plugins/out_udp": {
+    "(none)": 2
+   },
+   "plugins/out_vivo_exporter": {
+    "(none)": 3
+   },
+   "plugins/out_websocket": {
+    "(none)": 2
+   },
+   "plugins/processor_content_modifier": {
+    "(none)": 7
+   },
+   "plugins/processor_cumulative_to_delta": {
+    "(none)": 3
+   },
+   "plugins/processor_labels": {
+    "(none)": 1
+   },
+   "plugins/processor_metrics_selector": {
+    "(none)": 1
+   },
+   "plugins/processor_opentelemetry_envelope": {
+    "(none)": 1
+   },
+   "plugins/processor_sampling": {
+    "(none)": 17
+   },
+   "plugins/processor_sql": {
+    "(none)": 6
+   },
+   "plugins/processor_tda": {
+    "(none)": 1
+   },
+   "src": {
+    "(none)": 349
+   }
+  },
+  "no_strict_aliasing": []
+ },
+ "build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-source/fluent-bit-clang-production/compile_commands.json": {
+  "entries": 1419,
+  "by_library": {
+   "lib/c-ares-1.34.6": {
+    "-O0": 91
+   },
+   "lib/cfl": {
+    "(none)": 15
+   },
+   "lib/chunkio": {
+    "(none)": 15
+   },
+   "lib/cmetrics": {
+    "(none)": 35
+   },
+   "lib/cprofiles": {
+    "(none)": 19
+   },
+   "lib/ctraces": {
+    "(none)": 17
+   },
+   "lib/fluent-otel-proto": {
+    "(none)": 13
+   },
+   "lib/jsmn": {
+    "(none)": 1
+   },
+   "lib/librdkafka-2.15.0": {
+    "(none)": 106
+   },
+   "lib/luajit-7152e154": {
+    "(none)": 76
+   },
+   "lib/luajit-cmake": {
+    "(none)": 1
+   },
+   "lib/lwrb": {
+    "(none)": 2
+   },
+   "lib/miniz": {
+    "(none)": 4
+   },
+   "lib/monkey": {
+    "(none)": 38
+   },
+   "lib/mpack-amalgamation-1.1.1": {
+    "(none)": 1
+   },
+   "lib/msgpack-c": {
+    "(none)": 5
+   },
+   "lib/nghttp2-1.65.0": {
+    "(none)": 26
+   },
+   "lib/onigmo": {
+    "(none)": 50
+   },
+   "lib/ripser-1.2.1": {
+    "(none)": 1
+   },
+   "lib/simdutf-amalgamation-5.5.0": {
+    "(none)": 1
+   },
+   "lib/snappy-fef67ac": {
+    "(none)": 1
+   },
+   "lib/sqlite-amalgamation-3510100": {
+    "(none)": 1
+   },
+   "lib/tutf8e": {
+    "-Os": 2
+   },
+   "lib/wasm-micro-runtime-WAMR-2.4.1": {
+    "(none)": 53
+   },
+   "lib/yyjson-0.12.0": {
+    "-Og": 1
+   },
+   "lib/zstd-1.5.7": {
+    "(none)": 50
+   },
+   "other": {
+    "(none)": 101
+   },
+   "plugins/custom_calyptia": {
+    "(none)": 1
+   },
+   "plugins/filter_alter_size": {
+    "(none)": 1
+   },
+   "plugins/filter_aws": {
+    "(none)": 1
+   },
+   "plugins/filter_checklist": {
+    "(none)": 1
+   },
+   "plugins/filter_ecs": {
+    "(none)": 1
+   },
+   "plugins/filter_expect": {
+    "(none)": 1
+   },
+   "plugins/filter_geoip2": {
+    "(none)": 39
+   },
+   "plugins/filter_grep": {
+    "(none)": 1
+   },
+   "plugins/filter_kubernetes": {
+    "(none)": 6
+   },
+   "plugins/filter_log_to_metrics": {
+    "(none)": 1
+   },
+   "plugins/filter_lua": {
+    "(none)": 2
+   },
+   "plugins/filter_modify": {
+    "(none)": 1
+   },
+   "plugins/filter_multiline": {
+    "(none)": 2
+   },
+   "plugins/filter_nest": {
+    "(none)": 1
+   },
+   "plugins/filter_nightfall": {
+    "(none)": 2
+   },
+   "plugins/filter_parser": {
+    "(none)": 1
+   },
+   "plugins/filter_record_modifier": {
+    "(none)": 1
+   },
+   "plugins/filter_rewrite_tag": {
+    "(none)": 1
+   },
+   "plugins/filter_stdout": {
+    "(none)": 1
+   },
+   "plugins/filter_sysinfo": {
+    "(none)": 2
+   },
+   "plugins/filter_throttle": {
+    "(none)": 2
+   },
+   "plugins/filter_type_converter": {
+    "(none)": 1
+   },
+   "plugins/filter_wasm": {
+    "(none)": 1
+   },
+   "plugins/in_blob": {
+    "(none)": 3
+   },
+   "plugins/in_calyptia_fleet": {
+    "(none)": 1
+   },
+   "plugins/in_collectd": {
+    "(none)": 4
+   },
+   "plugins/in_cpu": {
+    "(none)": 1
+   },
+   "plugins/in_disk": {
+    "(none)": 1
+   },
+   "plugins/in_docker": {
+    "(none)": 3
+   },
+   "plugins/in_docker_events": {
+    "(none)": 2
+   },
+   "plugins/in_dummy": {
+    "(none)": 1
+   },
+   "plugins/in_elasticsearch": {
+    "(none)": 3
+   },
+   "plugins/in_emitter": {
+    "(none)": 1
+   },
+   "plugins/in_event_test": {
+    "(none)": 1
+   },
+   "plugins/in_event_type": {
+    "(none)": 1
+   },
+   "plugins/in_exec": {
+    "(none)": 1
+   },
+   "plugins/in_exec_wasi": {
+    "(none)": 1
+   },
+   "plugins/in_fluentbit_logs": {
+    "(none)": 1
+   },
+   "plugins/in_fluentbit_metrics": {
+    "(none)": 1
+   },
+   "plugins/in_forward": {
+    "(none)": 4
+   },
+   "plugins/in_gpu_metrics": {
+    "(none)": 4
+   },
+   "plugins/in_head": {
+    "(none)": 1
+   },
+   "plugins/in_health": {
+    "(none)": 1
+   },
+   "plugins/in_http": {
+    "(none)": 3
+   },
+   "plugins/in_kafka": {
+    "(none)": 1
+   },
+   "plugins/in_kmsg": {
+    "(none)": 1
+   },
+   "plugins/in_kubernetes_events": {
+    "(none)": 2
+   },
+   "plugins/in_lib": {
+    "(none)": 1
+   },
+   "plugins/in_mem": {
+    "(none)": 2
+   },
+   "plugins/in_mqtt": {
+    "(none)": 4
+   },
+   "plugins/in_netif": {
+    "(none)": 1
+   },
+   "plugins/in_nginx_exporter_metrics": {
+    "(none)": 1
+   },
+   "plugins/in_node_exporter_metrics": {
+    "(none)": 24
+   },
+   "plugins/in_opentelemetry": {
+    "(none)": 7
+   },
+   "plugins/in_podman_metrics": {
+    "(none)": 2
+   },
+   "plugins/in_proc": {
+    "(none)": 1
+   },
+   "plugins/in_process_exporter_metrics": {
+    "(none)": 4
+   },
+   "plugins/in_prometheus_remote_write": {
+    "(none)": 3
+   },
+   "plugins/in_prometheus_scrape": {
+    "(none)": 1
+   },
+   "plugins/in_prometheus_textfile": {
+    "(none)": 1
+   },
+   "plugins/in_random": {
+    "(none)": 1
+   },
+   "plugins/in_serial": {
+    "(none)": 2
+   },
+   "plugins/in_splunk": {
+    "(none)": 3
+   },
+   "plugins/in_statsd": {
+    "(none)": 1
+   },
+   "plugins/in_stdin": {
+    "(none)": 1
+   },
+   "plugins/in_storage_backlog": {
+    "(none)": 1
+   },
+   "plugins/in_stream_processor": {
+    "(none)": 1
+   },
+   "plugins/in_syslog": {
+    "(none)": 5
+   },
+   "plugins/in_systemd": {
+    "(none)": 3
+   },
+   "plugins/in_tail": {
+    "(none)": 9
+   },
+   "plugins/in_tcp": {
+    "(none)": 3
+   },
+   "plugins/in_thermal": {
+    "(none)": 1
+   },
+   "plugins/in_udp": {
+    "(none)": 3
+   },
+   "plugins/out_arvancloud_cloudlogs": {
+    "(none)": 2
+   },
+   "plugins/out_azure": {
+    "(none)": 2
+   },
+   "plugins/out_azure_blob": {
+    "(none)": 8
+   },
+   "plugins/out_azure_kusto": {
+    "(none)": 5
+   },
+   "plugins/out_azure_logs_ingestion": {
+    "(none)": 2
+   },
+   "plugins/out_bigquery": {
+    "(none)": 2
+   },
+   "plugins/out_calyptia": {
+    "(none)": 1
+   },
+   "plugins/out_chronicle": {
+    "(none)": 2
+   },
+   "plugins/out_cloudwatch_logs": {
+    "(none)": 2
+   },
+   "plugins/out_counter": {
+    "(none)": 1
+   },
+   "plugins/out_datadog": {
+    "(none)": 3
+   },
+   "plugins/out_es": {
+    "(none)": 4
+   },
+   "plugins/out_exit": {
+    "(none)": 1
+   },
+   "plugins/out_file": {
+    "(none)": 2
+   },
+   "plugins/out_flowcounter": {
+    "(none)": 1
+   },
+   "plugins/out_forward": {
+    "(none)": 2
+   },
+   "plugins/out_gcs": {
+    "(none)": 2
+   },
+   "plugins/out_gelf": {
+    "(none)": 1
+   },
+   "plugins/out_http": {
+    "(none)": 2
+   },
+   "plugins/out_influxdb": {
+    "(none)": 2
+   },
+   "plugins/out_kafka": {
+    "(none)": 4
+   },
+   "plugins/out_kafka_rest": {
+    "(none)": 2
+   },
+   "plugins/out_kinesis_firehose": {
+    "(none)": 2
+   },
+   "plugins/out_kinesis_streams": {
+    "(none)": 2
+   },
+   "plugins/out_lib": {
+    "(none)": 1
+   },
+   "plugins/out_logdna": {
+    "(none)": 1
+   },
+   "plugins/out_loki": {
+    "(none)": 1
+   },
+   "plugins/out_nats": {
+    "(none)": 1
+   },
+   "plugins/out_nrlogs": {
+    "(none)": 1
+   },
+   "plugins/out_null": {
+    "(none)": 1
+   },
+   "plugins/out_opensearch": {
+    "(none)": 2
+   },
+   "plugins/out_opentelemetry": {
+    "(none)": 4
+   },
+   "plugins/out_oracle_log_analytics": {
+    "(none)": 2
+   },
+   "plugins/out_plot": {
+    "(none)": 1
+   },
+   "plugins/out_prometheus_exporter": {
+    "(none)": 2
+   },
+   "plugins/out_prometheus_remote_write": {
+    "(none)": 2
+   },
+   "plugins/out_s3": {
+    "(none)": 3
+   },
+   "plugins/out_skywalking": {
+    "(none)": 1
+   },
+   "plugins/out_slack": {
+    "(none)": 1
+   },
+   "plugins/out_splunk": {
+    "(none)": 2
+   },
+   "plugins/out_stackdriver": {
+    "(none)": 9
+   },
+   "plugins/out_stdout": {
+    "(none)": 1
+   },
+   "plugins/out_syslog": {
+    "(none)": 2
+   },
+   "plugins/out_tcp": {
+    "(none)": 2
+   },
+   "plugins/out_td": {
+    "(none)": 3
+   },
+   "plugins/out_udp": {
+    "(none)": 2
+   },
+   "plugins/out_vivo_exporter": {
+    "(none)": 3
+   },
+   "plugins/out_websocket": {
+    "(none)": 2
+   },
+   "plugins/processor_content_modifier": {
+    "(none)": 7
+   },
+   "plugins/processor_cumulative_to_delta": {
+    "(none)": 3
+   },
+   "plugins/processor_labels": {
+    "(none)": 1
+   },
+   "plugins/processor_metrics_selector": {
+    "(none)": 1
+   },
+   "plugins/processor_opentelemetry_envelope": {
+    "(none)": 1
+   },
+   "plugins/processor_sampling": {
+    "(none)": 17
+   },
+   "plugins/processor_sql": {
+    "(none)": 6
+   },
+   "plugins/processor_tda": {
+    "(none)": 1
+   },
+   "src": {
+    "(none)": 349
+   }
+  },
+  "no_strict_aliasing": []
+ },
+ "build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/monkey/monkey-build/compile_commands.json": {
+  "entries": 142,
+  "by_library": {
+   "mk_core": {
+    "(none)": 7,
+    "-Wstrict-aliasing -fno-strict-aliasing": 108
+   },
+   "mk_server": {
+    "(none)": 21
+   },
+   "other": {
+    "(none)": 6
+   }
+  },
+  "no_strict_aliasing": [
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/monkey/monkey-source/mk_core/deps/libevent/buffer.c",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/monkey/monkey-source/mk_core/deps/libevent/bufferevent.c",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/monkey/monkey-source/mk_core/deps/libevent/bufferevent_filter.c",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/monkey/monkey-source/mk_core/deps/libevent/bufferevent_pair.c",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/monkey/monkey-source/mk_core/deps/libevent/bufferevent_ratelim.c",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/monkey/monkey-source/mk_core/deps/libevent/bufferevent_sock.c",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/monkey/monkey-source/mk_core/deps/libevent/epoll.c",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/monkey/monkey-source/mk_core/deps/libevent/evdns.c",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/monkey/monkey-source/mk_core/deps/libevent/event.c",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/monkey/monkey-source/mk_core/deps/libevent/event_tagging.c",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/monkey/monkey-source/mk_core/deps/libevent/evmap.c",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/monkey/monkey-source/mk_core/deps/libevent/evrpc.c",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/monkey/monkey-source/mk_core/deps/libevent/evthread.c",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/monkey/monkey-source/mk_core/deps/libevent/evutil.c",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/monkey/monkey-source/mk_core/deps/libevent/evutil_rand.c",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/monkey/monkey-source/mk_core/deps/libevent/evutil_time.c",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/monkey/monkey-source/mk_core/deps/libevent/http.c",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/monkey/monkey-source/mk_core/deps/libevent/listener.c",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/monkey/monkey-source/mk_core/deps/libevent/log.c",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/monkey/monkey-source/mk_core/deps/libevent/poll.c",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/monkey/monkey-source/mk_core/deps/libevent/select.c",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/monkey/monkey-source/mk_core/deps/libevent/sha1.c",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/monkey/monkey-source/mk_core/deps/libevent/signal.c",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/monkey/monkey-source/mk_core/deps/libevent/signalfd.c",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/monkey/monkey-source/mk_core/deps/libevent/strlcpy.c",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/monkey/monkey-source/mk_core/deps/libevent/watch.c",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/monkey/monkey-source/mk_core/deps/libevent/ws.c"
+  ]
+ },
+ "private/measure/landing-7b726587bdf6a8213f451fa1c78297bb5e476ef7-20261106T224000508079Z/mirror/c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json": {
+  "entries": 1415,
+  "by_library": {
+   "lib/c-ares-1.34.6": {
+    "-O0": 91
+   },
+   "lib/cfl": {
+    "(none)": 15
+   },
+   "lib/chunkio": {
+    "(none)": 15
+   },
+   "lib/cmetrics": {
+    "(none)": 35
+   },
+   "lib/cprofiles": {
+    "(none)": 19
+   },
+   "lib/ctraces": {
+    "(none)": 17
+   },
+   "lib/fluent-otel-proto": {
+    "(none)": 13
+   },
+   "lib/jsmn": {
+    "(none)": 1
+   },
+   "lib/librdkafka-2.15.0": {
+    "(none)": 106
+   },
+   "lib/luajit-7152e154": {
+    "(none)": 76
+   },
+   "lib/luajit-cmake": {
+    "(none)": 1
+   },
+   "lib/lwrb": {
+    "(none)": 2
+   },
+   "lib/miniz": {
+    "(none)": 4
+   },
+   "lib/monkey": {
+    "(none)": 38
+   },
+   "lib/mpack-amalgamation-1.1.1": {
+    "(none)": 1
+   },
+   "lib/msgpack-c": {
+    "(none)": 5
+   },
+   "lib/nghttp2-1.65.0": {
+    "(none)": 26
+   },
+   "lib/onigmo": {
+    "(none)": 50
+   },
+   "lib/ripser-1.2.1": {
+    "(none)": 1
+   },
+   "lib/simdutf-amalgamation-5.5.0": {
+    "(none)": 1
+   },
+   "lib/snappy-fef67ac": {
+    "(none)": 1
+   },
+   "lib/sqlite-amalgamation-3510100": {
+    "(none)": 1
+   },
+   "lib/tutf8e": {
+    "-Os": 2
+   },
+   "lib/wasm-micro-runtime-WAMR-2.4.1": {
+    "(none)": 53
+   },
+   "lib/yyjson-0.12.0": {
+    "-Og": 1
+   },
+   "lib/zstd-1.5.7": {
+    "(none)": 50
+   },
+   "other": {
+    "(none)": 100
+   },
+   "plugins/custom_calyptia": {
+    "(none)": 1
+   },
+   "plugins/filter_alter_size": {
+    "(none)": 1
+   },
+   "plugins/filter_aws": {
+    "(none)": 1
+   },
+   "plugins/filter_checklist": {
+    "(none)": 1
+   },
+   "plugins/filter_ecs": {
+    "(none)": 1
+   },
+   "plugins/filter_expect": {
+    "(none)": 1
+   },
+   "plugins/filter_geoip2": {
+    "(none)": 39
+   },
+   "plugins/filter_grep": {
+    "(none)": 1
+   },
+   "plugins/filter_kubernetes": {
+    "(none)": 6
+   },
+   "plugins/filter_log_to_metrics": {
+    "(none)": 1
+   },
+   "plugins/filter_lua": {
+    "(none)": 2
+   },
+   "plugins/filter_modify": {
+    "(none)": 1
+   },
+   "plugins/filter_multiline": {
+    "(none)": 2
+   },
+   "plugins/filter_nest": {
+    "(none)": 1
+   },
+   "plugins/filter_nightfall": {
+    "(none)": 2
+   },
+   "plugins/filter_parser": {
+    "(none)": 1
+   },
+   "plugins/filter_record_modifier": {
+    "(none)": 1
+   },
+   "plugins/filter_rewrite_tag": {
+    "(none)": 1
+   },
+   "plugins/filter_stdout": {
+    "(none)": 1
+   },
+   "plugins/filter_sysinfo": {
+    "(none)": 2
+   },
+   "plugins/filter_throttle": {
+    "(none)": 2
+   },
+   "plugins/filter_type_converter": {
+    "(none)": 1
+   },
+   "plugins/filter_wasm": {
+    "(none)": 1
+   },
+   "plugins/in_blob": {
+    "(none)": 3
+   },
+   "plugins/in_calyptia_fleet": {
+    "(none)": 1
+   },
+   "plugins/in_collectd": {
+    "(none)": 4
+   },
+   "plugins/in_cpu": {
+    "(none)": 1
+   },
+   "plugins/in_disk": {
+    "(none)": 1
+   },
+   "plugins/in_docker": {
+    "(none)": 3
+   },
+   "plugins/in_docker_events": {
+    "(none)": 2
+   },
+   "plugins/in_dummy": {
+    "(none)": 1
+   },
+   "plugins/in_elasticsearch": {
+    "(none)": 3
+   },
+   "plugins/in_emitter": {
+    "(none)": 1
+   },
+   "plugins/in_event_test": {
+    "(none)": 1
+   },
+   "plugins/in_event_type": {
+    "(none)": 1
+   },
+   "plugins/in_exec": {
+    "(none)": 1
+   },
+   "plugins/in_exec_wasi": {
+    "(none)": 1
+   },
+   "plugins/in_fluentbit_logs": {
+    "(none)": 1
+   },
+   "plugins/in_fluentbit_metrics": {
+    "(none)": 1
+   },
+   "plugins/in_forward": {
+    "(none)": 4
+   },
+   "plugins/in_gpu_metrics": {
+    "(none)": 4
+   },
+   "plugins/in_head": {
+    "(none)": 1
+   },
+   "plugins/in_health": {
+    "(none)": 1
+   },
+   "plugins/in_http": {
+    "(none)": 3
+   },
+   "plugins/in_kafka": {
+    "(none)": 1
+   },
+   "plugins/in_kmsg": {
+    "(none)": 1
+   },
+   "plugins/in_kubernetes_events": {
+    "(none)": 2
+   },
+   "plugins/in_lib": {
+    "(none)": 1
+   },
+   "plugins/in_mem": {
+    "(none)": 2
+   },
+   "plugins/in_mqtt": {
+    "(none)": 4
+   },
+   "plugins/in_netif": {
+    "(none)": 1
+   },
+   "plugins/in_nginx_exporter_metrics": {
+    "(none)": 1
+   },
+   "plugins/in_node_exporter_metrics": {
+    "(none)": 24
+   },
+   "plugins/in_opentelemetry": {
+    "(none)": 6
+   },
+   "plugins/in_podman_metrics": {
+    "(none)": 2
+   },
+   "plugins/in_proc": {
+    "(none)": 1
+   },
+   "plugins/in_process_exporter_metrics": {
+    "(none)": 4
+   },
+   "plugins/in_prometheus_remote_write": {
+    "(none)": 3
+   },
+   "plugins/in_prometheus_scrape": {
+    "(none)": 1
+   },
+   "plugins/in_prometheus_textfile": {
+    "(none)": 1
+   },
+   "plugins/in_random": {
+    "(none)": 1
+   },
+   "plugins/in_serial": {
+    "(none)": 2
+   },
+   "plugins/in_splunk": {
+    "(none)": 3
+   },
+   "plugins/in_statsd": {
+    "(none)": 1
+   },
+   "plugins/in_stdin": {
+    "(none)": 1
+   },
+   "plugins/in_storage_backlog": {
+    "(none)": 1
+   },
+   "plugins/in_stream_processor": {
+    "(none)": 1
+   },
+   "plugins/in_syslog": {
+    "(none)": 5
+   },
+   "plugins/in_systemd": {
+    "(none)": 3
+   },
+   "plugins/in_tail": {
+    "(none)": 9
+   },
+   "plugins/in_tcp": {
+    "(none)": 3
+   },
+   "plugins/in_thermal": {
+    "(none)": 1
+   },
+   "plugins/in_udp": {
+    "(none)": 3
+   },
+   "plugins/out_azure": {
+    "(none)": 2
+   },
+   "plugins/out_azure_blob": {
+    "(none)": 8
+   },
+   "plugins/out_azure_kusto": {
+    "(none)": 5
+   },
+   "plugins/out_azure_logs_ingestion": {
+    "(none)": 2
+   },
+   "plugins/out_bigquery": {
+    "(none)": 2
+   },
+   "plugins/out_calyptia": {
+    "(none)": 1
+   },
+   "plugins/out_chronicle": {
+    "(none)": 2
+   },
+   "plugins/out_cloudwatch_logs": {
+    "(none)": 2
+   },
+   "plugins/out_counter": {
+    "(none)": 1
+   },
+   "plugins/out_datadog": {
+    "(none)": 3
+   },
+   "plugins/out_es": {
+    "(none)": 4
+   },
+   "plugins/out_exit": {
+    "(none)": 1
+   },
+   "plugins/out_file": {
+    "(none)": 2
+   },
+   "plugins/out_flowcounter": {
+    "(none)": 1
+   },
+   "plugins/out_forward": {
+    "(none)": 2
+   },
+   "plugins/out_gcs": {
+    "(none)": 2
+   },
+   "plugins/out_gelf": {
+    "(none)": 1
+   },
+   "plugins/out_http": {
+    "(none)": 2
+   },
+   "plugins/out_influxdb": {
+    "(none)": 2
+   },
+   "plugins/out_kafka": {
+    "(none)": 4
+   },
+   "plugins/out_kafka_rest": {
+    "(none)": 2
+   },
+   "plugins/out_kinesis_firehose": {
+    "(none)": 2
+   },
+   "plugins/out_kinesis_streams": {
+    "(none)": 2
+   },
+   "plugins/out_lib": {
+    "(none)": 1
+   },
+   "plugins/out_logdna": {
+    "(none)": 1
+   },
+   "plugins/out_loki": {
+    "(none)": 1
+   },
+   "plugins/out_nats": {
+    "(none)": 1
+   },
+   "plugins/out_nrlogs": {
+    "(none)": 1
+   },
+   "plugins/out_null": {
+    "(none)": 1
+   },
+   "plugins/out_opensearch": {
+    "(none)": 2
+   },
+   "plugins/out_opentelemetry": {
+    "(none)": 4
+   },
+   "plugins/out_oracle_log_analytics": {
+    "(none)": 2
+   },
+   "plugins/out_plot": {
+    "(none)": 1
+   },
+   "plugins/out_prometheus_exporter": {
+    "(none)": 2
+   },
+   "plugins/out_prometheus_remote_write": {
+    "(none)": 2
+   },
+   "plugins/out_s3": {
+    "(none)": 3
+   },
+   "plugins/out_skywalking": {
+    "(none)": 1
+   },
+   "plugins/out_slack": {
+    "(none)": 1
+   },
+   "plugins/out_splunk": {
+    "(none)": 2
+   },
+   "plugins/out_stackdriver": {
+    "(none)": 9
+   },
+   "plugins/out_stdout": {
+    "(none)": 1
+   },
+   "plugins/out_syslog": {
+    "(none)": 2
+   },
+   "plugins/out_tcp": {
+    "(none)": 2
+   },
+   "plugins/out_td": {
+    "(none)": 3
+   },
+   "plugins/out_udp": {
+    "(none)": 2
+   },
+   "plugins/out_vivo_exporter": {
+    "(none)": 3
+   },
+   "plugins/out_websocket": {
+    "(none)": 2
+   },
+   "plugins/processor_content_modifier": {
+    "(none)": 7
+   },
+   "plugins/processor_cumulative_to_delta": {
+    "(none)": 3
+   },
+   "plugins/processor_labels": {
+    "(none)": 1
+   },
+   "plugins/processor_metrics_selector": {
+    "(none)": 1
+   },
+   "plugins/processor_opentelemetry_envelope": {
+    "(none)": 1
+   },
+   "plugins/processor_sampling": {
+    "(none)": 17
+   },
+   "plugins/processor_sql": {
+    "(none)": 6
+   },
+   "plugins/processor_tda": {
+    "(none)": 1
+   },
+   "src": {
+    "(none)": 349
+   }
+  },
+  "no_strict_aliasing": []
+ },
+ "private/measure/landing-7b726587bdf6a8213f451fa1c78297bb5e476ef7-20261106T224000508079Z/mirror/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json": {
+  "entries": 142,
+  "by_library": {
+   "mk_core": {
+    "(none)": 7,
+    "-Wstrict-aliasing -fno-strict-aliasing": 108
+   },
+   "mk_server": {
+    "(none)": 21
+   },
+   "other": {
+    "(none)": 6
+   }
+  },
+  "no_strict_aliasing": [
+   "/tmp/quirin-measure/mirror/c-gateway-wave-pin/monkey/monkey-source/mk_core/deps/libevent/buffer.c",
+   "/tmp/quirin-measure/mirror/c-gateway-wave-pin/monkey/monkey-source/mk_core/deps/libevent/bufferevent.c",
+   "/tmp/quirin-measure/mirror/c-gateway-wave-pin/monkey/monkey-source/mk_core/deps/libevent/bufferevent_filter.c",
+   "/tmp/quirin-measure/mirror/c-gateway-wave-pin/monkey/monkey-source/mk_core/deps/libevent/bufferevent_pair.c",
+   "/tmp/quirin-measure/mirror/c-gateway-wave-pin/monkey/monkey-source/mk_core/deps/libevent/bufferevent_ratelim.c",
+   "/tmp/quirin-measure/mirror/c-gateway-wave-pin/monkey/monkey-source/mk_core/deps/libevent/bufferevent_sock.c",
+   "/tmp/quirin-measure/mirror/c-gateway-wave-pin/monkey/monkey-source/mk_core/deps/libevent/epoll.c",
+   "/tmp/quirin-measure/mirror/c-gateway-wave-pin/monkey/monkey-source/mk_core/deps/libevent/evdns.c",
+   "/tmp/quirin-measure/mirror/c-gateway-wave-pin/monkey/monkey-source/mk_core/deps/libevent/event.c",
+   "/tmp/quirin-measure/mirror/c-gateway-wave-pin/monkey/monkey-source/mk_core/deps/libevent/event_tagging.c",
+   "/tmp/quirin-measure/mirror/c-gateway-wave-pin/monkey/monkey-source/mk_core/deps/libevent/evmap.c",
+   "/tmp/quirin-measure/mirror/c-gateway-wave-pin/monkey/monkey-source/mk_core/deps/libevent/evrpc.c",
+   "/tmp/quirin-measure/mirror/c-gateway-wave-pin/monkey/monkey-source/mk_core/deps/libevent/evthread.c",
+   "/tmp/quirin-measure/mirror/c-gateway-wave-pin/monkey/monkey-source/mk_core/deps/libevent/evutil.c",
+   "/tmp/quirin-measure/mirror/c-gateway-wave-pin/monkey/monkey-source/mk_core/deps/libevent/evutil_rand.c",
+   "/tmp/quirin-measure/mirror/c-gateway-wave-pin/monkey/monkey-source/mk_core/deps/libevent/evutil_time.c",
+   "/tmp/quirin-measure/mirror/c-gateway-wave-pin/monkey/monkey-source/mk_core/deps/libevent/http.c",
+   "/tmp/quirin-measure/mirror/c-gateway-wave-pin/monkey/monkey-source/mk_core/deps/libevent/listener.c",
+   "/tmp/quirin-measure/mirror/c-gateway-wave-pin/monkey/monkey-source/mk_core/deps/libevent/log.c",
+   "/tmp/quirin-measure/mirror/c-gateway-wave-pin/monkey/monkey-source/mk_core/deps/libevent/poll.c",
+   "/tmp/quirin-measure/mirror/c-gateway-wave-pin/monkey/monkey-source/mk_core/deps/libevent/select.c",
+   "/tmp/quirin-measure/mirror/c-gateway-wave-pin/monkey/monkey-source/mk_core/deps/libevent/sha1.c",
+   "/tmp/quirin-measure/mirror/c-gateway-wave-pin/monkey/monkey-source/mk_core/deps/libevent/signal.c",
+   "/tmp/quirin-measure/mirror/c-gateway-wave-pin/monkey/monkey-source/mk_core/deps/libevent/signalfd.c",
+   "/tmp/quirin-measure/mirror/c-gateway-wave-pin/monkey/monkey-source/mk_core/deps/libevent/strlcpy.c",
+   "/tmp/quirin-measure/mirror/c-gateway-wave-pin/monkey/monkey-source/mk_core/deps/libevent/watch.c",
+   "/tmp/quirin-measure/mirror/c-gateway-wave-pin/monkey/monkey-source/mk_core/deps/libevent/ws.c"
+  ]
+ },
+ "private/measure/landing-7b726587bdf6a8213f451fa1c78297bb5e476ef7-20261106T224000508079Z/mirror/system-compile_commands.json": {
+  "entries": 1419,
+  "by_library": {
+   "lib/c-ares-1.34.6": {
+    "-O0": 91
+   },
+   "lib/cfl": {
+    "(none)": 15
+   },
+   "lib/chunkio": {
+    "(none)": 15
+   },
+   "lib/cmetrics": {
+    "(none)": 35
+   },
+   "lib/cprofiles": {
+    "(none)": 19
+   },
+   "lib/ctraces": {
+    "(none)": 17
+   },
+   "lib/fluent-otel-proto": {
+    "(none)": 13
+   },
+   "lib/jsmn": {
+    "(none)": 1
+   },
+   "lib/librdkafka-2.15.0": {
+    "(none)": 106
+   },
+   "lib/luajit-7152e154": {
+    "(none)": 76
+   },
+   "lib/luajit-cmake": {
+    "(none)": 1
+   },
+   "lib/lwrb": {
+    "(none)": 2
+   },
+   "lib/miniz": {
+    "(none)": 4
+   },
+   "lib/monkey": {
+    "(none)": 38
+   },
+   "lib/mpack-amalgamation-1.1.1": {
+    "(none)": 1
+   },
+   "lib/msgpack-c": {
+    "(none)": 5
+   },
+   "lib/nghttp2-1.65.0": {
+    "(none)": 26
+   },
+   "lib/onigmo": {
+    "(none)": 50
+   },
+   "lib/ripser-1.2.1": {
+    "(none)": 1
+   },
+   "lib/simdutf-amalgamation-5.5.0": {
+    "(none)": 1
+   },
+   "lib/snappy-fef67ac": {
+    "(none)": 1
+   },
+   "lib/sqlite-amalgamation-3510100": {
+    "(none)": 1
+   },
+   "lib/tutf8e": {
+    "-Os": 2
+   },
+   "lib/wasm-micro-runtime-WAMR-2.4.1": {
+    "(none)": 53
+   },
+   "lib/yyjson-0.12.0": {
+    "-Og": 1
+   },
+   "lib/zstd-1.5.7": {
+    "(none)": 50
+   },
+   "other": {
+    "(none)": 101
+   },
+   "plugins/custom_calyptia": {
+    "(none)": 1
+   },
+   "plugins/filter_alter_size": {
+    "(none)": 1
+   },
+   "plugins/filter_aws": {
+    "(none)": 1
+   },
+   "plugins/filter_checklist": {
+    "(none)": 1
+   },
+   "plugins/filter_ecs": {
+    "(none)": 1
+   },
+   "plugins/filter_expect": {
+    "(none)": 1
+   },
+   "plugins/filter_geoip2": {
+    "(none)": 39
+   },
+   "plugins/filter_grep": {
+    "(none)": 1
+   },
+   "plugins/filter_kubernetes": {
+    "(none)": 6
+   },
+   "plugins/filter_log_to_metrics": {
+    "(none)": 1
+   },
+   "plugins/filter_lua": {
+    "(none)": 2
+   },
+   "plugins/filter_modify": {
+    "(none)": 1
+   },
+   "plugins/filter_multiline": {
+    "(none)": 2
+   },
+   "plugins/filter_nest": {
+    "(none)": 1
+   },
+   "plugins/filter_nightfall": {
+    "(none)": 2
+   },
+   "plugins/filter_parser": {
+    "(none)": 1
+   },
+   "plugins/filter_record_modifier": {
+    "(none)": 1
+   },
+   "plugins/filter_rewrite_tag": {
+    "(none)": 1
+   },
+   "plugins/filter_stdout": {
+    "(none)": 1
+   },
+   "plugins/filter_sysinfo": {
+    "(none)": 2
+   },
+   "plugins/filter_throttle": {
+    "(none)": 2
+   },
+   "plugins/filter_type_converter": {
+    "(none)": 1
+   },
+   "plugins/filter_wasm": {
+    "(none)": 1
+   },
+   "plugins/in_blob": {
+    "(none)": 3
+   },
+   "plugins/in_calyptia_fleet": {
+    "(none)": 1
+   },
+   "plugins/in_collectd": {
+    "(none)": 4
+   },
+   "plugins/in_cpu": {
+    "(none)": 1
+   },
+   "plugins/in_disk": {
+    "(none)": 1
+   },
+   "plugins/in_docker": {
+    "(none)": 3
+   },
+   "plugins/in_docker_events": {
+    "(none)": 2
+   },
+   "plugins/in_dummy": {
+    "(none)": 1
+   },
+   "plugins/in_elasticsearch": {
+    "(none)": 3
+   },
+   "plugins/in_emitter": {
+    "(none)": 1
+   },
+   "plugins/in_event_test": {
+    "(none)": 1
+   },
+   "plugins/in_event_type": {
+    "(none)": 1
+   },
+   "plugins/in_exec": {
+    "(none)": 1
+   },
+   "plugins/in_exec_wasi": {
+    "(none)": 1
+   },
+   "plugins/in_fluentbit_logs": {
+    "(none)": 1
+   },
+   "plugins/in_fluentbit_metrics": {
+    "(none)": 1
+   },
+   "plugins/in_forward": {
+    "(none)": 4
+   },
+   "plugins/in_gpu_metrics": {
+    "(none)": 4
+   },
+   "plugins/in_head": {
+    "(none)": 1
+   },
+   "plugins/in_health": {
+    "(none)": 1
+   },
+   "plugins/in_http": {
+    "(none)": 3
+   },
+   "plugins/in_kafka": {
+    "(none)": 1
+   },
+   "plugins/in_kmsg": {
+    "(none)": 1
+   },
+   "plugins/in_kubernetes_events": {
+    "(none)": 2
+   },
+   "plugins/in_lib": {
+    "(none)": 1
+   },
+   "plugins/in_mem": {
+    "(none)": 2
+   },
+   "plugins/in_mqtt": {
+    "(none)": 4
+   },
+   "plugins/in_netif": {
+    "(none)": 1
+   },
+   "plugins/in_nginx_exporter_metrics": {
+    "(none)": 1
+   },
+   "plugins/in_node_exporter_metrics": {
+    "(none)": 24
+   },
+   "plugins/in_opentelemetry": {
+    "(none)": 7
+   },
+   "plugins/in_podman_metrics": {
+    "(none)": 2
+   },
+   "plugins/in_proc": {
+    "(none)": 1
+   },
+   "plugins/in_process_exporter_metrics": {
+    "(none)": 4
+   },
+   "plugins/in_prometheus_remote_write": {
+    "(none)": 3
+   },
+   "plugins/in_prometheus_scrape": {
+    "(none)": 1
+   },
+   "plugins/in_prometheus_textfile": {
+    "(none)": 1
+   },
+   "plugins/in_random": {
+    "(none)": 1
+   },
+   "plugins/in_serial": {
+    "(none)": 2
+   },
+   "plugins/in_splunk": {
+    "(none)": 3
+   },
+   "plugins/in_statsd": {
+    "(none)": 1
+   },
+   "plugins/in_stdin": {
+    "(none)": 1
+   },
+   "plugins/in_storage_backlog": {
+    "(none)": 1
+   },
+   "plugins/in_stream_processor": {
+    "(none)": 1
+   },
+   "plugins/in_syslog": {
+    "(none)": 5
+   },
+   "plugins/in_systemd": {
+    "(none)": 3
+   },
+   "plugins/in_tail": {
+    "(none)": 9
+   },
+   "plugins/in_tcp": {
+    "(none)": 3
+   },
+   "plugins/in_thermal": {
+    "(none)": 1
+   },
+   "plugins/in_udp": {
+    "(none)": 3
+   },
+   "plugins/out_arvancloud_cloudlogs": {
+    "(none)": 2
+   },
+   "plugins/out_azure": {
+    "(none)": 2
+   },
+   "plugins/out_azure_blob": {
+    "(none)": 8
+   },
+   "plugins/out_azure_kusto": {
+    "(none)": 5
+   },
+   "plugins/out_azure_logs_ingestion": {
+    "(none)": 2
+   },
+   "plugins/out_bigquery": {
+    "(none)": 2
+   },
+   "plugins/out_calyptia": {
+    "(none)": 1
+   },
+   "plugins/out_chronicle": {
+    "(none)": 2
+   },
+   "plugins/out_cloudwatch_logs": {
+    "(none)": 2
+   },
+   "plugins/out_counter": {
+    "(none)": 1
+   },
+   "plugins/out_datadog": {
+    "(none)": 3
+   },
+   "plugins/out_es": {
+    "(none)": 4
+   },
+   "plugins/out_exit": {
+    "(none)": 1
+   },
+   "plugins/out_file": {
+    "(none)": 2
+   },
+   "plugins/out_flowcounter": {
+    "(none)": 1
+   },
+   "plugins/out_forward": {
+    "(none)": 2
+   },
+   "plugins/out_gcs": {
+    "(none)": 2
+   },
+   "plugins/out_gelf": {
+    "(none)": 1
+   },
+   "plugins/out_http": {
+    "(none)": 2
+   },
+   "plugins/out_influxdb": {
+    "(none)": 2
+   },
+   "plugins/out_kafka": {
+    "(none)": 4
+   },
+   "plugins/out_kafka_rest": {
+    "(none)": 2
+   },
+   "plugins/out_kinesis_firehose": {
+    "(none)": 2
+   },
+   "plugins/out_kinesis_streams": {
+    "(none)": 2
+   },
+   "plugins/out_lib": {
+    "(none)": 1
+   },
+   "plugins/out_logdna": {
+    "(none)": 1
+   },
+   "plugins/out_loki": {
+    "(none)": 1
+   },
+   "plugins/out_nats": {
+    "(none)": 1
+   },
+   "plugins/out_nrlogs": {
+    "(none)": 1
+   },
+   "plugins/out_null": {
+    "(none)": 1
+   },
+   "plugins/out_opensearch": {
+    "(none)": 2
+   },
+   "plugins/out_opentelemetry": {
+    "(none)": 4
+   },
+   "plugins/out_oracle_log_analytics": {
+    "(none)": 2
+   },
+   "plugins/out_plot": {
+    "(none)": 1
+   },
+   "plugins/out_prometheus_exporter": {
+    "(none)": 2
+   },
+   "plugins/out_prometheus_remote_write": {
+    "(none)": 2
+   },
+   "plugins/out_s3": {
+    "(none)": 3
+   },
+   "plugins/out_skywalking": {
+    "(none)": 1
+   },
+   "plugins/out_slack": {
+    "(none)": 1
+   },
+   "plugins/out_splunk": {
+    "(none)": 2
+   },
+   "plugins/out_stackdriver": {
+    "(none)": 9
+   },
+   "plugins/out_stdout": {
+    "(none)": 1
+   },
+   "plugins/out_syslog": {
+    "(none)": 2
+   },
+   "plugins/out_tcp": {
+    "(none)": 2
+   },
+   "plugins/out_td": {
+    "(none)": 3
+   },
+   "plugins/out_udp": {
+    "(none)": 2
+   },
+   "plugins/out_vivo_exporter": {
+    "(none)": 3
+   },
+   "plugins/out_websocket": {
+    "(none)": 2
+   },
+   "plugins/processor_content_modifier": {
+    "(none)": 7
+   },
+   "plugins/processor_cumulative_to_delta": {
+    "(none)": 3
+   },
+   "plugins/processor_labels": {
+    "(none)": 1
+   },
+   "plugins/processor_metrics_selector": {
+    "(none)": 1
+   },
+   "plugins/processor_opentelemetry_envelope": {
+    "(none)": 1
+   },
+   "plugins/processor_sampling": {
+    "(none)": 17
+   },
+   "plugins/processor_sql": {
+    "(none)": 6
+   },
+   "plugins/processor_tda": {
+    "(none)": 1
+   },
+   "src": {
+    "(none)": 349
+   }
+  },
+  "no_strict_aliasing": []
+ },
+ "private/measure/landing-7b726587bdf6a8213f451fa1c78297bb5e476ef7-20261106T224000508079Z/mirror/slice-compile_commands.json": {
+  "entries": 1421,
+  "by_library": {
+   "lib/c-ares-1.34.6": {
+    "-O0": 91
+   },
+   "lib/cfl": {
+    "(none)": 15
+   },
+   "lib/chunkio": {
+    "(none)": 15
+   },
+   "lib/cmetrics": {
+    "(none)": 35
+   },
+   "lib/cprofiles": {
+    "(none)": 19
+   },
+   "lib/ctraces": {
+    "(none)": 17
+   },
+   "lib/fluent-otel-proto": {
+    "(none)": 13
+   },
+   "lib/jsmn": {
+    "(none)": 1
+   },
+   "lib/librdkafka-2.15.0": {
+    "(none)": 106
+   },
+   "lib/luajit-7152e154": {
+    "(none)": 76
+   },
+   "lib/luajit-cmake": {
+    "(none)": 1
+   },
+   "lib/lwrb": {
+    "(none)": 2
+   },
+   "lib/miniz": {
+    "(none)": 4
+   },
+   "lib/monkey": {
+    "(none)": 38
+   },
+   "lib/mpack-amalgamation-1.1.1": {
+    "(none)": 1
+   },
+   "lib/msgpack-c": {
+    "(none)": 5
+   },
+   "lib/nghttp2-1.65.0": {
+    "(none)": 26
+   },
+   "lib/onigmo": {
+    "(none)": 50
+   },
+   "lib/ripser-1.2.1": {
+    "(none)": 1
+   },
+   "lib/simdutf-amalgamation-5.5.0": {
+    "(none)": 1
+   },
+   "lib/snappy-fef67ac": {
+    "(none)": 1
+   },
+   "lib/sqlite-amalgamation-3510100": {
+    "(none)": 1
+   },
+   "lib/tutf8e": {
+    "-Os": 2
+   },
+   "lib/wasm-micro-runtime-WAMR-2.4.1": {
+    "(none)": 53
+   },
+   "lib/yyjson-0.12.0": {
+    "-Og": 1
+   },
+   "lib/zstd-1.5.7": {
+    "(none)": 50
+   },
+   "other": {
+    "(none)": 102
+   },
+   "plugins/custom_calyptia": {
+    "(none)": 1
+   },
+   "plugins/filter_alter_size": {
+    "(none)": 1
+   },
+   "plugins/filter_aws": {
+    "(none)": 1
+   },
+   "plugins/filter_checklist": {
+    "(none)": 1
+   },
+   "plugins/filter_ecs": {
+    "(none)": 1
+   },
+   "plugins/filter_expect": {
+    "(none)": 1
+   },
+   "plugins/filter_geoip2": {
+    "(none)": 39
+   },
+   "plugins/filter_grep": {
+    "(none)": 1
+   },
+   "plugins/filter_kubernetes": {
+    "(none)": 6
+   },
+   "plugins/filter_log_to_metrics": {
+    "(none)": 1
+   },
+   "plugins/filter_lua": {
+    "(none)": 2
+   },
+   "plugins/filter_modify": {
+    "(none)": 1
+   },
+   "plugins/filter_multiline": {
+    "(none)": 2
+   },
+   "plugins/filter_nest": {
+    "(none)": 1
+   },
+   "plugins/filter_nightfall": {
+    "(none)": 2
+   },
+   "plugins/filter_parser": {
+    "(none)": 1
+   },
+   "plugins/filter_record_modifier": {
+    "(none)": 1
+   },
+   "plugins/filter_rewrite_tag": {
+    "(none)": 1
+   },
+   "plugins/filter_stdout": {
+    "(none)": 1
+   },
+   "plugins/filter_sysinfo": {
+    "(none)": 2
+   },
+   "plugins/filter_throttle": {
+    "(none)": 2
+   },
+   "plugins/filter_type_converter": {
+    "(none)": 1
+   },
+   "plugins/filter_wasm": {
+    "(none)": 1
+   },
+   "plugins/in_blob": {
+    "(none)": 3
+   },
+   "plugins/in_calyptia_fleet": {
+    "(none)": 1
+   },
+   "plugins/in_collectd": {
+    "(none)": 4
+   },
+   "plugins/in_cpu": {
+    "(none)": 1
+   },
+   "plugins/in_disk": {
+    "(none)": 1
+   },
+   "plugins/in_docker": {
+    "(none)": 3
+   },
+   "plugins/in_docker_events": {
+    "(none)": 2
+   },
+   "plugins/in_dummy": {
+    "(none)": 1
+   },
+   "plugins/in_elasticsearch": {
+    "(none)": 3
+   },
+   "plugins/in_emitter": {
+    "(none)": 1
+   },
+   "plugins/in_event_test": {
+    "(none)": 1
+   },
+   "plugins/in_event_type": {
+    "(none)": 1
+   },
+   "plugins/in_exec": {
+    "(none)": 1
+   },
+   "plugins/in_exec_wasi": {
+    "(none)": 1
+   },
+   "plugins/in_fluentbit_logs": {
+    "(none)": 1
+   },
+   "plugins/in_fluentbit_metrics": {
+    "(none)": 1
+   },
+   "plugins/in_forward": {
+    "(none)": 4
+   },
+   "plugins/in_gpu_metrics": {
+    "(none)": 4
+   },
+   "plugins/in_head": {
+    "(none)": 1
+   },
+   "plugins/in_health": {
+    "(none)": 1
+   },
+   "plugins/in_http": {
+    "(none)": 3
+   },
+   "plugins/in_kafka": {
+    "(none)": 1
+   },
+   "plugins/in_kmsg": {
+    "(none)": 1
+   },
+   "plugins/in_kubernetes_events": {
+    "(none)": 2
+   },
+   "plugins/in_lib": {
+    "(none)": 1
+   },
+   "plugins/in_mem": {
+    "(none)": 2
+   },
+   "plugins/in_mqtt": {
+    "(none)": 4
+   },
+   "plugins/in_netif": {
+    "(none)": 1
+   },
+   "plugins/in_nginx_exporter_metrics": {
+    "(none)": 1
+   },
+   "plugins/in_node_exporter_metrics": {
+    "(none)": 24
+   },
+   "plugins/in_opentelemetry": {
+    "(none)": 7
+   },
+   "plugins/in_podman_metrics": {
+    "(none)": 2
+   },
+   "plugins/in_proc": {
+    "(none)": 1
+   },
+   "plugins/in_process_exporter_metrics": {
+    "(none)": 4
+   },
+   "plugins/in_prometheus_remote_write": {
+    "(none)": 3
+   },
+   "plugins/in_prometheus_scrape": {
+    "(none)": 1
+   },
+   "plugins/in_prometheus_textfile": {
+    "(none)": 1
+   },
+   "plugins/in_random": {
+    "(none)": 1
+   },
+   "plugins/in_serial": {
+    "(none)": 2
+   },
+   "plugins/in_splunk": {
+    "(none)": 3
+   },
+   "plugins/in_statsd": {
+    "(none)": 1
+   },
+   "plugins/in_stdin": {
+    "(none)": 1
+   },
+   "plugins/in_storage_backlog": {
+    "(none)": 1
+   },
+   "plugins/in_stream_processor": {
+    "(none)": 1
+   },
+   "plugins/in_syslog": {
+    "(none)": 5
+   },
+   "plugins/in_systemd": {
+    "(none)": 3
+   },
+   "plugins/in_tail": {
+    "(none)": 10
+   },
+   "plugins/in_tcp": {
+    "(none)": 3
+   },
+   "plugins/in_thermal": {
+    "(none)": 1
+   },
+   "plugins/in_udp": {
+    "(none)": 3
+   },
+   "plugins/out_arvancloud_cloudlogs": {
+    "(none)": 2
+   },
+   "plugins/out_azure": {
+    "(none)": 2
+   },
+   "plugins/out_azure_blob": {
+    "(none)": 8
+   },
+   "plugins/out_azure_kusto": {
+    "(none)": 5
+   },
+   "plugins/out_azure_logs_ingestion": {
+    "(none)": 2
+   },
+   "plugins/out_bigquery": {
+    "(none)": 2
+   },
+   "plugins/out_calyptia": {
+    "(none)": 1
+   },
+   "plugins/out_chronicle": {
+    "(none)": 2
+   },
+   "plugins/out_cloudwatch_logs": {
+    "(none)": 2
+   },
+   "plugins/out_counter": {
+    "(none)": 1
+   },
+   "plugins/out_datadog": {
+    "(none)": 3
+   },
+   "plugins/out_es": {
+    "(none)": 4
+   },
+   "plugins/out_exit": {
+    "(none)": 1
+   },
+   "plugins/out_file": {
+    "(none)": 2
+   },
+   "plugins/out_flowcounter": {
+    "(none)": 1
+   },
+   "plugins/out_forward": {
+    "(none)": 2
+   },
+   "plugins/out_gcs": {
+    "(none)": 2
+   },
+   "plugins/out_gelf": {
+    "(none)": 1
+   },
+   "plugins/out_http": {
+    "(none)": 2
+   },
+   "plugins/out_influxdb": {
+    "(none)": 2
+   },
+   "plugins/out_kafka": {
+    "(none)": 4
+   },
+   "plugins/out_kafka_rest": {
+    "(none)": 2
+   },
+   "plugins/out_kinesis_firehose": {
+    "(none)": 2
+   },
+   "plugins/out_kinesis_streams": {
+    "(none)": 2
+   },
+   "plugins/out_lib": {
+    "(none)": 1
+   },
+   "plugins/out_logdna": {
+    "(none)": 1
+   },
+   "plugins/out_loki": {
+    "(none)": 1
+   },
+   "plugins/out_nats": {
+    "(none)": 1
+   },
+   "plugins/out_nrlogs": {
+    "(none)": 1
+   },
+   "plugins/out_null": {
+    "(none)": 1
+   },
+   "plugins/out_opensearch": {
+    "(none)": 2
+   },
+   "plugins/out_opentelemetry": {
+    "(none)": 4
+   },
+   "plugins/out_oracle_log_analytics": {
+    "(none)": 2
+   },
+   "plugins/out_plot": {
+    "(none)": 1
+   },
+   "plugins/out_prometheus_exporter": {
+    "(none)": 2
+   },
+   "plugins/out_prometheus_remote_write": {
+    "(none)": 2
+   },
+   "plugins/out_s3": {
+    "(none)": 3
+   },
+   "plugins/out_skywalking": {
+    "(none)": 1
+   },
+   "plugins/out_slack": {
+    "(none)": 1
+   },
+   "plugins/out_splunk": {
+    "(none)": 2
+   },
+   "plugins/out_stackdriver": {
+    "(none)": 9
+   },
+   "plugins/out_stdout": {
+    "(none)": 1
+   },
+   "plugins/out_syslog": {
+    "(none)": 2
+   },
+   "plugins/out_tcp": {
+    "(none)": 2
+   },
+   "plugins/out_td": {
+    "(none)": 3
+   },
+   "plugins/out_udp": {
+    "(none)": 2
+   },
+   "plugins/out_vivo_exporter": {
+    "(none)": 3
+   },
+   "plugins/out_websocket": {
+    "(none)": 2
+   },
+   "plugins/processor_content_modifier": {
+    "(none)": 7
+   },
+   "plugins/processor_cumulative_to_delta": {
+    "(none)": 3
+   },
+   "plugins/processor_labels": {
+    "(none)": 1
+   },
+   "plugins/processor_metrics_selector": {
+    "(none)": 1
+   },
+   "plugins/processor_opentelemetry_envelope": {
+    "(none)": 1
+   },
+   "plugins/processor_sampling": {
+    "(none)": 17
+   },
+   "plugins/processor_sql": {
+    "(none)": 6
+   },
+   "plugins/processor_tda": {
+    "(none)": 1
+   },
+   "src": {
+    "(none)": 349
+   }
+  },
+  "no_strict_aliasing": []
+ }
+}
