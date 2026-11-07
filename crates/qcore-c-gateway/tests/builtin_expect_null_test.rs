@@ -192,23 +192,43 @@ fn likely_and_unlikely_around_null_tests_refine_as_the_bare_test() {
     }
 }
 
-/// Card BUILTIN-EXPECT-NULL-TEST's admission: a hint spelled as any integer
-/// literal (C11 6.4.4.1) is read; before the card only a bare digit sequence
-/// was, and `0L` or `0x0` kept the refusal.
+/// The hint spellings the reader admits bind
+/// `QCore.BuiltinExpectCondition.vectors`, class by class in constructor
+/// order: a digit sequence (optionally parenthesised) is read as the bare
+/// test; a suffixed or prefixed integer literal, a name, an effectful hint and
+/// any other spelling keep the condition refused. (`0L` and `0x0` have no
+/// evaluation event either; admitting them is follow-up
+/// BUILTIN-EXPECT-LITERAL-HINT-SPELLINGS, which no site of any run needs.)
 #[test]
-fn an_integer_literal_hint_is_read() {
+fn the_hint_spellings_bind_the_admission_vector() {
     if !clang_available() {
         return;
     }
-    for hint in ["0", "(0)", "0L", "0UL", "0x0", "00"] {
-        let run = assert_transparent(
-            &format!(
-                "void subject(size_t n) {{ void *p = k_alloc(n); if (__builtin_expect(!p, {hint})) return; k_free(p); }}"
-            ),
-            "void subject(size_t n) { void *p = k_alloc(n); if (!p) return; k_free(p); }",
+    let classes: [&[&str]; 5] = [
+        &["0", "(0)", "1", "(1)"],
+        &["0L", "0UL", "0x0", "1ll"],
+        &["k", "s->k"],
+        &["opaque()", "k++", "k = 1"],
+        &["-1", "(long)0", "0.5"],
+    ];
+    let admitted = classes.map(|spellings| {
+        let decisions = spellings
+            .iter()
+            .map(|hint| {
+                analyze(&format!(
+                    "struct s {{ long k; }}; void subject(size_t n, long k, struct s *s) {{ void *p = k_alloc(n); if (__builtin_expect(!p, {hint})) return; k_free(p); }}"
+                ))
+                .status
+                    == AnalysisStatus::Safe
+            })
+            .collect::<Vec<_>>();
+        assert!(
+            decisions.iter().all(|d| *d == decisions[0]),
+            "{spellings:?}: {decisions:?}"
         );
-        assert_eq!(run.status, AnalysisStatus::Safe, "{hint}\n{run:?}");
-    }
+        decisions[0]
+    });
+    assert_eq!(admitted, [true, false, false, false, false]);
 }
 
 /// A wrapped operand that is not a test the route reads bare keeps the

@@ -9,7 +9,7 @@ the optimiser and changes no value. As a call, C evaluates both arguments, in
 an unspecified order (C11 6.5.2.2p10).
 
 Rule 5h's Boolean reading (`legacy_condition_desugar.rs`, `parse`) reads the
-call as its operand when the hint is an integer literal, and refuses it
+call as its operand when the hint is one token of decimal digits, and refuses it
 otherwise. This module states that reading over the Boolean trees of
 `QCore.ConditionCallDesugar` and proves:
 
@@ -24,8 +24,10 @@ otherwise. This module states that reading over the Boolean trees of
 * a hint with an evaluation event refuses the whole expression
   (`an_effectful_hint_refuses`, `a_nested_effectful_hint_refuses`), and so
   does a refused operand (`a_refused_operand_refuses`);
-* the hint spellings the Rust admits are exactly the integer literals, every
-  one effect-free (`admitted_spellings_are_literals`, `vectors_match`).
+* the hint spellings the Rust admits are exactly the digit-sequence
+  literals, every one effect-free (`admitted_spellings_are_literals`,
+  `vectors_match`); a suffixed or prefixed integer literal (`0L`, `0x0`)
+  is effect-free too but is not admitted, a refusal on the safe side.
 
 The C reader, the token-level hint classification and the Rust-to-Lean
 correspondence remain review premises (standing constraint 28); the Rust
@@ -207,14 +209,16 @@ theorem an_effectful_hint_is_observable {α : Type} (v : Nat → Bool) (i : Nat)
 
 /-! ## The hint spellings the Rust admits
 
-`hint_is_integer_literal` in `legacy_condition_desugar.rs` classifies the
-hint's token spelling. Only an integer literal is admitted; a literal has no
-evaluation event (C11 6.5.1, 6.4.4.1). -/
+`parse` in `legacy_condition_desugar.rs` admits a hint that is, after its
+enclosing parentheses, exactly one token of ASCII digits; a literal has no
+evaluation event (C11 6.5.1, 6.4.4.1). The Rust fixture
+`the_hint_spellings_bind_the_admission_vector` binds `vectors` through the
+reader itself. -/
 
 /-- A hint's spelling, as the token classifier sees it. -/
 inductive HintSpelling where
-  /-- one unsuffixed decimal constant, optionally parenthesised (`0`, `(1)`, `10`) -/
-  | decimal
+  /-- one token of decimal digits, optionally parenthesised (`0`, `(1)`) -/
+  | digits
   /-- one integer-literal token with a hex/octal prefix or a `u`/`l` suffix
   (`0L`, `1UL`, `0x0`) -/
   | suffixedOrPrefixed
@@ -227,14 +231,13 @@ inductive HintSpelling where
   deriving DecidableEq, Repr
 
 def admitted : HintSpelling → Bool
-  | .decimal => true
-  | .suffixedOrPrefixed => true
+  | .digits => true
   | _ => false
 
 /-- The evaluation events of a spelling's hint, as far as the reading may
 assume: none for a literal, possibly some for anything else. -/
 def mayHaveEvents : HintSpelling → Bool
-  | .decimal => false
+  | .digits => false
   | .suffixedOrPrefixed => false
   | _ => true
 
@@ -243,10 +246,10 @@ theorem admitted_spellings_are_literals (s : HintSpelling) (h : admitted s = tru
   cases s <;> simp_all [admitted, mayHaveEvents]
 
 /-- The admission vector the Rust fixture binds, in constructor order. -/
-def vectors : List Bool := [true, true, false, false, false]
+def vectors : List Bool := [true, false, false, false, false]
 
 theorem vectors_match :
-    [HintSpelling.decimal, .suffixedOrPrefixed, .name, .effectful, .other].map admitted =
+    [HintSpelling.digits, .suffixedOrPrefixed, .name, .effectful, .other].map admitted =
       vectors := by
   decide
 
