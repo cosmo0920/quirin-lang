@@ -192,5 +192,15 @@ open.
 
 ## Gate
 
-See [gate.json](gate.json) and the reply; the command was
-`python3 scripts/gate_scope.py --base 532e03c97 --out <worktree>/private/gate-N`.
+`python3 scripts/gate_scope.py --base 532e03c97 --out <worktree>/private/gate-N`
+(full mode: the diff reaches `qcore-c-gateway`; Lean all, a proof root
+changed; no provider gate).
+
+- gate-1 (tip `f636992a7`): exit 1. Rust suite exit 101, 616 units, 9,289
+  passed, 2 failed (the two re-pinned mechanisms above), 16 ignored; every
+  other step exit 0 (fmt, Clippy, both reevaluation probes, Lean 415 audits,
+  Python 685 tests). Record [gate-1/gate.json](gate-1/gate.json).
+- gate-2 (tip `61c58db35`): **exit 0**. Submodules, fmt, Clippy, Rust suite
+  (616 units, 9,291 passed, 0 failed, 16 ignored, 135 filtered), both
+  reevaluation probes, Lean (415 audits), Python (685 tests). Record
+  [gate.json](gate.json).
