@@ -25,6 +25,13 @@
 //! Token matching uses 32-bit hashes of the unit's identifiers: a collision
 //! only reads one more unit, never skips one.
 //!
+//! Card **CALLBACK-MEMBER-NON-C-UNITS** (rule 12n, amended in place): an
+//! unread C++ unit whose `-E` text is the whole unit (no precompiled header
+//! or module in its command or text) opens only the members whose own
+//! closure-graph tokens its text names: the skipping reading above, applied
+//! to each member's graph. An assembly unit, a failed preprocessing and a C
+//! unit whose AST is not read still open every member.
+//!
 //! Card **MEMBER-PREPASS-OTHER-ROUTES** (rule 12n, amended in place): the
 //! current and no-build routes run the same pre-pass over their own compile
 //! databases, and the scope file's exclusions are re-checked at run time. The
@@ -240,8 +247,11 @@ enum Reading {
     /// A C unit: its identifiers.
     C(Vec<u32>),
     /// A unit that is not C (C++, assembly): its identifiers, from its own
-    /// command with `-E`.
-    Other(Vec<u32>, String),
+    /// command with `-E`, why it is not read, and (card
+    /// CALLBACK-MEMBER-NON-C-UNITS) whether its reading is scoped to the
+    /// members whose tokens it names: a C++ unit whose text is the whole
+    /// unit ([`scoped_cxx`]).
+    Other(Vec<u32>, String, bool),
     /// Preprocessing failed: why.
     Failed(String),
     /// The profile names it outside the program: the scope entry's index.
@@ -568,19 +578,105 @@ fn read_identifiers(entry: &CompileEntry, scope: &[Outside]) -> Reading {
     }
     match preprocess_own(entry, &["-E"]) {
         Ok(text) if is_c(entry) => Reading::C(identifiers(&text)),
-        Ok(text) => Reading::Other(
-            identifiers(&text),
-            format!(
+        Ok(text) => {
+            let mut why = format!(
                 "a unit that is not C (`{}`)",
                 entry
                     .file
                     .extension()
                     .and_then(|ext| ext.to_str())
                     .unwrap_or("?")
-            ),
-        ),
+            );
+            let scoped = match scoped_cxx(entry, &text) {
+                Ok(scoped) => scoped,
+                Err(reason) => {
+                    why.push_str(&format!("; {reason}"));
+                    false
+                }
+            };
+            Reading::Other(identifiers(&text), why, scoped)
+        }
         Err(error) => Reading::Failed(format!("its preprocessing failed: {error}")),
     }
+}
+
+/// The extensions of a C++ unit (the driver's own).
+const CXX_EXTENSIONS: &[&str] = &["cc", "cp", "cxx", "cpp", "CPP", "c++", "C"];
+
+/// The flags under which a unit's `-E` text may not be the whole unit: a
+/// precompiled header or a module stands in for text, and `-Xclang` may pass
+/// either.
+const NOT_TEXTUAL_FLAGS: &[&str] = &[
+    "-include",
+    "-fmodule",
+    "-fcxx-modules",
+    "-fprebuilt-module-path",
+    "-fimplicit-module",
+    "-fbuiltin-module-map",
+    "-emit-pch",
+    "-emit-module",
+    "--precompile",
+    "-Xclang",
+];
+
+/// Card CALLBACK-MEMBER-NON-C-UNITS (rule 12n): whether an unread unit's
+/// reading is scoped to the members whose closure-graph tokens its
+/// preprocessed text names. `Ok(true)` for a C++ unit whose `-E` text is the
+/// whole unit: C++, like C, reaches a member only through its record's
+/// definition (a member access, an initializer and a whole-object write all
+/// need the complete type, so its tag or a typedef the text spells) and a
+/// function only through its name. `Ok(false)` for an assembly or other unit,
+/// which writes through offsets and symbols no record names; `Err` for a C++
+/// unit whose command reads a precompiled header or a module, or whose text
+/// declares or imports a module (the text is then not the whole unit). Every
+/// unit that is not scoped opens every member when it names a token.
+fn scoped_cxx(entry: &CompileEntry, text: &str) -> Result<bool, String> {
+    let cxx = entry
+        .file
+        .extension()
+        .and_then(|ext| ext.to_str())
+        .is_some_and(|ext| CXX_EXTENSIONS.contains(&ext));
+    if !cxx {
+        return Ok(false);
+    }
+    let words = shell_words(&entry.command)?;
+    if let Some(flag) = words.iter().skip(1).find(|word| {
+        NOT_TEXTUAL_FLAGS
+            .iter()
+            .any(|flag| word.as_str() == *flag || word.starts_with(flag))
+    }) {
+        return Err(format!(
+            "its command may read a precompiled header or module (`{flag}`)"
+        ));
+    }
+    if let Some(line) = text.lines().find(|line| module_line(line)) {
+        return Err(format!(
+            "its text declares or imports a module (`{}`)",
+            line.trim()
+        ));
+    }
+    Ok(true)
+}
+
+/// A line of preprocessed C++ that declares or imports a module, or a
+/// module pragma Clang leaves in `-E` output.
+fn module_line(line: &str) -> bool {
+    let line = line.trim_start();
+    if line.starts_with("#pragma") {
+        return line
+            .split_whitespace()
+            .nth(1)
+            .is_some_and(|word| word == "clang")
+            && line.split_whitespace().nth(2) == Some("module");
+    }
+    let line = line.strip_prefix("export").map_or(line, str::trim_start);
+    ["module", "import"].iter().any(|word| {
+        line.strip_prefix(word).is_some_and(|rest| {
+            rest.chars()
+                .next()
+                .is_none_or(|next| !(next == '_' || next.is_ascii_alphanumeric()))
+        })
+    })
 }
 
 /// The C dialect a command names (`-std=`), for reading preprocessed text.
@@ -885,10 +981,23 @@ pub fn run(
         .map(|token| hash(token))
         .collect::<BTreeSet<_>>();
     let names = |ids: &[u32]| hashes.iter().any(|token| ids.binary_search(token).is_ok());
+    // Card CALLBACK-MEMBER-NON-C-UNITS: a scoped unread unit's final tokens
+    // (a hash collision only adds a token, so only opens more).
+    let mut scoped: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
     for (index, reading) in readings.iter().enumerate() {
         let key = label(&entries[index]);
         match reading {
-            Reading::Other(ids, why) if names(ids) => {
+            Reading::Other(ids, why, scope) if names(ids) => {
+                if *scope {
+                    scoped.insert(
+                        key.clone(),
+                        tokens
+                            .iter()
+                            .filter(|token| ids.binary_search(&hash(token)).is_ok())
+                            .cloned()
+                            .collect(),
+                    );
+                }
                 unread.insert(key, why.clone());
             }
             Reading::Failed(why) => {
@@ -907,7 +1016,17 @@ pub fn run(
     let mut units = read.into_values().collect::<Vec<_>>();
     units.push(declarations);
     let read_count = units.len() - 1;
-    let facts = Arc::new(RunMemberFacts::new(units, unread));
+    let facts = Arc::new(RunMemberFacts::new(units, unread).with_scoped(tokens.clone(), scoped));
+    // Card CALLBACK-MEMBER-NON-C-UNITS: which unread units open each invoked
+    // member (evidence; the closure reads the same `opens`).
+    let non_c = json!({
+        "meaning": "rule 12n, card CALLBACK-MEMBER-NON-C-UNITS: an unread C++ unit whose preprocessed text (its own command, -E) is the whole unit opens only an invoked member whose closure-graph tokens it names (or one with a graph token it was not checked against); every other unread unit (a failed preprocessing, an assembly unit, a C unit whose AST was not read, a C++ unit reading a precompiled header or module) opens every member",
+        "scoped": facts.scoped,
+        "opened_by": members
+            .iter()
+            .map(|member| (member.clone(), facts.opening(member)))
+            .collect::<BTreeMap<_, _>>(),
+    });
     let section = json!({
         "meaning": "the member-facts pre-pass (rule 12n, card OP-APP-RK-CALLBACKS-VIA-POLL-CB, user decisions R1 and F1): every unit of the production compile database was preprocessed; a unit naming a token of an invoked member's closure graph was read whole for its facts, and a unit that names one but could not be read opens every member; a unit naming none holds no store the closure reads",
         "units": entries.len(),
@@ -921,6 +1040,7 @@ pub fn run(
             counts
         }),
         "outside_program": outside,
+        "non_c_units": non_c,
         // Card MEMBER-PREPASS-OTHER-ROUTES: the scope file's exclusions, each
         // re-verified against this run's sources and the final tokens.
         "scope": {
@@ -948,8 +1068,19 @@ pub fn run(
 /// # Errors
 /// A serialisation failure.
 pub fn facts_sha256(facts: &RunMemberFacts) -> Result<String, String> {
-    let bytes = serde_json::to_vec(&json!({"units": facts.units, "unread": facts.unread}))
-        .map_err(|error| error.to_string())?;
+    // Card CALLBACK-MEMBER-NON-C-UNITS: the scoped units and their checked
+    // tokens are part of the facts (a run without any keeps its digest).
+    let value = if facts.scoped.is_empty() {
+        json!({"units": facts.units, "unread": facts.unread})
+    } else {
+        json!({
+            "units": facts.units,
+            "unread": facts.unread,
+            "scoped": facts.scoped,
+            "checked": facts.checked,
+        })
+    };
+    let bytes = serde_json::to_vec(&value).map_err(|error| error.to_string())?;
     Ok(qcore_contract::profile_loader::sha256_hex(&bytes))
 }
 
