@@ -6018,6 +6018,11 @@ mod return_routes;
 #[path = "legacy_classify.rs"]
 mod classify;
 
+// Card CHAINED-ASSIGNMENT-INNER-DESTINATION (rule 5i, amended): the guard
+// that refuses an admission dropping a write inside an assigned value.
+#[path = "legacy_chained_assignment.rs"]
+pub(crate) mod chained_assignment;
+
 // Card GATEWAY-ANALYSIS-PATH-OPTIMIZATION: lexical shape readers over token
 // texts: calls, arguments, conditions, places and declarators.
 #[path = "legacy_token_shapes.rs"]

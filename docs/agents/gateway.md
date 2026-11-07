@@ -596,6 +596,45 @@ admission and scalar forgetting; [report](../reports/w48-bottom-up-batch5/README
     identity-free store into a chain or a record this reader does not resolve.
     Every premise above still holds for this rule.
 
+    **A write inside an assigned value is never dropped** (card
+    CHAINED-ASSIGNMENT-INNER-DESTINATION). `a = b = E` assigns `E` to `b` and
+    then that value, converted, to `a` (C11 6.5.16p3): afterwards both names
+    hold the same value, exactly as `b = E; a = b;` leaves them, so an
+    identity is held by both (the `Alias` reading of `a = b`, rule 10m's
+    identity-preserving conversion). The classifier models one write per
+    assignment statement, the destination this rule names, and read
+    `d = safe = rd_malloc(n)` as `d = rd_malloc(n)`: the write of `safe` was
+    neither modelled nor refused, so `return safe;` escaped nothing and
+    `rd_kafka_sasl_safe_string` was accused of a leak
+    (`rdkafka_sasl_scram.c:243`, `:249`); a release or return through the
+    inner name was unmatched the same way. `classify_simple` now ends with a
+    guard (`legacy_chained_assignment.rs`): when a comma segment's first
+    top-level assignment has another simple or compound assignment operator
+    anywhere in its value, an admission of the statement is replaced by a
+    refusal, `chained assignment writes an inner destination too; it is read
+    only as its sequential assignments (C11 6.5.16p3)` when the value is, up
+    to wrapping parentheses, that assignment, and `assignment nested in an
+    operand of an assigned value is not modeled` otherwise. The probe state
+    is restored, a refusal stays byte for byte and the guard admits nothing;
+    every caller of the classifier sees it (statements, the return and
+    condition probes, rule 10s's pieces). Rule 10s, asked after the refusal,
+    lowers a chain as its sequential assignments: the inner assignment, then
+    the outer destination assigned from the inner name, each decided by the
+    older statement lowering exactly as a single assignment; it now does the
+    same for `T a = b = E;` (the inner assignment, then the declaration from
+    `b`). A destination the route refuses alone keeps the whole chain refused
+    by name: a member store the gate refuses keeps the gate's refusal, and the
+    same object twice (`s = s = E`, two unsequenced stores) or a route without
+    the elaborator keeps the guard's. A scalar chain was already refused
+    ("multiple scalar writes") and is unchanged; a path chain the typed
+    scalar-field route admitted as one access is lowered as one access per
+    link. **Do not** admit an outer destination while dropping a write inside
+    its value, and do not exempt an instruction from the guard without showing
+    that its route reads every place the statement writes.
+    `QCore.ChainedAssignment` (`chain_eq_sequential`, `chainN_eq_sequential`,
+    `both_names_hold_the_identity`, `the_guard_never_promotes`);
+    [report](../reports/chained-assignment-inner-destination/README.md).
+
 <a id="constraint-5j"></a>
 
 5j. **A scalar-result return decides a read; a cast of a whole call is the
@@ -2228,6 +2267,11 @@ refusal stays.
     Amended by [rule 11b](#constraint-11b): the cast and type-query rows
     are read by `CAST_TABLE` and `query_operand`, and a statement, `return`
     or condition holding a cast or a type query is consulted too.
+    Amended by [rule 5i](#constraint-5i) (CHAINED-ASSIGNMENT-INNER-DESTINATION):
+    every chain now reaches this rule, since the older routes refuse an
+    admission that would drop a write inside an assigned value, and a
+    declaration `T a = b = E;` is lowered as the inner assignment, then the
+    declaration from `b`.
 
 <a id="constraint-10t"></a>
 

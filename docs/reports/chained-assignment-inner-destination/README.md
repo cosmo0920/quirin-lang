@@ -78,3 +78,93 @@ every other analysed chain is refused or already lowered by rule 10s. The
 census is lexical: it does not evaluate `#if` (the two "not compiled" rows
 are read by hand), and a chain spelled through a macro defined by another
 macro would be missed; the arbiter measurement covers both.
+
+## 3. Rule
+
+Gateway rule 5i is amended in place (`docs/agents/rules/5i.md`, "A write
+inside an assigned value is never dropped"), with a pointer from rule 10s. No
+new rule id: 40 is reserved, 41 is SCALAR-STATEMENT-FORMS'. The model is
+C11 6.5.16p3: a chain is its sequential assignments, the inner one first, and
+both names then hold the same identity (`Alias`, with rule 10m's
+identity-preserving conversion). A chain is admitted only where each link is a
+destination the route already models as a single assignment; a destination
+the route refuses alone keeps the whole chain refused by name.
+
+## 4. Implementation
+
+- `crates/qcore-c-gateway/src/legacy_chained_assignment.rs` (new):
+  `inner_write` finds, per top-level comma segment, the first top-level
+  assignment and any simple or compound assignment operator inside its value
+  (`==`, `!=`, `<=`, `>=` are not assignments; `<<=`, `>>=` are);
+  `chained_assignment_guard` replaces an admission of such a statement by the
+  refusal `chained assignment writes an inner destination too; it is read
+  only as its sequential assignments (C11 6.5.16p3)` (the value is, up to
+  wrapping parentheses, that assignment) or `assignment nested in an operand
+  of an assigned value is not modeled` (any other position), restores the
+  probe state (no site number moves) and leaves a refusal byte for byte.
+- `legacy_classify.rs` (SCALAR-STATEMENT-FORMS' file; the minimal edit): one
+  call of the guard in `classify_simple`, after the self-init routes and
+  before the list-iteration guard. `legacy_c.rs`: the module declaration.
+- `legacy_elaboration.rs`: rule 10s's `steps` lowers `T a = b = E;` (and
+  `T a = (b = E);`) as the inner assignment, then the declaration from `b`,
+  when Clang shows two distinct declarations, exactly as its existing
+  assignment chain.
+
+Every chain now reaches rule 10s, whose pieces are the older statement
+lowering of `b = E` and of `a = b`. Probed after the change: the three false
+leaks of §1 are `Safe` over the fixture contracts (`s = q_alloc(); d = s`);
+`d = s = q_alloc(); q_free(s); q_free(d);` is the `DoubleRelease` it is;
+`o->p = s = q_alloc()` and `s = o->p = q_alloc()` keep the gate's
+`indirect memory access`; `s = s = q_alloc()` and `x = (x = 1)` (two
+unsequenced stores to one object) keep the guard's refusal; `x = y = 3`,
+`x = y += k`, `a = b = s`, `d = s = 0` lower exactly as before; the
+scalar-field chains of `mk_http_parser` become one `IndirectScalarAccess` per
+link on the same base (still Safe in the fixture).
+
+The `x = (x = 1)` case is finding `CG02-OLDER-SCALAR-ROUTE-UNSEQUENCED`,
+whose DISCHARGE ("the older route refuses a same-object unsequenced pair by
+name, or defers to the elaborator's order model") the guard meets; its pin in
+`tests/clang_gap_phase1.rs` (`e04_…`) is flipped and the entry retired with
+this card's.
+
+## 5. Fixtures and Lean
+
+`crates/qcore-c-gateway/tests/chained_assignment.rs` (route G, Clang, the
+synthetic `q_*` contracts):
+
+- `the_scram_shape_withdraws_the_leak_and_does_not_become_safe`: the scram
+  body (two-pass loop, `char *safe = 0, *d = 0`, `*(d++) = *s`,
+  `d = safe = q_maybe_alloc()`, `return safe`). No leak, `Unknown`, the
+  `:214` declaration's `indirect memory access` kept, `safe` bound and
+  `d` its alias. The old reading spelled out (`d = q_maybe_alloc()`) is
+  `Unsafe` with the leak and `loop re-acquisition`, as the run's row is.
+- `the_inner_name_holds_the_value_c_assigns_it`: `return s` after
+  `d = s = q_alloc()`, three-link, parenthesised, declaration and `return`
+  chains are Safe; the bare chain still leaks.
+- `a_release_through_the_inner_name_is_matched`: release through the inner or
+  outer name is Safe; through both is `DoubleRelease`, also for `a = b = s`.
+- `a_chain_with_a_refused_destination_stays_refused_by_name`: member
+  destinations keep `indirect memory access`; `s = s = q_alloc()` keeps the
+  guard's refusal.
+- `a_scalar_chain_is_unchanged`: `x = y = 3` is `ForgetScalar y; x = y`,
+  Safe; `x = y += k`, `x = y = k` Safe.
+- Unit tests of `inner_write` in the module (chains in every spelling,
+  nested writes, comparisons and declarators that are not).
+
+`proof/QCore/ChainedAssignment.lean`, audited by
+`proof/AuditChainedAssignment.lean` (12 theorems, no axioms beyond the
+standard ones, no placeholders): `chain_eq_sequential` and
+`chainN_eq_sequential` (a chain equals its sequential assignments, with each
+destination's conversion), `both_names_hold_the_identity`,
+`the_old_reading_drops_the_inner_write`, the guard's `the_guard_never_admits`,
+`the_guard_keeps_refusals`, `the_guard_refuses_every_inner_write`,
+`the_guard_is_identity_elsewhere`, `the_guard_never_promotes`, and the
+non-vacuity cases `the_scram_shape_is_dropped_by_the_old_reading`,
+`the_scram_shape_is_its_sequential_assignments`,
+`a_scalar_chain_is_sequential`.
+
+## 6. Prediction
+
+[PREDICTION.md](PREDICTION.md), committed before the semantic change: corpus
+`rd_kafka_sasl_safe_string` Unsafe → Unknown, system and slice none; on the
+`current` run the scram unit leaves provisional Unsafe for Unknown.
