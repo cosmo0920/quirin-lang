@@ -263,6 +263,118 @@ fn strip(texts: &[&str], mut start: usize, mut end: usize) -> (usize, usize) {
     (start, end)
 }
 
+/// The spelling classes of a `__builtin_expect` hint, in the order of
+/// `QCore.BuiltinExpectCondition.HintSpelling`: card BUILTIN-EXPECT-NULL-TEST.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum HintSpelling {
+    /// One token of decimal digits (`0`, `1`).
+    Decimal,
+    /// One integer-literal token with a hex or octal prefix or an integer
+    /// suffix (`0L`, `1UL`, `0x0`, `00`).
+    SuffixedOrPrefixed,
+    /// An identifier, a member or an element read.
+    Name,
+    /// A call, an assignment, an increment or decrement.
+    Effectful,
+    /// Anything else: a cast, an operator expression, a floating literal.
+    Other,
+}
+
+impl HintSpelling {
+    /// `QCore.BuiltinExpectCondition.admitted`: only an integer literal,
+    /// which has no evaluation event (C11 6.5.1, 6.4.4.1).
+    pub(crate) const fn admitted(self) -> bool {
+        matches!(self, Self::Decimal | Self::SuffixedOrPrefixed)
+    }
+
+    /// Classify a hint's tokens, outer parentheses already stripped.
+    pub(crate) fn of(tokens: &[&str]) -> Self {
+        if let [literal] = tokens {
+            if !literal.is_empty() && literal.bytes().all(|byte| byte.is_ascii_digit()) {
+                return Self::Decimal;
+            }
+            if is_integer_literal(literal) {
+                return Self::SuffixedOrPrefixed;
+            }
+            if is_identifier(literal) {
+                return Self::Name;
+            }
+            return Self::Other;
+        }
+        let effect = tokens.windows(2).any(|pair| {
+            matches!(pair, ["+", "+"] | ["-", "-"]) || (is_identifier(pair[0]) && pair[1] == "(")
+        }) || (0..tokens.len()).any(|index| is_assignment_at(tokens, index));
+        if effect {
+            return Self::Effectful;
+        }
+        let read = tokens.first().is_some_and(|first| is_identifier(first))
+            && tokens.iter().all(|text| {
+                is_identifier(text)
+                    || matches!(*text, "." | "[" | "]" | "-" | ">")
+                    || text.bytes().all(|byte| byte.is_ascii_alphanumeric())
+            });
+        if read { Self::Name } else { Self::Other }
+    }
+}
+
+/// One C integer-literal token (C11 6.4.4.1): a decimal, octal or hex digit
+/// sequence and an optional integer suffix.
+fn is_integer_literal(text: &str) -> bool {
+    let (digits, rest) =
+        if let Some(hex) = text.strip_prefix("0x").or_else(|| text.strip_prefix("0X")) {
+            let end = hex
+                .find(|c: char| !c.is_ascii_hexdigit())
+                .unwrap_or(hex.len());
+            (&hex[..end], &hex[end..])
+        } else {
+            let end = text
+                .find(|c: char| !c.is_ascii_digit())
+                .unwrap_or(text.len());
+            let digits = &text[..end];
+            if digits.len() > 1
+                && digits.starts_with('0')
+                && !digits.bytes().all(|b| (b'0'..=b'7').contains(&b))
+            {
+                return false;
+            }
+            (digits, &text[end..])
+        };
+    !digits.is_empty()
+        && matches!(
+            rest,
+            "" | "u"
+                | "U"
+                | "l"
+                | "L"
+                | "ll"
+                | "LL"
+                | "ul"
+                | "uL"
+                | "Ul"
+                | "UL"
+                | "lu"
+                | "lU"
+                | "Lu"
+                | "LU"
+                | "ull"
+                | "uLL"
+                | "Ull"
+                | "ULL"
+                | "llu"
+                | "llU"
+                | "LLu"
+                | "LLU"
+        )
+}
+
+/// Whether a `__builtin_expect` hint is admitted: exactly one integer
+/// literal (card BUILTIN-EXPECT-NULL-TEST). Its value is a hint only, and a
+/// literal has no evaluation event, so the call has its operand's value and
+/// its operand's events.
+pub(crate) fn hint_is_integer_literal(tokens: &[&str]) -> bool {
+    HintSpelling::of(tokens).admitted()
+}
+
 /// Read `texts[start..end]` as a Boolean tree. `Err` is a refusal.
 fn parse(texts: &[&str], start: usize, end: usize) -> Result<Tree, Refusal> {
     let (start, end) = strip(texts, start, end);
@@ -271,7 +383,9 @@ fn parse(texts: &[&str], start: usize, end: usize) -> Result<Tree, Refusal> {
     }
     // `__builtin_expect(E, K)` with a literal `K` has the value of `E`; both
     // are evaluated and `K` is a constant, so the call is transparent to the
-    // Boolean reading (the `likely`/`unlikely` macros).
+    // Boolean reading (the `likely`/`unlikely` macros). Card
+    // BUILTIN-EXPECT-NULL-TEST (rule 5h amended): `K` is any one integer
+    // literal ([`hint_is_integer_literal`]); every other hint refuses.
     if texts[start] == "__builtin_expect"
         && texts.get(start + 1) == Some(&"(")
         && close_of(texts, start + 1) == Some(end - 1)
@@ -292,8 +406,7 @@ fn parse(texts: &[&str], start: usize, end: usize) -> Result<Tree, Refusal> {
         }
         let comma = comma.ok_or(Refusal::Unparsed)?;
         let (constant_start, constant_end) = strip(texts, comma + 1, end - 1);
-        let constant = &texts[constant_start..constant_end];
-        if !matches!(constant, [literal] if literal.bytes().all(|byte| byte.is_ascii_digit())) {
+        if !hint_is_integer_literal(&texts[constant_start..constant_end]) {
             return Err(Refusal::Unparsed);
         }
         return parse(texts, start + 2, comma);
@@ -1622,5 +1735,56 @@ mod tests {
             )))))
         );
         assert!(tree("__builtin_expect ( a , k )").is_err());
+    }
+
+    /// Card BUILTIN-EXPECT-NULL-TEST: every integer-literal hint is admitted,
+    /// every other hint refuses, and the classes bind
+    /// `QCore.BuiltinExpectCondition.vectors` in constructor order.
+    #[test]
+    fn builtin_expect_hints_are_integer_literals() {
+        for hint in [
+            "0", "1", "( 0 )", "0L", "1UL", "0x0", "0X1", "00", "1ll", "0LLU",
+        ] {
+            assert!(
+                tree(&format!("__builtin_expect ( ! p , {hint} )")).is_ok(),
+                "{hint}"
+            );
+        }
+        for hint in [
+            "k",
+            "s -> k",
+            "a [ 0 ]",
+            "f ( )",
+            "k ++",
+            "k = 1",
+            "0 . 5",
+            "- 1",
+            "( long ) 0",
+            "08",
+            "0x",
+            "1Lu2",
+            "0lL",
+        ] {
+            assert!(
+                tree(&format!("__builtin_expect ( ! p , {hint} )")).is_err(),
+                "{hint}"
+            );
+        }
+        let representatives: [&[&str]; 5] = [&["0"], &["0L"], &["k"], &["k", "++"], &["-", "1"]];
+        let classes = representatives.map(HintSpelling::of);
+        assert_eq!(
+            classes,
+            [
+                HintSpelling::Decimal,
+                HintSpelling::SuffixedOrPrefixed,
+                HintSpelling::Name,
+                HintSpelling::Effectful,
+                HintSpelling::Other,
+            ]
+        );
+        assert_eq!(
+            classes.map(HintSpelling::admitted),
+            [true, true, false, false, false]
+        );
     }
 }

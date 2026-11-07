@@ -119,7 +119,10 @@ fn analyze(body: &str) -> Run {
 fn assert_transparent(wrapped: &str, bare: &str) -> Run {
     let left = analyze(wrapped);
     let right = analyze(bare);
-    assert_eq!(left.status, right.status, "{wrapped}\n{left:?}\n{bare}\n{right:?}");
+    assert_eq!(
+        left.status, right.status,
+        "{wrapped}\n{left:?}\n{bare}\n{right:?}"
+    );
     assert_eq!(left.lines, right.lines, "{wrapped}\n{bare}");
     left
 }
@@ -189,6 +192,25 @@ fn likely_and_unlikely_around_null_tests_refine_as_the_bare_test() {
     }
 }
 
+/// Card BUILTIN-EXPECT-NULL-TEST's admission: a hint spelled as any integer
+/// literal (C11 6.4.4.1) is read; before the card only a bare digit sequence
+/// was, and `0L` or `0x0` kept the refusal.
+#[test]
+fn an_integer_literal_hint_is_read() {
+    if !clang_available() {
+        return;
+    }
+    for hint in ["0", "(0)", "0L", "0UL", "0x0", "00"] {
+        let run = assert_transparent(
+            &format!(
+                "void subject(size_t n) {{ void *p = k_alloc(n); if (__builtin_expect(!p, {hint})) return; k_free(p); }}"
+            ),
+            "void subject(size_t n) { void *p = k_alloc(n); if (!p) return; k_free(p); }",
+        );
+        assert_eq!(run.status, AnalysisStatus::Safe, "{hint}\n{run:?}");
+    }
+}
+
 /// A wrapped operand that is not a test the route reads bare keeps the
 /// refusal the bare operand has; so does `__builtin_expect_with_probability`,
 /// which this card does not admit.
@@ -211,7 +233,9 @@ fn an_operand_that_is_not_a_bare_test_stays_refused() {
         let run = assert_transparent(wrapped, bare);
         assert_eq!(run.status, AnalysisStatus::Unknown, "{wrapped}\n{run:?}");
         assert!(
-            run.refusals().iter().any(|r| r.starts_with("unmodeled call") || r.starts_with("call to uncontracted")),
+            run.refusals()
+                .iter()
+                .any(|r| r.starts_with("unmodeled call") || r.starts_with("call to uncontracted")),
             "{wrapped}\n{run:?}"
         );
         assert_eq!(run.leaks(), 0);
@@ -255,9 +279,15 @@ fn the_snappy_failure_arm_refines_the_allocation_away() {
     if !clang_available() {
         return;
     }
-    let run = assert_transparent(SNAPPY_NO_LOOP, &SNAPPY_NO_LOOP.replace("unlikely(!outbuf)", "!outbuf"));
+    let run = assert_transparent(
+        SNAPPY_NO_LOOP,
+        &SNAPPY_NO_LOOP.replace("unlikely(!outbuf)", "!outbuf"),
+    );
     assert_eq!(run.status, AnalysisStatus::Safe, "{run:?}");
-    let run = assert_transparent(SNAPPY_PASS, &SNAPPY_PASS.replace("unlikely(!outbuf)", "!outbuf"));
+    let run = assert_transparent(
+        SNAPPY_PASS,
+        &SNAPPY_PASS.replace("unlikely(!outbuf)", "!outbuf"),
+    );
     assert_eq!(run.status, AnalysisStatus::Safe, "{run:?}");
     let run = assert_transparent(
         LOOP_ONE_GENERATION,
@@ -267,7 +297,10 @@ fn the_snappy_failure_arm_refines_the_allocation_away() {
     // The two-pass loop: identical wrapped and bare, the leaves resting on the
     // loop generation join (`if (uof <= 0) return 0;` precedes the iteration's
     // allocation and is accused too).
-    let run = assert_transparent(SNAPPY_LOOP, &SNAPPY_LOOP.replace("unlikely(!outbuf)", "!outbuf"));
+    let run = assert_transparent(
+        SNAPPY_LOOP,
+        &SNAPPY_LOOP.replace("unlikely(!outbuf)", "!outbuf"),
+    );
     // Lines are those of the `-E -P` text; the allocation is two lines below
     // the pre-allocation `return` and two above the failure arm's `return`.
     let mut acquisitions = run.lines.iter().filter_map(|(line, kind)| match kind {
@@ -286,8 +319,14 @@ fn the_snappy_failure_arm_refines_the_allocation_away() {
             _ => None,
         })
         .collect::<Vec<_>>();
-    assert!(leak_lines.contains(&(acquisition - 2)), "the pre-allocation return: {run:?}");
-    assert!(leak_lines.contains(&(acquisition + 2)), "the failure arm's return: {run:?}");
+    assert!(
+        leak_lines.contains(&(acquisition - 2)),
+        "the pre-allocation return: {run:?}"
+    );
+    assert!(
+        leak_lines.contains(&(acquisition + 2)),
+        "the failure arm's return: {run:?}"
+    );
 }
 
 const SNAPPY_NO_LOOP: &str = "char *subject(size_t uof) {
