@@ -27,8 +27,10 @@ have read, relisted at `baseline:7b726587b`:
   * `mk_net_conn_create` 1.
 
   Every acquisition except the getter's is bound to a name (`rk = …`,
-  `outbuf = …`, `d = safe = …`, `fd = …`, `conn = …`). None is an
-  acquisition stored through a refused destination.
+  `outbuf = …`, `d = safe = …`, `fd = …`, `conn = …`), as read by
+  CURRENT-UNSAFE-TRIAGE §2 and W44-LEAK-PIN-AUDIT (the OIDC tests and
+  `ctr_random_get` are its class (a)). None is an acquisition stored through
+  a refused destination.
 * **system**: 0 leak leaves (13 Unknown / 2 Unsafe units, neither on a leak).
 * **slice**: 0 leak leaves.
 

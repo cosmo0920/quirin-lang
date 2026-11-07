@@ -1,0 +1,46 @@
+{
+ "schema": "refused-store-mutation/1",
+ "card": "REFUSED-STORE-OF-CALL-RESULT-ESCAPE",
+ "mutation": [
+  "@@ -5875 +5875 @@",
+  "-    if (map->metric_static_set) {",
+  "+    if (1) {"
+ ],
+ "mutated_sha256": "7802a56df5aa35e336def6a43fee81cec8d24064293097821a8742f957c1d3d4",
+ "witness_lines": 0,
+ "leaks_in_unit": 0,
+ "functions_changed": {
+  "cmt_map_metric_get": {
+   "before": {
+    "status": "Unsafe",
+    "diagnostics": [
+     {
+      "line": 5639,
+      "kind": "Leak { acquisition_line: 5639 }"
+     },
+     {
+      "line": 5834,
+      "kind": "Unsupported { description: \"C extension types could not be excluded: the definition's typed AST is unavailable (CG30)\" }"
+     },
+     {
+      "line": 5840,
+      "kind": "Unsupported { description: \"call to uncontracted function `map_metric_get_unlocked`\" }"
+     }
+    ]
+   },
+   "after": {
+    "status": "Unknown",
+    "diagnostics": [
+     {
+      "line": 5834,
+      "kind": "Unsupported { description: \"C extension types could not be excluded: the definition's typed AST is unavailable (CG30)\" }"
+     },
+     {
+      "line": 5840,
+      "kind": "Unsupported { description: \"call to uncontracted function `map_metric_get_unlocked`\" }"
+     }
+    ]
+   }
+  }
+ }
+}

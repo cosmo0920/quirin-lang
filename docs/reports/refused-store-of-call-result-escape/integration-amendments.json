@@ -1,0 +1,16 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "REFUSED-STORE-OF-CALL-RESULT-ESCAPE",
+ "base": "82ec0e80b",
+ "measured_tip": "82ec0e80b",
+ "increment_paragraph": "**REFUSED-STORE-OF-CALL-RESULT-ESCAPE** (round 26 implementation card; USER DECISION 2026-11-07, verbatim: \"Register four as implementation cards\"): the census refutes the hypothesis, so no rule was implemented. cmt_map_metric_get's provisional Unsafe leak of `calloc` at cmt_map.c:210 is not a custody-projection leak. It is CMT-GETTER-OWNERSHIP-CLOSURE's source-validated hash-zero counterexample, appended by `legacy_conditional_embedded_storage::diagnose`. Evidence: the QCORE_LEAK_WITNESS census over the unit's own preprocessed text (byte-identical to the row's source_identity) records 0 witnesses, against 4 for a positive control; the leak's line equals its acquisition line, which only the adapter emits; and a refused destination store is an `Unknown` instruction that mints no site. CURRENT-UNSAFE-TRIAGE's cmt_map row is corrected beside the frozen report to a validated counterexample, which leaves 8 modelling defects in 2 units. No analyzer, contract or Lean change, and no verdict moves; cmt_map.c stays provisional Unsafe and nothing is presented as an upstream defect.",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "REFUSED-STORE-OF-CALL-RESULT-ESCAPE",
+   "operation": "retire",
+   "why": "REFUTED by REFUSED-STORE-OF-CALL-RESULT-ESCAPE (docs/reports/refused-store-of-call-result-escape/README.md). The QCORE_LEAK_WITNESS census of cmt_map.c (the unit's own -E -P text, SHA-256 equal to the report row's source_identity) records no witness, so no CFG custody analysis reports the leak. cmt_map_metric_get's leak (line 5639 = acquisition line) is CMT-GETTER-OWNERSHIP-CLOSURE's validated hash-zero counterexample (legacy_conditional_embedded_storage::diagnose). A refused destination store is classified `Unknown` and mints no site, so the hypothesised unbound site does not exist. No rule was implemented (option A of the report; options B and C recorded there, both not recommended). cmt_map.c stays provisional Unsafe.",
+   "source": "docs/reports/refused-store-of-call-result-escape/README.md"
+  }
+ ]
+}
