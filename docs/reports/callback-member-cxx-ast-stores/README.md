@@ -238,3 +238,8 @@ unit still leaves every row that depends on that unit's C++ lifetime in
   at this base. The amend applies after CALLBACK-MEMBER-NON-C-UNITS's own
   amendments, which register the entry it amends.
 - No PREDICTION.md: nothing is measured.
+- [gate.json](gate.json): the scoped card gate on `1421d43b8` from base
+  `b5fc23151` (`python3 scripts/gate_scope.py --base b5fc23151 --out
+  private/gate-1`, exit 0). It ran 3 steps: submodules (1), `cargo fmt
+  --check`, and the Python suite (685 tests, OK). No crate, Lean or provider
+  step falls in scope.
