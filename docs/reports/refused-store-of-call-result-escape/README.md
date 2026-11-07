@@ -165,5 +165,12 @@ pin. Mapping and native observation are separate evidence (AGENTS.md); a
   route and no change to the current run.
 * [integration-amendments.json](integration-amendments.json) retires
   REFUSED-STORE-OF-CALL-RESULT-ESCAPE as refuted.
-* [gate.json](gate.json): the scoped card gate.
+* [gate.json](gate.json): the scoped card gate, `python3 scripts/gate_scope.py
+  --base 82ec0e80b --out private/gate-2` at `325b5e299`, exit 0. It selected
+  no crate, no Lean and no provider gate, so three steps ran: submodules
+  exit 0; `cargo fmt --all -- --check` exit 0; the Python suite exit 0, with
+  685 tests run and 0 skipped. An earlier attempt, `private/gate-1` at
+  `89578ebe6`, before the route evidence was committed, gave the same three
+  steps at exit 0 with 685 tests. Both logs are private, under the worktree's
+  `private/gate-{1,2}/`.
 * Shared files: none. The card commits only this directory.
