@@ -383,7 +383,7 @@ pub(crate) fn derive_custody_summaries(
                                 tokens,
                                 &name,
                                 &derivation.environment,
-                                infer_validated_summary,
+                                infer_exit_class,
                             )
                             .map(relational::BodySummary::ExitSpecific)
                         })
@@ -490,7 +490,7 @@ pub(crate) fn derive_custody_summaries(
                             tokens,
                             &name,
                             &derivation.environment,
-                            infer_validated_summary,
+                            infer_exit_class,
                         ) {
                             // Classes that all agree are no exit-specific
                             // relation, and the ordinary route refused that
@@ -793,6 +793,19 @@ fn component_lower_environment(
         }
     }
     lower
+}
+
+/// Rule 11r(4)'s per-value inference: the ordinary inference and validation,
+/// then (card OUT-PARAMETER-BODY-SUMMARY, rule 11r(6)) the unwritten class,
+/// with the slots that class leaves unwritten (empty for an ordinary one).
+fn infer_exit_class(
+    tokens: &[Token],
+    function: &str,
+    environment: &ResourceContracts,
+) -> Option<(ResourceFunctionContract, BTreeSet<usize>)> {
+    infer_validated_summary(tokens, function, environment)
+        .map(|contract| (contract, BTreeSet::new()))
+        .or_else(|| unwritten_class::infer(tokens, function, environment))
 }
 
 /// Infer one function's summary and validate it, or return `None`.
@@ -1326,8 +1339,24 @@ fn ordinary_contract(
     entry: &EntryCustody,
     observations: &[ExitObservation],
 ) -> Option<ResourceFunctionContract> {
+    ordinary_contract_with(entry, observations, &BTreeSet::new())
+}
+
+/// [`ordinary_contract`] with the out slots `unwritten` read as `Borrowed`:
+/// card OUT-PARAMETER-BODY-SUMMARY's unwritten class (`unwritten_class`),
+/// whose caller has already checked that every exit leaves them unwritten.
+/// With an empty set this is exactly [`ordinary_contract`].
+fn ordinary_contract_with(
+    entry: &EntryCustody,
+    observations: &[ExitObservation],
+    unwritten: &BTreeSet<usize>,
+) -> Option<ResourceFunctionContract> {
     let mut modes = Vec::with_capacity(entry.parameter_sites.len());
     for index in 0..entry.parameter_sites.len() {
+        if unwritten.contains(&index) {
+            modes.push(ResourceParameterMode::Borrowed);
+            continue;
+        }
         modes.push(parameter_mode(index, entry, observations)?);
     }
     let result = propose_result(entry, observations)?;
@@ -1659,6 +1688,32 @@ pub(crate) fn observations_match_contract(
     summary: &LegacyFunctionSummary,
     observations: &[ExitObservation],
 ) -> bool {
+    observations_match_class(contract, &BTreeSet::new(), entry, summary, observations)
+}
+
+/// [`observations_match_contract`] for a return-code class that leaves the
+/// out slots `unwritten` unwritten (card OUT-PARAMETER-BODY-SUMMARY, rule
+/// 11r(6)). `contract` is the *analysis* contract: every index in `unwritten`
+/// is `Out` in it, so the body's stores through that slot are sanctioned
+/// (they lie on paths that end in another class's exit or diverge), and
+/// condition (6) then demands that **every** exit of this class leaves the
+/// slot unwritten. Every other condition is the unchanged W4 gate; with an
+/// empty set this is exactly that gate.
+pub(crate) fn observations_match_class(
+    contract: &ResourceFunctionContract,
+    unwritten: &BTreeSet<usize>,
+    entry: &EntryCustody,
+    summary: &LegacyFunctionSummary,
+    observations: &[ExitObservation],
+) -> bool {
+    if unwritten.iter().any(|index| {
+        !matches!(
+            contract.parameters.get(*index),
+            Some(ResourceParameterMode::Out { .. })
+        )
+    }) {
+        return false;
+    }
     // (1) A summary is only as good as the analysis that produced it.
     if summary.status != AnalysisStatus::Safe
         || !summary.diagnostics.is_empty()
@@ -1719,7 +1774,7 @@ pub(crate) fn observations_match_contract(
                             }
                         } else { parameter_matches(mode, observation.parameters[index]) }
                 })
-            && out_slots_match(contract, observation, &parameter_sites)
+            && out_slots_match(contract, unwritten, observation, &parameter_sites)
             && result_matches(contract, entry, observation, &parameter_sites)
     })
 }
@@ -1766,6 +1821,7 @@ fn sanctioned_containment(
 /// resource, which is the failure this whole pass exists to prevent.
 fn out_slots_match(
     contract: &ResourceFunctionContract,
+    unwritten: &BTreeSet<usize>,
     observation: &ExitObservation,
     parameter_sites: &BTreeSet<usize>,
 ) -> bool {
@@ -1779,6 +1835,11 @@ fn out_slots_match(
         .copied()
         .enumerate()
         .all(|(index, mode)| {
+            // Card OUT-PARAMETER-BODY-SUMMARY: a slot this class leaves
+            // unwritten passes nothing back on any of its exits.
+            if unwritten.contains(&index) {
+                return matches!(observation.out_slots[index], Some(OutSlotValue::Unwritten));
+            }
             let ResourceParameterMode::Out { nullable } = mode else {
                 // A formal the contract does not declare `Out` writes through
                 // no slot, so the analysis registered none for it.
@@ -1966,6 +2027,11 @@ mod premises;
 // the body check of a declared return-code disposition.
 #[path = "legacy_relational_summary.rs"]
 mod relational;
+
+// Card OUT-PARAMETER-BODY-SUMMARY (rule 11r(6)): a return-code class that
+// leaves an out slot unwritten.
+#[path = "legacy_unwritten_class.rs"]
+pub(crate) mod unwritten_class;
 
 // Card CALLEE-RETENTION-CLASS1, stage (a) (rule 12s): relational forwarding
 // and the per-class row.

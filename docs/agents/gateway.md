@@ -1332,6 +1332,23 @@ refusal stays.
     are eligible chain roots is left to the flow, which reads each only as
     untracked (a tracked root refuses); an address actual and (2)'s return
     premise are unchanged.
+    **Amendment (OUT-PARAMETER-BODY-SUMMARY): (5) a scalar store the importer
+    named for an out slot.** A `*B = V` statement lowered as an out-slot
+    store (`Alias`/`Clear` with an indirect destination) is read by the
+    W46-ACCESS-PATH-STATEMENTS reader after every lexical route of the
+    statement position declined, and is replaced only by that reader's
+    scalar store (`IndirectScalarAccess`): the destination's type a scalar,
+    (4)'s enum arm included, so `rd_kafka_resp_err_t *errp; *errp =
+    RD_KAFKA_RESP_ERR__X;` is a frame write with its base's dereference
+    obligation, as `*errp = rkt->rkt_err` already was. A pointer store, a
+    refusal, a plan with no access and every unread shape keep the out-slot
+    reading, which transfer refuses unless a contract sanctions the slot; a
+    sanctioned slot is never written by the scalar route (transfer refuses
+    it). **Do not** admit a pointer-valued `*B = V` here: overwriting a
+    caller's pointer object is a custody effect no `Borrowed` summary
+    states. `QCore.OutParameterBodySummary`
+    (`scalar_store_preserves_custody`, `released_base_refuses`);
+    [report](../reports/out-parameter-body-summary/README.md).
 
 <a id="constraint-10l"></a>
 
@@ -4053,6 +4070,36 @@ own anchor here.
     and that replacing a `return` by divergence leaves every state on every
     other path as it was (the CFG's own construction).
 
+    **Amendment (OUT-PARAMETER-BODY-SUMMARY): (6) a class may leave an out
+    slot unwritten.** (4)'s per-value body, when the ordinary route publishes
+    nothing for it, is probed as the live-entry route probes (every formal it
+    stores through an `Out` slot, the bind loop), and the slots the run
+    leaves `Unwritten` at **every** reachable exit form the class's set `U`.
+    The class contract is the ordinary proposal with each slot of `U` read as
+    `resource_borrowed`, which beside `resource_out` in another class is
+    C04.13's unwritten slot, so (2)'s consumer passes `&NAME` as data on that
+    class and `NAME` then holds an untracked value. It is validated on a
+    fresh run under the *analysis* contract (each slot of `U` an `Out` slot,
+    so a store on a path ending in another class's exit or diverging is
+    sanctioned) by the unchanged W4 gate whose out-slot condition demands
+    `Unwritten` at every exit for each slot of `U`
+    (`legacy_summary::observations_match_class`), then by rule 4b's re-check
+    with the analysis contract as the function's own. The relation is kept
+    only when each class's `U` is exactly its slots that are `Borrowed` there
+    and `Out` in another class. Rule 12s(2)'s row analyses every class, and
+    the whole literal-only body, under the analysis contracts, whose entries
+    agree because an `Out` slot asks the entry for nothing
+    (`row_entries_agree`; the forwarding route keeps `entries_agree`). A slot
+    written on one exit of the class and not another, holding a released,
+    escaped, possibly-null or shared site, two slots given one site, a
+    non-literal return and a non-`int` result keep the refusal. **Do not**
+    read a slot as unwritten from fewer than all of its class's exits, keep
+    an unwritten class no other class writes, or validate it with the slot
+    unsanctioned. Measured: [report](../reports/out-parameter-body-summary/README.md);
+    `QCore.OutParameterBodySummary` (`class_mode_sound`,
+    `summary_effect_equals_body_on_every_path`,
+    `relation_requires_a_writer`).
+
 <a id="constraint-11s"></a>
 
 11s. **Bounds is a separately selected property: every access is
@@ -5990,6 +6037,11 @@ own anchor here.
     `a_conversion_can_move_a_value_between_classes` and three more), bound by
     the module's unit tests and `tests/callee_retention_class1.rs`;
     [report](../reports/callee-retention-class1/README.md).
+    Amended by [rule 11r](#constraint-11r)(6): (2)'s row analyses each class,
+    and the whole literal-only body, under its analysis contract (a slot the
+    class leaves unwritten is an `Out` slot there) and validates an unwritten
+    slot by `Unwritten` at every exit of the class; the forwarding route (1)
+    keeps its entry agreement unchanged.
 
 <a id="constraint-12t"></a>
 

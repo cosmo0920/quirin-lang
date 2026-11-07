@@ -67,6 +67,7 @@ use crate::relational_post::{
 };
 
 use super::relational::definition;
+use super::unwritten_class;
 
 /// The storage-class words a result-type comparison ignores.
 const STORAGE: &[&str] = &["static", "inline", "extern", "__inline", "__inline__"];
@@ -363,6 +364,42 @@ pub(crate) fn entries_agree(classes: &[ExitClass]) -> bool {
     })
 }
 
+/// Card OUT-PARAMETER-BODY-SUMMARY (rule 11r(6)): whether every class's
+/// *analysis* contract asks the same of the caller at entry. A slot one class
+/// leaves unwritten is an `Out` slot of that class's analysis, and an `Out`
+/// slot asks the entry for nothing whatever its nullability, so a slot
+/// `Borrowed` in one class and `Out` in another agrees here, while every other
+/// pair is decided by [`entries_agree`] unchanged. Read by the per-class row
+/// only; the forwarding route keeps [`entries_agree`].
+fn row_entries_agree(classes: &[ExitClass]) -> bool {
+    if entries_agree(classes) {
+        return true;
+    }
+    let analyses = (0..classes.len())
+        .map(|index| {
+            unwritten_class::analysis_contract(
+                &classes[index].contract,
+                &unwritten_class::unwritten_slots(classes, index),
+            )
+        })
+        .collect::<Vec<_>>();
+    let Some(first) = analyses.first() else {
+        return false;
+    };
+    let key = |mode: &ResourceParameterMode| match mode {
+        ResourceParameterMode::Out { .. } => Some((2, false)),
+        other => entry_requirement(other),
+    };
+    analyses.iter().all(|analysis| {
+        analysis.parameters.len() == first.parameters.len()
+            && analysis
+                .parameters
+                .iter()
+                .zip(&first.parameters)
+                .all(|(a, b)| key(a).is_some() && key(a) == key(b))
+    })
+}
+
 /// The body read for rule 12s: the definition and its returns. `None` when
 /// the function is not defined in the stream or a return is neither form.
 fn qualifying_body(
@@ -430,7 +467,7 @@ pub(crate) fn relational_row(
     environment: &ResourceContracts,
     contract: &RelationalContract,
 ) -> Option<LegacyFunctionSummary> {
-    if contract.withdrawn.is_some() || !entries_agree(&contract.classes) {
+    if contract.withdrawn.is_some() || !row_entries_agree(&contract.classes) {
         return None;
     }
     let (_, body, returns) = qualifying_body(tokens, function, environment)?;
@@ -449,15 +486,22 @@ pub(crate) fn relational_row(
     }
     // Each class's restricted body under that class's contract; the row is
     // published only when every one validates.
+    // Card OUT-PARAMETER-BODY-SUMMARY (rule 11r(6)): a class that leaves a
+    // slot unwritten is analysed with that slot an `Out` slot, so a store on
+    // a path ending in another class's exit is sanctioned, and validates only
+    // when every one of its exits leaves the slot unwritten.
     let mut first = None;
-    for class in &contract.classes {
+    for (index, class) in contract.classes.iter().enumerate() {
         let (restricted, under) = restrict(tokens, body, &returns, class.relation, environment)?;
         let cfg = build_function_cfg(&restricted, function, &under).ok()?;
         let parameters = function_parameters(&restricted, function)?;
-        let entry = EntryCustody::build(&cfg, &parameters, &class.contract)?;
+        let unwritten = unwritten_class::unwritten_slots(&contract.classes, index);
+        let analysis = unwritten_class::analysis_contract(&class.contract, &unwritten);
+        let entry = EntryCustody::build(&cfg, &parameters, &analysis)?;
         let (candidate, observations) = analyze_cfg_with_entry(cfg, &entry);
-        if !crate::legacy_summary::observations_match_contract(
-            &class.contract,
+        if !crate::legacy_summary::observations_match_class(
+            &analysis,
+            &unwritten,
             &entry,
             &candidate,
             &observations,
@@ -474,9 +518,15 @@ pub(crate) fn relational_row(
     }
     // Literal returns only: the whole body under the common entry, which
     // every class shares (`entries_agree`).
+    // Rule 11r(6): the common entry sanctions every slot some class writes
+    // (an `Out` slot asks the entry for nothing, so the entry is unchanged).
     let cfg = build_function_cfg(tokens, function, environment).ok()?;
     let parameters = function_parameters(tokens, function)?;
-    let entry = EntryCustody::build(&cfg, &parameters, &contract.classes[0].contract)?;
+    let common = unwritten_class::analysis_contract(
+        &contract.classes[0].contract,
+        &unwritten_class::unwritten_slots(&contract.classes, 0),
+    );
+    let entry = EntryCustody::build(&cfg, &parameters, &common)?;
     let (candidate, _) = analyze_cfg_with_entry(cfg, &entry);
     (candidate.status == AnalysisStatus::Safe && candidate.diagnostics.is_empty())
         .then_some(candidate)
