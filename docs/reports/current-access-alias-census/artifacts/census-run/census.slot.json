@@ -1,0 +1,55 @@
+{
+ "argv_requested": [
+  "python3",
+  "docs/reports/current-access-alias-census/scripts/run_census.py",
+  "private/census/run",
+  "7b726587b",
+  "target/census/release/quirin-audit"
+ ],
+ "argv_run": [
+  "python3",
+  "docs/reports/current-access-alias-census/scripts/run_census.py",
+  "private/census/run",
+  "7b726587b",
+  "target/census/release/quirin-audit"
+ ],
+ "budget": {
+  "QCORE_AUDIT_JOBS": {
+   "after": "3",
+   "before": null
+  },
+  "admission_mib": 7168,
+  "jobs_cap": 3,
+  "label": "7G",
+  "mechanism": "QCORE_AUDIT_JOBS",
+  "memory_budget_mib": 7168,
+  "route_class": null
+ },
+ "class": "audit",
+ "cwd": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a0dea5d9a872e9adc",
+ "exit": 0,
+ "finished": "2026-11-07T10:49:00+00:00",
+ "max_rss_kib": 7887840,
+ "max_rss_within_admission": false,
+ "pid": 2997218,
+ "schema": "quirin-gate-slot/1",
+ "slot_record": {
+  "audit_slot_ceiling": 15,
+  "class": "audit",
+  "gate_dir": "/tmp/quirin-gate",
+  "held": [
+   "legacy",
+   "audit/3"
+  ],
+  "legacy_lock": {
+   "mode": "shared",
+   "path": "/tmp/qcore-c-card-validation-20261022.lock"
+  },
+  "mem_available_kib": 37011872,
+  "mem_total_kib": 63615012,
+  "slot": 3,
+  "slot_count": 5,
+  "waited_seconds": 23849.604
+ },
+ "started": "2026-11-07T08:59:16+00:00"
+}

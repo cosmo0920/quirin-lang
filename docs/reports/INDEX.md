@@ -327,6 +327,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [ct47-copy-capture](ct47-copy-capture/README.md) | CT47-COPY-CAPTURE — the boundary refuses by the judgment, not the backend |
 
+| [current-access-alias-census](current-access-alias-census/README.md) | CURRENT-ACCESS-ALIAS-CENSUS: the IND, ALIAS, COND and RET leaves of the user's `current` run, by shape |
+
 | [current-run-defects](current-run-defects/README.md) | CURRENT-RUN-DEFECTS |
 
 | [current-unsafe-triage](current-unsafe-triage/README.md) | CURRENT-UNSAFE-TRIAGE: the current run's provisional Unsafe findings |

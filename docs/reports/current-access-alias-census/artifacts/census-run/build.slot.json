@@ -1,0 +1,83 @@
+{
+ "argv_requested": [
+  "cargo",
+  "build",
+  "--release",
+  "-p",
+  "qcore-audit",
+  "--features",
+  "qcore-c-gateway/indirect-census",
+  "--target-dir",
+  "target/census"
+ ],
+ "argv_run": [
+  "cargo",
+  "build",
+  "--release",
+  "-p",
+  "qcore-audit",
+  "--features",
+  "qcore-c-gateway/indirect-census",
+  "--target-dir",
+  "target/census"
+ ],
+ "class": "rust-suite",
+ "cwd": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a0dea5d9a872e9adc",
+ "exit": 0,
+ "finished": "2026-11-07T02:20:15+00:00",
+ "max_rss_kib": 2884620,
+ "pid": 2548786,
+ "schema": "quirin-gate-slot/1",
+ "slot_record": {
+  "audit_slot_ceiling": 15,
+  "audit_slots_held": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12,
+   13,
+   14
+  ],
+  "class": "rust-suite",
+  "gate_dir": "/tmp/quirin-gate",
+  "held": [
+   "legacy",
+   "rust-suite/0",
+   "audit/admission",
+   "audit/0",
+   "audit/1",
+   "audit/2",
+   "audit/3",
+   "audit/4",
+   "audit/5",
+   "audit/6",
+   "audit/7",
+   "audit/8",
+   "audit/9",
+   "audit/10",
+   "audit/11",
+   "audit/12",
+   "audit/13",
+   "audit/14"
+  ],
+  "legacy_lock": {
+   "mode": "shared",
+   "path": "/tmp/qcore-c-card-validation-20261022.lock"
+  },
+  "mem_available_kib": 39150272,
+  "mem_total_kib": 63615012,
+  "slot": 0,
+  "slot_count": 1,
+  "waited_seconds": 2936.982
+ },
+ "started": "2026-11-07T02:17:59+00:00"
+}

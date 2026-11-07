@@ -1,0 +1,2595 @@
+{
+ "rows": 4912,
+ "unknown_rows": 3832,
+ "alone_baseline": 0,
+ "tag_stats": {
+  "call": {
+   "family": {
+    "IND": 115,
+    "COND": 18,
+    "RET": 4
+   },
+   "leaves": 137,
+   "functions": 98,
+   "alone": 8
+  },
+  "expr:statement:call-arg": {
+   "family": {
+    "IND": 5116
+   },
+   "leaves": 5116,
+   "functions": 1415,
+   "alone": 69
+  },
+  "alias:poisoned-by-refusal": {
+   "family": {
+    "ALIAS": 1281
+   },
+   "leaves": 1281,
+   "functions": 462,
+   "alone": 0
+  },
+  "alias:field-store-owner": {
+   "family": {
+    "ALIAS": 56
+   },
+   "leaves": 56,
+   "functions": 36,
+   "alone": 0
+  },
+  "alias:formal-handed-uncontracted": {
+   "family": {
+    "ALIAS": 3803
+   },
+   "leaves": 3803,
+   "functions": 886,
+   "alone": 0
+  },
+  "pointer-valued-store": {
+   "family": {
+    "IND": 2102,
+    "RET": 67,
+    "COND": 259
+   },
+   "leaves": 2428,
+   "functions": 929,
+   "alone": 53
+  },
+  "alias:formal-handed-contracted": {
+   "family": {
+    "ALIAS": 150
+   },
+   "leaves": 150,
+   "functions": 96,
+   "alone": 3
+  },
+  "alias:borrowed-path-unguarded": {
+   "family": {
+    "ALIAS": 875
+   },
+   "leaves": 875,
+   "functions": 354,
+   "alone": 9
+  },
+  "expr:cond:call-arg": {
+   "family": {
+    "COND": 1492
+   },
+   "leaves": 1492,
+   "functions": 605,
+   "alone": 16
+  },
+  "expr:statement:direct": {
+   "family": {
+    "IND": 985
+   },
+   "leaves": 985,
+   "functions": 530,
+   "alone": 6
+  },
+  "none": {
+   "family": {
+    "IND": 77,
+    "COND": 952,
+    "RET": 29
+   },
+   "leaves": 1058,
+   "functions": 604,
+   "alone": 40
+  },
+  "alias:address-taken": {
+   "family": {
+    "ALIAS": 284
+   },
+   "leaves": 284,
+   "functions": 112,
+   "alone": 0
+  },
+  "alias:statement-expression-unguarded": {
+   "family": {
+    "ALIAS": 98
+   },
+   "leaves": 98,
+   "functions": 59,
+   "alone": 2
+  },
+  "alias:guarded-other": {
+   "family": {
+    "ALIAS": 674
+   },
+   "leaves": 674,
+   "functions": 390,
+   "alone": 16
+  },
+  "expr:cond:direct": {
+   "family": {
+    "COND": 528
+   },
+   "leaves": 528,
+   "functions": 302,
+   "alone": 1
+  },
+  "alias:derived-local-unguarded": {
+   "family": {
+    "ALIAS": 1037
+   },
+   "leaves": 1037,
+   "functions": 319,
+   "alone": 2
+  },
+  "alias:formal-copied": {
+   "family": {
+    "ALIAS": 273
+   },
+   "leaves": 273,
+   "functions": 241,
+   "alone": 13
+  },
+  "expr:return:call-arg": {
+   "family": {
+    "IND": 99,
+    "RET": 11
+   },
+   "leaves": 110,
+   "functions": 102,
+   "alone": 48
+  },
+  "union": {
+   "family": {
+    "IND": 779,
+    "COND": 173,
+    "RET": 15
+   },
+   "leaves": 967,
+   "functions": 323,
+   "alone": 8
+  },
+  "alias:peer-release": {
+   "family": {
+    "ALIAS": 27
+   },
+   "leaves": 27,
+   "functions": 8,
+   "alone": 0
+  },
+  "alias:uncontracted-result-unguarded": {
+   "family": {
+    "ALIAS": 859
+   },
+   "leaves": 859,
+   "functions": 368,
+   "alone": 1
+  },
+  "alias:contracted-result-unguarded": {
+   "family": {
+    "ALIAS": 587
+   },
+   "leaves": 587,
+   "functions": 206,
+   "alone": 1
+  },
+  "alias:non-pointer-name": {
+   "family": {
+    "ALIAS": 1072
+   },
+   "leaves": 1072,
+   "functions": 347,
+   "alone": 7
+  },
+  "cast": {
+   "family": {
+    "COND": 11,
+    "IND": 56,
+    "RET": 4
+   },
+   "leaves": 71,
+   "functions": 38,
+   "alone": 0
+  },
+  "pointer-arithmetic": {
+   "family": {
+    "COND": 24,
+    "IND": 9
+   },
+   "leaves": 33,
+   "functions": 15,
+   "alone": 2
+  },
+  "aggregate-value": {
+   "family": {
+    "IND": 222,
+    "COND": 26,
+    "RET": 4
+   },
+   "leaves": 252,
+   "functions": 169,
+   "alone": 9
+  },
+  "alias:formal-not-handed": {
+   "family": {
+    "ALIAS": 63
+   },
+   "leaves": 63,
+   "functions": 46,
+   "alone": 0
+  },
+  "indirect-call": {
+   "family": {
+    "IND": 158,
+    "RET": 12,
+    "COND": 15
+   },
+   "leaves": 185,
+   "functions": 142,
+   "alone": 6
+  },
+  "alias:unclassified": {
+   "family": {
+    "ALIAS": 33
+   },
+   "leaves": 33,
+   "functions": 10,
+   "alone": 0
+  },
+  "expr:return:direct": {
+   "family": {
+    "RET": 58
+   },
+   "leaves": 58,
+   "functions": 52,
+   "alone": 14
+  },
+  "root-other": {
+   "family": {
+    "IND": 11,
+    "COND": 3
+   },
+   "leaves": 14,
+   "functions": 10,
+   "alone": 0
+  },
+  "pointer-field-step": {
+   "family": {
+    "IND": 1
+   },
+   "leaves": 1,
+   "functions": 1,
+   "alone": 0
+  },
+  "pointer-step": {
+   "family": {
+    "COND": 4
+   },
+   "leaves": 4,
+   "functions": 4,
+   "alone": 1
+  },
+  "static-local": {
+   "family": {
+    "COND": 21,
+    "IND": 42,
+    "RET": 1
+   },
+   "leaves": 64,
+   "functions": 18,
+   "alone": 2
+  },
+  "statement-expression": {
+   "family": {
+    "IND": 117,
+    "COND": 1
+   },
+   "leaves": 118,
+   "functions": 72,
+   "alone": 0
+  },
+  "volatile-atomic": {
+   "family": {
+    "COND": 1
+   },
+   "leaves": 1,
+   "functions": 1,
+   "alone": 0
+  },
+  "alias:global-pointer": {
+   "family": {
+    "ALIAS": 5
+   },
+   "leaves": 5,
+   "functions": 4,
+   "alone": 0
+  },
+  "address-of-base": {
+   "family": {
+    "COND": 2
+   },
+   "leaves": 2,
+   "functions": 1,
+   "alone": 0
+  }
+ },
+ "greedy": [
+  {
+   "tag": "expr:statement:call-arg",
+   "gain": 69,
+   "cumulative": 69,
+   "pool": 766
+  },
+  {
+   "tag": "pointer-valued-store",
+   "gain": 60,
+   "cumulative": 129,
+   "pool": 766
+  },
+  {
+   "tag": "none",
+   "gain": 49,
+   "cumulative": 178,
+   "pool": 766
+  },
+  {
+   "tag": "expr:return:call-arg",
+   "gain": 50,
+   "cumulative": 228,
+   "pool": 766
+  },
+  {
+   "tag": "expr:cond:call-arg",
+   "gain": 28,
+   "cumulative": 256,
+   "pool": 766
+  },
+  {
+   "tag": "union",
+   "gain": 28,
+   "cumulative": 284,
+   "pool": 766
+  },
+  {
+   "tag": "alias:formal-handed-uncontracted",
+   "gain": 31,
+   "cumulative": 315,
+   "pool": 766
+  },
+  {
+   "tag": "alias:formal-copied",
+   "gain": 32,
+   "cumulative": 347,
+   "pool": 766
+  },
+  {
+   "tag": "alias:derived-local-unguarded",
+   "gain": 29,
+   "cumulative": 376,
+   "pool": 766
+  },
+  {
+   "tag": "expr:statement:direct",
+   "gain": 35,
+   "cumulative": 411,
+   "pool": 766
+  },
+  {
+   "tag": "alias:guarded-other",
+   "gain": 45,
+   "cumulative": 456,
+   "pool": 766
+  },
+  {
+   "tag": "aggregate-value",
+   "gain": 34,
+   "cumulative": 490,
+   "pool": 766
+  },
+  {
+   "tag": "alias:borrowed-path-unguarded",
+   "gain": 32,
+   "cumulative": 522,
+   "pool": 766
+  },
+  {
+   "tag": "alias:formal-handed-contracted",
+   "gain": 30,
+   "cumulative": 552,
+   "pool": 766
+  },
+  {
+   "tag": "alias:poisoned-by-refusal",
+   "gain": 23,
+   "cumulative": 575,
+   "pool": 766
+  },
+  {
+   "tag": "expr:return:direct",
+   "gain": 21,
+   "cumulative": 596,
+   "pool": 766
+  },
+  {
+   "tag": "alias:non-pointer-name",
+   "gain": 18,
+   "cumulative": 614,
+   "pool": 766
+  },
+  {
+   "tag": "expr:cond:direct",
+   "gain": 19,
+   "cumulative": 633,
+   "pool": 766
+  },
+  {
+   "tag": "indirect-call",
+   "gain": 41,
+   "cumulative": 674,
+   "pool": 766
+  },
+  {
+   "tag": "call",
+   "gain": 20,
+   "cumulative": 694,
+   "pool": 766
+  },
+  {
+   "tag": "alias:contracted-result-unguarded",
+   "gain": 16,
+   "cumulative": 710,
+   "pool": 766
+  },
+  {
+   "tag": "cast",
+   "gain": 9,
+   "cumulative": 719,
+   "pool": 766
+  },
+  {
+   "tag": "alias:statement-expression-unguarded",
+   "gain": 7,
+   "cumulative": 726,
+   "pool": 766
+  },
+  {
+   "tag": "alias:uncontracted-result-unguarded",
+   "gain": 6,
+   "cumulative": 732,
+   "pool": 766
+  },
+  {
+   "tag": "alias:formal-not-handed",
+   "gain": 5,
+   "cumulative": 737,
+   "pool": 766
+  },
+  {
+   "tag": "pointer-arithmetic",
+   "gain": 5,
+   "cumulative": 742,
+   "pool": 766
+  },
+  {
+   "tag": "static-local",
+   "gain": 3,
+   "cumulative": 745,
+   "pool": 766
+  },
+  {
+   "tag": "alias:field-store-owner",
+   "gain": 2,
+   "cumulative": 747,
+   "pool": 766
+  },
+  {
+   "tag": "alias:address-taken",
+   "gain": 1,
+   "cumulative": 748,
+   "pool": 766
+  },
+  {
+   "tag": "statement-expression",
+   "gain": 1,
+   "cumulative": 749,
+   "pool": 766
+  },
+  {
+   "tag": "alias:peer-release",
+   "gain": 1,
+   "cumulative": 750,
+   "pool": 766
+  },
+  {
+   "tag": "root-other",
+   "gain": 1,
+   "cumulative": 751,
+   "pool": 766
+  },
+  {
+   "tag": "alias:global-pointer",
+   "gain": 1,
+   "cumulative": 752,
+   "pool": 766
+  },
+  {
+   "tag": "pointer-step",
+   "gain": 1,
+   "cumulative": 753,
+   "pool": 766
+  }
+ ],
+ "pairs": {
+  "expr:statement:call-arg + pointer-valued-store": 129,
+  "expr:statement:call-arg + expr:return:call-arg": 117,
+  "expr:statement:call-arg + none": 112,
+  "expr:statement:call-arg + expr:cond:call-arg": 90,
+  "expr:statement:call-arg + alias:guarded-other": 86,
+  "expr:statement:call-arg + expr:return:direct": 83,
+  "expr:statement:call-arg + alias:formal-copied": 82,
+  "expr:statement:call-arg + alias:borrowed-path-unguarded": 81,
+  "expr:statement:call-arg + aggregate-value": 80,
+  "expr:statement:call-arg + call": 77,
+  "expr:statement:call-arg + union": 78,
+  "pointer-valued-store + expr:return:call-arg": 101,
+  "pointer-valued-store + none": 98,
+  "pointer-valued-store + expr:cond:call-arg": 72,
+  "pointer-valued-store + alias:guarded-other": 69,
+  "pointer-valued-store + expr:return:direct": 67,
+  "pointer-valued-store + alias:formal-copied": 67,
+  "pointer-valued-store + alias:borrowed-path-unguarded": 62,
+  "pointer-valued-store + aggregate-value": 64,
+  "pointer-valued-store + call": 61,
+  "pointer-valued-store + union": 70,
+  "expr:return:call-arg + none": 89,
+  "expr:return:call-arg + expr:cond:call-arg": 64,
+  "expr:return:call-arg + alias:guarded-other": 65,
+  "expr:return:call-arg + expr:return:direct": 62,
+  "expr:return:call-arg + alias:formal-copied": 74,
+  "expr:return:call-arg + alias:borrowed-path-unguarded": 58,
+  "expr:return:call-arg + aggregate-value": 57,
+  "expr:return:call-arg + call": 56,
+  "expr:return:call-arg + union": 56,
+  "none + expr:cond:call-arg": 59,
+  "none + alias:guarded-other": 58,
+  "none + expr:return:direct": 54,
+  "none + alias:formal-copied": 53,
+  "none + alias:borrowed-path-unguarded": 52,
+  "none + aggregate-value": 49,
+  "none + call": 49,
+  "none + union": 48,
+  "expr:cond:call-arg + alias:guarded-other": 34,
+  "expr:cond:call-arg + expr:return:direct": 33,
+  "expr:cond:call-arg + alias:formal-copied": 29,
+  "expr:cond:call-arg + alias:borrowed-path-unguarded": 25,
+  "expr:cond:call-arg + aggregate-value": 27,
+  "expr:cond:call-arg + call": 25,
+  "expr:cond:call-arg + union": 24,
+  "alias:guarded-other + expr:return:direct": 30,
+  "alias:guarded-other + alias:formal-copied": 29,
+  "alias:guarded-other + alias:borrowed-path-unguarded": 26,
+  "alias:guarded-other + aggregate-value": 35,
+  "alias:guarded-other + call": 24,
+  "alias:guarded-other + union": 24,
+  "expr:return:direct + alias:formal-copied": 30,
+  "expr:return:direct + alias:borrowed-path-unguarded": 23,
+  "expr:return:direct + aggregate-value": 23,
+  "expr:return:direct + call": 22,
+  "expr:return:direct + union": 22,
+  "alias:formal-copied + alias:borrowed-path-unguarded": 22,
+  "alias:formal-copied + aggregate-value": 22,
+  "alias:formal-copied + call": 21,
+  "alias:formal-copied + union": 24,
+  "alias:borrowed-path-unguarded + aggregate-value": 18,
+  "alias:borrowed-path-unguarded + call": 17,
+  "alias:borrowed-path-unguarded + union": 23,
+  "aggregate-value + call": 17,
+  "aggregate-value + union": 17,
+  "call + union": 16
+ },
+ "family_freed": {
+  "IND": 229,
+  "ALIAS": 65,
+  "COND": 56,
+  "RET": 46,
+  "IND+ALIAS": 495,
+  "IND+ALIAS+COND+RET": 766
+ },
+ "family_tags": {
+  "IND": [
+   "aggregate-value",
+   "call",
+   "cast",
+   "expr:return:call-arg",
+   "expr:statement:call-arg",
+   "expr:statement:direct",
+   "indirect-call",
+   "none",
+   "pointer-arithmetic",
+   "pointer-field-step",
+   "pointer-valued-store",
+   "root-other",
+   "statement-expression",
+   "static-local",
+   "union"
+  ],
+  "ALIAS": [
+   "alias:address-taken",
+   "alias:borrowed-path-unguarded",
+   "alias:contracted-result-unguarded",
+   "alias:derived-local-unguarded",
+   "alias:field-store-owner",
+   "alias:formal-copied",
+   "alias:formal-handed-contracted",
+   "alias:formal-handed-uncontracted",
+   "alias:formal-not-handed",
+   "alias:global-pointer",
+   "alias:guarded-other",
+   "alias:non-pointer-name",
+   "alias:peer-release",
+   "alias:poisoned-by-refusal",
+   "alias:statement-expression-unguarded",
+   "alias:unclassified",
+   "alias:uncontracted-result-unguarded"
+  ],
+  "COND": [
+   "address-of-base",
+   "aggregate-value",
+   "call",
+   "cast",
+   "expr:cond:call-arg",
+   "expr:cond:direct",
+   "indirect-call",
+   "none",
+   "pointer-arithmetic",
+   "pointer-step",
+   "pointer-valued-store",
+   "root-other",
+   "statement-expression",
+   "static-local",
+   "union",
+   "volatile-atomic"
+  ],
+  "RET": [
+   "aggregate-value",
+   "call",
+   "cast",
+   "expr:return:call-arg",
+   "expr:return:direct",
+   "indirect-call",
+   "none",
+   "pointer-valued-store",
+   "static-local",
+   "union"
+  ],
+  "IND+ALIAS": [
+   "aggregate-value",
+   "alias:address-taken",
+   "alias:borrowed-path-unguarded",
+   "alias:contracted-result-unguarded",
+   "alias:derived-local-unguarded",
+   "alias:field-store-owner",
+   "alias:formal-copied",
+   "alias:formal-handed-contracted",
+   "alias:formal-handed-uncontracted",
+   "alias:formal-not-handed",
+   "alias:global-pointer",
+   "alias:guarded-other",
+   "alias:non-pointer-name",
+   "alias:peer-release",
+   "alias:poisoned-by-refusal",
+   "alias:statement-expression-unguarded",
+   "alias:unclassified",
+   "alias:uncontracted-result-unguarded",
+   "call",
+   "cast",
+   "expr:return:call-arg",
+   "expr:statement:call-arg",
+   "expr:statement:direct",
+   "indirect-call",
+   "none",
+   "pointer-arithmetic",
+   "pointer-field-step",
+   "pointer-valued-store",
+   "root-other",
+   "statement-expression",
+   "static-local",
+   "union"
+  ],
+  "IND+ALIAS+COND+RET": [
+   "address-of-base",
+   "aggregate-value",
+   "alias:address-taken",
+   "alias:borrowed-path-unguarded",
+   "alias:contracted-result-unguarded",
+   "alias:derived-local-unguarded",
+   "alias:field-store-owner",
+   "alias:formal-copied",
+   "alias:formal-handed-contracted",
+   "alias:formal-handed-uncontracted",
+   "alias:formal-not-handed",
+   "alias:global-pointer",
+   "alias:guarded-other",
+   "alias:non-pointer-name",
+   "alias:peer-release",
+   "alias:poisoned-by-refusal",
+   "alias:statement-expression-unguarded",
+   "alias:unclassified",
+   "alias:uncontracted-result-unguarded",
+   "call",
+   "cast",
+   "expr:cond:call-arg",
+   "expr:cond:direct",
+   "expr:return:call-arg",
+   "expr:return:direct",
+   "expr:statement:call-arg",
+   "expr:statement:direct",
+   "indirect-call",
+   "none",
+   "pointer-arithmetic",
+   "pointer-field-step",
+   "pointer-step",
+   "pointer-valued-store",
+   "root-other",
+   "statement-expression",
+   "static-local",
+   "union",
+   "volatile-atomic"
+  ]
+ },
+ "closure": {
+  "greedy-top3": {
+   "none": {
+    "rounds": [
+     178
+    ],
+    "freed": 178,
+    "units_freed": 0
+   },
+   "same-unit": {
+    "rounds": [
+     184,
+     12,
+     2,
+     1
+    ],
+    "freed": 199,
+    "units_freed": 0
+   },
+   "cross-unit": {
+    "rounds": [
+     197,
+     21,
+     3,
+     1
+    ],
+    "freed": 222,
+    "units_freed": 0
+   },
+   "direct": 178,
+   "units_covered": 0
+  },
+  "greedy-top6": {
+   "none": {
+    "rounds": [
+     284
+    ],
+    "freed": 284,
+    "units_freed": 0
+   },
+   "same-unit": {
+    "rounds": [
+     290,
+     19,
+     2,
+     1
+    ],
+    "freed": 312,
+    "units_freed": 0
+   },
+   "cross-unit": {
+    "rounds": [
+     303,
+     28,
+     3,
+     1
+    ],
+    "freed": 335,
+    "units_freed": 0
+   },
+   "direct": 284,
+   "units_covered": 0
+  },
+  "greedy-all": {
+   "none": {
+    "rounds": [
+     753
+    ],
+    "freed": 753,
+    "units_freed": 5
+   },
+   "same-unit": {
+    "rounds": [
+     760,
+     94,
+     23,
+     4,
+     1
+    ],
+    "freed": 882,
+    "units_freed": 5
+   },
+   "cross-unit": {
+    "rounds": [
+     818,
+     157,
+     39,
+     12,
+     3,
+     2
+    ],
+    "freed": 1031,
+    "units_freed": 5
+   },
+   "direct": 753,
+   "units_covered": 5
+  },
+  "IND+ALIAS+COND+RET": {
+   "none": {
+    "rounds": [
+     753
+    ],
+    "freed": 753,
+    "units_freed": 5
+   },
+   "same-unit": {
+    "rounds": [
+     760,
+     94,
+     23,
+     4,
+     1
+    ],
+    "freed": 882,
+    "units_freed": 5
+   },
+   "cross-unit": {
+    "rounds": [
+     818,
+     157,
+     39,
+     12,
+     3,
+     2
+    ],
+    "freed": 1031,
+    "units_freed": 5
+   },
+   "direct": 753,
+   "units_covered": 5
+  },
+  "IND+ALIAS": {
+   "none": {
+    "rounds": [
+     494
+    ],
+    "freed": 494,
+    "units_freed": 1
+   },
+   "same-unit": {
+    "rounds": [
+     501,
+     46,
+     14,
+     2
+    ],
+    "freed": 563,
+    "units_freed": 1
+   },
+   "cross-unit": {
+    "rounds": [
+     553,
+     70,
+     19,
+     5,
+     2,
+     1
+    ],
+    "freed": 650,
+    "units_freed": 1
+   },
+   "direct": 494,
+   "units_covered": 1
+  },
+  "none": {
+   "none": {
+    "rounds": [],
+    "freed": 0,
+    "units_freed": 0
+   },
+   "same-unit": {
+    "rounds": [
+     6
+    ],
+    "freed": 6,
+    "units_freed": 0
+   },
+   "cross-unit": {
+    "rounds": [
+     13
+    ],
+    "freed": 13,
+    "units_freed": 0
+   },
+   "direct": 0,
+   "units_covered": 0
+  }
+ },
+ "units_covered_by_step": {
+  "expr:statement:call-arg": 0,
+  "pointer-valued-store": 0,
+  "none": 0,
+  "expr:return:call-arg": 0,
+  "expr:cond:call-arg": 0,
+  "union": 0,
+  "alias:formal-handed-uncontracted": 0,
+  "alias:formal-copied": 0,
+  "alias:derived-local-unguarded": 0,
+  "expr:statement:direct": 0,
+  "alias:guarded-other": 0,
+  "aggregate-value": 0,
+  "alias:borrowed-path-unguarded": 0,
+  "alias:formal-handed-contracted": 0,
+  "alias:poisoned-by-refusal": 0
+ },
+ "bundles": {
+  "K1 call-actual access (statement, return, condition)": {
+   "tags": [
+    "expr:cond:call-arg",
+    "expr:return:call-arg",
+    "expr:statement:call-arg"
+   ],
+   "leaves": 6718,
+   "functions_touched": 1653,
+   "alone": 138,
+   "units_covered": 0,
+   "closure_same_unit": {
+    "freed": 149,
+    "rounds": [
+     144,
+     5
+    ]
+   },
+   "closure_cross_unit": {
+    "freed": 160,
+    "rounds": [
+     152,
+     8
+    ]
+   },
+   "marginal_last": 371
+  },
+  "K2 no typed access (conditions, returns, statements)": {
+   "tags": [
+    "none"
+   ],
+   "leaves": 1058,
+   "functions_touched": 604,
+   "alone": 40,
+   "units_covered": 0,
+   "closure_same_unit": {
+    "freed": 47,
+    "rounds": [
+     46,
+     1
+    ]
+   },
+   "closure_cross_unit": {
+    "freed": 56,
+    "rounds": [
+     53,
+     3
+    ]
+   },
+   "marginal_last": 87
+  },
+  "K3 pointer-valued stores (FIELD-CUSTODY)": {
+   "tags": [
+    "pointer-valued-store"
+   ],
+   "leaves": 2428,
+   "functions_touched": 929,
+   "alone": 53,
+   "units_covered": 0,
+   "closure_same_unit": {
+    "freed": 68,
+    "rounds": [
+     59,
+     8,
+     1
+    ]
+   },
+   "closure_cross_unit": {
+    "freed": 81,
+    "rounds": [
+     70,
+     9,
+     2
+    ]
+   },
+   "marginal_last": 167
+  },
+  "K4 formal custody aliases": {
+   "tags": [
+    "alias:formal-copied",
+    "alias:formal-handed-contracted",
+    "alias:formal-handed-uncontracted",
+    "alias:formal-not-handed"
+   ],
+   "leaves": 4289,
+   "functions_touched": 1211,
+   "alone": 16,
+   "units_covered": 0,
+   "closure_same_unit": {
+    "freed": 23,
+    "rounds": [
+     22,
+     1
+    ]
+   },
+   "closure_cross_unit": {
+    "freed": 59,
+    "rounds": [
+     55,
+     4
+    ]
+   },
+   "marginal_last": 163
+  },
+  "K5 local-origin aliases": {
+   "tags": [
+    "alias:address-taken",
+    "alias:borrowed-path-unguarded",
+    "alias:contracted-result-unguarded",
+    "alias:derived-local-unguarded",
+    "alias:field-store-owner",
+    "alias:guarded-other",
+    "alias:non-pointer-name",
+    "alias:poisoned-by-refusal",
+    "alias:statement-expression-unguarded",
+    "alias:uncontracted-result-unguarded"
+   ],
+   "leaves": 6823,
+   "functions_touched": 1654,
+   "alone": 43,
+   "units_covered": 0,
+   "closure_same_unit": {
+    "freed": 49,
+    "rounds": [
+     49
+    ]
+   },
+   "closure_cross_unit": {
+    "freed": 62,
+    "rounds": [
+     60,
+     2
+    ]
+   },
+   "marginal_last": 232
+  },
+  "K6 direct-position expressible access": {
+   "tags": [
+    "expr:cond:direct",
+    "expr:return:direct",
+    "expr:statement:direct"
+   ],
+   "leaves": 1571,
+   "functions_touched": 769,
+   "alone": 21,
+   "units_covered": 0,
+   "closure_same_unit": {
+    "freed": 27,
+    "rounds": [
+     27
+    ]
+   },
+   "closure_cross_unit": {
+    "freed": 35,
+    "rounds": [
+     35
+    ]
+   },
+   "marginal_last": 142
+  },
+  "K7 residual refusal causes": {
+   "tags": [
+    "address-of-base",
+    "aggregate-value",
+    "call",
+    "cast",
+    "function-designator",
+    "indirect-call",
+    "pointer-arithmetic",
+    "pointer-field-step",
+    "pointer-step",
+    "root-other",
+    "statement-expression",
+    "static-local",
+    "union",
+    "volatile-atomic"
+   ],
+   "leaves": 1849,
+   "functions_touched": 739,
+   "alone": 40,
+   "units_covered": 0,
+   "closure_same_unit": {
+    "freed": 48,
+    "rounds": [
+     46,
+     2
+    ]
+   },
+   "closure_cross_unit": {
+    "freed": 57,
+    "rounds": [
+     54,
+     3
+    ]
+   },
+   "marginal_last": 184
+  }
+ },
+ "bundle_pairs": {
+  "K1+K2": 185,
+  "K1+K3": 202,
+  "K1+K4": 206,
+  "K1+K5": 222,
+  "K1+K6": 170,
+  "K1+K7": 189,
+  "K2+K3": 98,
+  "K2+K4": 59,
+  "K2+K5": 88,
+  "K2+K6": 62,
+  "K2+K7": 81,
+  "K3+K4": 74,
+  "K3+K5": 99,
+  "K3+K6": 78,
+  "K3+K7": 107,
+  "K4+K5": 65,
+  "K4+K6": 41,
+  "K4+K7": 61,
+  "K5+K6": 86,
+  "K5+K7": 115,
+  "K6+K7": 73
+ },
+ "all_bundles_alone": 751,
+ "alone_lists": {
+  "K1": [
+   [
+    "lib/chunkio/src/cio_file_unix.c",
+    "cio_file_native_close"
+   ],
+   [
+    "lib/chunkio/src/cio_file_unix.c",
+    "cio_file_native_open"
+   ],
+   [
+    "lib/chunkio/src/cio_meta.c",
+    "cio_meta_cmp"
+   ],
+   [
+    "lib/chunkio/src/cio_stream.c",
+    "get_stream_path"
+   ],
+   [
+    "lib/cmetrics/src/cmt_encode_prometheus.c",
+    "append_metric_value"
+   ],
+   [
+    "lib/cmetrics/src/cmt_filter.c",
+    "compare_fqname"
+   ],
+   [
+    "lib/cmetrics/src/cmt_filter.c",
+    "compare_label_keys"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/cJSON.c",
+    "print_string"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/cJSON.c",
+    "skip_utf8_bom"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/lz4.c",
+    "LZ4_prepareTable"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/lz4frame.c",
+    "LZ4F_localSaveDict"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/lz4hc.c",
+    "LZ4HC_clearTables"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c",
+    "pb_dec_bool"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/nanopb/pb_encode.c",
+    "pb_enc_fixed_length_bytes"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdhdrhistogram.c",
+    "rd_hdr_iter_next"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka.c",
+    "rd_kafka_Uuid_copy"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka.c",
+    "rd_kafka_init_wait"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka.c",
+    "rd_kafka_poll"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka.c",
+    "rd_kafka_queue_poll"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka.c",
+    "rd_kafka_queue_poll_callback"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka.c",
+    "rd_kafka_share_release"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka.c",
+    "rd_kafka_simple_consumer_add"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka.c",
+    "rd_kafka_toppar_dump"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+    "rd_kafka_AclBinding_destroy_array"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+    "rd_kafka_AdminOptions_set_broker"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+    "rd_kafka_AdminOptions_set_opaque"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+    "rd_kafka_AdminOptions_set_operation_timeout"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+    "rd_kafka_AdminOptions_set_request_timeout"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+    "rd_kafka_AdminOptions_set_validate_only"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+    "rd_kafka_AlterConsumerGroupOffsets_destroy_array"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+    "rd_kafka_ConfigResource_add_ConfigEntry"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+    "rd_kafka_ConfigResource_destroy_array"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+    "rd_kafka_ConsumerGroupDescription_member"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+    "rd_kafka_DeleteConsumerGroupOffsets_destroy_array"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+    "rd_kafka_DeleteGroup_destroy_array"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+    "rd_kafka_DeleteTopic_destroy_array"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+    "rd_kafka_ListConsumerGroupOffsets_destroy_array"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+    "rd_kafka_MemberDescription_copy"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+    "rd_kafka_NewPartitions_destroy_array"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+    "rd_kafka_NewTopic_destroy_array"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+    "rd_kafka_UserScramCredentialAlteration_destroy_array"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_assignment.c",
+    "rd_kafka_assignment_destroy"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_assignor.c",
+    "rd_kafka_assignor_find"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_assignor.c",
+    "rd_kafka_assignors_term"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_aux.c",
+    "rd_kafka_group_result_copy"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_aux.c",
+    "rd_kafka_topic_partition_result_destroy_array"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+    "rd_kafka_broker_destroy_error"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+    "rd_kafka_broker_ops_serve"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+    "rd_kafka_broker_start_reauth_timer"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+    "rd_kafka_broker_update_reconnect_backoff"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+    "rd_kafka_brokers_wait_state_change_async"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+    "rd_kafka_cgrp_group_leader_reset"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+    "rd_kafka_cgrp_heartbeat"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+    "rd_kafka_cgrp_set_join_state"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+    "rd_kafka_cgrp_start_max_poll_interval_timer"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_conf.c",
+    "rd_kafka_conf_flags2str"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_error.c",
+    "rd_kafka_error_name"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_error.c",
+    "rd_kafka_error_string"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+    "rd_kafka_broker_session_update_added_partitions"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+    "rd_kafka_broker_session_update_removed_partitions"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+    "rd_kafkap_Fetch_reply_tags_parse"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+    "rd_kafkap_Fetch_reply_tags_partition_parse"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_idempotence.c",
+    "rd_kafka_idemp_drain_toppar"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_idempotence.c",
+    "rd_kafka_idemp_pid_timer_restart"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c",
+    "rd_kafka_conf_interceptor_add_on_conf_destroy"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c",
+    "rd_kafka_conf_interceptor_add_on_conf_dup"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c",
+    "rd_kafka_conf_interceptor_add_on_conf_set"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c",
+    "rd_kafka_conf_interceptor_add_on_new"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c",
+    "rd_kafka_interceptor_add_on_acknowledgement"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c",
+    "rd_kafka_interceptor_add_on_broker_state_change"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c",
+    "rd_kafka_interceptor_add_on_commit"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c",
+    "rd_kafka_interceptor_add_on_consume"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c",
+    "rd_kafka_interceptor_add_on_destroy"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c",
+    "rd_kafka_interceptor_add_on_request_sent"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c",
+    "rd_kafka_interceptor_add_on_response_received"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c",
+    "rd_kafka_interceptor_add_on_send"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c",
+    "rd_kafka_interceptor_add_on_thread_exit"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c",
+    "rd_kafka_interceptor_add_on_thread_start"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c",
+    "rd_kafka_interceptor_failed"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c",
+    "rd_kafka_interceptors_destroy"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_metadata.c",
+    "rd_kafka_metadata_log"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_metadata_cache.c",
+    "rd_kafka_metadata_cache_wait_state_change_async"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+    "rd_kafka_mock_broker_add"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+    "rd_kafka_mock_broker_decommission"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+    "rd_kafka_mock_broker_remove_from_metadata"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+    "rd_kafka_mock_broker_set_down"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+    "rd_kafka_mock_broker_set_rtt"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+    "rd_kafka_mock_broker_set_up"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+    "rd_kafka_mock_clear_requests"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+    "rd_kafka_mock_error_stack_next"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+    "rd_kafka_mock_set_apiversion"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+    "rd_kafka_mock_start_request_tracking"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+    "rd_kafka_mock_stop_request_tracking"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+    "rd_kafka_mock_telemetry_set_push_interval"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c",
+    "rd_kafka_mock_cgrp_classic_rebalance_timer_restart"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_msg.c",
+    "rd_kafka_message_leader_epoch"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_msg.c",
+    "rd_kafka_msgq_enq_sorted"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_msgset_writer.c",
+    "rd_kafka_msgset_writer_compress_gzip"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_msgset_writer.c",
+    "rd_kafka_msgset_writer_compress_lz4"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_msgset_writer.c",
+    "rd_kafka_msgset_writer_compress_snappy"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_msgset_writer.c",
+    "rd_kafka_msgset_writer_compress_zstd"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_offset.c",
+    "rd_kafka_offset_file_sync"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+    "rd_kafka_topic_partition_list_cmp"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+    "rd_kafka_topic_partition_list_log"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+    "rd_kafka_toppar_insert_msgq"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+    "rd_kafka_toppar_reset_base_msgid"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+    "rd_kafka_toppar_retry_msgq"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_queue.c",
+    "rd_kafka_q_pop_serve_maybe_consume"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_queue.c",
+    "rd_kafka_q_serve_maybe_consume"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_queue.c",
+    "rd_kafka_queue_forward"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+    "rd_kafka_AclBinding_request_size"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+    "rd_kafkap_Produce_reply_tags_destroy"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+    "rd_kafkap_Produce_reply_tags_parse"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+    "rd_kafkap_Produce_reply_tags_partition_parse"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c",
+    "ConsumerPair_cmp"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_timer.c",
+    "rd_kafka_timer_schedule"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_transport.c",
+    "rd_kafka_transport_poll"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c",
+    "rd_kafka_txn_coord_timer_start"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c",
+    "rd_kafka_txn_schedule_register_partitions"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdlist.c",
+    "rd_list_cmp"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdlist.c",
+    "rd_list_dump"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdlist.c",
+    "rd_list_is_sorted"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdxxhash.c",
+    "XXH32_digest_endian"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdxxhash.c",
+    "XXH64_digest_endian"
+   ],
+   [
+    "lib/monkey/mk_core/mk_iov.c",
+    "mk_iov_free_marked"
+   ],
+   [
+    "lib/monkey/mk_server/mk_config.c",
+    "mk_config_set_init_values"
+   ],
+   [
+    "lib/monkey/mk_server/mk_http_parser.c",
+    "cb_copy_chunk"
+   ],
+   [
+    "lib/monkey/mk_server/mk_http_parser.c",
+    "header_cmp"
+   ],
+   [
+    "lib/monkey/mk_server/mk_mimetype.c",
+    "mk_mimetype_find"
+   ],
+   [
+    "lib/monkey/mk_server/mk_plugin.c",
+    "mk_plugin_load_static"
+   ],
+   [
+    "lib/monkey/mk_server/mk_user.c",
+    "mk_user_set_uidgid"
+   ],
+   [
+    "lib/monkey/mk_server/mk_utils.c",
+    "mk_utils_gmt_cache_add"
+   ],
+   [
+    "src/flb_input_chunk.c",
+    "flb_input_chunk_has_other_routes"
+   ],
+   [
+    "src/flb_input_chunk.c",
+    "flb_input_chunk_has_overlimit_routes"
+   ],
+   [
+    "src/flb_input_chunk.c",
+    "flb_input_chunk_safe_delete"
+   ]
+  ],
+  "K2": [
+   [
+    "lib/librdkafka-2.15.0/src/cJSON.c",
+    "cJSON_DetachItemFromObject"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/cJSON.c",
+    "cJSON_DetachItemFromObjectCaseSensitive"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/lz4.c",
+    "LZ4_NbCommonBytes"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/lz4.c",
+    "LZ4_hashPosition"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/lz4.c",
+    "LZ4_initStream"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c",
+    "pb_decode_svarint"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c",
+    "pb_skip_varint"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/nanopb/pb_encode.c",
+    "pb_encode"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/nanopb/pb_encode.c",
+    "pb_get_encoded_size"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka.c",
+    "rd_kafka_path_is_dir"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka.c",
+    "rd_kafka_purge_flags2str"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka.c",
+    "rd_kafka_test_fatal_error"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka.c",
+    "rd_kafka_wait_destroyed"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+    "rd_kafka_broker_ApiVersion_at_least"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+    "rd_kafka_broker_ApiVersion_at_least_no_lock"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_conf.c",
+    "rd_kafka_conf_finalize_oauthbearer_oidc_grant_type"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_conf.c",
+    "rd_kafka_conf_validate_single"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_conf.c",
+    "rd_kafka_sw_str_sanitize_inplace"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_feature.c",
+    "rd_kafka_ApiVersion_is_queryable"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_msg.c",
+    "rd_kafka_msg_partitioner_fnv1a"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_msg.c",
+    "rd_kafka_msg_partitioner_murmur2"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+    "rd_kafka_topic_partition_list_set_offset"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_pattern.c",
+    "rd_kafka_pattern_list_new"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+    "rd_kafka_actions2str"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c",
+    "rd_kafka_share_partition_offsets_list_new"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_telemetry.c",
+    "rd_kafka_filter_broker_by_GetTelemetrySubscription"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_topic.c",
+    "rd_kafka_topic_cmp_rkt"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdlist.c",
+    "rd_list_index"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdrand.c",
+    "rd_rand_bytes"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdrand.c",
+    "rd_rand_bytes_by_ossl"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/snappy.c",
+    "log2_floor"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/snappy.c",
+    "rd_kafka_snappy_uncompressed_length"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/tinycthread_extra.c",
+    "thrd_setname"
+   ],
+   [
+    "lib/monkey/mk_core/mk_file.c",
+    "mk_file_to_buffer"
+   ],
+   [
+    "lib/monkey/mk_server/mk_plugin.c",
+    "mk_handler_param_get"
+   ],
+   [
+    "lib/monkey/mk_server/mk_socket.c",
+    "mk_socket_set_nonblocking"
+   ],
+   [
+    "lib/monkey/mk_server/mk_user.c",
+    "mk_user_undo_uidgid"
+   ],
+   [
+    "lib/monkey/mk_server/mk_utils.c",
+    "mk_utils_gmt2utime"
+   ],
+   [
+    "src/flb_input_chunk.c",
+    "flb_input_chunk_prefers_physical_delete"
+   ]
+  ],
+  "K3": [
+   [
+    "lib/chunkio/src/chunkio.c",
+    "cio_set_log_callback"
+   ],
+   [
+    "lib/cmetrics/src/cmt_decode_msgpack.c",
+    "create_counter_instance"
+   ],
+   [
+    "lib/cmetrics/src/cmt_decode_msgpack.c",
+    "create_exp_histogram_instance"
+   ],
+   [
+    "lib/cmetrics/src/cmt_decode_msgpack.c",
+    "create_gauge_instance"
+   ],
+   [
+    "lib/cmetrics/src/cmt_decode_msgpack.c",
+    "create_histogram_instance"
+   ],
+   [
+    "lib/cmetrics/src/cmt_decode_msgpack.c",
+    "create_summary_instance"
+   ],
+   [
+    "lib/cmetrics/src/cmt_decode_msgpack.c",
+    "create_untyped_instance"
+   ],
+   [
+    "lib/ctraces/src/ctr_encode_opentelemetry.c",
+    "otel_span_set_attributes"
+   ],
+   [
+    "lib/ctraces/src/ctr_encode_opentelemetry.c",
+    "otel_span_set_events"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/cJSON.c",
+    "suffix_object"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/lz4.c",
+    "LZ4_renormDictT"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c",
+    "buf_read"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c",
+    "decode_pointer_field"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/nanopb/pb_encode.c",
+    "buf_write"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/nanopb/pb_encode.c",
+    "pb_ostream_from_buffer"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdbuf.c",
+    "rd_buf_init"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+    "rd_kafka_DeleteRecords_new"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+    "rd_kafka_ElectLeaders_new"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+    "rd_kafka_ListOffsetsResultInfo_new"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+    "rd_kafka_TopicCollection_of_topic_names"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+    "rd_kafka_UserScramCredentialDeletion_new"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_assignment.c",
+    "rd_kafka_assignment_init"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_assignor.c",
+    "ut_populate_internal_broker_metadata"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_aux.c",
+    "rd_kafka_Node_new"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_buf.c",
+    "rd_kafka_buf_set_maker"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+    "PartitionMemberInfo_new"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+    "rd_kafkap_Fetch_reply_tags_set_topic"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+    "rd_kafkap_Fetch_reply_tags_set_topic_cnt"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+    "rd_kafka_mock_partition_set_leader0"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c",
+    "rd_kafka_mock_cgrp_consumer_target_assignment_new0"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_op.c",
+    "rd_kafka_op_new_cb"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_op.c",
+    "rd_kafka_op_new_reply"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+    "rd_kafka_topic_partition_list_grow"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+    "rd_kafka_topic_partition_new"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+    "rd_kafka_topic_partition_new_from_rktp"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+    "rd_kafka_topic_partition_set_metadata_from_rktp_stored"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_pattern.c",
+    "rd_kafka_pattern_new"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_range_assignor.c",
+    "rd_kafka_member_assigned_partitions_pair_new"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+    "rd_kafka_ListOffsetRequest_parameters_make"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c",
+    "rd_kafka_sasl_scram_conf_validate"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c",
+    "rd_kafka_share_ack_batch_entry_new"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c",
+    "partitionCanParticipateInReassignment"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_timer.c",
+    "rd_kafka_timer_unschedule"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdlist.c",
+    "rd_list_grow"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdmap.c",
+    "rd_map_alloc_buckets"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c",
+    "ut_ack_create_message"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/snappy.c",
+    "rd_kafka_snappy_init_env"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/snappy.c",
+    "writer_set_expected_length"
+   ],
+   [
+    "lib/monkey/mk_core/mk_iov.c",
+    "mk_iov_consume"
+   ],
+   [
+    "lib/monkey/mk_core/mk_memory.c",
+    "mk_ptr_create"
+   ],
+   [
+    "lib/monkey/mk_server/mk_http_parser.c",
+    "request_set"
+   ],
+   [
+    "lib/monkey/mk_server/mk_lib.c",
+    "mk_vhost_set_property"
+   ],
+   [
+    "lib/monkey/mk_server/mk_utils.c",
+    "mk_buffer_cat"
+   ]
+  ],
+  "K4": [
+   [
+    "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+    "get_context_arena"
+   ],
+   [
+    "lib/cmetrics/src/cmt_encode_prometheus.c",
+    "metric_escape"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rddl.c",
+    "rd_dl_close"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_assignor.c",
+    "rd_kafka_assignor_cmp_str"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_assignor.c",
+    "rd_kafka_group_member_cmp"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+    "rd_kafka_broker_start_reauth_cb"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_cert.c",
+    "rd_kafka_conf_ssl_passwd_cb"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_header.c",
+    "rd_kafka_header_cmp_str"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+    "rd_kafka_mock_connection_write_out_tmr_cb"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+    "rd_kafka_topic_partition_cmp"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+    "rd_kafka_topic_partition_cmp_topic"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+    "rd_kafka_topic_partition_not_regex"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_range_assignor.c",
+    "rd_kafka_member_assigned_partitions_pair_cmp"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_ssl.c",
+    "rd_kafka_transport_ssl_passwd_cb"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_topic.c",
+    "rd_kafka_topic_info_topic_cmp"
+   ],
+   [
+    "lib/monkey/mk_server/mk_config.c",
+    "mk_config_print_error_msg"
+   ]
+  ],
+  "K5": [
+   [
+    "lib/chunkio/src/cio_chunk.c",
+    "cio_chunk_close_stream"
+   ],
+   [
+    "lib/chunkio/src/cio_file.c",
+    "format_acl_error_message"
+   ],
+   [
+    "lib/cmetrics/src/cmt_decode_msgpack.c",
+    "unpack_exp_histogram_count"
+   ],
+   [
+    "lib/cmetrics/src/cmt_decode_msgpack.c",
+    "unpack_exp_histogram_negative_bucket"
+   ],
+   [
+    "lib/cmetrics/src/cmt_decode_msgpack.c",
+    "unpack_exp_histogram_positive_bucket"
+   ],
+   [
+    "lib/cmetrics/src/cmt_decode_msgpack.c",
+    "unpack_exp_histogram_sum"
+   ],
+   [
+    "lib/cmetrics/src/cmt_decode_msgpack.c",
+    "unpack_exp_histogram_sum_set"
+   ],
+   [
+    "lib/cmetrics/src/cmt_decode_msgpack.c",
+    "unpack_exp_histogram_zero_count"
+   ],
+   [
+    "lib/cmetrics/src/cmt_decode_msgpack.c",
+    "unpack_histogram_bucket"
+   ],
+   [
+    "lib/cmetrics/src/cmt_decode_msgpack.c",
+    "unpack_histogram_count"
+   ],
+   [
+    "lib/cmetrics/src/cmt_decode_msgpack.c",
+    "unpack_metric_hash"
+   ],
+   [
+    "lib/cmetrics/src/cmt_decode_msgpack.c",
+    "unpack_metric_value_type"
+   ],
+   [
+    "lib/cmetrics/src/cmt_decode_msgpack.c",
+    "unpack_metric_value_uint64"
+   ],
+   [
+    "lib/cmetrics/src/cmt_decode_msgpack.c",
+    "unpack_summary_count"
+   ],
+   [
+    "lib/cmetrics/src/cmt_decode_msgpack.c",
+    "unpack_summary_quantile"
+   ],
+   [
+    "lib/cmetrics/src/cmt_decode_msgpack.c",
+    "unpack_summary_quantiles_set"
+   ],
+   [
+    "lib/cmetrics/src/cmt_decode_msgpack.c",
+    "unpack_summary_sum"
+   ],
+   [
+    "lib/cmetrics/src/cmt_encode_msgpack.c",
+    "pack_header"
+   ],
+   [
+    "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+    "fetch_metadata_kvlist_key"
+   ],
+   [
+    "lib/cmetrics/src/cmt_encode_opentelemetry_batch.c",
+    "request_data_point_count"
+   ],
+   [
+    "lib/cmetrics/src/cmt_encode_text.c",
+    "append_summary_metric_value"
+   ],
+   [
+    "lib/cmetrics/src/cmt_filter.c",
+    "metrics_check_label_value_existence"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/cJSON.c",
+    "cJSON_GetArraySize"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/lz4frame.c",
+    "LZ4F_optimalBSID"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka.c",
+    "rd_kafka_Uuid_str"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka.c",
+    "rd_kafka_global_cnt_get"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_conf.c",
+    "rd_kafka_conf_prop_find"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_op.c",
+    "rd_kafka_op_new0"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+    "rd_kafka_topic_partition_get_current_leader_epoch"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+    "rd_kafka_topic_partition_get_leader_epoch"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+    "rd_kafka_topic_partition_new_with_topic_id"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+    "rd_kafka_toppar_get0"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_sasl_cyrus.c",
+    "rd_kafka_sasl_cyrus_ready"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_timer.c",
+    "rd_kafka_timers_next"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/snappy.c",
+    "append"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/snappy.c",
+    "get_hash_table"
+   ],
+   [
+    "lib/monkey/mk_core/mk_file.c",
+    "mk_file_get_info"
+   ],
+   [
+    "lib/monkey/mk_core/mk_rconf.c",
+    "mk_rconf_section_entry_add"
+   ],
+   [
+    "lib/monkey/mk_server/mk_fifo.c",
+    "mk_fifo_queue_destroy_all"
+   ],
+   [
+    "lib/monkey/mk_server/mk_fifo.c",
+    "mk_fifo_queue_id_destroy"
+   ],
+   [
+    "lib/monkey/mk_server/mk_net.c",
+    "net_plain_close"
+   ],
+   [
+    "lib/monkey/mk_server/mk_scheduler.c",
+    "mk_sched_event_free"
+   ],
+   [
+    "lib/monkey/mk_server/mk_vhost.c",
+    "mk_vhost_fdt_chain_lookup"
+   ]
+  ],
+  "K6": [
+   [
+    "lib/librdkafka-2.15.0/src/cJSON.c",
+    "cJSON_GetErrorPtr"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/cJSON.c",
+    "cJSON_GetStringValue"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdbuf.c",
+    "extra_alloc"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka.c",
+    "rd_kafka_name"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+    "rd_kafka_ConfigEntry_name"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+    "rd_kafka_ConfigResource_configs"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+    "rd_kafka_MemberDescription_assignment"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+    "rd_kafka_TopicDescription_topic_id"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+    "rd_kafka_UserScramCredentialsDescription_scramcredentialinfo"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+    "rd_kafka_broker_weight_usable"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_conf.c",
+    "rd_kafka_conf"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_event.c",
+    "rd_kafka_event_name"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+    "rd_kafka_mock_partition_find"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+    "rd_kafka_mock_partition_next_leader_response"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+    "rd_kafka_mock_msgset_est_record_size"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+    "rd_kafkap_leader_discovery_tmpabuf_add_alloc_brokers"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c",
+    "rd_kafka_share_partition_offsets_offsets"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_telemetry_decode.c",
+    "clear_unit_test_data"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_telemetry_decode.c",
+    "unit_test_telemetry_decoded_int64"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdlist.c",
+    "rd_list_elem"
+   ],
+   [
+    "lib/monkey/mk_server/mk_plugin.c",
+    "mk_plugin_time_now_human"
+   ]
+  ],
+  "K7": [
+   [
+    "lib/cmetrics/src/cmt_decode_statsd.c",
+    "cmt_get_statsd_type"
+   ],
+   [
+    "lib/cmetrics/src/cmt_encode_influx.c",
+    "line_protocol_escape"
+   ],
+   [
+    "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+    "fetch_array_kvlist_entry"
+   ],
+   [
+    "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+    "fetch_metadata_array_key"
+   ],
+   [
+    "lib/cmetrics/src/cmt_encode_text.c",
+    "fetch_metadata_kvlist_key"
+   ],
+   [
+    "lib/cmetrics/src/cmt_label.c",
+    "cmt_labels_create"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/cJSON.c",
+    "buffer_skip_whitespace"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/cJSON.c",
+    "cJSON_New_Item"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/cJSON.c",
+    "cJSON_free"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/cJSON.c",
+    "cJSON_malloc"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/lz4.c",
+    "LZ4_resetStream_fast"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/lz4.c",
+    "LZ4_slideInputBuffer"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/lz4frame.c",
+    "LZ4F_freeCDict"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/lz4frame.c",
+    "LZ4F_freeCompressionContext"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/lz4frame.c",
+    "LZ4F_freeDecompressionContext"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/lz4hc.c",
+    "LZ4_compressHC2_continue"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/lz4hc.c",
+    "LZ4_compressHC2_limitedOutput_continue"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdhdrhistogram.c",
+    "rd_hdr_getCountAtIndex"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka.c",
+    "rd_kafka_errno"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+    "rd_kafka_DescribeCluster_result_cluster_id"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+    "rd_kafka_DescribeCluster_result_controller"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+    "rd_kafka_ElectLeaders_result_result"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_assignor.c",
+    "rtrim"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+    "rd_kafka_broker_monitor_op_cb"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_conf.c",
+    "rd_kafka_confval_get_ptr"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_conf.c",
+    "rd_kafka_confval_get_str"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+    "rd_kafka_toppar_fetch_decide_next_fetch_start_pos"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_metadata_cache.c",
+    "rd_kafka_metadata_cache_entry_by_id_cmp"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+    "rd_kafka_mock_error_stack_find"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+    "rd_kafka_mock_topic_find_by_id"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_msg.c",
+    "rd_kafka_message_latency"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+    "rd_kafka_fetch_pos2str"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c",
+    "do_unittest_illegal_extension_keys_should_fail"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c",
+    "rd_kafka_sasl_scram_H"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdkafka_telemetry_encode.c",
+    "get_member_id"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdmap.c",
+    "rd_map_elem_cmp"
+   ],
+   [
+    "lib/librdkafka-2.15.0/src/rdmap.c",
+    "rd_map_init"
+   ],
+   [
+    "lib/monkey/mk_core/mk_rconf.c",
+    "check_indent"
+   ],
+   [
+    "lib/monkey/mk_server/mk_stream.c",
+    "channel_write_in_file"
+   ],
+   [
+    "lib/monkey/mk_server/mk_utils.c",
+    "mk_utils_hex2int"
+   ]
+  ]
+ },
+ "alone_lists_unique": {
+  "K1": 135,
+  "K2": 39,
+  "K3": 53,
+  "K4": 16,
+  "K5": 43,
+  "K6": 21,
+  "K7": 40
+ }
+}
