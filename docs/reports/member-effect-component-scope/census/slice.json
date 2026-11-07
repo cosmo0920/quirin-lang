@@ -1,0 +1,324 @@
+{
+ "report": "/media/Data/GitHub/quirin-lang/private/baselines/7b726587bdf6a8213f451fa1c78297bb5e476ef7/fluent-bit-tail-pause/slice/resource-diagnostics.json",
+ "source_root": "/media/Data/GitHub/quirin-lang/private/w47-tail/attempt-1/prep/fluent-bit-clang-source",
+ "row_scopes": {
+  "several functions": 270
+ },
+ "leaves": 29,
+ "functions": 6,
+ "table": [
+  {
+   "base": "struct",
+   "member": "pointer typedef",
+   "leaves": 5,
+   "functions": 2,
+   "sole_blocker_functions": []
+  },
+  {
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "leaves": 22,
+   "functions": 4,
+   "sole_blocker_functions": []
+  },
+  {
+   "base": "struct",
+   "member": "unresolved name",
+   "leaves": 2,
+   "functions": 2,
+   "sole_blocker_functions": []
+  }
+ ],
+ "rows": [
+  {
+   "file": "src/flb_input.c",
+   "function": "collector_start",
+   "status": "Unknown",
+   "origin": "src/flb_input.c:2368",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "unresolved name",
+   "sole": false
+  },
+  {
+   "file": "src/flb_input.c",
+   "function": "flb_input_instance_destroy",
+   "status": "Unknown",
+   "origin": "src/flb_input.c:1165",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "src/flb_input.c",
+   "function": "flb_input_instance_destroy",
+   "status": "Unknown",
+   "origin": "src/flb_input.c:1196",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "src/flb_input.c",
+   "function": "flb_input_instance_destroy",
+   "status": "Unknown",
+   "origin": "src/flb_input.c:1200",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "src/flb_input.c",
+   "function": "flb_input_instance_destroy",
+   "status": "Unknown",
+   "origin": "src/flb_input.c:1204",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "src/flb_input.c",
+   "function": "flb_input_instance_destroy",
+   "status": "Unknown",
+   "origin": "src/flb_input.c:1208",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "src/flb_input.c",
+   "function": "flb_input_instance_destroy",
+   "status": "Unknown",
+   "origin": "src/flb_input.c:1212",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "src/flb_input.c",
+   "function": "flb_input_instance_destroy",
+   "status": "Unknown",
+   "origin": "src/flb_input.c:1216",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "src/flb_input.c",
+   "function": "flb_input_instance_destroy",
+   "status": "Unknown",
+   "origin": "src/flb_input.c:1220",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "src/flb_input.c",
+   "function": "flb_input_instance_destroy",
+   "status": "Unknown",
+   "origin": "src/flb_input.c:1224",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "src/flb_input.c",
+   "function": "flb_input_instance_destroy",
+   "status": "Unknown",
+   "origin": "src/flb_input.c:1228",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "src/flb_input.c",
+   "function": "flb_input_instance_destroy",
+   "status": "Unknown",
+   "origin": "src/flb_input.c:1232",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "src/flb_input.c",
+   "function": "flb_input_instance_destroy",
+   "status": "Unknown",
+   "origin": "src/flb_input.c:1236",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "src/flb_input.c",
+   "function": "flb_input_instance_destroy",
+   "status": "Unknown",
+   "origin": "src/flb_input.c:1255",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "src/flb_input.c",
+   "function": "flb_input_instance_destroy",
+   "status": "Unknown",
+   "origin": "src/flb_input.c:1281",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "src/flb_input_thread.c",
+   "function": "input_thread_instance_destroy",
+   "status": "Unknown",
+   "origin": "src/flb_input_thread.c:206",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "plugins/in_tail/tail_file.c",
+   "function": "dormant_destroy",
+   "status": "Unknown",
+   "origin": "plugins/in_tail/tail_file.c:406",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "pointer typedef",
+   "sole": false
+  },
+  {
+   "file": "plugins/in_tail/tail_file.c",
+   "function": "dormant_destroy",
+   "status": "Unknown",
+   "origin": "plugins/in_tail/tail_file.c:407",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "pointer typedef",
+   "sole": false
+  },
+  {
+   "file": "plugins/in_tail/tail_file.c",
+   "function": "flb_tail_file_name_dup",
+   "status": "Unknown",
+   "origin": "plugins/in_tail/tail_file.c:2731",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "plugins/in_tail/tail_file.c",
+   "function": "flb_tail_file_name_dup",
+   "status": "Unknown",
+   "origin": "plugins/in_tail/tail_file.c:2737",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "plugins/in_tail/tail_file.c",
+   "function": "flb_tail_file_remove",
+   "status": "Unknown",
+   "origin": "plugins/in_tail/tail_file.c:2037",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "pointer typedef",
+   "sole": false
+  },
+  {
+   "file": "plugins/in_tail/tail_file.c",
+   "function": "flb_tail_file_remove",
+   "status": "Unknown",
+   "origin": "plugins/in_tail/tail_file.c:2038",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "pointer typedef",
+   "sole": false
+  },
+  {
+   "file": "plugins/in_tail/tail_file.c",
+   "function": "flb_tail_file_remove",
+   "status": "Unknown",
+   "origin": "plugins/in_tail/tail_file.c:2049",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "unresolved name",
+   "sole": false
+  },
+  {
+   "file": "plugins/in_tail/tail_file.c",
+   "function": "flb_tail_file_remove",
+   "status": "Unknown",
+   "origin": "plugins/in_tail/tail_file.c:2053",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "plugins/in_tail/tail_file.c",
+   "function": "flb_tail_file_remove",
+   "status": "Unknown",
+   "origin": "plugins/in_tail/tail_file.c:2060",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "plugins/in_tail/tail_file.c",
+   "function": "flb_tail_file_remove",
+   "status": "Unknown",
+   "origin": "plugins/in_tail/tail_file.c:2061",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "plugins/in_tail/tail_file.c",
+   "function": "flb_tail_file_remove",
+   "status": "Unknown",
+   "origin": "plugins/in_tail/tail_file.c:2062",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "plugins/in_tail/tail_file.c",
+   "function": "flb_tail_file_remove",
+   "status": "Unknown",
+   "origin": "plugins/in_tail/tail_file.c:2063",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "plugins/in_tail/tail_file.c",
+   "function": "flb_tail_file_remove",
+   "status": "Unknown",
+   "origin": "plugins/in_tail/tail_file.c:2064",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "pointer typedef",
+   "sole": false
+  }
+ ]
+}
