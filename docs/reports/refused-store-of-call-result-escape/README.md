@@ -20,9 +20,13 @@ provisional. Nothing is presented or filed as an upstream defect.
 
 ## 1. Census
 
-Two runs of the census binary, built at the base with
-`--features qcore-c-gateway/indirect-census`, both over the unit's own
-preprocessed text.
+Two census builds at the base, both with the gateway's `indirect-census`
+feature and both over the unit's own preprocessed text:
+
+* a release `quirin-audit` built with
+  `--features qcore-c-gateway/indirect-census`;
+* a test executable built with `-p qcore-c-gateway --features indirect-census`
+  under the test-link configuration.
 
 * **Token level** ([evidence/token-census.json](evidence/token-census.json)).
   `analyze_legacy_c_translation_unit` ran over `cmt_map.c -E -P` with
@@ -50,11 +54,31 @@ preprocessed text.
 * **Route level** ([evidence/route-census/](evidence/route-census/)).
   `quirin-audit current` ran on the user's 046accf6 inputs with a one-unit
   selection ([cmt-map-selection.json](evidence/route-census/cmt-map-selection.json)),
-  through an audit slot. ROUTE-CENSUS-RESULT
+  through an audit slot. The census binary has SHA-256 `b0157d67…53f8`.
+  The run exited 0 after 24 min, following a 4 h 45 min slot wait
+  ([slot.json](evidence/route-census/slot.json)). The route analyses the
+  Monkey units as well as the selected unit, 30 units in all.
+  [summary.json](evidence/route-census/summary.json), made by
+  [scripts/route_census_record.py](scripts/route_census_record.py), records:
+  * **Rows.** `cmt_map_metric_get` and `metric_prepare_storage` are
+    identical to the user's run, including the `leak` at 5639, and the
+    unit's `source_identity` is the same.
+  * **Rows that differ.** Six other cmt_map.c functions differ, from the binary
+    era: the user's run used a 13337d0af-era binary, and member-effect
+    refusals and `metric_release_storage` Safe landed later. None of them is
+    Unsafe.
+  * **Witness stream** ([leak-witness.jsonl.gz](evidence/route-census/leak-witness.jsonl.gz)):
+    19 records.
+    * 7 leak witnesses, all for the Monkey route's own true positives
+      `mk_http_error` (6951 ← 6942) and `mk_net_conn_create` (6028 ← 5976),
+      both settled. They are the in-run positive control.
+    * 12 refused-test edges, all Monkey functions.
+    * **0** records for any cmt_map.c function.
 
 | Probe | `cmt_map_metric_get` | Witness records |
 |---|---|---:|
 | Report row, user's run | Unsafe: `leak` line 5639, acquired at `cmt_map.c:210`; `call to uncontracted function map_metric_get_unlocked` | — |
+| Route census (current, one-unit selection) | Unsafe: the same two diagnostics as the user's run | **0** (7 for the two Monkey leaks) |
 | Token census | Unsafe: `Leak { acquisition_line: 5639 }` **at line 5639**, plus the same uncontracted call and a CG30 refusal (no typed AST on this entry point) | **0** |
 | Positive control (`char *p = calloc(1, 1);` leaked at `return 0;`) | `w` Unsafe: leak at exit line 7, acquired at line 3 | 4 |
 | Guard mutation ([evidence/guard-mutation.json](evidence/guard-mutation.json)): `if (map->metric_static_set)` in `cmt_map_destroy` → `if (1)` | **Unknown**, no leak; its other two diagnostics unchanged | 0 |

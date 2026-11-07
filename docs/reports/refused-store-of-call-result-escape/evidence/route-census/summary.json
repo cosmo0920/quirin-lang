@@ -1,0 +1,138 @@
+{
+ "schema": "refused-store-route-census/1",
+ "card": "REFUSED-STORE-OF-CALL-RESULT-ESCAPE",
+ "run": "quirin-audit current, one-unit selection (cmt_map.c); the route also analyses the Monkey units",
+ "units": 30,
+ "unit_status": {
+  "lib/cmetrics/src/cmt_map.c": "Unsafe",
+  "lib/monkey/mk_server/mk_http.c": "Unsafe",
+  "lib/monkey/mk_server/mk_net.c": "Unsafe",
+  "lib/monkey/tls/tls_stub.c": "Safe"
+ },
+ "cmt_map_rows_equal_user_run": false,
+ "cmt_map_rows_differing_from_user_run": {
+  "cmt_map_destroy": {
+   "census": "Unknown",
+   "user": "Unknown"
+  },
+  "cmt_map_metrics_expire": {
+   "census": "Unknown",
+   "user": "Unknown"
+  },
+  "map_metric_destroy_unlocked": {
+   "census": "Unknown",
+   "user": "Unknown"
+  },
+  "metric_index_add": {
+   "census": "Unknown",
+   "user": "Unknown"
+  },
+  "metric_index_resize": {
+   "census": "Unknown",
+   "user": "Unknown"
+  },
+  "metric_release_storage": {
+   "census": "Safe",
+   "user": "Unknown"
+  }
+ },
+ "cmt_map_source_identity": "3416ae7a908fb4fa86334009324127bfe24fbadf549ca726715aa00bd162fcaf",
+ "cmt_map_metric_get": {
+  "status": "Unsafe",
+  "diagnostics": [
+   [
+    "leak",
+    5639,
+    "live obligation acquired at lib/cmetrics/src/cmt_map.c:210"
+   ],
+   [
+    "unsupported",
+    5840,
+    "call to uncontracted function `map_metric_get_unlocked`"
+   ]
+  ]
+ },
+ "metric_prepare_storage": {
+  "status": "Unknown",
+  "diagnostics": [
+   [
+    "unknown_alias",
+    5636,
+    "unresolved resource identity `histogram`"
+   ],
+   [
+    "unsupported",
+    5639,
+    "indirect memory access is outside the resource projection"
+   ],
+   [
+    "unsupported",
+    5642,
+    "indirect memory access is outside the resource projection"
+   ],
+   [
+    "unknown_alias",
+    5648,
+    "unresolved resource identity `summary`"
+   ],
+   [
+    "unsupported",
+    5652,
+    "indirect memory access is outside the resource projection"
+   ],
+   [
+    "unsupported",
+    5655,
+    "indirect memory access is outside the resource projection"
+   ]
+  ]
+ },
+ "witness_records": 19,
+ "witness_records_by_kind_and_function": [
+  [
+   "refused_test_edge",
+   "mk_config_listen_parse",
+   3
+  ],
+  [
+   "refused_test_edge",
+   "mk_http_error_page",
+   4
+  ],
+  [
+   "refused_test_edge",
+   "mk_plugin_load",
+   1
+  ],
+  [
+   "refused_test_edge",
+   "mk_sched_add_connection",
+   4
+  ],
+  [
+   "witness",
+   "mk_http_error",
+   4
+  ],
+  [
+   "witness",
+   "mk_net_conn_create",
+   3
+  ]
+ ],
+ "leak_witnesses": [
+  [
+   "mk_http_error",
+   6951,
+   6942,
+   true
+  ],
+  [
+   "mk_net_conn_create",
+   6028,
+   5976,
+   true
+  ]
+ ],
+ "cmt_map_witness_records": 0
+}
