@@ -97,3 +97,76 @@ other premises: `rd_kafka_snappy_free_env` ends with `clear_env(env)`, a
 whole-base call to a function with no member effect (P1); the three bodies
 with a typedef-spelled base are the base arm of
 W45-MEMBER-RELEASE-UNTYPED-DECLARATIONS.
+
+## 3. Decision: admit the untyped member at an admitted release; no component premise to state
+
+The registered alternatives were to admit the effect inside a component with
+its premises stated, or to record the premise that keeps it refused. Neither
+fits: there is no component premise, and the premise that refuses
+`cmt_opts_exit` is a reading defect fail-closed settles. Clang types
+`opts->ns` as the value of a `char *` member, exactly the fact the lexical
+reader gives a `*`-spelled member, and rule 1 needs nothing more. The card
+therefore admits that one reading, at that one position, and keeps every
+other premise:
+
+**[Rule 38j](../../agents/rules/38j.md), amended in place.** A release
+event's actual `B->F` whose member the lexical declaration reader leaves
+untyped is read by Clang instead
+(`legacy_call_argument_access.rs::candidate_arguments`, the
+`Refusal::UntypedMember` arm; `legacy_member_effect.rs::Parser::typed_member_release`),
+only when:
+
+- the position is `Released { nullable: true }` of the contract in force;
+- `(B, F)` is a place rule 5k's P1-P4 or rule 38j's P1-P3 admitted in this
+  body (`AdmissibleReleases::admits`);
+- the lexical refusal is the untyped **member**, so the reader already typed
+  `B` as a record pointer (an untyped base, the other arm of
+  W45-MEMBER-RELEASE-UNTYPED-DECLARATIONS, is not read);
+- Clang's actual, through parentheses, is an `LValueToRValue` read (never an
+  `ArrayToPointerDecay`, which would hand an interior address to the
+  release) of an arrow `MemberExpr` named `F` whose type is an object
+  pointer with no `volatile`/`_Atomic`, over a `DeclRefExpr` to the
+  parameter `B` that points to no `union`.
+
+The actual then reads as the lexical `B->F` does (base `B`, a pointer value,
+no chain) and rule 1's lowering is unchanged (the position read `Borrowed`).
+No rule id is added: the amendment is a reading inside rule 38j's own event
+(ids 40, 41, 42 reserved or held elsewhere, checked).
+
+**Scope of the reading.** Rule 1's admission is shared by rule 5k and rule
+38j, so a rule-5k body over a pointer-typedef member
+(`cfl_sds_destroy(opts->ns); free(opts);`) is admitted too; nothing else asks
+Clang at a release position. Concurrent files: none of the waiting cards'
+files is touched (`legacy_call_argument_access.rs` gains one match arm).
+
+## 4. Fixtures and Lean
+
+`crates/qcore-c-gateway/tests/member_effect_component_scope.rs` (Clang-backed,
+every `Safe` result's certificate rechecked; the diagnosis fixture of §1 is
+flipped deliberately by the amendment and replaced):
+
+| fixture | shape | result |
+|---|---|---|
+| `the_cmt_opts_pair_is_admitted_whatever_spells_the_members` | `cmt_opts_exit` with `cfl_sds_t` and with `char *` members, alone and beside `cmt_opts_init` | `Safe`; `cmt_opts_init` keeps `member-store-through-formal` |
+| same | rule 5k over a `cfl_sds_t` member: `cfl_sds_destroy(opts->ns); free(opts);` | `Safe` |
+| same | `cmt_counter_destroy`'s shape in one unit: `cmt_opts_exit(&c->opts); free(c);` | `Safe` (the embedded cascade) |
+| `a_member_one_function_releases_and_another_still_uses_stays_refused` | `cmt_opts_exit(opts);` then `opts->ns` read, or `cfl_sds_destroy(opts->name)` | `Unknown`, `member-effect-call-refused` |
+| same | in one body: a use after the release; two releases | `Unknown`; the second keeps both rule-38i names |
+| `a_recursive_pair_stays_refused` | `exit_a`/`exit_b` releasing a member each and calling each other with the base; a self-recursive exit | `Unknown` (no effect is published in a recursive component, so the whole-base call fails P1) |
+| `the_typed_reading_admits_only_a_pointer_members_value` | an array-typedef member (`free(r->buf)`), a function-pointer typedef member, a typedef-spelled base `r_t *`, a `union` base | not `Safe` (the array and the base keep rule 38i's name) |
+| same | `if (r->s) { cfl_sds_destroy(r->s); }`, `sds_t s` | `Safe` |
+
+`proof/QCore/MemberReleaseTypedMember.lean` (audited by
+`proof/AuditMemberReleaseTypedMember.lean`, axioms `propext`, plus
+`Classical.choice` and `Quot.sound` through `body_sound`; no placeholders):
+`an_old_admission_is_kept`, `a_new_admission_is_an_untyped_member`,
+`an_admission_needs_the_place_and_a_nullable_release`,
+`an_untyped_base_is_never_admitted`, `a_decayed_array_is_refused`,
+`a_function_pointer_is_refused`, `a_qualified_pointer_is_refused`,
+`a_union_base_is_refused`, `typedPointer_type`,
+`an_admitted_actual_is_an_object_pointer` (given the lexical reader's own
+premise for a `*`-spelled member, `LexicalSound`), `the_body_stays_sound`
+(rule 38j's `body_sound` applies to the admitted event unchanged) and
+`the_unit_plays_no_part`. Premises stated, not proved: Clang's
+`MemberExpr` type is the member's declared type, and the lexical reader's
+`*`-spelled reading (trust boundary 28).
