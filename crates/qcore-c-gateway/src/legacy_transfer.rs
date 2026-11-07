@@ -7,6 +7,9 @@
 
 use super::*;
 
+#[path = "legacy_out_slot_call_write.rs"]
+pub(crate) mod out_slot_call_write;
+
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub(super) struct AbstractPointer {
     pub(super) targets: BTreeSet<usize>,
@@ -1848,6 +1851,10 @@ pub(super) struct TransferContext<'a> {
     /// listed `effective-type:` premise; `None` in every analysis rule
     /// 11r(6)'s premised routes did not open.
     pub(super) effective_type: Option<crate::legacy_summary::effective_type::Frame>,
+    /// Card **OUT-SLOT-CALL-WRITE-ALIASING** (rule 11r(8)): the calls that
+    /// may write caller memory, which poison every bound sanctioned out slot;
+    /// `None` in an analysis that sanctions no slot.
+    pub(super) out_slot_call_write: Option<out_slot_call_write::Frame>,
 }
 
 /// The kind of `site` under `kinds`: heap unless recorded otherwise.
@@ -1951,6 +1958,10 @@ fn analyze_cfg_with_entry_collected(
         selection: entry_custody.selection.clone(),
         cell_frames: cfg.cell_frames.clone(),
         effective_type: crate::legacy_summary::effective_type::frame(
+            &cfg.function,
+            &entry_custody.sanctioned_places(),
+        ),
+        out_slot_call_write: out_slot_call_write::frame(
             &cfg.function,
             &entry_custody.sanctioned_places(),
         ),
@@ -2792,6 +2803,26 @@ pub(super) fn transfer(
         diagnostics,
     );
     slot_move_route::after(node, &mut output);
+    // Card OUT-SLOT-CALL-WRITE-ALIASING (rule 11r(8)): a call that may write
+    // caller memory leaves no bound out slot as it was, except the slots its
+    // own `Out` positions state it writes.
+    if let Some(frame) = &context.out_slot_call_write
+        && frame.writes(node.line, &node.instruction)
+    {
+        let written = out_slot_call_write::call_bearing(&node.instruction)
+            .into_iter()
+            .flat_map(|applied| applied.out_places)
+            .collect::<BTreeSet<_>>();
+        for place in &context.sanctioned {
+            if written.contains(place) {
+                continue;
+            }
+            if let Some(pointer) = output.pointers.get_mut(*place) {
+                pointer.unknown = true;
+                pointer.may_be_null = true;
+            }
+        }
+    }
     // Card MK-EVENT-CELL-CROSS-FUNCTION (rule 38c): a call that may reach a
     // record with a fact forwards it under its protocol, or refuses. A
     // cell-bearing call is rule 38's own.

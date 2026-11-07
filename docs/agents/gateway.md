@@ -4130,6 +4130,54 @@ own anchor here.
     `QCore.OutParameterScalarFramePremise` (`wide_store_keeps_pointer_object`,
     `spares_sound`, `character_refuses`, `no_strict_aliasing_refuses`).
 
+    **Amendment (OUT-SLOT-CALL-WRITE-ALIASING, user decision 2026-11-07
+    "Launch it next"): (8) a call that may write caller memory poisons every
+    bound out slot.** Every analysis whose contract sanctions out slots (rule
+    4's W4 `Out` summaries and their probes, (4)/(6)/(7)'s classes, rule
+    12s(2)'s rows, a declared `resource_out` body) reads the function's Clang
+    AST into a frame of its calls (`legacy_out_slot_call_write.rs`): the
+    lines of each call's statement and the positions whose actual may
+    designate caller memory. At a node that applies a call on those lines
+    (`ContractCall` and its nested calls, an element store or release, a
+    sub-object store of a call, a self-initialiser), after the call's own
+    effect, every sanctioned slot `*X` still bound is poisoned (unknown,
+    possibly null) exactly as the typed scalar store's refused-write frame
+    poisons it, so it is `Ambiguous` at the exits it reaches and no `Out`
+    mode, class or row that needed it validates; the row returns to its
+    uncontracted reading (`store through `*X` without an out-parameter
+    contract`), never an accusation. A `Borrowed` mode states no write frame
+    (C04.1; C04.3.1 item 6; rule 10k's W48 amendment), and `memcpy`,
+    `memmove`, `memset` and the `str*` copies write through character
+    lvalues, so (7)'s premise never spares a call. An actual reaches unless it
+    is positively read as: not a pointer (a record or union by value
+    reaches); a function pointer, a null pointer constant or a string
+    literal; a pointer whose pointee Clang types `const` at the position (the
+    converted parameter type; in a variadic tail the actual's own); `&NAME`,
+    `&NAME.f`, `&NAME[i]` or the decay of an array `NAME`, `NAME` an automatic
+    local or a formal's own variable whose type holds no pointer, record or
+    union; or a position the call's own contract declares `Out`, whose
+    written place keeps the binding the call gave it. Another formal, a local
+    pointer's value, a member or element read, `*X`, a call result, a
+    file-scope or `static` object and the address of a pointer or record
+    local all reach. A slot no store has bound is left unwritten: a
+    `Borrowed` write passes no custody into it, and (2)'s consumer reads the
+    caller's variable as untracked on that class. With no AST, or no AST call
+    on a call node's lines, every position but an `Out` one reaches. Census ([report](../reports/out-slot-call-write-aliasing/README.md)):
+    of every `Safe` row of the corpus, system, slice and `current`
+    populations (and the parent cards' predicted rows), five validate a
+    pointer out slot and one passes it across such a call,
+    `cio_file_content_copy` (`cio_chunk_down(ch)`), `Safe` only on the
+    unlanded parent branch and predicted `Unknown` again. **Do not** keep a
+    bound slot across a call with a reaching actual, read a `Borrowed` mode
+    as a read-only frame, spare a call under (7)'s premise, or poison a slot
+    the call's own `Out` position writes. Premises stated, not proved:
+    faithful Clang extraction and the AST's actual derivations (trust
+    boundary 28), that a callee does not write through a pointer whose
+    pointee its prototype qualifies `const`, and that an `Out` position
+    writes only the object it names. `QCore.OutSlotCallWrite`
+    (`transfer_sound`, `a_reaching_call_poisons_a_bound_slot`,
+    `bound_kept_only_when_excluded`, `the_old_reading_is_unsound`).
+
 <a id="constraint-11s"></a>
 
 11s. **Bounds is a separately selected property: every access is
@@ -6072,6 +6120,9 @@ own anchor here.
     class leaves unwritten is an `Out` slot there) and validates an unwritten
     slot by `Unwritten` at every exit of the class; the forwarding route (1)
     keeps its entry agreement unchanged.
+    Amended by [rule 11r](#constraint-11r)(8): a call on a class's path
+    whose actual may designate caller memory poisons the class's bound out
+    slots, so a row needing one does not validate.
 
 <a id="constraint-12t"></a>
 

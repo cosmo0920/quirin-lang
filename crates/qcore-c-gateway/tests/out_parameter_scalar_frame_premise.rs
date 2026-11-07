@@ -5,7 +5,8 @@
 //! through a second out formal that Clang types as a non-character integer or
 //! enumeration, under the listed premise `effective-type:` (C11 6.5p7), which
 //! every row resting on it carries among its assumptions. A character or
-//! floating store, a `memcpy` into the second formal, and a unit built with
+//! floating store, a `memcpy` into the second formal (rule 11r(8) since
+//! OUT-SLOT-CALL-WRITE-ALIASING), and a unit built with
 //! `-fno-strict-aliasing` keep the refusal.
 //!
 //! Every test asserts each function's status, complete diagnostic vector and
@@ -279,9 +280,10 @@ fn a_floating_store_through_the_second_formal_stays_refused() {
 #[test]
 fn a_copy_into_the_second_formal_is_not_read_under_the_premise() {
     // A call's write is untyped, so the premise never spares a slot for it.
-    // This body is certified without the premise: a contracted call with
-    // `Borrowed` positions writes no binding, so nothing poisons the slot.
-    // That pre-existing reading is follow-up OUT-SLOT-CALL-WRITE-ALIASING.
+    // Re-pinned by OUT-SLOT-CALL-WRITE-ALIASING (rule 11r(8)): this body was
+    // certified with no premise because a contracted call with `Borrowed`
+    // positions wrote no binding; `size` may designate the caller's `char *`
+    // object, so the call now poisons the bound slot and the class refuses.
     expect(
         "`x_copy(size, &n, sizeof n)` after the slot",
         "static int r(char **buf, x_size_t *size) {\n char *data = x_alloc(8);\n x_size_t n = 8;\n \
@@ -289,7 +291,7 @@ fn a_copy_into_the_second_formal_is_not_read_under_the_premise() {
          int w(void) {\n char *b;\n x_size_t m;\n if (r(&b, &m) != 0) return -1;\n x_free(b);\n \
          return 0;\n }",
         false,
-        &[("r", safe(Vec::new())), ("w", safe(Vec::new()))],
+        &[("r", refused("buf", &[])), ("w", caller_refused("b"))],
     );
 }
 
