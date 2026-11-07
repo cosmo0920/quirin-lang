@@ -127,4 +127,8 @@ retirement of an id that card registers).
 
 ## Gate
 
-See [gate.json](gate.json).
+`python3 scripts/gate_scope.py --base bb9412c2a --out <worktree>/private/gate-3`
+at tip `7a6276b58` (full mode: the diff reaches `qcore-c-gateway`; Lean all):
+**exit 0**. Submodules, fmt, Clippy, Rust suite (617 units, 9,302 passed,
+0 failed, 16 ignored, 135 filtered), both reevaluation probes, Lean (416
+audits), Python (685 tests). Record [gate.json](gate.json).
