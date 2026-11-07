@@ -173,6 +173,17 @@ units' five translation units with no difference.
 change): corpus nine rows `Unknown` to `Safe`, system and slice none, no unit
 status change. The integrator runs the declared measurement.
 
+## Gate
+
+`python3 scripts/gate_scope.py --base 7b726587b --out private/gate-2` on
+`26106dbb8` (full mode: the diff reaches `qcore-c-gateway`), exit 0
+([`gate.json`](gate.json)): submodules, fmt, Clippy, the Rust suite (617
+units, 658 summaries; 9,289 passed, 0 failed, 16 ignored), the provider-lock
+check, both reevaluation probes, Lean (414 audits) and the Python suite (659
+tests), each exit 0. The first attempt (`private/gate-1`, on `147e99f41`)
+exited 1 with one failure, the E01-F1 pin above, fixed in `fc1ed647d`; every
+other step passed there.
+
 ## Follow-ups (registered in `integration-amendments.json`)
 
 - `SCALAR-FORMS-LOCAL-ADDRESS-POINTER`: `uint64_t *_vp = &_uva;` (899
