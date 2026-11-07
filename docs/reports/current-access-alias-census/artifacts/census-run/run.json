@@ -1,0 +1,31 @@
+{
+  "command": [
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a0dea5d9a872e9adc/target/census/release/quirin-audit",
+    "current",
+    "--checkout",
+    "/media/Data/GitHub/quirin-lang/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-source/fluent-bit-clang-source",
+    "--profile-directory",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a0dea5d9a872e9adc/contract/profiles/fluent-bit",
+    "--compile-database",
+    "/media/Data/GitHub/quirin-lang/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-source/fluent-bit-clang-production/compile_commands.json",
+    "--monkey-database",
+    "/media/Data/GitHub/quirin-lang/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-source/monkey/monkey-build/compile_commands.json",
+    "--monkey-source-report",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a0dea5d9a872e9adc/private/census/run/monkey-source.json",
+    "--report",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a0dea5d9a872e9adc/private/census/run/resource-diagnostics.json",
+    "--jobs",
+    "8"
+  ],
+  "source_commit": "7b726587b",
+  "plain": false,
+  "binary_sha256": "f38912ea989df03fbbfcf0d579c6074017ac542b1b6626cec050710702be65bb",
+  "environment": {
+    "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang",
+    "QCORE_ACCESS_PATH_CENSUS": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a0dea5d9a872e9adc/private/census/run/access-path-units",
+    "QCORE_TYPED_PATH_PARITY": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a0dea5d9a872e9adc/private/census/run/parity.jsonl"
+  },
+  "start": "2026-11-07T08:59:16.651691+00:00",
+  "exit": 0,
+  "end": "2026-11-07T10:49:00.094121+00:00"
+}

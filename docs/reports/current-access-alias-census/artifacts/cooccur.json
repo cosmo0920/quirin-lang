@@ -1,0 +1,107 @@
+{
+ "K1": {
+  "touched": 1651,
+  "next_blocker": {
+   "UNC-RUN": 1096,
+   "no non-access blocker": 374,
+   "other:SYNTAX": 77,
+   "UNC-EXT": 40,
+   "other:NULLABLE": 24,
+   "other:CALLBACK": 16,
+   "other:REFCOUNT": 11,
+   "other:OUTPARAM": 9,
+   "other:SLOT": 2,
+   "other:VA": 1,
+   "other:RETAIN": 1
+  }
+ },
+ "K2": {
+  "touched": 601,
+  "next_blocker": {
+   "UNC-RUN": 416,
+   "no non-access blocker": 88,
+   "other:SYNTAX": 37,
+   "UNC-EXT": 35,
+   "other:NULLABLE": 12,
+   "other:CALLBACK": 7,
+   "other:OUTPARAM": 4,
+   "other:SLOT": 1,
+   "other:RETAIN": 1
+  }
+ },
+ "K3": {
+  "touched": 929,
+  "next_blocker": {
+   "UNC-RUN": 572,
+   "no non-access blocker": 171,
+   "other:SYNTAX": 72,
+   "other:NULLABLE": 44,
+   "UNC-EXT": 36,
+   "other:CALLBACK": 16,
+   "other:OUTPARAM": 12,
+   "other:REFCOUNT": 3,
+   "other:RETAIN": 2,
+   "other:SLOT": 1
+  }
+ },
+ "K4": {
+  "touched": 1209,
+  "next_blocker": {
+   "UNC-RUN": 896,
+   "no non-access blocker": 167,
+   "other:SYNTAX": 71,
+   "UNC-EXT": 26,
+   "other:REFCOUNT": 16,
+   "other:CALLBACK": 13,
+   "other:OUTPARAM": 9,
+   "other:NULLABLE": 5,
+   "other:RETAIN": 3,
+   "other:SUMMARY_CONFLICT": 2,
+   "other:VA": 1
+  }
+ },
+ "K5": {
+  "touched": 1646,
+  "next_blocker": {
+   "UNC-RUN": 1143,
+   "no non-access blocker": 235,
+   "other:SYNTAX": 88,
+   "other:NULLABLE": 81,
+   "UNC-EXT": 50,
+   "other:CALLBACK": 26,
+   "other:OUTPARAM": 10,
+   "other:REFCOUNT": 6,
+   "other:RETAIN": 4,
+   "other:SLOT": 2,
+   "other:VA": 1
+  }
+ },
+ "K6": {
+  "touched": 768,
+  "next_blocker": {
+   "UNC-RUN": 521,
+   "no non-access blocker": 146,
+   "other:SYNTAX": 53,
+   "other:NULLABLE": 21,
+   "UNC-EXT": 13,
+   "other:CALLBACK": 6,
+   "other:OUTPARAM": 4,
+   "other:REFCOUNT": 4
+  }
+ },
+ "K7": {
+  "touched": 737,
+  "next_blocker": {
+   "UNC-RUN": 439,
+   "no non-access blocker": 188,
+   "other:SYNTAX": 48,
+   "UNC-EXT": 25,
+   "other:NULLABLE": 17,
+   "other:CALLBACK": 7,
+   "other:OUTPARAM": 6,
+   "other:RETAIN": 4,
+   "other:REFCOUNT": 2,
+   "other:SLOT": 1
+  }
+ }
+}
