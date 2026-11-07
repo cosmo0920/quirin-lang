@@ -193,6 +193,201 @@ mod tests {
         let (_, missing) = map.select(found, [], &base);
         assert!(missing.is_empty());
     }
+
+    /// Card CURRENT-RUN-WORKER-SPIN: `count` exported homes `f0`..`f{count-1}`
+    /// of one home unit, selected under a link map.
+    fn exported_homes(
+        count: usize,
+    ) -> (
+        ResourceContracts,
+        Vec<qcore_c_gateway::legacy_c::CrossUnitHomeEvidence>,
+    ) {
+        let base = ResourceContracts::default();
+        let names = (0..count)
+            .map(|index| format!("f{index}"))
+            .collect::<Vec<_>>();
+        let map = LinkMap {
+            digest: "b".repeat(64),
+            premise: "Every listed external call resolves to lib/home.c".into(),
+            homes: names
+                .iter()
+                .map(|name| (name.clone(), "lib/home.c".to_owned()))
+                .collect(),
+        };
+        let source = names
+            .iter()
+            .map(|name| format!("void {name}(void) {{ return; }}\n"))
+            .collect::<String>();
+        let prepared = prepare_translation_unit(&C11TranslationUnit {
+            source: &source,
+            function_scope: LegacyFunctionScope::MainSourceDefinitions,
+            ..Default::default()
+        });
+        let exports = export_cross_unit_homes(&prepared, &base, &map.requested(), &map.digest)
+            .expect("export");
+        assert_eq!(exports.len(), count);
+        map.select(
+            exports
+                .into_iter()
+                .map(|export| ("lib/home.c".to_owned(), export)),
+            names
+                .iter()
+                .map(|name| ("lib/home.c".to_owned(), name.clone())),
+            &base,
+        )
+    }
+
+    fn caller_unit(calls: &[&str]) -> qcore_c_gateway::legacy_c::PreparedTranslationUnit {
+        let source = format!(
+            "{}void caller(void) {{ {} }}\n",
+            calls
+                .iter()
+                .map(|name| format!("void {name}(void); "))
+                .collect::<String>(),
+            calls
+                .iter()
+                .map(|name| format!("{name}(); "))
+                .collect::<String>(),
+        );
+        prepare_translation_unit(&C11TranslationUnit {
+            source: &source,
+            function_scope: LegacyFunctionScope::MainSourceDefinitions,
+            ..Default::default()
+        })
+    }
+
+    #[test]
+    fn a_caller_holds_and_replays_only_the_homes_it_may_reach() {
+        use qcore_c_gateway::legacy_c::{
+            UnrestrictedLegacyResult, analyze_prepared_translation_unit_with_cross_unit,
+            check_legacy_safety_certificate, cross_unit_for_caller,
+        };
+        if qcore_c_gateway::clang_command().is_err() {
+            return;
+        }
+        let (environment, homes) = exported_homes(3);
+        let caller = caller_unit(&["f0"]);
+        let source = caller.preprocessed_source().unwrap();
+        let scoped = cross_unit_for_caller(source, &environment, &homes);
+        assert_eq!(scoped.reachable, 1);
+        assert!(scoped.withheld.is_none());
+        assert_eq!(
+            scoped
+                .homes
+                .iter()
+                .map(|home| home.function.as_str())
+                .collect::<Vec<_>>(),
+            ["f0"]
+        );
+        assert_eq!(
+            scoped
+                .environment
+                .inferred_imports()
+                .keys()
+                .collect::<Vec<_>>(),
+            ["f0"]
+        );
+        assert_eq!(
+            scoped
+                .environment
+                .cross_unit_import_identities()
+                .keys()
+                .collect::<Vec<_>>(),
+            ["f0"]
+        );
+        let result = analyze_prepared_translation_unit_with_cross_unit(
+            &caller,
+            "caller",
+            &scoped.environment,
+            &scoped.homes,
+        )
+        .unwrap();
+        let UnrestrictedLegacyResult::Safe(certificate) = result else {
+            panic!("the reachable import was lost: {result:?}");
+        };
+        assert_eq!(certificate.cross_unit_homes.len(), 1);
+        check_legacy_safety_certificate(&certificate).unwrap();
+        // A function the run's member facts name as a value is reachable
+        // though the caller never spells it.
+        let mut facts = qcore_c_gateway::callback_member_closure::MemberFacts::default();
+        facts.stores.insert(
+            "T.cb".into(),
+            BTreeSet::from([qcore_c_gateway::callback_member_closure::Flow::Function {
+                name: "f2".into(),
+            }]),
+        );
+        // An address-taken function no store or setter actual names is no
+        // closure's candidate.
+        facts.address_taken.insert("f1".into());
+        let run = std::sync::Arc::new(qcore_c_gateway::member_run_facts::RunMemberFacts::new(
+            vec![facts],
+            BTreeMap::new(),
+        ));
+        let named = qcore_c_gateway::member_run_facts::scoped(Some(run), || {
+            cross_unit_for_caller(source, &environment, &homes)
+        });
+        assert_eq!(
+            named
+                .homes
+                .iter()
+                .map(|home| home.function.as_str())
+                .collect::<Vec<_>>(),
+            ["f0", "f2"]
+        );
+    }
+
+    #[test]
+    fn a_caller_reaching_more_homes_than_the_budget_holds_none() {
+        use qcore_c_gateway::legacy_c::{
+            CROSS_UNIT_REPLAY_BUDGET_PER_UNIT, UnrestrictedLegacyResult,
+            analyze_prepared_translation_unit_with_cross_unit, cross_unit_for_caller,
+        };
+        if qcore_c_gateway::clang_command().is_err() {
+            return;
+        }
+        let count = CROSS_UNIT_REPLAY_BUDGET_PER_UNIT + 1;
+        let (environment, homes) = exported_homes(count);
+        let names = (0..count)
+            .map(|index| format!("f{index}"))
+            .collect::<Vec<_>>();
+        let calls = names.iter().map(String::as_str).collect::<Vec<_>>();
+        let caller = caller_unit(&calls);
+        let source = caller.preprocessed_source().unwrap();
+        let scoped = cross_unit_for_caller(source, &environment, &homes);
+        assert_eq!(scoped.reachable, count);
+        assert!(scoped.homes.is_empty());
+        assert!(scoped.environment.inferred_imports().is_empty());
+        assert!(scoped.environment.cross_unit_import_identities().is_empty());
+        assert!(
+            scoped
+                .withheld
+                .as_deref()
+                .is_some_and(|reason| reason.contains("replay budget exhausted"))
+        );
+        // Exhaustion is Unknown: every call stays uncontracted.
+        let result = analyze_prepared_translation_unit_with_cross_unit(
+            &caller,
+            "caller",
+            &scoped.environment,
+            &scoped.homes,
+        )
+        .unwrap();
+        assert!(
+            matches!(result, UnrestrictedLegacyResult::Unknown { .. }),
+            "{result:?}"
+        );
+        // The check refuses a home set above the budget before any replay.
+        let refused = analyze_prepared_translation_unit_with_cross_unit(
+            &caller,
+            "caller",
+            &environment,
+            &homes,
+        )
+        .unwrap_err()
+        .to_string();
+        assert!(refused.contains("per-unit replay budget"), "{refused}");
+    }
+
     #[test]
     fn selected_lifetime_home_preserves_effects_through_caller_certificate_replay() {
         use qcore_c_gateway::legacy_c::{

@@ -95,7 +95,11 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [c-gateway-wave](c-gateway-wave/README.md) | C gateway refinements after the worktree sweep |
 
+| [callback-member-cxx-ast-stores](callback-member-cxx-ast-stores/README.md) | CALLBACK-MEMBER-CXX-AST-STORES |
+
 | [callback-member-data-only-units](callback-member-data-only-units/README.md) | CALLBACK-MEMBER-DATA-ONLY-UNITS: every unit read for the member closure |
+
+| [callback-member-non-c-units](callback-member-non-c-units/README.md) | CALLBACK-MEMBER-NON-C-UNITS |
 
 | [callee-retention-class1](callee-retention-class1/README.md) | CALLEE-RETENTION-CLASS1: class 1 split by shape |
 
@@ -323,7 +327,13 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [ct47-copy-capture](ct47-copy-capture/README.md) | CT47-COPY-CAPTURE — the boundary refuses by the judgment, not the backend |
 
+| [current-access-alias-census](current-access-alias-census/README.md) | CURRENT-ACCESS-ALIAS-CENSUS: the IND, ALIAS, COND and RET leaves of the user's `current` run, by shape |
+
 | [current-run-defects](current-run-defects/README.md) | CURRENT-RUN-DEFECTS |
+
+| [current-run-worker-spin](current-run-worker-spin/README.md) | CURRENT-RUN-WORKER-SPIN |
+
+| [current-unsafe-triage](current-unsafe-triage/README.md) | CURRENT-UNSAFE-TRIAGE: the current run's provisional Unsafe findings |
 
 | [cycle18-broader-composition](cycle18-broader-composition/README.md) | Cycle 18 broader callback composition |
 

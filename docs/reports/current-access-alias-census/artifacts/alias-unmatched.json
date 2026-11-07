@@ -1,0 +1,63 @@
+{
+ "units": [
+  {
+   "file": "lib/cmetrics/src/cmt_map.c",
+   "candidates": [
+    24
+   ]
+  }
+ ],
+ "functions": [
+  {
+   "file": "lib/cmetrics/src/cmt_map.c",
+   "function": "cmt_map_create",
+   "leaves": 6
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_map.c",
+   "function": "cmt_map_destroy",
+   "leaves": 3
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_map.c",
+   "function": "cmt_map_metric_destroy",
+   "leaves": 2
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_map.c",
+   "function": "destroy_label_list",
+   "leaves": 1
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_map.c",
+   "function": "map_metric_create",
+   "leaves": 5
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_map.c",
+   "function": "map_metric_destroy_unlocked",
+   "leaves": 4
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_map.c",
+   "function": "map_metric_get_unlocked",
+   "leaves": 5
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_map.c",
+   "function": "metric_hash_lookup",
+   "leaves": 4
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_map.c",
+   "function": "metric_labels_match",
+   "leaves": 1
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_map.c",
+   "function": "metric_prepare_storage",
+   "leaves": 2
+  }
+ ],
+ "clang_errors": {}
+}

@@ -1,0 +1,1455 @@
+{
+ "rows": 4912,
+ "unknown_rows": 3832,
+ "alone_baseline": 0,
+ "tag_stats": {
+  "call": {
+   "family": {
+    "IND": 115,
+    "COND": 18,
+    "RET": 4
+   },
+   "leaves": 137,
+   "functions": 98,
+   "alone": 8
+  },
+  "expr:statement:call-arg:local": {
+   "family": {
+    "IND": 1833
+   },
+   "leaves": 1833,
+   "functions": 644,
+   "alone": 2
+  },
+  "alias:poisoned-by-refusal": {
+   "family": {
+    "ALIAS": 1281
+   },
+   "leaves": 1281,
+   "functions": 462,
+   "alone": 0
+  },
+  "alias:field-store-owner": {
+   "family": {
+    "ALIAS": 56
+   },
+   "leaves": 56,
+   "functions": 36,
+   "alone": 0
+  },
+  "alias:formal-handed-uncontracted": {
+   "family": {
+    "ALIAS": 3803
+   },
+   "leaves": 3803,
+   "functions": 886,
+   "alone": 0
+  },
+  "pointer-valued-store": {
+   "family": {
+    "IND": 2102,
+    "RET": 67,
+    "COND": 259
+   },
+   "leaves": 2428,
+   "functions": 929,
+   "alone": 53
+  },
+  "expr:statement:call-arg:formal": {
+   "family": {
+    "IND": 2165
+   },
+   "leaves": 2165,
+   "functions": 857,
+   "alone": 62
+  },
+  "alias:formal-handed-contracted": {
+   "family": {
+    "ALIAS": 150
+   },
+   "leaves": 150,
+   "functions": 96,
+   "alone": 3
+  },
+  "alias:borrowed-path-unguarded": {
+   "family": {
+    "ALIAS": 875
+   },
+   "leaves": 875,
+   "functions": 354,
+   "alone": 9
+  },
+  "expr:cond-if:call-arg:formal": {
+   "family": {
+    "COND": 301
+   },
+   "leaves": 301,
+   "functions": 210,
+   "alone": 9
+  },
+  "expr:statement:direct:formal": {
+   "family": {
+    "IND": 371
+   },
+   "leaves": 371,
+   "functions": 219,
+   "alone": 4
+  },
+  "none": {
+   "family": {
+    "IND": 77,
+    "COND": 952,
+    "RET": 29
+   },
+   "leaves": 1058,
+   "functions": 604,
+   "alone": 40
+  },
+  "alias:address-taken": {
+   "family": {
+    "ALIAS": 284
+   },
+   "leaves": 284,
+   "functions": 112,
+   "alone": 0
+  },
+  "expr:cond-if:call-arg:local": {
+   "family": {
+    "COND": 396
+   },
+   "leaves": 396,
+   "functions": 238,
+   "alone": 0
+  },
+  "alias:statement-expression-unguarded": {
+   "family": {
+    "ALIAS": 98
+   },
+   "leaves": 98,
+   "functions": 59,
+   "alone": 2
+  },
+  "alias:guarded-other": {
+   "family": {
+    "ALIAS": 674
+   },
+   "leaves": 674,
+   "functions": 390,
+   "alone": 16
+  },
+  "expr:cond-if:direct:formal": {
+   "family": {
+    "COND": 173
+   },
+   "leaves": 173,
+   "functions": 116,
+   "alone": 0
+  },
+  "expr:cond-if:direct:local": {
+   "family": {
+    "COND": 267
+   },
+   "leaves": 267,
+   "functions": 138,
+   "alone": 0
+  },
+  "expr:statement:call-arg+direct:local": {
+   "family": {
+    "IND": 103
+   },
+   "leaves": 103,
+   "functions": 31,
+   "alone": 0
+  },
+  "expr:statement:direct:local": {
+   "family": {
+    "IND": 462
+   },
+   "leaves": 462,
+   "functions": 249,
+   "alone": 0
+  },
+  "alias:derived-local-unguarded": {
+   "family": {
+    "ALIAS": 1037
+   },
+   "leaves": 1037,
+   "functions": 319,
+   "alone": 2
+  },
+  "alias:formal-copied": {
+   "family": {
+    "ALIAS": 273
+   },
+   "leaves": 273,
+   "functions": 241,
+   "alone": 13
+  },
+  "expr:return:call-arg:local": {
+   "family": {
+    "IND": 34,
+    "RET": 4
+   },
+   "leaves": 38,
+   "functions": 34,
+   "alone": 2
+  },
+  "union": {
+   "family": {
+    "IND": 779,
+    "COND": 173,
+    "RET": 15
+   },
+   "leaves": 967,
+   "functions": 323,
+   "alone": 8
+  },
+  "expr:cond-for:direct:formal": {
+   "family": {
+    "COND": 10
+   },
+   "leaves": 10,
+   "functions": 10,
+   "alone": 0
+  },
+  "alias:peer-release": {
+   "family": {
+    "ALIAS": 27
+   },
+   "leaves": 27,
+   "functions": 8,
+   "alone": 0
+  },
+  "alias:uncontracted-result-unguarded": {
+   "family": {
+    "ALIAS": 859
+   },
+   "leaves": 859,
+   "functions": 368,
+   "alone": 1
+  },
+  "alias:contracted-result-unguarded": {
+   "family": {
+    "ALIAS": 587
+   },
+   "leaves": 587,
+   "functions": 206,
+   "alone": 1
+  },
+  "alias:non-pointer-name": {
+   "family": {
+    "ALIAS": 1072
+   },
+   "leaves": 1072,
+   "functions": 347,
+   "alone": 7
+  },
+  "cast": {
+   "family": {
+    "COND": 11,
+    "IND": 56,
+    "RET": 4
+   },
+   "leaves": 71,
+   "functions": 38,
+   "alone": 0
+  },
+  "pointer-arithmetic": {
+   "family": {
+    "COND": 24,
+    "IND": 9
+   },
+   "leaves": 33,
+   "functions": 15,
+   "alone": 2
+  },
+  "aggregate-value": {
+   "family": {
+    "IND": 222,
+    "COND": 26,
+    "RET": 4
+   },
+   "leaves": 252,
+   "functions": 169,
+   "alone": 9
+  },
+  "alias:formal-not-handed": {
+   "family": {
+    "ALIAS": 63
+   },
+   "leaves": 63,
+   "functions": 46,
+   "alone": 0
+  },
+  "expr:statement:call-arg+direct:formal+local": {
+   "family": {
+    "IND": 527
+   },
+   "leaves": 527,
+   "functions": 92,
+   "alone": 0
+  },
+  "expr:statement:direct:formal+local": {
+   "family": {
+    "IND": 115
+   },
+   "leaves": 115,
+   "functions": 97,
+   "alone": 0
+  },
+  "expr:return:call-arg:formal": {
+   "family": {
+    "IND": 65,
+    "RET": 4
+   },
+   "leaves": 69,
+   "functions": 65,
+   "alone": 44
+  },
+  "indirect-call": {
+   "family": {
+    "IND": 158,
+    "RET": 12,
+    "COND": 15
+   },
+   "leaves": 185,
+   "functions": 142,
+   "alone": 6
+  },
+  "alias:unclassified": {
+   "family": {
+    "ALIAS": 33
+   },
+   "leaves": 33,
+   "functions": 10,
+   "alone": 0
+  },
+  "expr:cond-if:call-arg+direct:local": {
+   "family": {
+    "COND": 98
+   },
+   "leaves": 98,
+   "functions": 41,
+   "alone": 0
+  },
+  "expr:return:direct:global": {
+   "family": {
+    "RET": 3
+   },
+   "leaves": 3,
+   "functions": 3,
+   "alone": 1
+  },
+  "expr:return:direct:formal": {
+   "family": {
+    "RET": 31
+   },
+   "leaves": 31,
+   "functions": 28,
+   "alone": 13
+  },
+  "expr:statement:direct:global": {
+   "family": {
+    "IND": 36
+   },
+   "leaves": 36,
+   "functions": 12,
+   "alone": 2
+  },
+  "expr:cond-if:direct:global": {
+   "family": {
+    "COND": 9
+   },
+   "leaves": 9,
+   "functions": 3,
+   "alone": 0
+  },
+  "expr:return:direct:local": {
+   "family": {
+    "RET": 24
+   },
+   "leaves": 24,
+   "functions": 21,
+   "alone": 0
+  },
+  "expr:cond-for:call-arg:formal": {
+   "family": {
+    "COND": 42
+   },
+   "leaves": 42,
+   "functions": 40,
+   "alone": 0
+  },
+  "expr:cond-while:call-arg:local": {
+   "family": {
+    "COND": 5
+   },
+   "leaves": 5,
+   "functions": 5,
+   "alone": 0
+  },
+  "expr:cond-while:direct:formal+local": {
+   "family": {
+    "COND": 1
+   },
+   "leaves": 1,
+   "functions": 1,
+   "alone": 0
+  },
+  "expr:cond-if:direct:formal+local": {
+   "family": {
+    "COND": 5
+   },
+   "leaves": 5,
+   "functions": 5,
+   "alone": 0
+  },
+  "expr:cond-if:call-arg+direct:formal": {
+   "family": {
+    "COND": 456
+   },
+   "leaves": 456,
+   "functions": 108,
+   "alone": 2
+  },
+  "root-other": {
+   "family": {
+    "IND": 11,
+    "COND": 3
+   },
+   "leaves": 14,
+   "functions": 10,
+   "alone": 0
+  },
+  "pointer-field-step": {
+   "family": {
+    "IND": 1
+   },
+   "leaves": 1,
+   "functions": 1,
+   "alone": 0
+  },
+  "expr:statement:call-arg+direct:formal": {
+   "family": {
+    "IND": 47
+   },
+   "leaves": 47,
+   "functions": 30,
+   "alone": 2
+  },
+  "pointer-step": {
+   "family": {
+    "COND": 4
+   },
+   "leaves": 4,
+   "functions": 4,
+   "alone": 1
+  },
+  "static-local": {
+   "family": {
+    "COND": 21,
+    "IND": 42,
+    "RET": 1
+   },
+   "leaves": 64,
+   "functions": 18,
+   "alone": 2
+  },
+  "expr:cond-while:direct:local": {
+   "family": {
+    "COND": 6
+   },
+   "leaves": 6,
+   "functions": 6,
+   "alone": 0
+  },
+  "statement-expression": {
+   "family": {
+    "IND": 117,
+    "COND": 1
+   },
+   "leaves": 118,
+   "functions": 72,
+   "alone": 0
+  },
+  "expr:cond-for:direct:local": {
+   "family": {
+    "COND": 51
+   },
+   "leaves": 51,
+   "functions": 41,
+   "alone": 0
+  },
+  "expr:statement:call-arg:formal+local": {
+   "family": {
+    "IND": 339
+   },
+   "leaves": 339,
+   "functions": 177,
+   "alone": 2
+  },
+  "expr:statement:call-arg:formal+global": {
+   "family": {
+    "IND": 50
+   },
+   "leaves": 50,
+   "functions": 43,
+   "alone": 0
+  },
+  "expr:statement:call-arg:global+local": {
+   "family": {
+    "IND": 24
+   },
+   "leaves": 24,
+   "functions": 14,
+   "alone": 0
+  },
+  "expr:cond-for:call-arg:local": {
+   "family": {
+    "COND": 26
+   },
+   "leaves": 26,
+   "functions": 25,
+   "alone": 0
+  },
+  "expr:cond-if:call-arg:global": {
+   "family": {
+    "COND": 15
+   },
+   "leaves": 15,
+   "functions": 3,
+   "alone": 0
+  },
+  "expr:cond-if:call-arg:formal+local": {
+   "family": {
+    "COND": 31
+   },
+   "leaves": 31,
+   "functions": 27,
+   "alone": 2
+  },
+  "expr:cond-while:call-arg+direct:formal": {
+   "family": {
+    "COND": 9
+   },
+   "leaves": 9,
+   "functions": 9,
+   "alone": 1
+  },
+  "expr:cond-if:call-arg+direct:formal+local": {
+   "family": {
+    "COND": 99
+   },
+   "leaves": 99,
+   "functions": 53,
+   "alone": 0
+  },
+  "expr:statement:call-arg:formal+global+local": {
+   "family": {
+    "IND": 11
+   },
+   "leaves": 11,
+   "functions": 10,
+   "alone": 0
+  },
+  "expr:cond-do:call-arg+direct:formal": {
+   "family": {
+    "COND": 2
+   },
+   "leaves": 2,
+   "functions": 1,
+   "alone": 0
+  },
+  "expr:cond-while:call-arg:formal": {
+   "family": {
+    "COND": 5
+   },
+   "leaves": 5,
+   "functions": 5,
+   "alone": 1
+  },
+  "expr:cond-do:call-arg+direct:formal+local": {
+   "family": {
+    "COND": 3
+   },
+   "leaves": 3,
+   "functions": 3,
+   "alone": 0
+  },
+  "expr:statement:call-arg:global": {
+   "family": {
+    "IND": 17
+   },
+   "leaves": 17,
+   "functions": 6,
+   "alone": 0
+  },
+  "volatile-atomic": {
+   "family": {
+    "COND": 1
+   },
+   "leaves": 1,
+   "functions": 1,
+   "alone": 0
+  },
+  "expr:return:call-arg+direct:formal": {
+   "family": {
+    "RET": 2
+   },
+   "leaves": 2,
+   "functions": 2,
+   "alone": 2
+  },
+  "expr:cond-switch:direct:formal": {
+   "family": {
+    "COND": 1
+   },
+   "leaves": 1,
+   "functions": 1,
+   "alone": 1
+  },
+  "expr:cond-for:direct:global": {
+   "family": {
+    "COND": 2
+   },
+   "leaves": 2,
+   "functions": 2,
+   "alone": 0
+  },
+  "expr:cond-do:call-arg+direct:local": {
+   "family": {
+    "COND": 1
+   },
+   "leaves": 1,
+   "functions": 1,
+   "alone": 0
+  },
+  "expr:cond-while:direct:formal": {
+   "family": {
+    "COND": 2
+   },
+   "leaves": 2,
+   "functions": 2,
+   "alone": 0
+  },
+  "expr:cond-do:call-arg:formal+local": {
+   "family": {
+    "COND": 1
+   },
+   "leaves": 1,
+   "functions": 1,
+   "alone": 0
+  },
+  "alias:global-pointer": {
+   "family": {
+    "ALIAS": 5
+   },
+   "leaves": 5,
+   "functions": 4,
+   "alone": 0
+  },
+  "expr:return:call-arg+direct:local": {
+   "family": {
+    "RET": 1
+   },
+   "leaves": 1,
+   "functions": 1,
+   "alone": 0
+  },
+  "expr:statement:direct:formal+global": {
+   "family": {
+    "IND": 1
+   },
+   "leaves": 1,
+   "functions": 1,
+   "alone": 0
+  },
+  "expr:cond-switch:direct:global": {
+   "family": {
+    "COND": 1
+   },
+   "leaves": 1,
+   "functions": 1,
+   "alone": 0
+  },
+  "expr:cond-while:call-arg+direct:local": {
+   "family": {
+    "COND": 1
+   },
+   "leaves": 1,
+   "functions": 1,
+   "alone": 0
+  },
+  "expr:cond-if:call-arg:formal+global": {
+   "family": {
+    "COND": 1
+   },
+   "leaves": 1,
+   "functions": 1,
+   "alone": 0
+  },
+  "address-of-base": {
+   "family": {
+    "COND": 2
+   },
+   "leaves": 2,
+   "functions": 1,
+   "alone": 0
+  }
+ },
+ "greedy": [
+  {
+   "tag": "expr:statement:call-arg:formal",
+   "gain": 62,
+   "cumulative": 62,
+   "pool": 766
+  },
+  {
+   "tag": "pointer-valued-store",
+   "gain": 58,
+   "cumulative": 120,
+   "pool": 766
+  },
+  {
+   "tag": "none",
+   "gain": 49,
+   "cumulative": 169,
+   "pool": 766
+  },
+  {
+   "tag": "expr:return:call-arg:formal",
+   "gain": 46,
+   "cumulative": 215,
+   "pool": 766
+  },
+  {
+   "tag": "union",
+   "gain": 28,
+   "cumulative": 243,
+   "pool": 766
+  },
+  {
+   "tag": "alias:formal-handed-uncontracted",
+   "gain": 24,
+   "cumulative": 267,
+   "pool": 766
+  },
+  {
+   "tag": "alias:formal-handed-contracted",
+   "gain": 24,
+   "cumulative": 291,
+   "pool": 766
+  },
+  {
+   "tag": "alias:guarded-other",
+   "gain": 20,
+   "cumulative": 311,
+   "pool": 766
+  },
+  {
+   "tag": "aggregate-value",
+   "gain": 25,
+   "cumulative": 336,
+   "pool": 766
+  },
+  {
+   "tag": "alias:borrowed-path-unguarded",
+   "gain": 22,
+   "cumulative": 358,
+   "pool": 766
+  },
+  {
+   "tag": "expr:statement:direct:formal+local",
+   "gain": 19,
+   "cumulative": 377,
+   "pool": 766
+  },
+  {
+   "tag": "expr:cond-if:call-arg:formal",
+   "gain": 17,
+   "cumulative": 394,
+   "pool": 766
+  },
+  {
+   "tag": "alias:formal-copied",
+   "gain": 18,
+   "cumulative": 412,
+   "pool": 766
+  },
+  {
+   "tag": "expr:return:call-arg:local",
+   "gain": 16,
+   "cumulative": 428,
+   "pool": 766
+  },
+  {
+   "tag": "alias:derived-local-unguarded",
+   "gain": 15,
+   "cumulative": 443,
+   "pool": 766
+  },
+  {
+   "tag": "expr:statement:call-arg:local",
+   "gain": 25,
+   "cumulative": 468,
+   "pool": 766
+  },
+  {
+   "tag": "alias:poisoned-by-refusal",
+   "gain": 18,
+   "cumulative": 486,
+   "pool": 766
+  },
+  {
+   "tag": "expr:statement:direct:local",
+   "gain": 18,
+   "cumulative": 504,
+   "pool": 766
+  },
+  {
+   "tag": "call",
+   "gain": 17,
+   "cumulative": 521,
+   "pool": 766
+  },
+  {
+   "tag": "alias:non-pointer-name",
+   "gain": 15,
+   "cumulative": 536,
+   "pool": 766
+  },
+  {
+   "tag": "alias:contracted-result-unguarded",
+   "gain": 15,
+   "cumulative": 551,
+   "pool": 766
+  },
+  {
+   "tag": "indirect-call",
+   "gain": 15,
+   "cumulative": 566,
+   "pool": 766
+  },
+  {
+   "tag": "expr:statement:direct:formal",
+   "gain": 16,
+   "cumulative": 582,
+   "pool": 766
+  },
+  {
+   "tag": "expr:cond-if:direct:formal",
+   "gain": 18,
+   "cumulative": 600,
+   "pool": 766
+  },
+  {
+   "tag": "expr:cond-if:direct:local",
+   "gain": 15,
+   "cumulative": 615,
+   "pool": 766
+  },
+  {
+   "tag": "expr:return:direct:formal",
+   "gain": 14,
+   "cumulative": 629,
+   "pool": 766
+  },
+  {
+   "tag": "expr:cond-if:call-arg:local",
+   "gain": 11,
+   "cumulative": 640,
+   "pool": 766
+  },
+  {
+   "tag": "expr:statement:call-arg:formal+local",
+   "gain": 12,
+   "cumulative": 652,
+   "pool": 766
+  },
+  {
+   "tag": "cast",
+   "gain": 9,
+   "cumulative": 661,
+   "pool": 766
+  },
+  {
+   "tag": "expr:cond-for:call-arg:formal",
+   "gain": 8,
+   "cumulative": 669,
+   "pool": 766
+  },
+  {
+   "tag": "alias:statement-expression-unguarded",
+   "gain": 7,
+   "cumulative": 676,
+   "pool": 766
+  },
+  {
+   "tag": "alias:uncontracted-result-unguarded",
+   "gain": 6,
+   "cumulative": 682,
+   "pool": 766
+  },
+  {
+   "tag": "expr:return:direct:local",
+   "gain": 6,
+   "cumulative": 688,
+   "pool": 766
+  },
+  {
+   "tag": "pointer-arithmetic",
+   "gain": 5,
+   "cumulative": 693,
+   "pool": 766
+  },
+  {
+   "tag": "expr:cond-if:call-arg+direct:formal",
+   "gain": 4,
+   "cumulative": 697,
+   "pool": 766
+  },
+  {
+   "tag": "expr:cond-if:call-arg:formal+local",
+   "gain": 4,
+   "cumulative": 701,
+   "pool": 766
+  },
+  {
+   "tag": "expr:cond-if:call-arg+direct:formal+local",
+   "gain": 3,
+   "cumulative": 704,
+   "pool": 766
+  },
+  {
+   "tag": "static-local",
+   "gain": 3,
+   "cumulative": 707,
+   "pool": 766
+  },
+  {
+   "tag": "alias:formal-not-handed",
+   "gain": 3,
+   "cumulative": 710,
+   "pool": 766
+  },
+  {
+   "tag": "expr:cond-if:call-arg+direct:local",
+   "gain": 4,
+   "cumulative": 714,
+   "pool": 766
+  }
+ ],
+ "pairs": {
+  "expr:statement:call-arg:formal + pointer-valued-store": 120,
+  "expr:statement:call-arg:formal + expr:return:call-arg:formal": 106,
+  "expr:statement:call-arg:formal + none": 105,
+  "expr:statement:call-arg:formal + alias:guarded-other": 79,
+  "expr:statement:call-arg:formal + alias:formal-copied": 75,
+  "expr:statement:call-arg:formal + expr:return:direct:formal": 75,
+  "expr:statement:call-arg:formal + alias:borrowed-path-unguarded": 71,
+  "expr:statement:call-arg:formal + expr:cond-if:call-arg:formal": 72,
+  "expr:statement:call-arg:formal + aggregate-value": 72,
+  "expr:statement:call-arg:formal + call": 70,
+  "expr:statement:call-arg:formal + union": 71,
+  "pointer-valued-store + expr:return:call-arg:formal": 97,
+  "pointer-valued-store + none": 98,
+  "pointer-valued-store + alias:guarded-other": 69,
+  "pointer-valued-store + alias:formal-copied": 67,
+  "pointer-valued-store + expr:return:direct:formal": 66,
+  "pointer-valued-store + alias:borrowed-path-unguarded": 62,
+  "pointer-valued-store + expr:cond-if:call-arg:formal": 64,
+  "pointer-valued-store + aggregate-value": 64,
+  "pointer-valued-store + call": 61,
+  "pointer-valued-store + union": 70,
+  "expr:return:call-arg:formal + none": 85,
+  "expr:return:call-arg:formal + alias:guarded-other": 60,
+  "expr:return:call-arg:formal + alias:formal-copied": 57,
+  "expr:return:call-arg:formal + expr:return:direct:formal": 57,
+  "expr:return:call-arg:formal + alias:borrowed-path-unguarded": 53,
+  "expr:return:call-arg:formal + expr:cond-if:call-arg:formal": 53,
+  "expr:return:call-arg:formal + aggregate-value": 53,
+  "expr:return:call-arg:formal + call": 52,
+  "expr:return:call-arg:formal + union": 52,
+  "none + alias:guarded-other": 58,
+  "none + alias:formal-copied": 53,
+  "none + expr:return:direct:formal": 53,
+  "none + alias:borrowed-path-unguarded": 52,
+  "none + expr:cond-if:call-arg:formal": 49,
+  "none + aggregate-value": 49,
+  "none + call": 49,
+  "none + union": 48,
+  "alias:guarded-other + alias:formal-copied": 29,
+  "alias:guarded-other + expr:return:direct:formal": 29,
+  "alias:guarded-other + alias:borrowed-path-unguarded": 26,
+  "alias:guarded-other + expr:cond-if:call-arg:formal": 25,
+  "alias:guarded-other + aggregate-value": 35,
+  "alias:guarded-other + call": 24,
+  "alias:guarded-other + union": 24,
+  "alias:formal-copied + expr:return:direct:formal": 26,
+  "alias:formal-copied + alias:borrowed-path-unguarded": 22,
+  "alias:formal-copied + expr:cond-if:call-arg:formal": 22,
+  "alias:formal-copied + aggregate-value": 22,
+  "alias:formal-copied + call": 21,
+  "alias:formal-copied + union": 24,
+  "expr:return:direct:formal + alias:borrowed-path-unguarded": 22,
+  "expr:return:direct:formal + expr:cond-if:call-arg:formal": 23,
+  "expr:return:direct:formal + aggregate-value": 22,
+  "expr:return:direct:formal + call": 21,
+  "expr:return:direct:formal + union": 21,
+  "alias:borrowed-path-unguarded + expr:cond-if:call-arg:formal": 18,
+  "alias:borrowed-path-unguarded + aggregate-value": 18,
+  "alias:borrowed-path-unguarded + call": 17,
+  "alias:borrowed-path-unguarded + union": 23,
+  "expr:cond-if:call-arg:formal + aggregate-value": 18,
+  "expr:cond-if:call-arg:formal + call": 18,
+  "expr:cond-if:call-arg:formal + union": 17,
+  "aggregate-value + call": 17,
+  "aggregate-value + union": 17,
+  "call + union": 16
+ },
+ "family_freed": {
+  "IND": 229,
+  "ALIAS": 65,
+  "COND": 56,
+  "RET": 46,
+  "IND+ALIAS": 495,
+  "IND+ALIAS+COND+RET": 766
+ },
+ "family_tags": {
+  "IND": [
+   "aggregate-value",
+   "call",
+   "cast",
+   "expr:return:call-arg:formal",
+   "expr:return:call-arg:local",
+   "expr:statement:call-arg+direct:formal",
+   "expr:statement:call-arg+direct:formal+local",
+   "expr:statement:call-arg+direct:local",
+   "expr:statement:call-arg:formal",
+   "expr:statement:call-arg:formal+global",
+   "expr:statement:call-arg:formal+global+local",
+   "expr:statement:call-arg:formal+local",
+   "expr:statement:call-arg:global",
+   "expr:statement:call-arg:global+local",
+   "expr:statement:call-arg:local",
+   "expr:statement:direct:formal",
+   "expr:statement:direct:formal+global",
+   "expr:statement:direct:formal+local",
+   "expr:statement:direct:global",
+   "expr:statement:direct:local",
+   "indirect-call",
+   "none",
+   "pointer-arithmetic",
+   "pointer-field-step",
+   "pointer-valued-store",
+   "root-other",
+   "statement-expression",
+   "static-local",
+   "union"
+  ],
+  "ALIAS": [
+   "alias:address-taken",
+   "alias:borrowed-path-unguarded",
+   "alias:contracted-result-unguarded",
+   "alias:derived-local-unguarded",
+   "alias:field-store-owner",
+   "alias:formal-copied",
+   "alias:formal-handed-contracted",
+   "alias:formal-handed-uncontracted",
+   "alias:formal-not-handed",
+   "alias:global-pointer",
+   "alias:guarded-other",
+   "alias:non-pointer-name",
+   "alias:peer-release",
+   "alias:poisoned-by-refusal",
+   "alias:statement-expression-unguarded",
+   "alias:unclassified",
+   "alias:uncontracted-result-unguarded"
+  ],
+  "COND": [
+   "address-of-base",
+   "aggregate-value",
+   "call",
+   "cast",
+   "expr:cond-do:call-arg+direct:formal",
+   "expr:cond-do:call-arg+direct:formal+local",
+   "expr:cond-do:call-arg+direct:local",
+   "expr:cond-do:call-arg:formal+local",
+   "expr:cond-for:call-arg:formal",
+   "expr:cond-for:call-arg:local",
+   "expr:cond-for:direct:formal",
+   "expr:cond-for:direct:global",
+   "expr:cond-for:direct:local",
+   "expr:cond-if:call-arg+direct:formal",
+   "expr:cond-if:call-arg+direct:formal+local",
+   "expr:cond-if:call-arg+direct:local",
+   "expr:cond-if:call-arg:formal",
+   "expr:cond-if:call-arg:formal+global",
+   "expr:cond-if:call-arg:formal+local",
+   "expr:cond-if:call-arg:global",
+   "expr:cond-if:call-arg:local",
+   "expr:cond-if:direct:formal",
+   "expr:cond-if:direct:formal+local",
+   "expr:cond-if:direct:global",
+   "expr:cond-if:direct:local",
+   "expr:cond-switch:direct:formal",
+   "expr:cond-switch:direct:global",
+   "expr:cond-while:call-arg+direct:formal",
+   "expr:cond-while:call-arg+direct:local",
+   "expr:cond-while:call-arg:formal",
+   "expr:cond-while:call-arg:local",
+   "expr:cond-while:direct:formal",
+   "expr:cond-while:direct:formal+local",
+   "expr:cond-while:direct:local",
+   "indirect-call",
+   "none",
+   "pointer-arithmetic",
+   "pointer-step",
+   "pointer-valued-store",
+   "root-other",
+   "statement-expression",
+   "static-local",
+   "union",
+   "volatile-atomic"
+  ],
+  "RET": [
+   "aggregate-value",
+   "call",
+   "cast",
+   "expr:return:call-arg+direct:formal",
+   "expr:return:call-arg+direct:local",
+   "expr:return:call-arg:formal",
+   "expr:return:call-arg:local",
+   "expr:return:direct:formal",
+   "expr:return:direct:global",
+   "expr:return:direct:local",
+   "indirect-call",
+   "none",
+   "pointer-valued-store",
+   "static-local",
+   "union"
+  ],
+  "IND+ALIAS": [
+   "aggregate-value",
+   "alias:address-taken",
+   "alias:borrowed-path-unguarded",
+   "alias:contracted-result-unguarded",
+   "alias:derived-local-unguarded",
+   "alias:field-store-owner",
+   "alias:formal-copied",
+   "alias:formal-handed-contracted",
+   "alias:formal-handed-uncontracted",
+   "alias:formal-not-handed",
+   "alias:global-pointer",
+   "alias:guarded-other",
+   "alias:non-pointer-name",
+   "alias:peer-release",
+   "alias:poisoned-by-refusal",
+   "alias:statement-expression-unguarded",
+   "alias:unclassified",
+   "alias:uncontracted-result-unguarded",
+   "call",
+   "cast",
+   "expr:return:call-arg:formal",
+   "expr:return:call-arg:local",
+   "expr:statement:call-arg+direct:formal",
+   "expr:statement:call-arg+direct:formal+local",
+   "expr:statement:call-arg+direct:local",
+   "expr:statement:call-arg:formal",
+   "expr:statement:call-arg:formal+global",
+   "expr:statement:call-arg:formal+global+local",
+   "expr:statement:call-arg:formal+local",
+   "expr:statement:call-arg:global",
+   "expr:statement:call-arg:global+local",
+   "expr:statement:call-arg:local",
+   "expr:statement:direct:formal",
+   "expr:statement:direct:formal+global",
+   "expr:statement:direct:formal+local",
+   "expr:statement:direct:global",
+   "expr:statement:direct:local",
+   "indirect-call",
+   "none",
+   "pointer-arithmetic",
+   "pointer-field-step",
+   "pointer-valued-store",
+   "root-other",
+   "statement-expression",
+   "static-local",
+   "union"
+  ],
+  "IND+ALIAS+COND+RET": [
+   "address-of-base",
+   "aggregate-value",
+   "alias:address-taken",
+   "alias:borrowed-path-unguarded",
+   "alias:contracted-result-unguarded",
+   "alias:derived-local-unguarded",
+   "alias:field-store-owner",
+   "alias:formal-copied",
+   "alias:formal-handed-contracted",
+   "alias:formal-handed-uncontracted",
+   "alias:formal-not-handed",
+   "alias:global-pointer",
+   "alias:guarded-other",
+   "alias:non-pointer-name",
+   "alias:peer-release",
+   "alias:poisoned-by-refusal",
+   "alias:statement-expression-unguarded",
+   "alias:unclassified",
+   "alias:uncontracted-result-unguarded",
+   "call",
+   "cast",
+   "expr:cond-do:call-arg+direct:formal",
+   "expr:cond-do:call-arg+direct:formal+local",
+   "expr:cond-do:call-arg+direct:local",
+   "expr:cond-do:call-arg:formal+local",
+   "expr:cond-for:call-arg:formal",
+   "expr:cond-for:call-arg:local",
+   "expr:cond-for:direct:formal",
+   "expr:cond-for:direct:global",
+   "expr:cond-for:direct:local",
+   "expr:cond-if:call-arg+direct:formal",
+   "expr:cond-if:call-arg+direct:formal+local",
+   "expr:cond-if:call-arg+direct:local",
+   "expr:cond-if:call-arg:formal",
+   "expr:cond-if:call-arg:formal+global",
+   "expr:cond-if:call-arg:formal+local",
+   "expr:cond-if:call-arg:global",
+   "expr:cond-if:call-arg:local",
+   "expr:cond-if:direct:formal",
+   "expr:cond-if:direct:formal+local",
+   "expr:cond-if:direct:global",
+   "expr:cond-if:direct:local",
+   "expr:cond-switch:direct:formal",
+   "expr:cond-switch:direct:global",
+   "expr:cond-while:call-arg+direct:formal",
+   "expr:cond-while:call-arg+direct:local",
+   "expr:cond-while:call-arg:formal",
+   "expr:cond-while:call-arg:local",
+   "expr:cond-while:direct:formal",
+   "expr:cond-while:direct:formal+local",
+   "expr:cond-while:direct:local",
+   "expr:return:call-arg+direct:formal",
+   "expr:return:call-arg+direct:local",
+   "expr:return:call-arg:formal",
+   "expr:return:call-arg:local",
+   "expr:return:direct:formal",
+   "expr:return:direct:global",
+   "expr:return:direct:local",
+   "expr:statement:call-arg+direct:formal",
+   "expr:statement:call-arg+direct:formal+local",
+   "expr:statement:call-arg+direct:local",
+   "expr:statement:call-arg:formal",
+   "expr:statement:call-arg:formal+global",
+   "expr:statement:call-arg:formal+global+local",
+   "expr:statement:call-arg:formal+local",
+   "expr:statement:call-arg:global",
+   "expr:statement:call-arg:global+local",
+   "expr:statement:call-arg:local",
+   "expr:statement:direct:formal",
+   "expr:statement:direct:formal+global",
+   "expr:statement:direct:formal+local",
+   "expr:statement:direct:global",
+   "expr:statement:direct:local",
+   "indirect-call",
+   "none",
+   "pointer-arithmetic",
+   "pointer-field-step",
+   "pointer-step",
+   "pointer-valued-store",
+   "root-other",
+   "statement-expression",
+   "static-local",
+   "union",
+   "volatile-atomic"
+  ]
+ },
+ "closure": {
+  "greedy-top3": {
+   "none": {
+    "rounds": [
+     169
+    ],
+    "freed": 169
+   },
+   "same-unit": {
+    "rounds": [
+     175,
+     12,
+     2,
+     1
+    ],
+    "freed": 190
+   },
+   "cross-unit": {
+    "rounds": [
+     187,
+     19,
+     3,
+     1
+    ],
+    "freed": 210
+   },
+   "direct": 169,
+   "units_covered": 0
+  },
+  "greedy-top6": {
+   "none": {
+    "rounds": [
+     267
+    ],
+    "freed": 267
+   },
+   "same-unit": {
+    "rounds": [
+     273,
+     25,
+     4,
+     1
+    ],
+    "freed": 303
+   },
+   "cross-unit": {
+    "rounds": [
+     303,
+     38,
+     7,
+     4,
+     1
+    ],
+    "freed": 353
+   },
+   "direct": 267,
+   "units_covered": 0
+  },
+  "greedy-all": {
+   "none": {
+    "rounds": [
+     714
+    ],
+    "freed": 714
+   },
+   "same-unit": {
+    "rounds": [
+     721,
+     90,
+     21,
+     3,
+     1
+    ],
+    "freed": 836
+   },
+   "cross-unit": {
+    "rounds": [
+     777,
+     146,
+     35,
+     11,
+     3,
+     2
+    ],
+    "freed": 974
+   },
+   "direct": 714,
+   "units_covered": 5
+  },
+  "IND+ALIAS+COND+RET": {
+   "none": {
+    "rounds": [
+     753
+    ],
+    "freed": 753
+   },
+   "same-unit": {
+    "rounds": [
+     760,
+     94,
+     23,
+     4,
+     1
+    ],
+    "freed": 882
+   },
+   "cross-unit": {
+    "rounds": [
+     818,
+     157,
+     39,
+     12,
+     3,
+     2
+    ],
+    "freed": 1031
+   },
+   "direct": 753,
+   "units_covered": 5
+  },
+  "IND+ALIAS": {
+   "none": {
+    "rounds": [
+     494
+    ],
+    "freed": 494
+   },
+   "same-unit": {
+    "rounds": [
+     501,
+     46,
+     14,
+     2
+    ],
+    "freed": 563
+   },
+   "cross-unit": {
+    "rounds": [
+     553,
+     70,
+     19,
+     5,
+     2,
+     1
+    ],
+    "freed": 650
+   },
+   "direct": 494,
+   "units_covered": 1
+  },
+  "none": {
+   "none": {
+    "rounds": [],
+    "freed": 0
+   },
+   "same-unit": {
+    "rounds": [
+     6
+    ],
+    "freed": 6
+   },
+   "cross-unit": {
+    "rounds": [
+     13
+    ],
+    "freed": 13
+   },
+   "direct": 0,
+   "units_covered": 0
+  }
+ },
+ "units_covered_by_step": {
+  "expr:statement:call-arg:formal": 0,
+  "pointer-valued-store": 0,
+  "none": 0,
+  "expr:return:call-arg:formal": 0,
+  "union": 0,
+  "alias:formal-handed-uncontracted": 0,
+  "alias:formal-handed-contracted": 0,
+  "alias:guarded-other": 0,
+  "aggregate-value": 0,
+  "alias:borrowed-path-unguarded": 0,
+  "expr:statement:direct:formal+local": 0,
+  "expr:cond-if:call-arg:formal": 0,
+  "alias:formal-copied": 0,
+  "expr:return:call-arg:local": 0,
+  "alias:derived-local-unguarded": 0
+ }
+}

@@ -1,0 +1,159 @@
+{
+ "schema": "quirin-gate-scope/1",
+ "source": "git diff",
+ "base": "b5fc23151bf8e8111925f775699e4a560e6fd7a9",
+ "head": "1421d43b823239bc2e9053561827985d49c5c420",
+ "committed": [
+  "docs/reports/INDEX.md",
+  "docs/reports/callback-member-cxx-ast-stores/README.md",
+  "docs/reports/callback-member-cxx-ast-stores/integration-amendments.json"
+ ],
+ "uncommitted": [],
+ "scope": {
+  "paths": [
+   "docs/reports/INDEX.md",
+   "docs/reports/callback-member-cxx-ast-stores/README.md",
+   "docs/reports/callback-member-cxx-ast-stores/integration-amendments.json"
+  ],
+  "attribution": {
+   "docs/reports/INDEX.md": [
+    "class prose"
+   ],
+   "docs/reports/callback-member-cxx-ast-stores/README.md": [
+    "class prose"
+   ],
+   "docs/reports/callback-member-cxx-ast-stores/integration-amendments.json": [
+    "class prose"
+   ]
+  },
+  "affected": {},
+  "targets": {},
+  "mode": "scoped",
+  "full_reasons": [],
+  "rust_packages": [],
+  "rust_targets": [],
+  "probes": false,
+  "lean": {
+   "mode": "none",
+   "reasons": [],
+   "modules": [],
+   "audits": []
+  },
+  "python_reasons": [],
+  "provider_gate": false,
+  "provider_reasons": [],
+  "provider_lock_check": false,
+  "provider_lock_reasons": [],
+  "provider_members_reached_without_providers_change": [],
+  "unresolved_includes": [
+   {
+    "crate": "qcore-compiler",
+    "source": "compiler/tests/ct_corpus.rs:8069",
+    "literal": "include_str!(\\\"fixtures/ct/{id}/case.qr\\\")\");",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   }
+  ],
+  "undeclared_directory_literals": [],
+  "stale_walkers": []
+ },
+ "planned_steps": [
+  {
+   "name": "submodules",
+   "argv": [
+    "git",
+    "-C",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ae5299cbd0eb7c091",
+    "submodule",
+    "status",
+    "--recursive"
+   ],
+   "slot": null
+  },
+  {
+   "name": "fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "slot": null
+  },
+  {
+   "name": "python",
+   "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+   ],
+   "slot": null
+  }
+ ],
+ "slots": true,
+ "landing": false,
+ "card_base": "b5fc23151bf8e8111925f775699e4a560e6fd7a9",
+ "started": "20261107T042433Z",
+ "ran": true,
+ "steps": [
+  {
+   "name": "submodules",
+   "argv": [
+    "git",
+    "-C",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ae5299cbd0eb7c091",
+    "submodule",
+    "status",
+    "--recursive"
+   ],
+   "exit": 0,
+   "seconds": 0.0,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ae5299cbd0eb7c091/private/gate-1/submodules.log",
+   "counts": {
+    "submodules": 1,
+    "not_checked_out_or_moved": []
+   }
+  },
+  {
+   "name": "fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "exit": 0,
+   "seconds": 5.9,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ae5299cbd0eb7c091/private/gate-1/fmt.log",
+   "counts": {}
+  },
+  {
+   "name": "python",
+   "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+   ],
+   "exit": 0,
+   "seconds": 114.5,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ae5299cbd0eb7c091/private/gate-1/python.log",
+   "counts": {
+    "tests": 685,
+    "skipped": 0,
+    "ok": true
+   },
+   "env": {
+    "QUIRIN_CARD_GATE_BASE": "b5fc23151bf8e8111925f775699e4a560e6fd7a9"
+   }
+  }
+ ],
+ "ok": true,
+ "finished": "20261107T042633Z"
+}

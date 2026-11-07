@@ -109,6 +109,7 @@ import QCore.ContractViewProjection
 import QCore.ControlFlow
 import QCore.CountedUsers
 import QCore.CounterSource
+import QCore.CrossUnitReplayBudget
 import QCore.CrossUnitSummary
 import QCore.Ct01OwnedTransfer
 import QCore.Ct03ReadShares
@@ -231,6 +232,7 @@ import QCore.MemberAddressReader
 import QCore.MemberCustodyAttribution
 import QCore.MemberEffectSummary
 import QCore.MemberFormalType
+import QCore.MemberNonCUnits
 import QCore.MemberPathDirectCall
 import QCore.MemberPathRelease
 import QCore.MemberPathUnitHelpers

@@ -1,0 +1,313 @@
+{
+ "expr:statement:call-arg": {
+  "leaves": 5116,
+  "no_parity_row": 87,
+  "reasons": {
+   "unlisted form: no value form of this card": 3853,
+   "unlisted form: address-of": 966,
+   "unlisted form: no unique Clang node for the statement": 858,
+   "an arm's expression an older route refuses": 818,
+   "CallRefused(X, X)": 632,
+   "unlisted form: no unique Clang node for the condition": 189,
+   "place: the typed access-path reader refused it (CGX)": 179,
+   "cast X (CGX)": 160,
+   "an operand unsequenced with the region carries an effect; composed with CGX's fo": 105,
+   "no unique Clang node": 104,
+   "place: path through UnaryOperator (CGX)": 89,
+   "unlisted form: write to an object the gateway does not read as a scalar local": 61,
+   "a deciding operand no condition route decides": 45,
+   "nested call (CGX)": 16
+  },
+  "roots": {
+   "formal": 3139,
+   "local": 2837,
+   "global": 102
+  },
+  "values": {
+   "address": 3977,
+   "pointer": 2224,
+   "scalar": 1689,
+   "function_pointer": 16
+  },
+  "accesses": {
+   "address": 3977,
+   "read": 2714,
+   "store": 664
+  },
+  "hops": {
+   "1": 3111,
+   "3": 809,
+   "2": 768,
+   "0": 409,
+   "4": 19
+  },
+  "callees": {
+   "rd_slice_abs_offset": 558,
+   "rd_slice_read": 541,
+   "flb_log_suppress_check": 32,
+   "rd_map_iter": 22,
+   "rd_slice_peek": 7,
+   "verifyNumPartitionsWithRackMismatch0": 6,
+   "verifyMultipleAssignment0": 6,
+   "rd_refcnt_sub0": 5,
+   "rd_atomic32_get": 3,
+   "rd_kafkap_str_cmp": 2,
+   "rd_interval0": 2,
+   "safe_read_bool": 1,
+   "strcmp": 1
+  }
+ },
+ "expr:cond:call-arg": {
+  "leaves": 1492,
+  "no_parity_row": 9,
+  "reasons": {
+   "CallRefused(X, X)": 1442,
+   "unlisted form: no value form of this card": 725,
+   "unlisted form: no unique Clang node for the statement": 558,
+   "an arm's expression an older route refuses": 540,
+   "unlisted form: no unique Clang node for the condition": 180,
+   "no unique Clang node": 100,
+   "unlisted form: address-of": 88,
+   "place: path through UnaryOperator (CGX)": 82,
+   "unlisted form: write to an object the gateway does not read as a scalar local": 61,
+   "cast X (CGX)": 42,
+   "CallFreeLeafRefused": 21,
+   "ResidualRefused": 16,
+   "place: the typed access-path reader refused it (CGX)": 2,
+   "unlisted form: event outside this card's lowering": 2
+  },
+  "roots": {
+   "formal": 950,
+   "local": 661,
+   "global": 16
+  },
+  "values": {
+   "address": 1156,
+   "scalar": 819,
+   "pointer": 800,
+   "function_pointer": 5
+  },
+  "accesses": {
+   "address": 1156,
+   "read": 989,
+   "store": 1
+  },
+  "hops": {
+   "1": 1215,
+   "2": 137,
+   "0": 116,
+   "3": 24
+  },
+  "callees": {
+   "rd_slice_abs_offset": 560,
+   "rd_slice_read": 541,
+   "rd_refcnt_sub0": 153,
+   "rd_atomic32_get": 89,
+   "verifyAssignment0": 70,
+   "rd_list_elem": 67,
+   "flb_log_suppress_check": 32,
+   "strcmp": 30,
+   "thrd_is_current": 24,
+   "rd_map_cnt": 24,
+   "rd_list_cnt": 21,
+   "flb_routes_mask_get_bit": 18,
+   "rd_interval0": 17,
+   "rd_kafka_topic_partition_list_find": 15
+  }
+ },
+ "expr:statement:direct": {
+  "leaves": 985,
+  "no_parity_row": 401,
+  "reasons": {
+   "unlisted form: no value form of this card": 360,
+   "place: the typed access-path reader refused it (CGX)": 77,
+   "pointer arithmetic (CGX)": 76,
+   "unlisted form: no unique Clang node for the statement": 62,
+   "an arm's expression an older route refuses": 31,
+   "place: path through UnaryOperator (CGX)": 27,
+   "a deciding operand no condition route decides": 18,
+   "pointer X converted to an integer may carry a tracked identity (CGX)": 12,
+   "unlisted form: event outside this card's lowering": 6,
+   "call X unsequenced with another event (CGX)": 5,
+   "unlisted form: address-of": 5,
+   "CallRefused(X, X)": 4,
+   "unlisted form: value of an unread type": 2,
+   "unlisted form: write to an object the gateway does not read as a scalar local": 2
+  },
+  "roots": {
+   "local": 577,
+   "formal": 487,
+   "global": 37
+  },
+  "values": {
+   "pointer": 476,
+   "scalar": 340,
+   "address": 183,
+   "function_pointer": 12
+  },
+  "accesses": {
+   "read": 412,
+   "null-store": 233,
+   "store": 200,
+   "address": 183
+  },
+  "hops": {
+   "1": 685,
+   "2": 171,
+   "0": 93,
+   "3": 34,
+   "4": 2
+  },
+  "callees": {
+   "rd_list_elem": 4
+  }
+ },
+ "expr:cond:direct": {
+  "leaves": 528,
+  "no_parity_row": 5,
+  "reasons": {
+   "unlisted form: no value form of this card": 364,
+   "unlisted form: no unique Clang node for the condition": 119,
+   "place: the typed access-path reader refused it (CGX)": 47,
+   "pointer arithmetic (CGX)": 46,
+   "CallRefused(X, X)": 40,
+   "unlisted form: value of an unread type": 12,
+   "ResidualRefused": 10,
+   "place: path through UnaryOperator (CGX)": 4,
+   "unlisted form: event outside this card's lowering": 3,
+   "cast X (CGX)": 1,
+   "unsequenced access of X and X, not proved disjoint (CGX)": 1,
+   "IndirectCallee": 1,
+   "unsequenced read of X and call X whose contract footprints do not commute (CGX)": 1,
+   "CallFreeLeafRefused": 1
+  },
+  "roots": {
+   "local": 330,
+   "formal": 192,
+   "global": 12
+  },
+  "values": {
+   "scalar": 307,
+   "pointer": 170,
+   "function_pointer": 104,
+   "address": 9
+  },
+  "accesses": {
+   "read": 526,
+   "address": 9,
+   "increment": 1
+  },
+  "hops": {
+   "1": 298,
+   "0": 118,
+   "2": 96,
+   "3": 13,
+   "4": 3
+  },
+  "callees": {
+   "rd_kafka_mock_cluster_get_coord": 5,
+   "rd_kafka_conf_is_modified": 4,
+   "refill_tag": 4,
+   "strstr": 3,
+   "strchr": 3,
+   "rd_timeout_expired": 2,
+   "rd_kafka_buf_retry": 2,
+   "rd_kafka_metadata_cache_find": 2,
+   "pb_field_iter_find": 1,
+   "__builtin_offsetof": 1,
+   "rd_segment_write_remains": 1,
+   "rd_kafka_broker_ApiVersion_supported": 1,
+   "rd_kafka_toppar_is_on_cgrp": 1,
+   "rd_kafka_broker_find": 1
+  }
+ },
+ "expr:return:call-arg": {
+  "leaves": 110,
+  "no_parity_row": 98,
+  "reasons": {
+   "unlisted form: no value form of this card": 8,
+   "CallRefused(X, X)": 8,
+   "data actual: conditional (CGX)": 4,
+   "nested call X has no contract in force": 3,
+   "LeafShape(ConnectiveBesideCall)": 3,
+   "call X: Unapplied(X)": 2,
+   "place: the typed access-path reader refused it (CGX)": 2,
+   "a deciding operand no condition route decides": 2,
+   "a value holding calls outside a scalar-result function": 2,
+   "an arm's expression an older route refuses": 2,
+   "a connective (CGX)": 1,
+   "unlisted form: address-of": 1,
+   "X leaves exceed X": 1,
+   "an operand unsequenced with the region carries an effect; composed with CGX's fo": 1
+  },
+  "roots": {
+   "formal": 71,
+   "local": 39
+  },
+  "values": {
+   "address": 47,
+   "pointer": 39,
+   "scalar": 37,
+   "function_pointer": 1
+  },
+  "accesses": {
+   "read": 68,
+   "address": 47
+  },
+  "hops": {
+   "1": 94,
+   "2": 12,
+   "3": 2,
+   "0": 2
+  },
+  "callees": {
+   "tolower": 1,
+   "LZ4F_isError": 1,
+   "safe_read_bool": 1,
+   "rd_atomic32_get": 1,
+   "rd_string_hash": 1,
+   "rd_kafka_topic_assignment_state_rack_search": 1,
+   "rd_list_cnt": 1,
+   "rd_map_str_hash": 1
+  }
+ },
+ "expr:return:direct": {
+  "leaves": 58,
+  "no_parity_row": 0,
+  "reasons": {
+   "a value holding calls outside a scalar-result function": 55,
+   "unlisted form: no value form of this card": 45,
+   "place: the typed access-path reader refused it (CGX)": 11,
+   "no nested call": 3,
+   "unlisted form: value of an unread type": 2,
+   "pointer store (CGX)": 1,
+   "unlisted form: address-of": 1,
+   "a deciding operand no condition route decides": 1,
+   "unlisted form: event outside this card's lowering": 1,
+   "unlisted form: no unique Clang node for the return": 1,
+   "an arm's expression an older route refuses": 1
+  },
+  "roots": {
+   "formal": 31,
+   "local": 24,
+   "global": 3
+  },
+  "values": {
+   "pointer": 24,
+   "address": 20,
+   "scalar": 17
+  },
+  "accesses": {
+   "read": 38,
+   "address": 20,
+   "increment": 1
+  },
+  "hops": {
+   "1": 34,
+   "2": 17,
+   "0": 6,
+   "3": 1
+  },
+  "callees": {}
+ }
+}

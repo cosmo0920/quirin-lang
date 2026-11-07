@@ -1,0 +1,70 @@
+{
+  "argv": [
+    "quirin-audit",
+    "current",
+    "--checkout",
+    "/media/Data/GitHub/quirin-lang/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-source/fluent-bit-clang-source",
+    "--profile-directory",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a0dea5d9a872e9adc/contract/profiles/fluent-bit",
+    "--compile-database",
+    "/media/Data/GitHub/quirin-lang/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-source/fluent-bit-clang-production/compile_commands.json",
+    "--monkey-database",
+    "/media/Data/GitHub/quirin-lang/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-source/monkey/monkey-build/compile_commands.json",
+    "--monkey-source-report",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a0dea5d9a872e9adc/private/census/run/monkey-source.json",
+    "--report",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a0dea5d9a872e9adc/private/census/run/resource-diagnostics.json",
+    "--jobs",
+    "8"
+  ],
+  "build_profile": "release",
+  "checkout": "/media/Data/GitHub/quirin-lang/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-source/fluent-bit-clang-source",
+  "clang": {
+    "program": "/usr/lib/llvm-21/bin/clang",
+    "target": "x86_64-pc-linux-gnu",
+    "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin"
+  },
+  "compile_database": "/media/Data/GitHub/quirin-lang/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-source/fluent-bit-clang-production/compile_commands.json",
+  "compile_database_sha256": "a833041a1f98c716704a596f70fe2a83c3bbe6177aaeab0b856c942ee3e3fa75",
+  "configuration": null,
+  "configuration_sha256": null,
+  "contracts": {
+    "manifest": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a0dea5d9a872e9adc/contract/profiles/fluent-bit/../../../cycle19-resource-contracts.json",
+    "manifest_sha256": "486f25f26f0d48bf94879b200bba2c156e65b9230ba516eff6ffea994c24d866",
+    "selection": null,
+    "source": "profile_manifest"
+  },
+  "cwd": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a0dea5d9a872e9adc",
+  "environment": {
+    "QCORE_AUDIT_JOBS": null,
+    "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang",
+    "QCORE_GATEWAY_RULES_OFF": null
+  },
+  "gateway_failures": false,
+  "gateway_rules_off": [],
+  "jobs": {
+    "effective": 1,
+    "requested": 8,
+    "source": "command_line"
+  },
+  "memory_admission": {
+    "omitted": 0,
+    "per_worker_reserve_bytes": 3221225472,
+    "phases": [],
+    "scope": "bounded parallel-dispatch attempts on the coordinating thread; serial requests are not listed; planning estimates only, not a hard memory limit or verdict input"
+  },
+  "mode": "configured",
+  "monkey_database": "/media/Data/GitHub/quirin-lang/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-source/monkey/monkey-build/compile_commands.json",
+  "monkey_database_sha256": "ef4fd54e3a35ea0f6b7a27305ceae8f139f1aafce14cf0aa333c53c41363ded0",
+  "profile_directory": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a0dea5d9a872e9adc/contract/profiles/fluent-bit",
+  "reports": {
+    "binding_directory": null,
+    "monkey_source_report": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a0dea5d9a872e9adc/private/census/run/monkey-source.json",
+    "report": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a0dea5d9a872e9adc/private/census/run/resource-diagnostics.json"
+  },
+  "schema_version": 1,
+  "scope": "invocation provenance of this run; not an input to any verdict. Preparation (the Clang CMake build and the Monkey inputs, including the C++ compiler) is recorded by quirin-audit prepare beside its outputs (build-provenance.json, qcore-monkey-inputs.json and prepare.json); resource analysis does not establish GCC equivalence or whole-library safety",
+  "source_revision": "046accf6aded7906f66a1baf0202da349e521736",
+  "tool": "quirin-audit current",
+  "tool_version": "0.1.0"
+}

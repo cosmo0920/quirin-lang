@@ -111,6 +111,9 @@ pub fn run_current_route_with_checkpoints(
     checkpoints: Option<&crate::checkpoint_run::CheckpointOptions>,
 ) -> Result<bool, String> {
     let cross_unit_links = LinkMap::load_selected()?;
+    // Card CURRENT-RUN-WORKER-SPIN: per-phase and per-unit progress on
+    // standard error for the cross-unit route (or when asked).
+    crate::route_progress::enable_if(cross_unit_links.is_some());
     if cross_unit_links.is_some() && route.mode.is_contracts_only() {
         return Err("cross-unit imports require configured home and caller units".into());
     }
@@ -255,13 +258,20 @@ pub fn run_current_route_with_checkpoints(
     let scope = crate::member_prepass::load_scope(profile.directory())?;
     // Card OUTER-CONTRACT (rule 31): what each loader's binders reach.
     crate::outer_selection::compute_reach(&prepass_entries)?;
-    if let Some(prepass) = crate::member_prepass::run(
+    let prepass_phase = crate::route_progress::Phase::begin(
+        "member facts pre-pass",
+        prepass_entries.len(),
+        route.jobs,
+    );
+    let prepass = crate::member_prepass::run(
         &prepass_entries,
         audit.contracts(),
         &scope,
         Some(&root),
         route.jobs,
-    ) {
+    );
+    prepass_phase.end(if prepass.is_some() { "read" } else { "not run" });
+    if let Some(prepass) = prepass {
         // The line joins the preamble a checkpoint composer prints.
         preamble.push(crate::member_prepass::announce(
             &prepass,
@@ -444,12 +454,25 @@ pub fn run_current_route_with_checkpoints(
     let phases = crate::refuted_contracts::run_two_phases_with_bounds(
         |table| {
             audit.set_refuted_table(table);
+            let progress = crate::route_progress::Phase::begin(
+                if table.is_empty() {
+                    "units under the loaded contracts"
+                } else {
+                    "units under the refutation table"
+                },
+                tasks.len(),
+                route.jobs,
+            );
             let mut outcomes = Vec::new();
             let stopped = run_ordered(
                 tasks.clone(),
                 route.jobs,
                 Some(dispatch.clone()),
-                |task| (task.group, evaluate_task(&audit, &task)),
+                |task| {
+                    let outcome =
+                        progress.unit(&task_label(&root, &task), || evaluate_task(&audit, &task));
+                    (task.group, outcome)
+                },
                 |(group, outcome): (usize, EntryOutcome)| {
                     let outcome = outcome.park();
                     let failed = outcome.result.is_err();
@@ -458,6 +481,11 @@ pub fn run_current_route_with_checkpoints(
                 },
             )
             .err();
+            progress.end(if stopped.is_some() {
+                "stopped at a failed unit"
+            } else {
+                ""
+            });
             (outcomes, stopped)
         },
         |outcomes| {
@@ -484,19 +512,37 @@ pub fn run_current_route_with_checkpoints(
         let mut exports = Vec::new();
         let mut definitions = Vec::new();
         let mut census_complete = true;
-        for task in &tasks {
-            if let (Ok(expected_source), TaskInput::Configured(entry)) =
-                (&task.expected_source, task.input)
-            {
-                let (found_exports, found_definitions, complete) =
-                    audit.export_cross_unit_home(task.library, expected_source, entry, links)?;
-                exports.extend(found_exports);
-                definitions.extend(found_definitions);
-                census_complete &= complete;
-            } else {
-                census_complete = false;
-            }
-        }
+        // Card CURRENT-RUN-WORKER-SPIN: the units are scanned concurrently
+        // and folded strictly in task order, stopping at the first error in
+        // that order, exactly as the sequential loop did.
+        let progress =
+            crate::route_progress::Phase::begin("cross-unit home export", tasks.len(), route.jobs);
+        run_ordered(
+            tasks.clone(),
+            route.jobs,
+            Some(dispatch.clone()),
+            |task| match (&task.expected_source, task.input) {
+                (Ok(expected_source), TaskInput::Configured(entry)) => {
+                    Some(progress.unit(&task_label(&root, &task), || {
+                        audit.export_cross_unit_home(task.library, expected_source, entry, links)
+                    }))
+                }
+                _ => None,
+            },
+            |scan| {
+                match scan {
+                    Some(scan) => {
+                        let (found_exports, found_definitions, complete) = scan?;
+                        exports.extend(found_exports);
+                        definitions.extend(found_definitions);
+                        census_complete &= complete;
+                    }
+                    None => census_complete = false,
+                }
+                Ok::<(), String>(())
+            },
+        )?;
+        progress.end(&format!("{} home export(s)", exports.len()));
         let (environment, homes) = if census_complete {
             links.select(exports, definitions, audit.contracts())
         } else {
@@ -505,12 +551,18 @@ pub fn run_current_route_with_checkpoints(
         };
         if !homes.is_empty() {
             audit.set_cross_unit(environment, homes, links);
+            let progress =
+                crate::route_progress::Phase::begin("cross-unit import", tasks.len(), route.jobs);
             let mut promoted = Vec::new();
             let stopped = run_ordered(
                 tasks.clone(),
                 route.jobs,
                 Some(dispatch.clone()),
-                |task| (task.group, evaluate_task(&audit, &task)),
+                |task| {
+                    let outcome =
+                        progress.unit(&task_label(&root, &task), || evaluate_task(&audit, &task));
+                    (task.group, outcome)
+                },
                 |(group, outcome): (usize, EntryOutcome)| {
                     let outcome = outcome.park();
                     let failed = outcome.result.is_err();
@@ -519,6 +571,11 @@ pub fn run_current_route_with_checkpoints(
                 },
             )
             .is_err();
+            progress.end(if stopped {
+                "stopped at a failed unit"
+            } else {
+                ""
+            });
             let new_refutations = retained_refutations(
                 promoted
                     .iter()
@@ -559,6 +616,18 @@ pub fn run_current_route_with_checkpoints(
 }
 
 /// One task's analysis: exactly what the whole-run fold computes for it.
+/// Card CURRENT-RUN-WORKER-SPIN: a task's progress label, its file named
+/// below the checkout when it lies there.
+fn task_label(root: &Path, task: &ConfiguredTask<'_>) -> String {
+    let file = match (&task.expected_source, task.input) {
+        (_, TaskInput::Absent(file)) => return format!("{}/{file}", task.library),
+        (Ok(source), _) => source.as_path(),
+        (Err(_), TaskInput::Configured(entry)) => entry.file.as_path(),
+    };
+    let file = file.strip_prefix(root).unwrap_or(file);
+    format!("{}/{}", task.library, file.display())
+}
+
 pub(crate) fn evaluate_task(audit: &CurrentAudit, task: &ConfiguredTask<'_>) -> EntryOutcome {
     match (&task.expected_source, task.input) {
         (_, TaskInput::Absent(file)) => audit.evaluate_absent(task.library, file),

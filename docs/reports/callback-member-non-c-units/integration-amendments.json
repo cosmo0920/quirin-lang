@@ -1,0 +1,54 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "CALLBACK-MEMBER-NON-C-UNITS",
+  "base": "7b726587b",
+  "measured_tip": "0807a69b8",
+  "increment_paragraph": "**CALLBACK-MEMBER-NON-C-UNITS** (round 26 B; user request 2026-11-06 \"we needed to cover more areas to fill the gaps of verifying as Safe or Provisional Unsafe units\", queued with \"Queue all six\"; [report](../../reports/callback-member-non-c-units/README.md)): the user's `current` run at Fluent Bit 046accf6 refused 205 rows `callback-member-open` only because two C++ units were unread, and the member pre-pass's unread map opened every invoked member: `lib/ripser-1.2.1/ripser.cpp` names only `event` (libstdc++'s `std::ios_base::event`, matching the S3 lifetime protocol's token) and `src/simdutf/flb_simdutf_connector.cpp` names `cmt`, `event` and `evl` (`fluent-bit/flb_log.h` includes cmetrics' `struct cmt`). Gateway rule 12n and C04.19.3, amended in place (no new rule id): an unread C++ unit whose `-E` text under its own command is the whole unit (no `-include`, `-Xclang`, precompiled-header or module flag, no module declaration or import) opens only a member whose own closure-graph tokens it names, or one with a graph token it was not checked against: the pre-pass's skipping reading (user decision F1) applied per member (`member_run_facts::RunMemberFacts::opens`, `member_prepass::scoped_cxx`, the section's `non_c_units`); a failed preprocessing, an assembly unit, a C unit whose AST is not read and a non-textual C++ unit still open every member, and the S3 lifetime standing is unchanged. Lean `QCore.MemberNonCUnits` (9 declarations; `the_closed_run_set_covers_every_store`, `SCOPED_VECTORS` bound); fixtures `crates/qcore-audit/tests/callback_member_non_c_units.rs`. Predicted (base baseline:c8c7edf21): no move on corpus, system or slice (their 34 preprocessing failures keep every member open); on the `current` run the 10 rk_conf members, the share-acknowledgement member and `consume_ctx.consume_cb` close empty and `rko_serve` over its four serve functions, `cmt.log_cb` stays open on the connector, and no function, unit or uncontracted callee changes.",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "CALLBACK-MEMBER-NON-C-UNITS",
+      "operation": "register",
+      "title": "An unread non-C unit opens every callback member, whatever it names",
+      "text": "Registered by its own card at landing (round 26 B, user request 2026-11-06): in the user's current run at Fluent Bit 046accf6, 205 callback-member-open rows rested only on two unread C++ units (lib/ripser-1.2.1/ripser.cpp, src/simdutf/flb_simdutf_connector.cpp) because the pre-pass's unread map was run-global; retired by the next entry.",
+      "source": "docs/reports/callback-member-non-c-units/README.md",
+      "recorded_by": "CALLBACK-MEMBER-NON-C-UNITS"
+    },
+    {
+      "id": "CALLBACK-MEMBER-NON-C-UNITS",
+      "operation": "retire",
+      "why": "DISCHARGED by CALLBACK-MEMBER-NON-C-UNITS (docs/reports/callback-member-non-c-units/README.md): the two units named with the tokens they name (census.txt); rule 12n amended in place: an unread C++ unit whose -E text is the whole unit opens only the members whose own closure-graph tokens it names (the F1 skipping reading per member), every other unread unit still opens every member; Lean QCore.MemberNonCUnits (the closed run set covers every store under the reading's premise); fixtures for a declaring-and-storing unit (open), a non-declaring unit (closed), a failed preprocessing, an assembly unit and non-textual C++ units (open). cmt.log_cb's remaining opening by the connector is CALLBACK-MEMBER-CXX-AST-STORES.",
+      "source": "docs/reports/callback-member-non-c-units/README.md"
+    },
+    {
+      "id": "CALLBACK-MEMBER-CXX-AST-STORES",
+      "operation": "register",
+      "title": "A C++ unit that declares a member's record but has no expression naming it: a clang++ store reading is a decision",
+      "text": "Registered by CALLBACK-MEMBER-NON-C-UNITS. At Fluent Bit 046accf6, src/simdutf/flb_simdutf_connector.cpp includes fluent-bit/flb_log.h, which includes cmetrics/cmetrics.h and so defines struct cmt; the token reading (rule 12n) keeps cmt.log_cb open on it (43 cmt_log_print rows in cmt_counter_create, cmt_gauge_create, cmt_untyped_create, cmt_summary_create, cmt_histogram_create, cmt_exp_histogram_create, filter_context_label_key_value; each also holds unresolved identities and uncontracted calls, so no status moves today). Its Clang AST under its own command names `cmt` only in 2 CXXRecordDecl, 2 FieldDecl, 5 FunctionDecl and 4 ParmVarDecl lines and in no expression or statement (census.txt). Fail-closed does not settle a clang++ reading: (a) keep the token reading (status quo); (b) read the unit's AST: open a member when any expression, statement, method, constructor or default member initializer names a graph token or a typedef that aliases one, writes through void * read as the C reading reads them (recommended: the C reading follows no untyped write either, so it adds no premise); (c) as (b) with every write through a void * or char * that is cast or copied opening every member (closes nothing in this unit: libstdc++ inlines and the connector's memcpy into temp_buffer). DISCHARGE: a user decision, then the reading with fixtures (typedef-aliased, template-instantiated, reference-bound and NSDMI stores open), Lean parity and a current-run measurement.",
+      "source": "docs/reports/callback-member-non-c-units/README.md",
+      "recorded_by": "CALLBACK-MEMBER-NON-C-UNITS"
+    },
+    {
+      "id": "MEMBER-PREPASS-ASSEMBLY-UNITS",
+      "operation": "register",
+      "title": "The member pre-pass skips an assembly unit that names no token, under C's premise",
+      "text": "Registered by CALLBACK-MEMBER-NON-C-UNITS. The pre-pass (rule 12n) skips every unit whose -E text names no final token, under the premise that a unit reaches a member only through its record's definition and a function only through its name. That holds for C and C++, not for assembly, which writes through offsets and symbols no record names: at Fluent Bit 046accf6 the current route skips lib/zstd-1.5.7/lib/decompress/huf_decompress_amd64.S, lib/luajit-cmake/lj_vm.S (after its scope exclusion is dropped, it preprocesses and names no token) and WAMR's invokeNative_em64.s (whose -E text is empty, so it can never name a token); an assembly unit that names one opens every member (fixture an_assembly_unit_naming_a_token_opens_every_member), and the corpus, system and slice routes' lj_vm.S fails preprocessing and opens every member. DISCHARGE: an evidenced reading of each assembly unit (its external symbol references and the C entry points that hand it objects, against the run's members), or an assembly unit in the program opens every member, with fixtures, Lean parity and an all-route measurement.",
+      "source": "docs/reports/callback-member-non-c-units/README.md",
+      "recorded_by": "CALLBACK-MEMBER-NON-C-UNITS"
+    },
+    {
+      "id": "MEMBER-PREPASS-NOT-TEXTUAL-SKIP",
+      "operation": "register",
+      "title": "The pre-pass's skip of a unit naming no token does not check that its -E text is the whole unit",
+      "text": "Registered by CALLBACK-MEMBER-NON-C-UNITS. Its scoped C++ reading applies only where the unit's -E text is the whole unit (member_prepass::scoped_cxx: no -include, -Xclang, precompiled-header or module flag in the command, no module declaration, import or `#pragma clang module` in the text); the older skip of any unit (C or not) naming no final token, and the C units read through the gateway's own preprocessing, do not apply that guard, so a precompiled header or module could hide a record definition from the token test. No command of the 046accf6 production (1,419) or Monkey (142) databases uses such a flag (scan in the report). A C unit whose AST is not read could also be scoped by the same reading (none at 046accf6). DISCHARGE: the guard on every unit's token test (a non-textual unit is read or opens every member), with fixtures and Lean parity.",
+      "source": "docs/reports/callback-member-non-c-units/README.md",
+      "recorded_by": "CALLBACK-MEMBER-NON-C-UNITS"
+    },
+    {
+      "id": "S3-PREPASS-UNREAD-GRAPH-ISOLATION",
+      "operation": "amend",
+      "text": "AMENDED (CALLBACK-MEMBER-NON-C-UNITS, 2026-11-07): the 2 C++ units are now isolated per member by rule 12n's scoped reading (an unread C++ unit whose -E text is the whole unit opens only the callback members whose own closure-graph tokens it names; at 046accf6 ripser.cpp names only `event`, flb_simdutf_connector.cpp `cmt`, `event`, `evl`, so only cmt.log_cb stays open on them). The 34 preprocessing failures (sources and headers the prepared builds never generated, W47-PREDEFINED-FACTS-UNGENERATED-SOURCES' 34) still open every member on the corpus, system and slice routes, and the S3 lifetime standing still reads every unread unit as a declared assumption.",
+      "source": "docs/reports/callback-member-non-c-units/README.md"
+    }
+  ]
+}
