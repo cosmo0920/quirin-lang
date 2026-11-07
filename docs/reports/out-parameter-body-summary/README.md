@@ -124,6 +124,15 @@ a class written on one exit only, a store after release, two slots given one
 site, the chunkio shape with the scalar store after the slot (all refused),
 and the ordinary `Out(nullable)` summary unchanged.
 
+Two older pins moved with part 2 (gate-1 failed on them, as designed):
+`call_argument_access::an_unsanctioned_out_slot_store_is_withdrawn_by_the_hand_on_rule`
+and `exposed_leak_mechanisms::mechanism_1_an_unsanctioned_out_slot_store_is_not_a_leak_claim`
+pinned `int w(char **out, …) { … if (!p) return -1; *out = p; return 0; }`
+as an unsanctioned store. That body now validates its own relation (`-1`
+unwritten, `0` fresh) and its row is `Safe`; both mechanisms are re-pinned on
+the `void` form of the same body, which no relation describes and which keeps
+the refusal, and the first test also pins the `int` form's new `Safe`.
+
 `QCore.OutParameterBodySummary` ([`proof/QCore/OutParameterBodySummary.lean`](../../../proof/QCore/OutParameterBodySummary.lean),
 audited by `proof/AuditOutParameterBodySummary.lean`): `class_mode_sound`
 (a class's published mode admits the body's effect on every exit of the

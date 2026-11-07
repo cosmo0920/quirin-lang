@@ -445,12 +445,23 @@ fn the_pre_existing_suffix_destination_hole_is_pinned() {
 
 #[test]
 fn an_unsanctioned_out_slot_store_is_withdrawn_by_the_hand_on_rule() {
+    // Card OUT-PARAMETER-BODY-SUMMARY (rule 11r(6)): the `int` body returning
+    // `-1` with the slot unwritten and `0` with it written now validates its
+    // own return-code relation, so the unsanctioned store is pinned on a
+    // `void` body, which no relation describes.
     expect(
         "`*out = p` with no out-parameter contract keeps `p` owed",
-        "int w(char **out, unsigned long n) { char *p = x_alloc(n); if (!p) return -1; \
-         *out = p; return 0; }",
+        "void w(char **out, unsigned long n) { char *p = x_alloc(n); if (!p) return; \
+         *out = p; }",
         "Unknown",
         &["unsupported:store through `*out` without an out-parameter contract"],
+    );
+    expect(
+        "the same store under the body's validated return-code relation",
+        "int w(char **out, unsigned long n) { char *p = x_alloc(n); if (!p) return -1; \
+         *out = p; return 0; }",
+        "Safe",
+        &[],
     );
 }
 
