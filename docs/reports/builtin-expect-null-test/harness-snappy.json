@@ -1,0 +1,839 @@
+[
+ {
+  "bare": {
+   "append": {
+    "diagnostics": [
+     "19813: UnknownAlias { variable: \"iov\" }",
+     "19814: UnknownAlias { variable: \"iov\" }"
+    ],
+    "status": "Unknown"
+   },
+   "available": {
+    "diagnostics": [],
+    "status": "Safe"
+   },
+   "clear_env": {
+    "diagnostics": [],
+    "status": "Safe"
+   },
+   "compress_fragment": {
+    "diagnostics": [
+     "20057: UnknownAlias { variable: \"input\" }",
+     "20060: Unsupported { description: \"call to uncontracted function `log2_floor`\" }",
+     "20062: Unsupported { description: \"unsupported assignment expression\" }",
+     "20067: Unsupported { description: \"unsupported assignment expression\" }",
+     "20070: Unsupported { description: \"unmodeled increment or decrement expression\" }",
+     "20085: Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "20088: Unsupported { description: \"unrecognized assignment destination\" }",
+     "20091: Unsupported { description: \"call to uncontracted function `emit_literal`\" }",
+     "20096: Unsupported { description: \"call to uncontracted function `find_match_length`\" }",
+     "20100: Unsupported { description: \"unsupported assignment expression\" }",
+     "20102: Unsupported { description: \"call to uncontracted function `emit_copy`\" }",
+     "20112: Unsupported { description: \"unrecognized assignment destination\" }",
+     "20116: Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "20118: Unsupported { description: \"unrecognized assignment destination\" }",
+     "20129: Unsupported { description: \"call to uncontracted function `emit_literal`\" }"
+    ],
+    "status": "Unknown"
+   },
+   "decompress_all_tags": {
+    "diagnostics": [
+     "20218: UnknownAlias { variable: \"d\" }",
+     "20218: Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "20218: Unsupported { description: \"unmodeled call, aggregate or indirect access in branch condition\" }",
+     "20220: Unsupported { description: \"unmodeled call, aggregate or indirect access in branch condition\" }",
+     "20221: Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "20222: Unsupported { description: \"unmodeled call, aggregate or indirect access in branch condition\" }",
+     "20224: UnknownAlias { variable: \"d\" }",
+     "20226: Unsupported { description: \"unmodeled increment or decrement expression\" }",
+     "20229: Unsupported { description: \"unmodeled call, aggregate or indirect access in branch condition\" }",
+     "20233: UnknownAlias { variable: \"d\" }",
+     "20233: Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "20233: Unsupported { description: \"unmodeled call, aggregate or indirect access in branch condition\" }",
+     "20238: Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "20242: Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "20244: Unsupported { description: \"unmodeled call, aggregate or indirect access in branch condition\" }",
+     "20251: UnknownAlias { variable: \"d\" }",
+     "20254: Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "20256: Unsupported { description: \"unmodeled call, aggregate or indirect access in branch condition\" }",
+     "20259: UnknownAlias { variable: \"d\" }",
+     "20259: Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "20259: Unsupported { description: \"unmodeled call, aggregate or indirect access in branch condition\" }",
+     "20262: Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "20267: Unsupported { description: \"unmodeled call, aggregate or indirect access in branch condition\" }",
+     "20271: UnknownAlias { variable: \"d\" }",
+     "20271: Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "20271: Unsupported { description: \"unmodeled call, aggregate or indirect access in branch condition\" }"
+    ],
+    "status": "Unknown"
+   },
+   "emit_copy": {
+    "diagnostics": [
+     "19978: Unsupported { description: \"call to uncontracted function `emit_copy_less_than64`\" }",
+     "19982: Unsupported { description: \"call to uncontracted function `emit_copy_less_than64`\" }",
+     "19985: Unsupported { description: \"call to uncontracted function `emit_copy_less_than64`\" }"
+    ],
+    "status": "Unknown"
+   },
+   "emit_copy_less_than64": {
+    "diagnostics": [
+     "19964: Unsupported { description: \"unmodeled expression may mutate a formal resource identity\" }",
+     "19967: Unsupported { description: \"unmodeled expression may mutate a formal resource identity\" }",
+     "19969: Unsupported { description: \"unmodeled expression may mutate a formal resource identity\" }",
+     "19970: Unsupported { description: \"resource call with a formal embedded in an unmodeled expression\" }"
+    ],
+    "status": "Unknown"
+   },
+   "emit_literal": {
+    "diagnostics": [
+     "19934: Unsupported { description: \"unmodeled expression may mutate a formal resource identity\" }",
+     "19936: UnknownAlias { variable: \"literal\" }",
+     "19936: UnknownAlias { variable: \"op\" }",
+     "19937: Unsupported { description: \"arguments do not match resource contract for `unaligned_copy64`\" }",
+     "19941: UnknownAlias { variable: \"op\" }",
+     "19943: Unsupported { description: \"unmodeled expression may mutate a formal resource identity\" }",
+     "19945: Unsupported { description: \"unmodeled expression may mutate a formal resource identity\" }"
+    ],
+    "status": "Unknown"
+   },
+   "exit_snappy_decompressor": {
+    "diagnostics": [],
+    "status": "Safe"
+   },
+   "find_lsb_set_non_zero": {
+    "diagnostics": [
+     "19679: Unsupported { description: \"call to uncontracted function `__builtin_ctz`\" }"
+    ],
+    "status": "Unknown"
+   },
+   "find_lsb_set_non_zero64": {
+    "diagnostics": [
+     "19683: Unsupported { description: \"call to uncontracted function `__builtin_ctzll`\" }"
+    ],
+    "status": "Unknown"
+   },
+   "find_match_length": {
+    "diagnostics": [
+     "20021: Unsupported { description: \"unmodeled call, aggregate or indirect access in branch condition\" }",
+     "20025: Unsupported { description: \"nested call `get_unaligned64` inside a modeled call is outside the resource projection\" }",
+     "20027: Unsupported { description: \"call to uncontracted function `find_lsb_set_non_zero64`\" }",
+     "20034: Unsupported { description: \"unmodeled expression may mutate a formal resource identity\" }"
+    ],
+    "status": "Unknown"
+   },
+   "get_eight_bytes_at": {
+    "diagnostics": [],
+    "status": "Safe"
+   },
+   "get_hash_table": {
+    "diagnostics": [
+     "20013: UnknownAlias { variable: \"table\" }"
+    ],
+    "status": "Unknown"
+   },
+   "get_u32_at_offset": {
+    "diagnostics": [],
+    "status": "Safe"
+   },
+   "get_unaligned32": {
+    "diagnostics": [],
+    "status": "Safe"
+   },
+   "get_unaligned64": {
+    "diagnostics": [],
+    "status": "Safe"
+   },
+   "hash": {
+    "diagnostics": [],
+    "status": "Safe"
+   },
+   "hash_bytes": {
+    "diagnostics": [],
+    "status": "Safe"
+   },
+   "incremental_copy": {
+    "diagnostics": [
+     "19842: Unsupported { description: \"unmodeled expression may mutate a formal resource identity\" }"
+    ],
+    "status": "Unknown"
+   },
+   "incremental_copy_fast_path": {
+    "diagnostics": [
+     "19849: UnknownAlias { variable: \"op\" }",
+     "19849: UnknownAlias { variable: \"src\" }",
+     "19850: Unsupported { description: \"unrecognized assignment destination\" }",
+     "19851: Unsupported { description: \"unrecognized assignment destination\" }",
+     "19854: UnknownAlias { variable: \"op\" }",
+     "19854: UnknownAlias { variable: \"src\" }"
+    ],
+    "status": "Unknown"
+   },
+   "init_snappy_decompressor": {
+    "diagnostics": [
+     "20180: Unsupported { description: \"store of a custody-carrying value into `d->reader`, a member of the formal `d` (member-store-through-formal)\" }"
+    ],
+    "status": "Unknown"
+   },
+   "internal_uncompress": {
+    "diagnostics": [
+     "20328: Unsupported { description: \"call to uncontracted function `init_snappy_decompressor`\" }",
+     "20333: Unsupported { description: \"call to uncontracted function `writer_set_expected_length`\" }",
+     "20334: Unsupported { description: \"call to uncontracted function `decompress_all_tags`\" }"
+    ],
+    "status": "Unknown"
+   },
+   "is_little_endian": {
+    "diagnostics": [],
+    "status": "Safe"
+   },
+   "log2_floor": {
+    "diagnostics": [
+     "19675: Unsupported { description: \"unmodeled call, aggregate or indirect access in return expression\" }"
+    ],
+    "status": "Unknown"
+   },
+   "n_bytes_after_addr": {
+    "diagnostics": [],
+    "status": "Safe"
+   },
+   "peek": {
+    "diagnostics": [],
+    "status": "Safe"
+   },
+   "put_unaligned16": {
+    "diagnostics": [],
+    "status": "Safe"
+   },
+   "put_unaligned32": {
+    "diagnostics": [],
+    "status": "Safe"
+   },
+   "put_unaligned64": {
+    "diagnostics": [],
+    "status": "Safe"
+   },
+   "rd_kafka_snappy_compress": {
+    "diagnostics": [
+     "20422: Unsupported { description: \"braced initializer, expression, or declaration is not modeled\" }",
+     "20426: Unsupported { description: \"braced initializer, expression, or declaration is not modeled\" }",
+     "20430: Unsupported { description: \"call to uncontracted function `rd_kafka_snappy_compress_iov`\" }"
+    ],
+    "status": "Unknown"
+   },
+   "rd_kafka_snappy_compress_iov": {
+    "diagnostics": [
+     "20403: Unsupported { description: \"braced initializer, expression, or declaration is not modeled\" }",
+     "20408: Unsupported { description: \"braced initializer, expression, or declaration is not modeled\" }",
+     "20412: Unsupported { description: \"call to uncontracted function `sn_compress`\" }"
+    ],
+    "status": "Unknown"
+   },
+   "rd_kafka_snappy_free_env": {
+    "diagnostics": [
+     "20551: Unsupported { description: \"release of `env->hash_table`, a member of the formal `env` (member-release-through-formal)\" }",
+     "20552: Unsupported { description: \"release of `env->scratch`, a member of the formal `env` (member-release-through-formal)\" }",
+     "20553: Unsupported { description: \"release of `env->scratch_output`, a member of the formal `env` (member-release-through-formal)\" }"
+    ],
+    "status": "Unknown"
+   },
+   "rd_kafka_snappy_init_env": {
+    "diagnostics": [
+     "20543: Unsupported { description: \"indirect memory access is outside the resource projection\" }"
+    ],
+    "status": "Unknown"
+   },
+   "rd_kafka_snappy_init_env_sg": {
+    "diagnostics": [
+     "20523: Unsupported { description: \"unmodeled call, aggregate or indirect access in branch condition\" }",
+     "20526: Unsupported { description: \"store of a custody-carrying value into `env->scratch`, a member of the formal `env` (member-store-through-formal)\" }",
+     "20529: Unsupported { description: \"store of a custody-carrying value into `env->scratch_output`, a member of the formal `env` (member-store-through-formal)\" }",
+     "20536: Unsupported { description: \"call to uncontracted function `rd_kafka_snappy_free_env`\" }"
+    ],
+    "status": "Unknown"
+   },
+   "rd_kafka_snappy_java_uncompress": {
+    "diagnostics": [
+     "20476: Leak { acquisition_line: 20506 }",
+     "20478: Unsupported { description: \"unmodeled call, aggregate or indirect access in branch condition\" }",
+     "20480: Leak { acquisition_line: 20506 }",
+     "20487: Unsupported { description: \"unmodeled call, aggregate or indirect access in branch condition\" }",
+     "20490: Leak { acquisition_line: 20506 }",
+     "20499: Leak { acquisition_line: 20506 }",
+     "20504: Leak { acquisition_line: 20506 }",
+     "20506: Unsupported { description: \"loop re-acquisition: an earlier generation that may be live is still held\" }",
+     "20508: Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "20509: Leak { acquisition_line: 20506 }",
+     "20515: Leak { acquisition_line: 20506 }",
+     "20515: UnknownAlias { variable: \"outbuf\" }",
+     "20515: Unsupported { description: \"nullable resource `outbuf` used by a non-null contract\" }"
+    ],
+    "status": "Unsafe"
+   },
+   "rd_kafka_snappy_max_compressed_length": {
+    "diagnostics": [],
+    "status": "Safe"
+   },
+   "rd_kafka_snappy_uncompress": {
+    "diagnostics": [
+     "20452: Unsupported { description: \"braced initializer, expression, or declaration is not modeled\" }",
+     "20456: Unsupported { description: \"call to uncontracted function `rd_kafka_snappy_uncompress_iov`\" }"
+    ],
+    "status": "Unknown"
+   },
+   "rd_kafka_snappy_uncompress_iov": {
+    "diagnostics": [
+     "20438: Unsupported { description: \"braced initializer, expression, or declaration is not modeled\" }",
+     "20443: Unsupported { description: \"braced initializer, expression, or declaration is not modeled\" }",
+     "20447: Unsupported { description: \"call to uncontracted function `internal_uncompress`\" }"
+    ],
+    "status": "Unknown"
+   },
+   "rd_kafka_snappy_uncompressed_length": {
+    "diagnostics": [
+     "19992: Unsupported { description: \"unmodeled call, aggregate or indirect access in branch condition\" }"
+    ],
+    "status": "Unknown"
+   },
+   "read_uncompressed_length": {
+    "diagnostics": [],
+    "status": "Safe"
+   },
+   "refill_tag": {
+    "diagnostics": [
+     "20284: UnknownAlias { variable: \"d\" }",
+     "20287: Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "20290: UnknownAlias { variable: \"ip\" }",
+     "20293: Unsupported { description: \"unmodeled call, aggregate or indirect access in branch condition\" }",
+     "20294: Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "20305: Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "20310: Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "20311: Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "20316: Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "20317: Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "20319: Unsupported { description: \"indirect memory access is outside the resource projection\" }"
+    ],
+    "status": "Unknown"
+   },
+   "sink_peek": {
+    "diagnostics": [],
+    "status": "Safe"
+   },
+   "skip": {
+    "diagnostics": [],
+    "status": "Safe"
+   },
+   "sn_compress": {
+    "diagnostics": [
+     "20347: Unsupported { description: \"call to uncontracted function `varint_encode32`\" }",
+     "20348: Unsupported { description: \"call to uncontracted function `append`\" }",
+     "20349: Unsupported { description: \"unrecognized assignment destination\" }",
+     "20371: Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "20376: UnknownAlias { variable: \"env\" }",
+     "20382: Unsupported { description: \"call to uncontracted function `get_hash_table`\" }",
+     "20386: UnknownAlias { variable: \"env\" }",
+     "20388: Unsupported { description: \"call to uncontracted function `compress_fragment`\" }",
+     "20390: Unsupported { description: \"call to uncontracted function `append`\" }",
+     "20391: Unsupported { description: \"unrecognized assignment destination\" }"
+    ],
+    "status": "Unknown"
+   },
+   "unaligned_copy64": {
+    "diagnostics": [],
+    "status": "Safe"
+   },
+   "varint_encode32": {
+    "diagnostics": [
+     "19729: UnknownAlias { variable: \"sptr\" }",
+     "19735: UnknownAlias { variable: \"ptr\" }",
+     "19738: UnknownAlias { variable: \"ptr\" }",
+     "19739: UnknownAlias { variable: \"ptr\" }",
+     "19742: UnknownAlias { variable: \"ptr\" }",
+     "19743: UnknownAlias { variable: \"ptr\" }",
+     "19744: UnknownAlias { variable: \"ptr\" }",
+     "19747: UnknownAlias { variable: \"ptr\" }",
+     "19748: UnknownAlias { variable: \"ptr\" }",
+     "19749: UnknownAlias { variable: \"ptr\" }",
+     "19750: UnknownAlias { variable: \"ptr\" }",
+     "19752: UnknownAlias { variable: \"ptr\" }"
+    ],
+    "status": "Unknown"
+   },
+   "varint_parse32_with_limit": {
+    "diagnostics": [
+     "19689: UnknownAlias { variable: \"p\" }",
+     "19690: UnknownAlias { variable: \"l\" }",
+     "19700: UnknownAlias { variable: \"ptr\" }",
+     "19701: Unsupported { description: \"unrecognized assignment destination\" }",
+     "19706: UnknownAlias { variable: \"ptr\" }",
+     "19707: Unsupported { description: \"unrecognized assignment destination\" }",
+     "19712: UnknownAlias { variable: \"ptr\" }",
+     "19713: Unsupported { description: \"unrecognized assignment destination\" }",
+     "19718: UnknownAlias { variable: \"ptr\" }",
+     "19719: Unsupported { description: \"unrecognized assignment destination\" }",
+     "19725: UnknownAlias { variable: \"ptr\" }"
+    ],
+    "status": "Unknown"
+   },
+   "writer_append": {
+    "diagnostics": [
+     "19887: Unsupported { description: \"unmodeled call, aggregate or indirect access in branch condition\" }",
+     "19888: Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "19892: Unsupported { description: \"indirect memory access is outside the resource projection\" }"
+    ],
+    "status": "Unknown"
+   },
+   "writer_append_from_self": {
+    "diagnostics": [
+     "19864: Unsupported { description: \"unmodeled call, aggregate or indirect access in branch condition\" }",
+     "19865: Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "19866: Unsupported { description: \"unmodeled call, aggregate or indirect access in branch condition\" }",
+     "19869: UnknownAlias { variable: \"op\" }",
+     "19869: Unsupported { description: \"arguments do not match resource contract for `unaligned_copy64`\" }",
+     "19870: Unsupported { description: \"arguments do not match resource contract for `unaligned_copy64`\" }",
+     "19873: Unsupported { description: \"call to uncontracted function `incremental_copy_fast_path`\" }",
+     "19878: Unsupported { description: \"call to uncontracted function `incremental_copy`\" }",
+     "19881: Unsupported { description: \"indirect memory access is outside the resource projection\" }"
+    ],
+    "status": "Unknown"
+   },
+   "writer_check_length": {
+    "diagnostics": [],
+    "status": "Safe"
+   },
+   "writer_set_expected_length": {
+    "diagnostics": [
+     "19832: Unsupported { description: \"indirect memory access is outside the resource projection\" }"
+    ],
+    "status": "Unknown"
+   },
+   "writer_try_fast_append": {
+    "diagnostics": [
+     "19899: Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "19901: UnknownAlias { variable: \"ip\" }",
+     "19901: UnknownAlias { variable: \"op\" }",
+     "19902: Unsupported { description: \"arguments do not match resource contract for `unaligned_copy64`\" }",
+     "19903: Unsupported { description: \"indirect memory access is outside the resource projection\" }"
+    ],
+    "status": "Unknown"
+   }
+  },
+  "unit": "current:lib/librdkafka-2.15.0/src/snappy.c",
+  "wrapped": {
+   "append": {
+    "diagnostics": [
+     "19813: UnknownAlias { variable: \"iov\" }",
+     "19814: UnknownAlias { variable: \"iov\" }"
+    ],
+    "status": "Unknown"
+   },
+   "available": {
+    "diagnostics": [],
+    "status": "Safe"
+   },
+   "clear_env": {
+    "diagnostics": [],
+    "status": "Safe"
+   },
+   "compress_fragment": {
+    "diagnostics": [
+     "20057: UnknownAlias { variable: \"input\" }",
+     "20060: Unsupported { description: \"call to uncontracted function `log2_floor`\" }",
+     "20062: Unsupported { description: \"unsupported assignment expression\" }",
+     "20067: Unsupported { description: \"unsupported assignment expression\" }",
+     "20070: Unsupported { description: \"unmodeled increment or decrement expression\" }",
+     "20085: Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "20088: Unsupported { description: \"unrecognized assignment destination\" }",
+     "20091: Unsupported { description: \"call to uncontracted function `emit_literal`\" }",
+     "20096: Unsupported { description: \"call to uncontracted function `find_match_length`\" }",
+     "20100: Unsupported { description: \"unsupported assignment expression\" }",
+     "20102: Unsupported { description: \"call to uncontracted function `emit_copy`\" }",
+     "20112: Unsupported { description: \"unrecognized assignment destination\" }",
+     "20116: Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "20118: Unsupported { description: \"unrecognized assignment destination\" }",
+     "20129: Unsupported { description: \"call to uncontracted function `emit_literal`\" }"
+    ],
+    "status": "Unknown"
+   },
+   "decompress_all_tags": {
+    "diagnostics": [
+     "20218: UnknownAlias { variable: \"d\" }",
+     "20218: Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "20218: Unsupported { description: \"unmodeled call, aggregate or indirect access in branch condition\" }",
+     "20220: Unsupported { description: \"unmodeled call, aggregate or indirect access in branch condition\" }",
+     "20221: Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "20222: Unsupported { description: \"unmodeled call, aggregate or indirect access in branch condition\" }",
+     "20224: UnknownAlias { variable: \"d\" }",
+     "20226: Unsupported { description: \"unmodeled increment or decrement expression\" }",
+     "20229: Unsupported { description: \"unmodeled call, aggregate or indirect access in branch condition\" }",
+     "20233: UnknownAlias { variable: \"d\" }",
+     "20233: Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "20233: Unsupported { description: \"unmodeled call, aggregate or indirect access in branch condition\" }",
+     "20238: Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "20242: Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "20244: Unsupported { description: \"unmodeled call, aggregate or indirect access in branch condition\" }",
+     "20251: UnknownAlias { variable: \"d\" }",
+     "20254: Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "20256: Unsupported { description: \"unmodeled call, aggregate or indirect access in branch condition\" }",
+     "20259: UnknownAlias { variable: \"d\" }",
+     "20259: Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "20259: Unsupported { description: \"unmodeled call, aggregate or indirect access in branch condition\" }",
+     "20262: Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "20267: Unsupported { description: \"unmodeled call, aggregate or indirect access in branch condition\" }",
+     "20271: UnknownAlias { variable: \"d\" }",
+     "20271: Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "20271: Unsupported { description: \"unmodeled call, aggregate or indirect access in branch condition\" }"
+    ],
+    "status": "Unknown"
+   },
+   "emit_copy": {
+    "diagnostics": [
+     "19978: Unsupported { description: \"call to uncontracted function `emit_copy_less_than64`\" }",
+     "19982: Unsupported { description: \"call to uncontracted function `emit_copy_less_than64`\" }",
+     "19985: Unsupported { description: \"call to uncontracted function `emit_copy_less_than64`\" }"
+    ],
+    "status": "Unknown"
+   },
+   "emit_copy_less_than64": {
+    "diagnostics": [
+     "19964: Unsupported { description: \"unmodeled expression may mutate a formal resource identity\" }",
+     "19967: Unsupported { description: \"unmodeled expression may mutate a formal resource identity\" }",
+     "19969: Unsupported { description: \"unmodeled expression may mutate a formal resource identity\" }",
+     "19970: Unsupported { description: \"resource call with a formal embedded in an unmodeled expression\" }"
+    ],
+    "status": "Unknown"
+   },
+   "emit_literal": {
+    "diagnostics": [
+     "19934: Unsupported { description: \"unmodeled expression may mutate a formal resource identity\" }",
+     "19936: UnknownAlias { variable: \"literal\" }",
+     "19936: UnknownAlias { variable: \"op\" }",
+     "19937: Unsupported { description: \"arguments do not match resource contract for `unaligned_copy64`\" }",
+     "19941: UnknownAlias { variable: \"op\" }",
+     "19943: Unsupported { description: \"unmodeled expression may mutate a formal resource identity\" }",
+     "19945: Unsupported { description: \"unmodeled expression may mutate a formal resource identity\" }"
+    ],
+    "status": "Unknown"
+   },
+   "exit_snappy_decompressor": {
+    "diagnostics": [],
+    "status": "Safe"
+   },
+   "find_lsb_set_non_zero": {
+    "diagnostics": [
+     "19679: Unsupported { description: \"call to uncontracted function `__builtin_ctz`\" }"
+    ],
+    "status": "Unknown"
+   },
+   "find_lsb_set_non_zero64": {
+    "diagnostics": [
+     "19683: Unsupported { description: \"call to uncontracted function `__builtin_ctzll`\" }"
+    ],
+    "status": "Unknown"
+   },
+   "find_match_length": {
+    "diagnostics": [
+     "20021: Unsupported { description: \"unmodeled call, aggregate or indirect access in branch condition\" }",
+     "20025: Unsupported { description: \"nested call `get_unaligned64` inside a modeled call is outside the resource projection\" }",
+     "20027: Unsupported { description: \"call to uncontracted function `find_lsb_set_non_zero64`\" }",
+     "20034: Unsupported { description: \"unmodeled expression may mutate a formal resource identity\" }"
+    ],
+    "status": "Unknown"
+   },
+   "get_eight_bytes_at": {
+    "diagnostics": [],
+    "status": "Safe"
+   },
+   "get_hash_table": {
+    "diagnostics": [
+     "20013: UnknownAlias { variable: \"table\" }"
+    ],
+    "status": "Unknown"
+   },
+   "get_u32_at_offset": {
+    "diagnostics": [],
+    "status": "Safe"
+   },
+   "get_unaligned32": {
+    "diagnostics": [],
+    "status": "Safe"
+   },
+   "get_unaligned64": {
+    "diagnostics": [],
+    "status": "Safe"
+   },
+   "hash": {
+    "diagnostics": [],
+    "status": "Safe"
+   },
+   "hash_bytes": {
+    "diagnostics": [],
+    "status": "Safe"
+   },
+   "incremental_copy": {
+    "diagnostics": [
+     "19842: Unsupported { description: \"unmodeled expression may mutate a formal resource identity\" }"
+    ],
+    "status": "Unknown"
+   },
+   "incremental_copy_fast_path": {
+    "diagnostics": [
+     "19849: UnknownAlias { variable: \"op\" }",
+     "19849: UnknownAlias { variable: \"src\" }",
+     "19850: Unsupported { description: \"unrecognized assignment destination\" }",
+     "19851: Unsupported { description: \"unrecognized assignment destination\" }",
+     "19854: UnknownAlias { variable: \"op\" }",
+     "19854: UnknownAlias { variable: \"src\" }"
+    ],
+    "status": "Unknown"
+   },
+   "init_snappy_decompressor": {
+    "diagnostics": [
+     "20180: Unsupported { description: \"store of a custody-carrying value into `d->reader`, a member of the formal `d` (member-store-through-formal)\" }"
+    ],
+    "status": "Unknown"
+   },
+   "internal_uncompress": {
+    "diagnostics": [
+     "20328: Unsupported { description: \"call to uncontracted function `init_snappy_decompressor`\" }",
+     "20333: Unsupported { description: \"call to uncontracted function `writer_set_expected_length`\" }",
+     "20334: Unsupported { description: \"call to uncontracted function `decompress_all_tags`\" }"
+    ],
+    "status": "Unknown"
+   },
+   "is_little_endian": {
+    "diagnostics": [],
+    "status": "Safe"
+   },
+   "log2_floor": {
+    "diagnostics": [
+     "19675: Unsupported { description: \"unmodeled call, aggregate or indirect access in return expression\" }"
+    ],
+    "status": "Unknown"
+   },
+   "n_bytes_after_addr": {
+    "diagnostics": [],
+    "status": "Safe"
+   },
+   "peek": {
+    "diagnostics": [],
+    "status": "Safe"
+   },
+   "put_unaligned16": {
+    "diagnostics": [],
+    "status": "Safe"
+   },
+   "put_unaligned32": {
+    "diagnostics": [],
+    "status": "Safe"
+   },
+   "put_unaligned64": {
+    "diagnostics": [],
+    "status": "Safe"
+   },
+   "rd_kafka_snappy_compress": {
+    "diagnostics": [
+     "20422: Unsupported { description: \"braced initializer, expression, or declaration is not modeled\" }",
+     "20426: Unsupported { description: \"braced initializer, expression, or declaration is not modeled\" }",
+     "20430: Unsupported { description: \"call to uncontracted function `rd_kafka_snappy_compress_iov`\" }"
+    ],
+    "status": "Unknown"
+   },
+   "rd_kafka_snappy_compress_iov": {
+    "diagnostics": [
+     "20403: Unsupported { description: \"braced initializer, expression, or declaration is not modeled\" }",
+     "20408: Unsupported { description: \"braced initializer, expression, or declaration is not modeled\" }",
+     "20412: Unsupported { description: \"call to uncontracted function `sn_compress`\" }"
+    ],
+    "status": "Unknown"
+   },
+   "rd_kafka_snappy_free_env": {
+    "diagnostics": [
+     "20551: Unsupported { description: \"release of `env->hash_table`, a member of the formal `env` (member-release-through-formal)\" }",
+     "20552: Unsupported { description: \"release of `env->scratch`, a member of the formal `env` (member-release-through-formal)\" }",
+     "20553: Unsupported { description: \"release of `env->scratch_output`, a member of the formal `env` (member-release-through-formal)\" }"
+    ],
+    "status": "Unknown"
+   },
+   "rd_kafka_snappy_init_env": {
+    "diagnostics": [
+     "20543: Unsupported { description: \"indirect memory access is outside the resource projection\" }"
+    ],
+    "status": "Unknown"
+   },
+   "rd_kafka_snappy_init_env_sg": {
+    "diagnostics": [
+     "20523: Unsupported { description: \"unmodeled call, aggregate or indirect access in branch condition\" }",
+     "20526: Unsupported { description: \"store of a custody-carrying value into `env->scratch`, a member of the formal `env` (member-store-through-formal)\" }",
+     "20529: Unsupported { description: \"store of a custody-carrying value into `env->scratch_output`, a member of the formal `env` (member-store-through-formal)\" }",
+     "20536: Unsupported { description: \"call to uncontracted function `rd_kafka_snappy_free_env`\" }"
+    ],
+    "status": "Unknown"
+   },
+   "rd_kafka_snappy_java_uncompress": {
+    "diagnostics": [
+     "20476: Leak { acquisition_line: 20506 }",
+     "20478: Unsupported { description: \"unmodeled call, aggregate or indirect access in branch condition\" }",
+     "20480: Leak { acquisition_line: 20506 }",
+     "20487: Unsupported { description: \"unmodeled call, aggregate or indirect access in branch condition\" }",
+     "20490: Leak { acquisition_line: 20506 }",
+     "20499: Leak { acquisition_line: 20506 }",
+     "20504: Leak { acquisition_line: 20506 }",
+     "20506: Unsupported { description: \"loop re-acquisition: an earlier generation that may be live is still held\" }",
+     "20508: Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "20509: Leak { acquisition_line: 20506 }",
+     "20515: Leak { acquisition_line: 20506 }",
+     "20515: UnknownAlias { variable: \"outbuf\" }",
+     "20515: Unsupported { description: \"nullable resource `outbuf` used by a non-null contract\" }"
+    ],
+    "status": "Unsafe"
+   },
+   "rd_kafka_snappy_max_compressed_length": {
+    "diagnostics": [],
+    "status": "Safe"
+   },
+   "rd_kafka_snappy_uncompress": {
+    "diagnostics": [
+     "20452: Unsupported { description: \"braced initializer, expression, or declaration is not modeled\" }",
+     "20456: Unsupported { description: \"call to uncontracted function `rd_kafka_snappy_uncompress_iov`\" }"
+    ],
+    "status": "Unknown"
+   },
+   "rd_kafka_snappy_uncompress_iov": {
+    "diagnostics": [
+     "20438: Unsupported { description: \"braced initializer, expression, or declaration is not modeled\" }",
+     "20443: Unsupported { description: \"braced initializer, expression, or declaration is not modeled\" }",
+     "20447: Unsupported { description: \"call to uncontracted function `internal_uncompress`\" }"
+    ],
+    "status": "Unknown"
+   },
+   "rd_kafka_snappy_uncompressed_length": {
+    "diagnostics": [
+     "19992: Unsupported { description: \"unmodeled call, aggregate or indirect access in branch condition\" }"
+    ],
+    "status": "Unknown"
+   },
+   "read_uncompressed_length": {
+    "diagnostics": [],
+    "status": "Safe"
+   },
+   "refill_tag": {
+    "diagnostics": [
+     "20284: UnknownAlias { variable: \"d\" }",
+     "20287: Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "20290: UnknownAlias { variable: \"ip\" }",
+     "20293: Unsupported { description: \"unmodeled call, aggregate or indirect access in branch condition\" }",
+     "20294: Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "20305: Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "20310: Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "20311: Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "20316: Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "20317: Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "20319: Unsupported { description: \"indirect memory access is outside the resource projection\" }"
+    ],
+    "status": "Unknown"
+   },
+   "sink_peek": {
+    "diagnostics": [],
+    "status": "Safe"
+   },
+   "skip": {
+    "diagnostics": [],
+    "status": "Safe"
+   },
+   "sn_compress": {
+    "diagnostics": [
+     "20347: Unsupported { description: \"call to uncontracted function `varint_encode32`\" }",
+     "20348: Unsupported { description: \"call to uncontracted function `append`\" }",
+     "20349: Unsupported { description: \"unrecognized assignment destination\" }",
+     "20371: Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "20376: UnknownAlias { variable: \"env\" }",
+     "20382: Unsupported { description: \"call to uncontracted function `get_hash_table`\" }",
+     "20386: UnknownAlias { variable: \"env\" }",
+     "20388: Unsupported { description: \"call to uncontracted function `compress_fragment`\" }",
+     "20390: Unsupported { description: \"call to uncontracted function `append`\" }",
+     "20391: Unsupported { description: \"unrecognized assignment destination\" }"
+    ],
+    "status": "Unknown"
+   },
+   "unaligned_copy64": {
+    "diagnostics": [],
+    "status": "Safe"
+   },
+   "varint_encode32": {
+    "diagnostics": [
+     "19729: UnknownAlias { variable: \"sptr\" }",
+     "19735: UnknownAlias { variable: \"ptr\" }",
+     "19738: UnknownAlias { variable: \"ptr\" }",
+     "19739: UnknownAlias { variable: \"ptr\" }",
+     "19742: UnknownAlias { variable: \"ptr\" }",
+     "19743: UnknownAlias { variable: \"ptr\" }",
+     "19744: UnknownAlias { variable: \"ptr\" }",
+     "19747: UnknownAlias { variable: \"ptr\" }",
+     "19748: UnknownAlias { variable: \"ptr\" }",
+     "19749: UnknownAlias { variable: \"ptr\" }",
+     "19750: UnknownAlias { variable: \"ptr\" }",
+     "19752: UnknownAlias { variable: \"ptr\" }"
+    ],
+    "status": "Unknown"
+   },
+   "varint_parse32_with_limit": {
+    "diagnostics": [
+     "19689: UnknownAlias { variable: \"p\" }",
+     "19690: UnknownAlias { variable: \"l\" }",
+     "19700: UnknownAlias { variable: \"ptr\" }",
+     "19701: Unsupported { description: \"unrecognized assignment destination\" }",
+     "19706: UnknownAlias { variable: \"ptr\" }",
+     "19707: Unsupported { description: \"unrecognized assignment destination\" }",
+     "19712: UnknownAlias { variable: \"ptr\" }",
+     "19713: Unsupported { description: \"unrecognized assignment destination\" }",
+     "19718: UnknownAlias { variable: \"ptr\" }",
+     "19719: Unsupported { description: \"unrecognized assignment destination\" }",
+     "19725: UnknownAlias { variable: \"ptr\" }"
+    ],
+    "status": "Unknown"
+   },
+   "writer_append": {
+    "diagnostics": [
+     "19887: Unsupported { description: \"unmodeled call, aggregate or indirect access in branch condition\" }",
+     "19888: Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "19892: Unsupported { description: \"indirect memory access is outside the resource projection\" }"
+    ],
+    "status": "Unknown"
+   },
+   "writer_append_from_self": {
+    "diagnostics": [
+     "19864: Unsupported { description: \"unmodeled call, aggregate or indirect access in branch condition\" }",
+     "19865: Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "19866: Unsupported { description: \"unmodeled call, aggregate or indirect access in branch condition\" }",
+     "19869: UnknownAlias { variable: \"op\" }",
+     "19869: Unsupported { description: \"arguments do not match resource contract for `unaligned_copy64`\" }",
+     "19870: Unsupported { description: \"arguments do not match resource contract for `unaligned_copy64`\" }",
+     "19873: Unsupported { description: \"call to uncontracted function `incremental_copy_fast_path`\" }",
+     "19878: Unsupported { description: \"call to uncontracted function `incremental_copy`\" }",
+     "19881: Unsupported { description: \"indirect memory access is outside the resource projection\" }"
+    ],
+    "status": "Unknown"
+   },
+   "writer_check_length": {
+    "diagnostics": [],
+    "status": "Safe"
+   },
+   "writer_set_expected_length": {
+    "diagnostics": [
+     "19832: Unsupported { description: \"indirect memory access is outside the resource projection\" }"
+    ],
+    "status": "Unknown"
+   },
+   "writer_try_fast_append": {
+    "diagnostics": [
+     "19899: Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "19901: UnknownAlias { variable: \"ip\" }",
+     "19901: UnknownAlias { variable: \"op\" }",
+     "19902: Unsupported { description: \"arguments do not match resource contract for `unaligned_copy64`\" }",
+     "19903: Unsupported { description: \"indirect memory access is outside the resource projection\" }"
+    ],
+    "status": "Unknown"
+   }
+  }
+ }
+]
