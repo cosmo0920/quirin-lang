@@ -153,3 +153,25 @@ section names each member's opening units.
 - `S3-PREPASS-UNREAD-GRAPH-ISOLATION` (amended): the two C++ units are now
   isolated per member; the 34 preprocessing failures and the lifetime
   standing remain.
+
+## Integrator measurement (2026-11-07)
+
+Declared measurement, base `baseline:7b726587bdf6a8213f451fa1c78297bb5e476ef7`
+(the card's base revision, published 2026-11-07; PREDICTION.md named
+`c8c7edf21` because the publication was still in progress at launch), tip
+`rev:0807a69b8`, run from the main checkout
+(`private/measure/callback-member-non-c-20261107T043848Z`): exit 0, all
+three routes complete, declared result **match** on corpus, system and slice.
+No row or unit moved. Corpus: 106 rows changed content, each by exchanging one
+callback-member leaf whose text differs only in its unread-unit count: 99 go
+from "36 unit(s)" to "34 unit(s)" (the two C++ units no longer counted), and
+the 7 `cmt.log_cb` rows (`cmt_counter_create`, `cmt_gauge_create`,
+`cmt_untyped_create`, `cmt_summary_create`, `cmt_histogram_create`,
+`cmt_exp_histogram_create`, `filter_context_label_key_value`) go to
+"35 unit(s)", since `flb_simdutf_connector.cpp` still opens that member, as
+§ PREDICTION states. Every other row differs in environment fields only.
+[Comparison](integration/native-comparison.json.gz) (gzip of
+`native-comparison.json`, sha256
+`4e9978ebffe4ed83e2ce01f061c0ccc00bafbca5d19a760e90f9313f84a7f3b2`).
+An earlier attempt from the card's worktree failed before measuring:
+`baseline:` sides resolve `private/baselines/` against the working directory.

@@ -383,3 +383,26 @@ An earlier attempt (`private/gate-3`, at `ed86172af`) failed only at Clippy
 Lean (411) and Python (625). `aa09196b9` boxes the record. Two attempts
 before that were stopped before their suites ran, so that audit slots could
 go to the acceptance run.
+
+## Integrator measurement (2026-11-07)
+
+Declared measurement, base `rev:13337d0af`, tip `rev:aa09196b9`, run from the
+main checkout (`private/measure/worker-spin-20261107T050627Z`): exit 0, all
+three routes complete, declared result **match** on corpus, system and slice.
+No row or unit moved. Corpus: 186 rows changed content, and in every one only
+`contract_dependencies` differs (no leaf added or removed, status unchanged),
+which is the prediction's evidence-only change (callers no longer record the
+dependencies of homes they never read); the other 4,648 corpus rows and every
+system and slice row differ in environment fields only.
+[Comparison](integration/native-comparison.json.gz) (gzip of
+`native-comparison.json`, sha256
+`e48c64f0fa2e8c1a4161a619315fa220ebab89a0d6d2fdd246b62de2a0fdb096`).
+
+Landing merge: `crates/qcore-audit/src/pinned_route.rs` conflicted with
+CORPUS-GROUP-CHECKPOINTS, which moved the cross-unit premise into
+`cross_unit_premise_of`; `replay_budget_per_unit` is written there.
+`crates/qcore-c-gateway/src/member_run_facts.rs` conflicted with
+CALLBACK-MEMBER-NON-C-UNITS (independent additions; both kept).
+`named_functions` reads read units' stores only, which stays complete under
+that card's reading: a scoped C++ unit stores nothing into a member it closes,
+and a member an unread unit opens keeps its call Unknown.

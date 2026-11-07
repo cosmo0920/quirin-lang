@@ -331,6 +331,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [current-run-defects](current-run-defects/README.md) | CURRENT-RUN-DEFECTS |
 
+| [current-run-worker-spin](current-run-worker-spin/README.md) | CURRENT-RUN-WORKER-SPIN |
+
 | [current-unsafe-triage](current-unsafe-triage/README.md) | CURRENT-UNSAFE-TRIAGE: the current run's provisional Unsafe findings |
 
 | [cycle18-broader-composition](cycle18-broader-composition/README.md) | Cycle 18 broader callback composition |
