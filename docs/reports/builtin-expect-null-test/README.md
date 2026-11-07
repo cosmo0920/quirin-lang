@@ -14,8 +14,9 @@ the runs has such a hint. The :1712 leaf is reproduced, line for line, with
 the wrapper removed from the whole unit (§2): it rests on the two-pass loop's
 generation join, LOOP-REACQUISITION-LEAK-ACCUSATION's mechanism. This card
 therefore states and proves the existing reading (rule 5h amended, new
-`QCore.BuiltinExpectCondition`), widens the hint to any integer literal, pins
-the reading with fixtures, and re-homes :1712.
+`QCore.BuiltinExpectCondition`), pins the reading with fixtures, and
+re-homes :1712. It changes no analyser code: `legacy_condition_desugar.rs`
+stays byte-identical to the base (§3).
 
 ## 1. Census
 
@@ -62,8 +63,9 @@ exact answer):
 The snappy site: `snappy.c:1706 if (unlikely(!outbuf))`, operand `( ! outbuf )`,
 hint `0`, **read**, no diagnostic on its line.
 
-What changes under this card's rule: no row. The widened hint (`0L`, `0x0`,
-…) occurs at no site of any route.
+What changes under this card: no row (no analyser code changes). A hint
+spelled `0L`, `0x0` or with any other suffix or prefix, which the reading
+refuses, occurs at no site of any route.
 
 ## 2. Wrapped against bare
 
@@ -89,16 +91,21 @@ slot-queued run completes.
 
 * **Rule 5h amended** ([text](../../agents/rules/5h.md)): the reading of
   `__builtin_expect(E, K)` as `E` is stated, with its hint premise (exactly one
-  integer literal, which has no evaluation event) and its conversion premise
+  token of decimal digits, which has no evaluation event) and its conversion premise
   (the operand's truthiness survives the implicit conversion to `long`: Clang
   rejects a pointer operand, a null or comparison test is `int` 0/1, an
   integer operand no wider than `long` keeps zero and non-zero on LP64;
   stated, not checked: `BUILTIN-EXPECT-OPERAND-CONVERSION`). No new rule id.
-* **Rust** (`legacy_condition_desugar.rs`): `HintSpelling` classifies a hint
-  (decimal, suffixed or prefixed integer literal, name, effectful, other);
-  only the two literal classes are admitted. Before, only a digit sequence
-  was. `builtin_expect_hints_are_integer_literals` binds the classes and the
-  admission vector to `QCore.BuiltinExpectCondition.vectors`.
+* **Rust: no analyser change.** The first version of this card widened the
+  hint to any integer literal in `legacy_condition_desugar.rs` (commits
+  `6dd88c8aa`, `6a8f19039`). That file is a pinned artifact of the libc
+  reading-site evidence (`docs/reports/libc-reading-site-evidence/bindings.json`,
+  `scalar-reader`, SHA-256 `02c929cf…`), so gate attempt 2 failed
+  `reading_site_domain` and `libc_reading_site_evidence` on the artifact
+  mismatch. Rebinding that digest would change the bindings manifest every
+  published receipt binds; as MK-EVENT-CELL-CROSS-FUNCTION did, the card keeps
+  the file byte-identical to the base instead and drops the widening, which
+  no site needed. Follow-up `BUILTIN-EXPECT-LITERAL-HINT-SPELLINGS`.
 * **Lean**: `QCore.BuiltinExpectCondition` (audited by
   `proof/AuditBuiltinExpectCondition.lean`, 11 theorems, no project axiom):
   `the_wrapper_has_the_operand_value`, `the_reading_is_c_evaluation`,
@@ -116,7 +123,10 @@ slot-queued run completes.
     arm returns with the object live, both a leak wrapped and bare; and two
     positions where the wrapped form is decided and the bare one is not
     (below);
-  * `an_integer_literal_hint_is_read`: `0`, `(0)`, `0L`, `0UL`, `0x0`, `00`;
+  * `the_hint_spellings_bind_the_admission_vector`: through the reader,
+    class by class (`0`/`(0)`/`1`/`(1)` read; `0L`/`0UL`/`0x0`/`1ll`,
+    `k`/`s->k`, `opaque()`/`k++`/`k = 1`, `-1`/`(long)0`/`0.5` refused),
+    equal to `QCore.BuiltinExpectCondition.vectors`;
   * `an_operand_that_is_not_a_bare_test_stays_refused`: `unlikely(!p |
     opaque())`, `unlikely(opaque())` keep the bare operand's refusal;
     `__builtin_expect_with_probability` refuses;
@@ -139,6 +149,11 @@ measures. No Safe row is added, so no per-function justification is owed.
   conversion premise with the Clang AST (the operand's implicit cast to
   `long` is an integral cast from a type no wider than `long`, or the operand
   is Boolean-valued), refusing a floating or wider operand; today a premise.
+* `BUILTIN-EXPECT-LITERAL-HINT-SPELLINGS` (registered): admit a suffixed or
+  prefixed integer-literal hint (`0L`, `0x0`, `1UL`), effect-free but refused
+  today; it needs an edit of the pinned `legacy_condition_desugar.rs` with the
+  reading-site artifact digest rebound (and every receipt that binds the
+  manifest re-measured). No site of any run has such a hint.
 * `BARE-CONNECTIVE-NULL-LEAF-REFINEMENT` (registered): the bare forms
   `if (!p && n) return; if (!p) return; k_free(p);` and `return (p != 0) ?
   p : 0;` / `return p ? p : 0;` report a leak (provisional Unsafe) although

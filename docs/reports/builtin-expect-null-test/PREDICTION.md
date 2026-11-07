@@ -55,6 +55,17 @@ reading had no Lean model).
   to LOOP-REACQUISITION-LEAK-ACCUSATION; `BUILTIN-EXPECT-OPERAND-CONVERSION`
   registered for the conversion-to-`long` premise.
 
+## Amendment after gate attempt 2 (prediction unchanged)
+
+The hint widening above is withdrawn: `legacy_condition_desugar.rs` is a
+pinned artifact of the libc reading-site evidence (its SHA-256 is bound in
+`docs/reports/libc-reading-site-evidence/bindings.json`), and the edit failed
+`reading_site_domain` and `libc_reading_site_evidence`. The file stays
+byte-identical to the base; the card changes no analyser code. The
+measurement prediction below is unchanged (it already predicted no move,
+because no site had a widened hint); the ledger line gains
+`BUILTIN-EXPECT-LITERAL-HINT-SPELLINGS`.
+
 ```measure-prediction
 route corpus
 none
