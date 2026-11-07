@@ -157,7 +157,20 @@ integrator's (`quirin-audit measure --declared PREDICTION.md`).
 
 ## 5. Gate
 
-GATE-PLACEHOLDER
+`python3 scripts/gate_scope.py --base 82ec0e80b --out <worktree>/private/gate-N`
+(mode full: the diff reaches `qcore-c-gateway`; provider gate not
+assigned). Logs are worktree-private, consoles outside the worktree.
+
+| attempt | head | steps | Rust suite | Lean | Python |
+|---|---|---|---|---|---|
+| `private/gate-1` | `d49b56390` | 8 / 8 exit 0 (submodules, fmt, clippy, rust-suite, both reevaluation probes, lean, python) | 616 units, 9,282 passed / 0 failed / 16 ignored / 135 filtered, 657 summaries | 415 audits | 685 tests, 0 skipped |
+| `private/gate-2` | `b297b667a` (final code and test tip) | 8 / 8 exit 0 | 616 units, 9,282 passed / 0 failed / 16 ignored / 135 filtered, 657 summaries | 415 audits | 685 tests, 0 skipped |
+
+The `:1712` fixture is a row of an existing table test, so the count does
+not move between the attempts. The timing-sensitive
+`test_gate_slot_starvation.py` case passed in both. Outside the gate:
+`cargo clippy -p qcore-c-gateway --features indirect-census --lib -- -D
+warnings` exit 0; `apply_amendments.py --check` exit 0.
 
 ## 6. Follow-ups
 
