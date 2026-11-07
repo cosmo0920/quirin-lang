@@ -225,3 +225,23 @@ These are registered in [integration-amendments.json](integration-amendments.jso
   still write a file-scope object that is itself the caller's slot (`r(&g)`
   with the callee resetting `g`). This is P-BORROW-FRAME's premise, which is
   unstated for out slots.
+
+## Gate
+
+`python3 scripts/gate_scope.py --base 7c1a474bb --out <worktree>/private/gate-N`
+(full mode: the diff reaches `qcore-c-gateway`; Lean all, a proof root
+changed; no provider gate).
+
+- gate-1: incomplete. I stopped it after its submodule and fmt steps to move
+  its console log outside the worktree. It is not evidence.
+- gate-2 (tip `33531dbe8`): **exit 0**. Every step passed:
+  - submodules;
+  - fmt;
+  - Clippy;
+  - the Rust suite: 618 units, 9,316 passed, 0 failed, 16 ignored, 135
+    filtered;
+  - both reevaluation probes;
+  - Lean: 417 audits;
+  - Python: 685 tests.
+
+  The record is [gate.json](gate.json).
