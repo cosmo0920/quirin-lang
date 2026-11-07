@@ -374,6 +374,10 @@ fn a_scalar_store_through_a_second_formal_after_the_slot_stays_refused() {
     // The chunkio shape (`*buf = data; *size = n;`): the scalar store's frame
     // may write the first slot's object unless the formals are known not to
     // alias, so the success class does not validate (the card's stop).
+    // Card OUT-PARAMETER-SCALAR-FRAME-PREMISE (rule 11r(7)) admits that shape
+    // under the `effective-type:` premise when the store is its line's only
+    // write (`tests/out_parameter_scalar_frame_premise.rs`); this fixture
+    // spells the whole body on one line, so it keeps the refusal.
     expect(
         "`*size = 4` after `*buf = d`",
         "static int r(char **buf, x_size_t *size) { char *d = x_alloc(4); \

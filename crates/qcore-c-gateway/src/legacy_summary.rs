@@ -486,16 +486,29 @@ pub(crate) fn derive_custody_summaries(
                     // Card CG23-RELATIONAL-POSTCONDITIONS (rule 11r): the
                     // exit-specific route, after every ordinary one.
                     None if contracts.contract(&name).is_none() => {
-                        match relational::infer_exit_specific(
+                        let inferred = relational::infer_exit_specific(
                             tokens,
                             &name,
                             &derivation.environment,
-                            infer_exit_class,
-                        ) {
+                            infer_exit_class_premised,
+                        );
+                        // Card OUT-PARAMETER-SCALAR-FRAME-PREMISE (rule
+                        // 11r(7)): whether a class rests on the premise.
+                        let premised = effective_type::take_premised(&name);
+                        match inferred {
                             // Classes that all agree are no exit-specific
                             // relation, and the ordinary route refused that
                             // contract: nothing is published.
                             Some(summary) if summary.join().is_none() => {
+                                if premised {
+                                    // Every in-unit row that reads the
+                                    // relation lists the premise.
+                                    crate::arm_obligations::carry_declaration_premise(
+                                        &name,
+                                        effective_type::RULE,
+                                        effective_type::PREMISE,
+                                    );
+                                }
                                 derivation.environment.insert_relational(name, summary);
                                 installed = true;
                             }
@@ -806,6 +819,27 @@ fn infer_exit_class(
     infer_validated_summary(tokens, function, environment)
         .map(|contract| (contract, BTreeSet::new()))
         .or_else(|| unwritten_class::infer(tokens, function, environment))
+}
+
+/// Card OUT-PARAMETER-SCALAR-FRAME-PREMISE (rule 11r(7)): [`infer_exit_class`],
+/// then, when it publishes nothing, the same inference with the listed
+/// `effective-type:` premise available to `function`'s analyses; a class read
+/// only under it is kept only when an analysis relied on it, and the function
+/// is noted ([`effective_type::take_premised`]). Read by the inferred
+/// exit-specific route only, never by a declared disposition's body check.
+fn infer_exit_class_premised(
+    tokens: &[Token],
+    function: &str,
+    environment: &ResourceContracts,
+) -> Option<(ResourceFunctionContract, BTreeSet<usize>)> {
+    infer_exit_class(tokens, function, environment).or_else(|| {
+        let (found, used) = effective_type::with_premise(function, || {
+            infer_exit_class(tokens, function, environment)
+        });
+        let found = found.filter(|_| used)?;
+        effective_type::note_premised(function);
+        Some(found)
+    })
 }
 
 /// Infer one function's summary and validate it, or return `None`.
@@ -2032,6 +2066,11 @@ mod relational;
 // leaves an out slot unwritten.
 #[path = "legacy_unwritten_class.rs"]
 pub(crate) mod unwritten_class;
+
+// Card OUT-PARAMETER-SCALAR-FRAME-PREMISE (rule 11r(7)): the listed
+// `effective-type:` premise of rule 11r(6)'s per-class summaries.
+#[path = "legacy_effective_type.rs"]
+pub(crate) mod effective_type;
 
 // Card CALLEE-RETENTION-CLASS1, stage (a) (rule 12s): relational forwarding
 // and the per-class row.

@@ -467,6 +467,34 @@ pub(crate) fn relational_row(
     environment: &ResourceContracts,
     contract: &RelationalContract,
 ) -> Option<LegacyFunctionSummary> {
+    if let Some(row) = relational_row_read(tokens, function, environment, contract) {
+        return Some(row);
+    }
+    // Card OUT-PARAMETER-SCALAR-FRAME-PREMISE (rule 11r(7)): an inferred
+    // relation's row, read again with the listed `effective-type:` premise
+    // available; a row that relied on it lists it among its assumptions.
+    if contract.origin != crate::relational_post::RelationalOrigin::InferredValidated {
+        return None;
+    }
+    let (row, used) = super::effective_type::with_premise(function, || {
+        relational_row_read(tokens, function, environment, contract)
+    });
+    let mut row = row.filter(|_| used)?;
+    row.rule_obligations
+        .premises
+        .insert(crate::arm_obligations::Carriage {
+            rule: super::effective_type::RULE.to_owned(),
+            name: super::effective_type::PREMISE.to_owned(),
+        });
+    Some(row)
+}
+
+fn relational_row_read(
+    tokens: &[Token],
+    function: &str,
+    environment: &ResourceContracts,
+    contract: &RelationalContract,
+) -> Option<LegacyFunctionSummary> {
     if contract.withdrawn.is_some() || !row_entries_agree(&contract.classes) {
         return None;
     }

@@ -280,6 +280,7 @@ import QCore.OpCallbacks
 import QCore.OrderedLifetimeReplay
 import QCore.OsEndpointPostState
 import QCore.OutParameterBodySummary
+import QCore.OutParameterScalarFramePremise
 import QCore.OuterContract
 import QCore.OuterListCandidates
 import QCore.OwnedFieldCopyReach

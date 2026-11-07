@@ -1843,6 +1843,11 @@ pub(super) struct TransferContext<'a> {
     /// Card **CELL-PROTOCOL-RELEASE-WINDOW-FRAMES** (rule 38g): the CFG's
     /// callee frame standings; empty (every frame absent) elsewhere.
     pub(super) cell_frames: super::cell_frames_route::CellFrames,
+    /// Card **OUT-PARAMETER-SCALAR-FRAME-PREMISE** (rule 11r(7)): the out
+    /// slots a typed scalar store through another out formal spares under the
+    /// listed `effective-type:` premise; `None` in every analysis rule
+    /// 11r(6)'s premised routes did not open.
+    pub(super) effective_type: Option<crate::legacy_summary::effective_type::Frame>,
 }
 
 /// The kind of `site` under `kinds`: heap unless recorded otherwise.
@@ -1945,6 +1950,10 @@ fn analyze_cfg_with_entry_collected(
         exact_return_bases: entry_custody.derived_bases.clone(),
         selection: entry_custody.selection.clone(),
         cell_frames: cfg.cell_frames.clone(),
+        effective_type: crate::legacy_summary::effective_type::frame(
+            &cfg.function,
+            &entry_custody.sanctioned_places(),
+        ),
         traversal: cfg.traversal.clone(),
         site_kinds: descriptor_custody::site_kinds(cfg.nodes.iter().map(|node| &node.instruction))
             .into_iter()
@@ -4018,11 +4027,24 @@ pub(super) fn transfer_base(
             }
         }
         if let Some(frame) = frame {
+            // Card OUT-PARAMETER-SCALAR-FRAME-PREMISE (rule 11r(7)): a
+            // non-character integer or enumeration store through another out
+            // formal leaves a pointer out slot as it was, under the listed
+            // `effective-type:` premise (C11 6.5p7), which the analysis notes.
+            let premised = context
+                .effective_type
+                .as_ref()
+                .filter(|_| destination.is_none());
             for (place, pointer) in state.pointers.iter_mut() {
-                if frame.poisons(place) {
-                    pointer.unknown = true;
-                    pointer.may_be_null = true;
+                if !frame.poisons(place) {
+                    continue;
                 }
+                if premised.is_some_and(|premise| premise.spares(node.line, bases, place)) {
+                    crate::legacy_summary::effective_type::note_used();
+                    continue;
+                }
+                pointer.unknown = true;
+                pointer.may_be_null = true;
             }
         }
         return state;
