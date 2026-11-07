@@ -250,6 +250,7 @@ theorem the_vectors_name_site_seven :
 def shapeVectors : List (String × Verdict) := [
   ("snappy-shape", .«unsafe»),
   ("refused-earlier-generation", .unknown),
+  ("refused-earlier-generation-expect", .unknown),
   ("refused-current-generation-leak", .«unsafe»),
   ("unrefused-loop-leak", .«unsafe»),
   ("no-reacquisition-loop-leak", .«unsafe»),
@@ -263,6 +264,8 @@ def shapeVerdict : String → Verdict
   | "snappy-shape" =>
       verdictAfter (vectorRefusals true true) [[7], [previous 7], [previous 7], [previous 7]] false true
   | "refused-earlier-generation" =>
+      verdictAfter (vectorRefusals true true) [[previous 7], [previous 7]] false true
+  | "refused-earlier-generation-expect" =>
       verdictAfter (vectorRefusals true true) [[previous 7], [previous 7]] false true
   | "refused-current-generation-leak" =>
       verdictAfter (vectorRefusals true true) [[previous 7], [7], [previous 7]] false true

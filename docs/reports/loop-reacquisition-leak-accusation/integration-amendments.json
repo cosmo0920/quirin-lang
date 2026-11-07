@@ -9,7 +9,7 @@
   {
    "id": "LOOP-REACQUISITION-LEAK-ACCUSATION",
    "operation": "retire",
-   "why": "DONE by LOOP-REACQUISITION-LEAK-ACCUSATION (gateway rule 42, docs/reports/loop-reacquisition-leak-accusation/README.md), scoped by its census as the DISCHARGE allows: the per-generation QCORE_LEAK_WITNESS census confirms the generation join for snappy :1680, :1694, :1712, :1721 and refutes it for :1648, :1660, :1701 (current-generation witnesses); a leak reported only by earlier generations of a refused, reported re-acquisition is withdrawn under the refusal (Unknown, never Safe); fixtures for a true leak inside such a loop (still Unsafe) and loops without re-acquisition (unchanged); Lean QCore.LoopReacquisitionLeak; card-local measurement: snappy loses the four confirmed leaves and stays provisional Unsafe (its three remaining leaves are not generation joins), no Safe move.",
+   "why": "DONE by LOOP-REACQUISITION-LEAK-ACCUSATION (gateway rule 42, docs/reports/loop-reacquisition-leak-accusation/README.md), scoped by its census as the DISCHARGE allows, all seven snappy leaves covered (:1712 moved here from BUILTIN-EXPECT-NULL-TEST by the coordinator): the per-generation QCORE_LEAK_WITNESS census confirms the generation join for snappy :1680, :1694, :1712, :1721 and refutes it for :1648, :1660, :1701 (current-generation witnesses); a leak reported only by earlier generations of a refused, reported re-acquisition is withdrawn under the refusal (Unknown, never Safe); fixtures for a true leak inside such a loop (still Unsafe) and loops without re-acquisition (unchanged); Lean QCore.LoopReacquisitionLeak; card-local measurement: snappy loses the four confirmed leaves and stays provisional Unsafe (its three remaining leaves are not generation joins), no Safe move.",
    "source": "docs/reports/loop-reacquisition-leak-accusation/README.md"
   },
   {
@@ -22,12 +22,6 @@
    "id": "LEAK-PATH-SCALAR-CORRELATION",
    "operation": "amend",
    "text": "AMENDED (LOOP-REACQUISITION-LEAK-ACCUSATION): the per-generation census at base 82ec0e80b shows rd_kafka_snappy_java_uncompress's :1648, :1660 and :1701 leaves are the current generation's (no re-acquisition on the witness), so gateway rule 42 keeps them and they are the function's only remaining leaves; they are also not reproduced by the settled exit (every generation unresolved there, C02-P-ALIAS -LEAK-ORDER).",
-   "source": "docs/reports/loop-reacquisition-leak-accusation/README.md"
-  },
-  {
-   "id": "BUILTIN-EXPECT-NULL-TEST",
-   "operation": "amend",
-   "text": "AMENDED (LOOP-REACQUISITION-LEAK-ACCUSATION): the per-generation census at base 82ec0e80b shows the `unlikely(!outbuf)` failure arm already removes the current generation at snappy.c:1712 (status 0 at the settled exit); the leaf there was the earlier generations', kept live by the pass guard, and gateway rule 42 withdraws it under the :1705 refusal. snappy :1712 no longer motivates this card; its fixtures and DISCHARGE stand for other bodies.",
    "source": "docs/reports/loop-reacquisition-leak-accusation/README.md"
   },
   {

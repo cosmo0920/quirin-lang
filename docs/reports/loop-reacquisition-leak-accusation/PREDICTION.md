@@ -91,3 +91,20 @@ One new module, `QCore.LoopReacquisitionLeak` (its audit
 retired (scoped by the census to the sites it confirms);
 LOOP-GENERATION-COUNTER-CORRELATION and BUILTIN-EXPECT-NULL-TEST amended
 with the census; one follow-up registered for §3.
+
+## 5. Amendment (after the semantic commit): scope update for :1712
+
+Added after `5de709b79`; §§1-4 and the `measure-prediction` block above are
+unchanged. The coordinator moved snappy.c:1712 from BUILTIN-EXPECT-NULL-TEST
+to this card (that card found its premise stale: rule 5h already reads
+`__builtin_expect(E, K)` as `E`, and `-D__builtin_expect(e,c)=(e)` leaves all
+53 snappy.c functions identical). Nothing in the prediction changes: §2
+already counts :1712 among the four confirmed generation joins the rule
+withdraws, on this card's own census (the failure arm removes the current
+generation, status 0). All seven snappy leaves are covered: four withdrawn
+(:1680, :1694, :1712, :1721), three kept as current-generation witnesses
+(:1648, :1660, :1701). One fixture was added
+(`refused-earlier-generation-expect`, the `__builtin_expect(!p, 0)` failure
+arm); BUILTIN-EXPECT-NULL-TEST is no longer amended by this card (its own
+records cover it), and §4's follow-up for §3 is an amendment of
+C02-P-ALIAS-O rather than a new id.

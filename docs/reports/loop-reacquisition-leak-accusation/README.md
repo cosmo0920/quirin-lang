@@ -11,7 +11,9 @@ presented or filed as an upstream defect.
 
 Commits: `0fb3c63ee` per-generation census (measurement only, behind the
 `indirect-census` feature), `f2bd5c6e3` census evidence and
-[PREDICTION.md](PREDICTION.md), `5de709b79` the rule, then this report.
+[PREDICTION.md](PREDICTION.md), `5de709b79` the rule (the analyzer the
+measurement builds), then this report and the :1712 scope update (one
+fixture and its Lean shape row, PREDICTION §5; no analyzer change).
 
 ## 1. The census
 
@@ -52,10 +54,12 @@ to the sites it confirms. Two findings outside the rule:
 
 * **:1712 is a join, not a refused null test.** At this base the
   `unlikely(!outbuf)` failure arm removes the current generation (status 0);
-  the leaf is the earlier generations', which the pass guard keeps live. This
-  card's rule withdraws it, so the snappy half of BUILTIN-EXPECT-NULL-TEST
-  and LEAK-UNDECIDED-NULL-TEST loses its motivating leaf (both amended, not
-  retired: their fixtures and other bodies are theirs).
+  the leaf is the earlier generations', which the pass guard keeps live. The
+  card's brief left :1712 to BUILTIN-EXPECT-NULL-TEST; the coordinator then
+  moved it here (that card found its premise stale: rule 5h already reads
+  `__builtin_expect(E, K)` as `E`), which matches this census, so all seven
+  snappy leaves are this card's: four withdrawn, three kept.
+  LEAK-UNDECIDED-NULL-TEST's snappy half is amended accordingly.
 * **The settled exits reproduce none of the eight leaves.** At every reporting
   exit every generation, current included, is live with an unresolved effect
   (`settled: false` on all 75 witnesses). All eight are published from
@@ -105,6 +109,7 @@ the decision forced to `false`, equal to `0fb3c63ee`):
 |---|---|---|
 | `snappy-shape` (one acquisition only pass 1 runs) | Unsafe, leaks 9, 17, 25, 28 | Unsafe, leak 9 (the current generation's pass-2 re-check), refusal kept |
 | `refused-earlier-generation` | Unsafe, leaks 8, 13 | **Unknown**, no leak, refusal kept |
+| `refused-earlier-generation-expect` (the same, failure arm `__builtin_expect(!p, 0)` as at snappy :1706/:1712) | Unsafe, leaks 8, 13 | **Unknown**, no leak, refusal kept |
 | `refused-current-generation-leak` (a true leak inside the refused loop) | Unsafe, leaks 8, 10, 15 | **Unsafe**, leak 10 (validates) |
 | `unrefused-loop-leak` (rule 11a's `for (;;)` leak, no refusal) | Unsafe | Unsafe, unchanged |
 | `no-reacquisition-loop-leak` | Unsafe | Unsafe, unchanged |
@@ -159,9 +164,11 @@ GATE-PLACEHOLDER
 * No new follow-up id. Amended: LOOP-GENERATION-COUNTER-CORRELATION (its four
   snappy leaves are now reported under the refusal; three pass-guard leaves
   remain), LEAK-PATH-SCALAR-CORRELATION (snappy's three leaves are the
-  current generation's), BUILTIN-EXPECT-NULL-TEST and
-  LEAK-UNDECIDED-NULL-TEST (:1712 is a generation join at this base,
-  withdrawn), CHAINED-ASSIGNMENT-INNER-DESTINATION (scram :249 is the current
+  current generation's), LEAK-UNDECIDED-NULL-TEST (:1712 is a generation
+  join at this base, withdrawn; BUILTIN-EXPECT-NULL-TEST is not amended
+  here, its own records cover it, and its amendment of
+  LOOP-REACQUISITION-LEAK-ACCUSATION must apply before this card's retire),
+  CHAINED-ASSIGNMENT-INNER-DESTINATION (scram :249 is the current
   generation's, unaffected), C02-P-ALIAS-O (`-LEAK-ORDER`: the eight leaves
   are intermediate-iterate reports).
 * Observed, not caused here: `cargo clippy -p qcore-c-gateway --features

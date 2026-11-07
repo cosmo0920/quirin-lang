@@ -191,6 +191,30 @@ const SHAPE_VECTORS: &[(&str, &str, &str, &[usize], bool)] = &[
         &[],
         true,
     ),
+    // snappy.c:1706/:1712 spelled as the source spells it: the failure arm
+    // tested through `__builtin_expect` (`unlikely`), which rule 5h reads as
+    // its operand. Before: leaks at 8 (the failure arm, the snappy :1712
+    // leaf) and 13, both only the previous generation's. After: `Unknown`.
+    (
+        "refused-earlier-generation-expect",
+        "void *subject(int n) {
+  int pass;
+  void *p = 0;
+  for (pass = 1; pass <= 2; pass++) {
+    if (pass == 1) {
+      p = q_maybe_alloc();
+      if (__builtin_expect(!p, 0))
+        return 0;
+    } else {
+      r_fill(p, n);
+    }
+  }
+  return p;
+}",
+        "unknown",
+        &[],
+        true,
+    ),
     // A true leak inside the refused loop: the fresh generation is live at
     // the `n < 0` return of the iteration that acquired it. It still
     // validates; the joined leaks at 8 and 15 are withdrawn.
