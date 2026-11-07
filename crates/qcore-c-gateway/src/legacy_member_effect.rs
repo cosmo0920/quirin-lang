@@ -57,7 +57,19 @@
 //! direct-call route ([`super::Parser::member_effect_call`]) classifies a call
 //! under it, and only for a call its own body check admitted as an event.
 //!
-//! The Lean model is `QCore.MemberEffectSummary`.
+//! ## A member spelled through a pointer typedef
+//!
+//! Card **MEMBER-EFFECT-COMPONENT-SCOPE**: the body check reads no type, but
+//! rule 1's lowering of a release event needs the call-argument recogniser's
+//! pointer read of `B->F`, which the lexical declaration reader refuses for a
+//! member spelled through a pointer typedef (`cfl_sds_t ns;`, left
+//! unresolved). [`Parser::typed_member_release`] is asked there instead, only
+//! for such an untyped member at a nullable release of an admitted place: Clang
+//! reads the actual as the value of an object-pointer member of the
+//! parameter's record, the fact the lexical reader gives a `*`-spelled member.
+//!
+//! The Lean models are `QCore.MemberEffectSummary` and
+//! `QCore.MemberReleaseTypedMember`.
 
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -508,7 +520,105 @@ pub(crate) fn published_effect(
     (!reading.effect.is_empty()).then_some(reading.effect)
 }
 
+/// Whether a node's type spelling is free of the qualifiers no member read
+/// here may carry.
+fn plain(spelling: &str) -> bool {
+    !spelling.contains("volatile") && !spelling.contains("_Atomic")
+}
+
 impl Parser<'_> {
+    /// Card MEMBER-EFFECT-COMPONENT-SCOPE (rule 38j amended): whether Clang
+    /// reads the actual `B -> F` (`argument`, at `index` of the one call of
+    /// `callee` with `arity` actuals on `line`) as the **value** of a pointer
+    /// member `F` of the object the formal `B` points to.
+    ///
+    /// Asked by the call-argument rule only where the lexical recogniser
+    /// refused the actual as an untyped member (a member spelled through a
+    /// pointer typedef, `cfl_sds_t ns;`, which the declaration reader leaves
+    /// unresolved), at a nullable release position, for a place rule 5k's or
+    /// rule 38j's lexical check admitted. `true` is exactly the fact the
+    /// lexical reader's `pointer_member` gives a `*`-spelled member: the
+    /// actual is one pointer value read from a member of `*B`. The value read
+    /// is required (`LValueToRValue`, never `ArrayToPointerDecay`, which would
+    /// hand an interior address to the release), the member's type an object
+    /// pointer with no `volatile`/`_Atomic`, and the base a plain parameter
+    /// reference that is not a pointer to a `union`.
+    pub(super) fn typed_member_release(
+        &self,
+        callee: &str,
+        index: usize,
+        arity: usize,
+        argument: &[&str],
+        line: usize,
+    ) -> bool {
+        use crate::typed_access_path::qual;
+        use crate::typed_c_ast::{children, kind};
+        let [base, "-", ">", field] = strip_parentheses(argument) else {
+            return false;
+        };
+        let Some(statements) = self.typed_positions_index() else {
+            return false;
+        };
+        let Some(mut node) = statements.argument_node(callee, index, arity, argument, line) else {
+            return false;
+        };
+        let mut value = false;
+        loop {
+            match kind(node) {
+                "ParenExpr" => {}
+                "ImplicitCastExpr" if node["castKind"].as_str() == Some("LValueToRValue") => {
+                    value = true;
+                }
+                _ => break,
+            }
+            let Some(inner) = children(node).first() else {
+                return false;
+            };
+            node = inner;
+        }
+        if !value
+            || kind(node) != "MemberExpr"
+            || node["isArrow"].as_bool() != Some(true)
+            || node["name"].as_str() != Some(*field)
+        {
+            return false;
+        }
+        let Some(member) = qual(node) else {
+            return false;
+        };
+        let member = member.trim_end();
+        if !member.ends_with('*') || member.contains('(') || !plain(member) {
+            return false;
+        }
+        let Some(mut reference) = children(node).first() else {
+            return false;
+        };
+        let Some(pointer) = qual(reference) else {
+            return false;
+        };
+        if pointer.contains("union ") || !plain(pointer) {
+            return false;
+        }
+        loop {
+            match kind(reference) {
+                "ParenExpr" => {}
+                "ImplicitCastExpr"
+                    if matches!(
+                        reference["castKind"].as_str(),
+                        Some("LValueToRValue" | "NoOp")
+                    ) => {}
+                _ => break,
+            }
+            let Some(inner) = children(reference).first() else {
+                return false;
+            };
+            reference = inner;
+        }
+        kind(reference) == "DeclRefExpr"
+            && reference["referencedDecl"]["kind"].as_str() == Some("ParmVarDecl")
+            && reference["referencedDecl"]["name"].as_str() == Some(*base)
+    }
+
     /// Rule 38j's direct-call route: `instruction`, the lowering of a
     /// whole-statement call to a function whose member-effect summary is in
     /// force, refused as an uncontracted call. `Some` is the call lowered under

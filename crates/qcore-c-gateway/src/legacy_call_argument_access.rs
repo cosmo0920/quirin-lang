@@ -1439,6 +1439,33 @@ impl Parser<'_> {
                             element_read(&argument, &unit, &self.typed_model, &self.typed_types)
                         })
                         .ok_or(refusal),
+                    // Card MEMBER-EFFECT-COMPONENT-SCOPE (rule 38j amended):
+                    // a member spelled through a pointer typedef, at a
+                    // nullable release of a place rule 5k or rule 38j
+                    // admitted, reads as the lexical `B->F` would when Clang
+                    // reads it as a pointer member's value.
+                    Err(Refusal::UntypedMember)
+                        if matches!(
+                            contract.and_then(|contract| contract.parameters.get(index)),
+                            Some(ResourceParameterMode::Released { nullable: true })
+                        ) && self.member_releases.admits(argument)
+                            && self.typed_member_release(
+                                callee,
+                                index,
+                                arity,
+                                argument,
+                                lines[start],
+                            ) =>
+                    {
+                        let mut read = ArgumentRead {
+                            pointer_valued: true,
+                            ..ArgumentRead::default()
+                        };
+                        if let [base, ..] = strip_parentheses(argument) {
+                            read.add_base(base, true);
+                        }
+                        Ok(read)
+                    }
                     other => other,
                 }
             });
