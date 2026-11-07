@@ -270,6 +270,12 @@ mod call_exits_route;
 #[path = "legacy_loop_generations.rs"]
 mod loop_generations_route;
 
+// Card LOOP-REACQUISITION-LEAK-ACCUSATION (rule 42): a leak only an earlier
+// generation of a refused re-acquisition reports is reported under the
+// refusal. The hooks below naming the card are thin.
+#[path = "legacy_loop_reacquisition_leak.rs"]
+mod loop_reacquisition_leak_route;
+
 // Card B08-FIELD-LINK-JOIN-SILENT-UNRESOLVED (rule 11c): a field link that
 // holds on some paths only never leaves an obligation unresolved without a
 // diagnostic. The hooks below naming the card are thin.

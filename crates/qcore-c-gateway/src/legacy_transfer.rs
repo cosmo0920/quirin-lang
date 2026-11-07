@@ -1962,6 +1962,9 @@ fn analyze_cfg_with_entry_collected(
     incoming[cfg.entry] = Some(entry_custody.state.clone());
     let mut work = VecDeque::from([cfg.entry]);
     let mut diagnostics = BTreeSet::new();
+    // Card LOOP-REACQUISITION-LEAK-ACCUSATION (rule 42): earlier generations'
+    // leak reports wait for the settled states.
+    let mut deferred_leaks = loop_reacquisition_leak_route::Deferred::default();
     let mut steps = 0usize;
     let acquisition_lines = cfg
         .nodes
@@ -2018,6 +2021,7 @@ fn analyze_cfg_with_entry_collected(
                 &acquisition_lines,
                 &exempt,
                 &mut diagnostics,
+                &mut deferred_leaks,
             );
             // Card CALLEE-RETENTION-CLASS1 (rule 12t).
             retained_by_route::report_exit(&cfg.function, node.line, &output, &mut diagnostics);
@@ -2148,6 +2152,10 @@ fn analyze_cfg_with_entry_collected(
             }
         }
     }
+
+    // Card LOOP-REACQUISITION-LEAK-ACCUSATION (rule 42): publish every
+    // deferred earlier-generation leak the settled refusal does not withdraw.
+    deferred_leaks.settle(&cfg, &incoming, &mut diagnostics);
 
     if incoming.iter().flatten().any(|state| state.widened) {
         diagnostics.insert(LegacyDiagnostic {
@@ -6450,6 +6458,7 @@ pub(super) fn report_leaks(
     // formal at exit is the interface, not a leak.
     exempt: &BTreeSet<usize>,
     diagnostics: &mut BTreeSet<LegacyDiagnostic>,
+    deferred: &mut loop_reacquisition_leak_route::Deferred,
 ) {
     for (&site, &status) in &state.resources {
         // Card REFCOUNT-RESOURCE-KIND (rule 13b): a reference family's
@@ -6459,6 +6468,12 @@ pub(super) fn report_leaks(
             && !state.unresolved_effect_sites.contains(&site)
             && !state.references.contains_key(&site)
         {
+            // Card LOOP-REACQUISITION-LEAK-ACCUSATION (rule 42): an earlier
+            // generation's report waits for the settled refusal.
+            if loop_reacquisition_leak_route::Deferred::defers(site) {
+                deferred.defer(line, acquisition_line(acquisition_lines, site), site);
+                continue;
+            }
             diagnostics.insert(LegacyDiagnostic {
                 function: function.to_owned(),
                 line,
