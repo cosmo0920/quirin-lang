@@ -66,11 +66,23 @@ pub(crate) enum InnerWrite {
 /// operands), the segment's first assignment at parenthesis depth 0 is its
 /// outer assignment, and an assignment operator anywhere after it in the same
 /// segment is a write inside its value. Returns `(outer, inner, shape)`.
+///
+/// A braced group is opaque: the statements of a GNU statement expression
+/// (`container_of`'s `({ … *__mptr = (ptr); … })`) and an initializer list
+/// are not the assigned value's own operators. The classifier refuses every
+/// braced statement before its operators are read
+/// (`braced initializer, expression, or declaration is not modeled`), and
+/// the routes that admit one read its inner statements themselves (rule 3's
+/// element binding, rule 11g).
 pub(crate) fn inner_write(texts: &[&str]) -> Option<(usize, usize, InnerWrite)> {
     let mut depth = 0usize;
+    let mut braces = 0usize;
     let mut outer: Option<usize> = None;
     for index in 0..texts.len() {
         match texts[index] {
+            "{" => braces += 1,
+            "}" => braces = braces.saturating_sub(1),
+            _ if braces > 0 => {}
             "(" | "[" => depth += 1,
             ")" | "]" => depth = depth.saturating_sub(1),
             "," if depth == 0 => outer = None,
@@ -268,6 +280,8 @@ mod tests {
             "x = 1 , y = 2",
             "q_free ( p )",
             "f ( a = b )",
+            // A statement expression's own statements (`container_of`).
+            "e = ( { const T * __mptr = ( it ) ; ( T * ) ( ( char * ) __mptr - 8 ) ; } )",
             "x + = 1",
         ] {
             assert_eq!(read(source), None, "{source}");

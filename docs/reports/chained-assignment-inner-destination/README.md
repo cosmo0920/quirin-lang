@@ -63,9 +63,9 @@ How the base route reads each (destinations left to right; value `E`):
 | Site | Function | Destinations | `E` | Base reading | Base row |
 |---|---|---|---|---|---|
 | `rdkafka_sasl_scram.c:243` | `rd_kafka_sasl_safe_string` | local / local | acquisition (`rd_malloc`) | **outer bound, inner dropped** (the defect): `leak` acquired at :243, exit :249; also `loop re-acquisition` at :243 | Unsafe |
-| `mk_http_parser.c:1100`, `:1023`, `:1038` (two `header_scope_eq` expansions) | `mk_http_parser` | member / member | scalar | admitted as one `IndirectScalarAccess` over `p` (the typed scalar-field route reads every written place: path writes are custody-neutral, names are counted by `scalar_effect`); nothing custody-bearing dropped | Unknown |
+| `mk_http_parser.c:1100`, `:1023`, `:1038` (two `header_scope_eq` expansions) | `mk_http_parser` | member / member | scalar | admitted as one `IndirectScalarAccess` over the formal `p` (the typed scalar-field route reads every written place: path writes are custody-neutral, names are counted by `scalar_effect`); nothing custody-bearing dropped. Read from a fixture of the shape (`QCORE_TYPED_PATH_PARITY`: `scalar_field_noop`) | Unknown |
 | `cJSON.c:1540`, `:1698` | `parse_array`, `parse_object` | local / local | name (`new_item`) | refused (`unsupported assignment expression`), lowered by rule 10s as two `Alias` | Unknown |
-| `rdkafka_mock.c:458` | `rd_kafka_mock_partition_pidstate_get` | member ×3 | scalar | refused (`indirect memory access`, the base is acquired here), lowered by rule 10s | Unknown |
+| `rdkafka_mock.c:458` | `rd_kafka_mock_partition_pidstate_get` | member ×3 | scalar | refused (`indirect memory access`: the base is acquired in the body), lowered by rule 10s; read from a fixture of the shape | Unknown |
 | `cJSON.c:2008`, `lz4frame.c:1373`, `rdavl.c:141`, `rdkafka_mock.c:1336`, `rdlist.c:115`, `:117`, `pb_decode.c:1434`–`:1485` (8), `mk_http_parser.c:454` | 8 functions | member or deref in the chain | scalar, name, address, uncontracted call | refused: `indirect memory access is outside the resource projection` | Unknown |
 | `rdkafka_ssl.c:410` | `rd_kafka_transport_ssl_cert_verify_cb` | local / local | uncontracted call | refused: `call to uncontracted function \`X509_STORE_CTX_get_error\`` | Unknown |
 | `mk_kernel.c:68` | `mk_kernel_version` | local / local | `p + pos + 1` | refused: `unsupported assignment expression` (rule 10s declines pointer arithmetic) | Unknown |
@@ -95,7 +95,7 @@ the route refuses alone keeps the whole chain refused by name.
 - `crates/qcore-c-gateway/src/legacy_chained_assignment.rs` (new):
   `inner_write` finds, per top-level comma segment, the first top-level
   assignment and any simple or compound assignment operator inside its value
-  (`==`, `!=`, `<=`, `>=` are not assignments; `<<=`, `>>=` are);
+  (`==`, `!=`, `<=`, `>=` are not assignments; `<<=`, `>>=` are), a braced group being opaque (a statement expression's own statements, such as `container_of`'s `*__mptr = (ptr)`, are read by the routes that admit one; gate-1 failed 20 tests in five list-iteration and foreign-unlink units before this was so);
   `chained_assignment_guard` replaces an admission of such a statement by the
   refusal `chained assignment writes an inner destination too; it is read
   only as its sequential assignments (C11 6.5.16p3)` (the value is, up to

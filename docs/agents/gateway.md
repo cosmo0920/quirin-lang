@@ -610,7 +610,10 @@ admission and scalar forgetting; [report](../reports/w48-bottom-up-batch5/README
     inner name was unmatched the same way. `classify_simple` now ends with a
     guard (`legacy_chained_assignment.rs`): when a comma segment's first
     top-level assignment has another simple or compound assignment operator
-    anywhere in its value, an admission of the statement is replaced by a
+    anywhere in its value outside a braced group (a statement expression's
+    own statements, such as `container_of`'s `*__mptr = (ptr)`, are read by
+    the routes that admit one, rule 3's element binding and rule 11g), an
+    admission of the statement is replaced by a
     refusal, `chained assignment writes an inner destination too; it is read
     only as its sequential assignments (C11 6.5.16p3)` when the value is, up
     to wrapping parentheses, that assignment, and `assignment nested in an
