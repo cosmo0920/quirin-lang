@@ -267,7 +267,7 @@ fn strip(texts: &[&str], mut start: usize, mut end: usize) -> (usize, usize) {
 /// `QCore.BuiltinExpectCondition.HintSpelling`: card BUILTIN-EXPECT-NULL-TEST.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) enum HintSpelling {
-    /// One token of decimal digits (`0`, `1`).
+    /// One unsuffixed decimal constant token (`0`, `1`, `10`; C11 6.4.4.1).
     Decimal,
     /// One integer-literal token with a hex or octal prefix or an integer
     /// suffix (`0L`, `1UL`, `0x0`, `00`).
@@ -290,7 +290,10 @@ impl HintSpelling {
     /// Classify a hint's tokens, outer parentheses already stripped.
     pub(crate) fn of(tokens: &[&str]) -> Self {
         if let [literal] = tokens {
-            if !literal.is_empty() && literal.bytes().all(|byte| byte.is_ascii_digit()) {
+            if *literal == "0"
+                || (literal.starts_with(|c: char| ('1'..='9').contains(&c))
+                    && literal.bytes().all(|byte| byte.is_ascii_digit()))
+            {
                 return Self::Decimal;
             }
             if is_integer_literal(literal) {
@@ -1670,7 +1673,7 @@ pub(super) fn census(
 
 #[cfg(test)]
 mod tests {
-    use super::{Tree, parse};
+    use super::{HintSpelling, Tree, parse};
 
     fn tree(text: &str) -> Result<Tree, super::Refusal> {
         let texts = text.split_whitespace().collect::<Vec<_>>();
@@ -1752,10 +1755,10 @@ mod tests {
         }
         for hint in [
             "k",
-            "s -> k",
+            "s - > k",
             "a [ 0 ]",
             "f ( )",
-            "k ++",
+            "k + +",
             "k = 1",
             "0 . 5",
             "- 1",
@@ -1770,7 +1773,8 @@ mod tests {
                 "{hint}"
             );
         }
-        let representatives: [&[&str]; 5] = [&["0"], &["0L"], &["k"], &["k", "++"], &["-", "1"]];
+        let representatives: [&[&str]; 5] =
+            [&["0"], &["0L"], &["k"], &["k", "+", "+"], &["-", "1"]];
         let classes = representatives.map(HintSpelling::of);
         assert_eq!(
             classes,

@@ -213,7 +213,7 @@ evaluation event (C11 6.5.1, 6.4.4.1). -/
 
 /-- A hint's spelling, as the token classifier sees it. -/
 inductive HintSpelling where
-  /-- one token of decimal digits, optionally parenthesised (`0`, `(1)`) -/
+  /-- one unsuffixed decimal constant, optionally parenthesised (`0`, `(1)`, `10`) -/
   | decimal
   /-- one integer-literal token with a hex/octal prefix or a `u`/`l` suffix
   (`0L`, `1UL`, `0x0`) -/
