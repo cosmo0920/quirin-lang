@@ -452,7 +452,26 @@ impl Parser<'_> {
                 );
                 answer
             },
-        )?;
+        );
+        // Card SCALAR-STATEMENT-FORMS: measurement only (feature
+        // `scalar-form-census`, off by default).
+        #[cfg(feature = "scalar-form-census")]
+        if let Some(description) = refusal(query.decision) {
+            let texts = query
+                .tokens
+                .iter()
+                .map(|token| token.text.as_str())
+                .collect::<Vec<_>>();
+            crate::scalar_form_census::record(
+                &self.typed_path_function,
+                query.line,
+                &texts,
+                description,
+                "fallback",
+                Some(decided.is_some()),
+            );
+        }
+        let decided = decided?;
         if STATEMENT_FALLBACKS[decided.index].clears_origins {
             self.element_origins.clear();
         }

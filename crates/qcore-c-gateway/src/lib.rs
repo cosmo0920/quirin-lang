@@ -137,6 +137,8 @@ mod indirect_chain_access;
 pub mod indirect_chain_census;
 pub mod legacy_c;
 pub mod legacy_census;
+#[cfg(feature = "scalar-form-census")]
+pub mod scalar_form_census;
 // Card GATEWAY-RULE-API: the rule registry and its run-time switches.
 pub mod gateway_rules;
 // Card RULE34-PILOT: the gateway as host of the transfer position (rule 34).
@@ -348,6 +350,9 @@ pub fn census_sink_variables() -> Vec<&'static str> {
     ]);
     #[cfg(feature = "provenance-rounds-census")]
     variables.push(legacy_c::joined_provenance::provenance_rounds::CENSUS_PATH_VARIABLE);
+    // Card SCALAR-STATEMENT-FORMS: one process-global stream.
+    #[cfg(feature = "scalar-form-census")]
+    variables.push(scalar_form_census::SCALAR_FORM_CENSUS_PATH);
     variables
 }
 
