@@ -854,6 +854,15 @@ impl AuditReport {
         }
     }
 
+    /// Card **CURRENT-RUN-WORKER-SPIN** (rule 4c, amended): the preceding
+    /// unit could reach more cross-unit homes than the per-unit replay budget
+    /// and held no import; its calls to them stayed uncontracted.
+    pub fn record_cross_unit_withheld(&mut self, reason: &str) {
+        if let Some(unit) = self.units.last_mut() {
+            unit["cross_unit_imports_withheld"] = json!(reason);
+        }
+    }
+
     pub fn record_data_only(&mut self, library: &str, file: &str, error: Option<&LegacyCError>) {
         let reason = error.map(ToString::to_string);
         self.units.push(json!({

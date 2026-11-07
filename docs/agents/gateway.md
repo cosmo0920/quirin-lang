@@ -178,6 +178,28 @@ which is not a second authority.
     Unaware consumers still see no ordinary borrowed contract. Guarded mixtures,
     imported-home chains and missing effects remain refused; see
     [ordered lifetime replay](../reports/event-ordered-lifetime/README.md).
+    Card CURRENT-RUN-WORKER-SPIN (amended in place): a caller holds, and so
+    replays at certificate issue and check, only the homes it may reach: no
+    definition of the name in the caller, and the name used in the caller's
+    preprocessed unit (inside any brace or after a file-scope `=`; a
+    file-scope prototype is not a use) or a candidate some member's run
+    closure can deliver (a function designator stored into a member, or
+    passed to a setter whose formal a member stores, transitively). Every
+    other import is absent from the caller's environment, so a lookup of it
+    finds no summary and the call stays uncontracted. A caller that may reach more than
+    `REPLAY_BUDGET_PER_UNIT` homes holds none, and its unit row names the
+    exhausted budget (`cross_unit_imports_withheld`); the certificate check
+    refuses a home set above the budget before any replay. Every check
+    still verifies every held home, but a home unit's W4 re-run is shared
+    within one process by every check whose recomputed input and environment
+    identities, dialect and selected names equal its own. The replay is
+    recorded once in a fresh recording, and that record is written into the
+    caller's rule 13f recording at every check, as a replay inside it would
+    have written it. The budget is
+    stated in the run's `cross_unit_link_resolution` assumption, and the
+    `current` route prints per-phase and per-unit progress on standard error
+    when the link map is selected. `QCore.CrossUnitReplayBudget`;
+    [report](../reports/current-run-worker-spin/README.md).
 
 <a id="constraint-5"></a>
 

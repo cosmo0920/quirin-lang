@@ -1,0 +1,45 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "CURRENT-RUN-WORKER-SPIN",
+  "base": "13337d0af",
+  "measured_tip": "aa09196b9",
+  "increment_paragraph": "**CURRENT-RUN-WORKER-SPIN** (round 24; first prerequisite of the user's \"Option A (rec.)\" on BODY-SUMMARY-REUSE-LINK-STANDING; [report](../../reports/current-run-worker-spin/README.md)). Diagnosis, committed before any code change: the `current` run with the 165-home experiment link map did not loop. Every loop on rule 4c's route is finite. Its cost was super-linear: `for_caller` gave every caller every run home, and `check_imports` replayed each held home (a whole-unit W4 analysis of the home unit) per caller, and again at a Safe caller's certificate check. That is `callers x homes` analyses: from the run's own unit times, about 307 CPU hours at issue alone. `rdkafka_admin.c` (627 s, 4 names) accounts for 129 h of it, so a one-home map in that unit reproduces the 10-hour hang. Fix (rule 4c amended in place, no new rule id): a caller holds and replays only the homes it may reach. Reachable means the name is used outside a file-scope prototype, or is a candidate some member's run closure can deliver; an address-taken function only opens a closure. A caller that may reach more than REPLAY_BUDGET_PER_UNIT = 24 homes holds none, and its row names the exhausted budget (`cross_unit_imports_withheld`, Unknown); the certificate check refuses a set above the budget before any replay. A home unit's replay is shared within the process, keyed by the identities each check recomputes. It is recorded once and written into every caller's rule 13f recording. The budget is stated in `cross_unit_link_resolution`. The `current` route prints per-phase and per-unit progress on stderr with a link map (or QCORE_AUDIT_PROGRESS), and scans home exports concurrently in task order. Lean QCore.CrossUnitReplayBudget (audited): work bound `callers x budget`, a restricted lookup is the full lookup or absent, exhaustion reads Unknown, consulted lookups unchanged; scope vectors bound to the Rust. Acceptance (experiment map only, never adopted): exit 0 in 2 h 12 min with no caller withheld. Peak RSS was 9.38 GB, above the 7 GiB admission; the map-free run was already at 7.5 GiB. Unit statuses are unchanged. 291 rows change, every one in a unit holding an import and none away from Safe: 16 Unknown->Safe (including the census's 7 cross-unit sole-blocked functions) and 411 uncontracted-import leaves resolved. On an 18-home cmetrics map that finishes at base, verdicts and leaves are equal to base; a caller's unit row no longer lists body validations of home units it never reads.",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "CURRENT-RUN-WORKER-SPIN",
+      "operation": "retire",
+      "why": "DISCHARGED (CURRENT-RUN-WORKER-SPIN, round 24, base 13337d0af, tip aa09196b9): not a spin. Rule 4c's import phase did callers x homes whole-unit home replays (for_caller kept every run home; check_imports replayed each per caller and again at a Safe caller's certificate check). That is about 307 CPU hours on the 165-home map, 129 h from rdkafka_admin.c alone; a one-home map there reproduces the hang. Rule 4c amended: a caller holds only reachable homes (used outside a file-scope prototype, or a member-closure candidate); REPLAY_BUDGET_PER_UNIT = 24, whose exhaustion holds no import (Unknown, unit row `cross_unit_imports_withheld`, check refuses above it); one recorded replay per home unit and process, written into every caller's recording; budget stated in cross_unit_link_resolution; per-phase/per-unit stderr progress. Lean QCore.CrossUnitReplayBudget audited, vectors bound. Acceptance: the 165-home run exits 0 in 2 h 12 min (import phase 55 min), peak RSS 9.38 GB (above the 7 GiB admission: CURRENT-RUN-RSS-ABOVE-ADMISSION), unit statuses unchanged, 291 changed rows all in units holding an import (16 Unknown->Safe). Equality on an 18-home map at base: 0 verdict/leaf differences.",
+      "source": "docs/reports/current-run-worker-spin/README.md"
+    },
+    {
+      "id": "CROSS-UNIT-MEMBER-CLOSURE-SCOPE",
+      "operation": "register",
+      "title": "Rule 4c holds every run member-closure candidate in every caller, whatever members the caller invokes",
+      "text": "CURRENT-RUN-WORKER-SPIN scopes a caller's cross-unit imports to the homes it uses plus RunMemberFacts::named_functions, the union of every member's run closure (stores, and stored setter formals' actuals, transitively). On the 165-home experiment map, 8 homes (the mk_* functions and rd_kafka_topic_partition_list_destroy_free) are held by 165 of 186 callers that never invoke a member delivering them. That is fail-closed but costs replay checks and budget. DISCHARGE: restrict the member-named part to the closures of the members the caller's own declared callees can invoke (rule 12n's member declarations, and the handoff candidates of HANDOFF-CANDIDATE-OWN-CALLBACKS), with a fixture where a closure candidate is still held, and equality on the 165-home map.",
+      "source": "docs/reports/current-run-worker-spin/README.md",
+      "recorded_by": "CURRENT-RUN-WORKER-SPIN"
+    },
+    {
+      "id": "CURRENT-RUN-RSS-ABOVE-ADMISSION",
+      "operation": "register",
+      "title": "quirin-audit current peaks above its 7 GiB audit admission",
+      "text": "Measured by CURRENT-RUN-WORKER-SPIN (receipt max_rss_kib, largest single descendant): map-free current at Fluent Bit 046accf6, 7.5 GiB (BODY-SUMMARY-REUSE); a 36-configuration selection, 6.8 GB, almost all in the member-facts pre-pass over 1448 units; a one-home reproducer selection, 8.8 GB; the 165-home map run, 9.38 GB. The slot admits 7168 MiB. DISCHARGE: measure where the pre-pass and the cross-unit route hold memory. Each CrossUnitHomeEvidence carries a full clone of the contract environment and the home's three source texts; the pre-pass keeps every unit's facts. Then reduce it, or give the route a measured admission as the pinned corpus has (ROUTE_ADMISSION_MIB), with the receipt recorded.",
+      "source": "docs/reports/current-run-worker-spin/README.md",
+      "recorded_by": "CURRENT-RUN-WORKER-SPIN"
+    },
+    {
+      "id": "W44-CALLEE-CROSS-UNIT-SUMMARY",
+      "operation": "append",
+      "text": "SCALED (CURRENT-RUN-WORKER-SPIN): the import route now holds only reachable homes per caller under a stated per-unit replay budget (24) and replays each home unit once per process, with its record written into each caller's recording. The 165-home experiment map on current finishes in 2 h 12 min, against more than 10 h before.",
+      "source": "docs/reports/current-run-worker-spin/README.md"
+    },
+    {
+      "id": "BODY-SUMMARY-REUSE-LINK-STANDING",
+      "operation": "append",
+      "text": "PREREQUISITE CLOSED (CURRENT-RUN-WORKER-SPIN): rule 4c's route finishes on current with the 165-home experiment map (2 h 12 min, no caller over the replay budget). That run is the measured effect of a full link resolution on the census population: unit statuses unchanged; 16 Unknown->Safe rows, including all 7 cross-unit sole-blocked functions; 411 uncontracted-import leaves resolved; 174 deeper leaves exposed in 105 rows. These figures are conditional on the experiment map, which is not adopted. Next prerequisite: a prepare that links fluent-bit.",
+      "source": "docs/reports/current-run-worker-spin/README.md"
+    }
+  ],
+  "profiles": []
+}

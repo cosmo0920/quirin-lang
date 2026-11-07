@@ -3229,8 +3229,9 @@ pub(crate) mod callee_scope;
 mod cross_unit;
 
 pub use cross_unit::{
-    CrossUnitExport, CrossUnitHomeEvidence, export_homes as export_cross_unit_homes,
-    for_caller as cross_unit_for_caller,
+    CallerImports as CrossUnitCallerImports, CrossUnitExport, CrossUnitHomeEvidence,
+    REPLAY_BUDGET_PER_UNIT as CROSS_UNIT_REPLAY_BUDGET_PER_UNIT,
+    export_homes as export_cross_unit_homes, for_caller as cross_unit_for_caller,
 };
 
 // Card W45-FB-RETRY-LIFETIME: intrusive-container publication.

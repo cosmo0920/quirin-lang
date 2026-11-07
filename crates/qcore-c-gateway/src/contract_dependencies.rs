@@ -421,6 +421,100 @@ pub(crate) fn unrecorded<R>(work: impl FnOnce() -> R) -> R {
     work()
 }
 
+/// Card **CURRENT-RUN-WORKER-SPIN** (rule 4c, amended): run `work` in a
+/// fresh recording and return what it recorded, to be written into later
+/// recordings by [`absorb_record`] exactly as running `work` there would
+/// have written it.
+///
+/// The fresh recording's primary stream is a digest no token stream has, so
+/// a reading site `work` analyses is omitted as a foreign stream, as it is
+/// when `work` runs inside a unit's recording whose primary stream is
+/// another unit's. Its unit-level consultations are discarded, as a unit's
+/// are when its recording finishes.
+pub(crate) fn captured<R>(work: impl FnOnce() -> R) -> (R, UnitRecord) {
+    let recording = Recording::start();
+    with_recorder(|recorder| {
+        let foreign = "cross-unit-home-replay".to_owned();
+        recorder.record.primary_source_sha256 = Some(foreign.clone());
+        recorder.record.primary_token_sha256 = Some(foreign);
+    });
+    let result = work();
+    let mut record = recording.finish();
+    record.primary_source_sha256 = None;
+    record.primary_token_sha256 = None;
+    (result, record)
+}
+
+/// Write a [`captured`] record into the open recording: every log and set
+/// is joined, every count added, an observation kept once, and a unit fact
+/// (`callback_members`, `constructed_states`) replaced, as the recording
+/// functions above write them. Evidence is written only outside a
+/// hypothetical analysis; the primary stream is never replaced. Nothing
+/// without an open recording.
+pub(crate) fn absorb_record(delta: &UnitRecord) {
+    with_recorder(|recorder| {
+        let record = &mut recorder.record;
+        for (function, consulted) in &delta.functions {
+            record
+                .functions
+                .entry(function.clone())
+                .or_default()
+                .absorb(consulted);
+        }
+        for (function, names) in &delta.bodies {
+            record
+                .bodies
+                .entry(function.clone())
+                .or_default()
+                .extend(names.iter().cloned());
+        }
+        record.inferred.extend(delta.inferred.iter().cloned());
+        if recorder.hypothetical != 0 {
+            return;
+        }
+        for observation in &delta.reading_sites {
+            if !record.reading_sites.contains(observation) {
+                record.reading_sites.push(observation.clone());
+            }
+        }
+        for (digest, bytes) in &delta.reading_environments {
+            record
+                .reading_environments
+                .entry(digest.clone())
+                .or_insert_with(|| bytes.clone());
+        }
+        for (reason, count) in &delta.reading_site_omissions {
+            *record
+                .reading_site_omissions
+                .entry(reason.clone())
+                .or_default() += count;
+        }
+        let join = |into: &mut BTreeMap<String, BTreeSet<String>>,
+                    from: &BTreeMap<String, BTreeSet<String>>| {
+            for (name, values) in from {
+                into.entry(name.clone())
+                    .or_default()
+                    .extend(values.iter().cloned());
+            }
+        };
+        join(&mut record.lifetime_members, &delta.lifetime_members);
+        join(
+            &mut record.lifetime_prerequisites,
+            &delta.lifetime_prerequisites,
+        );
+        join(&mut record.validated, &delta.validated);
+        join(&mut record.withdrawn, &delta.withdrawn);
+        join(&mut record.failed, &delta.failed);
+        record.examined.extend(delta.examined.iter().cloned());
+        if let Some(facts) = &delta.callback_members {
+            record.callback_members = Some(facts.clone());
+        }
+        if let Some(facts) = &delta.constructed_states {
+            record.constructed_states = Some(facts.clone());
+        }
+    });
+}
+
 /// Card HANDOFF-CANDIDATE-OWN-CALLBACKS: note that the current work relied on
 /// the declaration `name` through a decided callback invocation (the body
 /// need not spell it). Card ARM-OBLIGATIONS-UNIT-GRAIN: the note also reaches

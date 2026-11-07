@@ -401,6 +401,9 @@ impl CurrentAudit {
         self.cross_unit_homes = homes;
         self.assumptions["cross_unit_link_resolution"] = json!({
             "scope": "conditional: each external call to an imported symbol resolves to its named home definition with compatible function type and calling convention in the actual link and interposition environment",
+            // Card CURRENT-RUN-WORKER-SPIN (rule 4c, amended): the stated
+            // work bound; a caller reaching more homes holds none.
+            "replay_budget_per_unit": qcore_c_gateway::legacy_c::CROSS_UNIT_REPLAY_BUDGET_PER_UNIT,
             "premise": links.premise,
             "map_sha256": self.contracts.link_resolution_sha256(),
             "imported": self.cross_unit_homes.iter().map(|home| json!({
