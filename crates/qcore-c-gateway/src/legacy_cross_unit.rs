@@ -538,7 +538,7 @@ enum Replayed {
     NoSummary,
     EffectsDiffer,
     Valid {
-        record: qcore_schemas::contract::ResourceSummaryRecord,
+        record: Box<qcore_schemas::contract::ResourceSummaryRecord>,
         removals: RemovalTrace,
     },
 }
@@ -655,7 +655,7 @@ fn replayed(
                                             Some(_) => RemovalTrace::Differs,
                                         }
                                     },
-                                    record: record.clone(),
+                                    record: Box::new(record.clone()),
                                 },
                             }
                         }
