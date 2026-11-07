@@ -1,0 +1,250 @@
+{
+ "report_sha256": "80722f8ec4513d6af87cc71ed7907896c04d37ad87cdda7cba0bcf9ff726d6b2",
+ "units": [
+  {
+   "file": "lib/librdkafka-2.15.0/src/snappy.c",
+   "status": "Unsafe",
+   "functions": {
+    "Safe": 21,
+    "Pending": 0,
+    "Unknown": 31,
+    "Unsafe": 1
+   }
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c",
+   "status": "Unsafe",
+   "functions": {
+    "Safe": 0,
+    "Pending": 0,
+    "Unknown": 18,
+    "Unsafe": 1
+   }
+  }
+ ],
+ "rows": [
+  {
+   "file": "lib/librdkafka-2.15.0/src/snappy.c",
+   "function": "rd_kafka_snappy_java_uncompress",
+   "status": "Unsafe",
+   "diagnostics": [
+    {
+     "category": "leak",
+     "description": "live obligation acquired at lib/librdkafka-2.15.0/src/snappy.c:1705",
+     "line": 20476,
+     "origin": "lib/librdkafka-2.15.0/src/snappy.c:1648"
+    },
+    {
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "line": 20478,
+     "origin": "lib/librdkafka-2.15.0/src/snappy.c:1652"
+    },
+    {
+     "category": "leak",
+     "description": "live obligation acquired at lib/librdkafka-2.15.0/src/snappy.c:1705",
+     "line": 20480,
+     "origin": "lib/librdkafka-2.15.0/src/snappy.c:1660"
+    },
+    {
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "line": 20487,
+     "origin": "lib/librdkafka-2.15.0/src/snappy.c:1671"
+    },
+    {
+     "category": "leak",
+     "description": "live obligation acquired at lib/librdkafka-2.15.0/src/snappy.c:1705",
+     "line": 20504,
+     "origin": "lib/librdkafka-2.15.0/src/snappy.c:1701"
+    },
+    {
+     "category": "unsupported",
+     "description": "loop re-acquisition: an earlier generation that may be live is still held",
+     "line": 20506,
+     "origin": "lib/librdkafka-2.15.0/src/snappy.c:1705"
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "line": 20508,
+     "origin": "lib/librdkafka-2.15.0/src/snappy.c:1707"
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `outbuf`",
+     "line": 20515,
+     "origin": "lib/librdkafka-2.15.0/src/snappy.c:1721"
+    },
+    {
+     "category": "unsupported",
+     "description": "nullable resource `outbuf` used by a non-null contract",
+     "line": 20515,
+     "origin": "lib/librdkafka-2.15.0/src/snappy.c:1721"
+    }
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c",
+   "function": "rd_kafka_sasl_safe_string",
+   "status": "Unsafe",
+   "diagnostics": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "line": 20260,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c:214"
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `s`",
+     "line": 20265,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c:222"
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `str`",
+     "line": 20265,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c:222"
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `s`",
+     "line": 20267,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c:226"
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `s`",
+     "line": 20270,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c:230"
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `d`",
+     "line": 20271,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c:231"
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `d`",
+     "line": 20272,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c:232"
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `d`",
+     "line": 20273,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c:233"
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `s`",
+     "line": 20274,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c:234"
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `d`",
+     "line": 20275,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c:235"
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `d`",
+     "line": 20276,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c:236"
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `d`",
+     "line": 20277,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c:237"
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `d`",
+     "line": 20279,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c:239"
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `s`",
+     "line": 20279,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c:239"
+    },
+    {
+     "category": "unsupported",
+     "description": "loop re-acquisition: an earlier generation that may be live is still held",
+     "line": 20282,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c:243"
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `d`",
+     "line": 20285,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c:247"
+    },
+    {
+     "category": "leak",
+     "description": "live obligation acquired at lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c:243",
+     "line": 20286,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c:249"
+    }
+   ]
+  }
+ ],
+ "argv": [
+  "quirin-audit",
+  "current",
+  "--checkout",
+  "/media/Data/GitHub/quirin-lang/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-source/fluent-bit-clang-source",
+  "--profile-directory",
+  "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9819016a66a78c54/contract/profiles/fluent-bit",
+  "--compile-database",
+  "/media/Data/GitHub/quirin-lang/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-source/fluent-bit-clang-production/compile_commands.json",
+  "--selection",
+  "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9819016a66a78c54/private/census/snappy-selection.json",
+  "--report",
+  "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9819016a66a78c54/private/census/after/resource-diagnostics.json",
+  "--jobs",
+  "1",
+  "--memory-budget-mib",
+  "4096"
+ ],
+ "environment": {
+  "QCORE_AUDIT_JOBS": "1",
+  "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang",
+  "QCORE_GATEWAY_RULES_OFF": null
+ },
+ "clang": {
+  "program": "/usr/lib/llvm-21/bin/clang",
+  "target": "x86_64-pc-linux-gnu",
+  "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin"
+ },
+ "slot": {
+  "class": "audit",
+  "exit": 0,
+  "argv_run": [
+   "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9819016a66a78c54/private/census/quirin-audit-after",
+   "current",
+   "--checkout",
+   "/media/Data/GitHub/quirin-lang/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-source/fluent-bit-clang-source",
+   "--profile-directory",
+   "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9819016a66a78c54/contract/profiles/fluent-bit",
+   "--compile-database",
+   "/media/Data/GitHub/quirin-lang/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-source/fluent-bit-clang-production/compile_commands.json",
+   "--selection",
+   "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9819016a66a78c54/private/census/snappy-selection.json",
+   "--report",
+   "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9819016a66a78c54/private/census/after/resource-diagnostics.json",
+   "--jobs",
+   "1",
+   "--memory-budget-mib",
+   "4096"
+  ],
+  "max_rss_kib": 6264592,
+  "started": "2026-11-07T07:59:38+00:00",
+  "finished": "2026-11-07T08:37:45+00:00"
+ }
+}

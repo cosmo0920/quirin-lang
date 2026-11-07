@@ -1,0 +1,52 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "LOOP-REACQUISITION-LEAK-ACCUSATION",
+ "base": "82ec0e80b",
+ "measured_tip": "5de709b79",
+ "increment_paragraph": "**LOOP-REACQUISITION-LEAK-ACCUSATION** (round 26, gateway rule 42; USER DECISION 2026-11-07, verbatim: \"Register four as implementation cards\"): the per-generation QCORE_LEAK_WITNESS census on rd_kafka_snappy_java_uncompress and rd_kafka_sasl_safe_string (the two rows whose leaks sit on a `loop re-acquisition` refusal) confirms the generation join for snappy :1680, :1694, :1712, :1721 (the current generation released, escaped or refined away; only earlier generations reach the exit) and refutes it for :1648, :1660, :1701 and scram :249 (current-generation witnesses on the path-insensitive pass guard and the chained assignment). Rule 42 defers an earlier generation's leak report and withdraws it exactly when the settled states refuse the site's re-acquisition and the function reported that refusal; a current generation's report and an unrefused site's are published as before, so the function is Unknown or provisional Unsafe, never Safe. Card-local current-route check on the two units: snappy loses exactly the four confirmed leaves and stays provisional Unsafe, nothing else moves; prediction no status move on corpus, system and slice. The census also shows the settled exits reproduce none of the eight leaves (C02-P-ALIAS -LEAK-ORDER). Lean QCore.LoopReacquisitionLeak (15 theorems); fixtures for a true leak inside the refused loop (still Unsafe) and loops without re-acquisition (unchanged). Nothing is presented as an upstream defect.",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "LOOP-REACQUISITION-LEAK-ACCUSATION",
+   "operation": "retire",
+   "why": "DONE by LOOP-REACQUISITION-LEAK-ACCUSATION (gateway rule 42, docs/reports/loop-reacquisition-leak-accusation/README.md), scoped by its census as the DISCHARGE allows: the per-generation QCORE_LEAK_WITNESS census confirms the generation join for snappy :1680, :1694, :1712, :1721 and refutes it for :1648, :1660, :1701 (current-generation witnesses); a leak reported only by earlier generations of a refused, reported re-acquisition is withdrawn under the refusal (Unknown, never Safe); fixtures for a true leak inside such a loop (still Unsafe) and loops without re-acquisition (unchanged); Lean QCore.LoopReacquisitionLeak; card-local measurement: snappy loses the four confirmed leaves and stays provisional Unsafe (its three remaining leaves are not generation joins), no Safe move.",
+   "source": "docs/reports/loop-reacquisition-leak-accusation/README.md"
+  },
+  {
+   "id": "LOOP-GENERATION-COUNTER-CORRELATION",
+   "operation": "amend",
+   "text": "AMENDED (LOOP-REACQUISITION-LEAK-ACCUSATION, gateway rule 42): at base 82ec0e80b the four earlier-generation leaves of rd_kafka_snappy_java_uncompress (:1680, :1694, :1712, :1721) are withdrawn under the function's rule-11a refusal at :1705 (the re-acquisition is now refused); the pass guard still keeps the current generation live at :1648, :1660 and :1701, which stay provisional Unsafe. DISCHARGE unchanged.",
+   "source": "docs/reports/loop-reacquisition-leak-accusation/README.md"
+  },
+  {
+   "id": "LEAK-PATH-SCALAR-CORRELATION",
+   "operation": "amend",
+   "text": "AMENDED (LOOP-REACQUISITION-LEAK-ACCUSATION): the per-generation census at base 82ec0e80b shows rd_kafka_snappy_java_uncompress's :1648, :1660 and :1701 leaves are the current generation's (no re-acquisition on the witness), so gateway rule 42 keeps them and they are the function's only remaining leaves; they are also not reproduced by the settled exit (every generation unresolved there, C02-P-ALIAS -LEAK-ORDER).",
+   "source": "docs/reports/loop-reacquisition-leak-accusation/README.md"
+  },
+  {
+   "id": "BUILTIN-EXPECT-NULL-TEST",
+   "operation": "amend",
+   "text": "AMENDED (LOOP-REACQUISITION-LEAK-ACCUSATION): the per-generation census at base 82ec0e80b shows the `unlikely(!outbuf)` failure arm already removes the current generation at snappy.c:1712 (status 0 at the settled exit); the leaf there was the earlier generations', kept live by the pass guard, and gateway rule 42 withdraws it under the :1705 refusal. snappy :1712 no longer motivates this card; its fixtures and DISCHARGE stand for other bodies.",
+   "source": "docs/reports/loop-reacquisition-leak-accusation/README.md"
+  },
+  {
+   "id": "LEAK-UNDECIDED-NULL-TEST",
+   "operation": "amend",
+   "text": "AMENDED (LOOP-REACQUISITION-LEAK-ACCUSATION): the snappy.c:1712 half is withdrawn at base 82ec0e80b, not by a null test: the census shows that arm refines the current generation away and the leaf was the earlier generations', which gateway rule 42 reports under the :1705 re-acquisition refusal.",
+   "source": "docs/reports/loop-reacquisition-leak-accusation/README.md"
+  },
+  {
+   "id": "CHAINED-ASSIGNMENT-INNER-DESTINATION",
+   "operation": "amend",
+   "text": "AMENDED (LOOP-REACQUISITION-LEAK-ACCUSATION): the per-generation census shows rd_kafka_sasl_safe_string's :249 leaf is the current generation's (bound to `d` only), so gateway rule 42 does not withdraw it; at the settled exit every generation is unresolved, so it is published from an intermediate iterate (C02-P-ALIAS -LEAK-ORDER).",
+   "source": "docs/reports/loop-reacquisition-leak-accusation/README.md"
+  },
+  {
+   "id": "C02-P-ALIAS-O",
+   "operation": "amend",
+   "text": "AMENDED (LOOP-REACQUISITION-LEAK-ACCUSATION): -LEAK-ORDER also holds rd_kafka_snappy_java_uncompress's three remaining leaves (:1648, :1660, :1701) on the 046accf6 current run and base 82ec0e80b: the per-generation census finds every generation live with an unresolved effect at all eight reporting exits of snappy and scram, so none is reproduced by the settled exit.",
+   "source": "docs/reports/loop-reacquisition-leak-accusation/README.md"
+  }
+ ]
+}

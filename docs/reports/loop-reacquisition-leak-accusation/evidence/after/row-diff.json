@@ -1,0 +1,31 @@
+[
+ {
+  "file": "lib/librdkafka-2.15.0/src/snappy.c",
+  "function": "rd_kafka_snappy_java_uncompress",
+  "before": "Unsafe",
+  "after": "Unsafe",
+  "removed": [
+   [
+    "leak",
+    "lib/librdkafka-2.15.0/src/snappy.c:1680",
+    "live obligation acquired at lib/librdkafka-2.15.0/src/snappy.c:1705"
+   ],
+   [
+    "leak",
+    "lib/librdkafka-2.15.0/src/snappy.c:1694",
+    "live obligation acquired at lib/librdkafka-2.15.0/src/snappy.c:1705"
+   ],
+   [
+    "leak",
+    "lib/librdkafka-2.15.0/src/snappy.c:1712",
+    "live obligation acquired at lib/librdkafka-2.15.0/src/snappy.c:1705"
+   ],
+   [
+    "leak",
+    "lib/librdkafka-2.15.0/src/snappy.c:1721",
+    "live obligation acquired at lib/librdkafka-2.15.0/src/snappy.c:1705"
+   ]
+  ],
+  "added": []
+ }
+]

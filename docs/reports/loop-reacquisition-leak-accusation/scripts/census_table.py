@@ -51,7 +51,8 @@ def main(argv):
             entry = rows.setdefault(key, {})
             generation = witness["generation"]
             path = witness.get("path")
-            entry[generation] = {
+            entry.setdefault(generation, []).append({
+                "invocation": [witness["unit_seq"], witness["invocation"]],
                 "settled": witness["settled"],
                 "status": witness["status"],
                 "unresolved": witness["unresolved"],
@@ -60,30 +61,38 @@ def main(argv):
                 "path_lines": [step["line"] for step in path] if path else None,
                 "path_reacquisitions": witness.get("path_reacquisitions"),
                 "exit_unmodeled": witness["exit_unmodeled"],
-            }
+            })
     table = []
     for (function, line, acquisition_line), entry in sorted(rows.items()):
-        current = entry.get("current", {})
-        earlier = [g for g in ("previous", "older") if entry.get(g, {}).get("settled")]
-        join = not current.get("settled") and bool(earlier)
-        refused = any(e.get("reacquisition_refused") for e in entry.values())
+        # A generation has a witness when, in some invocation, the settled
+        # exit still reports it or a path keeps it live from its producer.
+        witnessed = lambda g: any(e["settled"] or e["path"] for e in entry.get(g, []))
+        current = witnessed("current")
+        earlier = [g for g in ("previous", "older") if witnessed(g)]
+        settled_any = any(e["settled"] for records in entry.values() for e in records)
+        join = not current and bool(earlier)
+        refused = any(e["reacquisition_refused"] for records in entry.values() for e in records)
+        statuses = {g: sorted({(e["status"], e["unresolved"]) for e in records})
+                    for g, records in entry.items()}
         table.append({
             "function": function,
             "line": line,
             "origin": origin.get((function, line)),
             "acquisition_line": acquisition_line,
-            "current_settled": bool(current.get("settled")),
-            "earlier_settled": earlier,
+            "current_witness": current,
+            "earlier_witnesses": earlier,
+            "settled_exit_reports_it": settled_any,
             "reacquisition_refused": refused,
             "generation_join": join,
             "withdrawn_by_rule_42": join and refused,
+            "statuses": statuses,
             "generations": entry,
         })
         print(
-            f"{function} line {line} [{origin.get((function, line))}] "
-            f"(acquired {acquisition_line}): "
-            f"current settled={bool(current.get('settled'))} "
-            f"earlier settled={earlier or '-'} refused={refused} "
+            f"{function} [{origin.get((function, line))}]: "
+            f"current witness={current} earlier={earlier or '-'} "
+            f"settled reproduces={settled_any} refused={refused} "
+            f"statuses={statuses} "
             f"=> {'generation join' if join else 'not a join'}"
         )
     if out:
