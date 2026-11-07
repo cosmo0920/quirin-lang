@@ -530,6 +530,13 @@ impl super::Parser<'_> {
     ) -> LegacyInstruction {
         let saved = self.probe_state();
         let instruction = self.classify_simple(stripped);
+        // Card SCALAR-STATEMENT-FORMS (rule 41): a clause refused with one of
+        // its five refusals, read from the original spelling (a clause has no
+        // fallback table, so this is asked after every route of the clause).
+        if let Some(admitted) = self.scalar_form_clause(original.unwrap_or(stripped), &instruction)
+        {
+            return admitted;
+        }
         let grouped = original.is_none_or(|original| {
             let texts = original
                 .iter()

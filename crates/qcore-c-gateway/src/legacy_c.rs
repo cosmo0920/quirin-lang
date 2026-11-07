@@ -436,6 +436,11 @@ pub(crate) mod checked_spec;
 #[path = "legacy_scalar_return_value.rs"]
 mod scalar_return_value;
 
+// Card SCALAR-STATEMENT-FORMS (rule 41): Clang-typed scalar statement forms,
+// asked last for five refusals.
+#[path = "legacy_scalar_statement_forms.rs"]
+mod scalar_statement_forms;
+
 // Card GATEWAY-ANALYSIS-PATH-OPTIMIZATION: the statement and return fallback
 // orders as explicit tables, asked by one dispatcher each.
 #[path = "legacy_route_table.rs"]
@@ -5890,6 +5895,11 @@ impl Parser<'_> {
         let residual = self.residual_access_statement(tokens, line, &instruction);
         self.typed_place_origin.set(None);
         if let Some(statement) = residual {
+            return statement;
+        }
+        // Card SCALAR-STATEMENT-FORMS (rule 41), asked after every statement
+        // fallback and rules 14a/14b, only for one of its five refusals.
+        if let Some(statement) = self.scalar_statement_form(tokens, line, &instruction) {
             return statement;
         }
         // Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS (rule 12k). Asked last,

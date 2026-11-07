@@ -84,3 +84,83 @@ pointer store (`ut_write_msgset_v2_header`), a `for`-clause comma
 not one of these five, so this rule is never asked there.
 `docs/design/W4_NEUTRAL_EXPRESSION_POSITIONS.md` is the expression-position
 design; this rule reads statements and `for` clauses only.
+
+## Rule 41
+
+The rule text is [rule 41](../../agents/rules/41.md) (id checked against
+every numeric and lettered id in `docs/agents/rules/`, the registry and the
+`integrate/r3`..`r5` branches; 40 is reserved for LINK-STANDING, and no
+existing rule's premise covers all six forms: the nearest, 10s's elaborator,
+lowers object writes only for names the lexical reader read and is never
+asked for a `for` clause). Code: `src/scalar_statement_forms.rs` (the
+decision, `VECTORS`, the Clang shape and class readers),
+`src/legacy_scalar_statement_forms.rs` (the two hooks), one reader flag in
+`src/typed_access_path.rs` (`unevaluated_queries`, set only by this rule),
+thin hooks in `legacy_c.rs` (last in `expression_statement_lowered`) and
+`legacy_parenthesised_callee.rs` (a refused `for` clause), and the registry
+row (`QCORE_GATEWAY_RULES_OFF=41` answers nothing).
+
+| Form | Admitted when | Lowering |
+|---|---|---|
+| `X++`, `--X`, `X op= E` | `X` a named automatic scalar (Clang type, every declaration of the spelling scalar, not protected) or a scalar typed path; `E` read by the typed reader | `ForgetScalar X`, or `IndirectScalarAccess` with the path's per-hop obligations (frame when written through a pointer) |
+| `X = E`, `T X = E;` | as above, the value needing rule 41's reading | the same |
+| `T a = E1, b;` | every declarator as above (statement position only) | one instruction per declarator, in order |
+| `typedef …;`, `struct/union/enum {…};` | declares no object, no variably modified `typedef`, no `typedef` or enumerator spelling an object of the function | `NoOp` |
+| `T x = { E };` | `x` a scalar object | as `T x = E;` |
+| `sizeof E`, `sizeof(T)` | Clang does not evaluate the operand | reads nothing |
+
+Refused by name (the older refusal stays byte for byte): `pointer-destination`,
+`pointer-value`, `volatile-object`, `aggregate-destination`,
+`inline-record-object`, `variably-modified`, `static-storage`,
+`shadowed-name`, `protected-formal`, `unread-destination`, `unread-value`,
+`mismatched-form`; each consultation is a `QCORE_TYPED_PATH_PARITY` row
+(`position: "scalar-statement-form"`).
+
+**Lean.** `proof/QCore/ScalarStatementForms.lean`, audited by
+`proof/AuditScalarStatementForms.lean` (22 theorems, axioms only `propext`
+and `Quot.sound`): the decision and its vectors (`decision_vectors_hold`,
+`admitted_destination`, `pointer_destination_refuses`, `volatile_refuses`,
+`inline_record_object_refuses`, `variably_modified_type_refuses`,
+`pointer_value_refuses`, `evaluated_query_refuses`); the forms as stores
+(`compound_is_assignment`, `step_is_compound`, `postfix_step_side_effect`);
+the lowering's soundness (`named_store_refines_forget`,
+`compound_refines_forget`, `step_refines_forget`,
+`path_store_refines_write`, `declarators_are_sequential`,
+`type_declaration_is_noop`); frame preservation (`run_preserves_frame`,
+`runs_preserve_frame`, `an_owned_object_stays_owed`,
+`a_released_base_has_no_write`); and `a_declined_statement_is_never_safe`.
+The Rust table `VECTORS` is the Lean `vectors` row for row
+(`the_decision_vectors_hold`).
+
+**Fixtures.** `tests/scalar_statement_forms.rs` (15, each with the complete
+diagnostic vector): admitted steps, compound assignments and `for` clauses in
+a function the lexical reader cannot read, a compound store through a live
+record, a compound store through a released record (`Unsafe`,
+`use_after_release`), several declarators, type declarations, unevaluated
+`sizeof`, a braced scalar initializer; refused `volatile`, pointer
+difference, an inline union object, a `for`-clause comma, a shadowed spelling,
+a pointer declarator, an enumerator spelling an object. The unit test
+`off_every_refusal_stands` (in `scalar_statement_forms.rs`) runs one fixture
+with the rule on (`Safe`) and off (its three refusals).
+
+## Driver comparison (with and without the rule)
+
+The census driver over the same 103 units, once with
+`QCORE_GATEWAY_RULES_OFF=41` and once without (`scripts/ab.sh`,
+`scripts/compare.py`; no contracts, so a contracted call stays refused):
+782 five-family leaves removed (245 in 93 functions the report lists, the
+rest in header inline functions), six functions `Unknown` to `Safe`
+(`LZ4_stream_t_alignment`, `LZ4_streamHC_t_alignment`, `LZ4F_returnErrorCode`,
+`LZ4_getIndexOnHash`, `LZ4HC_rotatePattern`, `_next_target`), no new
+diagnostic of any other kind, and only leaves a refusal's frame caused or a
+now-summarised callee's call removed elsewhere
+([`rule-comparison.json`](rule-comparison.json)). `XXH32/64_canonicalFromHash`
+and `rd_kafka_version_str` lose their only family leaf and keep a libc call
+the driver does not contract. The final binary was re-run on the moved
+units' five translation units with no difference.
+
+## Prediction
+
+[`PREDICTION.md`](PREDICTION.md) (committed `d5495ea53`, before the semantic
+change): corpus nine rows `Unknown` to `Safe`, system and slice none, no unit
+status change. The integrator runs the declared measurement.

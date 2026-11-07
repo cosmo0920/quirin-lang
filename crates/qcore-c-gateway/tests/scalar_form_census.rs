@@ -47,14 +47,13 @@ fn census_one_unit() {
             format!("Unsafe {}", summary.functions.len())
         }
         Ok(qcore_c_gateway::legacy_c::UnrestrictedLegacyResult::Unknown {
-            partial, reason, ..
+            partial,
+            reason,
+            ..
         }) => format!(
             "Unknown {:?} {reason}",
             partial.as_ref().map(|summary| summary.functions.len())
         ),
-        Ok(qcore_c_gateway::legacy_c::UnrestrictedLegacyResult::Unknown { .. }) => {
-            unreachable!()
-        }
         Err(error) => format!("error {error:?}"),
     };
     println!("unit {}: {shape}", path.to_string_lossy());
@@ -68,9 +67,9 @@ fn census_one_unit() {
             Ok(qcore_c_gateway::legacy_c::UnrestrictedLegacyResult::Unsafe(summary)) => {
                 Some(summary)
             }
-            Ok(qcore_c_gateway::legacy_c::UnrestrictedLegacyResult::Unknown { partial, .. }) => {
-                partial.as_ref()
-            }
+            Ok(qcore_c_gateway::legacy_c::UnrestrictedLegacyResult::Unknown {
+                partial, ..
+            }) => partial.as_ref(),
             Err(_) => None,
         };
         let rows = summary
