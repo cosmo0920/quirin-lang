@@ -315,6 +315,33 @@ pub(super) fn settle_refused(
     }
 }
 
+/// The acquisition sites whose re-acquisition the settled analysis refuses
+/// ([`Step::ShiftRefused`]), read from the settled incoming states. The
+/// decision is monotone in the state, so the settled state decides as the
+/// last iterate of each node did, and that iterate reported
+/// [`SHIFT_REFUSED`] there. Reads only.
+pub(super) fn refused_reacquisitions(
+    cfg: &LegacyCfg,
+    incoming: &[Option<AbstractState>],
+) -> BTreeSet<usize> {
+    let mut refused = BTreeSet::new();
+    for (node_id, node) in cfg.nodes.iter().enumerate() {
+        let Some(state) = incoming[node_id].as_ref() else {
+            continue;
+        };
+        let overwritten = overwritten_names(&node.instruction);
+        for site in instruction_produced_sites(&node.instruction) {
+            if indexable(site)
+                && mentioned(state, site)
+                && decide(earlier(state, site, &overwritten)) == Step::ShiftRefused
+            {
+                refused.insert(site);
+            }
+        }
+    }
+    refused
+}
+
 /// Record every re-acquisition an earlier generation reaches, with its step
 /// (see the module comment). Parity only: no diagnostic, no state change.
 pub(super) fn record_exposure(cfg: &LegacyCfg, incoming: &[Option<AbstractState>]) {
