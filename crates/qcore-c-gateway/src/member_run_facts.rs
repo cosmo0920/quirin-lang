@@ -20,6 +20,14 @@
 //! and a checkpoint carries the run's closures for its composer. With
 //! nothing installed (an analysis outside those routes) a unit decides over
 //! its own facts as before and an empty set is refused.
+//!
+//! Card **CALLBACK-MEMBER-NON-C-UNITS** (rule 12n, amended in place): an
+//! unread C++ unit whose preprocessed text is the whole unit is scoped
+//! ([`RunMemberFacts::scoped`]): it opens only a member whose closure-graph
+//! tokens it names, the reading by which the pre-pass skips a C unit naming
+//! no token, applied to each member's own graph
+//! (`QCore.MemberNonCUnits.a_scoped_unit_naming_no_graph_token_keeps_the_run_set`).
+//! Every other unread unit still opens every member.
 
 use std::cell::RefCell;
 use std::collections::{BTreeMap, BTreeSet};
@@ -36,8 +44,18 @@ pub struct RunMemberFacts {
     pub units: Vec<MemberFacts>,
     /// A unit that may name a token of a member's closure but whose facts
     /// were not read (a C++ or assembly unit, a failed preprocessing or
-    /// Clang run), with why. Any such unit opens every member.
+    /// Clang run), with why. Such a unit opens every member, except a unit
+    /// of [`Self::scoped`].
     pub unread: BTreeMap<String, String>,
+    /// Card CALLBACK-MEMBER-NON-C-UNITS: the unread C++ units whose
+    /// preprocessed text is the whole unit, each with the tokens of
+    /// [`Self::checked`] it names. Such a unit opens only a member whose
+    /// closure-graph tokens it names (or a member with a graph token outside
+    /// `checked`, which was never looked for).
+    pub scoped: BTreeMap<String, BTreeSet<String>>,
+    /// The tokens every unit of `scoped` was checked against: the pre-pass's
+    /// final tokens.
+    pub checked: BTreeSet<String>,
     /// The units' stores by normal key, built once.
     prepared: OnceLock<Prepared>,
     /// Every function the facts name as a value, built once.
@@ -51,6 +69,8 @@ impl RunMemberFacts {
         Self {
             units,
             unread,
+            scoped: BTreeMap::new(),
+            checked: BTreeSet::new(),
             prepared: OnceLock::new(),
             named_functions: OnceLock::new(),
         }
@@ -104,6 +124,70 @@ impl RunMemberFacts {
         })
     }
 
+    /// Card CALLBACK-MEMBER-NON-C-UNITS: the same facts, with the unread
+    /// units whose reading is scoped to the members they name. A unit of
+    /// `scoped` that is not in `unread` is ignored (it opens nothing it
+    /// would not open unread).
+    #[must_use]
+    pub fn with_scoped(
+        mut self,
+        checked: BTreeSet<String>,
+        scoped: BTreeMap<String, BTreeSet<String>>,
+    ) -> Self {
+        self.checked = checked;
+        self.scoped = scoped
+            .into_iter()
+            .filter(|(unit, _)| self.unread.contains_key(unit))
+            .collect();
+        self
+    }
+
+    /// Why the unread `unit` opens a member whose closure graph names
+    /// `tokens`, or `None` when its reading keeps the member's set (rule 12n,
+    /// card CALLBACK-MEMBER-NON-C-UNITS): a unit outside [`Self::scoped`]
+    /// opens every member; a scoped unit opens it when it names one of the
+    /// tokens, or when a token was never checked against it.
+    #[must_use]
+    pub fn opens(&self, unit: &str, tokens: &BTreeSet<String>) -> Option<String> {
+        let why = self.unread.get(unit)?;
+        let Some(named) = self.scoped.get(unit) else {
+            return Some(why.clone());
+        };
+        let unchecked = tokens.difference(&self.checked).next();
+        if let Some(token) = unchecked {
+            return Some(format!(
+                "{why}, not checked for the member's token `{token}`"
+            ));
+        }
+        let hits = named.intersection(tokens).take(3).collect::<Vec<_>>();
+        if hits.is_empty() {
+            return None;
+        }
+        Some(format!(
+            "{why}, naming {}",
+            hits.iter()
+                .map(|token| format!("`{token}`"))
+                .collect::<Vec<_>>()
+                .join(", ")
+        ))
+    }
+
+    /// The unread units that open `member`, with why (card
+    /// CALLBACK-MEMBER-NON-C-UNITS: evidence for the pre-pass section).
+    #[must_use]
+    pub fn opening(&self, member: &str) -> BTreeMap<String, String> {
+        let views = self.units.iter().collect::<Vec<_>>();
+        let tokens = closure_prepared(&views, self.prepared(), member).1;
+        self.opening_over(&tokens)
+    }
+
+    fn opening_over(&self, tokens: &BTreeSet<String>) -> BTreeMap<String, String> {
+        self.unread
+            .keys()
+            .filter_map(|unit| Some((unit.clone(), self.opens(unit, tokens)?)))
+            .collect()
+    }
+
     fn prepared(&self) -> &Prepared {
         self.prepared.get_or_init(|| {
             let views = self.units.iter().collect::<Vec<_>>();
@@ -122,17 +206,19 @@ impl RunMemberFacts {
         self.prepared().tables.normalise(member)
     }
 
-    /// The run's closure of `member`: open while any unit is unread.
+    /// The run's closure of `member`: open while any unread unit opens it
+    /// ([`Self::opens`]).
     pub fn closure(&self, member: &str) -> Closure {
         let views = self.units.iter().collect::<Vec<_>>();
-        let result = closure_prepared(&views, self.prepared(), member).0;
-        if self.unread.is_empty() {
+        let (result, tokens) = closure_prepared(&views, self.prepared(), member);
+        let opening = self.opening_over(&tokens);
+        if opening.is_empty() {
             return result;
         }
         let reason = format!(
             "{} unit(s) of the run may name it but were not read (first: {})",
-            self.unread.len(),
-            self.unread
+            opening.len(),
+            opening
                 .iter()
                 .next()
                 .map(|(unit, why)| format!("{unit}: {why}"))
@@ -232,9 +318,122 @@ pub(crate) const RUN_DECISION_VECTORS: &[(Option<&[&str]>, bool)] = &[
     (Some(&["a", "b"]), true),
 ];
 
+/// `SCOPED_VECTORS` (`QCore.MemberNonCUnits.scopedVectors`): an unread unit
+/// (`None`: not scoped, so its tokens are unknown; `Some(named)`: a scoped
+/// C++ unit naming `named`), the checked tokens, a member's graph tokens, and
+/// whether the unit opens the member.
+#[cfg(test)]
+#[allow(clippy::type_complexity)]
+pub(crate) const SCOPED_VECTORS: &[(Option<&[&str]>, &[&str], &[&str], bool)] = &[
+    (None, &["cmt"], &["cmt"], true),
+    (None, &[], &[], true),
+    (Some(&[]), &["cmt"], &["cmt"], false),
+    (Some(&["event"]), &["cmt", "event"], &["cmt"], false),
+    (Some(&["cmt", "event"]), &["cmt", "event"], &["cmt"], true),
+    (Some(&[]), &["cmt"], &["cmt", "cio_options"], true),
+    (
+        Some(&["event"]),
+        &["event", "rd_kafka_s"],
+        &["rd_kafka_s", "rd_kafka_conf_s"],
+        true,
+    ),
+    (
+        Some(&["event"]),
+        &["event", "rd_kafka_s", "rd_kafka_conf_s"],
+        &["rd_kafka_s", "rd_kafka_conf_s"],
+        false,
+    ),
+];
+
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::callback_member_closure::closure_tokens;
+
+    fn set(names: &[&str]) -> BTreeSet<String> {
+        names.iter().map(|name| (*name).to_owned()).collect()
+    }
+
+    #[test]
+    fn scoped_vectors_hold() {
+        for (named, checked, graph, opens) in SCOPED_VECTORS {
+            let mut run = RunMemberFacts::new(
+                Vec::new(),
+                BTreeMap::from([(
+                    "u.cpp".to_owned(),
+                    "a unit that is not C (`cpp`)".to_owned(),
+                )]),
+            );
+            if let Some(named) = named {
+                run = run.with_scoped(
+                    set(checked),
+                    BTreeMap::from([("u.cpp".to_owned(), set(named))]),
+                );
+            }
+            assert_eq!(
+                run.opens("u.cpp", &set(graph)).is_some(),
+                *opens,
+                "{named:?} {checked:?} {graph:?}"
+            );
+        }
+        assert_eq!(SCOPED_VECTORS.len(), 8);
+    }
+
+    #[test]
+    fn a_scoped_unit_opens_only_the_members_it_names() {
+        // Unit 0 stores `h` into `T.f` and `g` into `U.g`; the unread C++
+        // unit names `U` only.
+        let mut unit = MemberFacts::default();
+        unit.stores
+            .entry("T.f".into())
+            .or_default()
+            .insert(Flow::Function { name: "h".into() });
+        unit.stores
+            .entry("U.g".into())
+            .or_default()
+            .insert(Flow::Function { name: "g".into() });
+        let unread = BTreeMap::from([(
+            "x.cpp".to_owned(),
+            "a unit that is not C (`cpp`)".to_owned(),
+        )]);
+        let tokens = closure_tokens(&[&unit], "T.f")
+            .union(&closure_tokens(&[&unit], "U.g"))
+            .cloned()
+            .collect::<BTreeSet<_>>();
+        assert!(tokens.contains("T") && tokens.contains("U"), "{tokens:?}");
+        let scoped = RunMemberFacts::new(vec![unit.clone()], unread.clone()).with_scoped(
+            tokens.clone(),
+            BTreeMap::from([("x.cpp".to_owned(), set(&["U"]))]),
+        );
+        assert_eq!(scoped.closure("T.f"), Ok(set(&["h"])));
+        let open = scoped.closure("U.g").unwrap_err();
+        assert!(
+            open.iter()
+                .any(|why| why.contains("x.cpp") && why.contains("naming `U`")),
+            "{open:?}"
+        );
+        assert_eq!(scoped.opening("T.f"), BTreeMap::new());
+        // Unscoped, the same unit opens both members, as before.
+        let unscoped = RunMemberFacts::new(vec![unit.clone()], unread.clone());
+        assert!(unscoped.closure("T.f").is_err());
+        assert!(unscoped.closure("U.g").is_err());
+        // A token never checked against the unit opens the member.
+        let unchecked = RunMemberFacts::new(vec![unit.clone()], unread.clone()).with_scoped(
+            set(&["U"]),
+            BTreeMap::from([("x.cpp".to_owned(), set(&[]))]),
+        );
+        let open = unchecked.closure("T.f").unwrap_err();
+        assert!(
+            open.iter()
+                .any(|why| why.contains("not checked for the member's token `T`")),
+            "{open:?}"
+        );
+        // A scoped entry for a unit that is not unread is ignored.
+        let stray = RunMemberFacts::new(vec![unit], BTreeMap::new())
+            .with_scoped(tokens, BTreeMap::from([("y.cpp".to_owned(), set(&["T"]))]));
+        assert!(stray.scoped.is_empty());
+        assert_eq!(stray.closure("T.f"), Ok(set(&["h"])));
+    }
 
     #[test]
     fn a_registration_reads_the_setters_actuals_at_every_call() {

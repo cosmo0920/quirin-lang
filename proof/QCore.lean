@@ -232,6 +232,7 @@ import QCore.MemberAddressReader
 import QCore.MemberCustodyAttribution
 import QCore.MemberEffectSummary
 import QCore.MemberFormalType
+import QCore.MemberNonCUnits
 import QCore.MemberPathDirectCall
 import QCore.MemberPathRelease
 import QCore.MemberPathUnitHelpers

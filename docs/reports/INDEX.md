@@ -97,6 +97,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [callback-member-data-only-units](callback-member-data-only-units/README.md) | CALLBACK-MEMBER-DATA-ONLY-UNITS: every unit read for the member closure |
 
+| [callback-member-non-c-units](callback-member-non-c-units/README.md) | CALLBACK-MEMBER-NON-C-UNITS |
+
 | [callee-retention-class1](callee-retention-class1/README.md) | CALLEE-RETENTION-CLASS1: class 1 split by shape |
 
 | [canonical-contract-locations](canonical-contract-locations/README.md) | Canonical contract locations |
