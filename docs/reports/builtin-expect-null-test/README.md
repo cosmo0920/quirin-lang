@@ -84,8 +84,36 @@ including the leak at -P line 20509 (snappy.c:1712, acquired at 20506 =
 :1705) and the `loop re-acquisition` refusal at :1705. The leaf at :1712 does
 not depend on the wrapper.
 
-**Every unit with a site** (current route, 74 units): see §2a below once the
-slot-queued run completes.
+**The other 73 units with a site** were not run: the run was queued in an
+audit slot behind other cards' jobs for about 2.5 hours and then cancelled by this
+card. It needs no slot to be re-run: the list is written by
+`census.py --harness-list`, and the harness reads
+`QCORE_BUILTIN_EXPECT_CENSUS` (list), `QCORE_BUILTIN_EXPECT_CENSUS_OUT`,
+`QCORE_BUILTIN_EXPECT_CENSUS_CONTRACTS` (`cycle19-resource-contracts.json`)
+and `QCORE_BUILTIN_EXPECT_CENSUS_JOBS`. It is evidence about the base reading
+only; this card changes no analyser code, so no measured row depends on it.
+The fixtures show the two directions it would find: identical decisions for
+null and comparison leaves, and two shapes where the wrapped form is decided
+and the bare one is not (`BARE-CONNECTIVE-NULL-LEAF-REFINEMENT`).
+
+## 2a. Gate
+
+`python3 scripts/gate_scope.py --base 82ec0e80b --out private/gate-N`:
+
+* attempt 1: stopped by the card before its Rust suite, after a unit-test
+  spelling bug was found in review (no result);
+* attempt 2 (`6a8f19039`, full mode): exit 1. Rust suite 616 units, 9,280
+  passed, 4 failed (`reading_site_domain` 1, `libc_reading_site_evidence` 3:
+  the pinned artifact digest of `legacy_condition_desugar.rs`), 17 ignored;
+  fmt, clippy, both reevaluation probes exit 0; Lean 415 audits exit 0;
+  Python 685 tests, 1 failed: `test_gate_slot_starvation …
+  test_holders_a_draining_suite_and_a_waiter` (`0.18 not greater than 0.2`
+  CPU seconds, host load);
+* attempt 3 (`3eda75769`, scoped: no gateway source differs from the base):
+  exit 1. fmt and five clippy targets exit 0; Rust suite 11 units, 55
+  passed, 0 failed, 1 ignored (the harness); Lean 415 audits exit 0; Python
+  685 tests, the same timing test failed (`0.2 not greater than 0.2`, load
+  average 26 on 16 CPUs) and passes in isolation (1 test, 1.97 s, exit 0).
 
 ## 3. What changed
 
