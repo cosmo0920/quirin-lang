@@ -143,6 +143,14 @@ a pointer declarator, an enumerator spelling an object. The unit test
 `off_every_refusal_stands` (in `scalar_statement_forms.rs`) runs one fixture
 with the rule on (`Safe`) and off (its three refusals).
 
+**Deliberate pin update.** `legacy_c::tests::main_source_scope_excludes_header_bodies_but_not_main_source_expansions`
+(unit E01-F1) used the helper body `struct Local { int value; };` as an
+unmodeled construct; it declares no object, so rule 41 lowers it to nothing
+and the whole unit became `Safe` (the first gate attempt's one failure). The
+test's property is the header scope, not the helper's form: the helper body
+is now `union { int value; } local; local.value = 1;`, an object of an inline
+union, which every route still refuses.
+
 ## Driver comparison (with and without the rule)
 
 The census driver over the same 103 units, once with
@@ -164,3 +172,26 @@ units' five translation units with no difference.
 [`PREDICTION.md`](PREDICTION.md) (committed `d5495ea53`, before the semantic
 change): corpus nine rows `Unknown` to `Safe`, system and slice none, no unit
 status change. The integrator runs the declared measurement.
+
+## Follow-ups (registered in `integration-amendments.json`)
+
+- `SCALAR-FORMS-LOCAL-ADDRESS-POINTER`: `uint64_t *_vp = &_uva;` (899
+  readings), the largest residue, a pointer to a frame-local scalar.
+- `SCALAR-FORMS-ADDRESS-DEREF-PLACE`: `*(&X) = …` (96 readings), C11
+  6.5.3.2p3.
+- `SCALAR-FORMS-FOR-CLAUSE-COMMA`: `j--, c++` in one `for` clause
+  (`chunk_header`).
+- `TOKENIZER-NEGATIVE-OPERAND-DECREMENT`: `offset - -2000` read as a
+  decrement (`rd_kafka_offset2str`).
+- `SCALAR-FORMS-NESTED-STEP`: a scalar step inside a store or call actual
+  (63 readings).
+- `SCALAR-FORMS-VOLATILE-LOCAL`: a `volatile` automatic scalar
+  (`cmt_metric_dec`), rule 11h's decision.
+
+Files other cards may also touch: `legacy_c.rs` (one hook line in
+`expression_statement_lowered`), `legacy_parenthesised_callee.rs`
+(`classify_for_clause`), `typed_access_path.rs` (one `Reader` field and one
+`expression` arm), `lib.rs`, `crates/gateway-rules/registry.toml` and the
+generated `gateway_rule_registry.rs`, `docs/agents/gateway.md`,
+`docs/agents/README.md`, `proof/QCore.lean`. CALLBACK-MEMBER-NON-C-UNITS'
+`member_run_facts.rs` and `member_prepass.rs` are untouched.

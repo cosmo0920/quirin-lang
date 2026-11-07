@@ -1,0 +1,60 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "SCALAR-STATEMENT-FORMS",
+ "base": "7b726587bdf6a8213f451fa1c78297bb5e476ef7",
+ "measured_tip": "fc1ed647d5c86775f4b1c68150f3e888b57833cf",
+ "profiles": [],
+ "contribution": null,
+ "increment_paragraph": "**SCALAR-STATEMENT-FORMS (round 26 E; gateway rule 41).** Five lexical refusals ended 1,741 leaves of the user's current run at Fluent Bit 046accf6 (assignment 810, destination 293, braced 293, step 242, sizeof 103; 25 functions blocked by nothing else) ([report](../../reports/scalar-statement-forms/README.md)). A measurement-only stream (cargo feature scalar-form-census, enabled by no workspace member) records every statement classify_simple refuses with one of them and whether a statement fallback answered it; a census driver over each unit's own clang -E -P text matched 1,695 leaves to the classifier's own statement, each read with Clang's types: most are pointer declarations from the rd_kafka_buf_read_* expansions (899 readings), pointer steps, pointer stores, pointer arithmetic, compound literals and statement expressions; the scalar residue is a for clause (no fallback table) or a function the lexical declaration reader cannot read, several declarators, a type-only declaration (local typedef, static-assert enum) and a sizeof of an expression. New rule 41 is asked last in expression_statement (after the fallbacks and rules 14a/14b) and for a refused for clause from its original spelling; it reads the Clang node and admits a step or compound assignment of a scalar object or typed path, a plain assignment or declaration whose value only it reads, several scalar declarators, a type-only declaration (no variably modified typedef, no typedef or enumerator spelling an object), a braced scalar initializer and an unevaluated sizeof (a typed-reader flag only this rule sets), lowered as ForgetScalar or the typed reader's IndirectScalarAccess with its per-hop obligations; every destination must be a Clang non-pointer, non-volatile scalar, a named one automatic, unshadowed and unprotected. Pointer destinations, pointer values, volatile, aggregate, inline-record, variably modified, static and shadowed objects refuse by name with the older refusal byte for byte; QCORE_GATEWAY_RULES_OFF=41 answers nothing. Lean QCore.ScalarStatementForms (22 audited theorems: decision vectors, the forms as stores, the lowering refines the concrete store, frame preservation, a released base has no write); 15 fixtures with complete vectors and an on/off unit test; one deliberate pin update (the E01-F1 scope test's helper body `struct Local { int value; };` declares no object and is now an inline-union object, which still refuses). Predicted (PREDICTION.md, committed first): corpus nine rows Unknown to Safe (LZ4_stream_t_alignment, LZ4_streamHC_t_alignment, LZ4F_returnErrorCode, XXH32_canonicalFromHash, XXH64_canonicalFromHash, LZ4_getIndexOnHash, LZ4HC_rotatePattern, rd_kafka_version_str, _next_target), system and slice none, no unit status change; the driver run with and without the rule removes 782 family leaves (245 in 93 reported functions) and surfaces no other diagnostic. Gate and measurement: see the report.",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "SCALAR-FORMS-ADDRESS-DEREF-PLACE",
+   "operation": "register",
+   "title": "Read `*(&X)` as the named object X in the typed reader",
+   "text": "SCALAR-STATEMENT-FORMS' census of the user's current run (fluent-bit 046accf6): 96 `unrecognized assignment destination` readings are `*(&TopicsCnt) = (int32_t)_uva - 1`, the store rd_kafka_buf_read_arraycnt's expansion makes through the address of a scalar local. C11 6.5.3.2p3: `*&E` is `E`. The typed reader's path walk refuses a `&` step, so rule 41 refuses the destination (unread-destination). DISCHARGE: the reader reads `*(&X)` (parentheses and qualifier conversions only) as the place X with X's own class, never as a dereference of a pointer value; Lean parity; a measured re-pin. The same expansions also declare `T *_vp = &X;` (899 readings, refused as a pointer destination), so a function moves only with SCALAR-FORMS-LOCAL-ADDRESS-POINTER.",
+   "source": "docs/reports/scalar-statement-forms/README.md",
+   "recorded_by": "SCALAR-STATEMENT-FORMS"
+  },
+  {
+   "id": "SCALAR-FORMS-LOCAL-ADDRESS-POINTER",
+   "operation": "register",
+   "title": "A pointer local initialised from the address of a scalar automatic local",
+   "text": "SCALAR-STATEMENT-FORMS' census: the largest residue of `unsupported assignment expression` is the pointer declaration `uint64_t *_vp = &_uva;` (899 readings in the rd_kafka_buf_read_* macro expansions of rdkafka_mock_handlers.c, rdkafka_admin.c, rdkafka_request.c, rdkafka_fetcher.c and others), whose pointer only ever designates an automatic scalar of the same frame and is read through once (`*_vp = _v`). Rule 41 refuses every pointer destination by design. DISCHARGE: a named rule that binds such a local to a frame-local scalar place (no identity, no custody, never escaping the frame: no store into memory, no call actual, no return), with the reads and stores through it lowered to the place's own; refusal of every other use; Lean parity; a measured re-pin with the per-function moves of the macro-expanding functions.",
+   "source": "docs/reports/scalar-statement-forms/README.md",
+   "recorded_by": "SCALAR-STATEMENT-FORMS"
+  },
+  {
+   "id": "SCALAR-FORMS-FOR-CLAUSE-COMMA",
+   "operation": "register",
+   "title": "A comma of scalar steps in a `for` clause",
+   "text": "SCALAR-STATEMENT-FORMS: `for (j = i - 1; j > 0; j--, c++)` (mk_lib.c chunk_header, a function blocked only by this leaf) is one clause with two scalar writes; a `for` clause lowers to one CFG node (`Statement::For`'s `increment` holds one instruction), so rule 41 answers only a one-instruction reading and refuses the comma (unread-destination). DISCHARGE: a clause lowered as a sequence of nodes (the W45 list step's second increment node is a precedent), each comma operand read by rule 41 in order (C11 6.5.17p2 sequences them), with a fixture and a measured re-pin.",
+   "source": "docs/reports/scalar-statement-forms/README.md",
+   "recorded_by": "SCALAR-STATEMENT-FORMS"
+  },
+  {
+   "id": "TOKENIZER-NEGATIVE-OPERAND-DECREMENT",
+   "operation": "register",
+   "title": "`a - -2000` is read as a decrement by the lexical gate",
+   "text": "SCALAR-STATEMENT-FORMS' census: rd_kafka_offset2str (blocked only by this leaf) refuses `snprintf(ret[i], sizeof(ret[i]), \"TAIL(%lld)\", llabs(offset - -2000))` with `unmodeled increment or decrement expression`: the tokenizer emits one-character punctuation, so `- -` (binary minus, unary minus) and `--` are the same token pair and classify_simple_base's `has_increment` window fires. The refusal is fail-closed (no admission), but it names the wrong cause and hides the statement from every route that reads increments. DISCHARGE: the tokenizer keeps the adjacency of `--`/`++` (or the gate reads Clang's node), with a fixture of `x - -1` and of `x--`, and a measured re-pin.",
+   "source": "docs/reports/scalar-statement-forms/README.md",
+   "recorded_by": "SCALAR-STATEMENT-FORMS"
+  },
+  {
+   "id": "SCALAR-FORMS-NESTED-STEP",
+   "operation": "register",
+   "title": "A scalar step nested in a store or a call actual",
+   "text": "SCALAR-STATEMENT-FORMS' census: 63 `unmodeled increment or decrement expression` readings are a scalar index stepped inside another statement (`result[index++] = keyvalue`, `seen[seen_count++] = callback_entry`, `append_sample_to_metric(..., sample_index++)`); most store a pointer into an element, which is CG11's/the indexed collection's, and the call actuals are rule 10u's. Rule 41 reads only a statement whose top-level node is the step. DISCHARGE: the elaborator's piece lowering (rule 10s) reads the step as a sequenced piece where the enclosing store or call is admitted by its own rule, with fixtures and a measured re-pin; no new admission of the pointer store itself.",
+   "source": "docs/reports/scalar-statement-forms/README.md",
+   "recorded_by": "SCALAR-STATEMENT-FORMS"
+  },
+  {
+   "id": "SCALAR-FORMS-VOLATILE-LOCAL",
+   "operation": "register",
+   "title": "A `volatile` automatic scalar written and read with no value fact",
+   "text": "SCALAR-STATEMENT-FORMS refuses `double volatile val = 1.0;` (cmt_metric_dec, blocked only by this leaf) by name: rule 11h keeps no value-derived fact about a volatile object and orders its accesses as trace events, and no route here lowers a volatile write. A `ForgetScalar` of an automatic volatile scalar with no address taken would keep no fact either, but whether a volatile access may be lowered as an ordinary scalar write at all is rule 11h's decision, not this card's. DISCHARGE: a decision under rule 11h (user or rule owner) and, if admitted, the lowering with a fixture that a branch on the volatile refines nothing, Lean parity and a measured re-pin.",
+   "source": "docs/reports/scalar-statement-forms/README.md",
+   "recorded_by": "SCALAR-STATEMENT-FORMS"
+  }
+ ]
+}
