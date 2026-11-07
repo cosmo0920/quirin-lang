@@ -1,0 +1,54 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "CURRENT-UNSAFE-TRIAGE",
+ "base": "532e03c97",
+ "measured_tip": "532e03c97",
+ "increment_paragraph": "**CURRENT-UNSAFE-TRIAGE** (round 26 A, records only; USER DECISION 2026-11-07, verbatim: \"Register four as implementation cards\"): the 41 provisional Unsafe findings of the user's 046accf6 current run classified per witness from the bodies: 32 true positives in 5 units (decode_statsd_message's double release, mk_http_error's error-page fd, mk_net_conn_create's immediate-connect path, and 29 leaks on RD_UT_ASSERT failure paths in rdhttp.c and the OIDC unit tests) and 9 modelling defects in 3 units (cmt_map 1, scram 1, snappy 7). Registered LOOP-REACQUISITION-LEAK-ACCUSATION, BUILTIN-EXPECT-NULL-TEST and REFUSED-STORE-OF-CALL-RESULT-ESCAPE; amended CHAINED-ASSIGNMENT-INNER-DESTINATION. No Unsafe is presented as an upstream defect; no code, contract or Lean change.",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "CURRENT-UNSAFE-TRIAGE",
+   "operation": "register",
+   "title": "Triage every provisional Unsafe finding of the 046accf6 current run",
+   "text": "Registered by its own card at landing (round 26 A; user request 2026-11-06, verbatim: \"Hey, still, we needed to cover more areas to fill the gaps of verifying as Safe or Provisional Unsafe units.\", answered \"Queue all six\"). Per witness: function, identities, verdict from the bodies.",
+   "source": "docs/reports/current-unsafe-triage/README.md",
+   "recorded_by": "CURRENT-UNSAFE-TRIAGE"
+  },
+  {
+   "id": "CURRENT-UNSAFE-TRIAGE",
+   "operation": "retire",
+   "why": "DONE by CURRENT-UNSAFE-TRIAGE (docs/reports/current-unsafe-triage/README.md): 41 findings classified, 32 true positives / 9 modelling defects; four implementation cards registered or amended (USER DECISION 2026-11-07, verbatim: \"Register four as implementation cards\").",
+   "source": "docs/reports/current-unsafe-triage/README.md"
+  },
+  {
+   "id": "CHAINED-ASSIGNMENT-INNER-DESTINATION",
+   "operation": "amend",
+   "text": "AMENDED (CURRENT-UNSAFE-TRIAGE, USER DECISION 2026-11-07, verbatim: \"Register four as implementation cards\"): now an implementation card. On the 046accf6 current run rd_kafka_sasl_safe_string (rdkafka_sasl_scram.c:243 `d = safe = rd_malloc(len + 1)`, :249 `return safe`) is still a provisional Unsafe leak resting on this precision loss, the only finding of unit rdkafka_sasl_scram.c (which also carries `loop re-acquisition` at :243). DISCHARGE unchanged; the measurement must show that unit leave Unsafe (to Unknown or a validated verdict), never reach Safe by the fix alone.",
+   "source": "docs/reports/current-unsafe-triage/README.md"
+  },
+  {
+   "id": "LOOP-REACQUISITION-LEAK-ACCUSATION",
+   "operation": "register",
+   "title": "A leak whose acquisition site carries `loop re-acquisition` is accused across a loop's generation join",
+   "text": "Registered by CURRENT-UNSAFE-TRIAGE as an implementation card (USER DECISION 2026-11-07, verbatim: \"Register four as implementation cards\"). rd_kafka_snappy_java_uncompress (snappy.c) holds 7 provisional Unsafe leaks of `outbuf = rd_malloc(uof)` (:1705), reported at :1648, :1660, :1680, :1694, :1701, :1712 and :1721; the function also carries `loop re-acquisition` at :1705. :1648, :1660 and :1701 are pass-2 re-checks of bytes pass 1 accepted (W44-LEAK-PIN-AUDIT rows 223-225, PATH-INSENSITIVE-SCALAR-CORRELATION); :1680 and :1694 return after rd_free(outbuf) and :1721 returns outbuf (inferred: the pass loop's generation join). DISCHARGE: run the QCORE_LEAK_WITNESS census on the function first to confirm the attribution; then a Leak is not validated where its witness joins generations of an acquisition the same function reports as re-acquired in a loop (the site is reported under its refusal instead), with fixtures for a true leak inside such a loop that still validates, Lean parity, and a measurement showing snappy.c leave Unsafe without any Safe move from this rule alone.",
+   "source": "docs/reports/current-unsafe-triage/README.md",
+   "recorded_by": "CURRENT-UNSAFE-TRIAGE"
+  },
+  {
+   "id": "BUILTIN-EXPECT-NULL-TEST",
+   "operation": "register",
+   "title": "A NULL test inside __builtin_expect / unlikely() does not refine the tested acquisition",
+   "text": "Registered by CURRENT-UNSAFE-TRIAGE as an implementation card (USER DECISION 2026-11-07, verbatim: \"Register four as implementation cards\"). snappy.c:1712 reports a leak of `outbuf` on the `if (unlikely(!outbuf))` arm, where the allocation failed and nothing is held (W44-LEAK-PIN-AUDIT row 226). DISCHARGE: read `__builtin_expect(e, c)` as `e` for branch refinement (its value is e; c is a hint only), so the failure arm refines the site away; fixtures for likely()/unlikely() around null and non-null tests and for a __builtin_expect whose operand is not a bare test (stays refused); Lean parity; measured.",
+   "source": "docs/reports/current-unsafe-triage/README.md",
+   "recorded_by": "CURRENT-UNSAFE-TRIAGE"
+  },
+  {
+   "id": "REFUSED-STORE-OF-CALL-RESULT-ESCAPE",
+   "operation": "register",
+   "title": "An acquisition call result stored through a refused destination is accused as a leak",
+   "text": "Registered by CURRENT-UNSAFE-TRIAGE as an implementation card (USER DECISION 2026-11-07, verbatim: \"Register four as implementation cards\"). cmt_map_metric_get (cmt_map.c) is provisional Unsafe on a leak of `calloc` at :210 stored into `metric->hist_buckets` (a field of an object reached through a parameter; metric_release_storage frees it later), while metric_prepare_storage itself is Unknown with `indirect memory access is outside the resource projection` at :210. Hypothesis, not yet census-confirmed: the result is never bound to a name, so the refused hand-on rule has nothing to withdraw (same family as unpack_basic_type in W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE). DISCHARGE: confirm with the QCORE_LEAK_WITNESS census; then a store whose destination is refused and whose value is an acquisition result marks the site escaped-unresolved (as the refused hand-on rule does for bound places), fail-closed to Unknown; fixtures; Lean parity; measured with cmt_map.c leaving Unsafe and no Safe move from this rule alone.",
+   "source": "docs/reports/current-unsafe-triage/README.md",
+   "recorded_by": "CURRENT-UNSAFE-TRIAGE"
+  }
+ ]
+}
