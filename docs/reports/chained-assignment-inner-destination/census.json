@@ -1,0 +1,3109 @@
+{
+ "analysed": {
+  "corpus-fb": [
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "current_item"
+     },
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "head"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/cJSON.c",
+    "function": "parse_array",
+    "line": 1540,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `new_item`",
+        "origin": "cJSON.c:1540"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "cJSON.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "current_item = head = new_item",
+    "value": {
+     "kind": "name",
+     "text": "new_item"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "current_item"
+     },
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "head"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/cJSON.c",
+    "function": "parse_object",
+    "line": 1698,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `new_item`",
+        "origin": "cJSON.c:1698"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "cJSON.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "current_item = head = new_item",
+    "value": {
+     "kind": "name",
+     "text": "new_item"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "reference -> next"
+     },
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "reference -> prev"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/cJSON.c",
+    "function": "create_reference",
+    "line": 2008,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "cJSON.c:2008"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "cJSON.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "reference -> next = reference -> prev = NULL",
+    "value": {
+     "kind": "scalar",
+     "text": "NULL"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "dctx -> frameRemainingSize"
+     },
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "dctx -> frameInfo . contentSize"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/lz4frame.c",
+    "function": "LZ4F_decodeHeader",
+    "line": 1373,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "lz4frame.c:1373"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "lz4frame.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "dctx -> frameRemainingSize = dctx -> frameInfo . contentSize = LZ4F_readLE64 ( srcPtr + <num> )",
+    "value": {
+     "kind": "uncontracted call",
+     "text": "LZ4F_readLE64"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "clamped"
+     },
+     {
+      "declared": false,
+      "kind": "deref",
+      "operator": "=",
+      "place": "* ( pb_uint64_t * ) field -> pData"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c",
+    "function": "pb_dec_varint",
+    "line": 1434,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "nanopb/pb_decode.c:1434"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "nanopb/pb_decode.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "clamped = * ( pb_uint64_t * ) field -> pData = value",
+    "value": {
+     "kind": "name",
+     "text": "value"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "clamped"
+     },
+     {
+      "declared": false,
+      "kind": "deref",
+      "operator": "=",
+      "place": "* ( uint32_t * ) field -> pData"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c",
+    "function": "pb_dec_varint",
+    "line": 1436,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "nanopb/pb_decode.c:1436"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "nanopb/pb_decode.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "clamped = * ( uint32_t * ) field -> pData = ( uint32_t ) value",
+    "value": {
+     "kind": "name",
+     "text": "value"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "clamped"
+     },
+     {
+      "declared": false,
+      "kind": "deref",
+      "operator": "=",
+      "place": "* ( uint_least16_t * ) field -> pData"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c",
+    "function": "pb_dec_varint",
+    "line": 1438,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "nanopb/pb_decode.c:1438"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "nanopb/pb_decode.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "clamped = * ( uint_least16_t * ) field -> pData = ( uint_least16_t ) value",
+    "value": {
+     "kind": "name",
+     "text": "value"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "clamped"
+     },
+     {
+      "declared": false,
+      "kind": "deref",
+      "operator": "=",
+      "place": "* ( uint_least8_t * ) field -> pData"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c",
+    "function": "pb_dec_varint",
+    "line": 1440,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "nanopb/pb_decode.c:1440"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "nanopb/pb_decode.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "clamped = * ( uint_least8_t * ) field -> pData = ( uint_least8_t ) value",
+    "value": {
+     "kind": "name",
+     "text": "value"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "clamped"
+     },
+     {
+      "declared": false,
+      "kind": "deref",
+      "operator": "=",
+      "place": "* ( pb_int64_t * ) field -> pData"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c",
+    "function": "pb_dec_varint",
+    "line": 1479,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "nanopb/pb_decode.c:1479"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "nanopb/pb_decode.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "clamped = * ( pb_int64_t * ) field -> pData = svalue",
+    "value": {
+     "kind": "name",
+     "text": "svalue"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "clamped"
+     },
+     {
+      "declared": false,
+      "kind": "deref",
+      "operator": "=",
+      "place": "* ( int32_t * ) field -> pData"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c",
+    "function": "pb_dec_varint",
+    "line": 1481,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "nanopb/pb_decode.c:1481"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "nanopb/pb_decode.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "clamped = * ( int32_t * ) field -> pData = ( int32_t ) svalue",
+    "value": {
+     "kind": "name",
+     "text": "svalue"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "clamped"
+     },
+     {
+      "declared": false,
+      "kind": "deref",
+      "operator": "=",
+      "place": "* ( int_least16_t * ) field -> pData"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c",
+    "function": "pb_dec_varint",
+    "line": 1483,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "nanopb/pb_decode.c:1483"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "nanopb/pb_decode.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "clamped = * ( int_least16_t * ) field -> pData = ( int_least16_t ) svalue",
+    "value": {
+     "kind": "name",
+     "text": "svalue"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "clamped"
+     },
+     {
+      "declared": false,
+      "kind": "deref",
+      "operator": "=",
+      "place": "* ( int_least8_t * ) field -> pData"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c",
+    "function": "pb_dec_varint",
+    "line": 1485,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "nanopb/pb_decode.c:1485"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "nanopb/pb_decode.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "clamped = * ( int_least8_t * ) field -> pData = ( int_least8_t ) svalue",
+    "value": {
+     "kind": "name",
+     "text": "svalue"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "ran -> ran_p [ RD_AVL_LEFT ]"
+     },
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "ran -> ran_p [ RD_AVL_RIGHT ]"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/rdavl.c",
+    "function": "rd_avl_remove_node0",
+    "line": 141,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "rdavl.c:141"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "rdavl.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "ran -> ran_p [ RD_AVL_LEFT ] = ran -> ran_p [ RD_AVL_RIGHT ] = NULL",
+    "value": {
+     "kind": "scalar",
+     "text": "NULL"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "( rwl ) -> rcnt"
+     },
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "( rwl ) -> wcnt"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/rdavl.c",
+    "function": "rd_avl_init",
+    "line": 207,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "rdavl.c:207"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "rdavl.c"
+     }
+    ],
+    "shape": "chain (expansion of #define rwlock_init, lib/librdkafka-2.15.0/src/tinycthread_extra.h:116)",
+    "text": "( rwl ) -> rcnt = ( rwl ) -> wcnt = <num>",
+    "value": {
+     "kind": "scalar",
+     "text": "<num>"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "( rwl ) -> rcnt"
+     },
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "( rwl ) -> wcnt"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/rdkafka.c",
+    "function": "rd_kafka_new",
+    "line": 2587,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "rdkafka.c:2587"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "rdkafka.c"
+     }
+    ],
+    "shape": "chain (expansion of #define rwlock_init, lib/librdkafka-2.15.0/src/tinycthread_extra.h:116)",
+    "text": "( rwl ) -> rcnt = ( rwl ) -> wcnt = <num>",
+    "value": {
+     "kind": "scalar",
+     "text": "<num>"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "pidstate -> lo"
+     },
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "pidstate -> hi"
+     },
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "pidstate -> window"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+    "function": "rd_kafka_mock_partition_pidstate_get",
+    "line": 458,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `pidstate`",
+        "origin": "rdkafka_mock.c:458"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "rdkafka_mock.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "pidstate -> lo = pidstate -> hi = pidstate -> window = <num>",
+    "value": {
+     "kind": "scalar",
+     "text": "<num>"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "rkbuf"
+     },
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "mconn -> rxbuf"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+    "function": "rd_kafka_mock_connection_read_request",
+    "line": 1336,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "rdkafka_mock.c:1336"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "rdkafka_mock.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "rkbuf = mconn -> rxbuf = rd_kafka_buf_new ( <num> , RD_KAFKAP_REQHDR_SIZE )",
+    "value": {
+     "kind": "uncontracted call",
+     "text": "rd_kafka_buf_new"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "( rwl ) -> rcnt"
+     },
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "( rwl ) -> wcnt"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c",
+    "function": "rd_kafka_sasl_oauthbearer_init",
+    "line": 1304,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "rdkafka_sasl_oauthbearer.c:1304"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "rdkafka_sasl_oauthbearer.c"
+     }
+    ],
+    "shape": "chain (expansion of #define rwlock_init, lib/librdkafka-2.15.0/src/tinycthread_extra.h:116)",
+    "text": "( rwl ) -> rcnt = ( rwl ) -> wcnt = <num>",
+    "value": {
+     "kind": "scalar",
+     "text": "<num>"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "( rwl ) -> rcnt"
+     },
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "( rwl ) -> wcnt"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c",
+    "function": "do_unittest_odd_extension_size_should_fail",
+    "line": 1799,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "rdkafka_sasl_oauthbearer.c:1799"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "rdkafka_sasl_oauthbearer.c"
+     }
+    ],
+    "shape": "chain (expansion of #define rwlock_init, lib/librdkafka-2.15.0/src/tinycthread_extra.h:116)",
+    "text": "( rwl ) -> rcnt = ( rwl ) -> wcnt = <num>",
+    "value": {
+     "kind": "scalar",
+     "text": "<num>"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "d"
+     },
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "safe"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c",
+    "function": "rd_kafka_sasl_safe_string",
+    "line": 243,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "loop re-acquisition: an earlier generation that may be live is still held",
+        "origin": "rdkafka_sasl_scram.c:243"
+       },
+       {
+        "category": "leak",
+        "description": "live obligation acquired at rdkafka_sasl_scram.c:243",
+        "origin": "rdkafka_sasl_scram.c:249"
+       }
+      ],
+      "status": "Unsafe",
+      "unit": "rdkafka_sasl_scram.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "d = safe = rd_malloc ( len + <num> )",
+    "value": {
+     "kind": "acquisition",
+     "text": "rd_malloc"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "x509_orig_error"
+     },
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "x509_error"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c",
+    "function": "rd_kafka_transport_ssl_cert_verify_cb",
+    "line": 410,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "call to uncontracted function `X509_STORE_CTX_get_error`",
+        "origin": "rdkafka_ssl.c:410"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "rdkafka_ssl.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "x509_orig_error = x509_error = X509_STORE_CTX_get_error ( x509_ctx )",
+    "value": {
+     "kind": "uncontracted call",
+     "text": "X509_STORE_CTX_get_error"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "( rwl ) -> rcnt"
+     },
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "( rwl ) -> wcnt"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/rdkafka_telemetry_decode.c",
+    "function": "unit_test_telemetry",
+    "line": 537,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "rdkafka_telemetry_decode.c:537"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "rdkafka_telemetry_decode.c"
+     }
+    ],
+    "shape": "chain (expansion of #define rwlock_init, lib/librdkafka-2.15.0/src/tinycthread_extra.h:116)",
+    "text": "( rwl ) -> rcnt = ( rwl ) -> wcnt = <num>",
+    "value": {
+     "kind": "scalar",
+     "text": "<num>"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "( rwl ) -> rcnt"
+     },
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "( rwl ) -> wcnt"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/rdkafka_topic.c",
+    "function": "rd_kafka_topic_new0",
+    "line": 486,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "rdkafka_topic.c:486"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "rdkafka_topic.c"
+     }
+    ],
+    "shape": "chain (expansion of #define rwlock_init, lib/librdkafka-2.15.0/src/tinycthread_extra.h:116)",
+    "text": "( rwl ) -> rcnt = ( rwl ) -> wcnt = <num>",
+    "value": {
+     "kind": "scalar",
+     "text": "<num>"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "( rwl ) -> rcnt"
+     },
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "( rwl ) -> wcnt"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/rdkafka_topic.c",
+    "function": "rd_kafka_topic_new_with_id",
+    "line": 653,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "rdkafka_topic.c:653"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "rdkafka_topic.c"
+     }
+    ],
+    "shape": "chain (expansion of #define rwlock_init, lib/librdkafka-2.15.0/src/tinycthread_extra.h:116)",
+    "text": "( rwl ) -> rcnt = ( rwl ) -> wcnt = <num>",
+    "value": {
+     "kind": "scalar",
+     "text": "<num>"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "p"
+     },
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "rl -> rl_p"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/rdlist.c",
+    "function": "rd_list_prealloc_elems",
+    "line": 115,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "rdlist.c:115"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "rdlist.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "p = rl -> rl_p = ( char * ) & rl -> rl_elems [ cnt ]",
+    "value": {
+     "kind": "address",
+     "text": "& rl -> rl_elems [ cnt ]"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "p"
+     },
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "rl -> rl_p"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/rdlist.c",
+    "function": "rd_list_prealloc_elems",
+    "line": 117,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "rdlist.c:117"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "rdlist.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "p = rl -> rl_p = NULL",
+    "value": {
+     "kind": "scalar",
+     "text": "NULL"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "bEnd"
+     },
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "p"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/rdxxhash.c",
+    "function": "XXH32_endian_align",
+    "line": 362,
+    "rows": [
+     {
+      "at_line": [],
+      "status": "Unknown",
+      "unit": "rdxxhash.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "bEnd = p = ( const BYTE * ) ( size_t ) <num>",
+    "value": {
+     "kind": "scalar",
+     "text": "<num>"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "bEnd"
+     },
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "p"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/rdxxhash.c",
+    "function": "XXH64_endian_align",
+    "line": 821,
+    "rows": [
+     {
+      "at_line": [],
+      "status": "Unknown",
+      "unit": "rdxxhash.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "bEnd = p = ( const BYTE * ) ( size_t ) <num>",
+    "value": {
+     "kind": "scalar",
+     "text": "<num>"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "header_extra -> key . data"
+     },
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "tmp"
+     }
+    ],
+    "file": "lib/monkey/mk_server/mk_http_parser.c",
+    "function": "header_lookup",
+    "line": 454,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "mk_server/mk_http_parser.c:454"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "mk_server/mk_http_parser.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "header_extra -> key . data = tmp = ( buffer + p -> header_key )",
+    "value": {
+     "kind": "expression",
+     "text": "buffer + p -> header_key"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "p -> header_min"
+     },
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "p -> header_max"
+     }
+    ],
+    "file": "lib/monkey/mk_server/mk_http_parser.c",
+    "function": "mk_http_parser",
+    "line": 1023,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `p`",
+        "origin": "mk_server/mk_http_parser.c:1023"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "mk_server/mk_http_parser.c"
+     }
+    ],
+    "shape": "chain (expansion of #define header_scope_eq, lib/monkey/mk_server/mk_http_parser.c:42)",
+    "text": "p -> header_min = p -> header_max = x",
+    "value": {
+     "kind": "name",
+     "text": "x"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "p -> header_min"
+     },
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "p -> header_max"
+     }
+    ],
+    "file": "lib/monkey/mk_server/mk_http_parser.c",
+    "function": "mk_http_parser",
+    "line": 1038,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `p`",
+        "origin": "mk_server/mk_http_parser.c:1038"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "mk_server/mk_http_parser.c"
+     }
+    ],
+    "shape": "chain (expansion of #define header_scope_eq, lib/monkey/mk_server/mk_http_parser.c:42)",
+    "text": "p -> header_min = p -> header_max = x",
+    "value": {
+     "kind": "name",
+     "text": "x"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "p -> start"
+     },
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "p -> header_val"
+     }
+    ],
+    "file": "lib/monkey/mk_server/mk_http_parser.c",
+    "function": "mk_http_parser",
+    "line": 1100,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `p`",
+        "origin": "mk_server/mk_http_parser.c:1100"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "mk_server/mk_http_parser.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "p -> start = p -> header_val = p -> i",
+    "value": {
+     "kind": "expression",
+     "text": "p -> i"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "t"
+     },
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "p"
+     }
+    ],
+    "file": "lib/monkey/mk_server/mk_kernel.c",
+    "function": "mk_kernel_version",
+    "line": 68,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "unsupported assignment expression",
+        "origin": "mk_server/mk_kernel.c:68"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "mk_server/mk_kernel.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "t = p = p + pos + <num>",
+    "value": {
+     "kind": "expression",
+     "text": "p + pos + <num>"
+    }
+   }
+  ],
+  "corpus-mk": [
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "header_extra -> key . data"
+     },
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "tmp"
+     }
+    ],
+    "file": "monkey-source/mk_server/mk_http_parser.c",
+    "function": "header_lookup",
+    "line": 454,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "mk_server/mk_http_parser.c:454"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "mk_server/mk_http_parser.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "header_extra -> key . data = tmp = ( buffer + p -> header_key )",
+    "value": {
+     "kind": "expression",
+     "text": "buffer + p -> header_key"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "p -> header_min"
+     },
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "p -> header_max"
+     }
+    ],
+    "file": "monkey-source/mk_server/mk_http_parser.c",
+    "function": "mk_http_parser",
+    "line": 1023,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `p`",
+        "origin": "mk_server/mk_http_parser.c:1023"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "mk_server/mk_http_parser.c"
+     }
+    ],
+    "shape": "chain (expansion of #define header_scope_eq, monkey-source/mk_server/mk_http_parser.c:42)",
+    "text": "p -> header_min = p -> header_max = x",
+    "value": {
+     "kind": "name",
+     "text": "x"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "p -> header_min"
+     },
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "p -> header_max"
+     }
+    ],
+    "file": "monkey-source/mk_server/mk_http_parser.c",
+    "function": "mk_http_parser",
+    "line": 1038,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `p`",
+        "origin": "mk_server/mk_http_parser.c:1038"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "mk_server/mk_http_parser.c"
+     }
+    ],
+    "shape": "chain (expansion of #define header_scope_eq, monkey-source/mk_server/mk_http_parser.c:42)",
+    "text": "p -> header_min = p -> header_max = x",
+    "value": {
+     "kind": "name",
+     "text": "x"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "p -> start"
+     },
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "p -> header_val"
+     }
+    ],
+    "file": "monkey-source/mk_server/mk_http_parser.c",
+    "function": "mk_http_parser",
+    "line": 1100,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `p`",
+        "origin": "mk_server/mk_http_parser.c:1100"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "mk_server/mk_http_parser.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "p -> start = p -> header_val = p -> i",
+    "value": {
+     "kind": "expression",
+     "text": "p -> i"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "t"
+     },
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "p"
+     }
+    ],
+    "file": "monkey-source/mk_server/mk_kernel.c",
+    "function": "mk_kernel_version",
+    "line": 68,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "unsupported assignment expression",
+        "origin": "mk_server/mk_kernel.c:68"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "mk_server/mk_kernel.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "t = p = p + pos + <num>",
+    "value": {
+     "kind": "expression",
+     "text": "p + pos + <num>"
+    }
+   }
+  ],
+  "current": [
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "current_item"
+     },
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "head"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/cJSON.c",
+    "function": "parse_array",
+    "line": 1540,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `new_item`",
+        "origin": "lib/librdkafka-2.15.0/src/cJSON.c:1540"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "lib/librdkafka-2.15.0/src/cJSON.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "current_item = head = new_item",
+    "value": {
+     "kind": "name",
+     "text": "new_item"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "current_item"
+     },
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "head"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/cJSON.c",
+    "function": "parse_object",
+    "line": 1698,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `new_item`",
+        "origin": "lib/librdkafka-2.15.0/src/cJSON.c:1698"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "lib/librdkafka-2.15.0/src/cJSON.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "current_item = head = new_item",
+    "value": {
+     "kind": "name",
+     "text": "new_item"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "reference -> next"
+     },
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "reference -> prev"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/cJSON.c",
+    "function": "create_reference",
+    "line": 2008,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "lib/librdkafka-2.15.0/src/cJSON.c:2008"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "lib/librdkafka-2.15.0/src/cJSON.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "reference -> next = reference -> prev = NULL",
+    "value": {
+     "kind": "scalar",
+     "text": "NULL"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "dctx -> frameRemainingSize"
+     },
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "dctx -> frameInfo . contentSize"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/lz4frame.c",
+    "function": "LZ4F_decodeHeader",
+    "line": 1373,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "lib/librdkafka-2.15.0/src/lz4frame.c:1373"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "lib/librdkafka-2.15.0/src/lz4frame.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "dctx -> frameRemainingSize = dctx -> frameInfo . contentSize = LZ4F_readLE64 ( srcPtr + <num> )",
+    "value": {
+     "kind": "uncontracted call",
+     "text": "LZ4F_readLE64"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "clamped"
+     },
+     {
+      "declared": false,
+      "kind": "deref",
+      "operator": "=",
+      "place": "* ( pb_uint64_t * ) field -> pData"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c",
+    "function": "pb_dec_varint",
+    "line": 1434,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:1434"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "clamped = * ( pb_uint64_t * ) field -> pData = value",
+    "value": {
+     "kind": "name",
+     "text": "value"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "clamped"
+     },
+     {
+      "declared": false,
+      "kind": "deref",
+      "operator": "=",
+      "place": "* ( uint32_t * ) field -> pData"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c",
+    "function": "pb_dec_varint",
+    "line": 1436,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:1436"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "clamped = * ( uint32_t * ) field -> pData = ( uint32_t ) value",
+    "value": {
+     "kind": "name",
+     "text": "value"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "clamped"
+     },
+     {
+      "declared": false,
+      "kind": "deref",
+      "operator": "=",
+      "place": "* ( uint_least16_t * ) field -> pData"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c",
+    "function": "pb_dec_varint",
+    "line": 1438,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:1438"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "clamped = * ( uint_least16_t * ) field -> pData = ( uint_least16_t ) value",
+    "value": {
+     "kind": "name",
+     "text": "value"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "clamped"
+     },
+     {
+      "declared": false,
+      "kind": "deref",
+      "operator": "=",
+      "place": "* ( uint_least8_t * ) field -> pData"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c",
+    "function": "pb_dec_varint",
+    "line": 1440,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:1440"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "clamped = * ( uint_least8_t * ) field -> pData = ( uint_least8_t ) value",
+    "value": {
+     "kind": "name",
+     "text": "value"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "clamped"
+     },
+     {
+      "declared": false,
+      "kind": "deref",
+      "operator": "=",
+      "place": "* ( pb_int64_t * ) field -> pData"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c",
+    "function": "pb_dec_varint",
+    "line": 1479,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:1479"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "clamped = * ( pb_int64_t * ) field -> pData = svalue",
+    "value": {
+     "kind": "name",
+     "text": "svalue"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "clamped"
+     },
+     {
+      "declared": false,
+      "kind": "deref",
+      "operator": "=",
+      "place": "* ( int32_t * ) field -> pData"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c",
+    "function": "pb_dec_varint",
+    "line": 1481,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:1481"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "clamped = * ( int32_t * ) field -> pData = ( int32_t ) svalue",
+    "value": {
+     "kind": "name",
+     "text": "svalue"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "clamped"
+     },
+     {
+      "declared": false,
+      "kind": "deref",
+      "operator": "=",
+      "place": "* ( int_least16_t * ) field -> pData"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c",
+    "function": "pb_dec_varint",
+    "line": 1483,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:1483"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "clamped = * ( int_least16_t * ) field -> pData = ( int_least16_t ) svalue",
+    "value": {
+     "kind": "name",
+     "text": "svalue"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "clamped"
+     },
+     {
+      "declared": false,
+      "kind": "deref",
+      "operator": "=",
+      "place": "* ( int_least8_t * ) field -> pData"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c",
+    "function": "pb_dec_varint",
+    "line": 1485,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:1485"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "clamped = * ( int_least8_t * ) field -> pData = ( int_least8_t ) svalue",
+    "value": {
+     "kind": "name",
+     "text": "svalue"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "ran -> ran_p [ RD_AVL_LEFT ]"
+     },
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "ran -> ran_p [ RD_AVL_RIGHT ]"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/rdavl.c",
+    "function": "rd_avl_remove_node0",
+    "line": 141,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "lib/librdkafka-2.15.0/src/rdavl.c:141"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "lib/librdkafka-2.15.0/src/rdavl.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "ran -> ran_p [ RD_AVL_LEFT ] = ran -> ran_p [ RD_AVL_RIGHT ] = NULL",
+    "value": {
+     "kind": "scalar",
+     "text": "NULL"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "( rwl ) -> rcnt"
+     },
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "( rwl ) -> wcnt"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/rdavl.c",
+    "function": "rd_avl_init",
+    "line": 207,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "lib/librdkafka-2.15.0/src/rdavl.c:207"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "lib/librdkafka-2.15.0/src/rdavl.c"
+     }
+    ],
+    "shape": "chain (expansion of #define rwlock_init, lib/librdkafka-2.15.0/src/tinycthread_extra.h:116)",
+    "text": "( rwl ) -> rcnt = ( rwl ) -> wcnt = <num>",
+    "value": {
+     "kind": "scalar",
+     "text": "<num>"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "( rwl ) -> rcnt"
+     },
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "( rwl ) -> wcnt"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/rdkafka.c",
+    "function": "rd_kafka_new",
+    "line": 2587,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "lib/librdkafka-2.15.0/src/rdkafka.c:2587"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "lib/librdkafka-2.15.0/src/rdkafka.c"
+     }
+    ],
+    "shape": "chain (expansion of #define rwlock_init, lib/librdkafka-2.15.0/src/tinycthread_extra.h:116)",
+    "text": "( rwl ) -> rcnt = ( rwl ) -> wcnt = <num>",
+    "value": {
+     "kind": "scalar",
+     "text": "<num>"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "pidstate -> lo"
+     },
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "pidstate -> hi"
+     },
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "pidstate -> window"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+    "function": "rd_kafka_mock_partition_pidstate_get",
+    "line": 458,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `pidstate`",
+        "origin": "lib/librdkafka-2.15.0/src/rdkafka_mock.c:458"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "lib/librdkafka-2.15.0/src/rdkafka_mock.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "pidstate -> lo = pidstate -> hi = pidstate -> window = <num>",
+    "value": {
+     "kind": "scalar",
+     "text": "<num>"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "rkbuf"
+     },
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "mconn -> rxbuf"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+    "function": "rd_kafka_mock_connection_read_request",
+    "line": 1336,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "lib/librdkafka-2.15.0/src/rdkafka_mock.c:1336"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "lib/librdkafka-2.15.0/src/rdkafka_mock.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "rkbuf = mconn -> rxbuf = rd_kafka_buf_new ( <num> , RD_KAFKAP_REQHDR_SIZE )",
+    "value": {
+     "kind": "uncontracted call",
+     "text": "rd_kafka_buf_new"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "( rwl ) -> rcnt"
+     },
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "( rwl ) -> wcnt"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c",
+    "function": "rd_kafka_sasl_oauthbearer_init",
+    "line": 1304,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c:1304"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c"
+     }
+    ],
+    "shape": "chain (expansion of #define rwlock_init, lib/librdkafka-2.15.0/src/tinycthread_extra.h:116)",
+    "text": "( rwl ) -> rcnt = ( rwl ) -> wcnt = <num>",
+    "value": {
+     "kind": "scalar",
+     "text": "<num>"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "( rwl ) -> rcnt"
+     },
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "( rwl ) -> wcnt"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c",
+    "function": "do_unittest_odd_extension_size_should_fail",
+    "line": 1799,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c:1799"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c"
+     }
+    ],
+    "shape": "chain (expansion of #define rwlock_init, lib/librdkafka-2.15.0/src/tinycthread_extra.h:116)",
+    "text": "( rwl ) -> rcnt = ( rwl ) -> wcnt = <num>",
+    "value": {
+     "kind": "scalar",
+     "text": "<num>"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "d"
+     },
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "safe"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c",
+    "function": "rd_kafka_sasl_safe_string",
+    "line": 243,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "loop re-acquisition: an earlier generation that may be live is still held",
+        "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c:243"
+       },
+       {
+        "category": "leak",
+        "description": "live obligation acquired at lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c:243",
+        "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c:249"
+       }
+      ],
+      "status": "Unsafe",
+      "unit": "lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "d = safe = rd_malloc ( len + <num> )",
+    "value": {
+     "kind": "acquisition",
+     "text": "rd_malloc"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "x509_orig_error"
+     },
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "x509_error"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c",
+    "function": "rd_kafka_transport_ssl_cert_verify_cb",
+    "line": 410,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "call to uncontracted function `X509_STORE_CTX_get_error`",
+        "origin": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c:410"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "x509_orig_error = x509_error = X509_STORE_CTX_get_error ( x509_ctx )",
+    "value": {
+     "kind": "uncontracted call",
+     "text": "X509_STORE_CTX_get_error"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "( rwl ) -> rcnt"
+     },
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "( rwl ) -> wcnt"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/rdkafka_telemetry_decode.c",
+    "function": "unit_test_telemetry",
+    "line": 537,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "lib/librdkafka-2.15.0/src/rdkafka_telemetry_decode.c:537"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "lib/librdkafka-2.15.0/src/rdkafka_telemetry_decode.c"
+     }
+    ],
+    "shape": "chain (expansion of #define rwlock_init, lib/librdkafka-2.15.0/src/tinycthread_extra.h:116)",
+    "text": "( rwl ) -> rcnt = ( rwl ) -> wcnt = <num>",
+    "value": {
+     "kind": "scalar",
+     "text": "<num>"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "( rwl ) -> rcnt"
+     },
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "( rwl ) -> wcnt"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/rdkafka_topic.c",
+    "function": "rd_kafka_topic_new0",
+    "line": 486,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "lib/librdkafka-2.15.0/src/rdkafka_topic.c:486"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "lib/librdkafka-2.15.0/src/rdkafka_topic.c"
+     }
+    ],
+    "shape": "chain (expansion of #define rwlock_init, lib/librdkafka-2.15.0/src/tinycthread_extra.h:116)",
+    "text": "( rwl ) -> rcnt = ( rwl ) -> wcnt = <num>",
+    "value": {
+     "kind": "scalar",
+     "text": "<num>"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "( rwl ) -> rcnt"
+     },
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "( rwl ) -> wcnt"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/rdkafka_topic.c",
+    "function": "rd_kafka_topic_new_with_id",
+    "line": 653,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "lib/librdkafka-2.15.0/src/rdkafka_topic.c:653"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "lib/librdkafka-2.15.0/src/rdkafka_topic.c"
+     }
+    ],
+    "shape": "chain (expansion of #define rwlock_init, lib/librdkafka-2.15.0/src/tinycthread_extra.h:116)",
+    "text": "( rwl ) -> rcnt = ( rwl ) -> wcnt = <num>",
+    "value": {
+     "kind": "scalar",
+     "text": "<num>"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "p"
+     },
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "rl -> rl_p"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/rdlist.c",
+    "function": "rd_list_prealloc_elems",
+    "line": 115,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "lib/librdkafka-2.15.0/src/rdlist.c:115"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "lib/librdkafka-2.15.0/src/rdlist.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "p = rl -> rl_p = ( char * ) & rl -> rl_elems [ cnt ]",
+    "value": {
+     "kind": "address",
+     "text": "& rl -> rl_elems [ cnt ]"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "p"
+     },
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "rl -> rl_p"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/rdlist.c",
+    "function": "rd_list_prealloc_elems",
+    "line": 117,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "lib/librdkafka-2.15.0/src/rdlist.c:117"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "lib/librdkafka-2.15.0/src/rdlist.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "p = rl -> rl_p = NULL",
+    "value": {
+     "kind": "scalar",
+     "text": "NULL"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "bEnd"
+     },
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "p"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/rdxxhash.c",
+    "function": "XXH32_endian_align",
+    "line": 362,
+    "rows": [
+     {
+      "at_line": [],
+      "status": "Unknown",
+      "unit": "lib/librdkafka-2.15.0/src/rdxxhash.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "bEnd = p = ( const BYTE * ) ( size_t ) <num>",
+    "value": {
+     "kind": "scalar",
+     "text": "<num>"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "bEnd"
+     },
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "p"
+     }
+    ],
+    "file": "lib/librdkafka-2.15.0/src/rdxxhash.c",
+    "function": "XXH64_endian_align",
+    "line": 821,
+    "rows": [
+     {
+      "at_line": [],
+      "status": "Unknown",
+      "unit": "lib/librdkafka-2.15.0/src/rdxxhash.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "bEnd = p = ( const BYTE * ) ( size_t ) <num>",
+    "value": {
+     "kind": "scalar",
+     "text": "<num>"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "header_extra -> key . data"
+     },
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "tmp"
+     }
+    ],
+    "file": "lib/monkey/mk_server/mk_http_parser.c",
+    "function": "header_lookup",
+    "line": 454,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "lib/monkey/mk_server/mk_http_parser.c:454"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "lib/monkey/mk_server/mk_http_parser.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "header_extra -> key . data = tmp = ( buffer + p -> header_key )",
+    "value": {
+     "kind": "expression",
+     "text": "buffer + p -> header_key"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "p -> header_min"
+     },
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "p -> header_max"
+     }
+    ],
+    "file": "lib/monkey/mk_server/mk_http_parser.c",
+    "function": "mk_http_parser",
+    "line": 1023,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `p`",
+        "origin": "lib/monkey/mk_server/mk_http_parser.c:1023"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "lib/monkey/mk_server/mk_http_parser.c"
+     },
+     {
+      "at_line": [
+       {
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `p`",
+        "origin": "lib/monkey/mk_server/mk_http_parser.c:1023"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "lib/monkey/mk_server/mk_http_parser.c"
+     }
+    ],
+    "shape": "chain (expansion of #define header_scope_eq, lib/monkey/mk_server/mk_http_parser.c:42)",
+    "text": "p -> header_min = p -> header_max = x",
+    "value": {
+     "kind": "name",
+     "text": "x"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "p -> header_min"
+     },
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "p -> header_max"
+     }
+    ],
+    "file": "lib/monkey/mk_server/mk_http_parser.c",
+    "function": "mk_http_parser",
+    "line": 1038,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `p`",
+        "origin": "lib/monkey/mk_server/mk_http_parser.c:1038"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "lib/monkey/mk_server/mk_http_parser.c"
+     },
+     {
+      "at_line": [
+       {
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `p`",
+        "origin": "lib/monkey/mk_server/mk_http_parser.c:1038"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "lib/monkey/mk_server/mk_http_parser.c"
+     }
+    ],
+    "shape": "chain (expansion of #define header_scope_eq, lib/monkey/mk_server/mk_http_parser.c:42)",
+    "text": "p -> header_min = p -> header_max = x",
+    "value": {
+     "kind": "name",
+     "text": "x"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "p -> start"
+     },
+     {
+      "declared": false,
+      "kind": "member",
+      "operator": "=",
+      "place": "p -> header_val"
+     }
+    ],
+    "file": "lib/monkey/mk_server/mk_http_parser.c",
+    "function": "mk_http_parser",
+    "line": 1100,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `p`",
+        "origin": "lib/monkey/mk_server/mk_http_parser.c:1100"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "lib/monkey/mk_server/mk_http_parser.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "p -> start = p -> header_val = p -> i",
+    "value": {
+     "kind": "expression",
+     "text": "p -> i"
+    }
+   },
+   {
+    "context": "statement",
+    "destinations": [
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "t"
+     },
+     {
+      "declared": false,
+      "kind": "local",
+      "operator": "=",
+      "place": "p"
+     }
+    ],
+    "file": "lib/monkey/mk_server/mk_kernel.c",
+    "function": "mk_kernel_version",
+    "line": 68,
+    "rows": [
+     {
+      "at_line": [
+       {
+        "category": "unsupported",
+        "description": "unsupported assignment expression",
+        "origin": "lib/monkey/mk_server/mk_kernel.c:68"
+       }
+      ],
+      "status": "Unknown",
+      "unit": "lib/monkey/mk_server/mk_kernel.c"
+     }
+    ],
+    "shape": "chain",
+    "text": "t = p = p + pos + <num>",
+    "value": {
+     "kind": "expression",
+     "text": "p + pos + <num>"
+    }
+   }
+  ],
+  "slice": [],
+  "system": []
+ },
+ "schema": "chained-assignment-census-analysed/1",
+ "tree_counts": {
+  "corpus-fb": {
+   "by_destinations": {
+    "deref / deref": 3,
+    "deref / deref / deref / deref": 1,
+    "deref / local": 1,
+    "file-scope or other name / file-scope or other name": 18,
+    "file-scope or other name / file-scope or other name / file-scope or other name / file-scope or other name": 1,
+    "file-scope or other name / file-scope or other name / file-scope or other name / file-scope or other name / file-scope or other name": 2,
+    "file-scope or other name / local": 6,
+    "formal / formal / formal": 1,
+    "formal / local": 8,
+    "local / deref": 13,
+    "local / file-scope or other name": 4,
+    "local / formal": 30,
+    "local / local": 396,
+    "local / local / local": 20,
+    "local / local / local / local": 5,
+    "local / local / local / local / local": 1,
+    "local / local / local / local / local / local": 1,
+    "local / member": 112,
+    "local / other": 1,
+    "local / subscript": 3,
+    "member / file-scope or other name": 1,
+    "member / formal": 2,
+    "member / local": 110,
+    "member / member": 309,
+    "member / member / member": 22,
+    "member / member / member / member": 9,
+    "member / member / member / member / member": 2,
+    "other / local": 1,
+    "other / other": 10,
+    "other / other / other": 1,
+    "subscript / deref": 3,
+    "subscript / local": 8,
+    "subscript / subscript": 35,
+    "subscript / subscript / local": 1,
+    "subscript / subscript / subscript": 1,
+    "subscript / subscript / subscript / subscript": 3
+   },
+   "by_shape": {
+    "chain": 1117,
+    "chain (expansion of #define header_scope_eq, lib/monkey/mk_server/mk_http_parser.c:42)": 2,
+    "chain (expansion of #define rwlock_init, lib/librdkafka-2.15.0/src/tinycthread_extra.h:116)": 7,
+    "nested in an operand": 61,
+    "parenthesised chain": 19
+   },
+   "by_value": {
+    "acquisition": 13,
+    "address": 23,
+    "call without custody result": 1,
+    "empty": 1,
+    "expression": 267,
+    "expression with a call": 14,
+    "name": 185,
+    "scalar": 365,
+    "string literal": 1,
+    "uncontracted call": 275
+   },
+   "sites": 1206
+  },
+  "corpus-mk": {
+   "by_destinations": {
+    "file-scope or other name / file-scope or other name": 9,
+    "file-scope or other name / file-scope or other name / file-scope or other name / file-scope or other name / file-scope or other name": 1,
+    "file-scope or other name / local": 2,
+    "local / deref": 1,
+    "local / local": 44,
+    "local / local / local": 6,
+    "local / local / local / local": 1,
+    "local / member": 12,
+    "member / local": 11,
+    "member / member": 47,
+    "member / member / member": 6,
+    "member / member / member / member": 2,
+    "other / other": 8,
+    "subscript / deref": 3,
+    "subscript / subscript": 6
+   },
+   "by_shape": {
+    "chain": 153,
+    "chain (expansion of #define header_scope_eq, monkey-source/mk_server/mk_http_parser.c:42)": 2,
+    "nested in an operand": 4,
+    "parenthesised chain": 4
+   },
+   "by_value": {
+    "address": 4,
+    "expression": 42,
+    "name": 20,
+    "scalar": 74,
+    "uncontracted call": 19
+   },
+   "sites": 163
+  },
+  "current": {
+   "by_destinations": {
+    "deref / deref": 3,
+    "deref / deref / deref / deref": 1,
+    "deref / local": 1,
+    "file-scope or other name / file-scope or other name": 27,
+    "file-scope or other name / file-scope or other name / file-scope or other name / file-scope or other name": 1,
+    "file-scope or other name / file-scope or other name / file-scope or other name / file-scope or other name / file-scope or other name": 3,
+    "file-scope or other name / local": 8,
+    "formal / formal / formal": 1,
+    "formal / local": 8,
+    "local / deref": 14,
+    "local / file-scope or other name": 4,
+    "local / formal": 30,
+    "local / local": 441,
+    "local / local / local": 26,
+    "local / local / local / local": 6,
+    "local / local / local / local / local": 1,
+    "local / local / local / local / local / local": 1,
+    "local / member": 124,
+    "local / other": 1,
+    "local / subscript": 3,
+    "member / file-scope or other name": 5,
+    "member / formal": 2,
+    "member / local": 121,
+    "member / member": 368,
+    "member / member / member": 28,
+    "member / member / member / member": 11,
+    "member / member / member / member / member": 2,
+    "other / local": 1,
+    "other / other": 18,
+    "other / other / other": 1,
+    "subscript / deref": 6,
+    "subscript / local": 8,
+    "subscript / subscript": 45,
+    "subscript / subscript / local": 1,
+    "subscript / subscript / subscript": 1,
+    "subscript / subscript / subscript / subscript": 3
+   },
+   "by_shape": {
+    "chain": 1291,
+    "chain (expansion of #define header_scope_eq, lib/monkey/mk_server/mk_http_parser.c:42)": 2,
+    "chain (expansion of #define header_scope_eq, monkey/monkey-source/mk_server/mk_http_parser.c:42)": 2,
+    "chain (expansion of #define rwlock_init, lib/librdkafka-2.15.0/src/tinycthread_extra.h:116)": 7,
+    "nested in an operand": 65,
+    "parenthesised chain": 23
+   },
+   "by_value": {
+    "acquisition": 13,
+    "address": 27,
+    "call without custody result": 1,
+    "empty": 1,
+    "expression": 317,
+    "expression with a call": 14,
+    "name": 213,
+    "scalar": 444,
+    "string literal": 1,
+    "uncontracted call": 294
+   },
+   "sites": 1390
+  },
+  "slice": {
+   "by_destinations": {
+    "deref / deref": 3,
+    "deref / deref / deref / deref": 1,
+    "deref / local": 1,
+    "file-scope or other name / file-scope or other name": 18,
+    "file-scope or other name / file-scope or other name / file-scope or other name / file-scope or other name": 1,
+    "file-scope or other name / file-scope or other name / file-scope or other name / file-scope or other name / file-scope or other name": 2,
+    "file-scope or other name / local": 6,
+    "formal / formal / formal": 1,
+    "formal / local": 8,
+    "local / deref": 13,
+    "local / file-scope or other name": 4,
+    "local / formal": 30,
+    "local / local": 396,
+    "local / local / local": 20,
+    "local / local / local / local": 5,
+    "local / local / local / local / local": 1,
+    "local / local / local / local / local / local": 1,
+    "local / member": 112,
+    "local / other": 1,
+    "local / subscript": 3,
+    "member / file-scope or other name": 1,
+    "member / formal": 2,
+    "member / local": 110,
+    "member / member": 300,
+    "member / member / member": 22,
+    "member / member / member / member": 9,
+    "member / member / member / member / member": 2,
+    "other / local": 1,
+    "other / other": 10,
+    "other / other / other": 1,
+    "subscript / deref": 3,
+    "subscript / local": 8,
+    "subscript / subscript": 35,
+    "subscript / subscript / local": 1,
+    "subscript / subscript / subscript": 1,
+    "subscript / subscript / subscript / subscript": 3
+   },
+   "by_shape": {
+    "chain": 1117,
+    "nested in an operand": 61,
+    "parenthesised chain": 19
+   },
+   "by_value": {
+    "acquisition": 13,
+    "address": 23,
+    "call without custody result": 1,
+    "empty": 1,
+    "expression": 267,
+    "expression with a call": 14,
+    "name": 183,
+    "scalar": 358,
+    "string literal": 1,
+    "uncontracted call": 275
+   },
+   "sites": 1197
+  },
+  "system": {
+   "by_destinations": {
+    "deref / deref": 3,
+    "deref / deref / deref / deref": 1,
+    "deref / local": 1,
+    "file-scope or other name / file-scope or other name": 18,
+    "file-scope or other name / file-scope or other name / file-scope or other name / file-scope or other name": 1,
+    "file-scope or other name / file-scope or other name / file-scope or other name / file-scope or other name / file-scope or other name": 2,
+    "file-scope or other name / local": 6,
+    "formal / formal / formal": 1,
+    "formal / local": 8,
+    "local / deref": 13,
+    "local / file-scope or other name": 4,
+    "local / formal": 30,
+    "local / local": 396,
+    "local / local / local": 20,
+    "local / local / local / local": 5,
+    "local / local / local / local / local": 1,
+    "local / local / local / local / local / local": 1,
+    "local / member": 112,
+    "local / other": 1,
+    "local / subscript": 3,
+    "member / file-scope or other name": 1,
+    "member / formal": 2,
+    "member / local": 110,
+    "member / member": 300,
+    "member / member / member": 22,
+    "member / member / member / member": 9,
+    "member / member / member / member / member": 2,
+    "other / local": 1,
+    "other / other": 10,
+    "other / other / other": 1,
+    "subscript / deref": 3,
+    "subscript / local": 8,
+    "subscript / subscript": 35,
+    "subscript / subscript / local": 1,
+    "subscript / subscript / subscript": 1,
+    "subscript / subscript / subscript / subscript": 3
+   },
+   "by_shape": {
+    "chain": 1117,
+    "nested in an operand": 61,
+    "parenthesised chain": 19
+   },
+   "by_value": {
+    "acquisition": 13,
+    "address": 23,
+    "call without custody result": 1,
+    "empty": 1,
+    "expression": 267,
+    "expression with a call": 14,
+    "name": 183,
+    "scalar": 358,
+    "string literal": 1,
+    "uncontracted call": 275
+   },
+   "sites": 1197
+  }
+ },
+ "trees": {
+  "corpus-fb": "/media/Data/GitHub/quirin-lang/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+  "corpus-mk": "/media/Data/GitHub/quirin-lang/build/cycle19/c-gateway-wave-pin/monkey",
+  "current": "/media/Data/GitHub/quirin-lang/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-source",
+  "slice": "/media/Data/GitHub/quirin-lang/private/w47-tail/attempt-1/prep/fluent-bit-clang-source",
+  "system": "/media/Data/GitHub/quirin-lang/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source"
+ },
+ "unjoined": {
+  "corpus-fb": [
+   {
+    "file": "lib/monkey/mk_server/mk_http_parser.c",
+    "function": "#define header_scope_eq",
+    "line": 42,
+    "not_projected": false
+   }
+  ],
+  "corpus-mk": [
+   {
+    "file": "monkey-source/mk_server/mk_http_parser.c",
+    "function": "#define header_scope_eq",
+    "line": 42,
+    "not_projected": false
+   }
+  ],
+  "current": [
+   {
+    "file": "lib/monkey/mk_server/mk_http_parser.c",
+    "function": "#define header_scope_eq",
+    "line": 42,
+    "not_projected": false
+   }
+  ],
+  "slice": [],
+  "system": []
+ }
+}
