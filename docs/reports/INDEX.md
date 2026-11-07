@@ -265,6 +265,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [core-concurrency-prelude](core-concurrency-prelude/README.md) | Core concurrency prelude — 2026-09-08 |
 
+| [corpus-group-checkpoints](corpus-group-checkpoints/README.md) | CORPUS-GROUP-CHECKPOINTS |
+
 | [corpus-repin](corpus-repin/README.md) | CORPUS-REPIN — re-measurement and deliberate re-pin of the four 185-unit artifacts |
 
 | [ct-composed-native](ct-composed-native/README.md) | Wave-32 CT lane — the composed-epoch native runner (CT-COMPOSED-NATIVE) |
@@ -562,6 +564,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [gate-scope-lib-unit-test-modules](gate-scope-lib-unit-test-modules/README.md) | GATE-SCOPE-LIB-UNIT-TEST-MODULES: a library's cfg(test) code selects its unit-test executable |
 
 | [gate-scope-precise-selection](gate-scope-precise-selection/README.md) | GATE-SCOPE-PRECISE-SELECTION: the scoped gate selects what a change reaches |
+
+| [gate-slot-admission-starvation](gate-slot-admission-starvation/README.md) | GATE-SLOT-ADMISSION-STARVATION |
 
 | [gateway-analysis-path-optimization](gateway-analysis-path-optimization/README.md) | GATEWAY-ANALYSIS-PATH-OPTIMIZATION: the analysis paths mapped, made explicit and faster, verdict-identical |
 

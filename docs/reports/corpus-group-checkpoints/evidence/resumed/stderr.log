@@ -1,0 +1,20 @@
+gate_slot: audit slot 0, budget 7168 MiB, admitted at 11264 MiB
+checkpoint cmetrics.first: reused (identity equal)
+checkpoint ctraces.first: reused (identity equal)
+checkpoint librdkafka.first: reused (identity equal)
+checkpoint chunkio.first: reused (identity equal)
+checkpoint fluent-bit-chunk.first: reused (identity equal)
+checkpoint monkey-libevent.first: reused (identity equal)
+checkpoint cmetrics.imported: reused (identity equal)
+checkpoint ctraces.imported: recomputed (no checkpoint)
+checkpoint librdkafka.imported: recomputed (no checkpoint)
+checkpoint chunkio.imported: recomputed (no checkpoint)
+checkpoint fluent-bit-chunk.imported: recomputed (no checkpoint)
+checkpoint monkey-libevent.imported: recomputed (no checkpoint)
+checkpoint ready: /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a50c061771c033423/private/evidence/qo-one/ctraces.imported.qo
+checkpoint ready: /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a50c061771c033423/private/evidence/qo-one/librdkafka.imported.qo
+checkpoint ready: /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a50c061771c033423/private/evidence/qo-one/chunkio.imported.qo
+checkpoint ready: /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a50c061771c033423/private/evidence/qo-one/fluent-bit-chunk.imported.qo
+checkpoint ready: /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a50c061771c033423/private/evidence/qo-one/monkey-libevent.imported.qo
+gate_slot: peak resident set 15846976 KiB exceeds the admission budget 11264 MiB
+gate_slot: exit 0; receipt /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a50c061771c033423/private/evidence/resumed/slot.json

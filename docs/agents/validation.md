@@ -254,6 +254,54 @@ host beside a `rust-suite` job; `MemAvailable` already excludes running audits'
 resident memory, so admission is conservative; an exclusive legacy waiter can
 wait while slot jobs keep the lock shared.
 
+One job cannot starve the host (requirement R11 of
+[gate-time reduction](../plans/gate-time-reduction/README.md), card
+`GATE-SLOT-ADMISSION-STARVATION`):
+
+- **Deadlines.** Every slot job states its deadlines in its receipt
+  (`limits`). The script samples the command's process tree (the child and its
+  descendants, every 10 s). `--stall-timeout D` stops the command when, for
+  `D`, no process of the tree changed its `/proc/<pid>/io` counters (output is
+  a `write` and counts), no process started or ended, and the
+  `--progress-file` (when given) kept its size and mtime; `--deadline D` stops
+  it `D` after it started, slot wait excluded. Defaults: `audit` 2 h stall and
+  no wall-clock deadline; `rust-suite` and `lean` neither. A measured pinned
+  corpus route runs about 2 h with steady I/O, and the observed runaway spun
+  10 h 18 min with none, so 2 h without any I/O is far outside a working run.
+  Override with the flag, else `QUIRIN_GATE_STALL_TIMEOUT` /
+  `QUIRIN_GATE_DEADLINE` (`0`/`off` disables; a unit is required: `90s`,
+  `30m`, `8h`). A declared measurement runs its routes under the default (the
+  measure plugin passes the slot script only the gate location variables). I/O
+  that cannot be read counts as progress, so an unmeasurable tree is never
+  stopped for stalling; without `/proc` (macOS) the stall and resident-set
+  readings are off, the script says so, and the wall-clock deadline still
+  applies. On a breach the job's own `gate_slot.py` writes why
+  (stall or deadline, last progress, CPU since, the processes) to stderr and the
+  receipt, sends SIGTERM to its child and the descendants it started (each
+  re-identified by start time through a pidfd), SIGKILL after `--stop-grace`
+  (60 s), and exits 124 with the command's status as `child_exit`. No
+  process outside the job's own tree is signalled, and no job stops another.
+- **Resident set.** An `audit` job whose tree's summed resident set exceeds its
+  admission budget says so on stderr while it runs (first crossing, then each
+  further GiB); the receipt's `monitor` keeps the first crossing and the peak,
+  and the slot file's holder note carries the last sample (`live`).
+- **Bounded drain.** A `rust-suite` job closes audit admission and waits at
+  most `--drain-timeout` (2 h, `QUIRIN_GATE_DRAIN_TIMEOUT`) for the running
+  audits. Then it reopens admission, releases every lock it took, names each
+  blocking holder (slot, pid, argv, hold time, CPU and I/O over the wait,
+  resident set against its admission budget), waits `--drain-backoff` (5 min)
+  so queued audits start, and drains again; `--drain-attempts N` turns the Nth
+  give-up into exit 75 with that report, and `--wait-timeout` still bounds the
+  whole wait. The command never runs without a complete drain, and a job that
+  never got its slot only waited (its `--wait-record` stays `waiting`).
+- **Status.** `python3 scripts/gate_slot.py status [--json] [--interval S]`
+  lists the live holders and waiters: the `/proc/locks` entries on the gate's
+  slot files and the legacy lock, with role (holder, draining and what blocks
+  it, waiting for a slot, queued in the kernel, legacy holder), argv, wait and
+  hold times, CPU and I/O over the interval, and resident set against the
+  admission budget. A job waiting for an `audit` slot holds only the legacy
+  lock shared, which is how it shows; it reads `QUIRIN_GATE_DIR` like the jobs.
+
 ## Test build storage
 
 Building and running the test suites must fit a CI runner's disk: about 15 GB

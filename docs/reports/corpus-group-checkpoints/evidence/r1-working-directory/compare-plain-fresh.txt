@@ -1,0 +1,12 @@
+DIFF resource-diagnostics.json 9e98c7aaec091869 18ef479760cf5d59
+DIFF resource-diagnostics.contracts.json 035fb31eb65a42eb 3c607a451d316179
+same resource-diagnostics.chunk-contracts.json c56b0e2ac106ea57 c56b0e2ac106ea57
+DIFF resource-diagnostics.source-effects.json 718fe232caf190b5 74863e071f2fda87
+DIFF resource-diagnostics.components.json 729cc8c350da67ba 8a64583842244809
+same monkey-source.json 57acfc58c4f7dddf 57acfc58c4f7dddf
+DIFF corpus-null.jsonl 03e90681cf7562be 076bfa922bbeb99c
+same corpus-null.summary.json b54115a4437b6368 b54115a4437b6368
+same corpus-outer.json ecdd9b5c8ae5a051 ecdd9b5c8ae5a051
+DIFF console.log (output directory masked) b1e651ddddabd517 5b3f15f908c2df13
+DIFFERENCES
+exit 1

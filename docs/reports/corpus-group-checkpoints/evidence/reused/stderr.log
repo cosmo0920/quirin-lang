@@ -1,0 +1,16 @@
+gate_slot: waiting for an audit slot
+gate_slot: audit slot 0, budget 7168 MiB, admitted at 11264 MiB
+checkpoint cmetrics.first: reused (identity equal)
+checkpoint ctraces.first: reused (identity equal)
+checkpoint librdkafka.first: reused (identity equal)
+checkpoint chunkio.first: reused (identity equal)
+checkpoint fluent-bit-chunk.first: reused (identity equal)
+checkpoint monkey-libevent.first: reused (identity equal)
+checkpoint cmetrics.imported: reused (identity equal)
+checkpoint ctraces.imported: reused (identity equal)
+checkpoint librdkafka.imported: reused (identity equal)
+checkpoint chunkio.imported: reused (identity equal)
+checkpoint fluent-bit-chunk.imported: reused (identity equal)
+checkpoint monkey-libevent.imported: reused (identity equal)
+gate_slot: peak resident set 15832296 KiB exceeds the admission budget 11264 MiB
+gate_slot: exit 0; receipt /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a50c061771c033423/private/evidence/reused/slot.json

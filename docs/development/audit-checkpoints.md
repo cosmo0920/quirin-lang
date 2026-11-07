@@ -259,3 +259,70 @@ host-crash durability depends on filesystem and platform guarantees. The compose
 time. Each self-contained `.qo` repeats the full plan and global inputs; this
 uses more disk than one file per library, but permits independent durability
 and standalone verification of each compile configuration.
+
+## The pinned corpus route
+
+Card CORPUS-GROUP-CHECKPOINTS ([report](../reports/corpus-group-checkpoints/README.md)).
+`quirin-audit pinned --checkpoint-dir DIR [--resume]` checkpoints the corpus
+arbiter. The normative Rust is `crates/qcore-audit/src/pinned_route/checkpoints.rs`;
+the Lean model is `QCore.StagedCheckpoints`.
+
+**Groups and stages.** A group is one of the route's libraries (`audit.json`'s
+libraries, then `monkey-libevent`): ChunkIO's prelude and postlude share typed
+certificates across a library's units, so a library is the smallest result that
+stands alone. The route runs up to three **stages**, each a phase of the whole
+run: `first` (the loaded contracts), `refuted` (when a body refutes its own
+declaration: the contracts with the refutation table, C06.4) and `imported`
+(when the link map selects cross-unit homes: the imported environment and
+homes, accepted only when its rows leave the table unchanged). Each stage seals
+its own file, `DIR/<library>.<stage>.qo`, so the stages never overwrite each
+other. A group is sealed by the worker that completes it — its postlude runs
+then — whatever the other groups are doing, so an interrupted run keeps every
+completed group. Groups of one stage are analysed concurrently, as in the whole
+run.
+
+**Container.** The binary container above, with its own layout: schema version
+**1** and the five sections `pinned-identity`, `pinned-prelude`, `pinned-units`,
+`pinned-finish`, `provenance`. The current-route reader refuses these files
+(schema and section list) and the pinned reader refuses current-route files.
+`pinned-units` holds each unit's console lines, report rows, diagnostic
+counts, bounds and null rows and evidence, member facts, tally, native and
+teardown results, as typed binary values; `pinned-finish` holds the postlude's
+console lines and the teardown results it appended; `provenance` (wall time,
+jobs, peak RSS) is outside the content digest. `quirin-audit checkpoint`
+reads current-route files only.
+
+**Identity** (`pinned-identity`). A group is reused only when the whole section
+equals the one computed now; otherwise it is recomputed and the reason is
+printed (`checkpoint <library>.<stage>: recomputed (<field> differs)`) and
+recorded in `DIR/pinned-checkpoint-run.json`.
+
+| Part | Fields | Read by |
+|---|---|---|
+| run | analyzer (package, version, profile, build commit, binary SHA-256); canonical Fluent Bit root and its verified pinned revision; the process working directory (the route binds it into each row's `hypothesis_context.build_identity` and the source-effect configuration digests); SHA-256 over every file of the source-set profile directory; the source-contract configuration's SHA-256 and, in package mode, every file of the package; the contract manifest's path and SHA-256, every lock the pin evaluation read and the pin template's digest; Clang (program, version, target); every `QCORE_*` variable but the job count, with `QCORE_NULL_PROPERTY`, `QCORE_OUTER_PROJECTION` and `QCORE_MEMBER_PREPASS_SECTION` recorded as `selected` (their value is where the run writes) and `QCORE_CROSS_UNIT_LINK_MAP` as its content's SHA-256; the run's member facts' SHA-256 | every group |
+| stage | the stage name; SHA-256 of the exact contract environment every unit of the stage is analysed under (pin holds, result ranges, the refutation table, imports and link resolution included); SHA-256 of the homes supplied to every unit; SHA-256 of the installed bounds and null environments (with the bounds refutation table) | every group of that stage |
+| group | label, source root, and per unit: SHA-256 of `[file, directory, command]`, the raw source's SHA-256, the validated preprocessing's SHA-256, and the preparation facts (validation error, line-marked preprocessing digest or error) | that group |
+
+Whole-run facts therefore invalidate every group of the stage that reads them
+and no other stage: a changed refutation table recomputes every group's
+`refuted` stage and leaves its `first` stage reused. Refused before any work,
+because a reused group would not reproduce what they write or the identity does
+not digest what they read: a census stream, `QCORE_TYPED_PATH_PARITY`,
+`QCORE_AUDIT_IR_DIR`, `QCORE_UNIT_TIMING`, the bounds selection
+(`QCORE_BOUNDS_PROPERTY`, follow-up `CORPUS-CHECKPOINT-BOUNDS-SELECTION`) and a
+process source-contract configuration (`QCORE_SOURCE_CONTRACTS`; the
+`QCORE_CHUNKIO_PACKAGE` package is digested). A unit that cannot be
+fingerprinted recomputes its group, which is not sealed; a group with a failed
+step or postlude is never sealed.
+
+**Composition.** The whole-run fold is shared: the final stage's groups are
+expanded into the steps the fold consumes (prelude, units, postlude, at their
+plan positions, with the Monkey gate between the Fluent Bit libraries and
+Monkey), and each stored unit is restored to its report fragment one at a time.
+The phases' rules are the whole run's: a stopped stage (a failed prelude or
+unit) skips the later stages and the fold stops at the failure; an `imported`
+stage that fails or changes the table is refused and the previous stage's
+groups are published. Whole-run steps that read no group result — the library
+summary profiles, the pin and bounds evaluations, the member-facts pre-pass,
+the definition census and home exports, the Monkey gate and every sidecar —
+run every time.
