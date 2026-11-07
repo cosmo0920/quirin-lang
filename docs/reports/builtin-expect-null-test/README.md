@@ -81,3 +81,76 @@ with exactly the current run's thirteen diagnostics on the same lines,
 including the leak at -P line 20509 (snappy.c:1712, acquired at 20506 =
 :1705) and the `loop re-acquisition` refusal at :1705. The leaf at :1712 does
 not depend on the wrapper.
+
+**Every unit with a site** (current route, 74 units): see §2a below once the
+slot-queued run completes.
+
+## 3. What changed
+
+* **Rule 5h amended** ([text](../../agents/rules/5h.md)): the reading of
+  `__builtin_expect(E, K)` as `E` is stated, with its hint premise (exactly one
+  integer literal, which has no evaluation event) and its conversion premise
+  (the operand's truthiness survives the implicit conversion to `long`: Clang
+  rejects a pointer operand, a null or comparison test is `int` 0/1, an
+  integer operand no wider than `long` keeps zero and non-zero on LP64;
+  stated, not checked: `BUILTIN-EXPECT-OPERAND-CONVERSION`). No new rule id.
+* **Rust** (`legacy_condition_desugar.rs`): `HintSpelling` classifies a hint
+  (decimal, suffixed or prefixed integer literal, name, effectful, other);
+  only the two literal classes are admitted. Before, only a digit sequence
+  was. `builtin_expect_hints_are_integer_literals` binds the classes and the
+  admission vector to `QCore.BuiltinExpectCondition.vectors`.
+* **Lean**: `QCore.BuiltinExpectCondition` (audited by
+  `proof/AuditBuiltinExpectCondition.lean`, 11 theorems, no project axiom):
+  `the_wrapper_has_the_operand_value`, `the_reading_is_c_evaluation`,
+  `the_desugared_reading_is_c_evaluation` (composed with
+  `QCore.ConditionCallDesugar.the_desugaring_is_c_evaluation`),
+  `a_leaf_decides_as_its_bare_test`, `the_argument_order_is_unobservable`,
+  `an_effectful_hint_refuses`, `a_refused_operand_refuses`,
+  `a_nested_effectful_hint_refuses`, `an_effectful_hint_is_observable`,
+  `admitted_spellings_are_literals`, `vectors_match`.
+* **Fixtures** (`crates/qcore-c-gateway/tests/builtin_expect_null_test.rs`):
+  * `likely_and_unlikely_around_null_tests_refine_as_the_bare_test`: six
+    wrapped/bare pairs (`unlikely(!p)`, `unlikely(p == 0)`, `likely(p != 0)`,
+    `likely(!!(p))`, an assignment-then-test, a `do … while (unlikely(…))`)
+    with identical status and diagnostics, all Safe; two pairs whose non-null
+    arm returns with the object live, both a leak wrapped and bare; and two
+    positions where the wrapped form is decided and the bare one is not
+    (below);
+  * `an_integer_literal_hint_is_read`: `0`, `(0)`, `0L`, `0UL`, `0x0`, `00`;
+  * `an_operand_that_is_not_a_bare_test_stays_refused`: `unlikely(!p |
+    opaque())`, `unlikely(opaque())` keep the bare operand's refusal;
+    `__builtin_expect_with_probability` refuses;
+  * `a_hint_with_a_side_effect_stays_refused`: `opaque()`, `k++`, `k = 1`,
+    `k`, `-1`, `(long)0`;
+  * `the_snappy_failure_arm_refines_the_allocation_away`: snappy's shape
+    without the loop, with the pass test and with a one-generation loop is
+    Safe; in the two-pass loop the wrapped and bare forms are identical and
+    the leaf at the failure arm's return is accompanied by one at the
+    pre-allocation return, the generation join's signature.
+
+## 4. Measurement
+
+[PREDICTION.md](PREDICTION.md): no move on any route; the integrator
+measures. No Safe row is added, so no per-function justification is owed.
+
+## 5. Follow-ups
+
+* `BUILTIN-EXPECT-OPERAND-CONVERSION` (registered): bind rule 5h's
+  conversion premise with the Clang AST (the operand's implicit cast to
+  `long` is an integral cast from a type no wider than `long`, or the operand
+  is Boolean-valued), refusing a floating or wider operand; today a premise.
+* `BARE-CONNECTIVE-NULL-LEAF-REFINEMENT` (registered): the bare forms
+  `if (!p && n) return; if (!p) return; k_free(p);` and `return (p != 0) ?
+  p : 0;` / `return p ? p : 0;` report a leak (provisional Unsafe) although
+  no path leaks; the same tests under the wrapper are desugared by rule 5h
+  and decided Safe. An older whole-condition route accepts the call-free
+  connective or `?:` without refining its null leaf. Not sized on the runs.
+* `LOOP-NULL-STORE-AFTER-RELEASE` (registered): `while (p != 0) { k_free(p);
+  p = 0; }` and the `for` form with `if (p != 0) { k_free(p); p = 0; }` report
+  a double release (bare and wrapped alike); the straight-line form is Safe.
+  The null store after the release does not reach the loop's back edge. Not
+  sized on the runs.
+* `LOOP-REACQUISITION-LEAK-ACCUSATION` (amended): snappy.c:1712 is that
+  card's seventh leaf, not this card's.
+* `LEAK-UNDECIDED-NULL-TEST` (retired): its remaining snappy half rested on
+  the same misattribution.
