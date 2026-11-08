@@ -14,7 +14,12 @@ this card's tip, `prepare --link` on the user's database derives 173 more
 names, all Monkey homes. All 29 linked Monkey units are input-identical to
 the linked, reproduced objects. All 156 census callees derive.
 [PREDICTION.md](PREDICTION.md) is `none` for corpus, system and slice, and
-gives per-unit expectations for the user's run. The census was committed
+gives per-unit expectations for the user's run. The base-binary probes
+measured those expectations. The 343 functions of the replaced units are
+unchanged. `tls_stub.c`'s 5 `Safe` functions are withdrawn. `tls_openssl.c`
+adds 4 `Safe` rows (only because that file is compiled), 1 provisional
+`Unsafe` row and 22 `Unknown` rows. The prediction had expected no `Safe`
+row in `tls_openssl.c`. The census was committed
 first (`20fd18c82`), then the prediction (`7b2bb167c`), then the change
 (`e5925e6b0`).
 
@@ -268,7 +273,82 @@ functions has every blocker derived.
 | [`link-map.candidate.json.gz`](link-map.candidate.json.gz) | `edbde6c338ec5b60233135ccbb5d51b47dfa88288827ae805b0b8dacc3a1cb2c` |
 | [`link-map.candidate.refusals.json.gz`](link-map.candidate.refusals.json.gz) | `ebabfba3ed2b7a47a6c589441b264d71a3b3c05fe196e3fc200e823272d1d919` |
 
-TBD-PROBES
+## Measured: the two Monkey readings, per function (scope item 5)
+
+[`scripts/run_probes.sh`](scripts/run_probes.sh) ran the **base** binary
+(`20fd18c82`, SHA-256 `30b01afb…b4772cc3089`) twice in one audit slot (7 GiB;
+26 min; peak 6.4 GiB). Both runs used the user's preparation and this
+worktree's profile.
+
+- **A** is the standalone Monkey reading exactly as the user's run reads it
+  (`--monkey-database`), plus a placeholder unit, because a selection needs a
+  group.
+- **B** is the linked units through an explicit unit selection
+  ([`selection-linked.json`](scripts/selection-linked.json), library `monkey`,
+  the same 29 files). These are the keys, commands and pre-pass set of a tip
+  `--monkey-linked` run.
+
+[`scripts/compare_probes.py`](scripts/compare_probes.py) writes
+[`probe-comparison.json`](probe-comparison.json), and
+[`scripts/compare_prepass.py`](scripts/compare_prepass.py) writes
+[`prepass-comparison.json`](prepass-comparison.json). What a probe does not
+model: refutations found by the run's other units (the probes have one
+placeholder unit), and rule 31's reach over the non-Monkey units.
+
+| Monkey functions | Standalone (A) | Linked (B) |
+|---|---:|---:|
+| Safe | 92 | 91 |
+| Unknown | 254 | 276 |
+| Provisional Unsafe | 2 | 3 |
+| Total | 348 | 370 |
+
+- **All 343 functions of the 28 replaced units are unchanged**: the same
+  status and the same diagnostics in both readings. This includes every
+  `mk_event.c` row and the four `mk_event_foreach` users in `mk_lib.c` and
+  `mk_server.c`, which the prediction allowed to move. Unit statuses are
+  unchanged too: 26 `Unknown`, and `mk_http.c` and `mk_net.c` provisional
+  `Unsafe`. The backend statics that differ are not rows, because the route
+  publishes the unit's own definitions, and the backend is a textually
+  included file.
+- **`tls/tls_stub.c`** (A: unit `Safe`, all 5 functions `Safe`) becomes the
+  not-linked `Unknown` unit in a tip run, with its 5 definitions
+  `not_projected`. Those are 5 `Safe` functions withdrawn, in the fail-closed
+  direction.
+- **`tls/tls_openssl.c`** (new, linked only; unit provisional `Unsafe`): 27
+  functions, of which 22 are `Unknown` (`call to uncontracted function`,
+  mostly OpenSSL). The prediction said none would be `Safe`, and it was wrong
+  for these 5 rows:
+  - `config_free`, `local_thread_context`, `mk_tls_enabled` and
+    `mk_tls_transport` are `Safe`. They are `Safe` **only because the linked
+    configuration compiles `tls_openssl.c`** (`MK_HAVE_TLS`), a different file
+    from the stub. `mk_tls_enabled` and `mk_tls_transport` were also `Safe` as
+    stub bodies. `mk_tls_exit`, `mk_tls_init` and `mk_tls_thread_init` were
+    `Safe` stubs and are `Unknown` OpenSSL bodies.
+  - `context_new` is **provisional `Unsafe`**: a `leak` at
+    `lib/monkey/tls/tls_openssl.c:533` of the obligation acquired at `:521`,
+    among unresolved aliases (`thctx`) and uncontracted `SSL_*` calls. It is
+    not a validated reachable violation, and it is not presented as an
+    upstream defect.
+- **Member pre-pass.** A reads 1,448 units (1,062 read) and B 1,419 (1,038).
+  The 29 standalone units are the difference. Every section key is equal
+  except `lifetime_protocols`. There, one protocol
+  (`flb_input_collector.event`, host `flb_input_set_collector_time`) keeps its
+  standing (`DeclaredAssumption`) and its premise
+  (`loop-protocol-unchecked:flb_input_collector.event`). Its reason list loses
+  six entries from functions the linked configuration does not compile
+  (`_mk_event_update` ×2, `cb_event` ×2, `cb_timeout`, and the stub's
+  `mk_tls_transport`). The refused set and the callers are equal, and the
+  summarised function set is the same. So no row is expected to move from
+  the pre-pass. The integrator's full rerun is the check.
+
+User's run, per this measurement:
+
+- Monkey's units go from 29 (26 `Unknown`, 2 provisional `Unsafe`, 1 `Safe`)
+  to 30: the 28 replaced (unchanged statuses), `tls_stub.c` not-linked
+  `Unknown`, and `tls_openssl.c` provisional `Unsafe`.
+- Monkey's function rows go from `Safe` 92 / `Unknown` 254 / `Unsafe` 2 to
+  91 / 276 / 3, plus 5 `not_projected`.
+- No non-Monkey row is predicted to move.
 
 ## Tests and Lean
 
@@ -341,3 +421,17 @@ then restored): exit 0.
 - Not registered: `prepare` still builds the standalone Monkey database. The
   pinned route needs it, and the current run uses it only for accounting.
 
+
+## Measurement (integrator)
+
+```sh
+target/release/quirin-audit --plugin-path target/release --output <dir> --timeout-ms 36000000 measure \
+  --inputs crates/quirin-audit-plugin-measure/inputs/live.json \
+  --inputs-base /media/Data/GitHub/quirin-lang \
+  --side base=baseline:7b726587bdf6a8213f451fa1c78297bb5e476ef7 \
+  --side tip=rev:e5925e6b0 \
+  --declared docs/reports/current-monkey-linked-configuration/PREDICTION.md
+```
+
+The user's run is then re-run as `prepare --run` now invokes it: the user's
+arguments plus `--monkey-linked`.
