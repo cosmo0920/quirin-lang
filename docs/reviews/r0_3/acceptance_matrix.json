@@ -9624,13 +9624,6 @@
    "recorded_by": "W44-LEAK-PIN-AUDIT"
   },
   {
-   "id": "CHAINED-ASSIGNMENT-INNER-DESTINATION",
-   "title": "`d = safe = rd_malloc(n)` binds the call's result to `d` only; the inner destination is dropped, not refused",
-   "why": "Card W44-LEAK-PIN-AUDIT found rd_kafka_sasl_safe_string's one leak (rdkafka_sasl_scram.c:249) to rest on the parser binding a chained assignment's call result to its outer destination only: `safe`, which the function returns, stays unbound, so `return safe;` escapes nothing. A dropped write that is neither modelled nor refused is a precision loss in the accusing direction here and, symmetrically, could leave a release through the inner name unmatched. Discharge condition: model or refuse a chained assignment's inner destinations, measured by an arbiter. AMENDED (CURRENT-UNSAFE-TRIAGE, USER DECISION 2026-11-07, verbatim: \"Register four as implementation cards\"): now an implementation card. On the 046accf6 current run rd_kafka_sasl_safe_string (rdkafka_sasl_scram.c:243 `d = safe = rd_malloc(len + 1)`, :249 `return safe`) is still a provisional Unsafe leak resting on this precision loss, the only finding of unit rdkafka_sasl_scram.c (which also carries `loop re-acquisition` at :243). DISCHARGE unchanged; the measurement must show that unit leave Unsafe (to Unknown or a validated verdict), never reach Safe by the fix alone. AMENDED (LOOP-REACQUISITION-LEAK-ACCUSATION): the per-generation census shows rd_kafka_sasl_safe_string's :249 leaf is the current generation's (bound to `d` only), so gateway rule 42 does not withdraw it; at the settled exit every generation is unresolved, so it is published from an intermediate iterate (C02-P-ALIAS -LEAK-ORDER).",
-   "source": "docs/reports/w44-leak-pin-audit/README.md, docs/reports/current-unsafe-triage/README.md, docs/reports/loop-reacquisition-leak-accusation/README.md",
-   "recorded_by": "W44-LEAK-PIN-AUDIT"
-  },
-  {
    "id": "REFUSED-HANDON-LINE-GRANULARITY",
    "title": "The refused hand-on rule reads hand-ons per preprocessed line (condition and statement tables), and its unresolved effect joins by union",
    "why": "Card W44-LEAK-PIN-AUDIT's rule (legacy_refused_operands.rs) keys what a statement hands on by preprocessed line, because a CFG node carries its line and not its tokens. Each line keeps a condition table (an if/while/switch controlling expression, every for clause) and a statement table; a node refused as a condition reads the first, any other refused node the second, so RD_UT_ASSERT(strlen(p) > 0, ...) does not withdraw p through the refused fprintf beside it. Several statements a macro expands onto one line still union within a table, and the unresolved effect joins by union, so a path to an exit that never passes the refused statement loses its accusation when joined with one that does (QCore.RefusedHandOnCustody.the_union_join_withdraws_a_clean_path). Both approximations only withdraw, never accuse or discharge. Discharge condition: statement-granular hand-on sets carried on the refused node and a path-precise withdrawal, with Lean parity and a measured re-pin; or a recorded decision that the approximation stands. AMENDED (CG10-COMMON-TYPED-PLACE): unchanged by the card. Rule 10t introduces a statement-granular identity for a consumed statement (the parser's stream index and length, `typed_place_origin`) that a statement-granular hand-on table could key by; the refused-node hand-on rule still keys by line and joins by union. The approximation stands (it only withdraws); size not measurable by its own definition, which names none.",
@@ -11208,13 +11201,6 @@
    "id": "CG02-FOR-CLAUSE-SEQUENCES",
    "title": "For-loop init and increment clauses are not connected to the elaborator (109 leaves over 71 functions, lexical)",
    "why": "Found by CG02-ELABORATION-CORE: rule 10s hooks statements, returns and controlling expressions, but a `for` header's init and increment clauses are lowered by `classify_for_clause` into one instruction each (`Statement::For { init, increment }`), so a clause with a comma (`i++, j--`) or a value increment keeps its refusal. Measured lexically on the corpus arbiter at CG02's final tip (scripts/for_clause_census.py): 109 unsupported leaves over 71 functions on `for` headers whose init or increment clause holds a comma or an increment (91 `unmodeled increment or decrement expression`). DISCHARGE: the For statement carries a clause block, the elaborator lowers each clause as a statement with its order model, measured.",
-   "source": "docs/reports/cg02-elaboration-core/README.md",
-   "recorded_by": "CG02-ELABORATION-CORE"
-  },
-  {
-   "id": "CG02-OLDER-SCALAR-ROUTE-UNSEQUENCED",
-   "title": "The older scalar route admits `x = (x = 1)` (unsequenced writes of one object) as one scalar write",
-   "why": "Found by CG02-ELABORATION-CORE's control (tests/clang_gap_phase1.rs, e04): the lexical scalar route admits `x = (x = 1)` before the elaborator is asked, as one ForgetScalar. C leaves the two writes unsequenced (undefined behaviour); the admission is custody-neutral, so no custody verdict rests on it. A lexical census of the pinned corpus sources (scripts/same_object_census.py) finds 0 such statements (4 matches, each a member of the same spelling). DISCHARGE: the older route refuses a same-object unsequenced pair by name, or defers to the elaborator's order model.",
    "source": "docs/reports/cg02-elaboration-core/README.md",
    "recorded_by": "CG02-ELABORATION-CORE"
   },
