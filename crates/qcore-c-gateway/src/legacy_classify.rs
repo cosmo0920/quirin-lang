@@ -269,6 +269,21 @@ impl Parser<'_> {
             {
                 return typed;
             }
+            // Card OUT-PARAMETER-BODY-SUMMARY (rule 10k(5)): a `*B = V` store
+            // the importer named for an out slot, after every lexical route
+            // above declined, whose AST reading is a scalar store (the
+            // destination's type a scalar, the owner-aware enum arm
+            // included). Only that lowering replaces the store: a pointer
+            // store, a refusal or a plan with no access keeps the out-slot
+            // reading, which transfer refuses unless a contract sanctions it.
+            if matches!(&instruction,
+                    LegacyInstruction::Alias { destination, .. }
+                    | LegacyInstruction::Clear { destination } if is_indirect_place(destination))
+                && let Some(typed @ LegacyInstruction::IndirectScalarAccess { .. }) =
+                    self.typed_path_statement(tokens, &instruction)
+            {
+                return typed;
+            }
             return instruction;
         };
         if crate::typed_access_path::parity_enabled() {

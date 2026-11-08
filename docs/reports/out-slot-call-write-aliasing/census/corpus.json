@@ -1,0 +1,1737 @@
+{
+ "route": "corpus",
+ "report": "/media/Data/GitHub/quirin-lang/private/baselines/7b726587bdf6a8213f451fa1c78297bb5e476ef7/eight-home/corpus/corpus/resource-diagnostics.json",
+ "safe_rows": 1657,
+ "rows": [
+  {
+   "library": "chunkio",
+   "file": "cio_chunk.c",
+   "function": "cio_file_hash",
+   "error": "no AST"
+  },
+  {
+   "library": "chunkio",
+   "file": "cio_chunk.c",
+   "function": "cio_file_is_up",
+   "error": "no AST"
+  },
+  {
+   "library": "chunkio",
+   "file": "cio_chunk.c",
+   "function": "cio_file_real_size",
+   "error": "no AST"
+  },
+  {
+   "library": "chunkio",
+   "file": "cio_chunk.c",
+   "function": "cio_file_up",
+   "error": "no AST"
+  },
+  {
+   "library": "chunkio",
+   "file": "cio_chunk.c",
+   "function": "cio_file_up_force",
+   "error": "no AST"
+  },
+  {
+   "library": "chunkio",
+   "file": "cio_file.c",
+   "function": "cio_file_content_copy",
+   "formals": {
+    "ch": "struct cio_chunk *",
+    "out_buf": "void **",
+    "out_size": "size_t *"
+   },
+   "stores": [
+    {
+     "formal": "out_buf",
+     "type": "void **",
+     "value_type": "void *"
+    },
+    {
+     "formal": "out_size",
+     "type": "size_t *",
+     "value_type": "unsigned long"
+    }
+   ],
+   "calls": [
+    {
+     "callee": "cio_chunk_down",
+     "actuals": [
+      {
+       "type": "struct cio_chunk *",
+       "reach": "formal:ch"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "library": "chunkio",
+   "file": "cio_file.c",
+   "function": "get_available_size",
+   "formals": {
+    "cf": "struct cio_file *",
+    "meta_len": "int *"
+   },
+   "stores": [
+    {
+     "formal": "meta_len",
+     "type": "int *",
+     "value_type": "int"
+    }
+   ],
+   "calls": []
+  },
+  {
+   "library": "chunkio",
+   "file": "cio_file_unix.c",
+   "function": "cio_file_native_get_size",
+   "formals": {
+    "cf": "struct cio_file *",
+    "file_size": "size_t *"
+   },
+   "stores": [
+    {
+     "formal": "file_size",
+     "type": "size_t *",
+     "value_type": "unsigned long"
+    }
+   ],
+   "calls": []
+  },
+  {
+   "library": "chunkio",
+   "file": "cio_memfs.c",
+   "function": "cio_memfs_content_copy",
+   "formals": {
+    "ch": "struct cio_chunk *",
+    "out_buf": "void **",
+    "out_size": "size_t *"
+   },
+   "stores": [
+    {
+     "formal": "out_buf",
+     "type": "void **",
+     "value_type": "void *"
+    },
+    {
+     "formal": "out_size",
+     "type": "size_t *",
+     "value_type": "unsigned long"
+    }
+   ],
+   "calls": []
+  },
+  {
+   "library": "chunkio",
+   "file": "cio_utils.c",
+   "function": "cio_utils_read_file",
+   "formals": {
+    "path": "const char *",
+    "buf": "char **",
+    "size": "size_t *"
+   },
+   "stores": [
+    {
+     "formal": "buf",
+     "type": "char **",
+     "value_type": "char *"
+    },
+    {
+     "formal": "size",
+     "type": "size_t *",
+     "value_type": "unsigned long"
+    }
+   ],
+   "calls": []
+  },
+  {
+   "library": "cmetrics",
+   "file": "cmt_encode_opentelemetry.c",
+   "function": "fetch_metadata_int64_key",
+   "formals": {
+    "metadata": "struct cfl_kvlist *",
+    "key_name": "char *",
+    "error_flag": "int *"
+   },
+   "stores": [
+    {
+     "formal": "error_flag",
+     "type": "int *",
+     "value_type": "int"
+    },
+    {
+     "formal": "error_flag",
+     "type": "int *",
+     "value_type": "int"
+    }
+   ],
+   "calls": [
+    {
+     "callee": "cfl_kvlist_fetch",
+     "actuals": [
+      {
+       "type": "struct cfl_kvlist *",
+       "reach": "formal:metadata"
+      },
+      {
+       "type": "char *",
+       "reach": "formal:key_name"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "library": "cmetrics",
+   "file": "cmt_encode_opentelemetry.c",
+   "function": "kvlist_fetch_bool",
+   "formals": {
+    "kvlist": "struct cfl_kvlist *",
+    "key": "const char *",
+    "out": "int *"
+   },
+   "stores": [
+    {
+     "formal": "out",
+     "type": "int *",
+     "value_type": "int"
+    },
+    {
+     "formal": "out",
+     "type": "int *",
+     "value_type": "int"
+    },
+    {
+     "formal": "out",
+     "type": "int *",
+     "value_type": "int"
+    }
+   ],
+   "calls": []
+  },
+  {
+   "library": "cmetrics",
+   "file": "cmt_encode_opentelemetry.c",
+   "function": "kvlist_fetch_double",
+   "formals": {
+    "kvlist": "struct cfl_kvlist *",
+    "key": "const char *",
+    "out": "double *"
+   },
+   "stores": [
+    {
+     "formal": "out",
+     "type": "double *",
+     "value_type": "double"
+    },
+    {
+     "formal": "out",
+     "type": "double *",
+     "value_type": "double"
+    },
+    {
+     "formal": "out",
+     "type": "double *",
+     "value_type": "double"
+    }
+   ],
+   "calls": []
+  },
+  {
+   "library": "cmetrics",
+   "file": "cmt_encode_opentelemetry.c",
+   "function": "kvlist_fetch_uint64",
+   "formals": {
+    "kvlist": "struct cfl_kvlist *",
+    "key": "const char *",
+    "out": "uint64_t *"
+   },
+   "stores": [
+    {
+     "formal": "out",
+     "type": "uint64_t *",
+     "value_type": "unsigned long"
+    },
+    {
+     "formal": "out",
+     "type": "uint64_t *",
+     "value_type": "unsigned long"
+    }
+   ],
+   "calls": []
+  },
+  {
+   "library": "cmetrics",
+   "file": "cmt_encode_opentelemetry.c",
+   "function": "resolve_data_point_start_timestamp",
+   "formals": {
+    "sample": "struct cmt_metric *",
+    "point_metadata": "struct cfl_kvlist *",
+    "start_timestamp": "uint64_t *"
+   },
+   "stores": [
+    {
+     "formal": "start_timestamp",
+     "type": "uint64_t *",
+     "value_type": "unsigned long"
+    }
+   ],
+   "calls": [
+    {
+     "callee": "cmt_metric_get_start_timestamp",
+     "actuals": [
+      {
+       "type": "struct cmt_metric *",
+       "reach": "formal:sample"
+      }
+     ]
+    },
+    {
+     "callee": "kvlist_fetch_uint64",
+     "actuals": [
+      {
+       "type": "struct cfl_kvlist *",
+       "reach": "formal:point_metadata"
+      },
+      {
+       "type": "const char *",
+       "reach": "const"
+      },
+      {
+       "type": "uint64_t *",
+       "reach": "formal:start_timestamp"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "library": "cmetrics",
+   "file": "cmt_encode_opentelemetry_batch.c",
+   "function": "metric_data_point_count",
+   "formals": {
+    "metric": "const Opentelemetry__Proto__Metrics__V1__Metric *",
+    "count": "size_t *"
+   },
+   "stores": [
+    {
+     "formal": "count",
+     "type": "size_t *",
+     "value_type": "unsigned long"
+    },
+    {
+     "formal": "count",
+     "type": "size_t *",
+     "value_type": "unsigned long"
+    },
+    {
+     "formal": "count",
+     "type": "size_t *",
+     "value_type": "unsigned long"
+    },
+    {
+     "formal": "count",
+     "type": "size_t *",
+     "value_type": "unsigned long"
+    },
+    {
+     "formal": "count",
+     "type": "size_t *",
+     "value_type": "unsigned long"
+    },
+    {
+     "formal": "count",
+     "type": "size_t *",
+     "value_type": "unsigned long"
+    }
+   ],
+   "calls": []
+  },
+  {
+   "library": "cmetrics",
+   "file": "cmt_encode_opentelemetry_batch.c",
+   "function": "set_result",
+   "formals": {
+    "result": "int *",
+    "value": "int"
+   },
+   "stores": [
+    {
+     "formal": "result",
+     "type": "int *",
+     "value_type": "int"
+    }
+   ],
+   "calls": []
+  },
+  {
+   "library": "cmetrics",
+   "file": "cmt_metric.c",
+   "function": "cmt_metric_get_value_snapshot",
+   "formals": {
+    "metric": "struct cmt_metric *",
+    "out_type": "int *",
+    "out_int64": "int64_t *",
+    "out_uint64": "uint64_t *"
+   },
+   "stores": [
+    {
+     "formal": "out_type",
+     "type": "int *",
+     "value_type": "int"
+    },
+    {
+     "formal": "out_int64",
+     "type": "int64_t *",
+     "value_type": "long"
+    },
+    {
+     "formal": "out_uint64",
+     "type": "uint64_t *",
+     "value_type": "unsigned long"
+    }
+   ],
+   "calls": []
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_id.c",
+   "function": "decode_hex_digit",
+   "formals": {
+    "digit": "char *"
+   },
+   "stores": [
+    {
+     "formal": "digit",
+     "type": "char *",
+     "value_type": "char"
+    },
+    {
+     "formal": "digit",
+     "type": "char *",
+     "value_type": "char"
+    },
+    {
+     "formal": "digit",
+     "type": "char *",
+     "value_type": "char"
+    },
+    {
+     "formal": "digit",
+     "type": "char *",
+     "value_type": "char"
+    },
+    {
+     "formal": "digit",
+     "type": "char *",
+     "value_type": "char"
+    }
+   ],
+   "calls": []
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_mpack_utils.c",
+   "function": "ctr_mpack_consume_int32_tag",
+   "formals": {
+    "reader": "mpack_reader_t *",
+    "output_buffer": "int32_t *"
+   },
+   "stores": [
+    {
+     "formal": "output_buffer",
+     "type": "int32_t *",
+     "value_type": "int"
+    }
+   ],
+   "calls": []
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_mpack_utils.c",
+   "function": "ctr_mpack_consume_uint32_tag",
+   "formals": {
+    "reader": "mpack_reader_t *",
+    "output_buffer": "uint32_t *"
+   },
+   "stores": [
+    {
+     "formal": "output_buffer",
+     "type": "uint32_t *",
+     "value_type": "unsigned int"
+    }
+   ],
+   "calls": []
+  },
+  {
+   "library": "fluent-bit-chunk",
+   "file": "flb_input_chunk.c",
+   "function": "flb_input_chunk_drop_task_route",
+   "formals": {
+    "task": "struct flb_task *",
+    "output_plugin": "struct flb_output_instance *",
+    "dropped_record_count": "ssize_t *",
+    "dropped_byte_count": "ssize_t *"
+   },
+   "stores": [
+    {
+     "formal": "dropped_record_count",
+     "type": "ssize_t *",
+     "value_type": "long"
+    },
+    {
+     "formal": "dropped_byte_count",
+     "type": "ssize_t *",
+     "value_type": "long"
+    },
+    {
+     "formal": "dropped_record_count",
+     "type": "ssize_t *",
+     "value_type": "long"
+    },
+    {
+     "formal": "dropped_byte_count",
+     "type": "ssize_t *",
+     "value_type": "long"
+    }
+   ],
+   "calls": [
+    {
+     "callee": "flb_task_acquire_lock",
+     "actuals": [
+      {
+       "type": "struct flb_task *",
+       "reach": "formal:task"
+      }
+     ]
+    },
+    {
+     "callee": "flb_task_get_route_status",
+     "actuals": [
+      {
+       "type": "struct flb_task *",
+       "reach": "formal:task"
+      },
+      {
+       "type": "struct flb_output_instance *",
+       "reach": "formal:output_plugin"
+      }
+     ]
+    },
+    {
+     "callee": "flb_task_set_route_status",
+     "actuals": [
+      {
+       "type": "struct flb_task *",
+       "reach": "formal:task"
+      },
+      {
+       "type": "struct flb_output_instance *",
+       "reach": "formal:output_plugin"
+      },
+      {
+       "type": "int",
+       "reach": "scalar"
+      }
+     ]
+    },
+    {
+     "callee": "flb_task_get_route_data",
+     "actuals": [
+      {
+       "type": "struct flb_task *",
+       "reach": "formal:task"
+      },
+      {
+       "type": "struct flb_output_instance *",
+       "reach": "formal:output_plugin"
+      },
+      {
+       "type": "int *",
+       "reach": "addr-local"
+      },
+      {
+       "type": "size_t *",
+       "reach": "addr-local"
+      }
+     ]
+    },
+    {
+     "callee": "flb_task_release_lock",
+     "actuals": [
+      {
+       "type": "struct flb_task *",
+       "reach": "formal:task"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "library": "fluent-bit-chunk",
+   "file": "flb_input_chunk.c",
+   "function": "flb_input_chunk_output_would_exceed_limit",
+   "formals": {
+    "o_ins": "struct flb_output_instance *",
+    "chunk_size": "unsigned long",
+    "available_space": "size_t *"
+   },
+   "stores": [
+    {
+     "formal": "available_space",
+     "type": "size_t *",
+     "value_type": "unsigned long"
+    },
+    {
+     "formal": "available_space",
+     "type": "size_t *",
+     "value_type": "unsigned long"
+    }
+   ],
+   "calls": []
+  },
+  {
+   "library": "fluent-bit-chunk",
+   "file": "flb_input_chunk.c",
+   "function": "flb_task_get_route_data",
+   "formals": {
+    "task": "struct flb_task *",
+    "o_ins": "struct flb_output_instance *",
+    "records": "int *",
+    "bytes": "size_t *"
+   },
+   "stores": [
+    {
+     "formal": "records",
+     "type": "int *",
+     "value_type": "int"
+    },
+    {
+     "formal": "bytes",
+     "type": "size_t *",
+     "value_type": "unsigned long"
+    }
+   ],
+   "calls": []
+  },
+  {
+   "library": "librdkafka",
+   "file": "lz4frame.c",
+   "function": "LZ4_decompress_safe",
+   "error": "no AST"
+  },
+  {
+   "library": "librdkafka",
+   "file": "lz4frame.c",
+   "function": "LZ4_decompress_safe_forceExtDict",
+   "error": "no AST"
+  },
+  {
+   "library": "librdkafka",
+   "file": "lz4frame.c",
+   "function": "LZ4_decompress_safe_usingDict",
+   "error": "no AST"
+  },
+  {
+   "library": "librdkafka",
+   "file": "lz4frame.c",
+   "function": "LZ4_decompress_safe_withPrefix64k",
+   "error": "no AST"
+  },
+  {
+   "library": "librdkafka",
+   "file": "lz4frame.c",
+   "function": "LZ4_decompress_safe_withSmallPrefix",
+   "error": "no AST"
+  },
+  {
+   "library": "librdkafka",
+   "file": "lz4frame.c",
+   "function": "LZ4_favorDecompressionSpeed",
+   "error": "no AST"
+  },
+  {
+   "library": "librdkafka",
+   "file": "lz4frame.c",
+   "function": "LZ4_setCompressionLevel",
+   "error": "no AST"
+  },
+  {
+   "library": "librdkafka",
+   "file": "lz4frame.c",
+   "function": "LZ4_sizeofState",
+   "error": "no AST"
+  },
+  {
+   "library": "librdkafka",
+   "file": "lz4frame.c",
+   "function": "LZ4_sizeofStateHC",
+   "error": "no AST"
+  },
+  {
+   "library": "librdkafka",
+   "file": "lz4hc.c",
+   "function": "LZ4_compressBound",
+   "error": "no AST"
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdbuf.c",
+   "function": "rd_slice_peeker",
+   "formals": {
+    "slice": "const rd_slice_t *",
+    "p": "const void **"
+   },
+   "stores": [
+    {
+     "formal": "p",
+     "type": "const void **",
+     "value_type": "handed to rd_slice_reader0"
+    }
+   ],
+   "calls": []
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdbuf.c",
+   "function": "rd_slice_reader",
+   "formals": {
+    "slice": "rd_slice_t *",
+    "p": "const void **"
+   },
+   "stores": [
+    {
+     "formal": "p",
+     "type": "const void **",
+     "value_type": "handed to rd_slice_reader0"
+    }
+   ],
+   "calls": []
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka.c",
+   "function": "rd_kafka_curr_msgs_get",
+   "formals": {
+    "rk": "rd_kafka_t *",
+    "cntp": "unsigned int *",
+    "sizep": "size_t *"
+   },
+   "stores": [
+    {
+     "formal": "cntp",
+     "type": "unsigned int *",
+     "value_type": "unsigned int"
+    },
+    {
+     "formal": "sizep",
+     "type": "size_t *",
+     "value_type": "unsigned long"
+    },
+    {
+     "formal": "cntp",
+     "type": "unsigned int *",
+     "value_type": "unsigned int"
+    },
+    {
+     "formal": "sizep",
+     "type": "size_t *",
+     "value_type": "unsigned long"
+    }
+   ],
+   "calls": [
+    {
+     "callee": "mtx_lock",
+     "actuals": [
+      {
+       "type": "mtx_t *",
+       "reach": "other"
+      }
+     ]
+    },
+    {
+     "callee": "mtx_unlock",
+     "actuals": [
+      {
+       "type": "mtx_t *",
+       "reach": "other"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka.c",
+   "function": "rd_kafka_error_code",
+   "error": "no AST"
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka.c",
+   "function": "rd_kafka_error_destroy",
+   "error": "no AST"
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka.c",
+   "function": "rd_kafka_error_is_fatal",
+   "error": "no AST"
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_AlterUserScramCredentials_result_responses",
+   "formals": {
+    "result": "const rd_kafka_AlterUserScramCredentials_result_t *",
+    "cntp": "size_t *"
+   },
+   "stores": [
+    {
+     "formal": "cntp",
+     "type": "size_t *",
+     "value_type": "unsigned long"
+    }
+   ],
+   "calls": [
+    {
+     "callee": "rd_list_cnt",
+     "actuals": [
+      {
+       "type": "const rd_list_t *",
+       "reach": "const"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_ConfigEntry_synonyms",
+   "formals": {
+    "entry": "const rd_kafka_ConfigEntry_t *",
+    "cntp": "size_t *"
+   },
+   "stores": [
+    {
+     "formal": "cntp",
+     "type": "size_t *",
+     "value_type": "unsigned long"
+    }
+   ],
+   "calls": [
+    {
+     "callee": "rd_list_cnt",
+     "actuals": [
+      {
+       "type": "const rd_list_t *",
+       "reach": "const"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_ConsumerGroupDescription_authorized_operations",
+   "formals": {
+    "grpdesc": "const rd_kafka_ConsumerGroupDescription_t *",
+    "cntp": "size_t *"
+   },
+   "stores": [
+    {
+     "formal": "cntp",
+     "type": "size_t *",
+     "value_type": "unsigned long"
+    }
+   ],
+   "calls": []
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_DeleteAcls_result_response_matching_acls",
+   "formals": {
+    "result_response": "const rd_kafka_DeleteAcls_result_response_t *",
+    "matching_acls_cntp": "size_t *"
+   },
+   "stores": [
+    {
+     "formal": "matching_acls_cntp",
+     "type": "size_t *",
+     "value_type": "unsigned long"
+    }
+   ],
+   "calls": []
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_DescribeUserScramCredentials_result_descriptions",
+   "formals": {
+    "result": "const rd_kafka_DescribeUserScramCredentials_result_t *",
+    "cntp": "size_t *"
+   },
+   "stores": [
+    {
+     "formal": "cntp",
+     "type": "size_t *",
+     "value_type": "unsigned long"
+    }
+   ],
+   "calls": [
+    {
+     "callee": "rd_list_cnt",
+     "actuals": [
+      {
+       "type": "const rd_list_t *",
+       "reach": "const"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_ElectLeadersResult_partitions",
+   "formals": {
+    "result": "const rd_kafka_ElectLeadersResult_t *",
+    "cntp": "size_t *"
+   },
+   "stores": [
+    {
+     "formal": "cntp",
+     "type": "size_t *",
+     "value_type": "unsigned long"
+    }
+   ],
+   "calls": [
+    {
+     "callee": "rd_list_cnt",
+     "actuals": [
+      {
+       "type": "const rd_list_t *",
+       "reach": "const"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_ListOffsets_result_infos",
+   "formals": {
+    "result": "const rd_kafka_ListOffsets_result_t *",
+    "cntp": "size_t *"
+   },
+   "stores": [
+    {
+     "formal": "cntp",
+     "type": "size_t *",
+     "value_type": "unsigned long"
+    }
+   ],
+   "calls": [
+    {
+     "callee": "rd_list_cnt",
+     "actuals": [
+      {
+       "type": "const rd_list_t *",
+       "reach": "const"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_TopicDescription_authorized_operations",
+   "formals": {
+    "topicdesc": "const rd_kafka_TopicDescription_t *",
+    "cntp": "size_t *"
+   },
+   "stores": [
+    {
+     "formal": "cntp",
+     "type": "size_t *",
+     "value_type": "unsigned long"
+    }
+   ],
+   "calls": []
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_TopicDescription_partitions",
+   "formals": {
+    "topicdesc": "const rd_kafka_TopicDescription_t *",
+    "cntp": "size_t *"
+   },
+   "stores": [
+    {
+     "formal": "cntp",
+     "type": "size_t *",
+     "value_type": "unsigned long"
+    }
+   ],
+   "calls": []
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_TopicPartitionInfo_isr",
+   "formals": {
+    "partition": "const rd_kafka_TopicPartitionInfo_t *",
+    "cntp": "size_t *"
+   },
+   "stores": [
+    {
+     "formal": "cntp",
+     "type": "size_t *",
+     "value_type": "unsigned long"
+    }
+   ],
+   "calls": []
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_TopicPartitionInfo_replicas",
+   "formals": {
+    "partition": "const rd_kafka_TopicPartitionInfo_t *",
+    "cntp": "size_t *"
+   },
+   "stores": [
+    {
+     "formal": "cntp",
+     "type": "size_t *",
+     "value_type": "unsigned long"
+    }
+   ],
+   "calls": []
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_admin_result_ret_acl_bindings",
+   "formals": {
+    "rko": "const rd_kafka_op_t *",
+    "cntp": "size_t *"
+   },
+   "stores": [
+    {
+     "formal": "cntp",
+     "type": "size_t *",
+     "value_type": "unsigned long"
+    }
+   ],
+   "calls": [
+    {
+     "callee": "rd_list_cnt",
+     "actuals": [
+      {
+       "type": "const rd_list_t *",
+       "reach": "const"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_admin_result_ret_acl_results",
+   "formals": {
+    "rko": "const rd_kafka_op_t *",
+    "cntp": "size_t *"
+   },
+   "stores": [
+    {
+     "formal": "cntp",
+     "type": "size_t *",
+     "value_type": "unsigned long"
+    }
+   ],
+   "calls": [
+    {
+     "callee": "rd_list_cnt",
+     "actuals": [
+      {
+       "type": "const rd_list_t *",
+       "reach": "const"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_admin_result_ret_delete_acl_result_responses",
+   "formals": {
+    "rko": "const rd_kafka_op_t *",
+    "cntp": "size_t *"
+   },
+   "stores": [
+    {
+     "formal": "cntp",
+     "type": "size_t *",
+     "value_type": "unsigned long"
+    }
+   ],
+   "calls": [
+    {
+     "callee": "rd_list_cnt",
+     "actuals": [
+      {
+       "type": "const rd_list_t *",
+       "reach": "const"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_admin_result_ret_groups",
+   "formals": {
+    "rko": "const rd_kafka_op_t *",
+    "cntp": "size_t *"
+   },
+   "stores": [
+    {
+     "formal": "cntp",
+     "type": "size_t *",
+     "value_type": "unsigned long"
+    }
+   ],
+   "calls": [
+    {
+     "callee": "rd_list_cnt",
+     "actuals": [
+      {
+       "type": "const rd_list_t *",
+       "reach": "const"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_admin_result_ret_resources",
+   "formals": {
+    "rko": "const rd_kafka_op_t *",
+    "cntp": "size_t *"
+   },
+   "stores": [
+    {
+     "formal": "cntp",
+     "type": "size_t *",
+     "value_type": "unsigned long"
+    }
+   ],
+   "calls": [
+    {
+     "callee": "rd_list_cnt",
+     "actuals": [
+      {
+       "type": "const rd_list_t *",
+       "reach": "const"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_admin_result_ret_topics",
+   "formals": {
+    "rko": "const rd_kafka_op_t *",
+    "cntp": "size_t *"
+   },
+   "stores": [
+    {
+     "formal": "cntp",
+     "type": "size_t *",
+     "value_type": "unsigned long"
+    }
+   ],
+   "calls": [
+    {
+     "callee": "rd_list_cnt",
+     "actuals": [
+      {
+       "type": "const rd_list_t *",
+       "reach": "const"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_error_code",
+   "error": "no AST"
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_error_destroy",
+   "error": "no AST"
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_aux.c",
+   "function": "rd_kafka_error_destroy",
+   "error": "no AST"
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_error_destroy",
+   "error": "no AST"
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_msg.c",
+   "function": "rd_kafka_message_timestamp",
+   "formals": {
+    "rkmessage": "const rd_kafka_message_t *",
+    "tstype": "rd_kafka_timestamp_type_t *"
+   },
+   "stores": [
+    {
+     "formal": "tstype",
+     "type": "rd_kafka_timestamp_type_t *",
+     "value_type": "enum rd_kafka_timestamp_type_t"
+    },
+    {
+     "formal": "tstype",
+     "type": "rd_kafka_timestamp_type_t *",
+     "value_type": "enum rd_kafka_timestamp_type_t"
+    }
+   ],
+   "calls": [
+    {
+     "callee": "rd_kafka_message2msg",
+     "actuals": [
+      {
+       "type": "rd_kafka_message_t *",
+       "reach": "formal:rkmessage"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_op.c",
+   "function": "rd_kafka_error_code",
+   "error": "no AST"
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_op.c",
+   "function": "rd_kafka_error_destroy",
+   "error": "no AST"
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_get_avail",
+   "formals": {
+    "rkt": "const rd_kafka_topic_t *",
+    "partition": "int",
+    "ua_on_miss": "int",
+    "errp": "rd_kafka_resp_err_t *"
+   },
+   "stores": [
+    {
+     "formal": "errp",
+     "type": "rd_kafka_resp_err_t *",
+     "value_type": "rd_kafka_resp_err_t"
+    },
+    {
+     "formal": "errp",
+     "type": "rd_kafka_resp_err_t *",
+     "value_type": "rd_kafka_resp_err_t"
+    },
+    {
+     "formal": "errp",
+     "type": "rd_kafka_resp_err_t *",
+     "value_type": "rd_kafka_resp_err_t"
+    },
+    {
+     "formal": "errp",
+     "type": "rd_kafka_resp_err_t *",
+     "value_type": "rd_kafka_resp_err_t"
+    },
+    {
+     "formal": "errp",
+     "type": "rd_kafka_resp_err_t *",
+     "value_type": "rd_kafka_resp_err_t"
+    }
+   ],
+   "calls": [
+    {
+     "callee": "__builtin_expect",
+     "actuals": [
+      {
+       "type": "long",
+       "reach": "scalar"
+      },
+      {
+       "type": "long",
+       "reach": "scalar"
+      }
+     ]
+    },
+    {
+     "callee": "__builtin_expect",
+     "actuals": [
+      {
+       "type": "long",
+       "reach": "scalar"
+      },
+      {
+       "type": "long",
+       "reach": "scalar"
+      }
+     ]
+    },
+    {
+     "callee": "rd_kafka_crash",
+     "actuals": [
+      {
+       "type": "const char *",
+       "reach": "const"
+      },
+      {
+       "type": "int",
+       "reach": "scalar"
+      },
+      {
+       "type": "const char *",
+       "reach": "const"
+      },
+      {
+       "type": "rd_kafka_t *",
+       "reach": "member"
+      },
+      {
+       "type": "const char *",
+       "reach": "const"
+      }
+     ]
+    },
+    {
+     "callee": "rd_kafka_toppar_get0",
+     "actuals": [
+      {
+       "type": "const char *",
+       "reach": "const"
+      },
+      {
+       "type": "int",
+       "reach": "scalar"
+      },
+      {
+       "type": "const rd_kafka_topic_t *",
+       "reach": "const"
+      },
+      {
+       "type": "int",
+       "reach": "scalar"
+      },
+      {
+       "type": "int",
+       "reach": "scalar"
+      }
+     ]
+    },
+    {
+     "callee": "__builtin_expect",
+     "actuals": [
+      {
+       "type": "long",
+       "reach": "scalar"
+      },
+      {
+       "type": "long",
+       "reach": "scalar"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_share_acknowledgement.c",
+   "function": "rd_kafka_error_code",
+   "error": "no AST"
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_share_acknowledgement.c",
+   "function": "rd_kafka_error_destroy",
+   "error": "no AST"
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_subscription.c",
+   "function": "rd_kafka_error_code",
+   "error": "no AST"
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_subscription.c",
+   "function": "rd_kafka_error_destroy",
+   "error": "no AST"
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_txnmgr.c",
+   "function": "rd_kafka_error_code",
+   "error": "no AST"
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_txnmgr.c",
+   "function": "rd_kafka_error_destroy",
+   "error": "no AST"
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_txnmgr.c",
+   "function": "rd_kafka_error_is_retriable",
+   "error": "no AST"
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_txnmgr.c",
+   "function": "rd_kafka_error_set_fatal",
+   "error": "no AST"
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_txnmgr.c",
+   "function": "rd_kafka_error_set_retriable",
+   "error": "no AST"
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_txnmgr.c",
+   "function": "rd_kafka_error_set_txn_requires_abort",
+   "error": "no AST"
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_txnmgr.c",
+   "function": "rd_kafka_error_txn_requires_abort",
+   "error": "no AST"
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_txnmgr.c",
+   "function": "rd_kafka_txn_state_transition_is_valid",
+   "formals": {
+    "curr": "rd_kafka_txn_state_t",
+    "new_state": "rd_kafka_txn_state_t",
+    "ignore": "rd_bool_t *"
+   },
+   "stores": [
+    {
+     "formal": "ignore",
+     "type": "rd_bool_t *",
+     "value_type": "unsigned char"
+    },
+    {
+     "formal": "ignore",
+     "type": "rd_bool_t *",
+     "value_type": "unsigned char"
+    }
+   ],
+   "calls": [
+    {
+     "callee": "fprintf",
+     "actuals": [
+      {
+       "type": "FILE *",
+       "reach": "static:stderr"
+      },
+      {
+       "type": "const char *",
+       "reach": "const"
+      },
+      {
+       "type": "const char *",
+       "reach": "const"
+      },
+      {
+       "type": "int",
+       "reach": "scalar"
+      }
+     ]
+    },
+    {
+     "callee": "fprintf",
+     "actuals": [
+      {
+       "type": "FILE *",
+       "reach": "static:stderr"
+      },
+      {
+       "type": "const char *",
+       "reach": "const"
+      },
+      {
+       "type": "const char *",
+       "reach": "const"
+      },
+      {
+       "type": "const char *",
+       "reach": "const"
+      }
+     ]
+    },
+    {
+     "callee": "rd_kafka_txn_state2str",
+     "actuals": [
+      {
+       "type": "rd_kafka_txn_state_t",
+       "reach": "scalar"
+      }
+     ]
+    },
+    {
+     "callee": "rd_kafka_txn_state2str",
+     "actuals": [
+      {
+       "type": "rd_kafka_txn_state_t",
+       "reach": "scalar"
+      }
+     ]
+    },
+    {
+     "callee": "fprintf",
+     "actuals": [
+      {
+       "type": "FILE *",
+       "reach": "static:stderr"
+      },
+      {
+       "type": "const char *",
+       "reach": "const"
+      }
+     ]
+    },
+    {
+     "callee": "__assert_single_arg",
+     "actuals": [
+      {
+       "type": "_Bool",
+       "reach": "scalar"
+      }
+     ]
+    },
+    {
+     "callee": "__assert_fail",
+     "actuals": [
+      {
+       "type": "const char *",
+       "reach": "const"
+      },
+      {
+       "type": "const char *",
+       "reach": "const"
+      },
+      {
+       "type": "unsigned int",
+       "reach": "scalar"
+      },
+      {
+       "type": "const char *",
+       "reach": "const"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "snappy.c",
+   "function": "peek",
+   "formals": {
+    "s": "struct source *",
+    "len": "size_t *"
+   },
+   "stores": [
+    {
+     "formal": "len",
+     "type": "size_t *",
+     "value_type": "unsigned long"
+    },
+    {
+     "formal": "len",
+     "type": "size_t *",
+     "value_type": "unsigned long"
+    }
+   ],
+   "calls": [
+    {
+     "callee": "n_bytes_after_addr",
+     "actuals": [
+      {
+       "type": "void *",
+       "reach": "member"
+      },
+      {
+       "type": "unsigned long",
+       "reach": "scalar"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "snappy.c",
+   "function": "read_uncompressed_length",
+   "formals": {
+    "d": "struct snappy_decompressor *",
+    "result": "u32 *"
+   },
+   "stores": [
+    {
+     "formal": "result",
+     "type": "u32 *",
+     "value_type": "unsigned int"
+    },
+    {
+     "formal": "result",
+     "type": "u32 *",
+     "value_type": "unsigned int"
+    }
+   ],
+   "calls": [
+    {
+     "callee": "peek",
+     "actuals": [
+      {
+       "type": "struct source *",
+       "reach": "member"
+      },
+      {
+       "type": "size_t *",
+       "reach": "addr-local"
+      }
+     ]
+    },
+    {
+     "callee": "skip",
+     "actuals": [
+      {
+       "type": "struct source *",
+       "reach": "member"
+      },
+      {
+       "type": "unsigned long",
+       "reach": "scalar"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "tinycthread_extra.c",
+   "function": "cnd_timedwait_msp",
+   "formals": {
+    "cnd": "cnd_t *",
+    "mtx": "mtx_t *",
+    "timeout_msp": "int *"
+   },
+   "stores": [
+    {
+     "formal": "timeout_msp",
+     "type": "int *",
+     "value_type": "int"
+    }
+   ],
+   "calls": [
+    {
+     "callee": "rd_clock",
+     "actuals": []
+    }
+   ]
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_http_parser.c",
+   "function": "cb_debug_chunk_complete",
+   "formals": {
+    "in": "char *",
+    "in_len": "unsigned long",
+    "out": "char *",
+    "out_len": "unsigned long",
+    "out_len_processed": "size_t *"
+   },
+   "stores": [
+    {
+     "formal": "out_len_processed",
+     "type": "size_t *",
+     "value_type": "unsigned long"
+    }
+   ],
+   "calls": []
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_http_parser.c",
+   "function": "content_length_parse",
+   "formals": {
+    "value": "char *",
+    "len": "unsigned long",
+    "result": "long *"
+   },
+   "stores": [
+    {
+     "formal": "result",
+     "type": "long *",
+     "value_type": "long"
+    }
+   ],
+   "calls": []
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_lib.c",
+   "function": "mk_fifo_queue_get",
+   "error": "no AST"
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_lib.c",
+   "function": "mk_fifo_send",
+   "error": "no AST"
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_lib.c",
+   "function": "msg_write",
+   "error": "no AST"
+  }
+ ]
+}

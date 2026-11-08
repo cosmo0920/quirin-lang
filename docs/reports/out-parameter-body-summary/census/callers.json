@@ -1,0 +1,1329 @@
+[
+ {
+  "file": "lib/chunkio/src/cio_file.c",
+  "function": "cio_file_content_copy",
+  "slot": "*out_buf",
+  "index": 1,
+  "calls": 1,
+  "same_unit": 0,
+  "actuals": {
+   "forwarded pointer": 1
+  }
+ },
+ {
+  "file": "lib/chunkio/src/cio_memfs.c",
+  "function": "cio_memfs_content_copy",
+  "slot": "*out_buf",
+  "index": 1,
+  "calls": 1,
+  "same_unit": 0,
+  "actuals": {
+   "forwarded pointer": 1
+  }
+ },
+ {
+  "file": "lib/chunkio/src/cio_meta.c",
+  "function": "cio_meta_read",
+  "slot": "*meta_buf",
+  "index": 1,
+  "calls": 3,
+  "same_unit": 0,
+  "actuals": {
+   "&local": 3
+  }
+ },
+ {
+  "file": "lib/chunkio/src/cio_utils.c",
+  "function": "cio_utils_read_file",
+  "slot": "*buf",
+  "index": 1,
+  "calls": 1,
+  "same_unit": 0,
+  "actuals": {
+   "&local": 1
+  }
+ },
+ {
+  "file": "lib/cmetrics/src/cmt_cat.c",
+  "function": "cmt_cat_copy_label_keys",
+  "slot": "*out",
+  "index": 1,
+  "calls": 12,
+  "same_unit": 6,
+  "actuals": {
+   "other": 12
+  }
+ },
+ {
+  "file": "lib/cmetrics/src/cmt_cat.c",
+  "function": "copy_label_values",
+  "slot": "*out",
+  "index": 1,
+  "calls": 1,
+  "same_unit": 1,
+  "actuals": {
+   "other": 1
+  }
+ },
+ {
+  "file": "lib/cmetrics/src/cmt_decode_msgpack.c",
+  "function": "cmt_decode_msgpack_create",
+  "slot": "*out_cmt",
+  "index": 0,
+  "calls": 17,
+  "same_unit": 0,
+  "actuals": {
+   "&local": 17
+  }
+ },
+ {
+  "file": "lib/cmetrics/src/cmt_decode_msgpack.c",
+  "function": "unpack_basic_type",
+  "slot": "*map",
+  "index": 2,
+  "calls": 1,
+  "same_unit": 1,
+  "actuals": {
+   "&local": 1
+  }
+ },
+ {
+  "file": "lib/cmetrics/src/cmt_decode_msgpack.c",
+  "function": "unpack_metric",
+  "slot": "*out_metric",
+  "index": 2,
+  "calls": 1,
+  "same_unit": 1,
+  "actuals": {
+   "&local": 1
+  }
+ },
+ {
+  "file": "lib/cmetrics/src/cmt_decode_prometheus_remote_write.c",
+  "function": "cmt_decode_prometheus_remote_write_create",
+  "slot": "*out_cmt",
+  "index": 0,
+  "calls": 1,
+  "same_unit": 0,
+  "actuals": {
+   "&local": 1
+  }
+ },
+ {
+  "file": "lib/cmetrics/src/cmt_decode_statsd.c",
+  "function": "cmt_decode_statsd_create",
+  "slot": "*out_cmt",
+  "index": 0,
+  "calls": 1,
+  "same_unit": 0,
+  "actuals": {
+   "&local": 1
+  }
+ },
+ {
+  "file": "lib/cmetrics/src/cmt_encode_cloudwatch_emf.c",
+  "function": "cmt_encode_cloudwatch_emf_create",
+  "slot": "*out_buf",
+  "index": 1,
+  "calls": 1,
+  "same_unit": 0,
+  "actuals": {
+   "&local": 1
+  }
+ },
+ {
+  "file": "lib/cmetrics/src/cmt_encode_msgpack.c",
+  "function": "cmt_encode_msgpack_create",
+  "slot": "*out_buf",
+  "index": 1,
+  "calls": 4,
+  "same_unit": 0,
+  "actuals": {
+   "forwarded pointer": 1,
+   "&local": 3
+  }
+ },
+ {
+  "file": "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+  "function": "initialize_exemplars_from_metadata",
+  "slot": "*out_exemplars",
+  "index": 1,
+  "calls": 3,
+  "same_unit": 3,
+  "actuals": {
+   "&local": 3
+  }
+ },
+ {
+  "file": "lib/cmetrics/src/cmt_encode_prometheus_remote_write.c",
+  "function": "set_up_time_series_for_label_set",
+  "slot": "*time_series",
+  "index": 3,
+  "calls": 7,
+  "same_unit": 7,
+  "actuals": {
+   "&local": 7
+  }
+ },
+ {
+  "file": "lib/cmetrics/src/cmt_exp_histogram.c",
+  "function": "cmt_exp_histogram_to_explicit",
+  "slot": "*bucket_counts",
+  "index": 3,
+  "calls": 6,
+  "same_unit": 0,
+  "actuals": {
+   "&local": 6
+  }
+ },
+ {
+  "file": "lib/cmetrics/src/cmt_exp_histogram.c",
+  "function": "cmt_exp_histogram_to_explicit",
+  "slot": "*upper_bounds",
+  "index": 1,
+  "calls": 6,
+  "same_unit": 0,
+  "actuals": {
+   "&local": 6
+  }
+ },
+ {
+  "file": "lib/ctraces/src/ctr_decode_msgpack.c",
+  "function": "ctr_decode_msgpack_create",
+  "slot": "*out_context",
+  "index": 0,
+  "calls": 6,
+  "same_unit": 0,
+  "actuals": {
+   "&local": 6
+  }
+ },
+ {
+  "file": "lib/ctraces/src/ctr_decode_opentelemetry.c",
+  "function": "ctr_decode_opentelemetry_create",
+  "slot": "*out_ctr",
+  "index": 0,
+  "calls": 1,
+  "same_unit": 0,
+  "actuals": {
+   "&local": 1
+  }
+ },
+ {
+  "file": "lib/ctraces/src/ctr_encode_msgpack.c",
+  "function": "ctr_encode_msgpack_create",
+  "slot": "*out_buf",
+  "index": 1,
+  "calls": 2,
+  "same_unit": 0,
+  "actuals": {
+   "&local": 2
+  }
+ },
+ {
+  "file": "lib/ctraces/src/ctr_mpack_utils.c",
+  "function": "ctr_mpack_consume_binary_or_nil_tag",
+  "slot": "*output_buffer",
+  "index": 1,
+  "calls": 0,
+  "same_unit": 0,
+  "actuals": {}
+ },
+ {
+  "file": "lib/ctraces/src/ctr_mpack_utils.c",
+  "function": "ctr_mpack_consume_binary_tag",
+  "slot": "*output_buffer",
+  "index": 1,
+  "calls": 1,
+  "same_unit": 1,
+  "actuals": {
+   "forwarded pointer": 1
+  }
+ },
+ {
+  "file": "lib/ctraces/src/ctr_mpack_utils.c",
+  "function": "ctr_mpack_consume_string_or_nil_tag",
+  "slot": "*output_buffer",
+  "index": 1,
+  "calls": 15,
+  "same_unit": 0,
+  "actuals": {
+   "&member": 10,
+   "&local": 5
+  }
+ },
+ {
+  "file": "lib/ctraces/src/ctr_mpack_utils.c",
+  "function": "ctr_mpack_consume_string_tag",
+  "slot": "*output_buffer",
+  "index": 1,
+  "calls": 2,
+  "same_unit": 2,
+  "actuals": {
+   "forwarded pointer": 1,
+   "&local": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/lz4frame.c",
+  "function": "LZ4F_decompress",
+  "slot": "*dstSizePtr",
+  "index": 2,
+  "calls": 4,
+  "same_unit": 2,
+  "actuals": {
+   "&local": 3,
+   "forwarded pointer": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/lz4frame.c",
+  "function": "LZ4F_decompress",
+  "slot": "*srcSizePtr",
+  "index": 4,
+  "calls": 4,
+  "same_unit": 2,
+  "actuals": {
+   "&local": 3,
+   "forwarded pointer": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/lz4frame.c",
+  "function": "LZ4F_getFrameInfo",
+  "slot": "*srcSizePtr",
+  "index": 3,
+  "calls": 1,
+  "same_unit": 0,
+  "actuals": {
+   "&local": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/lz4hc.c",
+  "function": "LZ4HC_InsertAndGetWiderMatch",
+  "slot": "*startpos",
+  "index": 6,
+  "calls": 5,
+  "same_unit": 5,
+  "actuals": {
+   "other": 1,
+   "&local": 4
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdaddr.c",
+  "function": "rd_addrinfo_prepare",
+  "slot": "*node",
+  "index": 1,
+  "calls": 1,
+  "same_unit": 1,
+  "actuals": {
+   "&local": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdaddr.c",
+  "function": "rd_addrinfo_prepare",
+  "slot": "*svc",
+  "index": 2,
+  "calls": 1,
+  "same_unit": 1,
+  "actuals": {
+   "&local": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdaddr.c",
+  "function": "rd_getaddrinfo",
+  "slot": "*errstr",
+  "index": 8,
+  "calls": 3,
+  "same_unit": 1,
+  "actuals": {
+   "other": 1,
+   "&local": 2
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdavl.c",
+  "function": "rd_avl_insert_node",
+  "slot": "*existing",
+  "index": 3,
+  "calls": 1,
+  "same_unit": 1,
+  "actuals": {
+   "forwarded pointer": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdbuf.c",
+  "function": "rd_buf_get_writable0",
+  "slot": "*segp",
+  "index": 1,
+  "calls": 5,
+  "same_unit": 5,
+  "actuals": {
+   "other": 2,
+   "NULL": 1,
+   "&local": 2
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdhttp.c",
+  "function": "rd_http_get",
+  "slot": "*content_type",
+  "index": 8,
+  "calls": 1,
+  "same_unit": 1,
+  "actuals": {
+   "&local": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdhttp.c",
+  "function": "rd_http_get",
+  "slot": "*rbufp",
+  "index": 7,
+  "calls": 1,
+  "same_unit": 1,
+  "actuals": {
+   "&local": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdhttp.c",
+  "function": "rd_http_get_json",
+  "slot": "*jsonp",
+  "index": 7,
+  "calls": 3,
+  "same_unit": 2,
+  "actuals": {
+   "&local": 3
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka.c",
+  "function": "rd_kafka_get_err_descs",
+  "slot": "*errdescs",
+  "index": 0,
+  "calls": 0,
+  "same_unit": 0,
+  "actuals": {}
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka.c",
+  "function": "rd_kafka_share_commit_sync",
+  "slot": "*partitions",
+  "index": 2,
+  "calls": 1,
+  "same_unit": 1,
+  "actuals": {
+   "other": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka.c",
+  "function": "rd_kafka_share_poll",
+  "slot": "*rkmessages",
+  "index": 2,
+  "calls": 0,
+  "same_unit": 0,
+  "actuals": {}
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+  "function": "rd_kafka_AlterConfigsResponse_parse",
+  "slot": "*rko_resultp",
+  "index": 1,
+  "calls": 1,
+  "same_unit": 1,
+  "actuals": {
+   "other": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+  "function": "rd_kafka_AlterConsumerGroupOffsetsResponse_parse",
+  "slot": "*rko_resultp",
+  "index": 1,
+  "calls": 1,
+  "same_unit": 1,
+  "actuals": {
+   "other": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+  "function": "rd_kafka_AlterUserScramCredentialsResponse_parse",
+  "slot": "*rko_resultp",
+  "index": 1,
+  "calls": 1,
+  "same_unit": 1,
+  "actuals": {
+   "other": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+  "function": "rd_kafka_ConsumerGroupDescribeResponse_parse",
+  "slot": "*rko_resultp",
+  "index": 1,
+  "calls": 1,
+  "same_unit": 1,
+  "actuals": {
+   "other": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+  "function": "rd_kafka_CreateAclsResponse_parse",
+  "slot": "*rko_resultp",
+  "index": 1,
+  "calls": 1,
+  "same_unit": 1,
+  "actuals": {
+   "other": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+  "function": "rd_kafka_CreatePartitionsResponse_parse",
+  "slot": "*rko_resultp",
+  "index": 1,
+  "calls": 1,
+  "same_unit": 1,
+  "actuals": {
+   "other": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+  "function": "rd_kafka_CreateTopicsResponse_parse",
+  "slot": "*rko_resultp",
+  "index": 1,
+  "calls": 1,
+  "same_unit": 1,
+  "actuals": {
+   "other": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+  "function": "rd_kafka_DeleteAclsResponse_parse",
+  "slot": "*rko_resultp",
+  "index": 1,
+  "calls": 1,
+  "same_unit": 1,
+  "actuals": {
+   "other": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+  "function": "rd_kafka_DeleteGroupsResponse_parse",
+  "slot": "*rko_resultp",
+  "index": 1,
+  "calls": 1,
+  "same_unit": 1,
+  "actuals": {
+   "other": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+  "function": "rd_kafka_DeleteRecordsResponse_parse",
+  "slot": "*rko_resultp",
+  "index": 1,
+  "calls": 1,
+  "same_unit": 1,
+  "actuals": {
+   "other": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+  "function": "rd_kafka_DeleteTopicsResponse_parse",
+  "slot": "*rko_resultp",
+  "index": 1,
+  "calls": 1,
+  "same_unit": 1,
+  "actuals": {
+   "other": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+  "function": "rd_kafka_DescribeAclsResponse_parse",
+  "slot": "*rko_resultp",
+  "index": 1,
+  "calls": 1,
+  "same_unit": 1,
+  "actuals": {
+   "other": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+  "function": "rd_kafka_DescribeClusterResponse_parse",
+  "slot": "*rko_resultp",
+  "index": 1,
+  "calls": 1,
+  "same_unit": 1,
+  "actuals": {
+   "other": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+  "function": "rd_kafka_DescribeConfigsResponse_parse",
+  "slot": "*rko_resultp",
+  "index": 1,
+  "calls": 1,
+  "same_unit": 1,
+  "actuals": {
+   "other": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+  "function": "rd_kafka_DescribeConsumerGroupsResponse_parse",
+  "slot": "*rko_resultp",
+  "index": 1,
+  "calls": 1,
+  "same_unit": 1,
+  "actuals": {
+   "other": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+  "function": "rd_kafka_DescribeTopicsResponse_parse",
+  "slot": "*rko_resultp",
+  "index": 1,
+  "calls": 1,
+  "same_unit": 1,
+  "actuals": {
+   "other": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+  "function": "rd_kafka_DescribeUserScramCredentialsResponse_parse",
+  "slot": "*rko_resultp",
+  "index": 1,
+  "calls": 1,
+  "same_unit": 1,
+  "actuals": {
+   "other": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+  "function": "rd_kafka_ElectLeadersResponse_parse",
+  "slot": "*rko_resultp",
+  "index": 1,
+  "calls": 1,
+  "same_unit": 1,
+  "actuals": {
+   "other": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+  "function": "rd_kafka_IncrementalAlterConfigsResponse_parse",
+  "slot": "*rko_resultp",
+  "index": 1,
+  "calls": 1,
+  "same_unit": 1,
+  "actuals": {
+   "other": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+  "function": "rd_kafka_ListConsumerGroupOffsetsResponse_parse",
+  "slot": "*rko_resultp",
+  "index": 1,
+  "calls": 1,
+  "same_unit": 1,
+  "actuals": {
+   "other": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+  "function": "rd_kafka_ListConsumerGroupsResponse_parse",
+  "slot": "*rko_resultp",
+  "index": 1,
+  "calls": 1,
+  "same_unit": 1,
+  "actuals": {
+   "other": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+  "function": "rd_kafka_ListOffsetsResponse_parse",
+  "slot": "*rko_resultp",
+  "index": 1,
+  "calls": 1,
+  "same_unit": 1,
+  "actuals": {
+   "other": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+  "function": "rd_kafka_OffsetDeleteResponse_parse",
+  "slot": "*rko_resultp",
+  "index": 1,
+  "calls": 1,
+  "same_unit": 1,
+  "actuals": {
+   "other": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+  "function": "rd_kafka_broker_name_parse",
+  "slot": "*host",
+  "index": 3,
+  "calls": 1,
+  "same_unit": 1,
+  "actuals": {
+   "&local": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+  "function": "rd_kafka_broker_name_parse",
+  "slot": "*proto",
+  "index": 2,
+  "calls": 1,
+  "same_unit": 1,
+  "actuals": {
+   "&local": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+  "function": "rd_kafka_broker_share_session_add_remove_toppar",
+  "slot": "*toppars_remove_list",
+  "index": 1,
+  "calls": 3,
+  "same_unit": 3,
+  "actuals": {
+   "other": 1,
+   "&member": 2
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+  "function": "rd_kafka_broker_update",
+  "slot": "*rkbp",
+  "index": 3,
+  "calls": 4,
+  "same_unit": 0,
+  "actuals": {
+   "NULL": 3,
+   "&local": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+  "function": "rd_kafka_consumer_group_metadata_write",
+  "slot": "*bufferp",
+  "index": 1,
+  "calls": 2,
+  "same_unit": 2,
+  "actuals": {
+   "&local": 2
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_feature.c",
+  "function": "rd_kafka_get_legacy_ApiVersions",
+  "slot": "*api_cntp",
+  "index": 2,
+  "calls": 3,
+  "same_unit": 1,
+  "actuals": {
+   "&local": 3
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_feature.c",
+  "function": "rd_kafka_get_legacy_ApiVersions",
+  "slot": "*apisp",
+  "index": 1,
+  "calls": 3,
+  "same_unit": 1,
+  "actuals": {
+   "&local": 3
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+  "function": "rd_kafka_broker_session_update_toppars_list",
+  "slot": "*request_toppars_ptr",
+  "index": 1,
+  "calls": 2,
+  "same_unit": 2,
+  "actuals": {
+   "&member": 2
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+  "function": "rd_kafka_broker_session_update_toppars_list",
+  "slot": "*toppars_to_remove_from_ptr",
+  "index": 2,
+  "calls": 2,
+  "same_unit": 2,
+  "actuals": {
+   "&member": 2
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+  "function": "rd_kafka_share_fetch_reply_handle",
+  "slot": "*response_rko_out",
+  "index": 3,
+  "calls": 2,
+  "same_unit": 2,
+  "actuals": {
+   "other": 1,
+   "&local": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_idempotence.c",
+  "function": "rd_kafka_idemp_broker_any",
+  "slot": "*errp",
+  "index": 1,
+  "calls": 2,
+  "same_unit": 1,
+  "actuals": {
+   "&local": 2
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_lz4.c",
+  "function": "rd_kafka_lz4_compress",
+  "slot": "*outbuf",
+  "index": 4,
+  "calls": 2,
+  "same_unit": 0,
+  "actuals": {
+   "&member": 1,
+   "forwarded pointer": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_lz4.c",
+  "function": "rd_kafka_lz4_decompress",
+  "slot": "*outbuf",
+  "index": 5,
+  "calls": 2,
+  "same_unit": 0,
+  "actuals": {
+   "forwarded pointer": 1,
+   "&member": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_metadata.c",
+  "function": "rd_kafka_parse_Metadata0",
+  "slot": "*mdip",
+  "index": 3,
+  "calls": 3,
+  "same_unit": 3,
+  "actuals": {
+   "other": 1,
+   "forwarded pointer": 2
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_metadata_cache.c",
+  "function": "rd_kafka_metadata_cache_topic_get",
+  "slot": "*mdtip",
+  "index": 2,
+  "calls": 2,
+  "same_unit": 1,
+  "actuals": {
+   "&local": 1,
+   "NULL": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_metadata_cache.c",
+  "function": "rd_kafka_metadata_cache_topic_partition_get",
+  "slot": "*mdpip",
+  "index": 3,
+  "calls": 1,
+  "same_unit": 0,
+  "actuals": {
+   "&local": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_metadata_cache.c",
+  "function": "rd_kafka_metadata_cache_topic_partition_get",
+  "slot": "*mpartp",
+  "index": 2,
+  "calls": 1,
+  "same_unit": 0,
+  "actuals": {
+   "&local": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_metadata_cache.c",
+  "function": "rd_kafka_metadata_cache_topic_partition_get",
+  "slot": "*mtopicp",
+  "index": 1,
+  "calls": 1,
+  "same_unit": 0,
+  "actuals": {
+   "&local": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+  "function": "rd_kafka_mock_broker_new",
+  "slot": "*err",
+  "index": 2,
+  "calls": 3,
+  "same_unit": 3,
+  "actuals": {
+   "other": 1,
+   "&local": 1,
+   "NULL": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+  "function": "rd_kafka_mock_broker_new_listener",
+  "slot": "*sinp",
+  "index": 1,
+  "calls": 2,
+  "same_unit": 2,
+  "actuals": {
+   "&local": 1,
+   "&member": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+  "function": "rd_kafka_mock_connection_read_request",
+  "slot": "*rkbufp",
+  "index": 1,
+  "calls": 2,
+  "same_unit": 2,
+  "actuals": {
+   "other": 1,
+   "&local": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+  "function": "rd_kafka_mock_topic_auto_create",
+  "slot": "*errp",
+  "index": 3,
+  "calls": 4,
+  "same_unit": 3,
+  "actuals": {
+   "other": 1,
+   "&local": 3
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+  "function": "rd_kafka_mock_pid_find",
+  "slot": "*mpidp",
+  "index": 3,
+  "calls": 4,
+  "same_unit": 3,
+  "actuals": {
+   "&local": 3,
+   "other": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_mock_sharegrp.c",
+  "function": "rd_kafka_mock_sgrp_session_validate",
+  "slot": "*sessionp",
+  "index": 4,
+  "calls": 2,
+  "same_unit": 0,
+  "actuals": {
+   "&local": 2
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_mock_sharegrp.c",
+  "function": "rd_kafka_mock_sharegroup_get_member_ids",
+  "slot": "*member_ids_out",
+  "index": 2,
+  "calls": 1,
+  "same_unit": 1,
+  "actuals": {
+   "other": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_msg.c",
+  "function": "rd_kafka_message_timestamp",
+  "slot": "*tstype",
+  "index": 1,
+  "calls": 0,
+  "same_unit": 0,
+  "actuals": {}
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_msg.c",
+  "function": "rd_kafka_msg_new0",
+  "slot": "*errp",
+  "index": 8,
+  "calls": 4,
+  "same_unit": 4,
+  "actuals": {
+   "&local": 3,
+   "&member": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_msgset_writer.c",
+  "function": "rd_kafka_gzip_compress",
+  "slot": "*outbuf",
+  "index": 3,
+  "calls": 2,
+  "same_unit": 1,
+  "actuals": {
+   "&member": 1,
+   "forwarded pointer": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_op.c",
+  "function": "rd_kafka_op_new_fetch_msg",
+  "slot": "*rkmp",
+  "index": 0,
+  "calls": 3,
+  "same_unit": 1,
+  "actuals": {
+   "&local": 3
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+  "function": "rd_kafka_toppar_get_avail",
+  "slot": "*errp",
+  "index": 3,
+  "calls": 2,
+  "same_unit": 0,
+  "actuals": {
+   "&local": 2
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_queue.c",
+  "function": "rd_kafka_q_serve_share_rkmessages",
+  "slot": "*rkmessages_out",
+  "index": 2,
+  "calls": 3,
+  "same_unit": 2,
+  "actuals": {
+   "forwarded pointer": 2,
+   "other": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+  "function": "rd_kafka_handle_ApiVersion",
+  "slot": "*apis",
+  "index": 5,
+  "calls": 2,
+  "same_unit": 1,
+  "actuals": {
+   "other": 1,
+   "&local": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_sasl_cyrus.c",
+  "function": "rd_kafka_sasl_cyrus_cb_chalprompt",
+  "slot": "*result",
+  "index": 5,
+  "calls": 0,
+  "same_unit": 0,
+  "actuals": {}
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_sasl_cyrus.c",
+  "function": "rd_kafka_sasl_cyrus_cb_getopt",
+  "slot": "*result",
+  "index": 3,
+  "calls": 0,
+  "same_unit": 0,
+  "actuals": {}
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_sasl_cyrus.c",
+  "function": "rd_kafka_sasl_cyrus_cb_getsecret",
+  "slot": "*psecret",
+  "index": 3,
+  "calls": 0,
+  "same_unit": 0,
+  "actuals": {}
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_sasl_cyrus.c",
+  "function": "rd_kafka_sasl_cyrus_cb_getsimple",
+  "slot": "*result",
+  "index": 2,
+  "calls": 0,
+  "same_unit": 0,
+  "actuals": {}
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c",
+  "function": "rd_kafka_oidc_assertion_parse_template_file",
+  "slot": "*header",
+  "index": 2,
+  "calls": 4,
+  "same_unit": 4,
+  "actuals": {
+   "other": 1,
+   "&local": 3
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c",
+  "function": "rd_kafka_oidc_assertion_parse_template_file",
+  "slot": "*payload",
+  "index": 3,
+  "calls": 4,
+  "same_unit": 4,
+  "actuals": {
+   "other": 1,
+   "&local": 3
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c",
+  "function": "rd_kafka_oidc_token_try_validate",
+  "slot": "*sub",
+  "index": 3,
+  "calls": 5,
+  "same_unit": 5,
+  "actuals": {
+   "&local": 5
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c",
+  "function": "rd_kafka_share_ack_batch_resolve_leader_or_fail_acks",
+  "slot": "*errp",
+  "index": 2,
+  "calls": 2,
+  "same_unit": 2,
+  "actuals": {
+   "&local": 2
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c",
+  "function": "rd_kafka_share_find_ack_entry",
+  "slot": "*entry_out",
+  "index": 4,
+  "calls": 2,
+  "same_unit": 2,
+  "actuals": {
+   "other": 1,
+   "&local": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c",
+  "function": "rd_kafka_sticky_assignor_on_assignment_cb",
+  "slot": "*assignor_state",
+  "index": 1,
+  "calls": 0,
+  "same_unit": 0,
+  "actuals": {}
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_telemetry.c",
+  "function": "rd_kafka_push_telemetry_payload_compress",
+  "slot": "*compressed_payload",
+  "index": 3,
+  "calls": 2,
+  "same_unit": 2,
+  "actuals": {
+   "other": 1,
+   "&local": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_telemetry_encode.c",
+  "function": "resource_attributes",
+  "slot": "*attributes",
+  "index": 1,
+  "calls": 2,
+  "same_unit": 2,
+  "actuals": {
+   "other": 1,
+   "&local": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_topic.c",
+  "function": "rd_kafka_topic_new0",
+  "slot": "*existing",
+  "index": 3,
+  "calls": 5,
+  "same_unit": 2,
+  "actuals": {
+   "&local": 3,
+   "NULL": 2
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_transport.c",
+  "function": "rd_kafka_transport_framed_recv",
+  "slot": "*rkbufp",
+  "index": 1,
+  "calls": 2,
+  "same_unit": 1,
+  "actuals": {
+   "forwarded pointer": 1,
+   "&local": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_zstd.c",
+  "function": "rd_kafka_zstd_compress",
+  "slot": "*outbuf",
+  "index": 3,
+  "calls": 2,
+  "same_unit": 0,
+  "actuals": {
+   "&member": 1,
+   "forwarded pointer": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdkafka_zstd.c",
+  "function": "rd_kafka_zstd_decompress",
+  "slot": "*outbuf",
+  "index": 3,
+  "calls": 2,
+  "same_unit": 0,
+  "actuals": {
+   "forwarded pointer": 1,
+   "&member": 1
+  }
+ },
+ {
+  "file": "lib/librdkafka-2.15.0/src/rdlist.c",
+  "function": "rd_list_deduplicate",
+  "slot": "*rl",
+  "index": 0,
+  "calls": 7,
+  "same_unit": 0,
+  "actuals": {
+   "forwarded pointer": 1,
+   "&local": 6
+  }
+ },
+ {
+  "file": "lib/monkey/mk_core/mk_string.c",
+  "function": "mk_string_build",
+  "slot": "*buffer",
+  "index": 0,
+  "calls": 38,
+  "same_unit": 0,
+  "actuals": {
+   "&member": 23,
+   "&local": 14,
+   "forwarded pointer": 1
+  }
+ },
+ {
+  "file": "lib/monkey/mk_server/mk_http.c",
+  "function": "mk_http_error_page",
+  "slot": "*out_buf",
+  "index": 3,
+  "calls": 6,
+  "same_unit": 6,
+  "actuals": {
+   "&member": 6
+  }
+ },
+ {
+  "file": "lib/monkey/mk_server/mk_http_parser.c",
+  "function": "mk_http_parser_chunked_decode",
+  "slot": "*out_buf",
+  "index": 3,
+  "calls": 0,
+  "same_unit": 0,
+  "actuals": {}
+ },
+ {
+  "file": "lib/monkey/mk_server/mk_vhost.c",
+  "function": "mk_vhost_get",
+  "slot": "*alias",
+  "index": 2,
+  "calls": 1,
+  "same_unit": 0,
+  "actuals": {
+   "&member": 1
+  }
+ },
+ {
+  "file": "lib/monkey/mk_server/mk_vhost.c",
+  "function": "mk_vhost_get",
+  "slot": "*vhost",
+  "index": 1,
+  "calls": 1,
+  "same_unit": 0,
+  "actuals": {
+   "&member": 1
+  }
+ },
+ {
+  "file": "src/flb_input_chunk.c",
+  "function": "flb_input_chunk_get_direct_routes",
+  "slot": "*routes",
+  "index": 1,
+  "calls": 2,
+  "same_unit": 1,
+  "actuals": {
+   "&local": 2
+  }
+ },
+ {
+  "file": "src/flb_input_chunk.c",
+  "function": "flb_input_chunk_get_tag",
+  "slot": "*tag_buf",
+  "index": 1,
+  "calls": 6,
+  "same_unit": 2,
+  "actuals": {
+   "&local": 6
+  }
+ },
+ {
+  "file": "src/flb_input_chunk.c",
+  "function": "input_chunk_collect_output_references",
+  "slot": "*out_matches",
+  "index": 2,
+  "calls": 2,
+  "same_unit": 2,
+  "actuals": {
+   "&local": 2
+  }
+ }
+]

@@ -921,6 +921,12 @@ impl IndirectCallUnit<'_> {
         qcore_schemas::sha256_hex(self.source.as_bytes())
     }
 
+    /// Card OUT-PARAMETER-SCALAR-FRAME-PREMISE: whether `node`'s type is
+    /// positively an enumeration (the owner-aware enum arm's reading).
+    pub(crate) fn is_enum(&self, node: &Value) -> bool {
+        self.ast.enums.is_enum(node)
+    }
+
     /// The unique body Clang read for `name`.
     pub(crate) fn function(&self, name: &str) -> Option<&Value> {
         match self.ast.functions.get(name)?.as_slice() {
@@ -983,6 +989,25 @@ impl IndirectCallUnit<'_> {
     pub(crate) fn node_line(&self, node: &Value) -> Option<usize> {
         node_line(node, self.source.len(), &self.ast.line_starts)
     }
+}
+
+/// Card OUT-PARAMETER-SCALAR-FRAME-PREMISE (rule 11r(7)): whether the
+/// analysed unit's build leaves C11 6.5p7's effective-type rule in force: a
+/// source context is entered and its frontend options do not carry
+/// `-fno-strict-aliasing`. No context is no evidence, so `false`.
+pub(crate) fn strict_aliasing_in_force() -> bool {
+    ANALYSED_SOURCE.with(|cell| {
+        cell.borrow().as_ref().is_some_and(|context| {
+            !context.request.preprocessor_options.iter().any(|option| {
+                matches!(
+                    option,
+                    crate::legacy_c::CPreprocessorOption::FrontendFlag(
+                        crate::legacy_c::CFrontendFlag::NoStrictAliasing
+                    )
+                )
+            })
+        })
+    })
 }
 
 /// Run `f` over the analysed unit's AST, when a source context is entered

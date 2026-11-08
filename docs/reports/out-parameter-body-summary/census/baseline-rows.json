@@ -1,0 +1,1582 @@
+{
+ "baseline": "baseline:7b726587bdf6a8213f451fa1c78297bb5e476ef7",
+ "profiles": {
+  "corpus": [
+   {
+    "library": "cmetrics",
+    "file": "cmt_cat.c",
+    "function": "cmt_cat_copy_label_keys",
+    "status": "Unknown",
+    "leaves": 2,
+    "slots": [
+     "*out"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "cmetrics",
+    "file": "cmt_cat.c",
+    "function": "copy_label_values",
+    "status": "Unknown",
+    "leaves": 2,
+    "slots": [
+     "*out"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "cmetrics",
+    "file": "cmt_decode_msgpack.c",
+    "function": "cmt_decode_msgpack_create",
+    "status": "Unknown",
+    "leaves": 2,
+    "slots": [
+     "*out_cmt"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "cmetrics",
+    "file": "cmt_decode_msgpack.c",
+    "function": "unpack_basic_type",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*map"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "cmetrics",
+    "file": "cmt_decode_msgpack.c",
+    "function": "unpack_metric",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*out_metric"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "cmetrics",
+    "file": "cmt_decode_prometheus_remote_write.c",
+    "function": "cmt_decode_prometheus_remote_write_create",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*out_cmt"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "cmetrics",
+    "file": "cmt_decode_statsd.c",
+    "function": "cmt_decode_statsd_create",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*out_cmt"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "cmetrics",
+    "file": "cmt_encode_cloudwatch_emf.c",
+    "function": "cmt_encode_cloudwatch_emf_create",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*out_buf"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "cmetrics",
+    "file": "cmt_encode_msgpack.c",
+    "function": "cmt_encode_msgpack_create",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*out_buf"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "cmetrics",
+    "file": "cmt_encode_opentelemetry.c",
+    "function": "initialize_exemplars_from_metadata",
+    "status": "Unknown",
+    "leaves": 2,
+    "slots": [
+     "*out_exemplars"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "cmetrics",
+    "file": "cmt_encode_prometheus_remote_write.c",
+    "function": "set_up_time_series_for_label_set",
+    "status": "Unknown",
+    "leaves": 2,
+    "slots": [
+     "*time_series"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "cmetrics",
+    "file": "cmt_exp_histogram.c",
+    "function": "cmt_exp_histogram_to_explicit",
+    "status": "Unknown",
+    "leaves": 2,
+    "slots": [
+     "*bucket_counts",
+     "*upper_bounds"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "ctraces",
+    "file": "ctr_decode_opentelemetry.c",
+    "function": "ctr_decode_opentelemetry_create",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*out_ctr"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "ctraces",
+    "file": "ctr_encode_msgpack.c",
+    "function": "ctr_encode_msgpack_create",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*out_buf"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "ctraces",
+    "file": "ctr_mpack_utils.c",
+    "function": "ctr_mpack_consume_binary_or_nil_tag",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*output_buffer"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "ctraces",
+    "file": "ctr_mpack_utils.c",
+    "function": "ctr_mpack_consume_binary_tag",
+    "status": "Unknown",
+    "leaves": 2,
+    "slots": [
+     "*output_buffer"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "ctraces",
+    "file": "ctr_mpack_utils.c",
+    "function": "ctr_mpack_consume_string_or_nil_tag",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*output_buffer"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "ctraces",
+    "file": "ctr_mpack_utils.c",
+    "function": "ctr_mpack_consume_string_tag",
+    "status": "Unknown",
+    "leaves": 2,
+    "slots": [
+     "*output_buffer"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "lz4frame.c",
+    "function": "LZ4F_decompress",
+    "status": "Unknown",
+    "leaves": 2,
+    "slots": [
+     "*dstSizePtr",
+     "*srcSizePtr"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "lz4frame.c",
+    "function": "LZ4F_getFrameInfo",
+    "status": "Unknown",
+    "leaves": 6,
+    "slots": [
+     "*srcSizePtr"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "lz4hc.c",
+    "function": "LZ4HC_InsertAndGetWiderMatch",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*startpos"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdaddr.c",
+    "function": "rd_addrinfo_prepare",
+    "status": "Unknown",
+    "leaves": 4,
+    "slots": [
+     "*node",
+     "*snode",
+     "*ssvc",
+     "*svc"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdaddr.c",
+    "function": "rd_getaddrinfo",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*errstr"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdavl.c",
+    "function": "rd_avl_insert_node",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*existing"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdbuf.c",
+    "function": "rd_buf_get_writable0",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*segp"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdhttp.c",
+    "function": "rd_http_get",
+    "status": "Unknown",
+    "leaves": 3,
+    "slots": [
+     "*content_type",
+     "*rbufp"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdhttp.c",
+    "function": "rd_http_get_json",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*jsonp"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka.c",
+    "function": "rd_kafka_DescribeGroups_resp_cb",
+    "status": "Unknown",
+    "leaves": 9,
+    "slots": [
+     "*_vp"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka.c",
+    "function": "rd_kafka_get_err_descs",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*errdescs"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka.c",
+    "function": "rd_kafka_share_commit_sync",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*partitions"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka.c",
+    "function": "rd_kafka_share_poll",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*rkmessages"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_AlterConfigsResponse_parse",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*rko_resultp"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_AlterConsumerGroupOffsetsResponse_parse",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*rko_resultp"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_AlterUserScramCredentialsResponse_parse",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*rko_resultp"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_ConsumerGroupDescribeResponse_parse",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*rko_resultp"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_CreateAclsResponse_parse",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*rko_resultp"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_CreatePartitionsResponse_parse",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*rko_resultp"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_CreateTopicsResponse_parse",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*rko_resultp"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_DeleteAclsResponse_parse",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*rko_resultp"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_DeleteGroupsResponse_parse",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*rko_resultp"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_DeleteRecordsResponse_parse",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*rko_resultp"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_DeleteTopicsResponse_parse",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*rko_resultp"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_DescribeAclsResponse_parse",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*rko_resultp"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_DescribeClusterResponse_parse",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*rko_resultp"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_DescribeConfigsResponse_parse",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*rko_resultp"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_DescribeConsumerGroupsResponse_parse",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*rko_resultp"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_DescribeTopicsResponse_parse",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*rko_resultp"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_DescribeUserScramCredentialsResponse_parse",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*rko_resultp"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_ElectLeadersResponse_parse",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*rko_resultp"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_IncrementalAlterConfigsResponse_parse",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*rko_resultp"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_ListConsumerGroupOffsetsResponse_parse",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*rko_resultp"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_ListConsumerGroupsResponse_parse",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*rko_resultp"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_ListOffsetsResponse_parse",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*rko_resultp"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_OffsetDeleteResponse_parse",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*rko_resultp"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_broker.c",
+    "function": "rd_kafka_broker_bufq_timeout_scan",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*holbstr"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_broker.c",
+    "function": "rd_kafka_broker_name_parse",
+    "status": "Unknown",
+    "leaves": 2,
+    "slots": [
+     "*host",
+     "*proto"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_broker.c",
+    "function": "rd_kafka_broker_set_nodename",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*nodename"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_broker.c",
+    "function": "rd_kafka_broker_share_session_add_remove_toppar",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*toppars_remove_list"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_broker.c",
+    "function": "rd_kafka_broker_update",
+    "status": "Unknown",
+    "leaves": 2,
+    "slots": [
+     "*rkbp"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_cert.c",
+    "function": "rd_kafka_conf_set_ssl_cert",
+    "status": "Unknown",
+    "leaves": 2,
+    "slots": [
+     "*certp"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_cgrp.c",
+    "function": "rd_kafka_cgrp_assignor_run",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*errstr"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_cgrp.c",
+    "function": "rd_kafka_consumer_group_metadata_write",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*bufferp"
+    ],
+    "sole_blocked": true
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_conf.c",
+    "function": "rd_kafka_anyconf_clear",
+    "status": "Unknown",
+    "leaves": 4,
+    "slots": [
+     "*kstr",
+     "*plist",
+     "*str",
+     "*tconf"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_conf.c",
+    "function": "rd_kafka_anyconf_set_prop0",
+    "status": "Unknown",
+    "leaves": 3,
+    "slots": [
+     "*kstr",
+     "*plist",
+     "*str"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_conf.c",
+    "function": "rd_kafka_conf_properties_show",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*tmp"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_feature.c",
+    "function": "rd_kafka_get_legacy_ApiVersions",
+    "status": "Unknown",
+    "leaves": 2,
+    "slots": [
+     "*api_cntp",
+     "*apisp"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_fetcher.c",
+    "function": "rd_kafka_broker_session_update_toppars_list",
+    "status": "Unknown",
+    "leaves": 2,
+    "slots": [
+     "*request_toppars_ptr",
+     "*toppars_to_remove_from_ptr"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_fetcher.c",
+    "function": "rd_kafka_fetch_reply_handle",
+    "status": "Unknown",
+    "leaves": 5,
+    "slots": [
+     "*_vp"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_fetcher.c",
+    "function": "rd_kafka_fetch_reply_handle_partition",
+    "status": "Unknown",
+    "leaves": 5,
+    "slots": [
+     "*_vp"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_fetcher.c",
+    "function": "rd_kafka_share_fetch_reply_handle",
+    "status": "Unknown",
+    "leaves": 2,
+    "slots": [
+     "*response_rko_out"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_idempotence.c",
+    "function": "rd_kafka_idemp_broker_any",
+    "status": "Unknown",
+    "leaves": 2,
+    "slots": [
+     "*errp"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_lz4.c",
+    "function": "rd_kafka_lz4_compress",
+    "status": "Unknown",
+    "leaves": 2,
+    "slots": [
+     "*outbuf"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_lz4.c",
+    "function": "rd_kafka_lz4_decompress",
+    "status": "Unknown",
+    "leaves": 2,
+    "slots": [
+     "*outbuf"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_metadata.c",
+    "function": "rd_kafka_parse_Metadata0",
+    "status": "Unknown",
+    "leaves": 15,
+    "slots": [
+     "*_vp",
+     "*mdip"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_metadata_cache.c",
+    "function": "rd_kafka_metadata_cache_topic_get",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*mdtip"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_metadata_cache.c",
+    "function": "rd_kafka_metadata_cache_topic_partition_get",
+    "status": "Unknown",
+    "leaves": 5,
+    "slots": [
+     "*mdpip",
+     "*mpartp",
+     "*mtopicp"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_mock.c",
+    "function": "rd_kafka_mock_broker_new",
+    "status": "Unknown",
+    "leaves": 3,
+    "slots": [
+     "*err"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_mock.c",
+    "function": "rd_kafka_mock_broker_new_listener",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*sinp"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_mock.c",
+    "function": "rd_kafka_mock_connection_read_request",
+    "status": "Unknown",
+    "leaves": 2,
+    "slots": [
+     "*rkbufp"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_mock.c",
+    "function": "rd_kafka_mock_topic_auto_create",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*errp"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_mock_handlers.c",
+    "function": "rd_kafka_mock_pid_find",
+    "status": "Unknown",
+    "leaves": 2,
+    "slots": [
+     "*mpidp"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_mock_sharegrp.c",
+    "function": "rd_kafka_mock_sgrp_session_validate",
+    "status": "Unknown",
+    "leaves": 5,
+    "slots": [
+     "*sessionp"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_mock_sharegrp.c",
+    "function": "rd_kafka_mock_sharegroup_get_member_ids",
+    "status": "Unknown",
+    "leaves": 3,
+    "slots": [
+     "*member_ids_out"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_msg.c",
+    "function": "rd_kafka_message_timestamp",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*tstype"
+    ],
+    "sole_blocked": true
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_msg.c",
+    "function": "rd_kafka_msg_new0",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*errp"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_msgset_reader.c",
+    "function": "rd_kafka_msgset_reader_msg_v0_1",
+    "status": "Unknown",
+    "leaves": 2,
+    "slots": [
+     "*_vp"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_msgset_reader.c",
+    "function": "rd_kafka_msgset_reader_msg_v2",
+    "status": "Unknown",
+    "leaves": 4,
+    "slots": [
+     "*_vp"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_msgset_writer.c",
+    "function": "rd_kafka_gzip_compress",
+    "status": "Unknown",
+    "leaves": 2,
+    "slots": [
+     "*outbuf"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_op.c",
+    "function": "rd_kafka_op_new_fetch_msg",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*rkmp"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_partition.c",
+    "function": "rd_kafka_topic_partition_list_set_offsets",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*preamble"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_partition.c",
+    "function": "rd_kafka_toppar_get_avail",
+    "status": "Unknown",
+    "leaves": 4,
+    "slots": [
+     "*errp"
+    ],
+    "sole_blocked": true
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_queue.c",
+    "function": "rd_kafka_q_serve_share_rkmessages",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*rkmessages_out"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_request.c",
+    "function": "rd_kafka_handle_ApiVersion",
+    "status": "Unknown",
+    "leaves": 2,
+    "slots": [
+     "*apis"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_request.c",
+    "function": "rd_kafka_handle_Produce_parse",
+    "status": "Unknown",
+    "leaves": 11,
+    "slots": [
+     "*_vp"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_request.c",
+    "function": "rd_kafka_handle_idempotent_Produce_success",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*fatal_err"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_sasl_cyrus.c",
+    "function": "rd_kafka_sasl_cyrus_cb_chalprompt",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*result"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_sasl_cyrus.c",
+    "function": "rd_kafka_sasl_cyrus_cb_getopt",
+    "status": "Unknown",
+    "leaves": 2,
+    "slots": [
+     "*result"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_sasl_cyrus.c",
+    "function": "rd_kafka_sasl_cyrus_cb_getsecret",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*psecret"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_sasl_cyrus.c",
+    "function": "rd_kafka_sasl_cyrus_cb_getsimple",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*result"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_sasl_oauthbearer_oidc.c",
+    "function": "rd_kafka_oidc_assertion_parse_template_file",
+    "status": "Unknown",
+    "leaves": 3,
+    "slots": [
+     "*header",
+     "*payload"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_sasl_oauthbearer_oidc.c",
+    "function": "rd_kafka_oidc_token_try_validate",
+    "status": "Unknown",
+    "leaves": 2,
+    "slots": [
+     "*sub"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_share_acknowledgement.c",
+    "function": "rd_kafka_share_ack_batch_resolve_leader_or_fail_acks",
+    "status": "Unknown",
+    "leaves": 5,
+    "slots": [
+     "*errp"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_share_acknowledgement.c",
+    "function": "rd_kafka_share_find_ack_entry",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*entry_out"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_ssl.c",
+    "function": "rd_kafka_transport_ssl_cert_verify_cb",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*errstr"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_sticky_assignor.c",
+    "function": "rd_kafka_sticky_assignor_on_assignment_cb",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*assignor_state"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_telemetry.c",
+    "function": "rd_kafka_push_telemetry_payload_compress",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*compressed_payload"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_telemetry_encode.c",
+    "function": "resource_attributes",
+    "status": "Unknown",
+    "leaves": 2,
+    "slots": [
+     "*attributes"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_topic.c",
+    "function": "rd_kafka_topic_new0",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*existing"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_transport.c",
+    "function": "rd_kafka_transport_framed_recv",
+    "status": "Unknown",
+    "leaves": 2,
+    "slots": [
+     "*rkbufp"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_txnmgr.c",
+    "function": "rd_kafka_txn_handle_FindCoordinator",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*errstr"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_txnmgr.c",
+    "function": "rd_kafka_txn_handle_TxnOffsetCommit",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*errstr"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_txnmgr.c",
+    "function": "rd_kafka_txn_op_send_offsets_to_transaction",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*errstr"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_zstd.c",
+    "function": "rd_kafka_zstd_compress",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*outbuf"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_zstd.c",
+    "function": "rd_kafka_zstd_decompress",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*outbuf"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdlist.c",
+    "function": "rd_list_deduplicate",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*rl"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "chunkio",
+    "file": "cio_file.c",
+    "function": "cio_file_content_copy",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*out_buf"
+    ],
+    "sole_blocked": true
+   },
+   {
+    "library": "chunkio",
+    "file": "cio_memfs.c",
+    "function": "cio_memfs_content_copy",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*out_buf"
+    ],
+    "sole_blocked": true
+   },
+   {
+    "library": "chunkio",
+    "file": "cio_meta.c",
+    "function": "cio_meta_read",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*meta_buf"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "chunkio",
+    "file": "cio_utils.c",
+    "function": "cio_utils_read_file",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*buf"
+    ],
+    "sole_blocked": true
+   },
+   {
+    "library": "fluent-bit-chunk",
+    "file": "flb_input_chunk.c",
+    "function": "flb_input_chunk_get_direct_routes",
+    "status": "Unknown",
+    "leaves": 2,
+    "slots": [
+     "*routes"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "fluent-bit-chunk",
+    "file": "flb_input_chunk.c",
+    "function": "flb_input_chunk_get_tag",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*tag_buf"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "fluent-bit-chunk",
+    "file": "flb_input_chunk.c",
+    "function": "input_chunk_collect_output_references",
+    "status": "Unknown",
+    "leaves": 2,
+    "slots": [
+     "*out_matches"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "monkey-libevent",
+    "file": "mk_core/mk_string.c",
+    "function": "mk_string_build",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*buffer"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "monkey-libevent",
+    "file": "mk_server/mk_http.c",
+    "function": "mk_http_error_page",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*out_buf"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "monkey-libevent",
+    "file": "mk_server/mk_http_parser.c",
+    "function": "mk_http_parser_chunked_decode",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*out_buf"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "monkey-libevent",
+    "file": "mk_server/mk_vhost.c",
+    "function": "mk_vhost_get",
+    "status": "Unknown",
+    "leaves": 2,
+    "slots": [
+     "*alias",
+     "*vhost"
+    ],
+    "sole_blocked": true
+   }
+  ],
+  "system": [
+   {
+    "library": "fluent-bit-system",
+    "file": "src/flb_input_chunk.c",
+    "function": "flb_input_chunk_get_direct_routes",
+    "status": "Unknown",
+    "leaves": 2,
+    "slots": [
+     "*routes"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "fluent-bit-system",
+    "file": "src/flb_input_chunk.c",
+    "function": "flb_input_chunk_get_tag",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*tag_buf"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "fluent-bit-system",
+    "file": "src/flb_input_chunk.c",
+    "function": "input_chunk_collect_output_references",
+    "status": "Unknown",
+    "leaves": 2,
+    "slots": [
+     "*out_matches"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "fluent-bit-system",
+    "file": "src/flb_input_chunk.c",
+    "function": "flb_input_chunk_get_direct_routes",
+    "status": "Unknown",
+    "leaves": 2,
+    "slots": [
+     "*routes"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "fluent-bit-system",
+    "file": "src/flb_input_chunk.c",
+    "function": "flb_input_chunk_get_tag",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*tag_buf"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "fluent-bit-system",
+    "file": "src/flb_input_chunk.c",
+    "function": "input_chunk_collect_output_references",
+    "status": "Unknown",
+    "leaves": 2,
+    "slots": [
+     "*out_matches"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "fluent-bit-system",
+    "file": "src/flb_task.c",
+    "function": "task_collect_output_references",
+    "status": "Unknown",
+    "leaves": 2,
+    "slots": [
+     "*out_matches"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "fluent-bit-system",
+    "file": "src/flb_task.c",
+    "function": "task_collect_output_references",
+    "status": "Unknown",
+    "leaves": 2,
+    "slots": [
+     "*out_matches"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "fluent-bit-system",
+    "file": "src/flb_scheduler.c",
+    "function": "flb_sched_timer_cb_create",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*out_timer"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "fluent-bit-system",
+    "file": "src/flb_scheduler.c",
+    "function": "flb_sched_timer_cb_create",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*out_timer"
+    ],
+    "sole_blocked": false
+   }
+  ],
+  "slice": [
+   {
+    "library": "fluent-bit-tail-pause",
+    "file": "plugins/in_tail/tail_db.c",
+    "function": "stmt_add_param_concat",
+    "status": "Unknown",
+    "leaves": 3,
+    "slots": [
+     "*stmt_sql"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "fluent-bit-tail-pause",
+    "file": "plugins/in_tail/tail_dockermode.c",
+    "function": "flb_tail_dmode_process_content",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*repl_line"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "fluent-bit-tail-pause",
+    "file": "plugins/in_tail/tail_dockermode.c",
+    "function": "modify_json_cond",
+    "status": "Unknown",
+    "leaves": 4,
+    "slots": [
+     "*out",
+     "*out_len"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "fluent-bit-tail-pause",
+    "file": "plugins/in_tail/tail_dockermode.c",
+    "function": "prepend_sds_to_str",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*out"
+    ],
+    "sole_blocked": false
+   },
+   {
+    "library": "fluent-bit-tail-pause",
+    "file": "plugins/in_tail/tail_file.c",
+    "function": "stat_to_hash_key",
+    "status": "Unknown",
+    "leaves": 1,
+    "slots": [
+     "*key"
+    ],
+    "sole_blocked": false
+   }
+  ]
+ }
+}

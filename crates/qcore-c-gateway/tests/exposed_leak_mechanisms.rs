@@ -141,10 +141,13 @@ fn expect(label: &str, body: &str, status: &str, diagnostics: &[&str]) {
 /// off) the same body is `Unsafe` with a `leak`.
 #[test]
 fn mechanism_1_an_unsanctioned_out_slot_store_is_not_a_leak_claim() {
+    // Card OUT-PARAMETER-BODY-SUMMARY (rule 11r(6)): an `int` body returning
+    // `-1` with the slot unwritten and `0` with it written validates its own
+    // return-code relation, so the mechanism is pinned on a `void` body.
     expect(
         "`*out = p` with no out-parameter contract",
-        "int w(char **out, unsigned long n) {\n char *p = x_alloc(n);\n if (!p) return -1;\n \
-         *out = p;\n return 0;\n}",
+        "void w(char **out, unsigned long n) {\n char *p = x_alloc(n);\n if (!p) return;\n \
+         *out = p;\n}",
         "Unknown",
         &["unsupported:store through `*out` without an out-parameter contract"],
     );

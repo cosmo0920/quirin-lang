@@ -32,6 +32,8 @@
 //! site refuses. A body that yields no summary leaves the declaration a
 //! declared assumption, as an ordinary declaration is (rule 8).
 
+use std::collections::BTreeSet;
+
 use qcore_schemas::contract::{ResourceContracts, ResourceFunctionContract, ResourceReturnMode};
 
 use crate::legacy_c::{Token, matching};
@@ -122,12 +124,18 @@ fn diverge_returns(tokens: &[Token], returns: &[(usize, usize, i64)], keep: i64)
 }
 
 /// The exit-specific summary of `function`, or `None`. `infer` is the
-/// ordinary inference and validation, run unchanged on each per-value body.
+/// ordinary inference and validation, run unchanged on each per-value body,
+/// then card OUT-PARAMETER-BODY-SUMMARY's unwritten class (rule 11r(6)); it
+/// returns the class contract with the slots the class leaves unwritten.
 pub(super) fn infer_exit_specific(
     tokens: &[Token],
     function: &str,
     environment: &ResourceContracts,
-    infer: impl Fn(&[Token], &str, &ResourceContracts) -> Option<ResourceFunctionContract>,
+    infer: impl Fn(
+        &[Token],
+        &str,
+        &ResourceContracts,
+    ) -> Option<(ResourceFunctionContract, BTreeSet<usize>)>,
 ) -> Option<RelationalContract> {
     let (name, open, close) = definition(tokens, function)?;
     if !int_result(tokens, name) {
@@ -144,9 +152,10 @@ pub(super) fn infer_exit_specific(
         return None;
     }
     let mut classes = Vec::with_capacity(values.len());
+    let mut unwritten = Vec::with_capacity(values.len());
     for value in values {
         let body = diverge_returns(tokens, &returns, value);
-        let contract = infer(&body, function, environment)?;
+        let (contract, quiet) = infer(&body, function, environment)?;
         if contract.result != ResourceReturnMode::None {
             return None;
         }
@@ -154,6 +163,15 @@ pub(super) fn infer_exit_specific(
             relation: ReturnRelation::new(RelationOp::Eq, value),
             contract,
         });
+        unwritten.push(quiet);
+    }
+    // Rule 11r(6): a slot a class leaves unwritten is a relation only where
+    // another class writes it; it is then exactly the slot the consumer reads
+    // as unwritten (`Borrowed` here, `Out` there), and nothing else is.
+    for (index, quiet) in unwritten.iter().enumerate() {
+        if !quiet.is_empty() && *quiet != super::unwritten_class::unwritten_slots(&classes, index) {
+            return None;
+        }
     }
     Some(RelationalContract {
         origin: RelationalOrigin::InferredValidated,
