@@ -1,0 +1,59 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "CURRENT-MONKEY-LINKED-CONFIGURATION",
+ "base": "a0ac2cae9",
+ "measured_tip": "e5925e6b0",
+ "increment_paragraph": "**CURRENT-MONKEY-LINKED-CONFIGURATION** (round 29; user decision 2026-11-08, \"Analyse linked config\"; [report](../../reports/current-monkey-linked-configuration/README.md)). `quirin-audit current --monkey-linked` (or `monkey_linked` in `--config`) analyses Monkey's units (lib/monkey `mk_core/` without `mk_core/deps/`, `mk_server/`, `tls/`) from the run's own compile database, which is the configuration linked into `fluent-bit`, under the label `monkey`. A `--monkey-database` given with it is accounted for, not analysed. A standalone unit with a linked counterpart (the same file) is replaced by it. One without stays in the denominator as a not-linked `Unknown` unit under its `monkey-libevent` key, and in the cross-unit export phase it defines nothing. Nothing is dropped. The report's assumptions record `monkey_configuration` and the invocation records `monkey_linked`, both only when the flag is given. `prepare --run` passes the flag, and the link step keys the linked Monkey units as route units (`monkey/lib/monkey/<f>`). Census at 046accf6: 28 files in both configurations, `tls/tls_openssl.c` linked only, `tls/tls_stub.c` standalone only. 25 of the 28 have equal preprocessed text for every function. The differences are the event backend (epoll when linked, Libevent standalone: 11 backend statics in `mk_event.c`, 6 Libevent-only functions, and 4 `mk_event_foreach` users in `mk_lib.c` and `mk_server.c`) and TLS. Replace, not add alongside: alongside would define every Monkey name in two route units, and rule 4c's census would then refuse every Monkey home. Contract pins are configuration-independent source identities, and the loaded Monkey contracts were reviewed on the epoll backend. The profile's per-library provider table scopes only `monkey-libevent`, so a linked run under it refuses. The tip's `prepare --link`, on the user's database (equal after the prefix), derives 1,557 names, the 1,384 before plus 173 Monkey homes. Every one of the 29 linked Monkey route units is linked, reproduced byte for byte and has the user's compile input. All 156 census callees and 438 sites derive. 4 `mk_tls_*` homes move from `tls_stub.c` to `tls_openssl.c`, and every blocker of all 7 sole-blocked functions derives. Lean `QCore.MonkeyLinkedSelection` covers the accounting. Pinned routes are unchanged.",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "CURRENT-MONKEY-LINKED-CONFIGURATION",
+   "operation": "register",
+   "title": "The current route analyses Monkey under the configuration linked into fluent-bit",
+   "text": "User decision 2026-11-08 (\"Analyse linked config\") on CURRENT-MONKEY-CONFIGURATION-NOT-LINKED: make the current route analyse lib/monkey from the Fluent Bit compile database's configuration, the one linked into the fluent-bit executable, so that LINK-STANDING can derive Monkey homes.",
+   "source": "docs/reports/current-monkey-linked-configuration/README.md",
+   "recorded_by": "CURRENT-MONKEY-LINKED-CONFIGURATION"
+  },
+  {
+   "id": "CURRENT-MONKEY-LINKED-CONFIGURATION",
+   "operation": "retire",
+   "why": "DISCHARGED (CURRENT-MONKEY-LINKED-CONFIGURATION, round 29, base a0ac2cae9, tip e5925e6b0). current --monkey-linked selects Monkey's units from the run's compile database under the label monkey. A --monkey-database given with it is accounted for: 28 units are replaced by their linked counterpart and tls_stub.c stays as a not-linked Unknown unit. prepare --run passes the flag, and prepare --link keys the linked units as route units. On the user's database: 1,557 derived names (+173 Monkey). 29/29 linked Monkey units are linked, reproduced and input-identical, and 156/156 census callees derive. Lean QCore.MonkeyLinkedSelection.",
+   "source": "docs/reports/current-monkey-linked-configuration/README.md"
+  },
+  {
+   "id": "CURRENT-MONKEY-CONFIGURATION-NOT-LINKED",
+   "operation": "retire",
+   "why": "DISCHARGED (CURRENT-MONKEY-LINKED-CONFIGURATION, user choice \"Analyse linked config\", 2026-11-08): the current route analyses Monkey from the fluent-bit compile database's configuration (`current --monkey-linked`, which prepare --run passes), and the standalone libevent database is only accounted for. Each of its units is replaced by the linked unit of the same file, or kept as a not-linked Unknown unit (tls/tls_stub.c). Monkey homes measured: the tip's prepare --link on the user's database derives all 24 previously refused census callees (55 sites). 20 have the same file under monkey/, and 4 mk_tls_* move from tls_stub.c to tls_openssl.c. The blockers of mk_mq_send and net_plain_writev now derive. Rows of the user's run are measured by the integrator's rerun against PREDICTION.md.",
+   "source": "docs/reports/current-monkey-linked-configuration/README.md"
+  },
+  {
+   "id": "BODY-SUMMARY-REUSE-LINK-STANDING",
+   "operation": "append",
+   "text": "CURRENT-MONKEY-LINKED-CONFIGURATION (round 29) closes need (5): with `current --monkey-linked` (passed by prepare --run), Monkey's units are the compile database's own lib/monkey configurations, keyed `monkey/lib/monkey/<f>`, and prepare --link keys them as route units. On the user's database 173 Monkey names derive by the unchanged conditions (1,557 in all), and every census callee derives (156/156, 438 sites, every caller linked). Coordination: (a) 4 homes (mk_tls_exit, mk_tls_init, mk_tls_thread_init, mk_tls_transport) are tls/tls_openssl.c bodies, not the experiment map's tls_stub.c; (b) a standalone unit without a linked counterpart (tls/tls_stub.c) is a not-linked task under `monkey-libevent/`, which the route's export phase counts as scanned with no export and no definition (current_route.rs), not as an incomplete census, because the link cannot choose it; LINK-STANDING should keep or replace that arm deliberately; (c) the not-linked unit's key names a configuration that is not linked, so the caller-scope check must withhold imports from it like any unlinked caller (it has no analysed body, so there is none today).",
+   "source": "docs/reports/current-monkey-linked-configuration/README.md"
+  },
+  {
+   "id": "LINK-PREPARE-PINNED-ROUTE-INPUTS",
+   "operation": "append",
+   "text": "CURRENT-MONKEY-LINKED-CONFIGURATION: the pinned corpus still reads Monkey from its standalone forced-Libevent database (quirin-audit pinned, monkey-libevent), so a derived resolution for that route also needs its Monkey selection moved to the linked configuration (as current --monkey-linked does) before its Monkey homes can derive.",
+   "source": "docs/reports/current-monkey-linked-configuration/README.md"
+  },
+  {
+   "id": "MONKEY-LINKED-NON-ROUTE-UNITS",
+   "operation": "register",
+   "title": "Linked lib/monkey files outside the Monkey unit rule have no route unit, so their homes stay refused",
+   "text": "Found by CURRENT-MONKEY-LINKED-CONFIGURATION: the Monkey unit rule (is_monkey_unit: mk_core/ without deps, mk_server/, tls/) leaves out lib/monkey/deps/{flb_libco,rbtree,regex}, api/, mk_bin/ and plugins/ in both configurations. Of these, deps/ objects are linked into fluent-bit, and the tip's link resolution refuses 12 of their names as not route units (libco 4: co_active, co_create, co_delete, co_switch; rbtree 6; regex 2). DISCHARGE: a decision on whether the current route analyses the linked deps/ units (a new group with its own key) or keeps them out with a recorded reason, and the census population that depends on them measured.",
+   "source": "docs/reports/current-monkey-linked-configuration/README.md",
+   "recorded_by": "CURRENT-MONKEY-LINKED-CONFIGURATION"
+  },
+  {
+   "id": "LIBRARY-PROVIDERS-LINKED-MONKEY-SCOPE",
+   "operation": "register",
+   "title": "The fluent-bit per-library provider table scopes only the standalone monkey-libevent configuration",
+   "text": "Found by CURRENT-MONKEY-LINKED-CONFIGURATION: contract/profiles/fluent-bit/library-providers.json maps `monkey-libevent` to quirin-provider-libc + qcore-provider-libevent and lists it as a dependent library of fluent_bit. A `current --monkey-linked` run audits the `monkey` library, which the table does not scope, so per-library provider scoping refuses that run, by design and fail-closed, instead of reusing the Libevent scope for the epoll and OpenSSL configuration. The user's run does not use the table. DISCHARGE: a reviewed `monkey` scope (the linked configuration's providers: libc for epoll/timerfd/pipe, the Monkey contracts, and no OpenSSL contracts until an OpenSSL provider exists) and fluent_bit's dependent list updated, or a recorded decision that linked runs never use per-library scoping.",
+   "source": "docs/reports/current-monkey-linked-configuration/README.md",
+   "recorded_by": "CURRENT-MONKEY-LINKED-CONFIGURATION"
+  }
+ ],
+ "profiles": []
+}
