@@ -559,12 +559,72 @@ impl CurrentAudit {
         self.assumptions["unit_selection"] = selection;
     }
 
+    /// Card **CURRENT-MONKEY-LINKED-CONFIGURATION**: which Monkey
+    /// configuration the run analyses and how the standalone units are
+    /// accounted for; recorded only by a `--monkey-linked` run.
+    pub fn record_monkey_configuration(&mut self, record: Value) {
+        self.assumptions["monkey_configuration"] = record;
+    }
+
     /// Card **W45-FB-SYSTEM-SELECTION**: a selected file with no compilation
     /// record stays in the denominator as one `Unknown` unit, with an
     /// environment reason, its checkout definitions as `not_projected`, and a
     /// configuration record whose `compile_record` is null. It is never
     /// dropped and never analysed under a guessed command.
     pub fn evaluate_absent(&self, library: &str, relative: &str) -> EntryOutcome {
+        self.evaluate_unrecorded(library, relative, None)
+    }
+
+    /// Card **CURRENT-MONKEY-LINKED-CONFIGURATION**: a standalone Monkey unit
+    /// the linked configuration does not compile. It is an
+    /// [`Self::evaluate_absent`] unit (the run's compile database has no
+    /// record of it) whose reason says why: one `Unknown` unit under its own
+    /// key, never dropped and never analysed under the standalone command.
+    pub fn evaluate_not_linked(&self, library: &str, relative: &str, reason: &str) -> EntryOutcome {
+        self.evaluate_unrecorded(library, relative, Some(reason))
+    }
+
+    /// The refusal of a selected file with no compile record: `not_linked`'s
+    /// reason, or the record's absence, once the checkout's bytes are pinned;
+    /// and whether they are.
+    pub(crate) fn unrecorded_refusal(
+        checkout: &Path,
+        revision: &str,
+        relative: &str,
+        not_linked: Option<&str>,
+        bytes: &std::io::Result<Vec<u8>>,
+    ) -> (UnitRefusal, bool) {
+        let path = checkout.join(relative);
+        match bytes {
+            Ok(bytes) => match crate::verify_pinned_bytes(checkout, revision, &path, bytes) {
+                Ok(()) => (
+                    UnitRefusal::environment(not_linked.map_or_else(
+                        || {
+                            format!(
+                                "selected source has no compilation database record: {relative}"
+                            )
+                        },
+                        str::to_owned,
+                    )),
+                    true,
+                ),
+                Err(refusal) => (refusal, false),
+            },
+            Err(error) => (
+                UnitRefusal::environment(format!(
+                    "selected source is absent from the checkout: {relative}: {error}"
+                )),
+                false,
+            ),
+        }
+    }
+
+    fn evaluate_unrecorded(
+        &self,
+        library: &str,
+        relative: &str,
+        not_linked: Option<&str>,
+    ) -> EntryOutcome {
         let mut output = String::new();
         let mut products = EntryProducts {
             source: None,
@@ -574,22 +634,11 @@ impl CurrentAudit {
         };
         let path = self.checkout.join(relative);
         let bytes = fs::read(&path);
-        let refusal = match &bytes {
-            Ok(bytes) => {
-                match crate::verify_pinned_bytes(&self.checkout, &self.revision, &path, bytes) {
-                    Ok(()) => {
-                        products.source = path.canonicalize().ok();
-                        UnitRefusal::environment(format!(
-                            "selected source has no compilation database record: {relative}"
-                        ))
-                    }
-                    Err(refusal) => refusal,
-                }
-            }
-            Err(error) => UnitRefusal::environment(format!(
-                "selected source is absent from the checkout: {relative}: {error}"
-            )),
-        };
+        let (refusal, pinned) =
+            Self::unrecorded_refusal(&self.checkout, &self.revision, relative, not_linked, &bytes);
+        if pinned {
+            products.source = path.canonicalize().ok();
+        }
         let functions = bytes
             .as_ref()
             .ok()

@@ -1183,7 +1183,10 @@ fn tracked_changes(source: &Path) -> Result<String, String> {
 }
 
 /// The route's unit key of every configuration the `current` route selects
-/// (`audit.json`'s library selections over the profile's source roots).
+/// (`audit.json`'s library selections over the profile's source roots) and,
+/// card CURRENT-MONKEY-LINKED-CONFIGURATION, Monkey's units as the run
+/// `prepare --run` chains reads them (`--monkey-linked`: the database's own
+/// `lib/monkey` configurations under the `monkey` label).
 fn route_units(
     database_text: &str,
     source: &Path,
@@ -1211,6 +1214,28 @@ fn route_units(
                 {
                     keys[id] = Some(format!("{label}/{}", file.display()));
                 }
+            }
+        }
+    }
+    for chosen in crate::current_route::linked_monkey_configurations(&entries, source)? {
+        let file = crate::input_paths::relative_within(&chosen.file, source)
+            .ok_or("route unit outside the checkout")?;
+        for (id, entry) in entries.iter().enumerate() {
+            if entry.file == chosen.file
+                && entry.directory == chosen.directory
+                && entry.command == chosen.command
+            {
+                if let Some(other) = &keys[id] {
+                    return Err(format!(
+                        "{} is selected twice, as {other} and as a linked Monkey unit",
+                        file.display()
+                    ));
+                }
+                keys[id] = Some(format!(
+                    "{}/{}",
+                    crate::current_route::LINKED_MONKEY_LABEL,
+                    file.display()
+                ));
             }
         }
     }
@@ -1423,6 +1448,17 @@ pub fn prepare_link(request: &LinkRequest) -> Result<LinkPrepared, String> {
             "sha256": sha256_hex(database_text.as_bytes()),
         },
         "profile_directory": request.profile_directory,
+        // Card CURRENT-MONKEY-LINKED-CONFIGURATION: the route selection the
+        // configurations' `route_unit` keys name.
+        "route_selection": {
+            "groups": "audit.json's library selections over the profile's source roots",
+            "monkey": {
+                "configuration": "linked",
+                "label": crate::current_route::LINKED_MONKEY_LABEL,
+                "units": "this database's lib/monkey units (mk_core/ without mk_core/deps/, mk_server/, tls/)",
+                "run": "quirin-audit current --monkey-linked (prepare --run passes it); a run without it has no monkey/ unit",
+            },
+        },
         "counts": resolution.counts,
         "inputs": resolution.inputs,
         "configurations": resolution.configurations,
@@ -1438,7 +1474,8 @@ pub fn prepare_link(request: &LinkRequest) -> Result<LinkPrepared, String> {
          in the link-resolution artifact (sha256 {artifact_sha256}), each listed symbol has exactly one \
          definition among the linked objects: a strong global definition from the listed home unit's \
          object, which its compile database entry reproduces byte for byte, and the executable carries \
-         no dynamic relocation against it. Not established here: resolution for a caller outside the \
+         no dynamic relocation against it. A home key under `monkey/` names a unit only of a current \
+         run with --monkey-linked. Not established here: resolution for a caller outside the \
          executable's linked objects, and equality of the call-site type and calling convention with \
          the home definition.",
         sha256_hex(database_text.as_bytes())
@@ -1608,6 +1645,77 @@ puts                                              /usr/lib/x86_64-linux-gnu/libc
     /// A real link with Clang and GNU ld: strong, weak, duplicated,
     /// shared-object and unreproduced definitions, and a home outside the
     /// route.
+    /// Card CURRENT-MONKEY-LINKED-CONFIGURATION: the route keys name the
+    /// database's own Monkey units under `monkey/`, exactly as a
+    /// `--monkey-linked` run keys them; `mk_core/deps/`, `mk_bin/` and other
+    /// files outside the Monkey unit rule get no key.
+    #[test]
+    fn route_units_key_linked_monkey_units_like_a_linked_run() {
+        let dir = std::env::temp_dir().join(format!(
+            "quirin-link-route-units-{}-{}",
+            std::process::id(),
+            sha256_hex(format!("{:?}", Instant::now()).as_bytes())
+        ));
+        let files = [
+            "lib/monkey/mk_core/mk_event.c",
+            "lib/monkey/mk_server/mk_fifo.c",
+            "lib/monkey/tls/tls_openssl.c",
+            "lib/monkey/mk_core/deps/dep.c",
+            "lib/monkey/mk_bin/monkey.c",
+            "lib/monkey/mk_core/mk_event_epoll.h",
+        ];
+        for file in files {
+            fs::create_dir_all(dir.join(file).parent().unwrap()).unwrap();
+            fs::write(dir.join(file), "int f(void) { return 0; }\n").unwrap();
+        }
+        let profile = dir.join("sample");
+        fs::create_dir_all(&profile).unwrap();
+        fs::create_dir_all(dir.join("src")).unwrap();
+        fs::write(
+            profile.join("profile.json"),
+            json!({
+                "schema_version": 1, "source_set": "sample",
+                "pins": {"sample": {"git_commit": "0".repeat(40), "clean_paths": [], "description": "fixture"}},
+                "libraries": {"sample": {
+                    "pin": "sample", "source_roots": [{"root": "src", "selection": "top_level"}],
+                    "audited_files": [], "source_witnesses": [], "permitted_mechanisms": [],
+                    "operation_summaries": {}, "api_dispositions": {}, "accepted_builds": [],
+                    "required_evidence": [], "typed_import": null, "callback_summaries": {},
+                    "boolean_field_models": [], "provider": null}},
+                "resource_contract_manifest": null, "provider_manifests": [],
+            })
+            .to_string(),
+        )
+        .unwrap();
+        fs::write(
+            profile.join("audit.json"),
+            json!({"schema_version": 1, "libraries": [{"library": "sample", "label": null}]})
+                .to_string(),
+        )
+        .unwrap();
+        let database = json!(
+            files
+                .iter()
+                .map(|file| json!({"directory": dir, "file": dir.join(file),
+                    "arguments": ["clang", "-c", file, "-o", "x.o"]}))
+                .collect::<Vec<_>>()
+        )
+        .to_string();
+        let keys = route_units(&database, &dir, &profile).unwrap();
+        assert_eq!(
+            keys,
+            [
+                Some("monkey/lib/monkey/mk_core/mk_event.c".to_owned()),
+                Some("monkey/lib/monkey/mk_server/mk_fifo.c".to_owned()),
+                Some("monkey/lib/monkey/tls/tls_openssl.c".to_owned()),
+                None,
+                None,
+                None,
+            ]
+        );
+        let _ = fs::remove_dir_all(&dir);
+    }
+
     #[test]
     fn a_small_link_derives_only_unique_strong_reproduced_route_homes() {
         let clang = "/usr/lib/llvm-21/bin/clang";

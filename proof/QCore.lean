@@ -246,6 +246,7 @@ import QCore.Metatheory
 import QCore.MetricTraceContractGaps
 import QCore.ModuleImports
 import QCore.MonkeyEvent
+import QCore.MonkeyLinkedSelection
 import QCore.MonkeyWaitProjection
 import QCore.MonkeyWaitSourcePolicy
 import QCore.MsvcAbiReader
