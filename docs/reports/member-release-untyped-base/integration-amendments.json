@@ -1,0 +1,30 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "MEMBER-RELEASE-UNTYPED-BASE",
+  "base": "7cdd33906",
+  "measured_tip": "0000000",
+  "increment_paragraph": "**MEMBER-RELEASE-UNTYPED-BASE** (the base arm of W45-MEMBER-RELEASE-UNTYPED-DECLARATIONS, as MEMBER-EFFECT-COMPONENT-SCOPE recommended): rule 38j is amended again in place. Where the lexical call-actual recogniser refuses `B->F` as an untyped base, at a nullable release of a place rule 5k or rule 38j admitted, Clang's reading stands in under the parent's conditions (the `LValueToRValue` value of an arrow member named `F` of the parameter `B`, an object pointer, no array decay, no function pointer, no `volatile`/`_Atomic`) plus the base's: a pointer whose resolved member is a member of a complete `struct` the unit defines (never a `union`'s; an incomplete record resolves none). For both arms the parameter's declared type carries no `volatile`/`_Atomic`, and the value may be implicitly converted to the callee's object-pointer parameter (`char *` to `void *` for `free`). Lean `QCore.MemberReleaseUntypedBase` (`a_new_admission_is_an_untyped_base`, `a_previous_admission_is_kept`, `an_admitted_actual_is_a_struct_pointer_member`, `the_body_stays_sound`). Census of every rule-38i release leaf over a typedef-spelled base (corpus 166 in 107 functions, system and slice none, current-run estimate 88 in 69): the lexical reader resolves `typedef struct TAG T;` and leaves a defining, record-pointer or disagreeing typedef untyped (96 corpus leaves in 57 functions); `rd_kafka_offset_file_close`, named by the parent, is not an untyped base (its `fclose` release is nonnull and stays refused). Predicted corpus Unknown -> Safe: `mk_ptr_free`, `rd_kafka_mock_sgrp_record_release` (rule 38j), `rd_kafka_Node_destroy`, `rd_kafka_mock_error_stack_destroy`, `rd_kafka_share_ack_batch_entry_destroy` (rule 5k) and the wrappers `rd_kafka_Node_free`, `rd_kafka_share_ack_batch_entry_destroy_free`; system and slice none. Report: docs/reports/member-release-untyped-base/README.md.",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "W45-MEMBER-RELEASE-UNTYPED-DECLARATIONS",
+      "operation": "amend",
+      "text": "AMENDED (MEMBER-RELEASE-UNTYPED-BASE): the untyped-base arm is discharged at a `Released { nullable: true }` position of a place rule 5k or rule 38j admitted: there Clang's reading of `B->F` as the value of an object-pointer member of a complete `struct` (never a `union`'s), over the parameter `B` with no `volatile`/`_Atomic`, stands in for the lexical reader's (rule 38j amended again; Lean QCore.MemberReleaseUntypedBase), predicted to move mk_ptr_free, rd_kafka_mock_sgrp_record_release, rd_kafka_Node_destroy, rd_kafka_mock_error_stack_destroy, rd_kafka_share_ack_batch_entry_destroy and two wrappers. The lexical reader resolves `typedef struct TAG T;`; the untyped bases are typedefs defining the record, record-pointer typedefs and disagreeing typedefs (census: 96 corpus leaves in 57 functions). rd_kafka_offset_file_close was never an untyped base (its fclose release is nonnull). Still open: unreadable declarations, the untyped base and member at every position other than a nullable release of an admitted place (reads, stores, chains), and the shared declaration reader's own resolution of these typedefs for every typed route.",
+      "source": "docs/reports/member-release-untyped-base/README.md"
+    },
+    {
+      "id": "MEMBER-RELEASE-UNTYPED-BASE",
+      "operation": "register",
+      "title": "A release actual over a typedef-spelled formal base is refused as an untyped base before rule 1 admits it",
+      "text": "MEMBER-EFFECT-COMPONENT-SCOPE's census found three corpus bodies whose only leaves are rule-38i releases over a typedef-spelled base (rd_kafka_offset_file_close, rd_kafka_mock_sgrp_record_release, mk_ptr_free); its rule-38j amendment reads only an untyped member over a typed base. Recommended: the same Clang consultation for `Refusal::UntypedBase`, with the base's own type checked.",
+      "source": "docs/reports/member-effect-component-scope/README.md",
+      "recorded_by": "MEMBER-EFFECT-COMPONENT-SCOPE"
+    },
+    {
+      "id": "MEMBER-RELEASE-UNTYPED-BASE",
+      "operation": "retire",
+      "why": "DISCHARGED by MEMBER-RELEASE-UNTYPED-BASE (docs/reports/member-release-untyped-base/README.md): at a nullable release of an admitted place, a base the lexical reader leaves untyped is read by Clang (a pointer whose resolved member belongs to a complete struct, never a union, no volatile/_Atomic), rule 38j amended again; Lean QCore.MemberReleaseUntypedBase. Predicted corpus Unknown -> Safe x7; rd_kafka_offset_file_close stays Unknown (nonnull fclose, not an untyped base).",
+      "source": "docs/reports/member-release-untyped-base/README.md"
+    }
+  ]
+}
