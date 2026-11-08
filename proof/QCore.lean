@@ -61,6 +61,7 @@ import QCore.CellResultSet
 import QCore.CertificateScope
 import QCore.CflAtomicEffects
 import QCore.ChainedAccess
+import QCore.ChainedAssignment
 import QCore.ChainedTailActual
 import QCore.CheckedSelfInitCall
 import QCore.CheckedSpecification

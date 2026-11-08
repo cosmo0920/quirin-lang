@@ -550,6 +550,21 @@ impl Parser<'_> {
                 return Err(Refusal::Declaration("no initializer"));
             };
             if leading.is_empty() {
+                // Card CHAINED-ASSIGNMENT-INNER-DESTINATION (rule 5i,
+                // amended): `T NAME = (NAME2 = VALUE)` is the inner
+                // assignment, then `T NAME = NAME2` (C11 6.5.16p3), exactly as
+                // an assignment's chain below.
+                let inner = strip_parens(last);
+                if kind(inner) == "BinaryOperator"
+                    && inner["opcode"].as_str() == Some("=")
+                    && let [inner_name, _] = children(inner)
+                    && let Some((inner_id, _)) = named_object(inner_name)
+                    && declaration["id"].as_str().is_some_and(|id| id != inner_id)
+                {
+                    let mut steps = self.steps(inner)?;
+                    steps.push(Step::Declare(bare, inner_name));
+                    return Ok(steps);
+                }
                 return Ok(vec![Step::Piece(bare)]);
             }
             let mut steps = Vec::new();

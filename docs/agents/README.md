@@ -55,7 +55,7 @@ the index below is navigation only. Backticked code paths throughout these pages
 | 5f | [gateway](gateway.md#constraint-5f) | Every neutral nested sibling retains liveness and alias obligations. |
 | 5g | [gateway](gateway.md#constraint-5g) | W42-INDIRECT-ACCESS adds one route disjoint from the existing unbound scalar-field no-op. |
 | 5h | [gateway](gateway.md#constraint-5h) | A desugared condition applies a call exactly where C evaluates it. |
-| 5i | [gateway](gateway.md#constraint-5i) | An assignment's destination is its whole left-hand side. |
+| 5i | [gateway](gateway.md#constraint-5i) | An assignment's destination is its whole left-hand side; a write inside its assigned value is never dropped (a chain is its sequential assignments). |
 | 5j | [gateway](gateway.md#constraint-5j) | A scalar-result return decides a read; a cast of a whole call is the call. |
 | 5k | [gateway](gateway.md#constraint-5k) | A member release is admitted only as the last use of its place; its summaries are guarded at callers. |
 | 5l | [gateway](gateway.md#constraint-5l) | An intrusive-list iteration is modelled on its original spelling; a specification of an audited body is checked, never trusted. |

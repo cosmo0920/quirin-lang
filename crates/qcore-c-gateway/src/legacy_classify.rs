@@ -58,6 +58,10 @@ impl Parser<'_> {
         // Rule 36a: only an old refusal in a complete checked caller.
         let instruction = self.self_init_call(tokens, instruction);
         let instruction = self.tracked_self_init_call(tokens, instruction);
+        // Card CHAINED-ASSIGNMENT-INNER-DESTINATION (rule 5i, amended): an
+        // admission that would drop a write inside an assigned value is
+        // replaced by the refusal; a refusal stays itself.
+        let instruction = self.chained_assignment_guard(tokens, instruction, &saved);
         // Card W45-FB-BACKLOG-CUSTODY, rule 4: an admission that hands an
         // iteration's protected node or element to a position that may unlink
         // or release it is replaced by the refusal; a refusal stays itself.
