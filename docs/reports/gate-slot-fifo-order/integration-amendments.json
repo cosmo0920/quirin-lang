@@ -1,0 +1,74 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "GATE-SLOT-FIFO-ORDER",
+ "base": "1e522ca5d",
+ "measured_tip": "8aeb7908a",
+ "increment_paragraph": "**GATE-SLOT-FIFO-ORDER** (round 26; integrator's launch under the user's standing instruction to keep cards running, 2026-11-08; also covers MEASURE-SLOT-WAIT-EXCLUSION-CAP; requirement R12 of docs/plans/gate-time-reduction/README.md, added by this card; [report](../../reports/gate-slot-fifo-order/README.md)). The 2026-11-07/08 incident: SCALAR-STATEMENT-FORMS's measurement audit waited 7.5 h, then 15.5 h, while audits and rust-suite drains that asked hours later took the slots, then died with plugin-timeout because R7's slot-wait exclusion was capped at the quota. (1) scripts/gate_slot.py serves slots in arrival order: a job that must wait takes a ticket, `<gate dir>/<family>/queue/<seq>-<pid>.ticket` (family `audit` for the audit and rust-suite classes, `lean`), created locked by its owner and renamed into place, sequence from a counter file under a flock held for microseconds; no daemon. A job may take a slot only if no job ahead of it can take that slot: a job ahead holds back exactly the free slots it could itself take at the current reading (index below floor(MemAvailable / admission budget), at least one; lean: both), so the earlier of two equal waiters wins, a waiter whose memory admission cannot be met holds back nothing else (a 4 GiB audit behind an 11 GiB corpus audit runs in slot 1; `passed_over` in the receipt), and a rust-suite job holds back every audit behind it and starts its drain only when no job is ahead of it. A ticket stops holding others back when its owner is gone (flock free AND pid gone, a zombie or another start time; whoever scans unlinks it; never reclaimed while the pid is alive or the lock is held), when its owner has not polled for QUIRIN_GATE_QUEUE_LAPSE (10 min; 0/off never; skipped, not removed), or while a drain that gave up backs off (it keeps its place; audits behind it run); QUIRIN_GATE_QUEUE=off takes no ticket. Older gate_slot.py clients take the same flocks and ignore tickets: no deadlock, no double admission (one exclusive flock per slot), only that an older client may be admitted ahead of a ticketed job. `gate_slot.py status` shows `queue position N of M`, who is ahead and the ticket state, and lists queues in --json. (2) The subcommand host's slot-wait exclusion is no longer capped at the quota: `--slot-wait-limit-ms` defaults to a separate overall wall bound `--wall-limit-ms` (7 days, never below `--timeout-ms`; a smaller explicit value is refused), which stops the run whatever it declares (`plugin-wall-limit`); `--timeout-ms` stays the analysis quota. Both limits are in the request's quotas (quirin_audit_plugin::Quotas, optional fields), the host report's run, the invocation record and the measure report's `timing.limits`. Tests: scripts/tests/test_gate_slot_queue.py (39: order, mixed budgets, crashed waiters, restarts, races, command line, status, and the pre-card script run against the current one in one scratch gate), the host's subcommand_plugins (one new) and the measure plugin's slot_wait; an incident replay in a scratch gate (docs/reports/gate-slot-fifo-order/replay.json): the pre-card client ran the later rust-suite job first in 5 of 5 trials and the first waiter last in 2, this card ran arrival order in 5 of 5. The rule is stated in docs/agents/validation.md (Gate slots). GATE-SLOT-SHORT-BUILD-WAIT (registered by FLUENT-BIT-LINK-PREPARE) is not covered and stays registered. No analyzer, contract or Lean change; no measurement.",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "GATE-SLOT-FIFO-ORDER",
+   "operation": "register",
+   "title": "Gate slots are not served in arrival order",
+   "text": "Registered by its own card at landing (round 26; integrator's launch, 2026-11-08, after the 2026-11-07/08 incident: a measurement's audit waited 7.5 h, then 15.5 h, while later audits and rust-suite drains took the slots); retired by the next entry.",
+   "source": "docs/reports/gate-slot-fifo-order/README.md",
+   "recorded_by": "GATE-SLOT-FIFO-ORDER"
+  },
+  {
+   "id": "GATE-SLOT-FIFO-ORDER",
+   "operation": "retire",
+   "why": "DISCHARGED by GATE-SLOT-FIFO-ORDER (docs/reports/gate-slot-fifo-order/README.md): scripts/gate_slot.py admits waiters of a class in arrival order through tickets under <gate dir>/<family>/queue (no daemon, beside the existing flocks); a rust-suite drain starts only after the audits queued ahead of it; crashed waiters' tickets are reclaimed only when the owner pid is gone, stopped owners are skipped after QUIRIN_GATE_QUEUE_LAPSE, a backing-off drain keeps its place, a waiter whose memory admission cannot be met holds back only the slots its memory admits; older gate_slot.py clients share the flocks without deadlock or double admission (tested against the pre-card script); status shows each waiter's queue position; tests in scripts/tests/test_gate_slot_queue.py in scratch gate directories; the rule is in docs/agents/validation.md.",
+   "source": "docs/reports/gate-slot-fifo-order/README.md"
+  },
+  {
+   "id": "MEASURE-SLOT-WAIT-EXCLUSION-CAP",
+   "operation": "register",
+   "title": "A measurement's slot-wait exclusion is capped at its analysis quota",
+   "text": "Registered by its own card at landing (round 26; integrator's record, 2026-11-07/08: plugin-timeout 'exceeded the wall-time quota of 36000000 ms (36000000 ms of declared slot waits excluded, limit 36000000 ms)' after a 7.5 h and a 15.5 h queue); retired by the next entry.",
+   "source": "docs/reports/gate-slot-fifo-order/README.md",
+   "recorded_by": "GATE-SLOT-FIFO-ORDER"
+  },
+  {
+   "id": "MEASURE-SLOT-WAIT-EXCLUSION-CAP",
+   "operation": "retire",
+   "why": "DISCHARGED by GATE-SLOT-FIFO-ORDER (docs/reports/gate-slot-fifo-order/README.md): the subcommand host's --slot-wait-limit-ms now defaults to a separate overall wall bound, --wall-limit-ms (7 days, never below --timeout-ms, overridable), instead of the quota; --timeout-ms stays the analysis quota and the bound stops a run that declares waits for ever with plugin-wall-limit; both limits are in the request's quotas, the host report's run, the invocation record and the measure report's timing.limits; crates/qcore-audit/tests/subcommand_plugins.rs (a wait three times the quota completes; the bound stops the run; a bound below the quota is refused) and crates/quirin-audit-plugin-measure/tests/slot_wait.rs (real held slot, default limit).",
+   "source": "docs/reports/gate-slot-fifo-order/README.md"
+  },
+  {
+   "id": "SLOT-WAIT-DECLARED-BY-PLUGIN",
+   "operation": "amend",
+   "text": "AMENDED (GATE-SLOT-FIFO-ORDER): --slot-wait-limit-ms now defaults to the overall wall bound (--wall-limit-ms, seven days, never below the quota), not to the quota, so a run no longer 'never exceeds quota + limit': it never exceeds the overall wall bound, which stops it whatever it declares (plugin-wall-limit). The remaining gap is unchanged: a plugin can spend the excluded wait while working, up to the bound.",
+   "source": "docs/reports/gate-slot-fifo-order/README.md"
+  },
+  {
+   "id": "GATE-SLOT-STATUS-UNLOCKED-WAITERS",
+   "operation": "amend",
+   "text": "AMENDED (GATE-SLOT-FIFO-ORDER): a waiter now holds a locked ticket file (<gate dir>/<family>/queue/) from the moment it holds the legacy lock until it is admitted or gives up, and status lists it with its queue position, also while a rust-suite drain backs off and holds no gate lock. Still unlisted: a job in a timed wait for the legacy lock (it has no ticket yet) and a nested job, and the ticket is dropped at admission, not at exit.",
+   "source": "docs/reports/gate-slot-fifo-order/README.md"
+  },
+  {
+   "id": "GATE-SLOT-QUEUE-OLD-CLIENT-RETIREMENT",
+   "operation": "register",
+   "title": "Arrival order holds only among queue-aware gate_slot.py clients",
+   "text": "Registered by GATE-SLOT-FIFO-ORDER. A gate_slot.py from before the queue ignores tickets, takes the same flocks and so can be admitted ahead of a ticketed job; its waiters show in status as 'not queued'. The pre-card script is kept byte for byte as scripts/tests/fixtures/gate_slot_before_queue.py.txt to test that interaction. DISCHARGE: no live worktree or launcher runs a pre-queue gate_slot.py (every worktree rebased), then delete the fixture, its tests and the 'not queued' wording.",
+   "source": "docs/reports/gate-slot-fifo-order/README.md",
+   "recorded_by": "GATE-SLOT-FIFO-ORDER"
+  },
+  {
+   "id": "GATE-SLOT-QUEUE-DEFAULTS-REVIEW",
+   "operation": "register",
+   "title": "Review the queue lapse and the overall wall bound against the receipts",
+   "text": "Registered by GATE-SLOT-FIFO-ORDER. The queue lapse (10 min without a poll before a ticket is skipped) and the overall wall bound (7 days) were chosen from one incident (waits of 7.5 h and 15.5 h), not from a census. Receipts now record slot_record.queue (position at the request, tickets reclaimed, skipped, passed over) and limits.queue_lapse_seconds; the measure report records timing.limits. DISCHARGE: a review of a period of receipts (waits by position, tickets reclaimed or skipped, any plugin-wall-limit) with the defaults kept or changed by a recorded decision.",
+   "source": "docs/reports/gate-slot-fifo-order/README.md",
+   "recorded_by": "GATE-SLOT-FIFO-ORDER"
+  },
+  {
+   "id": "PLUGIN-QUOTAS-OLD-SDK-REQUEST",
+   "operation": "register",
+   "title": "A plugin built on the SDK before GATE-SLOT-FIFO-ORDER rejects the host's request",
+   "text": "Registered by GATE-SLOT-FIFO-ORDER. quirin_audit_plugin::Quotas keeps deny_unknown_fields and the host now sends slot_wait_limit_ms and wall_limit_ms in the request's quotas (both optional on parse, so a request from an older host still parses). An out-of-tree plugin built on the SDK before this card would refuse the request; the in-tree plugins (measure, libevent) are built with the host. DISCHARGE: either a protocol version for the fields, or a recorded decision that plugins are rebuilt with the host.",
+   "source": "docs/reports/gate-slot-fifo-order/README.md",
+   "recorded_by": "GATE-SLOT-FIFO-ORDER"
+  }
+ ]
+}

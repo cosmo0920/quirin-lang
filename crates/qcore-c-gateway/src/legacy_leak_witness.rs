@@ -96,6 +96,20 @@ pub struct Witness {
     pub acquisition_line: usize,
     pub exit_node: Option<usize>,
     pub site: Option<usize>,
+    /// Card LOOP-REACQUISITION-LEAK-ACCUSATION: which generation of its
+    /// acquisition site `site` names (`current`, `previous` or `older`,
+    /// `crate::loop_generations::generation`). One witness per reported leak
+    /// is the current generation's, as before; the earlier generations'
+    /// witnesses are emitted beside it when the settled exit keeps them live
+    /// or a path reaches the exit.
+    pub generation: &'static str,
+    /// The settled analysis refuses this site's re-acquisition
+    /// (`loop re-acquisition: an earlier generation that may be live is
+    /// still held`).
+    pub reacquisition_refused: bool,
+    /// How many nodes of `path` after its first acquire the site again: an
+    /// earlier generation's witness passes at least one re-acquisition.
+    pub path_reacquisitions: Option<usize>,
     /// The settled exit state still reports this leak.
     pub settled: bool,
     /// The site's status bits at the settled exit (`LIVE` 1, `RELEASED` 2,
@@ -268,8 +282,10 @@ pub(super) fn record(
                 map
             },
         );
+    let refused_reacquisitions =
+        super::loop_generations_route::refused_reacquisitions(cfg, incoming);
     for &(line, acquisition_line) in &reported {
-        let sites = acquisition_lines
+        let bases = acquisition_lines
             .iter()
             .filter(|(_, acquired)| **acquired == acquisition_line)
             .map(|(site, _)| *site)
@@ -281,9 +297,105 @@ pub(super) fn record(
             .filter(|(_, node)| node.is_exit && node.line == line)
             .map(|(index, _)| index)
             .collect::<Vec<_>>();
-        let mut best: Option<Witness> = None;
-        for &exit in &exits {
-            for &site in &sites {
+        // Card LOOP-REACQUISITION-LEAK-ACCUSATION: every generation of each
+        // site, the current one first (the witness this census always wrote).
+        for generation in [
+            crate::loop_generations::Generation::Current,
+            crate::loop_generations::Generation::Previous,
+            crate::loop_generations::Generation::Older,
+        ] {
+            let sites = bases
+                .iter()
+                .map(|&site| match generation {
+                    crate::loop_generations::Generation::Current => site,
+                    crate::loop_generations::Generation::Previous => {
+                        crate::loop_generations::previous(site)
+                    }
+                    crate::loop_generations::Generation::Older => {
+                        crate::loop_generations::older(site)
+                    }
+                })
+                .collect::<Vec<_>>();
+            let best = best_witness(
+                cfg,
+                incoming,
+                entry,
+                &settled,
+                &producers,
+                &refused_reacquisitions,
+                invocation,
+                &reported,
+                (line, acquisition_line),
+                &exits,
+                &sites,
+                generation,
+            );
+            match (generation, best) {
+                (crate::loop_generations::Generation::Current, best) => {
+                    emit(&best.unwrap_or_else(|| Witness {
+                        unit_seq: crate::indirect_census::unit_seq(),
+                        invocation,
+                        function: cfg.function.clone(),
+                        reported: reported.clone(),
+                        line,
+                        acquisition_line,
+                        exit_node: None,
+                        site: None,
+                        generation: "current",
+                        reacquisition_refused: false,
+                        path_reacquisitions: None,
+                        settled: false,
+                        status: 0,
+                        unresolved: false,
+                        exempt: false,
+                        exit_unmodeled: false,
+                        exit_widened: false,
+                        bound_at_exit: Vec::new(),
+                        path: None,
+                        clean_path: None,
+                        strict_path: None,
+                        handed_path: None,
+                        untested_path: None,
+                        untied_path: None,
+                    }));
+                }
+                (_, Some(best)) if best.settled || best.path.is_some() => emit(&best),
+                _ => {}
+            }
+        }
+    }
+}
+
+fn generation_code(generation: crate::loop_generations::Generation) -> &'static str {
+    match generation {
+        crate::loop_generations::Generation::Current => "current",
+        crate::loop_generations::Generation::Previous => "previous",
+        crate::loop_generations::Generation::Older => "older",
+    }
+}
+
+/// The best witness of one reported leak among `sites` (one generation of
+/// each acquisition site at the leak's acquisition line) over `exits`.
+#[allow(clippy::too_many_arguments)]
+fn best_witness(
+    cfg: &LegacyCfg,
+    incoming: &[Option<AbstractState>],
+    entry: &EntryCustody,
+    settled: &[Settled],
+    producers: &BTreeMap<usize, Vec<usize>>,
+    refused_reacquisitions: &BTreeSet<usize>,
+    invocation: u64,
+    reported: &[(usize, usize)],
+    (line, acquisition_line): (usize, usize),
+    exits: &[usize],
+    sites: &[usize],
+    generation: crate::loop_generations::Generation,
+) -> Option<Witness> {
+    let mut best: Option<Witness> = None;
+    {
+        for &exit in exits {
+            for &site in sites {
+                let base = crate::loop_generations::base(site);
                 let Some(output) = settled[exit].output.as_ref() else {
                     continue;
                 };
@@ -292,25 +404,36 @@ pub(super) fn record(
                 let reproduced = status & LIVE != 0
                     && !exempt.contains(&site)
                     && !output.unresolved_effect_sites.contains(&site);
-                let starts = producers.get(&site).cloned().unwrap_or_default();
+                // An earlier generation is created by the shift at its base
+                // site's producer, so the search starts there too.
+                let starts = producers.get(&base).cloned().unwrap_or_default();
                 let find = |avoid, edges| {
-                    search(cfg, &settled, incoming, &starts, exit, site, avoid, edges)
+                    search(cfg, settled, incoming, &starts, exit, site, avoid, edges)
                 };
                 let path = find(Avoid::Nothing, EdgeAvoid::Nothing);
+                let path_reacquisitions = path.as_ref().map(|path| {
+                    path.iter()
+                        .skip(1)
+                        .filter(|step| starts.contains(&step.node))
+                        .count()
+                });
                 let clean_path = find(Avoid::Escapes, EdgeAvoid::Nothing);
                 let strict_path = find(Avoid::HandOns, EdgeAvoid::Nothing);
                 let untested_path = find(Avoid::Nothing, EdgeAvoid::RefusedNull);
                 let untied_path = find(Avoid::Nothing, EdgeAvoid::Tied);
-                let handed_path = handed(cfg, &settled, incoming, &starts, exit, site);
+                let handed_path = handed(cfg, settled, incoming, &starts, exit, site);
                 let candidate = Witness {
                     unit_seq: crate::indirect_census::unit_seq(),
                     invocation,
                     function: cfg.function.clone(),
-                    reported: reported.clone(),
+                    reported: reported.to_vec(),
                     line,
                     acquisition_line,
                     exit_node: Some(exit),
                     site: Some(site),
+                    generation: generation_code(generation),
+                    reacquisition_refused: refused_reacquisitions.contains(&base),
+                    path_reacquisitions,
                     settled: reproduced,
                     status,
                     unresolved: output.unresolved_effect_sites.contains(&site),
@@ -337,31 +460,8 @@ pub(super) fn record(
                 }
             }
         }
-        let witness = best.unwrap_or_else(|| Witness {
-            unit_seq: crate::indirect_census::unit_seq(),
-            invocation,
-            function: cfg.function.clone(),
-            reported: reported.clone(),
-            line,
-            acquisition_line,
-            exit_node: None,
-            site: None,
-            settled: false,
-            status: 0,
-            unresolved: false,
-            exempt: false,
-            exit_unmodeled: false,
-            exit_widened: false,
-            bound_at_exit: Vec::new(),
-            path: None,
-            clean_path: None,
-            strict_path: None,
-            handed_path: None,
-            untested_path: None,
-            untied_path: None,
-        });
-        emit(&witness);
     }
+    best
 }
 
 /// Re-run every reachable node's transfer and edge refinement from its settled

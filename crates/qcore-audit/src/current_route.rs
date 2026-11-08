@@ -6,7 +6,12 @@
 //! Every selected compilation configuration of the profile's `audit.json`
 //! library groups, then of an optional Monkey (forced-Libevent) database, is
 //! one [`CurrentAudit`] task, analysed on up to `jobs` threads and folded in
-//! selection order (card W44-AUDIT-PARALLEL-UNITS). Every database record must
+//! selection order (card W44-AUDIT-PARALLEL-UNITS). Card
+//! CURRENT-MONKEY-LINKED-CONFIGURATION: with `monkey_linked`, Monkey's units
+//! come from the main compile database instead (the configuration linked into
+//! `fluent-bit`, label `monkey`), and a Monkey database is only accounted
+//! for: each of its units is replaced by the linked unit of the same file or
+//! stays as a not-linked `Unknown` unit. Every database record must
 //! name the configured Clang C driver (`/usr/bin/cc` and other substitutes
 //! refuse before any unit is analysed). Historical source/native/provider
 //! evidence is not admitted: its sidecar paths are overwritten with explicit
@@ -23,7 +28,7 @@ use serde_json::Value;
 use crate::compile_db::{
     CompileEntry, compile_entries, compiler_options_compatibility as compiler_options,
 };
-use crate::cross_unit_links::LinkMap;
+use crate::cross_unit_links::{DerivedResolution, LinkMap};
 use crate::current::{CurrentAudit, EntryOutcome, distinct_configurations, select_configurations};
 use crate::evidence::EvidenceMode;
 use crate::parallel::run_ordered;
@@ -44,7 +49,15 @@ pub struct CurrentRoute<'a> {
     /// when absent.
     pub compile_database: Option<&'a Path>,
     /// The Monkey compilation database, whose units join as `monkey-libevent`.
+    /// Under [`Self::monkey_linked`] it is only accounted for, never analysed.
     pub monkey_database: Option<&'a Path>,
+    /// Card CURRENT-MONKEY-LINKED-CONFIGURATION: analyse Monkey's units as the
+    /// main compile database configures them (the configuration linked into
+    /// `fluent-bit`), under [`LINKED_MONKEY_LABEL`]. With
+    /// [`Self::monkey_database`], each standalone unit is replaced by its
+    /// linked counterpart (the same file) or, without one, stays in the
+    /// denominator as a not-linked `Unknown` unit under its own key.
+    pub monkey_linked: bool,
     /// Report paths. The diagnostic report also names its `.contracts.json`,
     /// `.chunk-contracts.json` and `.source-effects.json` siblings.
     pub monkey_source_report: Option<&'a Path>,
@@ -85,6 +98,9 @@ pub(crate) struct ConfiguredTask<'a> {
 pub(crate) enum TaskInput<'a> {
     Configured(&'a CompileEntry),
     Absent(&'a str),
+    /// Card CURRENT-MONKEY-LINKED-CONFIGURATION: a standalone Monkey unit the
+    /// linked configuration does not compile (checkout-relative file, reason).
+    NotLinked(&'a str, &'a str),
 }
 
 /// One selected group: its report label, its configured units in order (a
@@ -94,6 +110,128 @@ type Group<'a> = (String, Vec<Selected<'a>>, Option<&'static str>);
 enum Selected<'a> {
     Configured(CompileEntry),
     Absent(&'a str),
+    NotLinked { file: String, reason: String },
+}
+
+/// Card CURRENT-MONKEY-LINKED-CONFIGURATION: the report label (and unit key
+/// prefix) of Monkey's units in the configuration linked into `fluent-bit`.
+pub const LINKED_MONKEY_LABEL: &str = "monkey";
+/// The label of the standalone, forced-Libevent Monkey configuration.
+pub const STANDALONE_MONKEY_LABEL: &str = "monkey-libevent";
+
+/// Card CURRENT-MONKEY-LINKED-CONFIGURATION: Monkey's units in the main
+/// compile database, by the route's Monkey unit rule ([`is_monkey_unit`])
+/// under `<checkout>/lib/monkey`: every distinct configuration, records
+/// matched by located path and two spellings of one file refused. Empty when
+/// the database compiles none; [`run_current_route`] refuses that, and the
+/// link step reads it as no Monkey unit.
+///
+/// # Errors
+/// An aliased spelling (`input-path-alias`).
+pub fn linked_monkey_configurations(
+    entries: &[CompileEntry],
+    checkout: &Path,
+) -> Result<Vec<CompileEntry>, String> {
+    let root = checkout.join("lib/monkey");
+    let selected = entries
+        .iter()
+        .filter(|entry| is_monkey_unit(&root, &entry.file))
+        .collect::<Vec<_>>();
+    crate::input_paths::refuse_aliases(selected.iter().copied())?;
+    Ok(distinct_configurations(selected.into_iter().cloned()))
+}
+
+/// The checkout-relative file of a linked Monkey configuration.
+fn checkout_relative(file: &Path, checkout: &Path) -> Result<String, String> {
+    crate::input_paths::relative_within(file, checkout)
+        .map(|relative| relative.to_string_lossy().into_owned())
+        .ok_or_else(|| format!("Monkey source outside the checkout: {}", file.display()))
+}
+
+/// Card CURRENT-MONKEY-LINKED-CONFIGURATION: how a linked run accounts for
+/// the standalone database's units: each is replaced by the linked unit of
+/// the same file, or kept as a not-linked unit. The record joins the
+/// report's assumptions.
+struct LinkedMonkey {
+    entries: Vec<CompileEntry>,
+    not_linked: Vec<(String, String)>,
+    record: Value,
+}
+
+fn linked_monkey(
+    entries: &[CompileEntry],
+    root: &Path,
+    standalone: Option<&Path>,
+) -> Result<LinkedMonkey, String> {
+    let linked = linked_monkey_configurations(entries, root)?;
+    if linked.is_empty() {
+        return Err(
+            "--monkey-linked: the compile database contains no Monkey sources under lib/monkey (mk_core/, mk_server/, tls/)"
+                .into(),
+        );
+    }
+    for entry in &linked {
+        crate::compile_db::require_clang_driver(entry)?;
+    }
+    let files = linked
+        .iter()
+        .map(|entry| checkout_relative(&entry.file, root))
+        .collect::<Result<Vec<_>, _>>()?;
+    let mut replaced = Vec::new();
+    let mut not_linked = Vec::new();
+    let mut pairs = Vec::new();
+    if let Some(path) = standalone {
+        let standalone_entries =
+            compile_entries(&fs::read_to_string(path).map_err(|error| error.to_string())?)?;
+        let source_root = monkey_source_root(&standalone_entries)?;
+        crate::input_paths::refuse_aliases(
+            standalone_entries
+                .iter()
+                .filter(|entry| is_monkey_unit(&source_root, &entry.file)),
+        )?;
+        let selected = distinct_configurations(
+            standalone_entries
+                .into_iter()
+                .filter(|entry| is_monkey_unit(&source_root, &entry.file)),
+        );
+        let mut seen = std::collections::BTreeSet::new();
+        for entry in &selected {
+            let relative = crate::input_paths::relative_within(&entry.file, &source_root)
+                .ok_or_else(|| "Monkey source outside compiled root".to_owned())?;
+            let file = format!("lib/monkey/{}", relative.to_string_lossy());
+            // Two standalone configurations of one file are one unit key.
+            if !seen.insert(file.clone()) {
+                continue;
+            }
+            let standalone_key = format!("{STANDALONE_MONKEY_LABEL}/{file}");
+            if files.contains(&file) {
+                replaced.push(serde_json::json!({
+                    "standalone": standalone_key,
+                    "linked": format!("{LINKED_MONKEY_LABEL}/{file}"),
+                }));
+            } else {
+                let reason = format!(
+                    "not linked: the configuration linked into fluent-bit (the run's compile database) does not compile {file}; the standalone Monkey configuration (--monkey-database) is accounted for, not analysed, under --monkey-linked"
+                );
+                not_linked.push(serde_json::json!({"unit": standalone_key, "reason": reason}));
+                pairs.push((file, reason));
+            }
+        }
+    }
+    let record = serde_json::json!({
+        "analysed": "linked",
+        "label": LINKED_MONKEY_LABEL,
+        "meaning": "Monkey's units (lib/monkey mk_core/ without mk_core/deps/, mk_server/, tls/) as the run's compile database configures them, which is the configuration linked into fluent-bit. A unit of the standalone Monkey database (--monkey-database) is replaced by the linked unit of the same file; one the linked configuration does not compile stays in the denominator as a not-linked Unknown unit under its own key. Nothing is dropped.",
+        "units": files,
+        "standalone_database": standalone,
+        "replaced": replaced,
+        "not_linked": not_linked,
+    });
+    Ok(LinkedMonkey {
+        entries: linked,
+        not_linked: pairs,
+        record,
+    })
 }
 
 /// Run the route; `Ok(true)` when any unit hit a gateway failure.
@@ -110,14 +248,25 @@ pub fn run_current_route_with_checkpoints(
     route: &CurrentRoute<'_>,
     checkpoints: Option<&crate::checkpoint_run::CheckpointOptions>,
 ) -> Result<bool, String> {
-    let cross_unit_links = LinkMap::load_selected()?;
+    let stated_links = LinkMap::load_selected()?;
+    // Card LINK-STANDING (rule 40): a supplied link-resolution artifact is
+    // the run's resolution, derived instead of stated.
+    let derived_resolution = DerivedResolution::load_selected()?;
+    if stated_links.is_some() && derived_resolution.is_some() {
+        return Err(format!(
+            "{} and {} are exclusive: a run either states its link resolution or derives it",
+            crate::cross_unit_links::SELECTION,
+            crate::cross_unit_links::RESOLUTION_SELECTION
+        ));
+    }
+    let opted = stated_links.is_some() || derived_resolution.is_some();
     // Card CURRENT-RUN-WORKER-SPIN: per-phase and per-unit progress on
     // standard error for the cross-unit route (or when asked).
-    crate::route_progress::enable_if(cross_unit_links.is_some());
-    if cross_unit_links.is_some() && route.mode.is_contracts_only() {
+    crate::route_progress::enable_if(opted);
+    if opted && route.mode.is_contracts_only() {
         return Err("cross-unit imports require configured home and caller units".into());
     }
-    if cross_unit_links.is_some() && checkpoints.is_some() {
+    if opted && checkpoints.is_some() {
         return Err("cross-unit imports are not supported by checkpoint composition".into());
     }
     let root = route
@@ -143,10 +292,12 @@ pub fn run_current_route_with_checkpoints(
         println!("{line}");
     }
     let default_database = root.join("build/compile_commands.json");
-    let entries = compile_entries(
-        &fs::read_to_string(route.compile_database.unwrap_or(&default_database))
-            .map_err(|error| error.to_string())?,
-    )?;
+    let database_text = fs::read_to_string(route.compile_database.unwrap_or(&default_database))
+        .map_err(|error| error.to_string())?;
+    let entries = compile_entries(&database_text)?;
+    // Card LINK-STANDING (rule 40): the artifact must describe this database.
+    let database_sha256 = qcore_schemas::sha256_hex(database_text.as_bytes());
+    drop(database_text);
     // Select all groups before auditing; missing groups cannot disappear from
     // the denominator. Different commands for one file remain separate tasks.
     let mut groups: Vec<Group<'_>> = Vec::new();
@@ -214,8 +365,71 @@ pub fn run_current_route_with_checkpoints(
             ));
         }
     }
+    // Card CURRENT-MONKEY-LINKED-CONFIGURATION: Monkey from the main compile
+    // database (the configuration linked into fluent-bit), after the
+    // profile's or the selection's groups; the standalone database, when
+    // given, is accounted for and not analysed.
+    if route.monkey_linked {
+        let linked = linked_monkey(&entries, &root, route.monkey_database)?;
+        let monkey_root = root.join("lib/monkey");
+        for (label, selected, _) in &groups {
+            if label == LINKED_MONKEY_LABEL || label == STANDALONE_MONKEY_LABEL {
+                return Err(format!(
+                    "--monkey-linked: group `{label}` already uses the label of a Monkey configuration"
+                ));
+            }
+            for unit in selected {
+                let file = match unit {
+                    Selected::Configured(entry) => entry.file.clone(),
+                    Selected::Absent(file) => root.join(file),
+                    Selected::NotLinked { file, .. } => root.join(file),
+                };
+                if is_monkey_unit(&monkey_root, &file) {
+                    return Err(format!(
+                        "--monkey-linked: group `{label}` already selects the Monkey unit {}; a unit is analysed under one configuration",
+                        file.display()
+                    ));
+                }
+            }
+        }
+        let line = format!(
+            "{LINKED_MONKEY_LABEL}: Monkey as linked into fluent-bit ({} unit(s) of the compile database); {} standalone unit(s) replaced, {} not linked",
+            linked.entries.len(),
+            linked.record["replaced"].as_array().map_or(0, Vec::len),
+            linked.not_linked.len()
+        );
+        println!("{line}");
+        preamble.push(line);
+        audit.record_monkey_configuration(linked.record);
+        group_keys.push((LINKED_MONKEY_LABEL.into(), LINKED_MONKEY_LABEL.into()));
+        groups.push((
+            LINKED_MONKEY_LABEL.into(),
+            linked
+                .entries
+                .into_iter()
+                .map(Selected::Configured)
+                .collect(),
+            None,
+        ));
+        if !linked.not_linked.is_empty() {
+            group_keys.push((
+                STANDALONE_MONKEY_LABEL.into(),
+                STANDALONE_MONKEY_LABEL.into(),
+            ));
+            groups.push((
+                STANDALONE_MONKEY_LABEL.into(),
+                linked
+                    .not_linked
+                    .into_iter()
+                    .map(|(file, reason)| Selected::NotLinked { file, reason })
+                    .collect(),
+                None,
+            ));
+        }
+    }
     let monkey = route
         .monkey_database
+        .filter(|_| !route.monkey_linked)
         .map(|path| {
             let entries =
                 compile_entries(&fs::read_to_string(path).map_err(|error| error.to_string())?)?;
@@ -298,6 +512,9 @@ pub fn run_current_route_with_checkpoints(
                     (Ok(entry.file.clone()), TaskInput::Configured(entry))
                 }
                 Selected::Absent(file) => (Ok(root.join(file)), TaskInput::Absent(file)),
+                Selected::NotLinked { file, reason } => {
+                    (Ok(root.join(file)), TaskInput::NotLinked(file, reason))
+                }
             };
             tasks.push(ConfiguredTask {
                 group: headers.len() - 1,
@@ -327,6 +544,59 @@ pub fn run_current_route_with_checkpoints(
             });
         }
     }
+    // Card LINK-STANDING (rule 40): the run-level conditions (database and
+    // bound digests), then the home-level conditions against the route's own
+    // configurations. A refused artifact leaves every call uncontracted.
+    let mut derived = None;
+    let mut link_refused = None;
+    let cross_unit_links = match derived_resolution {
+        None => stated_links,
+        Some(resolution) => match resolution.verify(&database_sha256) {
+            Err((refusal, detail)) => {
+                println!(
+                    "cross-unit import phase refused: {}: {detail}",
+                    refusal.phrase()
+                );
+                link_refused = Some(serde_json::json!({
+                    "evidence": "derived",
+                    "refused": refusal.phrase(),
+                    "detail": detail,
+                    "artifact": resolution.path,
+                    "artifact_sha256": resolution.artifact_sha256,
+                }));
+                None
+            }
+            Ok(()) => {
+                let route_units = tasks
+                    .iter()
+                    .filter_map(|task| match (&task.expected_source, task.input) {
+                        (Ok(expected_source), TaskInput::Configured(entry)) => {
+                            crate::input_paths::relative_within(expected_source, &root).map(
+                                |file| {
+                                    (
+                                        format!("{}/{}", task.library, file.to_string_lossy()),
+                                        crate::cross_unit_links::ConfigurationIdentity::of(entry),
+                                    )
+                                },
+                            )
+                        }
+                        _ => None,
+                    })
+                    .collect::<Vec<_>>();
+                let found = resolution.derive(&route_units);
+                println!(
+                    "cross-unit link resolution derived (rule 40) from {} (sha256 {}): {} home(s); refused {}",
+                    resolution.path.display(),
+                    resolution.artifact_sha256,
+                    found.map.requested().len(),
+                    found.refused_by_reason()
+                );
+                let map = found.map.clone();
+                derived = Some(found);
+                (!map.requested().is_empty()).then_some(map)
+            }
+        },
+    };
     if let Some(options) = checkpoints {
         let unresolved = groups
             .iter()
@@ -355,7 +625,7 @@ pub fn run_current_route_with_checkpoints(
         return crate::checkpoint_run::run(route, &audit, plan, options).map(|(failed, _)| failed);
     }
     if let Some(library_table) = route.library_providers {
-        if cross_unit_links.is_some() {
+        if opted {
             return Err(
                 "cross-unit imports are not supported with per-library provider scoping".into(),
             );
@@ -527,6 +797,10 @@ pub fn run_current_route_with_checkpoints(
                         audit.export_cross_unit_home(task.library, expected_source, entry, links)
                     }))
                 }
+                // Card CURRENT-MONKEY-LINKED-CONFIGURATION: a not-linked
+                // standalone unit is outside the linked program, so it
+                // exports and defines nothing the link could choose.
+                (_, TaskInput::NotLinked(..)) => Some(Ok((Vec::new(), Vec::new(), true))),
                 _ => None,
             },
             |scan| {
@@ -550,7 +824,10 @@ pub fn run_current_route_with_checkpoints(
             (audit.contracts().clone(), Vec::new())
         };
         if !homes.is_empty() {
-            audit.set_cross_unit(environment, homes, links);
+            match derived.take() {
+                Some(derived) => audit.set_cross_unit_derived(environment, homes, derived),
+                None => audit.set_cross_unit(environment, homes, links),
+            }
             let progress =
                 crate::route_progress::Phase::begin("cross-unit import", tasks.len(), route.jobs);
             let mut promoted = Vec::new();
@@ -594,6 +871,9 @@ pub fn run_current_route_with_checkpoints(
             }
         }
     }
+    if let Some(refused) = link_refused {
+        audit.record_link_resolution_refused(refused);
+    }
     for (group, outcome) in published {
         for header in &headers[printed_headers..=group] {
             println!("{header}");
@@ -620,7 +900,9 @@ pub fn run_current_route_with_checkpoints(
 /// below the checkout when it lies there.
 fn task_label(root: &Path, task: &ConfiguredTask<'_>) -> String {
     let file = match (&task.expected_source, task.input) {
-        (_, TaskInput::Absent(file)) => return format!("{}/{file}", task.library),
+        (_, TaskInput::Absent(file) | TaskInput::NotLinked(file, _)) => {
+            return format!("{}/{file}", task.library);
+        }
         (Ok(source), _) => source.as_path(),
         (Err(_), TaskInput::Configured(entry)) => entry.file.as_path(),
     };
@@ -631,6 +913,9 @@ fn task_label(root: &Path, task: &ConfiguredTask<'_>) -> String {
 pub(crate) fn evaluate_task(audit: &CurrentAudit, task: &ConfiguredTask<'_>) -> EntryOutcome {
     match (&task.expected_source, task.input) {
         (_, TaskInput::Absent(file)) => audit.evaluate_absent(task.library, file),
+        (_, TaskInput::NotLinked(file, reason)) => {
+            audit.evaluate_not_linked(task.library, file, reason)
+        }
         (Ok(expected_source), TaskInput::Configured(entry)) => {
             audit.evaluate_entry(task.library, expected_source, entry, task.unresolved)
         }
@@ -648,7 +933,7 @@ pub(crate) fn task_dispatch(tasks: &[ConfiguredTask<'_>]) -> Vec<usize> {
             .iter()
             .map(|task| match task.input {
                 TaskInput::Configured(entry) => source_weight(entry),
-                TaskInput::Absent(_) => 0,
+                TaskInput::Absent(_) | TaskInput::NotLinked(..) => 0,
             })
             .collect::<Vec<_>>(),
     )

@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "name": "refused-store-census-cmt-map",
+  "description": "Card REFUSED-STORE-OF-CALL-RESULT-ESCAPE: the cmetrics unit lib/cmetrics/src/cmt_map.c alone, for the QCORE_LEAK_WITNESS census.",
+  "groups": [
+    {
+      "library": "cmetrics",
+      "files": ["lib/cmetrics/src/cmt_map.c"]
+    }
+  ]
+}

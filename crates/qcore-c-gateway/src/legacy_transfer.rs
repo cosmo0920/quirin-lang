@@ -7,6 +7,9 @@
 
 use super::*;
 
+#[path = "legacy_out_slot_call_write.rs"]
+pub(crate) mod out_slot_call_write;
+
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub(super) struct AbstractPointer {
     pub(super) targets: BTreeSet<usize>,
@@ -1843,6 +1846,15 @@ pub(super) struct TransferContext<'a> {
     /// Card **CELL-PROTOCOL-RELEASE-WINDOW-FRAMES** (rule 38g): the CFG's
     /// callee frame standings; empty (every frame absent) elsewhere.
     pub(super) cell_frames: super::cell_frames_route::CellFrames,
+    /// Card **OUT-PARAMETER-SCALAR-FRAME-PREMISE** (rule 11r(7)): the out
+    /// slots a typed scalar store through another out formal spares under the
+    /// listed `effective-type:` premise; `None` in every analysis rule
+    /// 11r(6)'s premised routes did not open.
+    pub(super) effective_type: Option<crate::legacy_summary::effective_type::Frame>,
+    /// Card **OUT-SLOT-CALL-WRITE-ALIASING** (rule 11r(8)): the calls that
+    /// may write caller memory, which poison every bound sanctioned out slot;
+    /// `None` in an analysis that sanctions no slot.
+    pub(super) out_slot_call_write: Option<out_slot_call_write::Frame>,
 }
 
 /// The kind of `site` under `kinds`: heap unless recorded otherwise.
@@ -1945,6 +1957,14 @@ fn analyze_cfg_with_entry_collected(
         exact_return_bases: entry_custody.derived_bases.clone(),
         selection: entry_custody.selection.clone(),
         cell_frames: cfg.cell_frames.clone(),
+        effective_type: crate::legacy_summary::effective_type::frame(
+            &cfg.function,
+            &entry_custody.sanctioned_places(),
+        ),
+        out_slot_call_write: out_slot_call_write::frame(
+            &cfg.function,
+            &entry_custody.sanctioned_places(),
+        ),
         traversal: cfg.traversal.clone(),
         site_kinds: descriptor_custody::site_kinds(cfg.nodes.iter().map(|node| &node.instruction))
             .into_iter()
@@ -1962,6 +1982,9 @@ fn analyze_cfg_with_entry_collected(
     incoming[cfg.entry] = Some(entry_custody.state.clone());
     let mut work = VecDeque::from([cfg.entry]);
     let mut diagnostics = BTreeSet::new();
+    // Card LOOP-REACQUISITION-LEAK-ACCUSATION (rule 42): earlier generations'
+    // leak reports wait for the settled states.
+    let mut deferred_leaks = loop_reacquisition_leak_route::Deferred::default();
     let mut steps = 0usize;
     let acquisition_lines = cfg
         .nodes
@@ -2018,6 +2041,7 @@ fn analyze_cfg_with_entry_collected(
                 &acquisition_lines,
                 &exempt,
                 &mut diagnostics,
+                &mut deferred_leaks,
             );
             // Card CALLEE-RETENTION-CLASS1 (rule 12t).
             retained_by_route::report_exit(&cfg.function, node.line, &output, &mut diagnostics);
@@ -2148,6 +2172,10 @@ fn analyze_cfg_with_entry_collected(
             }
         }
     }
+
+    // Card LOOP-REACQUISITION-LEAK-ACCUSATION (rule 42): publish every
+    // deferred earlier-generation leak the settled refusal does not withdraw.
+    deferred_leaks.settle(&cfg, &incoming, &mut diagnostics);
 
     if incoming.iter().flatten().any(|state| state.widened) {
         diagnostics.insert(LegacyDiagnostic {
@@ -2783,6 +2811,26 @@ pub(super) fn transfer(
         diagnostics,
     );
     slot_move_route::after(node, &mut output);
+    // Card OUT-SLOT-CALL-WRITE-ALIASING (rule 11r(8)): a call that may write
+    // caller memory leaves no bound out slot as it was, except the slots its
+    // own `Out` positions state it writes.
+    if let Some(frame) = &context.out_slot_call_write
+        && frame.writes(node.line, &node.instruction)
+    {
+        let written = out_slot_call_write::call_bearing(&node.instruction)
+            .into_iter()
+            .flat_map(|applied| applied.out_places)
+            .collect::<BTreeSet<_>>();
+        for place in &context.sanctioned {
+            if written.contains(place) {
+                continue;
+            }
+            if let Some(pointer) = output.pointers.get_mut(*place) {
+                pointer.unknown = true;
+                pointer.may_be_null = true;
+            }
+        }
+    }
     // Card MK-EVENT-CELL-CROSS-FUNCTION (rule 38c): a call that may reach a
     // record with a fact forwards it under its protocol, or refuses. A
     // cell-bearing call is rule 38's own.
@@ -4018,11 +4066,24 @@ pub(super) fn transfer_base(
             }
         }
         if let Some(frame) = frame {
+            // Card OUT-PARAMETER-SCALAR-FRAME-PREMISE (rule 11r(7)): a
+            // non-character integer or enumeration store through another out
+            // formal leaves a pointer out slot as it was, under the listed
+            // `effective-type:` premise (C11 6.5p7), which the analysis notes.
+            let premised = context
+                .effective_type
+                .as_ref()
+                .filter(|_| destination.is_none());
             for (place, pointer) in state.pointers.iter_mut() {
-                if frame.poisons(place) {
-                    pointer.unknown = true;
-                    pointer.may_be_null = true;
+                if !frame.poisons(place) {
+                    continue;
                 }
+                if premised.is_some_and(|premise| premise.spares(node.line, bases, place)) {
+                    crate::legacy_summary::effective_type::note_used();
+                    continue;
+                }
+                pointer.unknown = true;
+                pointer.may_be_null = true;
             }
         }
         return state;
@@ -6450,6 +6511,7 @@ pub(super) fn report_leaks(
     // formal at exit is the interface, not a leak.
     exempt: &BTreeSet<usize>,
     diagnostics: &mut BTreeSet<LegacyDiagnostic>,
+    deferred: &mut loop_reacquisition_leak_route::Deferred,
 ) {
     for (&site, &status) in &state.resources {
         // Card REFCOUNT-RESOURCE-KIND (rule 13b): a reference family's
@@ -6459,6 +6521,12 @@ pub(super) fn report_leaks(
             && !state.unresolved_effect_sites.contains(&site)
             && !state.references.contains_key(&site)
         {
+            // Card LOOP-REACQUISITION-LEAK-ACCUSATION (rule 42): an earlier
+            // generation's report waits for the settled refusal.
+            if loop_reacquisition_leak_route::Deferred::defers(site) {
+                deferred.defer(line, acquisition_line(acquisition_lines, site), site);
+                continue;
+            }
             diagnostics.insert(LegacyDiagnostic {
                 function: function.to_owned(),
                 line,

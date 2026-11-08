@@ -1,0 +1,2198 @@
+[
+ {
+  "function": "rd_kafka_sasl_safe_string",
+  "line": 20286,
+  "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c:249",
+  "acquisition_line": 20282,
+  "current_witness": true,
+  "earlier_witnesses": [
+   "previous",
+   "older"
+  ],
+  "settled_exit_reports_it": false,
+  "reacquisition_refused": true,
+  "generation_join": false,
+  "withdrawn_by_rule_42": false,
+  "statuses": {
+   "current": [
+    [
+     1,
+     true
+    ]
+   ],
+   "previous": [
+    [
+     1,
+     true
+    ]
+   ],
+   "older": [
+    [
+     1,
+     true
+    ]
+   ]
+  },
+  "generations": {
+   "current": [
+    {
+     "invocation": [
+      2,
+      3
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20282,
+      20263,
+      20263,
+      20284,
+      20284,
+      20285,
+      20286
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      2,
+      4
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20282,
+      20263,
+      20263,
+      20284,
+      20284,
+      20285,
+      20286
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      2,
+      5
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20282,
+      20263,
+      20263,
+      20284,
+      20284,
+      20285,
+      20286
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      2,
+      6
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20282,
+      20263,
+      20263,
+      20284,
+      20284,
+      20285,
+      20286
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    }
+   ],
+   "previous": [
+    {
+     "invocation": [
+      2,
+      3
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20282,
+      20263,
+      20263,
+      20284,
+      20284,
+      20285,
+      20286
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      2,
+      4
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20282,
+      20263,
+      20263,
+      20284,
+      20284,
+      20285,
+      20286
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      2,
+      5
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20282,
+      20263,
+      20263,
+      20284,
+      20284,
+      20285,
+      20286
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      2,
+      6
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20282,
+      20263,
+      20263,
+      20284,
+      20284,
+      20285,
+      20286
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    }
+   ],
+   "older": [
+    {
+     "invocation": [
+      2,
+      3
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20282,
+      20263,
+      20263,
+      20284,
+      20284,
+      20285,
+      20286
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      2,
+      4
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20282,
+      20263,
+      20263,
+      20284,
+      20284,
+      20285,
+      20286
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      2,
+      5
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20282,
+      20263,
+      20263,
+      20284,
+      20284,
+      20285,
+      20286
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      2,
+      6
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20282,
+      20263,
+      20263,
+      20284,
+      20284,
+      20285,
+      20286
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    }
+   ]
+  }
+ },
+ {
+  "function": "rd_kafka_snappy_java_uncompress",
+  "line": 20476,
+  "origin": "lib/librdkafka-2.15.0/src/snappy.c:1648",
+  "acquisition_line": 20506,
+  "current_witness": true,
+  "earlier_witnesses": [
+   "previous",
+   "older"
+  ],
+  "settled_exit_reports_it": false,
+  "reacquisition_refused": true,
+  "generation_join": false,
+  "withdrawn_by_rule_42": false,
+  "statuses": {
+   "current": [
+    [
+     1,
+     true
+    ]
+   ],
+   "previous": [
+    [
+     1,
+     true
+    ]
+   ],
+   "older": [
+    [
+     1,
+     true
+    ]
+   ]
+  },
+  "generations": {
+   "current": [
+    {
+     "invocation": [
+      1,
+      0
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20464,
+      20464,
+      20465,
+      20466,
+      20467,
+      20468,
+      20469,
+      20470,
+      20471,
+      20472,
+      20473,
+      20474,
+      20475,
+      20476
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      1,
+      1
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20464,
+      20464,
+      20465,
+      20466,
+      20467,
+      20468,
+      20469,
+      20470,
+      20471,
+      20472,
+      20473,
+      20474,
+      20475,
+      20476
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      1,
+      2
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20464,
+      20464,
+      20465,
+      20466,
+      20467,
+      20468,
+      20469,
+      20470,
+      20471,
+      20472,
+      20473,
+      20474,
+      20475,
+      20476
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    }
+   ],
+   "previous": [
+    {
+     "invocation": [
+      1,
+      0
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20464,
+      20464,
+      20465,
+      20466,
+      20467,
+      20468,
+      20469,
+      20470,
+      20471,
+      20472,
+      20473,
+      20474,
+      20475,
+      20476
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      1,
+      1
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20464,
+      20464,
+      20465,
+      20466,
+      20467,
+      20468,
+      20469,
+      20470,
+      20471,
+      20472,
+      20473,
+      20474,
+      20475,
+      20476
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      1,
+      2
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20464,
+      20464,
+      20465,
+      20466,
+      20467,
+      20468,
+      20469,
+      20470,
+      20471,
+      20472,
+      20473,
+      20474,
+      20475,
+      20476
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    }
+   ],
+   "older": [
+    {
+     "invocation": [
+      1,
+      0
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20464,
+      20464,
+      20465,
+      20466,
+      20467,
+      20468,
+      20469,
+      20470,
+      20471,
+      20472,
+      20473,
+      20474,
+      20475,
+      20476
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      1,
+      1
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20464,
+      20464,
+      20465,
+      20466,
+      20467,
+      20468,
+      20469,
+      20470,
+      20471,
+      20472,
+      20473,
+      20474,
+      20475,
+      20476
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      1,
+      2
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20464,
+      20464,
+      20465,
+      20466,
+      20467,
+      20468,
+      20469,
+      20470,
+      20471,
+      20472,
+      20473,
+      20474,
+      20475,
+      20476
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    }
+   ]
+  }
+ },
+ {
+  "function": "rd_kafka_snappy_java_uncompress",
+  "line": 20480,
+  "origin": "lib/librdkafka-2.15.0/src/snappy.c:1660",
+  "acquisition_line": 20506,
+  "current_witness": true,
+  "earlier_witnesses": [
+   "previous",
+   "older"
+  ],
+  "settled_exit_reports_it": false,
+  "reacquisition_refused": true,
+  "generation_join": false,
+  "withdrawn_by_rule_42": false,
+  "statuses": {
+   "current": [
+    [
+     1,
+     true
+    ]
+   ],
+   "previous": [
+    [
+     1,
+     true
+    ]
+   ],
+   "older": [
+    [
+     1,
+     true
+    ]
+   ]
+  },
+  "generations": {
+   "current": [
+    {
+     "invocation": [
+      1,
+      0
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20464,
+      20464,
+      20465,
+      20466,
+      20467,
+      20468,
+      20469,
+      20470,
+      20471,
+      20472,
+      20473,
+      20474,
+      20478,
+      20479,
+      20480
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      1,
+      1
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20464,
+      20464,
+      20465,
+      20466,
+      20467,
+      20468,
+      20469,
+      20470,
+      20471,
+      20472,
+      20473,
+      20474,
+      20478,
+      20479,
+      20480
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      1,
+      2
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20464,
+      20464,
+      20465,
+      20466,
+      20467,
+      20468,
+      20469,
+      20470,
+      20471,
+      20472,
+      20473,
+      20474,
+      20478,
+      20479,
+      20480
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    }
+   ],
+   "previous": [
+    {
+     "invocation": [
+      1,
+      0
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20464,
+      20464,
+      20465,
+      20466,
+      20467,
+      20468,
+      20469,
+      20470,
+      20471,
+      20472,
+      20473,
+      20474,
+      20478,
+      20479,
+      20480
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      1,
+      1
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20464,
+      20464,
+      20465,
+      20466,
+      20467,
+      20468,
+      20469,
+      20470,
+      20471,
+      20472,
+      20473,
+      20474,
+      20478,
+      20479,
+      20480
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      1,
+      2
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20464,
+      20464,
+      20465,
+      20466,
+      20467,
+      20468,
+      20469,
+      20470,
+      20471,
+      20472,
+      20473,
+      20474,
+      20478,
+      20479,
+      20480
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    }
+   ],
+   "older": [
+    {
+     "invocation": [
+      1,
+      0
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20464,
+      20464,
+      20465,
+      20466,
+      20467,
+      20468,
+      20469,
+      20470,
+      20471,
+      20472,
+      20473,
+      20474,
+      20478,
+      20479,
+      20480
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      1,
+      1
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20464,
+      20464,
+      20465,
+      20466,
+      20467,
+      20468,
+      20469,
+      20470,
+      20471,
+      20472,
+      20473,
+      20474,
+      20478,
+      20479,
+      20480
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      1,
+      2
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20464,
+      20464,
+      20465,
+      20466,
+      20467,
+      20468,
+      20469,
+      20470,
+      20471,
+      20472,
+      20473,
+      20474,
+      20478,
+      20479,
+      20480
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    }
+   ]
+  }
+ },
+ {
+  "function": "rd_kafka_snappy_java_uncompress",
+  "line": 20490,
+  "origin": "lib/librdkafka-2.15.0/src/snappy.c:1680",
+  "acquisition_line": 20506,
+  "current_witness": false,
+  "earlier_witnesses": [
+   "previous",
+   "older"
+  ],
+  "settled_exit_reports_it": false,
+  "reacquisition_refused": true,
+  "generation_join": true,
+  "withdrawn_by_rule_42": true,
+  "statuses": {
+   "current": [
+    [
+     2,
+     true
+    ]
+   ],
+   "previous": [
+    [
+     1,
+     true
+    ]
+   ],
+   "older": [
+    [
+     1,
+     true
+    ]
+   ]
+  },
+  "generations": {
+   "current": [
+    {
+     "invocation": [
+      1,
+      0
+     ],
+     "settled": false,
+     "status": 2,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": false,
+     "path_lines": null,
+     "path_reacquisitions": null,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      1,
+      1
+     ],
+     "settled": false,
+     "status": 2,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": false,
+     "path_lines": null,
+     "path_reacquisitions": null,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      1,
+      2
+     ],
+     "settled": false,
+     "status": 2,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": false,
+     "path_lines": null,
+     "path_reacquisitions": null,
+     "exit_unmodeled": true
+    }
+   ],
+   "previous": [
+    {
+     "invocation": [
+      1,
+      0
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20464,
+      20464,
+      20465,
+      20466,
+      20467,
+      20468,
+      20469,
+      20470,
+      20471,
+      20472,
+      20473,
+      20474,
+      20478,
+      20482,
+      20487,
+      20488,
+      20489,
+      20490
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      1,
+      1
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20464,
+      20464,
+      20465,
+      20466,
+      20467,
+      20468,
+      20469,
+      20470,
+      20471,
+      20472,
+      20473,
+      20474,
+      20478,
+      20482,
+      20487,
+      20488,
+      20489,
+      20490
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      1,
+      2
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20464,
+      20464,
+      20465,
+      20466,
+      20467,
+      20468,
+      20469,
+      20470,
+      20471,
+      20472,
+      20473,
+      20474,
+      20478,
+      20482,
+      20487,
+      20488,
+      20489,
+      20490
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    }
+   ],
+   "older": [
+    {
+     "invocation": [
+      1,
+      0
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20464,
+      20464,
+      20465,
+      20466,
+      20467,
+      20468,
+      20469,
+      20470,
+      20471,
+      20472,
+      20473,
+      20474,
+      20478,
+      20482,
+      20487,
+      20488,
+      20489,
+      20490
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      1,
+      1
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20464,
+      20464,
+      20465,
+      20466,
+      20467,
+      20468,
+      20469,
+      20470,
+      20471,
+      20472,
+      20473,
+      20474,
+      20478,
+      20482,
+      20487,
+      20488,
+      20489,
+      20490
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      1,
+      2
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20464,
+      20464,
+      20465,
+      20466,
+      20467,
+      20468,
+      20469,
+      20470,
+      20471,
+      20472,
+      20473,
+      20474,
+      20478,
+      20482,
+      20487,
+      20488,
+      20489,
+      20490
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    }
+   ]
+  }
+ },
+ {
+  "function": "rd_kafka_snappy_java_uncompress",
+  "line": 20499,
+  "origin": "lib/librdkafka-2.15.0/src/snappy.c:1694",
+  "acquisition_line": 20506,
+  "current_witness": false,
+  "earlier_witnesses": [
+   "previous",
+   "older"
+  ],
+  "settled_exit_reports_it": false,
+  "reacquisition_refused": true,
+  "generation_join": true,
+  "withdrawn_by_rule_42": true,
+  "statuses": {
+   "current": [
+    [
+     2,
+     true
+    ]
+   ],
+   "previous": [
+    [
+     1,
+     true
+    ]
+   ],
+   "older": [
+    [
+     1,
+     true
+    ]
+   ]
+  },
+  "generations": {
+   "current": [
+    {
+     "invocation": [
+      1,
+      0
+     ],
+     "settled": false,
+     "status": 2,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": false,
+     "path_lines": null,
+     "path_reacquisitions": null,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      1,
+      1
+     ],
+     "settled": false,
+     "status": 2,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": false,
+     "path_lines": null,
+     "path_reacquisitions": null,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      1,
+      2
+     ],
+     "settled": false,
+     "status": 2,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": false,
+     "path_lines": null,
+     "path_reacquisitions": null,
+     "exit_unmodeled": true
+    }
+   ],
+   "previous": [
+    {
+     "invocation": [
+      1,
+      0
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20464,
+      20464,
+      20465,
+      20466,
+      20467,
+      20495,
+      20496,
+      20497,
+      20499
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      1,
+      1
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20464,
+      20464,
+      20465,
+      20466,
+      20467,
+      20495,
+      20496,
+      20497,
+      20499
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      1,
+      2
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20464,
+      20464,
+      20465,
+      20466,
+      20467,
+      20495,
+      20496,
+      20497,
+      20499
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    }
+   ],
+   "older": [
+    {
+     "invocation": [
+      1,
+      0
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20464,
+      20464,
+      20465,
+      20466,
+      20467,
+      20495,
+      20496,
+      20497,
+      20499
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      1,
+      1
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20464,
+      20464,
+      20465,
+      20466,
+      20467,
+      20495,
+      20496,
+      20497,
+      20499
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      1,
+      2
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20464,
+      20464,
+      20465,
+      20466,
+      20467,
+      20495,
+      20496,
+      20497,
+      20499
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    }
+   ]
+  }
+ },
+ {
+  "function": "rd_kafka_snappy_java_uncompress",
+  "line": 20504,
+  "origin": "lib/librdkafka-2.15.0/src/snappy.c:1701",
+  "acquisition_line": 20506,
+  "current_witness": true,
+  "earlier_witnesses": [
+   "previous",
+   "older"
+  ],
+  "settled_exit_reports_it": false,
+  "reacquisition_refused": true,
+  "generation_join": false,
+  "withdrawn_by_rule_42": false,
+  "statuses": {
+   "current": [
+    [
+     1,
+     true
+    ]
+   ],
+   "previous": [
+    [
+     1,
+     true
+    ]
+   ],
+   "older": [
+    [
+     1,
+     true
+    ]
+   ]
+  },
+  "generations": {
+   "current": [
+    {
+     "invocation": [
+      1,
+      0
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20464,
+      20464,
+      20465,
+      20466,
+      20467,
+      20495,
+      20501,
+      20502,
+      20503,
+      20504
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      1,
+      1
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20464,
+      20464,
+      20465,
+      20466,
+      20467,
+      20495,
+      20501,
+      20502,
+      20503,
+      20504
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      1,
+      2
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20464,
+      20464,
+      20465,
+      20466,
+      20467,
+      20495,
+      20501,
+      20502,
+      20503,
+      20504
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    }
+   ],
+   "previous": [
+    {
+     "invocation": [
+      1,
+      0
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20464,
+      20464,
+      20465,
+      20466,
+      20467,
+      20495,
+      20501,
+      20502,
+      20503,
+      20504
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      1,
+      1
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20464,
+      20464,
+      20465,
+      20466,
+      20467,
+      20495,
+      20501,
+      20502,
+      20503,
+      20504
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      1,
+      2
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20464,
+      20464,
+      20465,
+      20466,
+      20467,
+      20495,
+      20501,
+      20502,
+      20503,
+      20504
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    }
+   ],
+   "older": [
+    {
+     "invocation": [
+      1,
+      0
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20464,
+      20464,
+      20465,
+      20466,
+      20467,
+      20495,
+      20501,
+      20502,
+      20503,
+      20504
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      1,
+      1
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20464,
+      20464,
+      20465,
+      20466,
+      20467,
+      20495,
+      20501,
+      20502,
+      20503,
+      20504
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      1,
+      2
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20464,
+      20464,
+      20465,
+      20466,
+      20467,
+      20495,
+      20501,
+      20502,
+      20503,
+      20504
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    }
+   ]
+  }
+ },
+ {
+  "function": "rd_kafka_snappy_java_uncompress",
+  "line": 20509,
+  "origin": "lib/librdkafka-2.15.0/src/snappy.c:1712",
+  "acquisition_line": 20506,
+  "current_witness": false,
+  "earlier_witnesses": [
+   "previous",
+   "older"
+  ],
+  "settled_exit_reports_it": false,
+  "reacquisition_refused": true,
+  "generation_join": true,
+  "withdrawn_by_rule_42": true,
+  "statuses": {
+   "current": [
+    [
+     0,
+     false
+    ]
+   ],
+   "previous": [
+    [
+     1,
+     true
+    ]
+   ],
+   "older": [
+    [
+     1,
+     true
+    ]
+   ]
+  },
+  "generations": {
+   "current": [
+    {
+     "invocation": [
+      1,
+      0
+     ],
+     "settled": false,
+     "status": 0,
+     "unresolved": false,
+     "reacquisition_refused": true,
+     "path": false,
+     "path_lines": null,
+     "path_reacquisitions": null,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      1,
+      1
+     ],
+     "settled": false,
+     "status": 0,
+     "unresolved": false,
+     "reacquisition_refused": true,
+     "path": false,
+     "path_lines": null,
+     "path_reacquisitions": null,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      1,
+      2
+     ],
+     "settled": false,
+     "status": 0,
+     "unresolved": false,
+     "reacquisition_refused": true,
+     "path": false,
+     "path_lines": null,
+     "path_reacquisitions": null,
+     "exit_unmodeled": true
+    }
+   ],
+   "previous": [
+    {
+     "invocation": [
+      1,
+      0
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20508,
+      20509
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      1,
+      1
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20508,
+      20509
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      1,
+      2
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20508,
+      20509
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    }
+   ],
+   "older": [
+    {
+     "invocation": [
+      1,
+      0
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20508,
+      20509
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      1,
+      1
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20508,
+      20509
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      1,
+      2
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20508,
+      20509
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    }
+   ]
+  }
+ },
+ {
+  "function": "rd_kafka_snappy_java_uncompress",
+  "line": 20515,
+  "origin": "lib/librdkafka-2.15.0/src/snappy.c:1721",
+  "acquisition_line": 20506,
+  "current_witness": true,
+  "earlier_witnesses": [
+   "previous",
+   "older"
+  ],
+  "settled_exit_reports_it": false,
+  "reacquisition_refused": true,
+  "generation_join": false,
+  "withdrawn_by_rule_42": false,
+  "statuses": {
+   "current": [
+    [
+     1,
+     true
+    ],
+    [
+     4,
+     true
+    ]
+   ],
+   "previous": [
+    [
+     1,
+     true
+    ]
+   ],
+   "older": [
+    [
+     1,
+     true
+    ]
+   ]
+  },
+  "generations": {
+   "current": [
+    {
+     "invocation": [
+      1,
+      0
+     ],
+     "settled": false,
+     "status": 4,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": false,
+     "path_lines": null,
+     "path_reacquisitions": null,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      1,
+      1
+     ],
+     "settled": false,
+     "status": 4,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": false,
+     "path_lines": null,
+     "path_reacquisitions": null,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      1,
+      2
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20464,
+      20464,
+      20515
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    }
+   ],
+   "previous": [
+    {
+     "invocation": [
+      1,
+      0
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20464,
+      20464,
+      20515
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      1,
+      1
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20464,
+      20464,
+      20515
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      1,
+      2
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20464,
+      20464,
+      20515
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    }
+   ],
+   "older": [
+    {
+     "invocation": [
+      1,
+      0
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20464,
+      20464,
+      20515
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      1,
+      1
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20464,
+      20464,
+      20515
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    },
+    {
+     "invocation": [
+      1,
+      2
+     ],
+     "settled": false,
+     "status": 1,
+     "unresolved": true,
+     "reacquisition_refused": true,
+     "path": true,
+     "path_lines": [
+      20506,
+      20507,
+      20464,
+      20464,
+      20515
+     ],
+     "path_reacquisitions": 0,
+     "exit_unmodeled": true
+    }
+   ]
+  }
+ }
+]

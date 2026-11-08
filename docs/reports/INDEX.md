@@ -78,6 +78,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [body-summary-reuse](body-summary-reuse/README.md) | BODY-SUMMARY-REUSE |
 
+| [builtin-expect-null-test](builtin-expect-null-test/README.md) | BUILTIN-EXPECT-NULL-TEST |
+
 ## C
 
 | Card directory | Original report title |
@@ -217,6 +219,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cg30-type-identity-fixture](cg30-type-identity-fixture/README.md) | CG30 type-identity fixture correction |
 
+| [chained-assignment-inner-destination](chained-assignment-inner-destination/README.md) | CHAINED-ASSIGNMENT-INNER-DESTINATION |
+
 | [chunkio-meta-len-bounds-contracts](chunkio-meta-len-bounds-contracts/README.md) | CHUNKIO-META-LEN-BOUNDS-CONTRACTS |
 
 | [ci-rust-job-peak](ci-rust-job-peak/README.md) | CI-RUST-JOB-PEAK: the Linux CI job measured as one sequence |
@@ -328,6 +332,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [ct47-copy-capture](ct47-copy-capture/README.md) | CT47-COPY-CAPTURE — the boundary refuses by the judgment, not the backend |
 
 | [current-access-alias-census](current-access-alias-census/README.md) | CURRENT-ACCESS-ALIAS-CENSUS: the IND, ALIAS, COND and RET leaves of the user's `current` run, by shape |
+
+| [current-monkey-linked-configuration](current-monkey-linked-configuration/README.md) | CURRENT-MONKEY-LINKED-CONFIGURATION |
 
 | [current-run-defects](current-run-defects/README.md) | CURRENT-RUN-DEFECTS |
 
@@ -558,6 +564,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [fluent-bit-contracts-2026-09-05](fluent-bit-contracts-2026-09-05/README.md) | QCore contracts against actual Fluent Bit source — 2026-09-05 |
 
+| [fluent-bit-link-prepare](fluent-bit-link-prepare/README.md) | FLUENT-BIT-LINK-PREPARE |
+
 | [fluent-bit-moving-revisions](fluent-bit-moving-revisions/README.md) | Moving Fluent Bit revisions — 2026-09-07 |
 
 ## G
@@ -576,6 +584,10 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [gate-scope-precise-selection](gate-scope-precise-selection/README.md) | GATE-SCOPE-PRECISE-SELECTION: the scoped gate selects what a change reaches |
 
 | [gate-slot-admission-starvation](gate-slot-admission-starvation/README.md) | GATE-SLOT-ADMISSION-STARVATION |
+
+| [gate-slot-fifo-order](gate-slot-fifo-order/README.md) | GATE-SLOT-FIFO-ORDER |
+
+| [gate-slot-short-job-lane](gate-slot-short-job-lane/README.md) | GATE-SLOT-SHORT-JOB-LANE |
 
 | [gateway-analysis-path-optimization](gateway-analysis-path-optimization/README.md) | GATEWAY-ANALYSIS-PATH-OPTIMIZATION: the analysis paths mapped, made explicit and faster, verdict-identical |
 
@@ -650,9 +662,13 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [librdkafka-plugin-premise-remainder](librdkafka-plugin-premise-remainder/README.md) | LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER: the plugin premise on member facts, the crash path and a model contract |
 
+| [link-standing](link-standing/README.md) | LINK-STANDING |
+
 | [log-print-body-contracts](log-print-body-contracts/README.md) | LOG-PRINT-BODY-CONTRACTS |
 
 | [logger-effect-contracts](logger-effect-contracts/README.md) | Logger effect contracts |
+
+| [loop-reacquisition-leak-accusation](loop-reacquisition-leak-accusation/README.md) | LOOP-REACQUISITION-LEAK-ACCUSATION: a leak joined across a refused re-acquisition |
 
 | [loop-unroll-budget](loop-unroll-budget/README.md) | LOOP-UNROLL-BUDGET — the three-layer unrolling budget (wave 26) |
 
@@ -679,11 +695,15 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [member-access-projection](member-access-projection/README.md) | MEMBER-ACCESS-PROJECTION |
 
+| [member-effect-component-scope](member-effect-component-scope/README.md) | MEMBER-EFFECT-COMPONENT-SCOPE |
+
 | [member-effect-summary](member-effect-summary/README.md) | MEMBER-EFFECT-SUMMARY |
 
 | [member-path-unit-helpers](member-path-unit-helpers/README.md) | MEMBER-PATH-STATES-THROUGH-UNIT-HELPERS: rule 30's body check through the unit's helpers |
 
 | [member-prepass-other-routes](member-prepass-other-routes/README.md) | MEMBER-PREPASS-OTHER-ROUTES |
+
+| [member-release-untyped-base](member-release-untyped-base/README.md) | MEMBER-RELEASE-UNTYPED-BASE |
 
 | [mk-event-cell-array-slots](mk-event-cell-array-slots/README.md) | MK-EVENT-CELL-ARRAY-SLOTS |
 
@@ -742,6 +762,12 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [op-callback-member-path-release](op-callback-member-path-release/README.md) | OP-CALLBACK-MEMBER-PATH-RELEASE: a callback's release or move-out at a member path |
 
 | [op-constructor-declarations](op-constructor-declarations/README.md) | OP-CONSTRUCTOR-DECLARATIONS: op constructors and their result states |
+
+| [out-parameter-body-summary](out-parameter-body-summary/README.md) | OUT-PARAMETER-BODY-SUMMARY |
+
+| [out-parameter-scalar-frame-premise](out-parameter-scalar-frame-premise/README.md) | OUT-PARAMETER-SCALAR-FRAME-PREMISE |
+
+| [out-slot-call-write-aliasing](out-slot-call-write-aliasing/README.md) | OUT-SLOT-CALL-WRITE-ALIASING |
 
 | [outer-contract](outer-contract/README.md) | OUTER-CONTRACT: outer contracts and the runtime projection (stage 1) |
 
@@ -853,6 +879,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [refcount-reference-returning-declarations](refcount-reference-returning-declarations/README.md) | REFCOUNT-REFERENCE-RETURNING-DECLARATIONS: returned references and result holders |
 
 | [refcount-resource-kind](refcount-resource-kind/README.md) | REFCOUNT-RESOURCE-KIND: the reference-count resource kind |
+
+| [refused-store-of-call-result-escape](refused-store-of-call-result-escape/README.md) | REFUSED-STORE-OF-CALL-RESULT-ESCAPE: hypothesis refuted |
 
 | [region-credit-joins](region-credit-joins/README.md) | REGION-CREDIT-JOINS — the composed region: parent-local credit after the joins |
 
@@ -1142,6 +1170,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 |---|---|
 
 | [scalar-route-exit-edge](scalar-route-exit-edge/README.md) | SCALAR-ROUTE-EXIT-EDGE (wave 37, first arbiter) |
+
+| [scalar-statement-forms](scalar-statement-forms/README.md) | SCALAR-STATEMENT-FORMS (round 26 E) |
 
 | [scheduler-lifetime-contracts](scheduler-lifetime-contracts/README.md) | Scheduler lifetime contracts |
 

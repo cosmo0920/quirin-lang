@@ -270,6 +270,12 @@ mod call_exits_route;
 #[path = "legacy_loop_generations.rs"]
 mod loop_generations_route;
 
+// Card LOOP-REACQUISITION-LEAK-ACCUSATION (rule 42): a leak only an earlier
+// generation of a refused re-acquisition reports is reported under the
+// refusal. The hooks below naming the card are thin.
+#[path = "legacy_loop_reacquisition_leak.rs"]
+mod loop_reacquisition_leak_route;
+
 // Card B08-FIELD-LINK-JOIN-SILENT-UNRESOLVED (rule 11c): a field link that
 // holds on some paths only never leaves an obligation unresolved without a
 // diagnostic. The hooks below naming the card are thin.
@@ -435,6 +441,11 @@ pub(crate) mod checked_spec;
 // as the value of a statement.
 #[path = "legacy_scalar_return_value.rs"]
 mod scalar_return_value;
+
+// Card SCALAR-STATEMENT-FORMS (rule 41): Clang-typed scalar statement forms,
+// asked last for five refusals.
+#[path = "legacy_scalar_statement_forms.rs"]
+mod scalar_statement_forms;
 
 // Card GATEWAY-ANALYSIS-PATH-OPTIMIZATION: the statement and return fallback
 // orders as explicit tables, asked by one dispatcher each.
@@ -3232,6 +3243,7 @@ pub use cross_unit::{
     CallerImports as CrossUnitCallerImports, CrossUnitExport, CrossUnitHomeEvidence,
     REPLAY_BUDGET_PER_UNIT as CROSS_UNIT_REPLAY_BUDGET_PER_UNIT,
     export_homes as export_cross_unit_homes, for_caller as cross_unit_for_caller,
+    retain_held as cross_unit_retain_held,
 };
 
 // Card W45-FB-RETRY-LIFETIME: intrusive-container publication.
@@ -5893,6 +5905,11 @@ impl Parser<'_> {
         if let Some(statement) = residual {
             return statement;
         }
+        // Card SCALAR-STATEMENT-FORMS (rule 41), asked after every statement
+        // fallback and rules 14a/14b, only for one of its five refusals.
+        if let Some(statement) = self.scalar_statement_form(tokens, line, &instruction) {
+            return statement;
+        }
         // Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS (rule 12k). Asked last,
         // only for the gate's refusal: it names the uncontracted callee where
         // the callee decides; the node stays the same refusal with its writes.
@@ -6017,6 +6034,11 @@ mod return_routes;
 // stepped routes and `classify_simple_base`.
 #[path = "legacy_classify.rs"]
 mod classify;
+
+// Card CHAINED-ASSIGNMENT-INNER-DESTINATION (rule 5i, amended): the guard
+// that refuses an admission dropping a write inside an assigned value.
+#[path = "legacy_chained_assignment.rs"]
+pub(crate) mod chained_assignment;
 
 // Card GATEWAY-ANALYSIS-PATH-OPTIMIZATION: lexical shape readers over token
 // texts: calls, arguments, conditions, places and declarators.

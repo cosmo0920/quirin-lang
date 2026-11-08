@@ -21,6 +21,10 @@ route-census = []
 # rule and moves no verdict; the card publishes the byte-identity measurement
 # that says so.
 provenance-rounds-census = []
+# Card SCALAR-STATEMENT-FORMS (round 26 E). Off by default and never enabled
+# by any workspace member: with it off, `scalar_form_census` and its call sites
+# are compiled out entirely. Measurement only; it moves no verdict.
+scalar-form-census = []
 
 [dependencies]
 qcore-contract = { path = "../qcore-contract", version = "0.1.0" }

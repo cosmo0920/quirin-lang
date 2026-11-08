@@ -200,6 +200,10 @@ which is not a second authority.
     `current` route prints per-phase and per-unit progress on standard error
     when the link map is selected. `QCore.CrossUnitReplayBudget`;
     [report](../reports/current-run-worker-spin/README.md).
+    Card LINK-STANDING: on the `current` route the resolution may instead be
+    derived from a link-resolution artifact under rule 40's checked
+    conditions; this rule's selection, scope, budget and replay are
+    unchanged, and the artifact's digest is the link-resolution identity.
 
 <a id="constraint-5"></a>
 
@@ -557,6 +561,38 @@ admission and scalar forgetting; [report](../reports/w48-bottom-up-batch5/README
     and Rust correspondence remain premises 28.
     [Report](../reports/w48-bottom-up-batch4/README.md).
 
+    **Amendment (BUILTIN-EXPECT-NULL-TEST): the `__builtin_expect` wrapper.**
+    `likely(e)`/`unlikely(e)` reach the analyser as whatever the unit's own
+    preprocessed text expands them to; on the pinned and current runs that is
+    `__builtin_expect((e), 1)`/`(…, 0)` (`rdposix.h`, `mk_macros.h`). The
+    Boolean reading reads `__builtin_expect(E, K)` as `E`: its value is `E`'s
+    (GCC, Clang) and `K` is a hint only, so the operand's null, validity,
+    distinct or comparison leaf decides exactly as the bare test does and
+    refines the tested acquisition on each edge. `K` must be exactly one
+    token of decimal digits, optionally parenthesised (`0`, `(1)`), which has
+    no evaluation event (C11 6.5.1); any other hint refuses the whole
+    condition: a name, a call, an assignment, an increment, a cast, a sign, a
+    floating literal, and also a suffixed or prefixed integer literal (`0L`,
+    `0x0`), effect-free but not admitted (no site needs it; follow-up
+    `BUILTIN-EXPECT-LITERAL-HINT-SPELLINGS`, whose edit of the pinned
+    `legacy_condition_desugar.rs` must rebind the reading-site artifact
+    digest), as does `__builtin_expect_with_probability`. Outside a controlling expression (an
+    initialiser, an argument) the wrapper is an ordinary call and keeps its
+    refusal. Premise stated, not proved: the operand's truthiness
+    survives its implicit conversion to `long`: Clang rejects a pointer
+    operand, a null or comparison test is `int` 0/1 (C11 6.5.3.3p5, 6.5.8p6,
+    6.5.9p3), and an integer operand no wider than `long` keeps zero and
+    non-zero on the LP64 targets of the runs (follow-up
+    `BUILTIN-EXPECT-OPERAND-CONVERSION`). `QCore.BuiltinExpectCondition`
+    proves the wrapper has its operand's value, that an admitted reading
+    evaluates as C evaluates the wrapped expression for every leaf assignment
+    and either argument order (so its desugared plan is that evaluation by
+    `the_desugaring_is_c_evaluation`), that an effectful hint or a refused
+    operand refuses, and that the admitted spellings are effect-free
+    literals, with the admission vector bound through the reader in Rust; extraction and
+    correspondence remain premises 28.
+    [Report](../reports/builtin-expect-null-test/README.md).
+
 <a id="constraint-5i"></a>
 
 5i. **An assignment's destination is its whole left-hand side.**
@@ -595,6 +631,48 @@ admission and scalar forgetting; [report](../reports/w48-bottom-up-batch5/README
     `mk_list_init` hazard above cannot recur; and a null or other
     identity-free store into a chain or a record this reader does not resolve.
     Every premise above still holds for this rule.
+
+    **A write inside an assigned value is never dropped** (card
+    CHAINED-ASSIGNMENT-INNER-DESTINATION). `a = b = E` assigns `E` to `b` and
+    then that value, converted, to `a` (C11 6.5.16p3): afterwards both names
+    hold the same value, exactly as `b = E; a = b;` leaves them, so an
+    identity is held by both (the `Alias` reading of `a = b`, rule 10m's
+    identity-preserving conversion). The classifier models one write per
+    assignment statement, the destination this rule names, and read
+    `d = safe = rd_malloc(n)` as `d = rd_malloc(n)`: the write of `safe` was
+    neither modelled nor refused, so `return safe;` escaped nothing and
+    `rd_kafka_sasl_safe_string` was accused of a leak
+    (`rdkafka_sasl_scram.c:243`, `:249`); a release or return through the
+    inner name was unmatched the same way. `classify_simple` now ends with a
+    guard (`legacy_chained_assignment.rs`): when a comma segment's first
+    top-level assignment has another simple or compound assignment operator
+    anywhere in its value outside a braced group (a statement expression's
+    own statements, such as `container_of`'s `*__mptr = (ptr)`, are read by
+    the routes that admit one, rule 3's element binding and rule 11g), an
+    admission of the statement is replaced by a
+    refusal, `chained assignment writes an inner destination too; it is read
+    only as its sequential assignments (C11 6.5.16p3)` when the value is, up
+    to wrapping parentheses, that assignment, and `assignment nested in an
+    operand of an assigned value is not modeled` otherwise. The probe state
+    is restored, a refusal stays byte for byte and the guard admits nothing;
+    every caller of the classifier sees it (statements, the return and
+    condition probes, rule 10s's pieces). Rule 10s, asked after the refusal,
+    lowers a chain as its sequential assignments: the inner assignment, then
+    the outer destination assigned from the inner name, each decided by the
+    older statement lowering exactly as a single assignment; it now does the
+    same for `T a = b = E;` (the inner assignment, then the declaration from
+    `b`). A destination the route refuses alone keeps the whole chain refused
+    by name: a member store the gate refuses keeps the gate's refusal, and the
+    same object twice (`s = s = E`, two unsequenced stores) or a route without
+    the elaborator keeps the guard's. A scalar chain was already refused
+    ("multiple scalar writes") and is unchanged; a path chain the typed
+    scalar-field route admitted as one access is lowered as one access per
+    link. **Do not** admit an outer destination while dropping a write inside
+    its value, and do not exempt an instruction from the guard without showing
+    that its route reads every place the statement writes.
+    `QCore.ChainedAssignment` (`chain_eq_sequential`, `chainN_eq_sequential`,
+    `both_names_hold_the_identity`, `the_guard_never_promotes`);
+    [report](../reports/chained-assignment-inner-destination/README.md).
 
 <a id="constraint-5j"></a>
 
@@ -1354,6 +1432,23 @@ refusal stays.
     are eligible chain roots is left to the flow, which reads each only as
     untracked (a tracked root refuses); an address actual and (2)'s return
     premise are unchanged.
+    **Amendment (OUT-PARAMETER-BODY-SUMMARY): (5) a scalar store the importer
+    named for an out slot.** A `*B = V` statement lowered as an out-slot
+    store (`Alias`/`Clear` with an indirect destination) is read by the
+    W46-ACCESS-PATH-STATEMENTS reader after every lexical route of the
+    statement position declined, and is replaced only by that reader's
+    scalar store (`IndirectScalarAccess`): the destination's type a scalar,
+    (4)'s enum arm included, so `rd_kafka_resp_err_t *errp; *errp =
+    RD_KAFKA_RESP_ERR__X;` is a frame write with its base's dereference
+    obligation, as `*errp = rkt->rkt_err` already was. A pointer store, a
+    refusal, a plan with no access and every unread shape keep the out-slot
+    reading, which transfer refuses unless a contract sanctions the slot; a
+    sanctioned slot is never written by the scalar route (transfer refuses
+    it). **Do not** admit a pointer-valued `*B = V` here: overwriting a
+    caller's pointer object is a custody effect no `Borrowed` summary
+    states. `QCore.OutParameterBodySummary`
+    (`scalar_store_preserves_custody`, `released_base_refuses`);
+    [report](../reports/out-parameter-body-summary/README.md).
 
 <a id="constraint-10l"></a>
 
@@ -2228,6 +2323,11 @@ refusal stays.
     Amended by [rule 11b](#constraint-11b): the cast and type-query rows
     are read by `CAST_TABLE` and `query_operand`, and a statement, `return`
     or condition holding a cast or a type query is consulted too.
+    Amended by [rule 5i](#constraint-5i) (CHAINED-ASSIGNMENT-INNER-DESTINATION):
+    every chain now reaches this rule, since the older routes refuse an
+    admission that would drop a write inside an assigned value, and a
+    declaration `T a = b = E;` is lowered as the inner assignment, then the
+    declaration from `b`.
 
 <a id="constraint-10t"></a>
 
@@ -4074,6 +4174,114 @@ own anchor here.
     extraction (trust boundary 28), the declared dispositions (constraint 4),
     and that replacing a `return` by divergence leaves every state on every
     other path as it was (the CFG's own construction).
+
+    **Amendment (OUT-PARAMETER-BODY-SUMMARY): (6) a class may leave an out
+    slot unwritten.** (4)'s per-value body, when the ordinary route publishes
+    nothing for it, is probed as the live-entry route probes (every formal it
+    stores through an `Out` slot, the bind loop), and the slots the run
+    leaves `Unwritten` at **every** reachable exit form the class's set `U`.
+    The class contract is the ordinary proposal with each slot of `U` read as
+    `resource_borrowed`, which beside `resource_out` in another class is
+    C04.13's unwritten slot, so (2)'s consumer passes `&NAME` as data on that
+    class and `NAME` then holds an untracked value. It is validated on a
+    fresh run under the *analysis* contract (each slot of `U` an `Out` slot,
+    so a store on a path ending in another class's exit or diverging is
+    sanctioned) by the unchanged W4 gate whose out-slot condition demands
+    `Unwritten` at every exit for each slot of `U`
+    (`legacy_summary::observations_match_class`), then by rule 4b's re-check
+    with the analysis contract as the function's own. The relation is kept
+    only when each class's `U` is exactly its slots that are `Borrowed` there
+    and `Out` in another class. Rule 12s(2)'s row analyses every class, and
+    the whole literal-only body, under the analysis contracts, whose entries
+    agree because an `Out` slot asks the entry for nothing
+    (`row_entries_agree`; the forwarding route keeps `entries_agree`). A slot
+    written on one exit of the class and not another, holding a released,
+    escaped, possibly-null or shared site, two slots given one site, a
+    non-literal return and a non-`int` result keep the refusal. **Do not**
+    read a slot as unwritten from fewer than all of its class's exits, keep
+    an unwritten class no other class writes, or validate it with the slot
+    unsanctioned. Measured: [report](../reports/out-parameter-body-summary/README.md);
+    `QCore.OutParameterBodySummary` (`class_mode_sound`,
+    `summary_effect_equals_body_on_every_path`,
+    `relation_requires_a_writer`).
+
+    **Amendment (OUT-PARAMETER-SCALAR-FRAME-PREMISE, user decision
+    2026-11-07 "A: effective-type"): (7) a pointer out slot survives a wide
+    scalar store through a second out formal under the listed premise
+    `effective-type:` (C11 6.5p7).** When (4)/(6)'s per-value inference of an
+    undeclared function publishes nothing, it runs once more with the premise
+    available to that function's analyses
+    (`legacy_effective_type.rs::with_premise`), and so does (12s(2))'s row of
+    an inferred relation. There, in a unit whose build does not pass
+    `-fno-strict-aliasing` (`typed_access_path::strict_aliasing_in_force`), a
+    typed scalar store (no scalar destination) spares from its refused-write
+    frame each sanctioned slot `*X` whose formal Clang types as a pointer to an
+    object pointer, when the store's line holds exactly one write (assignment,
+    compound assignment or increment) and that write is `*Y = V` or `*Y op= V`
+    with `Y` a formal other than every such `X` and the left operand typed by
+    Clang as a non-character integer or an enumeration. A class read only that
+    way is kept only when an analysis relied on it. Every row resting on it
+    lists the premise among its assumptions (`rule_obligations`, rule `11r`):
+    the function's own row, and every in-unit row whose derivation reaches the
+    function (attributed to its name, `arm_obligations`). A character
+    (`char`, `signed char`, `unsigned char`), floating, `volatile`, `_Atomic`
+    or unread lvalue type, a base that is not such a formal, a line with
+    another write, every call (`memcpy`, `memmove`, `memset` included: the
+    premise never spares for a call), a declared disposition's body check and
+    a `-fno-strict-aliasing` unit keep the frame; every other refusal of (6)
+    stands. **Do not** spare a slot for a character store, read the premise
+    without listing it, or apply it in a unit built without the rule.
+    [Report](../reports/out-parameter-scalar-frame-premise/README.md);
+    `QCore.OutParameterScalarFramePremise` (`wide_store_keeps_pointer_object`,
+    `spares_sound`, `character_refuses`, `no_strict_aliasing_refuses`).
+
+    **Amendment (OUT-SLOT-CALL-WRITE-ALIASING, user decision 2026-11-07
+    "Launch it next"): (8) a call that may write caller memory poisons every
+    bound out slot.** Every analysis whose contract sanctions out slots (rule
+    4's W4 `Out` summaries and their probes, (4)/(6)/(7)'s classes, rule
+    12s(2)'s rows, a declared `resource_out` body) reads the function's Clang
+    AST into a frame of its calls (`legacy_out_slot_call_write.rs`): the
+    lines of each call's statement and the positions whose actual may
+    designate caller memory. At a node that applies a call on those lines
+    (`ContractCall` and its nested calls, an element store or release, a
+    sub-object store of a call, a self-initialiser), after the call's own
+    effect, every sanctioned slot `*X` still bound is poisoned (unknown,
+    possibly null) exactly as the typed scalar store's refused-write frame
+    poisons it, so it is `Ambiguous` at the exits it reaches and no `Out`
+    mode, class or row that needed it validates; the row returns to its
+    uncontracted reading (`store through `*X` without an out-parameter
+    contract`), never an accusation. A `Borrowed` mode states no write frame
+    (C04.1; C04.3.1 item 6; rule 10k's W48 amendment), and `memcpy`,
+    `memmove`, `memset` and the `str*` copies write through character
+    lvalues, so (7)'s premise never spares a call. An actual reaches unless it
+    is positively read as: not a pointer (a record or union by value
+    reaches); a function pointer, a null pointer constant or a string
+    literal; a pointer whose pointee Clang types `const` at the position (the
+    converted parameter type; in a variadic tail the actual's own); `&NAME`,
+    `&NAME.f`, `&NAME[i]` or the decay of an array `NAME`, `NAME` an automatic
+    local or a formal's own variable whose type holds no pointer, record or
+    union; or a position the call's own contract declares `Out`, whose
+    written place keeps the binding the call gave it. Another formal, a local
+    pointer's value, a member or element read, `*X`, a call result, a
+    file-scope or `static` object and the address of a pointer or record
+    local all reach. A slot no store has bound is left unwritten: a
+    `Borrowed` write passes no custody into it, and (2)'s consumer reads the
+    caller's variable as untracked on that class. With no AST, or no AST call
+    on a call node's lines, every position but an `Out` one reaches. Census ([report](../reports/out-slot-call-write-aliasing/README.md)):
+    of every `Safe` row of the corpus, system, slice and `current`
+    populations (and the parent cards' predicted rows), five validate a
+    pointer out slot and one passes it across such a call,
+    `cio_file_content_copy` (`cio_chunk_down(ch)`), `Safe` only on the
+    unlanded parent branch and predicted `Unknown` again. **Do not** keep a
+    bound slot across a call with a reaching actual, read a `Borrowed` mode
+    as a read-only frame, spare a call under (7)'s premise, or poison a slot
+    the call's own `Out` position writes. Premises stated, not proved:
+    faithful Clang extraction and the AST's actual derivations (trust
+    boundary 28), that a callee does not write through a pointer whose
+    pointee its prototype qualifies `const`, and that an `Out` position
+    writes only the object it names. `QCore.OutSlotCallWrite`
+    (`transfer_sound`, `a_reaching_call_poisons_a_bound_slot`,
+    `bound_kept_only_when_excluded`, `the_old_reading_is_unsound`).
 
 <a id="constraint-11s"></a>
 
@@ -6049,6 +6257,14 @@ own anchor here.
     `a_conversion_can_move_a_value_between_classes` and three more), bound by
     the module's unit tests and `tests/callee_retention_class1.rs`;
     [report](../reports/callee-retention-class1/README.md).
+    Amended by [rule 11r](#constraint-11r)(6): (2)'s row analyses each class,
+    and the whole literal-only body, under its analysis contract (a slot the
+    class leaves unwritten is an `Out` slot there) and validates an unwritten
+    slot by `Unwritten` at every exit of the class; the forwarding route (1)
+    keeps its entry agreement unchanged.
+    Amended by [rule 11r](#constraint-11r)(8): a call on a class's path
+    whose actual may designate caller memory poisons the class's bound out
+    slots, so a row needing one does not validate.
 
 <a id="constraint-12t"></a>
 
@@ -10056,7 +10272,37 @@ safety claim and no validation of the detach representation premise.
     of one call, or a callee that reaches a place this body released. Not
     in this rule: the store half of the member effect, a declared form for
     bodiless callees (a user choice, report section 4), typedef-spelled
-    bases (W45-MEMBER-RELEASE-UNTYPED-DECLARATIONS). Premises stated, not
+    bases outside the release reading below
+    (W45-MEMBER-RELEASE-UNTYPED-DECLARATIONS). **Amended (card
+    MEMBER-EFFECT-COMPONENT-SCOPE):** a release event's actual `B->F` whose
+    member the lexical declaration reader leaves untyped (spelled through a
+    pointer typedef, `cfl_sds_t ns;`) is read by Clang instead, only at a
+    `Released { nullable: true }` position of a place rule 5k or this rule
+    admitted and only where the lexical recogniser's refusal is the untyped
+    member, never an untyped base: the actual must be the `LValueToRValue`
+    value of an arrow `MemberExpr` named `F` over the parameter `B`, of an
+    object-pointer type with no `volatile`/`_Atomic`, on no `union`; it then
+    reads as the lexical `B->F` (`legacy_call_argument_access.rs`
+    `candidate_arguments`, `Parser::typed_member_release`). A row's scope
+    (its unit's function list) is no premise of this rule. **Amended again
+    (card MEMBER-RELEASE-UNTYPED-BASE):** the same reading where the lexical
+    refusal is the untyped **base** (a formal spelled through a typedef the
+    declaration reader leaves untyped: one that defines the record,
+    `typedef struct [TAG] { … } T;`, a typedef of a record pointer, or
+    disagreeing typedefs), which covers an untyped base and member together:
+    Clang must also read the base, its type through any typedef chain a
+    pointer, with no `volatile`/`_Atomic` and no function type, and the
+    member it resolved (`referencedMemberDecl`) a member named `F` of a
+    complete `struct` the unit defines (never a `union`'s, so an anonymous
+    union inside the record, a union typedef and an incomplete record stay
+    refused). For both arms the parameter's own declared type carries no
+    `volatile`/`_Atomic` (the rvalue read drops it), and the value read may
+    be implicitly converted to the callee's object-pointer parameter type
+    (`BitCast`/`NoOp` to a plain object pointer, `char *` to `void *` for
+    `free`), never by an explicit cast. Every other restriction is
+    unchanged: only at a nullable release of an admitted place, so a local
+    base, a released member used again, a second release and a `nonnull`
+    release (`fclose`) stay refused. Premises stated, not
     proved: rule 5k's (distinct members own distinct objects; a stored pointer
     is tracked only through a bound place or sub-custody) and the lexical
     reading (trust boundary 28). `QCore.MemberEffectSummary` (`body_sound`:
@@ -10069,6 +10315,16 @@ safety claim and no validation of the detach representation premise.
     `a_callee_touching_a_released_place_is_refused` and seven more), bound by
     `tests/member_effect_summary.rs`;
     [report](../reports/member-effect-summary/README.md).
+    `QCore.MemberReleaseTypedMember` (`a_new_admission_is_an_untyped_member`,
+    `an_admitted_actual_is_an_object_pointer`, `the_body_stays_sound`,
+    `the_unit_plays_no_part` and eight more), bound by
+    `tests/member_effect_component_scope.rs`;
+    [report](../reports/member-effect-component-scope/README.md).
+    `QCore.MemberReleaseUntypedBase` (`a_new_admission_is_an_untyped_base`,
+    `a_previous_admission_is_kept`,
+    `an_admitted_actual_is_a_struct_pointer_member`, `the_body_stays_sound`
+    and nine more), bound by `tests/member_release_untyped_base.rs`;
+    [report](../reports/member-release-untyped-base/README.md).
 
 <a id="constraint-39"></a>
 
@@ -10106,5 +10362,227 @@ safety claim and no validation of the detach representation premise.
     `a_correlated_miss_never_contributes`,
     `a_refused_miss_never_concludes_infeasible`; `missVectors`,
     `stateVectors`).
+
+<a id="constraint-40"></a>
+
+40. **A derived link resolution resolves a cross-unit call only by facts
+    the route checks.** Card LINK-STANDING (user decision "Option A (rec.)"
+    on BODY-SUMMARY-REUSE-LINK-STANDING; `cross_unit_links.rs`,
+    `link_call_type.rs`, `current_route.rs`). Under
+    `QCORE_CROSS_UNIT_LINK_RESOLUTION`, the `current` route reads a
+    `quirin-link-resolution/1` artifact (written by `prepare --link`). It
+    takes the artifact's homes as rule 4c's resolution in place of a
+    stated map. The option excludes `QCORE_CROSS_UNIT_LINK_MAP`, a pinned
+    route refuses it, and checkpoint composition, contracts-only runs and
+    provider scoping refuse it as they refuse rule 4c.
+
+    A call to an external name holds the home's summary only when every
+    condition below holds, checked in this order. The first one that fails
+    is the refusal, and the call stays uncontracted as it was without the
+    artifact:
+
+    (1) the artifact's compile-database digest equals that of the database
+    the route reads;
+
+    (2) every file the artifact binds by digest still has that digest: the
+    executable, the link command, the map, the driver, the linker and every
+    linked input;
+
+    (3) the caller's configuration (file, directory, command digest) is a
+    linked configuration that its own command reproduces;
+
+    (4) the image is an executable, not a shared object;
+
+    (5) the home's definition is in the executable, not in a shared object;
+
+    (6) it is a strong global function definition: not weak, common, unique
+    or an indirect function;
+
+    (7) it has default visibility;
+
+    (8) it is the only definition of the name among the linked objects;
+
+    (9) the executable has no dynamic relocation against the name;
+
+    (10) the artifact refuses none of the link's own facts (map against
+    symbol tables, a unique database entry, reproduction). The artifact's
+    route-relative refusals are not taken from it: conditions (12) and (13)
+    decide them again on the route's own configurations;
+
+    (11) the home's configuration is linked and reproduced;
+
+    (12) the route analyses that configuration;
+
+    (13) the route's `library/file` key names that configuration alone;
+
+    (14) Clang gives the callee's type in both units;
+
+    (15) the caller's type equals the home definition's type.
+
+    Conditions (1) and (2) hold or fail for the whole run, and a failure
+    holds no import. (4) to (13) are per home: a refused home is never
+    exported. (3), (14) and (15) are per caller, applied to the homes that
+    rule 4c's scope and replay budget already hold, both unchanged.
+
+    The type comes from Clang's name-filtered dump of the unit the route
+    already preprocesses, with one appended probe,
+    `typedef __typeof__(NAME) __quirin_link_call_type_NAME`. Its rules:
+
+    - every declaration of the name must be at file scope and spell one
+      type, so that type is in force at every call (a block-scope
+      declaration refuses);
+    - the probe's type tree is rendered without sugar (typedefs,
+      elaboration, parentheses, `typeof`, decay);
+    - parameters' top-level qualifiers are dropped (C11 6.7.6.3p15), and the
+      prototype's attributes (`variadic`, `cc`) are kept;
+    - a function without a prototype, an unnamed tag or an unrendered node
+      kind refuses;
+    - each tagged record in the signature is compared by tag. Where both
+      units complete it, Clang's canonical layout must also be equal
+      (`-fdump-record-layouts-complete -fdump-record-layouts-canonical`).
+
+    No rule names a library. A home whose analysed configuration is not the
+    linked one fails (12) and a caller in such a configuration fails (3).
+    On this base, that is every Monkey home and caller: the route analyses
+    Monkey's libevent configuration.
+
+    The run's `cross_unit_link_resolution` assumption names the artifact as
+    **derived** evidence and states no premise:
+
+    - the artifact's SHA-256, which is also the link-resolution identity that
+      rule 4c binds in every caller and home;
+    - the database, executable and map digests;
+    - the refusals by reason;
+    - each imported home's definition record.
+
+    A caller's unit row lists the held homes refused for it
+    (`cross_unit_link_refusals`).
+
+    What remains assumed:
+
+    - Clang's extraction is faithful (trust boundary 28);
+    - the deployed binary is the built one;
+    - a record reached only through a member pointer is the same by tag;
+    - enumeration constants are not compared.
+
+    **Do not** read an external body for a caller whose configuration the
+    executable does not link, or adopt a home from a configuration the route
+    does not analyse. **Do not** treat equal symbol names, or an artifact
+    for another database, as a resolution. `QCore.CrossUnitSummary`
+    (`standing`, `standing_none_iff`, `failed_condition_refuses`, one named
+    refusal per condition, `typeAgrees_iff`,
+    `derived_resolution_discharges`, `derived_admission_is_valid`,
+    `derived_refusal_is_not_admitted`, `refused_home_supplies_nothing`,
+    `standing_vectors_hold`); [report](../reports/link-standing/README.md).
+
+<a id="constraint-41"></a>
+
+41. **A scalar statement form is read from Clang only after every older route
+    refused it, and only where every value Clang types is a non-pointer
+    scalar.** Card SCALAR-STATEMENT-FORMS (round 26 E;
+    `scalar_statement_forms.rs`, the route-G hooks
+    `legacy_scalar_statement_forms.rs`, thin hooks in `legacy_c.rs` and
+    `legacy_parenthesised_callee.rs`, one reader flag in
+    `typed_access_path.rs`). It is asked for exactly five refusals,
+    `unsupported assignment expression`, `unrecognized assignment
+    destination`, `braced initializer, expression, or declaration is not
+    modeled`, `unmodeled increment or decrement expression` and ``C operator
+    `sizeof` requires type/operand analysis``: last in `expression_statement`
+    (after the statement fallbacks and rules 14a/14b), and for a refused
+    `for` clause (which has no fallback table) from the clause's original
+    spelling, where only a one-instruction reading answers. The statement is
+    matched to one Clang node by line and exact tokens (trust boundary 28).
+    (1) **Steps and compound assignments** `X++`, `--X`, `X op= E` are the
+    plain store `X = X op E` (C11 6.5.16.2p3, 6.5.3.1p2, 6.5.2.4p2) and get
+    the typed statement reader's lowering: a named object's write is
+    `ForgetScalar`, a typed path (`*B`, `B[I]`, `B->F`, `S.F`) is read and
+    written as `IndirectScalarAccess` with its per-hop obligations, and a
+    write through a pointer carries the refused-write frame. (2) **A plain
+    assignment or single declaration** whose value only this rule reads is
+    lowered the same way. (3) **Several declarators** are their declarators
+    in order (C11 6.7.6p3). (4) **A type declaration** (a `DeclStmt` of
+    `typedef`, `struct`, `union` and `enum` declarations only) declares no
+    object and evaluates nothing (6.7p5, 6.7.2.2p2), so it is `NoOp`; a
+    `typedef` of a variably modified type evaluates its size and refuses.
+    (5) **A braced scalar initializer** `T x = { E };` is `E` (6.7.9p11).
+    (6) **A `sizeof`** whose operand Clang does not evaluate
+    (`cast_representation::query_operand`, 6.5.3.4p2) is a scalar operand
+    that reads nothing; this reader flag is set by this rule's reading only.
+    A destination is admitted only when Clang types it as a non-pointer
+    builtin scalar or enumeration, never `volatile` or `_Atomic`; a named
+    object only when it has automatic storage in this function, every
+    `VarDecl`/`ParmVarDecl` of its spelling in the function has that class
+    (the projection names objects by spelling), and it is neither a
+    protected formal nor a tracked descriptor. A value is admitted only when
+    the typed reader admits it. **Refused by name** (`Refusal`), the older
+    refusal kept byte for byte: a pointer destination (a pointer step or
+    compound is W43-INDEX-TRAVERSAL's), a pointer value or pointer
+    arithmetic, a `volatile` object (rule 11h), an aggregate destination or
+    an object of an inline record type (rule 11f's), a variably modified
+    type or evaluated `sizeof`, a static or thread-duration object, a
+    shadowed spelling, a protected formal, an unmatched node, a statement
+    holding braces outside forms (4) and (5), a call, a comma, a
+    conditional, and a value or place the reader refuses. **Do not** ask
+    this rule before an older route of the statement (hard invariant 3; the
+    `QCORE_TYPED_PATH_PARITY` stream records each consultation with
+    `position: "scalar-statement-form"`), set the unevaluated-`sizeof` flag
+    outside its reading, or admit a destination whose spelling another
+    declaration of the function gives a pointer class.
+    `QCORE_GATEWAY_RULES_OFF=41` answers nothing: every refusal stands.
+    Premises stated, not proved: faithful Clang extraction and node matching
+    (trust boundary 28), and that `ForgetScalar` and `IndirectScalarAccess`
+    are the custody meaning of a scalar write and a typed access (the
+    W43/W46 rules). `QCore.ScalarStatementForms` (`decision_vectors_hold`,
+    `compound_is_assignment`, `named_store_refines_forget`,
+    `declarators_are_sequential`, `runs_preserve_frame`,
+    `a_released_base_has_no_write`), bound to `VECTORS` by a shared-vector
+    test; [report](../reports/scalar-statement-forms/README.md).
+
+<a id="constraint-42"></a>
+
+42. **A leak whose every witness joins generations across a refused
+    re-acquisition is reported under the refusal.** Card
+    LOOP-REACQUISITION-LEAK-ACCUSATION (`legacy_loop_reacquisition_leak.rs`;
+    thin hooks in `report_leaks` and after the work list in
+    `legacy_transfer.rs`; `refused_reacquisitions` in
+    `legacy_loop_generations.rs`). Rule 11a names an acquisition site's
+    generations apart; an earlier generation (previous or older) exists only
+    because the site's node ran again while the site was mentioned, so every
+    witness of its leak passes that re-acquisition with the earlier
+    generation live: it joins two generations of one acquisition. (1)
+    `report_leaks` inserts a current generation's `Leak` at once, as before,
+    and defers an earlier generation's, on every iterate. (2) After the work
+    list, a deferred report is **withdrawn** exactly when the site's
+    re-acquisition decides `ShiftRefused` in the settled incoming state
+    (rule 11a's decision is monotone, so the settled state decides as the
+    node's last iterate did) **and** the function's diagnostics hold
+    `loop re-acquisition: an earlier generation that may be live is still
+    held` at the site's acquisition line; every other deferred report is
+    inserted. A leak key (exit line, acquisition line) is therefore
+    published whenever any identity reported it on any iterate other than a
+    withdrawn one, so more reports never withdraw more and the work-list
+    order does not matter. **Fail-closed**: a withdrawal needs the refusal
+    in the same function, so the function is `Unknown` (or provisional
+    `Unsafe` on another accusation), never `Safe`; the rule only withdraws.
+    **Do not** withdraw a current generation's report (a true leak in the
+    iteration that acquired it, `refused-current-generation-leak`), an
+    earlier generation's report where the re-acquisition is not refused
+    (rule 11a's own loop leaks, `for (;;) { p = malloc(n); if (!p) break;
+    use(p); }`), or anything where the refusal is not reported; and do not
+    read a pass-guard correlation (an acquisition only the first pass runs
+    is still re-executable in the flow, LOOP-GENERATION-COUNTER-CORRELATION)
+    or a path-insensitive re-check of a current generation
+    (PATH-INSENSITIVE-SCALAR-CORRELATION) as a generation join: those
+    witnesses carry the current generation and stay. Premises stated, not
+    proved: that `report_leaks` hands each reported identity's generation to
+    the decision and the refused set is read from the settled states (trust
+    boundary 28, bound by the shared vectors and fixtures). A withdrawn leak
+    is unvalidated, not refuted. `QCore.LoopReacquisitionLeak`
+    (`a_current_report_is_published`, `an_unrefused_site_is_published`,
+    `the_rule_only_withdraws`, `withdrawn_iff_every_reporter_is_withdrawn`,
+    `more_reporters_never_withdraw`, `a_withdrawal_is_never_safe`,
+    `the_rule_moves_no_verdict_to_safe`), bound to `WITHDRAW_VECTORS` and the
+    fixtures' verdicts (`SHAPE_VECTORS`, `tests/loop_reacquisition_leak.rs`);
+    [report](../reports/loop-reacquisition-leak-accusation/README.md).
 
 <!-- generated:rules:end -->

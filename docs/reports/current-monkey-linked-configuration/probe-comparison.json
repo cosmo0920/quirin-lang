@@ -1,0 +1,234 @@
+{
+ "function_moves": {
+  "unchanged": 343
+ },
+ "prepass_differences": {
+  "lifetime_protocols": "differs",
+  "read": {
+   "linked": 1038,
+   "standalone": 1062
+  },
+  "units": {
+   "linked": 1419,
+   "standalone": 1448
+  }
+ },
+ "units": [
+  {
+   "file": "lib/monkey/mk_core/mk_event.c",
+   "functions_changed": [],
+   "linked": "Unknown",
+   "standalone": "Unknown"
+  },
+  {
+   "file": "lib/monkey/mk_core/mk_file.c",
+   "functions_changed": [],
+   "linked": "Unknown",
+   "standalone": "Unknown"
+  },
+  {
+   "file": "lib/monkey/mk_core/mk_iov.c",
+   "functions_changed": [],
+   "linked": "Unknown",
+   "standalone": "Unknown"
+  },
+  {
+   "file": "lib/monkey/mk_core/mk_memory.c",
+   "functions_changed": [],
+   "linked": "Unknown",
+   "standalone": "Unknown"
+  },
+  {
+   "file": "lib/monkey/mk_core/mk_rconf.c",
+   "functions_changed": [],
+   "linked": "Unknown",
+   "standalone": "Unknown"
+  },
+  {
+   "file": "lib/monkey/mk_core/mk_string.c",
+   "functions_changed": [],
+   "linked": "Unknown",
+   "standalone": "Unknown"
+  },
+  {
+   "file": "lib/monkey/mk_core/mk_utils.c",
+   "functions_changed": [],
+   "linked": "Unknown",
+   "standalone": "Unknown"
+  },
+  {
+   "file": "lib/monkey/mk_server/mk_cache.c",
+   "functions_changed": [],
+   "linked": "Unknown",
+   "standalone": "Unknown"
+  },
+  {
+   "file": "lib/monkey/mk_server/mk_clock.c",
+   "functions_changed": [],
+   "linked": "Unknown",
+   "standalone": "Unknown"
+  },
+  {
+   "file": "lib/monkey/mk_server/mk_config.c",
+   "functions_changed": [],
+   "linked": "Unknown",
+   "standalone": "Unknown"
+  },
+  {
+   "file": "lib/monkey/mk_server/mk_fifo.c",
+   "functions_changed": [],
+   "linked": "Unknown",
+   "standalone": "Unknown"
+  },
+  {
+   "file": "lib/monkey/mk_server/mk_header.c",
+   "functions_changed": [],
+   "linked": "Unknown",
+   "standalone": "Unknown"
+  },
+  {
+   "file": "lib/monkey/mk_server/mk_http.c",
+   "functions_changed": [],
+   "linked": "Unsafe",
+   "standalone": "Unsafe"
+  },
+  {
+   "file": "lib/monkey/mk_server/mk_http_parser.c",
+   "functions_changed": [],
+   "linked": "Unknown",
+   "standalone": "Unknown"
+  },
+  {
+   "file": "lib/monkey/mk_server/mk_http_thread.c",
+   "functions_changed": [],
+   "linked": "Unknown",
+   "standalone": "Unknown"
+  },
+  {
+   "file": "lib/monkey/mk_server/mk_kernel.c",
+   "functions_changed": [],
+   "linked": "Unknown",
+   "standalone": "Unknown"
+  },
+  {
+   "file": "lib/monkey/mk_server/mk_lib.c",
+   "functions_changed": [],
+   "linked": "Unknown",
+   "standalone": "Unknown"
+  },
+  {
+   "file": "lib/monkey/mk_server/mk_mimetype.c",
+   "functions_changed": [],
+   "linked": "Unknown",
+   "standalone": "Unknown"
+  },
+  {
+   "file": "lib/monkey/mk_server/mk_net.c",
+   "functions_changed": [],
+   "linked": "Unsafe",
+   "standalone": "Unsafe"
+  },
+  {
+   "file": "lib/monkey/mk_server/mk_plugin.c",
+   "functions_changed": [],
+   "linked": "Unknown",
+   "standalone": "Unknown"
+  },
+  {
+   "file": "lib/monkey/mk_server/mk_scheduler.c",
+   "functions_changed": [],
+   "linked": "Unknown",
+   "standalone": "Unknown"
+  },
+  {
+   "file": "lib/monkey/mk_server/mk_server.c",
+   "functions_changed": [],
+   "linked": "Unknown",
+   "standalone": "Unknown"
+  },
+  {
+   "file": "lib/monkey/mk_server/mk_socket.c",
+   "functions_changed": [],
+   "linked": "Unknown",
+   "standalone": "Unknown"
+  },
+  {
+   "file": "lib/monkey/mk_server/mk_stream.c",
+   "functions_changed": [],
+   "linked": "Unknown",
+   "standalone": "Unknown"
+  },
+  {
+   "file": "lib/monkey/mk_server/mk_user.c",
+   "functions_changed": [],
+   "linked": "Unknown",
+   "standalone": "Unknown"
+  },
+  {
+   "file": "lib/monkey/mk_server/mk_utils.c",
+   "functions_changed": [],
+   "linked": "Unknown",
+   "standalone": "Unknown"
+  },
+  {
+   "file": "lib/monkey/mk_server/mk_vhost.c",
+   "functions_changed": [],
+   "linked": "Unknown",
+   "standalone": "Unknown"
+  },
+  {
+   "file": "lib/monkey/mk_server/monkey.c",
+   "functions_changed": [],
+   "linked": "Unknown",
+   "standalone": "Unknown"
+  },
+  {
+   "file": "lib/monkey/tls/tls_openssl.c",
+   "functions": {
+    "config_free": "Safe",
+    "config_parse": "Unknown",
+    "context_get": "Unknown",
+    "context_get_head": "Unknown",
+    "context_get_or_create": "Unknown",
+    "context_new": "Unsafe",
+    "context_unset": "Unknown",
+    "contexts_free": "Unknown",
+    "local_thread_context": "Safe",
+    "mk_tls_close": "Unknown",
+    "mk_tls_enabled": "Safe",
+    "mk_tls_exit": "Unknown",
+    "mk_tls_init": "Unknown",
+    "mk_tls_read": "Unknown",
+    "mk_tls_send_file": "Unknown",
+    "mk_tls_thread_init": "Unknown",
+    "mk_tls_transport": "Safe",
+    "mk_tls_write": "Unknown",
+    "mk_tls_writev": "Unknown",
+    "tls_configure_dh": "Unknown",
+    "tls_create_server_context": "Unknown",
+    "tls_event_interest": "Unknown",
+    "tls_handle_return": "Unknown",
+    "tls_init_library": "Unknown",
+    "tls_load_builtin_credentials": "Unknown",
+    "tls_load_credentials": "Unknown",
+    "tls_pread": "Unknown"
+   },
+   "linked": "Unsafe",
+   "not_projected": [],
+   "standalone": null
+  },
+  {
+   "file": "lib/monkey/tls/tls_stub.c",
+   "functions": {
+    "mk_tls_enabled": "Safe",
+    "mk_tls_exit": "Safe",
+    "mk_tls_init": "Safe",
+    "mk_tls_thread_init": "Safe",
+    "mk_tls_transport": "Safe"
+   },
+   "linked": null,
+   "not_projected": [],
+   "standalone": "Safe"
+  }
+ ]
+}

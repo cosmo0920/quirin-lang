@@ -27,6 +27,28 @@ impl Parser<'_> {
     /// and element counters, and the descriptor guard, which restored
     /// nothing, does too.
     pub(super) fn classify_simple(&mut self, tokens: &[Token]) -> LegacyInstruction {
+        let instruction = self.classify_simple_recorded(tokens);
+        // Card SCALAR-STATEMENT-FORMS: measurement only (feature
+        // `scalar-form-census`, off by default).
+        #[cfg(feature = "scalar-form-census")]
+        if let LegacyInstruction::Unknown { description, .. } = &instruction {
+            let texts = tokens
+                .iter()
+                .map(|token| token.text.as_str())
+                .collect::<Vec<_>>();
+            crate::scalar_form_census::record(
+                &self.typed_path_function,
+                tokens.first().map_or(0, |token| token.line),
+                &texts,
+                description,
+                "classified",
+                None,
+            );
+        }
+        instruction
+    }
+
+    fn classify_simple_recorded(&mut self, tokens: &[Token]) -> LegacyInstruction {
         let saved = self.probe_state();
         let instruction = self.classify_simple_descriptors(tokens, &saved);
         let instruction = self.refuse_opaque_call(tokens, instruction, &saved);
@@ -36,6 +58,10 @@ impl Parser<'_> {
         // Rule 36a: only an old refusal in a complete checked caller.
         let instruction = self.self_init_call(tokens, instruction);
         let instruction = self.tracked_self_init_call(tokens, instruction);
+        // Card CHAINED-ASSIGNMENT-INNER-DESTINATION (rule 5i, amended): an
+        // admission that would drop a write inside an assigned value is
+        // replaced by the refusal; a refusal stays itself.
+        let instruction = self.chained_assignment_guard(tokens, instruction, &saved);
         // Card W45-FB-BACKLOG-CUSTODY, rule 4: an admission that hands an
         // iteration's protected node or element to a position that may unlink
         // or release it is replaced by the refusal; a refusal stays itself.
@@ -266,6 +292,21 @@ impl Parser<'_> {
             if matches!(&instruction, LegacyInstruction::Unknown { description, .. }
                 if TYPED_SCALAR_CONSULTED.contains(&description.as_str()))
                 && let Some(typed) = self.typed_path_statement(tokens, &instruction)
+            {
+                return typed;
+            }
+            // Card OUT-PARAMETER-BODY-SUMMARY (rule 10k(5)): a `*B = V` store
+            // the importer named for an out slot, after every lexical route
+            // above declined, whose AST reading is a scalar store (the
+            // destination's type a scalar, the owner-aware enum arm
+            // included). Only that lowering replaces the store: a pointer
+            // store, a refusal or a plan with no access keeps the out-slot
+            // reading, which transfer refuses unless a contract sanctions it.
+            if matches!(&instruction,
+                    LegacyInstruction::Alias { destination, .. }
+                    | LegacyInstruction::Clear { destination } if is_indirect_place(destination))
+                && let Some(typed @ LegacyInstruction::IndirectScalarAccess { .. }) =
+                    self.typed_path_statement(tokens, &instruction)
             {
                 return typed;
             }

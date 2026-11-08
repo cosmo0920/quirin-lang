@@ -212,10 +212,20 @@ fn e04_assignment_as_a_value_is_refused_on_both_routes() {
     // The same place on both sides of an unsequenced pair stays refused.
     let run = gs("int subject(struct S *s) { s->a = (s->a = 1); return s->a; }");
     assert!(!run.safe(), "{run:?}");
-    // Finding (CG02-OLDER-SCALAR-ROUTE-UNSEQUENCED): the older scalar route
-    // admits `x = (x = 1)` as one scalar write before the elaborator is asked.
-    // It is custody-neutral, so no custody verdict rests on it.
-    assert!(gs("int subject(int x) { x = (x = 1); return x; }").safe());
+    // Finding (CG02-OLDER-SCALAR-ROUTE-UNSEQUENCED) discharged by card
+    // CHAINED-ASSIGNMENT-INNER-DESTINATION (rule 5i, amended): the older
+    // scalar route admitted `x = (x = 1)` as one scalar write before the
+    // elaborator was asked. The chain guard now refuses that admission by
+    // name, and the elaborator's order model refuses the same-object pair.
+    let run = gs("int subject(int x) { x = (x = 1); return x; }");
+    assert!(run.unknown(), "{run:?}");
+    assert!(
+        run.refused(
+            "chained assignment writes an inner destination too; it is read only as its \
+             sequential assignments (C11 6.5.16p3)"
+        ),
+        "{run:?}"
+    );
 }
 
 /// **Flipped by CG02-ELABORATION-CORE** where the value is a scalar and no

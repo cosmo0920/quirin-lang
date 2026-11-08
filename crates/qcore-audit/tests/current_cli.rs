@@ -1583,3 +1583,263 @@ fn current_route_executes_per_library_slices_with_dependent_library_contracts() 
     assert_eq!(isolated_units[0]["status"], "Pending");
     assert_eq!(isolated_units[1]["status"], "Unknown");
 }
+
+/// Card CURRENT-MONKEY-LINKED-CONFIGURATION: `--monkey-linked` analyses
+/// Monkey's units as the main compile database configures them (label
+/// `monkey`), excluding `mk_core/deps/` and the files outside the Monkey unit
+/// rule. A standalone Monkey database is then accounted for, never analysed:
+/// a unit with a linked counterpart is replaced by it and one without stays as
+/// a not-linked `Unknown` unit under its own `monkey-libevent` key. The
+/// setting is declared once, and a group that already takes a Monkey label or
+/// unit, or a database with no Monkey unit, refuses.
+#[test]
+fn a_linked_monkey_run_replaces_or_keeps_every_standalone_unit() {
+    let Some(clang) = clang() else { return };
+    let fixture = Fixture::new(&clang, true);
+    let checkout = fixture.0.join("checkout");
+    let linked_files = [
+        (
+            "lib/monkey/mk_core/mk_event.c",
+            "int mk_event_init(void) { return 0; }\n",
+        ),
+        ("lib/monkey/mk_server/mk_fifo.c", SOURCE),
+        (
+            "lib/monkey/tls/tls_openssl.c",
+            "int mk_tls_init(void) { return 1; }\n",
+        ),
+        (
+            "lib/monkey/mk_core/deps/dep.c",
+            "int dep_fn(void) { return 2; }\n",
+        ),
+        (
+            "lib/monkey/mk_bin/monkey.c",
+            "int monkey_main(void) { return 3; }\n",
+        ),
+    ];
+    let stub = "int mk_tls_init(void) { return 0; }\n";
+    for (path, text) in linked_files
+        .iter()
+        .copied()
+        .chain([("lib/monkey/tls/tls_stub.c", stub)])
+    {
+        fs::create_dir_all(checkout.join(path).parent().unwrap()).unwrap();
+        fs::write(checkout.join(path), text).unwrap();
+    }
+    git(&checkout, &["add", "lib"]);
+    git(
+        &checkout,
+        &[
+            "-c",
+            "user.name=Audit Fixture",
+            "-c",
+            "user.email=audit@example.invalid",
+            "commit",
+            "--quiet",
+            "-m",
+            "Monkey units",
+        ],
+    );
+    // The main database: the fixture's units plus Monkey's, as linked.
+    let mut commands: Vec<Value> =
+        serde_json::from_str(&fs::read_to_string(fixture.0.join("compile_commands.json")).unwrap())
+            .unwrap();
+    for (path, _) in linked_files {
+        commands.push(json!({
+            "directory": checkout, "file": path,
+            "arguments": [&clang, "-std=c11", "-c", path, "-o", path.replace(".c", ".o")],
+        }));
+    }
+    fs::write(
+        fixture.0.join("linked.json"),
+        serde_json::to_string(&commands).unwrap(),
+    )
+    .unwrap();
+    // The standalone, forced-Libevent copy: one unit with a linked
+    // counterpart and one without.
+    let copy = fixture.0.join("monkey-source");
+    let standalone = [
+        (
+            "mk_core/mk_event.c",
+            "int mk_event_init(void) { return 0; }\n",
+        ),
+        ("tls/tls_stub.c", stub),
+    ];
+    for (path, text) in standalone {
+        fs::create_dir_all(copy.join(path).parent().unwrap()).unwrap();
+        fs::write(copy.join(path), text).unwrap();
+    }
+    fs::write(
+        fixture.0.join("standalone.json"),
+        json!(
+            standalone
+                .iter()
+                .map(|(path, _)| json!({
+                    "directory": copy, "file": path,
+                    "arguments": [&clang, "-DMK_EVENT_LOOP_LIBEVENT", "-std=c11", "-c", path,
+                                  "-o", path.replace(".c", ".o")],
+                }))
+                .collect::<Vec<_>>()
+        )
+        .to_string(),
+    )
+    .unwrap();
+    let linked_args = |out: &str| {
+        let mut args = fixture.base_args(out);
+        args[5] = "linked.json".into();
+        args
+    };
+    let mut args = linked_args("linked");
+    args.extend(strings(&[
+        "--monkey-linked",
+        "--monkey-database",
+        "standalone.json",
+    ]));
+    let output = fixture.run(&args);
+    succeeded(&output);
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(
+        stdout.contains("monkey: Monkey as linked into fluent-bit (3 unit(s) of the compile database); 1 standalone unit(s) replaced, 1 not linked"),
+        "{stdout}"
+    );
+    let report = fixture.read("linked/report.json");
+    let keys: Vec<String> = report["units"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|unit| {
+            format!(
+                "{}/{}",
+                unit["library"].as_str().unwrap(),
+                unit["file"].as_str().unwrap()
+            )
+        })
+        .filter(|key| key.contains("lib/monkey"))
+        .collect();
+    assert_eq!(
+        keys,
+        [
+            "monkey/lib/monkey/mk_core/mk_event.c",
+            "monkey/lib/monkey/mk_server/mk_fifo.c",
+            "monkey/lib/monkey/tls/tls_openssl.c",
+            "monkey-libevent/lib/monkey/tls/tls_stub.c",
+        ]
+    );
+    let units = report["units"].as_array().unwrap();
+    let stub_row = units
+        .iter()
+        .find(|unit| unit["file"] == "lib/monkey/tls/tls_stub.c")
+        .unwrap();
+    assert_eq!(stub_row["status"], "Unknown");
+    assert_eq!(stub_row["reason_code"], "environment-unavailable");
+    assert!(
+        stub_row["reason"]
+            .as_str()
+            .unwrap()
+            .starts_with("not linked:")
+    );
+    assert_eq!(stub_row["not_projected"], json!(["mk_tls_init"]));
+    let fifo = units
+        .iter()
+        .find(|unit| unit["file"] == "lib/monkey/mk_server/mk_fifo.c")
+        .unwrap();
+    // Analysed like any unit: the same text as `src/unit.c`, the same verdict.
+    let plain = units
+        .iter()
+        .find(|unit| unit["file"] == "src/unit.c")
+        .unwrap();
+    assert_eq!(fifo["status"], plain["status"]);
+    assert_ne!(fifo["status"], "Unknown");
+    let record = &fixture.read("linked/report.contracts.json")["monkey_configuration"];
+    assert_eq!(record["analysed"], "linked");
+    assert_eq!(
+        record["units"],
+        json!([
+            "lib/monkey/mk_core/mk_event.c",
+            "lib/monkey/mk_server/mk_fifo.c",
+            "lib/monkey/tls/tls_openssl.c"
+        ])
+    );
+    assert_eq!(
+        record["replaced"],
+        json!([{"standalone": "monkey-libevent/lib/monkey/mk_core/mk_event.c",
+                "linked": "monkey/lib/monkey/mk_core/mk_event.c"}])
+    );
+    assert_eq!(
+        record["not_linked"][0]["unit"],
+        "monkey-libevent/lib/monkey/tls/tls_stub.c"
+    );
+    assert_eq!(
+        fixture.read("linked/report.invocation.json")["monkey_linked"],
+        true
+    );
+
+    // Without a standalone database: only the linked units, nothing accounted.
+    let mut args = linked_args("only-linked");
+    args.push("--monkey-linked".into());
+    succeeded(&fixture.run(&args));
+    let only = fixture.read("only-linked/report.json");
+    assert!(
+        only["units"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .all(|unit| unit["library"] != "monkey-libevent")
+    );
+    let record = &fixture.read("only-linked/report.contracts.json")["monkey_configuration"];
+    assert_eq!(record["replaced"], json!([]));
+    assert_eq!(record["not_linked"], json!([]));
+
+    // The standalone route is unchanged: its units are analysed under
+    // `monkey-libevent`, and nothing records a Monkey configuration.
+    let mut args = linked_args("standalone");
+    args.extend(strings(&["--monkey-database", "standalone.json"]));
+    succeeded(&fixture.run(&args));
+    let old = fixture.read("standalone/report.json");
+    assert!(
+        old["units"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .all(|unit| unit["library"] != "monkey")
+    );
+    assert!(
+        old["units"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|unit| unit["library"] == "monkey-libevent")
+    );
+    assert!(fixture.read("standalone/report.contracts.json")["monkey_configuration"].is_null());
+    assert!(fixture.read("standalone/report.invocation.json")["monkey_linked"].is_null());
+
+    // Refusals.
+    let mut args = fixture.base_args("no-monkey");
+    args.push("--monkey-linked".into());
+    refused(&fixture.run(&args), "contains no Monkey sources");
+    let mut args = linked_args("twice");
+    args.extend(strings(&["--monkey-linked", "--monkey-linked"]));
+    refused(&fixture.run(&args), "--monkey-linked is given twice");
+    let config = fixture.config(
+        "unlinked.json",
+        &json!({"schema_version": 1, "monkey_linked": false}),
+    );
+    let mut args = linked_args("conflict");
+    args.extend(strings(&["--monkey-linked", "--config", &config]));
+    refused(&fixture.run(&args), "monkey_linked");
+    let labelled = fixture.config(
+        "labelled.json",
+        &json!({"schema_version": 1, "name": "labelled", "groups": [
+            {"library": "sample", "label": "monkey", "files": ["src/unit.c"]}]}),
+    );
+    let mut args = linked_args("labelled");
+    args.extend(strings(&["--monkey-linked", "--selection", &labelled]));
+    refused(&fixture.run(&args), "already uses the label");
+    let twice = fixture.config(
+        "twice-selected.json",
+        &json!({"schema_version": 1, "name": "twice", "groups": [
+            {"library": "sample", "files": ["lib/monkey/mk_server/mk_fifo.c"]}]}),
+    );
+    let mut args = linked_args("twice-selected");
+    args.extend(strings(&["--monkey-linked", "--selection", &twice]));
+    refused(&fixture.run(&args), "already selects the Monkey unit");
+}

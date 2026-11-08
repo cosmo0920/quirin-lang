@@ -1,0 +1,219 @@
+{
+ "schema": "quirin-gate-scope/1",
+ "source": "git diff",
+ "base": "82ec0e80bf4fc523c8bda9b55e80cabf81a3a766",
+ "head": "325b5e2992e62f4383e425cfdac8043acd1743d0",
+ "committed": [
+  "docs/reports/refused-store-of-call-result-escape/PREDICTION.md",
+  "docs/reports/refused-store-of-call-result-escape/README.md",
+  "docs/reports/refused-store-of-call-result-escape/evidence/guard-mutation.json",
+  "docs/reports/refused-store-of-call-result-escape/evidence/route-census/cmt-map-selection.json",
+  "docs/reports/refused-store-of-call-result-escape/evidence/route-census/invocation.json",
+  "docs/reports/refused-store-of-call-result-escape/evidence/route-census/leak-witness.jsonl.gz",
+  "docs/reports/refused-store-of-call-result-escape/evidence/route-census/slot.json",
+  "docs/reports/refused-store-of-call-result-escape/evidence/route-census/summary.json",
+  "docs/reports/refused-store-of-call-result-escape/evidence/token-census.json",
+  "docs/reports/refused-store-of-call-result-escape/integration-amendments.json",
+  "docs/reports/refused-store-of-call-result-escape/scripts/mutation_record.py",
+  "docs/reports/refused-store-of-call-result-escape/scripts/preprocess_unit.py",
+  "docs/reports/refused-store-of-call-result-escape/scripts/route_census_record.py",
+  "docs/reports/refused-store-of-call-result-escape/scripts/token_census_record.py"
+ ],
+ "uncommitted": [],
+ "scope": {
+  "paths": [
+   "docs/reports/refused-store-of-call-result-escape/PREDICTION.md",
+   "docs/reports/refused-store-of-call-result-escape/README.md",
+   "docs/reports/refused-store-of-call-result-escape/evidence/guard-mutation.json",
+   "docs/reports/refused-store-of-call-result-escape/evidence/route-census/cmt-map-selection.json",
+   "docs/reports/refused-store-of-call-result-escape/evidence/route-census/invocation.json",
+   "docs/reports/refused-store-of-call-result-escape/evidence/route-census/leak-witness.jsonl.gz",
+   "docs/reports/refused-store-of-call-result-escape/evidence/route-census/slot.json",
+   "docs/reports/refused-store-of-call-result-escape/evidence/route-census/summary.json",
+   "docs/reports/refused-store-of-call-result-escape/evidence/token-census.json",
+   "docs/reports/refused-store-of-call-result-escape/integration-amendments.json",
+   "docs/reports/refused-store-of-call-result-escape/scripts/mutation_record.py",
+   "docs/reports/refused-store-of-call-result-escape/scripts/preprocess_unit.py",
+   "docs/reports/refused-store-of-call-result-escape/scripts/route_census_record.py",
+   "docs/reports/refused-store-of-call-result-escape/scripts/token_census_record.py"
+  ],
+  "attribution": {
+   "docs/reports/refused-store-of-call-result-escape/PREDICTION.md": [
+    "class prose"
+   ],
+   "docs/reports/refused-store-of-call-result-escape/README.md": [
+    "class prose"
+   ],
+   "docs/reports/refused-store-of-call-result-escape/evidence/guard-mutation.json": [
+    "class prose"
+   ],
+   "docs/reports/refused-store-of-call-result-escape/evidence/route-census/cmt-map-selection.json": [
+    "class prose"
+   ],
+   "docs/reports/refused-store-of-call-result-escape/evidence/route-census/invocation.json": [
+    "class prose"
+   ],
+   "docs/reports/refused-store-of-call-result-escape/evidence/route-census/leak-witness.jsonl.gz": [
+    "class prose"
+   ],
+   "docs/reports/refused-store-of-call-result-escape/evidence/route-census/slot.json": [
+    "class prose"
+   ],
+   "docs/reports/refused-store-of-call-result-escape/evidence/route-census/summary.json": [
+    "class prose"
+   ],
+   "docs/reports/refused-store-of-call-result-escape/evidence/token-census.json": [
+    "class prose"
+   ],
+   "docs/reports/refused-store-of-call-result-escape/integration-amendments.json": [
+    "class prose"
+   ],
+   "docs/reports/refused-store-of-call-result-escape/scripts/mutation_record.py": [
+    "class prose"
+   ],
+   "docs/reports/refused-store-of-call-result-escape/scripts/preprocess_unit.py": [
+    "class prose"
+   ],
+   "docs/reports/refused-store-of-call-result-escape/scripts/route_census_record.py": [
+    "class prose"
+   ],
+   "docs/reports/refused-store-of-call-result-escape/scripts/token_census_record.py": [
+    "class prose"
+   ]
+  },
+  "affected": {},
+  "targets": {},
+  "mode": "scoped",
+  "full_reasons": [],
+  "rust_packages": [],
+  "rust_targets": [],
+  "probes": false,
+  "lean": {
+   "mode": "none",
+   "reasons": [],
+   "modules": [],
+   "audits": []
+  },
+  "python_reasons": [
+   "docs/reports/refused-store-of-call-result-escape/scripts/mutation_record.py: Python",
+   "docs/reports/refused-store-of-call-result-escape/scripts/preprocess_unit.py: Python",
+   "docs/reports/refused-store-of-call-result-escape/scripts/route_census_record.py: Python",
+   "docs/reports/refused-store-of-call-result-escape/scripts/token_census_record.py: Python"
+  ],
+  "provider_gate": false,
+  "provider_reasons": [],
+  "provider_lock_check": false,
+  "provider_lock_reasons": [],
+  "provider_members_reached_without_providers_change": [],
+  "unresolved_includes": [
+   {
+    "crate": "qcore-compiler",
+    "source": "compiler/tests/ct_corpus.rs:8069",
+    "literal": "include_str!(\\\"fixtures/ct/{id}/case.qr\\\")\");",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   }
+  ],
+  "undeclared_directory_literals": [],
+  "stale_walkers": []
+ },
+ "planned_steps": [
+  {
+   "name": "submodules",
+   "argv": [
+    "git",
+    "-C",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac360b607d74741a2",
+    "submodule",
+    "status",
+    "--recursive"
+   ],
+   "slot": null
+  },
+  {
+   "name": "fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "slot": null
+  },
+  {
+   "name": "python",
+   "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+   ],
+   "slot": null
+  }
+ ],
+ "slots": true,
+ "landing": false,
+ "card_base": "82ec0e80bf4fc523c8bda9b55e80cabf81a3a766",
+ "started": "20261107T152706Z",
+ "ran": true,
+ "steps": [
+  {
+   "name": "submodules",
+   "argv": [
+    "git",
+    "-C",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac360b607d74741a2",
+    "submodule",
+    "status",
+    "--recursive"
+   ],
+   "exit": 0,
+   "seconds": 0.1,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac360b607d74741a2/private/gate-2/submodules.log",
+   "counts": {
+    "submodules": 1,
+    "not_checked_out_or_moved": []
+   }
+  },
+  {
+   "name": "fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "exit": 0,
+   "seconds": 11.6,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac360b607d74741a2/private/gate-2/fmt.log",
+   "counts": {}
+  },
+  {
+   "name": "python",
+   "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+   ],
+   "exit": 0,
+   "seconds": 304.2,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ac360b607d74741a2/private/gate-2/python.log",
+   "counts": {
+    "tests": 685,
+    "skipped": 0,
+    "ok": true
+   },
+   "env": {
+    "QUIRIN_CARD_GATE_BASE": "82ec0e80bf4fc523c8bda9b55e80cabf81a3a766"
+   }
+  }
+ ],
+ "ok": true,
+ "finished": "20261107T153222Z"
+}

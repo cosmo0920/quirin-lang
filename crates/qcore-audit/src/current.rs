@@ -112,6 +112,9 @@ pub struct CurrentAudit {
     /// on every analysing thread, with its evidence section.
     member_prepass: Option<crate::member_prepass::Prepass>,
     cross_unit_homes: Vec<qcore_c_gateway::legacy_c::CrossUnitHomeEvidence>,
+    /// Card LINK-STANDING (rule 40): the derived resolution's per-caller
+    /// conditions, when the run's link resolution is derived.
+    link_standing: Option<std::sync::Arc<crate::cross_unit_links::LinkStanding>>,
 }
 
 /// One configuration's console lines and, unless it failed, its products.
@@ -351,6 +354,7 @@ impl CurrentAudit {
             counts: AuditCounts::default(),
             member_prepass: None,
             cross_unit_homes: Vec::new(),
+            link_standing: None,
         })
     }
 
@@ -380,6 +384,7 @@ impl CurrentAudit {
     ) {
         self.contracts = crate::refuted_contracts::with_table(&self.loaded_contracts, table);
         self.cross_unit_homes.clear();
+        self.link_standing = None;
         if let Some(assumptions) = self.assumptions.as_object_mut() {
             assumptions.remove("cross_unit_link_resolution");
         }
@@ -414,6 +419,50 @@ impl CurrentAudit {
                 "home_environment_sha256": home.environment_sha256,
             })).collect::<Vec<_>>(),
         });
+    }
+
+    /// Card **LINK-STANDING** (rule 40): install the homes of a derived
+    /// resolution and its per-caller conditions. The assumption names the
+    /// artifact as derived evidence; it states no premise.
+    pub fn set_cross_unit_derived(
+        &mut self,
+        environment: ResourceContracts,
+        homes: Vec<qcore_c_gateway::legacy_c::CrossUnitHomeEvidence>,
+        derived: crate::cross_unit_links::Derived,
+    ) {
+        let crate::cross_unit_links::Derived {
+            map,
+            standing,
+            refused: _,
+            evidence,
+        } = &derived;
+        self.contracts = environment;
+        self.cross_unit_homes = homes;
+        self.assumptions["cross_unit_link_resolution"] = json!({
+            "scope": "derived (rule 40): each external call to an imported symbol is resolved by the static link of the executable the artifact describes to the home's one strong global definition; a caller holds the import only when its own configuration is linked and the callee's type in its unit equals the home definition's",
+            "evidence": "derived",
+            "derived_from": evidence,
+            "replay_budget_per_unit": qcore_c_gateway::legacy_c::CROSS_UNIT_REPLAY_BUDGET_PER_UNIT,
+            "map_sha256": self.contracts.link_resolution_sha256(),
+            "derived_homes": map.requested().len(),
+            "refused_by_reason": derived.refused_by_reason(),
+            "imported": self.cross_unit_homes.iter().map(|home| json!({
+                "function": home.function,
+                "home_unit": map.home_for(&home.function),
+                "home_raw_source_sha256": home.input_identity.raw_source_sha256,
+                "home_preprocessed_source_sha256": home.input_identity.preprocessed_source_sha256,
+                "home_environment_sha256": home.environment_sha256,
+                "link_record": standing.record(&home.function),
+            })).collect::<Vec<_>>(),
+        });
+        let crate::cross_unit_links::Derived { standing, .. } = derived;
+        self.link_standing = Some(std::sync::Arc::new(standing));
+    }
+
+    /// Card **LINK-STANDING** (rule 40): a supplied artifact the run refused
+    /// as a whole (database or bound digest); no import is held.
+    pub fn record_link_resolution_refused(&mut self, evidence: Value) {
+        self.assumptions["cross_unit_link_resolution"] = evidence;
     }
 
     /// Card W45-REFUTED-CONTRACT-WITHDRAWAL: the refutation table later
@@ -559,12 +608,72 @@ impl CurrentAudit {
         self.assumptions["unit_selection"] = selection;
     }
 
+    /// Card **CURRENT-MONKEY-LINKED-CONFIGURATION**: which Monkey
+    /// configuration the run analyses and how the standalone units are
+    /// accounted for; recorded only by a `--monkey-linked` run.
+    pub fn record_monkey_configuration(&mut self, record: Value) {
+        self.assumptions["monkey_configuration"] = record;
+    }
+
     /// Card **W45-FB-SYSTEM-SELECTION**: a selected file with no compilation
     /// record stays in the denominator as one `Unknown` unit, with an
     /// environment reason, its checkout definitions as `not_projected`, and a
     /// configuration record whose `compile_record` is null. It is never
     /// dropped and never analysed under a guessed command.
     pub fn evaluate_absent(&self, library: &str, relative: &str) -> EntryOutcome {
+        self.evaluate_unrecorded(library, relative, None)
+    }
+
+    /// Card **CURRENT-MONKEY-LINKED-CONFIGURATION**: a standalone Monkey unit
+    /// the linked configuration does not compile. It is an
+    /// [`Self::evaluate_absent`] unit (the run's compile database has no
+    /// record of it) whose reason says why: one `Unknown` unit under its own
+    /// key, never dropped and never analysed under the standalone command.
+    pub fn evaluate_not_linked(&self, library: &str, relative: &str, reason: &str) -> EntryOutcome {
+        self.evaluate_unrecorded(library, relative, Some(reason))
+    }
+
+    /// The refusal of a selected file with no compile record: `not_linked`'s
+    /// reason, or the record's absence, once the checkout's bytes are pinned;
+    /// and whether they are.
+    pub(crate) fn unrecorded_refusal(
+        checkout: &Path,
+        revision: &str,
+        relative: &str,
+        not_linked: Option<&str>,
+        bytes: &std::io::Result<Vec<u8>>,
+    ) -> (UnitRefusal, bool) {
+        let path = checkout.join(relative);
+        match bytes {
+            Ok(bytes) => match crate::verify_pinned_bytes(checkout, revision, &path, bytes) {
+                Ok(()) => (
+                    UnitRefusal::environment(not_linked.map_or_else(
+                        || {
+                            format!(
+                                "selected source has no compilation database record: {relative}"
+                            )
+                        },
+                        str::to_owned,
+                    )),
+                    true,
+                ),
+                Err(refusal) => (refusal, false),
+            },
+            Err(error) => (
+                UnitRefusal::environment(format!(
+                    "selected source is absent from the checkout: {relative}: {error}"
+                )),
+                false,
+            ),
+        }
+    }
+
+    fn evaluate_unrecorded(
+        &self,
+        library: &str,
+        relative: &str,
+        not_linked: Option<&str>,
+    ) -> EntryOutcome {
         let mut output = String::new();
         let mut products = EntryProducts {
             source: None,
@@ -574,22 +683,11 @@ impl CurrentAudit {
         };
         let path = self.checkout.join(relative);
         let bytes = fs::read(&path);
-        let refusal = match &bytes {
-            Ok(bytes) => {
-                match crate::verify_pinned_bytes(&self.checkout, &self.revision, &path, bytes) {
-                    Ok(()) => {
-                        products.source = path.canonicalize().ok();
-                        UnitRefusal::environment(format!(
-                            "selected source has no compilation database record: {relative}"
-                        ))
-                    }
-                    Err(refusal) => refusal,
-                }
-            }
-            Err(error) => UnitRefusal::environment(format!(
-                "selected source is absent from the checkout: {relative}: {error}"
-            )),
-        };
+        let (refusal, pinned) =
+            Self::unrecorded_refusal(&self.checkout, &self.revision, relative, not_linked, &bytes);
+        if pinned {
+            products.source = path.canonicalize().ok();
+        }
         let functions = bytes
             .as_ref()
             .ok()
@@ -713,12 +811,24 @@ impl CurrentAudit {
                 )?;
                 configuration["compile_task_identity"] =
                     serde_json::to_value(&identity).map_err(|error| error.to_string())?;
-                crate::projection::project_prepared_unit_into_with_cross_unit(
+                // Card LINK-STANDING (rule 40): under a derived resolution
+                // a caller holds a home only when its own configuration is
+                // linked and the callee's type agrees.
+                let caller = crate::cross_unit_links::ConfigurationIdentity::of(entry);
+                let caller_unit = &prepared;
+                let admission = self.link_standing.as_ref().map(|standing| {
+                    let linked = standing.caller_linked(&caller);
+                    move |scoped| standing.admit(scoped, linked, caller_unit)
+                });
+                crate::projection::project_prepared_unit_into_with_link_standing(
                     library,
                     &file,
                     &prepared,
                     &self.contracts,
                     &self.cross_unit_homes,
+                    admission
+                        .as_ref()
+                        .map(|admit| admit as crate::projection::LinkAdmission<'_>),
                     PreparedAuditCertificateContext {
                         compile_task_identity: &identity,
                         source_profile_sha256: &self.source_profile_sha256,

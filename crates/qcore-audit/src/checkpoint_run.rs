@@ -379,6 +379,10 @@ fn unit_key(audit: &CurrentAudit, task: &ConfiguredTask<'_>) -> Result<UnitKey, 
             audit.checkout().join(file).display().to_string(),
             json!(["absent", file]),
         ),
+        (_, TaskInput::NotLinked(file, reason)) => (
+            audit.checkout().join(file).display().to_string(),
+            json!(["not-linked", file, reason]),
+        ),
         (Ok(expected), TaskInput::Configured(entry)) => (
             expected.display().to_string(),
             json!(["configured", entry.file, entry.directory, entry.command]),
@@ -681,21 +685,18 @@ fn fingerprint_task(
 ) -> Result<UnitFingerprint, String> {
     let checkout = audit.checkout();
     let revision = audit.revision();
+    let unrecorded = match task.input {
+        TaskInput::Absent(relative) => Some((relative, None)),
+        TaskInput::NotLinked(relative, reason) => Some((relative, Some(reason))),
+        TaskInput::Configured(_) => None,
+    };
     match (&task.expected_source, task.input) {
-        (_, TaskInput::Absent(relative)) => {
+        (_, TaskInput::Absent(_) | TaskInput::NotLinked(..)) => {
+            let (relative, not_linked) = unrecorded.ok_or("unrecorded task")?;
             let path = checkout.join(relative);
             let bytes = fs::read(&path);
-            let refusal = match &bytes {
-                Ok(bytes) => match crate::verify_pinned_bytes(checkout, revision, &path, bytes) {
-                    Ok(()) => UnitRefusal::environment(format!(
-                        "selected source has no compilation database record: {relative}"
-                    )),
-                    Err(refusal) => refusal,
-                },
-                Err(error) => UnitRefusal::environment(format!(
-                    "selected source is absent from the checkout: {relative}: {error}"
-                )),
-            };
+            let (refusal, _) =
+                CurrentAudit::unrecorded_refusal(checkout, revision, relative, not_linked, &bytes);
             let mut configuration = json!({
                 "source_revision": revision, "file": Value::Null, "expected_source": path,
                 "directory": Value::Null, "command": Value::Null, "compile_record": Value::Null,

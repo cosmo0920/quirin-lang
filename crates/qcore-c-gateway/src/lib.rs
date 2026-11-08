@@ -53,6 +53,8 @@ pub mod ffi_layout;
 // Card W48-QRLIB-LINKAGE: the exported symbol table of a C-ABI artifact on
 // every platform, and the generated `.qrlib` manifest.
 pub mod linkage;
+// Card LINK-STANDING (rule 40): a cross-unit callee's type in one unit.
+pub mod link_call_type;
 // Card CG03-CALL-SUMMARY-INSTANTIATION (rule 10u): the call-contract
 // acceptance and the typed per-formal substitution; the G hooks are in
 // `legacy_call_instantiation.rs`.
@@ -137,6 +139,11 @@ mod indirect_chain_access;
 pub mod indirect_chain_census;
 pub mod legacy_c;
 pub mod legacy_census;
+#[cfg(feature = "scalar-form-census")]
+pub mod scalar_form_census;
+// Card SCALAR-STATEMENT-FORMS (rule 41): Clang-typed scalar statement forms;
+// the G hooks are in `legacy_scalar_statement_forms.rs`.
+mod scalar_statement_forms;
 // Card GATEWAY-RULE-API: the rule registry and its run-time switches.
 pub mod gateway_rules;
 // Card RULE34-PILOT: the gateway as host of the transfer position (rule 34).
@@ -310,6 +317,8 @@ pub fn active_census_sinks() -> Vec<&'static str> {
 /// Every census stream variable compiled into this build, set or not; the
 /// population [`active_census_sinks`] filters. A guard test checks it against
 /// the sinks declared in this crate's sources.
+// With only the `scalar-form-census` feature on, the list is one `push`.
+#[cfg_attr(feature = "scalar-form-census", allow(clippy::vec_init_then_push))]
 pub fn census_sink_variables() -> Vec<&'static str> {
     #[allow(unused_mut)]
     // The W46 parity stream carries stable source/function/line/route keys
@@ -348,6 +357,9 @@ pub fn census_sink_variables() -> Vec<&'static str> {
     ]);
     #[cfg(feature = "provenance-rounds-census")]
     variables.push(legacy_c::joined_provenance::provenance_rounds::CENSUS_PATH_VARIABLE);
+    // Card SCALAR-STATEMENT-FORMS: one process-global stream.
+    #[cfg(feature = "scalar-form-census")]
+    variables.push(scalar_form_census::SCALAR_FORM_CENSUS_PATH);
     variables
 }
 

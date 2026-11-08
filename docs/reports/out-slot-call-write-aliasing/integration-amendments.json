@@ -1,0 +1,33 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "OUT-SLOT-CALL-WRITE-ALIASING",
+  "base": "7c1a474bb",
+  "measured_tip": "898fba855",
+  "increment_paragraph": "**OUT-SLOT-CALL-WRITE-ALIASING** (soundness card registered by OUT-PARAMETER-SCALAR-FRAME-PREMISE, user decision 2026-11-07 \"Launch it next\"; [report](../../reports/out-slot-call-write-aliasing/README.md)) adds rule 11r(8): every analysis that sanctions out slots (W4 `Out` summaries and their probes, rule 11r(4)/(6)/(7) classes, rule 12s(2) rows, a declared `resource_out` body) reads its calls from the Clang AST, and at a node applying a call whose actual may designate caller memory, every bound sanctioned slot is poisoned after the call's own effect, as the typed scalar store's refused-write frame poisons it. Before it, `*buf = data; memcpy(size, &n, sizeof n);` validated its slot because a `Borrowed` call wrote no binding, though `size` may designate the caller's pointer object and a `Borrowed` mode states no write frame (C04.1, C04.3.1 item 6, rule 10k's W48 amendment). Excluded: scalars, null, string literals, function pointers, `const` pointees, the address or decay of a pointer-free automatic local or formal variable, and the callee's own `Out` positions; a slot not yet bound stays unwritten; the effective-type premise never spares a call. AST census of every `Safe` row of the corpus, system, slice and `current` populations (plus the parent cards' predicted rows and every summary read): five rows validate a pointer out slot, one passes it across such a call (`cio_file_content_copy`, `cio_chunk_down(ch)`), `Safe` only on the unlanded parent branch; no published `Safe` row depended on the gap. The pinned fixture `a_copy_into_the_second_formal_is_not_read_under_the_premise` flips to `Unknown` deliberately. Lean `QCore.OutSlotCallWrite` (`transfer_sound`, `the_old_reading_is_unsound`); 13 fixtures. Predicted corpus `cio_file_content_copy` Safe -> Unknown against `rev:aa3999333`.",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "OUT-SLOT-CALL-WRITE-ALIASING",
+      "operation": "retire",
+      "why": "DISCHARGED (OUT-SLOT-CALL-WRITE-ALIASING, 2026-11-07, base 7c1a474bb, tip 898fba855): fail-closed settles it (a `Borrowed` mode states no write frame, C04.1/C04.3.1 item 6/rule 10k W48), so rule 11r(8) poisons every bound sanctioned out slot at a call whose actual may designate caller memory (memcpy, memmove, memset, str*, every borrowed-pointer and bodied callee), excluding scalars, null, string literals, const pointees, pointer-free locals' addresses and the callee's own Out positions. AST census: of every Safe row of the corpus, system, slice and current populations, one passed a pointer slot across such a call (cio_file_content_copy, Safe only on the unlanded parent branch, predicted Unknown); no published Safe row depended on the gap. Fixtures tests/out_slot_call_write_aliasing.rs (13) and the re-pinned premise fixture, Lean QCore.OutSlotCallWrite.",
+      "source": "docs/reports/out-slot-call-write-aliasing/README.md"
+    },
+    {
+      "id": "OUT-SLOT-CALL-WRITE-FRESH-ACTUAL",
+      "operation": "register",
+      "title": "A call through a local pointer to an object the body allocated still poisons a bound out slot",
+      "text": "Found by OUT-SLOT-CALL-WRITE-ALIASING (rule 11r(8)): after `*buf = data;`, `free(tmp)`, `memcpy(data, src, n)` or any call whose actual is a local pointer's value poisons the slot, even when the local is bound only to an object this body acquired, which cannot be the caller's slot object. Admitting it needs a stated reading that an owned result designates an object no caller pointer reaches (a `Removed` or reference result does not), and, for a release or destructor, that the object holds no caller pointer it writes through. No Safe row of the census needs it (precision only). DISCHARGE: decide the reading, then exempt such an actual with fixtures and Lean parity, or keep the refusal.",
+      "source": "docs/reports/out-slot-call-write-aliasing/README.md",
+      "recorded_by": "OUT-SLOT-CALL-WRITE-ALIASING"
+    },
+    {
+      "id": "OUT-SLOT-CALL-GLOBAL-REACH",
+      "operation": "register",
+      "title": "A call may write a file-scope object that is the caller's out slot without any reaching actual",
+      "text": "Found by OUT-SLOT-CALL-WRITE-ALIASING (rule 11r(8)): the rule reads only a call's actuals, so `int r(char **buf) { *buf = data; reset(); return 0; }` keeps its slot when the caller passes `&g` and `reset` writes the file-scope `g`. That is P-BORROW-FRAME's premise (rule 12y: a call reaches only what its actuals reach), stated for borrowed results but not for out slots. DISCHARGE: census the Safe rows with an out slot bound across a call that may write file-scope objects (bodied callees' global writes, contracted callees with no stated frame), then either poison the slot at such a call or state the premise for out slots in rule 11r(8) and the rows' assumptions.",
+      "source": "docs/reports/out-slot-call-write-aliasing/README.md",
+      "recorded_by": "OUT-SLOT-CALL-WRITE-ALIASING"
+    }
+  ],
+  "profiles": []
+}

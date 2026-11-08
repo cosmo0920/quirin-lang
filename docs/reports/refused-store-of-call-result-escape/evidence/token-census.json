@@ -1,0 +1,104 @@
+{
+ "schema": "refused-store-census/1",
+ "card": "REFUSED-STORE-OF-CALL-RESULT-ESCAPE",
+ "what": "Token-level leak-witness census of the unit's own preprocessed text: qcore_c_gateway::legacy_c::analyze_legacy_c_translation_unit over cmt_map.c -E -P with cycle19-resource-contracts.json, built at 82ec0e80b with --features indirect-census and QCORE_LEAK_WITNESS set.",
+ "base": "82ec0e80b",
+ "unit": "lib/cmetrics/src/cmt_map.c (Fluent Bit 046accf6)",
+ "preprocessed_sha256": "3416ae7a908fb4fa86334009324127bfe24fbadf549ca726715aa00bd162fcaf",
+ "report_source_identity": "3416ae7a908fb4fa86334009324127bfe24fbadf549ca726715aa00bd162fcaf",
+ "preprocessed_lines": 5916,
+ "witness_lines": 0,
+ "functions_with_leaks": {
+  "cmt_map_metric_get": [
+   {
+    "line": 5639,
+    "kind": "Leak { acquisition_line: 5639 }"
+   }
+  ]
+ },
+ "cmt_map_metric_get": {
+  "status": "Unsafe",
+  "diagnostics": [
+   {
+    "line": 5639,
+    "kind": "Leak { acquisition_line: 5639 }"
+   },
+   {
+    "line": 5834,
+    "kind": "Unsupported { description: \"C extension types could not be excluded: the definition's typed AST is unavailable (CG30)\" }"
+   },
+   {
+    "line": 5840,
+    "kind": "Unsupported { description: \"call to uncontracted function `map_metric_get_unlocked`\" }"
+   }
+  ]
+ },
+ "metric_prepare_storage": {
+  "status": "Unknown",
+  "diagnostics": [
+   {
+    "line": 5625,
+    "kind": "Unsupported { description: \"C extension types could not be excluded: the definition's typed AST is unavailable (CG30)\" }"
+   },
+   {
+    "line": 5636,
+    "kind": "UnknownAlias { variable: \"histogram\" }"
+   },
+   {
+    "line": 5639,
+    "kind": "Unsupported { description: \"indirect memory access is outside the resource projection\" }"
+   },
+   {
+    "line": 5642,
+    "kind": "Unsupported { description: \"indirect memory access is outside the resource projection\" }"
+   },
+   {
+    "line": 5648,
+    "kind": "UnknownAlias { variable: \"summary\" }"
+   },
+   {
+    "line": 5652,
+    "kind": "Unsupported { description: \"indirect memory access is outside the resource projection\" }"
+   },
+   {
+    "line": 5655,
+    "kind": "Unsupported { description: \"indirect memory access is outside the resource projection\" }"
+   }
+  ]
+ },
+ "positive_control": {
+  "source": "void *calloc(unsigned long n, unsigned long s); int w(int k) { char *p = calloc(1, 1); if (p == ((void*)0)) { return -1; } return 0; } (one token group per line, 8 lines)",
+  "w": "Unsafe, Leak at exit line 7, acquisition line 3",
+  "witness_lines": 4,
+  "first_witness": {
+   "unit_seq": 0,
+   "invocation": 0,
+   "function": "w",
+   "reported": [
+    [
+     7,
+     3
+    ]
+   ],
+   "line": 7,
+   "acquisition_line": 3,
+   "exit_node": 1,
+   "site": 0,
+   "settled": true,
+   "status": 1,
+   "unresolved": false,
+   "exempt": false,
+   "exit_unmodeled": false,
+   "exit_widened": false,
+   "bound_at_exit": [
+    "p"
+   ],
+   "path": "(elided)",
+   "clean_path": "(elided)",
+   "strict_path": "(elided)",
+   "handed_path": null,
+   "untested_path": "(elided)",
+   "untied_path": "(elided)"
+  }
+ }
+}

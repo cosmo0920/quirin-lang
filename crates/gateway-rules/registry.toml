@@ -221,6 +221,22 @@ placements = [
   { position = "typed-reader", arm = "scalar-element-address", route = "scalar_element_address::shape_admitted" },
 ]
 
+# Card SCALAR-STATEMENT-FORMS (round 26 E): rule 41 is asked after every
+# older route of a statement (after the statement fallbacks and rules
+# 14a/14b, an attribution of the refusal) and of a `for` clause, and amends
+# the typed reader with the unevaluated `sizeof` operand for its own reading
+# only. Off answers nothing: the five refusals stand byte for byte.
+[[rule]]
+id = "41"
+crate = "qcore-c-gateway"
+lean = ["QCore.ScalarStatementForms"]
+document = "docs/agents/rules/41.md"
+off = "refuses"
+placements = [
+  { position = "statement-attribution", arm = "scalar-statement-form", route = "legacy_scalar_statement_forms::scalar_statement_form" },
+  { position = "classification", arm = "scalar-for-clause", route = "legacy_scalar_statement_forms::scalar_form_clause" },
+]
+
 # Card RULE33-PILOT: rule 33's body lives in its own package (the frame
 # bodies' word shapes, the caller expansion and the selection decisions); the
 # host reads each frame against its contracts and type model. Two arms: the

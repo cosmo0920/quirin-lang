@@ -1,0 +1,2388 @@
+{
+ "report": "/media/Data/GitHub/quirin-lang/private/baselines/7b726587bdf6a8213f451fa1c78297bb5e476ef7/eight-home/corpus/corpus/resource-diagnostics.json",
+ "source_root": "/media/Data/GitHub/quirin-lang/private/measure/member-effect-20261105T185335Z/mirror/c-gateway-wave-pin",
+ "row_scopes": {
+  "several functions": 4829,
+  "one function": 5
+ },
+ "leaves": 233,
+ "functions": 149,
+ "table": [
+  {
+   "base": "struct",
+   "member": "pointer typedef",
+   "leaves": 24,
+   "functions": 17,
+   "sole_blocker_functions": [
+    "cmt_opts.c::cmt_opts_exit"
+   ]
+  },
+  {
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "leaves": 43,
+   "functions": 25,
+   "sole_blocker_functions": [
+    "snappy.c::rd_kafka_snappy_free_env"
+   ]
+  },
+  {
+   "base": "typedef-record",
+   "member": "member not found",
+   "leaves": 11,
+   "functions": 3,
+   "sole_blocker_functions": []
+  },
+  {
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "leaves": 88,
+   "functions": 63,
+   "sole_blocker_functions": [
+    "rdkafka_offset.c::rd_kafka_offset_file_close"
+   ]
+  },
+  {
+   "base": "typedef-record",
+   "member": "untagged",
+   "leaves": 67,
+   "functions": 42,
+   "sole_blocker_functions": [
+    "mk_core/mk_memory.c::mk_ptr_free",
+    "rdkafka_mock_sharegrp.c::rd_kafka_mock_sgrp_record_release"
+   ]
+  }
+ ],
+ "rows": [
+  {
+   "file": "cmt_cat.c",
+   "function": "cat_exp_histogram_values",
+   "status": "Unknown",
+   "origin": "cmt_cat.c:281",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "cmt_decode_msgpack.c",
+   "function": "append_unpacked_counter_to_metrics_context",
+   "status": "Unknown",
+   "origin": "cmt_decode_msgpack.c:1839",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "cmt_decode_msgpack.c",
+   "function": "append_unpacked_exp_histogram_to_metrics_context",
+   "status": "Unknown",
+   "origin": "cmt_decode_msgpack.c:1990",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "cmt_decode_msgpack.c",
+   "function": "append_unpacked_gauge_to_metrics_context",
+   "status": "Unknown",
+   "origin": "cmt_decode_msgpack.c:1870",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "cmt_decode_msgpack.c",
+   "function": "append_unpacked_histogram_to_metrics_context",
+   "status": "Unknown",
+   "origin": "cmt_decode_msgpack.c:1961",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "cmt_decode_msgpack.c",
+   "function": "append_unpacked_summary_to_metrics_context",
+   "status": "Unknown",
+   "origin": "cmt_decode_msgpack.c:1930",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "cmt_decode_msgpack.c",
+   "function": "append_unpacked_untyped_to_metrics_context",
+   "status": "Unknown",
+   "origin": "cmt_decode_msgpack.c:1900",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "cmt_decode_opentelemetry.c",
+   "function": "decode_metric_unit",
+   "status": "Unknown",
+   "origin": "cmt_decode_opentelemetry.c:298",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "pointer typedef",
+   "sole": false
+  },
+  {
+   "file": "cmt_encode_opentelemetry.c",
+   "function": "destroy_exponential_histogram_data_point",
+   "status": "Unknown",
+   "origin": "cmt_encode_opentelemetry.c:2070",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "cmt_encode_opentelemetry.c",
+   "function": "destroy_histogram_data_point",
+   "status": "Unknown",
+   "origin": "cmt_encode_opentelemetry.c:2052",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "cmt_encode_opentelemetry.c",
+   "function": "destroy_metric",
+   "status": "Unknown",
+   "origin": "cmt_encode_opentelemetry.c:2571",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "cmt_encode_opentelemetry.c",
+   "function": "destroy_metric",
+   "status": "Unknown",
+   "origin": "cmt_encode_opentelemetry.c:2576",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "cmt_encode_opentelemetry.c",
+   "function": "destroy_metric",
+   "status": "Unknown",
+   "origin": "cmt_encode_opentelemetry.c:2581",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "cmt_encode_opentelemetry.c",
+   "function": "destroy_metric",
+   "status": "Unknown",
+   "origin": "cmt_encode_opentelemetry.c:2594",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "member not found",
+   "sole": false
+  },
+  {
+   "file": "cmt_encode_opentelemetry.c",
+   "function": "destroy_metric",
+   "status": "Unknown",
+   "origin": "cmt_encode_opentelemetry.c:2599",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "member not found",
+   "sole": false
+  },
+  {
+   "file": "cmt_encode_opentelemetry.c",
+   "function": "destroy_metric",
+   "status": "Unknown",
+   "origin": "cmt_encode_opentelemetry.c:2604",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "member not found",
+   "sole": false
+  },
+  {
+   "file": "cmt_encode_opentelemetry.c",
+   "function": "destroy_metric",
+   "status": "Unknown",
+   "origin": "cmt_encode_opentelemetry.c:2609",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "member not found",
+   "sole": false
+  },
+  {
+   "file": "cmt_encode_opentelemetry.c",
+   "function": "destroy_metric",
+   "status": "Unknown",
+   "origin": "cmt_encode_opentelemetry.c:2614",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "member not found",
+   "sole": false
+  },
+  {
+   "file": "cmt_encode_opentelemetry.c",
+   "function": "destroy_numerical_data_point",
+   "status": "Unknown",
+   "origin": "cmt_encode_opentelemetry.c:2028",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "cmt_encode_opentelemetry.c",
+   "function": "destroy_opentelemetry_context",
+   "status": "Unknown",
+   "origin": "cmt_encode_opentelemetry.c:2901",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "cmt_encode_opentelemetry.c",
+   "function": "destroy_resource_metrics",
+   "status": "Unknown",
+   "origin": "cmt_encode_opentelemetry.c:1654",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "cmt_encode_opentelemetry.c",
+   "function": "destroy_scope_metrics",
+   "status": "Unknown",
+   "origin": "cmt_encode_opentelemetry.c:1773",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "cmt_encode_opentelemetry.c",
+   "function": "otlp_any_value_destroy",
+   "status": "Unknown",
+   "origin": "cmt_encode_opentelemetry.c:1054",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "member not found",
+   "sole": false
+  },
+  {
+   "file": "cmt_encode_opentelemetry.c",
+   "function": "otlp_array_destroy",
+   "status": "Unknown",
+   "origin": "cmt_encode_opentelemetry.c:1042",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "cmt_encode_opentelemetry.c",
+   "function": "otlp_kvlist_destroy",
+   "status": "Unknown",
+   "origin": "cmt_encode_opentelemetry.c:1025",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "cmt_encode_opentelemetry.c",
+   "function": "otlp_kvpair_destroy",
+   "status": "Unknown",
+   "origin": "cmt_encode_opentelemetry.c:1004",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "cmt_encode_opentelemetry_batch.c",
+   "function": "cmt_encode_opentelemetry_destroy_batches",
+   "status": "Unknown",
+   "origin": "cmt_encode_opentelemetry_batch.c:131",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "cmt_encode_opentelemetry_batch.c",
+   "function": "metric_view_destroy",
+   "status": "Unknown",
+   "origin": "cmt_encode_opentelemetry_batch.c:58",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "member not found",
+   "sole": false
+  },
+  {
+   "file": "cmt_encode_opentelemetry_batch.c",
+   "function": "metric_view_destroy",
+   "status": "Unknown",
+   "origin": "cmt_encode_opentelemetry_batch.c:62",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "member not found",
+   "sole": false
+  },
+  {
+   "file": "cmt_encode_opentelemetry_batch.c",
+   "function": "metric_view_destroy",
+   "status": "Unknown",
+   "origin": "cmt_encode_opentelemetry_batch.c:66",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "member not found",
+   "sole": false
+  },
+  {
+   "file": "cmt_encode_opentelemetry_batch.c",
+   "function": "metric_view_destroy",
+   "status": "Unknown",
+   "origin": "cmt_encode_opentelemetry_batch.c:70",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "member not found",
+   "sole": false
+  },
+  {
+   "file": "cmt_encode_opentelemetry_batch.c",
+   "function": "metric_view_destroy",
+   "status": "Unknown",
+   "origin": "cmt_encode_opentelemetry_batch.c:74",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "member not found",
+   "sole": false
+  },
+  {
+   "file": "cmt_encode_prometheus_remote_write.c",
+   "function": "destroy_label",
+   "status": "Unknown",
+   "origin": "cmt_encode_prometheus_remote_write.c:88",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "pointer typedef",
+   "sole": false
+  },
+  {
+   "file": "cmt_histogram.c",
+   "function": "cmt_histogram_destroy",
+   "status": "Unknown",
+   "origin": "cmt_histogram.c:291",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "cmt_map.c",
+   "function": "cmt_map_destroy",
+   "status": "Unknown",
+   "origin": "cmt_map.c:516",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "pointer typedef",
+   "sole": false
+  },
+  {
+   "file": "cmt_map.c",
+   "function": "metric_index_resize",
+   "status": "Unknown",
+   "origin": "cmt_map.c:80",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "cmt_metric.c",
+   "function": "cmt_metric_exp_hist_get_snapshot",
+   "status": "Unknown",
+   "origin": "cmt_metric.c:349",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "cmt_metric.c",
+   "function": "cmt_metric_exp_hist_get_snapshot",
+   "status": "Unknown",
+   "origin": "cmt_metric.c:358",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "cmt_opts.c",
+   "function": "cmt_opts_exit",
+   "status": "Unknown",
+   "origin": "cmt_opts.c:100",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "pointer typedef",
+   "sole": true
+  },
+  {
+   "file": "cmt_opts.c",
+   "function": "cmt_opts_exit",
+   "status": "Unknown",
+   "origin": "cmt_opts.c:104",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "pointer typedef",
+   "sole": true
+  },
+  {
+   "file": "cmt_opts.c",
+   "function": "cmt_opts_exit",
+   "status": "Unknown",
+   "origin": "cmt_opts.c:108",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "pointer typedef",
+   "sole": true
+  },
+  {
+   "file": "cmt_opts.c",
+   "function": "cmt_opts_exit",
+   "status": "Unknown",
+   "origin": "cmt_opts.c:112",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "pointer typedef",
+   "sole": true
+  },
+  {
+   "file": "cmt_opts.c",
+   "function": "cmt_opts_exit",
+   "status": "Unknown",
+   "origin": "cmt_opts.c:116",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "pointer typedef",
+   "sole": true
+  },
+  {
+   "file": "ctr_encode_opentelemetry.c",
+   "function": "destroy_span",
+   "status": "Unknown",
+   "origin": "ctr_encode_opentelemetry.c:1226",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "ctr_encode_opentelemetry.c",
+   "function": "otlp_array_destroy",
+   "status": "Unknown",
+   "origin": "ctr_encode_opentelemetry.c:81",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "ctr_encode_opentelemetry.c",
+   "function": "otlp_kvlist_destroy",
+   "status": "Unknown",
+   "origin": "ctr_encode_opentelemetry.c:64",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "ctr_encode_opentelemetry.c",
+   "function": "otlp_kvpair_destroy",
+   "status": "Unknown",
+   "origin": "ctr_encode_opentelemetry.c:43",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "ctr_id.c",
+   "function": "ctr_id_destroy",
+   "status": "Unknown",
+   "origin": "ctr_id.c:53",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "pointer typedef",
+   "sole": false
+  },
+  {
+   "file": "ctr_id.c",
+   "function": "ctr_id_set",
+   "status": "Unknown",
+   "origin": "ctr_id.c:84",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "pointer typedef",
+   "sole": false
+  },
+  {
+   "file": "ctr_link.c",
+   "function": "ctr_link_destroy",
+   "status": "Unknown",
+   "origin": "ctr_link.c:124",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "pointer typedef",
+   "sole": false
+  },
+  {
+   "file": "ctr_resource.c",
+   "function": "ctr_resource_span_destroy",
+   "status": "Unknown",
+   "origin": "ctr_resource.c:149",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "pointer typedef",
+   "sole": false
+  },
+  {
+   "file": "ctr_resource.c",
+   "function": "ctr_resource_span_set_schema_url",
+   "status": "Unknown",
+   "origin": "ctr_resource.c:126",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "pointer typedef",
+   "sole": false
+  },
+  {
+   "file": "ctr_scope.c",
+   "function": "ctr_instrumentation_scope_destroy",
+   "status": "Unknown",
+   "origin": "ctr_scope.c:117",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "pointer typedef",
+   "sole": false
+  },
+  {
+   "file": "ctr_scope.c",
+   "function": "ctr_instrumentation_scope_destroy",
+   "status": "Unknown",
+   "origin": "ctr_scope.c:121",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "pointer typedef",
+   "sole": false
+  },
+  {
+   "file": "ctr_scope.c",
+   "function": "ctr_scope_span_destroy",
+   "status": "Unknown",
+   "origin": "ctr_scope.c:56",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "pointer typedef",
+   "sole": false
+  },
+  {
+   "file": "ctr_scope.c",
+   "function": "ctr_scope_span_set_schema_url",
+   "status": "Unknown",
+   "origin": "ctr_scope.c:67",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "pointer typedef",
+   "sole": false
+  },
+  {
+   "file": "ctr_span.c",
+   "function": "ctr_span_destroy",
+   "status": "Unknown",
+   "origin": "ctr_span.c:359",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "pointer typedef",
+   "sole": false
+  },
+  {
+   "file": "ctr_span.c",
+   "function": "ctr_span_destroy",
+   "status": "Unknown",
+   "origin": "ctr_span.c:379",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "pointer typedef",
+   "sole": false
+  },
+  {
+   "file": "ctr_span.c",
+   "function": "ctr_span_destroy",
+   "status": "Unknown",
+   "origin": "ctr_span.c:383",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "pointer typedef",
+   "sole": false
+  },
+  {
+   "file": "ctr_span.c",
+   "function": "ctr_span_event_delete",
+   "status": "Unknown",
+   "origin": "ctr_span.c:506",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "pointer typedef",
+   "sole": false
+  },
+  {
+   "file": "ctr_span.c",
+   "function": "ctr_span_set_schema_url",
+   "status": "Unknown",
+   "origin": "ctr_span.c:324",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "pointer typedef",
+   "sole": false
+  },
+  {
+   "file": "ctr_span.c",
+   "function": "ctr_span_set_trace_state",
+   "status": "Unknown",
+   "origin": "ctr_span.c:304",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "pointer typedef",
+   "sole": false
+  },
+  {
+   "file": "rdbase64.c",
+   "function": "rd_base64_decode",
+   "status": "Unknown",
+   "origin": "rdbase64.c:178",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdbuf.c",
+   "function": "rd_buf_destroy",
+   "status": "Unknown",
+   "origin": "rdbuf.c:333",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka.c",
+   "function": "rd_kafka_destroy_final",
+   "status": "Unknown",
+   "origin": "rdkafka.c:1135",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka.c",
+   "function": "rd_kafka_destroy_final",
+   "status": "Unknown",
+   "origin": "rdkafka.c:1136",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka.c",
+   "function": "rd_kafka_destroy_final",
+   "status": "Unknown",
+   "origin": "rdkafka.c:1144",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka.c",
+   "function": "rd_kafka_destroy_internal",
+   "status": "Unknown",
+   "origin": "rdkafka.c:1412",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_AclBinding_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_admin.c:5401",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_AlterConsumerGroupOffsets_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_admin.c:6811",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_AlterUserScramCredentials_result_response_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_admin.c:6145",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_AlterUserScramCredentials_result_response_set_error",
+   "status": "Unknown",
+   "origin": "rdkafka_admin.c:6158",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_ClusterDescription_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_admin.c:9469",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_ClusterDescription_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_admin.c:9471",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_ClusterDescription_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_admin.c:9477",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_ConsumerGroupDescription_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_admin.c:8080",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_DeleteAcls_result_response_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_admin.c:6545",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_DeleteConsumerGroupOffsets_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_admin.c:5001",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_DeleteRecords_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_admin.c:3963",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_ElectLeaders_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_admin.c:9608",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_ListConsumerGroupOffsets_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_admin.c:7050",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_MemberDescription_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_admin.c:7926",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_TopicCollection_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_admin.c:8930",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_TopicDescription_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_admin.c:9070",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_TopicDescription_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_admin.c:9074",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_TopicPartitionInfo_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_admin.c:8990",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_TopicPartitionInfo_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_admin.c:8994",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_UserScramCredentailsDescription_set_error",
+   "status": "Unknown",
+   "origin": "rdkafka_admin.c:5766",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_UserScramCredentialAlteration_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_admin.c:6074",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_UserScramCredentialsDescription_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_admin.c:5752",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_assignor.c",
+   "function": "rd_kafka_assignor_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_assignor.c:462",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_assignor.c",
+   "function": "rd_kafka_assignor_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_assignor.c:463",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_assignor.c",
+   "function": "rd_kafka_group_member_clear",
+   "status": "Unknown",
+   "origin": "rdkafka_assignor.c:41",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_assignor.c",
+   "function": "rd_kafka_group_member_clear",
+   "status": "Unknown",
+   "origin": "rdkafka_assignor.c:44",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_assignor.c",
+   "function": "rd_kafka_group_member_clear",
+   "status": "Unknown",
+   "origin": "rdkafka_assignor.c:47",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_assignor.c",
+   "function": "rd_kafka_group_member_clear",
+   "status": "Unknown",
+   "origin": "rdkafka_assignor.c:52",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_assignor.c",
+   "function": "rd_kafka_group_member_clear",
+   "status": "Unknown",
+   "origin": "rdkafka_assignor.c:55",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_assignor.c",
+   "function": "rd_kafka_group_member_clear",
+   "status": "Unknown",
+   "origin": "rdkafka_assignor.c:58",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_assignor.c",
+   "function": "rd_kafka_group_member_clear",
+   "status": "Unknown",
+   "origin": "rdkafka_assignor.c:61",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_assignor.c",
+   "function": "rd_kafka_group_member_clear",
+   "status": "Unknown",
+   "origin": "rdkafka_assignor.c:64",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_assignor.c",
+   "function": "ut_set_owned",
+   "status": "Unknown",
+   "origin": "rdkafka_assignor.c:920",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_aux.c",
+   "function": "rd_kafka_Node_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_aux.c:304",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_aux.c",
+   "function": "rd_kafka_Node_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_aux.c:306",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_aux.c",
+   "function": "rd_kafka_acl_result_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_aux.c:216",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_aux.c",
+   "function": "rd_kafka_group_result_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_aux.c:176",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_aux.c",
+   "function": "rd_kafka_group_result_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_aux.c:178",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_aux.c",
+   "function": "rd_kafka_topic_partition_result_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_aux.c:373",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_broker.c",
+   "function": "rd_kafka_broker_destroy_final",
+   "status": "Unknown",
+   "origin": "rdkafka_broker.c:5168",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_broker.c",
+   "function": "rd_kafka_broker_destroy_final",
+   "status": "Unknown",
+   "origin": "rdkafka_broker.c:5169",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_broker.c",
+   "function": "rd_kafka_broker_destroy_final",
+   "status": "Unknown",
+   "origin": "rdkafka_broker.c:5212",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_broker.c",
+   "function": "rd_kafka_broker_set_api_versions",
+   "status": "Unknown",
+   "origin": "rdkafka_broker.c:2545",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_broker.c",
+   "function": "rd_kafka_broker_set_logname",
+   "status": "Unknown",
+   "origin": "rdkafka_broker.c:3164",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_consumer_apply_next_subscribe",
+   "status": "Unknown",
+   "origin": "rdkafka_cgrp.c:943",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_consumer_handle_next_assignment",
+   "status": "Unknown",
+   "origin": "rdkafka_cgrp.c:2941",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_consumer_handle_next_assignment",
+   "status": "Unknown",
+   "origin": "rdkafka_cgrp.c:2958",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_consumer_handle_next_assignment",
+   "status": "Unknown",
+   "origin": "rdkafka_cgrp.c:2965",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_consumer_incr_unassign_done",
+   "status": "Unknown",
+   "origin": "rdkafka_cgrp.c:7060",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_consumer_reset",
+   "status": "Unknown",
+   "origin": "rdkafka_cgrp.c:1014",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_consumer_reset",
+   "status": "Unknown",
+   "origin": "rdkafka_cgrp.c:1015",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_consumer_reset",
+   "status": "Unknown",
+   "origin": "rdkafka_cgrp.c:1018",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_consumer_subscribe",
+   "status": "Unknown",
+   "origin": "rdkafka_cgrp.c:7004",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_destroy_final",
+   "status": "Unknown",
+   "origin": "rdkafka_cgrp.c:438",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_destroy_final",
+   "status": "Unknown",
+   "origin": "rdkafka_cgrp.c:439",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_destroy_final",
+   "status": "Unknown",
+   "origin": "rdkafka_cgrp.c:441",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_destroy_final",
+   "status": "Unknown",
+   "origin": "rdkafka_cgrp.c:444",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_destroy_final",
+   "status": "Unknown",
+   "origin": "rdkafka_cgrp.c:446",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_destroy_final",
+   "status": "Unknown",
+   "origin": "rdkafka_cgrp.c:448",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_destroy_final",
+   "status": "Unknown",
+   "origin": "rdkafka_cgrp.c:456",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_group_assignment_modify",
+   "status": "Unknown",
+   "origin": "rdkafka_cgrp.c:5411",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_group_assignment_set",
+   "status": "Unknown",
+   "origin": "rdkafka_cgrp.c:5289",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_handle_assign_op",
+   "status": "Unknown",
+   "origin": "rdkafka_cgrp.c:6571",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_incr_unassign_done",
+   "status": "Unknown",
+   "origin": "rdkafka_cgrp.c:4929",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_set_member_id",
+   "status": "Unknown",
+   "origin": "rdkafka_cgrp.c:7581",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_subscription_set",
+   "status": "Unknown",
+   "origin": "rdkafka_cgrp.c:5970",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_subscription_set",
+   "status": "Unknown",
+   "origin": "rdkafka_cgrp.c:5972",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_subscription_set",
+   "status": "Unknown",
+   "origin": "rdkafka_cgrp.c:5974",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_subscription_set",
+   "status": "Unknown",
+   "origin": "rdkafka_cgrp.c:6019",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_group_MemberMetadata_consumer_read",
+   "status": "Unknown",
+   "origin": "rdkafka_cgrp.c:2253",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_propagate_consumer_topic_errors",
+   "status": "Unknown",
+   "origin": "rdkafka_cgrp.c:5811",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_share_topic_err_propagate",
+   "status": "Unknown",
+   "origin": "rdkafka_cgrp.c:5868",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_coord.c",
+   "function": "rd_kafka_coord_cache_entry_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_coord.c:43",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_fetcher.c",
+   "function": "rd_kafkap_Fetch_reply_tags_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_fetcher.c:373",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_broker_cmd",
+   "status": "Unknown",
+   "origin": "rdkafka_mock.c:2799",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_broker_cmd",
+   "status": "Unknown",
+   "origin": "rdkafka_mock.c:2828",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_broker_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_mock.c:1894",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_broker_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_mock.c:1903",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_cluster_destroy0",
+   "status": "Unknown",
+   "origin": "rdkafka_mock.c:3252",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_cluster_destroy0",
+   "status": "Unknown",
+   "origin": "rdkafka_mock.c:3258",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_cluster_destroy0",
+   "status": "Unknown",
+   "origin": "rdkafka_mock.c:3267",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_committed_offset_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_mock.c:807",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_coord_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_mock.c:2118",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_error_stack_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_mock.c:1880",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_partition_assign_replicas",
+   "status": "Unknown",
+   "origin": "rdkafka_mock.c:727",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_partition_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_mock.c:902",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_topic_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_mock.c:956",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_topic_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_mock.c:957",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_txn_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_mock.c:275",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_classic_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_mock_cgrp.c:649",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_classic_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_mock_cgrp.c:650",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_classic_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_mock_cgrp.c:652",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_classic_elect_leader",
+   "status": "Unknown",
+   "origin": "rdkafka_mock_cgrp.c:334",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_classic_member_assignment_set",
+   "status": "Unknown",
+   "origin": "rdkafka_mock_cgrp.c:155",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_classic_member_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_mock_cgrp.c:517",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_classic_member_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_mock_cgrp.c:523",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_consumer_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_mock_cgrp.c:1859",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_consumer_member_current_assignment_set",
+   "status": "Unknown",
+   "origin": "rdkafka_mock_cgrp.c:1027",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_consumer_member_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_mock_cgrp.c:1617",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_consumer_member_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_mock_cgrp.c:1620",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_consumer_member_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_mock_cgrp.c:1622",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_consumer_member_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_mock_cgrp.c:1624",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_consumer_member_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_mock_cgrp.c:1626",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_consumer_member_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_mock_cgrp.c:1632",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_consumer_member_returned_assignment_set",
+   "status": "Unknown",
+   "origin": "rdkafka_mock_cgrp.c:1050",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_consumer_member_subscribed_topic_names_set",
+   "status": "Unknown",
+   "origin": "rdkafka_mock_cgrp.c:1447",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_consumer_member_target_assignment_set",
+   "status": "Unknown",
+   "origin": "rdkafka_mock_cgrp.c:802",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_consumer_member_topic_id_set",
+   "status": "Unknown",
+   "origin": "rdkafka_mock_cgrp.c:1494",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_mock_sharegrp.c",
+   "function": "rd_kafka_mock_sgrp_fetch_session_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_mock_sharegrp.c:837",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_mock_sharegrp.c",
+   "function": "rd_kafka_mock_sgrp_fetch_session_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_mock_sharegrp.c:838",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_mock_sharegrp.c",
+   "function": "rd_kafka_mock_sgrp_record_release",
+   "status": "Unknown",
+   "origin": "rdkafka_mock_sharegrp.c:967",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": true
+  },
+  {
+   "file": "rdkafka_mock_sharegrp.c",
+   "function": "rd_kafka_mock_sharegroup_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_mock_sharegrp.c:179",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_mock_sharegrp.c",
+   "function": "rd_kafka_mock_sharegroup_member_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_mock_sharegrp.c:206",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_mock_sharegrp.c",
+   "function": "rd_kafka_mock_sharegroup_member_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_mock_sharegrp.c:209",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_msg.c",
+   "function": "rd_kafka_Produce_result_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_msg.c:1969",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_msg.c",
+   "function": "rd_kafka_Produce_result_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_msg.c:1971",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_offset.c",
+   "function": "rd_kafka_offset_file_close",
+   "status": "Unknown",
+   "origin": "rdkafka_offset.c:102",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": true
+  },
+  {
+   "file": "rdkafka_offset.c",
+   "function": "rd_kafka_offset_file_term",
+   "status": "Unknown",
+   "origin": "rdkafka_offset.c:761",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_op.c",
+   "function": "rd_kafka_op_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_op.c:610",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_topic_partition_destroy0",
+   "status": "Unknown",
+   "origin": "rdkafka_partition.c:2973",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_topic_partition_destroy0",
+   "status": "Unknown",
+   "origin": "rdkafka_partition.c:2975",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_topic_partition_list_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_partition.c:3125",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_destroy_final",
+   "status": "Unknown",
+   "origin": "rdkafka_partition.c:362",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_pattern.c",
+   "function": "rd_kafka_pattern_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_pattern.c:36",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_pattern.c",
+   "function": "rd_kafka_pattern_list_clear",
+   "status": "Unknown",
+   "origin": "rdkafka_pattern.c:165",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_plugin.c",
+   "function": "rd_kafka_plugin_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_plugin.c:130",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_queue.c",
+   "function": "rd_kafka_q_destroy_final",
+   "status": "Unknown",
+   "origin": "rdkafka_queue.c:61",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_queue.c",
+   "function": "rd_kafka_q_io_event_enable",
+   "status": "Unknown",
+   "origin": "rdkafka_queue.c:1133",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_sasl_oauthbearer.c",
+   "function": "rd_kafka_sasl_oauthbearer_token_free",
+   "status": "Unknown",
+   "origin": "rdkafka_sasl_oauthbearer.c:153",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_sasl_oauthbearer.c",
+   "function": "rd_kafka_sasl_oauthbearer_token_free",
+   "status": "Unknown",
+   "origin": "rdkafka_sasl_oauthbearer.c:154",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_sasl_oauthbearer.c",
+   "function": "rd_kafka_sasl_oauthbearer_token_free",
+   "status": "Unknown",
+   "origin": "rdkafka_sasl_oauthbearer.c:159",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_share_acknowledgement.c",
+   "function": "rd_kafka_share_ack_batch_entry_destroy",
+   "status": "Unknown",
+   "origin": "rdkafka_share_acknowledgement.c:55",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_topic.c",
+   "function": "rd_kafka_topic_destroy_final",
+   "status": "Unknown",
+   "origin": "rdkafka_topic.c:117",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_topic.c",
+   "function": "rd_kafka_topic_partition_cnt_update",
+   "status": "Unknown",
+   "origin": "rdkafka_topic.c:1257",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdkafka_topic.c",
+   "function": "rd_kafka_topic_partitions_remove",
+   "status": "Unknown",
+   "origin": "rdkafka_topic.c:1835",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "rdlist.c",
+   "function": "rd_list_destroy_elems",
+   "status": "Unknown",
+   "origin": "rdlist.c:303",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": false
+  },
+  {
+   "file": "snappy.c",
+   "function": "rd_kafka_snappy_free_env",
+   "status": "Unknown",
+   "origin": "snappy.c:1855",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": true
+  },
+  {
+   "file": "snappy.c",
+   "function": "rd_kafka_snappy_free_env",
+   "status": "Unknown",
+   "origin": "snappy.c:1857",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": true
+  },
+  {
+   "file": "snappy.c",
+   "function": "rd_kafka_snappy_free_env",
+   "status": "Unknown",
+   "origin": "snappy.c:1858",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": true
+  },
+  {
+   "file": "chunkio.c",
+   "function": "cio_destroy",
+   "status": "Unknown",
+   "origin": "chunkio.c:302",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "chunkio.c",
+   "function": "cio_destroy",
+   "status": "Unknown",
+   "origin": "chunkio.c:306",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "cio_chunk.c",
+   "function": "cio_chunk_close",
+   "status": "Unknown",
+   "origin": "cio_chunk.c:133",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "cio_stream.c",
+   "function": "cio_stream_destroy",
+   "status": "Unknown",
+   "origin": "cio_stream.c:190",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "flb_input_chunk.c",
+   "function": "destroy_chunk_raw",
+   "status": "Unknown",
+   "origin": "flb_input_chunk.c:3553",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "pointer typedef",
+   "sole": false
+  },
+  {
+   "file": "flb_input_chunk.c",
+   "function": "flb_input_chunk_destroy",
+   "status": "Unknown",
+   "origin": "flb_input_chunk.c:2797",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "flb_input_chunk.c",
+   "function": "flb_input_chunk_destroy",
+   "status": "Unknown",
+   "origin": "flb_input_chunk.c:2801",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "flb_input_chunk.c",
+   "function": "flb_input_chunk_destroy_corrupted",
+   "status": "Unknown",
+   "origin": "flb_input_chunk.c:2690",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "flb_input_chunk.c",
+   "function": "flb_input_chunk_destroy_corrupted",
+   "status": "Unknown",
+   "origin": "flb_input_chunk.c:2694",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "mk_core/mk_memory.c",
+   "function": "mk_ptr_free",
+   "status": "Unknown",
+   "origin": "mk_core/mk_memory.c:47",
+   "name": "member-release-through-formal",
+   "base": "typedef-record",
+   "member": "untagged",
+   "sole": true
+  },
+  {
+   "file": "mk_server/mk_clock.c",
+   "function": "mk_clock_exit",
+   "status": "Unknown",
+   "origin": "mk_server/mk_clock.c:140",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "mk_server/mk_config.c",
+   "function": "mk_config_free_all",
+   "status": "Unknown",
+   "origin": "mk_server/mk_config.c:79",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "mk_server/mk_config.c",
+   "function": "mk_config_free_all",
+   "status": "Unknown",
+   "origin": "mk_server/mk_config.c:83",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "mk_server/mk_config.c",
+   "function": "mk_config_free_all",
+   "status": "Unknown",
+   "origin": "mk_server/mk_config.c:87",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "mk_server/mk_config.c",
+   "function": "mk_config_free_all",
+   "status": "Unknown",
+   "origin": "mk_server/mk_config.c:96",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "mk_server/mk_config.c",
+   "function": "mk_config_free_all",
+   "status": "Unknown",
+   "origin": "mk_server/mk_config.c:100",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "mk_server/mk_config.c",
+   "function": "mk_config_free_all",
+   "status": "Unknown",
+   "origin": "mk_server/mk_config.c:104",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "mk_server/mk_config.c",
+   "function": "mk_config_free_all",
+   "status": "Unknown",
+   "origin": "mk_server/mk_config.c:108",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "mk_server/mk_config.c",
+   "function": "mk_config_free_all",
+   "status": "Unknown",
+   "origin": "mk_server/mk_config.c:112",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "mk_server/mk_config.c",
+   "function": "mk_config_free_all",
+   "status": "Unknown",
+   "origin": "mk_server/mk_config.c:116",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "mk_server/mk_config.c",
+   "function": "mk_config_free_all",
+   "status": "Unknown",
+   "origin": "mk_server/mk_config.c:122",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "mk_server/mk_http.c",
+   "function": "mk_http_session_remove",
+   "status": "Unknown",
+   "origin": "mk_server/mk_http.c:1441",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "mk_server/mk_plugin.c",
+   "function": "mk_plugin_unregister",
+   "status": "Unknown",
+   "origin": "mk_server/mk_plugin.c:270",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "mk_server/mk_vhost.c",
+   "function": "mk_vhost_destroy",
+   "status": "Unknown",
+   "origin": "mk_server/mk_vhost.c:803",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "mk_server/monkey.c",
+   "function": "mk_exit_all",
+   "status": "Unknown",
+   "origin": "mk_server/monkey.c:251",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  },
+  {
+   "file": "mk_server/monkey.c",
+   "function": "mk_exit_all",
+   "status": "Unknown",
+   "origin": "mk_server/monkey.c:255",
+   "name": "member-release-through-formal",
+   "base": "struct",
+   "member": "star-spelled pointer",
+   "sole": false
+  }
+ ]
+}

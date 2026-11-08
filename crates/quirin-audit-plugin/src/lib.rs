@@ -69,11 +69,21 @@ pub const ENVIRONMENT_ALLOW_LIST: [&str; 7] =
 /// plugin declares that all of its work is waiting for a gate slot
 /// (`scripts/gate_slot.py`). The host does not count that time against the
 /// wall-time quota, up to its slot-wait limit (`--slot-wait-limit-ms`,
-/// default the wall-time quota itself), and records it apart from the
-/// analysis time. The declaration is the plugin's, so the limit bounds what
-/// it can buy: the run's wall time never exceeds the quota plus the limit.
+/// default the overall wall bound, so a long queue is not capped at the
+/// analysis quota), and records it apart from the analysis time. The
+/// declaration is the plugin's, so two limits bound what it can buy: the
+/// slot-wait limit, and the overall wall bound ([`DEFAULT_WALL_LIMIT_MS`],
+/// `--wall-limit-ms`), after which the run is stopped whatever it declares.
 /// The host removes a stale marker before it spawns the plugin.
 pub const SLOT_WAIT_MARKER: &str = ".quirin-audit-slot-wait";
+
+/// Default overall wall bound: seven days. The wall-time quota counts analysis
+/// time only (gate-slot waits are excluded), so this separate bound on the
+/// run's whole elapsed time, analysis and declared waits together, is what
+/// stops a plugin that declares waits for ever (card GATE-SLOT-FIFO-ORDER,
+/// requirement R7 of `docs/plans/gate-time-reduction/README.md`). It is raised
+/// to the quota when the quota is larger.
+pub const DEFAULT_WALL_LIMIT_MS: u64 = 7 * 24 * 60 * 60 * 1000;
 
 /// Default wall-time quota: thirty minutes.
 pub const DEFAULT_WALL_TIME_MS: u64 = 30 * 60 * 1000;
@@ -112,9 +122,18 @@ pub struct AuditIdentity {
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Quotas {
+    /// The analysis-time quota: declared slot waits are not counted.
     pub wall_time_ms: u64,
     pub stdout_bytes: u64,
     pub stderr_bytes: u64,
+    /// The most declared slot-wait time the wall-time quota excludes. Absent
+    /// from a request of a host that predates it.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub slot_wait_limit_ms: Option<u64>,
+    /// The overall wall bound on the run, analysis and declared waits
+    /// together. Absent from a request of a host that predates it.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub wall_limit_ms: Option<u64>,
 }
 
 impl Default for Quotas {
@@ -123,6 +142,8 @@ impl Default for Quotas {
             wall_time_ms: DEFAULT_WALL_TIME_MS,
             stdout_bytes: DEFAULT_STDOUT_BYTES,
             stderr_bytes: DEFAULT_STDERR_BYTES,
+            slot_wait_limit_ms: None,
+            wall_limit_ms: None,
         }
     }
 }

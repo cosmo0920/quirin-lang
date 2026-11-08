@@ -296,6 +296,14 @@ pub(crate) fn record_layout_dump(
     source: &str,
     unit: &C11TranslationUnit<'_>,
 ) -> Result<String, String> {
+    layout_dump(source, unit, &[])
+}
+
+fn layout_dump(
+    source: &str,
+    unit: &C11TranslationUnit<'_>,
+    extra: &[&str],
+) -> Result<String, String> {
     let mut command = crate::clang::command()?;
     unit.append_frontend_flags(&mut command);
     let dialect = unit.dialect.clang_invocation_argument()?;
@@ -307,8 +315,9 @@ pub(crate) fn record_layout_dump(
             "-fsyntax-only",
             "-Xclang",
             "-fdump-record-layouts-complete",
-            "-",
         ])
+        .args(extra.iter().flat_map(|flag| ["-Xclang", flag]))
+        .arg("-")
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
@@ -331,6 +340,31 @@ pub(crate) fn record_layout_dump(
         ));
     }
     String::from_utf8(output.stdout).map_err(|error| format!("Clang layout is not text: {error}"))
+}
+
+/// Card **LINK-STANDING** (rule 40): Clang's name-filtered declarations of a
+/// probe source, launched without the reuse caches (each probe text is read
+/// once) and read under rule 13q's bound.
+pub(crate) fn filtered_declarations_uncached(
+    source: &str,
+    unit: &C11TranslationUnit<'_>,
+    filter: &str,
+) -> Result<Vec<Value>, String> {
+    launch_declarations(
+        declarations_command(unit, filter)?,
+        source,
+        crate::deep_unit_ast::values_from_slice,
+    )
+}
+
+/// Card **LINK-STANDING** (rule 40): every complete record's layout with
+/// canonical member types (`-fdump-record-layouts-complete
+/// -fdump-record-layouts-canonical`), as text. Raw transport.
+pub(crate) fn canonical_record_layout_dump(
+    source: &str,
+    unit: &C11TranslationUnit<'_>,
+) -> Result<String, String> {
+    layout_dump(source, unit, &["-fdump-record-layouts-canonical"])
 }
 
 /// Require exactly one body-bearing definition with the exact requested name.

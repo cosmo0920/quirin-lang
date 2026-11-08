@@ -57,7 +57,26 @@
 //! direct-call route ([`super::Parser::member_effect_call`]) classifies a call
 //! under it, and only for a call its own body check admitted as an event.
 //!
-//! The Lean model is `QCore.MemberEffectSummary`.
+//! ## A member spelled through a pointer typedef
+//!
+//! Card **MEMBER-EFFECT-COMPONENT-SCOPE**: the body check reads no type, but
+//! rule 1's lowering of a release event needs the call-argument recogniser's
+//! pointer read of `B->F`, which the lexical declaration reader refuses for a
+//! member spelled through a pointer typedef (`cfl_sds_t ns;`, left
+//! unresolved). [`Parser::typed_member_release`] is asked there instead, only
+//! for such an untyped member at a nullable release of an admitted place: Clang
+//! reads the actual as the value of an object-pointer member of the
+//! parameter's record, the fact the lexical reader gives a `*`-spelled member.
+//!
+//! Card **MEMBER-RELEASE-UNTYPED-BASE**: the same consultation where the
+//! lexical reader refused the actual's **base** instead (a formal spelled
+//! through a typedef of a record, `rd_kafka_toppar_t *rktp`, or of a record
+//! pointer), so it never reached the member. Clang must then also read the
+//! base: a pointer whose `->` member is a member of a complete `struct` the
+//! unit defines (never a `union`), with no `volatile`/`_Atomic`.
+//!
+//! The Lean models are `QCore.MemberEffectSummary`,
+//! `QCore.MemberReleaseTypedMember` and `QCore.MemberReleaseUntypedBase`.
 
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -508,7 +527,145 @@ pub(crate) fn published_effect(
     (!reading.effect.is_empty()).then_some(reading.effect)
 }
 
+/// Whether a node's type spelling is free of the qualifiers no member read
+/// here may carry.
+fn plain(spelling: &str) -> bool {
+    !spelling.contains("volatile") && !spelling.contains("_Atomic")
+}
+
 impl Parser<'_> {
+    /// Card MEMBER-EFFECT-COMPONENT-SCOPE (rule 38j amended): whether Clang
+    /// reads the actual `B -> F` (`argument`, at `index` of the one call of
+    /// `callee` with `arity` actuals on `line`) as the **value** of a pointer
+    /// member `F` of the object the formal `B` points to.
+    ///
+    /// Asked by the call-argument rule only where the lexical recogniser
+    /// refused the actual as an untyped member (a member spelled through a
+    /// pointer typedef, `cfl_sds_t ns;`, which the declaration reader leaves
+    /// unresolved), at a nullable release position, for a place rule 5k's or
+    /// rule 38j's lexical check admitted. `true` is exactly the fact the
+    /// lexical reader's `pointer_member` gives a `*`-spelled member: the
+    /// actual is one pointer value read from a member of `*B`. The value read
+    /// is required (`LValueToRValue`, never `ArrayToPointerDecay`, which would
+    /// hand an interior address to the release), the member's type an object
+    /// pointer with no `volatile`/`_Atomic`, and the base a plain parameter
+    /// reference that is not a pointer to a `union`.
+    ///
+    /// Card MEMBER-RELEASE-UNTYPED-BASE (rule 38j amended again): with
+    /// `untyped_base`, asked where the lexical recogniser refused the actual's
+    /// base instead (a formal spelled through a typedef of a record or of a
+    /// record pointer, which the declaration reader does not type, so it never
+    /// classified the member either). Every condition above holds, and Clang
+    /// must also read the base: its type (through any typedef chain, which
+    /// Clang has already resolved for `->`) a pointer with no
+    /// `volatile`/`_Atomic` and no function type, and the member Clang resolved
+    /// (`referencedMemberDecl`) a member named `F` of a complete `struct` the
+    /// unit defines, which no `union` member and no incomplete record is.
+    pub(super) fn typed_member_release(
+        &self,
+        callee: &str,
+        index: usize,
+        arity: usize,
+        argument: &[&str],
+        line: usize,
+        untyped_base: bool,
+    ) -> bool {
+        use crate::typed_access_path::qual;
+        use crate::typed_c_ast::{children, kind};
+        let [base, "-", ">", field] = strip_parentheses(argument) else {
+            return false;
+        };
+        let Some(statements) = self.typed_positions_index() else {
+            return false;
+        };
+        let Some(mut node) = statements.argument_node(callee, index, arity, argument, line) else {
+            return false;
+        };
+        let mut value = false;
+        loop {
+            match kind(node) {
+                "ParenExpr" => {}
+                "ImplicitCastExpr" if node["castKind"].as_str() == Some("LValueToRValue") => {
+                    value = true;
+                }
+                // Card MEMBER-RELEASE-UNTYPED-BASE: the implicit conversion
+                // of the value read to the callee's parameter type (`char *`
+                // to `void *` for `free`, `rd_free`, `mk_mem_free`): a
+                // conversion between object pointers that keeps the value,
+                // never an explicit cast, and only outside the read.
+                "ImplicitCastExpr"
+                    if !value
+                        && matches!(node["castKind"].as_str(), Some("BitCast" | "NoOp"))
+                        && qual(node).is_some_and(|ty| {
+                            let ty = ty.trim_end();
+                            ty.ends_with('*') && !ty.contains('(') && plain(ty)
+                        }) => {}
+                _ => break,
+            }
+            let Some(inner) = children(node).first() else {
+                return false;
+            };
+            node = inner;
+        }
+        if !value
+            || kind(node) != "MemberExpr"
+            || node["isArrow"].as_bool() != Some(true)
+            || node["name"].as_str() != Some(*field)
+        {
+            return false;
+        }
+        let Some(member) = qual(node) else {
+            return false;
+        };
+        let member = member.trim_end();
+        if !member.ends_with('*') || member.contains('(') || !plain(member) {
+            return false;
+        }
+        let Some(mut reference) = children(node).first() else {
+            return false;
+        };
+        let Some(pointer) = qual(reference) else {
+            return false;
+        };
+        if pointer.contains("union ") || !plain(pointer) {
+            return false;
+        }
+        if untyped_base {
+            let pointer = pointer.trim_end();
+            let in_struct = node["referencedMemberDecl"]
+                .as_str()
+                .and_then(|id| statements.records.struct_members.get(id))
+                .is_some_and(|(_, name)| name == field);
+            if !pointer.ends_with('*') || pointer.contains('(') || !in_struct {
+                return false;
+            }
+        }
+        loop {
+            match kind(reference) {
+                "ParenExpr" => {}
+                "ImplicitCastExpr"
+                    if matches!(
+                        reference["castKind"].as_str(),
+                        Some("LValueToRValue" | "NoOp")
+                    ) => {}
+                _ => break,
+            }
+            let Some(inner) = children(reference).first() else {
+                return false;
+            };
+            reference = inner;
+        }
+        // Card MEMBER-RELEASE-UNTYPED-BASE: the rvalue read above drops the
+        // parameter's own qualifiers, so they are read on its reference (a
+        // `volatile` or `_Atomic` formal is never this rule's base).
+        kind(reference) == "DeclRefExpr"
+            && reference["referencedDecl"]["kind"].as_str() == Some("ParmVarDecl")
+            && reference["referencedDecl"]["name"].as_str() == Some(*base)
+            && [qual(reference), reference["type"]["qualType"].as_str()]
+                .into_iter()
+                .all(|ty| ty.is_some_and(plain))
+    }
+
     /// Rule 38j's direct-call route: `instruction`, the lowering of a
     /// whole-statement call to a function whose member-effect summary is in
     /// force, refused as an uncontracted call. `Some` is the call lowered under

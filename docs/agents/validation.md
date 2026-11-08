@@ -235,6 +235,7 @@ peak resident set (`wait4`'s `ru_maxrss`: the largest single descendant).
 | `rust-suite` | 1; while it runs it also holds every `audit` slot | the root Rust suite and the provider workspace's `cargo test` (constraint 16's load-sensitive rows never share the host with an audit) |
 | `audit` | `max(1, floor(MemAvailable / admission budget))` when it asks; budget 7 GiB by default, 5 or 4 GiB selectable; the pinned corpus is admitted at 11 GiB | corpus, system, slice and other `quirin-audit` runs |
 | `lean` | 2 | `check_lean_audits.py`, `gate_lean.py` |
+| `short` | 2, a lane of its own (below) | CPU-bound, memory-light steps that take minutes: `prepare` (including `prepare clang-build --link`), builds, links, regenerations |
 
 The audit budget is the audit's own MiB planning budget (`audit-ir-working-set`):
 `quirin-audit current` gets `--memory-budget-mib`, a configuration's
@@ -249,8 +250,9 @@ slot budget, the one measured exception to the 7 GiB default
 transition every slot job holds the legacy lock
 `/tmp/qcore-c-card-validation-20261022.lock` shared, so a job under
 `flock <legacy lock>` excludes every slot and every slot excludes it. Limits:
-fmt, Clippy and builds take no slot, so another card's build can still load the
-host beside a `rust-suite` job; `MemAvailable` already excludes running audits'
+fmt and Clippy take no slot, and a build that does not go through the `short`
+lane takes none either, so another card's build can still load the host beside
+a `rust-suite` job; `MemAvailable` already excludes running audits'
 resident memory, so admission is conservative; an exclusive legacy waiter can
 wait while slot jobs keep the lock shared.
 
@@ -293,14 +295,137 @@ One job cannot starve the host (requirement R11 of
   so queued audits start, and drains again; `--drain-attempts N` turns the Nth
   give-up into exit 75 with that report, and `--wait-timeout` still bounds the
   whole wait. The command never runs without a complete drain, and a job that
-  never got its slot only waited (its `--wait-record` stays `waiting`).
+  never got its slot only waited (its `--wait-record` stays `waiting`). The
+  drain starts only when it is first in the queue (next bullet group), so it
+  respects the audits queued before it.
 - **Status.** `python3 scripts/gate_slot.py status [--json] [--interval S]`
   lists the live holders and waiters: the `/proc/locks` entries on the gate's
   slot files and the legacy lock, with role (holder, draining and what blocks
   it, waiting for a slot, queued in the kernel, legacy holder), argv, wait and
   hold times, CPU and I/O over the interval, and resident set against the
   admission budget. A job waiting for an `audit` slot holds only the legacy
-  lock shared, which is how it shows; it reads `QUIRIN_GATE_DIR` like the jobs.
+  lock shared, which is how it shows; it reads `QUIRIN_GATE_DIR` like the jobs. Each queued
+  waiter shows its position (`queue position 2 of 5 (audit)`, who is ahead,
+  its state), and `--json` lists every queue under `queues`.
+
+Slots are served in arrival order (card `GATE-SLOT-FIFO-ORDER`; the 2026-11-07/08
+incident: a measurement's audit waited 7.5 h, then 15.5 h, while audits and
+drains that asked hours later took the slots):
+
+- **Tickets.** A job that has to wait takes a ticket, a file
+  `<gate dir>/<family>/queue/<seq>-<pid>.ticket`, after it holds the legacy
+  lock, and drops it when it is admitted or gives up. The family is `audit`
+  for the `audit` and `rust-suite` classes (a suite takes every audit slot, so
+  its place among the audits is the point) and `lean`. The sequence number is
+  read from a counter file under a flock held for a few system calls; the
+  ticket is created locked, with the owner's pid and start time, and renamed
+  into place, so it is never visible unlocked. No daemon: tickets are plain
+  files beside the slot flocks, and the receipt's `slot_record.queue` gives the
+  ticket, the position at the request, the tickets reclaimed, those skipped and
+  those passed over.
+- **Admission rule.** A job may take a slot only if no job ahead of it (a
+  smaller number) can take that slot. A job ahead holds back exactly the free
+  slots it could itself take at the current memory reading: slot index below its
+  own `floor(MemAvailable / admission budget)` (at least one), both `lean`
+  slots. So the earlier of two equal waiters always wins, and a waiter whose
+  memory admission cannot be met now (every slot its memory admits is busy)
+  holds back nothing else: a 4 GiB audit behind an 11 GiB corpus audit that
+  waits for slot 0 runs in slot 1 (`passed_over` in its receipt), and the corpus
+  audit keeps slot 0 for itself when it frees. A `rust-suite` job ahead holds
+  back every audit behind it; it starts its drain only when no job is ahead of
+  it. A head is never left unadmittable by memory: one slot is always counted.
+- **A queue is never blocked for ever.** A ticket stops holding the others
+  back when (a) its owner is gone: its flock is free *and* its pid is gone, a
+  zombie, or has another start time (a reused pid); whoever finds it unlinks it,
+  and a live pid with a free lock, or a held lock whose pid is not visible, is
+  never reclaimed; (b) its owner has not polled for `QUIRIN_GATE_QUEUE_LAPSE`
+  (10 min; `0`/`off` never): it is skipped, not removed, and counts again at
+  its owner's next poll; (c) its `rust-suite` drain gave up and is backing off
+  (it keeps its place, and the audits queued behind it run meanwhile).
+  `QUIRIN_GATE_QUEUE=off` takes no ticket (the job competes as an older client
+  does). A job that is killed and run again asks again, behind the jobs that
+  asked meanwhile; a cleaned `/tmp` starts a fresh queue.
+- **Older clients.** A `gate_slot.py` from before the queue (a worktree not yet
+  rebased) ignores tickets and takes the same slot flocks in the same way, so a
+  mixed host never deadlocks and never holds a slot twice (flock admits one
+  exclusive holder); it can only be admitted ahead of a ticketed job, so arrival
+  order is guaranteed among queue-aware jobs, and an older client shows in
+  `status` as "not queued". A ticketed suite waits for the same locks an older
+  one does, and a ticketed job never holds a lock while it waits for its turn
+  except the shared legacy lock every waiter already held.
+
+A short job takes the **short lane** (card `GATE-SLOT-SHORT-JOB-LANE`; user
+decision of 2026-11-08, "Yes, add a fast lane"; the incident: `prepare
+clang-build --link`, 3 min 17 s at a peak of 832 MB, waited 5 h 8 min for an
+audit slot). `python3 scripts/gate_slot.py short [--memory-budget 1G|2G]
+[--max-wall D] --receipt FILE -- <cmd>`. Builds and prepares go through this
+lane, not the `audit` class: `prepare` (with or without `clang-build --link`,
+the one measured case) and other single-purpose preparation, link or
+regeneration steps that finish in minutes and stay within the memory bound
+below. A job qualifies by those bounds, which the lane enforces, not by its
+name: a parallel `cargo build` of the whole workspace (six rustc jobs) can sum
+past 4 GiB and would be stopped, so measure one before sending it here. An
+analysis (any `quirin-audit` route, the corpus, a measurement) is not a lane
+job; neither is `cargo test` of the root suite (`rust-suite`) or a Lean check
+(`lean`).
+
+- **Eligibility, enforced.** The wall bound `--max-wall` (default 30 min, at
+  most 1 h, never off; `--deadline` is refused for the class) stops the command
+  past it (SIGTERM, SIGKILL after `--stop-grace`, at most 2 min) and the script
+  exits 124 with `lane.wall_overrun: true` and `lane.complete: false` in the
+  receipt. It is stopped, not only recorded, because a draining suite waits for
+  lane jobs only as long as their bound. The exit is non-zero, so a caller never
+  reads a stopped job as finished, but the lane does not clean up after the
+  command: a tree it was writing may be half written, and the command must
+  write its completion record last (and its caller must check the exit). The
+  declared memory (`--memory-budget`, 1 GiB default, 2 GiB at most) is not
+  applied to the command: an excess is warned and recorded
+  (`lane.memory_over_declared`); a process tree over 4 GiB (the smallest audit
+  budget) is stopped too (`stopped: memory`), because such a job is an audit.
+- **Slots and order.** Two lane slots (`<gate dir>/short/0`, `1`) and a queue of
+  their own (family `short`, arrival order as above). The lane takes no audit
+  lock, so it is not behind queued audits, not behind a `rust-suite` job that
+  has taken a ticket, and not shut out by a drain. It holds the legacy lock
+  shared like every slot job.
+- **Memory.** A lane job is admitted when `MemAvailable`, less what the lane
+  jobs running have declared and not yet used, covers its own declaration (it
+  waits otherwise; a lane waiter that cannot be admitted by memory holds back
+  nothing else). An audit takes the same reserve from its reading, so a lane
+  job counts against audits before it has allocated and not twice afterwards
+  (its declared budget less the resident set of its last sample, per slot).
+- **Drains.** A `rust-suite` job drains the audits as before with the lane open.
+  Once the audits are drained it closes the lane and waits for the lane jobs in
+  flight, which end within their wall bound plus a sample and the stop grace
+  (at most a little over an hour; normally minutes); then it holds both lane
+  slots while its command runs, so its load-sensitive rows run alone, and a lane
+  job that arrives meanwhile waits for the suite to end. A lane wait longer
+  than that bound means a wedged lane job and gives up like an audit drain
+  (blockers named, everything released). A lane job started by a suite's own
+  command is covered by the suite's slots.
+- **Older clients (not guaranteed).** A `gate_slot.py` without the lane has no
+  `short` class (exit 2) and takes no lane lock, so it cannot deadlock with a
+  lane job or share a lane slot. An older `rust-suite` job does not close the
+  lane, so a lane job may run beside it (its load-sensitive rows are guaranteed
+  alone only once every worktree has this script), and an older audit counts
+  `MemAvailable` without the lane's reserve. `status` lists lane holders
+  and waiters (`short lane: 1 of 2 slots held by pid ..., waiting: ...`,
+  `short_lane` in `--json`) and a suite waiting for the lane.
+
+A declared measurement's slot waits are outside its analysis quota and are no
+longer capped by it (cards `MEASURE-QUOTA-AND-INCREMENTAL` and
+`MEASURE-SLOT-WAIT-EXCLUSION-CAP`). `quirin-audit measure` runs each route
+under `gate_slot.py audit --wait-record`; while every route in flight waits,
+the host does not count that time against `--timeout-ms`, which is the
+**analysis quota** (the default for `--slot-wait-limit-ms`, the most it
+excludes, is now the overall wall bound and no longer the quota, which killed a
+measurement after a queue as long as the quota). A separate **overall wall
+bound** `--wall-limit-ms` stops the run whatever it declares (code
+`plugin-wall-limit`): default seven days, never below `--timeout-ms` (a larger
+quota raises the default; a smaller explicit bound is refused). Override either
+on the host's command line. Both limits are in the request, the host's run and
+invocation records and the measure report's `timing.limits`. A measurement
+still needs `--timeout-ms` large enough for its analysis (the pinned corpus
+route ran about 2 h per profile).
 
 ## Test build storage
 

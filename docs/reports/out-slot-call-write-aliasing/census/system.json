@@ -1,0 +1,206 @@
+{
+ "route": "system",
+ "report": "/media/Data/GitHub/quirin-lang/private/baselines/7b726587bdf6a8213f451fa1c78297bb5e476ef7/fluent-bit-system/system/resource-diagnostics.json",
+ "safe_rows": 89,
+ "rows": [
+  {
+   "library": "fluent-bit-system",
+   "file": "src/flb_engine.c",
+   "function": "flb_task_get_route_data",
+   "formals": {
+    "task": "struct flb_task *",
+    "o_ins": "struct flb_output_instance *",
+    "records": "int *",
+    "bytes": "size_t *"
+   },
+   "stores": [
+    {
+     "formal": "records",
+     "type": "int *",
+     "value_type": "int"
+    },
+    {
+     "formal": "bytes",
+     "type": "size_t *",
+     "value_type": "unsigned long"
+    }
+   ],
+   "calls": []
+  },
+  {
+   "library": "fluent-bit-system",
+   "file": "src/flb_engine_dispatch.c",
+   "function": "flb_task_get_route_data",
+   "formals": {
+    "task": "struct flb_task *",
+    "o_ins": "struct flb_output_instance *",
+    "records": "int *",
+    "bytes": "size_t *"
+   },
+   "stores": [
+    {
+     "formal": "records",
+     "type": "int *",
+     "value_type": "int"
+    },
+    {
+     "formal": "bytes",
+     "type": "size_t *",
+     "value_type": "unsigned long"
+    }
+   ],
+   "calls": []
+  },
+  {
+   "library": "fluent-bit-system",
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_drop_task_route",
+   "formals": {
+    "task": "struct flb_task *",
+    "output_plugin": "struct flb_output_instance *",
+    "dropped_record_count": "ssize_t *",
+    "dropped_byte_count": "ssize_t *"
+   },
+   "stores": [
+    {
+     "formal": "dropped_record_count",
+     "type": "ssize_t *",
+     "value_type": "long"
+    },
+    {
+     "formal": "dropped_byte_count",
+     "type": "ssize_t *",
+     "value_type": "long"
+    },
+    {
+     "formal": "dropped_record_count",
+     "type": "ssize_t *",
+     "value_type": "long"
+    },
+    {
+     "formal": "dropped_byte_count",
+     "type": "ssize_t *",
+     "value_type": "long"
+    }
+   ],
+   "calls": [
+    {
+     "callee": "flb_task_acquire_lock",
+     "actuals": [
+      {
+       "type": "struct flb_task *",
+       "reach": "formal:task"
+      }
+     ]
+    },
+    {
+     "callee": "flb_task_get_route_status",
+     "actuals": [
+      {
+       "type": "struct flb_task *",
+       "reach": "formal:task"
+      },
+      {
+       "type": "struct flb_output_instance *",
+       "reach": "formal:output_plugin"
+      }
+     ]
+    },
+    {
+     "callee": "flb_task_set_route_status",
+     "actuals": [
+      {
+       "type": "struct flb_task *",
+       "reach": "formal:task"
+      },
+      {
+       "type": "struct flb_output_instance *",
+       "reach": "formal:output_plugin"
+      },
+      {
+       "type": "int",
+       "reach": "scalar"
+      }
+     ]
+    },
+    {
+     "callee": "flb_task_get_route_data",
+     "actuals": [
+      {
+       "type": "struct flb_task *",
+       "reach": "formal:task"
+      },
+      {
+       "type": "struct flb_output_instance *",
+       "reach": "formal:output_plugin"
+      },
+      {
+       "type": "int *",
+       "reach": "addr-local"
+      },
+      {
+       "type": "size_t *",
+       "reach": "addr-local"
+      }
+     ]
+    },
+    {
+     "callee": "flb_task_release_lock",
+     "actuals": [
+      {
+       "type": "struct flb_task *",
+       "reach": "formal:task"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "library": "fluent-bit-system",
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_output_would_exceed_limit",
+   "formals": {
+    "o_ins": "struct flb_output_instance *",
+    "chunk_size": "unsigned long",
+    "available_space": "size_t *"
+   },
+   "stores": [
+    {
+     "formal": "available_space",
+     "type": "size_t *",
+     "value_type": "unsigned long"
+    },
+    {
+     "formal": "available_space",
+     "type": "size_t *",
+     "value_type": "unsigned long"
+    }
+   ],
+   "calls": []
+  },
+  {
+   "library": "fluent-bit-system",
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_task_get_route_data",
+   "formals": {
+    "task": "struct flb_task *",
+    "o_ins": "struct flb_output_instance *",
+    "records": "int *",
+    "bytes": "size_t *"
+   },
+   "stores": [
+    {
+     "formal": "records",
+     "type": "int *",
+     "value_type": "int"
+    },
+    {
+     "formal": "bytes",
+     "type": "size_t *",
+     "value_type": "unsigned long"
+    }
+   ],
+   "calls": []
+  }
+ ]
+}

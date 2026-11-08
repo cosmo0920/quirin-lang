@@ -116,6 +116,57 @@ pub(super) fn validates_under_reported_premises(
     validates
 }
 
+/// Card OUT-PARAMETER-BODY-SUMMARY (rule 11r(6)): [`validates_under_reported_premises`]
+/// for an unwritten class, whose `analysis` contract (every slot of
+/// `unwritten` `Out`) is what the run reads, checked by the class gate
+/// [`super::observations_match_class`]. Recorded as route `unwritten-class`.
+pub(super) fn class_validates_under_reported_premises(
+    tokens: &[Token],
+    function: &str,
+    environment: &ResourceContracts,
+    parameters: &[Option<String>],
+    analysis: &ResourceFunctionContract,
+    unwritten: &std::collections::BTreeSet<usize>,
+    inferred_on: &LegacyCfg,
+) -> bool {
+    if environment.contract(function).is_some() {
+        return true;
+    }
+    let own = own_protected_formals(parameters, analysis);
+    if own.is_empty() {
+        return true;
+    }
+    let (cfg_changed, validates) = without_parity_rows(|| {
+        match build_function_cfg_under_own_contract(tokens, function, environment, analysis, false)
+        {
+            Err(_) => (true, false),
+            Ok(cfg) if &cfg == inferred_on => (false, true),
+            Ok(cfg) => (
+                true,
+                EntryCustody::build(&cfg, parameters, analysis).is_some_and(|entry| {
+                    let (summary, observations) = analyze_cfg_with_entry(cfg, &entry);
+                    super::observations_match_class(
+                        analysis,
+                        unwritten,
+                        &entry,
+                        &summary,
+                        &observations,
+                    )
+                }),
+            ),
+        }
+    });
+    record_with_label(
+        function,
+        "unwritten-class",
+        analysis,
+        &own,
+        cfg_changed,
+        validates,
+    );
+    validates
+}
+
 /// The unchanged W4 gate on one CFG.
 pub(super) fn validates_on(
     cfg: LegacyCfg,

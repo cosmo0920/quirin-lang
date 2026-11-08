@@ -257,6 +257,29 @@ fn pop(depth: usize) -> FrameCarriage {
     })
 }
 
+/// Card OUT-PARAMETER-SCALAR-FRAME-PREMISE (rule 11r(7)): carry the premise
+/// `name` of `rule` into the innermost open frame, attributed to the in-unit
+/// function `declaration`, so every row whose derivation reaches it lists the
+/// premise. `false` when no frame is open (nothing reads the relation then).
+pub(crate) fn carry_declaration_premise(declaration: &str, rule: &str, name: &str) -> bool {
+    FRAMES.with(|frames| {
+        let mut frames = frames.borrow_mut();
+        let Some(frame) = frames.last_mut() else {
+            return false;
+        };
+        frame
+            .declarations
+            .entry(declaration.to_owned())
+            .or_default()
+            .premises
+            .insert(Carriage {
+                rule: rule.to_owned(),
+                name: name.to_owned(),
+            });
+        true
+    })
+}
+
 /// Carry `carried` into the innermost open frame at unit grain (its
 /// enclosing frames receive it when it closes); `false` when none is open,
 /// so the admission it came from cannot be carried.

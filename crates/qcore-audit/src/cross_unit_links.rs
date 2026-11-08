@@ -10,6 +10,7 @@ use qcore_schemas::contract::{
     CrossUnitImportIdentity, ResourceContracts, ResourceFunctionContract,
 };
 use serde::Deserialize;
+use serde_json::Value;
 
 /// Opt-in path to a human-supplied link assertion. Unset means the old
 /// fail-closed route with no imported summary and byte-identical output.
@@ -31,6 +32,7 @@ struct Symbol {
 }
 
 /// One stated link premise, with its exact text pinned by SHA-256.
+#[derive(Clone)]
 pub struct LinkMap {
     pub digest: String,
     pub premise: String,
@@ -143,6 +145,745 @@ impl LinkMap {
         environment.set_lifetime_imports(lifetimes);
         environment.set_cross_unit_import_identities(identities);
         (environment, homes)
+    }
+}
+
+// ---- Rule 40: a derived link resolution ------------------------------------
+
+/// Card **LINK-STANDING** (rule 40): opt-in path to a link-resolution
+/// artifact (`quirin-link-resolution/1`, written by `prepare --link`). Read
+/// by the `current` route only. Exclusive with [`SELECTION`].
+pub const RESOLUTION_SELECTION: &str = "QCORE_CROSS_UNIT_LINK_RESOLUTION";
+
+/// Why rule 40 refuses a home for a caller, in decision order
+/// (`QCore.CrossUnitSummary.Refusal`). Each refusal leaves the call
+/// uncontracted, as it was without the artifact.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub enum Refusal {
+    DatabaseDiffers,
+    DigestUnverified,
+    CallerUnlinked,
+    NotExecutable,
+    NotInExecutable,
+    NotStrong,
+    NotDefaultVisibility,
+    Duplicate,
+    DynamicRelocation,
+    FactsRefused,
+    HomeUnlinked,
+    NotRouteUnit,
+    AmbiguousKey,
+    TypeUnavailable,
+    TypeDiffers,
+}
+
+impl Refusal {
+    pub const ALL: [Self; 15] = [
+        Self::DatabaseDiffers,
+        Self::DigestUnverified,
+        Self::CallerUnlinked,
+        Self::NotExecutable,
+        Self::NotInExecutable,
+        Self::NotStrong,
+        Self::NotDefaultVisibility,
+        Self::Duplicate,
+        Self::DynamicRelocation,
+        Self::FactsRefused,
+        Self::HomeUnlinked,
+        Self::NotRouteUnit,
+        Self::AmbiguousKey,
+        Self::TypeUnavailable,
+        Self::TypeDiffers,
+    ];
+
+    #[must_use]
+    pub const fn phrase(self) -> &'static str {
+        match self {
+            Self::DatabaseDiffers => {
+                "the link resolution artifact's compile database differs from the route's"
+            }
+            Self::DigestUnverified => "a digest the link resolution artifact binds does not verify",
+            Self::CallerUnlinked => {
+                "caller configuration is not a linked, reproduced configuration of the executable"
+            }
+            Self::NotExecutable => "the linked image is not an executable",
+            Self::NotInExecutable => "home is not defined in the executable",
+            Self::FactsRefused => "the artifact refuses the home's link facts",
+            Self::NotStrong => "home is not a strong global function definition",
+            Self::NotDefaultVisibility => "home definition does not have default visibility",
+            Self::Duplicate => "home has more than one definition among the linked objects",
+            Self::DynamicRelocation => {
+                "the executable resolves the home at run time (dynamic relocation)"
+            }
+            Self::HomeUnlinked => {
+                "home configuration is not a linked, reproduced configuration of the executable"
+            }
+            Self::NotRouteUnit => "home configuration is not a configuration the route analyses",
+            Self::AmbiguousKey => "home unit key names more than one route configuration",
+            Self::TypeUnavailable => qcore_c_gateway::link_call_type::TYPE_UNAVAILABLE,
+            Self::TypeDiffers => qcore_c_gateway::link_call_type::TYPE_DIFFERS,
+        }
+    }
+}
+
+/// Every condition rule 40 checks for one (caller, home) pair, in decision
+/// order; field `i` failing is [`Refusal::ALL`]`[i]`
+/// (`QCore.CrossUnitSummary.DerivedFacts`).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[allow(clippy::struct_excessive_bools)]
+pub struct Facts {
+    pub database_matches: bool,
+    pub digests_verify: bool,
+    pub caller_linked: bool,
+    pub executable: bool,
+    pub in_executable: bool,
+    pub strong_global: bool,
+    pub default_visibility: bool,
+    pub only_definition: bool,
+    pub no_dynamic_relocation: bool,
+    /// The artifact itself refused none of the link's facts (map and symbol
+    /// tables agree, a unique database entry, not an indirect function,
+    /// reproduced); only its route-relative refusals are re-decided here.
+    pub facts_agree: bool,
+    pub home_linked: bool,
+    pub route_unit: bool,
+    pub unique_key: bool,
+    pub type_available: bool,
+    pub type_equal: bool,
+}
+
+impl Facts {
+    pub const ALL: Self = Self {
+        database_matches: true,
+        digests_verify: true,
+        caller_linked: true,
+        executable: true,
+        in_executable: true,
+        facts_agree: true,
+        strong_global: true,
+        default_visibility: true,
+        only_definition: true,
+        no_dynamic_relocation: true,
+        home_linked: true,
+        route_unit: true,
+        unique_key: true,
+        type_available: true,
+        type_equal: true,
+    };
+
+    const fn fields(self) -> [bool; 15] {
+        [
+            self.database_matches,
+            self.digests_verify,
+            self.caller_linked,
+            self.executable,
+            self.in_executable,
+            self.strong_global,
+            self.default_visibility,
+            self.only_definition,
+            self.no_dynamic_relocation,
+            self.facts_agree,
+            self.home_linked,
+            self.route_unit,
+            self.unique_key,
+            self.type_available,
+            self.type_equal,
+        ]
+    }
+
+    #[cfg(test)]
+    fn failing(indices: &[usize]) -> Self {
+        let mut fields = Self::ALL.fields();
+        for &index in indices {
+            fields[index] = false;
+        }
+        let [
+            database_matches,
+            digests_verify,
+            caller_linked,
+            executable,
+            in_executable,
+            strong_global,
+            default_visibility,
+            only_definition,
+            no_dynamic_relocation,
+            facts_agree,
+            home_linked,
+            route_unit,
+            unique_key,
+            type_available,
+            type_equal,
+        ] = fields;
+        Self {
+            database_matches,
+            digests_verify,
+            caller_linked,
+            executable,
+            in_executable,
+            facts_agree,
+            strong_global,
+            default_visibility,
+            only_definition,
+            no_dynamic_relocation,
+            home_linked,
+            route_unit,
+            unique_key,
+            type_available,
+            type_equal,
+        }
+    }
+}
+
+/// Rule 40's decision: the first condition that fails, or `None` when the
+/// derived resolution resolves the call to the home
+/// (`QCore.CrossUnitSummary.decide`).
+#[must_use]
+pub fn decide(facts: Facts) -> Option<Refusal> {
+    facts
+        .fields()
+        .iter()
+        .position(|holds| !holds)
+        .map(|index| Refusal::ALL[index])
+}
+
+/// `STANDING_VECTORS` (`QCore.CrossUnitSummary.standingVectors`): the
+/// indices of the failing conditions, then the refusal's index.
+#[cfg(test)]
+pub(crate) const STANDING_VECTORS: &[(&[usize], Option<usize>)] = &[
+    (&[], None),
+    (&[0], Some(0)),
+    (&[1], Some(1)),
+    (&[2], Some(2)),
+    (&[3], Some(3)),
+    (&[4], Some(4)),
+    (&[5], Some(5)),
+    (&[6], Some(6)),
+    (&[7], Some(7)),
+    (&[8], Some(8)),
+    (&[9], Some(9)),
+    (&[10], Some(10)),
+    (&[11], Some(11)),
+    (&[12], Some(12)),
+    (&[13], Some(13)),
+    (&[14], Some(14)),
+    (&[2, 14], Some(2)),
+    (&[12, 13], Some(12)),
+    (&[0, 1, 2], Some(0)),
+    (&[9, 11], Some(9)),
+];
+
+/// One compile-database configuration as the artifact records it: its
+/// identity and whether the executable links it.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct ConfigurationIdentity {
+    pub file: String,
+    pub directory: String,
+    pub command_sha256: String,
+}
+
+impl ConfigurationIdentity {
+    #[must_use]
+    pub fn of(entry: &crate::compile_db::CompileEntry) -> Self {
+        Self {
+            file: entry.file.to_string_lossy().into_owned(),
+            directory: entry.directory.to_string_lossy().into_owned(),
+            command_sha256: qcore_schemas::sha256_hex(entry.command.as_bytes()),
+        }
+    }
+}
+
+struct ArtifactConfiguration {
+    identity: ConfigurationIdentity,
+    /// Linked into the executable and reproduced byte for byte by its own
+    /// database command.
+    linked: bool,
+}
+
+/// One referenced function symbol of the artifact, with the home-level
+/// facts its record states.
+struct ArtifactSymbol {
+    name: String,
+    configuration: Option<usize>,
+    facts: Facts,
+    record: Value,
+}
+
+/// A loaded link-resolution artifact (rule 40). Nothing in it is trusted
+/// before [`DerivedResolution::verify`].
+pub struct DerivedResolution {
+    pub path: std::path::PathBuf,
+    pub artifact_sha256: String,
+    pub database_sha256: String,
+    pub executable_sha256: String,
+    pub link_map_sha256: String,
+    executable: bool,
+    bound: Vec<(std::path::PathBuf, String)>,
+    inputs: Vec<(String, String)>,
+    link_directory: std::path::PathBuf,
+    configurations: Vec<ArtifactConfiguration>,
+    symbols: Vec<ArtifactSymbol>,
+}
+
+fn text<'a>(value: &'a Value, what: &str) -> Result<&'a str, String> {
+    value
+        .as_str()
+        .ok_or_else(|| format!("link resolution artifact lacks {what}"))
+}
+
+/// The artifact's own refusal reasons that are facts of the link, which the
+/// route cannot re-decide; the route-relative reasons it re-decides itself.
+const ROUTE_RELATIVE_REASONS: [&str; 2] = [
+    "home configuration is not a unit of the current route",
+    "home unit key names more than one route configuration",
+];
+
+impl DerivedResolution {
+    pub fn load_selected() -> Result<Option<Self>, String> {
+        let Some(path) = std::env::var_os(RESOLUTION_SELECTION) else {
+            return Ok(None);
+        };
+        Self::load(Path::new(&path)).map(Some)
+    }
+
+    pub fn load(path: &Path) -> Result<Self, String> {
+        let bytes = fs::read(path).map_err(|error| format!("{}: {error}", path.display()))?;
+        let artifact: Value = serde_json::from_slice(&bytes)
+            .map_err(|error| format!("{}: {error}", path.display()))?;
+        if artifact["schema"].as_str() != Some(crate::link_resolution::ARTIFACT_SCHEMA) {
+            return Err(format!(
+                "{}: not a `{}` artifact",
+                path.display(),
+                crate::link_resolution::ARTIFACT_SCHEMA
+            ));
+        }
+        let mut bound = vec![
+            (
+                text(&artifact["executable"]["path"], "the executable path")?.into(),
+                text(&artifact["executable"]["sha256"], "the executable digest")?.to_owned(),
+            ),
+            (
+                text(&artifact["link"]["link_txt"], "the link command path")?.into(),
+                text(
+                    &artifact["link"]["link_txt_sha256"],
+                    "the link command digest",
+                )?
+                .to_owned(),
+            ),
+            (
+                text(&artifact["link"]["map"], "the map path")?.into(),
+                text(&artifact["link"]["map_sha256"], "the map digest")?.to_owned(),
+            ),
+        ];
+        for tool in ["driver", "linker"] {
+            bound.push((
+                text(&artifact["toolchain"][tool]["resolved"], "a toolchain path")?.into(),
+                text(&artifact["toolchain"][tool]["sha256"], "a toolchain digest")?.to_owned(),
+            ));
+        }
+        let inputs = artifact["inputs"]
+            .as_array()
+            .ok_or("link resolution artifact lacks its inputs")?
+            .iter()
+            .map(|input| {
+                Ok((
+                    text(&input["label"], "an input label")?.to_owned(),
+                    text(&input["sha256"], "an input digest")?.to_owned(),
+                ))
+            })
+            .collect::<Result<Vec<_>, String>>()?;
+        let configurations = artifact["configurations"]
+            .as_array()
+            .ok_or("link resolution artifact lacks its configurations")?
+            .iter()
+            .enumerate()
+            .map(|(id, configuration)| {
+                if configuration["id"].as_u64() != Some(id as u64) {
+                    return Err("link resolution artifact's configurations are out of order".into());
+                }
+                Ok(ArtifactConfiguration {
+                    identity: ConfigurationIdentity {
+                        file: text(&configuration["file"], "a configuration file")?.to_owned(),
+                        directory: text(&configuration["directory"], "a configuration directory")?
+                            .to_owned(),
+                        command_sha256: text(
+                            &configuration["command_sha256"],
+                            "a configuration command digest",
+                        )?
+                        .to_owned(),
+                    },
+                    linked: configuration["linked"].as_bool() == Some(true)
+                        && configuration["reproduction"].as_str() == Some("equal"),
+                })
+            })
+            .collect::<Result<Vec<_>, String>>()?;
+        let executable = artifact["executable"]["image"]["is_executable"].as_bool() == Some(true);
+        let symbols = artifact["symbols"]
+            .as_array()
+            .ok_or("link resolution artifact lacks its symbols")?
+            .iter()
+            .map(|record| {
+                let name = text(&record["name"], "a symbol name")?.to_owned();
+                let definition = &record["definition"];
+                let configuration = definition["configuration"]
+                    .as_u64()
+                    .and_then(|id| usize::try_from(id).ok())
+                    .filter(|id| *id < configurations.len());
+                let reason = record["reason"].as_str();
+                let facts = Facts {
+                    executable,
+                    in_executable: definition["in"].as_str() == Some("executable"),
+                    facts_agree: reason
+                        .is_none_or(|reason| ROUTE_RELATIVE_REASONS.contains(&reason))
+                        && record["executable"]["in_definer_text"].as_bool() == Some(true),
+                    strong_global: record["kind"].as_str() == Some("function")
+                        && definition["type"].as_str() == Some("function")
+                        && definition["binding"].as_str() == Some("global"),
+                    default_visibility: definition["visibility"].as_str() == Some("default"),
+                    only_definition: record["definitions"]
+                        .as_array()
+                        .is_some_and(|all| all.len() == 1),
+                    no_dynamic_relocation: record["executable"]["dynamic_relocations"].as_u64()
+                        == Some(0),
+                    home_linked: configuration.is_some_and(|id| configurations[id].linked),
+                    ..Facts::ALL
+                };
+                Ok(ArtifactSymbol {
+                    name,
+                    configuration,
+                    facts,
+                    record: serde_json::json!({
+                        "definition": definition,
+                        "executable": record["executable"],
+                    }),
+                })
+            })
+            .collect::<Result<Vec<_>, String>>()?;
+        Ok(Self {
+            path: path.to_path_buf(),
+            artifact_sha256: qcore_schemas::sha256_hex(&bytes),
+            database_sha256: text(
+                &artifact["compile_database"]["sha256"],
+                "the database digest",
+            )?
+            .to_owned(),
+            executable_sha256: bound[0].1.clone(),
+            link_map_sha256: bound[2].1.clone(),
+            executable,
+            bound: std::mem::take(&mut bound),
+            inputs,
+            link_directory: text(&artifact["link"]["directory"], "the link directory")?.into(),
+            configurations,
+            symbols,
+        })
+    }
+
+    /// The run-level conditions: the database the route reads is the one
+    /// the artifact was read from, and every file the artifact binds by
+    /// digest (executable, link command, map, toolchain, linked inputs)
+    /// still has that digest.
+    pub fn verify(&self, route_database_sha256: &str) -> Result<(), (Refusal, String)> {
+        if self.database_sha256 != route_database_sha256 {
+            return Err((
+                Refusal::DatabaseDiffers,
+                format!(
+                    "artifact {}, route {route_database_sha256}",
+                    self.database_sha256
+                ),
+            ));
+        }
+        let differs = |what: &str, found: Result<String, String>, expected: &str| match found {
+            Ok(found) if found == expected => Ok(()),
+            Ok(found) => Err((
+                Refusal::DigestUnverified,
+                format!("{what}: {found}, artifact {expected}"),
+            )),
+            Err(error) => Err((Refusal::DigestUnverified, format!("{what}: {error}"))),
+        };
+        for (path, expected) in &self.bound {
+            differs(
+                &path.display().to_string(),
+                fs::read(path)
+                    .map(|bytes| qcore_schemas::sha256_hex(&bytes))
+                    .map_err(|error| error.to_string()),
+                expected,
+            )?;
+        }
+        for (label, expected) in &self.inputs {
+            differs(
+                label,
+                crate::link_resolution::input_bytes(&self.link_directory, label)
+                    .map(|bytes| qcore_schemas::sha256_hex(&bytes)),
+                expected,
+            )?;
+        }
+        Ok(())
+    }
+
+    /// The home-level conditions against the route's own configurations
+    /// (each with its `library/file` key): a derived [`LinkMap`] naming each
+    /// admitted home by the route's key, the caller standing, and the
+    /// refusals by symbol.
+    #[must_use]
+    pub fn derive(&self, route: &[(String, ConfigurationIdentity)]) -> Derived {
+        let mut keys = BTreeMap::<&str, usize>::new();
+        for (key, _) in route {
+            *keys.entry(key.as_str()).or_default() += 1;
+        }
+        let by_identity = route
+            .iter()
+            .map(|(key, identity)| (identity, key.as_str()))
+            .collect::<BTreeMap<_, _>>();
+        let mut homes = BTreeMap::new();
+        let mut records = BTreeMap::new();
+        let mut refused = BTreeMap::<Refusal, usize>::new();
+        for symbol in &self.symbols {
+            let key = symbol
+                .configuration
+                .and_then(|id| by_identity.get(&self.configurations[id].identity).copied());
+            let facts = Facts {
+                route_unit: key.is_some(),
+                unique_key: key.is_some_and(|key| keys.get(key) == Some(&1)),
+                ..symbol.facts
+            };
+            match decide(facts) {
+                None => {
+                    if let Some(key) = key {
+                        homes.insert(symbol.name.clone(), key.to_owned());
+                        records.insert(symbol.name.clone(), symbol.record.clone());
+                    }
+                }
+                Some(refusal) => *refused.entry(refusal).or_default() += 1,
+            }
+        }
+        let premise = format!(
+            "DERIVED (rule 40), not a stated premise: each listed home is the one strong global, \
+             default-visibility definition of its name among the objects linked into the \
+             executable (sha256 {}), from a reproduced, linked configuration that is the route's \
+             only configuration under its key, and the executable carries no dynamic relocation \
+             against it; read from the link-resolution artifact (sha256 {}) bound to the route's \
+             compile database (sha256 {}). A caller holds a home only when its own configuration \
+             is linked and Clang's type of the callee in its unit equals the home definition's.",
+            self.executable_sha256, self.artifact_sha256, self.database_sha256
+        );
+        let linked = self
+            .configurations
+            .iter()
+            .filter(|configuration| configuration.linked)
+            .map(|configuration| configuration.identity.clone())
+            .collect();
+        Derived {
+            map: LinkMap {
+                digest: self.artifact_sha256.clone(),
+                premise,
+                homes,
+            },
+            standing: LinkStanding {
+                linked,
+                records,
+                home_types: std::sync::Mutex::default(),
+            },
+            refused,
+            evidence: serde_json::json!({
+                "artifact": self.path,
+                "artifact_sha256": self.artifact_sha256,
+                "compile_database_sha256": self.database_sha256,
+                "executable_sha256": self.executable_sha256,
+                "link_map_sha256": self.link_map_sha256,
+                "executable": self.executable,
+            }),
+        }
+    }
+}
+
+/// What a verified artifact derives for one run.
+pub struct Derived {
+    /// Rule 4c's input: the admitted homes by the route's key, pinned by the
+    /// artifact's digest.
+    pub map: LinkMap,
+    pub standing: LinkStanding,
+    pub refused: BTreeMap<Refusal, usize>,
+    pub evidence: Value,
+}
+
+impl Derived {
+    #[must_use]
+    pub fn refused_by_reason(&self) -> Value {
+        self.refused
+            .iter()
+            .map(|(refusal, count)| (refusal.phrase().to_owned(), Value::from(*count)))
+            .collect::<serde_json::Map<_, _>>()
+            .into()
+    }
+}
+
+type HomeType = Result<
+    (
+        qcore_c_gateway::link_call_type::CallType,
+        qcore_c_gateway::link_call_type::Layouts,
+    ),
+    String,
+>;
+
+/// The per-caller conditions of rule 40: a linked caller configuration and
+/// the type check, applied to the homes rule 4c's scope holds.
+pub struct LinkStanding {
+    linked: BTreeSet<ConfigurationIdentity>,
+    records: BTreeMap<String, Value>,
+    /// Each home's type and the layouts of the records it names, read once
+    /// per home unit text.
+    home_types: std::sync::Mutex<BTreeMap<(String, String), std::sync::Arc<HomeType>>>,
+}
+
+impl LinkStanding {
+    #[must_use]
+    pub fn caller_linked(&self, caller: &ConfigurationIdentity) -> bool {
+        self.linked.contains(caller)
+    }
+
+    /// The artifact's definition record of an admitted home.
+    #[must_use]
+    pub fn record(&self, function: &str) -> Option<&Value> {
+        self.records.get(function)
+    }
+
+    fn home_type(
+        &self,
+        home: &qcore_c_gateway::legacy_c::CrossUnitHomeEvidence,
+    ) -> std::sync::Arc<HomeType> {
+        use qcore_c_gateway::link_call_type::{read, record_layouts};
+        let key = (
+            home.function.clone(),
+            home.input_identity.preprocessed_source_sha256.clone(),
+        );
+        if let Some(found) = self
+            .home_types
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .get(&key)
+        {
+            return found.clone();
+        }
+        let read = read(
+            &home.preprocessed_source,
+            &home.request,
+            home.dialect,
+            &home.function,
+        )
+        .and_then(|call| {
+            let layouts = if call.records.is_empty() {
+                BTreeMap::new()
+            } else {
+                record_layouts(&home.preprocessed_source, &home.request, home.dialect)?
+                    .into_iter()
+                    .filter(|(name, _)| call.records.contains(name))
+                    .collect()
+            };
+            Ok((call, layouts))
+        });
+        let read = std::sync::Arc::new(read);
+        self.home_types
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .insert(key, read.clone());
+        read
+    }
+
+    /// Rule 40 for one caller: keep a held home only when the caller is
+    /// linked and the callee's type in the caller unit equals the home
+    /// definition's. Returns the kept imports and each refused home with
+    /// its reason.
+    pub fn admit(
+        &self,
+        scoped: qcore_c_gateway::legacy_c::CrossUnitCallerImports,
+        caller_linked: bool,
+        caller: &qcore_c_gateway::legacy_c::PreparedTranslationUnit,
+    ) -> (
+        qcore_c_gateway::legacy_c::CrossUnitCallerImports,
+        Vec<(String, String)>,
+    ) {
+        use qcore_c_gateway::link_call_type::{agree, read, record_layouts};
+        let mut refusals = Vec::new();
+        let mut kept = BTreeSet::new();
+        let preprocessed = caller.preprocessed_source().ok();
+        let request = qcore_c_gateway::legacy_c::LegacyCertificateRequest {
+            include_paths: caller.include_paths().to_vec(),
+            definitions: caller.definitions().to_vec(),
+            preprocessor_options: caller.preprocessor_options().to_vec(),
+            input: caller.input().clone(),
+        };
+        let caller_layouts = std::cell::OnceCell::new();
+        for home in &scoped.homes {
+            let facts = if caller_linked {
+                Facts::ALL
+            } else {
+                Facts {
+                    caller_linked: false,
+                    ..Facts::ALL
+                }
+            };
+            let outcome = if decide(facts).is_some() {
+                Err((Refusal::CallerUnlinked, String::new()))
+            } else {
+                let call = preprocessed
+                    .ok_or_else(|| "the caller unit was not preprocessed".to_owned())
+                    .and_then(|source| read(source, &request, caller.dialect(), &home.function));
+                let home_type = self.home_type(home);
+                let layouts_of = |name: &str| -> Option<Option<String>> {
+                    let layouts = caller_layouts.get_or_init(|| {
+                        preprocessed
+                            .and_then(|source| {
+                                record_layouts(source, &request, caller.dialect()).ok()
+                            })
+                            .unwrap_or_default()
+                    });
+                    layouts.get(name).cloned()
+                };
+                let home_layouts = |name: &str| -> Option<Option<String>> {
+                    home_type
+                        .as_ref()
+                        .as_ref()
+                        .ok()
+                        .and_then(|(_, layouts)| layouts.get(name).cloned())
+                };
+                agree(
+                    call.as_ref().map_err(String::as_str),
+                    &layouts_of,
+                    home_type
+                        .as_ref()
+                        .as_ref()
+                        .map(|(call, _)| call)
+                        .map_err(String::as_str),
+                    &home_layouts,
+                )
+                .map_err(|detail| {
+                    let refusal = if call.is_ok() && home_type.is_ok() {
+                        Refusal::TypeDiffers
+                    } else {
+                        Refusal::TypeUnavailable
+                    };
+                    (refusal, detail)
+                })
+            };
+            match outcome {
+                Ok(()) => {
+                    kept.insert(home.function.clone());
+                }
+                Err((refusal, detail)) => refusals.push((
+                    home.function.clone(),
+                    if detail.is_empty() || detail == refusal.phrase() {
+                        refusal.phrase().to_owned()
+                    } else if detail.starts_with(refusal.phrase()) {
+                        detail
+                    } else {
+                        format!("{}: {detail}", refusal.phrase())
+                    },
+                )),
+            }
+        }
+        let scoped = qcore_c_gateway::legacy_c::cross_unit_retain_held(scoped, |home| {
+            kept.contains(&home.function)
+        });
+        (scoped, refusals)
     }
 }
 
@@ -451,5 +1192,503 @@ extern fn protocol_host(c: ptr<mut, u8>) -> unit contract { requires resource_co
             1
         );
         check_legacy_safety_certificate(&certificate).unwrap();
+    }
+
+    // ---- Card LINK-STANDING (rule 40) ----------------------------------------
+
+    #[test]
+    fn standing_vectors_hold() {
+        for (failing, expected) in STANDING_VECTORS {
+            assert_eq!(
+                decide(Facts::failing(failing)),
+                expected.map(|index| Refusal::ALL[index]),
+                "{failing:?}"
+            );
+        }
+        assert_eq!(decide(Facts::ALL), None);
+    }
+
+    /// A link-resolution artifact over real files in a fresh directory:
+    /// the bound files exist with the recorded digests, and the database is
+    /// `database`.
+    struct ArtifactFixture {
+        dir: std::path::PathBuf,
+        path: std::path::PathBuf,
+        database_sha256: String,
+    }
+
+    impl Drop for ArtifactFixture {
+        fn drop(&mut self) {
+            let _ = fs::remove_dir_all(&self.dir);
+        }
+    }
+
+    fn identity(file: &str, command: &str) -> ConfigurationIdentity {
+        ConfigurationIdentity {
+            file: format!("/src/{file}"),
+            directory: "/build".into(),
+            command_sha256: qcore_schemas::sha256_hex(command.as_bytes()),
+        }
+    }
+
+    /// The artifact's configurations: 0 home.c, 1 caller.c, 2 other.c (not
+    /// linked), 3 amb.c (the linked one of two route configurations under
+    /// one key), 4 elsewhere.c (linked, but the route analyses another
+    /// configuration of it).
+    fn configurations() -> Vec<(ConfigurationIdentity, bool)> {
+        vec![
+            (identity("lib/home.c", "cc -c home.c"), true),
+            (identity("lib/caller.c", "cc -c caller.c"), true),
+            (identity("lib/other.c", "cc -c other.c"), false),
+            (identity("lib/amb.c", "cc -c amb.c"), true),
+            (identity("lib/elsewhere.c", "cc -c elsewhere.c"), true),
+        ]
+    }
+
+    /// The route's configurations, keyed as the route keys them.
+    fn route() -> Vec<(String, ConfigurationIdentity)> {
+        vec![
+            ("lib/home.c".into(), identity("lib/home.c", "cc -c home.c")),
+            (
+                "lib/caller.c".into(),
+                identity("lib/caller.c", "cc -c caller.c"),
+            ),
+            (
+                "lib/other.c".into(),
+                identity("lib/other.c", "cc -c other.c"),
+            ),
+            ("lib/amb.c".into(), identity("lib/amb.c", "cc -c amb.c")),
+            (
+                "lib/amb.c".into(),
+                identity("lib/amb.c", "cc -fPIC -c amb.c"),
+            ),
+            (
+                "lib/elsewhere.c".into(),
+                identity("lib/elsewhere.c", "cc -DLIBEVENT -c elsewhere.c"),
+            ),
+        ]
+    }
+
+    /// One symbol record as `prepare --link` writes it.
+    #[allow(clippy::too_many_arguments)]
+    fn symbol(
+        name: &str,
+        configuration: Option<usize>,
+        defined_in: &str,
+        binding: &str,
+        visibility: &str,
+        definitions: usize,
+        relocations: u64,
+        reason: Option<&str>,
+    ) -> Value {
+        serde_json::json!({
+            "name": name,
+            "kind": "function",
+            "definition": {
+                "file": "x.o", "in": defined_in, "input": 0, "configuration": configuration,
+                "binding": binding, "visibility": visibility, "type": "function",
+            },
+            "definitions": (0..definitions).map(|id| serde_json::json!({"input": id, "binding": binding})).collect::<Vec<_>>(),
+            "referenced_by": [1],
+            "executable": {
+                "entries": [], "in_definer_text": defined_in == "executable",
+                "exported": false, "dynamic_relocations": relocations,
+            },
+            "home_unit": Value::Null,
+            "decision": if reason.is_some() { "refused" } else { "derived" },
+            "reason": reason,
+            "detail": "",
+        })
+    }
+
+    fn strong(name: &str, configuration: usize) -> Value {
+        symbol(
+            name,
+            Some(configuration),
+            "executable",
+            "global",
+            "default",
+            1,
+            0,
+            None,
+        )
+    }
+
+    fn artifact(symbols: Vec<Value>) -> ArtifactFixture {
+        let dir = std::env::temp_dir().join(format!(
+            "quirin-link-standing-{}-{}",
+            std::process::id(),
+            qcore_schemas::sha256_hex(format!("{:?}", std::time::Instant::now()).as_bytes())
+        ));
+        fs::create_dir_all(&dir).unwrap();
+        let file = |name: &str, body: &[u8]| {
+            fs::write(dir.join(name), body).unwrap();
+            (
+                dir.join(name).display().to_string(),
+                qcore_schemas::sha256_hex(body),
+            )
+        };
+        let (executable, executable_sha256) = file("fluent-bit", b"executable");
+        let (link_txt, link_txt_sha256) = file("link.txt", b"clang++ -o fluent-bit home.o");
+        let (map, map_sha256) = file("fluent-bit.map", b"map");
+        let (driver, driver_sha256) = file("clang", b"driver");
+        let (linker, linker_sha256) = file("ld", b"linker");
+        let (_, object_sha256) = file("home.o", b"object");
+        let database = b"[]";
+        let database_sha256 = qcore_schemas::sha256_hex(database);
+        let artifact = serde_json::json!({
+            "schema": crate::link_resolution::ARTIFACT_SCHEMA,
+            "executable": {"path": executable, "sha256": executable_sha256,
+                "image": {"is_executable": true}},
+            "link": {"link_txt": link_txt, "link_txt_sha256": link_txt_sha256,
+                "map": map, "map_sha256": map_sha256, "directory": dir},
+            "toolchain": {
+                "driver": {"path": driver, "resolved": driver, "sha256": driver_sha256},
+                "linker": {"path": linker, "resolved": linker, "sha256": linker_sha256},
+            },
+            "compile_database": {"path": "compile_commands.json", "sha256": database_sha256},
+            "inputs": [{"id": 0, "label": "home.o", "sha256": object_sha256, "configurations": [0]}],
+            "configurations": configurations().iter().enumerate().map(|(id, (identity, linked))| serde_json::json!({
+                "id": id, "file": identity.file, "directory": identity.directory,
+                "command_sha256": identity.command_sha256, "linked": linked,
+                "reproduction": if *linked { serde_json::json!("equal") } else { Value::Null },
+            })).collect::<Vec<_>>(),
+            "symbols": symbols,
+        });
+        let path = dir.join("link-resolution.json");
+        fs::write(&path, serde_json::to_vec_pretty(&artifact).unwrap()).unwrap();
+        ArtifactFixture {
+            dir,
+            path,
+            database_sha256,
+        }
+    }
+
+    /// Every home-level condition: one strong default-visibility home is
+    /// derived under the route's own key; each other symbol is refused by
+    /// the general condition it fails, including a home whose analysed
+    /// configuration is not the linked one.
+    #[test]
+    fn a_derived_resolution_decides_every_home_condition() {
+        let fixture = artifact(vec![
+            strong("callee", 0),
+            symbol(
+                "shared",
+                None,
+                "shared_object",
+                "global",
+                "default",
+                0,
+                1,
+                Some("defined in a shared object"),
+            ),
+            symbol(
+                "weak_home",
+                Some(0),
+                "executable",
+                "weak",
+                "default",
+                1,
+                0,
+                Some("weak definition"),
+            ),
+            symbol(
+                "hidden_home",
+                Some(0),
+                "executable",
+                "global",
+                "hidden",
+                1,
+                0,
+                None,
+            ),
+            symbol(
+                "twice",
+                Some(0),
+                "executable",
+                "global",
+                "default",
+                2,
+                0,
+                Some("more than one definition among the linked objects"),
+            ),
+            symbol(
+                "interposed",
+                Some(0),
+                "executable",
+                "global",
+                "default",
+                1,
+                2,
+                Some("the executable resolves it at run time (dynamic relocation)"),
+            ),
+            symbol(
+                "unreproduced",
+                Some(0),
+                "executable",
+                "global",
+                "default",
+                1,
+                0,
+                Some("home object is not reproduced by its compile database entry"),
+            ),
+            strong("in_unlinked", 2),
+            symbol(
+                "ambiguous",
+                Some(3),
+                "executable",
+                "global",
+                "default",
+                1,
+                0,
+                Some("home unit key names more than one route configuration"),
+            ),
+            symbol(
+                "elsewhere",
+                Some(4),
+                "executable",
+                "global",
+                "default",
+                1,
+                0,
+                Some("home configuration is not a unit of the current route"),
+            ),
+        ]);
+        let resolution = DerivedResolution::load(&fixture.path).unwrap();
+        resolution.verify(&fixture.database_sha256).unwrap();
+        let derived = resolution.derive(&route());
+        assert_eq!(
+            derived.map.requested(),
+            BTreeSet::from(["callee".to_owned()])
+        );
+        assert_eq!(derived.map.home_for("callee"), Some("lib/home.c"));
+        assert_eq!(derived.map.digest, resolution.artifact_sha256);
+        assert!(!derived.map.premise.contains("not established"));
+        assert_eq!(
+            derived.refused,
+            BTreeMap::from([
+                (Refusal::NotInExecutable, 1),
+                (Refusal::NotStrong, 1),
+                (Refusal::NotDefaultVisibility, 1),
+                (Refusal::Duplicate, 1),
+                (Refusal::DynamicRelocation, 1),
+                (Refusal::FactsRefused, 1),
+                (Refusal::HomeUnlinked, 1),
+                (Refusal::NotRouteUnit, 1),
+                (Refusal::AmbiguousKey, 1),
+            ])
+        );
+        assert!(
+            derived
+                .standing
+                .caller_linked(&identity("lib/caller.c", "cc -c caller.c"))
+        );
+        assert!(
+            !derived
+                .standing
+                .caller_linked(&identity("lib/other.c", "cc -c other.c"))
+        );
+        // The analysed configuration of a file that differs from the linked
+        // one is not linked, as a caller either.
+        assert!(
+            !derived
+                .standing
+                .caller_linked(&identity("lib/elsewhere.c", "cc -DLIBEVENT -c elsewhere.c"))
+        );
+        assert!(derived.standing.record("callee").is_some());
+    }
+
+    /// The run-level conditions: another database, or a bound file whose
+    /// bytes changed, refuses the whole artifact.
+    #[test]
+    fn a_changed_database_or_bound_file_refuses_the_artifact() {
+        let fixture = artifact(vec![strong("callee", 0)]);
+        let resolution = DerivedResolution::load(&fixture.path).unwrap();
+        let (refusal, _) = resolution.verify(&"0".repeat(64)).unwrap_err();
+        assert_eq!(refusal, Refusal::DatabaseDiffers);
+        fs::write(fixture.dir.join("home.o"), b"rebuilt").unwrap();
+        let (refusal, detail) = resolution.verify(&fixture.database_sha256).unwrap_err();
+        assert_eq!(refusal, Refusal::DigestUnverified);
+        assert!(detail.starts_with("home.o"), "{detail}");
+        fs::write(fixture.dir.join("home.o"), b"object").unwrap();
+        resolution.verify(&fixture.database_sha256).unwrap();
+        fs::write(fixture.dir.join("fluent-bit"), b"relinked").unwrap();
+        let (refusal, _) = resolution.verify(&fixture.database_sha256).unwrap_err();
+        assert_eq!(refusal, Refusal::DigestUnverified);
+    }
+
+    fn prepared(source: &str) -> qcore_c_gateway::legacy_c::PreparedTranslationUnit {
+        prepare_translation_unit(&C11TranslationUnit {
+            source,
+            function_scope: LegacyFunctionScope::MainSourceDefinitions,
+            ..Default::default()
+        })
+    }
+
+    /// The derived homes of `names`, all in `lib/home.c`, exported from
+    /// `home` and selected under the derived map.
+    fn derived_homes(
+        fixture: &ArtifactFixture,
+        home: &str,
+    ) -> (
+        Derived,
+        ResourceContracts,
+        Vec<qcore_c_gateway::legacy_c::CrossUnitHomeEvidence>,
+    ) {
+        let base = ResourceContracts::default();
+        let resolution = DerivedResolution::load(&fixture.path).unwrap();
+        resolution.verify(&fixture.database_sha256).unwrap();
+        let derived = resolution.derive(&route());
+        let home = prepared(home);
+        let names = home.inventory().definitions().to_vec();
+        let exports =
+            export_cross_unit_homes(&home, &base, &derived.map.requested(), &derived.map.digest)
+                .expect("export");
+        let (environment, homes) = derived.map.select(
+            exports
+                .into_iter()
+                .map(|export| ("lib/home.c".to_owned(), export)),
+            names
+                .into_iter()
+                .map(|name| ("lib/home.c".to_owned(), name)),
+            &base,
+        );
+        (derived, environment, homes)
+    }
+
+    fn analyse(
+        caller: &qcore_c_gateway::legacy_c::PreparedTranslationUnit,
+        derived: &Derived,
+        linked: bool,
+        environment: &ResourceContracts,
+        homes: &[qcore_c_gateway::legacy_c::CrossUnitHomeEvidence],
+    ) -> (
+        qcore_c_gateway::legacy_c::UnrestrictedLegacyResult,
+        Vec<(String, String)>,
+    ) {
+        use qcore_c_gateway::legacy_c::{
+            analyze_prepared_translation_unit_with_cross_unit, cross_unit_for_caller,
+        };
+        let scoped =
+            cross_unit_for_caller(caller.preprocessed_source().unwrap(), environment, homes);
+        let (scoped, refusals) = derived.standing.admit(scoped, linked, caller);
+        let result = analyze_prepared_translation_unit_with_cross_unit(
+            caller,
+            "caller",
+            &scoped.environment,
+            &scoped.homes,
+        )
+        .unwrap();
+        (result, refusals)
+    }
+
+    const RECORD_HOME: &str =
+        "struct s { int a; };\ntypedef struct s s_t;\nvoid callee(s_t *p) { return; }\n";
+
+    /// The derived home is adopted for a linked caller whose declaration in
+    /// force has the home definition's type (a typedef spelling and an equal
+    /// record layout): the caller is Safe and its certificate replays the
+    /// home. An unlinked caller, an unequal call type, an unequal record
+    /// layout and a missing declaration each refuse the home: the call stays
+    /// uncontracted and the row Unknown.
+    #[test]
+    fn a_derived_home_is_held_only_by_a_linked_caller_with_an_equal_type() {
+        use qcore_c_gateway::legacy_c::{
+            UnrestrictedLegacyResult, check_legacy_safety_certificate,
+        };
+        if qcore_c_gateway::clang_command().is_err() {
+            return;
+        }
+        let fixture = artifact(vec![strong("callee", 0)]);
+        let (derived, environment, homes) = derived_homes(&fixture, RECORD_HOME);
+        assert_eq!(homes.len(), 1, "the home was not exported");
+        let caller = prepared(
+            "struct s { int a; };\nvoid callee(struct s *);\nvoid caller(struct s *p) { callee(p); }\n",
+        );
+        let (result, refusals) = analyse(&caller, &derived, true, &environment, &homes);
+        assert!(refusals.is_empty(), "{refusals:?}");
+        let UnrestrictedLegacyResult::Safe(certificate) = result else {
+            panic!("the derived import was lost: {result:?}");
+        };
+        assert_eq!(certificate.cross_unit_homes.len(), 1);
+        check_legacy_safety_certificate(&certificate).unwrap();
+
+        let unknown = |result: &UnrestrictedLegacyResult| {
+            matches!(result, UnrestrictedLegacyResult::Unknown { .. })
+        };
+        let (result, refusals) = analyse(&caller, &derived, false, &environment, &homes);
+        assert!(unknown(&result), "{result:?}");
+        assert_eq!(
+            refusals,
+            [(
+                "callee".to_owned(),
+                Refusal::CallerUnlinked.phrase().to_owned()
+            )]
+        );
+
+        let mismatched = prepared(
+            "struct s { int a; };\nvoid callee(long *);\nvoid caller(struct s *p) { callee((long *)p); }\n",
+        );
+        let (result, refusals) = analyse(&mismatched, &derived, true, &environment, &homes);
+        assert!(unknown(&result), "{result:?}");
+        assert!(
+            refusals[0].1.starts_with(Refusal::TypeDiffers.phrase()),
+            "{refusals:?}"
+        );
+
+        let relaid = prepared(
+            "struct s { long a; long b; };\nvoid callee(struct s *);\nvoid caller(struct s *p) { callee(p); }\n",
+        );
+        let (result, refusals) = analyse(&relaid, &derived, true, &environment, &homes);
+        assert!(unknown(&result), "{result:?}");
+        assert!(refusals[0].1.contains("different layouts"), "{refusals:?}");
+
+        let block_scope = prepared(
+            "struct s { int a; };\nvoid caller(struct s *p) { void callee(struct s *); callee(p); }\n",
+        );
+        let (result, refusals) = analyse(&block_scope, &derived, true, &environment, &homes);
+        assert!(unknown(&result), "{result:?}");
+        assert!(
+            refusals[0].1.starts_with(Refusal::TypeUnavailable.phrase()),
+            "{refusals:?}"
+        );
+    }
+
+    /// Rule 4c's replay budget is unchanged under a derived resolution: a
+    /// caller reaching more derived homes than the budget holds none, and
+    /// rule 40 refuses nothing further.
+    #[test]
+    fn a_caller_over_the_budget_holds_no_derived_home() {
+        use qcore_c_gateway::legacy_c::{
+            CROSS_UNIT_REPLAY_BUDGET_PER_UNIT, UnrestrictedLegacyResult,
+        };
+        if qcore_c_gateway::clang_command().is_err() {
+            return;
+        }
+        let count = CROSS_UNIT_REPLAY_BUDGET_PER_UNIT + 1;
+        let names = (0..count)
+            .map(|index| format!("f{index}"))
+            .collect::<Vec<_>>();
+        let fixture = artifact(names.iter().map(|name| strong(name, 0)).collect());
+        let home = names
+            .iter()
+            .map(|name| format!("void {name}(void) {{ return; }}\n"))
+            .collect::<String>();
+        let (derived, environment, homes) = derived_homes(&fixture, &home);
+        assert_eq!(homes.len(), count);
+        let calls = names.iter().map(String::as_str).collect::<Vec<_>>();
+        let caller = caller_unit(&calls);
+        let scoped = qcore_c_gateway::legacy_c::cross_unit_for_caller(
+            caller.preprocessed_source().unwrap(),
+            &environment,
+            &homes,
+        );
+        assert!(scoped.withheld.is_some());
+        let (result, refusals) = analyse(&caller, &derived, true, &environment, &homes);
+        assert!(refusals.is_empty(), "{refusals:?}");
+        assert!(
+            matches!(result, UnrestrictedLegacyResult::Unknown { .. }),
+            "{result:?}"
+        );
     }
 }

@@ -1,0 +1,25 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "OUT-PARAMETER-SCALAR-FRAME-PREMISE",
+  "base": "bb9412c2a",
+  "measured_tip": "aa3999333",
+  "increment_paragraph": "**OUT-PARAMETER-SCALAR-FRAME-PREMISE** (follow-up of OUT-PARAMETER-BODY-SUMMARY, user decision 2026-11-07 \"A: effective-type\"; [report](../../reports/out-parameter-scalar-frame-premise/README.md)) adds rule 11r(7): when rule 11r(4)/(6)'s per-value inference of an undeclared function, or an inferred relation's per-class row, publishes nothing, it runs again with the listed premise `effective-type:` (C11 6.5p7) available, so a typed scalar store whose line's one write is a non-character integer or enumeration store through another out formal spares the pointer out slots (`T **` formals) from its refused-write frame, in a unit whose build does not pass `-fno-strict-aliasing`. The premise is carried in `rule_obligations` (folded into the verdict contract's assumptions) by the function's own row and by every in-unit row reaching it. Character, floating, `volatile`, `_Atomic` and unread lvalue types, a line with another write, calls (`memcpy` and kin), declared dispositions and `-fno-strict-aliasing` units keep the refusal. Flag census: no Fluent Bit unit of the 046accf6 or measured-route databases passes `-fno-strict-aliasing`; the Monkey route passes it to its 27 bundled libevent sources, where the premise is withheld. Lean `QCore.OutParameterScalarFramePremise`; 11 fixtures. Predicted corpus `cio_utils_read_file`, `cio_file_content_copy` and `cio_memfs_content_copy` Unknown -> Safe.",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "OUT-PARAMETER-SCALAR-FRAME-PREMISE",
+      "operation": "retire",
+      "why": "DISCHARGED (OUT-PARAMETER-SCALAR-FRAME-PREMISE, 2026-11-07, base bb9412c2a, tip aa3999333): the user chose option A (\"A: effective-type\"); rule 11r(7) keeps a pointer out slot across a non-character integer or enumeration store through a second out formal under the listed `effective-type:` premise (C11 6.5p7), carried in every resting row's assumptions, withheld in `-fno-strict-aliasing` units; character stores, calls and every other refusal of rule 11r(6) stand. Fixtures tests/out_parameter_scalar_frame_premise.rs (11), Lean QCore.OutParameterScalarFramePremise; the three chunkio rows are predicted Safe, measured by the integrator.",
+      "source": "docs/reports/out-parameter-scalar-frame-premise/README.md"
+    },
+    {
+      "id": "OUT-SLOT-CALL-WRITE-ALIASING",
+      "operation": "register",
+      "title": "A call writing through a second out formal does not poison a pointer out slot",
+      "text": "Found by OUT-PARAMETER-SCALAR-FRAME-PREMISE: `int r(char **buf, size_t *size) { … *buf = data; memcpy(size, &n, sizeof n); return 0; }` validates its out slot (rules 11r(6) and W4 alike) with no premise, because a contracted call with `Borrowed` positions writes no binding, so nothing poisons `*buf` though `memcpy`'s character-typed copy may alias the caller's pointer object (fixture a_copy_into_the_second_formal_is_not_read_under_the_premise pins the current behaviour; the effective-type premise is never consulted for it). Pre-existing and wider than the premise: any `Borrowed` call actual pointing at writable memory. DISCHARGE: decide, with a census of the bodies that rely on it, whether a call taking a pointer to writable memory must poison the out slots it may reach (memcpy, memmove, memset and every borrowed-pointer callee), and implement that refusal with fixtures and Lean parity, or record the reading as a stated premise.",
+      "source": "docs/reports/out-parameter-scalar-frame-premise/README.md",
+      "recorded_by": "OUT-PARAMETER-SCALAR-FRAME-PREMISE"
+    }
+  ],
+  "profiles": []
+}

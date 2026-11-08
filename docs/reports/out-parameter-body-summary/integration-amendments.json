@@ -1,0 +1,51 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "OUT-PARAMETER-BODY-SUMMARY",
+  "base": "532e03c97",
+  "measured_tip": "41d1b48a5",
+  "increment_paragraph": "**OUT-PARAMETER-BODY-SUMMARY** (round 26 F; [report](../../reports/out-parameter-body-summary/README.md)) censuses the `store through *X without an out-parameter contract` leaves of the user's `current` run (127 functions, 238 sites, 7 sole-blocked; corpus 126 rows) and lands two body readings. Rule 10k(5): a `*B = V` the importer named for an out slot is read by the W46 AST statement reader after every lexical route declined and replaced only by its scalar store, so a typedef-defined enumeration pointee (`*errp = RD_KAFKA_RESP_ERR__X`, kept `Opaque` by the lexical reader) is a frame write with its base's dereference obligation; pointer stores keep the refusal. Rule 11r(6): rule 11r(4)'s per-value body may read a slot left unwritten at every exit of its class as `resource_borrowed` beside `resource_out` in another class, validated with the slot sanctioned and `Unwritten` demanded at every exit (`observations_match_class`, then rule 4b), and rule 12s(2)'s row analyses each class under that analysis contract. Lean `QCore.OutParameterBodySummary`; 13 fixtures. Predicted corpus `rd_kafka_message_timestamp` and `rd_kafka_toppar_get_avail` Unknown -> Safe. The chunkio fresh-on-0 / unwritten-on--1 shape stays refused because a later `*size = n` through a second formal may alias the slot; the premise that would discharge it is put to the user (OUT-PARAMETER-SCALAR-FRAME-PREMISE).",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "OUT-PARAMETER-SCALAR-FRAME-PREMISE",
+      "operation": "register",
+      "title": "A pointer out slot is poisoned by a later non-character scalar store through a second formal",
+      "text": "Found by OUT-PARAMETER-BODY-SUMMARY: `int f(…, char **buf, size_t *size) { … *buf = data; *size = n; return 0; }` (cio_utils_read_file, cio_file_content_copy, cio_memfs_content_copy, all sole-blocked on the corpus and on current) does not validate rule 11r(6)'s success class, because the scalar store's frame may write the caller's pointer object `*buf` designates unless the two formals are known not to alias, leaving the slot Ambiguous at the exit. Fail-closed keeps it refused (the brief: aliasing between out formals keeps the site refused). Options put to the user: (A, recommended) keep a pointer-typed out slot across a non-character scalar store through another formal under the listed premise `effective-type:` (C11 6.5p7), as rule 14m does for the null property, a character store still poisoning; (B) a caller-side precondition that the out formals designate distinct objects, discharged at `&local` actuals (176 of 314 caller actuals), a new clause with Lean parity, the callee's own row staying Unknown; (C) keep the refusal. DISCHARGE: the user's choice, implemented with fixtures and Lean parity, measured (A predicts the three chunkio rows Unknown -> Safe).",
+      "source": "docs/reports/out-parameter-body-summary/README.md",
+      "recorded_by": "OUT-PARAMETER-BODY-SUMMARY"
+    },
+    {
+      "id": "OUT-PARAMETER-ENUM-RESULT-CLASSES",
+      "operation": "register",
+      "title": "Rule 11r(4)'s exit-specific reading admits only an int result with literal returns",
+      "text": "OUT-PARAMETER-BODY-SUMMARY's census: of the 127 functions storing through an uncontracted out slot, 26 return only integer literals and so reach rule 11r(4) and 11r(6); 40 return `rd_kafka_resp_err_t` (enumerator returns such as RD_KAFKA_RESP_ERR_NO_ERROR, not literals after preprocessing) and 4 `rd_kafka_error_t *`. DISCHARGE: an exit-specific reading over an enumeration-typed result whose every return is an enumerator of that type (classes keyed by the enumerator's value, the consumer's decided test extended to enumerator constants), with Lean parity, or a record that these stay refused.",
+      "source": "docs/reports/out-parameter-body-summary/README.md",
+      "recorded_by": "OUT-PARAMETER-BODY-SUMMARY"
+    },
+    {
+      "id": "OUT-PARAMETER-BORROWED-SLOT",
+      "operation": "register",
+      "title": "No body-derived summary for an out slot that receives a borrowed pointer",
+      "text": "OUT-PARAMETER-BODY-SUMMARY's census: 10 sites in 8 functions store a borrowed interior or list element through a formal out slot (mk_vhost_get, sole-blocked: `*vhost = entry_host; *alias = entry_alias;`), 4 sites in 3 functions a string literal, and 7 sites a local with no assignment seen. W4 infers only fresh `Out` slots; a derived out slot (rule 12z, C04.16) is declared, never inferred. DISCHARGE: an inferred borrowed out slot (the parent's extent, ended by the parent's release or mutation, as rule 12z's declared form), validated on the body with Lean parity, or a record that these stay refused.",
+      "source": "docs/reports/out-parameter-body-summary/README.md",
+      "recorded_by": "OUT-PARAMETER-BODY-SUMMARY"
+    },
+    {
+      "id": "OUT-PARAMETER-NULLABLE-SITE",
+      "operation": "register",
+      "title": "An out slot holding a possibly-null fresh site yields no summary",
+      "text": "OUT-PARAMETER-BODY-SUMMARY: rd_kafka_consumer_group_metadata_write (sole-blocked) stores an unchecked `rd_malloc` result (libc malloc, nullable) through `*bufferp` on its one exit; W4's `out_mode` claims `Out(nullable)` only for an exit that stores the null constant and refuses a possibly-null site. DISCHARGE: decide whether `Out(nullable)` may describe a possibly-null fresh site (the caller then null-tests the slot before use), with fixtures and Lean parity, or record that it stays refused.",
+      "source": "docs/reports/out-parameter-body-summary/README.md",
+      "recorded_by": "OUT-PARAMETER-BODY-SUMMARY"
+    },
+    {
+      "id": "OUT-SLOT-SCALAR-CALL-VALUE",
+      "operation": "register",
+      "title": "A scalar store through a macro-local pointer whose value is a call stays an out-slot refusal",
+      "text": "OUT-PARAMETER-BODY-SUMMARY's census: 50 sites in 7 functions (rd_kafka_parse_Metadata0, rd_kafka_handle_Produce_parse, rd_kafka_fetch_reply_handle and others) are librdkafka's `rd_kafka_buf_read_*` macros, `int64_t *_vp = dstptr; *_vp = be64toh(_v);`: the value is a call, which no typed statement route reads, so rule 10k(5) does not reach them. DISCHARGE: a scalar store whose value is one call with a scalar result and a declared or validated borrowed contract, read with the call's own obligations, or a record that these stay refused.",
+      "source": "docs/reports/out-parameter-body-summary/README.md",
+      "recorded_by": "OUT-PARAMETER-BODY-SUMMARY"
+    }
+  ],
+  "profiles": []
+}

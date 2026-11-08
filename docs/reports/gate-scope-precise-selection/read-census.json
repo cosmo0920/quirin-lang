@@ -1,5 +1,5 @@
 {
-"commit": "a9de4e8be126940ca9eaf27cab70ae03e52f6278",
+"commit": "682c7c84330935a0c712d5d0167983b06175fb5d",
 "excluded": [
 "target/",
 ".git/",
@@ -57,38 +57,38 @@
 ],
 "exit": 0,
 "ls_files": [],
-"missing_count": 22,
+"missing_count": 26,
 "ok": true,
 "probed_count": 6,
 "read": [
-"crates/qcore-audit/private/audit-retained-products/3359962-0",
-"crates/qcore-audit/private/audit-retained-products/3359962-0/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3359962-0/product.qc",
-"crates/qcore-audit/private/audit-retained-products/3359962-1",
-"crates/qcore-audit/private/audit-retained-products/3359962-1/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3359962-1/product.qc",
-"crates/qcore-audit/private/audit-retained-products/3359962-2",
-"crates/qcore-audit/private/audit-retained-products/3359962-2/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3359962-2/product.qc",
-"crates/qcore-audit/private/audit-retained-products/3359962-3",
-"crates/qcore-audit/private/audit-retained-products/3359962-3/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3359962-3/product.qc",
-"crates/qcore-audit/private/audit-retained-products/3359962-4",
-"crates/qcore-audit/private/audit-retained-products/3359962-4/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3359962-4/product.qc",
-"crates/qcore-audit/private/audit-retained-products/3359962-5",
-"crates/qcore-audit/private/audit-retained-products/3359962-5/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3359962-5/product.qc",
-"crates/qcore-audit/private/audit-retained-products/3359962-6",
-"crates/qcore-audit/private/audit-retained-products/3359962-6/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3359962-7",
-"crates/qcore-audit/private/audit-retained-products/3359962-7/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3359962-8",
-"crates/qcore-audit/private/audit-retained-products/3359962-8/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3359962-8/product.qc",
-"crates/qcore-audit/private/audit-retained-products/3359962-9",
-"crates/qcore-audit/private/audit-retained-products/3359962-9/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3359962-9/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1097300-0",
+"crates/qcore-audit/private/audit-retained-products/1097300-0/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1097300-0/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1097300-1",
+"crates/qcore-audit/private/audit-retained-products/1097300-1/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1097300-1/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1097300-2",
+"crates/qcore-audit/private/audit-retained-products/1097300-2/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1097300-2/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1097300-3",
+"crates/qcore-audit/private/audit-retained-products/1097300-3/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1097300-3/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1097300-4",
+"crates/qcore-audit/private/audit-retained-products/1097300-4/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1097300-4/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1097300-5",
+"crates/qcore-audit/private/audit-retained-products/1097300-5/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1097300-6",
+"crates/qcore-audit/private/audit-retained-products/1097300-6/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1097300-6/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1097300-7",
+"crates/qcore-audit/private/audit-retained-products/1097300-7/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1097300-7/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1097300-8",
+"crates/qcore-audit/private/audit-retained-products/1097300-8/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1097300-9",
+"crates/qcore-audit/private/audit-retained-products/1097300-9/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1097300-9/product.qc",
 "crates/qcore-audit/tests/fixtures/native_platform_probe.c",
 "docs/cycles/CYCLE_18_LIBEVENT_VALIDATION.md",
 "providers/contract-load-path.json",
@@ -245,7 +245,7 @@
 "providers/quirin-provider-shared/contracts/library/source_projection.qv",
 "third_party/libevent/.git"
 ],
-"seconds": 4.0
+"seconds": 3.2
 },
 "qcore-audit::test::bounds_pin_hold": {
 "dirs": [],
@@ -255,7 +255,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 5.1
+"seconds": 2.7
 },
 "qcore-audit::test::bounds_transport": {
 "dirs": [],
@@ -265,7 +265,7 @@
 "ok": true,
 "probed_count": 4,
 "read": [],
-"seconds": 7.5
+"seconds": 2.6
 },
 "qcore-audit::test::build_excluded_unit": {
 "dirs": [],
@@ -275,7 +275,17 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.6
+"seconds": 0.8
+},
+"qcore-audit::test::callback_member_non_c_units": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 2,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 1.5
 },
 "qcore-audit::test::canonical_paths": {
 "dirs": [],
@@ -285,7 +295,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 5.0
+"seconds": 1.9
 },
 "qcore-audit::test::certificate_context": {
 "dirs": [],
@@ -295,7 +305,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.3
+"seconds": 0.4
 },
 "qcore-audit::test::cg30_target_identity": {
 "dirs": [],
@@ -305,7 +315,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.5
+"seconds": 0.2
 },
 "qcore-audit::test::checkpoint_cli": {
 "dirs": [],
@@ -315,7 +325,7 @@
 "ok": true,
 "probed_count": 2,
 "read": [],
-"seconds": 19.3
+"seconds": 9.4
 },
 "qcore-audit::test::clang_gap_flags": {
 "dirs": [],
@@ -325,7 +335,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-audit::test::compile_options": {
 "dirs": [],
@@ -335,7 +345,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.8
+"seconds": 1.8
 },
 "qcore-audit::test::compile_task_identity": {
 "dirs": [],
@@ -345,7 +355,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.5
+"seconds": 1.1
 },
 "qcore-audit::test::configured_cli": {
 "dirs": [],
@@ -355,7 +365,7 @@
 "ok": true,
 "probed_count": 3,
 "read": [],
-"seconds": 6.9
+"seconds": 3.0
 },
 "qcore-audit::test::contract_dependencies_report": {
 "dirs": [],
@@ -365,7 +375,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.7
+"seconds": 0.6
 },
 "qcore-audit::test::contract_inherit_identity": {
 "dirs": [],
@@ -375,7 +385,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.2
 },
 "qcore-audit::test::contract_revision_audit": {
 "dirs": [],
@@ -389,7 +399,7 @@
 "crates/qcore-audit/tests/fixtures/revision_mode/queue.c",
 "crates/qcore-audit/tests/fixtures/revision_mode/queue.qv"
 ],
-"seconds": 15.6
+"seconds": 8.5
 },
 "qcore-audit::test::contract_revision_identities": {
 "dirs": [],
@@ -402,7 +412,7 @@
 "crates/qcore-audit/tests/fixtures/revision_mode/queue.c",
 "crates/qcore-audit/tests/fixtures/revision_mode/queue.qv"
 ],
-"seconds": 9.7
+"seconds": 5.3
 },
 "qcore-audit::test::contract_supersession": {
 "dirs": [],
@@ -412,7 +422,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-audit::test::contract_tip_mode": {
 "dirs": [],
@@ -425,7 +435,7 @@
 "crates/qcore-audit/tests/fixtures/revision_mode/queue.c",
 "crates/qcore-audit/tests/fixtures/revision_mode/queue.qv"
 ],
-"seconds": 12.8
+"seconds": 6.6
 },
 "qcore-audit::test::current_cli": {
 "dirs": [
@@ -461,42 +471,42 @@
 "probed_count": 4,
 "read": [
 "contract/profiles/fluent-bit/library-providers.json",
-"crates/qcore-audit/private/audit-retained-products/3363910-0",
-"crates/qcore-audit/private/audit-retained-products/3363910-0/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3363910-0/product.qc",
-"crates/qcore-audit/private/audit-retained-products/3363910-1",
-"crates/qcore-audit/private/audit-retained-products/3363910-1/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3363910-1/product.qc",
-"crates/qcore-audit/private/audit-retained-products/3363910-2",
-"crates/qcore-audit/private/audit-retained-products/3363910-2/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3363910-2/product.qc",
-"crates/qcore-audit/private/audit-retained-products/3363910-3",
-"crates/qcore-audit/private/audit-retained-products/3363910-3/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3363910-3/product.qc",
-"crates/qcore-audit/private/audit-retained-products/3363910-4",
-"crates/qcore-audit/private/audit-retained-products/3363910-4/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3363910-4/product.qc",
-"crates/qcore-audit/private/audit-retained-products/3363910-5",
-"crates/qcore-audit/private/audit-retained-products/3363910-5/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3363910-5/product.qc",
-"crates/qcore-audit/private/audit-retained-products/3369976-0",
-"crates/qcore-audit/private/audit-retained-products/3369976-0/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3369976-0/product.qc",
-"crates/qcore-audit/private/audit-retained-products/3369976-1",
-"crates/qcore-audit/private/audit-retained-products/3369976-1/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3369976-1/product.qc",
-"crates/qcore-audit/private/audit-retained-products/3369976-2",
-"crates/qcore-audit/private/audit-retained-products/3369976-2/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3369976-2/product.qc",
-"crates/qcore-audit/private/audit-retained-products/3369976-3",
-"crates/qcore-audit/private/audit-retained-products/3369976-3/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3369976-3/product.qc",
-"crates/qcore-audit/private/audit-retained-products/3369976-4",
-"crates/qcore-audit/private/audit-retained-products/3369976-4/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3369976-4/product.qc",
-"crates/qcore-audit/private/audit-retained-products/3369976-5",
-"crates/qcore-audit/private/audit-retained-products/3369976-5/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3369976-5/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1103106-0",
+"crates/qcore-audit/private/audit-retained-products/1103106-0/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1103106-0/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1103106-1",
+"crates/qcore-audit/private/audit-retained-products/1103106-1/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1103106-1/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1103106-2",
+"crates/qcore-audit/private/audit-retained-products/1103106-2/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1103106-2/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1103106-3",
+"crates/qcore-audit/private/audit-retained-products/1103106-3/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1103106-3/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1103106-4",
+"crates/qcore-audit/private/audit-retained-products/1103106-4/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1103106-4/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1103106-5",
+"crates/qcore-audit/private/audit-retained-products/1103106-5/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1103106-5/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1106804-0",
+"crates/qcore-audit/private/audit-retained-products/1106804-0/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1106804-0/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1106804-1",
+"crates/qcore-audit/private/audit-retained-products/1106804-1/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1106804-1/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1106804-2",
+"crates/qcore-audit/private/audit-retained-products/1106804-2/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1106804-2/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1106804-3",
+"crates/qcore-audit/private/audit-retained-products/1106804-3/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1106804-3/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1106804-4",
+"crates/qcore-audit/private/audit-retained-products/1106804-4/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1106804-4/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1106804-5",
+"crates/qcore-audit/private/audit-retained-products/1106804-5/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1106804-5/product.qc",
 "providers/contract-load-path.json",
 "providers/qcore-provider-chunkio/contracts/chunkio/chunk_destructor.qv",
 "providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qv",
@@ -649,7 +659,7 @@
 "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
 "providers/quirin-provider-shared/contracts/library/source_projection.qv"
 ],
-"seconds": 30.5
+"seconds": 19.3
 },
 "qcore-audit::test::cycle19_current_command": {
 "dirs": [
@@ -692,51 +702,51 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json",
 "contract/profiles/fluent-bit/source-contracts.json",
-"crates/qcore-audit/private/audit-retained-products/3365290-0",
-"crates/qcore-audit/private/audit-retained-products/3365290-0/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3365290-0/product.qc",
-"crates/qcore-audit/private/audit-retained-products/3365290-1",
-"crates/qcore-audit/private/audit-retained-products/3365290-1/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3365290-1/product.qc",
-"crates/qcore-audit/private/audit-retained-products/3365290-2",
-"crates/qcore-audit/private/audit-retained-products/3365290-2/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3365290-2/product.qc",
-"crates/qcore-audit/private/audit-retained-products/3365290-3",
-"crates/qcore-audit/private/audit-retained-products/3365290-3/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3365290-3/product.qc",
-"crates/qcore-audit/private/audit-retained-products/3365290-4",
-"crates/qcore-audit/private/audit-retained-products/3365290-4/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3365290-4/product.qc",
-"crates/qcore-audit/private/audit-retained-products/3409681-0",
-"crates/qcore-audit/private/audit-retained-products/3409681-0/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3409681-0/product.qc",
-"crates/qcore-audit/private/audit-retained-products/3409681-1",
-"crates/qcore-audit/private/audit-retained-products/3409681-1/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3409681-1/product.qc",
-"crates/qcore-audit/private/audit-retained-products/3409681-2",
-"crates/qcore-audit/private/audit-retained-products/3409681-2/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3409681-2/product.qc",
-"crates/qcore-audit/private/audit-retained-products/3409681-3",
-"crates/qcore-audit/private/audit-retained-products/3409681-3/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3409681-3/product.qc",
-"crates/qcore-audit/private/audit-retained-products/3409681-4",
-"crates/qcore-audit/private/audit-retained-products/3409681-4/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3409681-4/product.qc",
-"crates/qcore-audit/private/audit-retained-products/3433565-0",
-"crates/qcore-audit/private/audit-retained-products/3433565-0/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3433565-0/product.qc",
-"crates/qcore-audit/private/audit-retained-products/3433565-1",
-"crates/qcore-audit/private/audit-retained-products/3433565-1/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3433565-1/product.qc",
-"crates/qcore-audit/private/audit-retained-products/3433565-2",
-"crates/qcore-audit/private/audit-retained-products/3433565-2/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3433565-2/product.qc",
-"crates/qcore-audit/private/audit-retained-products/3433565-3",
-"crates/qcore-audit/private/audit-retained-products/3433565-3/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3433565-3/product.qc",
-"crates/qcore-audit/private/audit-retained-products/3433565-4",
-"crates/qcore-audit/private/audit-retained-products/3433565-4/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3433565-4/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1103949-0",
+"crates/qcore-audit/private/audit-retained-products/1103949-0/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1103949-0/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1103949-1",
+"crates/qcore-audit/private/audit-retained-products/1103949-1/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1103949-1/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1103949-2",
+"crates/qcore-audit/private/audit-retained-products/1103949-2/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1103949-2/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1103949-3",
+"crates/qcore-audit/private/audit-retained-products/1103949-3/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1103949-3/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1103949-4",
+"crates/qcore-audit/private/audit-retained-products/1103949-4/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1103949-4/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1126320-0",
+"crates/qcore-audit/private/audit-retained-products/1126320-0/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1126320-0/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1126320-1",
+"crates/qcore-audit/private/audit-retained-products/1126320-1/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1126320-1/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1126320-2",
+"crates/qcore-audit/private/audit-retained-products/1126320-2/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1126320-2/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1126320-3",
+"crates/qcore-audit/private/audit-retained-products/1126320-3/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1126320-3/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1126320-4",
+"crates/qcore-audit/private/audit-retained-products/1126320-4/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1126320-4/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1138775-0",
+"crates/qcore-audit/private/audit-retained-products/1138775-0/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1138775-0/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1138775-1",
+"crates/qcore-audit/private/audit-retained-products/1138775-1/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1138775-1/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1138775-2",
+"crates/qcore-audit/private/audit-retained-products/1138775-2/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1138775-2/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1138775-3",
+"crates/qcore-audit/private/audit-retained-products/1138775-3/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1138775-3/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1138775-4",
+"crates/qcore-audit/private/audit-retained-products/1138775-4/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1138775-4/product.qc",
 "cycle19-resource-contracts.json",
 "providers/contract-load-path.json",
 "providers/qcore-provider-chunkio/contracts.lock",
@@ -900,7 +910,7 @@
 "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
 "providers/quirin-provider-shared/contracts/library/source_projection.qv"
 ],
-"seconds": 375.6
+"seconds": 216.4
 },
 "qcore-audit::test::dependency_graph": {
 "dirs": [
@@ -972,7 +982,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.8
+"seconds": 0.7
 },
 "qcore-audit::test::guarded_contract_pin": {
 "dirs": [],
@@ -986,7 +996,7 @@
 "providers/qcore-provider-librdkafka/contracts.lock",
 "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv"
 ],
-"seconds": 0.1
+"seconds": 0.2
 },
 "qcore-audit::test::hypothesis_firewall": {
 "dirs": [],
@@ -998,6 +1008,16 @@
 "read": [],
 "seconds": 0.0
 },
+"qcore-audit::test::link_standing": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 2,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 3.9
+},
 "qcore-audit::test::member_prepass_routes": {
 "dirs": [],
 "exit": 0,
@@ -1006,7 +1026,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 3.0
+"seconds": 2.0
 },
 "qcore-audit::test::no_build_cli": {
 "dirs": [],
@@ -1016,7 +1036,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 6.5
+"seconds": 3.8
 },
 "qcore-audit::test::observer_compile_flags": {
 "dirs": [],
@@ -1026,7 +1046,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.4
+"seconds": 0.3
 },
 "qcore-audit::test::outer_projection": {
 "dirs": [],
@@ -1036,7 +1056,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 2.2
+"seconds": 1.2
 },
 "qcore-audit::test::pending_review_report": {
 "dirs": [],
@@ -1046,7 +1066,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.8
+"seconds": 0.4
 },
 "qcore-audit::test::pin_regenerate_stamps": {
 "dirs": [],
@@ -1059,17 +1079,17 @@
 "crates/qcore-audit/tests/fixtures/revision_mode/queue.c",
 "crates/qcore-audit/tests/fixtures/revision_mode/queue.qv"
 ],
-"seconds": 1.2
+"seconds": 0.7
 },
 "qcore-audit::test::pinned_cli": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 0,
+"missing_count": 1,
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.5
+"seconds": 0.7
 },
 "qcore-audit::test::plugin_null_hypotheses": {
 "dirs": [],
@@ -1079,7 +1099,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 13.5
+"seconds": 10.5
 },
 "qcore-audit::test::prepare_cli": {
 "dirs": [],
@@ -1093,7 +1113,7 @@
 "read": [
 "contract/profiles/cmetrics-counter/profile.json"
 ],
-"seconds": 0.8
+"seconds": 0.4
 },
 "qcore-audit::test::provider_selection": {
 "dirs": [
@@ -1130,6 +1150,7 @@
 "read": [
 "cycle19-resource-contracts.json",
 "providers/contract-load-path.json",
+"providers/qcore-provider-chunkio/contract-inventory.lock",
 "providers/qcore-provider-chunkio/contracts/chunkio/chunk_destructor.qv",
 "providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qv",
 "providers/qcore-provider-chunkio/contracts/chunkio/chunk_sizes.qv",
@@ -1177,6 +1198,7 @@
 "providers/qcore-provider-chunkio/contracts/chunkio/unsupported_close.qv",
 "providers/qcore-provider-chunkio/contracts/chunkio/unsupported_constructor_observation.qv",
 "providers/qcore-provider-chunkio/contracts/fluent_bit/busy_state.qv",
+"providers/qcore-provider-cmetrics/contract-inventory.lock",
 "providers/qcore-provider-cmetrics/contracts/cmetrics/context_lifetime.qv",
 "providers/qcore-provider-cmetrics/contracts/cmetrics/counter_reset.qv",
 "providers/qcore-provider-cmetrics/contracts/cmetrics/logging.qv",
@@ -1187,7 +1209,9 @@
 "providers/qcore-provider-cmetrics/contracts/cmetrics/null_deref.qv",
 "providers/qcore-provider-cmetrics/contracts/cmetrics/opts_lifetime.qv",
 "providers/qcore-provider-cmetrics/contracts/cmetrics/typed_setters.qv",
+"providers/qcore-provider-ctraces/contract-inventory.lock",
 "providers/qcore-provider-ctraces/contracts/ctraces/context_lifetime.qv",
+"providers/qcore-provider-libevent/contract-inventory.lock",
 "providers/qcore-provider-libevent/contracts/monkey/callback_binding.qv",
 "providers/qcore-provider-libevent/contracts/monkey/callback_task_handoff.qv",
 "providers/qcore-provider-libevent/contracts/monkey/composition.qv",
@@ -1208,6 +1232,7 @@
 "providers/qcore-provider-libevent/contracts/monkey/wait_identity_policy.qv",
 "providers/qcore-provider-libevent/contracts/monkey/wait_source_policy.qv",
 "providers/qcore-provider-libevent/contracts/monkey/wrapper_paths.qv",
+"providers/qcore-provider-librdkafka/contract-inventory.lock",
 "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
 "providers/qcore-provider-librdkafka/contracts/librdkafka/client.qv",
 "providers/qcore-provider-librdkafka/contracts/librdkafka/header_inlines.qv",
@@ -1222,6 +1247,7 @@
 "providers/qcore-provider-librdkafka/contracts/librdkafka/refcount.qv",
 "providers/qcore-provider-librdkafka/contracts/librdkafka/topic_partition.qv",
 "providers/qcore-provider-librdkafka/contracts/librdkafka/typed_queue.qv",
+"providers/quirin-provider-cfl/contract-inventory.lock",
 "providers/quirin-provider-cfl/contracts/cfl/arena_lifetime.qv",
 "providers/quirin-provider-cfl/contracts/cfl/atomic.qv",
 "providers/quirin-provider-cfl/contracts/cfl/hash_state.qv",
@@ -1229,6 +1255,7 @@
 "providers/quirin-provider-cfl/contracts/cfl/null_deref.qv",
 "providers/quirin-provider-cfl/contracts/cfl/sds_lifetime.qv",
 "providers/quirin-provider-cfl/contracts/cfl/time.qv",
+"providers/quirin-provider-fluent-bit/contract-inventory.lock",
 "providers/quirin-provider-fluent-bit/contracts/fluent_bit/hash_table_publication.qv",
 "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv",
 "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy_direct_routes.qv",
@@ -1256,6 +1283,7 @@
 "providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv",
 "providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv",
 "providers/quirin-provider-fluent-bit/contracts/fluent_bit/time.qv",
+"providers/quirin-provider-libc/contract-inventory.lock",
 "providers/quirin-provider-libc/contracts/libc/dirent.qv",
 "providers/quirin-provider-libc/contracts/libc/dlfcn.qv",
 "providers/quirin-provider-libc/contracts/libc/errno.qv",
@@ -1274,14 +1302,17 @@
 "providers/quirin-provider-libc/contracts/libc/threads.qv",
 "providers/quirin-provider-libc/contracts/libc/time.qv",
 "providers/quirin-provider-libc/contracts/libc/unistd.qv",
+"providers/quirin-provider-mpack/contract-inventory.lock",
 "providers/quirin-provider-mpack/contracts/mpack/writer.qv",
+"providers/quirin-provider-msgpack/contract-inventory.lock",
 "providers/quirin-provider-msgpack/contracts/msgpack/packer.qv",
+"providers/quirin-provider-shared/contract-inventory.lock",
 "providers/quirin-provider-shared/contracts/language/quantified_indices.qv",
 "providers/quirin-provider-shared/contracts/library/custody_evidence.qv",
 "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
 "providers/quirin-provider-shared/contracts/library/source_projection.qv"
 ],
-"seconds": 393.7
+"seconds": 245.4
 },
 "qcore-audit::test::root_source_set": {
 "dirs": [],
@@ -1291,35 +1322,35 @@
 "ok": true,
 "probed_count": 4,
 "read": [
-"crates/qcore-audit/private/audit-retained-products/3369500-0",
-"crates/qcore-audit/private/audit-retained-products/3369500-0/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3369500-0/product.qc",
-"crates/qcore-audit/private/audit-retained-products/3369500-1",
-"crates/qcore-audit/private/audit-retained-products/3369500-1/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3369500-1/product.qc",
-"crates/qcore-audit/private/audit-retained-products/3369500-2",
-"crates/qcore-audit/private/audit-retained-products/3369500-2/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3369500-2/product.qc",
-"crates/qcore-audit/private/audit-retained-products/3369503-0",
-"crates/qcore-audit/private/audit-retained-products/3369503-0/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3369503-0/product.qc",
-"crates/qcore-audit/private/audit-retained-products/3369503-1",
-"crates/qcore-audit/private/audit-retained-products/3369503-1/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3369503-1/product.qc",
-"crates/qcore-audit/private/audit-retained-products/3369503-2",
-"crates/qcore-audit/private/audit-retained-products/3369503-2/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3369503-2/product.qc",
-"crates/qcore-audit/private/audit-retained-products/3369504-0",
-"crates/qcore-audit/private/audit-retained-products/3369504-0/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3369504-0/product.qc",
-"crates/qcore-audit/private/audit-retained-products/3369504-1",
-"crates/qcore-audit/private/audit-retained-products/3369504-1/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3369504-1/product.qc",
-"crates/qcore-audit/private/audit-retained-products/3369504-2",
-"crates/qcore-audit/private/audit-retained-products/3369504-2/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3369504-2/product.qc"
+"crates/qcore-audit/private/audit-retained-products/1107348-0",
+"crates/qcore-audit/private/audit-retained-products/1107348-0/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1107348-0/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1107348-1",
+"crates/qcore-audit/private/audit-retained-products/1107348-1/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1107348-1/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1107348-2",
+"crates/qcore-audit/private/audit-retained-products/1107348-2/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1107348-2/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1107356-0",
+"crates/qcore-audit/private/audit-retained-products/1107356-0/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1107356-0/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1107356-1",
+"crates/qcore-audit/private/audit-retained-products/1107356-1/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1107356-1/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1107356-2",
+"crates/qcore-audit/private/audit-retained-products/1107356-2/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1107356-2/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1107357-0",
+"crates/qcore-audit/private/audit-retained-products/1107357-0/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1107357-0/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1107357-1",
+"crates/qcore-audit/private/audit-retained-products/1107357-1/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1107357-1/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1107357-2",
+"crates/qcore-audit/private/audit-retained-products/1107357-2/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1107357-2/product.qc"
 ],
-"seconds": 3.4
+"seconds": 2.0
 },
 "qcore-audit::test::rule_switch_entry_points": {
 "dirs": [],
@@ -1329,7 +1360,7 @@
 ],
 "missing_count": 1,
 "ok": true,
-"probed_count": 28750,
+"probed_count": 29189,
 "read": [
 "Cargo.toml",
 "compiler/Cargo.toml",
@@ -1409,7 +1440,7 @@
 "providers/quirin-provider-plugin/Cargo.toml",
 "providers/quirin-provider-shared/Cargo.toml"
 ],
-"seconds": 7.9
+"seconds": 6.0
 },
 "qcore-audit::test::second_source_set": {
 "dirs": [],
@@ -1419,26 +1450,26 @@
 "ok": true,
 "probed_count": 4,
 "read": [
-"crates/qcore-audit/private/audit-retained-products/3370204-0",
-"crates/qcore-audit/private/audit-retained-products/3370204-0/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3370204-0/product.qc",
-"crates/qcore-audit/private/audit-retained-products/3370204-1",
-"crates/qcore-audit/private/audit-retained-products/3370204-1/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3370204-1/product.qc",
-"crates/qcore-audit/private/audit-retained-products/3370204-2",
-"crates/qcore-audit/private/audit-retained-products/3370204-2/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3370204-2/product.qc",
-"crates/qcore-audit/private/audit-retained-products/3370209-0",
-"crates/qcore-audit/private/audit-retained-products/3370209-0/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3370209-0/product.qc",
-"crates/qcore-audit/private/audit-retained-products/3370209-1",
-"crates/qcore-audit/private/audit-retained-products/3370209-1/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3370209-1/product.qc",
-"crates/qcore-audit/private/audit-retained-products/3370209-2",
-"crates/qcore-audit/private/audit-retained-products/3370209-2/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/3370209-2/product.qc"
+"crates/qcore-audit/private/audit-retained-products/1107737-0",
+"crates/qcore-audit/private/audit-retained-products/1107737-0/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1107737-0/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1107737-1",
+"crates/qcore-audit/private/audit-retained-products/1107737-1/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1107737-1/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1107737-2",
+"crates/qcore-audit/private/audit-retained-products/1107737-2/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1107737-2/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1107738-0",
+"crates/qcore-audit/private/audit-retained-products/1107738-0/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1107738-0/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1107738-1",
+"crates/qcore-audit/private/audit-retained-products/1107738-1/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1107738-1/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1107738-2",
+"crates/qcore-audit/private/audit-retained-products/1107738-2/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1107738-2/product.qc"
 ],
-"seconds": 1.0
+"seconds": 0.5
 },
 "qcore-audit::test::source_contract_config": {
 "dirs": [
@@ -1478,7 +1509,7 @@
 "crates/qcore-audit/tests/fixtures/revision_mode/queue.c",
 "crates/qcore-audit/tests/fixtures/revision_mode/queue.qv"
 ],
-"seconds": 1.3
+"seconds": 1.1
 },
 "qcore-audit::test::subcommand_plugins": {
 "dirs": [],
@@ -1488,7 +1519,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 3.5
+"seconds": 14.8
 },
 "qcore-audit::test::user_contract_plugins": {
 "dirs": [
@@ -1689,7 +1720,7 @@
 "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
 "providers/quirin-provider-shared/contracts/library/source_projection.qv"
 ],
-"seconds": 87.2
+"seconds": 45.2
 },
 "qcore-c-gateway::lib::qcore_c_gateway": {
 "dirs": [],
@@ -1785,6 +1816,7 @@
 "crates/qcore-c-gateway/src/legacy_cell_frames.rs",
 "crates/qcore-c-gateway/src/legacy_census.rs",
 "crates/qcore-c-gateway/src/legacy_cfg_builder.rs",
+"crates/qcore-c-gateway/src/legacy_chained_assignment.rs",
 "crates/qcore-c-gateway/src/legacy_checked_spec.rs",
 "crates/qcore-c-gateway/src/legacy_classify.rs",
 "crates/qcore-c-gateway/src/legacy_condition_acquisition.rs",
@@ -1806,6 +1838,7 @@
 "crates/qcore-c-gateway/src/legacy_descriptor_custody.rs",
 "crates/qcore-c-gateway/src/legacy_detach.rs",
 "crates/qcore-c-gateway/src/legacy_dialect_hook.rs",
+"crates/qcore-c-gateway/src/legacy_effective_type.rs",
 "crates/qcore-c-gateway/src/legacy_elaboration.rs",
 "crates/qcore-c-gateway/src/legacy_elaborator_calls.rs",
 "crates/qcore-c-gateway/src/legacy_enum_projection.rs",
@@ -1824,6 +1857,9 @@
 "crates/qcore-c-gateway/src/legacy_location.rs",
 "crates/qcore-c-gateway/src/legacy_lookup.rs",
 "crates/qcore-c-gateway/src/legacy_loop_generations.rs",
+"crates/qcore-c-gateway/src/legacy_loop_reacquisition_leak.rs",
+"crates/qcore-c-gateway/src/legacy_member_custody_attribution.rs",
+"crates/qcore-c-gateway/src/legacy_member_effect.rs",
 "crates/qcore-c-gateway/src/legacy_member_path_route.rs",
 "crates/qcore-c-gateway/src/legacy_member_release.rs",
 "crates/qcore-c-gateway/src/legacy_nested_call.rs",
@@ -1831,6 +1867,7 @@
 "crates/qcore-c-gateway/src/legacy_no_return_paths.rs",
 "crates/qcore-c-gateway/src/legacy_null_premise.rs",
 "crates/qcore-c-gateway/src/legacy_out_alias.rs",
+"crates/qcore-c-gateway/src/legacy_out_slot_call_write.rs",
 "crates/qcore-c-gateway/src/legacy_parenthesised_callee.rs",
 "crates/qcore-c-gateway/src/legacy_parser_census.rs",
 "crates/qcore-c-gateway/src/legacy_pin_hold.rs",
@@ -1859,6 +1896,7 @@
 "crates/qcore-c-gateway/src/legacy_route_table.rs",
 "crates/qcore-c-gateway/src/legacy_scalar_precedence.rs",
 "crates/qcore-c-gateway/src/legacy_scalar_return_value.rs",
+"crates/qcore-c-gateway/src/legacy_scalar_statement_forms.rs",
 "crates/qcore-c-gateway/src/legacy_selection.rs",
 "crates/qcore-c-gateway/src/legacy_self_link_init.rs",
 "crates/qcore-c-gateway/src/legacy_signed_rank.rs",
@@ -1878,6 +1916,7 @@
 "crates/qcore-c-gateway/src/legacy_typed_residuals.rs",
 "crates/qcore-c-gateway/src/legacy_typed_roots.rs",
 "crates/qcore-c-gateway/src/legacy_uncontracted_access.rs",
+"crates/qcore-c-gateway/src/legacy_unwritten_class.rs",
 "crates/qcore-c-gateway/src/legacy_va_condition.rs",
 "crates/qcore-c-gateway/src/legacy_value_connective.rs",
 "crates/qcore-c-gateway/src/legacy_variadics.rs",
@@ -1885,6 +1924,7 @@
 "crates/qcore-c-gateway/src/legacy_void_view.rs",
 "crates/qcore-c-gateway/src/lexical_nested_assignment.rs",
 "crates/qcore-c-gateway/src/lib.rs",
+"crates/qcore-c-gateway/src/link_call_type.rs",
 "crates/qcore-c-gateway/src/linkage/archive.rs",
 "crates/qcore-c-gateway/src/linkage/artifact.rs",
 "crates/qcore-c-gateway/src/linkage/bytes.rs",
@@ -1938,7 +1978,9 @@
 "crates/qcore-c-gateway/src/rule_hosts.rs",
 "crates/qcore-c-gateway/src/scalar_accessor_condition.rs",
 "crates/qcore-c-gateway/src/scalar_element_address.rs",
+"crates/qcore-c-gateway/src/scalar_form_census.rs",
 "crates/qcore-c-gateway/src/scalar_read_identity.rs",
+"crates/qcore-c-gateway/src/scalar_statement_forms.rs",
 "crates/qcore-c-gateway/src/sizeof_operand.rs",
 "crates/qcore-c-gateway/src/slot_move_borrow.rs",
 "crates/qcore-c-gateway/src/source_call_use.rs",
@@ -1972,7 +2014,7 @@
 "crates/qcore-c-gateway/src/variadic_tail_actuals.rs",
 "crates/qcore-c-gateway/src/void_view.rs"
 ],
-"seconds": 73.4
+"seconds": 26.8
 },
 "qcore-c-gateway::test::abi_enum_const_pp": {
 "dirs": [],
@@ -1982,7 +2024,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.6
+"seconds": 0.2
 },
 "qcore-c-gateway::test::access_path_position_residuals": {
 "dirs": [],
@@ -1992,7 +2034,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 5.2
+"seconds": 0.9
 },
 "qcore-c-gateway::test::access_path_positions": {
 "dirs": [],
@@ -2002,7 +2044,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 5.6
+"seconds": 0.9
 },
 "qcore-c-gateway::test::access_path_statements": {
 "dirs": [],
@@ -2012,7 +2054,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 3.6
+"seconds": 0.6
 },
 "qcore-c-gateway::test::address_of_member": {
 "dirs": [],
@@ -2022,7 +2064,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 3.9
+"seconds": 0.9
 },
 "qcore-c-gateway::test::alias_aggregate": {
 "dirs": [],
@@ -2032,7 +2074,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.9
+"seconds": 0.7
 },
 "qcore-c-gateway::test::app_rk_callbacks": {
 "dirs": [],
@@ -2042,7 +2084,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 3.1
+"seconds": 0.5
 },
 "qcore-c-gateway::test::assignment_destination_suffix": {
 "dirs": [],
@@ -2052,7 +2094,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.4
+"seconds": 0.4
 },
 "qcore-c-gateway::test::atomic_publication_source": {
 "dirs": [],
@@ -2062,7 +2104,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 4.4
+"seconds": 1.1
 },
 "qcore-c-gateway::test::atomic_source_route": {
 "dirs": [],
@@ -2072,7 +2114,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 7.4
+"seconds": 1.3
 },
 "qcore-c-gateway::test::atomic_weak_memory_events": {
 "dirs": [],
@@ -2082,7 +2124,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 8.9
+"seconds": 1.7
 },
 "qcore-c-gateway::test::boolean_frame_helpers": {
 "dirs": [],
@@ -2092,7 +2134,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 5.3
+"seconds": 1.6
 },
 "qcore-c-gateway::test::borrow_liveness_boundary": {
 "dirs": [],
@@ -2102,7 +2144,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.2
+"seconds": 0.5
 },
 "qcore-c-gateway::test::borrow_residuals_boundary": {
 "dirs": [],
@@ -2112,7 +2154,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.0
+"seconds": 0.7
 },
 "qcore-c-gateway::test::borrowed_field_actuals": {
 "dirs": [],
@@ -2122,7 +2164,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 6.4
+"seconds": 1.2
 },
 "qcore-c-gateway::test::bound_untracked_roots": {
 "dirs": [],
@@ -2132,7 +2174,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 10.4
+"seconds": 2.9
 },
 "qcore-c-gateway::test::bounds_body_evidence": {
 "dirs": [],
@@ -2145,7 +2187,7 @@
 "providers/qcore-provider-chunkio/contracts/chunkio/file_st_bounds.qv",
 "providers/qcore-provider-chunkio/contracts/chunkio/meta_len_bounds.qv"
 ],
-"seconds": 1.3
+"seconds": 0.2
 },
 "qcore-c-gateway::test::branch_condition_calls": {
 "dirs": [],
@@ -2155,7 +2197,17 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.9
+"seconds": 0.3
+},
+"qcore-c-gateway::test::builtin_expect_null_test": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 2,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 2.0
 },
 "qcore-c-gateway::test::c03_neutral_frame_recursion_probe": {
 "dirs": [],
@@ -2165,7 +2217,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.2
+"seconds": 0.6
 },
 "qcore-c-gateway::test::c_numeric_abi_llp64": {
 "dirs": [],
@@ -2175,7 +2227,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.3
+"seconds": 0.2
 },
 "qcore-c-gateway::test::c_numeric_domain": {
 "dirs": [],
@@ -2185,7 +2237,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 3.3
+"seconds": 1.1
 },
 "qcore-c-gateway::test::call_argument_access": {
 "dirs": [],
@@ -2195,7 +2247,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.6
+"seconds": 0.8
 },
 "qcore-c-gateway::test::callback_member_data_only": {
 "dirs": [],
@@ -2205,7 +2257,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.8
+"seconds": 0.3
 },
 "qcore-c-gateway::test::callee_retention_class1": {
 "dirs": [],
@@ -2215,7 +2267,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.5
+"seconds": 0.5
 },
 "qcore-c-gateway::test::caller_frame_hold": {
 "dirs": [],
@@ -2225,7 +2277,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.0
+"seconds": 0.2
 },
 "qcore-c-gateway::test::cast_formalization": {
 "dirs": [],
@@ -2235,7 +2287,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 3.4
+"seconds": 1.3
 },
 "qcore-c-gateway::test::cell_array_slots": {
 "dirs": [],
@@ -2245,7 +2297,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 3.9
+"seconds": 1.4
 },
 "qcore-c-gateway::test::cell_guard_result_range": {
 "dirs": [],
@@ -2255,7 +2307,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 4.5
+"seconds": 2.3
 },
 "qcore-c-gateway::test::cell_protocol_close_actual": {
 "dirs": [],
@@ -2265,7 +2317,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.8
+"seconds": 0.8
 },
 "qcore-c-gateway::test::cell_protocol_fb_declarations": {
 "dirs": [],
@@ -2275,7 +2327,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.2
+"seconds": 0.7
 },
 "qcore-c-gateway::test::cell_protocol_per_end_guards": {
 "dirs": [],
@@ -2285,7 +2337,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.7
+"seconds": 1.4
 },
 "qcore-c-gateway::test::cell_protocol_release_window_frames": {
 "dirs": [],
@@ -2295,7 +2347,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.2
+"seconds": 0.6
 },
 "qcore-c-gateway::test::cell_result_set_alignment": {
 "dirs": [],
@@ -2305,7 +2357,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.7
+"seconds": 0.2
 },
 "qcore-c-gateway::test::certificate_scope": {
 "dirs": [],
@@ -2315,7 +2367,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.5
+"seconds": 0.6
 },
 "qcore-c-gateway::test::cfl_mpack_external_declarations": {
 "dirs": [],
@@ -2325,7 +2377,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 23.8
+"seconds": 4.7
 },
 "qcore-c-gateway::test::cg02_elaboration": {
 "dirs": [],
@@ -2335,7 +2387,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 8.4
+"seconds": 1.4
 },
 "qcore-c-gateway::test::cg03_call_instantiation": {
 "dirs": [],
@@ -2345,7 +2397,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 7.3
+"seconds": 1.1
 },
 "qcore-c-gateway::test::cg05_elaborator_call_footprints": {
 "dirs": [],
@@ -2355,7 +2407,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 7.4
+"seconds": 0.9
 },
 "qcore-c-gateway::test::cg05_nested_call_effects": {
 "dirs": [],
@@ -2365,7 +2417,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 6.5
+"seconds": 0.9
 },
 "qcore-c-gateway::test::cg06_connective_footprints": {
 "dirs": [],
@@ -2375,7 +2427,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 4.1
+"seconds": 0.5
 },
 "qcore-c-gateway::test::cg06_value_connectives": {
 "dirs": [],
@@ -2385,7 +2437,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 14.1
+"seconds": 2.1
 },
 "qcore-c-gateway::test::cg07_statement_expressions": {
 "dirs": [],
@@ -2395,7 +2447,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 9.3
+"seconds": 1.4
 },
 "qcore-c-gateway::test::cg08_casts_and_type_queries": {
 "dirs": [],
@@ -2405,7 +2457,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 9.2
+"seconds": 1.4
 },
 "qcore-c-gateway::test::cg10_sole_residual_contracts": {
 "dirs": [],
@@ -2415,7 +2467,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 5.0
+"seconds": 0.8
 },
 "qcore-c-gateway::test::cg11_pointer_stores": {
 "dirs": [],
@@ -2425,7 +2477,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 15.5
+"seconds": 2.5
 },
 "qcore-c-gateway::test::cg12_void_view_readback": {
 "dirs": [],
@@ -2435,7 +2487,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 10.7
+"seconds": 1.5
 },
 "qcore-c-gateway::test::cg14_aggregate_values": {
 "dirs": [],
@@ -2445,7 +2497,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 12.1
+"seconds": 2.2
 },
 "qcore-c-gateway::test::cg16_index_extents": {
 "dirs": [],
@@ -2455,7 +2507,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 14.1
+"seconds": 2.0
 },
 "qcore-c-gateway::test::cg21_call_exits": {
 "dirs": [],
@@ -2465,7 +2517,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 4.7
+"seconds": 0.7
 },
 "qcore-c-gateway::test::cg22_callback_registry": {
 "dirs": [],
@@ -2475,7 +2527,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.7
+"seconds": 0.4
 },
 "qcore-c-gateway::test::cg22_indirect_calls": {
 "dirs": [],
@@ -2485,7 +2537,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 5.9
+"seconds": 1.1
 },
 "qcore-c-gateway::test::cg22_op_callbacks": {
 "dirs": [],
@@ -2495,7 +2547,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 4.7
+"seconds": 0.7
 },
 "qcore-c-gateway::test::cg24_frames_and_relations": {
 "dirs": [],
@@ -2505,7 +2557,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 4.8
+"seconds": 0.9
 },
 "qcore-c-gateway::test::cg26_tail_residual_actuals": {
 "dirs": [],
@@ -2515,7 +2567,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 12.7
+"seconds": 2.5
 },
 "qcore-c-gateway::test::cg26_variadics": {
 "dirs": [],
@@ -2525,7 +2577,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 4.5
+"seconds": 0.7
 },
 "qcore-c-gateway::test::cg30_dialects_flags_types": {
 "dirs": [],
@@ -2535,7 +2587,17 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 8.4
+"seconds": 0.8
+},
+"qcore-c-gateway::test::chained_assignment": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 2,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 1.2
 },
 "qcore-c-gateway::test::chained_tail": {
 "dirs": [],
@@ -2545,7 +2607,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 8.4
+"seconds": 1.5
 },
 "qcore-c-gateway::test::checked_allocator_constructors": {
 "dirs": [
@@ -2733,7 +2795,7 @@
 "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
 "providers/quirin-provider-shared/contracts/library/source_projection.qv"
 ],
-"seconds": 41.1
+"seconds": 15.2
 },
 "qcore-c-gateway::test::checked_result_null": {
 "dirs": [],
@@ -2743,7 +2805,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.5
+"seconds": 0.3
 },
 "qcore-c-gateway::test::chunk_source_reason_codes": {
 "dirs": [],
@@ -2753,7 +2815,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-c-gateway::test::chunkio_meta_len_bounds": {
 "dirs": [],
@@ -2765,7 +2827,7 @@
 "read": [
 "providers/qcore-provider-chunkio/contracts/chunkio/meta_len_bounds.qv"
 ],
-"seconds": 0.7
+"seconds": 0.2
 },
 "qcore-c-gateway::test::clang_gap_phase1": {
 "dirs": [],
@@ -2775,7 +2837,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 27.3
+"seconds": 5.0
 },
 "qcore-c-gateway::test::clang_gap_phase2": {
 "dirs": [],
@@ -2785,7 +2847,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 9.9
+"seconds": 1.7
 },
 "qcore-c-gateway::test::clang_gap_phase3": {
 "dirs": [],
@@ -2795,7 +2857,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 6.8
+"seconds": 1.1
 },
 "qcore-c-gateway::test::clang_gap_phase4": {
 "dirs": [],
@@ -2805,7 +2867,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 10.2
+"seconds": 1.6
 },
 "qcore-c-gateway::test::collector_identity": {
 "dirs": [],
@@ -2815,7 +2877,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 5.8
+"seconds": 1.0
 },
 "qcore-c-gateway::test::condition_acquisition": {
 "dirs": [],
@@ -2825,7 +2887,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 13.5
+"seconds": 2.4
 },
 "qcore-c-gateway::test::condition_call_desugar": {
 "dirs": [],
@@ -2835,7 +2897,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 6.9
+"seconds": 1.4
 },
 "qcore-c-gateway::test::constant_do_while": {
 "dirs": [],
@@ -2845,7 +2907,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 3.7
+"seconds": 1.3
 },
 "qcore-c-gateway::test::constructor_residuals": {
 "dirs": [
@@ -3033,7 +3095,7 @@
 "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
 "providers/quirin-provider-shared/contracts/library/source_projection.qv"
 ],
-"seconds": 28.2
+"seconds": 14.9
 },
 "qcore-c-gateway::test::container_root_reach": {
 "dirs": [],
@@ -3043,7 +3105,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 4.9
+"seconds": 1.1
 },
 "qcore-c-gateway::test::contextual_recursion": {
 "dirs": [],
@@ -3053,7 +3115,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 18.5
+"seconds": 5.3
 },
 "qcore-c-gateway::test::contract_clause_standing": {
 "dirs": [],
@@ -3063,7 +3125,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.6
+"seconds": 0.2
 },
 "qcore-c-gateway::test::contract_conflict_hold": {
 "dirs": [],
@@ -3073,7 +3135,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.1
+"seconds": 0.2
 },
 "qcore-c-gateway::test::contract_deferred_review": {
 "dirs": [],
@@ -3083,7 +3145,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.6
+"seconds": 0.4
 },
 "qcore-c-gateway::test::contract_dependencies": {
 "dirs": [],
@@ -3093,7 +3155,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.7
+"seconds": 0.2
 },
 "qcore-c-gateway::test::contract_noreturn_borrowed_tails": {
 "dirs": [],
@@ -3103,7 +3165,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 12.0
+"seconds": 4.8
 },
 "qcore-c-gateway::test::contract_pin_hold": {
 "dirs": [],
@@ -3113,7 +3175,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.0
+"seconds": 0.3
 },
 "qcore-c-gateway::test::cross_unit_summary": {
 "dirs": [],
@@ -3123,7 +3185,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 7.2
+"seconds": 1.4
 },
 "qcore-c-gateway::test::custody_summary_regression": {
 "dirs": [],
@@ -3133,7 +3195,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.6
+"seconds": 0.5
 },
 "qcore-c-gateway::test::declared_entry_check": {
 "dirs": [],
@@ -3143,7 +3205,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.2
+"seconds": 0.9
 },
 "qcore-c-gateway::test::deep_unit_ast": {
 "dirs": [],
@@ -3153,7 +3215,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.9
+"seconds": 1.3
 },
 "qcore-c-gateway::test::deref_parts_null": {
 "dirs": [],
@@ -3163,7 +3225,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.6
+"seconds": 0.5
 },
 "qcore-c-gateway::test::derived_result": {
 "dirs": [],
@@ -3173,7 +3235,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.1
+"seconds": 0.8
 },
 "qcore-c-gateway::test::derived_result_returned": {
 "dirs": [],
@@ -3183,7 +3245,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 4.0
+"seconds": 2.5
 },
 "qcore-c-gateway::test::descriptor_cell_protocols": {
 "dirs": [],
@@ -3193,7 +3255,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.7
+"seconds": 1.2
 },
 "qcore-c-gateway::test::descriptor_cells": {
 "dirs": [],
@@ -3203,7 +3265,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 5.3
+"seconds": 3.9
 },
 "qcore-c-gateway::test::descriptor_custody": {
 "dirs": [],
@@ -3213,7 +3275,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.8
+"seconds": 1.8
 },
 "qcore-c-gateway::test::detach_lookup_membership": {
 "dirs": [],
@@ -3226,7 +3288,7 @@
 "crates/qcore-c-gateway/tests/fixtures/detach-lookup-membership/cjson_lookup_frame.h",
 "crates/qcore-c-gateway/tests/fixtures/detach-lookup-membership/native_case.c"
 ],
-"seconds": 1.2
+"seconds": 0.8
 },
 "qcore-c-gateway::test::detach_same_item": {
 "dirs": [],
@@ -3239,7 +3301,7 @@
 "crates/qcore-c-gateway/tests/fixtures/detach-same-item/detach_impl.h",
 "crates/qcore-c-gateway/tests/fixtures/detach-same-item/native_case.c"
 ],
-"seconds": 0.5
+"seconds": 0.3
 },
 "qcore-c-gateway::test::detach_wrapper_composition": {
 "dirs": [],
@@ -3251,7 +3313,7 @@
 "read": [
 "crates/qcore-c-gateway/tests/fixtures/detach-wrapper-composition/selection_replay.h"
 ],
-"seconds": 5.7
+"seconds": 3.7
 },
 "qcore-c-gateway::test::e01_denominator_coverage": {
 "dirs": [],
@@ -3261,7 +3323,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.6
+"seconds": 0.4
 },
 "qcore-c-gateway::test::e01_f1_raw_tokenizer": {
 "dirs": [],
@@ -3271,7 +3333,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.4
+"seconds": 0.3
 },
 "qcore-c-gateway::test::e01_raw_cond": {
 "dirs": [],
@@ -3281,7 +3343,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.3
+"seconds": 0.2
 },
 "qcore-c-gateway::test::e01_source_enumeration": {
 "dirs": [],
@@ -3291,7 +3353,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.9
+"seconds": 0.4
 },
 "qcore-c-gateway::test::e01_stdin_attribution": {
 "dirs": [],
@@ -3301,7 +3363,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.5
+"seconds": 0.2
 },
 "qcore-c-gateway::test::element_destroyer": {
 "dirs": [],
@@ -3311,7 +3373,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.5
+"seconds": 1.3
 },
 "qcore-c-gateway::test::event_holder_frame": {
 "dirs": [],
@@ -3321,7 +3383,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 3.5
+"seconds": 2.1
 },
 "qcore-c-gateway::test::event_loop_retention": {
 "dirs": [],
@@ -3331,7 +3393,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.0
+"seconds": 0.6
 },
 "qcore-c-gateway::test::event_removal_wrapper": {
 "dirs": [],
@@ -3341,7 +3403,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.2
+"seconds": 0.8
 },
 "qcore-c-gateway::test::exposed_leak_mechanisms": {
 "dirs": [],
@@ -3351,7 +3413,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.3
+"seconds": 0.2
 },
 "qcore-c-gateway::test::field_link_join": {
 "dirs": [],
@@ -3361,7 +3423,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.0
+"seconds": 0.8
 },
 "qcore-c-gateway::test::fixture_text_support": {
 "dirs": [],
@@ -3381,7 +3443,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.1
+"seconds": 1.3
 },
 "qcore-c-gateway::test::function_pointer_declarators": {
 "dirs": [],
@@ -3391,7 +3453,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.1
+"seconds": 0.7
 },
 "qcore-c-gateway::test::gapo_return_correctness": {
 "dirs": [],
@@ -3401,7 +3463,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.9
+"seconds": 0.8
 },
 "qcore-c-gateway::test::gateway_c_location": {
 "dirs": [],
@@ -3421,7 +3483,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.2
+"seconds": 0.7
 },
 "qcore-c-gateway::test::generic_selection": {
 "dirs": [],
@@ -3431,7 +3493,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.0
+"seconds": 1.0
 },
 "qcore-c-gateway::test::handoff_candidate_own_callbacks": {
 "dirs": [],
@@ -3441,7 +3503,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.1
+"seconds": 0.6
 },
 "qcore-c-gateway::test::handoff_direct_call": {
 "dirs": [],
@@ -3451,7 +3513,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.7
+"seconds": 1.1
 },
 "qcore-c-gateway::test::hash_contracts": {
 "dirs": [],
@@ -3461,7 +3523,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 4.5
+"seconds": 2.3
 },
 "qcore-c-gateway::test::index_traversal": {
 "dirs": [],
@@ -3471,7 +3533,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.4
+"seconds": 1.0
 },
 "qcore-c-gateway::test::indexed_collection": {
 "dirs": [],
@@ -3481,7 +3543,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.8
+"seconds": 0.9
 },
 "qcore-c-gateway::test::indirect_access_sole_blockers": {
 "dirs": [],
@@ -3491,7 +3553,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.4
+"seconds": 0.6
 },
 "qcore-c-gateway::test::indirect_access_sole_residuals": {
 "dirs": [],
@@ -3501,7 +3563,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.7
+"seconds": 0.3
 },
 "qcore-c-gateway::test::indirect_access_sole_residuals_r2": {
 "dirs": [],
@@ -3511,7 +3573,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.5
+"seconds": 0.8
 },
 "qcore-c-gateway::test::indirect_chain_access": {
 "dirs": [],
@@ -3521,7 +3583,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.6
+"seconds": 0.8
 },
 "qcore-c-gateway::test::indirect_scalar_access": {
 "dirs": [],
@@ -3531,7 +3593,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.3
+"seconds": 0.9
 },
 "qcore-c-gateway::test::intrusive_list_iteration": {
 "dirs": [],
@@ -3541,7 +3603,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.9
+"seconds": 0.7
 },
 "qcore-c-gateway::test::layout_extents": {
 "dirs": [],
@@ -3551,7 +3613,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.1
+"seconds": 1.3
 },
 "qcore-c-gateway::test::leak_pin_audit": {
 "dirs": [],
@@ -3561,7 +3623,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.2
+"seconds": 1.3
 },
 "qcore-c-gateway::test::lexical_closure_nested_assignment": {
 "dirs": [],
@@ -3571,7 +3633,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.8
+"seconds": 0.9
 },
 "qcore-c-gateway::test::libc_gap_declarations": {
 "dirs": [],
@@ -3581,7 +3643,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 19.4
+"seconds": 11.7
 },
 "qcore-c-gateway::test::libc_reading_dependencies": {
 "dirs": [],
@@ -3609,7 +3671,7 @@
 "proof/QCore/ScalarAccessorCondition.lean",
 "proof/QCore/VariadicNested.lean"
 ],
-"seconds": 1.0
+"seconds": 0.6
 },
 "qcore-c-gateway::test::librdkafka_header_inlines": {
 "dirs": [],
@@ -3619,7 +3681,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 3.1
+"seconds": 1.8
 },
 "qcore-c-gateway::test::literal_decay_readings": {
 "dirs": [],
@@ -3629,7 +3691,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.4
+"seconds": 1.1
 },
 "qcore-c-gateway::test::loader_abi": {
 "dirs": [],
@@ -3639,7 +3701,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.7
+"seconds": 0.4
 },
 "qcore-c-gateway::test::loader_abi_modes": {
 "dirs": [],
@@ -3649,7 +3711,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.7
+"seconds": 0.4
 },
 "qcore-c-gateway::test::log_print_member_contracts": {
 "dirs": [],
@@ -3659,7 +3721,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.8
+"seconds": 0.4
 },
 "qcore-c-gateway::test::loop_lifetime_s3": {
 "dirs": [],
@@ -3669,7 +3731,17 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.6
+"seconds": 0.7
+},
+"qcore-c-gateway::test::loop_reacquisition_leak": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 2,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.8
 },
 "qcore-c-gateway::test::loop_site_generations": {
 "dirs": [],
@@ -3679,7 +3751,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.7
+"seconds": 0.9
 },
 "qcore-c-gateway::test::loop_switch_condition_calls": {
 "dirs": [],
@@ -3689,7 +3761,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.1
+"seconds": 0.4
 },
 "qcore-c-gateway::test::loops_recursion_budgets": {
 "dirs": [],
@@ -3699,7 +3771,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 8.3
+"seconds": 4.3
 },
 "qcore-c-gateway::test::may_alias_boundary": {
 "dirs": [],
@@ -3709,7 +3781,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.5
+"seconds": 0.6
 },
 "qcore-c-gateway::test::member_access_projection": {
 "dirs": [],
@@ -3719,7 +3791,27 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.4
+"seconds": 0.7
+},
+"qcore-c-gateway::test::member_effect_component_scope": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 2,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 2.3
+},
+"qcore-c-gateway::test::member_effect_summary": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 2,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 1.3
 },
 "qcore-c-gateway::test::member_path_direct_call": {
 "dirs": [],
@@ -3729,7 +3821,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.9
+"seconds": 1.1
 },
 "qcore-c-gateway::test::member_path_release": {
 "dirs": [],
@@ -3739,7 +3831,17 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.7
+"seconds": 0.5
+},
+"qcore-c-gateway::test::member_release_untyped_base": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 2,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 2.3
 },
 "qcore-c-gateway::test::metric_aggregate_contracts": {
 "dirs": [],
@@ -3759,7 +3861,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.9
+"seconds": 0.7
 },
 "qcore-c-gateway::test::monkey_vhost_property_custody": {
 "dirs": [],
@@ -3769,7 +3871,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.7
+"seconds": 0.4
 },
 "qcore-c-gateway::test::neighbours": {
 "dirs": [
@@ -3806,6 +3908,7 @@
 "read": [
 "cycle19-resource-contracts.json",
 "providers/contract-load-path.json",
+"providers/qcore-provider-chunkio/contract-inventory.lock",
 "providers/qcore-provider-chunkio/contracts/chunkio/chunk_destructor.qv",
 "providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qv",
 "providers/qcore-provider-chunkio/contracts/chunkio/chunk_sizes.qv",
@@ -3853,6 +3956,7 @@
 "providers/qcore-provider-chunkio/contracts/chunkio/unsupported_close.qv",
 "providers/qcore-provider-chunkio/contracts/chunkio/unsupported_constructor_observation.qv",
 "providers/qcore-provider-chunkio/contracts/fluent_bit/busy_state.qv",
+"providers/qcore-provider-cmetrics/contract-inventory.lock",
 "providers/qcore-provider-cmetrics/contracts/cmetrics/context_lifetime.qv",
 "providers/qcore-provider-cmetrics/contracts/cmetrics/counter_reset.qv",
 "providers/qcore-provider-cmetrics/contracts/cmetrics/logging.qv",
@@ -3863,7 +3967,9 @@
 "providers/qcore-provider-cmetrics/contracts/cmetrics/null_deref.qv",
 "providers/qcore-provider-cmetrics/contracts/cmetrics/opts_lifetime.qv",
 "providers/qcore-provider-cmetrics/contracts/cmetrics/typed_setters.qv",
+"providers/qcore-provider-ctraces/contract-inventory.lock",
 "providers/qcore-provider-ctraces/contracts/ctraces/context_lifetime.qv",
+"providers/qcore-provider-libevent/contract-inventory.lock",
 "providers/qcore-provider-libevent/contracts/monkey/callback_binding.qv",
 "providers/qcore-provider-libevent/contracts/monkey/callback_task_handoff.qv",
 "providers/qcore-provider-libevent/contracts/monkey/composition.qv",
@@ -3884,6 +3990,7 @@
 "providers/qcore-provider-libevent/contracts/monkey/wait_identity_policy.qv",
 "providers/qcore-provider-libevent/contracts/monkey/wait_source_policy.qv",
 "providers/qcore-provider-libevent/contracts/monkey/wrapper_paths.qv",
+"providers/qcore-provider-librdkafka/contract-inventory.lock",
 "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
 "providers/qcore-provider-librdkafka/contracts/librdkafka/client.qv",
 "providers/qcore-provider-librdkafka/contracts/librdkafka/header_inlines.qv",
@@ -3898,6 +4005,7 @@
 "providers/qcore-provider-librdkafka/contracts/librdkafka/refcount.qv",
 "providers/qcore-provider-librdkafka/contracts/librdkafka/topic_partition.qv",
 "providers/qcore-provider-librdkafka/contracts/librdkafka/typed_queue.qv",
+"providers/quirin-provider-cfl/contract-inventory.lock",
 "providers/quirin-provider-cfl/contracts/cfl/arena_lifetime.qv",
 "providers/quirin-provider-cfl/contracts/cfl/atomic.qv",
 "providers/quirin-provider-cfl/contracts/cfl/hash_state.qv",
@@ -3905,6 +4013,7 @@
 "providers/quirin-provider-cfl/contracts/cfl/null_deref.qv",
 "providers/quirin-provider-cfl/contracts/cfl/sds_lifetime.qv",
 "providers/quirin-provider-cfl/contracts/cfl/time.qv",
+"providers/quirin-provider-fluent-bit/contract-inventory.lock",
 "providers/quirin-provider-fluent-bit/contracts/fluent_bit/hash_table_publication.qv",
 "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv",
 "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy_direct_routes.qv",
@@ -3932,6 +4041,7 @@
 "providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv",
 "providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv",
 "providers/quirin-provider-fluent-bit/contracts/fluent_bit/time.qv",
+"providers/quirin-provider-libc/contract-inventory.lock",
 "providers/quirin-provider-libc/contracts/libc/dirent.qv",
 "providers/quirin-provider-libc/contracts/libc/dlfcn.qv",
 "providers/quirin-provider-libc/contracts/libc/errno.qv",
@@ -3950,14 +4060,17 @@
 "providers/quirin-provider-libc/contracts/libc/threads.qv",
 "providers/quirin-provider-libc/contracts/libc/time.qv",
 "providers/quirin-provider-libc/contracts/libc/unistd.qv",
+"providers/quirin-provider-mpack/contract-inventory.lock",
 "providers/quirin-provider-mpack/contracts/mpack/writer.qv",
+"providers/quirin-provider-msgpack/contract-inventory.lock",
 "providers/quirin-provider-msgpack/contracts/msgpack/packer.qv",
+"providers/quirin-provider-shared/contract-inventory.lock",
 "providers/quirin-provider-shared/contracts/language/quantified_indices.qv",
 "providers/quirin-provider-shared/contracts/library/custody_evidence.qv",
 "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
 "providers/quirin-provider-shared/contracts/library/source_projection.qv"
 ],
-"seconds": 9.2
+"seconds": 6.0
 },
 "qcore-c-gateway::test::neutral_expression_positions": {
 "dirs": [],
@@ -3967,7 +4080,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.0
+"seconds": 1.5
 },
 "qcore-c-gateway::test::neutral_frame_recursion": {
 "dirs": [],
@@ -3977,7 +4090,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.1
+"seconds": 1.4
 },
 "qcore-c-gateway::test::neutral_reach_census": {
 "dirs": [],
@@ -3987,7 +4100,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.5
+"seconds": 0.3
 },
 "qcore-c-gateway::test::null_candidate_triage": {
 "dirs": [],
@@ -3997,7 +4110,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.6
+"seconds": 0.4
 },
 "qcore-c-gateway::test::null_member_invariant_scope": {
 "dirs": [],
@@ -4007,7 +4120,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.3
+"seconds": 0.2
 },
 "qcore-c-gateway::test::null_member_premise": {
 "dirs": [],
@@ -4017,7 +4130,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.4
+"seconds": 0.3
 },
 "qcore-c-gateway::test::null_premise_custody": {
 "dirs": [],
@@ -4027,7 +4140,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.1
+"seconds": 0.6
 },
 "qcore-c-gateway::test::null_safety_property": {
 "dirs": [],
@@ -4037,7 +4150,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.9
+"seconds": 1.0
 },
 "qcore-c-gateway::test::null_triage_unresolved_paths": {
 "dirs": [],
@@ -4047,7 +4160,17 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.6
+"seconds": 0.4
+},
+"qcore-c-gateway::test::null_witness_guard_correlation": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 2,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.3
 },
 "qcore-c-gateway::test::o04_arms": {
 "dirs": [],
@@ -4057,7 +4180,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.2
+"seconds": 1.3
 },
 "qcore-c-gateway::test::o04_b08": {
 "dirs": [],
@@ -4067,7 +4190,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 3.5
+"seconds": 1.9
 },
 "qcore-c-gateway::test::o04_b09b10": {
 "dirs": [],
@@ -4077,7 +4200,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.9
+"seconds": 1.1
 },
 "qcore-c-gateway::test::o04_constructor_caller": {
 "dirs": [],
@@ -4087,7 +4210,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 3.5
+"seconds": 1.7
 },
 "qcore-c-gateway::test::o04_read_bound": {
 "dirs": [],
@@ -4097,7 +4220,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 3.2
+"seconds": 1.1
 },
 "qcore-c-gateway::test::o04_trace": {
 "dirs": [],
@@ -4107,7 +4230,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.3
+"seconds": 1.2
 },
 "qcore-c-gateway::test::op_constructor_declarations": {
 "dirs": [],
@@ -4117,7 +4240,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.3
+"seconds": 0.9
 },
 "qcore-c-gateway::test::ordered_lifetime": {
 "dirs": [],
@@ -4129,6 +4252,36 @@
 "read": [],
 "seconds": 0.2
 },
+"qcore-c-gateway::test::out_parameter_body_summary": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 2,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 1.0
+},
+"qcore-c-gateway::test::out_parameter_scalar_frame_premise": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 2,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.8
+},
+"qcore-c-gateway::test::out_slot_call_write_aliasing": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 2,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.9
+},
 "qcore-c-gateway::test::outer_record_graph": {
 "dirs": [],
 "exit": 0,
@@ -4137,7 +4290,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.3
+"seconds": 0.2
 },
 "qcore-c-gateway::test::parenthesised_callee": {
 "dirs": [],
@@ -4147,7 +4300,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.0
+"seconds": 0.8
 },
 "qcore-c-gateway::test::premise_flow_dependencies": {
 "dirs": [],
@@ -4157,7 +4310,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.3
+"seconds": 0.2
 },
 "qcore-c-gateway::test::prepared_failure": {
 "dirs": [],
@@ -4167,7 +4320,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.3
+"seconds": 0.1
 },
 "qcore-c-gateway::test::prepared_translation_unit": {
 "dirs": [],
@@ -4177,7 +4330,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.8
+"seconds": 0.9
 },
 "qcore-c-gateway::test::prod_contracts": {
 "dirs": [
@@ -4214,6 +4367,7 @@
 "read": [
 "cycle19-resource-contracts.json",
 "providers/contract-load-path.json",
+"providers/qcore-provider-chunkio/contract-inventory.lock",
 "providers/qcore-provider-chunkio/contracts/chunkio/chunk_destructor.qv",
 "providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qv",
 "providers/qcore-provider-chunkio/contracts/chunkio/chunk_sizes.qv",
@@ -4261,6 +4415,7 @@
 "providers/qcore-provider-chunkio/contracts/chunkio/unsupported_close.qv",
 "providers/qcore-provider-chunkio/contracts/chunkio/unsupported_constructor_observation.qv",
 "providers/qcore-provider-chunkio/contracts/fluent_bit/busy_state.qv",
+"providers/qcore-provider-cmetrics/contract-inventory.lock",
 "providers/qcore-provider-cmetrics/contracts/cmetrics/context_lifetime.qv",
 "providers/qcore-provider-cmetrics/contracts/cmetrics/counter_reset.qv",
 "providers/qcore-provider-cmetrics/contracts/cmetrics/logging.qv",
@@ -4271,7 +4426,9 @@
 "providers/qcore-provider-cmetrics/contracts/cmetrics/null_deref.qv",
 "providers/qcore-provider-cmetrics/contracts/cmetrics/opts_lifetime.qv",
 "providers/qcore-provider-cmetrics/contracts/cmetrics/typed_setters.qv",
+"providers/qcore-provider-ctraces/contract-inventory.lock",
 "providers/qcore-provider-ctraces/contracts/ctraces/context_lifetime.qv",
+"providers/qcore-provider-libevent/contract-inventory.lock",
 "providers/qcore-provider-libevent/contracts/monkey/callback_binding.qv",
 "providers/qcore-provider-libevent/contracts/monkey/callback_task_handoff.qv",
 "providers/qcore-provider-libevent/contracts/monkey/composition.qv",
@@ -4292,6 +4449,7 @@
 "providers/qcore-provider-libevent/contracts/monkey/wait_identity_policy.qv",
 "providers/qcore-provider-libevent/contracts/monkey/wait_source_policy.qv",
 "providers/qcore-provider-libevent/contracts/monkey/wrapper_paths.qv",
+"providers/qcore-provider-librdkafka/contract-inventory.lock",
 "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
 "providers/qcore-provider-librdkafka/contracts/librdkafka/client.qv",
 "providers/qcore-provider-librdkafka/contracts/librdkafka/header_inlines.qv",
@@ -4306,6 +4464,7 @@
 "providers/qcore-provider-librdkafka/contracts/librdkafka/refcount.qv",
 "providers/qcore-provider-librdkafka/contracts/librdkafka/topic_partition.qv",
 "providers/qcore-provider-librdkafka/contracts/librdkafka/typed_queue.qv",
+"providers/quirin-provider-cfl/contract-inventory.lock",
 "providers/quirin-provider-cfl/contracts/cfl/arena_lifetime.qv",
 "providers/quirin-provider-cfl/contracts/cfl/atomic.qv",
 "providers/quirin-provider-cfl/contracts/cfl/hash_state.qv",
@@ -4313,6 +4472,7 @@
 "providers/quirin-provider-cfl/contracts/cfl/null_deref.qv",
 "providers/quirin-provider-cfl/contracts/cfl/sds_lifetime.qv",
 "providers/quirin-provider-cfl/contracts/cfl/time.qv",
+"providers/quirin-provider-fluent-bit/contract-inventory.lock",
 "providers/quirin-provider-fluent-bit/contracts/fluent_bit/hash_table_publication.qv",
 "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv",
 "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy_direct_routes.qv",
@@ -4340,6 +4500,7 @@
 "providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv",
 "providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv",
 "providers/quirin-provider-fluent-bit/contracts/fluent_bit/time.qv",
+"providers/quirin-provider-libc/contract-inventory.lock",
 "providers/quirin-provider-libc/contracts/libc/dirent.qv",
 "providers/quirin-provider-libc/contracts/libc/dlfcn.qv",
 "providers/quirin-provider-libc/contracts/libc/errno.qv",
@@ -4358,14 +4519,17 @@
 "providers/quirin-provider-libc/contracts/libc/threads.qv",
 "providers/quirin-provider-libc/contracts/libc/time.qv",
 "providers/quirin-provider-libc/contracts/libc/unistd.qv",
+"providers/quirin-provider-mpack/contract-inventory.lock",
 "providers/quirin-provider-mpack/contracts/mpack/writer.qv",
+"providers/quirin-provider-msgpack/contract-inventory.lock",
 "providers/quirin-provider-msgpack/contracts/msgpack/packer.qv",
+"providers/quirin-provider-shared/contract-inventory.lock",
 "providers/quirin-provider-shared/contracts/language/quantified_indices.qv",
 "providers/quirin-provider-shared/contracts/library/custody_evidence.qv",
 "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
 "providers/quirin-provider-shared/contracts/library/source_projection.qv"
 ],
-"seconds": 11.0
+"seconds": 5.7
 },
 "qcore-c-gateway::test::publication_custody": {
 "dirs": [],
@@ -4375,7 +4539,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 3.3
+"seconds": 1.2
 },
 "qcore-c-gateway::test::quant_index_checks": {
 "dirs": [],
@@ -4385,7 +4549,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.5
+"seconds": 1.1
 },
 "qcore-c-gateway::test::reach_gate_positions": {
 "dirs": [],
@@ -4395,7 +4559,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.0
+"seconds": 0.9
 },
 "qcore-c-gateway::test::reading_site_domain": {
 "dirs": [],
@@ -4413,7 +4577,7 @@
 "proof/QCore/ScalarAccessorCondition.lean",
 "proof/QCore/VariadicNested.lean"
 ],
-"seconds": 0.7
+"seconds": 0.6
 },
 "qcore-c-gateway::test::refcount_reference_returning": {
 "dirs": [],
@@ -4423,7 +4587,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.9
+"seconds": 0.8
 },
 "qcore-c-gateway::test::refcount_resource_kind": {
 "dirs": [],
@@ -4433,7 +4597,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.6
+"seconds": 1.0
 },
 "qcore-c-gateway::test::refused_call_hand_on": {
 "dirs": [],
@@ -4443,7 +4607,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.7
+"seconds": 0.3
 },
 "qcore-c-gateway::test::refuted_contract_foreign_unlink": {
 "dirs": [],
@@ -4453,7 +4617,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.4
+"seconds": 0.3
 },
 "qcore-c-gateway::test::refuted_contract_withdrawal": {
 "dirs": [],
@@ -4463,7 +4627,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.2
+"seconds": 0.8
 },
 "qcore-c-gateway::test::relational_postconditions": {
 "dirs": [],
@@ -4473,7 +4637,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.0
+"seconds": 1.0
 },
 "qcore-c-gateway::test::resource_kinds": {
 "dirs": [],
@@ -4483,7 +4647,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.8
+"seconds": 1.1
 },
 "qcore-c-gateway::test::resource_kinds_lean": {
 "dirs": [],
@@ -4493,7 +4657,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-c-gateway::test::result_constructors": {
 "dirs": [],
@@ -4503,7 +4667,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.9
+"seconds": 0.5
 },
 "qcore-c-gateway::test::result_set_derivation": {
 "dirs": [],
@@ -4513,7 +4677,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.4
+"seconds": 0.3
 },
 "qcore-c-gateway::test::retaining_call_minted_name": {
 "dirs": [],
@@ -4523,7 +4687,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 27.6
+"seconds": 18.8
 },
 "qcore-c-gateway::test::retention_guard": {
 "dirs": [],
@@ -4533,7 +4697,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.3
+"seconds": 3.0
 },
 "qcore-c-gateway::test::retry_lifetime": {
 "dirs": [],
@@ -4543,7 +4707,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.9
+"seconds": 2.0
 },
 "qcore-c-gateway::test::return_code_handoff": {
 "dirs": [],
@@ -4563,7 +4727,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 7.2
+"seconds": 2.9
 },
 "qcore-c-gateway::test::return_position_modeled_call": {
 "dirs": [],
@@ -4573,7 +4737,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 5.6
+"seconds": 1.6
 },
 "qcore-c-gateway::test::return_position_pointer_leaf": {
 "dirs": [],
@@ -4583,7 +4747,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 5.3
+"seconds": 1.3
 },
 "qcore-c-gateway::test::return_refused_call_lowering": {
 "dirs": [],
@@ -4593,7 +4757,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 3.1
+"seconds": 0.9
 },
 "qcore-c-gateway::test::review_hold_standing": {
 "dirs": [],
@@ -4603,7 +4767,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 3.5
+"seconds": 0.7
 },
 "qcore-c-gateway::test::rko_union_layout": {
 "dirs": [],
@@ -4613,7 +4777,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.8
+"seconds": 0.4
 },
 "qcore-c-gateway::test::rule32a_hold": {
 "dirs": [],
@@ -4623,7 +4787,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.7
+"seconds": 0.2
 },
 "qcore-c-gateway::test::rule33_switch": {
 "dirs": [],
@@ -4633,7 +4797,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.7
+"seconds": 1.0
 },
 "qcore-c-gateway::test::rule36_switch": {
 "dirs": [],
@@ -4643,7 +4807,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 3.6
+"seconds": 1.1
 },
 "qcore-c-gateway::test::rule37_switch": {
 "dirs": [
@@ -4831,7 +4995,17 @@
 "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
 "providers/quirin-provider-shared/contracts/library/source_projection.qv"
 ],
-"seconds": 209.6
+"seconds": 125.8
+},
+"qcore-c-gateway::test::scalar_form_census": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 0,
+"ok": true,
+"probed_count": 0,
+"read": [],
+"seconds": 0.0
 },
 "qcore-c-gateway::test::scalar_member_store": {
 "dirs": [],
@@ -4841,7 +5015,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.2
+"seconds": 0.4
 },
 "qcore-c-gateway::test::scalar_noop_alias": {
 "dirs": [],
@@ -4851,7 +5025,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.9
+"seconds": 0.9
 },
 "qcore-c-gateway::test::scalar_precedence": {
 "dirs": [],
@@ -4861,7 +5035,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.4
+"seconds": 0.7
 },
 "qcore-c-gateway::test::scalar_read_identity": {
 "dirs": [],
@@ -4871,7 +5045,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.4
+"seconds": 0.7
 },
 "qcore-c-gateway::test::scalar_route_exit_edge": {
 "dirs": [],
@@ -4881,7 +5055,17 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.6
+"seconds": 0.8
+},
+"qcore-c-gateway::test::scalar_statement_forms": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 2,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.4
 },
 "qcore-c-gateway::test::serve_forwarded_callback_formals": {
 "dirs": [],
@@ -4891,7 +5075,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.4
+"seconds": 0.3
 },
 "qcore-c-gateway::test::sizeof_operand": {
 "dirs": [],
@@ -4901,7 +5085,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.1
+"seconds": 0.6
 },
 "qcore-c-gateway::test::slot_move_interior_borrow": {
 "dirs": [],
@@ -4911,7 +5095,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.4
+"seconds": 0.7
 },
 "qcore-c-gateway::test::sr5_soundness": {
 "dirs": [],
@@ -4921,7 +5105,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.2
+"seconds": 0.7
 },
 "qcore-c-gateway::test::storage_duration_volatile": {
 "dirs": [],
@@ -4931,7 +5115,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.2
+"seconds": 1.5
 },
 "qcore-c-gateway::test::sub_object_stores": {
 "dirs": [],
@@ -4941,7 +5125,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.9
+"seconds": 0.7
 },
 "qcore-c-gateway::test::summary_validation_premises": {
 "dirs": [],
@@ -4951,7 +5135,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.1
+"seconds": 1.0
 },
 "qcore-c-gateway::test::sup07_refused_test_accusation": {
 "dirs": [],
@@ -4961,7 +5145,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.4
+"seconds": 0.3
 },
 "qcore-c-gateway::test::typed_body_comparison": {
 "dirs": [],
@@ -4971,7 +5155,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.0
+"seconds": 0.8
 },
 "qcore-c-gateway::test::typed_const_pointer_value": {
 "dirs": [],
@@ -4981,7 +5165,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.4
+"seconds": 1.1
 },
 "qcore-c-gateway::test::typed_field_access": {
 "dirs": [],
@@ -4991,7 +5175,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.3
+"seconds": 1.1
 },
 "qcore-c-gateway::test::typed_root_declarations": {
 "dirs": [],
@@ -5001,7 +5185,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.9
+"seconds": 0.8
 },
 "qcore-c-gateway::test::union_bitfield_places": {
 "dirs": [],
@@ -5011,7 +5195,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.1
+"seconds": 1.5
 },
 "qcore-c-gateway::test::union_opaque_writes": {
 "dirs": [],
@@ -5021,7 +5205,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.5
+"seconds": 0.4
 },
 "qcore-c-gateway::test::va_loop_pointer_arg": {
 "dirs": [],
@@ -5031,7 +5215,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.0
+"seconds": 0.7
 },
 "qcore-c-gateway::test::verdict_fold": {
 "dirs": [],
@@ -5041,7 +5225,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.8
+"seconds": 0.5
 },
 "qcore-c-gateway::test::w46_external_callee_contracts": {
 "dirs": [],
@@ -5051,7 +5235,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.7
+"seconds": 1.9
 },
 "qcore-c-gateway::test::w46_libc_event_contract_gaps": {
 "dirs": [],
@@ -5061,7 +5245,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.7
+"seconds": 1.4
 },
 "qcore-c-gateway::test::w46_routing_query_contracts": {
 "dirs": [],
@@ -5071,7 +5255,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.2
+"seconds": 1.0
 },
 "qcore-c-gateway::test::w47_callee_closure_r2": {
 "dirs": [],
@@ -5081,7 +5265,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.3
+"seconds": 0.9
 },
 "qcore-c-gateway::test::w48_bottom_up_callee_bodies": {
 "dirs": [],
@@ -5091,7 +5275,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.3
+"seconds": 1.0
 },
 "qcore-c-gateway::test::w48_callee_closure_r3": {
 "dirs": [],
@@ -5101,7 +5285,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.0
+"seconds": 0.8
 },
 "qcore-c-gateway::test::w48_external_callee_contracts": {
 "dirs": [],
@@ -5111,7 +5295,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.0
+"seconds": 1.4
 },
 "qcore-c-gateway::test::written_set_derivation": {
 "dirs": [],
@@ -5121,7 +5305,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.6
+"seconds": 0.5
 },
 "qcore-compiler::lib::qcore_compiler": {
 "dirs": [
@@ -5188,7 +5372,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 21.3
+"seconds": 11.8
 },
 "qcore-compiler::test::aggregate_owned_field": {
 "dirs": [
@@ -5212,7 +5396,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.6
+"seconds": 0.4
 },
 "qcore-compiler::test::bitfield_concurrency": {
 "dirs": [
@@ -5284,7 +5468,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.7
+"seconds": 0.5
 },
 "qcore-compiler::test::branch_statement": {
 "dirs": [
@@ -5308,7 +5492,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.7
+"seconds": 0.5
 },
 "qcore-compiler::test::call_use_route_parity": {
 "dirs": [],
@@ -5318,7 +5502,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 3.4
+"seconds": 2.6
 },
 "qcore-compiler::test::checked_mutex_guards": {
 "dirs": [
@@ -5342,7 +5526,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.5
+"seconds": 0.3
 },
 "qcore-compiler::test::chunk_lifecycle_coverage": {
 "dirs": [
@@ -5404,7 +5588,7 @@
 "docs/reports/w42-chunk-lifecycle-cert/inventory.json",
 "docs/reports/w43-chunk-source-profile/lifecycle-coverage.json"
 ],
-"seconds": 4.4
+"seconds": 2.0
 },
 "qcore-compiler::test::cleanup_replay_route_parity": {
 "dirs": [],
@@ -5414,7 +5598,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 38.4
+"seconds": 19.4
 },
 "qcore-compiler::test::cleanup_task_composition": {
 "dirs": [
@@ -5466,7 +5650,7 @@
 "contract/profiles/libevent/providers/qcore.libevent.json",
 "examples/threads/README.md"
 ],
-"seconds": 4.2
+"seconds": 2.0
 },
 "qcore-compiler::test::compose_event_lines": {
 "dirs": [
@@ -5490,7 +5674,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.3
+"seconds": 0.2
 },
 "qcore-compiler::test::composed_five_providers": {
 "dirs": [
@@ -5538,7 +5722,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.3
+"seconds": 0.1
 },
 "qcore-compiler::test::composition_route_parity": {
 "dirs": [],
@@ -5548,7 +5732,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 18.0
+"seconds": 6.9
 },
 "qcore-compiler::test::contract_consumers": {
 "dirs": [],
@@ -5558,7 +5742,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-compiler::test::contract_inherit_adoption": {
 "dirs": [
@@ -5749,7 +5933,7 @@
 "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
 "providers/quirin-provider-shared/contracts/library/source_projection.qv"
 ],
-"seconds": 23.3
+"seconds": 11.1
 },
 "qcore-compiler::test::contract_inherit_parity": {
 "dirs": [],
@@ -5913,7 +6097,7 @@
 "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
 "providers/quirin-provider-shared/contracts/library/source_projection.qv"
 ],
-"seconds": 5.8
+"seconds": 3.1
 },
 "qcore-compiler::test::contract_inherit_qcore_provider": {
 "dirs": [
@@ -6107,7 +6291,7 @@
 "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
 "providers/quirin-provider-shared/contracts/library/source_projection.qv"
 ],
-"seconds": 23.0
+"seconds": 13.3
 },
 "qcore-compiler::test::contract_loader": {
 "dirs": [
@@ -6147,6 +6331,7 @@
 "contract/corpus.json",
 "cycle19-resource-contracts.json",
 "providers/contract-load-path.json",
+"providers/qcore-provider-chunkio/contract-inventory.lock",
 "providers/qcore-provider-chunkio/contracts/chunkio/chunk_destructor.qv",
 "providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qv",
 "providers/qcore-provider-chunkio/contracts/chunkio/chunk_sizes.qv",
@@ -6194,6 +6379,7 @@
 "providers/qcore-provider-chunkio/contracts/chunkio/unsupported_close.qv",
 "providers/qcore-provider-chunkio/contracts/chunkio/unsupported_constructor_observation.qv",
 "providers/qcore-provider-chunkio/contracts/fluent_bit/busy_state.qv",
+"providers/qcore-provider-cmetrics/contract-inventory.lock",
 "providers/qcore-provider-cmetrics/contracts/cmetrics/context_lifetime.qv",
 "providers/qcore-provider-cmetrics/contracts/cmetrics/counter_reset.qv",
 "providers/qcore-provider-cmetrics/contracts/cmetrics/logging.qv",
@@ -6204,7 +6390,9 @@
 "providers/qcore-provider-cmetrics/contracts/cmetrics/null_deref.qv",
 "providers/qcore-provider-cmetrics/contracts/cmetrics/opts_lifetime.qv",
 "providers/qcore-provider-cmetrics/contracts/cmetrics/typed_setters.qv",
+"providers/qcore-provider-ctraces/contract-inventory.lock",
 "providers/qcore-provider-ctraces/contracts/ctraces/context_lifetime.qv",
+"providers/qcore-provider-libevent/contract-inventory.lock",
 "providers/qcore-provider-libevent/contracts/monkey/callback_binding.qv",
 "providers/qcore-provider-libevent/contracts/monkey/callback_task_handoff.qv",
 "providers/qcore-provider-libevent/contracts/monkey/composition.qv",
@@ -6225,6 +6413,7 @@
 "providers/qcore-provider-libevent/contracts/monkey/wait_identity_policy.qv",
 "providers/qcore-provider-libevent/contracts/monkey/wait_source_policy.qv",
 "providers/qcore-provider-libevent/contracts/monkey/wrapper_paths.qv",
+"providers/qcore-provider-librdkafka/contract-inventory.lock",
 "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
 "providers/qcore-provider-librdkafka/contracts/librdkafka/client.qv",
 "providers/qcore-provider-librdkafka/contracts/librdkafka/header_inlines.qv",
@@ -6239,6 +6428,7 @@
 "providers/qcore-provider-librdkafka/contracts/librdkafka/refcount.qv",
 "providers/qcore-provider-librdkafka/contracts/librdkafka/topic_partition.qv",
 "providers/qcore-provider-librdkafka/contracts/librdkafka/typed_queue.qv",
+"providers/quirin-provider-cfl/contract-inventory.lock",
 "providers/quirin-provider-cfl/contracts/cfl/arena_lifetime.qv",
 "providers/quirin-provider-cfl/contracts/cfl/atomic.qv",
 "providers/quirin-provider-cfl/contracts/cfl/hash_state.qv",
@@ -6246,6 +6436,7 @@
 "providers/quirin-provider-cfl/contracts/cfl/null_deref.qv",
 "providers/quirin-provider-cfl/contracts/cfl/sds_lifetime.qv",
 "providers/quirin-provider-cfl/contracts/cfl/time.qv",
+"providers/quirin-provider-fluent-bit/contract-inventory.lock",
 "providers/quirin-provider-fluent-bit/contracts/fluent_bit/hash_table_publication.qv",
 "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv",
 "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy_direct_routes.qv",
@@ -6273,6 +6464,7 @@
 "providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv",
 "providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv",
 "providers/quirin-provider-fluent-bit/contracts/fluent_bit/time.qv",
+"providers/quirin-provider-libc/contract-inventory.lock",
 "providers/quirin-provider-libc/contracts/libc/dirent.qv",
 "providers/quirin-provider-libc/contracts/libc/dlfcn.qv",
 "providers/quirin-provider-libc/contracts/libc/errno.qv",
@@ -6291,14 +6483,18 @@
 "providers/quirin-provider-libc/contracts/libc/threads.qv",
 "providers/quirin-provider-libc/contracts/libc/time.qv",
 "providers/quirin-provider-libc/contracts/libc/unistd.qv",
+"providers/quirin-provider-mpack/contract-inventory.lock",
 "providers/quirin-provider-mpack/contracts/mpack/writer.qv",
+"providers/quirin-provider-msgpack/contract-inventory.lock",
 "providers/quirin-provider-msgpack/contracts/msgpack/packer.qv",
+"providers/quirin-provider-shared/contract-inventory.lock",
 "providers/quirin-provider-shared/contracts/language/quantified_indices.qv",
 "providers/quirin-provider-shared/contracts/library/custody_evidence.qv",
 "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
-"providers/quirin-provider-shared/contracts/library/source_projection.qv"
+"providers/quirin-provider-shared/contracts/library/source_projection.qv",
+"tests/support/contract_locks_cases.json"
 ],
-"seconds": 23.9
+"seconds": 17.3
 },
 "qcore-compiler::test::contract_view_census": {
 "dirs": [
@@ -6488,7 +6684,7 @@
 "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
 "providers/quirin-provider-shared/contracts/library/source_projection.qv"
 ],
-"seconds": 47.5
+"seconds": 28.4
 },
 "qcore-compiler::test::counter_route_parity": {
 "dirs": [],
@@ -6498,7 +6694,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.2
+"seconds": 1.6
 },
 "qcore-compiler::test::ct01_proof_leg": {
 "dirs": [
@@ -7124,7 +7320,7 @@
 "docs/reports/wave9-ctwin/ct_stage_evidence.json",
 "docs/reviews/r0_3/acceptance.json"
 ],
-"seconds": 1.4
+"seconds": 1.0
 },
 "qcore-compiler::test::cycle20_verifier_plugins": {
 "dirs": [
@@ -7148,7 +7344,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 1.8
+"seconds": 1.5
 },
 "qcore-compiler::test::emitted_c_werror": {
 "dirs": [
@@ -7172,7 +7368,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 1.4
+"seconds": 0.9
 },
 "qcore-compiler::test::epoch_credit_error_path": {
 "dirs": [
@@ -7202,7 +7398,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-compiler::test::epoch_source": {
 "dirs": [
@@ -7236,7 +7432,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-compiler::test::epoch_tasks_source": {
 "dirs": [
@@ -7260,7 +7456,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.3
+"seconds": 0.1
 },
 "qcore-compiler::test::error_payload_tasks": {
 "dirs": [
@@ -7284,7 +7480,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.4
+"seconds": 0.3
 },
 "qcore-compiler::test::examples_suite": {
 "dirs": [
@@ -7324,7 +7520,7 @@
 "examples/threads/README.md",
 "examples/unsafe-linkage/README.md"
 ],
-"seconds": 0.9
+"seconds": 0.5
 },
 "qcore-compiler::test::extension_compatibility": {
 "dirs": [
@@ -7382,7 +7578,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-compiler::test::extern_calls": {
 "dirs": [
@@ -7406,7 +7602,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 1.0
+"seconds": 0.5
 },
 "qcore-compiler::test::f02_trace_relation": {
 "dirs": [
@@ -7430,7 +7626,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.9
+"seconds": 0.5
 },
 "qcore-compiler::test::f02_windows_pin_agreement": {
 "dirs": [],
@@ -7469,7 +7665,7 @@
 "examples/ffi/qr_header.c",
 "examples/ffi/qr_header.h"
 ],
-"seconds": 2.3
+"seconds": 1.3
 },
 "qcore-compiler::test::file_close_route_parity": {
 "dirs": [],
@@ -7485,7 +7681,7 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 58.4
+"seconds": 39.0
 },
 "qcore-compiler::test::filesystem_chunk_close_route_parity": {
 "dirs": [],
@@ -7501,7 +7697,7 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 54.5
+"seconds": 36.0
 },
 "qcore-compiler::test::first_party_discovery": {
 "dirs": [],
@@ -7562,7 +7758,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 26.3
+"seconds": 14.7
 },
 "qcore-compiler::test::float_extern": {
 "dirs": [
@@ -7586,7 +7782,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 9.9
+"seconds": 3.3
 },
 "qcore-compiler::test::float_ffi": {
 "dirs": [
@@ -7610,7 +7806,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 1.6
+"seconds": 1.2
 },
 "qcore-compiler::test::float_ieee_vectors": {
 "dirs": [],
@@ -7649,7 +7845,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 13.0
+"seconds": 9.3
 },
 "qcore-compiler::test::float_types": {
 "dirs": [
@@ -7673,7 +7869,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 15.3
+"seconds": 11.9
 },
 "qcore-compiler::test::http_computed_length": {
 "dirs": [
@@ -7771,7 +7967,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.3
+"seconds": 0.2
 },
 "qcore-compiler::test::loops_on_composed_routes": {
 "dirs": [
@@ -7795,7 +7991,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.3
+"seconds": 0.2
 },
 "qcore-compiler::test::memory_close_route_parity": {
 "dirs": [],
@@ -7805,7 +8001,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 17.2
+"seconds": 11.5
 },
 "qcore-compiler::test::module_imports": {
 "dirs": [
@@ -7869,7 +8065,7 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 0.7
+"seconds": 0.4
 },
 "qcore-compiler::test::native_library": {
 "dirs": [
@@ -7893,7 +8089,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-compiler::test::native_library_contract": {
 "dirs": [
@@ -7917,7 +8113,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-compiler::test::native_library_header": {
 "dirs": [
@@ -7945,7 +8141,7 @@
 "third_party/libevent/include/event2/thread.h",
 "third_party/libevent/include/event2/util.h"
 ],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-compiler::test::native_library_header_decoration": {
 "dirs": [
@@ -7975,7 +8171,7 @@
 "third_party/libevent/include/event2/util.h",
 "third_party/libevent/include/event2/visibility.h"
 ],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-compiler::test::native_library_source_binding": {
 "dirs": [
@@ -7999,7 +8195,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-compiler::test::nullable_removed": {
 "dirs": [],
@@ -8009,7 +8205,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.8
+"seconds": 1.1
 },
 "qcore-compiler::test::obs_reordering": {
 "dirs": [
@@ -8033,7 +8229,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.6
+"seconds": 0.2
 },
 "qcore-compiler::test::owned_field_route_reach": {
 "dirs": [
@@ -8057,7 +8253,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-compiler::test::owned_source_tasks": {
 "dirs": [
@@ -8081,7 +8277,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.7
+"seconds": 0.4
 },
 "qcore-compiler::test::pipe_drop_stage": {
 "dirs": [
@@ -8105,7 +8301,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-compiler::test::pipe_intrinsic_stage": {
 "dirs": [
@@ -8129,7 +8325,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.5
+"seconds": 0.2
 },
 "qcore-compiler::test::pipe_operator": {
 "dirs": [
@@ -8153,7 +8349,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.5
+"seconds": 0.3
 },
 "qcore-compiler::test::profile_loader": {
 "dirs": [],
@@ -8184,7 +8380,7 @@
 "third_party/libevent/kqueue.c",
 "third_party/libevent/win32select.c"
 ],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-compiler::test::proof_leg_digests": {
 "dirs": [],
@@ -8365,6 +8561,7 @@
 "proof/QCore/BranchConditionCall.lean",
 "proof/QCore/BranchJoin.lean",
 "proof/QCore/BucketTally.lean",
+"proof/QCore/BuiltinExpectCondition.lean",
 "proof/QCore/CGatewayRefinements.lean",
 "proof/QCore/CMetricsGetterOwnership.lean",
 "proof/QCore/CNumeric.lean",
@@ -8397,6 +8594,7 @@
 "proof/QCore/CertificateScope.lean",
 "proof/QCore/CflAtomicEffects.lean",
 "proof/QCore/ChainedAccess.lean",
+"proof/QCore/ChainedAssignment.lean",
 "proof/QCore/ChainedTailActual.lean",
 "proof/QCore/CheckedSelfInitCall.lean",
 "proof/QCore/CheckedSpecification.lean",
@@ -8446,6 +8644,7 @@
 "proof/QCore/ControlFlow.lean",
 "proof/QCore/CountedUsers.lean",
 "proof/QCore/CounterSource.lean",
+"proof/QCore/CrossUnitReplayBudget.lean",
 "proof/QCore/CrossUnitSummary.lean",
 "proof/QCore/Ct01OwnedTransfer.lean",
 "proof/QCore/Ct03ReadShares.lean",
@@ -8558,6 +8757,7 @@
 "proof/QCore/LoopLifetimeSummary.lean",
 "proof/QCore/LoopOwner.lean",
 "proof/QCore/LoopOwnerCoroPlugin.lean",
+"proof/QCore/LoopReacquisitionLeak.lean",
 "proof/QCore/LoopSiteGenerations.lean",
 "proof/QCore/LoopSwitchCallEvaluation.lean",
 "proof/QCore/LoopWindows.lean",
@@ -8565,13 +8765,18 @@
 "proof/QCore/MayAlias.lean",
 "proof/QCore/MemberAddress.lean",
 "proof/QCore/MemberAddressReader.lean",
+"proof/QCore/MemberCustodyAttribution.lean",
+"proof/QCore/MemberEffectSummary.lean",
 "proof/QCore/MemberFormalType.lean",
+"proof/QCore/MemberNonCUnits.lean",
 "proof/QCore/MemberPathDirectCall.lean",
 "proof/QCore/MemberPathRelease.lean",
 "proof/QCore/MemberPathUnitHelpers.lean",
 "proof/QCore/MemberPrepassRoutes.lean",
 "proof/QCore/MemberRelease.lean",
 "proof/QCore/MemberReleaseCallee.lean",
+"proof/QCore/MemberReleaseTypedMember.lean",
+"proof/QCore/MemberReleaseUntypedBase.lean",
 "proof/QCore/MemberSummaryOrder.lean",
 "proof/QCore/MemoKey.lean",
 "proof/QCore/MemoryClose.lean",
@@ -8579,6 +8784,7 @@
 "proof/QCore/MetricTraceContractGaps.lean",
 "proof/QCore/ModuleImports.lean",
 "proof/QCore/MonkeyEvent.lean",
+"proof/QCore/MonkeyLinkedSelection.lean",
 "proof/QCore/MonkeyWaitProjection.lean",
 "proof/QCore/MonkeyWaitSourcePolicy.lean",
 "proof/QCore/MsvcAbiReader.lean",
@@ -8602,6 +8808,7 @@
 "proof/QCore/NoBuildScope.lean",
 "proof/QCore/NullDeref.lean",
 "proof/QCore/NullDerefGrade.lean",
+"proof/QCore/NullLookupEvent.lean",
 "proof/QCore/NullMemberPremise.lean",
 "proof/QCore/NullMemberQualifier.lean",
 "proof/QCore/NullMemberScope.lean",
@@ -8613,6 +8820,9 @@
 "proof/QCore/OpCallbacks.lean",
 "proof/QCore/OrderedLifetimeReplay.lean",
 "proof/QCore/OsEndpointPostState.lean",
+"proof/QCore/OutParameterBodySummary.lean",
+"proof/QCore/OutParameterScalarFramePremise.lean",
+"proof/QCore/OutSlotCallWrite.lean",
 "proof/QCore/OuterContract.lean",
 "proof/QCore/OuterListCandidates.lean",
 "proof/QCore/OwnedFieldCopyReach.lean",
@@ -8712,6 +8922,7 @@
 "proof/QCore/ScalarReadIdentity.lean",
 "proof/QCore/ScalarReturnValue.lean",
 "proof/QCore/ScalarRouteExitEdge.lean",
+"proof/QCore/ScalarStatementForms.lean",
 "proof/QCore/ScalarTasks.lean",
 "proof/QCore/ScalarTypedErrors.lean",
 "proof/QCore/ScalarTypes.lean",
@@ -8736,6 +8947,7 @@
 "proof/QCore/SourceRootAdmission.lean",
 "proof/QCore/SourceValidation.lean",
 "proof/QCore/Sr5Soundness.lean",
+"proof/QCore/StagedCheckpoints.lean",
 "proof/QCore/StatementExpressions.lean",
 "proof/QCore/StdBuffer.lean",
 "proof/QCore/StdEvent.lean",
@@ -8804,7 +9016,7 @@
 "proof/QCore/WriteLendTasksExercise.lean",
 "proof/QCore/WrittenSetDerivation.lean"
 ],
-"seconds": 0.3
+"seconds": 0.1
 },
 "qcore-compiler::test::qcore_contract_corpus": {
 "dirs": [
@@ -9017,7 +9229,7 @@
 "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
 "providers/quirin-provider-shared/contracts/library/source_projection.qv"
 ],
-"seconds": 22.1
+"seconds": 11.5
 },
 "qcore-compiler::test::qr_lexical_selector_census": {
 "dirs": [
@@ -9029,7 +9241,7 @@
 ],
 "missing_count": 1,
 "ok": true,
-"probed_count": 28063,
+"probed_count": 28497,
 "read": [
 "compiler/tests/fixtures/bitfield_concurrency/addressable.qr",
 "compiler/tests/fixtures/bitfield_concurrency/adjacent.qr",
@@ -9800,7 +10012,7 @@
 "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
 "providers/quirin-provider-shared/contracts/library/source_projection.qv"
 ],
-"seconds": 24.3
+"seconds": 19.2
 },
 "qcore-compiler::test::qr_lexical_selector_selection": {
 "dirs": [
@@ -9824,7 +10036,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.3
+"seconds": 0.1
 },
 "qcore-compiler::test::qr_print_route_census": {
 "dirs": [],
@@ -9834,7 +10046,7 @@
 ],
 "missing_count": 1,
 "ok": true,
-"probed_count": 28074,
+"probed_count": 28508,
 "read": [
 "compiler/tests/fixtures/bitfield_concurrency/addressable.qr",
 "compiler/tests/fixtures/bitfield_concurrency/adjacent.qr",
@@ -10594,7 +10806,7 @@
 "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
 "providers/quirin-provider-shared/contracts/library/source_projection.qv"
 ],
-"seconds": 3.2
+"seconds": 1.7
 },
 "qcore-compiler::test::qr_print_route_selection": {
 "dirs": [
@@ -10618,7 +10830,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-compiler::test::qrlib_linkage": {
 "dirs": [
@@ -10642,7 +10854,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 4.5
+"seconds": 2.2
 },
 "qcore-compiler::test::quant_check_connectives": {
 "dirs": [
@@ -10666,7 +10878,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-compiler::test::quant_index_contracts": {
 "dirs": [
@@ -10690,7 +10902,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.4
+"seconds": 0.1
 },
 "qcore-compiler::test::quant_region": {
 "dirs": [
@@ -10714,7 +10926,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.9
+"seconds": 0.2
 },
 "qcore-compiler::test::reactor_route_parity": {
 "dirs": [],
@@ -10727,7 +10939,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-compiler::test::region_credit_joins": {
 "dirs": [
@@ -10759,7 +10971,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.4
+"seconds": 0.1
 },
 "qcore-compiler::test::region_joins_duties": {
 "dirs": [
@@ -10791,7 +11003,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.4
+"seconds": 0.2
 },
 "qcore-compiler::test::region_joins_loan": {
 "dirs": [
@@ -10822,7 +11034,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.3
+"seconds": 0.2
 },
 "qcore-compiler::test::resource_helper_functions": {
 "dirs": [
@@ -10846,7 +11058,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.4
+"seconds": 0.2
 },
 "qcore-compiler::test::result_set_operators": {
 "dirs": [
@@ -10918,7 +11130,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 25.8
+"seconds": 18.7
 },
 "qcore-compiler::test::scalar_composed_string": {
 "dirs": [
@@ -10942,7 +11154,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 4.2
+"seconds": 3.3
 },
 "qcore-compiler::test::scalar_epoch_tasks": {
 "dirs": [
@@ -10966,7 +11178,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 4.4
+"seconds": 4.2
 },
 "qcore-compiler::test::scalar_extern_values": {
 "dirs": [
@@ -10990,7 +11202,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 49.6
+"seconds": 28.2
 },
 "qcore-compiler::test::scalar_f02_outcomes": {
 "dirs": [
@@ -11014,7 +11226,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 7.8
+"seconds": 6.6
 },
 "qcore-compiler::test::scalar_loop_bounds": {
 "dirs": [
@@ -11038,7 +11250,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 14.5
+"seconds": 11.5
 },
 "qcore-compiler::test::scalar_payloads": {
 "dirs": [
@@ -11062,7 +11274,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 29.1
+"seconds": 18.5
 },
 "qcore-compiler::test::scalar_positions": {
 "dirs": [
@@ -11086,7 +11298,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 15.6
+"seconds": 11.7
 },
 "qcore-compiler::test::scalar_tasks": {
 "dirs": [
@@ -11110,7 +11322,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 71.5
+"seconds": 41.6
 },
 "qcore-compiler::test::scalar_typed_errors": {
 "dirs": [
@@ -11134,7 +11346,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 59.9
+"seconds": 43.2
 },
 "qcore-compiler::test::scalar_types": {
 "dirs": [
@@ -11158,7 +11370,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 47.9
+"seconds": 34.2
 },
 "qcore-compiler::test::scoped_read_loans": {
 "dirs": [
@@ -11230,7 +11442,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.8
+"seconds": 0.5
 },
 "qcore-compiler::test::socket_cell_route": {
 "dirs": [
@@ -11254,7 +11466,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.3
+"seconds": 0.2
 },
 "qcore-compiler::test::socket_event_compose": {
 "dirs": [
@@ -11278,7 +11490,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 1.3
+"seconds": 0.8
 },
 "qcore-compiler::test::source_loop": {
 "dirs": [
@@ -11302,7 +11514,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.7
+"seconds": 0.6
 },
 "qcore-compiler::test::source_record": {
 "dirs": [
@@ -11326,7 +11538,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 1.0
+"seconds": 0.6
 },
 "qcore-compiler::test::source_scalar_calls": {
 "dirs": [
@@ -11350,7 +11562,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 1.0
+"seconds": 0.6
 },
 "qcore-compiler::test::source_tasks": {
 "dirs": [
@@ -11374,7 +11586,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 1.4
+"seconds": 1.1
 },
 "qcore-compiler::test::std_buffer": {
 "dirs": [
@@ -11398,7 +11610,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.8
+"seconds": 0.5
 },
 "qcore-compiler::test::std_event": {
 "dirs": [
@@ -11422,7 +11634,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.8
+"seconds": 0.6
 },
 "qcore-compiler::test::std_http": {
 "dirs": [
@@ -11446,7 +11658,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 1.1
+"seconds": 0.8
 },
 "qcore-compiler::test::std_io_compose": {
 "dirs": [
@@ -11470,7 +11682,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 1.1
+"seconds": 0.9
 },
 "qcore-compiler::test::std_modules": {
 "dirs": [
@@ -11518,7 +11730,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.9
+"seconds": 0.7
 },
 "qcore-compiler::test::std_socket_inet": {
 "dirs": [
@@ -11530,7 +11742,7 @@
 ],
 "missing_count": 16,
 "ok": false,
-"probed_count": 28063,
+"probed_count": 28497,
 "read": [
 "compiler/tests/fixtures/bitfield_concurrency/addressable.qr",
 "compiler/tests/fixtures/bitfield_concurrency/adjacent.qr",
@@ -12301,7 +12513,7 @@
 "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
 "providers/quirin-provider-shared/contracts/library/source_projection.qv"
 ],
-"seconds": 4.4
+"seconds": 2.4
 },
 "qcore-compiler::test::std_string": {
 "dirs": [
@@ -12325,7 +12537,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.8
+"seconds": 0.5
 },
 "qcore-compiler::test::string_concat": {
 "dirs": [
@@ -12349,7 +12561,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 1.0
+"seconds": 0.4
 },
 "qcore-compiler::test::string_slice_io": {
 "dirs": [
@@ -12373,7 +12585,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 1.4
+"seconds": 0.4
 },
 "qcore-compiler::test::system_trace_examples_windows": {
 "dirs": [],
@@ -12407,7 +12619,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.9
+"seconds": 0.4
 },
 "qcore-compiler::test::task_record_captures": {
 "dirs": [
@@ -12432,7 +12644,7 @@
 "contract/profiles/libevent/providers/qcore.libevent.json",
 "examples/threads/README.md"
 ],
-"seconds": 7.7
+"seconds": 3.5
 },
 "qcore-compiler::test::task_route_tsan": {
 "dirs": [
@@ -12456,7 +12668,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 144.3
+"seconds": 57.6
 },
 "qcore-compiler::test::teardown_route_parity": {
 "dirs": [],
@@ -12466,7 +12678,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 5.0
+"seconds": 1.5
 },
 "qcore-compiler::test::thread_examples": {
 "dirs": [
@@ -12490,7 +12702,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.7
+"seconds": 0.3
 },
 "qcore-compiler::test::toolchain_compatibility": {
 "dirs": [],
@@ -12500,7 +12712,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-compiler::test::trace_alphabet_lease_boundary": {
 "dirs": [
@@ -12534,9 +12746,9 @@
 ],
 "missing_count": 1,
 "ok": true,
-"probed_count": 28831,
+"probed_count": 29265,
 "read": [],
-"seconds": 2.5
+"seconds": 0.7
 },
 "qcore-compiler::test::unread_annotations": {
 "dirs": [
@@ -12560,7 +12772,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.7
+"seconds": 0.3
 },
 "qcore-compiler::test::unsafe_linkage": {
 "dirs": [
@@ -12584,7 +12796,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.5
+"seconds": 0.3
 },
 "qcore-compiler::test::unsupported_close_route_parity": {
 "dirs": [],
@@ -12600,7 +12812,7 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 147.0
+"seconds": 94.4
 },
 "qcore-compiler::test::usable_records": {
 "dirs": [
@@ -12628,7 +12840,7 @@
 "examples/ffi/qr_point.h",
 "examples/records/nested_writes.qr"
 ],
-"seconds": 3.6
+"seconds": 1.7
 },
 "qcore-compiler::test::usable_records_survey": {
 "dirs": [
@@ -12711,7 +12923,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 2.5
+"seconds": 1.8
 },
 "qcore-compiler::test::w3_evidence_v2": {
 "dirs": [
@@ -12720,7 +12932,7 @@
 ],
 "exit": 0,
 "ls_files": [],
-"missing_count": 78,
+"missing_count": 79,
 "ok": true,
 "probed_count": 4,
 "read": [
@@ -12762,6 +12974,7 @@
 "crates/qcore-schemas/src/lib.rs",
 "crates/qcore-schemas/src/loop_lifetime.rs",
 "crates/qcore-schemas/src/mechanism.rs",
+"crates/qcore-schemas/src/member_effect.rs",
 "crates/qcore-schemas/src/member_path.rs",
 "crates/qcore-schemas/src/obligation.rs",
 "crates/qcore-schemas/src/plugin.rs",
@@ -12783,7 +12996,7 @@
 "crates/qcore-schemas/src/verdict.rs",
 "crates/qcore-schemas/src/witness.rs"
 ],
-"seconds": 30.7
+"seconds": 20.1
 },
 "qcore-compiler::test::windows_threads": {
 "dirs": [],
@@ -12829,7 +13042,7 @@
 "crates/quirin-audit-plugin/Cargo.toml",
 "crates/quirin-source-analysis/Cargo.toml"
 ],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-compiler::test::write_lend": {
 "dirs": [
@@ -12853,7 +13066,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 1.0
+"seconds": 0.3
 },
 "qcore-compiler::test::write_lend_tasks": {
 "dirs": [
@@ -12877,7 +13090,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.6
+"seconds": 0.3
 },
 "qcore-compiler::test::write_lend_tasks_exercise": {
 "dirs": [
@@ -12901,7 +13114,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 2.1
+"seconds": 0.9
 },
 "qcore-contract::lib::qcore_contract": {
 "dirs": [],
@@ -12911,7 +13124,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 1.1
+"seconds": 0.5
 },
 "qcore-contract::test::boolean_conditions": {
 "dirs": [],
@@ -12921,7 +13134,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-contract::test::boolean_frame_policy": {
 "dirs": [],
@@ -12931,7 +13144,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-contract::test::bounds_contract": {
 "dirs": [],
@@ -12941,7 +13154,7 @@
 ],
 "missing_count": 1,
 "ok": true,
-"probed_count": 28677,
+"probed_count": 29111,
 "read": [
 "providers/conformance/tests/fixtures/configured_boolean_source/sample.qv",
 "providers/conformance/tests/fixtures/configured_boolean_source/sample_reset.qv",
@@ -13099,7 +13312,7 @@
 "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
 "providers/quirin-provider-shared/contracts/library/source_projection.qv"
 ],
-"seconds": 3.9
+"seconds": 1.9
 },
 "qcore-contract::test::bounds_contract_frames": {
 "dirs": [],
@@ -13109,7 +13322,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-contract::test::bounds_quant": {
 "dirs": [],
@@ -13119,7 +13332,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-contract::test::callback_clause": {
 "dirs": [],
@@ -13129,7 +13342,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-contract::test::caller_frame": {
 "dirs": [],
@@ -13159,7 +13372,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-contract::test::cmetrics_api_models": {
 "dirs": [],
@@ -13169,7 +13382,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.5
+"seconds": 0.3
 },
 "qcore-contract::test::cmetrics_setter_models": {
 "dirs": [],
@@ -13179,7 +13392,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.5
+"seconds": 0.3
 },
 "qcore-contract::test::contract_body_checked": {
 "dirs": [],
@@ -13189,7 +13402,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-contract::test::contract_bundle": {
 "dirs": [],
@@ -13199,7 +13412,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 8.1
+"seconds": 3.4
 },
 "qcore-contract::test::contract_bundle_includes": {
 "dirs": [],
@@ -13209,7 +13422,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-contract::test::contract_deferred_review": {
 "dirs": [],
@@ -13219,7 +13432,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-contract::test::contract_inherit": {
 "dirs": [
@@ -13246,7 +13459,7 @@
 "crates/qcore-contract/tests/fixtures/contract_inherit/quirin-provider-libc/contracts/libc/internal.qv",
 "crates/qcore-contract/tests/fixtures/contract_inherit/quirin-provider-libc/contracts/libc/string.qv"
 ],
-"seconds": 0.4
+"seconds": 0.1
 },
 "qcore-contract::test::contract_lifecycle": {
 "dirs": [],
@@ -13266,7 +13479,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-contract::test::contract_revision_mode": {
 "dirs": [],
@@ -13276,7 +13489,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-contract::test::contract_views": {
 "dirs": [
@@ -13464,7 +13677,7 @@
 "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
 "providers/quirin-provider-shared/contracts/library/source_projection.qv"
 ],
-"seconds": 393.9
+"seconds": 301.2
 },
 "qcore-contract::test::deref_parts": {
 "dirs": [],
@@ -13486,7 +13699,7 @@
 "read": [
 "providers/qcore-provider-libevent/contracts/monkey/event_loop.qv"
 ],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-contract::test::detach_same_item_clause": {
 "dirs": [],
@@ -13509,7 +13722,7 @@
 "providers/qcore-provider-libevent/contracts/monkey/event_loop.qv",
 "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_collector_registration.qv"
 ],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-contract::test::guarded_contract_adoption": {
 "dirs": [],
@@ -13524,7 +13737,7 @@
 "docs/reports/premise-guarded-decomposition/applications/cjson.qgd",
 "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv"
 ],
-"seconds": 1.4
+"seconds": 0.8
 },
 "qcore-contract::test::guarded_decomposition": {
 "dirs": [],
@@ -13551,7 +13764,7 @@
 "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
 "providers/qcore-provider-librdkafka/contracts/librdkafka/kafka_mem.qv"
 ],
-"seconds": 1.9
+"seconds": 0.9
 },
 "qcore-contract::test::hypothesis": {
 "dirs": [],
@@ -13561,7 +13774,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.6
+"seconds": 0.4
 },
 "qcore-contract::test::hypothesis_bindings": {
 "dirs": [],
@@ -13571,7 +13784,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 1.5
+"seconds": 0.9
 },
 "qcore-contract::test::libc_reading_hypotheses": {
 "dirs": [],
@@ -13581,7 +13794,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.5
+"seconds": 0.2
 },
 "qcore-contract::test::local_conditions": {
 "dirs": [],
@@ -13621,7 +13834,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-contract::test::op_constructor_clause": {
 "dirs": [],
@@ -13641,7 +13854,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-contract::test::plugin_premise_decomposition": {
 "dirs": [],
@@ -13651,7 +13864,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 14.1
+"seconds": 9.8
 },
 "qcore-contract::test::premise_flow": {
 "dirs": [],
@@ -14027,7 +14240,7 @@
 "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
 "providers/quirin-provider-shared/contracts/library/source_projection.qv"
 ],
-"seconds": 882.3
+"seconds": 710.1
 },
 "qcore-contract::test::quant_condition": {
 "dirs": [],
@@ -14037,7 +14250,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-contract::test::quant_effect": {
 "dirs": [],
@@ -14047,7 +14260,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-contract::test::quant_proposition": {
 "dirs": [],
@@ -14057,7 +14270,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.2
+"seconds": 0.0
 },
 "qcore-contract::test::quant_theorem": {
 "dirs": [],
@@ -14067,7 +14280,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-contract::test::reference_clause": {
 "dirs": [],
@@ -14087,7 +14300,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.2
+"seconds": 0.0
 },
 "qcore-contract::test::resource_kinds_cg25": {
 "dirs": [],
@@ -14097,7 +14310,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-contract::test::result_set_contract": {
 "dirs": [],
@@ -14107,7 +14320,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.2
+"seconds": 0.0
 },
 "qcore-contract::test::retained_by_clause": {
 "dirs": [],
@@ -14117,7 +14330,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-contract::test::retention_guard_clause": {
 "dirs": [],
@@ -14127,7 +14340,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.4
+"seconds": 0.1
 },
 "qcore-contract::test::return_code_handoff_clause": {
 "dirs": [],
@@ -14137,7 +14350,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.2
+"seconds": 0.0
 },
 "qcore-contract::test::scheduler_lifetime": {
 "dirs": [],
@@ -14147,7 +14360,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-contract::test::slot_move_clause": {
 "dirs": [],
@@ -14157,7 +14370,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-contract::test::tracked_self_init_model": {
 "dirs": [],
@@ -14167,7 +14380,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-contract::test::typed_contract_facts": {
 "dirs": [],
@@ -14177,7 +14390,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-core::lib::qcore_core": {
 "dirs": [],
@@ -14187,7 +14400,7 @@
 "ok": false,
 "probed_count": 1,
 "read": [],
-"seconds": 10.3
+"seconds": 2.7
 },
 "qcore-core::test::bounds_body_standing": {
 "dirs": [],
@@ -14197,7 +14410,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-core::test::callback_task_handoff": {
 "dirs": [],
@@ -14207,7 +14420,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-core::test::clang_gap_core": {
 "dirs": [],
@@ -14217,7 +14430,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-core::test::index_extent": {
 "dirs": [],
@@ -14227,7 +14440,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.2
+"seconds": 0.0
 },
 "qcore-core::test::index_extent_frames": {
 "dirs": [],
@@ -14237,7 +14450,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-core::test::index_quant": {
 "dirs": [],
@@ -14247,7 +14460,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-core::test::lifetime_correspondence": {
 "dirs": [],
@@ -14257,7 +14470,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 1.7
+"seconds": 0.4
 },
 "qcore-core::test::null_deref": {
 "dirs": [],
@@ -14267,7 +14480,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-core::test::null_deref_grade": {
 "dirs": [],
@@ -14277,7 +14490,17 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
+},
+"qcore-core::test::null_lookup": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 0,
+"ok": true,
+"probed_count": 0,
+"read": [],
+"seconds": 0.0
 },
 "qcore-core::test::null_member_scope": {
 "dirs": [],
@@ -14287,7 +14510,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-core::test::null_paths": {
 "dirs": [],
@@ -14297,7 +14520,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-core::test::null_triage": {
 "dirs": [],
@@ -14307,7 +14530,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-core::test::os_endpoint_correspondence": {
 "dirs": [],
@@ -14317,7 +14540,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-core::test::premise_flow": {
 "dirs": [],
@@ -14327,7 +14550,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-core::test::result_set": {
 "dirs": [],
@@ -14337,7 +14560,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-core::test::task_trace_relation": {
 "dirs": [],
@@ -14347,7 +14570,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.8
+"seconds": 0.2
 },
 "qcore-core::test::written_set": {
 "dirs": [],
@@ -14367,7 +14590,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-frontend::test::cleanup_preempted": {
 "dirs": [],
@@ -14377,7 +14600,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.2
+"seconds": 0.0
 },
 "qcore-frontend::test::error_payloads": {
 "dirs": [],
@@ -14387,7 +14610,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-frontend::test::module_imports": {
 "dirs": [],
@@ -14407,7 +14630,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-frontend::test::mutex_share_cross_arms": {
 "dirs": [],
@@ -14417,7 +14640,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-frontend::test::owned_tasks": {
 "dirs": [],
@@ -14427,7 +14650,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-frontend::test::read_loans": {
 "dirs": [],
@@ -14437,7 +14660,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-frontend::test::read_shares": {
 "dirs": [],
@@ -14457,7 +14680,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-frontend::test::runtime_import_syntax": {
 "dirs": [],
@@ -14467,7 +14690,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-frontend::test::source_epoch": {
 "dirs": [],
@@ -14477,7 +14700,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-frontend::test::source_epoch_tasks": {
 "dirs": [],
@@ -14487,7 +14710,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-frontend::test::source_mutex": {
 "dirs": [],
@@ -14497,7 +14720,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-frontend::test::source_mutex_footprint": {
 "dirs": [],
@@ -14507,7 +14730,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-frontend::test::source_tasks": {
 "dirs": [],
@@ -14517,7 +14740,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.2
+"seconds": 0.0
 },
 "qcore-frontend::test::task_recovery": {
 "dirs": [],
@@ -14527,7 +14750,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-frontend::test::task_syntax": {
 "dirs": [],
@@ -14537,7 +14760,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-frontend::test::transferability": {
 "dirs": [],
@@ -14547,7 +14770,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-gateway-rule-api::lib::qcore_gateway_rule_api": {
 "dirs": [],
@@ -14557,7 +14780,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-schemas::lib::qcore_schemas": {
 "dirs": [],
@@ -14567,7 +14790,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-schemas::test::audit_composition": {
 "dirs": [],
@@ -14577,7 +14800,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 5.8
+"seconds": 3.2
 },
 "qcore-schemas::test::boolean_result_abi": {
 "dirs": [],
@@ -14587,7 +14810,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-schemas::test::call_use_request_wire": {
 "dirs": [],
@@ -14597,7 +14820,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-schemas::test::cleanup_replay_request_wire": {
 "dirs": [],
@@ -14617,7 +14840,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-schemas::test::contract_supersession": {
 "dirs": [],
@@ -14637,7 +14860,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-schemas::test::plugin_limit_kinds": {
 "dirs": [],
@@ -14647,7 +14870,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-schemas::test::reactor_records": {
 "dirs": [],
@@ -14657,7 +14880,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-schemas::test::reactor_request_wire": {
 "dirs": [],
@@ -14667,7 +14890,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.2
+"seconds": 0.0
 },
 "qcore-schemas::test::reason_codes": {
 "dirs": [],
@@ -14677,7 +14900,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-schemas::test::schema_canonicalization": {
 "dirs": [],
@@ -14687,7 +14910,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-schemas::test::teardown_request_wire": {
 "dirs": [],
@@ -14697,7 +14920,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-verification::lib::qcore_verification": {
 "dirs": [],
@@ -14713,7 +14936,7 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 21.0
+"seconds": 11.0
 },
 "qcore-verification::test::atomic_publication_source": {
 "dirs": [],
@@ -14723,7 +14946,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.3
+"seconds": 0.8
 },
 "qcore-verification::test::call_use_dependents": {
 "dirs": [],
@@ -14739,7 +14962,7 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 3.0
+"seconds": 1.5
 },
 "qcore-verification::test::call_use_source": {
 "dirs": [],
@@ -14755,7 +14978,7 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 6.9
+"seconds": 2.9
 },
 "qcore-verification::test::callback_coverage": {
 "dirs": [],
@@ -14765,7 +14988,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-verification::test::callback_task_handoff": {
 "dirs": [],
@@ -14783,7 +15006,7 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 4.1
+"seconds": 1.2
 },
 "qcore-verification::test::chunk_lifecycle_coverage": {
 "dirs": [],
@@ -14793,7 +15016,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-verification::test::cleanup_replay_mutations": {
 "dirs": [],
@@ -14809,7 +15032,7 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 29.9
+"seconds": 17.0
 },
 "qcore-verification::test::cleanup_replay_source": {
 "dirs": [],
@@ -14825,7 +15048,7 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 4.9
+"seconds": 2.4
 },
 "qcore-verification::test::cleanup_vocabulary": {
 "dirs": [],
@@ -14835,7 +15058,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.3
+"seconds": 0.5
 },
 "qcore-verification::test::composition_bounds": {
 "dirs": [],
@@ -14845,7 +15068,7 @@
 ],
 "missing_count": 12,
 "ok": true,
-"probed_count": 840,
+"probed_count": 857,
 "read": [
 "compiler/src/call_use_source_capability.rs",
 "compiler/src/chunk_contract.rs",
@@ -14927,6 +15150,7 @@
 "crates/qcore-audit/src/input_paths.rs",
 "crates/qcore-audit/src/ir_capture.rs",
 "crates/qcore-audit/src/lib.rs",
+"crates/qcore-audit/src/link_resolution.rs",
 "crates/qcore-audit/src/loop_lifetime_fold.rs",
 "crates/qcore-audit/src/main.rs",
 "crates/qcore-audit/src/member_prepass.rs",
@@ -14945,6 +15169,8 @@
 "crates/qcore-audit/src/pin_window.rs",
 "crates/qcore-audit/src/pinned_cli.rs",
 "crates/qcore-audit/src/pinned_route.rs",
+"crates/qcore-audit/src/pinned_route/checkpoints.rs",
+"crates/qcore-audit/src/pinned_route/checkpoints/tests.rs",
 "crates/qcore-audit/src/plugin_cli.rs",
 "crates/qcore-audit/src/prepare.rs",
 "crates/qcore-audit/src/prepare_json.rs",
@@ -14956,6 +15182,7 @@
 "crates/qcore-audit/src/retained_products.rs",
 "crates/qcore-audit/src/review_hold_reasons.rs",
 "crates/qcore-audit/src/revision_compare.rs",
+"crates/qcore-audit/src/route_progress.rs",
 "crates/qcore-audit/src/rule_switch_entry.rs",
 "crates/qcore-audit/src/source_audit.rs",
 "crates/qcore-audit/src/source_contract.rs",
@@ -15050,6 +15277,7 @@
 "crates/qcore-c-gateway/src/legacy_cell_frames.rs",
 "crates/qcore-c-gateway/src/legacy_census.rs",
 "crates/qcore-c-gateway/src/legacy_cfg_builder.rs",
+"crates/qcore-c-gateway/src/legacy_chained_assignment.rs",
 "crates/qcore-c-gateway/src/legacy_checked_spec.rs",
 "crates/qcore-c-gateway/src/legacy_classify.rs",
 "crates/qcore-c-gateway/src/legacy_condition_acquisition.rs",
@@ -15071,6 +15299,7 @@
 "crates/qcore-c-gateway/src/legacy_descriptor_custody.rs",
 "crates/qcore-c-gateway/src/legacy_detach.rs",
 "crates/qcore-c-gateway/src/legacy_dialect_hook.rs",
+"crates/qcore-c-gateway/src/legacy_effective_type.rs",
 "crates/qcore-c-gateway/src/legacy_elaboration.rs",
 "crates/qcore-c-gateway/src/legacy_elaborator_calls.rs",
 "crates/qcore-c-gateway/src/legacy_enum_projection.rs",
@@ -15089,6 +15318,9 @@
 "crates/qcore-c-gateway/src/legacy_location.rs",
 "crates/qcore-c-gateway/src/legacy_lookup.rs",
 "crates/qcore-c-gateway/src/legacy_loop_generations.rs",
+"crates/qcore-c-gateway/src/legacy_loop_reacquisition_leak.rs",
+"crates/qcore-c-gateway/src/legacy_member_custody_attribution.rs",
+"crates/qcore-c-gateway/src/legacy_member_effect.rs",
 "crates/qcore-c-gateway/src/legacy_member_path_route.rs",
 "crates/qcore-c-gateway/src/legacy_member_release.rs",
 "crates/qcore-c-gateway/src/legacy_nested_call.rs",
@@ -15096,6 +15328,7 @@
 "crates/qcore-c-gateway/src/legacy_no_return_paths.rs",
 "crates/qcore-c-gateway/src/legacy_null_premise.rs",
 "crates/qcore-c-gateway/src/legacy_out_alias.rs",
+"crates/qcore-c-gateway/src/legacy_out_slot_call_write.rs",
 "crates/qcore-c-gateway/src/legacy_parenthesised_callee.rs",
 "crates/qcore-c-gateway/src/legacy_parser_census.rs",
 "crates/qcore-c-gateway/src/legacy_pin_hold.rs",
@@ -15124,6 +15357,7 @@
 "crates/qcore-c-gateway/src/legacy_route_table.rs",
 "crates/qcore-c-gateway/src/legacy_scalar_precedence.rs",
 "crates/qcore-c-gateway/src/legacy_scalar_return_value.rs",
+"crates/qcore-c-gateway/src/legacy_scalar_statement_forms.rs",
 "crates/qcore-c-gateway/src/legacy_selection.rs",
 "crates/qcore-c-gateway/src/legacy_self_link_init.rs",
 "crates/qcore-c-gateway/src/legacy_signed_rank.rs",
@@ -15143,6 +15377,7 @@
 "crates/qcore-c-gateway/src/legacy_typed_residuals.rs",
 "crates/qcore-c-gateway/src/legacy_typed_roots.rs",
 "crates/qcore-c-gateway/src/legacy_uncontracted_access.rs",
+"crates/qcore-c-gateway/src/legacy_unwritten_class.rs",
 "crates/qcore-c-gateway/src/legacy_va_condition.rs",
 "crates/qcore-c-gateway/src/legacy_value_connective.rs",
 "crates/qcore-c-gateway/src/legacy_variadics.rs",
@@ -15150,6 +15385,7 @@
 "crates/qcore-c-gateway/src/legacy_void_view.rs",
 "crates/qcore-c-gateway/src/lexical_nested_assignment.rs",
 "crates/qcore-c-gateway/src/lib.rs",
+"crates/qcore-c-gateway/src/link_call_type.rs",
 "crates/qcore-c-gateway/src/linkage/archive.rs",
 "crates/qcore-c-gateway/src/linkage/artifact.rs",
 "crates/qcore-c-gateway/src/linkage/bytes.rs",
@@ -15203,7 +15439,9 @@
 "crates/qcore-c-gateway/src/rule_hosts.rs",
 "crates/qcore-c-gateway/src/scalar_accessor_condition.rs",
 "crates/qcore-c-gateway/src/scalar_element_address.rs",
+"crates/qcore-c-gateway/src/scalar_form_census.rs",
 "crates/qcore-c-gateway/src/scalar_read_identity.rs",
+"crates/qcore-c-gateway/src/scalar_statement_forms.rs",
 "crates/qcore-c-gateway/src/sizeof_operand.rs",
 "crates/qcore-c-gateway/src/slot_move_borrow.rs",
 "crates/qcore-c-gateway/src/source_call_use.rs",
@@ -15334,6 +15572,7 @@
 "crates/qcore-core/src/native_library.rs",
 "crates/qcore-core/src/native_library_header.rs",
 "crates/qcore-core/src/null_deref.rs",
+"crates/qcore-core/src/null_lookup.rs",
 "crates/qcore-core/src/null_member_scope.rs",
 "crates/qcore-core/src/null_paths.rs",
 "crates/qcore-core/src/null_triage.rs",
@@ -15462,6 +15701,7 @@
 "crates/qcore-schemas/src/lib.rs",
 "crates/qcore-schemas/src/loop_lifetime.rs",
 "crates/qcore-schemas/src/mechanism.rs",
+"crates/qcore-schemas/src/member_effect.rs",
 "crates/qcore-schemas/src/member_path.rs",
 "crates/qcore-schemas/src/obligation.rs",
 "crates/qcore-schemas/src/plugin.rs",
@@ -15552,6 +15792,7 @@
 "crates/quirin-audit-plugin-measure/src/rows.rs",
 "crates/quirin-audit-plugin-measure/src/sides.rs",
 "crates/quirin-audit-plugin-measure/src/util.rs",
+"crates/quirin-audit-plugin-measure/src/waits.rs",
 "crates/quirin-audit-plugin/src/bin/example.rs",
 "crates/quirin-audit-plugin/src/json_text.rs",
 "crates/quirin-audit-plugin/src/lib.rs",
@@ -15588,7 +15829,7 @@
 "crates/quirin-source-analysis/src/test_support.rs",
 "crates/quirin-source-analysis/src/typed_source_match.rs"
 ],
-"seconds": 1.4
+"seconds": 0.8
 },
 "qcore-verification::test::composition_mutations": {
 "dirs": [],
@@ -15604,7 +15845,7 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 72.3
+"seconds": 48.5
 },
 "qcore-verification::test::composition_relation": {
 "dirs": [],
@@ -15630,7 +15871,7 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 6.3
+"seconds": 4.3
 },
 "qcore-verification::test::counter_source": {
 "dirs": [],
@@ -15646,7 +15887,7 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 1.8
+"seconds": 1.3
 },
 "qcore-verification::test::ctraces_capability_boundary": {
 "dirs": [],
@@ -15656,7 +15897,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.1
+"seconds": 0.6
 },
 "qcore-verification::test::emit_cleanup_replay_fixtures": {
 "dirs": [],
@@ -15676,7 +15917,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-verification::test::event_payload": {
 "dirs": [],
@@ -15692,7 +15933,7 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 9.6
+"seconds": 3.9
 },
 "qcore-verification::test::file_close_composition_mutations": {
 "dirs": [],
@@ -15708,7 +15949,7 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 140.3
+"seconds": 61.9
 },
 "qcore-verification::test::file_close_composition_source": {
 "dirs": [],
@@ -15724,7 +15965,7 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 42.4
+"seconds": 17.3
 },
 "qcore-verification::test::filesystem_chunk_close_composition_mutations": {
 "dirs": [],
@@ -15740,7 +15981,7 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 113.3
+"seconds": 47.9
 },
 "qcore-verification::test::filesystem_chunk_close_composition_source": {
 "dirs": [],
@@ -15756,7 +15997,7 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 72.6
+"seconds": 25.3
 },
 "qcore-verification::test::frame_source": {
 "dirs": [],
@@ -15772,7 +16013,7 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 2.9
+"seconds": 0.7
 },
 "qcore-verification::test::frame_source_mutations": {
 "dirs": [],
@@ -15788,7 +16029,7 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 4.0
+"seconds": 0.9
 },
 "qcore-verification::test::generic_driver": {
 "dirs": [],
@@ -15798,7 +16039,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.3
+"seconds": 0.1
 },
 "qcore-verification::test::generic_source": {
 "dirs": [],
@@ -15808,7 +16049,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 3.1
+"seconds": 0.6
 },
 "qcore-verification::test::memory_close_composition_mutations": {
 "dirs": [],
@@ -15824,7 +16065,7 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 64.0
+"seconds": 25.9
 },
 "qcore-verification::test::memory_close_composition_source": {
 "dirs": [],
@@ -15840,7 +16081,7 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 17.7
+"seconds": 7.5
 },
 "qcore-verification::test::monkey_wait_projection": {
 "dirs": [],
@@ -15856,7 +16097,7 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 12.6
+"seconds": 4.6
 },
 "qcore-verification::test::observed_wait_composition": {
 "dirs": [],
@@ -15872,7 +16113,7 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 3.6
+"seconds": 1.8
 },
 "qcore-verification::test::reactor_callback": {
 "dirs": [],
@@ -15928,7 +16169,7 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 5.4
+"seconds": 2.6
 },
 "qcore-verification::test::source_effect_helper_target": {
 "dirs": [],
@@ -15944,7 +16185,7 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 1.4
+"seconds": 1.1
 },
 "qcore-verification::test::source_effect_mutations": {
 "dirs": [],
@@ -15960,7 +16201,7 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 2.7
+"seconds": 1.3
 },
 "qcore-verification::test::source_effect_obligations": {
 "dirs": [],
@@ -15976,7 +16217,7 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 10.2
+"seconds": 4.0
 },
 "qcore-verification::test::source_profile_boundary": {
 "dirs": [],
@@ -16002,7 +16243,7 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 3.6
+"seconds": 1.3
 },
 "qcore-verification::test::teardown_source": {
 "dirs": [],
@@ -16018,7 +16259,7 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 4.9
+"seconds": 1.3
 },
 "qcore-verification::test::timed_wait_observation_wire": {
 "dirs": [],
@@ -16028,7 +16269,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.3
+"seconds": 0.1
 },
 "qcore-verification::test::timeout_teardown": {
 "dirs": [],
@@ -16044,7 +16285,7 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 3.7
+"seconds": 0.9
 },
 "qcore-verification::test::unsupported_close_composition_mutations": {
 "dirs": [],
@@ -16060,7 +16301,7 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 89.4
+"seconds": 47.6
 },
 "qcore-verification::test::unsupported_close_composition_source": {
 "dirs": [],
@@ -16076,7 +16317,7 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 70.5
+"seconds": 33.6
 },
 "qcore-verification::test::wait_failure_paths": {
 "dirs": [],
@@ -16092,7 +16333,7 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 6.4
+"seconds": 1.6
 },
 "qcore-verifier-host::lib::qcore_verifier_host": {
 "dirs": [],
@@ -16102,7 +16343,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-verifier-host::test::composition_relation": {
 "dirs": [],
@@ -16112,7 +16353,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-verifier-host::test::confined_process_execution": {
 "dirs": [],
@@ -16122,7 +16363,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.0
+"seconds": 0.5
 },
 "qcore-verifier-host::test::diagnostic_attribution": {
 "dirs": [],
@@ -16132,7 +16373,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-verifier-host::test::enforced_process_limits": {
 "dirs": [],
@@ -16152,7 +16393,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 6.3
+"seconds": 6.1
 },
 "qcore-verifier-host::test::package_identity": {
 "dirs": [],
@@ -16162,7 +16403,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.4
+"seconds": 0.2
 },
 "qcore-verifier-host::test::plugin_firewall": {
 "dirs": [],
@@ -16172,7 +16413,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-verifier-host::test::request_consumption": {
 "dirs": [],
@@ -16182,7 +16423,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 3.5
+"seconds": 3.1
 },
 "qcore-verifier-host::test::standalone_host": {
 "dirs": [],
@@ -16192,7 +16433,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 3.8
+"seconds": 2.2
 },
 "qcorec::bin::quirin": {
 "dirs": [],
@@ -16232,7 +16473,7 @@
 "contract/profiles/libevent/providers/qcore.libevent.json",
 "examples/ffi/qr_header.h"
 ],
-"seconds": 1.9
+"seconds": 0.4
 },
 "qcorec::test::contract_load_path": {
 "dirs": [
@@ -16431,7 +16672,7 @@
 "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
 "providers/quirin-provider-shared/contracts/library/source_projection.qv"
 ],
-"seconds": 1.7
+"seconds": 0.7
 },
 "qcorec::test::examples_cli": {
 "dirs": [
@@ -16489,7 +16730,7 @@
 "examples/unsafe-linkage/unchecked_calls.qr",
 "examples/unsafe-linkage/unchecked_demo.qrlib"
 ],
-"seconds": 1.6
+"seconds": 0.7
 },
 "qcorec::test::extension_compatibility": {
 "dirs": [
@@ -16514,7 +16755,7 @@
 "contract/profiles/libevent/providers/qcore.libevent.json",
 "docs/reports/remaining-v07/probes/d02_boundary_record.qr"
 ],
-"seconds": 0.5
+"seconds": 0.3
 },
 "qcorec::test::plugin_packages": {
 "dirs": [
@@ -16538,7 +16779,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 1.9
+"seconds": 0.9
 },
 "qcorec::test::runtime_imports": {
 "dirs": [
@@ -16562,7 +16803,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.5
+"seconds": 0.2
 },
 "quirin-audit-plugin-libevent::bin::quirin-audit-libevent": {
 "dirs": [],
@@ -16602,7 +16843,7 @@
 "ok": true,
 "probed_count": 2,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "quirin-audit-plugin-measure::test::host": {
 "dirs": [],
@@ -16612,7 +16853,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.3
+"seconds": 0.1
 },
 "quirin-audit-plugin-measure::test::measure": {
 "dirs": [
@@ -16626,7 +16867,21 @@
 "read": [
 "scripts/contribution_ledgers.py"
 ],
-"seconds": 1.9
+"seconds": 0.6
+},
+"quirin-audit-plugin-measure::test::slot_wait": {
+"dirs": [
+"scripts"
+],
+"exit": 0,
+"ls_files": [],
+"missing_count": 3,
+"ok": true,
+"probed_count": 2,
+"read": [
+"scripts/gate_slot.py"
+],
+"seconds": 12.9
 },
 "quirin-audit-plugin-measure::test::units": {
 "dirs": [],
@@ -16662,7 +16917,7 @@
 "docs/reports/w48-sched-cleanup-production/scripts/measure.py",
 "docs/reports/w48-sched-cleanup-production/scripts/mirror_inputs.py"
 ],
-"seconds": 1.3
+"seconds": 0.4
 },
 "quirin-audit-plugin::lib::quirin_audit_plugin": {
 "dirs": [],
@@ -16672,7 +16927,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "quirin-audit-plugin::test::dependencies": {
 "dirs": [
@@ -16762,7 +17017,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 52.7
+"seconds": 17.0
 },
 "quirin-source-analysis::test::condvar_join_census": {
 "dirs": [],
@@ -16772,7 +17027,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.6
+"seconds": 0.2
 },
 "quirin-source-analysis::test::condvar_join_lifecycle": {
 "dirs": [],
@@ -16784,7 +17039,7 @@
 "read": [
 "providers/quirin-provider-fluent-bit/contracts/fluent_bit/lib_engine_thread.qv"
 ],
-"seconds": 0.5
+"seconds": 0.2
 },
 "quirin-source-analysis::test::condvar_join_stop_paths": {
 "dirs": [],
@@ -16794,7 +17049,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.2
+"seconds": 0.1
 },
 "quirin-source-analysis::test::loop_owner_census": {
 "dirs": [],
@@ -16804,7 +17059,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.0
+"seconds": 0.2
 },
 "quirin-source-analysis::test::loop_owner_coro_plugin": {
 "dirs": [],
@@ -16814,7 +17069,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 1.4
+"seconds": 0.5
 },
 "quirin-source-analysis::test::loop_owner_coroutine": {
 "dirs": [],
@@ -16824,7 +17079,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.2
+"seconds": 0.1
 },
 "quirin-source-analysis::test::loop_owner_holder_region": {
 "dirs": [],
@@ -16834,7 +17089,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 6.5
+"seconds": 1.6
 },
 "quirin-source-analysis::test::loop_owner_instance_flow": {
 "dirs": [],
@@ -16844,7 +17099,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 3.7
+"seconds": 1.0
 },
 "quirin-source-analysis::test::loop_owner_predefined_macros": {
 "dirs": [],
@@ -16854,7 +17109,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.8
+"seconds": 0.2
 },
 "quirin-source-analysis::test::loop_owner_premises_instance": {
 "dirs": [],
@@ -16864,7 +17119,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 3.3
+"seconds": 0.9
 },
 "quirin-source-analysis::test::loop_owner_property_keys": {
 "dirs": [],
@@ -16874,7 +17129,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 3.2
+"seconds": 1.1
 },
 "quirin-source-analysis::test::loop_owner_typed_route": {
 "dirs": [],
@@ -16884,7 +17139,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 2.4
+"seconds": 1.0
 },
 "rule-32a-caller-frame-hold::lib::rule_32a_caller_frame_hold": {
 "dirs": [],

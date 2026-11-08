@@ -28,6 +28,7 @@ import QCore.BranchArms
 import QCore.BranchConditionCall
 import QCore.BranchJoin
 import QCore.BucketTally
+import QCore.BuiltinExpectCondition
 import QCore.CGatewayRefinements
 import QCore.CMetricsGetterOwnership
 import QCore.CNumeric
@@ -60,6 +61,7 @@ import QCore.CellResultSet
 import QCore.CertificateScope
 import QCore.CflAtomicEffects
 import QCore.ChainedAccess
+import QCore.ChainedAssignment
 import QCore.ChainedTailActual
 import QCore.CheckedSelfInitCall
 import QCore.CheckedSpecification
@@ -222,6 +224,7 @@ import QCore.LoopInvariants
 import QCore.LoopLifetimeSummary
 import QCore.LoopOwner
 import QCore.LoopOwnerCoroPlugin
+import QCore.LoopReacquisitionLeak
 import QCore.LoopSiteGenerations
 import QCore.LoopSwitchCallEvaluation
 import QCore.LoopWindows
@@ -239,6 +242,8 @@ import QCore.MemberPathUnitHelpers
 import QCore.MemberPrepassRoutes
 import QCore.MemberRelease
 import QCore.MemberReleaseCallee
+import QCore.MemberReleaseTypedMember
+import QCore.MemberReleaseUntypedBase
 import QCore.MemberSummaryOrder
 import QCore.MemoKey
 import QCore.MemoryClose
@@ -246,6 +251,7 @@ import QCore.Metatheory
 import QCore.MetricTraceContractGaps
 import QCore.ModuleImports
 import QCore.MonkeyEvent
+import QCore.MonkeyLinkedSelection
 import QCore.MonkeyWaitProjection
 import QCore.MonkeyWaitSourcePolicy
 import QCore.MsvcAbiReader
@@ -281,6 +287,9 @@ import QCore.ObservedWaitComposition
 import QCore.OpCallbacks
 import QCore.OrderedLifetimeReplay
 import QCore.OsEndpointPostState
+import QCore.OutParameterBodySummary
+import QCore.OutParameterScalarFramePremise
+import QCore.OutSlotCallWrite
 import QCore.OuterContract
 import QCore.OuterListCandidates
 import QCore.OwnedFieldCopyReach
@@ -380,6 +389,7 @@ import QCore.ScalarPrecedence
 import QCore.ScalarReadIdentity
 import QCore.ScalarReturnValue
 import QCore.ScalarRouteExitEdge
+import QCore.ScalarStatementForms
 import QCore.ScalarTasks
 import QCore.ScalarTypedErrors
 import QCore.ScalarTypes

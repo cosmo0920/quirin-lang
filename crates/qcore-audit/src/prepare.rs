@@ -21,7 +21,19 @@
 //! clone). It adds `prepare.json`, which records both compilers (the C++
 //! compiler included), CMake, the step records' digests and the argv.
 //! `--run` then chains into `quirin-audit current` over those inputs, with
-//! `--jobs N` and any arguments after `--` passed through.
+//! `--jobs N` and any arguments after `--` passed through. Card
+//! **CURRENT-MONKEY-LINKED-CONFIGURATION**: the chained run passes
+//! `--monkey-linked`, so Monkey is analysed as the Fluent Bit compile
+//! database configures it (the configuration linked into `fluent-bit`); the
+//! prepared Monkey database is passed too and only accounted for.
+//!
+//! Card **FLUENT-BIT-LINK-PREPARE**: `--link` (with `prepare` or `prepare
+//! clang-build`) also builds and links the `fluent-bit` executable in the
+//! same build tree and writes the link-resolution artifact and a candidate
+//! rule 4c link map under `link-resolution/` ([`crate::link_resolution`]).
+//! `--build-jobs N` sets that build's and the object reproduction's
+//! parallelism (default 2). Without `--link` nothing is linked and every
+//! file is written as before.
 //!
 //! The step records are written byte for byte as the scripts wrote them
 //! (Python `json.dumps(indent=2)`, insertion order, ASCII escapes; see
@@ -46,9 +58,9 @@ use crate::prepare_json::PyJson;
 /// Usage text of `quirin-audit prepare`.
 pub const USAGE: &str = "usage: quirin-audit prepare [--fluent-bit DIR] [--revision REV] \
 [--output DIR] [--clang PATH] [--clangxx PATH] [--cmake PATH] [--repository DIR] \
-[--run [--jobs N] [-- CURRENT-ARGUMENTS...]]
+[--link [--build-jobs N]] [--run [--jobs N] [-- CURRENT-ARGUMENTS...]]
        quirin-audit prepare clang-build [--fluent-bit DIR] [--revision REV] [--output DIR] \
-[--clang PATH] [--clangxx PATH] [--cmake PATH] [--repository DIR]
+[--clang PATH] [--clangxx PATH] [--cmake PATH] [--repository DIR] [--link [--build-jobs N]]
        quirin-audit prepare monkey --fluent-bit DIR [--output DIR] [--clang PATH] \
 [--clangxx PATH] [--cmake PATH] [--repository DIR]";
 
@@ -119,6 +131,8 @@ struct Options {
     run: bool,
     jobs: Option<String>,
     forwarded: Vec<String>,
+    link: bool,
+    build_jobs: Option<usize>,
 }
 
 fn parse(arguments: &[String]) -> Result<(Step, Options), String> {
@@ -137,6 +151,19 @@ fn parse(arguments: &[String]) -> Result<(Step, Options), String> {
             }
             options.forwarded = rest[index + 1..].to_vec();
             break;
+        }
+        if flag == "--link" {
+            if step == Step::Monkey {
+                return Err(format!(
+                    "--link links fluent-bit; use `prepare --link` or `prepare clang-build --link`\n{USAGE}"
+                ));
+            }
+            if options.link {
+                return Err("--link is given twice".into());
+            }
+            options.link = true;
+            index += 1;
+            continue;
         }
         if flag == "--run" {
             if step != Step::All {
@@ -180,9 +207,24 @@ fn parse(arguments: &[String]) -> Result<(Step, Options), String> {
                 crate::parallel::resolve_jobs(Some(&value))?;
                 set_text(&mut options.jobs)?;
             }
+            "--build-jobs" => {
+                let jobs = value
+                    .parse::<usize>()
+                    .ok()
+                    .filter(|jobs| *jobs > 0)
+                    .ok_or_else(|| {
+                        format!("--build-jobs needs a positive integer, not `{value}`")
+                    })?;
+                if options.build_jobs.replace(jobs).is_some() {
+                    return Err(twice());
+                }
+            }
             other => return Err(format!("unknown argument `{other}`\n{USAGE}")),
         }
         index += 2;
+    }
+    if options.build_jobs.is_some() && !options.link {
+        return Err("--build-jobs sets the link step's parallelism; it needs --link".into());
     }
     if options.jobs.is_some() && !options.run {
         return Err("--jobs sets the chained audit's job count; it needs --run".into());
@@ -238,6 +280,11 @@ fn run(arguments: &[String]) -> Result<ExitCode, String> {
                 tools: &tools,
             })?;
             println!("{}", prepared.config_path.display());
+            if options.link {
+                let linked = link(&prepared, &repository, &tools, &options)?;
+                println!("{}", linked.artifact.display());
+                println!("{}", linked.candidate.display());
+            }
             Ok(ExitCode::SUCCESS)
         }
         Step::Monkey => {
@@ -270,6 +317,25 @@ fn run(arguments: &[String]) -> Result<ExitCode, String> {
             )
         }
     }
+}
+
+/// Card FLUENT-BIT-LINK-PREPARE: link `fluent-bit` in the prepared build
+/// tree and read the link (`--link`).
+fn link(
+    prepared: &ClangBuildPrepared,
+    repository: &Path,
+    tools: &Tools,
+    options: &Options,
+) -> Result<crate::link_resolution::LinkPrepared, String> {
+    crate::link_resolution::prepare_link(&crate::link_resolution::LinkRequest {
+        source: &prepared.source,
+        build: &prepared.build,
+        database: &prepared.database,
+        cmake: &tools.cmake,
+        jobs: options.build_jobs.unwrap_or(2),
+        output: &prepared.output.join("link-resolution"),
+        profile_directory: &repository.join("contract/profiles/fluent-bit"),
+    })
 }
 
 /// The QCore-C repository whose profiles and providers preparation names.
@@ -894,6 +960,14 @@ fn prepare_all(
         tools,
     })?;
     println!("{}", monkey.database.display());
+    let linked = if options.link {
+        let linked = link(&clang_build, repository, tools, options)?;
+        println!("{}", linked.artifact.display());
+        println!("{}", linked.candidate.display());
+        Some(linked)
+    } else {
+        None
+    };
     let reports = clang_build.output.join("reports");
     let mut current: Vec<String> = vec![
         "current".into(),
@@ -905,6 +979,11 @@ fn prepare_all(
         text(&clang_build.database)?.into(),
         "--monkey-database".into(),
         text(&monkey.database)?.into(),
+        // Card CURRENT-MONKEY-LINKED-CONFIGURATION (user decision
+        // 2026-11-08, "Analyse linked config"): Monkey is analysed as the
+        // compile database configures it, the configuration linked into
+        // fluent-bit; the standalone database above is only accounted for.
+        "--monkey-linked".into(),
         "--monkey-source-report".into(),
         text(&reports.join("monkey-source.json"))?.into(),
         "--report".into(),
@@ -969,6 +1048,10 @@ fn prepare_all(
         },
         "scope": "provenance of the preparation only; not an input to any verdict. The Clang CMake build is CMake's unmodified output of an independent clone and proves no GCC, code-generation or whole-library equivalence; the C++ compiler is used by preparation only, never by the audit",
     });
+    let mut record = record;
+    if let Some(linked) = linked {
+        record["link_resolution"] = linked.record;
+    }
     let record_path = clang_build.output.join("prepare.json");
     let record_text = serde_json::to_string_pretty(&record).map_err(|error| error.to_string())?;
     write_text(&record_path, &(record_text + "\n"))?;
@@ -1403,8 +1486,21 @@ mod tests {
             Step::Monkey
         );
         assert_eq!(parse(&args(&["clang-build"])).unwrap().0, Step::ClangBuild);
+        // Card FLUENT-BIT-LINK-PREPARE: `--link` is explicit, off by default.
+        assert!(!parse(&args(&[])).unwrap().1.link);
+        let (step, options) =
+            parse(&args(&["clang-build", "--link", "--build-jobs", "6"])).unwrap();
+        assert_eq!(step, Step::ClangBuild);
+        assert!(options.link);
+        assert_eq!(options.build_jobs, Some(6));
+        assert!(parse(&args(&["--link", "--run"])).unwrap().1.link);
         for misuse in [
-            &["--jobs", "2"][..],
+            &["monkey", "--fluent-bit", "x", "--link"][..],
+            &["--build-jobs", "2"],
+            &["--link", "--build-jobs", "0"],
+            &["--link", "--link"],
+            &["--link", "--build-jobs", "2", "--build-jobs", "3"],
+            &["--jobs", "2"],
             &["--run", "--jobs", "0"],
             &["--", "--contracts-only"],
             &["clang-build", "--run"],

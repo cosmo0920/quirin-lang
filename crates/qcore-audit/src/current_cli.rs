@@ -49,7 +49,7 @@ use crate::providers::{
 
 /// Usage text of `quirin-audit current`.
 pub const USAGE: &str = "usage: quirin-audit current [--config FILE] [--checkout DIR] \
-[--profile-directory DIR] [--compile-database PATH] [--monkey-database PATH] [--report PATH] \
+[--profile-directory DIR] [--compile-database PATH] [--monkey-database PATH] [--monkey-linked] [--report PATH] \
 [--monkey-source-report PATH] [--binding-directory DIR] [--provider NAME[:MODULE]]... \
 [--load-path PATH] [--contract-manifest PATH] [--contracts-only] [--quirin-providers-only] \
 [--selection FILE] [--jobs N] [--memory-budget-mib N] [--checkpoint-dir DIR [--resume]]";
@@ -75,6 +75,11 @@ struct CurrentConfig {
     compile_database: Option<PathBuf>,
     #[serde(default)]
     monkey_database: Option<PathBuf>,
+    /// Card CURRENT-MONKEY-LINKED-CONFIGURATION: analyse Monkey as the
+    /// compile database configures it (the configuration linked into
+    /// fluent-bit); a `monkey_database` is then only accounted for.
+    #[serde(default)]
+    monkey_linked: Option<bool>,
     #[serde(default)]
     report: Option<PathBuf>,
     #[serde(default)]
@@ -121,6 +126,7 @@ struct Settings {
     profile_directory: Option<PathBuf>,
     compile_database: Option<PathBuf>,
     monkey_database: Option<PathBuf>,
+    monkey_linked: Option<bool>,
     report: Option<PathBuf>,
     monkey_source_report: Option<PathBuf>,
     binding_directory: Option<PathBuf>,
@@ -171,6 +177,13 @@ fn parse_command_line(
             "--profile-directory" => set_path(&mut settings.profile_directory, flag, value)?,
             "--compile-database" => set_path(&mut settings.compile_database, flag, value)?,
             "--monkey-database" => set_path(&mut settings.monkey_database, flag, value)?,
+            "--monkey-linked" => {
+                if settings.monkey_linked.is_some() {
+                    return Err("--monkey-linked is given twice".into());
+                }
+                settings.monkey_linked = Some(true);
+                takes_value = false;
+            }
             "--report" => set_path(&mut settings.report, flag, value)?,
             "--monkey-source-report" => {
                 set_path(&mut settings.monkey_source_report, flag, value)?;
@@ -294,6 +307,7 @@ fn read_config(path: &Path) -> Result<(Settings, Vec<u8>), String> {
             profile_directory: anchor_all(config.profile_directory),
             compile_database: anchor_all(config.compile_database),
             monkey_database: anchor_all(config.monkey_database),
+            monkey_linked: config.monkey_linked,
             report: anchor_all(config.report),
             monkey_source_report: anchor_all(config.monkey_source_report),
             binding_directory: anchor_all(config.binding_directory),
@@ -479,6 +493,12 @@ fn run(arguments: &[String]) -> Result<bool, String> {
         command_line.monkey_database,
         configuration.monkey_database,
     )?;
+    let monkey_linked = one(
+        "monkey_linked",
+        command_line.monkey_linked,
+        configuration.monkey_linked,
+    )?
+    .unwrap_or(false);
     let report = one("report", command_line.report, configuration.report)?;
     // Card RULE-SWITCH-ENTRY-POINTS: without a report no component records
     // `rule_set.off`, so the counts alone must not run under a switch list.
@@ -561,7 +581,13 @@ fn run(arguments: &[String]) -> Result<bool, String> {
             .map(|item| item.library)
             .collect::<Vec<_>>(),
     };
-    if monkey_database.is_some() {
+    // Card CURRENT-MONKEY-LINKED-CONFIGURATION: a linked run's Monkey units
+    // carry the `monkey` label; the profile's per-library provider table
+    // scopes only `monkey-libevent` (the standalone configuration), so a
+    // linked run under per-library scoping refuses instead of reusing it.
+    if monkey_linked {
+        audited_libraries.push(crate::current_route::LINKED_MONKEY_LABEL.into());
+    } else if monkey_database.is_some() {
         audited_libraries.push("monkey-libevent".into());
     }
     let resolved_library_table = if has_library_providers {
@@ -654,6 +680,7 @@ fn run(arguments: &[String]) -> Result<bool, String> {
             mode,
             compile_database: compile_database.as_deref(),
             monkey_database: monkey_database.as_deref(),
+            monkey_linked,
             monkey_source_report: monkey_source_report.as_deref(),
             diagnostic_report: report.as_deref(),
             binding_directory: binding_directory.as_deref(),
@@ -722,6 +749,10 @@ fn run(arguments: &[String]) -> Result<bool, String> {
         // the profile's own groups keeps its record byte for byte.
         if let Some(selection) = &selection {
             invocation["selection"] = selection.record();
+        }
+        // Card CURRENT-MONKEY-LINKED-CONFIGURATION: likewise.
+        if monkey_linked {
+            invocation["monkey_linked"] = json!(true);
         }
         // Card W45-AUDIT-CHECKPOINTS: likewise named only when given.
         if let Some(options) = &checkpoints {
