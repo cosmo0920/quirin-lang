@@ -443,3 +443,19 @@ target/release/quirin-audit --plugin-path target/release --output <dir> --timeou
 
 The user's run is then re-run as `prepare --run` now invokes it: the user's
 arguments plus `--monkey-linked`.
+
+## Integrator measurement (2026-11-08)
+
+Declared measurement, base `baseline:7b726587bdf6a8213f451fa1c78297bb5e476ef7`, tip `rev:e5925e6b0`, run from the
+main checkout (`private/measure/monkey-linked-20261108T062421Z`): exit 0, all three routes
+complete, no unmatched rows, declared result **match**.
+
+- corpus: no row moved; 280 rows changed content only.
+- system: no row moved; 0 rows changed content only.
+- slice: no row moved; 0 rows changed content only.
+
+[Comparison](integration/native-comparison.json.gz) (gzip of
+`native-comparison.json`, sha256
+`7a7353c9bb8871539f77bdf150ac136214a2feb0f2a6b59b433b7b5736c1d37f`).
+
+The pinned routes do not read the Monkey selection; the content changes are the same landed cards' as FLUENT-BIT-LINK-PREPARE's. The card's effect is on the user's `current` run with `--monkey-linked` (rerun after landing). Its probe's new provisional Unsafe `context_new` (tls_openssl.c:533 from :521) is unvalidated, needs triage and is not presented as an upstream defect.

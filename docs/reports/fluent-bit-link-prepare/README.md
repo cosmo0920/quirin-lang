@@ -393,3 +393,19 @@ The record is [`gate.json`](gate.json).
 
 No Lean step is planned (no Lean path) and no provider gate (no provider
 path).
+
+## Integrator measurement (2026-11-08)
+
+Declared measurement, base `baseline:7b726587bdf6a8213f451fa1c78297bb5e476ef7`, tip `rev:b1aabb1e6`, run from the
+main checkout (`private/measure/link-prepare-20261108T001639Z`): exit 0, all three routes
+complete, no unmatched rows, declared result **match**.
+
+- corpus: no row moved; 280 rows changed content only.
+- system: no row moved; 0 rows changed content only.
+- slice: no row moved; 0 rows changed content only.
+
+[Comparison](integration/native-comparison.json.gz) (gzip of
+`native-comparison.json`, sha256
+`f0d2d49c64c0e729c6cee508b9561c87e1321bd567eabfbea3ef14d2e26c2683`).
+
+Every content change is CURRENT-RUN-WORKER-SPIN's and CALLBACK-MEMBER-NON-C-UNITS's (landed after the baseline): nothing reads the link artifact on these routes.

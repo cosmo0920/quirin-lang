@@ -206,3 +206,19 @@ Files other cards may also touch: `legacy_c.rs` (one hook line in
 generated `gateway_rule_registry.rs`, `docs/agents/gateway.md`,
 `docs/agents/README.md`, `proof/QCore.lean`. CALLBACK-MEMBER-NON-C-UNITS'
 `member_run_facts.rs` and `member_prepass.rs` are untouched.
+
+## Integrator measurement (2026-11-08)
+
+Declared measurement, base `baseline:7b726587bdf6a8213f451fa1c78297bb5e476ef7`, tip `rev:fc1ed647d`, run from the
+main checkout (`private/measure/scalar-forms-r2-20261108T032817Z`): exit 0, all three routes
+complete, no unmatched rows, declared result **mismatch**.
+
+- corpus: `lz4.c::LZ4_createStreamDecode` Unknown to Safe; `lz4.c::LZ4_getIndexOnHash` Unknown to Safe; `lz4.c::LZ4_initStream` Unknown to Safe; `lz4.c::LZ4_stream_t_alignment` Unknown to Safe; `lz4frame.c::LZ4F_returnErrorCode` Unknown to Safe; `lz4hc.c::LZ4HC_rotatePattern` Unknown to Safe; `lz4hc.c::LZ4_streamHC_t_alignment` Unknown to Safe; `rdkafka.c::rd_kafka_version_str` Unknown to Safe; `rdxxhash.c::XXH32_canonicalFromHash` Unknown to Safe; `rdxxhash.c::XXH64_canonicalFromHash` Unknown to Safe; `mk_server/mk_scheduler.c::_next_target` Unknown to Safe; 104 rows changed content only; unpredicted: `LZ4_createStreamDecode`, `LZ4_initStream`.
+- system: no row moved; 6 rows changed content only.
+- slice: no row moved; 1 rows changed content only.
+
+[Comparison](integration/native-comparison.json.gz) (gzip of
+`native-comparison.json`, sha256
+`9fc586d76746001985a68576bb11f780fb32445a4bae07725d11cd15a83c780d`).
+
+The first run timed out waiting for a slot (`plugin-timeout`, slot-wait exclusion capped at the quota; GATE-SLOT-FIFO-ORDER and MEASURE-SLOT-WAIT-EXCLUSION-CAP); this rerun used `--timeout-ms 86400000`. All nine predicted moves are present. The two unpredicted moves are justified and recorded at landing: `LZ4_createStreamDecode` (lz4.c) - rule 41 now reads the `LZ4_STATIC_ASSERT` block at :2469 (`{ enum { LZ4_static_assert = 1/(int)(!!(c)) }; }`, a type-only declaration, form 4), and the rest of the body returns the result of `rd_kafka_mem_calloc`, which is contracted in the measured run; the card's census driver loads no contracts, so the call stayed refused there (the same reason the prediction gives for `XXH32_canonicalFromHash`'s `memcpy`). `LZ4_initStream` (lz4.c) - its only leaf was the call `LZ4_stream_t_alignment()` in the condition at :1517; that predicted move makes the callee's body summary available (`contract_dependencies.summaries` gains it), which discharges the condition.

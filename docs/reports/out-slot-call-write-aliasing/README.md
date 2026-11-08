@@ -245,3 +245,19 @@ changed; no provider gate).
   - Python: 685 tests.
 
   The record is [gate.json](gate.json).
+
+## Integrator measurement (2026-11-08)
+
+Declared measurement, base `rev:aa3999333`, tip `rev:898fba855`, run from the
+main checkout (`private/measure/out-slot-call-write-20261107T155614Z`): exit 0, all three routes
+complete, no unmatched rows, declared result **match**.
+
+- corpus: `cio_file.c::cio_file_content_copy` Safe to Unknown; 1 rows changed content only.
+- system: no row moved; 0 rows changed content only.
+- slice: no row moved; 0 rows changed content only.
+
+[Comparison](integration/native-comparison.json.gz) (gzip of
+`native-comparison.json`, sha256
+`308e1d984848d43c7a5c93dcbafc89a3ebce74d10d64fd57b2d814e44b6378c0`).
+
+The one move is Safe to Unknown (fail-closed): a call that may write caller memory now poisons the bound out slot.

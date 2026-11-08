@@ -210,3 +210,19 @@ Follow-ups (amendments in [integration-amendments.json](integration-amendments.j
   type checked.
 - MEMBER-EFFECT-SUMMARY's report §5 attributes the miss to the component
   scope; that report is frozen, and this report's §1 is the correction.
+
+## Integrator measurement (2026-11-08)
+
+Declared measurement, base `baseline:7b726587bdf6a8213f451fa1c78297bb5e476ef7`, tip `rev:662dc54a4`, run from the
+main checkout (`private/measure/member-component-20261108T005621Z`): exit 0, all three routes
+complete, no unmatched rows, declared result **mismatch**.
+
+- corpus: `cmt_opts.c::cmt_opts_exit` Unknown to Safe; `ctr_id.c::ctr_id_destroy` Unknown to Safe; `flb_input_chunk.c::destroy_chunk_raw` Unknown to Safe; 290 rows changed content only; unpredicted: `ctr_id_destroy`, `destroy_chunk_raw`.
+- system: `src/flb_input_chunk.c::destroy_chunk_raw` Unknown to Safe in both configurations (unit#0 and unit#1); 6 rows changed content only; unpredicted: both.
+- slice: no row moved; 0 rows changed content only.
+
+[Comparison](integration/native-comparison.json.gz) (gzip of
+`native-comparison.json`, sha256
+`15cb5b3a36f4c6c496886215820381ca5b14ae60f2cc65b89283fb53cab1db46`).
+
+The predicted move `cmt_opts_exit` is present. The unpredicted moves (`ctr_id_destroy` in the corpus; `destroy_chunk_raw` in the corpus and in both system configurations) are justified and recorded at landing: each is rule 5k's shape (an `sds`-typedef member released, then the parent freed) reaching admission through the shared rule-1 admission the card's report flags; no Safe row moved to Unknown or Unsafe.

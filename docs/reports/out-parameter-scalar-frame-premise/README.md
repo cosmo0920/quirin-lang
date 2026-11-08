@@ -132,3 +132,17 @@ at tip `7a6276b58` (full mode: the diff reaches `qcore-c-gateway`; Lean all):
 **exit 0**. Submodules, fmt, Clippy, Rust suite (617 units, 9,302 passed,
 0 failed, 16 ignored, 135 filtered), both reevaluation probes, Lean (416
 audits), Python (685 tests). Record [gate.json](gate.json).
+
+## Integrator measurement (2026-11-08)
+
+Declared measurement, base `rev:41d1b48a5`, tip `rev:aa3999333`, run from the
+main checkout (`private/measure/scalar-frame-premise-20261107T130617Z`): exit 0, all three routes
+complete, no unmatched rows, declared result **match**.
+
+- corpus: `cio_file.c::cio_file_content_copy` Unknown to Safe; `cio_memfs.c::cio_memfs_content_copy` Unknown to Safe; `cio_utils.c::cio_utils_read_file` Unknown to Safe; 1 rows changed content only.
+- system: no row moved; 0 rows changed content only.
+- slice: no row moved; 0 rows changed content only.
+
+[Comparison](integration/native-comparison.json.gz) (gzip of
+`native-comparison.json`, sha256
+`6e12bccfd6ff366fd1e5601b9960d163dd71d5c9d6ef1672e2a289067cd0d030`).

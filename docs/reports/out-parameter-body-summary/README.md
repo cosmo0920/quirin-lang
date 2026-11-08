@@ -204,3 +204,19 @@ changed; no provider gate).
   (616 units, 9,291 passed, 0 failed, 16 ignored, 135 filtered), both
   reevaluation probes, Lean (415 audits), Python (685 tests). Record
   [gate.json](gate.json).
+
+## Integrator measurement (2026-11-08)
+
+Declared measurement, base `baseline:7b726587bdf6a8213f451fa1c78297bb5e476ef7`, tip `rev:41d1b48a5`, run from the
+main checkout (`private/measure/out-param-20261107T090628Z`): exit 0, all three routes
+complete, no unmatched rows, declared result **match**.
+
+- corpus: `rdkafka_msg.c::rd_kafka_message_timestamp` Unknown to Safe; `rdkafka_partition.c::rd_kafka_toppar_get_avail` Unknown to Safe; 28 rows changed content only.
+- system: no row moved; 0 rows changed content only.
+- slice: no row moved; 1 rows changed content only.
+
+[Comparison](integration/native-comparison.json.gz) (gzip of
+`native-comparison.json`, sha256
+`8170c90836ee33ad8982fe675401242a66ec225a4232f2a8a7dff996acb47a70`).
+
+The integrator checked that neither moved row relies on the call-write gap OUT-SLOT-CALL-WRITE-ALIASING closes; that card's own measurement (on this card's tip) moves only `cio_file_content_copy`.

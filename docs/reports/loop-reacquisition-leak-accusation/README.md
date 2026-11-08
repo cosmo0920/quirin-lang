@@ -189,3 +189,19 @@ warnings` exit 0; `apply_amendments.py --check` exit 0.
   (`clippy::duplicate_mod`, `tests/support/tracked_files.rs` loaded by
   `lib.rs` and `tests/unit/arm_obligations.rs`); the library alone
   (`--lib`) passes with the feature.
+
+## Integrator measurement (2026-11-08)
+
+Declared measurement, base `baseline:7b726587bdf6a8213f451fa1c78297bb5e476ef7`, tip `rev:5de709b79`, run from the
+main checkout (`private/measure/loop-reacq-20261107T193437Z`): exit 0, all three routes
+complete, no unmatched rows, declared result **match**.
+
+- corpus: no row moved; 1 rows changed content only.
+- system: no row moved; 0 rows changed content only.
+- slice: no row moved; 0 rows changed content only.
+
+[Comparison](integration/native-comparison.json.gz) (gzip of
+`native-comparison.json`, sha256
+`08f2513a99a9122f2625288f19bfabb487ab688904af7edf62eaa53c48cdfeaf`).
+
+`rd_kafka_snappy_java_uncompress` loses exactly the four confirmed leaves (:1680, :1694, :1712, :1721) and stays provisional Unsafe on the current-generation witnesses; it is not presented as an upstream defect.

@@ -209,3 +209,19 @@ the class `LEAK-PATH-SCALAR-CORRELATION` already tracks. The census is
 lexical: it evaluates no `#if`, and the two "not compiled" rows were read by
 hand. The arbiter measurement is the evidence for any chain the census
 could not see.
+
+## Integrator measurement (2026-11-08)
+
+Declared measurement, base `baseline:7b726587bdf6a8213f451fa1c78297bb5e476ef7`, tip `rev:4d9895a1067e952c52d0c30820ff50df917846e4`, run from the
+main checkout (`private/measure/chained-20261108T103349Z`): exit 0, all three routes
+complete, no unmatched rows, declared result **match**.
+
+- corpus: `rdkafka_sasl_scram.c::rd_kafka_sasl_safe_string` Unsafe to Unknown; 280 rows changed content only.
+- system: no row moved; 0 rows changed content only.
+- slice: no row moved; 0 rows changed content only.
+
+[Comparison](integration/native-comparison.json.gz) (gzip of
+`native-comparison.json`, sha256
+`84c9ca9dd935564b54972f24631b0166a990e2298c79805836cb67d3413a4a05`).
+
+The one move is provisional Unsafe to Unknown (a false leak withdrawn, never Safe). Landing merge: the guard's hook in `legacy_classify.rs` merged without conflict with SCALAR-STATEMENT-FORMS and OUT-PARAMETER-BODY-SUMMARY.

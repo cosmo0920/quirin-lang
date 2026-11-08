@@ -287,3 +287,19 @@ CURRENT-MONKEY-CONFIGURATION-NOT-LINKED, which that card registers.
 
 - [`integration-amendments.json`](integration-amendments.json)
 - [`gate.json`](gate.json)
+
+## Integrator measurement (2026-11-08)
+
+Declared measurement, base `baseline:7b726587bdf6a8213f451fa1c78297bb5e476ef7`, tip `rev:1f04fb45a`, run from the
+main checkout (`private/measure/link-standing-20261108T055718Z`): exit 0, all three routes
+complete, no unmatched rows, declared result **match**.
+
+- corpus: no row moved; 280 rows changed content only.
+- system: no row moved; 0 rows changed content only.
+- slice: no row moved; 0 rows changed content only.
+
+[Comparison](integration/native-comparison.json.gz) (gzip of
+`native-comparison.json`, sha256
+`fe6f21203569ba7bc70a6e11177a764344f7b05d7280a742eca494511a6ad778`).
+
+The pinned routes refuse a link-resolution artifact, so nothing moves; content changes are the landed cards' (e.g. the callback-member open-unit count 36 to 34). Landing merge: `crates/qcore-audit/src/current_route.rs` merged with CURRENT-MONKEY-LINKED-CONFIGURATION without conflict; the integration tree's workspace `cargo check --tests` exited 0 and the full gate runs both cards' tests.
