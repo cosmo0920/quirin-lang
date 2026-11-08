@@ -182,7 +182,26 @@ base points to, and its `type` is the member's declared type.
 
 ## 4. Gate
 
-See [gate-run1.json](gate-run1.json) once recorded.
+Card gate, `python3 scripts/gate_scope.py --base 7cdd33906 --out
+private/gate-1` at `271b8ede3` (code as of `278f87412`), run once
+([gate-run1.json](gate-run1.json)). Selection: the whole Rust suite
+(`qcore-c-gateway` changes), all of Lean (a proof root changes), Python; no
+provider gate. Every step exit 0 (`gate_scope: 8 steps passed`):
+
+| step | exit | counts |
+|---|---:|---|
+| submodules | 0 | 1 submodule |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --all-targets -- -D warnings` | 0 | |
+| Rust suite (`run_test_binaries.py`, rust-suite slot) | 0 | 618 units, 659 summaries; 9,297 passed; 0 failed; 16 ignored; 135 filtered |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| Lean (`check_lean_audits.py`) | 0 | 418 audits |
+| Python (`unittest discover -s scripts/tests`) | 0 | 685 tests |
+
+The Rust suite's 6,975 s include 5,749 s waiting for its shared slot (it ran
+08:03:44-08:24:10 UTC). Logs: `private/gate-1/` in the card worktree
+(per-unit logs under `rust-suite/`); console log
+`/tmp/claude-1000/-media-Data-GitHub-quirin-lang--claude-worktrees-launch-cards-clean-worktrees-5365ff/6fcd7fbd-1cae-4a40-a37d-5bce071c02c6/scratchpad/gate-1.console.log`.
 
 ## 5. Measurement and follow-ups
 
