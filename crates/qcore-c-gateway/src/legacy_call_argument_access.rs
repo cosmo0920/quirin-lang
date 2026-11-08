@@ -1443,8 +1443,11 @@ impl Parser<'_> {
                     // a member spelled through a pointer typedef, at a
                     // nullable release of a place rule 5k or rule 38j
                     // admitted, reads as the lexical `B->F` would when Clang
-                    // reads it as a pointer member's value.
-                    Err(Refusal::UntypedMember)
+                    // reads it as a pointer member's value. Card
+                    // MEMBER-RELEASE-UNTYPED-BASE: likewise a base spelled
+                    // through a typedef, when Clang also reads the base as a
+                    // pointer to a complete `struct` holding `F`.
+                    Err(refusal @ (Refusal::UntypedMember | Refusal::UntypedBase))
                         if matches!(
                             contract.and_then(|contract| contract.parameters.get(index)),
                             Some(ResourceParameterMode::Released { nullable: true })
@@ -1455,6 +1458,7 @@ impl Parser<'_> {
                                 arity,
                                 argument,
                                 lines[start],
+                                refusal == Refusal::UntypedBase,
                             ) =>
                     {
                         let mut read = ArgumentRead {

@@ -68,8 +68,15 @@
 //! reads the actual as the value of an object-pointer member of the
 //! parameter's record, the fact the lexical reader gives a `*`-spelled member.
 //!
-//! The Lean models are `QCore.MemberEffectSummary` and
-//! `QCore.MemberReleaseTypedMember`.
+//! Card **MEMBER-RELEASE-UNTYPED-BASE**: the same consultation where the
+//! lexical reader refused the actual's **base** instead (a formal spelled
+//! through a typedef of a record, `rd_kafka_toppar_t *rktp`, or of a record
+//! pointer), so it never reached the member. Clang must then also read the
+//! base: a pointer whose `->` member is a member of a complete `struct` the
+//! unit defines (never a `union`), with no `volatile`/`_Atomic`.
+//!
+//! The Lean models are `QCore.MemberEffectSummary`,
+//! `QCore.MemberReleaseTypedMember` and `QCore.MemberReleaseUntypedBase`.
 
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -543,6 +550,17 @@ impl Parser<'_> {
     /// hand an interior address to the release), the member's type an object
     /// pointer with no `volatile`/`_Atomic`, and the base a plain parameter
     /// reference that is not a pointer to a `union`.
+    ///
+    /// Card MEMBER-RELEASE-UNTYPED-BASE (rule 38j amended again): with
+    /// `untyped_base`, asked where the lexical recogniser refused the actual's
+    /// base instead (a formal spelled through a typedef of a record or of a
+    /// record pointer, which the declaration reader does not type, so it never
+    /// classified the member either). Every condition above holds, and Clang
+    /// must also read the base: its type (through any typedef chain, which
+    /// Clang has already resolved for `->`) a pointer with no
+    /// `volatile`/`_Atomic` and no function type, and the member Clang resolved
+    /// (`referencedMemberDecl`) a member named `F` of a complete `struct` the
+    /// unit defines, which no `union` member and no incomplete record is.
     pub(super) fn typed_member_release(
         &self,
         callee: &str,
@@ -550,6 +568,7 @@ impl Parser<'_> {
         arity: usize,
         argument: &[&str],
         line: usize,
+        untyped_base: bool,
     ) -> bool {
         use crate::typed_access_path::qual;
         use crate::typed_c_ast::{children, kind};
@@ -569,6 +588,18 @@ impl Parser<'_> {
                 "ImplicitCastExpr" if node["castKind"].as_str() == Some("LValueToRValue") => {
                     value = true;
                 }
+                // Card MEMBER-RELEASE-UNTYPED-BASE: the implicit conversion
+                // of the value read to the callee's parameter type (`char *`
+                // to `void *` for `free`, `rd_free`, `mk_mem_free`): a
+                // conversion between object pointers that keeps the value,
+                // never an explicit cast, and only outside the read.
+                "ImplicitCastExpr"
+                    if !value
+                        && matches!(node["castKind"].as_str(), Some("BitCast" | "NoOp"))
+                        && qual(node).is_some_and(|ty| {
+                            let ty = ty.trim_end();
+                            ty.ends_with('*') && !ty.contains('(') && plain(ty)
+                        }) => {}
                 _ => break,
             }
             let Some(inner) = children(node).first() else {
@@ -599,6 +630,16 @@ impl Parser<'_> {
         if pointer.contains("union ") || !plain(pointer) {
             return false;
         }
+        if untyped_base {
+            let pointer = pointer.trim_end();
+            let in_struct = node["referencedMemberDecl"]
+                .as_str()
+                .and_then(|id| statements.records.struct_members.get(id))
+                .is_some_and(|(_, name)| name == field);
+            if !pointer.ends_with('*') || pointer.contains('(') || !in_struct {
+                return false;
+            }
+        }
         loop {
             match kind(reference) {
                 "ParenExpr" => {}
@@ -614,9 +655,15 @@ impl Parser<'_> {
             };
             reference = inner;
         }
+        // Card MEMBER-RELEASE-UNTYPED-BASE: the rvalue read above drops the
+        // parameter's own qualifiers, so they are read on its reference (a
+        // `volatile` or `_Atomic` formal is never this rule's base).
         kind(reference) == "DeclRefExpr"
             && reference["referencedDecl"]["kind"].as_str() == Some("ParmVarDecl")
             && reference["referencedDecl"]["name"].as_str() == Some(*base)
+            && [qual(reference), reference["type"]["qualType"].as_str()]
+                .into_iter()
+                .all(|ty| ty.is_some_and(plain))
     }
 
     /// Rule 38j's direct-call route: `instruction`, the lowering of a

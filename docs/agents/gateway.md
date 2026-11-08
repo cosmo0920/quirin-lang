@@ -10056,7 +10056,8 @@ safety claim and no validation of the detach representation premise.
     of one call, or a callee that reaches a place this body released. Not
     in this rule: the store half of the member effect, a declared form for
     bodiless callees (a user choice, report section 4), typedef-spelled
-    bases (W45-MEMBER-RELEASE-UNTYPED-DECLARATIONS). **Amended (card
+    bases outside the release reading below
+    (W45-MEMBER-RELEASE-UNTYPED-DECLARATIONS). **Amended (card
     MEMBER-EFFECT-COMPONENT-SCOPE):** a release event's actual `B->F` whose
     member the lexical declaration reader leaves untyped (spelled through a
     pointer typedef, `cfl_sds_t ns;`) is read by Clang instead, only at a
@@ -10067,7 +10068,25 @@ safety claim and no validation of the detach representation premise.
     object-pointer type with no `volatile`/`_Atomic`, on no `union`; it then
     reads as the lexical `B->F` (`legacy_call_argument_access.rs`
     `candidate_arguments`, `Parser::typed_member_release`). A row's scope
-    (its unit's function list) is no premise of this rule. Premises stated, not
+    (its unit's function list) is no premise of this rule. **Amended again
+    (card MEMBER-RELEASE-UNTYPED-BASE):** the same reading where the lexical
+    refusal is the untyped **base** (a formal spelled through a typedef the
+    declaration reader leaves untyped: one that defines the record,
+    `typedef struct [TAG] { … } T;`, a typedef of a record pointer, or
+    disagreeing typedefs), which covers an untyped base and member together:
+    Clang must also read the base, its type through any typedef chain a
+    pointer, with no `volatile`/`_Atomic` and no function type, and the
+    member it resolved (`referencedMemberDecl`) a member named `F` of a
+    complete `struct` the unit defines (never a `union`'s, so an anonymous
+    union inside the record, a union typedef and an incomplete record stay
+    refused). For both arms the parameter's own declared type carries no
+    `volatile`/`_Atomic` (the rvalue read drops it), and the value read may
+    be implicitly converted to the callee's object-pointer parameter type
+    (`BitCast`/`NoOp` to a plain object pointer, `char *` to `void *` for
+    `free`), never by an explicit cast. Every other restriction is
+    unchanged: only at a nullable release of an admitted place, so a local
+    base, a released member used again, a second release and a `nonnull`
+    release (`fclose`) stay refused. Premises stated, not
     proved: rule 5k's (distinct members own distinct objects; a stored pointer
     is tracked only through a bound place or sub-custody) and the lexical
     reading (trust boundary 28). `QCore.MemberEffectSummary` (`body_sound`:
@@ -10085,6 +10104,11 @@ safety claim and no validation of the detach representation premise.
     `the_unit_plays_no_part` and eight more), bound by
     `tests/member_effect_component_scope.rs`;
     [report](../reports/member-effect-component-scope/README.md).
+    `QCore.MemberReleaseUntypedBase` (`a_new_admission_is_an_untyped_base`,
+    `a_previous_admission_is_kept`,
+    `an_admitted_actual_is_a_struct_pointer_member`, `the_body_stays_sound`
+    and nine more), bound by `tests/member_release_untyped_base.rs`;
+    [report](../reports/member-release-untyped-base/README.md).
 
 <a id="constraint-39"></a>
 

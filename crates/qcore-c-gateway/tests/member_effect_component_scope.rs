@@ -17,7 +17,8 @@
 //! rule 38j admitted, Clang's reading of it as a pointer member's value stands
 //! in for the lexical one. Every other premise is unchanged, so a caller that
 //! uses or releases what the callee released, a recursive pair, an array or
-//! function-pointer member and a typedef-spelled base all keep their refusal.
+//! function-pointer member all keep their refusal. (A typedef-spelled base,
+//! refused by this card, is admitted since card MEMBER-RELEASE-UNTYPED-BASE.)
 
 use std::collections::BTreeMap;
 
@@ -246,8 +247,8 @@ fn a_recursive_pair_stays_refused() {
 
 /// Clang's reading stands in only for the value of an object-pointer member
 /// of a parameter's record: an array member (an interior address), a
-/// function-pointer typedef, a typedef-spelled base and a non-null release keep
-/// their refusal.
+/// function-pointer typedef and a `union` keep their refusal; a typedef-spelled
+/// base is admitted since card MEMBER-RELEASE-UNTYPED-BASE.
 #[test]
 fn the_typed_reading_admits_only_a_pointer_members_value() {
     if !clang_available() {
@@ -269,14 +270,16 @@ fn the_typed_reading_admits_only_a_pointer_members_value() {
             "{prelude}struct r {{ hook_t cb; }};\nvoid hook_member(struct r *r) {{\n  free(r->cb);\n}}\n"
         ),
     );
-    // The base arm of W45-MEMBER-RELEASE-UNTYPED-DECLARATIONS is not this one.
-    let found = assert_not_safe(
+    // The base arm of W45-MEMBER-RELEASE-UNTYPED-DECLARATIONS: refused by
+    // this card, admitted since card MEMBER-RELEASE-UNTYPED-BASE (rule 38j
+    // amended again; `tests/member_release_untyped_base.rs`), flipped
+    // deliberately.
+    assert_safe(
         "typedef_base",
         &format!(
             "{prelude}typedef struct r {{ sds_t s; }} r_t;\nvoid typedef_base(r_t *r) {{\n  cfl_sds_destroy(r->s);\n}}\n"
         ),
     );
-    assert_eq!(found, [named("r", "s")]);
     // A union's member is never read here (rule 10w's ground).
     assert_not_safe(
         "union_member",
