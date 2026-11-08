@@ -243,7 +243,7 @@ Measurement command (r13-common):
 ```sh
 target/release/quirin-audit --plugin-path target/release --output <dir> --timeout-ms 36000000 measure \
   --inputs crates/quirin-audit-plugin-measure/inputs/live.json --inputs-base /media/Data/GitHub/quirin-lang \
-  --side base=baseline:7b726587bdf6a8213f451fa1c78297bb5e476ef7 --side tip=rev:<last code commit> \
+  --side base=baseline:7b726587bdf6a8213f451fa1c78297bb5e476ef7 --side tip=rev:1f04fb45a \
   --declared docs/reports/link-standing/PREDICTION.md
 ```
 
@@ -254,6 +254,36 @@ target/release/quirin-audit --plugin-path target/release --output <dir> --timeou
   compared. Discharge: a transitive layout comparison, or a DWARF
   cross-check of the home's subprogram type.
 
+## Gate
+
+`python3 scripts/gate_scope.py --base a0ac2cae9 --out private/gate-3` at
+`1f04fb45a`: **exit 0**, mode full (the diff reaches `qcore-c-gateway`). The
+record is [`gate.json`](gate.json). Console log outside the worktree, in the
+session scratchpad (`gate-3.console.log`).
+
+| Step | Exit | Counts |
+|---|---:|---|
+| submodules | 0 | 1 submodule |
+| fmt | 0 | |
+| clippy | 0 | |
+| rust-suite | 0 | 617 units, 9,300 passed, 0 failed, 16 ignored (8,712 s including the slot wait) |
+| reevaluation probe / follow-up | 0 / 0 | |
+| lean | 0 | 1 audit (`AuditCrossUnitSummary.lean`: no placeholder; axioms only `propext`, `Quot.sound`) |
+| python | 0 | 685 tests |
+
+`private/gate-2` was the previous attempt, at `76f10d7ae`. Every step passed
+except python, which had 1 failure. `test_tracked_files` refused the
+end-to-end fixture's directory walk (`fs::read_dir`). `1f04fb45a` reads the
+two report files by name instead. That attempt's rust suite also passed
+(9,300/0). An earlier attempt (`private/gate-1`) was stopped before its
+suites ran, so that the end-to-end fixture could be added.
+
+`python3 scripts/apply_amendments.py docs/reports/link-standing/integration-amendments.json
+--check`: exit 0 on a copy of the tree with FLUENT-BIT-LINK-PREPARE's
+amendments applied. On this base alone, it refuses the amendment of
+CURRENT-MONKEY-CONFIGURATION-NOT-LINKED, which that card registers.
+
 ## Records
 
 - [`integration-amendments.json`](integration-amendments.json)
+- [`gate.json`](gate.json)
