@@ -158,6 +158,21 @@ whose bound files are real files with their recorded digests:
 | `a_caller_over_the_budget_holds_no_derived_home` | **budget exceeded**: 25 derived homes, all called. Rule 4c withholds them all, rule 40 refuses nothing further, and the row is `Unknown`. |
 | `standing_vectors_hold` | the decision table against the Lean vectors |
 
+End to end, in `crates/qcore-audit/tests/link_standing.rs`
+(`the_current_route_adopts_a_derived_home_only_under_its_conditions`), the
+test runs `quirin-audit current` on a two-unit checkout:
+
+- without the artifact, `subject`'s call to `release` in another unit is
+  uncontracted (`Unknown`);
+- with the artifact, `subject` is `Safe`. Its declaration
+  `void release(byte *)` uses a typedef, but the canonical type is equal.
+  The run's assumption names `"evidence": "derived"`;
+- an artifact for another database prints the run-level refusal, and
+  `subject` stays `Unknown`;
+- an artifact that does not link `caller.c` leaves `subject` `Unknown`, and
+  its row lists `cross_unit_link_refusals`;
+- a stated map together with an artifact is refused as exclusive.
+
 In `crates/qcore-c-gateway/src/link_call_type.rs`:
 
 - `typedefs_desugar_and_parameter_qualifiers_drop`;
