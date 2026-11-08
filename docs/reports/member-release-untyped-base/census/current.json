@@ -1,0 +1,497 @@
+{
+ "inputs": {
+  "route": "current",
+  "premises": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a828b3e1a34ccf314/docs/reports/member-access-projection/census/premises.jsonl.gz",
+  "source_root": "/media/Data/GitHub/quirin-lang/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-source",
+  "providers": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a828b3e1a34ccf314/providers"
+ },
+ "leaves": 18,
+ "functions": 16,
+ "reader_untyped_leaves": 1,
+ "reader_untyped_functions": 1,
+ "sole_blocker_functions": [
+  "lib/librdkafka-2.15.0/src/rdkafka_offset.c::rd_kafka_offset_file_close"
+ ],
+ "table": [
+  {
+   "route": "current",
+   "reader": "resolved (`typedef struct TAG T;`)",
+   "base": "typedef of `struct TAG`, `T *B`",
+   "member": "other typedef",
+   "release_mode": "nonnull",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocker_functions": []
+  },
+  {
+   "route": "current",
+   "reader": "resolved (`typedef struct TAG T;`)",
+   "base": "typedef of `struct TAG`, `T *B`",
+   "member": "star-spelled pointer",
+   "release_mode": "nonnull",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocker_functions": [
+    "rd_kafka_offset_file_close"
+   ]
+  },
+  {
+   "route": "current",
+   "reader": "resolved (`typedef struct TAG T;`)",
+   "base": "typedef of `struct TAG`, `T *B`",
+   "member": "star-spelled pointer",
+   "release_mode": "nullable",
+   "leaves": 10,
+   "functions": 7,
+   "sole_blocker_functions": []
+  },
+  {
+   "route": "current",
+   "reader": "resolved (`typedef struct TAG T;`)",
+   "base": "typedef of `struct TAG`, `T *B`",
+   "member": "star-spelled pointer",
+   "release_mode": "unit",
+   "leaves": 5,
+   "functions": 3,
+   "sole_blocker_functions": []
+  },
+  {
+   "route": "current",
+   "reader": "untyped: the typedef defines the record",
+   "base": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+   "member": "star-spelled pointer",
+   "release_mode": "nullable",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocker_functions": []
+  }
+ ],
+ "rows": [
+  {
+   "route": "current",
+   "file": "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+   "function": "destroy_exponential_histogram_data_point",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "data_point",
+     "member": "exemplars",
+     "base_spelling": "Opentelemetry__Proto__Metrics__V1__ExponentialHistogramDataPoint *data_point",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "free",
+     "release_mode": "nullable",
+     "origin": "lib/cmetrics/src/cmt_encode_opentelemetry.c:2070",
+     "clang_root_type": "struct Opentelemetry__Proto__Metrics__V1__ExponentialHistogramDataPoint *"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `destroy_exemplar`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "current",
+   "file": "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+   "function": "destroy_histogram_data_point",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "data_point",
+     "member": "exemplars",
+     "base_spelling": "Opentelemetry__Proto__Metrics__V1__HistogramDataPoint *data_point",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "free",
+     "release_mode": "nullable",
+     "origin": "lib/cmetrics/src/cmt_encode_opentelemetry.c:2052",
+     "clang_root_type": "struct Opentelemetry__Proto__Metrics__V1__HistogramDataPoint *"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `destroy_exemplar`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "current",
+   "file": "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+   "function": "destroy_metric",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "metric",
+     "member": "name",
+     "base_spelling": "Opentelemetry__Proto__Metrics__V1__Metric *metric",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "is_string_releaseable",
+     "release_mode": "unit",
+     "origin": "lib/cmetrics/src/cmt_encode_opentelemetry.c:2571",
+     "clang_root_type": "struct Opentelemetry__Proto__Metrics__V1__Metric *"
+    },
+    {
+     "base": "metric",
+     "member": "description",
+     "base_spelling": "Opentelemetry__Proto__Metrics__V1__Metric *metric",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "is_string_releaseable",
+     "release_mode": "unit",
+     "origin": "lib/cmetrics/src/cmt_encode_opentelemetry.c:2576",
+     "clang_root_type": "struct Opentelemetry__Proto__Metrics__V1__Metric *"
+    },
+    {
+     "base": "metric",
+     "member": "unit",
+     "base_spelling": "Opentelemetry__Proto__Metrics__V1__Metric *metric",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "is_string_releaseable",
+     "release_mode": "unit",
+     "origin": "lib/cmetrics/src/cmt_encode_opentelemetry.c:2581",
+     "clang_root_type": "struct Opentelemetry__Proto__Metrics__V1__Metric *"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `otlp_kvpair_list_destroy`": 1,
+    "form:union": 10,
+    "store:pointer-null": 4,
+    "unknown_alias": 10
+   },
+   "sole": false
+  },
+  {
+   "route": "current",
+   "file": "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+   "function": "destroy_numerical_data_point",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "data_point",
+     "member": "exemplars",
+     "base_spelling": "Opentelemetry__Proto__Metrics__V1__NumberDataPoint *data_point",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "free",
+     "release_mode": "nullable",
+     "origin": "lib/cmetrics/src/cmt_encode_opentelemetry.c:2028",
+     "clang_root_type": "struct Opentelemetry__Proto__Metrics__V1__NumberDataPoint *"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `destroy_exemplar`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "current",
+   "file": "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+   "function": "destroy_resource_metrics",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "resource_metrics",
+     "member": "schema_url",
+     "base_spelling": "Opentelemetry__Proto__Metrics__V1__ResourceMetrics *resource_metrics",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "is_string_releaseable",
+     "release_mode": "unit",
+     "origin": "lib/cmetrics/src/cmt_encode_opentelemetry.c:1654",
+     "clang_root_type": "struct Opentelemetry__Proto__Metrics__V1__ResourceMetrics *"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `destroy_resource`": 1,
+    "call to uncontracted function `destroy_scope_metric_list`": 1,
+    "unknown_alias": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "current",
+   "file": "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+   "function": "destroy_scope_metrics",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "metric",
+     "member": "schema_url",
+     "base_spelling": "Opentelemetry__Proto__Metrics__V1__ScopeMetrics *metric",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "is_string_releaseable",
+     "release_mode": "unit",
+     "origin": "lib/cmetrics/src/cmt_encode_opentelemetry.c:1773",
+     "clang_root_type": "struct Opentelemetry__Proto__Metrics__V1__ScopeMetrics *"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `destroy_instrumentation_scope`": 1,
+    "call to uncontracted function `destroy_metric_list`": 1,
+    "unknown_alias": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "current",
+   "file": "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+   "function": "otlp_array_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "array",
+     "member": "values",
+     "base_spelling": "Opentelemetry__Proto__Common__V1__ArrayValue *array",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "free",
+     "release_mode": "nullable",
+     "origin": "lib/cmetrics/src/cmt_encode_opentelemetry.c:1042",
+     "clang_root_type": "struct Opentelemetry__Proto__Common__V1__ArrayValue *"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `otlp_any_value_destroy`": 1,
+    "unknown_alias": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "current",
+   "file": "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+   "function": "otlp_kvlist_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "kvlist",
+     "member": "values",
+     "base_spelling": "Opentelemetry__Proto__Common__V1__KeyValueList *kvlist",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "free",
+     "release_mode": "nullable",
+     "origin": "lib/cmetrics/src/cmt_encode_opentelemetry.c:1025",
+     "clang_root_type": "struct Opentelemetry__Proto__Common__V1__KeyValueList *"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `otlp_kvpair_destroy`": 1,
+    "unknown_alias": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "current",
+   "file": "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+   "function": "otlp_kvpair_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "kvpair",
+     "member": "key",
+     "base_spelling": "Opentelemetry__Proto__Common__V1__KeyValue *kvpair",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "free",
+     "release_mode": "nullable",
+     "origin": "lib/cmetrics/src/cmt_encode_opentelemetry.c:1004",
+     "clang_root_type": "struct Opentelemetry__Proto__Common__V1__KeyValue *"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `otlp_any_value_destroy`": 1,
+    "unknown_alias": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "current",
+   "file": "lib/ctraces/src/ctr_encode_opentelemetry.c",
+   "function": "destroy_span",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "span",
+     "member": "status",
+     "base_spelling": "Opentelemetry__Proto__Trace__V1__Span *span",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "free",
+     "release_mode": "nullable",
+     "origin": "lib/ctraces/src/ctr_encode_opentelemetry.c:1372",
+     "clang_root_type": "struct Opentelemetry__Proto__Trace__V1__Span *"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `destroy_attributes`": 1,
+    "call to uncontracted function `destroy_events`": 1,
+    "call to uncontracted function `destroy_links`": 1,
+    "form:aggregate-value": 3,
+    "store:pointer-null": 4,
+    "unknown_alias": 11
+   },
+   "sole": false
+  },
+  {
+   "route": "current",
+   "file": "lib/ctraces/src/ctr_encode_opentelemetry.c",
+   "function": "otlp_array_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "array",
+     "member": "values",
+     "base_spelling": "Opentelemetry__Proto__Common__V1__ArrayValue *array",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "free",
+     "release_mode": "nullable",
+     "origin": "lib/ctraces/src/ctr_encode_opentelemetry.c:91",
+     "clang_root_type": "struct Opentelemetry__Proto__Common__V1__ArrayValue *"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `otlp_any_value_destroy`": 1,
+    "unknown_alias": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "current",
+   "file": "lib/ctraces/src/ctr_encode_opentelemetry.c",
+   "function": "otlp_kvlist_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "kvlist",
+     "member": "values",
+     "base_spelling": "Opentelemetry__Proto__Common__V1__KeyValueList *kvlist",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "free",
+     "release_mode": "nullable",
+     "origin": "lib/ctraces/src/ctr_encode_opentelemetry.c:74",
+     "clang_root_type": "struct Opentelemetry__Proto__Common__V1__KeyValueList *"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `otlp_kvpair_destroy`": 1,
+    "unknown_alias": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "current",
+   "file": "lib/ctraces/src/ctr_encode_opentelemetry.c",
+   "function": "otlp_kvpair_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "kvpair",
+     "member": "key",
+     "base_spelling": "Opentelemetry__Proto__Common__V1__KeyValue *kvpair",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "free",
+     "release_mode": "nullable",
+     "origin": "lib/ctraces/src/ctr_encode_opentelemetry.c:53",
+     "clang_root_type": "struct Opentelemetry__Proto__Common__V1__KeyValue *"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `otlp_any_value_destroy`": 1,
+    "unknown_alias": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "current",
+   "file": "lib/librdkafka-2.15.0/src/cJSON.c",
+   "function": "cJSON_Delete",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "item",
+     "member": "child",
+     "base_spelling": "cJSON *item",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "cJSON_Delete",
+     "release_mode": "nullable",
+     "origin": "lib/librdkafka-2.15.0/src/cJSON.c:261",
+     "clang_root_type": "struct cJSON *"
+    }
+   ],
+   "other_blockers": {
+    "form:indirect-call": 3,
+    "store:pointer-null": 2,
+    "unknown_alias": 5
+   },
+   "sole": false
+  },
+  {
+   "route": "current",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_offset.c",
+   "function": "rd_kafka_offset_file_close",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "rktp",
+     "member": "rktp_offset_fp",
+     "base_spelling": "rd_kafka_toppar_t *rktp",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "fclose",
+     "release_mode": "nonnull",
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_offset.c:102",
+     "clang_root_type": "struct rd_kafka_toppar_s *"
+    }
+   ],
+   "other_blockers": {},
+   "sole": true
+  },
+  {
+   "route": "current",
+   "file": "lib/librdkafka-2.15.0/src/rdregex.c",
+   "function": "rd_regex_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "re",
+     "member": "re",
+     "base_spelling": "rd_regex_t *re",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "other typedef",
+     "callee": "regfree",
+     "release_mode": "nonnull",
+     "origin": "lib/librdkafka-2.15.0/src/rdregex.c:54",
+     "clang_root_type": "struct rd_regex_s *"
+    }
+   ],
+   "other_blockers": {
+    "unknown_alias": 1
+   },
+   "sole": false
+  }
+ ]
+}

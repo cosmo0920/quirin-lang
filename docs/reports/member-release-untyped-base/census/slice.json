@@ -1,0 +1,15 @@
+{
+ "inputs": {
+  "route": "slice",
+  "report": "/media/Data/GitHub/quirin-lang/private/baselines/7b726587bdf6a8213f451fa1c78297bb5e476ef7/fluent-bit-tail-pause/slice/resource-diagnostics.json",
+  "source_root": "/media/Data/GitHub/quirin-lang/private/w47-tail/attempt-1/prep/fluent-bit-clang-source",
+  "providers": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a828b3e1a34ccf314/providers"
+ },
+ "leaves": 0,
+ "functions": 0,
+ "reader_untyped_leaves": 0,
+ "reader_untyped_functions": 0,
+ "sole_blocker_functions": [],
+ "table": [],
+ "rows": []
+}
