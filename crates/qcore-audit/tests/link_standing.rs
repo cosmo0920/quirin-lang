@@ -262,10 +262,12 @@ impl Fixture {
         let report: Value =
             serde_json::from_str(&fs::read_to_string(directory.join("report.json")).unwrap())
                 .unwrap();
-        let mut texts = String::new();
-        for entry in fs::read_dir(&directory).unwrap() {
-            texts.push_str(&fs::read_to_string(entry.unwrap().path()).unwrap_or_default());
-        }
+        // The report and its contract sidecar, which carries the run's
+        // assumptions.
+        let texts = ["report.json", "report.contracts.json"]
+            .iter()
+            .map(|file| fs::read_to_string(directory.join(file)).unwrap_or_default())
+            .collect::<String>();
         let caller = report["units"]
             .as_array()
             .unwrap()
