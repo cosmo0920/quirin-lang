@@ -29,7 +29,8 @@ verbatim.
 | `--qo FILE` | A `.qo` checkpoint, verified whole and passed by content digest; all must come from one run; repeatable |
 | `--load-path FILE`, `--provider NAME` | A contract load path, validated, and crates on it; passed to the plugin |
 | `--timeout-ms N` | Wall-time quota (default 30 minutes), counting analysis time: declared gate-slot waits are excluded (below) |
-| `--slot-wait-limit-ms N` | The most declared slot-wait time the quota excludes (default: the quota itself; `0` counts every wait) |
+| `--slot-wait-limit-ms N` | The most declared slot-wait time the quota excludes (default: the overall wall bound, so a long queue is not capped at the quota; `0` counts every wait) |
+| `--wall-limit-ms N` | The overall wall bound on the whole run, analysis and declared waits together (default seven days, never below `--timeout-ms`; a smaller value is refused). A run that reaches it is stopped with `plugin-wall-limit` |
 | `--stdout-limit-bytes N`, `--stderr-limit-bytes N` | Output quotas (default 16 MiB each) |
 | `--plugin-env NAME` | Pass one more environment variable by name; repeatable |
 
@@ -63,11 +64,16 @@ requirement R7 of [gate-time reduction](../plans/gate-time-reduction/README.md))
 While the file `.quirin-audit-slot-wait` (`quirin_audit_plugin::SLOT_WAIT_MARKER`)
 exists in the output, the plugin declares that all its work waits for a gate
 slot (`scripts/gate_slot.py`); the host polls for it and does not count that
-time against `--timeout-ms`, up to `--slot-wait-limit-ms`. The run record
-(`run` in the report) gives `wall_time_ms`, `slot_wait_ms` and
-`analysis_time_ms`, and the invocation record the limit. The declaration is
-the plugin's own, so the limit is what bounds it: a run never exceeds the
-quota plus the limit. The host removes a marker left in the output before it
+time against `--timeout-ms`, up to `--slot-wait-limit-ms`, which defaults to
+the overall wall bound and not to the quota (card GATE-SLOT-FIFO-ORDER: a
+queue of 15 h killed a measurement whose quota was 10 h). The run record
+(`run` in the report) gives `wall_time_ms`, `slot_wait_ms`,
+`analysis_time_ms` and the limits (`wall_time_quota_ms`, `slot_wait_limit_ms`,
+`wall_limit_ms`); the invocation record and the request's `quotas` carry them
+too, so the plugin sees what it runs under. The declaration is the plugin's
+own, so the overall wall bound (`--wall-limit-ms`, default seven days) is what
+bounds it: the run is stopped at that elapsed time whatever it declares, with
+`plugin-wall-limit`. The host removes a marker left in the output before it
 spawns the plugin.
 
 **Exit status.** 0: the plugin completed and the report is written. 1: the run
@@ -201,7 +207,8 @@ slot. Each route's slot script keeps a live wait record
 every route in flight waits for its slot, the measurement declares the
 host's slot-wait marker, so the quota counts analysis time only (R7). The
 record's `timing` slot gives the measurement's `wall_time_ms`, the declared
-`slot_wait_ms` and the `analysis_time_ms`, and per side and route (with its
+`slot_wait_ms` and the `analysis_time_ms`, the `limits` it ran under
+(`wall_time_quota_ms`, `slot_wait_limit_ms`, `overall_wall_limit_ms`), and per side and route (with its
 profile) the route's own wait and run time, which each route's `run.json`
 entry also carries. One route waiting while another runs is not a wait: the
 measurement is making progress. Slot variables (`QUIRIN_GATE_DIR`,

@@ -31,9 +31,15 @@
 //!   elsewhere, and a descendant that leaves the group escapes the kill.
 //!   The wall-time quota counts analysis time: time during which the plugin
 //!   keeps the [`SLOT_WAIT_MARKER`] in its output (all its work waits for a
-//!   gate slot) is excluded, up to `--slot-wait-limit-ms` (default the quota;
-//!   `0` counts every wait), and both are recorded (card
-//!   MEASURE-QUOTA-AND-INCREMENTAL, requirement R7).
+//!   gate slot) is excluded, up to `--slot-wait-limit-ms` (default the overall
+//!   wall bound; `0` counts every wait), and both are recorded (card
+//!   MEASURE-QUOTA-AND-INCREMENTAL, requirement R7). A queue longer than the
+//!   quota therefore does not kill a run that has hardly analysed
+//!   (GATE-SLOT-FIFO-ORDER): a separate **overall wall bound**,
+//!   `--wall-limit-ms` (default seven days, never below the quota), stops the
+//!   run whatever it declares, with `plugin-wall-limit`. Both limits are sent
+//!   to the plugin in its request's quotas and recorded in the run and
+//!   invocation records.
 //! * **Firewall.** Each claim is classified as a checker plugin's answer is
 //!   ([`qcore_verifier_host::PluginClaim`]): the command line has no trusted
 //!   checker for a subcommand plugin's certificate or witness, so an uncertified
@@ -70,8 +76,8 @@ use qcore_schemas::sha256_hex;
 use qcore_schemas::verdict::{PendingReason, ReasonedVerdict};
 use qcore_verifier_host::{PluginClaim, PluginDiagnostic};
 use quirin_audit_plugin::{
-    AuditIdentity, ENVIRONMENT_ALLOW_LIST, EXECUTABLE_PREFIX, FileIdentity, Outcome,
-    PLUGIN_PATH_VARIABLE, PROTOCOL_VERSION, ProposedVerdict, Quotas, Request, Response,
+    AuditIdentity, DEFAULT_WALL_LIMIT_MS, ENVIRONMENT_ALLOW_LIST, EXECUTABLE_PREFIX, FileIdentity,
+    Outcome, PLUGIN_PATH_VARIABLE, PROTOCOL_VERSION, ProposedVerdict, Quotas, Request, Response,
     SLOT_WAIT_MARKER, VerdictClaim, VerifiedArtifact, parse_response, verify_artifacts,
 };
 use serde_json::{Value, json};
@@ -79,8 +85,8 @@ use serde_json::{Value, json};
 /// Usage text of the external-subcommand route.
 pub const USAGE: &str = "usage: quirin-audit [--plugin-path DIR]... --output DIR [--report FILE] \
 [--audit-report FILE] [--qo FILE]... [--load-path FILE] [--provider NAME]... [--timeout-ms N] \
-[--slot-wait-limit-ms N] [--stdout-limit-bytes N] [--stderr-limit-bytes N] [--plugin-env NAME]... \
-NAME [ARGUMENTS...]
+[--slot-wait-limit-ms N] [--wall-limit-ms N] [--stdout-limit-bytes N] [--stderr-limit-bytes N] \
+[--plugin-env NAME]... NAME [ARGUMENTS...]
        quirin-audit [--plugin-path DIR]... --list-plugins";
 
 /// Every built-in subcommand of `quirin-audit` (`src/main.rs`). An external
@@ -108,7 +114,7 @@ pub const BUILTINS: [&str; 18] = [
 ];
 
 /// The host options that take a value, all before `NAME`.
-const VALUE_OPTIONS: [&str; 12] = [
+const VALUE_OPTIONS: [&str; 13] = [
     "--plugin-path",
     "--output",
     "--report",
@@ -118,6 +124,7 @@ const VALUE_OPTIONS: [&str; 12] = [
     "--provider",
     "--timeout-ms",
     "--slot-wait-limit-ms",
+    "--wall-limit-ms",
     "--stdout-limit-bytes",
     "--stderr-limit-bytes",
     "--plugin-env",
@@ -166,8 +173,11 @@ pub struct HostOptions {
     pub providers: Vec<String>,
     pub timeout_ms: Option<u64>,
     /// How much declared slot-wait time ([`SLOT_WAIT_MARKER`]) the wall-time
-    /// quota excludes; `0` counts every wait (default: the quota itself).
+    /// quota excludes; `0` counts every wait (default: the overall wall bound).
     pub slot_wait_limit: Option<u64>,
+    /// The overall wall bound on the run, analysis and declared waits together
+    /// (default [`DEFAULT_WALL_LIMIT_MS`], or the quota if that is larger).
+    pub wall_limit: Option<u64>,
     pub stdout_limit: Option<u64>,
     pub stderr_limit: Option<u64>,
     pub plugin_env: Vec<String>,
@@ -228,6 +238,7 @@ pub fn parse(arguments: &[String]) -> Result<HostOptions, String> {
             "--qo" => options.checkpoints.push(PathBuf::from(&value)),
             "--provider" => options.providers.push(value.clone()),
             "--timeout-ms" => number(&mut options.timeout_ms)?,
+            "--wall-limit-ms" => number(&mut options.wall_limit)?,
             "--slot-wait-limit-ms" => {
                 let parsed = value
                     .parse::<u64>()
@@ -419,6 +430,9 @@ pub struct Prepared {
     pub host: BTreeMap<String, ReasonedVerdict>,
     /// The most declared slot-wait time the wall-time quota excludes.
     pub slot_wait_limit_ms: u64,
+    /// The overall wall bound: the run is stopped when it has lasted this
+    /// long, analysis and declared waits together.
+    pub wall_limit_ms: u64,
 }
 
 fn read(path: &Path) -> Result<Vec<u8>, String> {
@@ -467,6 +481,19 @@ pub fn prepare(
     executable: &Path,
     cwd: &Path,
 ) -> Result<Prepared, String> {
+    let defaults = Quotas::default();
+    let quota_ms = options.timeout_ms.unwrap_or(defaults.wall_time_ms);
+    let wall_limit_ms = match options.wall_limit {
+        Some(limit) if limit < quota_ms => {
+            return Err(format!(
+                "--wall-limit-ms {limit} is below the wall-time quota of {quota_ms} ms \
+                 (--timeout-ms): the overall bound cannot be shorter than the analysis it bounds"
+            ));
+        }
+        Some(limit) => limit,
+        None => DEFAULT_WALL_LIMIT_MS.max(quota_ms),
+    };
+    let slot_wait_limit_ms = options.slot_wait_limit.unwrap_or(wall_limit_ms);
     let output = options
         .output
         .as_ref()
@@ -573,7 +600,6 @@ pub fn prepare(
         }
     }
 
-    let defaults = Quotas::default();
     let request = Request {
         load_path,
         providers: options.providers.clone(),
@@ -581,16 +607,15 @@ pub fn prepare(
         audit_report,
         checkpoints,
         quotas: Quotas {
-            wall_time_ms: options.timeout_ms.unwrap_or(defaults.wall_time_ms),
+            wall_time_ms: quota_ms,
             stdout_bytes: options.stdout_limit.unwrap_or(defaults.stdout_bytes),
             stderr_bytes: options.stderr_limit.unwrap_or(defaults.stderr_bytes),
+            slot_wait_limit_ms: Some(slot_wait_limit_ms),
+            wall_limit_ms: Some(wall_limit_ms),
         },
         report: report.display().to_string(),
         ..Request::new(name, options.arguments.clone(), cwd, &output)
     };
-    let slot_wait_limit_ms = options
-        .slot_wait_limit
-        .unwrap_or(request.quotas.wall_time_ms);
     Ok(Prepared {
         name: name.to_owned(),
         executable,
@@ -601,6 +626,7 @@ pub fn prepare(
         environment,
         host,
         slot_wait_limit_ms,
+        wall_limit_ms,
     })
 }
 
@@ -754,6 +780,7 @@ pub fn join(
 )]
 enum Breach {
     Timeout,
+    WallLimit,
     Stdout,
     Stderr,
     Escaped,
@@ -898,6 +925,7 @@ fn supervise(prepared: &Prepared, request: &[u8]) -> Supervised {
     }
     let start = Instant::now();
     let quota = Duration::from_millis(quotas.wall_time_ms);
+    let wall_limit = Duration::from_millis(prepared.wall_limit_ms);
     let mut child = match command.spawn() {
         Ok(child) => child,
         Err(error) => {
@@ -958,6 +986,8 @@ fn supervise(prepared: &Prepared, request: &[u8]) -> Supervised {
             Some(Breach::Stderr)
         } else if now >= start + quota + waits.accrued {
             Some(Breach::Timeout)
+        } else if now.saturating_duration_since(start) >= wall_limit {
+            Some(Breach::WallLimit)
         } else {
             None
         };
@@ -1038,6 +1068,23 @@ fn classify_run(
                         "exceeded the wall-time quota of {} ms ({} ms of declared slot waits \
                          excluded, limit {} ms)",
                         quotas.wall_time_ms, observed.slot_wait_ms, prepared.slot_wait_limit_ms
+                    ),
+                ),
+            );
+        }
+        Some(Breach::WallLimit) => {
+            return (
+                None,
+                fail(
+                    "plugin-wall-limit",
+                    format!(
+                        "ran for {} ms, the overall wall bound (--wall-limit-ms), with {} ms of \
+                         declared slot waits excluded from the {} ms analysis quota (slot-wait \
+                         limit {} ms)",
+                        prepared.wall_limit_ms,
+                        observed.slot_wait_ms,
+                        quotas.wall_time_ms,
+                        prepared.slot_wait_limit_ms
                     ),
                 ),
             );
@@ -1212,6 +1259,9 @@ pub fn execute(
         "wall_time_ms": observed.wall_time_ms,
         "slot_wait_ms": observed.slot_wait_ms,
         "analysis_time_ms": observed.wall_time_ms.saturating_sub(observed.slot_wait_ms),
+        "wall_time_quota_ms": prepared.request.quotas.wall_time_ms,
+        "slot_wait_limit_ms": prepared.slot_wait_limit_ms,
+        "wall_limit_ms": prepared.wall_limit_ms,
         "stdout_bytes": observed.stdout.len(),
         "stderr_bytes": observed.stderr_bytes,
         "stderr_log": prepared.stderr_log.display().to_string(),
@@ -1258,6 +1308,7 @@ pub fn execute(
         },
         "quotas": prepared.request.quotas,
         "slot_wait_limit_ms": prepared.slot_wait_limit_ms,
+        "wall_limit_ms": prepared.wall_limit_ms,
         "output": prepared.request.output,
         "stderr_log": prepared.stderr_log.display().to_string(),
         "request_sha256": sha256_hex(&request_bytes),
@@ -1348,6 +1399,20 @@ mod tests {
         let counted = parse(&["--slot-wait-limit-ms".into(), "0".into(), "x".into()]).unwrap();
         assert_eq!(counted.slot_wait_limit, Some(0));
         assert!(parse(&["--slot-wait-limit-ms".into(), "-1".into(), "x".into()]).is_err());
+        // The overall wall bound is positive and given once.
+        let bounded = parse(&["--wall-limit-ms".into(), "9".into(), "x".into()]).unwrap();
+        assert_eq!(bounded.wall_limit, Some(9));
+        assert!(parse(&["--wall-limit-ms".into(), "0".into(), "x".into()]).is_err());
+        assert!(
+            parse(&[
+                "--wall-limit-ms".into(),
+                "1".into(),
+                "--wall-limit-ms".into(),
+                "2".into(),
+                "x".into()
+            ])
+            .is_err()
+        );
         assert!(parse(&["--bogus".into(), "x".into()]).is_err());
     }
 

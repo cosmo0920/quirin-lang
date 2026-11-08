@@ -148,6 +148,24 @@ live holders, waiters, their wait time and their CPU/I/O progress; peak RSS
 above the admission budget is reported while running, not only at exit.
 Tracked by GATE-SLOT-ADMISSION-STARVATION.
 
+**R12. Slots are served in arrival order; a queue does not kill a measurement.**
+Added 2026-11-08 (integrator's record of the 2026-11-07/08 incident). The audit
+slots were not first come, first served: a measurement's audit
+(SCALAR-STATEMENT-FORMS, `private/measure/scalar-forms-20261107T072754Z`)
+waited 7.5 h, then 15.5 h, while audits and `rust-suite` drains that asked
+hours later were admitted first; the measurement then died with
+`plugin-timeout: exceeded the wall-time quota of 36000000 ms (36000000 ms of
+declared slot waits excluded, limit 36000000 ms)`, because R7's exclusion was
+capped at the quota. Requirements: a waiter that arrived earlier is admitted
+before a later one of the same class, a `rust-suite` drain respecting the
+audits queued ahead of it, with crashed waiters, restarts and mixed memory
+budgets handled and no daemon; a measurement's slot wait is excluded from its
+analysis quota without being capped at it, under a separate stated overall wall
+bound with a much larger default and an override, both recorded; `status` shows
+each waiter's queue position. Tracked by GATE-SLOT-FIFO-ORDER and
+MEASURE-SLOT-WAIT-EXCLUSION-CAP (both discharged by card GATE-SLOT-FIFO-ORDER,
+[report](../../reports/gate-slot-fifo-order/README.md)).
+
 Suggested order: R1, R2, R3 and R7 first (scoper and test changes, no
 semantics); R9 alongside; R4 and R5 next; R8 after them; R10 last.
 
