@@ -385,6 +385,7 @@ import QCore.ScalarPrecedence
 import QCore.ScalarReadIdentity
 import QCore.ScalarReturnValue
 import QCore.ScalarRouteExitEdge
+import QCore.ScalarStatementForms
 import QCore.ScalarTasks
 import QCore.ScalarTypedErrors
 import QCore.ScalarTypes

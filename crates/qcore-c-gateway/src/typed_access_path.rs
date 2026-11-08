@@ -1154,6 +1154,7 @@ impl StatementIndex {
             pointer_stores: false,
             aggregate_target: false,
             opaque_call: None,
+            unevaluated_queries: false,
             plan: StatementPlan {
                 scalar: TypedScalarPlan::default(),
                 chains: Vec::new(),
@@ -1442,6 +1443,12 @@ pub(crate) struct Reader<'a> {
     /// the caller lowers on its own, read here as an opaque scalar operand.
     /// `None` everywhere else, which keeps every call refused.
     pub(crate) opaque_call: Option<&'a Value>,
+    /// Card SCALAR-STATEMENT-FORMS (rule 41): `sizeof` of an expression or a
+    /// type whose operand Clang does not evaluate
+    /// ([`crate::cast_representation::query_operand`] `Unevaluated`) is a
+    /// scalar operand that reads nothing. Off everywhere but rule 41's route,
+    /// so every other reading keeps its refusal.
+    pub(crate) unevaluated_queries: bool,
     fields: &'a BTreeMap<String, Option<FieldFacts>>,
     enums: &'a EnumFacts,
     /// Card CG13 (rule 10w): union and bit-field record facts.
@@ -1575,7 +1582,7 @@ impl<'a> Reader<'a> {
         }
     }
 
-    fn store(&mut self, node: &Value) -> Option<()> {
+    pub(crate) fn store(&mut self, node: &Value) -> Option<()> {
         let node = strip(node)?;
         if kind(node) == "DeclRefExpr" && self.scalar(node) {
             self.plan.scalar.destination =
@@ -1614,6 +1621,15 @@ impl<'a> Reader<'a> {
                     && node["argType"]["qualType"]
                         .as_str()
                         .is_some_and(|ty| !ty.contains('[')) =>
+            {
+                Some(())
+            }
+            // Rule 41: an unevaluated type query reads nothing (C11 6.5.3.4p2).
+            "UnaryExprOrTypeTraitExpr"
+                if self.unevaluated_queries
+                    && node["name"].as_str() == Some("sizeof")
+                    && crate::cast_representation::query_operand(node)
+                        == crate::cast_representation::QueryOperand::Unevaluated =>
             {
                 Some(())
             }

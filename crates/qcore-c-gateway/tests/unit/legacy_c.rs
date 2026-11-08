@@ -939,13 +939,19 @@ fn unrestricted_gateway_requires_an_explicit_gnu_dialect() {
 /// The property the test was really protecting is boundary **E01-B2**, header
 /// scope, and that is kept: the third leg moves the same helper into a real
 /// header, where the exclusion is genuine and `subject` is `Safe` again.
+///
+/// Deliberate pin update, card **SCALAR-STATEMENT-FORMS** (rule 41): the
+/// helper's body was `struct Local { int value; };`, a declaration of no
+/// object, which rule 41 now lowers to nothing. The helper only has to stay
+/// unmodeled, so its body is now an object of an inline union, which every
+/// route still refuses (rule 41's `inline-record-object`).
 #[test]
 fn main_source_scope_excludes_header_bodies_but_not_main_source_expansions() {
     if !crate::test_support::clang_available() {
         return;
     }
     let source = "\
-#define HEADER_BODY static void header_helper(void) { struct Local { int value; }; }\n\
+#define HEADER_BODY static void header_helper(void) { union { int value; } local; local.value = 1; }\n\
 HEADER_BODY\n\
 void *q_alloc(void);\n\
 void q_free(void *);\n\
@@ -1000,7 +1006,7 @@ void subject(void) { void *p = q_alloc(); q_free(p); }\n";
     std::fs::create_dir_all(&directory).unwrap();
     std::fs::write(
         directory.join("e01f1_scope.h"),
-        "static void header_helper(void) { struct Local { int value; }; }\n",
+        "static void header_helper(void) { union { int value; } local; local.value = 1; }\n",
     )
     .unwrap();
     let header_source = "\

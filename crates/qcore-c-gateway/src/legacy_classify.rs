@@ -27,6 +27,28 @@ impl Parser<'_> {
     /// and element counters, and the descriptor guard, which restored
     /// nothing, does too.
     pub(super) fn classify_simple(&mut self, tokens: &[Token]) -> LegacyInstruction {
+        let instruction = self.classify_simple_recorded(tokens);
+        // Card SCALAR-STATEMENT-FORMS: measurement only (feature
+        // `scalar-form-census`, off by default).
+        #[cfg(feature = "scalar-form-census")]
+        if let LegacyInstruction::Unknown { description, .. } = &instruction {
+            let texts = tokens
+                .iter()
+                .map(|token| token.text.as_str())
+                .collect::<Vec<_>>();
+            crate::scalar_form_census::record(
+                &self.typed_path_function,
+                tokens.first().map_or(0, |token| token.line),
+                &texts,
+                description,
+                "classified",
+                None,
+            );
+        }
+        instruction
+    }
+
+    fn classify_simple_recorded(&mut self, tokens: &[Token]) -> LegacyInstruction {
         let saved = self.probe_state();
         let instruction = self.classify_simple_descriptors(tokens, &saved);
         let instruction = self.refuse_opaque_call(tokens, instruction, &saved);

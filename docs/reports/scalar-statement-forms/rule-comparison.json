@@ -1,0 +1,934 @@
+{
+ "driver": "tests/scalar_form_census.rs (no contracts), QCORE_GATEWAY_RULES_OFF=41 against rule 41 on",
+ "rows_in_report_functions": [
+  {
+   "unit": "lib/librdkafka-2.15.0/src/cJSON.c",
+   "function": "utf16_literal_to_utf8",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/crc32c.c",
+   "function": "crc32c_hw",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 5,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/lz4.c",
+   "function": "LZ4_createStream",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/lz4.c",
+   "function": "LZ4_createStreamDecode",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/lz4.c",
+   "function": "LZ4_decompress_generic",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 9,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/lz4.c",
+   "function": "LZ4_getIndexOnHash",
+   "off": "Unknown",
+   "on": "Safe",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": [
+    "566:UnknownAlias { variable: \"tableBase\" }",
+    "568:UnknownAlias { variable: \"hashTable\" }",
+    "571:UnknownAlias { variable: \"tableBase\" }",
+    "573:UnknownAlias { variable: \"hashTable\" }"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/lz4.c",
+   "function": "LZ4_stream_t_alignment",
+   "off": "Unknown",
+   "on": "Safe",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/lz4frame.c",
+   "function": "LZ4F_compressBegin_usingCDict",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 0,
+   "new_other": [],
+   "lost_other": [
+    "1398:Unsupported { description: \"call to uncontracted function `LZ4F_returnErrorCode`\" }",
+    "1415:Unsupported { description: \"call to uncontracted function `LZ4F_returnErrorCode`\" }",
+    "1437:Unsupported { description: \"call to uncontracted function `LZ4F_returnErrorCode`\" }"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/lz4frame.c",
+   "function": "LZ4F_compressEnd",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 0,
+   "new_other": [],
+   "lost_other": [
+    "1718:Unsupported { description: \"call to uncontracted function `LZ4F_returnErrorCode`\" }",
+    "1723:Unsupported { description: \"call to uncontracted function `LZ4F_returnErrorCode`\" }",
+    "1732:Unsupported { description: \"call to uncontracted function `LZ4F_returnErrorCode`\" }"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/lz4frame.c",
+   "function": "LZ4F_compressFrame_usingCDict",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 0,
+   "new_other": [],
+   "lost_other": [
+    "1246:Unsupported { description: \"call to uncontracted function `LZ4F_returnErrorCode`\" }"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/lz4frame.c",
+   "function": "LZ4F_compressUpdateImpl",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 0,
+   "new_other": [],
+   "lost_other": [
+    "1584:Unsupported { description: \"call to uncontracted function `LZ4F_returnErrorCode`\" }",
+    "1586:Unsupported { description: \"call to uncontracted function `LZ4F_returnErrorCode`\" }",
+    "1588:Unsupported { description: \"call to uncontracted function `LZ4F_returnErrorCode`\" }"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/lz4frame.c",
+   "function": "LZ4F_decompress",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": [
+    "2032:Unsupported { description: \"call to uncontracted function `LZ4F_returnErrorCode`\" }",
+    "2035:Unsupported { description: \"call to uncontracted function `LZ4F_returnErrorCode`\" }",
+    "2076:Unsupported { description: \"call to uncontracted function `LZ4F_returnErrorCode`\" }",
+    "2157:Unsupported { description: \"call to uncontracted function `LZ4F_returnErrorCode`\" }",
+    "2194:Unsupported { description: \"call to uncontracted function `LZ4F_returnErrorCode`\" }",
+    "2211:Unsupported { description: \"call to uncontracted function `LZ4F_returnErrorCode`\" }",
+    "2245:Unsupported { description: \"call to uncontracted function `LZ4F_returnErrorCode`\" }",
+    "2272:Unsupported { description: \"call to uncontracted function `LZ4F_returnErrorCode`\" }",
+    "2304:Unsupported { description: \"call to uncontracted function `LZ4F_returnErrorCode`\" }"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/lz4frame.c",
+   "function": "LZ4F_getFrameInfo",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 2,
+   "new_other": [],
+   "lost_other": [
+    "1891:UnknownAlias { variable: \"dctx\" }",
+    "1897:UnknownAlias { variable: \"dctx\" }",
+    "1899:Unsupported { description: \"call to uncontracted function `LZ4F_returnErrorCode`\" }",
+    "1905:Unsupported { description: \"call to uncontracted function `LZ4F_returnErrorCode`\" }"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/lz4frame.c",
+   "function": "LZ4F_returnErrorCode",
+   "off": "Unknown",
+   "on": "Safe",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/lz4hc.c",
+   "function": "LZ4HC_InsertAndGetWiderMatch",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 0,
+   "new_other": [],
+   "lost_other": [
+    "785:Unsupported { description: \"call to uncontracted function `LZ4HC_rotatePattern`\" }",
+    "794:Unsupported { description: \"call to uncontracted function `LZ4HC_rotatePattern`\" }"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/lz4hc.c",
+   "function": "LZ4HC_compress_generic_internal",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 2,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/lz4hc.c",
+   "function": "LZ4HC_encodeSequence",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 5,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/lz4hc.c",
+   "function": "LZ4HC_rotatePattern",
+   "off": "Unknown",
+   "on": "Safe",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/lz4hc.c",
+   "function": "LZ4_streamHC_t_alignment",
+   "off": "Unknown",
+   "on": "Safe",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdbuf.c",
+   "function": "do_unittest_erase",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 4,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdhdrhistogram.c",
+   "function": "ut_quantile",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 2,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdhdrhistogram.c",
+   "function": "ut_subbucketmask_overflow",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 2,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdhttp.c",
+   "function": "rd_http_get",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 2,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdhttp.c",
+   "function": "rd_http_post_expect_json",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka.c",
+   "function": "rd_kafka_DescribeGroups_resp_cb",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 3,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka.c",
+   "function": "rd_kafka_stats_emit_all",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka.c",
+   "function": "rd_kafka_version_str",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_AuthorizedOperations_parse",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 2,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_assignor.c",
+   "function": "ut_assignors",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 12,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "function": "rd_kafka_broker_handle_purge_queues",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": [
+    "24025:UnknownAlias { variable: \"rkb\" }"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "function": "rd_kafka_broker_set_error",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_feature.c",
+   "function": "rd_kafka_get_legacy_ApiVersions",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+   "function": "rd_kafka_ShareAcknowledgeRequest",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 8,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+   "function": "rd_kafka_ShareFetchRequest",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 17,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+   "function": "rd_kafka_fetch_reply_handle",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 7,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+   "function": "rd_kafka_fetch_reply_handle_partition",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 12,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+   "function": "rd_kafka_share_fetch_reply_handle_partition",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_metadata.c",
+   "function": "rd_kafka_metadata_new_topic_mock",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 4,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_metadata.c",
+   "function": "rd_kafka_parse_Metadata0",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 26,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_metadata_cache.c",
+   "function": "rd_kafka_metadata_cache_topic_update_merge_partitions",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 4,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+   "function": "rd_kafka_mock_validate_records",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_consumer_member_next_assignment_can_bump_epoch",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_Fetch",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 2,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_OffsetCommit",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_ShareFetch",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_ShareGroupHeartbeat",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_sgrp_write_acquired_records_meta",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 3,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_mock_sharegrp.c",
+   "function": "rd_kafka_mock_sharegroup_assign_topic_partitions",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 2,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_msg.c",
+   "function": "rd_kafka_msgq_verify_order0",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 2,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_msg.c",
+   "function": "unittest_msg_seq_wrap",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_msg.c",
+   "function": "unittest_msgq_insert_all_sort",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_msg.c",
+   "function": "unittest_msgq_insert_each_sort",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_msg.c",
+   "function": "unittest_msgq_insert_sort",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_msgset_reader.c",
+   "function": "rd_kafka_msgset_reader_msg_v0_1",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 5,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_msgset_reader.c",
+   "function": "rd_kafka_msgset_reader_msg_v2",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 2,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_msgset_writer.c",
+   "function": "rd_kafka_msgset_writer_write_msg",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_msgset_writer.c",
+   "function": "rd_kafka_msgset_writer_write_msg_v2",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+   "function": "rd_kafka_purge_ua_toppar_queues",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+   "function": "rd_kafka_toppar_purge_internal_fetch_queue_maybe",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_queue.c",
+   "function": "rd_kafka_q_purge0",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_queue.c",
+   "function": "rd_kafka_q_purge_toppar_version",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_queue.c",
+   "function": "rd_kafka_q_serve_rkmessages",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_range_assignor.c",
+   "function": "rd_kafka_range_assignor_unittest",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 5,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+   "function": "rd_kafka_AddPartitionsToTxnRequest",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+   "function": "rd_kafka_buf_read_topic_partitions_nullable",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+   "function": "rd_kafka_buf_write_topic_partitions",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+   "function": "rd_kafka_handle_Produce_parse",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 12,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+   "function": "rd_kafka_make_ListOffsetsRequest",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 2,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+   "function": "rd_kafka_msgbatch_handle_Produce_result_record_errors",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c",
+   "function": "rd_kafka_oauthbearer_unsecured_token0",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_jwt_bearer_base64url_encode",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_sub_claim_name",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c",
+   "function": "unittest_ssl",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c",
+   "function": "prepopulateCurrentAssignments",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 2,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c",
+   "function": "rd_kafka_sticky_assignor_unittest",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 5,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_telemetry.c",
+   "function": "rd_kafka_match_requested_metrics",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 3,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_telemetry_encode.c",
+   "function": "count_attributes",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_telemetry_encode.c",
+   "function": "set_attributes",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_topic.c",
+   "function": "rd_kafka_topic_new0",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_topic.c",
+   "function": "rd_kafka_topic_scan_all",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c",
+   "function": "rd_kafka_txn_handle_EndTxn",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": [
+    "21330:UnknownAlias { variable: \"request\" }"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdlog.c",
+   "function": "rd_hexdump",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdlog.c",
+   "function": "rd_msghdr_print",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdmap.c",
+   "function": "unittest_untyped_map",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdrand.c",
+   "function": "rd_array_shuffle",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdrand.c",
+   "function": "rd_seed",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdstring.c",
+   "function": "ut_strcasestr",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdstring.c",
+   "function": "ut_string_split",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 2,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdunittest.c",
+   "function": "rd_unittest",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 3,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdunittest_fetcher.c",
+   "function": "unittest_fetcher_share_filter_forward",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 2,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdxxhash.c",
+   "function": "XXH32_canonicalFromHash",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdxxhash.c",
+   "function": "XXH64_canonicalFromHash",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/monkey/mk_core/mk_iov.c",
+   "function": "mk_iov_create",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 3,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/monkey/mk_core/mk_string.c",
+   "function": "mk_string_split_line",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/monkey/mk_server/mk_scheduler.c",
+   "function": "_next_target",
+   "off": "Unknown",
+   "on": "Safe",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "lib/monkey/mk_server/mk_utils.c",
+   "function": "mk_utils_stacktrace",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 1,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_get_direct_routes",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 3,
+   "new_other": [],
+   "lost_other": []
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_write_header_v2",
+   "off": "Unknown",
+   "on": "Unknown",
+   "family_leaves_removed": 3,
+   "new_other": [],
+   "lost_other": []
+  }
+ ],
+ "all_functions": {
+  "status_moves": {
+   "Unknown -> Safe": 6
+  },
+  "family_leaves_removed": 782
+ }
+}

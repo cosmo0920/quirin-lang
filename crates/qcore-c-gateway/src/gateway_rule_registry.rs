@@ -211,6 +211,18 @@ pub const REGISTRY: &[RuleEntry] = &[
         off: Off::Refuses,
     },
     RuleEntry {
+        id: "41",
+        crate_name: "qcore-c-gateway",
+        placements: &[
+            Placement { position: Position::StatementAttribution, order: None, arm: Some("scalar-statement-form"), route: "legacy_scalar_statement_forms::scalar_statement_form" },
+            Placement { position: Position::Classification, order: None, arm: Some("scalar-for-clause"), route: "legacy_scalar_statement_forms::scalar_form_clause" },
+        ],
+        lean: &["QCore.ScalarStatementForms"],
+        document: "docs/agents/rules/41.md",
+        reason_keys: &[],
+        off: Off::Refuses,
+    },
+    RuleEntry {
         id: "33",
         crate_name: "rule-33-removed-selection",
         placements: &[
