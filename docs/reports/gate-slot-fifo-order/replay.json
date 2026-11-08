@@ -1,0 +1,174 @@
+{
+ "schema": "quirin-fifo-replay/1",
+ "arrival_order": [
+  "M",
+  "A2",
+  "R",
+  "A3"
+ ],
+ "trials": 5,
+ "clients": {
+  "before the card (scripts/tests/fixtures/gate_slot_before_queue.py.txt)": {
+   "runs": [
+    {
+     "order": [
+      "R",
+      "A3",
+      "A2",
+      "M"
+     ],
+     "exits": [
+      0,
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "order": [
+      "R",
+      "A3",
+      "M",
+      "A2"
+     ],
+     "exits": [
+      0,
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "order": [
+      "R",
+      "A2",
+      "M",
+      "A3"
+     ],
+     "exits": [
+      0,
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "order": [
+      "R",
+      "A2",
+      "A3",
+      "M"
+     ],
+     "exits": [
+      0,
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "order": [
+      "R",
+      "M",
+      "A2",
+      "A3"
+     ],
+     "exits": [
+      0,
+      0,
+      0,
+      0,
+      0
+     ]
+    }
+   ],
+   "in_arrival_order": 0,
+   "first_to_wait_ran_first": 0
+  },
+  "this card (scripts/gate_slot.py)": {
+   "runs": [
+    {
+     "order": [
+      "M",
+      "A2",
+      "R",
+      "A3"
+     ],
+     "exits": [
+      0,
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "order": [
+      "M",
+      "A2",
+      "R",
+      "A3"
+     ],
+     "exits": [
+      0,
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "order": [
+      "M",
+      "A2",
+      "R",
+      "A3"
+     ],
+     "exits": [
+      0,
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "order": [
+      "M",
+      "A2",
+      "R",
+      "A3"
+     ],
+     "exits": [
+      0,
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "order": [
+      "M",
+      "A2",
+      "R",
+      "A3"
+     ],
+     "exits": [
+      0,
+      0,
+      0,
+      0,
+      0
+     ]
+    }
+   ],
+   "in_arrival_order": 5,
+   "first_to_wait_ran_first": 5
+  }
+ }
+}

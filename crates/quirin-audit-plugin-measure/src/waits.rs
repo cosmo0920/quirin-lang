@@ -11,11 +11,17 @@
 //! not count that time against `--timeout-ms`, and it sums the idle time for
 //! the record. One route waiting while another runs is not idle: the quota
 //! keeps counting, because the measurement is making progress.
+//!
+//! The host excludes those waits up to its slot-wait limit, which defaults to
+//! its separate overall wall bound and not to the analysis quota, so a long
+//! queue does not kill a measurement that has hardly analysed (card
+//! GATE-SLOT-FIFO-ORDER); the record keeps both limits next to the figures.
 
 use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
 
+use quirin_audit_plugin::Quotas;
 use serde_json::{Value, json};
 
 #[derive(Debug, Default)]
@@ -179,16 +185,25 @@ pub fn millis(duration: Duration) -> u64 {
 }
 
 /// The record's `timing` slot: the measurement's wall time, the idle time it
-/// declared as slot waits (outside the quota), the rest (analysis time), and
-/// each side's routes with their own waits and run times, by profile.
+/// declared as slot waits (outside the quota), the rest (analysis time), the
+/// limits the host ran it under (the analysis quota, the slot-wait limit and
+/// the overall wall bound, as the request carried them: `null` from a host
+/// that sent none) and each side's routes with their own waits and run times,
+/// by profile.
 #[must_use]
-pub fn timing(wall: Duration, tracker: &Tracker, routes: &Value) -> Value {
+pub fn timing(wall: Duration, tracker: &Tracker, routes: &Value, quotas: &Quotas) -> Value {
     let idle = tracker.idle();
     json!({
         "wall_time_ms": millis(wall),
         "slot_wait_ms": millis(idle),
         "analysis_time_ms": millis(wall.saturating_sub(idle)),
-        "slot_wait_meaning": "wall time during which every route in flight waited for its gate slot; the host's --timeout-ms does not count it (card MEASURE-QUOTA-AND-INCREMENTAL, R7)",
+        "slot_wait_meaning": "wall time during which every route in flight waited for its gate slot; the host's --timeout-ms does not count it, up to its slot-wait limit (cards MEASURE-QUOTA-AND-INCREMENTAL, R7, and GATE-SLOT-FIFO-ORDER)",
+        "limits": {
+            "wall_time_quota_ms": quotas.wall_time_ms,
+            "slot_wait_limit_ms": quotas.slot_wait_limit_ms,
+            "overall_wall_limit_ms": quotas.wall_limit_ms,
+            "meaning": "the analysis quota (--timeout-ms) counts analysis time only; declared slot waits are excluded up to the slot-wait limit; the overall wall limit stops the run whatever it declares",
+        },
         "sides": routes,
     })
 }

@@ -1011,7 +1011,12 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
             (side.name.clone(), routes)
         })
         .collect();
-    let timing = waits::timing(started.elapsed(), &tracker, &json!(route_times));
+    let timing = waits::timing(
+        started.elapsed(),
+        &tracker,
+        &json!(route_times),
+        &request.quotas,
+    );
     let complete = failures.is_empty();
     let record = json!({
         "schema": COMPARISON_SCHEMA,

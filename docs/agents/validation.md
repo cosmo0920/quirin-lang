@@ -293,14 +293,80 @@ One job cannot starve the host (requirement R11 of
   so queued audits start, and drains again; `--drain-attempts N` turns the Nth
   give-up into exit 75 with that report, and `--wait-timeout` still bounds the
   whole wait. The command never runs without a complete drain, and a job that
-  never got its slot only waited (its `--wait-record` stays `waiting`).
+  never got its slot only waited (its `--wait-record` stays `waiting`). The
+  drain starts only when it is first in the queue (next bullet group), so it
+  respects the audits queued before it.
 - **Status.** `python3 scripts/gate_slot.py status [--json] [--interval S]`
   lists the live holders and waiters: the `/proc/locks` entries on the gate's
   slot files and the legacy lock, with role (holder, draining and what blocks
   it, waiting for a slot, queued in the kernel, legacy holder), argv, wait and
   hold times, CPU and I/O over the interval, and resident set against the
   admission budget. A job waiting for an `audit` slot holds only the legacy
-  lock shared, which is how it shows; it reads `QUIRIN_GATE_DIR` like the jobs.
+  lock shared, which is how it shows; it reads `QUIRIN_GATE_DIR` like the jobs. Each queued
+  waiter shows its position (`queue position 2 of 5 (audit)`, who is ahead,
+  its state), and `--json` lists every queue under `queues`.
+
+Slots are served in arrival order (card `GATE-SLOT-FIFO-ORDER`; the 2026-11-07/08
+incident: a measurement's audit waited 7.5 h, then 15.5 h, while audits and
+drains that asked hours later took the slots):
+
+- **Tickets.** A job that has to wait takes a ticket, a file
+  `<gate dir>/<family>/queue/<seq>-<pid>.ticket`, after it holds the legacy
+  lock, and drops it when it is admitted or gives up. The family is `audit`
+  for the `audit` and `rust-suite` classes (a suite takes every audit slot, so
+  its place among the audits is the point) and `lean`. The sequence number is
+  read from a counter file under a flock held for a few system calls; the
+  ticket is created locked, with the owner's pid and start time, and renamed
+  into place, so it is never visible unlocked. No daemon: tickets are plain
+  files beside the slot flocks, and the receipt's `slot_record.queue` gives the
+  ticket, the position at the request, the tickets reclaimed, those skipped and
+  those passed over.
+- **Admission rule.** A job may take a slot only if no job ahead of it (a
+  smaller number) can take that slot. A job ahead holds back exactly the free
+  slots it could itself take at the current memory reading: slot index below its
+  own `floor(MemAvailable / admission budget)` (at least one), both `lean`
+  slots. So the earlier of two equal waiters always wins, and a waiter whose
+  memory admission cannot be met now (every slot its memory admits is busy)
+  holds back nothing else: a 4 GiB audit behind an 11 GiB corpus audit that
+  waits for slot 0 runs in slot 1 (`passed_over` in its receipt), and the corpus
+  audit keeps slot 0 for itself when it frees. A `rust-suite` job ahead holds
+  back every audit behind it; it starts its drain only when no job is ahead of
+  it. A head is never left unadmittable by memory: one slot is always counted.
+- **A queue is never blocked for ever.** A ticket stops holding the others
+  back when (a) its owner is gone: its flock is free *and* its pid is gone, a
+  zombie, or has another start time (a reused pid); whoever finds it unlinks it,
+  and a live pid with a free lock, or a held lock whose pid is not visible, is
+  never reclaimed; (b) its owner has not polled for `QUIRIN_GATE_QUEUE_LAPSE`
+  (10 min; `0`/`off` never): it is skipped, not removed, and counts again at
+  its owner's next poll; (c) its `rust-suite` drain gave up and is backing off
+  (it keeps its place, and the audits queued behind it run meanwhile).
+  `QUIRIN_GATE_QUEUE=off` takes no ticket (the job competes as an older client
+  does). A job that is killed and run again asks again, behind the jobs that
+  asked meanwhile; a cleaned `/tmp` starts a fresh queue.
+- **Older clients.** A `gate_slot.py` from before the queue (a worktree not yet
+  rebased) ignores tickets and takes the same slot flocks in the same way, so a
+  mixed host never deadlocks and never holds a slot twice (flock admits one
+  exclusive holder); it can only be admitted ahead of a ticketed job, so arrival
+  order is guaranteed among queue-aware jobs, and an older client shows in
+  `status` as "not queued". A ticketed suite waits for the same locks an older
+  one does, and a ticketed job never holds a lock while it waits for its turn
+  except the shared legacy lock every waiter already held.
+
+A declared measurement's slot waits are outside its analysis quota and are no
+longer capped by it (cards `MEASURE-QUOTA-AND-INCREMENTAL` and
+`MEASURE-SLOT-WAIT-EXCLUSION-CAP`). `quirin-audit measure` runs each route
+under `gate_slot.py audit --wait-record`; while every route in flight waits,
+the host does not count that time against `--timeout-ms`, which is the
+**analysis quota** (the default for `--slot-wait-limit-ms`, the most it
+excludes, is now the overall wall bound and no longer the quota, which killed a
+measurement after a queue as long as the quota). A separate **overall wall
+bound** `--wall-limit-ms` stops the run whatever it declares (code
+`plugin-wall-limit`): default seven days, never below `--timeout-ms` (a larger
+quota raises the default; a smaller explicit bound is refused). Override either
+on the host's command line. Both limits are in the request, the host's run and
+invocation records and the measure report's `timing.limits`. A measurement
+still needs `--timeout-ms` large enough for its analysis (the pinned corpus
+route ran about 2 h per profile).
 
 ## Test build storage
 

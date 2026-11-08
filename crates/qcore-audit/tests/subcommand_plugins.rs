@@ -300,25 +300,44 @@ fn declared_slot_waits_are_outside_the_wall_time_quota_up_to_the_limit() {
         10000
     );
 
-    // By default the limit is the quota itself: a 1.2 s wait under an 800 ms
-    // quota completes.
+    // By default the limit is the overall wall bound, not the quota (card
+    // GATE-SLOT-FIFO-ORDER): a 1.5 s wait under a 500 ms quota, three times the
+    // quota, completes. Both limits are in the request the plugin received, the
+    // invocation record and the run record.
     let directory = scratch("slot-wait-default");
     plugin(
         &directory,
         "waiting",
         &format!(
-            "touch {marker}\nsleep 1.2\nrm {marker}\n{}",
+            "touch {marker}\nsleep 1.5\nrm {marker}\n{}",
             emit(&response(&json!([]), &json!([])))
         ),
     );
-    let output = run(&directory, &["--timeout-ms", "800"], "waiting", &[]);
+    let output = run(&directory, &["--timeout-ms", "500"], "waiting", &[]);
     assert!(
         output.status.success(),
         "{}{}",
         stderr(&output),
         String::from_utf8_lossy(&output.stdout)
     );
-    assert_eq!(invocation(&directory, "waiting")["slot_wait_limit_ms"], 800);
+    let bound = quirin_audit_plugin::DEFAULT_WALL_LIMIT_MS;
+    let recorded = invocation(&directory, "waiting");
+    assert_eq!(recorded["slot_wait_limit_ms"], bound);
+    assert_eq!(recorded["wall_limit_ms"], bound);
+    let run_record = &report(&directory, "waiting")["run"];
+    assert!(
+        run_record["slot_wait_ms"].as_u64().unwrap() >= 1200,
+        "{run_record}"
+    );
+    assert_eq!(run_record["wall_limit_ms"], bound);
+    assert_eq!(run_record["slot_wait_limit_ms"], bound);
+    assert_eq!(run_record["wall_time_quota_ms"], 500);
+    let sent: Value =
+        serde_json::from_slice(&std::fs::read(directory.join("out/request.json")).unwrap())
+            .unwrap();
+    assert_eq!(sent["quotas"]["wall_limit_ms"], bound);
+    assert_eq!(sent["quotas"]["slot_wait_limit_ms"], bound);
+    assert_eq!(sent["quotas"]["wall_time_ms"], 500);
 
     // The same plugin with waits counted, as every run was before R7.
     let directory = scratch("slot-wait-counted");
@@ -361,6 +380,105 @@ fn declared_slot_waits_are_outside_the_wall_time_quota_up_to_the_limit() {
     std::fs::write(directory.join("out").join(marker), "").unwrap();
     let output = run(&directory, &["--timeout-ms", "1000"], "idle", &[]);
     assert_unknown(&directory, "idle", &output, "plugin-timeout");
+}
+
+/// Card GATE-SLOT-FIFO-ORDER: the overall wall bound is separate from the
+/// analysis quota. A plugin that declares waits for ever is stopped at the
+/// bound with its own code; the bound is overridable, never below the quota,
+/// and the quota alone still stops a plugin that analyses too long.
+#[test]
+fn the_overall_wall_bound_stops_a_run_that_declares_waits_for_ever() {
+    let _serial = serial();
+    let marker = quirin_audit_plugin::SLOT_WAIT_MARKER;
+    let directory = scratch("wall-bound");
+    plugin(&directory, "waiting", &format!("touch {marker}\nsleep 30"));
+    let started = std::time::Instant::now();
+    let output = run(
+        &directory,
+        &["--timeout-ms", "500", "--wall-limit-ms", "1500"],
+        "waiting",
+        &[],
+    );
+    assert!(started.elapsed() < std::time::Duration::from_secs(20));
+    assert_unknown(&directory, "waiting", &output, "plugin-wall-limit");
+    let run_record = &report(&directory, "waiting")["run"];
+    let wall = run_record["wall_time_ms"].as_u64().unwrap();
+    assert!((1500..10_000).contains(&wall), "{run_record}");
+    assert_eq!(run_record["wall_limit_ms"], 1500);
+    assert!(run_record["analysis_time_ms"].as_u64().unwrap() < 500);
+    let reason = run_record["reason"].as_str().unwrap();
+    assert!(reason.contains("overall wall bound"), "{reason}");
+    assert!(reason.contains("500 ms analysis quota"), "{reason}");
+    assert_eq!(invocation(&directory, "waiting")["wall_limit_ms"], 1500);
+
+    // The bound is a bound on the whole run: a slot-wait limit above it does
+    // not extend it.
+    let directory = scratch("wall-bound-over-limit");
+    plugin(&directory, "waiting", &format!("touch {marker}\nsleep 30"));
+    let output = run(
+        &directory,
+        &[
+            "--timeout-ms",
+            "500",
+            "--wall-limit-ms",
+            "1200",
+            "--slot-wait-limit-ms",
+            "100000000",
+        ],
+        "waiting",
+        &[],
+    );
+    assert_unknown(&directory, "waiting", &output, "plugin-wall-limit");
+
+    // A plugin that analyses (declares no wait) is stopped by the quota, not
+    // by the larger bound.
+    let directory = scratch("wall-bound-quota");
+    plugin(&directory, "busy", "sleep 30");
+    let output = run(
+        &directory,
+        &["--timeout-ms", "500", "--wall-limit-ms", "60000"],
+        "busy",
+        &[],
+    );
+    assert_unknown(&directory, "busy", &output, "plugin-timeout");
+
+    // The bound is never below the quota: refused before anything runs.
+    let directory = scratch("wall-bound-refused");
+    plugin(
+        &directory,
+        "waiting",
+        &emit(&response(&json!([]), &json!([]))),
+    );
+    let output = run(
+        &directory,
+        &["--timeout-ms", "5000", "--wall-limit-ms", "1000"],
+        "waiting",
+        &[],
+    );
+    assert_eq!(output.status.code(), Some(2), "{}", stderr(&output));
+    assert!(
+        stderr(&output).contains("--wall-limit-ms"),
+        "{}",
+        stderr(&output)
+    );
+    assert!(!directory.join("out/request.json").exists());
+
+    // A quota above the default bound raises the default to the quota.
+    let directory = scratch("wall-bound-default-raised");
+    plugin(
+        &directory,
+        "waiting",
+        &emit(&response(&json!([]), &json!([]))),
+    );
+    let quota = quirin_audit_plugin::DEFAULT_WALL_LIMIT_MS + 1000;
+    let output = run(
+        &directory,
+        &["--timeout-ms", &quota.to_string()],
+        "waiting",
+        &[],
+    );
+    assert!(output.status.success(), "{}", stderr(&output));
+    assert_eq!(invocation(&directory, "waiting")["wall_limit_ms"], quota);
 }
 
 #[test]

@@ -130,11 +130,19 @@ fn fixture(name: &str) -> (PathBuf, String, String) {
     (directory, manifest, format!("tip={}", binary.display()))
 }
 
+/// Run the measurement through the host; `limit` is the slot-wait limit, or
+/// empty for the host's default.
 fn measure(directory: &Path, manifest: &str, tip: &str, limit: &str) -> (bool, Value, Value) {
     let plugins = Path::new(PLUGIN).parent().unwrap().display().to_string();
+    let limit_arguments: Vec<&str> = if limit.is_empty() {
+        Vec::new()
+    } else {
+        vec!["--slot-wait-limit-ms", limit]
+    };
     let result = Command::new(host())
         .args(["--plugin-path", &plugins, "--output", "out"])
-        .args(["--timeout-ms", QUOTA_MS, "--slot-wait-limit-ms", limit])
+        .args(["--timeout-ms", QUOTA_MS])
+        .args(&limit_arguments)
         .args([
             "--plugin-env",
             "QUIRIN_GATE_DIR",
@@ -179,10 +187,11 @@ fn a_measurement_waiting_for_a_held_slot_is_not_killed_for_waiting() {
 
     // With the waits outside the quota, the same measurement completes; the
     // wait is recorded apart from the analysis time, by the host, in the
-    // record and per side and profile.
+    // record and per side and profile. The limit is the host's default, the
+    // overall wall bound, and not the quota (GATE-SLOT-FIFO-ORDER).
     let (directory, manifest, tip) = fixture("slot-wait-excluded");
     let mut holder = hold_the_suite_slot(&directory);
-    let (completed, report, record) = measure(&directory, &manifest, &tip, "60000");
+    let (completed, report, record) = measure(&directory, &manifest, &tip, "");
     assert!(completed, "{report:#}");
     assert!(holder.wait().unwrap().success());
     let run = &report["run"];
@@ -196,6 +205,17 @@ fn a_measurement_waiting_for_a_held_slot_is_not_killed_for_waiting() {
         timing["slot_wait_ms"].as_u64().unwrap() >= 3000,
         "{timing:#}"
     );
+    // Both limits are in the measure report's timing and in the host's records.
+    let overall = quirin_audit_plugin::DEFAULT_WALL_LIMIT_MS;
+    let limits = &timing["limits"];
+    assert_eq!(limits["wall_time_quota_ms"], 4000, "{limits:#}");
+    assert_eq!(limits["slot_wait_limit_ms"], overall, "{limits:#}");
+    assert_eq!(limits["overall_wall_limit_ms"], overall, "{limits:#}");
+    assert!(overall > 100 * 4000, "the default bound dwarfs the quota");
+    assert_eq!(run["slot_wait_limit_ms"], overall, "{run:#}");
+    assert_eq!(run["wall_limit_ms"], overall, "{run:#}");
+    assert_eq!(run["wall_time_quota_ms"], 4000, "{run:#}");
+    assert_eq!(report["request"]["quotas"]["wall_limit_ms"], overall);
     let route = &timing["sides"]["tip"]["slice"];
     assert_eq!(route["profile"], "fixture-profile");
     assert!(route["slot_wait_ms"].as_u64().unwrap() >= 3000, "{route:#}");
