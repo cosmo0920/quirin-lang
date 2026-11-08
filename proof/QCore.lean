@@ -241,6 +241,8 @@ import QCore.MemberPathUnitHelpers
 import QCore.MemberPrepassRoutes
 import QCore.MemberRelease
 import QCore.MemberReleaseCallee
+import QCore.MemberReleaseTypedMember
+import QCore.MemberReleaseUntypedBase
 import QCore.MemberSummaryOrder
 import QCore.MemoKey
 import QCore.MemoryClose

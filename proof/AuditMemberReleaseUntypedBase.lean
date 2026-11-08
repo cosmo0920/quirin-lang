@@ -1,0 +1,17 @@
+import QCore.MemberReleaseUntypedBase
+
+/-! Audited companion to MEMBER-RELEASE-UNTYPED-BASE (gateway rule 38j amended again). -/
+
+#print axioms QCore.MemberReleaseUntypedBase.a_previous_admission_is_kept
+#print axioms QCore.MemberReleaseUntypedBase.a_new_admission_is_an_untyped_base
+#print axioms QCore.MemberReleaseUntypedBase.an_admission_still_needs_the_place_and_a_nullable_release
+#print axioms QCore.MemberReleaseUntypedBase.a_failed_place_check_is_refused
+#print axioms QCore.MemberReleaseUntypedBase.a_union_base_is_refused
+#print axioms QCore.MemberReleaseUntypedBase.an_incomplete_record_is_refused
+#print axioms QCore.MemberReleaseUntypedBase.a_qualified_base_is_refused
+#print axioms QCore.MemberReleaseUntypedBase.a_local_base_is_refused
+#print axioms QCore.MemberReleaseUntypedBase.a_decayed_array_is_refused
+#print axioms QCore.MemberReleaseUntypedBase.a_function_pointer_is_refused
+#print axioms QCore.MemberReleaseUntypedBase.an_admitted_actual_is_a_struct_pointer_member
+#print axioms QCore.MemberReleaseUntypedBase.the_body_stays_sound
+#print axioms QCore.MemberReleaseUntypedBase.the_unit_plays_no_part

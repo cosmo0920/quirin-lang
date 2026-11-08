@@ -1,0 +1,22 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "MEMBER-EFFECT-COMPONENT-SCOPE",
+  "base": "1e522ca5d",
+  "measured_tip": "662dc54a4",
+  "increment_paragraph": "**MEMBER-EFFECT-COMPONENT-SCOPE** (registered follow-up of MEMBER-EFFECT-SUMMARY): the diagnosis found no component premise. A row's `hypothesis_context.scope` is its unit's function list (4,829 of 4,834 corpus rows have several functions, the moved `rd_kafka_metadata_partition_clear` 34), and `cmt_opts_init`/`cmt_opts_exit` are two singleton components of the summary call graph. `cmt_opts_exit` was refused because its members are spelled through a pointer typedef (`cfl_sds_t ns;`): the lexical call-actual recogniser refuses `opts->ns` as an untyped member, and rule 1's admission of a member at a nullable release needs its pointer read, so rule 38i named each release. Rule 38j is amended in place: there, only for a place rule 5k or 38j admitted and only for an untyped member (never an untyped base), Clang's reading stands in when the actual is the `LValueToRValue` value of an arrow member of the parameter, an object pointer with no `volatile`/`_Atomic`, on no `union`; every lexical premise is unchanged (Lean `QCore.MemberReleaseTypedMember`: `a_new_admission_is_an_untyped_member`, `an_admitted_actual_is_an_object_pointer`, `the_body_stays_sound`, `the_unit_plays_no_part`). Census of every rule-38i release leaf (corpus 233 in 149 functions, system 15 in 6, slice 29 in 6; current-run estimate 73 in 54): pointer-typedef members carry 24 corpus leaves in 17 functions, of which only `cmt_opts_exit` has no other leaf. Predicted: corpus `cmt_opts.c::cmt_opts_exit` Unknown -> Safe; system and slice none. Report: docs/reports/member-effect-component-scope/README.md.",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "MEMBER-EFFECT-COMPONENT-SCOPE",
+      "operation": "retire",
+      "why": "DISCHARGED by MEMBER-EFFECT-COMPONENT-SCOPE (docs/reports/member-effect-component-scope/README.md): the row scope is the unit's function list, not a component, and no component premise refuses rule 38j. The refusing premise was the lexical reader's untyped pointer-typedef member (`cfl_sds_t`), admitted at a nullable release of an admitted place by Clang's reading of the actual as an object-pointer member's value (rule 38j amended in place; Lean QCore.MemberReleaseTypedMember). Predicted corpus cmt_opts.c::cmt_opts_exit Unknown -> Safe.",
+      "source": "docs/reports/member-effect-component-scope/README.md"
+    },
+    {
+      "id": "W45-MEMBER-RELEASE-UNTYPED-DECLARATIONS",
+      "operation": "amend",
+      "text": "AMENDED (MEMBER-EFFECT-COMPONENT-SCOPE): the untyped-member arm is discharged at a `Released { nullable: true }` position of a place rule 5k or rule 38j admitted: there Clang's reading of `B->F` as the `LValueToRValue` value of an object-pointer member of the parameter `B` (no array decay, no function pointer, no `volatile`/`_Atomic`, no `union`) stands in for the lexical reader's (rule 38j amended; Lean QCore.MemberReleaseTypedMember), predicted to move cmt_opts_exit. Still open: the untyped-base arm (a base spelled through a typedef of a record or record pointer: rd_kafka_offset_file_close, rd_kafka_mock_sgrp_record_release and mk_ptr_free are the corpus bodies whose only leaves it holds; the same consultation, asked for `Refusal::UntypedBase` with the base's own Clang type checked, is the recommended next step), unreadable declarations, the untyped member at every other position, and the shared declaration reader's resolution of pointer typedefs for every typed route.",
+      "source": "docs/reports/member-effect-component-scope/README.md"
+    }
+  ]
+}

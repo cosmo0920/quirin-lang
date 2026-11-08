@@ -1,0 +1,3544 @@
+{
+ "inputs": {
+  "route": "corpus",
+  "report": "/media/Data/GitHub/quirin-lang/private/baselines/7b726587bdf6a8213f451fa1c78297bb5e476ef7/eight-home/corpus/corpus/resource-diagnostics.json",
+  "source_root": "/media/Data/GitHub/quirin-lang/private/measure/member-effect-20261105T185335Z/mirror/c-gateway-wave-pin",
+  "providers": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a828b3e1a34ccf314/providers"
+ },
+ "leaves": 166,
+ "functions": 107,
+ "reader_untyped_leaves": 96,
+ "reader_untyped_functions": 57,
+ "sole_blocker_functions": [
+  "mk_core/mk_memory.c::mk_ptr_free",
+  "rdkafka_mock_sharegrp.c::rd_kafka_mock_sgrp_record_release",
+  "rdkafka_offset.c::rd_kafka_offset_file_close"
+ ],
+ "table": [
+  {
+   "route": "corpus",
+   "reader": "resolved (`typedef struct TAG T;`)",
+   "base": "typedef of `struct TAG`, `T *B`",
+   "member": "member not found",
+   "release_mode": "nullable",
+   "leaves": 11,
+   "functions": 3,
+   "sole_blocker_functions": []
+  },
+  {
+   "route": "corpus",
+   "reader": "resolved (`typedef struct TAG T;`)",
+   "base": "typedef of `struct TAG`, `T *B`",
+   "member": "star-spelled pointer",
+   "release_mode": "nonnull",
+   "leaves": 7,
+   "functions": 7,
+   "sole_blocker_functions": [
+    "rd_kafka_offset_file_close"
+   ]
+  },
+  {
+   "route": "corpus",
+   "reader": "resolved (`typedef struct TAG T;`)",
+   "base": "typedef of `struct TAG`, `T *B`",
+   "member": "star-spelled pointer",
+   "release_mode": "nullable",
+   "leaves": 27,
+   "functions": 20,
+   "sole_blocker_functions": []
+  },
+  {
+   "route": "corpus",
+   "reader": "resolved (`typedef struct TAG T;`)",
+   "base": "typedef of `struct TAG`, `T *B`",
+   "member": "star-spelled pointer",
+   "release_mode": "unit",
+   "leaves": 25,
+   "functions": 20,
+   "sole_blocker_functions": []
+  },
+  {
+   "route": "corpus",
+   "reader": "untyped: disagreeing typedefs (a forward one and a defining one)",
+   "base": "typedef of `struct TAG`, `T *B`",
+   "member": "star-spelled pointer",
+   "release_mode": "nonnull",
+   "leaves": 16,
+   "functions": 13,
+   "sole_blocker_functions": []
+  },
+  {
+   "route": "corpus",
+   "reader": "untyped: disagreeing typedefs (a forward one and a defining one)",
+   "base": "typedef of `struct TAG`, `T *B`",
+   "member": "star-spelled pointer",
+   "release_mode": "nullable",
+   "leaves": 2,
+   "functions": 1,
+   "sole_blocker_functions": []
+  },
+  {
+   "route": "corpus",
+   "reader": "untyped: disagreeing typedefs (a forward one and a defining one)",
+   "base": "typedef of `struct TAG`, `T *B`",
+   "member": "star-spelled pointer",
+   "release_mode": "unit",
+   "leaves": 11,
+   "functions": 4,
+   "sole_blocker_functions": []
+  },
+  {
+   "route": "corpus",
+   "reader": "untyped: the typedef defines the record",
+   "base": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+   "member": "other typedef",
+   "release_mode": "unit",
+   "leaves": 2,
+   "functions": 2,
+   "sole_blocker_functions": []
+  },
+  {
+   "route": "corpus",
+   "reader": "untyped: the typedef defines the record",
+   "base": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+   "member": "star-spelled pointer",
+   "release_mode": "nonnull",
+   "leaves": 8,
+   "functions": 6,
+   "sole_blocker_functions": []
+  },
+  {
+   "route": "corpus",
+   "reader": "untyped: the typedef defines the record",
+   "base": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+   "member": "star-spelled pointer",
+   "release_mode": "nullable",
+   "leaves": 35,
+   "functions": 29,
+   "sole_blocker_functions": [
+    "mk_ptr_free",
+    "rd_kafka_mock_sgrp_record_release"
+   ]
+  },
+  {
+   "route": "corpus",
+   "reader": "untyped: the typedef defines the record",
+   "base": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+   "member": "star-spelled pointer",
+   "release_mode": "unit",
+   "leaves": 22,
+   "functions": 12,
+   "sole_blocker_functions": []
+  }
+ ],
+ "rows": [
+  {
+   "route": "corpus",
+   "file": "cmt_encode_opentelemetry.c",
+   "function": "destroy_exponential_histogram_data_point",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "data_point",
+     "member": "exemplars",
+     "base_spelling": "Opentelemetry__Proto__Metrics__V1__ExponentialHistogramDataPoint *data_point",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "free",
+     "release_mode": "nullable",
+     "origin": "cmt_encode_opentelemetry.c:2070"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `destroy_exemplar`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "cmt_encode_opentelemetry.c",
+   "function": "destroy_histogram_data_point",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "data_point",
+     "member": "exemplars",
+     "base_spelling": "Opentelemetry__Proto__Metrics__V1__HistogramDataPoint *data_point",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "free",
+     "release_mode": "nullable",
+     "origin": "cmt_encode_opentelemetry.c:2052"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `destroy_exemplar`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "cmt_encode_opentelemetry.c",
+   "function": "destroy_metric",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "metric",
+     "member": "name",
+     "base_spelling": "Opentelemetry__Proto__Metrics__V1__Metric *metric",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "is_string_releaseable",
+     "release_mode": "unit",
+     "origin": "cmt_encode_opentelemetry.c:2571"
+    },
+    {
+     "base": "metric",
+     "member": "description",
+     "base_spelling": "Opentelemetry__Proto__Metrics__V1__Metric *metric",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "is_string_releaseable",
+     "release_mode": "unit",
+     "origin": "cmt_encode_opentelemetry.c:2576"
+    },
+    {
+     "base": "metric",
+     "member": "unit",
+     "base_spelling": "Opentelemetry__Proto__Metrics__V1__Metric *metric",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "is_string_releaseable",
+     "release_mode": "unit",
+     "origin": "cmt_encode_opentelemetry.c:2581"
+    },
+    {
+     "base": "metric",
+     "member": "sum",
+     "base_spelling": "Opentelemetry__Proto__Metrics__V1__Metric *metric",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "member not found",
+     "callee": "free",
+     "release_mode": "nullable",
+     "origin": "cmt_encode_opentelemetry.c:2594"
+    },
+    {
+     "base": "metric",
+     "member": "gauge",
+     "base_spelling": "Opentelemetry__Proto__Metrics__V1__Metric *metric",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "member not found",
+     "callee": "free",
+     "release_mode": "nullable",
+     "origin": "cmt_encode_opentelemetry.c:2599"
+    },
+    {
+     "base": "metric",
+     "member": "summary",
+     "base_spelling": "Opentelemetry__Proto__Metrics__V1__Metric *metric",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "member not found",
+     "callee": "free",
+     "release_mode": "nullable",
+     "origin": "cmt_encode_opentelemetry.c:2604"
+    },
+    {
+     "base": "metric",
+     "member": "histogram",
+     "base_spelling": "Opentelemetry__Proto__Metrics__V1__Metric *metric",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "member not found",
+     "callee": "free",
+     "release_mode": "nullable",
+     "origin": "cmt_encode_opentelemetry.c:2609"
+    },
+    {
+     "base": "metric",
+     "member": "exponential_histogram",
+     "base_spelling": "Opentelemetry__Proto__Metrics__V1__Metric *metric",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "member not found",
+     "callee": "free",
+     "release_mode": "nullable",
+     "origin": "cmt_encode_opentelemetry.c:2614"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `otlp_kvpair_list_destroy`": 1,
+    "indirect memory access is outside the resource projection": 9,
+    "unresolved resource identity `metric`": 10
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "cmt_encode_opentelemetry.c",
+   "function": "destroy_numerical_data_point",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "data_point",
+     "member": "exemplars",
+     "base_spelling": "Opentelemetry__Proto__Metrics__V1__NumberDataPoint *data_point",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "free",
+     "release_mode": "nullable",
+     "origin": "cmt_encode_opentelemetry.c:2028"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `destroy_exemplar`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "cmt_encode_opentelemetry.c",
+   "function": "destroy_resource_metrics",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "resource_metrics",
+     "member": "schema_url",
+     "base_spelling": "Opentelemetry__Proto__Metrics__V1__ResourceMetrics *resource_metrics",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "is_string_releaseable",
+     "release_mode": "unit",
+     "origin": "cmt_encode_opentelemetry.c:1654"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `destroy_resource`": 1,
+    "call to uncontracted function `destroy_scope_metric_list`": 1,
+    "unresolved resource identity `resource_metrics`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "cmt_encode_opentelemetry.c",
+   "function": "destroy_scope_metrics",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "metric",
+     "member": "schema_url",
+     "base_spelling": "Opentelemetry__Proto__Metrics__V1__ScopeMetrics *metric",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "is_string_releaseable",
+     "release_mode": "unit",
+     "origin": "cmt_encode_opentelemetry.c:1773"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `destroy_instrumentation_scope`": 1,
+    "call to uncontracted function `destroy_metric_list`": 1,
+    "unresolved resource identity `metric`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "cmt_encode_opentelemetry.c",
+   "function": "otlp_any_value_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "value",
+     "member": "string_value",
+     "base_spelling": "Opentelemetry__Proto__Common__V1__AnyValue *value",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "member not found",
+     "callee": "free",
+     "release_mode": "nullable",
+     "origin": "cmt_encode_opentelemetry.c:1054"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `otlp_array_destroy`": 1,
+    "call to uncontracted function `otlp_kvlist_destroy`": 1,
+    "indirect memory access is outside the resource projection": 1,
+    "unresolved resource identity `value`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "cmt_encode_opentelemetry.c",
+   "function": "otlp_array_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "array",
+     "member": "values",
+     "base_spelling": "Opentelemetry__Proto__Common__V1__ArrayValue *array",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "free",
+     "release_mode": "nullable",
+     "origin": "cmt_encode_opentelemetry.c:1042"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `otlp_any_value_destroy`": 1,
+    "unresolved resource identity `array`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "cmt_encode_opentelemetry.c",
+   "function": "otlp_kvlist_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "kvlist",
+     "member": "values",
+     "base_spelling": "Opentelemetry__Proto__Common__V1__KeyValueList *kvlist",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "free",
+     "release_mode": "nullable",
+     "origin": "cmt_encode_opentelemetry.c:1025"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `otlp_kvpair_destroy`": 1,
+    "unresolved resource identity `kvlist`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "cmt_encode_opentelemetry.c",
+   "function": "otlp_kvpair_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "kvpair",
+     "member": "key",
+     "base_spelling": "Opentelemetry__Proto__Common__V1__KeyValue *kvpair",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "free",
+     "release_mode": "nullable",
+     "origin": "cmt_encode_opentelemetry.c:1004"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `otlp_any_value_destroy`": 1,
+    "unresolved resource identity `kvpair`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "cmt_encode_opentelemetry_batch.c",
+   "function": "metric_view_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "metric",
+     "member": "gauge",
+     "base_spelling": "Opentelemetry__Proto__Metrics__V1__Metric *metric",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "member not found",
+     "callee": "free",
+     "release_mode": "nullable",
+     "origin": "cmt_encode_opentelemetry_batch.c:58"
+    },
+    {
+     "base": "metric",
+     "member": "sum",
+     "base_spelling": "Opentelemetry__Proto__Metrics__V1__Metric *metric",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "member not found",
+     "callee": "free",
+     "release_mode": "nullable",
+     "origin": "cmt_encode_opentelemetry_batch.c:62"
+    },
+    {
+     "base": "metric",
+     "member": "histogram",
+     "base_spelling": "Opentelemetry__Proto__Metrics__V1__Metric *metric",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "member not found",
+     "callee": "free",
+     "release_mode": "nullable",
+     "origin": "cmt_encode_opentelemetry_batch.c:66"
+    },
+    {
+     "base": "metric",
+     "member": "exponential_histogram",
+     "base_spelling": "Opentelemetry__Proto__Metrics__V1__Metric *metric",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "member not found",
+     "callee": "free",
+     "release_mode": "nullable",
+     "origin": "cmt_encode_opentelemetry_batch.c:70"
+    },
+    {
+     "base": "metric",
+     "member": "summary",
+     "base_spelling": "Opentelemetry__Proto__Metrics__V1__Metric *metric",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "member not found",
+     "callee": "free",
+     "release_mode": "nullable",
+     "origin": "cmt_encode_opentelemetry_batch.c:74"
+    }
+   ],
+   "other_blockers": {
+    "unresolved resource identity `metric`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "ctr_encode_opentelemetry.c",
+   "function": "destroy_span",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "span",
+     "member": "status",
+     "base_spelling": "Opentelemetry__Proto__Trace__V1__Span *span",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "free",
+     "release_mode": "nullable",
+     "origin": "ctr_encode_opentelemetry.c:1226"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `destroy_attributes`": 1,
+    "call to uncontracted function `destroy_events`": 1,
+    "call to uncontracted function `destroy_links`": 1,
+    "indirect memory access is outside the resource projection": 7,
+    "unresolved resource identity `span`": 11
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "ctr_encode_opentelemetry.c",
+   "function": "otlp_array_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "array",
+     "member": "values",
+     "base_spelling": "Opentelemetry__Proto__Common__V1__ArrayValue *array",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "free",
+     "release_mode": "nullable",
+     "origin": "ctr_encode_opentelemetry.c:81"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `otlp_any_value_destroy`": 1,
+    "unresolved resource identity `array`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "ctr_encode_opentelemetry.c",
+   "function": "otlp_kvlist_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "kvlist",
+     "member": "values",
+     "base_spelling": "Opentelemetry__Proto__Common__V1__KeyValueList *kvlist",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "free",
+     "release_mode": "nullable",
+     "origin": "ctr_encode_opentelemetry.c:64"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `otlp_kvpair_destroy`": 1,
+    "unresolved resource identity `kvlist`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "ctr_encode_opentelemetry.c",
+   "function": "otlp_kvpair_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "kvpair",
+     "member": "key",
+     "base_spelling": "Opentelemetry__Proto__Common__V1__KeyValue *kvpair",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "free",
+     "release_mode": "nullable",
+     "origin": "ctr_encode_opentelemetry.c:43"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `otlp_any_value_destroy`": 1,
+    "unresolved resource identity `kvpair`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdbase64.c",
+   "function": "rd_base64_decode",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "out",
+     "member": "ptr",
+     "base_spelling": "rd_chariov_t *out",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdbase64.c:178"
+    }
+   ],
+   "other_blockers": {
+    "member-store-through-formal": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdbuf.c",
+   "function": "rd_buf_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "rbuf",
+     "member": "rbuf_extra",
+     "base_spelling": "rd_buf_t *rbuf",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdbuf.c:333"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `rd_segment_destroy`": 1,
+    "indirect memory access is outside the resource projection": 1,
+    "unmodeled call, aggregate or indirect access in for-loop condition": 1,
+    "unresolved resource identity `tmp`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka.c",
+   "function": "rd_kafka_destroy_final",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "rk",
+     "member": "rk_client_id",
+     "base_spelling": "rd_kafka_t *rk",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafkap_str_destroy",
+     "release_mode": "unit",
+     "origin": "rdkafka.c:1135"
+    },
+    {
+     "base": "rk",
+     "member": "rk_group_id",
+     "base_spelling": "rd_kafka_t *rk",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafkap_str_destroy",
+     "release_mode": "unit",
+     "origin": "rdkafka.c:1136"
+    },
+    {
+     "base": "rk",
+     "member": "rk_rkshare",
+     "base_spelling": "rd_kafka_t *rk",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka.c:1144"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `rd_kafka_assignment_destroy`": 1,
+    "call to uncontracted function `rd_kafka_assignors_term`": 1,
+    "call to uncontracted function `rd_kafka_cgrp_destroy_final`": 1,
+    "call to uncontracted function `rd_kafka_global_cnt_decr`": 1,
+    "call to uncontracted function `rd_kafka_q_fwd_set0`": 1,
+    "call to uncontracted function `rd_kafka_sasl_term`": 1,
+    "call to uncontracted function `rd_kafka_ssl_ctx_term`": 1,
+    "call to uncontracted function `rd_kafka_telemetry_clear`": 1,
+    "indirect memory access is outside the resource projection": 35,
+    "reference-drop-unheld": 4,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unresolved resource identity `rk`": 18
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka.c",
+   "function": "rd_kafka_destroy_internal",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "rk",
+     "member": "rk_clusterid",
+     "base_spelling": "rd_kafka_t *rk",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka.c:1412"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `rd_kafka_broker_decommission`": 1,
+    "call to uncontracted function `rd_kafka_brokers_broadcast_state_change`": 1,
+    "call to uncontracted function `rd_kafka_coord_reqs_term`": 1,
+    "call to uncontracted function `rd_kafka_interceptors_on_destroy`": 1,
+    "call to uncontracted function `rd_kafka_metadata_cache_destroy`": 1,
+    "call to uncontracted function `rd_kafka_metadata_cache_purge`": 1,
+    "call to uncontracted function `rd_kafka_mock_cluster_destroy`": 1,
+    "call to uncontracted function `rd_kafka_topic_partitions_remove`": 1,
+    "call to uncontracted function `thrd_join`": 1,
+    "callback-registry-undecided": 4,
+    "indirect memory access is outside the resource projection": 30,
+    "reference-drop-unheld": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 4,
+    "unmodeled call, aggregate or indirect access in for-loop condition": 4,
+    "unresolved resource identity `rk`": 16,
+    "unresolved resource identity `thrd`": 3
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_AclBinding_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "acl_binding",
+     "member": "error",
+     "base_spelling": "rd_kafka_AclBinding_t *acl_binding",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafka_error_destroy",
+     "release_mode": "unit",
+     "origin": "rdkafka_admin.c:5401"
+    }
+   ],
+   "other_blockers": {
+    "unresolved resource identity `acl_binding`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_AlterConsumerGroupOffsets_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "alter_grpoffsets",
+     "member": "partitions",
+     "base_spelling": "rd_kafka_AlterConsumerGroupOffsets_t *alter_grpoffsets",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafka_topic_partition_list_destroy",
+     "release_mode": "nonnull",
+     "origin": "rdkafka_admin.c:6811"
+    }
+   ],
+   "other_blockers": {
+    "unresolved resource identity `alter_grpoffsets`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_AlterUserScramCredentials_result_response_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "response",
+     "member": "error",
+     "base_spelling": "rd_kafka_AlterUserScramCredentials_result_response_t *response",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafka_error_destroy",
+     "release_mode": "unit",
+     "origin": "rdkafka_admin.c:6145"
+    }
+   ],
+   "other_blockers": {
+    "unresolved resource identity `response`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_AlterUserScramCredentials_result_response_set_error",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "response",
+     "member": "error",
+     "base_spelling": "rd_kafka_AlterUserScramCredentials_result_response_t *response",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafka_error_destroy",
+     "release_mode": "unit",
+     "origin": "rdkafka_admin.c:6158"
+    }
+   ],
+   "other_blockers": {
+    "member-store-through-formal": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_ClusterDescription_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "clusterdesc",
+     "member": "cluster_id",
+     "base_spelling": "rd_kafka_ClusterDescription_t *clusterdesc",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "RD_IF_FREE",
+     "release_mode": "unit",
+     "origin": "rdkafka_admin.c:9469"
+    },
+    {
+     "base": "clusterdesc",
+     "member": "authorized_operations",
+     "base_spelling": "rd_kafka_ClusterDescription_t *clusterdesc",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "RD_IF_FREE",
+     "release_mode": "unit",
+     "origin": "rdkafka_admin.c:9471"
+    },
+    {
+     "base": "clusterdesc",
+     "member": "nodes",
+     "base_spelling": "rd_kafka_ClusterDescription_t *clusterdesc",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafka_Node_free",
+     "release_mode": "unit",
+     "origin": "rdkafka_admin.c:9477"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `rd_kafka_Node_free`": 2,
+    "unresolved resource identity `clusterdesc`": 5
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_ConsumerGroupDescription_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "grpdesc",
+     "member": "error",
+     "base_spelling": "rd_kafka_ConsumerGroupDescription_t *grpdesc",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "likely",
+     "release_mode": "unit",
+     "origin": "rdkafka_admin.c:8080"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `rd_kafka_Node_destroy`": 1,
+    "indirect memory access is outside the resource projection": 1,
+    "unresolved resource identity `grpdesc`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_DeleteAcls_result_response_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "resp",
+     "member": "error",
+     "base_spelling": "rd_kafka_DeleteAcls_result_response_t *resp",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafka_error_destroy",
+     "release_mode": "unit",
+     "origin": "rdkafka_admin.c:6545"
+    }
+   ],
+   "other_blockers": {
+    "indirect memory access is outside the resource projection": 1,
+    "unresolved resource identity `resp`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_DeleteConsumerGroupOffsets_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "del_grpoffsets",
+     "member": "partitions",
+     "base_spelling": "rd_kafka_DeleteConsumerGroupOffsets_t *del_grpoffsets",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafka_topic_partition_list_destroy",
+     "release_mode": "nonnull",
+     "origin": "rdkafka_admin.c:5001"
+    }
+   ],
+   "other_blockers": {
+    "unresolved resource identity `del_grpoffsets`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_DeleteRecords_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "del_records",
+     "member": "offsets",
+     "base_spelling": "rd_kafka_DeleteRecords_t *del_records",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafka_topic_partition_list_destroy",
+     "release_mode": "nonnull",
+     "origin": "rdkafka_admin.c:3963"
+    }
+   ],
+   "other_blockers": {
+    "unresolved resource identity `del_records`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_ElectLeaders_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "elect_leaders",
+     "member": "partitions",
+     "base_spelling": "rd_kafka_ElectLeaders_t *elect_leaders",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafka_topic_partition_list_destroy",
+     "release_mode": "nonnull",
+     "origin": "rdkafka_admin.c:9608"
+    }
+   ],
+   "other_blockers": {
+    "unresolved resource identity `elect_leaders`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_ListConsumerGroupOffsets_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "list_grpoffsets",
+     "member": "partitions",
+     "base_spelling": "rd_kafka_ListConsumerGroupOffsets_t *list_grpoffsets",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafka_topic_partition_list_destroy",
+     "release_mode": "nonnull",
+     "origin": "rdkafka_admin.c:7050"
+    }
+   ],
+   "other_blockers": {
+    "unresolved resource identity `list_grpoffsets`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_MemberDescription_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "member",
+     "member": "target_assignment",
+     "base_spelling": "rd_kafka_MemberDescription_t *member",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_admin.c:7926"
+    }
+   ],
+   "other_blockers": {
+    "indirect memory access is outside the resource projection": 2,
+    "unresolved resource identity `member`": 2
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_TopicCollection_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "topics",
+     "member": "topics",
+     "base_spelling": "rd_kafka_TopicCollection_t *topics",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "RD_IF_FREE",
+     "release_mode": "unit",
+     "origin": "rdkafka_admin.c:8930"
+    }
+   ],
+   "other_blockers": {
+    "indirect memory access is outside the resource projection": 1,
+    "unresolved resource identity `topics`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_TopicDescription_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "topicdesc",
+     "member": "error",
+     "base_spelling": "rd_kafka_TopicDescription_t *topicdesc",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "RD_IF_FREE",
+     "release_mode": "unit",
+     "origin": "rdkafka_admin.c:9070"
+    },
+    {
+     "base": "topicdesc",
+     "member": "partitions",
+     "base_spelling": "rd_kafka_TopicDescription_t *topicdesc",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafka_TopicPartitionInfo_destroy",
+     "release_mode": "unit",
+     "origin": "rdkafka_admin.c:9074"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `rd_kafka_TopicPartitionInfo_destroy`": 1,
+    "unresolved resource identity `topicdesc`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_TopicPartitionInfo_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "pinfo",
+     "member": "isr",
+     "base_spelling": "rd_kafka_TopicPartitionInfo_t *pinfo",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafka_Node_destroy",
+     "release_mode": "unit",
+     "origin": "rdkafka_admin.c:8990"
+    },
+    {
+     "base": "pinfo",
+     "member": "replicas",
+     "base_spelling": "rd_kafka_TopicPartitionInfo_t *pinfo",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafka_Node_destroy",
+     "release_mode": "unit",
+     "origin": "rdkafka_admin.c:8994"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `rd_kafka_Node_destroy`": 3,
+    "unresolved resource identity `pinfo`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_UserScramCredentailsDescription_set_error",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "description",
+     "member": "error",
+     "base_spelling": "rd_kafka_UserScramCredentialsDescription_t *description",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafka_error_destroy",
+     "release_mode": "unit",
+     "origin": "rdkafka_admin.c:5766"
+    }
+   ],
+   "other_blockers": {
+    "member-store-through-formal": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_UserScramCredentialAlteration_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "alteration",
+     "member": "user",
+     "base_spelling": "rd_kafka_UserScramCredentialAlteration_t *alteration",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_admin.c:6074"
+    }
+   ],
+   "other_blockers": {
+    "indirect memory access is outside the resource projection": 2,
+    "unresolved resource identity `alteration`": 2
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_UserScramCredentialsDescription_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "description",
+     "member": "error",
+     "base_spelling": "rd_kafka_UserScramCredentialsDescription_t *description",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafka_error_destroy",
+     "release_mode": "unit",
+     "origin": "rdkafka_admin.c:5752"
+    }
+   ],
+   "other_blockers": {
+    "unresolved resource identity `description`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_assignor.c",
+   "function": "rd_kafka_assignor_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "rkas",
+     "member": "rkas_protocol_type",
+     "base_spelling": "rd_kafka_assignor_t *rkas",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafkap_str_destroy",
+     "release_mode": "unit",
+     "origin": "rdkafka_assignor.c:462"
+    },
+    {
+     "base": "rkas",
+     "member": "rkas_protocol_name",
+     "base_spelling": "rd_kafka_assignor_t *rkas",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafkap_str_destroy",
+     "release_mode": "unit",
+     "origin": "rdkafka_assignor.c:463"
+    }
+   ],
+   "other_blockers": {
+    "unresolved resource identity `rkas`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_assignor.c",
+   "function": "rd_kafka_group_member_clear",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "rkgm",
+     "member": "rkgm_owned",
+     "base_spelling": "rd_kafka_group_member_t *rkgm",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafka_topic_partition_list_destroy",
+     "release_mode": "nonnull",
+     "origin": "rdkafka_assignor.c:41"
+    },
+    {
+     "base": "rkgm",
+     "member": "rkgm_subscription",
+     "base_spelling": "rd_kafka_group_member_t *rkgm",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafka_topic_partition_list_destroy",
+     "release_mode": "nonnull",
+     "origin": "rdkafka_assignor.c:44"
+    },
+    {
+     "base": "rkgm",
+     "member": "rkgm_assignment",
+     "base_spelling": "rd_kafka_group_member_t *rkgm",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafka_topic_partition_list_destroy",
+     "release_mode": "nonnull",
+     "origin": "rdkafka_assignor.c:47"
+    },
+    {
+     "base": "rkgm",
+     "member": "rkgm_member_id",
+     "base_spelling": "rd_kafka_group_member_t *rkgm",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafkap_str_destroy",
+     "release_mode": "unit",
+     "origin": "rdkafka_assignor.c:52"
+    },
+    {
+     "base": "rkgm",
+     "member": "rkgm_group_instance_id",
+     "base_spelling": "rd_kafka_group_member_t *rkgm",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafkap_str_destroy",
+     "release_mode": "unit",
+     "origin": "rdkafka_assignor.c:55"
+    },
+    {
+     "base": "rkgm",
+     "member": "rkgm_userdata",
+     "base_spelling": "rd_kafka_group_member_t *rkgm",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafkap_bytes_destroy",
+     "release_mode": "unit",
+     "origin": "rdkafka_assignor.c:58"
+    },
+    {
+     "base": "rkgm",
+     "member": "rkgm_member_metadata",
+     "base_spelling": "rd_kafka_group_member_t *rkgm",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafkap_bytes_destroy",
+     "release_mode": "unit",
+     "origin": "rdkafka_assignor.c:61"
+    },
+    {
+     "base": "rkgm",
+     "member": "rkgm_rack_id",
+     "base_spelling": "rd_kafka_group_member_t *rkgm",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafkap_str_destroy",
+     "release_mode": "unit",
+     "origin": "rdkafka_assignor.c:64"
+    }
+   ],
+   "other_blockers": {
+    "indirect memory access is outside the resource projection": 1,
+    "unresolved resource identity `rkgm`": 7
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_assignor.c",
+   "function": "ut_set_owned",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "rkgm",
+     "member": "rkgm_owned",
+     "base_spelling": "rd_kafka_group_member_t *rkgm",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafka_topic_partition_list_destroy",
+     "release_mode": "nonnull",
+     "origin": "rdkafka_assignor.c:920"
+    }
+   ],
+   "other_blockers": {
+    "indirect memory access is outside the resource projection": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_aux.c",
+   "function": "rd_kafka_Node_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "node",
+     "member": "host",
+     "base_spelling": "rd_kafka_Node_t *node",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "untyped: disagreeing typedefs (a forward one and a defining one)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_aux.c:304"
+    },
+    {
+     "base": "node",
+     "member": "rack",
+     "base_spelling": "rd_kafka_Node_t *node",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "untyped: disagreeing typedefs (a forward one and a defining one)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_aux.c:306"
+    }
+   ],
+   "other_blockers": {
+    "unresolved resource identity `node`": 2
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_aux.c",
+   "function": "rd_kafka_acl_result_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "acl_res",
+     "member": "error",
+     "base_spelling": "rd_kafka_acl_result_t *acl_res",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafka_error_destroy",
+     "release_mode": "unit",
+     "origin": "rdkafka_aux.c:216"
+    }
+   ],
+   "other_blockers": {
+    "unresolved resource identity `acl_res`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_aux.c",
+   "function": "rd_kafka_group_result_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "groupres",
+     "member": "partitions",
+     "base_spelling": "rd_kafka_group_result_t *groupres",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafka_topic_partition_list_destroy",
+     "release_mode": "nonnull",
+     "origin": "rdkafka_aux.c:176"
+    },
+    {
+     "base": "groupres",
+     "member": "error",
+     "base_spelling": "rd_kafka_group_result_t *groupres",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafka_error_destroy",
+     "release_mode": "unit",
+     "origin": "rdkafka_aux.c:178"
+    }
+   ],
+   "other_blockers": {
+    "unresolved resource identity `groupres`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_aux.c",
+   "function": "rd_kafka_topic_partition_result_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "partition_result",
+     "member": "error",
+     "base_spelling": "rd_kafka_topic_partition_result_t *partition_result",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafka_error_destroy",
+     "release_mode": "unit",
+     "origin": "rdkafka_aux.c:373"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `rd_kafka_topic_partition_destroy`": 1,
+    "unresolved resource identity `partition_result`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_broker.c",
+   "function": "rd_kafka_broker_destroy_final",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "rkb",
+     "member": "rkb_ApiVersions",
+     "base_spelling": "rd_kafka_broker_t *rkb",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_broker.c:5168"
+    },
+    {
+     "base": "rkb",
+     "member": "rkb_origname",
+     "base_spelling": "rd_kafka_broker_t *rkb",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_broker.c:5169"
+    },
+    {
+     "base": "rkb",
+     "member": "rkb_logname",
+     "base_spelling": "rd_kafka_broker_t *rkb",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_broker.c:5212"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `rd_kafka_buf_destroy_final`": 1,
+    "call to uncontracted function `rd_kafka_sasl_broker_term`": 1,
+    "call to uncontracted function `rd_sockaddr_list_destroy`": 1,
+    "indirect memory access is outside the resource projection": 27,
+    "reference-drop-unheld": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 3,
+    "unresolved resource identity `rkb`": 23
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_broker.c",
+   "function": "rd_kafka_broker_set_api_versions",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "rkb",
+     "member": "rkb_ApiVersions",
+     "base_spelling": "rd_kafka_broker_t *rkb",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_broker.c:2545"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `rd_kafka_ApiVersions_copy`": 1,
+    "call to uncontracted function `rd_kafka_broker_features_set`": 1,
+    "call to uncontracted function `rd_kafka_get_legacy_ApiVersions`": 1,
+    "indirect memory access is outside the resource projection": 1,
+    "member-store-through-formal": 1,
+    "unresolved resource identity `rkb`": 2
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_broker.c",
+   "function": "rd_kafka_broker_set_logname",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "rkb",
+     "member": "rkb_logname",
+     "base_spelling": "rd_kafka_broker_t *rkb",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_broker.c:3164"
+    }
+   ],
+   "other_blockers": {
+    "member-store-through-formal": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_consumer_apply_next_subscribe",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "rkcg",
+     "member": "rkcg_next_subscription",
+     "base_spelling": "rd_kafka_cgrp_t *rkcg",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "untyped: disagreeing typedefs (a forward one and a defining one)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafka_topic_partition_list_destroy",
+     "release_mode": "nonnull",
+     "origin": "rdkafka_cgrp.c:943"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `rd_kafka_cgrp_consumer_expedite_next_heartbeat`": 1,
+    "call to uncontracted function `rd_kafka_cgrp_subscription_set`": 1,
+    "indirect memory access is outside the resource projection": 2
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_consumer_handle_next_assignment",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "rkcg",
+     "member": "rkcg_next_target_assignment",
+     "base_spelling": "rd_kafka_cgrp_t *rkcg",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "untyped: disagreeing typedefs (a forward one and a defining one)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafka_topic_partition_list_destroy",
+     "release_mode": "nonnull",
+     "origin": "rdkafka_cgrp.c:2941"
+    },
+    {
+     "base": "rkcg",
+     "member": "rkcg_target_assignment",
+     "base_spelling": "rd_kafka_cgrp_t *rkcg",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "untyped: disagreeing typedefs (a forward one and a defining one)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafka_topic_partition_list_destroy",
+     "release_mode": "nonnull",
+     "origin": "rdkafka_cgrp.c:2958"
+    },
+    {
+     "base": "rkcg",
+     "member": "rkcg_next_target_assignment",
+     "base_spelling": "rd_kafka_cgrp_t *rkcg",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "untyped: disagreeing typedefs (a forward one and a defining one)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafka_topic_partition_list_destroy",
+     "release_mode": "nonnull",
+     "origin": "rdkafka_cgrp.c:2965"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `rd_kafka_cgrp_consumer_is_new_assignment_different`": 1,
+    "call to uncontracted function `rd_kafka_cgrp_handle_assignment`": 1,
+    "call to uncontracted function `rd_kafka_topic_partition_list_str`": 1,
+    "indirect memory access is outside the resource projection": 6,
+    "unresolved resource identity `is_assignment_different`": 1,
+    "unresolved resource identity `rkcg`": 6
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_consumer_incr_unassign_done",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "rkcg",
+     "member": "rkcg_rebalance_incr_assignment",
+     "base_spelling": "rd_kafka_cgrp_t *rkcg",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "untyped: disagreeing typedefs (a forward one and a defining one)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafka_topic_partition_list_destroy",
+     "release_mode": "nonnull",
+     "origin": "rdkafka_cgrp.c:7060"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `rd_kafka_cgrp_leave_maybe`": 1,
+    "call to uncontracted function `rd_kafka_cgrp_rejoin`": 1,
+    "call to uncontracted function `rd_kafka_cgrp_set_join_state`": 1,
+    "call to uncontracted function `rd_kafka_cgrp_start_max_poll_interval_timer`": 1,
+    "call to uncontracted function `rd_kafka_cgrp_unassign`": 1,
+    "call to uncontracted function `rd_kafka_rebalance_op_incr`": 1,
+    "indirect memory access is outside the resource projection": 2,
+    "unresolved resource identity `rkcg`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_consumer_reset",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "rkcg",
+     "member": "rkcg_current_assignment",
+     "base_spelling": "rd_kafka_cgrp_t *rkcg",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "untyped: disagreeing typedefs (a forward one and a defining one)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafka_topic_partition_list_destroy",
+     "release_mode": "nonnull",
+     "origin": "rdkafka_cgrp.c:1014"
+    },
+    {
+     "base": "rkcg",
+     "member": "rkcg_target_assignment",
+     "base_spelling": "rd_kafka_cgrp_t *rkcg",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "untyped: disagreeing typedefs (a forward one and a defining one)",
+     "member_class": "star-spelled pointer",
+     "callee": "RD_IF_FREE",
+     "release_mode": "unit",
+     "origin": "rdkafka_cgrp.c:1015"
+    },
+    {
+     "base": "rkcg",
+     "member": "rkcg_next_target_assignment",
+     "base_spelling": "rd_kafka_cgrp_t *rkcg",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "untyped: disagreeing typedefs (a forward one and a defining one)",
+     "member_class": "star-spelled pointer",
+     "callee": "RD_IF_FREE",
+     "release_mode": "unit",
+     "origin": "rdkafka_cgrp.c:1018"
+    }
+   ],
+   "other_blockers": {
+    "indirect memory access is outside the resource projection": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_consumer_subscribe",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "rkcg",
+     "member": "rkcg_next_subscription",
+     "base_spelling": "rd_kafka_cgrp_t *rkcg",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "untyped: disagreeing typedefs (a forward one and a defining one)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafka_topic_partition_list_destroy",
+     "release_mode": "nonnull",
+     "origin": "rdkafka_cgrp.c:7004"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `rd_kafka_cgrp_consumer_apply_next_subscribe`": 1,
+    "call to uncontracted function `rd_kafka_cgrp_consumer_unsubscribe`": 1,
+    "call to uncontracted function `rd_kafka_cgrp_unsubscribe`": 1,
+    "indirect memory access is outside the resource projection": 1,
+    "unmodeled expression may mutate a formal resource identity": 1,
+    "unresolved resource identity `rkcg`": 4
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_destroy_final",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "rkcg",
+     "member": "rkcg_current_assignment",
+     "base_spelling": "rd_kafka_cgrp_t *rkcg",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "untyped: disagreeing typedefs (a forward one and a defining one)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafka_topic_partition_list_destroy",
+     "release_mode": "nonnull",
+     "origin": "rdkafka_cgrp.c:438"
+    },
+    {
+     "base": "rkcg",
+     "member": "rkcg_target_assignment",
+     "base_spelling": "rd_kafka_cgrp_t *rkcg",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "untyped: disagreeing typedefs (a forward one and a defining one)",
+     "member_class": "star-spelled pointer",
+     "callee": "RD_IF_FREE",
+     "release_mode": "unit",
+     "origin": "rdkafka_cgrp.c:439"
+    },
+    {
+     "base": "rkcg",
+     "member": "rkcg_next_target_assignment",
+     "base_spelling": "rd_kafka_cgrp_t *rkcg",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "untyped: disagreeing typedefs (a forward one and a defining one)",
+     "member_class": "star-spelled pointer",
+     "callee": "RD_IF_FREE",
+     "release_mode": "unit",
+     "origin": "rdkafka_cgrp.c:441"
+    },
+    {
+     "base": "rkcg",
+     "member": "rkcg_group_instance_id",
+     "base_spelling": "rd_kafka_cgrp_t *rkcg",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "untyped: disagreeing typedefs (a forward one and a defining one)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafkap_str_destroy",
+     "release_mode": "unit",
+     "origin": "rdkafka_cgrp.c:444"
+    },
+    {
+     "base": "rkcg",
+     "member": "rkcg_group_remote_assignor",
+     "base_spelling": "rd_kafka_cgrp_t *rkcg",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "untyped: disagreeing typedefs (a forward one and a defining one)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafkap_str_destroy",
+     "release_mode": "unit",
+     "origin": "rdkafka_cgrp.c:446"
+    },
+    {
+     "base": "rkcg",
+     "member": "rkcg_client_rack",
+     "base_spelling": "rd_kafka_cgrp_t *rkcg",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "untyped: disagreeing typedefs (a forward one and a defining one)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafkap_str_destroy",
+     "release_mode": "unit",
+     "origin": "rdkafka_cgrp.c:448"
+    },
+    {
+     "base": "rkcg",
+     "member": "rkcg_errored_topics",
+     "base_spelling": "rd_kafka_cgrp_t *rkcg",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "untyped: disagreeing typedefs (a forward one and a defining one)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafka_topic_partition_list_destroy",
+     "release_mode": "nonnull",
+     "origin": "rdkafka_cgrp.c:456"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `rd_kafka_cgrp_set_member_id`": 1,
+    "indirect memory access is outside the resource projection": 3,
+    "reference-drop-unheld": 3,
+    "unmodeled call, aggregate or indirect access in branch condition": 2,
+    "unresolved resource identity `rkcg`": 11
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_group_assignment_modify",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "rkcg",
+     "member": "rkcg_group_assignment",
+     "base_spelling": "rd_kafka_cgrp_t *rkcg",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "untyped: disagreeing typedefs (a forward one and a defining one)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafka_topic_partition_list_destroy",
+     "release_mode": "nonnull",
+     "origin": "rdkafka_cgrp.c:5411"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `rd_kafka_cgrp_group_assignment_set`": 2,
+    "call to uncontracted function `rd_kafka_topic_partition_list_add_copy`": 1,
+    "call to uncontracted function `rd_kafka_topic_partition_list_del_by_idx`": 1,
+    "call to uncontracted function `rd_kafka_topic_partition_list_find_idx_by_id`": 1,
+    "call to uncontracted function `rd_kafka_topic_partition_list_find_idx`": 1,
+    "call to uncontracted function `rd_kafka_topic_partition_list_log`": 1,
+    "call to uncontracted function `rd_kafka_topic_partition_list_sort_by_topic`": 1,
+    "indirect memory access is outside the resource projection": 5,
+    "unmodeled increment or decrement expression": 1,
+    "unresolved resource identity `partitions`": 3,
+    "unresolved resource identity `rkcg`": 10
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_group_assignment_set",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "rkcg",
+     "member": "rkcg_group_assignment",
+     "base_spelling": "rd_kafka_cgrp_t *rkcg",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "untyped: disagreeing typedefs (a forward one and a defining one)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafka_topic_partition_list_destroy",
+     "release_mode": "nonnull",
+     "origin": "rdkafka_cgrp.c:5289"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `rd_kafka_topic_partition_list_log`": 1,
+    "call to uncontracted function `rd_kafka_topic_partition_list_sort_by_topic`": 1,
+    "call to uncontracted function `rwlock_wrlock`": 1,
+    "call to uncontracted function `rwlock_wrunlock`": 1,
+    "indirect memory access is outside the resource projection": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_handle_assign_op",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "rkcg",
+     "member": "rkcg_rebalance_incr_assignment",
+     "base_spelling": "rd_kafka_cgrp_t *rkcg",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "untyped: disagreeing typedefs (a forward one and a defining one)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafka_topic_partition_list_destroy",
+     "release_mode": "nonnull",
+     "origin": "rdkafka_cgrp.c:6571"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `rd_kafka_assignment_serve`": 1,
+    "call to uncontracted function `rd_kafka_cgrp_assign`": 1,
+    "call to uncontracted function `rd_kafka_cgrp_incremental_assign`": 1,
+    "call to uncontracted function `rd_kafka_cgrp_incremental_unassign`": 1,
+    "call to uncontracted function `rd_kafka_cgrp_set_join_state`": 1,
+    "call to uncontracted function `rd_kafka_cgrp_unassign`": 1,
+    "call to uncontracted function `rd_kafka_op_error_reply`": 1,
+    "indirect memory access is outside the resource projection": 5,
+    "unresolved resource identity `error`": 3,
+    "unresolved resource identity `rkcg`": 2,
+    "unresolved resource identity `rko`": 4
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_incr_unassign_done",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "rkcg",
+     "member": "rkcg_rebalance_incr_assignment",
+     "base_spelling": "rd_kafka_cgrp_t *rkcg",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "untyped: disagreeing typedefs (a forward one and a defining one)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafka_topic_partition_list_destroy",
+     "release_mode": "nonnull",
+     "origin": "rdkafka_cgrp.c:4929"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `rd_kafka_cgrp_rejoin`": 1,
+    "call to uncontracted function `rd_kafka_cgrp_set_join_state`": 1,
+    "call to uncontracted function `rd_kafka_cgrp_unassign`": 1,
+    "call to uncontracted function `rd_kafka_rebalance_op_incr`": 1,
+    "indirect memory access is outside the resource projection": 3,
+    "unmodeled call, aggregate or indirect access in branch condition": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_set_member_id",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "rkcg",
+     "member": "rkcg_member_id",
+     "base_spelling": "rd_kafka_cgrp_t *rkcg",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "untyped: disagreeing typedefs (a forward one and a defining one)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafkap_str_destroy",
+     "release_mode": "unit",
+     "origin": "rdkafka_cgrp.c:7581"
+    }
+   ],
+   "other_blockers": {
+    "indirect memory access is outside the resource projection": 1,
+    "member-store-through-formal": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_subscription_set",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "rkcg",
+     "member": "rkcg_subscription",
+     "base_spelling": "rd_kafka_cgrp_t *rkcg",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "untyped: disagreeing typedefs (a forward one and a defining one)",
+     "member_class": "star-spelled pointer",
+     "callee": "RD_IF_FREE",
+     "release_mode": "unit",
+     "origin": "rdkafka_cgrp.c:5970"
+    },
+    {
+     "base": "rkcg",
+     "member": "rkcg_subscription_topics",
+     "base_spelling": "rd_kafka_cgrp_t *rkcg",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "untyped: disagreeing typedefs (a forward one and a defining one)",
+     "member_class": "star-spelled pointer",
+     "callee": "RD_IF_FREE",
+     "release_mode": "unit",
+     "origin": "rdkafka_cgrp.c:5972"
+    },
+    {
+     "base": "rkcg",
+     "member": "rkcg_subscription_regex",
+     "base_spelling": "rd_kafka_cgrp_t *rkcg",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "untyped: disagreeing typedefs (a forward one and a defining one)",
+     "member_class": "star-spelled pointer",
+     "callee": "RD_IF_FREE",
+     "release_mode": "unit",
+     "origin": "rdkafka_cgrp.c:5974"
+    },
+    {
+     "base": "rkcg",
+     "member": "rkcg_next_subscription",
+     "base_spelling": "rd_kafka_cgrp_t *rkcg",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "untyped: disagreeing typedefs (a forward one and a defining one)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafka_topic_partition_list_destroy",
+     "release_mode": "nonnull",
+     "origin": "rdkafka_cgrp.c:6019"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `rd_atomic32_add`": 1,
+    "indirect memory access is outside the resource projection": 4,
+    "unmodeled call, aggregate or indirect access in branch condition": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_group_MemberMetadata_consumer_read",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "rkgm",
+     "member": "rkgm_subscription",
+     "base_spelling": "rd_kafka_group_member_t *rkgm",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafka_topic_partition_list_destroy",
+     "release_mode": "nonnull",
+     "origin": "rdkafka_cgrp.c:2253"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `__builtin_alloca`": 1,
+    "call to uncontracted function `rd_kafka_buf_destroy_final`": 2,
+    "call to uncontracted function `rd_kafka_topic_partition_list_add`": 1,
+    "indirect memory access is outside the resource projection": 13,
+    "member-store-through-formal": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 9,
+    "unresolved resource identity `RD_KAFKA_RESP_ERR__BAD_MSG`": 1,
+    "unresolved resource identity `rkb`": 1,
+    "unresolved resource identity `rkbuf`": 7,
+    "unsupported assignment expression": 5
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_propagate_consumer_topic_errors",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "rkcg",
+     "member": "rkcg_errored_topics",
+     "base_spelling": "rd_kafka_cgrp_t *rkcg",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "untyped: disagreeing typedefs (a forward one and a defining one)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafka_topic_partition_list_destroy",
+     "release_mode": "nonnull",
+     "origin": "rdkafka_cgrp.c:5811"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `rd_kafka_topic_partition_list_find`": 1,
+    "indirect memory access is outside the resource projection": 4,
+    "unresolved resource identity `errored`": 1,
+    "unresolved resource identity `prev`": 1,
+    "unresolved resource identity `topic`": 4
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_share_topic_err_propagate",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "rkcg",
+     "member": "rkcg_errored_topics",
+     "base_spelling": "rd_kafka_cgrp_t *rkcg",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "untyped: disagreeing typedefs (a forward one and a defining one)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafka_topic_partition_list_destroy",
+     "release_mode": "nonnull",
+     "origin": "rdkafka_cgrp.c:5868"
+    }
+   ],
+   "other_blockers": {
+    "indirect memory access is outside the resource projection": 4,
+    "unresolved resource identity `pending_errored_tp`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_coord.c",
+   "function": "rd_kafka_coord_cache_entry_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "cce",
+     "member": "cce_coordkey",
+     "base_spelling": "rd_kafka_coord_cache_entry_t *cce",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_coord.c:43"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `rd_kafka_broker_destroy_final`": 1,
+    "indirect memory access is outside the resource projection": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unresolved resource identity `cce`": 2
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_fetcher.c",
+   "function": "rd_kafkap_Fetch_reply_tags_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "reply_tags",
+     "member": "Topics",
+     "base_spelling": "rd_kafkap_Fetch_reply_tags_t *reply_tags",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "RD_IF_FREE",
+     "release_mode": "unit",
+     "origin": "rdkafka_fetcher.c:373"
+    }
+   ],
+   "other_blockers": {
+    "indirect memory access is outside the resource projection": 2
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_broker_cmd",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "mrkb",
+     "member": "listen_s",
+     "base_spelling": "rd_kafka_mock_broker_t *mrkb",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "other typedef",
+     "callee": "rd_socket_close",
+     "release_mode": "unit",
+     "origin": "rdkafka_mock.c:2799"
+    },
+    {
+     "base": "mrkb",
+     "member": "rack",
+     "base_spelling": "rd_kafka_mock_broker_t *mrkb",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_mock.c:2828"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `rd_kafka_mock_broker_close_all`": 1,
+    "call to uncontracted function `rd_kafka_mock_broker_connections_write_out`": 1,
+    "call to uncontracted function `rd_kafka_mock_broker_destroy`": 1,
+    "call to uncontracted function `rd_kafka_mock_broker_start_listener`": 1,
+    "call to uncontracted function `rd_kafka_mock_cluster_io_del`": 1,
+    "call to uncontracted function `rd_kafka_mock_cluster_reassign_partitions`": 2,
+    "indirect memory access is outside the resource projection": 3,
+    "unresolved resource identity `mrkb`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_broker_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "mrkb",
+     "member": "listen_s",
+     "base_spelling": "rd_kafka_mock_broker_t *mrkb",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "other typedef",
+     "callee": "rd_socket_close",
+     "release_mode": "unit",
+     "origin": "rdkafka_mock.c:1894"
+    },
+    {
+     "base": "mrkb",
+     "member": "rack",
+     "base_spelling": "rd_kafka_mock_broker_t *mrkb",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_mock.c:1903"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `rd_kafka_mock_broker_close_all`": 1,
+    "call to uncontracted function `rd_kafka_mock_cluster_io_del`": 1,
+    "call to uncontracted function `rd_kafka_mock_coord_remove`": 1,
+    "call to uncontracted function `rd_kafka_mock_error_stack_destroy`": 1,
+    "indirect memory access is outside the resource projection": 2,
+    "unresolved resource identity `errstack`": 2,
+    "unresolved resource identity `mrkb`": 7
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_cluster_destroy0",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "mcluster",
+     "member": "fds",
+     "base_spelling": "rd_kafka_mock_cluster_t *mcluster",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_mock.c:3252"
+    },
+    {
+     "base": "mcluster",
+     "member": "bootstraps",
+     "base_spelling": "rd_kafka_mock_cluster_t *mcluster",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_mock.c:3258"
+    },
+    {
+     "base": "mcluster",
+     "member": "metrics",
+     "base_spelling": "rd_kafka_mock_cluster_t *mcluster",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_mock.c:3267"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `rd_kafka_mock_broker_destroy`": 1,
+    "call to uncontracted function `rd_kafka_mock_cgrp_classic_destroy`": 1,
+    "call to uncontracted function `rd_kafka_mock_cgrp_consumer_destroy`": 1,
+    "call to uncontracted function `rd_kafka_mock_coord_destroy`": 1,
+    "call to uncontracted function `rd_kafka_mock_error_stack_destroy`": 1,
+    "call to uncontracted function `rd_kafka_mock_sharegroup_destroy`": 1,
+    "call to uncontracted function `rd_kafka_mock_topic_destroy`": 1,
+    "call to uncontracted function `rd_kafka_mock_txn_destroy`": 1,
+    "indirect memory access is outside the resource projection": 10,
+    "reference-drop-unheld": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unresolved resource identity `errstack`": 2,
+    "unresolved resource identity `mcgrp_classic`": 1,
+    "unresolved resource identity `mcgrp_consumer`": 1,
+    "unresolved resource identity `mcluster`": 13,
+    "unresolved resource identity `mcoord`": 1,
+    "unresolved resource identity `mrkb`": 1,
+    "unresolved resource identity `mshgrp`": 1,
+    "unresolved resource identity `mtopic`": 1,
+    "unresolved resource identity `mtxn`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_committed_offset_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "coff",
+     "member": "metadata",
+     "base_spelling": "rd_kafka_mock_committed_offset_t *coff",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafkap_str_destroy",
+     "release_mode": "unit",
+     "origin": "rdkafka_mock.c:807"
+    }
+   ],
+   "other_blockers": {
+    "indirect memory access is outside the resource projection": 1,
+    "unresolved resource identity `coff`": 2
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_coord_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "mcoord",
+     "member": "key",
+     "base_spelling": "rd_kafka_mock_coord_t *mcoord",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_mock.c:2118"
+    }
+   ],
+   "other_blockers": {
+    "indirect memory access is outside the resource projection": 1,
+    "unresolved resource identity `mcoord`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_error_stack_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "errstack",
+     "member": "errs",
+     "base_spelling": "rd_kafka_mock_error_stack_t *errstack",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_mock.c:1880"
+    }
+   ],
+   "other_blockers": {
+    "unresolved resource identity `errstack`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_partition_assign_replicas",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "mpart",
+     "member": "replicas",
+     "base_spelling": "rd_kafka_mock_partition_t *mpart",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_mock.c:727"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `rd_kafka_mock_partition_set_leader0`": 1,
+    "indirect memory access is outside the resource projection": 5,
+    "unmodeled expression may mutate a formal resource identity": 2,
+    "unresolved resource identity `mpart`": 5,
+    "unresolved resource identity `mrkb`": 3
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_partition_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "mpart",
+     "member": "replicas",
+     "base_spelling": "rd_kafka_mock_partition_t *mpart",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_mock.c:902"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `rd_kafka_mock_committed_offset_destroy`": 1,
+    "call to uncontracted function `rd_kafka_mock_error_stack_destroy`": 1,
+    "call to uncontracted function `rd_kafka_mock_msgset_destroy`": 1,
+    "call to uncontracted function `rd_kafka_mock_partition_leader_destroy`": 1,
+    "indirect memory access is outside the resource projection": 8,
+    "unmodeled call, aggregate or indirect access in for-loop condition": 5,
+    "unresolved resource identity `errstack`": 1,
+    "unresolved resource identity `mabort`": 2,
+    "unresolved resource identity `tmp_errstack`": 1,
+    "unresolved resource identity `tmp_mabort`": 1,
+    "unresolved resource identity `tmp_mpart_leader`": 1,
+    "unresolved resource identity `tmp`": 1,
+    "unresolved resource identity `tmpcoff`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_topic_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "mtopic",
+     "member": "partitions",
+     "base_spelling": "rd_kafka_mock_topic_t *mtopic",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_mock.c:956"
+    },
+    {
+     "base": "mtopic",
+     "member": "name",
+     "base_spelling": "rd_kafka_mock_topic_t *mtopic",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_mock.c:957"
+    }
+   ],
+   "other_blockers": {
+    "indirect memory access is outside the resource projection": 2,
+    "unresolved resource identity `mtopic`": 4
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_txn_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "mtxn",
+     "member": "transactional_id",
+     "base_spelling": "rd_kafka_mock_txn_t *mtxn",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_mock.c:275"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `rd_kafka_mock_txn_partitions_clear`": 1,
+    "indirect memory access is outside the resource projection": 1,
+    "unresolved resource identity `mtxn`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_classic_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "mcgrp",
+     "member": "id",
+     "base_spelling": "rd_kafka_mock_cgrp_classic_t *mcgrp",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_mock_cgrp.c:649"
+    },
+    {
+     "base": "mcgrp",
+     "member": "protocol_type",
+     "base_spelling": "rd_kafka_mock_cgrp_classic_t *mcgrp",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_mock_cgrp.c:650"
+    },
+    {
+     "base": "mcgrp",
+     "member": "protocol_name",
+     "base_spelling": "rd_kafka_mock_cgrp_classic_t *mcgrp",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_mock_cgrp.c:652"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `rd_kafka_mock_cgrp_classic_member_destroy`": 1,
+    "indirect memory access is outside the resource projection": 3,
+    "unresolved resource identity `mcgrp`": 3,
+    "unresolved resource identity `member`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_classic_elect_leader",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "mcgrp",
+     "member": "protocol_name",
+     "base_spelling": "rd_kafka_mock_cgrp_classic_t *mcgrp",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_mock_cgrp.c:334"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `rd_kafka_mock_cgrp_classic_rebalance_timer_restart`": 1,
+    "call to uncontracted function `rd_kafka_mock_connection_send_response0`": 1,
+    "call to uncontracted function `rd_kafka_mock_connection_set_blocking`": 1,
+    "indirect memory access is outside the resource projection": 10,
+    "unmodeled call, aggregate or indirect access in branch condition": 2,
+    "unresolved resource identity `mcgrp`": 8,
+    "unresolved resource identity `member2`": 3,
+    "unresolved resource identity `member`": 4,
+    "unresolved resource identity `resp`": 2
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_classic_member_assignment_set",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "member",
+     "member": "assignment",
+     "base_spelling": "rd_kafka_mock_cgrp_classic_member_t *member",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafkap_bytes_destroy",
+     "release_mode": "unit",
+     "origin": "rdkafka_mock_cgrp.c:155"
+    }
+   ],
+   "other_blockers": {
+    "indirect memory access is outside the resource projection": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_classic_member_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "member",
+     "member": "id",
+     "base_spelling": "rd_kafka_mock_cgrp_classic_member_t *member",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_mock_cgrp.c:517"
+    },
+    {
+     "base": "member",
+     "member": "group_instance_id",
+     "base_spelling": "rd_kafka_mock_cgrp_classic_member_t *member",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_mock_cgrp.c:523"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `rd_kafka_buf_destroy_final`": 1,
+    "call to uncontracted function `rd_kafka_mock_cgrp_classic_member_assignment_set`": 1,
+    "call to uncontracted function `rd_kafka_mock_cgrp_classic_protos_destroy`": 1,
+    "indirect memory access is outside the resource projection": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unresolved resource identity `mcgrp`": 1,
+    "unresolved resource identity `member`": 3
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_consumer_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "mcgrp",
+     "member": "id",
+     "base_spelling": "rd_kafka_mock_cgrp_consumer_t *mcgrp",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_mock_cgrp.c:1859"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `rd_kafka_mock_cgrp_consumer_member_destroy`": 1,
+    "indirect memory access is outside the resource projection": 2,
+    "unresolved resource identity `mcgrp`": 2,
+    "unresolved resource identity `member`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_consumer_member_current_assignment_set",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "member",
+     "member": "current_assignment",
+     "base_spelling": "rd_kafka_mock_cgrp_consumer_member_t *member",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafka_topic_partition_list_destroy",
+     "release_mode": "nonnull",
+     "origin": "rdkafka_mock_cgrp.c:1027"
+    }
+   ],
+   "other_blockers": {
+    "indirect memory access is outside the resource projection": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_consumer_member_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "member",
+     "member": "id",
+     "base_spelling": "rd_kafka_mock_cgrp_consumer_member_t *member",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_mock_cgrp.c:1617"
+    },
+    {
+     "base": "member",
+     "member": "instance_id",
+     "base_spelling": "rd_kafka_mock_cgrp_consumer_member_t *member",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_mock_cgrp.c:1620"
+    },
+    {
+     "base": "member",
+     "member": "target_assignment",
+     "base_spelling": "rd_kafka_mock_cgrp_consumer_member_t *member",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "RD_IF_FREE",
+     "release_mode": "unit",
+     "origin": "rdkafka_mock_cgrp.c:1622"
+    },
+    {
+     "base": "member",
+     "member": "current_assignment",
+     "base_spelling": "rd_kafka_mock_cgrp_consumer_member_t *member",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "RD_IF_FREE",
+     "release_mode": "unit",
+     "origin": "rdkafka_mock_cgrp.c:1624"
+    },
+    {
+     "base": "member",
+     "member": "returned_assignment",
+     "base_spelling": "rd_kafka_mock_cgrp_consumer_member_t *member",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "RD_IF_FREE",
+     "release_mode": "unit",
+     "origin": "rdkafka_mock_cgrp.c:1626"
+    },
+    {
+     "base": "member",
+     "member": "subscribed_topic_regex",
+     "base_spelling": "rd_kafka_mock_cgrp_consumer_member_t *member",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "RD_IF_FREE",
+     "release_mode": "unit",
+     "origin": "rdkafka_mock_cgrp.c:1632"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `rd_kafka_mock_cgrp_consumer_target_assignment_recalculate`": 1,
+    "call to uncontracted function `rd_list_destroy_free`": 2,
+    "indirect memory access is outside the resource projection": 1,
+    "unresolved resource identity `mcgrp`": 1,
+    "unresolved resource identity `member`": 8
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_consumer_member_returned_assignment_set",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "member",
+     "member": "returned_assignment",
+     "base_spelling": "rd_kafka_mock_cgrp_consumer_member_t *member",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafka_topic_partition_list_destroy",
+     "release_mode": "nonnull",
+     "origin": "rdkafka_mock_cgrp.c:1050"
+    }
+   ],
+   "other_blockers": {
+    "indirect memory access is outside the resource projection": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_consumer_member_subscribed_topic_names_set",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "member",
+     "member": "subscribed_topic_regex",
+     "base_spelling": "rd_kafka_mock_cgrp_consumer_member_t *member",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "RD_IF_FREE",
+     "release_mode": "unit",
+     "origin": "rdkafka_mock_cgrp.c:1447"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `rd_list_copy_to`": 1,
+    "call to uncontracted function `rd_list_deduplicate`": 1,
+    "call to uncontracted function `rd_regex_comp`": 1,
+    "call to uncontracted function `rd_regex_destroy`": 1,
+    "call to uncontracted function `validate_subscription`": 1,
+    "callback-registry-undecided": 1,
+    "indirect memory access is outside the resource projection": 9,
+    "unmodeled call, aggregate or indirect access in branch condition": 2,
+    "unresolved resource identity `SubscribedTopicRegex`": 2
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_consumer_member_target_assignment_set",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "member",
+     "member": "target_assignment",
+     "base_spelling": "rd_kafka_mock_cgrp_consumer_member_t *member",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafka_topic_partition_list_destroy",
+     "release_mode": "nonnull",
+     "origin": "rdkafka_mock_cgrp.c:802"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `rd_kafka_mock_topic_find`": 1,
+    "call to uncontracted function `rd_kafka_topic_partition_get_topic_id`": 1,
+    "indirect memory access is outside the resource projection": 3,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unmodeled increment or decrement expression": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_consumer_member_topic_id_set",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "member",
+     "member": "id",
+     "base_spelling": "rd_kafka_mock_cgrp_consumer_member_t *member",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "RD_IF_FREE",
+     "release_mode": "unit",
+     "origin": "rdkafka_mock_cgrp.c:1494"
+    }
+   ],
+   "other_blockers": {
+    "indirect memory access is outside the resource projection": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_mock_sharegrp.c",
+   "function": "rd_kafka_mock_sgrp_fetch_session_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "session",
+     "member": "member_id",
+     "base_spelling": "rd_kafka_mock_sgrp_fetch_session_t *session",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_mock_sharegrp.c:837"
+    },
+    {
+     "base": "session",
+     "member": "partitions",
+     "base_spelling": "rd_kafka_mock_sgrp_fetch_session_t *session",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "RD_IF_FREE",
+     "release_mode": "unit",
+     "origin": "rdkafka_mock_sharegrp.c:838"
+    }
+   ],
+   "other_blockers": {
+    "unresolved resource identity `session`": 2
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_mock_sharegrp.c",
+   "function": "rd_kafka_mock_sgrp_record_release",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "state",
+     "member": "owner_member_id",
+     "base_spelling": "rd_kafka_mock_sgrp_record_state_t *state",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_mock_sharegrp.c:967"
+    }
+   ],
+   "other_blockers": {},
+   "sole": true
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_mock_sharegrp.c",
+   "function": "rd_kafka_mock_sharegroup_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "mshgrp",
+     "member": "id",
+     "base_spelling": "rd_kafka_mock_sharegroup_t *mshgrp",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_mock_sharegrp.c:179"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `rd_kafka_mock_sgrp_fetch_session_destroy`": 1,
+    "call to uncontracted function `rd_kafka_mock_sharegroup_member_destroy`": 1,
+    "indirect memory access is outside the resource projection": 7,
+    "unresolved resource identity `member`": 1,
+    "unresolved resource identity `mshgrp`": 5,
+    "unresolved resource identity `pmeta`": 4,
+    "unresolved resource identity `session`": 2,
+    "unresolved resource identity `state`": 3
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_mock_sharegrp.c",
+   "function": "rd_kafka_mock_sharegroup_member_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "member",
+     "member": "id",
+     "base_spelling": "rd_kafka_mock_sharegroup_member_t *member",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_mock_sharegrp.c:206"
+    },
+    {
+     "base": "member",
+     "member": "assignment",
+     "base_spelling": "rd_kafka_mock_sharegroup_member_t *member",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "RD_IF_FREE",
+     "release_mode": "unit",
+     "origin": "rdkafka_mock_sharegrp.c:209"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `rd_list_destroy_free`": 1,
+    "indirect memory access is outside the resource projection": 1,
+    "unresolved resource identity `member`": 3
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_msg.c",
+   "function": "rd_kafka_Produce_result_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "result",
+     "member": "record_errors",
+     "base_spelling": "rd_kafka_Produce_result_t *result",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_msg.c:1969"
+    },
+    {
+     "base": "result",
+     "member": "errstr",
+     "base_spelling": "rd_kafka_Produce_result_t *result",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "RD_IF_FREE",
+     "release_mode": "unit",
+     "origin": "rdkafka_msg.c:1971"
+    }
+   ],
+   "other_blockers": {
+    "indirect memory access is outside the resource projection": 1,
+    "unresolved resource identity `result`": 4
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_offset.c",
+   "function": "rd_kafka_offset_file_close",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "rktp",
+     "member": "rktp_offset_fp",
+     "base_spelling": "rd_kafka_toppar_t *rktp",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "fclose",
+     "release_mode": "nonnull",
+     "origin": "rdkafka_offset.c:102"
+    }
+   ],
+   "other_blockers": {},
+   "sole": true
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_offset.c",
+   "function": "rd_kafka_offset_file_term",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "rktp",
+     "member": "rktp_offset_path",
+     "base_spelling": "rd_kafka_toppar_t *rktp",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_offset.c:761"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `rd_kafka_offset_file_close`": 1,
+    "call to uncontracted function `rd_kafka_offset_file_sync`": 1,
+    "indirect memory access is outside the resource projection": 2,
+    "unresolved resource identity `RD_KAFKA_RESP_ERR_NO_ERROR`": 1,
+    "unresolved resource identity `err`": 1,
+    "unresolved resource identity `rktp`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_op.c",
+   "function": "rd_kafka_op_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "rko",
+     "member": "rko_error",
+     "base_spelling": "rd_kafka_op_t *rko",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "RD_IF_FREE",
+     "release_mode": "unit",
+     "origin": "rdkafka_op.c:610"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `rd_kafka_buf_handle_op`": 2,
+    "callback-member-open": 1,
+    "indirect memory access is outside the resource projection": 56,
+    "reference-drop-unheld": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 49,
+    "unmodeled call, aggregate or indirect access in for-loop condition": 1,
+    "unresolved resource identity `msg_rko`": 1,
+    "unresolved resource identity `rko/msg_rko`": 3,
+    "unresolved resource identity `rko`": 7
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_topic_partition_destroy0",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "rktpar",
+     "member": "topic",
+     "base_spelling": "rd_kafka_topic_partition_t *rktpar",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_partition.c:2973"
+    },
+    {
+     "base": "rktpar",
+     "member": "metadata",
+     "base_spelling": "rd_kafka_topic_partition_t *rktpar",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_partition.c:2975"
+    }
+   ],
+   "other_blockers": {
+    "indirect memory access is outside the resource projection": 1,
+    "unresolved resource identity `rktpar`": 3
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_topic_partition_list_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "rktparlist",
+     "member": "elems",
+     "base_spelling": "rd_kafka_topic_partition_list_t *rktparlist",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_partition.c:3125"
+    }
+   ],
+   "other_blockers": {
+    "call to `rd_kafka_topic_partition_destroy0` outside its declared literal-argument premise": 1,
+    "unresolved resource identity `rktparlist`": 3
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_destroy_final",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "rktp",
+     "member": "rktp_stored_metadata",
+     "base_spelling": "rd_kafka_toppar_t *rktp",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_partition.c:362"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `rd_kafka_broker_destroy_final`": 1,
+    "call to uncontracted function `rd_kafka_toppar_remove`": 1,
+    "indirect memory access is outside the resource projection": 4,
+    "reference-drop-unheld": 3,
+    "unmodeled call, aggregate or indirect access in branch condition": 2,
+    "unresolved resource identity `rktp`": 7
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_pattern.c",
+   "function": "rd_kafka_pattern_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "rkpat",
+     "member": "rkpat_orig",
+     "base_spelling": "rd_kafka_pattern_t *rkpat",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_pattern.c:36"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `rd_regex_destroy`": 1,
+    "indirect memory access is outside the resource projection": 1,
+    "unresolved resource identity `rkpat`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_pattern.c",
+   "function": "rd_kafka_pattern_list_clear",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "plist",
+     "member": "rkpl_orig",
+     "base_spelling": "rd_kafka_pattern_list_t *plist",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_pattern.c:165"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `rd_kafka_pattern_destroy`": 1,
+    "indirect memory access is outside the resource projection": 1,
+    "unresolved resource identity `plist`": 2,
+    "unresolved resource identity `rkpat`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_plugin.c",
+   "function": "rd_kafka_plugin_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "rkplug",
+     "member": "rkplug_path",
+     "base_spelling": "rd_kafka_plugin_t *rkplug",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_plugin.c:130"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `rd_dl_close`": 1,
+    "unresolved resource identity `rkplug`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_queue.c",
+   "function": "rd_kafka_q_destroy_final",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "rkq",
+     "member": "rkq_qio",
+     "base_spelling": "rd_kafka_q_t *rkq",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "unlikely",
+     "release_mode": "unit",
+     "origin": "rdkafka_queue.c:61"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `cnd_destroy`": 1,
+    "call to uncontracted function `mtx_destroy`": 1,
+    "call to uncontracted function `rd_kafka_q_fwd_set0`": 1,
+    "unresolved resource identity `rkq`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_queue.c",
+   "function": "rd_kafka_q_io_event_enable",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "rkq",
+     "member": "rkq_qio",
+     "base_spelling": "rd_kafka_q_t *rkq",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_queue.c:1133"
+    }
+   ],
+   "other_blockers": {
+    "indirect memory access is outside the resource projection": 4,
+    "unresolved resource identity `qio`": 4
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_share_acknowledgement.c",
+   "function": "rd_kafka_share_ack_batch_entry_destroy",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "entry",
+     "member": "types",
+     "base_spelling": "rd_kafka_share_ack_batch_entry_t *entry",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_share_acknowledgement.c:55"
+    }
+   ],
+   "other_blockers": {
+    "unresolved resource identity `entry`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_topic.c",
+   "function": "rd_kafka_topic_destroy_final",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "rkt",
+     "member": "rkt_topic",
+     "base_spelling": "rd_kafka_topic_t *rkt",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_kafkap_str_destroy",
+     "release_mode": "unit",
+     "origin": "rdkafka_topic.c:117"
+    }
+   ],
+   "other_blockers": {
+    "indirect memory access is outside the resource projection": 9,
+    "unmodeled call, aggregate or indirect access in branch condition": 2,
+    "unmodeled call, aggregate or indirect access in for-loop condition": 1,
+    "unresolved resource identity `partmsgid_tmp`": 1,
+    "unresolved resource identity `partmsgid`": 1,
+    "unresolved resource identity `rkt`": 6
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_topic.c",
+   "function": "rd_kafka_topic_partition_cnt_update",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "rkt",
+     "member": "rkt_p",
+     "base_spelling": "rd_kafka_topic_t *rkt",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_topic.c:1257"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `rd_kafka_toppar_broker_delegate`": 1,
+    "call to uncontracted function `rd_kafka_toppar_broker_leave_for_remove`": 1,
+    "call to uncontracted function `rd_kafka_toppar_desired_link`": 1,
+    "call to uncontracted function `rd_kafka_toppar_desired_unlink`": 1,
+    "call to uncontracted function `rd_kafka_toppar_idemp_msgid_restore`": 1,
+    "call to uncontracted function `rd_kafka_toppar_idemp_msgid_save`": 1,
+    "indirect memory access is outside the resource projection": 14,
+    "loop re-acquisition": 2,
+    "reference-drop-unheld": 2,
+    "unmodeled call, aggregate or indirect access in branch condition": 2,
+    "unmodeled call, aggregate or indirect access in for-loop condition": 1,
+    "unrecognized assignment destination": 1,
+    "unresolved resource identity `rk`": 1,
+    "unresolved resource identity `rkt`": 9,
+    "unresolved resource identity `rktp`": 5
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdkafka_topic.c",
+   "function": "rd_kafka_topic_partitions_remove",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "rkt",
+     "member": "rkt_p",
+     "base_spelling": "rd_kafka_topic_t *rkt",
+     "base_class": "typedef of `struct TAG`, `T *B`",
+     "reader": "resolved (`typedef struct TAG T;`)",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdkafka_topic.c:1835"
+    }
+   ],
+   "other_blockers": {
+    "call to uncontracted function `rd_kafka_topic_get_all_partitions`": 1,
+    "call to uncontracted function `rd_kafka_topic_partition_cnt_update`": 1,
+    "call to uncontracted function `rd_kafka_toppar_desired_del`": 1,
+    "call to uncontracted function `rd_kafka_toppar_purge_and_disable_queues`": 1,
+    "callback-registry-undecided": 1,
+    "indirect memory access is outside the resource projection": 12,
+    "loop re-acquisition": 1,
+    "reference-drop-unheld": 4,
+    "reference-undecided": 1,
+    "unmodeled call, aggregate or indirect access in for-loop condition": 2,
+    "unresolved resource identity `rkt`": 4,
+    "unresolved resource identity `rktp`": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "rdlist.c",
+   "function": "rd_list_destroy_elems",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "rl",
+     "member": "rl_elems",
+     "base_spelling": "rd_list_t *rl",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "rd_free",
+     "release_mode": "nullable",
+     "origin": "rdlist.c:303"
+    }
+   ],
+   "other_blockers": {
+    "indirect memory access is outside the resource projection": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 1
+   },
+   "sole": false
+  },
+  {
+   "route": "corpus",
+   "file": "mk_core/mk_memory.c",
+   "function": "mk_ptr_free",
+   "status": "Unknown",
+   "typedef_base_leaves": [
+    {
+     "base": "p",
+     "member": "data",
+     "base_spelling": "mk_ptr_t * p",
+     "base_class": "typedef of a `struct [TAG] {\u2026}` definition, `T *B`",
+     "reader": "untyped: the typedef defines the record",
+     "member_class": "star-spelled pointer",
+     "callee": "mk_mem_free",
+     "release_mode": "nullable",
+     "origin": "mk_core/mk_memory.c:47"
+    }
+   ],
+   "other_blockers": {},
+   "sole": true
+  }
+ ]
+}
