@@ -1,0 +1,60 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "BUILTIN-EXPECT-NULL-TEST",
+ "base": "82ec0e80b",
+ "measured_tip": "68d2dc342",
+ "increment_paragraph": "**BUILTIN-EXPECT-NULL-TEST** (round 26, CURRENT-UNSAFE-TRIAGE implementation card; USER DECISION 2026-11-07, verbatim: \"Register four as implementation cards\"): census first. Every `__builtin_expect` site of the analysed bodies, read from each unit's own preprocessed text (identity equal to the recorded digest for all 217 configured units): 2,905 in 74 units of the 046accf6 current run, the same rows in the pinned corpus, none in system or slice; every hint is `0`, `1`, `(0)` or `(1)`, already read through by rule 5h's Boolean reading since W44-BRANCH-CONDITION-CALLS. A wrapped-against-bare harness (each unit as configured and with `-D__builtin_expect(e,c)=(e)`) leaves all 53 snappy.c functions identical, `rd_kafka_snappy_java_uncompress`'s :1712 leaf included, so that leaf is the two-pass loop's generation join (re-homed to LOOP-REACQUISITION-LEAK-ACCUSATION), not the wrapper. Rule 5h amended, with no analyser code change (`legacy_condition_desugar.rs` stays byte-identical: it is a pinned reading-site artifact, and a first attempt to widen the hint failed that pin): the reading is stated with its hint premise (exactly one token of decimal digits; any other hint, a suffixed literal included, and `__builtin_expect_with_probability` refuse) and its conversion-to-`long` premise; new audited `QCore.BuiltinExpectCondition` (11 theorems: the wrapper has its operand's value, an admitted reading is C's evaluation for every leaf assignment and argument order and so is its desugared plan, an effectful hint or refused operand refuses, the admitted spellings are effect-free literals, the admission vector bound through the reader); fixtures for likely()/unlikely() around null and non-null tests, non-test operands and effectful hints that stay refused, and snappy's failure arm. Predicted and expected: no status move on any route. Registered BUILTIN-EXPECT-OPERAND-CONVERSION, BUILTIN-EXPECT-LITERAL-HINT-SPELLINGS, BARE-CONNECTIVE-NULL-LEAF-REFINEMENT and LOOP-NULL-STORE-AFTER-RELEASE; retired BUILTIN-EXPECT-NULL-TEST and LEAK-UNDECIDED-NULL-TEST. [Report](../../reports/builtin-expect-null-test/README.md).",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "BUILTIN-EXPECT-NULL-TEST",
+   "operation": "retire",
+   "why": "DONE by BUILTIN-EXPECT-NULL-TEST (docs/reports/builtin-expect-null-test/README.md). The DISCHARGE's reading already stood: rule 5h's Boolean reading (legacy_condition_desugar.rs, W44-BRANCH-CONDITION-CALLS) reads `__builtin_expect(e, c)` as `e` for a literal hint, and the census found every one of the 2,905 sites of the 046accf6 current run and of the pinned corpus (none on system or slice) with hint 0, 1, (0) or (1); snappy.c:1706 `if (unlikely(!outbuf))` is read with no diagnostic on its line. Analysed as configured and with -D__builtin_expect(e,c)=(e), all 53 snappy.c functions are identical, the :1712 leaf included: the failure arm refines the current allocation away and the leaf is the two-pass loop's generation join (re-homed to LOOP-REACQUISITION-LEAK-ACCUSATION). The card states the reading in rule 5h with its hint and conversion premises (no analyser code change), proves it in QCore.BuiltinExpectCondition (11 audited theorems, composed with the_desugaring_is_c_evaluation) and pins it with fixtures for likely()/unlikely() around null and non-null tests, a non-test operand and an effectful hint (both stay refused) and snappy's failure arm; predicted no move on any route.",
+   "source": "docs/reports/builtin-expect-null-test/README.md"
+  },
+  {
+   "id": "LOOP-REACQUISITION-LEAK-ACCUSATION",
+   "operation": "amend",
+   "text": "AMENDED (BUILTIN-EXPECT-NULL-TEST): snappy.c:1712, the `if (unlikely(!outbuf))` arm's return, is this card's seventh leaf. Rule 5h already reads the wrapper; analysed with -D__builtin_expect(e,c)=(e) the function's thirteen diagnostics are unchanged, line for line, and a fixture of the two-pass loop reports the failure arm's leaf identically with the bare `!outbuf`, together with a leaf at the pre-allocation return (snappy.c:1701's shape): both rest on the generation join (docs/reports/builtin-expect-null-test/README.md §2).",
+   "source": "docs/reports/builtin-expect-null-test/README.md"
+  },
+  {
+   "id": "LEAK-UNDECIDED-NULL-TEST",
+   "operation": "retire",
+   "why": "DONE: the mk_sched_add_connection half was discharged by SUP07-REFUSED-TEST-ACCUSATION (rule 12e). The remaining rd_kafka_snappy_java_uncompress half (snappy.c:1712) is discharged by BUILTIN-EXPECT-NULL-TEST: its null test is not undecided; rule 5h reads the `unlikely(!outbuf)` wrapper as the test it wraps (the DISCHARGE's second alternative, standing since W44-BRANCH-CONDITION-CALLS and now stated and proved, QCore.BuiltinExpectCondition), and the leaf is reproduced with the wrapper removed from the whole unit, so it rests on the loop generation join and belongs to LOOP-REACQUISITION-LEAK-ACCUSATION (docs/reports/builtin-expect-null-test/README.md).",
+   "source": "docs/reports/builtin-expect-null-test/README.md"
+  },
+  {
+   "id": "BUILTIN-EXPECT-OPERAND-CONVERSION",
+   "operation": "register",
+   "title": "Rule 5h reads __builtin_expect(E, K) as E on a stated premise that E's truthiness survives its conversion to long",
+   "text": "Registered by BUILTIN-EXPECT-NULL-TEST. The builtin's parameters are `long`: its value is `(long)E`, which has E's truthiness when E is a null or comparison test (int 0/1), or an integer no wider than `long` (LP64, the runs' targets); Clang rejects a pointer operand, but accepts a floating or `__int128` operand silently, where `(long)0.5` is 0 while `if (0.5)` is true. The token-level reading does not check the operand's type, so the premise is stated in rule 5h, not checked. DISCHARGE: read the operand's implicit conversion from the Clang AST (an integral cast from a type no wider than `long`, or a Boolean-valued operand) and refuse any other, with a fixture for a floating and a wider operand, Lean parity and a measurement (expected: no move; the census found no such operand).",
+   "source": "docs/reports/builtin-expect-null-test/README.md",
+   "recorded_by": "BUILTIN-EXPECT-NULL-TEST"
+  },
+  {
+   "id": "BUILTIN-EXPECT-LITERAL-HINT-SPELLINGS",
+   "operation": "register",
+   "title": "Rule 5h refuses a __builtin_expect hint spelled as a suffixed or prefixed integer literal",
+   "text": "Registered by BUILTIN-EXPECT-NULL-TEST. Rule 5h reads `__builtin_expect(E, K)` as `E` only when `K` is one token of decimal digits; `0L`, `0UL`, `0x0` and `1ll` are integer literals with no evaluation event (C11 6.4.4.1, 6.5.1) but keep the condition refused (fixture the_hint_spellings_bind_the_admission_vector). No site of the current run, the pinned corpus, the system or the slice has such a hint (census, docs/reports/builtin-expect-null-test/census.json.gz). The reader is in legacy_condition_desugar.rs, a pinned artifact of the libc reading-site evidence (docs/reports/libc-reading-site-evidence/bindings.json, `scalar-reader`): BUILTIN-EXPECT-NULL-TEST's first attempt to widen it failed reading_site_domain and libc_reading_site_evidence on that digest. DISCHARGE: when a site needs it, admit every integer-literal hint with the artifact digest rebound (or the reader moved out of the pinned file), the receipts re-measured, QCore.BuiltinExpectCondition.admitted widened and the fixture vector updated.",
+   "source": "docs/reports/builtin-expect-null-test/README.md",
+   "recorded_by": "BUILTIN-EXPECT-NULL-TEST"
+  },
+  {
+   "id": "BARE-CONNECTIVE-NULL-LEAF-REFINEMENT",
+   "operation": "register",
+   "title": "A call-free connective or `?:` with a null leaf is accepted without refining the leaf, and accuses a leak no path has",
+   "text": "Registered by BUILTIN-EXPECT-NULL-TEST. With a nullable owned `p = k_alloc(n)`, the bare `if (!p && n) { return; } if (!p) return; k_free(p);`, `return (p != 0) ? p : 0;` and `return p ? p : 0;` each report a leak (provisional Unsafe) although every path releases or returns `p` or holds nothing; the same tests under `__builtin_expect` are desugared by rule 5h and decided Safe (fixture in crates/qcore-c-gateway/tests/builtin_expect_null_test.rs). An older whole-condition route admits the call-free connective (and the pointer `?:` return) as neutral, keeping both edges without the null leaf's refinement. Not sized on the runs. DISCHARGE: census the corpus and current runs for such conditions; then lower a call-free connective or `?:` whose leaves include a null test through rule 5h's edges (or refuse it), with fixtures, Lean parity and a measurement showing no Safe move without a discharged obligation.",
+   "source": "docs/reports/builtin-expect-null-test/README.md",
+   "recorded_by": "BUILTIN-EXPECT-NULL-TEST"
+  },
+  {
+   "id": "LOOP-NULL-STORE-AFTER-RELEASE",
+   "operation": "register",
+   "title": "A null store after a release inside a loop does not reach the back edge, and the loop accuses a double release",
+   "text": "Registered by BUILTIN-EXPECT-NULL-TEST. With a nullable owned `p = k_alloc(n)`, `while (p != 0) { k_free(p); p = 0; }` reports a double release, and `for (i = 0; i < 2; i++) { if (p != 0) { k_free(p); p = 0; } }` a double release and a leak, although after the store the test fails on every path; the straight-line `k_free(p); p = 0; if (p != 0) k_free(p);` is Safe. Wrapped and bare tests agree, so the wrapper is not involved. Not sized on the runs. DISCHARGE: census the runs for a release followed by a null store of the same name inside a loop; then carry the store's null fact across the back edge (or refuse the site), with fixtures, Lean parity and a measurement.",
+   "source": "docs/reports/builtin-expect-null-test/README.md",
+   "recorded_by": "BUILTIN-EXPECT-NULL-TEST"
+  }
+ ]
+}
