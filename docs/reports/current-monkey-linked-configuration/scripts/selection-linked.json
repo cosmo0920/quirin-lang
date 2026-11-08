@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "name": "monkey-linked-probe",
+  "description": "CURRENT-MONKEY-LINKED-CONFIGURATION prediction run B: the route's Monkey units (mk_core/ without mk_core/deps/, mk_server/, tls/) as the Fluent Bit compile database configures them, i.e. the configuration linked into bin/fluent-bit, under the profile's monkey library (unit keys monkey/lib/monkey/...). No --monkey-database. Base binary.",
+  "groups": [
+    {
+      "library": "monkey",
+      "files": [
+        "lib/monkey/mk_core/mk_event.c",
+        "lib/monkey/mk_core/mk_file.c",
+        "lib/monkey/mk_core/mk_iov.c",
+        "lib/monkey/mk_core/mk_memory.c",
+        "lib/monkey/mk_core/mk_rconf.c",
+        "lib/monkey/mk_core/mk_string.c",
+        "lib/monkey/mk_core/mk_utils.c",
+        "lib/monkey/mk_server/mk_cache.c",
+        "lib/monkey/mk_server/mk_clock.c",
+        "lib/monkey/mk_server/mk_config.c",
+        "lib/monkey/mk_server/mk_fifo.c",
+        "lib/monkey/mk_server/mk_header.c",
+        "lib/monkey/mk_server/mk_http.c",
+        "lib/monkey/mk_server/mk_http_parser.c",
+        "lib/monkey/mk_server/mk_http_thread.c",
+        "lib/monkey/mk_server/mk_kernel.c",
+        "lib/monkey/mk_server/mk_lib.c",
+        "lib/monkey/mk_server/mk_mimetype.c",
+        "lib/monkey/mk_server/mk_net.c",
+        "lib/monkey/mk_server/mk_plugin.c",
+        "lib/monkey/mk_server/mk_scheduler.c",
+        "lib/monkey/mk_server/mk_server.c",
+        "lib/monkey/mk_server/mk_socket.c",
+        "lib/monkey/mk_server/mk_stream.c",
+        "lib/monkey/mk_server/mk_user.c",
+        "lib/monkey/mk_server/mk_utils.c",
+        "lib/monkey/mk_server/mk_vhost.c",
+        "lib/monkey/mk_server/monkey.c",
+        "lib/monkey/tls/tls_openssl.c"
+      ]
+    }
+  ]
+}

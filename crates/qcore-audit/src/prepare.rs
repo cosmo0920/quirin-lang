@@ -21,7 +21,11 @@
 //! clone). It adds `prepare.json`, which records both compilers (the C++
 //! compiler included), CMake, the step records' digests and the argv.
 //! `--run` then chains into `quirin-audit current` over those inputs, with
-//! `--jobs N` and any arguments after `--` passed through.
+//! `--jobs N` and any arguments after `--` passed through. Card
+//! **CURRENT-MONKEY-LINKED-CONFIGURATION**: the chained run passes
+//! `--monkey-linked`, so Monkey is analysed as the Fluent Bit compile
+//! database configures it (the configuration linked into `fluent-bit`); the
+//! prepared Monkey database is passed too and only accounted for.
 //!
 //! Card **FLUENT-BIT-LINK-PREPARE**: `--link` (with `prepare` or `prepare
 //! clang-build`) also builds and links the `fluent-bit` executable in the
@@ -975,6 +979,11 @@ fn prepare_all(
         text(&clang_build.database)?.into(),
         "--monkey-database".into(),
         text(&monkey.database)?.into(),
+        // Card CURRENT-MONKEY-LINKED-CONFIGURATION (user decision
+        // 2026-11-08, "Analyse linked config"): Monkey is analysed as the
+        // compile database configures it, the configuration linked into
+        // fluent-bit; the standalone database above is only accounted for.
+        "--monkey-linked".into(),
         "--monkey-source-report".into(),
         text(&reports.join("monkey-source.json"))?.into(),
         "--report".into(),

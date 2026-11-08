@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "name": "monkey-standalone-probe",
+  "description": "CURRENT-MONKEY-LINKED-CONFIGURATION prediction run A: one placeholder unit (chunkio's cio_error.c, ignored) so that the run's other group is the standalone Monkey database given by --monkey-database, exactly as the user's run reads it. Base binary.",
+  "groups": [
+    {
+      "library": "chunkio",
+      "label": "placeholder",
+      "files": ["lib/chunkio/src/cio_error.c"]
+    }
+  ]
+}

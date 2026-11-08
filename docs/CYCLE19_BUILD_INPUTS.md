@@ -14,6 +14,18 @@ cargo run --quiet -p qcore-audit -- current \
   --monkey-database build/cycle19/monkey-build/compile_commands.json
 ```
 
+**The linked configuration** (card CURRENT-MONKEY-LINKED-CONFIGURATION,
+[report](reports/current-monkey-linked-configuration/README.md)):
+`fluent-bit` links `lib/monkey` as the Fluent Bit build compiles it (epoll
+backend, OpenSSL TLS), not this forced-Libevent copy. `current
+--monkey-linked` analyses Monkey's units (`mk_core/` without `mk_core/deps/`,
+`mk_server/`, `tls/`) from the run's own `--compile-database` under the label
+`monkey`. A `--monkey-database` given with it is only accounted for. A
+standalone unit with a linked counterpart (the same file) is replaced by it.
+One without a counterpart stays in the denominator as a not-linked `Unknown`
+unit under its `monkey-libevent` key. The setup's `prepare --run` passes
+both.
+
 `quirin-audit prepare monkey` (formerly a Python script; same commands and
 files, [parity evidence](reports/w44-quirin-audit-prepare/README.md)) checks
 the checkout's `HEAD`, a clean Monkey source

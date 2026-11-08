@@ -1,0 +1,513 @@
+{
+ "all_hold": true,
+ "artifact": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a97483da790d806af/private/link-prepare/link-resolution.second/link-resolution.json",
+ "artifact_compile_database_sha256": "4b7b458916257c5cdd3f0f3709da5ab938af0ef475ae40f5fdb7514adae74910",
+ "artifact_sha256": "219bbadf9c7bba975fd7890ff1f58e10dc0dd88767bb6c6de497d73f82b5a339",
+ "monkey_route_units": 29,
+ "route_selection": {
+  "groups": "audit.json's library selections over the profile's source roots",
+  "monkey": {
+   "configuration": "linked",
+   "label": "monkey",
+   "run": "quirin-audit current --monkey-linked (prepare --run passes it); a run without it has no monkey/ unit",
+   "units": "this database's lib/monkey units (mk_core/ without mk_core/deps/, mk_server/, tls/)"
+  }
+ },
+ "run_root": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a97483da790d806af/private/link-prepare/run",
+ "units": [
+  {
+   "artifact_command_sha256": "fba78724d485a79a8bc8487a7feae401aaf758070de32ca965beb9a7841c715d",
+   "command_matches": true,
+   "directory_matches": true,
+   "holds": true,
+   "linked": true,
+   "linked_input_sha256": [
+    "d5449d7686946f010f5eb229561f8e3dc2270f1a61f4149407047a3edb572d11"
+   ],
+   "reproduction": "equal",
+   "route_unit": "monkey/lib/monkey/mk_core/mk_rconf.c",
+   "source_matches": true,
+   "source_sha256": "e483dc6d2ee2b2da24548bdea7ce118599a5bbde2bc59b8fe71a93ef733771af",
+   "user_command_rewritten_sha256": "fba78724d485a79a8bc8487a7feae401aaf758070de32ca965beb9a7841c715d",
+   "user_command_sha256": "a8ec816b258f8cb3bf4bafec4bbea6197bb712790d84d1ae54563ad15a317ec3",
+   "user_records": 1
+  },
+  {
+   "artifact_command_sha256": "4fd58423629bbe9a73dfe973b18dc0c630bd4c352c8158d706e864bf94b4544a",
+   "command_matches": true,
+   "directory_matches": true,
+   "holds": true,
+   "linked": true,
+   "linked_input_sha256": [
+    "88f26464c91a46fb08e557edcb5c909da6d7c317df42d4128a3febd458f9f593"
+   ],
+   "reproduction": "equal",
+   "route_unit": "monkey/lib/monkey/mk_core/mk_string.c",
+   "source_matches": true,
+   "source_sha256": "9c3cb46b8be931c25796c92211439c363bc152a19d2fdd9e889ebaff04e5d90d",
+   "user_command_rewritten_sha256": "4fd58423629bbe9a73dfe973b18dc0c630bd4c352c8158d706e864bf94b4544a",
+   "user_command_sha256": "186f61fa2d06548125afad091db1b5d745fb99abfdde2847b0377afc1887a358",
+   "user_records": 1
+  },
+  {
+   "artifact_command_sha256": "f7be5a7db77761a6c49aabab760aa566c04279c434ccf685bbaec15baac17b34",
+   "command_matches": true,
+   "directory_matches": true,
+   "holds": true,
+   "linked": true,
+   "linked_input_sha256": [
+    "bc3f0c7a4cd3a3675e6184da01a8b15ec23d4f3a67eea5cae38ed8782fae3281"
+   ],
+   "reproduction": "equal",
+   "route_unit": "monkey/lib/monkey/mk_core/mk_memory.c",
+   "source_matches": true,
+   "source_sha256": "250c12971a7ad618b1ac0c8577432811290fb4b718081c643b9ba2155993d256",
+   "user_command_rewritten_sha256": "f7be5a7db77761a6c49aabab760aa566c04279c434ccf685bbaec15baac17b34",
+   "user_command_sha256": "a67d49dcbb2d9c277e5e714f5fac52bd57a02547e5e8df4d1a4b4aedecafb404",
+   "user_records": 1
+  },
+  {
+   "artifact_command_sha256": "c240869166699a5841b209f79a5a3abbbe304f248050d07ed687d0a1dbe4e7fe",
+   "command_matches": true,
+   "directory_matches": true,
+   "holds": true,
+   "linked": true,
+   "linked_input_sha256": [
+    "d394c85f843e9b7fabae07b1e541d48fc269904cd613ad74286d3acc5526832d"
+   ],
+   "reproduction": "equal",
+   "route_unit": "monkey/lib/monkey/mk_core/mk_event.c",
+   "source_matches": true,
+   "source_sha256": "8ef958d26545ef52865f69cde0abf86cfdbeceb925557ff37af41031297b2382",
+   "user_command_rewritten_sha256": "c240869166699a5841b209f79a5a3abbbe304f248050d07ed687d0a1dbe4e7fe",
+   "user_command_sha256": "731294e71e74f89247f1deeb5b21f3e854645767ed361a02c65c046d27049c8a",
+   "user_records": 1
+  },
+  {
+   "artifact_command_sha256": "3ee968a8d3fbc9cb25ff26fa2066360fa464a3ac4e3e567bd28be2805d98cff8",
+   "command_matches": true,
+   "directory_matches": true,
+   "holds": true,
+   "linked": true,
+   "linked_input_sha256": [
+    "c5eae230b4274978d0eddaf24ecfe510d0f27f324e320d21d5a3237501afa126"
+   ],
+   "reproduction": "equal",
+   "route_unit": "monkey/lib/monkey/mk_core/mk_utils.c",
+   "source_matches": true,
+   "source_sha256": "2ee7487f90d2da5db62f778bc30ea3145b413caf68f500914d7c5f0a86dd890a",
+   "user_command_rewritten_sha256": "3ee968a8d3fbc9cb25ff26fa2066360fa464a3ac4e3e567bd28be2805d98cff8",
+   "user_command_sha256": "f6a8e23dfa2052f32c1b256c82781e1005ebd43d3342a6c21dbe172db402df16",
+   "user_records": 1
+  },
+  {
+   "artifact_command_sha256": "ac49a6b7ac609cd3e592c3aacd5cc7c9da63e3fdc9b3d8fa1ecf1486bd211092",
+   "command_matches": true,
+   "directory_matches": true,
+   "holds": true,
+   "linked": true,
+   "linked_input_sha256": [
+    "3b2c66b178d8a3027f9e1c6715398637f0ff33ee2f16c5c04a4532eb4a166ac9"
+   ],
+   "reproduction": "equal",
+   "route_unit": "monkey/lib/monkey/mk_core/mk_file.c",
+   "source_matches": true,
+   "source_sha256": "0adcb7b23356a9d21bd4cfd9f6fb168307556abc2e4110373ab2ca420771aff3",
+   "user_command_rewritten_sha256": "ac49a6b7ac609cd3e592c3aacd5cc7c9da63e3fdc9b3d8fa1ecf1486bd211092",
+   "user_command_sha256": "2aae6adecb8fe85a662a4f905db771a25627f6dc48c8a7698087d2553f6e4444",
+   "user_records": 1
+  },
+  {
+   "artifact_command_sha256": "c4d00e5355b4b749449f7046b5f180997e2158b35fe0e8ea6875704dfd154c21",
+   "command_matches": true,
+   "directory_matches": true,
+   "holds": true,
+   "linked": true,
+   "linked_input_sha256": [
+    "600b4f663bc7d5e44c2a8708c01d0628bb4ee361860d3c3f1d825ee766142b8f"
+   ],
+   "reproduction": "equal",
+   "route_unit": "monkey/lib/monkey/mk_core/mk_iov.c",
+   "source_matches": true,
+   "source_sha256": "eccfc9787f23195d3e1678368fb67b0ddada7fda9105f60516be46bccbc972f9",
+   "user_command_rewritten_sha256": "c4d00e5355b4b749449f7046b5f180997e2158b35fe0e8ea6875704dfd154c21",
+   "user_command_sha256": "18abe81106c0c67e6c0819f57870ceb5c850c721eb736dbc5c32d5e88c5b7567",
+   "user_records": 1
+  },
+  {
+   "artifact_command_sha256": "a4b2ee75a713e6d6dffe932f8b90baa091fd2a0ef8d17e8a1e5dc38845d643c9",
+   "command_matches": true,
+   "directory_matches": true,
+   "holds": true,
+   "linked": true,
+   "linked_input_sha256": [
+    "0776bc2dd480d0ae0d8a7e850ffd0698ecb66cfc26bd5ab3099c4b5ebb765149"
+   ],
+   "reproduction": "equal",
+   "route_unit": "monkey/lib/monkey/mk_server/monkey.c",
+   "source_matches": true,
+   "source_sha256": "6a42bbd04882e05b35c10533e6fb147e988960729050b7b43342087f4969afba",
+   "user_command_rewritten_sha256": "a4b2ee75a713e6d6dffe932f8b90baa091fd2a0ef8d17e8a1e5dc38845d643c9",
+   "user_command_sha256": "e598ed0cd74feec7dc754afbd7c265602af270ca1f19420d8c997a4163253365",
+   "user_records": 1
+  },
+  {
+   "artifact_command_sha256": "349507736b4efdd239bb024320d9fbc01e7bdb6a3ea9bff4dfabef130fb57b32",
+   "command_matches": true,
+   "directory_matches": true,
+   "holds": true,
+   "linked": true,
+   "linked_input_sha256": [
+    "6bd616fa04b80683e72f95c14ea6c16cd021a45373b5401947cd3f271771d006"
+   ],
+   "reproduction": "equal",
+   "route_unit": "monkey/lib/monkey/mk_server/mk_lib.c",
+   "source_matches": true,
+   "source_sha256": "f4f48d8efdb4cde301cc49dbb8fb89d2392dc4d4eacedac87e40be9902262883",
+   "user_command_rewritten_sha256": "349507736b4efdd239bb024320d9fbc01e7bdb6a3ea9bff4dfabef130fb57b32",
+   "user_command_sha256": "fdb1cb3d673c0b4e36723c2ba7a3bdb4fb5c7c852575fb37e592c281fc5c5669",
+   "user_records": 1
+  },
+  {
+   "artifact_command_sha256": "605db9b247f65281ea6f2d926c53fb9c5535ffcd1f5e4e584d7e51a898c59de5",
+   "command_matches": true,
+   "directory_matches": true,
+   "holds": true,
+   "linked": true,
+   "linked_input_sha256": [
+    "ad13efb263e2e9268f7c19dc71997eb061b0d222021272d32c534c7de3366376"
+   ],
+   "reproduction": "equal",
+   "route_unit": "monkey/lib/monkey/mk_server/mk_fifo.c",
+   "source_matches": true,
+   "source_sha256": "1b43086ad3e1001d1c36f1324904322509819c9dcf7eb44821f7991805d5de2b",
+   "user_command_rewritten_sha256": "605db9b247f65281ea6f2d926c53fb9c5535ffcd1f5e4e584d7e51a898c59de5",
+   "user_command_sha256": "14584fd6b84afc3cc9bc0128ce94ef24c76fe6eb9b3db8674d28887a4a440c78",
+   "user_records": 1
+  },
+  {
+   "artifact_command_sha256": "e277fad902ffd963f019b1da3177f2787146fa863bde8c6e5adde65a4684184d",
+   "command_matches": true,
+   "directory_matches": true,
+   "holds": true,
+   "linked": true,
+   "linked_input_sha256": [
+    "525f5364fb72391c0e834364189f0fab9670f480ed13224806dc0314eaf95ce8"
+   ],
+   "reproduction": "equal",
+   "route_unit": "monkey/lib/monkey/mk_server/mk_mimetype.c",
+   "source_matches": true,
+   "source_sha256": "4f770ba53285bb5ee1a8f36f29d8691ac2ad29e8325277ae72861a68efdfc9b2",
+   "user_command_rewritten_sha256": "e277fad902ffd963f019b1da3177f2787146fa863bde8c6e5adde65a4684184d",
+   "user_command_sha256": "23b97427277ebcc0318d85eeec97d648c21137d8817b2736477f411ee5f93bf2",
+   "user_records": 1
+  },
+  {
+   "artifact_command_sha256": "0f776a208f2558dc9e7d9087a1f9f46b69df29d05b87bea9e8abd2c037d10b7e",
+   "command_matches": true,
+   "directory_matches": true,
+   "holds": true,
+   "linked": true,
+   "linked_input_sha256": [
+    "c7ca96b15b044222d799b60f00a1197cdd6a6c6322a39178ec5c16cb7536984a"
+   ],
+   "reproduction": "equal",
+   "route_unit": "monkey/lib/monkey/mk_server/mk_vhost.c",
+   "source_matches": true,
+   "source_sha256": "f3671b4754d9a1d97a71910718480188dcb653feb31cddbfde307e458e40e77a",
+   "user_command_rewritten_sha256": "0f776a208f2558dc9e7d9087a1f9f46b69df29d05b87bea9e8abd2c037d10b7e",
+   "user_command_sha256": "8dd846dea01b7b3924e0497a5702857e75d263f4516a6c93295b5cb7ab7f9aa0",
+   "user_records": 1
+  },
+  {
+   "artifact_command_sha256": "a12938fdd2dd234cc6d1abb2aade31aa3dccdbba2738542c2693683da04f591a",
+   "command_matches": true,
+   "directory_matches": true,
+   "holds": true,
+   "linked": true,
+   "linked_input_sha256": [
+    "3a88b221614e7db1558f55b252c31c6910487e3b60f69527f84cb35b84ca1df8"
+   ],
+   "reproduction": "equal",
+   "route_unit": "monkey/lib/monkey/mk_server/mk_header.c",
+   "source_matches": true,
+   "source_sha256": "7ab8d8bac6c8760dd597eefc019c9d24185afe52af9b7368271ce9ae84005399",
+   "user_command_rewritten_sha256": "a12938fdd2dd234cc6d1abb2aade31aa3dccdbba2738542c2693683da04f591a",
+   "user_command_sha256": "1c25e62f75f8a867fa62a821dbf61e0b27a2878f28c911c20b9c00e6f92ff189",
+   "user_records": 1
+  },
+  {
+   "artifact_command_sha256": "64eda446a36357434bdb380a07253c76f4edc1564865aa716ddc05c905fd93be",
+   "command_matches": true,
+   "directory_matches": true,
+   "holds": true,
+   "linked": true,
+   "linked_input_sha256": [
+    "2e9815b05c08e7f592f0243066e38d70a3f30e11e11e64dfd8073542d833398e"
+   ],
+   "reproduction": "equal",
+   "route_unit": "monkey/lib/monkey/mk_server/mk_config.c",
+   "source_matches": true,
+   "source_sha256": "9e8bcce0ec0b7846e3fe874fd10f4553b379a387848d996d182a7146817ab7a7",
+   "user_command_rewritten_sha256": "64eda446a36357434bdb380a07253c76f4edc1564865aa716ddc05c905fd93be",
+   "user_command_sha256": "3b2fe4460f6f016ffce330115f8fd8937823920df3996d46d4057036dfbdfa88",
+   "user_records": 1
+  },
+  {
+   "artifact_command_sha256": "657bf837be9b066776f171f313620933b5e5d89af7d84078eb24430cf2bc050f",
+   "command_matches": true,
+   "directory_matches": true,
+   "holds": true,
+   "linked": true,
+   "linked_input_sha256": [
+    "32189873dc9c7edd2f87620c320816d59d958bb00bed5013760b7514d3fad2c4"
+   ],
+   "reproduction": "equal",
+   "route_unit": "monkey/lib/monkey/mk_server/mk_user.c",
+   "source_matches": true,
+   "source_sha256": "a238174ae767b20760ba77d8839d11d8623370a67c1e176de4af9cb417892cf6",
+   "user_command_rewritten_sha256": "657bf837be9b066776f171f313620933b5e5d89af7d84078eb24430cf2bc050f",
+   "user_command_sha256": "ac2d94c88c07ee2a7ecfcb894b3409c1566fb123ccb035794378781d10394d3c",
+   "user_records": 1
+  },
+  {
+   "artifact_command_sha256": "40f36e3eb4d38779c726f51a812693e96275c9167d5f734feec17cb337253041",
+   "command_matches": true,
+   "directory_matches": true,
+   "holds": true,
+   "linked": true,
+   "linked_input_sha256": [
+    "c4a9f5dae5db961397fae17e462e6ae2659b03fa3ec95836f081836256c45b4e"
+   ],
+   "reproduction": "equal",
+   "route_unit": "monkey/lib/monkey/mk_server/mk_utils.c",
+   "source_matches": true,
+   "source_sha256": "9853b77bca880ca761c8e204409f956f9c0257205413d906b40202033612d517",
+   "user_command_rewritten_sha256": "40f36e3eb4d38779c726f51a812693e96275c9167d5f734feec17cb337253041",
+   "user_command_sha256": "aab8042a1c608ca94c657268ff81ebe315f3b85558b81132bcfceb67218d10d2",
+   "user_records": 1
+  },
+  {
+   "artifact_command_sha256": "cb907c2a90fe3bee1a6c046ce36abdf1fbd6342d3f75d8547b4505851a4def21",
+   "command_matches": true,
+   "directory_matches": true,
+   "holds": true,
+   "linked": true,
+   "linked_input_sha256": [
+    "53ab007546930d2018fad67675c8bcd7cd312c5ba25327898ffcf20c7e2beb65"
+   ],
+   "reproduction": "equal",
+   "route_unit": "monkey/lib/monkey/mk_server/mk_stream.c",
+   "source_matches": true,
+   "source_sha256": "37d26918c71467b7c94ff271271925beeabb90bb52c0ff859fb3c5270f57226a",
+   "user_command_rewritten_sha256": "cb907c2a90fe3bee1a6c046ce36abdf1fbd6342d3f75d8547b4505851a4def21",
+   "user_command_sha256": "6c8c73b464af3b7a436e8acea36005d85ed5c3682051ef7a771f61e8c47e67f7",
+   "user_records": 1
+  },
+  {
+   "artifact_command_sha256": "684f5a1f2c402c175487ba251ffd95fef1b331f12c0a59d7eed062318b3257c1",
+   "command_matches": true,
+   "directory_matches": true,
+   "holds": true,
+   "linked": true,
+   "linked_input_sha256": [
+    "5439977ea3884db15bb4fdfc314f744c0862da0eef4758870bc5e947d82d32af"
+   ],
+   "reproduction": "equal",
+   "route_unit": "monkey/lib/monkey/mk_server/mk_scheduler.c",
+   "source_matches": true,
+   "source_sha256": "9a515fa6d0cc79ee8e70457e5e26e65a9ab82c8febd0bb383c88d35bcc1aedda",
+   "user_command_rewritten_sha256": "684f5a1f2c402c175487ba251ffd95fef1b331f12c0a59d7eed062318b3257c1",
+   "user_command_sha256": "fd950417f4aab561c4d146833467a9863782c563ca9ec4b43dac73e89d2c5bf2",
+   "user_records": 1
+  },
+  {
+   "artifact_command_sha256": "804193d252438f011a6b744a44dcd6ee55bffc2663f2104895c5e806d5a677ed",
+   "command_matches": true,
+   "directory_matches": true,
+   "holds": true,
+   "linked": true,
+   "linked_input_sha256": [
+    "e317e6c39a651ee03993344ab528ec31fc7a59c682b8dc814f2cf5775990be1f"
+   ],
+   "reproduction": "equal",
+   "route_unit": "monkey/lib/monkey/mk_server/mk_http.c",
+   "source_matches": true,
+   "source_sha256": "7e2a84eb42fdebfebdf7e4d2c1afe003d15b030b70d73dd38e30474f0afedb46",
+   "user_command_rewritten_sha256": "804193d252438f011a6b744a44dcd6ee55bffc2663f2104895c5e806d5a677ed",
+   "user_command_sha256": "071c52d99b50327aa207f9ddf45ddb309e38b6b40c76eb77cecdfd848f826403",
+   "user_records": 1
+  },
+  {
+   "artifact_command_sha256": "cde18c6227d3a727ebe044988516f2252f842879840d8cef8327654d3e6fc67c",
+   "command_matches": true,
+   "directory_matches": true,
+   "holds": true,
+   "linked": true,
+   "linked_input_sha256": [
+    "0928227c3baeabd569ab9847425fa3116b298249c85844c1506671f7f4a9172e"
+   ],
+   "reproduction": "equal",
+   "route_unit": "monkey/lib/monkey/mk_server/mk_http_parser.c",
+   "source_matches": true,
+   "source_sha256": "bb1fe87e129a64981271103305273f7e1eaa454329eb2d4cfaf113d682716ff9",
+   "user_command_rewritten_sha256": "cde18c6227d3a727ebe044988516f2252f842879840d8cef8327654d3e6fc67c",
+   "user_command_sha256": "00b315eb8ccb2383fb680cdae5fae96db00b4389435f8c1240ef7c551c840e7c",
+   "user_records": 1
+  },
+  {
+   "artifact_command_sha256": "53e7b00786814f387c0dbb61a122073ad921e3874670bf25127738d9bf45fdfe",
+   "command_matches": true,
+   "directory_matches": true,
+   "holds": true,
+   "linked": true,
+   "linked_input_sha256": [
+    "a1c4a66e95e718344049583f9740b53a9d686b75a36f3be15ef947b6a3bb1e44"
+   ],
+   "reproduction": "equal",
+   "route_unit": "monkey/lib/monkey/mk_server/mk_http_thread.c",
+   "source_matches": true,
+   "source_sha256": "29fa43236d38b00d8609906f535386d93c600685744cefc1914a2a7ccff3d745",
+   "user_command_rewritten_sha256": "53e7b00786814f387c0dbb61a122073ad921e3874670bf25127738d9bf45fdfe",
+   "user_command_sha256": "8efc0f201cb51f9c81b9901cba78bc2d6662761d4fbe06a2a5b7598030505556",
+   "user_records": 1
+  },
+  {
+   "artifact_command_sha256": "9693b316cb574f766f187229b00858db574842a00cac3b117f94749058567235",
+   "command_matches": true,
+   "directory_matches": true,
+   "holds": true,
+   "linked": true,
+   "linked_input_sha256": [
+    "4784fd2a40c5d3cadd2b58578b6837dc6f13ec9dd58db1f5a0c50c0c0fbd3a0e"
+   ],
+   "reproduction": "equal",
+   "route_unit": "monkey/lib/monkey/mk_server/mk_socket.c",
+   "source_matches": true,
+   "source_sha256": "b37b356b0c391c559e481551cf50121765484d680c70b482fd5626ba617ec794",
+   "user_command_rewritten_sha256": "9693b316cb574f766f187229b00858db574842a00cac3b117f94749058567235",
+   "user_command_sha256": "109cf23542ba3f568deb6ae976db6b2ad438fed75984ba3e530b7735c69d3060",
+   "user_records": 1
+  },
+  {
+   "artifact_command_sha256": "929792dcfe551b6d051af6a6f3fb2f818d59f1271f5012423735a7d295a4a84a",
+   "command_matches": true,
+   "directory_matches": true,
+   "holds": true,
+   "linked": true,
+   "linked_input_sha256": [
+    "a88a91ac8498a3c7e0d6d22a74c0988de8edd05097208df3392b6ea9f9ad4d78"
+   ],
+   "reproduction": "equal",
+   "route_unit": "monkey/lib/monkey/mk_server/mk_net.c",
+   "source_matches": true,
+   "source_sha256": "59b1ea384cd84087790b7f92b3079602a64a3d4cd269f4acbc799b98e82d4cd3",
+   "user_command_rewritten_sha256": "929792dcfe551b6d051af6a6f3fb2f818d59f1271f5012423735a7d295a4a84a",
+   "user_command_sha256": "1efac5695f09fcaf2c7dfbcdad970035a4a48f6212ef38fcb92818c8cbdb885f",
+   "user_records": 1
+  },
+  {
+   "artifact_command_sha256": "95a43fe5f4005396a74609bfd4db71672666c40dcf01aebb03cb35b92a0f280b",
+   "command_matches": true,
+   "directory_matches": true,
+   "holds": true,
+   "linked": true,
+   "linked_input_sha256": [
+    "0e04f7e7941029646de6947f3637dfa6ce327a5e9a9154d3e0cd651326e7c1d1"
+   ],
+   "reproduction": "equal",
+   "route_unit": "monkey/lib/monkey/mk_server/mk_clock.c",
+   "source_matches": true,
+   "source_sha256": "7197f65657d4bbd9fe1b9a47e67b6254d67a9403e171508ea086a90ba3a54ea7",
+   "user_command_rewritten_sha256": "95a43fe5f4005396a74609bfd4db71672666c40dcf01aebb03cb35b92a0f280b",
+   "user_command_sha256": "d895b7dd6944916451ab9db0a85eedadbabdc897e5e40fd8f9a843c774e05f7c",
+   "user_records": 1
+  },
+  {
+   "artifact_command_sha256": "913a8443c2eb6e3f74f3aed0a38e0e28013761085e9f23bc23ae82e38eabd5be",
+   "command_matches": true,
+   "directory_matches": true,
+   "holds": true,
+   "linked": true,
+   "linked_input_sha256": [
+    "f406d3be6ecac47ffa680371bd53936c6431e42aae9e206b0b3acaf9eb6d73f3"
+   ],
+   "reproduction": "equal",
+   "route_unit": "monkey/lib/monkey/mk_server/mk_cache.c",
+   "source_matches": true,
+   "source_sha256": "31e0d4b9b1224064cbe9ec63ae46a93ebe6a27e07e2d158f298a25477bc74a15",
+   "user_command_rewritten_sha256": "913a8443c2eb6e3f74f3aed0a38e0e28013761085e9f23bc23ae82e38eabd5be",
+   "user_command_sha256": "f335d6ae3613048ffb60778ef42e7220e50e8ce3517fbf550598e11c257d24df",
+   "user_records": 1
+  },
+  {
+   "artifact_command_sha256": "285ad0e2f49359b65774a5f8f4402db0fdbce5db7b8eea03bfc8dc564c83eef8",
+   "command_matches": true,
+   "directory_matches": true,
+   "holds": true,
+   "linked": true,
+   "linked_input_sha256": [
+    "cf364a9cae4f6616236e7bccc55e5ee642d00ad2634bfdb121c4c78729d39830"
+   ],
+   "reproduction": "equal",
+   "route_unit": "monkey/lib/monkey/mk_server/mk_server.c",
+   "source_matches": true,
+   "source_sha256": "07a15b43f175df357109d21ebf29deeb9fdc5b5de3bf8f9db703e9214fdbdcdd",
+   "user_command_rewritten_sha256": "285ad0e2f49359b65774a5f8f4402db0fdbce5db7b8eea03bfc8dc564c83eef8",
+   "user_command_sha256": "a6ab3538ca982eff35955d90bcbe586680d0946664603774a5589d3d15accd49",
+   "user_records": 1
+  },
+  {
+   "artifact_command_sha256": "6404d52d6418ca5c02fc9d77ed94e6d8ad595f9b85d6f7a02bd73e35934804cc",
+   "command_matches": true,
+   "directory_matches": true,
+   "holds": true,
+   "linked": true,
+   "linked_input_sha256": [
+    "a0f14249ebc3b59869c61bca38b3beb601db046017451210c19f71f5f47b4d9f"
+   ],
+   "reproduction": "equal",
+   "route_unit": "monkey/lib/monkey/mk_server/mk_kernel.c",
+   "source_matches": true,
+   "source_sha256": "2f80c96bd569bbca082e85c79d135580dca9c6faa593339fbaa2e5fa1fcb9a6f",
+   "user_command_rewritten_sha256": "6404d52d6418ca5c02fc9d77ed94e6d8ad595f9b85d6f7a02bd73e35934804cc",
+   "user_command_sha256": "e7393fdabc61c15ed42f60bc05bd21befcceae1e6aaf4d16d975c182f2abf02e",
+   "user_records": 1
+  },
+  {
+   "artifact_command_sha256": "20fa2047ab73e47817c4596bf5dda096dbfc903edd4c3b45945ec1f474367b90",
+   "command_matches": true,
+   "directory_matches": true,
+   "holds": true,
+   "linked": true,
+   "linked_input_sha256": [
+    "5c4d1498b4a15cb0077bb420f05375231685fab3a3be4bf7750674956cfeec0c"
+   ],
+   "reproduction": "equal",
+   "route_unit": "monkey/lib/monkey/mk_server/mk_plugin.c",
+   "source_matches": true,
+   "source_sha256": "ae0744547457b30484904bf9efc86021a29e33edc1168ad5550665382aecebb6",
+   "user_command_rewritten_sha256": "20fa2047ab73e47817c4596bf5dda096dbfc903edd4c3b45945ec1f474367b90",
+   "user_command_sha256": "2f3818bfd832e460ebe12d2acab84d84f7fd1c75d72fd65476900f057e1b1372",
+   "user_records": 1
+  },
+  {
+   "artifact_command_sha256": "70bb2c85c599d17a20e09192fbf1bf0ebf7caea27fde30e529f2518f56598fd6",
+   "command_matches": true,
+   "directory_matches": true,
+   "holds": true,
+   "linked": true,
+   "linked_input_sha256": [
+    "181c131f29b32a31f67f5607d95dd1decc7b7f73b4d42df7123982e84633daaa"
+   ],
+   "reproduction": "equal",
+   "route_unit": "monkey/lib/monkey/tls/tls_openssl.c",
+   "source_matches": true,
+   "source_sha256": "6791f827e13d754871adca75d512a1995c84c7c08d156e6b01f420d76644e362",
+   "user_command_rewritten_sha256": "70bb2c85c599d17a20e09192fbf1bf0ebf7caea27fde30e529f2518f56598fd6",
+   "user_command_sha256": "a75fcce94f0900bac2366171d5f06d8956441f027e5d8d42cae362bdbb0aaf0e",
+   "user_records": 1
+  }
+ ],
+ "user_preparation": "/media/Data/GitHub/quirin-lang/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736"
+}
