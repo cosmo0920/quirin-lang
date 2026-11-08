@@ -53,6 +53,8 @@ pub mod ffi_layout;
 // Card W48-QRLIB-LINKAGE: the exported symbol table of a C-ABI artifact on
 // every platform, and the generated `.qrlib` manifest.
 pub mod linkage;
+// Card LINK-STANDING (rule 40): a cross-unit callee's type in one unit.
+pub mod link_call_type;
 // Card CG03-CALL-SUMMARY-INSTANTIATION (rule 10u): the call-contract
 // acceptance and the typed per-formal substitution; the G hooks are in
 // `legacy_call_instantiation.rs`.

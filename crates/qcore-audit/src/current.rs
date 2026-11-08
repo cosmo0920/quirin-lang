@@ -112,6 +112,9 @@ pub struct CurrentAudit {
     /// on every analysing thread, with its evidence section.
     member_prepass: Option<crate::member_prepass::Prepass>,
     cross_unit_homes: Vec<qcore_c_gateway::legacy_c::CrossUnitHomeEvidence>,
+    /// Card LINK-STANDING (rule 40): the derived resolution's per-caller
+    /// conditions, when the run's link resolution is derived.
+    link_standing: Option<std::sync::Arc<crate::cross_unit_links::LinkStanding>>,
 }
 
 /// One configuration's console lines and, unless it failed, its products.
@@ -351,6 +354,7 @@ impl CurrentAudit {
             counts: AuditCounts::default(),
             member_prepass: None,
             cross_unit_homes: Vec::new(),
+            link_standing: None,
         })
     }
 
@@ -380,6 +384,7 @@ impl CurrentAudit {
     ) {
         self.contracts = crate::refuted_contracts::with_table(&self.loaded_contracts, table);
         self.cross_unit_homes.clear();
+        self.link_standing = None;
         if let Some(assumptions) = self.assumptions.as_object_mut() {
             assumptions.remove("cross_unit_link_resolution");
         }
@@ -414,6 +419,50 @@ impl CurrentAudit {
                 "home_environment_sha256": home.environment_sha256,
             })).collect::<Vec<_>>(),
         });
+    }
+
+    /// Card **LINK-STANDING** (rule 40): install the homes of a derived
+    /// resolution and its per-caller conditions. The assumption names the
+    /// artifact as derived evidence; it states no premise.
+    pub fn set_cross_unit_derived(
+        &mut self,
+        environment: ResourceContracts,
+        homes: Vec<qcore_c_gateway::legacy_c::CrossUnitHomeEvidence>,
+        derived: crate::cross_unit_links::Derived,
+    ) {
+        let crate::cross_unit_links::Derived {
+            map,
+            standing,
+            refused: _,
+            evidence,
+        } = &derived;
+        self.contracts = environment;
+        self.cross_unit_homes = homes;
+        self.assumptions["cross_unit_link_resolution"] = json!({
+            "scope": "derived (rule 40): each external call to an imported symbol is resolved by the static link of the executable the artifact describes to the home's one strong global definition; a caller holds the import only when its own configuration is linked and the callee's type in its unit equals the home definition's",
+            "evidence": "derived",
+            "derived_from": evidence,
+            "replay_budget_per_unit": qcore_c_gateway::legacy_c::CROSS_UNIT_REPLAY_BUDGET_PER_UNIT,
+            "map_sha256": self.contracts.link_resolution_sha256(),
+            "derived_homes": map.requested().len(),
+            "refused_by_reason": derived.refused_by_reason(),
+            "imported": self.cross_unit_homes.iter().map(|home| json!({
+                "function": home.function,
+                "home_unit": map.home_for(&home.function),
+                "home_raw_source_sha256": home.input_identity.raw_source_sha256,
+                "home_preprocessed_source_sha256": home.input_identity.preprocessed_source_sha256,
+                "home_environment_sha256": home.environment_sha256,
+                "link_record": standing.record(&home.function),
+            })).collect::<Vec<_>>(),
+        });
+        let crate::cross_unit_links::Derived { standing, .. } = derived;
+        self.link_standing = Some(std::sync::Arc::new(standing));
+    }
+
+    /// Card **LINK-STANDING** (rule 40): a supplied artifact the run refused
+    /// as a whole (database or bound digest); no import is held.
+    pub fn record_link_resolution_refused(&mut self, evidence: Value) {
+        self.assumptions["cross_unit_link_resolution"] = evidence;
     }
 
     /// Card W45-REFUTED-CONTRACT-WITHDRAWAL: the refutation table later
@@ -713,12 +762,24 @@ impl CurrentAudit {
                 )?;
                 configuration["compile_task_identity"] =
                     serde_json::to_value(&identity).map_err(|error| error.to_string())?;
-                crate::projection::project_prepared_unit_into_with_cross_unit(
+                // Card LINK-STANDING (rule 40): under a derived resolution
+                // a caller holds a home only when its own configuration is
+                // linked and the callee's type agrees.
+                let caller = crate::cross_unit_links::ConfigurationIdentity::of(entry);
+                let caller_unit = &prepared;
+                let admission = self.link_standing.as_ref().map(|standing| {
+                    let linked = standing.caller_linked(&caller);
+                    move |scoped| standing.admit(scoped, linked, caller_unit)
+                });
+                crate::projection::project_prepared_unit_into_with_link_standing(
                     library,
                     &file,
                     &prepared,
                     &self.contracts,
                     &self.cross_unit_homes,
+                    admission
+                        .as_ref()
+                        .map(|admit| admit as crate::projection::LinkAdmission<'_>),
                     PreparedAuditCertificateContext {
                         compile_task_identity: &identity,
                         source_profile_sha256: &self.source_profile_sha256,

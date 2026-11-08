@@ -826,12 +826,58 @@ pub fn project_prepared_unit_into_with_cross_unit(
     counts: &mut AuditCounts,
     out: &mut String,
 ) -> Result<(), String> {
+    project_prepared_unit_into_with_link_standing(
+        library,
+        file,
+        prepared,
+        contracts,
+        run_homes,
+        None,
+        certificate_context,
+        report,
+        counts,
+        out,
+    )
+}
+
+/// Card **LINK-STANDING** (rule 40): a caller's admission of the homes rule
+/// 4c's scope holds; returns the kept imports and each refused home with
+/// its reason.
+pub type LinkAdmission<'a> = &'a dyn Fn(
+    qcore_c_gateway::legacy_c::CrossUnitCallerImports,
+) -> (
+    qcore_c_gateway::legacy_c::CrossUnitCallerImports,
+    Vec<(String, String)>,
+);
+
+/// [`project_prepared_unit_into_with_cross_unit`], with rule 40's admission
+/// applied to the held homes after rule 4c's scope and budget.
+#[allow(clippy::too_many_arguments)]
+pub fn project_prepared_unit_into_with_link_standing(
+    library: &str,
+    file: &str,
+    prepared: &PreparedTranslationUnit,
+    contracts: &ResourceContracts,
+    run_homes: &[qcore_c_gateway::legacy_c::CrossUnitHomeEvidence],
+    admission: Option<LinkAdmission<'_>>,
+    certificate_context: PreparedAuditCertificateContext<'_>,
+    report: &mut AuditReport,
+    counts: &mut AuditCounts,
+    out: &mut String,
+) -> Result<(), String> {
     let scoped = if run_homes.is_empty() {
         None
     } else {
         prepared.preprocessed_source().ok().map(|source| {
             qcore_c_gateway::legacy_c::cross_unit_for_caller(source, contracts, run_homes)
         })
+    };
+    let (scoped, link_refusals) = match (scoped, admission) {
+        (Some(scoped), Some(admission)) => {
+            let (scoped, refusals) = admission(scoped);
+            (Some(scoped), refusals)
+        }
+        (scoped, _) => (scoped, Vec::new()),
     };
     let contracts = scoped
         .as_ref()
@@ -1008,7 +1054,20 @@ pub fn project_prepared_unit_into_with_cross_unit(
         out,
     )?;
     record_withheld(scoped.as_ref(), report, out);
+    record_link_refusals(&link_refusals, report, out);
     Ok(())
+}
+
+/// Card **LINK-STANDING** (rule 40): the homes rule 40 refused for this
+/// caller, on its unit row and console lines.
+fn record_link_refusals(refusals: &[(String, String)], report: &mut AuditReport, out: &mut String) {
+    if refusals.is_empty() {
+        return;
+    }
+    report.record_cross_unit_link_refusals(refusals);
+    for (function, reason) in refusals {
+        say!(out, "    cross-unit import `{function}` refused: {reason}");
+    }
 }
 
 /// Card **CURRENT-RUN-DEFECTS**: a unit whose every raw-scan definition is

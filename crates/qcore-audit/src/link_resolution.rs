@@ -478,6 +478,33 @@ fn parse_map(text: &str) -> Result<MapFile, String> {
     Ok(map)
 }
 
+/// Card **LINK-STANDING** (rule 40): the bytes of one linked input as the
+/// artifact labels it (relative to the link directory): an object file, or
+/// the one archive member of that name.
+pub(crate) fn input_bytes(link_dir: &Path, label: &str) -> Result<Vec<u8>, String> {
+    let read = |label: &str| {
+        let path = link_dir.join(label);
+        fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))
+    };
+    let Some((archive, member)) = split_member(label) else {
+        return read(label);
+    };
+    let bytes = read(archive)?;
+    let members = archive_members(&bytes).map_err(|error| format!("{archive}: {error}"))?;
+    match members
+        .iter()
+        .filter(|(name, _)| name == member)
+        .collect::<Vec<_>>()
+        .as_slice()
+    {
+        [(_, range)] => Ok(bytes[range.clone()].to_vec()),
+        found => Err(format!(
+            "{label}: {} archive members of that name",
+            found.len()
+        )),
+    }
+}
+
 /// `archive(member)` into its two parts.
 fn split_member(label: &str) -> Option<(&str, &str)> {
     let open = label.find(".a(")? + 2;
