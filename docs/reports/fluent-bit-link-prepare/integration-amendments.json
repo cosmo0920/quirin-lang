@@ -1,0 +1,63 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "FLUENT-BIT-LINK-PREPARE",
+  "base": "1e522ca5d",
+  "measured_tip": "b1aabb1e6",
+  "increment_paragraph": "**FLUENT-BIT-LINK-PREPARE** (round 27; second prerequisite of the user's \"Option A (rec.)\" on BODY-SUMMARY-REUSE-LINK-STANDING; [report](../../reports/fluent-bit-link-prepare/README.md)). `quirin-audit prepare [clang-build] --link [--build-jobs N]` (explicit, off by default; without it prepare is unchanged) builds and links the `fluent-bit` executable in the same build tree whose compile database the `current` route reads, then reads the link from the linker's own output. The same link command is rerun with GNU ld's `-Map`/`--cref` into a side path that must equal the executable byte for byte. The map (inputs, included archive members, text ranges, cross-reference table) is cross-checked against every linked object's and the executable's ELF symbol tables, dynamic section and dynamic relocations (a minimal ELF64/ar reader). Every linked database object is recompiled from its own database command and must reproduce byte for byte; a mismatch refuses that unit. LTO, version scripts, `--wrap`, `--defsym`, muldefs, `-shared`, `-Bsymbolic`, dynamic lists and non-GNU linkers stop the step. It writes the link-resolution artifact (`quirin-link-resolution/1`, bound to the executable, input, database, link-command and toolchain digests), a candidate rule 4c map in the route's existing format, and its refusal list. A name is derived only for one strong global definition in the executable (PIE, not a shared object), defined in no other linked object, with no dynamic relocation, from a reproduced object of a unit the route selects under a unique key. Nothing reads the map: no route, profile or verdict changes, and there is no Lean change. Run at Fluent Bit 046accf6 (GNU ld 2.46, clang 21.1.8): PIE executable, side relink equal; 1,006 linked inputs; 992 database objects, all reproduced byte for byte; 6,417 function symbols referenced across inputs: 1,384 derived, 4,286 homes outside the route's units, 704 shared-object, 26 under the ambiguous key of flb_input_chunk.c's two configurations, 17 libbacktrace (no database entry); none weak, duplicated, interposable or disagreeing. Census coverage (BODY-SUMMARY-REUSE): 132 of 156 cross-unit callees and 383 of 438 sites derived, each with the experiment map's home and a linked caller; the 24 refused (55 sites) are Monkey homes, which current analyses from its separate libevent database; 5 of the 7 sole-blocked functions have every blocker derived. A fresh prepare's database differs from the user's; a second configure of the same tree reproduces the user's exactly (PREPARE-CONFIGURE-CONVERGENCE), and the run on that database gives the same executable and decisions. Cost: about 2 min build and reproduction at 6 jobs, 302 MB linked tree, 19 MB records.",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "FLUENT-BIT-LINK-PREPARE",
+      "operation": "register",
+      "title": "A prepare that links fluent-bit and derives a candidate link resolution from the linked executable",
+      "text": "Second prerequisite of BODY-SUMMARY-REUSE-LINK-STANDING under the user's \"Option A (rec.)\" (2026-11-06): prepare links the fluent-bit executable from the configuration whose compile database the current route reads and extracts a link-resolution artifact and candidate rule 4c map from the linker's output.",
+      "source": "docs/reports/fluent-bit-link-prepare/README.md",
+      "recorded_by": "FLUENT-BIT-LINK-PREPARE"
+    },
+    {
+      "id": "FLUENT-BIT-LINK-PREPARE",
+      "operation": "retire",
+      "why": "DISCHARGED (FLUENT-BIT-LINK-PREPARE, round 27, base 1e522ca5d, tip b1aabb1e6). prepare --link (explicit) builds and links fluent-bit in the route's build tree, verifies the map by a byte-equal side relink, cross-checks it against ELF symbol tables and dynamic relocations, reproduces every linked object from its database command, and writes the link-resolution artifact, a candidate rule 4c map in the route's format and refusals; nothing reads them. On the user's configuration: 1,384 derived names; census coverage 132/156 callees, 383/438 sites; 24 Monkey callees refused (CURRENT-MONKEY-CONFIGURATION-NOT-LINKED). Gate exit 0 (rust-suite 2,611 passed, python 685).",
+      "source": "docs/reports/fluent-bit-link-prepare/README.md"
+    },
+    {
+      "id": "BODY-SUMMARY-REUSE-LINK-STANDING",
+      "operation": "amend",
+      "text": "PREREQUISITE CLOSED (FLUENT-BIT-LINK-PREPARE): `quirin-audit prepare --link` links fluent-bit in the route's own build tree and writes link-resolution/ (artifact `quirin-link-resolution/1`, candidate map in rule 4c's format, refusals), bound to executable, input, database and toolchain digests; nothing reads it yet. On the user's configuration (database equal to the run's after the path prefix), it derives 1,384 names. They cover 132 of the census's 156 cross-unit callees and 383 of its 438 sites, each with the experiment map's home and a caller linked into the executable, and every blocker of 5 of the 7 sole-blocked functions. The 24 refused callees (55 sites) are Monkey homes. What adoption still needs: (1) rule 4c applies a map to every caller, but the premise covers only callers whose configuration is linked into the executable; the artifact records `linked` per configuration, so the route must withhold imports from unlinked callers (on current: the Monkey units and flb_input_chunk.c's shared configuration); (2) the route's `library/file` key cannot name one of two configurations of a file (26 names in flb_input_chunk.c refused); (3) the artifact must match the database the run reads (compare its compile_database sha256; see PREPARE-CONFIGURE-CONVERGENCE); (4) the Clang call-type check: the artifact carries no function types (ELF symbol tables have none and the call-site declaration is in no object), so the check needs the caller's declaration in force and the home definition from the units the route already preprocesses (the objects' DWARF, built with -g, is an available cross-check); (5) Monkey homes need CURRENT-MONKEY-CONFIGURATION-NOT-LINKED decided.",
+      "source": "docs/reports/fluent-bit-link-prepare/README.md"
+    },
+    {
+      "id": "PREPARE-CONFIGURE-CONVERGENCE",
+      "operation": "register",
+      "title": "quirin-audit prepare's Fluent Bit CMake configuration does not converge in one pass",
+      "text": "Measured by FLUENT-BIT-LINK-PREPARE at Fluent Bit 046accf6: a fresh `prepare` emits a compile database (sha256 8cc891f0...829251f) that differs from the one the user's current run reads (93e9e67e...ff99583) in every command: 714 in word order only, 667 lacking `-I.../lib/yyjson-0.12.0/src`, 38 lacking that and `-DMK_HAVE_REGEX`. Configuring the same tree a second time with prepare's exact arguments yields the user's database exactly (all 1,419 commands equal after the path prefix). prepare reconfigures a reused output, so a fresh and a reused preparation of one revision give different databases and different analysed configurations. DISCHARGE: prepare configures until the compile database is stable (or states the number of passes) and records the pass count; the reports of both databases' runs keep their own digests.",
+      "source": "docs/reports/fluent-bit-link-prepare/README.md",
+      "recorded_by": "FLUENT-BIT-LINK-PREPARE"
+    },
+    {
+      "id": "CURRENT-MONKEY-CONFIGURATION-NOT-LINKED",
+      "operation": "register",
+      "title": "The current route analyses Monkey under a libevent configuration that the fluent-bit executable does not link",
+      "text": "Found by FLUENT-BIT-LINK-PREPARE: the current route reads Monkey units from prepare's separate monkey-build database (a libevent configuration of a copy of lib/monkey), but the fluent-bit executable links lib/monkey compiled under Fluent Bit's own configuration (its compile database). A derived link resolution therefore refuses every Monkey home: 24 of BODY-SUMMARY-REUSE's 156 cross-unit callees (55 sites, all in Monkey callers), including the blockers of the sole-blocked mk_mq_send and net_plain_writev. Options are a user choice: analyse Monkey from the fluent-bit database's configuration on current; link a program from the Monkey configuration; or keep Monkey homes refused. DISCHARGE: the user's choice, implemented, with the Monkey homes' outcome measured.",
+      "source": "docs/reports/fluent-bit-link-prepare/README.md",
+      "recorded_by": "FLUENT-BIT-LINK-PREPARE"
+    },
+    {
+      "id": "LINK-PREPARE-PINNED-ROUTE-INPUTS",
+      "operation": "register",
+      "title": "The pinned corpus, system and slice inputs have no linked executable",
+      "text": "FLUENT-BIT-LINK-PREPARE adds `prepare --link` for new preparations and runs it for the current route's revision only. The measurement routes read frozen preparations pinned by database digest (corpus: build/cycle19/c-gateway-wave-pin at 66910c10; system: private/w45-fb/w46-external-callee-contracts/attempt-1; slice: private/w47-tail/attempt-1/prep), none linked, so a derived resolution cannot replace their stated eight-home premise. DISCHARGE: when BODY-SUMMARY-REUSE-LINK-STANDING moves a pinned route to a derived resolution, prepare and link that route's input with --link (a new pinned preparation whose database digest equals the route's, or a recorded re-pin) and keep the eight-home premise until then.",
+      "source": "docs/reports/fluent-bit-link-prepare/README.md",
+      "recorded_by": "FLUENT-BIT-LINK-PREPARE"
+    },
+    {
+      "id": "GATE-SLOT-SHORT-BUILD-WAIT",
+      "operation": "register",
+      "title": "A short CPU-bound preparation waits hours for an audit slot behind memory-admitted audits and rust-suite drains",
+      "text": "Measured by FLUENT-BIT-LINK-PREPARE: `prepare clang-build --link` (3 min 17 s, peak 832 MB) waited 5 h 8 min for an audit slot at a 4 GiB budget, behind running audits, queued 7 GiB audits and repeated rust-suite drains that close audit admission. docs/agents/validation.md says builds take no slot; card briefs send heavy builds through gate_slot.py, and there is no class for a CPU-bound build. DISCHARGE: a build class (or a documented rule) for CPU-bound, memory-light preparation steps, with its interaction with rust-suite drains stated, or a recorded decision that such builds stay in the audit class.",
+      "source": "docs/reports/fluent-bit-link-prepare/README.md",
+      "recorded_by": "FLUENT-BIT-LINK-PREPARE"
+    }
+  ],
+  "profiles": []
+}
