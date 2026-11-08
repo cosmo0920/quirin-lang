@@ -396,7 +396,15 @@ uncommitted path.
 | lean | 0 | 417 audits (all, since a proof root changed) |
 | python | 0 | 685 tests |
 
-No provider gate: no provider path changed.
+No provider gate: no provider path changed. After the gate, only report
+files changed. At the report tip the Python suite was rerun:
+
+- with `QUIRIN_CARD_GATE_BASE=a0ac2cae9`, as the card gate runs it: 685
+  tests, OK;
+- without it: one failure, `test_the_derived_facts_are_recomputed_rather_than_carried`.
+  This is the expected stale Lean-audit count: the committed matrix records
+  416 audits, and the tree has 417 with this card's audit. Landing
+  regenerates the matrix.
 
 `python3 scripts/apply_amendments.py
 docs/reports/current-monkey-linked-configuration/integration-amendments.json
