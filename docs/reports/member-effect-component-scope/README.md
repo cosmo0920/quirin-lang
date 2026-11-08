@@ -170,3 +170,43 @@ premise for a `*`-spelled member, `LexicalSound`), `the_body_stays_sound`
 `the_unit_plays_no_part`. Premises stated, not proved: Clang's
 `MemberExpr` type is the member's declared type, and the lexical reader's
 `*`-spelled reading (trust boundary 28).
+
+## 5. Gate
+
+Card gate, `python3 scripts/gate_scope.py --base 1e522ca5d --out
+private/gate-1` at `662dc54a4` (the last code commit), run once
+([gate-run1.json](gate-run1.json)). Selection: the whole Rust suite
+(`qcore-c-gateway` changes), all of Lean (a proof root changes), Python; no
+provider gate. Every step exit 0 (`gate_scope: 8 steps passed`):
+
+| step | exit | counts |
+|---|---:|---|
+| submodules | 0 | 1 submodule |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --all-targets -- -D warnings` | 0 | |
+| Rust suite (`run_test_binaries.py`, rust-suite slot) | 0 | 617 units, 658 summaries; 9,292 passed; 0 failed; 16 ignored; 135 filtered |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| Lean (`check_lean_audits.py`) | 0 | 417 audits |
+| Python (`unittest discover -s scripts/tests`) | 0 | 685 tests |
+
+The Rust suite's 17,039 s include about 4 h 22 min waiting for its shared
+slot. Logs: `private/gate-1/` in the card worktree (per-unit logs under
+`rust-suite/`).
+
+## 6. Measurement and follow-ups
+
+Measured by the integrator:
+`target/release/quirin-audit --plugin-path target/release --output <dir> --timeout-ms 36000000 measure --inputs crates/quirin-audit-plugin-measure/inputs/live.json --inputs-base /media/Data/GitHub/quirin-lang --side base=baseline:7b726587bdf6a8213f451fa1c78297bb5e476ef7 --side tip=rev:662dc54a4 --declared docs/reports/member-effect-component-scope/PREDICTION.md`.
+
+Follow-ups (amendments in [integration-amendments.json](integration-amendments.json)):
+
+- **W45-MEMBER-RELEASE-UNTYPED-DECLARATIONS**, amended: its untyped-member
+  arm is discharged at an admitted nullable release; the untyped-base arm
+  (three corpus bodies whose only leaves it holds: `rd_kafka_offset_file_close`,
+  `rd_kafka_mock_sgrp_record_release`, `mk_ptr_free`), unreadable
+  declarations, the untyped member at other positions, and the shared
+  reader's pointer-typedef resolution stay open there. Recommended next: the
+  same Clang consultation for `Refusal::UntypedBase`, with the base's own
+  type checked.
+- MEMBER-EFFECT-SUMMARY's report §5 attributes the miss to the component
+  scope; that report is frozen, and this report's §1 is the correction.
