@@ -127,6 +127,53 @@ Arrival order (card GATE-SLOT-FIFO-ORDER):
   takes the same slot flocks, so it can neither deadlock with a queued job nor
   hold a slot another job holds, and it may be admitted ahead of a queued
   waiter (order is guaranteed among queue-aware jobs only).
+
+The short-job lane (card GATE-SLOT-SHORT-JOB-LANE; user decision of 2026-11-08,
+"Yes, add a fast lane"): ``gate_slot.py short [--memory-budget 1G|2G]
+[--max-wall D] -- <cmd>`` is for a CPU-bound, memory-light step that takes
+minutes (``prepare``, a build, a link, a regeneration), not an analysis.
+
+* **Where it sits.** ``short`` is a class of its own: ``SHORT_SLOTS`` (2) slots
+  ``<gate dir>/short/<n>``, its own arrival-order queue (family ``short``), and
+  it takes **no audit lock**: it is not queued behind audits, is not shut out by
+  a ``rust-suite`` job that is draining, and does not wait for the audits a
+  drain waits for.  It holds the legacy lock shared like every slot job.
+* **Eligibility, enforced.** ``--max-wall`` (default 30 min, at most 1 h; it
+  cannot be switched off; ``--deadline`` is refused for the class) is a wall
+  bound the monitor enforces: past it the command is stopped (SIGTERM, then
+  SIGKILL after ``--stop-grace``, at most 2 min) and the script exits 124 with
+  ``lane.wall_overrun`` and ``lane.complete: false`` in the receipt.  It is
+  stopped rather than only recorded because the lane's promise to a draining
+  suite is that a lane job ends within its bound; a recorded overrun would be an
+  unbounded drain.  The exit is non-zero, so no caller reads a stopped job as
+  finished, but the lane does not clean up after the command: what it was
+  writing is the command's to make safe (write the completion record last).
+  ``--memory-budget`` is the memory the job declares (1G default, 2G), not
+  applied to the command: an excess is recorded (``rss_over_admission``) and
+  warned, and a process tree over ``SHORT_HARD_STOP_MIB`` (4 GiB, the smallest
+  audit budget) is stopped like an overrun (``stopped: memory``): such a job is
+  an audit.
+* **Memory admission.** A lane job is admitted only when ``MemAvailable``, less
+  the unspent declared memory of the lane jobs already running, covers its
+  declaration.  An audit (and a lane waiter) takes the same reserve from its
+  reading: for each lane slot held, its declared budget less the resident set of
+  its last sample (``lane_reserved_kib``), so a lane job counts against audits
+  before it has allocated, and not twice once it has.
+* **Drains.** A ``rust-suite`` job drains the audits as before, with the lane
+  open.  Once the audits are drained it closes the lane (``short/admission``,
+  exclusive) and waits for the lane jobs in flight, which end within their wall
+  bound plus one sample and the stop grace (``SHORT_DRAIN_BOUND``, a little
+  over an hour at the extreme, normally minutes); it then holds the lane slots
+  while its command runs, so its load-sensitive rows run alone, and a lane job
+  that arrives meanwhile waits for the suite to end.  A lane job nested under
+  the suite is covered by its slots.  A lane wait past the bound gives up as an
+  audit drain does.
+* **Older clients.** A script without the lane has no ``short`` class and takes
+  no ``short`` lock: it cannot deadlock with a lane job or share a slot with
+  one.  An older ``rust-suite`` job does not close the lane, so a lane job may
+  run beside it (not guaranteed alone for load-sensitive rows until every
+  worktree has this script), and an older audit does not subtract the lane's
+  reserve (it sees ``MemAvailable`` as it is).
 """
 
 from __future__ import annotations
@@ -173,10 +220,35 @@ AUDIT_WORKER_MIB = 2048
 ROUTE_ADMISSION_MIB = {"pinned-corpus": 11264}
 
 FIXED_SLOTS = {"rust-suite": 1, "lean": 2}
-CLASSES = ("rust-suite", "audit", "lean")
-# Which classes a held slot already covers, for a nested invocation.
-COVERS = {"rust-suite": {"rust-suite", "audit"}, "audit": {"audit"}, "lean": {"lean"}}
+CLASSES = ("rust-suite", "audit", "lean", "short")
+# Which classes a held slot already covers, for a nested invocation.  A
+# rust-suite job holds the short lane too (below), so it covers it.
+SHORT = "short"
+COVERS = {"rust-suite": {"rust-suite", "audit", "short"}, "audit": {"audit"},
+          "lean": {"lean"}, "short": {"short"}}
 HELD_ENV = "QUIRIN_GATE_HELD"
+
+# --- the short-job lane (card GATE-SLOT-SHORT-JOB-LANE; user decision of
+# 2026-11-08: "Yes, add a fast lane") ---------------------------------------------
+# A CPU-bound, memory-light step (prepare, build, link, regeneration) that takes
+# minutes must not wait hours behind audits and rust-suite drains (the incident:
+# `prepare clang-build --link`, 3 min 17 s and 832 MB, waited 5 h 8 min).  The
+# lane is a class of its own: SHORT_SLOTS slots, its own arrival-order queue, no
+# audit lock.  What keeps it honest: a wall bound that is enforced (the command
+# is stopped, exit 124), a memory budget the job declares (1G or 2G), and a hard
+# stop at the smallest audit budget, because past that the job is an audit.
+SHORT_SLOTS = 2
+SHORT_BUDGETS_MIB = {"1G": 1024, "2G": 2048}
+DEFAULT_SHORT_BUDGET = "1G"
+DEFAULT_SHORT_WALL = 30 * 60.0   # a few tens of minutes
+SHORT_WALL_CAP = 60 * 60.0       # longer is not a short job: use the audit class
+SHORT_GRACE_CAP = 120.0          # SIGTERM-to-SIGKILL for a lane job, at most
+SHORT_HARD_STOP_MIB = 4096       # tree resident set that stops a lane job
+# How long a rust-suite job waits, once the audits are drained, for the lane
+# jobs in flight: their wall bound, one monitor sample (10 s), the stop grace,
+# plus slack.  A longer wait means a lane job is wedged, and the drain gives up
+# as it does for audits.
+SHORT_DRAIN_BOUND = SHORT_WALL_CAP + 10.0 + SHORT_GRACE_CAP + 300.0
 
 # --- starvation bounds (card GATE-SLOT-ADMISSION-STARVATION, R11) ---------------
 # Defaults in seconds; None means no deadline.  The audit stall default is long
@@ -185,8 +257,9 @@ HELD_ENV = "QUIRIN_GATE_HELD"
 # 10 h 18 min with zero I/O, so two hours without any I/O by any process of
 # the tree is far outside a working run and still cuts that loss by eight
 # hours.  The drain bound covers one such route started just before the drain.
-DEFAULT_STALL_TIMEOUT = {"audit": 2 * 3600.0, "rust-suite": None, "lean": None}
-DEFAULT_DEADLINE = {"audit": None, "rust-suite": None, "lean": None}
+DEFAULT_STALL_TIMEOUT = {"audit": 2 * 3600.0, "rust-suite": None, "lean": None, "short": None}
+DEFAULT_DEADLINE = {"audit": None, "rust-suite": None, "lean": None,
+                    "short": DEFAULT_SHORT_WALL}
 DEFAULT_DRAIN_TIMEOUT = 2 * 3600.0
 DEFAULT_DRAIN_BACKOFF = 5 * 60.0
 DEFAULT_STOP_GRACE = 60.0
@@ -202,7 +275,7 @@ WAIT_FAILED_EXIT = 75  # EX_TEMPFAIL: no slot (wait timeout or drain attempts sp
 # audit slots share one queue: a rust-suite job takes every audit slot, so its
 # place among the audits queued before it is the whole point.
 QUEUE_DIR = "queue"
-QUEUE_FAMILY = {"audit": "audit", "rust-suite": "audit", "lean": "lean"}
+QUEUE_FAMILY = {"audit": "audit", "rust-suite": "audit", "lean": "lean", "short": "short"}
 QUEUE_ENV = "QUIRIN_GATE_QUEUE"
 LAPSE_ENV = "QUIRIN_GATE_QUEUE_LAPSE"
 # A queued job polls every 2 s.  Ten minutes without a poll is a stopped or
@@ -714,6 +787,49 @@ def parse_budget(text: str) -> int:
         ) from None
 
 
+def parse_short_budget(text: str) -> int:
+    try:
+        return SHORT_BUDGETS_MIB[text.upper()]
+    except KeyError:
+        raise Refusal(
+            f"--memory-budget for the short class must be one of "
+            f"{', '.join(SHORT_BUDGETS_MIB)} (got {text!r}); a job that needs more "
+            "is not memory-light: use the audit class") from None
+
+
+def lane_reserved_kib(gate_dir: Path) -> int:
+    """Memory the lane jobs running now have been admitted for and have not
+    yet used, in KiB: for each lane slot held, its declared budget less the
+    resident set of its last sample (all of it before the first sample), and
+    nothing for the part already in use, which ``MemAvailable`` already
+    excludes.  An audit or lane request takes this from its reading, so a lane
+    job that has just been admitted counts against audits before it has
+    allocated.  A slot is held when a probe cannot lock it; the probe is let go
+    at once.  A held slot with no readable note counts at the largest lane
+    budget (fail closed); a ``rust-suite`` job's own hold counts for nothing
+    (the audits are shut out by its admission lock)."""
+    reserved = 0
+    for index in range(SHORT_SLOTS):
+        probe = Lock(gate_dir / SHORT / str(index), f"{SHORT}/{index}")
+        try:
+            if probe.try_lock(fcntl.LOCK_EX):
+                continue
+        except OSError:
+            continue
+        finally:
+            probe.release()
+        note = read_note(gate_dir / SHORT / str(index)) or {}
+        if note.get("cls") == "rust-suite":
+            continue
+        budget = note.get("admission_mib")
+        budget_kib = (budget if isinstance(budget, int) and budget > 0
+                      else max(SHORT_BUDGETS_MIB.values())) * 1024
+        live = note.get("live") or {}
+        used = live.get("tree_rss_kib") if isinstance(live.get("tree_rss_kib"), int) else 0
+        reserved += max(0, budget_kib - used)
+    return reserved
+
+
 def read_meminfo(path: Path = MEMINFO) -> dict[str, int]:
     """`/proc/meminfo` fields in KiB."""
     values: dict[str, int] = {}
@@ -966,7 +1082,7 @@ class Gate:
 
     def _note(self, lock: Lock, holder: dict) -> None:
         lock.note(dict(holder, noted_at=utc_now()))
-        if self.primary is None and lock.label != "audit/admission":
+        if self.primary is None and lock.label not in ("audit/admission", "short/admission"):
             self.primary = lock
 
     def _exclusive(self, cls: str, index: "int | str", deadline: Optional[float], holder: dict) -> None:
@@ -1121,17 +1237,18 @@ class Gate:
 
     # -- the rust-suite drain ------------------------------------------------------
 
-    def audit_holders(self, ceiling: int) -> list[dict]:
-        """The audit slots another process holds: label, pid (kernel locks,
-        else the holder note) and the note."""
+    def audit_holders(self, ceiling: int, cls: str = "audit") -> list[dict]:
+        """The slots of ``cls`` (``audit``, or the ``short`` lane) another
+        process holds: label, pid (kernel locks, else the holder note) and the
+        note."""
         mine = os.getpid()
         locks = gate_locks(self.gate_dir, self.legacy)
         holders = []
         for index in range(ceiling):
-            label = f"audit/{index}"
+            label = f"{cls}/{index}"
             if any(lock.label == label for lock in self.held):
                 continue
-            note = read_note(self.gate_dir / "audit" / str(index))
+            note = read_note(self.gate_dir / cls / str(index))
             if locks is not None:
                 pids = sorted({entry["pid"] for entry in locks
                                if entry["label"] == label and not entry["queued"]
@@ -1195,11 +1312,27 @@ class Gate:
             table = process_table()
             before = {entry["pid"]: sample_tree(entry["pid"], include_root=False, table=table)
                       for entry in self.audit_holders(ceiling)}
+            lane_before: dict = {}
             try:
                 for index in range(ceiling):
                     self._exclusive("audit", index, drain_deadline, holder)
+                # The audits are drained.  Now (not while they drained: the lane
+                # is open then) shut the short lane and wait for the lane jobs in
+                # flight, each stopped at its own wall bound, so the suite's
+                # load-sensitive rows run alone on the host.  This wait is
+                # bounded by the lane's wall bound, not by the audit drain's.
+                lane_bound = time.monotonic() + SHORT_DRAIN_BOUND
+                lane_deadline = lane_bound if deadline is None else min(lane_bound, deadline)
+                attempt["lane_closed_at"] = utc_now()
+                self._exclusive(SHORT, "admission", lane_deadline, holder)
+                lane_before = {entry["pid"]: sample_tree(entry["pid"], include_root=False)
+                               for entry in self.audit_holders(SHORT_SLOTS, SHORT)}
+                for index in range(SHORT_SLOTS):
+                    self._exclusive(SHORT, index, lane_deadline, holder)
             except WaitTimeout:
-                blockers = self.describe_blockers(self.audit_holders(ceiling), before)
+                blockers = self.describe_blockers(
+                    self.audit_holders(ceiling) + self.audit_holders(SHORT_SLOTS, SHORT),
+                    {**before, **lane_before})
                 waited = time.monotonic() - closed
                 self._release_locks()  # reopen admission; give back every lock taken
                 if self.ticket is not None:  # keep the place; let the queue run
@@ -1228,7 +1361,8 @@ class Gate:
                 continue
             attempt.update(outcome="drained",
                            waited_seconds=round(time.monotonic() - closed, 3))
-            record.update(slot=0, slot_count=1, audit_slots_held=list(range(ceiling)))
+            record.update(slot=0, slot_count=1, audit_slots_held=list(range(ceiling)),
+                          short_slots_held=list(range(SHORT_SLOTS)))
             self._leave_queue()
             return
 
@@ -1271,7 +1405,10 @@ class Gate:
                     try:
                         if not admission.try_lock(fcntl.LOCK_SH):
                             return False  # a rust-suite job holds or awaits every slot
-                        available = read_meminfo(self.meminfo)["MemAvailable"]
+                        # Lane jobs admitted ahead of this audit count against it
+                        # (their declared memory not yet in MemAvailable).
+                        reserved = lane_reserved_kib(self.gate_dir)
+                        available = max(0, read_meminfo(self.meminfo)["MemAvailable"] - reserved)
                         count = min(ceiling, audit_slot_count(available, budget_mib))
                         available_kib[0] = available
                         if self.ticket is not None:
@@ -1288,6 +1425,46 @@ class Gate:
 
                 self._wait(attempt, "an audit slot", deadline)
                 record.update(admitted)
+            elif cls == SHORT:
+                assert budget_mib is not None
+                self._legacy_shared(deadline, record)
+                self._join_queue(SHORT, budget_mib, holder)
+                taken: dict = {}
+                lane_available = [0]
+
+                def lane_count(entry: dict) -> Optional[int]:
+                    """Slots a lane waiter ahead could take at this reading: all
+                    of them if its declared memory fits, none if it does not (it
+                    then holds nothing back)."""
+                    mib = entry["admission_mib"] or max(SHORT_BUDGETS_MIB.values())
+                    return SHORT_SLOTS if lane_available[0] >= mib * 1024 else 0
+
+                def attempt_short() -> bool:
+                    # The lane's own admission lock: a rust-suite job that has
+                    # drained the audits closes it (and only then).  Audit
+                    # locks are never taken, so no audit or drain holds this up.
+                    admission = Lock(self.gate_dir / SHORT / "admission", "short/admission")
+                    try:
+                        if not admission.try_lock(fcntl.LOCK_SH):
+                            return False
+                        available = max(0, read_meminfo(self.meminfo)["MemAvailable"]
+                                        - lane_reserved_kib(self.gate_dir))
+                        lane_available[0] = available
+                        count = SHORT_SLOTS if available >= budget_mib * 1024 else 0
+                        if self.ticket is not None:
+                            index = self._queued_slot(SHORT, count, lane_count, holder)
+                        else:
+                            index = self._first_free(SHORT, count, holder)
+                        if index is None:
+                            return False
+                        taken.update(slot=index, slot_count=SHORT_SLOTS,
+                                     mem_available_kib=available)
+                        return True
+                    finally:
+                        admission.release()
+
+                self._wait(attempt_short, "a short-lane slot", deadline)
+                record.update(taken)
             else:
                 self._legacy_shared(deadline, record)
                 count = FIXED_SLOTS[cls]
@@ -1382,7 +1559,8 @@ class Monitor:
                  echo: Callable[[str], None] = lambda line: print(line, file=sys.stderr,
                                                                   flush=True),
                  on_sample: Optional[Callable[[dict], None]] = None,
-                 receipt: Optional[Path] = None):
+                 receipt: Optional[Path] = None, rss_stop_mib: Optional[int] = None):
+        self.rss_stop_mib = rss_stop_mib
         self.stall = stall
         self.deadline = deadline
         self.interval = interval
@@ -1493,6 +1671,8 @@ class Monitor:
             return self._breached("stall", now, reading)
         if self.deadline is not None and now - self.started >= self.deadline:
             return self._breached("deadline", now, reading)
+        if self.rss_stop_mib is not None and reading["tree_rss_kib"] > self.rss_stop_mib * 1024:
+            return self._breached("memory", now, reading)
         return None
 
     def _resident(self, reading: dict, now: float) -> None:
@@ -1538,6 +1718,10 @@ class Monitor:
                    f"change and no I/O by its {len(reading['pids'])} process(es) since "
                    f"{self.last_progress_at}; CPU {self.breach['cpu_seconds_since_progress']}s "
                    f"in that window) against --stall-timeout {format_duration(self.stall)}")
+        elif kind == "memory":
+            why = (f"its process tree's resident set is {reading['tree_rss_kib']} KiB, over the "
+                   f"short lane's hard stop of {self.rss_stop_mib} MiB (a job that needs more "
+                   "is an audit: use the audit class)")
         else:
             why = (f"ran {format_duration(now - self.started)} against --deadline "
                    f"{format_duration(self.deadline)}")
@@ -1693,9 +1877,17 @@ def parse_args(argv: Sequence[str]) -> argparse.Namespace:
                     "`gate_slot.py status` lists live holders and waiters.")
     parser.add_argument("cls", metavar="class", choices=CLASSES,
                         help="rust-suite (1 slot, holds every audit slot), audit "
-                             "(memory-budget slots) or lean (2 slots)")
-    parser.add_argument("--memory-budget", metavar="7G|5G|4G",
-                        help="audit class only: per-audit budget (default 7G)")
+                             "(memory-budget slots), lean (2 slots) or short (the lane for "
+                             f"CPU-bound, memory-light jobs of at most "
+                             f"{format_duration(SHORT_WALL_CAP)}: prepare, build, link; "
+                             f"{SHORT_SLOTS} slots, admitted ahead of queued audits)")
+    parser.add_argument("--memory-budget", metavar="7G|5G|4G|1G|2G",
+                        help="audit class: per-audit budget 7G, 5G or 4G (default 7G); "
+                             "short class: the memory the job declares, 1G or 2G (default 1G)")
+    parser.add_argument("--max-wall", metavar="DURATION",
+                        help="short class only: the job's wall bound; the command is stopped "
+                             f"(exit 124) after it (default {format_duration(DEFAULT_SHORT_WALL)}, "
+                             f"at most {format_duration(SHORT_WALL_CAP)}; it cannot be switched off)")
     parser.add_argument("--receipt", type=Path,
                         help="where the JSON receipt goes "
                              "(default private/gate-slot/<stamp>-<pid>-<class>.json)")
@@ -1763,17 +1955,43 @@ def resolve_limits(args: argparse.Namespace, env: dict[str, str]) -> dict:
         raise Refusal("--drain-attempts must be 0 (unlimited) or more")
     if args.sample_interval <= 0:
         raise Refusal("--sample-interval must be positive")
+    short = args.cls == SHORT
+    if args.max_wall is not None and not short:
+        raise Refusal("--max-wall applies to the short class only")
     stall, stall_from = pick(args.stall_timeout, STALL_ENV, DEFAULT_STALL_TIMEOUT[args.cls],
                              "--stall-timeout")
-    deadline, deadline_from = pick(args.deadline, DEADLINE_ENV, DEFAULT_DEADLINE[args.cls],
-                                   "--deadline")
+    if short:
+        # The lane's wall bound is not optional: it is what lets a rust-suite
+        # drain wait for lane jobs.  --deadline and the environment's deadline
+        # do not apply; the bound is --max-wall.
+        if args.deadline is not None:
+            raise Refusal("--deadline does not apply to the short class: use --max-wall "
+                          f"(at most {format_duration(SHORT_WALL_CAP)})")
+        if args.max_wall is None:
+            deadline, deadline_from = DEFAULT_SHORT_WALL, "default"
+        else:
+            deadline, deadline_from = parse_duration(args.max_wall, "--max-wall"), "flag"
+        if deadline is None or deadline > SHORT_WALL_CAP:
+            raise Refusal(f"--max-wall must be a duration of at most "
+                          f"{format_duration(SHORT_WALL_CAP)} and cannot be 0/off; a longer "
+                          "job is not a short job: use the audit class")
+    else:
+        deadline, deadline_from = pick(args.deadline, DEADLINE_ENV, DEFAULT_DEADLINE[args.cls],
+                                       "--deadline")
     grace, _ = pick(args.stop_grace, None, DEFAULT_STOP_GRACE, "--stop-grace", True)
+    if short and grace is not None and grace > SHORT_GRACE_CAP:
+        raise Refusal(f"--stop-grace for the short class is at most "
+                      f"{format_duration(SHORT_GRACE_CAP)}")
     lapse, lapse_from = pick(None, LAPSE_ENV, DEFAULT_QUEUE_LAPSE, "queue lapse")
     queue = env.get(QUEUE_ENV, "").strip().lower() not in ("off", "0", "no", "none")
     limits = {"stall_timeout_seconds": stall, "stall_timeout_from": stall_from,
               "deadline_seconds": deadline, "deadline_from": deadline_from,
               "stop_grace_seconds": grace, "queue": queue,
               "queue_lapse_seconds": lapse, "queue_lapse_from": lapse_from}
+    if short:
+        limits.update(max_wall_seconds=deadline, max_wall_from=deadline_from,
+                      max_wall_cap_seconds=SHORT_WALL_CAP,
+                      hard_memory_stop_mib=SHORT_HARD_STOP_MIB)
     if rust:
         drain, drain_from = pick(args.drain_timeout, DRAIN_ENV, DEFAULT_DRAIN_TIMEOUT,
                                  "--drain-timeout")
@@ -1803,12 +2021,18 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     env = dict(os.environ)
     argv_run = list(args.command)
     try:
-        if args.memory_budget is not None and args.cls != "audit":
-            raise Refusal("--memory-budget applies to the audit class only")
+        if args.memory_budget is not None and args.cls not in ("audit", SHORT):
+            raise Refusal("--memory-budget applies to the audit and short classes only")
         limits = resolve_limits(args, env)
         receipt["limits"] = limits
         budget_mib = None
         admission_mib = None
+        if args.cls == SHORT:
+            label = (args.memory_budget or DEFAULT_SHORT_BUDGET).upper()
+            budget_mib = admission_mib = parse_short_budget(label)
+            receipt["budget"] = {"label": label, "memory_budget_mib": budget_mib,
+                                 "admission_mib": admission_mib, "route_class": None,
+                                 "mechanism": "declared (not applied to the command)"}
         if args.cls == "audit":
             label = (args.memory_budget or DEFAULT_BUDGET).upper()
             budget_mib = parse_budget(label)
@@ -1882,7 +2106,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
                       interval=args.sample_interval, grace=limits["stop_grace_seconds"],
                       progress_file=args.progress_file.resolve() if args.progress_file else None,
                       admission_mib=admission_mib, on_sample=gate.update_note,
-                      receipt=receipt_path)
+                      receipt=receipt_path,
+                      rss_stop_mib=SHORT_HARD_STOP_MIB if args.cls == SHORT else None)
     peak_kib = None
     try:
         code, peak_kib = run_child(argv_run, env, monitor)
@@ -1898,6 +2123,17 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         receipt["stopped"] = monitor.breach["kind"]
         code = STOPPED_EXIT
     receipt["exit"] = code
+    if args.cls == SHORT:
+        stopped_by = monitor.breach["kind"] if monitor.breach is not None else None
+        receipt["lane"] = {
+            "max_wall_seconds": limits["max_wall_seconds"],
+            "ran_seconds": monitor.breach["run_seconds"] if monitor.breach is not None else None,
+            "wall_overrun": stopped_by == "deadline", "stopped_by": stopped_by,
+            # Only an exit 0 that was not stopped is a finished job.  A stopped
+            # command may have left a half-written tree: the exit is 124 so no
+            # caller reads success, and the lane does not clean up after it.
+            "complete": code == 0 and stopped_by is None,
+            "memory_over_declared": monitor.record.get("rss_over_admission") is not None}
     if peak_kib is not None:
         receipt["max_rss_kib"] = peak_kib
         if admission_mib is not None:
@@ -2040,6 +2276,14 @@ def gate_status(gate_dir: Path, legacy: Path, meminfo: Path, interval: float = 5
                         for label in missing if holders_of.get(label)]
             job["role"] = "draining (holds audit admission, waits for running audits)"
             job["blocked_by"] = blockers
+        elif job["class"] == "rust-suite" and "short/admission" in slots and \
+                len([s for s in slots if s.startswith("short/") and s != "short/admission"]) \
+                < SHORT_SLOTS:
+            blockers = [{"lock": f"short/{i}", "pids": holders_of.get(f"short/{i}", [])}
+                        for i in range(SHORT_SLOTS) if f"short/{i}" not in slots
+                        and holders_of.get(f"short/{i}")]
+            job["role"] = "draining (audits drained; holds lane admission, waits for lane jobs)"
+            job["blocked_by"] = blockers
         elif slots:
             job["role"] = "holder"
         elif legacy_mode == "exclusive":
@@ -2076,10 +2320,17 @@ def gate_status(gate_dir: Path, legacy: Path, meminfo: Path, interval: float = 5
     listed = sorted(jobs.values(), key=lambda job: (
         next((rank for prefix, rank in order.items() if job["role"].startswith(prefix)), 9),
         job["pid"]))
+    lane_holders = [job["pid"] for job in listed
+                    if job["class"] == SHORT and any(s.startswith("short/") for s in job["slots"])]
+    lane_waiters = [job["pid"] for job in listed
+                    if job["class"] == SHORT and job["pid"] not in lane_holders
+                    and job["role"].startswith(("waiting", "queued"))]
     return {"schema": "quirin-gate-status/1", "at": utc_now(), "gate_dir": str(gate_dir),
             "legacy_lock": str(legacy), "interval_seconds": interval,
             "mem_available_kib": memory.get("MemAvailable"),
             "mem_total_kib": memory.get("MemTotal"), "audit_slot_ceiling": ceiling,
+            "short_lane": {"slots": SHORT_SLOTS, "holders": lane_holders,
+                           "waiters": lane_waiters},
             "queues": queues["families"], "jobs": listed}
 
 
@@ -2121,6 +2372,13 @@ def render_status(status: dict) -> str:
                      f"{status['mem_total_kib'] // 1024} MiB")
     if not status["jobs"]:
         lines.append("no live holder or waiter")
+    lane = status.get("short_lane")
+    if lane and (lane["holders"] or lane["waiters"]):
+        lines.append(f"short lane: {len(lane['holders'])} of {lane['slots']} slots held"
+                     + (" by pid " + ", ".join(str(p) for p in lane["holders"])
+                        if lane["holders"] else "")
+                     + (f"; waiting: pid " + ", ".join(str(p) for p in lane["waiters"])
+                        if lane["waiters"] else ""))
     for job in status["jobs"]:
         head = f"pid {job['pid']} {job['class'] or '?'}: {job['role']}"
         if job["slots"]:

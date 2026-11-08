@@ -1,0 +1,330 @@
+{
+ "schema": "quirin-gate-scope/1",
+ "source": "git diff",
+ "base": "1742f00cbed5c569dc7f970dda80c3cb6e293720",
+ "head": "d6a421f63d2a41873b5417b2d750f00d87a8518c",
+ "committed": [
+  "docs/agents/validation.md",
+  "docs/plans/gate-time-reduction/README.md",
+  "docs/reports/gate-slot-short-job-lane/replay.json",
+  "docs/reports/gate-slot-short-job-lane/scripts/replay_incident.py",
+  "scripts/gate_slot.py",
+  "scripts/tests/fixtures/gate_slot_fifo_only.py.txt",
+  "scripts/tests/test_gate_slot_lane.py"
+ ],
+ "uncommitted": [],
+ "scope": {
+  "paths": [
+   "docs/agents/validation.md",
+   "docs/plans/gate-time-reduction/README.md",
+   "docs/reports/gate-slot-short-job-lane/replay.json",
+   "docs/reports/gate-slot-short-job-lane/scripts/replay_incident.py",
+   "scripts/gate_slot.py",
+   "scripts/tests/fixtures/gate_slot_fifo_only.py.txt",
+   "scripts/tests/test_gate_slot_lane.py"
+  ],
+  "attribution": {
+   "docs/agents/validation.md": [
+    "class prose"
+   ],
+   "docs/plans/gate-time-reduction/README.md": [
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4335) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:3975) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:3989) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4026) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:3988) in qcore-compiler::test::ct_corpus",
+    "class prose"
+   ],
+   "docs/reports/gate-slot-short-job-lane/replay.json": [
+    "class prose"
+   ],
+   "docs/reports/gate-slot-short-job-lane/scripts/replay_incident.py": [
+    "class prose"
+   ],
+   "scripts/gate_slot.py": [
+    "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/src/lib.rs:396)",
+    "read by quirin-audit-plugin-measure (runtime, crates/quirin-audit-plugin-measure/tests/slot_wait.rs:50) in quirin-audit-plugin-measure::test::slot_wait",
+    "read by quirin-audit-plugin-measure (walker, crates/quirin-audit-plugin-measure/tests/support/mod.rs:197) in quirin-audit-plugin-measure::test::host, quirin-audit-plugin-measure::test::measure, quirin-audit-plugin-measure::test::slot_wait, quirin-audit-plugin-measure::test::units",
+    "class python"
+   ],
+   "scripts/tests/fixtures/gate_slot_fifo_only.py.txt": [
+    "read by quirin-audit-plugin-measure (walker, crates/quirin-audit-plugin-measure/tests/support/mod.rs:197) in quirin-audit-plugin-measure::test::host, quirin-audit-plugin-measure::test::measure, quirin-audit-plugin-measure::test::slot_wait, quirin-audit-plugin-measure::test::units",
+    "class python"
+   ],
+   "scripts/tests/test_gate_slot_lane.py": [
+    "read by quirin-audit-plugin-measure (walker, crates/quirin-audit-plugin-measure/tests/support/mod.rs:197) in quirin-audit-plugin-measure::test::host, quirin-audit-plugin-measure::test::measure, quirin-audit-plugin-measure::test::slot_wait, quirin-audit-plugin-measure::test::units",
+    "class python"
+   ]
+  },
+  "affected": {
+   "quirin-audit-plugin-measure": [
+    "names scripts/gate_slot.py in a string literal: scripts/gate_slot.py (crates/quirin-audit-plugin-measure/src/lib.rs:396)"
+   ]
+  },
+  "targets": {
+   "qcore-compiler": {
+    "qcore-compiler::test::ct_corpus": [
+     "reads docs/reviews/r0_3/acceptance.json, which lists docs/plans/gate-time-reduction/README.md: docs/plans/gate-time-reduction/README.md (compiler/tests/ct_corpus.rs:4335)",
+     "reads docs/reports/remaining-t00/coverage.json, which lists docs/plans/gate-time-reduction/README.md: docs/plans/gate-time-reduction/README.md (compiler/tests/ct_corpus.rs:3975)",
+     "reads docs/reports/ct-proof-leg-2/ct_stage_evidence.json, which lists docs/plans/gate-time-reduction/README.md: docs/plans/gate-time-reduction/README.md (compiler/tests/ct_corpus.rs:3989)",
+     "reads docs/reports/ct-proof-leg-3/ct_stage_evidence.json, which lists docs/plans/gate-time-reduction/README.md: docs/plans/gate-time-reduction/README.md (compiler/tests/ct_corpus.rs:4026)",
+     "reads docs/reports/ct01-proof-leg/ct_stage_evidence.json, which lists docs/plans/gate-time-reduction/README.md: docs/plans/gate-time-reduction/README.md (compiler/tests/ct_corpus.rs:3988)"
+    ]
+   }
+  },
+  "mode": "scoped",
+  "full_reasons": [],
+  "rust_packages": [
+   "quirin-audit-plugin-measure"
+  ],
+  "rust_targets": [
+   "qcore-compiler::test::ct_corpus"
+  ],
+  "probes": false,
+  "lean": {
+   "mode": "none",
+   "reasons": [],
+   "modules": [],
+   "audits": []
+  },
+  "python_reasons": [
+   "docs/reports/gate-slot-short-job-lane/scripts/replay_incident.py: Python",
+   "scripts/gate_slot.py: Python",
+   "scripts/tests/fixtures/gate_slot_fifo_only.py.txt: Python",
+   "scripts/tests/test_gate_slot_lane.py: Python"
+  ],
+  "provider_gate": false,
+  "provider_reasons": [],
+  "provider_lock_check": false,
+  "provider_lock_reasons": [],
+  "provider_members_reached_without_providers_change": [],
+  "unresolved_includes": [
+   {
+    "crate": "qcore-compiler",
+    "source": "compiler/tests/ct_corpus.rs:8069",
+    "literal": "include_str!(\\\"fixtures/ct/{id}/case.qr\\\")\");",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   }
+  ],
+  "undeclared_directory_literals": [],
+  "stale_walkers": []
+ },
+ "planned_steps": [
+  {
+   "name": "submodules",
+   "argv": [
+    "git",
+    "-C",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9c9164d6281ee151",
+    "submodule",
+    "status",
+    "--recursive"
+   ],
+   "slot": null
+  },
+  {
+   "name": "fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "slot": null
+  },
+  {
+   "name": "clippy",
+   "argv": [
+    "cargo",
+    "clippy",
+    "-p",
+    "quirin-audit-plugin-measure",
+    "--all-targets",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "slot": null
+  },
+  {
+   "name": "clippy-qcore-compiler",
+   "argv": [
+    "cargo",
+    "clippy",
+    "-p",
+    "qcore-compiler",
+    "--test",
+    "ct_corpus",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "slot": null
+  },
+  {
+   "name": "rust-suite",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9c9164d6281ee151/scripts/run_test_binaries.py",
+    "--packages",
+    "quirin-audit-plugin-measure",
+    "--targets",
+    "qcore-compiler::test::ct_corpus",
+    "--log-dir",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9c9164d6281ee151/private/gate-1/rust-suite"
+   ],
+   "slot": "rust-suite"
+  },
+  {
+   "name": "python",
+   "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+   ],
+   "slot": null
+  }
+ ],
+ "slots": true,
+ "landing": false,
+ "card_base": "1742f00cbed5c569dc7f970dda80c3cb6e293720",
+ "started": "20261108T085817Z",
+ "ran": true,
+ "steps": [
+  {
+   "name": "submodules",
+   "argv": [
+    "git",
+    "-C",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9c9164d6281ee151",
+    "submodule",
+    "status",
+    "--recursive"
+   ],
+   "exit": 0,
+   "seconds": 0.0,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9c9164d6281ee151/private/gate-1/submodules.log",
+   "counts": {
+    "submodules": 1,
+    "not_checked_out_or_moved": []
+   }
+  },
+  {
+   "name": "fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "exit": 0,
+   "seconds": 4.8,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9c9164d6281ee151/private/gate-1/fmt.log",
+   "counts": {}
+  },
+  {
+   "name": "clippy",
+   "argv": [
+    "cargo",
+    "clippy",
+    "-p",
+    "quirin-audit-plugin-measure",
+    "--all-targets",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "exit": 0,
+   "seconds": 9.5,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9c9164d6281ee151/private/gate-1/clippy.log",
+   "counts": {}
+  },
+  {
+   "name": "clippy-qcore-compiler",
+   "argv": [
+    "cargo",
+    "clippy",
+    "-p",
+    "qcore-compiler",
+    "--test",
+    "ct_corpus",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "exit": 0,
+   "seconds": 45.7,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9c9164d6281ee151/private/gate-1/clippy-qcore-compiler.log",
+   "counts": {}
+  },
+  {
+   "name": "rust-suite",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9c9164d6281ee151/scripts/gate_slot.py",
+    "rust-suite",
+    "--receipt",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9c9164d6281ee151/private/gate-1/slots/rust-suite.json",
+    "--",
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9c9164d6281ee151/scripts/run_test_binaries.py",
+    "--packages",
+    "quirin-audit-plugin-measure",
+    "--targets",
+    "qcore-compiler::test::ct_corpus",
+    "--log-dir",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9c9164d6281ee151/private/gate-1/rust-suite"
+   ],
+   "exit": 0,
+   "seconds": 12184.6,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9c9164d6281ee151/private/gate-1/rust-suite.log",
+   "counts": {
+    "units": 8,
+    "passed": 53,
+    "failed": 0,
+    "ignored": 0,
+    "measured": 0,
+    "filtered": 0,
+    "summaries": 8,
+    "packages": [
+     "quirin-audit-plugin-measure"
+    ],
+    "targets": [
+     "qcore-compiler::test::ct_corpus"
+    ],
+    "summary": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9c9164d6281ee151/private/gate-1/rust-suite/summary.json",
+    "ok": true
+   },
+   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9c9164d6281ee151/private/gate-1/slots/rust-suite.json"
+  },
+  {
+   "name": "python",
+   "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+   ],
+   "exit": 0,
+   "seconds": 231.7,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a9c9164d6281ee151/private/gate-1/python.log",
+   "counts": {
+    "tests": 756,
+    "skipped": 0,
+    "ok": true
+   },
+   "env": {
+    "QUIRIN_CARD_GATE_BASE": "1742f00cbed5c569dc7f970dda80c3cb6e293720"
+   }
+  }
+ ],
+ "ok": true,
+ "finished": "20261108T122613Z"
+}

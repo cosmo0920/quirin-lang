@@ -1,0 +1,291 @@
+{
+ "schema": "quirin-lane-replay/1",
+ "queued_arrival_order": [
+  "M",
+  "A2",
+  "R",
+  "A3"
+ ],
+ "holder_seconds": 4.0,
+ "trials": 5,
+ "clients": {
+  "before the card (scripts/tests/fixtures/gate_slot_fifo_only.py.txt), prepare as audit": {
+   "runs": [
+    {
+     "order": [
+      "M",
+      "A2",
+      "R",
+      "A3",
+      "P"
+     ],
+     "exits": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "prepare_waited_seconds": 4.07,
+     "prepare_started_before_the_holder_ended": false,
+     "queued_jobs_order": [
+      "M",
+      "A2",
+      "R",
+      "A3"
+     ]
+    },
+    {
+     "order": [
+      "M",
+      "A2",
+      "R",
+      "A3",
+      "P"
+     ],
+     "exits": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "prepare_waited_seconds": 4.07,
+     "prepare_started_before_the_holder_ended": false,
+     "queued_jobs_order": [
+      "M",
+      "A2",
+      "R",
+      "A3"
+     ]
+    },
+    {
+     "order": [
+      "M",
+      "A2",
+      "R",
+      "A3",
+      "P"
+     ],
+     "exits": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "prepare_waited_seconds": 3.98,
+     "prepare_started_before_the_holder_ended": false,
+     "queued_jobs_order": [
+      "M",
+      "A2",
+      "R",
+      "A3"
+     ]
+    },
+    {
+     "order": [
+      "M",
+      "A2",
+      "R",
+      "A3",
+      "P"
+     ],
+     "exits": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "prepare_waited_seconds": 3.97,
+     "prepare_started_before_the_holder_ended": false,
+     "queued_jobs_order": [
+      "M",
+      "A2",
+      "R",
+      "A3"
+     ]
+    },
+    {
+     "order": [
+      "M",
+      "A2",
+      "R",
+      "A3",
+      "P"
+     ],
+     "exits": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "prepare_waited_seconds": 3.97,
+     "prepare_started_before_the_holder_ended": false,
+     "queued_jobs_order": [
+      "M",
+      "A2",
+      "R",
+      "A3"
+     ]
+    }
+   ],
+   "prepare_ran_last": 5,
+   "prepare_ran_before_holder_ended": 0,
+   "queued_jobs_in_arrival_order": 5,
+   "prepare_waited_seconds": [
+    4.07,
+    4.07,
+    3.98,
+    3.97,
+    3.97
+   ]
+  },
+  "this card (scripts/gate_slot.py), prepare as short": {
+   "runs": [
+    {
+     "order": [
+      "P",
+      "M",
+      "A2",
+      "R",
+      "A3"
+     ],
+     "exits": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "prepare_waited_seconds": 0.05,
+     "prepare_started_before_the_holder_ended": true,
+     "queued_jobs_order": [
+      "M",
+      "A2",
+      "R",
+      "A3"
+     ]
+    },
+    {
+     "order": [
+      "P",
+      "M",
+      "A2",
+      "R",
+      "A3"
+     ],
+     "exits": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "prepare_waited_seconds": 0.06,
+     "prepare_started_before_the_holder_ended": true,
+     "queued_jobs_order": [
+      "M",
+      "A2",
+      "R",
+      "A3"
+     ]
+    },
+    {
+     "order": [
+      "P",
+      "M",
+      "A2",
+      "R",
+      "A3"
+     ],
+     "exits": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "prepare_waited_seconds": 0.06,
+     "prepare_started_before_the_holder_ended": true,
+     "queued_jobs_order": [
+      "M",
+      "A2",
+      "R",
+      "A3"
+     ]
+    },
+    {
+     "order": [
+      "P",
+      "M",
+      "A2",
+      "R",
+      "A3"
+     ],
+     "exits": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "prepare_waited_seconds": 0.06,
+     "prepare_started_before_the_holder_ended": true,
+     "queued_jobs_order": [
+      "M",
+      "A2",
+      "R",
+      "A3"
+     ]
+    },
+    {
+     "order": [
+      "P",
+      "M",
+      "A2",
+      "R",
+      "A3"
+     ],
+     "exits": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "prepare_waited_seconds": 0.05,
+     "prepare_started_before_the_holder_ended": true,
+     "queued_jobs_order": [
+      "M",
+      "A2",
+      "R",
+      "A3"
+     ]
+    }
+   ],
+   "prepare_ran_last": 0,
+   "prepare_ran_before_holder_ended": 5,
+   "queued_jobs_in_arrival_order": 5,
+   "prepare_waited_seconds": [
+    0.05,
+    0.06,
+    0.06,
+    0.06,
+    0.05
+   ]
+  }
+ }
+}

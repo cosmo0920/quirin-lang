@@ -166,6 +166,16 @@ each waiter's queue position. Tracked by GATE-SLOT-FIFO-ORDER and
 MEASURE-SLOT-WAIT-EXCLUSION-CAP (both discharged by card GATE-SLOT-FIFO-ORDER,
 [report](../../reports/gate-slot-fifo-order/README.md)).
 
+**R13. A short, memory-light job does not wait for audits.** Added 2026-11-08
+(user decision, "Yes, add a fast lane"; the incident: `prepare clang-build
+--link`, 3 min 17 s and 832 MB, waited 5 h 8 min for an audit slot). A class of
+its own with a fixed small number of slots, admitted ahead of queued audits and
+not closed by a `rust-suite` drain; a declared wall bound that is enforced and
+a memory budget the job declares; a drain waits for lane jobs only as long as
+their wall bound; older clients stay safe. Tracked by GATE-SLOT-SHORT-BUILD-WAIT
+and GATE-SLOT-SHORT-JOB-LANE (both discharged by card GATE-SLOT-SHORT-JOB-LANE,
+[report](../../reports/gate-slot-short-job-lane/README.md)).
+
 Suggested order: R1, R2, R3 and R7 first (scoper and test changes, no
 semantics); R9 alongside; R4 and R5 next; R8 after them; R10 last.
 

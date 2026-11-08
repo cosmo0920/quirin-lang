@@ -1,0 +1,60 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "GATE-SLOT-SHORT-JOB-LANE",
+ "base": "1742f00cb",
+ "measured_tip": "d6a421f63",
+ "increment_paragraph": "**GATE-SLOT-SHORT-JOB-LANE** (round 30; integrator's launch, 2026-11-08, on the user's decision \"Yes, add a fast lane\" to \"Should a short job, like a 3-minute prepare, be allowed to jump ahead of long queued audits?\"; discharges GATE-SLOT-SHORT-BUILD-WAIT registered by FLUENT-BIT-LINK-PREPARE; requirement R13 of docs/plans/gate-time-reduction/README.md, added by this card; [report](../../reports/gate-slot-short-job-lane/README.md)). The incident: `prepare clang-build --link` (3 min 17 s, peak 832 MB) waited 5 h 8 min for an audit slot at a 4 GiB budget behind audits and rust-suite drains. (1) scripts/gate_slot.py has a `short` class, the short-job lane: two slots (`<gate dir>/short/0,1`), its own arrival-order queue (family `short`), and no audit lock, so it is admitted ahead of queued audits and is not closed by a draining rust-suite job. Eligibility is enforced, not assumed: `--max-wall` (default 30 min, at most 1 h, cannot be switched off, `--deadline` refused) stops the command past it (SIGTERM, SIGKILL after a stop grace of at most 2 min; exit 124; receipt `lane.wall_overrun`, `lane.complete: false`) because a draining suite waits for lane jobs only as long as their bound; the exit is non-zero so no caller reads a stopped job as finished, and the lane does not clean up after the command (it must write its completion record last); `--memory-budget 1G|2G` is the memory the job declares (an excess is warned and recorded, a process tree over 4 GiB, the smallest audit budget, is stopped as `memory`). (2) Memory admission: a lane job is admitted when MemAvailable less the unspent declared memory of the lane jobs running covers its declaration; an audit takes the same reserve from its reading (declared budget less the resident set of the last sample, per held lane slot), so the lane counts against audits before it has allocated and not twice afterwards. (3) Drains: a rust-suite job drains the audits with the lane open; once they are drained it closes the lane (`short/admission`) and waits for the lane jobs in flight, which end within their wall bound plus a sample and the stop grace (bound a little over an hour, `SHORT_DRAIN_BOUND`), then holds both lane slots while its command runs so its load-sensitive rows run alone (a lane job arriving meanwhile waits for the suite); a longer wait gives up like an audit drain with the lane holder named. A lane job nested under a suite is covered by its slots. (4) Older clients (pre-queue and queue-only scripts): no `short` class, no lane lock, so no deadlock and no double admission of any slot; not guaranteed: an older rust-suite does not close the lane (a lane job may run beside it) and an older audit does not subtract the lane's reserve. `gate_slot.py status` lists lane holders and waiters (`short_lane` in --json) and a suite waiting for the lane. Tests: scripts/tests/test_gate_slot_lane.py (32: overtaking queued audits and a draining suite, the slot cap and lane order, memory admission and the audit reserve, suite and lane interaction with a wedged lane job and a real overrun, the command line and the receipt, both older scripts run against the current one in one scratch gate, kill -9 and dead or stopped waiters, status) in scratch gate directories; an incident replay in a scratch gate (docs/reports/gate-slot-short-job-lane/replay.json): the queue-only client ran the prepare last in 5 of 5 trials, this card ran it first, before the holder ended, in 5 of 5, with the queued jobs' order unchanged. The rule is stated in docs/agents/validation.md (Gate slots). No analyzer, contract or Lean change; no measurement.",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "GATE-SLOT-SHORT-BUILD-WAIT",
+   "operation": "retire",
+   "why": "DISCHARGED by GATE-SLOT-SHORT-JOB-LANE (docs/reports/gate-slot-short-job-lane/README.md): scripts/gate_slot.py has a `short` class for CPU-bound, memory-light steps (prepare, link, regeneration): two slots, its own arrival-order queue, no audit lock, so a short job is admitted ahead of queued audits and is not closed by a rust-suite drain (user decision 2026-11-08, \"Yes, add a fast lane\"); the lane is kept honest by an enforced wall bound (default 30 min, at most 1 h; the command is stopped, exit 124, receipt lane.complete false), a declared memory budget (1G or 2G) with a hard stop at 4 GiB, memory admission that counts the lane against audits, and a drain that waits for lane jobs only as long as their bound; older gate_slot.py clients (pre-queue and queue-only) share the gate without deadlock or double admission, and what is not guaranteed in the transition is stated; docs/agents/validation.md (Gate slots) says which commands qualify; tests in scripts/tests/test_gate_slot_lane.py in scratch gate directories and an incident replay.",
+   "source": "docs/reports/gate-slot-short-job-lane/README.md"
+  },
+  {
+   "id": "GATE-SLOT-SHORT-JOB-LANE",
+   "operation": "register",
+   "title": "A short, memory-light job waits for audits and rust-suite drains",
+   "text": "Registered by its own card at landing (round 30; integrator's launch, 2026-11-08, on the user's decision \"Yes, add a fast lane\"): the discharge of GATE-SLOT-SHORT-BUILD-WAIT, itself registered by FLUENT-BIT-LINK-PREPARE after `prepare clang-build --link` waited 5 h 8 min for an audit slot; retired by the next entry.",
+   "source": "docs/reports/gate-slot-short-job-lane/README.md",
+   "recorded_by": "GATE-SLOT-SHORT-JOB-LANE"
+  },
+  {
+   "id": "GATE-SLOT-SHORT-JOB-LANE",
+   "operation": "retire",
+   "why": "DISCHARGED by GATE-SLOT-SHORT-JOB-LANE (docs/reports/gate-slot-short-job-lane/README.md): the `short` lane in scripts/gate_slot.py with its enforced wall and memory bounds, memory admission against audits, drain interaction bounded by the wall bound, own arrival-order queue, older-client safety, status, tests and replay; see the retirement of GATE-SLOT-SHORT-BUILD-WAIT.",
+   "source": "docs/reports/gate-slot-short-job-lane/README.md"
+  },
+  {
+   "id": "GATE-SLOT-LANE-DEFAULTS-REVIEW",
+   "operation": "register",
+   "title": "Review the short lane's bounds against receipts",
+   "text": "Registered by GATE-SLOT-SHORT-JOB-LANE. The lane's two slots, 30 min default and 1 h cap wall bound, 1G/2G declared budgets, 4 GiB hard stop, and the hour-long wait of a suite for lane jobs (SHORT_DRAIN_BOUND) were chosen from one measured case (prepare clang-build --link: 3 min 17 s, 832 MB largest process), not from a census. Receipts now carry limits.max_wall_seconds, lane.* and the tree's peak resident set. DISCHARGE: a review of a period of lane receipts (waits, overruns, memory stops, suite waits for the lane) with the defaults kept or changed by a recorded decision. Related: whether a cargo build of the root workspace qualifies (it was not measured; six rustc jobs may sum past the hard stop).",
+   "source": "docs/reports/gate-slot-short-job-lane/README.md",
+   "recorded_by": "GATE-SLOT-SHORT-JOB-LANE"
+  },
+  {
+   "id": "GATE-SLOT-LANE-DURING-SUITE-RUN",
+   "operation": "register",
+   "title": "A lane job that arrives while a rust-suite job runs waits for the suite to end",
+   "text": "Registered by GATE-SLOT-SHORT-JOB-LANE. The lane stays open while a suite drains the audits but a suite that has drained them holds both lane slots for its whole run (so constraint 16's load-sensitive rows run alone), which can be about two hours; a lane job arriving then waits that long, still ahead of any audit but not fast. The user's decision named queued audits and drains, not a running suite, so the fail-closed side was chosen. DISCHARGE: a recorded decision either to keep it or to let the lane run beside a suite (and to mark the load-sensitive rows' receipts when it overlapped).",
+   "source": "docs/reports/gate-slot-short-job-lane/README.md",
+   "recorded_by": "GATE-SLOT-SHORT-JOB-LANE"
+  },
+  {
+   "id": "GATE-SLOT-LANE-PARTIAL-TREE",
+   "operation": "register",
+   "title": "A lane job stopped at its wall bound can leave a half-written tree",
+   "text": "Registered by GATE-SLOT-SHORT-JOB-LANE. A stopped lane command exits 124 and the receipt says lane.complete false, but the gate cannot know what the command had written. The rule asks commands to write their completion record last; whether `prepare` (and each other lane command) does so was not audited by this card. DISCHARGE: an audit of the commands sent to the lane showing each leaves no tree that reads as complete after a SIGTERM/SIGKILL, or a fix.",
+   "source": "docs/reports/gate-slot-short-job-lane/README.md",
+   "recorded_by": "GATE-SLOT-SHORT-JOB-LANE"
+  },
+  {
+   "id": "GATE-SLOT-QUEUE-OLD-CLIENT-RETIREMENT",
+   "operation": "amend",
+   "text": "AMENDED (GATE-SLOT-SHORT-JOB-LANE): the queue-only script as it was before the lane is kept byte for byte as scripts/tests/fixtures/gate_slot_fifo_only.py.txt (sha256 1ea95433...), beside the pre-queue fixture, to test the lane against it; delete it with the other fixture when no worktree runs a script without the lane.",
+   "source": "docs/reports/gate-slot-short-job-lane/README.md"
+  }
+ ]
+}
