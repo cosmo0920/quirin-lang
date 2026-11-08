@@ -863,6 +863,17 @@ impl AuditReport {
         }
     }
 
+    /// Card **LINK-STANDING** (rule 40): the held homes a derived link
+    /// resolution refused for this caller, with their reasons.
+    pub fn record_cross_unit_link_refusals(&mut self, refusals: &[(String, String)]) {
+        if let Some(unit) = self.units.last_mut() {
+            unit["cross_unit_link_refusals"] = refusals
+                .iter()
+                .map(|(function, reason)| json!({"function": function, "reason": reason}))
+                .collect();
+        }
+    }
+
     pub fn record_data_only(&mut self, library: &str, file: &str, error: Option<&LegacyCError>) {
         let reason = error.map(ToString::to_string);
         self.units.push(json!({

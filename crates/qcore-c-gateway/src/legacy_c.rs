@@ -3243,6 +3243,7 @@ pub use cross_unit::{
     CallerImports as CrossUnitCallerImports, CrossUnitExport, CrossUnitHomeEvidence,
     REPLAY_BUDGET_PER_UNIT as CROSS_UNIT_REPLAY_BUDGET_PER_UNIT,
     export_homes as export_cross_unit_homes, for_caller as cross_unit_for_caller,
+    retain_held as cross_unit_retain_held,
 };
 
 // Card W45-FB-RETRY-LIFETIME: intrusive-container publication.

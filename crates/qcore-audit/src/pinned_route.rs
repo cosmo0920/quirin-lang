@@ -115,6 +115,14 @@ pub fn run_with_checkpoints(
         checkpoints::refuse_unsupported()?;
     }
     let cross_unit_links = crate::cross_unit_links::LinkMap::load_selected()?;
+    // Card LINK-STANDING (rule 40): a derived resolution is read by the
+    // current route only; a pinned route keeps its stated premise.
+    if std::env::var_os(crate::cross_unit_links::RESOLUTION_SELECTION).is_some() {
+        return Err(format!(
+            "{} is read by the current route only; the pinned route states its link resolution",
+            crate::cross_unit_links::RESOLUTION_SELECTION
+        ));
+    }
     // Explicit process selection is checked before any expensive source audit.
     let source_contracts = source_contract_configuration()?;
     // Validate the external build input before running any expensive audit.

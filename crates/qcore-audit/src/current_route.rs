@@ -28,7 +28,7 @@ use serde_json::Value;
 use crate::compile_db::{
     CompileEntry, compile_entries, compiler_options_compatibility as compiler_options,
 };
-use crate::cross_unit_links::LinkMap;
+use crate::cross_unit_links::{DerivedResolution, LinkMap};
 use crate::current::{CurrentAudit, EntryOutcome, distinct_configurations, select_configurations};
 use crate::evidence::EvidenceMode;
 use crate::parallel::run_ordered;
@@ -248,14 +248,25 @@ pub fn run_current_route_with_checkpoints(
     route: &CurrentRoute<'_>,
     checkpoints: Option<&crate::checkpoint_run::CheckpointOptions>,
 ) -> Result<bool, String> {
-    let cross_unit_links = LinkMap::load_selected()?;
+    let stated_links = LinkMap::load_selected()?;
+    // Card LINK-STANDING (rule 40): a supplied link-resolution artifact is
+    // the run's resolution, derived instead of stated.
+    let derived_resolution = DerivedResolution::load_selected()?;
+    if stated_links.is_some() && derived_resolution.is_some() {
+        return Err(format!(
+            "{} and {} are exclusive: a run either states its link resolution or derives it",
+            crate::cross_unit_links::SELECTION,
+            crate::cross_unit_links::RESOLUTION_SELECTION
+        ));
+    }
+    let opted = stated_links.is_some() || derived_resolution.is_some();
     // Card CURRENT-RUN-WORKER-SPIN: per-phase and per-unit progress on
     // standard error for the cross-unit route (or when asked).
-    crate::route_progress::enable_if(cross_unit_links.is_some());
-    if cross_unit_links.is_some() && route.mode.is_contracts_only() {
+    crate::route_progress::enable_if(opted);
+    if opted && route.mode.is_contracts_only() {
         return Err("cross-unit imports require configured home and caller units".into());
     }
-    if cross_unit_links.is_some() && checkpoints.is_some() {
+    if opted && checkpoints.is_some() {
         return Err("cross-unit imports are not supported by checkpoint composition".into());
     }
     let root = route
@@ -281,10 +292,12 @@ pub fn run_current_route_with_checkpoints(
         println!("{line}");
     }
     let default_database = root.join("build/compile_commands.json");
-    let entries = compile_entries(
-        &fs::read_to_string(route.compile_database.unwrap_or(&default_database))
-            .map_err(|error| error.to_string())?,
-    )?;
+    let database_text = fs::read_to_string(route.compile_database.unwrap_or(&default_database))
+        .map_err(|error| error.to_string())?;
+    let entries = compile_entries(&database_text)?;
+    // Card LINK-STANDING (rule 40): the artifact must describe this database.
+    let database_sha256 = qcore_schemas::sha256_hex(database_text.as_bytes());
+    drop(database_text);
     // Select all groups before auditing; missing groups cannot disappear from
     // the denominator. Different commands for one file remain separate tasks.
     let mut groups: Vec<Group<'_>> = Vec::new();
@@ -531,6 +544,59 @@ pub fn run_current_route_with_checkpoints(
             });
         }
     }
+    // Card LINK-STANDING (rule 40): the run-level conditions (database and
+    // bound digests), then the home-level conditions against the route's own
+    // configurations. A refused artifact leaves every call uncontracted.
+    let mut derived = None;
+    let mut link_refused = None;
+    let cross_unit_links = match derived_resolution {
+        None => stated_links,
+        Some(resolution) => match resolution.verify(&database_sha256) {
+            Err((refusal, detail)) => {
+                println!(
+                    "cross-unit import phase refused: {}: {detail}",
+                    refusal.phrase()
+                );
+                link_refused = Some(serde_json::json!({
+                    "evidence": "derived",
+                    "refused": refusal.phrase(),
+                    "detail": detail,
+                    "artifact": resolution.path,
+                    "artifact_sha256": resolution.artifact_sha256,
+                }));
+                None
+            }
+            Ok(()) => {
+                let route_units = tasks
+                    .iter()
+                    .filter_map(|task| match (&task.expected_source, task.input) {
+                        (Ok(expected_source), TaskInput::Configured(entry)) => {
+                            crate::input_paths::relative_within(expected_source, &root).map(
+                                |file| {
+                                    (
+                                        format!("{}/{}", task.library, file.to_string_lossy()),
+                                        crate::cross_unit_links::ConfigurationIdentity::of(entry),
+                                    )
+                                },
+                            )
+                        }
+                        _ => None,
+                    })
+                    .collect::<Vec<_>>();
+                let found = resolution.derive(&route_units);
+                println!(
+                    "cross-unit link resolution derived (rule 40) from {} (sha256 {}): {} home(s); refused {}",
+                    resolution.path.display(),
+                    resolution.artifact_sha256,
+                    found.map.requested().len(),
+                    found.refused_by_reason()
+                );
+                let map = found.map.clone();
+                derived = Some(found);
+                (!map.requested().is_empty()).then_some(map)
+            }
+        },
+    };
     if let Some(options) = checkpoints {
         let unresolved = groups
             .iter()
@@ -559,7 +625,7 @@ pub fn run_current_route_with_checkpoints(
         return crate::checkpoint_run::run(route, &audit, plan, options).map(|(failed, _)| failed);
     }
     if let Some(library_table) = route.library_providers {
-        if cross_unit_links.is_some() {
+        if opted {
             return Err(
                 "cross-unit imports are not supported with per-library provider scoping".into(),
             );
@@ -758,7 +824,10 @@ pub fn run_current_route_with_checkpoints(
             (audit.contracts().clone(), Vec::new())
         };
         if !homes.is_empty() {
-            audit.set_cross_unit(environment, homes, links);
+            match derived.take() {
+                Some(derived) => audit.set_cross_unit_derived(environment, homes, derived),
+                None => audit.set_cross_unit(environment, homes, links),
+            }
             let progress =
                 crate::route_progress::Phase::begin("cross-unit import", tasks.len(), route.jobs);
             let mut promoted = Vec::new();
@@ -801,6 +870,9 @@ pub fn run_current_route_with_checkpoints(
                 );
             }
         }
+    }
+    if let Some(refused) = link_refused {
+        audit.record_link_resolution_refused(refused);
     }
     for (group, outcome) in published {
         for header in &headers[printed_headers..=group] {

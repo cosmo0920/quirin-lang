@@ -268,11 +268,54 @@ pub fn for_caller(
         .iter()
         .map(|&index| run_homes[index].clone())
         .collect::<Vec<_>>();
+    let environment = restrict_environment(run_environment.clone(), &homes);
+    CallerImports {
+        environment,
+        homes,
+        reachable: scope.reachable,
+        named_only,
+        withheld,
+    }
+}
+
+/// Card **LINK-STANDING** (rule 40): drop every held home `keep` refuses,
+/// with its import, lifetime import and expected identity. Holding fewer
+/// homes never supplies a summary (fail-closed); the scope's counts are
+/// unchanged.
+pub fn retain_held(
+    imports: CallerImports,
+    keep: impl Fn(&CrossUnitHomeEvidence) -> bool,
+) -> CallerImports {
+    let CallerImports {
+        environment,
+        homes,
+        reachable,
+        named_only,
+        withheld,
+    } = imports;
+    let homes = homes
+        .into_iter()
+        .filter(|home| keep(home))
+        .collect::<Vec<_>>();
+    CallerImports {
+        environment: restrict_environment(environment, &homes),
+        homes,
+        reachable,
+        named_only,
+        withheld,
+    }
+}
+
+/// The environment with only the imports, lifetime imports and identities
+/// of `homes`.
+fn restrict_environment(
+    mut environment: ResourceContracts,
+    homes: &[CrossUnitHomeEvidence],
+) -> ResourceContracts {
     let held = homes
         .iter()
         .map(|home| home.function.as_str())
         .collect::<BTreeSet<_>>();
-    let mut environment = run_environment.clone();
     let imports = environment
         .inferred_imports()
         .iter()
@@ -295,13 +338,7 @@ pub fn for_caller(
         .map(|(name, identity)| (name.clone(), identity.clone()))
         .collect();
     environment.set_cross_unit_import_identities(identities);
-    CallerImports {
-        environment,
-        homes,
-        reachable: scope.reachable,
-        named_only,
-        withheld,
-    }
+    environment
 }
 
 /// The pure scope decision of [`for_caller`]
