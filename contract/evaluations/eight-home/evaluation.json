@@ -76,7 +76,7 @@
   },
   "baseline": {
     "path": "contract/evaluations/eight-home/baseline.json",
-    "sha256": "83e9bd86d2194e0e0e2df71a3f32f6d6ebd5f9d7ff9cbc3bf99ee64df5e40105"
+    "sha256": "a0d0651b0c5c9e1b461a739a24d730a26d4efeb40c4786a5fd27669b48a86492"
   },
   "baseline_history": [
     {
@@ -96,10 +96,16 @@
       "measured_revision": "777fba16efa49c67634fd9eec0b3db12051b0edd",
       "reason": "Landing 777fba16e against published c8c7edf21: 41 Unknown-to-Safe rows and units ctr_attributes.c to Safe, decode_statsd_message and unit cmt_decode_statsd.c to provisional Unsafe, each the measured move of LIBC-GAP-DECLARATIONS, CFL-MPACK-EXTERNAL-DECLARATIONS, LIBRDKAFKA-HEADER-INLINES or MEMBER-EFFECT-SUMMARY; no NULL verdict moves (digest changes with content only).",
       "source": "docs/reports/landing-777fba16e/README.md"
+    },
+    {
+      "sha256": "a0d0651b0c5c9e1b461a739a24d730a26d4efeb40c4786a5fd27669b48a86492",
+      "measured_revision": "556460e31f4b0fe00cfa477855771ed50f209236",
+      "reason": "Landing 556460e31 against published 7b726587b: 25 Unknown-to-Safe rows, rd_kafka_sasl_safe_string and unit rdkafka_sasl_scram.c from provisional Unsafe to Unknown, each the measured move of OUT-PARAMETER-SCALAR-FRAME-PREMISE, OUT-PARAMETER-BODY-SUMMARY, SCALAR-STATEMENT-FORMS, MEMBER-EFFECT-COMPONENT-SCOPE, MEMBER-RELEASE-UNTYPED-BASE or CHAINED-ASSIGNMENT-INNER-DESTINATION; no NULL verdict moves (digest changes with the custody/combined carrier and evidence version only).",
+      "source": "docs/reports/landing-556460e31/README.md"
     }
   ],
   "evidence_version": {
-    "analyzer_revision": "777fba16efa49c67634fd9eec0b3db12051b0edd",
+    "analyzer_revision": "556460e31f4b0fe00cfa477855771ed50f209236",
     "semantic_evidence": "v2 (unchanged)"
   }
 }

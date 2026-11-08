@@ -69,7 +69,7 @@
   },
   "baseline": {
     "path": "contract/evaluations/fluent-bit-system/baseline.json",
-    "sha256": "62f7368f87f98dc801dae3c5f490410aa1998e84641c1a57d745ff84c701aad0"
+    "sha256": "5f8ba3926276f9b3e5f78c7e7b7bf92061e921699233f436093a801e609e0df5"
   },
   "baseline_history": [
     {
@@ -77,10 +77,16 @@
       "measured_revision": "710021bd713b90037e803d4a1f87d95eba6476c9",
       "reason": "first published baseline of the live profile: BASE 710021bd7 measured by card EVALUATION-PROFILES with the AUDIT-CANONICAL-PATHS route driver on the original pinned inputs",
       "source": "docs/reports/evaluation-profiles/README.md"
+    },
+    {
+      "sha256": "5f8ba3926276f9b3e5f78c7e7b7bf92061e921699233f436093a801e609e0df5",
+      "measured_revision": "556460e31f4b0fe00cfa477855771ed50f209236",
+      "reason": "Landing 556460e31 against published 7b726587b: destroy_chunk_raw in both flb_input_chunk.c configurations Unknown to Safe, the measured move of MEMBER-EFFECT-COMPONENT-SCOPE; no NULL verdict moves (digest changes with the custody/combined carrier and evidence version only).",
+      "source": "docs/reports/landing-556460e31/README.md"
     }
   ],
   "evidence_version": {
-    "analyzer_revision": "710021bd713b90037e803d4a1f87d95eba6476c9",
+    "analyzer_revision": "556460e31f4b0fe00cfa477855771ed50f209236",
     "semantic_evidence": "v2 (unchanged)"
   }
 }
