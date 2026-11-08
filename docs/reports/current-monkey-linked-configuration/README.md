@@ -7,8 +7,16 @@ analyse `lib/monkey` under Fluent Bit's own configuration, the one linked
 into `bin/fluent-bit`, so that its homes can be derived. Before this card it
 kept the 24 Monkey homes refused.
 
-This commit holds the census (scope item 1). Later commits add the route
-change, the checks and the records.
+Outcome: `quirin-audit current --monkey-linked`, which `prepare --run` now
+passes, analyses Monkey's units from the run's own compile database. The
+standalone units are replaced, or kept as not-linked `Unknown` units. With
+this card's tip, `prepare --link` on the user's database derives 173 more
+names, all Monkey homes. All 29 linked Monkey units are input-identical to
+the linked, reproduced objects. All 156 census callees derive.
+[PREDICTION.md](PREDICTION.md) is `none` for corpus, system and slice, and
+gives per-unit expectations for the user's run. The census was committed
+first (`20fd18c82`), then the prediction (`7b2bb167c`), then the change
+(`e5925e6b0`).
 
 ## Census
 
@@ -290,9 +298,46 @@ TBD-PROBES
   the compile database's faithfulness are trust-boundary-28 premises,
   pinned by the two tests.
 
-TBD-GATE
+## Gate
+
+`python3 scripts/gate_scope.py --base a0ac2cae9 --out private/gate-1` at
+`e5925e6b0`: **exit 0**, scoped mode (packages `qcore-audit`,
+`qcore-compiler` and `qcorec`, plus five test targets that read the tree).
+The record is [`gate.json`](gate.json). The amendments file was its only
+uncommitted path.
+
+| Step | Exit | Counts |
+|---|---:|---|
+| submodules | 0 | 1 submodule |
+| fmt | 0 | |
+| clippy (and the two extra packages) | 0 | |
+| rust-suite | 0 | 199 units, 2,613 passed, 0 failed, 4 ignored (15,009 s including the slot wait) |
+| reevaluation probe / follow-up | 0 / 0 | |
+| lean | 0 | 417 audits (all, since a proof root changed) |
+| python | 0 | 685 tests |
+
+No provider gate: no provider path changed.
+
+`python3 scripts/apply_amendments.py
+docs/reports/current-monkey-linked-configuration/integration-amendments.json
+--check`, run after applying FLUENT-BIT-LINK-PREPARE's amendments (in place,
+then restored): exit 0.
 
 ## Follow-ups
 
-TBD-FOLLOWUPS
+- `MONKEY-LINKED-NON-ROUTE-UNITS` (registered): the linked
+  `lib/monkey/deps/{flb_libco,rbtree,regex}` objects are not route units, so
+  12 of their names stay refused (`co_active`, `co_create`, `co_delete`,
+  `co_switch` and 8 others).
+- `LIBRARY-PROVIDERS-LINKED-MONKEY-SCOPE` (registered): the per-library
+  provider table scopes only `monkey-libevent`, so a linked run under it
+  refuses.
+- `BODY-SUMMARY-REUSE-LINK-STANDING` (appended): need (5) is closed. It notes
+  the 4 `mk_tls_*` homes that are OpenSSL bodies and the export-phase arm
+  for not-linked units, which LINK-STANDING should keep or replace
+  deliberately.
+- `LINK-PREPARE-PINNED-ROUTE-INPUTS` (appended): the pinned corpus still
+  reads the standalone Monkey configuration.
+- Not registered: `prepare` still builds the standalone Monkey database. The
+  pinned route needs it, and the current run uses it only for accounting.
 
