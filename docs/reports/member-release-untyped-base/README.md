@@ -227,3 +227,19 @@ Follow-ups (amendments in [integration-amendments.json](integration-amendments.j
   typedef-base sole-blocker body and its `current` estimate omits releases
   through `contract inherit` wrappers; that report is frozen, and this
   report's §1 is the correction.
+
+## Integrator measurement (2026-11-08)
+
+Declared measurement, base `rev:662dc54a4`, tip `rev:278f87412`, run from the
+main checkout (`private/measure/untyped-base-20261108T083424Z`): exit 0, all three routes
+complete, no unmatched rows, declared result **match**.
+
+- corpus: `rdkafka_aux.c::rd_kafka_Node_destroy` Unknown to Safe; `rdkafka_aux.c::rd_kafka_Node_free` Unknown to Safe; `rdkafka_mock.c::rd_kafka_mock_error_stack_destroy` Unknown to Safe; `rdkafka_mock_sharegrp.c::rd_kafka_mock_sgrp_record_release` Unknown to Safe; `rdkafka_share_acknowledgement.c::rd_kafka_share_ack_batch_entry_destroy` Unknown to Safe; `rdkafka_share_acknowledgement.c::rd_kafka_share_ack_batch_entry_destroy_free` Unknown to Safe; `mk_core/mk_memory.c::mk_ptr_free` Unknown to Safe; 12 rows changed content only.
+- system: no row moved; 2 rows changed content only.
+- slice: no row moved; 4 rows changed content only.
+
+[Comparison](integration/native-comparison.json.gz) (gzip of
+`native-comparison.json`, sha256
+`da24baf43807a757b55ae8f704cc907152058e1f39c234d3b2916ab1401c7479`).
+
+Base is MEMBER-EFFECT-COMPONENT-SCOPE's measured code tip, so the seven moves are this card's alone; MEMBER-EFFECT-COMPONENT-SCOPE's own measurement is recorded in its report.
