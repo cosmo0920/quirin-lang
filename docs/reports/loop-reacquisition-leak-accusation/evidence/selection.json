@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "name": "loop-reacquisition-snappy",
+  "description": "Card LOOP-REACQUISITION-LEAK-ACCUSATION: the two librdkafka units holding the candidate rows rd_kafka_snappy_java_uncompress and rd_kafka_sasl_safe_string, for the leak-witness census.",
+  "groups": [
+    {"library": "librdkafka", "files": ["lib/librdkafka-2.15.0/src/snappy.c", "lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c"]}
+  ]
+}

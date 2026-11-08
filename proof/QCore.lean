@@ -223,6 +223,7 @@ import QCore.LoopInvariants
 import QCore.LoopLifetimeSummary
 import QCore.LoopOwner
 import QCore.LoopOwnerCoroPlugin
+import QCore.LoopReacquisitionLeak
 import QCore.LoopSiteGenerations
 import QCore.LoopSwitchCallEvaluation
 import QCore.LoopWindows
