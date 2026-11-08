@@ -1,0 +1,843 @@
+{
+ "population": {
+  "callees": 156,
+  "sites": 438
+ },
+ "callees_by_outcome": {
+  "derived": 132,
+  "refused: home configuration is not a unit of the current route": 24
+ },
+ "sites_by_outcome": {
+  "derived": 383,
+  "refused: home configuration is not a unit of the current route": 55
+ },
+ "sites_by_outcome_and_caller": {
+  "derived | caller linked": 383,
+  "refused: home configuration is not a unit of the current route | caller not a unit of this compile database (Monkey database or unselected)": 55
+ },
+ "experiment_map": {
+  "names": 165,
+  "by_outcome": {
+   "derived": 133,
+   "not listed: no linked object references it across inputs as a function": 8,
+   "refused: home configuration is not a unit of the current route": 24
+  }
+ },
+ "sole_blocked": {
+  "ctxTypeID_to_size": {
+   "LZ4_sizeofState": "derived",
+   "LZ4_sizeofStateHC": "derived"
+  },
+  "cio_chunk_hash": {
+   "cio_file_hash": "derived"
+  },
+  "cio_chunk_is_up": {
+   "cio_file_is_up": "derived"
+  },
+  "mk_mq_send": {
+   "mk_fifo_send": "refused: home configuration is not a unit of the current route"
+  },
+  "rd_kafka_share_consumer_closed_err": {
+   "rd_kafka_error_code": "derived",
+   "rd_kafka_error_destroy": "derived"
+  },
+  "net_plain_writev": {
+   "mk_iov_send": "refused: home configuration is not a unit of the current route"
+  },
+  "rd_kafka_transport_ssl_threadid_cb": {
+   "thrd_current_id": "derived"
+  }
+ },
+ "candidate_map": {
+  "derived": 1384,
+  "refused": 5033,
+  "refused_by_reason": {
+   "defined in a shared object": 704,
+   "defining object has no unique compile database entry": 17,
+   "home configuration is not a unit of the current route": 4286,
+   "home unit key names more than one route configuration": 26
+  }
+ },
+ "callees": {
+  "LZ4_decompress_safe_usingDict": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/lz4.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/lz4.c"
+  },
+  "LZ4_sizeofState": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/lz4.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/lz4.c"
+  },
+  "LZ4_sizeofStateHC": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/lz4hc.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/lz4hc.c"
+  },
+  "cJSON_CreateObject": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/cJSON.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/cJSON.c"
+  },
+  "cJSON_GetObjectItem": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/cJSON.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/cJSON.c"
+  },
+  "cJSON_PrintUnformatted": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/cJSON.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/cJSON.c"
+  },
+  "cio_chunk_counter_total_up_add": {
+   "outcome": "derived",
+   "detail": "chunkio/lib/chunkio/src/cio_chunk.c",
+   "experiment_home": "chunkio/lib/chunkio/src/cio_chunk.c"
+  },
+  "cio_chunk_counter_total_up_sub": {
+   "outcome": "derived",
+   "detail": "chunkio/lib/chunkio/src/cio_chunk.c",
+   "experiment_home": "chunkio/lib/chunkio/src/cio_chunk.c"
+  },
+  "cio_error_reset": {
+   "outcome": "derived",
+   "detail": "chunkio/lib/chunkio/src/cio_error.c",
+   "experiment_home": "chunkio/lib/chunkio/src/cio_error.c"
+  },
+  "cio_error_set": {
+   "outcome": "derived",
+   "detail": "chunkio/lib/chunkio/src/cio_error.c",
+   "experiment_home": "chunkio/lib/chunkio/src/cio_error.c"
+  },
+  "cio_file_hash": {
+   "outcome": "derived",
+   "detail": "chunkio/lib/chunkio/src/cio_file.c",
+   "experiment_home": "chunkio/lib/chunkio/src/cio_file.c"
+  },
+  "cio_file_is_up": {
+   "outcome": "derived",
+   "detail": "chunkio/lib/chunkio/src/cio_file.c",
+   "experiment_home": "chunkio/lib/chunkio/src/cio_file.c"
+  },
+  "cio_file_native_compose_path": {
+   "outcome": "derived",
+   "detail": "chunkio/lib/chunkio/src/cio_file_unix.c",
+   "experiment_home": "chunkio/lib/chunkio/src/cio_file_unix.c"
+  },
+  "cio_file_native_delete": {
+   "outcome": "derived",
+   "detail": "chunkio/lib/chunkio/src/cio_file_unix.c",
+   "experiment_home": "chunkio/lib/chunkio/src/cio_file_unix.c"
+  },
+  "cio_file_native_delete_by_path": {
+   "outcome": "derived",
+   "detail": "chunkio/lib/chunkio/src/cio_file_unix.c",
+   "experiment_home": "chunkio/lib/chunkio/src/cio_file_unix.c"
+  },
+  "cio_file_native_filename_check": {
+   "outcome": "derived",
+   "detail": "chunkio/lib/chunkio/src/cio_file_unix.c",
+   "experiment_home": "chunkio/lib/chunkio/src/cio_file_unix.c"
+  },
+  "cio_file_native_resize": {
+   "outcome": "derived",
+   "detail": "chunkio/lib/chunkio/src/cio_file_unix.c",
+   "experiment_home": "chunkio/lib/chunkio/src/cio_file_unix.c"
+  },
+  "cio_file_native_sync": {
+   "outcome": "derived",
+   "detail": "chunkio/lib/chunkio/src/cio_file_unix.c",
+   "experiment_home": "chunkio/lib/chunkio/src/cio_file_unix.c"
+  },
+  "cio_file_real_size": {
+   "outcome": "derived",
+   "detail": "chunkio/lib/chunkio/src/cio_file.c",
+   "experiment_home": "chunkio/lib/chunkio/src/cio_file.c"
+  },
+  "cio_file_up": {
+   "outcome": "derived",
+   "detail": "chunkio/lib/chunkio/src/cio_file.c",
+   "experiment_home": "chunkio/lib/chunkio/src/cio_file.c"
+  },
+  "cio_file_up_force": {
+   "outcome": "derived",
+   "detail": "chunkio/lib/chunkio/src/cio_file.c",
+   "experiment_home": "chunkio/lib/chunkio/src/cio_file.c"
+  },
+  "cio_getpagesize": {
+   "outcome": "derived",
+   "detail": "chunkio/lib/chunkio/src/cio_utils.c",
+   "experiment_home": "chunkio/lib/chunkio/src/cio_utils.c"
+  },
+  "cio_memfs_scan_dump": {
+   "outcome": "derived",
+   "detail": "chunkio/lib/chunkio/src/cio_memfs.c",
+   "experiment_home": "chunkio/lib/chunkio/src/cio_memfs.c"
+  },
+  "cio_os_isdir": {
+   "outcome": "derived",
+   "detail": "chunkio/lib/chunkio/src/cio_os.c",
+   "experiment_home": "chunkio/lib/chunkio/src/cio_os.c"
+  },
+  "cmt_encode_opentelemetry_destroy": {
+   "outcome": "derived",
+   "detail": "cmetrics/lib/cmetrics/src/cmt_encode_opentelemetry.c",
+   "experiment_home": "cmetrics/lib/cmetrics/src/cmt_encode_opentelemetry.c"
+  },
+  "cmt_histogram_buckets_destroy": {
+   "outcome": "derived",
+   "detail": "cmetrics/lib/cmetrics/src/cmt_histogram.c",
+   "experiment_home": "cmetrics/lib/cmetrics/src/cmt_histogram.c"
+  },
+  "cmt_labels_count": {
+   "outcome": "derived",
+   "detail": "cmetrics/lib/cmetrics/src/cmt_label.c",
+   "experiment_home": "cmetrics/lib/cmetrics/src/cmt_label.c"
+  },
+  "cmt_metric_add": {
+   "outcome": "derived",
+   "detail": "cmetrics/lib/cmetrics/src/cmt_metric.c",
+   "experiment_home": "cmetrics/lib/cmetrics/src/cmt_metric.c"
+  },
+  "cmt_metric_exp_hist_lock": {
+   "outcome": "derived",
+   "detail": "cmetrics/lib/cmetrics/src/cmt_metric.c",
+   "experiment_home": "cmetrics/lib/cmetrics/src/cmt_metric.c"
+  },
+  "cmt_metric_exp_hist_unlock": {
+   "outcome": "derived",
+   "detail": "cmetrics/lib/cmetrics/src/cmt_metric.c",
+   "experiment_home": "cmetrics/lib/cmetrics/src/cmt_metric.c"
+  },
+  "cmt_metric_hist_count_inc": {
+   "outcome": "derived",
+   "detail": "cmetrics/lib/cmetrics/src/cmt_metric_histogram.c",
+   "experiment_home": "cmetrics/lib/cmetrics/src/cmt_metric_histogram.c"
+  },
+  "cmt_metric_hist_count_set": {
+   "outcome": "derived",
+   "detail": "cmetrics/lib/cmetrics/src/cmt_metric_histogram.c",
+   "experiment_home": "cmetrics/lib/cmetrics/src/cmt_metric_histogram.c"
+  },
+  "cmt_metric_hist_inc": {
+   "outcome": "derived",
+   "detail": "cmetrics/lib/cmetrics/src/cmt_metric_histogram.c",
+   "experiment_home": "cmetrics/lib/cmetrics/src/cmt_metric_histogram.c"
+  },
+  "cmt_metric_hist_set": {
+   "outcome": "derived",
+   "detail": "cmetrics/lib/cmetrics/src/cmt_metric_histogram.c",
+   "experiment_home": "cmetrics/lib/cmetrics/src/cmt_metric_histogram.c"
+  },
+  "cmt_metric_hist_sum_add": {
+   "outcome": "derived",
+   "detail": "cmetrics/lib/cmetrics/src/cmt_metric_histogram.c",
+   "experiment_home": "cmetrics/lib/cmetrics/src/cmt_metric_histogram.c"
+  },
+  "cmt_metric_hist_sum_set": {
+   "outcome": "derived",
+   "detail": "cmetrics/lib/cmetrics/src/cmt_metric_histogram.c",
+   "experiment_home": "cmetrics/lib/cmetrics/src/cmt_metric_histogram.c"
+  },
+  "cmt_metric_inc": {
+   "outcome": "derived",
+   "detail": "cmetrics/lib/cmetrics/src/cmt_metric.c",
+   "experiment_home": "cmetrics/lib/cmetrics/src/cmt_metric.c"
+  },
+  "cmt_metric_set": {
+   "outcome": "derived",
+   "detail": "cmetrics/lib/cmetrics/src/cmt_metric.c",
+   "experiment_home": "cmetrics/lib/cmetrics/src/cmt_metric.c"
+  },
+  "cmt_metric_set_exp_hist_count": {
+   "outcome": "derived",
+   "detail": "cmetrics/lib/cmetrics/src/cmt_metric.c",
+   "experiment_home": "cmetrics/lib/cmetrics/src/cmt_metric.c"
+  },
+  "cmt_metric_set_exp_hist_sum": {
+   "outcome": "derived",
+   "detail": "cmetrics/lib/cmetrics/src/cmt_metric.c",
+   "experiment_home": "cmetrics/lib/cmetrics/src/cmt_metric.c"
+  },
+  "cmt_metric_sub": {
+   "outcome": "derived",
+   "detail": "cmetrics/lib/cmetrics/src/cmt_metric.c",
+   "experiment_home": "cmetrics/lib/cmetrics/src/cmt_metric.c"
+  },
+  "cmt_summary_count_set": {
+   "outcome": "derived",
+   "detail": "cmetrics/lib/cmetrics/src/cmt_summary.c",
+   "experiment_home": "cmetrics/lib/cmetrics/src/cmt_summary.c"
+  },
+  "cmt_summary_quantile_set": {
+   "outcome": "derived",
+   "detail": "cmetrics/lib/cmetrics/src/cmt_summary.c",
+   "experiment_home": "cmetrics/lib/cmetrics/src/cmt_summary.c"
+  },
+  "cmt_summary_sum_set": {
+   "outcome": "derived",
+   "detail": "cmetrics/lib/cmetrics/src/cmt_summary.c",
+   "experiment_home": "cmetrics/lib/cmetrics/src/cmt_summary.c"
+  },
+  "cmt_time_from_ns": {
+   "outcome": "derived",
+   "detail": "cmetrics/lib/cmetrics/src/cmt_time.c",
+   "experiment_home": "cmetrics/lib/cmetrics/src/cmt_time.c"
+  },
+  "ctr_attributes_count": {
+   "outcome": "derived",
+   "detail": "ctraces/lib/ctraces/src/ctr_attributes.c",
+   "experiment_home": "ctraces/lib/ctraces/src/ctr_attributes.c"
+  },
+  "ctr_attributes_create": {
+   "outcome": "derived",
+   "detail": "ctraces/lib/ctraces/src/ctr_attributes.c",
+   "experiment_home": "ctraces/lib/ctraces/src/ctr_attributes.c"
+  },
+  "ctr_attributes_destroy": {
+   "outcome": "derived",
+   "detail": "ctraces/lib/ctraces/src/ctr_attributes.c",
+   "experiment_home": "ctraces/lib/ctraces/src/ctr_attributes.c"
+  },
+  "ctr_create": {
+   "outcome": "derived",
+   "detail": "ctraces/lib/ctraces/src/ctraces.c",
+   "experiment_home": "ctraces/lib/ctraces/src/ctraces.c"
+  },
+  "ctr_id_get_buf": {
+   "outcome": "derived",
+   "detail": "ctraces/lib/ctraces/src/ctr_id.c",
+   "experiment_home": "ctraces/lib/ctraces/src/ctr_id.c"
+  },
+  "ctr_id_to_lower_base16": {
+   "outcome": "derived",
+   "detail": "ctraces/lib/ctraces/src/ctr_id.c",
+   "experiment_home": "ctraces/lib/ctraces/src/ctr_id.c"
+  },
+  "ctr_link_set_dropped_attr_count": {
+   "outcome": "derived",
+   "detail": "ctraces/lib/ctraces/src/ctr_link.c",
+   "experiment_home": "ctraces/lib/ctraces/src/ctr_link.c"
+  },
+  "ctr_link_set_flags": {
+   "outcome": "derived",
+   "detail": "ctraces/lib/ctraces/src/ctr_link.c",
+   "experiment_home": "ctraces/lib/ctraces/src/ctr_link.c"
+  },
+  "ctr_mpack_consume_int32_tag": {
+   "outcome": "derived",
+   "detail": "ctraces/lib/ctraces/src/ctr_mpack_utils.c",
+   "experiment_home": "ctraces/lib/ctraces/src/ctr_mpack_utils.c"
+  },
+  "ctr_mpack_consume_uint32_tag": {
+   "outcome": "derived",
+   "detail": "ctraces/lib/ctraces/src/ctr_mpack_utils.c",
+   "experiment_home": "ctraces/lib/ctraces/src/ctr_mpack_utils.c"
+  },
+  "ctr_mpack_consume_uint64_tag": {
+   "outcome": "derived",
+   "detail": "ctraces/lib/ctraces/src/ctr_mpack_utils.c",
+   "experiment_home": "ctraces/lib/ctraces/src/ctr_mpack_utils.c"
+  },
+  "ctr_random_get": {
+   "outcome": "derived",
+   "detail": "ctraces/lib/ctraces/src/ctr_random.c",
+   "experiment_home": "ctraces/lib/ctraces/src/ctr_random.c"
+  },
+  "ctr_resource_set_dropped_attr_count": {
+   "outcome": "derived",
+   "detail": "ctraces/lib/ctraces/src/ctr_resource.c",
+   "experiment_home": "ctraces/lib/ctraces/src/ctr_resource.c"
+  },
+  "ctr_resource_span_get_resource": {
+   "outcome": "derived",
+   "detail": "ctraces/lib/ctraces/src/ctr_resource.c",
+   "experiment_home": "ctraces/lib/ctraces/src/ctr_resource.c"
+  },
+  "ctr_span_end_ts": {
+   "outcome": "derived",
+   "detail": "ctraces/lib/ctraces/src/ctr_span.c",
+   "experiment_home": "ctraces/lib/ctraces/src/ctr_span.c"
+  },
+  "ctr_span_event_set_dropped_attributes_count": {
+   "outcome": "derived",
+   "detail": "ctraces/lib/ctraces/src/ctr_span.c",
+   "experiment_home": "ctraces/lib/ctraces/src/ctr_span.c"
+  },
+  "ctr_span_start_ts": {
+   "outcome": "derived",
+   "detail": "ctraces/lib/ctraces/src/ctr_span.c",
+   "experiment_home": "ctraces/lib/ctraces/src/ctr_span.c"
+  },
+  "mk_config_sanity_check": {
+   "outcome": "refused: home configuration is not a unit of the current route",
+   "detail": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-affab06b54e0c761c/private/link-prepare/run-1/fluent-bit-clang-source/lib/monkey/mk_server/mk_config.c",
+   "experiment_home": "monkey-libevent/lib/monkey/mk_server/mk_config.c"
+  },
+  "mk_config_signature": {
+   "outcome": "refused: home configuration is not a unit of the current route",
+   "detail": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-affab06b54e0c761c/private/link-prepare/run-1/fluent-bit-clang-source/lib/monkey/mk_server/mk_config.c",
+   "experiment_home": "monkey-libevent/lib/monkey/mk_server/mk_config.c"
+  },
+  "mk_core_init": {
+   "outcome": "refused: home configuration is not a unit of the current route",
+   "detail": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-affab06b54e0c761c/private/link-prepare/run-1/fluent-bit-clang-source/lib/monkey/mk_core/mk_utils.c",
+   "experiment_home": "monkey-libevent/lib/monkey/mk_core/mk_utils.c"
+  },
+  "mk_event_init": {
+   "outcome": "refused: home configuration is not a unit of the current route",
+   "detail": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-affab06b54e0c761c/private/link-prepare/run-1/fluent-bit-clang-source/lib/monkey/mk_core/mk_event.c",
+   "experiment_home": "monkey-libevent/lib/monkey/mk_core/mk_event.c"
+  },
+  "mk_fifo_send": {
+   "outcome": "refused: home configuration is not a unit of the current route",
+   "detail": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-affab06b54e0c761c/private/link-prepare/run-1/fluent-bit-clang-source/lib/monkey/mk_server/mk_fifo.c",
+   "experiment_home": "monkey-libevent/lib/monkey/mk_server/mk_fifo.c"
+  },
+  "mk_header_set_http_status": {
+   "outcome": "refused: home configuration is not a unit of the current route",
+   "detail": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-affab06b54e0c761c/private/link-prepare/run-1/fluent-bit-clang-source/lib/monkey/mk_server/mk_header.c",
+   "experiment_home": "monkey-libevent/lib/monkey/mk_server/mk_header.c"
+  },
+  "mk_iov_send": {
+   "outcome": "refused: home configuration is not a unit of the current route",
+   "detail": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-affab06b54e0c761c/private/link-prepare/run-1/fluent-bit-clang-source/lib/monkey/mk_core/mk_iov.c",
+   "experiment_home": "monkey-libevent/lib/monkey/mk_core/mk_iov.c"
+  },
+  "mk_kernel_features": {
+   "outcome": "refused: home configuration is not a unit of the current route",
+   "detail": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-affab06b54e0c761c/private/link-prepare/run-1/fluent-bit-clang-source/lib/monkey/mk_server/mk_kernel.c",
+   "experiment_home": "monkey-libevent/lib/monkey/mk_server/mk_kernel.c"
+  },
+  "mk_net_init": {
+   "outcome": "refused: home configuration is not a unit of the current route",
+   "detail": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-affab06b54e0c761c/private/link-prepare/run-1/fluent-bit-clang-source/lib/monkey/mk_server/mk_net.c",
+   "experiment_home": "monkey-libevent/lib/monkey/mk_server/mk_net.c"
+  },
+  "mk_net_transport_default": {
+   "outcome": "refused: home configuration is not a unit of the current route",
+   "detail": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-affab06b54e0c761c/private/link-prepare/run-1/fluent-bit-clang-source/lib/monkey/mk_server/mk_net.c",
+   "experiment_home": "monkey-libevent/lib/monkey/mk_server/mk_net.c"
+  },
+  "mk_plugin_exit_worker": {
+   "outcome": "refused: home configuration is not a unit of the current route",
+   "detail": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-affab06b54e0c761c/private/link-prepare/run-1/fluent-bit-clang-source/lib/monkey/mk_server/mk_plugin.c",
+   "experiment_home": "monkey-libevent/lib/monkey/mk_server/mk_plugin.c"
+  },
+  "mk_plugin_lookup": {
+   "outcome": "refused: home configuration is not a unit of the current route",
+   "detail": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-affab06b54e0c761c/private/link-prepare/run-1/fluent-bit-clang-source/lib/monkey/mk_server/mk_plugin.c",
+   "experiment_home": "monkey-libevent/lib/monkey/mk_server/mk_plugin.c"
+  },
+  "mk_rconf_section_get": {
+   "outcome": "refused: home configuration is not a unit of the current route",
+   "detail": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-affab06b54e0c761c/private/link-prepare/run-1/fluent-bit-clang-source/lib/monkey/mk_core/mk_rconf.c",
+   "experiment_home": "monkey-libevent/lib/monkey/mk_core/mk_rconf.c"
+  },
+  "mk_sched_broadcast_signal": {
+   "outcome": "refused: home configuration is not a unit of the current route",
+   "detail": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-affab06b54e0c761c/private/link-prepare/run-1/fluent-bit-clang-source/lib/monkey/mk_server/mk_scheduler.c",
+   "experiment_home": "monkey-libevent/lib/monkey/mk_server/mk_scheduler.c"
+  },
+  "mk_sched_get_connection": {
+   "outcome": "refused: home configuration is not a unit of the current route",
+   "detail": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-affab06b54e0c761c/private/link-prepare/run-1/fluent-bit-clang-source/lib/monkey/mk_server/mk_scheduler.c",
+   "experiment_home": "monkey-libevent/lib/monkey/mk_server/mk_scheduler.c"
+  },
+  "mk_sched_handler_cap": {
+   "outcome": "refused: home configuration is not a unit of the current route",
+   "detail": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-affab06b54e0c761c/private/link-prepare/run-1/fluent-bit-clang-source/lib/monkey/mk_server/mk_scheduler.c",
+   "experiment_home": "monkey-libevent/lib/monkey/mk_server/mk_scheduler.c"
+  },
+  "mk_socket_create": {
+   "outcome": "refused: home configuration is not a unit of the current route",
+   "detail": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-affab06b54e0c761c/private/link-prepare/run-1/fluent-bit-clang-source/lib/monkey/mk_server/mk_socket.c",
+   "experiment_home": "monkey-libevent/lib/monkey/mk_server/mk_socket.c"
+  },
+  "mk_string_copy_substr": {
+   "outcome": "refused: home configuration is not a unit of the current route",
+   "detail": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-affab06b54e0c761c/private/link-prepare/run-1/fluent-bit-clang-source/lib/monkey/mk_core/mk_string.c",
+   "experiment_home": "monkey-libevent/lib/monkey/mk_core/mk_string.c"
+  },
+  "mk_string_search_n": {
+   "outcome": "refused: home configuration is not a unit of the current route",
+   "detail": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-affab06b54e0c761c/private/link-prepare/run-1/fluent-bit-clang-source/lib/monkey/mk_core/mk_string.c",
+   "experiment_home": "monkey-libevent/lib/monkey/mk_core/mk_string.c"
+  },
+  "mk_tls_exit": {
+   "outcome": "refused: home configuration is not a unit of the current route",
+   "detail": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-affab06b54e0c761c/private/link-prepare/run-1/fluent-bit-clang-source/lib/monkey/tls/tls_openssl.c",
+   "experiment_home": "monkey-libevent/lib/monkey/tls/tls_stub.c"
+  },
+  "mk_tls_init": {
+   "outcome": "refused: home configuration is not a unit of the current route",
+   "detail": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-affab06b54e0c761c/private/link-prepare/run-1/fluent-bit-clang-source/lib/monkey/tls/tls_openssl.c",
+   "experiment_home": "monkey-libevent/lib/monkey/tls/tls_stub.c"
+  },
+  "mk_tls_thread_init": {
+   "outcome": "refused: home configuration is not a unit of the current route",
+   "detail": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-affab06b54e0c761c/private/link-prepare/run-1/fluent-bit-clang-source/lib/monkey/tls/tls_openssl.c",
+   "experiment_home": "monkey-libevent/lib/monkey/tls/tls_stub.c"
+  },
+  "mk_tls_transport": {
+   "outcome": "refused: home configuration is not a unit of the current route",
+   "detail": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-affab06b54e0c761c/private/link-prepare/run-1/fluent-bit-clang-source/lib/monkey/tls/tls_openssl.c",
+   "experiment_home": "monkey-libevent/lib/monkey/tls/tls_stub.c"
+  },
+  "mk_utils_worker_rename": {
+   "outcome": "refused: home configuration is not a unit of the current route",
+   "detail": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-affab06b54e0c761c/private/link-prepare/run-1/fluent-bit-clang-source/lib/monkey/mk_core/mk_utils.c",
+   "experiment_home": "monkey-libevent/lib/monkey/mk_core/mk_utils.c"
+  },
+  "rd_http_error_destroy": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdhttp.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdhttp.c"
+  },
+  "rd_kafka_Produce_result_new": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_msg.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_msg.c"
+  },
+  "rd_kafka_acl_result_new": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_aux.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_aux.c"
+  },
+  "rd_kafka_brokers_get_state_version": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_broker.c"
+  },
+  "rd_kafka_brokers_wait_state_change": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_broker.c"
+  },
+  "rd_kafka_buf_calc_timeout": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_buf.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_buf.c"
+  },
+  "rd_kafka_buf_upgrade_flexver_request": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_buf.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_buf.c"
+  },
+  "rd_kafka_bufq_init": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_buf.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_buf.c"
+  },
+  "rd_kafka_confval_get_int": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_conf.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_conf.c"
+  },
+  "rd_kafka_consumer_group_metadata_destroy": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_cgrp.c"
+  },
+  "rd_kafka_consumer_group_state_code": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka.c"
+  },
+  "rd_kafka_consumer_group_state_name": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka.c"
+  },
+  "rd_kafka_consumer_group_type_code": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka.c"
+  },
+  "rd_kafka_consumer_group_type_name": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka.c"
+  },
+  "rd_kafka_coord_reqs_init": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_coord.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_coord.c"
+  },
+  "rd_kafka_error_code": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_error.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_error.c"
+  },
+  "rd_kafka_error_destroy": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_error.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_error.c"
+  },
+  "rd_kafka_error_is_fatal": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_error.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_error.c"
+  },
+  "rd_kafka_error_set_fatal": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_error.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_error.c"
+  },
+  "rd_kafka_error_set_retriable": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_error.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_error.c"
+  },
+  "rd_kafka_error_set_txn_requires_abort": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_error.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_error.c"
+  },
+  "rd_kafka_handle_OffsetFetch_err_action": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_request.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_request.c"
+  },
+  "rd_kafka_mem_malloc": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka.c"
+  },
+  "rd_kafka_message_new": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_msg.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_msg.c"
+  },
+  "rd_kafka_messages_new": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_msg.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_msg.c"
+  },
+  "rd_kafka_metadata_cache_wait_change": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_metadata_cache.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_metadata_cache.c"
+  },
+  "rd_kafka_metadata_destroy": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_metadata.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_metadata.c"
+  },
+  "rd_kafka_mock_cgrp_classic_check_state": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c"
+  },
+  "rd_kafka_mock_cgrp_classic_member_active": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c"
+  },
+  "rd_kafka_mock_connection_set_blocking": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_mock.c"
+  },
+  "rd_kafka_mock_partition_leader_epoch_check": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_mock.c"
+  },
+  "rd_kafka_mock_sharegroup_member_active": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_mock_sharegrp.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_mock_sharegrp.c"
+  },
+  "rd_kafka_mock_sharegrps_init": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_mock_sharegrp.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_mock_sharegrp.c"
+  },
+  "rd_kafka_msgbatch_set_first_msg": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_msg.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_msg.c"
+  },
+  "rd_kafka_op_get_offset": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_op.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_op.c"
+  },
+  "rd_kafka_outq_len": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka.c"
+  },
+  "rd_kafka_set_thread_name": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka.c"
+  },
+  "rd_kafka_share_ensure_all_acknowledged_if_explicit": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c"
+  },
+  "rd_kafka_ssl_init": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_ssl.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_ssl.c"
+  },
+  "rd_kafka_ssl_term": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_ssl.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_ssl.c"
+  },
+  "rd_kafka_timer_next": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_timer.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_timer.c"
+  },
+  "rd_kafka_topic_partition_destroy": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_partition.c"
+  },
+  "rd_kafka_topic_partition_list_destroy_free": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_partition.c"
+  },
+  "rd_kafka_topic_partition_list_get_err": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_partition.c"
+  },
+  "rd_kafka_topic_partition_list_reset_offsets": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_partition.c"
+  },
+  "rd_kafka_topic_partition_list_set_err": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_partition.c"
+  },
+  "rd_kafka_topic_partition_set_current_leader_epoch": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_partition.c"
+  },
+  "rd_kafka_topic_partition_set_leader_epoch": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_partition.c"
+  },
+  "rd_kafka_topic_partition_set_topic_id": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_partition.c"
+  },
+  "rd_kafka_topic_result_destroy": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_aux.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_aux.c"
+  },
+  "rd_kafka_toppar_purge_and_disable_queues": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_partition.c"
+  },
+  "rd_kafka_transport_init": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_transport.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_transport.c"
+  },
+  "rd_kafka_transport_poll_set": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_transport.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_transport.c"
+  },
+  "rd_kafka_transport_shutdown": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_transport.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_transport.c"
+  },
+  "rd_kafkap_leader_discovery_metadata_init": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_request.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_request.c"
+  },
+  "rd_kafkap_leader_discovery_tmpabuf_add_alloc_topic": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_request.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_request.c"
+  },
+  "rd_kafkap_leader_discovery_tmpabuf_add_alloc_topics": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_request.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_request.c"
+  },
+  "rd_list_last": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdlist.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdlist.c"
+  },
+  "rd_list_set_cnt": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdlist.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdlist.c"
+  },
+  "rd_regex_match": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdregex.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdregex.c"
+  },
+  "rd_slice_crc32": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdbuf.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdbuf.c"
+  },
+  "rd_sockaddr_list_destroy": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdaddr.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdaddr.c"
+  },
+  "rd_strcmp": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdstring.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdstring.c"
+  },
+  "rd_string_hash": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdstring.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdstring.c"
+  },
+  "rd_strtup_destroy": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/rdstring.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/rdstring.c"
+  },
+  "rwlock_rdlock": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/tinycthread_extra.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/tinycthread_extra.c"
+  },
+  "rwlock_rdunlock": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/tinycthread_extra.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/tinycthread_extra.c"
+  },
+  "rwlock_wrlock": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/tinycthread_extra.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/tinycthread_extra.c"
+  },
+  "rwlock_wrunlock": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/tinycthread_extra.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/tinycthread_extra.c"
+  },
+  "thrd_current_id": {
+   "outcome": "derived",
+   "detail": "librdkafka/lib/librdkafka-2.15.0/src/tinycthread_extra.c",
+   "experiment_home": "librdkafka/lib/librdkafka-2.15.0/src/tinycthread_extra.c"
+  }
+ }
+}
