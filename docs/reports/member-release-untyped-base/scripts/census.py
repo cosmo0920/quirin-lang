@@ -71,6 +71,21 @@ def release_modes(root: pathlib.Path):
     return mode
 
 
+inherited_cache = {}
+
+
+def inherited(root: pathlib.Path):
+    """`wrapper -> parent` for every `contract inherit` declaration."""
+    if not inherited_cache:
+        for path in root.glob("*/contracts/**/*.qv"):
+            text = re.sub(r"//[^\n]*", "", path.read_text(errors="replace"))
+            for match in re.finditer(
+                r"extern\s+fn\s+(\w+)\s*\([^)]*\)[^\n]*?contract\s+inherit\s+(?:\w+::)?(\w+)\s*;", text
+            ):
+                inherited_cache[match.group(1)] = match.group(2)
+    return inherited_cache
+
+
 class Tree(parent.Tree):
     def raw(self, path):
         """The file's text with its line numbering kept."""
@@ -241,6 +256,17 @@ def from_report(route, report_path, root, providers):
 def from_current(premises, root, providers):
     rows = [json.loads(line) for line in gzip.open(premises, "rt")]
     releases, owned = estimate.contracts(pathlib.Path(providers))
+    # MEMBER-EFFECT-SUMMARY's estimate reads only written-out contracts; a
+    # wrapper declared `contract inherit libc::free` (`rd_free`, `mk_mem_free`)
+    # releases the same positions as its parent (the signatures agree
+    # position by position), so it is added here.
+    for child, parent_name in inherited(pathlib.Path(providers)).items():
+        seen, name = set(), parent_name
+        while name in inherited_cache and name not in seen:
+            seen.add(name)
+            name = inherited_cache[name]
+        if name in releases and child not in releases:
+            releases[child] = set(releases[name])
     mode = release_modes(pathlib.Path(providers))
     tree = Tree(pathlib.Path(root))
     by_function = collections.defaultdict(list)

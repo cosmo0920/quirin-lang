@@ -46,11 +46,18 @@ resolves, and their refusal lies elsewhere.
 | corpus | resolved | unit | 25 | 20 | none |
 | system | any | | 0 | 0 | |
 | slice | any | | 0 | 0 | |
-| current | untyped: the typedef defines the record | nullable | 1 | 1 | none (`cJSON_Delete`) |
-| current | resolved | any | 17 | 15 | `rd_kafka_offset_file_close` |
+| current | untyped: the typedef defines the record | nullable | 37 | 31 | `mk_ptr_free`, `rd_kafka_mock_sgrp_record_release` |
+| current | untyped: the typedef defines the record | unit | 8 | 6 | none |
+| current | untyped: disagreeing typedefs | nullable | 2 | 1 | none (`rd_kafka_Node_destroy`) |
+| current | resolved | any | 41 | 30 | `rd_kafka_offset_file_close` |
 
 Corpus totals: 166 leaves in 107 functions; the reader leaves the base untyped
-for 96 leaves in 57 functions. Every untyped-base leaf with a nullable
+for 96 leaves in 57 functions. `current` (estimate): 88 leaves in 69
+functions, 47 in 36 untyped. The `current` estimate counts more than the
+parent's (18 in 16) because MEMBER-EFFECT-SUMMARY's selection reads only
+written-out contracts and so missed every release through a wrapper declared
+`contract inherit libc::free` (`rd_free`, `mk_mem_free`); `census.py` adds
+the inherited positions (the signatures agree position by position). Every untyped-base leaf with a nullable
 release has a `*`-spelled member (two `unit` leaves have a member of another
 typedef), so "untyped base and member together" decides nothing on these
 routes.
