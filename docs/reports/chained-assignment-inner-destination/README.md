@@ -168,3 +168,44 @@ non-vacuity cases `the_scram_shape_is_dropped_by_the_old_reading`,
 [PREDICTION.md](PREDICTION.md), committed before the semantic change: corpus
 `rd_kafka_sasl_safe_string` Unsafe → Unknown, system and slice none; on the
 `current` run the scram unit leaves provisional Unsafe for Unknown.
+
+## 7. Gate
+
+`python3 scripts/gate_scope.py --base 1e522ca5d --out private/gate-N` (mode
+full: the diff reaches `qcore-c-gateway`; Lean all: a proof root changed).
+
+- **gate-1** (head `c97de4997`), exit 1, kept as `gate-1-failed.json`:
+  submodules, fmt and clippy 0; rust-suite 101 (617 units, 9,276 passed,
+  **20 failed** in five units: `intrusive_list_iteration`,
+  `element_destroyer`, `container_root_reach`,
+  `refuted_contract_foreign_unlink`, `sr5_soundness`); both reevaluation
+  probes 0; Lean 0 (417 audits); Python 0 (685 tests). Cause: the guard read
+  `container_of`'s statement expression as a write inside the assigned
+  value and refused rule 3's element binding. Fixed in `4d9895a10` (a braced
+  group is opaque); the five units were rerun green before gate-2.
+- **gate-2** (head `4d9895a10`), **exit 0**, `gate.json`: submodules 0, fmt
+  0, clippy 0, rust-suite 0 (617 units, 9,296 passed, 0 failed, 16 ignored,
+  135 filtered), `reevaluation_probe` 0, `reevaluation_followup` 0, Lean 0
+  (417 audits), Python 0 (685 tests, 0 skipped): 8 steps passed. Logs are in
+  the worktree's `private/gate-2/`. The timing-sensitive slot test did not
+  fail.
+
+`python3 scripts/apply_amendments.py
+docs/reports/chained-assignment-inner-destination/integration-amendments.json
+--check` exits 0. It retires `CHAINED-ASSIGNMENT-INNER-DESTINATION` and
+`CG02-OLDER-SCALAR-ROUTE-UNSEQUENCED`.
+
+## 8. Measurement and follow-ups
+
+The integrator measures `--side base=baseline:7b726587bdf6a8213f451fa1c78297bb5e476ef7
+--side tip=rev:4d9895a10 --declared
+docs/reports/chained-assignment-inner-destination/PREDICTION.md` and reruns
+the user's `current` run after landing.
+
+No new follow-up is registered. Two observations stay here. After the fix,
+the scram fixture's remaining refusal comes from the pass loop's
+path-insensitive scalar correlation (`safe = NULL` reaching `return safe`),
+the class `LEAK-PATH-SCALAR-CORRELATION` already tracks. The census is
+lexical: it evaluates no `#if`, and the two "not compiled" rows were read by
+hand. The arbiter measurement is the evidence for any chain the census
+could not see.

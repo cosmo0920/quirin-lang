@@ -1,0 +1,23 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "CHAINED-ASSIGNMENT-INNER-DESTINATION",
+  "base": "1e522ca5d",
+  "measured_tip": "4d9895a1067e952c52d0c30820ff50df917846e4",
+  "increment_paragraph": "**CHAINED-ASSIGNMENT-INNER-DESTINATION** (user decision of 2026-11-07, \"Register four as implementation cards\"; [report](../../reports/chained-assignment-inner-destination/README.md); gateway rule 5i amended in place, pointer from 10s). The statement classifier modelled one write per assignment statement and read `d = safe = rd_malloc(n)` as `d = rd_malloc(n)`, so the write of `safe` was neither modelled nor refused: `rd_kafka_sasl_safe_string`'s `return safe;` escaped nothing and a leak was accused (`rdkafka_sasl_scram.c:243`, `:249`). Census first (lexical, joined to the base reports): 33 chains inside analysed functions of the corpus and the `current` run, none in system or slice; one drops a custody-bearing inner write (scram), three `mk_http_parser` lines were admitted by the typed scalar-field route as one access, every other one is refused, already lowered by rule 10s or not compiled. A guard ending `classify_simple` (`legacy_chained_assignment.rs`) replaces an admission of a statement holding a write inside an assigned value by a named refusal (`chained assignment writes an inner destination too; …`, or the nested-operand refusal), restoring the probe state and admitting nothing; rule 10s then lowers a chain as its sequential assignments (C11 6.5.16p3), each link by the older single-assignment lowering, now also for `T a = b = E;`, and a destination the route refuses alone keeps the chain refused by name. The guard also discharges `CG02-OLDER-SCALAR-ROUTE-UNSEQUENCED` (`x = (x = 1)` now refused by name; its `clang_gap_phase1` pin flipped). Fixtures in `tests/chained_assignment.rs` (the scram shape loses its leak and stays Unknown; inner-name release matched, double release accused; refused destinations keep their refusal; scalar chains unchanged); `QCore.ChainedAssignment` (12 audited theorems: a chain equals its sequential assignments, both names hold the identity, the guard never promotes). Prediction: corpus `rd_kafka_sasl_safe_string` Unsafe → Unknown, system and slice none; the scram unit of the `current` run leaves provisional Unsafe for Unknown.",
+  "status_paragraph": null,
+  "profiles": [],
+  "ledger": [
+    {
+      "id": "CHAINED-ASSIGNMENT-INNER-DESTINATION",
+      "operation": "retire",
+      "why": "DISCHARGED by card CHAINED-ASSIGNMENT-INNER-DESTINATION (gateway rule 5i, amended): a chained assignment's inner destination is modelled or refused, never dropped. The classifier's admission of a statement holding a write inside an assigned value is replaced by a named refusal, and rule 10s lowers a chain as its sequential assignments (C11 6.5.16p3), each link by the older single-assignment lowering; a destination the route refuses alone keeps the chain refused by name. Census of 33 analysed chains (one custody-bearing drop: rd_kafka_sasl_safe_string). The arbiter measurement (integrator, base baseline:7b726587b) is predicted to move corpus rd_kafka_sasl_safe_string Unsafe -> Unknown and nothing in system or slice; the scram unit of the current run leaves provisional Unsafe for Unknown and does not reach Safe by this rule. Lean parity: QCore.ChainedAssignment.",
+      "source": "docs/reports/chained-assignment-inner-destination/README.md"
+    },
+    {
+      "id": "CG02-OLDER-SCALAR-ROUTE-UNSEQUENCED",
+      "operation": "retire",
+      "why": "DISCHARGED by card CHAINED-ASSIGNMENT-INNER-DESTINATION (gateway rule 5i, amended): the older route no longer admits `x = (x = 1)` as one scalar write; its guard refuses any admission holding a write inside an assigned value by name and defers to rule 10s's order model, which refuses the same-object unsequenced pair, so the statement stays refused by name (tests/clang_gap_phase1.rs e04 pin flipped). CG02's census found 0 such statements in the pinned corpus sources.",
+      "source": "docs/reports/chained-assignment-inner-destination/README.md"
+    }
+  ]
+}
