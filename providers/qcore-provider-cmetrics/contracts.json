@@ -2,15 +2,15 @@
   "schema_version": 1,
   "plugin_id": "qcore.cmetrics",
   "contracts": {
-    "contracts/cmetrics/context_lifetime.qv": "1ba76df850e122ae7a37a529594f94ad2257c31de5383e0fe106e063c2731014",
-    "contracts/cmetrics/counter_reset.qv": "68ddff8762494737f99a1d99ef9078211490e9f72047b2b5096fb0b2ba324194",
-    "contracts/cmetrics/logging.qv": "29c18ae97bf227a73d1af3e25f5006757cc1aa9f9662026f6292cee299c12781",
-    "contracts/cmetrics/map_lifetime.qv": "d6554e97c353ad16154d972ee0ec637b3a227678013517e342ba6ba6c02be4d9",
-    "contracts/cmetrics/metric_setters.qv": "43e5067e5c3134bf6921359c2cb4b64a36d282d5b7c92e9725e04bb77503043a",
-    "contracts/cmetrics/metric_values.qv": "c3db21d15d98e12fdf11fe6ffe3de98f674c94625256a94b3270f9db73be1a43",
-    "contracts/cmetrics/mpack_utils.qv": "c0c2c64b6b569303a24ecffd7c257641668747417851f2d12825aa13d13a93a2",
-    "contracts/cmetrics/null_deref.qv": "4041672b8470b5553f70099da2f23fa2490cac2a7eba5801e847dccea861faf3",
-    "contracts/cmetrics/opts_lifetime.qv": "5b3106651397e95ec5fdd5dbaf6f44a63993e11dcb0f2af6bcedacb54b636950",
-    "contracts/cmetrics/typed_setters.qv": "1ca57003973160606e19e980b35f96364b71c7b356ee9de3896f5aeeb669a55f"
+    "contracts/cmetrics/context_lifetime.qv": "92c42a2af345e2196033a2912bf39c6d4377814315b7bc92ee81658b74ec3898",
+    "contracts/cmetrics/counter_reset.qv": "20896b29b8902e821f78a450630eee2303f601e74b5745a05b0499bc9403f8ee",
+    "contracts/cmetrics/logging.qv": "726db038a1527d4abbe0bf6e050b32206431a87aa7d962f08081bfc2652a0864",
+    "contracts/cmetrics/map_lifetime.qv": "15ebd943190b19cf144c52929756af16d60fc2652feab1e1342a991e0cff29ba",
+    "contracts/cmetrics/metric_setters.qv": "6957f78598b3db2bc78b42f5867c850d9aff7b8979900b4cd2e757f0f3d6e57e",
+    "contracts/cmetrics/metric_values.qv": "fcdabbff6844f640c09d1a4cbb823e8de8edae976ac83afa25335bcae38f3822",
+    "contracts/cmetrics/mpack_utils.qv": "e7fba7cab009e3d096cd9acb3fcde1205d774cb5ad06bbcbe339e9bbed6d050f",
+    "contracts/cmetrics/null_deref.qv": "03c45beb4fb82ee9e63aad675f4780a3d98721225611e91b2ce32739c7f8625a",
+    "contracts/cmetrics/opts_lifetime.qv": "e8fc397d1ac7c0af2656075e0a0f217b242f8e4865b3f55ba0d95c42e44a219a",
+    "contracts/cmetrics/typed_setters.qv": "9704f9b330dd0b86b20145fd001023c77bb0c001fef56c4dd316ebd091c70df2"
   }
 }

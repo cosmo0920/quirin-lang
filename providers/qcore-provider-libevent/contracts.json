@@ -2,33 +2,33 @@
   "schema_version": 1,
   "plugin_id": "qcore.libevent",
   "contracts": {
-    "contracts/monkey/callback_binding.qv": "9c2dd85ccf4a993506fee37d4cab717788d9b06fb9ea9d6735e74159bf6d13d6",
-    "contracts/monkey/callback_task_handoff.qv": "be5964f3d8f390516bd53209ec3132503a65d3bf7833d5183f0e5eb13c2d663e",
-    "contracts/monkey/composition.qv": "ee16fa5d7b8bd36f355397045a7c12545db28392eaad113b454f862096215e73",
-    "contracts/monkey/cycle18_composition.qv": "76a4fc17604702c7b3fc012d75011f0d2e4abefb57f1a77406843b0c6f13e97b",
-    "contracts/monkey/descriptor_observation.qv": "89ffc2dfaae320c37341f4f6465b8b32c66a85134fff795bcd43364aec13c091",
-    "contracts/monkey/event_loop.qv": "8593b3517d2a8869abdfe4e18e9da2170d34c742b8fe8ee8573ca360ba778cee",
-    "contracts/monkey/event_payload.qv": "560c499d6f968a30bd7253340eeabac6604daa0cece08928be289f2ce0e2047a",
-    "contracts/monkey/intrusive_list.qv": "0c17d2fb756bed2580c62e3a94eef659e6ede10690854c9af179b09d7a181e3a",
-    "contracts/monkey/logging.qv": "c9fdea74a8d0227836c3ed6260c413f2ee43a82bf6856b312ce49babd516e15b",
-    "contracts/monkey/memory.qv": "d042af2e4a9302d8a207d782e5c3850ae8614daf611d439881a0f7b4cfe93dd6",
-    "contracts/monkey/native_platform_matrix.qv": "0525b020bca19c28e2b59b57d55f6816f578aea39749cf0b5c7fe04bee2b81a2",
-    "contracts/monkey/result_range.qv": "103438dc7ea69da822dbe887cb588c86aef8ce02782ca89534fa165c1c0376b3",
-    "contracts/monkey/scalar_observation.qv": "8f400380f17d656598422a0e8430dcf154d96893bba664e620d4e6a60c5e1def",
-    "contracts/monkey/string.qv": "53f9c3f6baa72f6acf2c7bdb2582b6a6392c67a9c17a1c5785413a1efc943f44",
-    "contracts/monkey/timeout_teardown.qv": "dfbc9a41a0066b1a53913703c3c80100f1536fc4cb9fc3a6488b257538808c7b",
-    "contracts/monkey/vhost_set.qv": "640187a5674cd86f7782bf9815e6d72b1082aef66e811f45b2def3e9f757fb34",
-    "contracts/monkey/wait_failure_policy.qv": "29aab57c753498539d92140ed08c02694d264394c31b2702232c3dbba6971d64",
-    "contracts/monkey/wait_identity_policy.qv": "131694dd932954d26cb085224bd6d25edfc02867e88863ca46de6f6c7572c1c3",
-    "contracts/monkey/wait_source_policy.qv": "b78d56857a059c96d0d748e8dd6a4c3ee9bbf527c21e17f3ce9ebcad4fe0c393",
-    "contracts/monkey/wrapper_paths.qv": "c5c51240aafc42b293f715113c76706e656ac51548b1be065536c83f6167bdb0"
+    "contracts/monkey/callback_binding.qv": "55587515743ddadde845440ebefd1b9555dd2cca65983386148365a6b14e8fc8",
+    "contracts/monkey/callback_task_handoff.qv": "f988c81e00471650a6b7c69c613be07f063a09d026287ff2dad6a3686e8e3311",
+    "contracts/monkey/composition.qv": "e7d841d7fd9c9322591c6a4c2339f31dc05e5ee96b62187b51042e42c2a996c8",
+    "contracts/monkey/cycle18_composition.qv": "a5d7c2ca197f81395df2f141ea88ec136fa14cec4d067f4c85cc018738d2571e",
+    "contracts/monkey/descriptor_observation.qv": "c12c580484b350932aa78d46d029aa1ab321286a568edac8a8cd550fd9d5ed35",
+    "contracts/monkey/event_loop.qv": "0eeb6e9bf6e8f4e880213c82d2097d505499c036e85db6fd5a5b170b55e4fd95",
+    "contracts/monkey/event_payload.qv": "ad2203f6bcee7e208ea65fa0fbb86ff66a97ec282ad19d844c4ef2849d1d1063",
+    "contracts/monkey/intrusive_list.qv": "f48ad90b2348412fd3f705ef2b0dfb9b2c01e96ba8dfbeac82b1702f4ad2c831",
+    "contracts/monkey/logging.qv": "4dae299d4d2894999b608a1a3c52cf92aae87a3133f68db9ea619287c084f8df",
+    "contracts/monkey/memory.qv": "6635b0d4037c727251abe9cbd3907bb925b628bc9fd6a1d5d0b3f25073f245a9",
+    "contracts/monkey/native_platform_matrix.qv": "461ffc45eca5cfe826fc6ba00c66a10c7e240a04f58453603a218814c7755659",
+    "contracts/monkey/result_range.qv": "d6ea9b348959caed059718d594b6a30f4290c130c0bc89116ed02ce92f1a82c7",
+    "contracts/monkey/scalar_observation.qv": "ca68fd35d557accac10dfb043d60e57fa096aeb97c53de09a38416e1f8c25303",
+    "contracts/monkey/string.qv": "ee0d13e55f40331438e572703773a222c56a519e511a8ff885be1616fecba8a2",
+    "contracts/monkey/timeout_teardown.qv": "64b92201adeb7e750a5f83c33642108550cb864caba3a9fab9fe33b9d32c55ca",
+    "contracts/monkey/vhost_set.qv": "1d9b9bad2a1e1f30cb2530cb600c831eeffee5c387c796b996f26efcc314af46",
+    "contracts/monkey/wait_failure_policy.qv": "26f45d80a0e930bc44b9b308182a74f98b3709f1b28ed0c894a61e91073c8633",
+    "contracts/monkey/wait_identity_policy.qv": "52dadbe99576d93282c4bbf4b29583a35360d91ff9f8f82564999bbaf5fbf115",
+    "contracts/monkey/wait_source_policy.qv": "a08d45b8f1bf7b376b94223ee39aceaef8786594a1bc09602a2cf9dc5d5be94a",
+    "contracts/monkey/wrapper_paths.qv": "7f4aedfc8d0b6d26a29935ac6297ea295150b4229e6d6248eac6d0193c63162b"
   },
   "includes": {
     "quirin-provider-libc:libc/memory.qv": {
       "crate": "quirin-provider-libc",
       "version": "0.1.0",
       "module": "libc/memory.qv",
-      "sha256": "dec99ab65e1abe68f8344e6a2fc45e31221f9015a5ed0285bae2ff384f2db34f"
+      "sha256": "647e223d864f5dfacfa57bb573f270fc7ae4dfd1c0af5f7fb022a0d00b534636"
     }
   }
 }

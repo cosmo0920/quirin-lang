@@ -334,8 +334,8 @@
         "libc/unistd.qv"
       ],
       "published": {
-        "libc/memory.qv": "dec99ab65e1abe68f8344e6a2fc45e31221f9015a5ed0285bae2ff384f2db34f",
-        "libc/string.qv": "6c59574468efc24ccd5fbc1fe4570d225087ec4f43c9818f678d74a75c89cc7f"
+        "libc/memory.qv": "647e223d864f5dfacfa57bb573f270fc7ae4dfd1c0af5f7fb022a0d00b534636",
+        "libc/string.qv": "08e91e18832980eb7112283db93b2c464a228ea172f58a91fe5d7c7a27c7cec5"
       },
       "resource_view": [
         "libc/dirent.qv",
