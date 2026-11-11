@@ -1,3 +1,17 @@
+-- SPDX-License-Identifier: Apache-2.0
+--
+-- Licensed under the Apache License, Version 2.0 (the "License");
+-- you may not use this file except in compliance with the License.
+-- You may obtain a copy of the License at
+--
+--     http://www.apache.org/licenses/LICENSE-2.0
+--
+-- Unless required by applicable law or agreed to in writing, software
+-- distributed under the License is distributed on an "AS IS" BASIS,
+-- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-- See the License for the specific language governing permissions and
+-- limitations under the License.
+
 import QCore.RegistrationById
 
 /-! Audited companion to FB-EVENT-LOOP-RETENTION-AND-REGISTRATION (gateway rule 12n, contract specification C04.19.3; USER DECISION 2026-10-16, "Result + list"): a registration forwarded through an id, validated against the body that creates one record, links it into the list, stores the callback into the member and returns the record's id, contributes exactly the store a direct registration does; an id that resolves to no record, or to two, never decides. -/

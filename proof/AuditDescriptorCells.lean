@@ -1,3 +1,17 @@
+-- SPDX-License-Identifier: Apache-2.0
+--
+-- Licensed under the Apache License, Version 2.0 (the "License");
+-- you may not use this file except in compliance with the License.
+-- You may obtain a copy of the License at
+--
+--     http://www.apache.org/licenses/LICENSE-2.0
+--
+-- Unless required by applicable law or agreed to in writing, software
+-- distributed under the License is distributed on an "AS IS" BASIS,
+-- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-- See the License for the specific language governing permissions and
+-- limitations under the License.
+
 import QCore.DescriptorCells
 
 /-! Audited companion to MK-EVENT-DESCRIPTOR-QUANT (gateway rule 38, contract specification C04.6.2; user decision 2026-11-01, "I approve the changes of D1-D5."): a descriptor is an identity and a cell a name of it; a fresh identity is released once, a second release through any name refuses; the witness decides a creation's class and an untested one never discharges; an untracked cell decides nothing and a live or undecided cell refuses at an exit; the member-equality guard is decided only from live identities (distinct numbers under the hypothesis that two open descriptors never share one), an undecided guard refuses and changes no cell, and a guarded removal then keeps and poisons its record; removal and release commute; the shorthand and its canonical parts are one set; the Rust decision vectors hold. Card MK-EVENT-FIRST-MEMBER-CELL (C11 6.7.2.1p15): a pointer to a record whose first member is the event resolves to the event's own place, so the cell table's results are unchanged under it; every other record, a nested chain, an empty or incomplete record, a mix of types and any other type refuse; the Rust initial-member vectors hold. -/

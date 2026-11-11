@@ -1,3 +1,17 @@
+-- SPDX-License-Identifier: Apache-2.0
+--
+-- Licensed under the Apache License, Version 2.0 (the "License");
+-- you may not use this file except in compliance with the License.
+-- You may obtain a copy of the License at
+--
+--     http://www.apache.org/licenses/LICENSE-2.0
+--
+-- Unless required by applicable law or agreed to in writing, software
+-- distributed under the License is distributed on an "AS IS" BASIS,
+-- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-- See the License for the specific language governing permissions and
+-- limitations under the License.
+
 import QCore.RetentionPath
 
 /-! Audited companion to FB-EVENT-LOOP-RETENTION-AND-REGISTRATION (gateway rule 12t, contract specification C04.14; USER DECISIONS 2026-10-16, "Tracked holder path" and "R3: quant state") and RETENTION-UNMATCHED-REMOVAL-POISONS (USER DECISION 2026-10-17, "Yes, small fix card now"): a record held by a resolved holder path ends only by a removal of exactly that registration or its loop's destroy, so a holder that would outlive the held object is never `Safe`; an unresolved path never decides; a removal that does not match a record exactly poisons every record it may name, and a poisoned record ends only by its loop's destroy (the old sequence "unmatched removal, matched removal, release" no longer decides); a release while any record (an interior included) holds the identity refuses. -/

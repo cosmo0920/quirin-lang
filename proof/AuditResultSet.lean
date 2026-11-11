@@ -1,3 +1,17 @@
+-- SPDX-License-Identifier: Apache-2.0
+--
+-- Licensed under the Apache License, Version 2.0 (the "License");
+-- you may not use this file except in compliance with the License.
+-- You may obtain a copy of the License at
+--
+--     http://www.apache.org/licenses/LICENSE-2.0
+--
+-- Unless required by applicable law or agreed to in writing, software
+-- distributed under the License is distributed on an "AS IS" BASIS,
+-- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-- See the License for the specific language governing permissions and
+-- limitations under the License.
+
 import QCore.ResultSet
 
 /-! Audited companion to CELL-GUARD-RESULT-RANGE-CHECKED (contract specification C09.4, grammar G05j, gateway rule 38e; user decision 2026-11-03, option C, a result-set form that allows unions, with the programming-language operators | & ^ as union, intersection and symmetric difference): the operators mean union, intersection and symmetric difference over the integers of the C type, every member lies in the universe; a test that reads a contract class exactly on a known set decides that class on both edges and keeps reading it on every narrower set; a set out of force (held, withdrawn, refuted, unchecked, unbound) is replaced by the whole universe, so no decision rests on an assumed set; the Rust set, member and class vectors hold. -/

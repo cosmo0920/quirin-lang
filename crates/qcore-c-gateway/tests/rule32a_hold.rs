@@ -1,3 +1,17 @@
+// SPDX-License-Identifier: Apache-2.0
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 //! Card RULE32A-PILOT (GATEWAY-RULE-API-HOLD-OFF): rule 32a's caller-frame
 //! hold is a fixed hold. No `QCORE_GATEWAY_RULES_OFF` list removes it: a list
 //! naming `32a` is refused (and the gateway's fallback for a refused list,

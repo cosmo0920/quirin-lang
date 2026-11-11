@@ -1,3 +1,17 @@
+-- SPDX-License-Identifier: Apache-2.0
+--
+-- Licensed under the Apache License, Version 2.0 (the "License");
+-- you may not use this file except in compliance with the License.
+-- You may obtain a copy of the License at
+--
+--     http://www.apache.org/licenses/LICENSE-2.0
+--
+-- Unless required by applicable law or agreed to in writing, software
+-- distributed under the License is distributed on an "AS IS" BASIS,
+-- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-- See the License for the specific language governing permissions and
+-- limitations under the License.
+
 import QCore.FunctionPointerDeclarators
 
 /-! Audited companion to FB-LOOP-CHAIN-ACCESS-IDENTITY-BLOCKERS (ledger RECORD-BODY-TOTAL-OR-REJECT; the lexical declaration reader of `typed_field_access.rs`): a record member that is exactly a function-pointer declarator is skipped and joins no class, every other member reads as in the same body without it, every other unparsed declaration still refuses the whole record, rule 5g's flow-refusing store route keeps its domain of records read with every member, and a function-pointer formal is read as a name of no committed type while every other unparsed formal still refuses the function. -/

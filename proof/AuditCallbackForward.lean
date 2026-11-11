@@ -1,3 +1,17 @@
+-- SPDX-License-Identifier: Apache-2.0
+--
+-- Licensed under the Apache License, Version 2.0 (the "License");
+-- you may not use this file except in compliance with the License.
+-- You may obtain a copy of the License at
+--
+--     http://www.apache.org/licenses/LICENSE-2.0
+--
+-- Unless required by applicable law or agreed to in writing, software
+-- distributed under the License is distributed on an "AS IS" BASIS,
+-- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-- See the License for the specific language governing permissions and
+-- limitations under the License.
+
 import QCore.CallbackForward
 
 /-! Audited companion to SERVE-FORWARDED-CALLBACK-FORMALS (gateway rule 15w): a callback formal handed on unchanged to the same clause position of a callee satisfies the caller's own declaration exactly when the callee's clause is in force and corresponds; every invocation the callee makes under its clause meets the caller's clause; a changed formal, a local use beside a forward, a callee not in force or non-corresponding actuals keep the refusal; and a recursive forward alone never stands under the least fixed point. -/

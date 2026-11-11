@@ -1,3 +1,17 @@
+// SPDX-License-Identifier: Apache-2.0
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 //! Card OUTER-CONTRACT (gateway rule 31, contract specification C04.20): the
 //! runtime projection. Unit vectors for the facts, the contributions and the
 //! join (bound to `QCore.OuterContract`'s `projectionVectors`), and an end

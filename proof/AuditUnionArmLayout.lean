@@ -1,3 +1,17 @@
+-- SPDX-License-Identifier: Apache-2.0
+--
+-- Licensed under the Apache License, Version 2.0 (the "License");
+-- you may not use this file except in compliance with the License.
+-- You may obtain a copy of the License at
+--
+--     http://www.apache.org/licenses/LICENSE-2.0
+--
+-- Unless required by applicable law or agreed to in writing, software
+-- distributed under the License is distributed on an "AS IS" BASIS,
+-- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-- See the License for the specific language governing permissions and
+-- limitations under the License.
+
 import QCore.UnionArmLayout
 
 /-! Audited companion to RKO-OP-CB-RUN-SET-OPEN-THROUGH-UNION (gateway rule 12n, amended): a union's places are separated by Clang's record layout. A write over bytes disjoint from a read's never changes the read; two places the rule keeps apart are known and disjoint, so a store into one never changes a read of the other; the whole union, a place whose bytes are not given and a union two units lay out differently alias every place; the same arm path always aliases and aliasing is symmetric; the layout only narrows Q3's sharing, never adding a store a member takes. UNION-OPAQUE-RECORD-WRITES-BY-TYPE: an opaque write of a record is keyed by its target; the target reading only narrows the type reading, an untargeted write is read by type, a separate object and a path below a record the union does not hold never key into the union, a write into the union is decided by its own place, a write into a separate object or a non-overlapping one never changes the read, and an unknown range aliases. -/

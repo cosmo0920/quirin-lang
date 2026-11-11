@@ -1,3 +1,17 @@
+-- SPDX-License-Identifier: Apache-2.0
+--
+-- Licensed under the Apache License, Version 2.0 (the "License");
+-- you may not use this file except in compliance with the License.
+-- You may obtain a copy of the License at
+--
+--     http://www.apache.org/licenses/LICENSE-2.0
+--
+-- Unless required by applicable law or agreed to in writing, software
+-- distributed under the License is distributed on an "AS IS" BASIS,
+-- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-- See the License for the specific language governing permissions and
+-- limitations under the License.
+
 import QCore.CellProtocolPerEnd
 
 /-! Audited companion to CELL-PROTOCOL-PER-END-GUARDS (gateway rule 38f; user decision 2026-11-03, "Per-end sentinels"): each channel end carries its own sentinel; a sentinel's dead edge decides "no cell is live" exactly when no possible descriptor is on it, so `!= -1`'s does and `> 0`'s does not (descriptor 0, a success value of every creator, is on it); a `> 0` dead edge is never read as absent and a close there refuses; a join never drops a name that may be live and two stale names join stale; the holder's release ends the protocol only without a live cell, naming the zero reading; a record keeps its protocols, and its release refuses, end by end; the Rust per-end vectors hold. -/

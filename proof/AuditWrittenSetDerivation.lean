@@ -1,3 +1,17 @@
+-- SPDX-License-Identifier: Apache-2.0
+--
+-- Licensed under the Apache License, Version 2.0 (the "License");
+-- you may not use this file except in compliance with the License.
+-- You may obtain a copy of the License at
+--
+--     http://www.apache.org/licenses/LICENSE-2.0
+--
+-- Unless required by applicable law or agreed to in writing, software
+-- distributed under the License is distributed on an "AS IS" BASIS,
+-- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-- See the License for the specific language governing permissions and
+-- limitations under the License.
+
 import QCore.WrittenSetDerivation
 
 /-! Audited companion to CELL-RESULT-SET-WRITTEN-SET-DERIVATION (gateway rule 38e as amended; user decisions 2026-11-04, "Basically, Q1(a) and Q2(i) ...", "Write [1, MAX]"): a pinned slot written set is derived from the body chain; the paths' slot sets combine soundly, a test's narrowing keeps the values its edge admits and a narrowing without the class constrains nothing, a call's out array holds the callee's written set once its result is one class, an aliasing store joins its value, forwarding keeps the callee's written set; the declared [1, MAX] admits the creation while POSIX's [0, MAX] derives descriptor 0; the Rust vectors hold. -/

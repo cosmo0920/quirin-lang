@@ -1,3 +1,17 @@
+-- SPDX-License-Identifier: Apache-2.0
+--
+-- Licensed under the Apache License, Version 2.0 (the "License");
+-- you may not use this file except in compliance with the License.
+-- You may obtain a copy of the License at
+--
+--     http://www.apache.org/licenses/LICENSE-2.0
+--
+-- Unless required by applicable law or agreed to in writing, software
+-- distributed under the License is distributed on an "AS IS" BASIS,
+-- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-- See the License for the specific language governing permissions and
+-- limitations under the License.
+
 import QCore.OpCallbacks
 
 /-! Audited companion to CG22-OP-CALLBACKS-AND-SERVED-QUEUES: op callbacks and served queues (gateway rules 12m-12o): a supplied object handed to the callback is taken by every admitted candidate, a type-switched release is the cautious join over its arms and an undeclared arm is never neutral, and a member's run-wide closed set decides only when the run's set is contained in the unit's. Card OP-CONSTRUCTOR-DECLARATIONS (rules 12o, 13w, 14e): a decided discriminant selects exactly its arm and an undecided or unstable one gives the cautious join; a constructor's registration followed by destroy invokes only the registered candidate, an op that maps to absent invokes none, and an unclassified store voids the state; `quant live #result: TAG.FIELD |-> #absent` and its two parts mean the same and are one canonical set. -/

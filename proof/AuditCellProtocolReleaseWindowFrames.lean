@@ -1,3 +1,17 @@
+-- SPDX-License-Identifier: Apache-2.0
+--
+-- Licensed under the Apache License, Version 2.0 (the "License");
+-- you may not use this file except in compliance with the License.
+-- You may obtain a copy of the License at
+--
+--     http://www.apache.org/licenses/LICENSE-2.0
+--
+-- Unless required by applicable law or agreed to in writing, software
+-- distributed under the License is distributed on an "AS IS" BASIS,
+-- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-- See the License for the specific language governing permissions and
+-- limitations under the License.
+
 import QCore.CellProtocolReleaseWindowFrames
 
 /-! Audited companion to CELL-PROTOCOL-RELEASE-WINDOW-FRAMES (gateway rule 38g; user decision 2026-11-04, "(a) Callee frames"): a callee whose footprint excludes a record's protocol members keeps every end and reads none; a unit's body check establishes a frame only over bodies that name no protocol member, read in full and call only established bodies, never through a missing or recursive body; a frame stands only where declared, passes unheld only when checked or accepted, is held for review when only declared, never has a refutation lifted by acceptance, and without one the window refuses as before; the Rust body and window vectors hold. -/

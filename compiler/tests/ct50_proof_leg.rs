@@ -1,3 +1,17 @@
+// SPDX-License-Identifier: Apache-2.0
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 //! `CT-PROOF-LEG-3` (wave 41) — the named runner behind CT50's `proof`-stage
 //! evidence, on the CT01/CT37/CT03 precedent
 //! (`compiler/tests/ct0{1,3}_proof_leg.rs`, `ct37_proof_leg.rs`).
