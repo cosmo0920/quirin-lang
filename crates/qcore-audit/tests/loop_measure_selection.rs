@@ -200,21 +200,25 @@ impl Fixture {
         self.0.join(relative)
     }
 
+    /// Every custody artifact of a run (its invocation record names the
+    /// run's own output paths, so it is not compared).
     fn outputs(&self, out: &str) -> Vec<(String, Vec<u8>)> {
-        let mut outputs = fs::read_dir(self.0.join(out))
-            .unwrap()
-            .map(|entry| entry.unwrap().path())
-            // The invocation record names the run's own output paths.
-            .filter(|path| !path.ends_with("report.invocation.json"))
-            .map(|path| {
-                (
-                    path.file_name().unwrap().to_string_lossy().into_owned(),
-                    fs::read(&path).unwrap(),
-                )
-            })
-            .collect::<Vec<_>>();
-        outputs.sort();
-        outputs
+        [
+            "report.json",
+            "report.components.json",
+            "report.contracts.json",
+            "report.chunk-contracts.json",
+            "report.source-effects.json",
+            "monkey-source.json",
+        ]
+        .iter()
+        .map(|name| {
+            (
+                (*name).to_owned(),
+                fs::read(self.0.join(out).join(name)).unwrap(),
+            )
+        })
+        .collect()
     }
 }
 
