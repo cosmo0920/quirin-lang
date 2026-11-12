@@ -274,6 +274,7 @@ is the arbiter.
   contract-only card's measurement reuses unaffected groups") is rehomed to
   `GATEWAY-WHOLE-TABLE-READS` and `MEASURE-CONTRACT-ONLY-SIDE-WIRING`, and
   the configured routes to `CONFIGURED-ROUTE-LOOKUP-REUSE`.
+- `BASE-LICENCE-HEADERS-BREAK-CLANG-TESTS` (new): §8.
 - Untouched: `PINNED-RESUME-FIXED-COSTS`, `PINNED-CHECKPOINT-PEAK-MEMORY`
   (the records add a few names per unit; the session's environment copy is
   dropped at unit end), `CORPUS-CHECKPOINT-BOUNDS-SELECTION`,
@@ -281,4 +282,43 @@ is the arbiter.
 
 ## 8. Gate
 
-See [gate.json](gate.json).
+`python3 scripts/gate_scope.py --base 74105dd0e` on `3c2449523`
+([gate.json](gate.json), log directory
+`private/gate-scope/20261112T033630Z-1889234/`), run under
+`private/toolchain/env.sh` (the privately unpacked Clang 21.1.8 with its
+sanitizer runtimes and `llvm-symbolizer` first on `PATH`, then Lean 4.35.0;
+[clang-version.txt](gate/clang-version.txt)). Scoped mode reached
+`qcore-schemas` and `qcore-c-gateway` whole, so the whole Rust suite ran; Lean
+all (a proof root changed); no provider gate. **Exit 1.**
+
+| Step | Exit | Counts |
+|---|---:|---|
+| submodules | 0 | 1 submodule |
+| fmt / Clippy | 0 / 0 | |
+| Rust suite (`rust-suite` slot) | **101** | 627 units, 668 summaries, 9,362 passed, **36 failed** (12 units), 17 ignored |
+| reevaluation probe / follow-up | 0 / 0 | |
+| Lean (`check_lean_audits.py`) | 0 | 427 audits |
+| Python suite | 0 | 756 tests |
+
+The 36 failures are in 12 units, every one of which also fails on an untouched
+snapshot of the base `74105dd0e` with the same Clang
+([base-attribution.log](gate/base-attribution.log); `task_route_tsan` run there
+separately, 3 failed): `qcore-c-gateway` `hash_contracts`, `neighbours`,
+`prod_contracts` ("the production module opens with its module header", "a
+production contract module must declare `module contract;`"),
+`libc_reading_site_evidence`, `reading_site_domain` (artifact reference
+mismatch on a Lean file), `qcore-contract` `guarded_contract_adoption`,
+`guarded_decomposition`, `hypothesis_bindings`, `production_symbolic_adoption`
+("whole-source inventory mismatch"), `qcore-audit`
+`contract_dependencies_report`, `source_contract_config` ("contract inventory
+digest mismatch"), and `qcore-compiler` `task_route_tsan` (TSan frames not
+symbolized on this host). All but the last read the bytes of contracts and Lean
+files that the base commit's licence headers changed; they are Clang-guarded,
+so a host without Clang (this one, before this card) skips them. None reads
+anything this card changed. They are the base's, for the integrator's full
+gate on the release host; recorded as `BASE-LICENCE-HEADERS-BREAK-CLANG-TESTS`.
+
+Two earlier attempts on the same tip are discarded as toolchain setup, not
+evidence: `20261112T025438Z-1009794` (198 failed: the private Clang lacked its
+sanitizer runtimes) and `20261112T031717Z-1539206` (38 failed: `clang` on
+`PATH` resolved to the Lean toolchain's bundled Clang).

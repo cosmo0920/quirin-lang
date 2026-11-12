@@ -1,0 +1,64 @@
+     Running tests/configured_cli.rs (target/debug/deps/configured_cli-d1aaa8efdc72f90c)
+thread 'pic_build_flag_preserves_the_unresolved_call_selected_by_preprocessing' (1528198) panicked at crates/qcore-audit/tests/configured_cli.rs:827:5:
+test result: FAILED. 19 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 14.41s
+     Running tests/contract_dependencies_report.rs (target/debug/deps/contract_dependencies_report-cda6b943c69653aa)
+thread 'concrete_attachment_preserves_closed_world_facts_and_publishes_checked_open_bindings' (1530059) panicked at crates/qcore-audit/tests/contract_dependencies_report.rs:694:6:
+thread 'proposed_cjson_detach_consultation_propagates_atoms_through_a_summary' (1530064) panicked at crates/qcore-audit/tests/contract_dependencies_report.rs:503:6:
+test result: FAILED. 10 passed; 2 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.12s
+     Running tests/source_contract_config.rs (target/debug/deps/source_contract_config-6a1a41139271862a)
+thread 'shipped_cmetrics_selection_loads_canonical_policy' (1530121) panicked at crates/qcore-audit/tests/source_contract_config.rs:344:6:
+test result: FAILED. 11 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.14s
+     Running tests/detach_lookup_membership.rs (target/debug/deps/detach_lookup_membership-a743f82c5c9ce138)
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.45s
+     Running tests/hash_contracts.rs (target/debug/deps/hash_contracts-2122caa4a43a349d)
+thread 'the_stored_mode_is_rejected_for_this_callee' (1530458) panicked at crates/qcore-c-gateway/tests/hash_contracts.rs:853:10:
+thread 'neither_real_function_is_promoted' (1530435) panicked at crates/qcore-c-gateway/tests/hash_contracts.rs:853:10:
+thread 'the_four_publications_decide_under_the_production_declaration' (1530452) panicked at crates/qcore-c-gateway/tests/hash_contracts.rs:853:10:
+thread 'the_clause_reproduces_the_directives_real_source_diagnostics' (1530446) panicked at crates/qcore-c-gateway/tests/hash_contracts.rs:853:10:
+thread 'one_publication_moved_off_the_literal_is_refused' (1530438) panicked at crates/qcore-c-gateway/tests/hash_contracts.rs:853:10:
+test result: FAILED. 19 passed; 5 failed; 2 ignored; 0 measured; 0 filtered out; finished in 0.91s
+     Running tests/libc_reading_site_evidence.rs (target/debug/deps/libc_reading_site_evidence-6ad36b3104856570)
+thread 'reference_resolution_rejects_missing_or_changed_independent_artifacts' (1531066) panicked at crates/qcore-c-gateway/tests/libc_reading_site_evidence.rs:266:50:
+thread 'siblings_and_spans_replay_against_actual_source_not_a_self_consistent_receipt' (1531068) panicked at crates/qcore-c-gateway/tests/libc_reading_site_evidence.rs:216:6:
+thread 'actual_scalar_site_replays_and_all_context_coordinates_are_required' (1531063) panicked at crates/qcore-c-gateway/tests/libc_reading_site_evidence.rs:106:6:
+test result: FAILED. 3 passed; 3 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.19s
+     Running tests/neighbours.rs (target/debug/deps/neighbours-1e7e5951d3d88bf3)
+thread 'withdrawing_one_neighbour_still_reproduces_the_refusal' (1531159) panicked at crates/qcore-c-gateway/tests/neighbours.rs:165:5:
+thread 'withdrawing_the_chained_tail_actual_decides_the_constructor' (1531162) panicked at crates/qcore-c-gateway/tests/neighbours.rs:165:5:
+thread 'the_constructor_keeps_exactly_one_refusal_under_production_declarations' (1531145) panicked at crates/qcore-c-gateway/tests/neighbours.rs:165:5:
+thread 'the_real_program_is_not_promoted_by_this_card' (1531147) panicked at crates/qcore-c-gateway/tests/neighbours.rs:165:5:
+thread 'withdrawing_any_single_neighbour_leaves_the_constructor_refusing' (1531153) panicked at crates/qcore-c-gateway/tests/neighbours.rs:165:5:
+test result: FAILED. 7 passed; 5 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.07s
+     Running tests/prod_contracts.rs (target/debug/deps/prod_contracts-f78eedde4924c89b)
+thread 'the_real_caller_is_not_promoted_by_this_card' (1531754) panicked at crates/qcore-c-gateway/tests/prod_contracts.rs:616:5:
+thread 'withdrawing_each_production_declaration_restores_its_refusal' (1531761) panicked at crates/qcore-c-gateway/tests/prod_contracts.rs:616:5:
+thread 'the_expanded_logging_statement_is_decided_on_the_real_caller' (1531748) panicked at crates/qcore-c-gateway/tests/prod_contracts.rs:616:5:
+thread 'the_remaining_production_blocker_is_one_uncontracted_neighbour' (1531757) panicked at crates/qcore-c-gateway/tests/prod_contracts.rs:616:5:
+test result: FAILED. 10 passed; 4 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.64s
+     Running tests/reading_site_domain.rs (target/debug/deps/reading_site_domain-c1f4ed99547f899e)
+thread 'complete_recorded_domain_replays_and_truncated_context_source_or_environment_refuses' (1532460) panicked at crates/qcore-c-gateway/tests/reading_site_domain.rs:88:14:
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
+     Running tests/guarded_contract_adoption.rs (target/debug/deps/guarded_contract_adoption-d341099c1ab64a49)
+thread 'actual_production_source_has_complete_independently_expected_map_and_no_truth_promotion' (1532480) panicked at crates/qcore-contract/tests/guarded_contract_adoption.rs:61:84:
+thread 'every_non_metadata_or_noncanonical_source_change_refuses_whole_source_bridge' (1532482) panicked at crates/qcore-contract/tests/guarded_contract_adoption.rs:148:64:
+test result: FAILED. 5 passed; 2 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.24s
+     Running tests/guarded_decomposition.rs (target/debug/deps/guarded_decomposition-22161206dbc0a9a1)
+thread 'forbidden_requires_positive_invalidity_and_positive_operation_refutation' (1532530) panicked at crates/qcore-contract/tests/guarded_decomposition.rs:73:10:
+thread 'operation_admission_requires_entry_prerequisites_in_the_correct_direction' (1532531) panicked at crates/qcore-contract/tests/guarded_decomposition.rs:73:10:
+thread 'actual_cjson_and_plugin_hypotheses_lower_without_truth_or_source_changes' (1532526) panicked at crates/qcore-contract/tests/guarded_decomposition.rs:73:10:
+thread 'exact_source_and_model_bytes_bind_even_semantically_equal_documents' (1532528) panicked at crates/qcore-contract/tests/guarded_decomposition.rs:73:10:
+thread 'prerequisite_errors_propagate_to_every_case_but_terminal_errors_never_enable_calls' (1532533) panicked at crates/qcore-contract/tests/guarded_decomposition.rs:73:10:
+thread 'all_nine_context_coordinates_and_every_alternative_assignment_are_bound' (1532527) panicked at crates/qcore-contract/tests/guarded_decomposition.rs:73:10:
+thread 'positive_success_does_not_hide_missing_or_refuted_failure_postcondition' (1532532) panicked at crates/qcore-contract/tests/guarded_decomposition.rs:73:10:
+thread 'explicit_version_grammar_roles_and_complete_cases_refuse_total_or_reject' (1532529) panicked at crates/qcore-contract/tests/guarded_decomposition.rs:73:10:
+test result: FAILED. 0 passed; 8 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+     Running tests/hypothesis_bindings.rs (target/debug/deps/hypothesis_bindings-658b81a98f4d79b4)
+thread 'production_bindings_resolve_only_from_explicit_independent_inputs' (1532539) panicked at crates/qcore-contract/tests/hypothesis_bindings.rs:67:32:
+test result: FAILED. 2 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.31s
+     Running tests/production_symbolic_adoption.rs (target/debug/deps/production_symbolic_adoption-4a943a7f9fc4cf8d)
+thread 'every_actual_hypothesis_is_introduced_and_every_original_group_is_an_open_conjunction' (1532588) panicked at crates/qcore-contract/tests/../../../tests/support/tracked_files.rs:102:5:
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+test result_set::tests::edges_follow_the_class ... ok
+test result_set::tests::combine_normalises ... ok
+test result: ok. 1118 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.39s
+done
