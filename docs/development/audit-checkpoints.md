@@ -309,7 +309,8 @@ and no other stage: a changed refutation table recomputes every group's
 because a reused group would not reproduce what they write or the identity does
 not digest what they read: a census stream, `QCORE_TYPED_PATH_PARITY`,
 `QCORE_AUDIT_IR_DIR`, `QCORE_UNIT_TIMING`, the bounds selection
-(`QCORE_BOUNDS_PROPERTY`, follow-up `CORPUS-CHECKPOINT-BOUNDS-SELECTION`) and a
+(`QCORE_BOUNDS_PROPERTY`, follow-up `CORPUS-CHECKPOINT-BOUNDS-SELECTION`), the
+loop-measure selection (`QCORE_LOOP_MEASURE_PROPERTY`, gateway rule 44) and a
 process source-contract configuration (`QCORE_SOURCE_CONTRACTS`; the
 `QCORE_CHUNKIO_PACKAGE` package is digested). A unit that cannot be
 fingerprinted recomputes its group, which is not sealed; a group with a failed
