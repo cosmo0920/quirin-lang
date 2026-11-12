@@ -156,7 +156,8 @@ const DRAIN: &str = "static int drain(struct queue *q) { int c = 0; struct mk_li
      e = mk_list_entry(it, struct item, _head); item_destroy(e); c++; } return c; }";
 
 /// The same with `mk_list_del` and `q_free` (rule 10f(2) alone).
-const DRAIN_UNLINK: &str = "static void drain_unlink(struct mk_list *list) { struct mk_list *it, *tmp;
+const DRAIN_UNLINK: &str =
+    "static void drain_unlink(struct mk_list *list) { struct mk_list *it, *tmp;
      struct item *e; mk_list_foreach_safe(it, tmp, list) {
      e = mk_list_entry(it, struct item, _head); mk_list_del(&e->_head); q_free(e); } }";
 
@@ -168,7 +169,12 @@ const DRAIN_STATIC: &str = "static void drain_static(void) { struct mk_list *it,
 /// Every fixture with its verdict with rule 43 on and with it off.
 const FIXTURES: &[(&str, &str, AnalysisStatus, AnalysisStatus)] = &[
     // Part 2: the helper keeps its row; its caller reads the summary.
-    ("drain-helper", "", AnalysisStatus::Safe, AnalysisStatus::Safe),
+    (
+        "drain-helper",
+        "",
+        AnalysisStatus::Safe,
+        AnalysisStatus::Safe,
+    ),
     (
         "drain-caller",
         "void subject(struct queue *q) { drain(q); }",
@@ -303,7 +309,10 @@ fn a_summary_with_the_clause_reaches_the_caller() {
     if std::env::var_os(CHILD).is_some() || !clang_available() {
         return;
     }
-    let (_, diagnostics) = verdict("drain-caller", "void subject(struct queue *q) { drain(q); }");
+    let (_, diagnostics) = verdict(
+        "drain-caller",
+        "void subject(struct queue *q) { drain(q); }",
+    );
     assert!(!uncontracted(&diagnostics, "drain"), "{diagnostics:?}");
 }
 
@@ -312,8 +321,14 @@ fn a_withheld_summary_leaves_the_call_uncontracted() {
     if std::env::var_os(CHILD).is_some() || !clang_available() {
         return;
     }
-    let (_, diagnostics) = verdict("static-drain-caller", "void subject(void) { drain_static(); }");
-    assert!(uncontracted(&diagnostics, "drain_static"), "{diagnostics:?}");
+    let (_, diagnostics) = verdict(
+        "static-drain-caller",
+        "void subject(void) { drain_static(); }",
+    );
+    assert!(
+        uncontracted(&diagnostics, "drain_static"),
+        "{diagnostics:?}"
+    );
     let (_, diagnostics) = verdict(
         "local-actual-caller-of-caller",
         "static void local(void) { struct mk_list l; l.next = &l; l.prev = &l; drain_unlink(&l); }

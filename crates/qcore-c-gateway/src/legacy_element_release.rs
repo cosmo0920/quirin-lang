@@ -176,48 +176,6 @@ pub(crate) fn required(
         .collect()
 }
 
-/// The vectors `QCore.ElementReleaseSummary.vectors_hold` checks of the Lean
-/// `required`: roots by position (`Some(p)` a formal at `p`, `None` a static
-/// or other root) and the required positions (`None`: withheld).
-#[cfg(test)]
-pub(crate) const ELEMENT_RELEASE_VECTORS: &[(&[Option<usize>], Option<&[usize]>)] = &[
-    (&[], Some(&[])),
-    (&[Some(0)], Some(&[0])),
-    (&[Some(0), Some(0)], Some(&[0, 0])),
-    (&[Some(1), Some(0)], Some(&[1, 0])),
-    (&[Some(0), None], None),
-    (&[None], None),
-    (&[None, Some(0)], None),
-];
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn the_lean_vectors_hold() {
-        let parameters = vec![Some("p0".to_owned()), Some("p1".to_owned())];
-        for (roots, expected) in ELEMENT_RELEASE_VECTORS {
-            let roots = roots
-                .iter()
-                .map(|root| match root {
-                    Some(p) => Root::Formal(format!("p{p}")),
-                    None => Root::Unnamed,
-                })
-                .collect::<Vec<_>>();
-            let got = required(&roots, &parameters).map(|map| map.into_keys().collect::<BTreeSet<_>>());
-            let want = expected.map(|positions| positions.iter().copied().collect::<BTreeSet<_>>());
-            assert_eq!(got, want, "{roots:?}");
-        }
-    }
-
-    #[test]
-    fn a_root_that_is_no_parameter_withholds_the_summary() {
-        let parameters = vec![Some("q".to_owned())];
-        assert_eq!(required(&[Root::Formal("other".into())], &parameters), None);
-    }
-}
-
 /// The `ElementsReleased` clauses of `contract`.
 fn stated(contract: &ResourceFunctionContract) -> BTreeMap<usize, ContainerEffect> {
     contract
@@ -262,4 +220,51 @@ pub(crate) fn attach(
         candidate.container_effects.extend(required);
     }
     Some(())
+}
+
+/// The vectors `QCore.ElementReleaseSummary.vectors_hold` checks of the Lean
+/// `required`: roots by position (`Some(p)` a formal at `p`, `None` a static
+/// or other root) and the required positions (`None`: withheld).
+#[cfg(test)]
+type Vector = (&'static [Option<usize>], Option<&'static [usize]>);
+
+/// The vectors themselves.
+#[cfg(test)]
+pub(crate) const ELEMENT_RELEASE_VECTORS: &[Vector] = &[
+    (&[], Some(&[])),
+    (&[Some(0)], Some(&[0])),
+    (&[Some(0), Some(0)], Some(&[0, 0])),
+    (&[Some(1), Some(0)], Some(&[1, 0])),
+    (&[Some(0), None], None),
+    (&[None], None),
+    (&[None, Some(0)], None),
+];
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn the_lean_vectors_hold() {
+        let parameters = vec![Some("p0".to_owned()), Some("p1".to_owned())];
+        for (roots, expected) in ELEMENT_RELEASE_VECTORS {
+            let roots = roots
+                .iter()
+                .map(|root| match root {
+                    Some(p) => Root::Formal(format!("p{p}")),
+                    None => Root::Unnamed,
+                })
+                .collect::<Vec<_>>();
+            let got =
+                required(&roots, &parameters).map(|map| map.into_keys().collect::<BTreeSet<_>>());
+            let want = expected.map(|positions| positions.iter().copied().collect::<BTreeSet<_>>());
+            assert_eq!(got, want, "{roots:?}");
+        }
+    }
+
+    #[test]
+    fn a_root_that_is_no_parameter_withholds_the_summary() {
+        let parameters = vec![Some("q".to_owned())];
+        assert_eq!(required(&[Root::Formal("other".into())], &parameters), None);
+    }
 }
