@@ -116,6 +116,7 @@ pub mod member_path_check;
 /// bounded path reading behind it, through the unit's static helpers.
 pub mod member_path_reading;
 // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB (rule 12n): the run's member facts.
+pub mod lookup_record;
 pub mod loop_lifetime_source;
 pub mod loop_lifetime_summary;
 pub mod member_run_facts;

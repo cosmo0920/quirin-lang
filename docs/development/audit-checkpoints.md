@@ -262,10 +262,13 @@ and standalone verification of each compile configuration.
 
 ## The pinned corpus route
 
-Card CORPUS-GROUP-CHECKPOINTS ([report](../reports/corpus-group-checkpoints/README.md)).
-`quirin-audit pinned --checkpoint-dir DIR [--resume]` checkpoints the corpus
-arbiter. The normative Rust is `crates/qcore-audit/src/pinned_route/checkpoints.rs`;
-the Lean model is `QCore.StagedCheckpoints`.
+Card CORPUS-GROUP-CHECKPOINTS ([report](../reports/corpus-group-checkpoints/README.md));
+schema 2, the lookup records and the restricted stage environment, card
+MEASURE-LOOKUP-RECORD-REUSE ([report](../reports/measure-lookup-record-reuse/README.md)).
+`quirin-audit pinned --checkpoint-dir DIR [--resume] [--accept-base-analyzer
+BASE --repository DIR]` checkpoints the corpus arbiter. The normative Rust is
+`crates/qcore-audit/src/pinned_route/checkpoints.rs`; the Lean models are
+`QCore.StagedCheckpoints` and `QCore.LookupRestrictedReuse`.
 
 **Groups and stages.** A group is one of the route's libraries (`audit.json`'s
 libraries, then `monkey-libevent`): ChunkIO's prelude and postlude share typed
@@ -282,12 +285,14 @@ completed group. Groups of one stage are analysed concurrently, as in the whole
 run.
 
 **Container.** The binary container above, with its own layout: schema version
-**1** and the five sections `pinned-identity`, `pinned-prelude`, `pinned-units`,
-`pinned-finish`, `provenance`. The current-route reader refuses these files
-(schema and section list) and the pinned reader refuses current-route files.
+**2** and the six sections `pinned-identity`, `pinned-prelude`, `pinned-units`,
+`pinned-lookups`, `pinned-finish`, `provenance`. The current-route reader refuses
+these files (schema and section list), the pinned reader refuses current-route
+files, and a schema 1 pinned file is refused (recomputed).
 `pinned-units` holds each unit's console lines, report rows, diagnostic
 counts, bounds and null rows and evidence, member facts, tally, native and
-teardown results, as typed binary values; `pinned-finish` holds the postlude's
+teardown results, as typed binary values; `pinned-lookups` holds each unit's
+lookup record (below); `pinned-finish` holds the postlude's
 console lines and the teardown results it appended; `provenance` (wall time,
 jobs, peak RSS) is outside the content digest. `quirin-audit checkpoint`
 reads current-route files only.
@@ -300,8 +305,48 @@ recorded in `DIR/pinned-checkpoint-run.json`.
 | Part | Fields | Read by |
 |---|---|---|
 | run | analyzer (package, version, profile, build commit, binary SHA-256); canonical Fluent Bit root and its verified pinned revision; the process working directory (the route binds it into each row's `hypothesis_context.build_identity` and the source-effect configuration digests); SHA-256 over every file of the source-set profile directory; the source-contract configuration's SHA-256 and, in package mode, every file of the package; the contract manifest's path and SHA-256, every lock the pin evaluation read and the pin template's digest; Clang (program, version, target); every `QCORE_*` variable but the job count, with `QCORE_NULL_PROPERTY`, `QCORE_OUTER_PROJECTION` and `QCORE_MEMBER_PREPASS_SECTION` recorded as `selected` (their value is where the run writes) and `QCORE_CROSS_UNIT_LINK_MAP` as its content's SHA-256; the run's member facts' SHA-256 | every group |
-| stage | the stage name; SHA-256 of the exact contract environment every unit of the stage is analysed under (pin holds, result ranges, the refutation table, imports and link resolution included); SHA-256 of the homes supplied to every unit; SHA-256 of the installed bounds and null environments (with the bounds refutation table) | every group of that stage |
+| stage | the stage name; the environment scope (`whole` or `restricted`) and its SHA-256: `whole`, of the exact contract environment every unit of the stage is analysed under (pin holds, result ranges, the refutation table, imports and link resolution included); `restricted`, of that environment restricted to the names the group's units read (below); SHA-256 of the homes supplied to every unit; SHA-256 of the installed bounds and null environments (with the bounds refutation table) | every group of that stage (`whole`); the groups that read a changed name (`restricted`) |
 | group | label, source root, and per unit: SHA-256 of `[file, directory, command]`, the raw source's SHA-256, the validated preprocessing's SHA-256, and the preparation facts (validation error, line-marked preprocessing digest or error) | that group |
+
+**Lookup records** (`pinned-lookups`, gateway
+`qcore_c_gateway::lookup_record`). Each unit is analysed under a recording copy
+of the stage environment (`ResourceContracts::with_lookup_recorder`): every read
+of it or of any clone, on any thread, is recorded — a read of one name as
+`found` or `missed`, and every read that can depend on more than named entries
+(an accessor handing out or iterating a table, serialization, `Debug`,
+equality, a copy from another environment) as a whole-map read by accessor
+name — with the decided callback candidates the unit relied on. The records
+are taken after the group's postlude. At seal, a group whose every record
+checks against the stage environment (a found name is held by it, a relied
+candidate was read by name, the flag agrees with the accessor list) and none
+read a whole table is sealed `restricted`: the digest
+(`ResourceContracts::restricted_sha256`) covers, for each name found, missed or
+relied, its entry in every name-keyed table (refutation entries included, as
+elaborated, so an inherited parent's change moves its children's entries) and
+the environment's scalars (link-resolution digest, callee-frame acceptance).
+Any other group is sealed `whole`. On resume the identity is recomputed over
+the stored scope: `restricted` over the stored records' names (a stored
+`restricted` claim over records with a whole-map read or an unread relied
+candidate is refused), `whole` over the whole environment. Homes and the
+bounds environment stay whole. Every unit of today's pinned analysis reads
+whole tables (the function map, the contract texts its rows' hypothesis
+context digests, and twenty more), so every corpus group is sealed `whole` and
+behaves as under schema 1 (`GATEWAY-WHOLE-TABLE-READS`).
+
+**Contract-only analyzer acceptance.** `--accept-base-analyzer BASE --repository
+DIR` (with `--checkpoint-dir`) states that the running binary is the base
+side's analyzer measuring the tip checkout `DIR` (`HEAD`) of a contract-only
+diff, so the base side's checkpoints can stand for the tip's
+(`crates/qcore-audit/src/contract_only_diff.rs`). Before any work the diff
+`BASE..HEAD` must name only contract data (`contract/**`, a provider's
+`contracts/**`, its `contracts.lock`, `bounds-contracts.lock`,
+`outer-contracts.lock`, `contract-inventory.lock`) none of which the base
+tree's non-test Rust compiles in (an include that cannot be enumerated
+refuses); once the contract inputs are resolved, the binary's build commit
+must be `BASE`, the repository clean in contract data, and the manifest,
+locks, source profile and source-contract configuration read from `DIR`. The
+checked acceptance is recorded in the run record and every decision; it
+changes no identity (the binary is the base one).
 
 Whole-run facts therefore invalidate every group of the stage that reads them
 and no other stage: a changed refutation table recomputes every group's

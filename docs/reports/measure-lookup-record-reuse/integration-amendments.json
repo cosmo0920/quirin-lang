@@ -1,0 +1,60 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "MEASURE-LOOKUP-RECORD-REUSE",
+  "base": "74105dd0e",
+  "measured_tip": "3c2449523",
+  "increment_paragraph": "**MEASURE-LOOKUP-RECORD-REUSE** (round 22, R8 option A; USER DECISION 2026-11-06, verbatim: \"D then A (rec.)\", the button being \"R8: option D first (per-group checkpoints for the pinned corpus route), then option A (gateway publishes per-unit lookups including missed ones; reuse only for contract-only diffs with matching cross-unit facts). I approve using that lookup record as a reuse input once it is published and checked.\"): a lookup recorder attached to a ResourceContracts instance and its clones (qcore_schemas::contract_lookup_record) records every named read (found or missed) and every whole-table read (accessors, serialization, Debug, equality, copies) on any thread, invisibly to serialization, Debug and equality; the gateway publishes a checked per-unit record (qcore_c_gateway::lookup_record: found, missed, relied callback candidates, whole-map flag and accessors); pinned group checkpoints move to schema 2 (pinned-lookups section, StageIdentity.environment_scope), sealing a group `restricted` (the environment restricted to its units' names in all 17 name-keyed tables, refutation entries included, plus the scalars) only when every record checks and none read a whole table, and recomputing the identity on resume over the stored scope; `quirin-audit pinned --accept-base-analyzer BASE --repository DIR` classifies BASE..HEAD as contract data none of which is compiled into an analyzer, checks that the binary is the base build reading the tip's contract inputs, and records the acceptance in every decision. Lean QCore.LookupRestrictedReuse (12 theorems, building on QCore.StagedCheckpoints) proves that a consumer agreeing on every name it read runs the same and that the lookup-keyed staged run and its publication are the whole run's. Evidence: on constructed contract-only diffs the composed run is byte-identical to the full run, for the real pinned unit analysis (real Clang) and for a name-only consumer, which is invalidated exactly where a read or missed name changed; sampled real commits classified (94bca8d9c, df6172543, ca9ee5d93 accepted; 74105dd0e refused). Finding: every unit of the pinned analysis reads 22 whole contract tables and every row binds the whole contract text set (hypothesis_context.assumptions), so every corpus group seals `whole` and reuses exactly as under schema 1 (GATEWAY-WHOLE-TABLE-READS); the declared identity measurement could not run on this host (no prepared corpus, system or slice inputs). No analyzer verdict change. Report: docs/reports/measure-lookup-record-reuse/README.md.",
+  "status_paragraph": "**Pinned checkpoints are lookup-keyed but every corpus group seals whole** (MEASURE-LOOKUP-RECORD-REUSE, 2026-11-12): pinned group checkpoints (schema 2) seal each unit's gateway lookup record and key a group's stage environment on the names its units read when no unit read a whole contract table; today every pinned unit reads 22 whole tables and every row digests the whole contract text set, so every group keys on the whole environment and a contract-only change reuses no group whose environment changed (GATEWAY-WHOLE-TABLE-READS). A contract-only analyzer acceptance (`--accept-base-analyzer`) is classified and recorded but not yet used by `quirin-audit measure` (MEASURE-CONTRACT-ONLY-SIDE-WIRING). No verdict or baseline moved.",
+  "ledger": [
+    {
+      "id": "MEASURE-LOOKUP-RECORD-REUSE",
+      "operation": "retire",
+      "why": "DONE in mechanism by MEASURE-LOOKUP-RECORD-REUSE (docs/reports/measure-lookup-record-reuse/README.md): the gateway publishes a checked per-unit lookup record (found, missed, relied, whole-map flag); pinned checkpoints (schema 2) key the stage environment on the restricted digest when no unit read a whole table; the base analyzer is accepted only for a diff confined to contract data not compiled in, recorded in every decision; composed equals full byte for byte on constructed contract-only diffs; Lean QCore.LookupRestrictedReuse. The corpus discharge (a contract-only card's measurement reusing unaffected groups) is not met because every pinned unit reads whole tables; it is rehomed to GATEWAY-WHOLE-TABLE-READS and MEASURE-CONTRACT-ONLY-SIDE-WIRING, and the configured routes to CONFIGURED-ROUTE-LOOKUP-REUSE (all registered below).",
+      "source": "docs/reports/measure-lookup-record-reuse/README.md"
+    },
+    {
+      "id": "GATEWAY-WHOLE-TABLE-READS",
+      "operation": "register",
+      "title": "Every pinned unit reads whole contract tables, so no corpus group keys on a restricted environment",
+      "text": "Registered by MEASURE-LOOKUP-RECORD-REUSE (docs/reports/measure-lookup-record-reuse/README.md section 4). The lookup record of a real pinned unit (audit_unit, one call) lists 22 whole-table reads: cell_protocols, contract_conflict, cross_unit_import_identities, declared_guarded, declared_revisions, functions, guarded_retaining, inclusion_evidence, inferred_imports, inferred_lifetimes, lifetime_declarations, lifetime_imports, lifetime_summaries, member_effects, pending_review, pin_mismatch, refuted_by_body, relational, result_ranges, retaining, source_assumptions, validate_lifetime_partition (textual non-test call sites: 63 source_assumptions(), 44 retaining(), 43 functions(), 16 relational(), 15 guarded_retaining(), 12 inferred_imports(), 2-10 each for the rest). Each row's hypothesis_context.assumptions digests the whole source_assumptions map (crates/qcore-audit/src/projection.rs) and loop_lifetime_source digests it into its keys, so any loaded contract text change changes every row. Every corpus group therefore seals `whole` and a contract-only change reuses no group whose environment changed. DISCHARGE: the analysis' reads narrowed to named lookups (or each whole read replaced by a recorded named equivalent) and those row digests restricted to the texts of the modules the unit's names come from, with the pinned baselines moved deliberately, and the report's section 2 census (no global cache answers a unit from another unit's reads) redone; shown by a real corpus unit sealed `restricted` and a contract-only diff reusing the groups that read no changed name, composed equal to a full run.",
+      "source": "docs/reports/measure-lookup-record-reuse/README.md",
+      "recorded_by": "MEASURE-LOOKUP-RECORD-REUSE"
+    },
+    {
+      "id": "MEASURE-CONTRACT-ONLY-SIDE-WIRING",
+      "operation": "register",
+      "title": "quirin-audit measure does not yet reuse base-side groups for a contract-only diff",
+      "text": "Registered by MEASURE-LOOKUP-RECORD-REUSE (docs/reports/measure-lookup-record-reuse/README.md sections 3 and 7). `quirin-audit pinned --accept-base-analyzer BASE --repository DIR` classifies and checks a contract-only run (the base binary over the tip's contract inputs) and records it, but the measure plugin builds and runs each side separately, with fresh working directories and no shared checkpoint directory. DISCHARGE: for a classified contract-only diff the measure tool runs the tip side with the base side's binary and checkpoint directory from one working directory (or after PINNED-ROWS-BIND-WORKING-DIRECTORY), with a sampled landing's composed comparison byte-identical to a full run; effective once GATEWAY-WHOLE-TABLE-READS lets a group seal restricted.",
+      "source": "docs/reports/measure-lookup-record-reuse/README.md",
+      "recorded_by": "MEASURE-LOOKUP-RECORD-REUSE"
+    },
+    {
+      "id": "CONFIGURED-ROUTE-LOOKUP-REUSE",
+      "operation": "register",
+      "title": "Configured-route (current) checkpoints keep the whole-environment identity",
+      "text": "Registered by MEASURE-LOOKUP-RECORD-REUSE (docs/reports/measure-lookup-record-reuse/README.md section 4). The system and slice routes (quirin-audit current) key their unit checkpoints on the whole contract environment; the same gateway reads the same whole tables there, so a restricted current-route identity would never be used and was not built. DISCHARGE: after GATEWAY-WHOLE-TABLE-READS, current-route checkpoints seal each unit's lookup record and key on the restricted environment, with a contract-only diff's composed system and slice runs byte-identical to full runs.",
+      "source": "docs/reports/measure-lookup-record-reuse/README.md",
+      "recorded_by": "MEASURE-LOOKUP-RECORD-REUSE"
+    },
+    {
+      "id": "PINNED-ROWS-BIND-WORKING-DIRECTORY",
+      "operation": "amend",
+      "text": "AMENDED (MEASURE-LOOKUP-RECORD-REUSE, docs/reports/measure-lookup-record-reuse/README.md): not discharged; it blocks only the measure-side reuse (MEASURE-CONTRACT-ONLY-SIDE-WIRING), which GATEWAY-WHOLE-TABLE-READS blocks first; the lookup-record fixtures and the contract-only acceptance do not need it.",
+      "source": "docs/reports/measure-lookup-record-reuse/README.md"
+    },
+    {
+      "id": "MEASURE-INCREMENTAL-BASELINE-COMPOSITION",
+      "operation": "amend",
+      "text": "AMENDED (MEASURE-LOOKUP-RECORD-REUSE, docs/reports/measure-lookup-record-reuse/README.md): option A's mechanism is in (lookup-keyed pinned checkpoints, contract-only analyzer acceptance); its corpus effect waits on GATEWAY-WHOLE-TABLE-READS and MEASURE-CONTRACT-ONLY-SIDE-WIRING.",
+      "source": "docs/reports/measure-lookup-record-reuse/README.md"
+    },
+    {
+      "id": "BASE-LICENCE-HEADERS-BREAK-CLANG-TESTS",
+      "operation": "register",
+      "title": "Clang-guarded tests fail at 74105dd0e after the licence headers",
+      "text": "Registered by MEASURE-LOOKUP-RECORD-REUSE (docs/reports/measure-lookup-record-reuse/README.md section 8). With Clang 21.1.8 present, 11 test units (35 tests) fail on an untouched snapshot of 74105dd0e exactly as on the card tip: qcore-c-gateway hash_contracts, neighbours, prod_contracts (the production module opens with its module header; a production contract module must declare module contract;), libc_reading_site_evidence and reading_site_domain (artifact reference mismatch on a Lean file), qcore-contract guarded_contract_adoption, guarded_decomposition, hypothesis_bindings, production_symbolic_adoption (whole-source inventory mismatch), qcore-audit contract_dependencies_report and source_contract_config (contract inventory digest mismatch): they pin the bytes of contracts and Lean files that 74105dd0e and 838bd777d prefixed with SPDX headers, and are skipped on a host without Clang. qcore-compiler task_route_tsan also fails there on this host (TSan frames not symbolized). Evidence: docs/reports/measure-lookup-record-reuse/gate/base-attribution.log. DISCHARGE: the pins and readers updated for the headers (or the headers excluded from the pinned bytes), with these units passing under Clang on the release host.",
+      "source": "docs/reports/measure-lookup-record-reuse/README.md",
+      "recorded_by": "MEASURE-LOOKUP-RECORD-REUSE"
+    }
+  ]
+}

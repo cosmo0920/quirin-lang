@@ -36,12 +36,80 @@ fn pinned_help_and_invalid_options_do_not_start_a_replay() {
         vec!["pinned", "--checkpoint-dir", ""],
         vec!["pinned", "--checkpoint-dir", "a", "--checkpoint-dir", "b"],
         vec!["pinned", "--checkpoint-dir", "a", "--resume", "--resume"],
+        // Card MEASURE-LOOKUP-RECORD-REUSE: the analyzer acceptance options.
+        vec![
+            "pinned",
+            "--checkpoint-dir",
+            "a",
+            "--accept-base-analyzer",
+            "HEAD",
+        ],
+        vec!["pinned", "--checkpoint-dir", "a", "--repository", "."],
+        vec![
+            "pinned",
+            "--accept-base-analyzer",
+            "HEAD",
+            "--repository",
+            ".",
+        ],
+        vec![
+            "pinned",
+            "--checkpoint-dir",
+            "a",
+            "--accept-base-analyzer",
+            "HEAD",
+            "--accept-base-analyzer",
+            "HEAD",
+        ],
+        vec!["pinned", "--checkpoint-dir", "a", "--repository", ""],
     ] {
         let output = Command::new(HOST).args(&args).output().unwrap();
         assert!(!output.status.success(), "{args:?}");
         let error = String::from_utf8_lossy(&output.stderr);
         assert!(!error.contains("could not resolve"), "{args:?}: {error}");
     }
+}
+
+/// Card MEASURE-LOOKUP-RECORD-REUSE: a base analyzer claimed for a diff
+/// that is not confined to contract data is refused before any replay.
+/// Skipped where this checkout's history is absent.
+#[test]
+fn a_base_analyzer_for_a_non_contract_diff_is_refused_before_any_replay() {
+    let repository = concat!(env!("CARGO_MANIFEST_DIR"), "/../..");
+    let present = Command::new("git")
+        .args([
+            "-C",
+            repository,
+            "rev-parse",
+            "--verify",
+            "74105dd0e~1^{commit}",
+        ])
+        .output()
+        .is_ok_and(|output| output.status.success());
+    if !present {
+        return;
+    }
+    let output = Command::new(HOST)
+        .args([
+            "pinned",
+            "--checkpoint-dir",
+            "never-created",
+            "--accept-base-analyzer",
+            "74105dd0e~1",
+            "--repository",
+            repository,
+            "/nonexistent-root",
+        ])
+        .output()
+        .unwrap();
+    assert!(!output.status.success());
+    let error = String::from_utf8_lossy(&output.stderr);
+    assert!(
+        error.contains("analyzer acceptance refused: the diff is not confined to contract data"),
+        "{error}"
+    );
+    assert!(!error.contains("could not resolve"), "{error}");
+    assert!(!std::path::Path::new("never-created").exists());
 }
 
 /// Card CORPUS-GROUP-CHECKPOINTS: an environment a checkpoint cannot stand

@@ -145,13 +145,26 @@ fn complete_record() -> GroupRecord {
                 BinaryValue::from_json(&json!({"kind": "nested"})).unwrap(),
             ]),
         )),
+        lookups: vec![UnitLookupRecord::default(), UnitLookupRecord::default()],
     }
+}
+
+/// `load`'s identity under any scope: a fixed one.
+fn fixed(identity: &PinnedIdentity) -> impl Fn(Scope<'_>) -> Result<PinnedIdentity, String> + '_ {
+    move |_| Ok(identity.clone())
 }
 
 fn identity() -> PinnedIdentity {
     PinnedIdentity {
         run: run_identity(Vec::new()),
-        stage: stage_identity(Stage::First, &contracts(false), &[], "n".repeat(64)).unwrap(),
+        stage: stage_identity(
+            Stage::First,
+            &contracts(false),
+            Scope::Whole,
+            &[],
+            "n".repeat(64),
+        )
+        .unwrap(),
         group: PinnedGroupIdentity {
             label: "fixture".into(),
             source_root: "/fixture/lib".into(),
@@ -178,7 +191,7 @@ fn a_sealed_group_is_reused_only_under_its_identity_and_refused_when_damaged() {
     let content = seal(&path, &identity, &record, &PinnedProvenance::default()).unwrap();
 
     // Equal identity: every section restored exactly.
-    let (loaded, reused_content) = load(&path, &identity).unwrap();
+    let (loaded, reused_content, _) = load(&path, fixed(&identity)).unwrap();
     assert_eq!(reused_content, content);
     assert_eq!(loaded.prelude_output, record.prelude_output);
     assert!(loaded.complete());
@@ -221,22 +234,29 @@ fn a_sealed_group_is_reused_only_under_its_identity_and_refused_when_damaged() {
 
     // Another identity: recomputed, naming the field.
     let mut changed = identity.clone();
-    changed.stage = stage_identity(Stage::First, &contracts(true), &[], "n".repeat(64)).unwrap();
+    changed.stage = stage_identity(
+        Stage::First,
+        &contracts(true),
+        Scope::Whole,
+        &[],
+        "n".repeat(64),
+    )
+    .unwrap();
     assert_eq!(
-        load(&path, &changed).err().unwrap(),
+        load(&path, fixed(&changed)).err().unwrap(),
         "stage.environment_sha256 differs"
     );
     let mut changed = identity.clone();
     changed.run.analyzer.binary_sha256 = "d".repeat(64);
     assert_eq!(
-        load(&path, &changed).err().unwrap(),
+        load(&path, fixed(&changed)).err().unwrap(),
         "run.analyzer.binary_sha256 differs"
     );
 
     // Neither reader accepts the other's files.
     let current = CheckpointReader::open(&path).err().unwrap();
     assert!(
-        current.contains("unsupported checkpoint schema version 1"),
+        current.contains("unsupported checkpoint schema version 2"),
         "{current}"
     );
 
@@ -246,13 +266,16 @@ fn a_sealed_group_is_reused_only_under_its_identity_and_refused_when_damaged() {
     let last = tampered.len() - 1;
     tampered[last] ^= 1;
     fs::write(&path, &tampered).unwrap();
-    let refused = load(&path, &identity).err().unwrap();
+    let refused = load(&path, fixed(&identity)).err().unwrap();
     assert!(refused.starts_with("checkpoint refused:"), "{refused}");
     fs::write(&path, &bytes[..bytes.len() - 3]).unwrap();
-    let refused = load(&path, &identity).err().unwrap();
+    let refused = load(&path, fixed(&identity)).err().unwrap();
     assert!(refused.contains("truncated"), "{refused}");
     fs::remove_file(&path).unwrap();
-    assert_eq!(load(&path, &identity).err().unwrap(), "no checkpoint");
+    assert_eq!(
+        load(&path, fixed(&identity)).err().unwrap(),
+        "no checkpoint"
+    );
 
     // An incomplete group is never sealed.
     let mut incomplete = complete_record();
@@ -441,7 +464,14 @@ fn a_changed_input_of_each_kind_invalidates_exactly_the_groups_that_read_it() {
         )
         .unwrap(),
     );
-    let first = stage_identity(Stage::First, &base_contracts, &[], bounds.clone()).unwrap();
+    let first = stage_identity(
+        Stage::First,
+        &base_contracts,
+        Scope::Whole,
+        &[],
+        bounds.clone(),
+    )
+    .unwrap();
     let groups = corpus.groups();
     let stored = identities(&run, &first, &groups);
     // Nothing changed: every group is reused.
@@ -499,7 +529,14 @@ fn a_changed_input_of_each_kind_invalidates_exactly_the_groups_that_read_it() {
     let all = ["alpha", "beta", "gamma"];
 
     // 2. The contract environment: every group.
-    let changed = stage_identity(Stage::First, &contracts(true), &[], bounds.clone()).unwrap();
+    let changed = stage_identity(
+        Stage::First,
+        &contracts(true),
+        Scope::Whole,
+        &[],
+        bounds.clone(),
+    )
+    .unwrap();
     let changes = invalidated(&stored, &identities(&run, &changed, &groups));
     assert_eq!(labels(&changes), all);
     assert!(
@@ -608,6 +645,7 @@ fn a_changed_input_of_each_kind_invalidates_exactly_the_groups_that_read_it() {
         stage_identity(
             Stage::Refuted,
             &crate::refuted_contracts::with_table(&base_contracts, &table(unit)),
+            Scope::Whole,
             &[],
             bounds.clone(),
         )
@@ -637,7 +675,14 @@ fn a_changed_input_of_each_kind_invalidates_exactly_the_groups_that_read_it() {
     );
     assert!(invalidated(&stored, &identities(&run, &first, &groups)).is_empty());
     // The bounds and null environments: every group of the stage.
-    let changed = stage_identity(Stage::First, &base_contracts, &[], "o".repeat(64)).unwrap();
+    let changed = stage_identity(
+        Stage::First,
+        &base_contracts,
+        Scope::Whole,
+        &[],
+        "o".repeat(64),
+    )
+    .unwrap();
     assert_eq!(
         labels(&invalidated(&stored, &identities(&run, &changed, &groups))),
         all
@@ -663,13 +708,26 @@ fn a_changed_input_of_each_kind_invalidates_exactly_the_groups_that_read_it() {
     };
     let homes = home("void callee(void) { return; }\n");
     assert_eq!(homes.len(), 1);
-    let imported =
-        stage_identity(Stage::Imported, &base_contracts, &homes, bounds.clone()).unwrap();
+    let imported = stage_identity(
+        Stage::Imported,
+        &base_contracts,
+        Scope::Whole,
+        &homes,
+        bounds.clone(),
+    )
+    .unwrap();
     assert_ne!(imported.homes_sha256, first.homes_sha256);
     let stored_imported = identities(&run, &imported, &groups);
     let rehomed = home("void callee(void) { }\n");
     assert_eq!(rehomed.len(), 1);
-    let changed = stage_identity(Stage::Imported, &base_contracts, &rehomed, bounds).unwrap();
+    let changed = stage_identity(
+        Stage::Imported,
+        &base_contracts,
+        Scope::Whole,
+        &rehomed,
+        bounds,
+    )
+    .unwrap();
     let changes = invalidated(&stored_imported, &identities(&run, &changed, &groups));
     assert_eq!(labels(&changes), all);
     assert!(

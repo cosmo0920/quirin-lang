@@ -234,6 +234,7 @@ import QCore.LiteralTailActual
 import QCore.LocalCondition
 import QCore.LocalSourceBindings
 import QCore.LoggerEffects
+import QCore.LookupRestrictedReuse
 import QCore.LoopBudget
 import QCore.LoopInvariants
 import QCore.LoopLifetimeSummary

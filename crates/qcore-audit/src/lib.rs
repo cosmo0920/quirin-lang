@@ -58,6 +58,7 @@ pub mod bounds_evidence;
 pub mod bounds_selection;
 // Card NULL-SAFETY-PROPERTY (rules 14k-14p): the null selection's tally.
 pub mod c_identity;
+pub mod contract_only_diff;
 pub mod contract_pin;
 pub mod contract_revision;
 pub mod null_fold;

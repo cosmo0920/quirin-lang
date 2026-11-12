@@ -49,9 +49,18 @@
 //! identity is equal; anything it cannot cover is refused before any work
 //! ([`refuse_unsupported`]) or forces the group to be recomputed.
 //!
+//! Card **MEASURE-LOOKUP-RECORD-REUSE** (R8 option A, schema 2): every
+//! unit is analysed under a recording copy of the stage environment
+//! ([`qcore_c_gateway::lookup_record::LookupSession`]) and its lookup record
+//! is sealed beside its rows (`pinned-lookups`). A group whose records all
+//! check and read no whole table keys its stage environment on the
+//! environment restricted to the names its units read
+//! ([`StageIdentity::environment_scope`] `restricted`); any other group keys
+//! on the whole environment, as schema 1 did.
+//!
 //! The format is specified in `docs/development/audit-checkpoints.md`.
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex, OnceLock, PoisonError};
@@ -61,6 +70,7 @@ use qcore_c_gateway::legacy_c::{
     C11TranslationUnit, CrossUnitHomeEvidence, LegacyFunctionScope, ResourceContracts,
     prepare_translation_unit,
 };
+use qcore_c_gateway::lookup_record::{LookupHandle, LookupSession, UnitLookupRecord};
 use qcore_contract::profile_loader::LoadedProfile;
 use qcore_schemas::sha256_hex;
 use serde::{Deserialize, Serialize};
@@ -86,12 +96,15 @@ use crate::report::{AuditReport, FragmentParts};
 /// The pinned group checkpoint's schema version. The container is the
 /// current route's (`checkpoint::Layout`); this schema's section list differs
 /// from the current route's, so each reader refuses the other's files.
-pub const SCHEMA_VERSION: u32 = 1;
+/// Schema 2 (card MEASURE-LOOKUP-RECORD-REUSE) adds the units' lookup
+/// records and the stage environment's scope; a schema 1 file is refused.
+pub const SCHEMA_VERSION: u32 = 2;
 /// The sections of a pinned group checkpoint, in file order.
-pub const SECTIONS: [&str; 5] = [
+pub const SECTIONS: [&str; 6] = [
     "pinned-identity",
     "pinned-prelude",
     "pinned-units",
+    "pinned-lookups",
     "pinned-finish",
     "provenance",
 ];
@@ -108,6 +121,9 @@ pub const RUN_RECORD: &str = "pinned-checkpoint-run.json";
 pub struct Options {
     pub directory: PathBuf,
     pub resume: bool,
+    /// Card MEASURE-LOOKUP-RECORD-REUSE: a checked contract-only analyzer
+    /// acceptance (`--analyzer-acceptance`), recorded in every decision.
+    pub acceptance: Option<crate::contract_only_diff::Acceptance>,
 }
 
 /// Variables whose value is where the run writes an output the fold
@@ -245,11 +261,20 @@ pub struct TreeIdentity {
 pub struct StageIdentity {
     /// `first`, `refuted` or `imported`.
     pub stage: String,
-    /// SHA-256 of the exact contract environment every unit is analysed
-    /// under (its serde form, as the cross-unit home digest takes it): the
-    /// pinned contracts with their pin holds and result ranges, the
+    /// `whole` or `restricted` (card MEASURE-LOOKUP-RECORD-REUSE): what
+    /// [`Self::environment_sha256`] digests. `restricted` only when every
+    /// unit's lookup record checked against the stage environment it was
+    /// recorded under and none read a whole table.
+    pub environment_scope: String,
+    /// `whole`: SHA-256 of the exact contract environment every unit is
+    /// analysed under (its serde form, as the cross-unit home digest takes
+    /// it): the pinned contracts with their pin holds and result ranges, the
     /// refutation table the stage applies (C06.4), and in the import stage
     /// the imported contracts, their identities and the link-map digest.
+    /// `restricted`: SHA-256 of that environment restricted to the names the
+    /// group's units read, found, missed or relied on
+    /// (`ResourceContracts::restricted_sha256`: each name's entry in every
+    /// name-keyed table, refutation entries included, and the scalars).
     pub environment_sha256: String,
     /// SHA-256 of the cross-unit homes supplied to every unit (function,
     /// import identity, line-marked source, dialect, link resolution); the
@@ -319,6 +344,13 @@ struct UnitsSectionRef<'a> {
 #[serde(deny_unknown_fields)]
 pub struct UnitsSection {
     pub units: Vec<StoredUnit>,
+}
+
+/// The units' lookup records, in unit order.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct LookupsSection {
+    pub units: Vec<UnitLookupRecord>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -500,6 +532,9 @@ struct GroupRecord {
     /// The postlude's console lines and appended teardown results, when every
     /// unit succeeded.
     finish: Option<(String, Result<Vec<BinaryValue>, String>)>,
+    /// Each analysed unit's lookup record, in unit order, taken after the
+    /// postlude; complete only for a complete group.
+    lookups: Vec<UnitLookupRecord>,
 }
 
 impl GroupRecord {
@@ -557,10 +592,13 @@ fn seal(
     let Some((finish_output, Ok(teardown))) = &record.finish else {
         return Err("an incomplete group is never sealed".into());
     };
-    if units.units.len() != identity.group.units.len() {
+    if units.units.len() != identity.group.units.len()
+        || record.lookups.len() != identity.group.units.len()
+    {
         return Err(format!(
-            "{} unit result(s) for {} fingerprinted unit(s)",
+            "{} unit result(s) and {} lookup record(s) for {} fingerprinted unit(s)",
             units.units.len(),
+            record.lookups.len(),
             identity.group.units.len()
         ));
     }
@@ -580,6 +618,15 @@ fn seal(
             )?,
         ),
         ("pinned-units", encode("pinned-units", &units)?),
+        (
+            "pinned-lookups",
+            encode(
+                "pinned-lookups",
+                &LookupsSection {
+                    units: record.lookups.clone(),
+                },
+            )?,
+        ),
         ("pinned-finish", encode("pinned-finish", &finish)?),
         ("provenance", encode("provenance", provenance)?),
     ];
@@ -589,10 +636,14 @@ fn seal(
     content_sha256_as(LAYOUT, reader.manifest())
 }
 
-/// The stored group at `path` when its identity equals `identity`;
-/// otherwise the reason it is recomputed. Every section's digest is checked
-/// and every section decoded before anything is used.
-fn load(path: &Path, identity: &PinnedIdentity) -> Result<(GroupRecord, String), String> {
+/// The stored group at `path` when its identity equals the one computed
+/// now (`identity_for`, given the stored lookup records' scope); otherwise
+/// the reason it is recomputed. Every section's digest is checked and every
+/// section decoded before anything is used.
+fn load(
+    path: &Path,
+    identity_for: impl Fn(Scope<'_>) -> Result<PinnedIdentity, String>,
+) -> Result<(GroupRecord, String, PinnedIdentity), String> {
     if !path.exists() {
         return Err("no checkpoint".into());
     }
@@ -601,7 +652,12 @@ fn load(path: &Path, identity: &PinnedIdentity) -> Result<(GroupRecord, String),
     let stored = reader
         .section::<PinnedIdentity>("pinned-identity")
         .map_err(refused)?;
-    if let Some(field) = identity_difference(&stored, identity)? {
+    let lookups = reader
+        .section::<LookupsSection>("pinned-lookups")
+        .map_err(refused)?;
+    let scope = stored_scope(&stored, &lookups.units).map_err(refused)?;
+    let identity = identity_for(scope)?;
+    if let Some(field) = identity_difference(&stored, &identity)? {
         return Err(format!("{field} differs"));
     }
     let prelude = reader
@@ -616,10 +672,13 @@ fn load(path: &Path, identity: &PinnedIdentity) -> Result<(GroupRecord, String),
     reader
         .section::<PinnedProvenance>("provenance")
         .map_err(refused)?;
-    if units.units.len() != identity.group.units.len() {
+    if units.units.len() != identity.group.units.len()
+        || lookups.units.len() != identity.group.units.len()
+    {
         return Err(refused(format!(
-            "{} stored unit(s) for {} planned",
+            "{} stored unit(s) and {} lookup record(s) for {} planned",
             units.units.len(),
+            lookups.units.len(),
             identity.group.units.len()
         )));
     }
@@ -634,9 +693,69 @@ fn load(path: &Path, identity: &PinnedIdentity) -> Result<(GroupRecord, String),
                 .map(|unit| Some(UnitRecord::Done(Box::new(unit))))
                 .collect(),
             finish: Some((finish.output, Ok(finish.teardown_results))),
+            lookups: lookups.units,
         },
         content,
+        identity,
     ))
+}
+
+/// What a stage identity's environment digest covers.
+#[derive(Clone, Copy, Debug)]
+pub enum Scope<'a> {
+    /// The whole stage environment.
+    Whole,
+    /// The stage environment restricted to the names these records read.
+    Restricted(&'a [UnitLookupRecord]),
+}
+
+/// The scope a stored identity claims, checked against its stored records
+/// as far as they can be without the environment they were recorded under
+/// (which the seal checked): a `restricted` claim needs records free of
+/// whole-map reads whose relied candidates were read by name.
+fn stored_scope<'a>(
+    stored: &PinnedIdentity,
+    records: &'a [UnitLookupRecord],
+) -> Result<Scope<'a>, String> {
+    match stored.stage.environment_scope.as_str() {
+        "whole" => Ok(Scope::Whole),
+        "restricted" => {
+            let consistent = records.iter().all(|record| {
+                !record.whole_map_read
+                    && record.whole_map_reads.is_empty()
+                    && record
+                        .relied
+                        .iter()
+                        .all(|name| record.found.contains(name) || record.missed.contains(name))
+            });
+            if consistent {
+                Ok(Scope::Restricted(records))
+            } else {
+                Err(
+                    "a restricted stage identity over a lookup record that cannot restrict it"
+                        .into(),
+                )
+            }
+        }
+        other => Err(format!("unknown environment scope `{other}`")),
+    }
+}
+
+/// The scope a group's fresh records allow: restricted when every record
+/// checks against the environment it was recorded under and none read a
+/// whole table.
+fn sealing_scope<'a>(
+    records: &'a [UnitLookupRecord],
+    environment: &ResourceContracts,
+) -> Scope<'a> {
+    if records
+        .iter()
+        .all(|record| !record.whole_map_read && record.check(environment).is_ok())
+    {
+        Scope::Restricted(records)
+    } else {
+        Scope::Whole
+    }
 }
 
 /// The first field (as a dotted path) where two identities differ, `None`
@@ -927,16 +1046,30 @@ impl Stage {
     }
 }
 
-/// A stage's identity.
+/// A stage's identity, its environment digest covering `scope`.
 pub fn stage_identity(
     stage: Stage,
     environment: &ResourceContracts,
+    scope: Scope<'_>,
     homes: &[CrossUnitHomeEvidence],
     bounds_environment_sha256: String,
 ) -> Result<StageIdentity, String> {
+    let (environment_scope, environment_sha256) = match scope {
+        Scope::Whole => ("whole", environment_sha256(environment)?),
+        Scope::Restricted(records) => (
+            "restricted",
+            environment.restricted_sha256(
+                &records
+                    .iter()
+                    .flat_map(UnitLookupRecord::closure)
+                    .collect::<BTreeSet<_>>(),
+            )?,
+        ),
+    };
     Ok(StageIdentity {
         stage: stage.name().into(),
-        environment_sha256: environment_sha256(environment)?,
+        environment_scope: environment_scope.into(),
+        environment_sha256,
         homes_sha256: homes_sha256(homes)?,
         bounds_environment_sha256,
     })
@@ -1022,7 +1155,7 @@ fn group_identities(
 
 /// One unit's deposit in its group's collector.
 enum Slot {
-    Done(Box<StoredUnit>, Box<ChunkioCaptures>),
+    Done(Box<StoredUnit>, Box<ChunkioCaptures>, LookupHandle),
     Failed { output: String, error: String },
 }
 
@@ -1033,7 +1166,8 @@ struct Collector {
     prelude: Option<(String, Result<(), String>)>,
     units: Vec<Option<Slot>>,
     record: Option<GroupRecord>,
-    sealed: Option<Result<String, String>>,
+    /// The sealed file's content digest and environment scope.
+    sealed: Option<Result<(String, String), String>>,
 }
 
 /// The group's record from what its collector holds; with `finish`, its
@@ -1047,12 +1181,14 @@ fn assemble_record(label: &str, collector: &mut Collector, finish: bool) -> Grou
     });
     let mut captures = ChunkioCaptures::default();
     let mut every_unit = prelude.is_ok();
+    let mut handles = Vec::new();
     let units = collector
         .units
         .iter_mut()
         .map(|slot| match slot.take() {
-            Some(Slot::Done(unit, captured)) => {
+            Some(Slot::Done(unit, captured, handle)) => {
                 captures.absorb(*captured);
+                handles.push(handle);
                 Some(UnitRecord::Done(unit))
             }
             Some(Slot::Failed { output, error }) => {
@@ -1072,11 +1208,14 @@ fn assemble_record(label: &str, collector: &mut Collector, finish: bool) -> Grou
             .and_then(|()| values(&teardown));
         (output, result)
     });
+    // Taken after the postlude, which reads what the units captured.
+    let lookups = handles.iter().map(LookupHandle::record).collect();
     GroupRecord {
         prelude_output,
         prelude,
         units,
         finish,
+        lookups,
     }
 }
 
@@ -1095,6 +1234,10 @@ struct Shared<'a> {
     contexts: Vec<OnceLock<Option<LibraryContext>>>,
     preludes: Vec<OnceLock<(String, Result<(), String>)>>,
     records: Mutex<Vec<Value>>,
+    /// Card MEASURE-LOOKUP-RECORD-REUSE: the checked contract-only analyzer
+    /// acceptance this run stands under, recorded in every decision; `null`
+    /// without one.
+    analyzer_decision: Value,
 }
 
 struct StageResult {
@@ -1115,34 +1258,44 @@ fn run_stage(
 ) -> Result<StageResult, String> {
     let route = shared.route;
     let started = Instant::now();
-    let stage_identity = stage_identity(stage, environment, homes, bounds_environment_sha256()?)?;
-    let identities = shared
-        .groups
-        .iter()
-        .map(|group| {
-            group.as_ref().map(|group| PinnedIdentity {
-                run: shared.run.clone(),
-                stage: stage_identity.clone(),
-                group: group.clone(),
-            })
+    let bounds = bounds_environment_sha256()?;
+    let whole_stage = stage_identity(stage, environment, Scope::Whole, homes, bounds.clone())?;
+    // A group's identity under a scope: the whole stage digest is computed
+    // once, a restricted one per group.
+    let identity_of = |group: &PinnedGroupIdentity, scope: Scope<'_>| {
+        let stage = match scope {
+            Scope::Whole => whole_stage.clone(),
+            Scope::Restricted(_) => {
+                stage_identity(stage, environment, scope, homes, bounds.clone())?
+            }
+        };
+        Ok::<_, String>(PinnedIdentity {
+            run: shared.run.clone(),
+            stage,
+            group: group.clone(),
         })
-        .collect::<Vec<_>>();
+    };
     // Decide every group first: reused from its file, or recomputed.
     let mut reused = Vec::new();
     for (index, plan) in route.plans.iter().enumerate() {
         let path = checkpoint_path(&shared.options.directory, &plan.library, stage);
-        let decision = match &identities[index] {
+        let decision = match &shared.groups[index] {
             Err(error) => Err(format!("unit fingerprint unavailable: {error}")),
             Ok(_) if !shared.options.resume => Err("resume not requested".to_owned()),
-            Ok(identity) => load(&path, identity),
+            Ok(group) => load(&path, |scope| identity_of(group, scope)),
         };
         let label = format!("{}.{}", plan.library, stage.name());
         match decision {
-            Ok((record, content)) => {
-                eprintln!("checkpoint {label}: reused (identity equal)");
+            Ok((record, content, identity)) => {
+                eprintln!(
+                    "checkpoint {label}: reused (identity equal, {} environment)",
+                    identity.stage.environment_scope
+                );
                 lock(&shared.records).push(json!({
                     "group": plan.library, "stage": stage.name(), "decision": "reused",
                     "reason": "identity equal", "content_sha256": content,
+                    "environment_scope": identity.stage.environment_scope,
+                    "analyzer": shared.analyzer_decision,
                 }));
                 reused.push(Some(record));
             }
@@ -1189,15 +1342,24 @@ fn run_stage(
         let label = &route.plans[index].library;
         let record = assemble_record(label, collector, true);
         if record.complete()
-            && let Ok(identity) = &identities[index]
+            && let Ok(group) = &shared.groups[index]
         {
+            let identity = match identity_of(group, sealing_scope(&record.lookups, environment)) {
+                Ok(identity) => identity,
+                Err(error) => {
+                    collector.sealed = Some(Err(error));
+                    collector.record = Some(record);
+                    return;
+                }
+            };
             let path = checkpoint_path(&shared.options.directory, label, stage);
             let provenance = PinnedProvenance {
                 wall_time_ms: started.elapsed().as_millis() as u64,
                 jobs: route.jobs as u64,
                 process_peak_rss_kib: status_kib("VmHWM:"),
             };
-            let sealed = seal(&path, identity, &record, &provenance);
+            let sealed = seal(&path, &identity, &record, &provenance)
+                .map(|content| (content, identity.stage.environment_scope.clone()));
             if sealed.is_ok() {
                 eprintln!("checkpoint ready: {}", path.display());
             }
@@ -1244,27 +1406,33 @@ fn run_stage(
                 let plan = &route.plans[index];
                 let entry = &plan.selected[unit];
                 let mut output = String::new();
+                // Card MEASURE-LOOKUP-RECORD-REUSE: the unit reads a
+                // recording copy of the stage environment.
+                let session = LookupSession::open(environment);
                 let result = match shared.contexts[index].wait() {
-                    Some(context) => {
+                    Some(context) => session.scoped(|| {
                         qcore_c_gateway::member_run_facts::scoped(route.run_facts.cloned(), || {
                             audit_unit(
                                 plan,
                                 context,
                                 entry,
                                 route.revision,
-                                environment,
+                                session.environment(),
                                 homes,
                                 route.source_contracts,
                                 route.provider,
                                 &mut output,
                             )
                         })
-                    }
+                    }),
                     None => Err(format!("{}: library prelude failed", plan.library)),
                 };
+                let handle = session.into_handle();
                 let deposit = match result {
                     Ok(products) => match store_unit(output.clone(), products) {
-                        Ok((stored, captures)) => Slot::Done(Box::new(stored), Box::new(captures)),
+                        Ok((stored, captures)) => {
+                            Slot::Done(Box::new(stored), Box::new(captures), handle)
+                        }
                         Err(error) => Slot::Failed { output, error },
                     },
                     Err(error) => Slot::Failed { output, error },
@@ -1308,10 +1476,11 @@ fn run_stage(
                 .display()
             ));
         }
-        if let Some(Ok(content)) = &collector.sealed {
+        if let Some(Ok((content, scope))) = &collector.sealed {
             lock(&shared.records).push(json!({
                 "group": route.plans[index].library, "stage": stage.name(), "decision": "sealed",
-                "content_sha256": content,
+                "content_sha256": content, "environment_scope": scope,
+                "analyzer": shared.analyzer_decision,
             }));
         }
         let record = match collector.record.take() {
@@ -1395,6 +1564,10 @@ pub(super) fn run_phases<'a>(
         contexts: route.plans.iter().map(|_| OnceLock::new()).collect(),
         preludes: route.plans.iter().map(|_| OnceLock::new()).collect(),
         records: Mutex::new(Vec::new()),
+        analyzer_decision: options
+            .acceptance
+            .as_ref()
+            .map_or(Value::Null, |acceptance| acceptance.decision()),
     };
     let first = run_stage(&shared, Stage::First, route.contracts, &[])?;
     let mut stopped = first.stopped || route.planning_failed;
@@ -1439,12 +1612,13 @@ pub(super) fn run_phases<'a>(
         }
     }
     let record = json!({
-        "schema_version": 1,
-        "scope": "provenance of one checkpointed pinned run: per stage, which library groups were reused or recomputed and why, the content digest of each file sealed or reused, and measured wall times; not an input to any verdict",
+        "schema_version": 2,
+        "scope": "provenance of one checkpointed pinned run: per stage, which library groups were reused or recomputed and why, the environment scope of each identity, the content digest of each file sealed or reused, the contract-only analyzer acceptance the run stands under (if any), and measured wall times; not an input to any verdict",
         "jobs": route.jobs,
         "fingerprint_wall_time_ms": fingerprint_ms,
         "phases_wall_time_ms": started.elapsed().as_millis() as u64,
         "process_peak_rss_kib": status_kib("VmHWM:"),
+        "analyzer": shared.analyzer_decision,
         "groups": shared.records.into_inner().unwrap_or_else(PoisonError::into_inner),
     });
     let mut bytes = serde_json::to_vec_pretty(&record).map_err(|error| error.to_string())?;
@@ -1530,3 +1704,6 @@ fn outcomes(steps: &[Step<'_>], records: Vec<GroupRecord>) -> Vec<StepOutcome> {
 
 #[cfg(test)]
 mod tests;
+
+#[cfg(test)]
+mod lookup_tests;
