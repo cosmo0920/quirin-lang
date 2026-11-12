@@ -808,9 +808,12 @@ def populate_cargo_home(source, destination, lock):
             target = destination / "registry" / kind / registry.name
             if kind == "index" and (registry / "config.json").is_file():
                 link_or_copy(registry / "config.json", target / "config.json")
-            for package in packages:
-                relative = (f"{package['name']}-{package['version']}.crate" if kind == "cache"
-                            else f".cache/{index_entry(package['name'])}")
+            # Two versions of one crate share one index entry: link it once.
+            relatives = sorted({f"{package['name']}-{package['version']}.crate"
+                                if kind == "cache"
+                                else f".cache/{index_entry(package['name'])}"
+                                for package in packages})
+            for relative in relatives:
                 if (registry / relative).is_file():
                     link_or_copy(registry / relative, target / relative)
                     copied += 1
