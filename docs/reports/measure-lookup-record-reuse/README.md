@@ -93,7 +93,13 @@ unchanged.
 from the entries of the names it read and the scalars; under an environment
 agreeing on those it makes the same reads in the same order and returns the
 same rows. A changed read name, an added entry for a missed name, or a removed
-one changes the restricted digest.
+one changes the restricted digest. The Rust side of that premise is a census,
+not a proof: no process- or thread-global cache answers a unit from another
+unit's reads of the stage environment (the `thread_local!`/`static` state of
+the gateway and audit crates holds Clang results, census sinks, rule switches
+and run member facts; the cross-unit replay cache is keyed on a home's own
+environment, which the whole `homes_sha256` covers). It matters only once a
+real unit can seal `restricted` (§7).
 
 ## 3. The contract-only analyzer acceptance
 
