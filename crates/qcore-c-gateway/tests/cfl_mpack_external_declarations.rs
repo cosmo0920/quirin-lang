@@ -34,9 +34,9 @@
 use std::collections::BTreeMap;
 
 use qcore_c_gateway::legacy_c::{
-    AnalysisStatus, C11TranslationUnit, LegacyDiagnosticKind, LegacyProgramSummary,
-    ResourceContracts, UnrestrictedLegacyResult, analyze_unrestricted_c11,
-    check_legacy_safety_certificate,
+    AbiOutcome, AbiRefusal, AnalysisStatus, C11TranslationUnit, LegacyDiagnosticKind,
+    LegacyProgramSummary, ResourceContracts, UnrestrictedLegacyResult, analyze_unrestricted_c11,
+    check_legacy_safety_certificate, declared_abi_census,
 };
 use qcore_contract::contract_loader::load_resource_contract_sources;
 
@@ -334,6 +334,51 @@ const ACCEPTING: [(&str, &str); 16] = [
     ),
 ];
 
+/// The accepting rows whose callee's contract states an mpack enumeration
+/// (`mpack_error_t`, `mpack_type_t`) as `u32`, each with that callee and the
+/// refusal its declaration gets where the enumeration is `int` (Windows).
+const ENUM_CONTRACTED: [(&str, &str, AbiRefusal); 3] = [
+    (
+        "mpack writer error flag",
+        "mpack_writer_flag_error",
+        AbiRefusal::ParameterTypeDisagreement,
+    ),
+    (
+        "mpack tag accessors",
+        "mpack_tag_type",
+        AbiRefusal::ReturnTypeDisagreement,
+    ),
+    (
+        "mpack reader primitives",
+        "mpack_reader_destroy",
+        AbiRefusal::ReturnTypeDisagreement,
+    ),
+];
+
+/// The enumeration-typed contracts follow the target's enumeration ABI
+/// (`abi_enum_const_pp` pins the probe's per-target answer): agreed where an
+/// enumeration without a negative value is `unsigned int` (System V), and
+/// withdrawn with the named disagreement where it is `int` (Windows).
+#[test]
+fn the_enumeration_contracts_follow_the_target_abi() {
+    if !clang_available() {
+        return;
+    }
+    let rows = declared_abi_census(PRELUDE, &production());
+    for (name, function, refusal) in ENUM_CONTRACTED {
+        let row = rows
+            .iter()
+            .find(|row| row.function == function)
+            .unwrap_or_else(|| panic!("{name}: no census row for `{function}` in {rows:?}"));
+        let expected = if cfg!(windows) {
+            AbiOutcome::Withdrawn(refusal)
+        } else {
+            AbiOutcome::Agreed
+        };
+        assert_eq!(row.outcome, expected, "{name}: `{function}`");
+    }
+}
+
 #[test]
 fn every_declared_group_accepts_its_correct_use() {
     if !clang_available() {
@@ -341,6 +386,20 @@ fn every_declared_group_accepts_its_correct_use() {
     }
     for (name, body) in ACCEPTING {
         let row = row(body, "a");
+        // Withdrawn on Windows (see the enumeration test above): the row
+        // fails closed instead of reaching Safe.
+        if cfg!(windows)
+            && ENUM_CONTRACTED
+                .iter()
+                .any(|(row_name, ..)| *row_name == name)
+        {
+            assert_eq!(
+                row.status,
+                AnalysisStatus::Unknown,
+                "{name}: expected Unknown on Windows, got {row:?}"
+            );
+            continue;
+        }
         assert!(row.safe(), "{name}: expected Safe, got {row:?}");
     }
 }

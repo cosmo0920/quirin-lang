@@ -365,6 +365,31 @@ class Runner:
         return results
 
 
+def print_failure_excerpt(uid: str, result: Result, limit: int = 200) -> None:
+    """Print a failed unit's captured `failures:` section (or its tail) and its
+    stderr tail, at most `limit` lines each, so a CI log carries the panics."""
+    def read(path: str) -> list[str]:
+        try:
+            return Path(path).read_text(encoding="utf-8", errors="replace").splitlines()
+        except OSError as error:
+            return [f"(unreadable: {error})"]
+
+    stdout = read(result.stdout_log)
+    start = next((i for i, line in enumerate(stdout) if line.strip() == "failures:"), None)
+    excerpt = stdout[start:] if start is not None else stdout[-limit:]
+    stderr = read(result.stderr_log)[-limit:]
+    print(f"::group::{uid} failure output", file=sys.stderr)
+    for line in excerpt[:limit]:
+        print(f"  | {line}", file=sys.stderr)
+    if len(excerpt) > limit:
+        print(f"  | ... {len(excerpt) - limit} more lines in {result.stdout_log}", file=sys.stderr)
+    if any(line.strip() for line in stderr):
+        print("  stderr tail:", file=sys.stderr)
+        for line in stderr:
+            print(f"  | {line}", file=sys.stderr)
+    print("::endgroup::", file=sys.stderr)
+
+
 def describe(result: Result) -> str:
     status = "ok" if result.ok else "FAILED"
     counts = totals([result])
@@ -1149,6 +1174,10 @@ def report(args: argparse.Namespace, document: dict, results: Sequence[Result],
         result = next(r for r in results if r.uid == uid)
         print(f"FAILED unit {uid}: {describe(result)}\n  stdout: {result.stdout_log}"
               f"\n  stderr: {result.stderr_log}", file=sys.stderr)
+        if os.environ.get("GITHUB_ACTIONS") == "true":
+            # The captured logs stay on the runner; put the failure detail in
+            # the job log, where it is the only record a CI reader gets.
+            print_failure_excerpt(uid, result)
     if args.write_weights and document["ok"]:
         seconds = {r.uid: round(r.duration, 1) for r in sorted(results, key=lambda r: r.uid)}
         args.write_weights.write_text(

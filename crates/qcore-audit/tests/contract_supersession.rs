@@ -250,8 +250,10 @@ fn the_loader_decides_duplicates_by_the_lock_stamps() {
         check_source_assumptions(&contracts).unwrap();
         let superseded = &contracts.superseded()["f"];
         assert_eq!(superseded.len(), 1);
+        // Compared by path components: on Windows the manifest's relative
+        // `a/contracts/m.qv` joins the scratch root after a `\`.
         assert!(
-            superseded[0].by_module.contains(&format!("/{winner}/")),
+            Path::new(&superseded[0].by_module).ends_with(Path::new(winner).join("contracts/m.qv")),
             "{superseded:?}"
         );
         assert!(contracts.contract_conflict().is_empty());

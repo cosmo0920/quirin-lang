@@ -220,6 +220,12 @@ jobs:
           # deleted before the next (`--batch-size`), one executable at a
           # time as `cargo test` runs them (`--jobs 1`); the test set and
           # its fail-closed verdicts are the runner's, docs/agents/validation.md.
+          # Card WINDOWS-TEST-PORTABILITY: the dependency-closure tests run
+          # `cargo metadata --locked --offline`, which reads every package of
+          # the lockfile, and a Windows build never downloads the
+          # `cfg(unix)`-only `libc`; fetch every platform's packages first.
+          cargo fetch --locked
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           python scripts/run_test_binaries.py --jobs 1 --batch-size 32
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           cargo run -p qcore-compiler --example reevaluation_probe

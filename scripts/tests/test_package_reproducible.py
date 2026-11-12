@@ -144,6 +144,26 @@ class SecondCargoHome(unittest.TestCase):
             with self.assertRaises(ValueError):
                 package.populate_cargo_home(home, root / "third", lock)
 
+    def test_two_versions_of_one_crate_share_their_index_entry(self):
+        # CI-PACKAGE-DUPLICATE-INDEX: the lock holds embedded-io 0.4 and 0.6;
+        # the second link of their one index entry failed with SameFileError.
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            home = root / "home"
+            files = ["registry/cache/idx/serde-1.0.0.crate", "registry/cache/idx/serde-2.0.0.crate",
+                     "registry/index/idx/.cache/se/rd/serde"]
+            for name in files:
+                (home / name).parent.mkdir(parents=True, exist_ok=True)
+                (home / name).write_text(name)
+            lock = root / "Cargo.lock"
+            lock.write_text("version = 4\n" + "".join(
+                f'[[package]]\nname = "serde"\nversion = "{version}"\n'
+                f'source = "{package.CRATES_IO}"\n' for version in ("1.0.0", "2.0.0")))
+            self.assertEqual(package.populate_cargo_home(home, root / "second", lock), 3)
+            copied = sorted(path.relative_to(root / "second").as_posix()
+                            for path in (root / "second").rglob("*") if path.is_file())
+            self.assertEqual(copied, sorted(files))
+
 
 if __name__ == "__main__":
     unittest.main()

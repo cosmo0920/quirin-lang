@@ -43,21 +43,23 @@ fn clang_available() -> bool {
     }
 }
 
+// The pinned byte offsets rest on 8-byte integers: `__INT64_TYPE__` is `long int`
+// on LP64 and `long long` on LLP64 (Windows), where a plain `long` is 4 bytes.
 const RECORDS: &str = "\
 typedef __SIZE_TYPE__ size_t;
 void *memcpy(void *, const void *, size_t);
 typedef int cb_t(void *);
 int fa(void *); int fb(void *);
-struct pos_s { long off; int epoch; };
+struct pos_s { __INT64_TYPE__ off; int epoch; };
 struct box_s { struct pos_s pos; };
 struct other_s { struct pos_s pos; };
 struct op_s {
   cb_t *op_cb;
   union {
     struct { cb_t *cb; struct pos_s pos; } early;
-    struct { long pad[4]; cb_t *cb; } late;
-    struct { long pad[4]; struct pos_s pos; } lp;
-    struct { long pad[4]; struct box_s box; } boxed;
+    struct { __INT64_TYPE__ pad[4]; cb_t *cb; } late;
+    struct { __INT64_TYPE__ pad[4]; struct pos_s pos; } lp;
+    struct { __INT64_TYPE__ pad[4]; struct box_s box; } boxed;
   } u;
 };
 struct pos_s make_pos(void);

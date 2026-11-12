@@ -720,6 +720,30 @@ fn libm_program(functions: &[&str]) -> (BTreeMap<String, String>, String) {
     (contracts, program(Some("libm"), "", &declarations, &body))
 }
 
+/// Whether `readelf --dyn-syms` lists `symbol` in `shared` with type IFUNC:
+/// an observation of the host's library independent of the manifest reader.
+#[cfg(target_os = "linux")]
+fn readelf_declares_ifunc(shared: &str, symbol: &str) -> bool {
+    let output = Command::new("readelf")
+        .args(["--dyn-syms", "-W", shared])
+        .output()
+        .expect("readelf runs");
+    assert!(
+        output.status.success(),
+        "readelf --dyn-syms {shared} failed"
+    );
+    let table = String::from_utf8_lossy(&output.stdout);
+    let rows: Vec<Vec<&str>> = table
+        .lines()
+        .map(|line| line.split_whitespace().collect::<Vec<_>>())
+        .filter(|fields| {
+            fields.len() >= 8 && fields[7].split('@').next() == Some(symbol) && fields[6] != "UND"
+        })
+        .collect();
+    assert!(!rows.is_empty(), "{shared} defines no `{symbol}`:\n{table}");
+    rows.iter().any(|fields| fields[3] == "IFUNC")
+}
+
 #[cfg(target_os = "linux")]
 fn libm_path(file: &str) -> PathBuf {
     let out = Command::new(unix::clang())
@@ -790,7 +814,25 @@ fn libm_links_statically_and_dynamically_and_runs_under_three_builds() {
             }
         }
         if kind == LinkageKind::Dynamic {
-            assert!(manifest.contracted["floor"].export.as_ref().unwrap().ifunc);
+            // Whether glibc builds `floor` as an IFUNC depends on its version
+            // and configuration, so the manifest is checked against the
+            // shared object the link script names, read independently.
+            let shared = linkage
+                .inputs
+                .iter()
+                .map(|input| input.reference.as_str())
+                .find(|reference| {
+                    std::path::Path::new(reference)
+                        .file_name()
+                        .and_then(|name| name.to_str())
+                        .is_some_and(|name| name.starts_with("libm.so."))
+                })
+                .unwrap_or_else(|| panic!("the link script names libm.so.N:\n{}", generated.text));
+            assert_eq!(
+                manifest.contracted["floor"].export.as_ref().unwrap().ifunc,
+                readelf_declares_ifunc(shared, "floor"),
+                "the manifest's IFUNC flag for `floor` disagrees with `readelf` on {shared}"
+            );
             assert!(generated.text.contains("runtime soname libm.so.6 in "));
         }
         let module = compile(
