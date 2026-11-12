@@ -140,6 +140,9 @@ mod index_traversal;
 // Card NULL-SAFETY-PROPERTY (rules 14k-14p): the separately selected
 // null-dereference property; no custody route reads it.
 pub mod null_deref;
+// Card W45-FB-ENGINE-PROGRESS-MEASURE (rule 44): the separately selected
+// loop-measure fact; no custody route reads it.
+pub mod loop_measure;
 // Card NULL-SAFETY-PROPERTY (rule 14n): the named null premises a custody
 // verdict rests on; the hook is `legacy_null_premise.rs`.
 pub mod null_premise;
