@@ -10642,7 +10642,11 @@ safety claim and no validation of the detach representation premise.
     the list the caller iterates). **Switch.** With `43` in
     `QCORE_GATEWAY_RULES_OFF` neither (1) nor (3)-(4) runs: a destroyer admits
     only rule 10d/10f's entries and a body that takes element custody
-    publishes no summary, as before. `QCore.ElementReleaseSummary`
+    publishes no summary, as before. Measured (base `74105dd0e`, the card's
+    own preparations): system 103/4/341 → 107/4/337, slice 58/1/341/4 Pending
+    → 59/1/340/4, corpus 1,079/6/3,619 → 1,081/6/3,617, no Safe row moved;
+    on the Fluent Bit routes no caller consumes a clause (derived summaries
+    stay in their unit). `QCore.ElementReleaseSummary`
     (`the_destroy_rule_is_sound`, `an_unlinked_object_has_no_defined_destroy`,
     `the_held_arm_only_replaces_a_refusal`, `the_gate_is_exact`,
     `a_static_root_withholds_the_summary`, `forgetting_covers_every_release`,

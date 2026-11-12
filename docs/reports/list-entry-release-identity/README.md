@@ -32,14 +32,17 @@ been drafted, unmeasured; the prediction says so).
   (`flb_engine_destroy_tasks`, `flb_storage_input_destroy`, both
   configurations, Unknown → Safe); slice 58 / 1 / 341 / 4 Pending →
   **59** / 1 / **340** / 4 (`flb_tail_file_remove_all` Unknown → Safe). Exactly
-  the predicted moves. No Safe row moved, no leak, double release or Unsafe
+  the predicted moves on those two routes (the arbiter's declaration check:
+  match). No Safe row moved, no leak, double release or Unsafe
   added; the null property's tallies are unchanged on both routes. Arbiter
   comparison: section 6.
-* **Part C reaches no native caller.** Every caller of a body that now
-  publishes the clause on these routes is in another unit (or the body is
-  still Unknown), and derived summaries do not cross units: measured,
-  follow-up `LERI-CROSS-UNIT-ELEMENTS-RELEASED`. It is exercised by fixtures
-  only.
+* **Corpus:** 1,079 / 6 / 3,619 → **1,081** / 6 / **3,617**: two Monkey
+  rows (`mk_sched_threads_purge`, `mk_sched_threads_destroy_all`) become Safe
+  through part C in their own unit, **unpredicted** (the prediction read only
+  the Fluent Bit units); every row read (section 6). On the Fluent Bit system
+  and slice routes every caller of a newly summarised drain is in another
+  unit, and derived summaries do not cross units there: follow-up
+  `LERI-CROSS-UNIT-ELEMENTS-RELEASED`.
 * **OR-6** is unchanged (the mutually recursive pair publishes nothing
   first); `W45-FB-OR6-ELEMENT-IDENTITY` stays open.
 
@@ -248,7 +251,44 @@ row), and its leaf deltas equal the quick runs' (system 27 resolved and 28
 unlink refusals per configuration; slice 16 and 21 over both
 configurations of `flb_input.c`).
 
-CORPUS_PLACEHOLDER
+**Corpus** ([native-comparison-corpus.json](artifacts/native-comparison-corpus.json),
+`measure/arbiter-4-corpus`, the same two exports with `--routes corpus`):
+custody 1,079 / 6 / 3,619 → **1,081** / 6 / **3,617**; unknown_alias
+10,711 → 10,709, unsupported 23,458 → 23,454; leak 7, double release 1,
+summary conflicts 3 on both sides. The declaration check reports a
+**mismatch**: two **unpredicted** moves, both read and both rule 43's
+released-element summary firing in-unit on Monkey (the prediction looked only
+at the Fluent Bit units):
+
+* `mk_sched_threads_purge` and `mk_sched_threads_destroy_all`
+  (`mk_server/mk_scheduler.c`) Unknown → **Safe**. Their only leaves were
+  `call to uncontracted function sched_thread_cleanup`. `sched_thread_cleanup(sched,
+  list)` drains `list` with a safe iteration whose every element goes to the
+  element destroyer `mk_http_thread_destroy` (rule 34, declared at
+  `monkey/intrusive_list.qv`); before this card rule 10f(3) withheld its
+  summary, now it publishes `ElementsReleased` at `list`. The callers hand it
+  `&sched->threads_purge` / `&sched->threads`, rooted at their formal `sched`,
+  hold no published object, and so apply the clause with nothing to forget and
+  carry it on as `ElementsReleased` at `sched`. Each row rests on
+  `mk_http_thread_destroy`'s declaration with its eight `resource_premise`
+  hypotheses (row `contract_dependencies`) and on P-CRR-MEMBER/P-CRR-LINKED and
+  P-LERI-CALLER-PUBLISHED.
+* Leaf trades, no status move: `mk_sched_drop_connection` loses `call to
+  uncontracted function mk_sched_threads_destroy_conn` (that body now
+  publishes `ElementsReleased` at `sched`), `mk_sched_exit` loses
+  `mk_sched_worker_cb_free` (a foreign-unlink drain of
+  `&server->sched_worker_callbacks`), `mk_server_worker_loop` loses both
+  `mk_sched_event_free_all` leaves (a header `static inline` drain of
+  `&sched->event_free_queue`, so in-unit); each row stays Unknown on other
+  leaves. In the Fluent Bit chunk unit, `flb_input_chunk_release_space` and
+  `memrb_input_chunk_release_space` lose their element leaf, and
+  `input_chunk_append_raw` (2) and `input_chunk_get` (1) gain the unlink
+  refusal beside an already refused release, as on the system route.
+
+No Safe row moved, no leak, double release or Unsafe changed. The summary
+therefore does reach native callers, in the unit that defines the drain
+(Monkey); on the system and slice routes every caller of a newly summarised
+Fluent Bit drain is in another unit (`LERI-CROSS-UNIT-ELEMENTS-RELEASED`).
 
 ## 7. Pins and locks
 

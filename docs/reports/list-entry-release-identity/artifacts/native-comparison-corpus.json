@@ -1,0 +1,1342 @@
+{
+  "comparisons": [
+    {
+      "after": "tip",
+      "before": "base",
+      "comparison": "base->tip",
+      "routes": {
+        "corpus": {
+          "after_directory": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a2c467a15d6a29eec/measure/arbiter-4-corpus/sides/tip/corpus",
+          "artifacts": {
+            "byte_identical_except_named_substitutions": false,
+            "differing": [
+              {
+                "after": "0688ffbf18b6ac7b1c32b54775a651f4bd2d8537b8817830d8ccfd1e6ed741bf",
+                "before": "fd466effae77270534cb01c06ea508a3d74123555198ed47b8076d014ea4c2e5",
+                "file": "corpus-null.jsonl"
+              },
+              {
+                "after": "b557843c7d0774d49a72b55591c43240dcc91f171b92230b3067d17414b08e07",
+                "before": "17845d07cf08f046a030935541d9274f191b74f488d4f6833c61dad1d0d663ff",
+                "file": "corpus-null.summary.json"
+              },
+              {
+                "after": "bb7be900e9c4a3716b761fcc3f93c893338ab38811ffd2adad9d79ed84152bbb",
+                "before": "70e4591d10ad40cee0904bdb8114c1a8c2c926e8e17fb2e872f0098fabbb7e1d",
+                "file": "corpus-outer.json"
+              },
+              {
+                "after": "7221d728e607ca56159553c87f14b301ca2d38260134911a4c6c8de46e8ac0b6",
+                "before": "4287b3342f322a32431a9cce870abae29f2f764fba2b97a377296c452e0b2b6c",
+                "file": "corpus/resource-diagnostics.components.json"
+              },
+              {
+                "file": "corpus/resource-diagnostics.contracts.json",
+                "why": {
+                  "lifetime_keys_only_after": [],
+                  "lifetime_keys_only_before": []
+                }
+              },
+              {
+                "after": "d841558a56245795aeb205666bd745c2446ba1b421d224d8833c817a700a8834",
+                "before": "679a75b64d172e2737aa92d41587dedffcc67e9225394da950f9fa6cd3b923ee",
+                "file": "corpus/resource-diagnostics.json"
+              },
+              {
+                "after": "778a1e254a3837e84324ef43bd683e40eee837ce3618e5f1ac3ff545593e7a76",
+                "before": "c7cd6eabd9d5d34e0708707dd4aef5e1f1ff42d98bd89d0c21a2f3b80d150170",
+                "file": "corpus/resource-diagnostics.source-effects.json"
+              }
+            ],
+            "identical": [
+              {
+                "file": "corpus/monkey-source.json",
+                "sha256": "648bfc61348318ce11e9bdf0ef9513585f8e6af56d47878d0647378633f48259"
+              },
+              {
+                "file": "corpus/resource-diagnostics.chunk-contracts.json",
+                "sha256": "6edff1fde2ca1bc798ae4234b19b5fb4e86e235e2f3770668cddbd3650698155"
+              }
+            ],
+            "identical_after_named_substitution": {},
+            "only_after": [],
+            "only_before": [],
+            "records_not_compared": [
+              "console.log",
+              "corpus.exit",
+              "corpus/audit.log",
+              "corpus/run.json",
+              "invocation.json",
+              "stderr.log"
+            ]
+          },
+          "before_directory": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a2c467a15d6a29eec/measure/arbiter-4-corpus/sides/base/corpus",
+          "composition": {
+            "components": {
+              "after": 179,
+              "before": 179,
+              "union": 358
+            },
+            "conflicts": [],
+            "rows": 179
+          },
+          "conflicts": {
+            "after": [],
+            "before": []
+          },
+          "content_changes": [
+            {
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `old_input_chunk`",
+                  "origin": "flb_input_chunk.c:718"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "fluent-bit-chunk::flb_input_chunk.c::unit#0::resource-custody.v1::fluent-bit-chunk::flb_input_chunk_release_space#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_input_chunk_destroy` of `ic`, which this function has not published",
+                  "origin": "flb_input_chunk.c:3454"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_input_chunk_destroy` of `ic`, which this function has not published",
+                  "origin": "flb_input_chunk.c:3485"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-chunk::flb_input_chunk.c::unit#0::resource-custody.v1::fluent-bit-chunk::input_chunk_append_raw#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_input_chunk_destroy` of `ic`, which this function has not published",
+                  "origin": "flb_input_chunk.c:2907"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-chunk::flb_input_chunk.c::unit#0::resource-custody.v1::fluent-bit-chunk::input_chunk_get#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `ic`",
+                  "origin": "flb_input_chunk.c:3184"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "fluent-bit-chunk::flb_input_chunk.c::unit#0::resource-custody.v1::fluent-bit-chunk::memrb_input_chunk_release_space#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "contract_dependencies": {
+                "after": {
+                  "declarations": [
+                    "mk_http_thread_destroy"
+                  ],
+                  "hypothesis_dependencies": {
+                    "mk_http_thread_destroy": [
+                      "legacy_atom_00000000",
+                      "legacy_atom_00000001",
+                      "legacy_atom_00000002",
+                      "legacy_atom_00000003",
+                      "legacy_atom_00000004",
+                      "legacy_atom_00000005",
+                      "legacy_atom_00000006",
+                      "legacy_atom_00000007"
+                    ]
+                  },
+                  "summaries": [
+                    "mk_sched_threads_destroy_conn"
+                  ]
+                },
+                "before": {
+                  "declarations": [],
+                  "hypothesis_dependencies": {}
+                }
+              },
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unsupported",
+                  "description": "call to uncontracted function `mk_sched_threads_destroy_conn`",
+                  "origin": "mk_server/mk_scheduler.c:577"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "monkey-libevent::mk_server/mk_scheduler.c::unit#0::resource-custody.v1::monkey-libevent::mk_sched_drop_connection#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "contract_dependencies": {
+                "after": {
+                  "declarations": [
+                    "mk_list_del",
+                    "mk_mem_free"
+                  ],
+                  "hypothesis_dependencies": {},
+                  "summaries": [
+                    "mk_sched_worker_cb_free"
+                  ]
+                },
+                "before": {
+                  "declarations": [
+                    "mk_mem_free"
+                  ],
+                  "hypothesis_dependencies": {}
+                }
+              },
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unsupported",
+                  "description": "call to uncontracted function `mk_sched_worker_cb_free`",
+                  "origin": "mk_server/mk_scheduler.c:509"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "monkey-libevent::mk_server/mk_scheduler.c::unit#0::resource-custody.v1::monkey-libevent::mk_sched_exit#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "contract_dependencies": {
+                "after": {
+                  "declarations": [
+                    "mk_event_add",
+                    "mk_event_loop_destroy",
+                    "mk_event_timeout_create",
+                    "mk_event_timeout_destroy",
+                    "mk_event_wait",
+                    "mk_list_del",
+                    "mk_mem_alloc_z",
+                    "mk_mem_free",
+                    "mk_utils_libc_error",
+                    "pthread_getspecific",
+                    "pthread_setspecific",
+                    "read"
+                  ],
+                  "hypothesis_dependencies": {
+                    "mk_event_timeout_create": [
+                      "legacy_atom_00000000"
+                    ],
+                    "mk_event_timeout_destroy": [
+                      "legacy_atom_00000000"
+                    ]
+                  },
+                  "null_premises": [
+                    "null-deref:mk_server_worker_loop:6436:evl",
+                    "null-deref:mk_server_worker_loop:6469:evl"
+                  ],
+                  "summaries": [
+                    "mk_channel_is_empty",
+                    "mk_list_is_empty",
+                    "mk_sched_event_free_all",
+                    "mk_sched_get_thread_conf"
+                  ]
+                },
+                "before": {
+                  "declarations": [
+                    "mk_event_add",
+                    "mk_event_loop_destroy",
+                    "mk_event_timeout_create",
+                    "mk_event_timeout_destroy",
+                    "mk_event_wait",
+                    "mk_mem_alloc_z",
+                    "mk_mem_free",
+                    "mk_utils_libc_error",
+                    "pthread_getspecific",
+                    "pthread_setspecific",
+                    "read"
+                  ],
+                  "hypothesis_dependencies": {
+                    "mk_event_timeout_create": [
+                      "legacy_atom_00000000"
+                    ],
+                    "mk_event_timeout_destroy": [
+                      "legacy_atom_00000000"
+                    ]
+                  },
+                  "null_premises": [
+                    "null-deref:mk_server_worker_loop:6436:evl",
+                    "null-deref:mk_server_worker_loop:6469:evl"
+                  ],
+                  "summaries": [
+                    "mk_channel_is_empty",
+                    "mk_list_is_empty",
+                    "mk_sched_get_thread_conf"
+                  ]
+                }
+              },
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unsupported",
+                  "description": "call to uncontracted function `mk_sched_event_free_all`",
+                  "origin": "mk_server/mk_server.c:590"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "call to uncontracted function `mk_sched_event_free_all`",
+                  "origin": "mk_server/mk_server.c:621"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "monkey-libevent::mk_server/mk_server.c::unit#0::resource-custody.v1::monkey-libevent::mk_server_worker_loop#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            }
+          ],
+          "environment_digest_fields": [
+            "assumptions",
+            "build_identity",
+            "environment_sha256",
+            "resource_contracts_sha256",
+            "id"
+          ],
+          "figures": {
+            "after": {
+              "null_rows": 4796,
+              "null_verdicts": {
+                "Safe": 2476,
+                "Unknown": 2303,
+                "Unsafe": 17
+              },
+              "null_verdicts_sha256": "b58f20f55164c6a81b9b81a68c944a3b73b5b59b1580838eca03e24ec596bdef",
+              "row_statuses": {
+                "Safe": 1081,
+                "Unknown": 3617,
+                "Unsafe": 6
+              },
+              "row_verdicts_sha256": "0a307a9e627d1ae9bc93c1640f2452bb6c57de4043dd7678543867a3498ffb28",
+              "rows": 4704,
+              "unit_statuses": {
+                "Safe": 9,
+                "Unknown": 160,
+                "Unsafe": 6,
+                "data_only": 4
+              },
+              "unit_verdicts_sha256": "b88d170b120055ffcbbc4ca2738d32203af0a23f496ec60ce8454a47328fac1f",
+              "units": 179
+            },
+            "before": {
+              "null_rows": 4796,
+              "null_verdicts": {
+                "Safe": 2476,
+                "Unknown": 2303,
+                "Unsafe": 17
+              },
+              "null_verdicts_sha256": "3d9133280e1ea271ecb0e92a09768a04ac2002f33c451da0070ee15b16492dc0",
+              "row_statuses": {
+                "Safe": 1079,
+                "Unknown": 3619,
+                "Unsafe": 6
+              },
+              "row_verdicts_sha256": "0a0904b0af32ce24d12e58ad3d9c5c3f933ebd3a782b811fc7c407d8f8beef4c",
+              "rows": 4704,
+              "unit_statuses": {
+                "Safe": 9,
+                "Unknown": 160,
+                "Unsafe": 6,
+                "data_only": 4
+              },
+              "unit_verdicts_sha256": "b88d170b120055ffcbbc4ca2738d32203af0a23f496ec60ce8454a47328fac1f",
+              "units": 179
+            }
+          },
+          "function_rows": {
+            "content_changed": 7,
+            "environment_only": 4695,
+            "identical": 0,
+            "moved": 2,
+            "unmatched": 0
+          },
+          "incomplete_because": [],
+          "moves": [
+            {
+              "contract_dependencies": {
+                "after": {
+                  "declarations": [
+                    "mk_http_thread_destroy"
+                  ],
+                  "hypothesis_dependencies": {
+                    "mk_http_thread_destroy": [
+                      "legacy_atom_00000000",
+                      "legacy_atom_00000001",
+                      "legacy_atom_00000002",
+                      "legacy_atom_00000003",
+                      "legacy_atom_00000004",
+                      "legacy_atom_00000005",
+                      "legacy_atom_00000006",
+                      "legacy_atom_00000007"
+                    ]
+                  },
+                  "summaries": [
+                    "sched_thread_cleanup"
+                  ]
+                },
+                "before": {
+                  "declarations": [],
+                  "hypothesis_dependencies": {}
+                }
+              },
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unsupported",
+                  "description": "call to uncontracted function `sched_thread_cleanup`",
+                  "origin": "mk_server/mk_scheduler.c:645"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "call to uncontracted function `sched_thread_cleanup`",
+                  "origin": "mk_server/mk_scheduler.c:646"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "monkey-libevent::mk_server/mk_scheduler.c::unit#0::resource-custody.v1::monkey-libevent::mk_sched_threads_destroy_all#0",
+              "status": [
+                "Unknown",
+                "Safe"
+              ]
+            },
+            {
+              "contract_dependencies": {
+                "after": {
+                  "declarations": [
+                    "mk_http_thread_destroy"
+                  ],
+                  "hypothesis_dependencies": {
+                    "mk_http_thread_destroy": [
+                      "legacy_atom_00000000",
+                      "legacy_atom_00000001",
+                      "legacy_atom_00000002",
+                      "legacy_atom_00000003",
+                      "legacy_atom_00000004",
+                      "legacy_atom_00000005",
+                      "legacy_atom_00000006",
+                      "legacy_atom_00000007"
+                    ]
+                  },
+                  "summaries": [
+                    "sched_thread_cleanup"
+                  ]
+                },
+                "before": {
+                  "declarations": [],
+                  "hypothesis_dependencies": {}
+                }
+              },
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unsupported",
+                  "description": "call to uncontracted function `sched_thread_cleanup`",
+                  "origin": "mk_server/mk_scheduler.c:637"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "monkey-libevent::mk_server/mk_scheduler.c::unit#0::resource-custody.v1::monkey-libevent::mk_sched_threads_purge#0",
+              "status": [
+                "Unknown",
+                "Safe"
+              ]
+            }
+          ],
+          "profile_baseline": {
+            "after": {
+              "exit": 1,
+              "lines": [
+                "null_rows: baseline 4921, run 4796",
+                "null_verdicts: baseline {'Safe': 2549, 'Unknown': 2355, 'Unsafe': 17}, run {'Safe': 2476, 'Unknown': 2303, 'Unsafe': 17}",
+                "null_verdicts_sha256: baseline '942e35745e4e33fa5e7ec2f09bdc358ed325f57c3eef3a22cdd994a1ba4ed3b0', run 'b58f20f55164c6a81b9b81a68c944a3b73b5b59b1580838eca03e24ec596bdef'",
+                "row_statuses: baseline {'Safe': 1079, 'Unknown': 3745, 'Unsafe': 10}, run {'Safe': 1081, 'Unknown': 3617, 'Unsafe': 6}",
+                "row_verdicts_sha256: baseline '5187f2f37dd403018a526493e7c6d691916e7aeed8811f8c3414a4251ca86a16', run '0a307a9e627d1ae9bc93c1640f2452bb6c57de4043dd7678543867a3498ffb28'",
+                "rows: baseline 4834, run 4704",
+                "unit_statuses: baseline {'Safe': 9, 'Unknown': 164, 'Unsafe': 8, 'data_only': 4}, run {'Safe': 9, 'Unknown': 160, 'Unsafe': 6, 'data_only': 4}",
+                "unit_verdicts_sha256: baseline '45d9840326d86749980d1afda1342a81a067112368830d9e7987cdb54a21991b', run 'b88d170b120055ffcbbc4ca2738d32203af0a23f496ec60ce8454a47328fac1f'",
+                "units: baseline 185, run 179",
+                "eight-home: results moved; record the new baseline with a reason in the same commit (record), or treat the move as a defect"
+              ],
+              "profile": "eight-home"
+            },
+            "before": {
+              "exit": 1,
+              "lines": [
+                "null_rows: baseline 4921, run 4796",
+                "null_verdicts: baseline {'Safe': 2549, 'Unknown': 2355, 'Unsafe': 17}, run {'Safe': 2476, 'Unknown': 2303, 'Unsafe': 17}",
+                "null_verdicts_sha256: baseline '942e35745e4e33fa5e7ec2f09bdc358ed325f57c3eef3a22cdd994a1ba4ed3b0', run '3d9133280e1ea271ecb0e92a09768a04ac2002f33c451da0070ee15b16492dc0'",
+                "row_statuses: baseline {'Safe': 1079, 'Unknown': 3745, 'Unsafe': 10}, run {'Safe': 1079, 'Unknown': 3619, 'Unsafe': 6}",
+                "row_verdicts_sha256: baseline '5187f2f37dd403018a526493e7c6d691916e7aeed8811f8c3414a4251ca86a16', run '0a0904b0af32ce24d12e58ad3d9c5c3f933ebd3a782b811fc7c407d8f8beef4c'",
+                "rows: baseline 4834, run 4704",
+                "unit_statuses: baseline {'Safe': 9, 'Unknown': 164, 'Unsafe': 8, 'data_only': 4}, run {'Safe': 9, 'Unknown': 160, 'Unsafe': 6, 'data_only': 4}",
+                "unit_verdicts_sha256: baseline '45d9840326d86749980d1afda1342a81a067112368830d9e7987cdb54a21991b', run 'b88d170b120055ffcbbc4ca2738d32203af0a23f496ec60ce8454a47328fac1f'",
+                "units: baseline 185, run 179",
+                "eight-home: results moved; record the new baseline with a reason in the same commit (record), or treat the move as a defect"
+              ],
+              "profile": "eight-home"
+            }
+          },
+          "status": "complete",
+          "status_deltas": {
+            "Safe": 2,
+            "Unknown": -2,
+            "Unsafe": 0
+          },
+          "totals": {
+            "after": {
+              "conflicted_unit_rows": 0,
+              "diagnostic_counts": {
+                "double_release": 1,
+                "leak": 7,
+                "summary_conflict": 3,
+                "unknown_alias": 10709,
+                "unsupported": 23454
+              },
+              "function_rows": 4704,
+              "function_status": {
+                "Safe": 1081,
+                "Unknown": 3617,
+                "Unsafe": 6
+              },
+              "row_source": "sidecar",
+              "unit_rows": 179,
+              "unit_verdict": {
+                "Safe": 13,
+                "Unknown": 160,
+                "Unsafe": 6
+              }
+            },
+            "before": {
+              "conflicted_unit_rows": 0,
+              "diagnostic_counts": {
+                "double_release": 1,
+                "leak": 7,
+                "summary_conflict": 3,
+                "unknown_alias": 10711,
+                "unsupported": 23458
+              },
+              "function_rows": 4704,
+              "function_status": {
+                "Safe": 1079,
+                "Unknown": 3619,
+                "Unsafe": 6
+              },
+              "row_source": "sidecar",
+              "unit_rows": 179,
+              "unit_verdict": {
+                "Safe": 13,
+                "Unknown": 160,
+                "Unsafe": 6
+              }
+            }
+          },
+          "unit_field_differences": {
+            "chunkio::chunkio.c::unit#0::resource-custody.v1::chunkio": [
+              "cross_unit_link_resolution"
+            ],
+            "chunkio::cio_chunk.c::unit#0::resource-custody.v1::chunkio": [
+              "cross_unit_link_resolution",
+              "reading_site_environments"
+            ],
+            "chunkio::cio_error.c::unit#0::resource-custody.v1::chunkio": [
+              "cross_unit_link_resolution"
+            ],
+            "chunkio::cio_file.c::unit#0::resource-custody.v1::chunkio": [
+              "cross_unit_link_resolution",
+              "reading_site_environments"
+            ],
+            "chunkio::cio_file_unix.c::unit#0::resource-custody.v1::chunkio": [
+              "cross_unit_link_resolution",
+              "reading_site_environments"
+            ],
+            "chunkio::cio_log.c::unit#0::resource-custody.v1::chunkio": [
+              "cross_unit_link_resolution"
+            ],
+            "chunkio::cio_memfs.c::unit#0::resource-custody.v1::chunkio": [
+              "cross_unit_link_resolution",
+              "reading_site_environments"
+            ],
+            "chunkio::cio_meta.c::unit#0::resource-custody.v1::chunkio": [
+              "cross_unit_link_resolution",
+              "reading_site_environments"
+            ],
+            "chunkio::cio_os.c::unit#0::resource-custody.v1::chunkio": [
+              "cross_unit_link_resolution"
+            ],
+            "chunkio::cio_scan.c::unit#0::resource-custody.v1::chunkio": [
+              "cross_unit_link_resolution",
+              "reading_site_environments"
+            ],
+            "chunkio::cio_stats.c::unit#0::resource-custody.v1::chunkio": [
+              "cross_unit_link_resolution"
+            ],
+            "chunkio::cio_stream.c::unit#0::resource-custody.v1::chunkio": [
+              "cross_unit_link_resolution",
+              "reading_site_environments"
+            ],
+            "chunkio::cio_utils.c::unit#0::resource-custody.v1::chunkio": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmetrics.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_atomic_clang.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_cat.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_counter.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_decode_msgpack.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_decode_opentelemetry.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_decode_prometheus_remote_write.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_decode_statsd.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_encode_cloudwatch_emf.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_encode_influx.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_encode_msgpack.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_encode_opentelemetry.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_encode_opentelemetry_batch.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_encode_prometheus.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_encode_prometheus_remote_write.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_encode_splunk_hec.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_encode_text.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_exp_histogram.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_filter.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_gauge.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_histogram.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_label.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_log.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_map.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_metric.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_metric_histogram.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_mpack_utils.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_opts.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_summary.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_time.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "cmetrics::cmt_untyped.c::unit#0::resource-custody.v1::cmetrics": [
+              "cross_unit_link_resolution"
+            ],
+            "ctraces::ctr_attributes.c::unit#0::resource-custody.v1::ctraces": [
+              "cross_unit_link_resolution",
+              "reading_site_environments"
+            ],
+            "ctraces::ctr_decode_msgpack.c::unit#0::resource-custody.v1::ctraces": [
+              "cross_unit_link_resolution"
+            ],
+            "ctraces::ctr_decode_opentelemetry.c::unit#0::resource-custody.v1::ctraces": [
+              "cross_unit_link_resolution",
+              "reading_site_environments"
+            ],
+            "ctraces::ctr_encode_msgpack.c::unit#0::resource-custody.v1::ctraces": [
+              "cross_unit_link_resolution"
+            ],
+            "ctraces::ctr_encode_opentelemetry.c::unit#0::resource-custody.v1::ctraces": [
+              "cross_unit_link_resolution",
+              "reading_site_environments"
+            ],
+            "ctraces::ctr_encode_text.c::unit#0::resource-custody.v1::ctraces": [
+              "cross_unit_link_resolution"
+            ],
+            "ctraces::ctr_id.c::unit#0::resource-custody.v1::ctraces": [
+              "cross_unit_link_resolution",
+              "reading_site_environments"
+            ],
+            "ctraces::ctr_link.c::unit#0::resource-custody.v1::ctraces": [
+              "cross_unit_link_resolution",
+              "reading_site_environments"
+            ],
+            "ctraces::ctr_log.c::unit#0::resource-custody.v1::ctraces": [
+              "cross_unit_link_resolution"
+            ],
+            "ctraces::ctr_mpack_utils.c::unit#0::resource-custody.v1::ctraces": [
+              "cross_unit_link_resolution"
+            ],
+            "ctraces::ctr_random.c::unit#0::resource-custody.v1::ctraces": [
+              "cross_unit_link_resolution"
+            ],
+            "ctraces::ctr_resource.c::unit#0::resource-custody.v1::ctraces": [
+              "cross_unit_link_resolution",
+              "reading_site_environments"
+            ],
+            "ctraces::ctr_scope.c::unit#0::resource-custody.v1::ctraces": [
+              "cross_unit_link_resolution",
+              "reading_site_environments"
+            ],
+            "ctraces::ctr_span.c::unit#0::resource-custody.v1::ctraces": [
+              "cross_unit_link_resolution",
+              "reading_site_environments"
+            ],
+            "ctraces::ctr_utils.c::unit#0::resource-custody.v1::ctraces": [
+              "cross_unit_link_resolution"
+            ],
+            "ctraces::ctr_version.c::unit#0::resource-custody.v1::ctraces": [
+              "cross_unit_link_resolution"
+            ],
+            "ctraces::ctraces.c::unit#0::resource-custody.v1::ctraces": [
+              "cross_unit_link_resolution",
+              "reading_site_environments"
+            ],
+            "fluent-bit-chunk::flb_input_chunk.c::unit#0::resource-custody.v1::fluent-bit-chunk": [
+              "cross_unit_link_resolution",
+              "diagnostic_counts",
+              "reason"
+            ],
+            "librdkafka::cJSON.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::crc32c.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::lz4.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::lz4frame.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::lz4hc.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::nanopb/pb_common.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::nanopb/pb_decode.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::nanopb/pb_encode.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::opentelemetry/common.pb.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::opentelemetry/metrics.pb.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::opentelemetry/resource.pb.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdaddr.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdavl.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdbase64.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdbuf.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdcrc32.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rddl.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdfnv1a.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdgz.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdhdrhistogram.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_admin.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_assignment.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_assignor.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_aux.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_background.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_broker.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_buf.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_cert.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_cgrp.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_conf.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_coord.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_error.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_event.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_feature.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_fetcher.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_header.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_idempotence.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_interceptor.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_lz4.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_metadata.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_metadata_cache.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_mock.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_mock_cgrp.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_mock_handlers.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_mock_sharegrp.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_msg.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_msgset_reader.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_msgset_writer.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_offset.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_op.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_partition.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_pattern.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_plugin.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_queue.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_range_assignor.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_request.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_roundrobin_assignor.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_sasl.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_sasl_plain.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_share_acknowledgement.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_ssl.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_sticky_assignor.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_subscription.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_telemetry.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_telemetry_decode.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_telemetry_encode.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_timer.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_topic.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_transport.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdkafka_txnmgr.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdlist.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdlog.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdmap.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdmurmur2.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdports.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdrand.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdregex.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdstring.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdunittest.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdunittest_acknowledge.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdunittest_fetcher.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdunittest_msgset_errors.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdvarint.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::rdxxhash.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::snappy.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::tinycthread.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "librdkafka::tinycthread_extra.c::unit#0::resource-custody.v1::librdkafka": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_core/mk_event.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_core/mk_file.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_core/mk_iov.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_core/mk_memory.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_core/mk_rconf.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution",
+              "reading_site_environments"
+            ],
+            "monkey-libevent::mk_core/mk_string.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_core/mk_utils.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_server/mk_cache.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_server/mk_clock.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_server/mk_config.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_server/mk_fifo.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_server/mk_header.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_server/mk_http.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_server/mk_http_parser.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_server/mk_http_thread.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_server/mk_kernel.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_server/mk_lib.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_server/mk_mimetype.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_server/mk_net.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_server/mk_plugin.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_server/mk_scheduler.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution",
+              "diagnostic_counts",
+              "reason"
+            ],
+            "monkey-libevent::mk_server/mk_server.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution",
+              "diagnostic_counts",
+              "reason"
+            ],
+            "monkey-libevent::mk_server/mk_socket.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_server/mk_stream.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_server/mk_user.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_server/mk_utils.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_server/mk_vhost.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::mk_server/monkey.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ],
+            "monkey-libevent::tls/tls_stub.c::unit#0::resource-custody.v1::monkey-libevent": [
+              "cross_unit_link_resolution"
+            ]
+          },
+          "unit_moves": [],
+          "unit_rows_environment_only": 0,
+          "unmatched": [],
+          "unmatched_units": []
+        }
+      }
+    }
+  ],
+  "contribution": {
+    "ledgers": [],
+    "rules": [],
+    "schema": "quirin-contribution-ledger/1"
+  },
+  "declared": {
+    "comparison": "base->tip",
+    "path": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a2c467a15d6a29eec/docs/reports/list-entry-release-identity/PREDICTION.md",
+    "result": "mismatch",
+    "routes": {
+      "corpus": {
+        "declared": true,
+        "delta_mismatches": [],
+        "missing": [],
+        "result": "mismatch",
+        "unpredicted": [
+          {
+            "after": "Safe",
+            "before": "Unknown",
+            "row": "monkey-libevent::mk_server/mk_scheduler.c::unit#0::resource-custody.v1::monkey-libevent::mk_sched_threads_destroy_all#0"
+          },
+          {
+            "after": "Safe",
+            "before": "Unknown",
+            "row": "monkey-libevent::mk_server/mk_scheduler.c::unit#0::resource-custody.v1::monkey-libevent::mk_sched_threads_purge#0"
+          }
+        ]
+      }
+    },
+    "sha256": "adf42b7d028f10f9ccce9983ad4f89fd978dbbbe902908f6c65e11b4f6e05c9e"
+  },
+  "failures": [],
+  "inputs_spelling": {
+    "canonical_prefix": null,
+    "mode": "auto",
+    "spelled_prefix": null,
+    "spelling": "original"
+  },
+  "interactions": [],
+  "routes": [
+    {
+      "definition": {
+        "clang": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a2c467a15d6a29eec/private/toolchain/root/usr/lib/llvm-21/bin/clang",
+        "compile_databases": [
+          {
+            "path": "c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json",
+            "sha256": "2f75e769ddd0544b63958e508c37e3cc104fd33fe10a69ae2240beadf1f19911"
+          },
+          {
+            "path": "c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
+            "sha256": "c5b805ff966b1ab99c3a8337d3f23254ed639f1d3490ac4f0de559a7e9d4474b"
+          }
+        ],
+        "inputs_root": "private/corpus-inputs",
+        "kind": "pinned-corpus",
+        "link_map": {
+          "path": "docs/reports/w48-bu-single-leaf-bodies/link-map.corpus.json",
+          "sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3"
+        },
+        "mirror_trees": [
+          "c-gateway-wave-pin/fluent-bit-clang-source",
+          "c-gateway-wave-pin/monkey",
+          "provider-packages-wave20"
+        ],
+        "name": "corpus",
+        "profile": "eight-home",
+        "source_commit": "66910c10",
+        "tracked": [
+          "contract/profiles/fluent-bit/audit.json",
+          "contract/profiles/fluent-bit/profile.json",
+          "contract/profiles/fluent-bit/member-facts-scope.json"
+        ]
+      },
+      "digest": "7b64482e3618bcb19e60525b6cbe0ef68ed580a2c7ff07b9af0c167dadefa653",
+      "name": "corpus",
+      "profile": "eight-home"
+    }
+  ],
+  "rules_off": [],
+  "schema": "quirin-native-comparison/1",
+  "sides": {
+    "base": {
+      "binary": {
+        "path": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a2c467a15d6a29eec/private/base-src/target/release/quirin-audit",
+        "path_as_run": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a2c467a15d6a29eec/private/base-src/target/release/quirin-audit",
+        "sha256": "c2cc83ea5a19acddc5f68e248c75b13115b5faa01892f86c459f5704421e5b3e"
+      },
+      "build_commit": null,
+      "bundles": {
+        "contract": "6ec05712e68088f5d9aa7bc1e707fd364ad02aa192178890a7e5baa1565e10af",
+        "providers/qcore-provider-chunkio/contracts": "0732ed1f1b7872591a3537b84d5c1561e11ad010cfb4d68f030cbce131edcb8f",
+        "providers/qcore-provider-cmetrics/contracts": "11b4f9d68f5bd6a523b8cc6d40f5b4243455192f690698a58d8ba72208c025f9",
+        "providers/qcore-provider-ctraces/contracts": "c9efd04d53275de44a6419a32c7e3632dfd8c7fe87b7df5f9cc02fc096f772fc",
+        "providers/qcore-provider-libevent/contracts": "c9caddff0aa36d8ed2f86a0da3fadaeae0416b62d1e963354a5dfad46beab322",
+        "providers/qcore-provider-librdkafka/contracts": "45369b070375522d6002e9223abd2a341566cf558ce7e1142a2769b4f0706660",
+        "providers/quirin-provider-cfl/contracts": "eedc4e59412f0363329404adb868e8d88c789d7a35f8cda5406b4bfa94a91640",
+        "providers/quirin-provider-fluent-bit/contracts": "04661b87c6f7e71fe570a7da2ddeb0a0a8aa3f755835929c51c57854238a872e",
+        "providers/quirin-provider-libc/contracts": "cf7397667266c85ccde682822fd5cfe8220ecf389f08fa26f7eb072f1f698178",
+        "providers/quirin-provider-mpack/contracts": "524edb31027a0c020e3b697be84f3818a7b44443ffc903f2456d71d3b9f170d6",
+        "providers/quirin-provider-msgpack/contracts": "655433bcaed3005bdb477b73ad527efa90c75874fcdeccba1743ee97c764befa",
+        "providers/quirin-provider-shared/contracts": "9a53ebaff81b4933d6464e928585ae7104e87c91e27a6ea70f6e610dd515b72d"
+      },
+      "directory": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a2c467a15d6a29eec/measure/arbiter-4-corpus/sides/base",
+      "inputs": {
+        "corpus": {
+          "canonical_prefix": null,
+          "databases_as_spelled": {
+            "private/corpus-inputs/c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json": "2f75e769ddd0544b63958e508c37e3cc104fd33fe10a69ae2240beadf1f19911",
+            "private/corpus-inputs/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json": "c5b805ff966b1ab99c3a8337d3f23254ed639f1d3490ac4f0de559a7e9d4474b"
+          },
+          "route_digest": "7b64482e3618bcb19e60525b6cbe0ef68ed580a2c7ff07b9af0c167dadefa653",
+          "source_date_epoch": 1767225600,
+          "spelled_prefix": null,
+          "spelling": "original"
+        }
+      },
+      "kind": "checkout",
+      "revision": null,
+      "run_json": {
+        "path": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a2c467a15d6a29eec/measure/arbiter-4-corpus/sides/base/run.json",
+        "sha256": "bfe5b358a4111f3e124cb55801581138fd62139443eeff166d91e9d483575d56"
+      },
+      "spec": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a2c467a15d6a29eec/private/base-src"
+    },
+    "tip": {
+      "binary": {
+        "path": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a2c467a15d6a29eec/private/tip-src/target/release/quirin-audit",
+        "path_as_run": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a2c467a15d6a29eec/private/tip-src/target/release/quirin-audit",
+        "sha256": "18bfc1fc7cf92084765518faefdb190ce809e296aab9d9e01d74ef8d4a269c6f"
+      },
+      "build_commit": null,
+      "bundles": {
+        "contract": "6ec05712e68088f5d9aa7bc1e707fd364ad02aa192178890a7e5baa1565e10af",
+        "providers/qcore-provider-chunkio/contracts": "0732ed1f1b7872591a3537b84d5c1561e11ad010cfb4d68f030cbce131edcb8f",
+        "providers/qcore-provider-cmetrics/contracts": "11b4f9d68f5bd6a523b8cc6d40f5b4243455192f690698a58d8ba72208c025f9",
+        "providers/qcore-provider-ctraces/contracts": "c9efd04d53275de44a6419a32c7e3632dfd8c7fe87b7df5f9cc02fc096f772fc",
+        "providers/qcore-provider-libevent/contracts": "c9caddff0aa36d8ed2f86a0da3fadaeae0416b62d1e963354a5dfad46beab322",
+        "providers/qcore-provider-librdkafka/contracts": "45369b070375522d6002e9223abd2a341566cf558ce7e1142a2769b4f0706660",
+        "providers/quirin-provider-cfl/contracts": "eedc4e59412f0363329404adb868e8d88c789d7a35f8cda5406b4bfa94a91640",
+        "providers/quirin-provider-fluent-bit/contracts": "ef4c62c49d6b7e87eac16d6f553c882d9dd5722f302bf106e61d111d73799d69",
+        "providers/quirin-provider-libc/contracts": "cf7397667266c85ccde682822fd5cfe8220ecf389f08fa26f7eb072f1f698178",
+        "providers/quirin-provider-mpack/contracts": "524edb31027a0c020e3b697be84f3818a7b44443ffc903f2456d71d3b9f170d6",
+        "providers/quirin-provider-msgpack/contracts": "655433bcaed3005bdb477b73ad527efa90c75874fcdeccba1743ee97c764befa",
+        "providers/quirin-provider-shared/contracts": "9a53ebaff81b4933d6464e928585ae7104e87c91e27a6ea70f6e610dd515b72d"
+      },
+      "directory": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a2c467a15d6a29eec/measure/arbiter-4-corpus/sides/tip",
+      "inputs": {
+        "corpus": {
+          "canonical_prefix": null,
+          "databases_as_spelled": {
+            "private/corpus-inputs/c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json": "2f75e769ddd0544b63958e508c37e3cc104fd33fe10a69ae2240beadf1f19911",
+            "private/corpus-inputs/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json": "c5b805ff966b1ab99c3a8337d3f23254ed639f1d3490ac4f0de559a7e9d4474b"
+          },
+          "route_digest": "7b64482e3618bcb19e60525b6cbe0ef68ed580a2c7ff07b9af0c167dadefa653",
+          "source_date_epoch": 1767225600,
+          "spelled_prefix": null,
+          "spelling": "original"
+        }
+      },
+      "kind": "checkout",
+      "revision": null,
+      "run_json": {
+        "path": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a2c467a15d6a29eec/measure/arbiter-4-corpus/sides/tip/run.json",
+        "sha256": "9c643b4b332f4743d6280714d1da0f9b1ad4d674d211d64715da577439131236"
+      },
+      "spec": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a2c467a15d6a29eec/private/tip-src"
+    }
+  },
+  "source_date_epoch": 1767225600,
+  "status": "complete",
+  "timing": {
+    "analysis_time_ms": 5253744,
+    "limits": {
+      "meaning": "the analysis quota (--timeout-ms) counts analysis time only; declared slot waits are excluded up to the slot-wait limit; the overall wall limit stops the run whatever it declares",
+      "overall_wall_limit_ms": 604800000,
+      "slot_wait_limit_ms": 604800000,
+      "wall_time_quota_ms": 36000000
+    },
+    "sides": {
+      "base": {
+        "corpus": {
+          "analysis_time_ms": 5235769,
+          "profile": "eight-home",
+          "slot_wait_ms": 5058702,
+          "wall_time_ms": 10294471
+        }
+      },
+      "tip": {
+        "corpus": {
+          "analysis_time_ms": 5236391,
+          "profile": "eight-home",
+          "slot_wait_ms": 5058706,
+          "wall_time_ms": 10295097
+        }
+      }
+    },
+    "slot_wait_meaning": "wall time during which every route in flight waited for its gate slot; the host's --timeout-ms does not count it, up to its slot-wait limit (cards MEASURE-QUOTA-AND-INCREMENTAL, R7, and GATE-SLOT-FIFO-ORDER)",
+    "slot_wait_ms": 5058673,
+    "wall_time_ms": 10312418
+  },
+  "tool": {
+    "name": "quirin-audit-measure",
+    "sha256": "3ca75e371599ddde278735ee5f64a6e9cc4dfdf3a4137d5fef52c448854e2488",
+    "version": "0.1.0"
+  }
+}
