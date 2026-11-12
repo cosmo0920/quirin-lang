@@ -447,13 +447,16 @@ fn census(repository: &Path) -> Vec<(EntryPoint, bool)> {
 fn every_gateway_entry_point_admits_the_switch() {
     let repository = repository();
     let census = census(&repository);
+    // Spelled with `/` on every host, as the expected paths below are.
     let relative = |entry: &EntryPoint| {
         entry
             .source
             .strip_prefix(&repository)
             .unwrap_or(&entry.source)
-            .display()
-            .to_string()
+            .components()
+            .map(|component| component.as_os_str().to_string_lossy())
+            .collect::<Vec<_>>()
+            .join("/")
     };
     let linked: BTreeSet<String> = census
         .iter()
