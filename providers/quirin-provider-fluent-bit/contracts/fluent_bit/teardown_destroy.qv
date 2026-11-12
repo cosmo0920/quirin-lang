@@ -45,6 +45,31 @@ module contract;
 // (fluent_bit/input_chunk_destroy.qv), selects only whether
 // `cio_chunk_close` unlinks the backing file.
 //
+// ## The unlink (card LIST-ENTRY-RELEASE-IDENTITY, gateway rules 34 and 43)
+//
+// `ensures normal resource_unpublished(P);` beside the release makes a
+// declaration an element destroyer: the call unlinks the object from the
+// list that holds it and then frees it. A caller applies the unlink first
+// (rule 34): an element of a safe iteration over a list its formal reaches,
+// an object it published, or (rule 43) an object it holds that no path
+// unlinked. Stated only where every body read (the three trees, card report
+// `artifacts/unlinks.json`) calls `mk_list_del(&P->_head)` before
+// `flb_free(P)`: `flb_sched_timer_destroy`, `flb_sched_request_destroy`
+// (after its `NULL` return), `flb_task_destroy` (only when the task is not an
+// orphan, i.e. when a list holds it), `flb_output_flush_destroy`,
+// `flb_output_instance_destroy`, `flb_input_instance_destroy`,
+// `flb_input_coro_destroy`, `flb_tail_file_remove` (which also unlinks
+// `_rotate_head` while `file->rotated > 0`); and, in their own modules,
+// `flb_task_retry_destroy` (fluent_bit/task_users.qv) and
+// `flb_input_chunk_destroy` (fluent_bit/input_chunk_destroy.qv). Not stated
+// for `flb_task_queue_destroy`, `flb_event_chunk_destroy`, `flb_coro_destroy`,
+// `flb_input_collector_destroy` and `flb_tail_config_destroy`, whose bodies
+// unlink no list link of their own object. NOT CLAIMED: which list holds
+// the object; `resource_unpublished` names no link member, so a caller
+// iterating a list linked through another member (`_rotate_head`) rests on
+// the object being unlinked from it too (premise P-LERI-LINK-MEMBER of rule
+// 43).
+//
 // ## Deliberately not declared
 //
 // `flb_task_retry_clean`, `flb_sched_request_invalidate`, `flb_output_exit`,
@@ -52,7 +77,9 @@ module contract;
 // `flb_tail_file_remove_all` destroy list entries reachable from a borrowed
 // formal (a retry, a request, every instance, every task, every file).
 // Resource v1 states no list custody, so `resource_borrowed` would hide the
-// release of an object a caller may still track: unfaithful.
+// release of an object a caller may still track: unfaithful. Where a unit
+// defines one, rule 43 derives its summary with `ElementsReleased` instead,
+// which no declaration can state (W45-FB-BACKLOG-REACHABLE-RELEASE).
 // `flb_task_users_release` may destroy its borrowed task
 // (W45-FB-USERS-RELEASE-CHECK).
 
@@ -62,6 +89,7 @@ module contract;
 extern fn flb_sched_timer_destroy(timer: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
+    ensures normal resource_unpublished(timer);
     ensures normal resource_released(timer, nonnull);
     ensures normal resource_return_none();
 };
@@ -73,6 +101,7 @@ contract {
 extern fn flb_sched_request_destroy(req: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
+    ensures normal resource_unpublished(req);
     ensures normal resource_released(req, nullable);
     ensures normal resource_return_none();
     quant live #req: flb_sched_request.timer |-> #moved;
@@ -86,6 +115,7 @@ contract {
 extern fn flb_task_destroy(task: ptr<mut, u8>, del: i32) -> unit
 contract {
     requires resource_contract_v1;
+    ensures normal resource_unpublished(task);
     ensures normal resource_released(task, nonnull);
     ensures normal resource_borrowed(del);
     ensures normal resource_return_none();
@@ -117,6 +147,7 @@ contract {
 extern fn flb_output_flush_destroy(out_flush: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
+    ensures normal resource_unpublished(out_flush);
     ensures normal resource_released(out_flush, nonnull);
     ensures normal resource_return_none();
     quant live #out_flush: flb_output_flush.coro |-> #released;
@@ -156,6 +187,7 @@ contract {
 extern fn flb_output_instance_destroy(ins: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
+    ensures normal resource_unpublished(ins);
     ensures normal resource_released(ins, nonnull);
     ensures normal resource_return_none();
     quant live #ins: flb_output_instance.alias |-> #released;
@@ -201,6 +233,7 @@ contract {
 extern fn flb_input_instance_destroy(ins: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
+    ensures normal resource_unpublished(ins);
     ensures normal resource_released(ins, nonnull);
     ensures normal resource_return_none();
     quant live #ins: flb_input_instance.alias |-> #released;
@@ -241,6 +274,7 @@ contract {
 extern fn flb_input_coro_destroy(input_coro: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
+    ensures normal resource_unpublished(input_coro);
     ensures normal resource_released(input_coro, nonnull);
     ensures normal resource_return_none();
     quant live #input_coro: flb_input_coro.coro |-> #released;
@@ -265,6 +299,7 @@ contract {
 extern fn flb_tail_file_remove(file: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
+    ensures normal resource_unpublished(file);
     ensures normal resource_released(file, nonnull);
     ensures normal resource_return_none();
     quant live #file: flb_tail_file.decompression_context |-> #released;

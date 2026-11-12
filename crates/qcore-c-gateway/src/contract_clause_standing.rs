@@ -394,6 +394,9 @@ fn contract_clauses(contract: &ResourceFunctionContract, function_map: bool) -> 
                 container_parameter,
             } => format!("resource_published(#{index}, #{container_parameter})"),
             ContainerEffect::Unpublished => format!("resource_unpublished(#{index})"),
+            ContainerEffect::ElementsReleased => {
+                format!("resource_elements_released(#{index})")
+            }
         };
         clauses.push(Clause::new(ClauseKind::Container, label));
     }

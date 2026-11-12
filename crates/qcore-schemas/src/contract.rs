@@ -305,6 +305,14 @@ pub enum ContainerEffect {
     /// `resource_unpublished(entry)`: the object is unlinked from the container
     /// that holds it, and custody returns to the caller.
     Unpublished,
+    /// Card **LIST-ENTRY-RELEASE-IDENTITY** (gateway rule 43): the call may
+    /// unlink, and then release or hand on, objects linked in the container
+    /// this parameter reaches; the container itself is borrowed and outlives
+    /// the call. Only a derived summary states it (a body that took custody
+    /// of an element of a container rooted at this formal); a consumer that
+    /// does not apply it MUST refuse the call, and one that does forgets every
+    /// object it had published, since the call may have released any of them.
+    ElementsReleased,
 }
 
 /// Card **W45-FB-RETRY-LIFETIME**: one counted-user operation on the object a

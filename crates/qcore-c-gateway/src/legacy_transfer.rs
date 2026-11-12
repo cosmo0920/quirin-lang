@@ -334,6 +334,12 @@ pub(super) struct AbstractState {
     /// refuses as a double release. Joined by union; empty in every function
     /// that calls no such declaration, which keeps the join as it was.
     pub(super) member_path_taken: BTreeSet<usize>,
+    /// Card **LIST-ENTRY-RELEASE-IDENTITY** (gateway rule 43): the sites this
+    /// body unlinked on some arriving path (a restored publication, a foreign
+    /// element, an element destroyer's held object). Joined by union; an
+    /// element destroyer never takes a held object a second unlink would
+    /// reach. Empty in every function with no unlink.
+    pub(super) unlinked: BTreeSet<usize>,
     /// Card **MK-EVENT-DESCRIPTOR-QUANT** (rule 38): the descriptor cells of
     /// this path. Empty in every function that calls no declaration with a
     /// cell state, which keeps the join as it was.
@@ -499,6 +505,7 @@ impl AbstractState {
         super::constructed_route::join(&mut self.constructed, &incoming.constructed);
         self.member_path_taken
             .extend(incoming.member_path_taken.iter().copied());
+        self.unlinked.extend(incoming.unlinked.iter().copied());
         // Card MK-EVENT-CELL-CROSS-FUNCTION (rule 38c), read against each
         // side's own table before the tables join (rule 38), which card
         // CELL-PROTOCOL-PER-END-GUARDS (rule 38f) does in the same hook.
@@ -932,6 +939,10 @@ pub(crate) struct EntryCustody {
     /// checked selection frame's own row is analysed under. `None` for every
     /// other entry.
     pub(crate) selection: Option<selection_route::SelectionEntry>,
+    /// Card **LIST-ENTRY-RELEASE-IDENTITY** (gateway rule 43): the formals'
+    /// names by position, as [`Self::build`] received them; empty for an
+    /// entry built any other way, which no `ElementsReleased` clause matches.
+    pub(crate) parameter_names: Vec<Option<String>>,
 }
 
 impl EntryCustody {
@@ -964,6 +975,7 @@ impl EntryCustody {
             derived_bases: BTreeMap::new(),
             site_kinds: BTreeMap::new(),
             selection: None,
+            parameter_names: parameters.to_vec(),
         };
         if let ResourceReturnMode::Derived { parameter, .. } = contract.result {
             // The base must be a borrowed, named formal: the summary claims the
@@ -4467,7 +4479,7 @@ pub(super) fn transfer_base(
                 .as_ref()
                 .filter(|operands| !operands.0.is_empty())
             {
-                container_publication::apply(
+                container_publication::apply_destroyers(
                     function,
                     node.line,
                     called,

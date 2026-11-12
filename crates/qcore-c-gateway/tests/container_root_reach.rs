@@ -409,10 +409,25 @@ fn a_foreign_unlink_publishes_no_summary() {
     assert_eq!(status, AnalysisStatus::Safe, "{diagnostics:?}");
     let (status, diagnostics) = analyze(unit);
     assert_eq!(status, AnalysisStatus::Unknown, "{diagnostics:?}");
+    // Card LIST-ENTRY-RELEASE-IDENTITY (gateway rule 43) amends rule 10f(3):
+    // the helper now publishes its summary with `ElementsReleased` at `q`,
+    // and the caller applying it forgets `x`, which it had published, so the
+    // later unlink refuses on `x` instead of on an uncontracted `drain`.
+    // Either way the caller never reads `Borrowed` and accuses nothing.
     assert!(
         diagnostics.iter().any(|kind| matches!(
             kind,
+            LegacyDiagnosticKind::UnknownAlias { variable } if variable == "x"
+        )) || diagnostics.iter().any(|kind| matches!(
+            kind,
             LegacyDiagnosticKind::Unsupported { description } if description.contains("drain")
+        )),
+        "{diagnostics:?}"
+    );
+    assert!(
+        !diagnostics.iter().any(|kind| matches!(
+            kind,
+            LegacyDiagnosticKind::Leak { .. } | LegacyDiagnosticKind::DoubleRelease { .. }
         )),
         "{diagnostics:?}"
     );

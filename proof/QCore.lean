@@ -160,6 +160,7 @@ import QCore.ElaborationCore
 import QCore.ElaboratorCallFootprints
 import QCore.ElementDestroyer
 import QCore.ElementDestroyerSwitch
+import QCore.ElementReleaseSummary
 import QCore.EnumerationAttribution
 import QCore.EpochAccounting
 import QCore.EpochSourceLowering

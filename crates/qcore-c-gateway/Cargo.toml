@@ -34,7 +34,7 @@ qcore-core = { path = "../qcore-core", version = "0.1.0" }
 # Card GATEWAY-RULE-API: the rule-package interface, the registry model and
 # the run-time switches the generated tables read.
 qcore-gateway-rule-api = { path = "../qcore-gateway-rule-api", version = "0.1.0" }
-qcore-schemas = { path = "../qcore-schemas", version = "24.0.0" }
+qcore-schemas = { path = "../qcore-schemas", version = "25.0.0" }
 # Card RULE32A-PILOT: rule 32a's package (plan seam B), asked through the rule
 # interface at the caller-frame token hold.
 rule-32a-caller-frame-hold = { path = "../gateway-rules/rule-32a-caller-frame-hold", version = "0.1.0" }

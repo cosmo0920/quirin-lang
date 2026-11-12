@@ -45,13 +45,18 @@
       "sha256": "1ec62e478f4899f7d2e594da7ca3623f341466caf49f6b5f43ed0763111dcd86"
     },
     "fluent_bit/input_chunk_destroy.qv": {
-      "clause_count": 4,
+      "clause_count": 5,
       "declaration_count": 1,
       "declarations": [
         {
-          "clauses": 4,
+          "clauses": 5,
           "name": "flb_input_chunk_destroy",
           "resource_mode": {
+            "container_effects": {
+              "0": {
+                "effect": "unpublished"
+              }
+            },
             "parameters": [
               {
                 "released": {
@@ -69,7 +74,7 @@
       "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "3f0f62917ccc85249109471866c72ee167a9586dfc6ae7cf2b4c40c8b37539a9"
+      "sha256": "8a4b9329960a6e2f83e8a39ddd2e5cfb518f012629e3a2f4358d68e46532a52e"
     },
     "fluent_bit/input_chunk_destroy_direct_routes.qv": {
       "clause_count": 4,
@@ -1301,7 +1306,7 @@
       "sha256": "68fd67c4f09fe5b10344e0c1255693c72cbecd3dda27b383dba2c27abf7ce8a1"
     },
     "fluent_bit/task_users.qv": {
-      "clause_count": 20,
+      "clause_count": 21,
       "declaration_count": 4,
       "declarations": [
         {
@@ -1344,9 +1349,14 @@
           "resource_table": "functions"
         },
         {
-          "clauses": 4,
+          "clauses": 5,
           "name": "flb_task_retry_destroy",
           "resource_mode": {
+            "container_effects": {
+              "0": {
+                "effect": "unpublished"
+              }
+            },
             "counted_users": {
               "neutral": true
             },
@@ -1382,16 +1392,21 @@
       "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "a5bc45d930b4bbb45803b783ae5ec606bfe6b6baaaf9992666844bd4e030e692"
+      "sha256": "7f9d61e1486584e465cd1acf9b130a3926af86e02d311941a57cbc2862101826"
     },
     "fluent_bit/teardown_destroy.qv": {
-      "clause_count": 164,
+      "clause_count": 172,
       "declaration_count": 15,
       "declarations": [
         {
-          "clauses": 3,
+          "clauses": 4,
           "name": "flb_sched_timer_destroy",
           "resource_mode": {
+            "container_effects": {
+              "0": {
+                "effect": "unpublished"
+              }
+            },
             "parameters": [
               {
                 "released": {
@@ -1404,13 +1419,13 @@
           "resource_table": "functions"
         },
         {
-          "clauses": 4,
+          "clauses": 5,
           "name": "flb_sched_request_destroy",
           "resource_mode": null,
           "resource_table": "retaining"
         },
         {
-          "clauses": 6,
+          "clauses": 7,
           "name": "flb_task_destroy",
           "resource_mode": null,
           "resource_table": "retaining"
@@ -1437,7 +1452,7 @@
           "resource_table": "retaining"
         },
         {
-          "clauses": 4,
+          "clauses": 5,
           "name": "flb_output_flush_destroy",
           "resource_mode": null,
           "resource_table": "retaining"
@@ -1461,19 +1476,19 @@
           "resource_table": "functions"
         },
         {
-          "clauses": 34,
+          "clauses": 35,
           "name": "flb_output_instance_destroy",
           "resource_mode": null,
           "resource_table": "retaining"
         },
         {
-          "clauses": 34,
+          "clauses": 35,
           "name": "flb_input_instance_destroy",
           "resource_mode": null,
           "resource_table": "retaining"
         },
         {
-          "clauses": 4,
+          "clauses": 5,
           "name": "flb_input_coro_destroy",
           "resource_mode": null,
           "resource_table": "retaining"
@@ -1494,7 +1509,7 @@
           "resource_table": "functions"
         },
         {
-          "clauses": 15,
+          "clauses": 16,
           "name": "flb_tail_file_remove",
           "resource_mode": null,
           "resource_table": "retaining"
@@ -1516,7 +1531,7 @@
       "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "af3e933643918b9e9db3fef260395558b8d50e41d2a886b8b5436e92a4d62075"
+      "sha256": "d406919f81efd380b28d34212c20ac55e823672c58b34ed713add75567f9cca2"
     },
     "fluent_bit/time.qv": {
       "clause_count": 2,

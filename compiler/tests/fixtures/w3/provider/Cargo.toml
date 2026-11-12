@@ -8,5 +8,5 @@ publish = false
 [workspace]
 
 [dependencies]
-qcore-schemas = { path = "../../../../../crates/qcore-schemas", version = "24.0.0" }
+qcore-schemas = { path = "../../../../../crates/qcore-schemas", version = "25.0.0" }
 serde_json = "1.0.151"
