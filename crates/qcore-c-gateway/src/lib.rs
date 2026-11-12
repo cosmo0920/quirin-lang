@@ -381,13 +381,15 @@ pub fn census_sink_variables() -> Vec<&'static str> {
     variables
 }
 
-#[cfg(all(test, feature = "indirect-census"))]
+/// The shared tracked-file lister, loaded once for every unit test that
+/// needs it (clippy's `duplicate_mod` refuses a second `#[path]` load).
+#[cfg(test)]
 #[path = "../../../tests/support/tracked_files.rs"]
-mod census_tracked_files;
+pub(crate) mod test_tracked_files;
 
 #[cfg(all(test, feature = "indirect-census"))]
 mod census_sink_inventory {
-    use super::census_tracked_files as tracked_files;
+    use crate::test_tracked_files as tracked_files;
 
     /// Every source file that declares a process-global stream sink must have
     /// its path variable in [`super::census_sink_variables`], or a parallel

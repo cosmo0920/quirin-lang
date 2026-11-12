@@ -24,6 +24,13 @@
 //! exemption and the `asserted_allocation` premise). With nothing off they are
 //! `Safe`; with 37 off they keep their refusals, so off never widens.
 
+// The provider-constructor tests run only on Linux/glibc; elsewhere their
+// helpers and imports are compiled but unused.
+#![cfg_attr(
+    not(all(target_os = "linux", target_env = "gnu")),
+    allow(dead_code, unused_imports)
+)]
+
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 use std::process::Command;

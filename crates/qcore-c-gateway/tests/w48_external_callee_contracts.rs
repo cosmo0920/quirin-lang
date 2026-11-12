@@ -47,6 +47,8 @@ fn contracts() -> ResourceContracts {
     load_resource_contract_sources(&sources()).expect("production libc modules load")
 }
 
+// Used only by the Linux-gated header test below.
+#[cfg(all(target_os = "linux", target_env = "gnu", target_pointer_width = "64"))]
 fn without_declaration(name: &str) -> ResourceContracts {
     let mut input = sources();
     let module = match name {

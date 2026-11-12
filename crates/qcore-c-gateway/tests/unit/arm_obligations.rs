@@ -22,11 +22,10 @@ use qcore_gateway_rule_api::{Admission, Answer, Obligation};
 
 use super::*;
 
-#[path = "../../../../tests/support/tracked_files.rs"]
-mod tracked;
 use crate::legacy_c::{
     AnalysisStatus, LegacyDiagnostic, LegacyDiagnosticKind, LegacyFunctionSummary,
 };
+use crate::test_tracked_files as tracked;
 
 fn admission(obligations: Vec<Obligation>) -> Admission<u8> {
     Admission {

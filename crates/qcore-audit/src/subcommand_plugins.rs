@@ -92,8 +92,11 @@ use qcore_verifier_host::{PluginClaim, PluginDiagnostic};
 use quirin_audit_plugin::{
     AuditIdentity, DEFAULT_WALL_LIMIT_MS, ENVIRONMENT_ALLOW_LIST, EXECUTABLE_PREFIX, FileIdentity,
     Outcome, PLUGIN_PATH_VARIABLE, PROTOCOL_VERSION, ProposedVerdict, Quotas, Request, Response,
-    SLOT_WAIT_MARKER, VerdictClaim, VerifiedArtifact, parse_response, verify_artifacts,
+    VerdictClaim, VerifiedArtifact, parse_response, verify_artifacts,
 };
+// Read only by the unix wall-time accounting below; the doc links use it everywhere.
+#[cfg_attr(not(unix), allow(unused_imports))]
+use quirin_audit_plugin::SLOT_WAIT_MARKER;
 use serde_json::{Value, json};
 
 /// Usage text of the external-subcommand route.

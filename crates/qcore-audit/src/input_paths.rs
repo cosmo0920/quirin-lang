@@ -275,6 +275,8 @@ fn alias_error(what: &str, file: &Path, spellings: &BTreeSet<&Path>) -> String {
 }
 
 #[cfg(test)]
+// The symlink tests are unix-only; their fixtures are unused elsewhere.
+#[cfg_attr(not(unix), allow(dead_code))]
 mod tests {
     use super::*;
     use std::fs;
