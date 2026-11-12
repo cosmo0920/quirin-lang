@@ -2372,7 +2372,6 @@ fn run(arguments: Arguments) -> Result<bool, String> {
 }
 
 /// Entry point of `quirin-audit pin`.
-#[must_use]
 pub fn main(arguments: Vec<String>) -> ExitCode {
     let parsed = match parse(arguments) {
         Ok(parsed) => parsed,

@@ -89,7 +89,6 @@ pub fn views(load_path: &std::path::Path, write: bool) -> Result<bool, String> {
 }
 
 /// Entry point of `quirin-audit plugin`.
-#[must_use]
 pub fn main(arguments: Vec<String>) -> ExitCode {
     let mut iter = arguments.into_iter();
     if iter.next().as_deref() != Some("views") {

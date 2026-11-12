@@ -105,7 +105,6 @@ fn inspect(options: Options) -> Result<String, String> {
         .map_err(|error| error.to_string())
 }
 
-#[must_use]
 pub fn main(arguments: Vec<OsString>) -> ExitCode {
     if arguments.len() == 1 && matches!(arguments[0].to_str(), Some("--help" | "-h")) {
         println!("{USAGE}");

@@ -362,7 +362,6 @@ pub fn list(directories: &[PathBuf]) -> Vec<(String, PathBuf, &'static str)> {
 /// Entry point of the external-subcommand route. Exit 0: the plugin completed
 /// and the report is written; 1: the run failed (the report is written, its
 /// verdict `Unknown`); 2: a usage error or a refused input, nothing run.
-#[must_use]
 pub fn main(arguments: Vec<String>) -> ExitCode {
     let usage = |error: String| {
         eprintln!("quirin-audit: {error}\n{USAGE}");

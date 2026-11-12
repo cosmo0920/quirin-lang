@@ -791,19 +791,17 @@ fn read_input(path: impl AsRef<std::path::Path>) -> Result<Vec<u8>, String> {
 fn resolved_compiler(program: &std::ffi::OsStr) -> Result<std::path::PathBuf, String> {
     let path = std::path::Path::new(program);
     let acceptable = |candidate: &std::path::Path| {
-        if !candidate.is_file() {
-            return false;
-        }
         #[cfg(unix)]
         {
             use std::os::unix::fs::PermissionsExt;
-            candidate
-                .metadata()
-                .is_ok_and(|m| m.permissions().mode() & 0o111 != 0)
+            candidate.is_file()
+                && candidate
+                    .metadata()
+                    .is_ok_and(|m| m.permissions().mode() & 0o111 != 0)
         }
         #[cfg(not(unix))]
         {
-            true
+            candidate.is_file()
         }
     };
     if path.components().count() > 1 || path.is_absolute() {

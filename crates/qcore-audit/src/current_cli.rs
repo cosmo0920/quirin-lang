@@ -466,7 +466,6 @@ fn checkpoint_options(
 }
 
 /// Parse, resolve and run. Returns the process exit code.
-#[must_use]
 pub fn main(arguments: Vec<String>) -> ExitCode {
     match run(&arguments) {
         Ok(false) => ExitCode::SUCCESS,

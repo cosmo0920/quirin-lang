@@ -33,7 +33,6 @@ quirin-audit checkpoint compose FILE.qo... [--report PATH] [--monkey-source-repo
 [--binding-directory DIR]";
 
 /// Run a `checkpoint` subcommand; returns the process exit code.
-#[must_use]
 pub fn main(arguments: Vec<String>) -> ExitCode {
     let Some((command, rest)) = arguments.split_first() else {
         eprintln!("{USAGE}");

@@ -590,7 +590,6 @@ fn tip_summary(report: &Value) -> String {
 }
 
 /// Entry point of `quirin-audit compare`.
-#[must_use]
 pub fn main(arguments: Vec<String>) -> ExitCode {
     let mut before = None;
     let mut after = None;

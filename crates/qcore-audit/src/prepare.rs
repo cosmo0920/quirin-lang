@@ -252,7 +252,6 @@ fn parse(arguments: &[String]) -> Result<(Step, Options), String> {
 }
 
 /// Parse, prepare and optionally run. Returns the process exit code.
-#[must_use]
 pub fn main(arguments: Vec<String>) -> ExitCode {
     match run(&arguments) {
         Ok(code) => code,

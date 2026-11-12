@@ -590,7 +590,6 @@ pub fn verify_artifacts(
 /// Write nothing else to standard output: the host reads it as the response.
 /// Diagnostics for a person go to standard error, which the host captures to
 /// a file.
-#[must_use]
 pub fn run<F>(handler: F) -> ExitCode
 where
     F: FnOnce(&Request) -> Result<Response, String>,
