@@ -305,6 +305,36 @@ fn with_rule_43_on_every_fixture_has_its_verdict() {
 }
 
 #[test]
+fn the_loader_admits_only_the_destroyers_unlink_beside_member_path_states() {
+    let load = |clauses: &str| {
+        let text = format!(
+            "module contract;\nextern fn close_it(e: ptr<mut, u8>, h: ptr<mut, u8>) -> unit\n\
+             contract {{ requires resource_contract_v1; {clauses} \
+             ensures normal resource_return_none(); quant live #e: item.payload |-> #released; }};\n"
+        );
+        load_resource_contract_sources(&[("m.qcore".to_owned(), text)].into_iter().collect())
+    };
+    // The element destroyer's unlink of the released binder: admitted.
+    let loaded = load(
+        "ensures normal resource_unpublished(e); ensures normal resource_released(e, nonnull); \
+         ensures normal resource_borrowed(h);",
+    )
+    .expect("a member-path destroyer with its unlink loads");
+    assert!(loaded.retaining_contract("close_it").is_some());
+    // Any other container clause beside a retaining clause still rejects.
+    for clauses in [
+        // an unlink of a borrowed formal
+        "ensures normal resource_released(e, nonnull); ensures normal resource_borrowed(h); \
+         ensures normal resource_unpublished(h);",
+        // a publication
+        "ensures normal resource_released(e, nonnull); ensures normal resource_borrowed(h); \
+         ensures normal resource_published(h, e);",
+    ] {
+        assert!(load(clauses).is_err(), "{clauses}");
+    }
+}
+
+#[test]
 fn a_summary_with_the_clause_reaches_the_caller() {
     if std::env::var_os(CHILD).is_some() || !clang_available() {
         return;
