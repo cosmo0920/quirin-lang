@@ -30,7 +30,7 @@ $manifest = Join-Path $repoRoot 'Cargo.toml'
 New-Item -ItemType Directory -Force -Path $outputDir | Out-Null
 
 foreach ($name in @('two_workers', 'owned_buffer', 'shared_readers', 'core_context')) {
-    $sourcePath = Join-Path $PSScriptRoot "$name.qcore"
+    $sourcePath = Join-Path $PSScriptRoot "$name.qr"
     $cPath = Join-Path $outputDir "$name.c"
     $objectPath = Join-Path $outputDir "$name.obj"
     $exePath = Join-Path $outputDir "$name.exe"

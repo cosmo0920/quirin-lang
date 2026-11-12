@@ -45,7 +45,7 @@ New-Item -ItemType Directory -Force -Path $outputDir | Out-Null
 # stdout, and its emitted C verifies the byte each turn drained against the one
 # the checker predicted (a mismatch exits 76).
 foreach ($name in @('self_pipe', 'wake_payload')) {
-    $sourcePath = Join-Path $PSScriptRoot "$name.qcore"
+    $sourcePath = Join-Path $PSScriptRoot "$name.qr"
     $cPath = Join-Path $outputDir "$name.c"
     $objectPath = Join-Path $outputDir "$name.obj"
     $exePath = Join-Path $outputDir "$name.exe"
