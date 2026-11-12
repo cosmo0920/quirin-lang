@@ -1,32 +1,24 @@
 {
-  "schema": "quirin-amendments/1",
-  "card": "LICENCE-HEADER-TEST-REPAIR",
-  "base": "74105dd0e",
-  "measured_tip": "a1bb5a981",
-  "increment_paragraph": "**LICENCE-HEADER-TEST-REPAIR** (2026-11-12). Repaired the 33 header-caused test failures in 11 binaries that the ungated APACHE-2.0-SOURCE-HEADERS and APACHE-2.0-CONTRACT-HEADERS commits left on base 74105dd0e; no analyser, contract-semantic, Lean-theorem or frozen-report change and no verdict movement. Three repair classes: hash_contracts, neighbours and prod_contracts assumed a production module opens with `module contract;`, so a shared test helper now skips exactly the leading SPDX notice block; contract/profiles/cmetrics-counter/source-contracts.json still pinned the pre-refresh cmetrics inventory digest and is re-pinned as 73d59a294 did; and 21 files whose exact bytes frozen evidence replays (premise binding manifests, the compiled-in libc reading-site bindings, the guarded-adoption bridge plan, plugin binding manifests, the quant migration record and the symbolic-adoption inventory) are restored to their pre-header bytes and excluded from the header: nine Lean modules, three gateway sources and nine librdkafka, libc and fluent-bit contract modules, with `providers/contracts.py sync` returning only their lock and inventory SHA-256 lines to the 74105dd0e^ values. configured_cli's pic row was not reproduced at base on this host and task_route_tsan's failures are host-only TSan symbolization; neither is header fallout. [Report](../../reports/licence-header-test-repair/README.md).",
-  "status_paragraph": null,
-  "ledger": [
-    {
-      "id": "BASE-LICENCE-HEADERS-BREAK-CLANG-TESTS",
-      "operation": "register",
-      "title": "The licence-header commits 838bd777d and 74105dd0e break Clang-gated and pin-replaying tests on main",
-      "text": "Measured on base 74105dd0e with Clang 21.1.8: 33 header-caused failures in 11 test binaries of qcore-audit, qcore-c-gateway and qcore-contract, from module-header assumptions in tests, one stale profile pin and frozen evidence that binds the exact bytes of headed files. Registered here because the card that first observed it (MEASURE-LOOKUP-RECORD-REUSE) is not merged; drop this register operation if that card lands first.",
-      "source": "docs/reports/licence-header-test-repair/README.md",
-      "recorded_by": "LICENCE-HEADER-TEST-REPAIR"
-    },
-    {
-      "id": "BASE-LICENCE-HEADERS-BREAK-CLANG-TESTS",
-      "operation": "retire",
-      "why": "LICENCE-HEADER-TEST-REPAIR: every listed failure passes with Clang on the card tip (header-tolerant test helper, cmetrics profile re-pin, 21 pinned inputs restored to pre-header bytes with locks synced); configured_cli's pic row did not reproduce at base and task_route_tsan is host-only TSan symbolization.",
-      "source": "docs/reports/licence-header-test-repair/README.md"
-    },
-    {
-      "id": "LICENCE-HEADER-PINNED-INPUT-EXCLUSIONS",
-      "operation": "register",
-      "title": "21 tracked files stay without the Apache-2.0 notice because frozen evidence binds their bytes",
-      "text": "LICENCE-HEADER-TEST-REPAIR restored nine Lean modules (CjsonRepresentationPremises, AuditPremiseRefinement, GuardedContractApplications, LibcReadingPremises, LibcReadingSiteEvidence, ScalarAccessorCondition, VariadicNested, PluginPremiseDecomposition, AuditPluginPremiseDecomposition), three gateway sources (legacy_condition_desugar.rs, typed_field_access.rs, variadic_nested.rs) and nine contract modules (librdkafka cjson, client, kafka_mem, logging, memory, null_deref, queue_destructor; libc errno; fluent-bit logging) to their pre-header bytes, because binding manifests, bridge plans, migration records and the symbolic-adoption inventory under docs/reports pin them and tests replay those pins. Giving them the notice needs that evidence re-derived by an owning card or a header-aware digest convention, not a test edit.",
-      "source": "docs/reports/licence-header-test-repair/README.md",
-      "recorded_by": "LICENCE-HEADER-TEST-REPAIR"
-    }
-  ]
+ "schema": "quirin-amendments/1",
+ "card": "LICENCE-HEADER-TEST-REPAIR",
+ "base": "74105dd0e",
+ "measured_tip": "a1bb5a981",
+ "increment_paragraph": "**LICENCE-HEADER-TEST-REPAIR** (2026-11-12). Repaired the 33 header-caused test failures in 11 binaries that the ungated APACHE-2.0-SOURCE-HEADERS and APACHE-2.0-CONTRACT-HEADERS commits left on base 74105dd0e; no analyser, contract-semantic, Lean-theorem or frozen-report change and no verdict movement. Three repair classes: hash_contracts, neighbours and prod_contracts assumed a production module opens with `module contract;`, so a shared test helper now skips exactly the leading SPDX notice block; contract/profiles/cmetrics-counter/source-contracts.json still pinned the pre-refresh cmetrics inventory digest and is re-pinned as 73d59a294 did; and 21 files whose exact bytes frozen evidence replays (premise binding manifests, the compiled-in libc reading-site bindings, the guarded-adoption bridge plan, plugin binding manifests, the quant migration record and the symbolic-adoption inventory) are restored to their pre-header bytes and excluded from the header: nine Lean modules, three gateway sources and nine librdkafka, libc and fluent-bit contract modules, with `providers/contracts.py sync` returning only their lock and inventory SHA-256 lines to the 74105dd0e^ values. configured_cli's pic row was not reproduced at base on this host and task_route_tsan's failures are host-only TSan symbolization; neither is header fallout. [Report](../../reports/licence-header-test-repair/README.md).",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "BASE-LICENCE-HEADERS-BREAK-CLANG-TESTS",
+   "operation": "retire",
+   "why": "LICENCE-HEADER-TEST-REPAIR: every listed failure passes with Clang on the card tip (header-tolerant test helper, cmetrics profile re-pin, 21 pinned inputs restored to pre-header bytes with locks synced); configured_cli's pic row did not reproduce at base and task_route_tsan is host-only TSan symbolization.",
+   "source": "docs/reports/licence-header-test-repair/README.md"
+  },
+  {
+   "id": "LICENCE-HEADER-PINNED-INPUT-EXCLUSIONS",
+   "operation": "register",
+   "title": "21 tracked files stay without the Apache-2.0 notice because frozen evidence binds their bytes",
+   "text": "LICENCE-HEADER-TEST-REPAIR restored nine Lean modules (CjsonRepresentationPremises, AuditPremiseRefinement, GuardedContractApplications, LibcReadingPremises, LibcReadingSiteEvidence, ScalarAccessorCondition, VariadicNested, PluginPremiseDecomposition, AuditPluginPremiseDecomposition), three gateway sources (legacy_condition_desugar.rs, typed_field_access.rs, variadic_nested.rs) and nine contract modules (librdkafka cjson, client, kafka_mem, logging, memory, null_deref, queue_destructor; libc errno; fluent-bit logging) to their pre-header bytes, because binding manifests, bridge plans, migration records and the symbolic-adoption inventory under docs/reports pin them and tests replay those pins. Giving them the notice needs that evidence re-derived by an owning card or a header-aware digest convention, not a test edit.",
+   "source": "docs/reports/licence-header-test-repair/README.md",
+   "recorded_by": "LICENCE-HEADER-TEST-REPAIR"
+  }
+ ]
 }
