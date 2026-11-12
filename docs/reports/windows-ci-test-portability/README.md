@@ -92,22 +92,35 @@ x86_64-pc-windows-msvc`, `cargo metadata --locked --offline` failed on
 `libc v0.2.189`; after a plain `cargo fetch` it succeeded; a Linux-only
 fetch needs nothing more.
 
-## Pending the CI excerpts or a Windows host
+## Second pass: the CI panic excerpts
 
-Main `5389f1d37` prints each failed unit's panic into the job log; until
-that run's excerpts are read, these are unrepaired or unconfirmed:
+The excerpts of CI run 43225703921 (main `5389f1d37`, before this card's
+commits) confirmed the causes above for every binary in the first table:
+the `size_t` redefinitions, the `abi-unreadable-declaration` and enumeration
+withdrawals, `grp.h` missing, the `\`-joined supersession and entry-point
+paths, and `failed to download libc v0.2.189 ... --offline` in both
+dependency tests. `descriptor_cells`' sixth failure is the
+`child_rule_38_off` child process, which fails on the same withdrawal and
+passes with the first-pass fixture. The rest:
 
-- gateway `member_effect_summary` (1), `cg30_dialects_flags_types` (1), and
-  the sixth `descriptor_cells` failure: locally `cg30` passes, and
-  `member_effect_summary` fails only on the wrapper's missing `<stdlib.h>`;
-  with a stand-in header holding the UCRT's preprocessed `malloc`, `calloc`,
-  `realloc` and `free` declarations it passes 11/11, so the CI failure lies
-  elsewhere in the real UCRT headers;
-- compiler `bitwise_conditions` (1), `branch_arms` (3), `branch_statement`
-  (1), `logical_connectives` (1), `system_trace_examples_windows` (1),
-  `ct_corpus` (1): native MSVC builds through `tests/support/windows_c.rs`;
-- audit `lib` (1), `current_cli` (2), and plugin-measure `lib` (1);
-- confirmation of the two path-spelling repairs and the fetch step.
+| Binary | CI failed | Cause (from the excerpt) | Repair | Linux after |
+|---|---|---|---|---|
+| compiler `bitwise_conditions`, `branch_arms` (3), `branch_statement`, `logical_connectives`, `system_trace_examples_windows`, `ct_corpus` | 8 | x64 `cl.exe /W4 /WX` raises C4127 (conditional expression is constant) on the fixtures' intentional constant conditions | `tests/support/windows_c.rs` passes `/wd4127` on every MSVC target, not only ARM64; `/W4 /WX` stay for every other warning | Windows-only code; Windows-target Clippy clean |
+| gateway `cg30_dialects_flags_types` | 1 | the runner's LLVM is Clang 20.1.8: it accepts `-std=c2y` but has no `_Countof` (Clang 21) | b: the `_Countof` test returns early below Clang 21, as it already does below the C2y mode | 10/10 |
+| gateway `member_effect_summary` | 1 | the UCRT's `malloc` declaration is unreadable to the declared-ABI reader (`abi-unreadable-declaration`), so `setnew` names the withdrawal instead of the member store | b: on Windows `setnew` asserts that named withdrawal (`Unknown`); `setnew2` (`obj_create`) asserts the member-store refusal on every target | 11/11 |
+| audit `lib` (`route_units_key_linked_monkey_units_like_a_linked_run`), `current_cli` (`a_linked_monkey_run_...`) | 2 | c: `is_monkey_unit` tested the located relative path as text (`starts_with("mk_core/")`), which on Windows is `mk_core\...`, so no Monkey unit was found | `Path::starts_with` by components; the same decisions on Linux | lib 186/186, `current_cli` 19/19 |
+| audit `current_cli` (`the_sidecar_reproduces_the_provider_selection`) | 1 | the CLI's current directory keeps `%TEMP%`'s 8.3 name (`RUNNER~1`); the test's expectation came from `canonicalize()` (`runneradmin`) | on Windows the expected root is the fixture's own spelling, which the child was started in | 19/19 |
+| plugin-measure `lib` (`invalid_routes_are_refused`) | 1 | c: route validation used `is_absolute()`, and on Windows `/etc/passwd` is rooted but not absolute, so it was admitted as repository-relative | a root, a drive prefix or `..` component is refused; Linux decisions unchanged | 27/27 |
+
+The two product fixes (c) change no analysis verdict: one selects which
+compile-database entries are Monkey units, the other refuses a route input
+path. Neither has a Lean counterpart. The UCRT `malloc` reading is a reader
+limitation that fails closed, recorded as a follow-up, not widened here.
+
+Still to be confirmed on the runner: every row of both tables, since
+the excerpts predate this branch. `detach_lookup_membership`'s native build
+of the respelled frame and `current_cli`'s linked Monkey run are those most
+dependent on Windows behaviour that the Linux wrapper cannot show.
 
 ## Commands
 

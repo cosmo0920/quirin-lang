@@ -536,16 +536,14 @@ fn the_sidecar_reproduces_the_provider_selection() {
     // The CLI resolves relative arguments against current_dir(), which resolves
     // temp-directory symlinks (e.g. /var -> /private/var on macOS). Preserve the
     // declared manifest suffix: only the working-directory root is canonical.
+    #[cfg(not(windows))]
     let root = fixture.0.canonicalize().unwrap();
-    // GetCurrentDirectoryW returns a regular drive path, while canonicalize()
-    // returns a verbatim path whose join() collapses the declared `../..` suffix.
+    // On Windows, GetCurrentDirectoryW returns the directory as the child was
+    // started in it: the fixture's own spelling, which keeps an 8.3 short name
+    // from %TEMP% (`RUNNER~1` on the CI runner), while canonicalize() returns
+    // a verbatim long-name path whose join() collapses the `../..` suffix.
     #[cfg(windows)]
-    let root = PathBuf::from(
-        root.to_str()
-            .unwrap()
-            .strip_prefix(r"\\?\")
-            .unwrap_or(root.to_str().unwrap()),
-    );
+    let root = fixture.0.clone();
     assert_eq!(
         selection["profile_contract_manifest"]["path"],
         json!(root.join("profiles/sample").join("../../contracts.json"))

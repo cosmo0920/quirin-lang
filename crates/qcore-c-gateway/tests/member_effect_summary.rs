@@ -213,11 +213,21 @@ fn a_custody_store_into_a_formal_member_is_named_and_stays_unknown() {
         "void setname(struct o *c, char *name) {\n  c->a = name;\n}",
         &[stored("c", "a")],
     );
-    // `map->unit = cfl_sds_create(unit)`: an owned result.
+    // `map->unit = cfl_sds_create(unit)`: an owned result. The UCRT's
+    // `<stdlib.h>` spells `malloc` with Microsoft declaration specifiers the
+    // declared-ABI reader does not read, so on Windows the libc contract is
+    // withdrawn against it and the call stays `Unknown` by that name; `setnew2`
+    // below carries the member-store refusal on every target.
     assert_leaves(
         "setnew",
         "void setnew(struct o *c) {\n  c->a = malloc(4);\n}",
-        &[stored("c", "a")],
+        &[if cfg!(windows) {
+            "call to `malloc` whose declared contract was withdrawn against its C declaration \
+             in this translation unit (abi-unreadable-declaration)"
+                .to_owned()
+        } else {
+            stored("c", "a")
+        }],
     );
     assert_leaves(
         "setnew2",
