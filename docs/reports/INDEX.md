@@ -668,6 +668,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [link-standing](link-standing/README.md) | LINK-STANDING |
 
+| [list-entry-release-identity](list-entry-release-identity/README.md) | LIST-ENTRY-RELEASE-IDENTITY: the released list element and its summary |
+
 | [log-print-body-contracts](log-print-body-contracts/README.md) | LOG-PRINT-BODY-CONTRACTS |
 
 | [logger-effect-contracts](logger-effect-contracts/README.md) | Logger effect contracts |
