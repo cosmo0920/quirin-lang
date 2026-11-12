@@ -79,7 +79,53 @@ identify the 21 files above as the live instances.
 
 ## Gate (full standing gate plus provider gate, Clang 21.1.8)
 
-GATE_SECTION
+Every command ran under the borrowed private toolchain of
+MEASURE-LOOKUP-RECORD-REUSE: Ubuntu clang 21.1.8 and Lean 4.35.0, with
+`QCORE_CLANG` set. The recording is [gate/clang-version.txt](gate/clang-version.txt),
+taken in this worktree. Every step and exit is in [gate/gate.json](gate/gate.json).
+
+**Base `74105dd0e`, with Clang.** The listed binaries, run at base
+([gate/base-targeted-results.txt](gate/base-targeted-results.txt)): 33
+failures in 11 binaries. They are contract_dependencies_report 2,
+source_contract_config 1, hash_contracts 5, libc_reading_site_evidence 3,
+neighbours 5, prod_contracts 4, reading_site_domain 1,
+guarded_contract_adoption 2, guarded_decomposition 8, hypothesis_bindings 1
+and production_symbolic_adoption 1. `configured_cli` passed 20/20 at base. On
+the same base the Python suite ran 756 tests, OK.
+
+**Tip.** The code tip is `a1bb5a981`; later commits add only this directory.
+
+| Step | Exit | Counts |
+|---|---|---|
+| `run_test_binaries.py` (rust-suite slot) | 101 | 627 units, 668 summaries; 9381 passed; **3 failed**; 17 ignored; 135 filtered out |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --all-targets -- -D warnings` | 0 | |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| `check_lean_audits.py` | 0 | 426 audits passed |
+| `python3 -m unittest discover -s scripts/tests` | 0 | 756 tests OK |
+| `providers/package.py build`, then `verify qcore.libevent` | 0, 0 | |
+| provider `cargo test --workspace --locked --offline` | 0 | 43 summaries; 133 passed; 0 failed; 1 ignored |
+| provider fmt, provider clippy | 0, 0 | |
+| `apply_amendments.py … --check` | 0 | |
+
+The only failing unit is `qcore-compiler::test::task_route_tsan` (17
+passed, 3 failed). This is host-only: its log shows ThreadSanitizer's `invalid
+path to external symbolizer` under the unpacked LLVM 21 toolchain, so the race
+frames the three rows require (`…the race should be named inside the
+byte-write helper`) never appear. It failed the same way at base, and the test
+reads none of the files the header commits changed. Every listed test passes
+on the tip, as do `guarded_contract_pin` and the `configured_cli` binary. The
+Lean audits ran at `30906e83a`; `a1bb5a981` changes only one `.qv` file and a
+lock, which no Lean module reads.
+
+Private logs (this worktree, ignored):
+`private/base-targeted/out.log`, `private/base-py/out.log`,
+`private/tip-targeted{,2,3}/out.log`, `private/sync{,2}/out.log` and
+`private/gate-full/` (`test-binaries/summary.json`, `suite.out`, `fmt.log`,
+`clippy.log`, `probe.log`, `followup.log`, `lean.log`, `python2.log`,
+`pkgbuild.log`, `pkgverify.log`, `ptest.log`, `pfmt.log`, `pclippy.log`).
+No `quirin-audit measure` was run because its inputs are not prepared on this
+host. No corpus figure is predicted to move.
 
 ## Follow-ups
 
