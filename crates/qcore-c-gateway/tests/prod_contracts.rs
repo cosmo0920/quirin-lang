@@ -73,7 +73,7 @@ use qcore_contract::contract_loader::load_resource_contract_sources;
 mod contract_locks;
 #[path = "support/text.rs"]
 mod text;
-use text::normalize_newlines;
+use text::{normalize_newlines, strip_licence_notice};
 
 /// **The three production contract modules this card lands.**
 const LOGGING: &str =
@@ -609,9 +609,11 @@ fn real_contracts() -> String {
 /// A production module's declarations without its `module contract;` header, so
 /// several modules concatenate into one loadable text. The module texts
 /// themselves are byte-unchanged; only the concatenation drops the repeated
-/// header, and the assertion below fails if a module ever stops carrying one.
+/// header (with the file's leading licence notice, which precedes it), and the
+/// assertion below fails if a module ever stops carrying one.
 fn declarations_of(module: &str) -> String {
-    let module = module.replace("\r\n", "\n");
+    let normalized = normalize_newlines(module);
+    let module = strip_licence_notice(&normalized);
     let header = "module contract;\n";
     assert!(
         module.starts_with(header),

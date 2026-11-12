@@ -53,7 +53,7 @@ use qcore_contract::contract_loader::load_resource_contract_sources;
 
 #[path = "support/text.rs"]
 mod text;
-use text::normalize_newlines;
+use text::{normalize_newlines, strip_licence_notice};
 
 const PRELUDE: &str = include_str!("fixtures/o04/prelude.c");
 const STORAGE_INPUT: &str = include_str!("fixtures/o04/flb_storage_input.h.txt");
@@ -845,10 +845,11 @@ fn real_unit() -> String {
 /// The production module is a standalone corpus module, so it opens with its
 /// own `module contract;`. Concatenating it onto the path fixture keeps its
 /// declaration and its premise clause byte-for-byte; only that one module
-/// header, which the fixture already supplies, is dropped.
+/// header, which the fixture already supplies, is dropped, together with the
+/// file's leading licence notice that precedes it.
 fn publication_fragment() -> String {
     let normalized = normalize_newlines(PUBLICATION);
-    let body = normalized
+    let body = strip_licence_notice(&normalized)
         .strip_prefix("module contract;\n")
         .expect("the production module opens with its module header");
     assert!(

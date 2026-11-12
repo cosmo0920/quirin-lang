@@ -1,0 +1,96 @@
+{
+ "note": "LICENCE-HEADER-TEST-REPAIR, 2026-11-12, base 74105dd0e. The full standing gate plus the provider gate (providers/ changed). Each step was run by hand with its exit captured to its own file and no pipe. Every command was wrapped in the borrowed toolchain: Ubuntu clang 21.1.8 ahead of Lean 4.35.0, with QCORE_CLANG set. gate/clang-version.txt was recorded in this worktree before the suite. The Rust suite, Lean audits, Python suite and provider steps ran on code tip a1bb5a981; later commits add only this report directory. Base failing set (gate/base-targeted-results.txt): the 11 header-affected binaries plus configured_cli at 74105dd0e with Clang, 33 failures in 11 binaries, with configured_cli 20/20 passed. Tip reruns of the same binaries plus guarded_contract_pin all passed (private/tip-targeted*/out.log). quirin-audit measure inputs are not prepared on this host, so no corpus measurement was run; none is expected to move.",
+ "base": "74105dd0e",
+ "code_tip": "a1bb5a981",
+ "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)",
+ "steps": [
+  {
+   "step": "git submodule update --init --recursive",
+   "exit": 0
+  },
+  {
+   "step": "python3 scripts/gate_slot.py rust-suite -- python3 scripts/run_test_binaries.py --log-dir private/gate-full/test-binaries",
+   "exit": 101,
+   "counts": "test binaries: 627 units, 668 summaries; 9381 passed; 3 failed; 17 ignored; 0 measured; 135 filtered out",
+   "failed_units": [
+    "qcore-compiler::test::task_route_tsan (17 passed, 3 failed, 1 ignored): host-only. ThreadSanitizer prints 'invalid path to external symbolizer' under the borrowed LLVM 21 toolchain, so the race frames the three rows assert are not named. It failed the same way at base and reads no file the header commits changed"
+   ],
+   "log": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a8061cfc1420021ff/private/gate-full/test-binaries/ (summary.json), /home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a8061cfc1420021ff/private/gate-full/suite.out"
+  },
+  {
+   "step": "cargo fmt --all -- --check",
+   "exit": 0,
+   "log": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a8061cfc1420021ff/private/gate-full/fmt.log"
+  },
+  {
+   "step": "cargo clippy --all-targets -- -D warnings",
+   "exit": 0,
+   "log": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a8061cfc1420021ff/private/gate-full/clippy.log"
+  },
+  {
+   "step": "cargo run <test_link_config> -p qcore-compiler --example reevaluation_probe",
+   "exit": 0,
+   "log": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a8061cfc1420021ff/private/gate-full/probe.log"
+  },
+  {
+   "step": "cargo run <test_link_config> -p qcore-compiler --example reevaluation_followup",
+   "exit": 0,
+   "log": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a8061cfc1420021ff/private/gate-full/followup.log"
+  },
+  {
+   "step": "python3 scripts/check_lean_audits.py",
+   "exit": 0,
+   "counts": "Passed 426 Lean audits",
+   "log": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a8061cfc1420021ff/private/gate-full/lean.log"
+  },
+  {
+   "step": "python3 -m unittest discover -s scripts/tests",
+   "exit": 0,
+   "counts": "Ran 756 tests, OK (rerun after the report files were added; the earlier run without them was also 756 OK)",
+   "log": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a8061cfc1420021ff/private/gate-full/python2.log"
+  },
+  {
+   "step": "python3 providers/package.py build --output private/qcore-packages",
+   "exit": 0,
+   "log": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a8061cfc1420021ff/private/gate-full/pkgbuild.log"
+  },
+  {
+   "step": "python3 providers/package.py verify private/qcore-packages/qcore.libevent",
+   "exit": 0,
+   "log": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a8061cfc1420021ff/private/gate-full/pkgverify.log"
+  },
+  {
+   "step": "cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline",
+   "exit": 0,
+   "counts": "43 summaries; 133 passed; 0 failed; 1 ignored",
+   "log": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a8061cfc1420021ff/private/gate-full/ptest.log"
+  },
+  {
+   "step": "cargo fmt --manifest-path providers/Cargo.toml --all -- --check",
+   "exit": 0,
+   "log": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a8061cfc1420021ff/private/gate-full/pfmt.log"
+  },
+  {
+   "step": "cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --locked --offline -- -D warnings",
+   "exit": 0,
+   "log": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a8061cfc1420021ff/private/gate-full/pclippy.log"
+  },
+  {
+   "step": "python3 scripts/apply_amendments.py docs/reports/licence-header-test-repair/integration-amendments.json --check",
+   "exit": 0
+  }
+ ],
+ "private_logs": {
+  "base_targeted": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a8061cfc1420021ff/private/base-targeted/out.log",
+  "base_python": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a8061cfc1420021ff/private/base-py/out.log",
+  "tip_targeted": [
+   "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a8061cfc1420021ff/private/tip-targeted/out.log",
+   "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a8061cfc1420021ff/private/tip-targeted2/out.log",
+   "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a8061cfc1420021ff/private/tip-targeted3/out.log"
+  ],
+  "contract_sync": [
+   "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a8061cfc1420021ff/private/sync/out.log",
+   "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a8061cfc1420021ff/private/sync2/out.log"
+  ]
+ }
+}
