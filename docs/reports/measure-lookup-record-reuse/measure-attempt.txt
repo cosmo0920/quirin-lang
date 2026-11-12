@@ -1,0 +1,5 @@
+run: measure/identity-20261112115237
+command: target/release/quirin-audit --plugin-path target/release --output measure/identity-20261112115237 --timeout-ms 36000000 measure --profile eight-home --profile fluent-bit-system --profile fluent-bit-tail-pause --inputs-base /home/cosmo/Documents/GitHub/quirin-lang --side base=rev:74105dd0e --side tip=rev:HEAD --declared docs/reports/measure-lookup-record-reuse/PREDICTION.md
+subcommand `measure` (quirin-audit-measure@7578a4800ba1e47a): failed (plugin-exit: the plugin ended with exit 1: route `corpus`: the prepared input /home/cosmo/Documents/GitHub/quirin-lang/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source is missing); 0 artifact(s), 0 claim(s); verdict Unknown
+report: /home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-aa027370e3c150ef3/measure/identity-20261112115237/quirin-audit-measure.report.json
+exit 1
