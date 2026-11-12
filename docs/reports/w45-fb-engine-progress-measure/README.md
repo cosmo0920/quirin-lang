@@ -180,9 +180,49 @@ The second command lists the bound facts on the slice
 
 ## 6. Validation
 
-The scoped card gate, `python3 scripts/gate_scope.py --base 74105dd0e`
-([gate.json](gate.json)), with `QCORE_CLANG` set to the unpacked `clang-21`
-and the unpacked Lean 4.35.0 first on `PATH`: see §6.1.
+The scoped card gate, `python3 scripts/gate_scope.py --base 74105dd0e`, on
+tip `c283beaaa` ([gate.json](gate.json), private run
+`private/gate-scope/20261112T030826Z-1364545/`), with `QCORE_CLANG` set to the
+unpacked `clang-21` ([clang-version.txt](clang-version.txt)) and the unpacked
+Lean 4.35.0 first on `PATH`. Mode **full** (the diff reaches
+`qcore-c-gateway`). Gate exit **1**:
+
+| Step | Exit | Counts |
+|---|---|---|
+| submodules | 0 | 1 submodule |
+| fmt | 0 | |
+| clippy | 0 | |
+| Rust suite | **101** | 629 units, 670 summaries; 9,207 passed, **198 failed**, 17 ignored |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| Lean (`check_lean_audits.py`, all) | 0 | 427 audits |
+| Python | 0 | 756 tests |
+
+**The 198 failures are this host's, not the card's.** They are 187 distinct
+test names in 79 units ([gate/tip-failed-tests.txt](gate/tip-failed-tests.txt)).
+The same 79 units were run at the base `74105dd0e` (a `git archive` of the base
+with the same Clang, `cargo test --no-fail-fast`, private log
+`private/base-failing-units.log`): 192 distinct names failed
+([gate/base-failed-tests.txt](gate/base-failed-tests.txt)), and every tip
+failure but one is among them. The six base-only names read the repository's
+`.git` or index, which the archive lacks. The one tip-only failure,
+`qcore-core` `translation_validation::tests::exhaustive_emitted_c_corpus_passes_available_native_sanitizers`,
+comes from the Lean toolchain's own `clang` shadowing the system compiler
+on the gate's `PATH`; run at the tip without that `PATH` it passes
+(`private/qcore-core-sanitizer-no-lean-path.log`), and `qcore-core` is not
+touched by this card. The causes seen in the failure logs are host
+toolchain gaps: the minimal Clang install has no sanitizer runtimes
+(`libclang_rt.asan*.a`), tests that require the configured compiler to be
+named `clang` reject `clang-21`, and the base's contract modules (licence
+headers at `74105dd0e`) fail `hash_contracts`'s "module header" check at the
+base too. The card's own targets pass: `qcore-c-gateway` lib (1,280 tests,
+including the four rule-44 unit tests), `qcore-c-gateway::test::loop_measure`
+(15) and `qcore-audit::test::loop_measure_selection` (2). The integrator's
+full gate on a provisioned host is the arbiter.
+
+An earlier run on `61a41d426` (`private/gate-scope/20261112T025326Z-987629/`)
+had the same Rust counts and one Python failure: the selection test's
+directory walk was not in the reviewed walk list. `c283beaaa` replaced it
+with a fixed file list.
 
 ## 7. Follow-ups
 
