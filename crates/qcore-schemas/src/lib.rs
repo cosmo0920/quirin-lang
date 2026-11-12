@@ -31,6 +31,7 @@ pub mod descriptor_cell;
 // Card VERDICT-CONTRACT-DEPENDENCIES (gateway rule 13f): the per-thread log of
 // the names a resource environment was asked for; evidence only.
 pub mod contract_consultation;
+pub mod contract_lookup_record;
 pub mod contract_refutation;
 pub mod contract_revision;
 pub mod contract_supersession;

@@ -20,8 +20,11 @@
 //! source-assumption recheck stay in the compiler crate.
 
 use std::collections::{BTreeMap, BTreeSet};
+use std::sync::Arc;
 
 use serde::{Deserialize, Serialize};
+
+use crate::contract_lookup_record::{LookupRecorder, RecorderSlot};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -703,8 +706,14 @@ pub struct CrossUnitImportIdentity {
     pub environment_sha256: String,
 }
 
-#[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ResourceContracts {
+    /// Card MEASURE-LOOKUP-RECORD-REUSE: the lookup recorder attached to this
+    /// instance and its clones, if any ([`Self::with_lookup_recorder`]).
+    /// Never serialized or deserialized, equal to every other slot, absent
+    /// from `Debug`; first, so an equality comparison records its read.
+    #[serde(skip_deserializing, skip_serializing_if = "RecorderSlot::serialized")]
+    lookups: RecorderSlot,
     functions: BTreeMap<String, ResourceFunctionContract>,
     /// Validated summaries imported from another translation unit.  These are
     /// never declared contracts: a gateway certificate must carry and replay
@@ -810,10 +819,140 @@ pub struct ResourceContracts {
     member_effects: BTreeMap<String, crate::member_effect::MemberEffectSummary>,
 }
 
+/// Card MEASURE-LOOKUP-RECORD-REUSE: the derived `Debug` output, field for
+/// field, without the recorder slot; formatting reads the whole environment.
+impl std::fmt::Debug for ResourceContracts {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.lookups.whole("debug");
+        formatter
+            .debug_struct("ResourceContracts")
+            .field("functions", &self.functions)
+            .field("inferred_imports", &self.inferred_imports)
+            .field(
+                "cross_unit_import_identities",
+                &self.cross_unit_import_identities,
+            )
+            .field("link_resolution_sha256", &self.link_resolution_sha256)
+            .field("source_assumptions", &self.source_assumptions)
+            .field("inclusion_evidence", &self.inclusion_evidence)
+            .field("pending_review", &self.pending_review)
+            .field("revision", &self.revision)
+            .field("pin_mismatch", &self.pin_mismatch)
+            .field("refuted_by_body", &self.refuted_by_body)
+            .field("relational", &self.relational)
+            .field("retaining", &self.retaining)
+            .field("guarded_retaining", &self.guarded_retaining)
+            .field("declared_guarded", &self.declared_guarded)
+            .field("inferred_lifetimes", &self.inferred_lifetimes)
+            .field("lifetime_imports", &self.lifetime_imports)
+            .field("cell_frames_accepted", &self.cell_frames_accepted)
+            .field("superseded", &self.superseded)
+            .field("contract_conflict", &self.contract_conflict)
+            .field("result_ranges", &self.result_ranges)
+            .field("member_effects", &self.member_effects)
+            .finish()
+    }
+}
+
 impl ResourceContracts {
+    /// Card MEASURE-LOOKUP-RECORD-REUSE: a copy of this environment with a
+    /// fresh lookup recorder, which records every read of the copy and of
+    /// its clones; the copy answers every read exactly as this one does.
+    #[must_use]
+    pub fn with_lookup_recorder(&self) -> (Self, Arc<LookupRecorder>) {
+        let recorder = LookupRecorder::new();
+        let mut copy = self.clone();
+        copy.lookups = RecorderSlot::holding(recorder.clone());
+        (copy, recorder)
+    }
+
+    /// Card MEASURE-LOOKUP-RECORD-REUSE: SHA-256 of this environment
+    /// restricted to `names`: for each name, its entry in every name-keyed
+    /// table (or `null`), and the environment's scalars (the link-resolution
+    /// digest and the callee-frame acceptance). Contract texts
+    /// (`source_assumptions`) and inclusion provenance are keyed by module and
+    /// reachable only through whole-map accessors, so a consumer that read
+    /// them recorded a whole-map read; the entries here are the elaborated
+    /// ones, so an included or inherited parent's change moves the entry of
+    /// every name that inherits it. Not a read: nothing is recorded.
+    ///
+    /// # Errors
+    ///
+    /// An entry that does not serialize.
+    pub fn restricted_sha256(&self, names: &BTreeSet<String>) -> Result<String, String> {
+        fn entry<V: Serialize>(
+            map: &BTreeMap<String, V>,
+            name: &str,
+        ) -> Result<serde_json::Value, String> {
+            map.get(name)
+                .map(serde_json::to_value)
+                .transpose()
+                .map(|value| value.unwrap_or(serde_json::Value::Null))
+                .map_err(|error| error.to_string())
+        }
+        let mut entries = serde_json::Map::new();
+        for name in names {
+            let tables = serde_json::json!({
+                "functions": entry(&self.functions, name)?,
+                "inferred_imports": entry(&self.inferred_imports, name)?,
+                "cross_unit_import_identities": entry(&self.cross_unit_import_identities, name)?,
+                "pending_review": entry(&self.pending_review, name)?,
+                "revision": entry(&self.revision, name)?,
+                "pin_mismatch": entry(&self.pin_mismatch, name)?,
+                "refuted_by_body": entry(&self.refuted_by_body, name)?,
+                "relational": entry(&self.relational, name)?,
+                "retaining": entry(&self.retaining, name)?,
+                "guarded_retaining": entry(&self.guarded_retaining, name)?,
+                "declared_guarded": self.declared_guarded.contains(name),
+                "inferred_lifetimes": entry(&self.inferred_lifetimes, name)?,
+                "lifetime_imports": entry(&self.lifetime_imports, name)?,
+                "superseded": entry(&self.superseded, name)?,
+                "contract_conflict": entry(&self.contract_conflict, name)?,
+                "result_ranges": entry(&self.result_ranges, name)?,
+                "member_effects": entry(&self.member_effects, name)?,
+            });
+            entries.insert(name.clone(), tables);
+        }
+        let value = serde_json::json!({
+            "schema": "quirin-restricted-environment/1",
+            "scalars": {
+                "link_resolution_sha256": self.link_resolution_sha256,
+                "cell_frames_accepted": self.cell_frames_accepted,
+            },
+            "names": entries,
+        });
+        serde_json::to_vec(&value)
+            .map(|bytes| crate::sha256_hex(&bytes))
+            .map_err(|error| error.to_string())
+    }
+
+    /// Card MEASURE-LOOKUP-RECORD-REUSE: whether any name-keyed table holds
+    /// `name` (the check of a recorded `found`). Not a read.
+    #[must_use]
+    pub fn holds_name(&self, name: &str) -> bool {
+        self.functions.contains_key(name)
+            || self.inferred_imports.contains_key(name)
+            || self.cross_unit_import_identities.contains_key(name)
+            || self.pending_review.contains_key(name)
+            || self.revision.contains_key(name)
+            || self.pin_mismatch.contains_key(name)
+            || self.refuted_by_body.contains_key(name)
+            || self.relational.contains_key(name)
+            || self.retaining.contains_key(name)
+            || self.guarded_retaining.contains_key(name)
+            || self.declared_guarded.contains(name)
+            || self.inferred_lifetimes.contains_key(name)
+            || self.lifetime_imports.contains_key(name)
+            || self.superseded.contains_key(name)
+            || self.contract_conflict.contains_key(name)
+            || self.result_ranges.contains_key(name)
+            || self.member_effects.contains_key(name)
+    }
+
     #[must_use]
     pub fn new(contracts: impl IntoIterator<Item = (impl Into<String>, ResourceApiKind)>) -> Self {
         Self {
+            lookups: RecorderSlot::default(),
             functions: contracts
                 .into_iter()
                 .map(|(name, kind)| (name.into(), ResourceFunctionContract::from(kind)))
@@ -845,12 +984,15 @@ impl ResourceContracts {
     /// with its member effect, if it has one.
     #[must_use]
     pub fn member_effect(&self, name: &str) -> Option<&crate::member_effect::MemberEffectSummary> {
-        self.member_effects.get(name)
+        let found = self.member_effects.get(name);
+        self.lookups.name(name, found.is_some());
+        found
     }
 
     /// Card MEMBER-EFFECT-SUMMARY: every member-effect summary in force.
     #[must_use]
     pub fn member_effects(&self) -> &BTreeMap<String, crate::member_effect::MemberEffectSummary> {
+        self.lookups.whole("member_effects");
         &self.member_effects
     }
 
@@ -864,6 +1006,7 @@ impl ResourceContracts {
         summary: crate::member_effect::MemberEffectSummary,
     ) {
         let name = name.into();
+        self.lookups.name(&name, self.functions.contains_key(&name));
         if self.functions.contains_key(&name) || self.has_guarded_interface(&name) {
             return;
         }
@@ -874,6 +1017,7 @@ impl ResourceContracts {
     /// sets the route installed, with their standing.
     #[must_use]
     pub fn result_ranges(&self) -> &BTreeMap<String, crate::result_range::ResultRangeFact> {
+        self.lookups.whole("result_ranges");
         &self.result_ranges
     }
 
@@ -884,9 +1028,9 @@ impl ResourceContracts {
         &self,
         name: &str,
     ) -> Option<&crate::result_range::ResultRangeFact> {
-        self.result_ranges
-            .get(name)
-            .filter(|fact| fact.standing == crate::result_range::ResultRangeStanding::InForce)
+        let found = self.result_ranges.get(name);
+        self.lookups.name(name, found.is_some());
+        found.filter(|fact| fact.standing == crate::result_range::ResultRangeStanding::InForce)
     }
 
     /// Card CELL-GUARD-RESULT-RANGE-CHECKED: install the route's result sets.
@@ -903,6 +1047,7 @@ impl ResourceContracts {
     pub fn superseded(
         &self,
     ) -> &BTreeMap<String, Vec<crate::contract_supersession::SupersededDeclaration>> {
+        self.lookups.whole("superseded");
         &self.superseded
     }
 
@@ -912,6 +1057,7 @@ impl ResourceContracts {
     pub fn contract_conflict(
         &self,
     ) -> &BTreeMap<String, crate::contract_supersession::ContractConflict> {
+        self.lookups.whole("contract_conflict");
         &self.contract_conflict
     }
 
@@ -933,6 +1079,7 @@ impl ResourceContracts {
 
     pub fn insert_contract(&mut self, name: impl Into<String>, contract: ResourceFunctionContract) {
         let name = name.into();
+        self.lookups.name(&name, self.functions.contains_key(&name));
         // An ordinary overlay has no representation of guarded entry
         // obligations. Withdrawal must be explicit before replacing one.
         if !self.has_guarded_interface(&name) {
@@ -953,6 +1100,7 @@ impl ResourceContracts {
     pub fn lifetime_imports(
         &self,
     ) -> &BTreeMap<String, crate::loop_lifetime::InferredLifetimeSummary> {
+        self.lookups.whole("lifetime_imports");
         &self.lifetime_imports
     }
     #[must_use]
@@ -960,13 +1108,17 @@ impl ResourceContracts {
         &self,
         name: &str,
     ) -> Option<&crate::loop_lifetime::InferredLifetimeSummary> {
-        self.inferred_lifetimes
+        let found = self
+            .inferred_lifetimes
             .get(name)
-            .or_else(|| self.lifetime_imports.get(name))
+            .or_else(|| self.lifetime_imports.get(name));
+        self.lookups.name(name, found.is_some());
+        found
     }
     pub fn lifetime_summaries(
         &self,
     ) -> impl Iterator<Item = (&String, &crate::loop_lifetime::InferredLifetimeSummary)> {
+        self.lookups.whole("lifetime_summaries");
         self.inferred_lifetimes.iter().chain(&self.lifetime_imports)
     }
 
@@ -976,6 +1128,7 @@ impl ResourceContracts {
 
     #[must_use]
     pub fn inferred_imports(&self) -> &BTreeMap<String, ResourceFunctionContract> {
+        self.lookups.whole("inferred_imports");
         &self.inferred_imports
     }
 
@@ -988,6 +1141,7 @@ impl ResourceContracts {
 
     #[must_use]
     pub fn cross_unit_import_identities(&self) -> &BTreeMap<String, CrossUnitImportIdentity> {
+        self.lookups.whole("cross_unit_import_identities");
         &self.cross_unit_import_identities
     }
 
@@ -1005,6 +1159,7 @@ impl ResourceContracts {
     /// or to prove a recursive component. The caller's certificate still
     /// replays every imported home and its link-resolution premise.
     pub fn carry_cross_unit_imports(&mut self, from: &Self) {
+        from.lookups.whole("carry_cross_unit_imports");
         self.inferred_imports = from.inferred_imports.clone();
         self.lifetime_imports = from.lifetime_imports.clone();
         self.cross_unit_import_identities = from.cross_unit_import_identities.clone();
@@ -1014,6 +1169,7 @@ impl ResourceContracts {
     /// Exact source inputs, declared as assumptions rather than verified facts.
     #[must_use]
     pub fn source_assumptions(&self) -> &BTreeMap<String, String> {
+        self.lookups.whole("source_assumptions");
         &self.source_assumptions
     }
 
@@ -1028,6 +1184,7 @@ impl ResourceContracts {
     /// (card CONTRACT-INHERIT). Empty for every environment loaded without it.
     #[must_use]
     pub fn inclusion_evidence(&self) -> &BTreeMap<String, ContractInclusionEvidence> {
+        self.lookups.whole("inclusion_evidence");
         &self.inclusion_evidence
     }
 
@@ -1045,6 +1202,7 @@ impl ResourceContracts {
     /// keyed by function name. None of them is in [`Self::functions`].
     #[must_use]
     pub fn pending_review(&self) -> &BTreeMap<String, PendingHumanReview> {
+        self.lookups.whole("pending_review");
         &self.pending_review
     }
 
@@ -1061,6 +1219,7 @@ impl ResourceContracts {
     pub fn declared_revisions(
         &self,
     ) -> &BTreeMap<String, crate::contract_revision::DeclaredRevision> {
+        self.lookups.whole("declared_revisions");
         &self.revision
     }
 
@@ -1077,6 +1236,7 @@ impl ResourceContracts {
     /// markers make it flexible.
     #[must_use]
     pub fn revision_mode(&self, name: &str) -> crate::contract_revision::RevisionMode {
+        self.lookups.name(name, self.revision.contains_key(name));
         self.revision
             .get(name)
             .map_or(crate::contract_revision::RevisionMode::Pinned, |declared| {
@@ -1089,6 +1249,7 @@ impl ResourceContracts {
     /// [`Self::functions`].
     #[must_use]
     pub fn pin_mismatch(&self) -> &BTreeMap<String, crate::contract_revision::PinMismatch> {
+        self.lookups.whole("pin_mismatch");
         &self.pin_mismatch
     }
 
@@ -1154,6 +1315,7 @@ impl ResourceContracts {
     /// [`Self::functions`]; its call sites are held.
     #[must_use]
     pub fn refuted_by_body(&self) -> &crate::contract_refutation::RefutationTable {
+        self.lookups.whole("refuted_by_body");
         &self.refuted_by_body
     }
 
@@ -1161,6 +1323,10 @@ impl ResourceContracts {
     /// is kept: a table entry for a declaration not in force here (withheld
     /// for review or a pin, or never declared) has no call site to hold.
     pub fn set_refuted_by_body(&mut self, table: &crate::contract_refutation::RefutationTable) {
+        for name in table.keys() {
+            self.lookups
+                .name(name, self.functions.contains_key(name.as_str()));
+        }
         self.refuted_by_body = table
             .iter()
             .filter(|(name, _)| self.functions.contains_key(*name))
@@ -1181,6 +1347,7 @@ impl ResourceContracts {
     /// refutation table is kept as it is: a name it lists stays held.
     #[must_use]
     pub fn with_human_holds_in_force(&self) -> Option<Self> {
+        self.lookups.whole("with_human_holds_in_force");
         // Card CELL-PROTOCOL-RELEASE-WINDOW-FRAMES (rule 38g): a declared
         // callee frame holds the calls it would admit for a human act too.
         let frames_held = !self.cell_frames_accepted && !self.cell_frames().is_empty();
@@ -1222,11 +1389,13 @@ impl ResourceContracts {
                 .or_else(|| self.inferred_imports.get(name))
         };
         crate::contract_consultation::note(name, found.is_some());
+        self.lookups.name(name, found.is_some());
         found
     }
 
     #[must_use]
     pub fn functions(&self) -> &BTreeMap<String, ResourceFunctionContract> {
+        self.lookups.whole("functions");
         &self.functions
     }
 
@@ -1234,6 +1403,7 @@ impl ResourceContracts {
     /// force, keyed by function name. None of them is in [`Self::functions`].
     #[must_use]
     pub fn relational(&self) -> &BTreeMap<String, crate::relational_post::RelationalContract> {
+        self.lookups.whole("relational");
         &self.relational
     }
 
@@ -1245,6 +1415,7 @@ impl ResourceContracts {
     ) -> Option<&crate::relational_post::RelationalContract> {
         let found = self.relational.get(name);
         crate::contract_consultation::note(name, found.is_some());
+        self.lookups.name(name, found.is_some());
         found
     }
 
@@ -1256,6 +1427,7 @@ impl ResourceContracts {
         contract: crate::relational_post::RelationalContract,
     ) {
         let name = name.into();
+        self.lookups.name(&name, self.functions.contains_key(&name));
         self.functions.remove(&name);
         self.relational.insert(name, contract);
     }
@@ -1263,6 +1435,7 @@ impl ResourceContracts {
     /// Mark the disposition of `name` withdrawn for `reason` (its own body
     /// contradicts it). Every call site then refuses.
     pub fn withdraw_relational(&mut self, name: &str, reason: String) {
+        self.lookups.name(name, self.relational.contains_key(name));
         if let Some(contract) = self.relational.get_mut(name) {
             contract.withdrawn = Some(reason);
         }
@@ -1272,35 +1445,42 @@ impl ResourceContracts {
     /// keyed by function name. None of them is in [`Self::functions`].
     #[must_use]
     pub fn retaining(&self) -> &BTreeMap<String, crate::retained_by::RetainingContract> {
+        self.lookups.whole("retaining");
         &self.retaining
     }
 
     /// Explicit S3/introspection access. This table supplies no ready effects.
     #[must_use]
     pub fn guarded_retaining(&self) -> &BTreeMap<String, crate::retained_by::RetainingContract> {
+        self.lookups.whole("guarded_retaining");
         &self.guarded_retaining
     }
     pub fn carry_guarded_identities(&mut self, from: &Self) {
+        from.lookups.whole("carry_guarded_identities");
         self.declared_guarded
             .extend(from.declared_guarded.iter().cloned());
     }
     #[must_use]
     pub fn declared_guarded(&self) -> &BTreeSet<String> {
+        self.lookups.whole("declared_guarded");
         &self.declared_guarded
     }
     #[must_use]
     pub fn has_guarded_interface(&self, name: &str) -> bool {
-        self.declared_guarded.contains(name)
+        let found = self.declared_guarded.contains(name)
             || self.guarded_retaining.contains_key(name)
             || self
                 .pin_mismatch
                 .get(name)
                 .and_then(|p| p.retaining.as_ref())
-                .is_some_and(|c| c.is_condition_bearing())
+                .is_some_and(|c| c.is_condition_bearing());
+        self.lookups.name(name, found);
+        found
     }
     pub fn lifetime_declarations(
         &self,
     ) -> impl Iterator<Item = (&String, &crate::retained_by::RetainingContract)> {
+        self.lookups.whole("lifetime_declarations");
         self.retaining
             .iter()
             .chain(&self.guarded_retaining)
@@ -1316,6 +1496,7 @@ impl ResourceContracts {
     pub fn cell_protocols(
         &self,
     ) -> BTreeMap<String, (BTreeSet<String>, Vec<crate::descriptor_cell::CellProtocol>)> {
+        self.lookups.whole("cell_protocols");
         type Stated = (BTreeSet<String>, Vec<crate::descriptor_cell::CellProtocol>);
         let mut out: BTreeMap<String, Stated> = BTreeMap::new();
         let mut conflicting = BTreeSet::new();
@@ -1355,6 +1536,7 @@ impl ResourceContracts {
     /// states the same callees (fail-closed: otherwise none).
     #[must_use]
     pub fn cell_frames(&self) -> BTreeMap<String, BTreeSet<String>> {
+        self.lookups.whole("cell_frames");
         let protocols = self.cell_protocols();
         let mut out: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
         let mut seen = BTreeSet::new();
@@ -1398,6 +1580,7 @@ impl ResourceContracts {
     /// Enforce the partition even for deserialized inputs, before any legacy
     /// prepass can read the raw retaining table.
     pub fn validate_lifetime_partition(&self) -> Result<(), String> {
+        self.lookups.whole("validate_lifetime_partition");
         if self.lifetime_imports.iter().any(|(name, summary)| {
             (summary.effects.is_empty() && summary.removals.is_empty())
                 || (!summary.effects.is_empty() && !summary.removals.is_empty())
@@ -1451,6 +1634,7 @@ impl ResourceContracts {
     pub fn inferred_lifetimes(
         &self,
     ) -> &BTreeMap<String, crate::loop_lifetime::InferredLifetimeSummary> {
+        self.lookups.whole("inferred_lifetimes");
         &self.inferred_lifetimes
     }
     pub fn insert_inferred_lifetime(
@@ -1477,6 +1661,7 @@ impl ResourceContracts {
                 .is_none_or(|l| l.blocks.is_empty() && l.bindings.is_empty())
         });
         crate::contract_consultation::note(name, found.is_some());
+        self.lookups.name(name, found.is_some());
         found
     }
 
@@ -1490,6 +1675,7 @@ impl ResourceContracts {
             .or_else(|| self.retaining.get(name))
             .filter(|c| c.lifetime.is_some());
         crate::contract_consultation::note(name, found.is_some());
+        self.lookups.name(name, found.is_some());
         found
     }
 
@@ -1499,6 +1685,7 @@ impl ResourceContracts {
     /// (a unit's withdrawals) keeps them this way, so a withdrawal of one name
     /// never drops every other declaration of those tables.
     pub fn carry_side_declarations(&mut self, from: &Self, withdrawn: impl Fn(&str) -> bool) {
+        from.lookups.whole("carry_side_declarations");
         self.declared_guarded
             .extend(from.declared_guarded.iter().cloned());
         self.inferred_lifetimes.extend(
@@ -1532,6 +1719,7 @@ impl ResourceContracts {
     /// for a translation unit whose own body of `name` does not validate a
     /// declared slot or borrowed-result clause.
     pub fn withdraw_declaration(&mut self, name: &str) {
+        self.lookups.name(name, self.functions.contains_key(name));
         self.inferred_lifetimes.remove(name);
         self.functions.remove(name);
         self.retaining.remove(name);
