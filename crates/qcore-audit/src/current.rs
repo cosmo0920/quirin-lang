@@ -962,6 +962,7 @@ impl CurrentAudit {
             self.report
                 .write_with_revision_key(path, "fluent_bit_revision")?;
             self.report.write_bounds_selection()?;
+            self.report.write_loop_measure_selection()?;
             let null_rows = self.report.write_null_selection()?;
             self.report
                 .write_outer_projection(&self.contracts, null_rows.as_deref())?;

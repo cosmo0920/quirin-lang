@@ -257,11 +257,14 @@ pub fn decide(shape: &Shape) -> Option<Refusal> {
     }
 }
 
+/// One shared vector: the shape's gates, its conjuncts and the expected code.
+pub type DecideVector = ([bool; 8], &'static [[bool; 7]], &'static str);
+
 /// Shared decision vectors: `(shape gates, conjuncts, expected code)`, the
 /// gates in [`Shape`]'s field order and each conjunct in [`Conjunct`]'s.
 /// `"admitted"` is the code of an admitted shape. Identical to
 /// `QCore.CountedLoopMeasure.decideVectors`.
-pub const DECIDE_VECTORS: &[([bool; 8], &[[bool; 7]], &str)] = &[
+pub const DECIDE_VECTORS: &[DecideVector] = &[
     // An admitted constant bound (the output-event batch).
     (
         [true, true, true, false, false, false, false, true],
