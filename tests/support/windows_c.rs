@@ -104,13 +104,12 @@ fn run_with_sources_impl(
         .include(root.join("compiler/tests/fixtures/compat-threads"));
     if cfg!(target_env = "msvc") {
         build.flags(["/std:c11", "/utf-8", "/experimental:c11atomics"]);
-        if cfg!(target_arch = "aarch64") {
-            // Native ARM64 MSVC diagnoses intentionally constant source-level
-            // conditions as C4127. Keep /W4 and /WX for every other warning;
-            // these conditions are executable fixtures for the checked
-            // bitwise and control-flow lowering, not accidental dead code.
-            build.flag("/wd4127");
-        }
+        // MSVC (ARM64 and, as the windows-2022 x64 runner showed, x64)
+        // diagnoses intentionally constant source-level conditions as C4127.
+        // Keep /W4 and /WX for every other warning; these conditions are
+        // executable fixtures for the checked bitwise and control-flow
+        // lowering, not accidental dead code.
+        build.flag("/wd4127");
         if header.is_some() {
             // Constant-failure hooks intentionally make success arms unreachable.
             build.flag("/wd4702");

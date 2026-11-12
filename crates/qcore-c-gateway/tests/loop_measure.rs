@@ -40,10 +40,13 @@ fn clang_available() -> bool {
     }
 }
 
-const PRELUDE: &str = "typedef unsigned long size_t;\n\
+// Target-neutral widths: Clang's own `__SIZE_TYPE__`/`__UINT64_TYPE__` are
+// `unsigned long` on LP64 and `unsigned long long` on LLP64 (Windows), so the
+// prelude never redefines a builtin type differently from the target.
+const PRELUDE: &str = "typedef __SIZE_TYPE__ size_t;\n\
 typedef unsigned short uint16_t;\n\
 typedef unsigned char uint8_t;\n\
-typedef unsigned long uint64_t;\n\
+typedef __UINT64_TYPE__ uint64_t;\n\
 int use(int);\n\
 int take(int *);\n";
 

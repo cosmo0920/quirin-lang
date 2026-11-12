@@ -38,6 +38,14 @@ use qcore_c_gateway::legacy_c::{
 const CHILD: &str = "RULE33_SWITCH_CHILD";
 
 const FRAME: &str = include_str!("fixtures/detach-wrapper-composition/cjson_wrapper_frame.h");
+
+#[path = "support/retained_frame.rs"]
+mod retained_frame;
+
+/// The retained frame as the target's preprocessor prints it.
+fn frame() -> String {
+    retained_frame::for_target(FRAME)
+}
 const PRODUCTION_MODULE: &str =
     include_str!("../../../providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv");
 const HELPERS: &str = r#"module contract;
@@ -95,7 +103,10 @@ fn environment() -> ResourceContracts {
 }
 
 fn program() -> LegacyProgramSummary {
-    let source = format!("{FRAME}\n{DECLARATIONS}\nvoid subject(void) {{ {CALLER} }}");
+    let source = format!(
+        "{frame}\n{DECLARATIONS}\nvoid subject(void) {{ {CALLER} }}",
+        frame = frame()
+    );
     qcore_c_gateway::legacy_c::analyze_legacy_c_translation_unit(&source, "subject", &environment())
         .unwrap()
 }

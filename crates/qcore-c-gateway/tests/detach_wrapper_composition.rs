@@ -19,6 +19,14 @@
 use qcore_c_gateway::legacy_c::{AnalysisStatus, LegacyProgramSummary, ResourceContracts};
 
 const FRAME: &str = include_str!("fixtures/detach-wrapper-composition/cjson_wrapper_frame.h");
+
+#[path = "support/retained_frame.rs"]
+mod retained_frame;
+
+/// The retained frame as the target's preprocessor prints it.
+fn frame() -> String {
+    retained_frame::for_target(FRAME)
+}
 const PRODUCTION_MODULE: &str =
     include_str!("../../../providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv");
 const HELPERS: &str = r#"module contract;
@@ -71,7 +79,7 @@ fn status(program: &LegacyProgramSummary, function: &str) -> AnalysisStatus {
 
 #[test]
 fn retained_frames_promote_exactly_the_two_array_wrappers() {
-    let mut sources = vec![("retained frame".to_owned(), FRAME.to_owned())];
+    let mut sources = vec![("retained frame".to_owned(), frame())];
     if let Some(path) = std::env::var_os("QCORE_SELECTION_PRODUCTION_INPUT") {
         let source = std::fs::read_to_string(&path).expect("explicit production source");
         sources.push((format!("explicit production source {path:?}"), source));
@@ -157,14 +165,15 @@ fn frame_mutations_and_contract_changes_keep_the_old_refusals() {
         ("index--;", "index++;"),
         ("item->next = ((void*)0);\n    return item;", "return item;"),
         (
-            "typedef long unsigned int size_t;",
-            "typedef long int size_t;",
+            retained_frame::size_t_typedef(),
+            retained_frame::signed_size_t_typedef(),
         ),
     ];
+    let frame = frame();
     for (from, to) in mutations {
-        let changed = FRAME.replace(from, to);
+        let changed = frame.replace(from, to);
         assert_ne!(
-            changed, FRAME,
+            changed, frame,
             "control must edit the retained source: {from}"
         );
         let program = unit(&changed, "cJSON_DetachItemFromArray", &environment());
@@ -187,8 +196,8 @@ fn frame_mutations_and_contract_changes_keep_the_old_refusals() {
         ),
     ];
     for (from, to) in release_mutations {
-        let changed = FRAME.replace(from, to);
-        assert_ne!(changed, FRAME);
+        let changed = frame.replace(from, to);
+        assert_ne!(changed, frame);
         let program = unit(&changed, "cJSON_DeleteItemFromArray", &environment());
         assert_ne!(
             status(&program, "cJSON_DeleteItemFromArray"),
@@ -226,7 +235,7 @@ extern fn cJSON_DetachItemViaPointer(parent: ptr<mut, u8>, item: ptr<mut, u8>) -
             &std::collections::BTreeMap::from([("cjson.qv".to_owned(), module(premise, release))]),
         )
         .expect("minimal declared environment loads");
-        let program = unit(FRAME, "cJSON_DeleteItemFromArray", &contracts);
+        let program = unit(&frame, "cJSON_DeleteItemFromArray", &contracts);
         let delete = status(&program, "cJSON_DeleteItemFromArray") == AnalysisStatus::Safe;
         let detach = status(&program, "cJSON_DetachItemFromArray") == AnalysisStatus::Safe;
         assert_eq!(delete, promoted, "{premise} {release}");
@@ -240,7 +249,10 @@ extern fn cJSON_DetachItemViaPointer(parent: ptr<mut, u8>, item: ptr<mut, u8>) -
 
 fn subject(body: &str) -> LegacyProgramSummary {
     unit(
-        &format!("{FRAME}\n{DECLARATIONS}\nvoid subject(void) {{ {body} }}"),
+        &format!(
+            "{frame}\n{DECLARATIONS}\nvoid subject(void) {{ {body} }}",
+            frame = frame()
+        ),
         "subject",
         &environment(),
     )
@@ -297,7 +309,8 @@ fn every_other_caller_shape_or_missing_fact_refuses() {
 #[test]
 fn a_spelled_reserved_place_disables_every_expansion() {
     let source = format!(
-        "{FRAME}\n{DECLARATIONS}\nvoid subject(void) {{ struct cJSON *p=dt_alloc(); struct cJSON *i=dt_alloc(); dt_store(p,i); p->child=i; cJSON_DeleteItemFromArray(p,0); dt_free(p); }}\nint __qcore_selection_item_0;"
+        "{frame}\n{DECLARATIONS}\nvoid subject(void) {{ struct cJSON *p=dt_alloc(); struct cJSON *i=dt_alloc(); dt_store(p,i); p->child=i; cJSON_DeleteItemFromArray(p,0); dt_free(p); }}\nint __qcore_selection_item_0;",
+        frame = frame()
     );
     let program = unit(&source, "subject", &environment());
     assert_ne!(status(&program, "subject"), AnalysisStatus::Safe);
@@ -312,8 +325,11 @@ fn transported_identity_and_frames_replay_independently() {
         C11TranslationUnit, LegacyFunctionScope, UnrestrictedLegacyResult,
         analyze_unrestricted_c11, check_legacy_safety_certificate,
     };
-    let root = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("tests/fixtures/detach-wrapper-composition");
+    let root = retained_frame::include_root(
+        &std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("tests/fixtures/detach-wrapper-composition"),
+        &["selection_replay.h"],
+    );
     let source = format!(
         "#include \"selection_replay.h\"\n{DECLARATIONS}\nvoid subject(void) {{ struct cJSON *p=dt_alloc(); struct cJSON *i=dt_alloc(); dt_store(p,i); p->child=i; cJSON_DeleteItemFromArray(p,0); dt_free(p); }}"
     );

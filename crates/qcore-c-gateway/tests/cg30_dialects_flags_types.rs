@@ -203,6 +203,13 @@ fn c2y_countof_is_refused_by_name() {
         eprintln!("selected Clang predates the C2y frontend mode; C23 coverage remains active");
         return;
     }
+    // `_Countof` reached Clang's C2y mode in Clang 21; Clang 19 and 20 accept
+    // `-std=c2y` but reject the operator as an undeclared identifier, so
+    // there is no AST for the refusal to read (windows-2022 ships Clang 20).
+    if qcore_c_gateway::clang_version().is_ok_and(|version| version.major < 21) {
+        eprintln!("selected Clang predates C2y `_Countof`; the other C2y coverage remains active");
+        return;
+    }
     let difference = C2Y_DIFFERENCES
         .iter()
         .find(|d| d.key == "c2y-countof")

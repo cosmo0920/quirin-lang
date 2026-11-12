@@ -31,8 +31,11 @@ use qcore_c_gateway::legacy_c::{
 };
 use qcore_contract::contract_loader::load_resource_contract_sources;
 
+// `time_t` and `nsec` are 64-bit, as the production contract states them:
+// `__INT64_TYPE__` preprocesses to `long int` on LP64 and to `long long` on
+// LLP64 (Windows), where a plain `long` is 32-bit and its reading is refused.
 const PRELUDE: &str = "\
-typedef long time_t;
+typedef __INT64_TYPE__ time_t;
 struct mk_event_loop;
 struct mk_event { int fd; int mask; };
 struct timer { int timer_fd; struct mk_event event; };
@@ -48,7 +51,7 @@ struct opaque;
 void *ev_alloc(__SIZE_TYPE__ n); void ev_free(void *p);
 struct mk_event_loop *mk_event_loop_create(int size);
 void mk_event_loop_destroy(struct mk_event_loop *loop);
-int mk_event_timeout_create(struct mk_event_loop *loop, time_t sec, long nsec, void *data);
+int mk_event_timeout_create(struct mk_event_loop *loop, time_t sec, __INT64_TYPE__ nsec, void *data);
 int mk_event_timeout_destroy(struct mk_event_loop *loop, void *data);
 int mk_event_del(struct mk_event_loop *loop, struct mk_event *event);
 int mk_event_channel_create(struct mk_event_loop *loop, int *r_fd, int *w_fd, void *data);

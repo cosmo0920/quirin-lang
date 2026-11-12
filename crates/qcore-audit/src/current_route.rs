@@ -1094,10 +1094,11 @@ pub fn is_monkey_unit(source_root: &Path, file: &Path) -> bool {
     if file.extension().is_none_or(|extension| extension != "c") {
         return false;
     }
-    let relative = relative.to_string_lossy();
-    (relative.starts_with("mk_core/") && !relative.starts_with("mk_core/deps/"))
-        || relative.starts_with("mk_server/")
-        || relative.starts_with("tls/")
+    // By path components, not text: the located path is spelled with the
+    // host's separator (`mk_core\mk_event.c` on Windows).
+    (relative.starts_with("mk_core") && !relative.starts_with(Path::new("mk_core").join("deps")))
+        || relative.starts_with("mk_server")
+        || relative.starts_with("tls")
 }
 
 /// The compiled Monkey copy must equal the checkout's `lib/monkey` bytes for

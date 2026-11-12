@@ -35,7 +35,7 @@
 //! source-set profiles, the runner script), which may differ per side.
 
 use std::collections::BTreeSet;
-use std::path::{Path, PathBuf};
+use std::path::{Component, Path, PathBuf};
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -218,11 +218,17 @@ pub fn validate(routes: &[Route]) -> Result<(), String> {
             }
         }
         for path in relative {
+            // A root or a drive prefix is refused as well as `is_absolute`:
+            // on Windows `/etc/passwd` and `C:x` are not absolute, yet
+            // neither is relative to the repository.
             if path.is_empty()
                 || Path::new(path).is_absolute()
-                || Path::new(path)
-                    .components()
-                    .any(|part| part.as_os_str() == "..")
+                || Path::new(path).components().any(|part| {
+                    matches!(
+                        part,
+                        Component::Prefix(_) | Component::RootDir | Component::ParentDir
+                    )
+                })
             {
                 return Err(format!(
                     "route `{}`: `{path}` must be a relative path without `..`",
