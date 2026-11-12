@@ -130,6 +130,16 @@ pub(crate) fn run(
             crate::projection::BOUNDS_SELECTION
         ));
     }
+    // Card W45-FB-ENGINE-PROGRESS-MEASURE (rule 44): likewise for the
+    // loop-measure fact.
+    if std::env::var_os(crate::projection::LOOP_MEASURE_SELECTION).is_some() {
+        return Err(format!(
+            "checkpoints refuse the loop-measure selection ({}): a checkpoint carries no \
+             loop-measure rows and its identity names none, so a reused or composed run would \
+             omit the requested rows; run without --checkpoints",
+            crate::projection::LOOP_MEASURE_SELECTION
+        ));
+    }
     let groups = split_units(
         audit,
         split_groups(plan.headers, plan.unresolved, plan.tasks)?,

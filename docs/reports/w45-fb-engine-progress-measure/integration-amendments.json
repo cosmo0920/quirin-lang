@@ -1,0 +1,48 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "W45-FB-ENGINE-PROGRESS-MEASURE",
+  "base": "74105dd0e",
+  "measured_tip": "c283beaaa",
+  "increment_paragraph": "W45-FB-ENGINE-PROGRESS-MEASURE (gateway rule 44, base `74105dd0e`): a checked measure for a counted `for` loop is recorded as a bound fact beside the resource verdict under the opt-in `QCORE_LOOP_MEASURE_PROPERTY` selection (`crates/qcore-c-gateway/src/loop_measure.rs`; rows `{library, file, function, custody, loops, identity}`, `loop-measure.v1`, a new optional component; no schema version bumped). A loop counted by one `c++` from a representable constant, tested `c < B` with `B` a Clang-evaluated constant (macro constants after Clang's preprocessing; array extents from Clang's type), a stable local or a value of an unsigned type of at most 16 bits, with value-preserving conversions and `B` within the counter's type, records `B - c` and at most `max(Bmax - c0, 0)` iterations; every other loop records one of fourteen named refusals. No verdict moves and no progress claim is made; checkpointed routes refuse the selection. `QCore.CountedLoopMeasure` (33 audited theorems: the measure is positive and strictly decreasing, runs are bounded, the decision meets every premise, each refusal shape has a non-terminating run, recording keeps the verdict, shared `decideVectors`). Fixtures reproduce the slice's loops: `handle_output_events` :909 at most 1 and `flb_input_chunk_get_direct_routes` :2286 at most 65,535 are checked; `flb_task_create` :652 is refused `bound-address-taken` (its `int` bound's address escapes before the loop; a deviation from the brief, predicted); `cb_queue_chunks`, `ipow` and `random_uniform` are refused `no-counter`. The slice run and the `quirin-audit measure --declared` arbiter were not run on the card's host (no prepared inputs or baselines; the worktree guard refuses cloning the Fluent Bit checkout) and are owed as `W45-FB-ENGINE-PROGRESS-MEASURE-SLICE-RUN`. [Report](../../reports/w45-fb-engine-progress-measure/README.md).",
+  "status_paragraph": "Loop measures (W45-FB-ENGINE-PROGRESS-MEASURE, gateway rule 44): with `QCORE_LOOP_MEASURE_PROPERTY` set, each projected function's loops carry a checked counted-loop measure or a named refusal beside the custody status; it is a fact, not a verdict, moves nothing and states no progress. The slice's bound facts are not yet measured (`W45-FB-ENGINE-PROGRESS-MEASURE-SLICE-RUN`).",
+  "ledger": [
+    {
+      "id": "W45-FB-ENGINE-PROGRESS-MEASURE",
+      "operation": "retire",
+      "why": "DISCHARGE (rule part): gateway rule 44 (`crates/qcore-c-gateway/src/loop_measure.rs`, `qcore-audit` selection `QCORE_LOOP_MEASURE_PROPERTY`) records the checked measure B - c0 for the specified counted `for` shape as a bound fact beside the resource verdict, with every soundness detail fail-closed and named (wrap, conversions, break/goto/continue, Clang-resolved constants, unwritten and non-address-taken bound, no counter aliasing); `QCore.CountedLoopMeasure` proves the measure non-negative and strictly decreasing, the run bound and the refusals (33 audited theorems). No verdict moves. Fixtures: `handle_output_events` :909 (<= 1) and `flb_input_chunk_get_direct_routes` :2286 (<= 65,535) checked; `cb_queue_chunks`, `ipow`, `random_uniform` refused (`no-counter`); `flb_task_create` :652 refused `bound-address-taken` (rehomed to W45-FB-MEASURE-ESCAPED-BOUND-PREMISE). The slice run and the arbiter are rehomed to W45-FB-ENGINE-PROGRESS-MEASURE-SLICE-RUN.",
+      "source": "docs/reports/w45-fb-engine-progress-measure/README.md"
+    },
+    {
+      "id": "W45-FB-ENGINE-PROGRESS-MEASURE-SLICE-RUN",
+      "operation": "register",
+      "title": "Measure rule 44's bound facts on the system slice and run its arbiter",
+      "text": "W45-FB-ENGINE-PROGRESS-MEASURE implemented rule 44 but could not run the slice with `QCORE_LOOP_MEASURE_PROPERTY` or `quirin-audit measure --declared docs/reports/w45-fb-engine-progress-measure/PREDICTION.md` on its host: no prepared inputs (`build/cycle19`, `private/w45-fb/w46-external-callee-contracts/attempt-1`) or published baselines existed, and the worktree guard refused cloning the user's Fluent Bit checkout. DISCHARGE: on a host with the prepared inputs, the arbiter over eight-home, fluent-bit-system and fluent-bit-tail-pause matches the prediction (no move, report bytes identical), and the fluent-bit-system route run with the selection lists the bound facts: `handle_output_events` :909 (<= 1) and `flb_input_chunk_get_direct_routes` :2286 (<= 65,535) checked; `flb_task_create` :652 refused `bound-address-taken`; `cb_queue_chunks` :611, `ipow` :237 and `random_uniform` :106 refused `no-counter`; with the census-wide tally of the 121 loops.",
+      "source": "docs/reports/w45-fb-engine-progress-measure/README.md",
+      "recorded_by": "W45-FB-ENGINE-PROGRESS-MEASURE"
+    },
+    {
+      "id": "W45-FB-MEASURE-ESCAPED-BOUND-PREMISE",
+      "operation": "register",
+      "title": "Admit a counted-loop bound whose address escapes to a non-retaining out-parameter",
+      "text": "Rule 44 refuses `flb_task_create` :652 and :688 (`bound-address-taken`): the `int` bound `direct_output_count` is written through `&direct_output_count` by `flb_input_chunk_get_direct_routes` at :648 before the loops, and the loop bodies call other functions, so a retained address could change the bound. The census's 65,535 rests on that callee writing a `uint16_t` value and retaining nothing, a cross-unit fact. DISCHARGE: a declared, checked out-parameter non-retention premise (the callee's body stores through the parameter and never copies it) admits a bound whose only address-taking is such an argument before the loop, with Lean parity and the two loops recorded.",
+      "source": "docs/reports/w45-fb-engine-progress-measure/README.md",
+      "recorded_by": "W45-FB-ENGINE-PROGRESS-MEASURE"
+    },
+    {
+      "id": "W45-FB-LIST-FINITENESS-PREMISE",
+      "operation": "register",
+      "title": "A list-finiteness premise for the slice's 87 list-length loops",
+      "text": "The W45-FB-ENGINE-PROGRESS census classifies 87 of 121 slice loops as bounded by a list length (premise PL: the list is finite and well formed and the body's callees do not extend it), which is not a local fact and which rule 44 deliberately does not derive. DISCHARGE: a declared list-finiteness contract premise, checked where its frame is established, records a list-length bound fact for those loops beside the resource verdict, with Lean parity; or a measured statement that the premise cannot be checked.",
+      "source": "docs/reports/w45-fb-engine-progress-measure/README.md",
+      "recorded_by": "W45-FB-ENGINE-PROGRESS-MEASURE"
+    },
+    {
+      "id": "W45-FB-MEASURE-SHIFT-PRECONDITION",
+      "operation": "register",
+      "title": "A right-shift measure for `ipow` under an `exp >= 0` precondition",
+      "text": "`ipow` (flb_scheduler.c:237) is a `while (exp)` loop decreasing by `exp >>= 1`, bounded by 32 iterations only under premise PE (`exp >= 0`; a negative `exp` stays at -1). Rule 44 refuses it (`no-counter`). DISCHARGE: a shift-measure rule with a declared, checked `exp >= 0` precondition at every caller records the bound, with Lean parity; without the precondition it stays refused.",
+      "source": "docs/reports/w45-fb-engine-progress-measure/README.md",
+      "recorded_by": "W45-FB-ENGINE-PROGRESS-MEASURE"
+    }
+  ]
+}

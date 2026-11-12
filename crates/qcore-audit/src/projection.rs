@@ -35,6 +35,84 @@ use qcore_schemas::verdict::Verdict;
 /// Unset, no bounds analysis runs and every artifact is byte-identical.
 pub const BOUNDS_SELECTION: &str = "QCORE_BOUNDS_PROPERTY";
 
+/// Card W45-FB-ENGINE-PROGRESS-MEASURE (gateway rule 44): the environment
+/// variable that selects the loop-measure fact and names its JSON-lines
+/// output. Unset, no loop-measure analysis runs and every artifact is
+/// byte-identical.
+pub const LOOP_MEASURE_SELECTION: &str = "QCORE_LOOP_MEASURE_PROPERTY";
+
+/// Card W45-FB-ENGINE-PROGRESS-MEASURE (gateway rule 44): when the property
+/// is selected, record each function's loop facts (a checked measure or a
+/// named refusal per loop), each presented at its original line. Reads no
+/// custody result and changes none; the custody status is joined in only when
+/// the rows are written, after every fold.
+fn record_loop_measures(
+    library: &str,
+    file: &str,
+    unit: &C11TranslationUnit<'_>,
+    preprocessed: Option<&str>,
+    functions: &[String],
+    locations: Option<&SourceLineMap>,
+    report: &mut AuditReport,
+) {
+    use qcore_c_gateway::loop_measure::{
+        analyze_loop_measures_c11, analyze_loop_measures_preprocessed,
+    };
+    if std::env::var_os(LOOP_MEASURE_SELECTION).is_none() {
+        return;
+    }
+    let analysed = match preprocessed {
+        Some(text) => analyze_loop_measures_preprocessed(text, unit, functions),
+        None => analyze_loop_measures_c11(unit, functions),
+    };
+    let mapped;
+    let locations = match (locations, preprocessed) {
+        (Some(map), _) => Some(map),
+        (None, Some(text)) => {
+            mapped = map_preprocessed_lines(unit, text);
+            Some(&mapped)
+        }
+        (None, None) => None,
+    };
+    let origin = |line: Option<u64>| {
+        line.and_then(|line| usize::try_from(line).ok())
+            .and_then(|line| locations.and_then(|map| map.present(line, file)))
+            .map_or(serde_json::Value::Null, serde_json::Value::String)
+    };
+    for name in functions {
+        let row = match &analysed {
+            Ok(analysed) => {
+                let mut loops = analysed
+                    .function(name)
+                    .map(|function| serde_json::to_value(&function.loops).unwrap_or_default())
+                    .unwrap_or_else(|| serde_json::json!([]));
+                for fact in loops.as_array_mut().into_iter().flatten() {
+                    fact["origin"] = origin(fact["line"].as_u64());
+                }
+                serde_json::json!({
+                    "library": library,
+                    "file": file,
+                    "function": name,
+                    "loops": loops,
+                    "identity": {
+                        "model_version": analysed.model_version,
+                        "property": analysed.property,
+                        "target": analysed.target,
+                    },
+                })
+            }
+            Err(error) => serde_json::json!({
+                "library": library,
+                "file": file,
+                "function": name,
+                "loops": [],
+                "error": format!("loop-measure-import-failure: {error}"),
+            }),
+        };
+        report.record_loop_measures(row);
+    }
+}
+
 /// The custody status as the four values the composition joins.
 fn custody_value(status: AnalysisStatus) -> qcore_c_gateway::index_extent::BoundsVerdict {
     use qcore_c_gateway::index_extent::BoundsVerdict;
@@ -727,6 +805,16 @@ pub fn project_unit_into_with_cross_unit(
         locations.as_ref(),
         report,
     );
+    // Card W45-FB-ENGINE-PROGRESS-MEASURE (rule 44).
+    record_loop_measures(
+        library,
+        file,
+        unit,
+        preprocessed,
+        source_functions,
+        locations.as_ref(),
+        report,
+    );
     record_projection(
         ProjectionContext {
             library,
@@ -1011,7 +1099,10 @@ pub fn project_prepared_unit_into_with_link_standing(
         }
         other => other,
     };
-    if std::env::var_os(BOUNDS_SELECTION).is_some() || std::env::var_os(NULL_SELECTION).is_some() {
+    if std::env::var_os(BOUNDS_SELECTION).is_some()
+        || std::env::var_os(NULL_SELECTION).is_some()
+        || std::env::var_os(LOOP_MEASURE_SELECTION).is_some()
+    {
         let view = C11TranslationUnit {
             source: prepared.raw_source(),
             include_paths: prepared.include_paths().to_vec(),
@@ -1038,6 +1129,16 @@ pub fn project_prepared_unit_into_with_link_standing(
             source_functions,
             &result,
             contracts,
+            Some(prepared.locations()),
+            report,
+        );
+        // Card W45-FB-ENGINE-PROGRESS-MEASURE (rule 44).
+        record_loop_measures(
+            library,
+            file,
+            &view,
+            prepared.preprocessed_source().ok(),
+            source_functions,
             Some(prepared.locations()),
             report,
         );

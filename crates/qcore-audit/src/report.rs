@@ -222,6 +222,10 @@ pub struct AuditReport {
     /// run before the null rows are written. Never part of the custody
     /// document.
     null_evidence: Vec<Value>,
+    /// Card W45-FB-ENGINE-PROGRESS-MEASURE (rule 44): the loop-measure rows
+    /// of a run that selected the property (`QCORE_LOOP_MEASURE_PROPERTY`),
+    /// in unit order. Never part of the custody document.
+    loop_measures: Vec<Value>,
     /// Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12n): each analysed
     /// unit's function-pointer member facts, in unit order, recorded only
     /// when a declaration invokes a member; folded over the run by
@@ -253,6 +257,7 @@ impl AuditReport {
             bounds_evidence: Vec::new(),
             null: Vec::new(),
             null_evidence: Vec::new(),
+            loop_measures: Vec::new(),
             callback_members: Vec::new(),
             member_prepass: None,
             contract_bundles: Ok(BTreeMap::new()),
@@ -502,6 +507,94 @@ impl AuditReport {
         self.bounds.push(row);
     }
 
+    /// Card W45-FB-ENGINE-PROGRESS-MEASURE (rule 44): one function's
+    /// loop-measure row.
+    pub(crate) fn record_loop_measures(&mut self, row: Value) {
+        self.loop_measures.push(row);
+    }
+
+    /// Card W45-FB-ENGINE-PROGRESS-MEASURE (rule 44): write the loop-measure
+    /// rows (JSON lines) and their tally beside them, when the run selected
+    /// the property. Each row carries the custody status the report's own
+    /// unit row publishes, read here after every fold, and never changes it:
+    /// the custody report is written elsewhere and never reads these rows.
+    pub fn write_loop_measure_selection(&self) -> Result<(), String> {
+        let Some(path) = std::env::var_os(crate::projection::LOOP_MEASURE_SELECTION) else {
+            return Ok(());
+        };
+        let path = std::path::PathBuf::from(path);
+        let mut custody: BTreeMap<(String, String, String), String> = BTreeMap::new();
+        for unit in &self.units {
+            let library = unit["library"].as_str().unwrap_or_default();
+            let file = unit["file"].as_str().unwrap_or_default();
+            for function in unit["functions"].as_array().into_iter().flatten() {
+                if let (Some(name), Some(status)) =
+                    (function["function"].as_str(), function["status"].as_str())
+                {
+                    custody.insert(
+                        (library.to_owned(), file.to_owned(), name.to_owned()),
+                        status.to_owned(),
+                    );
+                }
+            }
+        }
+        let mut lines = String::new();
+        let mut loops: BTreeMap<String, usize> = BTreeMap::new();
+        let mut refusals: BTreeMap<String, usize> = BTreeMap::new();
+        let mut kinds: BTreeMap<String, usize> = BTreeMap::new();
+        for row in &self.loop_measures {
+            let mut row = row.clone();
+            let key = (
+                row["library"].as_str().unwrap_or_default().to_owned(),
+                row["file"].as_str().unwrap_or_default().to_owned(),
+                row["function"].as_str().unwrap_or_default().to_owned(),
+            );
+            row["custody"] = custody
+                .get(&key)
+                .map_or(Value::Null, |status| Value::String(status.clone()));
+            for fact in row["loops"].as_array().into_iter().flatten() {
+                let outcome = if fact["measure"].is_object() {
+                    *kinds
+                        .entry(
+                            fact["measure"]["bound_kind"]
+                                .as_str()
+                                .unwrap_or("")
+                                .to_owned(),
+                        )
+                        .or_default() += 1;
+                    "measured"
+                } else {
+                    *refusals
+                        .entry(fact["refusal"].as_str().unwrap_or("unread").to_owned())
+                        .or_default() += 1;
+                    "refused"
+                };
+                *loops.entry(outcome.into()).or_default() += 1;
+            }
+            if row["error"].is_string() {
+                *loops.entry("functions-unread".into()).or_default() += 1;
+            }
+            lines.push_str(&serde_json::to_string(&row).map_err(|e| e.to_string())?);
+            lines.push('\n');
+        }
+        fs::write(&path, lines).map_err(|e| format!("could not write {}: {e}", path.display()))?;
+        let summary = json!({
+            "schema_version": 1,
+            "property": qcore_c_gateway::loop_measure::LOOP_MEASURE_PROPERTY,
+            "model_version": qcore_c_gateway::loop_measure::MODEL_VERSION,
+            "scope": "a bound fact per loop of every projected function (gateway rule 44): a checked measure for an admitted counted `for` loop, or a named refusal; recorded beside the custody status, which it never reads or changes; no progress verdict",
+            "functions": self.loop_measures.len(),
+            "loops": loops,
+            "measured_by_bound_kind": kinds,
+            "refused_by_reason": refusals,
+        });
+        let mut bytes = serde_json::to_vec_pretty(&summary).map_err(|e| e.to_string())?;
+        bytes.push(b'\n');
+        let summary_path = path.with_extension("summary.json");
+        fs::write(&summary_path, bytes)
+            .map_err(|e| format!("could not write {}: {e}", summary_path.display()))
+    }
+
     /// Card CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS: one unit's body
     /// evidence for bounds declarations.
     pub(crate) fn record_bounds_evidence(&mut self, unit: Value) {
@@ -636,6 +729,7 @@ impl AuditReport {
             bounds_evidence,
             null,
             null_evidence,
+            loop_measures,
             callback_members,
             member_prepass: _,
             contract_bundles: _,
@@ -657,6 +751,7 @@ impl AuditReport {
         self.bounds_evidence.extend(bounds_evidence);
         self.null.extend(null);
         self.null_evidence.extend(null_evidence);
+        self.loop_measures.extend(loop_measures);
         self.callback_members.extend(callback_members);
         for (category, count) in diagnostic_counts {
             *self.diagnostic_counts.entry(category).or_default() += count;
@@ -680,6 +775,7 @@ impl AuditReport {
             bounds_evidence,
             null,
             null_evidence,
+            loop_measures,
             callback_members,
             member_prepass,
             contract_bundles: _,
@@ -691,6 +787,12 @@ impl AuditReport {
             return Err(
                 "a checkpointed fragment carries no checker links (no pinned-route binding)".into(),
             );
+        }
+        // Card W45-FB-ENGINE-PROGRESS-MEASURE: a checkpoint carries no
+        // loop-measure rows, so a fragment holding some is refused rather
+        // than stored without them.
+        if !loop_measures.is_empty() {
+            return Err("a checkpointed fragment carries no loop-measure rows".into());
         }
         Ok(FragmentParts {
             units,
@@ -1206,6 +1308,7 @@ impl AuditReport {
             bounds_evidence: Vec::new(),
             null: Vec::new(),
             null_evidence: Vec::new(),
+            loop_measures: Vec::new(),
             callback_members: Vec::new(),
             member_prepass: None,
             contract_bundles: Ok(BTreeMap::new()),

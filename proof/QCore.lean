@@ -123,6 +123,7 @@ import QCore.ContractSupersession
 import QCore.ContractTipMode
 import QCore.ContractViewProjection
 import QCore.ControlFlow
+import QCore.CountedLoopMeasure
 import QCore.CountedUsers
 import QCore.CounterSource
 import QCore.CrossUnitReplayBudget

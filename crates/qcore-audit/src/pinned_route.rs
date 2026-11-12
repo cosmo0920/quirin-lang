@@ -727,6 +727,7 @@ pub fn run_with_checkpoints(
         report.record_contract_bundle(&contracts);
         report.write_with_revision_key(path, "fluent_bit_revision")?;
         report.write_bounds_selection()?;
+        report.write_loop_measure_selection()?;
         let null_rows = report.write_null_selection()?;
         report.write_outer_projection(&contracts, null_rows.as_deref())?;
         let (provider_results, native_results): (Vec<_>, Vec<_>) = native_results

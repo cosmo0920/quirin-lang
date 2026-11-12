@@ -123,10 +123,15 @@ const OUTPUT_SELECTIONS: [&str; 3] = [
 /// Variables a checkpoint cannot stand for: each makes a unit's analysis
 /// write a side output (or read an input) a reused group would not reproduce
 /// or the identity does not digest.
-const REFUSED: [(&str, &str); 5] = [
+const REFUSED: [(&str, &str); 6] = [
     (
         crate::projection::BOUNDS_SELECTION,
         "the bounds selection is not supported by pinned checkpoints yet (CORPUS-CHECKPOINT-BOUNDS-SELECTION); run without --checkpoint-dir",
+    ),
+    // Card W45-FB-ENGINE-PROGRESS-MEASURE (rule 44).
+    (
+        crate::projection::LOOP_MEASURE_SELECTION,
+        "a checkpoint carries no loop-measure rows, which a reused group would not write; run without --checkpoint-dir",
     ),
     (
         "QCORE_TYPED_PATH_PARITY",
