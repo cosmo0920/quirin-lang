@@ -1781,6 +1781,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [windows-c11-threads](windows-c11-threads/README.md) | Windows C11 thread emission |
 
+| [windows-ci-test-portability](windows-ci-test-portability/README.md) | WINDOWS-TEST-PORTABILITY: the first full Windows CI suite |
+
 | [windows-clang-fixtures](windows-clang-fixtures/README.md) | Windows Clang fixture type and line-ending repairs |
 
 | [windows-native-sockets-harness](windows-native-sockets-harness/README.md) | WINDOWS-NATIVE-SOCKETS-HARNESS — the wave-24 native runs, made runnable on Windows |

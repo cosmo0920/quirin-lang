@@ -1,8 +1,8 @@
 {
  "schema": "quirin-gate-scope/1",
  "source": "git diff",
- "base": "347340c22d8f1d9290109b5c98e0165c9b1f22c0",
- "head": "9efc2409cefd736d0f057eef7bc003c3b83dd669",
+ "base": "d07757712fac658dbb49ea6b832dc9eeb90bcb46",
+ "head": "408ec03f122be7e7785f66877dc50f44e495dd34",
  "committed": [
   "Cargo.lock",
   "compiler/Cargo.toml",
@@ -42,6 +42,7 @@
   "docs/agents/rules/34.md",
   "docs/agents/rules/43.md",
   "docs/development/increments/wave-48-part12.md",
+  "docs/reports/INDEX.md",
   "docs/reports/list-entry-release-identity/PREDICTION.md",
   "docs/reports/list-entry-release-identity/README.md",
   "docs/reports/list-entry-release-identity/artifacts/census-slice-before.json",
@@ -58,6 +59,9 @@
   "docs/reports/list-entry-release-identity/gate/clang-version.txt",
   "docs/reports/list-entry-release-identity/gate/tip-failed-tests.txt",
   "docs/reports/list-entry-release-identity/integration-amendments.json",
+  "docs/reports/list-entry-release-identity/integration/clang-version.txt",
+  "docs/reports/list-entry-release-identity/integration/gate-scope.json",
+  "docs/reports/list-entry-release-identity/integration/gate.json",
   "docs/reports/list-entry-release-identity/scripts/census.py",
   "docs/reports/list-entry-release-identity/scripts/compare.py",
   "docs/reports/list-entry-release-identity/scripts/null_tally.py",
@@ -77,16 +81,20 @@
  ],
  "uncommitted": [
   ".claude/worktrees/agent-a2c467a15d6a29eec/",
+  ".claude/worktrees/agent-a3aab7b4b70297610/",
   ".claude/worktrees/agent-a8061cfc1420021ff/",
   ".claude/worktrees/agent-aa027370e3c150ef3/",
-  ".claude/worktrees/agent-aacc9447fb39c9e9e/"
+  ".claude/worktrees/agent-aacc9447fb39c9e9e/",
+  ".claude/worktrees/ci-fix-windows-examples/"
  ],
  "scope": {
   "paths": [
    ".claude/worktrees/agent-a2c467a15d6a29eec/",
+   ".claude/worktrees/agent-a3aab7b4b70297610/",
    ".claude/worktrees/agent-a8061cfc1420021ff/",
    ".claude/worktrees/agent-aa027370e3c150ef3/",
    ".claude/worktrees/agent-aacc9447fb39c9e9e/",
+   ".claude/worktrees/ci-fix-windows-examples/",
    "Cargo.lock",
    "compiler/Cargo.toml",
    "compiler/tests/contract_loader.rs",
@@ -125,6 +133,7 @@
    "docs/agents/rules/34.md",
    "docs/agents/rules/43.md",
    "docs/development/increments/wave-48-part12.md",
+   "docs/reports/INDEX.md",
    "docs/reports/list-entry-release-identity/PREDICTION.md",
    "docs/reports/list-entry-release-identity/README.md",
    "docs/reports/list-entry-release-identity/artifacts/census-slice-before.json",
@@ -141,6 +150,9 @@
    "docs/reports/list-entry-release-identity/gate/clang-version.txt",
    "docs/reports/list-entry-release-identity/gate/tip-failed-tests.txt",
    "docs/reports/list-entry-release-identity/integration-amendments.json",
+   "docs/reports/list-entry-release-identity/integration/clang-version.txt",
+   "docs/reports/list-entry-release-identity/integration/gate-scope.json",
+   "docs/reports/list-entry-release-identity/integration/gate.json",
    "docs/reports/list-entry-release-identity/scripts/census.py",
    "docs/reports/list-entry-release-identity/scripts/compare.py",
    "docs/reports/list-entry-release-identity/scripts/null_tally.py",
@@ -162,6 +174,9 @@
    ".claude/worktrees/agent-a2c467a15d6a29eec/": [
     "unattributed"
    ],
+   ".claude/worktrees/agent-a3aab7b4b70297610/": [
+    "unattributed"
+   ],
    ".claude/worktrees/agent-a8061cfc1420021ff/": [
     "unattributed"
    ],
@@ -169,6 +184,9 @@
     "unattributed"
    ],
    ".claude/worktrees/agent-aacc9447fb39c9e9e/": [
+    "unattributed"
+   ],
+   ".claude/worktrees/ci-fix-windows-examples/": [
     "unattributed"
    ],
    "Cargo.lock": [
@@ -532,6 +550,9 @@
    "docs/development/increments/wave-48-part12.md": [
     "class prose"
    ],
+   "docs/reports/INDEX.md": [
+    "class prose"
+   ],
    "docs/reports/list-entry-release-identity/PREDICTION.md": [
     "class prose"
    ],
@@ -583,6 +604,15 @@
     "class prose"
    ],
    "docs/reports/list-entry-release-identity/integration-amendments.json": [
+    "class prose"
+   ],
+   "docs/reports/list-entry-release-identity/integration/clang-version.txt": [
+    "class prose"
+   ],
+   "docs/reports/list-entry-release-identity/integration/gate-scope.json": [
+    "class prose"
+   ],
+   "docs/reports/list-entry-release-identity/integration/gate.json": [
     "class prose"
    ],
    "docs/reports/list-entry-release-identity/scripts/census.py": [
@@ -705,16 +735,16 @@
     "read by qcore-contract (expansion, crates/qcore-contract/tests/contract_views.rs:33) in qcore-contract::test::contract_views",
     "read by qcore-compiler (expansion, compiler/tests/contract_view_census.rs:230) in qcore-compiler::test::contract_view_census",
     "read by qcore-compiler (expansion, compiler/tests/support/contract_corpus.rs:39) in qcore-compiler::test::contract_inherit_adoption, qcore-compiler::test::contract_inherit_parity, qcore-compiler::test::contract_loader, qcore-compiler::test::contract_view_census, qcore-compiler::test::qcore_contract_corpus",
-    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/units.rs:214) in quirin-audit-plugin-measure::test::units",
-    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/units.rs:214) in quirin-audit-plugin-measure::test::units",
-    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/units.rs:214) in quirin-audit-plugin-measure::test::units",
-    "read by qcore-audit (expansion, crates/qcore-audit/tests/current_cli.rs:1347) in qcore-audit::test::current_cli",
+    "read by qcore-audit (expansion, crates/qcore-audit/tests/current_cli.rs:1345) in qcore-audit::test::current_cli",
     "read by qcore-audit (expansion, crates/qcore-audit/src/prepare.rs:351)",
     "read by qcore-verification (expansion, crates/qcore-verification/src/cycle18_composition.rs:1224) in qcore-verification::lib::qcore_verification",
     "read by qcore-verification (expansion, crates/qcore-verification/src/monkey_wait_projection.rs:760) in qcore-verification::lib::qcore_verification",
@@ -815,10 +845,10 @@
     "read by qcore-provider-conformance (expansion, crates/qcore-verification/tests/fixtures/memory_close_composition.rs:112) in qcore-provider-conformance::test::filesystem_chunk_close_composition_capability, qcore-provider-conformance::test::memory_close_composition_capability, qcore-provider-conformance::test::unsupported_close_composition_capability",
     "read by qcore-provider-conformance (expansion, crates/qcore-verification/tests/fixtures/teardown_source.rs:73) in qcore-provider-conformance::test::teardown_capability",
     "read by qcore-provider-conformance (expansion, providers/conformance/tests/packages.rs:381) in qcore-provider-conformance::test::packages",
-    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/units.rs:214) in quirin-audit-plugin-measure::test::units",
-    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/units.rs:214) in quirin-audit-plugin-measure::test::units",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/units.rs:220) in quirin-audit-plugin-measure::test::units",
@@ -829,10 +859,10 @@
     "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4003) in qcore-compiler::test::ct_corpus",
     "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4040) in qcore-compiler::test::ct_corpus",
     "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4002) in qcore-compiler::test::ct_corpus",
-    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/units.rs:214) in quirin-audit-plugin-measure::test::units",
-    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/units.rs:214) in quirin-audit-plugin-measure::test::units"
    ],
@@ -886,16 +916,16 @@
     "read by qcore-contract (expansion, crates/qcore-contract/tests/contract_views.rs:33) in qcore-contract::test::contract_views",
     "read by qcore-compiler (expansion, compiler/tests/contract_view_census.rs:230) in qcore-compiler::test::contract_view_census",
     "read by qcore-compiler (expansion, compiler/tests/support/contract_corpus.rs:39) in qcore-compiler::test::contract_inherit_adoption, qcore-compiler::test::contract_inherit_parity, qcore-compiler::test::contract_loader, qcore-compiler::test::contract_view_census, qcore-compiler::test::qcore_contract_corpus",
-    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/units.rs:214) in quirin-audit-plugin-measure::test::units",
-    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/units.rs:214) in quirin-audit-plugin-measure::test::units",
-    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/units.rs:214) in quirin-audit-plugin-measure::test::units",
-    "read by qcore-audit (expansion, crates/qcore-audit/tests/current_cli.rs:1347) in qcore-audit::test::current_cli",
+    "read by qcore-audit (expansion, crates/qcore-audit/tests/current_cli.rs:1345) in qcore-audit::test::current_cli",
     "read by qcore-audit (expansion, crates/qcore-audit/src/prepare.rs:351)",
     "read by qcore-verification (expansion, crates/qcore-verification/src/cycle18_composition.rs:1224) in qcore-verification::lib::qcore_verification",
     "read by qcore-verification (expansion, crates/qcore-verification/src/monkey_wait_projection.rs:760) in qcore-verification::lib::qcore_verification",
@@ -996,10 +1026,10 @@
     "read by qcore-provider-conformance (expansion, crates/qcore-verification/tests/fixtures/memory_close_composition.rs:112) in qcore-provider-conformance::test::filesystem_chunk_close_composition_capability, qcore-provider-conformance::test::memory_close_composition_capability, qcore-provider-conformance::test::unsupported_close_composition_capability",
     "read by qcore-provider-conformance (expansion, crates/qcore-verification/tests/fixtures/teardown_source.rs:73) in qcore-provider-conformance::test::teardown_capability",
     "read by qcore-provider-conformance (expansion, providers/conformance/tests/packages.rs:381) in qcore-provider-conformance::test::packages",
-    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/units.rs:214) in quirin-audit-plugin-measure::test::units",
-    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/units.rs:214) in quirin-audit-plugin-measure::test::units",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/units.rs:220) in quirin-audit-plugin-measure::test::units",
@@ -1010,10 +1040,10 @@
     "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4003) in qcore-compiler::test::ct_corpus",
     "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4040) in qcore-compiler::test::ct_corpus",
     "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4002) in qcore-compiler::test::ct_corpus",
-    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/units.rs:214) in quirin-audit-plugin-measure::test::units",
-    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/units.rs:214) in quirin-audit-plugin-measure::test::units"
    ],
@@ -1135,19 +1165,19 @@
     "read by qcore-provider-conformance (expansion, crates/qcore-verification/tests/fixtures/memory_close_composition.rs:112) in qcore-provider-conformance::test::filesystem_chunk_close_composition_capability, qcore-provider-conformance::test::memory_close_composition_capability, qcore-provider-conformance::test::unsupported_close_composition_capability",
     "read by qcore-provider-conformance (expansion, crates/qcore-verification/tests/fixtures/teardown_source.rs:73) in qcore-provider-conformance::test::teardown_capability",
     "read by qcore-provider-conformance (expansion, providers/conformance/tests/packages.rs:381) in qcore-provider-conformance::test::packages",
-    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/units.rs:214) in quirin-audit-plugin-measure::test::units",
-    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/units.rs:214) in quirin-audit-plugin-measure::test::units",
-    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/units.rs:214) in quirin-audit-plugin-measure::test::units",
-    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/units.rs:214) in quirin-audit-plugin-measure::test::units",
-    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/units.rs:214) in quirin-audit-plugin-measure::test::units",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/units.rs:220) in quirin-audit-plugin-measure::test::units",
@@ -1159,13 +1189,13 @@
     "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4003) in qcore-compiler::test::ct_corpus",
     "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4040) in qcore-compiler::test::ct_corpus",
     "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4002) in qcore-compiler::test::ct_corpus",
-    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/units.rs:214) in quirin-audit-plugin-measure::test::units",
-    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/units.rs:214) in quirin-audit-plugin-measure::test::units",
-    "read by qcore-audit (expansion, crates/qcore-audit/tests/current_cli.rs:1347) in qcore-audit::test::current_cli",
+    "read by qcore-audit (expansion, crates/qcore-audit/tests/current_cli.rs:1345) in qcore-audit::test::current_cli",
     "read by qcore-audit (expansion, crates/qcore-audit/src/prepare.rs:351)",
     "read by qcore-verification (expansion, crates/qcore-verification/src/cycle18_composition.rs:1224) in qcore-verification::lib::qcore_verification",
     "read by qcore-verification (expansion, crates/qcore-verification/src/monkey_wait_projection.rs:760) in qcore-verification::lib::qcore_verification",
@@ -1317,19 +1347,19 @@
     "read by qcore-provider-conformance (expansion, crates/qcore-verification/tests/fixtures/memory_close_composition.rs:112) in qcore-provider-conformance::test::filesystem_chunk_close_composition_capability, qcore-provider-conformance::test::memory_close_composition_capability, qcore-provider-conformance::test::unsupported_close_composition_capability",
     "read by qcore-provider-conformance (expansion, crates/qcore-verification/tests/fixtures/teardown_source.rs:73) in qcore-provider-conformance::test::teardown_capability",
     "read by qcore-provider-conformance (expansion, providers/conformance/tests/packages.rs:381) in qcore-provider-conformance::test::packages",
-    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/units.rs:214) in quirin-audit-plugin-measure::test::units",
-    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/units.rs:214) in quirin-audit-plugin-measure::test::units",
-    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/units.rs:214) in quirin-audit-plugin-measure::test::units",
-    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/units.rs:214) in quirin-audit-plugin-measure::test::units",
-    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/units.rs:214) in quirin-audit-plugin-measure::test::units",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/units.rs:220) in quirin-audit-plugin-measure::test::units",
@@ -1341,13 +1371,13 @@
     "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4003) in qcore-compiler::test::ct_corpus",
     "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4040) in qcore-compiler::test::ct_corpus",
     "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4002) in qcore-compiler::test::ct_corpus",
-    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/units.rs:214) in quirin-audit-plugin-measure::test::units",
-    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/units.rs:214) in quirin-audit-plugin-measure::test::units",
-    "read by qcore-audit (expansion, crates/qcore-audit/tests/current_cli.rs:1347) in qcore-audit::test::current_cli",
+    "read by qcore-audit (expansion, crates/qcore-audit/tests/current_cli.rs:1345) in qcore-audit::test::current_cli",
     "read by qcore-audit (expansion, crates/qcore-audit/src/prepare.rs:351)",
     "read by qcore-verification (expansion, crates/qcore-verification/src/cycle18_composition.rs:1224) in qcore-verification::lib::qcore_verification",
     "read by qcore-verification (expansion, crates/qcore-verification/src/monkey_wait_projection.rs:760) in qcore-verification::lib::qcore_verification",
@@ -1505,19 +1535,19 @@
     "read by qcore-provider-conformance (expansion, crates/qcore-verification/tests/fixtures/memory_close_composition.rs:112) in qcore-provider-conformance::test::filesystem_chunk_close_composition_capability, qcore-provider-conformance::test::memory_close_composition_capability, qcore-provider-conformance::test::unsupported_close_composition_capability",
     "read by qcore-provider-conformance (expansion, crates/qcore-verification/tests/fixtures/teardown_source.rs:73) in qcore-provider-conformance::test::teardown_capability",
     "read by qcore-provider-conformance (expansion, providers/conformance/tests/packages.rs:381) in qcore-provider-conformance::test::packages",
-    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/units.rs:214) in quirin-audit-plugin-measure::test::units",
-    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/units.rs:214) in quirin-audit-plugin-measure::test::units",
-    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/units.rs:214) in quirin-audit-plugin-measure::test::units",
-    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/units.rs:214) in quirin-audit-plugin-measure::test::units",
-    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/units.rs:214) in quirin-audit-plugin-measure::test::units",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/units.rs:220) in quirin-audit-plugin-measure::test::units",
@@ -1529,13 +1559,13 @@
     "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4003) in qcore-compiler::test::ct_corpus",
     "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4040) in qcore-compiler::test::ct_corpus",
     "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4002) in qcore-compiler::test::ct_corpus",
-    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/units.rs:214) in quirin-audit-plugin-measure::test::units",
-    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
     "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/units.rs:214) in quirin-audit-plugin-measure::test::units",
-    "read by qcore-audit (expansion, crates/qcore-audit/tests/current_cli.rs:1347) in qcore-audit::test::current_cli",
+    "read by qcore-audit (expansion, crates/qcore-audit/tests/current_cli.rs:1345) in qcore-audit::test::current_cli",
     "read by qcore-audit (expansion, crates/qcore-audit/src/prepare.rs:351)",
     "read by qcore-verification (expansion, crates/qcore-verification/src/cycle18_composition.rs:1224) in qcore-verification::lib::qcore_verification",
     "read by qcore-verification (expansion, crates/qcore-verification/src/monkey_wait_projection.rs:760) in qcore-verification::lib::qcore_verification",
@@ -1673,75 +1703,75 @@
    ],
    "quirin-audit-plugin-measure": [
     "owns crates/quirin-audit-plugin-measure/Cargo.toml",
-    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contract-inventory.lock: providers/quirin-provider-fluent-bit/contract-inventory.lock (crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contract-inventory.lock: providers/quirin-provider-fluent-bit/contract-inventory.lock (crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "reads contract/evaluations/** (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contract-inventory.lock: providers/quirin-provider-fluent-bit/contract-inventory.lock (crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
-    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contract-inventory.lock: providers/quirin-provider-fluent-bit/contract-inventory.lock (crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contract-inventory.lock: providers/quirin-provider-fluent-bit/contract-inventory.lock (crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "reads contract/evaluations/** (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contract-inventory.lock: providers/quirin-provider-fluent-bit/contract-inventory.lock (crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
-    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contract-inventory.lock: providers/quirin-provider-fluent-bit/contract-inventory.lock (crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contract-inventory.lock: providers/quirin-provider-fluent-bit/contract-inventory.lock (crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "reads contract/evaluations/** (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contract-inventory.lock: providers/quirin-provider-fluent-bit/contract-inventory.lock (crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
-    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contract-inventory.lock: providers/quirin-provider-fluent-bit/contract-inventory.lock (crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contract-inventory.lock: providers/quirin-provider-fluent-bit/contract-inventory.lock (crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "reads contract/evaluations/** (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contract-inventory.lock: providers/quirin-provider-fluent-bit/contract-inventory.lock (crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
-    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contract-inventory.lock: providers/quirin-provider-fluent-bit/contract-inventory.lock (crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contract-inventory.lock: providers/quirin-provider-fluent-bit/contract-inventory.lock (crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "reads contract/evaluations/** (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contract-inventory.lock: providers/quirin-provider-fluent-bit/contract-inventory.lock (crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
-    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contract-inventory.lock: providers/quirin-provider-fluent-bit/contract-inventory.lock (crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contract-inventory.lock: providers/quirin-provider-fluent-bit/contract-inventory.lock (crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "reads contract/evaluations/** (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contract-inventory.lock: providers/quirin-provider-fluent-bit/contract-inventory.lock (crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
-    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contract-inventory.lock: providers/quirin-provider-fluent-bit/contract-inventory.lock (crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contract-inventory.lock: providers/quirin-provider-fluent-bit/contract-inventory.lock (crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "reads contract/evaluations/** (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contract-inventory.lock: providers/quirin-provider-fluent-bit/contract-inventory.lock (crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
-    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts.lock: providers/quirin-provider-fluent-bit/contracts.lock (crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts.lock: providers/quirin-provider-fluent-bit/contracts.lock (crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "reads contract/evaluations/** (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts.lock: providers/quirin-provider-fluent-bit/contracts.lock (crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
-    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts.lock: providers/quirin-provider-fluent-bit/contracts.lock (crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts.lock: providers/quirin-provider-fluent-bit/contracts.lock (crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "reads contract/evaluations/** (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts.lock: providers/quirin-provider-fluent-bit/contracts.lock (crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
-    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts.lock: providers/quirin-provider-fluent-bit/contracts.lock (crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts.lock: providers/quirin-provider-fluent-bit/contracts.lock (crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "reads contract/evaluations/** (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts.lock: providers/quirin-provider-fluent-bit/contracts.lock (crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
-    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts.lock: providers/quirin-provider-fluent-bit/contracts.lock (crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts.lock: providers/quirin-provider-fluent-bit/contracts.lock (crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "reads contract/evaluations/** (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts.lock: providers/quirin-provider-fluent-bit/contracts.lock (crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
-    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts.lock: providers/quirin-provider-fluent-bit/contracts.lock (crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts.lock: providers/quirin-provider-fluent-bit/contracts.lock (crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "reads contract/evaluations/** (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts.lock: providers/quirin-provider-fluent-bit/contracts.lock (crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
-    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts.lock: providers/quirin-provider-fluent-bit/contracts.lock (crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts.lock: providers/quirin-provider-fluent-bit/contracts.lock (crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "reads contract/evaluations/** (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts.lock: providers/quirin-provider-fluent-bit/contracts.lock (crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
-    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts.lock: providers/quirin-provider-fluent-bit/contracts.lock (crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts.lock: providers/quirin-provider-fluent-bit/contracts.lock (crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "reads contract/evaluations/** (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts.lock: providers/quirin-provider-fluent-bit/contracts.lock (crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
-    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv (crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv (crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "reads contract/evaluations/** (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv (crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
-    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv (crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv (crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "reads contract/evaluations/** (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv (crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
-    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv (crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv (crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "reads contract/evaluations/** (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv (crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
-    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv (crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv (crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "reads contract/evaluations/** (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv (crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
-    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv (crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv (crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "reads contract/evaluations/** (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv (crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
-    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv (crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv (crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "reads contract/evaluations/** (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv (crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
-    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv (crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv (crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "reads contract/evaluations/** (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv (crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
-    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv (crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv (crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "reads contract/evaluations/** (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv (crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
-    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv (crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv (crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "reads contract/evaluations/** (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv (crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
-    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv (crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv (crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "reads contract/evaluations/** (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv (crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
-    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv (crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv (crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "reads contract/evaluations/** (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv (crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
-    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv (crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv (crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "reads contract/evaluations/** (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv (crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
-    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv (crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv (crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "reads contract/evaluations/** (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv (crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
-    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv (crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv (crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "reads contract/evaluations/** (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv (crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
-    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv (crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv (crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "reads contract/evaluations/** (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv (crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
-    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv (crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv (crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "reads contract/evaluations/** (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv (crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
-    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv (crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv (crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "reads contract/evaluations/** (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv (crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
-    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv (crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv (crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "reads contract/evaluations/** (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv (crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
-    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv (crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv (crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "reads contract/evaluations/** (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv (crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
-    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv (crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv (crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "reads contract/evaluations/** (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv (crates/quirin-audit-plugin-measure/src/lib.rs:1144)",
-    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv (crates/quirin-audit-plugin-measure/src/inputs.rs:314)",
+    "reads contract/evaluations/**/*.json (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv (crates/quirin-audit-plugin-measure/src/inputs.rs:320)",
     "reads contract/evaluations/** (walker of contract/evaluations), which lists providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv: providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv (crates/quirin-audit-plugin-measure/src/lib.rs:1144)"
    ],
    "quirin-provider-fluent-bit": [
@@ -1807,9 +1837,11 @@
   "full_reasons": [
    "requested with --full",
    ".claude/worktrees/agent-a2c467a15d6a29eec/: no crate owns or reads it and it is not prose, Python, Lean or provider tooling, or a Python-checked record (fail-closed)",
+   ".claude/worktrees/agent-a3aab7b4b70297610/: no crate owns or reads it and it is not prose, Python, Lean or provider tooling, or a Python-checked record (fail-closed)",
    ".claude/worktrees/agent-a8061cfc1420021ff/: no crate owns or reads it and it is not prose, Python, Lean or provider tooling, or a Python-checked record (fail-closed)",
    ".claude/worktrees/agent-aa027370e3c150ef3/: no crate owns or reads it and it is not prose, Python, Lean or provider tooling, or a Python-checked record (fail-closed)",
    ".claude/worktrees/agent-aacc9447fb39c9e9e/: no crate owns or reads it and it is not prose, Python, Lean or provider tooling, or a Python-checked record (fail-closed)",
+   ".claude/worktrees/ci-fix-windows-examples/: no crate owns or reads it and it is not prose, Python, Lean or provider tooling, or a Python-checked record (fail-closed)",
    "Cargo.lock: workspace manifest or toolchain",
    "the diff reaches qcore-c-gateway",
    "the diff reaches qcore-contract",
@@ -1964,7 +1996,7 @@
     "/usr/bin/python3",
     "/home/cosmo/Documents/GitHub/quirin-lang/scripts/run_test_binaries.py",
     "--log-dir",
-    "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r8/gate-r9/rust-suite"
+    "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r9/gate-merge-d0777/rust-suite"
    ],
    "slot": "rust-suite"
   },
@@ -2027,7 +2059,7 @@
     "providers/package.py",
     "build",
     "--output",
-    "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r8/gate-r9/provider-packages"
+    "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r9/gate-merge-d0777/provider-packages"
    ],
    "slot": null
   },
@@ -2037,7 +2069,7 @@
     "/usr/bin/python3",
     "/home/cosmo/Documents/GitHub/quirin-lang/scripts/gate_scope.py",
     "--verify-packages",
-    "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r8/gate-r9/provider-packages"
+    "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r9/gate-merge-d0777/provider-packages"
    ],
    "slot": null
   },
@@ -2047,7 +2079,7 @@
     "/usr/bin/python3",
     "providers/package.py",
     "verify",
-    "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r8/gate-r9/provider-packages/qcore.libevent"
+    "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r9/gate-merge-d0777/provider-packages/qcore.libevent"
    ],
    "slot": null
   },
@@ -2098,7 +2130,7 @@
  "slots": true,
  "landing": true,
  "card_base": null,
- "started": "20261112T120404Z",
+ "started": "20261112T153650Z",
  "ran": true,
  "steps": [
   {
@@ -2113,7 +2145,7 @@
    ],
    "exit": 0,
    "seconds": 0.0,
-   "log": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r8/gate-r9/submodules.log",
+   "log": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r9/gate-merge-d0777/submodules.log",
    "counts": {
     "submodules": 1,
     "not_checked_out_or_moved": []
@@ -2129,8 +2161,8 @@
     "--check"
    ],
    "exit": 0,
-   "seconds": 4.1,
-   "log": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r8/gate-r9/fmt.log",
+   "seconds": 4.0,
+   "log": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r9/gate-merge-d0777/fmt.log",
    "counts": {}
   },
   {
@@ -2144,8 +2176,8 @@
     "warnings"
    ],
    "exit": 0,
-   "seconds": 30.8,
-   "log": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r8/gate-r9/clippy.log",
+   "seconds": 2.6,
+   "log": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r9/gate-merge-d0777/clippy.log",
    "counts": {}
   },
   {
@@ -2155,30 +2187,30 @@
     "/home/cosmo/Documents/GitHub/quirin-lang/scripts/gate_slot.py",
     "rust-suite",
     "--receipt",
-    "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r8/gate-r9/slots/rust-suite.json",
+    "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r9/gate-merge-d0777/slots/rust-suite.json",
     "--",
     "/usr/bin/python3",
     "/home/cosmo/Documents/GitHub/quirin-lang/scripts/run_test_binaries.py",
     "--log-dir",
-    "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r8/gate-r9/rust-suite"
+    "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r9/gate-merge-d0777/rust-suite"
    ],
-   "exit": 101,
-   "seconds": 785.2,
-   "log": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r8/gate-r9/rust-suite.log",
+   "exit": 0,
+   "seconds": 764.2,
+   "log": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r9/gate-merge-d0777/rust-suite.log",
    "counts": {
     "units": 630,
-    "passed": 9427,
-    "failed": 3,
+    "passed": 9431,
+    "failed": 0,
     "ignored": 17,
     "measured": 0,
     "filtered": 142,
     "summaries": 672,
     "packages": null,
     "targets": null,
-    "summary": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r8/gate-r9/rust-suite/summary.json",
-    "ok": false
+    "summary": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r9/gate-merge-d0777/rust-suite/summary.json",
+    "ok": true
    },
-   "slot_receipt": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r8/gate-r9/slots/rust-suite.json"
+   "slot_receipt": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r9/gate-merge-d0777/slots/rust-suite.json"
   },
   {
    "name": "probe-reevaluation_probe",
@@ -2196,7 +2228,7 @@
    ],
    "exit": 0,
    "seconds": 0.2,
-   "log": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r8/gate-r9/probe-reevaluation_probe.log",
+   "log": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r9/gate-merge-d0777/probe-reevaluation_probe.log",
    "counts": {}
   },
   {
@@ -2214,8 +2246,8 @@
     "reevaluation_followup"
    ],
    "exit": 0,
-   "seconds": 0.5,
-   "log": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r8/gate-r9/probe-reevaluation_followup.log",
+   "seconds": 0.4,
+   "log": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r9/gate-merge-d0777/probe-reevaluation_followup.log",
    "counts": {}
   },
   {
@@ -2225,18 +2257,18 @@
     "/home/cosmo/Documents/GitHub/quirin-lang/scripts/gate_slot.py",
     "lean",
     "--receipt",
-    "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r8/gate-r9/slots/lean.json",
+    "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r9/gate-merge-d0777/slots/lean.json",
     "--",
     "/usr/bin/python3",
     "/home/cosmo/Documents/GitHub/quirin-lang/scripts/check_lean_audits.py"
    ],
    "exit": 0,
-   "seconds": 11.0,
-   "log": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r8/gate-r9/lean.log",
+   "seconds": 10.4,
+   "log": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r9/gate-merge-d0777/lean.log",
    "counts": {
     "audits": 429
    },
-   "slot_receipt": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r8/gate-r9/slots/lean.json"
+   "slot_receipt": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r9/gate-merge-d0777/slots/lean.json"
   },
   {
    "name": "python",
@@ -2248,13 +2280,13 @@
     "-s",
     "scripts/tests"
    ],
-   "exit": 1,
-   "seconds": 155.8,
-   "log": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r8/gate-r9/python.log",
+   "exit": 0,
+   "seconds": 156.4,
+   "log": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r9/gate-merge-d0777/python.log",
    "counts": {
-    "tests": 756,
+    "tests": 757,
     "skipped": 0,
-    "ok": false
+    "ok": true
    }
   },
   {
@@ -2264,11 +2296,11 @@
     "providers/package.py",
     "build",
     "--output",
-    "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r8/gate-r9/provider-packages"
+    "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r9/gate-merge-d0777/provider-packages"
    ],
    "exit": 0,
-   "seconds": 161.7,
-   "log": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r8/gate-r9/provider-package-build.log",
+   "seconds": 144.8,
+   "log": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r9/gate-merge-d0777/provider-package-build.log",
    "counts": {}
   },
   {
@@ -2277,11 +2309,11 @@
     "/usr/bin/python3",
     "/home/cosmo/Documents/GitHub/quirin-lang/scripts/gate_scope.py",
     "--verify-packages",
-    "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r8/gate-r9/provider-packages"
+    "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r9/gate-merge-d0777/provider-packages"
    ],
    "exit": 0,
-   "seconds": 0.8,
-   "log": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r8/gate-r9/provider-package-verify-all.log",
+   "seconds": 0.9,
+   "log": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r9/gate-merge-d0777/provider-package-verify-all.log",
    "counts": {}
   },
   {
@@ -2290,11 +2322,11 @@
     "/usr/bin/python3",
     "providers/package.py",
     "verify",
-    "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r8/gate-r9/provider-packages/qcore.libevent"
+    "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r9/gate-merge-d0777/provider-packages/qcore.libevent"
    ],
    "exit": 0,
    "seconds": 0.1,
-   "log": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r8/gate-r9/provider-package-verify.log",
+   "log": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r9/gate-merge-d0777/provider-package-verify.log",
    "counts": {}
   },
   {
@@ -2304,7 +2336,7 @@
     "/home/cosmo/Documents/GitHub/quirin-lang/scripts/gate_slot.py",
     "rust-suite",
     "--receipt",
-    "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r8/gate-r9/slots/provider-test.json",
+    "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r9/gate-merge-d0777/slots/provider-test.json",
     "--",
     "cargo",
     "test",
@@ -2315,8 +2347,8 @@
     "--offline"
    ],
    "exit": 0,
-   "seconds": 2230.8,
-   "log": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r8/gate-r9/provider-test.log",
+   "seconds": 2173.7,
+   "log": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r9/gate-merge-d0777/provider-test.log",
    "counts": {
     "summaries": 43,
     "passed": 133,
@@ -2325,7 +2357,7 @@
     "measured": 0,
     "filtered": 0
    },
-   "slot_receipt": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r8/gate-r9/slots/provider-test.json"
+   "slot_receipt": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r9/gate-merge-d0777/slots/provider-test.json"
   },
   {
    "name": "provider-fmt",
@@ -2340,7 +2372,7 @@
    ],
    "exit": 0,
    "seconds": 4.2,
-   "log": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r8/gate-r9/provider-fmt.log",
+   "log": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r9/gate-merge-d0777/provider-fmt.log",
    "counts": {}
   },
   {
@@ -2359,11 +2391,11 @@
     "warnings"
    ],
    "exit": 0,
-   "seconds": 24.2,
-   "log": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r8/gate-r9/provider-clippy.log",
+   "seconds": 1.2,
+   "log": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r9/gate-merge-d0777/provider-clippy.log",
    "counts": {}
   }
  ],
- "ok": false,
- "finished": "20261112T130054Z"
+ "ok": true,
+ "finished": "20261112T163113Z"
 }

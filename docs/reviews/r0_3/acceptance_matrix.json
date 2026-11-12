@@ -6876,10 +6876,10 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Landing integrate/r9 (base main 347340c22, then main 73c39ffcf merged; merges LIST-ENTRY-RELEASE-IDENTITY b06d36ecf). Full standing gate via scripts/gate_scope.py --base main --full --landing on 9efc2409c (private/integrate-r8/gate-r9, raw record beside this file as gate-scope.json), Clang and Lean borrowed from an unpacked private toolchain. Rust 630 units / 672 summaries: 9427 passed, 3 failed, 17 ignored; the 3 are qcore-compiler task_route_tsan, host-only (ThreadSanitizer cannot symbolize with the unpacked LLVM 21), identical at base. Lean 429 audits 0; fmt, Clippy, both reevaluation examples 0; provider package build/verify 0, provider Rust 133 passed / 0 failed / 1 ignored, provider fmt/Clippy 0. Python 756 with 2 failures, both the stale derived matrix dimensions this regeneration repairs. Windows-target clippy and the indirect-census clippy also exit 0 on the merged tree. The later merge of main adds only the two Windows example build scripts and an increment paragraph, which no gate step reads. No native measurement on this host: the card's moves (system +4, slice +1, corpus +2 Safe, two corpus moves unpredicted and attributed in its report) come from the card's own preparations; land.py publish is owed.",
-  "workspace_tests": 9427,
+  "note": "Landing integrate/r9 (base main 347340c22; main 73c39ffcf and then d07757712, the WINDOWS-TEST-PORTABILITY and CI repairs, merged at 408ec03f1; merges LIST-ENTRY-RELEASE-IDENTITY b06d36ecf). Full standing gate via scripts/gate_scope.py --base main --full --landing on 408ec03f1 (private/integrate-r9/gate-merge-d0777, raw record beside this file as gate-scope.json), Clang and Lean borrowed from an unpacked private toolchain, with the host's llvm-21 package now installed. Every step exits 0: Rust 630 units / 672 summaries, 9431 passed, 0 failed, 17 ignored (task_route_tsan now symbolizes and passes on this host); Lean 429 audits; fmt, Clippy, both reevaluation examples; provider package build/verify, provider Rust 133 passed / 0 failed / 1 ignored, provider fmt/Clippy; Python 757. No native measurement on this host: the card's moves (system +4, slice +1, corpus +2 Safe, two corpus moves unpredicted and attributed in its report) come from the card's own preparations; land.py publish is owed.",
+  "workspace_tests": 9431,
   "provider_tests": 133,
-  "python_evidence_validator_tests": 756,
+  "python_evidence_validator_tests": 757,
   "lean_audits": 429,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
@@ -7316,7 +7316,7 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "full landing gate: every step 0 except Rust (3 host-only task_route_tsan symbolization failures, identical at base) and Python (2 stale-matrix failures repaired by this regeneration)",
+  "standing_gate": "full landing gate: every step exits 0",
   "full_language_conformance": false,
   "measurement_provenance": "integrator_supplied (docs/reports/list-entry-release-identity/integration/gate.json)"
  },
