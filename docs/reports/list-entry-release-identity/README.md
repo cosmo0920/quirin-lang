@@ -216,9 +216,39 @@ was read:
   fail-closed exchange: no row's status moves on it, and the pre-existing
   provisional Unsafe `flb_output_task_flush` only gains this leaf.
 
-**Arbiter.** `quirin-audit measure --declared` (base `rev:74105dd0e`, tip
-`rev:<measured tip>`, the three routes of [inputs.json](artifacts/inputs.json)):
-section 6a, filled from the run's `native-comparison.json`.
+**Arbiter.** `quirin-audit measure --declared PREDICTION.md`, built from this
+card's tip (`target/release`, measure plugin `3ca75e37…`), over the three
+routes of [inputs.json](artifacts/inputs.json). The host refuses user
+namespaces (`unshare: write failed /proc/self/uid_map`), so a `rev:` side
+cannot be built; both sides are checkout directories instead: `git archive`
+exports of `74105dd0e` (base) and `f4057708f` (tip, the measured code; later
+commits change only records) under worktree-private `private/{base,tip}-src`,
+each built in place by the tool, with the `third_party/libevent` submodule a
+clone at its pinned `d82464a2`. One measurement-driver adaptation in both
+exports, disclosed: `scripts/run_pinned_audit.py` hard-codes
+`QCORE_CLANG=/usr/bin/clang`, which this host does not have; both exports
+point it at the extracted Clang 21.1.8 instead (the compile databases already
+name that driver). Earlier attempts, kept as evidence of what failed:
+`measure/arbiter-1` (`rev:` sides, the namespace refusal), `arbiter-2` (the
+tip side was the live worktree, whose records changed during the run, so its
+routes exit 101; the corpus hit `/usr/bin/clang`), `arbiter-3` (system and
+slice complete; the corpus refused the libevent pin because the export was
+not a git checkout).
+
+[native-comparison-system-slice.json](artifacts/native-comparison-system-slice.json)
+(`measure/arbiter-3`, base binary `bf1ce1e3…`, tip `6cb348cc…`):
+
+| Route | base | tip | unknown_alias | unsupported | declared |
+|---|---|---|---|---|---|
+| system | 103 / 4 / 341 | **107** / 4 / **337** | 950 → 896 | 2,350 → 2,406 | **match** (no unpredicted, no missing move) |
+| slice | 58 / 1 / 341 / 4 Pending | **59** / 1 / **340** / 4 | 1,091 → 1,075 | 2,441 → 2,462 | **match** |
+
+The arbiter's moved rows are exactly section 6's (four system rows, one slice
+row), and its leaf deltas equal the quick runs' (system 27 resolved and 28
+unlink refusals per configuration; slice 16 and 21 over both
+configurations of `flb_input.c`).
+
+CORPUS_PLACEHOLDER
 
 ## 7. Pins and locks
 
@@ -234,8 +264,51 @@ tail destroyers at trees whose bodies differ); `pin --verify-contracts` 0.
 
 ## 8. Gate
 
-Section 8a, from `gate.json`.
+`python3 scripts/gate_scope.py --base 74105dd0e` on `7bc4ec072` (code equal to
+the measured `f4057708f`; [gate.json](gate.json), logs
+`private/gate-scope/20261112T035537Z-2144909/`; Clang recording
+[gate/clang-version.txt](gate/clang-version.txt), taken in this worktree).
+Selection: the whole Rust suite (the diff reaches `qcore-schemas`,
+`qcore-contract` and `qcore-c-gateway`), all Lean, the Python suite, the
+provider gate.
+
+| Step | Exit | Counts |
+|---|---|---|
+| submodules, fmt, clippy (`--all-targets -D warnings`) | 0 / 0 / 0 | |
+| Rust suite (`run_test_binaries.py`) | **101** | 628 units, 670 summaries; 9,359 passed, **36 failed**, 17 ignored |
+| both reevaluation probes | 0 / 0 | |
+| Lean (`check_lean_audits.py`) | 0 | 427 audits (this card adds `AuditElementReleaseSummary.lean`) |
+| Python suite | 0 | 756 tests |
+| provider package build, verify-all, verify | 0 / 0 / 0 | |
+| provider `cargo test` | 0 | 133 passed, 0 failed, 1 ignored |
+| provider fmt, clippy | 0 / 0 | |
+
+**The 36 failures are base's, every one.** 33 are in eleven test targets that
+fail identically on an export of base `74105dd0e` run on this host
+(`private/base-tests.sh`, logs `private/logs/base-tests/`; the failed names
+[at base](gate/base-failed-tests.txt) and [at the tip](gate/tip-failed-tests.txt)
+differ only by the three below): base `74105dd0e`'s Apache-2.0 header commit
+broke tests that require a contract module to start with `module contract;`
+(`prod_contracts`, `neighbours`, `hash_contracts`) and whole-source
+inventories (`guarded_*`, `hypothesis_bindings`, `production_symbolic_adoption`,
+`reading_site_*`, `libc_reading_site_evidence`, `contract_dependencies_report`,
+`source_contract_config`). The other three are `task_route_tsan`'s
+symbol-name assertions, which also fail at base on this host
+([names](gate/base-failed-tsan.txt), `private/logs/tsan-base.log`): its
+ThreadSanitizer reports carry no symbol names here. An earlier run
+(`gate-scope/20261112T032752Z-1646244`, 129 failed) predates installing the
+sanitizer runtimes and the card's `contract_loader` pin update; it is
+discarded as validation evidence.
 
 ## 9. Follow-ups
 
-See `integration-amendments.json`.
+[integration-amendments.json](integration-amendments.json): retires
+`W45-FOREIGN-UNLINK-SUMMARY`; amends `FB-TEARDOWN-RELEASE-ACTUAL-IDENTITIES`
+(advanced, still open for non-element actuals), `W45-FB-OR6-ELEMENT-IDENTITY`
+(blocker now the recursive pair), `W45-FB-BACKLOG-REACHABLE-RELEASE`; appends
+to `RETURN-POSITION-PREMISE-CONTRACT-ROUTE`; registers
+`LERI-CROSS-UNIT-ELEMENTS-RELEASED`, `LERI-ELEMENTS-RELEASED-DECLARED-FORM`,
+`LERI-HELD-AND-LINK-MEMBER-PREMISES`, `LERI-SLICE-EXPORT-PIN-IDENTITY`. No
+evaluation-profile baseline is changed (`profiles: []`): the figures here are
+on this card's preparations; the integrator's landing measurement on the
+published inputs owns the baselines.

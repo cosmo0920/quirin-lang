@@ -1,0 +1,2716 @@
+{
+  "comparisons": [
+    {
+      "after": "tip",
+      "before": "base",
+      "comparison": "base->tip",
+      "routes": {
+        "corpus": {
+          "status": "not-compared",
+          "why": "the route did not complete (exit 1)"
+        },
+        "slice": {
+          "after_directory": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a2c467a15d6a29eec/measure/arbiter-3/sides/tip/slice",
+          "artifacts": {
+            "byte_identical_except_named_substitutions": false,
+            "differing": [
+              {
+                "after": "aa77a8891db8a157db710299c4cf884a700bed4bfd5c7de0240334241ae19d6e",
+                "before": "196c5a04d2c8b1684e9d2143b38cc89d19cae66705e4730bea82ad563a3d92b3",
+                "file": "resource-diagnostics.components.json"
+              },
+              {
+                "file": "resource-diagnostics.contracts.json",
+                "why": {
+                  "lifetime_keys_only_after": [],
+                  "lifetime_keys_only_before": []
+                }
+              },
+              {
+                "after": "bb3bf74122de505b07a88d9d1bdd1e7f9da75657acb9bbb8d66e1309250c25d6",
+                "before": "8ba720486d5d30a5ada17714054b52fac09b5721c5deac928fcda47ab99325bd",
+                "file": "resource-diagnostics.json"
+              },
+              {
+                "after": "32bb56aeb657455b22b03a4ec7ad1b45bcd606ced530a3415ce56993ebc11697",
+                "before": "9d58dd18d17872b0ff8e6af37b856a2fbe7844c3896ecc7af28aad705353c8aa",
+                "file": "slice-null.jsonl"
+              },
+              {
+                "after": "668607f7def7d673745f766492ff1775bff4ccad4d19df17c0383659f94b3a72",
+                "before": "ef5553679b7aba6cfb07888382df6847ac3101de563e1dcce8c58cb5468a6002",
+                "file": "slice-null.summary.json"
+              },
+              {
+                "after": "7d38e96c3793ca9e9a4deffacaed856704de440f24c616cbe95515e5f04cd238",
+                "before": "066861b8fb771fd8ebe2eb40c6eadc0cb4fab17625158e9a5af4741101675e12",
+                "file": "slice-outer.json"
+              }
+            ],
+            "identical": [
+              {
+                "file": "resource-diagnostics.chunk-contracts.json",
+                "sha256": "d95091b8d0ff3fe5cb2ac8866c1912d7d51862c9a4c3fa551e7898f98298159c"
+              },
+              {
+                "file": "resource-diagnostics.source-effects.json",
+                "sha256": "d95091b8d0ff3fe5cb2ac8866c1912d7d51862c9a4c3fa551e7898f98298159c"
+              }
+            ],
+            "identical_after_named_substitution": {},
+            "only_after": [],
+            "only_before": [],
+            "records_not_compared": [
+              "console.log",
+              "invocation.json",
+              "resource-diagnostics.invocation.json",
+              "slice.exit",
+              "stderr.log"
+            ]
+          },
+          "before_directory": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a2c467a15d6a29eec/measure/arbiter-3/sides/base/slice",
+          "composition": {
+            "components": {
+              "after": 16,
+              "before": 16,
+              "union": 32
+            },
+            "conflicts": [],
+            "rows": 16
+          },
+          "conflicts": {
+            "after": [],
+            "before": []
+          },
+          "content_changes": [
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_tail_file_remove` of `f`, which this function has not published",
+                  "origin": "plugins/in_tail/tail.c:349"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-tail-pause::plugins/in_tail/tail.c::unit#0::resource-custody.v1::fluent-bit-tail-pause::in_tail_collect_event#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `file`",
+                  "origin": "plugins/in_tail/tail.c:119"
+                },
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `file`",
+                  "origin": "plugins/in_tail/tail.c:84"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "fluent-bit-tail-pause::plugins/in_tail/tail.c::unit#0::resource-custody.v1::fluent-bit-tail-pause::in_tail_collect_pending#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `file`",
+                  "origin": "plugins/in_tail/tail.c:212"
+                },
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `file`",
+                  "origin": "plugins/in_tail/tail.c:277"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "fluent-bit-tail-pause::plugins/in_tail/tail.c::unit#0::resource-custody.v1::fluent-bit-tail-pause::in_tail_collect_static#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_tail_file_remove` of `file`, which this function has not published",
+                  "origin": "plugins/in_tail/tail_file.c:2825"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_tail_file_remove` of `file`, which this function has not published",
+                  "origin": "plugins/in_tail/tail_file.c:2839"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_tail_file_remove` of `file`, which this function has not published",
+                  "origin": "plugins/in_tail/tail_file.c:2860"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-tail-pause::plugins/in_tail/tail_file.c::unit#0::resource-custody.v1::fluent-bit-tail-pause::check_purge_deleted_file#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `file`",
+                  "origin": "plugins/in_tail/tail_file.c:2905"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "fluent-bit-tail-pause::plugins/in_tail/tail_file.c::unit#0::resource-custody.v1::fluent-bit-tail-pause::flb_tail_file_purge#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `file`",
+                  "origin": "plugins/in_tail/tail_file.c:2150"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "fluent-bit-tail-pause::plugins/in_tail/tail_file.c::unit#0::resource-custody.v1::fluent-bit-tail-pause::flb_tail_file_reclaim#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_tail_file_remove` of `file`, which this function has not published",
+                  "origin": "plugins/in_tail/tail_fs_inotify.c:184"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_tail_file_remove` of `file`, which this function has not published",
+                  "origin": "plugins/in_tail/tail_fs_inotify.c:228"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-tail-pause::plugins/in_tail/tail_fs_inotify.c::unit#0::resource-custody.v1::fluent-bit-tail-pause::reconcile_file_state#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_tail_file_remove` of `file`, which this function has not published",
+                  "origin": "plugins/in_tail/tail_fs_stat.c:117"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_tail_file_remove` of `file`, which this function has not published",
+                  "origin": "plugins/in_tail/tail_fs_stat.c:130"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_tail_file_remove` of `file`, which this function has not published",
+                  "origin": "plugins/in_tail/tail_fs_stat.c:174"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-tail-pause::plugins/in_tail/tail_fs_stat.c::unit#0::resource-custody.v1::fluent-bit-tail-pause::tail_fs_check#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_input_coro_destroy` of `input_coro`, which this function has not published",
+                  "origin": "src/flb_input.c:747"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-tail-pause::src/flb_input.c::unit#0::resource-custody.v1::fluent-bit-tail-pause::flb_input_coro_finished#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `ins`",
+                  "origin": "src/flb_input.c:2160"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "fluent-bit-tail-pause::src/flb_input.c::unit#0::resource-custody.v1::fluent-bit-tail-pause::flb_input_exit_all#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_input_instance_destroy` of `ins`, which this function has not published",
+                  "origin": "src/flb_input.c:1545"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-tail-pause::src/flb_input.c::unit#0::resource-custody.v1::fluent-bit-tail-pause::flb_input_http_server_property_check#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `ins`",
+                  "origin": "src/flb_input.c:2081"
+                },
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `ins`",
+                  "origin": "src/flb_input.c:2090"
+                },
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `ins`",
+                  "origin": "src/flb_input.c:2100"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "fluent-bit-tail-pause::src/flb_input.c::unit#0::resource-custody.v1::fluent-bit-tail-pause::flb_input_init_all#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [],
+              "other_fields_changed": [
+                "review_holds"
+              ],
+              "row": "fluent-bit-tail-pause::src/flb_input.c::unit#0::resource-custody.v1::fluent-bit-tail-pause::flb_input_instance_exit#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_input_instance_destroy` of `ins`, which this function has not published",
+                  "origin": "src/flb_input.c:1413"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_input_instance_destroy` of `ins`, which this function has not published",
+                  "origin": "src/flb_input.c:1420"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-tail-pause::src/flb_input.c::unit#0::resource-custody.v1::fluent-bit-tail-pause::flb_input_net_property_check#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_input_instance_destroy` of `ins`, which this function has not published",
+                  "origin": "src/flb_input.c:1513"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-tail-pause::src/flb_input.c::unit#0::resource-custody.v1::fluent-bit-tail-pause::flb_input_oauth2_jwt_property_check#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_input_instance_destroy` of `ins`, which this function has not published",
+                  "origin": "src/flb_input.c:1485"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-tail-pause::src/flb_input.c::unit#0::resource-custody.v1::fluent-bit-tail-pause::flb_input_plugin_property_check#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_input_coro_destroy` of `input_coro`, which this function has not published",
+                  "origin": "src/flb_input.c:747"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-tail-pause::src/flb_input.c::unit#1::resource-custody.v1::fluent-bit-tail-pause::flb_input_coro_finished#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `ins`",
+                  "origin": "src/flb_input.c:2160"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "fluent-bit-tail-pause::src/flb_input.c::unit#1::resource-custody.v1::fluent-bit-tail-pause::flb_input_exit_all#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_input_instance_destroy` of `ins`, which this function has not published",
+                  "origin": "src/flb_input.c:1545"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-tail-pause::src/flb_input.c::unit#1::resource-custody.v1::fluent-bit-tail-pause::flb_input_http_server_property_check#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `ins`",
+                  "origin": "src/flb_input.c:2081"
+                },
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `ins`",
+                  "origin": "src/flb_input.c:2090"
+                },
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `ins`",
+                  "origin": "src/flb_input.c:2100"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "fluent-bit-tail-pause::src/flb_input.c::unit#1::resource-custody.v1::fluent-bit-tail-pause::flb_input_init_all#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [],
+              "other_fields_changed": [
+                "review_holds"
+              ],
+              "row": "fluent-bit-tail-pause::src/flb_input.c::unit#1::resource-custody.v1::fluent-bit-tail-pause::flb_input_instance_exit#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_input_instance_destroy` of `ins`, which this function has not published",
+                  "origin": "src/flb_input.c:1413"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_input_instance_destroy` of `ins`, which this function has not published",
+                  "origin": "src/flb_input.c:1420"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-tail-pause::src/flb_input.c::unit#1::resource-custody.v1::fluent-bit-tail-pause::flb_input_net_property_check#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_input_instance_destroy` of `ins`, which this function has not published",
+                  "origin": "src/flb_input.c:1513"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-tail-pause::src/flb_input.c::unit#1::resource-custody.v1::fluent-bit-tail-pause::flb_input_oauth2_jwt_property_check#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_input_instance_destroy` of `ins`, which this function has not published",
+                  "origin": "src/flb_input.c:1485"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-tail-pause::src/flb_input.c::unit#1::resource-custody.v1::fluent-bit-tail-pause::flb_input_plugin_property_check#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [],
+              "other_fields_changed": [
+                "review_holds"
+              ],
+              "row": "fluent-bit-tail-pause::src/flb_lib.c::unit#0::resource-custody.v1::fluent-bit-tail-pause::flb_create#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [],
+              "other_fields_changed": [
+                "review_holds"
+              ],
+              "row": "fluent-bit-tail-pause::src/flb_lib.c::unit#0::resource-custody.v1::fluent-bit-tail-pause::flb_input#0",
+              "status": [
+                "Pending",
+                "Pending"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [],
+              "other_fields_changed": [
+                "review_holds"
+              ],
+              "row": "fluent-bit-tail-pause::src/flb_lib.c::unit#0::resource-custody.v1::fluent-bit-tail-pause::flb_service_set#0",
+              "status": [
+                "Pending",
+                "Pending"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [],
+              "other_fields_changed": [
+                "review_holds"
+              ],
+              "row": "fluent-bit-tail-pause::src/flb_lib.c::unit#1::resource-custody.v1::fluent-bit-tail-pause::flb_create#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [],
+              "other_fields_changed": [
+                "review_holds"
+              ],
+              "row": "fluent-bit-tail-pause::src/flb_lib.c::unit#1::resource-custody.v1::fluent-bit-tail-pause::flb_input#0",
+              "status": [
+                "Pending",
+                "Pending"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [],
+              "other_fields_changed": [
+                "review_holds"
+              ],
+              "row": "fluent-bit-tail-pause::src/flb_lib.c::unit#1::resource-custody.v1::fluent-bit-tail-pause::flb_service_set#0",
+              "status": [
+                "Pending",
+                "Pending"
+              ]
+            }
+          ],
+          "environment_digest_fields": [
+            "assumptions",
+            "build_identity",
+            "environment_sha256",
+            "resource_contracts_sha256",
+            "id"
+          ],
+          "figures": {
+            "after": {
+              "null_rows": 406,
+              "null_verdicts": {
+                "Safe": 190,
+                "Unknown": 216
+              },
+              "null_verdicts_sha256": "cd5aa008117b49482c7736352e31a22af9536de2df4bdf5aa9d0ea1e2c0a76be",
+              "row_statuses": {
+                "Pending": 4,
+                "Safe": 59,
+                "Unknown": 340,
+                "Unsafe": 1
+              },
+              "row_verdicts_sha256": "5cb2dbdd6adff96cc18173bd944bd77db6116a27c97e954898ca09812069dd14",
+              "rows": 404,
+              "unit_statuses": {
+                "Unknown": 15,
+                "Unsafe": 1
+              },
+              "unit_verdicts_sha256": "54e95d5f88252a15b9dd02fb3878b6286b16eeea24a5a4cfd4fde8a08af830e5",
+              "units": 16
+            },
+            "before": {
+              "null_rows": 406,
+              "null_verdicts": {
+                "Safe": 190,
+                "Unknown": 216
+              },
+              "null_verdicts_sha256": "6ead33bb236929dcf74982bfff7f590d081783cee6b129e092247594a8c188b7",
+              "row_statuses": {
+                "Pending": 4,
+                "Safe": 58,
+                "Unknown": 341,
+                "Unsafe": 1
+              },
+              "row_verdicts_sha256": "b14be6fa5c1528f6d276a7899d68e2969dc0bc2855ea3ca2c6625edbad94df6d",
+              "rows": 404,
+              "unit_statuses": {
+                "Unknown": 15,
+                "Unsafe": 1
+              },
+              "unit_verdicts_sha256": "54e95d5f88252a15b9dd02fb3878b6286b16eeea24a5a4cfd4fde8a08af830e5",
+              "units": 16
+            }
+          },
+          "function_rows": {
+            "content_changed": 30,
+            "environment_only": 373,
+            "identical": 0,
+            "moved": 1,
+            "unmatched": 0
+          },
+          "incomplete_because": [],
+          "moves": [
+            {
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `file`",
+                  "origin": "plugins/in_tail/tail_file.c:2163"
+                },
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `file`",
+                  "origin": "plugins/in_tail/tail_file.c:2169"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "fluent-bit-tail-pause::plugins/in_tail/tail_file.c::unit#0::resource-custody.v1::fluent-bit-tail-pause::flb_tail_file_remove_all#0",
+              "status": [
+                "Unknown",
+                "Safe"
+              ]
+            }
+          ],
+          "profile_baseline": {
+            "after": {
+              "exit": 1,
+              "lines": [
+                "null_verdicts_sha256: baseline '6ead33bb236929dcf74982bfff7f590d081783cee6b129e092247594a8c188b7', run 'cd5aa008117b49482c7736352e31a22af9536de2df4bdf5aa9d0ea1e2c0a76be'",
+                "row_statuses: baseline {'Pending': 4, 'Safe': 58, 'Unknown': 341, 'Unsafe': 1}, run {'Pending': 4, 'Safe': 59, 'Unknown': 340, 'Unsafe': 1}",
+                "row_verdicts_sha256: baseline 'b14be6fa5c1528f6d276a7899d68e2969dc0bc2855ea3ca2c6625edbad94df6d', run '5cb2dbdd6adff96cc18173bd944bd77db6116a27c97e954898ca09812069dd14'",
+                "fluent-bit-tail-pause: results moved; record the new baseline with a reason in the same commit (record), or treat the move as a defect"
+              ],
+              "profile": "fluent-bit-tail-pause"
+            },
+            "before": {
+              "exit": 0,
+              "lines": [
+                "fluent-bit-tail-pause: the run reproduces the baseline"
+              ],
+              "profile": "fluent-bit-tail-pause"
+            }
+          },
+          "status": "complete",
+          "status_deltas": {
+            "Pending": 0,
+            "Safe": 1,
+            "Unknown": -1,
+            "Unsafe": 0
+          },
+          "totals": {
+            "after": {
+              "conflicted_unit_rows": 0,
+              "diagnostic_counts": {
+                "counted_user": 1,
+                "unknown_alias": 1075,
+                "unsupported": 2462
+              },
+              "function_rows": 404,
+              "function_status": {
+                "Pending": 4,
+                "Safe": 59,
+                "Unknown": 340,
+                "Unsafe": 1
+              },
+              "row_source": "sidecar",
+              "unit_rows": 16,
+              "unit_verdict": {
+                "Unknown": 15,
+                "Unsafe": 1
+              }
+            },
+            "before": {
+              "conflicted_unit_rows": 0,
+              "diagnostic_counts": {
+                "counted_user": 1,
+                "unknown_alias": 1091,
+                "unsupported": 2441
+              },
+              "function_rows": 404,
+              "function_status": {
+                "Pending": 4,
+                "Safe": 58,
+                "Unknown": 341,
+                "Unsafe": 1
+              },
+              "row_source": "sidecar",
+              "unit_rows": 16,
+              "unit_verdict": {
+                "Unknown": 15,
+                "Unsafe": 1
+              }
+            }
+          },
+          "unit_field_differences": {
+            "fluent-bit-tail-pause::plugins/in_tail/tail.c::unit#0::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration",
+              "diagnostic_counts",
+              "reason"
+            ],
+            "fluent-bit-tail-pause::plugins/in_tail/tail_config.c::unit#0::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration"
+            ],
+            "fluent-bit-tail-pause::plugins/in_tail/tail_db.c::unit#0::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration"
+            ],
+            "fluent-bit-tail-pause::plugins/in_tail/tail_dockermode.c::unit#0::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration"
+            ],
+            "fluent-bit-tail-pause::plugins/in_tail/tail_file.c::unit#0::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration",
+              "diagnostic_counts",
+              "reason"
+            ],
+            "fluent-bit-tail-pause::plugins/in_tail/tail_file_budget.c::unit#0::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration",
+              "reading_site_environments"
+            ],
+            "fluent-bit-tail-pause::plugins/in_tail/tail_fs_inotify.c::unit#0::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration",
+              "diagnostic_counts",
+              "reason"
+            ],
+            "fluent-bit-tail-pause::plugins/in_tail/tail_fs_stat.c::unit#0::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration",
+              "diagnostic_counts",
+              "reason"
+            ],
+            "fluent-bit-tail-pause::plugins/in_tail/tail_multiline.c::unit#0::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration"
+            ],
+            "fluent-bit-tail-pause::plugins/in_tail/tail_scan.c::unit#0::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration"
+            ],
+            "fluent-bit-tail-pause::src/flb_input.c::unit#0::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration",
+              "diagnostic_counts",
+              "reason"
+            ],
+            "fluent-bit-tail-pause::src/flb_input.c::unit#1::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration",
+              "diagnostic_counts",
+              "reason"
+            ],
+            "fluent-bit-tail-pause::src/flb_input_thread.c::unit#0::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration"
+            ],
+            "fluent-bit-tail-pause::src/flb_input_thread.c::unit#1::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration"
+            ],
+            "fluent-bit-tail-pause::src/flb_lib.c::unit#0::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration"
+            ],
+            "fluent-bit-tail-pause::src/flb_lib.c::unit#1::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration"
+            ]
+          },
+          "unit_moves": [],
+          "unit_rows_environment_only": 0,
+          "unmatched": [],
+          "unmatched_units": []
+        },
+        "system": {
+          "after_directory": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a2c467a15d6a29eec/measure/arbiter-3/sides/tip/system",
+          "artifacts": {
+            "byte_identical_except_named_substitutions": false,
+            "differing": [
+              {
+                "after": "c5f570857b50a119519b92aed287fd43c62f143dc5870e7529fdce108de4578b",
+                "before": "0dfe46664a960d882ca6aac114f5f0a8aa8ad5b23d6f0cc14d60be1508109933",
+                "file": "resource-diagnostics.components.json"
+              },
+              {
+                "file": "resource-diagnostics.contracts.json",
+                "why": {
+                  "lifetime_keys_only_after": [],
+                  "lifetime_keys_only_before": []
+                }
+              },
+              {
+                "after": "a3258c385caed05787dda36fb720ae266833a939522fa94dba639d3ad3e32c08",
+                "before": "c6321b67be48a83ddf6c892ef0098e628e4c00707f48917c2598aa2bc22133a2",
+                "file": "resource-diagnostics.json"
+              },
+              {
+                "after": "1bef68d10db1d6e141be8d56d4606f177adac710d801fd4daa423edac78683a0",
+                "before": "984f3d3f73433d667a28cd048aab6a901df423b9fbe7b267bcc7e57c0abf6227",
+                "file": "system-null.jsonl"
+              },
+              {
+                "after": "e6edc2bf57ae79f14404a5db47bbc98ea4f4503635525aaecbfc35168ceed6db",
+                "before": "1c9483268c2709c2517ecb78e68ed9b064d237b0084774d59bd192b4374cc711",
+                "file": "system-null.summary.json"
+              },
+              {
+                "after": "2f080509dec9d8ac4c9bd3de9779d7e686ca375d48423e92c3c0f0b2ebbcf9a1",
+                "before": "dfb4094000c890d83110f79f4f784f27198c0de4250ba574e9ceda6c1622b16e",
+                "file": "system-outer.json"
+              }
+            ],
+            "identical": [
+              {
+                "file": "resource-diagnostics.chunk-contracts.json",
+                "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922"
+              },
+              {
+                "file": "resource-diagnostics.source-effects.json",
+                "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922"
+              }
+            ],
+            "identical_after_named_substitution": {},
+            "only_after": [],
+            "only_before": [],
+            "records_not_compared": [
+              "console.log",
+              "invocation.json",
+              "resource-diagnostics.invocation.json",
+              "stderr.log",
+              "system.exit"
+            ]
+          },
+          "before_directory": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a2c467a15d6a29eec/measure/arbiter-3/sides/base/system",
+          "composition": {
+            "components": {
+              "after": 15,
+              "before": 15,
+              "union": 30
+            },
+            "conflicts": [],
+            "rows": 15
+          },
+          "conflicts": {
+            "after": [],
+            "before": []
+          },
+          "content_changes": [
+            {
+              "contract_dependencies": {
+                "after": {
+                  "declarations": [
+                    "flb_free",
+                    "mk_list_del"
+                  ],
+                  "hypothesis_dependencies": {},
+                  "null_premises": [
+                    "null-deref:cb_sb_exit:18320:ctx"
+                  ],
+                  "summaries": [
+                    "sb_destroy_backlogs"
+                  ],
+                  "withdrawn": [
+                    "flb_input_collector_pause",
+                    "sb_destroy_backlog",
+                    "sb_destroy_backlogs"
+                  ]
+                },
+                "before": {
+                  "declarations": [
+                    "flb_free"
+                  ],
+                  "hypothesis_dependencies": {},
+                  "null_premises": [
+                    "null-deref:cb_sb_exit:18320:ctx"
+                  ],
+                  "withdrawn": [
+                    "flb_input_collector_pause",
+                    "sb_destroy_backlogs"
+                  ]
+                }
+              },
+              "leaves_added": [],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::plugins/in_storage_backlog/sb.c::unit#0::resource-custody.v1::fluent-bit-system::cb_sb_exit#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "contract_dependencies": {
+                "after": {
+                  "declarations": [
+                    "flb_calloc",
+                    "flb_free",
+                    "mk_list_add",
+                    "mk_list_del"
+                  ],
+                  "hypothesis_dependencies": {},
+                  "summaries": [
+                    "sb_destroy_backlogs"
+                  ],
+                  "withdrawn": [
+                    "sb_allocate_backlogs",
+                    "sb_destroy_backlog",
+                    "sb_destroy_backlogs"
+                  ]
+                },
+                "before": {
+                  "declarations": [
+                    "flb_calloc",
+                    "mk_list_add"
+                  ],
+                  "hypothesis_dependencies": {},
+                  "withdrawn": [
+                    "sb_allocate_backlogs",
+                    "sb_destroy_backlogs"
+                  ]
+                }
+              },
+              "leaves_added": [],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::plugins/in_storage_backlog/sb.c::unit#0::resource-custody.v1::fluent-bit-system::sb_allocate_backlogs#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_task_retry_destroy` of `retry`, which this function has not published",
+                  "origin": "src/flb_engine.c:817"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_engine.c::unit#0::resource-custody.v1::fluent-bit-system::handle_output_event#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_task_retry_destroy` of `retry`, which this function has not published",
+                  "origin": "src/flb_engine.c:817"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_engine.c::unit#1::resource-custody.v1::fluent-bit-system::handle_output_event#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_task_destroy` of `task`, which this function has not published",
+                  "origin": "src/flb_engine_dispatch.c:462"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_engine_dispatch.c::unit#0::resource-custody.v1::fluent-bit-system::flb_engine_dispatch#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_task_retry_destroy` of `retry`, which this function has not published",
+                  "origin": "src/flb_engine_dispatch.c:151"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_task_retry_destroy` of `retry`, which this function has not published",
+                  "origin": "src/flb_engine_dispatch.c:188"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_engine_dispatch.c::unit#0::resource-custody.v1::fluent-bit-system::flb_engine_dispatch_retry#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_task_destroy` of `task`, which this function has not published",
+                  "origin": "src/flb_engine_dispatch.c:462"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_engine_dispatch.c::unit#1::resource-custody.v1::fluent-bit-system::flb_engine_dispatch#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_task_retry_destroy` of `retry`, which this function has not published",
+                  "origin": "src/flb_engine_dispatch.c:151"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_task_retry_destroy` of `retry`, which this function has not published",
+                  "origin": "src/flb_engine_dispatch.c:188"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_engine_dispatch.c::unit#1::resource-custody.v1::fluent-bit-system::flb_engine_dispatch_retry#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `old_input_chunk`",
+                  "origin": "src/flb_input_chunk.c:718"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_input_chunk.c::unit#0::resource-custody.v1::fluent-bit-system::flb_input_chunk_release_space#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_input_chunk_destroy` of `ic`, which this function has not published",
+                  "origin": "src/flb_input_chunk.c:3511"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_input_chunk_destroy` of `ic`, which this function has not published",
+                  "origin": "src/flb_input_chunk.c:3542"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_input_chunk.c::unit#0::resource-custody.v1::fluent-bit-system::input_chunk_append_raw#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_input_chunk_destroy` of `ic`, which this function has not published",
+                  "origin": "src/flb_input_chunk.c:2909"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_input_chunk_destroy` of `ic`, which this function has not published",
+                  "origin": "src/flb_input_chunk.c:2926"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_input_chunk_destroy` of `ic`, which this function has not published",
+                  "origin": "src/flb_input_chunk.c:2944"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_input_chunk.c::unit#0::resource-custody.v1::fluent-bit-system::input_chunk_get#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `ic`",
+                  "origin": "src/flb_input_chunk.c:3224"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_input_chunk.c::unit#0::resource-custody.v1::fluent-bit-system::memrb_input_chunk_release_space#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `old_input_chunk`",
+                  "origin": "src/flb_input_chunk.c:718"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_input_chunk.c::unit#1::resource-custody.v1::fluent-bit-system::flb_input_chunk_release_space#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_input_chunk_destroy` of `ic`, which this function has not published",
+                  "origin": "src/flb_input_chunk.c:3511"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_input_chunk_destroy` of `ic`, which this function has not published",
+                  "origin": "src/flb_input_chunk.c:3542"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_input_chunk.c::unit#1::resource-custody.v1::fluent-bit-system::input_chunk_append_raw#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_input_chunk_destroy` of `ic`, which this function has not published",
+                  "origin": "src/flb_input_chunk.c:2909"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_input_chunk_destroy` of `ic`, which this function has not published",
+                  "origin": "src/flb_input_chunk.c:2926"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_input_chunk_destroy` of `ic`, which this function has not published",
+                  "origin": "src/flb_input_chunk.c:2944"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_input_chunk.c::unit#1::resource-custody.v1::fluent-bit-system::input_chunk_get#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `ic`",
+                  "origin": "src/flb_input_chunk.c:3224"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_input_chunk.c::unit#1::resource-custody.v1::fluent-bit-system::memrb_input_chunk_release_space#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_output_instance_destroy` of `ins`, which this function has not published",
+                  "origin": "src/flb_output.c:1311"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_output.c::unit#0::resource-custody.v1::fluent-bit-system::flb_output_enable_multi_threading#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `ins`",
+                  "origin": "src/flb_output.c:671"
+                }
+              ],
+              "other_fields_changed": [
+                "review_holds"
+              ],
+              "row": "fluent-bit-system::src/flb_output.c::unit#0::resource-custody.v1::fluent-bit-system::flb_output_exit#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_output_flush_destroy` of `out_flush`, which this function has not published",
+                  "origin": "src/flb_output.c:744"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_output.c::unit#0::resource-custody.v1::fluent-bit-system::flb_output_flush_finished#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `ins`",
+                  "origin": "src/flb_output.c:1552"
+                },
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `ins`",
+                  "origin": "src/flb_output.c:1696"
+                },
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `ins`",
+                  "origin": "src/flb_output.c:1742"
+                },
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `ins`",
+                  "origin": "src/flb_output.c:1761"
+                },
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `ins`",
+                  "origin": "src/flb_output.c:1771"
+                },
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `ins`",
+                  "origin": "src/flb_output.c:1781"
+                },
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `ins`",
+                  "origin": "src/flb_output.c:1832"
+                },
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `ins`",
+                  "origin": "src/flb_output.c:1841"
+                },
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `ins`",
+                  "origin": "src/flb_output.c:1851"
+                },
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `ins`",
+                  "origin": "src/flb_output.c:1869"
+                },
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `ins`",
+                  "origin": "src/flb_output.c:1876"
+                },
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `ins`",
+                  "origin": "src/flb_output.c:1884"
+                },
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `ins`",
+                  "origin": "src/flb_output.c:1894"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_output.c::unit#0::resource-custody.v1::fluent-bit-system::flb_output_init_all#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_output_instance_destroy` of `ins`, which this function has not published",
+                  "origin": "src/flb_output.c:1350"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_output.c::unit#0::resource-custody.v1::fluent-bit-system::flb_output_net_property_check#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_output_flush_destroy` of `out_flush`, which this function has not published",
+                  "origin": "src/flb_output.c:526"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_output.c::unit#0::resource-custody.v1::fluent-bit-system::flb_output_task_flush#0",
+              "status": [
+                "Unsafe",
+                "Unsafe"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_output_instance_destroy` of `ins`, which this function has not published",
+                  "origin": "src/flb_output.c:1311"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_output.c::unit#1::resource-custody.v1::fluent-bit-system::flb_output_enable_multi_threading#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `ins`",
+                  "origin": "src/flb_output.c:671"
+                }
+              ],
+              "other_fields_changed": [
+                "review_holds"
+              ],
+              "row": "fluent-bit-system::src/flb_output.c::unit#1::resource-custody.v1::fluent-bit-system::flb_output_exit#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_output_flush_destroy` of `out_flush`, which this function has not published",
+                  "origin": "src/flb_output.c:744"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_output.c::unit#1::resource-custody.v1::fluent-bit-system::flb_output_flush_finished#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `ins`",
+                  "origin": "src/flb_output.c:1552"
+                },
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `ins`",
+                  "origin": "src/flb_output.c:1696"
+                },
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `ins`",
+                  "origin": "src/flb_output.c:1742"
+                },
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `ins`",
+                  "origin": "src/flb_output.c:1761"
+                },
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `ins`",
+                  "origin": "src/flb_output.c:1771"
+                },
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `ins`",
+                  "origin": "src/flb_output.c:1781"
+                },
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `ins`",
+                  "origin": "src/flb_output.c:1832"
+                },
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `ins`",
+                  "origin": "src/flb_output.c:1841"
+                },
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `ins`",
+                  "origin": "src/flb_output.c:1851"
+                },
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `ins`",
+                  "origin": "src/flb_output.c:1869"
+                },
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `ins`",
+                  "origin": "src/flb_output.c:1876"
+                },
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `ins`",
+                  "origin": "src/flb_output.c:1884"
+                },
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `ins`",
+                  "origin": "src/flb_output.c:1894"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_output.c::unit#1::resource-custody.v1::fluent-bit-system::flb_output_init_all#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_output_instance_destroy` of `ins`, which this function has not published",
+                  "origin": "src/flb_output.c:1350"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_output.c::unit#1::resource-custody.v1::fluent-bit-system::flb_output_net_property_check#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_output_flush_destroy` of `out_flush`, which this function has not published",
+                  "origin": "src/flb_output.c:526"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_output.c::unit#1::resource-custody.v1::fluent-bit-system::flb_output_task_flush#0",
+              "status": [
+                "Unsafe",
+                "Unsafe"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_sched_timer_destroy` of `timer`, which this function has not published",
+                  "origin": "src/flb_scheduler.c:787"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_scheduler.c::unit#0::resource-custody.v1::fluent-bit-system::flb_sched_create#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `request`",
+                  "origin": "src/flb_scheduler.c:829"
+                },
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `request`",
+                  "origin": "src/flb_scheduler.c:836"
+                },
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `sched`",
+                  "origin": "src/flb_scheduler.c:855"
+                },
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `sched`",
+                  "origin": "src/flb_scheduler.c:856"
+                },
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `timer`",
+                  "origin": "src/flb_scheduler.c:844"
+                },
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `timer`",
+                  "origin": "src/flb_scheduler.c:851"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_scheduler.c::unit#0::resource-custody.v1::fluent-bit-system::flb_sched_destroy#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_sched_request_destroy` of `req`, which this function has not published",
+                  "origin": "src/flb_scheduler.c:603"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_scheduler.c::unit#0::resource-custody.v1::fluent-bit-system::flb_sched_event_handler#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_sched_timer_destroy` of `timer`, which this function has not published",
+                  "origin": "src/flb_scheduler.c:319"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_scheduler.c::unit#0::resource-custody.v1::fluent-bit-system::flb_sched_request_create#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_sched_request_destroy` of `request`, which this function has not published",
+                  "origin": "src/flb_scheduler.c:365"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_sched_request_destroy` of `request`, which this function has not published",
+                  "origin": "src/flb_scheduler.c:382"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_scheduler.c::unit#0::resource-custody.v1::fluent-bit-system::flb_sched_request_invalidate#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_sched_timer_destroy` of `timer`, which this function has not published",
+                  "origin": "src/flb_scheduler.c:969"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_sched_timer_destroy` of `timer`, which this function has not published",
+                  "origin": "src/flb_scheduler.c:990"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_scheduler.c::unit#0::resource-custody.v1::fluent-bit-system::flb_sched_retry_now#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_sched_timer_destroy` of `timer`, which this function has not published",
+                  "origin": "src/flb_scheduler.c:676"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_scheduler.c::unit#0::resource-custody.v1::fluent-bit-system::flb_sched_timer_cb_create#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `timer`",
+                  "origin": "src/flb_scheduler.c:926"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_scheduler.c::unit#0::resource-custody.v1::fluent-bit-system::flb_sched_timer_cleanup#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_sched_timer_destroy` of `timer`, which this function has not published",
+                  "origin": "src/flb_scheduler.c:787"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_scheduler.c::unit#1::resource-custody.v1::fluent-bit-system::flb_sched_create#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `request`",
+                  "origin": "src/flb_scheduler.c:829"
+                },
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `request`",
+                  "origin": "src/flb_scheduler.c:836"
+                },
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `sched`",
+                  "origin": "src/flb_scheduler.c:855"
+                },
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `sched`",
+                  "origin": "src/flb_scheduler.c:856"
+                },
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `timer`",
+                  "origin": "src/flb_scheduler.c:844"
+                },
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `timer`",
+                  "origin": "src/flb_scheduler.c:851"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_scheduler.c::unit#1::resource-custody.v1::fluent-bit-system::flb_sched_destroy#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_sched_request_destroy` of `req`, which this function has not published",
+                  "origin": "src/flb_scheduler.c:603"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_scheduler.c::unit#1::resource-custody.v1::fluent-bit-system::flb_sched_event_handler#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_sched_timer_destroy` of `timer`, which this function has not published",
+                  "origin": "src/flb_scheduler.c:319"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_scheduler.c::unit#1::resource-custody.v1::fluent-bit-system::flb_sched_request_create#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_sched_request_destroy` of `request`, which this function has not published",
+                  "origin": "src/flb_scheduler.c:365"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_sched_request_destroy` of `request`, which this function has not published",
+                  "origin": "src/flb_scheduler.c:382"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_scheduler.c::unit#1::resource-custody.v1::fluent-bit-system::flb_sched_request_invalidate#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_sched_timer_destroy` of `timer`, which this function has not published",
+                  "origin": "src/flb_scheduler.c:969"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_sched_timer_destroy` of `timer`, which this function has not published",
+                  "origin": "src/flb_scheduler.c:990"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_scheduler.c::unit#1::resource-custody.v1::fluent-bit-system::flb_sched_retry_now#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_sched_timer_destroy` of `timer`, which this function has not published",
+                  "origin": "src/flb_scheduler.c:676"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_scheduler.c::unit#1::resource-custody.v1::fluent-bit-system::flb_sched_timer_cb_create#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `timer`",
+                  "origin": "src/flb_scheduler.c:926"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_scheduler.c::unit#1::resource-custody.v1::fluent-bit-system::flb_sched_timer_cleanup#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [],
+              "other_fields_changed": [
+                "review_holds"
+              ],
+              "row": "fluent-bit-system::src/flb_storage.c::unit#0::resource-custody.v1::fluent-bit-system::flb_storage_create#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [],
+              "other_fields_changed": [
+                "review_holds"
+              ],
+              "row": "fluent-bit-system::src/flb_storage.c::unit#1::resource-custody.v1::fluent-bit-system::flb_storage_create#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_task_destroy` of `task`, which this function has not published",
+                  "origin": "src/flb_task.c:739"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_task_destroy` of `task`, which this function has not published",
+                  "origin": "src/flb_task.c:814"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_task_destroy` of `task`, which this function has not published",
+                  "origin": "src/flb_task.c:834"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_task_destroy` of `task`, which this function has not published",
+                  "origin": "src/flb_task.c:887"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_task.c::unit#0::resource-custody.v1::fluent-bit-system::flb_task_create#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `retry`",
+                  "origin": "src/flb_task.c:936"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_task.c::unit#0::resource-custody.v1::fluent-bit-system::flb_task_destroy#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `retry`",
+                  "origin": "src/flb_task.c:429"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_task.c::unit#0::resource-custody.v1::fluent-bit-system::flb_task_retry_clean#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_task_retry_destroy` of `retry`, which this function has not published",
+                  "origin": "src/flb_task.c:331"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_task.c::unit#0::resource-custody.v1::fluent-bit-system::flb_task_retry_create#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_task_destroy` of `task`, which this function has not published",
+                  "origin": "src/flb_task.c:305"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_task_retry_destroy` of `retry`, which this function has not published",
+                  "origin": "src/flb_task.c:303"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_task.c::unit#0::resource-custody.v1::fluent-bit-system::flb_task_retry_reschedule#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_task_destroy` of `task`, which this function has not published",
+                  "origin": "src/flb_task.c:739"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_task_destroy` of `task`, which this function has not published",
+                  "origin": "src/flb_task.c:814"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_task_destroy` of `task`, which this function has not published",
+                  "origin": "src/flb_task.c:834"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_task_destroy` of `task`, which this function has not published",
+                  "origin": "src/flb_task.c:887"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_task.c::unit#1::resource-custody.v1::fluent-bit-system::flb_task_create#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `retry`",
+                  "origin": "src/flb_task.c:936"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_task.c::unit#1::resource-custody.v1::fluent-bit-system::flb_task_destroy#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `retry`",
+                  "origin": "src/flb_task.c:429"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_task.c::unit#1::resource-custody.v1::fluent-bit-system::flb_task_retry_clean#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_task_retry_destroy` of `retry`, which this function has not published",
+                  "origin": "src/flb_task.c:331"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_task.c::unit#1::resource-custody.v1::fluent-bit-system::flb_task_retry_create#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_task_destroy` of `task`, which this function has not published",
+                  "origin": "src/flb_task.c:305"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "unlink by `flb_task_retry_destroy` of `retry`, which this function has not published",
+                  "origin": "src/flb_task.c:303"
+                }
+              ],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_task.c::unit#1::resource-custody.v1::fluent-bit-system::flb_task_retry_reschedule#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            }
+          ],
+          "environment_digest_fields": [
+            "assumptions",
+            "build_identity",
+            "environment_sha256",
+            "resource_contracts_sha256",
+            "id"
+          ],
+          "figures": {
+            "after": {
+              "null_rows": 454,
+              "null_verdicts": {
+                "Safe": 211,
+                "Unknown": 243
+              },
+              "null_verdicts_sha256": "6cd35033210a8d17d99ce07817be68f036cec05d0007efa8923d118e58295f46",
+              "row_statuses": {
+                "Safe": 107,
+                "Unknown": 337,
+                "Unsafe": 4
+              },
+              "row_verdicts_sha256": "10742dc15ff86932bc9fe9ac4a8f9d822bdf6963d402afd7b2bc6de1d9af8ac7",
+              "rows": 448,
+              "unit_statuses": {
+                "Unknown": 13,
+                "Unsafe": 2
+              },
+              "unit_verdicts_sha256": "d326464ed189bac74776761057f9be31bd5197eea46563b8991137944ed2a01f",
+              "units": 15
+            },
+            "before": {
+              "null_rows": 454,
+              "null_verdicts": {
+                "Safe": 211,
+                "Unknown": 243
+              },
+              "null_verdicts_sha256": "62eff3de112879c09f4f1e344c3f1f3f9d5939ecca2b3468c211ad1ce40f0d14",
+              "row_statuses": {
+                "Safe": 103,
+                "Unknown": 341,
+                "Unsafe": 4
+              },
+              "row_verdicts_sha256": "92ab9acd3c1764e43240b148983c3e8b06246affa8d018561e8b037104ead3fe",
+              "rows": 448,
+              "unit_statuses": {
+                "Unknown": 13,
+                "Unsafe": 2
+              },
+              "unit_verdicts_sha256": "d326464ed189bac74776761057f9be31bd5197eea46563b8991137944ed2a01f",
+              "units": 15
+            }
+          },
+          "function_rows": {
+            "content_changed": 56,
+            "environment_only": 388,
+            "identical": 0,
+            "moved": 4,
+            "unmatched": 0
+          },
+          "incomplete_because": [],
+          "moves": [
+            {
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `task`",
+                  "origin": "src/flb_engine.c:145"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_engine.c::unit#0::resource-custody.v1::fluent-bit-system::flb_engine_destroy_tasks#0",
+              "status": [
+                "Unknown",
+                "Safe"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `task`",
+                  "origin": "src/flb_engine.c:145"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_engine.c::unit#1::resource-custody.v1::fluent-bit-system::flb_engine_destroy_tasks#0",
+              "status": [
+                "Unknown",
+                "Safe"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `ic`",
+                  "origin": "src/flb_storage.c:634"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_storage.c::unit#0::resource-custody.v1::fluent-bit-system::flb_storage_input_destroy#0",
+              "status": [
+                "Unknown",
+                "Safe"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `ic`",
+                  "origin": "src/flb_storage.c:634"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_storage.c::unit#1::resource-custody.v1::fluent-bit-system::flb_storage_input_destroy#0",
+              "status": [
+                "Unknown",
+                "Safe"
+              ]
+            }
+          ],
+          "profile_baseline": {
+            "after": {
+              "exit": 1,
+              "lines": [
+                "null_verdicts_sha256: baseline '62eff3de112879c09f4f1e344c3f1f3f9d5939ecca2b3468c211ad1ce40f0d14', run '6cd35033210a8d17d99ce07817be68f036cec05d0007efa8923d118e58295f46'",
+                "row_statuses: baseline {'Safe': 103, 'Unknown': 341, 'Unsafe': 4}, run {'Safe': 107, 'Unknown': 337, 'Unsafe': 4}",
+                "row_verdicts_sha256: baseline '92ab9acd3c1764e43240b148983c3e8b06246affa8d018561e8b037104ead3fe', run '10742dc15ff86932bc9fe9ac4a8f9d822bdf6963d402afd7b2bc6de1d9af8ac7'",
+                "fluent-bit-system: results moved; record the new baseline with a reason in the same commit (record), or treat the move as a defect"
+              ],
+              "profile": "fluent-bit-system"
+            },
+            "before": {
+              "exit": 0,
+              "lines": [
+                "fluent-bit-system: the run reproduces the baseline"
+              ],
+              "profile": "fluent-bit-system"
+            }
+          },
+          "status": "complete",
+          "status_deltas": {
+            "Safe": 4,
+            "Unknown": -4,
+            "Unsafe": 0
+          },
+          "totals": {
+            "after": {
+              "conflicted_unit_rows": 0,
+              "diagnostic_counts": {
+                "counted_user": 4,
+                "summary_conflict": 4,
+                "unknown_alias": 896,
+                "unsupported": 2406
+              },
+              "function_rows": 448,
+              "function_status": {
+                "Safe": 107,
+                "Unknown": 337,
+                "Unsafe": 4
+              },
+              "row_source": "sidecar",
+              "unit_rows": 15,
+              "unit_verdict": {
+                "Unknown": 13,
+                "Unsafe": 2
+              }
+            },
+            "before": {
+              "conflicted_unit_rows": 0,
+              "diagnostic_counts": {
+                "counted_user": 4,
+                "summary_conflict": 4,
+                "unknown_alias": 950,
+                "unsupported": 2350
+              },
+              "function_rows": 448,
+              "function_status": {
+                "Safe": 103,
+                "Unknown": 341,
+                "Unsafe": 4
+              },
+              "row_source": "sidecar",
+              "unit_rows": 15,
+              "unit_verdict": {
+                "Unknown": 13,
+                "Unsafe": 2
+              }
+            }
+          },
+          "unit_field_differences": {
+            "fluent-bit-system::plugins/in_storage_backlog/sb.c::unit#0::resource-custody.v1::fluent-bit-system": [
+              "compile_configuration"
+            ],
+            "fluent-bit-system::src/flb_engine.c::unit#0::resource-custody.v1::fluent-bit-system": [
+              "compile_configuration",
+              "diagnostic_counts",
+              "reason"
+            ],
+            "fluent-bit-system::src/flb_engine.c::unit#1::resource-custody.v1::fluent-bit-system": [
+              "compile_configuration",
+              "diagnostic_counts",
+              "reason"
+            ],
+            "fluent-bit-system::src/flb_engine_dispatch.c::unit#0::resource-custody.v1::fluent-bit-system": [
+              "compile_configuration",
+              "diagnostic_counts",
+              "reason"
+            ],
+            "fluent-bit-system::src/flb_engine_dispatch.c::unit#1::resource-custody.v1::fluent-bit-system": [
+              "compile_configuration",
+              "diagnostic_counts",
+              "reason"
+            ],
+            "fluent-bit-system::src/flb_input_chunk.c::unit#0::resource-custody.v1::fluent-bit-system": [
+              "compile_configuration",
+              "diagnostic_counts",
+              "reason"
+            ],
+            "fluent-bit-system::src/flb_input_chunk.c::unit#1::resource-custody.v1::fluent-bit-system": [
+              "compile_configuration",
+              "diagnostic_counts",
+              "reason"
+            ],
+            "fluent-bit-system::src/flb_output.c::unit#0::resource-custody.v1::fluent-bit-system": [
+              "compile_configuration",
+              "diagnostic_counts"
+            ],
+            "fluent-bit-system::src/flb_output.c::unit#1::resource-custody.v1::fluent-bit-system": [
+              "compile_configuration",
+              "diagnostic_counts"
+            ],
+            "fluent-bit-system::src/flb_scheduler.c::unit#0::resource-custody.v1::fluent-bit-system": [
+              "compile_configuration",
+              "diagnostic_counts",
+              "reason"
+            ],
+            "fluent-bit-system::src/flb_scheduler.c::unit#1::resource-custody.v1::fluent-bit-system": [
+              "compile_configuration",
+              "diagnostic_counts",
+              "reason"
+            ],
+            "fluent-bit-system::src/flb_storage.c::unit#0::resource-custody.v1::fluent-bit-system": [
+              "compile_configuration",
+              "diagnostic_counts",
+              "reason"
+            ],
+            "fluent-bit-system::src/flb_storage.c::unit#1::resource-custody.v1::fluent-bit-system": [
+              "compile_configuration",
+              "diagnostic_counts",
+              "reason"
+            ],
+            "fluent-bit-system::src/flb_task.c::unit#0::resource-custody.v1::fluent-bit-system": [
+              "compile_configuration",
+              "contract_body_evidence",
+              "diagnostic_counts",
+              "reading_site_environments",
+              "reason"
+            ],
+            "fluent-bit-system::src/flb_task.c::unit#1::resource-custody.v1::fluent-bit-system": [
+              "compile_configuration",
+              "contract_body_evidence",
+              "diagnostic_counts",
+              "reading_site_environments",
+              "reason"
+            ]
+          },
+          "unit_moves": [],
+          "unit_rows_environment_only": 0,
+          "unmatched": [],
+          "unmatched_units": []
+        }
+      }
+    }
+  ],
+  "contribution": {
+    "ledgers": [],
+    "rules": [],
+    "schema": "quirin-contribution-ledger/1"
+  },
+  "declared": {
+    "comparison": "base->tip",
+    "path": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a2c467a15d6a29eec/docs/reports/list-entry-release-identity/PREDICTION.md",
+    "result": "mismatch",
+    "routes": {
+      "corpus": {
+        "result": "not-compared",
+        "why": "the route did not complete (exit 1)"
+      },
+      "slice": {
+        "declared": true,
+        "delta_mismatches": [],
+        "missing": [],
+        "result": "match",
+        "unpredicted": []
+      },
+      "system": {
+        "declared": true,
+        "delta_mismatches": [],
+        "missing": [],
+        "result": "match",
+        "unpredicted": []
+      }
+    },
+    "sha256": "adf42b7d028f10f9ccce9983ad4f89fd978dbbbe902908f6c65e11b4f6e05c9e"
+  },
+  "failures": [
+    "side base route corpus exited 1",
+    "side tip route corpus exited 1",
+    "comparison base->tip route corpus: the route did not complete (exit 1)"
+  ],
+  "inputs_spelling": {
+    "canonical_prefix": null,
+    "mode": "auto",
+    "spelled_prefix": null,
+    "spelling": "original"
+  },
+  "interactions": [],
+  "routes": [
+    {
+      "definition": {
+        "clang": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a2c467a15d6a29eec/private/toolchain/root/usr/lib/llvm-21/bin/clang",
+        "compile_databases": [
+          {
+            "path": "c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json",
+            "sha256": "2f75e769ddd0544b63958e508c37e3cc104fd33fe10a69ae2240beadf1f19911"
+          },
+          {
+            "path": "c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
+            "sha256": "c5b805ff966b1ab99c3a8337d3f23254ed639f1d3490ac4f0de559a7e9d4474b"
+          }
+        ],
+        "inputs_root": "private/corpus-inputs",
+        "kind": "pinned-corpus",
+        "link_map": {
+          "path": "docs/reports/w48-bu-single-leaf-bodies/link-map.corpus.json",
+          "sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3"
+        },
+        "mirror_trees": [
+          "c-gateway-wave-pin/fluent-bit-clang-source",
+          "c-gateway-wave-pin/monkey",
+          "provider-packages-wave20"
+        ],
+        "name": "corpus",
+        "profile": "eight-home",
+        "source_commit": "66910c10",
+        "tracked": [
+          "contract/profiles/fluent-bit/audit.json",
+          "contract/profiles/fluent-bit/profile.json",
+          "contract/profiles/fluent-bit/member-facts-scope.json"
+        ]
+      },
+      "digest": "7b64482e3618bcb19e60525b6cbe0ef68ed580a2c7ff07b9af0c167dadefa653",
+      "name": "corpus",
+      "profile": "eight-home"
+    },
+    {
+      "definition": {
+        "checkout": "private/prep/system/fluent-bit-clang-source",
+        "clang": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a2c467a15d6a29eec/private/toolchain/root/usr/lib/llvm-21/bin/clang",
+        "compile_database": {
+          "path": "private/prep/system/fluent-bit-clang-production/compile_commands.json",
+          "sha256": "200439a05cad70cc09e61ad7b68da50c61ad4f18a4c17a3ecced4d4a7bb88d29"
+        },
+        "kind": "configured-selection",
+        "link_map": {
+          "path": "docs/reports/w48-bu-single-leaf-bodies/link-map.corpus.json",
+          "sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3"
+        },
+        "name": "system",
+        "profile": "fluent-bit-system",
+        "profile_directory": "contract/profiles/fluent-bit",
+        "selection": "contract/profiles/fluent-bit/system-selection.json",
+        "tracked": [
+          "contract/profiles/fluent-bit/system-selection.json",
+          "contract/profiles/fluent-bit/profile.json",
+          "contract/profiles/fluent-bit/member-facts-scope.json"
+        ]
+      },
+      "digest": "9c8db45095d4249012b18f3a74ee32f877c07d7b22d795a3238c21090e51206a",
+      "name": "system",
+      "profile": "fluent-bit-system"
+    },
+    {
+      "definition": {
+        "checkout": "private/prep/slice/fluent-bit-clang-source",
+        "clang": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a2c467a15d6a29eec/private/toolchain/root/usr/lib/llvm-21/bin/clang",
+        "compile_database": {
+          "path": "private/prep/slice/fluent-bit-clang-production/compile_commands.json",
+          "sha256": "0066bf4f7417f45d38353286448b0d35dcc7b6fe3577e3920d9fbeadbf4589e2"
+        },
+        "kind": "configured-selection",
+        "link_map": {
+          "path": "docs/reports/w48-bu-single-leaf-bodies/link-map.corpus.json",
+          "sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3"
+        },
+        "name": "slice",
+        "profile": "fluent-bit-tail-pause",
+        "profile_directory": "contract/profiles/fluent-bit",
+        "selection": "contract/profiles/fluent-bit/tail-pause-selection.json",
+        "tracked": [
+          "contract/profiles/fluent-bit/tail-pause-selection.json",
+          "contract/profiles/fluent-bit/profile.json",
+          "contract/profiles/fluent-bit/member-facts-scope.json"
+        ]
+      },
+      "digest": "220310d08d414f008ed1dbeea240337730a7055a06d872f2d0082c3d11fb923c",
+      "name": "slice",
+      "profile": "fluent-bit-tail-pause"
+    }
+  ],
+  "rules_off": [],
+  "schema": "quirin-native-comparison/1",
+  "sides": {
+    "base": {
+      "binary": {
+        "path": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a2c467a15d6a29eec/private/base-src/target/release/quirin-audit",
+        "path_as_run": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a2c467a15d6a29eec/private/base-src/target/release/quirin-audit",
+        "sha256": "c2cc83ea5a19acddc5f68e248c75b13115b5faa01892f86c459f5704421e5b3e"
+      },
+      "build_commit": null,
+      "bundles": {
+        "contract": "6ec05712e68088f5d9aa7bc1e707fd364ad02aa192178890a7e5baa1565e10af",
+        "providers/qcore-provider-chunkio/contracts": "0732ed1f1b7872591a3537b84d5c1561e11ad010cfb4d68f030cbce131edcb8f",
+        "providers/qcore-provider-cmetrics/contracts": "11b4f9d68f5bd6a523b8cc6d40f5b4243455192f690698a58d8ba72208c025f9",
+        "providers/qcore-provider-ctraces/contracts": "c9efd04d53275de44a6419a32c7e3632dfd8c7fe87b7df5f9cc02fc096f772fc",
+        "providers/qcore-provider-libevent/contracts": "c9caddff0aa36d8ed2f86a0da3fadaeae0416b62d1e963354a5dfad46beab322",
+        "providers/qcore-provider-librdkafka/contracts": "45369b070375522d6002e9223abd2a341566cf558ce7e1142a2769b4f0706660",
+        "providers/quirin-provider-cfl/contracts": "eedc4e59412f0363329404adb868e8d88c789d7a35f8cda5406b4bfa94a91640",
+        "providers/quirin-provider-fluent-bit/contracts": "04661b87c6f7e71fe570a7da2ddeb0a0a8aa3f755835929c51c57854238a872e",
+        "providers/quirin-provider-libc/contracts": "cf7397667266c85ccde682822fd5cfe8220ecf389f08fa26f7eb072f1f698178",
+        "providers/quirin-provider-mpack/contracts": "524edb31027a0c020e3b697be84f3818a7b44443ffc903f2456d71d3b9f170d6",
+        "providers/quirin-provider-msgpack/contracts": "655433bcaed3005bdb477b73ad527efa90c75874fcdeccba1743ee97c764befa",
+        "providers/quirin-provider-shared/contracts": "9a53ebaff81b4933d6464e928585ae7104e87c91e27a6ea70f6e610dd515b72d"
+      },
+      "directory": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a2c467a15d6a29eec/measure/arbiter-3/sides/base",
+      "inputs": {
+        "corpus": {
+          "canonical_prefix": null,
+          "databases_as_spelled": {
+            "private/corpus-inputs/c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json": "2f75e769ddd0544b63958e508c37e3cc104fd33fe10a69ae2240beadf1f19911",
+            "private/corpus-inputs/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json": "c5b805ff966b1ab99c3a8337d3f23254ed639f1d3490ac4f0de559a7e9d4474b"
+          },
+          "route_digest": "7b64482e3618bcb19e60525b6cbe0ef68ed580a2c7ff07b9af0c167dadefa653",
+          "source_date_epoch": 1767225600,
+          "spelled_prefix": null,
+          "spelling": "original"
+        },
+        "slice": {
+          "canonical_prefix": null,
+          "databases_as_spelled": {
+            "private/prep/slice/fluent-bit-clang-production/compile_commands.json": "0066bf4f7417f45d38353286448b0d35dcc7b6fe3577e3920d9fbeadbf4589e2"
+          },
+          "route_digest": "220310d08d414f008ed1dbeea240337730a7055a06d872f2d0082c3d11fb923c",
+          "source_date_epoch": 1767225600,
+          "spelled_prefix": null,
+          "spelling": "original"
+        },
+        "system": {
+          "canonical_prefix": null,
+          "databases_as_spelled": {
+            "private/prep/system/fluent-bit-clang-production/compile_commands.json": "200439a05cad70cc09e61ad7b68da50c61ad4f18a4c17a3ecced4d4a7bb88d29"
+          },
+          "route_digest": "9c8db45095d4249012b18f3a74ee32f877c07d7b22d795a3238c21090e51206a",
+          "source_date_epoch": 1767225600,
+          "spelled_prefix": null,
+          "spelling": "original"
+        }
+      },
+      "kind": "checkout",
+      "revision": null,
+      "run_json": {
+        "path": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a2c467a15d6a29eec/measure/arbiter-3/sides/base/run.json",
+        "sha256": "16260cc9eb84c7cf58a3027587f0a04f3aede8d92af22db3231e9e610364684f"
+      },
+      "spec": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a2c467a15d6a29eec/private/base-src"
+    },
+    "tip": {
+      "binary": {
+        "path": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a2c467a15d6a29eec/private/tip-src/target/release/quirin-audit",
+        "path_as_run": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a2c467a15d6a29eec/private/tip-src/target/release/quirin-audit",
+        "sha256": "18bfc1fc7cf92084765518faefdb190ce809e296aab9d9e01d74ef8d4a269c6f"
+      },
+      "build_commit": null,
+      "bundles": {
+        "contract": "6ec05712e68088f5d9aa7bc1e707fd364ad02aa192178890a7e5baa1565e10af",
+        "providers/qcore-provider-chunkio/contracts": "0732ed1f1b7872591a3537b84d5c1561e11ad010cfb4d68f030cbce131edcb8f",
+        "providers/qcore-provider-cmetrics/contracts": "11b4f9d68f5bd6a523b8cc6d40f5b4243455192f690698a58d8ba72208c025f9",
+        "providers/qcore-provider-ctraces/contracts": "c9efd04d53275de44a6419a32c7e3632dfd8c7fe87b7df5f9cc02fc096f772fc",
+        "providers/qcore-provider-libevent/contracts": "c9caddff0aa36d8ed2f86a0da3fadaeae0416b62d1e963354a5dfad46beab322",
+        "providers/qcore-provider-librdkafka/contracts": "45369b070375522d6002e9223abd2a341566cf558ce7e1142a2769b4f0706660",
+        "providers/quirin-provider-cfl/contracts": "eedc4e59412f0363329404adb868e8d88c789d7a35f8cda5406b4bfa94a91640",
+        "providers/quirin-provider-fluent-bit/contracts": "ef4c62c49d6b7e87eac16d6f553c882d9dd5722f302bf106e61d111d73799d69",
+        "providers/quirin-provider-libc/contracts": "cf7397667266c85ccde682822fd5cfe8220ecf389f08fa26f7eb072f1f698178",
+        "providers/quirin-provider-mpack/contracts": "524edb31027a0c020e3b697be84f3818a7b44443ffc903f2456d71d3b9f170d6",
+        "providers/quirin-provider-msgpack/contracts": "655433bcaed3005bdb477b73ad527efa90c75874fcdeccba1743ee97c764befa",
+        "providers/quirin-provider-shared/contracts": "9a53ebaff81b4933d6464e928585ae7104e87c91e27a6ea70f6e610dd515b72d"
+      },
+      "directory": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a2c467a15d6a29eec/measure/arbiter-3/sides/tip",
+      "inputs": {
+        "corpus": {
+          "canonical_prefix": null,
+          "databases_as_spelled": {
+            "private/corpus-inputs/c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json": "2f75e769ddd0544b63958e508c37e3cc104fd33fe10a69ae2240beadf1f19911",
+            "private/corpus-inputs/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json": "c5b805ff966b1ab99c3a8337d3f23254ed639f1d3490ac4f0de559a7e9d4474b"
+          },
+          "route_digest": "7b64482e3618bcb19e60525b6cbe0ef68ed580a2c7ff07b9af0c167dadefa653",
+          "source_date_epoch": 1767225600,
+          "spelled_prefix": null,
+          "spelling": "original"
+        },
+        "slice": {
+          "canonical_prefix": null,
+          "databases_as_spelled": {
+            "private/prep/slice/fluent-bit-clang-production/compile_commands.json": "0066bf4f7417f45d38353286448b0d35dcc7b6fe3577e3920d9fbeadbf4589e2"
+          },
+          "route_digest": "220310d08d414f008ed1dbeea240337730a7055a06d872f2d0082c3d11fb923c",
+          "source_date_epoch": 1767225600,
+          "spelled_prefix": null,
+          "spelling": "original"
+        },
+        "system": {
+          "canonical_prefix": null,
+          "databases_as_spelled": {
+            "private/prep/system/fluent-bit-clang-production/compile_commands.json": "200439a05cad70cc09e61ad7b68da50c61ad4f18a4c17a3ecced4d4a7bb88d29"
+          },
+          "route_digest": "9c8db45095d4249012b18f3a74ee32f877c07d7b22d795a3238c21090e51206a",
+          "source_date_epoch": 1767225600,
+          "spelled_prefix": null,
+          "spelling": "original"
+        }
+      },
+      "kind": "checkout",
+      "revision": null,
+      "run_json": {
+        "path": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a2c467a15d6a29eec/measure/arbiter-3/sides/tip/run.json",
+        "sha256": "0346e4255dafdce285e26a3ca6f09a57d6579950e4f945611877d1e33c53d2d7"
+      },
+      "spec": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a2c467a15d6a29eec/private/tip-src"
+    }
+  },
+  "source_date_epoch": 1767225600,
+  "status": "failed",
+  "timing": {
+    "analysis_time_ms": 6750299,
+    "limits": {
+      "meaning": "the analysis quota (--timeout-ms) counts analysis time only; declared slot waits are excluded up to the slot-wait limit; the overall wall limit stops the run whatever it declares",
+      "overall_wall_limit_ms": 604800000,
+      "slot_wait_limit_ms": 604800000,
+      "wall_time_quota_ms": 36000000
+    },
+    "sides": {
+      "base": {
+        "corpus": {
+          "analysis_time_ms": 5255602,
+          "profile": "eight-home",
+          "slot_wait_ms": 3720853,
+          "wall_time_ms": 8976455
+        },
+        "slice": {
+          "analysis_time_ms": 602339,
+          "profile": "fluent-bit-tail-pause",
+          "slot_wait_ms": 3720865,
+          "wall_time_ms": 4323204
+        },
+        "system": {
+          "analysis_time_ms": 702249,
+          "profile": "fluent-bit-system",
+          "slot_wait_ms": 3722861,
+          "wall_time_ms": 4425110
+        }
+      },
+      "tip": {
+        "corpus": {
+          "analysis_time_ms": 5782394,
+          "profile": "eight-home",
+          "slot_wait_ms": 2344348,
+          "wall_time_ms": 8126742
+        },
+        "slice": {
+          "analysis_time_ms": 603951,
+          "profile": "fluent-bit-tail-pause",
+          "slot_wait_ms": 3720985,
+          "wall_time_ms": 4324936
+        },
+        "system": {
+          "analysis_time_ms": 707163,
+          "profile": "fluent-bit-system",
+          "slot_wait_ms": 3720980,
+          "wall_time_ms": 4428143
+        }
+      }
+    },
+    "slot_wait_meaning": "wall time during which every route in flight waited for its gate slot; the host's --timeout-ms does not count it, up to its slot-wait limit (cards MEASURE-QUOTA-AND-INCREMENTAL, R7, and GATE-SLOT-FIFO-ORDER)",
+    "slot_wait_ms": 2344198,
+    "wall_time_ms": 9094497
+  },
+  "tool": {
+    "name": "quirin-audit-measure",
+    "sha256": "3ca75e371599ddde278735ee5f64a6e9cc4dfdf3a4137d5fef52c448854e2488",
+    "version": "0.1.0"
+  }
+}
