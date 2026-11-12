@@ -1,17 +1,3 @@
-// SPDX-License-Identifier: Apache-2.0
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 module contract;
 // qcore-premise-binding-manifest-v1 rd_kafka_ShareAcknowledgeRequest rk_plugin_callback_closure 63dfa5a508ef45cc08664228c911a134d911e356315cba1cfc0f8b7a93b08c96
 // qcore-premise-binding-manifest-v1 rd_kafka_broker_active_toppar_add rk_plugin_callback_closure 136663f589f867cd9cd3e4c9de6eafae89a1ee38ecd6e400f6cbc452142da21a
