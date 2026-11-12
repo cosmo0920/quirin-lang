@@ -83,6 +83,18 @@
    "why": "prose: the NOTE text names providers/; the library's provider reads go through DEFAULT_LOAD_PATH (providers/contract-load-path.json), which that literal and the manifest attribute"
   },
   {
+   "source": "crates/qcore-audit/src/contract_only_diff.rs",
+   "literal": "providers",
+   "reads": [],
+   "why": "a path component in is_contract_data's pattern; the classification reads git objects (diff, grep and cat-file of revisions), never the tracked worktree files, and its tests run in a scratch repository"
+  },
+  {
+   "source": "crates/qcore-audit/tests/pinned_cli.rs",
+   "literal": "crates",
+   "reads": [],
+   "why": "the repository root (CARGO_MANIFEST_DIR/../..) handed to quirin-audit pinned --repository; the refusal under test reads git objects (rev-parse, diff of revisions) before any worktree file"
+  },
+  {
    "source": "compiler/tests/chunk_lifecycle_coverage.rs",
    "literal": "docs/reports/w42-chunk-lifecycle-cert",
    "reads": [
