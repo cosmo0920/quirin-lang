@@ -1,0 +1,13 @@
+{
+  "note": "Landing integrate/r8 at 52e3142d5 (base main 74105dd0e; merges W45-FB-ENGINE-PROGRESS-MEASURE 4c7d7857d, MEASURE-LOOKUP-RECORD-REUSE d180f9410, LICENCE-HEADER-TEST-REPAIR bd0249f95). Full standing gate via scripts/gate_scope.py --base main --full --landing (private/integrate-r8/gate-landing-3, raw record beside this file as gate-scope.json), Clang and Lean borrowed from an unpacked private toolchain because this host has neither installed. Rust 629 units / 670 summaries: 9416 passed, 3 failed, 17 ignored; the 3 failures are qcore-compiler task_route_tsan, host-only (ThreadSanitizer 'invalid path to external symbolizer' with the unpacked LLVM 21), failing identically at base 74105dd0e and reading no file this landing changes. Lean 428 audits 0; fmt, Clippy, both reevaluation examples 0; provider package build/verify 0, provider Rust 133 passed / 0 failed / 1 ignored, provider fmt/Clippy 0. Python 756 with 2 failures, both the stale derived matrix dimensions (audit count 426 vs 428, named_followups 940 vs 946) that this regeneration repairs; rerun after the records commit. No native measurement: the live-route inputs are not prepared on this host, so land.py publish is owed.",
+  "workspace_tests": 9416,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 756,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "full landing gate: every step 0 except Rust (3 host-only task_route_tsan symbolization failures, identical at base) and Python (2 stale-matrix failures repaired by this regeneration)",
+  "lean_audits": 428,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

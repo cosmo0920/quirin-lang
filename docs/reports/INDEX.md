@@ -664,6 +664,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [librdkafka-plugin-premise-remainder](librdkafka-plugin-premise-remainder/README.md) | LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER: the plugin premise on member facts, the crash path and a model contract |
 
+| [licence-header-test-repair](licence-header-test-repair/README.md) | LICENCE-HEADER-TEST-REPAIR |
+
 | [link-standing](link-standing/README.md) | LINK-STANDING |
 
 | [log-print-body-contracts](log-print-body-contracts/README.md) | LOG-PRINT-BODY-CONTRACTS |
@@ -688,6 +690,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [macos-gateway-test-portability](macos-gateway-test-portability/README.md) | Gateway and plugin test portability (2026-10-22) |
 
 | [main-guard-removal](main-guard-removal/README.md) | MAIN-GUARD-REMOVAL |
+
+| [measure-lookup-record-reuse](measure-lookup-record-reuse/README.md) | MEASURE-LOOKUP-RECORD-REUSE |
 
 | [measure-quota-and-incremental](measure-quota-and-incremental/README.md) | MEASURE-QUOTA-AND-INCREMENTAL |
 
@@ -1424,6 +1428,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [w45-fb-backlog-fault-injection](w45-fb-backlog-fault-injection/README.md) | W45-FB-BACKLOG-FAULT-INJECTION — native fault-injection observations |
 
 | [w45-fb-engine-progress](w45-fb-engine-progress/README.md) | W45-FB-ENGINE-PROGRESS: do the engine callbacks make progress? |
+
+| [w45-fb-engine-progress-measure](w45-fb-engine-progress-measure/README.md) | W45-FB-ENGINE-PROGRESS-MEASURE: a checked measure for counted loops |
 
 | [w45-fb-retry-fault-injection](w45-fb-retry-fault-injection/README.md) | W45-FB-RETRY-FAULT-INJECTION — native fault-injection observations (C1-C3) |
 
