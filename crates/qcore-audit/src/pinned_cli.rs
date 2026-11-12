@@ -138,11 +138,12 @@ pub fn main(arguments: Vec<OsString>) -> ExitCode {
         },
         _ => None,
     };
-    let checkpoints = checkpoint_directory.map(|directory| crate::pinned_route::CheckpointOptions {
-        directory,
-        resume,
-        acceptance,
-    });
+    let checkpoints =
+        checkpoint_directory.map(|directory| crate::pinned_route::CheckpointOptions {
+            directory,
+            resume,
+            acceptance,
+        });
     let mut arguments = positional.into_iter();
     let jobs = match crate::parallel::resolve_jobs(jobs.as_deref()) {
         Ok(jobs) => crate::parallel::effective_jobs(jobs),

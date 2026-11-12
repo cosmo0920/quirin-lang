@@ -726,7 +726,10 @@ fn stored_scope<'a>(
             if consistent {
                 Ok(Scope::Restricted(records))
             } else {
-                Err("a restricted stage identity over a lookup record that cannot restrict it".into())
+                Err(
+                    "a restricted stage identity over a lookup record that cannot restrict it"
+                        .into(),
+                )
             }
         }
         other => Err(format!("unknown environment scope `{other}`")),
@@ -1696,3 +1699,6 @@ fn outcomes(steps: &[Step<'_>], records: Vec<GroupRecord>) -> Vec<StepOutcome> {
 
 #[cfg(test)]
 mod tests;
+
+#[cfg(test)]
+mod lookup_tests;

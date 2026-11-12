@@ -208,7 +208,11 @@ pub fn run_with_checkpoints(
     // analyzer for a contract-only diff is the base build reading the tip's
     // contract inputs, checked before any unit is analysed.
     if let Some(acceptance) = checkpoints.and_then(|options| options.acceptance.as_ref()) {
-        let locks = pins.lock_digests().into_keys().map(PathBuf::from).collect::<Vec<_>>();
+        let locks = pins
+            .lock_digests()
+            .into_keys()
+            .map(PathBuf::from)
+            .collect::<Vec<_>>();
         let configuration = profile.directory().join("source-contracts.json");
         let mut inputs = vec![contract_manifest, profile.directory()];
         if configuration.exists() {

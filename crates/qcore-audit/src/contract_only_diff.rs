@@ -34,7 +34,10 @@
 //!   names it (resolved relative to the including file, or to its crate
 //!   for `concat!(env!("CARGO_MANIFEST_DIR"), ..)`), and an include whose
 //!   argument is neither form refuses the whole classification, because what
-//!   it compiles in cannot be enumerated.
+//!   it compiles in cannot be enumerated. The provider workspace's sources
+//!   (`providers/`) are not an analyzer: a provider crate's embedded contracts
+//!   reach a pinned run only through a provider package
+//!   (`QCORE_CHUNKIO_PACKAGE`), whose every file the run identity digests.
 //!
 //! [`Acceptance::verify_run`] then checks the run that claims it: the running
 //! binary's build commit is the base commit, the repository's `HEAD` is the
@@ -91,7 +94,9 @@ impl Acceptance {
     pub fn verify_run(&self, build_commit: Option<&str>, inputs: &[&Path]) -> Result<(), String> {
         let repository = Path::new(&self.repository);
         let Some(commit) = build_commit else {
-            return Err("the analyzer records no build commit, so it cannot be the base side's".into());
+            return Err(
+                "the analyzer records no build commit, so it cannot be the base side's".into(),
+            );
         };
         let commit = rev_parse(repository, commit)?;
         if commit != self.base {
@@ -154,12 +159,14 @@ const LOCKS: [&str; 4] = [
 #[must_use]
 pub fn is_contract_data(path: &str) -> bool {
     let name = path.rsplit('/').next().unwrap_or(path);
-    if name.ends_with(".rs") || name == "Cargo.toml" || name == "Cargo.lock" || name == "build.rs"
-    {
+    if name.ends_with(".rs") || name == "Cargo.toml" || name == "Cargo.lock" || name == "build.rs" {
         return false;
     }
     let parts = path.split('/').collect::<Vec<_>>();
-    if parts.iter().any(|part| part.is_empty() || *part == "." || *part == "..") {
+    if parts
+        .iter()
+        .any(|part| part.is_empty() || *part == "." || *part == "..")
+    {
         return false;
     }
     match parts.as_slice() {
@@ -263,7 +270,11 @@ pub fn includes_of(path: &str, crate_root: &str, text: &str) -> Result<Vec<Strin
         let (anchor, literal) = if let Some(literal) = argument.strip_prefix('"') {
             (directory, literal)
         } else if let Some(concat) = argument.strip_prefix("concat!") {
-            let concat = concat.trim_start().strip_prefix('(').unwrap_or("").trim_start();
+            let concat = concat
+                .trim_start()
+                .strip_prefix('(')
+                .unwrap_or("")
+                .trim_start();
             let Some(tail) = concat
                 .strip_prefix("env!")
                 .map(str::trim_start)
@@ -321,6 +332,7 @@ pub fn compiled_in(repository: &Path, base: &str) -> Result<BTreeSet<String>, St
             "--",
             "*.rs",
             ":(exclude)third_party",
+            ":(exclude)providers",
         ],
     )
     .or_else(|error| {
@@ -496,5 +508,184 @@ mod tests {
         assert!(test_only("crates/k/src/route/checkpoints/tests.rs"));
         assert!(!test_only("crates/k/src/lib.rs"));
         assert_eq!(crate_root_of("crates/k/src/a/b.rs"), "crates/k");
+    }
+
+    /// A scratch Git repository, removed on drop.
+    struct Repository(PathBuf);
+
+    impl Repository {
+        fn new() -> Self {
+            use std::sync::atomic::{AtomicUsize, Ordering};
+            static NEXT: AtomicUsize = AtomicUsize::new(0);
+            let path = std::env::temp_dir().join(format!(
+                "qcore-contract-only-{}-{}",
+                std::process::id(),
+                NEXT.fetch_add(1, Ordering::Relaxed)
+            ));
+            let _ = std::fs::remove_dir_all(&path);
+            std::fs::create_dir_all(&path).unwrap();
+            let repository = Self(path.canonicalize().unwrap());
+            repository.git(&["init", "-q", "-b", "main"]);
+            repository
+        }
+
+        fn git(&self, args: &[&str]) -> String {
+            let output = Command::new("git")
+                .arg("-C")
+                .arg(&self.0)
+                .args([
+                    "-c",
+                    "user.name=fixture",
+                    "-c",
+                    "user.email=fixture@example.invalid",
+                    "-c",
+                    "commit.gpgsign=false",
+                ])
+                .args(args)
+                .output()
+                .unwrap();
+            assert!(output.status.success(), "git {args:?}: {output:?}");
+            String::from_utf8(output.stdout).unwrap().trim().to_owned()
+        }
+
+        fn write(&self, path: &str, text: &str) {
+            let path = self.0.join(path);
+            std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+            std::fs::write(path, text).unwrap();
+        }
+
+        fn commit(&self, message: &str) -> String {
+            self.git(&["add", "-A"]);
+            self.git(&["commit", "-q", "-m", message]);
+            self.git(&["rev-parse", "HEAD"])
+        }
+    }
+
+    impl Drop for Repository {
+        fn drop(&mut self) {
+            let _ = std::fs::remove_dir_all(&self.0);
+        }
+    }
+
+    #[test]
+    fn only_a_diff_confined_to_contract_data_not_compiled_in_accepts_the_base_analyzer() {
+        let repository = Repository::new();
+        repository.write(
+            "crates/k/src/lib.rs",
+            "pub const EMBEDDED: &str = include_str!(\"../../../providers/p/contracts/embedded.qv\");\n",
+        );
+        repository.write(
+            "crates/k/tests/t.rs",
+            "const T: &str = include_str!(\"../../../providers/p/contracts/a.qv\");\n",
+        );
+        repository.write("providers/p/contracts/a.qv", "module a;\n");
+        repository.write("providers/p/contracts/embedded.qv", "module e;\n");
+        repository.write("providers/p/contracts.lock", "{}\n");
+        repository.write("contract/profiles/x/audit.json", "{}\n");
+        let base = repository.commit("base");
+
+        // A contract text, its lock and a profile change: accepted (the test
+        // that includes a.qv is not compiled into an analyzer).
+        repository.write("providers/p/contracts/a.qv", "module a; // changed\n");
+        repository.write("providers/p/contracts.lock", "{\"changed\": true}\n");
+        repository.write("contract/profiles/x/audit.json", "{\"x\": 1}\n");
+        let tip = repository.commit("contract only");
+        let acceptance = classify(&repository.0, &base, &tip).unwrap();
+        assert_eq!(acceptance.base, base);
+        assert_eq!(acceptance.tip, tip);
+        assert_eq!(
+            acceptance.paths,
+            [
+                "contract/profiles/x/audit.json",
+                "providers/p/contracts.lock",
+                "providers/p/contracts/a.qv"
+            ]
+        );
+        assert_eq!(acceptance.compiled_in, 1);
+        assert_eq!(acceptance.decision()["accepted_from"], "base");
+
+        // The run claiming it: built at the base, reading the tip checkout.
+        let manifest = repository.0.join("providers/p/contracts.lock");
+        acceptance
+            .verify_run(Some(&base), &[manifest.as_path()])
+            .unwrap();
+        assert!(
+            acceptance
+                .verify_run(Some(&tip), &[manifest.as_path()])
+                .unwrap_err()
+                .contains("not at the base")
+        );
+        assert!(acceptance.verify_run(None, &[]).is_err());
+        let outside = std::env::temp_dir();
+        assert!(
+            acceptance
+                .verify_run(Some(&base), &[outside.as_path()])
+                .unwrap_err()
+                .contains("not read from the accepted tip checkout")
+        );
+        repository.write("providers/p/contracts/a.qv", "module a; // dirty\n");
+        assert!(
+            acceptance
+                .verify_run(Some(&base), &[])
+                .unwrap_err()
+                .contains("uncommitted contract data")
+        );
+        repository.git(&["checkout", "-q", "--", "."]);
+
+        // A non-contract diff: refused, naming the path.
+        repository.write("crates/k/src/other.rs", "pub fn f() {}\n");
+        let code = repository.commit("code");
+        let refused = classify(&repository.0, &tip, &code).unwrap_err();
+        assert!(refused.contains("`crates/k/src/other.rs`"), "{refused}");
+        assert!(
+            refused.contains("not confined to contract data"),
+            "{refused}"
+        );
+
+        // A contract file an analyzer compiles in: refused.
+        repository.write(
+            "providers/p/contracts/embedded.qv",
+            "module e; // changed\n",
+        );
+        let embedded = repository.commit("embedded");
+        let refused = classify(&repository.0, &code, &embedded).unwrap_err();
+        assert!(refused.contains("compiled into an analyzer"), "{refused}");
+
+        // An include that cannot be enumerated refuses the classification.
+        repository.write(
+            "crates/k/src/dynamic.rs",
+            "const D: &str = include_str!(PATH);\n",
+        );
+        let dynamic = repository.commit("dynamic include");
+        repository.write("providers/p/contracts/a.qv", "module a; // again\n");
+        let after = repository.commit("contract again");
+        let refused = classify(&repository.0, &dynamic, &after).unwrap_err();
+        assert!(refused.contains("cannot be enumerated"), "{refused}");
+    }
+
+    /// The real history of this repository, sampled: a contract-text change
+    /// with its inventory lock and two lock-only pin refreshes are accepted;
+    /// the licence-header commit (which also touched test fixtures) is not.
+    /// Skipped where the history is absent (a shallow or packaged tree).
+    #[test]
+    fn sampled_real_commits_are_classified() {
+        let repository = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
+        let present = |revision: &str| rev_parse(&repository, revision).is_ok();
+        let samples = [
+            ("94bca8d9c", true),
+            ("df6172543", true),
+            ("ca9ee5d93", true),
+            ("74105dd0e", false),
+        ];
+        if samples
+            .iter()
+            .any(|(revision, _)| !present(&format!("{revision}~1")))
+        {
+            return;
+        }
+        for (revision, accepted) in samples {
+            let result = classify(&repository, &format!("{revision}~1"), revision);
+            assert_eq!(result.is_ok(), accepted, "{revision}: {result:?}");
+        }
     }
 }

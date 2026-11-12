@@ -157,7 +157,14 @@ fn fixed(identity: &PinnedIdentity) -> impl Fn(Scope<'_>) -> Result<PinnedIdenti
 fn identity() -> PinnedIdentity {
     PinnedIdentity {
         run: run_identity(Vec::new()),
-        stage: stage_identity(Stage::First, &contracts(false), Scope::Whole, &[], "n".repeat(64)).unwrap(),
+        stage: stage_identity(
+            Stage::First,
+            &contracts(false),
+            Scope::Whole,
+            &[],
+            "n".repeat(64),
+        )
+        .unwrap(),
         group: PinnedGroupIdentity {
             label: "fixture".into(),
             source_root: "/fixture/lib".into(),
@@ -227,7 +234,14 @@ fn a_sealed_group_is_reused_only_under_its_identity_and_refused_when_damaged() {
 
     // Another identity: recomputed, naming the field.
     let mut changed = identity.clone();
-    changed.stage = stage_identity(Stage::First, &contracts(true), Scope::Whole, &[], "n".repeat(64)).unwrap();
+    changed.stage = stage_identity(
+        Stage::First,
+        &contracts(true),
+        Scope::Whole,
+        &[],
+        "n".repeat(64),
+    )
+    .unwrap();
     assert_eq!(
         load(&path, fixed(&changed)).err().unwrap(),
         "stage.environment_sha256 differs"
@@ -258,7 +272,10 @@ fn a_sealed_group_is_reused_only_under_its_identity_and_refused_when_damaged() {
     let refused = load(&path, fixed(&identity)).err().unwrap();
     assert!(refused.contains("truncated"), "{refused}");
     fs::remove_file(&path).unwrap();
-    assert_eq!(load(&path, fixed(&identity)).err().unwrap(), "no checkpoint");
+    assert_eq!(
+        load(&path, fixed(&identity)).err().unwrap(),
+        "no checkpoint"
+    );
 
     // An incomplete group is never sealed.
     let mut incomplete = complete_record();
@@ -447,7 +464,14 @@ fn a_changed_input_of_each_kind_invalidates_exactly_the_groups_that_read_it() {
         )
         .unwrap(),
     );
-    let first = stage_identity(Stage::First, &base_contracts, Scope::Whole, &[], bounds.clone()).unwrap();
+    let first = stage_identity(
+        Stage::First,
+        &base_contracts,
+        Scope::Whole,
+        &[],
+        bounds.clone(),
+    )
+    .unwrap();
     let groups = corpus.groups();
     let stored = identities(&run, &first, &groups);
     // Nothing changed: every group is reused.
@@ -505,7 +529,14 @@ fn a_changed_input_of_each_kind_invalidates_exactly_the_groups_that_read_it() {
     let all = ["alpha", "beta", "gamma"];
 
     // 2. The contract environment: every group.
-    let changed = stage_identity(Stage::First, &contracts(true), Scope::Whole, &[], bounds.clone()).unwrap();
+    let changed = stage_identity(
+        Stage::First,
+        &contracts(true),
+        Scope::Whole,
+        &[],
+        bounds.clone(),
+    )
+    .unwrap();
     let changes = invalidated(&stored, &identities(&run, &changed, &groups));
     assert_eq!(labels(&changes), all);
     assert!(
@@ -644,7 +675,14 @@ fn a_changed_input_of_each_kind_invalidates_exactly_the_groups_that_read_it() {
     );
     assert!(invalidated(&stored, &identities(&run, &first, &groups)).is_empty());
     // The bounds and null environments: every group of the stage.
-    let changed = stage_identity(Stage::First, &base_contracts, Scope::Whole, &[], "o".repeat(64)).unwrap();
+    let changed = stage_identity(
+        Stage::First,
+        &base_contracts,
+        Scope::Whole,
+        &[],
+        "o".repeat(64),
+    )
+    .unwrap();
     assert_eq!(
         labels(&invalidated(&stored, &identities(&run, &changed, &groups))),
         all
@@ -670,13 +708,26 @@ fn a_changed_input_of_each_kind_invalidates_exactly_the_groups_that_read_it() {
     };
     let homes = home("void callee(void) { return; }\n");
     assert_eq!(homes.len(), 1);
-    let imported =
-        stage_identity(Stage::Imported, &base_contracts, Scope::Whole, &homes, bounds.clone()).unwrap();
+    let imported = stage_identity(
+        Stage::Imported,
+        &base_contracts,
+        Scope::Whole,
+        &homes,
+        bounds.clone(),
+    )
+    .unwrap();
     assert_ne!(imported.homes_sha256, first.homes_sha256);
     let stored_imported = identities(&run, &imported, &groups);
     let rehomed = home("void callee(void) { }\n");
     assert_eq!(rehomed.len(), 1);
-    let changed = stage_identity(Stage::Imported, &base_contracts, Scope::Whole, &rehomed, bounds).unwrap();
+    let changed = stage_identity(
+        Stage::Imported,
+        &base_contracts,
+        Scope::Whole,
+        &rehomed,
+        bounds,
+    )
+    .unwrap();
     let changes = invalidated(&stored_imported, &identities(&run, &changed, &groups));
     assert_eq!(labels(&changes), all);
     assert!(

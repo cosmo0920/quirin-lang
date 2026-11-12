@@ -86,11 +86,7 @@ impl UnitLookupRecord {
         if self.whole_map_read == self.whole_map_reads.is_empty() {
             return Err("the whole-map flag disagrees with its accessor list".into());
         }
-        if let Some(name) = self
-            .found
-            .iter()
-            .find(|name| !environment.holds_name(name))
-        {
+        if let Some(name) = self.found.iter().find(|name| !environment.holds_name(name)) {
             return Err(format!(
                 "`{name}` is recorded as found but the environment holds no entry for it"
             ));
@@ -228,7 +224,10 @@ fn record_of(recorder: &LookupRecorder, relied: &Mutex<BTreeSet<String>>) -> Uni
     UnitLookupRecord {
         found: log.found,
         missed: log.missed,
-        relied: relied.lock().unwrap_or_else(PoisonError::into_inner).clone(),
+        relied: relied
+            .lock()
+            .unwrap_or_else(PoisonError::into_inner)
+            .clone(),
         whole_map_read: !log.whole_map_reads.is_empty(),
         whole_map_reads: log.whole_map_reads,
     }
