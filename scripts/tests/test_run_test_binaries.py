@@ -386,5 +386,52 @@ class CaptureTests(unittest.TestCase):
         self.assertNotEqual(completed.returncode, 0, "an unrecorded launch is not a pass")
 
 
+class FailureAnnotations(unittest.TestCase):
+    """CI-FAILURE-ANNOTATIONS: a check run's annotations are public where its
+    log is not, so the panics must survive in at most 10 `::error` commands."""
+
+    def result(self, root: Path, name: str, stdout: str) -> "runner_mod.Result":
+        log = root / f"{name}.stdout.log"
+        log.write_text(stdout, encoding="utf-8")
+        return runner_mod.Result(name, False, 101, None, None, 0.0, 1.0, [], [],
+                                 str(log), str(root / "missing.stderr.log"))
+
+    def test_digest_keeps_each_panic_and_its_message(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            result = self.result(Path(temporary), "u", textwrap.dedent("""\
+                running 2 tests
+                ---- a stdout ----
+
+                thread 'a' (1) panicked at crates\\x\\tests\\a.rs:4:5:
+                assertion `left == right` failed
+                  left: 1
+
+                ---- b stdout ----
+                thread 'b' (2) panicked at crates\\x\\tests\\b.rs:9:1:
+                boom
+                """))
+            digest = runner_mod.panic_digest(result)
+        self.assertIn("a.rs:4:5:\nassertion `left == right` failed\n  left: 1", digest)
+        self.assertIn("b.rs:9:1:\nboom", digest)
+        self.assertNotIn("running 2 tests", digest)
+
+    def test_annotations_escape_and_stay_within_ten(self):
+        digests = [(f"unit{n}", "50% failed\r\nline " + "x" * 9000) for n in range(40)]
+        commands = runner_mod.failure_annotations(digests)
+        self.assertEqual(len(commands), 10)
+        self.assertTrue(all(c.startswith("::error title=failed test units (") for c in commands))
+        self.assertTrue(all("\n" not in c and "\r" not in c for c in commands))
+        self.assertIn("50%25 failed%0D%0Aline", commands[0])
+        self.assertIn("units not shown in full: ", commands[-1])
+        self.assertIn("unit39", commands[-1])
+        shown = "".join(commands[:-1])
+        for n in range(27):
+            self.assertIn(f"== unit{n}%0A", shown)
+
+    def test_few_failures_fit_one_annotation(self):
+        commands = runner_mod.failure_annotations([("a", "p1"), ("b", "p2")])
+        self.assertEqual(commands, ["::error title=failed test units (1/1)::== a%0Ap1%0A== b%0Ap2"])
+
+
 if __name__ == "__main__":
     unittest.main()

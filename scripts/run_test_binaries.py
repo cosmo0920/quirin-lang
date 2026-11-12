@@ -390,6 +390,63 @@ def print_failure_excerpt(uid: str, result: Result, limit: int = 200) -> None:
     print("::endgroup::", file=sys.stderr)
 
 
+def panic_digest(result: Result, per_panic: int = 12, per_unit: int = 4000) -> str:
+    """A failed unit's panics, compact: each `panicked at` line and the lines
+    after it up to a blank line (at most `per_panic`), at most `per_unit`
+    characters; the stdout tail when nothing panicked (a crash, a timeout)."""
+    try:
+        lines = Path(result.stdout_log).read_text(encoding="utf-8",
+                                                  errors="replace").splitlines()
+    except OSError as error:
+        return f"(unreadable: {error})"
+    blocks, i = [], 0
+    while i < len(lines):
+        if "panicked at" in lines[i]:
+            block = [lines[i]]
+            i += 1
+            while i < len(lines) and lines[i].strip() and len(block) < per_panic:
+                block.append(lines[i])
+                i += 1
+            blocks.append("\n".join(block))
+        else:
+            i += 1
+    text = "\n\n".join(blocks) if blocks else "\n".join(lines[-per_panic:])
+    if result.error or result.signal:
+        text = f"({result.signal or result.error})\n{text}"
+    return text if len(text) <= per_unit else text[:per_unit] + "\n... (truncated)"
+
+
+def annotation_escape(text: str) -> str:
+    return text.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+
+
+def failure_annotations(digests: Sequence[tuple[str, str]], limit: int = 10,
+                        size: int = 30000) -> list[str]:
+    """GitHub `::error` commands carrying every failed unit's panic digest.
+
+    A job log needs credentials to download, but a check run's annotations are
+    public, so these are what a reader without them sees. GitHub keeps at most
+    10 error annotations per step, so units are packed into at most `limit`
+    annotations of at most `size` characters; what does not fit is named."""
+    chunks: list[list[str]] = [[]]
+    for uid, digest in digests:
+        entry = f"== {uid}\n{digest}"
+        current = chunks[-1]
+        if current and sum(len(e) + 2 for e in current) + len(entry) > size:
+            chunks.append([])
+        chunks[-1].append(entry[:size])
+    commands = []
+    total = len(chunks)
+    for number, chunk in enumerate(chunks[:limit], 1):
+        if number == limit and total > limit:
+            omitted = [e.split("\n", 1)[0][3:] for c in chunks[limit - 1:] for e in c]
+            chunk = ["(more failures than annotations; units not shown in full: "
+                     + ", ".join(omitted) + ")"]
+        title = f"failed test units ({number}/{min(total, limit)})"
+        commands.append(f"::error title={title}::{annotation_escape(chr(10).join(chunk))}")
+    return commands
+
+
 def describe(result: Result) -> str:
     status = "ok" if result.ok else "FAILED"
     counts = totals([result])
@@ -1178,6 +1235,11 @@ def report(args: argparse.Namespace, document: dict, results: Sequence[Result],
             # The captured logs stay on the runner; put the failure detail in
             # the job log, where it is the only record a CI reader gets.
             print_failure_excerpt(uid, result)
+    if os.environ.get("GITHUB_ACTIONS") == "true" and document["units_failed"]:
+        digests = [(uid, panic_digest(next(r for r in results if r.uid == uid)))
+                   for uid in document["units_failed"]]
+        for command in failure_annotations(digests):
+            print(command, file=sys.stderr)
     if args.write_weights and document["ok"]:
         seconds = {r.uid: round(r.duration, 1) for r in sorted(results, key=lambda r: r.uid)}
         args.write_weights.write_text(
