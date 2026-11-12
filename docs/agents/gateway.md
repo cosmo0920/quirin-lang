@@ -1194,6 +1194,10 @@ refusal stays.
     caller-side rule that forgets the published sites the call may release.
     `QCore.ContainerRootReach`;
     [report](../reports/w45-container-root-reach/README.md).
+    Amended by [rule 43](#constraint-43): a body whose every element
+    custody is rooted at its formals publishes its summary with an
+    `ElementsReleased` clause there, and a caller applying it forgets the
+    sites it published (the caller-side rule (3) asked for).
 
 <a id="constraint-10g"></a>
 
@@ -9209,6 +9213,9 @@ safety claim and no validation of the detach representation premise.
     child), the package's `tests/unit/destroyer_order.rs`;
     [report](../reports/w48-sched-cleanup-production/README.md),
     [migration](../reports/rule34-pilot/README.md).
+    Amended by [rule 43](#constraint-43): a destroyer also takes an object
+    the path holds as one live, unpublished identity no path unlinked, and
+    may sit beside member-path states.
 
 <a id="constraint-35"></a>
 
@@ -10584,6 +10591,69 @@ safety claim and no validation of the detach representation premise.
     `the_rule_moves_no_verdict_to_safe`), bound to `WITHDRAW_VECTORS` and the
     fixtures' verdicts (`SHAPE_VECTORS`, `tests/loop_reacquisition_leak.rs`);
     [report](../reports/loop-reacquisition-leak-accusation/README.md).
+
+<a id="constraint-43"></a>
+
+43. **A released list element has an identity, and a body that releases
+    elements says so.** Card LIST-ENTRY-RELEASE-IDENTITY
+    (`legacy_element_release.rs`, thin hooks in
+    `legacy_container_publication.rs`, `legacy_transfer.rs` (the destroyer
+    phase, the `unlinked` set, `EntryCustody::parameter_names`) and the W4
+    gate and attachment in `legacy_summary.rs`; contract specification
+    §C04.8, amended; schema `ContainerEffect::ElementsReleased`, qcore-schemas
+    25.0.0). It amends rules 10f(3) and 34. (1) **The held object.** Rule 34
+    admitted only rule 10d/10f's entries; an element destroyer
+    (`resource_unpublished(p)` beside `resource_released(p)`) now also takes an
+    entry that denotes one live, unpublished identity this path holds and no
+    arriving path unlinked (`destroyer_takes_held`; `AbstractState::unlinked`
+    joins by union): the unlink takes nothing and the release ends that
+    custody, so a formal handed to a destroyer and a body acquisition destroyed
+    keep their release. An object any path unlinked keeps rule 34's refusal
+    (its links are cleared; the destroyer's own unlink would read them
+    cleared), and a plain unlink of a held object keeps rule 10d's. (2) **The
+    loader** admits the destroyer's unlink beside C04.19.6's member-path
+    states (and only beside them among the retaining clauses); the call is
+    classified under its custody contract, so rule 34 orders the unlink as for
+    a plain destroyer (the amendment is the loader's, not switchable). (3)
+    **The released-element summary.** A body whose element custody — each
+    foreign unlink's roots (`Foreign::roots`) and each applied clause's root —
+    is rooted at its formals (a stable formal, or a derived local's root
+    formal) publishes its derived summary with `ElementsReleased` at exactly
+    those formals (`required_effects`, attached by `infer_cfg_summary`, checked
+    exactly by the W4 gate (`element_release::gate`), which still refuses a body
+    with any static, local, callee or other root, and a stated clause a body
+    does not need). A derived clause is not part of the comparison with a
+    declaration (custody projections on both sides). (4) **At a call** the
+    clause is applied after the call's own reading (`forget_published`):
+    every site this path published leaves the published set and is withdrawn
+    (an unresolved effect), so a later unlink, release or use refuses; a caller
+    whose actual is rooted at its own formal carries the clause in its own
+    summary, any other actual withholds the caller's summary (its row still
+    reads the clause). Every route that reads a call as a borrow refuses a
+    container effect (`has_container_effect`), so the clause is never read as
+    `Borrowed`. **Do not** admit a held object a path unlinked, publish a
+    summary for an element root that is not a formal, read the clause as a
+    borrow, or keep a published object trusted across it. Premises, stated not
+    proved: P-CRR-MEMBER and P-CRR-LINKED (rule 10f), P-LERI-CALLER-PUBLISHED
+    (the only tracked objects a container the actual reaches may hold are the
+    caller's published ones), P-LERI-HELD-LINKS (a held object no path
+    unlinked has links an unlink may remove) and P-LERI-LINK-MEMBER (a
+    destroyer's unlink, which names no link member, removes the object from
+    the list the caller iterates). **Switch.** With `43` in
+    `QCORE_GATEWAY_RULES_OFF` neither (1) nor (3)-(4) runs: a destroyer admits
+    only rule 10d/10f's entries and a body that takes element custody
+    publishes no summary, as before. Measured (base `74105dd0e`, the card's
+    own preparations): system 103/4/341 → 107/4/337, slice 58/1/341/4 Pending
+    → 59/1/340/4, corpus 1,079/6/3,619 → 1,081/6/3,617, no Safe row moved;
+    on the Fluent Bit routes no caller consumes a clause (derived summaries
+    stay in their unit). `QCore.ElementReleaseSummary`
+    (`the_destroy_rule_is_sound`, `an_unlinked_object_has_no_defined_destroy`,
+    `the_held_arm_only_replaces_a_refusal`, `the_gate_is_exact`,
+    `a_static_root_withholds_the_summary`, `forgetting_covers_every_release`,
+    `the_borrowed_reading_would_trust_a_released_object`, `vectors_hold`, …),
+    bound to `ELEMENT_RELEASE_VECTORS` and
+    `crates/qcore-c-gateway/tests/element_release_summary.rs` (with its
+    switched child); [report](../reports/list-entry-release-identity/README.md).
 
 <a id="constraint-44"></a>
 

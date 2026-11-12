@@ -137,6 +137,8 @@ fn a_call_without_a_destroyer_keeps_the_host_order_on_and_off() {
                 .map(|effect| match effect {
                     ContainerEffect::Unpublished => unlink("e"),
                     ContainerEffect::Published { .. } => link("e"),
+                    // Card LIST-ENTRY-RELEASE-IDENTITY: not among these calls.
+                    ContainerEffect::ElementsReleased => unreachable!("no call states it"),
                 })
                 .collect(),
         );

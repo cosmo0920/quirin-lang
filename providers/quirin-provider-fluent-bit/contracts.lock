@@ -517,8 +517,8 @@
     {
       "function": "flb_input_chunk_destroy",
       "module": "fluent_bit/input_chunk_destroy.qv",
-      "contract_sha256": "5fe7f48a4f15261dae3e2779b2521b2caa44b61b7442c950711c0d44f9141354",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "29233a0b6fbe837bac612c3f7eee2b38b47241dc39948770fbf51e62365e20a0",
+      "pinned_at": "2026-11-12T03:15:23Z",
       "identities": [
         {
           "reviewed_at": [
@@ -1026,8 +1026,8 @@
     {
       "function": "flb_input_coro_destroy",
       "module": "fluent_bit/teardown_destroy.qv",
-      "contract_sha256": "a419d94c018d7c3ff0335cc6801f929860147851a7cf69a88c0237d21aa68365",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "c5387380fe4c701e4e9e35f64c5a2ef20c03abf51f276682442ff07ad75e79d9",
+      "pinned_at": "2026-11-12T03:15:24Z",
       "identities": [
         {
           "reviewed_at": [
@@ -1037,11 +1037,11 @@
             },
             {
               "kind": "git",
-              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
             },
             {
               "kind": "git",
-              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576"
             }
           ],
           "sites": [
@@ -1058,8 +1058,8 @@
     {
       "function": "flb_input_instance_destroy",
       "module": "fluent_bit/teardown_destroy.qv",
-      "contract_sha256": "675a055b4a553053ef401af6635c5f33f237a49b32f52df6cdadd1d16c186dd1",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "18e35aa35c8d23e77ce983aea3e095dd131ae959459ea565500df0e08d9de878",
+      "pinned_at": "2026-11-12T03:15:23Z",
       "identities": [
         {
           "reviewed_at": [
@@ -1069,7 +1069,7 @@
             },
             {
               "kind": "git",
-              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+              "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576"
             }
           ],
           "sites": [
@@ -1407,8 +1407,8 @@
     {
       "function": "flb_output_flush_destroy",
       "module": "fluent_bit/teardown_destroy.qv",
-      "contract_sha256": "daa1e42204d8fe7759e395c609019509de8b98522a6b9aeef3ea0554132d7941",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "e4238939bb2356446a3613e01ab2b7a9cbebff01b041bc63187c1868bc335cc9",
+      "pinned_at": "2026-11-12T03:15:24Z",
       "identities": [
         {
           "reviewed_at": [
@@ -1418,11 +1418,11 @@
             },
             {
               "kind": "git",
-              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
             },
             {
               "kind": "git",
-              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576"
             }
           ],
           "sites": [
@@ -1472,8 +1472,8 @@
     {
       "function": "flb_output_instance_destroy",
       "module": "fluent_bit/teardown_destroy.qv",
-      "contract_sha256": "296187b3fac77a9eef003cfadb40caa948226f51847b6af7bac397d8d8bbb8c0",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "4881e3e2d81e0b9d84e6875dac8a16025b10fad4a761d22441c933467009d51e",
+      "pinned_at": "2026-11-12T03:15:23Z",
       "identities": [
         {
           "reviewed_at": [
@@ -1483,7 +1483,7 @@
             },
             {
               "kind": "git",
-              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+              "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576"
             }
           ],
           "sites": [
@@ -1790,8 +1790,8 @@
     {
       "function": "flb_sched_request_destroy",
       "module": "fluent_bit/teardown_destroy.qv",
-      "contract_sha256": "84f4984b7ada87ac2e79c25955e4b9bb47ff90e07c00cbea2c6b17e567ea5e23",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "71b0c8d94dd7001b6766bb6573dafa4120556c6ade81ed2ee20cfbde30daa5b7",
+      "pinned_at": "2026-11-12T03:15:24Z",
       "identities": [
         {
           "reviewed_at": [
@@ -1801,11 +1801,11 @@
             },
             {
               "kind": "git",
-              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
             },
             {
               "kind": "git",
-              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576"
             }
           ],
           "sites": [
@@ -1827,8 +1827,8 @@
     {
       "function": "flb_sched_timer_destroy",
       "module": "fluent_bit/teardown_destroy.qv",
-      "contract_sha256": "e16500f08d92bce9d8e01e9944c05024dc25831e7f2f7a545cb788d060f8e1f7",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "3d6cd24fb19b9201aff27f849273ab4b7dbf9a7aff9b670e81fa46b455aa8291",
+      "pinned_at": "2026-11-12T03:15:24Z",
       "identities": [
         {
           "reviewed_at": [
@@ -1838,11 +1838,11 @@
             },
             {
               "kind": "git",
-              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
             },
             {
               "kind": "git",
-              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576"
             }
           ],
           "sites": [
@@ -2126,14 +2126,14 @@
     {
       "function": "flb_tail_file_remove",
       "module": "fluent_bit/teardown_destroy.qv",
-      "contract_sha256": "801cb0b48ff257c2a9fc5e56bf8ff536d4b8f0e39861b2081570657d69b2310b",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "8370de53a8ec527e5fa05207b15ade9a6464f1c28227a26e79cddc11dd4af5a2",
+      "pinned_at": "2026-11-12T03:15:22Z",
       "identities": [
         {
           "reviewed_at": [
             {
               "kind": "git",
-              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+              "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576"
             }
           ],
           "sites": [
@@ -2155,8 +2155,8 @@
     {
       "function": "flb_task_destroy",
       "module": "fluent_bit/teardown_destroy.qv",
-      "contract_sha256": "503889ed37a5f8eb467490a0154fb5e7f5e37258c82e09edbdd48b8c03ad7d32",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "56360cf453bc095d5a4b17f370f3361d6e9ff200b980348f96d786bf38853e93",
+      "pinned_at": "2026-11-12T03:15:24Z",
       "identities": [
         {
           "reviewed_at": [
@@ -2166,11 +2166,11 @@
             },
             {
               "kind": "git",
-              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
             },
             {
               "kind": "git",
-              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576"
             }
           ],
           "sites": [
@@ -2290,8 +2290,8 @@
     {
       "function": "flb_task_retry_destroy",
       "module": "fluent_bit/task_users.qv",
-      "contract_sha256": "c90a2e6a3e19fa762f53187b874a94fb8e7610a3fb7c8f54592231009f634b06",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "250f26c1f14dbfccb62fd25d368c78cbd4e6d7a9a4484dbccc2c8266034c01dc",
+      "pinned_at": "2026-11-12T03:15:23Z",
       "identities": [
         {
           "reviewed_at": [

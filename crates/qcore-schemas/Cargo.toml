@@ -1,6 +1,6 @@
 [package]
 name = "qcore-schemas"
-version = "24.0.0"
+version = "25.0.0"
 edition = "2024"
 license = "MIT OR Apache-2.0"
 description = "Published, versioned schema surface of the QCore verifier ecosystem: serde data types that cross the core/provider boundary. No analysis logic."

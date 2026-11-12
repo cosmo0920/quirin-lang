@@ -17,7 +17,7 @@ path = "src/main.rs"
 quirin-audit-plugin = { path = "../quirin-audit-plugin", version = "0.1.0" }
 # The composition interface (seam G, `qcore_schemas::composition`), the only
 # crate a plugin reads components through, and SHA-256. No analysis crate.
-qcore-schemas = { path = "../qcore-schemas", version = "24.0.0" }
+qcore-schemas = { path = "../qcore-schemas", version = "25.0.0" }
 serde = { version = "1.0.229", features = ["derive"] }
 # Reports nest deeper than serde_json's default limit allows.
 serde_json = { version = "1.0.151", features = ["unbounded_depth"] }

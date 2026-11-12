@@ -459,7 +459,12 @@ pub(crate) fn derive_custody_summaries(
                             // container and counted-user clauses are not part
                             // of the comparison; the counted-user pass checks
                             // them against the body instead.
-                            Some(declared) if declared.custody_projection() != contract => {
+                            // Card LIST-ENTRY-RELEASE-IDENTITY (gateway rule
+                            // 43): nor is a derived `ElementsReleased` clause.
+                            Some(declared)
+                                if declared.custody_projection()
+                                    != contract.custody_projection() =>
+                            {
                                 derivation
                                     .conflicts
                                     .insert(name.clone(), (contract.clone(), declared.clone()));
@@ -1180,7 +1185,14 @@ fn infer_cfg_summary(
         }
         // The binding pattern is stable, so read the modes off the settled
         // observations and check the resulting contract against a fresh run.
-        let candidate = propose_contract(&entry, &observations)?;
+        let mut candidate = propose_contract(&entry, &observations)?;
+        // Card LIST-ENTRY-RELEASE-IDENTITY (gateway rule 43): the element
+        // custody the body takes, as `ElementsReleased` clauses.
+        crate::legacy_c::container_publication::element_release::attach(
+            &mut candidate,
+            &cfg,
+            parameters,
+        )?;
         let entry = EntryCustody::build(&cfg, parameters, &candidate)?;
         let (summary, observations) = analyze_cfg_with_entry(cfg, &entry);
         return observations_match_contract(&candidate, &entry, &summary, &observations)
@@ -1776,7 +1788,14 @@ pub(crate) fn observations_match_class(
     }
     // Card W45-CONTAINER-ROOT-REACH: a body that took custody of an element of
     // a container its caller supplied tells its callers nothing it could say.
-    if crate::legacy_c::container_publication::has_foreign_unlink(&summary.cfg) {
+    // Card LIST-ENTRY-RELEASE-IDENTITY (gateway rule 43): unless every such
+    // container is rooted at a formal and the contract states exactly those
+    // formals' `ElementsReleased` clauses.
+    if !crate::legacy_c::container_publication::element_release::gate(
+        contract,
+        &summary.cfg,
+        &entry.parameter_names,
+    ) {
         return false;
     }
     // Card CG11-POINTER-VALUED-STORES (rule 10v): a body that overwrote a slot

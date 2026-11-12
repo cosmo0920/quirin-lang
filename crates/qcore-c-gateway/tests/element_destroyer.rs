@@ -282,11 +282,12 @@ fn every_entry_rule_10f_does_not_admit_keeps_the_unlink_refusal() {
     if !clang_available() {
         return;
     }
+    // Card LIST-ENTRY-RELEASE-IDENTITY (gateway rule 43) admits two entries
+    // this list refused: a formal's own object and a body acquisition never
+    // published, each one live identity the path holds and never unlinked
+    // (`tests/element_release_summary.rs`, `held-acquisition-destroyed` and
+    // `formal-handed-to-destroyer-caller`, with rule 43 off as the control).
     for body in [
-        // a formal's own object: its container is unnamed
-        "void subject(struct item *e) { item_destroy(e); }",
-        // a body acquisition never published
-        "void subject(void) { struct item *e = q_alloc(); item_destroy(e); }",
         // a local list object
         "void subject(void) { struct mk_list *it, *tmp; struct item *e; struct queue local;
          mk_list_foreach_safe(it, tmp, &local.items) { e = mk_list_entry(it, struct item, _head);
@@ -359,8 +360,14 @@ fn a_destroying_body_publishes_no_summary() {
     assert_eq!(status, AnalysisStatus::Safe, "{diagnostics:?}");
     let (status, diagnostics) = analyze(unit);
     assert_eq!(status, AnalysisStatus::Unknown, "{diagnostics:?}");
+    // Card LIST-ENTRY-RELEASE-IDENTITY (gateway rule 43) amends rule 10f(3):
+    // the drain publishes `ElementsReleased` at `list`, the caller forgets
+    // `x`, which it had published, and the later unlink refuses on `x`.
     assert!(
         diagnostics.iter().any(|kind| matches!(
+            kind,
+            LegacyDiagnosticKind::UnknownAlias { variable } if variable == "x"
+        )) || diagnostics.iter().any(|kind| matches!(
             kind,
             LegacyDiagnosticKind::Unsupported { description } if description.contains("drain")
         )),
@@ -418,9 +425,10 @@ const DESTROYING: &[(&str, AnalysisStatus)] = &[
          mk_list_del(&e->_head); item_destroy(e); }",
         AnalysisStatus::Unknown,
     ),
+    // Unknown before card LIST-ENTRY-RELEASE-IDENTITY; rule 43's held arm.
     (
         "void subject(void) { struct item *e = q_alloc(); item_destroy(e); }",
-        AnalysisStatus::Unknown,
+        AnalysisStatus::Safe,
     ),
     (
         "void subject(struct queue *q) { struct mk_list *it; struct item *e;

@@ -162,6 +162,16 @@ pub enum Operand {
         /// when the entry is an element of an admitted container.
         foreign: Option<Foreign>,
     },
+    /// Card LIST-ENTRY-RELEASE-IDENTITY (gateway rule 43): a derived
+    /// summary's `ElementsReleased` at this position: the call may release
+    /// what the container the actual reaches holds. `root` is the formal of
+    /// this function the container is rooted at (through a derived local),
+    /// when it is one; this body's own summary must then carry the clause for
+    /// that formal ([`element_release`]).
+    ElementsReleased {
+        container: Container,
+        root: Option<String>,
+    },
 }
 
 /// An admitted foreign unlink: the fresh site the element's custody takes, and
@@ -170,6 +180,12 @@ pub enum Operand {
 pub struct Foreign {
     pub site: usize,
     pub containers: Vec<String>,
+    /// Card LIST-ENTRY-RELEASE-IDENTITY (gateway rule 43): the formals of this
+    /// function those containers are rooted at, when every one is (a stable
+    /// formal, or a derived local's root formal); `None` when one is a static
+    /// object, which no summary clause can name.
+    #[serde(default)]
+    pub roots: Option<BTreeSet<String>>,
 }
 
 /// Every container effect of one call, in parameter order.
@@ -200,6 +216,10 @@ pub struct CallerFormals {
     /// derived names this body hands whole to a position its contract in
     /// force does not declare `Borrowed` ([`CallerFormals::with_released_roots`]).
     released: BTreeSet<String>,
+    /// Card LIST-ENTRY-RELEASE-IDENTITY (gateway rule 43): each derived local
+    /// mapped to the stable formal its initialiser is rooted at (`L = P` or
+    /// `L = P->F…`).
+    derived_roots: BTreeMap<String, String>,
 }
 
 const WRITES: [&str; 12] = [
@@ -241,6 +261,7 @@ impl CallerFormals {
             .collect::<BTreeSet<_>>();
         let mut derived = BTreeSet::new();
         let mut aliases = BTreeMap::new();
+        let mut derived_roots = BTreeMap::new();
         for (index, token) in body.iter().enumerate() {
             if !is_identifier(token)
                 || formals.contains(*token)
@@ -281,6 +302,9 @@ impl CallerFormals {
                 if let Some([root]) = initialiser {
                     aliases.insert((*token).to_owned(), (*root).to_owned());
                 }
+                if let Some([root, ..]) = initialiser {
+                    derived_roots.insert((*token).to_owned(), (*root).to_owned());
+                }
             }
         }
         Self {
@@ -290,7 +314,21 @@ impl CallerFormals {
             statics: BTreeSet::new(),
             aliases,
             released: BTreeSet::new(),
+            derived_roots,
         }
+    }
+
+    /// Card LIST-ENTRY-RELEASE-IDENTITY (gateway rule 43): the formal a
+    /// container reached from `name` is rooted at: `name` itself when it is a
+    /// stable formal, a derived local's root formal, `None` otherwise.
+    pub fn formal_root(&self, name: &str) -> Option<String> {
+        if self.stable.contains(name) {
+            return Some(name.to_owned());
+        }
+        self.derived_roots
+            .get(name)
+            .filter(|root| self.stable.contains(*root))
+            .cloned()
     }
 
     /// Card W45-SR5-SOUNDNESS (`PUBLICATION-ROOT-RELEASED`): the same reading,
@@ -590,6 +628,14 @@ pub fn operands(
                     entry: entry(argument(index)),
                     foreign: None,
                 },
+                ContainerEffect::ElementsReleased => {
+                    let container = container(argument(index), formals);
+                    let root = match &container {
+                        Container::CallerFormal(name) => formals.formal_root(name),
+                        Container::Static(_) | Container::Other(_) => None,
+                    };
+                    Operand::ElementsReleased { container, root }
+                }
             })
             .collect(),
     )))
@@ -652,8 +698,39 @@ pub(super) fn apply(
     state: &mut AbstractState,
     diagnostics: &mut BTreeSet<LegacyDiagnostic>,
 ) {
+    apply_with(function, line, called, operands, false, state, diagnostics);
+}
+
+/// Card LIST-ENTRY-RELEASE-IDENTITY (gateway rule 43): rule 34's element
+/// destroyers' unlinks, applied before the call's own reading. As
+/// [`apply`], and one more admitted entry: an object this path holds as one
+/// live, unpublished identity it never unlinked
+/// ([`element_release::destroyer_takes_held`]).
+pub(super) fn apply_destroyers(
+    function: &str,
+    line: usize,
+    called: &str,
+    operands: &Operands,
+    state: &mut AbstractState,
+    diagnostics: &mut BTreeSet<LegacyDiagnostic>,
+) {
+    apply_with(function, line, called, operands, true, state, diagnostics);
+}
+
+fn apply_with(
+    function: &str,
+    line: usize,
+    called: &str,
+    operands: &Operands,
+    destroyer: bool,
+    state: &mut AbstractState,
+    diagnostics: &mut BTreeSet<LegacyDiagnostic>,
+) {
     for operand in &operands.0 {
         match operand {
+            // Card LIST-ENTRY-RELEASE-IDENTITY (gateway rule 43): the call may
+            // have released anything this path had published.
+            Operand::ElementsReleased { .. } => element_release::forget_published(state),
             Operand::Published {
                 entry,
                 container,
@@ -779,6 +856,7 @@ pub(super) fn apply(
                                 Some(restored) => {
                                     state.resources.insert(site, LIVE);
                                     state.published.remove(&site);
+                                    state.unlinked.insert(site);
                                     for child in restored {
                                         state.resources.insert(child, LIVE);
                                     }
@@ -801,8 +879,19 @@ pub(super) fn apply(
                         // becomes this body's custody at a fresh site.
                         Ok(None) => foreign.as_ref().is_some_and(|foreign| {
                             take_foreign_custody(name, foreign.site, state);
+                            state.unlinked.insert(foreign.site);
                             true
                         }),
+                        // Card LIST-ENTRY-RELEASE-IDENTITY (gateway rule 43):
+                        // an element destroyer handed an object this path
+                        // already holds takes nothing at its unlink; its
+                        // release then ends that custody.
+                        Ok(Some(site))
+                            if destroyer && element_release::destroyer_takes_held(state, site) =>
+                        {
+                            state.unlinked.insert(site);
+                            true
+                        }
                         _ => false,
                     },
                     Entry::Unnamed(_) => false,
@@ -1054,7 +1143,8 @@ pub(crate) fn settle_foreign_unlinks(
     formals: &CallerFormals,
 ) {
     let body = body.iter().collect::<Vec<_>>();
-    let admissible = |element: &str| -> Option<Vec<String>> {
+    type Admitted = (Vec<String>, Option<BTreeSet<String>>);
+    let admissible = |element: &str| -> Option<Admitted> {
         if formals.is_formal(element) || formals.statics.contains(element) {
             return None;
         }
@@ -1063,20 +1153,33 @@ pub(crate) fn settle_foreign_unlinks(
             return None;
         }
         let mut containers = BTreeSet::new();
+        // Card LIST-ENTRY-RELEASE-IDENTITY (gateway rule 43): the formals the
+        // containers are rooted at, while every one is.
+        let mut roots = Some(BTreeSet::new());
         for line in lines {
             let recorded = origins.admitted.get(&(element.to_owned(), line))?;
             for container in recorded {
                 let spelling = container.as_ref()?;
                 let texts = spelling.iter().map(String::as_str).collect::<Vec<_>>();
                 match self::container(&texts, formals) {
-                    Container::CallerFormal(_) | Container::Static(_) => {
+                    Container::CallerFormal(name) => {
                         containers.insert(texts.concat());
+                        match (formals.formal_root(&name), roots.as_mut()) {
+                            (Some(root), Some(roots)) => {
+                                roots.insert(root);
+                            }
+                            _ => roots = None,
+                        }
+                    }
+                    Container::Static(_) => {
+                        containers.insert(texts.concat());
+                        roots = None;
                     }
                     Container::Other(_) => return None,
                 }
             }
         }
-        Some(containers.into_iter().collect())
+        Some((containers.into_iter().collect(), roots))
     };
     let mut next = super::first_free_site(cfg);
     for node in &mut cfg.nodes {
@@ -1106,11 +1209,12 @@ pub(crate) fn settle_foreign_unlinks(
                 entry: Entry::Name(name),
                 foreign,
             } = operand
-                && let Some(containers) = admissible(name)
+                && let Some((containers, roots)) = admissible(name)
             {
                 *foreign = Some(Foreign {
                     site: next,
                     containers,
+                    roots,
                 });
                 next += 1;
             }
@@ -1201,6 +1305,9 @@ pub(super) fn unlinks_published(
 pub(super) fn join(current: &mut BTreeSet<usize>, incoming: &BTreeSet<usize>) {
     current.retain(|site| incoming.contains(site));
 }
+
+#[path = "legacy_element_release.rs"]
+pub(crate) mod element_release;
 
 #[cfg(test)]
 mod tests {

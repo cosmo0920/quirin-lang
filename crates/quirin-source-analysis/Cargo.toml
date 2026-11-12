@@ -10,7 +10,7 @@ qcore-c-gateway = { path = "../qcore-c-gateway", version = "0.1.0" }
 qcore-contract = { path = "../qcore-contract", version = "0.1.0" }
 qcore-core = { path = "../qcore-core", version = "0.1.0" }
 qcore-frontend = { path = "../qcore-frontend", version = "0.1.0" }
-qcore-schemas = { path = "../qcore-schemas", version = "24.0.0" }
+qcore-schemas = { path = "../qcore-schemas", version = "25.0.0" }
 qcore-verification = { path = "../qcore-verification", version = "0.4.0" }
 serde = { version = "1.0.229", features = ["derive"] }
 serde_json = "1.0.151"

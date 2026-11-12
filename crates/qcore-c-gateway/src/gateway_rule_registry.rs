@@ -297,6 +297,17 @@ pub const REGISTRY: &[RuleEntry] = &[
         off: Off::Refuses,
     },
     RuleEntry {
+        id: "43",
+        crate_name: "qcore-c-gateway",
+        placements: &[
+            Placement { position: Position::Transfer, order: None, arm: Some("held-destroyer"), route: "element_release::destroyer_takes_held" },
+        ],
+        lean: &["QCore.ElementReleaseSummary"],
+        document: "docs/agents/rules/43.md",
+        reason_keys: &[],
+        off: Off::Refuses,
+    },
+    RuleEntry {
         id: "32a",
         crate_name: "rule-32a-caller-frame-hold",
         placements: &[

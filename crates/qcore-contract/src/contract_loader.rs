@@ -2810,6 +2810,33 @@ fn load_function_in(
     {
         None
     } else {
+        // Card LIST-ENTRY-RELEASE-IDENTITY (gateway rule 43, §C04.8's element
+        // destroyer): a declaration whose only retaining clauses are rule 30's
+        // member-path states may also state the element destroyer's unlink of
+        // the object it releases. The call is classified under its custody
+        // contract, so rule 34 orders the unlink before the release exactly as
+        // for a plain destroyer; every other container clause still rejects.
+        let member_path_destroyer = retentions.is_empty()
+            && resets.is_empty()
+            && path_retentions.is_empty()
+            && removals.is_empty()
+            && slot_clauses.is_empty()
+            && reference_clauses.is_empty()
+            && callback_clauses.is_empty()
+            && discriminants.is_empty()
+            && arm_clauses.is_empty()
+            && constructed_clauses.is_empty()
+            && handoff_clauses.is_empty()
+            && cell_clauses.is_empty()
+            && cell_releases.is_empty()
+            && removal_guards.is_empty()
+            && collected.container_effects.iter().all(|(index, effect)| {
+                *effect == qcore_schemas::contract::ContainerEffect::Unpublished
+                    && matches!(
+                        contract.parameters.get(*index),
+                        Some(ResourceParameterMode::Released { .. })
+                    )
+            });
         if is_relational
             || !review.is_empty()
             || body_checked
@@ -2820,7 +2847,7 @@ fn load_function_in(
             || thread_sync.is_some()
             || lifecycle.is_some()
             || !collected.users.is_empty()
-            || !collected.container_effects.is_empty()
+            || (!collected.container_effects.is_empty() && !member_path_destroyer)
         {
             return Err(
                 "a retention clause stands only beside plain parameter and result predicates"

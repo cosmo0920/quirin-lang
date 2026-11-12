@@ -1,0 +1,82 @@
+{
+  "schema": "quirin-measure-inputs/1",
+  "description": "LIST-ENTRY-RELEASE-IDENTITY worktree-private preparations of the three live routes (fresh quirin-audit prepare runs with Ubuntu clang 21.1.8 at the profiles source revisions; the slice prepared from upstream 90978ac6 directly, not the synthetic export commit).",
+  "routes": [
+    {
+      "name": "corpus",
+      "profile": "eight-home",
+      "kind": "pinned-corpus",
+      "source_commit": "66910c10",
+      "inputs_root": "private/corpus-inputs",
+      "compile_databases": [
+        {
+          "path": "c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json",
+          "sha256": "2f75e769ddd0544b63958e508c37e3cc104fd33fe10a69ae2240beadf1f19911"
+        },
+        {
+          "path": "c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
+          "sha256": "c5b805ff966b1ab99c3a8337d3f23254ed639f1d3490ac4f0de559a7e9d4474b"
+        }
+      ],
+      "mirror_trees": [
+        "c-gateway-wave-pin/fluent-bit-clang-source",
+        "c-gateway-wave-pin/monkey",
+        "provider-packages-wave20"
+      ],
+      "link_map": {
+        "path": "docs/reports/w48-bu-single-leaf-bodies/link-map.corpus.json",
+        "sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3"
+      },
+      "clang": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a2c467a15d6a29eec/private/toolchain/root/usr/lib/llvm-21/bin/clang",
+      "tracked": [
+        "contract/profiles/fluent-bit/audit.json",
+        "contract/profiles/fluent-bit/profile.json",
+        "contract/profiles/fluent-bit/member-facts-scope.json"
+      ]
+    },
+    {
+      "name": "system",
+      "profile": "fluent-bit-system",
+      "kind": "configured-selection",
+      "checkout": "private/prep/system/fluent-bit-clang-source",
+      "compile_database": {
+        "path": "private/prep/system/fluent-bit-clang-production/compile_commands.json",
+        "sha256": "200439a05cad70cc09e61ad7b68da50c61ad4f18a4c17a3ecced4d4a7bb88d29"
+      },
+      "selection": "contract/profiles/fluent-bit/system-selection.json",
+      "profile_directory": "contract/profiles/fluent-bit",
+      "link_map": {
+        "path": "docs/reports/w48-bu-single-leaf-bodies/link-map.corpus.json",
+        "sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3"
+      },
+      "clang": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a2c467a15d6a29eec/private/toolchain/root/usr/lib/llvm-21/bin/clang",
+      "tracked": [
+        "contract/profiles/fluent-bit/system-selection.json",
+        "contract/profiles/fluent-bit/profile.json",
+        "contract/profiles/fluent-bit/member-facts-scope.json"
+      ]
+    },
+    {
+      "name": "slice",
+      "profile": "fluent-bit-tail-pause",
+      "kind": "configured-selection",
+      "checkout": "private/prep/slice/fluent-bit-clang-source",
+      "compile_database": {
+        "path": "private/prep/slice/fluent-bit-clang-production/compile_commands.json",
+        "sha256": "0066bf4f7417f45d38353286448b0d35dcc7b6fe3577e3920d9fbeadbf4589e2"
+      },
+      "selection": "contract/profiles/fluent-bit/tail-pause-selection.json",
+      "profile_directory": "contract/profiles/fluent-bit",
+      "link_map": {
+        "path": "docs/reports/w48-bu-single-leaf-bodies/link-map.corpus.json",
+        "sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3"
+      },
+      "clang": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a2c467a15d6a29eec/private/toolchain/root/usr/lib/llvm-21/bin/clang",
+      "tracked": [
+        "contract/profiles/fluent-bit/tail-pause-selection.json",
+        "contract/profiles/fluent-bit/profile.json",
+        "contract/profiles/fluent-bit/member-facts-scope.json"
+      ]
+    }
+  ]
+}

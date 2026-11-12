@@ -336,6 +336,22 @@ placements = [
   { position = "transfer", arm = "destroyer-order", route = "destroyer_order::order" },
 ]
 
+# Card LIST-ENTRY-RELEASE-IDENTITY: rule 43 amends rule 34's admission at the
+# transfer (an element destroyer may take an object the path already holds)
+# and carries a derived summary's `ElementsReleased` clause through the W4
+# gate and every caller. Off, neither part runs: a destroyer admits only rule
+# 10d/10f's entries and a body that takes element custody publishes no
+# summary, as before.
+[[rule]]
+id = "43"
+crate = "qcore-c-gateway"
+lean = ["QCore.ElementReleaseSummary"]
+document = "docs/agents/rules/43.md"
+off = "refuses"
+placements = [
+  { position = "transfer", arm = "held-destroyer", route = "element_release::destroyer_takes_held" },
+]
+
 # --- Token holds (ROUTE-MAP section 1): a hold's admission is the refusal of
 # --- a reading, so a switch that removed it would widen. Every hold is
 # --- off = "not-switchable": QCORE_GATEWAY_RULES_OFF naming it is refused, and

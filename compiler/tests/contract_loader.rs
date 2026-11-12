@@ -463,10 +463,14 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     // `nullable` that `flb_free`'s own declaration carries, since `free(NULL)`
     // is defined and this is not that. `del` is an `int` by value, the only
     // mode the loader admits on a scalar and also the true one.
-    old.insert_contract(
-        "flb_input_chunk_destroy",
-        ResourceFunctionContract::new([P::Released { nullable: false }, P::Borrowed], R::None),
-    );
+    // Card LIST-ENTRY-RELEASE-IDENTITY: the body unlinks `ic` before freeing
+    // it, so the declaration is an element destroyer (gateway rules 34, 43).
+    let mut chunk_destroy =
+        ResourceFunctionContract::new([P::Released { nullable: false }, P::Borrowed], R::None);
+    chunk_destroy
+        .container_effects
+        .insert(0, qcore_schemas::contract::ContainerEffect::Unpublished);
+    old.insert_contract("flb_input_chunk_destroy", chunk_destroy);
     // Card AOM-DESTROY-SIBLINGS adds the second non-all-borrowed production
     // declaration, and it is listed beside its neighbour deliberately, because
     // the two DISAGREE on the conjunct that decides every call site. This body
@@ -747,6 +751,10 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         old.insert_contract("flb_task_users_dec", dec);
         let mut retry = ResourceFunctionContract::new([P::Released { nullable: false }], R::None);
         retry.counted_users.neutral = true;
+        // Card LIST-ENTRY-RELEASE-IDENTITY: an element destroyer.
+        retry
+            .container_effects
+            .insert(0, ContainerEffect::Unpublished);
         old.insert_contract("flb_task_retry_destroy", retry);
         let mut pool =
             ResourceFunctionContract::new([P::Borrowed, P::Borrowed, P::Borrowed], R::None);
@@ -1056,10 +1064,15 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         "flb_task_queue_destroy",
         "flb_input_collector_destroy",
     ] {
-        old.insert_contract(
-            name,
-            ResourceFunctionContract::new([P::Released { nullable: false }], R::None),
-        );
+        let mut destroy = ResourceFunctionContract::new([P::Released { nullable: false }], R::None);
+        // Card LIST-ENTRY-RELEASE-IDENTITY: `flb_sched_timer_destroy`'s body
+        // unlinks the timer before freeing it (an element destroyer).
+        if name == "flb_sched_timer_destroy" {
+            destroy
+                .container_effects
+                .insert(0, qcore_schemas::contract::ContainerEffect::Unpublished);
+        }
+        old.insert_contract(name, destroy);
     }
     old.insert_contract(
         "flb_input_chunk_release_route",

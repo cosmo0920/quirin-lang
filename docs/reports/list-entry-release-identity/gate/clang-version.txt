@@ -1,0 +1,4 @@
+Ubuntu clang version 21.1.8 (6ubuntu1)
+Target: x86_64-pc-linux-gnu
+Thread model: posix
+InstalledDir: /home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a2c467a15d6a29eec/private/toolchain/root/usr/lib/llvm-21/bin

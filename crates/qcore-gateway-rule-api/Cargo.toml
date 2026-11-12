@@ -10,4 +10,4 @@ description = "The C gateway's rule-package interface: per-position traits, admi
 # reads qcore-contract yet), and every rule package depends on it, never on
 # qcore-c-gateway or on another rule package.
 [dependencies]
-qcore-schemas = { path = "../qcore-schemas", version = "24.0.0" }
+qcore-schemas = { path = "../qcore-schemas", version = "25.0.0" }

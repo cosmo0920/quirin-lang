@@ -1,0 +1,290 @@
+{
+ "route": "slice",
+ "totals": {
+  "before": {
+   "Unknown": 341,
+   "Safe": 58,
+   "Pending": 4,
+   "Unsafe": 1
+  },
+  "after": {
+   "Unknown": 340,
+   "Safe": 59,
+   "Pending": 4,
+   "Unsafe": 1
+  }
+ },
+ "moves": {
+  "Unknown -> Safe": 1
+ },
+ "rows_changed": 23,
+ "rows": [
+  {
+   "unit": "plugins/in_tail/tail.c",
+   "function": "in_tail_collect_event",
+   "occurrence": 1,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "plugins/in_tail/tail.c:349: unlink by `flb_tail_file_remove` of `f`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "plugins/in_tail/tail.c",
+   "function": "in_tail_collect_pending",
+   "occurrence": 1,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [
+    "plugins/in_tail/tail.c:119: unresolved resource identity `file`",
+    "plugins/in_tail/tail.c:84: unresolved resource identity `file`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "plugins/in_tail/tail.c",
+   "function": "in_tail_collect_static",
+   "occurrence": 1,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [
+    "plugins/in_tail/tail.c:212: unresolved resource identity `file`",
+    "plugins/in_tail/tail.c:277: unresolved resource identity `file`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "plugins/in_tail/tail_file.c",
+   "function": "check_purge_deleted_file",
+   "occurrence": 1,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "plugins/in_tail/tail_file.c:2825: unlink by `flb_tail_file_remove` of `file`, which this function has not published",
+    "plugins/in_tail/tail_file.c:2839: unlink by `flb_tail_file_remove` of `file`, which this function has not published",
+    "plugins/in_tail/tail_file.c:2860: unlink by `flb_tail_file_remove` of `file`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "plugins/in_tail/tail_file.c",
+   "function": "flb_tail_file_purge",
+   "occurrence": 1,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [
+    "plugins/in_tail/tail_file.c:2905: unresolved resource identity `file`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "plugins/in_tail/tail_file.c",
+   "function": "flb_tail_file_reclaim",
+   "occurrence": 1,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [
+    "plugins/in_tail/tail_file.c:2150: unresolved resource identity `file`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "plugins/in_tail/tail_file.c",
+   "function": "flb_tail_file_remove_all",
+   "occurrence": 1,
+   "before": "Unknown",
+   "after": "Safe",
+   "lost": [
+    "plugins/in_tail/tail_file.c:2163: unresolved resource identity `file`",
+    "plugins/in_tail/tail_file.c:2169: unresolved resource identity `file`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "plugins/in_tail/tail_fs_inotify.c",
+   "function": "reconcile_file_state",
+   "occurrence": 1,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "plugins/in_tail/tail_fs_inotify.c:184: unlink by `flb_tail_file_remove` of `file`, which this function has not published",
+    "plugins/in_tail/tail_fs_inotify.c:228: unlink by `flb_tail_file_remove` of `file`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "plugins/in_tail/tail_fs_stat.c",
+   "function": "tail_fs_check",
+   "occurrence": 1,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "plugins/in_tail/tail_fs_stat.c:117: unlink by `flb_tail_file_remove` of `file`, which this function has not published",
+    "plugins/in_tail/tail_fs_stat.c:130: unlink by `flb_tail_file_remove` of `file`, which this function has not published",
+    "plugins/in_tail/tail_fs_stat.c:174: unlink by `flb_tail_file_remove` of `file`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "function": "flb_input_coro_finished",
+   "occurrence": 1,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "src/flb_input.c:747: unlink by `flb_input_coro_destroy` of `input_coro`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "function": "flb_input_coro_finished",
+   "occurrence": 2,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "src/flb_input.c:747: unlink by `flb_input_coro_destroy` of `input_coro`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "function": "flb_input_exit_all",
+   "occurrence": 1,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [
+    "src/flb_input.c:2160: unresolved resource identity `ins`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_input.c",
+   "function": "flb_input_exit_all",
+   "occurrence": 2,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [
+    "src/flb_input.c:2160: unresolved resource identity `ins`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_input.c",
+   "function": "flb_input_http_server_property_check",
+   "occurrence": 1,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "src/flb_input.c:1545: unlink by `flb_input_instance_destroy` of `ins`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "function": "flb_input_http_server_property_check",
+   "occurrence": 2,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "src/flb_input.c:1545: unlink by `flb_input_instance_destroy` of `ins`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "function": "flb_input_init_all",
+   "occurrence": 1,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [
+    "src/flb_input.c:2081: unresolved resource identity `ins`",
+    "src/flb_input.c:2090: unresolved resource identity `ins`",
+    "src/flb_input.c:2100: unresolved resource identity `ins`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_input.c",
+   "function": "flb_input_init_all",
+   "occurrence": 2,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [
+    "src/flb_input.c:2081: unresolved resource identity `ins`",
+    "src/flb_input.c:2090: unresolved resource identity `ins`",
+    "src/flb_input.c:2100: unresolved resource identity `ins`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_input.c",
+   "function": "flb_input_net_property_check",
+   "occurrence": 1,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "src/flb_input.c:1413: unlink by `flb_input_instance_destroy` of `ins`, which this function has not published",
+    "src/flb_input.c:1420: unlink by `flb_input_instance_destroy` of `ins`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "function": "flb_input_net_property_check",
+   "occurrence": 2,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "src/flb_input.c:1413: unlink by `flb_input_instance_destroy` of `ins`, which this function has not published",
+    "src/flb_input.c:1420: unlink by `flb_input_instance_destroy` of `ins`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "function": "flb_input_oauth2_jwt_property_check",
+   "occurrence": 1,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "src/flb_input.c:1513: unlink by `flb_input_instance_destroy` of `ins`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "function": "flb_input_oauth2_jwt_property_check",
+   "occurrence": 2,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "src/flb_input.c:1513: unlink by `flb_input_instance_destroy` of `ins`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "function": "flb_input_plugin_property_check",
+   "occurrence": 1,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "src/flb_input.c:1485: unlink by `flb_input_instance_destroy` of `ins`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "function": "flb_input_plugin_property_check",
+   "occurrence": 2,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "src/flb_input.c:1485: unlink by `flb_input_instance_destroy` of `ins`, which this function has not published"
+   ]
+  }
+ ]
+}

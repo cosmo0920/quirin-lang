@@ -1,0 +1,691 @@
+{
+ "route": "system",
+ "totals": {
+  "before": {
+   "Unknown": 341,
+   "Safe": 103,
+   "Unsafe": 4
+  },
+  "after": {
+   "Unknown": 337,
+   "Safe": 107,
+   "Unsafe": 4
+  }
+ },
+ "moves": {
+  "Unknown -> Safe": 4
+ },
+ "rows_changed": 56,
+ "rows": [
+  {
+   "unit": "src/flb_engine.c",
+   "function": "flb_engine_destroy_tasks",
+   "occurrence": 1,
+   "before": "Unknown",
+   "after": "Safe",
+   "lost": [
+    "src/flb_engine.c:145: unresolved resource identity `task`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_engine.c",
+   "function": "flb_engine_destroy_tasks",
+   "occurrence": 2,
+   "before": "Unknown",
+   "after": "Safe",
+   "lost": [
+    "src/flb_engine.c:145: unresolved resource identity `task`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_engine.c",
+   "function": "handle_output_event",
+   "occurrence": 1,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "src/flb_engine.c:817: unlink by `flb_task_retry_destroy` of `retry`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "src/flb_engine.c",
+   "function": "handle_output_event",
+   "occurrence": 2,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "src/flb_engine.c:817: unlink by `flb_task_retry_destroy` of `retry`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "src/flb_engine_dispatch.c",
+   "function": "flb_engine_dispatch",
+   "occurrence": 1,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "src/flb_engine_dispatch.c:462: unlink by `flb_task_destroy` of `task`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "src/flb_engine_dispatch.c",
+   "function": "flb_engine_dispatch",
+   "occurrence": 2,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "src/flb_engine_dispatch.c:462: unlink by `flb_task_destroy` of `task`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "src/flb_engine_dispatch.c",
+   "function": "flb_engine_dispatch_retry",
+   "occurrence": 1,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "src/flb_engine_dispatch.c:151: unlink by `flb_task_retry_destroy` of `retry`, which this function has not published",
+    "src/flb_engine_dispatch.c:188: unlink by `flb_task_retry_destroy` of `retry`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "src/flb_engine_dispatch.c",
+   "function": "flb_engine_dispatch_retry",
+   "occurrence": 2,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "src/flb_engine_dispatch.c:151: unlink by `flb_task_retry_destroy` of `retry`, which this function has not published",
+    "src/flb_engine_dispatch.c:188: unlink by `flb_task_retry_destroy` of `retry`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_release_space",
+   "occurrence": 1,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [
+    "src/flb_input_chunk.c:718: unresolved resource identity `old_input_chunk`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_release_space",
+   "occurrence": 2,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [
+    "src/flb_input_chunk.c:718: unresolved resource identity `old_input_chunk`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "function": "input_chunk_append_raw",
+   "occurrence": 1,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "src/flb_input_chunk.c:3511: unlink by `flb_input_chunk_destroy` of `ic`, which this function has not published",
+    "src/flb_input_chunk.c:3542: unlink by `flb_input_chunk_destroy` of `ic`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "function": "input_chunk_append_raw",
+   "occurrence": 2,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "src/flb_input_chunk.c:3511: unlink by `flb_input_chunk_destroy` of `ic`, which this function has not published",
+    "src/flb_input_chunk.c:3542: unlink by `flb_input_chunk_destroy` of `ic`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "function": "input_chunk_get",
+   "occurrence": 1,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "src/flb_input_chunk.c:2909: unlink by `flb_input_chunk_destroy` of `ic`, which this function has not published",
+    "src/flb_input_chunk.c:2926: unlink by `flb_input_chunk_destroy` of `ic`, which this function has not published",
+    "src/flb_input_chunk.c:2944: unlink by `flb_input_chunk_destroy` of `ic`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "function": "input_chunk_get",
+   "occurrence": 2,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "src/flb_input_chunk.c:2909: unlink by `flb_input_chunk_destroy` of `ic`, which this function has not published",
+    "src/flb_input_chunk.c:2926: unlink by `flb_input_chunk_destroy` of `ic`, which this function has not published",
+    "src/flb_input_chunk.c:2944: unlink by `flb_input_chunk_destroy` of `ic`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "function": "memrb_input_chunk_release_space",
+   "occurrence": 1,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [
+    "src/flb_input_chunk.c:3224: unresolved resource identity `ic`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "function": "memrb_input_chunk_release_space",
+   "occurrence": 2,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [
+    "src/flb_input_chunk.c:3224: unresolved resource identity `ic`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_output.c",
+   "function": "flb_output_enable_multi_threading",
+   "occurrence": 1,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "src/flb_output.c:1311: unlink by `flb_output_instance_destroy` of `ins`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "src/flb_output.c",
+   "function": "flb_output_enable_multi_threading",
+   "occurrence": 2,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "src/flb_output.c:1311: unlink by `flb_output_instance_destroy` of `ins`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "src/flb_output.c",
+   "function": "flb_output_exit",
+   "occurrence": 1,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [
+    "src/flb_output.c:671: unresolved resource identity `ins`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_output.c",
+   "function": "flb_output_exit",
+   "occurrence": 2,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [
+    "src/flb_output.c:671: unresolved resource identity `ins`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_output.c",
+   "function": "flb_output_flush_finished",
+   "occurrence": 1,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "src/flb_output.c:744: unlink by `flb_output_flush_destroy` of `out_flush`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "src/flb_output.c",
+   "function": "flb_output_flush_finished",
+   "occurrence": 2,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "src/flb_output.c:744: unlink by `flb_output_flush_destroy` of `out_flush`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "src/flb_output.c",
+   "function": "flb_output_init_all",
+   "occurrence": 1,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [
+    "src/flb_output.c:1552: unresolved resource identity `ins`",
+    "src/flb_output.c:1696: unresolved resource identity `ins`",
+    "src/flb_output.c:1742: unresolved resource identity `ins`",
+    "src/flb_output.c:1761: unresolved resource identity `ins`",
+    "src/flb_output.c:1771: unresolved resource identity `ins`",
+    "src/flb_output.c:1781: unresolved resource identity `ins`",
+    "src/flb_output.c:1832: unresolved resource identity `ins`",
+    "src/flb_output.c:1841: unresolved resource identity `ins`",
+    "src/flb_output.c:1851: unresolved resource identity `ins`",
+    "src/flb_output.c:1869: unresolved resource identity `ins`",
+    "src/flb_output.c:1876: unresolved resource identity `ins`",
+    "src/flb_output.c:1884: unresolved resource identity `ins`",
+    "src/flb_output.c:1894: unresolved resource identity `ins`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_output.c",
+   "function": "flb_output_init_all",
+   "occurrence": 2,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [
+    "src/flb_output.c:1552: unresolved resource identity `ins`",
+    "src/flb_output.c:1696: unresolved resource identity `ins`",
+    "src/flb_output.c:1742: unresolved resource identity `ins`",
+    "src/flb_output.c:1761: unresolved resource identity `ins`",
+    "src/flb_output.c:1771: unresolved resource identity `ins`",
+    "src/flb_output.c:1781: unresolved resource identity `ins`",
+    "src/flb_output.c:1832: unresolved resource identity `ins`",
+    "src/flb_output.c:1841: unresolved resource identity `ins`",
+    "src/flb_output.c:1851: unresolved resource identity `ins`",
+    "src/flb_output.c:1869: unresolved resource identity `ins`",
+    "src/flb_output.c:1876: unresolved resource identity `ins`",
+    "src/flb_output.c:1884: unresolved resource identity `ins`",
+    "src/flb_output.c:1894: unresolved resource identity `ins`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_output.c",
+   "function": "flb_output_net_property_check",
+   "occurrence": 1,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "src/flb_output.c:1350: unlink by `flb_output_instance_destroy` of `ins`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "src/flb_output.c",
+   "function": "flb_output_net_property_check",
+   "occurrence": 2,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "src/flb_output.c:1350: unlink by `flb_output_instance_destroy` of `ins`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "src/flb_output.c",
+   "function": "flb_output_task_flush",
+   "occurrence": 1,
+   "before": "Unsafe",
+   "after": "Unsafe",
+   "lost": [],
+   "gained": [
+    "src/flb_output.c:526: unlink by `flb_output_flush_destroy` of `out_flush`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "src/flb_output.c",
+   "function": "flb_output_task_flush",
+   "occurrence": 2,
+   "before": "Unsafe",
+   "after": "Unsafe",
+   "lost": [],
+   "gained": [
+    "src/flb_output.c:526: unlink by `flb_output_flush_destroy` of `out_flush`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "function": "flb_sched_create",
+   "occurrence": 1,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "src/flb_scheduler.c:787: unlink by `flb_sched_timer_destroy` of `timer`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "function": "flb_sched_create",
+   "occurrence": 2,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "src/flb_scheduler.c:787: unlink by `flb_sched_timer_destroy` of `timer`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "function": "flb_sched_destroy",
+   "occurrence": 1,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [
+    "src/flb_scheduler.c:829: unresolved resource identity `request`",
+    "src/flb_scheduler.c:836: unresolved resource identity `request`",
+    "src/flb_scheduler.c:844: unresolved resource identity `timer`",
+    "src/flb_scheduler.c:851: unresolved resource identity `timer`",
+    "src/flb_scheduler.c:855: unresolved resource identity `sched`",
+    "src/flb_scheduler.c:856: unresolved resource identity `sched`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "function": "flb_sched_destroy",
+   "occurrence": 2,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [
+    "src/flb_scheduler.c:829: unresolved resource identity `request`",
+    "src/flb_scheduler.c:836: unresolved resource identity `request`",
+    "src/flb_scheduler.c:844: unresolved resource identity `timer`",
+    "src/flb_scheduler.c:851: unresolved resource identity `timer`",
+    "src/flb_scheduler.c:855: unresolved resource identity `sched`",
+    "src/flb_scheduler.c:856: unresolved resource identity `sched`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "function": "flb_sched_event_handler",
+   "occurrence": 1,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "src/flb_scheduler.c:603: unlink by `flb_sched_request_destroy` of `req`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "function": "flb_sched_event_handler",
+   "occurrence": 2,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "src/flb_scheduler.c:603: unlink by `flb_sched_request_destroy` of `req`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "function": "flb_sched_request_create",
+   "occurrence": 1,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "src/flb_scheduler.c:319: unlink by `flb_sched_timer_destroy` of `timer`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "function": "flb_sched_request_create",
+   "occurrence": 2,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "src/flb_scheduler.c:319: unlink by `flb_sched_timer_destroy` of `timer`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "function": "flb_sched_request_invalidate",
+   "occurrence": 1,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "src/flb_scheduler.c:365: unlink by `flb_sched_request_destroy` of `request`, which this function has not published",
+    "src/flb_scheduler.c:382: unlink by `flb_sched_request_destroy` of `request`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "function": "flb_sched_request_invalidate",
+   "occurrence": 2,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "src/flb_scheduler.c:365: unlink by `flb_sched_request_destroy` of `request`, which this function has not published",
+    "src/flb_scheduler.c:382: unlink by `flb_sched_request_destroy` of `request`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "function": "flb_sched_retry_now",
+   "occurrence": 1,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "src/flb_scheduler.c:969: unlink by `flb_sched_timer_destroy` of `timer`, which this function has not published",
+    "src/flb_scheduler.c:990: unlink by `flb_sched_timer_destroy` of `timer`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "function": "flb_sched_retry_now",
+   "occurrence": 2,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "src/flb_scheduler.c:969: unlink by `flb_sched_timer_destroy` of `timer`, which this function has not published",
+    "src/flb_scheduler.c:990: unlink by `flb_sched_timer_destroy` of `timer`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "function": "flb_sched_timer_cb_create",
+   "occurrence": 1,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "src/flb_scheduler.c:676: unlink by `flb_sched_timer_destroy` of `timer`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "function": "flb_sched_timer_cb_create",
+   "occurrence": 2,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "src/flb_scheduler.c:676: unlink by `flb_sched_timer_destroy` of `timer`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "function": "flb_sched_timer_cleanup",
+   "occurrence": 1,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [
+    "src/flb_scheduler.c:926: unresolved resource identity `timer`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "function": "flb_sched_timer_cleanup",
+   "occurrence": 2,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [
+    "src/flb_scheduler.c:926: unresolved resource identity `timer`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_storage.c",
+   "function": "flb_storage_input_destroy",
+   "occurrence": 1,
+   "before": "Unknown",
+   "after": "Safe",
+   "lost": [
+    "src/flb_storage.c:634: unresolved resource identity `ic`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_storage.c",
+   "function": "flb_storage_input_destroy",
+   "occurrence": 2,
+   "before": "Unknown",
+   "after": "Safe",
+   "lost": [
+    "src/flb_storage.c:634: unresolved resource identity `ic`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_task.c",
+   "function": "flb_task_create",
+   "occurrence": 1,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "src/flb_task.c:739: unlink by `flb_task_destroy` of `task`, which this function has not published",
+    "src/flb_task.c:814: unlink by `flb_task_destroy` of `task`, which this function has not published",
+    "src/flb_task.c:834: unlink by `flb_task_destroy` of `task`, which this function has not published",
+    "src/flb_task.c:887: unlink by `flb_task_destroy` of `task`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "src/flb_task.c",
+   "function": "flb_task_create",
+   "occurrence": 2,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "src/flb_task.c:739: unlink by `flb_task_destroy` of `task`, which this function has not published",
+    "src/flb_task.c:814: unlink by `flb_task_destroy` of `task`, which this function has not published",
+    "src/flb_task.c:834: unlink by `flb_task_destroy` of `task`, which this function has not published",
+    "src/flb_task.c:887: unlink by `flb_task_destroy` of `task`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "src/flb_task.c",
+   "function": "flb_task_destroy",
+   "occurrence": 1,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [
+    "src/flb_task.c:936: unresolved resource identity `retry`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_task.c",
+   "function": "flb_task_destroy",
+   "occurrence": 2,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [
+    "src/flb_task.c:936: unresolved resource identity `retry`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_task.c",
+   "function": "flb_task_retry_clean",
+   "occurrence": 1,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [
+    "src/flb_task.c:429: unresolved resource identity `retry`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_task.c",
+   "function": "flb_task_retry_clean",
+   "occurrence": 2,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [
+    "src/flb_task.c:429: unresolved resource identity `retry`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_task.c",
+   "function": "flb_task_retry_create",
+   "occurrence": 1,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "src/flb_task.c:331: unlink by `flb_task_retry_destroy` of `retry`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "src/flb_task.c",
+   "function": "flb_task_retry_create",
+   "occurrence": 2,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "src/flb_task.c:331: unlink by `flb_task_retry_destroy` of `retry`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "src/flb_task.c",
+   "function": "flb_task_retry_reschedule",
+   "occurrence": 1,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "src/flb_task.c:303: unlink by `flb_task_retry_destroy` of `retry`, which this function has not published",
+    "src/flb_task.c:305: unlink by `flb_task_destroy` of `task`, which this function has not published"
+   ]
+  },
+  {
+   "unit": "src/flb_task.c",
+   "function": "flb_task_retry_reschedule",
+   "occurrence": 2,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "src/flb_task.c:303: unlink by `flb_task_retry_destroy` of `retry`, which this function has not published",
+    "src/flb_task.c:305: unlink by `flb_task_destroy` of `task`, which this function has not published"
+   ]
+  }
+ ]
+}
