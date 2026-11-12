@@ -1,5 +1,7 @@
 # Current status and evidence boundaries
 
+Loop measures (W45-FB-ENGINE-PROGRESS-MEASURE, gateway rule 44): with `QCORE_LOOP_MEASURE_PROPERTY` set, each projected function's loops carry a checked counted-loop measure or a named refusal beside the custody status; it is a fact, not a verdict, moves nothing and states no progress. The slice's bound facts are not yet measured (`W45-FB-ENGINE-PROGRESS-MEASURE-SLICE-RUN`).
+
 Rule-package obligations are carried at row grain where attributed (ARM-OBLIGATIONS-UNIT-GRAIN, measured `rev:3e53c34fe` -> `rev:051aef7f2`, no verdict moved on any route): on the corpus 789 rows (34 Safe, 752 Unknown, 3 Unsafe) of the 54 librdkafka units in which `rd_calloc` or `rd_strdup` stands as a checked specification carry rule 37's `asserted_allocation`, the rows whose derivation reaches either specification; the other 1,904 rows of those units no longer list it. System and slice carry none.
 
 EVENT-COLLECTOR-SELECTION adds independently replayed source-audit imports for first-match collector selection and constructor-local conditional instance/loop stores. Production snapshots across three pinned revisions are read, but membership/instance invariance, persistent frames and caller lifetime composition remain open; no Safe route consumes these imports. [Report](reports/event-collector-selection/README.md).
