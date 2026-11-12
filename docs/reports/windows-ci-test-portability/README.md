@@ -124,6 +124,31 @@ dependent on Windows behaviour that the Linux wrapper cannot show.
 
 ## Commands
 
+Second pass, on the merge with main `6b677a364`:
+
+- The touched binaries on Linux: audit `lib` 186/186, `current_cli` 19/19,
+  `contract_supersession` 4/4, `rule_switch_entry_points` 4/4,
+  `dependency_graph` 2/2, plugin-measure `lib` 27/27, plugin
+  `dependencies` 1/1, `member_effect_summary` 11/11, `cg30` 10/10.
+- `cargo fmt --all -- --check`, `cargo clippy --workspace --all-targets --
+  -D warnings` and the Windows-target Clippy: exit 0 each.
+- Scoped card gate (`gate_scope.py --base 6b677a364`), exit 1:
+  - Rust suite: 219 units, 3908 passed, 3 failed. All three failures are in
+    `qcore-compiler::test::task_route_tsan`, a binary this card does not
+    touch (it is reached because `qcore-compiler` depends on `qcore-audit`).
+    It fails the same way in isolation: ThreadSanitizer reports
+    `invalid path to external symbolizer` with the borrowed Clang 21
+    toolchain, so the race is not named inside the helper the test expects.
+    That is this host's toolchain, not the change.
+  - Python suite: 757 tests, 2 failures. One is a timing-sensitive
+    gate-slot status test. The other,
+    `test_every_remaining_tree_walk_in_the_tests_is_a_reviewed_one`, is
+    main's: `6b677a364` gave `scripts/tests/test_package_reproducible.py` a
+    third walk primitive while `REVIEWED_WALKS` still lists 2.
+  - fmt, Clippy, both reevaluation probes and the submodule step: exit 0.
+
+First pass:
+
 - Linux, plain Clang 21: the fifteen gateway binaries above, 0 failures;
   `contract_supersession` 4/4, `rule_switch_entry_points` 4/4.
 - `cargo fmt --all -- --check`: exit 0.
