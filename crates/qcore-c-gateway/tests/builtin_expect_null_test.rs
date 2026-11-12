@@ -31,7 +31,7 @@ use qcore_c_gateway::legacy_c::{
 use qcore_contract::contract_loader::load_resource_contract_sources;
 
 const DECLARATIONS: &str = "\
-typedef unsigned long size_t; typedef long ssize_t; \
+typedef __SIZE_TYPE__ size_t; typedef __PTRDIFF_TYPE__ ssize_t; \
 void *k_alloc(size_t size); void k_free(void *p); int opaque(void); \
 int snprintf(char *s, size_t n, const char *f, ...); char *strerror(int e); \
 int *__errno_location(void);\n\

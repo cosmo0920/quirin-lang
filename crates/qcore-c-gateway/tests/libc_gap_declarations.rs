@@ -32,6 +32,11 @@
 //!   released while its record lives is `retention-released-while-held`.
 //!
 //! A `Safe` here is `Safe` over the libc assumptions and promotes nothing.
+//!
+//! The units include glibc's own headers (`<pwd.h>`, `<sys/mman.h>`,
+//! `<sys/random.h>`, ...) and the declarations are audited against glibc, so
+//! the target is GNU/Linux; elsewhere the headers do not exist.
+#![cfg(all(target_os = "linux", target_env = "gnu"))]
 
 use std::collections::BTreeMap;
 

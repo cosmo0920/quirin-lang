@@ -37,12 +37,14 @@ extern fn drop(p: ptr<mut, u8>) -> unit contract { requires resource_contract_v1
         ),
     ]))
     .unwrap();
+    // `allocate`'s contract takes a `u64`: `__UINT64_TYPE__` is that width on
+    // LP64 and LLP64 alike, where `unsigned long` is 32-bit on Windows.
     let source = format!(
         "struct loop; struct event {{ int state; }}; struct collector {{ struct loop *evl; struct event event; }};
 int mk_event_add(struct loop *, int, int, unsigned int, void *);
 int mk_event_timeout_disable(struct loop *, void *);
 struct loop *mk_event_loop_create(int); void mk_event_loop_destroy(struct loop *);
-void *allocate(unsigned long); void drop(void *);
+void *allocate(__UINT64_TYPE__); void drop(void *);
 {body}"
     );
     let result = analyze_unrestricted_c11(

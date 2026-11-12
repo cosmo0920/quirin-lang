@@ -16,6 +16,14 @@ use qcore_c_gateway::legacy_c::{AnalysisStatus, ResourceContracts, analyze_legac
 
 const ACTUAL_FRAME: &str = include_str!("fixtures/detach-lookup-membership/cjson_lookup_frame.h");
 
+#[path = "support/retained_frame.rs"]
+mod retained_frame;
+
+/// The retained frame as the target's preprocessor prints it.
+fn frame() -> String {
+    retained_frame::for_target(ACTUAL_FRAME)
+}
+
 #[test]
 fn production_lookup_baseline_refuses_the_unresolved_returned_cursor() {
     let mut sources = vec![("retained tracked frame".to_owned(), ACTUAL_FRAME.to_owned())];
@@ -41,7 +49,7 @@ fn production_lookup_baseline_refuses_the_unresolved_returned_cursor() {
 #[test]
 fn checked_lookup_unit_reports_borrowed_result_without_fresh_identity() {
     let program = qcore_c_gateway::legacy_c::analyze_legacy_c_translation_unit(
-        ACTUAL_FRAME,
+        &frame(),
         "get_array_item",
         &ResourceContracts::default(),
     )
@@ -81,7 +89,10 @@ extern fn dt_detach(parent: ptr<mut, u8>, item: ptr<mut, u8>) -> ptr<mut, u8> co
 const DECLARATIONS: &str = "struct cJSON *dt_alloc(void); void dt_free(struct cJSON*); void dt_store(struct cJSON*,struct cJSON*); void dt_touch(struct cJSON*); struct cJSON *dt_detach(struct cJSON*,struct cJSON*);";
 fn subject(body: &str) -> qcore_c_gateway::legacy_c::LegacyProgramSummary {
     qcore_c_gateway::legacy_c::analyze_legacy_c_translation_unit(
-        &format!("{ACTUAL_FRAME}\n{DECLARATIONS}\nvoid subject(void) {{ {body} }}"),
+        &format!(
+            "{frame}\n{DECLARATIONS}\nvoid subject(void) {{ {body} }}",
+            frame = frame()
+        ),
         "subject",
         &environment(),
     )
@@ -131,7 +142,8 @@ fn provenance_missing_order_wrong_parent_and_intervening_mutation_refuse() {
 #[test]
 fn differently_typed_same_spelled_link_cannot_supply_lookup_identity() {
     let source = format!(
-        "{ACTUAL_FRAME}\nstruct Other {{ struct cJSON *child; }};\n{DECLARATIONS}\nvoid subject(void) {{ void *p=dt_alloc(); struct Other *q=p; struct cJSON *i=dt_alloc(); dt_store(p,i); q->child=i; struct cJSON *s=get_array_item(p,0); struct cJSON *r=dt_detach(p,s); dt_free(p); dt_free(r); }}"
+        "{frame}\nstruct Other {{ struct cJSON *child; }};\n{DECLARATIONS}\nvoid subject(void) {{ void *p=dt_alloc(); struct Other *q=p; struct cJSON *i=dt_alloc(); dt_store(p,i); q->child=i; struct cJSON *s=get_array_item(p,0); struct cJSON *r=dt_detach(p,s); dt_free(p); dt_free(r); }}",
+        frame = frame()
     );
     let program = qcore_c_gateway::legacy_c::analyze_legacy_c_translation_unit(
         &source,
@@ -153,7 +165,8 @@ fn differently_typed_same_spelled_link_cannot_supply_lookup_identity() {
         "an unresolved caller record must not carry checked lookup metadata"
     );
     let source = format!(
-        "{ACTUAL_FRAME}\nstruct Other {{ struct cJSON *child; }};\n{DECLARATIONS}\nvoid subject(void) {{ struct cJSON *p=dt_alloc(); void *v=p; struct Other *q=v; struct cJSON *i=dt_alloc(); dt_store(p,i); q->child=i; struct cJSON *s=get_array_item(p,0); struct cJSON *r=dt_detach(p,s); dt_free(p); dt_free(r); }}"
+        "{frame}\nstruct Other {{ struct cJSON *child; }};\n{DECLARATIONS}\nvoid subject(void) {{ struct cJSON *p=dt_alloc(); void *v=p; struct Other *q=v; struct cJSON *i=dt_alloc(); dt_store(p,i); q->child=i; struct cJSON *s=get_array_item(p,0); struct cJSON *r=dt_detach(p,s); dt_free(p); dt_free(r); }}",
+        frame = frame()
     );
     let program = qcore_c_gateway::legacy_c::analyze_legacy_c_translation_unit(
         &source,
@@ -181,8 +194,11 @@ fn retained_lookup_identity_and_transfer_replay_independently() {
         C11TranslationUnit, LegacyFunctionScope, UnrestrictedLegacyResult,
         analyze_unrestricted_c11, check_legacy_safety_certificate,
     };
-    let root = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("tests/fixtures/detach-lookup-membership");
+    let root = retained_frame::include_root(
+        &std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("tests/fixtures/detach-lookup-membership"),
+        &["cjson_lookup_frame.h"],
+    );
     let source = format!(
         "#include \"cjson_lookup_frame.h\"\n{DECLARATIONS}\nvoid subject(void) {{ struct cJSON *p=dt_alloc(); struct cJSON *i=dt_alloc(); dt_store(p,i); p->child=i; struct cJSON *s=get_array_item(p,0); struct cJSON *r=dt_detach(p,s); dt_free(p); dt_free(r); }}"
     );
@@ -232,7 +248,8 @@ fn retained_lookup_identity_and_transfer_replay_independently() {
 #[test]
 fn signed_array_wrapper_preserves_borrowed_result_and_negative_branch() {
     let source = format!(
-        "{ACTUAL_FRAME}\ncJSON *cJSON_GetArrayItem(const cJSON *array, int index) {{ if (index < 0) {{ return ((void*)0); }} return get_array_item(array, (size_t)index); }}"
+        "{frame}\ncJSON *cJSON_GetArrayItem(const cJSON *array, int index) {{ if (index < 0) {{ return ((void*)0); }} return get_array_item(array, (size_t)index); }}",
+        frame = frame()
     );
     let program = qcore_c_gateway::legacy_c::analyze_legacy_c_translation_unit(
         &source,
@@ -260,8 +277,11 @@ fn native_exact_lookup_frame_returns_existing_nodes_or_null() {
             return;
         }
     };
-    let root = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("tests/fixtures/detach-lookup-membership");
+    let root = retained_frame::include_root(
+        &std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("tests/fixtures/detach-lookup-membership"),
+        &["cjson_lookup_frame.h", "native_case.c"],
+    );
     let nonce = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
         .unwrap()

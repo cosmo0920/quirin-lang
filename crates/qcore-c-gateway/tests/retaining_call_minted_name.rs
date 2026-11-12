@@ -88,6 +88,8 @@ contract { requires resource_contract_v1; ensures normal resource_borrowed(cb);\
            ensures normal resource_callback_invoked(cb, ctx);\n\
            ensures normal resource_return_none(); };";
 
+// The collector interval is the contract's `i64`: `__INT64_TYPE__` is `long int` on
+// LP64 and `long long` on LLP64 (Windows), where a plain `long` is 32-bit.
 const PRELUDE: &str = "\
 struct mk_event_loop;
 struct mk_event { int fd; int type; unsigned int mask; unsigned char status; void *data; int priority; };
@@ -105,11 +107,11 @@ void ev_call(void (*cb)(void *), void *ctx);
 struct chan { int ch[2]; int fd; struct mk_event_loop *evl; struct mk_event event; void *p; void *ctx; struct chan *next; };
 struct flb_config { int x; struct mk_event_loop *evl; };
 struct flb_input_instance { int id; struct flb_config *config; };
-struct tail_ctx { int ch_manager[2]; int fd_notify; long refresh_sec; long refresh_nsec; };
+struct tail_ctx { int ch_manager[2]; int fd_notify; __INT64_TYPE__ refresh_sec; __INT64_TYPE__ refresh_nsec; };
 int flb_input_set_collector_event(struct flb_input_instance *ins,
     int (*cb)(struct flb_input_instance *, struct flb_config *, void *), int fd, struct flb_config *config);
 int flb_input_set_collector_time(struct flb_input_instance *ins,
-    int (*cb)(struct flb_input_instance *, struct flb_config *, void *), long seconds, long nanoseconds,
+    int (*cb)(struct flb_input_instance *, struct flb_config *, void *), __INT64_TYPE__ seconds, __INT64_TYPE__ nanoseconds,
     struct flb_config *config);
 static int collect(struct flb_input_instance *ins, struct flb_config *config, void *in_context) { return 0; }
 typedef struct msgpack_packer { void *data; int (*callback)(void *data, const char *buf, __SIZE_TYPE__ len); } msgpack_packer;

@@ -231,6 +231,22 @@ fn every_family_accepts_its_correct_use() {
     }
     for (name, body) in ACCEPTING {
         let summary = summary(body, "a");
+        // The contract returns `rd_kafka_broker_state_t` as `u32`, the System V
+        // reading of an enumeration without a negative value. Windows' ABI
+        // makes it `int`, so there the contract is withdrawn against the
+        // declaration by name and the row fails closed (`abi_enum_const_pp`
+        // pins the per-target enumeration answer).
+        if cfg!(windows) && name == "accessor" {
+            assert_eq!(summary.status, AnalysisStatus::Unknown, "{name}");
+            assert!(
+                unsupported(&summary).iter().any(|description| description
+                    .contains("`rd_kafka_broker_get_state`")
+                    && description.contains("(abi-return-type-disagreement)")),
+                "{name}: expected the contract withdrawn on Windows, got {:?}",
+                summary.diagnostics
+            );
+            continue;
+        }
         assert_eq!(
             summary.status,
             AnalysisStatus::Safe,

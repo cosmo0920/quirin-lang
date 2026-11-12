@@ -163,9 +163,11 @@ fn g_refuses_consume_invalid_orders_and_legacy_forms_by_name() {
         "void subject(void) { __sync_synchronize(); }",
         "legacy `__sync_synchronize` is a GCC full barrier with no C11 memory order and is not routed to the weak-memory model (CG28)",
     );
-    // Clang names the sized `__sync` builtin, which no table lists.
+    // Clang names the sized `__sync` builtin, which no table lists. `long long`
+    // is 8 bytes on LP64 and LLP64 alike (`long` is 4 on Windows, which names
+    // `__sync_fetch_and_add_4`).
     assert_refused(
-        "long subject(long *p) { return __sync_fetch_and_add(p, 1); }",
+        "long long subject(long long *p) { return __sync_fetch_and_add(p, 1); }",
         "unlisted atomic form `__sync_fetch_and_add_8` (CG19)",
     );
     assert_refused(
