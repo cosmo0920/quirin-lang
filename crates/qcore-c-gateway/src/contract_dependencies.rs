@@ -537,6 +537,8 @@ pub(crate) fn absorb_record(delta: &UnitRecord) {
 pub(crate) fn relied(name: &str) {
     contract_consultation::note_relied(name);
     attribution::relied(name);
+    // Card MEASURE-LOOKUP-RECORD-REUSE: the unit's lookup record (evidence).
+    crate::lookup_record::relied(name);
 }
 
 /// Card **ARM-OBLIGATIONS-UNIT-GRAIN**: which rows of a unit reach a

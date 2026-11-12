@@ -204,6 +204,27 @@ pub fn run_with_checkpoints(
     // Card W45-CONTRACT-REVISION-MODE: every pinned contract is compared with
     // its lock over the audited Fluent Bit source before any unit is analysed.
     let pins = crate::contract_revision::apply_pins(&mut contracts, &owners, &root)?;
+    // Card MEASURE-LOOKUP-RECORD-REUSE: a run claiming the base side's
+    // analyzer for a contract-only diff is the base build reading the tip's
+    // contract inputs, checked before any unit is analysed.
+    if let Some(acceptance) = checkpoints.and_then(|options| options.acceptance.as_ref()) {
+        let locks = pins.lock_digests().into_keys().map(PathBuf::from).collect::<Vec<_>>();
+        let configuration = profile.directory().join("source-contracts.json");
+        let mut inputs = vec![contract_manifest, profile.directory()];
+        if configuration.exists() {
+            inputs.push(configuration.as_path());
+        }
+        inputs.extend(locks.iter().map(PathBuf::as_path));
+        acceptance
+            .verify_run(option_env!("QCORE_AUDIT_BUILD_COMMIT"), &inputs)
+            .map_err(|error| format!("analyzer acceptance refused: {error}"))?;
+        println!(
+            "analyzer accepted from the base side: {} -> {} ({} contract path(s))",
+            acceptance.base,
+            acceptance.tip,
+            acceptance.paths.len()
+        );
+    }
     // Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS: with the bounds property
     // selected, the bounds views of the manifest's load path, pinned over the
     // audited source, before any unit is analysed.

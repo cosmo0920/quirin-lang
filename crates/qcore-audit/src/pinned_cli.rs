@@ -17,7 +17,8 @@ use std::ffi::OsString;
 use std::path::PathBuf;
 use std::process::ExitCode;
 
-pub const USAGE: &str = "usage: quirin-audit pinned [--jobs N] [--checkpoint-dir DIR [--resume]] \
+pub const USAGE: &str = "usage: quirin-audit pinned [--jobs N] [--checkpoint-dir DIR [--resume] \
+[--accept-base-analyzer BASE --repository DIR]] \
 [fluent-bit-root] [monkey-libevent-compile_commands.json] [monkey-callback-source-report.json] \
 [resource-diagnostics.json] [native-observation-directory] [resource-contract-manifest.json]";
 
@@ -29,6 +30,9 @@ pub fn main(arguments: Vec<OsString>) -> ExitCode {
     // Card CORPUS-GROUP-CHECKPOINTS: per-group `.qo` checkpoints.
     let mut checkpoint_directory = None;
     let mut resume = false;
+    // Card MEASURE-LOOKUP-RECORD-REUSE: a contract-only analyzer acceptance.
+    let mut accept_base = None;
+    let mut repository = None;
     while let Some(argument) = arguments.peek() {
         if argument == "--help" || argument == "-h" {
             println!("{USAGE}");
@@ -60,6 +64,23 @@ pub fn main(arguments: Vec<OsString>) -> ExitCode {
                 return ExitCode::FAILURE;
             };
             checkpoint_directory = Some(PathBuf::from(directory));
+        } else if argument == "--accept-base-analyzer" || argument == "--repository" {
+            let option = argument.to_string_lossy().into_owned();
+            let slot = if option == "--repository" {
+                &mut repository
+            } else {
+                &mut accept_base
+            };
+            if slot.is_some() {
+                eprintln!("{option} is given twice");
+                return ExitCode::FAILURE;
+            }
+            arguments.next();
+            let Some(value) = arguments.next().filter(|value| !value.is_empty()) else {
+                eprintln!("{option} requires a value");
+                return ExitCode::FAILURE;
+            };
+            *slot = Some(value);
         } else if argument == "--resume" {
             if resume {
                 eprintln!("--resume is given twice");
@@ -93,8 +114,35 @@ pub fn main(arguments: Vec<OsString>) -> ExitCode {
         eprintln!("--resume requires --checkpoint-dir");
         return ExitCode::FAILURE;
     }
-    let checkpoints = checkpoint_directory
-        .map(|directory| crate::pinned_route::CheckpointOptions { directory, resume });
+    if accept_base.is_some() != repository.is_some() {
+        eprintln!("--accept-base-analyzer and --repository are given together");
+        return ExitCode::FAILURE;
+    }
+    if accept_base.is_some() && checkpoint_directory.is_none() {
+        eprintln!("--accept-base-analyzer requires --checkpoint-dir");
+        return ExitCode::FAILURE;
+    }
+    // The diff is classified before any work; the run that claims it is
+    // checked once its contract inputs are resolved.
+    let acceptance = match (accept_base, repository) {
+        (Some(base), Some(repository)) => match crate::contract_only_diff::classify(
+            std::path::Path::new(&repository),
+            &base.to_string_lossy(),
+            "HEAD",
+        ) {
+            Ok(acceptance) => Some(acceptance),
+            Err(error) => {
+                eprintln!("analyzer acceptance refused: {error}");
+                return ExitCode::FAILURE;
+            }
+        },
+        _ => None,
+    };
+    let checkpoints = checkpoint_directory.map(|directory| crate::pinned_route::CheckpointOptions {
+        directory,
+        resume,
+        acceptance,
+    });
     let mut arguments = positional.into_iter();
     let jobs = match crate::parallel::resolve_jobs(jobs.as_deref()) {
         Ok(jobs) => crate::parallel::effective_jobs(jobs),
