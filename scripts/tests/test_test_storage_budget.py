@@ -83,6 +83,24 @@ class WrapperTests(unittest.TestCase):
                                    f"qcore_core={self.deps}/libqcore_core-1.so",
                                    f"serde={self.deps}/libserde-2.rlib"])
 
+    def test_every_per_unit_output_directory_is_on_the_runpath(self):
+        # CI-CARGO-BUILD-DIR-LAYOUT: Cargo 1.100 builds each unit into its own
+        # build/<pkg>/<hash>/out and passes one `-L dependency=` per unit; a
+        # runpath holding only the first left the others' dylibs unloadable.
+        units = [Path(self.directory.name) / "build" / name / "h" / "out"
+                 for name in ("rule-35", "itoa")]
+        for unit in units:
+            unit.mkdir(parents=True)
+        (units[0] / "librule_35-9.rlib").write_bytes(b"")
+        (units[0] / "librule_35-9.so").write_bytes(b"")
+        args = ["--crate-name", "qcore_c_gateway", "--emit=dep-info,metadata,link",
+                "-L", f"dependency={units[1]}", "-L", f"dependency={units[0]}",
+                "--extern", f"rule_35={units[0]}/librule_35-9.rlib", "--test"]
+        out = wrapper.rewrite(args, MEMBER, "/sysroot/lib")
+        runpath = [arg.split("-rpath,", 1)[1] for arg in out if "-rpath," in arg]
+        self.assertEqual(runpath, [str(units[1].resolve()), str(units[0].resolve()),
+                                   str(Path("/sysroot/lib").resolve())])
+
     def test_an_rmeta_without_its_rlib_is_kept(self):
         self.assertEqual(wrapper.linkable_extern(f"s={self.deps}/libqcore_schemas-3.rmeta"),
                          [f"s={self.deps}/libqcore_schemas-3.rmeta"])

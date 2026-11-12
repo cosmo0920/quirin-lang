@@ -158,7 +158,7 @@ pub fn linked_monkey_configurations(
 /// The checkout-relative file of a linked Monkey configuration.
 fn checkout_relative(file: &Path, checkout: &Path) -> Result<String, String> {
     crate::input_paths::relative_within(file, checkout)
-        .map(|relative| relative.to_string_lossy().into_owned())
+        .map(|relative| crate::repository_path(&relative))
         .ok_or_else(|| format!("Monkey source outside the checkout: {}", file.display()))
 }
 
@@ -212,7 +212,7 @@ fn linked_monkey(
         for entry in &selected {
             let relative = crate::input_paths::relative_within(&entry.file, &source_root)
                 .ok_or_else(|| "Monkey source outside compiled root".to_owned())?;
-            let file = format!("lib/monkey/{}", relative.to_string_lossy());
+            let file = format!("lib/monkey/{}", crate::repository_path(&relative));
             // Two standalone configurations of one file are one unit key.
             if !seen.insert(file.clone()) {
                 continue;
@@ -588,7 +588,11 @@ pub fn run_current_route_with_checkpoints(
                             crate::input_paths::relative_within(expected_source, &root).map(
                                 |file| {
                                     (
-                                        format!("{}/{}", task.library, file.to_string_lossy()),
+                                        format!(
+                                            "{}/{}",
+                                            task.library,
+                                            crate::repository_path(&file)
+                                        ),
                                         crate::cross_unit_links::ConfigurationIdentity::of(entry),
                                     )
                                 },

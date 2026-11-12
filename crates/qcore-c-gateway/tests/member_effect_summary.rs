@@ -64,7 +64,7 @@ contract {
 };
 "#;
 
-const RECORD: &str = "struct inner { int x; };\nstruct o { char *a; char *b; struct inner in; struct o *next; int n; };\nvoid obj_destroy(void *obj);\nvoid list_destroy(void *list);\nvoid *obj_create(size_t size);\nvoid uncontracted(void *p);\nstruct o *other(void);\n";
+const RECORD: &str = "struct inner { int x; };\nstruct o { char *a; char *b; struct inner in; struct o *next; int n; };\nvoid obj_destroy(void *obj);\nvoid list_destroy(void *list);\nvoid *obj_create(__SIZE_TYPE__ size);\nvoid uncontracted(void *p);\nstruct o *other(void);\n";
 
 const GATE: &str = "indirect memory access is outside the resource projection";
 
@@ -217,7 +217,9 @@ fn a_custody_store_into_a_formal_member_is_named_and_stays_unknown() {
     // `<stdlib.h>` spells `malloc` with Microsoft declaration specifiers the
     // declared-ABI reader does not read, so on Windows the libc contract is
     // withdrawn against it and the call stays `Unknown` by that name; `setnew2`
-    // below carries the member-store refusal on every target.
+    // below carries the member-store refusal on every target (its declaration
+    // spells the parameter `__SIZE_TYPE__`, as the UCRT's `size_t` typedef is
+    // also unread there).
     assert_leaves(
         "setnew",
         "void setnew(struct o *c) {\n  c->a = malloc(4);\n}",

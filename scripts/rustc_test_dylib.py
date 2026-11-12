@@ -105,11 +105,24 @@ def root_member(manifest_dir: Optional[str], root: Path = REPO_ROOT) -> bool:
     return not relative.parts or relative.parts[0] not in OUTSIDE
 
 
-def dependency_dir(args: Sequence[str]) -> Optional[str]:
-    for value in option_values(args, "-L"):
-        if value.startswith("dependency="):
-            return value[len("dependency="):]
-    return None
+def dependency_dirs(args: Sequence[str]) -> list[str]:
+    """Every `-L dependency=` directory, in order. Cargo before 1.100 passes
+    one (`target/<profile>/deps`); its per-unit build-directory layout passes
+    one per dependency (`target/<profile>/build/<pkg>/<hash>/out`), and the
+    dylibs live in those, so each must be on the runpath."""
+    return [value[len("dependency="):] for value in option_values(args, "-L")
+            if value.startswith("dependency=")]
+
+
+def dylib_dirs(args: Sequence[str]) -> list[str]:
+    """The directory of every `.so` named by an `--extern` in `args`."""
+    directories = []
+    for index, arg in enumerate(args):
+        value = (args[index + 1] if arg == "--extern" and index + 1 < len(args)
+                 else arg[len("--extern="):] if arg.startswith("--extern=") else None)
+        if value and "=" in value and value.endswith(".so"):
+            directories.append(str(Path(value.split("=", 1)[1]).parent))
+    return directories
 
 
 def linkable_extern(value: str) -> list[str]:
@@ -170,9 +183,12 @@ def rewrite(args: Sequence[str], manifest_dir: Optional[str], libdir: str) -> li
     if any(kind in ("lib", "rlib") for kind in crate_types):
         rewritten += ["--crate-type", "dylib"]
     rewritten += ["-C", "prefer-dynamic"]
-    for directory in (dependency_dir(args), libdir):
-        if directory:
-            rewritten += ["-C", f"link-arg=-Wl,-rpath,{Path(directory).resolve()}"]
+    runpath: list[str] = []
+    for directory in [*dependency_dirs(args), *dylib_dirs(rewritten), libdir]:
+        if directory and str(Path(directory).resolve()) not in runpath:
+            runpath.append(str(Path(directory).resolve()))
+    for directory in runpath:
+        rewritten += ["-C", f"link-arg=-Wl,-rpath,{directory}"]
     return rewritten
 
 

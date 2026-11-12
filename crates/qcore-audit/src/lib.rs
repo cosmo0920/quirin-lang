@@ -317,7 +317,7 @@ fn resolve(base: &Path, path: &Path) -> PathBuf {
     }
 }
 
-fn repository_path(path: &Path) -> String {
+pub(crate) fn repository_path(path: &Path) -> String {
     path.iter()
         .map(|component| component.to_string_lossy())
         .collect::<Vec<_>>()
