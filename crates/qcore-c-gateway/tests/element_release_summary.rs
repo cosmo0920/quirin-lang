@@ -65,9 +65,9 @@ contract { requires resource_contract_v1; ensures normal resource_borrowed(entry
 extern fn q_use(p: ptr<mut, u8>) -> unit
 contract { requires resource_contract_v1; ensures normal resource_borrowed(p); ensures normal resource_return_none(); };
 extern fn item_destroy(e: ptr<mut, u8>) -> i32
-contract { requires resource_contract_v1; ensures normal resource_unpublished(e); ensures normal resource_released(e, nonnull); ensures normal resource_return_none(); };
+contract { requires resource_contract_v1; ensures normal resource_unpublished(e, _head); ensures normal resource_released(e, nonnull); ensures normal resource_return_none(); };
 extern fn item_close(e: ptr<mut, u8>) -> unit
-contract { requires resource_contract_v1; ensures normal resource_unpublished(e); ensures normal resource_released(e, nonnull); ensures normal resource_return_none(); quant live #e: item.payload |-> #released; };
+contract { requires resource_contract_v1; ensures normal resource_unpublished(e, _head); ensures normal resource_released(e, nonnull); ensures normal resource_return_none(); quant live #e: item.payload |-> #released; };
 ";
 
 const NOT_PUBLISHED: &str =
@@ -247,18 +247,22 @@ const FIXTURES: &[(&str, &str, AnalysisStatus, AnalysisStatus)] = &[
         AnalysisStatus::Safe,
         AnalysisStatus::Unknown,
     ),
-    // Part 1: the held object at an element destroyer.
+    // Part 1: the held object at an element destroyer. Amended by rule 46
+    // (card LERI-HELD-AND-LINK-MEMBER-PREMISES): a held object whose links
+    // this body did not initialise refuses (P-LERI-HELD-LINKS, checked), so a
+    // fresh acquisition and a formal both read `Unknown` now; an initialised
+    // one keeps the held arm (`tests/link_member_premises.rs`).
     (
         "held-acquisition-destroyed",
         "void subject(void) { struct item *e = q_alloc(); item_destroy(e); }",
-        AnalysisStatus::Safe,
+        AnalysisStatus::Unknown,
         AnalysisStatus::Unknown,
     ),
     (
         "formal-handed-to-destroyer-caller",
         "static void hand(struct item *e) { item_destroy(e); }
          void subject(void) { struct item *e = q_alloc(); hand(e); }",
-        AnalysisStatus::Safe,
+        AnalysisStatus::Unknown,
         AnalysisStatus::Unknown,
     ),
     // Refusing: an object this path already unlinked.

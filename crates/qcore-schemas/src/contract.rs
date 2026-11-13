@@ -289,6 +289,14 @@ pub struct ResourceFunctionContract {
     /// specification §C04.7). Omitted when empty.
     #[serde(default, skip_serializing_if = "CountedUserClauses::is_empty")]
     pub counted_users: CountedUserClauses,
+    /// Card **LERI-HELD-AND-LINK-MEMBER-PREMISES** (gateway rule 46): the link
+    /// member an element destroyer's unlink removes, by the index of the
+    /// parameter it unlinks and releases (`resource_unpublished(p, MEMBER)`,
+    /// contract specification §C04.8): the call runs `mk_list_del(&p->MEMBER)`.
+    /// Omitted when empty, so every contract without one serializes byte for
+    /// byte as before.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub link_members: BTreeMap<usize, String>,
 }
 
 /// Card **W45-FB-RETRY-LIFETIME**: an intrusive-container effect on the object
@@ -403,6 +411,9 @@ impl std::fmt::Debug for ResourceFunctionContract {
         if !self.counted_users.is_empty() {
             debug.field("counted_users", &self.counted_users);
         }
+        if !self.link_members.is_empty() {
+            debug.field("link_members", &self.link_members);
+        }
         debug.finish()
     }
 }
@@ -420,6 +431,7 @@ impl ResourceFunctionContract {
             result_kind: ResourceKind::Heap,
             container_effects: BTreeMap::new(),
             counted_users: CountedUserClauses::default(),
+            link_members: BTreeMap::new(),
         }
     }
 
@@ -432,13 +444,14 @@ impl ResourceFunctionContract {
     }
 
     /// Card W45-FB-RETRY-LIFETIME: the same contract without its container
-    /// and counted-user clauses — the part a derived custody summary can
+    /// (with their link members) and counted-user clauses — the part a derived custody summary can
     /// state, and so the part it is compared with.
     #[must_use]
     pub fn custody_projection(&self) -> Self {
         let mut projection = self.clone();
         projection.container_effects.clear();
         projection.counted_users = CountedUserClauses::default();
+        projection.link_members.clear();
         projection
     }
 

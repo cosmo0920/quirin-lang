@@ -161,6 +161,11 @@ pub enum Operand {
         /// Card W45-CONTAINER-ROOT-REACH: set by [`settle_foreign_unlinks`]
         /// when the entry is an element of an admitted container.
         foreign: Option<Foreign>,
+        /// Card LERI-HELD-AND-LINK-MEMBER-PREMISES (gateway rule 46): the link
+        /// member an element destroyer's declaration names
+        /// (`resource_unpublished(p, MEMBER)`), checked by [`link_member`].
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        link: Option<String>,
     },
     /// Card LIST-ENTRY-RELEASE-IDENTITY (gateway rule 43): a derived
     /// summary's `ElementsReleased` at this position: the call may release
@@ -186,6 +191,12 @@ pub struct Foreign {
     /// object, which no summary clause can name.
     #[serde(default)]
     pub roots: Option<BTreeSet<String>>,
+    /// Card LERI-HELD-AND-LINK-MEMBER-PREMISES (gateway rule 46): the member
+    /// every `container_of` binding of the element names
+    /// (`mk_list_entry(it, T, MEMBER)`), the link of the list it is reached
+    /// through.
+    #[serde(default)]
+    pub members: BTreeSet<String>,
 }
 
 /// Every container effect of one call, in parameter order.
@@ -627,6 +638,7 @@ pub fn operands(
                 ContainerEffect::Unpublished => Operand::Unpublished {
                     entry: entry(argument(index)),
                     foreign: None,
+                    link: contract.link_members.get(&index).cloned(),
                 },
                 ContainerEffect::ElementsReleased => {
                     let container = container(argument(index), formals);
@@ -841,7 +853,12 @@ fn apply_with(
                     ),
                 }
             }
-            Operand::Unpublished { entry, foreign } => {
+            Operand::Unpublished {
+                entry,
+                foreign,
+                link,
+            } => {
+                let link = link.as_deref();
                 let restored = match entry {
                     Entry::Name(name) => match settled_site(state, name) {
                         Ok(Some(site))
@@ -877,6 +894,16 @@ fn apply_with(
                         // Card W45-CONTAINER-ROOT-REACH, rule 6: an element of
                         // an admitted container, holding no binding here,
                         // becomes this body's custody at a fresh site.
+                        // Card LERI-HELD-AND-LINK-MEMBER-PREMISES (gateway rule
+                        // 46): an element destroyer takes the element only when
+                        // it unlinks the member the element's list links
+                        // (P-LERI-LINK-MEMBER, checked).
+                        Ok(None) if destroyer && !link_member::admits(foreign.as_ref(), link) => {
+                            let description =
+                                link_member::foreign_refusal(called, name, foreign.as_ref(), link);
+                            refuse(function, line, description, Some(name), state, diagnostics);
+                            true
+                        }
                         Ok(None) => foreign.as_ref().is_some_and(|foreign| {
                             take_foreign_custody(name, foreign.site, state);
                             state.unlinked.insert(foreign.site);
@@ -889,7 +916,16 @@ fn apply_with(
                         Ok(Some(site))
                             if destroyer && element_release::destroyer_takes_held(state, site) =>
                         {
-                            state.unlinked.insert(site);
+                            // Card LERI-HELD-AND-LINK-MEMBER-PREMISES (gateway
+                            // rule 46): only links this body initialised are
+                            // links an unlink may remove (P-LERI-HELD-LINKS,
+                            // decided from the body's own initialisation).
+                            if link_member::held_admits(state, site, link) {
+                                state.unlinked.insert(site);
+                            } else {
+                                let description = link_member::held_refusal(called, name, link);
+                                refuse(function, line, description, Some(name), state, diagnostics);
+                            }
                             true
                         }
                         _ => false,
@@ -1019,8 +1055,8 @@ fn take_foreign_custody(name: &str, site: usize, state: &mut AbstractState) {
 /// successor, or a never-bound formal).
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub(crate) struct ForeignOrigins {
-    admitted: BTreeMap<(String, usize), BTreeSet<Option<Vec<String>>>>,
-    pending: Option<(String, Option<Vec<String>>)>,
+    admitted: BTreeMap<(String, usize), BTreeSet<Origin>>,
+    pending: Option<(String, Origin)>,
     /// Card W45-SR5-SOUNDNESS (`CONTAINER-OF-FORMAL-PUBLICATION-LAUNDER`):
     /// every name rule 5l(2) bound from a never-bound formal
     /// (`ctx = container_of(arg, …)`), wherever the binding was proposed.
@@ -1034,9 +1070,10 @@ impl ForeignOrigins {
         self.over_formal.insert(element.to_owned());
     }
 
-    /// The binding rule 5l is about to return for `element`.
-    pub(crate) fn propose(&mut self, element: &str, container: Option<Vec<String>>) {
-        self.pending = Some((element.to_owned(), container));
+    /// The binding rule 5l is about to return for `element`, through
+    /// `member` (card LERI-HELD-AND-LINK-MEMBER-PREMISES).
+    pub(crate) fn propose(&mut self, element: &str, container: Option<Vec<String>>, member: &str) {
+        self.pending = Some((element.to_owned(), (container, member.to_owned())));
     }
 
     /// Card GAPO-RETURN-CORRECTNESS (rule 15x, shared item): the part a
@@ -1101,9 +1138,14 @@ impl ForeignOrigins {
 /// [`ForeignOrigins`] ([`ForeignOrigins::lowering`]).
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(crate) struct OriginsLowering {
-    admitted: BTreeMap<(String, usize), BTreeSet<Option<Vec<String>>>>,
-    pending: Option<(String, Option<Vec<String>>)>,
+    admitted: BTreeMap<(String, usize), BTreeSet<Origin>>,
+    pending: Option<(String, Origin)>,
 }
+
+/// One admitted binding's container, as spelled (`None`: no container this
+/// rule admits), and the `container_of` member it names (card
+/// LERI-HELD-AND-LINK-MEMBER-PREMISES).
+type Origin = (Option<Vec<String>>, String);
 
 /// Every lexical `container_of` binding `E = ( {` of `element` in `body`,
 /// by line, or `None` when the name is written any other way (an assignment,
@@ -1143,7 +1185,7 @@ pub(crate) fn settle_foreign_unlinks(
     formals: &CallerFormals,
 ) {
     let body = body.iter().collect::<Vec<_>>();
-    type Admitted = (Vec<String>, Option<BTreeSet<String>>);
+    type Admitted = (Vec<String>, Option<BTreeSet<String>>, BTreeSet<String>);
     let admissible = |element: &str| -> Option<Admitted> {
         if formals.is_formal(element) || formals.statics.contains(element) {
             return None;
@@ -1156,9 +1198,12 @@ pub(crate) fn settle_foreign_unlinks(
         // Card LIST-ENTRY-RELEASE-IDENTITY (gateway rule 43): the formals the
         // containers are rooted at, while every one is.
         let mut roots = Some(BTreeSet::new());
+        // Card LERI-HELD-AND-LINK-MEMBER-PREMISES: the members they name.
+        let mut members = BTreeSet::new();
         for line in lines {
             let recorded = origins.admitted.get(&(element.to_owned(), line))?;
-            for container in recorded {
+            for (container, member) in recorded {
+                members.insert(member.clone());
                 let spelling = container.as_ref()?;
                 let texts = spelling.iter().map(String::as_str).collect::<Vec<_>>();
                 match self::container(&texts, formals) {
@@ -1179,7 +1224,7 @@ pub(crate) fn settle_foreign_unlinks(
                 }
             }
         }
-        Some((containers.into_iter().collect(), roots))
+        Some((containers.into_iter().collect(), roots, members))
     };
     let mut next = super::first_free_site(cfg);
     for node in &mut cfg.nodes {
@@ -1208,13 +1253,15 @@ pub(crate) fn settle_foreign_unlinks(
             if let Operand::Unpublished {
                 entry: Entry::Name(name),
                 foreign,
+                ..
             } = operand
-                && let Some((containers, roots)) = admissible(name)
+                && let Some((containers, roots, members)) = admissible(name)
             {
                 *foreign = Some(Foreign {
                     site: next,
                     containers,
                     roots,
+                    members,
                 });
                 next += 1;
             }
@@ -1308,6 +1355,9 @@ pub(super) fn join(current: &mut BTreeSet<usize>, incoming: &BTreeSet<usize>) {
 
 #[path = "legacy_element_release.rs"]
 pub(crate) mod element_release;
+
+#[path = "legacy_link_member.rs"]
+pub(crate) mod link_member;
 
 #[cfg(test)]
 mod tests {

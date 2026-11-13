@@ -1,0 +1,49 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "LERI-HELD-AND-LINK-MEMBER-PREMISES",
+  "base": "8fd7c8d0d",
+  "measured_tip": "875d5e6d4",
+  "profiles": [],
+  "increment_paragraph": "**LERI-HELD-AND-LINK-MEMBER-PREMISES** (named follow-up of LIST-ENTRY-RELEASE-IDENTITY; gateway rule 46, rules 34 and 43 amended, contract specification §C04.8 amended, qcore-schemas 26.0.0 `ResourceFunctionContract::link_members`, Lean `QCore.ElementLinkPremises`; [report](../../reports/leri-held-and-link-member-premises/README.md)). Rule 43's P-LERI-LINK-MEMBER and P-LERI-HELD-LINKS are now checked. An element destroyer names the member its body unlinks, `resource_unpublished(p, MEMBER)` (a member beside any other mode than a release of the same parameter rejects the module); rule 34's destroyer takes a foreign element only when every `container_of` binding of it names that member, and rule 43's held arm takes an object only when the body itself initialised that member's links (a rule 36b self-initialisation covering `next` and `prev`, recorded in `AbstractState::link_ready`, joined by intersection and forgotten at any statement that may write the object). Every other entry refuses; nothing is admitted that rule 43 refused, and the rule has no switch. The ten Fluent Bit destroyers and `mk_http_thread_destroy` name `_head` (bodies read at the three trees; locks synced, the eleven re-pinned at their trees). The base census of rule 43 off against on found its held arm carrying four system rows, each a formal handed to a destroyer; measured on the card's own preparations, system custody 107/4/337 → 103/4/341 (`flb_output_task_queue_enqueue`, `flb_sched_timer_cb_destroy`, both configurations, Safe → Unknown, exactly the prediction), slice 59/1/340/4 Pending unchanged (`flb_tail_file_purge` now refuses its `_rotate_head` element), corpus 1,081/6/3,617 unchanged; the arbiter's declaration check matches on all three routes. A member-place store fix-up after the measured tip (`47e0ffb25`) re-ran with no row change; no Unknown → Safe, no accusation added or removed, null tallies unchanged. P-LERI-CALLER-PUBLISHED stays stated: the only Safe rows applying `ElementsReleased` (corpus `mk_sched_threads_purge`, `mk_sched_threads_destroy_all`) track no object at the call.",
+  "status_paragraph": "LERI-HELD-AND-LINK-MEMBER-PREMISES (gateway rule 46, measured base `8fd7c8d0d` against tip `875d5e6d4` on the card's own preparations of the three live routes): rule 43's P-LERI-LINK-MEMBER and P-LERI-HELD-LINKS are checked obligations (an element destroyer names its link member; a foreign element must be bound through it; a held object needs the body's own initialisation of it). System custody 107/4/337 → 103/4/341 (two formal hand-offs to a destroyer, both configurations, now `Unknown`), slice unchanged at 59/1/340/4 Pending, corpus 1,081/6/3,617 unchanged (no row content changed). P-LERI-CALLER-PUBLISHED remains a stated premise, vacuous on every measured Safe row.",
+  "ledger": [
+    {
+      "id": "LERI-HELD-AND-LINK-MEMBER-PREMISES",
+      "operation": "retire",
+      "why": "DISCHARGED by LERI-HELD-AND-LINK-MEMBER-PREMISES (gateway rule 46): P-LERI-LINK-MEMBER is checked (resource_unpublished(p, MEMBER) names the destroyer's link member; rule 34's destroyer takes a foreign element only when every container_of binding names it) and P-LERI-HELD-LINKS is checked, decided from the body's own initialisation (a rule 36b self-initialisation of that one member covering next and prev, AbstractState::link_ready, joined by intersection, forgotten at any statement that may write the object), each with Lean parity (QCore.ElementLinkPremises: the_unchecked_held_arm_admits_an_undefined_unlink, the_held_arm_is_sound, retaining_preserves_every_fact, an_admitted_unlink_removes_the_element, a_mismatched_member_leaves_the_element_linked, vectors_hold). Measured at 8fd7c8d0d on the card's preparations: the premise was load-bearing on four system rows (formals handed to flb_task_retry_destroy and flb_sched_timer_destroy), which move Safe -> Unknown, as predicted; slice unchanged; corpus 1,081/6/3,617 unchanged (no row content changed); arbiter declaration check: match on all three routes. P-LERI-CALLER-PUBLISHED is rehomed to LERI-CALLER-PUBLISHED-PREMISE with its measured load (vacuous on every measured Safe row).",
+      "source": "docs/reports/leri-held-and-link-member-premises/README.md"
+    },
+    {
+      "id": "LERI-CALLER-PUBLISHED-PREMISE",
+      "operation": "register",
+      "title": "Rule 43's P-LERI-CALLER-PUBLISHED is stated, not proved",
+      "text": "A caller applying a callee's ElementsReleased clause forgets every object it published and trusts every other tracked object, on P-LERI-CALLER-PUBLISHED (the only tracked objects a container the actual reaches may hold are the caller's published ones; an object held LIVE was never linked by a modelled step, and an unmodelled link refuses). Measured by LERI-HELD-AND-LINK-MEMBER-PREMISES at 8fd7c8d0d on its preparations: the only Safe rows applying the clause are corpus mk_sched_threads_purge and mk_sched_threads_destroy_all, whose bodies track no object at the call, so the premise is vacuous on every measured Safe row; it becomes load-bearing the first time a caller applying the clause tracks a live object (likely with LERI-CROSS-UNIT-ELEMENTS-RELEASED). DISCHARGE: a check that no tracked unpublished object may be linked in the container the actual reaches (e.g. every held object carries a link-state fact that excludes membership: freshly initialised, or unlinked by this body), with Lean parity; or a re-measured statement after cross-unit carriage lands.",
+      "source": "docs/reports/leri-held-and-link-member-premises/README.md",
+      "recorded_by": "LERI-HELD-AND-LINK-MEMBER-PREMISES"
+    },
+    {
+      "id": "LERI-HELD-FORMAL-LINK-OBLIGATION",
+      "operation": "register",
+      "title": "A formal handed to an element destroyer refuses: its links are its caller's",
+      "text": "Rule 46 decides P-LERI-HELD-LINKS only from the body's own initialisation, so a formal handed to an element destroyer refuses. Measured by LERI-HELD-AND-LINK-MEMBER-PREMISES at 8fd7c8d0d on its preparations: system flb_output_task_queue_enqueue (retry to flb_task_retry_destroy on the allocation-failure path) and flb_sched_timer_cb_destroy (timer to flb_sched_timer_destroy), both configurations, Safe -> Unknown, with leaf trades in flb_output_task_singleplex_enqueue and flb_sched_event_handler. DISCHARGE: carry the link-state obligation to the callers (a derived-summary precondition that the formal's MEMBER links are initialised or linked, discharged by the caller's own initialisation or publication), with Lean parity.",
+      "source": "docs/reports/leri-held-and-link-member-premises/README.md",
+      "recorded_by": "LERI-HELD-AND-LINK-MEMBER-PREMISES"
+    },
+    {
+      "id": "LERI-PUBLISHED-ARM-LINK-MEMBER",
+      "operation": "register",
+      "title": "Rule 34's published arm does not compare the publication's member with the destroyer's",
+      "text": "An element destroyer handed an object this path published (rule 10d's restored site) is admitted without comparing the member the publication linked (mk_list_add(&x->M, ...)) with the member the destroyer names (resource_unpublished(p, MEMBER)): a publication through another member would leave the object linked while it is freed. Recorded by LERI-HELD-AND-LINK-MEMBER-PREMISES, which checked the foreign and held arms only; not measured. DISCHARGE: record the publication's member with the published site and refuse a destroyer naming another, with Lean parity; or a measured statement that no route row takes the published arm through another member.",
+      "source": "docs/reports/leri-held-and-link-member-premises/README.md",
+      "recorded_by": "LERI-HELD-AND-LINK-MEMBER-PREMISES"
+    },
+    {
+      "id": "LERI-PLAIN-UNLINK-MEMBER",
+      "operation": "register",
+      "title": "A plain foreign unlink is not compared with the element's container_of member",
+      "text": "Rule 10f(2) admits mk_list_del(&E->F) of a foreign element E without comparing F with the member E's container_of binding names (P-CRR-MEMBER's remaining part): unlinking another member leaves E in the iterated list while the body takes its custody. Rule 46 records the binding members (Foreign::members) and checks them for element destroyers only. Recorded by LERI-HELD-AND-LINK-MEMBER-PREMISES; not measured. DISCHARGE: keep the entry's spelled member and require it to equal every binding member, with Lean parity; or a measured statement of where the premise is load-bearing.",
+      "source": "docs/reports/leri-held-and-link-member-premises/README.md",
+      "recorded_by": "LERI-HELD-AND-LINK-MEMBER-PREMISES"
+    }
+  ]
+}

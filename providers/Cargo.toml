@@ -3,7 +3,7 @@ members = ["quirin-provider-libc", "quirin-provider-cfl", "quirin-provider-mpack
 resolver = "2"
 
 [workspace.dependencies]
-qcore-schemas = { path = "../crates/qcore-schemas", version = "25.0.0" }
+qcore-schemas = { path = "../crates/qcore-schemas", version = "26.0.0" }
 serde = { version = "1.0.229", features = ["derive"] }
 serde_json = "1.0.151"
 quirin-provider-shared = { path = "quirin-provider-shared" }

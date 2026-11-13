@@ -239,7 +239,7 @@ fn the_scoped_probe_restores_only_on_decline_and_keeps_monotone_facts() {
         parser.cursor += 7;
         parser.next_site += 1;
         parser.element_lowerings += 1;
-        parser.element_origins.propose("e", None);
+        parser.element_origins.propose("e", None, "_head");
         parser.typed_position_uses.set(9);
         parser.condition_widening.set(3);
         parser.variadic_tail_widening.set(true);

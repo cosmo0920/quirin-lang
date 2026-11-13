@@ -533,6 +533,9 @@
                 "effect": "unpublished"
               }
             },
+            "link_members": {
+              "0": "_head"
+            },
             "parameters": [
               {
                 "released": {
@@ -584,7 +587,7 @@
           }
         ]
       },
-      "sha256": "f48ad90b2348412fd3f705ef2b0dfb9b2c01e96ba8dfbeac82b1702f4ad2c831"
+      "sha256": "c6095185922bc40356b28e1c347841dbd27a15d4b549b3a44caa3a6988b7957c"
     },
     "monkey/logging.qv": {
       "clause_count": 10,

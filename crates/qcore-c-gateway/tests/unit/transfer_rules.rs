@@ -56,6 +56,7 @@ fn unlink(name: &str) -> Operand {
     Operand::Unpublished {
         entry: Entry::Name(name.to_owned()),
         foreign: None,
+        link: None,
     }
 }
 

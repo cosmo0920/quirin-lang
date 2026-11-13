@@ -136,7 +136,7 @@ module contract;
 extern fn flb_input_chunk_destroy(ic: ptr<mut, u8>, del: i32) -> i32
 contract {
     requires resource_contract_v1;
-    ensures normal resource_unpublished(ic);
+    ensures normal resource_unpublished(ic, _head);
     ensures normal resource_released(ic, nonnull);
     ensures normal resource_borrowed(del);
     ensures normal resource_return_none();

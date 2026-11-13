@@ -9235,6 +9235,9 @@ safety claim and no validation of the detach representation premise.
     Amended by [rule 43](#constraint-43): a destroyer also takes an object
     the path holds as one live, unpublished identity no path unlinked, and
     may sit beside member-path states.
+    Amended by [rule 46](#constraint-46): a destroyer takes a foreign element
+    only when its declaration names the member every `container_of` binding
+    of the element names (`resource_unpublished(p, MEMBER)`).
 
 <a id="constraint-35"></a>
 
@@ -10680,12 +10683,14 @@ safety claim and no validation of the detach representation premise.
     `Borrowed`. **Do not** admit a held object a path unlinked, publish a
     summary for an element root that is not a formal, read the clause as a
     borrow, or keep a published object trusted across it. Premises, stated not
-    proved: P-CRR-MEMBER and P-CRR-LINKED (rule 10f), P-LERI-CALLER-PUBLISHED
+    proved: P-CRR-MEMBER and P-CRR-LINKED (rule 10f) and P-LERI-CALLER-PUBLISHED
     (the only tracked objects a container the actual reaches may hold are the
-    caller's published ones), P-LERI-HELD-LINKS (a held object no path
+    caller's published ones). P-LERI-HELD-LINKS (a held object no path
     unlinked has links an unlink may remove) and P-LERI-LINK-MEMBER (a
-    destroyer's unlink, which names no link member, removes the object from
-    the list the caller iterates). **Switch.** With `43` in
+    destroyer's unlink removes the object from the list the caller iterates)
+    are checked by [rule 46](#constraint-46): the held arm also needs the
+    body's own initialisation of the declared link member, and a foreign
+    element's `container_of` member must be that member. **Switch.** With `43` in
     `QCORE_GATEWAY_RULES_OFF` neither (1) nor (3)-(4) runs: a destroyer admits
     only rule 10d/10f's entries and a body that takes element custody
     publishes no summary, as before. Measured (base `74105dd0e`, the card's
@@ -10767,5 +10772,66 @@ safety claim and no validation of the detach representation premise.
     `decide_vectors_hold`), bound to `DECIDE_VECTORS` and the fixtures
     (`tests/loop_measure.rs`, `qcore-audit/tests/loop_measure_selection.rs`);
     [report](../reports/w45-fb-engine-progress-measure/README.md).
+
+<a id="constraint-46"></a>
+
+46. **An element destroyer's unlink is checked against the caller's list
+    and the caller's links.** Card LERI-HELD-AND-LINK-MEMBER-PREMISES
+    (`legacy_link_member.rs`, hooks in `legacy_container_publication.rs` and
+    `legacy_transfer.rs`; contract specification §C04.8, amended; schema
+    `ResourceFunctionContract::link_members`, qcore-schemas 26.0.0). It
+    discharges rule 43's P-LERI-LINK-MEMBER and P-LERI-HELD-LINKS and amends
+    rules 34 and 43. (1) **The member.** An element destroyer's declaration
+    may name the member its body unlinks, `resource_unpublished(p, MEMBER)`
+    (the body runs `mk_list_del(&p->MEMBER)`); a member beside any other
+    custody mode than `resource_released` of the same parameter rejects the
+    module (a plain unlink's entry is the link itself). The member is not
+    part of the custody projection. (2) **The foreign element**
+    (P-LERI-LINK-MEMBER). Rule 10f(2) records the member every
+    `container_of` binding of an element names (`Foreign::members`); rule
+    34's destroyer takes the element only when its declaration names a member
+    and every binding names exactly it (`foreign_admits`). Otherwise the
+    unlink refuses (`unlink by D of E, whose list links it through M…, while
+    the declaration unlinks N` / `names no link member`): unlinking another
+    member leaves the element in the iterated list while it is freed
+    (`flb_tail_file_purge` iterates `files_rotated` through `_rotate_head`;
+    `flb_tail_file_remove` unlinks `_rotate_head` only while
+    `file->rotated > 0`). (3) **The held object** (P-LERI-HELD-LINKS).
+    `AbstractState::link_ready` records `(site, member)` when a rule 36b
+    `TrackedSelfInit` of one member is admitted and its self-writes cover
+    both link fields `mk_list_del` reads (`next`, `prev`;
+    `initialised_member`); it joins by intersection and is forgotten at every
+    statement that may write the object (`retain`: only statements that
+    write no memory keep it, a copy, clear or acquisition included only when
+    it writes a plain name; a member-place copy or clear and a contract call
+    with no nested call keep the facts of objects none of their written
+    place's or actuals' root bindings may denote; a nested call drops every
+    fact before its call). Rule 43's held arm admits an
+    object only with `(site, MEMBER)` recorded for the destroyer's declared
+    member (`held_admits`); otherwise the unlink refuses (`unlink by D of E,
+    which this function holds, but this function has not initialised its
+    M links` / `the declaration names no link member`). A formal, a
+    callee-constructed object and an object initialised any other way hold no
+    fact: the premise is decided only from the body's own initialisation, so
+    those refuse (`Unknown`). Rule 36b's frame checks ignore `link_ready`
+    (a fact about its own writes, not a custody relation). **Do not** admit a
+    held object without a recorded initialisation of the declared member,
+    admit a foreign element through another member, read a member-less
+    destroyer as unlinking any member, or keep a link record across a
+    statement that may write the object. Nothing here admits an entry rule
+    43 refused, and it accuses nothing: every change replaces an admission
+    with a refusal. Not switchable (no registry entry): a switch would
+    re-admit an unchecked premise. P-LERI-CALLER-PUBLISHED stays stated;
+    its load is measured in the [report](../reports/leri-held-and-link-member-premises/README.md).
+    Ten Fluent Bit destroyers and `mk_http_thread_destroy` name `_head`.
+    Measured (base `8fd7c8d0d`, the card's own preparations): see the
+    report. `QCore.ElementLinkPremises`
+    (`a_fresh_object_has_no_defined_unlink`,
+    `the_unchecked_held_arm_admits_an_undefined_unlink`,
+    `an_initialised_member_is_unlinkable`, `retaining_preserves_every_fact`,
+    `the_held_arm_is_sound`, `an_admitted_unlink_removes_the_element`,
+    `a_mismatched_member_leaves_the_element_linked`, `vectors_hold`, …),
+    bound to `FOREIGN_VECTORS`, `INIT_VECTORS` and `HELD_VECTORS` and
+    `crates/qcore-c-gateway/tests/link_member_premises.rs`.
 
 <!-- generated:rules:end -->

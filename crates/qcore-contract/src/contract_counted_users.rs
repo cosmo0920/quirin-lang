@@ -25,6 +25,7 @@
 //! ensures normal resource_user_exit(p, RETURNED, DELTA);
 //! ensures normal resource_published(entry, container);
 //! ensures normal resource_unpublished(entry);
+//! ensures normal resource_unpublished(p, MEMBER);
 //! ```
 //!
 //! `COUNTER` names the member of the designated object that holds the count
@@ -44,6 +45,14 @@
 //! W48-SCHED-CLEANUP-PRODUCTION, gateway rule 34): `resource_unpublished(p)`
 //! may sit beside `resource_released(p, …)`, the element destroyer that
 //! unlinks the object and then ends it; a consumer applies the unlink first.
+//!
+//! Card LERI-HELD-AND-LINK-MEMBER-PREMISES (gateway rule 46): an element
+//! destroyer's unlink may name the link member its body removes,
+//! `resource_unpublished(p, MEMBER)` (the body runs `mk_list_del(&p->MEMBER)`);
+//! a consumer checks it against the member the caller's `container_of`
+//! binding names and against the links the caller initialised. A member is
+//! admitted only on an element destroyer's unlink: a plain unlink's entry is
+//! the link itself.
 
 use std::collections::BTreeMap;
 
@@ -68,7 +77,8 @@ pub(super) enum Clause {
         entry: String,
         container: String,
     },
-    Unpublished(String),
+    /// The entry, and the link member an element destroyer names.
+    Unpublished(String, Option<String>),
 }
 
 /// The clauses of one declaration, by parameter index.
@@ -76,6 +86,9 @@ pub(super) enum Clause {
 pub(super) struct Collected {
     pub container_effects: BTreeMap<usize, ContainerEffect>,
     pub users: CountedUserClauses,
+    /// Card LERI-HELD-AND-LINK-MEMBER-PREMISES: the link member of each
+    /// unlink that names one.
+    pub link_members: BTreeMap<usize, String>,
 }
 
 /// Read `expression` as a clause of this family. `Ok(None)` means it is not
@@ -111,7 +124,11 @@ pub(super) fn parse(words: Option<&[&str]>, expression: &str) -> Result<Option<C
                 entry: (*entry).to_owned(),
                 container: (*container).to_owned(),
             }),
-            ["resource_unpublished", entry] => Some(Clause::Unpublished((*entry).to_owned())),
+            ["resource_unpublished", entry] => Some(Clause::Unpublished((*entry).to_owned(), None)),
+            ["resource_unpublished", entry, member] => Some(Clause::Unpublished(
+                (*entry).to_owned(),
+                Some((*member).to_owned()),
+            )),
             [
                 "resource_user_added"
                 | "resource_user_dropped"
@@ -248,7 +265,7 @@ pub(super) fn record(
                 return Err(format!("duplicate container effect for {entry}"));
             }
         }
-        Clause::Unpublished(entry) => {
+        Clause::Unpublished(entry, member) => {
             let position = index(&entry)?;
             if collected
                 .container_effects
@@ -256,6 +273,9 @@ pub(super) fn record(
                 .is_some()
             {
                 return Err(format!("duplicate container effect for {entry}"));
+            }
+            if let Some(member) = member {
+                collected.link_members.insert(position, member);
             }
         }
     }
@@ -297,6 +317,16 @@ pub(super) fn validate(
             && pointer(position);
         if !destroyer {
             borrowed_pointer(position, "a container effect")?;
+            // Card LERI-HELD-AND-LINK-MEMBER-PREMISES (gateway rule 46): a
+            // plain unlink's entry is the link itself; only an element
+            // destroyer, which unlinks a member of the object it releases,
+            // names that member.
+            if collected.link_members.contains_key(&position) {
+                return Err(
+                    "a link member names the member an element destroyer unlinks; it stands only beside resource_released of the same parameter"
+                        .into(),
+                );
+            }
         }
         if let ContainerEffect::Published {
             container_parameter,

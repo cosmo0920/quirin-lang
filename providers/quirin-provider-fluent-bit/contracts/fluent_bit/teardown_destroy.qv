@@ -65,10 +65,16 @@ module contract;
 // for `flb_task_queue_destroy`, `flb_event_chunk_destroy`, `flb_coro_destroy`,
 // `flb_input_collector_destroy` and `flb_tail_config_destroy`, whose bodies
 // unlink no list link of their own object. NOT CLAIMED: which list holds
-// the object; `resource_unpublished` names no link member, so a caller
-// iterating a list linked through another member (`_rotate_head`) rests on
-// the object being unlinked from it too (premise P-LERI-LINK-MEMBER of rule
-// 43).
+// the object.
+//
+// Card LERI-HELD-AND-LINK-MEMBER-PREMISES (gateway rule 46): each unlink now
+// names the member its body removes, `resource_unpublished(P, _head)` (the
+// member every body read unlinks unconditionally). A caller iterating a list
+// linked through another member (`_rotate_head` of `flb_tail_file_purge`) no
+// longer rests on P-LERI-LINK-MEMBER: the element's `container_of` member
+// differs from `_head`, so the call refuses. `flb_tail_file_remove`'s
+// conditional `_rotate_head` unlink is not stated (it depends on
+// `file->rotated`, which no clause reads).
 //
 // ## Deliberately not declared
 //
@@ -89,7 +95,7 @@ module contract;
 extern fn flb_sched_timer_destroy(timer: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
-    ensures normal resource_unpublished(timer);
+    ensures normal resource_unpublished(timer, _head);
     ensures normal resource_released(timer, nonnull);
     ensures normal resource_return_none();
 };
@@ -101,7 +107,7 @@ contract {
 extern fn flb_sched_request_destroy(req: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
-    ensures normal resource_unpublished(req);
+    ensures normal resource_unpublished(req, _head);
     ensures normal resource_released(req, nullable);
     ensures normal resource_return_none();
     quant live #req: flb_sched_request.timer |-> #moved;
@@ -115,7 +121,7 @@ contract {
 extern fn flb_task_destroy(task: ptr<mut, u8>, del: i32) -> unit
 contract {
     requires resource_contract_v1;
-    ensures normal resource_unpublished(task);
+    ensures normal resource_unpublished(task, _head);
     ensures normal resource_released(task, nonnull);
     ensures normal resource_borrowed(del);
     ensures normal resource_return_none();
@@ -147,7 +153,7 @@ contract {
 extern fn flb_output_flush_destroy(out_flush: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
-    ensures normal resource_unpublished(out_flush);
+    ensures normal resource_unpublished(out_flush, _head);
     ensures normal resource_released(out_flush, nonnull);
     ensures normal resource_return_none();
     quant live #out_flush: flb_output_flush.coro |-> #released;
@@ -187,7 +193,7 @@ contract {
 extern fn flb_output_instance_destroy(ins: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
-    ensures normal resource_unpublished(ins);
+    ensures normal resource_unpublished(ins, _head);
     ensures normal resource_released(ins, nonnull);
     ensures normal resource_return_none();
     quant live #ins: flb_output_instance.alias |-> #released;
@@ -233,7 +239,7 @@ contract {
 extern fn flb_input_instance_destroy(ins: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
-    ensures normal resource_unpublished(ins);
+    ensures normal resource_unpublished(ins, _head);
     ensures normal resource_released(ins, nonnull);
     ensures normal resource_return_none();
     quant live #ins: flb_input_instance.alias |-> #released;
@@ -274,7 +280,7 @@ contract {
 extern fn flb_input_coro_destroy(input_coro: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
-    ensures normal resource_unpublished(input_coro);
+    ensures normal resource_unpublished(input_coro, _head);
     ensures normal resource_released(input_coro, nonnull);
     ensures normal resource_return_none();
     quant live #input_coro: flb_input_coro.coro |-> #released;
@@ -299,7 +305,7 @@ contract {
 extern fn flb_tail_file_remove(file: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
-    ensures normal resource_unpublished(file);
+    ensures normal resource_unpublished(file, _head);
     ensures normal resource_released(file, nonnull);
     ensures normal resource_return_none();
     quant live #file: flb_tail_file.decompression_context |-> #released;

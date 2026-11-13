@@ -994,7 +994,8 @@ impl super::Parser<'_> {
             }
             _ => return None,
         };
-        self.element_origins.propose(&shape.destination, origin);
+        self.element_origins
+            .propose(&shape.destination, origin, &shape.member);
         Some(LegacyInstruction::IndirectScalarAccess {
             typed_alternative: None,
             alias_reads: bases

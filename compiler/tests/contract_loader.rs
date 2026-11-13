@@ -470,6 +470,8 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     chunk_destroy
         .container_effects
         .insert(0, qcore_schemas::contract::ContainerEffect::Unpublished);
+    // Card LERI-HELD-AND-LINK-MEMBER-PREMISES: its link member.
+    chunk_destroy.link_members.insert(0, "_head".to_owned());
     old.insert_contract("flb_input_chunk_destroy", chunk_destroy);
     // Card AOM-DESTROY-SIBLINGS adds the second non-all-borrowed production
     // declaration, and it is listed beside its neighbour deliberately, because
@@ -734,6 +736,9 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         thread_destroy
             .container_effects
             .insert(0, ContainerEffect::Unpublished);
+        // Card LERI-HELD-AND-LINK-MEMBER-PREMISES (gateway rule 46): the
+        // unlink names its link member.
+        thread_destroy.link_members.insert(0, "_head".to_owned());
         old.insert_contract("mk_http_thread_destroy", thread_destroy);
         let operation = |effect| UserOperation {
             effect,
@@ -755,6 +760,8 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         retry
             .container_effects
             .insert(0, ContainerEffect::Unpublished);
+        // Card LERI-HELD-AND-LINK-MEMBER-PREMISES: its link member.
+        retry.link_members.insert(0, "_head".to_owned());
         old.insert_contract("flb_task_retry_destroy", retry);
         let mut pool =
             ResourceFunctionContract::new([P::Borrowed, P::Borrowed, P::Borrowed], R::None);
@@ -1071,6 +1078,8 @@ fn production_contracts_preserve_the_previous_resource_modes() {
             destroy
                 .container_effects
                 .insert(0, qcore_schemas::contract::ContainerEffect::Unpublished);
+            // Card LERI-HELD-AND-LINK-MEMBER-PREMISES: its link member.
+            destroy.link_members.insert(0, "_head".to_owned());
         }
         old.insert_contract(name, destroy);
     }

@@ -18,7 +18,7 @@ qcore-c-gateway = { path = "../crates/qcore-c-gateway", version = "0.1.0" }
 qcore-contract = { path = "../crates/qcore-contract", version = "0.1.0" }
 qcore-core = { path = "../crates/qcore-core", version = "0.1.0" }
 qcore-frontend = { path = "../crates/qcore-frontend", version = "0.1.0" }
-qcore-schemas = { path = "../crates/qcore-schemas", version = "25.0.0" }
+qcore-schemas = { path = "../crates/qcore-schemas", version = "26.0.0" }
 qcore-verifier-host = { path = "../crates/qcore-verifier-host", version = "0.4.0" }
 serde = { version = "1.0.229", features = ["derive"] }
 serde_json = "1.0.151"

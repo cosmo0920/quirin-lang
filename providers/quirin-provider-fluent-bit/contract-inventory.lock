@@ -57,6 +57,9 @@
                 "effect": "unpublished"
               }
             },
+            "link_members": {
+              "0": "_head"
+            },
             "parameters": [
               {
                 "released": {
@@ -74,7 +77,7 @@
       "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "8a4b9329960a6e2f83e8a39ddd2e5cfb518f012629e3a2f4358d68e46532a52e"
+      "sha256": "9256c95f12f939c494a3fedce1cffb4e1573f67c18009cb7be71412b990c8d52"
     },
     "fluent_bit/input_chunk_destroy_direct_routes.qv": {
       "clause_count": 4,
@@ -1360,6 +1363,9 @@
             "counted_users": {
               "neutral": true
             },
+            "link_members": {
+              "0": "_head"
+            },
             "parameters": [
               {
                 "released": {
@@ -1392,7 +1398,7 @@
       "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "7f9d61e1486584e465cd1acf9b130a3926af86e02d311941a57cbc2862101826"
+      "sha256": "bfe88a73a94c1371007da844dc0898dec947237b6960799bc5171355521672b8"
     },
     "fluent_bit/teardown_destroy.qv": {
       "clause_count": 172,
@@ -1406,6 +1412,9 @@
               "0": {
                 "effect": "unpublished"
               }
+            },
+            "link_members": {
+              "0": "_head"
             },
             "parameters": [
               {
@@ -1531,7 +1540,7 @@
       "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "d406919f81efd380b28d34212c20ac55e823672c58b34ed713add75567f9cca2"
+      "sha256": "cfcde66dfe2defc9174742abae64bde14b5742f0211025f5f57b01864b0e7307"
     },
     "fluent_bit/time.qv": {
       "clause_count": 2,
