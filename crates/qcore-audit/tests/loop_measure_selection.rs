@@ -18,7 +18,9 @@
 //! written beside its custody status, every loop at its original line; the
 //! custody report and its sidecars are byte-identical to the run without the
 //! selection; a checkpointed run refuses the selection instead of omitting
-//! the rows.
+//! the rows. Card W45-FB-LIST-FINITENESS-PREMISE (gateway rule 48): with
+//! `QCORE_LIST_FINITENESS_PREMISES` set too, each loop also carries its
+//! list-length outcome, and the custody artifacts are still byte-identical.
 
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -77,6 +79,15 @@ void uncounted(int c) {\n\
 
 const FILE: &str = "alpha/loops.c";
 
+/// Rule 48: a read-only traversal of a declared head (line 4).
+const LIST_UNIT: &str = "struct mk_list { struct mk_list *prev, *next; };\n\
+struct cfg { int n; struct mk_list outputs; };\n\
+int count(struct cfg *c) { struct mk_list *h; int n = 0;\n\
+    for (h = (&c->outputs)->next; h != (&c->outputs); h = h->next) n++;\n\
+    return n; }\n";
+
+const LIST_PREMISES: &str = "// rule 48 fixture\nquant list cfg.outputs |-> #finite;\n";
+
 fn git(directory: &Path, args: &[&str]) {
     let output = Command::new("git")
         .current_dir(directory)
@@ -94,6 +105,10 @@ struct Fixture(PathBuf);
 
 impl Fixture {
     fn new(driver: &Path) -> Self {
+        Self::with_unit(driver, UNIT)
+    }
+
+    fn with_unit(driver: &Path, unit: &str) -> Self {
         let root = std::env::temp_dir().join(format!(
             "qcore-loop-measure-{}-{}",
             std::process::id(),
@@ -102,7 +117,7 @@ impl Fixture {
         let checkout = root.join("checkout");
         let path = checkout.join(FILE);
         fs::create_dir_all(path.parent().unwrap()).unwrap();
-        fs::write(&path, UNIT).unwrap();
+        fs::write(&path, unit).unwrap();
         git(&checkout, &["init", "--quiet"]);
         git(&checkout, &["add", "alpha"]);
         git(
@@ -143,7 +158,7 @@ impl Fixture {
             "pins":{"sample":{"git_commit":commit,"clean_paths":[],"description":"loop fixture"}},
             "libraries":{"alpha": {
                 "pin":"sample", "source_roots":[{"root": "alpha", "selection":"top_level"}],
-                "audited_files": [{"path": FILE, "sha256": sha256_hex(UNIT.as_bytes())}],
+                "audited_files": [{"path": FILE, "sha256": sha256_hex(unit.as_bytes())}],
                 "source_witnesses":[], "permitted_mechanisms":[], "operation_summaries":{},
                 "api_dispositions":{}, "accepted_builds":[], "required_evidence":[], "typed_import":null,
                 "callback_summaries":{}, "boolean_field_models":[], "provider":null,
@@ -169,10 +184,24 @@ impl Fixture {
     }
 
     fn run(&self, out: &str, extra: &[&str], rows: Option<&Path>) -> Output {
+        self.run_with(out, extra, rows, None)
+    }
+
+    fn run_with(
+        &self,
+        out: &str,
+        extra: &[&str],
+        rows: Option<&Path>,
+        premises: Option<&Path>,
+    ) -> Output {
         let mut command = Command::new(env!("CARGO_BIN_EXE_quirin-audit"));
         match rows {
             Some(rows) => command.env("QCORE_LOOP_MEASURE_PROPERTY", rows),
             None => command.env_remove("QCORE_LOOP_MEASURE_PROPERTY"),
+        };
+        match premises {
+            Some(premises) => command.env("QCORE_LIST_FINITENESS_PREMISES", premises),
+            None => command.env_remove("QCORE_LIST_FINITENESS_PREMISES"),
         };
         command
             .env_remove("QCORE_BOUNDS_PROPERTY")
@@ -295,4 +324,59 @@ fn a_checkpointed_run_refuses_the_loop_measure_selection() {
         "{stderr}"
     );
     assert!(!rows.exists(), "no partial rows are written");
+}
+
+#[test]
+fn declared_premises_add_list_bounds_beside_an_unchanged_custody_report() {
+    let Some(clang) = clang() else { return };
+    let fixture = Fixture::with_unit(&clang, LIST_UNIT);
+    let premises = fixture.path("list-finiteness.qv");
+    fs::write(&premises, LIST_PREMISES).unwrap();
+    let with = fixture.path("with.jsonl");
+    let without = fixture.path("without.jsonl");
+    succeeded(&fixture.run_with("with", &["--jobs", "1"], Some(&with), Some(&premises)));
+    succeeded(&fixture.run("without", &["--jobs", "1"], Some(&without)));
+    succeeded(&fixture.run_with("plain", &["--jobs", "1"], None, Some(&premises)));
+    let (a, b, c) = (
+        fixture.outputs("with"),
+        fixture.outputs("without"),
+        fixture.outputs("plain"),
+    );
+    for (((name, left), (_, middle)), (_, right)) in a.iter().zip(&b).zip(&c) {
+        assert!(left == middle && middle == right, "{name} differs");
+    }
+    let row = |path: &Path| -> Value {
+        let text = fs::read_to_string(path).unwrap();
+        let rows = text
+            .lines()
+            .map(|line| serde_json::from_str::<Value>(line).unwrap())
+            .collect::<Vec<_>>();
+        rows.into_iter()
+            .find(|row| row["function"] == "count")
+            .expect("a row for count")
+    };
+    let selected = row(&with);
+    let fact = &selected["loops"][0];
+    assert_eq!(fact["origin"], format!("{FILE}:4"));
+    assert_eq!(fact["refusal"], "step-not-increment");
+    assert_eq!(fact["list_bound"]["bound"]["list"], "cfg.outputs");
+    assert_eq!(
+        fact["list_bound"]["bound"]["bound"],
+        "|c->outputs| at loop entry"
+    );
+    // Without the premises the row is rule 44's alone.
+    let plain = row(&without);
+    assert!(plain["loops"][0].get("list_bound").is_none(), "{plain}");
+    let mut stripped = selected.clone();
+    stripped["loops"][0]
+        .as_object_mut()
+        .unwrap()
+        .remove("list_bound");
+    assert_eq!(stripped, plain);
+    let summary: Value =
+        serde_json::from_slice(&fs::read(fixture.path("with.summary.json")).unwrap()).unwrap();
+    assert_eq!(summary["list_length_bound"]["outcomes"]["bounded"], 1);
+    let summary: Value =
+        serde_json::from_slice(&fs::read(fixture.path("without.summary.json")).unwrap()).unwrap();
+    assert!(summary.get("list_length_bound").is_none());
 }

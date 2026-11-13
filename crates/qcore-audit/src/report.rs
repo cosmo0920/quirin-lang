@@ -542,6 +542,9 @@ impl AuditReport {
         let mut loops: BTreeMap<String, usize> = BTreeMap::new();
         let mut refusals: BTreeMap<String, usize> = BTreeMap::new();
         let mut kinds: BTreeMap<String, usize> = BTreeMap::new();
+        // Card W45-FB-LIST-FINITENESS-PREMISE (rule 48): tallied only when a
+        // row carries a list-length outcome, so rule 44's summary is unchanged.
+        let mut list_bounds: BTreeMap<String, usize> = BTreeMap::new();
         for row in &self.loop_measures {
             let mut row = row.clone();
             let key = (
@@ -570,6 +573,17 @@ impl AuditReport {
                     "refused"
                 };
                 *loops.entry(outcome.into()).or_default() += 1;
+                if fact["list_bound"].is_object() {
+                    let outcome = if fact["list_bound"]["bound"].is_object() {
+                        "bounded".to_owned()
+                    } else {
+                        fact["list_bound"]["refusal"]
+                            .as_str()
+                            .unwrap_or("unread")
+                            .to_owned()
+                    };
+                    *list_bounds.entry(outcome).or_default() += 1;
+                }
             }
             if row["error"].is_string() {
                 *loops.entry("functions-unread".into()).or_default() += 1;
@@ -578,7 +592,7 @@ impl AuditReport {
             lines.push('\n');
         }
         fs::write(&path, lines).map_err(|e| format!("could not write {}: {e}", path.display()))?;
-        let summary = json!({
+        let mut summary = json!({
             "schema_version": 1,
             "property": qcore_c_gateway::loop_measure::LOOP_MEASURE_PROPERTY,
             "model_version": qcore_c_gateway::loop_measure::MODEL_VERSION,
@@ -588,6 +602,13 @@ impl AuditReport {
             "measured_by_bound_kind": kinds,
             "refused_by_reason": refusals,
         });
+        if !list_bounds.is_empty() {
+            summary["list_length_bound"] = json!({
+                "model_version": qcore_c_gateway::list_length_bound::MODEL_VERSION,
+                "scope": "gateway rule 48: a list-length bound fact per list traversal of a declared list-finiteness premise whose frame the unit establishes, or a named refusal; recorded beside the custody status, which it never reads or changes",
+                "outcomes": list_bounds,
+            });
+        }
         let mut bytes = serde_json::to_vec_pretty(&summary).map_err(|e| e.to_string())?;
         bytes.push(b'\n');
         let summary_path = path.with_extension("summary.json");

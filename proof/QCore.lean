@@ -229,6 +229,7 @@ import QCore.LibcReadingPremises
 import QCore.LibcReadingSiteEvidence
 import QCore.LifetimeCorrespondence
 import QCore.ListIteration
+import QCore.ListLengthBound
 import QCore.ListLookup
 import QCore.ListUnlink
 import QCore.LiteralArgumentPremise

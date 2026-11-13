@@ -10758,7 +10758,9 @@ safety claim and no validation of the detach representation premise.
     bound whose address is taken anywhere in the function unless its narrow
     unsigned type alone bounds it, read a macro constant from the source
     text, or derive a list length (the list-finiteness premise PL is not a
-    local fact, `W45-FB-LIST-FINITENESS-PREMISE`). Premises stated, not
+    local fact; rule 48 records a list-length bound only under a declared
+    premise whose frame the unit establishes, in its own `list_bound`
+    field). Premises stated, not
     proved (trust boundary 28): Clang's JSON AST is read faithfully (types,
     recorded conversions, referenced declarations, literal values, location
     de-duplication in document order) and the target integer model is the
@@ -10833,5 +10835,69 @@ safety claim and no validation of the detach representation premise.
     `a_mismatched_member_leaves_the_element_linked`, `vectors_hold`, …),
     bound to `FOREIGN_VECTORS`, `INIT_VECTORS` and `HELD_VECTORS` and
     `crates/qcore-c-gateway/tests/link_member_premises.rs`.
+
+<a id="constraint-48"></a>
+
+48. **A list traversal carries a list-length bound only under a declared
+    list-finiteness premise whose frame the unit establishes; no verdict
+    reads it.** Card W45-FB-LIST-FINITENESS-PREMISE
+    (`crates/qcore-c-gateway/src/list_length_bound.rs`, the loader
+    `crates/qcore-contract/src/list_finiteness.rs`; hooks in
+    `loop_measure.rs` (`ListSelection`, `LoopFact::list_bound`) and
+    `qcore-audit`'s `projection.rs` (`list_selection`) and `report.rs`).
+    (1) **The selection.** Only with rule 44's `QCORE_LOOP_MEASURE_PROPERTY`
+    set, `QCORE_LIST_FINITENESS_PREMISES=<file>` names a premise file
+    (contract specification C04.22, grammar G05l: `quant list TAG.MEMBER |->
+    #finite;` per head), loaded total-or-reject; a rejected or unreadable
+    file declares nothing. Each loop's row then carries `list_bound`
+    (`qcore-list-length-bound/1`): a bound or a refusal and its detail, and
+    the summary a `list_length_bound.outcomes` tally. Unset, the rows and
+    summary are rule 44's, byte for byte, and no custody, bounds, null or
+    rule-44 field changes in either case. (2) **The admitted shape**, read
+    from Clang's typed AST of the preprocessed text: `for (C = (H)->D; C !=
+    (H); C = C->D)` or `for (C = (H)->D, N = C->D; C != (H); C = N, N =
+    C->D)`, `D` one of `next`/`prev` throughout; `C`, `N` automatic,
+    non-volatile locals, never address-taken, unwritten in the condition and
+    body; `H` the same `&R->M` in init and condition, `M` a `struct mk_list` or
+    `struct cfl_list` member and `R` an automatic, non-volatile local or
+    formal of type `struct TAG *`, never address-taken and unwritten in the
+    loop; `TAG.M` declared; no returns-twice call, inline assembly or block
+    literal in the function, no label or outside `case` in the loop. (3)
+    **The frame**, composed after the whole unit is read: the loop body and,
+    transitively, every direct callee must be a body the unit defines or a
+    read-only library function of a fixed table (`strlen`, `strcmp`, …);
+    no indirect call; no inline assembly, block literal or atomic expression;
+    and no assignment, compound assignment, `++` or `--` whose target may
+    hold a list link — a record or union object, a `struct mk_list *`/`struct
+    cfl_list *` lvalue or a character object, other than a whole non-record
+    variable. Every inline list primitive that links or unlinks is such a
+    write, so an insertion or an unlink anywhere in the frame refuses. (4)
+    **The fact**: the loop runs at most `|R->M|` iterations, the list's
+    length at loop entry (fewer on an early exit), and `|R->M| - k` is a
+    measure after `k` iterations. (5) **Refusals**, each named, in this
+    precedence: `not-a-list-traversal`, `cursor-written`, `head-not-member`,
+    `head-root-not-stable`, `premise-not-declared`, `opaque-control`,
+    `label-in-loop`, `frame-writes-links`, `frame-indirect-call`,
+    `frame-callee-undefined`. **Do not** record a bound without a declared
+    premise, read a declared callee frame or a contract as establishing a
+    frame (an uncontracted or external callee refuses), admit an unlink of
+    the current node, read the fact into any verdict, or present it as a
+    progress, termination of the body, latency or throughput claim. Premises
+    stated, not proved (trust boundary 28): each declared premise (the list
+    is finite and well formed when a traversal begins and no other thread
+    writes its links during it); Clang's JSON AST is read faithfully; a call
+    to a function the unit defines runs that definition (no symbol
+    interposition); the program obeys C's effective-type rule (C11 6.5p7);
+    the table's library functions write no object. `QCore.ListLengthBound`
+    (`a_link_preserving_frame_fixes_the_links`, `cursor_is_the_walk`,
+    `safe_cursor_is_the_plain_cursor`, `run_length_bounded`,
+    `safe_run_length_bounded`, `the_loop_exits_after_the_length`,
+    `measure_positive_while_running`, `measure_decreases_by_one`,
+    `an_inserting_body_never_exits`, `every_inserted_state_is_well_formed`,
+    `an_ill_formed_list_never_exits`, `an_admitted_shape_meets_the_premises`,
+    `recording_a_fact_keeps_the_verdict`, `decide_vectors_hold`), bound to
+    `LIST_DECIDE_VECTORS` and the fixtures (`tests/list_length_bound.rs`,
+    `qcore-audit/tests/loop_measure_selection.rs`);
+    [report](../reports/w45-fb-list-finiteness-premise/README.md).
 
 <!-- generated:rules:end -->

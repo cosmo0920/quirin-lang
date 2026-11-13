@@ -2234,6 +2234,21 @@ stability, caller config equality, nonnullness or caller lifetime closure.
 These reports grant no ordinary borrowed contract or automatic Safe permission;
 all existing lifetime, alias/liveness and poison obligations remain in force.
 
+### C04.22. The list-finiteness premise
+
+Card W45-FB-LIST-FINITENESS-PREMISE (gateway rule [48](agents/gateway.md#constraint-48), grammar [G05l](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g05l-list-finiteness-premises); the [report](reports/w45-fb-list-finiteness-premise/README.md)). A traversal of an intrusive list (`mk_list_foreach`, `cfl_list_foreach` and their `_safe` and reverse forms) is bounded by the list's length only if the list is finite and well formed and nothing the loop runs extends it. The first half is not a local fact; a **list-finiteness premise** declares it:
+
+```qcore
+quant list flb_config.outputs |-> #finite;
+```
+
+- **Meaning.** The list whose head is the `MEMBER` field (a `struct mk_list` or `struct cfl_list`) of any `struct TAG` object is, whenever a traversal of it begins, finite and well formed — following the links from the head meets it again after exactly `n + 1` steps, `n` its length — and no other thread writes its links while the traversal runs. It is a **premise, stated and never proved**: no consumer derives it, and it is a trusted assumption of every fact that rests on it.
+- **Where it stands.** In a premise file of its own (grammar G05l), named by the run (`QCORE_LIST_FINITENESS_PREMISES`), never inside a resource-v1 declaration: it adds nothing to any declaration, to the environment's serialized form or to any contract bundle, so no custody, bounds or null verdict can read it.
+- **Checked where its frame is established.** A consumer MUST record a bound on a traversal only where the traversal's **frame** — the loop body and every function it can call, transitively — is read in the analysed unit and writes no list link: every callee is a body the unit defines (or a read-only C library function of the consumer's fixed table), no call is indirect, and no write may reach a link. A callee the unit does not define, a contract of a callee, or a frame declared but not read, establishes nothing: the loop carries a named refusal, never a bound. Gateway rule 48 lists the admitted header shape and the refusals.
+- **What is recorded.** At most `|H|` iterations, `|H|` the length at loop entry, as a fact beside the resource verdict (rule 44's loop-measure rows). It is never a verdict, never moves one and is never a progress, latency or throughput claim.
+
+The Lean model is `QCore.ListLengthBound`.
+
 ## C05. Manifests and immutable assumptions
 
 A resource manifest has the following existing version-1 shape:

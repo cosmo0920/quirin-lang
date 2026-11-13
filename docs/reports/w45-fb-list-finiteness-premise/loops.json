@@ -1,0 +1,992 @@
+{
+ "schema": "w45-fb-list-finiteness-premise/join/v1",
+ "loops": 87,
+ "outcomes": {
+  "bounded": 17,
+  "frame-callee-undefined": 21,
+  "frame-indirect-call": 1,
+  "frame-writes-links": 34,
+  "head-not-member": 12,
+  "not-a-list-traversal": 1,
+  "opaque-control": 1
+ },
+ "table": [
+  {
+   "id": "EP-L001",
+   "site": "plugins/in_storage_backlog/sb.c:142-146",
+   "function": "sb_destroy_backlog",
+   "premises": [
+    "PL"
+   ],
+   "variants": 1,
+   "outcome": "frame-writes-links",
+   "detail": "a write to a list pointer `prev` (`struct mk_list *`) in `mk_list_del`"
+  },
+  {
+   "id": "EP-L002",
+   "site": "plugins/in_storage_backlog/sb.c:155-174",
+   "function": "sb_allocate_backlogs",
+   "premises": [
+    "PC"
+   ],
+   "variants": 1,
+   "outcome": "head-not-member",
+   "detail": "the head `&context->ins->config->outputs` is not `&R->M` with `M` a list member of `struct TAG`"
+  },
+  {
+   "id": "EP-L003",
+   "site": "plugins/in_storage_backlog/sb.c:185-193",
+   "function": "sb_destroy_backlogs",
+   "premises": [
+    "PL"
+   ],
+   "variants": 1,
+   "outcome": "frame-writes-links",
+   "detail": "a write to a list pointer `prev` (`struct mk_list *`) in `mk_list_del`"
+  },
+  {
+   "id": "EP-L004",
+   "site": "plugins/in_storage_backlog/sb.c:203-209",
+   "function": "sb_find_segregated_backlog_by_output_plugin_instance",
+   "premises": [
+    "PL"
+   ],
+   "variants": 1,
+   "outcome": "bounded",
+   "detail": "flb_sb.backlogs"
+  },
+  {
+   "id": "EP-L005",
+   "site": "plugins/in_storage_backlog/sb.c:222-246",
+   "function": "sb_remove_chunk_from_segregated_backlog",
+   "premises": [
+    "PL"
+   ],
+   "variants": 1,
+   "outcome": "frame-writes-links",
+   "detail": "a write to a list pointer `prev` (`struct mk_list *`) in `mk_list_del`"
+  },
+  {
+   "id": "EP-L006",
+   "site": "plugins/in_storage_backlog/sb.c:255-259",
+   "function": "sb_remove_chunk_from_segregated_backlogs",
+   "premises": [
+    "PL"
+   ],
+   "variants": 1,
+   "outcome": "frame-writes-links",
+   "detail": "a write to a list pointer `prev` (`struct mk_list *`) in `mk_list_del`"
+  },
+  {
+   "id": "EP-L007",
+   "site": "plugins/in_storage_backlog/sb.c:341-352",
+   "function": "sb_append_chunk_to_segregated_backlogs",
+   "premises": [
+    "PL"
+   ],
+   "variants": 1,
+   "outcome": "frame-writes-links",
+   "detail": "a write to a list pointer `prev` (`struct mk_list *`) in `__mk_list_add`"
+  },
+  {
+   "id": "EP-L008",
+   "site": "plugins/in_storage_backlog/sb.c:399-483",
+   "function": "sb_segregate_chunks",
+   "premises": [
+    "PL"
+   ],
+   "variants": 1,
+   "outcome": "head-not-member",
+   "detail": "the head `&context->cio->streams` is not `&R->M` with `M` a list member of `struct TAG`"
+  },
+  {
+   "id": "EP-L009",
+   "site": "plugins/in_storage_backlog/sb.c:408-482",
+   "function": "sb_segregate_chunks",
+   "premises": [
+    "PL",
+    "PF"
+   ],
+   "variants": 1,
+   "outcome": "frame-writes-links",
+   "detail": "a write to a list pointer `prev` (`struct mk_list *`) in `__mk_list_add`"
+  },
+  {
+   "id": "EP-L010",
+   "site": "plugins/in_storage_backlog/sb.c:512-520",
+   "function": "sb_get_releasable_output_queue_space",
+   "premises": [
+    "PL"
+   ],
+   "variants": 1,
+   "outcome": "bounded",
+   "detail": "sb_out_queue.chunks"
+  },
+  {
+   "id": "EP-L011",
+   "site": "plugins/in_storage_backlog/sb.c:551-573",
+   "function": "sb_release_output_queue_space",
+   "premises": [
+    "PL",
+    "PW",
+    "PF"
+   ],
+   "variants": 1,
+   "outcome": "frame-writes-links",
+   "detail": "a write to a list pointer `prev` (`struct mk_list *`) in `mk_list_del`"
+  },
+  {
+   "id": "EP-L013",
+   "site": "plugins/in_storage_backlog/sb.c:615-721",
+   "function": "cb_queue_chunks",
+   "premises": [
+    "PL"
+   ],
+   "variants": 1,
+   "outcome": "frame-writes-links",
+   "detail": "a write to a list pointer `prev` (`struct mk_list *`) in `mk_list_del`"
+  },
+  {
+   "id": "EP-L015",
+   "site": "src/flb_input_chunk.c:569-731",
+   "function": "flb_input_chunk_release_space",
+   "premises": [
+    "PL",
+    "PF"
+   ],
+   "variants": 2,
+   "outcome": "frame-writes-links",
+   "detail": "a write to a list pointer `prev` (`struct mk_list *`) in `mk_list_del`"
+  },
+  {
+   "id": "EP-L016",
+   "site": "src/flb_input_chunk.c:947-959",
+   "function": "flb_input_chunk_has_other_routes",
+   "premises": [
+    "PC"
+   ],
+   "variants": 2,
+   "outcome": "head-not-member",
+   "detail": "the head `&ic->in->config->outputs` is not `&R->M` with `M` a list member of `struct TAG`"
+  },
+  {
+   "id": "EP-L017",
+   "site": "src/flb_input_chunk.c:1143-1159",
+   "function": "flb_input_chunk_release_space_compound",
+   "premises": [
+    "PC"
+   ],
+   "variants": 2,
+   "outcome": "head-not-member",
+   "detail": "the head `&output_plugin->config->inputs` is not `&R->M` with `M` a list member of `struct TAG`"
+  },
+  {
+   "id": "EP-L018",
+   "site": "src/flb_input_chunk.c:1223-1247",
+   "function": "flb_input_chunk_find_space_new_data",
+   "premises": [
+    "PC"
+   ],
+   "variants": 2,
+   "outcome": "head-not-member",
+   "detail": "the head `&ic->in->config->outputs` is not `&R->M` with `M` a list member of `struct TAG`"
+  },
+  {
+   "id": "EP-L019",
+   "site": "src/flb_input_chunk.c:1270-1291",
+   "function": "flb_input_chunk_has_overlimit_routes",
+   "premises": [
+    "PC"
+   ],
+   "variants": 2,
+   "outcome": "head-not-member",
+   "detail": "the head `&ic->in->config->outputs` is not `&R->M` with `M` a list member of `struct TAG`"
+  },
+  {
+   "id": "EP-L020",
+   "site": "src/flb_input_chunk.c:1354-1364",
+   "function": "input_chunk_collect_output_references",
+   "premises": [
+    "PC"
+   ],
+   "variants": 2,
+   "outcome": "bounded",
+   "detail": "flb_config.outputs"
+  },
+  {
+   "id": "EP-L021",
+   "site": "src/flb_input_chunk.c:1366-1381",
+   "function": "input_chunk_collect_output_references",
+   "premises": [
+    "PC"
+   ],
+   "variants": 2,
+   "outcome": "bounded",
+   "detail": "flb_config.outputs"
+  },
+  {
+   "id": "EP-L022",
+   "site": "src/flb_input_chunk.c:1388-1394",
+   "function": "input_chunk_collect_output_references",
+   "premises": [
+    "PC"
+   ],
+   "variants": 2,
+   "outcome": "bounded",
+   "detail": "flb_config.outputs"
+  },
+  {
+   "id": "EP-L023",
+   "site": "src/flb_input_chunk.c:1409-1419",
+   "function": "input_chunk_collect_output_references",
+   "premises": [
+    "PC"
+   ],
+   "variants": 2,
+   "outcome": "bounded",
+   "detail": "flb_config.outputs"
+  },
+  {
+   "id": "EP-L024",
+   "site": "src/flb_input_chunk.c:1421-1436",
+   "function": "input_chunk_collect_output_references",
+   "premises": [
+    "PC"
+   ],
+   "variants": 2,
+   "outcome": "bounded",
+   "detail": "flb_config.outputs"
+  },
+  {
+   "id": "EP-L025",
+   "site": "src/flb_input_chunk.c:1439-1445",
+   "function": "input_chunk_collect_output_references",
+   "premises": [
+    "PC"
+   ],
+   "variants": 2,
+   "outcome": "bounded",
+   "detail": "flb_config.outputs"
+  },
+  {
+   "id": "EP-L042",
+   "site": "src/flb_input_chunk.c:2643-2667",
+   "function": "flb_input_chunk_destroy_corrupted",
+   "premises": [
+    "PC"
+   ],
+   "variants": 2,
+   "outcome": "head-not-member",
+   "detail": "the head `&ic->in->config->outputs` is not `&R->M` with `M` a list member of `struct TAG`"
+  },
+  {
+   "id": "EP-L043",
+   "site": "src/flb_input_chunk.c:2729-2753",
+   "function": "flb_input_chunk_destroy",
+   "premises": [
+    "PC"
+   ],
+   "variants": 2,
+   "outcome": "head-not-member",
+   "detail": "the head `&ic->in->config->outputs` is not `&R->M` with `M` a list member of `struct TAG`"
+  },
+  {
+   "id": "EP-L044",
+   "site": "src/flb_input_chunk.c:3204-3236",
+   "function": "memrb_input_chunk_release_space",
+   "premises": [
+    "PL",
+    "PF"
+   ],
+   "variants": 2,
+   "outcome": "frame-writes-links",
+   "detail": "a write to a list pointer `prev` (`struct mk_list *`) in `mk_list_del`"
+  },
+  {
+   "id": "EP-L046",
+   "site": "src/flb_input_chunk.c:3742-3783",
+   "function": "flb_input_chunk_ring_buffer_collector",
+   "premises": [
+    "PC"
+   ],
+   "variants": 2,
+   "outcome": "frame-writes-links",
+   "detail": "a write to a list pointer `prev` (`struct mk_list *`) in `mk_list_del`"
+  },
+  {
+   "id": "EP-L048",
+   "site": "src/flb_input_chunk.c:3994-4024",
+   "function": "flb_input_chunk_update_output_instances",
+   "premises": [
+    "PC"
+   ],
+   "variants": 2,
+   "outcome": "head-not-member",
+   "detail": "the head `&ic->in->config->outputs` is not `&R->M` with `M` a list member of `struct TAG`"
+  },
+  {
+   "id": "EP-L049",
+   "site": "src/flb_storage.c:170-341",
+   "function": "metrics_append_input",
+   "premises": [
+    "PC"
+   ],
+   "variants": 2,
+   "outcome": "frame-writes-links",
+   "detail": "a write to a character object (`unsigned char`) in `msgpack_pack_map`"
+  },
+  {
+   "id": "EP-L050",
+   "site": "src/flb_storage.c:283-300",
+   "function": "metrics_append_input",
+   "premises": [
+    "PL"
+   ],
+   "variants": 2,
+   "outcome": "frame-callee-undefined",
+   "detail": "`cio_chunk_get_content_size` is called in the frame and the unit does not define it"
+  },
+  {
+   "id": "EP-L051",
+   "site": "src/flb_storage.c:632-635",
+   "function": "flb_storage_input_destroy",
+   "premises": [
+    "PL",
+    "PF"
+   ],
+   "variants": 2,
+   "outcome": "frame-callee-undefined",
+   "detail": "`flb_input_chunk_destroy` is called in the frame and the unit does not define it"
+  },
+  {
+   "id": "EP-L052",
+   "site": "src/flb_storage.c:649-658",
+   "function": "storage_contexts_create",
+   "premises": [
+    "PC"
+   ],
+   "variants": 2,
+   "outcome": "frame-callee-undefined",
+   "detail": "`flb_log_print` is called in the frame and the unit does not define it"
+  },
+  {
+   "id": "EP-L054",
+   "site": "src/flb_storage.c:854-862",
+   "function": "dlq_stream_total_size",
+   "premises": [
+    "PL"
+   ],
+   "variants": 2,
+   "outcome": "frame-callee-undefined",
+   "detail": "`cio_chunk_get_content_size` is called in the frame and the unit does not define it"
+  },
+  {
+   "id": "EP-L056",
+   "site": "src/flb_task.c:169-179",
+   "function": "task_collect_output_references",
+   "premises": [
+    "PC"
+   ],
+   "variants": 2,
+   "outcome": "frame-callee-undefined",
+   "detail": "`flb_chunk_route_plugin_matches` is called in the frame and the unit does not define it"
+  },
+  {
+   "id": "EP-L057",
+   "site": "src/flb_task.c:181-196",
+   "function": "task_collect_output_references",
+   "premises": [
+    "PC"
+   ],
+   "variants": 2,
+   "outcome": "frame-callee-undefined",
+   "detail": "`flb_chunk_route_plugin_matches` is called in the frame and the unit does not define it"
+  },
+  {
+   "id": "EP-L058",
+   "site": "src/flb_task.c:203-209",
+   "function": "task_collect_output_references",
+   "premises": [
+    "PC"
+   ],
+   "variants": 2,
+   "outcome": "frame-callee-undefined",
+   "detail": "`flb_chunk_route_plugin_matches` is called in the frame and the unit does not define it"
+  },
+  {
+   "id": "EP-L059",
+   "site": "src/flb_task.c:224-234",
+   "function": "task_collect_output_references",
+   "premises": [
+    "PC"
+   ],
+   "variants": 2,
+   "outcome": "frame-callee-undefined",
+   "detail": "`flb_chunk_route_plugin_matches` is called in the frame and the unit does not define it"
+  },
+  {
+   "id": "EP-L060",
+   "site": "src/flb_task.c:236-251",
+   "function": "task_collect_output_references",
+   "premises": [
+    "PC"
+   ],
+   "variants": 2,
+   "outcome": "frame-callee-undefined",
+   "detail": "`flb_chunk_route_plugin_matches` is called in the frame and the unit does not define it"
+  },
+  {
+   "id": "EP-L061",
+   "site": "src/flb_task.c:254-260",
+   "function": "task_collect_output_references",
+   "premises": [
+    "PC"
+   ],
+   "variants": 2,
+   "outcome": "frame-callee-undefined",
+   "detail": "`flb_chunk_route_plugin_matches` is called in the frame and the unit does not define it"
+  },
+  {
+   "id": "EP-L062",
+   "site": "src/flb_task.c:325-337",
+   "function": "flb_task_retry_create",
+   "premises": [
+    "PL"
+   ],
+   "variants": 2,
+   "outcome": "frame-writes-links",
+   "detail": "a write to a list pointer `prev` (`struct mk_list *`) in `mk_list_del`"
+  },
+  {
+   "id": "EP-L063",
+   "site": "src/flb_task.c:407-413",
+   "function": "flb_task_retry_count",
+   "premises": [
+    "PL"
+   ],
+   "variants": 2,
+   "outcome": "bounded",
+   "detail": "flb_task.retries"
+  },
+  {
+   "id": "EP-L064",
+   "site": "src/flb_task.c:426-432",
+   "function": "flb_task_retry_clean",
+   "premises": [
+    "PL"
+   ],
+   "variants": 2,
+   "outcome": "frame-writes-links",
+   "detail": "a write to a list pointer `prev` (`struct mk_list *`) in `mk_list_del`"
+  },
+  {
+   "id": "EP-L065",
+   "site": "src/flb_task.c:485-493",
+   "function": "flb_task_running_count",
+   "premises": [
+    "PC"
+   ],
+   "variants": 2,
+   "outcome": "bounded",
+   "detail": "flb_config.inputs"
+  },
+  {
+   "id": "EP-L066",
+   "site": "src/flb_task.c:487-492",
+   "function": "flb_task_running_count",
+   "premises": [
+    "PL"
+   ],
+   "variants": 2,
+   "outcome": "bounded",
+   "detail": "flb_input_instance.tasks"
+  },
+  {
+   "id": "EP-L067",
+   "site": "src/flb_task.c:516-541",
+   "function": "flb_task_running_print",
+   "premises": [
+    "PC"
+   ],
+   "variants": 2,
+   "outcome": "frame-callee-undefined",
+   "detail": "`flb_input_name` is called in the frame and the unit does not define it"
+  },
+  {
+   "id": "EP-L068",
+   "site": "src/flb_task.c:521-540",
+   "function": "flb_task_running_print",
+   "premises": [
+    "PL"
+   ],
+   "variants": 2,
+   "outcome": "frame-callee-undefined",
+   "detail": "`flb_log_print` is called in the frame and the unit does not define it"
+  },
+  {
+   "id": "EP-L069",
+   "site": "src/flb_task.c:524-535",
+   "function": "flb_task_running_print",
+   "premises": [
+    "PL"
+   ],
+   "variants": 2,
+   "outcome": "frame-callee-undefined",
+   "detail": "`flb_log_print` is called in the frame and the unit does not define it"
+  },
+  {
+   "id": "EP-L073",
+   "site": "src/flb_task.c:786-824",
+   "function": "flb_task_create",
+   "premises": [
+    "PL"
+   ],
+   "variants": 2,
+   "outcome": "frame-writes-links",
+   "detail": "a write to a list pointer `prev` (`struct mk_list *`) in `mk_list_del`"
+  },
+  {
+   "id": "EP-L074",
+   "site": "src/flb_task.c:848-873",
+   "function": "flb_task_create",
+   "premises": [
+    "PC"
+   ],
+   "variants": 2,
+   "outcome": "frame-writes-links",
+   "detail": "a write to a list pointer `prev` (`struct mk_list *`) in `__mk_list_add`"
+  },
+  {
+   "id": "EP-L075",
+   "site": "src/flb_task.c:912-920",
+   "function": "flb_task_destroy",
+   "premises": [
+    "PL"
+   ],
+   "variants": 2,
+   "outcome": "frame-writes-links",
+   "detail": "a write to a list pointer `prev` (`struct mk_list *`) in `mk_list_del`"
+  },
+  {
+   "id": "EP-L076",
+   "site": "src/flb_task.c:933-937",
+   "function": "flb_task_destroy",
+   "premises": [
+    "PL",
+    "PF"
+   ],
+   "variants": 2,
+   "outcome": "frame-writes-links",
+   "detail": "a write to a list pointer `prev` (`struct mk_list *`) in `mk_list_del`"
+  },
+  {
+   "id": "EP-L077",
+   "site": "src/flb_task.c:967-971",
+   "function": "flb_task_queue_destroy",
+   "premises": [
+    "PL"
+   ],
+   "variants": 2,
+   "outcome": "frame-writes-links",
+   "detail": "a write to a list pointer `prev` (`struct mk_list *`) in `mk_list_del`"
+  },
+  {
+   "id": "EP-L078",
+   "site": "src/flb_task.c:973-977",
+   "function": "flb_task_queue_destroy",
+   "premises": [
+    "PL"
+   ],
+   "variants": 2,
+   "outcome": "frame-writes-links",
+   "detail": "a write to a list pointer `prev` (`struct mk_list *`) in `mk_list_del`"
+  },
+  {
+   "id": "EP-L079",
+   "site": "src/flb_engine.c:100-108",
+   "function": "engine_has_fluentbit_logs_input",
+   "premises": [
+    "PC"
+   ],
+   "variants": 2,
+   "outcome": "bounded",
+   "detail": "flb_config.inputs"
+  },
+  {
+   "id": "EP-L081",
+   "site": "src/flb_engine.c:143-147",
+   "function": "flb_engine_destroy_tasks",
+   "premises": [
+    "PL",
+    "PF"
+   ],
+   "variants": 2,
+   "outcome": "head-not-member",
+   "detail": "the head `tasks` is not `&R->M` with `M` a list member of `struct TAG`"
+  },
+  {
+   "id": "EP-L082",
+   "site": "src/flb_engine.c:165-192",
+   "function": "flb_engine_reschedule_retries",
+   "premises": [
+    "PC"
+   ],
+   "variants": 2,
+   "outcome": "frame-callee-undefined",
+   "detail": "`__errno_location` is called in the frame and the unit does not define it"
+  },
+  {
+   "id": "EP-L083",
+   "site": "src/flb_engine.c:167-191",
+   "function": "flb_engine_reschedule_retries",
+   "premises": [
+    "PL"
+   ],
+   "variants": 2,
+   "outcome": "frame-callee-undefined",
+   "detail": "`__errno_location` is called in the frame and the unit does not define it"
+  },
+  {
+   "id": "EP-L084",
+   "site": "src/flb_engine.c:178-190",
+   "function": "flb_engine_reschedule_retries",
+   "premises": [
+    "PL"
+   ],
+   "variants": 2,
+   "outcome": "frame-callee-undefined",
+   "detail": "`__errno_location` is called in the frame and the unit does not define it"
+  },
+  {
+   "id": "EP-L085",
+   "site": "src/flb_engine.c:202-210",
+   "function": "flb_engine_flush",
+   "premises": [
+    "PC"
+   ],
+   "variants": 2,
+   "outcome": "frame-callee-undefined",
+   "detail": "`flb_engine_dispatch` is called in the frame and the unit does not define it"
+  },
+  {
+   "id": "EP-L086",
+   "site": "src/flb_engine.c:290-305",
+   "function": "flb_engine_get_chunk_backpressure_percent",
+   "premises": [
+    "PC"
+   ],
+   "variants": 2,
+   "outcome": "bounded",
+   "detail": "flb_config.outputs"
+  },
+  {
+   "id": "EP-L090",
+   "site": "src/flb_engine_dispatch.c:254-348",
+   "function": "tasks_start",
+   "premises": [
+    "PL",
+    "PF"
+   ],
+   "variants": 2,
+   "outcome": "frame-writes-links",
+   "detail": "a write to a character object `status` (`unsigned char`) in the loop"
+  },
+  {
+   "id": "EP-L091",
+   "site": "src/flb_engine_dispatch.c:282-341",
+   "function": "tasks_start",
+   "premises": [
+    "PL",
+    "PF"
+   ],
+   "variants": 2,
+   "outcome": "frame-writes-links",
+   "detail": "a write to a list pointer `prev` (`struct mk_list *`) in `mk_list_del`"
+  },
+  {
+   "id": "EP-L092",
+   "site": "src/flb_engine_dispatch.c:381-446",
+   "function": "flb_engine_dispatch",
+   "premises": [
+    "PL",
+    "PF"
+   ],
+   "variants": 2,
+   "outcome": "frame-callee-undefined",
+   "detail": "`flb_input_chunk_down` is called in the frame and the unit does not define it"
+  },
+  {
+   "id": "EP-L093",
+   "site": "src/flb_engine_dispatch.c:456-464",
+   "function": "flb_engine_dispatch",
+   "premises": [
+    "PL",
+    "PF"
+   ],
+   "variants": 2,
+   "outcome": "frame-callee-undefined",
+   "detail": "`flb_log_print` is called in the frame and the unit does not define it"
+  },
+  {
+   "id": "EP-L097",
+   "site": "src/flb_scheduler.c:183-221",
+   "function": "schedule_request_promote",
+   "premises": [
+    "PL"
+   ],
+   "variants": 2,
+   "outcome": "frame-writes-links",
+   "detail": "a write to a list pointer `prev` (`struct mk_list *`) in `mk_list_del`"
+  },
+  {
+   "id": "EP-L098",
+   "site": "src/flb_scheduler.c:224-228",
+   "function": "schedule_request_promote",
+   "premises": [
+    "PL"
+   ],
+   "variants": 2,
+   "outcome": "head-not-member",
+   "detail": "the head `&failed_requests` is not `&R->M` with `M` a list member of `struct TAG`"
+  },
+  {
+   "id": "EP-L100",
+   "site": "src/flb_scheduler.c:362-368",
+   "function": "flb_sched_request_invalidate",
+   "premises": [
+    "PL"
+   ],
+   "variants": 2,
+   "outcome": "frame-writes-links",
+   "detail": "a write to a list pointer `prev` (`struct mk_list *`) in `mk_list_del`"
+  },
+  {
+   "id": "EP-L101",
+   "site": "src/flb_scheduler.c:379-385",
+   "function": "flb_sched_request_invalidate",
+   "premises": [
+    "PL"
+   ],
+   "variants": 2,
+   "outcome": "frame-writes-links",
+   "detail": "a write to a list pointer `prev` (`struct mk_list *`) in `mk_list_del`"
+  },
+  {
+   "id": "EP-L102",
+   "site": "src/flb_scheduler.c:422-439",
+   "function": "sched_timer_coro_get_id",
+   "premises": [
+    "PL"
+   ],
+   "variants": 2,
+   "outcome": "not-a-list-traversal",
+   "detail": "a `while` loop is not a list traversal"
+  },
+  {
+   "id": "EP-L103",
+   "site": "src/flb_scheduler.c:424-430",
+   "function": "sched_timer_coro_get_id",
+   "premises": [
+    "PL"
+   ],
+   "variants": 2,
+   "outcome": "bounded",
+   "detail": "flb_sched.timer_coro_list"
+  },
+  {
+   "id": "EP-L104",
+   "site": "src/flb_scheduler.c:452-457",
+   "function": "sched_timer_coro_get_by_id",
+   "premises": [
+    "PL"
+   ],
+   "variants": 2,
+   "outcome": "bounded",
+   "detail": "flb_sched.timer_coro_list"
+  },
+  {
+   "id": "EP-L105",
+   "site": "src/flb_scheduler.c:827-831",
+   "function": "flb_sched_destroy",
+   "premises": [
+    "PL",
+    "PF"
+   ],
+   "variants": 2,
+   "outcome": "frame-writes-links",
+   "detail": "a write to a list pointer `prev` (`struct mk_list *`) in `mk_list_del`"
+  },
+  {
+   "id": "EP-L106",
+   "site": "src/flb_scheduler.c:834-838",
+   "function": "flb_sched_destroy",
+   "premises": [
+    "PL",
+    "PF"
+   ],
+   "variants": 2,
+   "outcome": "frame-writes-links",
+   "detail": "a write to a list pointer `prev` (`struct mk_list *`) in `mk_list_del`"
+  },
+  {
+   "id": "EP-L107",
+   "site": "src/flb_scheduler.c:841-846",
+   "function": "flb_sched_destroy",
+   "premises": [
+    "PL",
+    "PF"
+   ],
+   "variants": 2,
+   "outcome": "frame-writes-links",
+   "detail": "a write to a list pointer `prev` (`struct mk_list *`) in `mk_list_del`"
+  },
+  {
+   "id": "EP-L108",
+   "site": "src/flb_scheduler.c:849-853",
+   "function": "flb_sched_destroy",
+   "premises": [
+    "PL",
+    "PF"
+   ],
+   "variants": 2,
+   "outcome": "frame-writes-links",
+   "detail": "a write to a list pointer `prev` (`struct mk_list *`) in `mk_list_del`"
+  },
+  {
+   "id": "EP-L109",
+   "site": "src/flb_scheduler.c:924-928",
+   "function": "flb_sched_timer_cleanup",
+   "premises": [
+    "PL"
+   ],
+   "variants": 2,
+   "outcome": "frame-writes-links",
+   "detail": "a write to a list pointer `prev` (`struct mk_list *`) in `mk_list_del`"
+  },
+  {
+   "id": "EP-L110",
+   "site": "src/flb_scheduler.c:943-947",
+   "function": "flb_sched_timer_coro_cleanup",
+   "premises": [
+    "PL"
+   ],
+   "variants": 2,
+   "outcome": "opaque-control",
+   "detail": "inline assembly in `flb_coro_destroy`"
+  },
+  {
+   "id": "EP-L111",
+   "site": "src/flb_scheduler.c:1002-1007",
+   "function": "flb_sched_timer_coro_get",
+   "premises": [
+    "PL"
+   ],
+   "variants": 2,
+   "outcome": "bounded",
+   "detail": "flb_sched.timer_coro_list"
+  },
+  {
+   "id": "EP-L113",
+   "site": "src/flb_output.c:158-164",
+   "function": "flb_output_pre_run",
+   "premises": [
+    "PC"
+   ],
+   "variants": 2,
+   "outcome": "frame-indirect-call",
+   "detail": "an indirect call (`int`) in the loop"
+  },
+  {
+   "id": "EP-L114",
+   "site": "src/flb_output.c:652-672",
+   "function": "flb_output_exit",
+   "premises": [
+    "PL",
+    "PF"
+   ],
+   "variants": 2,
+   "outcome": "frame-writes-links",
+   "detail": "a write to a list pointer `prev` (`struct mk_list *`) in `mk_list_del`"
+  },
+  {
+   "id": "EP-L115",
+   "site": "src/flb_output.c:700-706",
+   "function": "flb_output_get_instance",
+   "premises": [
+    "PC"
+   ],
+   "variants": 2,
+   "outcome": "bounded",
+   "detail": "flb_config.outputs"
+  },
+  {
+   "id": "EP-L116",
+   "site": "src/flb_output.c:742-745",
+   "function": "flb_output_flush_finished",
+   "premises": [
+    "PL",
+    "PF"
+   ],
+   "variants": 2,
+   "outcome": "head-not-member",
+   "detail": "the head `list` is not `&R->M` with `M` a list member of `struct TAG`"
+  },
+  {
+   "id": "EP-L117",
+   "site": "src/flb_output.c:776-787",
+   "function": "flb_output_new",
+   "premises": [
+    "PL"
+   ],
+   "variants": 2,
+   "outcome": "frame-callee-undefined",
+   "detail": "`strstr` is called in the frame and the unit does not define it"
+  },
+  {
+   "id": "EP-L118",
+   "site": "src/flb_output.c:802-813",
+   "function": "flb_output_new",
+   "premises": [
+    "PL"
+   ],
+   "variants": 2,
+   "outcome": "frame-callee-undefined",
+   "detail": "`strstr` is called in the frame and the unit does not define it"
+  },
+  {
+   "id": "EP-L119",
+   "site": "src/flb_output.c:1445-1461",
+   "function": "flb_output_plugin_property_check",
+   "premises": [
+    "PL",
+    "PF"
+   ],
+   "variants": 2,
+   "outcome": "frame-writes-links",
+   "detail": "a write to a list pointer `prev` (`struct mk_list *`) in `mk_list_del`"
+  },
+  {
+   "id": "EP-L120",
+   "site": "src/flb_output.c:1537-1922",
+   "function": "flb_output_init_all",
+   "premises": [
+    "PL",
+    "PF"
+   ],
+   "variants": 2,
+   "outcome": "frame-writes-links",
+   "detail": "a write to a list pointer `tls_config_map` (`struct mk_list *`) in the loop"
+  },
+  {
+   "id": "EP-L121",
+   "site": "src/flb_output.c:2082-2085",
+   "function": "flb_output_upstream_ha_set",
+   "premises": [
+    "PL"
+   ],
+   "variants": 2,
+   "outcome": "frame-writes-links",
+   "detail": "a write to a character object (`char`) in `flb_strndup`"
+  }
+ ]
+}

@@ -144,6 +144,9 @@ pub mod null_deref;
 // Card W45-FB-ENGINE-PROGRESS-MEASURE (rule 44): the separately selected
 // loop-measure fact; no custody route reads it.
 pub mod loop_measure;
+// Card W45-FB-LIST-FINITENESS-PREMISE (rule 48): the list-length bound fact
+// under a declared list-finiteness premise, recorded beside rule 44's.
+pub mod list_length_bound;
 // Card NULL-SAFETY-PROPERTY (rule 14n): the named null premises a custody
 // verdict rests on; the hook is `legacy_null_premise.rs`.
 pub mod null_premise;

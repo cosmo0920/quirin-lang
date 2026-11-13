@@ -1,0 +1,50 @@
+// List-finiteness premises (contract specification C04.22, grammar G05l,
+// gateway rule 48), card W45-FB-LIST-FINITENESS-PREMISE.
+//
+// Each line states, and never proves, that the intrusive list whose head is
+// the named member of every object of the named struct is finite and well
+// formed whenever a traversal of it begins, and that no other thread writes
+// its links while the traversal runs. They are the heads the
+// W45-FB-ENGINE-PROGRESS census classifies under PL (the list is finite and
+// well formed) or PC (the configuration's instance lists are fixed while the
+// engine runs), read at Fluent Bit 046accf6. A premise is not a frame: a
+// traversal records a bound only where rule 48 reads its whole frame in the
+// unit and finds no link write.
+
+// The configuration's instance and plugin lists (PC).
+quant list flb_config.inputs |-> #finite;
+quant list flb_config.outputs |-> #finite;
+quant list flb_config.out_plugins |-> #finite;
+
+// An input instance's chunks, tasks and direct routes.
+quant list flb_input_instance.chunks |-> #finite;
+quant list flb_input_instance.tasks |-> #finite;
+quant list flb_input_instance.routes_direct |-> #finite;
+
+// An output instance's properties.
+quant list flb_output_instance.properties |-> #finite;
+
+// A task's routes and retries, and a task queue.
+quant list flb_task.routes |-> #finite;
+quant list flb_task.retries |-> #finite;
+quant list flb_task_queue.pending |-> #finite;
+quant list flb_task_queue.in_progress |-> #finite;
+
+// The scheduler's request, timer and timer-coroutine lists.
+quant list flb_sched.requests |-> #finite;
+quant list flb_sched.requests_wait |-> #finite;
+quant list flb_sched.timers |-> #finite;
+quant list flb_sched.timers_drop |-> #finite;
+quant list flb_sched.timer_coro_list |-> #finite;
+quant list flb_sched.timer_coro_list_drop |-> #finite;
+
+// The storage backlog's queues (PW holds for their wrappers).
+quant list flb_sb.backlogs |-> #finite;
+quant list sb_out_queue.chunks |-> #finite;
+
+// ChunkIO's streams and a stream's chunks.
+quant list cio_ctx.streams |-> #finite;
+quant list cio_stream.chunks |-> #finite;
+
+// An upstream HA group's nodes.
+quant list flb_upstream_ha.nodes |-> #finite;
