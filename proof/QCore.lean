@@ -195,6 +195,7 @@ import QCore.Frontend
 import QCore.FunctionPointerDeclarators
 import QCore.GenericSelection
 import QCore.GnuBuiltinReader
+import QCore.GuardCorrelatedCensus
 import QCore.GuardedContractApplications
 import QCore.GuardedDecomposition
 import QCore.GuardedDelete

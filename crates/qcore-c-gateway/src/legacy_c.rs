@@ -33,6 +33,10 @@ pub(crate) mod return_call;
 #[path = "legacy_enumeration.rs"]
 pub mod enumeration;
 
+// Card TAIL-FILE-DEFINITION-CENSUS-INCOMPLETE (rule 49).
+#[path = "legacy_guard_correlation.rs"]
+pub mod guard_correlation;
+
 pub use enumeration::{
     EnumerationRefusal, SourceDefinitionInventory, UnanalyzableDefinition, UnanalyzableForm,
     enumerate_source_definitions,

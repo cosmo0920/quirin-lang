@@ -179,9 +179,24 @@ pub(super) fn conditional_directive(line: &str) -> Option<ConditionalDirective> 
 /// structure to keep the arms of one `#if … #endif` from each contributing a
 /// brace to the same file-scope depth (unit **E01-RAW-COND**).
 pub(crate) fn tokenize_with_conditionals(source: &str) -> (Vec<Token>, Vec<ConditionalMark>) {
+    let (tokens, conditionals, _) = tokenize_with_directives(source);
+    (tokens, conditionals)
+}
+
+/// Lex as [`tokenize_with_conditionals`] does, additionally recording where
+/// every *other* directive stood, as `(token_index, byte_start)` (card
+/// **TAIL-FILE-DEFINITION-CENSUS-INCOMPLETE**, rule 49): a `#define`,
+/// `#undef`, `#include` or `#pragma` may change which macros are defined, so
+/// the guard-correlation scan forgets what it assumed about every guard there.
+/// The token stream and the conditional marks are exactly
+/// [`tokenize_with_conditionals`]'s.
+pub(crate) fn tokenize_with_directives(
+    source: &str,
+) -> (Vec<Token>, Vec<ConditionalMark>, Vec<(usize, usize)>) {
     let bytes = source.as_bytes();
     let mut tokens = Vec::new();
     let mut conditionals = Vec::new();
+    let mut others = Vec::new();
     let mut cursor = 0;
     let mut line = 1;
     // True while nothing but white space and comments has been seen since the
@@ -241,6 +256,8 @@ pub(crate) fn tokenize_with_conditionals(source: &str) -> (Vec<Token>, Vec<Condi
                     directive,
                     span: (start, cursor),
                 });
+            } else {
+                others.push((tokens.len(), start));
             }
         } else if byte == b'"' || byte == b'\'' {
             at_logical_line_start = false;
@@ -300,7 +317,7 @@ pub(crate) fn tokenize_with_conditionals(source: &str) -> (Vec<Token>, Vec<Condi
             cursor += 1;
         }
     }
-    (tokens, conditionals)
+    (tokens, conditionals, others)
 }
 
 /// Card **W43-INDIRECT-ACCESS-GENERAL**, census only: every `NAME = CALLEE (`

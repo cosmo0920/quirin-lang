@@ -442,6 +442,24 @@ fn source_definition_inventory_without_expansion(source: &str) -> SourceDefiniti
 
 fn raw_half(source: &str) -> RawHalf {
     let scan = legacy_c_source_scan(source);
+    // Card TAIL-FILE-DEFINITION-CENSUS-INCOMPLETE (rule 49): a scan whose only
+    // ground is an arm disagreement is decided when guard correlation decides
+    // every group; its names are unioned in (they include the scan's own), and
+    // anything it cannot decide keeps the refusal.
+    if scan.refusals() == [ConditionalScanRefusal::ArmDepthDisagreement]
+        && let Ok(correlated) = super::guard_correlation::correlated_source_scan(source)
+    {
+        let names = scan
+            .definitions()
+            .iter()
+            .chain(&correlated)
+            .cloned()
+            .collect::<BTreeSet<_>>();
+        return RawHalf {
+            names: names.into_iter().collect(),
+            refusals: BTreeSet::new(),
+        };
+    }
     RawHalf {
         names: scan.definitions().to_vec(),
         refusals: scan
