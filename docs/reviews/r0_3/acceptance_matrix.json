@@ -13828,13 +13828,6 @@
    "recorded_by": "W45-FB-ENGINE-PROGRESS-MEASURE"
   },
   {
-   "id": "W45-FB-LIST-FINITENESS-PREMISE",
-   "title": "A list-finiteness premise for the slice's 87 list-length loops",
-   "why": "The W45-FB-ENGINE-PROGRESS census classifies 87 of 121 slice loops as bounded by a list length (premise PL: the list is finite and well formed and the body's callees do not extend it), which is not a local fact and which rule 44 deliberately does not derive. DISCHARGE: a declared list-finiteness contract premise, checked where its frame is established, records a list-length bound fact for those loops beside the resource verdict, with Lean parity; or a measured statement that the premise cannot be checked.",
-   "source": "docs/reports/w45-fb-engine-progress-measure/README.md",
-   "recorded_by": "W45-FB-ENGINE-PROGRESS-MEASURE"
-  },
-  {
    "id": "W45-FB-MEASURE-SHIFT-PRECONDITION",
    "title": "A right-shift measure for `ipow` under an `exp >= 0` precondition",
    "why": "`ipow` (flb_scheduler.c:237) is a `while (exp)` loop decreasing by `exp >>= 1`, bounded by 32 iterations only under premise PE (`exp >= 0`; a negative `exp` stays at -1). Rule 44 refuses it (`no-counter`). DISCHARGE: a shift-measure rule with a declared, checked `exp >= 0` precondition at every caller records the bound, with Lean parity; without the precondition it stays refused.",
@@ -13931,6 +13924,27 @@
    "why": "Registered by MEASURE-CONTRACT-ONLY-SIDE-WIRING (docs/reports/measure-contract-only-side-wiring/README.md section 3). quirin-audit measure builds and runs every rev: side under `unshare -rm` to bind its tree (and now its working directory) at one fixed path; on a host whose AppArmor policy refuses unprivileged user namespaces (kernel.apparmor_restrict_unprivileged_userns = 1, Ubuntu's default) `unshare` fails and no rev: side runs, so the reuse path was demonstrated by its command sequence by hand. DISCHARGE: the integrator's release-host run of `--reuse-contract-only --verify-reuse` on a contract-only landing passing, and either a namespace-free fixed spelling for rev: sides or a documented host requirement checked before anything is built.",
    "source": "docs/reports/measure-contract-only-side-wiring/README.md",
    "recorded_by": "MEASURE-CONTRACT-ONLY-SIDE-WIRING"
+  },
+  {
+   "id": "W45-FB-LIST-UNLINK-CURRENT-FRAME",
+   "title": "Admit a list frame whose only link write unlinks the current node of a safe traversal",
+   "why": "Rule 48 refuses every frame that writes a list link, including the `_safe` traversal's unlink of the current node, which premise PL allows. Most of the 34 `frame-writes-links` loops of the Fluent Bit system slice (destroyers and cleanups calling `mk_list_del` on the current entry) refuse for that reason. DISCHARGE: a checked unlink-current rule (the unlinked node is the cursor, or the element `container_of` binds from it, and no other link is written) admits those frames, with Lean parity (the safe cursor still steps to the saved successor and the run stays bounded by the entry length), and the slice re-measured.",
+   "source": "docs/reports/w45-fb-list-finiteness-premise/README.md",
+   "recorded_by": "W45-FB-LIST-FINITENESS-PREMISE"
+  },
+  {
+   "id": "W45-FB-LIST-HEAD-MEMBER-CHAIN",
+   "title": "Admit a list head reached through a member chain the frame never writes",
+   "why": "Rule 48 admits a head only as `&R->M` with `R` a stable local, so nine of the slice's list-length loops (`&ic->in->config->outputs`, `&context->cio->streams`, `&output_plugin->config->inputs`, ...) refuse `head-not-member`: an intermediate pointer could be rewritten by the frame. DISCHARGE: a head `&R->F1->...->M` is admitted when no write in the frame may reach any intermediate pointer field, with Lean parity, and the nine loops re-measured.",
+   "source": "docs/reports/w45-fb-list-finiteness-premise/README.md",
+   "recorded_by": "W45-FB-LIST-FINITENESS-PREMISE"
+  },
+  {
+   "id": "W45-FB-LIST-EXTERNAL-CALLEE-FRAMES",
+   "title": "Check list frames through callees defined in other units",
+   "why": "Rule 48 establishes a frame only from bodies the analysed unit defines, so 21 of the slice's list-length loops refuse `frame-callee-undefined` (Fluent Bit's logger `flb_log_print`, `flb_chunk_route_plugin_matches` in `flb_task.c`, ChunkIO's `cio_chunk_get_content_size`, `flb_input_chunk_destroy`, `__errno_location`, `strstr`, `flb_engine_dispatch`). A declared callee frame is never a substitute. DISCHARGE: frame summaries exported from each callee's defining unit (the cross-unit link map) and composed bottom up, refusing on any unread or interposable callee, with Lean parity, and the slice re-measured.",
+   "source": "docs/reports/w45-fb-list-finiteness-premise/README.md",
+   "recorded_by": "W45-FB-LIST-FINITENESS-PREMISE"
   }
  ],
  "updated": "Completed plugin premise integration; exact hand-maintained union retains810followups, borrowed measured-source8419Rust/354Lean/freshcard133provider, exact source equivalence checked; authoritative root committed-matrix Python confirmation in integration receipt. CMetrics map/opts API model specifications added at the explicit user request. Eight declared-model API contracts remain outside interpreted views, with CMT-MAP-OPTS-CONTRACT-ADOPTION and CMT-LABELED-HASH-ZERO-STATIC-STORAGE Open. No trusted API coverage is claimed; the source gate is recorded by this card alongside its separate initializer native checkpoint. W48-CMT-TRACKED-INTERIOR-SELF-INIT implements rule 36b's checked initializer effect transport for an exact live owned root or embedded record, retaining actual self writes, invalidating aliased member facts and preserving resource obligations; nondefault custody frames refuse and no ordinary summary is exported. The canonical CFL intrusive_list.qv declares matching audit preconditions/effects; two CMetrics .qv modules add six map and two opts lifecycle models, including transitive ownership, partial failure, borrowed results and uncleared cleanup fields. All remain outside interpreted views; checked API adoption and labeled zero-hash storage accounting have named Open follow-ups. Fresh BASE/planner precedes prediction f18d96065 and implementation; the later contract amendment 08da23123 precedes .qv edits. Native corpus BASE/TIP Safe/Unknown/Pending/provisional-Unsafe: 1009 / 3816 / 0 / 9 to 1011 / 3814 / 0 / 9; full system/slice, 5781 NULL dictionaries and runtime projections are compared, 241 semantic leaves accounted, zero unexplained leaves and no prior Safe loss. Gate 8654 Rust / 370 Lean / 374 Python, provider 133 Rust / 25 Python and all five package verifies pass. The actual deep source reader uses 328 KiB below 1 MiB. Full getter closure remains Open; W48-CMT-SELF-INIT-DISJOINT-FRAMES tracks the next bounded frame extension, and W48-EXACT-RETURN-WITNESS-PRECISION is unchanged. Native evidence is isolated to measured e92d8aef35a8bd14550e90219d19a56eb3b196e7; later source gate 2d0d85299b830aa24d7f200d63a308653582363f validates the added declared API models separately; see docs/reports/w48-cmt-tracked-interior-self-init/README.md."
