@@ -1,0 +1,512 @@
+[
+ {
+  "function": "flb_sched_timer_destroy",
+  "tree": "corpus-inputs/c-gateway-wave-pin/fluent-bit-clang-source",
+  "path": "src/flb_scheduler.c",
+  "defined": true,
+  "body_sha256": "4894cc4143dc5ceb823a7381f43eac206b5d3f137b91a370ea2b4a1f83420619",
+  "unlinks": [
+   {
+    "field": "_head",
+    "top_level": true,
+    "before_free": true
+   }
+  ],
+  "frees": 1
+ },
+ {
+  "function": "flb_sched_timer_destroy",
+  "tree": "prep/system/fluent-bit-clang-source",
+  "path": "src/flb_scheduler.c",
+  "defined": true,
+  "body_sha256": "4894cc4143dc5ceb823a7381f43eac206b5d3f137b91a370ea2b4a1f83420619",
+  "unlinks": [
+   {
+    "field": "_head",
+    "top_level": true,
+    "before_free": true
+   }
+  ],
+  "frees": 1
+ },
+ {
+  "function": "flb_sched_timer_destroy",
+  "tree": "prep/slice/fluent-bit-clang-source",
+  "path": "src/flb_scheduler.c",
+  "defined": true,
+  "body_sha256": "4894cc4143dc5ceb823a7381f43eac206b5d3f137b91a370ea2b4a1f83420619",
+  "unlinks": [
+   {
+    "field": "_head",
+    "top_level": true,
+    "before_free": true
+   }
+  ],
+  "frees": 1
+ },
+ {
+  "function": "flb_sched_request_destroy",
+  "tree": "corpus-inputs/c-gateway-wave-pin/fluent-bit-clang-source",
+  "path": "src/flb_scheduler.c",
+  "defined": true,
+  "body_sha256": "865be9a43e4850cac42f784b32e01cb20880718aa54de2a4f052104d1beecd9f",
+  "unlinks": [
+   {
+    "field": "_head",
+    "top_level": true,
+    "before_free": true
+   }
+  ],
+  "frees": 1
+ },
+ {
+  "function": "flb_sched_request_destroy",
+  "tree": "prep/system/fluent-bit-clang-source",
+  "path": "src/flb_scheduler.c",
+  "defined": true,
+  "body_sha256": "865be9a43e4850cac42f784b32e01cb20880718aa54de2a4f052104d1beecd9f",
+  "unlinks": [
+   {
+    "field": "_head",
+    "top_level": true,
+    "before_free": true
+   }
+  ],
+  "frees": 1
+ },
+ {
+  "function": "flb_sched_request_destroy",
+  "tree": "prep/slice/fluent-bit-clang-source",
+  "path": "src/flb_scheduler.c",
+  "defined": true,
+  "body_sha256": "865be9a43e4850cac42f784b32e01cb20880718aa54de2a4f052104d1beecd9f",
+  "unlinks": [
+   {
+    "field": "_head",
+    "top_level": true,
+    "before_free": true
+   }
+  ],
+  "frees": 1
+ },
+ {
+  "function": "flb_task_destroy",
+  "tree": "corpus-inputs/c-gateway-wave-pin/fluent-bit-clang-source",
+  "path": "src/flb_task.c",
+  "defined": true,
+  "body_sha256": "9aeb999a552d9eb0669bed92c08a8994ffa7bed1883a5581e2992678a6f77fbe",
+  "unlinks": [
+   {
+    "field": "_head",
+    "top_level": false,
+    "before_free": true
+   }
+  ],
+  "frees": 1
+ },
+ {
+  "function": "flb_task_destroy",
+  "tree": "prep/system/fluent-bit-clang-source",
+  "path": "src/flb_task.c",
+  "defined": true,
+  "body_sha256": "9aeb999a552d9eb0669bed92c08a8994ffa7bed1883a5581e2992678a6f77fbe",
+  "unlinks": [
+   {
+    "field": "_head",
+    "top_level": false,
+    "before_free": true
+   }
+  ],
+  "frees": 1
+ },
+ {
+  "function": "flb_task_destroy",
+  "tree": "prep/slice/fluent-bit-clang-source",
+  "path": "src/flb_task.c",
+  "defined": true,
+  "body_sha256": "9aeb999a552d9eb0669bed92c08a8994ffa7bed1883a5581e2992678a6f77fbe",
+  "unlinks": [
+   {
+    "field": "_head",
+    "top_level": false,
+    "before_free": true
+   }
+  ],
+  "frees": 1
+ },
+ {
+  "function": "flb_task_retry_destroy",
+  "tree": "corpus-inputs/c-gateway-wave-pin/fluent-bit-clang-source",
+  "path": "src/flb_task.c",
+  "defined": true,
+  "body_sha256": "ffccf6fb60ea7dafb55661bbd30aa652aee07408e07e17cf9cf985ff2dcf4b60",
+  "unlinks": [
+   {
+    "field": "_head",
+    "top_level": true,
+    "before_free": true
+   }
+  ],
+  "frees": 1
+ },
+ {
+  "function": "flb_task_retry_destroy",
+  "tree": "prep/system/fluent-bit-clang-source",
+  "path": "src/flb_task.c",
+  "defined": true,
+  "body_sha256": "ffccf6fb60ea7dafb55661bbd30aa652aee07408e07e17cf9cf985ff2dcf4b60",
+  "unlinks": [
+   {
+    "field": "_head",
+    "top_level": true,
+    "before_free": true
+   }
+  ],
+  "frees": 1
+ },
+ {
+  "function": "flb_task_retry_destroy",
+  "tree": "prep/slice/fluent-bit-clang-source",
+  "path": "src/flb_task.c",
+  "defined": true,
+  "body_sha256": "ffccf6fb60ea7dafb55661bbd30aa652aee07408e07e17cf9cf985ff2dcf4b60",
+  "unlinks": [
+   {
+    "field": "_head",
+    "top_level": true,
+    "before_free": true
+   }
+  ],
+  "frees": 1
+ },
+ {
+  "function": "flb_input_chunk_destroy",
+  "tree": "corpus-inputs/c-gateway-wave-pin/fluent-bit-clang-source",
+  "path": "src/flb_input_chunk.c",
+  "defined": true,
+  "body_sha256": "915d7286e8f769263801d9bf55a81d1e4fcd0d9afe38496b25332b4825223610",
+  "unlinks": [
+   {
+    "field": "_head",
+    "top_level": true,
+    "before_free": true
+   }
+  ],
+  "frees": 1
+ },
+ {
+  "function": "flb_input_chunk_destroy",
+  "tree": "prep/system/fluent-bit-clang-source",
+  "path": "src/flb_input_chunk.c",
+  "defined": true,
+  "body_sha256": "915d7286e8f769263801d9bf55a81d1e4fcd0d9afe38496b25332b4825223610",
+  "unlinks": [
+   {
+    "field": "_head",
+    "top_level": true,
+    "before_free": true
+   }
+  ],
+  "frees": 1
+ },
+ {
+  "function": "flb_input_chunk_destroy",
+  "tree": "prep/slice/fluent-bit-clang-source",
+  "path": "src/flb_input_chunk.c",
+  "defined": true,
+  "body_sha256": "915d7286e8f769263801d9bf55a81d1e4fcd0d9afe38496b25332b4825223610",
+  "unlinks": [
+   {
+    "field": "_head",
+    "top_level": true,
+    "before_free": true
+   }
+  ],
+  "frees": 1
+ },
+ {
+  "function": "flb_output_instance_destroy",
+  "tree": "corpus-inputs/c-gateway-wave-pin/fluent-bit-clang-source",
+  "path": "src/flb_output.c",
+  "defined": true,
+  "body_sha256": "7d9c1c91447fbdc6dba565d052eca6e70c22caea8b989e5fb88bd538bd55683e",
+  "unlinks": [
+   {
+    "field": "_head",
+    "top_level": true,
+    "before_free": true
+   }
+  ],
+  "frees": 1
+ },
+ {
+  "function": "flb_output_instance_destroy",
+  "tree": "prep/system/fluent-bit-clang-source",
+  "path": "src/flb_output.c",
+  "defined": true,
+  "body_sha256": "7d9c1c91447fbdc6dba565d052eca6e70c22caea8b989e5fb88bd538bd55683e",
+  "unlinks": [
+   {
+    "field": "_head",
+    "top_level": true,
+    "before_free": true
+   }
+  ],
+  "frees": 1
+ },
+ {
+  "function": "flb_output_instance_destroy",
+  "tree": "prep/slice/fluent-bit-clang-source",
+  "path": "src/flb_output.c",
+  "defined": true,
+  "body_sha256": "7d9c1c91447fbdc6dba565d052eca6e70c22caea8b989e5fb88bd538bd55683e",
+  "unlinks": [
+   {
+    "field": "_head",
+    "top_level": true,
+    "before_free": true
+   }
+  ],
+  "frees": 1
+ },
+ {
+  "function": "flb_input_instance_destroy",
+  "tree": "corpus-inputs/c-gateway-wave-pin/fluent-bit-clang-source",
+  "path": "src/flb_input.c",
+  "defined": true,
+  "body_sha256": "5e5015c0dff3510f521ebc27c8cb0a43889585f18b1ff9aa9ed2b3ebff3d29a6",
+  "unlinks": [
+   {
+    "field": "_head",
+    "top_level": true,
+    "before_free": true
+   }
+  ],
+  "frees": 1
+ },
+ {
+  "function": "flb_input_instance_destroy",
+  "tree": "prep/system/fluent-bit-clang-source",
+  "path": "src/flb_input.c",
+  "defined": true,
+  "body_sha256": "66da9abe7606577ddd300aad4a3e4959d33ff27152883adc01d1c29adfb2fdd2",
+  "unlinks": [
+   {
+    "field": "_head",
+    "top_level": true,
+    "before_free": true
+   }
+  ],
+  "frees": 1
+ },
+ {
+  "function": "flb_input_instance_destroy",
+  "tree": "prep/slice/fluent-bit-clang-source",
+  "path": "src/flb_input.c",
+  "defined": true,
+  "body_sha256": "66da9abe7606577ddd300aad4a3e4959d33ff27152883adc01d1c29adfb2fdd2",
+  "unlinks": [
+   {
+    "field": "_head",
+    "top_level": true,
+    "before_free": true
+   }
+  ],
+  "frees": 1
+ },
+ {
+  "function": "flb_output_flush_destroy",
+  "tree": "corpus-inputs/c-gateway-wave-pin/fluent-bit-clang-source",
+  "path": "include/fluent-bit/flb_output.h",
+  "defined": true,
+  "body_sha256": "0a4b66bf51e35a00cad86bc9b77eec677bc9ad4d6d94cebfa7f4c0e11f269a28",
+  "unlinks": [
+   {
+    "field": "_head",
+    "top_level": true,
+    "before_free": true
+   }
+  ],
+  "frees": 1
+ },
+ {
+  "function": "flb_output_flush_destroy",
+  "tree": "prep/system/fluent-bit-clang-source",
+  "path": "include/fluent-bit/flb_output.h",
+  "defined": true,
+  "body_sha256": "0a4b66bf51e35a00cad86bc9b77eec677bc9ad4d6d94cebfa7f4c0e11f269a28",
+  "unlinks": [
+   {
+    "field": "_head",
+    "top_level": true,
+    "before_free": true
+   }
+  ],
+  "frees": 1
+ },
+ {
+  "function": "flb_output_flush_destroy",
+  "tree": "prep/slice/fluent-bit-clang-source",
+  "path": "include/fluent-bit/flb_output.h",
+  "defined": true,
+  "body_sha256": "0a4b66bf51e35a00cad86bc9b77eec677bc9ad4d6d94cebfa7f4c0e11f269a28",
+  "unlinks": [
+   {
+    "field": "_head",
+    "top_level": true,
+    "before_free": true
+   }
+  ],
+  "frees": 1
+ },
+ {
+  "function": "flb_input_coro_destroy",
+  "tree": "corpus-inputs/c-gateway-wave-pin/fluent-bit-clang-source",
+  "path": "src/flb_input.c",
+  "defined": true,
+  "body_sha256": "c1ccc097d1b7c8cd38c9ce12d42ded7b885e2b148ec59e477c8ae87a77afd742",
+  "unlinks": [
+   {
+    "field": "_head",
+    "top_level": true,
+    "before_free": true
+   }
+  ],
+  "frees": 1
+ },
+ {
+  "function": "flb_input_coro_destroy",
+  "tree": "prep/system/fluent-bit-clang-source",
+  "path": "src/flb_input.c",
+  "defined": true,
+  "body_sha256": "c1ccc097d1b7c8cd38c9ce12d42ded7b885e2b148ec59e477c8ae87a77afd742",
+  "unlinks": [
+   {
+    "field": "_head",
+    "top_level": true,
+    "before_free": true
+   }
+  ],
+  "frees": 1
+ },
+ {
+  "function": "flb_input_coro_destroy",
+  "tree": "prep/slice/fluent-bit-clang-source",
+  "path": "src/flb_input.c",
+  "defined": true,
+  "body_sha256": "c1ccc097d1b7c8cd38c9ce12d42ded7b885e2b148ec59e477c8ae87a77afd742",
+  "unlinks": [
+   {
+    "field": "_head",
+    "top_level": true,
+    "before_free": true
+   }
+  ],
+  "frees": 1
+ },
+ {
+  "function": "flb_tail_file_remove",
+  "tree": "corpus-inputs/c-gateway-wave-pin/fluent-bit-clang-source",
+  "path": "plugins/in_tail/tail_file.c",
+  "defined": true,
+  "body_sha256": "98a04b46fa563f2a593c58f49b93c32df523995ed085f585a5c173be925617e8",
+  "unlinks": [
+   {
+    "field": "_rotate_head",
+    "top_level": false,
+    "before_free": true
+   },
+   {
+    "field": "_head",
+    "top_level": true,
+    "before_free": true
+   }
+  ],
+  "frees": 1
+ },
+ {
+  "function": "flb_tail_file_remove",
+  "tree": "prep/system/fluent-bit-clang-source",
+  "path": "plugins/in_tail/tail_file.c",
+  "defined": true,
+  "body_sha256": "98a04b46fa563f2a593c58f49b93c32df523995ed085f585a5c173be925617e8",
+  "unlinks": [
+   {
+    "field": "_rotate_head",
+    "top_level": false,
+    "before_free": true
+   },
+   {
+    "field": "_head",
+    "top_level": true,
+    "before_free": true
+   }
+  ],
+  "frees": 1
+ },
+ {
+  "function": "flb_tail_file_remove",
+  "tree": "prep/slice/fluent-bit-clang-source",
+  "path": "plugins/in_tail/tail_file.c",
+  "defined": true,
+  "body_sha256": "ad02c55e5f242edeb997b18c4e5f78d0774b42dad14f9c4c439d755d25be9dfc",
+  "unlinks": [
+   {
+    "field": "_rotate_head",
+    "top_level": false,
+    "before_free": true
+   },
+   {
+    "field": "_head",
+    "top_level": true,
+    "before_free": true
+   }
+  ],
+  "frees": 1
+ },
+ {
+  "function": "mk_http_thread_destroy",
+  "tree": "corpus-inputs/c-gateway-wave-pin/fluent-bit-clang-source",
+  "path": "lib/monkey/mk_server/mk_http_thread.c",
+  "defined": true,
+  "body_sha256": "b37b0add364da031f5b7375bb59bffba95453fb6cb93e76a724997603a2839b1",
+  "unlinks": [
+   {
+    "field": "_head",
+    "top_level": true,
+    "before_free": false
+   }
+  ],
+  "frees": 0
+ },
+ {
+  "function": "mk_http_thread_destroy",
+  "tree": "prep/system/fluent-bit-clang-source",
+  "path": "lib/monkey/mk_server/mk_http_thread.c",
+  "defined": true,
+  "body_sha256": "b37b0add364da031f5b7375bb59bffba95453fb6cb93e76a724997603a2839b1",
+  "unlinks": [
+   {
+    "field": "_head",
+    "top_level": true,
+    "before_free": false
+   }
+  ],
+  "frees": 0
+ },
+ {
+  "function": "mk_http_thread_destroy",
+  "tree": "prep/slice/fluent-bit-clang-source",
+  "path": "lib/monkey/mk_server/mk_http_thread.c",
+  "defined": true,
+  "body_sha256": "b37b0add364da031f5b7375bb59bffba95453fb6cb93e76a724997603a2839b1",
+  "unlinks": [
+   {
+    "field": "_head",
+    "top_level": true,
+    "before_free": false
+   }
+  ],
+  "frees": 0
+ }
+]
