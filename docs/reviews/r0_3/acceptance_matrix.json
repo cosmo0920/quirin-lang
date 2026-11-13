@@ -13891,13 +13891,6 @@
    "recorded_by": "LIST-ENTRY-RELEASE-IDENTITY"
   },
   {
-   "id": "LINK-STANDING-SELECTION-TWO-CONFIGURATION-KEYS",
-   "title": "Rule 40 refuses every core Fluent Bit home on the selection routes: both configurations share one key",
-   "why": "Card LERI-CROSS-UNIT-ELEMENTS-RELEASED measured (base 8fd7c8d0d, its own prepare --link of 046accf6 and 90978ac6): the system and tail-pause selections keep every distinct compilation configuration, so each core file (src/flb_engine.c, flb_storage.c, flb_output.c, flb_scheduler.c, flb_task.c, flb_input_chunk.c, flb_engine_dispatch.c, flb_input.c, flb_lib.c, flb_input_thread.c) names two route configurations under its library/file key, of which only the static one is linked into fluent-bit. Condition 13 (unique key) refuses every home there (system: 2 homes derived, 103 refused by the key; slice: 62 derived, 62 refused), including flb_engine_destroy_tasks, flb_storage_input_destroy, flb_output_exit, flb_sched_timer_cleanup, flb_task_retry_clean and flb_sched_destroy. DISCHARGE: key a derived home by its linked route configuration (condition 13 over the linked configurations only, with the unlinked one still defining nothing the link could choose), with Lean (QCore.CrossUnitSummary.standing) and a fixture where an unlinked second configuration is present.",
-   "source": "docs/reports/leri-cross-unit-elements-released/README.md",
-   "recorded_by": "LERI-CROSS-UNIT-ELEMENTS-RELEASED"
-  },
-  {
    "id": "TAIL-FILE-DEFINITION-CENSUS-INCOMPLETE",
    "title": "plugins/in_tail/tail_file.c has an incomplete definition census, which refuses the tail-pause slice's whole import phase",
    "why": "Card LERI-CROSS-UNIT-ELEMENTS-RELEASED measured (90978ac6, its own preparation): tail_file.c's unit reads `enumeration completeness refused: a conditional group's arms leave different file-scope brace depths in the raw scan`, so the slice's definition census is incomplete and every run refuses its import phase (`cross-unit import phase refused: incomplete definition census`), under the stated map and under rule 40 alike; tail_file.c (home of flb_tail_file_remove_all, whose row is Safe) cannot be a home. Its callers in_tail_exit and flb_tail_config_destroy would keep other leaves even with the import. DISCHARGE: decide the conditional group's arms (or the unit's census) without conditional evaluation, then re-measure the slice under rule 40.",
@@ -13907,8 +13900,8 @@
   {
    "id": "SELECTION-ROUTES-SPLIT-CALLER-AND-HOME",
    "title": "The system route holds the released-element drains, the slice holds their callers",
-   "why": "Card LERI-CROSS-UNIT-ELEMENTS-RELEASED: flb_engine_destroy_tasks (src/flb_engine.c) and flb_storage_input_destroy (src/flb_storage.c) are system units; their caller flb_input_instance_destroy is in src/flb_input.c, a slice unit only. Rule 40's condition 12 admits a home only from a configuration the route analyses, so no measurement route holds both halves; the live routes also run on the stated eight-home map (the measure plugin sets QCORE_CROSS_UNIT_LINK_MAP), and their frozen inputs have no linked executable (LINK-PREPARE-PINNED-ROUTE-INPUTS). DISCHARGE: a measured route whose selection holds both the homes and their callers under rule 40 (or the current route's selection widened), measured with a link-resolution side in the measure plugin.",
-   "source": "docs/reports/leri-cross-unit-elements-released/README.md",
+   "why": "Card LERI-CROSS-UNIT-ELEMENTS-RELEASED: flb_engine_destroy_tasks (src/flb_engine.c) and flb_storage_input_destroy (src/flb_storage.c) are system units; their caller flb_input_instance_destroy is in src/flb_input.c, a slice unit only. Rule 40's condition 12 admits a home only from a configuration the route analyses, so no measurement route holds both halves; the live routes also run on the stated eight-home map (the measure plugin sets QCORE_CROSS_UNIT_LINK_MAP), and their frozen inputs have no linked executable (LINK-PREPARE-PINNED-ROUTE-INPUTS). DISCHARGE: a measured route whose selection holds both the homes and their callers under rule 40 (or the current route's selection widened), measured with a link-resolution side in the measure plugin. AMENDED by LINK-STANDING-SELECTION-TWO-CONFIGURATION-KEYS: condition 13 no longer refuses the two-configuration core homes; on the system route flb_engine_destroy_tasks is now derived and imported (one of 13 imported homes), so its caller's absence from the system selection is the remaining route-level blocker there.",
+   "source": "docs/reports/leri-cross-unit-elements-released/README.md, docs/reports/link-standing-selection-two-configuration-keys/README.md",
    "recorded_by": "LERI-CROSS-UNIT-ELEMENTS-RELEASED"
   }
  ],
