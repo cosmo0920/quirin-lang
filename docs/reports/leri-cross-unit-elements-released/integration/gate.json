@@ -1,0 +1,13 @@
+{
+  "note": "Landing integrate/r10 (base main 591e5523f; merges LERI-CROSS-UNIT-ELEMENTS-RELEASED 7e2e255e1, LINK-STANDING-SELECTION-TWO-CONFIGURATION-KEYS 63a81dd17, LERI-HELD-AND-LINK-MEMBER-PREMISES 5bcb4b531, MEASURE-CONTRACT-ONLY-SIDE-WIRING a977370b8, W45-FB-LIST-FINITENESS-PREMISE ed60dad9b). PROVISIONAL: figures expected from the first full landing gate on f47823dd1 (private/integrate-r10/gate) with its five cross-unit fixture failures repaired by 562d4594d; the rerun on the records commit replaces this record.",
+  "workspace_tests": 9476,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 761,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "full landing gate: pending rerun",
+  "lean_audits": 432,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
