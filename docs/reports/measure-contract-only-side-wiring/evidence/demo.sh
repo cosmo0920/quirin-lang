@@ -10,7 +10,8 @@
 # working directory, which spell the same paths the namespace would.
 #
 # Usage: demo.sh DEMO_DIR INPUTS_ROOT LINK_MAP BASE TIP_A TIP_B
-#   DEMO_DIR/src : a clone holding BASE, TIP_A, TIP_B, with
+#   DEMO_DIR/src : a clone holding BASE, TIP_A, TIP_B (submodules checked out
+#                  at their pinned commits), with
 #                  target/release/quirin-audit built at BASE
 #                  (QCORE_AUDIT_BUILD_COMMIT=BASE)
 #   INPUTS_ROOT  : the pinned corpus inputs (c-gateway-wave-pin/...,
@@ -58,9 +59,15 @@ classify() {
   echo $? > "$R/$1.classification.exit"
 }
 
-# Base side: seal every group.
+# Base side: seal every group. BASE_RESUME=1 completes an interrupted base
+# run from the groups it sealed under the same identity (one revision, as
+# CORPUS-GROUP-CHECKPOINTS item 1 showed byte-identical to a plain run).
 git -C "$S" checkout -q --detach "$BASE"
-corpus base 12 --checkpoint-dir "$DEMO/checkpoints"
+if [ "${BASE_RESUME:-0}" = 1 ]; then
+  corpus base 12 --checkpoint-dir "$DEMO/checkpoints" --resume
+else
+  corpus base 12 --checkpoint-dir "$DEMO/checkpoints"
+fi
 cp "$DEMO/checkpoints/pinned-checkpoint-run.json" "$R/base.checkpoint-run.json"
 for tip in a b; do
   rm -rf "$DEMO/checkpoints-$tip"

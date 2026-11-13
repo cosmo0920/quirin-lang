@@ -1,0 +1,876 @@
+{
+  "comparisons": [
+    {
+      "after": "composed",
+      "before": "base",
+      "comparison": "base->composed",
+      "routes": {
+        "corpus": {
+          "after_directory": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-adcf9ce2d0a0640d1/private/card/demo/runs/tip-b/corpus",
+          "artifacts": {
+            "byte_identical_except_named_substitutions": false,
+            "differing": [
+              {
+                "after": "aa16640c102f2793cbf5a7044cdfb6fbf4ac420cceced80eae9a5ccc611f4dd8",
+                "before": "7eed78601d0606b71bb9b916859c1fe4896a57d426bea18095aedb5946c4f8a8",
+                "file": "ended.txt"
+              },
+              {
+                "after": "72e7f02fc8feb9c7043331e86a3d9c0c37decf5045b804793b66a10694bdcaf1",
+                "before": "ead7e98feff8edabe92bcf881d85ec28f8703aaa039ea860050c29aea4dd2781",
+                "file": "started.txt"
+              },
+              {
+                "after": "71f8161462a71bcfe2541094bf6d4903294a143e25b622cac7c70a409040646b",
+                "before": "373d486cfbb6bb313abc13d18d9a720998f39d661a21105b1601358da4eb02d9",
+                "file": "time.txt"
+              }
+            ],
+            "identical": [
+              {
+                "file": "corpus-null.jsonl",
+                "sha256": "95a817a0cc71d3c4f765123b32ed0ff8abe902c7e65f0664507ba0669e2d0aa0"
+              },
+              {
+                "file": "corpus-null.summary.json",
+                "sha256": "b557843c7d0774d49a72b55591c43240dcc91f171b92230b3067d17414b08e07"
+              },
+              {
+                "file": "corpus-outer.json",
+                "sha256": "282c234e37f4aef39ea779f39bd9f634889bd6d3641238cf2f240730e3d727d7"
+              },
+              {
+                "file": "corpus/monkey-source.json",
+                "sha256": "2a4a2a8ca106b543f70e2d15e547ec8f9ead77478eb2de1029ff1333aaad3b1e"
+              },
+              {
+                "file": "corpus/resource-diagnostics.chunk-contracts.json",
+                "sha256": "6edff1fde2ca1bc798ae4234b19b5fb4e86e235e2f3770668cddbd3650698155"
+              },
+              {
+                "file": "corpus/resource-diagnostics.components.json",
+                "sha256": "bba50deaa7ffdf0016cd5c80940947fa78fb9abf7a13ef953cdcbfdf00c40c97"
+              },
+              {
+                "file": "corpus/resource-diagnostics.contracts.json",
+                "sha256": "3033de0bcfb8cd563210b5eca5e0777681b1c841c39f73c2e6f479c9425440d3"
+              },
+              {
+                "file": "corpus/resource-diagnostics.json",
+                "sha256": "7407d07a84c6d915378107984148b97b564fd15eaf9a8507b3e6b342caecfd81"
+              },
+              {
+                "file": "corpus/resource-diagnostics.source-effects.json",
+                "sha256": "9b0fb026ed3cc9b7f7301648feef6c84bb72cc5ecac032b4852f45dd251c7bdc"
+              }
+            ],
+            "identical_after_named_substitution": {},
+            "only_after": [],
+            "only_before": [],
+            "records_not_compared": [
+              "console.log",
+              "corpus.exit",
+              "stderr.log"
+            ]
+          },
+          "before_directory": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-adcf9ce2d0a0640d1/private/card/demo/runs/base/corpus",
+          "composition": {
+            "components": {
+              "after": 179,
+              "before": 179,
+              "union": 179
+            },
+            "conflicts": [],
+            "rows": 179
+          },
+          "conflicts": {
+            "after": [],
+            "before": []
+          },
+          "content_changes": [],
+          "environment_digest_fields": [
+            "assumptions",
+            "build_identity",
+            "environment_sha256",
+            "resource_contracts_sha256",
+            "id"
+          ],
+          "figures": {
+            "after": {
+              "null_rows": 4796,
+              "null_verdicts": {
+                "Safe": 2476,
+                "Unknown": 2303,
+                "Unsafe": 17
+              },
+              "null_verdicts_sha256": "b58f20f55164c6a81b9b81a68c944a3b73b5b59b1580838eca03e24ec596bdef",
+              "row_statuses": {
+                "Safe": 1081,
+                "Unknown": 3617,
+                "Unsafe": 6
+              },
+              "row_verdicts_sha256": "0a307a9e627d1ae9bc93c1640f2452bb6c57de4043dd7678543867a3498ffb28",
+              "rows": 4704,
+              "unit_statuses": {
+                "Safe": 9,
+                "Unknown": 160,
+                "Unsafe": 6,
+                "data_only": 4
+              },
+              "unit_verdicts_sha256": "b88d170b120055ffcbbc4ca2738d32203af0a23f496ec60ce8454a47328fac1f",
+              "units": 179
+            },
+            "before": {
+              "null_rows": 4796,
+              "null_verdicts": {
+                "Safe": 2476,
+                "Unknown": 2303,
+                "Unsafe": 17
+              },
+              "null_verdicts_sha256": "b58f20f55164c6a81b9b81a68c944a3b73b5b59b1580838eca03e24ec596bdef",
+              "row_statuses": {
+                "Safe": 1081,
+                "Unknown": 3617,
+                "Unsafe": 6
+              },
+              "row_verdicts_sha256": "0a307a9e627d1ae9bc93c1640f2452bb6c57de4043dd7678543867a3498ffb28",
+              "rows": 4704,
+              "unit_statuses": {
+                "Safe": 9,
+                "Unknown": 160,
+                "Unsafe": 6,
+                "data_only": 4
+              },
+              "unit_verdicts_sha256": "b88d170b120055ffcbbc4ca2738d32203af0a23f496ec60ce8454a47328fac1f",
+              "units": 179
+            }
+          },
+          "function_rows": {
+            "content_changed": 0,
+            "environment_only": 0,
+            "identical": 4704,
+            "moved": 0,
+            "unmatched": 0
+          },
+          "incomplete_because": [],
+          "moves": [],
+          "profile_baseline": {
+            "after": {
+              "exit": 1,
+              "lines": [
+                "null_rows: baseline 4921, run 4796",
+                "null_verdicts: baseline {'Safe': 2549, 'Unknown': 2355, 'Unsafe': 17}, run {'Safe': 2476, 'Unknown': 2303, 'Unsafe': 17}",
+                "null_verdicts_sha256: baseline '942e35745e4e33fa5e7ec2f09bdc358ed325f57c3eef3a22cdd994a1ba4ed3b0', run 'b58f20f55164c6a81b9b81a68c944a3b73b5b59b1580838eca03e24ec596bdef'",
+                "row_statuses: baseline {'Safe': 1079, 'Unknown': 3745, 'Unsafe': 10}, run {'Safe': 1081, 'Unknown': 3617, 'Unsafe': 6}",
+                "row_verdicts_sha256: baseline '5187f2f37dd403018a526493e7c6d691916e7aeed8811f8c3414a4251ca86a16', run '0a307a9e627d1ae9bc93c1640f2452bb6c57de4043dd7678543867a3498ffb28'",
+                "rows: baseline 4834, run 4704",
+                "unit_statuses: baseline {'Safe': 9, 'Unknown': 164, 'Unsafe': 8, 'data_only': 4}, run {'Safe': 9, 'Unknown': 160, 'Unsafe': 6, 'data_only': 4}",
+                "unit_verdicts_sha256: baseline '45d9840326d86749980d1afda1342a81a067112368830d9e7987cdb54a21991b', run 'b88d170b120055ffcbbc4ca2738d32203af0a23f496ec60ce8454a47328fac1f'",
+                "units: baseline 185, run 179",
+                "eight-home: results moved; record the new baseline with a reason in the same commit (record), or treat the move as a defect"
+              ],
+              "profile": "eight-home"
+            },
+            "before": {
+              "exit": 1,
+              "lines": [
+                "null_rows: baseline 4921, run 4796",
+                "null_verdicts: baseline {'Safe': 2549, 'Unknown': 2355, 'Unsafe': 17}, run {'Safe': 2476, 'Unknown': 2303, 'Unsafe': 17}",
+                "null_verdicts_sha256: baseline '942e35745e4e33fa5e7ec2f09bdc358ed325f57c3eef3a22cdd994a1ba4ed3b0', run 'b58f20f55164c6a81b9b81a68c944a3b73b5b59b1580838eca03e24ec596bdef'",
+                "row_statuses: baseline {'Safe': 1079, 'Unknown': 3745, 'Unsafe': 10}, run {'Safe': 1081, 'Unknown': 3617, 'Unsafe': 6}",
+                "row_verdicts_sha256: baseline '5187f2f37dd403018a526493e7c6d691916e7aeed8811f8c3414a4251ca86a16', run '0a307a9e627d1ae9bc93c1640f2452bb6c57de4043dd7678543867a3498ffb28'",
+                "rows: baseline 4834, run 4704",
+                "unit_statuses: baseline {'Safe': 9, 'Unknown': 164, 'Unsafe': 8, 'data_only': 4}, run {'Safe': 9, 'Unknown': 160, 'Unsafe': 6, 'data_only': 4}",
+                "unit_verdicts_sha256: baseline '45d9840326d86749980d1afda1342a81a067112368830d9e7987cdb54a21991b', run 'b88d170b120055ffcbbc4ca2738d32203af0a23f496ec60ce8454a47328fac1f'",
+                "units: baseline 185, run 179",
+                "eight-home: results moved; record the new baseline with a reason in the same commit (record), or treat the move as a defect"
+              ],
+              "profile": "eight-home"
+            }
+          },
+          "status": "complete",
+          "status_deltas": {
+            "Safe": 0,
+            "Unknown": 0,
+            "Unsafe": 0
+          },
+          "totals": {
+            "after": {
+              "conflicted_unit_rows": 0,
+              "diagnostic_counts": {
+                "double_release": 1,
+                "leak": 7,
+                "summary_conflict": 3,
+                "unknown_alias": 10709,
+                "unsupported": 23454
+              },
+              "function_rows": 4704,
+              "function_status": {
+                "Safe": 1081,
+                "Unknown": 3617,
+                "Unsafe": 6
+              },
+              "row_source": "sidecar",
+              "unit_rows": 179,
+              "unit_verdict": {
+                "Safe": 13,
+                "Unknown": 160,
+                "Unsafe": 6
+              }
+            },
+            "before": {
+              "conflicted_unit_rows": 0,
+              "diagnostic_counts": {
+                "double_release": 1,
+                "leak": 7,
+                "summary_conflict": 3,
+                "unknown_alias": 10709,
+                "unsupported": 23454
+              },
+              "function_rows": 4704,
+              "function_status": {
+                "Safe": 1081,
+                "Unknown": 3617,
+                "Unsafe": 6
+              },
+              "row_source": "sidecar",
+              "unit_rows": 179,
+              "unit_verdict": {
+                "Safe": 13,
+                "Unknown": 160,
+                "Unsafe": 6
+              }
+            }
+          },
+          "unit_field_differences": {},
+          "unit_moves": [],
+          "unit_rows_environment_only": 0,
+          "unmatched": [],
+          "unmatched_units": []
+        }
+      }
+    },
+    {
+      "after": "full",
+      "before": "base",
+      "comparison": "base->full",
+      "routes": {
+        "corpus": {
+          "after_directory": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-adcf9ce2d0a0640d1/private/card/demo/runs/tip-b-full/corpus",
+          "artifacts": {
+            "byte_identical_except_named_substitutions": false,
+            "differing": [
+              {
+                "after": "0610d6284feaa77ab38ae5f7c02cf623efaf27b439934553ca4e861af9fe7551",
+                "before": "7eed78601d0606b71bb9b916859c1fe4896a57d426bea18095aedb5946c4f8a8",
+                "file": "ended.txt"
+              },
+              {
+                "after": "72e7f02fc8feb9c7043331e86a3d9c0c37decf5045b804793b66a10694bdcaf1",
+                "before": "ead7e98feff8edabe92bcf881d85ec28f8703aaa039ea860050c29aea4dd2781",
+                "file": "started.txt"
+              },
+              {
+                "after": "c8edffe2013511f82f69b275598d2df9a289ea2065bdee759fad004090a7ac36",
+                "before": "373d486cfbb6bb313abc13d18d9a720998f39d661a21105b1601358da4eb02d9",
+                "file": "time.txt"
+              }
+            ],
+            "identical": [
+              {
+                "file": "corpus-null.jsonl",
+                "sha256": "95a817a0cc71d3c4f765123b32ed0ff8abe902c7e65f0664507ba0669e2d0aa0"
+              },
+              {
+                "file": "corpus-null.summary.json",
+                "sha256": "b557843c7d0774d49a72b55591c43240dcc91f171b92230b3067d17414b08e07"
+              },
+              {
+                "file": "corpus-outer.json",
+                "sha256": "282c234e37f4aef39ea779f39bd9f634889bd6d3641238cf2f240730e3d727d7"
+              },
+              {
+                "file": "corpus/monkey-source.json",
+                "sha256": "2a4a2a8ca106b543f70e2d15e547ec8f9ead77478eb2de1029ff1333aaad3b1e"
+              },
+              {
+                "file": "corpus/resource-diagnostics.chunk-contracts.json",
+                "sha256": "6edff1fde2ca1bc798ae4234b19b5fb4e86e235e2f3770668cddbd3650698155"
+              },
+              {
+                "file": "corpus/resource-diagnostics.components.json",
+                "sha256": "bba50deaa7ffdf0016cd5c80940947fa78fb9abf7a13ef953cdcbfdf00c40c97"
+              },
+              {
+                "file": "corpus/resource-diagnostics.contracts.json",
+                "sha256": "3033de0bcfb8cd563210b5eca5e0777681b1c841c39f73c2e6f479c9425440d3"
+              },
+              {
+                "file": "corpus/resource-diagnostics.json",
+                "sha256": "7407d07a84c6d915378107984148b97b564fd15eaf9a8507b3e6b342caecfd81"
+              },
+              {
+                "file": "corpus/resource-diagnostics.source-effects.json",
+                "sha256": "9b0fb026ed3cc9b7f7301648feef6c84bb72cc5ecac032b4852f45dd251c7bdc"
+              }
+            ],
+            "identical_after_named_substitution": {},
+            "only_after": [],
+            "only_before": [],
+            "records_not_compared": [
+              "console.log",
+              "corpus.exit",
+              "stderr.log"
+            ]
+          },
+          "before_directory": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-adcf9ce2d0a0640d1/private/card/demo/runs/base/corpus",
+          "composition": {
+            "components": {
+              "after": 179,
+              "before": 179,
+              "union": 179
+            },
+            "conflicts": [],
+            "rows": 179
+          },
+          "conflicts": {
+            "after": [],
+            "before": []
+          },
+          "content_changes": [],
+          "environment_digest_fields": [
+            "assumptions",
+            "build_identity",
+            "environment_sha256",
+            "resource_contracts_sha256",
+            "id"
+          ],
+          "figures": {
+            "after": {
+              "null_rows": 4796,
+              "null_verdicts": {
+                "Safe": 2476,
+                "Unknown": 2303,
+                "Unsafe": 17
+              },
+              "null_verdicts_sha256": "b58f20f55164c6a81b9b81a68c944a3b73b5b59b1580838eca03e24ec596bdef",
+              "row_statuses": {
+                "Safe": 1081,
+                "Unknown": 3617,
+                "Unsafe": 6
+              },
+              "row_verdicts_sha256": "0a307a9e627d1ae9bc93c1640f2452bb6c57de4043dd7678543867a3498ffb28",
+              "rows": 4704,
+              "unit_statuses": {
+                "Safe": 9,
+                "Unknown": 160,
+                "Unsafe": 6,
+                "data_only": 4
+              },
+              "unit_verdicts_sha256": "b88d170b120055ffcbbc4ca2738d32203af0a23f496ec60ce8454a47328fac1f",
+              "units": 179
+            },
+            "before": {
+              "null_rows": 4796,
+              "null_verdicts": {
+                "Safe": 2476,
+                "Unknown": 2303,
+                "Unsafe": 17
+              },
+              "null_verdicts_sha256": "b58f20f55164c6a81b9b81a68c944a3b73b5b59b1580838eca03e24ec596bdef",
+              "row_statuses": {
+                "Safe": 1081,
+                "Unknown": 3617,
+                "Unsafe": 6
+              },
+              "row_verdicts_sha256": "0a307a9e627d1ae9bc93c1640f2452bb6c57de4043dd7678543867a3498ffb28",
+              "rows": 4704,
+              "unit_statuses": {
+                "Safe": 9,
+                "Unknown": 160,
+                "Unsafe": 6,
+                "data_only": 4
+              },
+              "unit_verdicts_sha256": "b88d170b120055ffcbbc4ca2738d32203af0a23f496ec60ce8454a47328fac1f",
+              "units": 179
+            }
+          },
+          "function_rows": {
+            "content_changed": 0,
+            "environment_only": 0,
+            "identical": 4704,
+            "moved": 0,
+            "unmatched": 0
+          },
+          "incomplete_because": [],
+          "moves": [],
+          "profile_baseline": {
+            "after": {
+              "exit": 1,
+              "lines": [
+                "null_rows: baseline 4921, run 4796",
+                "null_verdicts: baseline {'Safe': 2549, 'Unknown': 2355, 'Unsafe': 17}, run {'Safe': 2476, 'Unknown': 2303, 'Unsafe': 17}",
+                "null_verdicts_sha256: baseline '942e35745e4e33fa5e7ec2f09bdc358ed325f57c3eef3a22cdd994a1ba4ed3b0', run 'b58f20f55164c6a81b9b81a68c944a3b73b5b59b1580838eca03e24ec596bdef'",
+                "row_statuses: baseline {'Safe': 1079, 'Unknown': 3745, 'Unsafe': 10}, run {'Safe': 1081, 'Unknown': 3617, 'Unsafe': 6}",
+                "row_verdicts_sha256: baseline '5187f2f37dd403018a526493e7c6d691916e7aeed8811f8c3414a4251ca86a16', run '0a307a9e627d1ae9bc93c1640f2452bb6c57de4043dd7678543867a3498ffb28'",
+                "rows: baseline 4834, run 4704",
+                "unit_statuses: baseline {'Safe': 9, 'Unknown': 164, 'Unsafe': 8, 'data_only': 4}, run {'Safe': 9, 'Unknown': 160, 'Unsafe': 6, 'data_only': 4}",
+                "unit_verdicts_sha256: baseline '45d9840326d86749980d1afda1342a81a067112368830d9e7987cdb54a21991b', run 'b88d170b120055ffcbbc4ca2738d32203af0a23f496ec60ce8454a47328fac1f'",
+                "units: baseline 185, run 179",
+                "eight-home: results moved; record the new baseline with a reason in the same commit (record), or treat the move as a defect"
+              ],
+              "profile": "eight-home"
+            },
+            "before": {
+              "exit": 1,
+              "lines": [
+                "null_rows: baseline 4921, run 4796",
+                "null_verdicts: baseline {'Safe': 2549, 'Unknown': 2355, 'Unsafe': 17}, run {'Safe': 2476, 'Unknown': 2303, 'Unsafe': 17}",
+                "null_verdicts_sha256: baseline '942e35745e4e33fa5e7ec2f09bdc358ed325f57c3eef3a22cdd994a1ba4ed3b0', run 'b58f20f55164c6a81b9b81a68c944a3b73b5b59b1580838eca03e24ec596bdef'",
+                "row_statuses: baseline {'Safe': 1079, 'Unknown': 3745, 'Unsafe': 10}, run {'Safe': 1081, 'Unknown': 3617, 'Unsafe': 6}",
+                "row_verdicts_sha256: baseline '5187f2f37dd403018a526493e7c6d691916e7aeed8811f8c3414a4251ca86a16', run '0a307a9e627d1ae9bc93c1640f2452bb6c57de4043dd7678543867a3498ffb28'",
+                "rows: baseline 4834, run 4704",
+                "unit_statuses: baseline {'Safe': 9, 'Unknown': 164, 'Unsafe': 8, 'data_only': 4}, run {'Safe': 9, 'Unknown': 160, 'Unsafe': 6, 'data_only': 4}",
+                "unit_verdicts_sha256: baseline '45d9840326d86749980d1afda1342a81a067112368830d9e7987cdb54a21991b', run 'b88d170b120055ffcbbc4ca2738d32203af0a23f496ec60ce8454a47328fac1f'",
+                "units: baseline 185, run 179",
+                "eight-home: results moved; record the new baseline with a reason in the same commit (record), or treat the move as a defect"
+              ],
+              "profile": "eight-home"
+            }
+          },
+          "status": "complete",
+          "status_deltas": {
+            "Safe": 0,
+            "Unknown": 0,
+            "Unsafe": 0
+          },
+          "totals": {
+            "after": {
+              "conflicted_unit_rows": 0,
+              "diagnostic_counts": {
+                "double_release": 1,
+                "leak": 7,
+                "summary_conflict": 3,
+                "unknown_alias": 10709,
+                "unsupported": 23454
+              },
+              "function_rows": 4704,
+              "function_status": {
+                "Safe": 1081,
+                "Unknown": 3617,
+                "Unsafe": 6
+              },
+              "row_source": "sidecar",
+              "unit_rows": 179,
+              "unit_verdict": {
+                "Safe": 13,
+                "Unknown": 160,
+                "Unsafe": 6
+              }
+            },
+            "before": {
+              "conflicted_unit_rows": 0,
+              "diagnostic_counts": {
+                "double_release": 1,
+                "leak": 7,
+                "summary_conflict": 3,
+                "unknown_alias": 10709,
+                "unsupported": 23454
+              },
+              "function_rows": 4704,
+              "function_status": {
+                "Safe": 1081,
+                "Unknown": 3617,
+                "Unsafe": 6
+              },
+              "row_source": "sidecar",
+              "unit_rows": 179,
+              "unit_verdict": {
+                "Safe": 13,
+                "Unknown": 160,
+                "Unsafe": 6
+              }
+            }
+          },
+          "unit_field_differences": {},
+          "unit_moves": [],
+          "unit_rows_environment_only": 0,
+          "unmatched": [],
+          "unmatched_units": []
+        }
+      }
+    },
+    {
+      "after": "full",
+      "before": "composed",
+      "comparison": "composed->full",
+      "routes": {
+        "corpus": {
+          "after_directory": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-adcf9ce2d0a0640d1/private/card/demo/runs/tip-b-full/corpus",
+          "artifacts": {
+            "byte_identical_except_named_substitutions": false,
+            "differing": [
+              {
+                "after": "0610d6284feaa77ab38ae5f7c02cf623efaf27b439934553ca4e861af9fe7551",
+                "before": "aa16640c102f2793cbf5a7044cdfb6fbf4ac420cceced80eae9a5ccc611f4dd8",
+                "file": "ended.txt"
+              },
+              {
+                "after": "c8edffe2013511f82f69b275598d2df9a289ea2065bdee759fad004090a7ac36",
+                "before": "71f8161462a71bcfe2541094bf6d4903294a143e25b622cac7c70a409040646b",
+                "file": "time.txt"
+              }
+            ],
+            "identical": [
+              {
+                "file": "corpus-null.jsonl",
+                "sha256": "95a817a0cc71d3c4f765123b32ed0ff8abe902c7e65f0664507ba0669e2d0aa0"
+              },
+              {
+                "file": "corpus-null.summary.json",
+                "sha256": "b557843c7d0774d49a72b55591c43240dcc91f171b92230b3067d17414b08e07"
+              },
+              {
+                "file": "corpus-outer.json",
+                "sha256": "282c234e37f4aef39ea779f39bd9f634889bd6d3641238cf2f240730e3d727d7"
+              },
+              {
+                "file": "corpus/monkey-source.json",
+                "sha256": "2a4a2a8ca106b543f70e2d15e547ec8f9ead77478eb2de1029ff1333aaad3b1e"
+              },
+              {
+                "file": "corpus/resource-diagnostics.chunk-contracts.json",
+                "sha256": "6edff1fde2ca1bc798ae4234b19b5fb4e86e235e2f3770668cddbd3650698155"
+              },
+              {
+                "file": "corpus/resource-diagnostics.components.json",
+                "sha256": "bba50deaa7ffdf0016cd5c80940947fa78fb9abf7a13ef953cdcbfdf00c40c97"
+              },
+              {
+                "file": "corpus/resource-diagnostics.contracts.json",
+                "sha256": "3033de0bcfb8cd563210b5eca5e0777681b1c841c39f73c2e6f479c9425440d3"
+              },
+              {
+                "file": "corpus/resource-diagnostics.json",
+                "sha256": "7407d07a84c6d915378107984148b97b564fd15eaf9a8507b3e6b342caecfd81"
+              },
+              {
+                "file": "corpus/resource-diagnostics.source-effects.json",
+                "sha256": "9b0fb026ed3cc9b7f7301648feef6c84bb72cc5ecac032b4852f45dd251c7bdc"
+              },
+              {
+                "file": "started.txt",
+                "sha256": "72e7f02fc8feb9c7043331e86a3d9c0c37decf5045b804793b66a10694bdcaf1"
+              }
+            ],
+            "identical_after_named_substitution": {},
+            "only_after": [],
+            "only_before": [],
+            "records_not_compared": [
+              "console.log",
+              "corpus.exit",
+              "stderr.log"
+            ]
+          },
+          "before_directory": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-adcf9ce2d0a0640d1/private/card/demo/runs/tip-b/corpus",
+          "composition": {
+            "components": {
+              "after": 179,
+              "before": 179,
+              "union": 179
+            },
+            "conflicts": [],
+            "rows": 179
+          },
+          "conflicts": {
+            "after": [],
+            "before": []
+          },
+          "content_changes": [],
+          "environment_digest_fields": [
+            "assumptions",
+            "build_identity",
+            "environment_sha256",
+            "resource_contracts_sha256",
+            "id"
+          ],
+          "figures": {
+            "after": {
+              "null_rows": 4796,
+              "null_verdicts": {
+                "Safe": 2476,
+                "Unknown": 2303,
+                "Unsafe": 17
+              },
+              "null_verdicts_sha256": "b58f20f55164c6a81b9b81a68c944a3b73b5b59b1580838eca03e24ec596bdef",
+              "row_statuses": {
+                "Safe": 1081,
+                "Unknown": 3617,
+                "Unsafe": 6
+              },
+              "row_verdicts_sha256": "0a307a9e627d1ae9bc93c1640f2452bb6c57de4043dd7678543867a3498ffb28",
+              "rows": 4704,
+              "unit_statuses": {
+                "Safe": 9,
+                "Unknown": 160,
+                "Unsafe": 6,
+                "data_only": 4
+              },
+              "unit_verdicts_sha256": "b88d170b120055ffcbbc4ca2738d32203af0a23f496ec60ce8454a47328fac1f",
+              "units": 179
+            },
+            "before": {
+              "null_rows": 4796,
+              "null_verdicts": {
+                "Safe": 2476,
+                "Unknown": 2303,
+                "Unsafe": 17
+              },
+              "null_verdicts_sha256": "b58f20f55164c6a81b9b81a68c944a3b73b5b59b1580838eca03e24ec596bdef",
+              "row_statuses": {
+                "Safe": 1081,
+                "Unknown": 3617,
+                "Unsafe": 6
+              },
+              "row_verdicts_sha256": "0a307a9e627d1ae9bc93c1640f2452bb6c57de4043dd7678543867a3498ffb28",
+              "rows": 4704,
+              "unit_statuses": {
+                "Safe": 9,
+                "Unknown": 160,
+                "Unsafe": 6,
+                "data_only": 4
+              },
+              "unit_verdicts_sha256": "b88d170b120055ffcbbc4ca2738d32203af0a23f496ec60ce8454a47328fac1f",
+              "units": 179
+            }
+          },
+          "function_rows": {
+            "content_changed": 0,
+            "environment_only": 0,
+            "identical": 4704,
+            "moved": 0,
+            "unmatched": 0
+          },
+          "incomplete_because": [],
+          "moves": [],
+          "profile_baseline": {
+            "after": {
+              "exit": 1,
+              "lines": [
+                "null_rows: baseline 4921, run 4796",
+                "null_verdicts: baseline {'Safe': 2549, 'Unknown': 2355, 'Unsafe': 17}, run {'Safe': 2476, 'Unknown': 2303, 'Unsafe': 17}",
+                "null_verdicts_sha256: baseline '942e35745e4e33fa5e7ec2f09bdc358ed325f57c3eef3a22cdd994a1ba4ed3b0', run 'b58f20f55164c6a81b9b81a68c944a3b73b5b59b1580838eca03e24ec596bdef'",
+                "row_statuses: baseline {'Safe': 1079, 'Unknown': 3745, 'Unsafe': 10}, run {'Safe': 1081, 'Unknown': 3617, 'Unsafe': 6}",
+                "row_verdicts_sha256: baseline '5187f2f37dd403018a526493e7c6d691916e7aeed8811f8c3414a4251ca86a16', run '0a307a9e627d1ae9bc93c1640f2452bb6c57de4043dd7678543867a3498ffb28'",
+                "rows: baseline 4834, run 4704",
+                "unit_statuses: baseline {'Safe': 9, 'Unknown': 164, 'Unsafe': 8, 'data_only': 4}, run {'Safe': 9, 'Unknown': 160, 'Unsafe': 6, 'data_only': 4}",
+                "unit_verdicts_sha256: baseline '45d9840326d86749980d1afda1342a81a067112368830d9e7987cdb54a21991b', run 'b88d170b120055ffcbbc4ca2738d32203af0a23f496ec60ce8454a47328fac1f'",
+                "units: baseline 185, run 179",
+                "eight-home: results moved; record the new baseline with a reason in the same commit (record), or treat the move as a defect"
+              ],
+              "profile": "eight-home"
+            },
+            "before": {
+              "exit": 1,
+              "lines": [
+                "null_rows: baseline 4921, run 4796",
+                "null_verdicts: baseline {'Safe': 2549, 'Unknown': 2355, 'Unsafe': 17}, run {'Safe': 2476, 'Unknown': 2303, 'Unsafe': 17}",
+                "null_verdicts_sha256: baseline '942e35745e4e33fa5e7ec2f09bdc358ed325f57c3eef3a22cdd994a1ba4ed3b0', run 'b58f20f55164c6a81b9b81a68c944a3b73b5b59b1580838eca03e24ec596bdef'",
+                "row_statuses: baseline {'Safe': 1079, 'Unknown': 3745, 'Unsafe': 10}, run {'Safe': 1081, 'Unknown': 3617, 'Unsafe': 6}",
+                "row_verdicts_sha256: baseline '5187f2f37dd403018a526493e7c6d691916e7aeed8811f8c3414a4251ca86a16', run '0a307a9e627d1ae9bc93c1640f2452bb6c57de4043dd7678543867a3498ffb28'",
+                "rows: baseline 4834, run 4704",
+                "unit_statuses: baseline {'Safe': 9, 'Unknown': 164, 'Unsafe': 8, 'data_only': 4}, run {'Safe': 9, 'Unknown': 160, 'Unsafe': 6, 'data_only': 4}",
+                "unit_verdicts_sha256: baseline '45d9840326d86749980d1afda1342a81a067112368830d9e7987cdb54a21991b', run 'b88d170b120055ffcbbc4ca2738d32203af0a23f496ec60ce8454a47328fac1f'",
+                "units: baseline 185, run 179",
+                "eight-home: results moved; record the new baseline with a reason in the same commit (record), or treat the move as a defect"
+              ],
+              "profile": "eight-home"
+            }
+          },
+          "status": "complete",
+          "status_deltas": {
+            "Safe": 0,
+            "Unknown": 0,
+            "Unsafe": 0
+          },
+          "totals": {
+            "after": {
+              "conflicted_unit_rows": 0,
+              "diagnostic_counts": {
+                "double_release": 1,
+                "leak": 7,
+                "summary_conflict": 3,
+                "unknown_alias": 10709,
+                "unsupported": 23454
+              },
+              "function_rows": 4704,
+              "function_status": {
+                "Safe": 1081,
+                "Unknown": 3617,
+                "Unsafe": 6
+              },
+              "row_source": "sidecar",
+              "unit_rows": 179,
+              "unit_verdict": {
+                "Safe": 13,
+                "Unknown": 160,
+                "Unsafe": 6
+              }
+            },
+            "before": {
+              "conflicted_unit_rows": 0,
+              "diagnostic_counts": {
+                "double_release": 1,
+                "leak": 7,
+                "summary_conflict": 3,
+                "unknown_alias": 10709,
+                "unsupported": 23454
+              },
+              "function_rows": 4704,
+              "function_status": {
+                "Safe": 1081,
+                "Unknown": 3617,
+                "Unsafe": 6
+              },
+              "row_source": "sidecar",
+              "unit_rows": 179,
+              "unit_verdict": {
+                "Safe": 13,
+                "Unknown": 160,
+                "Unsafe": 6
+              }
+            }
+          },
+          "unit_field_differences": {},
+          "unit_moves": [],
+          "unit_rows_environment_only": 0,
+          "unmatched": [],
+          "unmatched_units": []
+        }
+      }
+    }
+  ],
+  "contract_only_reuse": {
+    "reason": "not requested (--reuse-contract-only)",
+    "requested": false,
+    "taken": false
+  },
+  "contribution": {
+    "ledgers": [],
+    "rules": [],
+    "schema": "quirin-contribution-ledger/1"
+  },
+  "declared": null,
+  "failures": [],
+  "inputs_spelling": {
+    "spelling": "not prepared (no side runs or reuses a baseline)"
+  },
+  "interactions": [],
+  "routes": [
+    {
+      "definition": {
+        "clang": "/usr/lib/llvm-21/bin/clang",
+        "compile_databases": [
+          {
+            "path": "c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json",
+            "sha256": null
+          },
+          {
+            "path": "c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
+            "sha256": null
+          }
+        ],
+        "inputs_root": "private/prep/cycle19",
+        "kind": "pinned-corpus",
+        "link_map": {
+          "path": "docs/reports/w48-bu-single-leaf-bodies/link-map.corpus.json",
+          "sha256": null
+        },
+        "mirror_trees": [
+          "c-gateway-wave-pin/fluent-bit-clang-source",
+          "c-gateway-wave-pin/monkey",
+          "provider-packages-wave20"
+        ],
+        "name": "corpus",
+        "profile": "eight-home",
+        "source_commit": "66910c10",
+        "tracked": []
+      },
+      "digest": "d6e7e0fd9bf92c52d4f3a1379589f0e3da2fbc6c96a2cdc4c67cd64631c1a5b7",
+      "name": "corpus",
+      "profile": "eight-home"
+    }
+  ],
+  "rules_off": [],
+  "schema": "quirin-native-comparison/1",
+  "sides": {
+    "base": {
+      "binary": null,
+      "build_commit": null,
+      "bundles": null,
+      "directory": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-adcf9ce2d0a0640d1/private/card/demo/runs/base",
+      "inputs": {
+        "corpus": null
+      },
+      "kind": "run",
+      "revision": null,
+      "run_json": {
+        "path": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-adcf9ce2d0a0640d1/private/card/demo/runs/base/run.json",
+        "sha256": null
+      },
+      "spec": "run:/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-adcf9ce2d0a0640d1/private/card/demo/runs/base"
+    },
+    "composed": {
+      "binary": null,
+      "build_commit": null,
+      "bundles": null,
+      "directory": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-adcf9ce2d0a0640d1/private/card/demo/runs/tip-b",
+      "inputs": {
+        "corpus": null
+      },
+      "kind": "run",
+      "revision": null,
+      "run_json": {
+        "path": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-adcf9ce2d0a0640d1/private/card/demo/runs/tip-b/run.json",
+        "sha256": null
+      },
+      "spec": "run:/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-adcf9ce2d0a0640d1/private/card/demo/runs/tip-b"
+    },
+    "full": {
+      "binary": null,
+      "build_commit": null,
+      "bundles": null,
+      "directory": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-adcf9ce2d0a0640d1/private/card/demo/runs/tip-b-full",
+      "inputs": {
+        "corpus": null
+      },
+      "kind": "run",
+      "revision": null,
+      "run_json": {
+        "path": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-adcf9ce2d0a0640d1/private/card/demo/runs/tip-b-full/run.json",
+        "sha256": null
+      },
+      "spec": "run:/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-adcf9ce2d0a0640d1/private/card/demo/runs/tip-b-full"
+    }
+  },
+  "source_date_epoch": 1767225600,
+  "status": "complete",
+  "timing": {
+    "analysis_time_ms": 16427,
+    "limits": {
+      "meaning": "the analysis quota (--timeout-ms) counts analysis time only; declared slot waits are excluded up to the slot-wait limit; the overall wall limit stops the run whatever it declares",
+      "overall_wall_limit_ms": 604800000,
+      "slot_wait_limit_ms": 604800000,
+      "wall_time_quota_ms": 3600000
+    },
+    "sides": {},
+    "slot_wait_meaning": "wall time during which every route in flight waited for its gate slot; the host's --timeout-ms does not count it, up to its slot-wait limit (cards MEASURE-QUOTA-AND-INCREMENTAL, R7, and GATE-SLOT-FIFO-ORDER)",
+    "slot_wait_ms": 0,
+    "wall_time_ms": 16427
+  },
+  "tool": {
+    "name": "quirin-audit-measure",
+    "sha256": "4fc1e129c8d243d4f128712718748b86d031606ea48a5d8216fee365d76f77f8",
+    "version": "0.1.0"
+  }
+}

@@ -1,0 +1,129 @@
+{
+  "analyzer": null,
+  "fingerprint_wall_time_ms": 3724,
+  "groups": [
+    {
+      "analyzer": null,
+      "content_sha256": "b01cd3e5086f3089919a160b343a4255c67b0e684a2b43712db303457709a794",
+      "decision": "reused",
+      "environment_scope": "whole",
+      "group": "cmetrics",
+      "reason": "identity equal",
+      "stage": "first"
+    },
+    {
+      "analyzer": null,
+      "content_sha256": "627a42c3a3290e212fbb2629c3705501504880aad9c3b1123c4b9f503dc52737",
+      "decision": "reused",
+      "environment_scope": "whole",
+      "group": "ctraces",
+      "reason": "identity equal",
+      "stage": "first"
+    },
+    {
+      "analyzer": null,
+      "content_sha256": "53bd38f5446948b5376874605d3518ae3586218831049d8b53e825c999542620",
+      "decision": "reused",
+      "environment_scope": "whole",
+      "group": "librdkafka",
+      "reason": "identity equal",
+      "stage": "first"
+    },
+    {
+      "analyzer": null,
+      "content_sha256": "306479b0f8221a2205989a2f5fea6e1c2306ed3052bc6e1b48855d375e9a86b2",
+      "decision": "reused",
+      "environment_scope": "whole",
+      "group": "chunkio",
+      "reason": "identity equal",
+      "stage": "first"
+    },
+    {
+      "analyzer": null,
+      "content_sha256": "40634fce3be5ca21287f504ef55601d79c9bfe90859ab822150a8b0303881545",
+      "decision": "reused",
+      "environment_scope": "whole",
+      "group": "fluent-bit-chunk",
+      "reason": "identity equal",
+      "stage": "first"
+    },
+    {
+      "analyzer": null,
+      "content_sha256": "61ef3a71b714d820deada8e09aa40acec2485f94672789ecd437934b3aa393e0",
+      "decision": "reused",
+      "environment_scope": "whole",
+      "group": "monkey-libevent",
+      "reason": "identity equal",
+      "stage": "first"
+    },
+    {
+      "stage": "first",
+      "stopped": false,
+      "wall_time_ms": 993
+    },
+    {
+      "analyzer": null,
+      "content_sha256": "477fdec55474d93eb54bf6f70f54b899ed1d65b64174a98be77ac45dec935c41",
+      "decision": "reused",
+      "environment_scope": "whole",
+      "group": "cmetrics",
+      "reason": "identity equal",
+      "stage": "imported"
+    },
+    {
+      "analyzer": null,
+      "content_sha256": "f078e4a9fa4c165ca0cc2651793c6543b22a010251620d1e42ea94886d91faed",
+      "decision": "reused",
+      "environment_scope": "whole",
+      "group": "ctraces",
+      "reason": "identity equal",
+      "stage": "imported"
+    },
+    {
+      "analyzer": null,
+      "content_sha256": "b21e6b4387360e61ea75567bd77cc57b7798d21dfa6b7e3d029c48da7ebf2736",
+      "decision": "reused",
+      "environment_scope": "whole",
+      "group": "librdkafka",
+      "reason": "identity equal",
+      "stage": "imported"
+    },
+    {
+      "analyzer": null,
+      "content_sha256": "2ba7394940e35fa2c4da3b976c986281ed250ce39ef408c56883df07b366486d",
+      "decision": "reused",
+      "environment_scope": "whole",
+      "group": "chunkio",
+      "reason": "identity equal",
+      "stage": "imported"
+    },
+    {
+      "analyzer": null,
+      "content_sha256": "69096ca460f695a0840ab3d37e0df704e2d5d41128c2443ac43c027da10e1179",
+      "decision": "reused",
+      "environment_scope": "whole",
+      "group": "fluent-bit-chunk",
+      "reason": "identity equal",
+      "stage": "imported"
+    },
+    {
+      "analyzer": null,
+      "content_sha256": "bed10ae149138938ed156f12c657575878b600eec65fbd926cd4a0447dd774e6",
+      "decision": "reused",
+      "environment_scope": "whole",
+      "group": "monkey-libevent",
+      "reason": "identity equal",
+      "stage": "imported"
+    },
+    {
+      "stage": "imported",
+      "stopped": false,
+      "wall_time_ms": 967
+    }
+  ],
+  "jobs": 12,
+  "phases_wall_time_ms": 55526,
+  "process_peak_rss_kib": 17349004,
+  "schema_version": 2,
+  "scope": "provenance of one checkpointed pinned run: per stage, which library groups were reused or recomputed and why, the environment scope of each identity, the content digest of each file sealed or reused, the contract-only analyzer acceptance the run stands under (if any), and measured wall times; not an input to any verdict"
+}
