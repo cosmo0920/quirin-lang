@@ -227,4 +227,20 @@ blockers on these routes are the two already registered
 
 ## 7. Gate
 
-GATE
+`python3 scripts/gate_scope.py --base 2b5c8907a` (through
+`private/toolchain/env.sh`) on `28fc06b91` (code equal to the measured
+`b5783177b`; the later commits are records): **exit 0**, mode scoped, 10
+steps ([gate.json](gate.json), logs
+`private/gate-scope/20261113T150526Z-1882847/`, console
+`private/logs/gate-1.console.log`; Clang recording
+[gate/clang-version.txt](gate/clang-version.txt), taken in this worktree).
+
+| Step | Exit | Counts |
+|---|---|---|
+| submodules, fmt, clippy (3 invocations, `-D warnings`) | 0 / 0 / 0 | 1 submodule |
+| Rust suite (`qcore-audit`, `qcore-compiler`, `qcorec` whole; 5 test targets) | 0 | 203 units, 204 summaries; 2,637 passed, 0 failed, 4 ignored |
+| both reevaluation probes | 0 / 0 | |
+| Lean (`gate_lean.py`: `QCore.CrossUnitSummary`, its importer `QCore.CrossUnitElementRelease`) | 0 | 2 audits |
+| Python suite | 0 | 761 tests |
+
+No provider change, so no provider gate.
