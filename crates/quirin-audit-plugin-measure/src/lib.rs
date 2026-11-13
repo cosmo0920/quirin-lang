@@ -27,7 +27,7 @@
 //!     [--inputs-base DIR] [--jobs N] [--build-jobs N] [--mirror auto|always|never] \
 //!     [--mount-root DIR] [--no-slots] [--build-commit TEXT] \
 //!     [--source-date-epoch SECONDS|none] [--baselines DIR] \
-//!     [--legacy-rows]
+//!     [--legacy-rows] [--reuse-contract-only [--verify-reuse]]
 //! quirin-audit --plugin-path DIR --output <baselines>/<sha> measure publish \
 //!     --from OUT/sides/NAME [--routes R,...]
 //! ```
@@ -58,6 +58,7 @@ pub mod declared;
 pub mod inputs;
 pub mod ledger;
 pub mod mirror;
+pub mod reuse;
 pub mod rows;
 pub mod sides;
 pub mod util;
@@ -79,7 +80,8 @@ pub const USAGE: &str = "usage: quirin-audit --output OUT measure (--profile NAM
 [--routes R,...]) --side NAME=SPEC --side NAME=SPEC [--compare A B]... [--declared FILE] \
 [--rules-off IDS [--per-rule]] [--repository DIR] [--inputs-base DIR] [--jobs N] [--build-jobs N] \
 [--mirror auto|always|never] [--mount-root DIR] [--no-slots] [--build-commit TEXT] \
-[--source-date-epoch SECONDS|none] [--baselines DIR] [--legacy-rows]\n       quirin-audit --output <baselines>/<sha> measure \
+[--source-date-epoch SECONDS|none] [--baselines DIR] [--legacy-rows] \
+[--reuse-contract-only [--verify-reuse]]\n       quirin-audit --output <baselines>/<sha> measure \
 publish --from OUT/sides/NAME [--routes R,...]\nSPEC: rev:<rev> | <directory> | <binary> | \
 baseline:<sha> | run:<side directory>";
 
@@ -118,6 +120,9 @@ pub struct Options {
     pub source_date_epoch: Option<String>,
     pub baselines: Option<String>,
     pub legacy_rows: bool,
+    /// Card MEASURE-CONTRACT-ONLY-SIDE-WIRING ([`reuse`]).
+    pub reuse_contract_only: bool,
+    pub verify_reuse: bool,
     pub publish_from: Option<String>,
     pub publish: bool,
 }
@@ -176,6 +181,16 @@ pub fn parse(arguments: &[String]) -> Result<Options, String> {
             "--no-slots" => options.no_slots = true,
             "--legacy-rows" => options.legacy_rows = true,
             "--per-rule" => options.per_rule = true,
+            "--reuse-contract-only" | "--verify-reuse" => {
+                let slot = if flag == "--verify-reuse" {
+                    &mut options.verify_reuse
+                } else {
+                    &mut options.reuse_contract_only
+                };
+                if std::mem::replace(slot, true) {
+                    return Err(format!("{flag} is given twice"));
+                }
+            }
             _ => {
                 let value = rest
                     .get(index + 1)
@@ -248,7 +263,11 @@ pub fn parse(arguments: &[String]) -> Result<Options, String> {
         index += 1;
     }
     if options.publish {
-        if options.publish_from.is_none() || !options.sides.is_empty() {
+        if options.publish_from.is_none()
+            || !options.sides.is_empty()
+            || options.reuse_contract_only
+            || options.verify_reuse
+        {
             return Err(format!(
                 "publish takes --from SIDE_DIRECTORY and no --side\n{USAGE}"
             ));
@@ -257,6 +276,9 @@ pub fn parse(arguments: &[String]) -> Result<Options, String> {
     }
     if options.publish_from.is_some() {
         return Err("--from belongs to `measure publish`".into());
+    }
+    if options.verify_reuse && !options.reuse_contract_only {
+        return Err("--verify-reuse checks --reuse-contract-only: give both".into());
     }
     if options.per_rule && options.rules_off.as_ref().is_none_or(|ids| ids.len() < 2) {
         return Err(
@@ -462,6 +484,7 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
         build_commit: options.build_commit.clone(),
         source_date_epoch,
         rules_off: Vec::new(),
+        checkpoint: None,
     };
     // A rule-switched side is the after side of the first comparison,
     // re-run with the switch: it must run, and its binary must advertise
@@ -518,11 +541,38 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
             ));
         }
     }
+    // Card MEASURE-CONTRACT-ONLY-SIDE-WIRING: whether the first comparison
+    // may be measured with the tip under the base side's analyzer; decided
+    // finally once the base binary has classified the diff.
+    let reuse_candidate = if options.reuse_contract_only {
+        reuse::candidate(
+            &specs,
+            &comparisons,
+            &routes,
+            &rules_off,
+            options.build_commit.as_deref(),
+        )
+    } else {
+        Err("not requested (--reuse-contract-only)".to_owned())
+    };
+    let full_side = match (&reuse_candidate, options.verify_reuse) {
+        (Ok((_, tip)), true) => {
+            let name = format!("{tip}{}", reuse::FULL_SUFFIX);
+            if options.sides.iter().any(|(known, _)| *known == name) {
+                return Err(format!(
+                    "--side {name} collides with the --verify-reuse side of that name"
+                ));
+            }
+            Some(name)
+        }
+        _ => None,
+    };
     let needs_inputs = specs
         .iter()
         .any(|(_, spec)| spec.runs() || matches!(spec, SideSpec::Baseline(_)));
     let (spelled, spelling) = if needs_inputs {
         std::fs::create_dir_all(mount_root.join("src"))
+            .and_then(|()| std::fs::create_dir_all(mount_root.join(sides::WORK_DIRECTORY)))
             .and_then(|()| std::fs::create_dir_all(mount_root.join("mirror")))
             .map_err(|error| format!("{}: {error}", mount_root.display()))?;
         mirror::prepare(
@@ -565,8 +615,13 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
             source_date_epoch,
         ))
     };
-    // Build every running side, in parallel.
-    let running: Vec<&(String, SideSpec)> = specs.iter().filter(|(_, spec)| spec.runs()).collect();
+    // Build every running side, in parallel; a reuse candidate's tip waits
+    // for its base side's binary, below.
+    let deferred_tip = reuse_candidate.as_ref().ok().map(|(_, tip)| tip.clone());
+    let running: Vec<&(String, SideSpec)> = specs
+        .iter()
+        .filter(|(name, spec)| spec.runs() && Some(name) != deferred_tip.as_ref())
+        .collect();
     let built: Vec<Result<Built, String>> = std::thread::scope(|scope| {
         let handles: Vec<_> = running
             .iter()
@@ -588,6 +643,70 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
             .collect()
     });
     let mut built: Vec<Built> = built.into_iter().collect::<Result<_, _>>()?;
+    // The tip of a reuse candidate: checked out, classified by the base
+    // side's binary and given that binary; any refusal builds it as a
+    // separate side, exactly as without the option (fail-closed).
+    let mut reuse_record = json!({
+        "requested": options.reuse_contract_only,
+        "taken": false,
+        "reason": reuse_candidate.as_ref().err(),
+    });
+    let mut reuse_plan: Option<(String, String)> = None;
+    if let Ok((base_name, tip_name)) = &reuse_candidate {
+        let spec = &specs
+            .iter()
+            .find(|(name, _)| name == tip_name)
+            .expect("a candidate side")
+            .1;
+        let base = built
+            .iter()
+            .find(|side| &side.name == base_name)
+            .expect("a built base")
+            .clone();
+        eprintln!("measure: preparing side {tip_name} under side {base_name}'s analyzer");
+        match reuse::prepare_tip(tip_name, spec, &base, &context) {
+            Ok(tip) => {
+                reuse_record = json!({
+                    "requested": true,
+                    "taken": true,
+                    "base": base_name,
+                    "tip": tip_name,
+                    "base_revision": base.revision,
+                    "tip_revision": tip.revision,
+                    "binary_sha256": tip.record["binary"]["sha256"],
+                    "build_commit": tip.build_commit,
+                    "classification": tip.record["contract_only_reuse"]["classification"],
+                    "working_directory_as_run":
+                        mount_root.join(sides::WORK_DIRECTORY).display().to_string(),
+                    "checkpoints": routes.iter()
+                        .filter(|route| matches!(route.kind, inputs::RouteKind::PinnedCorpus { .. }))
+                        .map(|route| (route.name.clone(),
+                            reuse::checkpoint_directory(&output, &route.name).display().to_string()))
+                        .collect::<BTreeMap<_, _>>(),
+                    "verification": full_side.as_ref().map_or(Value::Null, |_| json!("pending")),
+                });
+                if let Some(full_name) = &full_side {
+                    let mut full = tip.clone();
+                    full.name.clone_from(full_name);
+                    full.directory = output.join("sides").join(full_name);
+                    std::fs::create_dir_all(&full.directory).map_err(|error| error.to_string())?;
+                    full.record["side"] = json!(full_name);
+                    full.record["contract_only_reuse"]["verifies"] = json!(tip_name);
+                    built.push(tip);
+                    built.push(full);
+                } else {
+                    built.push(tip);
+                }
+                reuse_plan = Some((base_name.clone(), tip_name.clone()));
+            }
+            Err(reason) => {
+                eprintln!("measure: side {tip_name} is measured separately: {reason}");
+                reuse_record["reason"] = json!(reason);
+                reuse::discard(&context, tip_name)?;
+                built.push(sides::build(tip_name, spec, &context)?);
+            }
+        }
+    }
     if let Some(tip) = &switched {
         let base = built
             .iter()
@@ -621,6 +740,12 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
         .flat_map(|side| routes.iter().map(move |route| (side, route)))
         .collect();
     let begun: Vec<waits::Job> = jobs.iter().map(|_| tracker.begin()).collect();
+    // Card MEASURE-CONTRACT-ONLY-SIDE-WIRING: the base side's pinned routes
+    // that have finished; the tip's wait for theirs before resuming.
+    let sealed = (
+        std::sync::Mutex::new(std::collections::BTreeSet::<String>::new()),
+        std::sync::Condvar::new(),
+    );
     let results: Vec<(usize, String, Result<Value, String>)> = std::thread::scope(|scope| {
         let handles: Vec<_> = jobs
             .iter()
@@ -631,12 +756,80 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
                 let context = &context;
                 let mirror_binding = &mirror_binding;
                 let switched_sides = &switched_sides;
+                let reuse_plan = &reuse_plan;
+                let sealed = &sealed;
+                let output = &output;
                 scope.spawn(move || {
                     let mut context = context.clone();
                     if let Some(off_list) = switched_sides.get(&built[side].name)
                         && built[side].record["rules_off"].is_array()
                     {
                         context.rules_off.clone_from(off_list);
+                    }
+                    let pinned = matches!(route.kind, inputs::RouteKind::PinnedCorpus { .. });
+                    let role = reuse_plan
+                        .as_ref()
+                        .filter(|_| pinned)
+                        .and_then(|(base, tip)| {
+                            if &built[side].name == base {
+                                Some(None)
+                            } else if &built[side].name == tip {
+                                Some(Some(&built[side]))
+                            } else {
+                                None
+                            }
+                        });
+                    // Signals the base route's end however it ends.
+                    struct Signal<'a>(
+                        &'a (
+                            std::sync::Mutex<std::collections::BTreeSet<String>>,
+                            std::sync::Condvar,
+                        ),
+                        String,
+                    );
+                    impl Drop for Signal<'_> {
+                        fn drop(&mut self) {
+                            let (done, changed) = self.0;
+                            done.lock()
+                                .unwrap_or_else(std::sync::PoisonError::into_inner)
+                                .insert(self.1.clone());
+                            changed.notify_all();
+                        }
+                    }
+                    let mut signal = None;
+                    match role {
+                        Some(None) => {
+                            context.checkpoint = Some(sides::Checkpoint {
+                                directory: reuse::checkpoint_directory(output, &route.name),
+                                accept_base: None,
+                            });
+                            signal = Some(Signal(sealed, route.name.clone()));
+                        }
+                        // The tip resumes from what the base side sealed: it
+                        // starts once the base side's route has ended.
+                        Some(Some(tip)) => {
+                            let (done, changed) = sealed;
+                            let mut finished = done
+                                .lock()
+                                .unwrap_or_else(std::sync::PoisonError::into_inner);
+                            while !finished.contains(&route.name) {
+                                finished = changed
+                                    .wait(finished)
+                                    .unwrap_or_else(std::sync::PoisonError::into_inner);
+                            }
+                            drop(finished);
+                            let base = reuse_plan.as_ref().map(|(base, _)| base).expect("planned");
+                            let revision = built
+                                .iter()
+                                .find(|candidate| &candidate.name == base)
+                                .and_then(|candidate| candidate.revision.clone())
+                                .expect("a rev side has a revision");
+                            context.checkpoint = Some(sides::Checkpoint {
+                                directory: reuse::checkpoint_directory(output, &route.name),
+                                accept_base: Some((revision, tip.source_run.clone())),
+                            });
+                        }
+                        None => {}
                     }
                     eprintln!("measure: side {} route {}", built[side].name, route.name);
                     let result = sides::run_route(
@@ -649,6 +842,7 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
                         &context,
                         &mut job,
                     );
+                    drop(signal);
                     drop(job);
                     (side, route.name.clone(), result)
                 })
@@ -815,6 +1009,16 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
     }
     let mut comparison_pairs = comparisons.clone();
     let mut per_rule_labels = std::collections::BTreeSet::new();
+    // The verification comparison (base against the full side) is evidence
+    // for the reuse, not a measured comparison: its rows are no interaction.
+    let verification_label = match (&reuse_plan, &full_side) {
+        (Some((base, _)), Some(full)) => {
+            comparison_pairs.push((base.clone(), full.clone()));
+            per_rule_labels.insert(format!("{base}->{full}"));
+            Some(format!("{base}->{full}"))
+        }
+        _ => None,
+    };
     if let Some(switch) = &switch {
         for (side, _) in switch.sides() {
             if side != switch.joint {
@@ -941,6 +1145,47 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
             json!({"comparison": label, "before": before, "after": after, "routes": per_route}),
         );
     }
+    // `--verify-reuse`: the reused tip against the full side, per route.
+    if let (Some(label), Some((_, tip)), Some(full)) =
+        (&verification_label, &reuse_plan, &full_side)
+    {
+        let first = &records[0]["routes"];
+        let against = records
+            .iter()
+            .find(|record| record["comparison"] == json!(label))
+            .map(|record| record["routes"].clone())
+            .unwrap_or(Value::Null);
+        let mut verified = BTreeMap::new();
+        for route in &routes {
+            let directories = [tip, full].map(|name| {
+                built
+                    .iter()
+                    .find(|side| &side.name == name)
+                    .map(|side| side.directory.join(&route.name))
+            });
+            let entry = match directories {
+                [Some(reused), Some(fresh)] => match compare::artifacts(&reused, &fresh) {
+                    Ok(artifacts) => {
+                        reuse::verify_route(&artifacts, &first[&route.name], &against[&route.name])
+                    }
+                    Err(error) => json!({"error": error}),
+                },
+                _ => json!({"error": "a side was not run"}),
+            };
+            if entry["artifacts_byte_identical"] != json!(true)
+                || entry["comparison_equal"] != json!(true)
+            {
+                failures.push(format!(
+                    "--verify-reuse route {}: the reused side {tip} is not byte-identical to the \
+                     full side {full}",
+                    route.name
+                ));
+            }
+            verified.insert(route.name.clone(), entry);
+        }
+        reuse_record["verification"] = json!({"full_side": full, "comparison": label,
+                                              "routes": verified});
+    }
     let declared_record = declaration
         .as_ref()
         .map_or(Value::Null, |(path, digest, _)| {
@@ -1047,6 +1292,7 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
         "rules_off": rules_off,
         "source_date_epoch": source_date_epoch,
         "contribution": contribution,
+        "contract_only_reuse": reuse_record,
         "timing": timing,
     });
     let record_path = output.join("native-comparison.json");

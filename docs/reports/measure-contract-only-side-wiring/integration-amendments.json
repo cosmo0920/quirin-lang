@@ -1,0 +1,44 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "MEASURE-CONTRACT-ONLY-SIDE-WIRING",
+  "base": "8fd7c8d0d",
+  "measured_tip": "0bbad3f67",
+  "increment_paragraph": "**MEASURE-CONTRACT-ONLY-SIDE-WIRING** (2026-11-13). `quirin-audit measure --reuse-contract-only` measures the first comparison's tip of a classified contract-only diff with the base side's analyzer: for two `rev:` sides with a pinned corpus route (no `--rules-off`, no `--build-commit`) the base is built first, the tip is checked out as a shared clone, the base binary classifies `BASE..TIP` (new `quirin-audit pinned --classify-only`, one `quirin-contract-only-classification/1` line) and, on acceptance, is copied into the tip tree in place of a build; the base side's pinned route seals into `checkpoints/<route>` and the tip's waits, then resumes from it under `--accept-base-analyzer` (forwarded by `run_pinned_audit.py`). Any refusal builds the tip as a separate side, exactly as before. Every snapshot route now runs from one spelled working directory (`<mount root>/work`, its private directory bound there), the minimal part of PINNED-ROWS-BIND-WORKING-DIRECTORY the checkpoint identity needs; `--verify-reuse` adds a `<tip>-full` side and fails unless the reused tip is byte-identical to it. Finding: the acceptance was inert on every base holding it, because the classifier's include scan read its own tests' string literals (`include_str!(PATH)`) and refused; `contract_only_diff::code_mask` now counts only includes in code (comments, string, raw, byte, C and character literals skipped; a lexer test keeps a real include visible after each literal form). Evidence (the tool's command sequence by hand on locally prepared Fluent Bit 66910c10 inputs, since this host refuses the user namespaces `rev:` sides need; compared by `quirin-audit measure` over `run:` sides): for the sampled landing a1bb5a981 replayed on the card base and for a contract comment the route does not read, the composed tip's nine report artifacts equal a full run's byte for byte (4,704 function rows) and base-to-composed equals base-to-full. Timings: the unread diff resumed all 12 groups in 4:19 against a 52:21 full tip; the replayed landing recomputed all 12 (`run.pin_evaluation_sha256 differs`: the run-wide pin template digests every pinned module's text) in 1:25:05 against 1:25:26, so for a loaded-contract edit the reuse costs time even after GATEWAY-WHOLE-TABLE-READS (PINNED-RUN-IDENTITY-PIN-EVALUATION). Scoped gate exit 0 (2,665 Rust tests, 761 Python). No verdict, coverage, contract or baseline change. Report: docs/reports/measure-contract-only-side-wiring/README.md.",
+  "status_paragraph": "**Contract-only measurements can reuse base-side pinned groups** (MEASURE-CONTRACT-ONLY-SIDE-WIRING, 2026-11-13): `quirin-audit measure --reuse-contract-only` measures a classified contract-only tip with the base side's analyzer, resuming the base side's pinned group checkpoints from one working directory; composed equals full byte for byte on a replayed sampled landing. Groups are reused only when the corpus route reads none of the diff: an edit to a loaded contract recomputes every group (run-wide pin template and whole-table reads; PINNED-RUN-IDENTITY-PIN-EVALUATION, GATEWAY-WHOLE-TABLE-READS). No verdict or baseline moved.",
+  "ledger": [
+    {
+      "id": "MEASURE-CONTRACT-ONLY-SIDE-WIRING",
+      "operation": "retire",
+      "why": "DONE by MEASURE-CONTRACT-ONLY-SIDE-WIRING (docs/reports/measure-contract-only-side-wiring/README.md): for a diff the base side's binary classifies contract-only, `quirin-audit measure --reuse-contract-only` runs the tip side with the base binary and the base side's checkpoint directory from one spelled working directory, and any other diff keeps separate sides; the classifier's self-refusal (its tests' string literals) fixed; the replayed sampled landing a1bb5a981 and an unread contract diff each give a composed tip byte-identical to a full run. Its effect on contract cards waits on PINNED-RUN-IDENTITY-PIN-EVALUATION and GATEWAY-WHOLE-TABLE-READS.",
+      "source": "docs/reports/measure-contract-only-side-wiring/README.md"
+    },
+    {
+      "id": "PINNED-RUN-IDENTITY-PIN-EVALUATION",
+      "operation": "register",
+      "title": "The pinned run identity digests every pinned module's text, so a loaded contract edit recomputes every group",
+      "text": "Registered by MEASURE-CONTRACT-ONLY-SIDE-WIRING (docs/reports/measure-contract-only-side-wiring/README.md section 4). The pinned checkpoint run identity includes pin_evaluation_sha256, the digest of contract_revision::template, which records for every pinned contract the SHA-256 of its module's text (module_sha256). Run identity is compared before any stage environment, so a contract-only diff editing any module that holds a pinned contract (the replayed landing a1bb5a981: logging.qv's header) recomputes all 12 corpus groups with reason `run.pin_evaluation_sha256 differs`, even after GATEWAY-WHOLE-TABLE-READS lets groups seal restricted. DISCHARGE: the pin evaluation keyed per group on the pinned functions its units read (or shown unread by them), so such a diff reuses the groups that read no changed pin, composed equal to a full run.",
+      "source": "docs/reports/measure-contract-only-side-wiring/README.md",
+      "recorded_by": "MEASURE-CONTRACT-ONLY-SIDE-WIRING"
+    },
+    {
+      "id": "MEASURE-REUSE-NAMESPACE-HOSTS",
+      "operation": "register",
+      "title": "rev: sides (and so the contract-only reuse path) need unprivileged user namespaces",
+      "text": "Registered by MEASURE-CONTRACT-ONLY-SIDE-WIRING (docs/reports/measure-contract-only-side-wiring/README.md section 3). quirin-audit measure builds and runs every rev: side under `unshare -rm` to bind its tree (and now its working directory) at one fixed path; on a host whose AppArmor policy refuses unprivileged user namespaces (kernel.apparmor_restrict_unprivileged_userns = 1, Ubuntu's default) `unshare` fails and no rev: side runs, so the reuse path was demonstrated by its command sequence by hand. DISCHARGE: the integrator's release-host run of `--reuse-contract-only --verify-reuse` on a contract-only landing passing, and either a namespace-free fixed spelling for rev: sides or a documented host requirement checked before anything is built.",
+      "source": "docs/reports/measure-contract-only-side-wiring/README.md",
+      "recorded_by": "MEASURE-CONTRACT-ONLY-SIDE-WIRING"
+    },
+    {
+      "id": "PINNED-ROWS-BIND-WORKING-DIRECTORY",
+      "operation": "amend",
+      "text": "AMENDED (MEASURE-CONTRACT-ONLY-SIDE-WIRING, docs/reports/measure-contract-only-side-wiring/README.md): the fixed-measurement-directory option is taken for snapshot sides: every rev: route runs from <mount root>/work with its private directory bound there, so every snapshot side of every measurement spells one working directory and the reuse path's checkpoint identities can match. Checkout and binary sides still run from their own directories, and the rows still digest the process directory; not discharged for them.",
+      "source": "docs/reports/measure-contract-only-side-wiring/README.md"
+    },
+    {
+      "id": "MEASURE-INCREMENTAL-BASELINE-COMPOSITION",
+      "operation": "amend",
+      "text": "AMENDED (MEASURE-CONTRACT-ONLY-SIDE-WIRING, docs/reports/measure-contract-only-side-wiring/README.md): the measure tool now reuses base-side pinned groups for a classified contract-only diff (--reuse-contract-only); it saves analysis only for diffs the corpus route does not read until PINNED-RUN-IDENTITY-PIN-EVALUATION and GATEWAY-WHOLE-TABLE-READS.",
+      "source": "docs/reports/measure-contract-only-side-wiring/README.md"
+    }
+  ]
+}

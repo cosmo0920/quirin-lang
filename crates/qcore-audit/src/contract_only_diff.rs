@@ -231,8 +231,134 @@ fn join_normalized(base: &str, relative: &str) -> Option<String> {
     Some(parts.join("/"))
 }
 
+/// Card **MEASURE-CONTRACT-ONLY-SIDE-WIRING**: which bytes of a Rust source
+/// are code, not a comment (line, nested block, doc) or a literal (string,
+/// raw string, byte or C string, character). An include macro spelled inside
+/// a comment or a literal compiles nothing in, and before this the scan read
+/// every spelling: the classifier's own tests spell unenumerable includes in
+/// string literals, so every base tree holding the classifier refused its own
+/// classification. Only an occurrence starting in code is an include; the
+/// argument of one is read from the raw text as before.
+#[must_use]
+pub fn code_mask(text: &str) -> Vec<bool> {
+    let bytes = text.as_bytes();
+    let mut code = vec![true; bytes.len()];
+    let identifier = |byte: u8| byte.is_ascii_alphanumeric() || byte == b'_';
+    let mut index = 0;
+    while index < bytes.len() {
+        let start = index;
+        let at = |offset: usize| bytes.get(index + offset).copied();
+        let boundary = start == 0 || !identifier(bytes[start - 1]);
+        if at(0) == Some(b'/') && at(1) == Some(b'/') {
+            while index < bytes.len() && bytes[index] != b'\n' {
+                index += 1;
+            }
+        } else if at(0) == Some(b'/') && at(1) == Some(b'*') {
+            let mut depth = 0_usize;
+            while index < bytes.len() {
+                if bytes[index] == b'/' && bytes.get(index + 1) == Some(&b'*') {
+                    depth += 1;
+                    index += 2;
+                } else if bytes[index] == b'*' && bytes.get(index + 1) == Some(&b'/') {
+                    depth -= 1;
+                    index += 2;
+                    if depth == 0 {
+                        break;
+                    }
+                } else {
+                    index += 1;
+                }
+            }
+        } else if let Some(prefix) = boundary
+            .then(|| {
+                // `r"`, `r#"`, `br"`, `cr#"`, ...: a raw string.
+                ["r", "br", "cr"].into_iter().find(|prefix| {
+                    let after = &bytes[start + prefix.len().min(bytes.len() - start)..];
+                    bytes[start..].starts_with(prefix.as_bytes())
+                        && after
+                            .iter()
+                            .position(|byte| *byte != b'#')
+                            .is_some_and(|quote| after[quote] == b'"')
+                })
+            })
+            .flatten()
+        {
+            index += prefix.len();
+            let mut hashes = 0;
+            while bytes.get(index) == Some(&b'#') {
+                hashes += 1;
+                index += 1;
+            }
+            index += 1;
+            while index < bytes.len() {
+                if bytes[index] == b'"'
+                    && bytes.len() >= index + 1 + hashes
+                    && bytes[index + 1..index + 1 + hashes]
+                        .iter()
+                        .all(|b| *b == b'#')
+                {
+                    index += 1 + hashes;
+                    break;
+                }
+                index += 1;
+            }
+        } else if at(0) == Some(b'"')
+            || (boundary && matches!(at(0), Some(b'b' | b'c')) && at(1) == Some(b'"'))
+        {
+            index += if at(0) == Some(b'"') { 1 } else { 2 };
+            while index < bytes.len() {
+                match bytes[index] {
+                    b'\\' => index += 2,
+                    b'"' => {
+                        index += 1;
+                        break;
+                    }
+                    _ => index += 1,
+                }
+            }
+        } else if at(0) == Some(b'\'') || (boundary && at(0) == Some(b'b') && at(1) == Some(b'\''))
+        {
+            // A character literal, or a lifetime or label (code).
+            let quote = if at(0) == Some(b'\'') { 0 } else { 1 };
+            let first = index + quote + 1;
+            let end = match bytes.get(first) {
+                Some(b'\\') => bytes[first + 1..]
+                    .iter()
+                    .skip(1)
+                    .position(|byte| *byte == b'\'')
+                    .map(|position| first + 2 + position),
+                Some(lead) => {
+                    let width = match lead {
+                        0x00..=0x7f => 1,
+                        0xc0..=0xdf => 2,
+                        0xe0..=0xef => 3,
+                        _ => 4,
+                    };
+                    (bytes.get(first + width) == Some(&b'\'')).then_some(first + width)
+                }
+                None => None,
+            };
+            match end {
+                Some(end) => index = end + 1,
+                None => {
+                    index += 1;
+                    continue;
+                }
+            }
+        } else {
+            index += 1;
+            continue;
+        }
+        for flag in &mut code[start..index.min(bytes.len())] {
+            *flag = false;
+        }
+    }
+    code
+}
+
 /// The repository-relative paths the include macros of `text` (the file
-/// `path`, in crate `crate_root`) compile in.
+/// `path`, in crate `crate_root`) compile in. A spelling inside a comment or
+/// a literal is not an include ([`code_mask`]).
 ///
 /// # Errors
 ///
@@ -240,10 +366,16 @@ fn join_normalized(base: &str, relative: &str) -> Option<String> {
 /// `concat!(env!("CARGO_MANIFEST_DIR"), "literal")`.
 pub fn includes_of(path: &str, crate_root: &str, text: &str) -> Result<Vec<String>, String> {
     let directory = path.rsplit_once('/').map_or("", |(directory, _)| directory);
+    let code = code_mask(text);
     let mut out = Vec::new();
     let mut rest = text;
     let mut offset = 0;
     while let Some(found) = rest.find("include") {
+        if !code[offset + found] {
+            offset += found + 1;
+            rest = &text[offset..];
+            continue;
+        }
         let after = &rest[found + "include".len()..];
         let suffix = ["_str!", "_bytes!", "!"]
             .into_iter()
@@ -510,6 +642,52 @@ mod tests {
         assert_eq!(crate_root_of("crates/k/src/a/b.rs"), "crates/k");
     }
 
+    /// Card MEASURE-CONTRACT-ONLY-SIDE-WIRING: a spelling inside a comment
+    /// or a literal is no include; one in code still is, after every literal
+    /// form that could hide it if lexed wrongly.
+    #[test]
+    fn only_includes_in_code_count_and_literals_do_not_hide_code() {
+        let quiet = concat!(
+            "// include_str!(PATH)\n",
+            "/// include_str!(PATH)\n",
+            "/* outer /* include_str!(PATH) */ still include_str!(PATH) */\n",
+            "const S: &str = \"include_str!(PATH) \\\" include_str!(PATH)\";\n",
+            "const R: &str = r#\"include_str!(PATH) \" include_str!(PATH)\"#;\n",
+            "const B: &[u8] = b\"include_str!(PATH)\";\n",
+            "const BR: &[u8] = br##\"include_str!(PATH) \"# include_str!(PATH)\"##;\n",
+        );
+        assert_eq!(
+            includes_of("crates/k/src/m.rs", "crates/k", quiet).unwrap(),
+            Vec::<String>::new()
+        );
+        // Each literal form is followed by a real include, which must be read.
+        for prefix in [
+            "let q = '\"';",
+            "let q = b'\"';",
+            "let e = '\\'';",
+            "let b = '\\\\';",
+            "let u = '\\u{22}';",
+            "let w = 'é';",
+            "fn f<'a>(x: &'a str) -> &'a str { x } let l = 'outer: loop { break 'outer; };",
+            "let s = \"a\\\\\";",
+            "let r = r\"a\\\";",
+            "let h = r#type;",
+            "/* a */ let c = 1; // b\n",
+        ] {
+            let text = format!("{prefix}\nconst X: &str = include_str!(PATH);\n");
+            assert!(
+                includes_of("crates/k/src/m.rs", "crates/k", &text).is_err(),
+                "an include after `{prefix}` must stay visible"
+            );
+            let text = format!("{prefix}\nconst X: &str = include_str!(\"../data/x.qv\");\n");
+            assert_eq!(
+                includes_of("crates/k/src/m.rs", "crates/k", &text).unwrap(),
+                vec!["crates/k/data/x.qv".to_owned()],
+                "{prefix}"
+            );
+        }
+    }
+
     /// A scratch Git repository, removed on drop.
     struct Repository(PathBuf);
 
@@ -686,6 +864,19 @@ mod tests {
         for (revision, accepted) in samples {
             let result = classify(&repository, &format!("{revision}~1"), revision);
             assert_eq!(result.is_ok(), accepted, "{revision}: {result:?}");
+        }
+        // Card MEASURE-CONTRACT-ONLY-SIDE-WIRING: a base holding this
+        // classifier classifies (its tests' spellings are literals), and the
+        // sampled landing a1bb5a981 (a loaded contract's header and its
+        // inventory lock) is accepted against its parent.
+        let compiled = compiled_in(&repository, "HEAD").unwrap();
+        assert!(
+            compiled.contains(
+                "providers/quirin-provider-shared/contracts/library/source_projection.qv"
+            )
+        );
+        if present("a1bb5a981~1") {
+            assert!(classify(&repository, "a1bb5a981~1", "a1bb5a981").is_ok());
         }
     }
 }

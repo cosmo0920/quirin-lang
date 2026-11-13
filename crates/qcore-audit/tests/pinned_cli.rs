@@ -141,3 +141,130 @@ fn pinned_checkpoints_refuse_unsupported_environments_before_any_replay() {
         assert!(!std::path::Path::new("never-created").exists());
     }
 }
+
+/// Card MEASURE-CONTRACT-ONLY-SIDE-WIRING: `pinned --classify-only` answers
+/// the classification a run claiming the base analyzer would get, as one JSON
+/// line or a refusal, and takes no run options.
+#[test]
+fn classify_only_answers_the_contract_only_classification_without_a_run() {
+    let directory = std::env::temp_dir().join(format!(
+        "qcore-classify-only-{}-{}",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
+    std::fs::create_dir_all(directory.join("contract/m")).unwrap();
+    std::fs::create_dir_all(directory.join("crates/a/src")).unwrap();
+    std::fs::write(directory.join("contract/m/x.qv"), "module contract;\n").unwrap();
+    std::fs::write(directory.join("crates/a/src/lib.rs"), "pub fn a() {}\n").unwrap();
+    let git = |arguments: &[&str]| {
+        let output = Command::new("git")
+            .args(arguments)
+            .current_dir(&directory)
+            .output()
+            .unwrap();
+        assert!(output.status.success(), "git {arguments:?}");
+        String::from_utf8(output.stdout).unwrap().trim().to_owned()
+    };
+    let commit = |message: &str| {
+        git(&["add", "-A"]);
+        git(&[
+            "-c",
+            "user.name=t",
+            "-c",
+            "user.email=t@t",
+            "commit",
+            "-q",
+            "-m",
+            message,
+        ]);
+        git(&["rev-parse", "HEAD"])
+    };
+    git(&["init", "-q"]);
+    let base = commit("base");
+    std::fs::write(
+        directory.join("contract/m/x.qv"),
+        "module contract;\n// c\n",
+    )
+    .unwrap();
+    let tip = commit("contract only");
+    let classify = |base: &str| {
+        Command::new(HOST)
+            .args(["pinned", "--classify-only", "--accept-base-analyzer", base])
+            .arg("--repository")
+            .arg(&directory)
+            .output()
+            .unwrap()
+    };
+    let accepted = classify(&base);
+    assert!(
+        accepted.status.success(),
+        "{}",
+        String::from_utf8_lossy(&accepted.stderr)
+    );
+    let line: serde_json::Value = serde_json::from_slice(&accepted.stdout).unwrap();
+    assert_eq!(line["schema"], "quirin-contract-only-classification/1");
+    assert_eq!(line["accepted"], true);
+    assert_eq!(line["acceptance"]["base"], base.as_str());
+    assert_eq!(line["acceptance"]["tip"], tip.as_str());
+    assert_eq!(
+        line["acceptance"]["paths"],
+        serde_json::json!(["contract/m/x.qv"])
+    );
+    assert_eq!(line["decision"]["accepted_from"], "base");
+    std::fs::write(directory.join("crates/a/src/lib.rs"), "pub fn b() {}\n").unwrap();
+    commit("analyzer source");
+    let refused = classify(&base);
+    assert!(!refused.status.success());
+    assert!(refused.stdout.is_empty());
+    assert!(
+        String::from_utf8_lossy(&refused.stderr)
+            .contains("analyzer acceptance refused: the diff is not confined to contract data"),
+    );
+    let repository = directory.display().to_string();
+    for args in [
+        vec!["pinned", "--classify-only"],
+        vec![
+            "pinned",
+            "--classify-only",
+            "--accept-base-analyzer",
+            "HEAD",
+        ],
+        vec![
+            "pinned",
+            "--classify-only",
+            "--classify-only",
+            "--accept-base-analyzer",
+            "HEAD",
+            "--repository",
+            &repository,
+        ],
+        vec![
+            "pinned",
+            "--classify-only",
+            "--checkpoint-dir",
+            "never-created",
+            "--accept-base-analyzer",
+            "HEAD",
+            "--repository",
+            &repository,
+        ],
+        vec![
+            "pinned",
+            "--classify-only",
+            "--accept-base-analyzer",
+            "HEAD",
+            "--repository",
+            &repository,
+            "/nonexistent-root",
+        ],
+    ] {
+        let output = Command::new(HOST).args(&args).output().unwrap();
+        assert!(!output.status.success(), "{args:?}");
+        assert!(output.stdout.is_empty(), "{args:?}");
+    }
+    assert!(!std::path::Path::new("never-created").exists());
+    std::fs::remove_dir_all(&directory).unwrap();
+}

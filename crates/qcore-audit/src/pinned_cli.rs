@@ -20,7 +20,11 @@ use std::process::ExitCode;
 pub const USAGE: &str = "usage: quirin-audit pinned [--jobs N] [--checkpoint-dir DIR [--resume] \
 [--accept-base-analyzer BASE --repository DIR]] \
 [fluent-bit-root] [monkey-libevent-compile_commands.json] [monkey-callback-source-report.json] \
-[resource-diagnostics.json] [native-observation-directory] [resource-contract-manifest.json]";
+[resource-diagnostics.json] [native-observation-directory] [resource-contract-manifest.json]
+       quirin-audit pinned --classify-only --accept-base-analyzer BASE --repository DIR";
+
+/// The schema of the line `pinned --classify-only` prints on acceptance.
+pub const CLASSIFICATION_SCHEMA: &str = "quirin-contract-only-classification/1";
 
 pub fn main(arguments: Vec<OsString>) -> ExitCode {
     let mut arguments = arguments.into_iter().peekable();
@@ -33,6 +37,8 @@ pub fn main(arguments: Vec<OsString>) -> ExitCode {
     // Card MEASURE-LOOKUP-RECORD-REUSE: a contract-only analyzer acceptance.
     let mut accept_base = None;
     let mut repository = None;
+    // Card MEASURE-CONTRACT-ONLY-SIDE-WIRING: classify only, before any run.
+    let mut classify_only = false;
     while let Some(argument) = arguments.peek() {
         if argument == "--help" || argument == "-h" {
             println!("{USAGE}");
@@ -81,6 +87,13 @@ pub fn main(arguments: Vec<OsString>) -> ExitCode {
                 return ExitCode::FAILURE;
             };
             *slot = Some(value);
+        } else if argument == "--classify-only" {
+            if classify_only {
+                eprintln!("--classify-only is given twice");
+                return ExitCode::FAILURE;
+            }
+            arguments.next();
+            classify_only = true;
         } else if argument == "--resume" {
             if resume {
                 eprintln!("--resume is given twice");
@@ -117,6 +130,13 @@ pub fn main(arguments: Vec<OsString>) -> ExitCode {
     if accept_base.is_some() != repository.is_some() {
         eprintln!("--accept-base-analyzer and --repository are given together");
         return ExitCode::FAILURE;
+    }
+    if classify_only {
+        return classify(
+            accept_base,
+            repository,
+            jobs_seen || checkpoint_directory.is_some() || resume || !positional.is_empty(),
+        );
     }
     if accept_base.is_some() && checkpoint_directory.is_none() {
         eprintln!("--accept-base-analyzer requires --checkpoint-dir");
@@ -189,6 +209,50 @@ pub fn main(arguments: Vec<OsString>) -> ExitCode {
         Ok(true) => ExitCode::FAILURE,
         Err(error) => {
             eprintln!("Fluent Bit library audit failed: {error}");
+            ExitCode::FAILURE
+        }
+    }
+}
+
+/// Card **MEASURE-CONTRACT-ONLY-SIDE-WIRING**: `pinned --classify-only`
+/// classifies `BASE..HEAD` of the repository exactly as a run claiming the
+/// base analyzer would, before anything is built or run, and prints the
+/// acceptance as one JSON line (exit 0) or the refusal (exit 1). The measure
+/// tool asks the base side's binary, so the classifier that decides is the one
+/// the tip run is checked by; a binary without this option refuses it as
+/// unknown, which the tool reads as a refusal.
+fn classify(
+    accept_base: Option<OsString>,
+    repository: Option<OsString>,
+    other_options: bool,
+) -> ExitCode {
+    let (Some(base), Some(repository)) = (accept_base, repository) else {
+        eprintln!("--classify-only requires --accept-base-analyzer BASE and --repository DIR");
+        return ExitCode::FAILURE;
+    };
+    if other_options {
+        eprintln!("--classify-only takes no run options and no paths\n{USAGE}");
+        return ExitCode::FAILURE;
+    }
+    match crate::contract_only_diff::classify(
+        std::path::Path::new(&repository),
+        &base.to_string_lossy(),
+        "HEAD",
+    ) {
+        Ok(acceptance) => {
+            println!(
+                "{}",
+                serde_json::json!({
+                    "schema": CLASSIFICATION_SCHEMA,
+                    "accepted": true,
+                    "acceptance": acceptance,
+                    "decision": acceptance.decision(),
+                })
+            );
+            ExitCode::SUCCESS
+        }
+        Err(error) => {
+            eprintln!("analyzer acceptance refused: {error}");
             ExitCode::FAILURE
         }
     }

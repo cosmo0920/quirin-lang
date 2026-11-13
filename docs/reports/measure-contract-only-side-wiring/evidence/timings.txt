@@ -1,0 +1,19 @@
+base exit 0 wall 3:45.39 rssGB 17.35 2026-11-13T08:46:40Z 2026-11-13T08:50:26Z
+tip-a exit 0 wall 1:25:05 rssGB 17.33 2026-11-13T08:50:26Z 2026-11-13T10:15:32Z
+   analyzer accepted from the base side: a11df6a5d16fc4443f8a0253502feac9895ff2db -> 8558e2956c666c4b700e3b35bb46582fbcd93ae8 (2 contract path(s))
+tip-a-full exit 0 wall 1:25:26 rssGB 10.67 2026-11-13T08:50:26Z 2026-11-13T10:15:53Z
+tip-b exit 0 wall 4:19.25 rssGB 17.33 2026-11-13T10:15:53Z 2026-11-13T10:20:12Z
+   analyzer accepted from the base side: a11df6a5d16fc4443f8a0253502feac9895ff2db -> f63cde2ef5e20f12a022fad19b4a89c26caf11c2 (2 contract path(s))
+tip-b-full exit 0 wall 52:20.87 rssGB 10.36 2026-11-13T10:15:53Z 2026-11-13T11:08:14Z
+base phases_ms 55526 {('first', 'reused', 'identity equal'): 6, ('imported', 'reused', 'identity equal'): 6}
+  analyzer null
+tip-a phases_ms 4830755 {('first', 'recomputed', 'run.pin_evaluation_sha256 differs'): 6, ('first', 'sealed', 'whole'): 6, ('imported', 'recomputed', 'run.pin_evaluation_sha256 differs'): 6, ('imported', 'sealed', 'whole'): 6}
+  analyzer {"accepted_from": "base", "base": "a11df6a5d16fc4443f8a0253502feac9895ff2db", "compiled_in_paths_checked": 137, "paths": ["providers/quirin-provider-fluent-bit/contract-inventory.lock", "providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv"], "reason": "the diff is confined to contra
+tip-b phases_ms 53798 {('first', 'reused', 'identity equal'): 6, ('imported', 'reused', 'identity equal'): 6}
+  analyzer {"accepted_from": "base", "base": "a11df6a5d16fc4443f8a0253502feac9895ff2db", "compiled_in_paths_checked": 137, "paths": ["providers/quirin-provider-shared/contract-inventory.lock", "providers/quirin-provider-shared/contracts/library/custody_evidence.qv"], "reason": "the diff is confined to contract
+a 0 ['providers/quirin-provider-fluent-bit/contract-inventory.lock', 'providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv']
+b 0 ['providers/quirin-provider-shared/contract-inventory.lock', 'providers/quirin-provider-shared/contracts/library/custody_evidence.qv']
+attempt 1 (discarded): fresh base run, no libevent submodule in the tree
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:42:31
+	Maximum resident set size (kbytes): 17370208
+Fluent Bit library audit failed: could not verify Cycle 18 Libevent source: Pin(SourceRevisionMismatch { pin: "libevent", expected: "d82464a277d0f42703702c4dfd9af6af38595a83", actual: "a11df6a5d16fc4443f8a0253502feac9895ff2db" })

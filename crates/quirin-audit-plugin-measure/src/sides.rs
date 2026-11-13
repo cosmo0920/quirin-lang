@@ -35,7 +35,9 @@
 //! snapshot; (5) a snapshot is built and run in a private mount namespace
 //! (`unshare -rm`) with its tree bound at one fixed path (`<mount
 //! root>/src`, and a re-spelled mirror at `<mount root>/mirror`), so sides
-//! that differ only in source spell every contract-source path alike.
+//! that differ only in source spell every contract-source path alike; each
+//! route's private working directory is bound at `<mount root>/work` too
+//! ([`WORK_DIRECTORY`]), so every side spells one working directory.
 
 use std::collections::BTreeMap;
 use std::fs;
@@ -157,6 +159,93 @@ pub struct Context {
     pub rules_off: Vec<String>,
     /// `SOURCE_DATE_EPOCH` for every route (`None`: unset).
     pub source_date_epoch: Option<u64>,
+    /// The group checkpoints this job's pinned route seals or resumes
+    /// (card MEASURE-CONTRACT-ONLY-SIDE-WIRING); `None` for every other job.
+    pub checkpoint: Option<Checkpoint>,
+}
+
+/// The working directory every route of a snapshot side runs from, under the
+/// mount root: each route's private directory is bound there, so every side
+/// of every measurement spells one directory. The pinned route digests the
+/// process working directory into its rows and its checkpoint identity
+/// (`PINNED-ROWS-BIND-WORKING-DIRECTORY`); this is the fixed measurement
+/// working directory that ledger entry names as one discharge.
+pub const WORK_DIRECTORY: &str = "work";
+
+/// The checkpoint run record the pinned route writes beside its checkpoints.
+pub const CHECKPOINT_RUN_RECORD: &str = "pinned-checkpoint-run.json";
+
+/// Card **MEASURE-CONTRACT-ONLY-SIDE-WIRING**: the pinned route's group
+/// checkpoints for one job. The base side seals into `directory`; the tip
+/// side, run by the base side's binary, resumes from it under the
+/// contract-only analyzer acceptance.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Checkpoint {
+    pub directory: PathBuf,
+    /// The base commit whose analyzer the tip side runs, and the tip checkout
+    /// as the analyzer sees it (`--accept-base-analyzer`, `--repository`).
+    pub accept_base: Option<(String, PathBuf)>,
+}
+
+impl Checkpoint {
+    /// The `run_pinned_audit.py` arguments.
+    #[must_use]
+    pub fn arguments(&self) -> Vec<String> {
+        let mut arguments = vec![
+            "--checkpoint-dir".to_owned(),
+            self.directory.display().to_string(),
+        ];
+        if let Some((base, repository)) = &self.accept_base {
+            arguments.extend([
+                "--resume".to_owned(),
+                "--accept-base-analyzer".to_owned(),
+                base.clone(),
+                "--repository".to_owned(),
+                repository.display().to_string(),
+            ]);
+        }
+        arguments
+    }
+
+    /// The record of the checkpoints a route ran with.
+    #[must_use]
+    pub fn record(&self) -> Value {
+        json!({
+            "directory": self.directory.display().to_string(),
+            "role": if self.accept_base.is_some() { "resume-under-base-analyzer" } else { "seal" },
+            "accept_base_analyzer": self.accept_base.as_ref().map(|(base, _)| base),
+            "repository": self.accept_base.as_ref()
+                .map(|(_, repository)| repository.display().to_string()),
+        })
+    }
+}
+
+/// Per stage, how many groups the checkpoint run record says were reused,
+/// recomputed (with the reason) and sealed (with the environment scope), from
+/// `pinned-checkpoint-run.json`'s `groups`; `null` for a record of another
+/// shape. Provenance only.
+#[must_use]
+pub fn checkpoint_summary(record: &Value) -> Value {
+    let Some(groups) = record["groups"].as_array() else {
+        return Value::Null;
+    };
+    let mut summary: BTreeMap<String, BTreeMap<String, u64>> = BTreeMap::new();
+    for group in groups {
+        let Some(decision) = group["decision"].as_str() else {
+            continue;
+        };
+        let stage = group["stage"].as_str().unwrap_or("unknown").to_owned();
+        let key = match (
+            group["reason"].as_str(),
+            group["environment_scope"].as_str(),
+        ) {
+            (Some(reason), _) if decision == "recomputed" => format!("{decision}: {reason}"),
+            (_, Some(scope)) => format!("{decision} ({scope})"),
+            _ => decision.to_owned(),
+        };
+        *summary.entry(stage).or_default().entry(key).or_insert(0) += 1;
+    }
+    json!(summary)
 }
 
 /// A side ready to run its routes.
@@ -215,6 +304,57 @@ pub fn gitlinks(repository: &Path, revision: &str) -> Result<Vec<(String, String
                 .then(|| (path.to_owned(), parts.next().unwrap_or_default().to_owned()))
         })
         .collect())
+}
+
+/// Clone every gitlink of `revision` at its pinned commit into `source`
+/// (`git archive` omits them, a checkout leaves them empty): hazard (1).
+///
+/// # Errors
+///
+/// A submodule whose commit the repository's copy lacks, or a failed clone.
+pub fn clone_submodules(
+    repository: &Path,
+    revision: &str,
+    source: &Path,
+) -> Result<BTreeMap<String, String>, String> {
+    let mut submodules = BTreeMap::new();
+    for (path, commit) in gitlinks(repository, revision)? {
+        let origin = repository.join(&path);
+        let check = format!("{commit}^{{commit}}");
+        capture("git", &["cat-file", "-e", &check], Some(&origin)).map_err(|_| {
+            format!(
+                "submodule {path}: {} has no commit {commit}; run `git submodule update \
+                 --init --recursive` in the repository",
+                origin.display()
+            )
+        })?;
+        let target = source.join(&path);
+        if target.is_dir() {
+            fs::remove_dir(&target).map_err(|error| format!("{}: {error}", target.display()))?;
+        }
+        capture(
+            "git",
+            &[
+                "clone",
+                "--quiet",
+                "--no-checkout",
+                &origin.display().to_string(),
+                &target.display().to_string(),
+            ],
+            None,
+        )?;
+        capture(
+            "git",
+            &["checkout", "--quiet", "--detach", &commit],
+            Some(&target),
+        )?;
+        let head = capture("git", &["rev-parse", "HEAD"], Some(&target))?;
+        if head.trim() != commit {
+            return Err(format!("submodule {path} checked out {head}, not {commit}"));
+        }
+        submodules.insert(path, commit);
+    }
+    Ok(submodules)
 }
 
 /// `cmd` wrapped to run in a private mount namespace with each `(real,
@@ -313,44 +453,7 @@ pub fn build(name: &str, spec: &SideSpec, context: &Context) -> Result<Built, St
                 None,
             )?;
             fs::remove_file(&tar).map_err(|error| format!("{}: {error}", tar.display()))?;
-            let mut submodules = BTreeMap::new();
-            for (path, commit) in gitlinks(&context.repository, &full)? {
-                let origin = context.repository.join(&path);
-                let check = format!("{commit}^{{commit}}");
-                capture("git", &["cat-file", "-e", &check], Some(&origin)).map_err(|_| {
-                    format!(
-                        "submodule {path}: {} has no commit {commit}; run `git submodule update \
-                         --init --recursive` in the repository",
-                        origin.display()
-                    )
-                })?;
-                let target = source.join(&path);
-                if target.is_dir() {
-                    fs::remove_dir(&target)
-                        .map_err(|error| format!("{}: {error}", target.display()))?;
-                }
-                capture(
-                    "git",
-                    &[
-                        "clone",
-                        "--quiet",
-                        "--no-checkout",
-                        &origin.display().to_string(),
-                        &target.display().to_string(),
-                    ],
-                    None,
-                )?;
-                capture(
-                    "git",
-                    &["checkout", "--quiet", "--detach", &commit],
-                    Some(&target),
-                )?;
-                let head = capture("git", &["rev-parse", "HEAD"], Some(&target))?;
-                if head.trim() != commit {
-                    return Err(format!("submodule {path} checked out {head}, not {commit}"));
-                }
-                submodules.insert(path, commit);
-            }
+            let submodules = clone_submodules(&context.repository, &full, &source)?;
             let fixed = context.mount_root.join("src");
             let build_commit = context.build_commit.clone().unwrap_or_else(|| full.clone());
             let mut environment = base_environment();
@@ -483,7 +586,17 @@ pub fn build(name: &str, spec: &SideSpec, context: &Context) -> Result<Built, St
             return Err(format!("side {name}: a {} side is not built", spec.kind()));
         }
     };
-    let mut built = built;
+    finish(built)
+}
+
+/// Record what a prepared side measures: revision, build commit, where its
+/// source and binary are (on disk and as run), the binary's digest and the
+/// contract-bundle digests.
+///
+/// # Errors
+///
+/// An unreadable binary or source tree.
+pub fn finish(mut built: Built) -> Result<Built, String> {
     built.record["build_ended"] = json!(now());
     built.record["revision"] = json!(built.revision);
     built.record["build_commit"] = json!(built.build_commit);
@@ -601,6 +714,18 @@ pub fn run_route(
         .map_err(|error| format!("{}: {error} (every run gets fresh paths)", out.display()))?;
     let work = side.directory.join(format!("work-{}", route.name));
     fs::create_dir_all(&work).map_err(|error| format!("{}: {error}", work.display()))?;
+    // A snapshot side's route runs from the fixed working directory, its
+    // private directory bound there (hazard 2 still holds: the directory on
+    // disk is the route's own).
+    let work_run = if side.snapshot {
+        context.mount_root.join(WORK_DIRECTORY)
+    } else {
+        work.clone()
+    };
+    let checkpoint = context
+        .checkpoint
+        .as_ref()
+        .filter(|_| matches!(route.kind, RouteKind::PinnedCorpus { .. }));
     let link_map = context.repository.join(&route.link_map.path);
     let mut environment = base_environment();
     environment.insert(
@@ -698,6 +823,9 @@ pub fn run_route(
     // spelling `quirin-audit current` refuses; giving the slot's budget in
     // the two-word form the CLI reads makes the slot accept it unchanged.
     let mut command = command;
+    if let Some(checkpoint) = checkpoint {
+        command.extend(checkpoint.arguments());
+    }
     if context.slot_script.is_some() && matches!(route.kind, RouteKind::ConfiguredSelection { .. })
     {
         command.splice(
@@ -711,11 +839,12 @@ pub fn run_route(
     let mut binds = Vec::new();
     if side.snapshot {
         binds.push((side.source_real.clone(), side.source_run.clone()));
+        binds.push((work.clone(), work_run.clone()));
     }
     if let Some((real, fixed)) = mirror {
         binds.push((real.to_path_buf(), fixed.to_path_buf()));
     }
-    let mut argv = namespaced(&binds, &work, &command);
+    let mut argv = namespaced(&binds, &work_run, &command);
     let receipt = side.directory.join(format!("{}.slot.json", route.name));
     let wait_record = side
         .directory
@@ -764,6 +893,8 @@ pub fn run_route(
                 || GATE_VARIABLES.contains(&name.as_str()))
             .collect::<BTreeMap<_, _>>(),
         "working_directory": work.display().to_string(),
+        "working_directory_as_run": work_run.display().to_string(),
+        "checkpoints": checkpoint.map(Checkpoint::record),
         "jobs": context.jobs,
         "binary_sha256": sha_file(&side.binary_real)?,
         "link_map": link_map.display().to_string(),
@@ -846,6 +977,25 @@ pub fn run_route(
     record["analysis_time_ms"] = json!(wall.saturating_sub(waited));
     if wait_record.is_file() {
         record["slot_wait_record"] = json!(wait_record.display().to_string());
+    }
+    // The checkpoint run record is rewritten by the next run over the same
+    // directory (the tip side's), so each side keeps its own copy beside its
+    // route directory, never inside it (it is no report artifact).
+    if let Some(checkpoint) = checkpoint {
+        let written = checkpoint.directory.join(CHECKPOINT_RUN_RECORD);
+        let kept = side
+            .directory
+            .join(format!("{}.checkpoint-run.json", route.name));
+        record["checkpoint_run"] = match fs::read(&written) {
+            Ok(bytes) => {
+                fs::write(&kept, &bytes).map_err(|error| format!("{}: {error}", kept.display()))?;
+                let summary = serde_json::from_slice::<Value>(&bytes)
+                    .map_or(Value::Null, |run| checkpoint_summary(&run));
+                json!({"path": kept.display().to_string(), "sha256": sha_file(&kept)?,
+                       "groups": summary})
+            }
+            Err(error) => json!({"missing": format!("{}: {error}", written.display())}),
+        };
     }
     write_json(&out.join("invocation.json"), &record)?;
     fs::write(

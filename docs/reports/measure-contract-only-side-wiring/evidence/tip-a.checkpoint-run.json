@@ -1,0 +1,332 @@
+{
+  "analyzer": {
+    "accepted_from": "base",
+    "base": "a11df6a5d16fc4443f8a0253502feac9895ff2db",
+    "compiled_in_paths_checked": 137,
+    "paths": [
+      "providers/quirin-provider-fluent-bit/contract-inventory.lock",
+      "providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv"
+    ],
+    "reason": "the diff is confined to contract data none of which is compiled into an analyzer",
+    "repository": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-adcf9ce2d0a0640d1/private/card/demo/src",
+    "tip": "8558e2956c666c4b700e3b35bb46582fbcd93ae8"
+  },
+  "fingerprint_wall_time_ms": 6004,
+  "groups": [
+    {
+      "decision": "recomputed",
+      "group": "cmetrics",
+      "reason": "run.pin_evaluation_sha256 differs",
+      "stage": "first"
+    },
+    {
+      "decision": "recomputed",
+      "group": "ctraces",
+      "reason": "run.pin_evaluation_sha256 differs",
+      "stage": "first"
+    },
+    {
+      "decision": "recomputed",
+      "group": "librdkafka",
+      "reason": "run.pin_evaluation_sha256 differs",
+      "stage": "first"
+    },
+    {
+      "decision": "recomputed",
+      "group": "chunkio",
+      "reason": "run.pin_evaluation_sha256 differs",
+      "stage": "first"
+    },
+    {
+      "decision": "recomputed",
+      "group": "fluent-bit-chunk",
+      "reason": "run.pin_evaluation_sha256 differs",
+      "stage": "first"
+    },
+    {
+      "decision": "recomputed",
+      "group": "monkey-libevent",
+      "reason": "run.pin_evaluation_sha256 differs",
+      "stage": "first"
+    },
+    {
+      "analyzer": {
+        "accepted_from": "base",
+        "base": "a11df6a5d16fc4443f8a0253502feac9895ff2db",
+        "compiled_in_paths_checked": 137,
+        "paths": [
+          "providers/quirin-provider-fluent-bit/contract-inventory.lock",
+          "providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv"
+        ],
+        "reason": "the diff is confined to contract data none of which is compiled into an analyzer",
+        "repository": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-adcf9ce2d0a0640d1/private/card/demo/src",
+        "tip": "8558e2956c666c4b700e3b35bb46582fbcd93ae8"
+      },
+      "content_sha256": "fb107f816e3f13250213d9481c2c9fbbf428bec6285c242fd176c1846b88874b",
+      "decision": "sealed",
+      "environment_scope": "whole",
+      "group": "cmetrics",
+      "stage": "first"
+    },
+    {
+      "analyzer": {
+        "accepted_from": "base",
+        "base": "a11df6a5d16fc4443f8a0253502feac9895ff2db",
+        "compiled_in_paths_checked": 137,
+        "paths": [
+          "providers/quirin-provider-fluent-bit/contract-inventory.lock",
+          "providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv"
+        ],
+        "reason": "the diff is confined to contract data none of which is compiled into an analyzer",
+        "repository": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-adcf9ce2d0a0640d1/private/card/demo/src",
+        "tip": "8558e2956c666c4b700e3b35bb46582fbcd93ae8"
+      },
+      "content_sha256": "61364b878dd7ffae55428c942cda0806a5ba601715200b43a202cb7808aec09f",
+      "decision": "sealed",
+      "environment_scope": "whole",
+      "group": "ctraces",
+      "stage": "first"
+    },
+    {
+      "analyzer": {
+        "accepted_from": "base",
+        "base": "a11df6a5d16fc4443f8a0253502feac9895ff2db",
+        "compiled_in_paths_checked": 137,
+        "paths": [
+          "providers/quirin-provider-fluent-bit/contract-inventory.lock",
+          "providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv"
+        ],
+        "reason": "the diff is confined to contract data none of which is compiled into an analyzer",
+        "repository": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-adcf9ce2d0a0640d1/private/card/demo/src",
+        "tip": "8558e2956c666c4b700e3b35bb46582fbcd93ae8"
+      },
+      "content_sha256": "1cf8371e9e9e5ef903ea453d1a7d393472f850ef692c4ff5aa1bccecb7481f29",
+      "decision": "sealed",
+      "environment_scope": "whole",
+      "group": "librdkafka",
+      "stage": "first"
+    },
+    {
+      "analyzer": {
+        "accepted_from": "base",
+        "base": "a11df6a5d16fc4443f8a0253502feac9895ff2db",
+        "compiled_in_paths_checked": 137,
+        "paths": [
+          "providers/quirin-provider-fluent-bit/contract-inventory.lock",
+          "providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv"
+        ],
+        "reason": "the diff is confined to contract data none of which is compiled into an analyzer",
+        "repository": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-adcf9ce2d0a0640d1/private/card/demo/src",
+        "tip": "8558e2956c666c4b700e3b35bb46582fbcd93ae8"
+      },
+      "content_sha256": "28e751109098030f50cd9f7e3b7890a84bd346164f3bedf53f4c108bea75ba4b",
+      "decision": "sealed",
+      "environment_scope": "whole",
+      "group": "chunkio",
+      "stage": "first"
+    },
+    {
+      "analyzer": {
+        "accepted_from": "base",
+        "base": "a11df6a5d16fc4443f8a0253502feac9895ff2db",
+        "compiled_in_paths_checked": 137,
+        "paths": [
+          "providers/quirin-provider-fluent-bit/contract-inventory.lock",
+          "providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv"
+        ],
+        "reason": "the diff is confined to contract data none of which is compiled into an analyzer",
+        "repository": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-adcf9ce2d0a0640d1/private/card/demo/src",
+        "tip": "8558e2956c666c4b700e3b35bb46582fbcd93ae8"
+      },
+      "content_sha256": "a08705f324b6ece34629c716eac33dccb1eef981b10b5a387681f17b3ef8d811",
+      "decision": "sealed",
+      "environment_scope": "whole",
+      "group": "fluent-bit-chunk",
+      "stage": "first"
+    },
+    {
+      "analyzer": {
+        "accepted_from": "base",
+        "base": "a11df6a5d16fc4443f8a0253502feac9895ff2db",
+        "compiled_in_paths_checked": 137,
+        "paths": [
+          "providers/quirin-provider-fluent-bit/contract-inventory.lock",
+          "providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv"
+        ],
+        "reason": "the diff is confined to contract data none of which is compiled into an analyzer",
+        "repository": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-adcf9ce2d0a0640d1/private/card/demo/src",
+        "tip": "8558e2956c666c4b700e3b35bb46582fbcd93ae8"
+      },
+      "content_sha256": "1ccc4f72c391a4e0a3f3747d3b5f13ffe88d60727bffd3065a77f5f2fc1b689e",
+      "decision": "sealed",
+      "environment_scope": "whole",
+      "group": "monkey-libevent",
+      "stage": "first"
+    },
+    {
+      "stage": "first",
+      "stopped": false,
+      "wall_time_ms": 2721871
+    },
+    {
+      "decision": "recomputed",
+      "group": "cmetrics",
+      "reason": "run.pin_evaluation_sha256 differs",
+      "stage": "imported"
+    },
+    {
+      "decision": "recomputed",
+      "group": "ctraces",
+      "reason": "run.pin_evaluation_sha256 differs",
+      "stage": "imported"
+    },
+    {
+      "decision": "recomputed",
+      "group": "librdkafka",
+      "reason": "run.pin_evaluation_sha256 differs",
+      "stage": "imported"
+    },
+    {
+      "decision": "recomputed",
+      "group": "chunkio",
+      "reason": "run.pin_evaluation_sha256 differs",
+      "stage": "imported"
+    },
+    {
+      "decision": "recomputed",
+      "group": "fluent-bit-chunk",
+      "reason": "run.pin_evaluation_sha256 differs",
+      "stage": "imported"
+    },
+    {
+      "decision": "recomputed",
+      "group": "monkey-libevent",
+      "reason": "run.pin_evaluation_sha256 differs",
+      "stage": "imported"
+    },
+    {
+      "analyzer": {
+        "accepted_from": "base",
+        "base": "a11df6a5d16fc4443f8a0253502feac9895ff2db",
+        "compiled_in_paths_checked": 137,
+        "paths": [
+          "providers/quirin-provider-fluent-bit/contract-inventory.lock",
+          "providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv"
+        ],
+        "reason": "the diff is confined to contract data none of which is compiled into an analyzer",
+        "repository": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-adcf9ce2d0a0640d1/private/card/demo/src",
+        "tip": "8558e2956c666c4b700e3b35bb46582fbcd93ae8"
+      },
+      "content_sha256": "a955cc9714694c5289ba4ccbcf6ff3ccc8d5f6fdf0edfbed7e9adf79b76db58e",
+      "decision": "sealed",
+      "environment_scope": "whole",
+      "group": "cmetrics",
+      "stage": "imported"
+    },
+    {
+      "analyzer": {
+        "accepted_from": "base",
+        "base": "a11df6a5d16fc4443f8a0253502feac9895ff2db",
+        "compiled_in_paths_checked": 137,
+        "paths": [
+          "providers/quirin-provider-fluent-bit/contract-inventory.lock",
+          "providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv"
+        ],
+        "reason": "the diff is confined to contract data none of which is compiled into an analyzer",
+        "repository": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-adcf9ce2d0a0640d1/private/card/demo/src",
+        "tip": "8558e2956c666c4b700e3b35bb46582fbcd93ae8"
+      },
+      "content_sha256": "12aa4b091bb317827c6263a7fbb0def64ae7f1f26e556c5ef5543d938066bc9b",
+      "decision": "sealed",
+      "environment_scope": "whole",
+      "group": "ctraces",
+      "stage": "imported"
+    },
+    {
+      "analyzer": {
+        "accepted_from": "base",
+        "base": "a11df6a5d16fc4443f8a0253502feac9895ff2db",
+        "compiled_in_paths_checked": 137,
+        "paths": [
+          "providers/quirin-provider-fluent-bit/contract-inventory.lock",
+          "providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv"
+        ],
+        "reason": "the diff is confined to contract data none of which is compiled into an analyzer",
+        "repository": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-adcf9ce2d0a0640d1/private/card/demo/src",
+        "tip": "8558e2956c666c4b700e3b35bb46582fbcd93ae8"
+      },
+      "content_sha256": "a0a5d22a17ac0e8e88e4aa40b387a13640c7733563bfbda324e434ebc9999d77",
+      "decision": "sealed",
+      "environment_scope": "whole",
+      "group": "librdkafka",
+      "stage": "imported"
+    },
+    {
+      "analyzer": {
+        "accepted_from": "base",
+        "base": "a11df6a5d16fc4443f8a0253502feac9895ff2db",
+        "compiled_in_paths_checked": 137,
+        "paths": [
+          "providers/quirin-provider-fluent-bit/contract-inventory.lock",
+          "providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv"
+        ],
+        "reason": "the diff is confined to contract data none of which is compiled into an analyzer",
+        "repository": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-adcf9ce2d0a0640d1/private/card/demo/src",
+        "tip": "8558e2956c666c4b700e3b35bb46582fbcd93ae8"
+      },
+      "content_sha256": "da3b8d1bf7083a2a32cdffeb5735d3f6d872d8bd74ecca6036a9908797875d4b",
+      "decision": "sealed",
+      "environment_scope": "whole",
+      "group": "chunkio",
+      "stage": "imported"
+    },
+    {
+      "analyzer": {
+        "accepted_from": "base",
+        "base": "a11df6a5d16fc4443f8a0253502feac9895ff2db",
+        "compiled_in_paths_checked": 137,
+        "paths": [
+          "providers/quirin-provider-fluent-bit/contract-inventory.lock",
+          "providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv"
+        ],
+        "reason": "the diff is confined to contract data none of which is compiled into an analyzer",
+        "repository": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-adcf9ce2d0a0640d1/private/card/demo/src",
+        "tip": "8558e2956c666c4b700e3b35bb46582fbcd93ae8"
+      },
+      "content_sha256": "05270de5d6cafd01b778492c5680e50dd0de7b724df953f133b125515c9de86f",
+      "decision": "sealed",
+      "environment_scope": "whole",
+      "group": "fluent-bit-chunk",
+      "stage": "imported"
+    },
+    {
+      "analyzer": {
+        "accepted_from": "base",
+        "base": "a11df6a5d16fc4443f8a0253502feac9895ff2db",
+        "compiled_in_paths_checked": 137,
+        "paths": [
+          "providers/quirin-provider-fluent-bit/contract-inventory.lock",
+          "providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv"
+        ],
+        "reason": "the diff is confined to contract data none of which is compiled into an analyzer",
+        "repository": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-adcf9ce2d0a0640d1/private/card/demo/src",
+        "tip": "8558e2956c666c4b700e3b35bb46582fbcd93ae8"
+      },
+      "content_sha256": "a1745b14ac4ac3f27a1d78c9f65422d625e77b074c20aa9309b26ea76d931a80",
+      "decision": "sealed",
+      "environment_scope": "whole",
+      "group": "monkey-libevent",
+      "stage": "imported"
+    },
+    {
+      "stage": "imported",
+      "stopped": false,
+      "wall_time_ms": 2050894
+    }
+  ],
+  "jobs": 8,
+  "phases_wall_time_ms": 4830755,
+  "process_peak_rss_kib": 17328984,
+  "schema_version": 2,
+  "scope": "provenance of one checkpointed pinned run: per stage, which library groups were reused or recomputed and why, the environment scope of each identity, the content digest of each file sealed or reused, the contract-only analyzer acceptance the run stands under (if any), and measured wall times; not an input to any verdict"
+}

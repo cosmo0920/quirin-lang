@@ -1,0 +1,25 @@
+{
+  "schema": "quirin-measure-inputs/1",
+  "description": "Card MEASURE-CONTRACT-ONLY-SIDE-WIRING: the pinned corpus route over this host's locally prepared inputs (Fluent Bit 66910c10 prepared by `quirin-audit prepare clang-build` and `prepare monkey`, the ChunkIO package of `providers/package.py build`), relative to --inputs-base; read here only to compare run: sides the evidence harness wrote.",
+  "routes": [
+    {
+      "name": "corpus",
+      "profile": "eight-home",
+      "kind": "pinned-corpus",
+      "source_commit": "66910c10",
+      "inputs_root": "private/prep/cycle19",
+      "compile_databases": [
+        {"path": "c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json"},
+        {"path": "c-gateway-wave-pin/monkey/monkey-build/compile_commands.json"}
+      ],
+      "mirror_trees": [
+        "c-gateway-wave-pin/fluent-bit-clang-source",
+        "c-gateway-wave-pin/monkey",
+        "provider-packages-wave20"
+      ],
+      "link_map": {"path": "docs/reports/w48-bu-single-leaf-bodies/link-map.corpus.json"},
+      "clang": "/usr/lib/llvm-21/bin/clang",
+      "tracked": []
+    }
+  ]
+}
