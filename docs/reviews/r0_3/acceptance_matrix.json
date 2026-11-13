@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 949
+  "named_followups": 956
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6876,11 +6876,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Landing integrate/r9 (base main 347340c22; main 73c39ffcf and then d07757712, the WINDOWS-TEST-PORTABILITY and CI repairs, merged at 408ec03f1; merges LIST-ENTRY-RELEASE-IDENTITY b06d36ecf). Full standing gate via scripts/gate_scope.py --base main --full --landing on 408ec03f1 (private/integrate-r9/gate-merge-d0777, raw record beside this file as gate-scope.json), Clang and Lean borrowed from an unpacked private toolchain, with the host's llvm-21 package now installed. Every step exits 0: Rust 630 units / 672 summaries, 9431 passed, 0 failed, 17 ignored (task_route_tsan now symbolizes and passes on this host); Lean 429 audits; fmt, Clippy, both reevaluation examples; provider package build/verify, provider Rust 133 passed / 0 failed / 1 ignored, provider fmt/Clippy; Python 757. No native measurement on this host: the card's moves (system +4, slice +1, corpus +2 Safe, two corpus moves unpredicted and attributed in its report) come from the card's own preparations; land.py publish is owed.",
-  "workspace_tests": 9431,
+  "note": "Landing integrate/r10 (base main 591e5523f; merges LERI-CROSS-UNIT-ELEMENTS-RELEASED 7e2e255e1, LINK-STANDING-SELECTION-TWO-CONFIGURATION-KEYS 63a81dd17, LERI-HELD-AND-LINK-MEMBER-PREMISES 5bcb4b531, MEASURE-CONTRACT-ONLY-SIDE-WIRING a977370b8, W45-FB-LIST-FINITENESS-PREMISE ed60dad9b). PROVISIONAL: figures expected from the first full landing gate on f47823dd1 (private/integrate-r10/gate) with its five cross-unit fixture failures repaired by 562d4594d; the rerun on the records commit replaces this record.",
+  "workspace_tests": 9476,
   "provider_tests": 133,
-  "python_evidence_validator_tests": 757,
-  "lean_audits": 429,
+  "python_evidence_validator_tests": 761,
+  "lean_audits": 432,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -6976,6 +6976,7 @@
    "AuditContractViewProjection.lean",
    "AuditCountedLoopMeasure.lean",
    "AuditCountedUsers.lean",
+   "AuditCrossUnitElementRelease.lean",
    "AuditCrossUnitReplayBudget.lean",
    "AuditCrossUnitSummary.lean",
    "AuditCt01OwnedTransfer.lean",
@@ -7023,6 +7024,7 @@
    "AuditElaboratorCallFootprints.lean",
    "AuditElementDestroyer.lean",
    "AuditElementDestroyerSwitch.lean",
+   "AuditElementLinkPremises.lean",
    "AuditElementReleaseSummary.lean",
    "AuditEnumerationAttribution.lean",
    "AuditEpochAccounting.lean",
@@ -7070,6 +7072,7 @@
    "AuditLibcReadingSiteEvidence.lean",
    "AuditLifetimeCorrespondence.lean",
    "AuditListIteration.lean",
+   "AuditListLengthBound.lean",
    "AuditListLookup.lean",
    "AuditLiteralArgumentPremise.lean",
    "AuditLiteralDecayReadings.lean",
@@ -7316,9 +7319,9 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "full landing gate: every step exits 0",
+  "standing_gate": "full landing gate: pending rerun",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/list-entry-release-identity/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/leri-cross-unit-elements-released/integration/gate.json)"
  },
  "named_followups": [
   {
