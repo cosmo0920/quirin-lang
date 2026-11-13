@@ -72,6 +72,18 @@ use serde_json::Value;
 
 use crate::c_numeric::{CType, IntKind, TargetIntegerModel};
 use crate::legacy_c::C11TranslationUnit;
+use crate::list_length_bound::{self, FrameSummary, ListBoundFact, ListShape, PendingList};
+use qcore_contract::list_finiteness::ListFinitenessPremises;
+
+/// Card W45-FB-LIST-FINITENESS-PREMISE (gateway rule 48): the list-finiteness
+/// premises a run declared, when it selected the list-length bound. A
+/// rejected premise file declares nothing; its loader error is carried into
+/// each refusal's detail.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum ListSelection {
+    Declared(ListFinitenessPremises),
+    Rejected(String),
+}
 
 /// The property name recorded with every fact.
 pub const LOOP_MEASURE_PROPERTY: &str = "loop-measure.v1";
@@ -453,6 +465,11 @@ pub struct LoopFact {
     pub refusal: Option<&'static str>,
     /// A human-readable account of the refusal.
     pub detail: Option<String>,
+    /// Card W45-FB-LIST-FINITENESS-PREMISE (rule 48): the list-length bound
+    /// fact or its refusal, only when the run declared list-finiteness
+    /// premises; absent otherwise, so rule 44's rows are unchanged.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub list_bound: Option<ListBoundFact>,
 }
 
 /// Every loop of one function, in source order.
@@ -493,6 +510,17 @@ pub fn analyze_loop_measures_preprocessed(
     unit: &C11TranslationUnit<'_>,
     functions: &[String],
 ) -> Result<LoopMeasureReport, String> {
+    analyze_loop_measures_preprocessed_with(preprocessed, unit, functions, None)
+}
+
+/// [`analyze_loop_measures_preprocessed`], with the list-length bound of
+/// rule 48 when `list` is given.
+pub fn analyze_loop_measures_preprocessed_with(
+    preprocessed: &str,
+    unit: &C11TranslationUnit<'_>,
+    functions: &[String],
+    list: Option<&ListSelection>,
+) -> Result<LoopMeasureReport, String> {
     let model = crate::c_numeric_obligations::target_model(
         unit,
         crate::c_numeric_obligations::NumericTarget::Default,
@@ -506,6 +534,7 @@ pub fn analyze_loop_measures_preprocessed(
             .stack_size(STACK)
             .spawn_scoped(scope, || {
                 let mut reader = UnitReader::new(&model, &wanted);
+                reader.list = list;
                 crate::typed_c_ast::translation_unit_ast_with(preprocessed, unit, |bytes| {
                     use serde::de::DeserializeSeed;
                     let mut deserializer = serde_json::Deserializer::from_slice(bytes);
@@ -515,7 +544,7 @@ pub fn analyze_loop_measures_preprocessed(
                     }
                     .deserialize(&mut deserializer)
                 })?;
-                Ok::<_, String>(reader.functions)
+                Ok::<_, String>(reader.finish())
             })
             .map_err(|error| format!("cannot start the loop-measure reader: {error}"))?
             .join()
@@ -535,9 +564,19 @@ pub fn analyze_loop_measures_c11(
     unit: &C11TranslationUnit<'_>,
     functions: &[String],
 ) -> Result<LoopMeasureReport, String> {
+    analyze_loop_measures_c11_with(unit, functions, None)
+}
+
+/// [`analyze_loop_measures_c11`], with the list-length bound of rule 48
+/// when `list` is given.
+pub fn analyze_loop_measures_c11_with(
+    unit: &C11TranslationUnit<'_>,
+    functions: &[String],
+    list: Option<&ListSelection>,
+) -> Result<LoopMeasureReport, String> {
     let preprocessed =
         crate::legacy_c::validate_unrestricted_c11(unit).map_err(|e| format!("{e:?}"))?;
-    analyze_loop_measures_preprocessed(&preprocessed, unit, functions)
+    analyze_loop_measures_preprocessed_with(&preprocessed, unit, functions, list)
 }
 
 /// Record the facts of every function of an AST already read (a whole
@@ -548,7 +587,7 @@ pub fn measures_of_ast(model: &TargetIntegerModel, ast: &Value) -> Vec<FunctionM
     for declaration in children(ast) {
         reader.declaration(declaration);
     }
-    reader.functions
+    reader.finish()
 }
 
 const STACK: usize = 256 << 20;
@@ -560,6 +599,12 @@ struct UnitReader<'a> {
     lines: LineTracker,
     enumerators: BTreeMap<String, i128>,
     functions: Vec<FunctionMeasures>,
+    /// Rule 48: the run's list selection, every defined body's frame summary
+    /// and each loop's pending list decision, resolved once the whole unit
+    /// is read (a callee may be defined after its caller).
+    list: Option<&'a ListSelection>,
+    summaries: BTreeMap<String, FrameSummary>,
+    pending: Vec<Vec<Option<PendingList>>>,
 }
 
 impl<'a> UnitReader<'a> {
@@ -570,7 +615,37 @@ impl<'a> UnitReader<'a> {
             lines: LineTracker::default(),
             enumerators: BTreeMap::new(),
             functions: Vec::new(),
+            list: None,
+            summaries: BTreeMap::new(),
+            pending: Vec::new(),
         }
+    }
+
+    /// Resolve every pending list decision against the unit's summaries.
+    fn finish(self) -> Vec<FunctionMeasures> {
+        let Self {
+            list,
+            summaries,
+            pending,
+            mut functions,
+            ..
+        } = self;
+        let Some(list) = list else {
+            return functions;
+        };
+        let empty = ListFinitenessPremises::default();
+        let (premises, rejected) = match list {
+            ListSelection::Declared(premises) => (premises, None),
+            ListSelection::Rejected(error) => (&empty, Some(error.as_str())),
+        };
+        for (function, pending) in functions.iter_mut().zip(pending) {
+            for (fact, pending) in function.loops.iter_mut().zip(pending) {
+                fact.list_bound = pending.map(|pending| {
+                    list_length_bound::resolve(pending, &summaries, premises, rejected)
+                });
+            }
+        }
+        functions
     }
 
     fn declaration(&mut self, declaration: &Value) {
@@ -583,13 +658,19 @@ impl<'a> UnitReader<'a> {
             return;
         }
         let name = declaration["name"].as_str().unwrap_or_default();
+        let body = children(declaration)
+            .iter()
+            .find(|node| kind(node) == "CompoundStmt");
+        if self.list.is_some()
+            && let Some(body) = body
+        {
+            self.summaries
+                .insert(name.to_owned(), FrameSummary::of(body));
+        }
         if !self.wanted.is_empty() && !self.wanted.contains(name) {
             return;
         }
-        let Some(body) = children(declaration)
-            .iter()
-            .find(|node| kind(node) == "CompoundStmt")
-        else {
+        let Some(body) = body else {
             return;
         };
         let scope = FunctionScope::read(declaration, body, self.model);
@@ -599,12 +680,15 @@ impl<'a> UnitReader<'a> {
             enumerators: &self.enumerators,
             scope: &scope,
             lines: &loop_lines,
+            list: self.list.is_some(),
         };
         context.loops_in(body, &mut loops);
+        let (loops, pending): (Vec<_>, Vec<_>) = loops.into_iter().unzip();
         self.functions.push(FunctionMeasures {
             function: name.to_owned(),
             loops,
         });
+        self.pending.push(pending);
     }
 }
 
@@ -936,6 +1020,8 @@ struct Context<'a> {
     enumerators: &'a BTreeMap<String, i128>,
     scope: &'a FunctionScope,
     lines: &'a BTreeMap<usize, Option<u64>>,
+    /// Rule 48 selected: decide each loop's list shape too.
+    list: bool,
 }
 
 /// A conjunct's reading: its abstract shape and, when admitted, its bound.
@@ -945,7 +1031,7 @@ struct Reading {
 }
 
 impl Context<'_> {
-    fn loops_in(&self, node: &Value, into: &mut Vec<LoopFact>) {
+    fn loops_in(&self, node: &Value, into: &mut Vec<(LoopFact, Option<PendingList>)>) {
         let loop_kind = match kind(node) {
             "ForStmt" => Some("for"),
             "WhileStmt" => Some("while"),
@@ -953,7 +1039,8 @@ impl Context<'_> {
             _ => None,
         };
         if let Some(loop_kind) = loop_kind {
-            into.push(self.fact(node, loop_kind));
+            let pending = self.list.then(|| self.pending_list(node, loop_kind));
+            into.push((self.fact(node, loop_kind), pending));
         }
         for child in children(node) {
             self.loops_in(child, into);
@@ -973,6 +1060,7 @@ impl Context<'_> {
                 measure: Some(measure),
                 refusal: None,
                 detail: None,
+                list_bound: None,
             },
             Err((refusal, detail)) => LoopFact {
                 line,
@@ -980,6 +1068,7 @@ impl Context<'_> {
                 measure: None,
                 refusal: Some(refusal.code()),
                 detail: Some(detail),
+                list_bound: None,
             },
         }
     }
@@ -1110,6 +1199,72 @@ impl Context<'_> {
             max_iterations,
             admitted_conjuncts: admitted.len(),
         })
+    }
+
+    /// Rule 48: everything the list decision reads from the function itself;
+    /// the frame's callees are composed once the unit is read.
+    fn pending_list(&self, node: &Value, loop_kind: &str) -> PendingList {
+        let mut shape = ListShape::default();
+        let parts = children(node);
+        let not_a_list = |detail: String| PendingList {
+            shape: ListShape::default(),
+            header: None,
+            local: FrameSummary::default(),
+            detail: Some(detail),
+        };
+        if loop_kind != "for" || parts.len() != 5 {
+            return not_a_list(format!("a `{loop_kind}` loop is not a list traversal"));
+        }
+        let (condition, step, body) = (&parts[2], &parts[3], &parts[4]);
+        let Some(header) = list_length_bound::header(&parts[0], condition, step) else {
+            return not_a_list("the header is not rule 5l's list traversal".into());
+        };
+        shape.list_traversal = true;
+        let stable = |id: &str| {
+            self.scope
+                .locals
+                .get(id)
+                .is_some_and(|local| local.automatic && !local.volatile)
+                && !self.scope.address_taken.contains(id)
+                && !writes(condition, id, None)
+                && !writes(body, id, None)
+        };
+        let mut detail = None;
+        shape.cursor_stable = header.cursor_ids.iter().all(|id| stable(id));
+        if !shape.cursor_stable {
+            detail = Some(format!(
+                "a cursor of `{}` is written in the loop, address-taken or not an automatic local",
+                header.cursor
+            ));
+        }
+        shape.head_member = header.head.is_some();
+        if detail.is_none() && !shape.head_member {
+            detail = Some(format!(
+                "the head `{}` is not `&R->M` with `M` a list member of `struct TAG`",
+                header.head_text
+            ));
+        }
+        shape.head_root_stable = header
+            .head
+            .as_ref()
+            .is_some_and(|head| stable(&head.root_id));
+        if detail.is_none() && !shape.head_root_stable {
+            detail = Some(format!(
+                "the head's root in `{}` is not an automatic local or formal that the loop \
+                 leaves unwritten and whose address is never taken",
+                header.head_text
+            ));
+        }
+        shape.opaque_control = self.scope.opaque_control;
+        shape.label_in_loop = [condition, step, body]
+            .iter()
+            .any(|part| entered_by_label(part, false));
+        PendingList {
+            shape,
+            header: Some(header),
+            local: FrameSummary::of(body),
+            detail,
+        }
     }
 
     /// `c = c0` or `T c = c0`, `c0` a constant representable in `c`'s type.

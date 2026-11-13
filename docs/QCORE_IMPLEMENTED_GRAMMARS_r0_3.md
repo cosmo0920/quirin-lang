@@ -4755,6 +4755,35 @@ written sets (`bounds-revision-flexible-scope`, amended). The word is
 reserved. Only the null and resource readers read it (`for_bounds()` removes
 it).
 
+## G05l. List-finiteness premises
+
+Card W45-FB-LIST-FINITENESS-PREMISE, contract specification
+[C04.22](QCORE_CONTRACT_SPEC_r0_3.md#c0422-the-list-finiteness-premise),
+gateway rule [48](agents/gateway.md#constraint-48). A premise file of its own,
+named by `QCORE_LIST_FINITENESS_PREMISES` and read by
+`crates/qcore-contract/src/list_finiteness.rs`
+(`parse_list_finiteness_premises`), one item per line:
+
+```ebnf
+premise_file = { line } ;
+line         = blank | "//", { any } | premise ;
+premise      = "quant", "list", IDENT, ".", IDENT, MAPS_TO, "#", "finite", ";" ;
+```
+
+The first `IDENT` is the record tag (`struct TAG`), the second the list-head
+member. Whitespace may separate any two tokens, but a `premise` takes one line.
+Static conditions, each rejecting the **whole file** (a rejected file declares
+nothing, so every traversal refuses `premise-not-declared` with the loader's
+error in its detail):
+
+- **Shape.** Every non-blank line is a `//` comment or exactly the form above.
+- **Once.** One premise per `TAG.MEMBER`.
+
+The file is no contract module: it is not part of any provider package,
+profile contract set or bundle digest, and no resource-v1 loader reads it. The
+first file is the Fluent Bit system selection's
+`contract/profiles/fluent-bit/list-finiteness.qv`.
+
 ## G06. Observation predicate grammar
 
 ```ebnf

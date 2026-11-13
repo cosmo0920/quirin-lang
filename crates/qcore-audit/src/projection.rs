@@ -41,6 +41,32 @@ pub const BOUNDS_SELECTION: &str = "QCORE_BOUNDS_PROPERTY";
 /// byte-identical.
 pub const LOOP_MEASURE_SELECTION: &str = "QCORE_LOOP_MEASURE_PROPERTY";
 
+/// Card W45-FB-LIST-FINITENESS-PREMISE (gateway rule 48): the environment
+/// variable naming a list-finiteness premise file (grammar G05l). Read only
+/// when the loop-measure property is selected; then each loop's row also
+/// carries a list-length bound fact or its refusal. Unset, the rows are
+/// rule 44's, byte for byte.
+pub const LIST_FINITENESS_PREMISES: &str = "QCORE_LIST_FINITENESS_PREMISES";
+
+/// Rule 48: the run's list selection, loaded total-or-reject; a file that
+/// cannot be read or parsed declares nothing.
+fn list_selection() -> Option<qcore_c_gateway::loop_measure::ListSelection> {
+    use qcore_c_gateway::loop_measure::ListSelection;
+    let path = std::env::var_os(LIST_FINITENESS_PREMISES)?;
+    let path = std::path::PathBuf::from(path);
+    Some(
+        match std::fs::read_to_string(&path)
+            .map_err(|error| format!("{}: {error}", path.display()))
+            .and_then(|text| {
+                qcore_contract::list_finiteness::parse_list_finiteness_premises(&text)
+                    .map_err(|error| format!("{}: {error}", path.display()))
+            }) {
+            Ok(premises) => ListSelection::Declared(premises),
+            Err(error) => ListSelection::Rejected(error),
+        },
+    )
+}
+
 /// Card W45-FB-ENGINE-PROGRESS-MEASURE (gateway rule 44): when the property
 /// is selected, record each function's loop facts (a checked measure or a
 /// named refusal per loop), each presented at its original line. Reads no
@@ -56,14 +82,16 @@ fn record_loop_measures(
     report: &mut AuditReport,
 ) {
     use qcore_c_gateway::loop_measure::{
-        analyze_loop_measures_c11, analyze_loop_measures_preprocessed,
+        analyze_loop_measures_c11_with, analyze_loop_measures_preprocessed_with,
     };
     if std::env::var_os(LOOP_MEASURE_SELECTION).is_none() {
         return;
     }
+    // Card W45-FB-LIST-FINITENESS-PREMISE (rule 48).
+    let list = list_selection();
     let analysed = match preprocessed {
-        Some(text) => analyze_loop_measures_preprocessed(text, unit, functions),
-        None => analyze_loop_measures_c11(unit, functions),
+        Some(text) => analyze_loop_measures_preprocessed_with(text, unit, functions, list.as_ref()),
+        None => analyze_loop_measures_c11_with(unit, functions, list.as_ref()),
     };
     let mapped;
     let locations = match (locations, preprocessed) {

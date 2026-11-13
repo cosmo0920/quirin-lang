@@ -36,6 +36,7 @@ pub mod descriptor_contract_binding;
 pub mod descriptor_observation;
 mod extension_compatibility;
 pub mod extern_bridge;
+pub mod list_finiteness;
 pub mod load_path_manifest;
 pub mod local_condition;
 pub mod outer_contract;
