@@ -190,4 +190,20 @@ refuses a record that already holds it, so the record is not edited here);
 
 ## 7. Gate
 
-GATE-PLACEHOLDER
+`python3 scripts/gate_scope.py --base 8fd7c8d0d` (through
+`private/toolchain/env.sh`) on `8e770549e` (code equal to the measured
+`42043f0ef`; later commits are this record and the gate file): **exit 0**,
+mode scoped, 11 steps ([gate.json](gate.json), logs
+`private/gate-scope/20261113T071948Z-593668/`, console
+`private/logs/gate-1.console.log`; Clang recording
+[gate/clang-version.txt](gate/clang-version.txt), taken in this worktree).
+
+| Step | Exit | Counts |
+|---|---|---|
+| submodules, fmt, clippy (4 invocations, `-D warnings`) | 0 / 0 / 0 | 1 submodule |
+| Rust suite (`qcore-audit`, `qcore-compiler`, `qcorec` whole; 6 test targets) | 0 | 203 units, 205 summaries; 2,641 passed, 0 failed, 4 ignored |
+| both reevaluation probes | 0 / 0 | |
+| Lean (`check_lean_audits.py`, all: a proof root changed) | 0 | 430 audits (this card adds `AuditCrossUnitElementRelease.lean`) |
+| Python suite | 0 | 761 tests |
+
+No provider change, so no provider gate.
