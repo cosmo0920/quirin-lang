@@ -204,6 +204,23 @@ which is not a second authority.
     derived from a link-resolution artifact under rule 40's checked
     conditions; this rule's selection, scope, budget and replay are
     unchanged, and the artifact's digest is the link-resolution identity.
+    Card LERI-CROSS-UNIT-ELEMENTS-RELEASED (amended in place): a home's
+    summary crosses with its whole contract, container effects included
+    (rule 43's `ElementsReleased`): the certificate compares the import with
+    the replayed home whole, so an import that dropped or added a clause is
+    refused, and the caller's call reading applies the clause exactly as in
+    the home's unit (every consumer that cannot apply a container effect
+    refuses it, `has_container_effect`). A caller carrying the clause on is
+    never itself a home (a home's environment holds no import). On the
+    `current` route a unit whose definition census is incomplete is not
+    analysed for export: the census refuses the import phase, and the run
+    keeps its first-phase rows; before, a requested home in such a unit
+    failed its export analysis and rejected the whole route. Measured on the
+    card's own preparations: no Fluent Bit caller of a released-element
+    summary is reachable on the system or tail-pause routes (condition 13 of
+    rule 40 refuses every two-configuration core home, and `tail_file.c`'s
+    census is incomplete). `QCore.CrossUnitElementRelease`;
+    [report](../reports/leri-cross-unit-elements-released/README.md).
 
 <a id="constraint-5"></a>
 

@@ -126,6 +126,7 @@ import QCore.ControlFlow
 import QCore.CountedLoopMeasure
 import QCore.CountedUsers
 import QCore.CounterSource
+import QCore.CrossUnitElementRelease
 import QCore.CrossUnitReplayBudget
 import QCore.CrossUnitSummary
 import QCore.Ct01OwnedTransfer
