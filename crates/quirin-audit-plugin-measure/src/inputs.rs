@@ -100,6 +100,15 @@ pub struct Route {
     pub kind: RouteKind,
     /// The cross-unit link map, relative to the repository.
     pub link_map: PinnedFile,
+    /// Card SELECTION-ROUTES-SPLIT-CALLER-AND-HOME: the route's rule 40
+    /// link-resolution artifact (`quirin-link-resolution/1`, written by
+    /// `prepare --link`), relative to the inputs base, with its required
+    /// SHA-256. A side named by `--link-resolution` runs the route under it
+    /// (`QCORE_CROSS_UNIT_LINK_RESOLUTION`) in place of the stated map;
+    /// every other side keeps the map. Left out of the canonical JSON when
+    /// not given, so the digest of every route without one is unchanged.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub link_resolution: Option<PinnedFile>,
     /// `QCORE_CLANG` for the route (the pinned runner overrides it).
     pub clang: String,
     /// Tracked inputs read from each side's source tree; their digests are
@@ -173,6 +182,22 @@ pub fn validate(routes: &[Route]) -> Result<(), String> {
             ));
         }
         let mut pinned = vec![&route.link_map];
+        if let Some(artifact) = &route.link_resolution {
+            if !matches!(route.kind, RouteKind::ConfiguredSelection { .. }) {
+                return Err(format!(
+                    "route `{}`: a link-resolution artifact belongs to a configured route (the \
+                     pinned route refuses rule 40)",
+                    route.name
+                ));
+            }
+            if artifact.sha256.is_none() {
+                return Err(format!(
+                    "route `{}`: the link-resolution artifact `{}` needs its sha256",
+                    route.name, artifact.path
+                ));
+            }
+            pinned.push(artifact);
+        }
         let mut relative: Vec<&str> = route
             .tracked
             .iter()
@@ -268,6 +293,7 @@ pub fn read_manifest(path: &Path) -> Result<Vec<Route>, String> {
             "profile",
             "kind",
             "link_map",
+            "link_resolution",
             "clang",
             "tracked",
             "required_inputs",
@@ -492,6 +518,7 @@ pub fn read_profile(path: &Path) -> Result<Route, String> {
         profile: name,
         kind,
         link_map,
+        link_resolution: None,
         clang,
         tracked,
         required_inputs,
@@ -535,6 +562,7 @@ mod tests {
                 path: "l".into(),
                 sha256: Some("x".into()),
             },
+            link_resolution: None,
             clang: "clang".into(),
             tracked: Vec::new(),
             required_inputs: Vec::new(),
@@ -556,5 +584,72 @@ mod tests {
                 .contains("repeated")
         );
         assert!(validate(&[]).is_err());
+    }
+
+    /// Card SELECTION-ROUTES-SPLIT-CALLER-AND-HOME: a route's link-resolution
+    /// artifact needs its digest and a configured route, and a route without
+    /// one keeps its canonical JSON (so its digest) unchanged.
+    #[test]
+    fn a_link_resolution_artifact_is_pinned_and_configured_only() {
+        let route = Route {
+            name: "system".into(),
+            profile: "fixture".into(),
+            kind: RouteKind::ConfiguredSelection {
+                checkout: "c".into(),
+                compile_database: PinnedFile {
+                    path: "d".into(),
+                    sha256: None,
+                },
+                selection: "s".into(),
+                profile_directory: "p".into(),
+            },
+            link_map: PinnedFile {
+                path: "l".into(),
+                sha256: None,
+            },
+            link_resolution: None,
+            clang: "clang".into(),
+            tracked: Vec::new(),
+            required_inputs: Vec::new(),
+        };
+        let canonical = serde_json::to_value(&route).unwrap();
+        assert!(canonical.get("link_resolution").is_none());
+        assert!(validate(std::slice::from_ref(&route)).is_ok());
+        let mut linked = route.clone();
+        linked.link_resolution = Some(PinnedFile {
+            path: "prep/link-resolution.json".into(),
+            sha256: None,
+        });
+        assert!(
+            validate(std::slice::from_ref(&linked))
+                .unwrap_err()
+                .contains("needs its sha256")
+        );
+        linked.link_resolution = Some(PinnedFile {
+            path: "../outside.json".into(),
+            sha256: Some("a".repeat(64)),
+        });
+        assert!(
+            validate(std::slice::from_ref(&linked))
+                .unwrap_err()
+                .contains("relative")
+        );
+        linked.link_resolution = Some(PinnedFile {
+            path: "prep/link-resolution.json".into(),
+            sha256: Some("a".repeat(64)),
+        });
+        assert!(validate(std::slice::from_ref(&linked)).is_ok());
+        assert_ne!(linked.digest(), route.digest());
+        let mut pinned = linked.clone();
+        pinned.kind = RouteKind::PinnedCorpus {
+            source_commit: "66910c10".into(),
+            inputs_root: "r".into(),
+            compile_databases: vec![PinnedFile {
+                path: "d".into(),
+                sha256: None,
+            }],
+            mirror_trees: Vec::new(),
+        };
+        assert!(validate(&[pinned]).unwrap_err().contains("refuses rule 40"));
     }
 }

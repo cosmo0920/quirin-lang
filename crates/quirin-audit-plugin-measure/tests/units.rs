@@ -70,6 +70,7 @@ fn corpus_route() -> Route {
             path: "link-map.json".into(),
             sha256: None,
         },
+        link_resolution: None,
         clang: "clang".into(),
         tracked: Vec::new(),
         required_inputs: Vec::new(),

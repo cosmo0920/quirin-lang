@@ -162,6 +162,18 @@ pub struct Context {
     /// The group checkpoints this job's pinned route seals or resumes
     /// (card MEASURE-CONTRACT-ONLY-SIDE-WIRING); `None` for every other job.
     pub checkpoint: Option<Checkpoint>,
+    /// Card SELECTION-ROUTES-SPLIT-CALLER-AND-HOME: per route, its checked
+    /// link-resolution artifact, when some side runs under one
+    /// ([`crate::link`]). A side whose record says `link_resolution: true`
+    /// runs each route under its artifact and never under the stated map.
+    pub link_artifacts: BTreeMap<String, crate::link::Artifact>,
+}
+
+/// Whether a side runs its routes under their link-resolution artifacts
+/// (card SELECTION-ROUTES-SPLIT-CALLER-AND-HOME).
+#[must_use]
+pub fn is_linked(side: &Built) -> bool {
+    side.record["link_resolution"] == json!(true)
 }
 
 /// The working directory every route of a snapshot side runs from, under the
@@ -726,6 +738,18 @@ pub fn run_route(
         .checkpoint
         .as_ref()
         .filter(|_| matches!(route.kind, RouteKind::PinnedCorpus { .. }));
+    // Card SELECTION-ROUTES-SPLIT-CALLER-AND-HOME: a linked side reads the
+    // route's checked artifact (rule 40) and never the stated map.
+    let artifact = if is_linked(side) {
+        Some(context.link_artifacts.get(&route.name).ok_or_else(|| {
+            format!(
+                "route {}: no checked link-resolution artifact for the linked side {}",
+                route.name, side.name
+            )
+        })?)
+    } else {
+        None
+    };
     let link_map = context.repository.join(&route.link_map.path);
     let mut environment = base_environment();
     environment.insert(
@@ -735,10 +759,16 @@ pub fn run_route(
             .display()
             .to_string(),
     );
-    environment.insert(
-        "QCORE_CROSS_UNIT_LINK_MAP".into(),
-        link_map.display().to_string(),
-    );
+    match artifact {
+        Some(artifact) => environment.insert(
+            crate::link::RESOLUTION_VARIABLE.into(),
+            artifact.path.display().to_string(),
+        ),
+        None => environment.insert(
+            "QCORE_CROSS_UNIT_LINK_MAP".into(),
+            link_map.display().to_string(),
+        ),
+    };
     environment.insert("QCORE_CLANG".into(), route.clang.clone());
     environment.insert(
         "QCORE_NULL_PROPERTY".into(),
@@ -869,7 +899,7 @@ pub fn run_route(
         .databases
         .iter()
         .cloned()
-        .chain([link_map.clone()])
+        .chain([artifact.map_or_else(|| link_map.clone(), |artifact| artifact.path.clone())])
         .collect();
     let digests = |paths: &[PathBuf]| -> Result<BTreeMap<String, String>, String> {
         paths
@@ -897,7 +927,8 @@ pub fn run_route(
         "checkpoints": checkpoint.map(Checkpoint::record),
         "jobs": context.jobs,
         "binary_sha256": sha_file(&side.binary_real)?,
-        "link_map": link_map.display().to_string(),
+        "link_map": if artifact.is_some() { Value::Null } else { json!(link_map.display().to_string()) },
+        "link_resolution": artifact.map(crate::link::Artifact::record),
         "tracked_inputs": tracked,
         "inputs_before": {"files": identity_before.len(), "digest": identity_digest(&identity_before)},
         "externals_before": digests(&externals)?,
@@ -967,6 +998,22 @@ pub fn run_route(
         record["exit"] = json!(code);
     }
     record["stable"] = json!(stable);
+    // Card SELECTION-ROUTES-SPLIT-CALLER-AND-HOME: a linked route that
+    // completed must have derived its resolution from the checked artifact;
+    // otherwise it fails (exit 102), never read as a map-free run.
+    if let Some(artifact) = artifact.filter(|_| code == 0) {
+        let console = fs::read_to_string(out.join("console.log")).unwrap_or_default();
+        let report = crate::util::read_json(&out.join(route.report())).unwrap_or(Value::Null);
+        match crate::link::check_run(&console, &report, artifact) {
+            Ok(checked) => record["link_resolution_run"] = checked,
+            Err(error) => {
+                record["link_resolution_error"] = json!(error);
+                record["audit_exit"] = json!(code);
+                code = 102;
+                record["exit"] = json!(code);
+            }
+        }
+    }
     if receipt.is_file() {
         record["slot_receipt"] = json!(receipt.display().to_string());
     }

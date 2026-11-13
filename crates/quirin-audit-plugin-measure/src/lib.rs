@@ -27,7 +27,7 @@
 //!     [--inputs-base DIR] [--jobs N] [--build-jobs N] [--mirror auto|always|never] \
 //!     [--mount-root DIR] [--no-slots] [--build-commit TEXT] \
 //!     [--source-date-epoch SECONDS|none] [--baselines DIR] \
-//!     [--legacy-rows] [--reuse-contract-only [--verify-reuse]]
+//!     [--legacy-rows] [--reuse-contract-only [--verify-reuse]] [--link-resolution NAME]...
 //! quirin-audit --plugin-path DIR --output <baselines>/<sha> measure publish \
 //!     --from OUT/sides/NAME [--routes R,...]
 //! ```
@@ -57,6 +57,7 @@ pub mod compare;
 pub mod declared;
 pub mod inputs;
 pub mod ledger;
+pub mod link;
 pub mod mirror;
 pub mod reuse;
 pub mod rows;
@@ -81,7 +82,8 @@ pub const USAGE: &str = "usage: quirin-audit --output OUT measure (--profile NAM
 [--rules-off IDS [--per-rule]] [--repository DIR] [--inputs-base DIR] [--jobs N] [--build-jobs N] \
 [--mirror auto|always|never] [--mount-root DIR] [--no-slots] [--build-commit TEXT] \
 [--source-date-epoch SECONDS|none] [--baselines DIR] [--legacy-rows] \
-[--reuse-contract-only [--verify-reuse]]\n       quirin-audit --output <baselines>/<sha> measure \
+[--reuse-contract-only [--verify-reuse]] [--link-resolution NAME]...\n       quirin-audit --output \
+<baselines>/<sha> measure \
 publish --from OUT/sides/NAME [--routes R,...]\nSPEC: rev:<rev> | <directory> | <binary> | \
 baseline:<sha> | run:<side directory>";
 
@@ -123,6 +125,9 @@ pub struct Options {
     /// Card MEASURE-CONTRACT-ONLY-SIDE-WIRING ([`reuse`]).
     pub reuse_contract_only: bool,
     pub verify_reuse: bool,
+    /// Card SELECTION-ROUTES-SPLIT-CALLER-AND-HOME ([`link`]): the sides that
+    /// run every route under its link-resolution artifact.
+    pub link_resolution: Vec<String>,
     pub publish_from: Option<String>,
     pub publish: bool,
 }
@@ -219,6 +224,12 @@ pub fn parse(arguments: &[String]) -> Result<Options, String> {
                         index += 1;
                     }
                     "--declared" => once(&mut options.declared, flag, value)?,
+                    "--link-resolution" => {
+                        if options.link_resolution.iter().any(|known| known == value) {
+                            return Err(format!("--link-resolution {value} is given twice"));
+                        }
+                        options.link_resolution.push(value.into());
+                    }
                     "--rules-off" => {
                         if options.rules_off.replace(parse_rules_off(value)?).is_some() {
                             return Err("--rules-off is given twice".into());
@@ -267,6 +278,7 @@ pub fn parse(arguments: &[String]) -> Result<Options, String> {
             || !options.sides.is_empty()
             || options.reuse_contract_only
             || options.verify_reuse
+            || !options.link_resolution.is_empty()
         {
             return Err(format!(
                 "publish takes --from SIDE_DIRECTORY and no --side\n{USAGE}"
@@ -276,6 +288,13 @@ pub fn parse(arguments: &[String]) -> Result<Options, String> {
     }
     if options.publish_from.is_some() {
         return Err("--from belongs to `measure publish`".into());
+    }
+    for name in &options.link_resolution {
+        if !options.sides.iter().any(|(known, _)| known == name) {
+            return Err(format!(
+                "--link-resolution names `{name}`, which is no --side"
+            ));
+        }
     }
     if options.verify_reuse && !options.reuse_contract_only {
         return Err("--verify-reuse checks --reuse-contract-only: give both".into());
@@ -473,7 +492,7 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
         Some("none") => None,
         Some(seconds) => seconds.parse().ok(),
     };
-    let context = Context {
+    let mut context = Context {
         repository: repository.clone(),
         inputs_base: inputs_base.clone(),
         output: output.clone(),
@@ -485,7 +504,25 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
         source_date_epoch,
         rules_off: Vec::new(),
         checkpoint: None,
+        link_artifacts: BTreeMap::new(),
     };
+    // Card SELECTION-ROUTES-SPLIT-CALLER-AND-HOME: a link-resolution side
+    // must run (it is measured, not read back) and must not be a rule-switched
+    // or verification name the tool derives.
+    for name in &options.link_resolution {
+        let spec = &specs
+            .iter()
+            .find(|(known, _)| known == name)
+            .expect("checked by parse")
+            .1;
+        if !spec.runs() {
+            return Err(format!(
+                "--link-resolution {name}: a {} side is read as it was measured; only a side \
+                 that runs can run under a link-resolution artifact",
+                spec.kind()
+            ));
+        }
+    }
     // A rule-switched side is the after side of the first comparison,
     // re-run with the switch: it must run, and its binary must advertise
     // the switch (card RULE-SWITCHES), or the measurement is refused before
@@ -588,6 +625,20 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
             json!({"spelling": "not prepared (no side runs or reuses a baseline)"}),
         )
     };
+    // Every route's artifact is checked before anything is built or run
+    // when some side runs under it ([`link`], point 1).
+    if !options.link_resolution.is_empty() {
+        for route in &routes {
+            let databases = spelled
+                .get(&route.name)
+                .map(|entry| entry.databases.clone())
+                .unwrap_or_default();
+            let artifact = link::check_artifact(route, &inputs_base, &databases)
+                .map_err(|error| format!("--link-resolution: {error}"))?;
+            context.link_artifacts.insert(route.name.clone(), artifact);
+        }
+    }
+    let context = context;
     let mirror_binding = (spelling["spelling"] == json!("mirror"))
         .then(|| (output.join("mirror"), mount_root.join("mirror")));
     let inputs_of = |route: &Route| -> Result<Value, String> {
@@ -643,6 +694,22 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
             .collect()
     });
     let mut built: Vec<Built> = built.into_iter().collect::<Result<_, _>>()?;
+    // A link-resolution side's analyzer must read the variable ([`link`],
+    // point 2); its record says so, and every side derived from it (a
+    // rule-switched copy) inherits the record.
+    for side in &mut built {
+        let linked = options.link_resolution.contains(&side.name);
+        if linked && !link::advertises(&side.binary_real)? {
+            return Err(format!(
+                "--link-resolution {}: the binary {} does not read {} (rule 40, card \
+                 LINK-STANDING); it would run the route with no cross-unit resolution",
+                side.name,
+                side.binary_real.display(),
+                link::RESOLUTION_VARIABLE
+            ));
+        }
+        side.record["link_resolution"] = json!(linked);
+    }
     // The tip of a reuse candidate: checked out, classified by the base
     // side's binary and given that binary; any refusal builds it as a
     // separate side, exactly as without the option (fail-closed).
@@ -1209,6 +1276,7 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
                 "directory": side.directory.display().to_string(),
                 "revision": side.record["revision"],
                 "build_commit": side.record["build_commit"],
+                "link_resolution": side.record["link_resolution"],
                 "binary": side.record["binary"],
                 "bundles": side.record["bundles"],
                 "inputs": routes.iter().map(|route| (route.name.clone(),
