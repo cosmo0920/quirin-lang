@@ -435,6 +435,60 @@ fn a_baseline_is_published_once_and_reused_only_after_identity_verification() {
     );
 }
 
+/// Card MEASURE-CONTRACT-ONLY-SIDE-WIRING: a measurement that cannot take the
+/// reuse path (here recorded sides and no pinned route) measures and
+/// compares exactly as without the option, and its record says why.
+#[test]
+fn reuse_not_taken_leaves_the_measurement_unchanged_and_says_why() {
+    let directory = scratch("reuse-not-taken");
+    write_route(
+        &directory.join("a"),
+        "slice",
+        &before_units(),
+        Some("analyzer@1"),
+    );
+    write_route(
+        &directory.join("b"),
+        "slice",
+        &after_units(),
+        Some("analyzer@2"),
+    );
+    let manifest = manifest(&directory).display().to_string();
+    let mut records = Vec::new();
+    for (name, extra) in [
+        ("plain", vec![]),
+        ("asked", vec!["--reuse-contract-only", "--verify-reuse"]),
+    ] {
+        let mut arguments = compare_args(&manifest, "before=run:a", "after=run:b");
+        arguments.extend(extra);
+        let output = directory.join(name);
+        let (invocation, _) = run(&arguments, &directory, &output);
+        assert!(invocation.status.success(), "{}", invocation.stderr);
+        records.push(record(&output));
+    }
+    assert_eq!(
+        records[0]["contract_only_reuse"],
+        json!({"requested": false, "taken": false,
+               "reason": "not requested (--reuse-contract-only)"})
+    );
+    let asked = &records[1]["contract_only_reuse"];
+    assert_eq!(asked["requested"], true);
+    assert_eq!(asked["taken"], false);
+    assert!(
+        asked["reason"]
+            .as_str()
+            .unwrap()
+            .contains("only two `rev:` sides"),
+        "{asked}"
+    );
+    assert_eq!(records[1]["sides"].as_object().unwrap().len(), 2);
+    assert_eq!(
+        records[0]["comparisons"][0]["routes"]["slice"]["moves"],
+        records[1]["comparisons"][0]["routes"]["slice"]["moves"]
+    );
+    assert_eq!(records[1]["comparisons"].as_array().unwrap().len(), 1);
+}
+
 #[test]
 fn bad_usage_is_refused_before_anything_runs() {
     let directory = scratch("usage");
@@ -476,6 +530,27 @@ fn bad_usage_is_refused_before_anything_runs() {
             "--mirror",
             "sometimes",
         ],
+        // Card MEASURE-CONTRACT-ONLY-SIDE-WIRING.
+        vec![
+            "--inputs",
+            "m.json",
+            "--side",
+            "a=run:x",
+            "--side",
+            "b=run:y",
+            "--verify-reuse",
+        ],
+        vec![
+            "--inputs",
+            "m.json",
+            "--side",
+            "a=run:x",
+            "--side",
+            "b=run:y",
+            "--reuse-contract-only",
+            "--reuse-contract-only",
+        ],
+        vec!["publish", "--from", "x", "--reuse-contract-only"],
     ] {
         let output = directory.join("out");
         let (invocation, _) = run(&arguments, &directory, &output);

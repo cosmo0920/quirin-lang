@@ -16,7 +16,7 @@
 """Run the built-in pinned Fluent Bit replay into a fresh private directory.
 
 Usage: run_pinned_audit.py OUT_DIR SOURCE_COMMIT [--inputs-root DIR] [--jobs N] [--census]
-       [--checkpoint-dir DIR [--resume]]
+       [--checkpoint-dir DIR [--resume] [--accept-base-analyzer BASE --repository DIR]]
 
 The input root holds c-gateway-wave-pin/ and provider-packages-wave20/.
 It defaults to this checkout's build/cycle19; QCORE_PINNED_INPUTS may name a
@@ -24,6 +24,10 @@ persistent input root in another checkout. No archived runner is modified.
 --checkpoint-dir seals each library group's `.qo` checkpoints there and
 --resume reuses those whose identity is unchanged (card CORPUS-GROUP-CHECKPOINTS);
 the directory may outlive OUT_DIR, which is always fresh.
+--accept-base-analyzer BASE --repository DIR forward the contract-only
+analyzer acceptance (card MEASURE-LOOKUP-RECORD-REUSE): this checkout's binary,
+built at BASE, measures the contract data of DIR; `quirin-audit measure` passes
+them for a classified contract-only diff (card MEASURE-CONTRACT-ONLY-SIDE-WIRING).
 """
 
 import argparse
@@ -46,9 +50,15 @@ def main() -> int:
     parser.add_argument("--census", action="store_true")
     parser.add_argument("--checkpoint-dir", type=pathlib.Path)
     parser.add_argument("--resume", action="store_true")
+    parser.add_argument("--accept-base-analyzer", metavar="BASE")
+    parser.add_argument("--repository", type=pathlib.Path)
     args = parser.parse_args()
     if args.resume and args.checkpoint_dir is None:
         parser.error("--resume requires --checkpoint-dir")
+    if (args.accept_base_analyzer is None) != (args.repository is None):
+        parser.error("--accept-base-analyzer and --repository are given together")
+    if args.accept_base_analyzer is not None and args.checkpoint_dir is None:
+        parser.error("--accept-base-analyzer requires --checkpoint-dir")
     if args.jobs is not None and args.jobs < 1:
         parser.error("--jobs needs a positive integer")
     inputs = args.inputs_root or pathlib.Path(
@@ -73,6 +83,11 @@ def main() -> int:
         command.extend(["--checkpoint-dir", str(args.checkpoint_dir.resolve())])
         if args.resume:
             command.append("--resume")
+        if args.accept_base_analyzer is not None:
+            command.extend([
+                "--accept-base-analyzer", args.accept_base_analyzer,
+                "--repository", str(args.repository.resolve()),
+            ])
     command.extend([
         str(source), str(monkey), str(out / "monkey-source.json"),
         str(out / "resource-diagnostics.json"),
@@ -103,6 +118,9 @@ def main() -> int:
             "directory": str(args.checkpoint_dir.resolve()),
             "resume": args.resume,
         }
+        if args.accept_base_analyzer is not None:
+            record["checkpoints"]["accept_base_analyzer"] = args.accept_base_analyzer
+            record["checkpoints"]["repository"] = str(args.repository.resolve())
     with (out / "audit.log").open("wb") as log:
         code = subprocess.run(command, env=environment, stdout=log, stderr=log, check=False).returncode
     record["exit"] = code
