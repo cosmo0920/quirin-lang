@@ -1,0 +1,1924 @@
+{
+  "comparisons": [
+    {
+      "after": "linked",
+      "before": "map",
+      "comparison": "map->linked",
+      "routes": {
+        "system": {
+          "after_directory": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-ab62b2e7e6f873b01/measure/arbiter-2/sides/linked/system",
+          "artifacts": {
+            "byte_identical_except_named_substitutions": false,
+            "differing": [
+              {
+                "after": "03186a592d1a1f1099ab02cb4c12ed8dbcbc1d41e13beb9156f4979bf167838f",
+                "before": "884b10b1152c297a56c86c9a4d1c8dddd27eb6f14ae4f0ce103810265c075196",
+                "file": "resource-diagnostics.components.json"
+              },
+              {
+                "file": "resource-diagnostics.contracts.json",
+                "why": {
+                  "lifetime_keys_only_after": [],
+                  "lifetime_keys_only_before": []
+                }
+              },
+              {
+                "after": "17a1a221b922060642f201b099b7e293cfb4600c09cdf1d89d26b222f44ce26d",
+                "before": "0945a29d55822ac8f204fbe0ea6c97346a4cc0c251888c6406af719c63e46ee7",
+                "file": "resource-diagnostics.json"
+              }
+            ],
+            "identical": [
+              {
+                "file": "resource-diagnostics.chunk-contracts.json",
+                "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922"
+              },
+              {
+                "file": "resource-diagnostics.source-effects.json",
+                "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922"
+              },
+              {
+                "file": "system-null.jsonl",
+                "sha256": "c1cb37341fc2525de22b61af54c9ca43b6a860fd2ef051194fba55682277d52a"
+              },
+              {
+                "file": "system-null.summary.json",
+                "sha256": "fbe55991b0147ade4de1fb3ad6fdf5146e5587643eb560ba9652ef419c4cabb5"
+              },
+              {
+                "file": "system-outer.json",
+                "sha256": "7cfc35f8c67358233902690a26d1bd5eb96f16ab7c72319a42d14ee3050d0c84"
+              }
+            ],
+            "identical_after_named_substitution": {},
+            "only_after": [],
+            "only_before": [],
+            "records_not_compared": [
+              "console.log",
+              "invocation.json",
+              "resource-diagnostics.invocation.json",
+              "stderr.log",
+              "system.exit"
+            ]
+          },
+          "before_directory": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-ab62b2e7e6f873b01/measure/arbiter-2/sides/map/system",
+          "composition": {
+            "components": {
+              "after": 15,
+              "before": 15,
+              "union": 30
+            },
+            "conflicts": [],
+            "rows": 15
+          },
+          "conflicts": {
+            "after": [],
+            "before": []
+          },
+          "content_changes": [
+            {
+              "contract_dependencies": {
+                "after": {
+                  "declarations": [
+                    "flb_calloc"
+                  ],
+                  "hypothesis_dependencies": {},
+                  "withdrawn": [
+                    "sb_allocate_chunk"
+                  ]
+                },
+                "before": {
+                  "declarations": [
+                    "flb_calloc",
+                    "sb_allocate_chunk"
+                  ],
+                  "hypothesis_dependencies": {}
+                }
+              },
+              "leaves_added": [],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::plugins/in_storage_backlog/sb.c::unit#0::resource-custody.v1::fluent-bit-system::sb_allocate_chunk#0",
+              "status": [
+                "Safe",
+                "Safe"
+              ]
+            },
+            {
+              "contract_dependencies": {
+                "after": {
+                  "declarations": [
+                    "__errno_location",
+                    "flb_errno_print",
+                    "flb_log_check",
+                    "flb_log_print",
+                    "mk_list_add"
+                  ],
+                  "hypothesis_dependencies": {
+                    "__errno_location": [
+                      "checked_reading_route",
+                      "scalar_declaration",
+                      "untracked_effects"
+                    ]
+                  },
+                  "withdrawn": [
+                    "sb_allocate_chunk",
+                    "sb_append_chunk_to_segregated_backlog"
+                  ]
+                },
+                "before": {
+                  "declarations": [
+                    "__errno_location",
+                    "flb_errno_print",
+                    "flb_log_check",
+                    "flb_log_print",
+                    "mk_list_add",
+                    "sb_allocate_chunk"
+                  ],
+                  "hypothesis_dependencies": {
+                    "__errno_location": [
+                      "checked_reading_route",
+                      "scalar_declaration",
+                      "untracked_effects"
+                    ]
+                  },
+                  "withdrawn": [
+                    "sb_append_chunk_to_segregated_backlog"
+                  ]
+                }
+              },
+              "leaves_added": [],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::plugins/in_storage_backlog/sb.c::unit#0::resource-custody.v1::fluent-bit-system::sb_append_chunk_to_segregated_backlog#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "contract_dependencies": {
+                "after": {
+                  "declarations": [
+                    "flb_free"
+                  ],
+                  "hypothesis_dependencies": {},
+                  "withdrawn": [
+                    "sb_destroy_chunk"
+                  ]
+                },
+                "before": {
+                  "declarations": [
+                    "flb_free",
+                    "sb_destroy_chunk"
+                  ],
+                  "hypothesis_dependencies": {}
+                }
+              },
+              "leaves_added": [],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::plugins/in_storage_backlog/sb.c::unit#0::resource-custody.v1::fluent-bit-system::sb_destroy_chunk#0",
+              "status": [
+                "Safe",
+                "Safe"
+              ]
+            },
+            {
+              "contract_dependencies": {
+                "after": {
+                  "declarations": [
+                    "flb_log_check",
+                    "flb_log_print",
+                    "mk_list_del"
+                  ],
+                  "hypothesis_dependencies": {},
+                  "withdrawn": [
+                    "sb_destroy_chunk",
+                    "sb_remove_chunk_from_segregated_backlog"
+                  ]
+                },
+                "before": {
+                  "declarations": [
+                    "flb_log_check",
+                    "flb_log_print",
+                    "mk_list_del",
+                    "sb_destroy_chunk"
+                  ],
+                  "hypothesis_dependencies": {},
+                  "withdrawn": [
+                    "sb_remove_chunk_from_segregated_backlog"
+                  ]
+                }
+              },
+              "leaves_added": [],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::plugins/in_storage_backlog/sb.c::unit#0::resource-custody.v1::fluent-bit-system::sb_remove_chunk_from_segregated_backlog#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "contract_dependencies": {
+                "after": {
+                  "declarations": [
+                    "flb_input_chunk_get_name",
+                    "flb_input_chunk_release_route",
+                    "flb_log_check",
+                    "flb_log_print",
+                    "flb_task_retry_count",
+                    "flb_task_retry_destroy",
+                    "flb_task_users_dec",
+                    "flb_time_now",
+                    "pthread_mutex_lock",
+                    "pthread_mutex_unlock"
+                  ],
+                  "hypothesis_dependencies": {
+                    "flb_input_chunk_get_name": [
+                      "legacy_atom_00000000"
+                    ],
+                    "flb_task_users_dec": [
+                      "legacy_atom_00000000"
+                    ]
+                  },
+                  "null_premises": [
+                    "null-deref:handle_output_event:19390:task",
+                    "null-deref:handle_output_event:19391:task",
+                    "null-deref:handle_output_event:19404:task",
+                    "null-deref:handle_output_event:19432:task",
+                    "null-deref:handle_output_event:19444:task",
+                    "null-deref:handle_output_event:19468:task",
+                    "null-deref:handle_output_event:19518:task"
+                  ],
+                  "summaries": [
+                    "calculate_chunk_capacity_percent",
+                    "flb_output_is_threaded",
+                    "flb_task_acquire_lock",
+                    "flb_task_from_fs_storage",
+                    "flb_task_get_route_data",
+                    "flb_task_release_lock"
+                  ],
+                  "withdrawn": [
+                    "flb_task_users_dec"
+                  ]
+                },
+                "before": {
+                  "declarations": [
+                    "flb_input_chunk_get_name",
+                    "flb_input_chunk_release_route",
+                    "flb_log_check",
+                    "flb_log_print",
+                    "flb_task_retry_count",
+                    "flb_task_retry_destroy",
+                    "flb_task_users_dec",
+                    "flb_time_now",
+                    "pthread_mutex_lock",
+                    "pthread_mutex_unlock"
+                  ],
+                  "hypothesis_dependencies": {
+                    "flb_input_chunk_get_name": [
+                      "legacy_atom_00000000"
+                    ],
+                    "flb_task_users_dec": [
+                      "legacy_atom_00000000"
+                    ]
+                  },
+                  "null_premises": [
+                    "null-deref:handle_output_event:19390:task",
+                    "null-deref:handle_output_event:19391:task",
+                    "null-deref:handle_output_event:19404:task",
+                    "null-deref:handle_output_event:19432:task",
+                    "null-deref:handle_output_event:19444:task",
+                    "null-deref:handle_output_event:19468:task",
+                    "null-deref:handle_output_event:19518:task"
+                  ],
+                  "summaries": [
+                    "calculate_chunk_capacity_percent",
+                    "flb_output_is_threaded",
+                    "flb_task_acquire_lock",
+                    "flb_task_get_route_data",
+                    "flb_task_release_lock"
+                  ],
+                  "withdrawn": [
+                    "flb_task_users_dec"
+                  ]
+                }
+              },
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unsupported",
+                  "description": "unmodeled call, aggregate or indirect access in branch condition",
+                  "origin": "src/flb_engine.c:687"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_engine.c::unit#1::resource-custody.v1::fluent-bit-system::handle_output_event#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "contract_dependencies": {
+                "after": {
+                  "declarations": [
+                    "cio_chunk_down",
+                    "cio_chunk_is_up",
+                    "flb_log_check",
+                    "flb_log_print",
+                    "flb_task_destroy"
+                  ],
+                  "hypothesis_dependencies": {},
+                  "summaries": [
+                    "flb_input_chunk_down",
+                    "flb_input_chunk_release_lock"
+                  ]
+                },
+                "before": {
+                  "declarations": [
+                    "flb_log_check",
+                    "flb_log_print",
+                    "flb_task_destroy"
+                  ],
+                  "hypothesis_dependencies": {}
+                }
+              },
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unsupported",
+                  "description": "call to uncontracted function `flb_input_chunk_down`",
+                  "origin": "src/flb_engine_dispatch.c:442"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "call to uncontracted function `flb_input_chunk_release_lock`",
+                  "origin": "src/flb_engine_dispatch.c:402"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "call to uncontracted function `flb_input_chunk_release_lock`",
+                  "origin": "src/flb_engine_dispatch.c:406"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "call to uncontracted function `flb_input_chunk_release_lock`",
+                  "origin": "src/flb_engine_dispatch.c:413"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "call to uncontracted function `flb_input_chunk_release_lock`",
+                  "origin": "src/flb_engine_dispatch.c:419"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "call to uncontracted function `flb_input_chunk_release_lock`",
+                  "origin": "src/flb_engine_dispatch.c:436"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_engine_dispatch.c::unit#1::resource-custody.v1::fluent-bit-system::flb_engine_dispatch#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "contract_dependencies": {
+                "after": {
+                  "declarations": [
+                    "__errno_location",
+                    "cio_chunk_down",
+                    "cio_chunk_is_up",
+                    "flb_errno_print",
+                    "flb_input_chunk_is_mem_overlimit",
+                    "flb_input_chunk_total_size",
+                    "flb_log_check",
+                    "flb_log_print",
+                    "flb_malloc",
+                    "flb_task_retry_destroy",
+                    "mk_list_add"
+                  ],
+                  "hypothesis_dependencies": {
+                    "__errno_location": [
+                      "checked_reading_route",
+                      "scalar_declaration",
+                      "untracked_effects"
+                    ]
+                  },
+                  "null_premises": [
+                    "null-deref:flb_input_chunk_set_up_down:20016:in",
+                    "null-deref:flb_input_chunk_set_up_down:20021:in",
+                    "null-deref:flb_task_retry_create:17501:retry",
+                    "null-deref:flb_task_retry_create:17502:retry",
+                    "null-deref:flb_task_retry_create:17503:retry"
+                  ],
+                  "summaries": [
+                    "flb_input_chunk_down",
+                    "flb_input_chunk_set_up_down"
+                  ]
+                },
+                "before": {
+                  "declarations": [
+                    "__errno_location",
+                    "flb_errno_print",
+                    "flb_log_check",
+                    "flb_log_print",
+                    "flb_malloc",
+                    "flb_task_retry_destroy",
+                    "mk_list_add"
+                  ],
+                  "hypothesis_dependencies": {
+                    "__errno_location": [
+                      "checked_reading_route",
+                      "scalar_declaration",
+                      "untracked_effects"
+                    ]
+                  },
+                  "null_premises": [
+                    "null-deref:flb_task_retry_create:17501:retry",
+                    "null-deref:flb_task_retry_create:17502:retry",
+                    "null-deref:flb_task_retry_create:17503:retry"
+                  ]
+                }
+              },
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unsupported",
+                  "description": "call to uncontracted function `flb_input_chunk_down`",
+                  "origin": "src/flb_task.c:380"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "call to uncontracted function `flb_input_chunk_set_up_down`",
+                  "origin": "src/flb_task.c:372"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_task.c::unit#1::resource-custody.v1::fluent-bit-system::flb_task_retry_create#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "contract_dependencies": {
+                "after": {
+                  "declarations": [
+                    "__errno_location",
+                    "flb_calloc",
+                    "flb_errno_print",
+                    "strlen",
+                    "strncmp"
+                  ],
+                  "hypothesis_dependencies": {
+                    "__errno_location": [
+                      "checked_reading_route",
+                      "scalar_declaration",
+                      "untracked_effects"
+                    ]
+                  },
+                  "summaries": [
+                    "flb_chunk_route_plugin_matches"
+                  ]
+                },
+                "before": {
+                  "declarations": [
+                    "__errno_location",
+                    "flb_calloc",
+                    "flb_errno_print",
+                    "strlen",
+                    "strncmp"
+                  ],
+                  "hypothesis_dependencies": {
+                    "__errno_location": [
+                      "checked_reading_route",
+                      "scalar_declaration",
+                      "untracked_effects"
+                    ]
+                  }
+                }
+              },
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `route`",
+                  "origin": "src/flb_task.c:157"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "unmodeled call, aggregate or indirect access in branch condition",
+                  "origin": "src/flb_task.c:173"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "unmodeled call, aggregate or indirect access in branch condition",
+                  "origin": "src/flb_task.c:205"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "unmodeled call, aggregate or indirect access in branch condition",
+                  "origin": "src/flb_task.c:228"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "unmodeled call, aggregate or indirect access in branch condition",
+                  "origin": "src/flb_task.c:256"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system::src/flb_task.c::unit#1::resource-custody.v1::fluent-bit-system::task_collect_output_references#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            }
+          ],
+          "environment_digest_fields": [
+            "assumptions",
+            "build_identity",
+            "environment_sha256",
+            "resource_contracts_sha256",
+            "id"
+          ],
+          "figures": {
+            "after": {
+              "null_rows": 454,
+              "null_verdicts": {
+                "Safe": 211,
+                "Unknown": 243
+              },
+              "null_verdicts_sha256": "e9c4c6e17431591fa4029443540edf7d172c7129be5797d93591d69d2a38b10c",
+              "row_statuses": {
+                "Safe": 103,
+                "Unknown": 341,
+                "Unsafe": 4
+              },
+              "row_verdicts_sha256": "b86cc3995a927da2739e82bd5910e87def3bc0090804cc4f9c4daa6ae986e1be",
+              "rows": 448,
+              "unit_statuses": {
+                "Unknown": 13,
+                "Unsafe": 2
+              },
+              "unit_verdicts_sha256": "d326464ed189bac74776761057f9be31bd5197eea46563b8991137944ed2a01f",
+              "units": 15
+            },
+            "before": {
+              "null_rows": 454,
+              "null_verdicts": {
+                "Safe": 211,
+                "Unknown": 243
+              },
+              "null_verdicts_sha256": "e9c4c6e17431591fa4029443540edf7d172c7129be5797d93591d69d2a38b10c",
+              "row_statuses": {
+                "Safe": 103,
+                "Unknown": 341,
+                "Unsafe": 4
+              },
+              "row_verdicts_sha256": "b86cc3995a927da2739e82bd5910e87def3bc0090804cc4f9c4daa6ae986e1be",
+              "rows": 448,
+              "unit_statuses": {
+                "Unknown": 13,
+                "Unsafe": 2
+              },
+              "unit_verdicts_sha256": "d326464ed189bac74776761057f9be31bd5197eea46563b8991137944ed2a01f",
+              "units": 15
+            }
+          },
+          "function_rows": {
+            "content_changed": 8,
+            "environment_only": 8,
+            "identical": 432,
+            "moved": 0,
+            "unmatched": 0
+          },
+          "incomplete_because": [],
+          "moves": [],
+          "profile_baseline": {
+            "after": {
+              "exit": 1,
+              "lines": [],
+              "profile": "fluent-bit-system"
+            },
+            "before": {
+              "exit": 1,
+              "lines": [],
+              "profile": "fluent-bit-system"
+            }
+          },
+          "status": "complete",
+          "status_deltas": {
+            "Safe": 0,
+            "Unknown": 0,
+            "Unsafe": 0
+          },
+          "totals": {
+            "after": {
+              "conflicted_unit_rows": 0,
+              "diagnostic_counts": {
+                "counted_user": 4,
+                "summary_conflict": 4,
+                "unknown_alias": 897,
+                "unsupported": 2401
+              },
+              "function_rows": 448,
+              "function_status": {
+                "Safe": 103,
+                "Unknown": 341,
+                "Unsafe": 4
+              },
+              "row_source": "sidecar",
+              "unit_rows": 15,
+              "unit_verdict": {
+                "Unknown": 13,
+                "Unsafe": 2
+              }
+            },
+            "before": {
+              "conflicted_unit_rows": 0,
+              "diagnostic_counts": {
+                "counted_user": 4,
+                "summary_conflict": 4,
+                "unknown_alias": 898,
+                "unsupported": 2414
+              },
+              "function_rows": 448,
+              "function_status": {
+                "Safe": 103,
+                "Unknown": 341,
+                "Unsafe": 4
+              },
+              "row_source": "sidecar",
+              "unit_rows": 15,
+              "unit_verdict": {
+                "Unknown": 13,
+                "Unsafe": 2
+              }
+            }
+          },
+          "unit_field_differences": {
+            "fluent-bit-system::plugins/in_storage_backlog/sb.c::unit#0::resource-custody.v1::fluent-bit-system": [
+              "contract_body_evidence",
+              "reading_site_domain"
+            ],
+            "fluent-bit-system::src/flb_engine.c::unit#0::resource-custody.v1::fluent-bit-system": [
+              "cross_unit_link_refusals"
+            ],
+            "fluent-bit-system::src/flb_engine.c::unit#1::resource-custody.v1::fluent-bit-system": [
+              "contract_body_evidence",
+              "cross_unit_link_refusals",
+              "diagnostic_counts",
+              "reading_site_domain",
+              "reason"
+            ],
+            "fluent-bit-system::src/flb_engine_dispatch.c::unit#0::resource-custody.v1::fluent-bit-system": [
+              "cross_unit_link_refusals"
+            ],
+            "fluent-bit-system::src/flb_engine_dispatch.c::unit#1::resource-custody.v1::fluent-bit-system": [
+              "contract_body_evidence",
+              "diagnostic_counts",
+              "reading_site_domain",
+              "reason"
+            ],
+            "fluent-bit-system::src/flb_input_chunk.c::unit#0::resource-custody.v1::fluent-bit-system": [
+              "cross_unit_link_refusals"
+            ],
+            "fluent-bit-system::src/flb_input_chunk.c::unit#1::resource-custody.v1::fluent-bit-system": [
+              "contract_body_evidence",
+              "reading_site_domain"
+            ],
+            "fluent-bit-system::src/flb_scheduler.c::unit#0::resource-custody.v1::fluent-bit-system": [
+              "cross_unit_link_refusals"
+            ],
+            "fluent-bit-system::src/flb_scheduler.c::unit#1::resource-custody.v1::fluent-bit-system": [
+              "contract_body_evidence",
+              "reading_site_domain"
+            ],
+            "fluent-bit-system::src/flb_storage.c::unit#0::resource-custody.v1::fluent-bit-system": [
+              "cross_unit_link_refusals"
+            ],
+            "fluent-bit-system::src/flb_storage.c::unit#1::resource-custody.v1::fluent-bit-system": [
+              "contract_body_evidence",
+              "reading_site_domain"
+            ],
+            "fluent-bit-system::src/flb_task.c::unit#0::resource-custody.v1::fluent-bit-system": [
+              "cross_unit_link_refusals",
+              "reading_site_environments"
+            ],
+            "fluent-bit-system::src/flb_task.c::unit#1::resource-custody.v1::fluent-bit-system": [
+              "contract_body_evidence",
+              "diagnostic_counts",
+              "reading_site_domain",
+              "reading_site_environments",
+              "reason"
+            ]
+          },
+          "unit_moves": [],
+          "unit_rows_environment_only": 0,
+          "unmatched": [],
+          "unmatched_units": []
+        },
+        "system-teardown": {
+          "after_directory": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-ab62b2e7e6f873b01/measure/arbiter-2/sides/linked/system-teardown",
+          "artifacts": {
+            "byte_identical_except_named_substitutions": false,
+            "differing": [
+              {
+                "after": "0c6e0044b9915e9f06fd214427e711a5c0b3a2fbe7e3bfbb855f403d375100f3",
+                "before": "9730f0bc5c30b36e5038ddfc52fc93c00ef682eede84a47cd23fbfb6befe6723",
+                "file": "resource-diagnostics.components.json"
+              },
+              {
+                "file": "resource-diagnostics.contracts.json",
+                "why": {
+                  "lifetime_keys_only_after": [],
+                  "lifetime_keys_only_before": []
+                }
+              },
+              {
+                "after": "fae6e36de3fbc73dcdec50879b7c73dd07fe05f23d8fc17366b55c7d60f53d4f",
+                "before": "7ea7c1b399889fd24e4b02e5d79341bb226fc105fdb8754f4166eba7cf66305b",
+                "file": "resource-diagnostics.json"
+              }
+            ],
+            "identical": [
+              {
+                "file": "resource-diagnostics.chunk-contracts.json",
+                "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922"
+              },
+              {
+                "file": "resource-diagnostics.source-effects.json",
+                "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922"
+              },
+              {
+                "file": "system-teardown-null.jsonl",
+                "sha256": "71a22539c7fbfc43f0f2b5f165be879445799bf0c39af65a8f125174c2e14add"
+              },
+              {
+                "file": "system-teardown-null.summary.json",
+                "sha256": "f7d8b850e4acb63d27e0ec03bb1f88af71a804e182c4e7594e50272568f6f8fd"
+              },
+              {
+                "file": "system-teardown-outer.json",
+                "sha256": "42059f44f045075df3979f5622fbab4c134bc2e9a1629669699c87b3e40093f4"
+              }
+            ],
+            "identical_after_named_substitution": {},
+            "only_after": [],
+            "only_before": [],
+            "records_not_compared": [
+              "console.log",
+              "invocation.json",
+              "resource-diagnostics.invocation.json",
+              "stderr.log",
+              "system-teardown.exit"
+            ]
+          },
+          "before_directory": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-ab62b2e7e6f873b01/measure/arbiter-2/sides/map/system-teardown",
+          "composition": {
+            "components": {
+              "after": 21,
+              "before": 21,
+              "union": 42
+            },
+            "conflicts": [],
+            "rows": 21
+          },
+          "conflicts": {
+            "after": [],
+            "before": []
+          },
+          "content_changes": [
+            {
+              "contract_dependencies": {
+                "after": {
+                  "declarations": [
+                    "flb_calloc"
+                  ],
+                  "hypothesis_dependencies": {},
+                  "withdrawn": [
+                    "sb_allocate_chunk"
+                  ]
+                },
+                "before": {
+                  "declarations": [
+                    "flb_calloc",
+                    "sb_allocate_chunk"
+                  ],
+                  "hypothesis_dependencies": {}
+                }
+              },
+              "leaves_added": [],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system-teardown::plugins/in_storage_backlog/sb.c::unit#0::resource-custody.v1::fluent-bit-system-teardown::sb_allocate_chunk#0",
+              "status": [
+                "Safe",
+                "Safe"
+              ]
+            },
+            {
+              "contract_dependencies": {
+                "after": {
+                  "declarations": [
+                    "__errno_location",
+                    "flb_errno_print",
+                    "flb_log_check",
+                    "flb_log_print",
+                    "mk_list_add"
+                  ],
+                  "hypothesis_dependencies": {
+                    "__errno_location": [
+                      "checked_reading_route",
+                      "scalar_declaration",
+                      "untracked_effects"
+                    ]
+                  },
+                  "withdrawn": [
+                    "sb_allocate_chunk",
+                    "sb_append_chunk_to_segregated_backlog"
+                  ]
+                },
+                "before": {
+                  "declarations": [
+                    "__errno_location",
+                    "flb_errno_print",
+                    "flb_log_check",
+                    "flb_log_print",
+                    "mk_list_add",
+                    "sb_allocate_chunk"
+                  ],
+                  "hypothesis_dependencies": {
+                    "__errno_location": [
+                      "checked_reading_route",
+                      "scalar_declaration",
+                      "untracked_effects"
+                    ]
+                  },
+                  "withdrawn": [
+                    "sb_append_chunk_to_segregated_backlog"
+                  ]
+                }
+              },
+              "leaves_added": [],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system-teardown::plugins/in_storage_backlog/sb.c::unit#0::resource-custody.v1::fluent-bit-system-teardown::sb_append_chunk_to_segregated_backlog#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "contract_dependencies": {
+                "after": {
+                  "declarations": [
+                    "flb_free"
+                  ],
+                  "hypothesis_dependencies": {},
+                  "withdrawn": [
+                    "sb_destroy_chunk"
+                  ]
+                },
+                "before": {
+                  "declarations": [
+                    "flb_free",
+                    "sb_destroy_chunk"
+                  ],
+                  "hypothesis_dependencies": {}
+                }
+              },
+              "leaves_added": [],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system-teardown::plugins/in_storage_backlog/sb.c::unit#0::resource-custody.v1::fluent-bit-system-teardown::sb_destroy_chunk#0",
+              "status": [
+                "Safe",
+                "Safe"
+              ]
+            },
+            {
+              "contract_dependencies": {
+                "after": {
+                  "declarations": [
+                    "flb_log_check",
+                    "flb_log_print",
+                    "mk_list_del"
+                  ],
+                  "hypothesis_dependencies": {},
+                  "withdrawn": [
+                    "sb_destroy_chunk",
+                    "sb_remove_chunk_from_segregated_backlog"
+                  ]
+                },
+                "before": {
+                  "declarations": [
+                    "flb_log_check",
+                    "flb_log_print",
+                    "mk_list_del",
+                    "sb_destroy_chunk"
+                  ],
+                  "hypothesis_dependencies": {},
+                  "withdrawn": [
+                    "sb_remove_chunk_from_segregated_backlog"
+                  ]
+                }
+              },
+              "leaves_added": [],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system-teardown::plugins/in_storage_backlog/sb.c::unit#0::resource-custody.v1::fluent-bit-system-teardown::sb_remove_chunk_from_segregated_backlog#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "contract_dependencies": {
+                "after": {
+                  "declarations": [
+                    "flb_input_chunk_get_name",
+                    "flb_input_chunk_release_route",
+                    "flb_log_check",
+                    "flb_log_print",
+                    "flb_task_retry_count",
+                    "flb_task_retry_destroy",
+                    "flb_task_users_dec",
+                    "flb_time_now",
+                    "pthread_mutex_lock",
+                    "pthread_mutex_unlock"
+                  ],
+                  "hypothesis_dependencies": {
+                    "flb_input_chunk_get_name": [
+                      "legacy_atom_00000000"
+                    ],
+                    "flb_task_users_dec": [
+                      "legacy_atom_00000000"
+                    ]
+                  },
+                  "null_premises": [
+                    "null-deref:handle_output_event:19390:task",
+                    "null-deref:handle_output_event:19391:task",
+                    "null-deref:handle_output_event:19404:task",
+                    "null-deref:handle_output_event:19432:task",
+                    "null-deref:handle_output_event:19444:task",
+                    "null-deref:handle_output_event:19468:task",
+                    "null-deref:handle_output_event:19518:task"
+                  ],
+                  "summaries": [
+                    "calculate_chunk_capacity_percent",
+                    "flb_output_is_threaded",
+                    "flb_task_acquire_lock",
+                    "flb_task_from_fs_storage",
+                    "flb_task_get_route_data",
+                    "flb_task_release_lock"
+                  ],
+                  "withdrawn": [
+                    "flb_task_users_dec"
+                  ]
+                },
+                "before": {
+                  "declarations": [
+                    "flb_input_chunk_get_name",
+                    "flb_input_chunk_release_route",
+                    "flb_log_check",
+                    "flb_log_print",
+                    "flb_task_retry_count",
+                    "flb_task_retry_destroy",
+                    "flb_task_users_dec",
+                    "flb_time_now",
+                    "pthread_mutex_lock",
+                    "pthread_mutex_unlock"
+                  ],
+                  "hypothesis_dependencies": {
+                    "flb_input_chunk_get_name": [
+                      "legacy_atom_00000000"
+                    ],
+                    "flb_task_users_dec": [
+                      "legacy_atom_00000000"
+                    ]
+                  },
+                  "null_premises": [
+                    "null-deref:handle_output_event:19390:task",
+                    "null-deref:handle_output_event:19391:task",
+                    "null-deref:handle_output_event:19404:task",
+                    "null-deref:handle_output_event:19432:task",
+                    "null-deref:handle_output_event:19444:task",
+                    "null-deref:handle_output_event:19468:task",
+                    "null-deref:handle_output_event:19518:task"
+                  ],
+                  "summaries": [
+                    "calculate_chunk_capacity_percent",
+                    "flb_output_is_threaded",
+                    "flb_task_acquire_lock",
+                    "flb_task_get_route_data",
+                    "flb_task_release_lock"
+                  ],
+                  "withdrawn": [
+                    "flb_task_users_dec"
+                  ]
+                }
+              },
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unsupported",
+                  "description": "unmodeled call, aggregate or indirect access in branch condition",
+                  "origin": "src/flb_engine.c:687"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system-teardown::src/flb_engine.c::unit#1::resource-custody.v1::fluent-bit-system-teardown::handle_output_event#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "contract_dependencies": {
+                "after": {
+                  "declarations": [
+                    "cio_chunk_down",
+                    "cio_chunk_is_up",
+                    "flb_log_check",
+                    "flb_log_print",
+                    "flb_task_destroy"
+                  ],
+                  "hypothesis_dependencies": {},
+                  "summaries": [
+                    "flb_input_chunk_down",
+                    "flb_input_chunk_release_lock"
+                  ]
+                },
+                "before": {
+                  "declarations": [
+                    "flb_log_check",
+                    "flb_log_print",
+                    "flb_task_destroy"
+                  ],
+                  "hypothesis_dependencies": {}
+                }
+              },
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unsupported",
+                  "description": "call to uncontracted function `flb_input_chunk_down`",
+                  "origin": "src/flb_engine_dispatch.c:442"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "call to uncontracted function `flb_input_chunk_release_lock`",
+                  "origin": "src/flb_engine_dispatch.c:402"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "call to uncontracted function `flb_input_chunk_release_lock`",
+                  "origin": "src/flb_engine_dispatch.c:406"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "call to uncontracted function `flb_input_chunk_release_lock`",
+                  "origin": "src/flb_engine_dispatch.c:413"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "call to uncontracted function `flb_input_chunk_release_lock`",
+                  "origin": "src/flb_engine_dispatch.c:419"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "call to uncontracted function `flb_input_chunk_release_lock`",
+                  "origin": "src/flb_engine_dispatch.c:436"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system-teardown::src/flb_engine_dispatch.c::unit#1::resource-custody.v1::fluent-bit-system-teardown::flb_engine_dispatch#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "contract_dependencies": {
+                "after": {
+                  "declarations": [
+                    "__errno_location",
+                    "flb_errno_print",
+                    "flb_log_check",
+                    "flb_log_print",
+                    "write"
+                  ],
+                  "hypothesis_dependencies": {
+                    "__errno_location": [
+                      "checked_reading_route",
+                      "scalar_declaration",
+                      "untracked_effects"
+                    ]
+                  },
+                  "null_premises": [
+                    "null-deref:flb_input_thread_collectors_signal_start:17616:thi"
+                  ],
+                  "summaries": [
+                    "flb_input_is_threaded",
+                    "flb_input_thread_collectors_signal_start"
+                  ]
+                },
+                "before": {
+                  "declarations": [
+                    "flb_log_check",
+                    "flb_log_print"
+                  ],
+                  "hypothesis_dependencies": {},
+                  "summaries": [
+                    "flb_input_is_threaded"
+                  ]
+                }
+              },
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unsupported",
+                  "description": "call to uncontracted function `flb_input_thread_collectors_signal_start`",
+                  "origin": "src/flb_input.c:2930"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system-teardown::src/flb_input.c::unit#1::resource-custody.v1::fluent-bit-system-teardown::flb_input_collectors_start#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "contract_dependencies": {
+                "after": {
+                  "declarations": [
+                    "close",
+                    "cmt_destroy",
+                    "flb_config_set_program_name",
+                    "flb_free",
+                    "flb_input_collector_destroy",
+                    "flb_input_instance_destroy",
+                    "flb_sds_destroy",
+                    "flb_task_destroy",
+                    "listen",
+                    "mk_list_del"
+                  ],
+                  "hypothesis_dependencies": {
+                    "flb_config_set_program_name": [
+                      "legacy_atom_00000000"
+                    ]
+                  },
+                  "summaries": [
+                    "flb_engine_destroy_tasks"
+                  ],
+                  "withdrawn": [
+                    "pthread_cond_destroy"
+                  ]
+                },
+                "before": {
+                  "declarations": [
+                    "close",
+                    "cmt_destroy",
+                    "flb_config_set_program_name",
+                    "flb_free",
+                    "flb_input_collector_destroy",
+                    "flb_input_instance_destroy",
+                    "flb_sds_destroy",
+                    "listen",
+                    "mk_list_del"
+                  ],
+                  "hypothesis_dependencies": {
+                    "flb_config_set_program_name": [
+                      "legacy_atom_00000000"
+                    ]
+                  },
+                  "withdrawn": [
+                    "pthread_cond_destroy"
+                  ]
+                }
+              },
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unsupported",
+                  "description": "call to uncontracted function `flb_engine_destroy_tasks`",
+                  "origin": "src/flb_input.c:1239"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system-teardown::src/flb_input.c::unit#1::resource-custody.v1::fluent-bit-system-teardown::flb_input_instance_destroy#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "contract_dependencies": {
+                "after": {
+                  "declarations": [
+                    "__errno_location",
+                    "flb_calloc",
+                    "flb_errno_print",
+                    "flb_free",
+                    "flb_task_queue_destroy",
+                    "mk_list_add",
+                    "snprintf",
+                    "strlen",
+                    "strstr"
+                  ],
+                  "hypothesis_dependencies": {
+                    "__errno_location": [
+                      "checked_reading_route",
+                      "scalar_declaration",
+                      "untracked_effects"
+                    ]
+                  },
+                  "null_premises": [
+                    "null-deref:flb_output_new:18155:plugin",
+                    "null-deref:flb_output_new:18159:plugin",
+                    "null-deref:flb_output_new:18166:plugin",
+                    "null-deref:flb_output_new:18180:plugin",
+                    "null-deref:flb_output_new:18235:plugin",
+                    "null-deref:flb_output_new:18250:plugin"
+                  ],
+                  "summaries": [
+                    "instance_id"
+                  ]
+                },
+                "before": {
+                  "declarations": [
+                    "__errno_location",
+                    "flb_calloc",
+                    "flb_errno_print",
+                    "flb_free",
+                    "flb_task_queue_destroy",
+                    "mk_list_add",
+                    "snprintf",
+                    "strlen",
+                    "strstr"
+                  ],
+                  "hypothesis_dependencies": {
+                    "__errno_location": [
+                      "checked_reading_route",
+                      "scalar_declaration",
+                      "untracked_effects"
+                    ]
+                  },
+                  "null_premises": [
+                    "null-deref:flb_output_new:18155:plugin",
+                    "null-deref:flb_output_new:18159:plugin",
+                    "null-deref:flb_output_new:18166:plugin",
+                    "null-deref:flb_output_new:18180:plugin",
+                    "null-deref:flb_output_new:18235:plugin",
+                    "null-deref:flb_output_new:18250:plugin"
+                  ]
+                }
+              },
+              "leaves_added": [],
+              "leaves_removed": [],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system-teardown::src/flb_output.c::unit#1::resource-custody.v1::fluent-bit-system-teardown::flb_output_new#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "contract_dependencies": {
+                "after": {
+                  "declarations": [
+                    "__errno_location",
+                    "cio_chunk_down",
+                    "cio_chunk_is_up",
+                    "flb_errno_print",
+                    "flb_input_chunk_is_mem_overlimit",
+                    "flb_input_chunk_total_size",
+                    "flb_log_check",
+                    "flb_log_print",
+                    "flb_malloc",
+                    "flb_task_retry_destroy",
+                    "mk_list_add"
+                  ],
+                  "hypothesis_dependencies": {
+                    "__errno_location": [
+                      "checked_reading_route",
+                      "scalar_declaration",
+                      "untracked_effects"
+                    ]
+                  },
+                  "null_premises": [
+                    "null-deref:flb_input_chunk_set_up_down:20016:in",
+                    "null-deref:flb_input_chunk_set_up_down:20021:in",
+                    "null-deref:flb_task_retry_create:17501:retry",
+                    "null-deref:flb_task_retry_create:17502:retry",
+                    "null-deref:flb_task_retry_create:17503:retry"
+                  ],
+                  "summaries": [
+                    "flb_input_chunk_down",
+                    "flb_input_chunk_set_up_down"
+                  ]
+                },
+                "before": {
+                  "declarations": [
+                    "__errno_location",
+                    "flb_errno_print",
+                    "flb_log_check",
+                    "flb_log_print",
+                    "flb_malloc",
+                    "flb_task_retry_destroy",
+                    "mk_list_add"
+                  ],
+                  "hypothesis_dependencies": {
+                    "__errno_location": [
+                      "checked_reading_route",
+                      "scalar_declaration",
+                      "untracked_effects"
+                    ]
+                  },
+                  "null_premises": [
+                    "null-deref:flb_task_retry_create:17501:retry",
+                    "null-deref:flb_task_retry_create:17502:retry",
+                    "null-deref:flb_task_retry_create:17503:retry"
+                  ]
+                }
+              },
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unsupported",
+                  "description": "call to uncontracted function `flb_input_chunk_down`",
+                  "origin": "src/flb_task.c:380"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "call to uncontracted function `flb_input_chunk_set_up_down`",
+                  "origin": "src/flb_task.c:372"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system-teardown::src/flb_task.c::unit#1::resource-custody.v1::fluent-bit-system-teardown::flb_task_retry_create#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "contract_dependencies": {
+                "after": {
+                  "declarations": [
+                    "__errno_location",
+                    "flb_calloc",
+                    "flb_errno_print",
+                    "strlen",
+                    "strncmp"
+                  ],
+                  "hypothesis_dependencies": {
+                    "__errno_location": [
+                      "checked_reading_route",
+                      "scalar_declaration",
+                      "untracked_effects"
+                    ]
+                  },
+                  "summaries": [
+                    "flb_chunk_route_plugin_matches"
+                  ]
+                },
+                "before": {
+                  "declarations": [
+                    "__errno_location",
+                    "flb_calloc",
+                    "flb_errno_print",
+                    "strlen",
+                    "strncmp"
+                  ],
+                  "hypothesis_dependencies": {
+                    "__errno_location": [
+                      "checked_reading_route",
+                      "scalar_declaration",
+                      "untracked_effects"
+                    ]
+                  }
+                }
+              },
+              "leaves_added": [],
+              "leaves_removed": [
+                {
+                  "category": "unknown_alias",
+                  "description": "unresolved resource identity `route`",
+                  "origin": "src/flb_task.c:157"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "unmodeled call, aggregate or indirect access in branch condition",
+                  "origin": "src/flb_task.c:173"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "unmodeled call, aggregate or indirect access in branch condition",
+                  "origin": "src/flb_task.c:205"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "unmodeled call, aggregate or indirect access in branch condition",
+                  "origin": "src/flb_task.c:228"
+                },
+                {
+                  "category": "unsupported",
+                  "description": "unmodeled call, aggregate or indirect access in branch condition",
+                  "origin": "src/flb_task.c:256"
+                }
+              ],
+              "other_fields_changed": [],
+              "row": "fluent-bit-system-teardown::src/flb_task.c::unit#1::resource-custody.v1::fluent-bit-system-teardown::task_collect_output_references#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            }
+          ],
+          "environment_digest_fields": [
+            "assumptions",
+            "build_identity",
+            "environment_sha256",
+            "resource_contracts_sha256",
+            "id"
+          ],
+          "figures": {
+            "after": {
+              "null_rows": 668,
+              "null_verdicts": {
+                "Safe": 317,
+                "Unknown": 351
+              },
+              "null_verdicts_sha256": "27fffc67ea30cd4858e124c5da5367f905451a4de4c9134e4804fc6149345704",
+              "row_statuses": {
+                "Safe": 135,
+                "Unknown": 523,
+                "Unsafe": 4
+              },
+              "row_verdicts_sha256": "a728ae067733b997444ac7717acddfd4182c8b3d5bd1140606ebfea3c19ede18",
+              "rows": 662,
+              "unit_statuses": {
+                "Unknown": 19,
+                "Unsafe": 2
+              },
+              "unit_verdicts_sha256": "20798a579f596e2d9ff4ecdaf351e8077b3279de67f21f21a37273ca531123c6",
+              "units": 21
+            },
+            "before": {
+              "null_rows": 668,
+              "null_verdicts": {
+                "Safe": 317,
+                "Unknown": 351
+              },
+              "null_verdicts_sha256": "27fffc67ea30cd4858e124c5da5367f905451a4de4c9134e4804fc6149345704",
+              "row_statuses": {
+                "Safe": 135,
+                "Unknown": 523,
+                "Unsafe": 4
+              },
+              "row_verdicts_sha256": "a728ae067733b997444ac7717acddfd4182c8b3d5bd1140606ebfea3c19ede18",
+              "rows": 662,
+              "unit_statuses": {
+                "Unknown": 19,
+                "Unsafe": 2
+              },
+              "unit_verdicts_sha256": "20798a579f596e2d9ff4ecdaf351e8077b3279de67f21f21a37273ca531123c6",
+              "units": 21
+            }
+          },
+          "function_rows": {
+            "content_changed": 11,
+            "environment_only": 8,
+            "identical": 643,
+            "moved": 0,
+            "unmatched": 0
+          },
+          "incomplete_because": [],
+          "moves": [],
+          "profile_baseline": {
+            "after": {
+              "profile": "fluent-bit-system-teardown",
+              "record": "none committed"
+            },
+            "before": {
+              "profile": "fluent-bit-system-teardown",
+              "record": "none committed"
+            }
+          },
+          "status": "complete",
+          "status_deltas": {
+            "Safe": 0,
+            "Unknown": 0,
+            "Unsafe": 0
+          },
+          "totals": {
+            "after": {
+              "conflicted_unit_rows": 0,
+              "diagnostic_counts": {
+                "counted_user": 4,
+                "summary_conflict": 4,
+                "unknown_alias": 1495,
+                "unsupported": 3829
+              },
+              "function_rows": 662,
+              "function_status": {
+                "Safe": 135,
+                "Unknown": 523,
+                "Unsafe": 4
+              },
+              "row_source": "sidecar",
+              "unit_rows": 21,
+              "unit_verdict": {
+                "Unknown": 19,
+                "Unsafe": 2
+              }
+            },
+            "before": {
+              "conflicted_unit_rows": 0,
+              "diagnostic_counts": {
+                "counted_user": 4,
+                "summary_conflict": 4,
+                "unknown_alias": 1496,
+                "unsupported": 3844
+              },
+              "function_rows": 662,
+              "function_status": {
+                "Safe": 135,
+                "Unknown": 523,
+                "Unsafe": 4
+              },
+              "row_source": "sidecar",
+              "unit_rows": 21,
+              "unit_verdict": {
+                "Unknown": 19,
+                "Unsafe": 2
+              }
+            }
+          },
+          "unit_field_differences": {
+            "fluent-bit-system-teardown::plugins/in_storage_backlog/sb.c::unit#0::resource-custody.v1::fluent-bit-system-teardown": [
+              "contract_body_evidence",
+              "reading_site_domain"
+            ],
+            "fluent-bit-system-teardown::src/flb_engine.c::unit#0::resource-custody.v1::fluent-bit-system-teardown": [
+              "cross_unit_link_refusals"
+            ],
+            "fluent-bit-system-teardown::src/flb_engine.c::unit#1::resource-custody.v1::fluent-bit-system-teardown": [
+              "contract_body_evidence",
+              "cross_unit_link_refusals",
+              "diagnostic_counts",
+              "reading_site_domain",
+              "reason"
+            ],
+            "fluent-bit-system-teardown::src/flb_engine_dispatch.c::unit#0::resource-custody.v1::fluent-bit-system-teardown": [
+              "cross_unit_link_refusals"
+            ],
+            "fluent-bit-system-teardown::src/flb_engine_dispatch.c::unit#1::resource-custody.v1::fluent-bit-system-teardown": [
+              "contract_body_evidence",
+              "diagnostic_counts",
+              "reading_site_domain",
+              "reason"
+            ],
+            "fluent-bit-system-teardown::src/flb_input.c::unit#0::resource-custody.v1::fluent-bit-system-teardown": [
+              "cross_unit_link_refusals"
+            ],
+            "fluent-bit-system-teardown::src/flb_input.c::unit#1::resource-custody.v1::fluent-bit-system-teardown": [
+              "contract_body_evidence",
+              "diagnostic_counts",
+              "reading_site_domain",
+              "reason"
+            ],
+            "fluent-bit-system-teardown::src/flb_input_chunk.c::unit#0::resource-custody.v1::fluent-bit-system-teardown": [
+              "cross_unit_link_refusals"
+            ],
+            "fluent-bit-system-teardown::src/flb_input_chunk.c::unit#1::resource-custody.v1::fluent-bit-system-teardown": [
+              "contract_body_evidence",
+              "reading_site_domain"
+            ],
+            "fluent-bit-system-teardown::src/flb_input_thread.c::unit#0::resource-custody.v1::fluent-bit-system-teardown": [
+              "cross_unit_link_refusals"
+            ],
+            "fluent-bit-system-teardown::src/flb_input_thread.c::unit#1::resource-custody.v1::fluent-bit-system-teardown": [
+              "contract_body_evidence",
+              "reading_site_domain"
+            ],
+            "fluent-bit-system-teardown::src/flb_output.c::unit#0::resource-custody.v1::fluent-bit-system-teardown": [
+              "cross_unit_link_refusals"
+            ],
+            "fluent-bit-system-teardown::src/flb_output.c::unit#1::resource-custody.v1::fluent-bit-system-teardown": [
+              "contract_body_evidence",
+              "reading_site_domain"
+            ],
+            "fluent-bit-system-teardown::src/flb_output_thread.c::unit#0::resource-custody.v1::fluent-bit-system-teardown": [
+              "cross_unit_link_refusals"
+            ],
+            "fluent-bit-system-teardown::src/flb_output_thread.c::unit#1::resource-custody.v1::fluent-bit-system-teardown": [
+              "contract_body_evidence",
+              "reading_site_domain"
+            ],
+            "fluent-bit-system-teardown::src/flb_scheduler.c::unit#0::resource-custody.v1::fluent-bit-system-teardown": [
+              "cross_unit_link_refusals"
+            ],
+            "fluent-bit-system-teardown::src/flb_scheduler.c::unit#1::resource-custody.v1::fluent-bit-system-teardown": [
+              "contract_body_evidence",
+              "reading_site_domain"
+            ],
+            "fluent-bit-system-teardown::src/flb_storage.c::unit#0::resource-custody.v1::fluent-bit-system-teardown": [
+              "cross_unit_link_refusals"
+            ],
+            "fluent-bit-system-teardown::src/flb_storage.c::unit#1::resource-custody.v1::fluent-bit-system-teardown": [
+              "contract_body_evidence",
+              "reading_site_domain"
+            ],
+            "fluent-bit-system-teardown::src/flb_task.c::unit#0::resource-custody.v1::fluent-bit-system-teardown": [
+              "cross_unit_link_refusals",
+              "reading_site_environments"
+            ],
+            "fluent-bit-system-teardown::src/flb_task.c::unit#1::resource-custody.v1::fluent-bit-system-teardown": [
+              "contract_body_evidence",
+              "diagnostic_counts",
+              "reading_site_domain",
+              "reading_site_environments",
+              "reason"
+            ]
+          },
+          "unit_moves": [],
+          "unit_rows_environment_only": 0,
+          "unmatched": [],
+          "unmatched_units": []
+        }
+      }
+    }
+  ],
+  "contract_only_reuse": {
+    "reason": "not requested (--reuse-contract-only)",
+    "requested": false,
+    "taken": false
+  },
+  "contribution": {
+    "ledgers": [],
+    "rules": [],
+    "schema": "quirin-contribution-ledger/1"
+  },
+  "declared": {
+    "comparison": "map->linked",
+    "path": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-ab62b2e7e6f873b01/private/tip-src/docs/reports/selection-routes-split-caller-and-home/PREDICTION.md",
+    "result": "match",
+    "routes": {
+      "system": {
+        "declared": true,
+        "delta_mismatches": [],
+        "missing": [],
+        "result": "match",
+        "unpredicted": []
+      },
+      "system-teardown": {
+        "declared": true,
+        "delta_mismatches": [],
+        "missing": [],
+        "result": "match",
+        "unpredicted": []
+      }
+    },
+    "sha256": "4f0bdf61c782f6a43438e1cf0d7990a9b2b7806caae4335fe339510d079486ed"
+  },
+  "failures": [],
+  "inputs_spelling": {
+    "canonical_prefix": null,
+    "mode": "auto",
+    "spelled_prefix": null,
+    "spelling": "original"
+  },
+  "interactions": [],
+  "routes": [
+    {
+      "definition": {
+        "checkout": "private/prep/system/fluent-bit-clang-source",
+        "clang": "/usr/lib/llvm-21/bin/clang",
+        "compile_database": {
+          "path": "private/prep/system/fluent-bit-clang-production/compile_commands.json",
+          "sha256": "40bc0b350f3e0c36c587a7ffc4fff24abb9b9f7bfdfecc32242125e343f27e3e"
+        },
+        "kind": "configured-selection",
+        "link_map": {
+          "path": "docs/reports/w48-bu-single-leaf-bodies/link-map.corpus.json",
+          "sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3"
+        },
+        "link_resolution": {
+          "path": "private/prep/system/link-resolution/link-resolution.json",
+          "sha256": "5756d7d8ecec57c92d9c257a8168a2c77ebce0b12e1a849f10e79ee8c335d552"
+        },
+        "name": "system",
+        "profile": "fluent-bit-system",
+        "profile_directory": "contract/profiles/fluent-bit",
+        "selection": "contract/profiles/fluent-bit/system-selection.json",
+        "tracked": [
+          "contract/profiles/fluent-bit/system-selection.json",
+          "contract/profiles/fluent-bit/profile.json",
+          "contract/profiles/fluent-bit/member-facts-scope.json"
+        ]
+      },
+      "digest": "2c12e55d47feb60f2af9c75fe56f91f6eae805b48d912545da5329c0011c9e08",
+      "name": "system",
+      "profile": "fluent-bit-system"
+    },
+    {
+      "definition": {
+        "checkout": "private/prep/system/fluent-bit-clang-source",
+        "clang": "/usr/lib/llvm-21/bin/clang",
+        "compile_database": {
+          "path": "private/prep/system/fluent-bit-clang-production/compile_commands.json",
+          "sha256": "40bc0b350f3e0c36c587a7ffc4fff24abb9b9f7bfdfecc32242125e343f27e3e"
+        },
+        "kind": "configured-selection",
+        "link_map": {
+          "path": "docs/reports/w48-bu-single-leaf-bodies/link-map.corpus.json",
+          "sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3"
+        },
+        "link_resolution": {
+          "path": "private/prep/system/link-resolution/link-resolution.json",
+          "sha256": "5756d7d8ecec57c92d9c257a8168a2c77ebce0b12e1a849f10e79ee8c335d552"
+        },
+        "name": "system-teardown",
+        "profile": "fluent-bit-system-teardown",
+        "profile_directory": "contract/profiles/fluent-bit",
+        "selection": "contract/profiles/fluent-bit/system-teardown-selection.json",
+        "tracked": [
+          "contract/profiles/fluent-bit/system-teardown-selection.json",
+          "contract/profiles/fluent-bit/profile.json",
+          "contract/profiles/fluent-bit/member-facts-scope.json"
+        ]
+      },
+      "digest": "efe2863ed0a7f2084d4e0bf0f5686634a332ccd2efebac8582e9dc05c59398d7",
+      "name": "system-teardown",
+      "profile": "fluent-bit-system-teardown"
+    }
+  ],
+  "rules_off": [],
+  "schema": "quirin-native-comparison/1",
+  "sides": {
+    "linked": {
+      "binary": {
+        "path": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-ab62b2e7e6f873b01/private/tip-src/target/release/quirin-audit",
+        "path_as_run": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-ab62b2e7e6f873b01/private/tip-src/target/release/quirin-audit",
+        "sha256": "6543f75b0f2f36b9a232383eb35b7ff699e634141cbad3c3279315717be0667f"
+      },
+      "build_commit": null,
+      "bundles": {
+        "contract": "25aa436cc424cb13f7dd76c6f72bc407604ecc3ec3d2974a6bf59a0fc311edb2",
+        "providers/qcore-provider-chunkio/contracts": "0732ed1f1b7872591a3537b84d5c1561e11ad010cfb4d68f030cbce131edcb8f",
+        "providers/qcore-provider-cmetrics/contracts": "11b4f9d68f5bd6a523b8cc6d40f5b4243455192f690698a58d8ba72208c025f9",
+        "providers/qcore-provider-ctraces/contracts": "c9efd04d53275de44a6419a32c7e3632dfd8c7fe87b7df5f9cc02fc096f772fc",
+        "providers/qcore-provider-libevent/contracts": "b18bd4bde2a0156bc91577d2d83d5514583f36cd15214b5b9c37a752fadaefe9",
+        "providers/qcore-provider-librdkafka/contracts": "44b20eade95ef6187f01f3c670a9b47cce1b7652568358034b1211b9ce035db3",
+        "providers/quirin-provider-cfl/contracts": "eedc4e59412f0363329404adb868e8d88c789d7a35f8cda5406b4bfa94a91640",
+        "providers/quirin-provider-fluent-bit/contracts": "22ca4cf66465ce39c84924aa458a590d2b014832cfbe11032770868c09cba01b",
+        "providers/quirin-provider-libc/contracts": "b15193679a8a294f0dc1775969457c5e4e02e2eefe753adf11661d7ba990a07d",
+        "providers/quirin-provider-mpack/contracts": "524edb31027a0c020e3b697be84f3818a7b44443ffc903f2456d71d3b9f170d6",
+        "providers/quirin-provider-msgpack/contracts": "655433bcaed3005bdb477b73ad527efa90c75874fcdeccba1743ee97c764befa",
+        "providers/quirin-provider-shared/contracts": "9a53ebaff81b4933d6464e928585ae7104e87c91e27a6ea70f6e610dd515b72d"
+      },
+      "directory": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-ab62b2e7e6f873b01/measure/arbiter-2/sides/linked",
+      "inputs": {
+        "system": {
+          "canonical_prefix": null,
+          "databases_as_spelled": {
+            "private/prep/system/fluent-bit-clang-production/compile_commands.json": "40bc0b350f3e0c36c587a7ffc4fff24abb9b9f7bfdfecc32242125e343f27e3e"
+          },
+          "route_digest": "2c12e55d47feb60f2af9c75fe56f91f6eae805b48d912545da5329c0011c9e08",
+          "source_date_epoch": 1767225600,
+          "spelled_prefix": null,
+          "spelling": "original"
+        },
+        "system-teardown": {
+          "canonical_prefix": null,
+          "databases_as_spelled": {
+            "private/prep/system/fluent-bit-clang-production/compile_commands.json": "40bc0b350f3e0c36c587a7ffc4fff24abb9b9f7bfdfecc32242125e343f27e3e"
+          },
+          "route_digest": "efe2863ed0a7f2084d4e0bf0f5686634a332ccd2efebac8582e9dc05c59398d7",
+          "source_date_epoch": 1767225600,
+          "spelled_prefix": null,
+          "spelling": "original"
+        }
+      },
+      "kind": "binary",
+      "link_resolution": true,
+      "revision": null,
+      "run_json": {
+        "path": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-ab62b2e7e6f873b01/measure/arbiter-2/sides/linked/run.json",
+        "sha256": "4c85dba16aa2234bf9f2db4ad311d39f6f465015638032f072be60809125df58"
+      },
+      "spec": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-ab62b2e7e6f873b01/private/tip-src/target/release/quirin-audit"
+    },
+    "map": {
+      "binary": {
+        "path": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-ab62b2e7e6f873b01/private/tip-src/target/release/quirin-audit",
+        "path_as_run": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-ab62b2e7e6f873b01/private/tip-src/target/release/quirin-audit",
+        "sha256": "6543f75b0f2f36b9a232383eb35b7ff699e634141cbad3c3279315717be0667f"
+      },
+      "build_commit": null,
+      "bundles": {
+        "contract": "25aa436cc424cb13f7dd76c6f72bc407604ecc3ec3d2974a6bf59a0fc311edb2",
+        "providers/qcore-provider-chunkio/contracts": "0732ed1f1b7872591a3537b84d5c1561e11ad010cfb4d68f030cbce131edcb8f",
+        "providers/qcore-provider-cmetrics/contracts": "11b4f9d68f5bd6a523b8cc6d40f5b4243455192f690698a58d8ba72208c025f9",
+        "providers/qcore-provider-ctraces/contracts": "c9efd04d53275de44a6419a32c7e3632dfd8c7fe87b7df5f9cc02fc096f772fc",
+        "providers/qcore-provider-libevent/contracts": "b18bd4bde2a0156bc91577d2d83d5514583f36cd15214b5b9c37a752fadaefe9",
+        "providers/qcore-provider-librdkafka/contracts": "44b20eade95ef6187f01f3c670a9b47cce1b7652568358034b1211b9ce035db3",
+        "providers/quirin-provider-cfl/contracts": "eedc4e59412f0363329404adb868e8d88c789d7a35f8cda5406b4bfa94a91640",
+        "providers/quirin-provider-fluent-bit/contracts": "22ca4cf66465ce39c84924aa458a590d2b014832cfbe11032770868c09cba01b",
+        "providers/quirin-provider-libc/contracts": "b15193679a8a294f0dc1775969457c5e4e02e2eefe753adf11661d7ba990a07d",
+        "providers/quirin-provider-mpack/contracts": "524edb31027a0c020e3b697be84f3818a7b44443ffc903f2456d71d3b9f170d6",
+        "providers/quirin-provider-msgpack/contracts": "655433bcaed3005bdb477b73ad527efa90c75874fcdeccba1743ee97c764befa",
+        "providers/quirin-provider-shared/contracts": "9a53ebaff81b4933d6464e928585ae7104e87c91e27a6ea70f6e610dd515b72d"
+      },
+      "directory": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-ab62b2e7e6f873b01/measure/arbiter-2/sides/map",
+      "inputs": {
+        "system": {
+          "canonical_prefix": null,
+          "databases_as_spelled": {
+            "private/prep/system/fluent-bit-clang-production/compile_commands.json": "40bc0b350f3e0c36c587a7ffc4fff24abb9b9f7bfdfecc32242125e343f27e3e"
+          },
+          "route_digest": "2c12e55d47feb60f2af9c75fe56f91f6eae805b48d912545da5329c0011c9e08",
+          "source_date_epoch": 1767225600,
+          "spelled_prefix": null,
+          "spelling": "original"
+        },
+        "system-teardown": {
+          "canonical_prefix": null,
+          "databases_as_spelled": {
+            "private/prep/system/fluent-bit-clang-production/compile_commands.json": "40bc0b350f3e0c36c587a7ffc4fff24abb9b9f7bfdfecc32242125e343f27e3e"
+          },
+          "route_digest": "efe2863ed0a7f2084d4e0bf0f5686634a332ccd2efebac8582e9dc05c59398d7",
+          "source_date_epoch": 1767225600,
+          "spelled_prefix": null,
+          "spelling": "original"
+        }
+      },
+      "kind": "binary",
+      "link_resolution": false,
+      "revision": null,
+      "run_json": {
+        "path": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-ab62b2e7e6f873b01/measure/arbiter-2/sides/map/run.json",
+        "sha256": "c476871873a60a0590e48824691cced680e7d505e1d9c0236c636716860ab0c9"
+      },
+      "spec": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-ab62b2e7e6f873b01/private/tip-src/target/release/quirin-audit"
+    }
+  },
+  "source_date_epoch": 1767225600,
+  "status": "complete",
+  "timing": {
+    "analysis_time_ms": 1053446,
+    "limits": {
+      "meaning": "the analysis quota (--timeout-ms) counts analysis time only; declared slot waits are excluded up to the slot-wait limit; the overall wall limit stops the run whatever it declares",
+      "overall_wall_limit_ms": 604800000,
+      "slot_wait_limit_ms": 604800000,
+      "wall_time_quota_ms": 36000000
+    },
+    "sides": {
+      "linked": {
+        "system": {
+          "analysis_time_ms": 926476,
+          "profile": "fluent-bit-system",
+          "slot_wait_ms": 0,
+          "wall_time_ms": 926476
+        },
+        "system-teardown": {
+          "analysis_time_ms": 1039255,
+          "profile": "fluent-bit-system-teardown",
+          "slot_wait_ms": 0,
+          "wall_time_ms": 1039255
+        }
+      },
+      "map": {
+        "system": {
+          "analysis_time_ms": 700072,
+          "profile": "fluent-bit-system",
+          "slot_wait_ms": 0,
+          "wall_time_ms": 700072
+        },
+        "system-teardown": {
+          "analysis_time_ms": 744888,
+          "profile": "fluent-bit-system-teardown",
+          "slot_wait_ms": 0,
+          "wall_time_ms": 744888
+        }
+      }
+    },
+    "slot_wait_meaning": "wall time during which every route in flight waited for its gate slot; the host's --timeout-ms does not count it, up to its slot-wait limit (cards MEASURE-QUOTA-AND-INCREMENTAL, R7, and GATE-SLOT-FIFO-ORDER)",
+    "slot_wait_ms": 0,
+    "wall_time_ms": 1053446
+  },
+  "tool": {
+    "name": "quirin-audit-measure",
+    "sha256": "feee3376e3b0abd7901f49f8ea89e26facdefcb7ea9b7343b5d0df1ed3f8aa1e",
+    "version": "0.1.0"
+  }
+}

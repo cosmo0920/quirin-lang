@@ -1,0 +1,50 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "SELECTION-ROUTES-SPLIT-CALLER-AND-HOME",
+  "base": "f47823dd1",
+  "measured_tip": "2c3bfc453",
+  "profiles": [],
+  "increment_paragraph": "**SELECTION-ROUTES-SPLIT-CALLER-AND-HOME** (named follow-up of LERI-CROSS-UNIT-ELEMENTS-RELEASED; tooling and a new selection, no rule, contract or Lean change; [report](../../reports/selection-routes-split-caller-and-home/README.md)). The measure plugin gains a link-resolution side: a configured route of the inputs manifest may declare its rule 40 artifact (`link_resolution`, path and required sha256), and a side named by `--link-resolution NAME` runs every route with `QCORE_CROSS_UNIT_LINK_RESOLUTION` and never `QCORE_CROSS_UNIT_LINK_MAP`. It is fail-closed: before anything runs the artifact must have its declared digest and schema and bind the compile database the route reads (a missing, unreadable or mismatched artifact, a route without one, a pinned route or a `baseline:`/`run:` side refuses the measurement); the side's binary must name the variable; a route whose analyzer did not print that it derived its resolution from that digest, or whose contract sidecar records a whole-run refusal, fails with exit 102; `measure publish` refuses a linked side. A new selection `contract/profiles/fluent-bit/system-teardown-selection.json` (no live profile; the system selection is unchanged) holds the system files plus `src/flb_input.c`, `src/flb_input_thread.c` and `src/flb_output_thread.c`, the callers of the released-element drain homes; `src/flb_config.c` is left out (its refused definition census would refuse the import phase). Measured on the card's own `prepare --link` of Fluent Bit 046accf6 by `quirin-audit measure --declared` with two sides of one analyzer, the stated map against rule 40: no status move on either route, matching the committed prediction; system 105 derived homes, 12 imported; system-teardown 162 derived, 19 exported, 16 imported. `flb_input_instance_destroy` (static configuration) now imports `flb_engine_destroy_tasks`, a released-element drain, and loses that uncontracted-call leaf; it stays Unknown on 59 others. `flb_storage_input_destroy` (Safe row) is not exported, so its two calls stay uncontracted. Eleven rows change content only (leaves lost, none gained; four sb.c rows and two others change their dependency record alone).",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "SELECTION-ROUTES-SPLIT-CALLER-AND-HOME",
+      "operation": "retire",
+      "why": "DISCHARGED by SELECTION-ROUTES-SPLIT-CALLER-AND-HOME: a measured route (contract/profiles/fluent-bit/system-teardown-selection.json, no live profile) holds the released-element drain homes and their callers (src/flb_input.c, src/flb_input_thread.c, src/flb_output_thread.c), and the measure plugin's --link-resolution side measures it under rule 40 (fail-closed: crates/quirin-audit-plugin-measure/src/link.rs, tests/link_resolution.rs). Measured (own prepare --link of 046accf6, quirin-audit measure --declared, stated map against rule 40): no status move; flb_input_instance_destroy imports flb_engine_destroy_tasks and loses that leaf, staying Unknown on 59 others; flb_storage_input_destroy is not exported (SELECTION-TEARDOWN-STORAGE-DRAIN-NOT-EXPORTED); src/flb_config.c is left out for its refused census (TAIL-FILE-DEFINITION-CENSUS-INCOMPLETE, amended).",
+      "source": "docs/reports/selection-routes-split-caller-and-home/README.md"
+    },
+    {
+      "id": "LINK-PREPARE-PINNED-ROUTE-INPUTS",
+      "operation": "amend",
+      "text": "AMENDED by SELECTION-ROUTES-SPLIT-CALLER-AND-HOME: the measure plugin now has a link-resolution side (a route's `link_resolution` input and `--link-resolution NAME`, fail-closed), so a declared measurement under rule 40 needs only a linked preparation; the frozen system, slice and corpus inputs are still unlinked, and the live profiles still run the stated map (moving a live profile to rule 40 is a profile change for the user).",
+      "source": "docs/reports/selection-routes-split-caller-and-home/README.md"
+    },
+    {
+      "id": "TAIL-FILE-DEFINITION-CENSUS-INCOMPLETE",
+      "operation": "amend",
+      "text": "AMENDED by SELECTION-ROUTES-SPLIT-CALLER-AND-HOME: src/flb_config.c (046accf6) has the same refusal (`conditional-arm-depth-disagreement`, a conditional group's arms leave different file-scope brace depths; 12 definitions absent from the raw scan), so a selection holding it refuses its whole import phase; the system-teardown selection leaves it out, and with it flb_config_exit's call to flb_sched_destroy.",
+      "source": "docs/reports/selection-routes-split-caller-and-home/README.md"
+    },
+    {
+      "id": "SELECTION-TEARDOWN-STORAGE-DRAIN-NOT-EXPORTED",
+      "operation": "register",
+      "title": "flb_storage_input_destroy is a Safe derived home that rule 4c does not export",
+      "text": "Card SELECTION-ROUTES-SPLIT-CALLER-AND-HOME measured the system-teardown route under rule 40 (046accf6): flb_storage_input_destroy (src/flb_storage.c, static configuration) has a Safe row with no diagnostic and its key has one usable configuration, yet the run exports no summary for it (no caller holds it; flb_input_instance_destroy keeps its two `call to uncontracted function` leaves). Rule 4c exports only a requested Safe row with a validated W4 summary, no rule obligation and no linkage-sensitive declaration; which of these fails was not determined (the body drains `&in->chunks` into flb_input_chunk_destroy, frees the member `in->storage` and stores NULL into it). DISCHARGE: name the failing export condition (a gateway fixture of that shape) and either export the summary with its clauses or record why none is stated; then re-measure the system-teardown route.",
+      "source": "docs/reports/selection-routes-split-caller-and-home/README.md"
+    },
+    {
+      "id": "CROSS-UNIT-REPLAY-RELABELS-CALLER-DEPENDENCIES",
+      "operation": "register",
+      "title": "A cross-unit home replay's withdrawals relabel the caller unit's own declarations as withdrawn",
+      "text": "Card SELECTION-ROUTES-SPLIT-CALLER-AND-HOME measured (stated map against rule 40, 046accf6): in plugins/in_storage_backlog/sb.c the rows sb_allocate_chunk, sb_destroy_chunk (Safe) and their callers sb_append_chunk_to_segregated_backlog, sb_remove_chunk_from_segregated_backlog (Unknown) move their own unit's declarations sb_allocate_chunk and sb_destroy_chunk from `declarations` to `withdrawn` in their contract dependencies, with no leaf or status change. The unit's contract-body evidence gains `C06.3-no-body` withdrawals for those names, recorded from a replayed home's stream (rule 4c writes the replay's record into the caller's rule 13f recording), where the sb_* functions have no body. flb_output_new (src/flb_output.c) likewise gains the in-unit summary `instance_id` in its record only. No verdict depends on it on these routes, but the dependency record feeds contract-evidence and refutation bookkeeping. DISCHARGE: keep a replayed home's withdrawals out of the caller's own declaration standing (or show they belong there), with a fixture.",
+      "source": "docs/reports/selection-routes-split-caller-and-home/README.md"
+    },
+    {
+      "id": "SYSTEM-TEARDOWN-LIVE-PROFILE",
+      "operation": "register",
+      "title": "The system-teardown route under rule 40 is measured but is no live evaluation profile",
+      "text": "Card SELECTION-ROUTES-SPLIT-CALLER-AND-HOME added contract/profiles/fluent-bit/system-teardown-selection.json and measured it under rule 40 on its own linked preparation, without an evaluation profile (contract/evaluations) or a baseline, since adding or changing a live profile is a user decision. DISCHARGE: a user decision to make it (or the system profile under rule 40) a live profile with a published linked preparation and baseline, or to keep it a card-local route.",
+      "source": "docs/reports/selection-routes-split-caller-and-home/README.md"
+    }
+  ]
+}

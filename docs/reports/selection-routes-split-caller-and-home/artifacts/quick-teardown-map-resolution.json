@@ -1,0 +1,111 @@
+{
+ "before": {
+  "Unknown": 523,
+  "Safe": 135,
+  "Unsafe": 4
+ },
+ "after": {
+  "Unknown": 523,
+  "Safe": 135,
+  "Unsafe": 4
+ },
+ "only_before": [],
+ "only_after": [],
+ "moves": [],
+ "leaf_trades": [
+  {
+   "row": [
+    "src/flb_engine.c",
+    "5fc27041792d",
+    "handle_output_event",
+    1
+   ],
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [
+    "unmodeled call, aggregate or indirect access in branch condition"
+   ],
+   "gained": []
+  },
+  {
+   "row": [
+    "src/flb_engine_dispatch.c",
+    "c060cbcc2b17",
+    "flb_engine_dispatch",
+    1
+   ],
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [
+    "call to uncontracted function `flb_input_chunk_down`",
+    "call to uncontracted function `flb_input_chunk_release_lock`",
+    "call to uncontracted function `flb_input_chunk_release_lock`",
+    "call to uncontracted function `flb_input_chunk_release_lock`",
+    "call to uncontracted function `flb_input_chunk_release_lock`",
+    "call to uncontracted function `flb_input_chunk_release_lock`"
+   ],
+   "gained": []
+  },
+  {
+   "row": [
+    "src/flb_input.c",
+    "04a845e94451",
+    "flb_input_collectors_start",
+    1
+   ],
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [
+    "call to uncontracted function `flb_input_thread_collectors_signal_start`"
+   ],
+   "gained": []
+  },
+  {
+   "row": [
+    "src/flb_input.c",
+    "04a845e94451",
+    "flb_input_instance_destroy",
+    1
+   ],
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [
+    "call to uncontracted function `flb_engine_destroy_tasks`"
+   ],
+   "gained": []
+  },
+  {
+   "row": [
+    "src/flb_task.c",
+    "b794e0e48098",
+    "flb_task_retry_create",
+    1
+   ],
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [
+    "call to uncontracted function `flb_input_chunk_down`",
+    "call to uncontracted function `flb_input_chunk_set_up_down`"
+   ],
+   "gained": []
+  },
+  {
+   "row": [
+    "src/flb_task.c",
+    "b794e0e48098",
+    "task_collect_output_references",
+    1
+   ],
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [
+    "unmodeled call, aggregate or indirect access in branch condition",
+    "unmodeled call, aggregate or indirect access in branch condition",
+    "unmodeled call, aggregate or indirect access in branch condition",
+    "unmodeled call, aggregate or indirect access in branch condition",
+    "unresolved resource identity `route`"
+   ],
+   "gained": []
+  }
+ ]
+}
