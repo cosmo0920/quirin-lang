@@ -1,0 +1,560 @@
+{
+  "comparisons": [
+    {
+      "after": "tip",
+      "before": "base",
+      "comparison": "base->tip",
+      "routes": {
+        "slice": {
+          "after_directory": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-afeb996565c83e6ed/measure/arbiter-1/sides/tip/slice",
+          "artifacts": {
+            "byte_identical_except_named_substitutions": false,
+            "differing": [
+              {
+                "after": "691ef63c812c362409096ee7d4691144ea257987aa59d58bb747576c40cd57a4",
+                "before": "d7524caa737c8c4b6d58a140890e39618e70b93b5b0cdf962500943c17e23abd",
+                "file": "resource-diagnostics.components.json"
+              },
+              {
+                "file": "resource-diagnostics.contracts.json",
+                "why": {
+                  "lifetime_keys_only_after": [],
+                  "lifetime_keys_only_before": []
+                }
+              },
+              {
+                "after": "a7e29272aa8b350d3c65ba7cdc0af7d28cf6bb5b5860e66a802faa9a32b27f91",
+                "before": "0396bf865aa9fc14f54de22220270a0b9c1ac260ef290b620123290a9554c5f1",
+                "file": "resource-diagnostics.json"
+              },
+              {
+                "after": "cb20bf2d30c06d136fa4fc2d28dabdf4fb36bff509d22cdf2c7ea9767aaac14e",
+                "before": "505f621b4080773fe567ced857e9609f17bafd37eef629922aaaabb8c8aa7165",
+                "file": "slice-null.jsonl"
+              },
+              {
+                "after": "b6e27ac2a798ca8dd3eb89b2e21c2ac89eb53ee2153221b556e7874f4719dfc9",
+                "before": "e527dc60d832c1b7829c4f72953478a562a254f05ea7e011c323ff8720a5ec4c",
+                "file": "slice-outer.json"
+              }
+            ],
+            "identical": [
+              {
+                "file": "resource-diagnostics.chunk-contracts.json",
+                "sha256": "d95091b8d0ff3fe5cb2ac8866c1912d7d51862c9a4c3fa551e7898f98298159c"
+              },
+              {
+                "file": "resource-diagnostics.source-effects.json",
+                "sha256": "d95091b8d0ff3fe5cb2ac8866c1912d7d51862c9a4c3fa551e7898f98298159c"
+              },
+              {
+                "file": "slice-null.summary.json",
+                "sha256": "668607f7def7d673745f766492ff1775bff4ccad4d19df17c0383659f94b3a72"
+              }
+            ],
+            "identical_after_named_substitution": {},
+            "only_after": [],
+            "only_before": [],
+            "records_not_compared": [
+              "console.log",
+              "invocation.json",
+              "resource-diagnostics.invocation.json",
+              "slice.exit",
+              "stderr.log"
+            ]
+          },
+          "before_directory": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-afeb996565c83e6ed/measure/arbiter-1/sides/base/slice",
+          "composition": {
+            "components": {
+              "after": 16,
+              "before": 16,
+              "union": 32
+            },
+            "conflicts": [],
+            "rows": 16
+          },
+          "conflicts": {
+            "after": [],
+            "before": []
+          },
+          "content_changes": [
+            {
+              "leaves_added": [],
+              "leaves_removed": [],
+              "other_fields_changed": [
+                "review_holds"
+              ],
+              "row": "fluent-bit-tail-pause::src/flb_input.c::unit#0::resource-custody.v1::fluent-bit-tail-pause::flb_input_instance_exit#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [],
+              "other_fields_changed": [
+                "review_holds"
+              ],
+              "row": "fluent-bit-tail-pause::src/flb_input.c::unit#1::resource-custody.v1::fluent-bit-tail-pause::flb_input_instance_exit#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [],
+              "other_fields_changed": [
+                "review_holds"
+              ],
+              "row": "fluent-bit-tail-pause::src/flb_lib.c::unit#0::resource-custody.v1::fluent-bit-tail-pause::flb_create#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [],
+              "other_fields_changed": [
+                "review_holds"
+              ],
+              "row": "fluent-bit-tail-pause::src/flb_lib.c::unit#0::resource-custody.v1::fluent-bit-tail-pause::flb_input#0",
+              "status": [
+                "Pending",
+                "Pending"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [],
+              "other_fields_changed": [
+                "review_holds"
+              ],
+              "row": "fluent-bit-tail-pause::src/flb_lib.c::unit#0::resource-custody.v1::fluent-bit-tail-pause::flb_service_set#0",
+              "status": [
+                "Pending",
+                "Pending"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [],
+              "other_fields_changed": [
+                "review_holds"
+              ],
+              "row": "fluent-bit-tail-pause::src/flb_lib.c::unit#1::resource-custody.v1::fluent-bit-tail-pause::flb_create#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [],
+              "other_fields_changed": [
+                "review_holds"
+              ],
+              "row": "fluent-bit-tail-pause::src/flb_lib.c::unit#1::resource-custody.v1::fluent-bit-tail-pause::flb_input#0",
+              "status": [
+                "Pending",
+                "Pending"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [],
+              "other_fields_changed": [
+                "review_holds"
+              ],
+              "row": "fluent-bit-tail-pause::src/flb_lib.c::unit#1::resource-custody.v1::fluent-bit-tail-pause::flb_service_set#0",
+              "status": [
+                "Pending",
+                "Pending"
+              ]
+            }
+          ],
+          "environment_digest_fields": [
+            "assumptions",
+            "build_identity",
+            "environment_sha256",
+            "resource_contracts_sha256",
+            "id"
+          ],
+          "figures": {
+            "after": {
+              "null_rows": 406,
+              "null_verdicts": {
+                "Safe": 190,
+                "Unknown": 216
+              },
+              "null_verdicts_sha256": "cd5aa008117b49482c7736352e31a22af9536de2df4bdf5aa9d0ea1e2c0a76be",
+              "row_statuses": {
+                "Pending": 4,
+                "Safe": 59,
+                "Unknown": 340,
+                "Unsafe": 1
+              },
+              "row_verdicts_sha256": "5cb2dbdd6adff96cc18173bd944bd77db6116a27c97e954898ca09812069dd14",
+              "rows": 404,
+              "unit_statuses": {
+                "Unknown": 15,
+                "Unsafe": 1
+              },
+              "unit_verdicts_sha256": "54e95d5f88252a15b9dd02fb3878b6286b16eeea24a5a4cfd4fde8a08af830e5",
+              "units": 16
+            },
+            "before": {
+              "null_rows": 406,
+              "null_verdicts": {
+                "Safe": 190,
+                "Unknown": 216
+              },
+              "null_verdicts_sha256": "cd5aa008117b49482c7736352e31a22af9536de2df4bdf5aa9d0ea1e2c0a76be",
+              "row_statuses": {
+                "Pending": 4,
+                "Safe": 59,
+                "Unknown": 340,
+                "Unsafe": 1
+              },
+              "row_verdicts_sha256": "5cb2dbdd6adff96cc18173bd944bd77db6116a27c97e954898ca09812069dd14",
+              "rows": 404,
+              "unit_statuses": {
+                "Unknown": 15,
+                "Unsafe": 1
+              },
+              "unit_verdicts_sha256": "54e95d5f88252a15b9dd02fb3878b6286b16eeea24a5a4cfd4fde8a08af830e5",
+              "units": 16
+            }
+          },
+          "function_rows": {
+            "content_changed": 8,
+            "environment_only": 396,
+            "identical": 0,
+            "moved": 0,
+            "unmatched": 0
+          },
+          "incomplete_because": [],
+          "moves": [],
+          "profile_baseline": {
+            "after": {
+              "exit": 1,
+              "lines": [
+                "null_verdicts_sha256: baseline '6ead33bb236929dcf74982bfff7f590d081783cee6b129e092247594a8c188b7', run 'cd5aa008117b49482c7736352e31a22af9536de2df4bdf5aa9d0ea1e2c0a76be'",
+                "row_statuses: baseline {'Pending': 4, 'Safe': 58, 'Unknown': 341, 'Unsafe': 1}, run {'Pending': 4, 'Safe': 59, 'Unknown': 340, 'Unsafe': 1}",
+                "row_verdicts_sha256: baseline 'b14be6fa5c1528f6d276a7899d68e2969dc0bc2855ea3ca2c6625edbad94df6d', run '5cb2dbdd6adff96cc18173bd944bd77db6116a27c97e954898ca09812069dd14'",
+                "fluent-bit-tail-pause: results moved; record the new baseline with a reason in the same commit (record), or treat the move as a defect"
+              ],
+              "profile": "fluent-bit-tail-pause"
+            },
+            "before": {
+              "exit": 1,
+              "lines": [
+                "null_verdicts_sha256: baseline '6ead33bb236929dcf74982bfff7f590d081783cee6b129e092247594a8c188b7', run 'cd5aa008117b49482c7736352e31a22af9536de2df4bdf5aa9d0ea1e2c0a76be'",
+                "row_statuses: baseline {'Pending': 4, 'Safe': 58, 'Unknown': 341, 'Unsafe': 1}, run {'Pending': 4, 'Safe': 59, 'Unknown': 340, 'Unsafe': 1}",
+                "row_verdicts_sha256: baseline 'b14be6fa5c1528f6d276a7899d68e2969dc0bc2855ea3ca2c6625edbad94df6d', run '5cb2dbdd6adff96cc18173bd944bd77db6116a27c97e954898ca09812069dd14'",
+                "fluent-bit-tail-pause: results moved; record the new baseline with a reason in the same commit (record), or treat the move as a defect"
+              ],
+              "profile": "fluent-bit-tail-pause"
+            }
+          },
+          "status": "complete",
+          "status_deltas": {
+            "Pending": 0,
+            "Safe": 0,
+            "Unknown": 0,
+            "Unsafe": 0
+          },
+          "totals": {
+            "after": {
+              "conflicted_unit_rows": 0,
+              "diagnostic_counts": {
+                "counted_user": 1,
+                "unknown_alias": 1076,
+                "unsupported": 2463
+              },
+              "function_rows": 404,
+              "function_status": {
+                "Pending": 4,
+                "Safe": 59,
+                "Unknown": 340,
+                "Unsafe": 1
+              },
+              "row_source": "sidecar",
+              "unit_rows": 16,
+              "unit_verdict": {
+                "Unknown": 15,
+                "Unsafe": 1
+              }
+            },
+            "before": {
+              "conflicted_unit_rows": 0,
+              "diagnostic_counts": {
+                "counted_user": 1,
+                "unknown_alias": 1076,
+                "unsupported": 2463
+              },
+              "function_rows": 404,
+              "function_status": {
+                "Pending": 4,
+                "Safe": 59,
+                "Unknown": 340,
+                "Unsafe": 1
+              },
+              "row_source": "sidecar",
+              "unit_rows": 16,
+              "unit_verdict": {
+                "Unknown": 15,
+                "Unsafe": 1
+              }
+            }
+          },
+          "unit_field_differences": {
+            "fluent-bit-tail-pause::plugins/in_tail/tail.c::unit#0::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration"
+            ],
+            "fluent-bit-tail-pause::plugins/in_tail/tail_config.c::unit#0::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration"
+            ],
+            "fluent-bit-tail-pause::plugins/in_tail/tail_db.c::unit#0::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration"
+            ],
+            "fluent-bit-tail-pause::plugins/in_tail/tail_dockermode.c::unit#0::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration"
+            ],
+            "fluent-bit-tail-pause::plugins/in_tail/tail_file.c::unit#0::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration",
+              "enumeration"
+            ],
+            "fluent-bit-tail-pause::plugins/in_tail/tail_file_budget.c::unit#0::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration",
+              "reading_site_environments"
+            ],
+            "fluent-bit-tail-pause::plugins/in_tail/tail_fs_inotify.c::unit#0::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration"
+            ],
+            "fluent-bit-tail-pause::plugins/in_tail/tail_fs_stat.c::unit#0::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration"
+            ],
+            "fluent-bit-tail-pause::plugins/in_tail/tail_multiline.c::unit#0::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration"
+            ],
+            "fluent-bit-tail-pause::plugins/in_tail/tail_scan.c::unit#0::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration"
+            ],
+            "fluent-bit-tail-pause::src/flb_input.c::unit#0::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration"
+            ],
+            "fluent-bit-tail-pause::src/flb_input.c::unit#1::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration"
+            ],
+            "fluent-bit-tail-pause::src/flb_input_thread.c::unit#0::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration"
+            ],
+            "fluent-bit-tail-pause::src/flb_input_thread.c::unit#1::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration"
+            ],
+            "fluent-bit-tail-pause::src/flb_lib.c::unit#0::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration"
+            ],
+            "fluent-bit-tail-pause::src/flb_lib.c::unit#1::resource-custody.v1::fluent-bit-tail-pause": [
+              "compile_configuration"
+            ]
+          },
+          "unit_moves": [],
+          "unit_rows_environment_only": 0,
+          "unmatched": [],
+          "unmatched_units": []
+        }
+      }
+    }
+  ],
+  "contract_only_reuse": {
+    "reason": "not requested (--reuse-contract-only)",
+    "requested": false,
+    "taken": false
+  },
+  "contribution": {
+    "ledgers": [],
+    "rules": [],
+    "schema": "quirin-contribution-ledger/1"
+  },
+  "declared": {
+    "comparison": "base->tip",
+    "path": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-afeb996565c83e6ed/docs/reports/tail-file-definition-census-incomplete/PREDICTION.md",
+    "result": "match",
+    "routes": {
+      "slice": {
+        "declared": true,
+        "delta_mismatches": [],
+        "missing": [],
+        "result": "match",
+        "unpredicted": []
+      }
+    },
+    "sha256": "4885f0fffd4e8448c87f17b077b65ecde5aa2c61080524241d33a634729ab164"
+  },
+  "failures": [],
+  "inputs_spelling": {
+    "canonical_prefix": null,
+    "mode": "auto",
+    "spelled_prefix": null,
+    "spelling": "original"
+  },
+  "interactions": [],
+  "routes": [
+    {
+      "definition": {
+        "checkout": "private/prep/slice/fluent-bit-clang-source",
+        "clang": "/usr/lib/llvm-21/bin/clang",
+        "compile_database": {
+          "path": "private/prep/slice/fluent-bit-clang-production/compile_commands.json",
+          "sha256": "460d3f33ea35ea6fcff195637abd5b181a45ed9df6551fc1ab635c8c9ed2d44d"
+        },
+        "kind": "configured-selection",
+        "link_map": {
+          "path": "docs/reports/w48-bu-single-leaf-bodies/link-map.corpus.json",
+          "sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3"
+        },
+        "name": "slice",
+        "profile": "fluent-bit-tail-pause",
+        "profile_directory": "contract/profiles/fluent-bit",
+        "selection": "contract/profiles/fluent-bit/tail-pause-selection.json",
+        "tracked": [
+          "contract/profiles/fluent-bit/tail-pause-selection.json",
+          "contract/profiles/fluent-bit/profile.json",
+          "contract/profiles/fluent-bit/member-facts-scope.json"
+        ]
+      },
+      "digest": "c6bd5765c5a45a91cc3c759d51ad47844e3c19a46e1d4d71e6dd80de9052717b",
+      "name": "slice",
+      "profile": "fluent-bit-tail-pause"
+    }
+  ],
+  "rules_off": [],
+  "schema": "quirin-native-comparison/1",
+  "sides": {
+    "base": {
+      "binary": {
+        "path": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-afeb996565c83e6ed/private/base-src/target/release/quirin-audit",
+        "path_as_run": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-afeb996565c83e6ed/private/base-src/target/release/quirin-audit",
+        "sha256": "89725901f756052ef774a6bc15583f9fae386ce7796f3ba8ece4188f62cc3b36"
+      },
+      "build_commit": null,
+      "bundles": {
+        "contract": "5ee9860fa53f1db989b4c229c15e24dcc528607e4afc9c4b12c2d44ee1b8866f",
+        "providers/qcore-provider-chunkio/contracts": "0732ed1f1b7872591a3537b84d5c1561e11ad010cfb4d68f030cbce131edcb8f",
+        "providers/qcore-provider-cmetrics/contracts": "11b4f9d68f5bd6a523b8cc6d40f5b4243455192f690698a58d8ba72208c025f9",
+        "providers/qcore-provider-ctraces/contracts": "c9efd04d53275de44a6419a32c7e3632dfd8c7fe87b7df5f9cc02fc096f772fc",
+        "providers/qcore-provider-libevent/contracts": "b18bd4bde2a0156bc91577d2d83d5514583f36cd15214b5b9c37a752fadaefe9",
+        "providers/qcore-provider-librdkafka/contracts": "44b20eade95ef6187f01f3c670a9b47cce1b7652568358034b1211b9ce035db3",
+        "providers/quirin-provider-cfl/contracts": "eedc4e59412f0363329404adb868e8d88c789d7a35f8cda5406b4bfa94a91640",
+        "providers/quirin-provider-fluent-bit/contracts": "22ca4cf66465ce39c84924aa458a590d2b014832cfbe11032770868c09cba01b",
+        "providers/quirin-provider-libc/contracts": "b15193679a8a294f0dc1775969457c5e4e02e2eefe753adf11661d7ba990a07d",
+        "providers/quirin-provider-mpack/contracts": "524edb31027a0c020e3b697be84f3818a7b44443ffc903f2456d71d3b9f170d6",
+        "providers/quirin-provider-msgpack/contracts": "655433bcaed3005bdb477b73ad527efa90c75874fcdeccba1743ee97c764befa",
+        "providers/quirin-provider-shared/contracts": "9a53ebaff81b4933d6464e928585ae7104e87c91e27a6ea70f6e610dd515b72d"
+      },
+      "directory": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-afeb996565c83e6ed/measure/arbiter-1/sides/base",
+      "inputs": {
+        "slice": {
+          "canonical_prefix": null,
+          "databases_as_spelled": {
+            "private/prep/slice/fluent-bit-clang-production/compile_commands.json": "460d3f33ea35ea6fcff195637abd5b181a45ed9df6551fc1ab635c8c9ed2d44d"
+          },
+          "route_digest": "c6bd5765c5a45a91cc3c759d51ad47844e3c19a46e1d4d71e6dd80de9052717b",
+          "source_date_epoch": 1767225600,
+          "spelled_prefix": null,
+          "spelling": "original"
+        }
+      },
+      "kind": "checkout",
+      "revision": null,
+      "run_json": {
+        "path": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-afeb996565c83e6ed/measure/arbiter-1/sides/base/run.json",
+        "sha256": "c2c859ea6ce369d7b0e3248ecf86c0ce4f82a42c912e78794a24923819b5bd7b"
+      },
+      "spec": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-afeb996565c83e6ed/private/base-src"
+    },
+    "tip": {
+      "binary": {
+        "path": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-afeb996565c83e6ed/private/tip-src/target/release/quirin-audit",
+        "path_as_run": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-afeb996565c83e6ed/private/tip-src/target/release/quirin-audit",
+        "sha256": "1a3affeaac356dfa82020a363f45a098e6b402ddf19591c0364c0f4b7c19dfc1"
+      },
+      "build_commit": null,
+      "bundles": {
+        "contract": "5ee9860fa53f1db989b4c229c15e24dcc528607e4afc9c4b12c2d44ee1b8866f",
+        "providers/qcore-provider-chunkio/contracts": "0732ed1f1b7872591a3537b84d5c1561e11ad010cfb4d68f030cbce131edcb8f",
+        "providers/qcore-provider-cmetrics/contracts": "11b4f9d68f5bd6a523b8cc6d40f5b4243455192f690698a58d8ba72208c025f9",
+        "providers/qcore-provider-ctraces/contracts": "c9efd04d53275de44a6419a32c7e3632dfd8c7fe87b7df5f9cc02fc096f772fc",
+        "providers/qcore-provider-libevent/contracts": "b18bd4bde2a0156bc91577d2d83d5514583f36cd15214b5b9c37a752fadaefe9",
+        "providers/qcore-provider-librdkafka/contracts": "44b20eade95ef6187f01f3c670a9b47cce1b7652568358034b1211b9ce035db3",
+        "providers/quirin-provider-cfl/contracts": "eedc4e59412f0363329404adb868e8d88c789d7a35f8cda5406b4bfa94a91640",
+        "providers/quirin-provider-fluent-bit/contracts": "22ca4cf66465ce39c84924aa458a590d2b014832cfbe11032770868c09cba01b",
+        "providers/quirin-provider-libc/contracts": "b15193679a8a294f0dc1775969457c5e4e02e2eefe753adf11661d7ba990a07d",
+        "providers/quirin-provider-mpack/contracts": "524edb31027a0c020e3b697be84f3818a7b44443ffc903f2456d71d3b9f170d6",
+        "providers/quirin-provider-msgpack/contracts": "655433bcaed3005bdb477b73ad527efa90c75874fcdeccba1743ee97c764befa",
+        "providers/quirin-provider-shared/contracts": "9a53ebaff81b4933d6464e928585ae7104e87c91e27a6ea70f6e610dd515b72d"
+      },
+      "directory": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-afeb996565c83e6ed/measure/arbiter-1/sides/tip",
+      "inputs": {
+        "slice": {
+          "canonical_prefix": null,
+          "databases_as_spelled": {
+            "private/prep/slice/fluent-bit-clang-production/compile_commands.json": "460d3f33ea35ea6fcff195637abd5b181a45ed9df6551fc1ab635c8c9ed2d44d"
+          },
+          "route_digest": "c6bd5765c5a45a91cc3c759d51ad47844e3c19a46e1d4d71e6dd80de9052717b",
+          "source_date_epoch": 1767225600,
+          "spelled_prefix": null,
+          "spelling": "original"
+        }
+      },
+      "kind": "checkout",
+      "revision": null,
+      "run_json": {
+        "path": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-afeb996565c83e6ed/measure/arbiter-1/sides/tip/run.json",
+        "sha256": "06e8e858006487f2aaf6b32c3b2f4b56f1ebbdf1b640c8ee6fc1c1dc472f5582"
+      },
+      "spec": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-afeb996565c83e6ed/private/tip-src"
+    }
+  },
+  "source_date_epoch": 1767225600,
+  "status": "complete",
+  "timing": {
+    "analysis_time_ms": 360103,
+    "limits": {
+      "meaning": "the analysis quota (--timeout-ms) counts analysis time only; declared slot waits are excluded up to the slot-wait limit; the overall wall limit stops the run whatever it declares",
+      "overall_wall_limit_ms": 604800000,
+      "slot_wait_limit_ms": 604800000,
+      "wall_time_quota_ms": 36000000
+    },
+    "sides": {
+      "base": {
+        "slice": {
+          "analysis_time_ms": 323090,
+          "profile": "fluent-bit-tail-pause",
+          "slot_wait_ms": 0,
+          "wall_time_ms": 323090
+        }
+      },
+      "tip": {
+        "slice": {
+          "analysis_time_ms": 324690,
+          "profile": "fluent-bit-tail-pause",
+          "slot_wait_ms": 0,
+          "wall_time_ms": 324690
+        }
+      }
+    },
+    "slot_wait_meaning": "wall time during which every route in flight waited for its gate slot; the host's --timeout-ms does not count it, up to its slot-wait limit (cards MEASURE-QUOTA-AND-INCREMENTAL, R7, and GATE-SLOT-FIFO-ORDER)",
+    "slot_wait_ms": 0,
+    "wall_time_ms": 360103
+  },
+  "tool": {
+    "name": "quirin-audit-measure",
+    "sha256": "89a755a69dfeba8dc5f50670212a63269548f0c4d0d9795985fd0a3564fa8e23",
+    "version": "0.1.0"
+  }
+}

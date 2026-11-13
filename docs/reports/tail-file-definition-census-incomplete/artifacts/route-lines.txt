@@ -1,0 +1,28 @@
+== base-slice-resolution
+cross-unit link resolution derived (rule 40) from private/prep/slice/link-resolution/link-resolution.json (sha256 d1c76d8c6f664cd09e3fa1d6aac6d0183902aee47bd100fad718b09b6c6ba199): 124 home(s); refused {"home configuration is not a configuration the route analyses":4948,"home definition does not have default visibility":579,"home is not defined in the executable":678,"the artifact refuses the home's link facts":17}
+cross-unit import phase refused: incomplete definition census
+current revision: 13 source file(s), 16 configuration(s): 0 Safe / 0 Pending / 1 provisional Unsafe / 15 Unknown / 0 data-only / 0 gateway failures
+outer projection (all loaded): custody {"Pending":4,"Safe":59,"Unknown":340,"Unsafe":1}, null {"Pending":0,"Safe":174,"Unknown":232,"Unsafe":0}, combined {"Pending":2,"Safe":36,"Unknown":367,"Unsafe":1}; static custody {"Pending":4,"Safe":59,"Unknown":340,"Unsafe":1}
+progress: [328s] cross-unit home export: end, 13/16 unit(s) in 34.9s: 8 home export(s)
+== tip-slice-resolution
+cross-unit link resolution derived (rule 40) from private/prep/slice/link-resolution/link-resolution.json (sha256 d1c76d8c6f664cd09e3fa1d6aac6d0183902aee47bd100fad718b09b6c6ba199): 124 home(s); refused {"home configuration is not a configuration the route analyses":4948,"home definition does not have default visibility":579,"home is not defined in the executable":678,"the artifact refuses the home's link facts":17}
+    cross-unit import `flb_input_thread_collectors_signal_start` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_coro_id_get` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_coro_id_get` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+current revision: 13 source file(s), 16 configuration(s): 0 Safe / 0 Pending / 1 provisional Unsafe / 15 Unknown / 0 data-only / 0 gateway failures
+outer projection (all loaded): custody {"Pending":4,"Safe":59,"Unknown":340,"Unsafe":1}, null {"Pending":0,"Safe":174,"Unknown":232,"Unsafe":0}, combined {"Pending":2,"Safe":36,"Unknown":367,"Unsafe":1}; static custody {"Pending":4,"Safe":59,"Unknown":340,"Unsafe":1}
+progress: [333s] cross-unit home export: end, 13/16 unit(s) in 56.9s: 10 home export(s)
+progress: [424s] cross-unit import: end, 16/16 unit(s) in 90.8s
+== base-slice-map
+cross-unit import phase refused: incomplete definition census
+current revision: 13 source file(s), 16 configuration(s): 0 Safe / 0 Pending / 1 provisional Unsafe / 15 Unknown / 0 data-only / 0 gateway failures
+outer projection (all loaded): custody {"Pending":4,"Safe":59,"Unknown":340,"Unsafe":1}, null {"Pending":0,"Safe":174,"Unknown":232,"Unsafe":0}, combined {"Pending":2,"Safe":36,"Unknown":367,"Unsafe":1}; static custody {"Pending":4,"Safe":59,"Unknown":340,"Unsafe":1}
+progress: [354s] cross-unit home export: end, 16/16 unit(s) in 0.6s: 0 home export(s)
+== tip-slice-map
+current revision: 13 source file(s), 16 configuration(s): 0 Safe / 0 Pending / 1 provisional Unsafe / 15 Unknown / 0 data-only / 0 gateway failures
+outer projection (all loaded): custody {"Pending":4,"Safe":59,"Unknown":340,"Unsafe":1}, null {"Pending":0,"Safe":174,"Unknown":232,"Unsafe":0}, combined {"Pending":2,"Safe":36,"Unknown":367,"Unsafe":1}; static custody {"Pending":4,"Safe":59,"Unknown":340,"Unsafe":1}
+progress: [275s] cross-unit home export: end, 16/16 unit(s) in 0.6s: 0 home export(s)
