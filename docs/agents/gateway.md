@@ -204,6 +204,8 @@ which is not a second authority.
     derived from a link-resolution artifact under rule 40's checked
     conditions; this rule's selection, scope, budget and replay are
     unchanged, and the artifact's digest is the link-resolution identity.
+    On such a run the census leaves out a configuration rule 40 shows
+    outside the link (card LINK-STANDING-SELECTION-TWO-CONFIGURATION-KEYS).
     Card LERI-CROSS-UNIT-ELEMENTS-RELEASED (amended in place): a home's
     summary crosses with its whole contract, container effects included
     (rule 43's `ElementsReleased`): the certificate compares the import with
@@ -10437,7 +10439,9 @@ safety claim and no validation of the detach representation premise.
 
     (12) the route analyses that configuration;
 
-    (13) the route's `library/file` key names that configuration alone;
+    (13) the route's `library/file` key names that configuration alone
+    among the configurations the link can use: every other route
+    configuration under the key is shown outside the link (below);
 
     (14) Clang gives the callee's type in both units;
 
@@ -10470,6 +10474,24 @@ safety claim and no validation of the detach representation premise.
     On this base, that is every Monkey home and caller: the route analyses
     Monkey's libevent configuration.
 
+    Card LINK-STANDING-SELECTION-TWO-CONFIGURATION-KEYS (amended in place):
+    a selection may keep two configurations of one file under one key (the
+    Fluent Bit system and tail-pause selections keep the static and shared
+    variants of each core file). A route configuration is **shown outside
+    the link** only when the artifact records it with `linked: false` and
+    every link input's attribution (the configurations whose object has its
+    bytes) is readable and names it nowhere: the link used nothing it
+    compiles. Condition (13) does not count such a configuration, and on a
+    derived run it exports and defines nothing in rule 4c's census, as a
+    not-linked standalone unit already does, so the linked configuration is
+    the key's one home. A configuration the artifact does not record, one an
+    input is attributed to (even an input whose bytes match two
+    configurations, which leaves both `linked: false`), or any configuration
+    when one input's attribution is unreadable, still counts, and the home
+    stays refused. The run's assumption lists the configurations left out
+    (`outside_the_link`). Rows of an outside configuration are still
+    analysed and published; as callers they fail (3).
+
     The run's `cross_unit_link_resolution` assumption names the artifact as
     **derived** evidence and states no premise:
 
@@ -10497,7 +10519,14 @@ safety claim and no validation of the detach representation premise.
     refusal per condition, `typeAgrees_iff`,
     `derived_resolution_discharges`, `derived_admission_is_valid`,
     `derived_refusal_is_not_admitted`, `refused_home_supplies_nothing`,
-    `standing_vectors_hold`); [report](../reports/link-standing/README.md).
+    `standing_vectors_hold`; for condition (13) over usable configurations
+    `outside_configuration_is_no_link_input`,
+    `an_outside_second_configuration_leaves_the_key`,
+    `a_usable_second_configuration_refuses`,
+    `the_census_leaves_the_linked_home_unique`,
+    `an_outside_second_configuration_admits_the_linked_home`,
+    `outside_vectors_hold`); [report](../reports/link-standing/README.md),
+    [two-configuration keys](../reports/link-standing-selection-two-configuration-keys/README.md).
 
 <a id="constraint-41"></a>
 

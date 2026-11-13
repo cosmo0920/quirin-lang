@@ -805,11 +805,26 @@ pub fn run_current_route_with_checkpoints(
         // that order, exactly as the sequential loop did.
         let progress =
             crate::route_progress::Phase::begin("cross-unit home export", tasks.len(), route.jobs);
+        let derived_here = derived.as_ref();
         run_ordered(
             tasks.clone(),
             route.jobs,
             Some(dispatch.clone()),
             |task| match (&task.expected_source, task.input) {
+                // Card LINK-STANDING-SELECTION-TWO-CONFIGURATION-KEYS (rule
+                // 40): a configuration the derived resolution shows outside
+                // the link (recorded, no link input attributed to it) exports
+                // and defines nothing the link could choose, as a not-linked
+                // standalone unit below.
+                (Ok(_), TaskInput::Configured(entry))
+                    if derived_here.is_some_and(|derived| {
+                        derived.outside_the_link(
+                            &crate::cross_unit_links::ConfigurationIdentity::of(entry),
+                        )
+                    }) =>
+                {
+                    Some(Ok((Vec::new(), Vec::new(), true)))
+                }
                 (Ok(expected_source), TaskInput::Configured(entry)) => {
                     Some(progress.unit(&task_label(&root, &task), || {
                         audit.export_cross_unit_home(task.library, expected_source, entry, links)

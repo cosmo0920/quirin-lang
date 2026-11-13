@@ -1,0 +1,44 @@
+== system-base-resolution-1
+cross-unit link resolution derived (rule 40) from private/prep/system/link-resolution/link-resolution.json (sha256 4945551b21ed74d424abe692fef55807749a1091143e46bb618778f830aeed0d): 2 home(s); refused {"home configuration is not a configuration the route analyses":4955,"home definition does not have default visibility":579,"home is not defined in the executable":678,"home unit key names more than one route configuration":103,"the artifact refuses the home's link facts":17}
+current revision: 8 source file(s), 15 configuration(s): 0 Safe / 0 Pending / 2 provisional Unsafe / 13 Unknown / 0 data-only / 0 gateway failures
+progress: cross-unit home export: end, 15/15 unit(s) in 21.2s: 0 home export(s)
+exit 0
+== system-tip-resolution-1
+cross-unit link resolution derived (rule 40) from private/prep/system/link-resolution/link-resolution.json (sha256 4945551b21ed74d424abe692fef55807749a1091143e46bb618778f830aeed0d): 105 home(s); refused {"home configuration is not a configuration the route analyses":4955,"home definition does not have default visibility":579,"home is not defined in the executable":678,"the artifact refuses the home's link facts":17}
+    cross-unit import `flb_output_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_chunk_route_plugin_matches` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_chunk_down` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_chunk_set_up_down` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_sched_ctx_init` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_task_from_fs_storage` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_sched_ctx_init` refused: call type unavailable: caller: call type unavailable: `flb_sched_ctx_init` has no prototype (FunctionNoProtoType)
+    cross-unit import `flb_input_chunk_down` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_chunk_release_lock` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+current revision: 8 source file(s), 15 configuration(s): 0 Safe / 0 Pending / 2 provisional Unsafe / 13 Unknown / 0 data-only / 0 gateway failures
+progress: cross-unit home export: end, 8/15 unit(s) in 80.0s: 15 home export(s)
+progress: cross-unit import: begin, 15 unit(s), 8 worker(s)
+progress: cross-unit import: end, 15/15 unit(s) in 131.2s
+exit 0
+== slice-base-resolution-1
+cross-unit link resolution derived (rule 40) from private/prep/slice/link-resolution/link-resolution.json (sha256 77261274ae63c1192cb7c157d532d0cf8834e2703470d79d2990d3cbf9984d99): 62 home(s); refused {"home configuration is not a configuration the route analyses":4948,"home definition does not have default visibility":579,"home is not defined in the executable":678,"home unit key names more than one route configuration":62,"the artifact refuses the home's link facts":17}
+cross-unit import phase refused: incomplete definition census
+current revision: 13 source file(s), 16 configuration(s): 0 Safe / 0 Pending / 1 provisional Unsafe / 15 Unknown / 0 data-only / 0 gateway failures
+progress: cross-unit home export: end, 16/16 unit(s) in 10.5s: 3 home export(s)
+exit 0
+== slice-tip-resolution-1
+cross-unit link resolution derived (rule 40) from private/prep/slice/link-resolution/link-resolution.json (sha256 77261274ae63c1192cb7c157d532d0cf8834e2703470d79d2990d3cbf9984d99): 124 home(s); refused {"home configuration is not a configuration the route analyses":4948,"home definition does not have default visibility":579,"home is not defined in the executable":678,"the artifact refuses the home's link facts":17}
+cross-unit import phase refused: incomplete definition census
+current revision: 13 source file(s), 16 configuration(s): 0 Safe / 0 Pending / 1 provisional Unsafe / 15 Unknown / 0 data-only / 0 gateway failures
+progress: cross-unit home export: end, 13/16 unit(s) in 54.8s: 8 home export(s)
+exit 0

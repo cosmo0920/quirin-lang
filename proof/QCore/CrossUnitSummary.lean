@@ -380,6 +380,213 @@ theorem refused_home_supplies_nothing {σ : Type} (declared : Name → Option σ
   rw [this]
   rfl
 
+/-! ### Card LINK-STANDING-SELECTION-TWO-CONFIGURATION-KEYS: condition 13 over
+the configurations the link can use
+
+A selection may keep two configurations of one file (a static and a shared
+variant) under one route `library/file` key. Condition 13 (`uniqueKey`) counts
+only the route configurations the link can use. A configuration is left out
+only when the artifact records it with `linked: false` and every link input's
+attribution is readable and names it nowhere: the link used nothing it
+compiles, so it also defines nothing in rule 4c's census on a derived run.
+A configuration the artifact does not record, or one some input is
+attributed to, still counts (fail-closed). -/
+
+abbrev Configuration := String
+
+/-- `shown_outside` in `cross_unit_links.rs`: the artifact's `linked` flag
+(`none`: not recorded) and whether some link input is attributed to the
+configuration (`none`: some input's attribution is unreadable). -/
+def shownOutside : Option Bool → Option Bool → Bool
+  | some false, some false => true
+  | _, _ => false
+
+theorem shownOutside_iff :
+    ∀ linked attributed : Option Bool,
+      shownOutside linked attributed = true ↔ linked = some false ∧ attributed = some false
+  | none, none => by decide
+  | none, some false => by decide
+  | none, some true => by decide
+  | some false, none => by decide
+  | some false, some false => by decide
+  | some false, some true => by decide
+  | some true, none => by decide
+  | some true, some false => by decide
+  | some true, some true => by decide
+
+/-- Whether some link input is attributed to `c`: `inputs` lists, per input,
+the configurations whose object has its bytes; `none` when one list is
+unreadable. -/
+def attributedIn (inputs : Option (List (List Configuration))) (c : Configuration) :
+    Option Bool :=
+  inputs.map (fun lists => lists.any (fun input => input.contains c))
+
+/-- `record c` is the artifact's `linked` flag for `c`, `none` when the
+artifact does not record it. -/
+def outsideTheLink (record : Configuration → Option Bool)
+    (inputs : Option (List (List Configuration))) (c : Configuration) : Bool :=
+  shownOutside (record c) (attributedIn inputs c)
+
+/-- What "defines nothing the link could choose" rests on: no link input is
+an object of an outside configuration. -/
+theorem outside_configuration_is_no_link_input (record : Configuration → Option Bool)
+    (inputs : List (List Configuration)) (c : Configuration)
+    (outside : outsideTheLink record (some inputs) c = true) :
+    ∀ input ∈ inputs, c ∉ input := by
+  have hattr := ((shownOutside_iff _ _).1 outside).2
+  simp only [attributedIn, Option.map_some, Option.some.injEq] at hattr
+  intro input member named
+  have : inputs.any (fun input => input.contains c) = true :=
+    List.any_eq_true.2 ⟨input, member, by simpa using named⟩
+  rw [this] at hattr
+  cases hattr
+
+theorem an_unrecorded_configuration_is_not_outside (record : Configuration → Option Bool)
+    (inputs : Option (List (List Configuration))) (c : Configuration)
+    (unrecorded : record c = none) : outsideTheLink record inputs c = false := by
+  simp [outsideTheLink, unrecorded, shownOutside]
+
+theorem an_attributed_configuration_is_not_outside (record : Configuration → Option Bool)
+    (inputs : List (List Configuration)) (c : Configuration) (input : List Configuration)
+    (member : input ∈ inputs) (named : c ∈ input) :
+    outsideTheLink record (some inputs) c = false := by
+  have : inputs.any (fun input => input.contains c) = true :=
+    List.any_eq_true.2 ⟨input, member, by simpa using named⟩
+  unfold outsideTheLink attributedIn
+  rw [Option.map_some, this]
+  cases record c with
+  | none => rfl
+  | some linked => cases linked <;> rfl
+
+theorem an_unreadable_attribution_shows_nothing_outside
+    (record : Configuration → Option Bool) (c : Configuration) :
+    outsideTheLink record none c = false := by
+  unfold outsideTheLink attributedIn
+  cases record c with
+  | none => rfl
+  | some linked => cases linked <;> rfl
+
+/-- The route's configurations under `key` that the link can use; route rows
+are `(configuration, key)`. -/
+def usableUnder (record : Configuration → Option Bool)
+    (inputs : Option (List (List Configuration))) (route : List (Configuration × Unit))
+    (key : Unit) : List Configuration :=
+  (route.filter (fun row => row.2 == key && !outsideTheLink record inputs row.1)).map (·.1)
+
+/-- Condition 13: the home's configuration is the one route configuration the
+link can use under its key (`unique_key` in `derive`). -/
+def keyUnique (record : Configuration → Option Bool)
+    (inputs : Option (List (List Configuration))) (route : List (Configuration × Unit))
+    (home : Configuration) (key : Unit) : Bool :=
+  usableUnder record inputs route key == [home]
+
+/-- Rule 40 as it was: a key naming one usable configuration is unique. -/
+theorem a_single_configuration_key_is_unique (record : Configuration → Option Bool)
+    (inputs : Option (List (List Configuration))) (home : Configuration) (key : Unit)
+    (homeUsable : outsideTheLink record inputs home = false) :
+    keyUnique record inputs [(home, key)] home key = true := by
+  simp [keyUnique, usableUnder, homeUsable]
+
+/-- The discharge: a second configuration under the key that is shown
+outside the link leaves the key to the linked one. -/
+theorem an_outside_second_configuration_leaves_the_key (record : Configuration → Option Bool)
+    (inputs : Option (List (List Configuration))) (home other : Configuration) (key : Unit)
+    (homeUsable : outsideTheLink record inputs home = false)
+    (otherOutside : outsideTheLink record inputs other = true) :
+    keyUnique record inputs [(home, key), (other, key)] home key = true := by
+  simp [keyUnique, usableUnder, homeUsable, otherOutside]
+
+/-- Fail-closed: any other route configuration under the key that is not
+shown outside the link (linked, attributed, unrecorded, or with an unreadable
+attribution) keeps condition 13 failing. -/
+theorem a_usable_second_configuration_keeps_the_key (record : Configuration → Option Bool)
+    (inputs : Option (List (List Configuration))) (route : List (Configuration × Unit))
+    (home other : Configuration) (key : Unit) (distinct : other ≠ home)
+    (listed : (other, key) ∈ route) (usable : outsideTheLink record inputs other = false) :
+    keyUnique record inputs route home key = false := by
+  have kept : other ∈ usableUnder record inputs route key := by
+    unfold usableUnder
+    exact List.mem_map.2 ⟨(other, key), List.mem_filter.2 ⟨listed, by simp [usable]⟩, rfl⟩
+  unfold keyUnique
+  cases h : usableUnder record inputs route key == [home] with
+  | false => rfl
+  | true =>
+    have : usableUnder record inputs route key = [home] := by simpa using h
+    rw [this] at kept
+    exact absurd (List.mem_singleton.1 kept) distinct
+
+/-- Through `standing`: such a home is refused. -/
+theorem a_usable_second_configuration_refuses (f : DerivedFacts)
+    (record : Configuration → Option Bool) (inputs : Option (List (List Configuration)))
+    (route : List (Configuration × Unit)) (home other : Configuration) (key : Unit)
+    (decided : f.uniqueKey = keyUnique record inputs route home key)
+    (distinct : other ≠ home) (listed : (other, key) ∈ route)
+    (usable : outsideTheLink record inputs other = false) : standing f ≠ none :=
+  ambiguous_key_refuses f (by
+    rw [decided]
+    exact a_usable_second_configuration_keeps_the_key record inputs route home other key
+      distinct listed usable)
+
+/-- Rule 4c's census on a derived run: definition rows `(configuration, key,
+name)`; a configuration outside the link defines nothing. -/
+def derivedCensus (record : Configuration → Option Bool)
+    (inputs : Option (List (List Configuration)))
+    (rows : List (Configuration × Unit × Name)) : List (Unit × Name) :=
+  (rows.filter (fun row => !outsideTheLink record inputs row.1)).map (·.2)
+
+theorem the_census_leaves_the_linked_home_unique {σ : Type}
+    (record : Configuration → Option Bool) (inputs : Option (List (List Configuration)))
+    (home other : Configuration) (h : Home σ)
+    (homeUsable : outsideTheLink record inputs home = false)
+    (otherOutside : outsideTheLink record inputs other = true) :
+    uniqueHome (derivedCensus record inputs
+      [(home, h.unit, h.function), (other, h.unit, h.function)]) h := by
+  simp [uniqueHome, derivedCensus, homeUsable, otherOutside]
+
+/-- Without the exclusion the two configurations' rows make the home
+ambiguous, so rule 4c refuses it. -/
+theorem an_unexcluded_second_definition_is_ambiguous {σ : Type}
+    (record : Configuration → Option Bool) (inputs : Option (List (List Configuration)))
+    (home other : Configuration) (h : Home σ)
+    (homeUsable : outsideTheLink record inputs home = false)
+    (otherUsable : outsideTheLink record inputs other = false) :
+    ¬ uniqueHome (derivedCensus record inputs
+      [(home, h.unit, h.function), (other, h.unit, h.function)]) h := by
+  simp [uniqueHome, derivedCensus, homeUsable, otherUsable]
+
+/-- The derived admission of a home whose file has a second configuration
+shown outside the link: the census over the configurations the link can use
+holds the linked home alone, and the rest is `derived_resolution_discharges`. -/
+theorem an_outside_second_configuration_admits_the_linked_home {σ : Type}
+    (record : Configuration → Option Bool) (inputs : Option (List (List Configuration)))
+    (home other : Configuration) (artifactDigest : String)
+    (facts : Name → Unit → DerivedFacts) (declared : Name → Option σ) (h : Home σ)
+    (source environment : String) (valid : Home σ → Prop)
+    (homeUsable : outsideTheLink record inputs home = false)
+    (otherOutside : outsideTheLink record inputs other = true)
+    (resolved : standing (facts h.function h.unit) = none)
+    (undeclared : declared h.function = none) (sameSource : h.sourceDigest = source)
+    (sameEnvironment : h.environmentDigest = environment) (validHome : valid h) :
+    admitted (derivedCensus record inputs
+        [(home, h.unit, h.function), (other, h.unit, h.function)])
+      (derivedPremise artifactDigest facts) declared h source environment valid :=
+  derived_resolution_discharges _ artifactDigest facts declared h source environment valid
+    resolved (the_census_leaves_the_linked_home_unique record inputs home other h homeUsable
+      otherOutside) undeclared sameSource sameEnvironment validHome
+
+/-- `(linked, attributed, shown outside)`, bound to the Rust
+`OUTSIDE_VECTORS`. -/
+def outsideVectors : List (Option Bool × Option Bool × Bool) := [
+  (some false, some false, true), (some false, some true, false), (some false, none, false),
+  (some true, some false, false), (some true, some true, false), (some true, none, false),
+  (none, some false, false), (none, some true, false), (none, none, false)
+]
+
+theorem outside_vectors_hold :
+    outsideVectors.all (fun (linked, attributed, expected) =>
+      shownOutside linked attributed == expected) = true := by
+  decide
+
 /-! ### Vectors bound to the Rust (`STANDING_VECTORS`) -/
 
 def failing (indices : List Nat) : DerivedFacts :=
