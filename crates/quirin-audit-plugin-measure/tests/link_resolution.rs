@@ -71,15 +71,12 @@ fn linked_manifest(directory: &Path, digest: Option<&str>) -> PathBuf {
 /// map it copies the `map` report; given both it exits 3. `advertise: false`
 /// leaves the variable's name out of its text.
 fn link_checkout(directory: &Path, fixtures: &Path, advertise: bool, refuse: bool) -> PathBuf {
-    std::fs::create_dir_all(directory.join("target/release")).unwrap();
-    std::fs::create_dir_all(directory.join("scripts")).unwrap();
-    std::fs::create_dir_all(directory.join("contract/profiles/fixture")).unwrap();
-    std::fs::write(directory.join("scripts/run_pinned_audit.py"), "# stub\n").unwrap();
-    std::fs::write(
-        directory.join("contract/profiles/fixture/selection.json"),
-        "{}\n",
-    )
-    .unwrap();
+    // The checkout's layout is the plain stub's; its analyzer is replaced.
+    stub_checkout(
+        directory,
+        &fixtures.join("map/resource-diagnostics.json"),
+        false,
+    );
     let variable = if advertise {
         "QCORE_CROSS_UNIT_LINK_RESOLUTION"
     } else {
