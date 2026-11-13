@@ -242,6 +242,7 @@ mod tests {
             rule_36_exact_formal_return::ExactFormalReturnRoute.id(),
             "36"
         );
+        assert_eq!(rule_38_descriptor_cells::DescriptorCells.id(), "38");
         for (id, crate_name) in HOSTED {
             let entry = REGISTRY
                 .iter()

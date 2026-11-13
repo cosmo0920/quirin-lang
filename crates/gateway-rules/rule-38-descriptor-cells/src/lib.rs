@@ -55,3 +55,15 @@ pub use initial_member::{Record, View};
 
 /// The package's registry id.
 pub const ID: &str = "38";
+
+/// The package as the rule API names it: the identity the host's route-G hook
+/// consults the cell table under (seam B: every rule package implements the
+/// rule API).
+#[derive(Debug, Clone, Copy, Default)]
+pub struct DescriptorCells;
+
+impl qcore_gateway_rule_api::traits::RulePackage for DescriptorCells {
+    fn id(&self) -> &'static str {
+        ID
+    }
+}
