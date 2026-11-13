@@ -1,0 +1,50 @@
+{
+  "schema": "quirin-measure-inputs/1",
+  "description": "LERI-CROSS-UNIT-ELEMENTS-RELEASED worktree-private preparations of the system and tail-pause slice routes: fresh `quirin-audit prepare clang-build --link` runs (base binary 9574cd8f) with the host's Ubuntu clang 21.1.8 at Fluent Bit 046accf6 (system) and upstream 90978ac6 (slice, not the synthetic export commit). Each preparation also wrote the rule 40 link-resolution artifact under link-resolution/. The corpus route is not prepared (see the report, section 5).",
+  "routes": [
+    {
+      "name": "system",
+      "profile": "fluent-bit-system",
+      "kind": "configured-selection",
+      "checkout": "private/prep/system/fluent-bit-clang-source",
+      "compile_database": {
+        "path": "private/prep/system/fluent-bit-clang-production/compile_commands.json",
+        "sha256": "42ac0c5c73e3f1821ee0df50ee87d5db36a750373818d324126521b0b0b6e97a"
+      },
+      "selection": "contract/profiles/fluent-bit/system-selection.json",
+      "profile_directory": "contract/profiles/fluent-bit",
+      "link_map": {
+        "path": "docs/reports/w48-bu-single-leaf-bodies/link-map.corpus.json",
+        "sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3"
+      },
+      "clang": "/usr/lib/llvm-21/bin/clang",
+      "tracked": [
+        "contract/profiles/fluent-bit/system-selection.json",
+        "contract/profiles/fluent-bit/profile.json",
+        "contract/profiles/fluent-bit/member-facts-scope.json"
+      ]
+    },
+    {
+      "name": "slice",
+      "profile": "fluent-bit-tail-pause",
+      "kind": "configured-selection",
+      "checkout": "private/prep/slice/fluent-bit-clang-source",
+      "compile_database": {
+        "path": "private/prep/slice/fluent-bit-clang-production/compile_commands.json",
+        "sha256": "54b3620a322f0431120a2dbaa9c420e4ed53741d5d3b44862f270fd827b07d05"
+      },
+      "selection": "contract/profiles/fluent-bit/tail-pause-selection.json",
+      "profile_directory": "contract/profiles/fluent-bit",
+      "link_map": {
+        "path": "docs/reports/w48-bu-single-leaf-bodies/link-map.corpus.json",
+        "sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3"
+      },
+      "clang": "/usr/lib/llvm-21/bin/clang",
+      "tracked": [
+        "contract/profiles/fluent-bit/tail-pause-selection.json",
+        "contract/profiles/fluent-bit/profile.json",
+        "contract/profiles/fluent-bit/member-facts-scope.json"
+      ]
+    }
+  ]
+}

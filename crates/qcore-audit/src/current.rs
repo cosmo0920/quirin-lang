@@ -213,7 +213,13 @@ impl CurrentAudit {
             .filter(|name| requested_names.contains(*name))
             .map(|name| (unit_key.to_string(), name.clone()))
             .collect();
-        let exports = if requested.is_empty() {
+        // Card LERI-CROSS-UNIT-ELEMENTS-RELEASED (rule 4c, amended): a unit
+        // whose definition census is incomplete cannot be a home, and its
+        // census already refuses the run's import phase. Its export analysis
+        // is not attempted: it fails on the same incompleteness, and that
+        // failure used to reject the whole route instead of refusing the
+        // imports (the tail-pause slice's `tail_file.c` under rule 40).
+        let exports = if requested.is_empty() || !complete {
             Vec::new()
         } else {
             qcore_c_gateway::legacy_c::export_cross_unit_homes(
