@@ -282,7 +282,7 @@ the compile database the route reads as spelled (rule 40's condition 1; a
 re-spelled mirror refuses); a side that does not run (`baseline:`, `run:`) is
 refused; after the build, the side's binary must name the variable; after each
 route, the analyzer must have printed that it derived its resolution from that
-artifact's digest and the report must record no whole-run refusal, or the route
+artifact's digest and its contract sidecar must record no whole-run refusal, or the route
 fails with exit 102 (`link_resolution_error` in its `invocation.json`). The
 side's `run.json` and the record's `sides` slot carry `link_resolution: true`,
 each route's `invocation.json` the artifact (`link_resolution`) and what the run

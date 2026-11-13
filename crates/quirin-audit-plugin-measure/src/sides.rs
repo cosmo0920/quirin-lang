@@ -1003,8 +1003,10 @@ pub fn run_route(
     // otherwise it fails (exit 102), never read as a map-free run.
     if let Some(artifact) = artifact.filter(|_| code == 0) {
         let console = fs::read_to_string(out.join("console.log")).unwrap_or_default();
-        let report = crate::util::read_json(&out.join(route.report())).unwrap_or(Value::Null);
-        match crate::link::check_run(&console, &report, artifact) {
+        let contracts =
+            crate::util::read_json(&out.join(route.report()).with_extension("contracts.json"))
+                .unwrap_or(Value::Null);
+        match crate::link::check_run(&console, &contracts, artifact) {
             Ok(checked) => record["link_resolution_run"] = checked,
             Err(error) => {
                 record["link_resolution_error"] = json!(error);

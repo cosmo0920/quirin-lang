@@ -29,7 +29,7 @@
 //!    variable, so an analyzer without rule 40 cannot run the route and
 //!    silently import nothing;
 //! 3. after each route ([`check_run`]): the analyzer printed that it derived
-//!    the resolution from that artifact (its digest), and the report records
+//!    the resolution from that artifact (its digest), and its contract sidecar records
 //!    no whole-run refusal (rule 40's conditions 1 and 2: a bound digest that
 //!    changed). Otherwise the route fails.
 //!
@@ -150,13 +150,15 @@ pub fn advertises(binary: &Path) -> Result<bool, String> {
 }
 
 /// Check a linked route that exited 0: `console` is its standard output and
-/// `report` its report. Returns what the run recorded.
+/// `contracts` its contract sidecar (`*.contracts.json`, where the run
+/// records its `cross_unit_link_resolution` assumption). Returns what the
+/// run recorded.
 ///
 /// # Errors
 ///
-/// No derived line naming the artifact's digest, or a report recording a
+/// No derived line naming the artifact's digest, or a sidecar recording a
 /// whole-run refusal or other evidence.
-pub fn check_run(console: &str, report: &Value, artifact: &Artifact) -> Result<Value, String> {
+pub fn check_run(console: &str, contracts: &Value, artifact: &Artifact) -> Result<Value, String> {
     let digest = format!("(sha256 {})", artifact.sha256);
     let derived = console
         .lines()
@@ -175,16 +177,16 @@ pub fn check_run(console: &str, report: &Value, artifact: &Artifact) -> Result<V
                 .unwrap_or_default()
         ));
     };
-    let assumption = &report["assumptions"]["cross_unit_link_resolution"];
+    let assumption = &contracts["cross_unit_link_resolution"];
     if !assumption.is_null() {
         if !assumption["refused"].is_null() || assumption["evidence"] != json!("derived") {
             return Err(format!(
-                "the report records the link resolution as {assumption}, not derived"
+                "the contract sidecar records the link resolution as {assumption}, not derived"
             ));
         }
         if assumption["derived_from"]["artifact_sha256"] != json!(artifact.sha256) {
             return Err(format!(
-                "the report's derived resolution names artifact {}, not {}",
+                "the contract sidecar's derived resolution names artifact {}, not {}",
                 assumption["derived_from"]["artifact_sha256"], artifact.sha256
             ));
         }
@@ -213,9 +215,9 @@ mod tests {
             "{DERIVED_LINE}/p/link-resolution.json (sha256 {}): 3 home(s); refused {{}}",
             "a".repeat(64)
         );
-        let derived = json!({"assumptions": {"cross_unit_link_resolution": {
+        let derived = json!({"cross_unit_link_resolution": {
             "evidence": "derived", "derived_from": {"artifact_sha256": "a".repeat(64)},
-            "imported": [{"function": "f"}]}}});
+            "imported": [{"function": "f"}]}});
         let checked = check_run(&line, &derived, &artifact()).unwrap();
         assert_eq!(checked["imported"], 1);
         // No assumption: no home was imported (none exported, or the census
@@ -232,14 +234,14 @@ mod tests {
         let whole = format!("{REFUSED_LINE}compile database digest differs: x");
         let error = check_run(&whole, &json!({}), &artifact()).unwrap_err();
         assert!(error.contains("compile database digest differs"), "{error}");
-        let refused = json!({"assumptions": {"cross_unit_link_resolution": {
-            "evidence": "derived", "refused": "x"}}});
+        let refused = json!({"cross_unit_link_resolution": {
+            "evidence": "derived", "refused": "x"}});
         assert!(check_run(&line, &refused, &artifact()).is_err());
-        let stated = json!({"assumptions": {"cross_unit_link_resolution": {
-            "premise": "stated"}}});
+        let stated = json!({"cross_unit_link_resolution": {
+            "premise": "stated"}});
         assert!(check_run(&line, &stated, &artifact()).is_err());
-        let elsewhere = json!({"assumptions": {"cross_unit_link_resolution": {
-            "evidence": "derived", "derived_from": {"artifact_sha256": "c".repeat(64)}}}});
+        let elsewhere = json!({"cross_unit_link_resolution": {
+            "evidence": "derived", "derived_from": {"artifact_sha256": "c".repeat(64)}}});
         assert!(check_run(&line, &elsewhere, &artifact()).is_err());
     }
 }
