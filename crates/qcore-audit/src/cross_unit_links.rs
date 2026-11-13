@@ -233,7 +233,9 @@ impl Refusal {
                 "home configuration is not a linked, reproduced configuration of the executable"
             }
             Self::NotRouteUnit => "home configuration is not a configuration the route analyses",
-            Self::AmbiguousKey => "home unit key names more than one route configuration",
+            Self::AmbiguousKey => {
+                "home unit key names another route configuration not shown outside the link"
+            }
             Self::TypeUnavailable => qcore_c_gateway::link_call_type::TYPE_UNAVAILABLE,
             Self::TypeDiffers => qcore_c_gateway::link_call_type::TYPE_DIFFERS,
         }
@@ -261,6 +263,9 @@ pub struct Facts {
     pub facts_agree: bool,
     pub home_linked: bool,
     pub route_unit: bool,
+    /// Under the home's `library/file` key, the home's configuration is the
+    /// only route configuration the link can use: every other one is shown
+    /// outside the link (card LINK-STANDING-SELECTION-TWO-CONFIGURATION-KEYS).
     pub unique_key: bool,
     pub type_available: bool,
     pub type_equal: bool,
@@ -386,6 +391,32 @@ pub(crate) const STANDING_VECTORS: &[(&[usize], Option<usize>)] = &[
     (&[9, 11], Some(9)),
 ];
 
+/// Card LINK-STANDING-SELECTION-TWO-CONFIGURATION-KEYS: a recorded
+/// configuration is shown outside the link only when the artifact states
+/// `linked: false` and every input's attribution is readable and names it
+/// nowhere (`attributed == Some(false)`); anything else may be what the link
+/// used (`QCore.CrossUnitSummary.shownOutside`).
+#[must_use]
+pub const fn shown_outside(linked: Option<bool>, attributed: Option<bool>) -> bool {
+    matches!((linked, attributed), (Some(false), Some(false)))
+}
+
+/// `OUTSIDE_VECTORS` (`QCore.CrossUnitSummary.outsideVectors`): the
+/// artifact's `linked` flag, the attribution, and whether the configuration
+/// is shown outside the link.
+#[cfg(test)]
+pub(crate) const OUTSIDE_VECTORS: &[(Option<bool>, Option<bool>, bool)] = &[
+    (Some(false), Some(false), true),
+    (Some(false), Some(true), false),
+    (Some(false), None, false),
+    (Some(true), Some(false), false),
+    (Some(true), Some(true), false),
+    (Some(true), None, false),
+    (None, Some(false), false),
+    (None, Some(true), false),
+    (None, None, false),
+];
+
 /// One compile-database configuration as the artifact records it: its
 /// identity and whether the executable links it.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
@@ -411,6 +442,12 @@ struct ArtifactConfiguration {
     /// Linked into the executable and reproduced byte for byte by its own
     /// database command.
     linked: bool,
+    /// Shown outside the link: every link input states the configurations
+    /// whose object has its bytes, and none names this one, so the link used
+    /// nothing it compiles (card LINK-STANDING-SELECTION-TWO-CONFIGURATION-KEYS).
+    /// `linked: false` alone does not show it: an input whose bytes match
+    /// two configurations leaves both unlinked, and either may be the one used.
+    outside: bool,
 }
 
 /// One referenced function symbol of the artifact, with the home-level
@@ -505,6 +542,19 @@ impl DerivedResolution {
                 ))
             })
             .collect::<Result<Vec<_>, String>>()?;
+        // Which configurations a link input is attributed to. One input
+        // without a readable list shows no configuration outside the link.
+        let attributed = artifact["inputs"]
+            .as_array()
+            .into_iter()
+            .flatten()
+            .map(|input| {
+                input["configurations"]
+                    .as_array()
+                    .and_then(|ids| ids.iter().map(Value::as_u64).collect::<Option<Vec<_>>>())
+            })
+            .collect::<Option<Vec<_>>>()
+            .map(|lists| lists.into_iter().flatten().collect::<BTreeSet<u64>>());
         let configurations = artifact["configurations"]
             .as_array()
             .ok_or("link resolution artifact lacks its configurations")?
@@ -527,6 +577,12 @@ impl DerivedResolution {
                     },
                     linked: configuration["linked"].as_bool() == Some(true)
                         && configuration["reproduction"].as_str() == Some("equal"),
+                    outside: shown_outside(
+                        configuration["linked"].as_bool(),
+                        attributed
+                            .as_ref()
+                            .map(|attributed| attributed.contains(&(id as u64))),
+                    ),
                 })
             })
             .collect::<Result<Vec<_>, String>>()?;
@@ -639,9 +695,25 @@ impl DerivedResolution {
     /// refusals by symbol.
     #[must_use]
     pub fn derive(&self, route: &[(String, ConfigurationIdentity)]) -> Derived {
+        // Card LINK-STANDING-SELECTION-TWO-CONFIGURATION-KEYS: condition 13
+        // counts, under each key, the route configurations the link can use.
+        // A configuration is left out only when the artifact records it and
+        // every record of it is shown outside the link; one the artifact
+        // does not record cannot be shown and still counts (fail-closed).
+        let mut recorded = BTreeMap::<&ConfigurationIdentity, bool>::new();
+        for configuration in &self.configurations {
+            *recorded.entry(&configuration.identity).or_insert(true) &= configuration.outside;
+        }
+        let outside = route
+            .iter()
+            .filter(|(_, identity)| recorded.get(identity) == Some(&true))
+            .map(|(_, identity)| identity.clone())
+            .collect::<BTreeSet<_>>();
         let mut keys = BTreeMap::<&str, usize>::new();
-        for (key, _) in route {
-            *keys.entry(key.as_str()).or_default() += 1;
+        for (key, identity) in route {
+            if !outside.contains(identity) {
+                *keys.entry(key.as_str()).or_default() += 1;
+            }
         }
         let by_identity = route
             .iter()
@@ -656,7 +728,10 @@ impl DerivedResolution {
                 .and_then(|id| by_identity.get(&self.configurations[id].identity).copied());
             let facts = Facts {
                 route_unit: key.is_some(),
-                unique_key: key.is_some_and(|key| keys.get(key) == Some(&1)),
+                unique_key: key.is_some_and(|key| keys.get(key) == Some(&1))
+                    && symbol
+                        .configuration
+                        .is_some_and(|id| !outside.contains(&self.configurations[id].identity)),
                 ..symbol.facts
             };
             match decide(facts) {
@@ -673,7 +748,9 @@ impl DerivedResolution {
             "DERIVED (rule 40), not a stated premise: each listed home is the one strong global, \
              default-visibility definition of its name among the objects linked into the \
              executable (sha256 {}), from a reproduced, linked configuration that is the route's \
-             only configuration under its key, and the executable carries no dynamic relocation \
+             only configuration under its key that the link can use (every other one is recorded \
+             by the artifact and no link input is attributed to it), and the executable carries \
+             no dynamic relocation \
              against it; read from the link-resolution artifact (sha256 {}) bound to the route's \
              compile database (sha256 {}). A caller holds a home only when its own configuration \
              is linked and Clang's type of the callee in its unit equals the home definition's.",
@@ -697,6 +774,7 @@ impl DerivedResolution {
                 home_types: std::sync::Mutex::default(),
             },
             refused,
+            outside,
             evidence: serde_json::json!({
                 "artifact": self.path,
                 "artifact_sha256": self.artifact_sha256,
@@ -716,10 +794,21 @@ pub struct Derived {
     pub map: LinkMap,
     pub standing: LinkStanding,
     pub refused: BTreeMap<Refusal, usize>,
+    /// The route configurations shown outside the link (card
+    /// LINK-STANDING-SELECTION-TWO-CONFIGURATION-KEYS): each exports and
+    /// defines nothing in rule 4c's census, since the link used nothing it
+    /// compiles, so the linked configuration of its key is the one home.
+    pub outside: BTreeSet<ConfigurationIdentity>,
     pub evidence: Value,
 }
 
 impl Derived {
+    /// Whether the run's census leaves this configuration out.
+    #[must_use]
+    pub fn outside_the_link(&self, configuration: &ConfigurationIdentity) -> bool {
+        self.outside.contains(configuration)
+    }
+
     #[must_use]
     pub fn refused_by_reason(&self) -> Value {
         self.refused
@@ -1248,7 +1337,12 @@ extern fn protocol_host(c: ptr<mut, u8>) -> unit contract { requires resource_co
     /// The artifact's configurations: 0 home.c, 1 caller.c, 2 other.c (not
     /// linked), 3 amb.c (the linked one of two route configurations under
     /// one key), 4 elsewhere.c (linked, but the route analyses another
-    /// configuration of it).
+    /// configuration of it). Card LINK-STANDING-SELECTION-TWO-CONFIGURATION-KEYS
+    /// adds three two-configuration keys: 5/6 two.c (static linked, `-fPIC`
+    /// recorded and attributed to no input: outside the link), 7/8 chosen.c
+    /// (static linked, `-fPIC` unlinked but attributed, with 9 twin.c, to an
+    /// input whose bytes match both: the link may have used it), 10/11
+    /// both.c (both linked).
     fn configurations() -> Vec<(ConfigurationIdentity, bool)> {
         vec![
             (identity("lib/home.c", "cc -c home.c"), true),
@@ -1256,7 +1350,43 @@ extern fn protocol_host(c: ptr<mut, u8>) -> unit contract { requires resource_co
             (identity("lib/other.c", "cc -c other.c"), false),
             (identity("lib/amb.c", "cc -c amb.c"), true),
             (identity("lib/elsewhere.c", "cc -c elsewhere.c"), true),
+            (identity("lib/two.c", "cc -c two.c"), true),
+            (identity("lib/two.c", "cc -fPIC -c two.c"), false),
+            (identity("lib/chosen.c", "cc -c chosen.c"), true),
+            (identity("lib/chosen.c", "cc -fPIC -c chosen.c"), false),
+            (identity("lib/twin.c", "cc -c twin.c"), false),
+            (identity("lib/both.c", "cc -c both.c"), true),
+            (identity("lib/both.c", "cc -fPIC -c both.c"), true),
         ]
+    }
+
+    /// The link inputs (label, configurations whose object has its bytes).
+    fn inputs() -> Vec<(&'static str, Vec<usize>)> {
+        vec![
+            ("home.o", vec![0]),
+            ("two.o", vec![5]),
+            ("chosen.o", vec![7]),
+            ("twin.o", vec![8, 9]),
+            ("both.o", vec![10]),
+            ("both.pic.o", vec![11]),
+        ]
+    }
+
+    /// The route configurations of the three two-configuration keys.
+    fn two_configuration_route() -> Vec<(String, ConfigurationIdentity)> {
+        ["two", "chosen", "both"]
+            .into_iter()
+            .flat_map(|name| {
+                let key = format!("lib/{name}.c");
+                [
+                    (key.clone(), identity(&key, &format!("cc -c {name}.c"))),
+                    (
+                        key.clone(),
+                        identity(&key, &format!("cc -fPIC -c {name}.c")),
+                    ),
+                ]
+            })
+            .collect()
     }
 
     /// The route's configurations, keyed as the route keys them.
@@ -1329,6 +1459,11 @@ extern fn protocol_host(c: ptr<mut, u8>) -> unit contract { requires resource_co
     }
 
     fn artifact(symbols: Vec<Value>) -> ArtifactFixture {
+        artifact_with(symbols, true)
+    }
+
+    /// `attribution: false` drops the last input's configuration list.
+    fn artifact_with(symbols: Vec<Value>, attribution: bool) -> ArtifactFixture {
         let dir = std::env::temp_dir().join(format!(
             "quirin-link-standing-{}-{}",
             std::process::id(),
@@ -1347,7 +1482,25 @@ extern fn protocol_host(c: ptr<mut, u8>) -> unit contract { requires resource_co
         let (map, map_sha256) = file("fluent-bit.map", b"map");
         let (driver, driver_sha256) = file("clang", b"driver");
         let (linker, linker_sha256) = file("ld", b"linker");
-        let (_, object_sha256) = file("home.o", b"object");
+        let all = inputs();
+        let last = all.len() - 1;
+        let inputs = all
+            .into_iter()
+            .enumerate()
+            .map(|(id, (label, configurations))| {
+                let body: &[u8] = if label == "home.o" {
+                    b"object"
+                } else {
+                    label.as_bytes()
+                };
+                let (_, sha256) = file(label, body);
+                let mut input = serde_json::json!({"id": id, "label": label, "sha256": sha256});
+                if attribution || id != last {
+                    input["configurations"] = serde_json::json!(configurations);
+                }
+                input
+            })
+            .collect::<Vec<_>>();
         let database = b"[]";
         let database_sha256 = qcore_schemas::sha256_hex(database);
         let artifact = serde_json::json!({
@@ -1361,7 +1514,7 @@ extern fn protocol_host(c: ptr<mut, u8>) -> unit contract { requires resource_co
                 "linker": {"path": linker, "resolved": linker, "sha256": linker_sha256},
             },
             "compile_database": {"path": "compile_commands.json", "sha256": database_sha256},
-            "inputs": [{"id": 0, "label": "home.o", "sha256": object_sha256, "configurations": [0]}],
+            "inputs": inputs,
             "configurations": configurations().iter().enumerate().map(|(id, (identity, linked))| serde_json::json!({
                 "id": id, "file": identity.file, "directory": identity.directory,
                 "command_sha256": identity.command_sha256, "linked": linked,
@@ -1510,6 +1663,92 @@ extern fn protocol_host(c: ptr<mut, u8>) -> unit contract { requires resource_co
                 .caller_linked(&identity("lib/elsewhere.c", "cc -DLIBEVENT -c elsewhere.c"))
         );
         assert!(derived.standing.record("callee").is_some());
+    }
+
+    #[test]
+    fn outside_vectors_hold() {
+        for &(linked, attributed, expected) in OUTSIDE_VECTORS {
+            assert_eq!(
+                shown_outside(linked, attributed),
+                expected,
+                "{linked:?} {attributed:?}"
+            );
+        }
+    }
+
+    /// Card LINK-STANDING-SELECTION-TWO-CONFIGURATION-KEYS: condition 13 is
+    /// decided over the configurations the link can use. A second
+    /// configuration under the home's key that the artifact records and
+    /// attributes to no link input leaves the key to the linked one, and the
+    /// census leaves it out. One the link may have used (attributed, even
+    /// unlinked; linked) or one the artifact does not record keeps the
+    /// refusal.
+    #[test]
+    fn an_unlinked_second_configuration_leaves_the_key_to_the_linked_one() {
+        let homes = || {
+            vec![
+                strong("two_home", 5),
+                strong("chosen_home", 7),
+                strong("both_home", 10),
+                symbol(
+                    "amb_home",
+                    Some(3),
+                    "executable",
+                    "global",
+                    "default",
+                    1,
+                    0,
+                    Some("home unit key names more than one route configuration"),
+                ),
+            ]
+        };
+        let mut route = route();
+        route.extend(two_configuration_route());
+        let fixture = artifact(homes());
+        let resolution = DerivedResolution::load(&fixture.path).unwrap();
+        resolution.verify(&fixture.database_sha256).unwrap();
+        let derived = resolution.derive(&route);
+        assert_eq!(
+            derived.map.requested(),
+            BTreeSet::from(["two_home".to_owned()])
+        );
+        assert_eq!(derived.map.home_for("two_home"), Some("lib/two.c"));
+        // chosen.c's `-fPIC` object may be the one linked; both.c's is;
+        // amb.c's `-fPIC` configuration is not recorded by the artifact.
+        assert_eq!(
+            derived.refused,
+            BTreeMap::from([(Refusal::AmbiguousKey, 3)])
+        );
+        let two_pic = identity("lib/two.c", "cc -fPIC -c two.c");
+        assert!(derived.outside_the_link(&two_pic));
+        for kept in [
+            identity("lib/two.c", "cc -c two.c"),
+            identity("lib/chosen.c", "cc -fPIC -c chosen.c"),
+            identity("lib/both.c", "cc -fPIC -c both.c"),
+            identity("lib/amb.c", "cc -fPIC -c amb.c"),
+            identity("lib/caller.c", "cc -c caller.c"),
+        ] {
+            assert!(!derived.outside_the_link(&kept), "{kept:?}");
+        }
+        // The outside configuration is not a linked caller either.
+        assert!(!derived.standing.caller_linked(&two_pic));
+        assert!(
+            derived
+                .standing
+                .caller_linked(&identity("lib/two.c", "cc -c two.c"))
+        );
+
+        // One input without its configuration list shows nothing outside
+        // the link: the key is refused again (fail-closed).
+        let fixture = artifact_with(homes(), false);
+        let resolution = DerivedResolution::load(&fixture.path).unwrap();
+        let derived = resolution.derive(&route);
+        assert!(derived.map.requested().is_empty());
+        assert_eq!(
+            derived.refused,
+            BTreeMap::from([(Refusal::AmbiguousKey, 4)])
+        );
+        assert!(derived.outside.is_empty());
     }
 
     /// The run-level conditions: another database, or a bound file whose

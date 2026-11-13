@@ -454,6 +454,7 @@ impl CurrentAudit {
             map,
             standing,
             refused: _,
+            outside: _,
             evidence,
         } = &derived;
         self.contracts = environment;
@@ -466,6 +467,13 @@ impl CurrentAudit {
             "map_sha256": self.contracts.link_resolution_sha256(),
             "derived_homes": map.requested().len(),
             "refused_by_reason": derived.refused_by_reason(),
+            // Card LINK-STANDING-SELECTION-TWO-CONFIGURATION-KEYS: the route
+            // configurations shown outside the link, left out of the census.
+            "outside_the_link": derived.outside.iter().map(|configuration| json!({
+                "file": configuration.file,
+                "directory": configuration.directory,
+                "command_sha256": configuration.command_sha256,
+            })).collect::<Vec<_>>(),
             "imported": self.cross_unit_homes.iter().map(|home| json!({
                 "function": home.function,
                 "home_unit": map.home_for(&home.function),

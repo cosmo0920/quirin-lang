@@ -50,3 +50,23 @@ home never supplies a summary. -/
 #print axioms QCore.CrossUnitSummary.derived_refusal_is_not_admitted
 #print axioms QCore.CrossUnitSummary.refused_home_supplies_nothing
 #print axioms QCore.CrossUnitSummary.standing_vectors_hold
+
+/-! Card **LINK-STANDING-SELECTION-TWO-CONFIGURATION-KEYS** (rule 40,
+condition 13): the key is decided over the configurations the link can use.
+A second configuration shown outside the link (recorded, `linked: false`, no
+link input attributed to it) leaves the key and the census to the linked
+one; any other second configuration keeps the refusal. -/
+
+#print axioms QCore.CrossUnitSummary.shownOutside_iff
+#print axioms QCore.CrossUnitSummary.outside_configuration_is_no_link_input
+#print axioms QCore.CrossUnitSummary.an_unrecorded_configuration_is_not_outside
+#print axioms QCore.CrossUnitSummary.an_attributed_configuration_is_not_outside
+#print axioms QCore.CrossUnitSummary.an_unreadable_attribution_shows_nothing_outside
+#print axioms QCore.CrossUnitSummary.a_single_configuration_key_is_unique
+#print axioms QCore.CrossUnitSummary.an_outside_second_configuration_leaves_the_key
+#print axioms QCore.CrossUnitSummary.a_usable_second_configuration_keeps_the_key
+#print axioms QCore.CrossUnitSummary.a_usable_second_configuration_refuses
+#print axioms QCore.CrossUnitSummary.the_census_leaves_the_linked_home_unique
+#print axioms QCore.CrossUnitSummary.an_unexcluded_second_definition_is_ambiguous
+#print axioms QCore.CrossUnitSummary.an_outside_second_configuration_admits_the_linked_home
+#print axioms QCore.CrossUnitSummary.outside_vectors_hold
