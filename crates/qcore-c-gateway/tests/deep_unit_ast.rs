@@ -170,8 +170,11 @@ fn run(tag: &str, header: &str, main: &str, contracts: &ResourceContracts) -> Ru
 /// The beyond-bound fixtures run on a 256 MiB thread: the token route's
 /// `else if` recursion over 130 arms needs more than a debug test thread's
 /// default stack, at the base as after this card (measured: the base's test
-/// binary aborts with a stack overflow there). The deep fixture (80 arms),
-/// whose typed index this card admits, runs on the default test thread.
+/// binary aborts with a stack overflow there). The deep fixture (80 arms)
+/// runs there too: on Linux it needs between 1.98 and 2.0 MiB (1.92 to 1.98
+/// before integrate/r10), so the 2 MiB default test thread left it no margin,
+/// and Windows' larger debug frames overflowed it (TOKEN-ROUTE-ELSE-IF-
+/// RECURSION-STACK tracks the recursion itself).
 fn on_a_large_stack(
     tag: &'static str,
     header: &'static str,
@@ -225,7 +228,7 @@ fn an_asserting_wrapper_is_validated_in_a_unit_deeper_than_the_default_limit() {
         return;
     }
     let main = format!("{}{ALLOC_USER}", chain(DEEP));
-    let run = run("deep", ASSERTING, &main, &contracts(W_ALLOC));
+    let run = on_a_large_stack("deep", ASSERTING, main, W_ALLOC);
     assert_eq!(
         run.record.body_outcomes().get("w"),
         Some(&BodyOutcome::Validated),
@@ -270,7 +273,7 @@ fn a_release_wrapper_without_a_statement_expression_validates_at_every_depth() {
         ("r-beyond", BEYOND),
     ] {
         let main = format!("{}{RELEASE_USER}", chain(arms));
-        let run = if arms == BEYOND {
+        let run = if arms != SHALLOW {
             on_a_large_stack(tag, RELEASING, main, W_RELEASE)
         } else {
             run(tag, RELEASING, &main, &contracts(W_RELEASE))
