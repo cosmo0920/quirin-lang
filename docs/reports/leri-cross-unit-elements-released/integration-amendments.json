@@ -1,0 +1,47 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "LERI-CROSS-UNIT-ELEMENTS-RELEASED",
+  "base": "8fd7c8d0d",
+  "measured_tip": "42043f0ef",
+  "profiles": [],
+  "increment_paragraph": "**LERI-CROSS-UNIT-ELEMENTS-RELEASED** (named follow-up of LIST-ENTRY-RELEASE-IDENTITY; rule 4c amended in place, Lean `QCore.CrossUnitElementRelease`; [report](../../reports/leri-cross-unit-elements-released/README.md)). A derived summary already crossed units with its whole contract: rule 4c's certificate compares the import with the replayed home whole, so rule 43's `ElementsReleased` is carried and applied by the caller's call reading as in the home's unit, an import that dropped or added a clause is refused, and every consumer that cannot apply a container effect refuses it (the extern-call bridge among them); a caller carrying the clause on is never itself a home. Fixtures pin it in the gateway (`cross_unit_elements_released.rs`, 6 vectors equal to the Lean ones, a rule 43 switched child) and end to end on the link-standing route (`link_standing_elements_released.rs`). One defect on the refusal path is fixed: on the `current` route a requested home in a unit with an incomplete definition census failed its export analysis and rejected the whole route; such a unit is no longer analysed for export, so the census refuses the import phase as rule 4c states and the run keeps its first-phase rows. Measured on the card's own `prepare --link` preparations (046accf6, upstream 90978ac6): the declared measurement (stated map, system and slice, base and tip as export directories) moved no row (declaration check: match). Under rule 40 the slice's base run was rejected and its tip run equals the stated-map rows (59/1/340/4 Pending), the system's 107/4/337 is unchanged; no caller of a released-element summary is reachable, because rule 40's condition 13 refuses every two-configuration core home (`flb_engine_destroy_tasks`, `flb_storage_input_destroy`, `flb_output_exit`, `flb_sched_timer_cleanup`, `flb_task_retry_clean`, `flb_sched_destroy`), their caller `flb_input.c` is not a system unit, and `tail_file.c` (home of `flb_tail_file_remove_all`) has an incomplete census; follow-ups LINK-STANDING-SELECTION-TWO-CONFIGURATION-KEYS, TAIL-FILE-DEFINITION-CENSUS-INCOMPLETE, SELECTION-ROUTES-SPLIT-CALLER-AND-HOME. Corpus not measured: the pinned route never reaches the changed code.",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "LERI-CROSS-UNIT-ELEMENTS-RELEASED",
+      "operation": "retire",
+      "why": "DISCHARGED by LERI-CROSS-UNIT-ELEMENTS-RELEASED (rule 4c amended; Lean QCore.CrossUnitElementRelease): a derived summary already crossed units with its whole contract, so ElementsReleased is carried and applied (the certificate compares the import with the replayed home whole: an import that dropped or added the clause is refused; every consumer that cannot apply a container effect refuses it), shown in the gateway (crates/qcore-c-gateway/tests/cross_unit_elements_released.rs) and end to end on the link-standing route (crates/qcore-audit/tests/link_standing_elements_released.rs). The current route no longer rejects the whole run when a requested home unit's definition census is incomplete (the census refuses the import phase, as rule 4c states). Re-measured on the card's linked preparations: no Fluent Bit caller of a released-element summary is reachable on the system or tail-pause routes; the blockers are route-level and registered as LINK-STANDING-SELECTION-TWO-CONFIGURATION-KEYS, TAIL-FILE-DEFINITION-CENSUS-INCOMPLETE and SELECTION-ROUTES-SPLIT-CALLER-AND-HOME.",
+      "source": "docs/reports/leri-cross-unit-elements-released/README.md"
+    },
+    {
+      "id": "LINK-STANDING-SELECTION-TWO-CONFIGURATION-KEYS",
+      "operation": "register",
+      "title": "Rule 40 refuses every core Fluent Bit home on the selection routes: both configurations share one key",
+      "text": "Card LERI-CROSS-UNIT-ELEMENTS-RELEASED measured (base 8fd7c8d0d, its own prepare --link of 046accf6 and 90978ac6): the system and tail-pause selections keep every distinct compilation configuration, so each core file (src/flb_engine.c, flb_storage.c, flb_output.c, flb_scheduler.c, flb_task.c, flb_input_chunk.c, flb_engine_dispatch.c, flb_input.c, flb_lib.c, flb_input_thread.c) names two route configurations under its library/file key, of which only the static one is linked into fluent-bit. Condition 13 (unique key) refuses every home there (system: 2 homes derived, 103 refused by the key; slice: 62 derived, 62 refused), including flb_engine_destroy_tasks, flb_storage_input_destroy, flb_output_exit, flb_sched_timer_cleanup, flb_task_retry_clean and flb_sched_destroy. DISCHARGE: key a derived home by its linked route configuration (condition 13 over the linked configurations only, with the unlinked one still defining nothing the link could choose), with Lean (QCore.CrossUnitSummary.standing) and a fixture where an unlinked second configuration is present.",
+      "source": "docs/reports/leri-cross-unit-elements-released/README.md",
+      "recorded_by": "LERI-CROSS-UNIT-ELEMENTS-RELEASED"
+    },
+    {
+      "id": "TAIL-FILE-DEFINITION-CENSUS-INCOMPLETE",
+      "operation": "register",
+      "title": "plugins/in_tail/tail_file.c has an incomplete definition census, which refuses the tail-pause slice's whole import phase",
+      "text": "Card LERI-CROSS-UNIT-ELEMENTS-RELEASED measured (90978ac6, its own preparation): tail_file.c's unit reads `enumeration completeness refused: a conditional group's arms leave different file-scope brace depths in the raw scan`, so the slice's definition census is incomplete and every run refuses its import phase (`cross-unit import phase refused: incomplete definition census`), under the stated map and under rule 40 alike; tail_file.c (home of flb_tail_file_remove_all, whose row is Safe) cannot be a home. Its callers in_tail_exit and flb_tail_config_destroy would keep other leaves even with the import. DISCHARGE: decide the conditional group's arms (or the unit's census) without conditional evaluation, then re-measure the slice under rule 40.",
+      "source": "docs/reports/leri-cross-unit-elements-released/README.md",
+      "recorded_by": "LERI-CROSS-UNIT-ELEMENTS-RELEASED"
+    },
+    {
+      "id": "SELECTION-ROUTES-SPLIT-CALLER-AND-HOME",
+      "operation": "register",
+      "title": "The system route holds the released-element drains, the slice holds their callers",
+      "text": "Card LERI-CROSS-UNIT-ELEMENTS-RELEASED: flb_engine_destroy_tasks (src/flb_engine.c) and flb_storage_input_destroy (src/flb_storage.c) are system units; their caller flb_input_instance_destroy is in src/flb_input.c, a slice unit only. Rule 40's condition 12 admits a home only from a configuration the route analyses, so no measurement route holds both halves; the live routes also run on the stated eight-home map (the measure plugin sets QCORE_CROSS_UNIT_LINK_MAP), and their frozen inputs have no linked executable (LINK-PREPARE-PINNED-ROUTE-INPUTS). DISCHARGE: a measured route whose selection holds both the homes and their callers under rule 40 (or the current route's selection widened), measured with a link-resolution side in the measure plugin.",
+      "source": "docs/reports/leri-cross-unit-elements-released/README.md",
+      "recorded_by": "LERI-CROSS-UNIT-ELEMENTS-RELEASED"
+    },
+    {
+      "id": "LINK-PREPARE-PINNED-ROUTE-INPUTS",
+      "operation": "amend",
+      "text": "AMENDED by LERI-CROSS-UNIT-ELEMENTS-RELEASED: prepare clang-build --link of 046accf6 and of upstream 90978ac6 (worktree-private, Ubuntu clang 21.1.8) linked both; the artifacts verify against their databases (system adb20950…, slice 21c7c6d8…). The measure plugin still has no link-resolution side (it always sets QCORE_CROSS_UNIT_LINK_MAP, which excludes rule 40), so a declared measurement under rule 40 needs that side first.",
+      "source": "docs/reports/leri-cross-unit-elements-released/README.md"
+    }
+  ]
+}

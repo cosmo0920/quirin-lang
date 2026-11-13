@@ -1,0 +1,21 @@
+== slice-base-map-1
+cross-unit import phase refused: incomplete definition census
+progress: [275s] cross-unit home export: end, 16/16 unit(s) in 0.5s: 0 home export(s)
+== slice-base-resolution-1
+cross-unit link resolution derived (rule 40) from private/prep/slice/link-resolution/link-resolution.json (sha256 21c7c6d802db33c202f67d8a909cc14c9c5e9473f192a315ee44c0ee60b4b6df): 62 home(s); refused {"home configuration is not a configuration the route analyses":4948,"home definition does not have default visibility":579,"home is not defined in the executable":678,"home unit key names more than one route configuration":62,"the artifact refuses the home's link facts":17}
+current audit rejected (Unknown): enumeration completeness refused: a conditional group's arms leave different file-scope brace depths in the raw scan, and deciding which arm survives is conditional evaluation, so a definition guarded out of the expansion may be missing after that group
+== slice-tip-map-1
+cross-unit import phase refused: incomplete definition census
+progress: [788s] cross-unit home export: end, 16/16 unit(s) in 2.4s: 0 home export(s)
+== slice-tip-resolution-1
+cross-unit link resolution derived (rule 40) from private/prep/slice/link-resolution/link-resolution.json (sha256 21c7c6d802db33c202f67d8a909cc14c9c5e9473f192a315ee44c0ee60b4b6df): 62 home(s); refused {"home configuration is not a configuration the route analyses":4948,"home definition does not have default visibility":579,"home is not defined in the executable":678,"home unit key names more than one route configuration":62,"the artifact refuses the home's link facts":17}
+cross-unit import phase refused: incomplete definition census
+progress: [851s] cross-unit home export: end, 16/16 unit(s) in 32.3s: 3 home export(s)
+== system-base-resolution-1
+cross-unit link resolution derived (rule 40) from private/prep/system/link-resolution/link-resolution.json (sha256 adb20950b4522cd5f3a60bdef72aa414165fcce5aa3c798e26af2fc0ee30a592): 2 home(s); refused {"home configuration is not a configuration the route analyses":4955,"home definition does not have default visibility":579,"home is not defined in the executable":678,"home unit key names more than one route configuration":103,"the artifact refuses the home's link facts":17}
+progress: [497s] cross-unit home export: end, 15/15 unit(s) in 24.8s: 0 home export(s)
+== system-tip-map-1
+progress: [986s] cross-unit home export: end, 15/15 unit(s) in 2.4s: 0 home export(s)
+== system-tip-resolution-1
+cross-unit link resolution derived (rule 40) from private/prep/system/link-resolution/link-resolution.json (sha256 adb20950b4522cd5f3a60bdef72aa414165fcce5aa3c798e26af2fc0ee30a592): 2 home(s); refused {"home configuration is not a configuration the route analyses":4955,"home definition does not have default visibility":579,"home is not defined in the executable":678,"home unit key names more than one route configuration":103,"the artifact refuses the home's link facts":17}
+progress: [1059s] cross-unit home export: end, 15/15 unit(s) in 75.9s: 0 home export(s)
