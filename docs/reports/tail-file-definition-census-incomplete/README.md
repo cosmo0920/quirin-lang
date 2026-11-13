@@ -224,4 +224,31 @@ paragraph is the file's `increment_paragraph`; `--check` exits 0 on this tree.
 
 ## 7. Gate
 
-Recorded after the gate run (next commit).
+`python3 scripts/gate_scope.py --base f47823dd1` (through
+`private/toolchain/env.sh`) on `459590a8f` (code equal to the measured
+`09794501e`; later commits are the integrator's fixture fix, the merge of
+integrate/r10 `98e0cc91e`, the regenerated matrix counts, and this record):
+**exit 0**, mode full (the diff reaches `qcore-c-gateway`), 8 steps
+([gate.json](gate.json), logs `private/gate-scope/20261113T173453Z-3485182/`,
+console `private/logs/gate-3.console.log`; Clang recording
+[gate/clang-version.txt](gate/clang-version.txt), taken in this worktree).
+
+| Step | Exit | Counts |
+|---|---|---|
+| submodules, fmt, clippy (`-D warnings`) | 0 / 0 / 0 | 1 submodule |
+| Rust suite | 0 | 636 units, 679 summaries; 9,492 passed, 0 failed, 17 ignored |
+| both reevaluation probes | 0 / 0 | |
+| Lean (`check_lean_audits.py`, all: a proof root changed) | 0 | 433 audits (this card adds `AuditGuardCorrelatedCensus.lean`) |
+| Python suite | 0 | 761 tests |
+
+Incomplete attempts, kept: gate 1 (`private/logs/gate-1.console.log`) was
+stopped on the integrator's note that the base carries five failing
+cross-unit fixture tests (fixed by cherry-picking `562d4594d`); gate 2
+(`private/gate-scope/20261113T165840Z-3006310/`, exit 1) passed every step
+but Python, whose one failure
+(`test_each_derived_dimension_matches_the_section_it_counts`, 949 ≠ 956) is
+the base's stale matrix (it fails identically on a `f47823dd1` export).
+Merging integrate/r10 brought its regenerated matrix; `build_matrix.py` then
+moved the Lean audit count 432 → 433 for this card's audit (it also relabels
+the gate block as carried, not measured, until the integrator passes
+`--gate`). No provider change, so no provider gate.
