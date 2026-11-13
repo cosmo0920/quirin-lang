@@ -340,6 +340,13 @@ pub(super) struct AbstractState {
     /// element destroyer never takes a held object a second unlink would
     /// reach. Empty in every function with no unlink.
     pub(super) unlinked: BTreeSet<usize>,
+    /// Card **LERI-HELD-AND-LINK-MEMBER-PREMISES** (gateway rule 46): the
+    /// `(site, member)` link records this body initialised itself (a rule 36b
+    /// self-initialisation covering both link fields) and no later statement
+    /// may have written ([`container_publication::link_member::retain`]).
+    /// Joined by intersection; empty in every function with no such
+    /// initialisation, which keeps the join as it was.
+    pub(super) link_ready: BTreeSet<(usize, String)>,
     /// Card **MK-EVENT-DESCRIPTOR-QUANT** (rule 38): the descriptor cells of
     /// this path. Empty in every function that calls no declaration with a
     /// cell state, which keeps the join as it was.
@@ -506,6 +513,8 @@ impl AbstractState {
         self.member_path_taken
             .extend(incoming.member_path_taken.iter().copied());
         self.unlinked.extend(incoming.unlinked.iter().copied());
+        self.link_ready
+            .retain(|fact| incoming.link_ready.contains(fact));
         // Card MK-EVENT-CELL-CROSS-FUNCTION (rule 38c), read against each
         // side's own table before the tables join (rule 38), which card
         // CELL-PROTOCOL-PER-END-GUARDS (rule 38f) does in the same hook.
@@ -2827,6 +2836,15 @@ pub(super) fn transfer(
         &context.traversal.scalars,
         diagnostics,
     );
+    // Card LERI-HELD-AND-LINK-MEMBER-PREMISES (gateway rule 46): a nested
+    // call runs before the call it is nested in and may write any memory it
+    // is handed, so no link record survives into the call.
+    let mut state = state;
+    if let LegacyInstruction::ContractCall { nested, .. } = &node.instruction
+        && !nested.is_empty()
+    {
+        state.link_ready.clear();
+    }
     let mut output = transfer_dispatch(
         function,
         node,
@@ -2836,6 +2854,7 @@ pub(super) fn transfer(
         alias,
         diagnostics,
     );
+    container_publication::link_member::retain(&node.instruction, &mut output);
     slot_move_route::after(node, &mut output);
     // Card OUT-SLOT-CALL-WRITE-ALIASING (rule 11r(8)): a call that may write
     // caller memory leaves no bound out slot as it was, except the slots its
@@ -3024,6 +3043,8 @@ pub(super) fn transfer_dispatch(
         }
         LegacyInstruction::TrackedSelfInit {
             base: root,
+            path,
+            writes,
             protected_fields,
             compatible_roots,
             access,
@@ -3042,6 +3063,15 @@ pub(super) fn transfer_dispatch(
                 let mut checked = BTreeSet::new();
                 let read_state = base(&with_instruction(node, access), state.clone(), &mut checked);
                 if checked.is_empty() && read_state == state {
+                    // Card LERI-HELD-AND-LINK-MEMBER-PREMISES (gateway rule
+                    // 46): the body's own initialisation of a link record.
+                    let mut output = output;
+                    container_publication::link_member::record_initialisation(
+                        &mut output,
+                        root,
+                        path,
+                        writes,
+                    );
                     return output;
                 }
             }

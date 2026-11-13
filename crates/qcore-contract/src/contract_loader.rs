@@ -2761,6 +2761,7 @@ fn load_function_in(
         contract.result_kind = kinds.result_kind;
         contract.container_effects = collected.container_effects.clone();
         contract.counted_users = collected.users.clone();
+        contract.link_members = collected.link_members.clone();
         finished.push(qcore_schemas::relational_post::ExitClass { relation, contract });
     }
     let relational = if is_relational {

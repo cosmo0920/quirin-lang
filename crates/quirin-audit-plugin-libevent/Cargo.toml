@@ -15,5 +15,5 @@ path = "src/main.rs"
 
 [dependencies]
 quirin-audit-plugin = { path = "../quirin-audit-plugin", version = "0.1.0" }
-qcore-schemas = { path = "../qcore-schemas", version = "25.0.0" }
+qcore-schemas = { path = "../qcore-schemas", version = "26.0.0" }
 serde_json = "1.0.151"

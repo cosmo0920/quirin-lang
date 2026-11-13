@@ -64,7 +64,7 @@ contract { requires resource_contract_v1; ensures normal resource_borrowed(entry
 extern fn q_use(p: ptr<mut, u8>) -> unit
 contract { requires resource_contract_v1; ensures normal resource_borrowed(p); ensures normal resource_return_none(); };
 extern fn item_destroy(e: ptr<mut, u8>) -> i32
-contract { requires resource_contract_v1; ensures normal resource_unpublished(e); ensures normal resource_released(e, nonnull); ensures normal resource_return_none(); };
+contract { requires resource_contract_v1; ensures normal resource_unpublished(e, _head); ensures normal resource_released(e, nonnull); ensures normal resource_return_none(); };
 ";
 
 const NOT_PUBLISHED: &str =
@@ -425,10 +425,14 @@ const DESTROYING: &[(&str, AnalysisStatus)] = &[
          mk_list_del(&e->_head); item_destroy(e); }",
         AnalysisStatus::Unknown,
     ),
-    // Unknown before card LIST-ENTRY-RELEASE-IDENTITY; rule 43's held arm.
+    // Unknown before card LIST-ENTRY-RELEASE-IDENTITY; rule 43's held arm made
+    // it Safe; Unknown again under rule 46 (card
+    // LERI-HELD-AND-LINK-MEMBER-PREMISES): the body never initialised the
+    // object's `_head` links, so the destroyer's unlink is undefined
+    // (P-LERI-HELD-LINKS, checked).
     (
         "void subject(void) { struct item *e = q_alloc(); item_destroy(e); }",
-        AnalysisStatus::Safe,
+        AnalysisStatus::Unknown,
     ),
     (
         "void subject(struct queue *q) { struct mk_list *it; struct item *e;

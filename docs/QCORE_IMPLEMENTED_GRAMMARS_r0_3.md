@@ -3790,7 +3790,10 @@ counted_user_predicate =
     ("added" | "restored" | "dropped"), ")" ;
 container_predicate =
     "resource_published", "(", IDENT, ",", IDENT, ")"   (* entry, container *)
-  | "resource_unpublished", "(", IDENT, ")" ;
+  | "resource_unpublished", "(", IDENT, ")"
+  | "resource_unpublished", "(", IDENT, ",", IDENT, ")" ;
+    (* entry, link member: an element destroyer only; card
+       LERI-HELD-AND-LINK-MEMBER-PREMISES, contract specification C04.8 *)
 (* card CG23-RELATIONAL-POSTCONDITIONS, contract specification C04.13 *)
 return_code_disposition =
     "resource_on_return", "(", relation_op, ",", integer_literal, ",",

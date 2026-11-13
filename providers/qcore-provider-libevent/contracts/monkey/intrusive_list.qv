@@ -190,6 +190,12 @@ contract {
 // NOT CLAIMED: anything about the current thread's `mk_thread` key, which
 // destruction does not clear; that `mth` is on any particular list; creation,
 // purge or dispatch.
+//
+// Card LERI-HELD-AND-LINK-MEMBER-PREMISES (gateway rule 46): the unlink names
+// its link member, `_head` (`mk_list_del(&mth->_head)` in the body at
+// `mk_server/mk_http_thread.c`, 66910c10 and 046accf6), so a caller's element
+// is taken only when its `container_of` binding names `_head` too, and an
+// object the caller holds only when the caller initialised its `_head` links.
 
 extern fn mk_http_thread_destroy(mth: ptr<mut, u8>) -> i32
 contract {
@@ -202,7 +208,7 @@ contract {
     requires resource_premise(scheduler_valid_membership, "mth->_head is linked in exactly one valid circular mk_list, the one its caller reaches it through, with reciprocal links and no concurrent or reentrant writer of that list, the coroutine, the borrowed chain or the key (scheduler decomposition valid_membership and no_concurrent_writer)");
     requires resource_premise(scheduler_no_later_alias_use, "no alias the source leaves behind, request->thread, channel.thread or the current thread's mk_thread key, is read or resumed after the call (scheduler decomposition no_later_alias_use)");
     requires resource_premise(scheduler_valgrind_request_neutral, "the Valgrind client request VALGRIND_STACK_DEREGISTER compiled in under MK_HAVE_VALGRIND reads th->valgrind_stack_id and changes no object the projection tracks");
-    ensures normal resource_unpublished(mth);
+    ensures normal resource_unpublished(mth, _head);
     ensures normal resource_released(mth, nonnull);
     ensures normal resource_return_none();
 };

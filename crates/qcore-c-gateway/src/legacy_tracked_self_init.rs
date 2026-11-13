@@ -524,6 +524,10 @@ pub(super) fn apply(state: &AbstractState, base: &str) -> Option<AbstractState> 
     frame.pointers.clear();
     frame.resources.clear();
     frame.nullable_sites.clear();
+    // Card LERI-HELD-AND-LINK-MEMBER-PREMISES (gateway rule 46): a link
+    // record an earlier initialisation established is a fact about those
+    // writes, not a custody relation, and this route's own output.
+    frame.link_ready.clear();
     if frame != AbstractState::default() {
         return None;
     }
@@ -594,6 +598,9 @@ pub(super) fn apply_frame(
     residue.nullable_sites.clear();
     residue.field_links.clear();
     residue.partial_links.clear();
+    // Card LERI-HELD-AND-LINK-MEMBER-PREMISES (gateway rule 46): as in
+    // [`apply`], a link record is not a custody relation.
+    residue.link_ready.clear();
     if residue != AbstractState::default() {
         return None;
     }

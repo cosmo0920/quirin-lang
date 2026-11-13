@@ -9,7 +9,7 @@ description = "Trusted obligation derivation, witness replay and scope dispatch 
 qcore-core = { path = "../qcore-core", version = "0.1.0" }
 qcore-frontend = { path = "../qcore-frontend", version = "0.1.0" }
 qcore-contract = { path = "../qcore-contract", version = "0.1.0" }
-qcore-schemas = { path = "../qcore-schemas", version = "25.0.0" }
+qcore-schemas = { path = "../qcore-schemas", version = "26.0.0" }
 qcore-verifier-host = { path = "../qcore-verifier-host", version = "0.4.0" }
 qcore-c-gateway = { path = "../qcore-c-gateway", version = "0.1.0" }
 serde = { version = "1.0.229", features = ["derive"] }

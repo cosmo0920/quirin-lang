@@ -95,7 +95,7 @@ contract {
 extern fn flb_task_retry_destroy(retry: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
-    ensures normal resource_unpublished(retry);
+    ensures normal resource_unpublished(retry, _head);
     ensures normal resource_released(retry, nonnull);
     ensures normal resource_user_neutral();
     ensures normal resource_return_none();

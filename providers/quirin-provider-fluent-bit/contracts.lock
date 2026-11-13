@@ -517,8 +517,8 @@
     {
       "function": "flb_input_chunk_destroy",
       "module": "fluent_bit/input_chunk_destroy.qv",
-      "contract_sha256": "29233a0b6fbe837bac612c3f7eee2b38b47241dc39948770fbf51e62365e20a0",
-      "pinned_at": "2026-11-12T03:15:23Z",
+      "contract_sha256": "b808e13c30931bd67ca3e75f5ca370ebbcef16f35b2037118d13e9e3cf6b8793",
+      "pinned_at": "2026-11-13T07:16:12Z",
       "identities": [
         {
           "reviewed_at": [
@@ -1026,8 +1026,8 @@
     {
       "function": "flb_input_coro_destroy",
       "module": "fluent_bit/teardown_destroy.qv",
-      "contract_sha256": "c5387380fe4c701e4e9e35f64c5a2ef20c03abf51f276682442ff07ad75e79d9",
-      "pinned_at": "2026-11-12T03:15:24Z",
+      "contract_sha256": "56f7a765674cbb692afa120524a2c35a3cda540e2dbfd925414cd1a2193f7335",
+      "pinned_at": "2026-11-13T07:16:13Z",
       "identities": [
         {
           "reviewed_at": [
@@ -1058,8 +1058,8 @@
     {
       "function": "flb_input_instance_destroy",
       "module": "fluent_bit/teardown_destroy.qv",
-      "contract_sha256": "18e35aa35c8d23e77ce983aea3e095dd131ae959459ea565500df0e08d9de878",
-      "pinned_at": "2026-11-12T03:15:23Z",
+      "contract_sha256": "ce55cddff7821b2a0babad1399ce500874dfdf73f640c95067cff40ab1b927a2",
+      "pinned_at": "2026-11-13T07:16:13Z",
       "identities": [
         {
           "reviewed_at": [
@@ -1407,8 +1407,8 @@
     {
       "function": "flb_output_flush_destroy",
       "module": "fluent_bit/teardown_destroy.qv",
-      "contract_sha256": "e4238939bb2356446a3613e01ab2b7a9cbebff01b041bc63187c1868bc335cc9",
-      "pinned_at": "2026-11-12T03:15:24Z",
+      "contract_sha256": "6f02301a1c479ea960d127a62341a0a200fea679f1993cfb7eb3960cf75bc98c",
+      "pinned_at": "2026-11-13T07:16:13Z",
       "identities": [
         {
           "reviewed_at": [
@@ -1472,8 +1472,8 @@
     {
       "function": "flb_output_instance_destroy",
       "module": "fluent_bit/teardown_destroy.qv",
-      "contract_sha256": "4881e3e2d81e0b9d84e6875dac8a16025b10fad4a761d22441c933467009d51e",
-      "pinned_at": "2026-11-12T03:15:23Z",
+      "contract_sha256": "c20d39e6427ae9919a88c0ef44570f887ddb1e758b34e6d534cecd1df7013af5",
+      "pinned_at": "2026-11-13T07:16:13Z",
       "identities": [
         {
           "reviewed_at": [
@@ -1790,8 +1790,8 @@
     {
       "function": "flb_sched_request_destroy",
       "module": "fluent_bit/teardown_destroy.qv",
-      "contract_sha256": "71b0c8d94dd7001b6766bb6573dafa4120556c6ade81ed2ee20cfbde30daa5b7",
-      "pinned_at": "2026-11-12T03:15:24Z",
+      "contract_sha256": "aca941b959105da15b36c2d77d57ac13c658e3480d16666c0229a97d643c4a60",
+      "pinned_at": "2026-11-13T07:16:13Z",
       "identities": [
         {
           "reviewed_at": [
@@ -1827,8 +1827,8 @@
     {
       "function": "flb_sched_timer_destroy",
       "module": "fluent_bit/teardown_destroy.qv",
-      "contract_sha256": "3d6cd24fb19b9201aff27f849273ab4b7dbf9a7aff9b670e81fa46b455aa8291",
-      "pinned_at": "2026-11-12T03:15:24Z",
+      "contract_sha256": "8bb771c12afcec7258355f179b376e05e0eb25a0d72c0e34ed8963af7ca90c7d",
+      "pinned_at": "2026-11-13T07:16:13Z",
       "identities": [
         {
           "reviewed_at": [
@@ -2126,8 +2126,8 @@
     {
       "function": "flb_tail_file_remove",
       "module": "fluent_bit/teardown_destroy.qv",
-      "contract_sha256": "8370de53a8ec527e5fa05207b15ade9a6464f1c28227a26e79cddc11dd4af5a2",
-      "pinned_at": "2026-11-12T03:15:22Z",
+      "contract_sha256": "88e83d2ec8c2a20a4c69fb8b4ca715aa79a58fa91ca4a36d8659f213f6c23893",
+      "pinned_at": "2026-11-13T07:16:12Z",
       "identities": [
         {
           "reviewed_at": [
@@ -2155,8 +2155,8 @@
     {
       "function": "flb_task_destroy",
       "module": "fluent_bit/teardown_destroy.qv",
-      "contract_sha256": "56360cf453bc095d5a4b17f370f3361d6e9ff200b980348f96d786bf38853e93",
-      "pinned_at": "2026-11-12T03:15:24Z",
+      "contract_sha256": "3a6428236af39e534e4fdaff5563b064ccbae1ccaa1b2c7f56ce9f890842bfff",
+      "pinned_at": "2026-11-13T07:16:13Z",
       "identities": [
         {
           "reviewed_at": [
@@ -2290,8 +2290,8 @@
     {
       "function": "flb_task_retry_destroy",
       "module": "fluent_bit/task_users.qv",
-      "contract_sha256": "250f26c1f14dbfccb62fd25d368c78cbd4e6d7a9a4484dbccc2c8266034c01dc",
-      "pinned_at": "2026-11-12T03:15:23Z",
+      "contract_sha256": "ba2c105b8ac26a58c95aef45501e1af0ec887b16690b92ff9b8392c10fdf40ee",
+      "pinned_at": "2026-11-13T07:16:12Z",
       "identities": [
         {
           "reviewed_at": [

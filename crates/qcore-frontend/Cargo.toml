@@ -7,4 +7,4 @@ description = "QCore language front end: lexer, parsers, quant-index resolution,
 
 [dependencies]
 qcore-core = { path = "../qcore-core", version = "0.1.0" }
-qcore-schemas = { path = "../qcore-schemas", version = "25.0.0" }
+qcore-schemas = { path = "../qcore-schemas", version = "26.0.0" }

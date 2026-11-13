@@ -393,7 +393,11 @@ fn contract_clauses(contract: &ResourceFunctionContract, function_map: bool) -> 
             ContainerEffect::Published {
                 container_parameter,
             } => format!("resource_published(#{index}, #{container_parameter})"),
-            ContainerEffect::Unpublished => format!("resource_unpublished(#{index})"),
+            // Card LERI-HELD-AND-LINK-MEMBER-PREMISES (gateway rule 46).
+            ContainerEffect::Unpublished => match contract.link_members.get(index) {
+                Some(member) => format!("resource_unpublished(#{index}, {member})"),
+                None => format!("resource_unpublished(#{index})"),
+            },
             ContainerEffect::ElementsReleased => {
                 format!("resource_elements_released(#{index})")
             }
