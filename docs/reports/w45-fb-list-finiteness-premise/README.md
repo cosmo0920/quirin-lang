@@ -261,11 +261,69 @@ stays owed.
 
 ## 5. Arbiter comparison
 
-ARBITER
+`quirin-audit measure --declared PREDICTION.md` over the `fluent-bit-system`
+route ([measure-inputs.json](measure-inputs.json): the live route's selection,
+profile and link map over the card's own preparation), **result `match`**,
+status `complete`, exit 0 ([record](arbiter/native-comparison.json); private
+run `private/w45-list/measure-3/`):
+
+* **0 moves**, 0 unit moves, 0 unmatched rows; status deltas Safe 0, Unknown
+  0, Unsafe 0 (448 function rows: 107 Safe, 337 Unknown, 4 Unsafe on both
+  sides; 15 unit rows: 13 Unknown, 2 Unsafe).
+* Not byte-identical, for environment reasons only: the four
+  `review_holds` content changes (`flb_output_exit` and `flb_storage_create`,
+  each variant) and the `compile_configuration` unit fields spell each side's
+  own checkout path (`private/w45-list/base-src` vs `private/w45-list/tip-src`)
+  in a module path, and the report, components, null and outer files carry
+  the analyzer revision in their evidence versions and the ids hashed from
+  them. The chunk-contract, source-effect and null-summary files are
+  byte-identical.
+
+**How it was run, and what was not.** The `rev:` sides need a private mount
+namespace, which this host refuses (`unshare: write failed /proc/self/uid_map:
+Operation not permitted`, first attempt `private/w45-list/measure-1/`). The
+sides are therefore binaries built from `git archive` snapshots of the base
+`591e5523f` and of `438fef384` (the card's code at its final state; private
+`private/w45-list/{base,tip}-src/`), with `QCORE_AUDIT_BUILD_COMMIT` set to
+each revision. A second attempt (`private/w45-list/measure-2/`) used the live
+worktree as the tip side and was refused, correctly, with exit 101 because the
+tree changed during the run. The `eight-home` corpus and the
+`fluent-bit-tail-pause` slice were **not** measured: their prepared inputs
+(`build/cycle19`, the tail-pause export of upstream `90978ac6`) and published
+baselines do not exist on this host. The prediction's `none` for those routes
+rests on construction: with `QCORE_LOOP_MEASURE_PROPERTY` unset the new code
+returns before doing anything, and no custody, contract or provider code
+changed. The integrator's arbiter on a provisioned host is owed as before
+(`W45-FB-ENGINE-PROGRESS-MEASURE-SLICE-RUN`).
+
+A direct comparison of the selection runs agrees
+([scripts/statuses.py](scripts/statuses.py)): the base run with rule 44 alone,
+the tip with an empty premise file and the tip with the Fluent Bit premises
+publish the same 448 function statuses, and rule 44's tally is identical.
 
 ## 6. Validation
 
-GATE
+The scoped card gate, `python3 scripts/gate_scope.py --base 591e5523f`, on
+`438fef384` through the host toolchain script (`private/toolchain/env.sh`,
+copied verbatim into the worktree's `private/w45-list/env.sh` because the
+worktree guard refuses a command naming the primary checkout's path; it points
+at the same system Clang 21.1.8 and Lean 4.35.0), mode full (the diff reaches
+`qcore-c-gateway`): **8 steps passed, exit 0** ([gate.json](gate.json),
+private run `private/gate-scope/20261113T151231Z-1981602/`).
+
+| Step | Exit | Counts |
+|---|---|---|
+| submodules | 0 | 1 submodule |
+| fmt | 0 | |
+| clippy | 0 | |
+| Rust suite | 0 | 631 units, 673 summaries; 9,450 passed, 0 failed, 17 ignored |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| Lean (`check_lean_audits.py`, all) | 0 | 430 audits |
+| Python | 0 | 761 tests |
+
+No provider step: `providers/` is untouched and the premise file is no
+provider contract. The commits after `438fef384` add only this report's
+evidence files (README, arbiter record, gate record).
 
 ## 7. Follow-ups
 
