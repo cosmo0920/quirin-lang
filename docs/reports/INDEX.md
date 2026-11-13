@@ -650,6 +650,10 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [lean-proof-integrity](lean-proof-integrity/README.md) | Lean proof integrity and Lean 4.34 warning cleanup |
 
+| [leri-cross-unit-elements-released](leri-cross-unit-elements-released/README.md) | LERI-CROSS-UNIT-ELEMENTS-RELEASED |
+
+| [leri-held-and-link-member-premises](leri-held-and-link-member-premises/README.md) | LERI-HELD-AND-LINK-MEMBER-PREMISES: an element destroyer's link premises, checked |
+
 | [lexical-routes-typed-fallbacks](lexical-routes-typed-fallbacks/README.md) | LEXICAL-ROUTES-PREEMPT-TYPED-FALLBACKS |
 
 | [lexical-scalar-noop-alias-read](lexical-scalar-noop-alias-read/README.md) | LEXICAL-SCALAR-NOOP-ALIAS-READ |
@@ -667,6 +671,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [licence-header-test-repair](licence-header-test-repair/README.md) | LICENCE-HEADER-TEST-REPAIR |
 
 | [link-standing](link-standing/README.md) | LINK-STANDING |
+
+| [link-standing-selection-two-configuration-keys](link-standing-selection-two-configuration-keys/README.md) | LINK-STANDING-SELECTION-TWO-CONFIGURATION-KEYS |
 
 | [list-entry-release-identity](list-entry-release-identity/README.md) | LIST-ENTRY-RELEASE-IDENTITY: the released list element and its summary |
 
@@ -692,6 +698,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [macos-gateway-test-portability](macos-gateway-test-portability/README.md) | Gateway and plugin test portability (2026-10-22) |
 
 | [main-guard-removal](main-guard-removal/README.md) | MAIN-GUARD-REMOVAL |
+
+| [measure-contract-only-side-wiring](measure-contract-only-side-wiring/README.md) | MEASURE-CONTRACT-ONLY-SIDE-WIRING |
 
 | [measure-lookup-record-reuse](measure-lookup-record-reuse/README.md) | MEASURE-LOOKUP-RECORD-REUSE |
 
@@ -1432,6 +1440,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [w45-fb-engine-progress](w45-fb-engine-progress/README.md) | W45-FB-ENGINE-PROGRESS: do the engine callbacks make progress? |
 
 | [w45-fb-engine-progress-measure](w45-fb-engine-progress-measure/README.md) | W45-FB-ENGINE-PROGRESS-MEASURE: a checked measure for counted loops |
+
+| [w45-fb-list-finiteness-premise](w45-fb-list-finiteness-premise/README.md) | W45-FB-LIST-FINITENESS-PREMISE: a list-length bound under a declared premise |
 
 | [w45-fb-retry-fault-injection](w45-fb-retry-fault-injection/README.md) | W45-FB-RETRY-FAULT-INJECTION — native fault-injection observations (C1-C3) |
 
