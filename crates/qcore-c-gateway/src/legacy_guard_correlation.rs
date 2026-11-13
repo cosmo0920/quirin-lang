@@ -50,7 +50,16 @@
 //! world's kept text clears all of the world's assumptions (a later guard
 //! group splits again), because each can change which macros are defined.
 //! Worlds whose scan states are equal are merged, keeping only the
-//! assumptions they share; more than [`WORLD_BUDGET`] worlds refuse.
+//! assumptions they share; more than [`WORLD_BUDGET`] worlds refuse. A
+//! directive that spells `_Pragma`, `__pragma`, `push_macro` or `pop_macro`
+//! refuses outright: a macro defined with one changes the macro table where it
+//! is *invoked*, which reads as an ordinary identifier here.
+//!
+//! The premise is E01-RAW-COND's, unchanged: the raw half reads written text,
+//! not macro expansions, so a macro defined outside this file that expands to a
+//! brace or to a `push_macro`/`pop_macro` pragma is outside what it reads (the
+//! expansion half stays authoritative for the configuration actually
+//! compiled).
 //!
 //! Soundness, stated once: the worlds always cover every assignment of
 //! definedness to guard names, each world follows exactly the configurations
@@ -82,6 +91,10 @@ pub enum CorrelationRefusal {
     ArmsDisagree,
     /// More than [`WORLD_BUDGET`] worlds would be needed.
     WorldBudget,
+    /// A directive other than a conditional one spells `_Pragma`, `__pragma`,
+    /// `push_macro` or `pop_macro`: a macro defined with one could change a
+    /// guard's definedness wherever it is invoked, which this scan cannot see.
+    MacroTableOperator,
 }
 
 impl CorrelationRefusal {
@@ -92,8 +105,28 @@ impl CorrelationRefusal {
             Self::UnstructuredGroup => "unstructured-conditional-group",
             Self::ArmsDisagree => "uncorrelated-arm-depth-disagreement",
             Self::WorldBudget => "guard-world-budget-exhausted",
+            Self::MacroTableOperator => "macro-table-operator-in-a-directive",
         }
     }
+}
+
+/// The text of the directive starting at `start`, to the end of its logical
+/// line.
+fn directive_text(source: &str, start: usize) -> &str {
+    let bytes = source.as_bytes();
+    let mut cursor = start;
+    while cursor < bytes.len() && bytes[cursor] != b'\n' {
+        cursor += super::line_splice_width(bytes, cursor).unwrap_or(1);
+    }
+    &source[start..cursor.min(bytes.len())]
+}
+
+/// Whether a directive's text spells an operator that changes the macro table
+/// when a macro carrying it is invoked.
+fn writes_a_macro_table_operator(text: &str) -> bool {
+    ["_Pragma", "__pragma", "push_macro", "pop_macro"]
+        .iter()
+        .any(|word| text.contains(word))
 }
 
 /// The guard of a guard-group opening line: `#ifdef NAME` is `(NAME, true)`,
@@ -253,6 +286,12 @@ enum Event {
 pub fn correlated_source_scan(source: &str) -> Result<Vec<String>, CorrelationRefusal> {
     let (tokens, marks, others) = tokenize_with_directives(source);
     let structure = structure(source, &marks)?;
+    if others
+        .iter()
+        .any(|&(_, start)| writes_a_macro_table_operator(directive_text(source, start)))
+    {
+        return Err(CorrelationRefusal::MacroTableOperator);
+    }
     let mut events: Vec<(usize, usize, Event)> = marks
         .iter()
         .enumerate()

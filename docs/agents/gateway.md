@@ -10923,8 +10923,13 @@ safety claim and no validation of the detach representation premise.
     other directive (`#define`, `#undef`, `#include`, `#pragma`, …) and every
     `_Pragma`/`__pragma` operator in a world's kept text clears that world's
     assumptions. Worlds with equal scan states merge, keeping only shared
-    assumptions; more than 64 worlds refuse. No controlling expression is
-    evaluated. (3) **What it claims.** The worlds cover every valuation of
+    assumptions; more than 64 worlds refuse, and so does any directive that
+    spells `_Pragma`, `__pragma`, `push_macro` or `pop_macro` (a macro
+    carrying one changes the macro table where it is invoked, an ordinary
+    identifier to this reading). No controlling expression is evaluated; the
+    premise is E01-RAW-COND's (the raw half reads written text, not
+    expansions, and the expansion half stays authoritative for the
+    configuration compiled). (3) **What it claims.** The worlds cover every valuation of
     every guard in every epoch between directives, so every definition any
     configuration keeps at file scope, guarded-out arms included, is reached
     at file scope by some world and collected; a merged world may follow a

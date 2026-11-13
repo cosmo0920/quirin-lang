@@ -298,6 +298,32 @@ fn an_unstructured_stream_is_refused() {
     }
 }
 
+/// A macro defined with `_Pragma("pop_macro(…)")` changes a guard's
+/// definedness where it is invoked, an ordinary identifier to this scan: the
+/// scan refuses rather than trusting the correlation. A `#pragma` written
+/// directly only clears assumptions where it stands.
+#[test]
+fn a_macro_carrying_a_macro_table_operator_refuses() {
+    for define in [
+        "#define RESTORE _Pragma(\"pop_macro(\\\"FLB_HAVE_REGEX\\\")\")\n",
+        "#define SAVE __pragma(push_macro(\"FLB_HAVE_REGEX\"))\n",
+        "#pragma pop_macro(\"FLB_HAVE_REGEX\")\n",
+    ] {
+        let source = format!("{define}{TAG_COMPOSE}");
+        assert_eq!(
+            correlated_source_scan(&source),
+            Err(CorrelationRefusal::MacroTableOperator),
+            "{define:?}"
+        );
+        if clang_available() {
+            assert!(!enumerate_source_definitions(&unit(&source)).is_complete());
+        }
+    }
+    // A plain `#define` costs precision only.
+    let source = format!("#define FLB_TAIL 1\n{TAG_COMPOSE}");
+    assert!(correlated_source_scan(&source).is_ok());
+}
+
 #[test]
 fn extern_c_linkage_braces_are_read_as_function_names_reads_them() {
     let source = "\
@@ -372,6 +398,7 @@ fn observation(items: &[usize]) -> u64 {
         Err(CorrelationRefusal::UnstructuredGroup) => 1,
         Err(CorrelationRefusal::ArmsDisagree) => 2,
         Err(CorrelationRefusal::WorldBudget) => 3,
+        Err(CorrelationRefusal::MacroTableOperator) => unreachable!("not in the alphabet"),
         Ok(names) => {
             4 + names
                 .iter()

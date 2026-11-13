@@ -58,7 +58,8 @@ What is proved:
 What is **not** proved, and stays a Rust boundary: that `guard_of` recognises
 exactly the `#ifdef NAME`/`#ifndef NAME` spellings, that every directive other
 than a conditional one is reported as a `reset`, the `_Pragma` operator's
-clearing, and the `extern "C"` linkage braces (shared unchanged with
+clearing, the refusal of a directive spelling `_Pragma`/`__pragma`/
+`push_macro`/`pop_macro`, and the `extern "C"` linkage braces (shared unchanged with
 `function_names`); and that a valuation read beyond the enumerated epochs and
 positions does not matter (the bounded theorems enumerate exactly the ones a
 stream can read). -/
