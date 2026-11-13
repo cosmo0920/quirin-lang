@@ -35,7 +35,9 @@
 //! snapshot; (5) a snapshot is built and run in a private mount namespace
 //! (`unshare -rm`) with its tree bound at one fixed path (`<mount
 //! root>/src`, and a re-spelled mirror at `<mount root>/mirror`), so sides
-//! that differ only in source spell every contract-source path alike.
+//! that differ only in source spell every contract-source path alike; each
+//! route's private working directory is bound at `<mount root>/work` too
+//! ([`WORK_DIRECTORY`]), so every side spells one working directory.
 
 use std::collections::BTreeMap;
 use std::fs;

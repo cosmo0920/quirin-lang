@@ -238,6 +238,7 @@ target/release/quirin-audit --plugin-path target/release --output ../measure/car
 | `--mirror auto\|always\|never` | Re-spell the compile databases into a digest-manifested mirror when they spell a non-canonical path (default `auto`); needed for analyzers built before AUDIT-CANONICAL-PATHS |
 | `--source-date-epoch SECONDS\|none` | `SOURCE_DATE_EPOCH` for every route of every side (default `1767225600`), so Clang expands Monkey's `__DATE__`/`__TIME__` identically and the lifetime-source pre-pass key does not move with the clock; recorded and part of a baseline's inputs |
 | `--legacy-rows` | Read reports without a component sidecar (written before AUDIT-COMPOSITION) by their unit rows |
+| `--reuse-contract-only`, `--verify-reuse` | Measure the first comparison's tip with the base side's analyzer, resuming the base side's pinned group checkpoints, when the diff is classified contract-only (below); `--verify-reuse` also measures `<tip>-full` without checkpoints and fails unless the two are byte-identical |
 | `--jobs N`, `--build-jobs N`, `--no-slots`, `--mount-root DIR`, `--build-commit TEXT`, `--baselines DIR` | Audit workers (3, the 7 GiB slot's cap), build jobs (6), run without slots, the fixed path (`/tmp/quirin-measure`), an explicit build commit for identity runs, the baseline root (`<repository>/private/baselines`) |
 
 **What it writes.** Under the output: `sides/<name>/` (the snapshot `src/`,
@@ -255,6 +256,41 @@ where the contract sidecar's one clock-dependent lifetime-source key (Monkey's
 moved in more than one comparison are listed as named interactions; nothing is
 summed. An unmatched row stays in its side's denominator and marks the route
 incomplete.
+
+**Working directory.** Every route of a snapshot side runs from one fixed
+directory, `<mount root>/work`, with the route's own private directory
+(`sides/<side>/work-<route>`) bound there, so every side of every measurement
+spells the same working directory. The pinned route digests the process
+working directory into its rows' `hypothesis_context.build_identity` and its
+checkpoint identity (`PINNED-ROWS-BIND-WORKING-DIRECTORY`); `invocation.json`
+records both spellings (`working_directory`, `working_directory_as_run`).
+
+**Contract-only reuse** (card
+[MEASURE-CONTRACT-ONLY-SIDE-WIRING](../reports/measure-contract-only-side-wiring/README.md),
+`--reuse-contract-only`). When the first comparison is two `rev:` sides, a
+pinned corpus route is measured, and neither `--rules-off` nor
+`--build-commit` is given, the base side is built first; the tip is then
+checked out (a shared clone, so a run can check its `HEAD`) and the base
+side's binary classifies `BASE..TIP` (`quirin-audit pinned --classify-only`,
+[audit checkpoints](audit-checkpoints.md#the-pinned-corpus-route)). On
+acceptance the base binary is copied into the tip tree instead of building
+it, so the tip side's binary digest and build commit are the base side's;
+the base side's pinned route seals its groups into `checkpoints/<route>`
+under the output, and the tip side's waits for it, then resumes from that
+directory with `--accept-base-analyzer BASE --repository <tip as run>`. Any
+refusal (a mixed or unclassifiable diff, a tree whose `run_pinned_audit.py`
+does not forward the acceptance, an older binary without `--classify-only`)
+builds the tip as a separate side, exactly as without the option. The
+record's `contract_only_reuse` slot says whether the path was taken and why
+not, the classification, and the checkpoint directories; each side keeps the
+checkpoint run record it produced (`sides/<side>/<route>.checkpoint-run.json`,
+summarised per stage in the route's `checkpoint_run`). The tip's pinned route
+starts only after the base side's, so the reuse saves wall time only when
+groups are reused: while every corpus group seals `whole`
+(`GATEWAY-WHOLE-TABLE-READS`), a diff that changes any loaded contract text
+recomputes every group, and only a diff the route does not read (identity
+unchanged) reuses them. Not for landing baselines: the tip is measured by the
+base build.
 
 **Contribution ledgers** (card CONTRIBUTION-LEDGERS, plan seam A). With
 `--rules-off`, the record's `contribution` slot holds a

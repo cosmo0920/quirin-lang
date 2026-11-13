@@ -346,7 +346,12 @@ refuses); once the contract inputs are resolved, the binary's build commit
 must be `BASE`, the repository clean in contract data, and the manifest,
 locks, source profile and source-contract configuration read from `DIR`. The
 checked acceptance is recorded in the run record and every decision; it
-changes no identity (the binary is the base one).
+changes no identity (the binary is the base one). `pinned --classify-only
+--accept-base-analyzer BASE --repository DIR` answers the classification alone,
+before anything runs: one `quirin-contract-only-classification/1` JSON line
+(exit 0) or the refusal (exit 1); `quirin-audit measure --reuse-contract-only`
+asks the base side's binary
+([MEASURE-CONTRACT-ONLY-SIDE-WIRING](../reports/measure-contract-only-side-wiring/README.md)).
 
 Whole-run facts therefore invalidate every group of the stage that reads them
 and no other stage: a changed refutation table recomputes every group's
