@@ -7,7 +7,9 @@ amended; schema `ResourceFunctionContract::link_members` (qcore-schemas
 **26.0.0**); Lean `QCore.ElementLinkPremises`; eleven destroyer declarations
 name their link member. The [prediction](PREDICTION.md) and the base census
 were committed at `b3d991abf`, before any tip measurement (the code had been
-drafted, unmeasured; the prediction says so). Measured code: `875d5e6d4`.
+drafted, unmeasured; the prediction says so). Measured code: `875d5e6d4`; the final code `05e0f3f93` adds the member-place arm of
+`retain` (`47e0ffb25`) and a test pin (`05e0f3f93`), re-run with no row change
+(section 6).
 
 ## Headline
 
@@ -31,7 +33,7 @@ drafted, unmeasured; the prediction says so). Measured code: `875d5e6d4`.
   **103** / 4 / **341** (`flb_output_task_queue_enqueue`,
   `flb_sched_timer_cb_destroy`, both configurations, Safe → Unknown), exactly
   the predicted moves; slice 59 / 1 / 340 / 4 Pending unchanged (one leaf
-  trade, `flb_tail_file_purge`); corpus: CORPUS-HEADLINE. No Unknown → Safe,
+  trade, `flb_tail_file_purge`); corpus 1,081 / 6 / 3,617 unchanged, no row content changed at all. No Unknown → Safe,
   no leak, double release or Unsafe added or removed; the null property's
   tallies are unchanged. The four system rows are exactly the rows rule 43's
   held arm carried at base (rule 43 off moves the same four), each a
@@ -63,7 +65,7 @@ Base binary, rule 43 on against `QCORE_GATEWAY_RULES_OFF=43`
 |---|---|---|
 | system | `flb_output_task_queue_enqueue` ×2, `flb_sched_timer_cb_destroy` ×2 (Safe; Unknown off) | held arm, a formal (`retry`, `timer`) handed to `flb_task_retry_destroy` / `flb_sched_timer_destroy`: P-LERI-HELD-LINKS |
 | slice | none | |
-| corpus | CORPUS-CENSUS | |
+| corpus | `mk_sched_threads_purge`, `mk_sched_threads_destroy_all` (Safe; Unknown off), and leaf trades in `mk_sched_drop_connection`, `mk_sched_exit`, `mk_server_worker_loop` | rule 43's released-element summary applied at the caller (parts 2–4): P-LERI-CALLER-PUBLISHED, not the held arm; no corpus row rests on the held arm ([census-off43-corpus.json](artifacts/census-off43-corpus.json), off-43 side `private/census/base-corpus-off43` against the arbiter's base side) |
 
 The census found no Safe row whose foreign-element admission rests on
 P-LERI-LINK-MEMBER being wrong: the bodies of the ten Fluent Bit destroyers
@@ -113,7 +115,7 @@ no nested call keep the records of objects none of their written place's or
 actuals' root bindings may denote (an unbound or unknown root forgets all);
 everything else forgets all; a call with a nested call forgets all before
 it runs. The member-place arm was added after the measured tip
-`875d5e6d4` (commit FIXUP-SHA), on review of the aggregate-store lowering; it
+`875d5e6d4` (commit `47e0ffb25`), on review of the aggregate-store lowering; it
 only removes admissions, and section 6 records the re-run that shows no row
 changes. Rule 43's held arm then needs `held_admits`: the
 destroyer names a member and `(site, member)` is recorded. Otherwise the
@@ -259,7 +261,24 @@ unchanged.
 The quick runs (`private/route.sh`, the plugin's route environment, binaries
 built in this worktree; `private/quick/`) gave the same rows.
 
-CORPUS-ARBITER
+**Corpus** ([native-comparison-corpus.json](artifacts/native-comparison-corpus.json),
+`measure/arbiter-2-corpus`, the same two exports, `--routes corpus`; status
+`complete`): custody 1,081 / 6 / 3,617 on both sides; unknown_alias 10,709,
+unsupported 23,454, leak 7, double release 1, summary conflicts 3 on both
+sides; null 2,476 / 2,303 / 17 on both. Declaration check: **match**. No row
+moved and no row's content changed: the corpus's Fluent Bit unit takes its
+destroyer elements through `_head`, and its callee-constructed chunks were
+refused at base; Monkey's drains bind through `_head`, which
+`mk_http_thread_destroy` now names, so `mk_sched_threads_purge` and
+`mk_sched_threads_destroy_all` stay Safe.
+
+**The member-place fix-up.** `47e0ffb25` (after the measured tip) makes
+`retain` forget records at a member-place `Alias`/`Clear`; `05e0f3f93` only
+updates a test pin. Quick runs with a binary built at `47e0ffb25`
+(`private/bin-tip2`, `private/quick/tip2-*`) against the measured tip's runs
+(`tip1-*` for system and slice, the arbiter's tip side for the corpus):
+0 rows changed on every route, so the measured figures stand for the final
+code.
 
 ## 7. Premise status
 
@@ -285,7 +304,32 @@ exits 0 (`private/pin-check-1/`); a second `sync` exits 0.
 
 ## 9. Gate
 
-GATE-SECTION
+`python3 scripts/gate_scope.py --base 8fd7c8d0d` on `05e0f3f93` (the final
+code; later commits change only records), run through the host's
+`private/toolchain/env.sh`: [gate.json](gate.json), logs
+`private/gate-scope/20261113T090746Z-1375168/`; Clang recording
+[gate/clang-version.txt](gate/clang-version.txt), taken in this worktree.
+Selection: the whole Rust suite (the diff reaches `qcore-schemas`,
+`qcore-contract` and `qcore-c-gateway`), all Lean (a proof root changed),
+the Python suite, the provider gate. **Exit 0.**
+
+| Step | Exit | Counts |
+|---|---|---|
+| submodules, fmt, clippy | 0 / 0 / 0 | |
+| Rust suite (`run_test_binaries.py`) | 0 | 631 units, 673 summaries; 9,436 passed, 0 failed, 17 ignored |
+| both reevaluation probes | 0 / 0 | |
+| Lean (`check_lean_audits.py`) | 0 | 430 audits (this card adds `AuditElementLinkPremises.lean`) |
+| Python suite | 0 | 761 tests |
+| provider package build, verify-all, verify | 0 / 0 / 0 | |
+| provider `cargo test` | 0 | 133 passed, 0 failed, 1 ignored |
+| provider fmt, clippy | 0 / 0 | |
+
+Discarded attempts: `gate-scope/20261113T074000Z-770459` (stopped by hand
+when the member-place fix-up changed the code) and
+`20261113T075556Z-984563` on `47e0ffb25` (exit 1: one failure,
+`compiler/tests/contract_loader.rs`'s previous-modes table lacked the new
+`link_members`, fixed and attributed in `05e0f3f93`; every other step
+exit 0).
 
 ## 10. Follow-ups
 

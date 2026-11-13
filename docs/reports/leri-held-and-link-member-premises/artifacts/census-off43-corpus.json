@@ -1,0 +1,78 @@
+{
+ "route": "corpus",
+ "totals": {
+  "before": {
+   "Unknown": 3617,
+   "Safe": 1081,
+   "Unsafe": 6
+  },
+  "after": {
+   "Unknown": 3619,
+   "Safe": 1079,
+   "Unsafe": 6
+  }
+ },
+ "moves": {
+  "Safe -> Unknown": 2
+ },
+ "rows_changed": 5,
+ "rows": [
+  {
+   "unit": "mk_server/mk_scheduler.c",
+   "function": "mk_sched_drop_connection",
+   "occurrence": 1,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "mk_server/mk_scheduler.c:577: call to uncontracted function `mk_sched_threads_destroy_conn`"
+   ]
+  },
+  {
+   "unit": "mk_server/mk_scheduler.c",
+   "function": "mk_sched_exit",
+   "occurrence": 1,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "mk_server/mk_scheduler.c:509: call to uncontracted function `mk_sched_worker_cb_free`"
+   ]
+  },
+  {
+   "unit": "mk_server/mk_scheduler.c",
+   "function": "mk_sched_threads_destroy_all",
+   "occurrence": 1,
+   "before": "Safe",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "mk_server/mk_scheduler.c:645: call to uncontracted function `sched_thread_cleanup`",
+    "mk_server/mk_scheduler.c:646: call to uncontracted function `sched_thread_cleanup`"
+   ]
+  },
+  {
+   "unit": "mk_server/mk_scheduler.c",
+   "function": "mk_sched_threads_purge",
+   "occurrence": 1,
+   "before": "Safe",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "mk_server/mk_scheduler.c:637: call to uncontracted function `sched_thread_cleanup`"
+   ]
+  },
+  {
+   "unit": "mk_server/mk_server.c",
+   "function": "mk_server_worker_loop",
+   "occurrence": 1,
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [],
+   "gained": [
+    "mk_server/mk_server.c:590: call to uncontracted function `mk_sched_event_free_all`",
+    "mk_server/mk_server.c:621: call to uncontracted function `mk_sched_event_free_all`"
+   ]
+  }
+ ]
+}
