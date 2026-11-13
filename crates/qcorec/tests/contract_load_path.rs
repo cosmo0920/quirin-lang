@@ -118,9 +118,14 @@ struct Fixture(PathBuf);
 
 impl Fixture {
     fn new() -> Self {
+        // Tests run in parallel and Windows' clock can hand two of them the
+        // same nanosecond reading, so a per-process counter keeps each
+        // fixture's directory its own.
+        static NEXT: std::sync::atomic::AtomicUsize = std::sync::atomic::AtomicUsize::new(0);
         let unique = format!(
-            "qcore-contract-cli-{}-{}",
+            "qcore-contract-cli-{}-{}-{}",
             std::process::id(),
+            NEXT.fetch_add(1, std::sync::atomic::Ordering::Relaxed),
             std::time::SystemTime::now()
                 .duration_since(std::time::UNIX_EPOCH)
                 .unwrap()

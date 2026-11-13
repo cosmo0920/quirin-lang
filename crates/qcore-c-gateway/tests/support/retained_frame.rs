@@ -64,13 +64,18 @@ pub fn include_root(fixtures: &Path, names: &[&str]) -> PathBuf {
     if !cfg!(windows) {
         return fixtures.to_path_buf();
     }
+    // Several tests build include roots at once, and Windows' clock can hand
+    // two of them the same nanosecond reading; the counter keeps each
+    // directory its own.
+    static NEXT: std::sync::atomic::AtomicUsize = std::sync::atomic::AtomicUsize::new(0);
     let nonce = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
         .unwrap()
         .as_nanos();
     let directory = std::env::temp_dir().join(format!(
-        "qcore-retained-frame-{}-{nonce}",
-        std::process::id()
+        "qcore-retained-frame-{}-{}-{nonce}",
+        std::process::id(),
+        NEXT.fetch_add(1, std::sync::atomic::Ordering::Relaxed)
     ));
     std::fs::create_dir(&directory).unwrap();
     for name in names {
