@@ -1,0 +1,40 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "W45-FB-LIST-FINITENESS-PREMISE",
+  "base": "591e5523f",
+  "measured_tip": "9ec4d7417",
+  "increment_paragraph": "W45-FB-LIST-FINITENESS-PREMISE (gateway rule 48, base `591e5523f`): a declared list-finiteness premise (`quant list TAG.MEMBER |-> #finite;`, contract specification C04.22, grammar G05l, a premise file named by `QCORE_LIST_FINITENESS_PREMISES` and loaded total-or-reject by `crates/qcore-contract/src/list_finiteness.rs`; never a contract module, bundle or provider input) lets a list traversal of rule 5l's header family over `&R->M` record a list-length bound fact (at most `|R->M|` iterations at loop entry) beside rule 44's loop fact, only where its frame — the body and every function it can call — is read in the unit and writes no list link (`crates/qcore-c-gateway/src/list_length_bound.rs`; an undefined callee, an indirect call, opaque control or any write that may reach a link, including every inline `mk_list_add`/`mk_list_del`, is a named refusal; ten refusals). No verdict moves; without the premise variable the loop-measure rows are rule 44's byte for byte. `QCore.ListLengthBound` (24 audited theorems: a link-preserving frame fixes the links and bounds every plain or safe run by the declared length, the measure decreases by one, an appending body and a head-missing cycle never exit, the decision meets its premises, recording keeps the verdict, shared `decideVectors`). Measured on the card's own `quirin-audit prepare` of Fluent Bit `046accf6` (no live inputs on the host): 17 of the census's 87 list-length loops gain a bound; 34 refuse a link write, 21 an undefined callee, 12 a member-chain or formal-pointer head, one each not-a-list-traversal, opaque control and an indirect call; both variants agree on every loop and every function status is unchanged. [Report](../../reports/w45-fb-list-finiteness-premise/README.md).",
+  "status_paragraph": "List-length bounds (W45-FB-LIST-FINITENESS-PREMISE, gateway rule 48): under the loop-measure selection and a declared list-finiteness premise file, 17 of the Fluent Bit system slice's 87 list-length loops carry a list-length bound fact whose frame the unit establishes; the other 70 carry named refusals (link writes, undefined callees, member-chain heads). A fact, not a verdict: nothing moves.",
+  "ledger": [
+    {
+      "id": "W45-FB-LIST-FINITENESS-PREMISE",
+      "operation": "retire",
+      "why": "DISCHARGE: a declared list-finiteness premise (C04.22, G05l, `contract/profiles/fluent-bit/list-finiteness.qv`) is checked where its frame is established (gateway rule 48: the traversal's body and every callee read in the unit, no list-link write, otherwise a named refusal) and records a list-length bound fact beside the resource verdict, with Lean parity (`QCore.ListLengthBound`, 24 audited theorems). Measured on Fluent Bit 046accf6: 17 of the 87 loops bounded; the 70 others carry named reasons (34 frame-writes-links, 21 frame-callee-undefined, 12 head-not-member, 1 not-a-list-traversal, 1 opaque-control, 1 frame-indirect-call). No verdict moves.",
+      "source": "docs/reports/w45-fb-list-finiteness-premise/README.md"
+    },
+    {
+      "id": "W45-FB-LIST-UNLINK-CURRENT-FRAME",
+      "operation": "register",
+      "title": "Admit a list frame whose only link write unlinks the current node of a safe traversal",
+      "text": "Rule 48 refuses every frame that writes a list link, including the `_safe` traversal's unlink of the current node, which premise PL allows. Most of the 34 `frame-writes-links` loops of the Fluent Bit system slice (destroyers and cleanups calling `mk_list_del` on the current entry) refuse for that reason. DISCHARGE: a checked unlink-current rule (the unlinked node is the cursor, or the element `container_of` binds from it, and no other link is written) admits those frames, with Lean parity (the safe cursor still steps to the saved successor and the run stays bounded by the entry length), and the slice re-measured.",
+      "source": "docs/reports/w45-fb-list-finiteness-premise/README.md",
+      "recorded_by": "W45-FB-LIST-FINITENESS-PREMISE"
+    },
+    {
+      "id": "W45-FB-LIST-HEAD-MEMBER-CHAIN",
+      "operation": "register",
+      "title": "Admit a list head reached through a member chain the frame never writes",
+      "text": "Rule 48 admits a head only as `&R->M` with `R` a stable local, so nine of the slice's list-length loops (`&ic->in->config->outputs`, `&context->cio->streams`, `&output_plugin->config->inputs`, ...) refuse `head-not-member`: an intermediate pointer could be rewritten by the frame. DISCHARGE: a head `&R->F1->...->M` is admitted when no write in the frame may reach any intermediate pointer field, with Lean parity, and the nine loops re-measured.",
+      "source": "docs/reports/w45-fb-list-finiteness-premise/README.md",
+      "recorded_by": "W45-FB-LIST-FINITENESS-PREMISE"
+    },
+    {
+      "id": "W45-FB-LIST-EXTERNAL-CALLEE-FRAMES",
+      "operation": "register",
+      "title": "Check list frames through callees defined in other units",
+      "text": "Rule 48 establishes a frame only from bodies the analysed unit defines, so 21 of the slice's list-length loops refuse `frame-callee-undefined` (Fluent Bit's logger `flb_log_print`, `flb_chunk_route_plugin_matches` in `flb_task.c`, ChunkIO's `cio_chunk_get_content_size`, `flb_input_chunk_destroy`, `__errno_location`, `strstr`, `flb_engine_dispatch`). A declared callee frame is never a substitute. DISCHARGE: frame summaries exported from each callee's defining unit (the cross-unit link map) and composed bottom up, refusing on any unread or interposable callee, with Lean parity, and the slice re-measured.",
+      "source": "docs/reports/w45-fb-list-finiteness-premise/README.md",
+      "recorded_by": "W45-FB-LIST-FINITENESS-PREMISE"
+    }
+  ]
+}
