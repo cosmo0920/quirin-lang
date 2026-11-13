@@ -52,7 +52,7 @@ ensures normal resource_borrowed(entry); ensures normal resource_unpublished(ent
 ensures normal resource_return_none(); };\n\
 extern fn item_destroy(e: ptr<mut, u8>) -> i32\n\
 contract { requires resource_contract_v1; requires resource_revision(flexible); \
-ensures normal resource_unpublished(e); ensures normal resource_released(e, nonnull); \
+ensures normal resource_unpublished(e, _head); ensures normal resource_released(e, nonnull); \
 ensures normal resource_return_none(); };\n";
 
 const PRELUDE: &str = "#include <stddef.h>\n\
