@@ -10756,9 +10756,11 @@ safety claim and no validation of the detach representation premise.
     both link fields `mk_list_del` reads (`next`, `prev`;
     `initialised_member`); it joins by intersection and is forgotten at every
     statement that may write the object (`retain`: only statements that
-    write no memory keep it; a contract call with no nested call keeps the
-    facts of objects none of its actuals' root bindings may denote; a nested
-    call drops every fact before its call). Rule 43's held arm admits an
+    write no memory keep it, a copy, clear or acquisition included only when
+    it writes a plain name; a member-place copy or clear and a contract call
+    with no nested call keep the facts of objects none of their written
+    place's or actuals' root bindings may denote; a nested call drops every
+    fact before its call). Rule 43's held arm admits an
     object only with `(site, MEMBER)` recorded for the destroyer's declared
     member (`held_admits`); otherwise the unlink refuses (`unlink by D of E,
     which this function holds, but this function has not initialised its

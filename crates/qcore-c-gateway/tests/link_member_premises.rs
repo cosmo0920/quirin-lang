@@ -166,6 +166,13 @@ const FIXTURES: &[(&str, &str, AnalysisStatus, Option<&str>)] = &[
         Some(NOT_INITIALISED),
     ),
     (
+        "held-initialised-then-link-stored",
+        "void subject(void) { struct item *e = q_alloc(); mk_list_init(&e->_head);
+         e->_head.next = 0; item_destroy(e); }",
+        AnalysisStatus::Unknown,
+        None,
+    ),
+    (
         "held-initialised-another-object-handed-on",
         "void subject(void) { struct item *f = q_alloc(); struct item *e = q_alloc();
          mk_list_init(&e->_head); q_use(f); item_destroy(e); q_free(f); }",

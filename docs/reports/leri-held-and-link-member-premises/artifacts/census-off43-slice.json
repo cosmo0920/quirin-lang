@@ -1,0 +1,20 @@
+{
+ "route": "slice",
+ "totals": {
+  "before": {
+   "Unknown": 340,
+   "Safe": 59,
+   "Pending": 4,
+   "Unsafe": 1
+  },
+  "after": {
+   "Unknown": 340,
+   "Safe": 59,
+   "Pending": 4,
+   "Unsafe": 1
+  }
+ },
+ "moves": {},
+ "rows_changed": 0,
+ "rows": []
+}

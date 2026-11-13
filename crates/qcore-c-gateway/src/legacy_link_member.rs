@@ -41,9 +41,11 @@
 //!   destroyer's declared member ([`held_admits`]). The fact joins by
 //!   intersection (initialised on every arriving path) and is forgotten at
 //!   every statement that may write the object's memory ([`retain`]): only
-//!   statements that write no memory keep it, and a contract call keeps it
-//!   only when it has no nested call and every actual's root names a binding
-//!   that cannot denote the object. A formal, a callee-constructed object and
+//!   statements that write no memory keep it (a copy, clear or acquisition
+//!   only into a plain name), and a member-place copy or clear and a contract
+//!   call keep it only when (the call having no nested call) every written
+//!   place's and actual's root names a binding that cannot denote the
+//!   object. A formal, a callee-constructed object and
 //!   an object initialised any other way hold no fact, so the held arm
 //!   refuses them (`Unknown`).
 //!
@@ -183,44 +185,73 @@ fn root(actual: &str) -> Option<&str> {
     (!name.is_empty() && !name.starts_with(|c: char| c.is_ascii_digit())).then_some(name)
 }
 
+/// Whether `place` is a plain name (a variable), whose write changes no
+/// object's memory.
+fn plain(place: &str) -> bool {
+    !place.is_empty()
+        && place
+            .bytes()
+            .all(|byte| byte.is_ascii_alphanumeric() || byte == b'_')
+}
+
+/// Forget the records of every object one of `places` may reach: the sites
+/// its root's binding denotes, or every record when a root has no binding or
+/// an unknown one. A place with no identifier root (a literal) reaches none.
+fn forget_reached<'a>(state: &mut AbstractState, places: impl IntoIterator<Item = &'a str>) {
+    let mut reached = BTreeSet::new();
+    for place in places {
+        let Some(name) = root(place) else {
+            continue;
+        };
+        match state.pointers.get(name) {
+            Some(pointer) if !pointer.unknown => reached.extend(pointer.targets.iter().copied()),
+            _ => {
+                state.link_ready.clear();
+                return;
+            }
+        }
+    }
+    state.link_ready.retain(|(site, _)| !reached.contains(site));
+}
+
 /// Forget every initialisation fact a statement may invalidate, after its
-/// transfer. Statements that write no memory keep every fact; a contract
-/// call with no nested call keeps the facts of the objects none of its
-/// actuals may denote; everything else forgets them all.
+/// transfer. Statements that write no memory keep every fact (a copy, a
+/// clear or an acquisition into a plain name, a branch, a rule 36b
+/// initialisation); a copy or a clear into a member place, and a contract
+/// call with no nested call, forget the records of the objects their written
+/// place or their actuals may denote; everything else forgets them all.
 pub(in crate::legacy_c) fn retain(instruction: &LegacyInstruction, state: &mut AbstractState) {
     if state.link_ready.is_empty() {
         return;
     }
     match instruction {
         LegacyInstruction::NoOp
-        | LegacyInstruction::Acquire { .. }
-        | LegacyInstruction::Alias { .. }
-        | LegacyInstruction::Clear { .. }
         | LegacyInstruction::BranchOnNull { .. }
         | LegacyInstruction::BranchOnValidity { .. }
         | LegacyInstruction::BranchOnResult { .. }
         | LegacyInstruction::TrackedSelfInit { .. } => {}
+        LegacyInstruction::Acquire { destination, .. }
+        | LegacyInstruction::Alias { destination, .. }
+        | LegacyInstruction::Clear { destination } => {
+            if !plain(destination) {
+                forget_reached(state, [destination.as_str()]);
+            }
+        }
         LegacyInstruction::ContractCall {
-            arguments, nested, ..
+            arguments,
+            nested,
+            destination,
+            ..
         } if nested.is_empty() && arguments.iter().all(Option::is_some) => {
-            let mut reached = BTreeSet::new();
-            let mut unknown = false;
-            for actual in arguments.iter().flatten() {
-                let Some(name) = root(actual) else {
-                    continue;
-                };
-                match state.pointers.get(name) {
-                    Some(pointer) if !pointer.unknown => {
-                        reached.extend(pointer.targets.iter().copied());
-                    }
-                    _ => unknown = true,
-                }
-            }
-            if unknown {
-                state.link_ready.clear();
-            } else {
-                state.link_ready.retain(|(site, _)| !reached.contains(site));
-            }
+            let written = destination.as_deref().filter(|place| !plain(place));
+            forget_reached(
+                state,
+                arguments
+                    .iter()
+                    .flatten()
+                    .map(String::as_str)
+                    .chain(written),
+            );
         }
         _ => state.link_ready.clear(),
     }
@@ -299,6 +330,13 @@ mod tests {
                 "{link:?} {ready:?}"
             );
         }
+    }
+
+    #[test]
+    fn a_member_place_is_not_plain() {
+        assert!(plain("e"));
+        assert!(!plain("e->_head.next"));
+        assert!(!plain("*slot"));
     }
 
     #[test]

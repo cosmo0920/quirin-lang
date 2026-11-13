@@ -106,11 +106,16 @@ cover `next` and `prev` (`initialised_member`; the two fields
 `mk_list_del` reads before writing through them). The join keeps a record
 only when both paths have it. After every statement `retain` forgets the
 records the statement may invalidate: statements that write no memory
-(`NoOp`, `Acquire`, `Alias`, `Clear`, the three branches, `TrackedSelfInit`)
-keep all; a contract call with no nested call keeps the records of objects
-none of its actuals' root bindings may denote (an unbound or unknown root
-forgets all); everything else forgets all; a call with a nested call forgets
-all before it runs. Rule 43's held arm then needs `held_admits`: the
+(`NoOp`, the three branches, `TrackedSelfInit`, and `Acquire`, `Alias` and
+`Clear` into a plain name) keep all; `Alias` and `Clear` into a member place
+(an admitted aggregate store, `e->_head.next = …`) and a contract call with
+no nested call keep the records of objects none of their written place's or
+actuals' root bindings may denote (an unbound or unknown root forgets all);
+everything else forgets all; a call with a nested call forgets all before
+it runs. The member-place arm was added after the measured tip
+`875d5e6d4` (commit FIXUP-SHA), on review of the aggregate-store lowering; it
+only removes admissions, and section 6 records the re-run that shows no row
+changes. Rule 43's held arm then needs `held_admits`: the
 destroyer names a member and `(site, member)` is recorded. Otherwise the
 unlink refuses with `unlink by D of E, which this function holds, but this
 function has not initialised its M links` (or `the declaration names no link
@@ -187,7 +192,74 @@ trust boundary 28's.
 
 ## 6. Native measurement and the arbiter
 
-ARBITER-SECTION
+**Arbiter.** `quirin-audit measure --declared PREDICTION.md` (measure plugin
+`72e26d08…`, built from the measured code), over
+[inputs.json](artifacts/inputs.json). Both sides are checkout directories,
+each built in place by the tool: `git archive` exports of `8fd7c8d0d` (base)
+and `875d5e6d4` (tip) under worktree-private `private/{base,tip}-src`, with
+the `third_party/libevent` submodule a clone at its pinned `d82464a2` (a
+`rev:` side needs user namespaces, which LIST-ENTRY-RELEASE-IDENTITY found
+this host refuses). One measurement-driver adaptation in both exports,
+disclosed: `scripts/run_pinned_audit.py` hard-codes
+`QCORE_CLANG=/usr/bin/clang`, which this host does not have; both exports
+point it at `/usr/lib/llvm-21/bin/clang`. `--no-slots`; system and slice in
+`measure/arbiter-1`, the corpus separately in `measure/arbiter-2-corpus`.
+
+[native-comparison-system-slice.json](artifacts/native-comparison-system-slice.json)
+(base binary `f7146138…`, tip `0b5430a4…`; status `complete`, no failure):
+
+| Route | base | tip | unknown_alias | unsupported | null (both sides) | declared |
+|---|---|---|---|---|---|---|
+| system (448 rows) | 107 / 4 / 337 | **103** / 4 / **341** | 896 → 898 | 2,406 → 2,414 | 211 Safe / 243 Unknown | **match** (no unpredicted, missing or delta mismatch) |
+| slice (404 rows) | 59 / 1 / 340 / 4 Pending | 59 / 1 / 340 / 4 | 1,075 → 1,076 | 2,462 → 2,463 | 190 / 216 | **match** |
+
+Every moved and changed row was read:
+
+* **Status moves (4 system rows).** `flb_output_task_queue_enqueue`
+  (both configurations): on its allocation-failure path it hands its formal
+  `retry` to `flb_task_retry_destroy`; `flb_sched_timer_cb_destroy` (both)
+  hands its formal `timer` to `flb_sched_timer_destroy`. At base rule 43's
+  held arm admitted the formal in the W4 derivation (the formal seeded as a
+  held object), so the derived summary released it and the row was Safe;
+  rule 46's held refusal (no initialisation of `_head` in the body) now
+  fails that derivation, and the row falls back to its plain reading, whose
+  leaves are exactly the ones switching rule 43 off produces at base (the
+  census): `unlink by DESTROYER of FORMAL, which this function has not
+  published` and `unresolved resource identity FORMAL` (295 and 299 in
+  `flb_output.c`, 732 in `flb_scheduler.c`). Each refusal is P-LERI-HELD-LINKS
+  made an obligation: the formal's links are its caller's (both objects are
+  linked into a scheduler or retry list by their creator), which the body
+  cannot decide. Two of the four rows were also null-Safe, so the combined
+  custody-and-null tally moves 69 → 67 Safe; the null tallies themselves are
+  unchanged.
+* **Leaf trades (system, no status move).** Their in-unit callers
+  `flb_output_task_singleplex_enqueue` (Unsafe, both configurations, the
+  pre-existing provisional Unsafe, which accuses nothing new) and
+  `flb_sched_event_handler` (Unknown, both) trade `unresolved resource
+  identity retry/timer` for `call to uncontracted function` of the callee
+  whose summary is now withheld; their `contract_dependencies` drop the
+  callee's summary and the destroyer it rested on.
+* **Leaf gain (slice, no status move).** `flb_tail_file_purge` gains the
+  rule 46 member refusal at `tail_file.c:2905`, `unlink by
+  flb_tail_file_remove of file, whose list links it through _head,
+  _rotate_head, while the declaration unlinks _head`, with `unresolved
+  resource identity file`: `file` is bound in three loops (`files_rotated`
+  through `_rotate_head`, `files_static` and `files_event` through `_head`),
+  and the call's element may be the rotated one, which unlinking `_head`
+  alone would leave in `files_rotated` (the body's conditional
+  `_rotate_head` unlink is not stated). At base the element was admitted on
+  P-LERI-LINK-MEMBER; the row stays Unknown on its other leaves.
+* **Environment-only content changes.** The `review_holds` of four system
+  and eight slice rows differ only in the checkout path of the holding
+  module (`private/base-src` against `private/tip-src`).
+
+No leak, double release or Unsafe moved; `summary_conflict` (4 system) is
+unchanged.
+
+The quick runs (`private/route.sh`, the plugin's route environment, binaries
+built in this worktree; `private/quick/`) gave the same rows.
+
+CORPUS-ARBITER
 
 ## 7. Premise status
 
