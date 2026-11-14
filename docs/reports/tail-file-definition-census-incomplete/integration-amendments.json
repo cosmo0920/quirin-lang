@@ -1,0 +1,25 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "TAIL-FILE-DEFINITION-CENSUS-INCOMPLETE",
+  "base": "f47823dd1",
+  "measured_tip": "09794501e",
+  "profiles": [],
+  "increment_paragraph": "**TAIL-FILE-DEFINITION-CENSUS-INCOMPLETE** (named follow-up of LERI-CROSS-UNIT-ELEMENTS-RELEASED; new rule 49; Lean `QCore.GuardCorrelatedCensus`; [report](../../reports/tail-file-definition-census-incomplete/README.md)). Fluent Bit 90978ac6's `plugins/in_tail/tail_file.c` (`tag_compose`) opens `else {` inside one `#ifdef FLB_HAVE_REGEX` group and closes it inside a second; E01-RAW-COND refused each group alone, ended the file one brace deep (hiding 16 of 48 definitions) and so refused the unit's census and the tail-pause slice's whole import phase. Rule 49 decides a raw scan whose only ground is that arm disagreement by guard correlation, without evaluating any conditional: one scan per world of `#ifdef`/`#ifndef NAME` assumptions (a guard group with no `#elif` is read under the world's assumption, splitting when it has none), every other group's arms must still agree in every world, every other directive and `_Pragma` clears assumptions, equal worlds merge keeping shared assumptions, more than 64 worlds or a directive spelling a macro-table operator refuse; the collected names are unioned into the census, anything undecided keeps the refusal. Lean proves the assumption bookkeeping, the measured shape (refused by E01-RAW-COND, decided and sound here), the negatives and soundness over every stream of length at most four against a selection semantics, tied to the Rust by a checksum. Measured on the card's own `prepare --link` of 90978ac6: the slice's import phase now runs (rule 40: home exports 8 -> 10); no row moves (59/1/340/4 Pending); four Unknown rows lose a home-call leaf and keep others (`in_tail_exit`, `flb_tail_config_destroy`, `flb_tail_scan`, `flb_input_collectors_start`); declared measurement (stated map, slice): match. No system or corpus unit has the refusal; `libevent-core`'s two (`buffer.c`, `bufferevent_sock.c`) are now decided, unmeasured (follow-up LIBEVENT-CORE-CENSUS-GUARD-CORRELATION).",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "TAIL-FILE-DEFINITION-CENSUS-INCOMPLETE",
+      "operation": "retire",
+      "why": "DISCHARGED by TAIL-FILE-DEFINITION-CENSUS-INCOMPLETE (new rule 49; Lean QCore.GuardCorrelatedCensus: a_split_covers_every_value, a_merge_only_weakens, e01_raw_cond_refuses_the_measured_shape, the_measured_shape_is_sound, the_domain_is_sound, the_domain_checksum_is_pinned): the refusing groups are tag_compose's two #ifdef FLB_HAVE_REGEX groups (lines 1255-1310 and 1368-1370 at 90978ac6); guard correlation decides them without conditional evaluation and tail_file.c's census is complete. Re-measured under rule 40 on the card's own preparation: the slice's import phase runs, home exports 8 -> 10, no row moves, four Unknown rows lose a home-call leaf; declared measurement (stated map): match.",
+      "source": "docs/reports/tail-file-definition-census-incomplete/README.md"
+    },
+    {
+      "id": "LIBEVENT-CORE-CENSUS-GUARD-CORRELATION",
+      "operation": "register",
+      "title": "libevent-core's two census refusals are now decided by rule 49, unmeasured",
+      "text": "Card TAIL-FILE-DEFINITION-CENSUS-INCOMPLETE (raw-source census only, no route run): third_party/libevent's buffer.c (evbuffer_write_atmost, two #ifdef USE_SENDFILE groups) and bufferevent_sock.c (bufferevent_socket_connect, two #ifdef _WIN32 groups) have the tail_file.c shape; E01-TAIL recorded them as the libevent-core route's two conditional-arm-depth-disagreement refusals, and rule 49 now decides both (30 and 13 raw-scan names added). libevent-core is not a live route and was not run. DISCHARGE: run the libevent-core configured audit at base and tip, read every unit whose census or verdict changes.",
+      "source": "docs/reports/tail-file-definition-census-incomplete/README.md",
+      "recorded_by": "TAIL-FILE-DEFINITION-CENSUS-INCOMPLETE"
+    }
+  ]
+}

@@ -6880,7 +6880,7 @@
   "workspace_tests": 9476,
   "provider_tests": 133,
   "python_evidence_validator_tests": 761,
-  "lean_audits": 432,
+  "lean_audits": 433,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -7046,6 +7046,7 @@
    "AuditGenericNames.lean",
    "AuditGenericSelection.lean",
    "AuditGnuBuiltinReader.lean",
+   "AuditGuardCorrelatedCensus.lean",
    "AuditGuardedDecomposition.lean",
    "AuditGuardedSourceAdoption.lean",
    "AuditHandOffDirect.lean",
@@ -7321,7 +7322,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "full landing gate: every step exits 0 except one load-sensitive Python test (rerun OK, disclosed in the note)",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/leri-cross-unit-elements-released/integration/gate.json)"
+  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
  "named_followups": [
   {

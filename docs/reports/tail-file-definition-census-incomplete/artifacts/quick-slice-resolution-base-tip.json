@@ -1,0 +1,76 @@
+{
+ "before": {
+  "Unknown": 340,
+  "Safe": 59,
+  "Pending": 4,
+  "Unsafe": 1
+ },
+ "after": {
+  "Unknown": 340,
+  "Safe": 59,
+  "Pending": 4,
+  "Unsafe": 1
+ },
+ "only_before": [],
+ "only_after": [],
+ "moves": [],
+ "leaf_trades": [
+  {
+   "row": [
+    "plugins/in_tail/tail.c",
+    "27a5b817e65f",
+    "in_tail_exit",
+    1
+   ],
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [
+    "call to uncontracted function `flb_tail_file_remove_all`"
+   ],
+   "gained": []
+  },
+  {
+   "row": [
+    "plugins/in_tail/tail_config.c",
+    "042122b8ab03",
+    "flb_tail_config_destroy",
+    1
+   ],
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [
+    "call to uncontracted function `flb_tail_file_remove_all`",
+    "call to uncontracted function `flb_tail_mult_destroy`"
+   ],
+   "gained": []
+  },
+  {
+   "row": [
+    "plugins/in_tail/tail_scan.c",
+    "ad65a1a6daf5",
+    "flb_tail_scan",
+    1
+   ],
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [
+    "call to uncontracted function `flb_tail_file_dormant_scan_begin`"
+   ],
+   "gained": []
+  },
+  {
+   "row": [
+    "src/flb_input.c",
+    "fa2ceb71c4ce",
+    "flb_input_collectors_start",
+    1
+   ],
+   "before": "Unknown",
+   "after": "Unknown",
+   "lost": [
+    "call to uncontracted function `flb_input_thread_collectors_signal_start`"
+   ],
+   "gained": []
+  }
+ ]
+}
