@@ -1985,6 +1985,70 @@ read untouched. Otherwise the clause stays a declared assumption (rules
 13i–13k), never withdrawn. That the taken object was released or handed on
 stays a declared assumption, as for the arms.
 
+**A stated member's value handed to a declared unit helper (card
+SCHEDULER-DESTROY-MEMBER-STATES, gateway rule 50).** On the user's decision
+of 2026-11-14 (verbatim: "Go with 1, 2A and typed refinements for 3"),
+answering the card's proposal 2A. Before it, a member's value passed to a
+call reached nothing of the formal, and that the object a `#stale` path held
+was taken stayed a declared assumption. Two placements and one reading are
+added; nothing else changes.
+
+* **A helper destroyer** (loader, G05d). `resource_callback_member_invoked(P,
+  TAG.FIELD, A…)` (C04.19.3) may stand beside the member-path states when
+  every state and every invocation bind one formal `P` the declaration
+  releases (`resource_released(P, nonnull | nullable)`) and there is no
+  hand-off. Every other callback clause beside the states still rejects the
+  module. A consumer never composes such a declaration at a call: a direct
+  call refuses `member-path-direct` and a callback candidate is missing
+  (`callback-uncontracted`), as for every member-path declaration that is not
+  plain. It exists for the reading below.
+* **The link member.** Inside a followed helper, a pointer store at or below
+  the link member the declaration's own unlink names
+  (`resource_unpublished(P, LINK)`, C04.8) is that clause's, not a store into
+  an unstated path: it no longer ends the reading (`mk_list_del(&mth->_head)`
+  clearing `_head.prev` and `_head.next`). A store there in the declaration's
+  own frame is still a contradiction.
+* **The followed helper.** In the declaration's own frame only, a direct call
+  of a function the unit defines with storage class `static` (a header
+  `static inline` included) that has a helper declaration in force, and
+  that receives at the formal its states bind the **value** of a path `M`
+  stated `#stale` (not a set) of the stated formal, is composed: its formal
+  is bound to the object `M` held. The value is `P->M` read while `M` is
+  untouched, or a **copy**: a local, non-`static` variable of the
+  declaration's body whose only write is one assignment or initializer of
+  that value, never updated and whose address is never taken, read where
+  every path has written it from the untouched member. The helper qualifies
+  only when its declaration's states bind one formal with no guard, it
+  states nothing beside its custody contract but member invocations of that
+  formal, it releases that formal, its states' record is the argument's
+  pointee (`struct TAG`), its own rule 30 check in the unit finds no
+  contradiction, and each member invocation reads a closed empty set over
+  the run's member facts (C04.19.3; a unit's own empty set, an open set, a
+  non-empty set and a route without the run's facts never qualify). The
+  composition takes `M`'s object at the call and records what the helper
+  states at it (`M->X |-> V`, its invocations invoking nothing). The take is
+  **established** when every exit where the state's guard may hold took the
+  object exactly once so and the reading itself validated the states; a take
+  on only some paths, a second take, a call that is not composed (any frame,
+  any callee) receiving the value, a store or return that may carry it, and
+  a composed helper reached through a followed helper (a deeper frame) leave
+  it a declared assumption. Bounded: one frame, no recursion (the helper's
+  body is not read for the caller; its declaration is composed, and its own
+  rule 30 check reads its body).
+
+Evidence only: an established take is recorded as body evidence `50` beside
+`30` (rule 13i, covering the member-path states), and no consumer reads the
+composition: a caller of the destroyer applies its states exactly as before.
+A stale path beside the release of the binder composes at a direct call as
+two ends: `#stale` takes the object linked at the member once and the
+release ends the binder once; when the caller tracked the two as one
+identity the second end refuses (`member-path-double-release`), so the pair
+never yields a double release a `Safe` rests on. The Lean model is
+`QCore.MemberValueHelper` (`the_slot_abstracts_the_path`,
+`established_iff_taken_once`, `an_escape_never_establishes`,
+`an_uncomposed_callee_never_establishes`, `a_second_take_never_establishes`,
+`a_join_is_established_iff_both_are`, `one_identity_refuses_the_second_end`).
+
 #### C04.19.7. A candidate with its own invocations
 
 Card HANDOFF-CANDIDATE-OWN-CALLBACKS (gateway rule 13u, amended in place;

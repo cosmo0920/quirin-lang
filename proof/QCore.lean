@@ -266,6 +266,7 @@ import QCore.MemberReleaseCallee
 import QCore.MemberReleaseTypedMember
 import QCore.MemberReleaseUntypedBase
 import QCore.MemberSummaryOrder
+import QCore.MemberValueHelper
 import QCore.MemoKey
 import QCore.MemoryClose
 import QCore.Metatheory
