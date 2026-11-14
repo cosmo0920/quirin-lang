@@ -3082,28 +3082,26 @@ fn load_function_in(
         // candidate), as for every member-path declaration that is not plain.
         let helper_invocations = !declared.callbacks.is_empty()
             && handed.is_none()
-            && member_paths
-                .first()
-                .is_some_and(|first| {
-                    member_paths
-                        .iter()
-                        .all(|state| state.parameter == first.parameter)
-                        && matches!(
-                            contract.parameters.get(first.parameter),
-                            Some(ResourceParameterMode::Released { .. })
+            && member_paths.first().is_some_and(|first| {
+                member_paths
+                    .iter()
+                    .all(|state| state.parameter == first.parameter)
+                    && matches!(
+                        contract.parameters.get(first.parameter),
+                        Some(ResourceParameterMode::Released { .. })
+                    )
+                    && declared.callbacks.iter().all(|clause| {
+                        matches!(
+                            clause,
+                            qcore_schemas::callback::CallbackClause::MemberInvoked {
+                                object: qcore_schemas::callback::MemberObject::Parameter {
+                                    index
+                                },
+                                ..
+                            } if *index == first.parameter
                         )
-                        && declared.callbacks.iter().all(|clause| {
-                            matches!(
-                                clause,
-                                qcore_schemas::callback::CallbackClause::MemberInvoked {
-                                    object: qcore_schemas::callback::MemberObject::Parameter {
-                                        index
-                                    },
-                                    ..
-                                } if *index == first.parameter
-                            )
-                        })
-                });
+                    })
+            });
         if !member_paths.is_empty()
             && (!declared.slot_moves.is_empty()
                 || !declared.derived_outs.is_empty()

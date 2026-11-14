@@ -149,7 +149,11 @@ fn summary_of(outcome: &UnrestrictedLegacyResult) -> Option<&LegacyProgramSummar
 
 /// The body evidence recorded for `hthread_destroy` and the row of `caller`
 /// in the unit `PRELUDE + helper + destroyer + caller`.
-fn run(helper: &str, destroyer: &str, contracts: &ResourceContracts) -> (BTreeSet<String>, AnalysisStatus) {
+fn run(
+    helper: &str,
+    destroyer: &str,
+    contracts: &ResourceContracts,
+) -> (BTreeSet<String>, AnalysisStatus) {
     let text = format!(
         "{PRELUDE}\n{helper}\n{destroyer}\n\
          void caller(struct hthread *m) {{ (void) m; }}\n"

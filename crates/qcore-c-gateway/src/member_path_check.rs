@@ -54,7 +54,7 @@ use serde_json::Value;
 
 use std::collections::BTreeMap;
 
-pub use crate::member_path_reading::{Helper, Taken};
+pub use crate::member_path_reading::{Helper, HelperLookup, Taken};
 use crate::member_path_reading::{ORIG, Reader, taken_exits, validated_exits};
 use crate::typed_c_ast::{children, kind};
 
@@ -161,7 +161,7 @@ pub fn validates_composing<'a>(
     pointee: &dyn Fn(&Value) -> Option<String>,
     callee: &dyn Fn(&str) -> Option<&'a Value>,
     links: &BTreeMap<usize, String>,
-    helper: Option<&dyn Fn(&str) -> Option<Helper>>,
+    helper: Option<HelperLookup<'_>>,
 ) -> Result<Checked, String> {
     let mut taken = Taken::NotStated;
     let mut composed = std::collections::BTreeSet::new();
@@ -302,9 +302,7 @@ pub fn validates_composing<'a>(
                 },
             };
             taken = match (taken, here) {
-                (Taken::Assumption(why), _) | (_, Taken::Assumption(why)) => {
-                    Taken::Assumption(why)
-                }
+                (Taken::Assumption(why), _) | (_, Taken::Assumption(why)) => Taken::Assumption(why),
                 (Taken::Established, _) | (_, Taken::Established) => Taken::Established,
                 _ => Taken::NotStated,
             };
@@ -941,11 +939,7 @@ mod tests {
     #[test]
     fn a_take_on_some_paths_or_twice_is_an_assumption() {
         assert!(!established(copy_then(vec![
-            branch(
-                opaque(),
-                call("destroy_thr", vec![local("th", THR)]),
-                None
-            ),
+            branch(opaque(), call("destroy_thr", vec![local("th", THR)]), None),
             returning(None),
         ])));
         assert!(!established(copy_then(vec![
@@ -996,17 +990,22 @@ mod tests {
     #[test]
     fn only_a_static_helper_in_force_that_releases_the_record_is_composed() {
         // A non-static callee with the same declaration.
-        let helper = |name: &str| {
-            matches!(name, "destroy_thr" | "destroy_external").then(destroyer_helper)
-        };
+        let helper =
+            |name: &str| matches!(name, "destroy_thr" | "destroy_external").then(destroyer_helper);
         let external = function(copy_then(vec![
             call("destroy_external", vec![local("th", THR)]),
             returning(None),
         ]));
         assert!(matches!(
-            compose(&external, &stale_parent(), &unit(), &BTreeMap::new(), &helper)
-                .expect("no contradiction")
-                .taken,
+            compose(
+                &external,
+                &stale_parent(),
+                &unit(),
+                &BTreeMap::new(),
+                &helper
+            )
+            .expect("no contradiction")
+            .taken,
             Taken::Assumption(_)
         ));
         let body = function(copy_then(vec![
@@ -1109,16 +1108,28 @@ mod tests {
         let helper = |_: &str| None;
         // Without the link member the helper's store ends the reading.
         assert!(matches!(
-            compose(&body, &states, std::slice::from_ref(&unlink), &BTreeMap::new(), &helper)
-                .expect("no contradiction")
-                .standing,
+            compose(
+                &body,
+                &states,
+                std::slice::from_ref(&unlink),
+                &BTreeMap::new(),
+                &helper
+            )
+            .expect("no contradiction")
+            .standing,
             Standing::Assumption(_)
         ));
         let links = BTreeMap::from([(0, "link".to_owned())]);
         assert_eq!(
-            compose(&body, &states, std::slice::from_ref(&unlink), &links, &helper)
-                .expect("no contradiction")
-                .standing,
+            compose(
+                &body,
+                &states,
+                std::slice::from_ref(&unlink),
+                &links,
+                &helper
+            )
+            .expect("no contradiction")
+            .standing,
             Standing::Validated
         );
         // Another member is still an unstated store.

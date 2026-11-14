@@ -303,7 +303,9 @@ fn member_path_helper<'a>(
             )),
             Some(run) => run
                 .normalise(&spelled)
-                .map_err(|why| format!("`{spelled}` is not a member the run's records define ({why})"))
+                .map_err(|why| {
+                    format!("`{spelled}` is not a member the run's records define ({why})")
+                })
                 .and_then(|_| {
                     run.closure(&spelled).map_err(|open| {
                         format!(
@@ -2564,9 +2566,11 @@ pub(crate) fn settle(
         // declarations (`member_path_helper`).
         let checked = crate::typed_access_path::with_indirect_call_unit(|unit| {
             unit.function(name).map(|function| {
-                let pointee = |node: &serde_json::Value| unit.member_facts().record_of_node(node, true);
+                let pointee =
+                    |node: &serde_json::Value| unit.member_facts().record_of_node(node, true);
                 let callee = |callee: &str| unit.function(callee);
-                let helper = |helper: &str| member_path_helper(contracts, helper, &pointee, &callee);
+                let helper =
+                    |helper: &str| member_path_helper(contracts, helper, &pointee, &callee);
                 crate::member_path_check::validates_composing(
                     function,
                     &declaration.member_paths,

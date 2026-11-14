@@ -127,6 +127,10 @@ type View = Option<String>;
 /// One frame's bindings: parameter declaration id to the view it holds.
 type Bindings = BTreeMap<String, View>;
 
+/// Card SCHEDULER-DESTROY-MEMBER-STATES (rule 50): the unit's helper
+/// declarations by function name.
+pub type HelperLookup<'c> = &'c dyn Fn(&str) -> Option<Helper>;
+
 /// Card SCHEDULER-DESTROY-MEMBER-STATES (rule 50): a unit helper's
 /// declaration as the reading composes it at a direct call that hands it a
 /// stated member's value.
@@ -502,7 +506,7 @@ pub struct Reader<'a, 'c> {
     linked: Vec<String>,
     /// The unit's helper declarations (rule 50), when the reading composes
     /// them.
-    helper: Option<&'c dyn Fn(&str) -> Option<Helper>>,
+    helper: Option<HelperLookup<'c>>,
     /// Whether each stated path is stated `#stale` (a take is read there).
     stale: Vec<bool>,
     /// Qualified locals of the declaration's own frame: declaration id to
@@ -559,11 +563,7 @@ impl<'a, 'c> Reader<'a, 'c> {
     /// helper declarations at the stated `#stale` paths (`stale`, one flag
     /// per stated path).
     #[must_use]
-    pub fn with_helpers(
-        mut self,
-        helper: &'c dyn Fn(&str) -> Option<Helper>,
-        stale: Vec<bool>,
-    ) -> Self {
+    pub fn with_helpers(mut self, helper: HelperLookup<'c>, stale: Vec<bool>) -> Self {
         self.helper = Some(helper);
         self.stale = stale;
         self.sized()
@@ -994,11 +994,7 @@ impl<'a, 'c> Reader<'a, 'c> {
                 };
                 let before = state.clone();
                 let outcomes = self.fixpoint(&graph, start, state, bindings)?;
-                let mut after = if maybe {
-                    before
-                } else {
-                    vec![0; self.width]
-                };
+                let mut after = if maybe { before } else { vec![0; self.width] };
                 for exit in outcomes.values() {
                     join_into(&mut after, exit);
                 }
@@ -1238,11 +1234,7 @@ impl<'a, 'c> Reader<'a, 'c> {
             return Some(state);
         }
         if let Some(outcomes) = self.followed(call, &state, bindings) {
-            let mut after = if maybe {
-                state
-            } else {
-                vec![0; self.width]
-            };
+            let mut after = if maybe { state } else { vec![0; self.width] };
             for exit in outcomes?.values() {
                 join_into(&mut after, exit);
             }
@@ -1410,7 +1402,9 @@ impl<'a, 'c> Reader<'a, 'c> {
     fn member_value(&self, argument: &Value, state: &State, bindings: &Bindings) -> Option<usize> {
         let argument = strip(argument);
         if kind(argument) == "DeclRefExpr" {
-            let (index, slot) = *self.copies.get(argument["referencedDecl"]["id"].as_str()?)?;
+            let (index, slot) = *self
+                .copies
+                .get(argument["referencedDecl"]["id"].as_str()?)?;
             return (state[slot] == 0).then_some(index);
         }
         let index = self
@@ -1421,7 +1415,13 @@ impl<'a, 'c> Reader<'a, 'c> {
 
     /// Rule 50 at a call: a composed take, or an escape of every carried
     /// value.
-    fn compose(&mut self, call: &Value, mut state: State, maybe: bool, bindings: &Bindings) -> State {
+    fn compose(
+        &mut self,
+        call: &Value,
+        mut state: State,
+        maybe: bool,
+        bindings: &Bindings,
+    ) -> State {
         if self.helper.is_none() {
             return state;
         }
