@@ -169,6 +169,16 @@ contract {
 // candidate: its states stand beside a member invocation, which only rule
 // 50's body reading composes (`member-path-direct`, a missing candidate).
 //
+// The pin's identity records both definition sites the pin tool reads: the
+// libco body above and the `ucontext` variant of
+// `lib/monkey/include/monkey/mk_thread_ucontext.h` (selected by Monkey's
+// build configuration; neither audited configuration compiles it), read at
+// both revisions too: `if (th->cb_destroy) th->cb_destroy(MK_THREAD_DATA(th));
+// VALGRIND_STACK_DEREGISTER(...); free(th);`. There the invocation and the
+// release hold as stated, `callee` is an embedded `ucontext_t` (no pointer:
+// no object a caller links there, so `#stale` decides nothing) and there is
+// no `data` member (the `#kept` state names no path a caller can link).
+//
 // NOT CLAIMED: that `callee` is a coroutine `co_delete` accepts or that it is
 // not running (the caller's `scheduler_callee_live`); anything about the
 // Valgrind client request; the data area's contents.
