@@ -163,7 +163,71 @@ and the custody pair. `QCore.BodyClauseStanding` gains `r50`.
 
 ## 2. Measurement
 
-MEASUREMENT-PENDING
+**Arbiter.** `quirin-audit measure --declared PREDICTION.md` (the measure
+plugin built from this card's code), driven by
+[artifacts/arbiter.sh](artifacts/arbiter.sh) over
+[artifacts/inputs.json](artifacts/inputs.json). This host has no published
+live-route inputs and refuses user namespaces, so no `rev:` side runs. The
+inputs are card LERI-HELD-AND-LINK-MEMBER-PREMISES's worktree-private
+preparations, read-only and digest-checked: system `046accf6`, slice
+`90978ac6`, corpus `66910c10`. Both sides are `git archive` exports under
+`private/`: base `89fa31d21` and tip `7bbea41df`. Each side is built in place
+by the tool. One driver adaptation is made in both exports, as LERI did:
+`scripts/run_pinned_audit.py` points `QCORE_CLANG` at
+`/usr/lib/llvm-21/bin/clang`. `--no-slots` was used.
+
+**Attempts.**
+- `measure/arbiter-1` was stopped by hand before any route ran, to re-export
+  the tip after formatting; it is discarded.
+- `measure/arbiter-2` (base binary `beb5e9e8…`, tip `85533375…`) completed
+  system and slice. Its corpus failed on both sides, because the exports'
+  `third_party/libevent` was a plain copy: the pinned libevent revision check
+  read the enclosing worktree's `HEAD` (`SourceRevisionMismatch`). It is
+  discarded as corpus evidence.
+- `measure/arbiter-3-corpus` (base `05062097…`, tip `39e8eb1d…`) re-ran the
+  corpus with each export's submodule a clone at `d82464a2`.
+
+The two runs' binaries differ by rebuild only; the exports' sources are
+unchanged.
+
+| Route | Base custody Safe / Unknown / Unsafe | Tip | Moves | Declared check |
+|---|---|---|---|---|
+| system (448 rows) | 103 / 341 / 4 | 103 / 341 / 4 | 0 | **match** |
+| slice (404 rows) | 59 / 340 / 1, 4 Pending | unchanged | 0 | **match** |
+| corpus (4,704 rows) | 1,081 / 3,617 / 6 | 1,081 / 3,617 / 6 | 0 | **match** |
+
+Every route's status is `complete`, with no unmatched row. Records:
+[native-comparison-system-slice.json](artifacts/native-comparison-system-slice.json)
+and [native-comparison-corpus.json](artifacts/native-comparison-corpus.json).
+Corpus analysis took about 87 minutes per side.
+
+**Content changes, none a status.**
+- *Corpus, six rows.*
+  - `sched_thread_cleanup`, `mk_sched_threads_destroy_conn`,
+    `mk_sched_threads_purge` and `mk_sched_threads_destroy_all` (all Safe)
+    and `mk_sched_drop_connection` (Unknown) gain the 19 refinement atoms in
+    their `hypothesis_dependencies`. The eight legacy premise atoms remain.
+  - `mk_http_thread_destroy`'s own row (Unknown) now consults
+    `mk_thread_destroy` (`run_set_members` `mk_thread.cb_destroy`). It trades
+    leaves: `call to uncontracted function mk_thread_destroy` and two
+    `unresolved resource identity mth` leaves become the call's
+    `member-path-direct` refusal. Its refusal text still says "beside a
+    hand-off" for a member invocation (follow-up below).
+- *System, four rows; slice, eight rows.* Only `review_holds` changed, and
+  only because the hold's module path spells the side's checkout
+  (`private/base-src` against `private/tip-src`). This is environment only.
+
+**Body evidence (corpus, `resource-diagnostics.components.json`).** At base
+`mk_http_thread_destroy` has no body evidence: all its clauses are declared
+assumptions. At tip its three member-path states are covered by `30` and `50`.
+Rule 30 validated them in `mk_server/mk_http_thread.c`, the `_head` stores
+inside `mk_list_del` being the unlink's. Rule 50 established the take of
+`parent`'s object through the composed `mk_thread_destroy`, its
+`mk_thread.cb_destroy` set read closed and empty over the run's member
+facts. The declaration moves from declared assumption to partly validated.
+Its premises, unlink and release stay uncovered, and `mk_thread_destroy`
+stays unvalidated (its released binder's states are assumptions). The
+prediction holds on every route.
 
 ## 3. Gate
 
@@ -184,3 +248,6 @@ Registered in [integration-amendments.json](integration-amendments.json):
 
 `SCHED-DESTROYER-PREMISES` is amended, not retired: all eight premises are
 still Open source truth.
+
+- `MEMBER-PATH-DIRECT-REFUSAL-TEXT`: the `member-path-direct` refusal says
+  "beside a hand-off" for a helper destroyer's member invocation.
