@@ -231,7 +231,29 @@ prediction holds on every route.
 
 ## 3. Gate
 
-GATE-PENDING
+The scoped card gate, `gate_scope.py --base 89fa31d21`, ran in full mode
+because the diff reaches `qcore-c-gateway` and `qcore-contract`. It ran
+through `private/toolchain/env.sh` (Clang 21, Lean 4.35.0) on `cd295c8e9`.
+Later commits add only this section and the gate record. Record:
+[gate.json](gate.json); logs are in `private/gate-2/`.
+
+| Step | Exit | Counts |
+|---|---|---|
+| submodules, fmt, clippy | 0, 0, 0 | |
+| Rust suite (`run_test_binaries.py`) | 0 | 638 units, 681 summaries; 9,509 passed, 0 failed, 17 ignored |
+| reevaluation probe, follow-up | 0, 0 | |
+| Lean audits | 0 | 434 audits |
+| Python suite | 0 | 761 tests |
+| provider package build, verify-all, verify `qcore.libevent` | 0, 0, 0 | |
+| provider tests, fmt, clippy | 0, 0, 0 | 43 summaries; 133 passed, 0 failed, 1 ignored |
+
+The first run (`private/gate-1/`, on `7bbea41df` plus the report draft)
+exited 1. Every other step passed. The one failure was
+`qcore-contract::production_symbolic_adoption`, which pins the modules
+carrying typed refinements to PREMISE-SYMBOLIC-ADOPTION's frozen inventory.
+`0ae0a04c9` lists `intrusive_list.qv` there, exactly, as a later adoption,
+without editing the frozen inventory. That is a test-only change after the
+measured tip.
 
 ## 4. Follow-ons
 
