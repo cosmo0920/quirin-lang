@@ -1193,6 +1193,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [schema-1-compatibility](schema-1-compatibility/README.md) | Schema 1.0 compatibility and package evidence |
 
+| [selection-routes-split-caller-and-home](selection-routes-split-caller-and-home/README.md) | SELECTION-ROUTES-SPLIT-CALLER-AND-HOME |
+
 | [serve-forwarded-callback-formals](serve-forwarded-callback-formals/README.md) | SERVE-FORWARDED-CALLBACK-FORMALS: forwarded callback formals |
 
 | [slice-permissions-write-lend](slice-permissions-write-lend/README.md) | SLICE-PERMISSIONS-WRITE-LEND — the write half of CT07, and the fraction that finally exists (wave 29) |
@@ -1239,6 +1241,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | Card directory | Original report title |
 |---|---|
+
+| [tail-file-definition-census-incomplete](tail-file-definition-census-incomplete/README.md) | TAIL-FILE-DEFINITION-CENSUS-INCOMPLETE |
 
 | [task-context-contract-bundle](task-context-contract-bundle/README.md) | TASK-CONTEXT-CONTRACT-BUNDLE — task reading and pinned policy data pilot |
 

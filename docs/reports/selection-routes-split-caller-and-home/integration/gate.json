@@ -1,0 +1,13 @@
+{
+  "note": "Landing integrate/r11 (base main 458bd804d; merges SELECTION-ROUTES-SPLIT-CALLER-AND-HOME 1be266ce5, TAIL-FILE-DEFINITION-CENSUS-INCOMPLETE 6681a67f6; the first merge's only conflict was the increment record, resolved keeping main's paragraphs). Full landing gate on 70579246c (private/integrate-r11/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base main --full --landing through private/toolchain/env.sh: Rust 637 units / 680 summaries, 9497 passed, 0 failed, 17 ignored; Lean 433 audits; fmt, Clippy, both reevaluation examples exit 0. Python exited 1 on one test only, test_build_matrix_sections' committed-matrix self-consistency, because the matrix predates this landing's amendments; it is regenerated from this record and the suite rerun is recorded in private/integrate-r11/python-rerun.log. The provider gate was not selected: nothing under providers/ changed (validation.md, full gate), so provider_tests 133 is carried from the integrate/r10 landing gate (private/integrate-r10/gate-2), not measured here. No native measurement on this host and no verdict moves: SELECTION-ROUTES adds a card-local system-teardown route measured on its own preparation (live-profile adoption is the registered user decision SYSTEM-TEARDOWN-LIVE-PROFILE); TAIL-FILE's rule 49 moves 0 rows on the slice. No profile baseline is changed and land.py publish is owed.",
+  "workspace_tests": 9497,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 761,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "full landing gate: every step exits 0 except the Python suite's stale-matrix check, cleared by regenerating the matrix from this record (rerun disclosed in the note)",
+  "lean_audits": 433,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

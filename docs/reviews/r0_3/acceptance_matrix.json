@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 956
+  "named_followups": 958
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6876,8 +6876,8 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Landing integrate/r10 (base main 591e5523f; merges LERI-CROSS-UNIT-ELEMENTS-RELEASED 7e2e255e1, LINK-STANDING-SELECTION-TWO-CONFIGURATION-KEYS 63a81dd17, LERI-HELD-AND-LINK-MEMBER-PREMISES 5bcb4b531, MEASURE-CONTRACT-ONLY-SIDE-WIRING a977370b8, W45-FB-LIST-FINITENESS-PREMISE ed60dad9b). First full landing gate on f47823dd1 (private/integrate-r10/gate): Rust 9471 passed, 5 failed (the cross-unit fixtures' element destroyer named no link member, refused by rule 46 of LERI-HELD; repaired test-only in 562d4594d), Python failed on the then-stale matrix. Rerun on 98e0cc91e (private/integrate-r10/gate-2, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base main --full --landing through private/toolchain/env.sh: Rust 635 units / 678 summaries, 9476 passed, 0 failed, 17 ignored; Lean 432 audits; fmt, Clippy, both reevaluation examples; provider package build/verify, provider Rust 133 passed / 0 failed / 1 ignored, provider fmt/Clippy all exit 0. Python exited 1 on one load-sensitive test (test_gate_slot_starvation: the spinning holder measured 0.19 CPU-seconds against a 0.2 floor while a parallel card's measurement loaded the host, load average ~15); it failed 1 of 3 isolated reruns under the same load, and the whole suite reran 761 tests OK (private/integrate-r10/python-rerun.log). No native measurement on this host: the cards' figures come from their own preparations (LERI-HELD measured system 107 -> 103 Safe there); no profile baseline is changed and land.py publish is owed.",
-  "workspace_tests": 9476,
+  "note": "Landing integrate/r11 (base main 458bd804d; merges SELECTION-ROUTES-SPLIT-CALLER-AND-HOME 1be266ce5, TAIL-FILE-DEFINITION-CENSUS-INCOMPLETE 6681a67f6; the first merge's only conflict was the increment record, resolved keeping main's paragraphs). Full landing gate on 70579246c (private/integrate-r11/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base main --full --landing through private/toolchain/env.sh: Rust 637 units / 680 summaries, 9497 passed, 0 failed, 17 ignored; Lean 433 audits; fmt, Clippy, both reevaluation examples exit 0. Python exited 1 on one test only, test_build_matrix_sections' committed-matrix self-consistency, because the matrix predates this landing's amendments; it is regenerated from this record and the suite rerun is recorded in private/integrate-r11/python-rerun.log. The provider gate was not selected: nothing under providers/ changed (validation.md, full gate), so provider_tests 133 is carried from the integrate/r10 landing gate (private/integrate-r10/gate-2), not measured here. No native measurement on this host and no verdict moves: SELECTION-ROUTES adds a card-local system-teardown route measured on its own preparation (live-profile adoption is the registered user decision SYSTEM-TEARDOWN-LIVE-PROFILE); TAIL-FILE's rule 49 moves 0 rows on the slice. No profile baseline is changed and land.py publish is owed.",
+  "workspace_tests": 9497,
   "provider_tests": 133,
   "python_evidence_validator_tests": 761,
   "lean_audits": 433,
@@ -7320,9 +7320,9 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "full landing gate: every step exits 0 except one load-sensitive Python test (rerun OK, disclosed in the note)",
+  "standing_gate": "full landing gate: every step exits 0 except the Python suite's stale-matrix check, cleared by regenerating the matrix from this record (rerun disclosed in the note)",
   "full_language_conformance": false,
-  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
+  "measurement_provenance": "integrator_supplied (docs/reports/selection-routes-split-caller-and-home/integration/gate.json)"
  },
  "named_followups": [
   {
