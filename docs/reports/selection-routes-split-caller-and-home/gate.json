@@ -1,0 +1,1044 @@
+{
+ "schema": "quirin-gate-scope/1",
+ "source": "git diff",
+ "base": "f47823dd1d84a4b85fb2b2d18e174f5b890827ba",
+ "head": "cf846229f4260058c6488b9c872e16790e27174d",
+ "committed": [
+  "contract/profiles/fluent-bit/system-teardown-selection.json",
+  "crates/qcore-audit/tests/link_standing_elements_released.rs",
+  "crates/qcore-c-gateway/tests/cross_unit_elements_released.rs",
+  "crates/quirin-audit-plugin-measure/src/baseline.rs",
+  "crates/quirin-audit-plugin-measure/src/inputs.rs",
+  "crates/quirin-audit-plugin-measure/src/lib.rs",
+  "crates/quirin-audit-plugin-measure/src/link.rs",
+  "crates/quirin-audit-plugin-measure/src/sides.rs",
+  "crates/quirin-audit-plugin-measure/tests/link_resolution.rs",
+  "crates/quirin-audit-plugin-measure/tests/units.rs",
+  "docs/development/audit-subcommand-plugins.md",
+  "docs/development/increments/wave-48-part12.md",
+  "docs/reports/selection-routes-split-caller-and-home/PREDICTION.md",
+  "docs/reports/selection-routes-split-caller-and-home/artifacts/inputs.json"
+ ],
+ "uncommitted": [],
+ "scope": {
+  "paths": [
+   "contract/profiles/fluent-bit/system-teardown-selection.json",
+   "crates/qcore-audit/tests/link_standing_elements_released.rs",
+   "crates/qcore-c-gateway/tests/cross_unit_elements_released.rs",
+   "crates/quirin-audit-plugin-measure/src/baseline.rs",
+   "crates/quirin-audit-plugin-measure/src/inputs.rs",
+   "crates/quirin-audit-plugin-measure/src/lib.rs",
+   "crates/quirin-audit-plugin-measure/src/link.rs",
+   "crates/quirin-audit-plugin-measure/src/sides.rs",
+   "crates/quirin-audit-plugin-measure/tests/link_resolution.rs",
+   "crates/quirin-audit-plugin-measure/tests/units.rs",
+   "docs/development/audit-subcommand-plugins.md",
+   "docs/development/increments/wave-48-part12.md",
+   "docs/reports/selection-routes-split-caller-and-home/PREDICTION.md",
+   "docs/reports/selection-routes-split-caller-and-home/artifacts/inputs.json"
+  ],
+  "attribution": {
+   "contract/profiles/fluent-bit/system-teardown-selection.json": [
+    "read by qcore-audit (walker, crates/qcore-audit/src/prepare.rs:350)",
+    "read by qcore-verification (walker, crates/qcore-verification/src/cycle18_composition.rs:1224) in qcore-verification::lib::qcore_verification",
+    "read by qcore-verification (walker, crates/qcore-verification/src/monkey_wait_projection.rs:760) in qcore-verification::lib::qcore_verification",
+    "read by qcore-verification (walker, crates/qcore-verification/tests/callback_task_handoff.rs:46) in qcore-verification::test::callback_task_handoff",
+    "read by qcore-verification (walker, crates/qcore-verification/tests/event_payload.rs:70) in qcore-verification::test::event_payload",
+    "read by qcore-verification (walker, crates/qcore-verification/tests/fixtures/boolean_source.rs:20) in qcore-verification::test::source_effect, qcore-verification::test::source_effect_mutations, qcore-verification::test::source_effect_obligations",
+    "read by qcore-verification (walker, crates/qcore-verification/tests/fixtures/call_use_source.rs:78) in qcore-verification::test::call_use_dependents, qcore-verification::test::call_use_source",
+    "read by qcore-verification (walker, crates/qcore-verification/tests/fixtures/cleanup_replay_source.rs:187) in qcore-verification::test::cleanup_replay_mutations, qcore-verification::test::cleanup_replay_source, qcore-verification::test::emit_cleanup_replay_fixtures",
+    "read by qcore-verification (walker, crates/qcore-verification/tests/fixtures/composition_source.rs:93) in qcore-verification::test::composition_mutations, qcore-verification::test::composition_source",
+    "read by qcore-verification (walker, crates/qcore-verification/tests/fixtures/counter_source.rs:37) in qcore-verification::test::counter_source",
+    "read by qcore-verification (walker, crates/qcore-verification/tests/fixtures/file_close_composition.rs:136) in qcore-verification::test::file_close_composition_mutations, qcore-verification::test::file_close_composition_source, qcore-verification::test::filesystem_chunk_close_composition_mutations, qcore-verification::test::filesystem_chunk_close_composition_source, qcore-verification::test::unsupported_close_composition_mutations, qcore-verification::test::unsupported_close_composition_source",
+    "read by qcore-verification (walker, crates/qcore-verification/tests/fixtures/frame_source.rs:57) in qcore-verification::test::frame_source, qcore-verification::test::frame_source_mutations, qcore-verification::test::teardown_prerequisites",
+    "read by qcore-verification (walker, crates/qcore-verification/tests/fixtures/memory_close_composition.rs:112) in qcore-verification::test::filesystem_chunk_close_composition_mutations, qcore-verification::test::filesystem_chunk_close_composition_source, qcore-verification::test::memory_close_composition_mutations, qcore-verification::test::memory_close_composition_source, qcore-verification::test::unsupported_close_composition_mutations, qcore-verification::test::unsupported_close_composition_source",
+    "read by qcore-verification (walker, crates/qcore-verification/tests/fixtures/teardown_source.rs:73) in qcore-verification::test::teardown_prerequisites, qcore-verification::test::teardown_source",
+    "read by qcore-verification (walker, crates/qcore-verification/tests/monkey_wait_projection.rs:58) in qcore-verification::test::monkey_wait_projection",
+    "read by qcore-verification (walker, crates/qcore-verification/tests/observed_wait_composition.rs:62) in qcore-verification::test::observed_wait_composition",
+    "read by qcore-verification (walker, crates/qcore-verification/tests/source_effect_helper_target.rs:106) in qcore-verification::test::source_effect_helper_target",
+    "read by qcore-verification (walker, crates/qcore-verification/tests/timeout_teardown.rs:35) in qcore-verification::test::timeout_teardown",
+    "read by qcore-verification (walker, crates/qcore-verification/tests/unit/cycle18_callback_obligations.rs:34) in qcore-verification::lib::qcore_verification",
+    "read by qcore-verification (walker, crates/qcore-verification/tests/wait_failure_paths.rs:55) in qcore-verification::test::wait_failure_paths",
+    "read by quirin-source-analysis (walker, crates/quirin-source-analysis/src/source_profiles.rs:53)",
+    "read by qcore-compiler (walker, crates/qcore-verification/tests/fixtures/file_close_composition.rs:136) in qcore-compiler::test::file_close_route_parity, qcore-compiler::test::filesystem_chunk_close_route_parity, qcore-compiler::test::unsupported_close_route_parity",
+    "read by qcore-compiler (walker, crates/qcore-verification/tests/fixtures/memory_close_composition.rs:112) in qcore-compiler::test::filesystem_chunk_close_route_parity, qcore-compiler::test::unsupported_close_route_parity",
+    "read by qcore-provider-conformance (walker, crates/qcore-verification/tests/fixtures/boolean_source.rs:20) in qcore-provider-conformance::test::composed_five_providers, qcore-provider-conformance::test::source_effect",
+    "read by qcore-provider-conformance (walker, crates/qcore-verification/tests/fixtures/call_use_source.rs:78) in qcore-provider-conformance::test::call_use_capability",
+    "read by qcore-provider-conformance (walker, crates/qcore-verification/tests/fixtures/cleanup_replay_source.rs:187) in qcore-provider-conformance::test::cleanup_replay_capability",
+    "read by qcore-provider-conformance (walker, crates/qcore-verification/tests/fixtures/composition_source.rs:93) in qcore-provider-conformance::test::composition_capability",
+    "read by qcore-provider-conformance (walker, crates/qcore-verification/tests/fixtures/counter_source.rs:37) in qcore-provider-conformance::test::composed_five_providers, qcore-provider-conformance::test::counter_effect",
+    "read by qcore-provider-conformance (walker, crates/qcore-verification/tests/fixtures/file_close_composition.rs:136) in qcore-provider-conformance::test::file_close_composition_capability, qcore-provider-conformance::test::filesystem_chunk_close_composition_capability, qcore-provider-conformance::test::unsupported_close_composition_capability",
+    "read by qcore-provider-conformance (walker, crates/qcore-verification/tests/fixtures/memory_close_composition.rs:112) in qcore-provider-conformance::test::filesystem_chunk_close_composition_capability, qcore-provider-conformance::test::memory_close_composition_capability, qcore-provider-conformance::test::unsupported_close_composition_capability",
+    "read by qcore-provider-conformance (walker, crates/qcore-verification/tests/fixtures/teardown_source.rs:73) in qcore-provider-conformance::test::teardown_capability",
+    "read by qcore-provider-conformance (walker, providers/conformance/tests/packages.rs:381) in qcore-provider-conformance::test::packages",
+    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/units.rs:221) in quirin-audit-plugin-measure::test::units",
+    "read by qcore-verification (expansion, crates/qcore-verification/tests/composition_bounds.rs:302) in qcore-verification::test::composition_bounds",
+    "read by qcore-compiler (expansion, compiler/tests/workspace_layering.rs:178) in qcore-compiler::test::workspace_layering",
+    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/support/mod.rs:211) in quirin-audit-plugin-measure::test::host, quirin-audit-plugin-measure::test::link_resolution, quirin-audit-plugin-measure::test::measure, quirin-audit-plugin-measure::test::slot_wait, quirin-audit-plugin-measure::test::units",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4349) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:3989) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4003) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4040) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4002) in qcore-compiler::test::ct_corpus"
+   ],
+   "crates/qcore-audit/tests/link_standing_elements_released.rs": [
+    "owned by qcore-audit",
+    "read by qcore-verification (walker, crates/qcore-verification/tests/composition_bounds.rs:302) in qcore-verification::test::composition_bounds",
+    "read by qcore-compiler (walker, compiler/tests/workspace_layering.rs:155) in qcore-compiler::test::workspace_layering",
+    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/support/mod.rs:211) in quirin-audit-plugin-measure::test::host, quirin-audit-plugin-measure::test::link_resolution, quirin-audit-plugin-measure::test::measure, quirin-audit-plugin-measure::test::slot_wait, quirin-audit-plugin-measure::test::units",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4349) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:3989) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4003) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4040) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4002) in qcore-compiler::test::ct_corpus"
+   ],
+   "crates/qcore-c-gateway/tests/cross_unit_elements_released.rs": [
+    "owned by qcore-c-gateway (test targets qcore-c-gateway::test::cross_unit_elements_released)",
+    "read by qcore-audit (walker, crates/qcore-audit/tests/rule_switch_entry_points.rs:0) in qcore-audit::test::rule_switch_entry_points",
+    "read by qcore-verification (walker, crates/qcore-verification/tests/composition_bounds.rs:302) in qcore-verification::test::composition_bounds",
+    "read by qcore-compiler (walker, compiler/tests/workspace_layering.rs:94) in qcore-compiler::test::workspace_layering",
+    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/support/mod.rs:211) in quirin-audit-plugin-measure::test::host, quirin-audit-plugin-measure::test::link_resolution, quirin-audit-plugin-measure::test::measure, quirin-audit-plugin-measure::test::slot_wait, quirin-audit-plugin-measure::test::units",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4349) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:3989) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4003) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4040) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4002) in qcore-compiler::test::ct_corpus"
+   ],
+   "crates/quirin-audit-plugin-measure/src/baseline.rs": [
+    "owned by quirin-audit-plugin-measure",
+    "read by qcore-verification (walker, crates/qcore-verification/tests/composition_bounds.rs:302) in qcore-verification::test::composition_bounds",
+    "read by qcore-compiler (walker, compiler/tests/workspace_layering.rs:178) in qcore-compiler::test::workspace_layering",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4349) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:3989) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4003) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4040) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4002) in qcore-compiler::test::ct_corpus"
+   ],
+   "crates/quirin-audit-plugin-measure/src/inputs.rs": [
+    "owned by quirin-audit-plugin-measure",
+    "read by qcore-verification (walker, crates/qcore-verification/tests/composition_bounds.rs:302) in qcore-verification::test::composition_bounds",
+    "read by qcore-compiler (walker, compiler/tests/workspace_layering.rs:178) in qcore-compiler::test::workspace_layering",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4349) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:3989) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4003) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4040) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4002) in qcore-compiler::test::ct_corpus"
+   ],
+   "crates/quirin-audit-plugin-measure/src/lib.rs": [
+    "owned by quirin-audit-plugin-measure",
+    "read by qcore-verification (walker, crates/qcore-verification/tests/composition_bounds.rs:302) in qcore-verification::test::composition_bounds",
+    "read by qcore-compiler (walker, compiler/tests/workspace_layering.rs:178) in qcore-compiler::test::workspace_layering",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4349) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:3989) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4003) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4040) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4002) in qcore-compiler::test::ct_corpus"
+   ],
+   "crates/quirin-audit-plugin-measure/src/link.rs": [
+    "owned by quirin-audit-plugin-measure",
+    "read by qcore-verification (walker, crates/qcore-verification/tests/composition_bounds.rs:302) in qcore-verification::test::composition_bounds",
+    "read by qcore-compiler (walker, compiler/tests/workspace_layering.rs:178) in qcore-compiler::test::workspace_layering",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4349) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:3989) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4003) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4040) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4002) in qcore-compiler::test::ct_corpus"
+   ],
+   "crates/quirin-audit-plugin-measure/src/sides.rs": [
+    "owned by quirin-audit-plugin-measure",
+    "read by qcore-verification (walker, crates/qcore-verification/tests/composition_bounds.rs:302) in qcore-verification::test::composition_bounds",
+    "read by qcore-compiler (walker, compiler/tests/workspace_layering.rs:178) in qcore-compiler::test::workspace_layering",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4349) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:3989) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4003) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4040) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4002) in qcore-compiler::test::ct_corpus"
+   ],
+   "crates/quirin-audit-plugin-measure/tests/link_resolution.rs": [
+    "owned by quirin-audit-plugin-measure (test targets quirin-audit-plugin-measure::test::host, quirin-audit-plugin-measure::test::link_resolution, quirin-audit-plugin-measure::test::measure, quirin-audit-plugin-measure::test::slot_wait, quirin-audit-plugin-measure::test::units)",
+    "read by qcore-audit (walker, crates/qcore-audit/tests/rule_switch_entry_points.rs:0) in qcore-audit::test::rule_switch_entry_points",
+    "read by qcore-verification (walker, crates/qcore-verification/tests/composition_bounds.rs:302) in qcore-verification::test::composition_bounds",
+    "read by qcore-compiler (walker, compiler/tests/workspace_layering.rs:178) in qcore-compiler::test::workspace_layering",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4349) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:3989) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4003) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4040) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4002) in qcore-compiler::test::ct_corpus"
+   ],
+   "crates/quirin-audit-plugin-measure/tests/units.rs": [
+    "owned by quirin-audit-plugin-measure (test targets quirin-audit-plugin-measure::test::host, quirin-audit-plugin-measure::test::link_resolution, quirin-audit-plugin-measure::test::measure, quirin-audit-plugin-measure::test::slot_wait, quirin-audit-plugin-measure::test::units)",
+    "read by qcore-audit (walker, crates/qcore-audit/tests/rule_switch_entry_points.rs:0) in qcore-audit::test::rule_switch_entry_points",
+    "read by qcore-verification (walker, crates/qcore-verification/tests/composition_bounds.rs:302) in qcore-verification::test::composition_bounds",
+    "read by qcore-compiler (walker, compiler/tests/workspace_layering.rs:178) in qcore-compiler::test::workspace_layering",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4349) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:3989) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4003) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4040) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4002) in qcore-compiler::test::ct_corpus"
+   ],
+   "docs/development/audit-subcommand-plugins.md": [
+    "class prose"
+   ],
+   "docs/development/increments/wave-48-part12.md": [
+    "class prose"
+   ],
+   "docs/reports/selection-routes-split-caller-and-home/PREDICTION.md": [
+    "class prose"
+   ],
+   "docs/reports/selection-routes-split-caller-and-home/artifacts/inputs.json": [
+    "class prose"
+   ]
+  },
+  "affected": {
+   "qcore-audit": [
+    "walks contract/profiles/fluent-bit/** (walker of contract/profiles/fluent-bit): contract/profiles/fluent-bit/system-teardown-selection.json (crates/qcore-audit/src/prepare.rs:350)",
+    "owns crates/qcore-audit/tests/link_standing_elements_released.rs"
+   ],
+   "qcore-compiler": [
+    "depends on qcore-audit"
+   ],
+   "qcore-provider-conformance": [
+    "depends on qcore-audit"
+   ],
+   "qcorec": [
+    "depends on qcore-compiler"
+   ],
+   "quirin-audit-plugin-measure": [
+    "owns crates/quirin-audit-plugin-measure/src/baseline.rs",
+    "owns crates/quirin-audit-plugin-measure/src/inputs.rs",
+    "owns crates/quirin-audit-plugin-measure/src/lib.rs",
+    "owns crates/quirin-audit-plugin-measure/src/link.rs",
+    "owns crates/quirin-audit-plugin-measure/src/sides.rs"
+   ],
+   "quirin-source-analysis": [
+    "walks contract/profiles/** (walker of contract/profiles): contract/profiles/fluent-bit/system-teardown-selection.json (crates/quirin-source-analysis/src/source_profiles.rs:53)"
+   ]
+  },
+  "targets": {
+   "qcore-c-gateway": {
+    "qcore-c-gateway::test::cross_unit_elements_released": [
+     "owns crates/qcore-c-gateway/tests/cross_unit_elements_released.rs"
+    ]
+   },
+   "qcore-verification": {
+    "qcore-verification::lib::qcore_verification": [
+     "walks contract/profiles/** (walker of contract/profiles): contract/profiles/fluent-bit/system-teardown-selection.json (crates/qcore-verification/src/cycle18_composition.rs:1224)",
+     "walks contract/profiles/** (walker of contract/profiles): contract/profiles/fluent-bit/system-teardown-selection.json (crates/qcore-verification/src/monkey_wait_projection.rs:760)",
+     "walks contract/profiles/** (walker of contract/profiles): contract/profiles/fluent-bit/system-teardown-selection.json (crates/qcore-verification/tests/unit/cycle18_callback_obligations.rs:34)"
+    ],
+    "qcore-verification::test::call_use_dependents": [
+     "walks contract/profiles/fluent-bit/** (walker of contract/profiles/fluent-bit): contract/profiles/fluent-bit/system-teardown-selection.json (crates/qcore-verification/tests/fixtures/call_use_source.rs:78)"
+    ],
+    "qcore-verification::test::call_use_source": [
+     "walks contract/profiles/fluent-bit/** (walker of contract/profiles/fluent-bit): contract/profiles/fluent-bit/system-teardown-selection.json (crates/qcore-verification/tests/fixtures/call_use_source.rs:78)"
+    ],
+    "qcore-verification::test::callback_task_handoff": [
+     "walks contract/profiles/** (walker of contract/profiles): contract/profiles/fluent-bit/system-teardown-selection.json (crates/qcore-verification/tests/callback_task_handoff.rs:46)"
+    ],
+    "qcore-verification::test::cleanup_replay_mutations": [
+     "walks contract/profiles/fluent-bit/** (walker of contract/profiles/fluent-bit): contract/profiles/fluent-bit/system-teardown-selection.json (crates/qcore-verification/tests/fixtures/cleanup_replay_source.rs:187)"
+    ],
+    "qcore-verification::test::cleanup_replay_source": [
+     "walks contract/profiles/fluent-bit/** (walker of contract/profiles/fluent-bit): contract/profiles/fluent-bit/system-teardown-selection.json (crates/qcore-verification/tests/fixtures/cleanup_replay_source.rs:187)"
+    ],
+    "qcore-verification::test::composition_bounds": [
+     "reads crates/** (walker of crates), which lists contract/profiles/fluent-bit/system-teardown-selection.json: contract/profiles/fluent-bit/system-teardown-selection.json (crates/qcore-verification/tests/composition_bounds.rs:302)",
+     "walks crates/** (walker of crates): crates/qcore-audit/tests/link_standing_elements_released.rs (crates/qcore-verification/tests/composition_bounds.rs:302)",
+     "walks crates/** (walker of crates): crates/qcore-c-gateway/tests/cross_unit_elements_released.rs (crates/qcore-verification/tests/composition_bounds.rs:302)",
+     "walks crates/** (walker of crates): crates/quirin-audit-plugin-measure/src/baseline.rs (crates/qcore-verification/tests/composition_bounds.rs:302)",
+     "walks crates/** (walker of crates): crates/quirin-audit-plugin-measure/src/inputs.rs (crates/qcore-verification/tests/composition_bounds.rs:302)",
+     "walks crates/** (walker of crates): crates/quirin-audit-plugin-measure/src/lib.rs (crates/qcore-verification/tests/composition_bounds.rs:302)",
+     "walks crates/** (walker of crates): crates/quirin-audit-plugin-measure/src/link.rs (crates/qcore-verification/tests/composition_bounds.rs:302)",
+     "walks crates/** (walker of crates): crates/quirin-audit-plugin-measure/src/sides.rs (crates/qcore-verification/tests/composition_bounds.rs:302)",
+     "walks crates/** (walker of crates): crates/quirin-audit-plugin-measure/tests/link_resolution.rs (crates/qcore-verification/tests/composition_bounds.rs:302)",
+     "walks crates/** (walker of crates): crates/quirin-audit-plugin-measure/tests/units.rs (crates/qcore-verification/tests/composition_bounds.rs:302)"
+    ],
+    "qcore-verification::test::composition_mutations": [
+     "walks contract/profiles/fluent-bit/** (walker of contract/profiles/fluent-bit): contract/profiles/fluent-bit/system-teardown-selection.json (crates/qcore-verification/tests/fixtures/composition_source.rs:93)"
+    ],
+    "qcore-verification::test::composition_source": [
+     "walks contract/profiles/fluent-bit/** (walker of contract/profiles/fluent-bit): contract/profiles/fluent-bit/system-teardown-selection.json (crates/qcore-verification/tests/fixtures/composition_source.rs:93)"
+    ],
+    "qcore-verification::test::counter_source": [
+     "walks contract/profiles/fluent-bit/** (walker of contract/profiles/fluent-bit): contract/profiles/fluent-bit/system-teardown-selection.json (crates/qcore-verification/tests/fixtures/counter_source.rs:37)"
+    ],
+    "qcore-verification::test::emit_cleanup_replay_fixtures": [
+     "walks contract/profiles/fluent-bit/** (walker of contract/profiles/fluent-bit): contract/profiles/fluent-bit/system-teardown-selection.json (crates/qcore-verification/tests/fixtures/cleanup_replay_source.rs:187)"
+    ],
+    "qcore-verification::test::event_payload": [
+     "walks contract/profiles/** (walker of contract/profiles): contract/profiles/fluent-bit/system-teardown-selection.json (crates/qcore-verification/tests/event_payload.rs:70)"
+    ],
+    "qcore-verification::test::file_close_composition_mutations": [
+     "walks contract/profiles/fluent-bit/** (walker of contract/profiles/fluent-bit): contract/profiles/fluent-bit/system-teardown-selection.json (crates/qcore-verification/tests/fixtures/file_close_composition.rs:136)"
+    ],
+    "qcore-verification::test::file_close_composition_source": [
+     "walks contract/profiles/fluent-bit/** (walker of contract/profiles/fluent-bit): contract/profiles/fluent-bit/system-teardown-selection.json (crates/qcore-verification/tests/fixtures/file_close_composition.rs:136)"
+    ],
+    "qcore-verification::test::filesystem_chunk_close_composition_mutations": [
+     "walks contract/profiles/fluent-bit/** (walker of contract/profiles/fluent-bit): contract/profiles/fluent-bit/system-teardown-selection.json (crates/qcore-verification/tests/fixtures/file_close_composition.rs:136)",
+     "walks contract/profiles/fluent-bit/** (walker of contract/profiles/fluent-bit): contract/profiles/fluent-bit/system-teardown-selection.json (crates/qcore-verification/tests/fixtures/memory_close_composition.rs:112)"
+    ],
+    "qcore-verification::test::filesystem_chunk_close_composition_source": [
+     "walks contract/profiles/fluent-bit/** (walker of contract/profiles/fluent-bit): contract/profiles/fluent-bit/system-teardown-selection.json (crates/qcore-verification/tests/fixtures/file_close_composition.rs:136)",
+     "walks contract/profiles/fluent-bit/** (walker of contract/profiles/fluent-bit): contract/profiles/fluent-bit/system-teardown-selection.json (crates/qcore-verification/tests/fixtures/memory_close_composition.rs:112)"
+    ],
+    "qcore-verification::test::frame_source": [
+     "walks contract/profiles/fluent-bit/** (walker of contract/profiles/fluent-bit): contract/profiles/fluent-bit/system-teardown-selection.json (crates/qcore-verification/tests/fixtures/frame_source.rs:57)"
+    ],
+    "qcore-verification::test::frame_source_mutations": [
+     "walks contract/profiles/fluent-bit/** (walker of contract/profiles/fluent-bit): contract/profiles/fluent-bit/system-teardown-selection.json (crates/qcore-verification/tests/fixtures/frame_source.rs:57)"
+    ],
+    "qcore-verification::test::memory_close_composition_mutations": [
+     "walks contract/profiles/fluent-bit/** (walker of contract/profiles/fluent-bit): contract/profiles/fluent-bit/system-teardown-selection.json (crates/qcore-verification/tests/fixtures/memory_close_composition.rs:112)"
+    ],
+    "qcore-verification::test::memory_close_composition_source": [
+     "walks contract/profiles/fluent-bit/** (walker of contract/profiles/fluent-bit): contract/profiles/fluent-bit/system-teardown-selection.json (crates/qcore-verification/tests/fixtures/memory_close_composition.rs:112)"
+    ],
+    "qcore-verification::test::monkey_wait_projection": [
+     "walks contract/profiles/** (walker of contract/profiles): contract/profiles/fluent-bit/system-teardown-selection.json (crates/qcore-verification/tests/monkey_wait_projection.rs:58)"
+    ],
+    "qcore-verification::test::observed_wait_composition": [
+     "walks contract/profiles/** (walker of contract/profiles): contract/profiles/fluent-bit/system-teardown-selection.json (crates/qcore-verification/tests/observed_wait_composition.rs:62)"
+    ],
+    "qcore-verification::test::source_effect": [
+     "walks contract/profiles/fluent-bit/** (walker of contract/profiles/fluent-bit): contract/profiles/fluent-bit/system-teardown-selection.json (crates/qcore-verification/tests/fixtures/boolean_source.rs:20)"
+    ],
+    "qcore-verification::test::source_effect_helper_target": [
+     "walks contract/profiles/fluent-bit/** (walker of contract/profiles/fluent-bit): contract/profiles/fluent-bit/system-teardown-selection.json (crates/qcore-verification/tests/source_effect_helper_target.rs:106)"
+    ],
+    "qcore-verification::test::source_effect_mutations": [
+     "walks contract/profiles/fluent-bit/** (walker of contract/profiles/fluent-bit): contract/profiles/fluent-bit/system-teardown-selection.json (crates/qcore-verification/tests/fixtures/boolean_source.rs:20)"
+    ],
+    "qcore-verification::test::source_effect_obligations": [
+     "walks contract/profiles/fluent-bit/** (walker of contract/profiles/fluent-bit): contract/profiles/fluent-bit/system-teardown-selection.json (crates/qcore-verification/tests/fixtures/boolean_source.rs:20)"
+    ],
+    "qcore-verification::test::teardown_prerequisites": [
+     "walks contract/profiles/fluent-bit/** (walker of contract/profiles/fluent-bit): contract/profiles/fluent-bit/system-teardown-selection.json (crates/qcore-verification/tests/fixtures/frame_source.rs:57)",
+     "walks contract/profiles/fluent-bit/** (walker of contract/profiles/fluent-bit): contract/profiles/fluent-bit/system-teardown-selection.json (crates/qcore-verification/tests/fixtures/teardown_source.rs:73)"
+    ],
+    "qcore-verification::test::teardown_source": [
+     "walks contract/profiles/fluent-bit/** (walker of contract/profiles/fluent-bit): contract/profiles/fluent-bit/system-teardown-selection.json (crates/qcore-verification/tests/fixtures/teardown_source.rs:73)"
+    ],
+    "qcore-verification::test::timeout_teardown": [
+     "walks contract/profiles/** (walker of contract/profiles): contract/profiles/fluent-bit/system-teardown-selection.json (crates/qcore-verification/tests/timeout_teardown.rs:35)"
+    ],
+    "qcore-verification::test::unsupported_close_composition_mutations": [
+     "walks contract/profiles/fluent-bit/** (walker of contract/profiles/fluent-bit): contract/profiles/fluent-bit/system-teardown-selection.json (crates/qcore-verification/tests/fixtures/file_close_composition.rs:136)",
+     "walks contract/profiles/fluent-bit/** (walker of contract/profiles/fluent-bit): contract/profiles/fluent-bit/system-teardown-selection.json (crates/qcore-verification/tests/fixtures/memory_close_composition.rs:112)"
+    ],
+    "qcore-verification::test::unsupported_close_composition_source": [
+     "walks contract/profiles/fluent-bit/** (walker of contract/profiles/fluent-bit): contract/profiles/fluent-bit/system-teardown-selection.json (crates/qcore-verification/tests/fixtures/file_close_composition.rs:136)",
+     "walks contract/profiles/fluent-bit/** (walker of contract/profiles/fluent-bit): contract/profiles/fluent-bit/system-teardown-selection.json (crates/qcore-verification/tests/fixtures/memory_close_composition.rs:112)"
+    ],
+    "qcore-verification::test::wait_failure_paths": [
+     "walks contract/profiles/** (walker of contract/profiles): contract/profiles/fluent-bit/system-teardown-selection.json (crates/qcore-verification/tests/wait_failure_paths.rs:55)"
+    ]
+   }
+  },
+  "mode": "scoped",
+  "full_reasons": [],
+  "rust_packages": [
+   "qcore-audit",
+   "qcore-compiler",
+   "qcorec",
+   "quirin-audit-plugin-measure",
+   "quirin-source-analysis"
+  ],
+  "rust_targets": [
+   "qcore-c-gateway::test::cross_unit_elements_released",
+   "qcore-verification::lib::qcore_verification",
+   "qcore-verification::test::call_use_dependents",
+   "qcore-verification::test::call_use_source",
+   "qcore-verification::test::callback_task_handoff",
+   "qcore-verification::test::cleanup_replay_mutations",
+   "qcore-verification::test::cleanup_replay_source",
+   "qcore-verification::test::composition_bounds",
+   "qcore-verification::test::composition_mutations",
+   "qcore-verification::test::composition_source",
+   "qcore-verification::test::counter_source",
+   "qcore-verification::test::emit_cleanup_replay_fixtures",
+   "qcore-verification::test::event_payload",
+   "qcore-verification::test::file_close_composition_mutations",
+   "qcore-verification::test::file_close_composition_source",
+   "qcore-verification::test::filesystem_chunk_close_composition_mutations",
+   "qcore-verification::test::filesystem_chunk_close_composition_source",
+   "qcore-verification::test::frame_source",
+   "qcore-verification::test::frame_source_mutations",
+   "qcore-verification::test::memory_close_composition_mutations",
+   "qcore-verification::test::memory_close_composition_source",
+   "qcore-verification::test::monkey_wait_projection",
+   "qcore-verification::test::observed_wait_composition",
+   "qcore-verification::test::source_effect",
+   "qcore-verification::test::source_effect_helper_target",
+   "qcore-verification::test::source_effect_mutations",
+   "qcore-verification::test::source_effect_obligations",
+   "qcore-verification::test::teardown_prerequisites",
+   "qcore-verification::test::teardown_source",
+   "qcore-verification::test::timeout_teardown",
+   "qcore-verification::test::unsupported_close_composition_mutations",
+   "qcore-verification::test::unsupported_close_composition_source",
+   "qcore-verification::test::wait_failure_paths"
+  ],
+  "probes": true,
+  "lean": {
+   "mode": "none",
+   "reasons": [],
+   "modules": [],
+   "audits": []
+  },
+  "python_reasons": [],
+  "provider_gate": false,
+  "provider_reasons": [],
+  "provider_lock_check": false,
+  "provider_lock_reasons": [],
+  "provider_members_reached_without_providers_change": [
+   "qcore-provider-conformance"
+  ],
+  "unresolved_includes": [
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:629",
+    "literal": "include_str!(PATH)\").is_err());",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:634",
+    "literal": "include_str!(concat!(\"a\", \"b\"))\"#",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:651",
+    "literal": "include_str!(PATH)\\n\",",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:652",
+    "literal": "include_str!(PATH)\\n\",",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:653",
+    "literal": "include_str!(PATH) */ still include_str!(PATH) */\\n\",",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:653",
+    "literal": "include_str!(PATH) */\\n\",",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:654",
+    "literal": "include_str!(PATH) \\\\\\\" include_str!(PATH)\\\";\\n\",",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:654",
+    "literal": "include_str!(PATH)\\\";\\n\",",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:655",
+    "literal": "include_str!(PATH) \\\" include_str!(PATH)\\\"#;\\n\",",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:655",
+    "literal": "include_str!(PATH)\\\"#;\\n\",",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:656",
+    "literal": "include_str!(PATH)\\\";\\n\",",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:657",
+    "literal": "include_str!(PATH) \\\"# include_str!(PATH)\\\"##;\\n\",",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:657",
+    "literal": "include_str!(PATH)\\\"##;\\n\",",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:677",
+    "literal": "include_str!(PATH);\\n\");",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:682",
+    "literal": "include_str!(\\\"../data/x.qv\\\");\\n\");",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:753",
+    "literal": "include_str!(\\\"../../../providers/p/contracts/embedded.qv\\\");\\n\",",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:757",
+    "literal": "include_str!(\\\"../../../providers/p/contracts/a.qv\\\");\\n\",",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:835",
+    "literal": "include_str!(PATH);\\n\",",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-compiler",
+    "source": "compiler/tests/ct_corpus.rs:8083",
+    "literal": "include_str!(\\\"fixtures/ct/{id}/case.qr\\\")\");",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   }
+  ],
+  "undeclared_directory_literals": [],
+  "stale_walkers": []
+ },
+ "planned_steps": [
+  {
+   "name": "submodules",
+   "argv": [
+    "git",
+    "-C",
+    "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-ab62b2e7e6f873b01",
+    "submodule",
+    "status",
+    "--recursive"
+   ],
+   "slot": null
+  },
+  {
+   "name": "fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "slot": null
+  },
+  {
+   "name": "clippy",
+   "argv": [
+    "cargo",
+    "clippy",
+    "-p",
+    "qcore-audit",
+    "-p",
+    "qcore-compiler",
+    "-p",
+    "qcorec",
+    "-p",
+    "quirin-audit-plugin-measure",
+    "-p",
+    "quirin-source-analysis",
+    "--all-targets",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "slot": null
+  },
+  {
+   "name": "clippy-qcore-c-gateway",
+   "argv": [
+    "cargo",
+    "clippy",
+    "-p",
+    "qcore-c-gateway",
+    "--test",
+    "cross_unit_elements_released",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "slot": null
+  },
+  {
+   "name": "clippy-qcore-verification",
+   "argv": [
+    "cargo",
+    "clippy",
+    "-p",
+    "qcore-verification",
+    "--test",
+    "call_use_dependents",
+    "--test",
+    "call_use_source",
+    "--test",
+    "callback_task_handoff",
+    "--test",
+    "cleanup_replay_mutations",
+    "--test",
+    "cleanup_replay_source",
+    "--test",
+    "composition_bounds",
+    "--test",
+    "composition_mutations",
+    "--test",
+    "composition_source",
+    "--test",
+    "counter_source",
+    "--test",
+    "emit_cleanup_replay_fixtures",
+    "--test",
+    "event_payload",
+    "--test",
+    "file_close_composition_mutations",
+    "--test",
+    "file_close_composition_source",
+    "--test",
+    "filesystem_chunk_close_composition_mutations",
+    "--test",
+    "filesystem_chunk_close_composition_source",
+    "--test",
+    "frame_source",
+    "--test",
+    "frame_source_mutations",
+    "--test",
+    "memory_close_composition_mutations",
+    "--test",
+    "memory_close_composition_source",
+    "--test",
+    "monkey_wait_projection",
+    "--test",
+    "observed_wait_composition",
+    "--test",
+    "source_effect",
+    "--test",
+    "source_effect_helper_target",
+    "--test",
+    "source_effect_mutations",
+    "--test",
+    "source_effect_obligations",
+    "--test",
+    "teardown_prerequisites",
+    "--test",
+    "teardown_source",
+    "--test",
+    "timeout_teardown",
+    "--test",
+    "unsupported_close_composition_mutations",
+    "--test",
+    "unsupported_close_composition_source",
+    "--test",
+    "wait_failure_paths",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "slot": null
+  },
+  {
+   "name": "clippy-qcore-verification-lib",
+   "argv": [
+    "cargo",
+    "clippy",
+    "-p",
+    "qcore-verification",
+    "--lib",
+    "--profile",
+    "test",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "slot": null
+  },
+  {
+   "name": "rust-suite",
+   "argv": [
+    "/usr/bin/python3",
+    "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-ab62b2e7e6f873b01/scripts/run_test_binaries.py",
+    "--packages",
+    "qcore-audit,qcore-compiler,qcorec,quirin-audit-plugin-measure,quirin-source-analysis",
+    "--targets",
+    "qcore-c-gateway::test::cross_unit_elements_released,qcore-verification::lib::qcore_verification,qcore-verification::test::call_use_dependents,qcore-verification::test::call_use_source,qcore-verification::test::callback_task_handoff,qcore-verification::test::cleanup_replay_mutations,qcore-verification::test::cleanup_replay_source,qcore-verification::test::composition_bounds,qcore-verification::test::composition_mutations,qcore-verification::test::composition_source,qcore-verification::test::counter_source,qcore-verification::test::emit_cleanup_replay_fixtures,qcore-verification::test::event_payload,qcore-verification::test::file_close_composition_mutations,qcore-verification::test::file_close_composition_source,qcore-verification::test::filesystem_chunk_close_composition_mutations,qcore-verification::test::filesystem_chunk_close_composition_source,qcore-verification::test::frame_source,qcore-verification::test::frame_source_mutations,qcore-verification::test::memory_close_composition_mutations,qcore-verification::test::memory_close_composition_source,qcore-verification::test::monkey_wait_projection,qcore-verification::test::observed_wait_composition,qcore-verification::test::source_effect,qcore-verification::test::source_effect_helper_target,qcore-verification::test::source_effect_mutations,qcore-verification::test::source_effect_obligations,qcore-verification::test::teardown_prerequisites,qcore-verification::test::teardown_source,qcore-verification::test::timeout_teardown,qcore-verification::test::unsupported_close_composition_mutations,qcore-verification::test::unsupported_close_composition_source,qcore-verification::test::wait_failure_paths",
+    "--log-dir",
+    "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-ab62b2e7e6f873b01/private/gate-scope/20261113T165757Z-2962791/rust-suite"
+   ],
+   "slot": "rust-suite"
+  },
+  {
+   "name": "probe-reevaluation_probe",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-ab62b2e7e6f873b01/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_probe"
+   ],
+   "slot": null
+  },
+  {
+   "name": "probe-reevaluation_followup",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-ab62b2e7e6f873b01/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_followup"
+   ],
+   "slot": null
+  },
+  {
+   "name": "python",
+   "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+   ],
+   "slot": null
+  }
+ ],
+ "slots": true,
+ "landing": false,
+ "card_base": "f47823dd1d84a4b85fb2b2d18e174f5b890827ba",
+ "started": "20261113T165757Z",
+ "ran": true,
+ "steps": [
+  {
+   "name": "submodules",
+   "argv": [
+    "git",
+    "-C",
+    "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-ab62b2e7e6f873b01",
+    "submodule",
+    "status",
+    "--recursive"
+   ],
+   "exit": 0,
+   "seconds": 0.0,
+   "log": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-ab62b2e7e6f873b01/private/gate-scope/20261113T165757Z-2962791/submodules.log",
+   "counts": {
+    "submodules": 1,
+    "not_checked_out_or_moved": []
+   }
+  },
+  {
+   "name": "fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "exit": 0,
+   "seconds": 4.1,
+   "log": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-ab62b2e7e6f873b01/private/gate-scope/20261113T165757Z-2962791/fmt.log",
+   "counts": {}
+  },
+  {
+   "name": "clippy",
+   "argv": [
+    "cargo",
+    "clippy",
+    "-p",
+    "qcore-audit",
+    "-p",
+    "qcore-compiler",
+    "-p",
+    "qcorec",
+    "-p",
+    "quirin-audit-plugin-measure",
+    "-p",
+    "quirin-source-analysis",
+    "--all-targets",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "exit": 0,
+   "seconds": 3.4,
+   "log": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-ab62b2e7e6f873b01/private/gate-scope/20261113T165757Z-2962791/clippy.log",
+   "counts": {}
+  },
+  {
+   "name": "clippy-qcore-c-gateway",
+   "argv": [
+    "cargo",
+    "clippy",
+    "-p",
+    "qcore-c-gateway",
+    "--test",
+    "cross_unit_elements_released",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "exit": 0,
+   "seconds": 0.9,
+   "log": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-ab62b2e7e6f873b01/private/gate-scope/20261113T165757Z-2962791/clippy-qcore-c-gateway.log",
+   "counts": {}
+  },
+  {
+   "name": "clippy-qcore-verification",
+   "argv": [
+    "cargo",
+    "clippy",
+    "-p",
+    "qcore-verification",
+    "--test",
+    "call_use_dependents",
+    "--test",
+    "call_use_source",
+    "--test",
+    "callback_task_handoff",
+    "--test",
+    "cleanup_replay_mutations",
+    "--test",
+    "cleanup_replay_source",
+    "--test",
+    "composition_bounds",
+    "--test",
+    "composition_mutations",
+    "--test",
+    "composition_source",
+    "--test",
+    "counter_source",
+    "--test",
+    "emit_cleanup_replay_fixtures",
+    "--test",
+    "event_payload",
+    "--test",
+    "file_close_composition_mutations",
+    "--test",
+    "file_close_composition_source",
+    "--test",
+    "filesystem_chunk_close_composition_mutations",
+    "--test",
+    "filesystem_chunk_close_composition_source",
+    "--test",
+    "frame_source",
+    "--test",
+    "frame_source_mutations",
+    "--test",
+    "memory_close_composition_mutations",
+    "--test",
+    "memory_close_composition_source",
+    "--test",
+    "monkey_wait_projection",
+    "--test",
+    "observed_wait_composition",
+    "--test",
+    "source_effect",
+    "--test",
+    "source_effect_helper_target",
+    "--test",
+    "source_effect_mutations",
+    "--test",
+    "source_effect_obligations",
+    "--test",
+    "teardown_prerequisites",
+    "--test",
+    "teardown_source",
+    "--test",
+    "timeout_teardown",
+    "--test",
+    "unsupported_close_composition_mutations",
+    "--test",
+    "unsupported_close_composition_source",
+    "--test",
+    "wait_failure_paths",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "exit": 0,
+   "seconds": 0.4,
+   "log": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-ab62b2e7e6f873b01/private/gate-scope/20261113T165757Z-2962791/clippy-qcore-verification.log",
+   "counts": {}
+  },
+  {
+   "name": "clippy-qcore-verification-lib",
+   "argv": [
+    "cargo",
+    "clippy",
+    "-p",
+    "qcore-verification",
+    "--lib",
+    "--profile",
+    "test",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "exit": 0,
+   "seconds": 0.2,
+   "log": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-ab62b2e7e6f873b01/private/gate-scope/20261113T165757Z-2962791/clippy-qcore-verification-lib.log",
+   "counts": {}
+  },
+  {
+   "name": "rust-suite",
+   "argv": [
+    "/usr/bin/python3",
+    "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-ab62b2e7e6f873b01/scripts/gate_slot.py",
+    "rust-suite",
+    "--receipt",
+    "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-ab62b2e7e6f873b01/private/gate-scope/20261113T165757Z-2962791/slots/rust-suite.json",
+    "--",
+    "/usr/bin/python3",
+    "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-ab62b2e7e6f873b01/scripts/run_test_binaries.py",
+    "--packages",
+    "qcore-audit,qcore-compiler,qcorec,quirin-audit-plugin-measure,quirin-source-analysis",
+    "--targets",
+    "qcore-c-gateway::test::cross_unit_elements_released,qcore-verification::lib::qcore_verification,qcore-verification::test::call_use_dependents,qcore-verification::test::call_use_source,qcore-verification::test::callback_task_handoff,qcore-verification::test::cleanup_replay_mutations,qcore-verification::test::cleanup_replay_source,qcore-verification::test::composition_bounds,qcore-verification::test::composition_mutations,qcore-verification::test::composition_source,qcore-verification::test::counter_source,qcore-verification::test::emit_cleanup_replay_fixtures,qcore-verification::test::event_payload,qcore-verification::test::file_close_composition_mutations,qcore-verification::test::file_close_composition_source,qcore-verification::test::filesystem_chunk_close_composition_mutations,qcore-verification::test::filesystem_chunk_close_composition_source,qcore-verification::test::frame_source,qcore-verification::test::frame_source_mutations,qcore-verification::test::memory_close_composition_mutations,qcore-verification::test::memory_close_composition_source,qcore-verification::test::monkey_wait_projection,qcore-verification::test::observed_wait_composition,qcore-verification::test::source_effect,qcore-verification::test::source_effect_helper_target,qcore-verification::test::source_effect_mutations,qcore-verification::test::source_effect_obligations,qcore-verification::test::teardown_prerequisites,qcore-verification::test::teardown_source,qcore-verification::test::timeout_teardown,qcore-verification::test::unsupported_close_composition_mutations,qcore-verification::test::unsupported_close_composition_source,qcore-verification::test::wait_failure_paths",
+    "--log-dir",
+    "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-ab62b2e7e6f873b01/private/gate-scope/20261113T165757Z-2962791/rust-suite"
+   ],
+   "exit": 0,
+   "seconds": 1095.5,
+   "log": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-ab62b2e7e6f873b01/private/gate-scope/20261113T165757Z-2962791/rust-suite.log",
+   "counts": {
+    "units": 251,
+    "passed": 3264,
+    "failed": 0,
+    "ignored": 5,
+    "measured": 0,
+    "filtered": 6,
+    "summaries": 255,
+    "packages": [
+     "qcore-audit",
+     "qcore-compiler",
+     "qcorec",
+     "quirin-audit-plugin-measure",
+     "quirin-source-analysis"
+    ],
+    "targets": [
+     "qcore-c-gateway::test::cross_unit_elements_released",
+     "qcore-verification::lib::qcore_verification",
+     "qcore-verification::test::call_use_dependents",
+     "qcore-verification::test::call_use_source",
+     "qcore-verification::test::callback_task_handoff",
+     "qcore-verification::test::cleanup_replay_mutations",
+     "qcore-verification::test::cleanup_replay_source",
+     "qcore-verification::test::composition_bounds",
+     "qcore-verification::test::composition_mutations",
+     "qcore-verification::test::composition_source",
+     "qcore-verification::test::counter_source",
+     "qcore-verification::test::emit_cleanup_replay_fixtures",
+     "qcore-verification::test::event_payload",
+     "qcore-verification::test::file_close_composition_mutations",
+     "qcore-verification::test::file_close_composition_source",
+     "qcore-verification::test::filesystem_chunk_close_composition_mutations",
+     "qcore-verification::test::filesystem_chunk_close_composition_source",
+     "qcore-verification::test::frame_source",
+     "qcore-verification::test::frame_source_mutations",
+     "qcore-verification::test::memory_close_composition_mutations",
+     "qcore-verification::test::memory_close_composition_source",
+     "qcore-verification::test::monkey_wait_projection",
+     "qcore-verification::test::observed_wait_composition",
+     "qcore-verification::test::source_effect",
+     "qcore-verification::test::source_effect_helper_target",
+     "qcore-verification::test::source_effect_mutations",
+     "qcore-verification::test::source_effect_obligations",
+     "qcore-verification::test::teardown_prerequisites",
+     "qcore-verification::test::teardown_source",
+     "qcore-verification::test::timeout_teardown",
+     "qcore-verification::test::unsupported_close_composition_mutations",
+     "qcore-verification::test::unsupported_close_composition_source",
+     "qcore-verification::test::wait_failure_paths"
+    ],
+    "summary": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-ab62b2e7e6f873b01/private/gate-scope/20261113T165757Z-2962791/rust-suite/summary.json",
+    "ok": true
+   },
+   "slot_receipt": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-ab62b2e7e6f873b01/private/gate-scope/20261113T165757Z-2962791/slots/rust-suite.json"
+  },
+  {
+   "name": "probe-reevaluation_probe",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-ab62b2e7e6f873b01/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_probe"
+   ],
+   "exit": 0,
+   "seconds": 0.2,
+   "log": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-ab62b2e7e6f873b01/private/gate-scope/20261113T165757Z-2962791/probe-reevaluation_probe.log",
+   "counts": {}
+  },
+  {
+   "name": "probe-reevaluation_followup",
+   "argv": [
+    "cargo",
+    "run",
+    "--config",
+    "build.incremental=false",
+    "--config",
+    "build.rustc-wrapper=\"/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-ab62b2e7e6f873b01/scripts/rustc_test_dylib.py\"",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_followup"
+   ],
+   "exit": 0,
+   "seconds": 0.4,
+   "log": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-ab62b2e7e6f873b01/private/gate-scope/20261113T165757Z-2962791/probe-reevaluation_followup.log",
+   "counts": {}
+  },
+  {
+   "name": "python",
+   "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+   ],
+   "exit": 1,
+   "seconds": 235.3,
+   "log": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-ab62b2e7e6f873b01/private/gate-scope/20261113T165757Z-2962791/python.log",
+   "counts": {
+    "tests": 761,
+    "skipped": 0,
+    "ok": false
+   },
+   "env": {
+    "QUIRIN_CARD_GATE_BASE": "f47823dd1d84a4b85fb2b2d18e174f5b890827ba"
+   }
+  }
+ ],
+ "ok": false,
+ "finished": "20261113T172018Z"
+}

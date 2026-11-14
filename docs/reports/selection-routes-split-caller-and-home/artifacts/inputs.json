@@ -1,0 +1,58 @@
+{
+  "schema": "quirin-measure-inputs/1",
+  "description": "SELECTION-ROUTES-SPLIT-CALLER-AND-HOME worktree-private preparation: `quirin-audit prepare clang-build --link` (base binary 95eb1575, built from f47823dd1) with the host's Ubuntu clang 21.1.8 at Fluent Bit 046accf6, which also wrote the rule 40 link-resolution artifact. Two configured routes on it: `system` (the live system selection, unchanged) and `system-teardown` (the system selection plus the cross-unit callers of the released-element drain homes). Each declares the artifact, so a side named by --link-resolution runs it under rule 40; every other side runs the stated eight-home map. Paths are relative to --inputs-base (this card's worktree) and --repository.",
+  "routes": [
+    {
+      "name": "system",
+      "profile": "fluent-bit-system",
+      "kind": "configured-selection",
+      "checkout": "private/prep/system/fluent-bit-clang-source",
+      "compile_database": {
+        "path": "private/prep/system/fluent-bit-clang-production/compile_commands.json",
+        "sha256": "40bc0b350f3e0c36c587a7ffc4fff24abb9b9f7bfdfecc32242125e343f27e3e"
+      },
+      "selection": "contract/profiles/fluent-bit/system-selection.json",
+      "profile_directory": "contract/profiles/fluent-bit",
+      "link_map": {
+        "path": "docs/reports/w48-bu-single-leaf-bodies/link-map.corpus.json",
+        "sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3"
+      },
+      "link_resolution": {
+        "path": "private/prep/system/link-resolution/link-resolution.json",
+        "sha256": "5756d7d8ecec57c92d9c257a8168a2c77ebce0b12e1a849f10e79ee8c335d552"
+      },
+      "clang": "/usr/lib/llvm-21/bin/clang",
+      "tracked": [
+        "contract/profiles/fluent-bit/system-selection.json",
+        "contract/profiles/fluent-bit/profile.json",
+        "contract/profiles/fluent-bit/member-facts-scope.json"
+      ]
+    },
+    {
+      "name": "system-teardown",
+      "profile": "fluent-bit-system-teardown",
+      "kind": "configured-selection",
+      "checkout": "private/prep/system/fluent-bit-clang-source",
+      "compile_database": {
+        "path": "private/prep/system/fluent-bit-clang-production/compile_commands.json",
+        "sha256": "40bc0b350f3e0c36c587a7ffc4fff24abb9b9f7bfdfecc32242125e343f27e3e"
+      },
+      "selection": "contract/profiles/fluent-bit/system-teardown-selection.json",
+      "profile_directory": "contract/profiles/fluent-bit",
+      "link_map": {
+        "path": "docs/reports/w48-bu-single-leaf-bodies/link-map.corpus.json",
+        "sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3"
+      },
+      "link_resolution": {
+        "path": "private/prep/system/link-resolution/link-resolution.json",
+        "sha256": "5756d7d8ecec57c92d9c257a8168a2c77ebce0b12e1a849f10e79ee8c335d552"
+      },
+      "clang": "/usr/lib/llvm-21/bin/clang",
+      "tracked": [
+        "contract/profiles/fluent-bit/system-teardown-selection.json",
+        "contract/profiles/fluent-bit/profile.json",
+        "contract/profiles/fluent-bit/member-facts-scope.json"
+      ]
+    }
+  ]
+}

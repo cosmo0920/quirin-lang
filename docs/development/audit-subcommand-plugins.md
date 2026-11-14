@@ -238,6 +238,7 @@ target/release/quirin-audit --plugin-path target/release --output ../measure/car
 | `--mirror auto\|always\|never` | Re-spell the compile databases into a digest-manifested mirror when they spell a non-canonical path (default `auto`); needed for analyzers built before AUDIT-CANONICAL-PATHS |
 | `--source-date-epoch SECONDS\|none` | `SOURCE_DATE_EPOCH` for every route of every side (default `1767225600`), so Clang expands Monkey's `__DATE__`/`__TIME__` identically and the lifetime-source pre-pass key does not move with the clock; recorded and part of a baseline's inputs |
 | `--legacy-rows` | Read reports without a component sidecar (written before AUDIT-COMPOSITION) by their unit rows |
+| `--link-resolution NAME` | Repeatable: side `NAME` (one that runs) runs every route under the route's rule 40 link-resolution artifact in place of the stated map (below) |
 | `--reuse-contract-only`, `--verify-reuse` | Measure the first comparison's tip with the base side's analyzer, resuming the base side's pinned group checkpoints, when the diff is classified contract-only (below); `--verify-reuse` also measures `<tip>-full` without checkpoints and fails unless the two are byte-identical |
 | `--jobs N`, `--build-jobs N`, `--no-slots`, `--mount-root DIR`, `--build-commit TEXT`, `--baselines DIR` | Audit workers (3, the 7 GiB slot's cap), build jobs (6), run without slots, the fixed path (`/tmp/quirin-measure`), an explicit build commit for identity runs, the baseline root (`<repository>/private/baselines`) |
 
@@ -264,6 +265,29 @@ spells the same working directory. The pinned route digests the process
 working directory into its rows' `hypothesis_context.build_identity` and its
 checkpoint identity (`PINNED-ROWS-BIND-WORKING-DIRECTORY`); `invocation.json`
 records both spellings (`working_directory`, `working_directory_as_run`).
+
+**Link-resolution sides** (card
+[SELECTION-ROUTES-SPLIT-CALLER-AND-HOME](../reports/selection-routes-split-caller-and-home/README.md),
+`--link-resolution NAME`, [`link.rs`](../../crates/quirin-audit-plugin-measure/src/link.rs)).
+A configured route of the inputs manifest may name its rule 40 artifact,
+`"link_resolution": {"path": ..., "sha256": ...}` (relative to the inputs base,
+digest required; a pinned route refuses one; a route without one keeps its
+canonical JSON and digest). A side named by `--link-resolution` runs every route
+with `QCORE_CROSS_UNIT_LINK_RESOLUTION` set to that artifact and without
+`QCORE_CROSS_UNIT_LINK_MAP`; every other side runs the stated map, so two
+sides of one binary compare the stated map with the derived resolution. It is
+fail-closed and never falls back to the map: before anything runs, every route
+must declare an artifact whose file has the declared digest and schema and binds
+the compile database the route reads as spelled (rule 40's condition 1; a
+re-spelled mirror refuses); a side that does not run (`baseline:`, `run:`) is
+refused; after the build, the side's binary must name the variable; after each
+route, the analyzer must have printed that it derived its resolution from that
+artifact's digest and its contract sidecar must record no whole-run refusal, or the route
+fails with exit 102 (`link_resolution_error` in its `invocation.json`). The
+side's `run.json` and the record's `sides` slot carry `link_resolution: true`,
+each route's `invocation.json` the artifact (`link_resolution`) and what the run
+derived (`link_resolution_run`), and `measure publish` refuses such a side: a
+profile's baseline is its route under the stated map.
 
 **Contract-only reuse** (card
 [MEASURE-CONTRACT-ONLY-SIDE-WIRING](../reports/measure-contract-only-side-wiring/README.md),

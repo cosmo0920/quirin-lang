@@ -175,6 +175,16 @@ pub fn publish(side: &Path, output: &Path, only: &[String]) -> Result<Vec<PathBu
             side.join("run.json").display()
         ));
     }
+    // Card SELECTION-ROUTES-SPLIT-CALLER-AND-HOME: a profile's baseline is
+    // its route as defined, under the stated map; a side run under a
+    // link-resolution artifact measures something else.
+    if run["link_resolution"] == json!(true) {
+        return Err(format!(
+            "side {}: it ran under link-resolution artifacts (--link-resolution); a baseline is \
+             never published from it",
+            side.display()
+        ));
+    }
     let revision = run["revision"]
         .as_str()
         .filter(|text| is_full_revision(text))

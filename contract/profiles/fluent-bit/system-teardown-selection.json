@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "name": "fluent-bit-system-teardown",
+  "description": "Card SELECTION-ROUTES-SPLIT-CALLER-AND-HOME: the eight files of the fluent-bit-system selection (system-selection.json, unchanged) plus every Fluent Bit source file that calls one of the released-element drain homes named by LERI-CROSS-UNIT-ELEMENTS-RELEASED (flb_engine_destroy_tasks, flb_storage_input_destroy, flb_output_exit, flb_sched_timer_cleanup, flb_task_retry_clean, flb_sched_destroy) from another file and whose definition census is complete: src/flb_input.c (flb_input_instance_destroy, flb_input_instance_exit), src/flb_input_thread.c and src/flb_output_thread.c (the scheduler drains of the thread loops). src/flb_config.c (flb_config_exit calls flb_sched_destroy) is left out: its census is refused (a conditional group's arms leave different file-scope brace depths, the ground of TAIL-FILE-DEFINITION-CENSUS-INCOMPLETE), which would refuse the route's whole import phase (rule 4c). So rule 40 can resolve each drain's cross-unit callers to its home in one route. Every distinct compilation configuration is kept, as in the system selection. Measured under a rule 40 link-resolution artifact; this is no live evaluation profile, and it changes neither the system selection nor the profile's audit.json 185-unit selection.",
+  "groups": [
+    {
+      "library": "fluent_bit",
+      "label": "fluent-bit-system-teardown",
+      "files": [
+        "plugins/in_storage_backlog/sb.c",
+        "src/flb_input_chunk.c",
+        "src/flb_storage.c",
+        "src/flb_task.c",
+        "src/flb_engine.c",
+        "src/flb_engine_dispatch.c",
+        "src/flb_scheduler.c",
+        "src/flb_output.c",
+        "src/flb_input.c",
+        "src/flb_input_thread.c",
+        "src/flb_output_thread.c"
+      ]
+    }
+  ]
+}

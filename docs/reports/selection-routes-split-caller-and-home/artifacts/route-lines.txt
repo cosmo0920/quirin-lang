@@ -1,0 +1,156 @@
+== teardown-map-1
+cross-unit import phase refused: incomplete definition census
+current revision: 12 source file(s), 23 configuration(s): 0 Safe / 0 Pending / 4 provisional Unsafe / 19 Unknown / 0 data-only / 0 gateway failures
+progress: cross-unit home export: end, 23/23 unit(s) in 0.8s: 0 home export(s)
+exit 0
+== teardown-map-2
+current revision: 11 source file(s), 21 configuration(s): 0 Safe / 0 Pending / 2 provisional Unsafe / 19 Unknown / 0 data-only / 0 gateway failures
+progress: cross-unit home export: end, 21/21 unit(s) in 1.2s: 0 home export(s)
+exit 0
+== system-resolution-1
+cross-unit link resolution derived (rule 40) from /home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-ab62b2e7e6f873b01/private/prep/system/link-resolution/link-resolution.json (sha256 5756d7d8ecec57c92d9c257a8168a2c77ebce0b12e1a849f10e79ee8c335d552): 105 home(s); refused {"home configuration is not a configuration the route analyses":4955,"home definition does not have default visibility":579,"home is not defined in the executable":678,"the artifact refuses the home's link facts":17}
+    cross-unit import `flb_output_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_chunk_route_plugin_matches` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_chunk_down` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_chunk_set_up_down` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_sched_ctx_init` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_task_from_fs_storage` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_sched_ctx_init` refused: call type unavailable: caller: call type unavailable: `flb_sched_ctx_init` has no prototype (FunctionNoProtoType)
+    cross-unit import `flb_input_chunk_down` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_chunk_release_lock` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+current revision: 8 source file(s), 15 configuration(s): 0 Safe / 0 Pending / 2 provisional Unsafe / 13 Unknown / 0 data-only / 0 gateway failures
+progress: cross-unit home export: end, 8/15 unit(s) in 58.1s: 14 home export(s)
+progress: cross-unit import: end, 15/15 unit(s) in 99.3s
+exit 0
+== teardown-resolution-1
+cross-unit link resolution derived (rule 40) from /home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-ab62b2e7e6f873b01/private/prep/system/link-resolution/link-resolution.json (sha256 5756d7d8ecec57c92d9c257a8168a2c77ebce0b12e1a849f10e79ee8c335d552): 162 home(s); refused {"home configuration is not a configuration the route analyses":4898,"home definition does not have default visibility":579,"home is not defined in the executable":678,"the artifact refuses the home's link facts":17}
+    cross-unit import `flb_input_coro_id_get` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_coro_id_get` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_chunk_route_plugin_matches` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_chunk_down` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_chunk_set_up_down` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_coro_id_get` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_coro_id_get` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_sched_ctx_init` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_task_from_fs_storage` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_sched_ctx_init` refused: call type unavailable: caller: call type unavailable: `flb_sched_ctx_init` has no prototype (FunctionNoProtoType)
+    cross-unit import `flb_input_chunk_down` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_chunk_release_lock` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_coro_id_get` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_coro_id_get` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_coro_id_get` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_engine_destroy_tasks` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_thread_collectors_signal_start` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_coro_id_get` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_coro_id_get` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+current revision: 11 source file(s), 21 configuration(s): 0 Safe / 0 Pending / 2 provisional Unsafe / 19 Unknown / 0 data-only / 0 gateway failures
+progress: cross-unit home export: end, 11/21 unit(s) in 110.3s: 19 home export(s)
+progress: cross-unit import: end, 21/21 unit(s) in 269.3s
+exit 0
+== teardown-resolution-off43-1
+cross-unit link resolution derived (rule 40) from /home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-ab62b2e7e6f873b01/private/prep/system/link-resolution/link-resolution.json (sha256 5756d7d8ecec57c92d9c257a8168a2c77ebce0b12e1a849f10e79ee8c335d552): 162 home(s); refused {"home configuration is not a configuration the route analyses":4898,"home definition does not have default visibility":579,"home is not defined in the executable":678,"the artifact refuses the home's link facts":17}
+    cross-unit import `flb_input_coro_id_get` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_coro_id_get` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_chunk_route_plugin_matches` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_chunk_down` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_chunk_set_up_down` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_coro_id_get` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_coro_id_get` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_sched_ctx_init` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_task_from_fs_storage` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_sched_ctx_init` refused: call type unavailable: caller: call type unavailable: `flb_sched_ctx_init` has no prototype (FunctionNoProtoType)
+    cross-unit import `flb_input_chunk_down` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_chunk_release_lock` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_coro_id_get` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_coro_id_get` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_coro_id_get` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_thread_collectors_signal_start` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_coro_id_get` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_coro_id_get` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_input_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_get_cmt_instance` refused: caller configuration is not a linked, reproduced configuration of the executable
+    cross-unit import `flb_output_log_check` refused: caller configuration is not a linked, reproduced configuration of the executable
+current revision: 11 source file(s), 21 configuration(s): 0 Safe / 0 Pending / 2 provisional Unsafe / 19 Unknown / 0 data-only / 0 gateway failures
+progress: cross-unit home export: end, 11/21 unit(s) in 67.6s: 18 home export(s)
+progress: cross-unit import: end, 21/21 unit(s) in 164.4s
+exit 0
