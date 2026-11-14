@@ -47,6 +47,26 @@
 //!   not model, a pointer store into an unstated path inside a followed
 //!   helper, or the budget.
 //!
+//! Card **SCHEDULER-DESTROY-MEMBER-STATES** (gateway rule 50): two
+//! additions, both bounded and fail-closed.
+//!
+//! * A store into a path at or below a **link member** the declaration's own
+//!   unlink names (`resource_unpublished(P, LINK)`) inside a followed helper
+//!   (`mk_list_del(&mth->_head)` clearing `_head.prev` / `_head.next`) is
+//!   that clause's, not an unstated store: it no longer ends the reading.
+//! * A **taken** slot per stated path and a **copy** slot per qualified local
+//!   ([`TAKEN`], [`UNTAKEN`], [`UNSET`]), after the value slots of the
+//!   [`State`]: in the declaration's own frame, a direct call to a `static`
+//!   function the unit defines that has a [`Helper`] declaration in force and
+//!   receives the **value** of a path stated `#stale` (`P->M`, or a local
+//!   whose one write in the body is `v = P->M`, read while `M` is untouched)
+//!   at the formal its declaration releases is **composed**: the object `M`
+//!   held is taken there, once. Any other call, store or return that may
+//!   carry that value (in any frame), a second take, a take on only some
+//!   paths, a helper not in force, a member invocation whose run set is not
+//!   closed and empty, or a pointee that is not the helper's record leaves
+//!   the take a declared assumption ([`taken_exits`]).
+//!
 //! [`validated_exits`] then checks every exit where a state's guard may hold
 //! (an exit returning exactly the guard's enumerator is exempt from a `!=`
 //! guard): `#released` / `#moved` read null ([`NULL`] or [`ORIG_NULL`]), a
@@ -69,6 +89,15 @@ pub const ORIG_NULL: u8 = 2;
 pub const NULL: u8 = 4;
 /// Anything: a store of another value, a call that is not followed.
 pub const OTHER: u8 = 8;
+
+/// Card SCHEDULER-DESTROY-MEMBER-STATES (rule 50): a taken slot's "some
+/// path reaching here has not taken the object" bit.
+pub const UNTAKEN: u8 = 1;
+/// A taken slot's "some path reaching here has taken the object" bit.
+pub const TAKEN: u8 = 2;
+/// A copy slot's "some path reaching here has not stored the member's value
+/// into the local" bit (zero: every path has, from an untouched member).
+pub const UNSET: u8 = 1;
 
 /// Frames the reading follows at most (the declaration's body is the first).
 pub const MAX_DEPTH: usize = 8;
@@ -97,6 +126,26 @@ type View = Option<String>;
 
 /// One frame's bindings: parameter declaration id to the view it holds.
 type Bindings = BTreeMap<String, View>;
+
+/// Card SCHEDULER-DESTROY-MEMBER-STATES (rule 50): a unit helper's
+/// declaration as the reading composes it at a direct call that hands it a
+/// stated member's value.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Helper {
+    /// The formal its member-path states and member invocations bind.
+    pub parameter: usize,
+    /// The record its states are stated on (`struct TAG`).
+    pub tag: String,
+    /// Whether it states `resource_released` of that formal.
+    pub releases: bool,
+    /// `Ok` when each member invocation it states reads a closed empty set
+    /// over the run's member facts (it invokes nothing); why not otherwise.
+    pub invokes_nothing: Result<(), String>,
+    /// Its member-path states, `(path, value spelling)`.
+    pub states: Vec<(String, String)>,
+    /// The members it invokes.
+    pub invocations: Vec<String>,
+}
 
 fn join_into(into: &mut State, from: &State) -> bool {
     let mut grew = false;
@@ -204,6 +253,13 @@ fn contains_transfer(node: &Value) -> bool {
         kind(node),
         "ReturnStmt" | "GotoStmt" | "IndirectGotoStmt" | "LabelStmt" | "BreakStmt" | "ContinueStmt"
     ) || children(node).iter().any(contains_transfer)
+}
+
+fn collect<'v>(node: &'v Value, out: &mut Vec<&'v Value>) {
+    out.push(node);
+    for child in children(node) {
+        collect(child, out);
+    }
 }
 
 const PENDING: usize = usize::MAX;
@@ -440,6 +496,24 @@ pub struct Reader<'a, 'c> {
     pub not_followed: BTreeSet<String>,
     /// Why the reading failed.
     pub failure: Option<String>,
+    /// Card SCHEDULER-DESTROY-MEMBER-STATES (rule 50): the link members the
+    /// declaration's own unlink names; a store at or below one inside a
+    /// followed helper is that clause's.
+    linked: Vec<String>,
+    /// The unit's helper declarations (rule 50), when the reading composes
+    /// them.
+    helper: Option<&'c dyn Fn(&str) -> Option<Helper>>,
+    /// Whether each stated path is stated `#stale` (a take is read there).
+    stale: Vec<bool>,
+    /// Qualified locals of the declaration's own frame: declaration id to
+    /// (stated path index, copy slot).
+    copies: BTreeMap<String, (usize, usize)>,
+    /// The width of a state: value slots, taken slots, copy slots.
+    width: usize,
+    /// What the composed helpers state at the taken objects (rule 50).
+    pub composed: BTreeSet<String>,
+    /// Why a take was not composed or was spoilt (rule 50).
+    pub take_failures: BTreeSet<String>,
 }
 
 impl<'a, 'c> Reader<'a, 'c> {
@@ -455,7 +529,55 @@ impl<'a, 'c> Reader<'a, 'c> {
             stored: BTreeSet::new(),
             not_followed: BTreeSet::new(),
             failure: None,
+            linked: Vec::new(),
+            helper: None,
+            stale: Vec::new(),
+            copies: BTreeMap::new(),
+            width: 0,
+            composed: BTreeSet::new(),
+            take_failures: BTreeSet::new(),
         }
+        .sized()
+    }
+
+    fn sized(mut self) -> Self {
+        let paths = self.paths.len();
+        self.stale.resize(paths, false);
+        self.width = 2 * paths + self.copies.len();
+        self
+    }
+
+    /// Card SCHEDULER-DESTROY-MEMBER-STATES (rule 50): the link members the
+    /// declaration's own unlink names.
+    #[must_use]
+    pub fn with_link_members(mut self, linked: Vec<String>) -> Self {
+        self.linked = linked;
+        self
+    }
+
+    /// Card SCHEDULER-DESTROY-MEMBER-STATES (rule 50): compose the unit's
+    /// helper declarations at the stated `#stale` paths (`stale`, one flag
+    /// per stated path).
+    #[must_use]
+    pub fn with_helpers(
+        mut self,
+        helper: &'c dyn Fn(&str) -> Option<Helper>,
+        stale: Vec<bool>,
+    ) -> Self {
+        self.helper = Some(helper);
+        self.stale = stale;
+        self.sized()
+    }
+
+    /// The entry state: every stated path untouched and not taken. The
+    /// qualified locals' copy slots are added when the declaration's own
+    /// frame is read ([`Self::read`]).
+    #[must_use]
+    pub fn entry(&self) -> State {
+        let paths = self.paths.len();
+        let mut state = vec![ORIG; paths];
+        state.extend(std::iter::repeat_n(UNTAKEN, paths));
+        state
     }
 
     fn fail<T>(&mut self, why: String) -> Option<T> {
@@ -497,6 +619,15 @@ impl<'a, 'c> Reader<'a, 'c> {
             Ok(graph) => graph,
             Err(why) => return self.fail(format!("{name}: {why}")),
         };
+        let mut entry = entry;
+        if self.stack.is_empty() {
+            if self.helper.is_some() {
+                self.find_copies(body, &bindings);
+            }
+            entry.resize(2 * self.paths.len(), UNTAKEN);
+            entry.extend(std::iter::repeat_n(UNSET, self.copies.len()));
+            self.width = entry.len();
+        }
         self.stack.push(name.to_owned());
         let outcomes = self.fixpoint(&graph, start, entry, &bindings);
         self.stack.pop();
@@ -588,13 +719,16 @@ impl<'a, 'c> Reader<'a, 'c> {
             return Some(vec![(Returned::Unknown, state)]);
         };
         let stripped = strip(expression);
-        if kind(stripped) == "CallExpr"
-            && !children(stripped).iter().any(eventful)
-            && let Some(outcomes) = self.followed(stripped, &state, bindings)
-        {
-            return Some(outcomes?.into_iter().collect());
+        if kind(stripped) == "CallExpr" && !children(stripped).iter().any(eventful) {
+            // Rule 50: the call's member values are read before it is
+            // followed (a followed call bypasses `call`).
+            let composed = self.compose(stripped, state.clone(), false, bindings);
+            if let Some(outcomes) = self.followed(stripped, &composed, bindings) {
+                return Some(outcomes?.into_iter().collect());
+            }
         }
         let after = self.walk(expression, state, false, bindings)?;
+        let after = self.escape(expression, after, "a `return`", bindings);
         let returned = if kind(stripped) == "DeclRefExpr"
             && stripped["referencedDecl"]["kind"].as_str() == Some("EnumConstantDecl")
         {
@@ -827,6 +961,11 @@ impl<'a, 'c> Reader<'a, 'c> {
                     ));
                 }
                 state = self.walk(init, state, false, bindings)?;
+                let copy = declaration["id"]
+                    .as_str()
+                    .and_then(|id| self.copies.get(id).copied())
+                    .filter(|_| self.stack.len() == 1);
+                state = self.write_copy_or_escape(copy, init, state, false, bindings);
             }
         }
         Some(state)
@@ -858,7 +997,7 @@ impl<'a, 'c> Reader<'a, 'c> {
                 let mut after = if maybe {
                     before
                 } else {
-                    vec![0; self.paths.len()]
+                    vec![0; self.width]
                 };
                 for exit in outcomes.values() {
                     join_into(&mut after, exit);
@@ -978,6 +1117,14 @@ impl<'a, 'c> Reader<'a, 'c> {
                 stripped["referencedDecl"]["name"].as_str().unwrap_or("?")
             ));
         }
+        if let Some(value) = value {
+            let copy = (kind(stripped) == "DeclRefExpr")
+                .then(|| stripped["referencedDecl"]["id"].as_str())
+                .flatten()
+                .and_then(|id| self.copies.get(id).copied())
+                .filter(|_| self.stack.len() == 1);
+            state = self.write_copy_or_escape(copy, value, state, maybe, bindings);
+        }
         let null = value.is_some_and(null_constant);
         let mut touched = false;
         let written = if let Some(path) = self.path_of(stripped, bindings) {
@@ -1007,6 +1154,10 @@ impl<'a, 'c> Reader<'a, 'c> {
             && !touched
             && is_pointer(target)
             && self.stack.len() > 1
+            && !self
+                .linked
+                .iter()
+                .any(|link| path == *link || path.starts_with(&format!("{link}.")))
         {
             return self.fail(format!(
                 "`{}` stores a pointer into the unstated path `{path}`",
@@ -1081,6 +1232,7 @@ impl<'a, 'c> Reader<'a, 'c> {
         maybe: bool,
         bindings: &Bindings,
     ) -> Option<State> {
+        let state = self.compose(call, state, maybe, bindings);
         let arguments = self.argument_views(call, bindings);
         if arguments.is_empty() {
             return Some(state);
@@ -1089,7 +1241,7 @@ impl<'a, 'c> Reader<'a, 'c> {
             let mut after = if maybe {
                 state
             } else {
-                vec![0; self.paths.len()]
+                vec![0; self.width]
             };
             for exit in outcomes?.values() {
                 join_into(&mut after, exit);
@@ -1112,6 +1264,279 @@ impl<'a, 'c> Reader<'a, 'c> {
             }
         }
         Some(state)
+    }
+
+    // Card SCHEDULER-DESTROY-MEMBER-STATES (rule 50): takes through a
+    // composed helper.
+
+    /// The qualified locals of the declaration's own body: a local
+    /// (non-`static`) pointer variable whose only write is one assignment or
+    /// initializer of the value of a path stated `#stale`, whose address is
+    /// never taken and which is never updated.
+    fn find_copies(&mut self, body: &Value, bindings: &Bindings) {
+        let mut nodes = Vec::new();
+        collect(body, &mut nodes);
+        let mut locals = BTreeSet::new();
+        let mut writes: BTreeMap<String, Vec<&Value>> = BTreeMap::new();
+        let mut spoilt = BTreeSet::new();
+        for node in &nodes {
+            let target = |node: &Value| {
+                children(node)
+                    .first()
+                    .map(strip)
+                    .filter(|target| kind(target) == "DeclRefExpr")
+                    .and_then(|target| target["referencedDecl"]["id"].as_str())
+                    .map(str::to_owned)
+            };
+            match kind(node) {
+                "VarDecl" => {
+                    if let Some(id) = node["id"].as_str()
+                        && node["storageClass"].as_str().is_none()
+                    {
+                        locals.insert(id.to_owned());
+                        if let Some(init) = children(node).first() {
+                            writes.entry(id.to_owned()).or_default().push(init);
+                        }
+                    }
+                }
+                "BinaryOperator" if node["opcode"].as_str() == Some("=") => {
+                    if let (Some(id), Some(value)) = (target(node), children(node).get(1)) {
+                        writes.entry(id).or_default().push(value);
+                    }
+                }
+                "CompoundAssignOperator" => spoilt.extend(target(node)),
+                "UnaryOperator" if matches!(node["opcode"].as_str(), Some("++" | "--" | "&")) => {
+                    spoilt.extend(target(node));
+                }
+                _ => {}
+            }
+        }
+        for (id, values) in writes {
+            if !locals.contains(&id) || spoilt.contains(&id) {
+                continue;
+            }
+            let [value] = values.as_slice() else {
+                continue;
+            };
+            let Some(index) = self
+                .path_of(value, bindings)
+                .and_then(|path| self.paths.iter().position(|stated| *stated == path))
+                .filter(|&index| self.stale[index])
+            else {
+                continue;
+            };
+            let slot = 2 * self.paths.len() + self.copies.len();
+            self.copies.insert(id, (index, slot));
+        }
+    }
+
+    /// The stated `#stale` paths whose value `node` may carry: the path's
+    /// value itself, a qualified local, and any expression built from them
+    /// other than through a member access, a dereference or a call (a call
+    /// that receives the value is read at the call).
+    fn carried(&self, node: &Value, bindings: &Bindings) -> BTreeSet<usize> {
+        let node = strip(node);
+        let mut out = BTreeSet::new();
+        if let Some(index) = self
+            .path_of(node, bindings)
+            .and_then(|path| self.paths.iter().position(|stated| *stated == path))
+            .filter(|&index| self.stale.get(index).copied().unwrap_or(false))
+        {
+            out.insert(index);
+            return out;
+        }
+        if kind(node) == "DeclRefExpr" {
+            if let Some((index, _)) = node["referencedDecl"]["id"]
+                .as_str()
+                .and_then(|id| self.copies.get(id))
+            {
+                out.insert(*index);
+            }
+            return out;
+        }
+        match kind(node) {
+            "MemberExpr" | "ArraySubscriptExpr" | "CallExpr" | "UnaryExprOrTypeTraitExpr" => {}
+            "UnaryOperator" if node["opcode"].as_str() == Some("*") => {}
+            _ => {
+                for child in children(node) {
+                    out.extend(self.carried(child, bindings));
+                }
+            }
+        }
+        out
+    }
+
+    /// Spoil the take at every stated path `node` may carry the value of:
+    /// the value reaches something the reading does not compose.
+    fn escape(&mut self, node: &Value, mut state: State, what: &str, bindings: &Bindings) -> State {
+        if self.helper.is_none() {
+            return state;
+        }
+        let frame = self.stack.last().cloned().unwrap_or_default();
+        for index in self.carried(node, bindings) {
+            state[self.paths.len() + index] |= UNTAKEN | TAKEN;
+            self.take_failures.insert(format!(
+                "{what} in `{frame}` carries the value of `{}`",
+                self.paths[index]
+            ));
+        }
+        state
+    }
+
+    /// A store of `value`: into the qualified local `copy` (its one write),
+    /// set from an untouched member; anywhere else, an escape of what it
+    /// carries.
+    fn write_copy_or_escape(
+        &mut self,
+        copy: Option<(usize, usize)>,
+        value: &Value,
+        mut state: State,
+        maybe: bool,
+        bindings: &Bindings,
+    ) -> State {
+        if let Some((index, slot)) = copy {
+            let from_untouched = self.path_of(value, bindings).as_deref()
+                == Some(self.paths[index].as_str())
+                && state[index] & !(ORIG | ORIG_NULL) == 0;
+            let set = if from_untouched { 0 } else { UNSET };
+            state[slot] = if maybe { state[slot] | set } else { set };
+            return state;
+        }
+        self.escape(value, state, "a store", bindings)
+    }
+
+    /// The stated `#stale` path whose untouched value `argument` holds, read
+    /// directly (`P->M`) or through a qualified local every path set.
+    fn member_value(&self, argument: &Value, state: &State, bindings: &Bindings) -> Option<usize> {
+        let argument = strip(argument);
+        if kind(argument) == "DeclRefExpr" {
+            let (index, slot) = *self.copies.get(argument["referencedDecl"]["id"].as_str()?)?;
+            return (state[slot] == 0).then_some(index);
+        }
+        let index = self
+            .path_of(argument, bindings)
+            .and_then(|path| self.paths.iter().position(|stated| *stated == path))?;
+        (self.stale[index] && state[index] & !(ORIG | ORIG_NULL) == 0).then_some(index)
+    }
+
+    /// Rule 50 at a call: a composed take, or an escape of every carried
+    /// value.
+    fn compose(&mut self, call: &Value, mut state: State, maybe: bool, bindings: &Bindings) -> State {
+        if self.helper.is_none() {
+            return state;
+        }
+        let arguments = children(call).iter().skip(1).collect::<Vec<_>>();
+        let carried = arguments
+            .iter()
+            .enumerate()
+            .filter(|(_, argument)| !self.carried(argument, bindings).is_empty())
+            .map(|(position, _)| position)
+            .collect::<Vec<_>>();
+        if carried.is_empty() {
+            return state;
+        }
+        let name = Self::direct_callee(call).map(str::to_owned);
+        let label = name
+            .as_deref()
+            .map_or_else(|| "an indirect call".to_owned(), |name| format!("`{name}`"));
+        let helper = self.admitted_helper(name.as_deref());
+        for position in carried {
+            let argument = arguments[position];
+            let take = match (&helper, self.member_value(argument, &state, bindings)) {
+                (Ok(helper), Some(index)) => self
+                    .admits(helper, position, argument)
+                    .map(|()| (helper.clone(), index)),
+                (Ok(_), None) => Err(
+                    "the argument is not the untouched value of a stated `#stale` path or of                      its one copy"
+                        .to_owned(),
+                ),
+                (Err(why), _) => Err(why.clone()),
+            };
+            match take {
+                Ok((helper, index)) => {
+                    let slot = self.paths.len() + index;
+                    if state[slot] & TAKEN != 0 {
+                        state[slot] |= UNTAKEN | TAKEN;
+                        self.take_failures.insert(format!(
+                            "{label} may take `{}`'s object a second time",
+                            self.paths[index]
+                        ));
+                        continue;
+                    }
+                    state[slot] = if maybe { state[slot] | TAKEN } else { TAKEN };
+                    let path = &self.paths[index];
+                    self.composed
+                        .insert(format!("`{path}`'s object is released by {label}"));
+                    for (inner, spelling) in &helper.states {
+                        self.composed
+                            .insert(format!("`{path}->{inner}` reads {spelling} ({label})"));
+                    }
+                    for member in &helper.invocations {
+                        self.composed.insert(format!(
+                            "`{path}->{member}` invokes nothing: its run set is closed and                              empty ({label})"
+                        ));
+                    }
+                }
+                Err(why) => {
+                    let frame = self.stack.last().cloned().unwrap_or_default();
+                    for index in self.carried(argument, bindings) {
+                        state[self.paths.len() + index] |= UNTAKEN | TAKEN;
+                        self.take_failures.insert(format!(
+                            "{label} in `{frame}` receives the value of `{}` and is not composed:                              {why}",
+                            self.paths[index]
+                        ));
+                    }
+                }
+            }
+        }
+        state
+    }
+
+    /// The call's helper declaration, when its callee may be composed at
+    /// all: the declaration's own frame, a `static` function the unit
+    /// defines, a helper declaration in force.
+    fn admitted_helper(&self, name: Option<&str>) -> Result<Helper, String> {
+        let name = name.ok_or("the callee is not named")?;
+        if self.stack.len() != 1 {
+            return Err("only a call in the declaration's own frame is composed".into());
+        }
+        let function = (self.callee)(name).ok_or("the unit defines no unique body for it")?;
+        if function["storageClass"].as_str() != Some("static") {
+            return Err("it is not a `static` function of the unit".into());
+        }
+        if self.stack.iter().any(|frame| frame == name) {
+            return Err("it is being read".into());
+        }
+        let helper = self.helper.ok_or("no helper is composed")?;
+        helper(name).ok_or_else(|| "it has no helper declaration in force in this unit".into())
+    }
+
+    /// Whether `helper`'s declaration takes the object at `position`.
+    fn admits(&self, helper: &Helper, position: usize, argument: &Value) -> Result<(), String> {
+        if position != helper.parameter {
+            return Err("its declaration states nothing at that position".into());
+        }
+        if !helper.releases {
+            return Err("its declaration does not release that formal".into());
+        }
+        helper.invokes_nothing.clone()?;
+        let spelled = argument["type"]["desugaredQualType"]
+            .as_str()
+            .or_else(|| argument["type"]["qualType"].as_str())
+            .unwrap_or("");
+        let record = spelled
+            .trim_end()
+            .strip_suffix('*')
+            .map(str::trim_end)
+            .and_then(|pointee| pointee.strip_prefix("struct "))
+            .map(str::trim);
+        if record != Some(helper.tag.as_str()) {
+            return Err(format!(
+                "the argument's pointee `{spelled}` is not `struct {}`",
+                helper.tag
+            ));
+        }
+        Ok(())
     }
 
     /// The states on the true and false branch of `condition`.
@@ -1243,6 +1668,56 @@ pub fn validated_exits(
         }
     }
     Ok(())
+}
+
+/// What rule 50 establishes for a declaration's `#stale` states.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum Taken {
+    /// No non-set `#stale` state is stated.
+    NotStated,
+    /// Every exit where a `#stale` state's guard may hold took the path's
+    /// object exactly once, through a composed helper.
+    Established,
+    /// A declared assumption, with why.
+    Assumption(String),
+}
+
+/// Card SCHEDULER-DESTROY-MEMBER-STATES (rule 50): whether every exit where
+/// a non-set `#stale` state's guard may hold reads its taken slot exactly
+/// [`TAKEN`] (every path took the object, none took it twice or let its value
+/// escape).
+#[must_use]
+pub fn taken_exits(states: &[&MemberPathState], paths: &[String], outcomes: &Outcomes) -> Taken {
+    let mut stated = false;
+    for state in states {
+        if state.state.fate != Fate::Stale || state.state.maybe {
+            continue;
+        }
+        stated = true;
+        let Some(index) = paths.iter().position(|path| *path == state.member.path) else {
+            return Taken::Assumption(format!("`{}` is not read", state.member.path));
+        };
+        if outcomes.is_empty() {
+            return Taken::Assumption("the body has no exit".into());
+        }
+        for (returned, exit) in outcomes {
+            if guard_may_hold(state, returned) && exit.get(paths.len() + index) != Some(&TAKEN) {
+                return Taken::Assumption(format!(
+                    "`{}`'s object is not taken exactly once by a composed helper on every path                      to an exit returning {}",
+                    state.member.path,
+                    match returned {
+                        Returned::Enumerator(name) => name.as_str(),
+                        Returned::Unknown => "a value the reading does not name",
+                    }
+                ));
+            }
+        }
+    }
+    if stated {
+        Taken::Established
+    } else {
+        Taken::NotStated
+    }
 }
 
 fn spell(value: u8) -> String {

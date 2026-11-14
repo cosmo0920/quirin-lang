@@ -203,9 +203,11 @@ impl ClauseKind {
 /// CG22-CALLBACK-REGISTRY-CONTRACT adds `13y` (the callback body check);
 /// card CG22-OP-CALLBACKS-AND-SERVED-QUEUES adds `12o` (the arm check);
 /// card OP-CONSTRUCTOR-DECLARATIONS adds `14e` (the result-state check);
-/// card OP-CALLBACK-MEMBER-PATH-RELEASE adds `30` (the member-path check).
-pub const EVIDENCE: [&str; 12] = [
-    "W4", "entry", "11r", "12w", "13a", "13c", "13d", "13m", "13y", "12o", "14e", "30",
+/// card OP-CALLBACK-MEMBER-PATH-RELEASE adds `30` (the member-path check);
+/// card SCHEDULER-DESTROY-MEMBER-STATES adds `50` (a stale path's object taken
+/// through a composed unit helper, recorded only beside `30`).
+pub const EVIDENCE: [&str; 13] = [
+    "W4", "entry", "11r", "12w", "13a", "13c", "13d", "13m", "13y", "12o", "14e", "30", "50",
 ];
 
 /// Whether the evidence spelled `evidence` covers a clause of `kind` (rule
@@ -232,6 +234,8 @@ pub fn covers(evidence: &str, kind: ClauseKind) -> bool {
         "14e" => kind == ClauseKind::MemberState,
         // Card OP-CALLBACK-MEMBER-PATH-RELEASE (rule 30).
         "30" => kind == ClauseKind::MemberState,
+        // Card SCHEDULER-DESTROY-MEMBER-STATES (rule 50).
+        "50" => kind == ClauseKind::MemberState,
         _ => false,
     }
 }

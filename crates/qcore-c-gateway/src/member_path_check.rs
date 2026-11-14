@@ -40,11 +40,22 @@
 //! still withdraws it. The check establishes the member's reading after the
 //! call; that the object it held was released or handed on stays a declared
 //! assumption, as for the arms (rule 12o).
+//!
+//! Card **SCHEDULER-DESTROY-MEMBER-STATES** (gateway rule 50):
+//! [`validates_composing`] also reads the declaration's own unlink's link
+//! members (a store there inside a followed helper is that clause's) and,
+//! given the unit's helper declarations, composes a direct call of a unit
+//! `static` helper that receives a `#stale` path's value: where every exit
+//! takes the path's object exactly once through such a helper, the take is
+//! established ([`Taken::Established`]) instead of assumed.
 
 use qcore_schemas::member_path::{Fate, MemberPathState};
 use serde_json::Value;
 
-use crate::member_path_reading::{ORIG, Reader, validated_exits};
+use std::collections::BTreeMap;
+
+pub use crate::member_path_reading::{Helper, Taken};
+use crate::member_path_reading::{ORIG, Reader, taken_exits, validated_exits};
 use crate::typed_c_ast::{children, kind};
 
 fn strip(mut node: &Value) -> &Value {
@@ -122,6 +133,38 @@ pub fn validates<'a>(
     pointee: &dyn Fn(&Value) -> Option<String>,
     callee: &dyn Fn(&str) -> Option<&'a Value>,
 ) -> Result<Standing, String> {
+    validates_composing(function, states, pointee, callee, &BTreeMap::new(), None)
+        .map(|checked| checked.standing)
+}
+
+/// What [`validates_composing`] establishes.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Checked {
+    /// Rule 30's standing of the states.
+    pub standing: Standing,
+    /// Rule 50's take of the `#stale` paths' objects.
+    pub taken: Taken,
+    /// What the composed helpers state at the taken objects.
+    pub composed: Vec<String>,
+}
+
+/// Rule 30's body check with rule 50's additions: `links` the link member
+/// the declaration's own unlink names per formal, `helper` the unit's helper
+/// declarations (no composition when `None`; [`Taken::NotStated`] then
+/// stands for "not read").
+///
+/// # Errors
+/// A contradiction, naming it.
+pub fn validates_composing<'a>(
+    function: &'a Value,
+    states: &[MemberPathState],
+    pointee: &dyn Fn(&Value) -> Option<String>,
+    callee: &dyn Fn(&str) -> Option<&'a Value>,
+    links: &BTreeMap<usize, String>,
+    helper: Option<&dyn Fn(&str) -> Option<Helper>>,
+) -> Result<Checked, String> {
+    let mut taken = Taken::NotStated;
+    let mut composed = std::collections::BTreeSet::new();
     let parameters = children(function)
         .iter()
         .filter(|child| kind(child) == "ParmVarDecl")
@@ -230,10 +273,45 @@ pub fn validates<'a>(
             .iter()
             .map(|state| state.member.path.clone())
             .collect::<Vec<_>>();
-        let mut reader = Reader::new(paths.clone(), callee);
+        let mut reader = Reader::new(paths.clone(), callee)
+            .with_link_members(links.get(&formal).cloned().into_iter().collect());
+        if let Some(helper) = helper {
+            let stale = stated
+                .iter()
+                .map(|state| state.state.fate == Fate::Stale && !state.state.maybe)
+                .collect();
+            reader = reader.with_helpers(helper, stale);
+        }
         let name = function["name"].as_str().unwrap_or("the declaration");
         let views = std::collections::BTreeMap::from([(formal, None)]);
         let outcomes = reader.read(name, function, &views, vec![ORIG; paths.len()]);
+        if helper.is_some() {
+            let here = match &outcomes {
+                None => Taken::Assumption(
+                    reader
+                        .failure
+                        .clone()
+                        .unwrap_or_else(|| "the reading failed".into()),
+                ),
+                Some(outcomes) => match taken_exits(&stated, &paths, outcomes) {
+                    Taken::Assumption(why) if !reader.take_failures.is_empty() => {
+                        let failures = reader.take_failures.iter().cloned().collect::<Vec<_>>();
+                        Taken::Assumption(format!("{why}; {}", failures.join("; ")))
+                    }
+                    other => other,
+                },
+            };
+            taken = match (taken, here) {
+                (Taken::Assumption(why), _) | (_, Taken::Assumption(why)) => {
+                    Taken::Assumption(why)
+                }
+                (Taken::Established, _) | (_, Taken::Established) => Taken::Established,
+                _ => Taken::NotStated,
+            };
+            if matches!(taken, Taken::Established) {
+                composed.extend(reader.composed.iter().cloned());
+            }
+        }
         let verdict = match outcomes {
             None => Err(reader
                 .failure
@@ -250,9 +328,23 @@ pub fn validates<'a>(
             });
         }
     }
-    Ok(match assumption {
+    let standing = match assumption {
         None => Standing::Validated,
         Some(why) => Standing::Assumption(why),
+    };
+    if let (Standing::Assumption(why), Taken::Established) = (&standing, &taken) {
+        // A take is established only where the reading itself stands.
+        taken = Taken::Assumption(why.clone());
+    }
+    let composed = if helper.is_some() && taken == Taken::Established {
+        composed.into_iter().collect()
+    } else {
+        Vec::new()
+    };
+    Ok(Checked {
+        standing,
+        taken,
+        composed,
     })
 }
 
@@ -688,6 +780,354 @@ mod tests {
         assert!(matches!(
             check(&body, &[state("u.a", Fate::Released, false)], &[]),
             Ok(Standing::Assumption(_))
+        ));
+    }
+
+    // Card SCHEDULER-DESTROY-MEMBER-STATES (gateway rule 50).
+
+    const THR: &str = "struct thr *";
+
+    fn typed_member(base: &str, path: &[&str], ty: &str) -> Value {
+        let mut node = member(base, path);
+        node["type"] = json!({ "qualType": ty });
+        json!({"kind": "ImplicitCastExpr", "castKind": "LValueToRValue",
+               "type": {"qualType": ty}, "inner": [node]})
+    }
+
+    fn local(id: &str, ty: &str) -> Value {
+        json!({"kind": "ImplicitCastExpr", "castKind": "LValueToRValue", "type": {"qualType": ty},
+               "inner": [{"kind": "DeclRefExpr", "type": {"qualType": ty},
+                          "referencedDecl": {"id": id, "kind": "VarDecl", "name": id}}]})
+    }
+
+    fn declare(id: &str, ty: &str) -> Value {
+        json!({"kind": "DeclStmt", "inner": [{"kind": "VarDecl", "id": id, "name": id,
+               "type": {"qualType": ty}}]})
+    }
+
+    fn assign(id: &str, value: Value) -> Value {
+        json!({"kind": "BinaryOperator", "opcode": "=", "type": {"qualType": THR}, "inner": [
+            {"kind": "DeclRefExpr", "type": {"qualType": THR},
+             "referencedDecl": {"id": id, "kind": "VarDecl", "name": id}},
+            value,
+        ]})
+    }
+
+    fn destroyer_helper() -> Helper {
+        Helper {
+            parameter: 0,
+            tag: "thr".into(),
+            releases: true,
+            invokes_nothing: Ok(()),
+            states: vec![("callee".into(), "#stale".into())],
+            invocations: vec!["cb".into()],
+        }
+    }
+
+    fn unit() -> Vec<Value> {
+        vec![
+            defined(
+                "destroy_thr",
+                "t",
+                Some("static"),
+                vec![call("free", vec![reference("t")])],
+            ),
+            defined(
+                "destroy_external",
+                "t",
+                None,
+                vec![call("free", vec![reference("t")])],
+            ),
+        ]
+    }
+
+    fn compose(
+        function: &Value,
+        states: &[MemberPathState],
+        unit: &[Value],
+        links: &BTreeMap<usize, String>,
+        helper: &dyn Fn(&str) -> Option<Helper>,
+    ) -> Result<Checked, String> {
+        validates_composing(
+            function,
+            states,
+            &|parameter| {
+                parameter["type"]["qualType"]
+                    .as_str()?
+                    .strip_prefix("struct ")?
+                    .split_whitespace()
+                    .next()
+                    .map(str::to_owned)
+            },
+            &|name| {
+                unit.iter()
+                    .find(|helper| helper["name"].as_str() == Some(name))
+            },
+            links,
+            Some(helper),
+        )
+    }
+
+    fn stale_parent() -> Vec<MemberPathState> {
+        vec![
+            state("parent", Fate::Stale, false),
+            state("session", Fate::Kept, false),
+        ]
+    }
+
+    fn taken_of(statements: Vec<Value>) -> Taken {
+        let helper = |name: &str| (name == "destroy_thr").then(destroyer_helper);
+        compose(
+            &function(statements),
+            &stale_parent(),
+            &unit(),
+            &BTreeMap::new(),
+            &helper,
+        )
+        .expect("no contradiction")
+        .taken
+    }
+
+    fn established(statements: Vec<Value>) -> bool {
+        taken_of(statements) == Taken::Established
+    }
+
+    fn copy_then(statements: Vec<Value>) -> Vec<Value> {
+        let mut body = vec![
+            declare("th", THR),
+            assign("th", typed_member("p", &["parent"], THR)),
+        ];
+        body.extend(statements);
+        body
+    }
+
+    #[test]
+    fn a_helper_handed_the_copy_of_a_stale_member_takes_its_object() {
+        let helper = |name: &str| (name == "destroy_thr").then(destroyer_helper);
+        let body = function(copy_then(vec![
+            call("destroy_thr", vec![local("th", THR)]),
+            returning(None),
+        ]));
+        let checked = compose(&body, &stale_parent(), &unit(), &BTreeMap::new(), &helper)
+            .expect("no contradiction");
+        assert_eq!(checked.standing, Standing::Validated);
+        assert_eq!(checked.taken, Taken::Established);
+        assert!(
+            checked
+                .composed
+                .contains(&"`parent`'s object is released by `destroy_thr`".to_owned()),
+            "{:?}",
+            checked.composed
+        );
+        assert!(
+            checked
+                .composed
+                .contains(&"`parent->callee` reads #stale (`destroy_thr`)".to_owned()),
+            "{:?}",
+            checked.composed
+        );
+        // The member's value handed directly composes the same way.
+        assert!(established(vec![
+            call("destroy_thr", vec![typed_member("p", &["parent"], THR)]),
+            returning(None),
+        ]));
+        // Without the helpers, rule 30's standing alone (no take read).
+        assert_eq!(
+            validates(&body, &stale_parent(), &|_| Some("op_s".into()), &|_| None),
+            Ok(Standing::Validated)
+        );
+    }
+
+    #[test]
+    fn a_take_on_some_paths_or_twice_is_an_assumption() {
+        assert!(!established(copy_then(vec![
+            branch(
+                opaque(),
+                call("destroy_thr", vec![local("th", THR)]),
+                None
+            ),
+            returning(None),
+        ])));
+        assert!(!established(copy_then(vec![
+            call("destroy_thr", vec![local("th", THR)]),
+            call("destroy_thr", vec![local("th", THR)]),
+            returning(None),
+        ])));
+        // A path that returns before the take.
+        assert!(!established(copy_then(vec![
+            branch(opaque(), returning(None), None),
+            call("destroy_thr", vec![local("th", THR)]),
+            returning(None),
+        ])));
+        // No take at all.
+        assert!(matches!(
+            taken_of(vec![returning(None)]),
+            Taken::Assumption(_)
+        ));
+    }
+
+    #[test]
+    fn an_escaping_value_spoils_the_take() {
+        // Handed to an external call before the helper.
+        assert!(!established(copy_then(vec![
+            call("external", vec![local("th", THR)]),
+            call("destroy_thr", vec![local("th", THR)]),
+            returning(None),
+        ])));
+        // Stored elsewhere.
+        assert!(!established(copy_then(vec![
+            assign("other", local("th", THR)),
+            call("destroy_thr", vec![local("th", THR)]),
+            returning(None),
+        ])));
+        // Returned.
+        assert!(!established(copy_then(vec![
+            call("destroy_thr", vec![local("th", THR)]),
+            returning(Some(local("th", THR))),
+        ])));
+        // A local written twice is no copy: its writes carry the value away.
+        assert!(!established(copy_then(vec![
+            assign("th", typed_member("p", &["parent"], THR)),
+            call("destroy_thr", vec![local("th", THR)]),
+            returning(None),
+        ])));
+    }
+
+    #[test]
+    fn only_a_static_helper_in_force_that_releases_the_record_is_composed() {
+        // A non-static callee with the same declaration.
+        let helper = |name: &str| {
+            matches!(name, "destroy_thr" | "destroy_external").then(destroyer_helper)
+        };
+        let external = function(copy_then(vec![
+            call("destroy_external", vec![local("th", THR)]),
+            returning(None),
+        ]));
+        assert!(matches!(
+            compose(&external, &stale_parent(), &unit(), &BTreeMap::new(), &helper)
+                .expect("no contradiction")
+                .taken,
+            Taken::Assumption(_)
+        ));
+        let body = function(copy_then(vec![
+            call("destroy_thr", vec![local("th", THR)]),
+            returning(None),
+        ]));
+        let with = |helper: Helper| {
+            compose(
+                &body,
+                &stale_parent(),
+                &unit(),
+                &BTreeMap::new(),
+                &move |name: &str| (name == "destroy_thr").then(|| helper.clone()),
+            )
+            .expect("no contradiction")
+            .taken
+        };
+        // No declaration in force.
+        assert!(matches!(
+            compose(&body, &stale_parent(), &unit(), &BTreeMap::new(), &|_| None)
+                .expect("no contradiction")
+                .taken,
+            Taken::Assumption(_)
+        ));
+        // A helper that does not release its formal.
+        assert!(matches!(
+            with(Helper {
+                releases: false,
+                ..destroyer_helper()
+            }),
+            Taken::Assumption(_)
+        ));
+        // A member invocation whose run set is not closed and empty.
+        assert!(matches!(
+            with(Helper {
+                invokes_nothing: Err("open".into()),
+                ..destroyer_helper()
+            }),
+            Taken::Assumption(_)
+        ));
+        // A formal of another record.
+        assert!(matches!(
+            with(Helper {
+                tag: "other".into(),
+                ..destroyer_helper()
+            }),
+            Taken::Assumption(_)
+        ));
+        // Its states at another position.
+        assert!(matches!(
+            with(Helper {
+                parameter: 1,
+                ..destroyer_helper()
+            }),
+            Taken::Assumption(_)
+        ));
+        assert_eq!(with(destroyer_helper()), Taken::Established);
+    }
+
+    #[test]
+    fn a_helper_reached_through_a_followed_helper_is_not_composed() {
+        let wrap = defined(
+            "wrap",
+            "o",
+            Some("static"),
+            vec![call(
+                "destroy_thr",
+                vec![typed_member("o", &["parent"], THR)],
+            )],
+        );
+        let mut helpers = unit();
+        helpers.push(wrap);
+        let helper = |name: &str| (name == "destroy_thr").then(destroyer_helper);
+        let body = function(vec![call("wrap", vec![reference("p")]), returning(None)]);
+        assert!(matches!(
+            compose(&body, &stale_parent(), &helpers, &BTreeMap::new(), &helper)
+                .expect("no contradiction")
+                .taken,
+            Taken::Assumption(_)
+        ));
+    }
+
+    #[test]
+    fn a_store_below_the_unlinks_link_member_inside_a_helper_is_that_clauses() {
+        let unlink = defined(
+            "unlink",
+            "l",
+            Some("static"),
+            vec![store_into("l", &["next"], null())],
+        );
+        let body = function(vec![
+            call(
+                "unlink",
+                vec![json!({"kind": "UnaryOperator", "opcode": "&",
+                            "inner": [member("p", &["link"])]})],
+            ),
+            returning(None),
+        ]);
+        let states = [state("parent", Fate::Stale, false)];
+        let helper = |_: &str| None;
+        // Without the link member the helper's store ends the reading.
+        assert!(matches!(
+            compose(&body, &states, std::slice::from_ref(&unlink), &BTreeMap::new(), &helper)
+                .expect("no contradiction")
+                .standing,
+            Standing::Assumption(_)
+        ));
+        let links = BTreeMap::from([(0, "link".to_owned())]);
+        assert_eq!(
+            compose(&body, &states, std::slice::from_ref(&unlink), &links, &helper)
+                .expect("no contradiction")
+                .standing,
+            Standing::Validated
+        );
+        // Another member is still an unstated store.
+        let other = BTreeMap::from([(0, "other".to_owned())]);
+        assert!(matches!(
+            compose(&body, &states, &[unlink], &other, &helper)
+                .expect("no contradiction")
+                .standing,
+            Standing::Assumption(_)
         ));
     }
 }

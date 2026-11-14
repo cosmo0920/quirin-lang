@@ -3073,11 +3073,42 @@ fn load_function_in(
             &names,
             handed.as_ref(),
         )?;
+        // Card SCHEDULER-DESTROY-MEMBER-STATES (gateway rule 50, §C04.19.6):
+        // a helper destroyer's member invocations stand beside its states
+        // when every state and every invocation bind one formal the
+        // declaration releases, with no hand-off. A consumer reads such a
+        // declaration only through rule 50's body reading; a direct call and
+        // a callback invocation refuse it (`member-path-direct`, a missing
+        // candidate), as for every member-path declaration that is not plain.
+        let helper_invocations = !declared.callbacks.is_empty()
+            && handed.is_none()
+            && member_paths
+                .first()
+                .is_some_and(|first| {
+                    member_paths
+                        .iter()
+                        .all(|state| state.parameter == first.parameter)
+                        && matches!(
+                            contract.parameters.get(first.parameter),
+                            Some(ResourceParameterMode::Released { .. })
+                        )
+                        && declared.callbacks.iter().all(|clause| {
+                            matches!(
+                                clause,
+                                qcore_schemas::callback::CallbackClause::MemberInvoked {
+                                    object: qcore_schemas::callback::MemberObject::Parameter {
+                                        index
+                                    },
+                                    ..
+                                } if *index == first.parameter
+                            )
+                        })
+                });
         if !member_paths.is_empty()
             && (!declared.slot_moves.is_empty()
                 || !declared.derived_outs.is_empty()
                 || !declared.references.is_empty()
-                || !declared.callbacks.is_empty()
+                || (!declared.callbacks.is_empty() && !helper_invocations)
                 || declared.discriminant.is_some()
                 || !declared.arms.is_empty()
                 || !declared.constructed.is_empty()
