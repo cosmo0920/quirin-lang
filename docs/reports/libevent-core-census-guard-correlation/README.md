@@ -190,5 +190,21 @@ is the file's `increment_paragraph`.
 
 ## 6. Gate
 
-See [gate.json](gate.json) and section 6.1 for the scoped card gate run on
-this tree.
+`sh private/toolchain/env.sh python3 scripts/gate_scope.py --base 0f6e17118
+--out private/gate-1` on `901909bce` (the measurement and report commit;
+this record commit adds only this section and [gate.json](gate.json)):
+**exit 0**, mode scoped (no crate, proof root or provider changed), 3 steps.
+Logs are in `private/gate-1/`; the console is `private/logs/gate-1.console.log`.
+
+| Step | Exit | Counts |
+|---|---|---|
+| submodules | 0 | 1 submodule |
+| fmt | 0 | |
+| Python suite | 0 | 761 tests, 0 skipped |
+
+No Rust suite, Lean audit or provider gate is assigned: the diff is
+documentation and report scripts only.
+[raw_census.rs](scripts/raw_census.rs) is not a workspace target. It was
+compiled only inside the tip export, as `qcore-c-gateway`'s example, and that
+does not change the measured `quirin-audit` binary (its digest is the same
+before and after).
