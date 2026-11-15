@@ -419,6 +419,42 @@ pub fn base_environment() -> BTreeMap<String, String> {
         .collect()
 }
 
+/// Card GATE-SLOT-BUILDS-UNSLOTTED: a side's release build runs in the gate's
+/// `build` class (`gate_slot.py build`), so it waits while a rust-suite job's
+/// EXCLUSIVE phase runs instead of loading the host beside constraint 16's
+/// load-sensitive rows. The build itself is unchanged (`argv`, recorded as
+/// `build_command`); the slot's receipt goes beside the build log
+/// (`build.slot.json`) and the slot script's location variables are passed as
+/// they are to every route. Without slots (`--no-slots`) the build runs as
+/// before and the record's `build_slot` is null.
+pub fn slotted_build(
+    context: &Context,
+    directory: &Path,
+    environment: &mut BTreeMap<String, String>,
+    argv: &[String],
+) -> (Vec<String>, Value) {
+    let Some(script) = &context.slot_script else {
+        return (argv.to_vec(), Value::Null);
+    };
+    for name in GATE_VARIABLES {
+        if let Ok(value) = std::env::var(name) {
+            environment.insert(name.into(), value);
+        }
+    }
+    let receipt = directory.join("build.slot.json");
+    let mut run = vec![
+        "python3".to_owned(),
+        script.display().to_string(),
+        "build".into(),
+        "--receipt".into(),
+        receipt.display().to_string(),
+        "--".into(),
+    ];
+    run.extend(argv.iter().cloned());
+    let slot = json!({"class": "build", "command": run, "receipt": receipt.display().to_string()});
+    (run, slot)
+}
+
 fn command_of(argv: &[String], environment: &BTreeMap<String, String>) -> Command {
     let mut command = Command::new(&argv[0]);
     command.args(&argv[1..]).env_clear().envs(environment);
@@ -486,8 +522,10 @@ pub fn build(name: &str, spec: &SideSpec, context: &Context) -> Result<Built, St
                     "quirin-audit".into(),
                 ],
             );
-            let code = logged(&mut command_of(&argv, &environment), &log)?;
+            let (run, slot) = slotted_build(context, &directory, &mut environment, &argv);
+            let code = logged(&mut command_of(&run, &environment), &log)?;
             record["build_command"] = json!(argv);
+            record["build_slot"] = slot;
             record["build_exit"] = json!(code);
             if code != 0 {
                 return Err(format!(
@@ -532,10 +570,12 @@ pub fn build(name: &str, spec: &SideSpec, context: &Context) -> Result<Built, St
             ]
             .map(str::to_owned)
             .to_vec();
-            let mut command = command_of(&argv, &environment);
+            let (run, slot) = slotted_build(context, &directory, &mut environment, &argv);
+            let mut command = command_of(&run, &environment);
             command.current_dir(&checkout);
             let code = logged(&mut command, &log)?;
             record["build_command"] = json!(argv);
+            record["build_slot"] = slot;
             record["build_exit"] = json!(code);
             if code != 0 {
                 return Err(format!(
@@ -1128,5 +1168,55 @@ mod tests {
             namespaced(&[], Path::new("/w"), &["tool".into()]),
             vec!["tool".to_owned()]
         );
+    }
+
+    fn context(slot_script: Option<PathBuf>) -> Context {
+        Context {
+            repository: PathBuf::from("/r"),
+            inputs_base: PathBuf::from("/i"),
+            output: PathBuf::from("/o"),
+            mount_root: PathBuf::from("/m"),
+            jobs: 1,
+            build_jobs: 1,
+            slot_script,
+            build_commit: None,
+            rules_off: Vec::new(),
+            source_date_epoch: None,
+            checkpoint: None,
+            link_artifacts: BTreeMap::new(),
+        }
+    }
+
+    /// Card GATE-SLOT-BUILDS-UNSLOTTED: a side's build runs in the `build`
+    /// class when slots are on, unchanged when they are off.
+    #[test]
+    fn a_side_build_takes_the_build_class_under_slots() {
+        let cargo: Vec<String> = ["cargo", "build", "--release"].map(str::to_owned).to_vec();
+        let mut environment = BTreeMap::new();
+        let (run, slot) = slotted_build(&context(None), Path::new("/s"), &mut environment, &cargo);
+        assert_eq!(run, cargo);
+        assert_eq!(slot, Value::Null);
+        let script = PathBuf::from("/r/scripts/gate_slot.py");
+        let (run, slot) = slotted_build(
+            &context(Some(script)),
+            Path::new("/s"),
+            &mut environment,
+            &cargo,
+        );
+        assert_eq!(
+            run[..6],
+            [
+                "python3",
+                "/r/scripts/gate_slot.py",
+                "build",
+                "--receipt",
+                "/s/build.slot.json",
+                "--"
+            ]
+        );
+        assert_eq!(run[6..], cargo[..]);
+        assert_eq!(slot["class"], "build");
+        assert_eq!(slot["receipt"], "/s/build.slot.json");
+        assert_eq!(slot["command"], json!(run));
     }
 }

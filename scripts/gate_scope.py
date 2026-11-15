@@ -67,8 +67,10 @@ per landing, run by the integrator).  Usage::
    ``providers/`` changed.
 
 Heavy steps run under ``scripts/gate_slot.py`` (``rust-suite`` for both Rust
-suites, ``lean`` for Lean) unless ``--no-slots`` says the caller already holds
-a lock, e.g. the legacy ``flock``.  Exit 0 only if every step exited 0; 1 if a
+suites, the provider suite with ``--close-builds``; ``lean`` for Lean;
+``build`` for fmt, Clippy, the reevaluation examples and the provider
+package build, fmt and Clippy, card GATE-SLOT-BUILDS-UNSLOTTED) unless
+``--no-slots`` says the caller already holds a lock, e.g. the legacy ``flock``.  Exit 0 only if every step exited 0; 1 if a
 step failed; 2 if the scope could not be computed (nothing ran).
 
 The scoped gate is a card's gate.  The full standing gate in
@@ -134,6 +136,13 @@ PROVIDER_COMMANDS = (
     "cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets "
     "--locked --offline -- -D warnings",
 )
+
+# The slot class of each provider-gate step (card GATE-SLOT-BUILDS-UNSLOTTED):
+# the suite under rust-suite, the steps that run cargo builds or checks under
+# build; the package verification runs no cargo build and takes none.
+BUILD = "build"
+PROVIDER_STEP_SLOTS = {"provider-package-build": BUILD, "provider-test": "rust-suite",
+                       "provider-fmt": BUILD, "provider-clippy": BUILD}
 
 INCLUDE_RE = re.compile(r'\b(include_str|include_bytes|include)!\s*\(\s*"((?:[^"\\\n]|\\.)*)"\s*,?\s*\)')
 INCLUDE_CONCAT_RE = re.compile(
@@ -1347,6 +1356,7 @@ class Step:
     name: str
     argv: list[str]
     slot: Optional[str] = None  # gate_slot class
+    slot_args: tuple = ()  # gate_slot options before `--`
     counts: str = ""  # how to read counts: rust-summary | libtest | unittest | lean
     cwd: Optional[str] = None
     note: str = ""
@@ -1357,10 +1367,14 @@ def steps_for(scope: dict, out: Path, python: str = sys.executable,
               card_base: Optional[str] = None) -> list[Step]:
     steps = [Step("submodules", ["git", "-C", str(REPO_ROOT), "submodule", "status", "--recursive"],
                   counts="submodules")]
-    steps.append(Step("fmt", ["cargo", "fmt", "--all", "--", "--check"]))
+    # fmt, Clippy and every cargo build run in the `build` class (card
+    # GATE-SLOT-BUILDS-UNSLOTTED): unlimited, kept out only while another
+    # card's rust-suite job runs its EXCLUSIVE phase.
+    steps.append(Step("fmt", ["cargo", "fmt", "--all", "--", "--check"], slot=BUILD))
     packages = scope["rust_packages"]
     if scope["mode"] == "full":
-        steps.append(Step("clippy", ["cargo", "clippy", "--all-targets", "--", "-D", "warnings"]))
+        steps.append(Step("clippy", ["cargo", "clippy", "--all-targets", "--", "-D", "warnings"],
+                          slot=BUILD))
         steps.append(Step("rust-suite", [python, str(SCRIPTS / "run_test_binaries.py"),
                                          "--log-dir", str(out / "rust-suite")],
                           slot="rust-suite", counts="rust-summary"))
@@ -1369,7 +1383,7 @@ def steps_for(scope: dict, out: Path, python: str = sys.executable,
         if packages:
             selection = [arg for name in packages for arg in ("-p", name)]
             steps.append(Step("clippy", ["cargo", "clippy", *selection, "--all-targets", "--",
-                                         "-D", "warnings"]))
+                                         "-D", "warnings"], slot=BUILD))
         by_crate: dict[str, list[str]] = {}
         lib_crates: set[str] = set()
         for uid in targets:
@@ -1381,13 +1395,13 @@ def steps_for(scope: dict, out: Path, python: str = sys.executable,
         for crate, names in sorted(by_crate.items()):
             filters = [arg for name in names for arg in ("--test", name)]
             steps.append(Step(f"clippy-{crate}", ["cargo", "clippy", "-p", crate, *filters, "--",
-                                                  "-D", "warnings"]))
+                                                  "-D", "warnings"], slot=BUILD))
         for crate in sorted(lib_crates):
             # `--profile test` checks the library as its unit-test executable
             # compiles it (cfg(test) on); plain `--lib` would skip that code.
             steps.append(Step(f"clippy-{crate}-lib", ["cargo", "clippy", "-p", crate, "--lib",
                                                       "--profile", "test", "--", "-D",
-                                                      "warnings"]))
+                                                      "warnings"], slot=BUILD))
         argv = [python, str(SCRIPTS / "run_test_binaries.py")]
         if packages:
             argv += ["--packages", ",".join(packages)]
@@ -1407,7 +1421,7 @@ def steps_for(scope: dict, out: Path, python: str = sys.executable,
         config = test_link_config.cargo_config_args()
         for probe in PROBES:
             steps.append(Step(f"probe-{probe}", ["cargo", "run", *config, "-p", PROBE_CRATE,
-                                                 "--example", probe]))
+                                                 "--example", probe], slot=BUILD))
     lean = scope["lean"]
     if lean["mode"] == "all":
         steps.append(Step("lean", [python, str(SCRIPTS / "check_lean_audits.py")], slot="lean",
@@ -1434,8 +1448,12 @@ def steps_for(scope: dict, out: Path, python: str = sys.executable,
                 argv[0] = python
             name = ["provider-package-build", "provider-package-verify", "provider-test",
                     "provider-fmt", "provider-clippy"][index]
-            slot = "rust-suite" if name == "provider-test" else None
+            # The provider suite has no EXCLUSIVE phase of its own (its
+            # conformance binaries launch process providers under declared
+            # timeouts throughout), so its whole run closes the build class.
+            slot = PROVIDER_STEP_SLOTS.get(name)
             steps.append(Step(name, argv, slot=slot,
+                              slot_args=("--close-builds",) if name == "provider-test" else (),
                               counts="libtest" if name == "provider-test" else ""))
             if name == "provider-package-build":
                 # Verify every package the build produced, not only libevent.
@@ -1487,7 +1505,7 @@ def run_steps(steps: Sequence[Step], out: Path, use_slots: bool, echo=print) -> 
         if step.slot and use_slots:
             receipt = out / "slots" / f"{step.name}.json"
             argv = [sys.executable, str(SCRIPTS / "gate_slot.py"), step.slot,
-                    "--receipt", str(receipt), "--", *argv]
+                    *step.slot_args, "--receipt", str(receipt), "--", *argv]
         echo(f"[{step.name}] $ {' '.join(argv)}")
         started = time.monotonic()
         with open(log, "wb") as handle:
@@ -1646,7 +1664,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     describe(scope)
     steps = steps_for(scope, out, card_base=card_base)
     document = {"schema": "quirin-gate-scope/1", **source, "scope": scope,
-                "planned_steps": [{"name": s.name, "argv": s.argv, "slot": s.slot} for s in steps],
+                "planned_steps": [{"name": s.name, "argv": s.argv, "slot": s.slot,
+                                   "slot_args": list(s.slot_args)} for s in steps],
                 "slots": not args.no_slots, "landing": args.landing,
                 "card_base": card_base, "started": stamp}
     gate_json = out / "gate.json"

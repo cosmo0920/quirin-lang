@@ -234,12 +234,18 @@ AUDIT_WORKER_MIB = 2048
 ROUTE_ADMISSION_MIB = {"pinned-corpus": 11264}
 
 FIXED_SLOTS = {"rust-suite": 1, "lean": 2}
-CLASSES = ("rust-suite", "audit", "lean", "short")
+CLASSES = ("rust-suite", "audit", "lean", "short", "build")
 # Which classes a held slot already covers, for a nested invocation.  A
-# rust-suite job holds the short lane too (below), so it covers it.
+# rust-suite job holds the short lane too (below), so it covers it.  The build
+# class (below) is covered by every class that never runs beside a rust-suite
+# job's EXCLUSIVE phase: the suite itself, an audit (drained before the suite
+# runs) and a lane job (the lane is closed for the suite's whole run).  A lean
+# job runs beside a suite, so a build nested in one is refused like any other
+# uncovered nesting.
 SHORT = "short"
-COVERS = {"rust-suite": {"rust-suite", "audit", "short"}, "audit": {"audit"},
-          "lean": {"lean"}, "short": {"short"}}
+BUILD = "build"
+COVERS = {"rust-suite": {"rust-suite", "audit", "short", BUILD}, "audit": {"audit", BUILD},
+          "lean": {"lean"}, "short": {"short", BUILD}, BUILD: {BUILD}}
 HELD_ENV = "QUIRIN_GATE_HELD"
 
 # --- the short-job lane (card GATE-SLOT-SHORT-JOB-LANE; user decision of
@@ -264,6 +270,28 @@ SHORT_HARD_STOP_MIB = 4096       # tree resident set that stops a lane job
 # as it does for audits.
 SHORT_DRAIN_BOUND = SHORT_WALL_CAP + 10.0 + SHORT_GRACE_CAP + 300.0
 
+# --- the build class (card GATE-SLOT-BUILDS-UNSLOTTED) ----------------------------
+# fmt, Clippy and cargo builds are not slotted against one another (they never
+# were, and they need no memory admission), but a build is CPU load, and a
+# rust-suite job's EXCLUSIVE phase (constraint 16's load-sensitive rows, about a
+# minute of the suite's run) must not share the host with one.  A build job
+# holds <gate dir>/build/running shared for its run; it is admitted only while
+# <gate dir>/build/admission can be taken shared (held for a few system calls).
+# The EXCLUSIVE phase (run_test_binaries.py under a rust-suite slot, or
+# `rust-suite --close-builds` for a command with no phase of its own) takes
+# build/admission exclusive, so new builds wait, then build/running exclusive,
+# so it waits for the builds in flight, at most the build drain bound (default
+# 30 min; QUIRIN_GATE_BUILD_DRAIN).  Past the bound the phase runs anyway (no
+# job stops another) and its record says so and names the builds that
+# overlapped it.  A build waiting for admission holds build/waiting shared, so
+# `status` lists it.  No legacy lock: builds never took it, and taking it would
+# hold every build for a legacy job's whole run, not for an EXCLUSIVE phase.
+BUILD_ADMISSION = "admission"
+BUILD_RUNNING = "running"
+BUILD_WAITING = "waiting"
+BUILD_DRAIN_ENV = "QUIRIN_GATE_BUILD_DRAIN"
+DEFAULT_BUILD_DRAIN = 30 * 60.0
+
 # --- starvation bounds (card GATE-SLOT-ADMISSION-STARVATION, R11) ---------------
 # Defaults in seconds; None means no deadline.  The audit stall default is long
 # on purpose: a measured pinned-corpus route runs about two hours with steady
@@ -271,9 +299,10 @@ SHORT_DRAIN_BOUND = SHORT_WALL_CAP + 10.0 + SHORT_GRACE_CAP + 300.0
 # 10 h 18 min with zero I/O, so two hours without any I/O by any process of
 # the tree is far outside a working run and still cuts that loss by eight
 # hours.  The drain bound covers one such route started just before the drain.
-DEFAULT_STALL_TIMEOUT = {"audit": 2 * 3600.0, "rust-suite": None, "lean": None, "short": None}
+DEFAULT_STALL_TIMEOUT = {"audit": 2 * 3600.0, "rust-suite": None, "lean": None, "short": None,
+                         BUILD: None}
 DEFAULT_DEADLINE = {"audit": None, "rust-suite": None, "lean": None,
-                    "short": DEFAULT_SHORT_WALL}
+                    "short": DEFAULT_SHORT_WALL, BUILD: None}
 DEFAULT_DRAIN_TIMEOUT = 2 * 3600.0
 DEFAULT_DRAIN_BACKOFF = 5 * 60.0
 DEFAULT_STOP_GRACE = 60.0
@@ -1479,6 +1508,8 @@ class Gate:
 
                 self._wait(attempt_short, "a short-lane slot", deadline)
                 record.update(taken)
+            elif cls == BUILD:
+                self._acquire_build(deadline, record)
             else:
                 self._legacy_shared(deadline, record)
                 count = FIXED_SLOTS[cls]
@@ -1507,6 +1538,41 @@ class Gate:
         record["admitted_at"] = utc_now()
         return record
 
+    def _acquire_build(self, deadline: Optional[float], record: dict) -> None:
+        """The build class: no slot count, no memory admission, no queue and
+        no legacy lock; only the build closure of an EXCLUSIVE phase keeps it
+        out (module docstring, "The build class")."""
+        directory = self.gate_dir / BUILD
+        running = Lock(directory / BUILD_RUNNING, f"{BUILD}/{BUILD_RUNNING}")
+        waiting: list[Lock] = []
+        closed = [False]
+
+        def attempt_build() -> bool:
+            admission = Lock(directory / BUILD_ADMISSION, f"{BUILD}/{BUILD_ADMISSION}")
+            try:
+                if admission.try_lock(fcntl.LOCK_SH) and running.try_lock(fcntl.LOCK_SH):
+                    return True
+            finally:
+                admission.release()
+            if not waiting:  # visible to `status` while it waits
+                marker = Lock(directory / BUILD_WAITING, f"{BUILD}/{BUILD_WAITING}")
+                marker.try_lock(fcntl.LOCK_SH)
+                waiting.append(marker)
+            closed[0] = True
+            return False
+
+        try:
+            self._wait(attempt_build, "the builds to reopen (a rust-suite EXCLUSIVE phase "
+                       "has closed them)", deadline)
+        except BaseException:
+            running.release()
+            raise
+        finally:
+            for marker in waiting:
+                marker.release()
+        self.held.append(running)
+        record.update(slot=None, slot_count=None, waited_for_exclusive_phase=closed[0])
+
     def _release_locks(self) -> None:
         while self.held:
             self.held.pop().release()
@@ -1518,6 +1584,103 @@ class Gate:
         if self.ticket is not None:
             self.ticket.drop()
             self.ticket = None
+
+
+class BuildClosure:
+    """Keep the build class out for an EXCLUSIVE phase (card
+    GATE-SLOT-BUILDS-UNSLOTTED).  ``close`` takes build admission exclusive (new
+    builds wait), then waits at most ``timeout`` seconds (None: unbounded) for
+    the builds in flight to end; ``reopen`` lets builds in again.  Both return
+    or extend one record: when it closed, how long it waited, whether every
+    build had ended (``drained``) and, if not, the builds that overlap the
+    phase.  A closure that cannot take its locks records the error and closes
+    nothing; it never stops a build."""
+
+    def __init__(self, gate_dir: Path, timeout: Optional[float] = DEFAULT_BUILD_DRAIN,
+                 poll: float = 1.0, legacy: Path = LEGACY_LOCK, owner: Optional[dict] = None,
+                 echo: Callable[[str], None] = lambda line: print(line, file=sys.stderr,
+                                                                  flush=True)):
+        self.gate_dir = gate_dir
+        self.timeout = timeout
+        self.poll = poll
+        self.legacy = legacy
+        self.owner = dict(owner or {})
+        self.echo = echo
+        directory = gate_dir / BUILD
+        self.admission = Lock(directory / BUILD_ADMISSION, f"{BUILD}/{BUILD_ADMISSION}")
+        self.running = Lock(directory / BUILD_RUNNING, f"{BUILD}/{BUILD_RUNNING}")
+        self.record: dict = {}
+
+    def build_holders(self) -> list[dict]:
+        """The processes holding build/running (shared), with their argv."""
+        locks = gate_locks(self.gate_dir, self.legacy)
+        if locks is None:
+            return [{"pid": None, "argv": None, "note": "/proc/locks is not readable"}]
+        mine = os.getpid()
+        pids = sorted({entry["pid"] for entry in locks
+                       if entry["label"] == f"{BUILD}/{BUILD_RUNNING}" and not entry["queued"]
+                       and entry["pid"] != mine})
+        return [{"pid": pid, "argv": read_cmdline(pid)} for pid in pids]
+
+    def close(self) -> dict:
+        started = time.monotonic()
+        record = {"gate_dir": str(self.gate_dir), "closed_at": utc_now(),
+                  "timeout_seconds": self.timeout}
+        self.record = record
+        try:
+            self.admission.lock_blocking(fcntl.LOCK_EX)  # builds hold it for microseconds
+            self.admission.note(dict(self.owner, pid=os.getpid(), cls="rust-suite",
+                                     phase="EXCLUSIVE", noted_at=utc_now()))
+            in_flight = self.build_holders()
+            record["builds_in_flight_at_close"] = in_flight
+            if in_flight:
+                self.echo(f"gate_slot: EXCLUSIVE phase: builds closed; waiting for "
+                          f"{len(in_flight)} build(s) in flight (at most "
+                          f"{format_duration(self.timeout)})")
+            while not self.running.try_lock(fcntl.LOCK_EX):
+                if self.timeout is not None and time.monotonic() - started >= self.timeout:
+                    overlapping = self.build_holders()
+                    record.update(drained=False, overlapping_builds=overlapping,
+                                  waited_seconds=round(time.monotonic() - started, 3))
+                    self.echo("gate_slot: EXCLUSIVE phase: builds still running after "
+                              f"{format_duration(self.timeout)}; the phase runs beside "
+                              f"{len(overlapping)} build(s) (recorded; new builds stay out): "
+                              + ", ".join(f"pid {b['pid']}" for b in overlapping))
+                    return record
+                time.sleep(self.poll)
+        except OSError as error:
+            self.reopen()
+            record.update(drained=False, error=f"{type(error).__name__}: {error}",
+                          waited_seconds=round(time.monotonic() - started, 3))
+            self.echo(f"gate_slot: EXCLUSIVE phase: cannot close the builds ({error}); "
+                      "the phase runs without the closure (recorded)")
+            return record
+        record.update(drained=True, waited_seconds=round(time.monotonic() - started, 3))
+        return record
+
+    def reopen(self) -> dict:
+        self.running.release()
+        self.admission.release()
+        self.record.setdefault("reopened_at", utc_now())
+        return self.record
+
+
+def exclusive_phase_closure(env: Optional[dict] = None,
+                            echo: Callable[[str], None] = lambda line: print(
+                                line, file=sys.stderr, flush=True)) -> Optional[BuildClosure]:
+    """The build closure a test runner's EXCLUSIVE phase takes, or None when
+    the runner does not run under a rust-suite slot (``QUIRIN_GATE_HELD``):
+    outside a slot audits are not drained either, so nothing is promised.
+    Reads ``QUIRIN_GATE_DIR``, ``QUIRIN_GATE_LEGACY_LOCK`` and
+    ``QUIRIN_GATE_BUILD_DRAIN`` as the slot script does."""
+    env = os.environ if env is None else env
+    if "rust-suite/0" not in parse_held(env.get(HELD_ENV)):
+        return None
+    text = env.get(BUILD_DRAIN_ENV, "").strip()
+    timeout = parse_duration(text, f"${BUILD_DRAIN_ENV}") if text else DEFAULT_BUILD_DRAIN
+    return BuildClosure(Path(env.get("QUIRIN_GATE_DIR", DEFAULT_GATE_DIR)), timeout,
+                        legacy=Path(env.get("QUIRIN_GATE_LEGACY_LOCK", LEGACY_LOCK)),
+                        owner={"argv": sys.argv[:6]}, echo=echo)
 
 
 def seconds_since(stamp: Optional[str]) -> Optional[float]:
@@ -1894,7 +2057,9 @@ def parse_args(argv: Sequence[str]) -> argparse.Namespace:
                              "(memory-budget slots), lean (2 slots) or short (the lane for "
                              f"CPU-bound, memory-light jobs of at most "
                              f"{format_duration(SHORT_WALL_CAP)}: prepare, build, link; "
-                             f"{SHORT_SLOTS} slots, admitted ahead of queued audits)")
+                             f"{SHORT_SLOTS} slots, admitted ahead of queued audits) or build "
+                             "(fmt, Clippy, cargo builds: unlimited, kept out only while a "
+                             "rust-suite job's EXCLUSIVE phase runs)")
     parser.add_argument("--memory-budget", metavar="7G|5G|4G|1G|2G",
                         help="audit class: per-audit budget 7G, 5G or 4G (default 7G); "
                              "short class: the memory the job declares, 1G or 2G (default 1G)")
@@ -1935,6 +2100,11 @@ def parse_args(argv: Sequence[str]) -> argparse.Namespace:
     parser.add_argument("--drain-attempts", type=int, default=None,
                         help="rust-suite only: fail (exit 75) when this many drains gave up "
                              "(default 0: retry until --wait-timeout)")
+    parser.add_argument("--close-builds", action="store_true",
+                        help="rust-suite only: the whole command is an EXCLUSIVE phase; close "
+                             "the build class around it (for a suite without a phase of its "
+                             "own, such as the provider workspace's cargo test). "
+                             "run_test_binaries.py closes it around its own EXCLUSIVE phase")
     parser.add_argument("--poll", type=float, default=2.0, help=argparse.SUPPRESS)
     parser.add_argument("--sample-interval", type=float, default=SAMPLE_INTERVAL,
                         help=argparse.SUPPRESS)
@@ -1965,6 +2135,8 @@ def resolve_limits(args: argparse.Namespace, env: dict[str, str]) -> dict:
     for name in ("drain_timeout", "drain_backoff", "drain_attempts"):
         if getattr(args, name) is not None and not rust:
             raise Refusal(f"--{name.replace('_', '-')} applies to the rust-suite class only")
+    if getattr(args, "close_builds", False) and not rust:
+        raise Refusal("--close-builds applies to the rust-suite class only")
     if args.drain_attempts is not None and args.drain_attempts < 0:
         raise Refusal("--drain-attempts must be 0 (unlimited) or more")
     if args.sample_interval <= 0:
@@ -2013,6 +2185,11 @@ def resolve_limits(args: argparse.Namespace, env: dict[str, str]) -> dict:
                           True)
         limits.update(drain_timeout_seconds=drain, drain_timeout_from=drain_from,
                       drain_backoff_seconds=backoff, drain_attempts=args.drain_attempts or 0)
+        if getattr(args, "close_builds", False):
+            build_drain, build_from = pick(None, BUILD_DRAIN_ENV, DEFAULT_BUILD_DRAIN,
+                                           "build drain")
+            limits.update(close_builds=True, build_drain_seconds=build_drain,
+                          build_drain_from=build_from)
     return limits
 
 
@@ -2102,13 +2279,16 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         except Refusal as error:
             print(f"gate_slot: refused: {error}", file=sys.stderr)
             return 2
-        env[HELD_ENV] = ",".join(gate.record["held"][1:])  # slots, not the legacy lock
+        env[HELD_ENV] = ",".join(label for label in gate.record["held"]
+                                 if label != "legacy")  # slots, not the legacy lock
         write_wait_record(wait_record, "admitted", args.cls,
                           waited_seconds=gate.record["waited_seconds"])
     env["QUIRIN_GATE_CLASS"] = args.cls
     receipt["argv_run"] = argv_run
     receipt["started"] = utc_now()
     slot = receipt["slot_record"].get("slot")
+    if slot is None and not held and args.cls == BUILD:
+        slot = "(builds open)"
     print(f"gate_slot: {args.cls} slot {slot if slot is not None else '(parent)'}"
           + (f", budget {receipt['budget']['memory_budget_mib']} MiB, admitted at "
              f"{receipt['budget']['admission_mib']} MiB"
@@ -2123,12 +2303,19 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
                       receipt=receipt_path,
                       rss_stop_mib=SHORT_HARD_STOP_MIB if args.cls == SHORT else None)
     peak_kib = None
+    closure = None
+    if limits.get("close_builds"):
+        closure = BuildClosure(gate_dir, limits["build_drain_seconds"], legacy=legacy,
+                               owner={"argv": args.command[:6], "cwd": os.getcwd()})
+        receipt["build_exclusion"] = closure.close()
     try:
         code, peak_kib = run_child(argv_run, env, monitor)
     except OSError as error:
         print(f"gate_slot: cannot run {argv_run[0]}: {error}", file=sys.stderr)
         code = 127
     finally:
+        if closure is not None:
+            closure.reopen()
         gate.release()
     receipt["finished"] = utc_now()
     receipt["monitor"] = monitor.record
@@ -2298,6 +2485,16 @@ def gate_status(gate_dir: Path, legacy: Path, meminfo: Path, interval: float = 5
                         and holders_of.get(f"short/{i}")]
             job["role"] = "draining (audits drained; holds lane admission, waits for lane jobs)"
             job["blocked_by"] = blockers
+        elif f"{BUILD}/{BUILD_ADMISSION}" in slots:
+            job["class"] = job["class"] or "rust-suite"
+            if f"{BUILD}/{BUILD_RUNNING}" in slots:
+                job["role"] = "EXCLUSIVE phase (builds closed)"
+            else:
+                job["role"] = "draining builds (an EXCLUSIVE phase waits for builds in flight)"
+                job["blocked_by"] = [{"lock": f"{BUILD}/{BUILD_RUNNING}",
+                                      "pids": holders_of.get(f"{BUILD}/{BUILD_RUNNING}", [])}]
+        elif slots == [f"{BUILD}/{BUILD_WAITING}"]:
+            job["role"] = "waiting for the builds to reopen (an EXCLUSIVE phase runs)"
         elif slots:
             job["role"] = "holder"
         elif legacy_mode == "exclusive":
@@ -2330,7 +2527,8 @@ def gate_status(gate_dir: Path, legacy: Path, meminfo: Path, interval: float = 5
             job["over_interval"] = sample_delta(before[pid], after)
         if job.get("admission_mib") is not None:
             job["rss_over_admission"] = after["tree_rss_kib"] > job["admission_mib"] * 1024
-    order = {"holder": 0, "draining": 1, "legacy": 2, "waiting": 3, "queued": 4, "holds": 5}
+    order = {"holder": 0, "EXCLUSIVE": 1, "draining": 1, "legacy": 2, "waiting": 3,
+             "queued": 4, "holds": 5}
     listed = sorted(jobs.values(), key=lambda job: (
         next((rank for prefix, rank in order.items() if job["role"].startswith(prefix)), 9),
         job["pid"]))
@@ -2345,6 +2543,11 @@ def gate_status(gate_dir: Path, legacy: Path, meminfo: Path, interval: float = 5
             "mem_total_kib": memory.get("MemTotal"), "audit_slot_ceiling": ceiling,
             "short_lane": {"slots": SHORT_SLOTS, "holders": lane_holders,
                            "waiters": lane_waiters},
+            "builds": {
+                "closed_by": sorted(holders_of.get(f"{BUILD}/{BUILD_ADMISSION}", [])),
+                "running": sorted(pid for pid in holders_of.get(f"{BUILD}/{BUILD_RUNNING}", [])
+                                  if f"{BUILD}/{BUILD_ADMISSION}" not in jobs[pid]["slots"]),
+                "waiting": sorted(holders_of.get(f"{BUILD}/{BUILD_WAITING}", []))},
             "queues": queues["families"], "jobs": listed}
 
 
@@ -2393,6 +2596,14 @@ def render_status(status: dict) -> str:
                         if lane["holders"] else "")
                      + (f"; waiting: pid " + ", ".join(str(p) for p in lane["waiters"])
                         if lane["waiters"] else ""))
+    builds = status.get("builds")
+    if builds and (builds["closed_by"] or builds["running"] or builds["waiting"]):
+        lines.append("builds: " + ("closed by pid " + ", ".join(str(p) for p in builds["closed_by"])
+                                   + " (EXCLUSIVE phase)" if builds["closed_by"] else "open")
+                     + (f"; running: pid " + ", ".join(str(p) for p in builds["running"])
+                        if builds["running"] else "")
+                     + (f"; waiting: pid " + ", ".join(str(p) for p in builds["waiting"])
+                        if builds["waiting"] else ""))
     for job in status["jobs"]:
         head = f"pid {job['pid']} {job['class'] or '?'}: {job['role']}"
         if job["slots"]:
