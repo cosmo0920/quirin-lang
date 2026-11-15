@@ -59,6 +59,51 @@ def gone(pid, starttime, within=5.0):
     return False
 
 
+# --- CPU readings independent of gate_slot (card GATE-SLOT-BUILDS-UNSLOTTED) ---------
+#
+# The tests below once asserted a fixed CPU floor for a spinning process over a
+# short wall window (0.2 CPU-seconds in 0.5 s, 0.3 in 1 s): an assumption about
+# the spinner's share of a CPU, which a loaded host breaks (2026-11-14: 0.19
+# against 0.2 at load average ~15, 1 failure in 3 isolated reruns) although the
+# accounting under test was right.  They now compare the reported figure with
+# the spinner's own CPU time, read here from /proc/<pid>/stat around the
+# measurement, and with what one thread can spend in the window; neither bound
+# depends on the share the host gives the spinner.  A spinner that got no
+# measurable CPU at all makes the reading inconclusive: the window is lengthened
+# (bounded), never the bound relaxed, and a run that stays inconclusive fails.
+try:
+    TICKS = os.sysconf("SC_CLK_TCK")
+except (AttributeError, ValueError, OSError):  # pragma: no cover - non-POSIX
+    TICKS = 100
+TICK = 1.0 / TICKS
+SLACK = 2 * TICK  # a reading is whole ticks, the report rounds to 0.01 s
+
+
+def own_cpu_seconds(pid):
+    """utime + stime of one process, from /proc/<pid>/stat (not gate_slot's reader)."""
+    fields = Path(f"/proc/{pid}/stat").read_text().rpartition(")")[2].split()
+    return (int(fields[11]) + int(fields[12])) / TICKS
+
+
+def children_of(pid):
+    found = []
+    for entry in Path("/proc").iterdir():
+        if entry.name.isdigit():
+            try:
+                fields = (entry / "stat").read_text().rpartition(")")[2].split()
+            except OSError:
+                continue
+            if int(fields[1]) == pid:
+                found.append(int(entry.name))
+    return sorted(found)
+
+
+def spun(pid, seconds, within=60.0):
+    """Wait until the process has spent ``seconds`` of CPU (so a report of its
+    cumulative CPU, not of the window, would exceed the bracket)."""
+    return wait_for(lambda: own_cpu_seconds(pid) >= seconds, within=within, step=0.05)
+
+
 def wait_for(predicate, within=20.0, step=0.02):
     limit = time.monotonic() + within
     while time.monotonic() < limit:
@@ -252,7 +297,10 @@ class Deadlines(Scratch):
         breach = document["monitor"]["breach"]
         self.assertEqual(breach["kind"], "stall")
         self.assertGreaterEqual(breach["seconds_without_progress"], 1.0)
-        self.assertGreater(breach["cpu_seconds_since_progress"], 0.3, "the grandchild spun")
+        # The grandchild spun: it shows CPU over at least a second without
+        # progress (a share of the host is not assumed; see TICK above).  A
+        # sleeping tree shows none: Deadlines' sleeper control below.
+        self.assertGreater(breach["cpu_seconds_since_progress"], 0, "the grandchild spun")
         spinner = int(pids.read_text())
         listed = {entry["pid"] for entry in breach["processes"]}
         self.assertIn(spinner, listed)
@@ -284,6 +332,9 @@ class Deadlines(Scratch):
         monitor = json.loads((self.root / "r.json").read_text())["monitor"]
         self.assertEqual(monitor["samples_unmeasured"], 0)
         self.assertTrue(any(entry["state"] == "Z" for entry in monitor["breach"]["processes"]))
+        # The sleeper control for the spinning tree above: a tree that only
+        # sleeps shows no CPU since its last progress.
+        self.assertLessEqual(monitor["breach"]["cpu_seconds_since_progress"], SLACK)
 
     def test_steady_file_io_is_progress(self):
         out = self.root / "out"
@@ -446,20 +497,36 @@ class Drain(Scratch):
     def test_a_drain_gives_up_reopens_admission_releases_and_names_the_holder(self):
         holder = self.holder(sys.executable, "-c", "while True: pass",
                              extra=("--stall-timeout", "off"))
+        [spinner] = wait_for(lambda: children_of(holder.pid))
+        self.assertTrue(spun(spinner, 0.1), "the spinner never ran")
         suite = self.gate()
-        with self.assertRaises(slot_mod.DrainFailed) as raised:
-            suite.acquire("rust-suite", drain_timeout=0.5, drain_backoff=0.05, drain_attempts=1)
+        # The blocker's CPU over the wait, against the spinner's own CPU read
+        # around the drain.  A window in which it got no CPU at all is
+        # inconclusive and is retried with a longer drain (bounded).
+        for drain_timeout in (0.5, 1.0, 2.0, 4.0):
+            before = own_cpu_seconds(spinner)
+            with self.assertRaises(slot_mod.DrainFailed) as raised:
+                suite.acquire("rust-suite", drain_timeout=drain_timeout, drain_backoff=0.05,
+                              drain_attempts=1)
+            spent = own_cpu_seconds(spinner) - before
+            during = raised.exception.attempts[0]["blockers"][0]["during_wait"]
+            self.assertLessEqual(during["cpu_seconds"], spent + SLACK,
+                                 "the report is the CPU over the wait, not more")
+            if during["cpu_seconds"] > 0:
+                break
+        else:
+            self.fail("the spinning holder never showed CPU over a drain's wait")
         message = str(raised.exception)
         self.assertIn(f"audit/0 pid {holder.pid}", message)
         self.assertIn("admission reopened and every slot released", message)
         [attempt] = raised.exception.attempts
         self.assertEqual(attempt["outcome"], "gave up")
-        self.assertGreaterEqual(attempt["waited_seconds"], 0.5)
+        self.assertGreaterEqual(attempt["waited_seconds"], drain_timeout)
         [blocker] = attempt["blockers"]
         self.assertEqual((blocker["slot"], blocker["pid"]), ("audit/0", holder.pid))
         self.assertIn("while True: pass", blocker["argv"])
         self.assertEqual(blocker["admission_mib"], 7168)
-        self.assertGreater(blocker["during_wait"]["cpu_seconds"], 0.2, "the holder spins")
+        self.assertGreater(blocker["during_wait"]["cpu_seconds"], 0, "the holder spins")
         self.assertEqual(blocker["during_wait"]["io"]["wchar"], 0)
         self.assertIn("held_seconds", blocker)
         self.assertEqual(suite.held, [])
@@ -590,13 +657,34 @@ class Status(Scratch):
             job["pid"] == waiter.pid and job["role"] == "waiting for a slot"
             for job in slot_mod.gate_status(self.gate_dir, self.legacy, self.meminfo,
                                             0)["jobs"]))
-        status = slot_mod.gate_status(self.gate_dir, self.legacy, self.meminfo, interval=0.5)
+        [spinner] = wait_for(lambda: children_of(holder.pid))
+        self.assertTrue(spun(spinner, 0.1), "the spinner never ran")
+        # The holder's CPU over the interval, bracketed by the spinner's own CPU
+        # read just before and just after: the interval lies inside the
+        # bracket, so the report is at most what it spent there; and the
+        # spinner (one thread) can have spent at most the bracket's wall beyond
+        # the interval outside it, so the report is at least the rest.  An
+        # interval too short to show any CPU is lengthened, never the bounds.
+        for interval in (0.5, 1.0, 2.0, 4.0, 8.0):
+            before, started = own_cpu_seconds(spinner), time.monotonic()
+            status = slot_mod.gate_status(self.gate_dir, self.legacy, self.meminfo,
+                                          interval=interval)
+            outside = time.monotonic() - started - interval
+            spent = own_cpu_seconds(spinner) - before
+            if spent - outside >= 3 * TICK:
+                break
+        else:
+            self.fail(f"the spinner got too little CPU to measure (last: {spent:.2f}s, "
+                      f"{outside:.2f}s outside the interval)")
         held = self.job(status, holder.pid)
         self.assertEqual(held["role"], "holder")
         self.assertEqual(held["class"], "audit")
         self.assertEqual(held["slots"], ["audit/0"])
         self.assertIn("while True: pass", held["argv"])
-        self.assertGreater(held["over_interval"]["cpu_seconds"], 0.2)
+        reported = held["over_interval"]["cpu_seconds"]
+        self.assertLessEqual(reported, spent + SLACK, "not cumulative, not inflated")
+        self.assertGreaterEqual(reported, spent - outside - SLACK, "the spinning holder shows")
+        self.assertGreater(reported, 0)
         self.assertEqual(held["over_interval"]["io"]["rchar"], 0)
         self.assertEqual(held["admission_mib"], 7168)
         self.assertFalse(held["rss_over_admission"])
