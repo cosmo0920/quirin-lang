@@ -131,3 +131,13 @@ is the same: standalone Libevent Monkey at `66910c10`.
 None new. `MEMBER-PATH-HELPER-AT-A-CALL` and `RULE50-CONSUMER-COMPOSITION`
 remain open and may change whether this refusal fires at
 `mk_http_thread.c:269` at all.
+
+## Gate
+
+Scoped card gate, run through the private toolchain env (system Clang 21,
+Lean 4.35): `sh private/toolchain/env.sh python3 scripts/gate_scope.py --base
+0f6e17118 --out private/gate-1` at `77879e90f` (the tree before this section
+and [gate.json](gate.json) were added). Exit 0, 7 steps passed: submodules,
+fmt, clippy, Rust suite (638 units, 9,509 passed, 0 failed, 17 ignored),
+`reevaluation_probe`, `reevaluation_followup`, Python suite (761 tests).
+There is no Lean step and no provider gate in scope.
