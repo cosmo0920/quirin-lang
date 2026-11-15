@@ -88,16 +88,13 @@ def own_cpu_seconds(pid):
 
 
 def children_of(pid):
-    found = []
-    for entry in Path("/proc").iterdir():
-        if entry.name.isdigit():
-            try:
-                fields = (entry / "stat").read_text().rpartition(")")[2].split()
-            except OSError:
-                continue
-            if int(fields[1]) == pid:
-                found.append(int(entry.name))
-    return sorted(found)
+    """The children the process's main thread started (the slot script starts
+    its command there), from /proc/<pid>/task/<pid>/children: no walk."""
+    try:
+        text = Path(f"/proc/{pid}/task/{pid}/children").read_text()
+    except OSError:
+        return []
+    return sorted(int(child) for child in text.split())
 
 
 class InnerBracket:
