@@ -332,8 +332,13 @@ int hthread_destroy(struct hthread *mth)
     );
 }
 
+/// Card RULE50-CONSUMER-COMPOSITION (MEMBER-PATH-HELPER-AT-A-CALL): the
+/// direct call no longer refuses `member-path-direct`; it reads the member
+/// invocation first, and without the run's facts (this route) the unit's own
+/// empty set is refused (`callback-member-open`), fail-closed. The composed
+/// reading over the run's facts is `tests/rule50_consumer_composition.rs`.
 #[test]
-fn a_direct_call_of_a_helper_with_an_invocation_beside_its_states_refuses() {
+fn a_direct_call_of_a_helper_reads_its_invocation_first_and_refuses_without_the_run() {
     if !clang_available() {
         return;
     }
@@ -355,7 +360,8 @@ fn a_direct_call_of_a_helper_with_an_invocation_beside_its_states_refuses() {
     let row = &summary_of(&outcome).expect("a summary").functions["caller"];
     assert_ne!(row.status, AnalysisStatus::Safe, "{row:?}");
     assert!(
-        format!("{:?}", row.diagnostics).contains("member-path-direct"),
+        format!("{:?}", row.diagnostics).contains("callback-member-open")
+            && !format!("{:?}", row.diagnostics).contains("member-path-direct"),
         "{:?}",
         row.diagnostics
     );

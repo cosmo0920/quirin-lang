@@ -2049,6 +2049,52 @@ never yields a double release a `Safe` rests on. The Lean model is
 `an_uncomposed_callee_never_establishes`, `a_second_take_never_establishes`,
 `a_join_is_established_iff_both_are`, `one_identity_refuses_the_second_end`).
 
+**The named helper at the destroyer's consumers, and a helper destroyer at a
+direct call (card RULE50-CONSUMER-COMPOSITION, gateway rule 51).** These
+discharge the follow-ups RULE50-CONSUMER-COMPOSITION and
+MEMBER-PATH-HELPER-AT-A-CALL. A consumer in another unit cannot read the
+destroyer's body, so the composition it reads has to be stated. One
+predicate is added, `ensures normal resource_member_helper(P, TAG.PATH, H);`
+(G05d): the object the path `TAG.PATH` of `P` held is taken, inside the
+call, by the unit helper `H`.
+
+* **Placement.** At most one per declaration. `P` is a formal the
+  declaration releases, and `TAG.PATH` is a path it states exactly
+  `#stale`, unguarded and not a set. `H` is not the declaration itself. The
+  declaration states no callback clause and no hand-off, so a helper
+  destroyer never names a helper.
+* **Checked against the body.** Rule 50's reading in a unit that defines the
+  declaration admits only `H`. An established take is then the take through
+  `H`, and evidence `50` covers the clause (and nothing else covers it);
+  otherwise the clause is a declared assumption (rule 13i).
+* **What a consumer MUST apply at a direct call.** After the declaration's
+  own states:
+  1. Each member invocation `H` states is decided over the run's set
+     (C04.19.3). Only a closed empty set decides, and it invokes nothing.
+     The call refuses for an open set (`callback-member-open`), and for a
+     closed non-empty set, a route without the run's facts, or an `H` whose
+     declaration is not in force as a helper destroyer
+     (`member-path-helper`).
+  2. Then `H`'s states are read at the one live object the caller linked at
+     the path, as a direct call of `H` on it reads them (above).
+
+  Because `H` is looked up, the row rests on `H`'s declaration, so the run's
+  fold checks `H`'s members for that row (rule 12n). A callback invocation
+  never composes `H`.
+* **A helper destroyer at a direct call.** A declaration whose states stand
+  beside member invocations of the released formal is read in two steps:
+  first its invocations, decided exactly as every direct call's member
+  invocations are (C04.19.3), then its states (the direct call above). It
+  no longer refuses `member-path-direct`. As a callback candidate it is still
+  missing (C04.19.7).
+
+Bounded: one frame, since `H` names no helper. The Lean model is
+`QCore.DestroyerHelperComposition`, including
+`the_composition_carries_the_footprint`: over a closed empty set the
+composition equals the reading that assumed the callback invokes nothing,
+and every other set refuses. This is why `mk_http_thread_destroy`'s
+callback-footprint premise is removed.
+
 #### C04.19.7. A candidate with its own invocations
 
 Card HANDOFF-CANDIDATE-OWN-CALLBACKS (gateway rule 13u, amended in place;

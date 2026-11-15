@@ -1958,6 +1958,9 @@ fn load_function_in(
     // Card OP-CALLBACK-MEMBER-PATH-RELEASE: the member-path states, as
     // written, their guards' constants canonical.
     let mut member_path_clauses: Vec<member_path::Written> = Vec::new();
+    // Card RULE50-CONSUMER-COMPOSITION (gateway rule 51): the helper named
+    // for a stale path, as written.
+    let mut member_helper_clauses: Vec<member_path::WrittenHelper> = Vec::new();
     // Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION (§C04.14): holder-path
     // retentions and removals of one registration, as written.
     let mut path_retentions: Vec<retained_by::WrittenPath> = Vec::new();
@@ -2210,6 +2213,13 @@ fn load_function_in(
         // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (§C04.19.3): a member
         // invocation, whose dotted member the identifier-only predicate reader
         // does not read.
+        // Card RULE50-CONSUMER-COMPOSITION (gateway rule 51, §C04.19.6): the
+        // helper that takes a stale path's object, whose dotted path the
+        // identifier-only predicate reader does not read.
+        if let Some(written) = member_path::helper_clause(expression)? {
+            member_helper_clauses.push(written);
+            continue;
+        }
         if let Some(written) = callback::member_clause(expression)? {
             callback_clauses.push(written);
             continue;
@@ -2792,6 +2802,14 @@ fn load_function_in(
         .next()
         .map(|class| class.contract)
         .ok_or("missing parameter mode")?;
+    // Card RULE50-CONSUMER-COMPOSITION (gateway rule 51): a helper clause
+    // names a stated path; alone it states nothing and rejects.
+    if !member_helper_clauses.is_empty() && member_path_clauses.is_empty() {
+        return Err(format!(
+            "member-helper-path: `{}` names a path no member-path state states",
+            member_helper_clauses[0].text
+        ));
+    }
     // Card CALLEE-RETENTION-CLASS1 (§C04.14).
     let retaining = if retentions.is_empty()
         && resets.is_empty()
@@ -3066,20 +3084,31 @@ fn load_function_in(
         }
         // Card OP-CALLBACK-MEMBER-PATH-RELEASE (§C04.19.6): the member-path
         // states stand where a hand-off may, beside it or alone.
-        let member_paths = member_path::declaration(
+        let mut member_paths = member_path::declaration(
             &member_path_clauses,
             &contract,
             &parameter_types,
             &names,
             handed.as_ref(),
         )?;
+        // Card RULE50-CONSUMER-COMPOSITION (gateway rule 51): the helper
+        // named for one unguarded stale path of a released formal.
+        member_path::attach_helpers(
+            &member_helper_clauses,
+            &mut member_paths,
+            &contract,
+            &names,
+            &decl.name,
+            !declared.callbacks.is_empty(),
+            handed.is_some(),
+        )?;
         // Card SCHEDULER-DESTROY-MEMBER-STATES (gateway rule 50, §C04.19.6):
         // a helper destroyer's member invocations stand beside its states
         // when every state and every invocation bind one formal the
-        // declaration releases, with no hand-off. A consumer reads such a
-        // declaration only through rule 50's body reading; a direct call and
-        // a callback invocation refuse it (`member-path-direct`, a missing
-        // candidate), as for every member-path declaration that is not plain.
+        // declaration releases, with no hand-off. Rule 50's body reading
+        // composes it; card RULE50-CONSUMER-COMPOSITION (rule 51) reads it
+        // at a direct call (its invocations, then its states); a callback
+        // invocation still reads it missing.
         let helper_invocations = !declared.callbacks.is_empty()
             && handed.is_none()
             && member_paths.first().is_some_and(|first| {
