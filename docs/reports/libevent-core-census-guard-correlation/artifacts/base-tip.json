@@ -1,0 +1,7747 @@
+{
+ "base": "private/runs/base-3/libevent-core-audit.json",
+ "tip": "private/runs/tip-1/libevent-core-audit.json",
+ "totals": {
+  "base": {
+   "Unknown": 21
+  },
+  "tip": {
+   "Unknown": 21
+  }
+ },
+ "absent_from_raw_scan_total": {
+  "base": 62,
+  "tip": 21
+ },
+ "refused_units": {
+  "base": [
+   "buffer.c",
+   "bufferevent_sock.c"
+  ],
+  "tip": []
+ },
+ "unmatched_units": {
+  "base_only": [],
+  "tip_only": []
+ },
+ "top_level_keys_changed": [],
+ "units": [
+  {
+   "unit": "libevent-core::buffer.c",
+   "changed_fields": [
+    "enumeration",
+    "functions",
+    "not_projected",
+    "source_functions"
+   ],
+   "enumeration": {
+    "base": {
+     "completeness": "refused",
+     "refusals": [
+      "conditional-arm-depth-disagreement"
+     ],
+     "absent_from_raw_scan": [
+      "evbuffer_add_cb",
+      "evbuffer_add_file",
+      "evbuffer_add_file_segment",
+      "evbuffer_add_printf",
+      "evbuffer_add_reference",
+      "evbuffer_add_reference_with_offset",
+      "evbuffer_add_vprintf",
+      "evbuffer_cb_clear_flags",
+      "evbuffer_cb_set_flags",
+      "evbuffer_file_segment_add_cleanup_cb",
+      "evbuffer_file_segment_free",
+      "evbuffer_file_segment_materialize",
+      "evbuffer_file_segment_new",
+      "evbuffer_find",
+      "evbuffer_freeze",
+      "evbuffer_get_callbacks_",
+      "evbuffer_peek",
+      "evbuffer_ptr_memcmp",
+      "evbuffer_ptr_set",
+      "evbuffer_ptr_subtract",
+      "evbuffer_remove_cb",
+      "evbuffer_remove_cb_entry",
+      "evbuffer_search",
+      "evbuffer_search_range",
+      "evbuffer_setcb",
+      "evbuffer_unfreeze",
+      "evbuffer_write",
+      "get_page_size"
+     ],
+     "unanalyzable": []
+    },
+    "tip": {
+     "completeness": "established",
+     "refusals": [],
+     "absent_from_raw_scan": [],
+     "unanalyzable": []
+    }
+   },
+   "source_functions": {
+    "added": [
+     "evbuffer_cb_suspend",
+     "evbuffer_cb_unsuspend"
+    ],
+    "removed": [],
+    "base_count": 101,
+    "tip_count": 103
+   },
+   "not_projected": {
+    "added": [
+     "evbuffer_cb_suspend",
+     "evbuffer_cb_unsuspend"
+    ],
+    "removed": [],
+    "base_count": 0,
+    "tip_count": 2
+   },
+   "function_rows_changed": [
+    {
+     "function": "APPEND_CHAIN",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "APPEND_CHAIN_MULTICAST",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "COPY_CHAIN",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "HAS_PINNED_R",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "PREPEND_CHAIN",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "PRESERVE_PINNED",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "RESTORE_PINNED",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "ZERO_CHAIN",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "advance_last_with_data",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_add",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_add_buffer",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_add_buffer_reference",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_add_cb",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_add_file",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_add_file_segment",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_add_iovec",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_add_printf",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_add_reference",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_add_reference_with_offset",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_add_vprintf",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_cb_clear_flags",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_cb_set_flags",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_chain_align",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_chain_free",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_chain_incref",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_chain_insert",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_chain_insert_new",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_chain_new",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_chain_new_membuf",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_chain_pin_",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_chain_should_realign",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_chain_unpin_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_chains_all_empty",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_clear_flags",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_commit_space",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_copyout",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_copyout_from",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_decref_and_unlock_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_defer_callbacks",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_deferred_callback",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_drain",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_enable_locking",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_expand",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_expand_fast_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_expand_singlechain",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_file_segment_add_cleanup_cb",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_file_segment_free",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_file_segment_materialize",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_file_segment_new",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_find",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_find_eol_char",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_free",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_free_all_chains",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_free_trailing_empty_chains",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_freeze",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_get_callbacks_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_get_contiguous_space",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_get_length",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_get_max_read",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_getchr",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_incref_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_incref_and_lock_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_invoke_callbacks_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_lock",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_new",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_peek",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_prepend",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_prepend_buffer",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_ptr_memcmp",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_ptr_set",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_ptr_subtract",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_pullup",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_read",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_read_setup_vecs_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_readline",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_readln",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_remove",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_remove_all_callbacks",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_remove_buffer",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_remove_cb",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_remove_cb_entry",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_reserve_space",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_run_callbacks",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_search",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_search_eol",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_search_range",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_set_flags",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_set_max_read",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_set_parent_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_setcb",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_strchr",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_strspn",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_unfreeze",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_unlock",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_write",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_write_atmost",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_write_iovec",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evbuffer_write_sendfile",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "find_eol_char",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "get_n_bytes_readable_on_socket",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "get_page_size",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    }
+   ]
+  },
+  {
+   "unit": "libevent-core::bufferevent.c",
+   "changed_fields": [
+    "functions"
+   ],
+   "function_rows_changed": [
+    {
+     "function": "bufferevent_add_event_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_cancel_all_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_decref",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_decref_and_unlock_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_disable",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_disable_hard_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_enable",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_enable_locking_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_finalize_cb_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_flush",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_free",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_generic_adj_existing_timeouts_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_generic_adj_timeouts_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_generic_read_timeout_cb",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_generic_write_timeout_cb",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_get_base",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_get_enabled",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_get_input",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_get_options_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_get_output",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_get_priority",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_get_underlying",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_getcb",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_getfd",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_getwatermark",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_inbuf_wm_cb",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_inbuf_wm_check",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_incref",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_incref_and_lock_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_init_common_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_init_generic_timeout_cbs_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_lock",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_read",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_read_buffer",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_replacefd",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_run_deferred_callbacks_locked",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_run_deferred_callbacks_unlocked",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_run_eventcb_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_run_readcb_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_run_writecb_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_set_timeouts",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_setcb",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_setfd",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_settimeout",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_setwatermark",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_suspend_read_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_suspend_write_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_trigger",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_trigger_event",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_unlock",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_unsuspend_read_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_unsuspend_write_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_write",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_write_buffer",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    }
+   ]
+  },
+  {
+   "unit": "libevent-core::bufferevent_filter.c",
+   "changed_fields": [
+    "functions"
+   ],
+   "function_rows_changed": [
+    {
+     "function": "be_filter_ctrl",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "be_filter_destruct",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "be_filter_disable",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "be_filter_enable",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "be_filter_eventcb",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "be_filter_flush",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "be_filter_process_input",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "be_filter_process_output",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "be_filter_read_nolock_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "be_filter_readcb",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "be_filter_unlink",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "be_filter_writecb",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "be_null_filter",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "be_readbuf_full",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "be_underlying_writebuf_full",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_filter_new",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_filtered_inbuf_cb",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_filtered_outbuf_cb",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "upcast",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    }
+   ]
+  },
+  {
+   "unit": "libevent-core::bufferevent_pair.c",
+   "changed_fields": [
+    "functions"
+   ],
+   "function_rows_changed": [
+    {
+     "function": "be_pair_destruct",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "be_pair_disable",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "be_pair_enable",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "be_pair_flush",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "be_pair_outbuf_cb",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "be_pair_transfer",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "be_pair_unlink",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "be_pair_wants_to_talk",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_pair_elt_new",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_pair_get_partner",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_pair_new",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "decref_and_unlock",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "incref_and_lock",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "upcast",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    }
+   ]
+  },
+  {
+   "unit": "libevent-core::bufferevent_ratelim.c",
+   "changed_fields": [
+    "functions"
+   ],
+   "function_rows_changed": [
+    {
+     "function": "bev_group_random_element_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bev_group_refill_callback_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bev_group_suspend_reading_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bev_group_suspend_writing_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bev_group_unsuspend_reading_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bev_group_unsuspend_writing_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bev_refill_callback_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_add_to_rate_limit_group",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_decrement_read_buckets_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_decrement_read_limit",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_decrement_write_buckets_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_decrement_write_limit",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_get_max_single_read",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_get_max_single_write",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_get_max_to_read",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_get_max_to_write",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_get_read_limit",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_get_read_max_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_get_rlim_max_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_get_token_bucket_cfg",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_get_write_limit",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_get_write_max_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_rate_limit_group_decrement_read",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_rate_limit_group_decrement_write",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_rate_limit_group_free",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_rate_limit_group_get_read_limit",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_rate_limit_group_get_totals",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_rate_limit_group_get_write_limit",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_rate_limit_group_new",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_rate_limit_group_reset_totals",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_rate_limit_group_set_cfg",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_rate_limit_group_set_min_share",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_ratelim_init_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_remove_from_rate_limit_group",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_remove_from_rate_limit_group_internal_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_set_max_single_read",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_set_max_single_write",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_set_rate_limit",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_update_buckets",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "ev_token_bucket_cfg_free",
+     "status": {
+      "base": "Pending",
+      "tip": "Pending"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "ev_token_bucket_cfg_new",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "ev_token_bucket_get_tick_",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "ev_token_bucket_init_",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "ev_token_bucket_update_",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    }
+   ]
+  },
+  {
+   "unit": "libevent-core::bufferevent_sock.c",
+   "changed_fields": [
+    "enumeration",
+    "functions"
+   ],
+   "enumeration": {
+    "base": {
+     "completeness": "refused",
+     "refusals": [
+      "conditional-arm-depth-disagreement"
+     ],
+     "absent_from_raw_scan": [
+      "be_socket_ctrl",
+      "be_socket_destruct",
+      "be_socket_disable",
+      "be_socket_enable",
+      "be_socket_flush",
+      "be_socket_setfd",
+      "bufferevent_base_set",
+      "bufferevent_connect_getaddrinfo_cb",
+      "bufferevent_new",
+      "bufferevent_priority_set",
+      "bufferevent_socket_connect_hostname",
+      "bufferevent_socket_connect_hostname_hints",
+      "bufferevent_socket_get_dns_error"
+     ],
+     "unanalyzable": []
+    },
+    "tip": {
+     "completeness": "established",
+     "refusals": [],
+     "absent_from_raw_scan": [],
+     "unanalyzable": []
+    }
+   },
+   "function_rows_changed": [
+    {
+     "function": "be_socket_ctrl",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "be_socket_destruct",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "be_socket_disable",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "be_socket_enable",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "be_socket_flush",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "be_socket_setfd",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_base_set",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_connect_getaddrinfo_cb",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_new",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_priority_set",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_readcb",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_socket_connect",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_socket_connect_hostname",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_socket_connect_hostname_hints",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_socket_get_conn_address_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_socket_get_dns_error",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_socket_new",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_socket_outbuf_cb",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_socket_set_conn_address_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_socket_set_conn_address_fd_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "bufferevent_writecb",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    }
+   ]
+  },
+  {
+   "unit": "libevent-core::epoll.c",
+   "changed_fields": [
+    "functions"
+   ],
+   "function_rows_changed": [
+    {
+     "function": "change_to_string",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "close_epoll_handle",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "epoll_apply_changes",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "epoll_apply_one_change",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "epoll_dealloc",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "epoll_dispatch",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "epoll_init",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "epoll_nochangelist_add",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "epoll_nochangelist_del",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "epoll_op_to_string",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    }
+   ]
+  },
+  {
+   "unit": "libevent-core::event.c",
+   "changed_fields": [
+    "functions"
+   ],
+   "function_rows_changed": [
+    {
+     "function": "clear_time_cache",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "common_timeout_callback",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "common_timeout_schedule",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "dump_active_event_fn",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "dump_inserted_event_fn",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "eq_debug_entry",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_active",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_active_later_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_active_later_nolock_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_active_nolock_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_add",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_add_nolock_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_assign",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_base_active_by_fd",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_base_active_by_signal",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_base_add_virtual_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_base_assert_ok_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_base_assert_ok_nolock_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_base_cancel_single_callback_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_base_del_virtual_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_base_dispatch",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_base_dump_events",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_base_foreach_event",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_base_foreach_event_nolock_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_base_free",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_base_free_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_base_free_nofinalize",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_base_free_queues_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_base_get_features",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_base_get_max_events",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_base_get_method",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_base_get_npriorities",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_base_get_num_events",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_base_get_running_event",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_base_get_signal_method",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_base_gettimeofday_cached",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_base_got_break",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_base_got_exit",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_base_init_common_timeout",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_base_loop",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_base_loopbreak",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_base_loopcontinue",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_base_loopexit",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_base_new",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_base_new_with_config",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_base_once",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_base_priority_init",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_base_set",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_base_start_iocp_",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_base_stop_iocp_",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_base_update_cache_time",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_callback_activate_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_callback_activate_later_nolock_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_callback_activate_nolock_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_callback_cancel_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_callback_cancel_nolock_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_callback_finalize_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_callback_finalize_many_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_callback_finalize_nolock_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_callback_init_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_callback_to_event",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_config_avoid_method",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_config_entry_free",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_config_free",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_config_is_avoided_method",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_config_new",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_config_require_features",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_config_set_flag",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_config_set_max_dispatch_interval",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_config_set_num_cpus_hint",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_debug_assert_is_setup_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_debug_assert_not_added_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_debug_assert_socket_nonblocking_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_debug_map_HT_CLEAR",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_debug_map_HT_FIND",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_debug_map_HT_FIND_P_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_debug_map_HT_FOREACH_FN",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_debug_map_HT_GROW",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_debug_map_HT_INIT",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_debug_map_HT_INSERT",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_debug_map_HT_NEXT",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_debug_map_HT_NEXT_RMV",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_debug_map_HT_REMOVE",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_debug_map_HT_REPLACE",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_debug_map_HT_REP_IS_BAD_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_debug_map_HT_START",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_debug_mode_too_late_set",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_debug_note_add_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_debug_note_del_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_debug_note_setup_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_debug_note_teardown_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_debug_unassign",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_deferred_cb_cancel_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_deferred_cb_init_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_deferred_cb_schedule_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_deferred_cb_set_priority_",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_del",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_del_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_del_block",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_del_noblock",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_del_nolock_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_disable_debug_mode",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_dispatch",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_enable_debug_mode",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_finalize",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_finalize_impl_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_finalize_nolock_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_free",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_free_debug_globals",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_free_debug_globals_locks",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_free_evsig_globals",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_free_evutil_globals",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_free_finalize",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_free_globals",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_get_assignment",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_get_base",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_get_callback",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_get_callback_arg",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_get_events",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_get_fd",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_get_method",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_get_priority",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_get_struct_event_size",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_get_supported_methods",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_get_version",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_get_version_number",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_gettime_monotonic",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_global_setup_locks_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_haveevents",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_init",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_initialized",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_is_method_disabled",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_loop",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_loopbreak",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_loopexit",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_loopexit_cb",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_mm_calloc_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_mm_free_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_mm_malloc_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_mm_realloc_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_mm_strdup_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_new",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_once",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_once_cb",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_pending",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_persist_closure",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_priority_init",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_priority_set",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_process_active",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_process_active_single_queue",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_queue_insert_active",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_queue_insert_active_later",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_queue_insert_inserted",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_queue_insert_timeout",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_queue_make_later_events_active",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_queue_remove_active",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_queue_remove_active_later",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_queue_remove_inserted",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_queue_remove_timeout",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_reinit",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_remove_timer",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_remove_timer_nolock_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_self_cbarg",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_set",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_set_mem_functions",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_signal_closure",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_to_event_callback",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evthread_make_base_notifiable",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evthread_make_base_notifiable_nolock_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evthread_notify_base",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evthread_notify_base_default",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evthread_notify_base_eventfd",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evthread_notify_drain_default",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evthread_notify_drain_eventfd",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "get_common_timeout_list",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "gettime",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "hash_debug_entry",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "insert_common_timeout_inorder",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "is_common_timeout",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "is_same_common_timeout",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "libevent_global_shutdown",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "nil_backend_del",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "timeout_next",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "timeout_process",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "update_time_cache",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    }
+   ]
+  },
+  {
+   "unit": "libevent-core::evmap.c",
+   "changed_fields": [
+    "functions"
+   ],
+   "function_rows_changed": [
+    {
+     "function": "delete_all_in_dlist",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_change_get_fdinfo",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_changelist_add_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_changelist_assert_ok",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_changelist_assert_ok_foreach_iter_fn",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_changelist_del_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_changelist_freemem_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_changelist_get_or_construct",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_changelist_grow",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_changelist_init_",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_changelist_remove_all_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evmap_check_integrity_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evmap_delete_all_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evmap_foreach_event_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evmap_io_active_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evmap_io_add_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evmap_io_check_integrity_fn",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evmap_io_clear_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evmap_io_del_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evmap_io_delete_all_iter_fn",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evmap_io_foreach_event_fn",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evmap_io_foreach_fd",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evmap_io_get_fdinfo_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evmap_io_init",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evmap_io_initmap_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evmap_io_reinit_iter_fn",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evmap_make_space",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evmap_reinit_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evmap_signal_active_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evmap_signal_add_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evmap_signal_check_integrity_fn",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evmap_signal_clear_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evmap_signal_del_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evmap_signal_delete_all_iter_fn",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evmap_signal_foreach_event_fn",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evmap_signal_foreach_signal",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evmap_signal_init",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evmap_signal_initmap_",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evmap_signal_reinit_iter_fn",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    }
+   ]
+  },
+  {
+   "unit": "libevent-core::evthread.c",
+   "changed_fields": [
+    "functions"
+   ],
+   "function_rows_changed": [
+    {
+     "function": "debug_cond_wait",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "debug_lock_alloc",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "debug_lock_free",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "debug_lock_lock",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "debug_lock_unlock",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evthread_debug_get_real_lock_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evthread_debug_lock_mark_locked",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evthread_debug_lock_mark_unlocked",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evthread_enable_lock_debugging",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evthread_enable_lock_debuging",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evthread_get_condition_callbacks",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evthread_get_lock_callbacks",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evthread_is_debug_lock_held_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evthread_set_condition_callbacks",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evthread_set_id_callback",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evthread_set_lock_callbacks",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evthread_setup_global_lock_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evthreadimpl_disable_lock_debugging_",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    }
+   ]
+  },
+  {
+   "unit": "libevent-core::evutil.c",
+   "changed_fields": [
+    "functions"
+   ],
+   "function_rows_changed": [
+    {
+     "function": "EVUTIL_ISALNUM_",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "EVUTIL_ISALPHA_",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "EVUTIL_ISDIGIT_",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "EVUTIL_ISLOWER_",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "EVUTIL_ISPRINT_",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "EVUTIL_ISSPACE_",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "EVUTIL_ISUPPER_",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "EVUTIL_ISXDIGIT_",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "EVUTIL_TOLOWER_",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "EVUTIL_TOUPPER_",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "ai_find_protocol",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "apply_numeric_port_hack",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "apply_socktype_protocol_hack",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_accept4_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_addrinfo_append_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_adjust_hints_for_addrconfig_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_ascii_strcasecmp",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_ascii_strcasestr",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_ascii_strncasecmp",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_check_ifaddrs",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_check_interfaces",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_closesocket",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_dup_addrinfo_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_ersatz_socketpair_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_eventfd_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_fast_socket_closeonexec",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_fast_socket_nonblocking",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_fd_filesize",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_format_sockaddr_port_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_found_ifaddr",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_free_globals_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_free_sock_err_globals",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_freeaddrinfo",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_gai_strerror",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_getaddrinfo",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_getaddrinfo_async_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_getaddrinfo_cancel_async_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_getaddrinfo_common_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_getaddrinfo_infer_protocols",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_getenv_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_global_setup_locks_",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_hex_char_to_int_",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_inet_ntop",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_inet_pton",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_inet_pton_scope",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_issetugid",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_make_internal_pipe_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_make_listen_socket_ipv6only",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_make_listen_socket_not_ipv6only",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_make_listen_socket_reuseable",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_make_listen_socket_reuseable_port",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_make_socket_closeonexec",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_make_socket_nonblocking",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_make_tcp_listen_socket_deferred",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_memclear_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_new_addrinfo_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_open_closeonexec_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_parse_servname",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_parse_sockaddr_port",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_read_file_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_resolvconf_filename_",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_rtrim_lws_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_set_evdns_getaddrinfo_cancel_fn_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_set_evdns_getaddrinfo_fn_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_set_resolvconf_filename_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_set_tcp_keepalive",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_snprintf",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_sockaddr_cmp",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_sockaddr_is_loopback_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_socket_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_socket_connect_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_socket_finished_connecting_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_socketpair",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_strsignal",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_strtoll",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_unparse_protoname",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_v4addr_is_classd",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_v4addr_is_linklocal",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_v4addr_is_local_",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_v4addr_is_localhost",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_v6addr_is_local_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_vsnprintf",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_weakrand_",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_weakrand_range_",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_weakrand_seed_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "need_numeric_port_hack",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "need_socktype_protocol_hack",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "parse_numeric_servname",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "test_for_getaddrinfo_hacks",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    }
+   ]
+  },
+  {
+   "unit": "libevent-core::evutil_rand.c",
+   "changed_fields": [
+    "functions"
+   ],
+   "function_rows_changed": [
+    {
+     "function": "ev_arc4random_buf",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_free_secure_rng_globals_",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_free_secure_rng_globals_locks",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_secure_rng_add_bytes",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_secure_rng_get_bytes",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_secure_rng_global_setup_locks_",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_secure_rng_init",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_secure_rng_set_urandom_device_file",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    }
+   ]
+  },
+  {
+   "unit": "libevent-core::evutil_time.c",
+   "changed_fields": [
+    "functions"
+   ],
+   "function_rows_changed": [
+    {
+     "function": "adjust_monotonic_time",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_configure_monotonic_time",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_configure_monotonic_time_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_date_rfc1123",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_gettime_monotonic",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_gettime_monotonic_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_monotonic_timer_free",
+     "status": {
+      "base": "Pending",
+      "tip": "Pending"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_monotonic_timer_new",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_tv_to_msec_",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evutil_usleep_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    }
+   ]
+  },
+  {
+   "unit": "libevent-core::listener.c",
+   "changed_fields": [
+    "functions"
+   ],
+   "function_rows_changed": [
+    {
+     "function": "evconnlistener_disable",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evconnlistener_enable",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evconnlistener_free",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evconnlistener_get_base",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evconnlistener_get_fd",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evconnlistener_new",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evconnlistener_new_bind",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evconnlistener_set_cb",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evconnlistener_set_error_cb",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_listener_destroy",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_listener_disable",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_listener_enable",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_listener_getbase",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_listener_getfd",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "listener_decref_and_unlock",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "listener_read_cb",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    }
+   ]
+  },
+  {
+   "unit": "libevent-core::log.c",
+   "changed_fields": [
+    "functions"
+   ],
+   "function_rows_changed": [
+    {
+     "function": "event_debugx_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_enable_debug_logging",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_err",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_errx",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_exit",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_log",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_logv_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_msgx",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_set_fatal_callback",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_set_log_callback",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_sock_err",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_sock_warn",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_warn",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "event_warnx",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    }
+   ]
+  },
+  {
+   "unit": "libevent-core::poll.c",
+   "changed_fields": [
+    "functions"
+   ],
+   "function_rows_changed": [
+    {
+     "function": "poll_add",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "poll_dealloc",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "poll_del",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "poll_dispatch",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "poll_init",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    }
+   ]
+  },
+  {
+   "unit": "libevent-core::select.c",
+   "changed_fields": [
+    "functions"
+   ],
+   "function_rows_changed": [
+    {
+     "function": "select_add",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "select_dealloc",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "select_del",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "select_dispatch",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "select_free_selectop",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "select_init",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "select_resize",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    }
+   ]
+  },
+  {
+   "unit": "libevent-core::signal.c",
+   "changed_fields": [
+    "functions"
+   ],
+   "function_rows_changed": [
+    {
+     "function": "evsig_add",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evsig_cb",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evsig_dealloc_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evsig_del",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evsig_ensure_saved_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evsig_free_globals_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evsig_free_globals_locks",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evsig_global_setup_locks_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evsig_handler",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evsig_init_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evsig_restore_handler_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evsig_set_base_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evsig_set_handler_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    }
+   ]
+  },
+  {
+   "unit": "libevent-core::signalfd.c",
+   "changed_fields": [
+    "functions"
+   ],
+   "function_rows_changed": [
+    {
+     "function": "sigfd_add",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "sigfd_cb",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "sigfd_del",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "sigfd_free_sigevent",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "sigfd_init_",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    }
+   ]
+  },
+  {
+   "unit": "libevent-core::watch.c",
+   "changed_fields": [
+    "functions"
+   ],
+   "function_rows_changed": [
+    {
+     "function": "evwatch_base",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evwatch_check_new",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evwatch_free",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evwatch_new",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evwatch_prepare_get_timeout",
+     "status": {
+      "base": "Safe",
+      "tip": "Safe"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    },
+    {
+     "function": "evwatch_prepare_new",
+     "status": {
+      "base": "Unknown",
+      "tip": "Unknown"
+     },
+     "moved": false,
+     "changed_fields": [
+      "hypothesis_context"
+     ]
+    }
+   ]
+  }
+ ],
+ "function_rows_moved": 0,
+ "unit_rows_moved": 0
+}

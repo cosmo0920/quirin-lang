@@ -1,0 +1,25 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "LIBEVENT-CORE-CENSUS-GUARD-CORRELATION",
+  "base": "fe6d5760d",
+  "measured_tip": "0f6e17118",
+  "profiles": [],
+  "increment_paragraph": "**LIBEVENT-CORE-CENSUS-GUARD-CORRELATION** (named follow-up of TAIL-FILE-DEFINITION-CENSUS-INCOMPLETE; measurement only, no code change; [report](../../reports/libevent-core-census-guard-correlation/README.md)). The `libevent-core` configured audit (`quirin-audit CONFIG.json`, one `quirin-audit libevent prepare` of the pinned `third_party/libevent`, both sides built from `git archive` exports) was run before rule 49 (`fe6d5760d`, the first parent of the merge that brought it) and at `0f6e17118`. Rule 49 decides both refusals E01-TAIL recorded: `buffer.c` (two `#ifdef USE_SENDFILE` groups in `evbuffer_write_atmost`) and `bufferevent_sock.c` (two `#ifdef _WIN32` groups in `bufferevent_socket_connect`) now have an established census; refused units 2 -> 0, `absent_from_raw_scan` 62 -> 21 (the 28 and 13 names are now raw names); the denominator 727 -> 729 gains `buffer.c`'s two `#if 0` definitions as build-excluded `not_projected` names. No unit or function row moves (21 Unknown units; 80 Safe / 2 Pending / 596 Unknown function rows on both sides); with the run directory and build commit normalised (a second base run shows those are the only run-to-run differences), nothing else differs. The prediction, committed before the tip run, matched; the declared block was checked by the card's comparison script because the measure plugin has no route kind for the plain configured route. The route does not load as committed: the profile's `contracts.json` still names `libevent_memory.qcore`, renamed to `.qv` by `f4018a925`; the card measured with a corrected per-run copy and registers LIBEVENT-CORE-PROFILE-CONTRACT-SPELLING.",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "LIBEVENT-CORE-CENSUS-GUARD-CORRELATION",
+      "operation": "retire",
+      "why": "DISCHARGED by LIBEVENT-CORE-CENSUS-GUARD-CORRELATION: the libevent-core configured audit run at fe6d5760d (before rule 49) and 0f6e17118 over one prepared input set. buffer.c and bufferevent_sock.c go from enumeration refused (conditional-arm-depth-disagreement) to established; absent_from_raw_scan 62 -> 21; the denominator 727 -> 729 gains buffer.c's two #if 0 definitions (evbuffer_cb_suspend, evbuffer_cb_unsuspend) as build-excluded not_projected names. 0 unit and 0 function rows move (21 Unknown units; 80 Safe / 2 Pending / 596 Unknown rows); after normalising the run directory and the build commit (a base-against-base control shows those are the only run-to-run differences) nothing else differs. Both changes are correct decisions; nothing is still refused or suspicious; no rule-49 defect.",
+      "source": "docs/reports/libevent-core-census-guard-correlation/README.md"
+    },
+    {
+      "id": "LIBEVENT-CORE-PROFILE-CONTRACT-SPELLING",
+      "operation": "register",
+      "title": "The libevent-core profile names a contract module that no longer exists",
+      "text": "contract/profiles/libevent-core/contracts.json lists libevent_memory.qcore, but f4018a925 (\"Migrate contract sources and lock paths to .qv\") renamed the module to libevent_memory.qv, so the libevent-core configured route (quirin-audit CONFIG.json from quirin-audit libevent prepare) refuses before auditing anything (audit rejected: ... libevent_memory.qcore: No such file or directory) at fe6d5760d and 0f6e17118. Card LIBEVENT-CORE-CENSUS-GUARD-CORRELATION measured with a per-run copy of the profile directory whose contracts.json names the .qv file. Also observed, not investigated: 18 of the route's 21 units are Unknown with reason_code contract-pin-mismatch on both sides. The measure plugin has no route kind for this plain configured route (only pinned-corpus and configured-selection via current --selection with a link map), so libevent-core cannot be a declared measurement as it stands. DISCHARGE: correct the module name (with whatever test or pin reads the profile), rerun the route as committed and record its figures, and decide (user) whether libevent-core becomes a measured route.",
+      "source": "docs/reports/libevent-core-census-guard-correlation/README.md",
+      "recorded_by": "LIBEVENT-CORE-CENSUS-GUARD-CORRELATION"
+    }
+  ]
+}

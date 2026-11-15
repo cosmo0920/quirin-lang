@@ -1,0 +1,68 @@
+libevent-core-audit.assumptions.json: equal after normalisation
+libevent-core-audit.components.json: 65 diff lines
+  --- base
+  +++ tip
+  @@ -7994 +7994 @@
+  -      "resource-contracts": "bd65b81f051da0d0de734399007b23e55ec332c87386b7fe07eff4bc2f666149"
+  +      "resource-contracts": "1731d786381953d9354e30b4b9b06f8cbf19c03ecb89d0507212c01908bfc764"
+  @@ -12078 +12078 @@
+  -      "resource-contracts": "bd65b81f051da0d0de734399007b23e55ec332c87386b7fe07eff4bc2f666149"
+  +      "resource-contracts": "1731d786381953d9354e30b4b9b06f8cbf19c03ecb89d0507212c01908bfc764"
+  @@ -13438 +13438 @@
+  -      "resource-contracts": "bd65b81f051da0d0de734399007b23e55ec332c87386b7fe07eff4bc2f666149"
+  +      "resource-contracts": "1731d786381953d9354e30b4b9b06f8cbf19c03ecb89d0507212c01908bfc764"
+  @@ -14356 +14356 @@
+  -      "resource-contracts": "bd65b81f051da0d0de734399007b23e55ec332c87386b7fe07eff4bc2f666149"
+  +      "resource-contracts": "1731d786381953d9354e30b4b9b06f8cbf19c03ecb89d0507212c01908bfc764"
+  @@ -17725 +17725 @@
+  -      "resource-contracts": "bd65b81f051da0d0de734399007b23e55ec332c87386b7fe07eff4bc2f666149"
+  +      "resource-contracts": "1731d786381953d9354e30b4b9b06f8cbf19c03ecb89d0507212c01908bfc764"
+  @@ -19419 +19419 @@
+  -      "resource-contracts": "bd65b81f051da0d0de734399007b23e55ec332c87386b7fe07eff4bc2f666149"
+  +      "resource-contracts": "1731d786381953d9354e30b4b9b06f8cbf19c03ecb89d0507212c01908bfc764"
+  @@ -20160 +20160 @@
+  -      "resource-contracts": "bd65b81f051da0d0de734399007b23e55ec332c87386b7fe07eff4bc2f666149"
+  +      "resource-contracts": "1731d786381953d9354e30b4b9b06f8cbf19c03ecb89d0507212c01908bfc764"
+  @@ -31959 +31959 @@
+  -      "resource-contracts": "bd65b81f051da0d0de734399007b23e55ec332c87386b7fe07eff4bc2f666149"
+  +      "resource-contracts": "1731d786381953d9354e30b4b9b06f8cbf19c03ecb89d0507212c01908bfc764"
+  @@ -34120 +34120 @@
+  -      "resource-contracts": "bd65b81f051da0d0de734399007b23e55ec332c87386b7fe07eff4bc2f666149"
+  +      "resource-contracts": "1731d786381953d9354e30b4b9b06f8cbf19c03ecb89d0507212c01908bfc764"
+  @@ -35151 +35151 @@
+  -      "resource-contracts": "bd65b81f051da0d0de734399007b23e55ec332c87386b7fe07eff4bc2f666149"
+  +      "resource-contracts": "1731d786381953d9354e30b4b9b06f8cbf19c03ecb89d0507212c01908bfc764"
+  @@ -39500 +39500 @@
+  -      "resource-contracts": "bd65b81f051da0d0de734399007b23e55ec332c87386b7fe07eff4bc2f666149"
+  +      "resource-contracts": "1731d786381953d9354e30b4b9b06f8cbf19c03ecb89d0507212c01908bfc764"
+  @@ -39789 +39789 @@
+  -      "resource-contracts": "bd65b81f051da0d0de734399007b23e55ec332c87386b7fe07eff4bc2f666149"
+  +      "resource-contracts": "1731d786381953d9354e30b4b9b06f8cbf19c03ecb89d0507212c01908bfc764"
+  @@ -40267 +40267 @@
+  -      "resource-contracts": "bd65b81f051da0d0de734399007b23e55ec332c87386b7fe07eff4bc2f666149"
+  +      "resource-contracts": "1731d786381953d9354e30b4b9b06f8cbf19c03ecb89d0507212c01908bfc764"
+  @@ -41500 +41500 @@
+  -      "resource-contracts": "bd65b81f051da0d0de734399007b23e55ec332c87386b7fe07eff4bc2f666149"
+  +      "resource-contracts": "1731d786381953d9354e30b4b9b06f8cbf19c03ecb89d0507212c01908bfc764"
+  @@ -42058 +42058 @@
+  -      "resource-contracts": "bd65b81f051da0d0de734399007b23e55ec332c87386b7fe07eff4bc2f666149"
+  +      "resource-contracts": "1731d786381953d9354e30b4b9b06f8cbf19c03ecb89d0507212c01908bfc764"
+  @@ -42752 +42752 @@
+  -      "resource-contracts": "bd65b81f051da0d0de734399007b23e55ec332c87386b7fe07eff4bc2f666149"
+  +      "resource-contracts": "1731d786381953d9354e30b4b9b06f8cbf19c03ecb89d0507212c01908bfc764"
+  @@ -43379 +43379 @@
+  -      "resource-contracts": "bd65b81f051da0d0de734399007b23e55ec332c87386b7fe07eff4bc2f666149"
+  +      "resource-contracts": "1731d786381953d9354e30b4b9b06f8cbf19c03ecb89d0507212c01908bfc764"
+  @@ -44394 +44394 @@
+  -      "resource-contracts": "bd65b81f051da0d0de734399007b23e55ec332c87386b7fe07eff4bc2f666149"
+  +      "resource-contracts": "1731d786381953d9354e30b4b9b06f8cbf19c03ecb89d0507212c01908bfc764"
+  @@ -44914 +44914 @@
+  -      "resource-contracts": "bd65b81f051da0d0de734399007b23e55ec332c87386b7fe07eff4bc2f666149"
+  +      "resource-contracts": "1731d786381953d9354e30b4b9b06f8cbf19c03ecb89d0507212c01908bfc764"
+  @@ -44971 +44971 @@
+  -      "resource-contracts": "bd65b81f051da0d0de734399007b23e55ec332c87386b7fe07eff4bc2f666149"
+  +      "resource-contracts": "1731d786381953d9354e30b4b9b06f8cbf19c03ecb89d0507212c01908bfc764"
+  @@ -45291 +45291 @@
+  -      "resource-contracts": "bd65b81f051da0d0de734399007b23e55ec332c87386b7fe07eff4bc2f666149"
+  +      "resource-contracts": "1731d786381953d9354e30b4b9b06f8cbf19c03ecb89d0507212c01908bfc764"
+libevent-core-audit.json: equal after normalisation
