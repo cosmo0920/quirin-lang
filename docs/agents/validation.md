@@ -236,6 +236,7 @@ peak resident set (`wait4`'s `ru_maxrss`: the largest single descendant).
 | `audit` | `max(1, floor(MemAvailable / admission budget))` when it asks; budget 7 GiB by default, 5 or 4 GiB selectable; the pinned corpus is admitted at 11 GiB | corpus, system, slice and other `quirin-audit` runs |
 | `lean` | 2 | `check_lean_audits.py`, `gate_lean.py` |
 | `short` | 2, a lane of its own (below) | CPU-bound, memory-light steps that take minutes: `prepare` (including `prepare clang-build --link`), builds, links, regenerations |
+| `build` | unlimited; closed only while a `rust-suite` job's `EXCLUSIVE` phase runs (below) | fmt, Clippy and cargo builds: the scoped gate's fmt, Clippy, reevaluation examples and provider package build, fmt and Clippy; a measurement's side builds |
 
 The audit budget is the audit's own MiB planning budget (`audit-ir-working-set`):
 `quirin-audit current` gets `--memory-budget-mib`, a configuration's
@@ -249,12 +250,35 @@ slot budget, the one measured exception to the 7 GiB default
 (`ROUTE_ADMISSION_MIB`, card `LANDING-PUBLISH-COMPLETION`). During the
 transition every slot job holds the legacy lock
 `/tmp/qcore-c-card-validation-20261022.lock` shared, so a job under
-`flock <legacy lock>` excludes every slot and every slot excludes it. Limits:
-fmt and Clippy take no slot, and a build that does not go through the `short`
-lane takes none either, so another card's build can still load the host beside
-a `rust-suite` job; `MemAvailable` already excludes running audits'
-resident memory, so admission is conservative; an exclusive legacy waiter can
-wait while slot jobs keep the lock shared.
+`flock <legacy lock>` excludes every slot and every slot excludes it (the `build` class is the
+exception: it takes no legacy lock, below). Limits: `MemAvailable` already
+excludes running audits' resident memory, so admission is conservative; an
+exclusive legacy waiter can wait while slot jobs keep the lock shared.
+
+A build takes the **`build` class** (card `GATE-SLOT-BUILDS-UNSLOTTED`):
+`gate_slot.py build -- <cmd>`. Builds are not slotted against one another, are
+not queued, read no memory and take no legacy lock; a build holds
+`<gate dir>/build/running` shared and is admitted while `build/admission` can be
+taken shared. The `rust-suite` class excludes builds during its `EXCLUSIVE`
+phase only, about a minute of a full suite (62.7 s of the integrate/r9 run's
+740 s): `run_test_binaries.py` under a `rust-suite` slot takes
+`build/admission` exclusive before its first exclusive unit, waits for the
+builds in flight, runs the phase, and reopens; `gate_slot.py rust-suite
+--close-builds` does the same around the whole command for a suite without a
+phase of its own (the scoped gate passes it for the provider workspace's
+`cargo test`). The drain, build and parallel phases leave builds open. The wait
+for builds in flight is bounded by `QUIRIN_GATE_BUILD_DRAIN` (30 min); past it
+the phase runs beside them with new builds still kept out, and its record
+(`summary.json` `build_exclusion`, or the receipt's for `--close-builds`) says
+`drained: false` and names them: no job stops another. A build nested in a
+`rust-suite`, `audit`, `short` or `build` job is covered; one nested in a
+`lean` job is refused. `status` lists build holders, waiters and the closing
+phase (`builds` in `--json`). A runner outside a slot (or `gate_scope.py
+--no-slots`) closes nothing. Older clients (not guaranteed): a script without
+the class has no `build` (exit 2), and an older runner does not close builds,
+so a build may run beside an older suite's `EXCLUSIVE` phase until every
+worktree has this script. Still outside every class: the Python suite, the
+provider package verification and Lean (its own slots run beside a suite).
 
 One job cannot starve the host (requirement R11 of
 [gate-time reduction](../plans/gate-time-reduction/README.md), card

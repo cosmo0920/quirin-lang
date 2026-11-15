@@ -1,0 +1,10 @@
+test_a_drain_gives_up_reopens_admission_releases_and_names_the_holder (test_gate_slot_starvation.Drain.test_a_drain_gives_up_reopens_admission_releases_and_names_the_holder) ... ok
+test_holders_a_draining_suite_and_a_waiter (test_gate_slot_starvation.Status.test_holders_a_draining_suite_and_a_waiter) ... ok
+test_a_tree_without_io_is_stopped_reported_and_only_its_own_processes_signalled (test_gate_slot_starvation.Deadlines.test_a_tree_without_io_is_stopped_reported_and_only_its_own_processes_signalled) ... ok
+test_an_unreaped_zombie_does_not_hide_a_stall (test_gate_slot_starvation.Deadlines.test_an_unreaped_zombie_does_not_hide_a_stall) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 26.809s
+
+OK
+exit 0 (cpu 31, 15 competing spinners)

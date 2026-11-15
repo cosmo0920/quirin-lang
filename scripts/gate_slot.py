@@ -20,7 +20,8 @@ decision 5 of 2026-10-24).  Usage::
 
     gate_slot.py <class> [--memory-budget 7G|5G|4G] [--receipt PATH] [--wait-record PATH]
                  [--stall-timeout D] [--deadline D] [--progress-file PATH]
-                 [--drain-timeout D] [--drain-backoff D] [--drain-attempts N] -- <cmd> [args...]
+                 [--drain-timeout D] [--drain-backoff D] [--drain-attempts N]
+                 [--close-builds] -- <cmd> [args...]
     gate_slot.py status [--json] [--interval SECONDS]
 
 Slots are ``flock(2)`` locks on files ``<gate dir>/<class>/<n>`` (default gate
@@ -41,6 +42,9 @@ dir ``/tmp/quirin-gate``).  Classes:
                 corpus at 11 GiB) while its workers stay planned at the slot
                 budget (card LANDING-PUBLISH-COMPLETION).
 ``lean``        two slots.
+``short``       the short-job lane (below).
+``build``       fmt, Clippy, cargo builds: unlimited, kept out only while a
+                ``rust-suite`` job's EXCLUSIVE phase runs (below).
 
 Transition interlock: every slot job holds the legacy lock
 ``/tmp/qcore-c-card-validation-20261022.lock`` **shared** for its whole run.
@@ -188,6 +192,36 @@ minutes (``prepare``, a build, a link, a regeneration), not an analysis.
   run beside it (not guaranteed alone for load-sensitive rows until every
   worktree has this script), and an older audit does not subtract the lane's
   reserve (it sees ``MemAvailable`` as it is).
+
+The build class (card GATE-SLOT-BUILDS-UNSLOTTED): ``gate_slot.py build --
+<cmd>`` is for fmt, Clippy and cargo builds, which take CPU but need no memory
+admission and were never slotted against one another.
+
+* **Unlimited, except during an EXCLUSIVE phase.** A build holds
+  ``<gate dir>/build/running`` shared for its run; it is admitted whenever
+  ``build/admission`` can be taken shared (held for a few system calls).  No
+  slot count, no queue, no memory reading, and no legacy lock (builds never
+  took it; it would hold them for a legacy job's whole run).
+* **The rust-suite class excludes builds during its EXCLUSIVE phase only.**
+  ``run_test_binaries.py``, under a ``rust-suite`` slot (``QUIRIN_GATE_HELD``),
+  takes ``build/admission`` exclusive before its first exclusive unit (new
+  builds wait, holding ``build/waiting`` shared so ``status`` lists them), then
+  ``build/running`` exclusive (it waits for the builds in flight), and lets go
+  of both after its last exclusive unit.  ``rust-suite --close-builds`` does the
+  same around the whole command, for a suite with no phase of its own (the
+  provider workspace's ``cargo test``).  The suite's drain, build and parallel
+  phases leave builds open.  The wait for builds in flight is bounded by
+  ``QUIRIN_GATE_BUILD_DRAIN`` (30 min); past it the phase runs beside them, new
+  builds still kept out, and the record (``summary.json``'s ``build_exclusion``,
+  the receipt's for ``--close-builds``) says ``drained: false`` and names them.
+  No build is ever stopped by another job.
+* **Nesting.** A build nested in a ``rust-suite``, ``audit``, ``short`` or
+  ``build`` job is covered (none of them runs beside an EXCLUSIVE phase); one
+  nested in a ``lean`` job is refused.
+* **Older clients.** A script without the class has no ``build`` (exit 2) and
+  its runner does not close builds, so a build may run beside an older suite's
+  EXCLUSIVE phase until every worktree has this script; neither can deadlock
+  the other (the build locks are files no older script opens).
 """
 
 from __future__ import annotations
