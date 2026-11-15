@@ -1,0 +1,17 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "MEMBER-PATH-DIRECT-REFUSAL-TEXT",
+  "base": "0f6e17118",
+  "measured_tip": "8e735f30f",
+  "profiles": [],
+  "increment_paragraph": "**MEMBER-PATH-DIRECT-REFUSAL-TEXT** (rule 30 diagnostic text, contract specification §C04.19.6 note; [report](../../reports/member-path-direct-refusal-text/README.md)). The `member-path-direct` refusal of a direct call now names the clause beside the member-path states: a hand-off keeps \"beside a hand-off, which only a callback invocation composes\"; a helper destroyer (rule 50) reads \"beside member invocations, which no direct call composes\"; any other clause, which the loader does not admit, reads \"beside a clause other than a plain predicate\" (`member_path_direct_reason` in `legacy_callback_route.rs`). When the refusal fires, its code and every verdict are unchanged. Measured with `quirin-audit current` (base `0f6e17118` against tip `8e735f30f`, both `git archive` exports) over the standalone Libevent Monkey units at Fluent Bit `66910c10` plus one chunkio file. 349 rows on each side (98 Safe / 249 Unknown / 2 Unsafe) and no status move. The only semantic content change is `mk_http_thread_destroy`'s refusal at `mk_http_thread.c:269`; `mk_rconf_read`'s reading-site evidence differs only by the build commit it spells. The pinned corpus and `measure --declared` were not run (no user namespaces, and the corpus preparations are deleted).",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "MEMBER-PATH-DIRECT-REFUSAL-TEXT",
+      "operation": "retire",
+      "why": "Discharged by MEMBER-PATH-DIRECT-REFUSAL-TEXT: the member-path-direct refusal names the clause beside the states (a hand-off, member invocations, or any other clause), and its code and every verdict are unchanged. Re-measured: mk_http_thread_destroy's row at mk_http_thread.c:269 now reads \"beside member invocations, which no direct call composes (member-path-direct)\", still Unknown, with no status move among the 349 rows of the Monkey run.",
+      "source": "docs/reports/member-path-direct-refusal-text/README.md"
+    }
+  ]
+}
