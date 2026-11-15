@@ -1189,6 +1189,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [scalar-statement-forms](scalar-statement-forms/README.md) | SCALAR-STATEMENT-FORMS (round 26 E) |
 
+| [scheduler-destroy-member-states](scheduler-destroy-member-states/README.md) | SCHEDULER-DESTROY-MEMBER-STATES |
+
 | [scheduler-lifetime-contracts](scheduler-lifetime-contracts/README.md) | Scheduler lifetime contracts |
 
 | [schema-1-compatibility](schema-1-compatibility/README.md) | Schema 1.0 compatibility and package evidence |
