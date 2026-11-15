@@ -301,6 +301,69 @@ class RunnerClosure(Scratch):
         self.assertIsNone(runner_mod.write_summary(logs, [], [], {}, 2, plain)["build_exclusion"])
 
 
+LANE_ONLY_SCRIPT = Path(__file__).resolve().parent / "fixtures" / "gate_slot_lane_only.py.txt"
+LANE_ONLY_SHA256 = "ef00cd2a3fe65ac7448c0261e42862397d44b817f7412a1d7bf22703c3481c21"
+
+
+@unittest.skipUnless(LINUX_PROC, "needs /proc/locks")
+class OlderClients(Scratch):
+    """The script as it was before the build class (main 0f6e17118, kept byte
+    for byte as fixtures/gate_slot_lane_only.py.txt) shares a gate directory
+    with this one: neither waits for the other's build locks."""
+
+    def old(self, *args):
+        path = self.root / "old" / "gate_slot.py"
+        if not path.exists():
+            path.parent.mkdir()
+            path.write_bytes(LANE_ONLY_SCRIPT.read_bytes())
+        return [sys.executable, str(path), *args]
+
+    def test_the_fixture_is_the_script_as_it_was(self):
+        import hashlib
+        self.assertEqual(hashlib.sha256(LANE_ONLY_SCRIPT.read_bytes()).hexdigest(),
+                         LANE_ONLY_SHA256)
+        text = LANE_ONLY_SCRIPT.read_text()
+        self.assertIn("SHORT_SLOTS", text)
+        self.assertNotIn("BuildClosure", text)
+
+    def test_an_older_client_has_no_build_class(self):
+        import subprocess
+        completed = subprocess.run(self.old("build", "--receipt", str(self.root / "o.json"),
+                                            "--", "true"),
+                                   env=self.env(), capture_output=True, text=True, timeout=30)
+        self.assertEqual(completed.returncode, 2)
+        self.assertFalse((self.gate_dir / "build").exists())
+
+    def test_an_older_suite_and_audit_run_while_the_builds_are_closed_and_a_build_runs(self):
+        import subprocess
+        build = self.start_slot("build", "--poll", "0.02", "--receipt",
+                                str(self.root / "b.json"), "--", sys.executable, "-c",
+                                "import time; time.sleep(600)")
+        self.assertTrue(wait_for(lambda: any(
+            entry["label"] == "build/running" and entry["pid"] == build.pid
+            for entry in slot_mod.gate_locks(self.gate_dir, self.legacy))))
+        for cls in ("rust-suite", "audit"):
+            completed = subprocess.run(
+                self.old(cls, "--poll", "0.02", "--receipt", str(self.root / f"{cls}.json"),
+                         "--", "true"),
+                env=self.env(), capture_output=True, text=True, timeout=60)
+            self.assertEqual(completed.returncode, 0, (cls, completed.stderr))
+        closure = slot_mod.BuildClosure(self.gate_dir, 0.2, poll=0.02, legacy=self.legacy,
+                                        echo=lambda line: None)
+        self.addCleanup(closure.reopen)
+        self.assertFalse(closure.close()["drained"])
+        completed = subprocess.run(
+            self.old("rust-suite", "--poll", "0.02", "--receipt", str(self.root / "s2.json"),
+                     "--", "true"),
+            env=self.env(), capture_output=True, text=True, timeout=60)
+        self.assertEqual(completed.returncode, 0, completed.stderr)
+        # The older status reads a gate with build files without failing.
+        completed = subprocess.run(self.old("status", "--json", "--interval", "0"),
+                                   env=self.env(), capture_output=True, text=True, timeout=60)
+        self.assertEqual(completed.returncode, 0, completed.stderr)
+        self.assertIn(build.pid, {job["pid"] for job in json.loads(completed.stdout)["jobs"]})
+
+
 class ScopedGateSteps(unittest.TestCase):
     """gate_scope.py sends fmt, Clippy and its cargo builds through the build
     class and the provider suite through rust-suite --close-builds."""
