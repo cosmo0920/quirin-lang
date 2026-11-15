@@ -2001,7 +2001,8 @@ added; nothing else changes.
   module. A consumer never composes such a declaration at a call: a direct
   call refuses `member-path-direct` and a callback candidate is missing
   (`callback-uncontracted`), as for every member-path declaration that is not
-  plain. It exists for the reading below.
+  plain. The refusal's text names the clause beside the states: a hand-off,
+  or member invocations (card MEMBER-PATH-DIRECT-REFUSAL-TEXT). It exists for the reading below.
 * **The link member.** Inside a followed helper, a pointer store at or below
   the link member the declaration's own unlink names
   (`resource_unpublished(P, LINK)`, C04.8) is that clause's, not a store into

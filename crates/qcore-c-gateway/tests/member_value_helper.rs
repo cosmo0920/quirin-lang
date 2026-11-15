@@ -354,9 +354,17 @@ fn a_direct_call_of_a_helper_with_an_invocation_beside_its_states_refuses() {
     .expect("the unit analyses");
     let row = &summary_of(&outcome).expect("a summary").functions["caller"];
     assert_ne!(row.status, AnalysisStatus::Safe, "{row:?}");
+    let diagnostics = format!("{:?}", row.diagnostics);
+    assert!(diagnostics.contains("member-path-direct"), "{diagnostics}");
+    // Card MEMBER-PATH-DIRECT-REFUSAL-TEXT: the refusal names the member
+    // invocations that stand beside the states, not a hand-off.
     assert!(
-        format!("{:?}", row.diagnostics).contains("member-path-direct"),
-        "{:?}",
-        row.diagnostics
+        diagnostics.contains(
+            "call to `thr_destroy`: it states what it leaves at member paths of a formal's \
+             object beside member invocations, which no direct call composes \
+             (member-path-direct)"
+        ),
+        "{diagnostics}"
     );
+    assert!(!diagnostics.contains("hand-off"), "{diagnostics}");
 }
