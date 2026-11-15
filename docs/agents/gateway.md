@@ -8893,6 +8893,11 @@ safety claim and no validation of the detach representation premise.
     `the_join_is_cautious`, `direct_vectors_hold`, `guard_vectors_hold`);
     `tests/member_path_direct_call.rs`;
     [report](../reports/fb-teardown-destroy-declarations/README.md).
+    **Extended by rule 50** (card SCHEDULER-DESTROY-MEMBER-STATES): a
+    store below the declaration's own unlink's link member inside a
+    followed helper no longer ends the reading, and a member's value handed
+    to a declared unit helper is composed there; every other sentence of
+    this rule stands, a member's value still reaches nothing of the formal.
 
 <a id="constraint-31"></a>
 
@@ -10948,5 +10953,65 @@ safety claim and no validation of the detach representation premise.
     `the_domain_checksum_is_pinned`, …), bound to
     `crates/qcore-c-gateway/tests/guard_correlated_census.rs`;
     [report](../reports/tail-file-definition-census-incomplete/README.md).
+
+<a id="constraint-50"></a>
+
+50. **A stated member's value handed to a declared unit helper is composed
+    by the body reading; the take it establishes is evidence, never a
+    consumer's fact.** Card SCHEDULER-DESTROY-MEMBER-STATES (contract
+    specification C04.19.6 amended, grammar G05d), on the user's decision
+    of 2026-11-14 ("Go with 1, 2A and typed refinements for 3"). Loader
+    `crates/qcore-contract/src/contract_loader.rs` (`helper_invocations`:
+    `resource_callback_member_invoked` stands beside member-path states only
+    when every state and invocation bind one released formal, with no
+    hand-off). Reading `crates/qcore-c-gateway/src/member_path_reading.rs`
+    (`Helper`, `Reader::with_helpers`, `Reader::with_link_members`,
+    `compose`, `find_copies`, `carried`, `escape`, `taken_exits`, the
+    `UNTAKEN` / `TAKEN` / `UNSET` slots after the value slots of a state);
+    check `member_path_check::validates_composing` (`Checked`, `Taken`);
+    route `legacy_callback_route::member_path_helper` and the rule 30 loop,
+    which records body evidence `50` beside `30` (`contract_clause_standing`,
+    covering the member-path states). In the declaration's own frame only,
+    a direct call of a function the unit defines with storage class
+    `static` that has a helper declaration in force (its states bind one
+    unguarded formal, nothing but member invocations of that formal beside
+    its custody contract, `resource_released` of it, its own rule 30 check
+    finds no contradiction, every member invocation reads a closed empty set
+    over the run's member facts) and receives the value of a path stated
+    `#stale` (not a set), `P->M` while `M` is untouched or a local whose one
+    write copies it (never updated, address never taken, written on every
+    path), at that formal, with the argument's pointee that formal's
+    record, takes the object `M` held there; what the helper states at it
+    is recorded (`M->X |-> V`, its invocations invoking nothing). The take
+    is established when every exit where the guard may hold took it exactly
+    once so and the reading validated the states. A take on some paths, a
+    second take, any other call (any frame, any callee) receiving the
+    value, a store or return that may carry it, a helper reached through a
+    followed helper, a unit's own empty or an open or non-empty invocation
+    set, and a route without the run's facts leave it a declared assumption.
+    A pointer store at or below the link member the declaration's own unlink
+    names inside a followed helper no longer ends the reading; in the
+    declaration's own frame it still contradicts. A consumer never composes
+    a helper destroyer at a call (`member-path-direct`, a missing
+    candidate). Declared in `qcore-provider-libevent`
+    (`monkey/intrusive_list.qv`): `mk_thread_destroy` (the helper:
+    `cb_destroy` invoked, `callee |-> #stale`, `caller` / `data |-> #kept`,
+    released) and `mk_http_thread_destroy` (`parent |-> #stale`, `session` /
+    `request |-> #kept` beside its unlink and release, and typed
+    refinements of seven of its eight premises). **Do not** compose a call in
+    a deeper frame, a non-`static` or indirect callee, a helper whose
+    invocation set is not closed and empty over the run, or a value that may
+    have escaped; read the composition at a consumer; or drop the callback
+    footprint premise on the strength of a composition no consumer folds.
+    `QCore.MemberValueHelper` (`the_slot_abstracts_the_path`,
+    `established_iff_taken_once`, `the_reading_is_the_abstract_run`,
+    `an_escape_never_establishes`, `an_uncomposed_callee_never_establishes`,
+    `no_take_never_establishes`, `a_second_take_never_establishes`,
+    `a_copy_not_yet_written_is_no_take`, `the_destroyers_path_establishes`,
+    `a_join_is_established_iff_both_are`,
+    `distinct_identities_each_end_once`,
+    `one_identity_refuses_the_second_end`); `member_path_check`'s unit tests,
+    `tests/member_value_helper.rs`;
+    [report](../reports/scheduler-destroy-member-states/README.md).
 
 <!-- generated:rules:end -->

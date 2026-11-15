@@ -244,6 +244,111 @@ fn member_path_plain(declared: &RetainingContract) -> bool {
         && declared.constructed.is_empty()
 }
 
+/// Card SCHEDULER-DESTROY-MEMBER-STATES (rule 50): `name`'s declaration as a
+/// helper rule 30's body reading may compose, `None` when it is not one: its
+/// member-path states bind one formal with no guard, it states nothing else
+/// beside its custody contract than member invocations of that formal, it is
+/// not withdrawn, and its own body check in this unit (`pointee`, `callee`)
+/// finds no contradiction. Each member invocation invokes nothing only where
+/// the run's member facts are installed and read its set closed and empty
+/// (rule 12n's run set; a unit's own empty set never decides).
+fn member_path_helper<'a>(
+    contracts: &ResourceContracts,
+    name: &str,
+    pointee: &dyn Fn(&Value) -> Option<String>,
+    callee: &dyn Fn(&str) -> Option<&'a Value>,
+) -> Option<crate::member_path_check::Helper> {
+    let declared = contracts.retaining_contract(name)?;
+    let first = declared.member_paths.first()?;
+    if declared.member_paths_withdrawn
+        || declared.callbacks_withdrawn
+        || declared.handoff.is_some()
+        || declared.member_paths.iter().any(|state| {
+            state.parameter != first.parameter
+                || state.member.tag != first.member.tag
+                || state.guard.is_some()
+                || state.parameter_guard.is_some()
+        })
+        || !declared.retentions.is_empty()
+        || !declared.resets.is_empty()
+        || !declared.slot_moves.is_empty()
+        || !declared.derived_outs.is_empty()
+        || !declared.references.is_empty()
+        || declared.discriminant.is_some()
+        || !declared.arms.is_empty()
+        || !declared.constructed.is_empty()
+    {
+        return None;
+    }
+    let mut invocations = Vec::new();
+    let mut invokes_nothing = Ok(());
+    for clause in &declared.callbacks {
+        let CallbackClause::MemberInvoked {
+            object: MemberObject::Parameter { index },
+            member,
+            ..
+        } = clause
+        else {
+            return None;
+        };
+        if *index != first.parameter {
+            return None;
+        }
+        let spelled = member.spelling();
+        invocations.push(member.path.clone());
+        let decided = match crate::member_run_facts::installed() {
+            None => Err(format!(
+                "`{spelled}` is decided only over the run's member facts, which this route does \
+                 not read"
+            )),
+            Some(run) => run
+                .normalise(&spelled)
+                .map_err(|why| {
+                    format!("`{spelled}` is not a member the run's records define ({why})")
+                })
+                .and_then(|_| {
+                    run.closure(&spelled).map_err(|open| {
+                        format!(
+                            "`{spelled}`'s run set is open ({})",
+                            open.into_iter().take(3).collect::<Vec<_>>().join("; ")
+                        )
+                    })
+                })
+                .and_then(|set| {
+                    if set.is_empty() {
+                        Ok(())
+                    } else {
+                        Err(format!(
+                            "`{spelled}`'s run set is not empty ({}): its candidates are not \
+                             composed",
+                            set.into_iter().collect::<Vec<_>>().join(", ")
+                        ))
+                    }
+                }),
+        };
+        if invokes_nothing.is_ok() {
+            invokes_nothing = decided;
+        }
+    }
+    let body = callee(name)?;
+    crate::member_path_check::validates(body, &declared.member_paths, pointee, callee).ok()?;
+    Some(crate::member_path_check::Helper {
+        parameter: first.parameter,
+        tag: first.member.tag.clone(),
+        releases: matches!(
+            declared.contract.parameters.get(first.parameter),
+            Some(qcore_schemas::contract::ResourceParameterMode::Released { .. })
+        ),
+        invokes_nothing,
+        states: declared
+            .member_paths
+            .iter()
+            .map(|state| (state.member.path.clone(), state.state.spelling()))
+            .collect(),
+        invocations,
+    })
+}
+
 fn is_identifier(text: &str) -> bool {
     let mut chars = text.chars();
     chars
@@ -2456,25 +2561,41 @@ pub(crate) fn settle(
         }
         // Card MEMBER-PATH-STATES-THROUGH-UNIT-HELPERS: the reading follows
         // the unit's static helpers (`unit.function`).
+        // Card SCHEDULER-DESTROY-MEMBER-STATES (rule 50): it also reads the
+        // declaration's unlink's link member and composes the unit's helper
+        // declarations (`member_path_helper`).
         let checked = crate::typed_access_path::with_indirect_call_unit(|unit| {
             unit.function(name).map(|function| {
-                crate::member_path_check::validates(
+                let pointee =
+                    |node: &serde_json::Value| unit.member_facts().record_of_node(node, true);
+                let callee = |callee: &str| unit.function(callee);
+                let helper =
+                    |helper: &str| member_path_helper(contracts, helper, &pointee, &callee);
+                crate::member_path_check::validates_composing(
                     function,
                     &declaration.member_paths,
-                    &|node| unit.member_facts().record_of_node(node, true),
-                    &|callee| unit.function(callee),
+                    &pointee,
+                    &callee,
+                    &declaration.contract.link_members,
+                    Some(&helper),
                 )
             })
         })
         .flatten();
         match checked {
-            Some(Ok(crate::member_path_check::Standing::Validated)) => {
-                crate::contract_dependencies::validated(name, "30");
+            Some(Ok(checked)) => {
+                if checked.standing == crate::member_path_check::Standing::Validated {
+                    crate::contract_dependencies::validated(name, "30");
+                    if checked.taken == crate::member_path_check::Taken::Established {
+                        crate::contract_dependencies::validated(name, "50");
+                    }
+                }
+                // A body whose reading leaves a stated path to a call it
+                // does not follow: a declared assumption.
             }
             Some(Err(_)) => member_paths_withdrawn.push(name.clone()),
-            // A body the check does not read, or whose reading leaves a
-            // stated path to a call it does not follow: a declared assumption.
-            Some(Ok(crate::member_path_check::Standing::Assumption(_))) | None => {}
+            // A body the check does not read: a declared assumption.
+            None => {}
         }
     }
     if withdrawn.is_empty()

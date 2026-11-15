@@ -134,6 +134,69 @@ contract {
     ensures normal resource_return_none();
 };
 
+// Card SCHEDULER-DESTROY-MEMBER-STATES (gateway rule 50, contract spec
+// C04.19.6; USER DECISION 2026-11-14, "Go with 1, 2A and typed refinements
+// for 3"): the inline `mk_thread_destroy` of
+// `lib/monkey/include/monkey/mk_thread_libco.h:64-78`, byte-identical at
+// `66910c10` and `046accf6`, given its own declaration so that rule 50's body
+// reading of `mk_http_thread_destroy` can compose it where that body hands it
+// the value of `mth->parent` (`th = mth->parent; ... mk_thread_destroy(th);`).
+//
+//     static MK_INLINE void mk_thread_destroy(struct mk_thread *th)
+//     {
+//         if (th->cb_destroy) {
+//             th->cb_destroy(MK_THREAD_DATA(th));
+//         }
+//         VALGRIND_STACK_DEREGISTER(th->valgrind_stack_id);  /* MK_HAVE_VALGRIND */
+//         co_delete(th->callee);
+//         mk_mem_free(th);
+//     }
+//
+// What it states: the `cb_destroy` member is invoked (zero or more times; its
+// candidates are the run's closed set of stores into `mk_thread.cb_destroy`,
+// C04.19.3: the only store is `th->cb_destroy = cb_destroy` in the inline
+// `mk_thread_new`, from a formal whose only actual, in
+// `mk_http_thread_create`, is NULL, so over the run's facts the set is closed
+// and empty and the invocation invokes nothing; the actual is
+// `MK_THREAD_DATA(th)`, the data area, which is `_` here); the coroutine
+// `callee` is deleted (`co_delete`) and the member is not cleared
+// (`#stale`); `caller` and `data` are untouched (`#kept`); the allocation `th`
+// is freed (`resource_released`). The object is released, so its own body
+// check leaves the states a declared assumption (C04.19.6: a released
+// binder's states validate only where the body clears the member).
+//
+// A consumer never reads this declaration at a direct call or as a callback
+// candidate: its states stand beside a member invocation, which only rule
+// 50's body reading composes (`member-path-direct`, a missing candidate).
+//
+// The pin's identity records both definition sites the pin tool reads: the
+// libco body above and the `ucontext` variant of
+// `lib/monkey/include/monkey/mk_thread_ucontext.h` (selected by Monkey's
+// build configuration; neither audited configuration compiles it), read at
+// both revisions too: `if (th->cb_destroy) th->cb_destroy(MK_THREAD_DATA(th));
+// VALGRIND_STACK_DEREGISTER(...); free(th);`. There the invocation and the
+// release hold as stated, `callee` is an embedded `ucontext_t` (no pointer:
+// no object a caller links there, so `#stale` decides nothing) and there is
+// no `data` member (the `#kept` state names no path a caller can link).
+//
+// NOT CLAIMED: that `callee` is a coroutine `co_delete` accepts or that it is
+// not running (the caller's `scheduler_callee_live`); anything about the
+// Valgrind client request; the data area's contents.
+//
+// ABI: `struct mk_thread *` is one object-pointer level, `ptr<mut, u8>`; the
+// `void` result `unit`.
+
+extern fn mk_thread_destroy(th: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_callback_member_invoked(th, mk_thread.cb_destroy, _);
+    ensures normal resource_released(th, nonnull);
+    ensures normal resource_return_none();
+    quant live #th: mk_thread.callee |-> #stale;
+    quant live #th: mk_thread.caller |-> #kept;
+    quant live #th: mk_thread.data |-> #kept;
+};
+
 // Card W48-SCHED-CLEANUP-PRODUCTION (gateway rule 34): `mk_http_thread_destroy`,
 // the element destroyer of the scheduler's thread lists.
 //
@@ -196,19 +259,111 @@ contract {
 // `mk_server/mk_http_thread.c`, 66910c10 and 046accf6), so a caller's element
 // is taken only when its `container_of` binding names `_head` too, and an
 // object the caller holds only when the caller initialised its `_head` links.
+//
+// Card SCHEDULER-DESTROY-MEMBER-STATES (gateway rules 30 and 50, contract
+// spec C04.19.6 and C04.18; USER DECISION 2026-11-14, verbatim: "Go with 1,
+// 2A and typed refinements for 3"):
+//
+// 1. Member-path states on the released formal `mth` (`struct mk_http_thread
+//    { int close; struct mk_http_session *session; struct mk_http_request
+//    *request; struct mk_thread *parent; struct mk_list _head; }`):
+//    `parent |-> #stale` (the body copies `mth->parent` into `th` and hands it
+//    to the inline `mk_thread_destroy`, which frees it; the member is not
+//    cleared), `session |-> #kept` and `request |-> #kept` (read, never
+//    stored, never taken). Rule 43 admits the element destroyer's unlink
+//    beside them. `parent` names the allocation `mth` lives in
+//    (`MK_THREAD_DATA(th) = (char *) th + sizeof(struct mk_thread)`), so a
+//    caller that tracked both would release each once through this call: the
+//    stale path takes the parent's object once and the release ends `mth`
+//    once; a later release or use of either refuses (a double release, a
+//    released binding). No caller links a tracked object there.
+// 2. Rule 50: the body's `mk_thread_destroy(th)`, with `th = mth->parent` its
+//    single copy, is a direct call of a unit `static` helper with its own
+//    declaration (above) receiving the stated member's value, so rule 30's
+//    body reading composes that declaration: the object `parent` held is
+//    released by the helper, its `callee` deleted and left stale, and its
+//    `cb_destroy` invoked over the run's set (closed and empty: nothing).
+//    Evidence only: no consumer of this declaration reads the composition.
+// 3. Typed refinements of the premises no member form states, in the style
+//    of PLUGIN-PREMISE-DECOMPOSITION: one `quant proposition` per atom, each
+//    introduced by `resource_lifecycle_v1`, attached by
+//    `resource_premise_decomposition` and chained by
+//    `resource_premise_flow_v1`. They are evidence-only metadata: every
+//    original premise keeps its name and is still published with every row
+//    resting on this declaration; the texts of the parent embedding, the
+//    callback footprint, the coroutine and the borrowed chain are narrowed
+//    to what no symbolic clause states. The callback footprint is kept: the
+//    run's closed empty set of `mk_thread.cb_destroy` is read only by rule
+//    50's composition, and no consumer of this declaration folds it
+//    (rule 12n), so the premise stays the consumer's.
 
 extern fn mk_http_thread_destroy(mth: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
-    requires resource_premise(scheduler_exact_parent_embedding, "mth is the mk_http_thread embedded at MK_THREAD_DATA of exactly one live mk_thread allocation that mth->parent names and nothing else releases; freeing mth->parent ends the storage of mth (scheduler decomposition exact_parent_embedding and parent_live; established at creation by mk_http_thread_create, not by this body)");
-    requires resource_premise(scheduler_callback_footprint, "th->cb_destroy is NULL, as mk_http_thread_create sets it through mk_thread_new and no other Monkey source writes it, or a returning callback whose transitive effects release and mutate neither the saved successor of a caller's iteration, nor its parent, nor any other list element, coroutine or borrowed object (scheduler decomposition callback_footprint); no neutral-callback reading is made");
+    requires resource_premise(scheduler_exact_parent_embedding, "mth is the mk_http_thread at MK_THREAD_DATA of the one live mk_thread allocation mth->parent names, which nothing but this call releases, so that freeing it ends the storage of mth (scheduler decomposition exact_parent_embedding and parent_live; established at creation by mk_http_thread_create, not by this body); that the call takes the object mth->parent names and leaves the member designating it is the state parent |-> #stale");
+    requires resource_premise(scheduler_callback_footprint, "th->cb_destroy (th = mth->parent) is NULL, as mk_http_thread_create sets it through mk_thread_new and no other Monkey source writes it, or a returning callback whose transitive effects release and mutate neither the saved successor of a caller's iteration, nor its parent, nor any other list element, coroutine or borrowed object (scheduler decomposition callback_footprint); no neutral-callback reading is made, and the run's closed empty set that rule 50 composes is not folded for this declaration's consumers");
     requires resource_premise(scheduler_tls_params_owned, "the mk_http_thread_libco_params key of the current thread holds NULL or one live allocation it alone owns, disjoint from every caller-tracked object; pthread_getspecific and pthread_setspecific of that key succeed, so the freed params are no longer reachable from the key (scheduler decomposition tls_params_owned and tls_api_success)");
-    requires resource_premise(scheduler_callee_live, "th->callee is a coroutine co_delete accepts, created for this thread, suspended and not co_active, with no concurrent resume or deletion (scheduler decomposition callee_live and suspended_coroutines)");
-    requires resource_premise(scheduler_borrowed_chain_live, "mth->session, its channel and that channel's event are live borrowed objects this call neither releases nor ends; the call writes one scalar through them (scheduler decomposition borrowed_chain_live)");
+    requires resource_premise(scheduler_callee_live, "th->callee (th = mth->parent), which mk_thread_destroy deletes, is a coroutine co_delete accepts, created for this thread, suspended and not co_active, with no concurrent resume or deletion (scheduler decomposition callee_live and suspended_coroutines)");
+    requires resource_premise(scheduler_borrowed_chain_live, "mth->session is live where it is read, and its channel and that channel's event are live borrowed objects this call neither releases nor ends; the call writes one scalar through them, event->type (scheduler decomposition borrowed_chain_live); that the session itself is not taken is the state session |-> #kept");
     requires resource_premise(scheduler_valid_membership, "mth->_head is linked in exactly one valid circular mk_list, the one its caller reaches it through, with reciprocal links and no concurrent or reentrant writer of that list, the coroutine, the borrowed chain or the key (scheduler decomposition valid_membership and no_concurrent_writer)");
     requires resource_premise(scheduler_no_later_alias_use, "no alias the source leaves behind, request->thread, channel.thread or the current thread's mk_thread key, is read or resumed after the call (scheduler decomposition no_later_alias_use)");
     requires resource_premise(scheduler_valgrind_request_neutral, "the Valgrind client request VALGRIND_STACK_DEREGISTER compiled in under MK_HAVE_VALGRIND reads th->valgrind_stack_id and changes no object the projection tracks");
+    quant proposition #sched_parent_data_identity(#address: function<environment,object,integer>, #data_address: function<environment,object,integer>, #env: environment, #mth: object, #parent: function<environment,object,object>) = (#address(#env,#mth) == #data_address(#env,#parent(#env,#mth)));
+    requires resource_lifecycle_v1(introduce_sched_parent_data_identity, |^+ hypothesis(sched_parent_data_identity));
+    quant proposition #sched_parent_storage(#contains: predicate<environment,object,object>, #env: environment, #live: predicate<environment,object>, #mth: object, #parent: function<environment,object,object>) = (#live(#env,#parent(#env,#mth)) && #contains(#env,#parent(#env,#mth),#mth));
+    requires resource_lifecycle_v1(introduce_sched_parent_storage, |^+ hypothesis(sched_parent_storage));
+    quant proposition #sched_parent_sole_releaser(#action: function<environment,event,action>, #destroy_site: integer, #env: environment, #in_trace: predicate<environment,event>, #mth: object, #parent: function<environment,object,object>, #release: action, #released: function<environment,event,object>, #site: function<environment,event,integer>) = forall (#ev: event) { ((#in_trace(#env,#ev) && (#action(#env,#ev) == #release)) => ((#released(#env,#ev) == #parent(#env,#mth)) => (#site(#env,#ev) == #destroy_site))) };
+    requires resource_lifecycle_v1(introduce_sched_parent_sole_releaser, |^+ hypothesis(sched_parent_sole_releaser));
+    quant proposition #sched_tls_slot_null_or_owned(#disjoint: predicate<environment,object>, #env: environment, #null: object, #owned: predicate<environment,object>, #slot: function<environment,object>) = ((#slot(#env) == #null) || (#owned(#env,#slot(#env)) && #disjoint(#env,#slot(#env))));
+    requires resource_lifecycle_v1(introduce_sched_tls_slot_null_or_owned, |^+ hypothesis(sched_tls_slot_null_or_owned));
+    quant proposition #sched_tls_api_success(#env: environment, #get_ok: function<environment,integer>, #set_ok: function<environment,integer>) = ((#get_ok(#env) == 1) && (#set_ok(#env) == 1));
+    requires resource_lifecycle_v1(introduce_sched_tls_api_success, |^+ hypothesis(sched_tls_api_success));
+    quant proposition #sched_tls_slot_cleared(#env: environment, #null: object, #slot_after: function<environment,object>) = (#slot_after(#env) == #null);
+    requires resource_lifecycle_v1(introduce_sched_tls_slot_cleared, |^+ hypothesis(sched_tls_slot_cleared));
+    quant proposition #sched_callee_created_for_thread(#callee: function<environment,object,coroutine>, #created_for: function<environment,coroutine,object>, #env: environment, #mth: object, #parent: function<environment,object,object>) = (#created_for(#env,#callee(#env,#parent(#env,#mth))) == #parent(#env,#mth));
+    requires resource_lifecycle_v1(introduce_sched_callee_created_for_thread, |^+ hypothesis(sched_callee_created_for_thread));
+    quant proposition #sched_callee_suspended(#active: function<environment,coroutine>, #callee: function<environment,object,coroutine>, #env: environment, #mth: object, #parent: function<environment,object,object>, #suspended: predicate<environment,coroutine>) = (#suspended(#env,#callee(#env,#parent(#env,#mth))) && (#active(#env) != #callee(#env,#parent(#env,#mth))));
+    requires resource_lifecycle_v1(introduce_sched_callee_suspended, |^+ hypothesis(sched_callee_suspended));
+    quant proposition #sched_callee_no_concurrent_use(#action: function<environment,event,action>, #callee: function<environment,object,coroutine>, #concurrent: predicate<environment,event>, #delete: action, #env: environment, #in_trace: predicate<environment,event>, #mth: object, #parent: function<environment,object,object>, #resume: action, #target: function<environment,event,coroutine>) = forall (#ev: event) { ((#in_trace(#env,#ev) && #concurrent(#env,#ev)) => ((#target(#env,#ev) == #callee(#env,#parent(#env,#mth))) => ((#action(#env,#ev) != #resume) && (#action(#env,#ev) != #delete)))) };
+    requires resource_lifecycle_v1(introduce_sched_callee_no_concurrent_use, |^+ hypothesis(sched_callee_no_concurrent_use));
+    quant proposition #sched_chain_live(#channel: function<environment,object,object>, #env: environment, #event: function<environment,object,object>, #live: predicate<environment,object>, #mth: object, #session: function<environment,object,object>) = ((#live(#env,#session(#env,#mth)) && #live(#env,#channel(#env,#session(#env,#mth)))) && #live(#env,#event(#env,#channel(#env,#session(#env,#mth)))));
+    requires resource_lifecycle_v1(introduce_sched_chain_live, |^+ hypothesis(sched_chain_live));
+    quant proposition #sched_chain_not_ended(#action: function<environment,event,action>, #channel: function<environment,object,object>, #end: action, #env: environment, #event: function<environment,object,object>, #in_call: predicate<environment,event>, #mth: object, #object_of: function<environment,event,object>, #session: function<environment,object,object>) = forall (#ev: event) { ((#in_call(#env,#ev) && (#action(#env,#ev) == #end)) => ((#object_of(#env,#ev) != #channel(#env,#session(#env,#mth))) && (#object_of(#env,#ev) != #event(#env,#channel(#env,#session(#env,#mth)))))) };
+    requires resource_lifecycle_v1(introduce_sched_chain_not_ended, |^+ hypothesis(sched_chain_not_ended));
+    quant proposition #sched_chain_single_scalar_write(#action: function<environment,event,action>, #channel: function<environment,object,object>, #env: environment, #event: function<environment,object,object>, #field_of: function<environment,event,field>, #in_call: predicate<environment,event>, #mth: object, #object_of: function<environment,event,object>, #session: function<environment,object,object>, #type_field: field, #write: action) = forall (#ev: event) { ((#in_call(#env,#ev) && (#action(#env,#ev) == #write)) => ((#object_of(#env,#ev) == #event(#env,#channel(#env,#session(#env,#mth)))) => (#field_of(#env,#ev) == #type_field))) };
+    requires resource_lifecycle_v1(introduce_sched_chain_single_scalar_write, |^+ hypothesis(sched_chain_single_scalar_write));
+    quant proposition #sched_membership_unique(#caller_list: object, #env: environment, #member: predicate<environment,object,object>, #node: object) = (#member(#env,#caller_list,#node) && forall (#l: object) { (#member(#env,#l,#node) => (#l == #caller_list)) });
+    requires resource_lifecycle_v1(introduce_sched_membership_unique, |^+ hypothesis(sched_membership_unique));
+    quant proposition #sched_membership_reciprocal(#env: environment, #next: function<environment,object,object>, #node: object, #prev: function<environment,object,object>) = ((#prev(#env,#next(#env,#node)) == #node) && (#next(#env,#prev(#env,#node)) == #node));
+    requires resource_lifecycle_v1(introduce_sched_membership_reciprocal, |^+ hypothesis(sched_membership_reciprocal));
+    quant proposition #sched_no_concurrent_writer(#concurrent: predicate<environment,event>, #env: environment, #footprint: predicate<environment,object>, #in_trace: predicate<environment,event>, #writes: predicate<environment,event,object>) = forall (#ev: event) { ((#in_trace(#env,#ev) && #concurrent(#env,#ev)) => forall (#o: object) { (#footprint(#env,#o) => !#writes(#env,#ev,#o)) }) };
+    requires resource_lifecycle_v1(introduce_sched_no_concurrent_writer, |^+ hypothesis(sched_no_concurrent_writer));
+    quant proposition #sched_alias_set(#alias: predicate<environment,object>, #channel_thread: object, #env: environment, #request_thread: object, #tls_thread: object) = ((#alias(#env,#request_thread) && #alias(#env,#channel_thread)) && #alias(#env,#tls_thread));
+    requires resource_lifecycle_v1(introduce_sched_alias_set, |^+ hypothesis(sched_alias_set));
+    quant proposition #sched_alias_not_used_after(#alias: predicate<environment,object>, #env: environment, #free_time: integer, #in_trace: predicate<environment,event>, #reads: predicate<environment,event,object>, #resumes: predicate<environment,event,object>, #time: function<environment,event,integer>) = forall (#ev: event) { ((#in_trace(#env,#ev) && (#free_time < #time(#env,#ev))) => forall (#a: object) { (#alias(#env,#a) => (!#reads(#env,#ev,#a) && !#resumes(#env,#ev,#a))) }) };
+    requires resource_lifecycle_v1(introduce_sched_alias_not_used_after, |^+ hypothesis(sched_alias_not_used_after));
+    quant proposition #sched_valgrind_configuration(#env: environment, #have_valgrind: function<environment,integer>, #request_compiled: function<environment,integer>) = (#request_compiled(#env) == #have_valgrind(#env));
+    requires resource_lifecycle_v1(introduce_sched_valgrind_configuration, |^+ hypothesis(sched_valgrind_configuration));
+    quant proposition #sched_valgrind_tracked_unchanged(#changes: predicate<environment,object>, #env: environment, #tracked: predicate<environment,object>) = forall (#o: object) { (#tracked(#env,#o) => !#changes(#env,#o)) };
+    requires resource_lifecycle_v1(introduce_sched_valgrind_tracked_unchanged, |^+ hypothesis(sched_valgrind_tracked_unchanged));
+    requires resource_premise_decomposition(scheduler_exact_parent_embedding, sched_parent_data_identity, sched_parent_sole_releaser, sched_parent_storage);
+    requires resource_premise_flow_v1(decompose_scheduler_exact_parent_embedding, ((sched_parent_data_identity |-> sched_parent_storage) |-> sched_parent_sole_releaser));
+    requires resource_premise_decomposition(scheduler_tls_params_owned, sched_tls_api_success, sched_tls_slot_cleared, sched_tls_slot_null_or_owned);
+    requires resource_premise_flow_v1(decompose_scheduler_tls_params_owned, ((sched_tls_slot_null_or_owned |-> sched_tls_api_success) |-> sched_tls_slot_cleared));
+    requires resource_premise_decomposition(scheduler_callee_live, sched_callee_created_for_thread, sched_callee_no_concurrent_use, sched_callee_suspended);
+    requires resource_premise_flow_v1(decompose_scheduler_callee_live, ((sched_callee_created_for_thread |-> sched_callee_suspended) |-> sched_callee_no_concurrent_use));
+    requires resource_premise_decomposition(scheduler_borrowed_chain_live, sched_chain_live, sched_chain_not_ended, sched_chain_single_scalar_write);
+    requires resource_premise_flow_v1(decompose_scheduler_borrowed_chain_live, ((sched_chain_live |-> sched_chain_not_ended) |-> sched_chain_single_scalar_write));
+    requires resource_premise_decomposition(scheduler_valid_membership, sched_membership_reciprocal, sched_membership_unique, sched_no_concurrent_writer);
+    requires resource_premise_flow_v1(decompose_scheduler_valid_membership, ((sched_membership_unique |-> sched_membership_reciprocal) |-> sched_no_concurrent_writer));
+    requires resource_premise_decomposition(scheduler_no_later_alias_use, sched_alias_not_used_after, sched_alias_set);
+    requires resource_premise_flow_v1(decompose_scheduler_no_later_alias_use, (sched_alias_set |-> sched_alias_not_used_after));
+    requires resource_premise_decomposition(scheduler_valgrind_request_neutral, sched_valgrind_configuration, sched_valgrind_tracked_unchanged);
+    requires resource_premise_flow_v1(decompose_scheduler_valgrind_request_neutral, (sched_valgrind_configuration |-> sched_valgrind_tracked_unchanged));
     ensures normal resource_unpublished(mth, _head);
     ensures normal resource_released(mth, nonnull);
     ensures normal resource_return_none();
+    quant live #mth: mk_http_thread.parent |-> #stale;
+    quant live #mth: mk_http_thread.session |-> #kept;
+    quant live #mth: mk_http_thread.request |-> #kept;
 };

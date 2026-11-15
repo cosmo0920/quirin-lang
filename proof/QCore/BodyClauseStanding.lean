@@ -93,9 +93,11 @@ CG22-OP-CALLBACKS-AND-SERVED-QUEUES adds `r12o`, the arm check of a
 type-switched release (`QCore.OpCallbacks`); card OP-CONSTRUCTOR-DECLARATIONS
 adds `r14e`, the result-state check of a constructor's body
 (`QCore.OpCallbacks`); card OP-CALLBACK-MEMBER-PATH-RELEASE adds `r30`, the
-member-path check of a callback candidate's body (`QCore.MemberPathRelease`). -/
+member-path check of a callback candidate's body (`QCore.MemberPathRelease`);
+card SCHEDULER-DESTROY-MEMBER-STATES adds `r50`, the take of a stale path's
+object through a composed unit helper (`QCore.MemberValueHelper`). -/
 inductive Evidence where
-  | w4 | entry | r11r | r12w | r13a | r13c | r13d | r13m | r13y | r12o | r14e | r30
+  | w4 | entry | r11r | r12w | r13a | r13c | r13d | r13m | r13y | r12o | r14e | r30 | r50
   deriving DecidableEq, Repr
 
 /-- Whether a piece of evidence covers a clause kind (rule 13i). -/
@@ -112,6 +114,7 @@ def covers : Evidence → ClauseKind → Bool
   | .r12o, k => k == .arm
   | .r14e, k => k == .memberState
   | .r30, k => k == .memberState
+  | .r50, k => k == .memberState
 
 /-- The structural checks. -/
 def Evidence.structural : Evidence → Bool
@@ -130,6 +133,7 @@ def reads : Evidence → List ClauseKind
   | .r12o => [.arm]
   | .r14e => [.memberState]
   | .r30 => [.memberState]
+  | .r50 => [.memberState]
 
 /-- A structural check's evidence never covers a clause of another kind. -/
 theorem a_structural_check_covers_only_what_it_reads (e : Evidence) (k : ClauseKind)
@@ -387,6 +391,7 @@ def Evidence.spelling : Evidence → String
   | .r12o => "12o"
   | .r14e => "14e"
   | .r30 => "30"
+  | .r50 => "50"
 
 /-- (evidence, the clause kinds it covers). -/
 def coverageVectors : List (String × List String) := [
@@ -401,11 +406,12 @@ def coverageVectors : List (String × List String) := [
   ("13y", ["callbackChecked"]),
   ("12o", ["arm"]),
   ("14e", ["memberState"]),
-  ("30", ["memberState"])
+  ("30", ["memberState"]),
+  ("50", ["memberState"])
 ]
 
 def allEvidence : List Evidence :=
-  [.w4, .entry, .r11r, .r12w, .r13a, .r13c, .r13d, .r13m, .r13y, .r12o, .r14e, .r30]
+  [.w4, .entry, .r11r, .r12w, .r13a, .r13c, .r13d, .r13m, .r13y, .r12o, .r14e, .r30, .r50]
 
 theorem coverage_vectors_hold :
     (allEvidence.zip coverageVectors).all (fun (e, v) =>
@@ -434,6 +440,7 @@ def unitOf : String → UnitView
   | "12o" => ⟨false, [.r12o]⟩
   | "14e" => ⟨false, [.r14e]⟩
   | "30" => ⟨false, [.r30]⟩
+  | "30+50" => ⟨false, [.r30, .r50]⟩
   | _ => ⟨true, []⟩
 
 def kindOf (s : String) : ClauseKind :=

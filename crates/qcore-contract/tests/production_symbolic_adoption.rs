@@ -251,6 +251,8 @@ fn current_checkpoint_text(path: &str) -> String {
     format!("{}\n\n{card}", text.trim_end_matches('\n'))
 }
 const RK_MEMORY: &str = "providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qv";
+/// The module SCHEDULER-DESTROY-MEMBER-STATES refined after the frozen inventory.
+const LATER_ADOPTION: &str = "providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qv";
 fn rule37_checkpoint_prefixes() -> (&'static str, &'static str) {
     let before = include_str!(
         "../../../docs/reports/w48-cmt-list-self-init/integration/rule37-memory-before-prefix.txt"
@@ -409,7 +411,21 @@ fn every_actual_hypothesis_is_introduced_and_every_original_group_is_an_open_con
                     .contains("requires resource_lifecycle_v1(introduce_")
         })
         .collect::<BTreeSet<_>>();
-    assert_eq!(actual, expected_paths);
+    // Card SCHEDULER-DESTROY-MEMBER-STATES adopted typed refinements in one
+    // further module after this card's frozen inventory; it is listed here,
+    // exactly, and checked by its own card's tests, not replayed against the
+    // inventory's before-assets.
+    let later = [root().join(LATER_ADOPTION)]
+        .into_iter()
+        .collect::<BTreeSet<_>>();
+    assert_eq!(
+        actual
+            .difference(&expected_paths)
+            .cloned()
+            .collect::<BTreeSet<_>>(),
+        later
+    );
+    assert!(expected_paths.is_subset(&actual));
     let (mut atoms, mut flows, mut declarations) = (0, 0, 0);
     for file in files {
         let path = file["path"].as_str().unwrap();

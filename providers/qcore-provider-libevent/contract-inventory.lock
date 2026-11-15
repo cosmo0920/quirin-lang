@@ -471,8 +471,8 @@
       "sha256": "ad2203f6bcee7e208ea65fa0fbb86ff66a97ec282ad19d844c4ef2849d1d1063"
     },
     "monkey/intrusive_list.qv": {
-      "clause_count": 25,
-      "declaration_count": 4,
+      "clause_count": 87,
+      "declaration_count": 5,
       "declarations": [
         {
           "clauses": 5,
@@ -525,27 +525,16 @@
           "resource_table": "functions"
         },
         {
-          "clauses": 12,
+          "clauses": 7,
+          "name": "mk_thread_destroy",
+          "resource_mode": null,
+          "resource_table": "retaining"
+        },
+        {
+          "clauses": 67,
           "name": "mk_http_thread_destroy",
-          "resource_mode": {
-            "container_effects": {
-              "0": {
-                "effect": "unpublished"
-              }
-            },
-            "link_members": {
-              "0": "_head"
-            },
-            "parameters": [
-              {
-                "released": {
-                  "nullable": false
-                }
-              }
-            ],
-            "result": "none"
-          },
-          "resource_table": "functions"
+          "resource_mode": null,
+          "resource_table": "retaining"
         }
       ],
       "inherits": [],
@@ -587,7 +576,7 @@
           }
         ]
       },
-      "sha256": "c6095185922bc40356b28e1c347841dbd27a15d4b549b3a44caa3a6988b7957c"
+      "sha256": "9fdd65fb13f939af57aae1a2e5f8466f626d03a75cce2a22bb91c67a673de3f6"
     },
     "monkey/logging.qv": {
       "clause_count": 10,
