@@ -262,6 +262,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "quirin-audit-plugin-openssl"
+version = "0.1.0"
+dependencies = [
+ "qcore-audit",
+ "qcore-schemas",
+ "quirin-audit-plugin",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "quirin-source-analysis"
 version = "0.1.0"
 dependencies = [
