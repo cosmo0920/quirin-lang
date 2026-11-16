@@ -72,3 +72,33 @@ none
 route slice
 none
 ```
+
+## Amendment, before the null-pointer-constant code (2026-11-16)
+
+The text above was frozen before D3's code. A unit-scoped reproduction then
+showed that Monkey's `NULL` (`((void *) 0)` on glibc) is outside the
+literal-argument premise as §C04.5.1 stated it, so D3 alone moved no row (see
+the README's D3 finding).
+
+User decision, 2026-11-16, relayed by the integrator and quoted exactly:
+"Admit (void *) 0 (Recommended)". §C04.5.1 is amended to admit the C11
+6.3.2.3p3 null pointer constant `(void *) 0` (matched parentheses only, the
+cast exactly `void *`, the operand the canonical `0`), and only at a
+pointer-typed premise parameter whose declared literal is `0`. Scalar
+premises are unchanged.
+
+Reach of the amendment: pointer premises only. These are `pthread_join`'s
+`thread_return` and `pthread_key_create`'s `destructor`. Every
+literal-premise refusal on corpus, system and slice today is a scalar premise
+(`flb_hash_table_add`, `fcntl`, `flb_task_users_dec`,
+`rd_kafka_topic_partition_destroy0`). The `pthread_join` callers
+(`mk_stop`, `mk_sched_workers_join`, `mk_clock_exit`) keep the
+thread-synchronization gate. So the predicted moves are exactly those stated
+above:
+
+* corpus: `mk_http_thread_initialize_tls_once` `Unknown -> Safe`;
+* system, slice: none;
+* the user's current: `mk_http_thread_initialize_tls_once`
+  `Unknown -> Safe`, nothing else.
+
+The `measure-prediction` block above stands unchanged.

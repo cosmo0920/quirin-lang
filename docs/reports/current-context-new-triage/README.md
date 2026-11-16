@@ -324,3 +324,8 @@ The static-key and automatic-key readings are in place and pinned with a
 `0`-spelled destructor (`tests/thread_key_in_place.rs`). Whether to admit
 the C11 6.3.2.3p3 null pointer constant `(void *) 0` at a pointer premise is
 a specification choice, offered to the user in the hand-back.
+
+User decision on that choice, 2026-11-16, relayed by the integrator and
+quoted exactly: "Admit (void *) 0 (Recommended)". §C04.5.1 now admits
+`(void *) 0` at a pointer premise whose literal is `0`
+([prediction amendment](PREDICTION-D3.md)).
