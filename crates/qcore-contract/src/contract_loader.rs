@@ -2630,7 +2630,12 @@ fn load_function_in(
             result_word,
             result_kind,
         )?;
-        let integer_parameter = |i: usize| kinds.parameter_kind(i).is_integer();
+        // Card CURRENT-CONTEXT-NEW-TRIAGE (D3): a by-value in-place position
+        // (`pthread_key_delete(key)`) is custody on a `u32`, checked by
+        // `in_place::check_parameter` above.
+        let integer_parameter = |i: usize| {
+            kinds.parameter_kind(i).is_integer() || kinds.parameter_kind(i).finalised_by_value()
+        };
         if result != ResourceReturnMode::None
             && !return_type.starts_with("ptr<")
             && !kinds.result_kind.is_integer()

@@ -66,6 +66,12 @@ use qcore_schemas::contract::ResourceFunctionContract;
 /// object.
 pub(crate) const ACTUAL_REFUSAL: &str = "in-place resource object is not the address of one automatic object of this function (rule 11v)";
 
+/// Card CURRENT-CONTEXT-NEW-TRIAGE (D3): the refusal of a by-value finaliser
+/// of a key held by static storage. Its creation bound no frame obligation
+/// (P-THREAD-KEY-STATIC), and whether another frame still needs it is outside
+/// this one.
+pub(crate) const STATIC_KEY_RELEASE_REFUSAL: &str = "finaliser of a thread key held by static storage: the holder's lifetime is outside this frame (rule 11v)";
+
 /// The refusal of an initialiser whose status no plain name holds, or is
 /// assigned to a name the body takes the address of.
 pub(crate) const WITNESS_REFUSAL: &str =
@@ -76,6 +82,15 @@ pub(crate) const WITNESS_REFUSAL: &str =
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub(crate) struct InPlaceNames {
     kinds: BTreeMap<String, BTreeSet<ResourceKind>>,
+    /// Card CURRENT-CONTEXT-NEW-TRIAGE (D3): every unshadowed object of static
+    /// storage duration (file scope or block `static`, never thread-local)
+    /// passed as `&NAME` to a `thread_key` initialiser. Its key is held by
+    /// static storage (P-THREAD-KEY-STATIC): no frame obligation is bound, so
+    /// it is not a tracked name.
+    static_keys: BTreeSet<String>,
+    /// Every name of an unshadowed static-duration object (not thread-local)
+    /// this body may name, for the by-value finaliser's refusal.
+    static_objects: BTreeSet<String>,
     /// Every name the body takes the address of: a status assigned to one
     /// can be written through a pointer, so it witnesses nothing.
     address_taken: BTreeSet<String>,
@@ -86,8 +101,13 @@ impl InPlaceNames {
     /// initialiser position of a contract in force, anywhere in `body` (the
     /// tokens between the braces). Flow-insensitive: a larger set only refuses
     /// more.
-    pub(crate) fn read(body: &[&str], contracts: &ResourceContracts) -> Self {
+    pub(crate) fn read(
+        body: &[&str],
+        contracts: &ResourceContracts,
+        static_objects: &BTreeSet<String>,
+    ) -> Self {
         let mut kinds: BTreeMap<String, BTreeSet<ResourceKind>> = BTreeMap::new();
+        let mut static_keys = BTreeSet::new();
         let any_in_place = contracts.functions().values().any(has_in_place_position);
         if !any_in_place {
             return Self::default();
@@ -121,18 +141,33 @@ impl InPlaceNames {
                     continue;
                 }
                 if let Some(name) = address_of_name(argument) {
-                    kinds.entry(name.to_owned()).or_default().insert(kind);
+                    if kind == ResourceKind::ThreadKey && static_objects.contains(name) {
+                        static_keys.insert(name.to_owned());
+                    } else {
+                        kinds.entry(name.to_owned()).or_default().insert(kind);
+                    }
                 }
             }
         }
+        // A name the body also initialises another way stays tracked, never
+        // held by static storage.
+        static_keys.retain(|name: &String| !kinds.contains_key(name));
         Self {
             kinds,
+            static_keys,
+            static_objects: static_objects.clone(),
             address_taken,
         }
     }
 
     pub(crate) fn is_empty(&self) -> bool {
         self.kinds.is_empty()
+    }
+
+    /// Card CURRENT-CONTEXT-NEW-TRIAGE (D3): whether `name` is a static
+    /// object a `thread_key` initialiser of this body creates a key into.
+    pub(crate) fn static_key(&self, name: &str) -> bool {
+        self.static_keys.contains(name)
     }
 
     pub(crate) fn contains(&self, name: &str) -> bool {
@@ -150,6 +185,26 @@ impl InPlaceNames {
             _ => None,
         }
     }
+}
+
+/// Card CURRENT-CONTEXT-NEW-TRIAGE (D3): whether `body` calls a declared
+/// `thread_key` initialiser (the only case the static-key reading needs the
+/// unit's static objects for).
+pub(crate) fn calls_thread_key_initialiser(body: &[&str], contracts: &ResourceContracts) -> bool {
+    body.windows(2).any(|pair| {
+        pair[1] == "("
+            && is_identifier(pair[0])
+            && contracts.contract(pair[0]).is_some_and(|contract| {
+                contract
+                    .parameters
+                    .iter()
+                    .enumerate()
+                    .any(|(position, mode)| {
+                        matches!(mode, ResourceParameterMode::Out { .. })
+                            && contract.parameter_kind(position) == ResourceKind::ThreadKey
+                    })
+            })
+    })
 }
 
 /// Whether a contract has any in-place-kinded position.
@@ -201,16 +256,36 @@ impl Parser<'_> {
     /// Hook (rule 11v): give every in-place-kinded position of one contracted
     /// call its place. `Err` carries the refusal; the call is then lowered to
     /// nothing else.
+    ///
+    /// `Ok` carries the initialiser positions whose object is held by static
+    /// storage (card CURRENT-CONTEXT-NEW-TRIAGE, D3: a `thread_key` created
+    /// into `&G`, `G` of static storage duration). The caller reads each as a
+    /// borrowed position: the key is the static holder's
+    /// (P-THREAD-KEY-STATIC), so the call binds no frame obligation and needs
+    /// no status witness.
     pub(super) fn in_place_actuals(
         &self,
         contract: &ResourceFunctionContract,
         raw_arguments: Option<&Vec<&[&str]>>,
         destination: Option<&str>,
         arguments: &mut [Option<String>],
-    ) -> Result<(), String> {
+    ) -> Result<Vec<usize>, String> {
         if !has_in_place_position(contract) {
-            return Ok(());
+            return Ok(Vec::new());
         }
+        let static_held = (0..contract.parameters.len())
+            .filter(|position| {
+                contract.parameter_kind(*position) == ResourceKind::ThreadKey
+                    && matches!(
+                        contract.parameters.get(*position),
+                        Some(ResourceParameterMode::Out { .. })
+                    )
+                    && raw_arguments
+                        .and_then(|arguments| arguments.get(*position))
+                        .and_then(|argument| address_of_name(argument))
+                        .is_some_and(|name| self.in_place_names.static_key(name))
+            })
+            .collect::<Vec<_>>();
         let initialiser = contract
             .parameters
             .iter()
@@ -218,6 +293,7 @@ impl Parser<'_> {
             .any(|(position, mode)| {
                 matches!(mode, ResourceParameterMode::Out { .. })
                     && contract.parameter_kind(position).is_in_place()
+                    && !static_held.contains(&position)
             });
         // The status is the kind's sentinel: an initialiser whose status no
         // plain name holds (discarded, or consumed by an enclosing expression
@@ -235,7 +311,51 @@ impl Parser<'_> {
             if !kind.is_in_place() {
                 continue;
             }
+            if static_held.contains(&position) {
+                *slot = None;
+                continue;
+            }
             let raw = raw_arguments.and_then(|arguments| arguments.get(position));
+            // Card CURRENT-CONTEXT-NEW-TRIAGE (D3): a by-value finaliser or use
+            // (`pthread_key_delete(k)`) names the object by itself. The place
+            // is `k` when `k` is the one automatic object this body created a
+            // key into; a static key's finaliser refuses (its holder's
+            // lifetime is outside the frame).
+            if kind.finalised_by_value()
+                && !matches!(
+                    contract.parameters.get(position),
+                    Some(ResourceParameterMode::Out { .. })
+                )
+            {
+                let named = raw.map(|argument| strip_parentheses(argument)).and_then(
+                    |argument| match argument {
+                        [name] if is_identifier(name) => Some(*name),
+                        _ => None,
+                    },
+                );
+                if let Some(name) = named
+                    .filter(|name| self.in_place_names.kind(name) == Some(kind))
+                    .filter(|name| {
+                        self.typed_positions_index()
+                            .is_some_and(|index| one_automatic_object(&index.function, name))
+                    })
+                {
+                    *slot = Some(name.to_owned());
+                    continue;
+                }
+                let released = matches!(
+                    contract.parameters.get(position),
+                    Some(ResourceParameterMode::Released { .. })
+                );
+                if released
+                    && named.is_some_and(|name| {
+                        self.in_place_names.static_objects.contains(name)
+                            && !self.in_place_names.contains(name)
+                    })
+                {
+                    return Err(STATIC_KEY_RELEASE_REFUSAL.to_owned());
+                }
+            }
             let name = raw
                 .and_then(|argument| address_of_name(argument))
                 .filter(|name| self.in_place_names.kind(name) == Some(kind))
@@ -265,7 +385,7 @@ impl Parser<'_> {
                 return Err(ACTUAL_REFUSAL.to_owned());
             }
         }
-        Ok(())
+        Ok(static_held)
     }
 
     /// Hook (rule 11v): whether `argument` is `&NAME` of a tracked object at

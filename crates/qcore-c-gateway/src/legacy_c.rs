@@ -4027,7 +4027,27 @@ fn build_function_cfg_unscoped(
                 .iter()
                 .map(|token| token.text.as_str())
                 .collect::<Vec<_>>();
-            in_place_custody::InPlaceNames::read(&body, contracts)
+            // Card CURRENT-CONTEXT-NEW-TRIAGE (D3): the unshadowed objects of
+            // static, not thread, storage duration a `thread_key` initialiser
+            // of this body may create a key into. Read only where the body
+            // calls such an initialiser.
+            let static_objects = if in_place_custody::calls_thread_key_initialiser(&body, contracts)
+            {
+                let unit = tokens
+                    .iter()
+                    .map(|token| token.text.as_str())
+                    .collect::<Vec<_>>();
+                let thread_local = crate::publication::thread_local_objects(&unit, &body);
+                publications
+                    .destinations
+                    .iter()
+                    .filter(|name| !thread_local.contains(*name))
+                    .cloned()
+                    .collect()
+            } else {
+                BTreeSet::new()
+            };
+            in_place_custody::InPlaceNames::read(&body, contracts, &static_objects)
         },
     );
     let declared_callees = if descriptor_names.is_empty() && in_place_names.is_empty() {

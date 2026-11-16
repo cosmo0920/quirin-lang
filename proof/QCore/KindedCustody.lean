@@ -81,6 +81,10 @@ inductive Kind where
   drop is refused there, never accused, so this model's use-after-close
   candidate excludes it as it excludes the heap. -/
   | reference
+  /-- Card CURRENT-CONTEXT-NEW-TRIAGE (D3, gateway rule 11v): a POSIX
+  thread-specific data key, in place, finalised by value
+  (`QCore.ThreadKeyStatic`). -/
+  | threadKey
   deriving DecidableEq, Repr
 
 /-- The kinds carried by an integer rather than a pointer. -/

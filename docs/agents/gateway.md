@@ -4645,6 +4645,30 @@ own anchor here.
     table and the protocols bound to Rust and to the libc declarations by
     `kindVectors` and `protocolVectors`); `QCore.KindedCustody.Kind` gains the
     two constructors; [report](../reports/cg25-resource-kinds/README.md).
+    (5) **Thread keys** (card CURRENT-CONTEXT-NEW-TRIAGE, D3; user decision
+    2026-11-16 "Queue both (Recommended)"; contract specification §C04.6.1;
+    qcore-schemas 27.0.0 `ResourceKind::ThreadKey`,
+    `ResourceKind::finalised_by_value`). `thread_key` is the second in-place
+    kind, finalised by value: libc's `pthread_key_create` (applies only with a
+    null destructor, C04.5) initialises `&k`; `pthread_key_delete(k)` takes the
+    whole `k` (`in_place_actuals`). `&k` of one automatic object is (1)-(4)
+    unchanged. `&G` of an unshadowed **static**-duration object
+    (`publication::destinations` minus `thread_local_objects`) binds **no
+    frame obligation** and needs no witness: the key is the static holder's
+    under the stated premise P-THREAD-KEY-STATIC (created once, no
+    destructor, not owed a delete); the call is read with that position
+    borrowed (`legacy_classify.rs`). A by-value delete of such a `G` refuses
+    (`STATIC_KEY_RELEASE_REFUSAL`), as does a key reached through a pointer,
+    a thread-local key and a delete of an untracked key; the getters are not
+    kinded, so naming a tracked automatic key there refuses. **Do not** read
+    a thread-local, member or pointer-reached key as static, drop the literal
+    destructor premise, or accept a static key's delete without a reading of
+    its holder. Measured: see the report (`mk_http_thread_initialize_tls_once`
+    predicted `Unknown -> Safe`, corpus and current). `QCore.ThreadKeyStatic`
+    (`AuditThreadKeyStatic.lean`), `QCore.KindedCustody.Kind.threadKey`,
+    `kindVectors`/`protocolVectors` extended;
+    `tests/thread_key_in_place.rs`;
+    [report](../reports/current-context-new-triage/README.md).
 
 <a id="constraint-11w"></a>
 

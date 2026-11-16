@@ -47,6 +47,24 @@ pub(super) fn check_parameter(
     ty: &str,
 ) -> Result<(), String> {
     let spelling = kind.spelling();
+    // Card CURRENT-CONTEXT-NEW-TRIAGE (D3): a kind finalised by value (a
+    // `pthread_key_t`) is named by itself at its finaliser and its uses; only
+    // its initialiser names the object by address.
+    if kind.finalised_by_value() && ty == "u32" {
+        if word == Some(ValidityWord::Integer) {
+            return Err(format!(
+                "a by-value {spelling} position spells its validity `nonnull`"
+            ));
+        }
+        return match mode {
+            ResourceParameterMode::Released { nullable: false } | ResourceParameterMode::Borrowed => {
+                Ok(())
+            }
+            _ => Err(format!(
+                "a by-value {spelling} position is a finaliser (`nonnull`) or a use; its initialiser names the object by address"
+            )),
+        };
+    }
     if !matches!(ty, "ptr<mut, u8>" | "ptr<const, u8>") {
         return Err(format!(
             "a {spelling} position names the object: `ptr<mut, u8>` or `ptr<const, u8>`"

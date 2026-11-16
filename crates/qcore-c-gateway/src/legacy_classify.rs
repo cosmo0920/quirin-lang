@@ -1696,17 +1696,33 @@ impl Parser<'_> {
                     .collect::<Vec<_>>();
                 // Card CG25-RESOURCE-KINDS (rule 11v): an in-place position's
                 // place is the automatic object its `&NAME` actual designates.
-                if let Err(description) = self.in_place_actuals(
+                let static_held = match self.in_place_actuals(
                     &contract,
                     raw_arguments.as_ref(),
                     destination.as_deref(),
                     &mut arguments,
                 ) {
-                    return LegacyInstruction::Unknown {
-                        description,
-                        writes: self.refused_writes(&texts),
-                    };
-                }
+                    Ok(static_held) => static_held,
+                    Err(description) => {
+                        return LegacyInstruction::Unknown {
+                            description,
+                            writes: self.refused_writes(&texts),
+                        };
+                    }
+                };
+                // Card CURRENT-CONTEXT-NEW-TRIAGE (D3, rule 11v): a key created
+                // into static storage is the static holder's
+                // (P-THREAD-KEY-STATIC). The position binds no frame
+                // obligation, so it is read as borrowed and produces no site.
+                let contract = if static_held.is_empty() {
+                    contract
+                } else {
+                    let mut held = contract;
+                    for position in static_held {
+                        held.parameters[position] = ResourceParameterMode::Borrowed;
+                    }
+                    held
+                };
                 // A proved null actual of the removed result is a value,
                 // not a missing argument. `0` cannot name a C object. Raw
                 // NULL identifiers are excluded: preprocessing must establish

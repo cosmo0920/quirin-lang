@@ -61,7 +61,9 @@ module contract;
 //   `pthread_rwlock_init`/`pthread_rwlock_destroy`, `pthread_attr_init`,
 //   `pthread_key_create` -- open an obligation to destroy an object the caller
 //   owns in place; v1 cannot state it, and a neutral declaration would erase
-//   it. `call_once` invokes a caller-supplied function (`pthread_once` is
+//   it. (Card CURRENT-CONTEXT-NEW-TRIAGE declares `pthread_key_create` and
+//   `pthread_key_delete` at the end of this module with the in-place kind
+//   `thread_key`.) `call_once` invokes a caller-supplied function (`pthread_once` is
 //   declared at the end of this module with a synchronous invocation, card
 //   CG22-CALLBACK-REGISTRY-CONTRACT; `call_once`, which librdkafka's
 //   `rdkafka.c` calls and `tinycthread.c` may define, is not declared here;
@@ -375,5 +377,50 @@ contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     ensures normal resource_borrowed(key);
+    ensures normal resource_return_none();
+};
+
+// ## Card CURRENT-CONTEXT-NEW-TRIAGE (D3): thread-specific data keys, in-place kind `thread_key`
+//
+// Read from `/usr/include/pthread.h:1297-1302` on the audited host:
+//
+//   extern int pthread_key_create (pthread_key_t *__key,
+//                                  void (*__destr_function) (void *))
+//        __THROW __nonnull ((1));
+//   extern int pthread_key_delete (pthread_key_t __key) __THROW;
+//
+// `pthread_key_create` creates a key INTO the caller's `pthread_key_t` and
+// returns a status, zero on success (POSIX); every thread's value for the new
+// key is NULL. The key is a process resource `pthread_key_delete` releases, so
+// a neutral declaration would erase that obligation: it is the in-place kind
+// `thread_key` (contract spec C04.6.1, gateway rule 11v), whose finaliser takes
+// the key BY VALUE. A non-NULL destructor is a callback the implementation
+// runs at thread exit, a registration this declaration does not state, so the
+// declaration applies only where `destructor` is the null pointer constant
+// (`resource_literal_argument(destructor, 0)`, C04.5); every other call stays
+// undeclared. Route G binds the obligation to one automatic object passed as
+// `&k` (rule 11v), or, for an object of static storage duration, to the static
+// holder under the stated premise P-THREAD-KEY-STATIC (rule 11v (5)).
+//
+// NOT stated: the key's values (`pthread_setspecific` / `pthread_getspecific`
+// keep their declarations above), destructor iterations, `PTHREAD_KEYS_MAX`.
+
+extern fn pthread_key_create(key: ptr<mut, u8>, destructor: fnptr) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_literal_argument(destructor, 0);
+    ensures normal resource_out(key, nullable);
+    ensures normal resource_kind(key, thread_key);
+    ensures normal resource_borrowed(destructor);
+    ensures normal resource_return_none();
+};
+
+extern fn pthread_key_delete(key: u32) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_released(key, nonnull);
+    ensures normal resource_kind(key, thread_key);
     ensures normal resource_return_none();
 };

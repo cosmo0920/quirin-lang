@@ -94,6 +94,43 @@ const RUN_LIMIT: usize = 1 << 20;
 /// carrying `(` at declarator level is skipped whole, so neither a prototype's
 /// parameter names nor a K&R definition's parameter list can enter the set.
 pub(crate) fn file_scope_objects(unit: &[&str]) -> BTreeSet<String> {
+    file_scope_objects_where(unit, |_| true)
+}
+
+/// The thread storage keywords (C11 `_Thread_local`, its `<threads.h>` macro
+/// spelling and GNU `__thread`).
+const THREAD_STORAGE_SPECIFIERS: &[&str] = &["_Thread_local", "thread_local", "__thread"];
+
+/// Card **CURRENT-CONTEXT-NEW-TRIAGE** (D3): the objects of `unit` (file
+/// scope) and `body` (block scope) declared with thread storage duration. A
+/// key created into one of them is per thread, not held by static storage, so
+/// the static-key reading excludes them. Over-approximates in the refusing
+/// direction: a name declared thread-local anywhere is excluded.
+pub(crate) fn thread_local_objects(unit: &[&str], body: &[&str]) -> BTreeSet<String> {
+    let thread_local = |run: &[&str]| {
+        run.iter()
+            .any(|text| THREAD_STORAGE_SPECIFIERS.contains(text))
+    };
+    let mut names = file_scope_objects_where(unit, thread_local);
+    for start in 0..body.len() {
+        if start > 0 && !matches!(body[start - 1], "{" | "}" | ";" | "(" | ":") {
+            continue;
+        }
+        if !is_declaration_candidate(body, start) {
+            continue;
+        }
+        let Some(end) = statement_end(body, start) else {
+            continue;
+        };
+        if thread_local(&body[start..end]) {
+            collect_declared_objects(&body[start..end], &mut names);
+        }
+    }
+    names
+}
+
+/// [`file_scope_objects`] restricted to the declaration runs `keep` accepts.
+fn file_scope_objects_where(unit: &[&str], keep: impl Fn(&[&str]) -> bool) -> BTreeSet<String> {
     let mut names = BTreeSet::new();
     let mut depth = 0usize;
     let mut start = 0usize;
@@ -115,7 +152,7 @@ pub(crate) fn file_scope_objects(unit: &[&str]) -> BTreeSet<String> {
             }
             "=" if depth == 0 => saw_assignment = true,
             ";" if depth == 0 => {
-                if index > start && index - start <= RUN_LIMIT {
+                if index > start && index - start <= RUN_LIMIT && keep(&unit[start..index]) {
                     collect_declared_objects(&unit[start..index], &mut names);
                 }
                 start = index + 1;

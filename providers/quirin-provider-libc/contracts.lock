@@ -482,6 +482,18 @@
       "pinned_at": "2026-10-25T18:10:00Z"
     },
     {
+      "function": "pthread_key_create",
+      "module": "libc/threads.qv",
+      "contract_sha256": "dfad316920661de01aafef4bdc2001800101348656fc04571ed9ae7dc1eb3631",
+      "pinned_at": "2026-11-16T08:06:42Z"
+    },
+    {
+      "function": "pthread_key_delete",
+      "module": "libc/threads.qv",
+      "contract_sha256": "390d7a3138af18d5c7ca86071fe335114ada7686fce7d3e94090cd43e3928db0",
+      "pinned_at": "2026-11-16T08:06:42Z"
+    },
+    {
       "function": "pthread_kill",
       "module": "libc/threads.qv",
       "contract_sha256": "01f51ee40dc97836fa730f2496b418ff393bc92722c621c6a8e69310a5ed98d0",
