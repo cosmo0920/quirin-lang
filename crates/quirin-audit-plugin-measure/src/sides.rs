@@ -1203,6 +1203,11 @@ mod tests {
             &mut environment,
             &cargo,
         );
+        // The receipt is joined with the platform separator (`\` on Windows).
+        let receipt = Path::new("/s")
+            .join("build.slot.json")
+            .to_string_lossy()
+            .into_owned();
         assert_eq!(
             run[..6],
             [
@@ -1210,13 +1215,13 @@ mod tests {
                 "/r/scripts/gate_slot.py",
                 "build",
                 "--receipt",
-                "/s/build.slot.json",
+                receipt.as_str(),
                 "--"
             ]
         );
         assert_eq!(run[6..], cargo[..]);
         assert_eq!(slot["class"], "build");
-        assert_eq!(slot["receipt"], "/s/build.slot.json");
+        assert_eq!(slot["receipt"], receipt.as_str());
         assert_eq!(slot["command"], json!(run));
     }
 }
