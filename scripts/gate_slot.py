@@ -229,7 +229,14 @@ from __future__ import annotations
 import argparse
 import datetime
 import errno
-import fcntl
+try:
+    import fcntl
+except ImportError:  # pragma: no cover - Windows has no flock
+    # Hotfix after the integrate/r13 landing: run_test_binaries.py imports this module
+    # on every platform (card GATE-SLOT-BUILDS-UNSLOTTED), and the Windows CI
+    # job runs it with no gate slot. The slots themselves are POSIX-only:
+    # exclusive_phase_closure refuses rather than reach a missing flock.
+    fcntl = None  # type: ignore[assignment]
 import json
 import os
 from pathlib import Path
@@ -1710,6 +1717,9 @@ def exclusive_phase_closure(env: Optional[dict] = None,
     env = os.environ if env is None else env
     if "rust-suite/0" not in parse_held(env.get(HELD_ENV)):
         return None
+    if fcntl is None:
+        raise Refusal(f"${HELD_ENV} names a rust-suite slot, but this platform has no "
+                      "fcntl.flock, so the gate's build class cannot be closed")
     text = env.get(BUILD_DRAIN_ENV, "").strip()
     timeout = parse_duration(text, f"${BUILD_DRAIN_ENV}") if text else DEFAULT_BUILD_DRAIN
     return BuildClosure(Path(env.get("QUIRIN_GATE_DIR", DEFAULT_GATE_DIR)), timeout,

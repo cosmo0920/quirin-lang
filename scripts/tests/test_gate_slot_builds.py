@@ -428,3 +428,40 @@ class ScopedGateSteps(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class WithoutFcntl(unittest.TestCase):
+    """Hotfix after the integrate/r13 landing: the Windows CI job runs
+    run_test_binaries.py, which imports gate_slot, on a platform with no
+    fcntl. Both modules must load there, report no closure outside a slot,
+    and refuse a claimed slot rather than reach a missing flock."""
+
+    def run_without_fcntl(self, body: str, env: dict) -> "subprocess.CompletedProcess[str]":
+        import subprocess
+        scripts = Path(__file__).resolve().parents[1]
+        code = ("import sys\n"
+                "sys.modules['fcntl'] = None\n"  # makes `import fcntl` raise ImportError
+                f"sys.path.insert(0, {str(scripts)!r})\n"
+                "import gate_slot, run_test_binaries\n" + body)
+        clean = {k: v for k, v in os.environ.items() if not k.startswith("QUIRIN_GATE")}
+        return subprocess.run([sys.executable, "-I", "-c", code], env={**clean, **env},
+                              capture_output=True, text=True, timeout=60)
+
+    def test_the_runner_loads_and_has_no_closure_outside_a_slot(self):
+        done = self.run_without_fcntl(
+            "assert gate_slot.fcntl is None\n"
+            "assert run_test_binaries.build_closure_factory() is None\n"
+            "print('ok')\n", {})
+        self.assertEqual(done.returncode, 0, done.stderr)
+        self.assertEqual(done.stdout.strip(), "ok")
+
+    def test_a_claimed_slot_is_refused_without_flock(self):
+        done = self.run_without_fcntl(
+            "try:\n"
+            "    gate_slot.exclusive_phase_closure()\n"
+            "except gate_slot.Refusal as error:\n"
+            "    print('refused', error)\n",
+            {slot_mod.HELD_ENV: "rust-suite/0"})
+        self.assertEqual(done.returncode, 0, done.stderr)
+        self.assertIn("refused", done.stdout)
+        self.assertIn("no fcntl.flock", done.stdout)
