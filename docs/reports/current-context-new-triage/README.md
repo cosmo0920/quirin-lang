@@ -6,7 +6,27 @@ Base `0f6e17118` (integrate/r12). Subject: the provisional `Unsafe` of
 the integrator's `current --monkey-linked` run at binary `89fa31d21`
 (`private/current-linked-556460e31/reports-89fa31d21/`, read only).
 
-This section is the census, committed before any implementation.
+Sections 1-4 are the census, committed at `f88e6a16d` before any
+implementation; the [prediction](PREDICTION.md) was committed at
+`191220d46`, before the implementation commit `1e691eecc` (the measured tip;
+later commits change records only). Gateway rule 5l amended in place with
+item (6), rule 7's pointer updated; Lean `QCore.RefusedStoreHandOn` (new).
+
+## Headline
+
+* **Verdict (a): a modelling defect.** `context_new`'s two leak claims are
+  not validated: the node is linked into the per-thread list that
+  `mk_tls_exit` releases (section 1). Nothing is presented or filed upstream.
+* **Fixed under the existing rule.** B08's owner refusal reports
+  `UnknownAlias`, which W44-LEAK-PIN-AUDIT's refused hand-on rule never read;
+  rule 5l (6) gives it rule 5l (5)'s treatment. A withdrawal only:
+  `context_new` is `Unknown`, never `Safe`.
+* **Accepting the store** (`context_new` `Safe`) needs a semantic choice no
+  rule settles; options with a recommendation are in section 7.
+* **Measured on unit-scoped reproductions** (evidence tree, base vs tip
+  binary): one row moves, `context_new` `Unsafe -> Unknown`; corpus, system
+  and slice predicted unchanged (section 6). The integrator reruns
+  `current` and measures the live routes.
 
 ## 1. Validation verdict: (a) a modelling defect
 
@@ -141,3 +161,109 @@ above). Only `context_new` has it.
 
 Unit: `Unsafe` → `Unknown` (its only `Unsafe` row moves). Wider census and
 the measured confirmation follow in later sections.
+
+## 5. The repair (rule 5l (6))
+
+`crates/qcore-c-gateway/src/legacy_transfer.rs`, B08's owner-refusal branch:
+before the bindings are poisoned, the places the refused store hands on go
+through `refused_operands::withdraw_refused_call` (live sites only, cascading
+through containment and field links). `refused_store_hand_ons`: an `Alias`
+store hands on its value; a contracted call whose result the store would take
+hands on what rule 5l (5) lists (`refused_call_hand_ons`, now shared with the
+bound-read/member-address refusal, which is unchanged); `Clear` and an
+identity-free `AggregateStore` hand on nothing. The node keeps its
+`UnknownAlias`, so a function it fully withdraws is `Unknown`.
+
+Fixtures, `crates/qcore-c-gateway/tests/refused_store_hand_on.rs` (7 tests,
+all pass at the tip; run against the base transfer source, 3 fail as the
+census says):
+
+| Fixture | Base | Tip |
+|---|---|---|
+| store of a node into a borrowed root's member (`t = bu_get(0); t->contexts = n;`) | Unsafe, 1 leak | Unknown, no leak |
+| `context_new`'s shape, both returns (head insert through a borrowed `thctx`) | Unsafe, 2 leaks (the `ssl_new` failure return and the success return) | Unknown, no leak |
+| store through an owner this body released | Unsafe, leak | not Safe, no leak, refusal kept |
+| a second allocation the refused store does not name | Unsafe, 1 leak | unchanged |
+| admitted store into a body owner, owner released (P-B08-SHALLOW) | Unsafe, 1 leak | unchanged |
+| call result into a refused member (`t->contexts = r_wrap(p)`, `p` borrowed) | Unsafe, `p`'s leak | unchanged |
+| refused store then explicit release of the value | not Safe | not Safe |
+
+The fourth and fifth rows are the brief's "store into an unowned or
+unreleased root still leaks" in the form the rule gives it: an admitted
+store (a resolved owner) is untouched and keeps its accusation; a refused
+store is no longer an accusation of the value it stored. The released-owner
+row is the one precision cost: the stored node there is unreachable, but the
+refusal is uniform, as rule 5l (5)'s is.
+
+Lean `QCore.RefusedStoreHandOn` (`proof/AuditRefusedStoreHandOn.lean`, 8
+theorems, `propext` only): the W44 rule at a wider refusal signal that extends
+the call rule; only withdraws and changes no status; an admitted store is
+untouched; an unnamed site keeps its leak; the stored value is withdrawn; a
+refused store is never `Safe`.
+
+## 6. Measurement
+
+Unit-scoped `current --monkey-linked` on the evidence tree (read only),
+reduced copies of its compile database, the rule 40 link artifact, base
+binary (`0f6e17118`) against the tip binary; script `private/repro/run.sh`,
+`run_pair.sh`, comparison `compare_all.py`:
+
+* `tls_openssl.c` alone: `context_new`'s row equals the evidence row byte for
+  byte at base (one unrelated `config_parse` diagnostic differs: the reduced
+  database lacks the unit that defines `mk_rconf_section_get`).
+* every unit of a function row that is `Unsafe` with an unresolved identity
+  in the evidence run (`mk_http.c`, `mk_net.c`, `tls_openssl.c`, `rdhttp.c`,
+  `rdkafka_sasl_oauthbearer_oidc.c`, `snappy.c`, `ctr_random.c`, then
+  `cmt_decode_statsd.c`; 181 + 93 rows): **one row moves**, `context_new`
+  `Unsafe -> Unknown` (leaks at `:533` and `:541` withdrawn); the unit
+  `Unsafe -> Unknown`, `leak` 2 -> 0. Nothing else changes, diagnostics
+  included.
+
+Why no other row of any route can move, and the per-route census of the
+`Unsafe` rows with an unresolved identity at `baseline:497bdeb90`: see the
+[prediction](PREDICTION.md). The live routes do not read `tls_openssl.c`.
+
+## 7. Decision offered: accepting the store
+
+Fail-closed settles the withdrawal; it does not settle acceptance. To make
+`context_new` `Safe` the analysis would have to know both:
+
+1. that `pthread_getspecific(local_context)` returns the object
+   `mk_tls_thread_init` retained with `pthread_setspecific` (today
+   `resource_return_none()`; open as `W43-RESULT-ALIAS-CONDITIONAL-AND-RETAINED`
+   and `W46-FLUENT-TLS-RETAINED-RESULT`), and
+2. that `thctx->contexts` is a checked owner: a list whose nodes a known path
+   releases (`mk_tls_exit` → `contexts_free`, after the workers join).
+
+Options:
+
+* **A (recommended): keep `Unknown`; record the observation on the open
+  follow-ups.** No vocabulary change; the row is honest and in the
+  denominator.
+* **B: a declared premise for Monkey's TLS context list.** A
+  `resource_premise` (deferred-review, so `Pending`) on a contract of
+  `local_thread_context` stating that its result is the calling worker's
+  `tls_thread_context`, whose `contexts` list `mk_tls_exit` releases; the
+  head insert would then be a publication into that list (rule 10d's
+  container reading extended to a singly linked head insert). Moves the row
+  to `Pending`, needs a new store-publication reading with Lean parity.
+* **C: a retained-result relation for `pthread_getspecific`** (the open
+  follow-ups' discharge), plus an owner relation from the TLS slot to a list
+  released on a teardown path: general, and the largest.
+
+A is recommended: B and C each add a semantic clause (an owner relation for
+a singly linked head insert through retained thread storage) that only the
+user can choose, and neither changes any live route.
+
+## 8. Follow-ups
+
+* `UNKNOWN-ALIAS-REFUSAL-HAND-ON-CENSUS` (registered): other transfer
+  branches that report `UnknownAlias` and return before the instruction's
+  effect may share the gap rule 5l (5) and (6) closed for calls and B08
+  stores; no census lists them.
+* `W43-RESULT-ALIAS-CONDITIONAL-AND-RETAINED` (amended): Monkey's
+  `context_new` measured as a consumer of the retained result.
+
+## 9. Gate
+
+Scoped card gate on the final code commit: recorded in `gate.json` below.
