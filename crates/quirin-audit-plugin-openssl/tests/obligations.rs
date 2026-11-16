@@ -108,15 +108,45 @@ fn set() -> ContractSet {
             ("refcounted-release".to_owned(), class(false)),
         ]),
         bindings: vec![
-            binding("MINI_clear", "void (void)", "no-pointer-interface", Some("src/mini.c")),
-            binding("MINI_get", "int (const struct mini_st *)", "pure-reader", Some("src/mini.c")),
-            binding("MINI_free", "void (struct mini_st *)", "refcounted-release", None),
+            binding(
+                "MINI_clear",
+                "void (void)",
+                "no-pointer-interface",
+                Some("src/mini.c"),
+            ),
+            binding(
+                "MINI_get",
+                "int (const struct mini_st *)",
+                "pure-reader",
+                Some("src/mini.c"),
+            ),
+            binding(
+                "MINI_free",
+                "void (struct mini_st *)",
+                "refcounted-release",
+                None,
+            ),
             // The contract's prototype is not the header's.
-            binding("MINI_wide", "int (void)", "no-pointer-interface", Some("src/mini.c")),
+            binding(
+                "MINI_wide",
+                "int (void)",
+                "no-pointer-interface",
+                Some("src/mini.c"),
+            ),
             // Declared, but not defined where the contract says.
-            binding("MINI_elsewhere", "int (void)", "no-pointer-interface", Some("src/other.c")),
+            binding(
+                "MINI_elsewhere",
+                "int (void)",
+                "no-pointer-interface",
+                Some("src/other.c"),
+            ),
             // Not declared at all.
-            binding("MINI_absent", "int (void)", "no-pointer-interface", Some("src/mini.c")),
+            binding(
+                "MINI_absent",
+                "int (void)",
+                "no-pointer-interface",
+                Some("src/mini.c"),
+            ),
         ],
     };
     set.validate("9.9.9").unwrap();
@@ -185,21 +215,29 @@ fn a_pin_mismatch_makes_every_binding_unknown() {
     let set = set();
     // One byte of one file: the prepared tree no longer has the pinned digest.
     std::fs::write(tree.join("src/other.c"), "#include <openssl/mini.h> \n").unwrap();
-    let checks = checks(&pin, &set, &tree);
-    for (function, check) in &checks {
+    let tampered = checks(&pin, &set, &tree);
+    for (function, check) in &tampered {
         assert_eq!(check.proposed(), ProposedVerdict::Unknown, "{function}");
         assert_eq!(failed(check), Some("release-pin"), "{function}");
     }
     // An absent tree, and a tree of another version, are mismatches too.
     let absent = checks(&pin, &set, &directory.join("nothing"));
-    assert!(absent.values().all(|check| failed(check) == Some("release-pin")));
+    assert!(
+        absent
+            .values()
+            .all(|check| failed(check) == Some("release-pin"))
+    );
     std::fs::write(tree.join("src/other.c"), "#include <openssl/mini.h>\n").unwrap();
     let other = Pin {
         version: "9.9.8",
         ..pin.clone()
     };
-    let checks = checks(&other, &set, &tree);
-    assert!(checks.values().all(|check| failed(check) == Some("release-pin")));
+    let versioned = checks(&other, &set, &tree);
+    assert!(
+        versioned
+            .values()
+            .all(|check| failed(check) == Some("release-pin"))
+    );
 }
 
 #[test]

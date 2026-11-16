@@ -68,8 +68,8 @@ pub const PURE_CASTS: [&str; 8] = [
 
 /// Binary operators that compute a value and assign nothing.
 pub const PURE_BINARY: [&str; 19] = [
-    "==", "!=", "<", ">", "<=", ">=", "&&", "||", "+", "-", "*", "/", "%", "&", "|", "^", "<<", ">>",
-    ",",
+    "==", "!=", "<", ">", "<=", ">=", "&&", "||", "+", "-", "*", "/", "%", "&", "|", "^", "<<",
+    ">>", ",",
 ];
 
 /// Unary operators that compute a value and assign nothing (`++`/`--` are
@@ -115,9 +115,19 @@ fn node_name(node: &Value) -> String {
 /// The first node the whitelist does not admit.
 pub fn pure_node(node: &Value, scope: &Scope, read: &mut BTreeSet<usize>) -> Result<(), String> {
     let admitted = match kind(node) {
-        "CompoundStmt" | "ReturnStmt" | "IfStmt" | "NullStmt" | "DeclStmt" | "ParenExpr"
-        | "MemberExpr" | "ArraySubscriptExpr" | "IntegerLiteral" | "CharacterLiteral"
-        | "ConditionalOperator" | "ConstantExpr" | "UnaryExprOrTypeTraitExpr" => true,
+        "CompoundStmt"
+        | "ReturnStmt"
+        | "IfStmt"
+        | "NullStmt"
+        | "DeclStmt"
+        | "ParenExpr"
+        | "MemberExpr"
+        | "ArraySubscriptExpr"
+        | "IntegerLiteral"
+        | "CharacterLiteral"
+        | "ConditionalOperator"
+        | "ConstantExpr"
+        | "UnaryExprOrTypeTraitExpr" => true,
         "VarDecl" => {
             node["storageClass"].is_null()
                 && scope.locals.contains(node["id"].as_str().unwrap_or(""))
@@ -166,10 +176,10 @@ pub fn pure_node(node: &Value, scope: &Scope, read: &mut BTreeSet<usize>) -> Res
 }
 
 fn collect_locals(node: &Value, locals: &mut BTreeSet<String>) {
-    if kind(node) == "VarDecl" {
-        if let Some(id) = node["id"].as_str() {
-            locals.insert(id.to_owned());
-        }
+    if kind(node) == "VarDecl"
+        && let Some(id) = node["id"].as_str()
+    {
+        locals.insert(id.to_owned());
     }
     for child in children(node) {
         collect_locals(child, locals);

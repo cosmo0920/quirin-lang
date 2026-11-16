@@ -291,10 +291,8 @@ mod tests {
                 .unwrap_err()
                 .contains("release pin mismatch")
         );
-        let text = OPENSSL_3_5_5.replace(
-            "\"contract_set_version\": 1",
-            "\"contract_set_version\": 2",
-        );
+        let text =
+            OPENSSL_3_5_5.replace("\"contract_set_version\": 1", "\"contract_set_version\": 2");
         assert!(
             ContractSet::parse(&text, "3.5.5")
                 .unwrap_err()
@@ -304,11 +302,7 @@ mod tests {
 
     #[test]
     fn an_unchecked_class_marked_checked_is_refused() {
-        let text = OPENSSL_3_5_5.replacen(
-            "\"checked\": false",
-            "\"checked\": true",
-            1,
-        );
+        let text = OPENSSL_3_5_5.replacen("\"checked\": false", "\"checked\": true", 1);
         assert!(
             ContractSet::parse(&text, "3.5.5")
                 .unwrap_err()

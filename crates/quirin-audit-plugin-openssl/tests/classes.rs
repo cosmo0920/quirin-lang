@@ -88,7 +88,8 @@ fn no_pointer_interface_admits_only_parameterless_builtin_signatures() {
 #[test]
 fn static_object_return_admits_only_the_named_static_const_object() {
     let objects = dump("the_table");
-    let ok = checker::static_object_return(&definition("table"), "the_table", &objects, "classes.c");
+    let ok =
+        checker::static_object_return(&definition("table"), "the_table", &objects, "classes.c");
     assert!(ok.is_ok(), "{ok:?}");
     // Another name, a non-const object, another file, or more work is refused.
     assert!(
@@ -167,12 +168,10 @@ fn member_store_requires_exactly_the_contracts_stores_and_escapes() {
     );
     // A store the contract does not list, or another member, is refused.
     assert!(
-        checker::member_store(&definition("set_two"), &[store("error", "=", &[1])], &[])
-            .is_err()
+        checker::member_store(&definition("set_two"), &[store("error", "=", &[1])], &[]).is_err()
     );
     assert!(
-        checker::member_store(&definition("set_error"), &[store("depth", "=", &[1])], &[])
-            .is_err()
+        checker::member_store(&definition("set_error"), &[store("depth", "=", &[1])], &[]).is_err()
     );
     // A stored call, a further statement, or a non-member target is refused.
     assert!(checker::stores(&definition("set_from_call")).is_err());

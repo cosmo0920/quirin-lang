@@ -33,7 +33,9 @@ const PLUGIN: &str = env!("CARGO_BIN_EXE_quirin-audit-openssl");
 static HOST: std::sync::Mutex<()> = std::sync::Mutex::new(());
 
 fn host(output: &Path, extra: &[&str], arguments: &[&str]) -> (ExitCode, Value) {
-    let _serial = HOST.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
+    let _serial = HOST
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
     let plugins = Path::new(PLUGIN).parent().unwrap();
     let mut argv = vec![
         "--plugin-path".to_owned(),

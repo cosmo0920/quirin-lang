@@ -102,8 +102,8 @@ pub fn tree_digest(root: &Path, exclude: &[&str]) -> Result<(String, usize), Str
 }
 
 fn walk(root: &Path, directory: &Path, files: &mut Vec<(String, String)>) -> Result<(), String> {
-    let entries =
-        std::fs::read_dir(directory).map_err(|error| format!("{}: {error}", directory.display()))?;
+    let entries = std::fs::read_dir(directory)
+        .map_err(|error| format!("{}: {error}", directory.display()))?;
     for entry in entries {
         let entry = entry.map_err(|error| format!("{}: {error}", directory.display()))?;
         let path = entry.path();
@@ -165,10 +165,8 @@ mod tests {
     use super::*;
 
     fn scratch(name: &str) -> std::path::PathBuf {
-        let directory = std::env::temp_dir().join(format!(
-            "quirin-openssl-pin-{}-{name}",
-            std::process::id()
-        ));
+        let directory =
+            std::env::temp_dir().join(format!("quirin-openssl-pin-{}-{name}", std::process::id()));
         let _ = std::fs::remove_dir_all(&directory);
         std::fs::create_dir_all(&directory).unwrap();
         directory

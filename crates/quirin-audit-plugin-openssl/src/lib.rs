@@ -163,10 +163,10 @@ impl PrepareOptions {
                 pin::OPENSSL.tarball_url
             ));
         }
-        if let Some(jobs) = &options.jobs {
-            if !jobs.parse::<u32>().is_ok_and(|jobs| jobs > 0) {
-                return Err(format!("--jobs `{jobs}` is not a positive integer"));
-            }
+        if let Some(jobs) = &options.jobs
+            && !jobs.parse::<u32>().is_ok_and(|jobs| jobs > 0)
+        {
+            return Err(format!("--jobs `{jobs}` is not a positive integer"));
         }
         Ok(options)
     }
@@ -575,12 +575,9 @@ pub fn environment(pin: &Pin, set: &ContractSet, tree: &Path, clang: &str) -> En
 
 fn declared(environment: &Environment, binding: &Binding) -> Result<String, String> {
     let declarations = environment.declarations.as_ref().map_err(Clone::clone)?;
-    let spelled = declarations.get(&binding.function).ok_or_else(|| {
-        format!(
-            "{} is not declared by the public headers",
-            binding.function
-        )
-    })?;
+    let spelled = declarations
+        .get(&binding.function)
+        .ok_or_else(|| format!("{} is not declared by the public headers", binding.function))?;
     if spelled.iter().any(|spelled| spelled != &binding.prototype) {
         return Err(format!(
             "the public declaration(s) {spelled:?} are not the contract's `{}`",
@@ -596,7 +593,11 @@ fn declared(environment: &Environment, binding: &Binding) -> Result<String, Stri
 
 /// Check one binding.
 #[must_use]
-pub fn check_binding(environment: &Environment, set: &ContractSet, binding: &Binding) -> BindingCheck {
+pub fn check_binding(
+    environment: &Environment,
+    set: &ContractSet,
+    binding: &Binding,
+) -> BindingCheck {
     let mut check = BindingCheck {
         function: binding.function.clone(),
         obligations: vec![Obligation::from("release-pin", environment.pin.clone())],
@@ -856,7 +857,9 @@ pub fn check(
 ) -> Result<Response, String> {
     for name in &options.bindings {
         if !set.bindings.iter().any(|binding| &binding.function == name) {
-            return Err(format!("--binding {name}: the contract set binds no such function"));
+            return Err(format!(
+                "--binding {name}: the contract set binds no such function"
+            ));
         }
     }
     let output = request.output_directory();
@@ -874,7 +877,9 @@ pub fn check(
     let selected: Vec<&Binding> = set
         .bindings
         .iter()
-        .filter(|binding| options.bindings.is_empty() || options.bindings.contains(&binding.function))
+        .filter(|binding| {
+            options.bindings.is_empty() || options.bindings.contains(&binding.function)
+        })
         .collect();
     let mut checks = Vec::new();
     for binding in &selected {
@@ -931,7 +936,11 @@ pub fn check(
     };
     let mut response = Response::completed();
     response.push_artifact(&output, Path::new(CHECK_RECORD), "openssl-check")?;
-    response.push_artifact(&output, Path::new("openssl-contracts.json"), "openssl-contracts")?;
+    response.push_artifact(
+        &output,
+        Path::new("openssl-contracts.json"),
+        "openssl-contracts",
+    )?;
     if let Err(error) = &environment.pin {
         response.push_diagnostic(
             Severity::Error,

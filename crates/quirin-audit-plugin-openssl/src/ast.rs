@@ -113,7 +113,12 @@ pub fn parse_stream(bytes: &[u8]) -> Result<Vec<Value>, String> {
     Ok(values)
 }
 
-fn run(clang: &str, directory: &Path, arguments: &[String], input: Option<&[u8]>) -> Result<Vec<u8>, String> {
+fn run(
+    clang: &str,
+    directory: &Path,
+    arguments: &[String],
+    input: Option<&[u8]>,
+) -> Result<Vec<u8>, String> {
     use std::io::Write;
     let mut command = Command::new(clang);
     command

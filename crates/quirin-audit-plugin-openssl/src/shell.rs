@@ -153,8 +153,12 @@ mod tests {
                     crypto/err/libcrypto-lib-err.d.tmp -c -o crypto/err/libcrypto-lib-err.o \
                     crypto/err/err.c";
         let printed = format!("if true; then\n{line}\nfi\n");
-        let flags =
-            compile_flags(&printed, "crypto/err/libcrypto-lib-err.o", "crypto/err/err.c").unwrap();
+        let flags = compile_flags(
+            &printed,
+            "crypto/err/libcrypto-lib-err.o",
+            "crypto/err/err.c",
+        )
+        .unwrap();
         assert_eq!(
             flags,
             [
