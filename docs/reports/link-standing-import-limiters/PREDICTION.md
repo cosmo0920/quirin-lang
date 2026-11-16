@@ -90,3 +90,16 @@ of every unit's scope matches the run's own progress lines exactly (186 of
   new Unsafe is not expected; any would be provisional.
 - **Cost.** More callers replay homes, so the import phase grows; the replay
   of a home unit stays shared within the process. Measured in the report.
+
+## Addendum after the cost run (not a revision)
+
+The 13-unit selection run (report, "Replay cost") confirms `mk_mq_send`
+Unknown -> Safe and the predicted withheld homes of `mk_server.c` and
+`monkey.c`, with no other row moving among 1,501. It also shows what the
+prediction above did not count: once the budget no longer withholds whole
+units, called homes reach rule 40's type refusals. The full run should
+therefore show many more "unnamed or unreadable tag" refusals (`rwlock_*`
+over glibc's `pthread_rwlock_t`, `cnd_timedwait_abs`, librdkafka enum
+typedefs) and more "no prototype" refusals (Monkey initialisers), while
+the "undeclared identifier" refusals go to zero. This changes no predicted
+status: those calls were uncontracted at base too.

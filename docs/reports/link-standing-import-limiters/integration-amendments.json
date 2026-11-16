@@ -1,0 +1,57 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "LINK-STANDING-IMPORT-LIMITERS",
+  "base": "0f6e17118",
+  "measured_tip": "0ae403bc0",
+  "profiles": [],
+  "increment_paragraph": "**LINK-STANDING-IMPORT-LIMITERS** (USER DECISION 2026-11-16, \"yes, launch it\"; gateway rules 4c and 40 amended in place, Lean `QCore.CrossUnitReplayBudget`; [report](../../reports/link-standing-import-limiters/README.md)). A census of the user's linked `current` run (binary `89fa31d21`) reproduces rule 4c's scope for all 186 units exactly and finds both limiters: the run-wide member-named set (18 Monkey plugin-API functions stored in `mk_plugin.c`, 5 librdkafka list destructors passed to `rd_list_init`/`rd_list_new`) was held by every caller, which exhausted the replay budget of 24 in 95 of the 99 withheld units, and rule 40 then probed those names in units that never declare them (1,554 \"undeclared identifier\" caller refusals; 3,633 such probes over all units). Rule 40: on a derived run a home that only member facts name and whose name has no token in the caller's unit leaves the scope before the budget (condition 14 cannot hold); it is counted on the unit row (`cross_unit_unprobed_homes`), never probed or refused; a declared but untypable name still refuses. Rule 4c: a caller over the budget holds a deterministic subset of at most 24 instead of none (whole per-function home sets closed over local callees, smallest first, then the rest by name); withheld homes are named and stay uncontracted; the bound and every per-home check are unchanged. Census prediction for the user's run: 4 units remain over the budget and hold a subset; held homes before rule 40's caller conditions rise from 2,016 in 87 units (strays included) to 1,545 in 138; at most six functions can move Unknown -> Safe (`ctxTypeID_to_size`, `rd_kafka_share_consumer_closed_err`, `rd_kafka_transport_ssl_threadid_cb`, `cio_chunk_hash`, `cio_chunk_is_up`, `mk_mq_send`). The unnamed-tag (`mk_ptr_t`, 42) and no-prototype (19) refusals stay: each is sound only with more machinery than the card justifies and no function depends on either alone (follow-ups). Pinned routes unchanged by construction (stated eight-home map, never over the budget).",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "LINK-STANDING-IMPORT-LIMITERS",
+      "operation": "register",
+      "title": "Rule 40's derived homes are mostly not imported: replay budget and stray probes",
+      "text": "On the user's linked current run (binary 89fa31d21) rule 40 derived 1,583 homes but callers held 262 imports: 99 of 187 units exceeded rule 4c's replay budget of 24 and held none, and 1,554 caller refusals were Clang probes of 23 names in units that never mention them.",
+      "source": "docs/reports/link-standing-import-limiters/README.md",
+      "recorded_by": "LINK-STANDING-IMPORT-LIMITERS"
+    },
+    {
+      "id": "LINK-STANDING-IMPORT-LIMITERS",
+      "operation": "retire",
+      "why": "DISCHARGED by LINK-STANDING-IMPORT-LIMITERS: the 23 probed names are rule 4c's run-wide member-named set; on a derived run a member-named home with no token in the caller's unit now leaves the scope before the budget (rule 40 amended; condition 14 cannot hold for it), and a caller over the budget holds a deterministic subset of at most 24 (rule 4c amended). Census: 95 of the 99 withheld units fit the budget once the strays leave; the other 4 hold a subset. QCore.CrossUnitReplayBudget select_within_budget, select_sub_reachable, held_lookup_is_full, withheld_import_call_is_unknown, unprobed_is_never_held, probing_shrinks_reachable.",
+      "source": "docs/reports/link-standing-import-limiters/README.md"
+    },
+    {
+      "id": "LINK-STANDING-UNNAMED-RECORD-LAYOUT",
+      "operation": "register",
+      "title": "Rule 40 refuses a signature naming an untagged record or enum (mk_ptr_t, pthread_rwlock_t, cnd_t, librdkafka enum typedefs)",
+      "text": "42 caller refusals on the user's linked run are mk_ptr_print and mk_ptr_to_buf, whose signatures name typedef struct { char *data; unsigned long len; } mk_ptr_t; with LINK-STANDING-IMPORT-LIMITERS's subset the refusal also reaches called homes (measured on a 13-unit librdkafka selection: rwlock_rdlock/rdunlock/wrlock/wrunlock over glibc's untagged pthread_rwlock_t union, cnd_timedwait_abs over cnd_t, and librdkafka enum typedefs such as rd_kafka_resp_err_t; 111 refusals). Two untagged structures or unions in different units are compatible when their members match in name, compatible type and order (C11 6.2.7p1), and two untagged enums when their enumeration constants match; Clang's canonical complete record layout states the member part, but names an unnamed record only by its location in each unit's preprocessed text, so the signature would have to render it structurally through the AST declaration's location, a member pointer to another unnamed record would have to refuse, and an untagged enum would need its constants compared. DISCHARGE: render an untagged record by its canonical complete layout (located through its declaration) and an untagged enum by its constants, refuse a member pointer to an untagged record, extend QCore.CrossUnitSummary.typeAgrees, and measure.",
+      "source": "docs/reports/link-standing-import-limiters/README.md",
+      "recorded_by": "LINK-STANDING-IMPORT-LIMITERS"
+    },
+    {
+      "id": "LINK-STANDING-NO-PROTOTYPE-ZERO-PARAMETERS",
+      "operation": "register",
+      "title": "Rule 40 refuses K&R () declarations of a home defined with an empty parameter list",
+      "text": "19 caller refusals on the user's linked run (mk_event_backend 17, cio_getpagesize, mk_net_init) are functions declared T name(); and defined T name() { ... }, both without a prototype. C11 6.7.6.3p14 (an empty list in a definition means no parameters) and 6.5.2.2p6 make a sound narrow case: both types without a prototype with equal return types, a home definition with no parameters, and every use of the name in the caller a call with no arguments (no address taken). No function is blocked by these homes alone (mk_net_init co-blocks two, cio_getpagesize one). DISCHARGE: read FunctionNoProtoType in link_call_type with the home definition's parameter count and a caller call-site check, extend QCore.CrossUnitSummary.typeAgrees, and measure.",
+      "source": "docs/reports/link-standing-import-limiters/README.md",
+      "recorded_by": "LINK-STANDING-IMPORT-LIMITERS"
+    },
+    {
+      "id": "CROSS-UNIT-MEMBER-NAMED-SCOPE-PER-UNIT",
+      "operation": "register",
+      "title": "Every caller that declares a member-named home holds and replays it, though it may invoke no member that delivers it",
+      "text": "Rule 4c's reachability counts the run-wide member-named set (RunMemberFacts::named_functions) in every caller. LINK-STANDING-IMPORT-LIMITERS leaves out, on a derived run, the names a caller has no token for; a caller that declares them (Monkey units through their headers: 16 plugin-API homes in mk_http.c; librdkafka units: the 5 list destructors) still holds and replays them and spends budget on them. A caller can reach such a home only by invoking a member whose closure delivers it, or by calling a declaration whose callback clause invokes one. Holding fewer homes is fail-closed, so this is cost and budget precision only. DISCHARGE: scope the member-named homes per caller to the members it can invoke (spelled fields, and members named by the callback clauses of declarations it calls, transitively), with Lean parity in QCore.CrossUnitReplayBudget, and measure replay cost.",
+      "source": "docs/reports/link-standing-import-limiters/README.md",
+      "recorded_by": "LINK-STANDING-IMPORT-LIMITERS"
+    },
+    {
+      "id": "LINK-STANDING-MEMBER-CALL-TYPE",
+      "operation": "register",
+      "title": "Rule 40 types a member-delivered candidate by the caller's declaration of its name, not by the member's function-pointer type",
+      "text": "A home reached through a member invocation (a candidate of the member's run closure) is admitted by rule 40 when the caller's declaration of its name has the home definition's type (conditions 14 and 15). The call itself goes through the member's function-pointer type, which rule 40 does not compare with the definition; the storing unit's assignment is the only place their compatibility is checked, by the compiler. Observation, not a measured defect: no admitted member-delivered home has been shown to differ. DISCHARGE: compare the invoked member's pointee type with the home definition's (both canonical, as condition 15) for a candidate held only through member facts, or show the store-site compatibility is enforced, with Lean parity in QCore.CrossUnitSummary.",
+      "source": "docs/reports/link-standing-import-limiters/README.md",
+      "recorded_by": "LINK-STANDING-IMPORT-LIMITERS"
+    }
+  ]
+}
