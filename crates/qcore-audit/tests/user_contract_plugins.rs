@@ -437,11 +437,12 @@ fn an_uncertified_safe_claim_is_pending_and_the_chain_folds() {
         assert_eq!(binding["code"], if evidence { "QP016" } else { "QP008" });
         assert_eq!(binding["verdict"], "Pending");
         assert_eq!(binding["reasons"][0]["code"], "plugin-claim-uncertified");
-        // Card OPENSSL-PROVIDER-PLUGIN: what the plugin itself said is kept
-        // beside the classification.
-        assert_eq!(binding["proposed"], "safe");
+        // Card OPENSSL-PROVIDER-PLUGIN, on W48-PLUGIN-VERDICT-PRESERVATION's
+        // record: what the plugin itself said is kept beside the
+        // classification.
+        assert_eq!(binding["answer"]["proposed"], "Safe");
         assert_eq!(
-            binding["plugin_diagnostics"][0]["message"],
+            binding["answer"]["reasons"][0]["detail"],
             "both pool functions checked against the pool header"
         );
         let report = tree.read("r.json");
@@ -458,8 +459,8 @@ fn an_uncertified_safe_claim_is_pending_and_the_chain_folds() {
             .unwrap()["plugin_links"];
         assert_eq!(links.as_array().unwrap().len(), 2, "{links}");
         assert_eq!(links[0]["plugin"], PLUGIN);
-        // The composed row names the binding row it rests on.
-        assert_eq!(links[0]["binding"], binding["task_digest"]);
+        // The composed row keeps the binding's own answer.
+        assert_eq!(links[0]["answer"], binding["answer"]);
         // A unit that applies no bound contract is untouched.
         let other = Tree::unit(&report, "plain.c");
         assert_eq!(other["status"], "Safe");
@@ -479,8 +480,8 @@ fn an_uncertified_unsafe_claim_is_pending_and_never_unsafe() {
     let binding = &tree.read("r.contracts.json")["plugin_checks"]["bindings"][0];
     assert_eq!(binding["claim"], "unvalidated-unsafe");
     assert_eq!(binding["verdict"], "Pending");
-    assert_eq!(binding["proposed"], "unsafe");
-    assert_eq!(binding["plugin_diagnostics"].as_array().unwrap().len(), 1);
+    assert_eq!(binding["answer"]["proposed"], "Unsafe");
+    assert_eq!(binding["answer"]["reasons"].as_array().unwrap().len(), 1);
     let report = tree.read("r.json");
     let unit = Tree::unit(&report, "pool_user.c");
     assert_eq!(Tree::status(unit, "use_pool"), "Pending");

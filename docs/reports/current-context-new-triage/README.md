@@ -305,6 +305,6 @@ Declared measurement, base `rev:0f6e17118` (the card's base; r8–r12 landed aft
 `native-comparison.json`, sha256
 `8eb61cba4b522a2b6019c0824c19f028fb8638fef95ee3337c9e2065faf1e0d4`).
 
-The change runs only on a refused-owner branch; no pinned route reads Monkey `tls_openssl.c`, so nothing moves. Its effect is on the user's `current --monkey-linked` run (`context_new` Unsafe to Unknown), which the integrator reruns after landing. Landed through integrate/r14 with CURRENT-CONTEXT-NEW-TRIAGE (phase 1), LINK-STANDING-IMPORT-LIMITERS and OPENSSL-PROVIDER-PLUGIN; all three merged without conflict.
+The change runs only on a refused-owner branch; no pinned route reads Monkey `tls_openssl.c`, so nothing moves. Its effect is on the user's `current --monkey-linked` run (`context_new` Unsafe to Unknown), which the integrator reruns after landing. Landed through integrate/r15 with CURRENT-CONTEXT-NEW-TRIAGE (phase 1), LINK-STANDING-IMPORT-LIMITERS and OPENSSL-PROVIDER-PLUGIN; all three merged without conflict.
 
-The integrate/r14 landing gate record is [OPENSSL-PROVIDER-PLUGIN's](../openssl-provider-plugin/integration/gate.json) (full gate on the merged tree 5b5ff2912, 14 steps exit 0).
+The integrate/r15 landing gate record is [OPENSSL-PROVIDER-PLUGIN's](../openssl-provider-plugin/integration/gate.json) (full gate on the merged tree 96bf2cc25 plus a targeted rerun; see its note).

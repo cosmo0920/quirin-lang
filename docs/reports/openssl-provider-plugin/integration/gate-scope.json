@@ -1,8 +1,8 @@
 {
  "schema": "quirin-gate-scope/1",
  "source": "git diff",
- "base": "d7a4978220ba5250fa1ec72932ad720fe4c38808",
- "head": "5b5ff2912d4bf29297cbb24145c91d3b43b5112d",
+ "base": "fb2fb465db535049c91429d30b0aed93324056fd",
+ "head": "96bf2cc25e9f7dfc120da4c5da5fc33d8b0365c5",
  "committed": [
   ".github/workflows/ci.yml",
   "crates/qcore-audit/src/contract_pin.rs",
@@ -13,7 +13,6 @@
   "crates/qcore-audit/src/projection.rs",
   "crates/qcore-audit/src/report.rs",
   "crates/qcore-audit/src/route_progress.rs",
-  "crates/qcore-audit/src/user_plugins.rs",
   "crates/qcore-audit/tests/bounds_pin_hold.rs",
   "crates/qcore-audit/tests/bounds_transport.rs",
   "crates/qcore-audit/tests/fixtures/library_version/include/fakelib/fakelibv.h",
@@ -37,8 +36,6 @@
   "crates/qcore-schemas/src/library_version.rs",
   "crates/qcore-schemas/src/reason.rs",
   "crates/qcore-schemas/tests/reason_codes.rs",
-  "crates/qcore-verifier-host/src/lib.rs",
-  "crates/qcore-verifier-host/src/plugin_firewall.rs",
   "docs/QCORE_CONTRACT_SPEC_r0_3.md",
   "docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md",
   "docs/agents/README.md",
@@ -88,6 +85,7 @@
   "docs/reports/openssl-provider-plugin/gate/clang-version.txt",
   "docs/reports/openssl-provider-plugin/gate/gate-1.json",
   "docs/reports/openssl-provider-plugin/integration-amendments.json",
+  "docs/reports/openssl-provider-plugin/integration/amendments-applied.json",
   "docs/reports/openssl-provider-plugin/integration/clang-version.txt",
   "docs/reports/openssl-provider-plugin/integration/gate-scope.json",
   "docs/reports/openssl-provider-plugin/integration/gate.json",
@@ -145,7 +143,6 @@
    "crates/qcore-audit/src/projection.rs",
    "crates/qcore-audit/src/report.rs",
    "crates/qcore-audit/src/route_progress.rs",
-   "crates/qcore-audit/src/user_plugins.rs",
    "crates/qcore-audit/tests/bounds_pin_hold.rs",
    "crates/qcore-audit/tests/bounds_transport.rs",
    "crates/qcore-audit/tests/fixtures/library_version/include/fakelib/fakelibv.h",
@@ -169,8 +166,6 @@
    "crates/qcore-schemas/src/library_version.rs",
    "crates/qcore-schemas/src/reason.rs",
    "crates/qcore-schemas/tests/reason_codes.rs",
-   "crates/qcore-verifier-host/src/lib.rs",
-   "crates/qcore-verifier-host/src/plugin_firewall.rs",
    "docs/QCORE_CONTRACT_SPEC_r0_3.md",
    "docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md",
    "docs/agents/README.md",
@@ -220,6 +215,7 @@
    "docs/reports/openssl-provider-plugin/gate/clang-version.txt",
    "docs/reports/openssl-provider-plugin/gate/gate-1.json",
    "docs/reports/openssl-provider-plugin/integration-amendments.json",
+   "docs/reports/openssl-provider-plugin/integration/amendments-applied.json",
    "docs/reports/openssl-provider-plugin/integration/clang-version.txt",
    "docs/reports/openssl-provider-plugin/integration/gate-scope.json",
    "docs/reports/openssl-provider-plugin/integration/gate.json",
@@ -347,17 +343,6 @@
     "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4002) in qcore-compiler::test::ct_corpus"
    ],
    "crates/qcore-audit/src/route_progress.rs": [
-    "owned by qcore-audit",
-    "read by qcore-verification (walker, crates/qcore-verification/tests/composition_bounds.rs:302) in qcore-verification::test::composition_bounds",
-    "read by qcore-compiler (walker, compiler/tests/workspace_layering.rs:155) in qcore-compiler::test::workspace_layering",
-    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/support/mod.rs:211) in quirin-audit-plugin-measure::test::host, quirin-audit-plugin-measure::test::link_resolution, quirin-audit-plugin-measure::test::measure, quirin-audit-plugin-measure::test::slot_wait, quirin-audit-plugin-measure::test::units",
-    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4349) in qcore-compiler::test::ct_corpus",
-    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:3989) in qcore-compiler::test::ct_corpus",
-    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4003) in qcore-compiler::test::ct_corpus",
-    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4040) in qcore-compiler::test::ct_corpus",
-    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4002) in qcore-compiler::test::ct_corpus"
-   ],
-   "crates/qcore-audit/src/user_plugins.rs": [
     "owned by qcore-audit",
     "read by qcore-verification (walker, crates/qcore-verification/tests/composition_bounds.rs:302) in qcore-verification::test::composition_bounds",
     "read by qcore-compiler (walker, compiler/tests/workspace_layering.rs:155) in qcore-compiler::test::workspace_layering",
@@ -623,29 +608,6 @@
     "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4040) in qcore-compiler::test::ct_corpus",
     "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4002) in qcore-compiler::test::ct_corpus"
    ],
-   "crates/qcore-verifier-host/src/lib.rs": [
-    "owned by qcore-verifier-host",
-    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:378) in qcore-verification::test::composition_bounds",
-    "read by qcore-verification (walker, crates/qcore-verification/tests/composition_bounds.rs:302) in qcore-verification::test::composition_bounds",
-    "read by qcore-compiler (walker, compiler/tests/workspace_layering.rs:115) in qcore-compiler::test::workspace_layering",
-    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/support/mod.rs:211) in quirin-audit-plugin-measure::test::host, quirin-audit-plugin-measure::test::link_resolution, quirin-audit-plugin-measure::test::measure, quirin-audit-plugin-measure::test::slot_wait, quirin-audit-plugin-measure::test::units",
-    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4349) in qcore-compiler::test::ct_corpus",
-    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:3989) in qcore-compiler::test::ct_corpus",
-    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4003) in qcore-compiler::test::ct_corpus",
-    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4040) in qcore-compiler::test::ct_corpus",
-    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4002) in qcore-compiler::test::ct_corpus"
-   ],
-   "crates/qcore-verifier-host/src/plugin_firewall.rs": [
-    "owned by qcore-verifier-host",
-    "read by qcore-verification (walker, crates/qcore-verification/tests/composition_bounds.rs:302) in qcore-verification::test::composition_bounds",
-    "read by qcore-compiler (walker, compiler/tests/workspace_layering.rs:115) in qcore-compiler::test::workspace_layering",
-    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/support/mod.rs:211) in quirin-audit-plugin-measure::test::host, quirin-audit-plugin-measure::test::link_resolution, quirin-audit-plugin-measure::test::measure, quirin-audit-plugin-measure::test::slot_wait, quirin-audit-plugin-measure::test::units",
-    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4349) in qcore-compiler::test::ct_corpus",
-    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:3989) in qcore-compiler::test::ct_corpus",
-    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4003) in qcore-compiler::test::ct_corpus",
-    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4040) in qcore-compiler::test::ct_corpus",
-    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4002) in qcore-compiler::test::ct_corpus"
-   ],
    "docs/QCORE_CONTRACT_SPEC_r0_3.md": [
     "class prose"
    ],
@@ -806,6 +768,9 @@
     "class prose"
    ],
    "docs/reports/openssl-provider-plugin/integration-amendments.json": [
+    "class prose"
+   ],
+   "docs/reports/openssl-provider-plugin/integration/amendments-applied.json": [
     "class prose"
    ],
    "docs/reports/openssl-provider-plugin/integration/clang-version.txt": [
@@ -1013,8 +978,9 @@
     "read by qcore-audit (expansion, crates/qcore-audit/tests/no_build_cli.rs:122) in qcore-audit::test::no_build_cli",
     "read by qcore-audit (expansion, crates/qcore-audit/tests/outer_projection.rs:327) in qcore-audit::test::outer_projection",
     "read by qcore-audit (expansion, crates/qcore-audit/tests/pending_review_report.rs:72) in qcore-audit::test::pending_review_report",
+    "read by qcore-audit (expansion, crates/qcore-audit/tests/plugin_verdict_preservation/checker_route.rs:177) in qcore-audit::test::user_contract_plugins",
     "read by qcore-audit (expansion, crates/qcore-audit/tests/provider_selection.rs:186) in qcore-audit::test::provider_selection",
-    "read by qcore-audit (expansion, crates/qcore-audit/tests/user_contract_plugins.rs:137) in qcore-audit::test::user_contract_plugins",
+    "read by qcore-audit (expansion, crates/qcore-audit/tests/user_contract_plugins.rs:147) in qcore-audit::test::user_contract_plugins",
     "read by qcore-audit (expansion, tests/support/contract_locks.rs:144) in qcore-audit::test::provider_selection",
     "read by qcore-c-gateway (expansion, tests/support/contract_locks.rs:144) in qcore-c-gateway::test::neighbours, qcore-c-gateway::test::prod_contracts",
     "read by qcore-compiler (expansion, compiler/tests/contract_inherit_adoption.rs:69) in qcore-compiler::test::contract_inherit_adoption",
@@ -1196,8 +1162,9 @@
     "read by qcore-audit (expansion, crates/qcore-audit/tests/no_build_cli.rs:122) in qcore-audit::test::no_build_cli",
     "read by qcore-audit (expansion, crates/qcore-audit/tests/outer_projection.rs:327) in qcore-audit::test::outer_projection",
     "read by qcore-audit (expansion, crates/qcore-audit/tests/pending_review_report.rs:72) in qcore-audit::test::pending_review_report",
+    "read by qcore-audit (expansion, crates/qcore-audit/tests/plugin_verdict_preservation/checker_route.rs:177) in qcore-audit::test::user_contract_plugins",
     "read by qcore-audit (expansion, crates/qcore-audit/tests/provider_selection.rs:186) in qcore-audit::test::provider_selection",
-    "read by qcore-audit (expansion, crates/qcore-audit/tests/user_contract_plugins.rs:137) in qcore-audit::test::user_contract_plugins",
+    "read by qcore-audit (expansion, crates/qcore-audit/tests/user_contract_plugins.rs:147) in qcore-audit::test::user_contract_plugins",
     "read by qcore-audit (expansion, tests/support/contract_locks.rs:144) in qcore-audit::test::provider_selection",
     "read by qcore-c-gateway (expansion, tests/support/contract_locks.rs:144) in qcore-c-gateway::test::neighbours, qcore-c-gateway::test::prod_contracts",
     "read by qcore-compiler (expansion, compiler/tests/contract_inherit_adoption.rs:69) in qcore-compiler::test::contract_inherit_adoption",
@@ -1390,8 +1357,9 @@
     "read by qcore-audit (expansion, crates/qcore-audit/tests/no_build_cli.rs:122) in qcore-audit::test::no_build_cli",
     "read by qcore-audit (expansion, crates/qcore-audit/tests/outer_projection.rs:327) in qcore-audit::test::outer_projection",
     "read by qcore-audit (expansion, crates/qcore-audit/tests/pending_review_report.rs:72) in qcore-audit::test::pending_review_report",
+    "read by qcore-audit (expansion, crates/qcore-audit/tests/plugin_verdict_preservation/checker_route.rs:177) in qcore-audit::test::user_contract_plugins",
     "read by qcore-audit (expansion, crates/qcore-audit/tests/provider_selection.rs:186) in qcore-audit::test::provider_selection",
-    "read by qcore-audit (expansion, crates/qcore-audit/tests/user_contract_plugins.rs:137) in qcore-audit::test::user_contract_plugins",
+    "read by qcore-audit (expansion, crates/qcore-audit/tests/user_contract_plugins.rs:147) in qcore-audit::test::user_contract_plugins",
     "read by qcore-audit (expansion, tests/support/contract_locks.rs:144) in qcore-audit::test::provider_selection",
     "read by qcore-c-gateway (expansion, tests/support/contract_locks.rs:144) in qcore-c-gateway::test::neighbours, qcore-c-gateway::test::prod_contracts",
     "read by qcore-compiler (expansion, compiler/tests/contract_inherit_adoption.rs:69) in qcore-compiler::test::contract_inherit_adoption",
@@ -1584,8 +1552,9 @@
     "read by qcore-audit (expansion, crates/qcore-audit/tests/no_build_cli.rs:122) in qcore-audit::test::no_build_cli",
     "read by qcore-audit (expansion, crates/qcore-audit/tests/outer_projection.rs:327) in qcore-audit::test::outer_projection",
     "read by qcore-audit (expansion, crates/qcore-audit/tests/pending_review_report.rs:72) in qcore-audit::test::pending_review_report",
+    "read by qcore-audit (expansion, crates/qcore-audit/tests/plugin_verdict_preservation/checker_route.rs:177) in qcore-audit::test::user_contract_plugins",
     "read by qcore-audit (expansion, crates/qcore-audit/tests/provider_selection.rs:186) in qcore-audit::test::provider_selection",
-    "read by qcore-audit (expansion, crates/qcore-audit/tests/user_contract_plugins.rs:137) in qcore-audit::test::user_contract_plugins",
+    "read by qcore-audit (expansion, crates/qcore-audit/tests/user_contract_plugins.rs:147) in qcore-audit::test::user_contract_plugins",
     "read by qcore-audit (expansion, tests/support/contract_locks.rs:144) in qcore-audit::test::provider_selection",
     "read by qcore-c-gateway (expansion, tests/support/contract_locks.rs:144) in qcore-c-gateway::test::neighbours, qcore-c-gateway::test::prod_contracts",
     "read by qcore-compiler (expansion, compiler/tests/contract_inherit_adoption.rs:69) in qcore-compiler::test::contract_inherit_adoption",
@@ -1778,8 +1747,9 @@
     "read by qcore-audit (expansion, crates/qcore-audit/tests/no_build_cli.rs:122) in qcore-audit::test::no_build_cli",
     "read by qcore-audit (expansion, crates/qcore-audit/tests/outer_projection.rs:327) in qcore-audit::test::outer_projection",
     "read by qcore-audit (expansion, crates/qcore-audit/tests/pending_review_report.rs:72) in qcore-audit::test::pending_review_report",
+    "read by qcore-audit (expansion, crates/qcore-audit/tests/plugin_verdict_preservation/checker_route.rs:177) in qcore-audit::test::user_contract_plugins",
     "read by qcore-audit (expansion, crates/qcore-audit/tests/provider_selection.rs:186) in qcore-audit::test::provider_selection",
-    "read by qcore-audit (expansion, crates/qcore-audit/tests/user_contract_plugins.rs:137) in qcore-audit::test::user_contract_plugins",
+    "read by qcore-audit (expansion, crates/qcore-audit/tests/user_contract_plugins.rs:147) in qcore-audit::test::user_contract_plugins",
     "read by qcore-audit (expansion, tests/support/contract_locks.rs:144) in qcore-audit::test::provider_selection",
     "read by qcore-c-gateway (expansion, tests/support/contract_locks.rs:144) in qcore-c-gateway::test::neighbours, qcore-c-gateway::test::prod_contracts",
     "read by qcore-compiler (expansion, compiler/tests/contract_inherit_adoption.rs:69) in qcore-compiler::test::contract_inherit_adoption",
@@ -1972,8 +1942,9 @@
     "read by qcore-audit (expansion, crates/qcore-audit/tests/no_build_cli.rs:122) in qcore-audit::test::no_build_cli",
     "read by qcore-audit (expansion, crates/qcore-audit/tests/outer_projection.rs:327) in qcore-audit::test::outer_projection",
     "read by qcore-audit (expansion, crates/qcore-audit/tests/pending_review_report.rs:72) in qcore-audit::test::pending_review_report",
+    "read by qcore-audit (expansion, crates/qcore-audit/tests/plugin_verdict_preservation/checker_route.rs:177) in qcore-audit::test::user_contract_plugins",
     "read by qcore-audit (expansion, crates/qcore-audit/tests/provider_selection.rs:186) in qcore-audit::test::provider_selection",
-    "read by qcore-audit (expansion, crates/qcore-audit/tests/user_contract_plugins.rs:137) in qcore-audit::test::user_contract_plugins",
+    "read by qcore-audit (expansion, crates/qcore-audit/tests/user_contract_plugins.rs:147) in qcore-audit::test::user_contract_plugins",
     "read by qcore-audit (expansion, tests/support/contract_locks.rs:144) in qcore-audit::test::provider_selection",
     "read by qcore-c-gateway (expansion, tests/support/contract_locks.rs:144) in qcore-c-gateway::test::neighbours, qcore-c-gateway::test::prod_contracts",
     "read by qcore-compiler (expansion, compiler/tests/contract_inherit_adoption.rs:69) in qcore-compiler::test::contract_inherit_adoption",
@@ -2166,8 +2137,9 @@
     "read by qcore-audit (expansion, crates/qcore-audit/tests/no_build_cli.rs:122) in qcore-audit::test::no_build_cli",
     "read by qcore-audit (expansion, crates/qcore-audit/tests/outer_projection.rs:327) in qcore-audit::test::outer_projection",
     "read by qcore-audit (expansion, crates/qcore-audit/tests/pending_review_report.rs:72) in qcore-audit::test::pending_review_report",
+    "read by qcore-audit (expansion, crates/qcore-audit/tests/plugin_verdict_preservation/checker_route.rs:177) in qcore-audit::test::user_contract_plugins",
     "read by qcore-audit (expansion, crates/qcore-audit/tests/provider_selection.rs:186) in qcore-audit::test::provider_selection",
-    "read by qcore-audit (expansion, crates/qcore-audit/tests/user_contract_plugins.rs:137) in qcore-audit::test::user_contract_plugins",
+    "read by qcore-audit (expansion, crates/qcore-audit/tests/user_contract_plugins.rs:147) in qcore-audit::test::user_contract_plugins",
     "read by qcore-audit (expansion, tests/support/contract_locks.rs:144) in qcore-audit::test::provider_selection",
     "read by qcore-c-gateway (expansion, tests/support/contract_locks.rs:144) in qcore-c-gateway::test::neighbours, qcore-c-gateway::test::prod_contracts",
     "read by qcore-compiler (expansion, compiler/tests/contract_inherit_adoption.rs:69) in qcore-compiler::test::contract_inherit_adoption",
@@ -2360,8 +2332,9 @@
     "read by qcore-audit (expansion, crates/qcore-audit/tests/no_build_cli.rs:122) in qcore-audit::test::no_build_cli",
     "read by qcore-audit (expansion, crates/qcore-audit/tests/outer_projection.rs:327) in qcore-audit::test::outer_projection",
     "read by qcore-audit (expansion, crates/qcore-audit/tests/pending_review_report.rs:72) in qcore-audit::test::pending_review_report",
+    "read by qcore-audit (expansion, crates/qcore-audit/tests/plugin_verdict_preservation/checker_route.rs:177) in qcore-audit::test::user_contract_plugins",
     "read by qcore-audit (expansion, crates/qcore-audit/tests/provider_selection.rs:186) in qcore-audit::test::provider_selection",
-    "read by qcore-audit (expansion, crates/qcore-audit/tests/user_contract_plugins.rs:137) in qcore-audit::test::user_contract_plugins",
+    "read by qcore-audit (expansion, crates/qcore-audit/tests/user_contract_plugins.rs:147) in qcore-audit::test::user_contract_plugins",
     "read by qcore-audit (expansion, tests/support/contract_locks.rs:144) in qcore-audit::test::provider_selection",
     "read by qcore-c-gateway (expansion, tests/support/contract_locks.rs:144) in qcore-c-gateway::test::neighbours, qcore-c-gateway::test::prod_contracts",
     "read by qcore-compiler (expansion, compiler/tests/contract_inherit_adoption.rs:69) in qcore-compiler::test::contract_inherit_adoption",
@@ -2775,7 +2748,6 @@
     "owns crates/qcore-audit/src/projection.rs",
     "owns crates/qcore-audit/src/report.rs",
     "owns crates/qcore-audit/src/route_progress.rs",
-    "owns crates/qcore-audit/src/user_plugins.rs",
     "owns crates/qcore-audit/tests/bounds_pin_hold.rs",
     "owns crates/qcore-audit/tests/bounds_transport.rs",
     "owns crates/qcore-audit/tests/fixtures/library_version/include/fakelib/fakelibv.h",
@@ -2893,8 +2865,7 @@
     "depends on qcore-c-gateway"
    ],
    "qcore-verifier-host": [
-    "owns crates/qcore-verifier-host/src/lib.rs",
-    "owns crates/qcore-verifier-host/src/plugin_firewall.rs"
+    "depends on qcore-schemas"
    ],
    "qcorec": [
     "depends on qcore-contract"
@@ -3360,7 +3331,7 @@
     "/usr/bin/python3",
     "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/scripts/run_test_binaries.py",
     "--log-dir",
-    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/rust-suite"
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-96bf2cc25/rust-suite"
    ],
    "slot": "rust-suite",
    "slot_args": []
@@ -3428,7 +3399,7 @@
     "providers/package.py",
     "build",
     "--output",
-    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/provider-packages"
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-96bf2cc25/provider-packages"
    ],
    "slot": "build",
    "slot_args": []
@@ -3439,7 +3410,7 @@
     "/usr/bin/python3",
     "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/scripts/gate_scope.py",
     "--verify-packages",
-    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/provider-packages"
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-96bf2cc25/provider-packages"
    ],
    "slot": null,
    "slot_args": []
@@ -3450,7 +3421,7 @@
     "/usr/bin/python3",
     "providers/package.py",
     "verify",
-    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/provider-packages/qcore.libevent"
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-96bf2cc25/provider-packages/qcore.libevent"
    ],
    "slot": null,
    "slot_args": []
@@ -3507,7 +3478,7 @@
  "slots": true,
  "landing": true,
  "card_base": null,
- "started": "20261116T152931Z",
+ "started": "20261116T202840Z",
  "ran": true,
  "steps": [
   {
@@ -3521,8 +3492,8 @@
     "--recursive"
    ],
    "exit": 0,
-   "seconds": 0.1,
-   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/submodules.log",
+   "seconds": 0.0,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-96bf2cc25/submodules.log",
    "counts": {
     "submodules": 1,
     "not_checked_out_or_moved": []
@@ -3535,7 +3506,7 @@
     "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/scripts/gate_slot.py",
     "build",
     "--receipt",
-    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/slots/fmt.json",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-96bf2cc25/slots/fmt.json",
     "--",
     "cargo",
     "fmt",
@@ -3544,10 +3515,10 @@
     "--check"
    ],
    "exit": 0,
-   "seconds": 11.0,
-   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/fmt.log",
+   "seconds": 4.9,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-96bf2cc25/fmt.log",
    "counts": {},
-   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/slots/fmt.json"
+   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-96bf2cc25/slots/fmt.json"
   },
   {
    "name": "clippy",
@@ -3556,7 +3527,7 @@
     "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/scripts/gate_slot.py",
     "build",
     "--receipt",
-    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/slots/clippy.json",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-96bf2cc25/slots/clippy.json",
     "--",
     "cargo",
     "clippy",
@@ -3566,10 +3537,10 @@
     "warnings"
    ],
    "exit": 0,
-   "seconds": 57.8,
-   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/clippy.log",
+   "seconds": 11.9,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-96bf2cc25/clippy.log",
    "counts": {},
-   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/slots/clippy.json"
+   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-96bf2cc25/slots/clippy.json"
   },
   {
    "name": "rust-suite",
@@ -3578,30 +3549,30 @@
     "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/scripts/gate_slot.py",
     "rust-suite",
     "--receipt",
-    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/slots/rust-suite.json",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-96bf2cc25/slots/rust-suite.json",
     "--",
     "/usr/bin/python3",
     "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/scripts/run_test_binaries.py",
     "--log-dir",
-    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/rust-suite"
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-96bf2cc25/rust-suite"
    ],
-   "exit": 0,
-   "seconds": 12913.6,
-   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/rust-suite.log",
+   "exit": 101,
+   "seconds": 1175.4,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-96bf2cc25/rust-suite.log",
    "counts": {
     "units": 641,
-    "passed": 9536,
-    "failed": 0,
+    "passed": 9541,
+    "failed": 2,
     "ignored": 17,
     "measured": 0,
     "filtered": 148,
     "summaries": 684,
     "packages": null,
     "targets": null,
-    "summary": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/rust-suite/summary.json",
-    "ok": true
+    "summary": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-96bf2cc25/rust-suite/summary.json",
+    "ok": false
    },
-   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/slots/rust-suite.json"
+   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-96bf2cc25/slots/rust-suite.json"
   },
   {
    "name": "probe-reevaluation_probe",
@@ -3610,7 +3581,7 @@
     "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/scripts/gate_slot.py",
     "build",
     "--receipt",
-    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/slots/probe-reevaluation_probe.json",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-96bf2cc25/slots/probe-reevaluation_probe.json",
     "--",
     "cargo",
     "run",
@@ -3625,9 +3596,9 @@
    ],
    "exit": 0,
    "seconds": 0.3,
-   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/probe-reevaluation_probe.log",
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-96bf2cc25/probe-reevaluation_probe.log",
    "counts": {},
-   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/slots/probe-reevaluation_probe.json"
+   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-96bf2cc25/slots/probe-reevaluation_probe.json"
   },
   {
    "name": "probe-reevaluation_followup",
@@ -3636,7 +3607,7 @@
     "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/scripts/gate_slot.py",
     "build",
     "--receipt",
-    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/slots/probe-reevaluation_followup.json",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-96bf2cc25/slots/probe-reevaluation_followup.json",
     "--",
     "cargo",
     "run",
@@ -3651,9 +3622,9 @@
    ],
    "exit": 0,
    "seconds": 0.5,
-   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/probe-reevaluation_followup.log",
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-96bf2cc25/probe-reevaluation_followup.log",
    "counts": {},
-   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/slots/probe-reevaluation_followup.json"
+   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-96bf2cc25/slots/probe-reevaluation_followup.json"
   },
   {
    "name": "lean",
@@ -3662,18 +3633,18 @@
     "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/scripts/gate_slot.py",
     "lean",
     "--receipt",
-    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/slots/lean.json",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-96bf2cc25/slots/lean.json",
     "--",
     "/usr/bin/python3",
     "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/scripts/check_lean_audits.py"
    ],
    "exit": 0,
-   "seconds": 21.1,
-   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/lean.log",
+   "seconds": 20.1,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-96bf2cc25/lean.log",
    "counts": {
     "audits": 437
    },
-   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/slots/lean.json"
+   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-96bf2cc25/slots/lean.json"
   },
   {
    "name": "python",
@@ -3686,8 +3657,8 @@
     "scripts/tests"
    ],
    "exit": 0,
-   "seconds": 247.8,
-   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/python.log",
+   "seconds": 177.0,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-96bf2cc25/python.log",
    "counts": {
     "tests": 779,
     "skipped": 0,
@@ -3701,19 +3672,19 @@
     "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/scripts/gate_slot.py",
     "build",
     "--receipt",
-    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/slots/provider-package-build.json",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-96bf2cc25/slots/provider-package-build.json",
     "--",
     "/usr/bin/python3",
     "providers/package.py",
     "build",
     "--output",
-    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/provider-packages"
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-96bf2cc25/provider-packages"
    ],
    "exit": 0,
-   "seconds": 418.7,
-   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/provider-package-build.log",
+   "seconds": 252.5,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-96bf2cc25/provider-package-build.log",
    "counts": {},
-   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/slots/provider-package-build.json"
+   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-96bf2cc25/slots/provider-package-build.json"
   },
   {
    "name": "provider-package-verify-all",
@@ -3721,11 +3692,11 @@
     "/usr/bin/python3",
     "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/scripts/gate_scope.py",
     "--verify-packages",
-    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/provider-packages"
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-96bf2cc25/provider-packages"
    ],
    "exit": 0,
-   "seconds": 1.0,
-   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/provider-package-verify-all.log",
+   "seconds": 3.8,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-96bf2cc25/provider-package-verify-all.log",
    "counts": {}
   },
   {
@@ -3734,11 +3705,11 @@
     "/usr/bin/python3",
     "providers/package.py",
     "verify",
-    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/provider-packages/qcore.libevent"
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-96bf2cc25/provider-packages/qcore.libevent"
    ],
    "exit": 0,
-   "seconds": 0.1,
-   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/provider-package-verify.log",
+   "seconds": 0.7,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-96bf2cc25/provider-package-verify.log",
    "counts": {}
   },
   {
@@ -3749,7 +3720,7 @@
     "rust-suite",
     "--close-builds",
     "--receipt",
-    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/slots/provider-test.json",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-96bf2cc25/slots/provider-test.json",
     "--",
     "cargo",
     "test",
@@ -3760,8 +3731,8 @@
     "--offline"
    ],
    "exit": 0,
-   "seconds": 3007.0,
-   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/provider-test.log",
+   "seconds": 3427.4,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-96bf2cc25/provider-test.log",
    "counts": {
     "summaries": 46,
     "passed": 140,
@@ -3770,7 +3741,7 @@
     "measured": 0,
     "filtered": 0
    },
-   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/slots/provider-test.json"
+   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-96bf2cc25/slots/provider-test.json"
   },
   {
    "name": "provider-fmt",
@@ -3779,7 +3750,7 @@
     "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/scripts/gate_slot.py",
     "build",
     "--receipt",
-    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/slots/provider-fmt.json",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-96bf2cc25/slots/provider-fmt.json",
     "--",
     "cargo",
     "fmt",
@@ -3790,10 +3761,10 @@
     "--check"
    ],
    "exit": 0,
-   "seconds": 5.9,
-   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/provider-fmt.log",
+   "seconds": 4.8,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-96bf2cc25/provider-fmt.log",
    "counts": {},
-   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/slots/provider-fmt.json"
+   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-96bf2cc25/slots/provider-fmt.json"
   },
   {
    "name": "provider-clippy",
@@ -3802,7 +3773,7 @@
     "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/scripts/gate_slot.py",
     "build",
     "--receipt",
-    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/slots/provider-clippy.json",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-96bf2cc25/slots/provider-clippy.json",
     "--",
     "cargo",
     "clippy",
@@ -3817,12 +3788,12 @@
     "warnings"
    ],
    "exit": 0,
-   "seconds": 24.4,
-   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/provider-clippy.log",
+   "seconds": 7.3,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-96bf2cc25/provider-clippy.log",
    "counts": {},
-   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/slots/provider-clippy.json"
+   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-96bf2cc25/slots/provider-clippy.json"
   }
  ],
- "ok": true,
- "finished": "20261116T200800Z"
+ "ok": false,
+ "finished": "20261116T215327Z"
 }

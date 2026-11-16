@@ -306,6 +306,6 @@ Declared measurement, base `rev:0f6e17118` (the card's base; r8–r12 landed aft
 `native-comparison.json`, sha256
 `fdf79726490a31623f9f1ec7f8923e3e8568140fe99c96d8ca4ed0a7c49b09d7`).
 
-The pinned routes run the stated eight-home map, which never exceeds the replay budget, and the stray filter applies only to derived (rule 40) runs, so nothing moves. Its effect is on the user's `current` run with the link artifact, which the integrator reruns after landing. Landed through integrate/r14 with CURRENT-CONTEXT-NEW-TRIAGE (phase 1), LINK-STANDING-IMPORT-LIMITERS and OPENSSL-PROVIDER-PLUGIN; all three merged without conflict.
+The pinned routes run the stated eight-home map, which never exceeds the replay budget, and the stray filter applies only to derived (rule 40) runs, so nothing moves. Its effect is on the user's `current` run with the link artifact, which the integrator reruns after landing. Landed through integrate/r15 with CURRENT-CONTEXT-NEW-TRIAGE (phase 1), LINK-STANDING-IMPORT-LIMITERS and OPENSSL-PROVIDER-PLUGIN; all three merged without conflict.
 
-The integrate/r14 landing gate record is [OPENSSL-PROVIDER-PLUGIN's](../openssl-provider-plugin/integration/gate.json) (full gate on the merged tree 5b5ff2912, 14 steps exit 0).
+The integrate/r15 landing gate record is [OPENSSL-PROVIDER-PLUGIN's](../openssl-provider-plugin/integration/gate.json) (full gate on the merged tree 96bf2cc25 plus a targeted rerun; see its note).
