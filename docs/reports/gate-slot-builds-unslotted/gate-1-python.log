@@ -1,0 +1,64 @@
+..............................................................................skip: docs/reports/wave9-corpus/diff-e01f1-to-wave9.json.gz: already backfilled, byte-identical
+skip: docs/reports/wave10-corpus/diff-wave9-to-wave10.json.gz: already backfilled, byte-identical
+skip: docs/reports/wave11-corpus/diff-wave10-to-wave11.json.gz: already backfilled, byte-identical
+skip: docs/reports/wave12-corpus/diff-wave11-to-wave12.json.gz: already backfilled, byte-identical
+skip: docs/reports/wave13-corpus/diff-wave12-to-wave13.json.gz: already backfilled, byte-identical
+skip: docs/reports/wave14-corpus/diff-wave13-to-wave14.json.gz: already backfilled, byte-identical
+skip: docs/reports/wave15-corpus/diff-wave14-to-wave15.json.gz: already backfilled, byte-identical
+skip: docs/reports/wave16-corpus/diff-wave15-to-wave16.json.gz: already itemized by the tool that wrote it
+skip: docs/reports/wave9-corpus/diff-e01f1-to-wave9.json.gz: already backfilled, byte-identical
+skip: docs/reports/wave10-corpus/diff-wave9-to-wave10.json.gz: already backfilled, byte-identical
+skip: docs/reports/wave11-corpus/diff-wave10-to-wave11.json.gz: already backfilled, byte-identical
+skip: docs/reports/wave12-corpus/diff-wave11-to-wave12.json.gz: already backfilled, byte-identical
+skip: docs/reports/wave13-corpus/diff-wave12-to-wave13.json.gz: already backfilled, byte-identical
+skip: docs/reports/wave14-corpus/diff-wave13-to-wave14.json.gz: already backfilled, byte-identical
+skip: docs/reports/wave15-corpus/diff-wave14-to-wave15.json.gz: already backfilled, byte-identical
+skip: docs/reports/wave16-corpus/diff-wave15-to-wave16.json.gz: already itemized by the tool that wrote it
+Passed 2 Lean audits
+..Passed 2 Lean audits
+..Passed 2 Lean audits
+......Starting 6 audits, 4 at a time (limit 120s each)
+Starting 6 audits, 4 at a time (limit 120s each)
+Passed Audit1.lean (1/6) in 0.0s
+Passed Audit2.lean (2/6) in 0.0s
+Passed Audit3.lean (3/6) in 0.0s
+Passed Audit4.lean (4/6) in 0.0s
+Passed Audit5.lean (5/6) in 0.0s
+Passed AuditAll.lean (6/6) in 0.0s
+Passed 6 Lean audits
+.Starting 6 audits, 4 at a time (limit 120s each)
+Passed Audit1.lean (1/6) in 0.0s
+Passed Audit2.lean (2/6) in 0.0s
+Passed Audit3.lean (3/6) in 0.0s
+Passed Audit4.lean (4/6) in 0.0s
+Passed Audit5.lean (5/6) in 0.0s
+Passed AuditAll.lean (6/6) in 0.0s
+Passed 6 Lean audits
+.Starting 6 audits, 4 at a time (limit 120s each)
+..Starting 6 audits, 4 at a time (limit 120s each)
+.Passed 6 Lean audits
+........Starting failure (limit 5s)
+..Starting stopped fixture (limit 5s)
+.Starting stalled fixture (limit 0.5s)
+Still running stalled fixture: 0.2s / 0.5s
+Still running stalled fixture: 0.4s / 0.5s
+Still running stalled fixture: 0.5s / 0.5s
+....................................................................................................................................................................................................................................................................................................................................................................................................................................................................land: measuring fb0af48b915350660e4772fb6dc082c998482e3d -> 3da70a8c04209e940a21ef0179a7bc8fb049a764 at /tmp/tmpub0u6are/private/measure/landing-3da70a8c04209e940a21ef0179a7bc8fb049a764-20261115T232804763994Z
+land: measuring 3da70a8c04209e940a21ef0179a7bc8fb049a764 -> 731895c00e67a5ab762c2fe1fb9e03df1c50ca56 at /tmp/tmpub0u6are/private/measure/landing-731895c00e67a5ab762c2fe1fb9e03df1c50ca56-20261115T232804798487Z
+..land: measuring 47f626846f31d308ab920cc8dbf33acefc464847 -> aea2e60887e6246840b9a07adab020b8514c01ce at /tmp/tmpto9olt10/private/measure/landing-aea2e60887e6246840b9a07adab020b8514c01ce-20261115T232804919952Z
+.............................................................................................................................................................................fatal: bad revision 'not-a-real-task-context-base'
+............................F.................
+======================================================================
+FAIL: test_every_remaining_tree_walk_in_the_tests_is_a_reviewed_one (test_tracked_files.TrackedFiles.test_every_remaining_tree_walk_in_the_tests_is_a_reviewed_one)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a751a7886bfed1a17/scripts/tests/test_tracked_files.py", line 133, in test_every_remaining_tree_walk_in_the_tests_is_a_reviewed_one
+    self.assertEqual(found, REVIEWED_WALKS)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'com[234 chars]sts/checkpoint_cli.rs': 1, 'crates/qcore-audit[630 chars]': 1} != {'com[234 chars]sts/configured_cli.rs': 6, 'crates/qcore-c-gat[581 chars]': 1}
+Diff is 977 characters long. Set self.maxDiff to None to see it.
+
+----------------------------------------------------------------------
+Ran 777 tests in 169.760s
+
+FAILED (failures=1)

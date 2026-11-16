@@ -134,8 +134,8 @@ Evidence, with harnesses in [scripts/](scripts/):
 - [starved_core.sh](scripts/starved_core.sh) runs the four tests pinned to one
   CPU shared with 15 spinners (a share near 1/17; only that core is loaded).
   The base tests failed 3 of 4 ([log](starved-base.log): 0.04, 0.04 and 0.06
-  against floors of 0.2, 0.2 and 0.3); this card's passed 4 of 4 in three runs
-  ([2](starved-card-2.log), [3](starved-card-3.log), [4](starved-card-4.log)).
+  against floors of 0.2, 0.2 and 0.3); this card's passed 4 of 4 in four runs
+  ([2](starved-card-2.log), [3](starved-card-3.log), [4](starved-card-4.log), [5](starved-card-5.log)).
   The first run of the card's tests (before the inner bracket and the zombie
   fix) failed 2 of 4 and is kept only in the worktree's private log: its lower
   bound subtracted the measurer's wall time outside the interval, which a
@@ -162,7 +162,27 @@ other than `build`. `quirin-audit-plugin-measure`'s
 
 ## Gate
 
-See [gate.json](gate.json) (filled at the end of the card).
+`sh private/toolchain/env.sh python3 scripts/gate_scope.py --base 0f6e17118
+--out <dir>` (main checkout's toolchain env). The runner and scoper changed,
+so the whole Rust suite ran.
+
+- Attempt 1 (`private/gate-1`, tree at `b0b8e922b` plus the report): exit 1.
+  submodules, fmt, Clippy (both under `build`), Rust suite (638 units, 681
+  summaries; 9,510 passed, 0 failed, 17 ignored) and both reevaluation
+  examples exit 0; Python 777 tests, 1 failed
+  ([log](gate-1-python.log)): rule 29's walk tripwire
+  (`test_tracked_files`) caught this card's `Path("/proc").iterdir()` in the
+  starvation test's child lookup. Repaired in `6ac9a54e7` (read
+  `/proc/<pid>/task/<pid>/children`, no walk); the starved-core run was
+  repeated after it ([5](starved-card-5.log), 4 of 4).
+- Attempt 2 (`private/gate-2`, `39994b407`): **exit 0**
+  ([gate.json](gate.json)). submodules, fmt, Clippy exit 0; Rust suite 638
+  units, 681 summaries, 9,510 passed, 0 failed, 17 ignored, 148 filtered;
+  both reevaluation examples exit 0; Python 777 tests OK. The suite's
+  `summary.json` records the first live build closure: the EXCLUSIVE phase
+  (12 units) closed builds at 23:55:35Z, found none in flight (other
+  worktrees run main's script), waited 0.019 s, reopened at 23:56:44Z,
+  `drained: true`.
 
 ## Follow-ons
 
