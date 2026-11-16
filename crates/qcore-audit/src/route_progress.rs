@@ -124,15 +124,25 @@ pub fn cross_unit_scope(
     let Some(scoped) = scoped else {
         return;
     };
+    // Card LINK-STANDING-IMPORT-LIMITERS: the unprobed count (derived runs)
+    // and, above the budget, the subset held are named too.
     line(&format!(
-        "cross-unit scope {library}/{file}: {} reachable home(s) ({} named only by member facts), {} held and replayed (budget {}){}",
+        "cross-unit scope {library}/{file}: {} reachable home(s) ({} named only by member facts{}), {} held and replayed (budget {}){}{}",
         scoped.reachable,
         scoped.named_only,
+        if scoped.unprobed == 0 {
+            String::new()
+        } else {
+            format!("; {} member-named left unprobed", scoped.unprobed)
+        },
         scoped.homes.len(),
         qcore_c_gateway::legacy_c::CROSS_UNIT_REPLAY_BUDGET_PER_UNIT,
         if scoped.withheld.is_some() {
-            "; budget exhausted, no import held".to_owned()
-        } else if scoped.homes.is_empty() {
+            "; budget exceeded, subset held"
+        } else {
+            ""
+        },
+        if scoped.homes.is_empty() {
             String::new()
         } else {
             format!(

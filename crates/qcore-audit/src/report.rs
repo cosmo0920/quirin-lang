@@ -993,10 +993,21 @@ impl AuditReport {
 
     /// Card **CURRENT-RUN-WORKER-SPIN** (rule 4c, amended): the preceding
     /// unit could reach more cross-unit homes than the per-unit replay budget
-    /// and held no import; its calls to them stayed uncontracted.
+    /// and held only the budget's subset (card
+    /// LINK-STANDING-IMPORT-LIMITERS); its calls to the withheld homes stayed
+    /// uncontracted.
     pub fn record_cross_unit_withheld(&mut self, reason: &str) {
         if let Some(unit) = self.units.last_mut() {
             unit["cross_unit_imports_withheld"] = json!(reason);
+        }
+    }
+
+    /// Card **LINK-STANDING-IMPORT-LIMITERS** (rule 40): how many
+    /// member-named homes the preceding unit left out of its scope because
+    /// their name has no token in it: never held, probed or refused.
+    pub fn record_cross_unit_unprobed(&mut self, count: usize) {
+        if let Some(unit) = self.units.last_mut() {
+            unit["cross_unit_unprobed_homes"] = json!(count);
         }
     }
 

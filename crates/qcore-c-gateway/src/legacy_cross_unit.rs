@@ -179,9 +179,11 @@ pub fn export_homes(
 /// Card **CURRENT-RUN-WORKER-SPIN** (rule 4c, amended): the most homes one
 /// caller unit holds. Certificate issue and the certificate check each replay
 /// every home the caller holds (a whole-unit W4 analysis of the home), so a
-/// caller's import work is bounded by this many home analyses per check. A
-/// caller that may reach more holds none: its calls to those names stay
-/// uncontracted (`Unknown`), and [`CallerImports::withheld`] names why.
+/// caller's import work is bounded by this many home analyses per check.
+/// Card **LINK-STANDING-IMPORT-LIMITERS** (rule 4c, amended): a caller that
+/// may reach more holds a subset of this many ([`select`]); its calls to the
+/// withheld names stay uncontracted (`Unknown`), and
+/// [`CallerImports::withheld`] names them.
 pub const REPLAY_BUDGET_PER_UNIT: usize = 24;
 
 /// What one caller unit holds of a run's cross-unit imports.
@@ -198,8 +200,14 @@ pub struct CallerImports {
     /// Of `reachable`, the homes the caller never uses and only the run's
     /// member facts name.
     pub named_only: usize,
+    /// Card LINK-STANDING-IMPORT-LIMITERS (rule 40): member-named homes left
+    /// out of `reachable` under a derived resolution because their name has
+    /// no token in the caller's unit ([`for_linked_caller`]). Not held, not
+    /// probed, not counted toward the budget and not a caller refusal.
+    pub unprobed: usize,
     /// Set when `reachable` exceeds [`REPLAY_BUDGET_PER_UNIT`]: the caller
-    /// then holds no import.
+    /// then holds the budget's subset ([`select`]) and this names the
+    /// withheld homes.
     pub withheld: Option<String>,
 }
 
@@ -228,6 +236,73 @@ fn used_identifiers(tokens: &[super::Token]) -> BTreeSet<&str> {
     used
 }
 
+/// Card **LINK-STANDING-IMPORT-LIMITERS** (rule 4c): each function the unit
+/// defines (`NAME ( ... ) {` at file scope) with the identifiers its body
+/// uses, closed over the unit's own functions it names: what the function's
+/// analysis can look up directly or through a local callee's summary. Read
+/// only to order the budget's subset ([`select`]); a function this scan
+/// misses (a K&R definition, an attribute after the declarator) leaves its
+/// homes to the fill by name.
+fn function_uses(tokens: &[super::Token]) -> BTreeMap<&str, BTreeSet<&str>> {
+    let mut direct = BTreeMap::<&str, BTreeSet<&str>>::new();
+    let mut depth = 0usize;
+    let mut index = 0usize;
+    while index < tokens.len() {
+        let text = tokens[index].text.as_str();
+        match text {
+            "{" => depth += 1,
+            "}" => depth = depth.saturating_sub(1),
+            _ if depth == 0
+                && is_identifier(text)
+                && !matches!(text, "if" | "while" | "for" | "switch")
+                && tokens.get(index + 1).map(|next| next.text.as_str()) == Some("(") =>
+            {
+                if let Some(close) = super::matching(tokens, index + 1, "(", ")")
+                    && tokens.get(close + 1).map(|next| next.text.as_str()) == Some("{")
+                    && let Some(end) = super::matching(tokens, close + 1, "{", "}")
+                {
+                    direct.entry(text).or_default().extend(
+                        tokens[close + 2..end]
+                            .iter()
+                            .map(|token| token.text.as_str())
+                            .filter(|token| is_identifier(token)),
+                    );
+                    index = end + 1;
+                    continue;
+                }
+            }
+            _ => {}
+        }
+        index += 1;
+    }
+    direct
+        .keys()
+        .map(|&function| {
+            let mut seen = BTreeSet::from([function]);
+            let mut stack = vec![function];
+            let mut uses = BTreeSet::new();
+            while let Some(next) = stack.pop() {
+                for &name in &direct[next] {
+                    uses.insert(name);
+                    if direct.contains_key(name) && seen.insert(name) {
+                        stack.push(name);
+                    }
+                }
+            }
+            (function, uses)
+        })
+        .collect()
+}
+
+fn is_identifier(text: &str) -> bool {
+    text.bytes()
+        .next()
+        .is_some_and(|byte| byte == b'_' || byte.is_ascii_alphabetic())
+        && text
+            .bytes()
+            .all(|byte| byte == b'_' || byte.is_ascii_alphanumeric())
+}
+
 /// Restrict a run-wide import table to the homes this caller may reach. A
 /// name defined in the caller's preprocessed unit takes local precedence (a
 /// header static always does). A name neither used in the caller's unit
@@ -237,11 +312,36 @@ fn used_identifiers(tokens: &[super::Token]) -> BTreeSet<&str> {
 /// looked up by the caller's analysis, so its home is not held and not
 /// replayed. Holding fewer imports can only leave a call uncontracted, never
 /// supply a summary (fail-closed); a caller that may reach more than
-/// [`REPLAY_BUDGET_PER_UNIT`] homes holds none.
+/// [`REPLAY_BUDGET_PER_UNIT`] homes holds the budget's subset ([`select`]).
 pub fn for_caller(
     preprocessed: &str,
     run_environment: &ResourceContracts,
     run_homes: &[CrossUnitHomeEvidence],
+) -> CallerImports {
+    caller_scope(preprocessed, run_environment, run_homes, false)
+}
+
+/// Card **LINK-STANDING-IMPORT-LIMITERS** (rule 40): [`for_caller`] under a
+/// derived resolution. A home only the run's member facts name, whose name
+/// has no token anywhere in the caller's preprocessed unit, leaves the scope
+/// before the budget: the unit never declares the name, so Clang gives it
+/// no type there and condition (14) cannot hold. Leaving it out holds fewer
+/// imports (fail-closed); it is counted in [`CallerImports::unprobed`]. A
+/// name the unit declares or uses stays in scope, and rule 40 still refuses
+/// it when it cannot be typed.
+pub fn for_linked_caller(
+    preprocessed: &str,
+    run_environment: &ResourceContracts,
+    run_homes: &[CrossUnitHomeEvidence],
+) -> CallerImports {
+    caller_scope(preprocessed, run_environment, run_homes, true)
+}
+
+fn caller_scope(
+    preprocessed: &str,
+    run_environment: &ResourceContracts,
+    run_homes: &[CrossUnitHomeEvidence],
+    linked: bool,
 ) -> CallerImports {
     let (tokens, conditionals) = tokenize_with_conditionals(preprocessed);
     let local = function_names(&tokens, &conditionals)
@@ -249,6 +349,10 @@ pub fn for_caller(
         .into_iter()
         .collect::<BTreeSet<_>>();
     let spelled = used_identifiers(&tokens);
+    let present = tokens
+        .iter()
+        .map(|token| token.text.as_str())
+        .collect::<BTreeSet<_>>();
     let run_facts = crate::member_run_facts::installed();
     let names = run_homes
         .iter()
@@ -259,22 +363,42 @@ pub fn for_caller(
             .as_ref()
             .is_some_and(|facts| facts.named_functions().contains(name))
     };
+    let groups = function_uses(&tokens)
+        .into_values()
+        .zip(0..)
+        .map(|(uses, order)| (order, uses))
+        .collect::<Vec<_>>();
     let scope = scope(
         &names,
-        |name| local.contains(name),
-        |name| spelled.contains(name),
-        named,
+        &Facts {
+            local: &|name| local.contains(name),
+            spelled: &|name| spelled.contains(name),
+            named: &named,
+            present: &|name| !linked || present.contains(name),
+        },
+        &groups,
         REPLAY_BUDGET_PER_UNIT,
     );
-    let named_only = names
+    let named_only = scope
+        .reachable
         .iter()
-        .filter(|name| !local.contains(**name) && !spelled.contains(**name) && named(name))
+        .filter(|&&index| !spelled.contains(names[index]))
         .count();
     let withheld = scope.exhausted.then(|| {
+        let held = scope.held.iter().copied().collect::<BTreeSet<_>>();
+        let withheld = scope
+            .reachable
+            .iter()
+            .filter(|index| !held.contains(index))
+            .map(|&index| names[index])
+            .collect::<BTreeSet<_>>();
         format!(
-            "cross-unit replay budget exhausted: {} reachable home(s) exceed the per-unit \
-             budget of {REPLAY_BUDGET_PER_UNIT}; no import held",
-            scope.reachable
+            "cross-unit replay budget exceeded: {} reachable home(s) exceed the per-unit \
+             budget of {REPLAY_BUDGET_PER_UNIT}; {} held by whole function sets, then by \
+             name; withheld: {}",
+            scope.reachable.len(),
+            scope.held.len(),
+            withheld.into_iter().collect::<Vec<_>>().join(", ")
         )
     });
     let homes = scope
@@ -286,8 +410,9 @@ pub fn for_caller(
     CallerImports {
         environment,
         homes,
-        reachable: scope.reachable,
+        reachable: scope.reachable.len(),
         named_only,
+        unprobed: scope.unprobed,
         withheld,
     }
 }
@@ -305,6 +430,7 @@ pub fn retain_held(
         homes,
         reachable,
         named_only,
+        unprobed,
         withheld,
     } = imports;
     let homes = homes
@@ -316,6 +442,7 @@ pub fn retain_held(
         homes,
         reachable,
         named_only,
+        unprobed,
         withheld,
     }
 }
@@ -357,37 +484,120 @@ fn restrict_environment(
 
 /// The pure scope decision of [`for_caller`]
 /// (`QCore.CrossUnitReplayBudget.held`): the indices of the homes a caller
-/// holds, how many it may reach, and whether the budget is exhausted.
+/// holds, the reachable ones, how many member-named homes were left out
+/// for want of a token, and whether the reachable homes exceed the budget.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(crate) struct Scope {
     pub(crate) held: Vec<usize>,
-    pub(crate) reachable: usize,
+    pub(crate) reachable: Vec<usize>,
+    pub(crate) unprobed: usize,
     pub(crate) exhausted: bool,
 }
 
+/// What the scope reads of one caller, per home name.
+pub(crate) struct Facts<'a> {
+    /// The caller defines the name.
+    pub(crate) local: &'a dyn Fn(&str) -> bool,
+    /// The caller uses the name ([`used_identifiers`]).
+    pub(crate) spelled: &'a dyn Fn(&str) -> bool,
+    /// The run's member facts name it as a value.
+    pub(crate) named: &'a dyn Fn(&str) -> bool,
+    /// The name can be probed in the caller: always, except under a derived
+    /// resolution, where its token must occur in the unit.
+    pub(crate) present: &'a dyn Fn(&str) -> bool,
+}
+
 /// A home is reachable when the caller does not define its name and either
-/// spells it or the run's member facts name it as a value; the caller holds
-/// every reachable home when they fit the budget, and none otherwise.
+/// spells it or the run's member facts name it as a value and it can be
+/// probed in the caller. The caller holds every reachable home when they fit
+/// the budget and otherwise the subset [`select`] chooses.
 pub(crate) fn scope(
     homes: &[&str],
-    local: impl Fn(&str) -> bool,
-    spelled: impl Fn(&str) -> bool,
-    named: impl Fn(&str) -> bool,
+    facts: &Facts<'_>,
+    groups: &[(usize, BTreeSet<&str>)],
     budget: usize,
 ) -> Scope {
-    let reachable = homes
-        .iter()
-        .enumerate()
-        .filter(|(_, name)| !local(name) && (spelled(name) || named(name)))
-        .map(|(index, _)| index)
-        .collect::<Vec<_>>();
-    let count = reachable.len();
-    let exhausted = count > budget;
+    let mut reachable = Vec::new();
+    let mut unprobed = 0;
+    for (index, name) in homes.iter().enumerate() {
+        if (facts.local)(name) {
+            continue;
+        }
+        if (facts.spelled)(name) {
+            reachable.push(index);
+        } else if (facts.named)(name) {
+            if (facts.present)(name) {
+                reachable.push(index);
+            } else {
+                unprobed += 1;
+            }
+        }
+    }
+    let exhausted = reachable.len() > budget;
     Scope {
-        held: if exhausted { Vec::new() } else { reachable },
-        reachable: count,
+        held: select(homes, &reachable, groups, budget),
+        reachable,
+        unprobed,
         exhausted,
     }
+}
+
+/// Card **LINK-STANDING-IMPORT-LIMITERS** (rule 4c,
+/// `QCore.CrossUnitReplayBudget.select`): the homes a caller holds of its
+/// reachable ones. Within the budget, all of them. Above it, at most
+/// `budget`: each function's reachable home set (`groups`, keyed by the
+/// function's position in name order), smallest first with the function
+/// order breaking ties, is held whole when the union still fits; then the
+/// remaining reachable homes by name while room is left. The result depends
+/// only on the sets and names, never on the order `groups` is given in.
+/// Every subset is fail-closed: a withheld home's calls stay uncontracted.
+pub(crate) fn select(
+    homes: &[&str],
+    reachable: &[usize],
+    groups: &[(usize, BTreeSet<&str>)],
+    budget: usize,
+) -> Vec<usize> {
+    if reachable.len() <= budget {
+        return reachable.to_vec();
+    }
+    let index_of = reachable
+        .iter()
+        .map(|&index| (homes[index], index))
+        .collect::<BTreeMap<_, _>>();
+    let mut ordered = groups
+        .iter()
+        .map(|(order, uses)| {
+            let set = uses
+                .iter()
+                .filter_map(|name| index_of.get(name).copied())
+                .collect::<BTreeSet<_>>();
+            (set.len(), *order, set)
+        })
+        .filter(|(size, _, _)| *size > 0)
+        .collect::<Vec<_>>();
+    ordered.sort();
+    let mut held = Vec::new();
+    let mut chosen = BTreeSet::new();
+    for (_, _, set) in ordered {
+        let added = set
+            .iter()
+            .filter(|index| !chosen.contains(*index))
+            .copied()
+            .collect::<Vec<_>>();
+        if chosen.len() + added.len() <= budget {
+            chosen.extend(added.iter().copied());
+            held.extend(added);
+        }
+    }
+    for &index in index_of.values() {
+        if held.len() >= budget {
+            break;
+        }
+        if chosen.insert(index) {
+            held.push(index);
+        }
+    }
+    held
 }
 
 fn digest_environment(environment: &ResourceContracts) -> Result<String, String> {
@@ -751,72 +961,255 @@ fn linkage_sensitive_declaration(tokens: &[super::Token], function: &str) -> boo
     false
 }
 
-/// `SCOPE_VECTORS` (`QCore.CrossUnitReplayBudget.scopeVectors`): run homes,
-/// the caller's local definitions, its spellings, the run's member-fact
-/// names and the budget, then the held homes, the reachable count and
-/// whether the budget is exhausted.
+/// One `SCOPE_VECTORS` row: run homes (in name order), the caller's local
+/// definitions, its spellings, the run's member-fact names, whether the run
+/// is derived (rule 40) and the names with a token in the unit, the
+/// per-function home sets (by function position) and the budget; then the
+/// held homes, the reachable count, the unprobed count and whether the
+/// budget is exceeded.
 #[cfg(test)]
-#[allow(clippy::type_complexity)]
-pub(crate) const SCOPE_VECTORS: &[(
-    &[&str],
-    &[&str],
-    &[&str],
-    &[&str],
+pub(crate) type ScopeVector = (
+    &'static [&'static str],
+    &'static [&'static str],
+    &'static [&'static str],
+    &'static [&'static str],
+    bool,
+    &'static [&'static str],
+    &'static [&'static [&'static str]],
     usize,
-    &[&str],
+    &'static [&'static str],
+    usize,
     usize,
     bool,
-)] = &[
-    (&["a", "b", "c"], &[], &["a", "x"], &[], 4, &["a"], 1, false),
+);
+
+/// `SCOPE_VECTORS` (`QCore.CrossUnitReplayBudget.scopeVectors`).
+#[cfg(test)]
+pub(crate) const SCOPE_VECTORS: &[ScopeVector] = &[
+    // spelled homes are held; an unspelled, unnamed home is not
+    (
+        &["a", "b", "c"],
+        &[],
+        &["a", "x"],
+        &[],
+        false,
+        &[],
+        &[],
+        4,
+        &["a"],
+        1,
+        0,
+        false,
+    ),
+    // a member-fact name is held though unspelled
     (
         &["a", "b", "c"],
         &[],
         &["a"],
         &["c"],
+        false,
+        &[],
+        &[],
         4,
         &["a", "c"],
         2,
+        0,
         false,
     ),
-    (&["a", "b"], &["a"], &["a", "b"], &[], 4, &["b"], 1, false),
-    (&["a", "b"], &[], &["a", "b"], &[], 2, &["a", "b"], 2, false),
+    // a local definition takes precedence over its home
+    (
+        &["a", "b"],
+        &["a"],
+        &["a", "b"],
+        &[],
+        false,
+        &[],
+        &[],
+        4,
+        &["b"],
+        1,
+        0,
+        false,
+    ),
+    // exactly at the budget, every reachable home is held
+    (
+        &["a", "b"],
+        &[],
+        &["a", "b"],
+        &[],
+        false,
+        &[],
+        &[],
+        2,
+        &["a", "b"],
+        2,
+        0,
+        false,
+    ),
+    // above the budget: the smaller whole function set first, then by name
     (
         &["a", "b", "c"],
         &[],
         &["a", "b", "c"],
         &[],
-        2,
+        false,
         &[],
+        &[&["a", "b"], &["c"]],
+        2,
+        &["c", "a"],
         3,
+        0,
         true,
     ),
-    (&["a"], &[], &[], &[], 0, &[], 0, false),
+    // no home reachable
+    (&["a"], &[], &[], &[], false, &[], &[], 0, &[], 0, 0, false),
+    // derived run: a member-named home with no token in the unit is unprobed
+    (
+        &["a", "b", "c"],
+        &[],
+        &["a"],
+        &["b", "c"],
+        true,
+        &["a", "b"],
+        &[],
+        4,
+        &["a", "b"],
+        2,
+        1,
+        false,
+    ),
+    // derived run: the unprobed homes do not count toward the budget
+    (
+        &["a", "b", "c"],
+        &[],
+        &["a"],
+        &["b", "c"],
+        true,
+        &["a"],
+        &[],
+        1,
+        &["a"],
+        1,
+        2,
+        false,
+    ),
+    // equal-size function sets: the earlier function wins the tie
+    (
+        &["a", "b", "c", "d"],
+        &[],
+        &["a", "b", "c", "d"],
+        &[],
+        false,
+        &[],
+        &[&["c", "d"], &["a", "b"]],
+        2,
+        &["c", "d"],
+        4,
+        0,
+        true,
+    ),
+    // a function set larger than the budget is never held whole
+    (
+        &["a", "b", "c", "d"],
+        &[],
+        &["a", "b", "c", "d"],
+        &[],
+        false,
+        &[],
+        &[&["a", "b", "c"], &["d"]],
+        2,
+        &["d", "a"],
+        4,
+        0,
+        true,
+    ),
 ];
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
+    fn run(vector: &ScopeVector) -> Scope {
+        let (homes, local, spelled, named, linked, present, groups, budget, ..) = *vector;
+        let groups = groups
+            .iter()
+            .enumerate()
+            .map(|(order, uses)| (order, uses.iter().copied().collect::<BTreeSet<_>>()))
+            .collect::<Vec<_>>();
+        scope(
+            homes,
+            &Facts {
+                local: &|name| local.contains(&name),
+                spelled: &|name| spelled.contains(&name),
+                named: &|name| named.contains(&name),
+                present: &|name| !linked || present.contains(&name),
+            },
+            &groups,
+            budget,
+        )
+    }
+
     #[test]
     fn scope_vectors_hold() {
-        for (homes, local, spelled, named, budget, held, reachable, exhausted) in SCOPE_VECTORS {
-            let scope = scope(
-                homes,
-                |name| local.contains(&name),
-                |name| spelled.contains(&name),
-                |name| named.contains(&name),
-                *budget,
-            );
+        for vector in SCOPE_VECTORS {
+            let (homes, .., budget, held, reachable, unprobed, exhausted) = *vector;
+            let scope = run(vector);
             let names = scope
                 .held
                 .iter()
                 .map(|&index| homes[index])
                 .collect::<Vec<_>>();
-            assert_eq!(names, *held, "{homes:?} {spelled:?} {named:?}");
-            assert_eq!(scope.reachable, *reachable);
-            assert_eq!(scope.exhausted, *exhausted);
-            assert!(scope.held.len() <= *budget);
+            assert_eq!(names, held, "{vector:?}");
+            assert_eq!(scope.reachable.len(), reachable, "{vector:?}");
+            assert_eq!(scope.unprobed, unprobed, "{vector:?}");
+            assert_eq!(scope.exhausted, exhausted, "{vector:?}");
+            assert!(scope.held.len() <= budget);
+            assert!(
+                scope
+                    .held
+                    .iter()
+                    .all(|index| scope.reachable.contains(index))
+            );
         }
-        assert_eq!(SCOPE_VECTORS.len(), 6);
+        assert_eq!(SCOPE_VECTORS.len(), 10);
+    }
+
+    /// Card LINK-STANDING-IMPORT-LIMITERS: the subset depends on the sets and
+    /// names, not on the order the function sets are given in.
+    #[test]
+    fn selection_is_deterministic() {
+        let homes = ["a", "b", "c", "d", "e"];
+        let reachable = (0..homes.len()).collect::<Vec<_>>();
+        let sets = [
+            (0, BTreeSet::from(["d", "e"])),
+            (1, BTreeSet::from(["a"])),
+            (2, BTreeSet::from(["b", "c", "d"])),
+        ];
+        let forward = select(&homes, &reachable, &sets, 3);
+        let mut reversed = sets.clone();
+        reversed.reverse();
+        assert_eq!(select(&homes, &reachable, &reversed, 3), forward);
+        let names = forward
+            .iter()
+            .map(|&index| homes[index])
+            .collect::<Vec<_>>();
+        assert_eq!(names, ["a", "d", "e"]);
+    }
+
+    /// Card LINK-STANDING-IMPORT-LIMITERS: each defined function's uses,
+    /// closed over the unit's own callees; a prototype is not a definition.
+    #[test]
+    fn function_uses_close_over_local_callees() {
+        let (tokens, _) = tokenize_with_conditionals(
+            "int h1(int); int h2(int);\n\
+             static int helper(int x) { return h2(x); }\n\
+             int outer(int x) { return helper(h1(x)); }\n\
+             int alone(void) { return 0; }\n",
+        );
+        let uses = function_uses(&tokens);
+        assert_eq!(uses.len(), 3);
+        assert!(uses["helper"].contains("h2") && !uses["helper"].contains("h1"));
+        assert!(uses["outer"].contains("h1") && uses["outer"].contains("h2"));
+        assert!(!uses["alone"].contains("h1"));
     }
 }

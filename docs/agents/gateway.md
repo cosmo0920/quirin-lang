@@ -187,9 +187,17 @@ which is not a second authority.
     passed to a setter whose formal a member stores, transitively). Every
     other import is absent from the caller's environment, so a lookup of it
     finds no summary and the call stays uncontracted. A caller that may reach more than
-    `REPLAY_BUDGET_PER_UNIT` homes holds none, and its unit row names the
-    exhausted budget (`cross_unit_imports_withheld`); the certificate check
-    refuses a home set above the budget before any replay. Every check
+    `REPLAY_BUDGET_PER_UNIT` homes holds at most that many, and its unit row
+    names the withheld homes (`cross_unit_imports_withheld`); the certificate
+    check refuses a home set above the budget before any replay. Card
+    LINK-STANDING-IMPORT-LIMITERS (amended in place; before it, such a
+    caller held none): the subset is each function's reachable home set (the
+    names its body uses, closed over the unit's own functions it names),
+    smallest first with function name order breaking ties, held whole while
+    the union fits, then the remaining reachable homes by name while room is
+    left. The subset depends only on the unit and the run's homes. A
+    withheld home's calls stay uncontracted, so the subset changes no
+    per-home check and the bound is unchanged. Every check
     still verifies every held home, but a home unit's W4 re-run is shared
     within one process by every check whose recomputed input and environment
     identities, dialect and selected names equal its own. The replay is
@@ -198,8 +206,11 @@ which is not a second authority.
     have written it. The budget is
     stated in the run's `cross_unit_link_resolution` assumption, and the
     `current` route prints per-phase and per-unit progress on standard error
-    when the link map is selected. `QCore.CrossUnitReplayBudget`;
-    [report](../reports/current-run-worker-spin/README.md).
+    when the link map is selected. `QCore.CrossUnitReplayBudget`
+    (`select_within_budget`, `select_sub_reachable`, `held_lookup_is_full`,
+    `withheld_import_call_is_unknown`);
+    [report](../reports/current-run-worker-spin/README.md),
+    [subset](../reports/link-standing-import-limiters/README.md).
     Card LINK-STANDING: on the `current` route the resolution may instead be
     derived from a link-resolution artifact under rule 40's checked
     conditions; this rule's selection, scope, budget and replay are
@@ -10474,7 +10485,20 @@ safety claim and no validation of the detach representation premise.
     Conditions (1) and (2) hold or fail for the whole run, and a failure
     holds no import. (4) to (13) are per home: a refused home is never
     exported. (3), (14) and (15) are per caller, applied to the homes that
-    rule 4c's scope and replay budget already hold, both unchanged.
+    rule 4c's scope and replay budget already hold.
+
+    Card LINK-STANDING-IMPORT-LIMITERS (amended in place): on a derived run,
+    rule 4c's scope leaves out, before its budget, a home that only the
+    run's member facts name and whose name has no token anywhere in the
+    caller's preprocessed unit. The unit never declares the name, so Clang
+    gives it no type there and (14) cannot hold. Such a home is not held,
+    not probed, not counted toward the budget and not listed among the
+    caller's refusals; the unit row counts it (`cross_unit_unprobed_homes`).
+    A name the unit declares or uses stays in scope and is probed; when it
+    cannot be typed it still refuses. Before the card, the run-wide
+    member-named set (23 Monkey plugin-API and librdkafka list-destructor
+    functions on the user's linked run) was probed in every caller and
+    exhausted the budget of 95 units.
 
     The type comes from Clang's name-filtered dump of the unit the route
     already preprocesses, with one appended probe,
@@ -10549,8 +10573,11 @@ safety claim and no validation of the detach representation premise.
     `a_usable_second_configuration_refuses`,
     `the_census_leaves_the_linked_home_unique`,
     `an_outside_second_configuration_admits_the_linked_home`,
-    `outside_vectors_hold`); [report](../reports/link-standing/README.md),
-    [two-configuration keys](../reports/link-standing-selection-two-configuration-keys/README.md).
+    `outside_vectors_hold`); for the unprobed homes
+    `QCore.CrossUnitReplayBudget` (`unprobed_is_never_held`,
+    `probing_shrinks_reachable`); [report](../reports/link-standing/README.md),
+    [two-configuration keys](../reports/link-standing-selection-two-configuration-keys/README.md),
+    [import limiters](../reports/link-standing-import-limiters/README.md).
 
 <a id="constraint-41"></a>
 

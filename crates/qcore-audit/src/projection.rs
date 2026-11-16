@@ -728,6 +728,7 @@ pub fn project_unit_into_with_cross_unit(
                     homes: Vec::new(),
                     reachable: 0,
                     named_only: 0,
+                    unprobed: 0,
                     withheld: None,
                 }
             }
@@ -878,8 +879,10 @@ pub fn project_unit_into_with_cross_unit(
 }
 
 /// Card **CURRENT-RUN-WORKER-SPIN** (rule 4c, amended): a caller whose
-/// reachable homes exceeded the per-unit replay budget held no import; its
-/// unit row and console line name why.
+/// reachable homes exceeded the per-unit replay budget held only the
+/// budget's subset (card LINK-STANDING-IMPORT-LIMITERS); its unit row and
+/// console line name the withheld homes. Under a derived resolution the row
+/// also counts the member-named homes left unprobed for want of a token.
 fn record_withheld(
     scoped: Option<&qcore_c_gateway::legacy_c::CrossUnitCallerImports>,
     report: &mut AuditReport,
@@ -888,6 +891,12 @@ fn record_withheld(
     if let Some(reason) = scoped.and_then(|scoped| scoped.withheld.as_deref()) {
         report.record_cross_unit_withheld(reason);
         say!(out, "    {reason}");
+    }
+    if let Some(unprobed) = scoped
+        .map(|scoped| scoped.unprobed)
+        .filter(|count| *count > 0)
+    {
+        report.record_cross_unit_unprobed(unprobed);
     }
 }
 
@@ -995,11 +1004,20 @@ pub fn project_prepared_unit_into_with_link_standing(
     counts: &mut AuditCounts,
     out: &mut String,
 ) -> Result<(), String> {
+    // Card LINK-STANDING-IMPORT-LIMITERS (rule 40): under a derived
+    // resolution a member-named home without a token in the caller's unit
+    // leaves the scope before the budget (it cannot pass condition 14).
     let scoped = if run_homes.is_empty() {
         None
     } else {
         prepared.preprocessed_source().ok().map(|source| {
-            qcore_c_gateway::legacy_c::cross_unit_for_caller(source, contracts, run_homes)
+            if admission.is_some() {
+                qcore_c_gateway::legacy_c::cross_unit_for_linked_caller(
+                    source, contracts, run_homes,
+                )
+            } else {
+                qcore_c_gateway::legacy_c::cross_unit_for_caller(source, contracts, run_homes)
+            }
         })
     };
     let (scoped, link_refusals) = match (scoped, admission) {
