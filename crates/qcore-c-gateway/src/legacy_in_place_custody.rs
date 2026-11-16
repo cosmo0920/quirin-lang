@@ -72,6 +72,14 @@ pub(crate) const ACTUAL_REFUSAL: &str = "in-place resource object is not the add
 /// this one.
 pub(crate) const STATIC_KEY_RELEASE_REFUSAL: &str = "finaliser of a thread key held by static storage: the holder's lifetime is outside this frame (rule 11v)";
 
+/// Card CURRENT-CONTEXT-NEW-TRIAGE (D3): the refusal of a `thread_key`
+/// creation into anything but an object of static storage duration. An
+/// automatic key would be a tracked in-place object, and a by-value use of
+/// one (`(void) pthread_getspecific(k)`) can reach a statement route that
+/// reads it as data (the card's gate finding), so no key is tracked.
+pub(crate) const THREAD_KEY_STORAGE_REFUSAL: &str =
+    "thread key created into an object that is not of static storage duration (rule 11v (5))";
+
 /// The refusal of an initialiser whose status no plain name holds, or is
 /// assigned to a name the body takes the address of.
 pub(crate) const WITNESS_REFUSAL: &str =
@@ -141,8 +149,12 @@ impl InPlaceNames {
                     continue;
                 }
                 if let Some(name) = address_of_name(argument) {
-                    if kind == ResourceKind::ThreadKey && static_objects.contains(name) {
-                        static_keys.insert(name.to_owned());
+                    if kind == ResourceKind::ThreadKey {
+                        // Card CURRENT-CONTEXT-NEW-TRIAGE (D3): a key is held
+                        // by static storage or refused; it is never tracked.
+                        if static_objects.contains(name) {
+                            static_keys.insert(name.to_owned());
+                        }
                     } else {
                         kinds.entry(name.to_owned()).or_default().insert(kind);
                     }
@@ -297,6 +309,18 @@ impl Parser<'_> {
                         .is_some_and(|name| self.in_place_names.static_key(name))
             })
             .collect::<Vec<_>>();
+        // Card CURRENT-CONTEXT-NEW-TRIAGE (D3): a key created anywhere but
+        // into static storage refuses.
+        if (0..contract.parameters.len()).any(|position| {
+            contract.parameter_kind(position) == ResourceKind::ThreadKey
+                && matches!(
+                    contract.parameters.get(position),
+                    Some(ResourceParameterMode::Out { .. })
+                )
+                && !static_held.contains(&position)
+        }) {
+            return Err(THREAD_KEY_STORAGE_REFUSAL.to_owned());
+        }
         let initialiser = contract
             .parameters
             .iter()
@@ -605,66 +629,7 @@ pub(crate) fn join_witnesses(
 /// position's place. A node a route lowered without it would drop the
 /// effect, so it is refused instead (`Unsupported`, the path is unmodelled).
 pub(crate) fn verify_cfg(cfg: &mut LegacyCfg) {
-    // Card CURRENT-CONTEXT-NEW-TRIAGE (D3, rule 11v (4)): the objects an
-    // in-place initialiser of this CFG binds, with their kinds. A call node
-    // naming one at any position but an in-place position of its kind reads
-    // tracked storage as data, whichever route lowered it (the statement
-    // guard sees only the first classification; a fallback that re-lowers
-    // `(void) pthread_getspecific(key)` produced such a node), so it is
-    // refused here.
-    let tracked = cfg
-        .nodes
-        .iter()
-        .filter_map(|node| match &node.instruction {
-            LegacyInstruction::ContractCall {
-                arguments,
-                contract,
-                ..
-            } => Some((arguments, contract)),
-            _ => None,
-        })
-        .flat_map(|(arguments, contract)| {
-            arguments
-                .iter()
-                .enumerate()
-                .filter(|(position, _)| {
-                    contract.parameter_kind(*position).is_in_place()
-                        && matches!(
-                            contract.parameters.get(*position),
-                            Some(ResourceParameterMode::Out { .. })
-                        )
-                })
-                .filter_map(|(position, argument)| {
-                    argument
-                        .clone()
-                        .map(|name| (name, contract.parameter_kind(position)))
-                })
-                .collect::<Vec<_>>()
-        })
-        .collect::<BTreeMap<String, ResourceKind>>();
     for node in &mut cfg.nodes {
-        if let LegacyInstruction::ContractCall {
-            arguments,
-            contract,
-            ..
-        } = &node.instruction
-            && let Some(name) = arguments
-                .iter()
-                .enumerate()
-                .find_map(|(position, argument)| {
-                    let name = argument.as_deref()?;
-                    let kind = tracked.get(name)?;
-                    (contract.parameter_kind(position) != *kind).then_some(name)
-                })
-        {
-            node.instruction = LegacyInstruction::Unknown {
-                description: format!(
-                    "tracked in-place object `{name}` used outside a declared in-place position is outside the resource projection (rule 11v)"
-                ),
-                writes: super::RefusedWrites::Unbounded,
-            };
-            continue;
-        }
         let LegacyInstruction::ContractCall {
             arguments,
             contract,

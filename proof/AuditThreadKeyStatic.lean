@@ -17,7 +17,7 @@ import QCore.ThreadKeyStatic
 /-! Card **CURRENT-CONTEXT-NEW-TRIAGE** (D3, gateway rule 11v (5)): the in-place
 `thread_key` kind. A key created into static storage binds no frame obligation
 (P-THREAD-KEY-STATIC, stated); a static key's finaliser is refused; an
-automatic key is CG25's in-place protocol with a by-value finaliser. The
+automatic key's creation is refused, so no key is ever tracked. The
 static/automatic split is read off the token stream and Clang (trust boundary
 28), pinned by `crates/qcore-c-gateway/tests/thread_key_in_place.rs`. -/
 
@@ -26,8 +26,6 @@ static/automatic split is read off the token stream and Clang (trust boundary
 #print axioms QCore.ThreadKeyStatic.a_static_creation_binds_no_storage
 #print axioms QCore.ThreadKeyStatic.a_static_finaliser_is_refused
 #print axioms QCore.ThreadKeyStatic.a_static_finaliser_is_never_safe
-#print axioms QCore.ThreadKeyStatic.an_automatic_key_created_and_deleted_owes_nothing
-#print axioms QCore.ThreadKeyStatic.an_automatic_key_never_deleted_leaks
-#print axioms QCore.ThreadKeyStatic.a_failed_automatic_creation_owes_nothing
-#print axioms QCore.ThreadKeyStatic.a_second_delete_is_a_candidate
+#print axioms QCore.ThreadKeyStatic.an_automatic_creation_is_refused
+#print axioms QCore.ThreadKeyStatic.an_automatic_creation_tracks_nothing
 #print axioms QCore.ThreadKeyStatic.the_two_static_creations_owe_nothing

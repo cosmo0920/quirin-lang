@@ -387,3 +387,14 @@ that names an object an in-place initialiser of the same CFG binds, at any
 position but an in-place position of its kind, is refused, whichever route
 lowered it. `rd_regex_match` keeps its admission, and `(void)
 pthread_getspecific(key)` over a tracked key refuses.
+
+Second correction (`private/repro/d3-targeted.log`): the CFG-level check
+did not catch the case either. The fallback's node carries no place for a
+by-value scalar actual, so no name is there to match. That check is
+reverted. D3 now **never tracks a thread key**: a creation into anything
+but static storage refuses (`THREAD_KEY_STORAGE_REFUSAL`, rule 11v (5),
+`QCore.ThreadKeyStatic.an_automatic_creation_is_refused`), so no read after
+a delete can be certified. No Fluent Bit or Monkey row creates an automatic
+key. The same fallback escape for a tracked `regex` object (`(void) f(&re)`
+at an unkinded position) predates this card; it is registered as
+`CG25-VOID-CAST-GUARD-ESCAPE`, not repaired here.

@@ -4651,8 +4651,11 @@ own anchor here.
     `ResourceKind::finalised_by_value`). `thread_key` is the second in-place
     kind, finalised by value: libc's `pthread_key_create` (applies only with a
     null destructor, C04.5) initialises `&k`; `pthread_key_delete(k)` takes the
-    whole `k` (`in_place_actuals`). `&k` of one automatic object is (1)-(4)
-    unchanged. The null destructor is spelled `0` or the C11 null pointer
+    whole `k` (`in_place_actuals`). A creation into anything but static
+    storage refuses (`THREAD_KEY_STORAGE_REFUSAL`): an automatic key would be
+    tracked by value, and the card's gate found a statement fallback that
+    re-lowered `(void) pthread_getspecific(k)` as a plain borrowed call even
+    after `pthread_key_delete(k)`, so no key is tracked. The null destructor is spelled `0` or the C11 null pointer
     constant `(void *) 0` (glibc's `NULL`), admitted at a pointer premise of
     `0` by §C04.5.1 (user decision 2026-11-16 "Admit (void *) 0
     (Recommended)"; `legacy_literal_premise::void_pointer_null_constant`,
@@ -4664,12 +4667,9 @@ own anchor here.
     borrowed (`legacy_classify.rs`). A by-value delete of such a `G` refuses
     (`STATIC_KEY_RELEASE_REFUSAL`), as does a key reached through a pointer,
     a thread-local key and a delete of an untracked key; the getters are not
-    kinded, so naming a tracked automatic key there refuses, and the guard's
-    refusal is final (`is_guard_refusal`), and `verify_cfg` refuses any call
-    node naming a tracked object at a position that is not an in-place
-    position of its kind, whichever route lowered it (a statement fallback
-    used to re-admit `(void) f(obj)` as a plain borrowed call, a data route
-    over tracked storage). **Do not** read
+    kinded, and the guard's own refusal is final (`is_guard_refusal`). The
+    same fallback escape for the `regex` kind is a registered follow-up
+    (`CG25-VOID-CAST-GUARD-ESCAPE`). **Do not** read
     a thread-local, member or pointer-reached key as static, drop the literal
     destructor premise, or accept a static key's delete without a reading of
     its holder. Measured: see the report (`mk_http_thread_initialize_tls_once`

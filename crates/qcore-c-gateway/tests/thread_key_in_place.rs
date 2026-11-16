@@ -16,8 +16,9 @@
 //! `thread_key` kind, read through the production libc declarations of
 //! `pthread_key_create` / `pthread_key_delete` (`threads.qv`).
 //!
-//! * `&k`, `k` one automatic object: CG25's in-place protocol (status witness,
-//!   by-value delete discharges, a missing delete leaks).
+//! * `&k`, `k` one automatic object: refused. An automatic key would be a
+//!   tracked by-value object, and the card's gate found a statement route
+//!   that reads one as data, so no key is tracked.
 //! * `&G`, `G` of static storage duration: the key is held by static storage
 //!   (P-THREAD-KEY-STATIC), so no frame obligation and no witness.
 //! * Refused: a static key's delete, a thread-local key, a key reached
@@ -80,13 +81,6 @@ impl Run {
         self.diagnostics.iter().any(|kind| {
             matches!(kind, LegacyDiagnosticKind::Unsupported { description } if description.contains(fragment))
         })
-    }
-
-    fn count(&self, predicate: impl Fn(&LegacyDiagnosticKind) -> bool) -> usize {
-        self.diagnostics
-            .iter()
-            .filter(|kind| predicate(kind))
-            .count()
     }
 }
 
@@ -221,101 +215,50 @@ fn a_static_keys_delete_is_refused() {
     assert!(run.refused("thread key held by static storage"), "{run:?}");
 }
 
-/// An automatic key: created, tested, deleted by value.
+/// An automatic key is never tracked: its creation refuses (rule 11v (5)).
+/// A tracked by-value key could reach a statement route that reads it as
+/// data: the card's gate found `(void) pthread_getspecific(key)` admitted
+/// after `pthread_key_delete(key)`. Every form refuses, so no read after a
+/// delete can be certified.
 #[test]
-fn an_automatic_key_created_and_deleted_is_safe() {
+fn an_automatic_key_is_refused() {
     if !clang_available() {
         return;
     }
-    let run = run("void subject(void) { pthread_key_t key; int r; \
-         r = pthread_key_create(&key, 0); if (r) return; pthread_key_delete(key); }");
-    assert_eq!(run.status, AnalysisStatus::Safe, "{run:?}");
-}
-
-/// The getter is not kinded in D3: naming a tracked key there is a data
-/// route over tracked storage, refused (rule 11v (4)), in every spelling,
-/// including a cast to `void` that a statement fallback used to re-lower as a
-/// plain borrowed call (so a read after the delete went unseen).
-#[test]
-fn a_getter_naming_a_tracked_key_is_refused() {
-    if !clang_available() {
-        return;
+    for body in [
+        "pthread_key_t key; int r; r = pthread_key_create(&key, 0); if (r) return; \
+         pthread_key_delete(key);",
+        "pthread_key_t key; int r; r = pthread_key_create(&key, 0); if (r) return;",
+        "pthread_key_t key; pthread_key_create(&key, 0);",
+        "pthread_key_t key; int r; r = pthread_key_create(&key, 0); if (r) return; \
+         pthread_key_delete(key); (void) pthread_getspecific(key);",
+        "pthread_key_t key; int r; r = pthread_key_create(&key, 0); if (r) return; \
+         (void) pthread_getspecific(key); pthread_key_delete(key);",
+    ] {
+        let run = run(&format!("void subject(void) {{ {body} }}"));
+        assert_eq!(run.status, AnalysisStatus::Unknown, "{body}: {run:?}");
+        assert!(
+            run.refused("thread key created into an object that is not of static storage duration"),
+            "{body}: {run:?}"
+        );
     }
-    let run = run("void subject(void) { pthread_key_t key; int r; \
-         r = pthread_key_create(&key, 0); if (r) return; \
-         (void) pthread_getspecific(key); pthread_key_delete(key); }");
-    assert_eq!(run.status, AnalysisStatus::Unknown, "{run:?}");
-    let after_delete = self::run(
-        "void subject(void) { pthread_key_t key; int r; \
-         r = pthread_key_create(&key, 0); if (r) return; \
-         pthread_key_delete(key); (void) pthread_getspecific(key); }",
-    );
-    assert_eq!(
-        after_delete.status,
-        AnalysisStatus::Unknown,
-        "{after_delete:?}"
-    );
-    assert!(
-        after_delete.refused("tracked in-place object `key`"),
-        "{after_delete:?}"
-    );
 }
 
+/// A local shadowing a file-scope key is automatic, so it is refused, never
+/// read as the static holder.
 #[test]
-fn an_automatic_key_never_deleted_leaks() {
-    if !clang_available() {
-        return;
-    }
-    let run = run("void subject(void) { pthread_key_t key; int r; \
-         r = pthread_key_create(&key, 0); if (r) return; }");
-    assert_eq!(run.status, AnalysisStatus::Unsafe, "{run:?}");
-    assert_eq!(
-        run.count(|kind| matches!(kind, LegacyDiagnosticKind::Leak { .. })),
-        1,
-        "{run:?}"
-    );
-}
-
-#[test]
-fn an_automatic_key_deleted_twice_is_a_double_release() {
-    if !clang_available() {
-        return;
-    }
-    let run = run("void subject(void) { pthread_key_t key; int r; \
-         r = pthread_key_create(&key, 0); if (r) return; \
-         pthread_key_delete(key); pthread_key_delete(key); }");
-    assert_eq!(run.status, AnalysisStatus::Unsafe, "{run:?}");
-    assert_eq!(
-        run.count(|kind| matches!(kind, LegacyDiagnosticKind::DoubleRelease { .. })),
-        1,
-        "{run:?}"
-    );
-}
-
-/// An automatic key's status must be witnessed (rule 11v (3), unchanged).
-#[test]
-fn an_automatic_key_with_a_discarded_status_is_refused() {
-    if !clang_available() {
-        return;
-    }
-    let run = run(
-        "void subject(void) { pthread_key_t key; pthread_key_create(&key, 0); \
-         pthread_key_delete(key); }",
-    );
-    assert_eq!(run.status, AnalysisStatus::Unknown, "{run:?}");
-    assert!(run.refused("in-place initialiser status"), "{run:?}");
-}
-
-/// A local shadowing a file-scope key is automatic, so it is tracked.
-#[test]
-fn a_local_shadowing_a_file_scope_key_is_tracked() {
+fn a_local_shadowing_a_file_scope_key_is_refused() {
     if !clang_available() {
         return;
     }
     let run = run("pthread_key_t key;\n\
          void subject(void) { pthread_key_t key; int r; \
          r = pthread_key_create(&key, 0); if (r) return; }");
-    assert_eq!(run.status, AnalysisStatus::Unsafe, "{run:?}");
+    assert_eq!(run.status, AnalysisStatus::Unknown, "{run:?}");
+    assert!(
+        run.refused("thread key created into an object that is not of static storage duration"),
+        "{run:?}"
+    );
 }
 
 /// Deleting a key this body never created, held by no static name, refuses.
