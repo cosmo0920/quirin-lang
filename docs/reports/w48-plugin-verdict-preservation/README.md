@@ -97,9 +97,16 @@ system runs carry no checker binding. No prediction was required.
 
 ## 4. Gate
 
-See [gate.json](gate.json) (scoped card gate, `scripts/gate_scope.py --base
-d7a497822`); commands, exits, counts and log paths are in the reply and the
-increment paragraph.
+Scoped card gate on `d23e9f2ee` (`sh private/toolchain/env.sh python3
+scripts/gate_scope.py --base d7a497822`, exit 0; [gate.json](gate.json), run
+directory `private/gate-scope/20261116T155516Z-3042812/`): submodules 0; fmt
+0; clippy (6 packages, and the measure plugin's 5 test targets) 0; Rust suite
+0 — 273 units, 278 summaries, 3,518 passed, 0 failed, 5 ignored; both
+reevaluation examples 0; Lean 0 (18 modules, 18 audits); Python 0 (779
+tests). A previous run on `a69318414` failed only the Python step
+(`test_tracked_files`: rule 29's tree-walk tripwire, a `read_dir` in the new
+trace), fixed in `d23e9f2ee`; Clang 21 (`private/toolchain/env.sh`) was
+present, so the Clang-dependent traces ran.
 
 ## 5. Boundaries and follow-ons
 
