@@ -994,7 +994,8 @@ impl LinkStanding {
 mod tests {
     use super::*;
     use qcore_c_gateway::legacy_c::{
-        C11TranslationUnit, LegacyFunctionScope, export_cross_unit_homes, prepare_translation_unit,
+        AnalysisStatus, C11TranslationUnit, LegacyFunctionScope, export_cross_unit_homes,
+        prepare_translation_unit,
     };
 
     #[test]
@@ -1180,11 +1181,90 @@ mod tests {
         );
     }
 
+    /// The status of `function`'s row in a unit result.
+    fn row_status(
+        result: &qcore_c_gateway::legacy_c::UnrestrictedLegacyResult,
+        function: &str,
+    ) -> Option<AnalysisStatus> {
+        use qcore_c_gateway::legacy_c::UnrestrictedLegacyResult;
+        match result {
+            UnrestrictedLegacyResult::Safe(certificate) => certificate
+                .summary
+                .functions
+                .get(function)
+                .map(|row| row.status),
+            UnrestrictedLegacyResult::Unsafe(summary)
+            | UnrestrictedLegacyResult::Unknown {
+                partial: Some(summary),
+                ..
+            } => summary.functions.get(function).map(|row| row.status),
+            UnrestrictedLegacyResult::Unknown { partial: None, .. } => None,
+        }
+    }
+
+    /// The diagnostics of `function`'s row, rendered.
+    fn row_diagnostics(
+        result: &qcore_c_gateway::legacy_c::UnrestrictedLegacyResult,
+        function: &str,
+    ) -> String {
+        use qcore_c_gateway::legacy_c::UnrestrictedLegacyResult;
+        match result {
+            UnrestrictedLegacyResult::Unsafe(summary)
+            | UnrestrictedLegacyResult::Unknown {
+                partial: Some(summary),
+                ..
+            } => format!("{:?}", summary.functions.get(function)),
+            _ => String::new(),
+        }
+    }
+
+    /// Card LINK-STANDING-IMPORT-LIMITERS: `small` calls `f0`..`f23`; a
+    /// file-scope table names `f24`, which nothing calls. The unit reaches
+    /// 25 homes, one over the budget; `small`'s 24 fill it.
+    fn table_caller(names: &[String]) -> String {
+        let (last, called) = names.split_last().expect("homes");
+        format!(
+            "{}void small(void) {{ {} }}\nvoid (*const table[])(void) = {{ {last} }};\n",
+            names
+                .iter()
+                .map(|name| format!("void {name}(void);\n"))
+                .collect::<String>(),
+            called
+                .iter()
+                .map(|name| format!("{name}(); "))
+                .collect::<String>(),
+        )
+    }
+
+    /// Card LINK-STANDING-IMPORT-LIMITERS: `small` calls `f0`; `big` calls
+    /// `f1`..`f24`. The unit reaches 25 homes, one over the budget.
+    fn two_function_caller(names: &[String]) -> String {
+        let (first, rest) = names.split_first().expect("homes");
+        format!(
+            "{}void small(void) {{ {first}(); }}\nvoid big(void) {{ {} }}\n",
+            names
+                .iter()
+                .map(|name| format!("void {name}(void);\n"))
+                .collect::<String>(),
+            rest.iter()
+                .map(|name| format!("{name}(); "))
+                .collect::<String>(),
+        )
+    }
+
+    /// Card LINK-STANDING-IMPORT-LIMITERS (rule 4c, amended): a caller
+    /// reaching more homes than the budget holds a subset of exactly the
+    /// budget, whole function sets first (`small`'s `f0`; `big`'s 24 homes
+    /// do not fit beside it), then by name (`f1`, `f10`, ... `f8`), so `f9`
+    /// is withheld. `small` is Safe on its held import and its certificate
+    /// checks; `big` keeps an uncontracted call to `f9` and is Unknown. The
+    /// check still refuses a home set above the budget before any replay.
     #[test]
-    fn a_caller_reaching_more_homes_than_the_budget_holds_none() {
+    fn a_caller_over_the_budget_holds_whole_function_sets_first() {
         use qcore_c_gateway::legacy_c::{
             CROSS_UNIT_REPLAY_BUDGET_PER_UNIT, UnrestrictedLegacyResult,
-            analyze_prepared_translation_unit_with_cross_unit, cross_unit_for_caller,
+            analyze_prepared_translation_unit_with_cross_unit, check_legacy_safety_certificate,
+            cross_unit_for_caller,
         };
         if qcore_c_gateway::clang_command().is_err() {
             return;
@@ -1194,36 +1274,95 @@ mod tests {
         let names = (0..count)
             .map(|index| format!("f{index}"))
             .collect::<Vec<_>>();
-        let calls = names.iter().map(String::as_str).collect::<Vec<_>>();
-        let caller = caller_unit(&calls);
+        let caller = prepare_translation_unit(&C11TranslationUnit {
+            source: &two_function_caller(&names),
+            function_scope: LegacyFunctionScope::MainSourceDefinitions,
+            ..Default::default()
+        });
         let source = caller.preprocessed_source().unwrap();
         let scoped = cross_unit_for_caller(source, &environment, &homes);
         assert_eq!(scoped.reachable, count);
-        assert!(scoped.homes.is_empty());
-        assert!(scoped.environment.inferred_imports().is_empty());
-        assert!(scoped.environment.cross_unit_import_identities().is_empty());
+        assert_eq!(scoped.homes.len(), CROSS_UNIT_REPLAY_BUDGET_PER_UNIT);
+        assert_eq!(scoped.homes[0].function, "f0");
+        assert!(scoped.homes.iter().all(|home| home.function != "f9"));
+        assert!(!scoped.environment.inferred_imports().contains_key("f9"));
+        assert!(
+            !scoped
+                .environment
+                .cross_unit_import_identities()
+                .contains_key("f9")
+        );
         assert!(
             scoped
                 .withheld
                 .as_deref()
-                .is_some_and(|reason| reason.contains("replay budget exhausted"))
+                .is_some_and(|reason| reason.contains("replay budget exceeded")
+                    && reason.ends_with("withheld: f9")),
+            "{:?}",
+            scoped.withheld
         );
-        // Exhaustion is Unknown: every call stays uncontracted.
+        // A rerun reads the same subset.
+        let again = cross_unit_for_caller(source, &environment, &homes);
+        assert_eq!(
+            again
+                .homes
+                .iter()
+                .map(|home| &home.function)
+                .collect::<Vec<_>>(),
+            scoped
+                .homes
+                .iter()
+                .map(|home| &home.function)
+                .collect::<Vec<_>>()
+        );
         let result = analyze_prepared_translation_unit_with_cross_unit(
             &caller,
-            "caller",
+            "small",
             &scoped.environment,
             &scoped.homes,
         )
         .unwrap();
+        // `small`'s held import is adopted; the withheld home stays
+        // uncontracted, so `big` (and so the unit) is Unknown.
+        assert_eq!(row_status(&result, "small"), Some(AnalysisStatus::Safe));
+        assert_eq!(row_status(&result, "big"), Some(AnalysisStatus::Unknown));
+        assert!(row_diagnostics(&result, "big").contains("uncontracted function `f9`"));
+        // A unit whose only withheld home it never calls is Safe on the
+        // subset, and its certificate replays exactly the 24 held homes.
+        let table = prepare_translation_unit(&C11TranslationUnit {
+            source: &table_caller(&names),
+            function_scope: LegacyFunctionScope::MainSourceDefinitions,
+            ..Default::default()
+        });
+        let scoped =
+            cross_unit_for_caller(table.preprocessed_source().unwrap(), &environment, &homes);
         assert!(
-            matches!(result, UnrestrictedLegacyResult::Unknown { .. }),
-            "{result:?}"
+            scoped
+                .withheld
+                .as_deref()
+                .is_some_and(|reason| reason.ends_with("withheld: f24")),
+            "{:?}",
+            scoped.withheld
         );
+        let result = analyze_prepared_translation_unit_with_cross_unit(
+            &table,
+            "small",
+            &scoped.environment,
+            &scoped.homes,
+        )
+        .unwrap();
+        let UnrestrictedLegacyResult::Safe(certificate) = result else {
+            panic!("the held subset was not adopted: {result:?}");
+        };
+        assert_eq!(
+            certificate.cross_unit_homes.len(),
+            CROSS_UNIT_REPLAY_BUDGET_PER_UNIT
+        );
+        check_legacy_safety_certificate(&certificate).unwrap();
         // The check refuses a home set above the budget before any replay.
         let refused = analyze_prepared_translation_unit_with_cross_unit(
             &caller,
-            "caller",
+            "small",
             &environment,
             &homes,
         )
@@ -1819,15 +1958,32 @@ extern fn protocol_host(c: ptr<mut, u8>) -> unit contract { requires resource_co
         qcore_c_gateway::legacy_c::UnrestrictedLegacyResult,
         Vec<(String, String)>,
     ) {
+        analyse_entry(caller, "caller", derived, linked, environment, homes)
+    }
+
+    /// The derived route's caller path: rule 4c's scope under a derived
+    /// resolution (`cross_unit_for_linked_caller`, as `projection.rs` takes
+    /// it), rule 40's admission, then the analysis of `entry`.
+    fn analyse_entry(
+        caller: &qcore_c_gateway::legacy_c::PreparedTranslationUnit,
+        entry: &str,
+        derived: &Derived,
+        linked: bool,
+        environment: &ResourceContracts,
+        homes: &[qcore_c_gateway::legacy_c::CrossUnitHomeEvidence],
+    ) -> (
+        qcore_c_gateway::legacy_c::UnrestrictedLegacyResult,
+        Vec<(String, String)>,
+    ) {
         use qcore_c_gateway::legacy_c::{
-            analyze_prepared_translation_unit_with_cross_unit, cross_unit_for_caller,
+            analyze_prepared_translation_unit_with_cross_unit, cross_unit_for_linked_caller,
         };
         let scoped =
-            cross_unit_for_caller(caller.preprocessed_source().unwrap(), environment, homes);
+            cross_unit_for_linked_caller(caller.preprocessed_source().unwrap(), environment, homes);
         let (scoped, refusals) = derived.standing.admit(scoped, linked, caller);
         let result = analyze_prepared_translation_unit_with_cross_unit(
             caller,
-            "caller",
+            entry,
             &scoped.environment,
             &scoped.homes,
         )
@@ -1907,13 +2063,16 @@ extern fn protocol_host(c: ptr<mut, u8>) -> unit contract { requires resource_co
         );
     }
 
-    /// Rule 4c's replay budget is unchanged under a derived resolution: a
-    /// caller reaching more derived homes than the budget holds none, and
-    /// rule 40 refuses nothing further.
+    /// Card LINK-STANDING-IMPORT-LIMITERS: rule 4c's budget under a derived
+    /// resolution holds the same subset as under a stated map, and rule 40
+    /// still checks each held home: `small`'s home is adopted and its
+    /// certificate replays the 24 held homes, while `big` keeps a call to a
+    /// withheld home and stays Unknown.
     #[test]
-    fn a_caller_over_the_budget_holds_no_derived_home() {
+    fn a_caller_over_the_budget_imports_its_subset_of_derived_homes() {
         use qcore_c_gateway::legacy_c::{
             CROSS_UNIT_REPLAY_BUDGET_PER_UNIT, UnrestrictedLegacyResult,
+            check_legacy_safety_certificate,
         };
         if qcore_c_gateway::clang_command().is_err() {
             return;
@@ -1929,19 +2088,100 @@ extern fn protocol_host(c: ptr<mut, u8>) -> unit contract { requires resource_co
             .collect::<String>();
         let (derived, environment, homes) = derived_homes(&fixture, &home);
         assert_eq!(homes.len(), count);
-        let calls = names.iter().map(String::as_str).collect::<Vec<_>>();
-        let caller = caller_unit(&calls);
-        let scoped = qcore_c_gateway::legacy_c::cross_unit_for_caller(
+        let caller = prepared(&two_function_caller(&names));
+        let scoped = qcore_c_gateway::legacy_c::cross_unit_for_linked_caller(
             caller.preprocessed_source().unwrap(),
             &environment,
             &homes,
         );
-        assert!(scoped.withheld.is_some());
-        let (result, refusals) = analyse(&caller, &derived, true, &environment, &homes);
-        assert!(refusals.is_empty(), "{refusals:?}");
+        assert_eq!(scoped.homes.len(), CROSS_UNIT_REPLAY_BUDGET_PER_UNIT);
         assert!(
-            matches!(result, UnrestrictedLegacyResult::Unknown { .. }),
-            "{result:?}"
+            scoped
+                .withheld
+                .as_deref()
+                .is_some_and(|reason| reason.ends_with("withheld: f9")),
+            "{:?}",
+            scoped.withheld
         );
+        let (result, refusals) =
+            analyse_entry(&caller, "small", &derived, true, &environment, &homes);
+        assert!(refusals.is_empty(), "{refusals:?}");
+        assert_eq!(row_status(&result, "small"), Some(AnalysisStatus::Safe));
+        assert_eq!(row_status(&result, "big"), Some(AnalysisStatus::Unknown));
+        let table = prepared(&table_caller(&names));
+        let (result, refusals) =
+            analyse_entry(&table, "small", &derived, true, &environment, &homes);
+        assert!(refusals.is_empty(), "{refusals:?}");
+        let UnrestrictedLegacyResult::Safe(certificate) = result else {
+            panic!("the held subset was not adopted: {result:?}");
+        };
+        assert_eq!(
+            certificate.cross_unit_homes.len(),
+            CROSS_UNIT_REPLAY_BUDGET_PER_UNIT
+        );
+        check_legacy_safety_certificate(&certificate).unwrap();
+    }
+
+    /// Card LINK-STANDING-IMPORT-LIMITERS (rule 40): a home only the run's
+    /// member facts name is not probed in a caller whose unit has no token
+    /// of it: it is neither held nor refused, and it leaves the budget. A
+    /// caller that declares the name keeps it in scope and is probed: a
+    /// declaration Clang cannot type (no prototype) still refuses. A stated
+    /// map's scope (rule 4c alone) still holds the member-named home.
+    #[test]
+    fn a_member_named_home_the_caller_never_declares_is_not_probed() {
+        use qcore_c_gateway::legacy_c::{cross_unit_for_caller, cross_unit_for_linked_caller};
+        if qcore_c_gateway::clang_command().is_err() {
+            return;
+        }
+        let names = ["callee".to_owned(), "named".to_owned()];
+        let fixture = artifact(names.iter().map(|name| strong(name, 0)).collect());
+        let (derived, environment, homes) = derived_homes(
+            &fixture,
+            "void callee(void) { return; }\nvoid named(void) { return; }\n",
+        );
+        assert_eq!(homes.len(), 2);
+        let mut facts = qcore_c_gateway::callback_member_closure::MemberFacts::default();
+        facts.stores.insert(
+            "T.cb".into(),
+            BTreeSet::from([qcore_c_gateway::callback_member_closure::Flow::Function {
+                name: "named".into(),
+            }]),
+        );
+        let run = std::sync::Arc::new(qcore_c_gateway::member_run_facts::RunMemberFacts::new(
+            vec![facts],
+            BTreeMap::new(),
+        ));
+        let held = |scoped: &qcore_c_gateway::legacy_c::CrossUnitCallerImports| {
+            scoped
+                .homes
+                .iter()
+                .map(|home| home.function.clone())
+                .collect::<Vec<_>>()
+        };
+        let silent = prepared("void callee(void);\nvoid caller(void) { callee(); }\n");
+        let source = silent.preprocessed_source().unwrap();
+        qcore_c_gateway::member_run_facts::scoped(Some(run.clone()), || {
+            let stated = cross_unit_for_caller(source, &environment, &homes);
+            assert_eq!(held(&stated), ["callee", "named"]);
+            let linked = cross_unit_for_linked_caller(source, &environment, &homes);
+            assert_eq!(held(&linked), ["callee"]);
+            assert_eq!((linked.reachable, linked.unprobed), (1, 1));
+            let (_, refusals) = derived.standing.admit(linked, true, &silent);
+            assert!(refusals.is_empty(), "{refusals:?}");
+        });
+        let declaring =
+            prepared("void callee(void);\nvoid named();\nvoid caller(void) { callee(); }\n");
+        let source = declaring.preprocessed_source().unwrap();
+        qcore_c_gateway::member_run_facts::scoped(Some(run), || {
+            let linked = cross_unit_for_linked_caller(source, &environment, &homes);
+            assert_eq!(held(&linked), ["callee", "named"]);
+            assert_eq!(linked.unprobed, 0);
+            let (kept, refusals) = derived.standing.admit(linked, true, &declaring);
+            assert_eq!(held(&kept), ["callee"]);
+            assert_eq!(refusals.len(), 1, "{refusals:?}");
+            assert_eq!(refusals[0].0, "named");
+            assert!(refusals[0].1.contains("no prototype"), "{refusals:?}");
+        });
     }
 }
