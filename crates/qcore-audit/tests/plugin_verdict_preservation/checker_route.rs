@@ -49,9 +49,11 @@ use qcore_audit::plugin_verdicts::{
     Recovered, Source, SourceKind, of_source, project_function, project_unit,
 };
 use qcore_audit::providers::{ContractInput, SelectionSource, resolve_providers};
+use qcore_audit::report_components::check;
 use qcore_audit::user_plugins::{PluginCheckers, checker_request, checker_task};
 use qcore_contract::load_path_manifest::load_contract_load_path_manifest;
 use qcore_contract::profile_loader::load_profile_directory;
+use qcore_schemas::composition::{Component, ComponentSidecar};
 use qcore_schemas::verdict::Verdict;
 use qcore_verifier_host::*;
 use serde_json::{Value, json};
@@ -518,6 +520,53 @@ fn assert_every_row_projects(report: &Value) {
     }
 }
 
+/// The component sidecar (`<report>.components.json`, card AUDIT-COMPOSITION)
+/// keeps each plugin apart from the host: a linked unit row is the host's
+/// component (its own verdict, no external checker) and one component per
+/// plugin (its identity as the external checker, its links' join), and the
+/// published row is their derivation (`report_components::check`). An
+/// unlinked row is one host component, as before.
+fn assert_components(fixture: &Fixture, out: &str, report: &Value) {
+    let sidecar: ComponentSidecar =
+        serde_json::from_value(fixture.json(&format!("{out}/report.components.json"))).unwrap();
+    check(report, &sidecar).unwrap();
+    for (key, unit) in sidecar
+        .order
+        .iter()
+        .zip(report["units"].as_array().unwrap())
+    {
+        let derivation = sidecar.contribution.derive(key).unwrap();
+        let (hosts, plugins): (Vec<&Component>, Vec<&Component>) = derivation
+            .components
+            .iter()
+            .partition(|component| component.provenance.external_checker.is_none());
+        assert_eq!(hosts.len(), 1, "{key:?}");
+        assert_eq!(derivation.verdict.as_str(), unit["status"]);
+        let Some(own) = unit.get("host_verdict") else {
+            assert!(plugins.is_empty(), "{key:?}");
+            continue;
+        };
+        assert!(hosts[0].verdict.verdict >= own["status"].as_str().unwrap().parse().unwrap());
+        let mut links = BTreeSet::new();
+        for function in unit["functions"].as_array().unwrap() {
+            for link in function["plugin_links"].as_array().into_iter().flatten() {
+                links.insert(link["plugin"].as_str().unwrap().to_owned());
+                let checker = plugins
+                    .iter()
+                    .find(|component| {
+                        component.provenance.external_checker.as_ref().unwrap().id
+                            == link["plugin"].as_str().unwrap()
+                    })
+                    .unwrap_or_else(|| panic!("no component for {link}"));
+                assert!(
+                    checker.verdict.verdict >= link["verdict"].as_str().unwrap().parse().unwrap()
+                );
+            }
+        }
+        assert_eq!(plugins.len(), links.len(), "{key:?}");
+    }
+}
+
 /// `Pending` and `Unknown` on the command line, through checkpoints and their
 /// composition; two plugins disagreeing; a failing plugin; a plugin beside a
 /// host `Unsafe`.
@@ -577,6 +626,11 @@ fn pending_and_unknown_survive_checkpoints_and_composition() {
     for out in ["whole", "composed"] {
         let report = fixture.json(&format!("{out}/report.json"));
         assert_every_row_projects(&report);
+        if out == "whole" {
+            // A checkpointed run and its composition write no component
+            // sidecar (follow-up CHECKPOINT-COMPONENT-SIDECAR).
+            assert_components(&fixture, out, &report);
+        }
         // Two plugins disagreeing beside a host Safe: the uncertified Safe is
         // Pending, the crash Unknown, the function their join; each plugin's
         // own record comes back out.
@@ -701,6 +755,9 @@ fn certified_safe_and_validated_unsafe_survive_checkpoints_and_composition() {
         for out in ["whole", "composed"] {
             let report = fixture.json(&format!("{out}/report.json"));
             assert_every_row_projects(&report);
+            if out == "whole" {
+                assert_components(&fixture, out, &report);
+            }
             let pool = unit(&report, "pool_user.c");
             let use_pool = function(pool, "use_pool");
             assert_eq!(use_pool["host_status"], "Safe");
@@ -730,6 +787,7 @@ fn certified_safe_and_validated_unsafe_survive_checkpoints_and_composition() {
         succeeded(&fixture.current("cli", &[]));
         let report = fixture.json("cli/report.json");
         assert_every_row_projects(&report);
+        assert_components(&fixture, "cli", &report);
         let pool = unit(&report, "pool_user.c");
         assert_eq!(pool["status"], "Pending");
         assert_eq!(pool["reason_code"], "plugin-claim-uncertified");

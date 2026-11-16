@@ -216,6 +216,8 @@ struct Link {
     module: String,
     /// What the plugin itself answered (card W48-PLUGIN-VERDICT-PRESERVATION).
     answer: Answer,
+    /// The package's version and digest (null when it does not verify).
+    package: Value,
     verdict: ReasonedVerdict,
 }
 
@@ -359,6 +361,9 @@ pub fn run(
             "package": binding.package_spelling,
             "task_digest": task.task_digest(),
         });
+        // The package identity a plugin component's provenance names; null
+        // for a package that does not verify.
+        let mut package = json!({"version": null, "digest": null});
         let (plugin, answer) = match ProcessProvider::from_package(&binding.package) {
             Err(error) => (
                 binding.package_spelling.clone(),
@@ -371,6 +376,10 @@ pub fn run(
                 let manifest = provider.manifest().clone();
                 row["plugin_id"] = json!(manifest.plugin_id);
                 row["package_digest"] = json!(manifest.package_digest);
+                package = json!({
+                    "version": manifest.package_version,
+                    "digest": manifest.package_digest,
+                });
                 row["execution_profile"] = json!(provider.execution_profile().to_string());
                 row["limits"] = json!({
                     "timeout_ms": manifest.limits.timeout_ms,
@@ -413,6 +422,7 @@ pub fn run(
                 user_crate: binding.user_crate.clone(),
                 module: binding.module.clone(),
                 answer: answer.clone(),
+                package: package.clone(),
                 verdict: verdict.clone(),
             });
         }
@@ -524,6 +534,7 @@ pub(crate) fn fold_unit(
                     "crate": link.user_crate,
                     "module": link.module,
                     "answer": link.answer,
+                    "package": link.package,
                     "verdict": link.verdict.verdict(),
                     "reasons": link.verdict.reasons(),
                 })
