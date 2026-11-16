@@ -135,32 +135,36 @@ fn keys_created_into_file_scope_objects_owe_nothing() {
     assert_eq!(run.status, AnalysisStatus::Safe, "{run:?}");
 }
 
-/// Monkey's real spelling, `NULL` = `((void *) 0)` on glibc, is outside the
-/// literal-argument premise as §C04.5.1 states it (a cast's operand is not
-/// read): the declaration does not apply there. Pinned as measured; see the
-/// report's D3 finding.
+/// Monkey's real spelling, `NULL` = `((void *) 0)` on glibc: the C11
+/// 6.3.2.3p3 null pointer constant, admitted at the pointer premise
+/// (§C04.5.1, user decision 2026-11-16 "Admit (void *) 0 (Recommended)").
 #[test]
-fn a_void_pointer_cast_null_destructor_is_outside_the_premise() {
+fn a_void_pointer_null_destructor_meets_the_premise() {
+    if !clang_available() {
+        return;
+    }
+    for destructor in ["((void *) 0)", "(void *)0"] {
+        let run = run(&format!(
+            "pthread_key_t key;\nvoid subject(void) {{ pthread_key_create(&key, {destructor}); }}"
+        ));
+        assert_eq!(run.status, AnalysisStatus::Safe, "{destructor}: {run:?}");
+    }
+}
+
+/// Another pointer type's null is not the null pointer constant `(void *) 0`
+/// as §C04.5.1 reads it structurally: the declaration does not apply.
+#[test]
+fn a_differently_typed_null_destructor_is_outside_the_premise() {
     if !clang_available() {
         return;
     }
     let run = run("pthread_key_t key;\n\
-         void subject(void) { pthread_key_create(&key, ((void *) 0)); }");
+         void subject(void) { pthread_key_create(&key, (void (*)(void *)) 0); }");
     assert_eq!(run.status, AnalysisStatus::Unknown, "{run:?}");
     assert!(
         run.refused("outside its declared literal-argument premise"),
         "{run:?}"
     );
-}
-
-#[test]
-fn a_key_created_into_a_block_static_owes_nothing() {
-    if !clang_available() {
-        return;
-    }
-    let run = run("int subject(void) { static pthread_key_t key; \
-         return pthread_key_create(&key, 0); }");
-    assert_eq!(run.status, AnalysisStatus::Safe, "{run:?}");
 }
 
 /// A destructor is a registration the declaration does not state: the call

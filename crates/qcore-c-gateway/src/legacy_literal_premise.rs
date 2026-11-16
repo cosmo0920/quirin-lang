@@ -140,6 +140,9 @@ pub(super) fn unmet_description(function: &str) -> Option<String> {
 pub(super) struct LiteralArgument {
     pub(super) index: usize,
     pub(super) literal: Vec<String>,
+    /// Card CURRENT-CONTEXT-NEW-TRIAGE (D3, §C04.5.1): the premise names a
+    /// pointer-typed parameter.
+    pub(super) pointer: bool,
 }
 
 /// Every literal-argument premise a contract environment declares.
@@ -226,6 +229,7 @@ impl LiteralPremises {
                         entry.push(LiteralArgument {
                             index: clause.parameter,
                             literal: clause.literal,
+                            pointer: clause.pointer,
                         });
                     }
                 }
@@ -289,7 +293,7 @@ impl LiteralPremises {
         self.declared(function).iter().find(|premise| {
             arguments
                 .and_then(|arguments| arguments.get(premise.index))
-                .is_none_or(|actual| !satisfies(actual, &premise.literal))
+                .is_none_or(|actual| !satisfies_premise(actual, premise))
         })
     }
 }
@@ -344,6 +348,32 @@ const INTEGER_SUFFIXES: &[&str] = &[
 /// `docs/reports/remaining-hash-refine/README.md`.
 fn satisfies(actual: &[String], literal: &[String]) -> bool {
     actual == literal || canonical_integer(actual).as_deref() == Some(literal)
+}
+
+/// Card **CURRENT-CONTEXT-NEW-TRIAGE** (D3, user decision 2026-11-16 "Admit
+/// (void *) 0 (Recommended)", §C04.5.1): [`satisfies`], plus, at a
+/// pointer-typed premise whose declared literal is `0`, the C11 6.3.2.3p3 null
+/// pointer constant `(void *) 0`: matched enclosing parentheses, a cast whose
+/// type name is exactly `void *`, and an operand [`canonical_integer`] reads as
+/// `0`. Structural: nothing is evaluated. `(char *) 0`, `(const void *) 0`,
+/// `(void *) 1`, `(void *) x` and any cast at a scalar premise refuse.
+fn satisfies_premise(actual: &[String], premise: &LiteralArgument) -> bool {
+    satisfies(actual, &premise.literal)
+        || (premise.pointer && premise.literal == ["0"] && void_pointer_null_constant(actual))
+}
+
+/// Whether `actual` is `(void *) 0`, modulo matched enclosing parentheses
+/// around the whole and around the operand.
+fn void_pointer_null_constant(actual: &[String]) -> bool {
+    let tokens = strip_matched_parentheses(actual);
+    let [open, void, star, close, operand @ ..] = tokens else {
+        return false;
+    };
+    open == "("
+        && void == "void"
+        && star == "*"
+        && close == ")"
+        && canonical_integer(operand).is_some_and(|value| value == ["0"])
 }
 
 /// The declared spelling an actual stands for, or `None` if this relation does
@@ -576,6 +606,7 @@ contract {
             [LiteralArgument {
                 index: 2,
                 literal: vec!["0".to_owned()],
+                pointer: false,
             }]
         );
     }
@@ -782,6 +813,64 @@ contract {
             assert!(
                 !satisfies(&actual(spelling), &zero),
                 "`{spelling}` must stay refused; deciding it would need {ground}"
+            );
+        }
+    }
+
+    /// Card CURRENT-CONTEXT-NEW-TRIAGE (D3, user decision 2026-11-16 "Admit
+    /// (void *) 0 (Recommended)"): at a pointer-typed premise whose literal is
+    /// `0`, the C11 6.3.2.3p3 null pointer constant `(void *) 0` is admitted
+    /// structurally; every other cast, operand or premise keeps its refusal.
+    #[test]
+    fn the_void_pointer_null_constant_satisfies_only_a_pointer_premise_of_zero() {
+        let pointer_zero = LiteralArgument {
+            index: 1,
+            literal: vec!["0".to_owned()],
+            pointer: true,
+        };
+        let scalar_zero = LiteralArgument {
+            pointer: false,
+            ..pointer_zero.clone()
+        };
+        let pointer_one = LiteralArgument {
+            literal: vec!["1".to_owned()],
+            ..pointer_zero.clone()
+        };
+        for spelling in [
+            "((void *) 0)",
+            "(void *)0",
+            "(void *) 0",
+            "((void *) (0))",
+            "(void *) 0L",
+            "0",
+        ] {
+            assert!(
+                satisfies_premise(&actual(spelling), &pointer_zero),
+                "`{spelling}` is the null pointer constant at a pointer premise of `0`"
+            );
+        }
+        for spelling in [
+            "(char *) 0",
+            "(const void *) 0",
+            "(void *) 1",
+            "(void *) x",
+            "(void **) 0",
+            "(void *) 0 + 0",
+            "(void *) -0",
+        ] {
+            assert!(
+                !satisfies_premise(&actual(spelling), &pointer_zero),
+                "`{spelling}` must stay refused at a pointer premise"
+            );
+        }
+        for spelling in ["((void *) 0)", "(void *) 0"] {
+            assert!(
+                !satisfies_premise(&actual(spelling), &scalar_zero),
+                "`{spelling}` must stay refused at a scalar premise"
+            );
+            assert!(
+                !satisfies_premise(&actual(spelling), &pointer_one),
+                "`{spelling}` must stay refused against a declared literal other than `0`"
             );
         }
     }

@@ -490,10 +490,12 @@ Every other spelling MUST be refused, because deciding it would require a capabi
 |---|---|
 | `0 + 0`, `1 - 1`, `-(0)`, `-0` against `0` | arithmetic |
 | `0x0`, `0b0`, `00` | a base; `010` is 8, so a leading zero MUST NOT be stripped |
-| `(void *) 0`, `(long) 0` | reaching into a cast's operand |
+| `(void *) 0`, `(long) 0` | reaching into a cast's operand (but see the null pointer constant below) |
 | an `enum` constant, or any other identifier | symbol resolution |
 
 An object-like **macro** is not among the refusals: a consumer that reads preprocessed text sees the expansion, so a macro naming the constant has already become the constant.
+
+**The null pointer constant** (card CURRENT-CONTEXT-NEW-TRIAGE, D3; user decision 2026-11-16 "Admit (void *) 0 (Recommended)"). At a premise whose parameter is **pointer-typed** (`ptr<…>` or `fnptr`) and whose declared literal is `0`, a consumer MUST also admit the C11 6.3.2.3p3 null pointer constant `(void *) 0`. That is: matched enclosing parentheses around the whole, then a cast whose type name is exactly the tokens `void *`, then an operand that the two erasures above reduce to `0` (`((void *) 0)`, glibc's `NULL`; `(void *)0`; `(void *) (0)`; `(void *) 0L`). The decision stays structural: nothing is evaluated, and the cast is matched by its tokens. `(char *) 0`, `(const void *) 0` (a null pointer, but not a null pointer constant in 6.3.2.3p3's words), `(void **) 0`, `(void *) 1`, `(void *) x`, a cast to a function-pointer type, and any cast at a scalar premise or against a declared literal other than `0` stay refused. The Lean model is `QCore.NullPointerConstantPremise`.
 
 Because the admitted spellings are exactly the declared constant, honoring them is not a widening of the declaration: it is applying the declaration where the clause already says it applies. A consumer MUST NOT admit a spelling whose value it has not decided structurally, and MUST NOT compare numeric values.
 

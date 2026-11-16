@@ -483,6 +483,11 @@ pub struct DeclaredLiteralArgument {
     pub parameter: usize,
     /// The declared literal, as C token texts.
     pub literal: Vec<String>,
+    /// Card **CURRENT-CONTEXT-NEW-TRIAGE** (D3, §C04.5.1): whether the
+    /// parameter is pointer-typed (`ptr<…>` or `fnptr`). At such a parameter
+    /// with the declared literal `0`, a consumer also admits the C11 6.3.2.3p3
+    /// null pointer constant `(void *) 0`.
+    pub pointer: bool,
 }
 
 /// What a declared loop-owner obligation says the operation does to the loop
@@ -2179,7 +2184,15 @@ fn load_function_in(
                     decl.parameters[parameter].name.value
                 ));
             }
-            literal_arguments.push(DeclaredLiteralArgument { parameter, literal });
+            let pointer = matches!(
+                token_kinds(&decl.parameters[parameter].type_source)?.first(),
+                Some(TokenKind::Word(word)) if word == "ptr" || word == "fnptr"
+            );
+            literal_arguments.push(DeclaredLiteralArgument {
+                parameter,
+                literal,
+                pointer,
+            });
             continue;
         }
         // Card MK-EVENT-DESCRIPTOR-QUANT (§C04.6.2, rule 38): a release
