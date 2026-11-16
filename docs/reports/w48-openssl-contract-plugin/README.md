@@ -196,7 +196,48 @@ at its pin) and measured on this card's preparations
 ([inputs](artifacts/measure-inputs.json); figures are on these
 preparations, not the published baselines):
 
-MEASURE-RESULT
+| Route (profile) | Base | Tip | Moves | Declared check |
+|---|---|---|---:|---|
+| corpus (`eight-home`, 66910c10) | 1,081 Safe / 3,617 Unknown / 6 Unsafe; units 13 / 160 / 6 | identical | 0 | **match** |
+| system (`fluent-bit-system`, 046accf6) | 103 / 341 / 4 | identical | 0 | **match** |
+| slice (`fluent-bit-tail-pause`, 90978ac6) | 59 Safe / 4 Pending / 340 Unknown / 1 Unsafe | identical | 0 | **match** |
+
+Records: [system and slice](measure/native-comparison-system-slice.json)
+(run `measure/arbiter-1`), [corpus](measure/native-comparison-corpus.json)
+(run `measure/corpus-2`). The first run's corpus route failed on both sides
+before analysing anything: `run_pinned_audit.py` sets
+`QCORE_CLANG=/usr/bin/clang`, which this host does not have. Both side
+exports were then patched identically
+([patch_run_pinned_clang.py](scripts/patch_run_pinned_clang.py): honour the
+environment's `QCORE_CLANG`, which the measure route sets to
+`/usr/lib/llvm-21/bin/clang`) and the corpus route alone was remeasured; the
+tracked script is unchanged.
+
+**Every difference is environment.** No function row or unit verdict moves
+on any route, and none of the 4,704 corpus rows has a content change. What
+differs:
+
+* `review_holds` on 2 system rows and 4 slice rows (each in two
+  configurations): the hold records the contract module's path, which
+  spells each side's export; equal once `<root>` replaces it
+  ([review_holds_diff.py](scripts/review_holds_diff.py));
+* unit fields `cross_unit_link_resolution` and `reading_site_environments`
+  (corpus 179 units, system 17) and `compile_configuration` (slice 17): every
+  differing value is a digest (`home_environment_sha256`, an environment's
+  key, `resource_contract_sources`, `inventory_sha256`) over inputs keyed by
+  path, and the files themselves are byte-length-equal across sides
+  ([unit_field_diff.py](scripts/unit_field_diff.py) lists them);
+  `git diff d7a497822 aa8db89bd` touches no file under `contract/`,
+  `providers/`, `compiler/src/` or any analysis crate, so no contract text or
+  analysis code can differ;
+* the sides' `analyzer_revision`: the exports have no `.git`, so the build
+  took the enclosing worktree's HEAD at build time.
+
+The prediction holds because a subcommand plugin's claims reach only its own
+report's artifact rows, never an audit report's function or unit rows or a
+`.qo` checkpoint; the W48-PLUGIN-VERDICT-PRESERVATION integrator note names
+that route `SUBCOMMAND-CLAIMS-INTO-AUDIT-ROWS`, on which
+`W48-OPENSSL-CALLER-COMPOSITION` depends.
 
 ## 7. Tests
 
@@ -214,14 +255,49 @@ in its `EXCLUSIVE` phase (process plugins under declared quotas, a 300 ms timeou
 
 ## 8. Gate
 
-GATE-RESULT
+`python3 scripts/gate_scope.py --base d7a497822` through
+`private/toolchain/env.sh` at `c004b59a7` (full mode: the root `Cargo.toml`,
+`Cargo.lock` and the test runner changed), [gate.json](gate/gate.json),
+log directory `private/gate-scope/20261116T162442Z-3638087/`, Clang
+[21.1.8](gate/clang-version.txt):
+
+| Step | Exit | Count |
+|---|---:|---|
+| submodules | 0 | 1 |
+| fmt | 0 | |
+| clippy `--all-targets -D warnings` | 0 | |
+| rust suite (`run_test_binaries.py`, whole) | 0 | **644 units, 688 summaries: 9,543 passed, 0 failed, 19 ignored** |
+| provider lock (`cargo metadata --locked`) | 0 | |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| Lean (`check_lean_audits.py`) | 0 | **436 audits** (+1) |
+| Python (`unittest discover -s scripts/tests`) | **1** | 779 tests, 1 failure: `test_gate_slot_queue.Status.test_each_waiter_shows_its_queue_position` |
+
+The Python failure is in the gate-slot queue tests, which this card does
+not touch; it ran while other cards held audit and build slots (load average
+about 10–12). In isolation `test_gate_slot_queue` passed (39 tests), a full
+rerun under load failed two other gate-slot timing rows
+(`test_gate_slot_lane`), those two modules together then passed, and a full
+rerun at load 1.4 passed **779 / 0**
+([log](gate/python-rerun.log), `QUIRIN_CARD_GATE_BASE=d7a497822`). Recorded,
+not weakened. The provider gate is not selected (`providers/` is unchanged).
+
+The earlier gate run at `125008156` (`private/gate-scope/20261116T155135Z-3005735/`)
+failed only `test_gate_scope_census.test_the_census_covers_the_suite`: the
+new crate's five units took the read census below its 90% coverage floor.
+They were traced with `gate_read_census.py record --packages
+quirin-audit-plugin-openssl` and `reduce` and added to
+`docs/reports/gate-scope-precise-selection/read-census.json` (no existing
+unit changed; none reads a tracked file at run time) at `c004b59a7`.
+Commits after `c004b59a7` change this report, its artifacts and the
+amendments only.
 
 ## 9. Follow-ups
 
 Registered by [integration-amendments.json](integration-amendments.json):
 
 * `W48-OPENSSL-CALLER-COMPOSITION` — no analysis route reads the plugin's
-  binding verdicts, so `rd_kafka_transport_ssl_clear_error` (blocked by
+  binding verdicts (dependency: `SUBCOMMAND-CLAIMS-INTO-AUDIT-ROWS`, registered
+  by W48-PLUGIN-VERDICT-PRESERVATION, not yet on main), so `rd_kafka_transport_ssl_clear_error` (blocked by
   `ERR_clear_error` alone) and the census callers do not move.
 * `W48-OPENSSL-UNCHECKED-CLASSES` — the 52 `Unknown` bindings of §3.
 * `W48-OPENSSL-DISTRIBUTION-BUILD` — the check reads the upstream release,
