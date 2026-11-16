@@ -422,7 +422,9 @@ impl Parser<'_> {
         instruction: LegacyInstruction,
         saved: &super::probe_state::ParserProbeState,
     ) -> LegacyInstruction {
-        if self.in_place_names.is_empty() {
+        if self.in_place_names.is_empty()
+            || matches!(instruction, LegacyInstruction::Unknown { .. })
+        {
             return instruction;
         }
         let texts = tokens
@@ -433,24 +435,7 @@ impl Parser<'_> {
         let Some(name) = mentioned.first().copied() else {
             return instruction;
         };
-        // Card CURRENT-CONTEXT-NEW-TRIAGE (D3): a refusal of a statement that
-        // mentions a tracked object becomes this guard's refusal, which no
-        // later route re-lowers (`is_guard_refusal`). Before, an older
-        // refusal of `(void) f(obj)` went on to the cast fallback, which
-        // lowered the uncast call as a plain borrowed one. The rule's own
-        // refusals of an in-place call keep their text.
-        if declares_only(&texts, &mentioned) {
-            return instruction;
-        }
-        if let LegacyInstruction::Unknown { description, .. } = &instruction
-            && [ACTUAL_REFUSAL, WITNESS_REFUSAL, STATIC_KEY_RELEASE_REFUSAL]
-                .contains(&description.as_str())
-        {
-            return instruction;
-        }
-        if !matches!(instruction, LegacyInstruction::Unknown { .. })
-            && self.admits(&texts, &instruction, &mentioned)
-        {
+        if declares_only(&texts, &mentioned) || self.admits(&texts, &instruction, &mentioned) {
             return instruction;
         }
         self.restore_probe_state(saved);
@@ -620,7 +605,66 @@ pub(crate) fn join_witnesses(
 /// position's place. A node a route lowered without it would drop the
 /// effect, so it is refused instead (`Unsupported`, the path is unmodelled).
 pub(crate) fn verify_cfg(cfg: &mut LegacyCfg) {
+    // Card CURRENT-CONTEXT-NEW-TRIAGE (D3, rule 11v (4)): the objects an
+    // in-place initialiser of this CFG binds, with their kinds. A call node
+    // naming one at any position but an in-place position of its kind reads
+    // tracked storage as data, whichever route lowered it (the statement
+    // guard sees only the first classification; a fallback that re-lowers
+    // `(void) pthread_getspecific(key)` produced such a node), so it is
+    // refused here.
+    let tracked = cfg
+        .nodes
+        .iter()
+        .filter_map(|node| match &node.instruction {
+            LegacyInstruction::ContractCall {
+                arguments,
+                contract,
+                ..
+            } => Some((arguments, contract)),
+            _ => None,
+        })
+        .flat_map(|(arguments, contract)| {
+            arguments
+                .iter()
+                .enumerate()
+                .filter(|(position, _)| {
+                    contract.parameter_kind(*position).is_in_place()
+                        && matches!(
+                            contract.parameters.get(*position),
+                            Some(ResourceParameterMode::Out { .. })
+                        )
+                })
+                .filter_map(|(position, argument)| {
+                    argument
+                        .clone()
+                        .map(|name| (name, contract.parameter_kind(position)))
+                })
+                .collect::<Vec<_>>()
+        })
+        .collect::<BTreeMap<String, ResourceKind>>();
     for node in &mut cfg.nodes {
+        if let LegacyInstruction::ContractCall {
+            arguments,
+            contract,
+            ..
+        } = &node.instruction
+            && let Some(name) = arguments
+                .iter()
+                .enumerate()
+                .find_map(|(position, argument)| {
+                    let name = argument.as_deref()?;
+                    let kind = tracked.get(name)?;
+                    (contract.parameter_kind(position) != *kind).then_some(name)
+                })
+        {
+            node.instruction = LegacyInstruction::Unknown {
+                description: format!(
+                    "tracked in-place object `{name}` used outside a declared in-place position is outside the resource projection (rule 11v)"
+                ),
+                writes: super::RefusedWrites::Unbounded,
+            };
+            continue;
+        }
         let LegacyInstruction::ContractCall {
             arguments,
             contract,

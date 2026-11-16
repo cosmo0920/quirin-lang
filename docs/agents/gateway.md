@@ -4665,9 +4665,11 @@ own anchor here.
     (`STATIC_KEY_RELEASE_REFUSAL`), as does a key reached through a pointer,
     a thread-local key and a delete of an untracked key; the getters are not
     kinded, so naming a tracked automatic key there refuses, and the guard's
-    refusal is final: no later statement route re-lowers it (a statement
-    fallback used to re-admit `(void) f(obj)` as a plain borrowed call, a
-    data route over tracked storage; `is_guard_refusal`). **Do not** read
+    refusal is final (`is_guard_refusal`), and `verify_cfg` refuses any call
+    node naming a tracked object at a position that is not an in-place
+    position of its kind, whichever route lowered it (a statement fallback
+    used to re-admit `(void) f(obj)` as a plain borrowed call, a data route
+    over tracked storage). **Do not** read
     a thread-local, member or pointer-reached key as static, drop the literal
     destructor premise, or accept a static key's delete without a reading of
     its holder. Measured: see the report (`mk_http_thread_initialize_tls_once`

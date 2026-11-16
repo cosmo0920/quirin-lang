@@ -374,3 +374,16 @@ in-place object.
 The Python failure in that gate is the matrix's derived `qcore-schemas`
 version (`26.0.0` != `27.0.0`). It is expected for a schema bump: the
 integrator regenerates the matrix at landing.
+
+Correction after the next gate (`private/gate-d3-3`, `private/gate-d3-4`):
+making the guard's own refusal final was not enough. The cast statement's
+first classification is an older refusal, which the guard skips. Widening
+the guard to every refusal that mentions a tracked object broke
+`rd_regex_match`'s admitted `r = k_regexec(&re, str) != 1;` (a fallback
+lowers it correctly). That widening is reverted.
+
+The check now sits at the CFG (`in_place_custody::verify_cfg`). A call node
+that names an object an in-place initialiser of the same CFG binds, at any
+position but an in-place position of its kind, is refused, whichever route
+lowered it. `rd_regex_match` keeps its admission, and `(void)
+pthread_getspecific(key)` over a tracked key refuses.
