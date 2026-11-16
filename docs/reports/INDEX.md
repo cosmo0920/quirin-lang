@@ -719,6 +719,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [member-effect-summary](member-effect-summary/README.md) | MEMBER-EFFECT-SUMMARY |
 
+| [member-helper-clause-spelling](member-helper-clause-spelling/README.md) | MEMBER-HELPER-CLAUSE-SPELLING: the user keeps `resource_member_helper` |
+
 | [member-path-direct-refusal-text](member-path-direct-refusal-text/README.md) | MEMBER-PATH-DIRECT-REFUSAL-TEXT |
 
 | [member-path-unit-helpers](member-path-unit-helpers/README.md) | MEMBER-PATH-STATES-THROUGH-UNIT-HELPERS: rule 30's body check through the unit's helpers |

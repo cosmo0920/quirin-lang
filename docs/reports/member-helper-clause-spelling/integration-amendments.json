@@ -1,0 +1,17 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "MEMBER-HELPER-CLAUSE-SPELLING",
+  "base": "46bcd0304",
+  "measured_tip": "46bcd0304",
+  "profiles": [],
+  "increment_paragraph": "**MEMBER-HELPER-CLAUSE-SPELLING** (user decision; [report](../../reports/member-helper-clause-spelling/README.md)). The user keeps `resource_member_helper(P, TAG.PATH, H)`, the spelling RULE50-CONSUMER-COMPOSITION chose for gateway rule 51's clause (G05d, §C04.19.6). No code, contract, pin, rule or Lean change; the follow-up of the same id is retired. No gate step is affected beyond the Python suite's ledger checks.",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "MEMBER-HELPER-CLAUSE-SPELLING",
+      "operation": "retire",
+      "why": "The user confirmed the spelling resource_member_helper on 2026-11-16; no rename, so no loader, provider or pin change.",
+      "source": "docs/reports/member-helper-clause-spelling/README.md"
+    }
+  ]
+}

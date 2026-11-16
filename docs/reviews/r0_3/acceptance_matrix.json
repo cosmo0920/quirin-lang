@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 965
+  "named_followups": 964
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -13975,13 +13975,6 @@
    "id": "HELPER-STATES-BELOW-A-LINKED-OBJECT",
    "title": "Rule 51's helper states at the object linked at a stale path decide nothing today",
    "why": "Rule 51 composes the named helper's states at the one live object a consumer linked at the destroyer's stale path, but the tracker holds no link below a linked object (m->parent = t; t->callee = co refuses as an indirect access), so that step is exercised only through the helper's own direct call. DISCHARGE: track a link below a linked object and test the composed takes (and their double-release refusals) at a consumer, with Lean parity.",
-   "source": "docs/reports/rule50-consumer-composition/README.md",
-   "recorded_by": "RULE50-CONSUMER-COMPOSITION"
-  },
-  {
-   "id": "MEMBER-HELPER-CLAUSE-SPELLING",
-   "title": "resource_member_helper is the card's spelling, not a user decision",
-   "why": "RULE50-CONSUMER-COMPOSITION needed a stated composition, because a consumer in another unit cannot read the destroyer's body and body evidence feeds no analysis (rule 13f). It added resource_member_helper(P, TAG.PATH, H) (G05d) without a user decision on the spelling. DISCHARGE: the user confirms the spelling or chooses another; a rename is a loader, provider and pin change.",
    "source": "docs/reports/rule50-consumer-composition/README.md",
    "recorded_by": "RULE50-CONSUMER-COMPOSITION"
   },
