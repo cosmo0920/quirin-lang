@@ -835,6 +835,22 @@ admission and scalar forgetting; [report](../reports/w48-bottom-up-batch5/README
     whose effect still applies. `QCore.ListIteration`,
     `QCore.CheckedSpecification`, `QCore.RefusedCallHandOn`;
     [report](../reports/w45-fb-backlog-custody/README.md).
+    (6) The same holds for an O00 B08 field store `OWNER->F = V` refused
+    **before its effect** because `OWNER` does not resolve to one live identity
+    this body acquired (`resolved_aggregate_owner`; a borrowed or
+    `pthread_getspecific` result, a released, nullable or caller-held object):
+    it reports `UnknownAlias OWNER` and hands on `V`, or, for a contracted
+    call whose result the store would take, what (5) lists for that call
+    (`legacy_transfer::refused_store_hand_ons`). A `Clear` or identity-free
+    `AggregateStore` hands on nothing; an admitted store is untouched. It
+    only withdraws; the node keeps its refusal, so the function is never
+    `Safe`, and the store is **not** a custody transfer: accepting a list
+    root as an owner needs a retained-result relation and a checked owner
+    released on a known path, which no rule states. Without it Monkey's
+    `context_new` (the node linked into `thctx->contexts`, `thctx` from
+    `pthread_getspecific`) was accused of two leaks.
+    `QCore.RefusedStoreHandOn`;
+    [report](../reports/current-context-new-triage/README.md).
 
 <a id="constraint-6"></a>
 
@@ -862,7 +878,7 @@ admission and scalar forgetting; [report](../reports/w48-bottom-up-batch5/README
      first admission card to move no leaf, modelled wrappers that retain nothing.)
    * **Deciding** a leaf, where a **withdrawal** — the site marked through the
      unresolved-effect mechanism, so `report_leaks` skips it (`W44-LEAK-PIN-AUDIT`'s
-     refused hand-on rule, extended by constraint 5l (5)) — is not a **discharge**; only a
+     refused hand-on rule, extended by constraint 5l (5) and (6)) — is not a **discharge**; only a
      discharging contract or rule answers the leak itself.
    No move has promoted anything: a withdrawn leak moves a provisional `Unsafe`
    to `Unknown`, never to `Safe`, and no leak row is a validated upstream

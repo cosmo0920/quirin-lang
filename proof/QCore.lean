@@ -358,6 +358,7 @@ import QCore.ReferenceCount
 import QCore.ReferenceResult
 import QCore.RefusedCallHandOn
 import QCore.RefusedHandOnCustody
+import QCore.RefusedStoreHandOn
 import QCore.RefusedTestAccusation
 import QCore.RefusedWrites
 import QCore.RefutedContractWithdrawal
