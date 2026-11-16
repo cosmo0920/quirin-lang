@@ -265,3 +265,31 @@ and every condition apply to the held homes exactly as before.
 | `cross_unit_links::tests::a_caller_over_the_budget_imports_its_subset_of_derived_homes` | the same under a derived resolution, through rule 40's admission |
 | `cross_unit_links::tests::a_member_named_home_the_caller_never_declares_is_not_probed` | a member-named home without a token: held under a stated map, unprobed (not held, not refused) under a derived one; a K&R declaration keeps it in scope and it refuses "no prototype" |
 | `cross_unit_links::tests::a_caller_holds_and_replays_only_the_homes_it_may_reach` | unchanged: within budget the scope is as before |
+
+## Gate
+
+`python3 scripts/gate_scope.py --base 0f6e17118 --out private/gate-1`
+(full mode: the diff reaches `qcore-c-gateway`) at `4722c05d6`; console
+`/media/Data/GitHub/quirin-lang/private/link-limiters-logs-ae6c/gate-1.console.log`,
+record [`gate.json`](gate.json). Exit 0, 8 steps passed:
+
+| Step | Exit | Counts |
+|---|---:|---|
+| submodules | 0 | 1 submodule |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --all-targets -- -D warnings` | 0 | |
+| Rust suite (`run_test_binaries.py`, rust-suite slot) | 0 | 638 units, 9,512 passed, 0 failed, 17 ignored (3,793 s) |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| Lean (`QCore.CrossUnitReplayBudget`, `AuditCrossUnitReplayBudget.lean`) | 0 | 1 audit, 18 theorems, axioms only `propext`/`Quot.sound` |
+| Python (`unittest discover -s scripts/tests`) | 0 | 761 tests |
+
+The provider gate does not apply (no `providers/` change).
+
+## Measurement
+
+The integrator runs it, then reruns the user's `current` with the artifact
+and `--monkey-linked`:
+
+```text
+target/release/quirin-audit --plugin-path target/release --output <dir> --timeout-ms 36000000 measure --inputs crates/quirin-audit-plugin-measure/inputs/live.json --inputs-base /media/Data/GitHub/quirin-lang --side base=baseline:497bdeb906e1ad29a94f54079991f0b62bd701df --side tip=rev:0ae403bc0 --declared docs/reports/link-standing-import-limiters/PREDICTION.md
+```
