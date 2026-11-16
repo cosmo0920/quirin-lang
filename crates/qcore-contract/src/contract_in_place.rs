@@ -57,9 +57,8 @@ pub(super) fn check_parameter(
             ));
         }
         return match mode {
-            ResourceParameterMode::Released { nullable: false } | ResourceParameterMode::Borrowed => {
-                Ok(())
-            }
+            ResourceParameterMode::Released { nullable: false }
+            | ResourceParameterMode::Borrowed => Ok(()),
             _ => Err(format!(
                 "a by-value {spelling} position is a finaliser (`nonnull`) or a use; its initialiser names the object by address"
             )),

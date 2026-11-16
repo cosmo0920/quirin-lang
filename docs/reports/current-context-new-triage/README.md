@@ -300,3 +300,27 @@ User decisions, 2026-11-16, relayed by the integrator and quoted exactly:
 D3 is this card's next landable set ([prediction](PREDICTION-D3.md)); C
 follows on the same branch. D1 and D2 (OPENSSL-PROVIDER-PLUGIN) are separate
 cards.
+
+## D3 finding: Monkey spells the null destructor `NULL`
+
+A unit-scoped `current --monkey-linked` reproduction (base binary `p1` from
+`3d735b88c` with the base contracts, against the D3 binary;
+`private/repro/d3run-{p1,d3}`) shows **no status move**, against
+[PREDICTION-D3](PREDICTION-D3.md)'s `mk_http_thread_initialize_tls_once
+Unknown -> Safe`.
+
+Monkey writes `pthread_key_create(&key, NULL)`, and glibc's `NULL` is
+`((void *) 0)`. §C04.5.1 admits only `0` with matched parentheses and an
+integer suffix, and refuses `(void *) 0` explicitly ("reaching into a cast's
+operand"). So the declaration does not apply at any Monkey creation site.
+Six rows trade "call to uncontracted function `pthread_key_create`" for
+"outside its declared literal-argument premise":
+
+* `mk_http_thread_initialize_tls_once`, `mk_plugin_preworker_calls`,
+  `mk_set_up_tls_keys`, `mk_fifo_create`, `mk_tls_init`;
+* `mk_tls_exit`, whose static delete now refuses as rule 11v (5) says.
+
+The static-key and automatic-key readings are in place and pinned with a
+`0`-spelled destructor (`tests/thread_key_in_place.rs`). Whether to admit
+the C11 6.3.2.3p3 null pointer constant `(void *) 0` at a pointer premise is
+a specification choice, offered to the user in the hand-back.

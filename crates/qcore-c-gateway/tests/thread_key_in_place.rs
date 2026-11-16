@@ -83,7 +83,10 @@ impl Run {
     }
 
     fn count(&self, predicate: impl Fn(&LegacyDiagnosticKind) -> bool) -> usize {
-        self.diagnostics.iter().filter(|kind| predicate(kind)).count()
+        self.diagnostics
+            .iter()
+            .filter(|kind| predicate(kind))
+            .count()
     }
 }
 
@@ -119,9 +122,8 @@ fn run(source: &str) -> Run {
     }
 }
 
-/// `mk_http_thread_initialize_tls_once`'s shape: two keys created into
-/// file-scope objects, statuses discarded. BASE: `Unknown`, two uncontracted
-/// calls.
+/// `mk_http_thread_initialize_tls_once`'s shape with the destructor spelled
+/// `0`: two keys created into file-scope objects, statuses discarded.
 #[test]
 fn keys_created_into_file_scope_objects_owe_nothing() {
     if !clang_available() {
@@ -129,8 +131,26 @@ fn keys_created_into_file_scope_objects_owe_nothing() {
     }
     let run = run("pthread_key_t first_key; pthread_key_t second_key;\n\
          void subject(void) { pthread_key_create(&first_key, 0); \
-         pthread_key_create(&second_key, ((void *) 0)); }");
+         pthread_key_create(&second_key, (0)); }");
     assert_eq!(run.status, AnalysisStatus::Safe, "{run:?}");
+}
+
+/// Monkey's real spelling, `NULL` = `((void *) 0)` on glibc, is outside the
+/// literal-argument premise as §C04.5.1 states it (a cast's operand is not
+/// read): the declaration does not apply there. Pinned as measured; see the
+/// report's D3 finding.
+#[test]
+fn a_void_pointer_cast_null_destructor_is_outside_the_premise() {
+    if !clang_available() {
+        return;
+    }
+    let run = run("pthread_key_t key;\n\
+         void subject(void) { pthread_key_create(&key, ((void *) 0)); }");
+    assert_eq!(run.status, AnalysisStatus::Unknown, "{run:?}");
+    assert!(
+        run.refused("outside its declared literal-argument premise"),
+        "{run:?}"
+    );
 }
 
 #[test]
@@ -154,7 +174,7 @@ fn a_non_null_destructor_leaves_the_call_undeclared() {
          void subject(void) { pthread_key_create(&key, destroy_value); }");
     assert_eq!(run.status, AnalysisStatus::Unknown, "{run:?}");
     assert!(
-        run.refused("call to uncontracted function `pthread_key_create`"),
+        run.refused("call to `pthread_key_create` outside its declared literal-argument premise"),
         "{run:?}"
     );
 }
@@ -189,10 +209,7 @@ fn a_static_keys_delete_is_refused() {
     }
     let run = run("pthread_key_t key;\nvoid subject(void) { pthread_key_delete(key); }");
     assert_eq!(run.status, AnalysisStatus::Unknown, "{run:?}");
-    assert!(
-        run.refused("thread key held by static storage"),
-        "{run:?}"
-    );
+    assert!(run.refused("thread key held by static storage"), "{run:?}");
 }
 
 /// An automatic key: created, tested, deleted by value.
@@ -256,8 +273,10 @@ fn an_automatic_key_with_a_discarded_status_is_refused() {
     if !clang_available() {
         return;
     }
-    let run = run("void subject(void) { pthread_key_t key; pthread_key_create(&key, 0); \
-         pthread_key_delete(key); }");
+    let run = run(
+        "void subject(void) { pthread_key_t key; pthread_key_create(&key, 0); \
+         pthread_key_delete(key); }",
+    );
     assert_eq!(run.status, AnalysisStatus::Unknown, "{run:?}");
     assert!(run.refused("in-place initialiser status"), "{run:?}");
 }

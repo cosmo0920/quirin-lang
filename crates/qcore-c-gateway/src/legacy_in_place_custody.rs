@@ -188,21 +188,18 @@ impl InPlaceNames {
 }
 
 /// Card CURRENT-CONTEXT-NEW-TRIAGE (D3): whether `body` calls a declared
-/// `thread_key` initialiser (the only case the static-key reading needs the
-/// unit's static objects for).
+/// callee with a `thread_key` position (an initialiser, which the static-key
+/// reading needs the unit's static objects for, or a finaliser, whose refusal
+/// of a static key names it).
 pub(crate) fn calls_thread_key_initialiser(body: &[&str], contracts: &ResourceContracts) -> bool {
     body.windows(2).any(|pair| {
         pair[1] == "("
             && is_identifier(pair[0])
             && contracts.contract(pair[0]).is_some_and(|contract| {
                 contract
-                    .parameters
-                    .iter()
-                    .enumerate()
-                    .any(|(position, mode)| {
-                        matches!(mode, ResourceParameterMode::Out { .. })
-                            && contract.parameter_kind(position) == ResourceKind::ThreadKey
-                    })
+                    .parameter_kinds
+                    .values()
+                    .any(|kind| *kind == ResourceKind::ThreadKey)
             })
     })
 }
@@ -327,12 +324,12 @@ impl Parser<'_> {
                     Some(ResourceParameterMode::Out { .. })
                 )
             {
-                let named = raw.map(|argument| strip_parentheses(argument)).and_then(
-                    |argument| match argument {
+                let named = raw
+                    .map(|argument| strip_parentheses(argument))
+                    .and_then(|argument| match argument {
                         [name] if is_identifier(name) => Some(*name),
                         _ => None,
-                    },
-                );
+                    });
                 if let Some(name) = named
                     .filter(|name| self.in_place_names.kind(name) == Some(kind))
                     .filter(|name| {
