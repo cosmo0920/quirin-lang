@@ -1,0 +1,132 @@
+{
+ "schema_version": 1,
+ "generated_by": "providers/quirin-provider-openssl/scripts/pin_prototypes.py",
+ "version": "3.5.5",
+ "headers": {
+  "/usr/include/openssl/asn1.h": "4fa5c0b192a3eb73927fbec13c8a399831afd09bf4c0b5f551f025c7c8044a02",
+  "/usr/include/openssl/asn1err.h": "9d60638b3d0c52170d390fe566c0b96a6381590590cc3dd71339eb85140fe1d6",
+  "/usr/include/openssl/async.h": "708d52ecd7bb5ca83d243ddecb132db0693b0809f65c093eabda549156934030",
+  "/usr/include/openssl/asyncerr.h": "eb6ea0f0389aa7846ea5b8f5b7b8d2a82a7b52e7dbfa105bc137e52be1399a69",
+  "/usr/include/openssl/bio.h": "c2aa5855e8b17a316d5ec8222db127816c601ce5f19ef239788ad4cc24a1ea53",
+  "/usr/include/openssl/bioerr.h": "fe1bf57251e4eaab30d2a6aa2048ee93deb1f0f15ef6634f61093b4d405586c6",
+  "/usr/include/openssl/bn.h": "113a732a94b0221fdcda3e0b0f24b7d389072b2920291c23c0849c7bc5030b3f",
+  "/usr/include/openssl/bnerr.h": "beeb78746fbcc2c09e1f833f4c2ea72e845e757390aad7dc8699f7787b580204",
+  "/usr/include/openssl/buffer.h": "c7b9803f89bb492176a1e2738999dad86195ab8048a26e8ec9ef6948b8882e8a",
+  "/usr/include/openssl/buffererr.h": "4dea6e8ec7f09bfbdaa85fa3e75572b95d2ea62a813e7420a04f5f56ee7ccdfd",
+  "/usr/include/openssl/comp.h": "3f95492b4054a8064bc75f770766aa6c8c0866cbd267939460786e13092a053e",
+  "/usr/include/openssl/comperr.h": "03faa7ac9cf7ec99350a55758a685056dae8f75992887e0411c23b0d8c5d83b0",
+  "/usr/include/openssl/conf.h": "14c276c3b47e537d7efc1150bc4bf9054c85a1eba6f60bd7b237885327f071fa",
+  "/usr/include/openssl/conferr.h": "ea9346e399d5dd1fbcca4f34078e1acb5039333602ecaf72faa04e32cdd55484",
+  "/usr/include/openssl/conftypes.h": "496997cc0f4c32b840677eeefd3ecb488453254be6e228b8cd34d4a4061a9e28",
+  "/usr/include/openssl/core.h": "4d4e63e2e01d06530515adbbe3c93601c5f0f5e1a96754d34d3470bccfcbdbc3",
+  "/usr/include/openssl/core_dispatch.h": "43e25c38bbdc9b070ce14111d8722cf1c4072ba52fb0d0fe40f6fbbc2dc70365",
+  "/usr/include/openssl/crypto.h": "345267a63492320c5c23550bf10b6b94744c6250bcbb17a87954e324c7a51faf",
+  "/usr/include/openssl/cryptoerr.h": "c457c0591449551657a69ff9727784a79cc1afd899ac733c682c1a41fefdaa19",
+  "/usr/include/openssl/cryptoerr_legacy.h": "985664cb71a62441b2822028340bb4ad5e3f98d6c74ba4c1bc7c997e188b97d3",
+  "/usr/include/openssl/ct.h": "bafa52d57bb3da74016273aca034fdf1f402b935430cbc0943a7526bd7939d0a",
+  "/usr/include/openssl/cterr.h": "26d971ab2166ba4473864506dcd933290fa6c321956ef46220eb61fb33a04c89",
+  "/usr/include/openssl/dh.h": "25080c32c48d5a88053c4b83c326e8f024b68249a0ef65d3c45af4f9aab6e0c6",
+  "/usr/include/openssl/dherr.h": "70f9e260865a9aae4c5f9a72d42d878e4dc216c906709245a8da2cceb79c3a14",
+  "/usr/include/openssl/dsa.h": "dac47d9779f83eb4e5a4f57c234e6eb25277cea68001384360e16c8859c38338",
+  "/usr/include/openssl/dsaerr.h": "b8fb8dae664d18298ae4b0c5444378e3f5c5d095256acb50764230159b1a15d6",
+  "/usr/include/openssl/dtls1.h": "3477022a712ecbb2bfb61b297c57026f1c354d52c638dfb22292183bd68d2e8f",
+  "/usr/include/openssl/e_os2.h": "d7300e16ec04f764e8fd45ae5288c37ab5af09dd1ea204d17c54c0155c69921c",
+  "/usr/include/openssl/e_ostime.h": "0528cffa1548778b3ad52d4abb527e5f31590fb1bab4b0f55aad391efd79fd68",
+  "/usr/include/openssl/ec.h": "2cc0edb6a18c4c1199bfce6799ca56362a6c27d41dfdfee62177a3d53a8c9a65",
+  "/usr/include/openssl/ecerr.h": "c072432649cd1e4bd1eb8c1f636bc2b57045d6f620d69d61c85f589d1c6b63e3",
+  "/usr/include/openssl/engine.h": "185311cc9702aa00fcafefad6f83ca1f597659d5075b66100c61053e1be5f47d",
+  "/usr/include/openssl/engineerr.h": "2732c698916f320ba12ba690a80c1ef0651112015c5eac6141b1c3c315d1f5fc",
+  "/usr/include/openssl/err.h": "0d673984ff62d55d1fb4534d8136b7325e5264efeeb0b911cc94a4922681e080",
+  "/usr/include/openssl/evp.h": "41b42c68adfd98b9d8a80fb2d78bbdaf1094f43dd02be045c7d8605edf36a706",
+  "/usr/include/openssl/evperr.h": "ee0a462f1985667434a2b8a91d5df67ce2ee74e4ad9246f660dece5fafcf4474",
+  "/usr/include/openssl/hmac.h": "9caf0b993c6ae2b3c75b9b585c8539dd358ca5f4edc42447295f87fc504eb1b9",
+  "/usr/include/openssl/http.h": "1f8d65d9633d54a74e8477396f2e3d34f5cdafc753fa8d56a5ee31753f5b734f",
+  "/usr/include/openssl/indicator.h": "4be987d4fe4a4b39feac27c2ee85000e1b6ca7188d8ca9f75689a8205c2b4563",
+  "/usr/include/openssl/lhash.h": "ba50a0dc4caa9662e138f913566c44454a68f6e59c405c761c1f387f58855af4",
+  "/usr/include/openssl/macros.h": "de19de1ecdef8709fecdd76fcaa35e78ca22afd15a0e938f13d98857b8713f49",
+  "/usr/include/openssl/obj_mac.h": "d51cb3f619888a0485ba46ad886f76ac605ce78a3cfbc080460947ab2dbb3a02",
+  "/usr/include/openssl/objects.h": "b6227db488aa39ed20a29e67d48fe8fefb2f649a1afcc3149cba22ac26510057",
+  "/usr/include/openssl/objectserr.h": "fc14e6c9e71fb550363394f912cb72e6078dd11e300bdddfdd17ec118c88dc4b",
+  "/usr/include/openssl/opensslv.h": "7acbe88993a8691183aff3277743d8090c6bbba24b6e218919cf8afdbde42de6",
+  "/usr/include/openssl/params.h": "b76d73449d8d44d14a7da9918caf3d1feee85b384e2d62ace73a8a1126152702",
+  "/usr/include/openssl/pem.h": "9098124ff7a21c8f1db5ddead59b1cf092f88c9f44bf88dacd3c8de9c67ade76",
+  "/usr/include/openssl/pemerr.h": "18c1dbdde2452416b1d49c7512b7c4b8bf26ac7b83f5c0ee5e27e9bec454d2fb",
+  "/usr/include/openssl/pkcs7.h": "667c662d2efd30e5a69e61d8129770425479dae87c5cb28b0c0624ad7fff3b4d",
+  "/usr/include/openssl/pkcs7err.h": "717e017e7d0981928b33820660e19d5c264a06a5e824b94194036a8be92be07c",
+  "/usr/include/openssl/prov_ssl.h": "23b96759ae94e17c7c0e7ee32a531676be2a276a6d9802828e80268e20f224fd",
+  "/usr/include/openssl/quic.h": "a80af6c42394132eaad8de7177c6b0b3f747711730e8dd687acdc34284b3c2f8",
+  "/usr/include/openssl/rand.h": "cb240ffedfd9516ec7a8cd0796951d46a4707c0460f940371620c83f7bafd037",
+  "/usr/include/openssl/randerr.h": "a6acbb47da2f26fe5e572f232eb9d9ebcd65bb7c01d5984ab26229e5bf0bd45e",
+  "/usr/include/openssl/rsa.h": "86d3fcf7e4f018e512f025ba7e51c465a97e2d7d9cdb07cb89f9cda583f7afc4",
+  "/usr/include/openssl/rsaerr.h": "b4f87b5dddc672b81de0dfd7f3c4e6409887bd08b286c99ded8f1255e5836804",
+  "/usr/include/openssl/safestack.h": "0468b87ce8ea20069f621cc4dfc25fe6788408d5f46ce3baec738c89b64c2591",
+  "/usr/include/openssl/sha.h": "7e006accd6565cc97dee672c097acc5e38482be7cd4fa1e0c316bf466425b895",
+  "/usr/include/openssl/srtp.h": "6efa8edb1f040ba35cb05a671efc74c1494b9d4badc32d47cd5bb99e1a9cda38",
+  "/usr/include/openssl/ssl.h": "8d68f9a7d1f98ace505505767260a7013468ce6b0ab3fdb43c036adb17abc2a9",
+  "/usr/include/openssl/ssl2.h": "d33dc2afbcdee20f20ffcdd5cda6777c5e49a7cc37d513e4618b71a99129af20",
+  "/usr/include/openssl/ssl3.h": "f98e0eb1702bf99614e92e2d09f1af5b59309e156441e40ab711df7d661536aa",
+  "/usr/include/openssl/sslerr.h": "7a9dab7a198ea5c17fe5cf8e1905a54ae88c0044a86c1accf1e7cc9e7de374e2",
+  "/usr/include/openssl/sslerr_legacy.h": "988c235994713d83d73ee904804f7edb4f6e321b4ab94c5aa5a9a0c7134fb499",
+  "/usr/include/openssl/stack.h": "c81fbb17b5476dca609b96eb11372d1d246a49096838c2cf7e81ad6b25f69316",
+  "/usr/include/openssl/symhacks.h": "2b54552189bfbf4204c28c6a421b21702a3cd3dba37570dbcdadb7ee648f155b",
+  "/usr/include/openssl/tls1.h": "f075f51b48cdc3503e40b8f81fb2b760ba2d4f315d2844759d9089ffb10613dc",
+  "/usr/include/openssl/types.h": "426f5586d3e21033515498d81ce77c1ae022c5aab52962d91d6c88a36cd07262",
+  "/usr/include/openssl/ui.h": "cef3b9a240669810f11ea82ff463cebf620ee8c1ea55d8908d6aa9925b7f8d17",
+  "/usr/include/openssl/uierr.h": "a21be118ee97343a03dc28256370839e5751c82a2a7bcb4c60fcbd97a9e2bef5",
+  "/usr/include/openssl/x509.h": "4221e65e6a73feaed17d839bd5e91f2db2e2d53cec06ab57715c344f326d67c0",
+  "/usr/include/openssl/x509_vfy.h": "be68c37fdfeb10ea258609eba9f750478e61a7b9b3017d82a8d3a8dd278175c8",
+  "/usr/include/openssl/x509err.h": "2250a50091ffbc35c6cc45fc2a32b68ea38cf2ba510b197cc7d58c957179bd1e",
+  "/usr/include/x86_64-linux-gnu/openssl/configuration.h": "0fe39d13260d1cbcca3e54fad2a160fa63ae8f955749c3dc15599c87b11f3146",
+  "/usr/include/x86_64-linux-gnu/openssl/opensslconf.h": "7f4b522c049d0bd0d651e6f6ebe71d6df0c37231a94e32524da3f4642ebda3be"
+ },
+ "prototypes": {
+  "BIO_free": {
+   "declaration": "int BIO_free(BIO *a)",
+   "header": "/usr/include/openssl/bio.h"
+  },
+  "ENGINE_free": {
+   "declaration": "int ENGINE_free(ENGINE *e)",
+   "header": "/usr/include/openssl/engine.h"
+  },
+  "ERR_clear_error": {
+   "declaration": "void ERR_clear_error(void)",
+   "header": "/usr/include/openssl/err.h"
+  },
+  "EVP_PKEY_free": {
+   "declaration": "void EVP_PKEY_free(EVP_PKEY *pkey)",
+   "header": "/usr/include/openssl/evp.h"
+  },
+  "OPENSSL_init_ssl": {
+   "declaration": "int OPENSSL_init_ssl(uint64_t opts, const OPENSSL_INIT_SETTINGS *settings)",
+   "header": "/usr/include/openssl/ssl.h"
+  },
+  "SSL_CTX_free": {
+   "declaration": "void SSL_CTX_free(SSL_CTX *)",
+   "header": "/usr/include/openssl/ssl.h"
+  },
+  "SSL_CTX_new": {
+   "declaration": "SSL_CTX *SSL_CTX_new(const SSL_METHOD *meth)",
+   "header": "/usr/include/openssl/ssl.h"
+  },
+  "SSL_free": {
+   "declaration": "void SSL_free(SSL *ssl)",
+   "header": "/usr/include/openssl/ssl.h"
+  },
+  "SSL_new": {
+   "declaration": "SSL *SSL_new(SSL_CTX *ctx)",
+   "header": "/usr/include/openssl/ssl.h"
+  },
+  "SSL_shutdown": {
+   "declaration": "int SSL_shutdown(SSL *s)",
+   "header": "/usr/include/openssl/ssl.h"
+  },
+  "TLS_server_method": {
+   "declaration": "const SSL_METHOD *TLS_server_method(void)",
+   "header": "/usr/include/openssl/ssl.h"
+  },
+  "X509_free": {
+   "declaration": "void X509_free(X509 *a)",
+   "header": "/usr/include/openssl/x509.h"
+  }
+ }
+}

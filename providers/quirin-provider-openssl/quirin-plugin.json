@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "checkers": [
+    { "module": "openssl/bio.qv", "functions": ["BIO_free"], "package": "checkers/openssl-check" },
+    { "module": "openssl/engine.qv", "functions": ["ENGINE_free"], "package": "checkers/openssl-check" },
+    { "module": "openssl/err.qv", "functions": ["ERR_clear_error"], "package": "checkers/openssl-check" },
+    { "module": "openssl/evp.qv", "functions": ["EVP_PKEY_free"], "package": "checkers/openssl-check" },
+    { "module": "openssl/init.qv", "functions": ["OPENSSL_init_ssl"], "package": "checkers/openssl-check" },
+    { "module": "openssl/ssl.qv", "functions": ["SSL_CTX_free"], "package": "checkers/openssl-check" },
+    { "module": "openssl/ssl.qv", "functions": ["SSL_CTX_new"], "package": "checkers/openssl-check" },
+    { "module": "openssl/ssl.qv", "functions": ["SSL_free"], "package": "checkers/openssl-check" },
+    { "module": "openssl/ssl.qv", "functions": ["SSL_new"], "package": "checkers/openssl-check" },
+    { "module": "openssl/ssl.qv", "functions": ["SSL_shutdown"], "package": "checkers/openssl-check" },
+    { "module": "openssl/ssl.qv", "functions": ["TLS_server_method"], "package": "checkers/openssl-check" },
+    { "module": "openssl/x509.qv", "functions": ["X509_free"], "package": "checkers/openssl-check" }
+  ],
+  "overrides": []
+}

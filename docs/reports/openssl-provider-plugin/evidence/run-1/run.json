@@ -1,0 +1,704 @@
+{
+ "rows": [
+  {
+   "unit": "tls_user.c",
+   "function": "clear_error",
+   "status": "Pending",
+   "diagnostics": [],
+   "plugin_links": [
+    {
+     "binding": "43771a7449b4b9efb0b3cf12fcb2eca4ca8a4b89c7b81305472b65612a8ca3cd",
+     "callee": "ERR_clear_error",
+     "crate": "quirin-provider-openssl",
+     "module": "openssl/err.qv",
+     "plugin": "openssl.contract_check",
+     "reasons": [
+      {
+       "code": "plugin-claim-uncertified",
+       "detail": "plugin claim uncertified: `openssl.contract_check` proposed Safe without a certificate the audit checks independently (QP008: safe result has no evidence)"
+      }
+     ],
+     "verdict": "Pending"
+    }
+   ]
+  },
+  {
+   "unit": "tls_user.c",
+   "function": "create_server_context",
+   "status": "Unknown",
+   "diagnostics": [
+    "unresolved resource identity `__qcore_returned_value`",
+    "nullable resource `__qcore_returned_value` used by a non-null contract"
+   ],
+   "plugin_links": [
+    {
+     "binding": "a43c75e88829463a485726ae5be62249c7f9095a1389f443a8219c08785b83c9",
+     "callee": "SSL_CTX_new",
+     "crate": "quirin-provider-openssl",
+     "module": "openssl/ssl.qv",
+     "plugin": "openssl.contract_check",
+     "reasons": [
+      {
+       "code": "plugin-claim-uncertified",
+       "detail": "plugin claim uncertified: `openssl.contract_check` proposed Safe without a certificate the audit checks independently (QP008: safe result has no evidence)"
+      }
+     ],
+     "verdict": "Pending"
+    },
+    {
+     "binding": "d55c8b70d0a804902ba55bd11c392e73af7190245bbd58684e2f5e22471725b1",
+     "callee": "TLS_server_method",
+     "crate": "quirin-provider-openssl",
+     "module": "openssl/ssl.qv",
+     "plugin": "openssl.contract_check",
+     "reasons": [
+      {
+       "code": "plugin-claim-uncertified",
+       "detail": "plugin claim uncertified: `openssl.contract_check` proposed Safe without a certificate the audit checks independently (QP008: safe result has no evidence)"
+      }
+     ],
+     "verdict": "Pending"
+    }
+   ]
+  },
+  {
+   "unit": "tls_user.c",
+   "function": "ctx_cycle",
+   "status": "Pending",
+   "diagnostics": [],
+   "plugin_links": [
+    {
+     "binding": "630aa869d6c06fc8cd9e9edec78d401fc27f3b455ee7f23d01d51fa91d98beaf",
+     "callee": "SSL_CTX_free",
+     "crate": "quirin-provider-openssl",
+     "module": "openssl/ssl.qv",
+     "plugin": "openssl.contract_check",
+     "reasons": [
+      {
+       "code": "plugin-claim-uncertified",
+       "detail": "plugin claim uncertified: `openssl.contract_check` proposed Safe without a certificate the audit checks independently (QP008: safe result has no evidence)"
+      }
+     ],
+     "verdict": "Pending"
+    },
+    {
+     "binding": "a43c75e88829463a485726ae5be62249c7f9095a1389f443a8219c08785b83c9",
+     "callee": "SSL_CTX_new",
+     "crate": "quirin-provider-openssl",
+     "module": "openssl/ssl.qv",
+     "plugin": "openssl.contract_check",
+     "reasons": [
+      {
+       "code": "plugin-claim-uncertified",
+       "detail": "plugin claim uncertified: `openssl.contract_check` proposed Safe without a certificate the audit checks independently (QP008: safe result has no evidence)"
+      }
+     ],
+     "verdict": "Pending"
+    },
+    {
+     "binding": "d55c8b70d0a804902ba55bd11c392e73af7190245bbd58684e2f5e22471725b1",
+     "callee": "TLS_server_method",
+     "crate": "quirin-provider-openssl",
+     "module": "openssl/ssl.qv",
+     "plugin": "openssl.contract_check",
+     "reasons": [
+      {
+       "code": "plugin-claim-uncertified",
+       "detail": "plugin claim uncertified: `openssl.contract_check` proposed Safe without a certificate the audit checks independently (QP008: safe result has no evidence)"
+      }
+     ],
+     "verdict": "Pending"
+    }
+   ]
+  },
+  {
+   "unit": "tls_user.c",
+   "function": "ctx_term",
+   "status": "Unknown",
+   "diagnostics": [
+    "call to `ENGINE_free` with `h - > engine`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "call to `SSL_CTX_free` with `h - > ctx`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ],
+   "plugin_links": [
+    {
+     "binding": "e1d672cfc77e89a25283ac8b84d42ce6fc7393538e8c6b822eed5b9254eb6a18",
+     "callee": "ENGINE_free",
+     "crate": "quirin-provider-openssl",
+     "module": "openssl/engine.qv",
+     "plugin": "openssl.contract_check",
+     "reasons": [
+      {
+       "code": "plugin-claim-uncertified",
+       "detail": "plugin claim uncertified: `openssl.contract_check` proposed Safe without a certificate the audit checks independently (QP008: safe result has no evidence)"
+      }
+     ],
+     "verdict": "Pending"
+    },
+    {
+     "binding": "630aa869d6c06fc8cd9e9edec78d401fc27f3b455ee7f23d01d51fa91d98beaf",
+     "callee": "SSL_CTX_free",
+     "crate": "quirin-provider-openssl",
+     "module": "openssl/ssl.qv",
+     "plugin": "openssl.contract_check",
+     "reasons": [
+      {
+       "code": "plugin-claim-uncertified",
+       "detail": "plugin claim uncertified: `openssl.contract_check` proposed Safe without a certificate the audit checks independently (QP008: safe result has no evidence)"
+      }
+     ],
+     "verdict": "Pending"
+    }
+   ]
+  },
+  {
+   "unit": "tls_user.c",
+   "function": "init_library",
+   "status": "Pending",
+   "diagnostics": [],
+   "plugin_links": [
+    {
+     "binding": "cfa0f81f8be5e391bfbed5eb80b8d9b1d1192bfa786cfeac552aeb2a0b87fc90",
+     "callee": "OPENSSL_init_ssl",
+     "crate": "quirin-provider-openssl",
+     "module": "openssl/init.qv",
+     "plugin": "openssl.contract_check",
+     "reasons": [
+      {
+       "code": "plugin-claim-uncertified",
+       "detail": "plugin claim uncertified: `openssl.contract_check` proposed Safe without a certificate the audit checks independently (QP008: safe result has no evidence)"
+      }
+     ],
+     "verdict": "Pending"
+    }
+   ]
+  }
+ ],
+ "plugin_checks": {
+  "counts": {
+   "Pending": 12,
+   "Safe": 0,
+   "Unknown": 0,
+   "Unsafe": 0
+  },
+  "bindings": [
+   {
+    "crate": "quirin-provider-openssl",
+    "module": "openssl/bio.qv",
+    "functions": [
+     "BIO_free"
+    ],
+    "task_digest": "6f9f5217784a5a8da0e7db2ffef7530180f659967ffa0f4eca3c3eb79c9b7352",
+    "plugin_id": "openssl.contract_check",
+    "package_digest": "7f9bf86c7e3e7b729275737f0e348b855857147296e6bfda4183ce8dc5e76713",
+    "claim": "uncertified-safe",
+    "code": "QP008",
+    "verdict": "Pending",
+    "reasons": [
+     {
+      "code": "plugin-claim-uncertified",
+      "detail": "plugin claim uncertified: `openssl.contract_check` proposed Safe without a certificate the audit checks independently (QP008: safe result has no evidence)"
+     }
+    ],
+    "proposed": "safe",
+    "plugin_diagnostics": [
+     {
+      "code": "openssl.contract_check.note",
+      "fact_id": null,
+      "message": "OpenSSL contract check (prototype, version range, documented semantics); a claim, not a certificate"
+     },
+     {
+      "code": "openssl.contract_check.binding",
+      "fact_id": null,
+      "message": "BIO_free: prototype `int BIO_free(BIO *a)` (/usr/include/openssl/bio.h, sha256 c2aa5855e8b1) matches the contract; `resource_library_version(openssl, documented \"1.0.2\")` admits the pinned OpenSSL 3.5.5; custody as documented at https://docs.openssl.org/1.0.2/man3/BIO_new/ (sha256 b3a50f548f47 as fetched)"
+     }
+    ]
+   },
+   {
+    "crate": "quirin-provider-openssl",
+    "module": "openssl/engine.qv",
+    "functions": [
+     "ENGINE_free"
+    ],
+    "task_digest": "e1d672cfc77e89a25283ac8b84d42ce6fc7393538e8c6b822eed5b9254eb6a18",
+    "plugin_id": "openssl.contract_check",
+    "package_digest": "7f9bf86c7e3e7b729275737f0e348b855857147296e6bfda4183ce8dc5e76713",
+    "claim": "uncertified-safe",
+    "code": "QP008",
+    "verdict": "Pending",
+    "reasons": [
+     {
+      "code": "plugin-claim-uncertified",
+      "detail": "plugin claim uncertified: `openssl.contract_check` proposed Safe without a certificate the audit checks independently (QP008: safe result has no evidence)"
+     }
+    ],
+    "proposed": "safe",
+    "plugin_diagnostics": [
+     {
+      "code": "openssl.contract_check.note",
+      "fact_id": null,
+      "message": "OpenSSL contract check (prototype, version range, documented semantics); a claim, not a certificate"
+     },
+     {
+      "code": "openssl.contract_check.binding",
+      "fact_id": null,
+      "message": "ENGINE_free: prototype `int ENGINE_free(ENGINE *e)` (/usr/include/openssl/engine.h, sha256 185311cc9702) matches the contract; `resource_library_version(openssl, documented \"1.1.1\")` admits the pinned OpenSSL 3.5.5; custody as documented at https://docs.openssl.org/1.1.1/man3/ENGINE_add/ (sha256 d0066de839a3 as fetched)"
+     }
+    ]
+   },
+   {
+    "crate": "quirin-provider-openssl",
+    "module": "openssl/err.qv",
+    "functions": [
+     "ERR_clear_error"
+    ],
+    "task_digest": "43771a7449b4b9efb0b3cf12fcb2eca4ca8a4b89c7b81305472b65612a8ca3cd",
+    "plugin_id": "openssl.contract_check",
+    "package_digest": "7f9bf86c7e3e7b729275737f0e348b855857147296e6bfda4183ce8dc5e76713",
+    "claim": "uncertified-safe",
+    "code": "QP008",
+    "verdict": "Pending",
+    "reasons": [
+     {
+      "code": "plugin-claim-uncertified",
+      "detail": "plugin claim uncertified: `openssl.contract_check` proposed Safe without a certificate the audit checks independently (QP008: safe result has no evidence)"
+     }
+    ],
+    "proposed": "safe",
+    "plugin_diagnostics": [
+     {
+      "code": "openssl.contract_check.note",
+      "fact_id": null,
+      "message": "OpenSSL contract check (prototype, version range, documented semantics); a claim, not a certificate"
+     },
+     {
+      "code": "openssl.contract_check.binding",
+      "fact_id": null,
+      "message": "ERR_clear_error: prototype `void ERR_clear_error(void)` (/usr/include/openssl/err.h, sha256 0d673984ff62) matches the contract; `resource_library_version(openssl, documented \"1.0.2\")` admits the pinned OpenSSL 3.5.5; custody as documented at https://docs.openssl.org/1.0.2/man3/ERR_clear_error/ (sha256 d5c999e81d23 as fetched)"
+     }
+    ]
+   },
+   {
+    "crate": "quirin-provider-openssl",
+    "module": "openssl/evp.qv",
+    "functions": [
+     "EVP_PKEY_free"
+    ],
+    "task_digest": "01aaba2462c408ccd6560f274c6dbbb2480865b04756261627742a0908843275",
+    "plugin_id": "openssl.contract_check",
+    "package_digest": "7f9bf86c7e3e7b729275737f0e348b855857147296e6bfda4183ce8dc5e76713",
+    "claim": "uncertified-safe",
+    "code": "QP008",
+    "verdict": "Pending",
+    "reasons": [
+     {
+      "code": "plugin-claim-uncertified",
+      "detail": "plugin claim uncertified: `openssl.contract_check` proposed Safe without a certificate the audit checks independently (QP008: safe result has no evidence)"
+     }
+    ],
+    "proposed": "safe",
+    "plugin_diagnostics": [
+     {
+      "code": "openssl.contract_check.note",
+      "fact_id": null,
+      "message": "OpenSSL contract check (prototype, version range, documented semantics); a claim, not a certificate"
+     },
+     {
+      "code": "openssl.contract_check.binding",
+      "fact_id": null,
+      "message": "EVP_PKEY_free: prototype `void EVP_PKEY_free(EVP_PKEY *pkey)` (/usr/include/openssl/evp.h, sha256 41b42c68adfd) matches the contract; `resource_library_version(openssl, documented \"1.0.2\")` admits the pinned OpenSSL 3.5.5; custody as documented at https://docs.openssl.org/1.0.2/man3/EVP_PKEY_new/ (sha256 41115457d08c as fetched)"
+     }
+    ]
+   },
+   {
+    "crate": "quirin-provider-openssl",
+    "module": "openssl/init.qv",
+    "functions": [
+     "OPENSSL_init_ssl"
+    ],
+    "task_digest": "cfa0f81f8be5e391bfbed5eb80b8d9b1d1192bfa786cfeac552aeb2a0b87fc90",
+    "plugin_id": "openssl.contract_check",
+    "package_digest": "7f9bf86c7e3e7b729275737f0e348b855857147296e6bfda4183ce8dc5e76713",
+    "claim": "uncertified-safe",
+    "code": "QP008",
+    "verdict": "Pending",
+    "reasons": [
+     {
+      "code": "plugin-claim-uncertified",
+      "detail": "plugin claim uncertified: `openssl.contract_check` proposed Safe without a certificate the audit checks independently (QP008: safe result has no evidence)"
+     }
+    ],
+    "proposed": "safe",
+    "plugin_diagnostics": [
+     {
+      "code": "openssl.contract_check.note",
+      "fact_id": null,
+      "message": "OpenSSL contract check (prototype, version range, documented semantics); a claim, not a certificate"
+     },
+     {
+      "code": "openssl.contract_check.binding",
+      "fact_id": null,
+      "message": "OPENSSL_init_ssl: prototype `int OPENSSL_init_ssl(uint64_t opts, const OPENSSL_INIT_SETTINGS *settings)` (/usr/include/openssl/ssl.h, sha256 8d68f9a7d1f9) matches the contract; `resource_library_version(openssl, since \"1.1.0\")` admits the pinned OpenSSL 3.5.5; custody as documented at https://docs.openssl.org/3.5/man3/OPENSSL_init_ssl/ (sha256 b025ffa5e7b0 as fetched)"
+     }
+    ]
+   },
+   {
+    "crate": "quirin-provider-openssl",
+    "module": "openssl/ssl.qv",
+    "functions": [
+     "SSL_CTX_free"
+    ],
+    "task_digest": "630aa869d6c06fc8cd9e9edec78d401fc27f3b455ee7f23d01d51fa91d98beaf",
+    "plugin_id": "openssl.contract_check",
+    "package_digest": "7f9bf86c7e3e7b729275737f0e348b855857147296e6bfda4183ce8dc5e76713",
+    "claim": "uncertified-safe",
+    "code": "QP008",
+    "verdict": "Pending",
+    "reasons": [
+     {
+      "code": "plugin-claim-uncertified",
+      "detail": "plugin claim uncertified: `openssl.contract_check` proposed Safe without a certificate the audit checks independently (QP008: safe result has no evidence)"
+     }
+    ],
+    "proposed": "safe",
+    "plugin_diagnostics": [
+     {
+      "code": "openssl.contract_check.note",
+      "fact_id": null,
+      "message": "OpenSSL contract check (prototype, version range, documented semantics); a claim, not a certificate"
+     },
+     {
+      "code": "openssl.contract_check.binding",
+      "fact_id": null,
+      "message": "SSL_CTX_free: prototype `void SSL_CTX_free(SSL_CTX *)` (/usr/include/openssl/ssl.h, sha256 8d68f9a7d1f9) matches the contract; `resource_library_version(openssl, documented \"1.0.2\")` admits the pinned OpenSSL 3.5.5; custody as documented at https://docs.openssl.org/1.0.2/man3/SSL_CTX_free/ (sha256 56acb9354169 as fetched)"
+     }
+    ]
+   },
+   {
+    "crate": "quirin-provider-openssl",
+    "module": "openssl/ssl.qv",
+    "functions": [
+     "SSL_CTX_new"
+    ],
+    "task_digest": "a43c75e88829463a485726ae5be62249c7f9095a1389f443a8219c08785b83c9",
+    "plugin_id": "openssl.contract_check",
+    "package_digest": "7f9bf86c7e3e7b729275737f0e348b855857147296e6bfda4183ce8dc5e76713",
+    "claim": "uncertified-safe",
+    "code": "QP008",
+    "verdict": "Pending",
+    "reasons": [
+     {
+      "code": "plugin-claim-uncertified",
+      "detail": "plugin claim uncertified: `openssl.contract_check` proposed Safe without a certificate the audit checks independently (QP008: safe result has no evidence)"
+     }
+    ],
+    "proposed": "safe",
+    "plugin_diagnostics": [
+     {
+      "code": "openssl.contract_check.note",
+      "fact_id": null,
+      "message": "OpenSSL contract check (prototype, version range, documented semantics); a claim, not a certificate"
+     },
+     {
+      "code": "openssl.contract_check.binding",
+      "fact_id": null,
+      "message": "SSL_CTX_new: prototype `SSL_CTX *SSL_CTX_new(const SSL_METHOD *meth)` (/usr/include/openssl/ssl.h, sha256 8d68f9a7d1f9) matches the contract; `resource_library_version(openssl, documented \"1.0.2\")` admits the pinned OpenSSL 3.5.5; custody as documented at https://docs.openssl.org/1.0.2/man3/SSL_CTX_new/ (sha256 1039e29f7a0e as fetched)"
+     }
+    ]
+   },
+   {
+    "crate": "quirin-provider-openssl",
+    "module": "openssl/ssl.qv",
+    "functions": [
+     "SSL_free"
+    ],
+    "task_digest": "1c96489ee1e56d8ba7e4b71b95a9533b3c7345790174e00acad61e5575b84010",
+    "plugin_id": "openssl.contract_check",
+    "package_digest": "7f9bf86c7e3e7b729275737f0e348b855857147296e6bfda4183ce8dc5e76713",
+    "claim": "uncertified-safe",
+    "code": "QP008",
+    "verdict": "Pending",
+    "reasons": [
+     {
+      "code": "plugin-claim-uncertified",
+      "detail": "plugin claim uncertified: `openssl.contract_check` proposed Safe without a certificate the audit checks independently (QP008: safe result has no evidence)"
+     }
+    ],
+    "proposed": "safe",
+    "plugin_diagnostics": [
+     {
+      "code": "openssl.contract_check.note",
+      "fact_id": null,
+      "message": "OpenSSL contract check (prototype, version range, documented semantics); a claim, not a certificate"
+     },
+     {
+      "code": "openssl.contract_check.binding",
+      "fact_id": null,
+      "message": "SSL_free: prototype `void SSL_free(SSL *ssl)` (/usr/include/openssl/ssl.h, sha256 8d68f9a7d1f9) matches the contract; `resource_library_version(openssl, documented \"1.0.2\")` admits the pinned OpenSSL 3.5.5; custody as documented at https://docs.openssl.org/1.0.2/man3/SSL_free/ (sha256 b220ffa04de3 as fetched)"
+     }
+    ]
+   },
+   {
+    "crate": "quirin-provider-openssl",
+    "module": "openssl/ssl.qv",
+    "functions": [
+     "SSL_new"
+    ],
+    "task_digest": "88510d287dd5dc0c0d1f59292de1e59cebe0ba5b8ce503bfbc444f1143bcffed",
+    "plugin_id": "openssl.contract_check",
+    "package_digest": "7f9bf86c7e3e7b729275737f0e348b855857147296e6bfda4183ce8dc5e76713",
+    "claim": "uncertified-safe",
+    "code": "QP008",
+    "verdict": "Pending",
+    "reasons": [
+     {
+      "code": "plugin-claim-uncertified",
+      "detail": "plugin claim uncertified: `openssl.contract_check` proposed Safe without a certificate the audit checks independently (QP008: safe result has no evidence)"
+     }
+    ],
+    "proposed": "safe",
+    "plugin_diagnostics": [
+     {
+      "code": "openssl.contract_check.note",
+      "fact_id": null,
+      "message": "OpenSSL contract check (prototype, version range, documented semantics); a claim, not a certificate"
+     },
+     {
+      "code": "openssl.contract_check.binding",
+      "fact_id": null,
+      "message": "SSL_new: prototype `SSL *SSL_new(SSL_CTX *ctx)` (/usr/include/openssl/ssl.h, sha256 8d68f9a7d1f9) matches the contract; `resource_library_version(openssl, documented \"1.0.2\")` admits the pinned OpenSSL 3.5.5; custody as documented at https://docs.openssl.org/1.0.2/man3/SSL_new/ (sha256 1b871190d68c as fetched)"
+     }
+    ]
+   },
+   {
+    "crate": "quirin-provider-openssl",
+    "module": "openssl/ssl.qv",
+    "functions": [
+     "SSL_shutdown"
+    ],
+    "task_digest": "d6e14137859784662d48f9a3a158a9b78b182612574e5bb397cf50be1a2ec888",
+    "plugin_id": "openssl.contract_check",
+    "package_digest": "7f9bf86c7e3e7b729275737f0e348b855857147296e6bfda4183ce8dc5e76713",
+    "claim": "uncertified-safe",
+    "code": "QP008",
+    "verdict": "Pending",
+    "reasons": [
+     {
+      "code": "plugin-claim-uncertified",
+      "detail": "plugin claim uncertified: `openssl.contract_check` proposed Safe without a certificate the audit checks independently (QP008: safe result has no evidence)"
+     }
+    ],
+    "proposed": "safe",
+    "plugin_diagnostics": [
+     {
+      "code": "openssl.contract_check.note",
+      "fact_id": null,
+      "message": "OpenSSL contract check (prototype, version range, documented semantics); a claim, not a certificate"
+     },
+     {
+      "code": "openssl.contract_check.binding",
+      "fact_id": null,
+      "message": "SSL_shutdown: prototype `int SSL_shutdown(SSL *s)` (/usr/include/openssl/ssl.h, sha256 8d68f9a7d1f9) matches the contract; `resource_library_version(openssl, documented \"1.0.2\")` admits the pinned OpenSSL 3.5.5; custody as documented at https://docs.openssl.org/1.0.2/man3/SSL_shutdown/ (sha256 b50ad20b57f4 as fetched)"
+     }
+    ]
+   },
+   {
+    "crate": "quirin-provider-openssl",
+    "module": "openssl/ssl.qv",
+    "functions": [
+     "TLS_server_method"
+    ],
+    "task_digest": "d55c8b70d0a804902ba55bd11c392e73af7190245bbd58684e2f5e22471725b1",
+    "plugin_id": "openssl.contract_check",
+    "package_digest": "7f9bf86c7e3e7b729275737f0e348b855857147296e6bfda4183ce8dc5e76713",
+    "claim": "uncertified-safe",
+    "code": "QP008",
+    "verdict": "Pending",
+    "reasons": [
+     {
+      "code": "plugin-claim-uncertified",
+      "detail": "plugin claim uncertified: `openssl.contract_check` proposed Safe without a certificate the audit checks independently (QP008: safe result has no evidence)"
+     }
+    ],
+    "proposed": "safe",
+    "plugin_diagnostics": [
+     {
+      "code": "openssl.contract_check.note",
+      "fact_id": null,
+      "message": "OpenSSL contract check (prototype, version range, documented semantics); a claim, not a certificate"
+     },
+     {
+      "code": "openssl.contract_check.binding",
+      "fact_id": null,
+      "message": "TLS_server_method: prototype `const SSL_METHOD *TLS_server_method(void)` (/usr/include/openssl/ssl.h, sha256 8d68f9a7d1f9) matches the contract; `resource_library_version(openssl, since \"1.1.0\")` admits the pinned OpenSSL 3.5.5; custody as documented at https://docs.openssl.org/3.5/man3/SSL_CTX_new/ (sha256 e24d4106a761 as fetched)"
+     }
+    ]
+   },
+   {
+    "crate": "quirin-provider-openssl",
+    "module": "openssl/x509.qv",
+    "functions": [
+     "X509_free"
+    ],
+    "task_digest": "5416d0fed428b4dbc2d48347b806d7c59b9902919d99072afaaf80cc5278f417",
+    "plugin_id": "openssl.contract_check",
+    "package_digest": "7f9bf86c7e3e7b729275737f0e348b855857147296e6bfda4183ce8dc5e76713",
+    "claim": "uncertified-safe",
+    "code": "QP008",
+    "verdict": "Pending",
+    "reasons": [
+     {
+      "code": "plugin-claim-uncertified",
+      "detail": "plugin claim uncertified: `openssl.contract_check` proposed Safe without a certificate the audit checks independently (QP008: safe result has no evidence)"
+     }
+    ],
+    "proposed": "safe",
+    "plugin_diagnostics": [
+     {
+      "code": "openssl.contract_check.note",
+      "fact_id": null,
+      "message": "OpenSSL contract check (prototype, version range, documented semantics); a claim, not a certificate"
+     },
+     {
+      "code": "openssl.contract_check.binding",
+      "fact_id": null,
+      "message": "X509_free: prototype `void X509_free(X509 *a)` (/usr/include/openssl/x509.h, sha256 4221e65e6a73) matches the contract; `resource_library_version(openssl, documented \"1.0.2\")` admits the pinned OpenSSL 3.5.5; custody as documented at https://docs.openssl.org/1.0.2/man3/X509_new/ (sha256 7c3b2c00cd75 as fetched)"
+     }
+    ]
+   }
+  ]
+ },
+ "library_versions": {
+  "configurations": "clang-default-search-path",
+  "declarations": [
+   {
+    "audited_version": "3.5.5",
+    "detail": "",
+    "function": "BIO_free",
+    "in_force": true,
+    "library": "openssl",
+    "pinned_version": "3.5.5",
+    "range": "resource_library_version(openssl, documented \"1.0.2\")",
+    "reason": null
+   },
+   {
+    "audited_version": "3.5.5",
+    "detail": "",
+    "function": "ENGINE_free",
+    "in_force": true,
+    "library": "openssl",
+    "pinned_version": "3.5.5",
+    "range": "resource_library_version(openssl, documented \"1.1.1\")",
+    "reason": null
+   },
+   {
+    "audited_version": "3.5.5",
+    "detail": "",
+    "function": "ERR_clear_error",
+    "in_force": true,
+    "library": "openssl",
+    "pinned_version": "3.5.5",
+    "range": "resource_library_version(openssl, documented \"1.0.2\")",
+    "reason": null
+   },
+   {
+    "audited_version": "3.5.5",
+    "detail": "",
+    "function": "EVP_PKEY_free",
+    "in_force": true,
+    "library": "openssl",
+    "pinned_version": "3.5.5",
+    "range": "resource_library_version(openssl, documented \"1.0.2\")",
+    "reason": null
+   },
+   {
+    "audited_version": "3.5.5",
+    "detail": "",
+    "function": "OPENSSL_init_ssl",
+    "in_force": true,
+    "library": "openssl",
+    "pinned_version": "3.5.5",
+    "range": "resource_library_version(openssl, since \"1.1.0\")",
+    "reason": null
+   },
+   {
+    "audited_version": "3.5.5",
+    "detail": "",
+    "function": "SSL_CTX_free",
+    "in_force": true,
+    "library": "openssl",
+    "pinned_version": "3.5.5",
+    "range": "resource_library_version(openssl, documented \"1.0.2\")",
+    "reason": null
+   },
+   {
+    "audited_version": "3.5.5",
+    "detail": "",
+    "function": "SSL_CTX_new",
+    "in_force": true,
+    "library": "openssl",
+    "pinned_version": "3.5.5",
+    "range": "resource_library_version(openssl, documented \"1.0.2\")",
+    "reason": null
+   },
+   {
+    "audited_version": "3.5.5",
+    "detail": "",
+    "function": "SSL_free",
+    "in_force": true,
+    "library": "openssl",
+    "pinned_version": "3.5.5",
+    "range": "resource_library_version(openssl, documented \"1.0.2\")",
+    "reason": null
+   },
+   {
+    "audited_version": "3.5.5",
+    "detail": "",
+    "function": "SSL_new",
+    "in_force": true,
+    "library": "openssl",
+    "pinned_version": "3.5.5",
+    "range": "resource_library_version(openssl, documented \"1.0.2\")",
+    "reason": null
+   },
+   {
+    "audited_version": "3.5.5",
+    "detail": "",
+    "function": "SSL_shutdown",
+    "in_force": true,
+    "library": "openssl",
+    "pinned_version": "3.5.5",
+    "range": "resource_library_version(openssl, documented \"1.0.2\")",
+    "reason": null
+   },
+   {
+    "audited_version": "3.5.5",
+    "detail": "",
+    "function": "TLS_server_method",
+    "in_force": true,
+    "library": "openssl",
+    "pinned_version": "3.5.5",
+    "range": "resource_library_version(openssl, since \"1.1.0\")",
+    "reason": null
+   },
+   {
+    "audited_version": "3.5.5",
+    "detail": "",
+    "function": "X509_free",
+    "in_force": true,
+    "library": "openssl",
+    "pinned_version": "3.5.5",
+    "range": "resource_library_version(openssl, documented \"1.0.2\")",
+    "reason": null
+   }
+  ],
+  "libraries": {
+   "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a35090bafc9d378ff/providers/quirin-provider-openssl:openssl": {
+    "configurations": 1,
+    "header": "/usr/include/openssl/opensslv.h",
+    "header_sha256": "7acbe88993a8691183aff3277743d8090c6bbba24b6e218919cf8afdbde42de6",
+    "version": "3.5.5"
+   }
+  },
+  "meaning": "library version ranges (card OPENSSL-PROVIDER-PLUGIN, contract spec C06.2): a declaration stating `resource_library_version(LIB, since|documented V[, removed W])` is in force only where the version the audited build's headers report (read from the crate's library-versions.json source by preprocessing under every include configuration) is readable, unambiguous, within [V, W) and equal to the version its lock pins; a version that only differs from the pinned one is held as contract-pin-mismatch (Pending: review and re-pin), and out of range, unreadable or ambiguous holds every call Unknown"
+ }
+}

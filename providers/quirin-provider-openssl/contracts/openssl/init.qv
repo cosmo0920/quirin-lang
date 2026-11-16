@@ -1,0 +1,34 @@
+// SPDX-License-Identifier: Apache-2.0
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+module contract;
+
+// Card OPENSSL-PROVIDER-PLUGIN. Library initialisation (see err.qv for what
+// every declaration of this crate shares).
+
+// OPENSSL_init_ssl: https://docs.openssl.org/3.5/man3/OPENSSL_init_ssl/
+// HISTORY (3.5, 1.1.1): "The OPENSSL_init_ssl() function was added in OpenSSL
+// 1.1.0." Pinned prototype: `int OPENSSL_init_ssl(uint64_t opts, const
+// OPENSSL_INIT_SETTINGS *settings)` (openssl/ssl.h). `settings` is read
+// during the call (NULL for the defaults); no custody is taken or returned.
+// In OpenSSL 3, `SSL_load_error_strings()` is a macro over this function.
+extern fn OPENSSL_init_ssl(opts: u64, settings: ptr<const, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.1.0");
+    ensures normal resource_borrowed(opts);
+    ensures normal resource_borrowed(settings);
+    ensures normal resource_return_none();
+};

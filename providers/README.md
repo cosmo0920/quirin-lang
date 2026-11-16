@@ -42,6 +42,31 @@ repository; [`quirin-provider-plugin`](quirin-provider-plugin/README.md) is
 their SDK (card W45-USER-CONTRACT-PLUGINS). It owns no contracts and is not on
 the load path.
 
+**User crates in this workspace** (card OPENSSL-PROVIDER-PLUGIN, user decision
+2026-11-16). `quirin-provider-openssl` owns OpenSSL's contracts and their
+checker plugin as a *user crate* on that SDK: a workspace member the provider
+gate builds, tests and packages, listed in `contracts.py`'s
+`USER_LOAD_PATH_PACKAGES`, and **never** a record of `contract-load-path.json`
+(which carries no checker bindings, so a contract there would apply
+unchecked). It is loaded only through the generated user load path
+`user-crates-load-path.json`, behind its checker:
+
+```sh
+python3 providers/package.py checkers      # build and install checkers/openssl-check, check the load path
+quirin-audit contracts --load-path providers/user-crates-load-path.json \
+    --provider quirin-provider-libc --provider quirin-provider-openssl --source-root SRC --report r.json
+```
+
+Regenerate the user load path after a module or binding changes with
+`quirin-plugin load-path --extends contract-load-path.json --output
+providers/user-crates-load-path.json providers/quirin-provider-openssl` and
+`quirin-audit plugin views --load-path providers/user-crates-load-path.json
+--write`; re-pin after review with `quirin-audit pin --load-path
+providers/user-crates-load-path.json --source-root SRC`, which also records the
+OpenSSL version the headers report (contract specification C06.2, library
+version ranges). `contracts.py check` refuses a user-crate declaration no
+checker binds.
+
 Provider crates own their supplied Quirin contracts under `contracts/`, beside
 `src/` and `provider-template.json`. `contracts.json` records their package paths
 and SHA-256 values. The ownership map is `providers/contracts.py`.

@@ -1,0 +1,555 @@
+{
+ "schema_version": 1,
+ "source": "https://docs.openssl.org",
+ "fetched_on": "2026-11-16",
+ "rule": "user decision 2026-11-16: since/removal bounds come from the official manual pages' HISTORY sections; pages are not committed, only their SHA-256 as fetched and the HISTORY text",
+ "pages": [
+  {
+   "url": "https://docs.openssl.org/3.5/man3/ERR_clear_error/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "265077ebc58fb9e8f6d1255d2ccc271ce95c608e04ce7cbef5c5370b22736f57",
+   "bytes": 1074157,
+   "history": null,
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "ERR_clear_error"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/ERR_clear_error/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "e577f4b46282865e3ab8d44dc8d8a6518b5cfb5750270bd44e9f774f9cee002c",
+   "bytes": 667500,
+   "history": null,
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "ERR_clear_error"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/ERR_clear_error/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "d5c999e81d23f195a2d32e493b3c0e1aa189ae69f3f9103764d1fabe0e9ac7e6",
+   "bytes": 277660,
+   "history": "ERR_clear_error() is available in all versions of SSLeay and OpenSSL.",
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "ERR_clear_error"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/OPENSSL_init_ssl/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "b025ffa5e7b08450ff9ac0388930bd9cc5c3f99003dd468591a33b10841ad443",
+   "bytes": 1076991,
+   "history": "The OPENSSL_init_ssl() function was added in OpenSSL 1.1.0.",
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "OPENSSL_init_ssl"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/OPENSSL_init_ssl/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "c129458e9c3d559fd71e0f70b708371e19abca49b2dd9731bb5f9c90fbfdb47a",
+   "bytes": 670334,
+   "history": "The OPENSSL_init_ssl() function was added in OpenSSL 1.1.0.",
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "OPENSSL_init_ssl"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/OPENSSL_init_ssl/",
+   "series": "1.0.2",
+   "fetched": false,
+   "error": "curl: (22) The requested URL returned error: 404",
+   "page": "OPENSSL_init_ssl"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/SSL_CTX_new/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "e24d4106a76124a5946662567bbb9a60d870840e1c125e275c76690d47366ca9",
+   "bytes": 1091578,
+   "history": "Support for SSLv2 and the corresponding SSLv2_method(), SSLv2_server_method() and SSLv2_client_method() functions where removed in OpenSSL 1.1.0. SSLv23_method(), SSLv23_server_method() and SSLv23_client_method() were deprecated and the preferred TLS_method(), TLS_server_method() and TLS_client_method() functions were added in OpenSSL 1.1.0. All version-specific methods were deprecated in OpenSSL 1.1.0. SSL_CTX_new_ex() was added in OpenSSL 3.0.",
+   "null_sentences": [
+    "Either or both the libctx or propq parameters may be NULL.",
+    "The following return values can occur: NULL The creation of a new SSL_CTX object failed."
+   ],
+   "reference_sentences": [
+    "An SSL_CTX object is reference counted.",
+    "Creating an SSL_CTX object for the first time increments the reference count.",
+    "When the reference count drops to zero, any memory or resources allocated to the SSL_CTX object are freed.",
+    "SSL_CTX_up_ref() increments the reference count for an existing SSL_CTX structure."
+   ],
+   "page": "SSL_CTX_new"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/SSL_CTX_new/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "4ec8b629958285aaea41689e74617b9b35cd48cb4a5d749378cf52a2c04bc911",
+   "bytes": 681700,
+   "history": "Support for SSLv2 and the corresponding SSLv2_method(), SSLv2_server_method() and SSLv2_client_method() functions where removed in OpenSSL 1.1.0. SSLv23_method(), SSLv23_server_method() and SSLv23_client_method() were deprecated and the preferred TLS_method(), TLS_server_method() and TLS_client_method() functions were added in OpenSSL 1.1.0. All version-specific methods were deprecated in OpenSSL 1.1.0.",
+   "null_sentences": [
+    "The following return values can occur: NULL The creation of a new SSL_CTX object failed."
+   ],
+   "reference_sentences": [
+    "An SSL_CTX object is reference counted.",
+    "Creating an SSL_CTX object for the first time increments the reference count.",
+    "When the reference count drops to zero, any memory or resources allocated to the SSL_CTX object are freed.",
+    "SSL_CTX_up_ref() increments the reference count for an existing SSL_CTX structure."
+   ],
+   "page": "SSL_CTX_new"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/SSL_CTX_new/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "1039e29f7a0e28c6da6fd6397f2fdc6efbc95d5c2c557ca8341a48b1dd2ec8fb",
+   "bytes": 289430,
+   "history": null,
+   "null_sentences": [
+    "The following return values can occur: NULL The creation of a new SSL_CTX object failed."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_CTX_new"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/SSL_CTX_free/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "a8bbb33d433411b23d3565a6fe7d704c1ac35081f1c84899544baa2547f2c651",
+   "bytes": 1075494,
+   "history": null,
+   "null_sentences": [
+    "If ctx is NULL nothing is done."
+   ],
+   "reference_sentences": [
+    "SSL_CTX_free() decrements the reference count of ctx , and removes the SSL_CTX object pointed to by ctx and frees up the allocated memory if the reference count has reached 0."
+   ],
+   "page": "SSL_CTX_free"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/SSL_CTX_free/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "e06a3592182fd1cfc0f2d840d068b40ab91cd0775c4a5973b9f492f4b48bf343",
+   "bytes": 668810,
+   "history": null,
+   "null_sentences": [
+    "If ctx is NULL nothing is done."
+   ],
+   "reference_sentences": [
+    "SSL_CTX_free() decrements the reference count of ctx , and removes the SSL_CTX object pointed to by ctx and frees up the allocated memory if the reference count has reached 0."
+   ],
+   "page": "SSL_CTX_free"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/SSL_CTX_free/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "56acb9354169398ddfdde068c808bf0f09e3b90eeb2b03bf3db5c105ea08a161",
+   "bytes": 278522,
+   "history": null,
+   "null_sentences": [],
+   "reference_sentences": [
+    "SSL_CTX_free() decrements the reference count of ctx , and removes the SSL_CTX object pointed to by ctx and frees up the allocated memory if the the reference count has reached 0."
+   ],
+   "page": "SSL_CTX_free"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/SSL_new/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "a343618108812e7a4e5e9a8738d96849868939db1a744a01e14de121e8794db1",
+   "bytes": 1079424,
+   "history": null,
+   "null_sentences": [
+    "SSL_dup() is not supported on QUIC SSL objects and returns NULL if called on such an object.",
+    "The following return values can occur: NULL The creation of a new SSL structure failed."
+   ],
+   "reference_sentences": [
+    "An SSL structure is reference counted.",
+    "Creating an SSL structure for the first time increments the reference count.",
+    "When the reference count drops to zero, any memory or resources allocated to the SSL structure are freed.",
+    "SSL_up_ref() increments the reference count for an existing SSL structure.",
+    "For connections that are not in their initial state SSL_dup() just increments an internal reference count and returns the same handle."
+   ],
+   "page": "SSL_new"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/SSL_new/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "81f42d6861f1cee8123ce12e57ff0389ff0f63e54111b5c656c944fd507e4481",
+   "bytes": 672172,
+   "history": null,
+   "null_sentences": [
+    "The following return values can occur: NULL The creation of a new SSL structure failed."
+   ],
+   "reference_sentences": [
+    "An SSL structure is reference counted.",
+    "Creating an SSL structure for the first time increments the reference count.",
+    "When the reference count drops to zero, any memory or resources allocated to the SSL structure are freed.",
+    "SSL_up_ref() increments the reference count for an existing SSL structure.",
+    "For connections that are not in their initial state SSL_dup() just increments an internal reference count and returns the same handle."
+   ],
+   "page": "SSL_new"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/SSL_new/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "1b871190d68cb30237fe43376a0584592ed670f5627f5a71291da841614cb83b",
+   "bytes": 277941,
+   "history": null,
+   "null_sentences": [
+    "The following return values can occur: NULL The creation of a new SSL structure failed."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_new"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/SSL_free/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "423cea6937b9ff38c784980191919a6265b90b153755e8f9253201ad7009833a",
+   "bytes": 1076907,
+   "history": null,
+   "null_sentences": [
+    "If ssl is NULL nothing is done."
+   ],
+   "reference_sentences": [
+    "SSL_free() decrements the reference count of ssl , and removes the SSL structure pointed to by ssl and frees up the allocated memory if the reference count has reached 0."
+   ],
+   "page": "SSL_free"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/SSL_free/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "c2331b6a8ef4ab0c7df055d3b6beb3f048e3af6277064e4822e264506fa5189a",
+   "bytes": 668734,
+   "history": null,
+   "null_sentences": [
+    "If ssl is NULL nothing is done."
+   ],
+   "reference_sentences": [
+    "SSL_free() decrements the reference count of ssl , and removes the SSL structure pointed to by ssl and frees up the allocated memory if the reference count has reached 0."
+   ],
+   "page": "SSL_free"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/SSL_free/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "b220ffa04de3d97bda9667e2001d7b9a5c8592387c3919cb57c90e3d13aa9c21",
+   "bytes": 278444,
+   "history": null,
+   "null_sentences": [],
+   "reference_sentences": [
+    "SSL_free() decrements the reference count of ssl , and removes the SSL structure pointed to by ssl and frees up the allocated memory if the reference count has reached 0."
+   ],
+   "page": "SSL_free"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/SSL_shutdown/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "36d946f90727dd2673572d57ae46e18fd6eee96911e9fbbf813e84f9fafd54af",
+   "bytes": 1101692,
+   "history": "The SSL_shutdown_ex() function was added in OpenSSL 3.2.",
+   "null_sentences": [
+    "ssl MUST NOT be NULL.",
+    "If non-NULL, args must point to a SSL_SHUTDOWN_EX_ARGS structure and args_len must be set to sizeof(SSL_SHUTDOWN_EX_ARGS) .",
+    "If args is NULL, the behaviour is the same as passing a zero-initialised SSL_SHUTDOWN_EX_ARGS structure."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_shutdown"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/SSL_shutdown/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "99fe94bb66e3baa035c0b78390ebf20d67de98de1a6000cb8b198b6c82a37f30",
+   "bytes": 675851,
+   "history": null,
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "SSL_shutdown"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/SSL_shutdown/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "b50ad20b57f4c5a55005e04a29c38935be205a323c980b8d3de831b5e3037860",
+   "bytes": 282737,
+   "history": null,
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "SSL_shutdown"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/ENGINE_add/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "509792560933bbf3a731df63d4b73d9efd6a56071b21a88c4a791d91a03354d6",
+   "bytes": 1141305,
+   "history": "All of these functions were deprecated in OpenSSL 3.0. ENGINE_cleanup() was deprecated in OpenSSL 1.1.0 by the automatic cleanup done by OPENSSL_cleanup() and should not be used.",
+   "null_sentences": [
+    "If the argument to ENGINE_free() is NULL, nothing is done.",
+    "the ENGINE_get_next() and ENGINE_get_prev() functions are used for iterating across the internal ENGINE list - they will return a new structural reference to the next (or previous) ENGINE in the list or NULL if at the end (or beginning) of the list, but in either case the structural reference passed to the function is released on behalf of the caller.",
+    "when calling RSA_new_method(NULL)), a \"get_default\" call will be made to the ENGINE subsystem to process the corresponding state table and return a functional reference to an initialised ENGINE whose implementation should be used.",
+    "If no ENGINE should (or can) be used, it will return NULL and the caller will operate with a NULL ENGINE handle - this usually equates to using the conventional software implementation.",
+    "Likewise, it will cache a NULL response if no ENGINE was available so that future queries won't repeat the same iteration unless the state table changes.",
+    "This behaviour can also be changed; if the ENGINE_TABLE_FLAG_NOINIT flag is set (using ENGINE_set_table_flags()), no attempted initialisations will take place, instead the only way for the state table to return a non-NULL ENGINE to the \"get_default\" query will be if one is expressly set in the table.",
+    "Note that the string-pairs used for control commands consist of a command \"name\" followed by the command \"parameter\" - the parameter could be NULL in some cases but the name can not.",
+    "int generic_load_engine_fn ( const char * engine_id , const char ** pre_cmds , int pre_num , const char ** post_cmds , int post_num ) { ENGINE * e = ENGINE_by_id ( engine_id ); if ( ! e ) return 0 ; while ( pre_num -- ) { if ( ! ENGINE_ctrl_cmd_string ( e , pre_cmds [ 0 ], pre_cmds [ 1 ], 0 )) { fprintf ( stderr , \"Failed command (%s - %s:%s) \\n \" , engine_id , pre_cmds [ 0 ], pre_cmds [ 1 ] ? pre_cmds [ 1 ] : \"(NULL)\" ); ENGINE_free ( e ); return 0 ; } pre_cmds += 2 ; } if ( ! ENGINE_init ( e )) { fprintf ( stderr , \"Failed initialisation \\n \" ); ENGINE_free ( e ); return 0 ; } /* * ENGINE_init() returned a functional reference, so free the structural * reference from ENGINE_by_id().",
+    "*/ ENGINE_free ( e ); while ( post_num -- ) { if ( ! ENGINE_ctrl_cmd_string ( e , post_cmds [ 0 ], post_cmds [ 1 ], 0 )) { fprintf ( stderr , \"Failed command (%s - %s:%s) \\n \" , engine_id , post_cmds [ 0 ], post_cmds [ 1 ] ? post_cmds [ 1 ] : \"(NULL)\" ); ENGINE_finish ( e ); return 0 ; } post_cmds += 2 ; } ENGINE_set_default ( e , ENGINE_METHOD_ALL & ~ ENGINE_METHOD_RAND ); /* Success */ return 1 ; } Note that ENGINE_ctrl_cmd_string() accepts a boolean argument that can relax the semantics of the function - if set nonzero it will only return failure if the ENGINE supported the given command name but failed while executing it, if the ENGINE doesn't support the command name it will simply return success without doing anything.",
+    "ENGINE_get_first(), ENGINE_get_last(), ENGINE_get_next() and ENGINE_get_prev() return a valid ENGINE structure or NULL if an error occurred.",
+    "ENGINE_by_id() returns a valid ENGINE structure or NULL if an error occurred.",
+    "All ENGINE_get_default_TYPE() functions, ENGINE_get_cipher_engine() and ENGINE_get_digest_engine() return a valid ENGINE structure on success or NULL if an error occurred.",
+    "ENGINE_new() returns a valid ENGINE structure on success or NULL if an error occurred.",
+    "ENGINE_get_cipher() returns a valid EVP_CIPHER structure on success or NULL if an error occurred.",
+    "ENGINE_get_digest() returns a valid EVP_MD structure on success or NULL if an error occurred.",
+    "ENGINE_get_cmd_defns() returns an ENGINE_CMD_DEFN structure or NULL if it's not set.",
+    "ENGINE_load_private_key() and ENGINE_load_public_key() return a valid EVP_PKEY structure on success or NULL if an error occurred."
+   ],
+   "reference_sentences": [
+    "At the most basic level, each ENGINE pointer is inherently a structural reference - a structural reference is required to use the pointer value at all, as this kind of reference is a guarantee that the structure can not be deallocated until the reference is released.",
+    "However, a structural reference provides no guarantee that the ENGINE is initialised and able to use any of its cryptographic implementations.",
+    "This kind of reference can be considered a specialised form of structural reference, because each functional reference implicitly contains a structural reference as well - however to avoid difficult-to-find programming bugs, it is recommended to treat the two kinds of reference independently.",
+    "Essentially a structural reference is sufficient if you only need to query or manipulate the data of an ENGINE implementation rather than use its functionality.",
+    "The ENGINE_new() function returns a structural reference to a new (empty) ENGINE object.",
+    "There are other ENGINE API functions that return structural references such as; ENGINE_by_id(), ENGINE_get_first(), ENGINE_get_last(), ENGINE_get_next(), ENGINE_get_prev().",
+    "All structural references should be released by a corresponding to call to the ENGINE_free() function - the ENGINE object itself will only actually be cleaned up and deallocated when the last structural reference is released.",
+    "It should also be noted that many ENGINE API function calls that accept a structural reference will internally obtain another reference - typically this happens whenever the supplied ENGINE will be needed by OpenSSL after the function has returned.",
+    "the function to add a new ENGINE to OpenSSL's internal list is ENGINE_add() - if this function returns success, then OpenSSL will have stored a new structural reference internally so the caller is still responsible for freeing their own reference with ENGINE_free() when they are finished with it.",
+    "In a similar way, some functions will automatically release the structural reference passed to it if part of the function's job is to do so.",
+    "the ENGINE_get_next() and ENGINE_get_prev() functions are used for iterating across the internal ENGINE list - they will return a new structural reference to the next (or previous) ENGINE in the list or NULL if at the end (or beginning) of the list, but in either case the structural reference passed to the function is released on behalf of the caller.",
+    "A functional reference can be obtained in one of two ways; from an existing structural reference to the required ENGINE, or by asking OpenSSL for the default operational ENGINE for a given cryptographic purpose.",
+    "To obtain a functional reference from an existing structural reference, call the ENGINE_init() function.",
+    "All functional references are released by calling ENGINE_finish() (which removes the implicit structural reference as well).",
+    "*/ abort (); ENGINE_set_default_DSA ( e ); ENGINE_set_default_ciphers ( e ); /* Release the functional reference from ENGINE_init() */ ENGINE_finish ( e ); /* Release the structural reference from ENGINE_by_id() */ ENGINE_free ( e ); Automatically using built-in ENGINE implementations Here we'll assume we want to load and register all ENGINE implementations bundled with OpenSSL, such that for any cryptographic algorithm required by OpenSSL - if there is an ENGINE that implements it and can be initialised, it should be used.",
+    "Discovering supported control commands It is possible to discover at run-time the names, numerical-ids, descriptions and input parameters of the control commands supported by an ENGINE using a structural reference."
+   ],
+   "page": "ENGINE_add"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/ENGINE_add/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "d0066de839a310871d9903374aef3243c92e295c9241c5419f28dbedfd0cb055",
+   "bytes": 733931,
+   "history": "ENGINE_cleanup() was deprecated in OpenSSL 1.1.0 by the automatic cleanup done by OPENSSL_cleanup() and should not be used.",
+   "null_sentences": [
+    "the ENGINE_get_next() and ENGINE_get_prev() functions are used for iterating across the internal ENGINE list - they will return a new structural reference to the next (or previous) ENGINE in the list or NULL if at the end (or beginning) of the list, but in either case the structural reference passed to the function is released on behalf of the caller.",
+    "when calling RSA_new_method(NULL)), a \"get_default\" call will be made to the ENGINE subsystem to process the corresponding state table and return a functional reference to an initialised ENGINE whose implementation should be used.",
+    "If no ENGINE should (or can) be used, it will return NULL and the caller will operate with a NULL ENGINE handle - this usually equates to using the conventional software implementation.",
+    "Likewise, it will cache a NULL response if no ENGINE was available so that future queries won't repeat the same iteration unless the state table changes.",
+    "This behaviour can also be changed; if the ENGINE_TABLE_FLAG_NOINIT flag is set (using ENGINE_set_table_flags()), no attempted initialisations will take place, instead the only way for the state table to return a non-NULL ENGINE to the \"get_default\" query will be if one is expressly set in the table.",
+    "Note that the string-pairs used for control commands consist of a command \"name\" followed by the command \"parameter\" - the parameter could be NULL in some cases but the name can not.",
+    "int generic_load_engine_fn ( const char * engine_id , const char ** pre_cmds , int pre_num , const char ** post_cmds , int post_num ) { ENGINE * e = ENGINE_by_id ( engine_id ); if ( ! e ) return 0 ; while ( pre_num -- ) { if ( ! ENGINE_ctrl_cmd_string ( e , pre_cmds [ 0 ], pre_cmds [ 1 ], 0 )) { fprintf ( stderr , \"Failed command (%s - %s:%s) \\n \" , engine_id , pre_cmds [ 0 ], pre_cmds [ 1 ] ? pre_cmds [ 1 ] : \"(NULL)\" ); ENGINE_free ( e ); return 0 ; } pre_cmds += 2 ; } if ( ! ENGINE_init ( e )) { fprintf ( stderr , \"Failed initialisation \\n \" ); ENGINE_free ( e ); return 0 ; } /* * ENGINE_init() returned a functional reference, so free the structural * reference from ENGINE_by_id().",
+    "*/ ENGINE_free ( e ); while ( post_num -- ) { if ( ! ENGINE_ctrl_cmd_string ( e , post_cmds [ 0 ], post_cmds [ 1 ], 0 )) { fprintf ( stderr , \"Failed command (%s - %s:%s) \\n \" , engine_id , post_cmds [ 0 ], post_cmds [ 1 ] ? post_cmds [ 1 ] : \"(NULL)\" ); ENGINE_finish ( e ); return 0 ; } post_cmds += 2 ; } ENGINE_set_default ( e , ENGINE_METHOD_ALL & ~ ENGINE_METHOD_RAND ); /* Success */ return 1 ; } Note that ENGINE_ctrl_cmd_string() accepts a boolean argument that can relax the semantics of the function - if set nonzero it will only return failure if the ENGINE supported the given command name but failed while executing it, if the ENGINE doesn't support the command name it will simply return success without doing anything.",
+    "ENGINE_get_first(), ENGINE_get_last(), ENGINE_get_next() and ENGINE_get_prev() return a valid ENGINE structure or NULL if an error occurred.",
+    "ENGINE_by_id() returns a valid ENGINE structure or NULL if an error occurred.",
+    "All ENGINE_get_default_TYPE() functions, ENGINE_get_cipher_engine() and ENGINE_get_digest_engine() return a valid ENGINE structure on success or NULL if an error occurred.",
+    "ENGINE_new() returns a valid ENGINE structure on success or NULL if an error occurred.",
+    "ENGINE_get_cipher() returns a valid EVP_CIPHER structure on success or NULL if an error occurred.",
+    "ENGINE_get_digest() returns a valid EVP_MD structure on success or NULL if an error occurred.",
+    "ENGINE_get_cmd_defns() returns an ENGINE_CMD_DEFN structure or NULL if it's not set.",
+    "ENGINE_load_private_key() and ENGINE_load_public_key() return a valid EVP_PKEY structure on success or NULL if an error occurred."
+   ],
+   "reference_sentences": [
+    "At the most basic level, each ENGINE pointer is inherently a structural reference - a structural reference is required to use the pointer value at all, as this kind of reference is a guarantee that the structure can not be deallocated until the reference is released.",
+    "However, a structural reference provides no guarantee that the ENGINE is initialised and able to use any of its cryptographic implementations.",
+    "This kind of reference can be considered a specialised form of structural reference, because each functional reference implicitly contains a structural reference as well - however to avoid difficult-to-find programming bugs, it is recommended to treat the two kinds of reference independently.",
+    "Essentially a structural reference is sufficient if you only need to query or manipulate the data of an ENGINE implementation rather than use its functionality.",
+    "The ENGINE_new() function returns a structural reference to a new (empty) ENGINE object.",
+    "There are other ENGINE API functions that return structural references such as; ENGINE_by_id(), ENGINE_get_first(), ENGINE_get_last(), ENGINE_get_next(), ENGINE_get_prev().",
+    "All structural references should be released by a corresponding to call to the ENGINE_free() function - the ENGINE object itself will only actually be cleaned up and deallocated when the last structural reference is released.",
+    "It should also be noted that many ENGINE API function calls that accept a structural reference will internally obtain another reference - typically this happens whenever the supplied ENGINE will be needed by OpenSSL after the function has returned.",
+    "the function to add a new ENGINE to OpenSSL's internal list is ENGINE_add() - if this function returns success, then OpenSSL will have stored a new structural reference internally so the caller is still responsible for freeing their own reference with ENGINE_free() when they are finished with it.",
+    "In a similar way, some functions will automatically release the structural reference passed to it if part of the function's job is to do so.",
+    "the ENGINE_get_next() and ENGINE_get_prev() functions are used for iterating across the internal ENGINE list - they will return a new structural reference to the next (or previous) ENGINE in the list or NULL if at the end (or beginning) of the list, but in either case the structural reference passed to the function is released on behalf of the caller.",
+    "A functional reference can be obtained in one of two ways; from an existing structural reference to the required ENGINE, or by asking OpenSSL for the default operational ENGINE for a given cryptographic purpose.",
+    "To obtain a functional reference from an existing structural reference, call the ENGINE_init() function.",
+    "All functional references are released by calling ENGINE_finish() (which removes the implicit structural reference as well).",
+    "*/ abort (); ENGINE_set_default_DSA ( e ); ENGINE_set_default_ciphers ( e ); /* Release the functional reference from ENGINE_init() */ ENGINE_finish ( e ); /* Release the structural reference from ENGINE_by_id() */ ENGINE_free ( e ); Automatically using builtin ENGINE implementations Here we'll assume we want to load and register all ENGINE implementations bundled with OpenSSL, such that for any cryptographic algorithm required by OpenSSL - if there is an ENGINE that implements it and can be initialised, it should be used.",
+    "Discovering supported control commands It is possible to discover at run-time the names, numerical-ids, descriptions and input parameters of the control commands supported by an ENGINE using a structural reference."
+   ],
+   "page": "ENGINE_add"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/ENGINE_add/",
+   "series": "1.0.2",
+   "fetched": false,
+   "error": "curl: (22) The requested URL returned error: 404",
+   "page": "ENGINE_add"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/X509_new/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "50b72148127e2e78ddbd339dd3d78ba792b71206b0ac0568c3ceeb6c11ae93c1",
+   "bytes": 1079461,
+   "history": "X509_new_ex() was added in OpenSSL 3.0. OSSL_STACK_OF_X509_free() was added in OpenSSL 3.2.",
+   "null_sentences": [
+    "X509_new() is similar to X509_new_ex() but sets the library context and property query to NULL.",
+    "This results in the default (NULL) library context being used for any X509 operations requiring algorithm fetches.",
+    "If the argument is NULL, nothing is done.",
+    "X509_chain_up_ref() increases the reference count of all certificates in chain x and returns a copy of the stack, or an empty stack if a is NULL.",
+    "If the argument is NULL, nothing is done.",
+    "If the allocation fails, X509_new() returns NULL and sets an error code that can be obtained by ERR_get_error(3) .",
+    "X509_chain_up_ref() returns a copy of the stack or NULL if an error occurred."
+   ],
+   "reference_sentences": [
+    "X509_new_ex() allocates and initializes a X509 structure with a library context of libctx , property query of propq and a reference count of 1 .",
+    "X509_free() decrements the reference count of X509 structure a and frees it up if the reference count is zero.",
+    "X509_up_ref() increments the reference count of a .",
+    "X509_chain_up_ref() increases the reference count of all certificates in chain x and returns a copy of the stack, or an empty stack if a is NULL."
+   ],
+   "page": "X509_new"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/X509_new/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "e461da4ca976a606c8ef629eacb7f4543451dee53d0bf17f799635710762530e",
+   "bytes": 670840,
+   "history": null,
+   "null_sentences": [
+    "If a is NULL nothing is done.",
+    "If the allocation fails, X509_new() returns NULL and sets an error code that can be obtained by ERR_get_error(3) .",
+    "X509_chain_up_ref() returns a copy of the stack or NULL if an error occurred."
+   ],
+   "reference_sentences": [
+    "X509_new() allocates and initializes a X509 structure with reference count 1 .",
+    "X509_free() decrements the reference count of X509 structure a and frees it up if the reference count is zero.",
+    "X509_up_ref() increments the reference count of a .",
+    "X509_chain_up_ref() increases the reference count of all certificates in chain x and returns a copy of the stack."
+   ],
+   "page": "X509_new"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/X509_new/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "7c3b2c00cd75b15ba356a48d51fdf5a731a6b62692606a5f05a15d958f48630e",
+   "bytes": 278291,
+   "history": "X509_new() and X509_free() are available in all versions of SSLeay and OpenSSL.",
+   "null_sentences": [
+    "If the allocation fails, X509_new() returns NULL and sets an error code that can be obtained by ERR_get_error(3) ."
+   ],
+   "reference_sentences": [],
+   "page": "X509_new"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/EVP_PKEY_new/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "4d437dd02c835966daba075073682f9bf84178379f3236976e57d0575401a7a8",
+   "bytes": 1093424,
+   "history": "The EVP_PKEY_new() and EVP_PKEY_free() functions exist in all versions of OpenSSL. The EVP_PKEY_up_ref() function was added in OpenSSL 1.1.0. The EVP_PKEY_new_raw_private_key(), EVP_PKEY_new_raw_public_key(), EVP_PKEY_new_CMAC_key(), EVP_PKEY_new_raw_private_key() and EVP_PKEY_get_raw_public_key() functions were added in OpenSSL 1.1.1. The EVP_PKEY_dup(), EVP_PKEY_new_raw_private_key_ex(), and EVP_PKEY_new_raw_public_key_ex() functions were added in OpenSSL 3.0. The EVP_PKEY_new_CMAC_key() was deprecated in OpenSSL 3.0. The documentation of EVP_PKEY was amended in OpenSSL 3.0 to allow there to be the private part of the keypair without the public part, where this was previously implied to be disallowed. Support for ML-DSA and ML-KEM was added in OpenSSL 3.5.",
+   "null_sentences": [
+    "If key is NULL, nothing is done.",
+    "If e is non-NULL then the new EVP_PKEY structure is associated with the engine e .",
+    "If the buffer priv is NULL then *len is populated with the number of bytes required to hold the key.",
+    "If the buffer pub is NULL then *len is populated with the number of bytes required to hold the key.",
+    "EVP_PKEY_new(), EVP_PKEY_new_raw_private_key(), EVP_PKEY_new_raw_public_key(), EVP_PKEY_new_CMAC_key() and EVP_PKEY_new_mac_key() return either the newly allocated EVP_PKEY structure or NULL if an error occurred.",
+    "EVP_PKEY_dup() returns the key duplicate or NULL if an error occurred."
+   ],
+   "reference_sentences": [
+    "The reference count is set to 1 .",
+    "EVP_PKEY_up_ref() increments the reference count of key .",
+    "EVP_PKEY_free() decrements the reference count of key and, if the reference count is zero, frees it up."
+   ],
+   "page": "EVP_PKEY_new"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/EVP_PKEY_new/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "f893b83cd9cf7b19533089cc9ba620379a844f9531c486bce57e2c1ef175b4d6",
+   "bytes": 678621,
+   "history": "The EVP_PKEY_new() and EVP_PKEY_free() functions exist in all versions of OpenSSL. The EVP_PKEY_up_ref() function was added in OpenSSL 1.1.0. The EVP_PKEY_new_raw_private_key(), EVP_PKEY_new_raw_public_key(), EVP_PKEY_new_CMAC_key(), EVP_PKEY_new_raw_private_key() and EVP_PKEY_get_raw_public_key() functions were added in OpenSSL 1.1.1.",
+   "null_sentences": [
+    "If key is NULL, nothing is done.",
+    "If e is non-NULL then the new EVP_PKEY structure is associated with the engine e .",
+    "If the buffer priv is NULL then *len is populated with the number of bytes required to hold the key.",
+    "If the buffer pub is NULL then *len is populated with the number of bytes required to hold the key.",
+    "EVP_PKEY_new(), EVP_PKEY_new_raw_private_key(), EVP_PKEY_new_raw_public_key(), EVP_PKEY_new_CMAC_key() and EVP_PKEY_new_mac_key() return either the newly allocated EVP_PKEY structure or NULL if an error occurred."
+   ],
+   "reference_sentences": [
+    "The reference count is set to 1 .",
+    "EVP_PKEY_up_ref() increments the reference count of key .",
+    "EVP_PKEY_free() decrements the reference count of key and, if the reference count is zero, frees it up."
+   ],
+   "page": "EVP_PKEY_new"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/EVP_PKEY_new/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "41115457d08c50a249222b8941967426b9560f3a2ed9ca5d22c2e06ee70f9cd1",
+   "bytes": 278743,
+   "history": "TBA",
+   "null_sentences": [
+    "EVP_PKEY_new() returns either the newly allocated EVP_PKEY structure of NULL if an error occurred."
+   ],
+   "reference_sentences": [],
+   "page": "EVP_PKEY_new"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/BIO_new/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "a88ee68da07b6ff531dc192307c518d4ecec55ad7dc8b4a61f4c4337a29c6a19",
+   "bytes": 1077886,
+   "history": "BIO_set() was removed in OpenSSL 1.1.0 as BIO type is now opaque. BIO_new_ex() was added in OpenSSL 3.0.",
+   "null_sentences": [
+    "The library context may be NULL to indicate the default library context.",
+    "type MUST NOT be NULL.",
+    "If a is NULL nothing is done.",
+    "If a is NULL nothing is done.",
+    "BIO_new_ex() and BIO_new() return a newly created BIO or NULL if the call fails."
+   ],
+   "reference_sentences": [
+    "BIO_up_ref() increments the reference count associated with the BIO object."
+   ],
+   "page": "BIO_new"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/BIO_new/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "032ee76b4ce4581fa3ff222a6bc3e1bfc8327a5f79b0a288bf2926f39c745611",
+   "bytes": 670466,
+   "history": "BIO_set() was removed in OpenSSL 1.1.0 as BIO type is now opaque.",
+   "null_sentences": [
+    "If a is NULL nothing is done.",
+    "If a is NULL nothing is done.",
+    "BIO_new() returns a newly created BIO or NULL if the call fails."
+   ],
+   "reference_sentences": [
+    "BIO_up_ref() increments the reference count associated with the BIO object."
+   ],
+   "page": "BIO_new"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/BIO_new/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "b3a50f548f47a43c699712e47703c49ed381a8c78cb445f3c9986523d0fef510",
+   "bytes": 280569,
+   "history": null,
+   "null_sentences": [
+    "BIO_new() returns a newly created BIO or NULL if the call fails."
+   ],
+   "reference_sentences": [],
+   "page": "BIO_new"
+  }
+ ]
+}

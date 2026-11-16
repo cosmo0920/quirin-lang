@@ -152,6 +152,19 @@ impl PluginClaim {
     }
 }
 
+/// Card OPENSSL-PROVIDER-PLUGIN (`W48-PLUGIN-VERDICT-PRESERVATION`): what the
+/// plugin itself answered, kept beside its classification so neither its
+/// proposed verdict nor its own reasons are lost when the firewall reads the
+/// answer as `Pending` or `Unknown`. It is a record, never an input to a
+/// verdict: the classification alone decides.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct PluginAnswer {
+    /// The verdict the plugin proposed.
+    pub proposed: ProposedVerdict,
+    /// The plugin's own diagnostics, in its order.
+    pub diagnostics: Vec<PluginDiagnostic>,
+}
+
 /// The first diagnostic of a host refusal, as a failure.
 fn refusal(outcome: &super::VerificationOutcome) -> PluginClaim {
     let (code, reason) = outcome
@@ -176,10 +189,44 @@ impl VerifierRegistry {
         checker: Option<&dyn WitnessChecker>,
         counterexample: Option<&dyn CounterexampleChecker>,
     ) -> PluginClaim {
+        self.verify_plugin_answer(request, task, checker, counterexample)
+            .0
+    }
+
+    /// [`Self::verify_plugin_claim`], with the plugin's own answer when it
+    /// gave one that passed dispatch ([`PluginAnswer`]); `None` when the
+    /// request was refused before an answer, or the transport failed.
+    #[must_use]
+    pub fn verify_plugin_answer(
+        &self,
+        request: &VerificationRequestV2,
+        task: &VerificationTask,
+        checker: Option<&dyn WitnessChecker>,
+        counterexample: Option<&dyn CounterexampleChecker>,
+    ) -> (PluginClaim, Option<PluginAnswer>) {
         let (manifest, response) = match self.dispatch_v2(request, task) {
             Ok(dispatched) => dispatched,
-            Err(outcome) => return refusal(&outcome),
+            Err(outcome) => return (refusal(&outcome), None),
         };
+        let answer = PluginAnswer {
+            proposed: response.verdict,
+            diagnostics: response.diagnostics.clone(),
+        };
+        (
+            self.classify_answer(manifest, request, task, checker, counterexample, response),
+            Some(answer),
+        )
+    }
+
+    fn classify_answer(
+        &self,
+        manifest: &PluginManifest,
+        request: &VerificationRequestV2,
+        task: &VerificationTask,
+        checker: Option<&dyn WitnessChecker>,
+        counterexample: Option<&dyn CounterexampleChecker>,
+        response: super::VerificationResponseV2,
+    ) -> PluginClaim {
         let proposed = response.verdict;
         let evidence = response.evidence.clone();
         let outcome = self.check_response_v2(manifest, request, task, checker, response);

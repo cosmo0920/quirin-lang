@@ -87,6 +87,14 @@ applies it.
 | [`package`](src/package.rs) | build and verify a checker package |
 | [`checker`](src/checker.rs) | the checker runtime and response builders |
 
+**The first in-repository user crate** is
+[`quirin-provider-openssl`](../quirin-provider-openssl/src/lib.rs) (card
+OPENSSL-PROVIDER-PLUGIN), which depends on this crate for its checker. That
+dependency found two gaps, now fixed: a `[dependencies]` key naming this SDK
+(or another package that owns no contracts, `NON_CONTRACT_PACKAGES`) was read
+as a contract dependency, and a dotted key (`NAME.workspace = true`) was
+recorded as `NAME.workspace`; `[dependencies.NAME]` tables are now read too.
+
 Tests: [`tests/sdk.rs`](tests/sdk.rs) on the example user crate
 ([`tests/fixtures/example-user-crate/`](tests/fixtures/example-user-crate/));
 the audit's end-to-end tests run the same crate with real checker processes

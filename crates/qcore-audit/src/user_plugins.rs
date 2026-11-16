@@ -70,7 +70,7 @@ use crate::providers::SelectedModule;
 pub const SEMANTIC_PROFILE: &str = "quirin.user-contract-check.v1";
 
 /// What the `plugin_checks` sidecar section means, carried in it.
-pub const MEANING: &str = "checker plugins attached to user contracts (card W45-USER-CONTRACT-PLUGINS, contract spec C11.1): each binding runs once, out of process, as a verified package, on an evidence-v2 task the core derives (one parameter_mode_respected obligation per bound function, bound to the module's text digest); a plugin's Safe counts only with a certificate the registry issued from a trusted-core witness replay, and without one it is Pending (plugin-claim-uncertified); its Unsafe counts, provisionally, only with a witness a trusted-core counterexample checker validated, and without one it is Pending; a crash, timeout, quota breach, protocol error, mismatch or refuted evidence is Unknown; every function that applies a bound contract publishes the join of its own status and the binding's verdict (Safe < Pending < Unknown < Unsafe), and every unit the join of its functions'";
+pub const MEANING: &str = "checker plugins attached to user contracts (card W45-USER-CONTRACT-PLUGINS, contract spec C11.1): each binding runs once, out of process, as a verified package, on an evidence-v2 task the core derives (one parameter_mode_respected obligation per bound function, bound to the module's text digest); a plugin's Safe counts only with a certificate the registry issued from a trusted-core witness replay, and without one it is Pending (plugin-claim-uncertified); its Unsafe counts, provisionally, only with a witness a trusted-core counterexample checker validated, and without one it is Pending; a crash, timeout, quota breach, protocol error, mismatch or refuted evidence is Unknown; every function that applies a bound contract publishes the join of its own status and the binding's verdict (Safe < Pending < Unknown < Unsafe), and every unit the join of its functions'; each binding row also records what the plugin itself answered (`proposed`, `plugin_diagnostics`), which decides nothing, and each function's `plugin_links` entry names its binding row by task digest (`binding`)";
 
 /// The declared function names of a contract module, read lexically: every
 /// `extern fn NAME` outside a comment. Over-reports rather than misses.
@@ -212,6 +212,10 @@ struct Link {
     plugin: String,
     user_crate: String,
     module: String,
+    /// Card OPENSSL-PROVIDER-PLUGIN: the binding's task digest, which names
+    /// its `plugin_checks` row (where the plugin's proposed verdict and own
+    /// diagnostics are recorded) even when one module has several bindings.
+    task_digest: String,
     verdict: ReasonedVerdict,
 }
 
@@ -377,12 +381,23 @@ pub fn run(
                 });
                 let mut registry = VerifierRegistry::default();
                 let claim = match registry.register(Arc::new(provider)) {
-                    Ok(()) => registry.verify_plugin_claim(
-                        &checker_request(&manifest.plugin_id, &task),
-                        &task,
-                        checkers.witness,
-                        checkers.counterexample,
-                    ),
+                    Ok(()) => {
+                        let (claim, answer) = registry.verify_plugin_answer(
+                            &checker_request(&manifest.plugin_id, &task),
+                            &task,
+                            checkers.witness,
+                            checkers.counterexample,
+                        );
+                        // Card OPENSSL-PROVIDER-PLUGIN
+                        // (W48-PLUGIN-VERDICT-PRESERVATION): the plugin's own
+                        // proposed verdict and diagnostics, recorded beside
+                        // the classification, which alone decides.
+                        if let Some(answer) = answer {
+                            row["proposed"] = json!(answer.proposed);
+                            row["plugin_diagnostics"] = json!(answer.diagnostics);
+                        }
+                        claim
+                    }
                     Err(error) => PluginClaim::Failure {
                         code: "registry".into(),
                         reason: error.to_string(),
@@ -403,6 +418,7 @@ pub fn run(
                 plugin: plugin.clone(),
                 user_crate: binding.user_crate.clone(),
                 module: binding.module.clone(),
+                task_digest: task.task_digest(),
                 verdict: verdict.clone(),
             });
         }
@@ -509,6 +525,7 @@ pub(crate) fn fold_unit(
                     "plugin": link.plugin,
                     "crate": link.user_crate,
                     "module": link.module,
+                    "binding": link.task_digest,
                     "verdict": link.verdict.verdict(),
                     "reasons": link.verdict.reasons(),
                 })

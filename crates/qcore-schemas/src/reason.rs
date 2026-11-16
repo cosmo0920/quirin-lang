@@ -524,6 +524,17 @@ const REASON_RULES: &[(&str, ReasonCategory)] = &[
         "pinned contract is not in force",
         ReasonCategory::ContractPinMismatch,
     ),
+    // ---- a library version range not in force (card
+    // OPENSSL-PROVIDER-PLUGIN, contract spec C06.2): the audited library
+    // version is outside the declaration's range, unreadable or ambiguous, so
+    // the declaration is evidence about other versions than the audited one:
+    // `stale-evidence`, never human-resolvable. Matched before every
+    // source-subject rule. Site: `qcore_c_gateway::legacy_c`'s held-call
+    // statement (`pin_hold::library_version_hold_description`).
+    (
+        "not in force at the audited library version",
+        ReasonCategory::StaleEvidence,
+    ),
     // ---- a declared contract its own analysed body refutes (card
     // W45-REFUTED-CONTRACT-WITHDRAWAL, contract spec C06.4): the call was
     // held, and the declaration is evidence about a body other than the one

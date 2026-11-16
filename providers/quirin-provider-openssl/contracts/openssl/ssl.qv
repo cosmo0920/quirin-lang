@@ -1,0 +1,110 @@
+// SPDX-License-Identifier: Apache-2.0
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+module contract;
+
+// Card OPENSSL-PROVIDER-PLUGIN. SSL_CTX and SSL objects (see err.qv for what
+// every declaration of this crate shares).
+//
+// Both objects are reference counted: the SSL_CTX_new and SSL_new pages
+// (3.5) say each "is reference counted", that creation increments the count
+// and that resources are freed "When the reference count drops to zero".
+// So, per the 2026-10-05 class-3 decision (C04.17), a constructor returns one
+// reference the caller owes (`resource_return_kind(reference)`) and a free is
+// a reference drop, never read as a final free.
+
+// TLS_server_method: https://docs.openssl.org/3.5/man3/SSL_CTX_new/
+// HISTORY (3.5, 1.1.1): TLS_method(), TLS_server_method() and
+// TLS_client_method() "were added in OpenSSL 1.1.0". Pinned prototype:
+// `const SSL_METHOD *TLS_server_method(void)` (openssl/ssl.h). The method
+// table is static: the result owns nothing.
+extern fn TLS_server_method() -> ptr<const, u8>
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.1.0");
+    ensures normal resource_return_none();
+};
+
+// SSL_CTX_new: https://docs.openssl.org/1.0.2/man3/SSL_CTX_new/ (also 3.5,
+// 1.1.1). No HISTORY entry names its introduction at any series checked, so
+// the bound is the oldest series that documents it. RETURN VALUES: NULL when
+// creation failed. Pinned prototype: `SSL_CTX *SSL_CTX_new(const SSL_METHOD
+// *meth)`.
+extern fn SSL_CTX_new(meth: ptr<const, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.0.2");
+    ensures normal resource_borrowed(meth);
+    ensures normal resource_return_owned(nullable);
+    ensures normal resource_return_kind(reference);
+};
+
+// SSL_CTX_free: https://docs.openssl.org/1.0.2/man3/SSL_CTX_free/ (also 3.5,
+// 1.1.1). No HISTORY entry. DESCRIPTION (3.5): it "decrements the reference
+// count of ctx" and frees the object when the count reaches zero; "If ctx is
+// NULL nothing is done" (documented from 1.1.1; the drop below never reads a
+// NULL actual as held). Pinned prototype: `void SSL_CTX_free(SSL_CTX *)`.
+extern fn SSL_CTX_free(ctx: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.0.2");
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_reference_dropped(ctx);
+    ensures normal resource_return_none();
+};
+
+// SSL_new: https://docs.openssl.org/1.0.2/man3/SSL_new/ (also 3.5, 1.1.1).
+// No HISTORY entry. RETURN VALUES: NULL when creation failed. The new SSL
+// takes its own reference on `ctx`; the caller's is unchanged. Pinned
+// prototype: `SSL *SSL_new(SSL_CTX *ctx)`.
+extern fn SSL_new(ctx: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.0.2");
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_return_owned(nullable);
+    ensures normal resource_return_kind(reference);
+};
+
+// SSL_free: https://docs.openssl.org/1.0.2/man3/SSL_free/ (also 3.5, 1.1.1).
+// No HISTORY entry. DESCRIPTION (3.5): it "decrements the reference count of
+// ssl"; "If ssl is NULL nothing is done" (documented from 1.1.1). Pinned
+// prototype: `void SSL_free(SSL *ssl)`.
+extern fn SSL_free(ssl: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.0.2");
+    ensures normal resource_borrowed(ssl);
+    ensures normal resource_reference_dropped(ssl);
+    ensures normal resource_return_none();
+};
+
+// SSL_shutdown: https://docs.openssl.org/1.0.2/man3/SSL_shutdown/ (also 3.5,
+// 1.1.1). HISTORY (3.5) names only SSL_shutdown_ex() (added in 3.2), so the
+// bound for SSL_shutdown is the oldest series that documents it. "ssl MUST
+// NOT be NULL" (3.5). Pinned prototype: `int SSL_shutdown(SSL *s)`. It
+// sends or reads the close_notify alert on `ssl`; custody is unchanged.
+extern fn SSL_shutdown(ssl: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.0.2");
+    ensures normal resource_borrowed(ssl);
+    ensures normal resource_return_none();
+};

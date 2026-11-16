@@ -228,6 +228,7 @@ import QCore.LegacyCAnalyzer
 import QCore.LexicalClosureNestedAssignment
 import QCore.LibcReadingPremises
 import QCore.LibcReadingSiteEvidence
+import QCore.LibraryVersionRange
 import QCore.LifetimeCorrespondence
 import QCore.ListIteration
 import QCore.ListLengthBound

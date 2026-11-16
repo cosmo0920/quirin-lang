@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "libraries": {
+    "openssl": {
+      "header": "openssl/opensslv.h",
+      "major": "OPENSSL_VERSION_MAJOR",
+      "minor": "OPENSSL_VERSION_MINOR",
+      "patch": "OPENSSL_VERSION_PATCH"
+    }
+  }
+}
