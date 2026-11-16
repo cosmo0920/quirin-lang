@@ -398,3 +398,26 @@ a delete can be certified. No Fluent Bit or Monkey row creates an automatic
 key. The same fallback escape for a tracked `regex` object (`(void) f(&re)`
 at an unkinded position) predates this card; it is registered as
 `CG25-VOID-CAST-GUARD-ESCAPE`, not repaired here.
+
+### D3 gate
+
+`python3 scripts/gate_scope.py --base 0f6e17118 --out private/gate-d3-5` was
+run at `8e190aa83`, the D3 tip. It records [gate-d3.json](gate-d3.json), and
+Clang is recorded in [gate-d3/](gate-d3/clang-version.txt). The scope was
+full, with the provider steps selected.
+
+| Step | Exit | Counts |
+|---|---|---|
+| submodules, fmt, clippy | 0, 0, 0 | |
+| Rust suite | 0 | 640 units, 683 summaries; 9,527 passed, 0 failed, 17 ignored, 148 filtered |
+| Lean (`check_lean_audits.py`) | 0 | 437 audits |
+| Python suite | 1 | 761 tests, 1 failure |
+| provider package build, verify-all, verify | 0, 0, 0 | |
+| provider tests | 0 | 43 summaries; 133 passed, 0 failed, 1 ignored |
+| provider fmt, clippy | 0, 0 | |
+
+The Python failure is
+`test_build_matrix_sections …test_the_derived_facts_are_recomputed_rather_than_carried`
+(`'26.0.0' != '27.0.0'`). It is the committed matrix's derived
+`qcore-schemas` version, stale because D3 bumps the schema. It is expected,
+and the integrator regenerates the matrix at landing.
