@@ -24,7 +24,8 @@ mod support;
 use std::collections::BTreeMap;
 use std::path::Path;
 
-use qcore_audit::subcommand_plugins::{classify_claim, join};
+use qcore_audit::plugin_verdicts::{Answer, Contribution, Source, SourceKind, compose};
+use qcore_audit::subcommand_plugins::{classify_claim, compose_rows, join};
 use qcore_schemas::verdict::{ReasonedVerdict, Verdict};
 use quirin_audit_plugin::ProposedVerdict;
 use quirin_audit_plugin_openssl::contracts::{Binding, Class, ContractSet, Definition};
@@ -279,16 +280,12 @@ fn the_host_publishes_a_safe_proposal_pending_and_never_safe() {
     assert_eq!(aggregate.unwrap().verdict(), Verdict::Unsafe);
 }
 
-/// W48-PLUGIN-VERDICT-PRESERVATION (discharger): the published row of an
-/// uncertified `Safe` proposal carries the firewall's reason only; the
-/// plugin's own reason (here, every obligation it discharged) reaches the
-/// host's report in its `claims` record but not in the row's reason multiset,
-/// so a projection of the row alone cannot recover it. This asserts the
-/// preserving behaviour and fails on the base host; it is ignored until that
-/// card closes the gap in the host's composition path, which this card does
-/// not edit.
+/// W48-PLUGIN-VERDICT-PRESERVATION: the published row of an uncertified
+/// `Safe` proposal is `Pending` with the firewall's reason, and the plugin's
+/// own reason (every obligation it discharged) survives in the row's
+/// contributor record for the plugin (contract spec C11.3), from which a
+/// projection of the row alone recovers it.
 #[test]
-#[ignore = "W48-PLUGIN-VERDICT-PRESERVATION: the row of an uncertified Safe claim drops the plugin's own reason"]
 fn the_row_of_an_uncertified_safe_claim_keeps_the_plugins_reason() {
     let directory = support::scratch("preserve");
     let tree = tree(&directory);
@@ -298,19 +295,37 @@ fn the_row_of_an_uncertified_safe_claim_keeps_the_plugins_reason() {
     let binding = &set.bindings[0];
     let claim = claim(&pin, binding, &checks[&binding.function], "clang", None);
     assert_eq!(claim.verdict, ProposedVerdict::Safe);
-    let classified = classify_claim(&claim).verdict("quirin-audit-openssl@test");
-    let (rows, _) = join(
+    let label = "quirin-audit-openssl@test";
+    let classified = classify_claim(&claim);
+    let contribution = Contribution {
+        source: Source::new(SourceKind::Plugin, label),
+        answer: Some(Answer::of_claim("Safe", &claim.reason, &classified)),
+        verdict: classified.verdict(label),
+    };
+    let run = Contribution {
+        source: Source::new(SourceKind::Run, label),
+        answer: None,
+        verdict: ReasonedVerdict::safe(),
+    };
+    let (rows, _) = compose_rows(
         &BTreeMap::new(),
-        &ReasonedVerdict::safe(),
-        &[(claim.artifact.clone(), classified)],
+        &run,
+        &[(claim.artifact.clone(), contribution)],
     );
+    let records = &rows[&claim.artifact];
+    assert_eq!(compose(records).verdict(), Verdict::Pending);
+    let plugin = records
+        .iter()
+        .find(|record| record.source.kind == SourceKind::Plugin)
+        .expect("the plugin's record is kept");
+    let answer = plugin.answer.as_ref().expect("the plugin's answer is kept");
+    assert_eq!(answer.proposed.as_deref(), Some("Safe"));
     assert!(
-        rows[&claim.artifact]
-            .reasons()
+        answer
+            .reasons
             .iter()
-            .any(|reason| reason.detail.contains(&claim.reason)),
-        "the row's reasons {:?} do not carry the plugin's reason `{}`",
-        rows[&claim.artifact].reasons(),
+            .any(|reason| reason.detail == claim.reason),
+        "the plugin's record {answer:?} does not carry its reason `{}`",
         claim.reason
     );
 }
