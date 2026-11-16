@@ -152,6 +152,24 @@ impl PluginClaim {
     }
 }
 
+/// A checker plugin's answer as it gave it, beside the firewall's
+/// classification (card W48-PLUGIN-VERDICT-PRESERVATION).
+///
+/// The classification decides the verdict; this keeps what it does not
+/// carry, so a composed row can still say what each plugin itself answered.
+/// Nothing here is evidence: [`Self::claim`] is the only part that reaches a
+/// verdict.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct PluginAnswer {
+    /// The verdict the plugin proposed, or `None` when no response was read
+    /// (a request or task gate, a spawn, transport or protocol failure).
+    pub proposed: Option<ProposedVerdict>,
+    /// The plugin's own diagnostics, in its order.
+    pub diagnostics: Vec<PluginDiagnostic>,
+    /// The firewall's classification.
+    pub claim: PluginClaim,
+}
+
 /// The first diagnostic of a host refusal, as a failure.
 fn refusal(outcome: &super::VerificationOutcome) -> PluginClaim {
     let (code, reason) = outcome
@@ -176,10 +194,52 @@ impl VerifierRegistry {
         checker: Option<&dyn WitnessChecker>,
         counterexample: Option<&dyn CounterexampleChecker>,
     ) -> PluginClaim {
+        self.verify_plugin_answer(request, task, checker, counterexample)
+            .claim
+    }
+
+    /// [`Self::verify_plugin_claim`], keeping beside the classification what
+    /// the plugin itself answered (card W48-PLUGIN-VERDICT-PRESERVATION): its
+    /// proposed verdict and its own diagnostics, which the classified claim
+    /// alone does not carry for a `Safe`, an `Unsafe` or a refuted answer.
+    #[must_use]
+    pub fn verify_plugin_answer(
+        &self,
+        request: &VerificationRequestV2,
+        task: &VerificationTask,
+        checker: Option<&dyn WitnessChecker>,
+        counterexample: Option<&dyn CounterexampleChecker>,
+    ) -> PluginAnswer {
         let (manifest, response) = match self.dispatch_v2(request, task) {
             Ok(dispatched) => dispatched,
-            Err(outcome) => return refusal(&outcome),
+            Err(outcome) => {
+                return PluginAnswer {
+                    proposed: None,
+                    diagnostics: Vec::new(),
+                    claim: refusal(&outcome),
+                };
+            }
         };
+        let proposed = response.verdict;
+        let diagnostics = response.diagnostics.clone();
+        let claim = self.classify_v2(manifest, request, task, checker, counterexample, response);
+        PluginAnswer {
+            proposed: Some(proposed),
+            diagnostics,
+            claim,
+        }
+    }
+
+    /// Classify one dispatched response (the module table).
+    fn classify_v2(
+        &self,
+        manifest: &PluginManifest,
+        request: &VerificationRequestV2,
+        task: &VerificationTask,
+        checker: Option<&dyn WitnessChecker>,
+        counterexample: Option<&dyn CounterexampleChecker>,
+        response: super::VerificationResponseV2,
+    ) -> PluginClaim {
         let proposed = response.verdict;
         let evidence = response.evidence.clone();
         let outcome = self.check_response_v2(manifest, request, task, checker, response);

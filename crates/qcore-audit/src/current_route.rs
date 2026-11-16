@@ -93,6 +93,10 @@ pub struct CurrentRoute<'a> {
     /// transitive `dependent_libraries` closure, dropping the slice's
     /// contract environment and unit outcomes before the next slice starts.
     pub library_providers: Option<&'a crate::providers::ResolvedLibraryProvidersTable>,
+    /// Card W48-PLUGIN-VERDICT-PRESERVATION: the trusted-core checkers a
+    /// library caller supplies for checker plugins; the command line supplies
+    /// none (`PluginCheckers::default()`).
+    pub plugin_checkers: crate::user_plugins::PluginCheckers<'a>,
 }
 
 /// One configured-route compilation configuration, in selection order.
@@ -288,7 +292,13 @@ pub fn run_current_route_with_checkpoints(
         .canonicalize()
         .map_err(|error| error.to_string())?;
     let profile = route.profile;
-    let mut audit = CurrentAudit::with_contracts(&root, profile, route.contracts, route.mode)?;
+    let mut audit = CurrentAudit::with_plugin_checkers(
+        &root,
+        profile,
+        route.contracts,
+        route.mode,
+        route.plugin_checkers,
+    )?;
     if let Some(selection) = route.selection {
         audit.record_selection(selection.record());
     }

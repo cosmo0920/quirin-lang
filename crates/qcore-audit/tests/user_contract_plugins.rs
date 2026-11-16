@@ -51,6 +51,12 @@ use serde_json::{Value, json};
 mod process_fixture;
 use process_fixture::write_executable;
 
+// Card W48-PLUGIN-VERDICT-PRESERVATION: the same plugins traced through the
+// configured route, its checkpoints and their composition (in this binary so
+// it shares its exclusive slot).
+#[path = "plugin_verdict_preservation/checker_route.rs"]
+mod checker_route;
+
 static NEXT: AtomicUsize = AtomicUsize::new(0);
 const PLUGIN: &str = "acme.pool_check";
 
@@ -83,6 +89,14 @@ fn copy_tree(from: &Path, to: &Path) {
     }
 }
 
+/// Copy the SDK's example user crate (`quirin-provider-acme`) to `to`.
+fn copy_example_user_crate(to: &Path) {
+    copy_tree(
+        &repository().join("providers/quirin-provider-plugin/tests/fixtures/example-user-crate"),
+        to,
+    );
+}
+
 /// What the checker package does.
 enum Checker {
     /// Answer with this proposal (computed against the core's own task).
@@ -109,11 +123,7 @@ impl Tree {
             &Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/user_plugins/src"),
             &root.join("src"),
         );
-        copy_tree(
-            &repository()
-                .join("providers/quirin-provider-plugin/tests/fixtures/example-user-crate"),
-            &root.join("user"),
-        );
+        copy_example_user_crate(&root.join("user"));
         let tree = Self(root);
         succeeded(&tree.write_load_path(checkers, &[]));
         tree

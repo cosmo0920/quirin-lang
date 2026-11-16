@@ -65,7 +65,7 @@ pub use execution_policy::{EXECUTION_POLICY_VERSION, ExecutionPolicy, ExecutionP
 // Card W45-USER-CONTRACT-PLUGINS: a checker plugin's answer, classified into
 // the four-value verdict by the certificate firewall.
 pub mod plugin_firewall;
-pub use plugin_firewall::{CounterexampleChecker, PluginClaim};
+pub use plugin_firewall::{CounterexampleChecker, PluginAnswer, PluginClaim};
 
 pub mod process_quota;
 pub use process_quota::{

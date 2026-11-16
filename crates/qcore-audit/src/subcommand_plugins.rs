@@ -89,6 +89,8 @@ use qcore_schemas::reason::ReasonCategory;
 use qcore_schemas::sha256_hex;
 use qcore_schemas::verdict::{PendingReason, ReasonedVerdict};
 use qcore_verifier_host::{PluginClaim, PluginDiagnostic};
+
+use crate::plugin_verdicts::{Answer, Contribution, Source, SourceKind, claim_kind, compose};
 use quirin_audit_plugin::{
     AuditIdentity, DEFAULT_WALL_LIMIT_MS, ENVIRONMENT_ALLOW_LIST, EXECUTABLE_PREFIX, FileIdentity,
     Outcome, PLUGIN_PATH_VARIABLE, PROTOCOL_VERSION, ProposedVerdict, Quotas, Request, Response,
@@ -749,16 +751,8 @@ pub fn classify_claim(claim: &VerdictClaim) -> PluginClaim {
     }
 }
 
-fn claim_kind(claim: &PluginClaim) -> &'static str {
-    match claim {
-        PluginClaim::CertifiedSafe(_) => "certified-safe",
-        PluginClaim::ValidatedUnsafe { .. } => "validated-unsafe",
-        PluginClaim::UncertifiedSafe { .. } => "uncertified-safe",
-        PluginClaim::UnvalidatedUnsafe { .. } => "unvalidated-unsafe",
-        PluginClaim::Undecided { .. } => "undecided",
-        PluginClaim::Failure { .. } => "failure",
-    }
-}
+/// The source label of the host's verdicts (`--audit-report` rows).
+pub const HOST_SOURCE: &str = "audit-report";
 
 /// The result: each row the join of the host's verdict for its artifact, the
 /// run's verdict and the classified claims about it; and the join of every
@@ -770,21 +764,55 @@ pub fn join(
     run: &ReasonedVerdict,
     claims: &[(String, ReasonedVerdict)],
 ) -> (BTreeMap<String, ReasonedVerdict>, Option<ReasonedVerdict>) {
-    let mut rows: BTreeMap<String, ReasonedVerdict> = host
+    let record = |kind, verdict: &ReasonedVerdict| Contribution {
+        source: Source::new(kind, "test"),
+        answer: None,
+        verdict: verdict.clone(),
+    };
+    let claims = claims
         .iter()
-        .map(|(artifact, verdict)| (artifact.clone(), verdict.clone().join(run.clone())))
+        .map(|(artifact, verdict)| (artifact.clone(), record(SourceKind::Plugin, verdict)))
+        .collect::<Vec<_>>();
+    let (rows, aggregate) = compose_rows(host, &record(SourceKind::Run, run), &claims);
+    let rows = rows
+        .into_iter()
+        .map(|(artifact, records)| (artifact, compose(&records)))
         .collect();
-    for (artifact, verdict) in claims {
-        let row = rows
-            .remove(artifact)
-            .unwrap_or_else(|| run.clone())
-            .join(verdict.clone());
-        rows.insert(artifact.clone(), row);
+    (rows, aggregate)
+}
+
+/// [`join`], keeping every row's records (card
+/// W48-PLUGIN-VERDICT-PRESERVATION): per artifact, the host's verdict for it
+/// (source [`HOST_SOURCE`]), the run's record and each claim's, in that
+/// order. A row's published verdict is [`compose`] of its records; the
+/// aggregate is the join of every row and the run, `None` as in [`join`].
+#[must_use]
+pub fn compose_rows(
+    host: &BTreeMap<String, ReasonedVerdict>,
+    run: &Contribution,
+    claims: &[(String, Contribution)],
+) -> (BTreeMap<String, Vec<Contribution>>, Option<ReasonedVerdict>) {
+    let mut rows: BTreeMap<String, Vec<Contribution>> = host
+        .iter()
+        .map(|(artifact, verdict)| {
+            let host = Contribution {
+                source: Source::new(SourceKind::Host, HOST_SOURCE),
+                answer: None,
+                verdict: verdict.clone(),
+            };
+            (artifact.clone(), vec![host, run.clone()])
+        })
+        .collect();
+    for (artifact, claim) in claims {
+        rows.entry(artifact.clone())
+            .or_insert_with(|| vec![run.clone()])
+            .push(claim.clone());
     }
-    if rows.is_empty() && run.verdict().is_safe() {
+    if rows.is_empty() && run.verdict.verdict().is_safe() {
         return (rows, None);
     }
-    let aggregate = ReasonedVerdict::fold(rows.values().cloned()).join(run.clone());
+    let aggregate = ReasonedVerdict::fold(rows.values().map(|records| compose(records)))
+        .join(run.verdict.clone());
     (rows, Some(aggregate))
 }
 
@@ -1214,7 +1242,7 @@ pub fn execute(
         "label": label,
     });
 
-    let (run, artifacts, failure) = match &classified {
+    let (run_verdict, artifacts, failure) = match &classified {
         Ok(artifacts) => (ReasonedVerdict::safe(), artifacts.clone(), None),
         Err(failure) => (
             PluginClaim::Failure {
@@ -1229,6 +1257,11 @@ pub fn execute(
     // Claims count only from a completed run; a failed run's claims are
     // recorded and join nothing (the run is `Unknown`, above every Pending).
     let completed = failure.is_none();
+    let run = Contribution {
+        source: Source::new(SourceKind::Run, label.clone()),
+        answer: None,
+        verdict: run_verdict,
+    };
     let mut claim_rows = Vec::new();
     let mut joined_claims = Vec::new();
     for claim in response.iter().flat_map(|response| &response.claims) {
@@ -1246,18 +1279,35 @@ pub fn execute(
             "joined": completed,
         }));
         if completed {
-            joined_claims.push((claim.artifact.clone(), verdict));
+            // Card W48-PLUGIN-VERDICT-PRESERVATION: the row keeps what the
+            // plugin proposed and its own reason beside the classification.
+            let proposed = match claim.verdict {
+                ProposedVerdict::Safe => "Safe",
+                ProposedVerdict::Unsafe => "Unsafe",
+                ProposedVerdict::Unknown => "Unknown",
+            };
+            joined_claims.push((
+                claim.artifact.clone(),
+                Contribution {
+                    source: Source::new(SourceKind::Plugin, label.clone()),
+                    answer: Some(Answer::of_claim(proposed, &claim.reason, &classified)),
+                    verdict,
+                },
+            ));
         }
     }
-    let (rows, aggregate) = join(&prepared.host, &run, &joined_claims);
+    let (rows, aggregate) = compose_rows(&prepared.host, &run, &joined_claims);
+    let run = run.verdict;
     let rows = rows
         .iter()
-        .map(|(artifact, verdict)| {
+        .map(|(artifact, records)| {
+            let verdict = compose(records);
             json!({
                 "artifact": artifact,
                 "host": prepared.host.get(artifact).map(|host| json!({
                     "verdict": host.verdict(), "reasons": host.reasons(),
                 })),
+                "contributions": records.iter().map(Contribution::to_json).collect::<Vec<_>>(),
                 "verdict": verdict.verdict(),
                 "reasons": verdict.reasons(),
             })
@@ -1359,7 +1409,7 @@ pub fn execute(
 }
 
 /// What the report means, carried in it.
-pub const MEANING: &str = "an external quirin-audit subcommand (card W45-AUDIT-SUBCOMMAND-PLUGINS, contract spec C11.2): a quirin-audit-NAME executable found only on the declared plugin search path, run out of process with a cleared environment, its working directory the declared output, under wall-time and output quotas enforced by a process-group kill; its artifacts are accepted only inside the output with their declared SHA-256; each verdict claim is classified by the checker-plugin firewall (an uncertified Safe or Unsafe is Pending, plugin-claim-uncertified; an Unknown is Unknown) and a spawn failure, timeout, quota breach, nonzero exit, malformed response, protocol-version mismatch, reported failure or unverified artifact makes the run Unknown; each row is the join (Safe < Pending < Unknown < Unsafe) of the host's verdict from --audit-report, the run's and the claims about its artifact, and `verdict` is the join of every row and the run (null when a completed run has no row: no claim publishes no verdict)";
+pub const MEANING: &str = "an external quirin-audit subcommand (card W45-AUDIT-SUBCOMMAND-PLUGINS, contract spec C11.2): a quirin-audit-NAME executable found only on the declared plugin search path, run out of process with a cleared environment, its working directory the declared output, under wall-time and output quotas enforced by a process-group kill; its artifacts are accepted only inside the output with their declared SHA-256; each verdict claim is classified by the checker-plugin firewall (an uncertified Safe or Unsafe is Pending, plugin-claim-uncertified; an Unknown is Unknown) and a spawn failure, timeout, quota breach, nonzero exit, malformed response, protocol-version mismatch, reported failure or unverified artifact makes the run Unknown; each row is the join (Safe < Pending < Unknown < Unsafe) of the host's verdict from --audit-report, the run's and the claims about its artifact, and `verdict` is the join of every row and the run (null when a completed run has no row: no claim publishes no verdict); each row keeps its contributions (card W48-PLUGIN-VERDICT-PRESERVATION: the host's, the run's and each joined claim's source, the plugin's proposal and reason, verdict and reasons), and its verdict and reasons are their join";
 
 #[cfg(test)]
 mod tests {

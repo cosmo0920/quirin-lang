@@ -107,6 +107,9 @@ pub mod user_plugins;
 // Card W45-AUDIT-SUBCOMMAND-PLUGINS: external `quirin-audit NAME` subcommands
 // (`quirin-audit-NAME` on a declared search path), through the plugin firewall.
 pub mod subcommand_plugins;
+// Card W48-PLUGIN-VERDICT-PRESERVATION: every contributor's record in a
+// composed row, and its projection back out.
+pub mod plugin_verdicts;
 // Card RULE-SWITCH-ENTRY-POINTS: which command lines record the rule set.
 pub mod rule_switch_entry;
 pub mod wait_failures;

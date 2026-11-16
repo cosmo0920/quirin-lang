@@ -51,6 +51,12 @@ checker-plugin answer is which value).
   `Pending`; a refuted certificate or witness, an `Unknown` answer and every
   failure (crash, timeout, quota breach, protocol error, mismatch) are
   `Unknown`.
+* **Contributions** (card W48-PLUGIN-VERDICT-PRESERVATION). A composed row
+  keeps every contributor's `(source, answer, verdict, reasons)` record and
+  publishes their join; composition keeps every record, projection by source
+  recovers each one, and a plugin's own answer, value and reasons are
+  recovered from any row holding them (the model of
+  `crates/qcore-audit/src/plugin_verdicts.rs`).
 
 ## What this is not
 
@@ -479,5 +485,271 @@ of the chain says. -/
 theorem an_uncertified_plugin_link_keeps_the_chain_non_safe (xs : List V) (o : Outcome)
     (uncertified : firewall o = .pending) : fold (firewall o :: xs) ≠ .safe :=
   pending_never_folds_to_safe (by rw [uncertified]; exact List.mem_cons.mpr (Or.inl rfl))
+
+/-! ## Contributions: who said what (card W48-PLUGIN-VERDICT-PRESERVATION)
+
+A composed row keeps every contributor's record — its source (the host, the
+plugin run, a plugin), what it answered before the firewall classified it,
+the value it contributes and its reasons — and *derives* its published value
+and reasons from them. The published value is the join of the contributed
+values, the published reasons the union of the contributed reasons, and
+composing two rows (a unit over its functions, a checkpoint's units, a
+report's rows) concatenates their records. So no composition erases a
+contributor: each source's own records are recovered from the composed row by
+projection, and that source's records and everyone else's recompose the
+published value. -/
+
+/-- One contributor's record in a composed row. `A` is what the contributor
+answered before classification (for a plugin, its firewall outcome). -/
+structure Contribution (S A R : Type) where
+  source : S
+  answer : A
+  value : V
+  reasons : List R
+
+namespace Contribution
+
+variable {S A R : Type}
+
+/-- The record read as a reasoned verdict, forgetting who said it. -/
+def toReasoned (c : Contribution S A R) : Reasoned R := ⟨c.value, c.reasons⟩
+
+end Contribution
+
+namespace Reasoned
+
+variable {R : Type}
+
+/-- The fold of reasoned verdicts; the identity for none. -/
+def fold : List (Reasoned R) → Reasoned R
+  | [] => identity
+  | x :: xs => join x (fold xs)
+
+end Reasoned
+
+/-- The fold does not depend on the order of the links. -/
+theorem fold_perm {xs ys : List V} (h : xs.Perm ys) : fold xs = fold ys := by
+  induction h with
+  | nil => rfl
+  | cons x _ ih => simp [fold, ih]
+  | swap x y l =>
+    simp only [fold]
+    rw [← join_assoc, join_comm y x, join_assoc]
+  | trans _ _ ih₁ ih₂ => exact ih₁.trans ih₂
+
+/-- A composed row: the records it keeps. Its value and reasons are derived. -/
+structure Row (S A R : Type) where
+  contributions : List (Contribution S A R)
+
+namespace Row
+
+variable {S A R : Type}
+
+/-- The published value: the join of every contributed value. -/
+def value (r : Row S A R) : V := fold (r.contributions.map Contribution.value)
+
+/-- The published reasons: every contributed reason, with multiplicity. -/
+def reasons (r : Row S A R) : List R := r.contributions.flatMap Contribution.reasons
+
+/-- The published reasoned verdict. -/
+def published (r : Row S A R) : Reasoned R := ⟨r.value, r.reasons⟩
+
+/-- Composition of rows keeps both rows' records. -/
+def join (a b : Row S A R) : Row S A R := ⟨a.contributions ++ b.contributions⟩
+
+/-- One source's own records, recovered from a composed row. -/
+def project [DecidableEq S] (r : Row S A R) (s : S) : Row S A R :=
+  ⟨r.contributions.filter (fun c => decide (c.source = s))⟩
+
+/-- Every other source's records. -/
+def rest [DecidableEq S] (r : Row S A R) (s : S) : Row S A R :=
+  ⟨r.contributions.filter (fun c => !decide (c.source = s))⟩
+
+/-- **The published value is the join**: a row publishes exactly the
+reasoned fold of its contributors' records. -/
+theorem published_is_the_fold (r : Row S A R) :
+    r.published = Reasoned.fold (r.contributions.map Contribution.toReasoned) := by
+  rcases r with ⟨cs⟩
+  induction cs with
+  | nil => rfl
+  | cons c cs ih =>
+    simp only [published, value, reasons, List.map_cons, fold, List.flatMap_cons,
+      Reasoned.fold] at ih ⊢
+    rw [← ih]
+    rfl
+
+/-- Composing rows joins their published verdicts. -/
+theorem join_published (a b : Row S A R) :
+    (join a b).published = Reasoned.join a.published b.published := by
+  simp [join, published, value, reasons, Reasoned.join, List.map_append, fold_append,
+    List.flatMap_append]
+
+theorem join_assoc (a b c : Row S A R) : join (join a b) c = join a (join b c) := by
+  simp [join]
+
+/-- Composition never lowers a row. -/
+theorem value_le_join_left (a b : Row S A R) : a.value.rank ≤ (join a b).value.rank := by
+  simp only [join, value, List.map_append, fold_append]; exact le_join_left _ _
+
+theorem value_le_join_right (a b : Row S A R) : b.value.rank ≤ (join a b).value.rank := by
+  simp only [join, value, List.map_append, fold_append]; exact le_join_right _ _
+
+/-- **Composition preserves every record**: a record of either row is a
+record of the composed row. -/
+theorem join_keeps_every_record (a b : Row S A R) (c : Contribution S A R)
+    (member : c ∈ a.contributions ∨ c ∈ b.contributions) :
+    c ∈ (join a b).contributions := by
+  simp [join]; exact member
+
+/-- A contributor's value is below the published value, and its reasons are
+published. -/
+theorem a_record_is_below_the_row (r : Row S A R) {c : Contribution S A R}
+    (member : c ∈ r.contributions) :
+    c.value.rank ≤ r.value.rank ∧ ∀ x ∈ c.reasons, x ∈ r.reasons := by
+  refine ⟨every_link_is_below_the_fold (List.mem_map_of_mem member), ?_⟩
+  intro x hx
+  exact List.mem_flatMap.mpr ⟨c, member, hx⟩
+
+/-- A row is `Safe` exactly when every contributor is. -/
+theorem value_eq_safe_iff (r : Row S A R) :
+    r.value = .safe ↔ ∀ c ∈ r.contributions, c.value = .safe := by
+  rw [value, fold_eq_safe_iff]
+  simp
+
+variable [DecidableEq S]
+
+/-- **Projection recovers a source's own records**, every one, from any
+composition: projection distributes over composition. -/
+theorem project_join (a b : Row S A R) (s : S) :
+    (join a b).project s = join (a.project s) (b.project s) := by
+  simp [join, project, List.filter_append]
+
+/-- A record is recovered under its own source. -/
+theorem project_recovers (r : Row S A R) {c : Contribution S A R}
+    (member : c ∈ r.contributions) : c ∈ (r.project c.source).contributions := by
+  simp [project, member]
+
+/-- Everything projected under `s` is a record of the row from `s`. -/
+theorem project_only_from_the_source (r : Row S A R) (s : S) {c : Contribution S A R}
+    (member : c ∈ (r.project s).contributions) : c ∈ r.contributions ∧ c.source = s := by
+  simpa [project] using member
+
+/-- **Recovery recomposes**: a source's own records and everyone else's
+recompose the published value, and the published reasons up to order. -/
+theorem project_and_rest_recompose (r : Row S A R) (s : S) :
+    (join (r.project s) (r.rest s)).value = r.value ∧
+      (join (r.project s) (r.rest s)).reasons.Perm r.reasons := by
+  have perm : (r.contributions.filter (fun c => decide (c.source = s)) ++
+      r.contributions.filter (fun c => !decide (c.source = s))).Perm r.contributions :=
+    List.filter_append_perm _ _
+  constructor
+  · simp only [join, project, rest, value]
+    exact fold_perm (perm.map _)
+  · simp only [join, project, rest, reasons]
+    exact perm.flatMap_right _
+
+end Row
+
+/-! ### Plugins in a composed row
+
+A plugin's record carries its firewall outcome as its answer and the
+firewall's value as its value; a host or run record carries no outcome. -/
+
+/-- A plugin's record: what it answered, and the value the firewall gives it. -/
+def pluginRecord {S R : Type} (s : S) (o : Outcome) (reasons : List R) :
+    Contribution S (Option Outcome) R :=
+  ⟨s, some o, firewall o, reasons⟩
+
+/-- A host (or run) record: no plugin answer. -/
+def hostRecord {S R : Type} (s : S) (v : V) (reasons : List R) :
+    Contribution S (Option Outcome) R :=
+  ⟨s, none, v, reasons⟩
+
+section Plugins
+
+variable {S R : Type}
+
+/-- **A plugin's own verdict and reasons are recovered**: projecting a composed
+row under the plugin's source finds its answer, its firewall value and its
+reasons. -/
+theorem a_plugin_record_is_recovered [DecidableEq S] (r : Row S (Option Outcome) R) (s : S)
+    (o : Outcome)
+    (rs : List R) (member : pluginRecord s o rs ∈ r.contributions) :
+    ∃ c ∈ (r.project s).contributions,
+      c.answer = some o ∧ c.value = firewall o ∧ c.reasons = rs :=
+  ⟨_, Row.project_recovers r member, rfl, rfl, rfl⟩
+
+/-- An uncertified plugin claim keeps the composed row from `Safe`. -/
+theorem an_uncertified_plugin_keeps_the_row_non_safe (r : Row S (Option Outcome) R) (s : S)
+    (o : Outcome) (rs : List R) (member : pluginRecord s o rs ∈ r.contributions)
+    (uncertified : firewall o = .pending) : r.value ≠ .safe := by
+  intro h
+  have := (Row.value_eq_safe_iff r).mp h _ member
+  simp [pluginRecord, uncertified] at this
+
+/-- No `Unknown` contributor flips to `Safe` or `Pending`: a row with an
+`Unknown` record is `Unknown` or `Unsafe`. -/
+theorem an_unknown_record_keeps_the_row_at_least_unknown (r : Row S (Option Outcome) R)
+    {c : Contribution S (Option Outcome) R} (member : c ∈ r.contributions)
+    (unknown : c.value = .unknown) : r.value = .unknown ∨ r.value = .provisionalUnsafe := by
+  have le := (Row.a_record_is_below_the_row r member).1
+  rw [unknown] at le
+  cases h : r.value <;> simp_all [rank]
+
+/-- A failing plugin is fail-closed in any row. -/
+theorem a_failing_plugin_keeps_the_row_at_least_unknown (r : Row S (Option Outcome) R)
+    (s : S) (rs : List R) (member : pluginRecord s .failure rs ∈ r.contributions) :
+    r.value = .unknown ∨ r.value = .provisionalUnsafe :=
+  an_unknown_record_keeps_the_row_at_least_unknown r member rfl
+
+/-- A row with a plugin record is `Safe` only if that plugin's `Safe` was
+certified. -/
+theorem a_row_with_a_plugin_is_safe_only_if_certified (r : Row S (Option Outcome) R) (s : S)
+    (o : Outcome) (rs : List R) (member : pluginRecord s o rs ∈ r.contributions)
+    (safe : r.value = .safe) : o = .answered (.safe (.offered .accepted)) :=
+  (a_plugin_is_safe_only_with_an_accepted_certificate o).mp
+    ((Row.value_eq_safe_iff r).mp safe _ member)
+
+/-! #### Negative controls -/
+
+/-- Two plugins disagreeing — one certified `Safe`, one failed — beside a
+`Safe` host: the row is `Unknown`, and each plugin's own record is recovered. -/
+theorem two_plugins_disagreeing [DecidableEq S] (host p q : S) (hp : p ≠ host) (hq : q ≠ host)
+    (pq : p ≠ q)
+    (rp rq : List R) :
+    Row.value (⟨[hostRecord host .safe [],
+        pluginRecord p (.answered (.safe (.offered .accepted))) rp,
+        pluginRecord q .failure rq]⟩ : Row S (Option Outcome) R) = .unknown ∧
+      (Row.project (⟨[hostRecord host .safe [],
+        pluginRecord p (.answered (.safe (.offered .accepted))) rp,
+        pluginRecord q .failure rq]⟩ : Row S (Option Outcome) R) p).contributions =
+        [pluginRecord p (.answered (.safe (.offered .accepted))) rp] ∧
+      (Row.project (⟨[hostRecord host .safe [],
+        pluginRecord p (.answered (.safe (.offered .accepted))) rp,
+        pluginRecord q .failure rq]⟩ : Row S (Option Outcome) R) q).contributions =
+        [pluginRecord q .failure rq] := by
+  refine ⟨rfl, ?_, ?_⟩
+  · simp [Row.project, hostRecord, pluginRecord, Ne.symm hp, Ne.symm pq]
+  · simp [Row.project, hostRecord, pluginRecord, Ne.symm hq, pq]
+
+/-- A plugin's `Unsafe` beside a host `Safe`: `Pending` while uncertified,
+provisional `Unsafe` only with a validated witness; never `Safe`. -/
+theorem a_plugin_unsafe_beside_a_host_safe (host p : S) (rs : List R) :
+    Row.value (⟨[hostRecord host .safe [], pluginRecord p (.answered (.violated .none)) rs]⟩ :
+        Row S (Option Outcome) R) = .pending ∧
+      Row.value (⟨[hostRecord host .safe [],
+          pluginRecord p (.answered (.violated (.offered .noChecker))) rs]⟩ :
+        Row S (Option Outcome) R) = .pending ∧
+      Row.value (⟨[hostRecord host .safe [],
+          pluginRecord p (.answered (.violated (.offered .accepted))) rs]⟩ :
+        Row S (Option Outcome) R) = .provisionalUnsafe :=
+  ⟨rfl, rfl, rfl⟩
+
+/-- A failing plugin beside a host `Safe` is `Unknown`. -/
+theorem a_failing_plugin_beside_a_host_safe (host p : S) (rs : List R) :
+    Row.value (⟨[hostRecord host .safe [], pluginRecord p .failure rs]⟩ :
+        Row S (Option Outcome) R) = .unknown := rfl
+
+end Plugins
 
 end QCore.VerdictSemigroup
