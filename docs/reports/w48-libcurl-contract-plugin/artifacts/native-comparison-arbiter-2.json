@@ -1,0 +1,589 @@
+{
+  "comparisons": [
+    {
+      "after": "tip",
+      "before": "base",
+      "comparison": "base->tip",
+      "routes": {
+        "corpus": {
+          "status": "not-compared",
+          "why": "the route did not complete (exit 1)"
+        },
+        "system": {
+          "after_directory": "<worktree>/measure/arbiter-2/sides/tip/system",
+          "artifacts": {
+            "byte_identical_except_named_substitutions": false,
+            "differing": [
+              {
+                "after": "6997d1d04b36bb246af8f86b8aef04e847a5168253f864f0649a5ba68e68ad48",
+                "before": "f2217c1260ebb38805da1aa0040d6ff9237af77ea3f9abb96472aed990267fe4",
+                "file": "resource-diagnostics.components.json"
+              },
+              {
+                "file": "resource-diagnostics.contracts.json",
+                "why": {
+                  "lifetime_keys_only_after": [],
+                  "lifetime_keys_only_before": []
+                }
+              },
+              {
+                "after": "72ce4a70997fdb14c636f7a8817de28b3ebf268a330def90133d17376e040cd6",
+                "before": "728e671c96976431b9c4bb9ec6cde8f9e1c2045a42c4ace00027ae3ad0347d45",
+                "file": "resource-diagnostics.json"
+              },
+              {
+                "after": "29ac8007205bdb276f8c0789c3e1902d2e6979625664d81abc37e67097c17223",
+                "before": "21f7d12379e5f830df715625b033fe1955703976aa615844142b89cba60ab4db",
+                "file": "system-null.jsonl"
+              },
+              {
+                "after": "9022e16c47ca17363ea368f615b7b294acba14a6b1894f950c671532eb504c40",
+                "before": "be26276b92c354948f1ce63a627d692243afc3205c09640f8f9acab9ab66dc09",
+                "file": "system-outer.json"
+              }
+            ],
+            "identical": [
+              {
+                "file": "resource-diagnostics.chunk-contracts.json",
+                "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922"
+              },
+              {
+                "file": "resource-diagnostics.source-effects.json",
+                "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922"
+              },
+              {
+                "file": "system-null.summary.json",
+                "sha256": "fbe55991b0147ade4de1fb3ad6fdf5146e5587643eb560ba9652ef419c4cabb5"
+              }
+            ],
+            "identical_after_named_substitution": {},
+            "only_after": [],
+            "only_before": [],
+            "records_not_compared": [
+              "console.log",
+              "invocation.json",
+              "resource-diagnostics.invocation.json",
+              "stderr.log",
+              "system.exit"
+            ]
+          },
+          "before_directory": "<worktree>/measure/arbiter-2/sides/base/system",
+          "composition": {
+            "components": {
+              "after": 15,
+              "before": 15,
+              "union": 30
+            },
+            "conflicts": [],
+            "rows": 15
+          },
+          "conflicts": {
+            "after": [],
+            "before": []
+          },
+          "content_changes": [
+            {
+              "leaves_added": [],
+              "leaves_removed": [],
+              "other_fields_changed": [
+                "review_holds"
+              ],
+              "row": "fluent-bit-system::src/flb_output.c::unit#0::resource-custody.v1::fluent-bit-system::flb_output_exit#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [],
+              "other_fields_changed": [
+                "review_holds"
+              ],
+              "row": "fluent-bit-system::src/flb_output.c::unit#1::resource-custody.v1::fluent-bit-system::flb_output_exit#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [],
+              "other_fields_changed": [
+                "review_holds"
+              ],
+              "row": "fluent-bit-system::src/flb_storage.c::unit#0::resource-custody.v1::fluent-bit-system::flb_storage_create#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            },
+            {
+              "leaves_added": [],
+              "leaves_removed": [],
+              "other_fields_changed": [
+                "review_holds"
+              ],
+              "row": "fluent-bit-system::src/flb_storage.c::unit#1::resource-custody.v1::fluent-bit-system::flb_storage_create#0",
+              "status": [
+                "Unknown",
+                "Unknown"
+              ]
+            }
+          ],
+          "environment_digest_fields": [
+            "assumptions",
+            "build_identity",
+            "environment_sha256",
+            "resource_contracts_sha256",
+            "id"
+          ],
+          "figures": {
+            "after": {
+              "null_rows": 454,
+              "null_verdicts": {
+                "Safe": 211,
+                "Unknown": 243
+              },
+              "null_verdicts_sha256": "e9c4c6e17431591fa4029443540edf7d172c7129be5797d93591d69d2a38b10c",
+              "row_statuses": {
+                "Safe": 103,
+                "Unknown": 341,
+                "Unsafe": 4
+              },
+              "row_verdicts_sha256": "b86cc3995a927da2739e82bd5910e87def3bc0090804cc4f9c4daa6ae986e1be",
+              "rows": 448,
+              "unit_statuses": {
+                "Unknown": 13,
+                "Unsafe": 2
+              },
+              "unit_verdicts_sha256": "d326464ed189bac74776761057f9be31bd5197eea46563b8991137944ed2a01f",
+              "units": 15
+            },
+            "before": {
+              "null_rows": 454,
+              "null_verdicts": {
+                "Safe": 211,
+                "Unknown": 243
+              },
+              "null_verdicts_sha256": "e9c4c6e17431591fa4029443540edf7d172c7129be5797d93591d69d2a38b10c",
+              "row_statuses": {
+                "Safe": 103,
+                "Unknown": 341,
+                "Unsafe": 4
+              },
+              "row_verdicts_sha256": "b86cc3995a927da2739e82bd5910e87def3bc0090804cc4f9c4daa6ae986e1be",
+              "rows": 448,
+              "unit_statuses": {
+                "Unknown": 13,
+                "Unsafe": 2
+              },
+              "unit_verdicts_sha256": "d326464ed189bac74776761057f9be31bd5197eea46563b8991137944ed2a01f",
+              "units": 15
+            }
+          },
+          "function_rows": {
+            "content_changed": 4,
+            "environment_only": 444,
+            "identical": 0,
+            "moved": 0,
+            "unmatched": 0
+          },
+          "incomplete_because": [],
+          "moves": [],
+          "profile_baseline": {
+            "after": {
+              "exit": 1,
+              "lines": [
+                "null_verdicts_sha256: baseline '62eff3de112879c09f4f1e344c3f1f3f9d5939ecca2b3468c211ad1ce40f0d14', run 'e9c4c6e17431591fa4029443540edf7d172c7129be5797d93591d69d2a38b10c'",
+                "row_verdicts_sha256: baseline '92ab9acd3c1764e43240b148983c3e8b06246affa8d018561e8b037104ead3fe', run 'b86cc3995a927da2739e82bd5910e87def3bc0090804cc4f9c4daa6ae986e1be'",
+                "fluent-bit-system: results moved; record the new baseline with a reason in the same commit (record), or treat the move as a defect"
+              ],
+              "profile": "fluent-bit-system"
+            },
+            "before": {
+              "exit": 1,
+              "lines": [
+                "null_verdicts_sha256: baseline '62eff3de112879c09f4f1e344c3f1f3f9d5939ecca2b3468c211ad1ce40f0d14', run 'e9c4c6e17431591fa4029443540edf7d172c7129be5797d93591d69d2a38b10c'",
+                "row_verdicts_sha256: baseline '92ab9acd3c1764e43240b148983c3e8b06246affa8d018561e8b037104ead3fe', run 'b86cc3995a927da2739e82bd5910e87def3bc0090804cc4f9c4daa6ae986e1be'",
+                "fluent-bit-system: results moved; record the new baseline with a reason in the same commit (record), or treat the move as a defect"
+              ],
+              "profile": "fluent-bit-system"
+            }
+          },
+          "status": "complete",
+          "status_deltas": {
+            "Safe": 0,
+            "Unknown": 0,
+            "Unsafe": 0
+          },
+          "totals": {
+            "after": {
+              "conflicted_unit_rows": 0,
+              "diagnostic_counts": {
+                "counted_user": 4,
+                "summary_conflict": 4,
+                "unknown_alias": 898,
+                "unsupported": 2414
+              },
+              "function_rows": 448,
+              "function_status": {
+                "Safe": 103,
+                "Unknown": 341,
+                "Unsafe": 4
+              },
+              "row_source": "sidecar",
+              "unit_rows": 15,
+              "unit_verdict": {
+                "Unknown": 13,
+                "Unsafe": 2
+              }
+            },
+            "before": {
+              "conflicted_unit_rows": 0,
+              "diagnostic_counts": {
+                "counted_user": 4,
+                "summary_conflict": 4,
+                "unknown_alias": 898,
+                "unsupported": 2414
+              },
+              "function_rows": 448,
+              "function_status": {
+                "Safe": 103,
+                "Unknown": 341,
+                "Unsafe": 4
+              },
+              "row_source": "sidecar",
+              "unit_rows": 15,
+              "unit_verdict": {
+                "Unknown": 13,
+                "Unsafe": 2
+              }
+            }
+          },
+          "unit_field_differences": {
+            "fluent-bit-system::plugins/in_storage_backlog/sb.c::unit#0::resource-custody.v1::fluent-bit-system": [
+              "compile_configuration"
+            ],
+            "fluent-bit-system::src/flb_engine.c::unit#0::resource-custody.v1::fluent-bit-system": [
+              "compile_configuration"
+            ],
+            "fluent-bit-system::src/flb_engine.c::unit#1::resource-custody.v1::fluent-bit-system": [
+              "compile_configuration"
+            ],
+            "fluent-bit-system::src/flb_engine_dispatch.c::unit#0::resource-custody.v1::fluent-bit-system": [
+              "compile_configuration"
+            ],
+            "fluent-bit-system::src/flb_engine_dispatch.c::unit#1::resource-custody.v1::fluent-bit-system": [
+              "compile_configuration"
+            ],
+            "fluent-bit-system::src/flb_input_chunk.c::unit#0::resource-custody.v1::fluent-bit-system": [
+              "compile_configuration"
+            ],
+            "fluent-bit-system::src/flb_input_chunk.c::unit#1::resource-custody.v1::fluent-bit-system": [
+              "compile_configuration"
+            ],
+            "fluent-bit-system::src/flb_output.c::unit#0::resource-custody.v1::fluent-bit-system": [
+              "compile_configuration"
+            ],
+            "fluent-bit-system::src/flb_output.c::unit#1::resource-custody.v1::fluent-bit-system": [
+              "compile_configuration"
+            ],
+            "fluent-bit-system::src/flb_scheduler.c::unit#0::resource-custody.v1::fluent-bit-system": [
+              "compile_configuration"
+            ],
+            "fluent-bit-system::src/flb_scheduler.c::unit#1::resource-custody.v1::fluent-bit-system": [
+              "compile_configuration"
+            ],
+            "fluent-bit-system::src/flb_storage.c::unit#0::resource-custody.v1::fluent-bit-system": [
+              "compile_configuration"
+            ],
+            "fluent-bit-system::src/flb_storage.c::unit#1::resource-custody.v1::fluent-bit-system": [
+              "compile_configuration"
+            ],
+            "fluent-bit-system::src/flb_task.c::unit#0::resource-custody.v1::fluent-bit-system": [
+              "compile_configuration",
+              "reading_site_environments"
+            ],
+            "fluent-bit-system::src/flb_task.c::unit#1::resource-custody.v1::fluent-bit-system": [
+              "compile_configuration",
+              "reading_site_environments"
+            ]
+          },
+          "unit_moves": [],
+          "unit_rows_environment_only": 0,
+          "unmatched": [],
+          "unmatched_units": []
+        }
+      }
+    }
+  ],
+  "contract_only_reuse": {
+    "reason": "not requested (--reuse-contract-only)",
+    "requested": false,
+    "taken": false
+  },
+  "contribution": {
+    "ledgers": [],
+    "rules": [],
+    "schema": "quirin-contribution-ledger/1"
+  },
+  "declared": {
+    "comparison": "base->tip",
+    "path": "<worktree>/docs/reports/w48-libcurl-contract-plugin/PREDICTION.md",
+    "result": "mismatch",
+    "routes": {
+      "corpus": {
+        "result": "not-compared",
+        "why": "the route did not complete (exit 1)"
+      },
+      "system": {
+        "declared": true,
+        "delta_mismatches": [],
+        "missing": [],
+        "result": "match",
+        "unpredicted": []
+      }
+    },
+    "sha256": "8d567b266516296c94260615c488565aedccba93b8a942325d318a9ef8bd7641"
+  },
+  "failures": [
+    "side base route corpus exited 1",
+    "side tip route corpus exited 1",
+    "comparison base->tip route corpus: the route did not complete (exit 1)"
+  ],
+  "inputs_spelling": {
+    "canonical_prefix": null,
+    "mode": "auto",
+    "spelled_prefix": null,
+    "spelling": "original"
+  },
+  "interactions": [],
+  "routes": [
+    {
+      "definition": {
+        "clang": "/usr/lib/llvm-21/bin/clang",
+        "compile_databases": [
+          {
+            "path": "c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json",
+            "sha256": "0ae624f8f5e726258a99e30b032bb88f47509675ba3048d44882e62269aef15b"
+          },
+          {
+            "path": "c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
+            "sha256": "3a24f673e033a3f8b9b2bff33dbe5ca8036d74d3d70b9c58266d85c5ead998ba"
+          }
+        ],
+        "inputs_root": "private/w48-libcurl/corpus-inputs",
+        "kind": "pinned-corpus",
+        "link_map": {
+          "path": "docs/reports/w48-bu-single-leaf-bodies/link-map.corpus.json",
+          "sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3"
+        },
+        "mirror_trees": [
+          "c-gateway-wave-pin/fluent-bit-clang-source",
+          "c-gateway-wave-pin/monkey",
+          "provider-packages-wave20"
+        ],
+        "name": "corpus",
+        "profile": "eight-home",
+        "source_commit": "66910c10",
+        "tracked": [
+          "contract/profiles/fluent-bit/audit.json",
+          "contract/profiles/fluent-bit/profile.json",
+          "contract/profiles/fluent-bit/member-facts-scope.json"
+        ]
+      },
+      "digest": "b8828e90b0126e0eb05edf3c47c0c62f0c35233336bb00805847c57467fcb881",
+      "name": "corpus",
+      "profile": "eight-home"
+    },
+    {
+      "definition": {
+        "checkout": "private/w48-libcurl/prep-system/fluent-bit-clang-source",
+        "clang": "/usr/lib/llvm-21/bin/clang",
+        "compile_database": {
+          "path": "private/w48-libcurl/prep-system/fluent-bit-clang-production/compile_commands.json",
+          "sha256": "a72f4d479b69ceafd2ab6991b8d793caf2066c1027db440ae54609449d66f09d"
+        },
+        "kind": "configured-selection",
+        "link_map": {
+          "path": "docs/reports/w48-bu-single-leaf-bodies/link-map.corpus.json",
+          "sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3"
+        },
+        "name": "system",
+        "profile": "fluent-bit-system",
+        "profile_directory": "contract/profiles/fluent-bit",
+        "selection": "contract/profiles/fluent-bit/system-selection.json",
+        "tracked": [
+          "contract/profiles/fluent-bit/system-selection.json",
+          "contract/profiles/fluent-bit/profile.json",
+          "contract/profiles/fluent-bit/member-facts-scope.json"
+        ]
+      },
+      "digest": "c7792c54e8ae2d854875fb48d6d6c74d0fcadac3e958052376d2d91cd7bd5960",
+      "name": "system",
+      "profile": "fluent-bit-system"
+    }
+  ],
+  "rules_off": [],
+  "schema": "quirin-native-comparison/1",
+  "sides": {
+    "base": {
+      "binary": {
+        "path": "<worktree>/private/w48-libcurl/base-src/target/release/quirin-audit",
+        "path_as_run": "<worktree>/private/w48-libcurl/base-src/target/release/quirin-audit",
+        "sha256": "8af3e8fa2628d3a468f7bc0c7c690ec25e4ca9ee68ec5297e3e9b7ef66282603"
+      },
+      "build_commit": null,
+      "bundles": {
+        "contract": "25aa436cc424cb13f7dd76c6f72bc407604ecc3ec3d2974a6bf59a0fc311edb2",
+        "providers/qcore-provider-chunkio/contracts": "0732ed1f1b7872591a3537b84d5c1561e11ad010cfb4d68f030cbce131edcb8f",
+        "providers/qcore-provider-cmetrics/contracts": "11b4f9d68f5bd6a523b8cc6d40f5b4243455192f690698a58d8ba72208c025f9",
+        "providers/qcore-provider-ctraces/contracts": "c9efd04d53275de44a6419a32c7e3632dfd8c7fe87b7df5f9cc02fc096f772fc",
+        "providers/qcore-provider-libevent/contracts": "986a2ed227ebd44e84bd0d609800d94b7aa2ac2aa5ada12ea6e3abac9860d654",
+        "providers/qcore-provider-librdkafka/contracts": "44b20eade95ef6187f01f3c670a9b47cce1b7652568358034b1211b9ce035db3",
+        "providers/quirin-provider-cfl/contracts": "eedc4e59412f0363329404adb868e8d88c789d7a35f8cda5406b4bfa94a91640",
+        "providers/quirin-provider-fluent-bit/contracts": "22ca4cf66465ce39c84924aa458a590d2b014832cfbe11032770868c09cba01b",
+        "providers/quirin-provider-libc/contracts": "b15193679a8a294f0dc1775969457c5e4e02e2eefe753adf11661d7ba990a07d",
+        "providers/quirin-provider-mpack/contracts": "524edb31027a0c020e3b697be84f3818a7b44443ffc903f2456d71d3b9f170d6",
+        "providers/quirin-provider-msgpack/contracts": "655433bcaed3005bdb477b73ad527efa90c75874fcdeccba1743ee97c764befa",
+        "providers/quirin-provider-shared/contracts": "9a53ebaff81b4933d6464e928585ae7104e87c91e27a6ea70f6e610dd515b72d"
+      },
+      "directory": "<worktree>/measure/arbiter-2/sides/base",
+      "inputs": {
+        "corpus": {
+          "canonical_prefix": null,
+          "databases_as_spelled": {
+            "private/w48-libcurl/corpus-inputs/c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json": "0ae624f8f5e726258a99e30b032bb88f47509675ba3048d44882e62269aef15b",
+            "private/w48-libcurl/corpus-inputs/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json": "3a24f673e033a3f8b9b2bff33dbe5ca8036d74d3d70b9c58266d85c5ead998ba"
+          },
+          "route_digest": "b8828e90b0126e0eb05edf3c47c0c62f0c35233336bb00805847c57467fcb881",
+          "source_date_epoch": 1767225600,
+          "spelled_prefix": null,
+          "spelling": "original"
+        },
+        "system": {
+          "canonical_prefix": null,
+          "databases_as_spelled": {
+            "private/w48-libcurl/prep-system/fluent-bit-clang-production/compile_commands.json": "a72f4d479b69ceafd2ab6991b8d793caf2066c1027db440ae54609449d66f09d"
+          },
+          "route_digest": "c7792c54e8ae2d854875fb48d6d6c74d0fcadac3e958052376d2d91cd7bd5960",
+          "source_date_epoch": 1767225600,
+          "spelled_prefix": null,
+          "spelling": "original"
+        }
+      },
+      "kind": "checkout",
+      "link_resolution": false,
+      "revision": null,
+      "run_json": {
+        "path": "<worktree>/measure/arbiter-2/sides/base/run.json",
+        "sha256": "d8f53c8bbb91b3c117a2c367e0c42c42cc3606bf8c225891e99c90093ce96292"
+      },
+      "spec": "<worktree>/private/w48-libcurl/base-src"
+    },
+    "tip": {
+      "binary": {
+        "path": "<worktree>/private/w48-libcurl/tip-src/target/release/quirin-audit",
+        "path_as_run": "<worktree>/private/w48-libcurl/tip-src/target/release/quirin-audit",
+        "sha256": "2ed9a6564f014e3a8b8de6b549a78e4c9b2f3c576010f650f8ef8869a03b3132"
+      },
+      "build_commit": null,
+      "bundles": {
+        "contract": "25aa436cc424cb13f7dd76c6f72bc407604ecc3ec3d2974a6bf59a0fc311edb2",
+        "providers/qcore-provider-chunkio/contracts": "0732ed1f1b7872591a3537b84d5c1561e11ad010cfb4d68f030cbce131edcb8f",
+        "providers/qcore-provider-cmetrics/contracts": "11b4f9d68f5bd6a523b8cc6d40f5b4243455192f690698a58d8ba72208c025f9",
+        "providers/qcore-provider-ctraces/contracts": "c9efd04d53275de44a6419a32c7e3632dfd8c7fe87b7df5f9cc02fc096f772fc",
+        "providers/qcore-provider-libevent/contracts": "986a2ed227ebd44e84bd0d609800d94b7aa2ac2aa5ada12ea6e3abac9860d654",
+        "providers/qcore-provider-librdkafka/contracts": "44b20eade95ef6187f01f3c670a9b47cce1b7652568358034b1211b9ce035db3",
+        "providers/quirin-provider-cfl/contracts": "eedc4e59412f0363329404adb868e8d88c789d7a35f8cda5406b4bfa94a91640",
+        "providers/quirin-provider-fluent-bit/contracts": "22ca4cf66465ce39c84924aa458a590d2b014832cfbe11032770868c09cba01b",
+        "providers/quirin-provider-libc/contracts": "b15193679a8a294f0dc1775969457c5e4e02e2eefe753adf11661d7ba990a07d",
+        "providers/quirin-provider-mpack/contracts": "524edb31027a0c020e3b697be84f3818a7b44443ffc903f2456d71d3b9f170d6",
+        "providers/quirin-provider-msgpack/contracts": "655433bcaed3005bdb477b73ad527efa90c75874fcdeccba1743ee97c764befa",
+        "providers/quirin-provider-shared/contracts": "9a53ebaff81b4933d6464e928585ae7104e87c91e27a6ea70f6e610dd515b72d"
+      },
+      "directory": "<worktree>/measure/arbiter-2/sides/tip",
+      "inputs": {
+        "corpus": {
+          "canonical_prefix": null,
+          "databases_as_spelled": {
+            "private/w48-libcurl/corpus-inputs/c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json": "0ae624f8f5e726258a99e30b032bb88f47509675ba3048d44882e62269aef15b",
+            "private/w48-libcurl/corpus-inputs/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json": "3a24f673e033a3f8b9b2bff33dbe5ca8036d74d3d70b9c58266d85c5ead998ba"
+          },
+          "route_digest": "b8828e90b0126e0eb05edf3c47c0c62f0c35233336bb00805847c57467fcb881",
+          "source_date_epoch": 1767225600,
+          "spelled_prefix": null,
+          "spelling": "original"
+        },
+        "system": {
+          "canonical_prefix": null,
+          "databases_as_spelled": {
+            "private/w48-libcurl/prep-system/fluent-bit-clang-production/compile_commands.json": "a72f4d479b69ceafd2ab6991b8d793caf2066c1027db440ae54609449d66f09d"
+          },
+          "route_digest": "c7792c54e8ae2d854875fb48d6d6c74d0fcadac3e958052376d2d91cd7bd5960",
+          "source_date_epoch": 1767225600,
+          "spelled_prefix": null,
+          "spelling": "original"
+        }
+      },
+      "kind": "checkout",
+      "link_resolution": false,
+      "revision": null,
+      "run_json": {
+        "path": "<worktree>/measure/arbiter-2/sides/tip/run.json",
+        "sha256": "7d699e405da33712b47b62bd004c3e3a70f3fc2b2abbc4617800f36859c74ec6"
+      },
+      "spec": "<worktree>/private/w48-libcurl/tip-src"
+    }
+  },
+  "source_date_epoch": 1767225600,
+  "status": "failed",
+  "timing": {
+    "analysis_time_ms": 7140721,
+    "limits": {
+      "meaning": "the analysis quota (--timeout-ms) counts analysis time only; declared slot waits are excluded up to the slot-wait limit; the overall wall limit stops the run whatever it declares",
+      "overall_wall_limit_ms": 604800000,
+      "slot_wait_limit_ms": 604800000,
+      "wall_time_quota_ms": 36000000
+    },
+    "sides": {
+      "base": {
+        "corpus": {
+          "analysis_time_ms": 7037927,
+          "profile": "eight-home",
+          "slot_wait_ms": 196040,
+          "wall_time_ms": 7233967
+        },
+        "system": {
+          "analysis_time_ms": 728222,
+          "profile": "fluent-bit-system",
+          "slot_wait_ms": 194033,
+          "wall_time_ms": 922255
+        }
+      },
+      "tip": {
+        "corpus": {
+          "analysis_time_ms": 7043189,
+          "profile": "eight-home",
+          "slot_wait_ms": 196030,
+          "wall_time_ms": 7239219
+        },
+        "system": {
+          "analysis_time_ms": 730085,
+          "profile": "fluent-bit-system",
+          "slot_wait_ms": 194037,
+          "wall_time_ms": 924122
+        }
+      }
+    },
+    "slot_wait_meaning": "wall time during which every route in flight waited for its gate slot; the host's --timeout-ms does not count it, up to its slot-wait limit (cards MEASURE-QUOTA-AND-INCREMENTAL, R7, and GATE-SLOT-FIFO-ORDER)",
+    "slot_wait_ms": 193943,
+    "wall_time_ms": 7334665
+  },
+  "tool": {
+    "name": "quirin-audit-measure",
+    "sha256": "f2961e128ec0815e814e514dcf64ed7703313972bfa2712aab2d4428da985a83",
+    "version": "0.1.0"
+  }
+}

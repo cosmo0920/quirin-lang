@@ -1,0 +1,789 @@
+{
+  "artifacts": [
+    {
+      "bytes": 38372,
+      "kind": "check-record",
+      "path": "<worktree>/private/w48-libcurl/callers-2/plugin/libcurl-check.json",
+      "relative": "libcurl-check.json",
+      "sha256": "d9a7eb7ae8a6f9a363801d5d6cfb4167f122a2f5a310202fd1d278720f2f2b87"
+    }
+  ],
+  "claims": [
+    {
+      "claim": {
+        "artifact": "libcurl:curl_global_init",
+        "assumptions": {
+          "default-allocators": "the program never calls curl_global_init_mem, so Curl_cmalloc, Curl_ccalloc, Curl_crealloc, Curl_cstrdup and Curl_cfree stay the C library's malloc, calloc, realloc, strdup and free (lib/easy.c)",
+          "heap-kind": "heap custody does not name the releaser (contract specification C04: a position with no kind clause is heap), so a libcurl object released by another heap releaser is not told apart, as for every heap contract",
+          "libc-c-standard-abi": "the C library's allocation functions behave as the C standard specifies",
+          "release-build": "libcurl is built with BUILDING_LIBCURL and without CURLDEBUG, so the curlx_* allocator macros are the Curl_c* function pointers (lib/curl_setup.h)",
+          "upstream-release": "the libcurl the audited program links is upstream 8.18.0 (the pinned tarball); Ubuntu 8.18.0-1ubuntu2.8's patches touch no function a Safe answer rests on"
+        },
+        "bounds": "lexical obligations over the pinned files' tokens; the named helpers only; no path enumeration, no preprocessing",
+        "certificates": [
+          {
+            "kind": "libcurl-check-record",
+            "path": "libcurl-check.json",
+            "sha256": "d9a7eb7ae8a6f9a363801d5d6cfb4167f122a2f5a310202fd1d278720f2f2b87"
+          }
+        ],
+        "evidence_version": 1,
+        "property": "libcurl-contract-conformance",
+        "reason": "every one of the 5 obligation(s) of `curl_global_init`'s contract holds of the pinned libcurl 8.18.0",
+        "scope": "the definition of `curl_global_init` in libcurl 8.18.0 (curl-8_18_0), read lexically against its resource-v1 contract in libcurl/libcurl.qv",
+        "semantic_profile": "quirin.libcurl-contract-check.v1",
+        "verdict": "Safe"
+      },
+      "firewall": {
+        "claim": "uncertified-safe",
+        "code": "QP016",
+        "reasons": [
+          {
+            "code": "plugin-claim-uncertified",
+            "detail": "plugin claim uncertified: `quirin-audit-libcurl@3f0a65546c498592` proposed Safe without a certificate the audit checks independently (QP016: the claim offers 1 certificate reference(s), and no trusted-core checker accepts a subcommand plugin's certificate)"
+          }
+        ],
+        "verdict": "Pending"
+      },
+      "joined": true,
+      "plugin": {
+        "executable": "<worktree>/target/debug/quirin-audit-libcurl",
+        "label": "quirin-audit-libcurl@3f0a65546c498592",
+        "name": "libcurl",
+        "sha256": "3f0a65546c498592bcfa31d6a33d486fb9257ddb8371c5841c731592805076c6"
+      }
+    },
+    {
+      "claim": {
+        "artifact": "libcurl:curl_slist_append",
+        "assumptions": {
+          "default-allocators": "the program never calls curl_global_init_mem, so Curl_cmalloc, Curl_ccalloc, Curl_crealloc, Curl_cstrdup and Curl_cfree stay the C library's malloc, calloc, realloc, strdup and free (lib/easy.c)",
+          "heap-kind": "heap custody does not name the releaser (contract specification C04: a position with no kind clause is heap), so a libcurl object released by another heap releaser is not told apart, as for every heap contract",
+          "libc-c-standard-abi": "the C library's allocation functions behave as the C standard specifies",
+          "release-build": "libcurl is built with BUILDING_LIBCURL and without CURLDEBUG, so the curlx_* allocator macros are the Curl_c* function pointers (lib/curl_setup.h)",
+          "upstream-release": "the libcurl the audited program links is upstream 8.18.0 (the pinned tarball); Ubuntu 8.18.0-1ubuntu2.8's patches touch no function a Safe answer rests on"
+        },
+        "bounds": "lexical obligations over the pinned files' tokens; the named helpers only; no path enumeration, no preprocessing",
+        "certificates": [
+          {
+            "kind": "libcurl-check-record",
+            "path": "libcurl-check.json",
+            "sha256": "d9a7eb7ae8a6f9a363801d5d6cfb4167f122a2f5a310202fd1d278720f2f2b87"
+          }
+        ],
+        "evidence_version": 1,
+        "property": "libcurl-contract-conformance",
+        "reason": "every one of the 13 obligation(s) of `curl_slist_append`'s contract holds of the pinned libcurl 8.18.0",
+        "scope": "the definition of `curl_slist_append` in libcurl 8.18.0 (curl-8_18_0), read lexically against its resource-v1 contract in libcurl/libcurl.qv",
+        "semantic_profile": "quirin.libcurl-contract-check.v1",
+        "verdict": "Safe"
+      },
+      "firewall": {
+        "claim": "uncertified-safe",
+        "code": "QP016",
+        "reasons": [
+          {
+            "code": "plugin-claim-uncertified",
+            "detail": "plugin claim uncertified: `quirin-audit-libcurl@3f0a65546c498592` proposed Safe without a certificate the audit checks independently (QP016: the claim offers 1 certificate reference(s), and no trusted-core checker accepts a subcommand plugin's certificate)"
+          }
+        ],
+        "verdict": "Pending"
+      },
+      "joined": true,
+      "plugin": {
+        "executable": "<worktree>/target/debug/quirin-audit-libcurl",
+        "label": "quirin-audit-libcurl@3f0a65546c498592",
+        "name": "libcurl",
+        "sha256": "3f0a65546c498592bcfa31d6a33d486fb9257ddb8371c5841c731592805076c6"
+      }
+    },
+    {
+      "claim": {
+        "artifact": "libcurl:curl_slist_free_all",
+        "assumptions": {
+          "default-allocators": "the program never calls curl_global_init_mem, so Curl_cmalloc, Curl_ccalloc, Curl_crealloc, Curl_cstrdup and Curl_cfree stay the C library's malloc, calloc, realloc, strdup and free (lib/easy.c)",
+          "heap-kind": "heap custody does not name the releaser (contract specification C04: a position with no kind clause is heap), so a libcurl object released by another heap releaser is not told apart, as for every heap contract",
+          "libc-c-standard-abi": "the C library's allocation functions behave as the C standard specifies",
+          "release-build": "libcurl is built with BUILDING_LIBCURL and without CURLDEBUG, so the curlx_* allocator macros are the Curl_c* function pointers (lib/curl_setup.h)",
+          "upstream-release": "the libcurl the audited program links is upstream 8.18.0 (the pinned tarball); Ubuntu 8.18.0-1ubuntu2.8's patches touch no function a Safe answer rests on"
+        },
+        "bounds": "lexical obligations over the pinned files' tokens; the named helpers only; no path enumeration, no preprocessing",
+        "certificates": [
+          {
+            "kind": "libcurl-check-record",
+            "path": "libcurl-check.json",
+            "sha256": "d9a7eb7ae8a6f9a363801d5d6cfb4167f122a2f5a310202fd1d278720f2f2b87"
+          }
+        ],
+        "evidence_version": 1,
+        "property": "libcurl-contract-conformance",
+        "reason": "every one of the 7 obligation(s) of `curl_slist_free_all`'s contract holds of the pinned libcurl 8.18.0",
+        "scope": "the definition of `curl_slist_free_all` in libcurl 8.18.0 (curl-8_18_0), read lexically against its resource-v1 contract in libcurl/libcurl.qv",
+        "semantic_profile": "quirin.libcurl-contract-check.v1",
+        "verdict": "Safe"
+      },
+      "firewall": {
+        "claim": "uncertified-safe",
+        "code": "QP016",
+        "reasons": [
+          {
+            "code": "plugin-claim-uncertified",
+            "detail": "plugin claim uncertified: `quirin-audit-libcurl@3f0a65546c498592` proposed Safe without a certificate the audit checks independently (QP016: the claim offers 1 certificate reference(s), and no trusted-core checker accepts a subcommand plugin's certificate)"
+          }
+        ],
+        "verdict": "Pending"
+      },
+      "joined": true,
+      "plugin": {
+        "executable": "<worktree>/target/debug/quirin-audit-libcurl",
+        "label": "quirin-audit-libcurl@3f0a65546c498592",
+        "name": "libcurl",
+        "sha256": "3f0a65546c498592bcfa31d6a33d486fb9257ddb8371c5841c731592805076c6"
+      }
+    },
+    {
+      "claim": {
+        "artifact": "libcurl:curl_easy_setopt",
+        "assumptions": {
+          "default-allocators": "the program never calls curl_global_init_mem, so Curl_cmalloc, Curl_ccalloc, Curl_crealloc, Curl_cstrdup and Curl_cfree stay the C library's malloc, calloc, realloc, strdup and free (lib/easy.c)",
+          "heap-kind": "heap custody does not name the releaser (contract specification C04: a position with no kind clause is heap), so a libcurl object released by another heap releaser is not told apart, as for every heap contract",
+          "libc-c-standard-abi": "the C library's allocation functions behave as the C standard specifies",
+          "release-build": "libcurl is built with BUILDING_LIBCURL and without CURLDEBUG, so the curlx_* allocator macros are the Curl_c* function pointers (lib/curl_setup.h)",
+          "upstream-release": "the libcurl the audited program links is upstream 8.18.0 (the pinned tarball); Ubuntu 8.18.0-1ubuntu2.8's patches touch no function a Safe answer rests on"
+        },
+        "bounds": "lexical obligations over the pinned files' tokens; the named helpers only; no path enumeration, no preprocessing",
+        "certificates": [
+          {
+            "kind": "libcurl-check-record",
+            "path": "libcurl-check.json",
+            "sha256": "d9a7eb7ae8a6f9a363801d5d6cfb4167f122a2f5a310202fd1d278720f2f2b87"
+          }
+        ],
+        "evidence_version": 1,
+        "property": "libcurl-contract-conformance",
+        "reason": "what curl_easy_setopt does with its third argument depends on the option: CURLOPT_HTTPHEADER and CURLOPT_ERRORBUFFER (both passed by librdkafka) keep the caller's pointer in the handle, string options copy it, and callback options register a function; resource-v1 has no clause indexed by an option value over a variadic tail, so no contract is written",
+        "scope": "the definition of `curl_easy_setopt` in libcurl 8.18.0 (curl-8_18_0), read lexically against its resource-v1 contract in libcurl/libcurl.qv (none is written: see the reason)",
+        "semantic_profile": "quirin.libcurl-contract-check.v1",
+        "verdict": "Unknown"
+      },
+      "firewall": {
+        "claim": "undecided",
+        "code": null,
+        "reasons": [
+          {
+            "code": "incomplete-obligation-coverage",
+            "detail": "`quirin-audit-libcurl@3f0a65546c498592` answered Unknown; plugin-unknown: what curl_easy_setopt does with its third argument depends on the option: CURLOPT_HTTPHEADER and CURLOPT_ERRORBUFFER (both passed by librdkafka) keep the caller's pointer in the handle, string options copy it, and callback options register a function; resource-v1 has no clause indexed by an option value over a variadic tail, so no contract is written"
+          }
+        ],
+        "verdict": "Unknown"
+      },
+      "joined": true,
+      "plugin": {
+        "executable": "<worktree>/target/debug/quirin-audit-libcurl",
+        "label": "quirin-audit-libcurl@3f0a65546c498592",
+        "name": "libcurl",
+        "sha256": "3f0a65546c498592bcfa31d6a33d486fb9257ddb8371c5841c731592805076c6"
+      }
+    },
+    {
+      "claim": {
+        "artifact": "libcurl:curl_easy_cleanup",
+        "assumptions": {
+          "default-allocators": "the program never calls curl_global_init_mem, so Curl_cmalloc, Curl_ccalloc, Curl_crealloc, Curl_cstrdup and Curl_cfree stay the C library's malloc, calloc, realloc, strdup and free (lib/easy.c)",
+          "heap-kind": "heap custody does not name the releaser (contract specification C04: a position with no kind clause is heap), so a libcurl object released by another heap releaser is not told apart, as for every heap contract",
+          "libc-c-standard-abi": "the C library's allocation functions behave as the C standard specifies",
+          "release-build": "libcurl is built with BUILDING_LIBCURL and without CURLDEBUG, so the curlx_* allocator macros are the Curl_c* function pointers (lib/curl_setup.h)",
+          "upstream-release": "the libcurl the audited program links is upstream 8.18.0 (the pinned tarball); Ubuntu 8.18.0-1ubuntu2.8's patches touch no function a Safe answer rests on"
+        },
+        "bounds": "lexical obligations over the pinned files' tokens; the named helpers only; no path enumeration, no preprocessing",
+        "certificates": [
+          {
+            "kind": "libcurl-check-record",
+            "path": "libcurl-check.json",
+            "sha256": "d9a7eb7ae8a6f9a363801d5d6cfb4167f122a2f5a310202fd1d278720f2f2b87"
+          }
+        ],
+        "evidence_version": 1,
+        "property": "libcurl-contract-conformance",
+        "reason": "curl_easy_cleanup releases the handle through Curl_close, which may run callbacks the handle registered (closing sockets, debug output) with caller data; the checker does not establish that it touches nothing of the caller's beyond the handle",
+        "scope": "the definition of `curl_easy_cleanup` in libcurl 8.18.0 (curl-8_18_0), read lexically against its resource-v1 contract in libcurl/libcurl.qv (none is written: see the reason)",
+        "semantic_profile": "quirin.libcurl-contract-check.v1",
+        "verdict": "Unknown"
+      },
+      "firewall": {
+        "claim": "undecided",
+        "code": null,
+        "reasons": [
+          {
+            "code": "incomplete-obligation-coverage",
+            "detail": "`quirin-audit-libcurl@3f0a65546c498592` answered Unknown; plugin-unknown: curl_easy_cleanup releases the handle through Curl_close, which may run callbacks the handle registered (closing sockets, debug output) with caller data; the checker does not establish that it touches nothing of the caller's beyond the handle"
+          }
+        ],
+        "verdict": "Unknown"
+      },
+      "joined": true,
+      "plugin": {
+        "executable": "<worktree>/target/debug/quirin-audit-libcurl",
+        "label": "quirin-audit-libcurl@3f0a65546c498592",
+        "name": "libcurl",
+        "sha256": "3f0a65546c498592bcfa31d6a33d486fb9257ddb8371c5841c731592805076c6"
+      }
+    },
+    {
+      "claim": {
+        "artifact": "libcurl:curl_easy_escape",
+        "assumptions": {
+          "default-allocators": "the program never calls curl_global_init_mem, so Curl_cmalloc, Curl_ccalloc, Curl_crealloc, Curl_cstrdup and Curl_cfree stay the C library's malloc, calloc, realloc, strdup and free (lib/easy.c)",
+          "heap-kind": "heap custody does not name the releaser (contract specification C04: a position with no kind clause is heap), so a libcurl object released by another heap releaser is not told apart, as for every heap contract",
+          "libc-c-standard-abi": "the C library's allocation functions behave as the C standard specifies",
+          "release-build": "libcurl is built with BUILDING_LIBCURL and without CURLDEBUG, so the curlx_* allocator macros are the Curl_c* function pointers (lib/curl_setup.h)",
+          "upstream-release": "the libcurl the audited program links is upstream 8.18.0 (the pinned tarball); Ubuntu 8.18.0-1ubuntu2.8's patches touch no function a Safe answer rests on"
+        },
+        "bounds": "lexical obligations over the pinned files' tokens; the named helpers only; no path enumeration, no preprocessing",
+        "certificates": [
+          {
+            "kind": "libcurl-check-record",
+            "path": "libcurl-check.json",
+            "sha256": "d9a7eb7ae8a6f9a363801d5d6cfb4167f122a2f5a310202fd1d278720f2f2b87"
+          }
+        ],
+        "evidence_version": 1,
+        "property": "libcurl-contract-conformance",
+        "reason": "every one of the 17 obligation(s) of `curl_easy_escape`'s contract holds of the pinned libcurl 8.18.0",
+        "scope": "the definition of `curl_easy_escape` in libcurl 8.18.0 (curl-8_18_0), read lexically against its resource-v1 contract in libcurl/libcurl.qv",
+        "semantic_profile": "quirin.libcurl-contract-check.v1",
+        "verdict": "Safe"
+      },
+      "firewall": {
+        "claim": "uncertified-safe",
+        "code": "QP016",
+        "reasons": [
+          {
+            "code": "plugin-claim-uncertified",
+            "detail": "plugin claim uncertified: `quirin-audit-libcurl@3f0a65546c498592` proposed Safe without a certificate the audit checks independently (QP016: the claim offers 1 certificate reference(s), and no trusted-core checker accepts a subcommand plugin's certificate)"
+          }
+        ],
+        "verdict": "Pending"
+      },
+      "joined": true,
+      "plugin": {
+        "executable": "<worktree>/target/debug/quirin-audit-libcurl",
+        "label": "quirin-audit-libcurl@3f0a65546c498592",
+        "name": "libcurl",
+        "sha256": "3f0a65546c498592bcfa31d6a33d486fb9257ddb8371c5841c731592805076c6"
+      }
+    },
+    {
+      "claim": {
+        "artifact": "libcurl:curl_easy_getinfo",
+        "assumptions": {
+          "default-allocators": "the program never calls curl_global_init_mem, so Curl_cmalloc, Curl_ccalloc, Curl_crealloc, Curl_cstrdup and Curl_cfree stay the C library's malloc, calloc, realloc, strdup and free (lib/easy.c)",
+          "heap-kind": "heap custody does not name the releaser (contract specification C04: a position with no kind clause is heap), so a libcurl object released by another heap releaser is not told apart, as for every heap contract",
+          "libc-c-standard-abi": "the C library's allocation functions behave as the C standard specifies",
+          "release-build": "libcurl is built with BUILDING_LIBCURL and without CURLDEBUG, so the curlx_* allocator macros are the Curl_c* function pointers (lib/curl_setup.h)",
+          "upstream-release": "the libcurl the audited program links is upstream 8.18.0 (the pinned tarball); Ubuntu 8.18.0-1ubuntu2.8's patches touch no function a Safe answer rests on"
+        },
+        "bounds": "lexical obligations over the pinned files' tokens; the named helpers only; no path enumeration, no preprocessing",
+        "certificates": [
+          {
+            "kind": "libcurl-check-record",
+            "path": "libcurl-check.json",
+            "sha256": "d9a7eb7ae8a6f9a363801d5d6cfb4167f122a2f5a310202fd1d278720f2f2b87"
+          }
+        ],
+        "evidence_version": 1,
+        "property": "libcurl-contract-conformance",
+        "reason": "what curl_easy_getinfo writes through its third argument depends on the information asked for: a number, or (CURLINFO_CONTENT_TYPE, which librdkafka asks for) a pointer into memory the handle owns; resource-v1 has no clause indexed by an option value over a variadic tail",
+        "scope": "the definition of `curl_easy_getinfo` in libcurl 8.18.0 (curl-8_18_0), read lexically against its resource-v1 contract in libcurl/libcurl.qv (none is written: see the reason)",
+        "semantic_profile": "quirin.libcurl-contract-check.v1",
+        "verdict": "Unknown"
+      },
+      "firewall": {
+        "claim": "undecided",
+        "code": null,
+        "reasons": [
+          {
+            "code": "incomplete-obligation-coverage",
+            "detail": "`quirin-audit-libcurl@3f0a65546c498592` answered Unknown; plugin-unknown: what curl_easy_getinfo writes through its third argument depends on the information asked for: a number, or (CURLINFO_CONTENT_TYPE, which librdkafka asks for) a pointer into memory the handle owns; resource-v1 has no clause indexed by an option value over a variadic tail"
+          }
+        ],
+        "verdict": "Unknown"
+      },
+      "joined": true,
+      "plugin": {
+        "executable": "<worktree>/target/debug/quirin-audit-libcurl",
+        "label": "quirin-audit-libcurl@3f0a65546c498592",
+        "name": "libcurl",
+        "sha256": "3f0a65546c498592bcfa31d6a33d486fb9257ddb8371c5841c731592805076c6"
+      }
+    },
+    {
+      "claim": {
+        "artifact": "libcurl:curl_easy_perform",
+        "assumptions": {
+          "default-allocators": "the program never calls curl_global_init_mem, so Curl_cmalloc, Curl_ccalloc, Curl_crealloc, Curl_cstrdup and Curl_cfree stay the C library's malloc, calloc, realloc, strdup and free (lib/easy.c)",
+          "heap-kind": "heap custody does not name the releaser (contract specification C04: a position with no kind clause is heap), so a libcurl object released by another heap releaser is not told apart, as for every heap contract",
+          "libc-c-standard-abi": "the C library's allocation functions behave as the C standard specifies",
+          "release-build": "libcurl is built with BUILDING_LIBCURL and without CURLDEBUG, so the curlx_* allocator macros are the Curl_c* function pointers (lib/curl_setup.h)",
+          "upstream-release": "the libcurl the audited program links is upstream 8.18.0 (the pinned tarball); Ubuntu 8.18.0-1ubuntu2.8's patches touch no function a Safe answer rests on"
+        },
+        "bounds": "lexical obligations over the pinned files' tokens; the named helpers only; no path enumeration, no preprocessing",
+        "certificates": [
+          {
+            "kind": "libcurl-check-record",
+            "path": "libcurl-check.json",
+            "sha256": "d9a7eb7ae8a6f9a363801d5d6cfb4167f122a2f5a310202fd1d278720f2f2b87"
+          }
+        ],
+        "evidence_version": 1,
+        "property": "libcurl-contract-conformance",
+        "reason": "curl_easy_perform runs the transfer, which calls the callbacks the handle registered (librdkafka's write callback with its request as data) and writes into buffers the handle keeps; resource-v1 cannot name a callback registered by an earlier curl_easy_setopt",
+        "scope": "the definition of `curl_easy_perform` in libcurl 8.18.0 (curl-8_18_0), read lexically against its resource-v1 contract in libcurl/libcurl.qv (none is written: see the reason)",
+        "semantic_profile": "quirin.libcurl-contract-check.v1",
+        "verdict": "Unknown"
+      },
+      "firewall": {
+        "claim": "undecided",
+        "code": null,
+        "reasons": [
+          {
+            "code": "incomplete-obligation-coverage",
+            "detail": "`quirin-audit-libcurl@3f0a65546c498592` answered Unknown; plugin-unknown: curl_easy_perform runs the transfer, which calls the callbacks the handle registered (librdkafka's write callback with its request as data) and writes into buffers the handle keeps; resource-v1 cannot name a callback registered by an earlier curl_easy_setopt"
+          }
+        ],
+        "verdict": "Unknown"
+      },
+      "joined": true,
+      "plugin": {
+        "executable": "<worktree>/target/debug/quirin-audit-libcurl",
+        "label": "quirin-audit-libcurl@3f0a65546c498592",
+        "name": "libcurl",
+        "sha256": "3f0a65546c498592bcfa31d6a33d486fb9257ddb8371c5841c731592805076c6"
+      }
+    },
+    {
+      "claim": {
+        "artifact": "libcurl:curl_url",
+        "assumptions": {
+          "default-allocators": "the program never calls curl_global_init_mem, so Curl_cmalloc, Curl_ccalloc, Curl_crealloc, Curl_cstrdup and Curl_cfree stay the C library's malloc, calloc, realloc, strdup and free (lib/easy.c)",
+          "heap-kind": "heap custody does not name the releaser (contract specification C04: a position with no kind clause is heap), so a libcurl object released by another heap releaser is not told apart, as for every heap contract",
+          "libc-c-standard-abi": "the C library's allocation functions behave as the C standard specifies",
+          "release-build": "libcurl is built with BUILDING_LIBCURL and without CURLDEBUG, so the curlx_* allocator macros are the Curl_c* function pointers (lib/curl_setup.h)",
+          "upstream-release": "the libcurl the audited program links is upstream 8.18.0 (the pinned tarball); Ubuntu 8.18.0-1ubuntu2.8's patches touch no function a Safe answer rests on"
+        },
+        "bounds": "lexical obligations over the pinned files' tokens; the named helpers only; no path enumeration, no preprocessing",
+        "certificates": [
+          {
+            "kind": "libcurl-check-record",
+            "path": "libcurl-check.json",
+            "sha256": "d9a7eb7ae8a6f9a363801d5d6cfb4167f122a2f5a310202fd1d278720f2f2b87"
+          }
+        ],
+        "evidence_version": 1,
+        "property": "libcurl-contract-conformance",
+        "reason": "every one of the 5 obligation(s) of `curl_url`'s contract holds of the pinned libcurl 8.18.0",
+        "scope": "the definition of `curl_url` in libcurl 8.18.0 (curl-8_18_0), read lexically against its resource-v1 contract in libcurl/libcurl.qv",
+        "semantic_profile": "quirin.libcurl-contract-check.v1",
+        "verdict": "Safe"
+      },
+      "firewall": {
+        "claim": "uncertified-safe",
+        "code": "QP016",
+        "reasons": [
+          {
+            "code": "plugin-claim-uncertified",
+            "detail": "plugin claim uncertified: `quirin-audit-libcurl@3f0a65546c498592` proposed Safe without a certificate the audit checks independently (QP016: the claim offers 1 certificate reference(s), and no trusted-core checker accepts a subcommand plugin's certificate)"
+          }
+        ],
+        "verdict": "Pending"
+      },
+      "joined": true,
+      "plugin": {
+        "executable": "<worktree>/target/debug/quirin-audit-libcurl",
+        "label": "quirin-audit-libcurl@3f0a65546c498592",
+        "name": "libcurl",
+        "sha256": "3f0a65546c498592bcfa31d6a33d486fb9257ddb8371c5841c731592805076c6"
+      }
+    },
+    {
+      "claim": {
+        "artifact": "libcurl:curl_url_cleanup",
+        "assumptions": {
+          "default-allocators": "the program never calls curl_global_init_mem, so Curl_cmalloc, Curl_ccalloc, Curl_crealloc, Curl_cstrdup and Curl_cfree stay the C library's malloc, calloc, realloc, strdup and free (lib/easy.c)",
+          "heap-kind": "heap custody does not name the releaser (contract specification C04: a position with no kind clause is heap), so a libcurl object released by another heap releaser is not told apart, as for every heap contract",
+          "libc-c-standard-abi": "the C library's allocation functions behave as the C standard specifies",
+          "release-build": "libcurl is built with BUILDING_LIBCURL and without CURLDEBUG, so the curlx_* allocator macros are the Curl_c* function pointers (lib/curl_setup.h)",
+          "upstream-release": "the libcurl the audited program links is upstream 8.18.0 (the pinned tarball); Ubuntu 8.18.0-1ubuntu2.8's patches touch no function a Safe answer rests on"
+        },
+        "bounds": "lexical obligations over the pinned files' tokens; the named helpers only; no path enumeration, no preprocessing",
+        "certificates": [
+          {
+            "kind": "libcurl-check-record",
+            "path": "libcurl-check.json",
+            "sha256": "d9a7eb7ae8a6f9a363801d5d6cfb4167f122a2f5a310202fd1d278720f2f2b87"
+          }
+        ],
+        "evidence_version": 1,
+        "property": "libcurl-contract-conformance",
+        "reason": "every one of the 7 obligation(s) of `curl_url_cleanup`'s contract holds of the pinned libcurl 8.18.0",
+        "scope": "the definition of `curl_url_cleanup` in libcurl 8.18.0 (curl-8_18_0), read lexically against its resource-v1 contract in libcurl/libcurl.qv",
+        "semantic_profile": "quirin.libcurl-contract-check.v1",
+        "verdict": "Safe"
+      },
+      "firewall": {
+        "claim": "uncertified-safe",
+        "code": "QP016",
+        "reasons": [
+          {
+            "code": "plugin-claim-uncertified",
+            "detail": "plugin claim uncertified: `quirin-audit-libcurl@3f0a65546c498592` proposed Safe without a certificate the audit checks independently (QP016: the claim offers 1 certificate reference(s), and no trusted-core checker accepts a subcommand plugin's certificate)"
+          }
+        ],
+        "verdict": "Pending"
+      },
+      "joined": true,
+      "plugin": {
+        "executable": "<worktree>/target/debug/quirin-audit-libcurl",
+        "label": "quirin-audit-libcurl@3f0a65546c498592",
+        "name": "libcurl",
+        "sha256": "3f0a65546c498592bcfa31d6a33d486fb9257ddb8371c5841c731592805076c6"
+      }
+    },
+    {
+      "claim": {
+        "artifact": "libcurl:curl_url_get",
+        "assumptions": {
+          "default-allocators": "the program never calls curl_global_init_mem, so Curl_cmalloc, Curl_ccalloc, Curl_crealloc, Curl_cstrdup and Curl_cfree stay the C library's malloc, calloc, realloc, strdup and free (lib/easy.c)",
+          "heap-kind": "heap custody does not name the releaser (contract specification C04: a position with no kind clause is heap), so a libcurl object released by another heap releaser is not told apart, as for every heap contract",
+          "libc-c-standard-abi": "the C library's allocation functions behave as the C standard specifies",
+          "release-build": "libcurl is built with BUILDING_LIBCURL and without CURLDEBUG, so the curlx_* allocator macros are the Curl_c* function pointers (lib/curl_setup.h)",
+          "upstream-release": "the libcurl the audited program links is upstream 8.18.0 (the pinned tarball); Ubuntu 8.18.0-1ubuntu2.8's patches touch no function a Safe answer rests on"
+        },
+        "bounds": "lexical obligations over the pinned files' tokens; the named helpers only; no path enumeration, no preprocessing",
+        "certificates": [
+          {
+            "kind": "libcurl-check-record",
+            "path": "libcurl-check.json",
+            "sha256": "d9a7eb7ae8a6f9a363801d5d6cfb4167f122a2f5a310202fd1d278720f2f2b87"
+          }
+        ],
+        "evidence_version": 1,
+        "property": "libcurl-contract-conformance",
+        "reason": "curl_url_get hands back a string it allocates through an out-parameter, and resource-v1 reads an allocation through an out slot only with a resource kind (contract specification C04.6), none of which is a libcurl string; the checker does not establish the out-slot write",
+        "scope": "the definition of `curl_url_get` in libcurl 8.18.0 (curl-8_18_0), read lexically against its resource-v1 contract in libcurl/libcurl.qv (none is written: see the reason)",
+        "semantic_profile": "quirin.libcurl-contract-check.v1",
+        "verdict": "Unknown"
+      },
+      "firewall": {
+        "claim": "undecided",
+        "code": null,
+        "reasons": [
+          {
+            "code": "incomplete-obligation-coverage",
+            "detail": "`quirin-audit-libcurl@3f0a65546c498592` answered Unknown; plugin-unknown: curl_url_get hands back a string it allocates through an out-parameter, and resource-v1 reads an allocation through an out slot only with a resource kind (contract specification C04.6), none of which is a libcurl string; the checker does not establish the out-slot write"
+          }
+        ],
+        "verdict": "Unknown"
+      },
+      "joined": true,
+      "plugin": {
+        "executable": "<worktree>/target/debug/quirin-audit-libcurl",
+        "label": "quirin-audit-libcurl@3f0a65546c498592",
+        "name": "libcurl",
+        "sha256": "3f0a65546c498592bcfa31d6a33d486fb9257ddb8371c5841c731592805076c6"
+      }
+    },
+    {
+      "claim": {
+        "artifact": "libcurl:curl_url_set",
+        "assumptions": {
+          "default-allocators": "the program never calls curl_global_init_mem, so Curl_cmalloc, Curl_ccalloc, Curl_crealloc, Curl_cstrdup and Curl_cfree stay the C library's malloc, calloc, realloc, strdup and free (lib/easy.c)",
+          "heap-kind": "heap custody does not name the releaser (contract specification C04: a position with no kind clause is heap), so a libcurl object released by another heap releaser is not told apart, as for every heap contract",
+          "libc-c-standard-abi": "the C library's allocation functions behave as the C standard specifies",
+          "release-build": "libcurl is built with BUILDING_LIBCURL and without CURLDEBUG, so the curlx_* allocator macros are the Curl_c* function pointers (lib/curl_setup.h)",
+          "upstream-release": "the libcurl the audited program links is upstream 8.18.0 (the pinned tarball); Ubuntu 8.18.0-1ubuntu2.8's patches touch no function a Safe answer rests on"
+        },
+        "bounds": "lexical obligations over the pinned files' tokens; the named helpers only; no path enumeration, no preprocessing",
+        "certificates": [
+          {
+            "kind": "libcurl-check-record",
+            "path": "libcurl-check.json",
+            "sha256": "d9a7eb7ae8a6f9a363801d5d6cfb4167f122a2f5a310202fd1d278720f2f2b87"
+          }
+        ],
+        "evidence_version": 1,
+        "property": "libcurl-contract-conformance",
+        "reason": "curl_url_set hands its string argument to URL-parsing helpers (parseurl_and_replace and others) that copy parts of it into the handle; the checker does not establish that none of them keeps the caller's pointer",
+        "scope": "the definition of `curl_url_set` in libcurl 8.18.0 (curl-8_18_0), read lexically against its resource-v1 contract in libcurl/libcurl.qv (none is written: see the reason)",
+        "semantic_profile": "quirin.libcurl-contract-check.v1",
+        "verdict": "Unknown"
+      },
+      "firewall": {
+        "claim": "undecided",
+        "code": null,
+        "reasons": [
+          {
+            "code": "incomplete-obligation-coverage",
+            "detail": "`quirin-audit-libcurl@3f0a65546c498592` answered Unknown; plugin-unknown: curl_url_set hands its string argument to URL-parsing helpers (parseurl_and_replace and others) that copy parts of it into the handle; the checker does not establish that none of them keeps the caller's pointer"
+          }
+        ],
+        "verdict": "Unknown"
+      },
+      "joined": true,
+      "plugin": {
+        "executable": "<worktree>/target/debug/quirin-audit-libcurl",
+        "label": "quirin-audit-libcurl@3f0a65546c498592",
+        "name": "libcurl",
+        "sha256": "3f0a65546c498592bcfa31d6a33d486fb9257ddb8371c5841c731592805076c6"
+      }
+    }
+  ],
+  "diagnostics": [
+    {
+      "code": "libcurl-checked",
+      "message": "12 binding(s): 6 established (published Pending: uncertified), 6 Unknown",
+      "severity": "info"
+    }
+  ],
+  "meaning": "an external quirin-audit subcommand (card W45-AUDIT-SUBCOMMAND-PLUGINS, contract spec C11.2): a quirin-audit-NAME executable found only on the declared plugin search path, run out of process with a cleared environment, its working directory the declared output, under wall-time and output quotas enforced by a process-group kill; its artifacts are accepted only inside the output with their declared SHA-256; each verdict claim is classified by the checker-plugin firewall (an uncertified Safe or Unsafe is Pending, plugin-claim-uncertified; an Unknown is Unknown) and a spawn failure, timeout, quota breach, nonzero exit, malformed response, protocol-version mismatch, reported failure or unverified artifact makes the run Unknown; each row is the join (Safe < Pending < Unknown < Unsafe) of the host's verdict from --audit-report, the run's and the claims about its artifact, and `verdict` is the join of every row and the run (null when a completed run has no row: no claim publishes no verdict)",
+  "plugin": {
+    "executable": "<worktree>/target/debug/quirin-audit-libcurl",
+    "label": "quirin-audit-libcurl@3f0a65546c498592",
+    "name": "libcurl",
+    "sha256": "3f0a65546c498592bcfa31d6a33d486fb9257ddb8371c5841c731592805076c6"
+  },
+  "protocol_version": 1,
+  "reasons": [
+    {
+      "code": "incomplete-obligation-coverage",
+      "detail": "`quirin-audit-libcurl@3f0a65546c498592` answered Unknown; plugin-unknown: curl_easy_cleanup releases the handle through Curl_close, which may run callbacks the handle registered (closing sockets, debug output) with caller data; the checker does not establish that it touches nothing of the caller's beyond the handle"
+    },
+    {
+      "code": "incomplete-obligation-coverage",
+      "detail": "`quirin-audit-libcurl@3f0a65546c498592` answered Unknown; plugin-unknown: curl_easy_perform runs the transfer, which calls the callbacks the handle registered (librdkafka's write callback with its request as data) and writes into buffers the handle keeps; resource-v1 cannot name a callback registered by an earlier curl_easy_setopt"
+    },
+    {
+      "code": "incomplete-obligation-coverage",
+      "detail": "`quirin-audit-libcurl@3f0a65546c498592` answered Unknown; plugin-unknown: curl_url_get hands back a string it allocates through an out-parameter, and resource-v1 reads an allocation through an out slot only with a resource kind (contract specification C04.6), none of which is a libcurl string; the checker does not establish the out-slot write"
+    },
+    {
+      "code": "incomplete-obligation-coverage",
+      "detail": "`quirin-audit-libcurl@3f0a65546c498592` answered Unknown; plugin-unknown: curl_url_set hands its string argument to URL-parsing helpers (parseurl_and_replace and others) that copy parts of it into the handle; the checker does not establish that none of them keeps the caller's pointer"
+    },
+    {
+      "code": "incomplete-obligation-coverage",
+      "detail": "`quirin-audit-libcurl@3f0a65546c498592` answered Unknown; plugin-unknown: what curl_easy_getinfo writes through its third argument depends on the information asked for: a number, or (CURLINFO_CONTENT_TYPE, which librdkafka asks for) a pointer into memory the handle owns; resource-v1 has no clause indexed by an option value over a variadic tail"
+    },
+    {
+      "code": "incomplete-obligation-coverage",
+      "detail": "`quirin-audit-libcurl@3f0a65546c498592` answered Unknown; plugin-unknown: what curl_easy_setopt does with its third argument depends on the option: CURLOPT_HTTPHEADER and CURLOPT_ERRORBUFFER (both passed by librdkafka) keep the caller's pointer in the handle, string options copy it, and callback options register a function; resource-v1 has no clause indexed by an option value over a variadic tail, so no contract is written"
+    },
+    {
+      "code": "plugin-claim-uncertified",
+      "detail": "plugin claim uncertified: `quirin-audit-libcurl@3f0a65546c498592` proposed Safe without a certificate the audit checks independently (QP016: the claim offers 1 certificate reference(s), and no trusted-core checker accepts a subcommand plugin's certificate)"
+    },
+    {
+      "code": "plugin-claim-uncertified",
+      "detail": "plugin claim uncertified: `quirin-audit-libcurl@3f0a65546c498592` proposed Safe without a certificate the audit checks independently (QP016: the claim offers 1 certificate reference(s), and no trusted-core checker accepts a subcommand plugin's certificate)"
+    },
+    {
+      "code": "plugin-claim-uncertified",
+      "detail": "plugin claim uncertified: `quirin-audit-libcurl@3f0a65546c498592` proposed Safe without a certificate the audit checks independently (QP016: the claim offers 1 certificate reference(s), and no trusted-core checker accepts a subcommand plugin's certificate)"
+    },
+    {
+      "code": "plugin-claim-uncertified",
+      "detail": "plugin claim uncertified: `quirin-audit-libcurl@3f0a65546c498592` proposed Safe without a certificate the audit checks independently (QP016: the claim offers 1 certificate reference(s), and no trusted-core checker accepts a subcommand plugin's certificate)"
+    },
+    {
+      "code": "plugin-claim-uncertified",
+      "detail": "plugin claim uncertified: `quirin-audit-libcurl@3f0a65546c498592` proposed Safe without a certificate the audit checks independently (QP016: the claim offers 1 certificate reference(s), and no trusted-core checker accepts a subcommand plugin's certificate)"
+    },
+    {
+      "code": "plugin-claim-uncertified",
+      "detail": "plugin claim uncertified: `quirin-audit-libcurl@3f0a65546c498592` proposed Safe without a certificate the audit checks independently (QP016: the claim offers 1 certificate reference(s), and no trusted-core checker accepts a subcommand plugin's certificate)"
+    }
+  ],
+  "request": {
+    "arguments": [
+      "check"
+    ],
+    "audit_report": null,
+    "checkpoints": [],
+    "identity": {
+      "contract_set_sha256": null,
+      "refuted_table_sha256": null,
+      "revision": null
+    },
+    "invocation_directory": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a717a6f321d7ff5d9",
+    "load_path": null,
+    "output": "<worktree>/private/w48-libcurl/callers-2/plugin",
+    "protocol": "quirin-audit-plugin",
+    "protocol_version": 1,
+    "providers": [],
+    "quotas": {
+      "slot_wait_limit_ms": 604800000,
+      "stderr_bytes": 16777216,
+      "stdout_bytes": 16777216,
+      "wall_limit_ms": 604800000,
+      "wall_time_ms": 1800000
+    },
+    "report": "<worktree>/private/w48-libcurl/callers-2/plugin/check.report.json",
+    "subcommand": "libcurl"
+  },
+  "response_protocol_version": 1,
+  "route": "external-subcommand",
+  "rows": [
+    {
+      "artifact": "libcurl:curl_easy_cleanup",
+      "host": null,
+      "reasons": [
+        {
+          "code": "incomplete-obligation-coverage",
+          "detail": "`quirin-audit-libcurl@3f0a65546c498592` answered Unknown; plugin-unknown: curl_easy_cleanup releases the handle through Curl_close, which may run callbacks the handle registered (closing sockets, debug output) with caller data; the checker does not establish that it touches nothing of the caller's beyond the handle"
+        }
+      ],
+      "verdict": "Unknown"
+    },
+    {
+      "artifact": "libcurl:curl_easy_escape",
+      "host": null,
+      "reasons": [
+        {
+          "code": "plugin-claim-uncertified",
+          "detail": "plugin claim uncertified: `quirin-audit-libcurl@3f0a65546c498592` proposed Safe without a certificate the audit checks independently (QP016: the claim offers 1 certificate reference(s), and no trusted-core checker accepts a subcommand plugin's certificate)"
+        }
+      ],
+      "verdict": "Pending"
+    },
+    {
+      "artifact": "libcurl:curl_easy_getinfo",
+      "host": null,
+      "reasons": [
+        {
+          "code": "incomplete-obligation-coverage",
+          "detail": "`quirin-audit-libcurl@3f0a65546c498592` answered Unknown; plugin-unknown: what curl_easy_getinfo writes through its third argument depends on the information asked for: a number, or (CURLINFO_CONTENT_TYPE, which librdkafka asks for) a pointer into memory the handle owns; resource-v1 has no clause indexed by an option value over a variadic tail"
+        }
+      ],
+      "verdict": "Unknown"
+    },
+    {
+      "artifact": "libcurl:curl_easy_perform",
+      "host": null,
+      "reasons": [
+        {
+          "code": "incomplete-obligation-coverage",
+          "detail": "`quirin-audit-libcurl@3f0a65546c498592` answered Unknown; plugin-unknown: curl_easy_perform runs the transfer, which calls the callbacks the handle registered (librdkafka's write callback with its request as data) and writes into buffers the handle keeps; resource-v1 cannot name a callback registered by an earlier curl_easy_setopt"
+        }
+      ],
+      "verdict": "Unknown"
+    },
+    {
+      "artifact": "libcurl:curl_easy_setopt",
+      "host": null,
+      "reasons": [
+        {
+          "code": "incomplete-obligation-coverage",
+          "detail": "`quirin-audit-libcurl@3f0a65546c498592` answered Unknown; plugin-unknown: what curl_easy_setopt does with its third argument depends on the option: CURLOPT_HTTPHEADER and CURLOPT_ERRORBUFFER (both passed by librdkafka) keep the caller's pointer in the handle, string options copy it, and callback options register a function; resource-v1 has no clause indexed by an option value over a variadic tail, so no contract is written"
+        }
+      ],
+      "verdict": "Unknown"
+    },
+    {
+      "artifact": "libcurl:curl_global_init",
+      "host": null,
+      "reasons": [
+        {
+          "code": "plugin-claim-uncertified",
+          "detail": "plugin claim uncertified: `quirin-audit-libcurl@3f0a65546c498592` proposed Safe without a certificate the audit checks independently (QP016: the claim offers 1 certificate reference(s), and no trusted-core checker accepts a subcommand plugin's certificate)"
+        }
+      ],
+      "verdict": "Pending"
+    },
+    {
+      "artifact": "libcurl:curl_slist_append",
+      "host": null,
+      "reasons": [
+        {
+          "code": "plugin-claim-uncertified",
+          "detail": "plugin claim uncertified: `quirin-audit-libcurl@3f0a65546c498592` proposed Safe without a certificate the audit checks independently (QP016: the claim offers 1 certificate reference(s), and no trusted-core checker accepts a subcommand plugin's certificate)"
+        }
+      ],
+      "verdict": "Pending"
+    },
+    {
+      "artifact": "libcurl:curl_slist_free_all",
+      "host": null,
+      "reasons": [
+        {
+          "code": "plugin-claim-uncertified",
+          "detail": "plugin claim uncertified: `quirin-audit-libcurl@3f0a65546c498592` proposed Safe without a certificate the audit checks independently (QP016: the claim offers 1 certificate reference(s), and no trusted-core checker accepts a subcommand plugin's certificate)"
+        }
+      ],
+      "verdict": "Pending"
+    },
+    {
+      "artifact": "libcurl:curl_url",
+      "host": null,
+      "reasons": [
+        {
+          "code": "plugin-claim-uncertified",
+          "detail": "plugin claim uncertified: `quirin-audit-libcurl@3f0a65546c498592` proposed Safe without a certificate the audit checks independently (QP016: the claim offers 1 certificate reference(s), and no trusted-core checker accepts a subcommand plugin's certificate)"
+        }
+      ],
+      "verdict": "Pending"
+    },
+    {
+      "artifact": "libcurl:curl_url_cleanup",
+      "host": null,
+      "reasons": [
+        {
+          "code": "plugin-claim-uncertified",
+          "detail": "plugin claim uncertified: `quirin-audit-libcurl@3f0a65546c498592` proposed Safe without a certificate the audit checks independently (QP016: the claim offers 1 certificate reference(s), and no trusted-core checker accepts a subcommand plugin's certificate)"
+        }
+      ],
+      "verdict": "Pending"
+    },
+    {
+      "artifact": "libcurl:curl_url_get",
+      "host": null,
+      "reasons": [
+        {
+          "code": "incomplete-obligation-coverage",
+          "detail": "`quirin-audit-libcurl@3f0a65546c498592` answered Unknown; plugin-unknown: curl_url_get hands back a string it allocates through an out-parameter, and resource-v1 reads an allocation through an out slot only with a resource kind (contract specification C04.6), none of which is a libcurl string; the checker does not establish the out-slot write"
+        }
+      ],
+      "verdict": "Unknown"
+    },
+    {
+      "artifact": "libcurl:curl_url_set",
+      "host": null,
+      "reasons": [
+        {
+          "code": "incomplete-obligation-coverage",
+          "detail": "`quirin-audit-libcurl@3f0a65546c498592` answered Unknown; plugin-unknown: curl_url_set hands its string argument to URL-parsing helpers (parseurl_and_replace and others) that copy parts of it into the handle; the checker does not establish that none of them keeps the caller's pointer"
+        }
+      ],
+      "verdict": "Unknown"
+    }
+  ],
+  "run": {
+    "analysis_time_ms": 35,
+    "code": null,
+    "exit_code": 0,
+    "outcome": "completed",
+    "reason": null,
+    "reasons": [],
+    "signal": null,
+    "slot_wait_limit_ms": 604800000,
+    "slot_wait_ms": 0,
+    "stderr_bytes": 0,
+    "stderr_log": "<worktree>/private/w48-libcurl/callers-2/plugin/check.report.stderr.log",
+    "stdout_bytes": 20878,
+    "verdict": "Safe",
+    "wall_limit_ms": 604800000,
+    "wall_time_ms": 35,
+    "wall_time_quota_ms": 1800000
+  },
+  "schema_version": 1,
+  "verdict": "Unknown"
+}

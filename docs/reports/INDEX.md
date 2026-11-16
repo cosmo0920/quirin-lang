@@ -1585,6 +1585,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w48-impl-round1-halt](w48-impl-round1-halt/README.md) | W48 implementation round 1: halt record |
 
+| [w48-libcurl-contract-plugin](w48-libcurl-contract-plugin/README.md) | W48-LIBCURL-CONTRACT-PLUGIN: libcurl contracts through a quirin-audit plugin with its own checker |
+
 | [w48-openssl-contract-plugin](w48-openssl-contract-plugin/README.md) | W48-OPENSSL-CONTRACT-PLUGIN: OpenSSL's contracts checked by their own plugin |
 
 | [w48-plugin-verdict-preservation](w48-plugin-verdict-preservation/README.md) | W48-PLUGIN-VERDICT-PRESERVATION |

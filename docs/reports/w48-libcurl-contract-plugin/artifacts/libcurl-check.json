@@ -1,0 +1,1013 @@
+{
+  "assumptions": {
+    "default-allocators": "the program never calls curl_global_init_mem, so Curl_cmalloc, Curl_ccalloc, Curl_crealloc, Curl_cstrdup and Curl_cfree stay the C library's malloc, calloc, realloc, strdup and free (lib/easy.c)",
+    "heap-kind": "heap custody does not name the releaser (contract specification C04: a position with no kind clause is heap), so a libcurl object released by another heap releaser is not told apart, as for every heap contract",
+    "libc-c-standard-abi": "the C library's allocation functions behave as the C standard specifies",
+    "release-build": "libcurl is built with BUILDING_LIBCURL and without CURLDEBUG, so the curlx_* allocator macros are the Curl_c* function pointers (lib/curl_setup.h)",
+    "upstream-release": "the libcurl the audited program links is upstream 8.18.0 (the pinned tarball); Ubuntu 8.18.0-1ubuntu2.8's patches touch no function a Safe answer rests on"
+  },
+  "bindings": [
+    {
+      "answer": "Safe",
+      "clauses": [
+        "resource_borrowed(flags)",
+        "resource_return_none()"
+      ],
+      "contracted": true,
+      "function": "curl_global_init",
+      "obligations": [
+        {
+          "detail": "defined",
+          "file": "lib/easy.c",
+          "holds": true,
+          "lines": [
+            212,
+            222
+          ],
+          "obligation": "lib/easy.c: `curl_global_init` is defined once as `CURLcode curl_global_init ( long flags )`",
+          "sha256": "2e52bdc0560e1e864fb820ab3eb73a2dc49e12cbf034d348d8af2f11af1c3661"
+        },
+        {
+          "detail": "declared",
+          "file": "include/curl/curl.h",
+          "holds": true,
+          "lines": [
+            2743,
+            2743
+          ],
+          "obligation": "include/curl/curl.h: `curl_global_init` is declared once as `CURL_EXTERN CURLcode curl_global_init ( long flags ) ;`",
+          "sha256": "697555e3f5829c8fbea3fc3ef783fb6003219f3263c464b6de4019f3b09ea604"
+        },
+        {
+          "detail": "1 occurrence(s)",
+          "file": "include/curl/curl.h",
+          "holds": true,
+          "lines": [
+            518,
+            519
+          ],
+          "obligation": "include/curl/curl.h contains `typedef enum { CURLE_OK = 0 ,`",
+          "sha256": "697555e3f5829c8fbea3fc3ef783fb6003219f3263c464b6de4019f3b09ea604"
+        },
+        {
+          "detail": "1 return(s)",
+          "file": "lib/easy.c",
+          "holds": true,
+          "lines": [
+            214,
+            221
+          ],
+          "obligation": "lib/easy.c: every `return` of `curl_global_init` returns one of `result`",
+          "sha256": "2e52bdc0560e1e864fb820ab3eb73a2dc49e12cbf034d348d8af2f11af1c3661"
+        },
+        {
+          "detail": "1 occurrence(s), all in the allowed shapes",
+          "file": "lib/easy.c",
+          "holds": true,
+          "lines": [
+            214,
+            221
+          ],
+          "obligation": "lib/easy.c: in the body of `curl_global_init`, `flags` occurs only in `global_init ( flags , TRUE )`",
+          "sha256": "2e52bdc0560e1e864fb820ab3eb73a2dc49e12cbf034d348d8af2f11af1c3661"
+        }
+      ],
+      "rank": 1,
+      "reasons": [
+        "every one of the 5 obligation(s) of `curl_global_init`'s contract holds of the pinned libcurl 8.18.0"
+      ]
+    },
+    {
+      "answer": "Safe",
+      "clauses": [
+        "resource_owned(list, nullable)",
+        "resource_borrowed(data)",
+        "resource_return_reallocated(list, nullable)"
+      ],
+      "contracted": true,
+      "function": "curl_slist_append",
+      "obligations": [
+        {
+          "detail": "defined",
+          "file": "lib/slist.c",
+          "holds": true,
+          "lines": [
+            85,
+            97
+          ],
+          "obligation": "lib/slist.c: `curl_slist_append` is defined once as `struct curl_slist * curl_slist_append ( struct curl_slist * list , const char * data )`",
+          "sha256": "8bdaa480609ef676ddf6fa5628bf46038150730e057471c870cb068759640f6c"
+        },
+        {
+          "detail": "declared",
+          "file": "include/curl/curl.h",
+          "holds": true,
+          "lines": [
+            2844,
+            2845
+          ],
+          "obligation": "include/curl/curl.h: `curl_slist_append` is declared once as `CURL_EXTERN struct curl_slist * curl_slist_append ( struct curl_slist * list , const char * data ) ;`",
+          "sha256": "697555e3f5829c8fbea3fc3ef783fb6003219f3263c464b6de4019f3b09ea604"
+        },
+        {
+          "detail": "1 occurrence(s), all in the allowed shapes",
+          "file": "lib/slist.c",
+          "holds": true,
+          "lines": [
+            87,
+            96
+          ],
+          "obligation": "lib/slist.c: in the body of `curl_slist_append`, `data` occurs only in `curlx_strdup ( data )`",
+          "sha256": "8bdaa480609ef676ddf6fa5628bf46038150730e057471c870cb068759640f6c"
+        },
+        {
+          "detail": "1 occurrence(s)",
+          "file": "lib/slist.c",
+          "holds": true,
+          "lines": [
+            87,
+            96
+          ],
+          "obligation": "lib/slist.c: the body of `curl_slist_append` contains `char * dupdata = curlx_strdup ( data ) ; if ( ! dupdata ) return NULL ; list = Curl_slist_append_nodup ( list , dupdata ) ; if ( ! list ) curlx_free ( dupdata ) ; return list ;`",
+          "sha256": "8bdaa480609ef676ddf6fa5628bf46038150730e057471c870cb068759640f6c"
+        },
+        {
+          "detail": "2 return(s)",
+          "file": "lib/slist.c",
+          "holds": true,
+          "lines": [
+            87,
+            96
+          ],
+          "obligation": "lib/slist.c: every `return` of `curl_slist_append` returns one of `NULL`, `list`",
+          "sha256": "8bdaa480609ef676ddf6fa5628bf46038150730e057471c870cb068759640f6c"
+        },
+        {
+          "detail": "defined",
+          "file": "lib/slist.c",
+          "holds": true,
+          "lines": [
+            54,
+            76
+          ],
+          "obligation": "lib/slist.c: `Curl_slist_append_nodup` is defined once as `struct curl_slist * Curl_slist_append_nodup ( struct curl_slist * list , const char * data )`",
+          "sha256": "8bdaa480609ef676ddf6fa5628bf46038150730e057471c870cb068759640f6c"
+        },
+        {
+          "detail": "1 occurrence(s)",
+          "file": "lib/slist.c",
+          "holds": true,
+          "lines": [
+            62,
+            75
+          ],
+          "obligation": "lib/slist.c: the body of `Curl_slist_append_nodup` contains `new_item = curlx_malloc ( sizeof ( struct curl_slist ) ) ; if ( ! new_item ) return NULL ; new_item -> next = NULL ; new_item -> data = CURL_UNCONST ( data ) ; if ( ! list ) return new_item ; last = slist_get_last ( list ) ; last -> next = new_item ; return list ;`",
+          "sha256": "8bdaa480609ef676ddf6fa5628bf46038150730e057471c870cb068759640f6c"
+        },
+        {
+          "detail": "3 occurrence(s), all in the allowed shapes",
+          "file": "lib/slist.c",
+          "holds": true,
+          "lines": [
+            57,
+            75
+          ],
+          "obligation": "lib/slist.c: in the body of `Curl_slist_append_nodup`, `list` occurs only in `if ( ! list ) return new_item ;`, `last = slist_get_last ( list ) ;`, `return list ;`",
+          "sha256": "8bdaa480609ef676ddf6fa5628bf46038150730e057471c870cb068759640f6c"
+        },
+        {
+          "detail": "3 return(s)",
+          "file": "lib/slist.c",
+          "holds": true,
+          "lines": [
+            57,
+            75
+          ],
+          "obligation": "lib/slist.c: every `return` of `Curl_slist_append_nodup` returns one of `NULL`, `new_item`, `list`",
+          "sha256": "8bdaa480609ef676ddf6fa5628bf46038150730e057471c870cb068759640f6c"
+        },
+        {
+          "detail": "1 occurrence(s)",
+          "file": "lib/curl_setup.h",
+          "holds": true,
+          "lines": [
+            1078,
+            1078
+          ],
+          "obligation": "lib/curl_setup.h contains `# define curlx_strdup ( ptr ) Curl_cstrdup ( ptr )`",
+          "sha256": "84bbb5f4915d53ce8759d0962d49c3eed2ca92e5372721e717763068b8cb3d32"
+        },
+        {
+          "detail": "1 occurrence(s)",
+          "file": "lib/curl_setup.h",
+          "holds": true,
+          "lines": [
+            1079,
+            1079
+          ],
+          "obligation": "lib/curl_setup.h contains `# define curlx_malloc ( size ) Curl_cmalloc ( size )`",
+          "sha256": "84bbb5f4915d53ce8759d0962d49c3eed2ca92e5372721e717763068b8cb3d32"
+        },
+        {
+          "detail": "1 occurrence(s)",
+          "file": "lib/curl_setup.h",
+          "holds": true,
+          "lines": [
+            1082,
+            1082
+          ],
+          "obligation": "lib/curl_setup.h contains `# define curlx_free ( ptr ) Curl_cfree ( ptr )`",
+          "sha256": "84bbb5f4915d53ce8759d0962d49c3eed2ca92e5372721e717763068b8cb3d32"
+        },
+        {
+          "detail": "2 occurrence(s)",
+          "file": "lib/easy.c",
+          "holds": true,
+          "lines": [
+            122,
+            122
+          ],
+          "obligation": "lib/easy.c contains `Curl_cfree = ( curl_free_callback ) free ;`",
+          "sha256": "2e52bdc0560e1e864fb820ab3eb73a2dc49e12cbf034d348d8af2f11af1c3661"
+        }
+      ],
+      "rank": 2,
+      "reasons": [
+        "every one of the 13 obligation(s) of `curl_slist_append`'s contract holds of the pinned libcurl 8.18.0"
+      ]
+    },
+    {
+      "answer": "Safe",
+      "clauses": [
+        "resource_released(list, nullable)",
+        "resource_return_none()"
+      ],
+      "contracted": true,
+      "function": "curl_slist_free_all",
+      "obligations": [
+        {
+          "detail": "defined",
+          "file": "lib/slist.c",
+          "holds": true,
+          "lines": [
+            124,
+            139
+          ],
+          "obligation": "lib/slist.c: `curl_slist_free_all` is defined once as `void curl_slist_free_all ( struct curl_slist * list )`",
+          "sha256": "8bdaa480609ef676ddf6fa5628bf46038150730e057471c870cb068759640f6c"
+        },
+        {
+          "detail": "declared",
+          "file": "include/curl/curl.h",
+          "holds": true,
+          "lines": [
+            2854,
+            2854
+          ],
+          "obligation": "include/curl/curl.h: `curl_slist_free_all` is declared once as `CURL_EXTERN void curl_slist_free_all ( struct curl_slist * list ) ;`",
+          "sha256": "697555e3f5829c8fbea3fc3ef783fb6003219f3263c464b6de4019f3b09ea604"
+        },
+        {
+          "detail": "1 occurrence(s)",
+          "file": "lib/slist.c",
+          "holds": true,
+          "lines": [
+            129,
+            138
+          ],
+          "obligation": "lib/slist.c: the body of `curl_slist_free_all` contains `if ( ! list ) return ; item = list ; do { next = item -> next ; Curl_safefree ( item -> data ) ; curlx_free ( item ) ; item = next ; } while ( next ) ;`",
+          "sha256": "8bdaa480609ef676ddf6fa5628bf46038150730e057471c870cb068759640f6c"
+        },
+        {
+          "detail": "2 occurrence(s), all in the allowed shapes",
+          "file": "lib/slist.c",
+          "holds": true,
+          "lines": [
+            126,
+            138
+          ],
+          "obligation": "lib/slist.c: in the body of `curl_slist_free_all`, `list` occurs only in `if ( ! list ) return ;`, `item = list ;`",
+          "sha256": "8bdaa480609ef676ddf6fa5628bf46038150730e057471c870cb068759640f6c"
+        },
+        {
+          "detail": "1 occurrence(s)",
+          "file": "lib/curl_setup.h",
+          "holds": true,
+          "lines": [
+            933,
+            937
+          ],
+          "obligation": "lib/curl_setup.h contains `# define Curl_safefree ( ptr ) do { curlx_free ( ptr ) ; ( ptr ) = NULL ; } while ( 0 )`",
+          "sha256": "84bbb5f4915d53ce8759d0962d49c3eed2ca92e5372721e717763068b8cb3d32"
+        },
+        {
+          "detail": "1 occurrence(s)",
+          "file": "lib/curl_setup.h",
+          "holds": true,
+          "lines": [
+            1082,
+            1082
+          ],
+          "obligation": "lib/curl_setup.h contains `# define curlx_free ( ptr ) Curl_cfree ( ptr )`",
+          "sha256": "84bbb5f4915d53ce8759d0962d49c3eed2ca92e5372721e717763068b8cb3d32"
+        },
+        {
+          "detail": "2 occurrence(s)",
+          "file": "lib/easy.c",
+          "holds": true,
+          "lines": [
+            122,
+            122
+          ],
+          "obligation": "lib/easy.c contains `Curl_cfree = ( curl_free_callback ) free ;`",
+          "sha256": "2e52bdc0560e1e864fb820ab3eb73a2dc49e12cbf034d348d8af2f11af1c3661"
+        }
+      ],
+      "rank": 3,
+      "reasons": [
+        "every one of the 7 obligation(s) of `curl_slist_free_all`'s contract holds of the pinned libcurl 8.18.0"
+      ]
+    },
+    {
+      "answer": "Unknown",
+      "clauses": null,
+      "contracted": false,
+      "function": "curl_easy_setopt",
+      "obligations": [
+        {
+          "detail": "1 occurrence(s)",
+          "file": "lib/setopt.c",
+          "holds": true,
+          "lines": [
+            1358,
+            1363
+          ],
+          "obligation": "lib/setopt.c contains `case CURLOPT_HTTPHEADER : s -> headers = slist ; break ;`",
+          "sha256": "82c6526a8156d643b561cb7dddf8afa3768b7874791ecbd161f5711ad621dfa4"
+        },
+        {
+          "detail": "1 occurrence(s)",
+          "file": "lib/setopt.c",
+          "holds": true,
+          "lines": [
+            1940,
+            1946
+          ],
+          "obligation": "lib/setopt.c contains `case CURLOPT_ERRORBUFFER : s -> errorbuffer = ptr ; break ;`",
+          "sha256": "82c6526a8156d643b561cb7dddf8afa3768b7874791ecbd161f5711ad621dfa4"
+        }
+      ],
+      "rank": 4,
+      "reasons": [
+        "what curl_easy_setopt does with its third argument depends on the option: CURLOPT_HTTPHEADER and CURLOPT_ERRORBUFFER (both passed by librdkafka) keep the caller's pointer in the handle, string options copy it, and callback options register a function; resource-v1 has no clause indexed by an option value over a variadic tail, so no contract is written"
+      ]
+    },
+    {
+      "answer": "Unknown",
+      "clauses": null,
+      "contracted": false,
+      "function": "curl_easy_cleanup",
+      "obligations": [
+        {
+          "detail": "1 occurrence(s)",
+          "file": "lib/easy.c",
+          "holds": true,
+          "lines": [
+            856,
+            856
+          ],
+          "obligation": "lib/easy.c: the body of `curl_easy_cleanup` contains `Curl_close ( & data ) ;`",
+          "sha256": "2e52bdc0560e1e864fb820ab3eb73a2dc49e12cbf034d348d8af2f11af1c3661"
+        }
+      ],
+      "rank": 5,
+      "reasons": [
+        "curl_easy_cleanup releases the handle through Curl_close, which may run callbacks the handle registered (closing sockets, debug output) with caller data; the checker does not establish that it touches nothing of the caller's beyond the handle"
+      ]
+    },
+    {
+      "answer": "Safe",
+      "clauses": [
+        "resource_borrowed(handle)",
+        "resource_borrowed(text)",
+        "resource_borrowed(length)",
+        "resource_return_owned(nullable)"
+      ],
+      "contracted": true,
+      "function": "curl_easy_escape",
+      "obligations": [
+        {
+          "detail": "defined",
+          "file": "lib/escape.c",
+          "holds": true,
+          "lines": [
+            50,
+            87
+          ],
+          "obligation": "lib/escape.c: `curl_easy_escape` is defined once as `char * curl_easy_escape ( CURL * data , const char * string , int inlength )`",
+          "sha256": "be3d650fe9007000c64741c1c2d2e5fda3f61a9f920cfc6792d48bdc8b348b77"
+        },
+        {
+          "detail": "declared",
+          "file": "include/curl/curl.h",
+          "holds": true,
+          "lines": [
+            2694,
+            2696
+          ],
+          "obligation": "include/curl/curl.h: `curl_easy_escape` is declared once as `CURL_EXTERN char * curl_easy_escape ( CURL * handle , const char * string , int length ) ;`",
+          "sha256": "697555e3f5829c8fbea3fc3ef783fb6003219f3263c464b6de4019f3b09ea604"
+        },
+        {
+          "detail": "1 occurrence(s), all in the allowed shapes",
+          "file": "lib/escape.c",
+          "holds": true,
+          "lines": [
+            52,
+            86
+          ],
+          "obligation": "lib/escape.c: in the body of `curl_easy_escape`, `data` occurs only in `( void ) data ;`",
+          "sha256": "be3d650fe9007000c64741c1c2d2e5fda3f61a9f920cfc6792d48bdc8b348b77"
+        },
+        {
+          "detail": "3 occurrence(s), all in the allowed shapes",
+          "file": "lib/escape.c",
+          "holds": true,
+          "lines": [
+            52,
+            86
+          ],
+          "obligation": "lib/escape.c: in the body of `curl_easy_escape`, `string` occurs only in `! string ||`, `strlen ( string )`, `* string ++`",
+          "sha256": "be3d650fe9007000c64741c1c2d2e5fda3f61a9f920cfc6792d48bdc8b348b77"
+        },
+        {
+          "detail": "6 return(s)",
+          "file": "lib/escape.c",
+          "holds": true,
+          "lines": [
+            52,
+            86
+          ],
+          "obligation": "lib/escape.c: every `return` of `curl_easy_escape` returns one of `NULL`, `curlx_strdup ( \"\" )`, `curlx_dyn_ptr ( & d )`",
+          "sha256": "be3d650fe9007000c64741c1c2d2e5fda3f61a9f920cfc6792d48bdc8b348b77"
+        },
+        {
+          "detail": "1 occurrence(s)",
+          "file": "lib/escape.c",
+          "holds": true,
+          "lines": [
+            66,
+            66
+          ],
+          "obligation": "lib/escape.c: the body of `curl_easy_escape` contains `curlx_dyn_init ( & d , length * 3 + 1 ) ;`",
+          "sha256": "be3d650fe9007000c64741c1c2d2e5fda3f61a9f920cfc6792d48bdc8b348b77"
+        },
+        {
+          "detail": "1 occurrence(s)",
+          "file": "lib/escape.c",
+          "holds": true,
+          "lines": [
+            74,
+            75
+          ],
+          "obligation": "lib/escape.c: the body of `curl_easy_escape` contains `if ( curlx_dyn_addn ( & d , & in , 1 ) ) return NULL ;`",
+          "sha256": "be3d650fe9007000c64741c1c2d2e5fda3f61a9f920cfc6792d48bdc8b348b77"
+        },
+        {
+          "detail": "1 occurrence(s)",
+          "file": "lib/escape.c",
+          "holds": true,
+          "lines": [
+            81,
+            82
+          ],
+          "obligation": "lib/escape.c: the body of `curl_easy_escape` contains `if ( curlx_dyn_addn ( & d , out , 3 ) ) return NULL ;`",
+          "sha256": "be3d650fe9007000c64741c1c2d2e5fda3f61a9f920cfc6792d48bdc8b348b77"
+        },
+        {
+          "detail": "1 return(s)",
+          "file": "lib/curlx/dynbuf.c",
+          "holds": true,
+          "lines": [
+            166,
+            169
+          ],
+          "obligation": "lib/curlx/dynbuf.c: every `return` of `curlx_dyn_addn` returns one of `dyn_nappend ( s , mem , len )`",
+          "sha256": "274a3e728d5e277e4e08544ebec00b9093ae6e5bef383b298528320280874941"
+        },
+        {
+          "detail": "1 occurrence(s)",
+          "file": "lib/curlx/dynbuf.c",
+          "holds": true,
+          "lines": [
+            82,
+            85
+          ],
+          "obligation": "lib/curlx/dynbuf.c: the body of `dyn_nappend` contains `if ( fit > s -> toobig ) { curlx_dyn_free ( s ) ; return CURLE_TOO_LARGE ; }`",
+          "sha256": "274a3e728d5e277e4e08544ebec00b9093ae6e5bef383b298528320280874941"
+        },
+        {
+          "detail": "1 occurrence(s)",
+          "file": "lib/curlx/dynbuf.c",
+          "holds": true,
+          "lines": [
+            107,
+            111
+          ],
+          "obligation": "lib/curlx/dynbuf.c: the body of `dyn_nappend` contains `void * p = curlx_realloc ( s -> bufr , a ) ; if ( ! p ) { curlx_dyn_free ( s ) ; return CURLE_OUT_OF_MEMORY ; }`",
+          "sha256": "274a3e728d5e277e4e08544ebec00b9093ae6e5bef383b298528320280874941"
+        },
+        {
+          "detail": "3 return(s)",
+          "file": "lib/curlx/dynbuf.c",
+          "holds": true,
+          "lines": [
+            70,
+            120
+          ],
+          "obligation": "lib/curlx/dynbuf.c: every `return` of `dyn_nappend` returns one of `CURLE_TOO_LARGE`, `CURLE_OUT_OF_MEMORY`, `CURLE_OK`",
+          "sha256": "274a3e728d5e277e4e08544ebec00b9093ae6e5bef383b298528320280874941"
+        },
+        {
+          "detail": "1 return(s)",
+          "file": "lib/curlx/dynbuf.c",
+          "holds": true,
+          "lines": [
+            241,
+            244
+          ],
+          "obligation": "lib/curlx/dynbuf.c: every `return` of `curlx_dyn_ptr` returns one of `s -> bufr`",
+          "sha256": "274a3e728d5e277e4e08544ebec00b9093ae6e5bef383b298528320280874941"
+        },
+        {
+          "detail": "1 occurrence(s)",
+          "file": "lib/curl_setup.h",
+          "holds": true,
+          "lines": [
+            1078,
+            1078
+          ],
+          "obligation": "lib/curl_setup.h contains `# define curlx_strdup ( ptr ) Curl_cstrdup ( ptr )`",
+          "sha256": "84bbb5f4915d53ce8759d0962d49c3eed2ca92e5372721e717763068b8cb3d32"
+        },
+        {
+          "detail": "1 occurrence(s)",
+          "file": "lib/curl_setup.h",
+          "holds": true,
+          "lines": [
+            1081,
+            1081
+          ],
+          "obligation": "lib/curl_setup.h contains `# define curlx_realloc ( ptr , size ) Curl_crealloc ( ptr , size )`",
+          "sha256": "84bbb5f4915d53ce8759d0962d49c3eed2ca92e5372721e717763068b8cb3d32"
+        },
+        {
+          "detail": "2 occurrence(s)",
+          "file": "lib/easy.c",
+          "holds": true,
+          "lines": [
+            122,
+            122
+          ],
+          "obligation": "lib/easy.c contains `Curl_cfree = ( curl_free_callback ) free ;`",
+          "sha256": "2e52bdc0560e1e864fb820ab3eb73a2dc49e12cbf034d348d8af2f11af1c3661"
+        },
+        {
+          "detail": "2 occurrence(s)",
+          "file": "lib/easy.c",
+          "holds": true,
+          "lines": [
+            123,
+            123
+          ],
+          "obligation": "lib/easy.c contains `Curl_crealloc = ( curl_realloc_callback ) realloc ;`",
+          "sha256": "2e52bdc0560e1e864fb820ab3eb73a2dc49e12cbf034d348d8af2f11af1c3661"
+        }
+      ],
+      "rank": 6,
+      "reasons": [
+        "every one of the 17 obligation(s) of `curl_easy_escape`'s contract holds of the pinned libcurl 8.18.0"
+      ]
+    },
+    {
+      "answer": "Unknown",
+      "clauses": null,
+      "contracted": false,
+      "function": "curl_easy_getinfo",
+      "obligations": [
+        {
+          "detail": "1 occurrence(s)",
+          "file": "lib/easy.c",
+          "holds": true,
+          "lines": [
+            877,
+            879
+          ],
+          "obligation": "lib/easy.c: the body of `curl_easy_getinfo` contains `paramp = va_arg ( arg , void * ) ; result = Curl_getinfo ( data , info , paramp ) ;`",
+          "sha256": "2e52bdc0560e1e864fb820ab3eb73a2dc49e12cbf034d348d8af2f11af1c3661"
+        },
+        {
+          "detail": "1 occurrence(s)",
+          "file": "lib/getinfo.c",
+          "holds": true,
+          "lines": [
+            126,
+            128
+          ],
+          "obligation": "lib/getinfo.c contains `case CURLINFO_CONTENT_TYPE : * param_charp = data -> info . contenttype ; break ;`",
+          "sha256": "30eac4f54f562e42f379dcb39a8f511c4bf4f496ddbf8c7c3c0bea793159d76a"
+        }
+      ],
+      "rank": 7,
+      "reasons": [
+        "what curl_easy_getinfo writes through its third argument depends on the information asked for: a number, or (CURLINFO_CONTENT_TYPE, which librdkafka asks for) a pointer into memory the handle owns; resource-v1 has no clause indexed by an option value over a variadic tail"
+      ]
+    },
+    {
+      "answer": "Unknown",
+      "clauses": null,
+      "contracted": false,
+      "function": "curl_easy_perform",
+      "obligations": [
+        {
+          "detail": "declared",
+          "file": "include/curl/easy.h",
+          "holds": true,
+          "lines": [
+            43,
+            43
+          ],
+          "obligation": "include/curl/easy.h: `curl_easy_perform` is declared once as `CURL_EXTERN CURLcode curl_easy_perform ( CURL * curl ) ;`",
+          "sha256": "4b94482a7b8f7f70928cc5113eb532fc7e7db49cab20f2d63a0318eda59f0d79"
+        },
+        {
+          "detail": "1 return(s)",
+          "file": "lib/easy.c",
+          "holds": true,
+          "lines": [
+            832,
+            832
+          ],
+          "obligation": "lib/easy.c: every `return` of `curl_easy_perform` returns one of `easy_perform ( data , FALSE )`",
+          "sha256": "2e52bdc0560e1e864fb820ab3eb73a2dc49e12cbf034d348d8af2f11af1c3661"
+        }
+      ],
+      "rank": 8,
+      "reasons": [
+        "curl_easy_perform runs the transfer, which calls the callbacks the handle registered (librdkafka's write callback with its request as data) and writes into buffers the handle keeps; resource-v1 cannot name a callback registered by an earlier curl_easy_setopt"
+      ]
+    },
+    {
+      "answer": "Safe",
+      "clauses": [
+        "resource_return_owned(nullable)"
+      ],
+      "contracted": true,
+      "function": "curl_url",
+      "obligations": [
+        {
+          "detail": "defined",
+          "file": "lib/urlapi.c",
+          "holds": true,
+          "lines": [
+            1273,
+            1276
+          ],
+          "obligation": "lib/urlapi.c: `curl_url` is defined once as `CURLU * curl_url ( void )`",
+          "sha256": "da7f3127436028b85a8c6d22c9d827a30dd6e35524a2ec157fd02b5464e30eaf"
+        },
+        {
+          "detail": "declared",
+          "file": "include/curl/urlapi.h",
+          "holds": true,
+          "lines": [
+            113,
+            113
+          ],
+          "obligation": "include/curl/urlapi.h: `curl_url` is declared once as `CURL_EXTERN CURLU * curl_url ( void ) ;`",
+          "sha256": "4dda5954c042ff23f7561a6767ee6cf8929ddbbca7c8ae1dae15044d1dcfeafb"
+        },
+        {
+          "detail": "1 return(s)",
+          "file": "lib/urlapi.c",
+          "holds": true,
+          "lines": [
+            1275,
+            1275
+          ],
+          "obligation": "lib/urlapi.c: every `return` of `curl_url` returns one of `curlx_calloc ( 1 , sizeof ( struct Curl_URL ) )`",
+          "sha256": "da7f3127436028b85a8c6d22c9d827a30dd6e35524a2ec157fd02b5464e30eaf"
+        },
+        {
+          "detail": "1 occurrence(s)",
+          "file": "lib/curl_setup.h",
+          "holds": true,
+          "lines": [
+            1080,
+            1080
+          ],
+          "obligation": "lib/curl_setup.h contains `# define curlx_calloc ( nbelem , size ) Curl_ccalloc ( nbelem , size )`",
+          "sha256": "84bbb5f4915d53ce8759d0962d49c3eed2ca92e5372721e717763068b8cb3d32"
+        },
+        {
+          "detail": "2 occurrence(s)",
+          "file": "lib/easy.c",
+          "holds": true,
+          "lines": [
+            125,
+            125
+          ],
+          "obligation": "lib/easy.c contains `Curl_ccalloc = ( curl_calloc_callback ) calloc ;`",
+          "sha256": "2e52bdc0560e1e864fb820ab3eb73a2dc49e12cbf034d348d8af2f11af1c3661"
+        }
+      ],
+      "rank": 9,
+      "reasons": [
+        "every one of the 5 obligation(s) of `curl_url`'s contract holds of the pinned libcurl 8.18.0"
+      ]
+    },
+    {
+      "answer": "Safe",
+      "clauses": [
+        "resource_released(handle, nullable)",
+        "resource_return_none()"
+      ],
+      "contracted": true,
+      "function": "curl_url_cleanup",
+      "obligations": [
+        {
+          "detail": "defined",
+          "file": "lib/urlapi.c",
+          "holds": true,
+          "lines": [
+            1278,
+            1284
+          ],
+          "obligation": "lib/urlapi.c: `curl_url_cleanup` is defined once as `void curl_url_cleanup ( CURLU * u )`",
+          "sha256": "da7f3127436028b85a8c6d22c9d827a30dd6e35524a2ec157fd02b5464e30eaf"
+        },
+        {
+          "detail": "declared",
+          "file": "include/curl/urlapi.h",
+          "holds": true,
+          "lines": [
+            120,
+            120
+          ],
+          "obligation": "include/curl/urlapi.h: `curl_url_cleanup` is declared once as `CURL_EXTERN void curl_url_cleanup ( CURLU * handle ) ;`",
+          "sha256": "4dda5954c042ff23f7561a6767ee6cf8929ddbbca7c8ae1dae15044d1dcfeafb"
+        },
+        {
+          "detail": "1 occurrence(s)",
+          "file": "lib/urlapi.c",
+          "holds": true,
+          "lines": [
+            1280,
+            1283
+          ],
+          "obligation": "lib/urlapi.c: the body of `curl_url_cleanup` contains `if ( u ) { free_urlhandle ( u ) ; curlx_free ( u ) ; }`",
+          "sha256": "da7f3127436028b85a8c6d22c9d827a30dd6e35524a2ec157fd02b5464e30eaf"
+        },
+        {
+          "detail": "3 occurrence(s), all in the allowed shapes",
+          "file": "lib/urlapi.c",
+          "holds": true,
+          "lines": [
+            1280,
+            1283
+          ],
+          "obligation": "lib/urlapi.c: in the body of `curl_url_cleanup`, `u` occurs only in `if ( u ) { free_urlhandle ( u ) ; curlx_free ( u ) ; }`",
+          "sha256": "da7f3127436028b85a8c6d22c9d827a30dd6e35524a2ec157fd02b5464e30eaf"
+        },
+        {
+          "detail": "1 occurrence(s)",
+          "file": "lib/urlapi.c",
+          "holds": true,
+          "lines": [
+            91,
+            100
+          ],
+          "obligation": "lib/urlapi.c: the body of `free_urlhandle` contains `curlx_free ( u -> scheme ) ; curlx_free ( u -> user ) ; curlx_free ( u -> password ) ; curlx_free ( u -> options ) ; curlx_free ( u -> host ) ; curlx_free ( u -> zoneid ) ; curlx_free ( u -> port ) ; curlx_free ( u -> path ) ; curlx_free ( u -> query ) ; curlx_free ( u -> fragment ) ;`",
+          "sha256": "da7f3127436028b85a8c6d22c9d827a30dd6e35524a2ec157fd02b5464e30eaf"
+        },
+        {
+          "detail": "1 occurrence(s)",
+          "file": "lib/curl_setup.h",
+          "holds": true,
+          "lines": [
+            1082,
+            1082
+          ],
+          "obligation": "lib/curl_setup.h contains `# define curlx_free ( ptr ) Curl_cfree ( ptr )`",
+          "sha256": "84bbb5f4915d53ce8759d0962d49c3eed2ca92e5372721e717763068b8cb3d32"
+        },
+        {
+          "detail": "2 occurrence(s)",
+          "file": "lib/easy.c",
+          "holds": true,
+          "lines": [
+            122,
+            122
+          ],
+          "obligation": "lib/easy.c contains `Curl_cfree = ( curl_free_callback ) free ;`",
+          "sha256": "2e52bdc0560e1e864fb820ab3eb73a2dc49e12cbf034d348d8af2f11af1c3661"
+        }
+      ],
+      "rank": 10,
+      "reasons": [
+        "every one of the 7 obligation(s) of `curl_url_cleanup`'s contract holds of the pinned libcurl 8.18.0"
+      ]
+    },
+    {
+      "answer": "Unknown",
+      "clauses": null,
+      "contracted": false,
+      "function": "curl_url_get",
+      "obligations": [
+        {
+          "detail": "declared",
+          "file": "include/curl/urlapi.h",
+          "holds": true,
+          "lines": [
+            133,
+            134
+          ],
+          "obligation": "include/curl/urlapi.h: `curl_url_get` is declared once as `CURL_EXTERN CURLUcode curl_url_get ( const CURLU * handle , CURLUPart what , char * * part , unsigned int flags ) ;`",
+          "sha256": "4dda5954c042ff23f7561a6767ee6cf8929ddbbca7c8ae1dae15044d1dcfeafb"
+        }
+      ],
+      "rank": 11,
+      "reasons": [
+        "curl_url_get hands back a string it allocates through an out-parameter, and resource-v1 reads an allocation through an out slot only with a resource kind (contract specification C04.6), none of which is a libcurl string; the checker does not establish the out-slot write"
+      ]
+    },
+    {
+      "answer": "Unknown",
+      "clauses": null,
+      "contracted": false,
+      "function": "curl_url_set",
+      "obligations": [
+        {
+          "detail": "declared",
+          "file": "include/curl/urlapi.h",
+          "holds": true,
+          "lines": [
+            141,
+            142
+          ],
+          "obligation": "include/curl/urlapi.h: `curl_url_set` is declared once as `CURL_EXTERN CURLUcode curl_url_set ( CURLU * handle , CURLUPart what , const char * part , unsigned int flags ) ;`",
+          "sha256": "4dda5954c042ff23f7561a6767ee6cf8929ddbbca7c8ae1dae15044d1dcfeafb"
+        }
+      ],
+      "rank": 12,
+      "reasons": [
+        "curl_url_set hands its string argument to URL-parsing helpers (parseurl_and_replace and others) that copy parts of it into the handle; the checker does not establish that none of them keeps the caller's pointer"
+      ]
+    }
+  ],
+  "card": "W48-LIBCURL-CONTRACT-PLUGIN",
+  "files": [
+    {
+      "path": "include/curl/curl.h",
+      "sha256": "697555e3f5829c8fbea3fc3ef783fb6003219f3263c464b6de4019f3b09ea604"
+    },
+    {
+      "path": "include/curl/easy.h",
+      "sha256": "4b94482a7b8f7f70928cc5113eb532fc7e7db49cab20f2d63a0318eda59f0d79"
+    },
+    {
+      "path": "include/curl/urlapi.h",
+      "sha256": "4dda5954c042ff23f7561a6767ee6cf8929ddbbca7c8ae1dae15044d1dcfeafb"
+    },
+    {
+      "path": "include/curl/typecheck-gcc.h",
+      "sha256": "8cc9c4827abc4ca51a73a4ef236b0caf1a3876edc9da14f4d5671e1a61876d74"
+    },
+    {
+      "path": "lib/curl_setup.h",
+      "sha256": "84bbb5f4915d53ce8759d0962d49c3eed2ca92e5372721e717763068b8cb3d32"
+    },
+    {
+      "path": "lib/easy.c",
+      "sha256": "2e52bdc0560e1e864fb820ab3eb73a2dc49e12cbf034d348d8af2f11af1c3661"
+    },
+    {
+      "path": "lib/slist.c",
+      "sha256": "8bdaa480609ef676ddf6fa5628bf46038150730e057471c870cb068759640f6c"
+    },
+    {
+      "path": "lib/escape.c",
+      "sha256": "be3d650fe9007000c64741c1c2d2e5fda3f61a9f920cfc6792d48bdc8b348b77"
+    },
+    {
+      "path": "lib/urlapi.c",
+      "sha256": "da7f3127436028b85a8c6d22c9d827a30dd6e35524a2ec157fd02b5464e30eaf"
+    },
+    {
+      "path": "lib/setopt.c",
+      "sha256": "82c6526a8156d643b561cb7dddf8afa3768b7874791ecbd161f5711ad621dfa4"
+    },
+    {
+      "path": "lib/getinfo.c",
+      "sha256": "30eac4f54f562e42f379dcb39a8f511c4bf4f496ddbf8c7c3c0bea793159d76a"
+    },
+    {
+      "path": "lib/curlx/dynbuf.c",
+      "sha256": "274a3e728d5e277e4e08544ebec00b9093ae6e5bef383b298528320280874941"
+    }
+  ],
+  "meaning": "the plugin's own checker: a binding is Safe exactly when the tree is the pinned release and every lexical obligation of its contract holds, otherwise Unknown with the failed obligation or the reason no contract is written; the host's firewall publishes an uncertified Safe as Pending",
+  "module": {
+    "path": "libcurl/libcurl.qv",
+    "sha256": "567f4b13d3f30fda8f6b86e59a7ecd3c4b3e19779254d08c9939c53ba5d8f2de"
+  },
+  "pin": {
+    "source_directory": "curl-8.18.0",
+    "tag": "curl-8_18_0",
+    "tag_commit": "2eebc58c4b8d68c98c8344381a9f6df4cca838fd",
+    "tarball": "curl-8.18.0.tar.gz",
+    "tarball_sha256": "e9274a5f8ab5271c0e0e6762d2fce194d5f98acc568e4ce816845b2dcc0cf88f",
+    "version": "8.18.0"
+  },
+  "schema": "quirin-libcurl-check/1",
+  "typecheck_stubs": {
+    "definition": {
+      "detail": "1 occurrence(s)",
+      "file": "include/curl/typecheck-gcc.h",
+      "holds": true,
+      "lines": [
+        271,
+        274
+      ],
+      "obligation": "include/curl/typecheck-gcc.h contains `# define CURLWARNING ( id , message ) static void __attribute__ ( ( __warning__ ( message ) ) ) __attribute__ ( ( __unused__ ) ) __attribute__ ( ( __noinline__ ) ) id ( void ) { __asm__ ( \"\" ) ; }`",
+      "sha256": "8cc9c4827abc4ca51a73a4ef236b0caf1a3876edc9da14f4d5671e1a61876d74"
+    },
+    "guard": {
+      "detail": "1 occurrence(s)",
+      "file": "include/curl/typecheck-gcc.h",
+      "holds": true,
+      "lines": [
+        44,
+        46
+      ],
+      "obligation": "include/curl/typecheck-gcc.h contains `# define curl_easy_setopt ( handle , option , value ) __extension__ ( { if ( __builtin_constant_p ( option ) ) {`",
+      "sha256": "8cc9c4827abc4ca51a73a4ef236b0caf1a3876edc9da14f4d5671e1a61876d74"
+    },
+    "question": "W48-LIBCURL-TYPECHECK-STUBS",
+    "stubs_defined": [
+      "Wcurl_easy_getinfo_err_curl_certinfo",
+      "Wcurl_easy_getinfo_err_curl_off_t",
+      "Wcurl_easy_getinfo_err_curl_slist",
+      "Wcurl_easy_getinfo_err_curl_socket",
+      "Wcurl_easy_getinfo_err_curl_tlssessioninfo",
+      "Wcurl_easy_getinfo_err_double",
+      "Wcurl_easy_getinfo_err_long",
+      "Wcurl_easy_getinfo_err_string",
+      "Wcurl_easy_setopt_err_CURLSH",
+      "Wcurl_easy_setopt_err_FILE",
+      "Wcurl_easy_setopt_err_cb_data",
+      "Wcurl_easy_setopt_err_chunk_bgn_cb",
+      "Wcurl_easy_setopt_err_chunk_end_cb",
+      "Wcurl_easy_setopt_err_close_socket_cb",
+      "Wcurl_easy_setopt_err_conv_cb",
+      "Wcurl_easy_setopt_err_curl",
+      "Wcurl_easy_setopt_err_curl_httpost",
+      "Wcurl_easy_setopt_err_curl_mimepost",
+      "Wcurl_easy_setopt_err_curl_off_t",
+      "Wcurl_easy_setopt_err_curl_slist",
+      "Wcurl_easy_setopt_err_curlu",
+      "Wcurl_easy_setopt_err_debug_cb",
+      "Wcurl_easy_setopt_err_error_buffer",
+      "Wcurl_easy_setopt_err_fnmatch_cb",
+      "Wcurl_easy_setopt_err_hstsread_cb",
+      "Wcurl_easy_setopt_err_hstswrite_cb",
+      "Wcurl_easy_setopt_err_interleave_cb",
+      "Wcurl_easy_setopt_err_ioctl_cb",
+      "Wcurl_easy_setopt_err_long",
+      "Wcurl_easy_setopt_err_opensocket_cb",
+      "Wcurl_easy_setopt_err_postfields",
+      "Wcurl_easy_setopt_err_prereq_cb",
+      "Wcurl_easy_setopt_err_progress_cb",
+      "Wcurl_easy_setopt_err_read_cb",
+      "Wcurl_easy_setopt_err_resolver_start_callback",
+      "Wcurl_easy_setopt_err_seek_cb",
+      "Wcurl_easy_setopt_err_sockopt_cb",
+      "Wcurl_easy_setopt_err_ssh_hostkey_cb",
+      "Wcurl_easy_setopt_err_ssh_key_cb",
+      "Wcurl_easy_setopt_err_ssl_ctx_cb",
+      "Wcurl_easy_setopt_err_string",
+      "Wcurl_easy_setopt_err_trailer_cb",
+      "Wcurl_easy_setopt_err_write_callback",
+      "Wcurl_easy_setopt_err_xferinfo_cb",
+      "Wcurl_multi_setopt_err_cb_data",
+      "Wcurl_multi_setopt_err_charpp",
+      "Wcurl_multi_setopt_err_curl_off_t",
+      "Wcurl_multi_setopt_err_long",
+      "Wcurl_multi_setopt_err_notifycb",
+      "Wcurl_multi_setopt_err_pushcb",
+      "Wcurl_multi_setopt_err_socketcb",
+      "Wcurl_multi_setopt_err_timercb"
+    ],
+    "treatment": "not bound: no contract and no claim; a caller's call to a stub keeps whatever the host decides for it"
+  }
+}

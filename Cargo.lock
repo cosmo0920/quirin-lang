@@ -243,6 +243,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "quirin-audit-plugin-libcurl"
+version = "0.1.0"
+dependencies = [
+ "qcore-audit",
+ "qcore-contract",
+ "qcore-schemas",
+ "quirin-audit-plugin",
+ "serde_json",
+]
+
+[[package]]
 name = "quirin-audit-plugin-libevent"
 version = "0.1.0"
 dependencies = [

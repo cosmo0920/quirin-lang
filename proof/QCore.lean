@@ -229,6 +229,7 @@ import QCore.LegacyCAnalyzer
 import QCore.LexicalClosureNestedAssignment
 import QCore.LibcReadingPremises
 import QCore.LibcReadingSiteEvidence
+import QCore.LibcurlContractPlugin
 import QCore.LifetimeCorrespondence
 import QCore.ListIteration
 import QCore.ListLengthBound
