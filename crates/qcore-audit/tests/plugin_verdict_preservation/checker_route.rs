@@ -56,7 +56,9 @@ use qcore_schemas::verdict::Verdict;
 use qcore_verifier_host::*;
 use serde_json::{Value, json};
 
-use super::{Replay, copy_tree, manifest, proposal, repository, succeeded, write_executable};
+use super::{
+    Replay, copy_example_user_crate, manifest, proposal, repository, succeeded, write_executable,
+};
 
 static NEXT: AtomicUsize = AtomicUsize::new(0);
 
@@ -152,11 +154,7 @@ impl Fixture {
         .unwrap()
         .trim()
         .to_owned();
-        copy_tree(
-            &repository()
-                .join("providers/quirin-provider-plugin/tests/fixtures/example-user-crate"),
-            &root.join("user"),
-        );
+        copy_example_user_crate(&root.join("user"));
         let crate_root = root.join("user/quirin-provider-acme");
         let checkers = plugins
             .iter()
