@@ -178,6 +178,18 @@ const ALLOWED: &[(&str, &[&str])] = &[
         "crates/quirin-audit-plugin-measure",
         &["quirin-audit-plugin", "qcore-schemas"],
     ),
+    // Card W48-LIBCURL-CONTRACT-PLUGIN: the libcurl plugin links the SDK and
+    // the schema crate only; its tests (dev-dependencies) drive the host's
+    // firewall and checker-binding route as a library.
+    (
+        "crates/quirin-audit-plugin-libcurl",
+        &[
+            "quirin-audit-plugin",
+            "qcore-schemas",
+            "qcore-audit",
+            "qcore-contract",
+        ],
+    ),
     ("crates/qcorec", &["qcore-compiler", "qcore-contract"]),
 ];
 

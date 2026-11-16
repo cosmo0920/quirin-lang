@@ -70,6 +70,7 @@ fn closures() -> BTreeMap<String, BTreeSet<String>> {
     for root_name in [
         "quirin-audit-plugin",
         "quirin-audit-plugin-libevent",
+        "quirin-audit-plugin-libcurl",
         "quirin-audit-plugin-measure",
     ] {
         let root = names
@@ -121,6 +122,13 @@ fn the_sdk_links_no_core_analysis_crate_and_the_plugin_only_the_sdk() {
     // `qcore_schemas::composition` and links no core analysis crate.
     assert_eq!(
         closures["quirin-audit-plugin-measure"],
+        BTreeSet::from(["qcore-schemas".to_owned(), "quirin-audit-plugin".to_owned()])
+    );
+    // Card W48-LIBCURL-CONTRACT-PLUGIN: the libcurl plugin and its checker
+    // package link the SDK and the schema crate only (its tests drive the
+    // host as a dev-dependency, which this closure does not follow).
+    assert_eq!(
+        closures["quirin-audit-plugin-libcurl"],
         BTreeSet::from(["qcore-schemas".to_owned(), "quirin-audit-plugin".to_owned()])
     );
 }
