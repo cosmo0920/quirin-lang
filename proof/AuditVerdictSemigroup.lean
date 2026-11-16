@@ -18,7 +18,7 @@ import QCore.VerdictSemigroup
 `Safe < Pending < Unknown < Unsafe`, composed by the join along every chain,
 and the checker-plugin firewall (language spec §L21.2, contract spec §C11.1).
 
-Six directions are audited.
+Seven directions are audited.
 
 **The algebra.** The join is associative, commutative and idempotent with
 `Safe` as its identity; the fold of a chain is the join of its parts and does
@@ -44,11 +44,26 @@ uncertified claim is `Pending` and only an unchecked claim is; a failure, a
 refuted certificate or witness and an `Unknown` answer are `Unknown`; an
 uncertified link keeps its chain from `Safe`.
 
+**Contributions** (card **W48-PLUGIN-VERDICT-PRESERVATION**). A composed row
+keeps every contributor's `(source, answer, verdict, reasons)` record and
+publishes their reasoned fold; composing rows concatenates records and joins
+the published verdicts; projection by source distributes over composition,
+recovers every record under its own source and nothing else, and a source's
+records and the rest recompose the published value (reasons up to order). A
+plugin's answer, firewall value and reasons are recovered from any row holding
+them; an uncertified plugin keeps the row from `Safe`, an `Unknown` record or a
+failing plugin keeps it `Unknown` or `Unsafe`, and a row with a plugin record
+is `Safe` only if that plugin's `Safe` was certified. Negative controls: two
+plugins disagreeing, a plugin `Unsafe` beside a host `Safe`, a failing plugin
+beside a host `Safe`.
+
 The Rust boundary — that `qcore_schemas::verdict`, the gateway's
 `legacy_verdict` and the host's `plugin_firewall` compute these functions — is
 pinned by `crates/qcore-schemas/src/verdict.rs`'s tests,
 `crates/qcore-c-gateway/tests/verdict_fold.rs` and
-`crates/qcore-verifier-host/tests/plugin_firewall.rs`. -/
+`crates/qcore-verifier-host/tests/plugin_firewall.rs`; that the published rows
+are the composition of their records, by `qcore_audit::plugin_verdicts`'s tests
+and `crates/qcore-audit/tests/plugin_verdict_preservation.rs`. -/
 
 -- The algebra.
 #print axioms QCore.VerdictSemigroup.join_rank
@@ -93,3 +108,25 @@ pinned by `crates/qcore-schemas/src/verdict.rs`'s tests,
 #print axioms QCore.VerdictSemigroup.a_plugin_failure_is_unknown
 #print axioms QCore.VerdictSemigroup.a_plugin_is_pending_only_when_nothing_was_checked
 #print axioms QCore.VerdictSemigroup.an_uncertified_plugin_link_keeps_the_chain_non_safe
+
+#print axioms QCore.VerdictSemigroup.fold_perm
+#print axioms QCore.VerdictSemigroup.Row.published_is_the_fold
+#print axioms QCore.VerdictSemigroup.Row.join_published
+#print axioms QCore.VerdictSemigroup.Row.join_assoc
+#print axioms QCore.VerdictSemigroup.Row.value_le_join_left
+#print axioms QCore.VerdictSemigroup.Row.value_le_join_right
+#print axioms QCore.VerdictSemigroup.Row.join_keeps_every_record
+#print axioms QCore.VerdictSemigroup.Row.a_record_is_below_the_row
+#print axioms QCore.VerdictSemigroup.Row.value_eq_safe_iff
+#print axioms QCore.VerdictSemigroup.Row.project_join
+#print axioms QCore.VerdictSemigroup.Row.project_recovers
+#print axioms QCore.VerdictSemigroup.Row.project_only_from_the_source
+#print axioms QCore.VerdictSemigroup.Row.project_and_rest_recompose
+#print axioms QCore.VerdictSemigroup.a_plugin_record_is_recovered
+#print axioms QCore.VerdictSemigroup.an_uncertified_plugin_keeps_the_row_non_safe
+#print axioms QCore.VerdictSemigroup.an_unknown_record_keeps_the_row_at_least_unknown
+#print axioms QCore.VerdictSemigroup.a_failing_plugin_keeps_the_row_at_least_unknown
+#print axioms QCore.VerdictSemigroup.a_row_with_a_plugin_is_safe_only_if_certified
+#print axioms QCore.VerdictSemigroup.two_plugins_disagreeing
+#print axioms QCore.VerdictSemigroup.a_plugin_unsafe_beside_a_host_safe
+#print axioms QCore.VerdictSemigroup.a_failing_plugin_beside_a_host_safe
