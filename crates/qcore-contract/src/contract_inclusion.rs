@@ -1355,11 +1355,14 @@ impl Resolution<'_> {
             };
         signatures_agree(child, parent_declaration)
             .map_err(|message| self.error(InclusionCode::Qi010, message))?;
-        // Card W45-CONTRACT-REVISION-MODE: a revision mode is not inherited.
+        // Card W45-CONTRACT-REVISION-MODE: a revision mode is not inherited;
+        // card OPENSSL-PROVIDER-PLUGIN: nor is a library version range.
         let clauses = rename_clauses(
             &parameter_names(parent_declaration),
             &parameter_names(child),
-            &crate::contract_revision::strip_revision_markers(&parent_clauses),
+            &crate::library_version::strip_library_version(
+                &crate::contract_revision::strip_revision_markers(&parent_clauses),
+            ),
         )
         .map_err(|message| self.error(InclusionCode::Qi012, message))?;
         let mut chain = vec![ContractInheritanceLink {

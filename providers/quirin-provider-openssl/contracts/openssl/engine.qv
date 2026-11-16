@@ -1,0 +1,37 @@
+// SPDX-License-Identifier: Apache-2.0
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+module contract;
+
+// Card OPENSSL-PROVIDER-PLUGIN. The ENGINE API (see err.qv for what every
+// declaration of this crate shares).
+
+// ENGINE_free: https://docs.openssl.org/1.1.1/man3/ENGINE_add/ (also 3.5; the
+// 1.0.2 page is not published, HTTP 404 on 2026-11-16). No HISTORY entry
+// names its introduction, so the bound is the oldest series checked that
+// documents it. HISTORY (3.5): the ENGINE functions "were deprecated in
+// OpenSSL 3.0"; a deprecation is not a removal, and no series checked
+// records one, so no `removed` bound is stated. DESCRIPTION (3.5): every
+// ENGINE pointer is a structural reference, which ENGINE_free releases; "If
+// the argument to ENGINE_free() is NULL, nothing is done". Pinned prototype:
+// `int ENGINE_free(ENGINE *e)` (openssl/engine.h).
+extern fn ENGINE_free(e: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.1.1");
+    ensures normal resource_borrowed(e);
+    ensures normal resource_reference_dropped(e);
+    ensures normal resource_return_none();
+};

@@ -155,6 +155,42 @@ fn a_crate_outside_the_load_path_directory_or_malformed_is_refused() {
     );
 }
 
+/// Card OPENSSL-PROVIDER-PLUGIN: a crate that depends on this SDK (to build
+/// its checker) does not list the SDK as a contract dependency, in any of
+/// Cargo's spellings, and a dotted key names its package, not `NAME.workspace`.
+#[test]
+fn dependency_keys_name_contract_crates_only() {
+    for (dependencies, expected) in [
+        (
+            "quirin-provider-plugin = { path = \"../quirin-provider-plugin\" }\n",
+            vec![],
+        ),
+        ("quirin-provider-plugin.workspace = true\n", vec![]),
+        (
+            "quirin-provider-shared.workspace = true\nquirin-provider-libc = { path = \"x\" }\n",
+            vec!["quirin-provider-libc", "quirin-provider-shared"],
+        ),
+        (
+            "serde.workspace = true\n\n[dependencies.quirin-provider-cfl]\npath = \"y\"\n",
+            vec!["quirin-provider-cfl"],
+        ),
+        (
+            "\n[dependencies.quirin-provider-plugin]\npath = \"z\"\n",
+            vec![],
+        ),
+    ] {
+        let root = scratch("deps");
+        let directory = root.join("quirin-provider-acme");
+        copy_tree(&example().join("quirin-provider-acme"), &directory);
+        let manifest = directory.join("Cargo.toml");
+        let mut text = fs::read_to_string(&manifest).unwrap();
+        text.push_str(dependencies);
+        fs::write(&manifest, text).unwrap();
+        let krate = UserCrate::read(&directory).unwrap();
+        assert_eq!(krate.dependencies, expected, "{dependencies}");
+    }
+}
+
 #[test]
 fn a_new_crate_from_the_template_is_a_valid_crate_held_for_review() {
     let root = scratch("template");

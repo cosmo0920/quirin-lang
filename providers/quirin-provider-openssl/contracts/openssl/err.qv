@@ -1,0 +1,36 @@
+// SPDX-License-Identifier: Apache-2.0
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+module contract;
+
+// Card OPENSSL-PROVIDER-PLUGIN. OpenSSL's error queue. Every declaration of
+// this crate is flexible (no OpenSSL source is audited to pin), states the
+// OpenSSL versions it holds for (user decision 2026-11-16, from the official
+// manual pages; `doc-snapshots.json` keeps each page's SHA-256 as fetched),
+// and is bound to the crate's checker plugin, so a caller applying it is at
+// most Pending while no trusted certificate checker exists.
+
+// ERR_clear_error: https://docs.openssl.org/1.0.2/man3/ERR_clear_error/
+// HISTORY (1.0.2): available "in all versions of SSLeay and OpenSSL"; the
+// 3.5 and 1.1.1 pages record no HISTORY entry, so the bound is the oldest
+// series checked that documents it (`documented`, never an invented `since`).
+// Pinned prototype: `void ERR_clear_error(void)` (openssl/err.h). It empties
+// the calling thread's error queue: no custody is taken or returned.
+extern fn ERR_clear_error() -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.0.2");
+    ensures normal resource_return_none();
+};

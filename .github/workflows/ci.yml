@@ -100,6 +100,14 @@ jobs:
             python3 providers/package.py verify "$RUNNER_TEMP/provider-packages/$package" > /dev/null
           done
 
+      # Card OPENSSL-PROVIDER-PLUGIN: the user crates' checker plugins
+      # (quirin-provider-openssl) are built, installed as verified packages
+      # where their bindings name them, and the generated user load path is
+      # checked against them (views and locks); the build reuses the
+      # packaging target directory.
+      - name: Build and install the user crates' checker plugins and check the user load path
+        run: python3 providers/package.py checkers --target-dir providers/target/packaging
+
       - name: Run the provider workspace tests
         run: cargo test --manifest-path providers/Cargo.toml --workspace
 

@@ -53,6 +53,14 @@ pub mod user_crate;
 /// user crates included (`qcore_contract::contract_inclusion`).
 pub const CONTRACT_CRATE_PREFIX: &str = "quirin-provider-";
 
+/// Packages that carry a contract-crate prefix but own no contracts, so a
+/// user crate's dependency on one is not a contract dependency (card
+/// OPENSSL-PROVIDER-PLUGIN): this SDK itself, which a crate with a checker
+/// depends on, and the providers' conformance harness. The same list as
+/// `providers/contracts.py`'s `NON_CONTRACT_PACKAGES`.
+pub const NON_CONTRACT_PACKAGES: &[&str] =
+    &["qcore-provider-conformance", "quirin-provider-plugin"];
+
 /// The per-crate SDK manifest, beside the crate's `Cargo.toml`.
 pub const PLUGIN_MANIFEST: &str = "quirin-plugin.json";
 

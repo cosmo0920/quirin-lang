@@ -209,6 +209,13 @@ fn reason_corpus() -> Vec<(&'static str, ReasonCategory)> {
              does not match its lock (contract-pin-mismatch)",
             Pin,
         ),
+        // Card OPENSSL-PROVIDER-PLUGIN: a call held because the audited
+        // library version is outside its callee's declared range.
+        (
+            "call to `X509_free` whose contract is not in force at the audited library \
+             version (library-version-out-of-range)",
+            Stale,
+        ),
         // Card W45-REFUTED-CONTRACT-WITHDRAWAL: a call held because its
         // callee's own analysed body refutes the declaration.
         (

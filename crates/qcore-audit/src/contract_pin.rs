@@ -517,6 +517,9 @@ struct Target {
     /// Card CELL-GUARD-RESULT-RANGE-CHECKED: the derivations this run
     /// computed (`--derive-results`), by function.
     derivations: BTreeMap<String, ResultDerivation>,
+    /// Card OPENSSL-PROVIDER-PLUGIN: the libraries the target's declarations
+    /// state version ranges for; `pin` probes and records each one.
+    libraries: BTreeSet<String>,
 }
 
 impl Target {
@@ -536,8 +539,66 @@ impl Target {
             ranges: BTreeMap::new(),
             written: BTreeMap::new(),
             derivations: BTreeMap::new(),
+            libraries: contracts
+                .library_versions()
+                .values()
+                .map(|bound| bound.library.clone())
+                .collect(),
         })
     }
+}
+
+/// Card OPENSSL-PROVIDER-PLUGIN: probe every library a target's declarations
+/// state a version range for, under the audited build's include
+/// configurations (`crate::library_version`). A library that cannot be
+/// probed refuses the pin: a version nobody read is never recorded.
+fn probe_libraries(
+    target: &Target,
+) -> Result<BTreeMap<String, crate::library_version::LockedLibraryVersion>, String> {
+    let mut versions = BTreeMap::new();
+    if target.libraries.is_empty() {
+        return Ok(versions);
+    }
+    let root = target
+        .lock
+        .parent()
+        .ok_or_else(|| format!("{}: the lock has no directory", target.label))?;
+    let sources = crate::library_version::read_sources(root)?.ok_or_else(|| {
+        format!(
+            "{}: declarations state library version ranges but {} has no {}",
+            target.label,
+            root.display(),
+            crate::library_version::SOURCE_FILE
+        )
+    })?;
+    let (configurations, _) = crate::library_version::include_configurations()?;
+    for library in &target.libraries {
+        let source = sources.get(library).ok_or_else(|| {
+            format!(
+                "{}: {} declares no `{library}`",
+                target.label,
+                crate::library_version::SOURCE_FILE
+            )
+        })?;
+        let probed = crate::library_version::probe(source, &configurations).map_err(
+            |(failure, detail)| {
+                format!(
+                    "{}: cannot pin the `{library}` version ({}): {detail}",
+                    target.label,
+                    failure.as_str()
+                )
+            },
+        )?;
+        versions.insert(
+            library.clone(),
+            crate::library_version::LockedLibraryVersion {
+                version: probed.version.to_string(),
+                header: probed.header,
+                header_sha256: probed.header_sha256,
+            },
+        );
+    }
+    Ok(versions)
 }
 
 /// Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS: the bounds lock targets, one per
@@ -637,6 +698,7 @@ fn bounds_targets(
             ranges,
             written,
             derivations: BTreeMap::new(),
+            libraries: BTreeSet::new(),
         });
     }
     Ok(targets)
@@ -710,6 +772,7 @@ fn outer_targets(load_path: &Path, crates: &[String], strict: bool) -> Result<Ve
             ranges: BTreeMap::new(),
             written: BTreeMap::new(),
             derivations: BTreeMap::new(),
+            libraries: BTreeSet::new(),
         });
     }
     Ok(targets)
@@ -860,6 +923,7 @@ fn empty_lock(target: &Target) -> ContractLock {
         pinned: Vec::new(),
         flexible: Vec::new(),
         tip: Vec::new(),
+        library_versions: BTreeMap::new(),
     }
 }
 
@@ -1435,6 +1499,17 @@ fn update(
     lock.pinned.sort_by(|a, b| a.function.cmp(&b.function));
     lock.flexible.sort_by(|a, b| a.function.cmp(&b.function));
     lock.tip.sort_by(|a, b| a.function.cmp(&b.function));
+    // Card OPENSSL-PROVIDER-PLUGIN: the library versions the declarations'
+    // ranges are checked against, probed now.
+    lock.library_versions = probe_libraries(target)?;
+    for (library, version) in &lock.library_versions {
+        if old.library_versions.get(library) != Some(version) {
+            lines.push(format!(
+                "= {library}: version {} pinned ({})",
+                version.version, version.header
+            ));
+        }
+    }
     Ok((lock, lines))
 }
 

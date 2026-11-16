@@ -139,6 +139,12 @@ pub struct ContractLock {
     /// (format version 3 only).
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub tip: Vec<TipEntry>,
+    /// Card OPENSSL-PROVIDER-PLUGIN: the library versions `quirin-audit pin`
+    /// probed for the crate's declarations that state a version range, by
+    /// library (`crate::library_version`). Omitted when empty, so every lock
+    /// without one is byte-identical.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub library_versions: BTreeMap<String, crate::library_version::LockedLibraryVersion>,
 }
 
 /// A source a pinned identity was reviewed at: a Git revision, or a
@@ -381,6 +387,7 @@ impl LockV1 {
                 .collect(),
             flexible: self.flexible,
             tip: Vec::new(),
+            library_versions: BTreeMap::new(),
         }
     }
 }
@@ -823,6 +830,30 @@ impl ModuleOwners {
         root.parent().map(Path::to_path_buf)
     }
 
+    /// Card OPENSSL-PROVIDER-PLUGIN: the crate root holding a module: the
+    /// load-path crate's root for a qualified `crate:module` key, otherwise
+    /// the nearest directory above the module that holds a `Cargo.toml`.
+    #[must_use]
+    pub fn crate_root_for(&self, module: &str) -> Option<PathBuf> {
+        if let Some((crate_name, _)) = module.split_once(':')
+            && !Path::new(module).is_absolute()
+        {
+            return self.crate_root(crate_name);
+        }
+        let path = Path::new(module).canonicalize().ok()?;
+        let mut directory = path.parent();
+        while let Some(current) = directory {
+            if current.join("Cargo.toml").exists() {
+                return Some(current.to_path_buf());
+            }
+            if current.join(".git").exists() {
+                return None;
+            }
+            directory = current.parent();
+        }
+        None
+    }
+
     /// The lock covering a module key and the crate that owns it, if any.
     #[must_use]
     pub fn lock_for(&self, module: &str) -> (Option<PathBuf>, Option<String>) {
@@ -965,6 +996,9 @@ pub struct PinEvaluation {
     owners: BTreeMap<String, Option<String>>,
     contract_sha256: BTreeMap<String, String>,
     modules: BTreeMap<String, String>,
+    /// Card OPENSSL-PROVIDER-PLUGIN: the library version evaluation, empty
+    /// when no declaration states a range.
+    library_versions: crate::library_version::Evaluation,
 }
 
 /// Compare every pinned declaration in force with its lock over the source at
@@ -1082,6 +1116,19 @@ pub fn apply_pins(
             notice,
         });
     }
+    // Card OPENSSL-PROVIDER-PLUGIN: every declaration still in force that
+    // states a library version range is checked against the audited
+    // headers' version and its lock's pinned one.
+    if !contracts.library_versions().is_empty() {
+        let crate_root = |module: &str| owners.crate_root_for(module);
+        let pinned = |root: &Path| {
+            ContractLock::read(&root.join(LOCK_FILE))
+                .ok()
+                .map(|lock| lock.library_versions)
+        };
+        evaluation.library_versions =
+            crate::library_version::evaluate(contracts, &evaluation.modules, &crate_root, &pinned)?;
+    }
     Ok(evaluation)
 }
 
@@ -1187,6 +1234,11 @@ pub struct SectionTemplate {
     /// when there are none.
     #[serde(default, skip_serializing_if = "Value::is_null")]
     pub supersession: Value,
+    /// Card OPENSSL-PROVIDER-PLUGIN: the library version evaluation's record,
+    /// absent (and so byte-identical to before) when no declaration states a
+    /// range.
+    #[serde(default, skip_serializing_if = "Value::is_null")]
+    pub library_versions: Value,
     /// Per pinned outcome, in evaluation order: its record without the
     /// report-dependent keys, and whether it is in force.
     pub pinned: Vec<PinnedTemplate>,
@@ -1344,6 +1396,7 @@ pub fn template(contracts: &ResourceContracts, evaluation: &PinEvaluation) -> Se
         source: json!({"kind": evaluation.source_kind, "revision": evaluation.source_revision}),
         locks: json!(evaluation.locks),
         supersession: supersession_record(contracts),
+        library_versions: evaluation.library_versions.record().unwrap_or(Value::Null),
         pinned,
         flexible,
         inventory,
@@ -1469,6 +1522,9 @@ pub fn render(template: &SectionTemplate, facts: &ReportFacts) -> Value {
     });
     if !template.supersession.is_null() {
         section["supersession"] = template.supersession.clone();
+    }
+    if !template.library_versions.is_null() {
+        section["library_versions"] = template.library_versions.clone();
     }
     add_tip_tracking(&mut section, template);
     section

@@ -39,8 +39,8 @@ use std::path::{Path, PathBuf};
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    CONTRACT_CRATE_PREFIX, PLUGIN_MANIFEST, PLUGIN_MANIFEST_SCHEMA, derive_namespace,
-    relative_without_traversal,
+    CONTRACT_CRATE_PREFIX, NON_CONTRACT_PACKAGES, PLUGIN_MANIFEST, PLUGIN_MANIFEST_SCHEMA,
+    derive_namespace, relative_without_traversal,
 };
 
 /// A checker bound to a module's contracts, as `quirin-plugin.json` states
@@ -104,8 +104,20 @@ fn quoted(line: &str, key: &str) -> Option<String> {
     (!inner.contains('"')).then(|| inner.to_owned())
 }
 
+/// The package a `[dependencies]` key names, if it is a contract crate: the
+/// key up to its first `.` (`NAME.workspace = true`, `NAME.path = "…"`), with
+/// a contract-crate prefix and not one of [`NON_CONTRACT_PACKAGES`] (card
+/// OPENSSL-PROVIDER-PLUGIN: the first in-repository user crate depends on this
+/// SDK, which owns no contracts).
+fn contract_dependency(key: &str) -> Option<String> {
+    let name = key.trim().split('.').next()?.trim().trim_matches('"');
+    ((name.starts_with(CONTRACT_CRATE_PREFIX) || name.starts_with("qcore-provider-"))
+        && !NON_CONTRACT_PACKAGES.contains(&name))
+    .then(|| name.to_owned())
+}
+
 /// `[package]` name and version, and the contract-crate keys of
-/// `[dependencies]`.
+/// `[dependencies]` (also as `[dependencies.NAME]` tables).
 fn cargo_manifest(directory: &Path) -> Result<(String, String, Vec<String>), String> {
     let text = fs::read_to_string(directory.join("Cargo.toml"))
         .map_err(|error| refuse(directory, format!("Cargo.toml: {error}")))?;
@@ -115,6 +127,13 @@ fn cargo_manifest(directory: &Path) -> Result<(String, String, Vec<String>), Str
     for line in text.lines().map(str::trim) {
         if line.starts_with('[') {
             section = line.to_owned();
+            if let Some(name) = section
+                .strip_prefix("[dependencies.")
+                .and_then(|rest| rest.strip_suffix(']'))
+                .and_then(contract_dependency)
+            {
+                dependencies.insert(name);
+            }
             continue;
         }
         if section == "[package]" {
@@ -125,11 +144,9 @@ fn cargo_manifest(directory: &Path) -> Result<(String, String, Vec<String>), Str
             }
         } else if section == "[dependencies]"
             && let Some((key, _)) = line.split_once('=')
+            && let Some(name) = contract_dependency(key)
         {
-            let key = key.trim();
-            if key.starts_with(CONTRACT_CRATE_PREFIX) || key.starts_with("qcore-provider-") {
-                dependencies.insert(key.to_owned());
-            }
+            dependencies.insert(name);
         }
     }
     match (name, version) {

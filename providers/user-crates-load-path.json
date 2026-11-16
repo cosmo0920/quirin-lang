@@ -1,0 +1,131 @@
+{
+  "checkers": [
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "BIO_free"
+      ],
+      "module": "openssl/bio.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "ENGINE_free"
+      ],
+      "module": "openssl/engine.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "ERR_clear_error"
+      ],
+      "module": "openssl/err.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "EVP_PKEY_free"
+      ],
+      "module": "openssl/evp.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "OPENSSL_init_ssl"
+      ],
+      "module": "openssl/init.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "SSL_CTX_free"
+      ],
+      "module": "openssl/ssl.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "SSL_CTX_new"
+      ],
+      "module": "openssl/ssl.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "SSL_free"
+      ],
+      "module": "openssl/ssl.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "SSL_new"
+      ],
+      "module": "openssl/ssl.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "SSL_shutdown"
+      ],
+      "module": "openssl/ssl.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "TLS_server_method"
+      ],
+      "module": "openssl/ssl.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "X509_free"
+      ],
+      "module": "openssl/x509.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    }
+  ],
+  "crates": [
+    {
+      "contracts": "quirin-provider-openssl/contracts",
+      "dependencies": [],
+      "modules": [
+        "openssl/bio.qv",
+        "openssl/engine.qv",
+        "openssl/err.qv",
+        "openssl/evp.qv",
+        "openssl/init.qv",
+        "openssl/ssl.qv",
+        "openssl/x509.qv"
+      ],
+      "name": "quirin-provider-openssl",
+      "namespace": "openssl",
+      "published": {},
+      "resource_view": [
+        "openssl/bio.qv",
+        "openssl/engine.qv",
+        "openssl/err.qv",
+        "openssl/evp.qv",
+        "openssl/init.qv",
+        "openssl/ssl.qv",
+        "openssl/x509.qv"
+      ],
+      "version": "0.1.0"
+    }
+  ],
+  "extends": "contract-load-path.json",
+  "overrides": [],
+  "schema_version": 1
+}

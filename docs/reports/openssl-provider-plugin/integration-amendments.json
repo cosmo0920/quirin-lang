@@ -1,0 +1,46 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "OPENSSL-PROVIDER-PLUGIN",
+ "base": "0f6e17118",
+ "measured_tip": "0f6e17118",
+ "increment_paragraph": "**OPENSSL-PROVIDER-PLUGIN (2026-11-16).** OpenSSL's contracts move onto the user-contract SDK, on the user's decisions of 2026-11-16 (contracts built on quirin-provider-plugin as the first crate depending on it; the OpenSSL identity is a version tied to each function's documented supported-since; since comes from the official manual pages; the stop's answers: a contract clause, the split held status, a generated user load path, documented-present when HISTORY names no version). New crate providers/quirin-provider-openssl (namespace openssl): twelve flexible, version-ranged, checker-bound declarations (ERR_clear_error, OPENSSL_init_ssl, TLS_server_method, SSL_CTX_new/free, SSL_new/free, SSL_shutdown, ENGINE_free, X509_free, EVP_PKEY_free, BIO_free; frees of reference-counted objects are reference drops, constructors returned references), its lock with the pinned OpenSSL 3.5.5, library-versions.json, one checker binding per function and the checker quirin-openssl-check (prototype against the preprocessed pinned headers, range against the documentation record doc-snapshots.json and the pinned version, documented custody shape; a Safe claim without certificate, so Pending, any failure Unknown). It is a providers-workspace member (contracts.py's new USER_LOAD_PATH_PACKAGES class; package.py checkers; CI step) and never on contract-load-path.json; it is loaded only through providers/user-crates-load-path.json. Generic core: the clause `requires resource_library_version(LIB, since|documented \"V\"[, removed \"W\"])` (contract spec C06.2, grammar G05, rule 53), the version probe (Clang on the crate's library-versions.json header under every include configuration of QCORE_LIBRARY_VERSION_COMPILE_DATABASE or the default search path), pin recording library_versions in the lock, and the hold: a changed version is contract-pin-mismatch (Pending), out of range, unreadable or ambiguous hold calls Unknown (stale-evidence); every report and lock without a range is byte-identical. Preservation: plugin_checks binding rows now keep the plugin's proposed verdict and own diagnostics, and plugin_links name their binding row. SDK: a dependency on the SDK (or a dotted key) is no longer read as a contract dependency. Lean QCore.LibraryVersionRange (17 audited theorems). Census (docs/reports/openssl-provider-plugin/census/): corpus 68 OpenSSL callees / 99 pairs / 29 rows (4 sole), current 72 / 116 / 38 (6 sole), system and slice none; Fluent Bit's own TLS sources are analysed by no route. Measured routes predicted verdict-identical; the opt-in current run moves at most three rows Unknown -> Pending.",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "W48-OPENSSL-CONTRACT-PLUGIN",
+   "operation": "amend",
+   "text": "NARROWED (OPENSSL-PROVIDER-PLUGIN, 2026-11-16): built on providers/quirin-provider-plugin (user decision 2026-11-16) as the user crate providers/quirin-provider-openssl, loaded only through providers/user-crates-load-path.json; the pinned identity is the OpenSSL version the build's headers report (3.5.5, system /usr/include, libssl-dev 3.5.5-1ubuntu3.7), recorded per crate lock and re-read by every audit through the generic resource_library_version clause (rule 53); twelve contracts (ERR_clear_error first, the free/new pairs of SSL, SSL_CTX, X509, EVP_PKEY, BIO, ENGINE, OPENSSL_init_ssl, TLS_server_method, SSL_shutdown) with their checker, Rust tests and audited Lean (QCore.LibraryVersionRange). REMAINING: the census's other OpenSSL callees (PEM_read_bio_PrivateKey needs a callback contract, BIO_new_mem_buf a retention, then X509/EVP/SSL accessors, stacks, ERR and PKCS12 functions), and the measured opt-in arbiter attributing every move (the integrator's current rerun with the user load path).",
+   "source": "docs/reports/openssl-provider-plugin/README.md"
+  },
+  {
+   "id": "W48-PLUGIN-VERDICT-PRESERVATION",
+   "operation": "amend",
+   "text": "OPENSSL-PROVIDER-PLUGIN (2026-11-16) traced a checker's answer to the published row: the firewall's classification dropped the plugin's own diagnostics and proposed verdict for uncertified, unvalidated and certified claims. Fixed: VerifierRegistry::verify_plugin_answer returns the plugin's PluginAnswer beside the claim; each plugin_checks binding row records proposed and plugin_diagnostics, and each plugin_links entry names its binding row by task digest (user_contract_plugins.rs pins Safe, Unsafe and failure answers). Still open: checkpoint (.qo) composition (it carries the section's digest only), the Lean record-preservation theorem and the two-plugin negative controls.",
+   "source": "docs/reports/openssl-provider-plugin/README.md"
+  },
+  {
+   "id": "LIBRARY-VERSION-PROBE-ROUTE-DATABASE",
+   "operation": "register",
+   "title": "The library version probe does not read a route's own compile database",
+   "text": "Rule 53's probe reads the include configurations of the compile database QCORE_LIBRARY_VERSION_COMPILE_DATABASE names, else Clang's default search path, which is the audited build's only when the build passes the library no include directory (true for OpenSSL in the prepared Fluent Bit build, recorded by OPENSSL-PROVIDER-PLUGIN's census). `quirin-audit current --compile-database` does not hand its database to the probe. DISCHARGE: the current and configured routes pass their compile database's include configurations to the probe (and pin takes the same flag), with a test where a bundled header set in the database wins over the system one and a disagreement is ambiguous.",
+   "source": "docs/reports/openssl-provider-plugin/README.md",
+   "recorded_by": "OPENSSL-PROVIDER-PLUGIN"
+  },
+  {
+   "id": "REFERENCE-DROP-NULL-ACCEPTING",
+   "operation": "register",
+   "title": "A NULL-accepting reference drop refuses a possibly-NULL actual",
+   "text": "OpenSSL's frees of reference-counted objects (X509_free, EVP_PKEY_free, SSL_free, SSL_CTX_free, BIO_free, ENGINE_free) document that NULL does nothing, but resource_reference_dropped has no nullability: rule 13b refuses a possibly-NULL actual at a drop, so a caller freeing a pointer that may be NULL stays Unknown. QCore.LibraryVersionRange proves the premise (null_release_is_noop, null_drop_discharges_nothing). DISCHARGE: a `resource_reference_dropped(p, nullable)` form whose NULL edge is a no-op on the family, with gateway tests and Lean parity, used by the OpenSSL contracts from the documentation series that states it (1.1.1 for SSL_free and SSL_CTX_free).",
+   "source": "docs/reports/openssl-provider-plugin/README.md",
+   "recorded_by": "OPENSSL-PROVIDER-PLUGIN"
+  },
+  {
+   "id": "FLUENT-BIT-TLS-UNITS-UNANALYSED",
+   "operation": "register",
+   "title": "No audit route analyses Fluent Bit's own OpenSSL callers",
+   "text": "OPENSSL-PROVIDER-PLUGIN's census: src/tls/openssl.c (73 OpenSSL functions, 133 sites), flb_crypto.c, flb_hmac.c, flb_hash.c, flb_oauth2.c, flb_fips.c, flb_utils.c and out_azure_kusto call OpenSSL, and none is a unit of the corpus, system, slice or the user's current run (Monkey's lib/monkey/plugins/tls/tls_openssl.c neither). DISCHARGE: a selection that brings them into a route (with the OpenSSL user load path), measured.",
+   "source": "docs/reports/openssl-provider-plugin/README.md",
+   "recorded_by": "OPENSSL-PROVIDER-PLUGIN"
+  }
+ ]
+}

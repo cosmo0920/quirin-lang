@@ -65,3 +65,18 @@ Of the six rows OpenSSL alone blocks:
 The 32 co-blocked rows keep other diagnostics and stay at their status (31
 Unknown, 1 Unsafe), and their units keep theirs; the OpenSSL callees covered
 leave the uncontracted list on those rows. Corpus, system and slice: no move.
+
+## Correction after the evidence run (contracts bound)
+
+The table above is unchanged as committed (`dbec50aae`). The user-path
+evidence run ([README](README.md) §10) audited a fixture shaped like the six
+rows through the real headers, the generated user load path and the real
+checker: `clear_error`, `init_library` and an acquired-and-dropped context
+are `Pending`, and the member-read drops are `Unknown` as predicted, but
+`return SSL_CTX_new(TLS_server_method());` is `Unknown` (`nullable resource
+... used by a non-null contract`: a nullable returned reference handed
+straight to the caller's return is refused). So
+`tls_openssl.c::tls_create_server_context` is expected to **stay Unknown**,
+and the opt-in run moves at most **two** rows (`rd_kafka_transport_ssl_clear_error`,
+`tls_init_library`) `Unknown -> Pending`. The measured routes' block is
+unchanged: no move.
