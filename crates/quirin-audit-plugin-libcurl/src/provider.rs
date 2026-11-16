@@ -263,7 +263,7 @@ pub fn run(template: &str) -> Result<(), String> {
     if !arguments.is_empty() {
         return Err("expected no arguments or --verify-package".into());
     }
-    let limit = usize::try_from(manifest.limits.output_bytes).unwrap_or(usize::MAX);
+    let limit = manifest.limits.output_bytes;
     let payload = read_frame(&mut std::io::stdin().lock(), limit)?;
     let selector: serde_json::Value =
         serde_json::from_slice(&payload).map_err(|error| error.to_string())?;

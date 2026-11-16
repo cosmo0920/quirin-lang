@@ -190,6 +190,41 @@ them. It refuses an output inside `build/cycle19` or `third_party`, and
 `libevent-clang-build/profile.json` for a person to review and copy, rather
 than editing the committed profile. It claims no verdict.
 
+## The libcurl plugin
+
+`quirin-audit libcurl` (crate
+[`quirin-audit-plugin-libcurl`](../../crates/quirin-audit-plugin-libcurl/src/lib.rs),
+card [W48-LIBCURL-CONTRACT-PLUGIN](../reports/w48-libcurl-contract-plugin/README.md))
+carries libcurl's contracts and checks them with its own checker against a
+pinned release: libcurl 8.18.0, the upstream tarball by SHA-256, and every
+file the checker reads by its own digest. Its answers reach the audit only
+through the plugin firewall.
+
+```sh
+cargo build -p qcore-audit -p quirin-audit-plugin-libcurl
+Q="target/debug/quirin-audit --plugin-path target/debug --output ../out/libcurl"
+$Q libcurl prepare --tarball curl-8.18.0.tar.gz   # from curl.se/download/
+$Q libcurl check                                   # one claim per binding
+$Q libcurl install --repository .                  # the user crate and checker package
+target/debug/quirin-audit current ... --load-path ../out/libcurl/user/user-load-path.json \
+  --provider quirin-provider-libcurl --provider ...
+```
+
+| Step | What it does |
+|---|---|
+| `prepare --tarball FILE` | Refuses a tarball whose SHA-256 is not the pin, unpacks it under `libcurl-source/`, refuses a tree whose read files do not match, writes `libcurl-preparation.json`. It reads no network |
+| `check [--prepared DIR]` | One verdict claim per binding (artifact `libcurl:FUNCTION`): `Safe` when every lexical obligation of the function's contract holds of the pinned source, otherwise `Unknown` with the reason; `libcurl-check.json` is the claim's certificate reference, which no trusted checker reads, so the host publishes a `Safe` claim as `Pending` (`QP016`) |
+| `install [--prepared DIR] [--repository DIR] [--checker FILE]` | Writes the user contract crate `quirin-provider-libcurl` (module `libcurl/libcurl.qv`), the checker package `quirin-libcurl-checker` with the pinned files as its filesystem input, one checker binding per contracted function, and `user/user-load-path.json` extending the repository's shipped load path |
+
+On a `current` or `contracts` run with that load path and the crate selected,
+the contracts apply and each binding's verdict joins into every function that
+applies it (C11.1): an established binding is `Pending` (`QP008`), so a
+caller is at best `Pending`, never `Safe`. A tree or package file that does
+not match the pin fails the run or answers `Unknown` for every binding. The
+`typecheck-gcc.h` warning stubs (`Wcurl_easy_*_err_*`) are never bound. The
+configured and pinned routes do not read a user load path
+(`W45-PLUGIN-ROUTE-COVERAGE`), so the plugin moves nothing on them.
+
 ## The measure plugin
 
 `quirin-audit measure` (crate

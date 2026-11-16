@@ -360,6 +360,14 @@
   },
   {
    "source": "compiler/tests/workspace_layering.rs",
+   "literal": "crates/quirin-audit-plugin-libcurl",
+   "reads": [
+    "crates/quirin-audit-plugin-libcurl/**"
+   ],
+   "why": "census: its units list the directory (1 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
+  },
+  {
+   "source": "compiler/tests/workspace_layering.rs",
    "literal": "crates/quirin-audit-plugin-libevent",
    "reads": [
     "crates/quirin-audit-plugin-libevent/**"

@@ -27,14 +27,23 @@ run check "$H" --plugin-path "$PLUGINS" --output "$OUT/plugin" \
   --report "$OUT/plugin/check.report.json" libcurl check
 run install "$H" --plugin-path "$PLUGINS" --output "$OUT/plugin" \
   --report "$OUT/plugin/install.report.json" libcurl install --repository "$W"
+# The profile's default modules as a provider selection (the provider route
+# is the one that runs checker bindings), without and with the plugin's crate.
+python3 "$W/docs/reports/w48-libcurl-contract-plugin/scripts/provider_args.py" "$W" \
+  > "$OUT/provider-args.txt"
+set --
+while IFS= read -r word; do
+  set -- "$@" "$word"
+done < "$OUT/provider-args.txt"
 run without "$H" current --checkout "$S/fluent-bit-clang-source" \
   --profile-directory "$W/contract/profiles/fluent-bit" \
   --compile-database "$S/fluent-bit-clang-production/compile_commands.json" \
+  --load-path "$W/providers/contract-load-path.json" "$@" \
   --selection "$SEL" --jobs 2 --report "$OUT/without/resource-diagnostics.json"
 run with "$H" current --checkout "$S/fluent-bit-clang-source" \
   --profile-directory "$W/contract/profiles/fluent-bit" \
   --compile-database "$S/fluent-bit-clang-production/compile_commands.json" \
-  --load-path "$OUT/plugin/user/user-load-path.json" \
+  --load-path "$OUT/plugin/user/user-load-path.json" "$@" \
   --provider quirin-provider-libcurl \
   --selection "$SEL" --jobs 2 --report "$OUT/with/resource-diagnostics.json"
 for step in prepare check install without with; do

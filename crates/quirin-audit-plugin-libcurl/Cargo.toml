@@ -12,6 +12,8 @@ name = "quirin_audit_plugin_libcurl"
 [[bin]]
 name = "quirin-audit-libcurl"
 path = "src/main.rs"
+# `main.rs` holds no test; the crate's tests are its library's and `tests/`.
+test = false
 
 # The C11.1 checker package's executable. Deliberately not named
 # `quirin-audit-*`, so the host never lists it as a subcommand.
