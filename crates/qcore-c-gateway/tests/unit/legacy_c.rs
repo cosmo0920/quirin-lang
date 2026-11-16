@@ -1304,6 +1304,7 @@ fn alias_cfg(nodes: Vec<LegacyCfgNode>) -> LegacyCfg {
         traversal: Default::default(),
         cell_tests: Default::default(),
         cell_frames: Default::default(),
+        thread_local_reads: Default::default(),
     }
 }
 

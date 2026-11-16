@@ -147,6 +147,7 @@ fn row(function: &str, applied: &[&str]) -> LegacyFunctionSummary {
             traversal: Default::default(),
             cell_tests: Default::default(),
             cell_frames: Default::default(),
+            thread_local_reads: Default::default(),
         },
         exits: Vec::new(),
         counted_users: Vec::new(),

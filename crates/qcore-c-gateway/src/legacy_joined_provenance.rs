@@ -651,6 +651,7 @@ mod tests {
             traversal: Default::default(),
             cell_tests: Default::default(),
             cell_frames: Default::default(),
+            thread_local_reads: Default::default(),
         }
     }
 
@@ -703,6 +704,7 @@ mod tests {
             traversal: Default::default(),
             cell_tests: Default::default(),
             cell_frames: Default::default(),
+            thread_local_reads: Default::default(),
         }
     }
 
@@ -1098,6 +1100,7 @@ mod tests {
             traversal: Default::default(),
             cell_tests: Default::default(),
             cell_frames: Default::default(),
+            thread_local_reads: Default::default(),
         };
         assert_eq!(
             derive(&cfg)[2].get(&7),

@@ -562,6 +562,7 @@ mod exact_formal_tests {
             traversal: Default::default(),
             cell_tests: Default::default(),
             cell_frames: Default::default(),
+            thread_local_reads: Default::default(),
         };
         let facts = FunctionFacts {
             volatile_objects: BTreeSet::from(["p".into()]),

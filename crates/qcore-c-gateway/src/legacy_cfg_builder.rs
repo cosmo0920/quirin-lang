@@ -77,6 +77,7 @@ impl CfgBuilder {
             traversal: TraversalNames::default(),
             cell_tests: builder.cell_tests,
             cell_frames: Default::default(),
+            thread_local_reads: Default::default(),
         }
     }
 

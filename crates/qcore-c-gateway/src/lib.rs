@@ -207,6 +207,9 @@ pub mod teardown_source;
 pub mod condvar_census;
 // Card W47-LOOP-OWNER-CONTRACTS (rule 10p): derived thread identity.
 pub mod thread_entry_census;
+// Card THREAD-LOCAL-CUSTODY-FREE-READ (rule 54): a whole read of a
+// thread-local pointer object is a custody-free value.
+pub mod thread_local_read;
 #[cfg(feature = "indirect-census")]
 pub mod traversal_census;
 mod type_query;

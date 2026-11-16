@@ -296,6 +296,10 @@ pub(crate) struct StatementIndex {
     /// Card CG21-CALL-EXITS-AND-BOUNDARIES (rule 11o): the ids of the unit's
     /// file-scope function declarations carrying a `noreturn` attribute.
     pub(crate) no_return_declarations: Arc<BTreeSet<String>>,
+    /// Card THREAD-LOCAL-CUSTODY-FREE-READ (rule 54): the ids of the unit's
+    /// file-scope thread-local (`__thread` / `_Thread_local`) object
+    /// declarations.
+    pub(crate) thread_local_declarations: Arc<BTreeSet<String>>,
     by_line: Arc<BTreeMap<usize, Vec<Vec<usize>>>>,
     /// The unit's line starts: a node's line is found by binary search.
     line_starts: Arc<Vec<usize>>,
@@ -437,6 +441,8 @@ struct AstIndex {
     aggregates: Arc<crate::aggregate_value::AggregateFacts>,
     /// Card CG21-CALL-EXITS-AND-BOUNDARIES (rule 11o).
     no_return_declarations: Arc<BTreeSet<String>>,
+    /// Card THREAD-LOCAL-CUSTODY-FREE-READ (rule 54).
+    thread_local_declarations: Arc<BTreeSet<String>>,
     /// Card CG22-INDIRECT-CALLS-AND-CALLBACKS (rule 11p): constant tables.
     indirect_tables: Arc<crate::indirect_calls::TableFacts>,
     /// Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12n): the stores into
@@ -468,6 +474,8 @@ struct RetainedDeclarations {
     aggregates: crate::aggregate_value::AggregateFacts,
     /// Card CG21-CALL-EXITS-AND-BOUNDARIES (rule 11o).
     no_return_declarations: BTreeSet<String>,
+    /// Card THREAD-LOCAL-CUSTODY-FREE-READ (rule 54).
+    thread_local_declarations: BTreeSet<String>,
     /// Card CG22-INDIRECT-CALLS-AND-CALLBACKS (rule 11p).
     indirect_tables: crate::indirect_calls::TableFacts,
     /// Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12n).
@@ -481,6 +489,12 @@ impl RetainedDeclarations {
             && let Some(id) = node["id"].as_str()
         {
             self.no_return_declarations.insert(id.to_owned());
+        }
+        // Card THREAD-LOCAL-CUSTODY-FREE-READ (rule 54).
+        if crate::thread_local_read::declares_thread_local(&node)
+            && let Some(id) = node["id"].as_str()
+        {
+            self.thread_local_declarations.insert(id.to_owned());
         }
         collect_field_facts(&node, &mut self.fields);
         EnumFacts::collect(&node, &mut self.enums);
@@ -629,6 +643,7 @@ impl AstIndex {
             records: Arc::new(retained.records),
             aggregates: Arc::new(retained.aggregates),
             no_return_declarations: Arc::new(retained.no_return_declarations),
+            thread_local_declarations: Arc::new(retained.thread_local_declarations),
             indirect_tables: Arc::new(retained.indirect_tables),
             member_facts: Arc::new(retained.member_facts),
             state_facts: std::cell::RefCell::default(),
@@ -654,6 +669,7 @@ impl AstIndex {
             records: Arc::new(retained.records),
             aggregates: Arc::new(retained.aggregates),
             no_return_declarations: Arc::new(retained.no_return_declarations),
+            thread_local_declarations: Arc::new(retained.thread_local_declarations),
             indirect_tables: Arc::new(retained.indirect_tables),
             member_facts: Arc::new(retained.member_facts),
             state_facts: std::cell::RefCell::default(),
@@ -1066,6 +1082,7 @@ impl StatementIndex {
                 records: Arc::clone(&ast.records),
                 aggregates: Arc::clone(&ast.aggregates),
                 no_return_declarations: Arc::clone(&ast.no_return_declarations),
+                thread_local_declarations: Arc::clone(&ast.thread_local_declarations),
                 by_line: Arc::clone(by_line),
                 line_starts: Arc::clone(&ast.line_starts),
                 line_tokens: Arc::clone(&ast.line_tokens),

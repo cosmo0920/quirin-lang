@@ -1290,6 +1290,15 @@ pub struct LegacyCfg {
         skip_serializing_if = "cell_frames_route::CellFrames::is_empty"
     )]
     pub cell_frames: cell_frames_route::CellFrames,
+    /// Card **THREAD-LOCAL-CUSTODY-FREE-READ** (rule 54): the thread-local
+    /// pointer objects whose whole read, and the automatic locals whose copy
+    /// of one, is a custody-free value. Empty (and omitted) wherever the
+    /// reading is withheld. Derived from source.
+    #[serde(
+        default,
+        skip_serializing_if = "crate::thread_local_read::ThreadLocalReads::is_empty"
+    )]
+    pub thread_local_reads: crate::thread_local_read::ThreadLocalReads,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -4212,6 +4221,11 @@ fn build_function_cfg_unscoped(
     // local's copy (an automatic array, a never-bound pointer) is unbound.
     pointers.retain(|name| !parser.formal_parameters.contains(name));
     cfg.traversal = TraversalNames { scalars, pointers };
+    // Card THREAD-LOCAL-CUSTODY-FREE-READ (rule 54).
+    if let Some(index) = parser.typed_positions_index() {
+        cfg.thread_local_reads =
+            crate::thread_local_read::admitted(&index.function, &index.thread_local_declarations);
+    }
     if let Some(body_end) = matching(tokens, body_start, "{", "}") {
         let body = tokens[body_start + 1..body_end]
             .iter()
