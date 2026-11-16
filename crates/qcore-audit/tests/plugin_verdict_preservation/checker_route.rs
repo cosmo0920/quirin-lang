@@ -167,11 +167,9 @@ impl Fixture {
                        "functions": ["acme_pool_get", "acme_pool_put"], "package": package})
             })
             .collect::<Vec<_>>();
-        let mut modules = fs::read_dir(crate_root.join("contracts/acme"))
-            .unwrap()
-            .map(|entry| format!("acme/{}", entry.unwrap().file_name().to_string_lossy()))
-            .collect::<Vec<_>>();
-        modules.sort();
+        // The example crate's one module (no walk: rule 29).
+        let modules = ["acme/pool.qv"];
+        assert!(crate_root.join("contracts").join(modules[0]).is_file());
         fs::write(
             root.join("user/user-load-path.json"),
             serde_json::to_vec_pretty(&json!({

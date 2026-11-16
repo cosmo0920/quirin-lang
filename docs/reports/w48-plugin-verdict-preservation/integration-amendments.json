@@ -1,0 +1,39 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "W48-PLUGIN-VERDICT-PRESERVATION",
+  "base": "d7a497822",
+  "measured_tip": "a69318414",
+  "profiles": [],
+  "increment_paragraph": "**W48-PLUGIN-VERDICT-PRESERVATION** (user decision 2026-09-28; contract spec §C11.3 new, rule 10h amended, Lean `QCore.VerdictSemigroup` Contributions section; [report](../../reports/w48-plugin-verdict-preservation/README.md)). Every artifact a plugin's verdict reaches now keeps each contributor's record (source, the plugin's own answer: proposal, firewall class and code, its own reasons or diagnostics; the verdict and reasons it contributes) and publishes their join, and `qcore_audit::plugin_verdicts` recovers each source's records from a composed row, refusing a row that is not their join. The firewall's `verify_plugin_answer` keeps the proposal and the plugin's diagnostics beside the unchanged classification; a checker function row keeps `host_status` and each link's `answer` and package identity, a linked unit row `host_verdict`, a `plugin_checks` binding `answer`; an external-subcommand report row carries `contributions` (host, run, each joined claim with the plugin's proposal and reason). One defect fixed: a checker-raised unit took the first non-Safe link's reason, so a Pending link before an Unknown one published Unknown with the human-resolvable code `plugin-claim-uncertified`; the reason is now the deciding link's with its typed code. The component sidecar keeps each plugin as its own component (`Provenance.external_checker`: id, package version, digest) beside the host's own, and the published row is their derivation (discharges COMPOSITION-PLUGIN-FIREWALL-WIRING). End-to-end Rust traces of all four values through rows, report, sidecars, `.qo` checkpoints and their composition (byte-identical to the whole run), with negative controls (two plugins disagreeing, a plugin Unsafe beside a host Safe, a failing plugin); an uncertified plugin Safe or Unsafe stays Pending on both routes, and Safe/provisional Unsafe are reached only through the library entry's trusted checkers (`CurrentRoute::plugin_checkers`, test doubles). No verdict value moves; no measurement. Rule id 51, which the brief reserved, was already taken; no rule was added.",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "W48-PLUGIN-VERDICT-PRESERVATION",
+      "operation": "retire",
+      "why": "DISCHARGED by W48-PLUGIN-VERDICT-PRESERVATION (contract spec C11.3, rule 10h amended, Lean QCore.VerdictSemigroup Contributions section audited in AuditVerdictSemigroup.lean): every row a plugin contributes to keeps each contributor's (source, answer, verdict, reasons) record and publishes their join; qcore_audit::plugin_verdicts projects each plugin's own verdict and reasons back out of a composed row (project_row, project_function, project_unit) and refuses a row that is not the join of its records; end-to-end traces for Safe, Pending, Unknown and Unsafe through function and unit rows, report, plugin_checks and component sidecars, .qo checkpoints and their composition (crates/qcore-audit/tests/plugin_verdict_preservation/), with the negative controls two plugins disagreeing, a plugin Unsafe beside a host Safe and a failing plugin; an uncertified plugin Safe or Unsafe is Pending on both routes until W45-SUBCOMMAND-CERTIFICATE-ROUTE / W45-PLUGIN-CERTIFICATE-CHECKER exist.",
+      "source": "docs/reports/w48-plugin-verdict-preservation/README.md"
+    },
+    {
+      "id": "COMPOSITION-PLUGIN-FIREWALL-WIRING",
+      "operation": "retire",
+      "why": "DISCHARGED by W48-PLUGIN-VERDICT-PRESERVATION: report_components::sidecar builds, for a unit row a checker plugin linked, the host's component (the unit's and its linked functions' own verdicts, the unit's own reason) and one component per plugin with Provenance.external_checker set (plugin id, package version, package digest), and render_row takes the host's component as the row's base, so the published row is Contribution::derive over both and report_components::check passes on the plugin-bound fixtures (checker_route.rs). A row without a binding is built by the unchanged path (one host component, its detail the row), so a report without plugin bindings is unchanged by construction; this is not a base-versus-tip byte comparison. Residual: a checkpointed run writes no component sidecar (CHECKPOINT-COMPONENT-SIDECAR).",
+      "source": "docs/reports/w48-plugin-verdict-preservation/README.md"
+    },
+    {
+      "id": "CHECKPOINT-COMPONENT-SIDECAR",
+      "operation": "register",
+      "title": "A checkpointed current run and checkpoint compose write no component sidecar",
+      "text": "Found by W48-PLUGIN-VERDICT-PRESERVATION: `quirin-audit current --checkpoint-dir` and `quirin-audit checkpoint compose` write the report and its contract sidecar byte-identical to the whole run's but no `<report>.components.json` (compose.rs and checkpoint_run.rs never call report_components::sidecar), so on those routes the per-plugin components (and AUDIT-COMPOSITION's host components) exist only implicitly in the rows; `quirin-audit-measure` refuses such a report without --legacy-rows. Nothing is erased from the rows themselves. DISCHARGE: the composer writes the component sidecar the whole run writes, byte-identical, with a test on a plugin-bound checkpoint fixture.",
+      "source": "docs/reports/w48-plugin-verdict-preservation/README.md",
+      "recorded_by": "W48-PLUGIN-VERDICT-PRESERVATION"
+    },
+    {
+      "id": "SUBCOMMAND-CLAIMS-INTO-AUDIT-ROWS",
+      "operation": "register",
+      "title": "No route composes a subcommand plugin's claims into an audit report's function or unit rows",
+      "text": "Found by W48-PLUGIN-VERDICT-PRESERVATION: a quirin-audit subcommand plugin's claims are joined only into its own report's artifact rows (subcommand_plugins::compose_rows, keyed by the --audit-report unit row's file); nothing carries a per-binding claim into the function rows, unit rows, .qo checkpoints or component sidecar of an audit report, which only the checker-plugin route (user_plugins::fold_unit) reaches. The OpenSSL and libcurl contract plugins (W48-OPENSSL-CONTRACT-PLUGIN, W48-LIBCURL-CONTRACT-PLUGIN) need such a route to change any corpus row. DISCHARGE: a stated route (a checker binding per plugin, or a host composition of subcommand claims into function rows keyed by the applied contract) that keeps every record per contract spec C11.3, with an end-to-end test and an arbiter attributing any move.",
+      "source": "docs/reports/w48-plugin-verdict-preservation/README.md",
+      "recorded_by": "W48-PLUGIN-VERDICT-PRESERVATION"
+    }
+  ]
+}
