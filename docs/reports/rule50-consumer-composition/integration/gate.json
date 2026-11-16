@@ -1,0 +1,13 @@
+{
+  "note": "Landing integrate/r13 (base main 0f6e17118; merges, in order, RULE50-CONSUMER-COMPOSITION c74ea2139, MEMBER-PATH-DIRECT-REFUSAL-TEXT b3a933f98, LIBEVENT-CORE-CENSUS-GUARD-CORRELATION 21dbd218f and GATE-SLOT-BUILDS-UNSLOTTED 75f66c905). The second merge conflicted with the first in crates/qcore-c-gateway/src/legacy_callback_route.rs (both helper_destroyer and member_path_direct_reason kept) and tests/member_value_helper.rs (RULE50's reading of a helper's direct call kept, so the member-invocations refusal wording is no longer pinned by any fixture; registered as MEMBER-PATH-DIRECT-INVOCATIONS-TEXT-PIN). Full landing gate on 44a4df18a (private/integrate-r13/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base main --full --landing through private/toolchain/env.sh: Rust 639 units / 682 summaries, 9518 passed, 0 failed, 17 ignored; Lean 435 audits; fmt, Clippy, both reevaluation examples exit 0; provider gate selected (providers/ changed): package build/verify, provider Rust 133 passed / 0 failed / 1 ignored, provider fmt/Clippy all exit 0. Python (777 tests, GATE-SLOT-BUILDS-UNSLOTTED adds 16) exited 1 on two test_build_matrix_sections checks only, because the committed matrix predates this landing's amendments and Lean count; it is regenerated from this record and the suite rerun is recorded in private/integrate-r13/python-rerun.log. No verdict moves: RULE50-CONSUMER-COMPOSITION measured corpus 1081/3617/6 Safe/Unknown/Unsafe at base and tip (declared match; system and slice unmeasured, no Monkey unit); MEMBER-PATH-DIRECT-REFUSAL-TEXT and LIBEVENT-CORE-CENSUS-GUARD-CORRELATION report 0 status moves; GATE-SLOT-BUILDS-UNSLOTTED changes gate tooling only. The merged figures differ from each card's own gate (merged suites), hence this record. No profile baseline is changed and land.py publish is owed.",
+  "workspace_tests": 9518,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 777,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "full landing gate: every step exits 0 except the Python suite's two stale-matrix checks, cleared by regenerating the matrix from this record (rerun disclosed in the note)",
+  "lean_audits": 435,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

@@ -585,6 +585,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [gate-slot-admission-starvation](gate-slot-admission-starvation/README.md) | GATE-SLOT-ADMISSION-STARVATION |
 
+| [gate-slot-builds-unslotted](gate-slot-builds-unslotted/README.md) | GATE-SLOT-BUILDS-UNSLOTTED: a build class the EXCLUSIVE phase closes |
+
 | [gate-slot-fifo-order](gate-slot-fifo-order/README.md) | GATE-SLOT-FIFO-ORDER |
 
 | [gate-slot-short-job-lane](gate-slot-short-job-lane/README.md) | GATE-SLOT-SHORT-JOB-LANE |
@@ -662,6 +664,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [libc-reading-site-evidence](libc-reading-site-evidence/README.md) | Libc reading-site evidence v1 |
 
+| [libevent-core-census-guard-correlation](libevent-core-census-guard-correlation/README.md) | LIBEVENT-CORE-CENSUS-GUARD-CORRELATION |
+
 | [librdkafka-header-inlines](librdkafka-header-inlines/README.md) | LIBRDKAFKA-HEADER-INLINES |
 
 | [librdkafka-plugin-premise](librdkafka-plugin-premise/README.md) | LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED: the plugin premise on every dependent declaration |
@@ -714,6 +718,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [member-effect-component-scope](member-effect-component-scope/README.md) | MEMBER-EFFECT-COMPONENT-SCOPE |
 
 | [member-effect-summary](member-effect-summary/README.md) | MEMBER-EFFECT-SUMMARY |
+
+| [member-path-direct-refusal-text](member-path-direct-refusal-text/README.md) | MEMBER-PATH-DIRECT-REFUSAL-TEXT |
 
 | [member-path-unit-helpers](member-path-unit-helpers/README.md) | MEMBER-PATH-STATES-THROUGH-UNIT-HELPERS: rule 30's body check through the unit's helpers |
 
@@ -1177,6 +1183,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [rule36-pilot](rule36-pilot/README.md) | RULE36-PILOT: rule 36 as its own rule package |
 
 | [rule37-pilot](rule37-pilot/README.md) | RULE37-PILOT: rule 37 as a rule package |
+
+| [rule50-consumer-composition](rule50-consumer-composition/README.md) | RULE50-CONSUMER-COMPOSITION |
 
 | [runtime-source-imports](runtime-source-imports/README.md) | Runtime source imports |
 
