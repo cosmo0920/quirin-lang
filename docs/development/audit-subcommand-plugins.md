@@ -202,7 +202,10 @@ It claims no verdict; a failed side, a refused baseline, a route that cannot be
 compared or a declared-versus-measured mismatch fails the run (exit 1,
 `Unknown`). Measurements take hours, so raise the host's wall-time quota, and
 do not wrap the command in `gate_slot.py`: each route takes its own `audit`
-slot. Each route's slot script keeps a live wait record
+slot, and each side's release build takes the `build` class (it waits while a
+`rust-suite` job's `EXCLUSIVE` phase runs; receipt `sides/<side>/build.slot.json`,
+`build_slot` in the side record; card `GATE-SLOT-BUILDS-UNSLOTTED`). That wait
+is counted against the quota like the build. Each route's slot script keeps a live wait record
 (`sides/<side>/<route>.slot-wait.json`, `gate_slot.py --wait-record`); while
 every route in flight waits for its slot, the measurement declares the
 host's slot-wait marker, so the quota counts analysis time only (R7). The

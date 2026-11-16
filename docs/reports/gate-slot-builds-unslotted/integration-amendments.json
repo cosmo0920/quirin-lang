@@ -1,0 +1,44 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "GATE-SLOT-BUILDS-UNSLOTTED",
+ "base": "0f6e17118",
+ "measured_tip": "39994b407",
+ "increment_paragraph": "**GATE-SLOT-BUILDS-UNSLOTTED** (discharges the ledger entry of the same id registered by GATE-ELASTIC; [report](../../reports/gate-slot-builds-unslotted/README.md)). fmt, Clippy and cargo builds took no gate slot, so another card's build could load the host while a rust-suite job's EXCLUSIVE phase ran constraint 16's load-sensitive rows. Of the ledger's two discharges the card takes the first, a build class the rust-suite class excludes during its EXCLUSIVE phase only: the phase is about a minute (62.7 s of the integrate/r9 suite's 740 s run), and a class holds for any build while a measurement holds for one build, host and row set. (1) scripts/gate_slot.py has a `build` class: unlimited, no queue, no memory reading, no legacy lock; a build holds `<gate dir>/build/running` shared and is admitted while `build/admission` can be taken shared (a waiting build holds `build/waiting` so `status` lists it). (2) scripts/run_test_binaries.py, under a rust-suite slot (QUIRIN_GATE_HELD), takes build admission exclusive before its first exclusive unit, waits for the builds in flight (at most QUIRIN_GATE_BUILD_DRAIN, 30 min), runs the phase and reopens; past the bound the phase runs beside them with new builds kept out and summary.json's `build_exclusion` says `drained: false` and names them (no job stops another). `gate_slot.py rust-suite --close-builds` closes builds around a whole command, for the provider workspace's cargo test. The suite's drain, build and parallel phases leave builds open. A build nested in a rust-suite, audit, short or build job is covered, one nested in a lean job refused; the child's QUIRIN_GATE_HELD now drops only the legacy label. (3) scripts/gate_scope.py runs fmt, every Clippy step, both reevaluation examples and the provider package build, fmt and Clippy under `build`, the provider suite under `rust-suite --close-builds`; the measure plugin runs each side's release build under `gate_slot.py build` (receipt `sides/<side>/build.slot.json`, `build_slot` in the side record; no analysis input or output changes, no corpus figure moves). (4) Older clients: main's script before the card has no `build` class and its runner closes nothing, so a build may run beside an older suite's phase until every worktree is rebased; neither deadlocks the other (kept byte for byte as scripts/tests/fixtures/gate_slot_lane_only.py.txt and tested). (5) The 2026-11-14 test_gate_slot_starvation failure (0.19 CPU-seconds against a 0.2 floor at load average ~15) was the test's own load sensitivity, not a slot gap: the Python suite runs outside every slot by design, and three assertions required a fixed CPU share of a spinner. They now bound the reported CPU by the spinner's own /proc/<pid>/stat time read by the test, an outer bracket around the measuring call (no more) and an inner one across the measurer's own sleeps (no less), lengthening an inconclusive window (bounded) and never relaxing a bound; a sleeper control was added and the zombie test tolerates an unreadable exiting child only. Pinned to one CPU shared with 15 spinners the base tests failed 3 of 4 and the card's passed 4 of 4 in four runs; mutating the reported CPU to 0 or to a cumulative figure fails both bracketed tests (harnesses and logs in the report). Tests: scripts/tests/test_gate_slot_builds.py (16) and a measure-plugin unit test. The rule is stated in docs/agents/validation.md (Gate slots). No analyzer, contract or Lean change; no measurement.",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "GATE-SLOT-BUILDS-UNSLOTTED",
+   "operation": "retire",
+   "why": "DISCHARGED by GATE-SLOT-BUILDS-UNSLOTTED (docs/reports/gate-slot-builds-unslotted/README.md), by the first option: scripts/gate_slot.py has a `build` class (unlimited, no queue, no legacy lock) that a rust-suite job closes during its EXCLUSIVE phase only (scripts/run_test_binaries.py under a suite slot; `rust-suite --close-builds` around the provider suite), waiting for builds in flight at most QUIRIN_GATE_BUILD_DRAIN (30 min) and recording any overlap (`build_exclusion`, drained false); scripts/gate_scope.py runs fmt, Clippy, the reevaluation examples and the provider package build, fmt and Clippy under it, and the measure plugin its side builds; the drain, build and parallel phases leave builds open; older scripts share the gate without deadlock (fixture and tests); tests in scripts/tests/test_gate_slot_builds.py.",
+   "source": "docs/reports/gate-slot-builds-unslotted/README.md"
+  },
+  {
+   "id": "GATE-SLOT-LEAN-BESIDE-EXCLUSIVE",
+   "operation": "register",
+   "title": "Lean jobs and other unslotted steps still run beside a rust-suite job's EXCLUSIVE phase",
+   "text": "Registered by GATE-SLOT-BUILDS-UNSLOTTED. The build class keeps fmt, Clippy and cargo builds out of the EXCLUSIVE phase, but the `lean` class (two slots, `lake build` and the audits: CPU-heavy) runs beside a suite by design, and the Python suite, the provider package verification and anything run outside gate_slot.py (a runner without a suite slot, `gate_scope.py --no-slots`) take no class. A build nested in a lean job is refused rather than covered. DISCHARGE: either the EXCLUSIVE phase also closes lean admission (and waits for Lean jobs in flight, bounded, overlap recorded as for builds), or a measurement of the load-sensitive rows beside a Lean build recorded as holding.",
+   "source": "docs/reports/gate-slot-builds-unslotted/README.md",
+   "recorded_by": "GATE-SLOT-BUILDS-UNSLOTTED"
+  },
+  {
+   "id": "GATE-SLOT-BUILD-DRAIN-REVIEW",
+   "operation": "register",
+   "title": "Review the EXCLUSIVE phase's build drain bound against receipts",
+   "text": "Registered by GATE-SLOT-BUILDS-UNSLOTTED. The wait of an EXCLUSIVE phase for builds in flight (QUIRIN_GATE_BUILD_DRAIN, 30 min) was chosen from the phase length (62.7 s of the integrate/r9 suite) and the expectation that a gate's cold Clippy or a side's release build ends within minutes, not from a census; a build arriving while the phase waits waits that long too, and a measurement's side build counts that wait against its quota (it declares no slot wait). Receipts now record summary.json `build_exclusion` (builds in flight at close, waited seconds, drained) and each build's `waited_for_exclusive_phase`. DISCHARGE: a review of a period of receipts (phase waits, overlaps, build waits) with the bound kept or changed by a recorded decision, and whether a side build should declare its wait.",
+   "source": "docs/reports/gate-slot-builds-unslotted/README.md",
+   "recorded_by": "GATE-SLOT-BUILDS-UNSLOTTED"
+  },
+  {
+   "id": "GATE-SLOT-QUEUE-OLD-CLIENT-RETIREMENT",
+   "operation": "amend",
+   "text": "AMENDED (GATE-SLOT-BUILDS-UNSLOTTED): the script as it was before the build class (main 0f6e17118) is kept byte for byte as scripts/tests/fixtures/gate_slot_lane_only.py.txt (sha256 ef00cd2a...) to test the build class against it; until no worktree runs a script without the class, a build may run beside an older suite's EXCLUSIVE phase; delete it with the other fixtures.",
+   "source": "docs/reports/gate-slot-builds-unslotted/README.md"
+  },
+  {
+   "id": "GATE-SLOT-LANE-DURING-SUITE-RUN",
+   "operation": "amend",
+   "text": "AMENDED (GATE-SLOT-BUILDS-UNSLOTTED): scripts/run_test_binaries.py now marks its EXCLUSIVE phase to the gate (the build closure, gate_slot.BuildClosure, under a suite slot), so a decision to let the lane run beside a suite outside that phase could close the lane for the phase only by the same mechanism.",
+   "source": "docs/reports/gate-slot-builds-unslotted/README.md"
+  }
+ ]
+}
