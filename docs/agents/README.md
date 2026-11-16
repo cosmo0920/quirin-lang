@@ -58,7 +58,7 @@ the index below is navigation only. Backticked code paths throughout these pages
 | 5i | [gateway](gateway.md#constraint-5i) | An assignment's destination is its whole left-hand side; a write inside its assigned value is never dropped (a chain is its sequential assignments). |
 | 5j | [gateway](gateway.md#constraint-5j) | A scalar-result return decides a read; a cast of a whole call is the call. |
 | 5k | [gateway](gateway.md#constraint-5k) | A member release is admitted only as the last use of its place; its summaries are guarded at callers. |
-| 5l | [gateway](gateway.md#constraint-5l) | An intrusive-list iteration is modelled on its original spelling; a specification of an audited body is checked, never trusted. |
+| 5l | [gateway](gateway.md#constraint-5l) | An intrusive-list iteration is modelled on its original spelling; a specification of an audited body is checked, never trusted; a call or B08 field store refused before its effects hands on what it may move, a withdrawal only. |
 | 6 | [gateway](gateway.md#constraint-6) | C02-P-ALIAS-LEAK-ORDER: report_leaks on intermediate iterates is… |
 | 7 | [gateway](gateway.md#constraint-7) | Leak diagnostics are 34 across the pinned 185-unit corpus. A change… |
 | 8 | [gateway](gateway.md#constraint-8) | A declared contract must agree with the C the unit declares — in types… |

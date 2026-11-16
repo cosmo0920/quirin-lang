@@ -3843,10 +3843,7 @@ pub(super) fn transfer_base(
     // never linked or whose binding no longer agrees with its link. This is the
     // C00 premise in its read direction.
     if let LegacyInstruction::ContractCall {
-        arguments,
-        contract,
         aggregate_reads,
-        aggregate_consumed,
         aggregate_addresses,
         container,
         ..
@@ -3890,29 +3887,7 @@ pub(super) fn transfer_base(
         // on: the refusal is about the read's liveness, not the call's effect.
         refused_operands::withdraw_refused_call(
             &mut state,
-            contract
-                .parameters
-                .iter()
-                .zip(arguments)
-                .filter(|(mode, _)| !matches!(mode, ResourceParameterMode::Borrowed))
-                .filter_map(|(_, argument)| argument.as_deref())
-                .chain(
-                    container
-                        .iter()
-                        .flat_map(|operands| operands.0.iter())
-                        .filter_map(|operand| match operand {
-                            container_publication::Operand::Published {
-                                entry: container_publication::Entry::Name(name),
-                                ..
-                            }
-                            | container_publication::Operand::Unpublished {
-                                entry: container_publication::Entry::Name(name),
-                                ..
-                            } => Some(name.as_str()),
-                            _ => None,
-                        }),
-                )
-                .chain(aggregate_consumed.iter().map(String::as_str)),
+            refused_call_hand_ons(&node.instruction),
         );
         for pointer in state.pointers.values_mut() {
             pointer.unknown = true;
@@ -4246,6 +4221,17 @@ pub(super) fn transfer_base(
                             variable: owner.to_owned(),
                         },
                     });
+                    // Card CURRENT-CONTEXT-NEW-TRIAGE (rule 5l (6)): the store
+                    // is refused before its effect, as a statement of unknown
+                    // effect, so what it hands on carries an unresolved effect
+                    // (W44-LEAK-PIN-AUDIT's hand-on rule; it reports
+                    // `UnknownAlias`, which that rule does not read). Only
+                    // withdraws: the node keeps its refusal, so the function
+                    // is never `Safe`, and the store is not a discharge.
+                    refused_operands::withdraw_refused_call(
+                        &mut state,
+                        refused_store_hand_ons(&node.instruction),
+                    );
                     for pointer in state.pointers.values_mut() {
                         pointer.unknown = true;
                         pointer.may_be_null = true;
@@ -4923,6 +4909,61 @@ pub(super) fn bound_read_resolves(
 
 /// The single live identity an admitted aggregate base denotes here, when the
 /// projection can name exactly one and this body acquired it.
+/// Card **W45-FB-BACKLOG-CUSTODY** (rule 5l (5)): the places a contracted call
+/// refused before its effects hands on — what its contract says it may move:
+/// the actuals at custody positions, the entries of its container effects and
+/// the bound reads it takes. A `Borrowed` actual the contract moves nothing
+/// through is not handed on. Any other instruction hands on nothing here.
+pub(super) fn refused_call_hand_ons(instruction: &LegacyInstruction) -> Vec<&str> {
+    let LegacyInstruction::ContractCall {
+        arguments,
+        contract,
+        aggregate_consumed,
+        container,
+        ..
+    } = instruction
+    else {
+        return Vec::new();
+    };
+    contract
+        .parameters
+        .iter()
+        .zip(arguments)
+        .filter(|(mode, _)| !matches!(mode, ResourceParameterMode::Borrowed))
+        .filter_map(|(_, argument)| argument.as_deref())
+        .chain(
+            container
+                .iter()
+                .flat_map(|operands| operands.0.iter())
+                .filter_map(|operand| match operand {
+                    container_publication::Operand::Published {
+                        entry: container_publication::Entry::Name(name),
+                        ..
+                    }
+                    | container_publication::Operand::Unpublished {
+                        entry: container_publication::Entry::Name(name),
+                        ..
+                    } => Some(name.as_str()),
+                    _ => None,
+                }),
+        )
+        .chain(aggregate_consumed.iter().map(String::as_str))
+        .collect()
+}
+
+/// Card **CURRENT-CONTEXT-NEW-TRIAGE** (rule 5l (6)): the places a B08 field
+/// store refused on its owner hands on. An `Alias` store hands on its value; a
+/// contracted call whose result the store would take is refused before its
+/// effects, so it hands on what [`refused_call_hand_ons`] lists. A null store
+/// (`Clear`) and an identity-free `AggregateStore` hand on nothing.
+pub(super) fn refused_store_hand_ons(instruction: &LegacyInstruction) -> Vec<&str> {
+    match instruction {
+        LegacyInstruction::Alias { source, .. } => vec![source.as_str()],
+        LegacyInstruction::ContractCall { .. } => refused_call_hand_ons(instruction),
+        _ => Vec::new(),
+    }
+}
+
 pub(super) fn resolved_aggregate_owner(
     state: &AbstractState,
     owner: &str,
