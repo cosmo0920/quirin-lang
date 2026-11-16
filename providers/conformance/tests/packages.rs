@@ -635,6 +635,7 @@ fn artifact_dependencies_are_only_schemas_and_serialization() {
     let mut artifacts = 0;
     let mut shared = 0;
     let mut sdk = 0;
+    let mut user_crates = 0;
     let mut data_edges: Vec<(String, String)> = Vec::new();
     let mut artifact_contract_edges: Vec<(String, String)> = Vec::new();
     for package in packages {
@@ -658,6 +659,26 @@ fn artifact_dependencies_are_only_schemas_and_serialization() {
                     matches!(
                         dependency_name,
                         "qcore-schemas" | "serde" | "serde_json" | "quirin-provider-shared"
+                    ) && dependency["kind"].is_null(),
+                    "{name}: {dependency}"
+                );
+            }
+            continue;
+        }
+        // Card OPENSSL-PROVIDER-PLUGIN (deliberate pin update): a user crate
+        // on the SDK (`providers/contracts.py`'s `USER_LOAD_PATH_PACKAGES`)
+        // owns contracts and a checker plugin; it links the SDK for its
+        // checker runtime and the schema surface, and nothing else
+        // first-party. It is never on the shipped load path.
+        let is_user_crate = name == "quirin-provider-openssl";
+        if is_user_crate {
+            user_crates += 1;
+            for dependency in package["dependencies"].as_array().unwrap() {
+                let dependency_name = dependency["name"].as_str().unwrap();
+                assert!(
+                    matches!(
+                        dependency_name,
+                        "qcore-schemas" | "serde" | "serde_json" | "quirin-provider-plugin"
                     ) && dependency["kind"].is_null(),
                     "{name}: {dependency}"
                 );
@@ -759,6 +780,7 @@ fn artifact_dependencies_are_only_schemas_and_serialization() {
     assert_eq!(artifacts, 5);
     assert_eq!(shared, 6);
     assert_eq!(sdk, 1);
+    assert_eq!(user_crates, 1);
     // Card CONTRACT-INHERIT-ADOPTION: the one contract-use edge among the data
     // crates. Adding another is a deliberate edit here.
     data_edges.sort();
