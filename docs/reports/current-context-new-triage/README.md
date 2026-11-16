@@ -292,3 +292,19 @@ The one Python failure is the timing-sensitive starvation test the brief
 names; rerun alone it passes (both recorded). The host was shared with
 another card's audit job (gate_slot status: 9.6 GB RSS over its 7 GB
 admission) while the suite ran.
+
+## Integrator measurement (2026-11-16)
+
+Declared measurement, base `rev:0f6e17118` (the card's base; r8–r12 landed after the newest published baseline `497bdeb90` without a publish, so the card base isolates this card), tip `rev:1e691eecc`, run from the main checkout (`private/measure/context-new-20261116T040720Z`): exit 0, all three routes complete, no unmatched rows, declared result **match**.
+
+- corpus: 0 rows moved; 0 rows changed content only.
+- system: 0 rows moved; 0 rows changed content only.
+- slice: 0 rows moved; 0 rows changed content only.
+
+[Comparison](integration/native-comparison.json.gz) (gzip of
+`native-comparison.json`, sha256
+`8eb61cba4b522a2b6019c0824c19f028fb8638fef95ee3337c9e2065faf1e0d4`).
+
+The change runs only on a refused-owner branch; no pinned route reads Monkey `tls_openssl.c`, so nothing moves. Its effect is on the user's `current --monkey-linked` run (`context_new` Unsafe to Unknown), which the integrator reruns after landing. Landed through integrate/r13 with CURRENT-CONTEXT-NEW-TRIAGE (phase 1), LINK-STANDING-IMPORT-LIMITERS and OPENSSL-PROVIDER-PLUGIN; all three merged without conflict.
+
+The integrate/r13 landing gate record is [OPENSSL-PROVIDER-PLUGIN's](../openssl-provider-plugin/integration/gate.json) (full gate on 0497a6b8b, 14 steps exit 0).

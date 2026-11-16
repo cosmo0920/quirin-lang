@@ -321,3 +321,17 @@ CURRENT-CONTEXT-NEW-TRIAGE reads Monkey's `context_new` in `tls_openssl.c`,
 which calls `SSL_new` on the server context (`SSL_CTX_new` is in `tls_create_server_context`), both contracted here (returned
 references); this card changes no gateway leak reading, but its contracts
 change which calls that triage sees as uncontracted on an opt-in run.
+
+## Integrator measurement (2026-11-16)
+
+Declared measurement, base `rev:0f6e17118` (the card's base; r8–r12 landed after the newest published baseline `497bdeb90` without a publish, so the card base isolates this card), tip `rev:24240a300`, run from the main checkout (`private/measure/openssl-20261116T080259Z`): exit 0, all three routes complete, no unmatched rows, declared result **match**.
+
+- corpus: 0 rows moved; 0 rows changed content only.
+- system: 0 rows moved; 0 rows changed content only.
+- slice: 0 rows moved; 0 rows changed content only.
+
+[Comparison](integration/native-comparison.json.gz) (gzip of
+`native-comparison.json`, sha256
+`96260b405ddf199dab7cd79fa0ab20d86e9b39c91e682c00696b9f9e5a5304cf`).
+
+The crate loads only through the generated user load path, which no pinned route uses, so nothing moves; the shipped load path, views and locks are unchanged. Its effect is on an opt-in `current --load-path providers/user-crates-load-path.json` run. Landed through integrate/r13 with CURRENT-CONTEXT-NEW-TRIAGE (phase 1), LINK-STANDING-IMPORT-LIMITERS and OPENSSL-PROVIDER-PLUGIN; all three merged without conflict.

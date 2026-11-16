@@ -293,3 +293,19 @@ and `--monkey-linked`:
 ```text
 target/release/quirin-audit --plugin-path target/release --output <dir> --timeout-ms 36000000 measure --inputs crates/quirin-audit-plugin-measure/inputs/live.json --inputs-base /media/Data/GitHub/quirin-lang --side base=baseline:497bdeb906e1ad29a94f54079991f0b62bd701df --side tip=rev:0ae403bc0 --declared docs/reports/link-standing-import-limiters/PREDICTION.md
 ```
+
+## Integrator measurement (2026-11-16)
+
+Declared measurement, base `rev:0f6e17118` (the card's base; r8–r12 landed after the newest published baseline `497bdeb90` without a publish, so the card base isolates this card), tip `rev:0ae403bc0`, run from the main checkout (`private/measure/link-limiters-20261116T055100Z`): exit 0, all three routes complete, no unmatched rows, declared result **match**.
+
+- corpus: 0 rows moved; 0 rows changed content only.
+- system: 0 rows moved; 0 rows changed content only.
+- slice: 0 rows moved; 0 rows changed content only.
+
+[Comparison](integration/native-comparison.json.gz) (gzip of
+`native-comparison.json`, sha256
+`fdf79726490a31623f9f1ec7f8923e3e8568140fe99c96d8ca4ed0a7c49b09d7`).
+
+The pinned routes run the stated eight-home map, which never exceeds the replay budget, and the stray filter applies only to derived (rule 40) runs, so nothing moves. Its effect is on the user's `current` run with the link artifact, which the integrator reruns after landing. Landed through integrate/r13 with CURRENT-CONTEXT-NEW-TRIAGE (phase 1), LINK-STANDING-IMPORT-LIMITERS and OPENSSL-PROVIDER-PLUGIN; all three merged without conflict.
+
+The integrate/r13 landing gate record is [OPENSSL-PROVIDER-PLUGIN's](../openssl-provider-plugin/integration/gate.json) (full gate on 0497a6b8b, 14 steps exit 0).
