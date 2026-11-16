@@ -329,3 +329,48 @@ User decision on that choice, 2026-11-16, relayed by the integrator and
 quoted exactly: "Admit (void *) 0 (Recommended)". §C04.5.1 now admits
 `(void *) 0` at a pointer premise whose literal is `0`
 ([prediction amendment](PREDICTION-D3.md)).
+
+### D3 confirmation (unit-scoped, after the null pointer constant)
+
+Same reproduction, base binary `p1` (with the base contracts) against the D3
+binary at `c92b77db8` (`private/repro/d3run-{p1,d3b}`, 31 units, 99 rows):
+
+* one status move: `mk_http_thread_initialize_tls_once` `Unknown -> Safe`
+  (its two `pthread_key_create(&key, NULL)` refusals are gone), as
+  PREDICTION-D3 states;
+* refusal text changes, all still `Unknown`:
+  * `mk_set_up_tls_keys` and `mk_tls_init` lose their static-creation
+    refusals; `mk_http_thread_initialize_tls` and `mk_tls_init`'s other
+    blockers remain;
+  * `mk_tls_exit`'s static delete is refused by rule 11v (5);
+  * `mk_fifo_create` and `mk_plugin_preworker_calls`, whose keys are
+    reached through `ctx->key` and `node->thread_key`, are refused at the
+    access gate ("indirect memory access").
+
+No other row changes.
+
+### D3 gate finding: a `(void)` cast escaped the in-place guard
+
+The first D3 gate (`private/gate-d3-2`) failed 4 tests:
+
+* **Three were deliberate updates.**
+  * `hash_contracts` pinned `(void *) 0` as refused; it is moved to the
+    admitted list at a pointer premise.
+  * `libc_gap_declarations` read D3's `threads.qv` section as its own.
+  * A D3 fixture's refusal text: the access gate refuses a pointer-reached
+    key first.
+* **One was a real gap.** A probe (`private/repro/probe-getter.log`) showed
+  that `(void) pthread_getspecific(key)` over a tracked automatic key was
+  **Safe**, even after `pthread_key_delete(key)`. The in-place guard refused
+  it, and a later statement fallback re-lowered the cast statement as a plain
+  borrowed call. The two spellings without the cast stayed refused.
+
+The guard's refusal is now final (`in_place_custody::is_guard_refusal`,
+checked in `legacy_c.rs` before the statement fallbacks; rule 11v (5)), with
+a fixture for the read after the delete. This also closes the same escape
+for the `regex` kind, which only adds refusals in bodies that track an
+in-place object.
+
+The Python failure in that gate is the matrix's derived `qcore-schemas`
+version (`26.0.0` != `27.0.0`). It is expected for a schema bump: the
+integrator regenerates the matrix at landing.

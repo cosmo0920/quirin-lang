@@ -322,6 +322,14 @@ fn the_module_index_names_exactly_the_cards_declarations() {
     let mut names: Vec<String> = MODULES
         .iter()
         .filter_map(|(_, text)| text.find(SECTION).map(|at| &text[at..]))
+        // Card CURRENT-CONTEXT-NEW-TRIAGE (D3) appends its own section after
+        // this card's in `threads.qv`; it is not this card's declaration.
+        .map(|section| {
+            section
+                .split("// ## Card CURRENT-CONTEXT-NEW-TRIAGE")
+                .next()
+                .unwrap_or_default()
+        })
         .flat_map(|section| {
             section
                 .lines()

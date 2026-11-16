@@ -187,6 +187,20 @@ impl InPlaceNames {
     }
 }
 
+/// Card CURRENT-CONTEXT-NEW-TRIAGE (D3): whether `instruction` is this
+/// module's guard refusal (a tracked in-place object named outside a declared
+/// in-place position). No later statement route may re-admit it: a route that
+/// re-lowers the statement (`(void) f(obj)` through the cast route, for
+/// instance) would read tracked storage as data, which rule 11v (4) forbids.
+pub(crate) fn is_guard_refusal(instruction: &LegacyInstruction) -> bool {
+    matches!(
+        instruction,
+        LegacyInstruction::Unknown { description, .. }
+            if description.starts_with("tracked in-place object `")
+                && description.ends_with("(rule 11v)")
+    )
+}
+
 /// Card CURRENT-CONTEXT-NEW-TRIAGE (D3): whether `body` calls a declared
 /// callee with a `thread_key` position (an initialiser, which the static-key
 /// reading needs the unit's static objects for, or a finaliser, whose refusal

@@ -191,7 +191,12 @@ fn a_key_reached_through_a_pointer_is_refused() {
     }
     let run = run("void subject(struct holder *h) { pthread_key_create(h->key, 0); }");
     assert_eq!(run.status, AnalysisStatus::Unknown, "{run:?}");
-    assert!(run.refused("in-place resource object"), "{run:?}");
+    // Refused before rule 11v reads it: the access gate refuses the read
+    // `h->key` handed to a custody position.
+    assert!(
+        run.refused("indirect memory access") || run.refused("in-place resource object"),
+        "{run:?}"
+    );
 }
 
 /// A thread-local key is per thread, not held by static storage.
@@ -228,7 +233,9 @@ fn an_automatic_key_created_and_deleted_is_safe() {
 }
 
 /// The getter is not kinded in D3: naming a tracked key there is a data
-/// route over tracked storage, refused (rule 11v (4)).
+/// route over tracked storage, refused (rule 11v (4)), in every spelling,
+/// including a cast to `void` that a statement fallback used to re-lower as a
+/// plain borrowed call (so a read after the delete went unseen).
 #[test]
 fn a_getter_naming_a_tracked_key_is_refused() {
     if !clang_available() {
@@ -238,6 +245,20 @@ fn a_getter_naming_a_tracked_key_is_refused() {
          r = pthread_key_create(&key, 0); if (r) return; \
          (void) pthread_getspecific(key); pthread_key_delete(key); }");
     assert_eq!(run.status, AnalysisStatus::Unknown, "{run:?}");
+    let after_delete = self::run(
+        "void subject(void) { pthread_key_t key; int r; \
+         r = pthread_key_create(&key, 0); if (r) return; \
+         pthread_key_delete(key); (void) pthread_getspecific(key); }",
+    );
+    assert_eq!(
+        after_delete.status,
+        AnalysisStatus::Unknown,
+        "{after_delete:?}"
+    );
+    assert!(
+        after_delete.refused("tracked in-place object `key`"),
+        "{after_delete:?}"
+    );
 }
 
 #[test]
