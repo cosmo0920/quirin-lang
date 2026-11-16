@@ -168,6 +168,11 @@ EXCLUSIVE: dict[str, str] = {
         "external subcommand plugins under a declared 500 ms timeout, killed "
         "by process group (card W45-AUDIT-SUBCOMMAND-PLUGINS)"
     ),
+    "quirin-audit-plugin-openssl::test::host": (
+        "the OpenSSL contract plugin through the host route under declared "
+        "quotas, a 1 ms timeout row among them (card "
+        "W48-OPENSSL-CONTRACT-PLUGIN)"
+    ),
     "qcore-compiler::test::w3_evidence_v2": (
         "an out-of-process provider under a declared timeout"
     ),

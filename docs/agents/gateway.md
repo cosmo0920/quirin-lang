@@ -11094,4 +11094,41 @@ safety claim and no validation of the detach representation premise.
     `tests/member_value_helper.rs`. See the
     [report](../reports/rule50-consumer-composition/README.md).
 
+<a id="constraint-52"></a>
+
+52. **An external library's contracts are checked by its own plugin against
+    a pinned release, and what that plugin says reaches a verdict only
+    through rule 10h.** Card W48-OPENSSL-CONTRACT-PLUGIN, on the user's
+    decision of 2026-09-28 (OpenSSL and libcurl contracts through
+    `quirin-audit` plugins, not a flexible mode of a provider crate). Crate
+    `crates/quirin-audit-plugin-openssl` (`quirin-audit openssl prepare` /
+    `check`); contracts `contracts/openssl-3.5.5.json`
+    (`quirin-openssl-contracts/1`, one binding per function); pin
+    `pin::OPENSSL`. **Do not** read a tree the pin does not bind: `prepare`
+    refuses a tarball, an extracted tree or a prepared tree whose SHA-256 is
+    not the pinned one, and a build that compiles a defining file with other
+    flags than the contract set's; `check` makes every binding `Unknown`
+    (`release-pin`) for an absent tree, another version or another prepared
+    digest, and refuses a contract set of another schema, version or
+    release. A binding's obligations are the release pin, the public
+    prototype (Clang's header probe equals the contract's), and, for a class
+    the checker has a rule for, exactly one external definition in the
+    contract's file with that prototype and the class rule
+    (`checker::{no_pointer_interface, static_object_return, pure_reader,
+    member_store}`); **do not** widen a rule beyond its closed whitelist (a
+    node kind, operator or cast it does not name refuses the body), and
+    **do not** mark a class checked without a rule (the set refuses it).
+    The plugin proposes `Safe` only when every obligation is discharged,
+    `Unknown` with the first undischarged obligation otherwise, and never
+    `Unsafe`; a class without a rule is `Unknown`. Every claim names its
+    premises in `assumptions` (the upstream release, not the distribution's
+    patched build; the configuration; Clang's AST as the C semantics; the
+    link; per class, library-owned state or argument validity). The host
+    publishes a `Safe` proposal `Pending` (`plugin-claim-uncertified`) until
+    `W45-SUBCOMMAND-CERTIFICATE-ROUTE` gives a trusted checker, and a failed
+    run `Unknown`. The binding verdicts are published in the plugin's own
+    report (`openssl@<release>::<function>`); no analysis route reads them
+    yet (`W48-OPENSSL-CALLER-COMPOSITION`). `QCore.OpensslContractPlugin`;
+    [report](../reports/w48-openssl-contract-plugin/README.md).
+
 <!-- generated:rules:end -->
