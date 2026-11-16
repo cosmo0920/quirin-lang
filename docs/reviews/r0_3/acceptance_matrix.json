@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 963
+  "named_followups": 971
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6857,7 +6857,7 @@
    "crates/quirin-audit-plugin-measure",
    "crates/quirin-source-analysis"
   ],
-  "provider_workspace_members": 13,
+  "provider_workspace_members": 14,
   "provider_workspace_member_paths": [
    "conformance",
    "qcore-provider-chunkio",
@@ -6870,6 +6870,7 @@
    "quirin-provider-libc",
    "quirin-provider-mpack",
    "quirin-provider-msgpack",
+   "quirin-provider-openssl",
    "quirin-provider-plugin",
    "quirin-provider-shared"
   ],
@@ -6880,7 +6881,7 @@
   "workspace_tests": 9509,
   "provider_tests": 133,
   "python_evidence_validator_tests": 761,
-  "lean_audits": 434,
+  "lean_audits": 436,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -7071,6 +7072,7 @@
    "AuditLexicalClosureNestedAssignment.lean",
    "AuditLibcReadingPremises.lean",
    "AuditLibcReadingSiteEvidence.lean",
+   "AuditLibraryVersionRange.lean",
    "AuditLifetimeCorrespondence.lean",
    "AuditListIteration.lean",
    "AuditListLengthBound.lean",
@@ -7186,6 +7188,7 @@
    "AuditReferenceResult.lean",
    "AuditRefusedCallHandOn.lean",
    "AuditRefusedHandOnCustody.lean",
+   "AuditRefusedStoreHandOn.lean",
    "AuditRefusedTestAccusation.lean",
    "AuditRefusedWrites.lean",
    "AuditRefutedContractWithdrawal.lean",
@@ -7323,7 +7326,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "full landing gate: every step exits 0 except the Python suite's two stale-matrix checks, cleared by regenerating the matrix from this record (rerun disclosed in the note)",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/scheduler-destroy-member-states/integration/gate.json)"
+  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
  "named_followups": [
   {
