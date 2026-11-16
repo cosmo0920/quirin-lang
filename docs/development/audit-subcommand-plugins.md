@@ -203,6 +203,46 @@ them. It refuses an output inside `build/cycle19` or `third_party`, and
 `libevent-clang-build/profile.json` for a person to review and copy, rather
 than editing the committed profile. It claims no verdict.
 
+## The OpenSSL plugin
+
+```sh
+cargo build -p qcore-audit -p quirin-audit-plugin-openssl
+curl -LO https://github.com/openssl/openssl/releases/download/openssl-3.5.5/openssl-3.5.5.tar.gz
+target/debug/quirin-audit --plugin-path target/debug --output ../out/openssl \
+  openssl prepare --tarball openssl-3.5.5.tar.gz --clang clang
+target/debug/quirin-audit --plugin-path target/debug --output ../out/openssl \
+  openssl check --clang clang [--binding NAME]...
+```
+
+Card [W48-OPENSSL-CONTRACT-PLUGIN](../reports/w48-openssl-contract-plugin/README.md),
+rule 52. OpenSSL's contracts are checked by this plugin, not by a provider
+crate: it carries them (`crates/quirin-audit-plugin-openssl/contracts/openssl-3.5.5.json`,
+one binding per OpenSSL function the Fluent Bit routes call uncontracted:
+its prototype, contract class and text, and for a checked class its
+defining file) and checks them against the release Fluent Bit builds
+against, OpenSSL 3.5.5.
+
+**prepare** refuses a tarball whose SHA-256 is not the pinned one, extracts
+it into the output, checks the tree's digest, runs `perl Configure
+linux-x86_64 no-asm` (`CC` the given Clang) and `make build_generated`,
+checks with `make -n` that every defining file compiles with the contract
+set's flags, and checks the prepared tree's digest (the six files that spell
+the build directory excluded). It writes `openssl-preparation.json` and
+claims nothing.
+
+**check** answers one claim per binding, about `openssl@3.5.5::FUNCTION`.
+Its obligations are the release pin (the prepared tree's digest), the
+public prototype (a header probe through Clang's JSON AST), and, for a class
+the checker has a rule for, one external definition in the contract's file
+with that prototype and the class rule: `no-pointer-interface`,
+`static-object-return`, `pure-reader` (a closed whitelist: no call,
+assignment, increment, loop or static local) and `member-store` (exactly the
+contract's stores and escapes). It proposes `Safe` only when every
+obligation is discharged and `Unknown` otherwise, never `Unsafe`; the host
+publishes the `Safe` proposals `Pending`. `openssl-check.json` keeps every
+obligation with its detail and evidence. Nothing reads these verdicts into
+an analysis route yet.
+
 ## The measure plugin
 
 `quirin-audit measure` (crate

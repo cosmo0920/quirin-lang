@@ -376,6 +376,14 @@
   },
   {
    "source": "compiler/tests/workspace_layering.rs",
+   "literal": "crates/quirin-audit-plugin-openssl",
+   "reads": [
+    "crates/quirin-audit-plugin-openssl/**"
+   ],
+   "why": "the workspace layering test reads the crate's Cargo.toml; declared like its sibling plugin crates, whose census lists the directory (card W48-OPENSSL-CONTRACT-PLUGIN, not re-recorded): the whole directory"
+  },
+  {
+   "source": "compiler/tests/workspace_layering.rs",
    "literal": "crates/quirin-source-analysis",
    "reads": [
     "crates/quirin-source-analysis/**"
