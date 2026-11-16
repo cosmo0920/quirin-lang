@@ -422,9 +422,7 @@ impl Parser<'_> {
         instruction: LegacyInstruction,
         saved: &super::probe_state::ParserProbeState,
     ) -> LegacyInstruction {
-        if self.in_place_names.is_empty()
-            || matches!(instruction, LegacyInstruction::Unknown { .. })
-        {
+        if self.in_place_names.is_empty() {
             return instruction;
         }
         let texts = tokens
@@ -435,7 +433,24 @@ impl Parser<'_> {
         let Some(name) = mentioned.first().copied() else {
             return instruction;
         };
-        if declares_only(&texts, &mentioned) || self.admits(&texts, &instruction, &mentioned) {
+        // Card CURRENT-CONTEXT-NEW-TRIAGE (D3): a refusal of a statement that
+        // mentions a tracked object becomes this guard's refusal, which no
+        // later route re-lowers (`is_guard_refusal`). Before, an older
+        // refusal of `(void) f(obj)` went on to the cast fallback, which
+        // lowered the uncast call as a plain borrowed one. The rule's own
+        // refusals of an in-place call keep their text.
+        if declares_only(&texts, &mentioned) {
+            return instruction;
+        }
+        if let LegacyInstruction::Unknown { description, .. } = &instruction
+            && [ACTUAL_REFUSAL, WITNESS_REFUSAL, STATIC_KEY_RELEASE_REFUSAL]
+                .contains(&description.as_str())
+        {
+            return instruction;
+        }
+        if !matches!(instruction, LegacyInstruction::Unknown { .. })
+            && self.admits(&texts, &instruction, &mentioned)
+        {
             return instruction;
         }
         self.restore_probe_state(saved);
