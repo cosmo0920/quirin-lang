@@ -4221,8 +4221,12 @@ fn build_function_cfg_unscoped(
     // local's copy (an automatic array, a never-bound pointer) is unbound.
     pointers.retain(|name| !parser.formal_parameters.contains(name));
     cfg.traversal = TraversalNames { scalars, pointers };
-    // Card THREAD-LOCAL-CUSTODY-FREE-READ (rule 54).
-    if let Some(index) = parser.typed_positions_index() {
+    // Card THREAD-LOCAL-CUSTODY-FREE-READ (rule 54). Asked only where the
+    // unit spells a thread-local storage class before the body's end, so a
+    // unit with none asks Clang for nothing more.
+    if storage_duration_route::mentions_thread_local(tokens, body_start)
+        && let Some(index) = parser.typed_positions_index()
+    {
         cfg.thread_local_reads =
             crate::thread_local_read::admitted(&index.function, &index.thread_local_declarations);
     }
