@@ -258,6 +258,26 @@ impl CurrentAudit {
         input: &ContractInput,
         mode: EvidenceMode,
     ) -> Result<Self, String> {
+        Self::with_plugin_checkers(
+            checkout,
+            profile,
+            input,
+            mode,
+            crate::user_plugins::PluginCheckers::default(),
+        )
+    }
+
+    /// [`Self::with_contracts`] with the trusted-core checkers a library
+    /// caller supplies for checker plugins (card
+    /// W48-PLUGIN-VERDICT-PRESERVATION). The command line supplies none, so
+    /// every plugin `Safe` and `Unsafe` it sees is `Pending`.
+    pub fn with_plugin_checkers(
+        checkout: &Path,
+        profile: &LoadedProfile,
+        input: &ContractInput,
+        mode: EvidenceMode,
+        checkers: crate::user_plugins::PluginCheckers<'_>,
+    ) -> Result<Self, String> {
         let checkout = checkout.canonicalize().map_err(|error| error.to_string())?;
         let revision = crate::checkout_head(&checkout)?;
         let mut contracts = input.load()?;
@@ -346,10 +366,7 @@ impl CurrentAudit {
         let mut report = AuditReport::new(&revision);
         // Card W45-USER-CONTRACT-PLUGINS: every checker binding of a user load
         // path runs once, before any unit, and every unit folds its links.
-        if let Some(plugins) = crate::user_plugins::run(
-            input.extension(),
-            crate::user_plugins::PluginCheckers::default(),
-        ) {
+        if let Some(plugins) = crate::user_plugins::run(input.extension(), checkers) {
             report.set_plugin_links(plugins.links);
             assumptions["plugin_checks"] = plugins.section;
         }

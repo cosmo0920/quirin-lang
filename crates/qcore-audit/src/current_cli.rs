@@ -703,6 +703,7 @@ fn run(arguments: &[String]) -> Result<bool, String> {
             jobs: effective_jobs,
             selection: selection.as_ref(),
             library_providers: resolved_library_table.as_ref(),
+            plugin_checkers: crate::user_plugins::PluginCheckers::default(),
         },
         checkpoints.as_ref(),
     )?;

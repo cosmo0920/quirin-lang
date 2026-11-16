@@ -1,0 +1,13 @@
+{
+  "note": "Landing integrate/r14 (base main d7a497822; merges W48-PLUGIN-VERDICT-PRESERVATION 7c7295b6e without conflict, then applies its amendments at f414877af). Full landing gate on f414877af (private/integrate-r14/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base main --full --landing through private/toolchain/env.sh: Rust 639 units / 682 summaries, 9525 passed, 0 failed, 17 ignored; fmt, Clippy, both reevaluation examples exit 0; Python 779 tests OK. The scoper's Lean step selected only the 18 modules importing the changed QCore.VerdictSemigroup (no proof root changed), so the full gate's scripts/check_lean_audits.py was run separately on the same tree: 435/435 audits passed, exit 0 (private/integrate-r14/lean-all.log). Provider gate not selected (providers/ unchanged). No verdict moves: the card folds statuses exactly as before and no measurement was taken. COMPOSITION-PLUGIN-FIREWALL-WIRING is retired on the card's argument that a report without plugin bindings is byte-identical by construction, not on a base-versus-tip identity run. The merged figures differ from the card's scoped gate (merged full suite), hence this record. No profile baseline is changed and land.py publish is owed.",
+  "workspace_tests": 9525,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 779,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "full landing gate: every step exits 0; Lean run as check_lean_audits.py over all 435 audits beside the scoper's 18-module selection",
+  "lean_audits": 435,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

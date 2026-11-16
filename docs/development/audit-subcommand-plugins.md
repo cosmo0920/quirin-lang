@@ -109,6 +109,19 @@ nothing publishes no verdict). The join never lowers a host verdict: an
 `Unsafe` row stays `Unsafe`, and a failed plugin makes a `Safe` row `Unknown`.
 `QCore.SubcommandPlugins` proves these properties of the model.
 
+**Who said what** (card W48-PLUGIN-VERDICT-PRESERVATION, contract spec C11.3).
+Each row also keeps its `contributions`: the host's record (source
+`{"kind": "host", "label": "audit-report"}`), the run's (`run`, the plugin's
+label) and each joined claim's (`plugin`, the plugin's label), each with its
+`verdict` and `reasons`, and a claim's `answer` — what the plugin proposed, the
+firewall's class and code, and the plugin's own reason. The row's `verdict` and
+`reasons` are exactly their join, so nothing a plugin said is lost to the join;
+`qcore_audit::plugin_verdicts::project_row` recovers the records and refuses a
+row that is not their join. The OpenSSL and libcurl contract plugins publish
+through this route; until a trusted checker accepts a subcommand plugin's
+certificate (`W45-SUBCOMMAND-CERTIFICATE-ROUTE`), their `Safe` and `Unsafe`
+are `Pending` here.
+
 ## The protocol
 
 Version 1 of `quirin-audit-plugin`: one JSON request on the plugin's standard

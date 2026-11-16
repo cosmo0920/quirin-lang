@@ -1303,7 +1303,12 @@ refusal stays.
     reported failure or unverified artifact makes the run `Unknown`, whose
     claims join nothing. A row is the join of the host's verdict, the run's
     and the claims, so it never lowers a host verdict, and a run with no row
-    publishes no verdict rather than a vacuous `Safe`. The protocol version is
+    publishes no verdict rather than a vacuous `Safe`. **Do not** publish a
+    row a plugin contributes to without every contributor's record (source,
+    the plugin's own answer, verdict, reasons) whose join it is, on this route
+    or a checker plugin's (§C11.3, card W48-PLUGIN-VERDICT-PRESERVATION,
+    `qcore_audit::plugin_verdicts`, `QCore.VerdictSemigroup`): a record is
+    reporting, never evidence. The protocol version is
     checked before the shape; a new field is a new version. Premises stated,
     not proved: the host reads the plugin's answer only through
     `parse_response`, and a descendant that leaves the group is outside the

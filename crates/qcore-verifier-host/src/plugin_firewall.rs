@@ -152,17 +152,22 @@ impl PluginClaim {
     }
 }
 
-/// Card OPENSSL-PROVIDER-PLUGIN (`W48-PLUGIN-VERDICT-PRESERVATION`): what the
-/// plugin itself answered, kept beside its classification so neither its
-/// proposed verdict nor its own reasons are lost when the firewall reads the
-/// answer as `Pending` or `Unknown`. It is a record, never an input to a
-/// verdict: the classification alone decides.
+/// A checker plugin's answer as it gave it, beside the firewall's
+/// classification (card W48-PLUGIN-VERDICT-PRESERVATION).
+///
+/// The classification decides the verdict; this keeps what it does not
+/// carry, so a composed row can still say what each plugin itself answered.
+/// Nothing here is evidence: [`Self::claim`] is the only part that reaches a
+/// verdict.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct PluginAnswer {
-    /// The verdict the plugin proposed.
-    pub proposed: ProposedVerdict,
+    /// The verdict the plugin proposed, or `None` when no response was read
+    /// (a request or task gate, a spawn, transport or protocol failure).
+    pub proposed: Option<ProposedVerdict>,
     /// The plugin's own diagnostics, in its order.
     pub diagnostics: Vec<PluginDiagnostic>,
+    /// The firewall's classification.
+    pub claim: PluginClaim,
 }
 
 /// The first diagnostic of a host refusal, as a failure.
@@ -190,12 +195,13 @@ impl VerifierRegistry {
         counterexample: Option<&dyn CounterexampleChecker>,
     ) -> PluginClaim {
         self.verify_plugin_answer(request, task, checker, counterexample)
-            .0
+            .claim
     }
 
-    /// [`Self::verify_plugin_claim`], with the plugin's own answer when it
-    /// gave one that passed dispatch ([`PluginAnswer`]); `None` when the
-    /// request was refused before an answer, or the transport failed.
+    /// [`Self::verify_plugin_claim`], keeping beside the classification what
+    /// the plugin itself answered (card W48-PLUGIN-VERDICT-PRESERVATION): its
+    /// proposed verdict and its own diagnostics, which the classified claim
+    /// alone does not carry for a `Safe`, an `Unsafe` or a refuted answer.
     #[must_use]
     pub fn verify_plugin_answer(
         &self,
@@ -203,22 +209,29 @@ impl VerifierRegistry {
         task: &VerificationTask,
         checker: Option<&dyn WitnessChecker>,
         counterexample: Option<&dyn CounterexampleChecker>,
-    ) -> (PluginClaim, Option<PluginAnswer>) {
+    ) -> PluginAnswer {
         let (manifest, response) = match self.dispatch_v2(request, task) {
             Ok(dispatched) => dispatched,
-            Err(outcome) => return (refusal(&outcome), None),
+            Err(outcome) => {
+                return PluginAnswer {
+                    proposed: None,
+                    diagnostics: Vec::new(),
+                    claim: refusal(&outcome),
+                };
+            }
         };
-        let answer = PluginAnswer {
-            proposed: response.verdict,
-            diagnostics: response.diagnostics.clone(),
-        };
-        (
-            self.classify_answer(manifest, request, task, checker, counterexample, response),
-            Some(answer),
-        )
+        let proposed = response.verdict;
+        let diagnostics = response.diagnostics.clone();
+        let claim = self.classify_v2(manifest, request, task, checker, counterexample, response);
+        PluginAnswer {
+            proposed: Some(proposed),
+            diagnostics,
+            claim,
+        }
     }
 
-    fn classify_answer(
+    /// Classify one dispatched response (the module table).
+    fn classify_v2(
         &self,
         manifest: &PluginManifest,
         request: &VerificationRequestV2,

@@ -335,3 +335,5 @@ Declared measurement, base `rev:0f6e17118` (the card's base; r8–r12 landed aft
 `96260b405ddf199dab7cd79fa0ab20d86e9b39c91e682c00696b9f9e5a5304cf`).
 
 The crate loads only through the generated user load path, which no pinned route uses, so nothing moves; the shipped load path, views and locks are unchanged. Its effect is on an opt-in `current --load-path providers/user-crates-load-path.json` run. Landed through integrate/r14 with CURRENT-CONTEXT-NEW-TRIAGE (phase 1), LINK-STANDING-IMPORT-LIMITERS and OPENSSL-PROVIDER-PLUGIN; all three merged without conflict.
+
+At landing (integrate/r15) main already carried W48-PLUGIN-VERDICT-PRESERVATION, which records each plugin's own answer in every binding, link and unit row. The merge kept main's `plugin_firewall.rs` and `user_plugins.rs`, so this card's `proposed`, `plugin_diagnostics` and `binding` fields do not ship (the same facts are under main's `answer`); the card's amend of that retired follow-up was dropped ([applied amendments](integration/amendments-applied.json)).

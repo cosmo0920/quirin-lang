@@ -55,22 +55,24 @@ use qcore_c_gateway::legacy_c::{
 };
 use qcore_contract::load_path_manifest::{CheckerBinding, LoadPathExtension, LoadPathManifest};
 use qcore_schemas::sha256_hex;
-use qcore_schemas::verdict::{ReasonedVerdict, Verdict};
+use qcore_schemas::verdict::{ReasonedVerdict, Verdict, VerdictReason};
 use qcore_verifier_host::{
     CounterexampleChecker, Obligation, ObligationProperty, ObligationScope, ObligationSubject,
-    PLUGIN_EVIDENCE_VERSION_V2, PLUGIN_PROTOCOL_VERSION, PluginClaim, ProcessProvider,
-    TargetProfile, TaskBounds, UnitIdentity, VERIFICATION_TASK_VERSION, VerificationRequestV2,
-    VerificationTask, VerifierCapability, VerifierProvider, VerifierRegistry, WitnessChecker,
+    PLUGIN_EVIDENCE_VERSION_V2, PLUGIN_PROTOCOL_VERSION, PluginAnswer, PluginClaim,
+    ProcessProvider, TargetProfile, TaskBounds, UnitIdentity, VERIFICATION_TASK_VERSION,
+    VerificationRequestV2, VerificationTask, VerifierCapability, VerifierProvider,
+    VerifierRegistry, WitnessChecker,
 };
 use serde_json::{Value, json};
 
+use crate::plugin_verdicts::Answer;
 use crate::providers::SelectedModule;
 
 /// The semantic profile of a user-contract check task.
 pub const SEMANTIC_PROFILE: &str = "quirin.user-contract-check.v1";
 
 /// What the `plugin_checks` sidecar section means, carried in it.
-pub const MEANING: &str = "checker plugins attached to user contracts (card W45-USER-CONTRACT-PLUGINS, contract spec C11.1): each binding runs once, out of process, as a verified package, on an evidence-v2 task the core derives (one parameter_mode_respected obligation per bound function, bound to the module's text digest); a plugin's Safe counts only with a certificate the registry issued from a trusted-core witness replay, and without one it is Pending (plugin-claim-uncertified); its Unsafe counts, provisionally, only with a witness a trusted-core counterexample checker validated, and without one it is Pending; a crash, timeout, quota breach, protocol error, mismatch or refuted evidence is Unknown; every function that applies a bound contract publishes the join of its own status and the binding's verdict (Safe < Pending < Unknown < Unsafe), and every unit the join of its functions'; each binding row also records what the plugin itself answered (`proposed`, `plugin_diagnostics`), which decides nothing, and each function's `plugin_links` entry names its binding row by task digest (`binding`)";
+pub const MEANING: &str = "checker plugins attached to user contracts (card W45-USER-CONTRACT-PLUGINS, contract spec C11.1): each binding runs once, out of process, as a verified package, on an evidence-v2 task the core derives (one parameter_mode_respected obligation per bound function, bound to the module's text digest); a plugin's Safe counts only with a certificate the registry issued from a trusted-core witness replay, and without one it is Pending (plugin-claim-uncertified); its Unsafe counts, provisionally, only with a witness a trusted-core counterexample checker validated, and without one it is Pending; a crash, timeout, quota breach, protocol error, mismatch or refuted evidence is Unknown; every function that applies a bound contract publishes the join of its own status and the binding's verdict (Safe < Pending < Unknown < Unsafe), and every unit the join of its functions'; nothing is erased (card W48-PLUGIN-VERDICT-PRESERVATION): each binding keeps the plugin's own answer (its proposal and diagnostics), each linked function its own status (host_status) and each link's answer, and each linked unit its own verdict and reason (host_verdict), so qcore_audit::plugin_verdicts recovers every contributor's verdict and reasons from a published row";
 
 /// The declared function names of a contract module, read lexically: every
 /// `extern fn NAME` outside a comment. Over-reports rather than misses.
@@ -202,8 +204,8 @@ pub fn check_overrides(
 /// caller supplies the ones it trusts.
 #[derive(Default, Clone, Copy)]
 pub struct PluginCheckers<'a> {
-    pub witness: Option<&'a dyn WitnessChecker>,
-    pub counterexample: Option<&'a dyn CounterexampleChecker>,
+    pub witness: Option<&'a (dyn WitnessChecker + Sync)>,
+    pub counterexample: Option<&'a (dyn CounterexampleChecker + Sync)>,
 }
 
 /// One checker's verdict on one bound function's contract.
@@ -212,10 +214,10 @@ struct Link {
     plugin: String,
     user_crate: String,
     module: String,
-    /// Card OPENSSL-PROVIDER-PLUGIN: the binding's task digest, which names
-    /// its `plugin_checks` row (where the plugin's proposed verdict and own
-    /// diagnostics are recorded) even when one module has several bindings.
-    task_digest: String,
+    /// What the plugin itself answered (card W48-PLUGIN-VERDICT-PRESERVATION).
+    answer: Answer,
+    /// The package's version and digest (null when it does not verify).
+    package: Value,
     verdict: ReasonedVerdict,
 }
 
@@ -326,14 +328,12 @@ pub fn checker_request(
     }
 }
 
-fn claim_kind(claim: &PluginClaim) -> &'static str {
-    match claim {
-        PluginClaim::CertifiedSafe(_) => "certified-safe",
-        PluginClaim::ValidatedUnsafe { .. } => "validated-unsafe",
-        PluginClaim::UncertifiedSafe { .. } => "uncertified-safe",
-        PluginClaim::UnvalidatedUnsafe { .. } => "unvalidated-unsafe",
-        PluginClaim::Undecided { .. } => "undecided",
-        PluginClaim::Failure { .. } => "failure",
+/// A failure before any answer was read: no proposal, no plugin diagnostics.
+fn unanswered(claim: PluginClaim) -> PluginAnswer {
+    PluginAnswer {
+        proposed: None,
+        diagnostics: Vec::new(),
+        claim,
     }
 }
 
@@ -361,18 +361,25 @@ pub fn run(
             "package": binding.package_spelling,
             "task_digest": task.task_digest(),
         });
-        let (plugin, claim) = match ProcessProvider::from_package(&binding.package) {
+        // The package identity a plugin component's provenance names; null
+        // for a package that does not verify.
+        let mut package = json!({"version": null, "digest": null});
+        let (plugin, answer) = match ProcessProvider::from_package(&binding.package) {
             Err(error) => (
                 binding.package_spelling.clone(),
-                PluginClaim::Failure {
+                unanswered(PluginClaim::Failure {
                     code: "package".into(),
                     reason: format!("the checker package does not verify: {error}"),
-                },
+                }),
             ),
             Ok(provider) => {
                 let manifest = provider.manifest().clone();
                 row["plugin_id"] = json!(manifest.plugin_id);
                 row["package_digest"] = json!(manifest.package_digest);
+                package = json!({
+                    "version": manifest.package_version,
+                    "digest": manifest.package_digest,
+                });
                 row["execution_profile"] = json!(provider.execution_profile().to_string());
                 row["limits"] = json!({
                     "timeout_ms": manifest.limits.timeout_ms,
@@ -380,45 +387,42 @@ pub fn run(
                     "output_bytes": manifest.limits.output_bytes,
                 });
                 let mut registry = VerifierRegistry::default();
-                let claim = match registry.register(Arc::new(provider)) {
-                    Ok(()) => {
-                        let (claim, answer) = registry.verify_plugin_answer(
-                            &checker_request(&manifest.plugin_id, &task),
-                            &task,
-                            checkers.witness,
-                            checkers.counterexample,
-                        );
-                        // Card OPENSSL-PROVIDER-PLUGIN
-                        // (W48-PLUGIN-VERDICT-PRESERVATION): the plugin's own
-                        // proposed verdict and diagnostics, recorded beside
-                        // the classification, which alone decides.
-                        if let Some(answer) = answer {
-                            row["proposed"] = json!(answer.proposed);
-                            row["plugin_diagnostics"] = json!(answer.diagnostics);
-                        }
-                        claim
-                    }
-                    Err(error) => PluginClaim::Failure {
+                let answer = match registry.register(Arc::new(provider)) {
+                    Ok(()) => registry.verify_plugin_answer(
+                        &checker_request(&manifest.plugin_id, &task),
+                        &task,
+                        checkers
+                            .witness
+                            .map(|checker| checker as &dyn WitnessChecker),
+                        checkers
+                            .counterexample
+                            .map(|checker| checker as &dyn CounterexampleChecker),
+                    ),
+                    Err(error) => unanswered(PluginClaim::Failure {
                         code: "registry".into(),
                         reason: error.to_string(),
-                    },
+                    }),
                 };
-                (manifest.plugin_id.to_string(), claim)
+                (manifest.plugin_id.to_string(), answer)
             }
         };
-        let verdict = claim.verdict(&plugin);
+        let verdict = answer.claim.verdict(&plugin);
+        let answer = Answer::of_checker(&answer);
         *counts.entry(verdict.verdict().as_str()).or_default() += 1;
-        row["claim"] = json!(claim_kind(&claim));
-        row["code"] = json!(claim.code());
+        row["claim"] = json!(answer.claim);
+        row["code"] = json!(answer.code);
         row["verdict"] = json!(verdict.verdict());
         row["reasons"] = json!(verdict.reasons());
+        // Card W48-PLUGIN-VERDICT-PRESERVATION: what the plugin itself said.
+        row["answer"] = json!(answer);
         rows.push(row);
         for function in &binding.functions {
             links.links.entry(function.clone()).or_default().push(Link {
                 plugin: plugin.clone(),
                 user_crate: binding.user_crate.clone(),
                 module: binding.module.clone(),
-                task_digest: task.task_digest(),
+                answer: answer.clone(),
+                package: package.clone(),
                 verdict: verdict.clone(),
             });
         }
@@ -493,7 +497,8 @@ pub(crate) fn fold_unit(
         return;
     };
     let mut joined = unit_verdict;
-    let mut unit_reasons = Vec::new();
+    // Each link's value with its first reason, in row order.
+    let mut link_reasons: Vec<(Verdict, VerdictReason)> = Vec::new();
     let mut linked_any = false;
     for function_row in row["functions"].as_array_mut().into_iter().flatten() {
         let Some(name) = function_row["function"].as_str() else {
@@ -517,6 +522,9 @@ pub(crate) fn fold_unit(
             verdict.join(link.verdict.verdict())
         });
         function_row["status"] = json!(folded.as_str());
+        // Card W48-PLUGIN-VERDICT-PRESERVATION: the function's own status,
+        // which the fold overwrites, and each plugin's own answer.
+        function_row["host_status"] = json!(own.as_str());
         function_row["plugin_links"] = function_links
             .iter()
             .map(|(callee, link)| {
@@ -525,7 +533,8 @@ pub(crate) fn fold_unit(
                     "plugin": link.plugin,
                     "crate": link.user_crate,
                     "module": link.module,
-                    "binding": link.task_digest,
+                    "answer": link.answer,
+                    "package": link.package,
                     "verdict": link.verdict.verdict(),
                     "reasons": link.verdict.reasons(),
                 })
@@ -533,8 +542,8 @@ pub(crate) fn fold_unit(
             .collect::<Vec<_>>()
             .into();
         for (_, link) in &function_links {
-            if !link.verdict.verdict().is_safe() {
-                unit_reasons.extend(link.verdict.reasons().iter().map(|r| r.detail.clone()));
+            if let Some(reason) = link.verdict.reasons().first() {
+                link_reasons.push((link.verdict.verdict(), reason.clone()));
             }
         }
         joined = joined.join(folded);
@@ -542,13 +551,21 @@ pub(crate) fn fold_unit(
     if !linked_any {
         return;
     }
+    // Card W48-PLUGIN-VERDICT-PRESERVATION: the unit's own verdict and
+    // reason, before any link raised them.
+    row["host_verdict"] = json!({
+        "status": unit_verdict.as_str(),
+        "reason": row["reason"].clone(),
+        "reason_code": row["reason_code"].clone(),
+    });
     if joined != unit_verdict {
         row["status"] = json!(joined.as_str());
-        if row["reason"].is_null()
-            && let Some(reason) = unit_reasons.first()
-        {
-            row["reason"] = json!(reason);
-            row["reason_code"] = crate::report::reason_code(Some(reason));
+        // The reason is the deciding link's, with the code that link's
+        // classification typed — never a lower link's or the host's lower
+        // reason, which would name a `Pending` cause on an `Unknown` row.
+        if let Some((_, reason)) = link_reasons.iter().find(|(verdict, _)| *verdict == joined) {
+            row["reason"] = json!(reason.detail);
+            row["reason_code"] = crate::report::reason_code_value(reason.code.parse().ok());
         }
     }
 }

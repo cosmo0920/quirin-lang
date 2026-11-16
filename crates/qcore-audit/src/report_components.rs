@@ -39,8 +39,8 @@ use std::borrow::Cow;
 use std::collections::{BTreeMap, BTreeSet};
 
 use qcore_schemas::composition::{
-    COMPOSITION_SCHEMA_VERSION, Component, ComponentSidecar, Contribution, Provenance, ReasonLeaf,
-    RowKey, RuleSet, UnitRef, VerdictTuple,
+    COMPOSITION_SCHEMA_VERSION, CheckerIdentity, Component, ComponentSidecar, Contribution,
+    Provenance, ReasonLeaf, RowKey, RuleSet, UnitRef, VerdictTuple,
 };
 use qcore_schemas::contract::ResourceContracts;
 use qcore_schemas::reason::ReasonCategory;
@@ -142,7 +142,21 @@ pub fn sidecar(rows: &[Value], provenance: &Result<Provenance, String>) -> Compo
             profile: unit.library.clone(),
         };
         *ordinal += 1;
-        contribution.insert(component(row, &key, provenance));
+        let host = component(row, &key, provenance);
+        // Card W48-PLUGIN-VERDICT-PRESERVATION: a row a checker plugin raised
+        // is the host's component (its own verdict and reason) and one
+        // component per plugin, so the plugin's contribution is kept apart
+        // and the published row is their derivation.
+        match (provenance, row.get("host_verdict")) {
+            // A refused row (its detail rewritten to `Unknown`) stays whole.
+            (Ok(provenance), Some(own)) if host.detail == *row => {
+                for plugin in plugin_components(row, &key, provenance, &host) {
+                    contribution.insert(plugin);
+                }
+                contribution.insert(host_component(row, own, host));
+            }
+            _ => contribution.insert(host),
+        }
         order.push(key);
     }
     ComponentSidecar {
@@ -151,6 +165,96 @@ pub fn sidecar(rows: &[Value], provenance: &Result<Provenance, String>) -> Compo
         order,
         contribution,
     }
+}
+
+/// The host's component of a row a checker plugin linked: the row as its
+/// detail, but the host's own verdict — the unit's own (`host_verdict`)
+/// joined with each linked function's own (`host_status`) — and the unit's
+/// own reason, not the deciding link's.
+fn host_component(row: &Value, own: &Value, mut host: Component) -> Component {
+    let mut verdict = unit_verdict(own["status"].as_str().unwrap_or(""));
+    for function in row["functions"].as_array().into_iter().flatten() {
+        if let Some(status) = function["host_status"].as_str() {
+            verdict = verdict.join(unit_verdict(status));
+        }
+    }
+    host.verdict.verdict = verdict;
+    host.reasons = match &own["reason"] {
+        Value::String(text) => vec![ReasonLeaf {
+            category: own["reason_code"]
+                .as_str()
+                .and_then(|code| code.parse::<ReasonCategory>().ok()),
+            text: text.clone(),
+        }],
+        _ => Vec::new(),
+    };
+    host
+}
+
+/// One component per checker plugin (its id and package identity) linked in
+/// a row: the join of its links' verdicts, their reasons, and the links
+/// themselves (with the function each was applied in) as its detail.
+fn plugin_components(
+    row: &Value,
+    key: &RowKey,
+    provenance: &Provenance,
+    host: &Component,
+) -> Vec<Component> {
+    let mut plugins =
+        BTreeMap::<CheckerIdentity, (Verdict, BTreeSet<ReasonLeaf>, Vec<Value>)>::new();
+    for function in row["functions"].as_array().into_iter().flatten() {
+        for link in function["plugin_links"].as_array().into_iter().flatten() {
+            let text = |value: &Value| value.as_str().unwrap_or("unverified").to_owned();
+            let identity = CheckerIdentity {
+                id: text(&link["plugin"]),
+                version: text(&link["package"]["version"]),
+                digest: text(&link["package"]["digest"]),
+            };
+            let entry = plugins
+                .entry(identity)
+                .or_insert_with(|| (Verdict::Safe, BTreeSet::new(), Vec::new()));
+            // A link without a readable verdict is fail-closed `Unknown`.
+            entry.0 = entry.0.join(
+                link["verdict"]
+                    .as_str()
+                    .and_then(|verdict| verdict.parse().ok())
+                    .unwrap_or(Verdict::Unknown),
+            );
+            for reason in link["reasons"].as_array().into_iter().flatten() {
+                entry.1.insert(ReasonLeaf {
+                    category: reason["code"]
+                        .as_str()
+                        .and_then(|code| code.parse::<ReasonCategory>().ok()),
+                    text: reason["detail"].as_str().unwrap_or("").to_owned(),
+                });
+            }
+            let mut record = link.clone();
+            record["function"] = function["function"].clone();
+            entry.2.push(record);
+        }
+    }
+    plugins
+        .into_iter()
+        .map(|(identity, (verdict, reasons, links))| Component {
+            unit: key.unit.clone(),
+            row: key.row.clone(),
+            property: key.property.clone(),
+            profile: key.profile.clone(),
+            provenance: Provenance {
+                external_checker: Some(identity),
+                ..provenance.clone()
+            },
+            verdict: VerdictTuple {
+                verdict,
+                scope: host.verdict.scope.clone(),
+                bounds: host.verdict.bounds.clone(),
+                assumptions: BTreeSet::new(),
+                evidence_version: crate::user_plugins::SEMANTIC_PROFILE.into(),
+            },
+            reasons: reasons.into_iter().collect(),
+            detail: json!({ "plugin_links": links }),
+        })
+        .collect()
 }
 
 /// The unit a row names; empty spellings when it names none, which
@@ -347,10 +451,29 @@ fn render_row<'a>(contribution: &'a Contribution, key: &RowKey) -> Cow<'a, Value
     if let ([only], false) = (derivation.components.as_slice(), derivation.is_conflicted()) {
         return Cow::Borrowed(&only.detail);
     }
+    // The base is the host's own component (no external checker) carrying
+    // the joined verdict, else any host component, else as before: a checker
+    // plugin's component details its links, never the row (card
+    // W48-PLUGIN-VERDICT-PRESERVATION). Without a plugin component this is
+    // the first component carrying the joined verdict, as it always was.
+    let host = |component: &&Component| component.provenance.external_checker.is_none();
+    let joined = |component: &&Component| component.verdict.verdict == derivation.verdict;
     let base = derivation
         .components
         .iter()
-        .find(|component| component.verdict.verdict == derivation.verdict)
+        .find(|component| host(component) && joined(component))
+        .or_else(|| {
+            derivation
+                .components
+                .iter()
+                .find(|component| host(component))
+        })
+        .or_else(|| {
+            derivation
+                .components
+                .iter()
+                .find(|component| joined(component))
+        })
         .unwrap_or(&derivation.components[0]);
     let mut row = match &base.detail {
         Value::Object(object) => object.clone(),
