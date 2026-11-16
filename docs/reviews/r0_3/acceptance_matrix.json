@@ -6876,10 +6876,10 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Landing integrate/r13 (base main 0f6e17118; merges, in order, RULE50-CONSUMER-COMPOSITION c74ea2139, MEMBER-PATH-DIRECT-REFUSAL-TEXT b3a933f98, LIBEVENT-CORE-CENSUS-GUARD-CORRELATION 21dbd218f and GATE-SLOT-BUILDS-UNSLOTTED 75f66c905). The second merge conflicted with the first in crates/qcore-c-gateway/src/legacy_callback_route.rs (both helper_destroyer and member_path_direct_reason kept) and tests/member_value_helper.rs (RULE50's reading of a helper's direct call kept, so the member-invocations refusal wording is no longer pinned by any fixture; registered as MEMBER-PATH-DIRECT-INVOCATIONS-TEXT-PIN). Full landing gate on 44a4df18a (private/integrate-r13/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base main --full --landing through private/toolchain/env.sh: Rust 639 units / 682 summaries, 9518 passed, 0 failed, 17 ignored; Lean 435 audits; fmt, Clippy, both reevaluation examples exit 0; provider gate selected (providers/ changed): package build/verify, provider Rust 133 passed / 0 failed / 1 ignored, provider fmt/Clippy all exit 0. Python (777 tests, GATE-SLOT-BUILDS-UNSLOTTED adds 16) exited 1 on two test_build_matrix_sections checks only, because the committed matrix predates this landing's amendments and Lean count; it is regenerated from this record and the suite rerun is recorded in private/integrate-r13/python-rerun.log. No verdict moves: RULE50-CONSUMER-COMPOSITION measured corpus 1081/3617/6 Safe/Unknown/Unsafe at base and tip (declared match; system and slice unmeasured, no Monkey unit); MEMBER-PATH-DIRECT-REFUSAL-TEXT and LIBEVENT-CORE-CENSUS-GUARD-CORRELATION report 0 status moves; GATE-SLOT-BUILDS-UNSLOTTED changes gate tooling only. The merged figures differ from each card's own gate (merged suites), hence this record. No profile baseline is changed and land.py publish is owed.",
-  "workspace_tests": 9518,
+  "note": "Landing integrate/r14 (base main d7a497822; merges W48-PLUGIN-VERDICT-PRESERVATION 7c7295b6e without conflict, then applies its amendments at f414877af). Full landing gate on f414877af (private/integrate-r14/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base main --full --landing through private/toolchain/env.sh: Rust 639 units / 682 summaries, 9525 passed, 0 failed, 17 ignored; fmt, Clippy, both reevaluation examples exit 0; Python 779 tests OK. The scoper's Lean step selected only the 18 modules importing the changed QCore.VerdictSemigroup (no proof root changed), so the full gate's scripts/check_lean_audits.py was run separately on the same tree: 435/435 audits passed, exit 0 (private/integrate-r14/lean-all.log). Provider gate not selected (providers/ unchanged). No verdict moves: the card folds statuses exactly as before and no measurement was taken. COMPOSITION-PLUGIN-FIREWALL-WIRING is retired on the card's argument that a report without plugin bindings is byte-identical by construction, not on a base-versus-tip identity run. The merged figures differ from the card's scoped gate (merged full suite), hence this record. No profile baseline is changed and land.py publish is owed.",
+  "workspace_tests": 9525,
   "provider_tests": 133,
-  "python_evidence_validator_tests": 777,
+  "python_evidence_validator_tests": 779,
   "lean_audits": 435,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
@@ -7322,9 +7322,9 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "full landing gate: every step exits 0 except the Python suite's two stale-matrix checks, cleared by regenerating the matrix from this record (rerun disclosed in the note)",
+  "standing_gate": "full landing gate: every step exits 0; Lean run as check_lean_audits.py over all 435 audits beside the scoper's 18-module selection",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/rule50-consumer-composition/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w48-plugin-verdict-preservation/integration/gate.json)"
  },
  "named_followups": [
   {
