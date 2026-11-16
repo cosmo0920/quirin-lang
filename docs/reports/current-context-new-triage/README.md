@@ -255,6 +255,12 @@ A is recommended: B and C each add a semantic clause (an owner relation for
 a singly linked head insert through retained thread storage) that only the
 user can choose, and neither changes any live route.
 
+**Phase 2** (user decision 2026-11-16, "Go further to gather what should
+make it safe"): the facts a Safe verdict needs, the options with their rule,
+contract and Lean changes, and the reach census are in
+[PROPOSAL.md](PROPOSAL.md). It is a proposal only; the code above is
+unchanged.
+
 ## 8. Follow-ups
 
 * `UNKNOWN-ALIAS-REFUSAL-HAND-ON-CENSUS` (registered): other transfer
