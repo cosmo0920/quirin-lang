@@ -334,4 +334,4 @@ Declared measurement, base `rev:0f6e17118` (the card's base; r8–r12 landed aft
 `native-comparison.json`, sha256
 `96260b405ddf199dab7cd79fa0ab20d86e9b39c91e682c00696b9f9e5a5304cf`).
 
-The crate loads only through the generated user load path, which no pinned route uses, so nothing moves; the shipped load path, views and locks are unchanged. Its effect is on an opt-in `current --load-path providers/user-crates-load-path.json` run. Landed through integrate/r13 with CURRENT-CONTEXT-NEW-TRIAGE (phase 1), LINK-STANDING-IMPORT-LIMITERS and OPENSSL-PROVIDER-PLUGIN; all three merged without conflict.
+The crate loads only through the generated user load path, which no pinned route uses, so nothing moves; the shipped load path, views and locks are unchanged. Its effect is on an opt-in `current --load-path providers/user-crates-load-path.json` run. Landed through integrate/r14 with CURRENT-CONTEXT-NEW-TRIAGE (phase 1), LINK-STANDING-IMPORT-LIMITERS and OPENSSL-PROVIDER-PLUGIN; all three merged without conflict.

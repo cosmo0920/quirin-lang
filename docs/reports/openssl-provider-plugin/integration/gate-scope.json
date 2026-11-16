@@ -1,8 +1,8 @@
 {
  "schema": "quirin-gate-scope/1",
  "source": "git diff",
- "base": "0f6e171183b0b33dbe5fea806ba52afac2332607",
- "head": "0497a6b8baeee4c70cdaf88d1b8109b1b6c71dac",
+ "base": "d7a4978220ba5250fa1ec72932ad720fe4c38808",
+ "head": "5b5ff2912d4bf29297cbb24145c91d3b43b5112d",
  "committed": [
   ".github/workflows/ci.yml",
   "crates/qcore-audit/src/contract_pin.rs",
@@ -56,6 +56,7 @@
   "docs/reports/current-context-new-triage/gate.json",
   "docs/reports/current-context-new-triage/gate/clang-version.txt",
   "docs/reports/current-context-new-triage/integration-amendments.json",
+  "docs/reports/current-context-new-triage/integration/native-comparison.json.gz",
   "docs/reports/link-standing-import-limiters/PREDICTION.md",
   "docs/reports/link-standing-import-limiters/README.md",
   "docs/reports/link-standing-import-limiters/census/census-table.json",
@@ -64,6 +65,7 @@
   "docs/reports/link-standing-import-limiters/census/table.py",
   "docs/reports/link-standing-import-limiters/gate.json",
   "docs/reports/link-standing-import-limiters/integration-amendments.json",
+  "docs/reports/link-standing-import-limiters/integration/native-comparison.json.gz",
   "docs/reports/openssl-provider-plugin/PREDICTION.md",
   "docs/reports/openssl-provider-plugin/README.md",
   "docs/reports/openssl-provider-plugin/census/census.json",
@@ -86,6 +88,10 @@
   "docs/reports/openssl-provider-plugin/gate/clang-version.txt",
   "docs/reports/openssl-provider-plugin/gate/gate-1.json",
   "docs/reports/openssl-provider-plugin/integration-amendments.json",
+  "docs/reports/openssl-provider-plugin/integration/clang-version.txt",
+  "docs/reports/openssl-provider-plugin/integration/gate-scope.json",
+  "docs/reports/openssl-provider-plugin/integration/gate.json",
+  "docs/reports/openssl-provider-plugin/integration/native-comparison.json.gz",
   "docs/reviews/r0_3/acceptance_matrix.json",
   "proof/AuditCrossUnitReplayBudget.lean",
   "proof/AuditLibraryVersionRange.lean",
@@ -182,6 +188,7 @@
    "docs/reports/current-context-new-triage/gate.json",
    "docs/reports/current-context-new-triage/gate/clang-version.txt",
    "docs/reports/current-context-new-triage/integration-amendments.json",
+   "docs/reports/current-context-new-triage/integration/native-comparison.json.gz",
    "docs/reports/link-standing-import-limiters/PREDICTION.md",
    "docs/reports/link-standing-import-limiters/README.md",
    "docs/reports/link-standing-import-limiters/census/census-table.json",
@@ -190,6 +197,7 @@
    "docs/reports/link-standing-import-limiters/census/table.py",
    "docs/reports/link-standing-import-limiters/gate.json",
    "docs/reports/link-standing-import-limiters/integration-amendments.json",
+   "docs/reports/link-standing-import-limiters/integration/native-comparison.json.gz",
    "docs/reports/openssl-provider-plugin/PREDICTION.md",
    "docs/reports/openssl-provider-plugin/README.md",
    "docs/reports/openssl-provider-plugin/census/census.json",
@@ -212,6 +220,10 @@
    "docs/reports/openssl-provider-plugin/gate/clang-version.txt",
    "docs/reports/openssl-provider-plugin/gate/gate-1.json",
    "docs/reports/openssl-provider-plugin/integration-amendments.json",
+   "docs/reports/openssl-provider-plugin/integration/clang-version.txt",
+   "docs/reports/openssl-provider-plugin/integration/gate-scope.json",
+   "docs/reports/openssl-provider-plugin/integration/gate.json",
+   "docs/reports/openssl-provider-plugin/integration/native-comparison.json.gz",
    "docs/reviews/r0_3/acceptance_matrix.json",
    "proof/AuditCrossUnitReplayBudget.lean",
    "proof/AuditLibraryVersionRange.lean",
@@ -690,6 +702,9 @@
    "docs/reports/current-context-new-triage/integration-amendments.json": [
     "class prose"
    ],
+   "docs/reports/current-context-new-triage/integration/native-comparison.json.gz": [
+    "class prose"
+   ],
    "docs/reports/link-standing-import-limiters/PREDICTION.md": [
     "class prose"
    ],
@@ -717,6 +732,9 @@
     "class prose"
    ],
    "docs/reports/link-standing-import-limiters/integration-amendments.json": [
+    "class prose"
+   ],
+   "docs/reports/link-standing-import-limiters/integration/native-comparison.json.gz": [
     "class prose"
    ],
    "docs/reports/openssl-provider-plugin/PREDICTION.md": [
@@ -788,6 +806,18 @@
     "class prose"
    ],
    "docs/reports/openssl-provider-plugin/integration-amendments.json": [
+    "class prose"
+   ],
+   "docs/reports/openssl-provider-plugin/integration/clang-version.txt": [
+    "class prose"
+   ],
+   "docs/reports/openssl-provider-plugin/integration/gate-scope.json": [
+    "class prose"
+   ],
+   "docs/reports/openssl-provider-plugin/integration/gate.json": [
+    "class prose"
+   ],
+   "docs/reports/openssl-provider-plugin/integration/native-comparison.json.gz": [
     "class prose"
    ],
    "docs/reviews/r0_3/acceptance_matrix.json": [
@@ -3296,7 +3326,8 @@
     "status",
     "--recursive"
    ],
-   "slot": null
+   "slot": null,
+   "slot_args": []
   },
   {
    "name": "fmt",
@@ -3307,7 +3338,8 @@
     "--",
     "--check"
    ],
-   "slot": null
+   "slot": "build",
+   "slot_args": []
   },
   {
    "name": "clippy",
@@ -3319,7 +3351,8 @@
     "-D",
     "warnings"
    ],
-   "slot": null
+   "slot": "build",
+   "slot_args": []
   },
   {
    "name": "rust-suite",
@@ -3327,9 +3360,10 @@
     "/usr/bin/python3",
     "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/scripts/run_test_binaries.py",
     "--log-dir",
-    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-0497a6b8b/rust-suite"
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/rust-suite"
    ],
-   "slot": "rust-suite"
+   "slot": "rust-suite",
+   "slot_args": []
   },
   {
    "name": "probe-reevaluation_probe",
@@ -3345,7 +3379,8 @@
     "--example",
     "reevaluation_probe"
    ],
-   "slot": null
+   "slot": "build",
+   "slot_args": []
   },
   {
    "name": "probe-reevaluation_followup",
@@ -3361,7 +3396,8 @@
     "--example",
     "reevaluation_followup"
    ],
-   "slot": null
+   "slot": "build",
+   "slot_args": []
   },
   {
    "name": "lean",
@@ -3369,7 +3405,8 @@
     "/usr/bin/python3",
     "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/scripts/check_lean_audits.py"
    ],
-   "slot": "lean"
+   "slot": "lean",
+   "slot_args": []
   },
   {
    "name": "python",
@@ -3381,7 +3418,8 @@
     "-s",
     "scripts/tests"
    ],
-   "slot": null
+   "slot": null,
+   "slot_args": []
   },
   {
    "name": "provider-package-build",
@@ -3390,9 +3428,10 @@
     "providers/package.py",
     "build",
     "--output",
-    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-0497a6b8b/provider-packages"
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/provider-packages"
    ],
-   "slot": null
+   "slot": "build",
+   "slot_args": []
   },
   {
    "name": "provider-package-verify-all",
@@ -3400,9 +3439,10 @@
     "/usr/bin/python3",
     "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/scripts/gate_scope.py",
     "--verify-packages",
-    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-0497a6b8b/provider-packages"
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/provider-packages"
    ],
-   "slot": null
+   "slot": null,
+   "slot_args": []
   },
   {
    "name": "provider-package-verify",
@@ -3410,9 +3450,10 @@
     "/usr/bin/python3",
     "providers/package.py",
     "verify",
-    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-0497a6b8b/provider-packages/qcore.libevent"
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/provider-packages/qcore.libevent"
    ],
-   "slot": null
+   "slot": null,
+   "slot_args": []
   },
   {
    "name": "provider-test",
@@ -3425,7 +3466,10 @@
     "--locked",
     "--offline"
    ],
-   "slot": "rust-suite"
+   "slot": "rust-suite",
+   "slot_args": [
+    "--close-builds"
+   ]
   },
   {
    "name": "provider-fmt",
@@ -3438,7 +3482,8 @@
     "--",
     "--check"
    ],
-   "slot": null
+   "slot": "build",
+   "slot_args": []
   },
   {
    "name": "provider-clippy",
@@ -3455,13 +3500,14 @@
     "-D",
     "warnings"
    ],
-   "slot": null
+   "slot": "build",
+   "slot_args": []
   }
  ],
  "slots": true,
  "landing": true,
  "card_base": null,
- "started": "20261116T104608Z",
+ "started": "20261116T152931Z",
  "ran": true,
  "steps": [
   {
@@ -3475,8 +3521,8 @@
     "--recursive"
    ],
    "exit": 0,
-   "seconds": 0.0,
-   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-0497a6b8b/submodules.log",
+   "seconds": 0.1,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/submodules.log",
    "counts": {
     "submodules": 1,
     "not_checked_out_or_moved": []
@@ -3485,6 +3531,12 @@
   {
    "name": "fmt",
    "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/scripts/gate_slot.py",
+    "build",
+    "--receipt",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/slots/fmt.json",
+    "--",
     "cargo",
     "fmt",
     "--all",
@@ -3492,13 +3544,20 @@
     "--check"
    ],
    "exit": 0,
-   "seconds": 5.3,
-   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-0497a6b8b/fmt.log",
-   "counts": {}
+   "seconds": 11.0,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/fmt.log",
+   "counts": {},
+   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/slots/fmt.json"
   },
   {
    "name": "clippy",
    "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/scripts/gate_slot.py",
+    "build",
+    "--receipt",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/slots/clippy.json",
+    "--",
     "cargo",
     "clippy",
     "--all-targets",
@@ -3507,9 +3566,10 @@
     "warnings"
    ],
    "exit": 0,
-   "seconds": 129.8,
-   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-0497a6b8b/clippy.log",
-   "counts": {}
+   "seconds": 57.8,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/clippy.log",
+   "counts": {},
+   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/slots/clippy.json"
   },
   {
    "name": "rust-suite",
@@ -3518,34 +3578,40 @@
     "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/scripts/gate_slot.py",
     "rust-suite",
     "--receipt",
-    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-0497a6b8b/slots/rust-suite.json",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/slots/rust-suite.json",
     "--",
     "/usr/bin/python3",
     "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/scripts/run_test_binaries.py",
     "--log-dir",
-    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-0497a6b8b/rust-suite"
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/rust-suite"
    ],
    "exit": 0,
-   "seconds": 11043.0,
-   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-0497a6b8b/rust-suite.log",
+   "seconds": 12913.6,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/rust-suite.log",
    "counts": {
-    "units": 640,
-    "passed": 9527,
+    "units": 641,
+    "passed": 9536,
     "failed": 0,
     "ignored": 17,
     "measured": 0,
     "filtered": 148,
-    "summaries": 683,
+    "summaries": 684,
     "packages": null,
     "targets": null,
-    "summary": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-0497a6b8b/rust-suite/summary.json",
+    "summary": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/rust-suite/summary.json",
     "ok": true
    },
-   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-0497a6b8b/slots/rust-suite.json"
+   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/slots/rust-suite.json"
   },
   {
    "name": "probe-reevaluation_probe",
    "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/scripts/gate_slot.py",
+    "build",
+    "--receipt",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/slots/probe-reevaluation_probe.json",
+    "--",
     "cargo",
     "run",
     "--config",
@@ -3558,13 +3624,20 @@
     "reevaluation_probe"
    ],
    "exit": 0,
-   "seconds": 0.2,
-   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-0497a6b8b/probe-reevaluation_probe.log",
-   "counts": {}
+   "seconds": 0.3,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/probe-reevaluation_probe.log",
+   "counts": {},
+   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/slots/probe-reevaluation_probe.json"
   },
   {
    "name": "probe-reevaluation_followup",
    "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/scripts/gate_slot.py",
+    "build",
+    "--receipt",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/slots/probe-reevaluation_followup.json",
+    "--",
     "cargo",
     "run",
     "--config",
@@ -3578,8 +3651,9 @@
    ],
    "exit": 0,
    "seconds": 0.5,
-   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-0497a6b8b/probe-reevaluation_followup.log",
-   "counts": {}
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/probe-reevaluation_followup.log",
+   "counts": {},
+   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/slots/probe-reevaluation_followup.json"
   },
   {
    "name": "lean",
@@ -3588,18 +3662,18 @@
     "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/scripts/gate_slot.py",
     "lean",
     "--receipt",
-    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-0497a6b8b/slots/lean.json",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/slots/lean.json",
     "--",
     "/usr/bin/python3",
     "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/scripts/check_lean_audits.py"
    ],
    "exit": 0,
-   "seconds": 171.9,
-   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-0497a6b8b/lean.log",
+   "seconds": 21.1,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/lean.log",
    "counts": {
-    "audits": 436
+    "audits": 437
    },
-   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-0497a6b8b/slots/lean.json"
+   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/slots/lean.json"
   },
   {
    "name": "python",
@@ -3612,10 +3686,10 @@
     "scripts/tests"
    ],
    "exit": 0,
-   "seconds": 379.6,
-   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-0497a6b8b/python.log",
+   "seconds": 247.8,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/python.log",
    "counts": {
-    "tests": 761,
+    "tests": 779,
     "skipped": 0,
     "ok": true
    }
@@ -3624,15 +3698,22 @@
    "name": "provider-package-build",
    "argv": [
     "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/scripts/gate_slot.py",
+    "build",
+    "--receipt",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/slots/provider-package-build.json",
+    "--",
+    "/usr/bin/python3",
     "providers/package.py",
     "build",
     "--output",
-    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-0497a6b8b/provider-packages"
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/provider-packages"
    ],
    "exit": 0,
-   "seconds": 285.6,
-   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-0497a6b8b/provider-package-build.log",
-   "counts": {}
+   "seconds": 418.7,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/provider-package-build.log",
+   "counts": {},
+   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/slots/provider-package-build.json"
   },
   {
    "name": "provider-package-verify-all",
@@ -3640,11 +3721,11 @@
     "/usr/bin/python3",
     "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/scripts/gate_scope.py",
     "--verify-packages",
-    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-0497a6b8b/provider-packages"
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/provider-packages"
    ],
    "exit": 0,
    "seconds": 1.0,
-   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-0497a6b8b/provider-package-verify-all.log",
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/provider-package-verify-all.log",
    "counts": {}
   },
   {
@@ -3653,11 +3734,11 @@
     "/usr/bin/python3",
     "providers/package.py",
     "verify",
-    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-0497a6b8b/provider-packages/qcore.libevent"
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/provider-packages/qcore.libevent"
    ],
    "exit": 0,
    "seconds": 0.1,
-   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-0497a6b8b/provider-package-verify.log",
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/provider-package-verify.log",
    "counts": {}
   },
   {
@@ -3666,8 +3747,9 @@
     "/usr/bin/python3",
     "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/scripts/gate_slot.py",
     "rust-suite",
+    "--close-builds",
     "--receipt",
-    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-0497a6b8b/slots/provider-test.json",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/slots/provider-test.json",
     "--",
     "cargo",
     "test",
@@ -3678,8 +3760,8 @@
     "--offline"
    ],
    "exit": 0,
-   "seconds": 4553.6,
-   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-0497a6b8b/provider-test.log",
+   "seconds": 3007.0,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/provider-test.log",
    "counts": {
     "summaries": 46,
     "passed": 140,
@@ -3688,11 +3770,17 @@
     "measured": 0,
     "filtered": 0
    },
-   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-0497a6b8b/slots/provider-test.json"
+   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/slots/provider-test.json"
   },
   {
    "name": "provider-fmt",
    "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/scripts/gate_slot.py",
+    "build",
+    "--receipt",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/slots/provider-fmt.json",
+    "--",
     "cargo",
     "fmt",
     "--manifest-path",
@@ -3702,13 +3790,20 @@
     "--check"
    ],
    "exit": 0,
-   "seconds": 7.0,
-   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-0497a6b8b/provider-fmt.log",
-   "counts": {}
+   "seconds": 5.9,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/provider-fmt.log",
+   "counts": {},
+   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/slots/provider-fmt.json"
   },
   {
    "name": "provider-clippy",
    "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/scripts/gate_slot.py",
+    "build",
+    "--receipt",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/slots/provider-clippy.json",
+    "--",
     "cargo",
     "clippy",
     "--manifest-path",
@@ -3722,11 +3817,12 @@
     "warnings"
    ],
    "exit": 0,
-   "seconds": 66.1,
-   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-0497a6b8b/provider-clippy.log",
-   "counts": {}
+   "seconds": 24.4,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/provider-clippy.log",
+   "counts": {},
+   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/landing-r4/private/gate-full-5b5ff2912/slots/provider-clippy.json"
   }
  ],
  "ok": true,
- "finished": "20261116T152332Z"
+ "finished": "20261116T200800Z"
 }

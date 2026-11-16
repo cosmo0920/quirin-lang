@@ -1,13 +1,13 @@
 {
-  "note": "Landing integrate/r13 (base main 0f6e17118; merges CURRENT-CONTEXT-NEW-TRIAGE phase 1 3d735b88c, LINK-STANDING-IMPORT-LIMITERS 00cf0be02 and OPENSSL-PROVIDER-PLUGIN a5d216a24, no conflicts; amendments applied in that order, matrix regenerated). Full landing gate on 0497a6b8b (landing-r4 private/gate-full-0497a6b8b, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base 0f6e17118 --full --landing: 14 steps exit 0. Rust 640 units / 683 summaries, 9527 passed, 0 failed, 17 ignored; Lean 436 audits; Python 761 tests; fmt, Clippy, both reevaluation examples exit 0; provider gate selected (providers/ changed): package build/verify, provider workspace tests 140 passed / 0 failed / 1 ignored (this is the complete provider-workspace run OPENSSL-PROVIDER-PLUGIN's card gate could not finish), provider fmt/Clippy exit 0. No verdict moves on any pinned route: each card's declared measurement against rev:0f6e17118 matched with 0 moved rows (records in each card's integration/). No profile baseline changes; land.py publish is owed (r8-r13 unpublished since baseline:497bdeb90).",
-  "workspace_tests": 9527,
+  "note": "Landing integrate/r14 (renamed from integrate/r13 after the other lane's integrate/r13 landed as main d7a497822; branch from main 0f6e17118 merging CURRENT-CONTEXT-NEW-TRIAGE phase 1 3d735b88c, LINK-STANDING-IMPORT-LIMITERS 00cf0be02 and OPENSSL-PROVIDER-PLUGIN a5d216a24, no conflicts; then main d7a497822 merged in, generated docs regenerated, matrix and wave-48-part12 taken from main with the three amendments re-applied). First full landing gate on 0497a6b8b (before the main merge): 14 steps exit 0 (Rust 9527/0/17, Lean 436, Python 761, provider tests 140/0/1). Because main's batch also changed crates/qcore-contract/src/contract_loader.rs and the contract spec, the merged tree was gated again: full landing gate on 5b5ff2912 (landing-r4 private/gate-full-5b5ff2912, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base d7a497822 --full --landing: 14 steps exit 0. Rust 641 units / 684 summaries, 9536 passed, 0 failed, 17 ignored; Lean 437 audits; Python 779 tests; fmt, Clippy, both reevaluation examples exit 0; provider gate: package build/verify, provider workspace tests 140 passed / 0 failed / 1 ignored (the complete provider-workspace run OPENSSL-PROVIDER-PLUGIN's card gate could not finish), provider fmt/Clippy exit 0. No verdict moves on any pinned route: each card's declared measurement against rev:0f6e17118 matched with 0 moved rows (records in each card's integration/). No profile baseline changes; land.py publish is owed (unpublished since baseline:497bdeb90).",
+  "workspace_tests": 9536,
   "provider_tests": 140,
-  "python_evidence_validator_tests": 761,
+  "python_evidence_validator_tests": 779,
   "reevaluation_probe_exit": 0,
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
   "standing_gate": "full landing gate: every step exits 0",
-  "lean_audits": 436,
+  "lean_audits": 437,
   "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
 }
