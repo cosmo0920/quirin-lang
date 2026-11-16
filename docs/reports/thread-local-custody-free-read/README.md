@@ -177,5 +177,8 @@ thread-local object. Repaired in `1ac1fabbd`: the reading is asked only where
 the unit spells `__thread` or `_Thread_local` before the body's end (as rule
 11h asks only where it spells `volatile`); the test, the card's fixtures,
 `storage_duration_volatile` and `libc_gap_declarations` then passed
-(targeted run). Attempt 2 covers the repaired tip; its result is in the
-hand-back.
+(targeted run). Attempt 2 (head `b2773869a`, `private/gate-2/`, full mode):
+submodules, fmt, clippy, both probes exit 0; Rust suite exit 0 (639 units,
+9,523 passed, 0 failed, 17 ignored, 148 filtered); Lean exit 0 (435 audits);
+Python exit 0 (761 tests). The provider gate is not assigned (no
+`providers/` change).
