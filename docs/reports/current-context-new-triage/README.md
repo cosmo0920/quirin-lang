@@ -266,4 +266,23 @@ user can choose, and neither changes any live route.
 
 ## 9. Gate
 
-Scoped card gate on the final code commit: recorded in `gate.json` below.
+`python3 scripts/gate_scope.py --base 0f6e17118 --out private/gate-1` at
+`310fd412b` (the code is that of `1e691eecc`; later commits are records);
+[gate.json](gate.json), Clang recorded in [gate/](gate/clang-version.txt).
+Mode full (the diff reaches `qcore-c-gateway`).
+
+| Step | Exit | Counts |
+|---|---|---|
+| submodules | 0 | 1 submodule |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --all-targets -- -D warnings` | 0 | |
+| Rust suite (`run_test_binaries.py`) | 0 | 639 units, 682 summaries; 9,516 passed, 0 failed, 17 ignored, 148 filtered (5,288 s) |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| `check_lean_audits.py` | 0 | 435 audits |
+| Python suite | 1 | 761 tests, 1 failure: `test_gate_slot_starvation.Drain.test_a_drain_gives_up_reopens_admission_releases_and_names_the_holder` ("0.18 not greater than 0.2 : the holder spins") |
+| that module rerun alone (`python3 -m unittest test_gate_slot_starvation` in `scripts/tests`) | 0 | 26 tests OK |
+
+The one Python failure is the timing-sensitive starvation test the brief
+names; rerun alone it passes (both recorded). The host was shared with
+another card's audit job (gate_slot status: 9.6 GB RSS over its 7 GB
+admission) while the suite ran.
