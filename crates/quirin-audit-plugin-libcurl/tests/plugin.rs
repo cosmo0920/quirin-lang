@@ -623,21 +623,26 @@ fn the_checker_package_publishes_each_established_binding_pending() {
     let _ = fs::remove_dir_all(user);
 }
 
-/// The preservation gap this card records for W48-PLUGIN-VERDICT-PRESERVATION:
-/// on the checker-binding route the firewall replaces an uncertified `Safe`
-/// claim's reason with its own `QP008` text, so the checker's own reason
-/// (which obligations established the contract) does not reach the
-/// published row. It fails today; the discharging card makes it pass.
+/// W48-PLUGIN-VERDICT-PRESERVATION: on the checker-binding route the
+/// published binding of an uncertified `Safe` claim carries the firewall's
+/// `QP008` reason, and the checker's own reason (which obligations
+/// established the contract) is kept in the binding's `answer` record
+/// (contract spec C11.3), so it reaches the published report.
 #[test]
-#[ignore = "preservation gap (W48-PLUGIN-VERDICT-PRESERVATION): an uncertified Safe claim's own reason is dropped; needs QUIRIN_LIBCURL_SOURCE"]
+#[ignore = "needs QUIRIN_LIBCURL_SOURCE"]
 fn the_checkers_reason_for_an_established_binding_reaches_the_published_row() {
     let user = scratch("gap");
     let load_path =
         write_user_crate(&user, &checker_executable(), &release_files(), &shipped()).unwrap();
     let section = bindings(&load_path);
     for row in section["bindings"].as_array().unwrap() {
-        let reasons = row["reasons"].to_string();
-        assert!(reasons.contains("obligation(s)"), "{reasons}");
+        assert!(
+            row["reasons"].to_string().contains("QP008"),
+            "{}",
+            row["reasons"]
+        );
+        let answer = row["answer"]["reasons"].to_string();
+        assert!(answer.contains("obligation(s)"), "{answer}");
     }
     let _ = fs::remove_dir_all(user);
 }
