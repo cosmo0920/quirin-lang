@@ -51,6 +51,12 @@ use serde_json::{Value, json};
 mod process_fixture;
 use process_fixture::write_executable;
 
+// Card W48-PLUGIN-VERDICT-PRESERVATION: the same plugins traced through the
+// configured route, its checkpoints and their composition (in this binary so
+// it shares its exclusive slot).
+#[path = "plugin_verdict_preservation/checker_route.rs"]
+mod checker_route;
+
 static NEXT: AtomicUsize = AtomicUsize::new(0);
 const PLUGIN: &str = "acme.pool_check";
 

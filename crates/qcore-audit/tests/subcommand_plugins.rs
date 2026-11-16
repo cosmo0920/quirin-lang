@@ -38,6 +38,11 @@ use serde_json::{Value, json};
 #[path = "../../../tests/support/process_fixture.rs"]
 mod process_fixture;
 
+// Card W48-PLUGIN-VERDICT-PRESERVATION: every row's contributors, recovered
+// (in this binary so it shares its exclusive slot).
+#[path = "plugin_verdict_preservation/subcommand_route.rs"]
+mod subcommand_route;
+
 const HOST: &str = env!("CARGO_BIN_EXE_quirin-audit");
 
 // The runner isolates this binary from other test binaries. Also isolate its
