@@ -1,5 +1,7 @@
 # Current status and evidence boundaries
 
+W48-OPENSSL-CONTRACT-PLUGIN (gateway rule 52): OpenSSL's contracts are checked by their own plugin, `quirin-audit openssl`, against the pinned upstream 3.5.5 release (the distribution build Fluent Bit links is 3.5.5-1ubuntu3.7); of 68 bindings, 16 are published Pending (uncertified plugin Safe, never Safe) and 52 Unknown. No analysis route reads these verdicts yet, so the corpus, system and slice figures are unchanged (measured on the card's preparations).
+
 SCHEDULER-DESTROY-MEMBER-STATES (gateway rule 50, base `89fa31d21`, measured tip `7bbea41df`): `mk_http_thread_destroy` states three member-path states and typed refinements of seven of its eight scheduler premises; `mk_thread_destroy` has a helper declaration that rule 50's body reading composes (evidence only). All eight premise names stay Open source truth on the rows resting on the declaration. No status move: system custody 103/341/4, slice 59/340/1 with 4 Pending, corpus 1,081/3,617/6, unchanged; `mk_http_thread_destroy` becomes partly validated in the corpus (its member-path states covered by body evidence `30` and `50`).
 
 List-length bounds (W45-FB-LIST-FINITENESS-PREMISE, gateway rule 48): under the loop-measure selection and a declared list-finiteness premise file, 17 of the Fluent Bit system slice's 87 list-length loops carry a list-length bound fact whose frame the unit establishes; the other 70 carry named refusals (link writes, undefined callees, member-chain heads). A fact, not a verdict: nothing moves.
