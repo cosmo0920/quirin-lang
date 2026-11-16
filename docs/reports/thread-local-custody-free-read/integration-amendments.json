@@ -1,0 +1,47 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "THREAD-LOCAL-CUSTODY-FREE-READ",
+  "base": "0f6e17118",
+  "measured_tip": "7d5315699",
+  "profiles": [],
+  "increment_paragraph": "**THREAD-LOCAL-CUSTODY-FREE-READ** (USER DECISION 2026-11-16, \"Queue both (Recommended)\", option D1 of CURRENT-CONTEXT-NEW-TRIAGE's proposal; gateway rule 54, Lean `QCore.ThreadLocalRead`; [report](../../reports/thread-local-custody-free-read/README.md)). A whole read of a `__thread` / `_Thread_local` object of object-pointer type copied into an automatic local is now a custody-free value on route G, the reading `pthread_getspecific`'s `resource_return_none()` result already gets: the copy drops the destination's binding, no obligation is created or discharged, and every custody use of the value (a release or transfer, in the body or in a caller of a getter returning it) finds no binding and refuses. The reading is admitted per function only when every reference to the object is a copy, an initializer, a `return` or a null test and every reference to a copy is a rebinding or one of those; a write to the object, `&`, a member or dereference, a call actual, a non-pointer object or a shadowing local withholds it, and every alias keeps its unresolved-identity answer. Census before the change (corpus, system, slice at `baseline:497bdeb90`, the user's `current --monkey-linked` at `89fa31d21`): 23 / 12 / 8 / 23 rows name a thread-local object; the reading is admitted only for `flb_engine_evl_get`, `flb_sched_ctx_get` (system) and `flb_context_get`, `flb_cf_context_get` (slice), two configurations each, whose only diagnostics are the read's unresolved identities; librdkafka's readers (non-pointer objects, written objects, a dereferenced copy, a call actual) are withheld, and Monkey builds without `MK_HAVE_C_TLS`. Predicted: system and slice Safe +4 each, corpus and current no move; measured by the integrator.",
+  "status_paragraph": "THREAD-LOCAL-CUSTODY-FREE-READ (gateway rule 54, base `0f6e17118`, code tip `7d5315699`): a whole read of a thread-local pointer object copied into a local is custody-free, as `pthread_getspecific`'s result is. Predicted Unknown -> Safe for `flb_engine_evl_get`, `flb_sched_ctx_get` (system) and `flb_context_get`, `flb_cf_context_get` (slice), two configurations each; corpus and current unchanged. Not yet measured: the integrator's measurement against `rev:0f6e17118` decides the figures.",
+  "ledger": [
+    {
+      "id": "THREAD-LOCAL-CUSTODY-FREE-READ",
+      "operation": "register",
+      "title": "A getter that only returns a thread-local pointer (FLB_TLS_GET with FLB_HAVE_C_TLS) is Unknown",
+      "text": "CURRENT-CONTEXT-NEW-TRIAGE's census (option D1): flb_engine_evl_get and flb_sched_ctx_get (system) and flb_context_get and flb_cf_context_get (slice), two configurations each, are Unknown only because evl = flb_engine_evl; return evl; reports the unread thread-local object and its local copy as unresolved identities, while the pthread_getspecific build of the same getter is Safe (resource_return_none()). DISCHARGE: read a whole read of a thread-local pointer object copied into a local as a custody-free value under fail-closed conditions, with Lean parity and fixtures, and measure.",
+      "source": "docs/reports/thread-local-custody-free-read/README.md",
+      "recorded_by": "THREAD-LOCAL-CUSTODY-FREE-READ"
+    },
+    {
+      "id": "THREAD-LOCAL-CUSTODY-FREE-READ",
+      "operation": "retire",
+      "why": "Discharged by gateway rule 54 (thread_local_read.rs, one Alias arm in legacy_transfer, the unit index's file-scope thread-local ids, the CFG field thread_local_reads; Lean QCore.ThreadLocalRead, 13 audited theorems, decision vectors bound by a shared-vector test; fixtures in tests/thread_local_custody_free_read.rs): where every reference to a thread-local pointer object is a copy, an initializer, a return or a null test and every reference to a copy a rebinding or one of those, the copy drops the destination's binding exactly as a return_none call result does; any write, address, member, dereference, call actual, non-pointer object or shadowing local withholds the reading. Predicted Safe +4 on system and +4 on slice (the four getters), no move on corpus or current; the integrator measures against rev:0f6e17118.",
+      "source": "docs/reports/thread-local-custody-free-read/README.md"
+    },
+    {
+      "id": "THREAD-LOCAL-READ-BORROWED-USES",
+      "operation": "register",
+      "title": "Rule 54 withholds the reading when a thread-local value is handed to a borrowed actual or read through",
+      "text": "Rule 54 admits a thread-local pointer's value only as a copy, an initializer, a return or a null test; a call actual (even a Borrowed position), a member read or dereference through the object or a copy withholds the reading for the whole function, because the body could release, transfer or store through it and the admission does not consult the callee's contract or separate reads from stores. Measured instance: librdkafka's rd_kafka_transport_ssl_cert_verify_cb (rktrans = rd_kafka_curr_transport, then rktrans->rktrans_rkb), which carries 21 other diagnostics. DISCHARGE: admit a Borrowed call position under the callee's contract in force and a member read (not a store) through the value, keeping every release, transfer, Owned position and store refused, with Lean parity, fixtures and a measured statement of the rows it moves.",
+      "source": "docs/reports/thread-local-custody-free-read/README.md",
+      "recorded_by": "THREAD-LOCAL-CUSTODY-FREE-READ"
+    },
+    {
+      "id": "STATIC-POINTER-OBJECT-READ",
+      "operation": "register",
+      "title": "A copy of a static (not thread-local) pointer object into a local keeps the unresolved-identity refusal",
+      "text": "Rule 11h (3) says a static object's value carries no identity, and route G admits it handed straight out, but a copy into a local (c = g_ctx; return c;) still reports the object and the local as unresolved identities. Rule 54 reads only thread-local objects (THREAD-LOCAL-CUSTODY-FREE-READ's scope); its fixture a_static_object_and_a_formal_destination_keep_the_old_answer pins the static case as refused. DISCHARGE: extend rule 54's admission to static-duration pointer objects with the same per-function conditions (no write, address, member, dereference or call actual in the body), with Lean parity, a census of the rows on corpus, system, slice and current, and a measured statement.",
+      "source": "docs/reports/thread-local-custody-free-read/README.md",
+      "recorded_by": "THREAD-LOCAL-CUSTODY-FREE-READ"
+    },
+    {
+      "id": "W46-FLUENT-TLS-RETAINED-RESULT",
+      "operation": "append",
+      "text": "THREAD-LOCAL-CUSTODY-FREE-READ (gateway rule 54): flb_output_thread_instance_get's own body (th_ins = FLB_TLS_GET(local_thread_instance); return th_ins; with FLB_HAVE_C_TLS) is rule 54's shape, so where its unit is analysed the getter derives as custody-free, the return_none reading; src/flb_output_thread.c is in no live selection, so no row moves. The retained-result relation stays open on its own discharge condition.",
+      "source": "docs/reports/thread-local-custody-free-read/README.md"
+    }
+  ]
+}

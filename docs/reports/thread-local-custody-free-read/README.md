@@ -63,3 +63,104 @@ What blocks each today, and what the reading does:
   `_Thread_local` or `*_TLS_*` macro.
 
 No other function on any route reads a thread-local object.
+
+## 2. The reading (gateway rule 54)
+
+[Rule 54](../../agents/rules/54.md) is the authority. In short:
+
+* **Objects** are names every reference of which is to a `VarDecl` Clang
+  marks thread-local (`tls`): a file-scope one, collected once per unit into
+  the unit index (`StatementIndex::thread_local_declarations`, beside rule
+  11o's no-return ids), or a block-scope one; no other declaration of the
+  function may spell the name. **Copies** are automatic locals (no
+  storage-class specifier, not thread-local, not a parameter) receiving an
+  object's value by `=` or an initializer, closed under copying.
+* **Admission, per function** (`thread_local_read::admitted`): every object
+  is an object pointer at every reference (not an array, a record, a function
+  pointer, `volatile`, `_Atomic`); every reference to an object is a whole
+  read consumed as a copy, an initializer, a `return` operand or a null test;
+  every reference to a copy is a rebinding or a whole read in those four
+  positions.
+* **Transfer** (one `Alias` arm in `legacy_transfer::transfer_base`): where
+  admitted, `COPY = OBJECT` and `COPY = COPY'` from a source with no binding
+  drop the destination's binding. This is byte for byte the transfer of a
+  `ResourceReturnMode::None` call result (`pthread_getspecific`). Withheld, or
+  with a bound source, the old alias transfer runs.
+* The admitted sets travel in the CFG (`LegacyCfg::thread_local_reads`,
+  omitted when empty, so every other function's certificate is unchanged);
+  the certificate recheck re-derives them from the source.
+
+Refusals kept (each withholds the reading for the whole function):
+
+| Shape | Why | Fixture |
+|---|---|---|
+| `t = p;`, `t = 0;`, `t++` beside the read | a take-from-thread-local would hide a transfer | `a_write_to_the_thread_local_object_is_refused` |
+| `&t` anywhere in the body | the object's address escapes the reading | `the_address_of_the_thread_local_object_is_refused` |
+| `t_rec.p`, `t_rec->p`, `char t_buf[16]` | not a whole read of a pointer object | `a_member_of_a_thread_local_record_is_refused` |
+| `c = t; q_free(c);`, `q_free(t)`, `q_transfer(c)` | a release or transfer through it | `a_getter_that_also_frees_through_it_is_refused` |
+| `c = t; c->x = 1;`, `c = t; q_observe(c);` | a store through it, a call actual | same |
+| static (not thread-local) object, formal destination | outside the card | `a_static_object_and_a_formal_destination_keep_the_old_answer` |
+| a local shadowing the object's name | the name is not only the object | `a_shadowed_name_is_not_read_as_thread_local` |
+
+A caller that releases a getter's result still answers for it: the getter
+derives as custody-free (`Safe`), and the caller's release of its result finds
+no binding and is refused (`a_caller_that_releases_the_result_still_answers_for_it`).
+No ownership, teardown or retained-result claim is made. The admitted getters
+(`a_plain_thread_local_getter_is_safe`: `=` and initializer forms,
+`_Thread_local`, a typedef'd record pointer, `extern` plus definition, a null
+test with a local-to-local copy, a block-scope thread-local) are `Safe` and
+their certificates recheck.
+
+### Choice of rule id
+
+No rule reads `pthread_getspecific`'s result: it is a provider contract
+(`libc/threads.qv`, `resource_return_none()`), so per the brief the reading
+takes the new id 54 (51 and 52 are reserved for CURRENT-CONTEXT-NEW-TRIAGE
+phase C, 53 for OPENSSL-PROVIDER-PLUGIN; every numeric and lettered id was
+checked: 1-50 with 45 and 47 unused, none at 54). Rule 54 names itself the
+completion of rule 11h (3) for a copy into a local; 11h's text is unchanged.
+
+## 3. Lean
+
+`proof/QCore/ThreadLocalRead.lean`, audited by
+`proof/AuditThreadLocalRead.lean` (13 theorems, no `sorry`, no project
+axiom): the decision table (`decision_vectors_hold`, bound to
+`thread_local_read::DECISION_VECTORS` by the shared-vector test
+`the_lean_decision_vectors_match_the_shared_table`), the exact admission
+(`admitted_exactly_on_a_custody_free_use`), each refusal family
+(`a_write_to_the_object_withholds`, `a_use_through_it_withholds`,
+`a_non_pointer_object_withholds`), and the transfer over bindings and
+obligation states: the admitted copy is the `return_none` reading
+(`the_copy_is_the_return_none_reading`), creates and discharges no obligation
+(`the_copy_changes_no_obligation`), leaves the copy unbound and every other
+binding unchanged, a release of the copy refuses
+(`a_release_of_the_copy_refuses`), returning it escapes nothing
+(`returning_the_copy_escapes_nothing`), and withheld or with a bound source
+the old answer is unchanged (`the_withheld_answer_is_unchanged`,
+`a_bound_source_keeps_the_old_answer`).
+
+## 4. Prediction and measurement
+
+[PREDICTION.md](PREDICTION.md), committed before the semantic commit: system
+`flb_engine_evl_get`, `flb_sched_ctx_get` and slice `flb_context_get`,
+`flb_cf_context_get` (two configurations each) `Unknown -> Safe`, Safe +4 on
+each route; corpus and current no move. The measurement is the integrator's
+(see the hand-back for the command, base `rev:0f6e17118`).
+
+## 5. Concurrent work
+
+The only shared file with CURRENT-CONTEXT-NEW-TRIAGE phase C is
+`legacy_transfer.rs`: this card adds one `Alias` arm before the generic one
+in `transfer_base` and one `TransferContext` field, not the refused-store
+code. No function is touched that the `pthread_getspecific` reading touches
+(that reading is a contract; this one is a source read). Nothing in
+`providers/` changes.
+
+## 6. Follow-ups
+
+Registered through [integration-amendments.json](integration-amendments.json):
+`THREAD-LOCAL-READ-BORROWED-USES` (a copy handed to a borrowed actual or
+read through is withheld) and `STATIC-POINTER-OBJECT-READ` (the same reading
+for a non-thread-local static object). Appended to
+`W46-FLUENT-TLS-RETAINED-RESULT`: `flb_output_thread_instance_get`'s own body
+is this rule's shape; its retained-result relation stays open.
