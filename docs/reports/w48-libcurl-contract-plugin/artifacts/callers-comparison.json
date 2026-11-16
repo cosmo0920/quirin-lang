@@ -1,0 +1,174 @@
+{
+ "schema": "w48-libcurl-callers-comparison/1",
+ "units": {
+  "without": {
+   "lib/librdkafka-2.15.0/src/rdhttp.c": "Unsafe",
+   "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c": "Unsafe"
+  },
+  "with": {
+   "lib/librdkafka-2.15.0/src/rdhttp.c": "Unsafe",
+   "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c": "Unsafe"
+  }
+ },
+ "function_tallies": {
+  "without": {
+   "Safe": 6,
+   "Unknown": 39,
+   "Unsafe": 4
+  },
+  "with": {
+   "Safe": 6,
+   "Unknown": 38,
+   "Pending": 1,
+   "Unsafe": 4
+  }
+ },
+ "rows_moved_or_linked": [
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdhttp.c",
+   "function": "rd_http_get",
+   "without": "Unknown",
+   "with": "Unknown",
+   "plugin_links": [
+    {
+     "callee": "curl_slist_append",
+     "verdict": "Pending"
+    },
+    {
+     "callee": "curl_slist_free_all",
+     "verdict": "Pending"
+    }
+   ],
+   "curl_still_uncontracted": [
+    "Wcurl_easy_setopt_err_CURLSH",
+    "Wcurl_easy_setopt_err_FILE",
+    "Wcurl_easy_setopt_err_cb_data",
+    "Wcurl_easy_setopt_err_chunk_bgn_cb",
+    "Wcurl_easy_setopt_err_chunk_end_cb",
+    "Wcurl_easy_setopt_err_close_socket_cb",
+    "Wcurl_easy_setopt_err_conv_cb",
+    "Wcurl_easy_setopt_err_curl",
+    "Wcurl_easy_setopt_err_curl_httpost",
+    "Wcurl_easy_setopt_err_curl_mimepost",
+    "Wcurl_easy_setopt_err_curl_off_t",
+    "Wcurl_easy_setopt_err_curl_slist",
+    "Wcurl_easy_setopt_err_curlu",
+    "Wcurl_easy_setopt_err_debug_cb",
+    "Wcurl_easy_setopt_err_error_buffer",
+    "Wcurl_easy_setopt_err_fnmatch_cb",
+    "Wcurl_easy_setopt_err_hstsread_cb",
+    "Wcurl_easy_setopt_err_hstswrite_cb",
+    "Wcurl_easy_setopt_err_interleave_cb",
+    "Wcurl_easy_setopt_err_ioctl_cb",
+    "Wcurl_easy_setopt_err_long",
+    "Wcurl_easy_setopt_err_opensocket_cb",
+    "Wcurl_easy_setopt_err_postfields",
+    "Wcurl_easy_setopt_err_prereq_cb",
+    "Wcurl_easy_setopt_err_progress_cb",
+    "Wcurl_easy_setopt_err_read_cb",
+    "Wcurl_easy_setopt_err_resolver_start_callback",
+    "Wcurl_easy_setopt_err_seek_cb",
+    "Wcurl_easy_setopt_err_sockopt_cb",
+    "Wcurl_easy_setopt_err_ssh_hostkey_cb",
+    "Wcurl_easy_setopt_err_ssh_key_cb",
+    "Wcurl_easy_setopt_err_ssl_ctx_cb",
+    "Wcurl_easy_setopt_err_string",
+    "Wcurl_easy_setopt_err_trailer_cb",
+    "Wcurl_easy_setopt_err_write_callback",
+    "Wcurl_easy_setopt_err_xferinfo_cb"
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdhttp.c",
+   "function": "rd_http_get_params_append",
+   "without": "Unknown",
+   "with": "Unknown",
+   "plugin_links": [
+    {
+     "callee": "curl_url",
+     "verdict": "Pending"
+    },
+    {
+     "callee": "curl_url_cleanup",
+     "verdict": "Pending"
+    }
+   ],
+   "curl_still_uncontracted": [
+    "curl_url_get",
+    "curl_url_set"
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdhttp.c",
+   "function": "rd_http_global_init",
+   "without": "Unknown",
+   "with": "Pending",
+   "plugin_links": [
+    {
+     "callee": "curl_global_init",
+     "verdict": "Pending"
+    }
+   ],
+   "curl_still_uncontracted": []
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "rd_kafka_oidc_jwt_bearer_build_request_body",
+   "without": "Unknown",
+   "with": "Unknown",
+   "plugin_links": [
+    {
+     "callee": "curl_easy_escape",
+     "verdict": "Pending"
+    }
+   ],
+   "curl_still_uncontracted": []
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "rd_kafka_oidc_token_client_credentials_refresh_cb",
+   "without": "Unknown",
+   "with": "Unknown",
+   "plugin_links": [
+    {
+     "callee": "curl_slist_free_all",
+     "verdict": "Pending"
+    }
+   ],
+   "curl_still_uncontracted": []
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "rd_kafka_oidc_token_jwt_bearer_refresh_cb",
+   "without": "Unknown",
+   "with": "Unknown",
+   "plugin_links": [
+    {
+     "callee": "curl_slist_append",
+     "verdict": "Pending"
+    },
+    {
+     "callee": "curl_slist_free_all",
+     "verdict": "Pending"
+    }
+   ],
+   "curl_still_uncontracted": []
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "rd_kafka_oidc_token_metadata_azure_imds_refresh_cb",
+   "without": "Unknown",
+   "with": "Unknown",
+   "plugin_links": [
+    {
+     "callee": "curl_slist_free_all",
+     "verdict": "Pending"
+    }
+   ],
+   "curl_still_uncontracted": []
+  }
+ ],
+ "unmatched": [],
+ "rows_to_safe": [],
+ "rows_into_or_out_of_unsafe": []
+}

@@ -1,0 +1,174 @@
+{
+ "bindings": [
+  {
+   "claim": "uncertified-safe",
+   "code": "QP008",
+   "crate": "quirin-provider-libcurl",
+   "execution_profile": "unenforced-legacy",
+   "functions": [
+    "curl_easy_escape"
+   ],
+   "limits": {
+    "memory_bytes": 536870912,
+    "output_bytes": 4194304,
+    "timeout_ms": 30000
+   },
+   "module": "libcurl/libcurl.qv",
+   "module_sha256": "567f4b13d3f30fda8f6b86e59a7ecd3c4b3e19779254d08c9939c53ba5d8f2de",
+   "package": "quirin-provider-libcurl/checkers/libcurl-check",
+   "package_digest": "1d86559582d0b622db4456267629cd30cea203754b1c677a46746b7a609c6ce9",
+   "plugin_id": "libcurl.contract_check",
+   "reasons": [
+    {
+     "code": "plugin-claim-uncertified",
+     "detail": "plugin claim uncertified: `libcurl.contract_check` proposed Safe without a certificate the audit checks independently (QP008: safe result has no evidence)"
+    }
+   ],
+   "task_digest": "26bc19659b03bbbdbd94bf057510da26ca4e6896fb95e0a1f8d573021b9151eb",
+   "verdict": "Pending"
+  },
+  {
+   "claim": "uncertified-safe",
+   "code": "QP008",
+   "crate": "quirin-provider-libcurl",
+   "execution_profile": "unenforced-legacy",
+   "functions": [
+    "curl_global_init"
+   ],
+   "limits": {
+    "memory_bytes": 536870912,
+    "output_bytes": 4194304,
+    "timeout_ms": 30000
+   },
+   "module": "libcurl/libcurl.qv",
+   "module_sha256": "567f4b13d3f30fda8f6b86e59a7ecd3c4b3e19779254d08c9939c53ba5d8f2de",
+   "package": "quirin-provider-libcurl/checkers/libcurl-check",
+   "package_digest": "1d86559582d0b622db4456267629cd30cea203754b1c677a46746b7a609c6ce9",
+   "plugin_id": "libcurl.contract_check",
+   "reasons": [
+    {
+     "code": "plugin-claim-uncertified",
+     "detail": "plugin claim uncertified: `libcurl.contract_check` proposed Safe without a certificate the audit checks independently (QP008: safe result has no evidence)"
+    }
+   ],
+   "task_digest": "c0dadf9587dabc2064332458cc5eb40c2ad89304c2cb7c09d8ad6a5fd6ac8b06",
+   "verdict": "Pending"
+  },
+  {
+   "claim": "uncertified-safe",
+   "code": "QP008",
+   "crate": "quirin-provider-libcurl",
+   "execution_profile": "unenforced-legacy",
+   "functions": [
+    "curl_slist_append"
+   ],
+   "limits": {
+    "memory_bytes": 536870912,
+    "output_bytes": 4194304,
+    "timeout_ms": 30000
+   },
+   "module": "libcurl/libcurl.qv",
+   "module_sha256": "567f4b13d3f30fda8f6b86e59a7ecd3c4b3e19779254d08c9939c53ba5d8f2de",
+   "package": "quirin-provider-libcurl/checkers/libcurl-check",
+   "package_digest": "1d86559582d0b622db4456267629cd30cea203754b1c677a46746b7a609c6ce9",
+   "plugin_id": "libcurl.contract_check",
+   "reasons": [
+    {
+     "code": "plugin-claim-uncertified",
+     "detail": "plugin claim uncertified: `libcurl.contract_check` proposed Safe without a certificate the audit checks independently (QP008: safe result has no evidence)"
+    }
+   ],
+   "task_digest": "547b0590696c56a78a5ad325044ad5f20aa2913468cfccc70296c007559d391e",
+   "verdict": "Pending"
+  },
+  {
+   "claim": "uncertified-safe",
+   "code": "QP008",
+   "crate": "quirin-provider-libcurl",
+   "execution_profile": "unenforced-legacy",
+   "functions": [
+    "curl_slist_free_all"
+   ],
+   "limits": {
+    "memory_bytes": 536870912,
+    "output_bytes": 4194304,
+    "timeout_ms": 30000
+   },
+   "module": "libcurl/libcurl.qv",
+   "module_sha256": "567f4b13d3f30fda8f6b86e59a7ecd3c4b3e19779254d08c9939c53ba5d8f2de",
+   "package": "quirin-provider-libcurl/checkers/libcurl-check",
+   "package_digest": "1d86559582d0b622db4456267629cd30cea203754b1c677a46746b7a609c6ce9",
+   "plugin_id": "libcurl.contract_check",
+   "reasons": [
+    {
+     "code": "plugin-claim-uncertified",
+     "detail": "plugin claim uncertified: `libcurl.contract_check` proposed Safe without a certificate the audit checks independently (QP008: safe result has no evidence)"
+    }
+   ],
+   "task_digest": "db92d36b6f7006db4785f508d377b65b47e33e19cd69a8153a0b67d1469544a0",
+   "verdict": "Pending"
+  },
+  {
+   "claim": "uncertified-safe",
+   "code": "QP008",
+   "crate": "quirin-provider-libcurl",
+   "execution_profile": "unenforced-legacy",
+   "functions": [
+    "curl_url"
+   ],
+   "limits": {
+    "memory_bytes": 536870912,
+    "output_bytes": 4194304,
+    "timeout_ms": 30000
+   },
+   "module": "libcurl/libcurl.qv",
+   "module_sha256": "567f4b13d3f30fda8f6b86e59a7ecd3c4b3e19779254d08c9939c53ba5d8f2de",
+   "package": "quirin-provider-libcurl/checkers/libcurl-check",
+   "package_digest": "1d86559582d0b622db4456267629cd30cea203754b1c677a46746b7a609c6ce9",
+   "plugin_id": "libcurl.contract_check",
+   "reasons": [
+    {
+     "code": "plugin-claim-uncertified",
+     "detail": "plugin claim uncertified: `libcurl.contract_check` proposed Safe without a certificate the audit checks independently (QP008: safe result has no evidence)"
+    }
+   ],
+   "task_digest": "3ee7e113277eb8bb5cb9e63aab194462456780d9835779dca40d7e52c66fdd4d",
+   "verdict": "Pending"
+  },
+  {
+   "claim": "uncertified-safe",
+   "code": "QP008",
+   "crate": "quirin-provider-libcurl",
+   "execution_profile": "unenforced-legacy",
+   "functions": [
+    "curl_url_cleanup"
+   ],
+   "limits": {
+    "memory_bytes": 536870912,
+    "output_bytes": 4194304,
+    "timeout_ms": 30000
+   },
+   "module": "libcurl/libcurl.qv",
+   "module_sha256": "567f4b13d3f30fda8f6b86e59a7ecd3c4b3e19779254d08c9939c53ba5d8f2de",
+   "package": "quirin-provider-libcurl/checkers/libcurl-check",
+   "package_digest": "1d86559582d0b622db4456267629cd30cea203754b1c677a46746b7a609c6ce9",
+   "plugin_id": "libcurl.contract_check",
+   "reasons": [
+    {
+     "code": "plugin-claim-uncertified",
+     "detail": "plugin claim uncertified: `libcurl.contract_check` proposed Safe without a certificate the audit checks independently (QP008: safe result has no evidence)"
+    }
+   ],
+   "task_digest": "b2c89048a2d4c907a3604ef1a50f150f8477962ae9a263708909fc81c1088819",
+   "verdict": "Pending"
+  }
+ ],
+ "counts": {
+  "Pending": 6,
+  "Safe": 0,
+  "Unknown": 0,
+  "Unsafe": 0
+ },
+ "meaning": "checker plugins attached to user contracts (card W45-USER-CONTRACT-PLUGINS, contract spec C11.1): each binding runs once, out of process, as a verified package, on an evidence-v2 task the core derives (one parameter_mode_respected obligation per bound function, bound to the module's text digest); a plugin's Safe counts only with a certificate the registry issued from a trusted-core witness replay, and without one it is Pending (plugin-claim-uncertified); its Unsafe counts, provisionally, only with a witness a trusted-core counterexample checker validated, and without one it is Pending; a crash, timeout, quota breach, protocol error, mismatch or refuted evidence is Unknown; every function that applies a bound contract publishes the join of its own status and the binding's verdict (Safe < Pending < Unknown < Unsafe), and every unit the join of its functions'",
+ "schema_version": 1
+}

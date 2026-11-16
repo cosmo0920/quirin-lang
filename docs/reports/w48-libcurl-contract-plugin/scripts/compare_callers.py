@@ -23,7 +23,6 @@ def rows(side):
 
 before, before_units = rows("without")
 after, after_units = rows("with")
-ORDER = ["Safe", "Pending", "Unknown", "Unsafe"]
 moves, tallies, unmatched = [], {"without": {}, "with": {}}, sorted(
     {f"{k[0]}::{k[1]}" for k in set(before) ^ set(after)}
 )
@@ -61,7 +60,11 @@ record = {
     "rows_moved_or_linked": moves,
     "unmatched": unmatched,
     "rows_to_safe": [m for m in moves if m["with"] == "Safe" and m["without"] != "Safe"],
-    "rows_lowered": [m for m in moves if ORDER.index(m["with"]) < ORDER.index(m["without"])],
+    # A move into or out of Unsafe would be a host-verdict change the plugin
+    # cannot cause; Unknown -> Pending is the contract applying.
+    "rows_into_or_out_of_unsafe": [
+        m for m in moves if (m["with"] == "Unsafe") != (m["without"] == "Unsafe")
+    ],
 }
 out.write_text(json.dumps(record, indent=1) + "\n")
 for move in moves:
@@ -72,4 +75,4 @@ for move in moves:
     )
 print("tallies", tallies)
 print("unmatched", unmatched)
-sys.exit(1 if record["rows_to_safe"] or record["rows_lowered"] or unmatched else 0)
+sys.exit(1 if record["rows_to_safe"] or record["rows_into_or_out_of_unsafe"] or unmatched else 0)
