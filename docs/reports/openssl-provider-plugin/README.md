@@ -278,8 +278,34 @@ force, not ambiguous (18 s on the fixture).
 
 ## 11. Gate
 
-See the hand-back; the card gate's commands, exits, counts and log paths are
-recorded in [`gate/`](gate/) once it has run.
+`python3 scripts/gate_scope.py --base 0f6e17118 --out private/gate-1` on
+`9adf8fa14` (full scope: the diff reaches `qcore-schemas`, `qcore-contract`
+and `qcore-c-gateway`; provider gate yes; record [`gate/gate-1.json`](gate/gate-1.json),
+Clang [`gate/clang-version.txt`](gate/clang-version.txt)):
+
+| Step | Exit | Counts |
+|---|---:|---|
+| submodules, `cargo fmt --all -- --check`, `cargo clippy --all-targets -- -D warnings` | 0, 0, 0 | |
+| Rust suite (`run_test_binaries.py`) | 0 | 639 units, 680 summaries; 9515 passed, 0 failed, 17 ignored, 136 filtered |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| Lean (`check_lean_audits.py`) | 0 | 435 audits (`AuditLibraryVersionRange.lean` among them) |
+| Python suite | 1 | 761 tests, 1 error: `test_gate_slot_queue.Stale.test_a_restarted_waiter_goes_to_the_back_and_the_counter_survives` (a gate-slot queue timing test on a loaded host; this card touches no gate-slot code) |
+| provider package build, verify-all, verify `qcore.libevent` | 0, 0, 0 | five packages |
+| provider tests (`cargo test --manifest-path providers/Cargo.toml --workspace`) | 101 | 36 passed, 1 failed: `conformance/tests/packages.rs` `artifact_dependencies_are_only_schemas_and_serialization` (the dependency pin did not admit a user crate) |
+| provider fmt, provider clippy | 0, 0 | |
+
+The provider failure was a deliberate pin to update: commit `24240a300` admits
+the user crate's dependencies (the schema surface and the SDK, nothing else
+first-party) and counts it apart from the data-only crates. Reruns on `24240a300`: the
+failed Python test alone exit 0 (`private/gate-1-reruns-2/python-queue-test.log`);
+the conformance `packages` binary exit 0, 6 passed, 0 failed, and the
+providers' Python tests exit 0, 26 tests (`private/gate-1-reruns-3/`); the
+SDK's and the OpenSSL crate's tests exit 0, 16 passed, 0 failed
+(`private/logs/ptest.log`); provider clippy exit 0. The whole provider
+workspace was rerun once in the short lane and stopped at its 30-minute
+deadline after 27 passed and 0 failed (`private/gate-1-reruns-2/`): the
+rust-suite slot it belongs in was held behind other cards' audits for over two
+hours, so the full provider-test rerun is left to the landing gate.
 
 ## 12. Follow-ups
 
