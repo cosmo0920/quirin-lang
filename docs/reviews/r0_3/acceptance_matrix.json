@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 964
+  "named_followups": 967
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6809,7 +6809,7 @@
   }
  },
  "workspace": {
-  "cargo_workspace_members": 22,
+  "cargo_workspace_members": 23,
   "cargo_workspace_member_paths": [
    "compiler",
    "crates/gateway-rules/rule-32a-caller-frame-hold",
@@ -6832,6 +6832,7 @@
    "crates/quirin-audit-plugin",
    "crates/quirin-audit-plugin-libevent",
    "crates/quirin-audit-plugin-measure",
+   "crates/quirin-audit-plugin-openssl",
    "crates/quirin-source-analysis"
   ],
   "crates_directory_members": [
@@ -6855,6 +6856,7 @@
    "crates/quirin-audit-plugin",
    "crates/quirin-audit-plugin-libevent",
    "crates/quirin-audit-plugin-measure",
+   "crates/quirin-audit-plugin-openssl",
    "crates/quirin-source-analysis"
   ],
   "provider_workspace_members": 13,
@@ -6876,11 +6878,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Landing integrate/r14 (base main d7a497822; merges W48-PLUGIN-VERDICT-PRESERVATION 7c7295b6e without conflict, then applies its amendments at f414877af). Full landing gate on f414877af (private/integrate-r14/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base main --full --landing through private/toolchain/env.sh: Rust 639 units / 682 summaries, 9525 passed, 0 failed, 17 ignored; fmt, Clippy, both reevaluation examples exit 0; Python 779 tests OK. The scoper's Lean step selected only the 18 modules importing the changed QCore.VerdictSemigroup (no proof root changed), so the full gate's scripts/check_lean_audits.py was run separately on the same tree: 435/435 audits passed, exit 0 (private/integrate-r14/lean-all.log). Provider gate not selected (providers/ unchanged). No verdict moves: the card folds statuses exactly as before and no measurement was taken. COMPOSITION-PLUGIN-FIREWALL-WIRING is retired on the card's argument that a report without plugin bindings is byte-identical by construction, not on a base-versus-tip identity run. The merged figures differ from the card's scoped gate (merged full suite), hence this record. No profile baseline is changed and land.py publish is owed.",
-  "workspace_tests": 9525,
+  "note": "Landing integrate/r15 (base main fb2fb465d; merges W48-OPENSSL-CONTRACT-PLUGIN 95ad115e6, conflicting only in the generated docs/reports/INDEX.md, regenerated with the Lean roots and rule docs). Integrator changes on landing: the card's ignored test tests/obligations.rs::the_row_of_an_uncertified_safe_claim_keeps_the_plugins_reason still failed on top of W48-PLUGIN-VERDICT-PRESERVATION because it looked for the plugin's reason in the row's reason multiset, while that card keeps it in the row's plugin contributor record (contract spec C11.3); the test now checks the contributor record through compose_rows and runs (542bff375). The card's ledger append to W48-PLUGIN-VERDICT-PRESERVATION is declined (that follow-up was retired by integrate/r14 and the reported gap is closed there); the increment sentence calling the test ignored is corrected; the card's README, frozen at its tip, still describes it as ignored. Full landing gate on fd33b9c1d (private/integrate-r15/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base main --full --landing through private/toolchain/env.sh: Rust 644 units / 688 summaries, 9551 passed, 0 failed, 18 ignored; Lean all, 436 audits; fmt, Clippy, provider lock and both reevaluation examples exit 0; provider gate not selected (providers/ unchanged). Python (779 tests) exited 1 on two test_build_matrix_sections checks only, because the committed matrix predates this landing's amendments and Lean count; it is regenerated from this record and the suite rerun is recorded in private/integrate-r15/python-rerun.log. No measured row moves: the card measured corpus 1081/3617/6, system 103/341/4 and slice 59/4/340/1 Safe/Pending/Unknown/Unsafe equal at base and tip on its own preparations (subcommand claims reach no audit row, SUBCOMMAND-CLAIMS-INTO-AUDIT-ROWS). The merged figures differ from the card's own gate (merged suite), hence this record. No profile baseline is changed and land.py publish is owed.",
+  "workspace_tests": 9551,
   "provider_tests": 133,
   "python_evidence_validator_tests": 779,
-  "lean_audits": 435,
+  "lean_audits": 436,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -7141,6 +7143,7 @@
    "AuditObsReordering.lean",
    "AuditObservedWaitComposition.lean",
    "AuditOpCallbacks.lean",
+   "AuditOpensslContractPlugin.lean",
    "AuditOrderedLifetimeReplay.lean",
    "AuditOsEndpointPostState.lean",
    "AuditOutParameterBodySummary.lean",
@@ -7322,9 +7325,9 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "full landing gate: every step exits 0; Lean run as check_lean_audits.py over all 435 audits beside the scoper's 18-module selection",
+  "standing_gate": "full landing gate: every step exits 0 except the Python suite's two stale-matrix checks, cleared by regenerating the matrix from this record (rerun disclosed in the note)",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w48-plugin-verdict-preservation/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w48-openssl-contract-plugin/integration/gate.json)"
  },
  "named_followups": [
   {
