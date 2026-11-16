@@ -164,3 +164,18 @@ read through is withheld) and `STATIC-POINTER-OBJECT-READ` (the same reading
 for a non-thread-local static object). Appended to
 `W46-FLUENT-TLS-RETAINED-RESULT`: `flb_output_thread_instance_get`'s own body
 is this rule's shape; its retained-result relation stays open.
+
+## 7. Gate
+
+Attempt 1 (head `de1070a20`, `private/gate-1/`): fmt, clippy, both probes,
+Lean (435 audits) and Python (761 tests) exit 0; the Rust suite exited 101
+with 9,522 passed, 1 failed, 17 ignored: `qcore-audit::test::configured_cli`
+`one_configured_unit_runs_each_preparation_stage_once` counted two
+`-fsyntax-only` Clang launches where it pins one. Rule 54 consulted the unit
+index for every function, which launches the unit AST even in a unit with no
+thread-local object. Repaired in `1ac1fabbd`: the reading is asked only where
+the unit spells `__thread` or `_Thread_local` before the body's end (as rule
+11h asks only where it spells `volatile`); the test, the card's fixtures,
+`storage_duration_volatile` and `libc_gap_declarations` then passed
+(targeted run). Attempt 2 covers the repaired tip; its result is in the
+hand-back.
