@@ -292,3 +292,11 @@ The one Python failure is the timing-sensitive starvation test the brief
 names; rerun alone it passes (both recorded). The host was shared with
 another card's audit job (gate_slot status: 9.6 GB RSS over its 7 GB
 admission) while the suite ran.
+
+## Phase 3: user decisions on the proposal
+
+User decisions, 2026-11-16, relayed by the integrator and quoted exactly:
+`context_new` → "C: derived → Safe"; D1/D3 → "Queue both (Recommended)".
+D3 is this card's next landable set ([prediction](PREDICTION-D3.md)); C
+follows on the same branch. D1 and D2 (OPENSSL-PROVIDER-PLUGIN) are separate
+cards.
