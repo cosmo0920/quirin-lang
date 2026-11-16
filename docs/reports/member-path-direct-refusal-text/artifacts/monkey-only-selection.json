@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "name": "member-path-direct-refusal-text",
+  "description": "MEMBER-PATH-DIRECT-REFUSAL-TEXT: one chunkio file, so the run analyses the standalone Monkey (Libevent) units of --monkey-database beside it.",
+  "groups": [
+    {"library": "chunkio", "files": ["lib/chunkio/src/cio_utils.c"]}
+  ]
+}

@@ -359,10 +359,14 @@ fn a_direct_call_of_a_helper_reads_its_invocation_first_and_refuses_without_the_
     .expect("the unit analyses");
     let row = &summary_of(&outcome).expect("a summary").functions["caller"];
     assert_ne!(row.status, AnalysisStatus::Safe, "{row:?}");
+    // Card RULE50-CONSUMER-COMPOSITION (MEMBER-PATH-HELPER-AT-A-CALL): the
+    // helper's invocation is read first and refuses on the open set; the
+    // direct call no longer refuses `member-path-direct` (whose text card
+    // MEMBER-PATH-DIRECT-REFUSAL-TEXT names), and never names a hand-off.
+    let diagnostics = format!("{:?}", row.diagnostics);
     assert!(
-        format!("{:?}", row.diagnostics).contains("callback-member-open")
-            && !format!("{:?}", row.diagnostics).contains("member-path-direct"),
-        "{:?}",
-        row.diagnostics
+        diagnostics.contains("callback-member-open") && !diagnostics.contains("member-path-direct"),
+        "{diagnostics}"
     );
+    assert!(!diagnostics.contains("hand-off"), "{diagnostics}");
 }

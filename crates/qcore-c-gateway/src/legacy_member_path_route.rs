@@ -55,10 +55,12 @@ pub const STALE: &str = "member-path-stale";
 pub const UNDECIDED: &str = "member-path-undecided";
 /// A path no declaration in force states.
 pub const UNSTATED: &str = "member-path-unstated";
-/// A direct call of a member-path declaration that also hands its formal
-/// to a callback (a hand-off): its states are read only at a callback
-/// invocation. Card FB-TEARDOWN-DESTROY-DECLARATIONS reads every other
-/// direct call ([`direct_operands`], [`apply_direct`]).
+/// A direct call of a member-path declaration that is not plain: one that
+/// also hands its formal to a callback (a hand-off; its states are read
+/// only at a callback invocation) or, a helper destroyer (rule 50), states
+/// member invocations beside them. The refusal's text names which (card
+/// MEMBER-PATH-DIRECT-REFUSAL-TEXT). Card FB-TEARDOWN-DESTROY-DECLARATIONS
+/// reads every other direct call ([`direct_operands`], [`apply_direct`]).
 pub const DIRECT: &str = "member-path-direct";
 /// Card RULE50-CONSUMER-COMPOSITION (gateway rule 51): the helper a stale
 /// path names is not composed at a consumer's direct call.

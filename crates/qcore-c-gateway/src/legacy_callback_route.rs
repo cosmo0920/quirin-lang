@@ -284,6 +284,24 @@ fn helper_destroyer(declared: &RetainingContract) -> bool {
         && declared.constructed.is_empty()
 }
 
+/// Card MEMBER-PATH-DIRECT-REFUSAL-TEXT (rule 30): the reason a direct call
+/// of a member-path declaration refuses `member-path-direct`, naming the
+/// clause that stands beside its states. The loader admits only a hand-off
+/// or (a helper destroyer, rule 50) member invocations of the released
+/// formal; any other clause is named generically.
+fn member_path_direct_reason(declared: &RetainingContract) -> &'static str {
+    if declared.handoff.is_some() {
+        "it states what it leaves at member paths of a formal's object beside a \
+         hand-off, which only a callback invocation composes"
+    } else if !declared.callbacks.is_empty() {
+        "it states what it leaves at member paths of a formal's object beside \
+         member invocations, which no direct call composes"
+    } else {
+        "it states what it leaves at member paths of a formal's object beside a \
+         clause other than a plain predicate, which no direct call composes"
+    }
+}
+
 /// Card SCHEDULER-DESTROY-MEMBER-STATES (rule 50): `name`'s declaration as a
 /// helper rule 30's body reading may compose, `None` when it is not one: its
 /// member-path states bind one formal with no guard, it states nothing else
@@ -1222,8 +1240,7 @@ impl Parser<'_> {
             {
                 return Err(refusal(
                     function,
-                    "it states what it leaves at member paths of a formal's object beside a \
-                     hand-off, which only a callback invocation composes",
+                    member_path_direct_reason(declaration),
                     super::member_path_route::DIRECT,
                 ));
             }
