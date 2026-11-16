@@ -158,15 +158,29 @@ fn a_usage_error_fails_the_run() {
 #[test]
 fn a_timeout_makes_the_run_unknown_and_joins_no_claim() {
     let directory = support::scratch("timeout");
-    let clang = support::clang();
-    // A 1 ms quota: the plugin cannot answer before the host stops it.
+    // A "Clang" that never answers: the plugin's first step blocks, so the
+    // host's 300 ms quota is breached however fast the machine is. The
+    // script is written by a separate process (no descriptor of ours is open
+    // on it when it is executed: the ETXTBSY shape of constraint 16).
+    let stalled = directory.join("stalled-clang");
+    let status = std::process::Command::new("sh")
+        .args([
+            "-c",
+            "printf '#!/bin/sh\\nexec sleep 60\\n' > \"$1\" && chmod 755 \"$1\"",
+            "sh",
+            stalled.to_str().unwrap(),
+        ])
+        .status()
+        .unwrap();
+    assert!(status.success());
     let (code, report) = host(
         &directory,
-        &["--timeout-ms", "1"],
-        &["check", "--clang", &clang],
+        &["--timeout-ms", "300"],
+        &["check", "--clang", stalled.to_str().unwrap()],
     );
     assert_eq!(code, ExitCode::FAILURE);
     assert_eq!(report["run"]["outcome"], "failed");
+    assert_eq!(report["run"]["code"], "plugin-timeout");
     assert_eq!(report["verdict"], "Unknown");
     assert!(rows(&report).iter().all(|row| row["verdict"] == "Unknown"));
 }

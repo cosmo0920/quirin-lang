@@ -153,7 +153,7 @@ route (rule 10h, C11.2): `classify_claim` and the reasoned join
 | `Safe`, check record by reference | `Pending` (`plugin-claim-uncertified`, QP016) |
 | `Unknown` with its reason | `Unknown` (`incomplete-obligation-coverage`), the plugin's reason in the row's detail |
 | pin mismatch / absent tree | 68 rows `Unknown`, diagnostic `openssl-pin-mismatch` |
-| tarball not the pinned one, usage error, 1 ms timeout | run failed, report `Unknown`, no claim joined |
+| tarball not the pinned one, usage error, a 300 ms timeout (a stalled `--clang`) | run failed, report `Unknown`, no claim joined |
 | a host `Unsafe` row for the artifact | stays `Unsafe` |
 
 **Gap.** For an uncertified `Safe` (or `Unsafe`) claim the row's reason
@@ -209,7 +209,7 @@ MEASURE-RESULT
 | `crates/quirin-audit-plugin/tests/dependencies.rs`, `compiler/tests/workspace_layering.rs` | (amended) | the plugin's normal closure is the SDK and `qcore-schemas`; `qcore-audit` is a dev-dependency only |
 
 `scripts/run_test_binaries.py` runs `quirin-audit-plugin-openssl::test::host`
-in its `EXCLUSIVE` phase (process plugins under declared quotas), and
+in its `EXCLUSIVE` phase (process plugins under declared quotas, a 300 ms timeout row), and
 `scripts/gate_scope_walkers.json` declares the layering test's new literal.
 
 ## 8. Gate

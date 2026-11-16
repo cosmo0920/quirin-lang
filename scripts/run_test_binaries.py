@@ -170,7 +170,7 @@ EXCLUSIVE: dict[str, str] = {
     ),
     "quirin-audit-plugin-openssl::test::host": (
         "the OpenSSL contract plugin through the host route under declared "
-        "quotas, a 1 ms timeout row among them (card "
+        "quotas, a 300 ms timeout row among them (card "
         "W48-OPENSSL-CONTRACT-PLUGIN)"
     ),
     "qcore-compiler::test::w3_evidence_v2": (
