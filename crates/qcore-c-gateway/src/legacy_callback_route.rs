@@ -244,6 +244,46 @@ fn member_path_plain(declared: &RetainingContract) -> bool {
         && declared.constructed.is_empty()
 }
 
+/// Card RULE50-CONSUMER-COMPOSITION (rule 51, MEMBER-PATH-HELPER-AT-A-CALL):
+/// whether a declaration is a helper destroyer as the loader admits it: its
+/// member-path states bind one formal it releases, unguarded, beside nothing
+/// but member invocations of that formal and its custody contract, with no
+/// hand-off.
+fn helper_destroyer(declared: &RetainingContract) -> bool {
+    let Some(first) = declared.member_paths.first() else {
+        return false;
+    };
+    declared.handoff.is_none()
+        && !declared.callbacks.is_empty()
+        && declared.member_paths.iter().all(|state| {
+            state.parameter == first.parameter
+                && state.guard.is_none()
+                && state.parameter_guard.is_none()
+                && state.helper.is_none()
+        })
+        && matches!(
+            declared.contract.parameters.get(first.parameter),
+            Some(qcore_schemas::contract::ResourceParameterMode::Released { .. })
+        )
+        && declared.callbacks.iter().all(|clause| {
+            matches!(
+                clause,
+                CallbackClause::MemberInvoked {
+                    object: MemberObject::Parameter { index },
+                    ..
+                } if *index == first.parameter
+            )
+        })
+        && declared.retentions.is_empty()
+        && declared.resets.is_empty()
+        && declared.slot_moves.is_empty()
+        && declared.derived_outs.is_empty()
+        && declared.references.is_empty()
+        && declared.discriminant.is_none()
+        && declared.arms.is_empty()
+        && declared.constructed.is_empty()
+}
+
 /// Card SCHEDULER-DESTROY-MEMBER-STATES (rule 50): `name`'s declaration as a
 /// helper rule 30's body reading may compose, `None` when it is not one: its
 /// member-path states bind one formal with no guard, it states nothing else
@@ -1034,6 +1074,113 @@ impl Parser<'_> {
         }
     }
 
+    /// Card RULE50-CONSUMER-COMPOSITION (gateway rule 51): at a direct call
+    /// of `function`, the helper each of its stale paths names
+    /// (`resource_member_helper`), composed. The helper's declaration must be
+    /// in force here as a helper destroyer (not withdrawn, naming no helper
+    /// itself: one frame), and each member invocation it states must read a
+    /// closed empty set over the run's member facts, so it invokes nothing;
+    /// looking it up makes the calling row rest on it, so the run's fold
+    /// checks its members for that row (rule 12n). `Err` with the call's
+    /// refusal for a helper that is missing, not a helper destroyer, open,
+    /// non-empty or read without the run's facts.
+    fn composed_helpers(
+        &self,
+        function: &str,
+        declaration: &RetainingContract,
+    ) -> Result<Vec<super::member_path_route::HelperOperands>, String> {
+        let mut out = Vec::new();
+        for state in &declaration.member_paths {
+            let Some(name) = &state.helper else {
+                continue;
+            };
+            let place = state.member.spelling();
+            let refuse = |detail: String, reason: &str| Err(refusal(function, &detail, reason));
+            let declared = match self.contracts.retaining_contract(name) {
+                Some(declared) if self.contracts.contract(name).is_none() => declared,
+                _ => {
+                    return refuse(
+                        format!(
+                            "the helper `{name}` that takes `{place}`'s object has no helper \
+                             declaration in force"
+                        ),
+                        super::member_path_route::HELPER,
+                    );
+                }
+            };
+            if !helper_destroyer(declared)
+                || declared.member_paths_withdrawn
+                || declared.callbacks_withdrawn
+            {
+                return refuse(
+                    format!(
+                        "the helper `{name}` that takes `{place}`'s object is not a helper \
+                         destroyer in force here"
+                    ),
+                    super::member_path_route::HELPER,
+                );
+            }
+            let Some(run) = crate::member_run_facts::installed() else {
+                return refuse(
+                    format!(
+                        "the helper `{name}`'s member invocations are decided only over the \
+                         run's set, which this route does not read"
+                    ),
+                    super::member_path_route::HELPER,
+                );
+            };
+            for clause in &declared.callbacks {
+                let CallbackClause::MemberInvoked { member, .. } = clause else {
+                    continue;
+                };
+                let spelled = member.spelling();
+                let set = run
+                    .normalise(&spelled)
+                    .map_err(|why| {
+                        format!("`{spelled}` is not a member the run's records define ({why})")
+                    })
+                    .and_then(|_| {
+                        run.closure(&spelled)
+                            .map_err(|open| open.into_iter().take(3).collect::<Vec<_>>().join("; "))
+                    });
+                match set {
+                    Err(why) => {
+                        return refuse(
+                            format!(
+                                "the callbacks the helper `{name}` invokes from `{spelled}` are \
+                                 not a closed set of functions ({why})"
+                            ),
+                            MEMBER_OPEN,
+                        );
+                    }
+                    Ok(set) if !set.is_empty() => {
+                        return refuse(
+                            format!(
+                                "the helper `{name}` invokes `{spelled}`, whose run set is not \
+                                 empty ({}): its candidates are not composed at a consumer",
+                                set.into_iter().collect::<Vec<_>>().join(", ")
+                            ),
+                            super::member_path_route::HELPER,
+                        );
+                    }
+                    Ok(_) => {}
+                }
+            }
+            // The row rests on the helper although its body does not spell
+            // it: noted as relied, so its dependencies list the helper and
+            // the run's fold and `run_set_members` read its members.
+            crate::contract_dependencies::relied(name);
+            out.push(super::member_path_route::HelperOperands {
+                helper: name.clone(),
+                position: state.parameter,
+                path: state.member.path.clone(),
+                binder: declared.member_paths[0].parameter,
+                states: declared.member_paths.clone(),
+            });
+        }
+        Ok(out)
+    }
+
     /// Hook 1 (rules 13u–13x): decide the synchronous invocations and table
     /// dispatches of a call to `function`, and read its registry clauses.
     /// `Err` with the call's refusal.
@@ -1063,8 +1210,16 @@ impl Parser<'_> {
         // direct call of any other member-path declaration reads its states
         // once (`member_path_route::apply_direct`); withdrawn in this unit,
         // it has no states in force and refuses.
+        // Card RULE50-CONSUMER-COMPOSITION (MEMBER-PATH-HELPER-AT-A-CALL): a
+        // helper destroyer's direct call is read in two steps, its member
+        // invocations first (below, as every member invocation of a direct
+        // call), then its states.
+        let mut helper_states = None;
         if !declaration.member_paths.is_empty() {
-            if declaration.handoff.is_some() || !member_path_plain(declaration) {
+            let helper_destroyer = helper_destroyer(declaration);
+            if declaration.handoff.is_some()
+                || !(member_path_plain(declaration) || helper_destroyer)
+            {
                 return Err(refusal(
                     function,
                     "it states what it leaves at member paths of a formal's object beside a \
@@ -1103,20 +1258,34 @@ impl Parser<'_> {
                 });
                 guard.decide(value, constant)
             };
-            return Ok(Some(Operands {
-                uses: Vec::new(),
-                texts: Vec::new(),
-                owned: BTreeMap::new(),
-                arms: None,
-                constructed: None,
-                member_uses: Vec::new(),
-                member_paths: Vec::new(),
-                direct_member_paths: super::member_path_route::direct_operands(
-                    &declaration.member_paths,
-                    actual,
-                    &decide,
-                ),
-            }));
+            let mut direct = super::member_path_route::direct_operands(
+                &declaration.member_paths,
+                actual,
+                &decide,
+            );
+            // Card RULE50-CONSUMER-COMPOSITION (rule 51): the helper a stale
+            // path names is composed after the declaration's own states.
+            let helpers = self.composed_helpers(function, declaration)?;
+            for operands in &mut direct {
+                operands.helpers = helpers
+                    .iter()
+                    .filter(|helper| helper.position == operands.position)
+                    .cloned()
+                    .collect();
+            }
+            if !helper_destroyer {
+                return Ok(Some(Operands {
+                    uses: Vec::new(),
+                    texts: Vec::new(),
+                    owned: BTreeMap::new(),
+                    arms: None,
+                    constructed: None,
+                    member_uses: Vec::new(),
+                    member_paths: Vec::new(),
+                    direct_member_paths: direct,
+                }));
+            }
+            helper_states = Some(direct);
         }
         if declaration.callbacks_withdrawn {
             return Err(refusal(
@@ -1504,12 +1673,18 @@ impl Parser<'_> {
                 }
             }
         }
+        // Card RULE50-CONSUMER-COMPOSITION (MEMBER-PATH-HELPER-AT-A-CALL): the
+        // helper destroyer's states, applied after its decided invocations.
+        if let Some(direct) = helper_states {
+            operands.direct_member_paths = direct;
+        }
         Ok((!operands.uses.is_empty()
             || !operands.owned.is_empty()
             || operands.arms.is_some()
             || operands.constructed.is_some()
             || !operands.member_uses.is_empty()
-            || !operands.member_paths.is_empty())
+            || !operands.member_paths.is_empty()
+            || !operands.direct_member_paths.is_empty())
         .then_some(operands))
     }
 
@@ -1657,10 +1832,6 @@ pub(super) fn apply(
     // before the release's arms; a linked path some candidate states is
     // decided by their composition with the arms, every other path by the
     // arms as before.
-    // Card FB-TEARDOWN-DESTROY-DECLARATIONS (rule 30 at a direct call).
-    for direct in &operands.direct_member_paths {
-        super::member_path_route::apply_direct(function, line, callee, direct, state, diagnostics);
-    }
     for member_paths in &operands.member_paths {
         super::member_path_route::apply(
             function,
@@ -1671,6 +1842,12 @@ pub(super) fn apply(
             state,
             diagnostics,
         );
+    }
+    // Card FB-TEARDOWN-DESTROY-DECLARATIONS (rule 30 at a direct call). Card
+    // RULE50-CONSUMER-COMPOSITION: after the call's own member invocations
+    // (a helper destroyer's, MEMBER-PATH-HELPER-AT-A-CALL), which run first.
+    for direct in &operands.direct_member_paths {
+        super::member_path_route::apply_direct(function, line, callee, direct, state, diagnostics);
     }
     if let Some(arms) = &operands.arms {
         apply_arms(function, line, callee, arms, state, diagnostics);
@@ -2569,8 +2746,20 @@ pub(crate) fn settle(
                 let pointee =
                     |node: &serde_json::Value| unit.member_facts().record_of_node(node, true);
                 let callee = |callee: &str| unit.function(callee);
-                let helper =
-                    |helper: &str| member_path_helper(contracts, helper, &pointee, &callee);
+                // Card RULE50-CONSUMER-COMPOSITION (rule 51): a declaration
+                // naming its helper (`resource_member_helper`, at most one)
+                // composes only that helper, so evidence `50` establishes
+                // the take through the helper its consumers compose.
+                let named = declaration
+                    .member_paths
+                    .iter()
+                    .find_map(|state| state.helper.as_deref());
+                let helper = |helper: &str| {
+                    if named.is_some_and(|named| named != helper) {
+                        return None;
+                    }
+                    member_path_helper(contracts, helper, &pointee, &callee)
+                };
                 crate::member_path_check::validates_composing(
                     function,
                     &declaration.member_paths,

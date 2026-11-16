@@ -486,9 +486,150 @@ pub(super) fn declaration(
             state: clause.state,
             guard: clause.guard.clone(),
             parameter_guard,
+            helper: None,
         });
     }
     Ok(states)
+}
+
+/// Card **RULE50-CONSUMER-COMPOSITION** (gateway rule 51, §C04.19.6): the
+/// predicate naming the unit helper that takes a `#stale` path's object.
+pub(super) const MEMBER_HELPER: &str = "resource_member_helper";
+
+/// `resource_member_helper(P, TAG.PATH, H)` as written.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(super) struct WrittenHelper {
+    /// The binder's formal.
+    pub parameter: String,
+    pub member: CallbackMember,
+    /// The helper's function name.
+    pub helper: String,
+    /// The clause, for diagnostics.
+    pub text: String,
+}
+
+/// Read `resource_member_helper(P, TAG.PATH, H)`; `None` for any other
+/// predicate.
+///
+/// # Errors
+/// A malformed clause of this predicate.
+pub(super) fn helper_clause(expression: &str) -> Result<Option<WrittenHelper>, String> {
+    let Some(rest) = expression.trim().strip_prefix(MEMBER_HELPER) else {
+        return Ok(None);
+    };
+    let malformed = || format!("malformed `{MEMBER_HELPER}` clause `{expression}`");
+    let inner = rest
+        .trim_start()
+        .strip_prefix('(')
+        .and_then(|inner| inner.strip_suffix(')'))
+        .ok_or_else(malformed)?;
+    let arguments = inner.split(',').map(str::trim).collect::<Vec<_>>();
+    let [parameter, member, helper] = arguments.as_slice() else {
+        return Err(malformed());
+    };
+    let mut segments = member.split('.').map(str::to_owned).collect::<Vec<_>>();
+    if !is_identifier(parameter)
+        || !is_identifier(helper)
+        || segments.len() < 2
+        || segments.iter().any(|segment| !is_identifier(segment))
+    {
+        return Err(malformed());
+    }
+    let tag = segments.remove(0);
+    Ok(Some(WrittenHelper {
+        parameter: (*parameter).to_owned(),
+        member: CallbackMember {
+            tag,
+            path: segments.join("."),
+        },
+        helper: (*helper).to_owned(),
+        text: expression.trim().to_owned(),
+    }))
+}
+
+/// Card **RULE50-CONSUMER-COMPOSITION** (gateway rule 51): attach each
+/// helper clause to the state it names. Total-or-reject: at most one clause
+/// per declaration, on a declaration with no callback clause and no hand-off
+/// (a helper destroyer never names a helper: a deeper frame is not composed),
+/// naming a formal the declaration releases and a path it states exactly
+/// `#stale`, unguarded and not a set, and a helper other than the declaration
+/// itself.
+///
+/// # Errors
+/// The first clause that does not stand.
+pub(super) fn attach_helpers(
+    written: &[WrittenHelper],
+    states: &mut [MemberPathState],
+    contract: &ResourceFunctionContract,
+    names: &BTreeMap<&str, usize>,
+    own_name: &str,
+    callbacks: bool,
+    handed: bool,
+) -> Result<(), String> {
+    if written.len() > 1 {
+        return Err(format!(
+            "member-helper-duplicate: at most one `{MEMBER_HELPER}` clause per declaration"
+        ));
+    }
+    for clause in written {
+        if callbacks || handed {
+            return Err(format!(
+                "member-helper-placement: `{}`: a helper is named only by a declaration with no \
+                 callback clause and no hand-off",
+                clause.text
+            ));
+        }
+        if clause.helper == own_name {
+            return Err(format!(
+                "member-helper-placement: `{}`: a declaration does not name itself",
+                clause.text
+            ));
+        }
+        let at = names
+            .get(clause.parameter.as_str())
+            .copied()
+            .ok_or_else(|| {
+                format!(
+                    "member-helper-binder: `{}`: `{}` names no parameter",
+                    clause.text, clause.parameter
+                )
+            })?;
+        if !matches!(
+            contract.parameters.get(at),
+            Some(ResourceParameterMode::Released { .. })
+        ) {
+            return Err(format!(
+                "member-helper-binder: `{}`: the formal is one the declaration releases",
+                clause.text
+            ));
+        }
+        let state = states
+            .iter_mut()
+            .find(|state| state.parameter == at && state.member == clause.member)
+            .ok_or_else(|| {
+                format!(
+                    "member-helper-path: `{}`: the declaration states no path `{}` of `{}`",
+                    clause.text,
+                    clause.member.spelling(),
+                    clause.parameter
+                )
+            })?;
+        if state.state
+            != (PathState {
+                fate: Fate::Stale,
+                maybe: false,
+            })
+            || state.guard.is_some()
+            || state.parameter_guard.is_some()
+        {
+            return Err(format!(
+                "member-helper-path: `{}`: the path is stated `#stale`, unguarded and not a set",
+                clause.text
+            ));
+        }
+        state.helper = Some(clause.helper.clone());
+    }
+    Ok(())
 }
 
 #[cfg(test)]

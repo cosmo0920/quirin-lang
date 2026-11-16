@@ -71,14 +71,14 @@ inductive ClauseKind where
   | parameter | result | borrowedResult | referenceResult | container | countedUser
   | retention | guard | holderReset | slotMove | outDerived | reference | exitClass
   | premise | variadicTail | noReturn | callback | callbackChecked | arm | memberState
-  | unreadable | lifetimeProtocol
+  | unreadable | lifetimeProtocol | memberHelper
   deriving DecidableEq, Repr
 
 def allKinds : List ClauseKind :=
   [.parameter, .result, .borrowedResult, .referenceResult, .container, .countedUser,
    .retention, .guard, .holderReset, .slotMove, .outDerived, .reference, .exitClass,
    .premise, .variadicTail, .noReturn, .callback, .callbackChecked, .arm, .memberState,
-   .unreadable, .lifetimeProtocol]
+   .unreadable, .lifetimeProtocol, .memberHelper]
 
 /-- The clauses of the custody projection. -/
 def ClauseKind.custody : ClauseKind → Bool
@@ -95,7 +95,9 @@ adds `r14e`, the result-state check of a constructor's body
 (`QCore.OpCallbacks`); card OP-CALLBACK-MEMBER-PATH-RELEASE adds `r30`, the
 member-path check of a callback candidate's body (`QCore.MemberPathRelease`);
 card SCHEDULER-DESTROY-MEMBER-STATES adds `r50`, the take of a stale path's
-object through a composed unit helper (`QCore.MemberValueHelper`). -/
+object through a composed unit helper (`QCore.MemberValueHelper`); card
+RULE50-CONSUMER-COMPOSITION has `r50` also cover the clause naming that
+helper (`memberHelper`, rule 51), which nothing else covers. -/
 inductive Evidence where
   | w4 | entry | r11r | r12w | r13a | r13c | r13d | r13m | r13y | r12o | r14e | r30 | r50
   deriving DecidableEq, Repr
@@ -114,7 +116,7 @@ def covers : Evidence → ClauseKind → Bool
   | .r12o, k => k == .arm
   | .r14e, k => k == .memberState
   | .r30, k => k == .memberState
-  | .r50, k => k == .memberState
+  | .r50, k => k == .memberState || k == .memberHelper
 
 /-- The structural checks. -/
 def Evidence.structural : Evidence → Bool
@@ -133,7 +135,7 @@ def reads : Evidence → List ClauseKind
   | .r12o => [.arm]
   | .r14e => [.memberState]
   | .r30 => [.memberState]
-  | .r50 => [.memberState]
+  | .r50 => [.memberState, .memberHelper]
 
 /-- A structural check's evidence never covers a clause of another kind. -/
 theorem a_structural_check_covers_only_what_it_reads (e : Evidence) (k : ClauseKind)
@@ -377,6 +379,7 @@ def ClauseKind.spelling : ClauseKind → String
   | .memberState => "memberState"
   | .unreadable => "unreadable"
   | .lifetimeProtocol => "lifetimeProtocol"
+  | .memberHelper => "memberHelper"
 
 def Evidence.spelling : Evidence → String
   | .w4 => "W4"
@@ -407,7 +410,7 @@ def coverageVectors : List (String × List String) := [
   ("12o", ["arm"]),
   ("14e", ["memberState"]),
   ("30", ["memberState"]),
-  ("50", ["memberState"])
+  ("50", ["memberState", "memberHelper"])
 ]
 
 def allEvidence : List Evidence :=
