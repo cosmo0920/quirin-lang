@@ -55,11 +55,16 @@ pub const STALE: &str = "member-path-stale";
 pub const UNDECIDED: &str = "member-path-undecided";
 /// A path no declaration in force states.
 pub const UNSTATED: &str = "member-path-unstated";
-/// A direct call of a member-path declaration that also hands its formal
-/// to a callback (a hand-off): its states are read only at a callback
-/// invocation. Card FB-TEARDOWN-DESTROY-DECLARATIONS reads every other
-/// direct call ([`direct_operands`], [`apply_direct`]).
+/// A direct call of a member-path declaration that is not plain: one that
+/// also hands its formal to a callback (a hand-off; its states are read
+/// only at a callback invocation) or, a helper destroyer (rule 50), states
+/// member invocations beside them. The refusal's text names which (card
+/// MEMBER-PATH-DIRECT-REFUSAL-TEXT). Card FB-TEARDOWN-DESTROY-DECLARATIONS
+/// reads every other direct call ([`direct_operands`], [`apply_direct`]).
 pub const DIRECT: &str = "member-path-direct";
+/// Card RULE50-CONSUMER-COMPOSITION (gateway rule 51): the helper a stale
+/// path names is not composed at a consumer's direct call.
+pub const HELPER: &str = "member-path-helper";
 
 /// The member-path reading of one invocation at one parameter position.
 #[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
@@ -298,6 +303,28 @@ pub struct DirectOperands {
     pub position: usize,
     /// The stated paths with their state at this call.
     pub states: Vec<MemberPathState>,
+    /// Card RULE50-CONSUMER-COMPOSITION (rule 51): the helpers the stale
+    /// paths at this position name, composed after the states. Omitted when
+    /// empty.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub helpers: Vec<HelperOperands>,
+}
+
+/// Card RULE50-CONSUMER-COMPOSITION (gateway rule 51): one helper composed at
+/// a consumer's direct call of the destroyer that names it: its member
+/// invocations already decided (a closed empty run set, invoking nothing),
+/// its states read at the object the caller linked at the stale path.
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+pub struct HelperOperands {
+    pub helper: String,
+    /// The destroyer's formal the stale path is below.
+    pub position: usize,
+    /// The stale path, below the destroyer's record.
+    pub path: String,
+    /// The helper's formal its states bind.
+    pub binder: usize,
+    /// The helper's states.
+    pub states: Vec<MemberPathState>,
 }
 
 /// The direct-call readings of a call to a member-path declaration: one per
@@ -329,6 +356,7 @@ pub(super) fn direct_operands(
                     state
                 })
                 .collect(),
+            helpers: Vec::new(),
         })
         .collect()
 }
@@ -367,6 +395,97 @@ pub(super) fn apply_direct(
     let Some(pointer) = state.pointers.get(name).cloned() else {
         return;
     };
+    // Card RULE50-CONSUMER-COMPOSITION (rule 51): each composed helper's
+    // states at the one object the caller linked at its stale path, read as
+    // a direct call of the helper on that object reads them (its member
+    // invocations invoked nothing). A path the helper leaves `#kept` stays;
+    // a taken or gone object needs one live object linked there.
+    let single = !pointer.unknown && pointer.targets.len() == 1;
+    for helper in &operands.helpers {
+        for site in &pointer.targets {
+            let Some(parents) = state
+                .field_links
+                .get(site)
+                .and_then(|fields| fields.get(&helper.path))
+                .cloned()
+            else {
+                continue;
+            };
+            for parent in &parents {
+                let Some(fields) = state.field_links.get(parent).cloned() else {
+                    continue;
+                };
+                for (field, children) in fields {
+                    let stated = state_at(&helper.states, helper.binder, &field);
+                    if stated
+                        == Some(PathState {
+                            fate: Fate::Kept,
+                            maybe: false,
+                        })
+                    {
+                        continue;
+                    }
+                    let place = format!("{name}->{}->{field}", helper.path);
+                    let live = children.iter().all(|child| {
+                        state.resources.get(child).copied().unwrap_or(0) & super::LIVE != 0
+                    });
+                    let (reason, detail) = match compose_direct(stated) {
+                        DirectOutcome::Stays => continue,
+                        outcome @ (DirectOutcome::Gone | DirectOutcome::Taken)
+                            if single && parents.len() == 1 && live =>
+                        {
+                            for child in &children {
+                                let status = state.resources.get(child).copied().unwrap_or(0);
+                                state.resources.insert(
+                                    *child,
+                                    (status & !(super::LIVE | super::CONTAINED)) | super::RELEASED,
+                                );
+                            }
+                            if outcome == DirectOutcome::Gone {
+                                if let Some(links) = state.field_links.get_mut(parent) {
+                                    links.remove(&field);
+                                    if links.is_empty() {
+                                        state.field_links.remove(parent);
+                                    }
+                                }
+                            } else {
+                                state.member_path_taken.extend(children.iter().copied());
+                            }
+                            continue;
+                        }
+                        DirectOutcome::Gone | DirectOutcome::Taken => (
+                            UNDECIDED,
+                            format!(
+                                "`{place}` does not link one live object the helper `{}` takes",
+                                helper.helper
+                            ),
+                        ),
+                        DirectOutcome::Refused(Refusal::Unstated) => (
+                            UNSTATED,
+                            format!(
+                                "no state of the helper `{}` names `{place}` as one path",
+                                helper.helper
+                            ),
+                        ),
+                        DirectOutcome::Refused(_) => (
+                            UNDECIDED,
+                            format!(
+                                "the helper `{}` does not decide whether `{place}` is taken",
+                                helper.helper
+                            ),
+                        ),
+                    };
+                    refuse(
+                        function,
+                        line,
+                        refusal(callee, &detail, reason),
+                        state,
+                        diagnostics,
+                    );
+                }
+            }
+        }
+    }
     for site in &pointer.targets {
         let Some(fields) = state.field_links.get(site).cloned() else {
             continue;

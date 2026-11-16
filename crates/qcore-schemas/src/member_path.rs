@@ -135,6 +135,14 @@ pub struct MemberPathState {
     /// absent, so every declaration before the card serializes as it did.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub parameter_guard: Option<ParameterGuard>,
+    /// Card **RULE50-CONSUMER-COMPOSITION** (gateway rule 51):
+    /// `resource_member_helper(P, TAG.PATH, H)` on an unguarded `#stale`
+    /// state of a released formal: the object the path held is taken inside
+    /// the call by the unit helper `H`, whose declaration a consumer composes
+    /// at a direct call. Omitted when absent, so every declaration before the
+    /// card serializes as it did.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub helper: Option<String>,
 }
 
 /// The comparison of a parameter guard: rule 12w's operators and `!=`.
@@ -708,6 +716,7 @@ mod tests {
             },
             guard: None,
             parameter_guard: None,
+            helper: None,
         }];
         assert_eq!(
             state_at(&states, 2, "u.l.p").map(|s| s.fate),

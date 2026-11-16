@@ -39,7 +39,12 @@ Phases:
    first.
 4. **Exclusive phase.** Binaries named in ``EXCLUSIVE`` (constraint 16's
    load-sensitive rows and their siblings) run one at a time with nothing else
-   of this runner's running, exactly as ``cargo test`` would run them.
+   of this runner's running, exactly as ``cargo test`` would run them.  Under a
+   ``gate_slot.py rust-suite`` slot (``QUIRIN_GATE_HELD``) the phase also closes
+   the gate's ``build`` class (card GATE-SLOT-BUILDS-UNSLOTTED): other cards'
+   fmt, Clippy and cargo builds wait while it runs, and the builds in flight
+   end first (at most ``QUIRIN_GATE_BUILD_DRAIN``, 30 min; past that the phase
+   runs beside them and ``summary.json``'s ``build_exclusion`` names them).
 
 Fail-closed: a unit passes only if it exited 0, printed at least one libtest
 summary, and every summary it printed is ``ok`` with zero failures.  A missing
@@ -101,6 +106,7 @@ import threading
 import time
 from typing import Callable, Iterable, Optional, Sequence
 
+import gate_slot
 import test_link_config
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -260,10 +266,15 @@ def safe_name(uid: str) -> str:
 class Runner:
     """Runs units; the parallel phase under a job limit, then exclusives alone."""
 
-    def __init__(self, log_dir: Path, jobs: int, echo: Callable[[str], None] = print):
+    def __init__(self, log_dir: Path, jobs: int, echo: Callable[[str], None] = print,
+                 build_closure: Optional[Callable[[], Optional[gate_slot.BuildClosure]]] = None):
         self.log_dir = log_dir
         self.jobs = jobs
         self.echo = echo
+        # Card GATE-SLOT-BUILDS-UNSLOTTED: a factory for the gate's build
+        # closure around each EXCLUSIVE phase (None: not under a suite slot).
+        self.build_closure = build_closure
+        self.build_exclusion: list[dict] = []
         self._lock = threading.Lock()
         self._live: set[subprocess.Popen] = set()
         self._stopping = False
@@ -355,13 +366,22 @@ class Runner:
             raise
         pool.shutdown(wait=True)
         # Every parallel unit has finished (the pool is shut down) before any
-        # exclusive unit starts, and exclusive units run strictly one at a time.
+        # exclusive unit starts, and exclusive units run strictly one at a time,
+        # with the gate's build class closed (other cards' builds kept out).
+        closure = self.build_closure() if exclusive and self.build_closure else None
+        if closure is not None:
+            record = closure.close()
+            record["units"] = [unit.uid for unit in exclusive]
+            self.build_exclusion.append(record)
         try:
             for unit in exclusive:
                 results.append(self.run_unit(unit))
         except BaseException:
             self.terminate()
             raise
+        finally:
+            if closure is not None:
+                closure.reopen()
         return results
 
 
@@ -884,6 +904,13 @@ def write_summary(
         # whole members of "packages" (the scoped gate's test-only selection).
         "targets": list(targets) if targets is not None else None,
         "phases_seconds": phases,
+        # Card GATE-SLOT-BUILDS-UNSLOTTED: the gate's build closure around each
+        # EXCLUSIVE phase; null when the run was not under a rust-suite slot
+        # (nothing was closed), else one record per phase (drained: false
+        # names the builds the phase ran beside).
+        "build_exclusion": (runner.build_exclusion
+                            if runner is not None and runner.build_closure is not None
+                            else None),
         "problems": list(problems),
         "totals": total,
         "units_run": len(results),
@@ -963,8 +990,22 @@ def parse_args(argv: Sequence[str]) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
+def build_closure_factory() -> Optional[Callable[[], Optional[gate_slot.BuildClosure]]]:
+    """The EXCLUSIVE phase's build closure factory when this run holds a
+    rust-suite slot, else None; a malformed ``QUIRIN_GATE_BUILD_DRAIN`` is
+    refused here, before anything is built."""
+    if gate_slot.exclusive_phase_closure(os.environ) is None:
+        return None
+    return lambda: gate_slot.exclusive_phase_closure(os.environ)
+
+
 def main(argv: Optional[Sequence[str]] = None) -> int:
     args = parse_args(list(sys.argv[1:] if argv is None else argv))
+    try:
+        args.build_closure = build_closure_factory()
+    except gate_slot.Refusal as error:
+        print(f"error: {error}", file=sys.stderr)
+        return 2
     config = test_link_config.cargo_config_args(args.link)
     link = {"mode": args.link, "cargo_config": config}
     # The configuration goes first so that every cargo command below -- the
@@ -1090,7 +1131,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         flush=True,
     )
 
-    runner = Runner(log_dir, args.jobs)
+    runner = Runner(log_dir, args.jobs, build_closure=args.build_closure)
     t0 = time.monotonic()
     try:
         results = runner.run(units)
@@ -1145,7 +1186,7 @@ def run_batched(args: argparse.Namespace, cargo: str, extra: Sequence[str], log_
     print(f"batches: {len(groups)} of up to {args.batch_size} target names "
           f"({len(expected)} test executables), then {len(examples)} examples to compile",
           flush=True)
-    runner = Runner(log_dir, args.jobs)
+    runner = Runner(log_dir, args.jobs, build_closure=args.build_closure)
     phases: dict[str, float] = {"build": 0.0, "capture": 0.0, "run": 0.0}
     problems: list[str] = []
     results: list[Result] = []

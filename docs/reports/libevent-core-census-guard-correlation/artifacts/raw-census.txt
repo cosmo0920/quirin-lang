@@ -1,0 +1,47 @@
+third_party/libevent/buffer.c: raw 73 names, refusals [ArmDepthDisagreement]
+  correlation decides: 103 names, 30 added, 0 raw names not in it
+  + evbuffer_add_cb
+  + evbuffer_add_file
+  + evbuffer_add_file_segment
+  + evbuffer_add_printf
+  + evbuffer_add_reference
+  + evbuffer_add_reference_with_offset
+  + evbuffer_add_vprintf
+  + evbuffer_cb_clear_flags
+  + evbuffer_cb_set_flags
+  + evbuffer_cb_suspend
+  + evbuffer_cb_unsuspend
+  + evbuffer_file_segment_add_cleanup_cb
+  + evbuffer_file_segment_free
+  + evbuffer_file_segment_materialize
+  + evbuffer_file_segment_new
+  + evbuffer_find
+  + evbuffer_freeze
+  + evbuffer_get_callbacks_
+  + evbuffer_peek
+  + evbuffer_ptr_memcmp
+  + evbuffer_ptr_set
+  + evbuffer_ptr_subtract
+  + evbuffer_remove_cb
+  + evbuffer_remove_cb_entry
+  + evbuffer_search
+  + evbuffer_search_range
+  + evbuffer_setcb
+  + evbuffer_unfreeze
+  + evbuffer_write
+  + get_page_size
+third_party/libevent/bufferevent_sock.c: raw 8 names, refusals [ArmDepthDisagreement]
+  correlation decides: 21 names, 13 added, 0 raw names not in it
+  + be_socket_ctrl
+  + be_socket_destruct
+  + be_socket_disable
+  + be_socket_enable
+  + be_socket_flush
+  + be_socket_setfd
+  + bufferevent_base_set
+  + bufferevent_connect_getaddrinfo_cb
+  + bufferevent_new
+  + bufferevent_priority_set
+  + bufferevent_socket_connect_hostname
+  + bufferevent_socket_connect_hostname_hints
+  + bufferevent_socket_get_dns_error

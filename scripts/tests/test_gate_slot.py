@@ -291,7 +291,8 @@ class Accounting(unittest.TestCase):
 
     def test_unknown_class_refuses(self):
         with self.assertRaises(slot_mod.Refusal):
-            self.gate().acquire("build", timeout=0.1)
+            # "build" became a class (card GATE-SLOT-BUILDS-UNSLOTTED).
+            self.gate().acquire("compile", timeout=0.1)
 
 
 class CommandLine(unittest.TestCase):

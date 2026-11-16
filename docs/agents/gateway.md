@@ -11035,8 +11035,11 @@ safety claim and no validation of the detach representation premise.
     A pointer store at or below the link member the declaration's own unlink
     names inside a followed helper no longer ends the reading; in the
     declaration's own frame it still contradicts. A consumer never composes
-    a helper destroyer at a call (`member-path-direct`, a missing
-    candidate). Declared in `qcore-provider-libevent`
+    a helper destroyer as a callback candidate (a missing candidate); card
+    RULE50-CONSUMER-COMPOSITION (rule [51](#constraint-51)) reads one at a
+    direct call, and composes the helper a destroyer names
+    (`resource_member_helper`) at its consumers' direct calls; a declaration
+    naming its helper admits only that helper here. Declared in `qcore-provider-libevent`
     (`monkey/intrusive_list.qv`): `mk_thread_destroy` (the helper:
     `cb_destroy` invoked, `callee |-> #stale`, `caller` / `data |-> #kept`,
     released) and `mk_http_thread_destroy` (`parent |-> #stale`, `session` /
@@ -11044,8 +11047,8 @@ safety claim and no validation of the detach representation premise.
     refinements of seven of its eight premises). **Do not** compose a call in
     a deeper frame, a non-`static` or indirect callee, a helper whose
     invocation set is not closed and empty over the run, or a value that may
-    have escaped; read the composition at a consumer; or drop the callback
-    footprint premise on the strength of a composition no consumer folds.
+    have escaped; or read a composition at a consumer except through rule
+    51's named helper.
     `QCore.MemberValueHelper` (`the_slot_abstracts_the_path`,
     `established_iff_taken_once`, `the_reading_is_the_abstract_run`,
     `an_escape_never_establishes`, `an_uncomposed_callee_never_establishes`,
@@ -11056,6 +11059,83 @@ safety claim and no validation of the detach representation premise.
     `one_identity_refuses_the_second_end`); `member_path_check`'s unit tests,
     `tests/member_value_helper.rs`;
     [report](../reports/scheduler-destroy-member-states/README.md).
+
+<a id="constraint-51"></a>
+
+51. **A destroyer's named helper is composed at its consumers, and a helper
+    destroyer is read at a direct call.** Card RULE50-CONSUMER-COMPOSITION,
+    folding in MEMBER-PATH-HELPER-AT-A-CALL (contract specification C04.19.6
+    amended, grammar G05d). Loader `crates/qcore-contract/src/contract_member_path.rs`
+    (`helper_clause`, `attach_helpers`; `MemberPathState::helper`): at most
+    one `resource_member_helper(P, TAG.PATH, H)` per declaration. It must
+    name a formal the declaration releases, a path that formal states
+    `#stale` (unguarded, not a set), and a helper `H` other than the
+    declaration itself. The declaration must state no callback clause and no
+    hand-off, so a helper destroyer never names a helper. Anything else
+    rejects the module.
+
+    *At a consumer.* `legacy_callback_route::composed_helpers` and
+    `member_path_route::apply_direct` (`HelperOperands`). At a direct call of
+    such a destroyer, `H`'s declaration must be in force as a helper
+    destroyer, not withdrawn in the unit, not in the function map. Each member
+    invocation it states must read a closed empty set over the run's member
+    facts (rule 12n), and then it invokes nothing. Otherwise the call refuses:
+    a missing or non-helper declaration, a non-empty set and a route without
+    the run's facts refuse `member-path-helper`, and an open set refuses
+    `callback-member-open`. Looking `H` up makes the row rest on it, so the
+    run's fold checks `H`'s members for the row and demotes it unless their
+    run sets are closed (`run_set_members` lists them). After the
+    destroyer's own states, `H`'s states are read at the one live object the
+    caller linked at the stale path, as C04.19.6 reads a direct call: `#stale`
+    takes it (a later release refuses `member-path-double-release`),
+    `#released` ends it, `#kept` and unnamed paths leave it, and anything
+    that is not one live object refuses. The tracker holds no link below a
+    linked object today (such a store refuses as an indirect access), so this
+    step decides nothing in a measured row.
+
+    *A helper destroyer at a direct call.* `callback_operands` and the
+    reordered `apply`. A declaration whose states stand beside member
+    invocations of the released formal no longer refuses `member-path-direct`.
+    Its member invocations are decided first, exactly as every direct call's
+    (C04.19.3). Its states are then applied (C04.19.6's direct call) after
+    the invocations' candidates. A callback candidate of such a declaration
+    is still missing: C04.19.7 composes no declaration with states of its
+    own.
+
+    *Rule 50's evidence.* In the destroyer's own unit, the body reading
+    admits only the named helper (`member_path_helper` behind the lookup), so
+    evidence `50` means that the take was established through `H`. `50`
+    covers the clause (`ClauseKind::MemberHelper`, `memberHelper` in
+    `QCore.BodyClauseStanding`), and nothing else does.
+
+    Declared in `qcore-provider-libevent` (`monkey/intrusive_list.qv`):
+    `mk_http_thread_destroy` names `mk_thread_destroy` for `parent`. Its
+    `scheduler_callback_footprint` premise is removed, because the
+    composition and the fold now check `mk_thread.cb_destroy` for every row
+    resting on it.
+
+    **Do not:**
+    * compose a helper whose set is not closed and empty, or without the
+      run's facts;
+    * compose a helper reached through a helper (a deeper frame);
+    * read the composition at a callback invocation;
+    * count evidence `50` for a clause whose take went through another
+      helper;
+    * drop a premise the composition and the fold do not check.
+
+    Lean: `QCore.DestroyerHelperComposition`
+    (`composed_only_over_closed_empty_sets`, `an_open_set_refuses`,
+    `a_non_empty_set_refuses`, `no_run_facts_refuses`,
+    `a_deeper_frame_refuses`, `a_refused_invocation_applies_no_state`,
+    `the_composition_carries_the_footprint`,
+    `a_decided_invocation_is_kept_by_the_fold`,
+    `a_release_after_the_helpers_take_refuses`,
+    `a_take_needs_a_live_object`, `kept_leaves_the_object`,
+    `evidence_only_through_the_named_helper`,
+    `the_schedulers_case_composes`). Tests:
+    `tests/rule50_consumer_composition.rs` and
+    `tests/member_value_helper.rs`. See the
+    [report](../reports/rule50-consumer-composition/README.md).
 
 <a id="constraint-53"></a>
 

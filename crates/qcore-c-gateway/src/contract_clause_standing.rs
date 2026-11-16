@@ -128,11 +128,14 @@ pub enum ClauseKind {
     Unreadable,
     /// S3 condition bindings, scoped prerequisites and registered footprints.
     LifetimeProtocol,
+    /// Card RULE50-CONSUMER-COMPOSITION (rule 51): `resource_member_helper`,
+    /// the helper named for a stale path; covered only by rule 50's take.
+    MemberHelper,
 }
 
 impl ClauseKind {
     /// Every kind, in declaration order.
-    pub const ALL: [Self; 22] = [
+    pub const ALL: [Self; 23] = [
         Self::Parameter,
         Self::Result,
         Self::BorrowedResult,
@@ -155,6 +158,7 @@ impl ClauseKind {
         Self::MemberState,
         Self::Unreadable,
         Self::LifetimeProtocol,
+        Self::MemberHelper,
     ];
 
     /// The spelling the shared vectors use (`QCore.BodyClauseStanding`).
@@ -183,6 +187,7 @@ impl ClauseKind {
             Self::MemberState => "memberState",
             Self::Unreadable => "unreadable",
             Self::LifetimeProtocol => "lifetimeProtocol",
+            Self::MemberHelper => "memberHelper",
         }
     }
 
@@ -235,7 +240,9 @@ pub fn covers(evidence: &str, kind: ClauseKind) -> bool {
         // Card OP-CALLBACK-MEMBER-PATH-RELEASE (rule 30).
         "30" => kind == ClauseKind::MemberState,
         // Card SCHEDULER-DESTROY-MEMBER-STATES (rule 50).
-        "50" => kind == ClauseKind::MemberState,
+        // Card RULE50-CONSUMER-COMPOSITION (rule 51): and the helper clause,
+        // recorded only where the take was established through that helper.
+        "50" => matches!(kind, ClauseKind::MemberState | ClauseKind::MemberHelper),
         _ => false,
     }
 }
@@ -646,6 +653,17 @@ pub fn declaration_clauses(environment: &ResourceContracts, name: &str) -> Vec<C
                 state.state.spelling()
             ),
         ));
+        // Card RULE50-CONSUMER-COMPOSITION (rule 51): the helper it names.
+        if let Some(helper) = &state.helper {
+            clauses.push(Clause::new(
+                ClauseKind::MemberHelper,
+                format!(
+                    "resource_member_helper(#{}, {}, {helper})",
+                    state.parameter,
+                    state.member.spelling()
+                ),
+            ));
+        }
     }
     clauses
 }

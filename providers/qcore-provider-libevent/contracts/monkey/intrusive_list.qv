@@ -165,9 +165,11 @@ contract {
 // check leaves the states a declared assumption (C04.19.6: a released
 // binder's states validate only where the body clears the member).
 //
-// A consumer never reads this declaration at a direct call or as a callback
-// candidate: its states stand beside a member invocation, which only rule
-// 50's body reading composes (`member-path-direct`, a missing candidate).
+// Card RULE50-CONSUMER-COMPOSITION (MEMBER-PATH-HELPER-AT-A-CALL, gateway
+// rule 51): a direct call reads the member invocation first (rule 12n, over
+// the run's set: closed and empty, it invokes nothing; open, it refuses),
+// then the states (C04.19.6's direct call). A callback candidate of it is
+// still missing (C04.19.7 composes no declaration with states of its own).
 //
 // The pin's identity records both definition sites the pin tool reads: the
 // libco body above and the `ucontext` variant of
@@ -236,13 +238,8 @@ contract {
 // hypothesis names (hypotheses.json) and are Open source truth:
 //
 // * the parent embedding (`exact_parent_embedding`);
-// * the callback footprint (`callback_footprint`): read from source, the only
-//   inserters into `sched->threads` and `threads_purge` are
-//   `mk_http_thread_create` and `mk_http_thread_purge`, creation passes a
-//   NULL `cb_destroy` to `mk_thread_new`, and no other Monkey source writes
-//   it; the premise is that it is still NULL, or a returning callback that
-//   releases and mutates neither the saved successor, nor its parent, nor
-//   any other list element. No neutral-callback reading is made;
+// * the callback footprint (`callback_footprint`): removed by card
+//   RULE50-CONSUMER-COMPOSITION, see below;
 // * the params slot (`tls_params_owned`, `tls_api_success`);
 // * the coroutine (`callee_live`, `suspended_coroutines`);
 // * the borrowed session chain (`borrowed_chain_live`);
@@ -283,7 +280,8 @@ contract {
 //    body reading composes that declaration: the object `parent` held is
 //    released by the helper, its `callee` deleted and left stale, and its
 //    `cb_destroy` invoked over the run's set (closed and empty: nothing).
-//    Evidence only: no consumer of this declaration reads the composition.
+//    Evidence only: no consumer of this declaration reads the composition
+//    (until card RULE50-CONSUMER-COMPOSITION, below).
 // 3. Typed refinements of the premises no member form states, in the style
 //    of PLUGIN-PREMISE-DECOMPOSITION: one `quant proposition` per atom, each
 //    introduced by `resource_lifecycle_v1`, attached by
@@ -292,16 +290,31 @@ contract {
 //    original premise keeps its name and is still published with every row
 //    resting on this declaration; the texts of the parent embedding, the
 //    callback footprint, the coroutine and the borrowed chain are narrowed
-//    to what no symbolic clause states. The callback footprint is kept: the
-//    run's closed empty set of `mk_thread.cb_destroy` is read only by rule
-//    50's composition, and no consumer of this declaration folds it
-//    (rule 12n), so the premise stays the consumer's.
+//    to what no symbolic clause states. The callback footprint was kept
+//    then: the run's closed empty set of `mk_thread.cb_destroy` was read only
+//    by rule 50's composition.
+//
+// Card RULE50-CONSUMER-COMPOSITION (gateway rule 51, contract spec
+// C04.19.6): `resource_member_helper(mth, mk_http_thread.parent,
+// mk_thread_destroy)` names the helper that takes the stale `parent`'s
+// object. Rule 50's body reading covers the clause (evidence `50`) only
+// where it establishes the take through exactly that helper (it did in
+// `mk_server/mk_http_thread.c` before this card). A consumer's direct call
+// composes, after this declaration's own states, the helper's member
+// invocation (`mk_thread.cb_destroy`, decided over the run's set: closed
+// and empty, it invokes nothing; open, non-empty or without the run's facts,
+// the call refuses) and its states at the object linked at `parent`. The
+// row then rests on `mk_thread_destroy` too, so the run's fold (rule 12n)
+// demotes it unless the run's set is closed. That is what the callback
+// footprint premise stated (`th->cb_destroy` is NULL, or a callback with a
+// bounded footprint), so it is removed: every row resting on this
+// declaration now carries the run's check of `mk_thread.cb_destroy`, under
+// rule 12n's P-CG22-MEMBER-CLOSED-WORLD, instead of the premise.
 
 extern fn mk_http_thread_destroy(mth: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
     requires resource_premise(scheduler_exact_parent_embedding, "mth is the mk_http_thread at MK_THREAD_DATA of the one live mk_thread allocation mth->parent names, which nothing but this call releases, so that freeing it ends the storage of mth (scheduler decomposition exact_parent_embedding and parent_live; established at creation by mk_http_thread_create, not by this body); that the call takes the object mth->parent names and leaves the member designating it is the state parent |-> #stale");
-    requires resource_premise(scheduler_callback_footprint, "th->cb_destroy (th = mth->parent) is NULL, as mk_http_thread_create sets it through mk_thread_new and no other Monkey source writes it, or a returning callback whose transitive effects release and mutate neither the saved successor of a caller's iteration, nor its parent, nor any other list element, coroutine or borrowed object (scheduler decomposition callback_footprint); no neutral-callback reading is made, and the run's closed empty set that rule 50 composes is not folded for this declaration's consumers");
     requires resource_premise(scheduler_tls_params_owned, "the mk_http_thread_libco_params key of the current thread holds NULL or one live allocation it alone owns, disjoint from every caller-tracked object; pthread_getspecific and pthread_setspecific of that key succeed, so the freed params are no longer reachable from the key (scheduler decomposition tls_params_owned and tls_api_success)");
     requires resource_premise(scheduler_callee_live, "th->callee (th = mth->parent), which mk_thread_destroy deletes, is a coroutine co_delete accepts, created for this thread, suspended and not co_active, with no concurrent resume or deletion (scheduler decomposition callee_live and suspended_coroutines)");
     requires resource_premise(scheduler_borrowed_chain_live, "mth->session is live where it is read, and its channel and that channel's event are live borrowed objects this call neither releases nor ends; the call writes one scalar through them, event->type (scheduler decomposition borrowed_chain_live); that the session itself is not taken is the state session |-> #kept");
@@ -363,6 +376,7 @@ contract {
     ensures normal resource_unpublished(mth, _head);
     ensures normal resource_released(mth, nonnull);
     ensures normal resource_return_none();
+    ensures normal resource_member_helper(mth, mk_http_thread.parent, mk_thread_destroy);
     quant live #mth: mk_http_thread.parent |-> #stale;
     quant live #mth: mk_http_thread.session |-> #kept;
     quant live #mth: mk_http_thread.request |-> #kept;

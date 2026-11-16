@@ -155,6 +155,7 @@ import QCore.DescriptorCells
 import QCore.DescriptorCustody
 import QCore.DescriptorNativeObservation
 import QCore.DescriptorObservation
+import QCore.DestroyerHelperComposition
 import QCore.DetachSameItem
 import QCore.DialectTargetIdentity
 import QCore.DisjointFootprint

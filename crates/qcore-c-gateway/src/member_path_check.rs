@@ -479,6 +479,7 @@ mod tests {
             state: PathState { fate, maybe },
             guard: None,
             parameter_guard: None,
+            helper: None,
         }
     }
 

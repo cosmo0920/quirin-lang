@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "profile_directory": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a4e7bae9ed2b2649b/private/runs/base-3/libevent-core",
+  "checkout": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a4e7bae9ed2b2649b/private/tip-src/third_party/libevent",
+  "compile_database": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a4e7bae9ed2b2649b/private/libevent-prep/libevent-clang-build/compile_commands.json",
+  "libraries": [
+    "libevent-core"
+  ],
+  "compile_target": {
+    "object_prefix": "CMakeFiles/event_core_static.dir/"
+  },
+  "report": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a4e7bae9ed2b2649b/private/runs/base-3/libevent-core-audit.json"
+}

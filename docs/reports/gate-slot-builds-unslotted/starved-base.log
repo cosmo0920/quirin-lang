@@ -1,0 +1,37 @@
+test_a_drain_gives_up_reopens_admission_releases_and_names_the_holder (test_gate_slot_starvation.Drain.test_a_drain_gives_up_reopens_admission_releases_and_names_the_holder) ... FAIL
+test_holders_a_draining_suite_and_a_waiter (test_gate_slot_starvation.Status.test_holders_a_draining_suite_and_a_waiter) ... FAIL
+test_a_tree_without_io_is_stopped_reported_and_only_its_own_processes_signalled (test_gate_slot_starvation.Deadlines.test_a_tree_without_io_is_stopped_reported_and_only_its_own_processes_signalled) ... FAIL
+test_an_unreaped_zombie_does_not_hide_a_stall (test_gate_slot_starvation.Deadlines.test_an_unreaped_zombie_does_not_hide_a_stall) ... ok
+
+======================================================================
+FAIL: test_a_drain_gives_up_reopens_admission_releases_and_names_the_holder (test_gate_slot_starvation.Drain.test_a_drain_gives_up_reopens_admission_releases_and_names_the_holder)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/claude-1000/-home-cosmo-Documents-GitHub-quirin-lang/751d230e-f4ac-4284-b958-93e1a582a322/scratchpad/base/scripts/tests/test_gate_slot_starvation.py", line 462, in test_a_drain_gives_up_reopens_admission_releases_and_names_the_holder
+    self.assertGreater(blocker["during_wait"]["cpu_seconds"], 0.2, "the holder spins")
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0.04 not greater than 0.2 : the holder spins
+
+======================================================================
+FAIL: test_holders_a_draining_suite_and_a_waiter (test_gate_slot_starvation.Status.test_holders_a_draining_suite_and_a_waiter)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/claude-1000/-home-cosmo-Documents-GitHub-quirin-lang/751d230e-f4ac-4284-b958-93e1a582a322/scratchpad/base/scripts/tests/test_gate_slot_starvation.py", line 599, in test_holders_a_draining_suite_and_a_waiter
+    self.assertGreater(held["over_interval"]["cpu_seconds"], 0.2)
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0.04 not greater than 0.2
+
+======================================================================
+FAIL: test_a_tree_without_io_is_stopped_reported_and_only_its_own_processes_signalled (test_gate_slot_starvation.Deadlines.test_a_tree_without_io_is_stopped_reported_and_only_its_own_processes_signalled)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/claude-1000/-home-cosmo-Documents-GitHub-quirin-lang/751d230e-f4ac-4284-b958-93e1a582a322/scratchpad/base/scripts/tests/test_gate_slot_starvation.py", line 255, in test_a_tree_without_io_is_stopped_reported_and_only_its_own_processes_signalled
+    self.assertGreater(breach["cpu_seconds_since_progress"], 0.3, "the grandchild spun")
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0.06 not greater than 0.3 : the grandchild spun
+
+----------------------------------------------------------------------
+Ran 4 tests in 10.903s
+
+FAILED (failures=3)
+exit 1 (cpu 31, 15 competing spinners)
