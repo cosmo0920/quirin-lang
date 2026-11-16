@@ -1,0 +1,53 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "RULE50-CONSUMER-COMPOSITION",
+  "base": "0f6e17118",
+  "measured_tip": "8e00d7493",
+  "profiles": [],
+  "increment_paragraph": "**RULE50-CONSUMER-COMPOSITION** (folding in MEMBER-PATH-HELPER-AT-A-CALL; gateway rule 51, rule 50 amended, contract specification §C04.19.6 amended, G05d, Lean `QCore.DestroyerHelperComposition` and `memberHelper` in `QCore.BodyClauseStanding`; [report](../../reports/rule50-consumer-composition/README.md)). A destroyer may name the unit helper that takes one unguarded `#stale` path of the formal it releases, `resource_member_helper(P, TAG.PATH, H)`, because a consumer in another unit cannot read the destroyer's body. Rule 50 admits only that helper, and its evidence `50` covers the clause. At a consumer's direct call the helper is composed after the destroyer's own states: its member invocations first, each a closed empty set over the run's facts (an open set, a non-empty set, no run facts or a missing helper refuses), then its states at the object linked at the path. The row relies on the helper, so the run's fold and `run_set_members` read its members. A helper destroyer's own direct call now reads its invocations, then its states, in place of `member-path-direct`; as a callback candidate it is still missing. `mk_http_thread_destroy` names `mk_thread_destroy` for `parent` and drops `scheduler_callback_footprint`. The provider lock was resynced (87 clauses) and the declaration re-pinned at `046accf6` and `66910c10`. Measured on the corpus route only (worktree-private preparation, base `0f6e17118` against tip `8e00d7493`): 1,081 / 3,617 / 6 on both sides, 0 moves, declared `match`. Six rows change content only: the four Safe scheduler rows and `mk_sched_drop_connection` gain `mk_thread_destroy` and `mk_thread.cb_destroy` and lose the premise atom; `mk_http_thread_destroy`'s own row trades `member-path-direct` for `unresolved resource identity th`. System and slice were not measured: they analyse no Monkey unit. The scoped gate passed 14 of 14 steps (9,517 Rust tests, 435 Lean audits, 761 Python tests, 133 provider tests).",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "RULE50-CONSUMER-COMPOSITION",
+      "operation": "retire",
+      "why": "Card RULE50-CONSUMER-COMPOSITION (gateway rule 51, C04.19.6 amended, G05d, Lean QCore.DestroyerHelperComposition): mk_http_thread_destroy now states resource_member_helper(mth, mk_http_thread.parent, mk_thread_destroy), which rule 50 covers (evidence 50) only through that helper. A consumer's direct call composes, after the destroyer's own states, mk_thread_destroy's mk_thread.cb_destroy invocation (closed empty over the run's facts, otherwise refused) and its states at the object linked at parent, and the row rests on mk_thread_destroy, so the run's fold checks the member. scheduler_callback_footprint is removed. Measured on the corpus route (base 0f6e17118, tip 8e00d7493): no status move (1,081 / 3,617 / 6). sched_thread_cleanup, mk_sched_threads_destroy_conn, mk_sched_threads_purge, mk_sched_threads_destroy_all (Safe) and mk_sched_drop_connection gain mk_thread_destroy and run_set_members mk_thread.cb_destroy and lose the premise atom (27 to 26 hypothesis atoms); the fold kept every Safe row.",
+      "source": "docs/reports/rule50-consumer-composition/README.md"
+    },
+    {
+      "id": "MEMBER-PATH-HELPER-AT-A-CALL",
+      "operation": "retire",
+      "why": "Card RULE50-CONSUMER-COMPOSITION (gateway rule 51): a direct call of a helper destroyer reads its member invocations first (C04.19.3 over the run's set) and then its states (C04.19.6 direct call), instead of refusing member-path-direct; tests in tests/rule50_consumer_composition.rs, Lean QCore.DestroyerHelperComposition.a_refused_invocation_applies_no_state. mk_http_thread_destroy's own row stays Unknown. The callback-candidate half stays open as MEMBER-PATH-HELPER-AS-CANDIDATE.",
+      "source": "docs/reports/rule50-consumer-composition/README.md"
+    },
+    {
+      "id": "SCHED-DESTROYER-PREMISES",
+      "operation": "amend",
+      "text": "Amended by RULE50-CONSUMER-COMPOSITION (gateway rule 51): scheduler_callback_footprint is removed from the declaration. Every row resting on it now composes mk_thread_destroy's mk_thread.cb_destroy invocation (closed empty over the run's facts or refused) and rests on mk_thread_destroy, so the run's fold re-checks the closure under rule 12n's P-CG22-MEMBER-CLOSED-WORLD. The other seven premises remain Open source truth.",
+      "source": "docs/reports/rule50-consumer-composition/README.md"
+    },
+    {
+      "id": "MEMBER-PATH-HELPER-AS-CANDIDATE",
+      "operation": "register",
+      "title": "A helper destroyer is still a missing callback candidate",
+      "text": "After RULE50-CONSUMER-COMPOSITION a helper destroyer (member invocations beside member-path states on its released formal; only mk_thread_destroy) is read at a direct call, but as a callback candidate it is missing: C04.19.7 composes no declaration with member-path states of its own. No measured invocation has one as a candidate. DISCHARGE: compose its invocations and then its states at an invocation (C04.19.7 with C04.19.6's candidate table), with Lean parity, and measure.",
+      "source": "docs/reports/rule50-consumer-composition/README.md",
+      "recorded_by": "RULE50-CONSUMER-COMPOSITION"
+    },
+    {
+      "id": "HELPER-STATES-BELOW-A-LINKED-OBJECT",
+      "operation": "register",
+      "title": "Rule 51's helper states at the object linked at a stale path decide nothing today",
+      "text": "Rule 51 composes the named helper's states at the one live object a consumer linked at the destroyer's stale path, but the tracker holds no link below a linked object (m->parent = t; t->callee = co refuses as an indirect access), so that step is exercised only through the helper's own direct call. DISCHARGE: track a link below a linked object and test the composed takes (and their double-release refusals) at a consumer, with Lean parity.",
+      "source": "docs/reports/rule50-consumer-composition/README.md",
+      "recorded_by": "RULE50-CONSUMER-COMPOSITION"
+    },
+    {
+      "id": "MEMBER-HELPER-CLAUSE-SPELLING",
+      "operation": "register",
+      "title": "resource_member_helper is the card's spelling, not a user decision",
+      "text": "RULE50-CONSUMER-COMPOSITION needed a stated composition, because a consumer in another unit cannot read the destroyer's body and body evidence feeds no analysis (rule 13f). It added resource_member_helper(P, TAG.PATH, H) (G05d) without a user decision on the spelling. DISCHARGE: the user confirms the spelling or chooses another; a rename is a loader, provider and pin change.",
+      "source": "docs/reports/rule50-consumer-composition/README.md",
+      "recorded_by": "RULE50-CONSUMER-COMPOSITION"
+    }
+  ]
+}
