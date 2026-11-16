@@ -1166,6 +1166,10 @@ impl Parser<'_> {
                     Ok(_) => {}
                 }
             }
+            // The row rests on the helper although its body does not spell
+            // it: noted as relied, so its dependencies list the helper and
+            // the run's fold and `run_set_members` read its members.
+            crate::contract_dependencies::relied(name);
             out.push(super::member_path_route::HelperOperands {
                 helper: name.clone(),
                 position: state.parameter,

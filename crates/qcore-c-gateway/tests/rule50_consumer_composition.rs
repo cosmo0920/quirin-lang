@@ -203,11 +203,14 @@ fn row(
     })
     .unwrap_or_else(|error| panic!("fixture rejected by Clang: {error:?}\n{text}"));
     let record = recording.finish();
-    let consulted = record
-        .functions
-        .get(function)
-        .is_some_and(|consulted| format!("{consulted:?}").contains("thr_destroy"));
     let summary = summary_of(&outcome).expect("a summary");
+    // The row's published dependencies (rule 13f), which the run's fold and
+    // `run_set_members` read: the helper must be listed although the body
+    // never spells it.
+    let consulted =
+        qcore_c_gateway::contract_dependencies::row_dependencies(&record, summary, contracts)
+            .get(function)
+            .is_some_and(|dependencies| dependencies.declarations.contains("thr_destroy"));
     let row = &summary.functions[function];
     let leaves = row
         .diagnostics
