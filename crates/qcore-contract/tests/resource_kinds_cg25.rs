@@ -50,6 +50,8 @@ fn every_kind_has_one_spelling_and_one_carrier() {
             ("regex", ResourceCarrier::Storage),
             // Card REFCOUNT-RESOURCE-KIND (§C04.17).
             ("reference", ResourceCarrier::Pointer),
+            // Card CURRENT-CONTEXT-NEW-TRIAGE (D3, rule 11v).
+            ("thread_key", ResourceCarrier::Storage),
         ]
     );
     for kind in ResourceKind::ALL {

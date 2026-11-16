@@ -390,9 +390,10 @@ fn k06_derived_results_have_no_offset_or_length() {
 /// generic `handle` stays outside resource v1. Card REFCOUNT-RESOURCE-KIND
 /// (rule 13b) adds the reference kind, taken and dropped only by its own
 /// clauses and spelled only on an owned result (deliberate update: six kinds
-/// to seven).
+/// to seven). Card CURRENT-CONTEXT-NEW-TRIAGE (D3, rule 11v) adds the in-place
+/// `thread_key` kind, finalised by value (deliberate update: seven to eight).
 #[test]
-fn k07_resource_kinds_are_exactly_seven() {
+fn k07_resource_kinds_are_exactly_eight() {
     assert_eq!(
         ResourceKind::ALL,
         [
@@ -403,6 +404,7 @@ fn k07_resource_kinds_are_exactly_seven() {
             ResourceKind::DynamicLibrary,
             ResourceKind::Regex,
             ResourceKind::Reference,
+            ResourceKind::ThreadKey,
         ]
     );
     let error = load("    ensures normal resource_released(p, nonnull);\n    ensures normal resource_borrowed(n);\n    ensures normal resource_kind(p, reference);\n    ensures normal resource_return_none();\n")

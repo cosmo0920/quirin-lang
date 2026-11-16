@@ -175,6 +175,13 @@ pub enum ResourceKind {
     /// `resource_kind` clause spells it, because its obligation is counted per
     /// object rather than owned per pointer.
     Reference,
+    /// Card **CURRENT-CONTEXT-NEW-TRIAGE** (D3, gateway rule 11v): a POSIX
+    /// thread-specific data key (`pthread_key_create`; `pthread_key_delete`).
+    /// **In place**: `pthread_key_create` initialises the caller's
+    /// `pthread_key_t` and returns a status. Unlike [`ResourceKind::Regex`]
+    /// its finaliser takes the key **by value**
+    /// ([`ResourceKind::finalised_by_value`]).
+    ThreadKey,
 }
 
 /// Card **CG25-RESOURCE-KINDS**: what carries a kind's identity.
@@ -192,7 +199,7 @@ pub enum ResourceCarrier {
 
 impl ResourceKind {
     /// Every kind, in declaration order.
-    pub const ALL: [Self; 7] = [
+    pub const ALL: [Self; 8] = [
         Self::Heap,
         Self::Descriptor,
         Self::Stream,
@@ -200,6 +207,7 @@ impl ResourceKind {
         Self::DynamicLibrary,
         Self::Regex,
         Self::Reference,
+        Self::ThreadKey,
     ];
 
     #[must_use]
@@ -212,7 +220,7 @@ impl ResourceKind {
     pub const fn carrier(self) -> ResourceCarrier {
         match self {
             Self::Descriptor => ResourceCarrier::Integer,
-            Self::Regex => ResourceCarrier::Storage,
+            Self::Regex | Self::ThreadKey => ResourceCarrier::Storage,
             Self::Heap
             | Self::Stream
             | Self::Directory
@@ -228,6 +236,15 @@ impl ResourceKind {
     #[must_use]
     pub const fn is_in_place(self) -> bool {
         matches!(self.carrier(), ResourceCarrier::Storage)
+    }
+
+    /// Card **CURRENT-CONTEXT-NEW-TRIAGE** (D3): whether this in-place kind's
+    /// finaliser and uses take the object **by value** (a `pthread_key_t`
+    /// passed as itself) rather than by its address. Its initialiser still
+    /// takes the address.
+    #[must_use]
+    pub const fn finalised_by_value(self) -> bool {
+        matches!(self, Self::ThreadKey)
     }
 
     /// Whether this kind's identity is carried by an integer rather than a
@@ -251,6 +268,7 @@ impl ResourceKind {
             Self::DynamicLibrary => "dynamic_library",
             Self::Regex => "regex",
             Self::Reference => "reference",
+            Self::ThreadKey => "thread_key",
         }
     }
 
