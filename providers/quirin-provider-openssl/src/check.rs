@@ -719,12 +719,11 @@ mod tests {
         let (path, text) = module_of("PEM_read_bio_X509");
         let widened = text.replacen("    requires resource_literal_argument(x, 0);\n", "", 1);
         assert!(check_function(path, &widened, "PEM_read_bio_X509").is_err());
-        // The password callback read as a benign borrowed pointer.
-        let benign = text.replacen(
-            "    ensures normal resource_callback_invoked(cb, _, _, _, u);\n",
-            "",
-            1,
-        );
+        // The null-callback premise removed: a caller's password callback
+        // would read as a benign borrowed pointer.
+        let premise = "    requires resource_literal_argument(cb, 0);\n";
+        assert!(text.contains(premise));
+        let benign = text.replacen(premise, "", 1);
         assert!(check_function(path, &benign, "PEM_read_bio_X509").is_err());
         // A release of a non-counted object read as a counted drop, and a
         // counted drop read as a final free.
