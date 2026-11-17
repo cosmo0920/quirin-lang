@@ -136,7 +136,27 @@ build uses the system `/usr/include` headers.
   sha256 `4a681612e94c…` before and after. The version stays 3.5.5 from
   `/usr/include/openssl/opensslv.h`, with the same digest. The log is
   `private/measure-openssl/pin.log`.
-- **Current route record.** See §4a.
+- **Current route record.** `quirin-audit current` (release binary) ran
+  over the prepared checkout with `contract/profiles/fluent-bit`, the
+  prepared `--compile-database`, the opt-in contract selection
+  (`opt_in_providers.py`, the profile's modules plus
+  `quirin-provider-openssl`) and a one-unit selection
+  (`lib/librdkafka-2.15.0/src/rdcrc32.c`). The version record is computed
+  before any unit, over the whole database, so the unit choice does not
+  affect it. The run exited 0. The record:
+  - `configurations` is `compile-database:<prepared>/compile_commands.json`;
+  - the probe read **50** include configurations, all resolving
+    `/usr/include/openssl/opensslv.h` (sha256 `7acbe889…`) at **3.5.5**;
+  - all 12 declarations are in force, with audited = pinned = 3.5.5 and no
+    reason.
+
+  These are the version, header and digest the lock pins, and the version the
+  OpenSSL card measured through the variable (49 configurations then, on the
+  integrator's preparation). On this build the record changes only in its
+  `configurations` source string. Output:
+  `private/measure-openssl/current-small/`. A first attempt with the debug
+  binary on `rdkafka_ssl.c` was stopped after 54 minutes (CPU time on a
+  loaded host). It is discarded, not evidence.
 
 ## 5. Routes that do not move (by construction)
 
@@ -155,7 +175,31 @@ which gives the base string `clang-default-search-path`.
 
 ## 6. Gate
 
-See §6a.
+Command: `python3 scripts/gate_scope.py --base 32336c33d --out
+private/gate-1/gate`, run through `private/toolchain/env.sh` on `b318bd791`.
+Record: [`gate/gate-1.json`](gate/gate-1.json). Clang:
+[`gate/clang-version.txt`](gate/clang-version.txt). The scope is qcore-audit
+and its reverse dependencies (qcore-compiler, qcorec, the libcurl and
+OpenSSL audit plugins) plus six test targets. There are no Lean or provider
+steps.
+
+| Step | Exit | Counts |
+|---|---:|---|
+| submodules, fmt, clippy (4 invocations) | 0, 0, 0 | |
+| Rust suite (`run_test_binaries.py`) | 101 | 213 units, 216 summaries; 2706 passed, 1 failed, 8 ignored |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| Python suite | 0 | 779 tests |
+
+The one failure is
+`qcore-compiler::test::cycle20_verifier_plugins::vp04_vp07_vp08_process_lifecycle_and_payload_budgets`
+(`assertion failed: elapsed < Duration::from_millis(500)`). It is a
+constraint-16 timing row in the runner's `EXCLUSIVE` phase. It failed while
+three other cards' Fluent Bit audits loaded the host, and this card touches
+no verifier-plugin code. Following constraint 16 it was verified in
+isolation, not weakened. That binary alone exited 0: 20 passed, 0 failed
+(`private/gate-1/isolation-cycle20-all.log`), and the test alone also exited
+0 (`private/gate-1/isolation-cycle20.log`). The gate's overall exit is
+therefore 1. The landing gate is the arbiter.
 
 ## 7. Follow-ups
 
