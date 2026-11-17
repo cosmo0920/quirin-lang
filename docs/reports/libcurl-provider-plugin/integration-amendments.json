@@ -1,0 +1,54 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "LIBCURL-PROVIDER-PLUGIN",
+ "base": "32336c33d",
+ "measured_tip": "e13e95257",
+ "increment_paragraph": "**LIBCURL-PROVIDER-PLUGIN** (user decision 2026-11-17: libcurl's contracts on the user-contract SDK exactly as OPENSSL-PROVIDER-PLUGIN did for OpenSSL; rule 53 unchanged, no new rule or Lean module; [report](../../reports/libcurl-provider-plugin/README.md)). New user crate providers/quirin-provider-libcurl (namespace libcurl) carries the six contracts W48-LIBCURL-CONTRACT-PLUGIN established against libcurl 8.18.0 (curl_global_init, curl_slist_append, curl_slist_free_all, curl_easy_escape, curl_url, curl_url_cleanup), clause for clause, each version-ranged with `since` the official manual page's AVAILABILITY version (7.8, 7.1, 7.1, 7.15.4, 7.62.0, 7.62.0; page SHA-256s in doc-snapshots.json). It has library-versions.json (curl/curlver.h), a lock pinning 8.18.0 (Ubuntu 26.04 libcurl4-openssl-dev 8.18.0-1ubuntu2.8), one checker binding per function and the checker quirin-libcurl-check (prototype against the preprocessed pinned headers with CURLcode's integer type established by static assertion, range against the fetched page and the pinned version, custody as an exact clause set with the page's supporting sentences; a Safe claim without certificate, so Pending, any failure Unknown). It is registered as the second USER_LOAD_PATH_PACKAGES crate (package.py checkers, CI step, regenerated user-crates-load-path.json, conformance user-crate pin 1 -> 2) and is never on contract-load-path.json. The tests cover in range, a changed version (Pending), below since or with no header (Unknown) and the user-load-path-only property, end to end in crates/qcore-audit/tests/libcurl_user_crate_versions.rs. In the opt-in current run over librdkafka's libcurl callers (Fluent Bit 046accf6), with the probe reading the audited units' commands, every declaration is in force and rd_http_global_init moves Unknown -> Pending, while six other rows link a Pending binding and stay Unknown: exactly W48's movement. With the probe unreadable (default path, or the whole database, where 599 of 1,414 commands pass no libcurl include directory), the declarations are held library-version-unreadable, yet the current route still publishes rd_http_global_init Pending under the contract-pin-mismatch text. That is a fail-closed defect (rule 53 requires Unknown), registered as LIBRARY-VERSION-HOLD-CURRENT-ROUTE-PENDING. The measured routes read no user load path and are predicted verdict-identical.",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "LIBRARY-VERSION-HOLD-CURRENT-ROUTE-PENDING",
+   "operation": "register",
+   "title": "On `current`, a call held for an unreadable, out-of-range or ambiguous library version is published Pending",
+   "text": "Found by LIBCURL-PROVIDER-PLUGIN's opt-in run (report section 6; logs private/callers-1 with-default and with-full, comparison docs/reports/libcurl-provider-plugin/evidence/callers-comparison.json). With the probe unreadable, the sidecar records every libcurl declaration in_force false, library-version-unreadable, yet `quirin-audit current` publishes rd_http_global_init Pending with \"call to `curl_global_init` whose pinned contract is not in force: the audited source does not match its lock (contract-pin-mismatch)\". That is legacy_pin_hold::hold_description's human-resolvable text, which hold_description_for falls back to when the classifier's environment lacks the withheld entry's reason. The `contracts` route publishes the same hold Unknown (crates/qcore-audit/tests/libcurl_user_crate_versions.rs). Rule 53 requires Unknown (stale-evidence): the published verdict is below the row's standing, a fail-closed defect (no row reaches Safe). The cause is not localised (the run's checker bindings and the current route's environment pipeline differ from the test). DISCHARGE: the current route (and every route publishing rows) describes and classifies a library-version hold by its reason, with a current-route test at an unreadable, an out-of-range and an ambiguous version, and the opt-in run re-measured.",
+   "source": "docs/reports/libcurl-provider-plugin/README.md",
+   "recorded_by": "LIBCURL-PROVIDER-PLUGIN"
+  },
+  {
+   "id": "LIBRARY-VERSION-PROBE-UNIT-CONFIGURATIONS",
+   "operation": "register",
+   "title": "The library version probe reads every include configuration, so a library only some targets include is unreadable",
+   "text": "Rule 53's probe preprocesses the version header under every include configuration of the database QCORE_LIBRARY_VERSION_COMPILE_DATABASE names, and one configuration that cannot find it makes the library unreadable. In LIBCURL-PROVIDER-PLUGIN's prepared Fluent Bit 046accf6 build (libcurl headers off the default path), only 815 of 1,414 commands pass the libcurl include directory, so the whole database holds every libcurl call. Only a database cut to the audited units' commands puts the contracts in force. A route database handed to the probe as it is (LIBRARY-VERSION-PROBE-ROUTE-DATABASE's discharge) would inherit this. DISCHARGE: the probe reads the configurations of the units that call the library (or the units audited), with a test where a library absent from unrelated targets is in force and a disagreement among the calling units is ambiguous.",
+   "source": "docs/reports/libcurl-provider-plugin/README.md",
+   "recorded_by": "LIBCURL-PROVIDER-PLUGIN"
+  },
+  {
+   "id": "USER-LOAD-PATH-CHECKER-ORDER",
+   "operation": "register",
+   "title": "`quirin-plugin load-path` orders checker bindings by argument while `contracts.py check` expects sorted crates",
+   "text": "Found by LIBCURL-PROVIDER-PLUGIN: generating providers/user-crates-load-path.json with the crates named openssl then libcurl wrote the crates sorted but the checker bindings in argument order, and `providers/contracts.py check` refused it as stale; naming them sorted works (providers/README.md says so). DISCHARGE: the generator sorts bindings by crate (or the check compares as sets), with a test generating from unsorted arguments.",
+   "source": "docs/reports/libcurl-provider-plugin/README.md",
+   "recorded_by": "LIBCURL-PROVIDER-PLUGIN"
+  },
+  {
+   "id": "LIBCURL-CONTRACTS-TWO-HOMES",
+   "operation": "register",
+   "title": "libcurl's six contracts live both in the user crate and in the `quirin-audit libcurl` plugin's install output",
+   "text": "After LIBCURL-PROVIDER-PLUGIN, providers/quirin-provider-libcurl carries the six contracts W48 established, version-ranged and checked against the documentation and pinned headers, while crates/quirin-audit-plugin-libcurl keeps its own copy (contracts/libcurl/libcurl.qv, no ranges), which `libcurl install` emits as a user crate also named quirin-provider-libcurl, namespace libcurl, checked against the pinned source. The two never share a load path, but they can drift. DISCHARGE: a user decision on the owner (for example, install emits this crate, or the plugin's checker becomes this crate's source-level check), and a test that the two declaration sets agree until then.",
+   "source": "docs/reports/libcurl-provider-plugin/README.md",
+   "recorded_by": "LIBCURL-PROVIDER-PLUGIN"
+  },
+  {
+   "id": "W48-LIBCURL-UNCONTRACTED-CALLEES",
+   "operation": "amend",
+   "text": "AMENDED (LIBCURL-PROVIDER-PLUGIN, 2026-11-17): unchanged in scope. The six established contracts now also ride the user crate providers/quirin-provider-libcurl (version-ranged, checker-bound, user load path only). curl_easy_init (\"Added in curl 7.1\", one caller rd_http_req_init) stays uncontracted too: return_owned(nullable) would let a heap release stand in for curl_easy_cleanup, itself uncontracted here.",
+   "source": "docs/reports/libcurl-provider-plugin/README.md"
+  },
+  {
+   "id": "W45-PLUGIN-ROUTE-COVERAGE",
+   "operation": "amend",
+   "text": "AMENDED (LIBCURL-PROVIDER-PLUGIN): the libcurl user crate's six bindings likewise reach only current and contracts; its opt-in current run moves rd_http_global_init Unknown -> Pending, invisible to the measured routes.",
+   "source": "docs/reports/libcurl-provider-plugin/README.md"
+  }
+ ]
+}

@@ -1,0 +1,111 @@
+{
+ "schema_version": 1,
+ "source": "https://curl.se/libcurl/c",
+ "fetched_on": "2026-11-17",
+ "rule": "user decision 2026-11-17 (card LIBCURL-PROVIDER-PLUGIN): since bounds come from the official manual pages' AVAILABILITY sections; pages are not committed, only their SHA-256 as fetched and the sections' text",
+ "pages": [
+  {
+   "url": "https://curl.se/libcurl/c/curl_easy_escape.html",
+   "fetched": true,
+   "sha256": "38e61ac8e75b5cea64aa98d3b5e1605ae95f7fb8a5bac8cf8f14c8b2a7ef9da1",
+   "bytes": 8873,
+   "availability": "Added in curl 7.15.4",
+   "added_in": "7.15.4",
+   "synopsis": "#include <curl/curl.h> char * curl_easy_escape (CURL *curl, const char *string, int length);",
+   "return_value": "A pointer to a null-terminated string or NULL if it failed.",
+   "null_sentences": [
+    "A pointer to a null-terminated string or NULL if it failed."
+   ],
+   "custody_sentences": [
+    "This function converts the given input string to a URL encoded string and returns that as a new allocated string.",
+    "You must curl_free the returned string when you are done with it."
+   ],
+   "page": "curl_easy_escape"
+  },
+  {
+   "url": "https://curl.se/libcurl/c/curl_global_init.html",
+   "fetched": true,
+   "sha256": "cb7e688d554889e124ad6f4170b0672522a694d66f030770048821e4d6b30439",
+   "bytes": 11076,
+   "availability": "Added in curl 7.8",
+   "added_in": "7.8",
+   "synopsis": "#include <curl/curl.h> CURLcode curl_global_init (long flags);",
+   "return_value": "If this function returns non-zero, something went wrong and you cannot use the other curl functions.",
+   "null_sentences": [],
+   "custody_sentences": [],
+   "page": "curl_global_init"
+  },
+  {
+   "url": "https://curl.se/libcurl/c/curl_slist_append.html",
+   "fetched": true,
+   "sha256": "ca17ea5156ae4711742d15a614b2054c0d9b2496b20eeb636073ad522c2ab127",
+   "bytes": 7752,
+   "availability": "Added in curl 7.1",
+   "added_in": "7.1",
+   "synopsis": "#include <curl/curl.h> struct curl_slist * curl_slist_append (struct curl_slist *list, const char *string);",
+   "return_value": "A null pointer is returned if anything went wrong, otherwise the new list pointer is returned. To avoid overwriting an existing non-empty list on failure, the new list should be returned to a temporary variable which can be tested for NULL before updating the original list pointer.",
+   "null_sentences": [
+    "Pass in NULL in the list argument to create a new list.",
+    "The string argument must be a valid string pointer and cannot be NULL.",
+    "To avoid overwriting an existing non-empty list on failure, the new list should be returned to a temporary variable which can be tested for NULL before updating the original list pointer."
+   ],
+   "custody_sentences": [
+    "curl_slist_append copies the string.",
+    "The list should be freed (after usage) with curl_slist_free_all ."
+   ],
+   "page": "curl_slist_append"
+  },
+  {
+   "url": "https://curl.se/libcurl/c/curl_slist_free_all.html",
+   "fetched": true,
+   "sha256": "f47cb6199393144499e3f6b626a8eb0139f7a5ad65f363c51f72553433885e57",
+   "bytes": 6642,
+   "availability": "Added in curl 7.1",
+   "added_in": "7.1",
+   "synopsis": "#include <curl/curl.h> void curl_slist_free_all (struct curl_slist *list);",
+   "return_value": "Nothing.",
+   "null_sentences": [
+    "Passing in a NULL pointer in list makes this function return immediately with no action."
+   ],
+   "custody_sentences": [
+    "curl_slist_free_all() removes all traces of a previously built curl_slist linked list."
+   ],
+   "page": "curl_slist_free_all"
+  },
+  {
+   "url": "https://curl.se/libcurl/c/curl_url.html",
+   "fetched": true,
+   "sha256": "4feac3ebea6290a27c26dd65bfadca8b23bfe0b02d8c210ab2cbeeb8e2bd91f9",
+   "bytes": 7173,
+   "availability": "Added in curl 7.62.0",
+   "added_in": "7.62.0",
+   "synopsis": "#include <curl/curl.h> CURLU * curl_url ();",
+   "return_value": "Returns a CURLU * if successful, or NULL if out of memory.",
+   "null_sentences": [
+    "Returns a CURLU * if successful, or NULL if out of memory."
+   ],
+   "custody_sentences": [
+    "This function allocates a URL object and returns a CURLU handle for it, to be used as input to all other URL API functions.",
+    "The object must be destroyed with a call to curl_url_cleanup when no longer needed."
+   ],
+   "page": "curl_url"
+  },
+  {
+   "url": "https://curl.se/libcurl/c/curl_url_cleanup.html",
+   "fetched": true,
+   "sha256": "93ef5111f706bff6826c49bd42f558fc1c948ade55619f6851ac0231f1c94c0c",
+   "bytes": 6491,
+   "availability": "Added in curl 7.62.0",
+   "added_in": "7.62.0",
+   "synopsis": "#include <curl/curl.h> void curl_url_cleanup (CURLU *handle);",
+   "return_value": "none",
+   "null_sentences": [
+    "Passing in a NULL pointer in handle makes this function return immediately with no action."
+   ],
+   "custody_sentences": [
+    "Frees all the resources associated with the given CURLU handle."
+   ],
+   "page": "curl_url_cleanup"
+  }
+ ]
+}

@@ -1,0 +1,50 @@
+// SPDX-License-Identifier: Apache-2.0
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+module contract;
+
+// Card LIBCURL-PROVIDER-PLUGIN. libcurl's string lists (see global.qv for
+// what every declaration of this crate shares).
+
+// curl_slist_append: https://curl.se/libcurl/c/curl_slist_append.html
+// AVAILABILITY: "Added in curl 7.1". DESCRIPTION: "Pass in NULL in the list
+// argument to create a new list"; "curl_slist_append copies the string".
+// RETURN VALUE: "A null pointer is returned if anything went wrong,
+// otherwise the new list pointer is returned", and the caller is told to
+// keep the old list on failure. That is the reallocation reading (C04.3)
+// libc's realloc carries. Pinned prototype: `struct curl_slist
+// *curl_slist_append(struct curl_slist *list, const char *data)`.
+extern fn curl_slist_append(list: ptr<mut, u8>, data: ptr<const, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(curl, since "7.1");
+    ensures normal resource_owned(list, nullable);
+    ensures normal resource_borrowed(data);
+    ensures normal resource_return_reallocated(list, nullable);
+};
+
+// curl_slist_free_all: https://curl.se/libcurl/c/curl_slist_free_all.html
+// AVAILABILITY: "Added in curl 7.1". "Passing in a NULL pointer in list
+// makes this function return immediately with no action"; otherwise it
+// "removes all traces" of the list. Pinned prototype: `void
+// curl_slist_free_all(struct curl_slist *list)`.
+extern fn curl_slist_free_all(list: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(curl, since "7.1");
+    ensures normal resource_released(list, nullable);
+    ensures normal resource_return_none();
+};

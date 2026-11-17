@@ -126,7 +126,8 @@ NON_CONTRACT_PACKAGES = ("qcore-provider-conformance", "quirin-provider-plugin")
 # `quirin-audit plugin views --write`), which `check` validates
 # (`check_user_crates`): every declaration bound to a checker, every
 # declaration of a crate with a version source stating a range, a lock.
-USER_LOAD_PATH_PACKAGES = ("quirin-provider-openssl",)
+# Card LIBCURL-PROVIDER-PLUGIN adds quirin-provider-libcurl.
+USER_LOAD_PATH_PACKAGES = ("quirin-provider-openssl", "quirin-provider-libcurl")
 USER_LOAD_PATH = "user-crates-load-path.json"
 NAMESPACE_CONST = re.compile(r'^pub const NAMESPACE: &str = "([a-z_][a-z0-9_]*)";$', re.M)
 PUBLISHED_CONST = re.compile(r'^pub const PUBLISHED: &\[&str\] = &\[([^\]]*)\];$', re.M)

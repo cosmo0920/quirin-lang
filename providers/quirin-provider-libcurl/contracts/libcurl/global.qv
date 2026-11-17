@@ -1,0 +1,39 @@
+// SPDX-License-Identifier: Apache-2.0
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+module contract;
+
+// Card LIBCURL-PROVIDER-PLUGIN (user decision 2026-11-17). libcurl's global
+// initialisation. Every declaration of this crate is flexible (no libcurl
+// source is audited to pin), states the libcurl versions it holds for (the
+// official manual page's AVAILABILITY section, https://curl.se/libcurl/c/;
+// `doc-snapshots.json` keeps each page's SHA-256 as fetched), and is bound to
+// the crate's checker plugin, so a caller applying it is at most Pending while
+// no trusted certificate checker exists. The clauses are card
+// W48-LIBCURL-CONTRACT-PLUGIN's, established against the pinned 8.18.0
+// source (crates/quirin-audit-plugin-libcurl). Enumerations are spelled as
+// Clang's integer type for them (contract specification C02, rule 12u):
+// CURLcode is `unsigned int` under the pinned headers, so `u32`.
+
+// curl_global_init: https://curl.se/libcurl/c/curl_global_init.html
+// AVAILABILITY: "Added in curl 7.8". Pinned prototype: `CURLcode
+// curl_global_init(long flags)` (curl/curl.h). A scalar in, a scalar out.
+extern fn curl_global_init(flags: i64) -> u32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(curl, since "7.8");
+    ensures normal resource_borrowed(flags);
+    ensures normal resource_return_none();
+};

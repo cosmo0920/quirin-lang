@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "checkers": [
+    { "module": "libcurl/escape.qv", "functions": ["curl_easy_escape"], "package": "checkers/libcurl-check" },
+    { "module": "libcurl/global.qv", "functions": ["curl_global_init"], "package": "checkers/libcurl-check" },
+    { "module": "libcurl/slist.qv", "functions": ["curl_slist_append"], "package": "checkers/libcurl-check" },
+    { "module": "libcurl/slist.qv", "functions": ["curl_slist_free_all"], "package": "checkers/libcurl-check" },
+    { "module": "libcurl/url.qv", "functions": ["curl_url"], "package": "checkers/libcurl-check" },
+    { "module": "libcurl/url.qv", "functions": ["curl_url_cleanup"], "package": "checkers/libcurl-check" }
+  ],
+  "overrides": []
+}
