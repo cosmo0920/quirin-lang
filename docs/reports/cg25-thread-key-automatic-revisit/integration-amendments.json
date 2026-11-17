@@ -1,0 +1,41 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "CG25-THREAD-KEY-AUTOMATIC-REVISIT",
+  "base": "5c824e443",
+  "measured_tip": "5da652f52",
+  "profiles": [],
+  "increment_paragraph": "**CG25-THREAD-KEY-AUTOMATIC-REVISIT** (USER DECISION 2026-11-17 \"CG25-THREAD-KEY-AUTOMATIC-REVISIT -> Let's get started.\"; gateway rule 11v (7); Lean `QCore.ThreadKeyStatic`; [report](../../reports/cg25-thread-key-automatic-revisit/README.md)). D3 refused every `pthread_key_create` into anything but static storage because a tracked by-value key reached a data route; rule 11v (6) now refuses every such mention, so the refusal was revisited use by use. Rules 11v (1)-(6) refuse or decide every use of a tracked automatic key except a by-value getter before the status test, on the failure edge or before any creation, which they would admit `Safe` although POSIX leaves it undefined: the plain lift is unsound. The card lifts it narrowed: the one automatic key object of a function (one `VarDecl`, every `DeclRefExpr` designating it) is CG25's in-place object; libc's `pthread_getspecific` key becomes a kinded by-value use; a by-value use of a tracked key is admitted only where the settled state certifies it (`report_uncertified_key_uses`), a released key being the `use_after_close` candidate; `&k` is never a by-value actual. Members, formals, pointer-reached keys and names that also designate a file-scope object keep `THREAD_KEY_STORAGE_REFUSAL`; the setter stays refused on a tracked key. Census: no Fluent Bit or Monkey evidence tree creates an automatic key, and a unit differential of the 40 evidence units that name a key call is identical at base and tip. Predicted: no move on corpus, system, slice or `current`.",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "CG25-THREAD-KEY-AUTOMATIC-REVISIT",
+      "operation": "retire",
+      "why": "Discharged by card CG25-THREAD-KEY-AUTOMATIC-REVISIT (gateway rule 11v (7), Lean QCore.ThreadKeyStatic): the soundness analysis showed the plain lift would admit a getter before the status test, on the failure edge or before any creation Safe; the refusal is lifted narrowed, the one automatic key object tracked and every by-value use admitted only where its creation status certifies it. Fixtures tests/thread_key_in_place.rs (create/delete and a certified getter Safe, a getter after the delete a use_after_close candidate, a missing delete a leak candidate, a double delete a double_release candidate, every copy, escape, uncertified use and other storage refused). No published row moves (census and unit differential in the report).",
+      "source": "docs/reports/cg25-thread-key-automatic-revisit/README.md"
+    },
+    {
+      "id": "CG25-THREAD-KEY-SETTER-PLACE",
+      "operation": "register",
+      "title": "Admit pthread_setspecific on a tracked automatic key",
+      "text": "Rule 11v (7) tracks the one automatic thread key object and admits a certified getter, but pthread_setspecific's declaration is withheld from the function map (rule 12t's retained_by route), so its key is no custody actual and a setter naming a tracked key refuses the function under rule 11v (6). Admitting it needs the retention route to carry the key's place at a kinded by-value use position (and rule 11v (7)'s certified-use check over it). No Fluent Bit or Monkey row tracks a key, so nothing measured waits on it.",
+      "source": "docs/reports/cg25-thread-key-automatic-revisit/README.md",
+      "recorded_by": "CG25-THREAD-KEY-AUTOMATIC-REVISIT"
+    },
+    {
+      "id": "CG25-IN-PLACE-REGEX-USE-CERTIFIED",
+      "operation": "register",
+      "title": "A regex use before the status test or on the failure edge is admitted Safe",
+      "text": "CG25's in-place use (QCore.ResourceKinds.transferI .use, route G's report_kind_violations) checks only the released bit, so for the regex kind `t = regexec(&re, …)` before `if (r)` tests regcomp's status, or on the nonzero (failure) edge, is admitted Safe (probe R3/R4 in the CG25-THREAD-KEY-AUTOMATIC-REVISIT report). Rule 11v (7) closes the same shape for thread keys only (report_uncertified_key_uses). The only tracked regex object on any route, rd_regex_match, uses `re` only after the zero edge, so no published Safe rests on it. Extending the certified-use check to by-address uses of every in-place kind is a semantic change for the regex kind.",
+      "source": "docs/reports/cg25-thread-key-automatic-revisit/README.md",
+      "recorded_by": "CG25-THREAD-KEY-AUTOMATIC-REVISIT"
+    },
+    {
+      "id": "CG25-IN-PLACE-REGEX-SHADOWED-NAME",
+      "operation": "register",
+      "title": "A regex local shadowing a file-scope object is tracked across both",
+      "text": "one_automatic_object counts only the VarDecls inside the function, so a block-scope `regex_t g;` that shadows a file-scope `regex_t g;` is tracked under a name the body also uses for the file-scope object: `{ regex_t g; r = regcomp(&g, p, 0); if (r) return 0; } regfree(&g);` is certified Safe though the local is never freed and the regfree frees the file-scope object (probe R2 in the CG25-THREAD-KEY-AUTOMATIC-REVISIT report). Rule 11v (7) requires every DeclRefExpr of a tracked key to designate its one declaration (every_reference_is); the regex kind lacks that check. rd_regex_match, the only tracked regex object on any route, shadows nothing, so no published Safe rests on it.",
+      "source": "docs/reports/cg25-thread-key-automatic-revisit/README.md",
+      "recorded_by": "CG25-THREAD-KEY-AUTOMATIC-REVISIT"
+    }
+  ]
+}

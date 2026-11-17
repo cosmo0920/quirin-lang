@@ -107,3 +107,125 @@ rule 12t's retention route to carry the key's place, which is a follow-up.
 
 Fail-closed settles the choice, so this card lifts the refusal, narrowed as
 above.
+
+## 2. Census and unit differential
+
+The [prediction](PREDICTION.md) holds the method. In short:
+
+* **Census.** Every `pthread_key_create` actual in the pinned corpus
+  inputs, the user's `current` evidence tree and their bundled `lib/` trees
+  is `&G` of a static object, a member, or reached through a pointer. **No
+  evidence tree creates an automatic key**, so no measured row tracks one.
+* **Kinded getter.** The getter change touches every body that calls
+  `pthread_getspecific`. A **unit differential** checked it. The inputs are
+  the 40 units of the two `current` compile databases whose source names a
+  key call or a TLS macro (`private/probe/units/`, preprocessed with their
+  recorded commands). Each unit was analysed with every loadable libc
+  module, once by a base tree (`git archive 5c824e443`) and once by the
+  change. Driver: [census/unit_probe.rs.txt](census/unit_probe.rs.txt).
+  Preprocessing: [preprocess_units.py](census/preprocess_units.py) and
+  [entries.py](census/entries.py).
+  Result: **identical**. 40 units and 19,619 function rows (4,413 Safe,
+  15,204 Unknown, 2 Unsafe) have byte-identical status and diagnostics at
+  base and tip. The whole output's SHA-256 is
+  `552a46b349bb32200a71cdc1fbc8970fef6650c0656e38c6bf13967ddabec797` on both
+  sides. Per unit: [unit-differential.tsv](census/unit-differential.tsv)
+  (the unit list is [units.tsv](census/units.tsv); full rows in
+  `private/probe/diff-{base,tip}.tsv`). Fluent Bit's units were analysed
+  with libc contracts only, not their provider modules. This is a
+  differential of the change, not a route measurement.
+* **Synthetic shapes, both trees.** The shape probe
+  ([census/shape_probe.rs.txt](census/shape_probe.rs.txt)) ran at base and
+  tip ([shapes-base.txt](census/shapes-base.txt),
+  [shapes-tip.txt](census/shapes-tip.txt)). Every automatic-key shape
+  refuses at base with D3's refusal. Every static-key and untracked shape is
+  identical at base and tip: rows 31, 32, 46, 54 and 55 of the probe.
+
+## 3. The change (rule 11v (7))
+
+* `legacy_in_place_custody.rs`:
+  * `InPlaceNames::read` tracks a non-static `&k` key.
+  * `in_place_actuals` admits it only through `automatic_key`:
+    `one_automatic_object` plus `every_reference_is`, which requires every
+    `DeclRefExpr` naming `k` to designate its one `VarDecl`. Any other
+    storage keeps `THREAD_KEY_STORAGE_REFUSAL`, text unchanged.
+  * A by-value position never takes `&k` as its place, in
+    `in_place_actuals` or in `body_mentions`.
+  * `verify_cfg` exempts a nested by-value use
+    (`has_in_place_custody_position`).
+  * `report_uncertified_key_uses` refuses a by-value use of a tracked key
+    the settled state does not certify.
+* `legacy_transfer.rs`: one call, beside `report_kind_violations`.
+* `threads.qv`: `pthread_getspecific` gains `resource_kind(key,
+  thread_key)`, a by-value use. The contract lock is regenerated in the same
+  commit.
+* Rule 11v (5) is amended where it said no key is tracked; (7) is new.
+  Contract specification §C04.6.1 gains rule 6.
+
+## 4. Fixtures and Lean
+
+`crates/qcore-c-gateway/tests/thread_key_in_place.rs` covers README §1:
+
+| Fixture | Shapes | Verdict |
+|---|---|---|
+| `an_automatic_key_created_and_deleted_is_safe` | create/delete; a certified getter; parenthesised actuals; `r = 5` after the test; the `r == 0` form; per-iteration loop; two keys | Safe |
+| `a_getter_after_the_delete_is_a_candidate_or_refused` | assigned and plain getter after the delete; `(void)`, condition forms | `use_after_close` candidate; refused (uncarried) |
+| `an_uncertified_getter_is_refused` | before the test, on the failure edge, before the creation | refused (11v (7)) |
+| `a_missing_delete_is_a_leak_candidate` | no delete, early return, delete in one arm, create twice, `continue` past the delete | `leak` candidate |
+| `a_double_delete_is_a_candidate` | delete twice | `double_release` candidate |
+| `copy_and_escape_forms_are_refused` | copies, uncontracted callee, global and member stores, address, comparison, expression actual, setter, `return key` | refused (11v (6)) |
+| `an_unwitnessed_or_undecided_key_is_refused` | discarded or consumed status, delete before the test, create on one path | refused |
+| `only_the_one_automatic_key_object_is_tracked` | `&formal`, a shadowing local beside a file-scope reference (two shapes); a shadowing local alone | `THREAD_KEY_STORAGE_REFUSAL`; `leak` candidate |
+| `an_automatic_key_with_a_destructor_is_undeclared` | non-null destructor | refused (§C04.5) |
+| `an_untracked_getter_keeps_the_borrowed_reading` | static key getter, formal key getter | Safe, as at base |
+
+The lib unit test `a_by_value_getter_of_a_tracked_key_is_custody_only_whole`
+replaces `a_by_value_getter_of_a_tracked_key_is_stray`, as a deliberate
+update. The whole getter is now custody; `&key` and `key + 0` at the getter
+stay stray, and so does `&key` at the delete.
+
+Lean, `QCore.ThreadKeyStatic` (`AuditThreadKeyStatic.lean`):
+
+* `KInstr` gains `automaticCreate` (CG25's `init`), `otherCreate` (refused)
+  and `keyUse`.
+* The use theorems: `a_certified_use_changes_nothing`,
+  `a_use_after_delete_is_a_candidate`, `an_uncertified_use_is_refused`,
+  `a_use_changes_no_custody`.
+* `diagnostics_only_grow` gives `a_safe_verdict_used_only_certified_keys`:
+  every key use of a `Safe` run met a certified key.
+* Eight witness programs.
+* D3's `an_automatic_creation_is_refused` and
+  `an_automatic_creation_tracks_nothing` become
+  `another_creation_is_refused` and `another_creation_tracks_nothing`. The
+  automatic creation is no longer refused.
+
+`QCore.InPlaceMentionGuard.the_void_cast_getter_is_refused` is restated:
+the getter is kinded now, so the cast form is refused as uncarried. The old
+statement survives as `an_unkinded_by_value_mention_is_refused`. Both are
+placeholder-free, with no project axioms (the `#print axioms` lines list
+only `propext`, `Quot.sound` and `Classical.choice`).
+
+## 5. Follow-ups
+
+* `CG25-THREAD-KEY-SETTER-PLACE`: admit `pthread_setspecific` on a tracked
+  key. Rule 12t's retention route would have to carry the key's place.
+* `CG25-IN-PLACE-REGEX-USE-CERTIFIED`: for the `regex` kind, a use before
+  the status test or on the failure edge is admitted `Safe` (probe R3, R4 at
+  base and tip). Rule 11v (7) closes the shape for keys only. No published
+  row rests on it: `rd_regex_match` uses `re` only after the zero edge.
+* `CG25-IN-PLACE-REGEX-SHADOWED-NAME` (soundness): a block-scope `regex_t`
+  that shadows a file-scope one is tracked across both, so `{ regex_t g;
+  r = regcomp(&g, …); if (r) return 0; } regfree(&g);` is certified `Safe`
+  (probe R2, at base and tip). Keys now require `every_reference_is`; the
+  `regex` kind does not. `rd_regex_match` shadows nothing, so no published
+  `Safe` rests on it.
+* Over-refusal, recorded and not registered: `n = sizeof k;` is refused by
+  rule 11v (4)'s statement guard, although (6) admits the operand. The
+  `regex` kind is the same.
+
+The integrator measures with base `rev:5c824e443` against
+[PREDICTION.md](PREDICTION.md).
+
+## 6. Gate
+
+GATE_SECTION
