@@ -55,7 +55,10 @@ pub const MODULES: &[(&str, &str)] = &[
         "libcurl/slist.qv",
         include_str!("../contracts/libcurl/slist.qv"),
     ),
-    ("libcurl/url.qv", include_str!("../contracts/libcurl/url.qv")),
+    (
+        "libcurl/url.qv",
+        include_str!("../contracts/libcurl/url.qv"),
+    ),
 ];
 
 /// The pinned libcurl headers' prototypes (`scripts/pin_prototypes.py`).

@@ -351,7 +351,9 @@ fn check_custody(
         Documented::NullableRelease(position) => {
             let name = parameter(position)?;
             (
-                vec![format!("ensures normal resource_released({name}, nullable)")],
+                vec![format!(
+                    "ensures normal resource_released({name}, nullable)"
+                )],
                 Some(name),
             )
         }
@@ -675,10 +677,7 @@ mod tests {
         );
         assert!(check_function(path, &borrowed, "curl_url_cleanup").is_err());
         // A non-null owned result.
-        let nonnull = text.replace(
-            "resource_return_owned(nullable)",
-            "resource_return_owned()",
-        );
+        let nonnull = text.replace("resource_return_owned(nullable)", "resource_return_owned()");
         assert!(check_function(path, &nonnull, "curl_url").is_err());
         // A range the documentation does not support.
         let ranged = text.replace("since \"7.62.0\"", "since \"7.61.0\"");
@@ -689,7 +688,10 @@ mod tests {
         let removed = text.replace("since \"7.62.0\")", "since \"7.62.0\", removed \"8.0.0\")");
         assert!(check_function(path, &removed, "curl_url").is_err());
         // Another library's range.
-        let other = text.replace("resource_library_version(curl,", "resource_library_version(openssl,");
+        let other = text.replace(
+            "resource_library_version(curl,",
+            "resource_library_version(openssl,",
+        );
         assert!(check_function(path, &other, "curl_url").is_err());
         // No range at all.
         let unranged = text.replace(
@@ -742,8 +744,14 @@ mod tests {
         );
         assert_eq!(contract_type("CURLcode", &enums), Some("u32"));
         assert_eq!(contract_type("long", &enums), Some("i64"));
-        assert_eq!(contract_type("struct curl_slist *", &enums), Some("ptr<mut, u8>"));
-        assert_eq!(contract_type("const char *", &enums), Some("ptr<const, u8>"));
+        assert_eq!(
+            contract_type("struct curl_slist *", &enums),
+            Some("ptr<mut, u8>")
+        );
+        assert_eq!(
+            contract_type("const char *", &enums),
+            Some("ptr<const, u8>")
+        );
         assert_eq!(contract_type("CURLUcode", &enums), None);
         assert_eq!(contract_type("size_t", &enums), None);
     }

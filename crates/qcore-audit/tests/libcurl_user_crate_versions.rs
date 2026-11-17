@@ -74,7 +74,11 @@ impl Tree {
         let fixture =
             Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/libcurl_user_crate");
         fs::create_dir_all(root.join("src")).unwrap();
-        fs::copy(fixture.join("src/curl_user.c"), root.join("src/curl_user.c")).unwrap();
+        fs::copy(
+            fixture.join("src/curl_user.c"),
+            root.join("src/curl_user.c"),
+        )
+        .unwrap();
         let source = repository().join("providers/quirin-provider-libcurl");
         let krate = root.join("user/quirin-provider-libcurl");
         fs::create_dir_all(krate.join("src")).unwrap();
@@ -277,7 +281,10 @@ fn the_libcurl_ranges_follow_the_audited_curlver_header() {
     tree.header(7, 61, 0);
     let (statuses, records) = tree.audit("below.json");
     assert_eq!(statuses["url_cycle"], "Unknown", "{records}");
-    assert_eq!(records["curl_url"]["reason"], "library-version-out-of-range");
+    assert_eq!(
+        records["curl_url"]["reason"],
+        "library-version-out-of-range"
+    );
     assert_eq!(
         records["curl_url_cleanup"]["reason"],
         "library-version-out-of-range"

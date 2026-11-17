@@ -253,9 +253,11 @@ fn the_crate_is_on_the_user_load_path_only() {
         .collect::<Vec<_>>();
     documented.sort();
     assert_eq!(bound, documented, "every declaration is bound exactly once");
-    assert!(bindings.iter().all(|binding| {
-        binding["package"] == "quirin-provider-libcurl/checkers/libcurl-check"
-    }));
+    assert!(
+        bindings.iter().all(|binding| {
+            binding["package"] == "quirin-provider-libcurl/checkers/libcurl-check"
+        })
+    );
     // The lock pins the version the audited build's headers report.
     let lock: serde_json::Value =
         serde_json::from_slice(&fs::read(crate_dir().join("contracts.lock")).unwrap()).unwrap();
