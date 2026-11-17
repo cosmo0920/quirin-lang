@@ -283,20 +283,30 @@ fn the_unit_reason_names_the_held_calls_under_their_own_code() {
 /// whose C declaration contradicts its contract's result) and classifies
 /// under the gate's reduced environment: out of range, unreadable and
 /// ambiguous are `Unknown` with the library-version text, a changed version
-/// `Pending` (`contract-pin-mismatch`).
+/// `Pending` (`contract-pin-mismatch`). Likewise under the checked
+/// specification gate's reduced environment (`legacy_checked_spec::reduced`):
+/// a `resource_body_checked` declaration (`k_spec`) whose body this unit does
+/// not define is withdrawn from the unit's environment, as librdkafka's
+/// units withdraw the profile's checked specifications.
 #[test]
-fn a_library_version_hold_keeps_its_reason_under_the_abi_gate() {
+fn a_library_version_hold_keeps_its_reason_under_reduced_environments() {
     use qcore_c_gateway::legacy_c::pin_hold::library_version_hold_description;
     let size = "\nextern fn k_size() -> u32\ncontract {\n    requires resource_contract_v1;\n    \
                 ensures normal resource_return_none();\n};\n";
-    for (contradicted, prelude) in [(false, ""), (true, "long k_size(void);\n")] {
+    let spec = "\nextern fn k_spec() -> unit\ncontract {\n    requires resource_contract_v1;\n    \
+                requires resource_body_checked;\n    ensures normal resource_return_none();\n};\n";
+    for (contradicted, extra, prelude) in [
+        ("none", size, ""),
+        ("abi", size, "long k_size(void);\n"),
+        ("checked-spec", spec, "void k_spec(void);\n"),
+    ] {
         for reason in [
             PinMismatchReason::LibraryVersionChanged,
             PinMismatchReason::LibraryVersionOutOfRange,
             PinMismatchReason::LibraryVersionUnreadable,
             PinMismatchReason::LibraryVersionAmbiguous,
         ] {
-            let mut contracts = load(&format!("{BARE}{size}"));
+            let mut contracts = load(&format!("{BARE}{extra}"));
             contracts
                 .withhold_for_pin_mismatch(
                     "k_close",

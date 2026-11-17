@@ -811,6 +811,8 @@ fn component_lower_environment(
     let mut lower = ResourceContracts::default();
     lower.set_source_assumptions(environment.source_assumptions().clone());
     lower.carry_cross_unit_imports(environment);
+    // Card LIBRARY-VERSION-HOLD-CURRENT-ROUTE-PENDING (rule 53).
+    lower.carry_pin_mismatch(environment);
     // Preserve guarded interface identity even when its active declaration
     // was withdrawn; no ordinary recursive summary may erase it.
     lower.carry_guarded_identities(environment);
