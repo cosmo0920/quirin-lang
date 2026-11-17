@@ -11232,7 +11232,17 @@ safety claim and no validation of the detach representation premise.
     the compile databases the run analyses, `ProbeDatabases`), hooked at the
     end of `contract_revision::apply_pins_probing`, recorded by `pin` in the
     lock's `library_versions`, and held by the gateway through the pin hold
-    (`legacy_pin_hold::hold_description_for`). Card
+    (`legacy_pin_hold::hold_description_for`), which reads the withheld
+    entry's reason from the environment the unit is classified under, so
+    every environment a gateway pass rebuilds (the ABI gate's
+    `withdraw_environment`, the checked specification gate's `reduced`,
+    the recursive components' round environments) carries the withheld
+    table
+    (`ResourceContracts::carry_pin_mismatch`; card
+    LIBRARY-VERSION-HOLD-CURRENT-ROUTE-PENDING, which found it dropped and
+    every range failure published `Pending`), and a checker binding's
+    claim is joined onto the row, never lifting a held call above
+    `Unknown`. Card
     LIBRARY-VERSION-PROBE-ROUTE-DATABASE: the configured, current and pinned
     routes hand the probe their own databases and `pin` takes
     `--compile-database FILE`; only a run with no database (the contracts

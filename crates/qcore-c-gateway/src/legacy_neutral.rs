@@ -240,6 +240,8 @@ fn component_environment(
     let mut round = ResourceContracts::default();
     round.set_source_assumptions(environment.source_assumptions().clone());
     round.carry_cross_unit_imports(environment);
+    // Card LIBRARY-VERSION-HOLD-CURRENT-ROUTE-PENDING (rule 53).
+    round.carry_pin_mismatch(environment);
     for (name, contract) in environment.functions() {
         if !component.contains(name) {
             round.insert_contract(name.clone(), contract.clone());

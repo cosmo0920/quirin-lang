@@ -1,0 +1,22 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "LIBRARY-VERSION-HOLD-CURRENT-ROUTE-PENDING",
+  "base": "681fca01a",
+  "measured_tip": "e1a3a2469",
+  "increment_paragraph": "**LIBRARY-VERSION-HOLD-CURRENT-ROUTE-PENDING** (fail-closed defect, launched by the user 2026-11-18; rule 53 amended in place, no new rule; [report](../../reports/library-version-hold-current-route-pending/README.md)). A call held because its ranged declaration's library version is out of range, unreadable or ambiguous was published `Pending` with the human-resolvable contract-pin-mismatch text whenever the gateway classified its unit under a rebuilt environment. Four passes rebuild a unit's environment from scratch, and none carried `pin_mismatch`: the ABI gate (`AbiAgreement::withdraw_environment`), the checked-specification gate (`legacy_checked_spec::reduced`, which withdraws every `resource_body_checked` specification the unit does not define, so nearly every unit under the Fluent Bit selection) and the two recursive-component round environments. `legacy_pin_hold::hold_description_for` then found no withheld reason and fell back to `hold_description`. The defect was on every route, not only `current`, and the checker binding was not involved (a held call applies no contract, so no link). `ResourceContracts::carry_pin_mismatch` now keeps the table in all four. Tests: contract_pin_hold.rs at the four library-version reasons under no reduction, the ABI gate's and the checked-specification gate's (each carry's removal fails it); library_version_hold_routes.rs runs the current, contracts and configured routes at in-force, changed, out-of-range, unreadable and ambiguous versions with a checker binding answering an uncertified Safe (changed stays Pending; in force is the binding's Pending). Lean: QCore.LibraryVersionRange gains six audited theorems. Re-measured on this card's own preparation of Fluent Bit 046accf6: the base binary reproduces the defect, and the tip publishes rd_http_global_init Unknown (library-version-unreadable) on both unreadable runs and Pending only in force. Six other Unknown rows change only their held-call text, and nothing else moves. The pinned and live routes cannot move by construction: they state no range, so every withheld reason there is human-resolvable and its text is unchanged. Found on the way: the configured route reads a user load path but runs none of its checker bindings, so a bound user contract in force publishes Safe there (amends W45-PLUGIN-ROUTE-COVERAGE).",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "LIBRARY-VERSION-HOLD-CURRENT-ROUTE-PENDING",
+      "operation": "retire",
+      "why": "Discharged by LIBRARY-VERSION-HOLD-CURRENT-ROUTE-PENDING. Cause: four gateway passes rebuild a unit's environment without the pin_mismatch table: AbiAgreement::withdraw_environment, legacy_checked_spec::reduced (the one librdkafka's units hit) and the two recursive-component environments. hold_description_for (legacy_pin_hold.rs) then fell back to the human-resolvable text, on every route. Fix: ResourceContracts::carry_pin_mismatch in all four. Tests: contract_pin_hold.rs and library_version_hold_routes.rs. Lean: six theorems in QCore.LibraryVersionRange. Re-measured on this card's own preparation: rd_http_global_init is Unknown on the unreadable runs and Pending only in force.",
+      "source": "docs/reports/library-version-hold-current-route-pending/README.md"
+    },
+    {
+      "id": "W45-PLUGIN-ROUTE-COVERAGE",
+      "operation": "amend",
+      "text": "AMENDED (LIBRARY-VERSION-HOLD-CURRENT-ROUTE-PENDING): the configured route now reads a user load path (its configuration's `load_path`), yet runs none of its checker bindings: on library_version_hold_routes.rs's fixture a bound user contract in force publishes its caller Safe on the configured route (no plugin_checks section, no plugin_links) where current and contracts publish the binding's Pending. That is below rule 53's 'Unknown -> Pending at most' for user contracts; until the discharge, the configured route should refuse a load path with checker bindings.",
+      "source": "docs/reports/library-version-hold-current-route-pending/README.md"
+    }
+  ]
+}
