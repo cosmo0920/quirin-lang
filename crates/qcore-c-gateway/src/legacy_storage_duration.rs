@@ -277,6 +277,17 @@ pub(super) fn mentions_volatile(tokens: &[Token], body_start: usize) -> bool {
     })
 }
 
+/// Card THREAD-LOCAL-CUSTODY-FREE-READ (rule 54): whether the unit spells a
+/// thread-local storage class before the body's end. A unit with none
+/// declares no thread-local object the body can name, so rule 54 asks Clang
+/// for nothing more there.
+pub(super) fn mentions_thread_local(tokens: &[Token], body_start: usize) -> bool {
+    let end = super::matching(tokens, body_start, "{", "}").map_or(tokens.len(), |end| end + 1);
+    tokens[..end.min(tokens.len())]
+        .iter()
+        .any(|token| matches!(token.text.as_str(), "__thread" | "_Thread_local"))
+}
+
 fn visit(node: &Value, f: &mut impl FnMut(&Value)) {
     f(node);
     for child in children(node) {
@@ -562,6 +573,7 @@ mod exact_formal_tests {
             traversal: Default::default(),
             cell_tests: Default::default(),
             cell_frames: Default::default(),
+            thread_local_reads: Default::default(),
         };
         let facts = FunctionFacts {
             volatile_objects: BTreeSet::from(["p".into()]),

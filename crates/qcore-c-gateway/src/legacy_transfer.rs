@@ -1867,6 +1867,9 @@ pub(super) struct TransferContext<'a> {
     /// Card **W43-INDEX-TRAVERSAL**: the declared scalar and pointer names a
     /// copy from an unbound source is read against.
     pub(super) traversal: TraversalNames,
+    /// Card **THREAD-LOCAL-CUSTODY-FREE-READ** (rule 54): the thread-local
+    /// objects and their copies a copy from an unbound source is read against.
+    pub(super) thread_local_reads: crate::thread_local_read::ThreadLocalReads,
     /// Card **W43-DESCRIPTOR-RESOURCE-TRACKING**: the kind of every non-heap
     /// site this analysis can hold, the CFG's produced sites and the entry
     /// custody's formal sites together. A site absent here is heap.
@@ -2001,6 +2004,7 @@ fn analyze_cfg_with_entry_collected(
             &entry_custody.sanctioned_places(),
         ),
         traversal: cfg.traversal.clone(),
+        thread_local_reads: cfg.thread_local_reads.clone(),
         site_kinds: descriptor_custody::site_kinds(cfg.nodes.iter().map(|node| &node.instruction))
             .into_iter()
             .chain(entry_custody.site_kinds.clone())
@@ -4315,6 +4319,20 @@ pub(super) fn transfer_base(
                 && context.traversal.scalars.contains(source))
                 || (context.traversal.pointers.contains(destination)
                     && context.traversal.pointers.contains(source))) =>
+        {
+            state.pointers.remove(destination);
+        }
+        // Card THREAD-LOCAL-CUSTODY-FREE-READ (rule 54): a whole read of a
+        // thread-local pointer object, or of an automatic local holding one,
+        // copied into such a local is a custody-free value, exactly as
+        // `pthread_getspecific`'s `return_none` result: the destination holds
+        // no binding afterwards, no obligation is created or discharged, and
+        // any later custody use of it finds no binding and refuses.
+        LegacyInstruction::Alias {
+            destination,
+            source,
+        } if !state.pointers.contains_key(source)
+            && context.thread_local_reads.admits_copy(destination, source) =>
         {
             state.pointers.remove(destination);
         }
