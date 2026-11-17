@@ -1,0 +1,90 @@
+// SPDX-License-Identifier: Apache-2.0
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+module contract;
+
+// Card OPENSSL-PROVIDER-REMAINING-CALLEES. Stacks (see err.qv for what every
+// declaration of this crate shares).
+//
+// https://docs.openssl.org/3.0/man3/DEFINE_STACK_OF/ (also 3.5) documents
+// the type-safe sk_TYPE_*() macros and, in NOTES, "the underlying utility
+// OPENSSL_sk_ API" they expand to: "It defines these functions:
+// ... OPENSSL_sk_free(), ... OPENSSL_sk_new_null(), ... OPENSSL_sk_push(),
+// ... OPENSSL_sk_value(), ...". The 1.1.1 page documents the macros only
+// (HISTORY: "Before OpenSSL 1.1.0, this was implemented via macros and not
+// inline functions and was not a public API"), so each bound is the oldest
+// series checked that documents the OPENSSL_sk_ function: 3.0. The semantics
+// are the macros', as the 3.5 page states them. OPENSSL_sk_pop_free is not
+// declared: it calls `freefunc` on every element (a synchronous callback
+// that releases what the holder holds), which no clause states.
+
+// OPENSSL_sk_new_null: "sk_TYPE_new_null() allocates a new empty stack with
+// no comparison function"; RETURN VALUES: it returns "an empty stack or NULL
+// if an error occurs". A fresh object (stacks are not reference counted).
+// Pinned prototype: `OPENSSL_STACK *OPENSSL_sk_new_null(void)`
+// (openssl/stack.h).
+extern fn OPENSSL_sk_new_null() -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "3.0");
+    ensures normal resource_return_owned(nullable);
+};
+
+// OPENSSL_sk_free: "sk_TYPE_free() frees up the sk structure. It does not
+// free up any elements of sk. After this call sk is no longer valid"; NOTES:
+// "It is not an error to call ... sk_TYPE_free() ... on a NULL stack". The
+// elements stay their owners'. Pinned prototype: `void
+// OPENSSL_sk_free(OPENSSL_STACK *)`.
+extern fn OPENSSL_sk_free(st: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "3.0");
+    ensures normal resource_released(st, nullable);
+    ensures normal resource_return_none();
+};
+
+// OPENSSL_sk_value: "sk_TYPE_value() returns element idx in sk ... If idx is
+// out of range then NULL is returned." The element is a pointer the stack
+// holds: a borrowed result of `st`, ended by the stack's release or
+// mutation, never released by the caller through it. Pinned prototype:
+// `void *OPENSSL_sk_value(const OPENSSL_STACK *, int)`.
+extern fn OPENSSL_sk_value(st: ptr<const, u8>, idx: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "3.0");
+    ensures normal resource_borrowed(st);
+    ensures normal resource_borrowed(idx);
+    ensures normal resource_return_borrowed_from(st, nullable);
+};
+
+// OPENSSL_sk_push: sk_TYPE_push() appends `ptr` to `sk` (the stack keeps the
+// pointer: sk_TYPE_pop_free() later "frees up all elements of sk", while
+// sk_TYPE_free() frees none); RETURN VALUES: "the total number of elements
+// in the stack and 0 if an error occurred". The stack keeps `data` (C04.14):
+// the caller keeps custody of `data`'s object and must show it outlives the
+// stack, or the call is never Safe. Pinned prototype: `int
+// OPENSSL_sk_push(OPENSSL_STACK *st, const void *data)`.
+extern fn OPENSSL_sk_push(st: ptr<mut, u8>, data: ptr<const, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "3.0");
+    ensures normal resource_borrowed(st);
+    ensures normal resource_borrowed(data);
+    ensures normal resource_retained_by(data, st);
+    ensures normal resource_return_none();
+};

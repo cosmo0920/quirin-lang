@@ -62,7 +62,10 @@ fn the_crate_reads_as_a_user_crate_and_lists_in_a_user_load_path() {
     for (path, text) in quirin_provider_openssl::MODULES {
         assert_eq!(&krate.modules[*path], text, "{path}");
     }
-    assert_eq!(krate.manifest.checkers.len(), 12);
+    assert_eq!(
+        krate.manifest.checkers.len(),
+        quirin_provider_openssl::check::DOCUMENTED.len()
+    );
     let providers = crate_dir().parent().unwrap().to_path_buf();
     let manifest =
         load_path::user_load_path("contract-load-path.json", &providers, &[krate]).unwrap();
@@ -71,7 +74,10 @@ fn the_crate_reads_as_a_user_crate_and_lists_in_a_user_load_path() {
         "quirin-provider-openssl/contracts"
     );
     assert_eq!(manifest["crates"][0]["dependencies"], serde_json::json!([]));
-    assert_eq!(manifest["checkers"].as_array().unwrap().len(), 12);
+    assert_eq!(
+        manifest["checkers"].as_array().unwrap().len(),
+        quirin_provider_openssl::check::DOCUMENTED.len()
+    );
     assert!(
         manifest["checkers"]
             .as_array()

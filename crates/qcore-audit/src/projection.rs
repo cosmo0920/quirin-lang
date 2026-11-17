@@ -1371,6 +1371,10 @@ fn record_projection(
         // the verdict is settled; additive.
         crate::contract_dependencies::annotate_unit(row, dependencies, &result, contracts)?;
     }
+    // Card OPENSSL-PROVIDER-REMAINING-CALLEES: every bound declaration a row
+    // rests on joins its binding's verdict, linked by a `ContractCall` node
+    // or not.
+    report.fold_last_unit_dependencies();
     // All full-record consumers are finished; retain the publication account.
     let publication = match result {
         Ok(UnrestrictedLegacyResult::Safe(certificate)) => {

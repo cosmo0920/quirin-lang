@@ -1,0 +1,59 @@
+// SPDX-License-Identifier: Apache-2.0
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+module contract;
+
+// Card OPENSSL-PROVIDER-REMAINING-CALLEES. Constructors and lookups of
+// reference-counted objects released by bio.qv's BIO_free and engine.qv's
+// ENGINE_free (see err.qv for what every declaration of this crate shares).
+// BIO_new_mem_buf is not declared: its BIO keeps reading the caller's
+// buffer, a retention by a result that may be NULL, which C04.14.2 (a
+// non-null holder result only) does not state.
+
+// BIO_new_file: https://docs.openssl.org/1.0.2/man3/BIO_s_file/ (also 3.5,
+// 1.1.1). No HISTORY entry. DESCRIPTION (3.5): it "creates a new file BIO
+// with mode mode"; RETURN VALUES: it returns "a file BIO or NULL if an error
+// occurred". BIOs are reference counted (BIO_new, 3.5: "BIO_up_ref()
+// increments the reference count associated with the BIO object"), so the
+// result is one returned reference. `filename` and `mode` are read, not
+// kept. Pinned prototype: `BIO *BIO_new_file(const char *filename, const
+// char *mode)` (openssl/bio.h).
+extern fn BIO_new_file(filename: ptr<const, u8>, mode: ptr<const, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.0.2");
+    ensures normal resource_borrowed(filename);
+    ensures normal resource_borrowed(mode);
+    ensures normal resource_return_owned(nullable);
+    ensures normal resource_return_kind(reference);
+};
+
+// ENGINE_by_id: https://docs.openssl.org/1.1.1/man3/ENGINE_add/ (also 3.5;
+// no page at 1.0.2; deprecated since 3.0, not removed). No HISTORY entry
+// names it. DESCRIPTION (3.5): "There are other ENGINE API functions that
+// return structural references such as; ENGINE_by_id()"; its example ends
+// "Release the structural reference from ENGINE_by_id() */ ENGINE_free(e)";
+// RETURN VALUES: "a valid ENGINE structure or NULL if an error occurred".
+// One returned reference. Pinned prototype: `ENGINE *ENGINE_by_id(const char
+// *id)` (openssl/engine.h).
+extern fn ENGINE_by_id(id: ptr<const, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.1.1");
+    ensures normal resource_borrowed(id);
+    ensures normal resource_return_owned(nullable);
+    ensures normal resource_return_kind(reference);
+};

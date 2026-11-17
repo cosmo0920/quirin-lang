@@ -34,3 +34,55 @@ contract {
     requires resource_library_version(openssl, documented "1.0.2");
     ensures normal resource_return_none();
 };
+
+// Card OPENSSL-PROVIDER-REMAINING-CALLEES. Reading the error queue. Each
+// returns a packed error code (`unsigned long`, `u64`) and takes or returns
+// no custody.
+
+// ERR_peek_error: https://docs.openssl.org/1.0.2/man3/ERR_get_error/
+// HISTORY (1.0.2): ERR_peek_error() is "available in all versions of SSLeay
+// and OpenSSL"; no version is named, so the bound is the oldest series
+// checked. DESCRIPTION (3.5): it "returns the earliest error code from the
+// thread's error queue without modifying it". Pinned prototype: `unsigned
+// long ERR_peek_error(void)` (openssl/err.h).
+extern fn ERR_peek_error() -> u64
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.0.2");
+    ensures normal resource_return_none();
+};
+
+// ERR_peek_last_error: https://docs.openssl.org/1.0.2/man3/ERR_get_error/
+// HISTORY (1.0.2): "ERR_peek_last_error(), ERR_peek_last_error_line() and
+// ERR_peek_last_error_line_data() were added in OpenSSL 0.9.7." DESCRIPTION
+// (3.5): it "returns the latest error code from the thread's error queue
+// without modifying it". Pinned prototype: `unsigned long
+// ERR_peek_last_error(void)`. (ERR_peek_last_error_all, which hands back
+// pointers into the error record through four out slots, is not declared:
+// no mode states a slot receiving a pointer the queue keeps.)
+extern fn ERR_peek_last_error() -> u64
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "0.9.7");
+    ensures normal resource_return_none();
+};
+
+// ERR_error_string_n: https://docs.openssl.org/1.0.2/man3/ERR_error_string/
+// HISTORY (1.0.2): "ERR_error_string_n() was added in OpenSSL 0.9.6."
+// DESCRIPTION (3.5): it "writes at most len characters (including the
+// terminating 0)" of the error string into `buf`; "buf MUST NOT be NULL".
+// The caller's buffer is written during the call and not kept. Pinned
+// prototype: `void ERR_error_string_n(unsigned long e, char *buf, size_t
+// len)`.
+extern fn ERR_error_string_n(e: u64, buf: ptr<mut, u8>, len: usize) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "0.9.6");
+    ensures normal resource_borrowed(e);
+    ensures normal resource_borrowed(buf);
+    ensures normal resource_borrowed(len);
+    ensures normal resource_return_none();
+};

@@ -1,0 +1,94 @@
+// SPDX-License-Identifier: Apache-2.0
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+module contract;
+
+// Card OPENSSL-PROVIDER-REMAINING-CALLEES. Message digests and base64 (see
+// err.qv for what every declaration of this crate shares). Each declaration's
+// range comes from the page's HISTORY section; its custody is read off the
+// page of the pinned series (3.5).
+
+// EVP_sha256: https://docs.openssl.org/1.0.2/man3/EVP_DigestInit/ (3.5,
+// 1.1.1: man3/EVP_sha224). The 1.0.2 page documents it and its HISTORY names
+// no version for it, so the bound is the oldest series checked. RETURN
+// VALUES (3.5, EVP_sha224): "These functions return a EVP_MD structure that
+// contains the implementation of the message digest"; EVP_DigestInit (3.5):
+// algorithm objects "without an associated implementation" (as these are,
+// ossl-guide-libcrypto-introduction, "Implicit fetching") "do not need to be
+// freed with EVP_MD_free()", which releases only fetched digests. The result
+// is a const table the caller owns nothing of. Pinned prototype: `const
+// EVP_MD *EVP_sha256(void)` (openssl/evp.h).
+extern fn EVP_sha256() -> ptr<const, u8>
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.0.2");
+    ensures normal resource_return_none();
+};
+
+// EVP_sha512: as EVP_sha256 (same pages). Pinned prototype: `const EVP_MD
+// *EVP_sha512(void)`.
+extern fn EVP_sha512() -> ptr<const, u8>
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.0.2");
+    ensures normal resource_return_none();
+};
+
+// EVP_MD_CTX_new: https://docs.openssl.org/3.5/man3/EVP_DigestInit/ HISTORY
+// (3.5, 1.1.1): "The EVP_MD_CTX_create() and EVP_MD_CTX_destroy() functions
+// were renamed to EVP_MD_CTX_new() and EVP_MD_CTX_free() in OpenSSL 1.1.0".
+// DESCRIPTION (3.5): it "Allocates and returns a digest context", which
+// EVP_MD_CTX_free frees; the context is not reference counted (the page
+// gives it no up_ref), so the result is a fresh object, NULL when the
+// allocation fails. Pinned prototype: `EVP_MD_CTX *EVP_MD_CTX_new(void)`.
+extern fn EVP_MD_CTX_new() -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.1.0");
+    ensures normal resource_return_owned(nullable);
+};
+
+// EVP_MD_CTX_free: same page and HISTORY. DESCRIPTION (3.5): it "Cleans up
+// digest context ctx and frees up the space allocated to it. If the argument
+// is NULL, nothing is done." Pinned prototype: `void
+// EVP_MD_CTX_free(EVP_MD_CTX *ctx)`.
+extern fn EVP_MD_CTX_free(ctx: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.1.0");
+    ensures normal resource_released(ctx, nullable);
+    ensures normal resource_return_none();
+};
+
+// EVP_EncodeBlock: https://docs.openssl.org/1.0.2/man3/EVP_EncodeInit/
+// (also 3.5, 1.1.1). No HISTORY entry names it, so the bound is the oldest
+// series checked. DESCRIPTION (3.5): it "encodes a full block of input data
+// in f and of length n and stores it in t"; RETURN VALUES: "the number of
+// bytes encoded excluding the NUL terminator". Both buffers are the caller's
+// and are not kept. Pinned prototype: `int EVP_EncodeBlock(unsigned char *t,
+// const unsigned char *f, int n)`.
+extern fn EVP_EncodeBlock(t: ptr<mut, u8>, f: ptr<const, u8>, n: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.0.2");
+    ensures normal resource_borrowed(t);
+    ensures normal resource_borrowed(f);
+    ensures normal resource_borrowed(n);
+    ensures normal resource_return_none();
+};
