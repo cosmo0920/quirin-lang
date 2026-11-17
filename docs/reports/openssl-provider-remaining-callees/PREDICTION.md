@@ -98,3 +98,19 @@ changes nothing the binary is built from).
   predicted; any measured `Unknown -> Unsafe` is reported row by row with
   the declaration it rests on.
 - The `Unsafe` row `context_new` (Monkey) stays `Unsafe`.
+
+## Correction after the fixture run (before the opt-in measurement)
+
+The table above is unchanged as committed (`f1677b59c`). The fixture run
+([README](README.md) §5) found `unsigned long peek(void) { return
+ERR_peek_error(); }` published `Safe` over the `Pending` binding: the
+plugin fold read only `ContractCall` nodes, and a scalar `return f();` is
+admitted without one. The card fixes the fold (`qcore-audit`), so the binary
+**does** change, and the opt-in arbiter becomes three runs of `current`:
+base (base binary, base load path), fix-only (tip binary, base load path)
+and tip (tip binary, tip load path). Predicted for the fix alone: only
+raises, `Safe -> Pending` on rows applying one of the twelve first-card
+contracts only through such a call, if any (none named in advance); never a
+row to `Safe`. The pinned routes still read no user load path, so the fix
+moves nothing there (`fold_dependencies` returns at once without links): the
+block above is unchanged.

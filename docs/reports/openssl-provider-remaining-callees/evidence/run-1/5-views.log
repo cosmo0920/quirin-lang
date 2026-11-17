@@ -1,0 +1,4 @@
+$ private/tip-target/release/quirin-audit plugin views --load-path providers/user-crates-load-path.json --write
+quirin-provider-openssl: declared null probed ["openssl/bio.qv","openssl/engine.qv","openssl/err.qv","openssl/evp.qv","openssl/evp_digest.qv","openssl/init.qv","openssl/lookup.qv","openssl/pem.qv","openssl/pkcs12.qv","openssl/ssl.qv","openssl/ssl_ctx.qv","openssl/ssl_io.qv","openssl/stack.qv","openssl/x509.qv","openssl/x509_store.qv"]
+plugin views: written to providers/user-crates-load-path.json
+exit 0

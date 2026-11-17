@@ -1,0 +1,255 @@
+{
+ "rows": [
+  {
+   "unit": "tls_more.c",
+   "function": "digest_cycle",
+   "status": "Pending",
+   "host_status": "Safe",
+   "diagnostics": [],
+   "links": [
+    {
+     "callee": "EVP_MD_CTX_free",
+     "verdict": "Pending"
+    },
+    {
+     "callee": "EVP_MD_CTX_new",
+     "verdict": "Pending"
+    },
+    {
+     "callee": "EVP_sha256",
+     "verdict": "Pending"
+    }
+   ],
+   "rests_on": [
+    "EVP_MD_CTX_free",
+    "EVP_MD_CTX_new",
+    "EVP_sha256"
+   ]
+  },
+  {
+   "unit": "tls_more.c",
+   "function": "engine_cycle",
+   "status": "Pending",
+   "host_status": "Safe",
+   "diagnostics": [],
+   "links": [
+    {
+     "callee": "ENGINE_by_id",
+     "verdict": "Pending"
+    },
+    {
+     "callee": "ENGINE_free",
+     "verdict": "Pending"
+    }
+   ],
+   "rests_on": [
+    "ENGINE_by_id",
+    "ENGINE_free"
+   ]
+  },
+  {
+   "unit": "tls_more.c",
+   "function": "error_string",
+   "status": "Pending",
+   "host_status": "Safe",
+   "diagnostics": [],
+   "links": [
+    {
+     "callee": "ERR_error_string_n",
+     "verdict": "Pending"
+    },
+    {
+     "callee": "ERR_peek_last_error",
+     "verdict": "Pending"
+    }
+   ],
+   "rests_on": [
+    "ERR_error_string_n",
+    "ERR_peek_last_error"
+   ]
+  },
+  {
+   "unit": "tls_more.c",
+   "function": "keep_userdata",
+   "status": "Unknown",
+   "host_status": "Unknown",
+   "diagnostics": [
+    "call to `SSL_CTX_set_default_passwd_cb_userdata` retains `opaque` in `ctx`, whose lifetime this body does not decide against it (retention-undecided)"
+   ],
+   "links": [
+    {
+     "callee": "SSL_CTX_set_default_passwd_cb_userdata",
+     "verdict": "Pending"
+    }
+   ],
+   "rests_on": [
+    "SSL_CTX_set_default_passwd_cb_userdata"
+   ]
+  },
+  {
+   "unit": "tls_more.c",
+   "function": "peek",
+   "status": "Safe",
+   "host_status": null,
+   "diagnostics": [],
+   "links": [],
+   "rests_on": [
+    "ERR_peek_error"
+   ]
+  },
+  {
+   "unit": "tls_more.c",
+   "function": "peer_check",
+   "status": "Pending",
+   "host_status": "Safe",
+   "diagnostics": [],
+   "links": [
+    {
+     "callee": "SSL_get1_peer_certificate",
+     "verdict": "Pending"
+    },
+    {
+     "callee": "X509_free",
+     "verdict": "Pending"
+    }
+   ],
+   "rests_on": [
+    "SSL_get1_peer_certificate",
+    "X509_free"
+   ]
+  },
+  {
+   "unit": "tls_more.c",
+   "function": "pkcs12_cycle",
+   "status": "Pending",
+   "host_status": "Safe",
+   "diagnostics": [],
+   "links": [
+    {
+     "callee": "PKCS12_free",
+     "verdict": "Pending"
+    },
+    {
+     "callee": "d2i_PKCS12_bio",
+     "verdict": "Pending"
+    }
+   ],
+   "rests_on": [
+    "PKCS12_free",
+    "d2i_PKCS12_bio"
+   ]
+  },
+  {
+   "unit": "tls_more.c",
+   "function": "read_cert",
+   "status": "Pending",
+   "host_status": "Safe",
+   "diagnostics": [],
+   "links": [
+    {
+     "callee": "PEM_read_bio_X509",
+     "verdict": "Pending"
+    },
+    {
+     "callee": "X509_free",
+     "verdict": "Pending"
+    }
+   ],
+   "rests_on": [
+    "PEM_read_bio_X509",
+    "X509_free"
+   ]
+  },
+  {
+   "unit": "tls_more.c",
+   "function": "read_cert_reuse",
+   "status": "Unknown",
+   "host_status": null,
+   "diagnostics": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ],
+   "links": [],
+   "rests_on": []
+  },
+  {
+   "unit": "tls_more.c",
+   "function": "store_flags",
+   "status": "Pending",
+   "host_status": "Safe",
+   "diagnostics": [],
+   "links": [
+    {
+     "callee": "SSL_CTX_get_cert_store",
+     "verdict": "Pending"
+    },
+    {
+     "callee": "X509_STORE_set_flags",
+     "verdict": "Pending"
+    }
+   ],
+   "rests_on": [
+    "SSL_CTX_get_cert_store",
+    "X509_STORE_set_flags"
+   ]
+  },
+  {
+   "unit": "tls_more.c",
+   "function": "verify_depth",
+   "status": "Unknown",
+   "host_status": "Unknown",
+   "diagnostics": [
+    "use of `cert` after its object moved or its parent changed (interior-borrow-ended)"
+   ],
+   "links": [
+    {
+     "callee": "X509_STORE_CTX_get_current_cert",
+     "verdict": "Pending"
+    },
+    {
+     "callee": "X509_STORE_CTX_get_error",
+     "verdict": "Pending"
+    },
+    {
+     "callee": "X509_STORE_CTX_get_error_depth",
+     "verdict": "Pending"
+    },
+    {
+     "callee": "X509_STORE_CTX_set_error",
+     "verdict": "Pending"
+    }
+   ],
+   "rests_on": [
+    "X509_STORE_CTX_get_current_cert",
+    "X509_STORE_CTX_get_error",
+    "X509_STORE_CTX_get_error_depth",
+    "X509_STORE_CTX_set_error"
+   ]
+  },
+  {
+   "unit": "tls_more.c",
+   "function": "write_some",
+   "status": "Pending",
+   "host_status": "Safe",
+   "diagnostics": [],
+   "links": [
+    {
+     "callee": "SSL_get_error",
+     "verdict": "Pending"
+    },
+    {
+     "callee": "SSL_write",
+     "verdict": "Pending"
+    }
+   ],
+   "rests_on": [
+    "SSL_get_error",
+    "SSL_write"
+   ]
+  }
+ ],
+ "bindings": 57,
+ "binding_verdicts": [
+  "Pending"
+ ],
+ "library_versions": null
+}

@@ -1,0 +1,3 @@
+$ providers/target/release/quirin-plugin package --executable providers/target/release/quirin-openssl-check --output providers/quirin-provider-openssl/checkers/openssl-check
+packaged openssl.contract_check at providers/quirin-provider-openssl/checkers/openssl-check (sha256 22976d25a851fb796d71d9293e99d0c8284c7327f583c1996e4b4c2f6678672c)
+exit 0
