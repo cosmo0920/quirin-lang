@@ -1002,7 +1002,9 @@ pub struct PinEvaluation {
 }
 
 /// Compare every pinned declaration in force with its lock over the source at
-/// `source_root`, and withhold every mismatch.
+/// `source_root`, and withhold every mismatch. For a run with no compile
+/// database: a library version range is probed under Clang's default search
+/// path ([`apply_pins_probing`]).
 ///
 /// # Errors
 ///
@@ -1012,6 +1014,27 @@ pub fn apply_pins(
     contracts: &mut ResourceContracts,
     owners: &ModuleOwners,
     source_root: &Path,
+) -> Result<PinEvaluation, String> {
+    apply_pins_probing(
+        contracts,
+        owners,
+        source_root,
+        &crate::library_version::ProbeDatabases::None,
+    )
+}
+
+/// [`apply_pins`] for a run that analyses units from `databases`: a library
+/// version range is probed under their include configurations (card
+/// LIBRARY-VERSION-PROBE-ROUTE-DATABASE, rule 53).
+///
+/// # Errors
+///
+/// As [`apply_pins`].
+pub fn apply_pins_probing(
+    contracts: &mut ResourceContracts,
+    owners: &ModuleOwners,
+    source_root: &Path,
+    databases: &crate::library_version::ProbeDatabases,
 ) -> Result<PinEvaluation, String> {
     let digests =
         qcore_contract::contract_revision::declaration_digests(contracts.source_assumptions())?;
@@ -1126,8 +1149,13 @@ pub fn apply_pins(
                 .ok()
                 .map(|lock| lock.library_versions)
         };
-        evaluation.library_versions =
-            crate::library_version::evaluate(contracts, &evaluation.modules, &crate_root, &pinned)?;
+        evaluation.library_versions = crate::library_version::evaluate(
+            contracts,
+            &evaluation.modules,
+            &crate_root,
+            &pinned,
+            databases,
+        )?;
     }
     Ok(evaluation)
 }

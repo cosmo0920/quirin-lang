@@ -292,12 +292,23 @@ pub fn run_current_route_with_checkpoints(
         .canonicalize()
         .map_err(|error| error.to_string())?;
     let profile = route.profile;
-    let mut audit = CurrentAudit::with_plugin_checkers(
+    let default_database = root.join("build/compile_commands.json");
+    // Card LIBRARY-VERSION-PROBE-ROUTE-DATABASE (rule 53): a library version
+    // range is probed under the databases this run analyses units from: the
+    // main one and, when its units are analysed standalone, Monkey's.
+    let probe_databases = crate::library_version::ProbeDatabases::Route(
+        std::iter::once(route.compile_database.unwrap_or(&default_database))
+            .chain(route.monkey_database.filter(|_| !route.monkey_linked))
+            .map(Path::to_path_buf)
+            .collect(),
+    );
+    let mut audit = CurrentAudit::with_probe_databases(
         &root,
         profile,
         route.contracts,
         route.mode,
         route.plugin_checkers,
+        probe_databases,
     )?;
     if let Some(selection) = route.selection {
         audit.record_selection(selection.record());
@@ -315,7 +326,6 @@ pub fn run_current_route_with_checkpoints(
     for line in &preamble {
         println!("{line}");
     }
-    let default_database = root.join("build/compile_commands.json");
     let database_text = fs::read_to_string(route.compile_database.unwrap_or(&default_database))
         .map_err(|error| error.to_string())?;
     let entries = compile_entries(&database_text)?;
