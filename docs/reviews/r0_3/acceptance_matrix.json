@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 1001
+  "named_followups": 1002
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6882,11 +6882,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Landing integrate/r23 (base main 534fc8035; merges LIBRARY-VERSION-HOLD-CURRENT-ROUTE-PENDING 235e33728, no conflicts; amendments applied in ff18df25d: the card retired, W45-PLUGIN-ROUTE-COVERAGE amended). Full landing gate on ff18df25d (private/integrate-r23/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base main --full --landing through private/toolchain/env.sh: Rust 653 units / 698 summaries, 9625 passed, 0 failed, 21 ignored; fmt, Clippy and both reevaluation examples exit 0; the scoper selected one Lean audit (AuditLibraryVersionRange, exit 0), and check_lean_audits.py was run separately over all: 443 audits passed (private/integrate-r23/lean.log); provider gate not selected (providers/ unchanged). Python (779 tests) exited 1 on one test_build_matrix_sections check only (named_followups dimension), because the committed matrix predates the amendments; it is regenerated from this record and the suite rerun is recorded in private/integrate-r23/python-rerun.log. Lands ResourceContracts::carry_pin_mismatch, closing the fail-closed defect where environments rebuilt by AbiAgreement::withdraw_environment, legacy_checked_spec::reduced, legacy_neutral and legacy_summary dropped the pin mismatch and an unreadable library version was published Pending; it is now Unknown on the current route. provider_tests carries the previous landing record's figure. No profile baseline is changed and land.py publish is owed.",
-  "workspace_tests": 9625,
+  "note": "Landing integrate/r24 (base main b99927d48; merges CG22-CALLBACK-CANDIDATE-CONTRACTS 67dd40c60, no conflicts; amendments applied in 068b6b922: CG22-CALLBACK-CANDIDATE-CONTRACTS and W48-CALLEE-DECISION-TABLE amended, CG22-CALLBACK-CANDIDATE-LINK-PREMISE registered as a user decision because extending the eight-home link map changes a profile premise). Full landing gate on 068b6b922 (private/integrate-r24/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base main --full --landing through private/toolchain/env.sh: Rust 654 units / 699 summaries, 9631 passed, 0 failed, 21 ignored; fmt, Clippy and both reevaluation examples exit 0; Lean selected: 444 audits passed (QCore.CallbackCandidateScope new); provider gate not selected (providers/ unchanged). Python (779 tests) exited 1 on two test_build_matrix_sections checks only (lean audit count and named_followups dimension), because the committed matrix predates the amendments; it is regenerated from this record and the suite rerun is recorded in private/integrate-r24/python-rerun.log. Gateway rule 4a amended: the derivation scope follows designators handed to a synchronous invocation or table dispatch. The card's corpus measurement (its own preparation, declared match) moves rd_kafka_ApiVersion_check Unknown -> Safe, no Safe -> non-Safe, no Unsafe added; this landing re-measures no route, system and slice are not measured. provider_tests carries the previous landing record's figure. No profile baseline is changed and land.py publish is owed.",
+  "workspace_tests": 9631,
   "provider_tests": 149,
   "python_evidence_validator_tests": 779,
-  "lean_audits": 443,
+  "lean_audits": 444,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -6923,6 +6923,7 @@
    "AuditCallFreeConditionReads.lean",
    "AuditCallInstantiation.lean",
    "AuditCallUseAdmission.lean",
+   "AuditCallbackCandidateScope.lean",
    "AuditCallbackContracts.lean",
    "AuditCallbackForward.lean",
    "AuditCallbackTaskHandoff.lean",
@@ -7336,9 +7337,9 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "full landing gate: every step exits 0 except the Python suite's one stale-matrix check, cleared by regenerating the matrix from this record (rerun disclosed in the note); all Lean audits run separately as check_lean_audits.py",
+  "standing_gate": "full landing gate: every step exits 0 except the Python suite's two stale-matrix checks, cleared by regenerating the matrix from this record (rerun disclosed in the note); Lean selected and run in the gate",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/library-version-hold-current-route-pending/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/cg22-callback-candidate-contracts/integration/gate.json)"
  },
  "named_followups": [
   {
