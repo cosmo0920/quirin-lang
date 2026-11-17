@@ -1203,6 +1203,18 @@ impl ResourceContracts {
         self.link_resolution_sha256.as_deref()
     }
 
+    /// Card LIBRARY-VERSION-HOLD-CURRENT-ROUTE-PENDING (rule 53): preserve the
+    /// declarations withheld for a pin mismatch, each with its reason, when a
+    /// gateway pass rebuilds an environment to withdraw ordinary
+    /// declarations. The withheld calls were rewritten before the rebuild, and
+    /// their refusal is described by the reason
+    /// (`legacy_pin_hold::hold_description_for`): without the table every
+    /// library version out of range, unreadable or ambiguous would read as a
+    /// human-resolvable mismatch and publish `Pending` instead of `Unknown`.
+    pub fn carry_pin_mismatch(&mut self, from: &Self) {
+        self.pin_mismatch = from.pin_mismatch().clone();
+    }
+
     /// Preserve the separately validated cross-unit import channel when a
     /// gateway pass rebuilds an environment to withdraw ordinary declarations
     /// or to prove a recursive component. The caller's certificate still

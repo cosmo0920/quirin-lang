@@ -276,3 +276,63 @@ fn the_unit_reason_names_the_held_calls_under_their_own_code() {
     forged.contracts = serde_json::from_value(value).unwrap();
     assert!(check_legacy_safety_certificate(&forged).is_err());
 }
+
+/// Card LIBRARY-VERSION-HOLD-CURRENT-ROUTE-PENDING (rule 53): a call held for
+/// a library version is described and classified by its reason whether or
+/// not the unit's ABI gate withdraws some other declaration (here `k_size`,
+/// whose C declaration contradicts its contract's result) and classifies
+/// under the gate's reduced environment: out of range, unreadable and
+/// ambiguous are `Unknown` with the library-version text, a changed version
+/// `Pending` (`contract-pin-mismatch`).
+#[test]
+fn a_library_version_hold_keeps_its_reason_under_the_abi_gate() {
+    use qcore_c_gateway::legacy_c::pin_hold::library_version_hold_description;
+    let size = "\nextern fn k_size() -> u32\ncontract {\n    requires resource_contract_v1;\n    \
+                ensures normal resource_return_none();\n};\n";
+    for (contradicted, prelude) in [(false, ""), (true, "long k_size(void);\n")] {
+        for reason in [
+            PinMismatchReason::LibraryVersionChanged,
+            PinMismatchReason::LibraryVersionOutOfRange,
+            PinMismatchReason::LibraryVersionUnreadable,
+            PinMismatchReason::LibraryVersionAmbiguous,
+        ] {
+            let mut contracts = load(&format!("{BARE}{size}"));
+            contracts
+                .withhold_for_pin_mismatch(
+                    "k_close",
+                    "k.qcore".into(),
+                    reason,
+                    None,
+                    "the audited library version".into(),
+                )
+                .unwrap();
+            let summary = analyze_legacy_c_translation_unit(
+                &format!("{PRELUDE}{prelude}{BALANCED}"),
+                "w",
+                &contracts,
+            )
+            .expect("the fixture tokenizes");
+            let w = function(&summary, "w");
+            let descriptions = w
+                .diagnostics
+                .iter()
+                .filter_map(|diagnostic| match &diagnostic.kind {
+                    LegacyDiagnosticKind::Unsupported { description } => Some(description.clone()),
+                    _ => None,
+                })
+                .collect::<Vec<_>>();
+            let context = format!("{reason:?} contradicted={contradicted}: {descriptions:?}");
+            if reason.is_human_resolvable() {
+                assert_eq!(w.status, AnalysisStatus::Pending, "{context}");
+                assert_eq!(descriptions, [hold_description("k_close")], "{context}");
+            } else {
+                assert_eq!(w.status, AnalysisStatus::Unknown, "{context}");
+                assert_eq!(
+                    descriptions,
+                    [library_version_hold_description("k_close", reason.as_str())],
+                    "{context}"
+                );
+            }
+        }
+    }
+}

@@ -589,6 +589,10 @@ impl AbiAgreement {
         reduced.carry_side_declarations(contracts, |name| self.withdrawn.contains_key(name));
         reduced.set_source_assumptions(contracts.source_assumptions().clone());
         reduced.carry_cross_unit_imports(contracts);
+        // Card LIBRARY-VERSION-HOLD-CURRENT-ROUTE-PENDING (rule 53): a call
+        // held for a pin mismatch is described by the reason it is held for,
+        // read from this environment by the classifier.
+        reduced.carry_pin_mismatch(contracts);
         Some(reduced)
     }
 

@@ -37,9 +37,7 @@ use std::process::{Command, Output};
 use std::sync::atomic::{AtomicUsize, Ordering};
 
 use qcore_audit::user_plugins::{checker_request, checker_task};
-use qcore_c_gateway::legacy_c::pin_hold::{
-    hold_description, library_version_hold_description,
-};
+use qcore_c_gateway::legacy_c::pin_hold::{hold_description, library_version_hold_description};
 use qcore_contract::load_path_manifest::load_contract_load_path_manifest;
 use qcore_contract::profile_loader::sha256_hex;
 use qcore_verifier_host::*;
@@ -307,11 +305,9 @@ impl Fixture {
         fixture.database(Standing::InForce.database(), &[&["-Ibundled"]]);
         fixture.database(Standing::Changed.database(), &[&["-Ichanged"]]);
         fixture.database(Standing::OutOfRange.database(), &[&["-Iold"]]);
-        // A configuration the probe cannot reproduce (the other unit's).
-        fixture.database(
-            Standing::Unreadable.database(),
-            &[&["-Ibundled"], &["-Ibundled", "--sysroot=/nowhere"]],
-        );
+        // No configuration finds the version header (the registering card's
+        // unreadable runs: the libcurl headers off every searched path).
+        fixture.database(Standing::Unreadable.database(), &[&[]]);
         fixture.database(
             Standing::Ambiguous.database(),
             &[&["-Ibundled"], &["-Iother"]],
@@ -362,7 +358,8 @@ impl Fixture {
             .0
             .join("user/quirin-provider-fakelib/checkers/reset-check");
         let template = manifest();
-        let mut bytes = b"#!/bin/sh\n/bin/cat > /dev/null\n/bin/cat response.bin\nexit $?\n".to_vec();
+        let mut bytes =
+            b"#!/bin/sh\n/bin/cat > /dev/null\n/bin/cat response.bin\nexit $?\n".to_vec();
         bytes.extend(envelope(&serde_json::to_string(&template).unwrap()).into_bytes());
         bytes.push(b'\n');
         write_executable(&package.join("check.sh"), &bytes);
@@ -419,8 +416,8 @@ impl Fixture {
             Standing::InForce.database(),
         ]));
         assert_eq!(
-            self.json("user/quirin-provider-fakelib/contracts.lock")["library_versions"]
-                ["fakelib"]["version"],
+            self.json("user/quirin-provider-fakelib/contracts.lock")["library_versions"]["fakelib"]
+                ["version"],
             "2.5.0"
         );
     }

@@ -182,6 +182,73 @@ theorem held_call_keeps_chain_non_safe (analysed : V) (d : Decision) (h : d ≠ 
   have hz : (held analysed d).rank = 0 := Nat.le_zero.mp hle
   exact not_in_force_never_safe analysed d h (V.rank_injective (b := .safe) hz)
 
+/-! ## The hold under a reduced environment
+
+Card **LIBRARY-VERSION-HOLD-CURRENT-ROUTE-PENDING**. The gateway rewrites a
+withheld callee's call sites first, then classifies the held call by the
+withheld entry it finds in the environment it reads
+(`hold_description_for`): a range failure is `Unknown`, anything else, or no
+entry, the human-resolvable mismatch, `Pending`. A unit whose ABI gate
+withdraws some declaration is classified under a rebuilt, reduced environment
+(`AbiAgreement::withdraw_environment`). A reduction that drops the withheld
+table publishes a range failure `Pending` (`dropped_table_lifts_a_range_failure`,
+the defect); one that carries it (`carry_pin_mismatch`) classifies every held
+call exactly as the unreduced environment does
+(`carried_reduction_keeps_the_verdict`, `carried_reduction_agrees_with_held`).
+A checker binding's claim is joined onto the row, so it never lowers a held
+call, and a `Pending` claim leaves a range failure `Unknown`. -/
+
+/-- What the classifier finds for a held callee: its withheld entry's
+decision, or no entry. -/
+abbrev Withheld := Option Decision
+
+/-- `hold_description_for`, read as the verdict its description carries. -/
+def heldBy : Withheld → V
+  | some .outOfRange => .unknown
+  | some .unreadable => .unknown
+  | _ => .pending
+
+/-- An environment's withheld table, by callee, after a reduction that
+withdraws other declarations: kept when `carry`, dropped otherwise. -/
+def reduce (carry : Bool) (table : String → Withheld) : String → Withheld :=
+  if carry then table else fun _ => none
+
+/-- On a held call (any decision but in force) the classifier's verdict is
+the split's. -/
+theorem heldBy_agrees_with_held (analysed : V) (d : Decision) (h : d ≠ .inForce) :
+    heldBy (some d) = held analysed d := by
+  cases d <;> simp_all [heldBy, held]
+
+/-- The defect: a reduction that drops the table publishes an unreadable
+version's hold `Pending`. -/
+theorem dropped_table_lifts_a_range_failure :
+    heldBy (reduce false (fun _ => some .unreadable) "f") = .pending := rfl
+
+/-- The fix: a reduction that carries the table classifies as the unreduced
+environment does. -/
+theorem carried_reduction_keeps_the_verdict (table : String → Withheld) (f : String) :
+    heldBy (reduce true table f) = heldBy (table f) := rfl
+
+theorem carried_reduction_agrees_with_held (table : String → Withheld) (f : String)
+    (analysed : V) (d : Decision) (hd : table f = some d) (h : d ≠ .inForce) :
+    heldBy (reduce true table f) = held analysed d := by
+  rw [carried_reduction_keeps_the_verdict, hd]
+  exact heldBy_agrees_with_held analysed d h
+
+/-- A checker binding's claim is joined onto the held call's verdict: it
+never lowers it. -/
+theorem binding_never_lowers_a_hold (analysed claim : V) (d : Decision) :
+    (held analysed d).rank ≤ (V.join (held analysed d) claim).rank :=
+  le_join_left _ _
+
+/-- A binding's `Pending` claim leaves a range failure `Unknown`, and a
+changed version `Pending`. -/
+theorem pending_binding_keeps_the_split (analysed : V) :
+    V.join (held analysed .outOfRange) .pending = .unknown ∧
+      V.join (held analysed .unreadable) .pending = .unknown ∧
+      V.join (held analysed .changed) .pending = .pending := by
+  exact ⟨rfl, rfl, rfl⟩
+
 /-! ## The OpenSSL plugin's premises -/
 
 /-- A reference-counted object: its count, and whether it was freed. -/
