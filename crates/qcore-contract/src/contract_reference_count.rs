@@ -129,5 +129,6 @@ pub(super) fn declaration(
     Ok(vec![ReferenceClause {
         parameter,
         operation: clause.operation,
+        nullable: false,
     }])
 }

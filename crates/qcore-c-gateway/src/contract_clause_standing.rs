@@ -933,6 +933,7 @@ mod tests {
                 references: vec![qcore_schemas::reference_count::ReferenceClause {
                     parameter: 0,
                     operation: qcore_schemas::reference_count::ReferenceOperation::Kept,
+                    nullable: false,
                 }],
                 references_withdrawn: false,
                 callbacks: Vec::new(),

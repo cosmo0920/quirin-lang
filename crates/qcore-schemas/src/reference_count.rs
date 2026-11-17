@@ -27,7 +27,16 @@
 //! ```text
 //! ensures normal resource_reference_kept(p);      // +1 on the object p designates
 //! ensures normal resource_reference_dropped(p);   // -1; the last drop may free it
+//! ensures normal resource_reference_dropped(p, nullable); // NULL: nothing
 //! ```
+//!
+//! Card **REFERENCE-DROP-NULL-ACCEPTING** (§C04.17, rule 13b): a drop whose
+//! callee documents that a NULL argument does nothing (OpenSSL's `X509_free`,
+//! `SSL_free`, …) is written `resource_reference_dropped(p, nullable)`. Its
+//! NULL edge discharges nothing and creates nothing; its non-NULL edge is
+//! exactly the drop above. [`ReferenceClause::nullable`] is omitted from the
+//! serialized form when false, so every clause written before the card
+//! serializes as it did.
 //!
 //! Both clauses ride on [`crate::retained_by::RetainingContract`]: a
 //! declaration carrying either is **withheld** from the function map (the
@@ -64,4 +73,9 @@ impl ReferenceOperation {
 pub struct ReferenceClause {
     pub parameter: usize,
     pub operation: ReferenceOperation,
+    /// Card **REFERENCE-DROP-NULL-ACCEPTING**: a drop written
+    /// `resource_reference_dropped(p, nullable)`, whose NULL actual is a
+    /// no-op. Never set on a keep. Omitted when false.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub nullable: bool,
 }

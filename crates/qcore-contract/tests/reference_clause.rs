@@ -69,7 +69,8 @@ fn reference_clauses_load_withheld() {
         keep.references,
         [ReferenceClause {
             parameter: 2,
-            operation: ReferenceOperation::Kept
+            operation: ReferenceOperation::Kept,
+            nullable: false,
         }]
     );
     assert!(!keep.retains());
@@ -79,7 +80,8 @@ fn reference_clauses_load_withheld() {
         put.references,
         [ReferenceClause {
             parameter: 0,
-            operation: ReferenceOperation::Dropped
+            operation: ReferenceOperation::Dropped,
+            nullable: false,
         }]
     );
     check_source_assumptions(&contracts).expect("the retained texts reload");
