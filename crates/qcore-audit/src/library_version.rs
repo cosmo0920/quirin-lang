@@ -310,7 +310,10 @@ pub fn probe(
                 }
             };
         let defines = String::from_utf8_lossy(&run(&["-dM"])?.stdout).into_owned();
-        let chain = String::from_utf8_lossy(&run(&["-H", "-o", "/dev/null"])?.stderr).into_owned();
+        // `-H` writes the include chain to stderr; the preprocessed text goes
+        // to the piped stdout and is dropped (no `-o /dev/null`, which
+        // Windows does not have).
+        let chain = String::from_utf8_lossy(&run(&["-H"])?.stderr).into_owned();
         let header = chain
             .lines()
             .find_map(|line| line.strip_prefix(". "))
@@ -639,7 +642,9 @@ mod tests {
             ],
             Path::new("/b"),
         );
-        assert_eq!(flags, ["-I", "/b/inc", "-isystem", "/opt/ssl"]);
+        // A relative directory is joined with the platform's separator.
+        let joined = Path::new("/b").join("inc").display().to_string();
+        assert_eq!(flags, ["-I", joined.as_str(), "-isystem", "/opt/ssl"]);
     }
 
     #[test]
