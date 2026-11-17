@@ -80,6 +80,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [builtin-expect-null-test](builtin-expect-null-test/README.md) | BUILTIN-EXPECT-NULL-TEST |
 
+| [busy-state-fluent-bit-provider](busy-state-fluent-bit-provider/README.md) | BUSY-STATE-FLUENT-BIT-PROVIDER: Fluent Bit's busy-state contract moves to the Fluent Bit provider |
+
 ## C
 
 | Card directory | Original report title |
