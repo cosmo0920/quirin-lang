@@ -1,0 +1,610 @@
+{
+ "before": "run-base-1/resource-diagnostics.json",
+ "after": "run-tip-1/resource-diagnostics.json",
+ "function_totals": {
+  "before": {
+   "Pending": 2,
+   "Safe": 1097,
+   "Unknown": 3700,
+   "Unsafe": 5
+  },
+  "after": {
+   "Pending": 2,
+   "Safe": 1097,
+   "Unknown": 3700,
+   "Unsafe": 5
+  }
+ },
+ "unit_totals": {
+  "before": {
+   "Unknown": 163,
+   "Safe": 9,
+   "Unsafe": 5,
+   "data_only": 4
+  },
+  "after": {
+   "Unknown": 163,
+   "Safe": 9,
+   "Unsafe": 5,
+   "data_only": 4
+  }
+ },
+ "unmatched": {
+  "before_only": [],
+  "after_only": []
+ },
+ "rows_changed": 32,
+ "content_changes": [
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdbase64.c::0::rd_base64_encode",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [
+    "EVP_EncodeBlock"
+   ],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": []
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_admin.c::0::rd_kafka_AlterUserScramCredentialsRequest_salted_password",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [
+    "EVP_sha256",
+    "EVP_sha512"
+   ],
+   "links_lost": [],
+   "uncontracted_left": [
+    "EVP_sha256",
+    "EVP_sha512"
+   ],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": []
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_cert.c::0::rd_kafka_cert_destroy",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [
+    "X509_STORE_free"
+   ],
+   "links_lost": [],
+   "uncontracted_left": [
+    "X509_STORE_free"
+   ],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `X509_STORE_free` with `cert - > store`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_cert.c::0::rd_kafka_cert_new",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [
+    "OPENSSL_sk_new_null",
+    "OPENSSL_sk_value",
+    "PKCS12_free",
+    "d2i_PKCS12_bio"
+   ],
+   "links_lost": [],
+   "uncontracted_left": [
+    "PKCS12_free",
+    "d2i_PKCS12_bio"
+   ],
+   "uncontracted_new": [],
+   "other_left": [
+    "unresolved resource identity `p12`"
+   ],
+   "other_new": [
+    "call to `PEM_read_bio_PrivateKey` outside its declared literal-argument premise",
+    "call to `PEM_read_bio_X509` outside its declared literal-argument premise"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_ssl.c::0::rd_kafka_ssl_PKEY_from_string",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [
+    "PEM_read_bio_PrivateKey"
+   ],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `PEM_read_bio_PrivateKey` outside its declared literal-argument premise"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_ssl.c::0::rd_kafka_ssl_X509_from_string",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [
+    "PEM_read_bio_X509"
+   ],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `PEM_read_bio_X509` outside its declared literal-argument premise"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_ssl.c::0::rd_kafka_ssl_cert_callback",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [
+    "OPENSSL_sk_value",
+    "SSL_get_certificate",
+    "SSL_get_client_CA_list"
+   ],
+   "links_lost": [],
+   "uncontracted_left": [
+    "OPENSSL_sk_value",
+    "SSL_get_certificate",
+    "SSL_get_client_CA_list"
+   ],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "derived result of `OPENSSL_sk_value` from an unmodeled base expression",
+    "use of `ca_list` after its object moved or its parent changed (interior-borrow-ended)",
+    "use of `cert` after its object moved or its parent changed (interior-borrow-ended)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_ssl.c::0::rd_kafka_ssl_cert_issuer_match",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [
+    "OPENSSL_sk_value",
+    "X509_get_issuer_name"
+   ],
+   "links_lost": [],
+   "uncontracted_left": [
+    "OPENSSL_sk_value",
+    "X509_get_issuer_name"
+   ],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "derived result of `OPENSSL_sk_value` from an unmodeled base expression",
+    "use of `issuer_dn` after its object moved or its parent changed (interior-borrow-ended)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_ssl.c::0::rd_kafka_ssl_ctx_init",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [
+    "SSL_CTX_new",
+    "SSL_CTX_set_default_passwd_cb_userdata",
+    "SSL_CTX_set_options"
+   ],
+   "links_lost": [],
+   "uncontracted_left": [
+    "SSL_CTX_set_default_passwd_cb_userdata",
+    "SSL_CTX_set_options"
+   ],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `SSL_CTX_set_default_passwd_cb_userdata` retains `rk` in `ctx`, whose lifetime this body does not decide against it (retention-undecided)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_ssl.c::0::rd_kafka_ssl_ctx_init_engine",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [
+    "ENGINE_by_id"
+   ],
+   "links_lost": [],
+   "uncontracted_left": [
+    "ENGINE_by_id"
+   ],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": []
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_ssl.c::0::rd_kafka_ssl_error0",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [
+    "ERR_error_string_n"
+   ],
+   "links_lost": [],
+   "uncontracted_left": [
+    "ERR_error_string_n"
+   ],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": []
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_ssl.c::0::rd_kafka_ssl_read_cert_chain_from_BIO",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [
+    "ERR_peek_last_error",
+    "OPENSSL_sk_push",
+    "X509_new"
+   ],
+   "links_lost": [],
+   "uncontracted_left": [
+    "ERR_peek_last_error",
+    "OPENSSL_sk_push",
+    "X509_new"
+   ],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `OPENSSL_sk_push` retains `ossl_check_X509_type ( ca )` in `ossl_check_X509_sk_type ( chainp )`, whose lifetime this body does not decide against it (retention-undecided)",
+    "loop re-acquisition: an earlier generation that may be live is still held"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_ssl.c::0::rd_kafka_ssl_set_ca_path",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [
+    "SSL_CTX_load_verify_locations"
+   ],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": []
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_ssl.c::0::rd_kafka_ssl_set_certs",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [
+    "BIO_new_file",
+    "OPENSSL_sk_free",
+    "OPENSSL_sk_new_null",
+    "OPENSSL_sk_push",
+    "OPENSSL_sk_value",
+    "PKCS12_free",
+    "SSL_CTX_get_cert_store",
+    "SSL_CTX_load_verify_locations",
+    "SSL_CTX_set_default_verify_paths",
+    "SSL_CTX_use_PrivateKey",
+    "SSL_CTX_use_PrivateKey_file",
+    "SSL_CTX_use_certificate",
+    "SSL_CTX_use_certificate_chain_file",
+    "X509_STORE_get0_objects",
+    "X509_STORE_set_flags",
+    "d2i_PKCS12_bio"
+   ],
+   "links_lost": [],
+   "uncontracted_left": [
+    "BIO_new_file",
+    "OPENSSL_sk_free",
+    "OPENSSL_sk_new_null",
+    "OPENSSL_sk_push",
+    "PKCS12_free",
+    "SSL_CTX_get_cert_store",
+    "SSL_CTX_load_verify_locations",
+    "SSL_CTX_set_default_verify_paths",
+    "SSL_CTX_use_PrivateKey",
+    "SSL_CTX_use_PrivateKey_file",
+    "SSL_CTX_use_certificate",
+    "SSL_CTX_use_certificate_chain_file",
+    "X509_STORE_get0_objects",
+    "X509_STORE_set_flags",
+    "d2i_PKCS12_bio"
+   ],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `OPENSSL_sk_push` retains `ossl_check_X509_NAME_type ( X509_get_subject_name ( x509 ) )` in `ossl_check_X509_NAME_sk_type ( cert_names )`, whose lifetime this body does not decide against it (retention-undecided)",
+    "unresolved resource identity `__qcore_nested_value_0`",
+    "use of `bio` after a possibly-final drop of its reference (reference-dropped)",
+    "use of `roots` after its object moved or its parent changed (interior-borrow-ended)",
+    "use of `store` after its object moved or its parent changed (interior-borrow-ended)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_ssl.c::0::rd_kafka_transport_ssl_cert_verify_cb",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [
+    "X509_STORE_CTX_get_current_cert",
+    "X509_STORE_CTX_get_error",
+    "X509_STORE_CTX_get_error_depth",
+    "X509_STORE_CTX_set_error",
+    "X509_get_issuer_name"
+   ],
+   "links_lost": [],
+   "uncontracted_left": [
+    "X509_STORE_CTX_get_current_cert",
+    "X509_STORE_CTX_get_error",
+    "X509_STORE_CTX_get_error_depth",
+    "X509_STORE_CTX_set_error"
+   ],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "use of `cert` after its object moved or its parent changed (interior-borrow-ended)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_ssl.c::0::rd_kafka_transport_ssl_connect",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [
+    "ERR_clear_error",
+    "SSL_connect",
+    "SSL_new"
+   ],
+   "links_lost": [],
+   "uncontracted_left": [
+    "SSL_connect"
+   ],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": []
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_ssl.c::0::rd_kafka_transport_ssl_handshake",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [
+    "SSL_do_handshake"
+   ],
+   "links_lost": [],
+   "uncontracted_left": [
+    "SSL_do_handshake"
+   ],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": []
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_ssl.c::0::rd_kafka_transport_ssl_io_event",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [
+    "ERR_clear_error",
+    "SSL_write"
+   ],
+   "links_lost": [],
+   "uncontracted_left": [
+    "SSL_write"
+   ],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": []
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_ssl.c::0::rd_kafka_transport_ssl_io_update",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [
+    "ERR_peek_error",
+    "SSL_get_error"
+   ],
+   "links_lost": [],
+   "uncontracted_left": [
+    "ERR_peek_error",
+    "SSL_get_error"
+   ],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": []
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_ssl.c::0::rd_kafka_transport_ssl_recv",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [
+    "ERR_clear_error",
+    "SSL_read"
+   ],
+   "links_lost": [],
+   "uncontracted_left": [
+    "SSL_read"
+   ],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "unresolved resource identity `rktrans`"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_ssl.c::0::rd_kafka_transport_ssl_send",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [
+    "ERR_clear_error",
+    "SSL_write"
+   ],
+   "links_lost": [],
+   "uncontracted_left": [
+    "SSL_write"
+   ],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "unresolved resource identity `rktrans`"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_ssl.c::0::rd_kafka_transport_ssl_verify",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [
+    "SSL_get1_peer_certificate"
+   ],
+   "links_lost": [],
+   "uncontracted_left": [
+    "SSL_get1_peer_certificate"
+   ],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": []
+  },
+  {
+   "row": "monkey::lib/monkey/tls/tls_openssl.c::0::context_new",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [
+    "SSL_set_accept_state"
+   ],
+   "links_lost": [],
+   "uncontracted_left": [
+    "SSL_set_accept_state"
+   ],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": []
+  },
+  {
+   "row": "monkey::lib/monkey/tls/tls_openssl.c::0::mk_tls_exit",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [
+    "SSL_CTX_free"
+   ],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": []
+  },
+  {
+   "row": "monkey::lib/monkey/tls/tls_openssl.c::0::mk_tls_init",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [
+    "OPENSSL_init_ssl"
+   ],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": []
+  },
+  {
+   "row": "monkey::lib/monkey/tls/tls_openssl.c::0::mk_tls_read",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [
+    "SSL_read"
+   ],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": []
+  },
+  {
+   "row": "monkey::lib/monkey/tls/tls_openssl.c::0::mk_tls_send_file",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [
+    "SSL_write"
+   ],
+   "links_lost": [],
+   "uncontracted_left": [
+    "SSL_write"
+   ],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": []
+  },
+  {
+   "row": "monkey::lib/monkey/tls/tls_openssl.c::0::mk_tls_write",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [
+    "SSL_write"
+   ],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": []
+  },
+  {
+   "row": "monkey::lib/monkey/tls/tls_openssl.c::0::mk_tls_writev",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [
+    "SSL_write"
+   ],
+   "links_lost": [],
+   "uncontracted_left": [
+    "SSL_write"
+   ],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": []
+  },
+  {
+   "row": "monkey::lib/monkey/tls/tls_openssl.c::0::tls_handle_return",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [
+    "SSL_get_error"
+   ],
+   "links_lost": [],
+   "uncontracted_left": [
+    "SSL_get_error"
+   ],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": []
+  },
+  {
+   "row": "monkey::lib/monkey/tls/tls_openssl.c::0::tls_load_builtin_credentials",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [
+    "PEM_read_bio_PrivateKey",
+    "PEM_read_bio_X509",
+    "SSL_CTX_use_PrivateKey",
+    "SSL_CTX_use_certificate"
+   ],
+   "links_lost": [],
+   "uncontracted_left": [
+    "PEM_read_bio_PrivateKey",
+    "PEM_read_bio_X509"
+   ],
+   "uncontracted_new": [],
+   "other_left": [
+    "call to `EVP_PKEY_free` with `key`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "call to `X509_free` with `cert`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "unmodeled call, aggregate or indirect access in branch condition"
+   ],
+   "other_new": []
+  },
+  {
+   "row": "monkey::lib/monkey/tls/tls_openssl.c::0::tls_load_credentials",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [
+    "SSL_CTX_load_verify_locations",
+    "SSL_CTX_use_PrivateKey_file",
+    "SSL_CTX_use_certificate_chain_file"
+   ],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": []
+  }
+ ],
+ "moves": [],
+ "unit_moves": []
+}
