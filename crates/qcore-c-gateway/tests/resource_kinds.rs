@@ -165,6 +165,11 @@ const FORMAL_ADDRESS: &str =
     "unsupported:call has an unmodeled formal address or borrowed expression";
 const WITNESS: &str = "unsupported:in-place initialiser status not held by a plain, not address-taken name (rule 11v)";
 const ACTUAL: &str = "unsupported:in-place resource object is not the address of one automatic object of this function (rule 11v)";
+/// Card CG25-VOID-CAST-GUARD-ESCAPE (rule 11v (6)): the body reading's two
+/// refusals, beside a refusal a route already gave.
+const STRAY: &str = "unsupported:tracked in-place object `re` named outside its declarator, a `sizeof` operand or a declared in-place position (rule 11v (6))";
+const UNCARRIED_COMPILE: &str =
+    "unsupported:in-place actual `re` of `k_regcomp` is carried by no call node (rule 11v (6))";
 
 // -- The loader ---------------------------------------------------------------
 
@@ -323,11 +328,14 @@ fn an_untested_status_decides_nothing() {
     assert_ne!(status, "Safe");
     // A status no plain name holds is refused outright: discarded, or
     // consumed by the condition that tests it.
+    // Card CG25-VOID-CAST-GUARD-ESCAPE (rule 11v (6)): a refused compile is
+    // carried by no call node, which the body reading adds beside the
+    // refusal.
     expect(
         "discarded status",
         "void w(const char *p) { regex_t re; k_regcomp(&re, p, 0); }",
         "Unknown",
-        &[WITNESS],
+        &[UNCARRIED_COMPILE, WITNESS],
     );
     expect(
         "status consumed by its condition: the condition route keeps its refusal",
@@ -335,6 +343,7 @@ fn an_untested_status_decides_nothing() {
         "Unknown",
         &[
             "unknown_alias:re",
+            UNCARRIED_COMPILE,
             "unsupported:unmodeled call, aggregate or indirect access in branch condition",
         ],
     );
@@ -386,19 +395,19 @@ fn the_storage_is_custody_never_data() {
         "an unkinded borrowed position may overwrite the object",
         "void w(const char *p) { regex_t re; int r = k_regcomp(&re, p, 0); if (r) return; k_wipe(&re, sizeof re); k_regfree(&re); }",
         "Unknown",
-        &["unknown_alias:re", FORMAL_ADDRESS],
+        &["unknown_alias:re", FORMAL_ADDRESS, STRAY],
     );
     expect(
         "a struct copy",
         "void w(const char *p) { regex_t re; regex_t other; int r = k_regcomp(&re, p, 0); if (r) return; other = re; k_regfree(&re); }",
         "Unknown",
-        &["unknown_alias:re", GUARD],
+        &["unknown_alias:re", STRAY, GUARD],
     );
     expect(
         "free of the object's address",
         "void w(const char *p) { regex_t re; int r = k_regcomp(&re, p, 0); if (r) return; k_free(&re); }",
         "Unknown",
-        &[FORMAL_ADDRESS],
+        &[FORMAL_ADDRESS, STRAY],
     );
 }
 

@@ -210,6 +210,7 @@ import QCore.Ieee754Ops
 import QCore.Ieee754Round
 import QCore.Ieee754Vectors32
 import QCore.Ieee754Vectors64
+import QCore.InPlaceMentionGuard
 import QCore.Index
 import QCore.IndexExtent
 import QCore.IndexExtentFrames

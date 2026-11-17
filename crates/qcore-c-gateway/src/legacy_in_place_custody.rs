@@ -48,6 +48,16 @@
 //! * [`verify_cfg`]: after the CFG is built, every call node with an in-place
 //!   position must carry that position's place; a route that lowered one
 //!   without it is refused, so no in-place effect is ever silently dropped.
+//! * **Every mention, whatever the route** (card CG25-VOID-CAST-GUARD-ESCAPE,
+//!   rule 11v (6)): [`InPlaceNames::body_mentions`] reads every mention of a
+//!   tracked object in the body's token stream once, before any route, and
+//!   [`verify_mentions`] refuses the function at its entry when one is not
+//!   the object's declarator, a `sizeof` operand, or a whole custody actual
+//!   at a position of its kind, or when a custody actual's call reached no
+//!   node with the object's place. The statement guard sees only the first
+//!   classification; this sees every fallback, condition and return route,
+//!   and a by-value actual too, because it reads names off the tokens rather
+//!   than off the nodes.
 //!
 //! Everything here refuses rather than approximates.
 
@@ -56,8 +66,9 @@ use std::collections::{BTreeMap, BTreeSet};
 use serde_json::Value;
 
 use super::{
-    AbstractState, LegacyCfg, LegacyInstruction, Parser, ResourceContracts, ResourceKind,
-    ResourceParameterMode, Token, call_arguments, is_identifier, strip_parentheses,
+    AbstractState, LegacyCfg, LegacyCfgNode, LegacyInstruction, Parser, RefusedWrites,
+    ResourceContracts, ResourceKind, ResourceParameterMode, Token, call_argument_spans,
+    call_arguments, is_identifier, strip_parentheses,
 };
 use crate::typed_c_ast::{children, kind};
 use qcore_schemas::contract::ResourceFunctionContract;
@@ -197,6 +208,172 @@ impl InPlaceNames {
             _ => None,
         }
     }
+
+    /// Card CG25-VOID-CAST-GUARD-ESCAPE (rule 11v (6)): every mention of a
+    /// tracked object in `body` (the tokens between the function's braces, as
+    /// the parser reads them), read once and before any route.
+    ///
+    /// A mention is admitted only as one of three things:
+    ///
+    /// * the object's declarator, by the statement guard's own
+    ///   `declares_only` over the enclosing statement;
+    /// * the operand of `sizeof` spelled `sizeof NAME` or `sizeof ( NAME )`,
+    ///   which C does not evaluate (C11 6.5.3.4p2; a tracked object is never
+    ///   an array, so never a VLA);
+    /// * a **custody actual**: a whole `&NAME` actual (or `NAME` itself at a
+    ///   by-value finaliser or use of a by-value kind) of a direct call to a
+    ///   declared callee with a contract in force, at a position of the
+    ///   object's kind.
+    ///
+    /// The first other mention is recorded as stray, whatever its statement,
+    /// condition or return is and whichever route would lower it.
+    pub(crate) fn body_mentions(
+        &self,
+        body: &[Token],
+        contracts: &ResourceContracts,
+        declared_callees: &BTreeSet<String>,
+    ) -> BodyMentions {
+        let mut mentions = BodyMentions::default();
+        if self.kinds.is_empty() {
+            return mentions;
+        }
+        let texts = body
+            .iter()
+            .map(|token| token.text.as_str())
+            .collect::<Vec<_>>();
+        let mut custody_indices = BTreeSet::new();
+        for index in 0..texts.len().saturating_sub(1) {
+            let callee = texts[index];
+            if texts[index + 1] != "("
+                || !is_identifier(callee)
+                || after_member(&texts, index)
+                || !declared_callees.contains(callee)
+            {
+                continue;
+            }
+            let Some(contract) = contracts.contract(callee) else {
+                continue;
+            };
+            let Some(spans) = call_argument_spans(&texts, index) else {
+                continue;
+            };
+            for (position, (start, end)) in spans.into_iter().enumerate() {
+                let kind = contract.parameter_kind(position);
+                if !kind.is_in_place() {
+                    continue;
+                }
+                let argument = &texts[start..end];
+                let by_value = kind.finalised_by_value()
+                    && !matches!(
+                        contract.parameters.get(position),
+                        Some(ResourceParameterMode::Out { .. })
+                    );
+                let name =
+                    address_of_name(argument).or_else(|| match strip_parentheses(argument) {
+                        [name] if by_value && is_identifier(name) => Some(*name),
+                        _ => None,
+                    });
+                let Some(name) = name.filter(|name| self.kind(name) == Some(kind)) else {
+                    continue;
+                };
+                let Some(at) = (start..end).find(|at| texts[*at] == name) else {
+                    continue;
+                };
+                custody_indices.insert(at);
+                let entry = mentions
+                    .custody
+                    .entry((callee.to_owned(), position, name.to_owned()))
+                    .or_insert((0, body[at].line));
+                entry.0 += 1;
+            }
+        }
+        for (index, text) in texts.iter().enumerate() {
+            if !self.contains(text) || after_member(&texts, index) {
+                continue;
+            }
+            if custody_indices.contains(&index)
+                || sizeof_operand(&texts, index)
+                || declarator(&texts, index)
+            {
+                continue;
+            }
+            mentions.stray = Some((body[index].line, (*text).to_owned()));
+            break;
+        }
+        mentions
+    }
+}
+
+/// Card CG25-VOID-CAST-GUARD-ESCAPE (rule 11v (6)): what
+/// [`InPlaceNames::body_mentions`] read of one body.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub(crate) struct BodyMentions {
+    /// The first mention of a tracked object that is not admitted: its line
+    /// and the object's name.
+    stray: Option<(usize, String)>,
+    /// Every custody actual, keyed by callee, position and object: how many
+    /// times the body spells it, and the line of the first.
+    custody: BTreeMap<(String, usize, String), (usize, usize)>,
+}
+
+/// Whether the mention at `index` is the operand of `sizeof NAME` or
+/// `sizeof ( NAME )`.
+fn sizeof_operand(texts: &[&str], index: usize) -> bool {
+    (index >= 1 && texts[index - 1] == "sizeof")
+        || (index >= 2
+            && texts[index - 2] == "sizeof"
+            && texts[index - 1] == "("
+            && texts.get(index + 1) == Some(&")"))
+}
+
+/// Whether the mention at `index` is a declarator of a statement the
+/// statement guard reads as a declaration that reads nothing
+/// ([`declares_only`]): the statement runs from the token after the nearest
+/// `;`, `{` or `}` before `index` to the nearest `;` after it.
+fn declarator(texts: &[&str], index: usize) -> bool {
+    let start = texts[..index]
+        .iter()
+        .rposition(|text| matches!(*text, ";" | "{" | "}"))
+        .map_or(0, |at| at + 1);
+    let Some(end) = texts[index..].iter().position(|text| *text == ";") else {
+        return false;
+    };
+    let statement = &texts[start..index + end];
+    // A statement keyword followed by the name (`return re;`, `else re;`)
+    // reads the object; only a declaration declares it.
+    let keyword = statement.first().is_some_and(|first| {
+        matches!(
+            *first,
+            "return"
+                | "goto"
+                | "case"
+                | "default"
+                | "else"
+                | "do"
+                | "if"
+                | "while"
+                | "for"
+                | "switch"
+                | "break"
+                | "continue"
+                | "sizeof"
+                | "typedef"
+        )
+    });
+    !keyword && declares_only(statement, &[texts[index]])
+}
+
+/// Card CG25-VOID-CAST-GUARD-ESCAPE: the refusal of a stray mention.
+fn stray_refusal(name: &str) -> String {
+    format!(
+        "tracked in-place object `{name}` named outside its declarator, a `sizeof` operand or a declared in-place position (rule 11v (6))"
+    )
+}
+
+/// Card CG25-VOID-CAST-GUARD-ESCAPE: the refusal of a custody actual whose
+/// call no route lowered with the object's place.
+fn uncarried_refusal(callee: &str, name: &str) -> String {
+    format!("in-place actual `{name}` of `{callee}` is carried by no call node (rule 11v (6))")
 }
 
 /// Card CURRENT-CONTEXT-NEW-TRIAGE (D3): whether `instruction` is this
@@ -658,5 +835,196 @@ pub(crate) fn verify_cfg(cfg: &mut LegacyCfg) {
                 writes: super::RefusedWrites::Unbounded,
             };
         }
+    }
+}
+
+/// Card CG25-VOID-CAST-GUARD-ESCAPE (rule 11v (6)): refuse the function at its
+/// entry when [`InPlaceNames::body_mentions`] found a stray mention, or when a
+/// custody actual is carried by fewer call nodes than the body spells it (a
+/// route lowered its call without the place, or not at all). Asked last,
+/// over the finished CFG (after [`verify_cfg`] and every later pass); the
+/// identity on a body that tracks nothing.
+///
+/// The refusal is a new node before the old entry, so it lies on every path
+/// and no instruction the routes produced is replaced. Whichever route lowered
+/// a statement, condition or return, an admitted function therefore never
+/// reads tracked storage as data and never drops a custody effect.
+pub(crate) fn verify_mentions(cfg: &mut LegacyCfg, mentions: &BodyMentions) {
+    let refusal = mentions
+        .stray
+        .as_ref()
+        .map(|(line, name)| (*line, stray_refusal(name)))
+        .or_else(|| {
+            mentions
+                .custody
+                .iter()
+                .find(|((callee, position, name), (spelled, _))| {
+                    carried(cfg, callee, *position, name) < *spelled
+                })
+                .map(|((callee, _, name), (_, line))| (*line, uncarried_refusal(callee, name)))
+        });
+    let Some((line, description)) = refusal else {
+        return;
+    };
+    let entry = cfg.nodes.len();
+    cfg.nodes.push(LegacyCfgNode {
+        lookup: None,
+        lookup_read: None,
+        instruction: LegacyInstruction::Unknown {
+            description,
+            writes: RefusedWrites::Unbounded,
+        },
+        successors: vec![cfg.entry],
+        line,
+        is_exit: false,
+        loop_exit_edge: None,
+    });
+    cfg.entry = entry;
+}
+
+/// How many call nodes of `callee` carry `name`'s place at `position`.
+fn carried(cfg: &LegacyCfg, callee: &str, position: usize, name: &str) -> usize {
+    cfg.nodes
+        .iter()
+        .filter(|node| {
+            matches!(
+                &node.instruction,
+                LegacyInstruction::ContractCall { function, arguments, .. }
+                    if function == callee
+                        && arguments.get(position).and_then(Option::as_deref) == Some(name)
+            )
+        })
+        .count()
+}
+
+/// Card CG25-VOID-CAST-GUARD-ESCAPE: the body reading over the libc
+/// declarations, including the by-value `thread_key` case D3's node-level
+/// check could not see (no place is recorded for a by-value scalar actual).
+/// No key is tracked in a real body (D3 refuses the creation), so the names
+/// are built directly here.
+#[cfg(test)]
+mod mention_tests {
+    use super::*;
+    use qcore_contract::contract_loader::load_resource_contract_sources;
+
+    const REGEX: &str =
+        include_str!("../../../providers/quirin-provider-libc/contracts/libc/regex.qv");
+    const THREADS: &str =
+        include_str!("../../../providers/quirin-provider-libc/contracts/libc/threads.qv");
+
+    fn contracts() -> ResourceContracts {
+        load_resource_contract_sources(&BTreeMap::from([
+            ("libc/regex.qv".to_owned(), REGEX.to_owned()),
+            ("libc/threads.qv".to_owned(), THREADS.to_owned()),
+        ]))
+        .expect("the libc modules load")
+    }
+
+    fn tracked(name: &str, kind: ResourceKind) -> InPlaceNames {
+        InPlaceNames {
+            kinds: BTreeMap::from([(name.to_owned(), BTreeSet::from([kind]))]),
+            ..InPlaceNames::default()
+        }
+    }
+
+    /// Space-separated tokens, one line per `;`-terminated statement.
+    fn tokens(text: &str) -> Vec<Token> {
+        let mut line = 1;
+        text.split_whitespace()
+            .map(|text| {
+                let token = Token {
+                    text: text.to_owned(),
+                    line,
+                };
+                if text == ";" {
+                    line += 1;
+                }
+                token
+            })
+            .collect()
+    }
+
+    fn read(names: &InPlaceNames, body: &str) -> BodyMentions {
+        let declared = [
+            "regcomp",
+            "regexec",
+            "regerror",
+            "regfree",
+            "pthread_key_create",
+            "pthread_key_delete",
+            "pthread_getspecific",
+        ]
+        .into_iter()
+        .map(str::to_owned)
+        .collect();
+        names.body_mentions(&tokens(body), &contracts(), &declared)
+    }
+
+    const REGEX_MATCH: &str = "regex_t re ; int r ; r = regcomp ( & re , pattern , 1 ) ; \
+         if ( r ) { if ( errstr ) regerror ( r , & re , errstr , size ) ; return 0 ; } \
+         r = regexec ( & re , str , 0 , 0 , 0 ) != 1 ; regfree ( & re ) ; return r ;";
+
+    #[test]
+    fn the_regex_match_body_names_only_custody_actuals() {
+        let mentions = read(&tracked("re", ResourceKind::Regex), REGEX_MATCH);
+        assert_eq!(mentions.stray, None);
+        assert_eq!(
+            mentions.custody.keys().cloned().collect::<Vec<_>>(),
+            [
+                ("regcomp".to_owned(), 0, "re".to_owned()),
+                ("regerror".to_owned(), 1, "re".to_owned()),
+                ("regexec".to_owned(), 0, "re".to_owned()),
+                ("regfree".to_owned(), 0, "re".to_owned()),
+            ]
+        );
+    }
+
+    #[test]
+    fn every_data_spelling_is_stray() {
+        let names = tracked("re", ResourceKind::Regex);
+        for (statement, line) in [
+            ("( void ) re . re_nsub ;", 8),
+            ("if ( re . re_nsub ) r = 2 ;", 8),
+            ("return ( int ) re . re_nsub ;", 8),
+            ("else re ;", 8),
+            (
+                "r = regerror ( r , & re , 0 , 0 ) + ( int ) sizeof ( re . re_nsub ) ;",
+                8,
+            ),
+        ] {
+            let body = REGEX_MATCH.replace("return r ;", &format!("{statement} return r ;"));
+            assert_eq!(
+                read(&names, &body).stray,
+                Some((line, "re".to_owned())),
+                "{statement}"
+            );
+        }
+        // An unevaluated operand reads nothing.
+        let body = REGEX_MATCH.replace("return r ;", "r = sizeof re + sizeof ( re ) ; return r ;");
+        assert_eq!(read(&names, &body).stray, None);
+    }
+
+    /// D3's escape: the getter's position has no kind, so a by-value mention
+    /// of a tracked key there is stray; the by-value delete is custody.
+    #[test]
+    fn a_by_value_getter_of_a_tracked_key_is_stray() {
+        let names = tracked("key", ResourceKind::ThreadKey);
+        let body = "pthread_key_t key ; int r ; r = pthread_key_create ( & key , 0 ) ; \
+             if ( r ) return ; pthread_key_delete ( key ) ;";
+        let mentions = read(&names, body);
+        assert_eq!(mentions.stray, None);
+        assert!(mentions.custody.contains_key(&(
+            "pthread_key_delete".to_owned(),
+            0,
+            "key".to_owned()
+        )));
+        let escaped = format!("{body} ( void ) pthread_getspecific ( key ) ;");
+        assert_eq!(read(&names, &escaped).stray, Some((6, "key".to_owned())));
+    }
+
+    #[test]
+    fn a_body_that_tracks_nothing_reads_nothing() {
+        let mentions = read(&InPlaceNames::default(), REGEX_MATCH);
+        assert_eq!(mentions, BodyMentions::default());
     }
 }

@@ -4283,6 +4283,21 @@ fn build_function_cfg_unscoped(
     lookup_route::settle(&mut cfg, tokens, function);
     lookup_route::settle_calls(&mut cfg, tokens, contracts);
     self_link_init::restore_unreachable(&mut cfg);
+    // Card CG25-VOID-CAST-GUARD-ESCAPE (rule 11v (6)), asked last, over the
+    // finished CFG: every mention of a tracked object, whichever route
+    // lowered it, is its declarator, a `sizeof` operand or a custody actual
+    // as many call nodes carry as the body spells; otherwise the function is
+    // refused at a new entry node. The identity on a body that tracks nothing.
+    if !parser.in_place_names.is_empty()
+        && let Some(body_end) = matching(tokens, body_start, "{", "}")
+    {
+        let mentions = parser.in_place_names.body_mentions(
+            &tokens[body_start + 1..body_end],
+            contracts,
+            &parser.declared_callees,
+        );
+        in_place_custody::verify_mentions(&mut cfg, &mentions);
+    }
     Ok(cfg)
 }
 

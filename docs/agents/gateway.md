@@ -4684,8 +4684,7 @@ own anchor here.
     (`STATIC_KEY_RELEASE_REFUSAL`), as does a key reached through a pointer,
     a thread-local key and a delete of an untracked key; the getters are not
     kinded, and the guard's own refusal is final (`is_guard_refusal`). The
-    same fallback escape for the `regex` kind is a registered follow-up
-    (`CG25-VOID-CAST-GUARD-ESCAPE`). **Do not** read
+    same fallback escape for the `regex` kind is closed by (6). **Do not** read
     a thread-local, member or pointer-reached key as static, drop the literal
     destructor premise, or accept a static key's delete without a reading of
     its holder. Measured: see the report (`mk_http_thread_initialize_tls_once`
@@ -4694,6 +4693,43 @@ own anchor here.
     `kindVectors`/`protocolVectors` extended;
     `tests/thread_key_in_place.rs`;
     [report](../reports/current-context-new-triage/README.md).
+    (6) **Every mention, whatever the route** (card
+    CG25-VOID-CAST-GUARD-ESCAPE, priority soundness; user decision
+    2026-11-17 "Yes, launch it."). (4)'s guard reads only a statement's first
+    classification. A first classification that was already a refusal skipped
+    it, and a later route admitted tracked storage as data. The census found
+    25 regex shape runs certified `Safe`, among them `(void) re.used;`,
+    `(void) (re.used = 0);` and `(void) (re.used ? 1 : 0);` (statement
+    fallbacks 10s and 10z), `t = k_regexec(&re, s) + (int) re.used;`,
+    `if`/`while`/`do`/`switch` on `re.used`, and `return (int) re.used;`.
+    So, over the finished CFG (after `verify_cfg` and every later pass), the
+    body's token stream (the one the parser reads) is read once
+    (`InPlaceNames::body_mentions`, `verify_mentions`). Every variable
+    mention of a tracked object must be one of three things: its declarator
+    (the guard's `declares_only` over the enclosing statement, not after a
+    statement keyword); the operand of `sizeof NAME` or `sizeof ( NAME )`
+    (not evaluated, C11 6.5.3.4p2; a tracked object is never an array); or a
+    **custody actual**. A custody actual is a whole `&NAME` actual (or `NAME`
+    at a by-value finaliser or use of a by-value kind) of a direct call to a
+    declared callee with a contract in force, at a position of the object's
+    kind. Every custody actual must also be carried by at least as many call
+    nodes of that callee as the body spells it, each holding the object's
+    place at that position. Otherwise a refusal node is added before the
+    entry, so it lies on every path and replaces no lowering. Names are read
+    off the tokens, not off the nodes, so a by-value scalar actual is seen:
+    D3's CFG-level check missed that case. Widening (4)'s guard to every
+    refusal is also not needed, which is what broke `rd_regex_match`. Every
+    correctly admitted use stays admitted, with its place: kinded calls
+    plain, assigned, compared (10y), cast, in a statement expression (11g),
+    in a condition, a declaration or a return, and `sizeof`. No published
+    Safe rested on an escape: `rd_regex_match`, the only tracked object on
+    any route or baseline, names `re` only in custody actuals. **Do not**
+    admit a mention because some route lowered it, or relax the carried
+    count to "some node". `QCore.InPlaceMentionGuard`
+    (`AuditInPlaceMentionGuard.lean`; every admitted lowering, from any
+    route, passed the guard; `shapeAdmissions` bound to
+    `tests/in_place_mention_guard.rs`);
+    [report](../reports/cg25-void-cast-guard-escape/README.md).
 
 <a id="constraint-11w"></a>
 
