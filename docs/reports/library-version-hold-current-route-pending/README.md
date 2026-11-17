@@ -38,46 +38,65 @@ none
 
 ## 2. The cause
 
-The registering card thought the current route or its checker-binding join
-lost the hold's reason. Neither did. A fixture with the current route, a
+The registering card suspected that the current route, or its checker-binding
+join, lost the hold's reason. Neither did. A fixture with the current route, a
 ranged user declaration and a bound checker published an out-of-range hold
-`Unknown` correctly. The defect needed one more ingredient: **the caller's
-unit contradicts some other contracted declaration's ABI**.
+`Unknown` correctly. The defect needs one more ingredient: **a gateway pass
+that rebuilds the unit's environment**.
 
-`AbiAgreement::withdraw_environment`
-(`crates/qcore-c-gateway/src/legacy_declared_abi.rs:574`, at base) rebuilt a
-unit's environment from `ResourceContracts::default()` whenever the unit's own
-C declarations contradicted any contracted declaration. It carried the
-function map, the side tables, the retained texts and the cross-unit imports,
-but not `pin_mismatch`. Every caller in `legacy_c.rs` (lines 2491, 3208 and
-3403) classifies the unit under that reduced environment. The withheld calls
-had already been rewritten (`hold_call_sites`, under the full environment), so
-the call stayed held. But `legacy_pin_hold::hold_description_for`
-(`legacy_classify.rs:1277`) found no withheld entry and fell back to the
-human-resolvable `hold_description`. So every library-version hold in such a
-unit (out of range, unreadable, ambiguous) was published `Pending`
-(`contract-pin-mismatch`) instead of `Unknown`. That is the registering
-card's row: librdkafka's `rdhttp.c` withdraws some other declaration under
-the 69-module selection, which the `contracts` route test's small unit does
-not.
+Four places build a reduced environment from `ResourceContracts::default()`.
+Each carries the function map, the retained texts and the cross-unit imports,
+and three carry the side tables. None carried `pin_mismatch`. The four places
+are (lines at base):
 
-The defect was on every route that publishes rows, not just `current`. The
-first commit (`825af79af`) is the failing test: the current and contracts
-routes publish the out-of-range hold `Pending` with the human-resolvable text.
+* `AbiAgreement::withdraw_environment`
+  (`crates/qcore-c-gateway/src/legacy_declared_abi.rs:574`). It runs when the
+  unit's own C declarations contradict any contracted declaration.
+* `legacy_checked_spec::reduced`
+  (`crates/qcore-c-gateway/src/legacy_checked_spec.rs:133`). It withdraws
+  every `resource_body_checked` specification that the unit does not define
+  and establish. In practice that means nearly every unit under a selection
+  that loads such specifications, the 69-module Fluent Bit selection among
+  them.
+* `legacy_neutral::component_environment` (`:234`) and
+  `legacy_summary::component_lower_environment` (`:806`), the round
+  environments of recursive components.
+
+The withheld calls had already been rewritten (`hold_call_sites`, under the
+full environment), so each call stayed held. But
+`legacy_pin_hold::hold_description_for` (`legacy_classify.rs:1277`) then
+found no withheld entry and fell back to the human-resolvable
+`hold_description`. So every library-version hold in such a unit (out of
+range, unreadable or ambiguous) was published `Pending`
+(`contract-pin-mismatch`) instead of `Unknown`. The defect was on every route
+that publishes rows, not only `current`.
+
+The card localised the cause in two steps:
+
+* **The ABI gate.** The first commit (`825af79af`) is a failing test. The
+  current and contracts routes publish an out-of-range hold `Pending` with the
+  human-resolvable text when the caller's unit contradicts another
+  declaration's ABI. Fixing the ABI gate alone did not fix the libcurl run:
+  `rd_http_global_init` stayed `Pending` (section 6, first tip binary).
+* **The other rebuilds.** Those were the remaining rebuilds, so all four now
+  carry the table. A gateway test reproduces the checked-specification
+  reduction, and it fails without that carry.
+
 The binding was not involved. A held call applies no contract, so no link
 folds onto it (`user_plugins::fold_unit` joins, never replaces).
 
 ## 3. The change
 
 * `ResourceContracts::carry_pin_mismatch`
-  (`crates/qcore-schemas/src/contract.rs`) copies the withheld table, with its
-  reasons. `withdraw_environment` calls it. The read goes through
+  (`crates/qcore-schemas/src/contract.rs`) copies the withheld table, with
+  its reasons. All four rebuilds call it, next to `carry_cross_unit_imports`,
+  and those are all of that function's call sites. The read goes through
   `pin_mismatch()`, which every unit's hold rewrite already records in the
   lookup log, so the log does not change.
 * Rule 53 is amended in place with one sentence: the hold reads its reason
-  from the environment the unit is classified under, a rebuilt environment
-  carries the table, and a binding's claim is joined. The topic page is
-  regenerated.
+  from the environment the unit is classified under, every rebuilt
+  environment carries the table, and a binding's claim is joined. The topic
+  page is regenerated.
 * Lean (`QCore.LibraryVersionRange`, audited in `AuditLibraryVersionRange`)
   adds six theorems. `heldBy` models `hold_description_for` as a verdict, and
   `reduce` models a rebuild that keeps or drops the table:
@@ -95,12 +114,19 @@ folds onto it (`user_plugins::fold_unit` joins, never replaces).
 ### Tests
 
 * `crates/qcore-c-gateway/tests/contract_pin_hold.rs`,
-  `a_library_version_hold_keeps_its_reason_under_the_abi_gate`. It covers the
-  four library-version reasons, each with and without a contradicted
-  declaration (`long k_size(void)` against `k_size() -> u32`). Changed is
-  `Pending` with the pin-mismatch text. The other three are `Unknown` with
-  `library_version_hold_description`. With the carry line removed, the test
-  fails at `LibraryVersionOutOfRange contradicted=true` (`Pending`).
+  `a_library_version_hold_keeps_its_reason_under_reduced_environments`. It
+  covers the four library-version reasons under three environments:
+  * no reduction;
+  * the ABI gate's, with `long k_size(void)` against `k_size() -> u32`;
+  * the checked-specification gate's, with an undefined
+    `resource_body_checked` `k_spec`.
+
+  Changed is `Pending` with the pin-mismatch text. The other three reasons
+  are `Unknown` with `library_version_hold_description`. With the ABI gate's
+  carry removed, or the checked-specification gate's, the test fails at
+  `LibraryVersionOutOfRange` under that reduction (`Pending`). No test
+  reaches the two recursive-component carries; they are there by the same
+  argument.
 * `crates/qcore-audit/tests/library_version_hold_routes.rs` runs the
   `current`, `contracts` and configured routes through the shipped binary. The
   fixture is `library_version_route_database.rs`'s, plus an unranged,
@@ -135,8 +161,8 @@ checks only the hold's classification on that route.
 
 ## 4. Why the pinned and live routes cannot move
 
-The change touches one value: the reduced environment of a unit whose ABI gate
-withdraws a declaration. That environment now holds the full environment's
+The change touches one value: the reduced environments a gateway pass
+rebuilds (section 2). That environment now holds the full environment's
 `pin_mismatch` table instead of an empty one.
 
 * With no withheld declaration, the carried table is empty and the reduced
@@ -163,3 +189,24 @@ withdraws a declaration. That environment now holds the full environment's
 So no published byte of the pinned, corpus, system or tail-pause routes can
 differ. They are not measured: this host has no shared prepared corpus
 inputs, and the integrator's landing measurement is the arbiter.
+
+## 5. Interaction with OPENSSL-PROVIDER-REMAINING-CALLEES
+
+That card (branch tip `c714ef64d`, not merged here) adds
+`user_plugins::fold_dependencies`. It joins every bound declaration listed in
+a row's `contract_dependencies.declarations` that `fold_unit` did not link.
+This card does not touch either join. The two are compatible, for three
+reasons:
+
+* A held call's callee is spelled with the hold prefix and recorded under
+  `contract_dependencies.held`, never under `declarations`
+  (`contract_dependencies::read`, `Spelling::Held`). So neither fold links a
+  binding to it. The dependencies are computed against the run environment,
+  which this card does not change.
+* Both folds only join (`Safe < Pending < Unknown < Unsafe`). A
+  range-failure hold is `Unknown` from the classifier, and a `Pending` claim
+  leaves it `Unknown` whichever path folds it
+  (`pending_binding_keeps_the_split`).
+* `library_version_hold_routes.rs` asserts that a held row carries no
+  `plugin_links`. That stays true after the merge, because the held callee is
+  not a declaration the row rests on.

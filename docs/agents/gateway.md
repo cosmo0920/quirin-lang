@@ -11234,8 +11234,10 @@ safety claim and no validation of the detach representation premise.
     lock's `library_versions`, and held by the gateway through the pin hold
     (`legacy_pin_hold::hold_description_for`), which reads the withheld
     entry's reason from the environment the unit is classified under, so
-    an environment a gateway pass rebuilds (the ABI gate's
-    `withdraw_environment`) carries the withheld table
+    every environment a gateway pass rebuilds (the ABI gate's
+    `withdraw_environment`, the checked specification gate's `reduced`,
+    the recursive components' round environments) carries the withheld
+    table
     (`ResourceContracts::carry_pin_mismatch`; card
     LIBRARY-VERSION-HOLD-CURRENT-ROUTE-PENDING, which found it dropped and
     every range failure published `Pending`), and a checker binding's
