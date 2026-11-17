@@ -51,6 +51,13 @@
 //! never held — and is a violation candidate on a path with no refusal; a
 //! drop past a borrowed family's last drop may consume the caller's
 //! reference and is refused.
+//!
+//! Card **REFERENCE-DROP-NULL-ACCEPTING** ([`decide_drop_actual`]): a drop
+//! declared `resource_reference_dropped(p, nullable)` reads a definitely-NULL
+//! actual as a no-op (it discharges nothing and creates nothing) and a name
+//! bound to one live family or NULL as that family's drop; its non-NULL edge
+//! is exactly the table above. A drop not so marked refuses both NULL
+//! classes as before.
 
 /// The refusal reasons, as they appear in diagnostics.
 pub const DROPPED: &str = "reference-dropped";
@@ -608,6 +615,138 @@ pub const REFERENCE_TRACE_VECTORS: [(&[RefEvent], RefOutcome); 21] = [
     ),
 ];
 
+// ---------------------------------------------------------------------------
+// Card REFERENCE-DROP-NULL-ACCEPTING: the NULL-accepting drop
+// ---------------------------------------------------------------------------
+
+/// What a drop's actual denotes, with the two NULL classes the
+/// NULL-accepting drop (`resource_reference_dropped(p, nullable)`, contract
+/// specification §C04.17) reads apart. Shared with
+/// `QCore.NullableReferenceDrop` (`DropActual`).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum DropActual {
+    /// Any binding the non-NULL classes describe: decided as today.
+    Plain(Binding),
+    /// A definitely-NULL actual (no target, not unknown, possibly null).
+    Null,
+    /// A name bound to exactly one live family or NULL: its family on the
+    /// non-NULL edge, nothing on the NULL edge.
+    OneOrNull { held: Held, handed: bool },
+}
+
+/// What a drop does once its actual's NULL edge is read.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum NullableDrop {
+    /// The NULL edge of a NULL-accepting drop: it discharges nothing and
+    /// creates nothing.
+    NoOp,
+    /// Rule 13b's drop table, over the non-NULL edge.
+    Drop(DropDecision),
+}
+
+/// Rule 13b's drop, with the clause's nullability. A drop **not** marked
+/// nullable decides a NULL class exactly as the `Other` binding it was
+/// before the card: refused (`reference-drop-unheld`). A NULL-accepting drop
+/// reads a definitely-NULL actual as a no-op, and a one-family-or-NULL actual
+/// as that family's drop (its NULL edge holds nothing); every other actual,
+/// a caller's reference included, decides as today.
+#[must_use]
+pub const fn decide_drop_actual(actual: DropActual, nullable: bool) -> NullableDrop {
+    match (actual, nullable) {
+        (DropActual::Plain(binding), _) => NullableDrop::Drop(decide_drop(binding)),
+        (DropActual::Null, true) => NullableDrop::NoOp,
+        (DropActual::OneOrNull { held, handed }, true) => {
+            NullableDrop::Drop(decide_drop(Binding::Family { held, handed }))
+        }
+        (DropActual::Null | DropActual::OneOrNull { .. }, false) => {
+            NullableDrop::Drop(decide_drop(Binding::Other))
+        }
+    }
+}
+
+/// `(actual, nullable, decision)`, shared with `QCore.NullableReferenceDrop`
+/// (`nullable_drop_vectors_hold`).
+pub const NULLABLE_DROP_VECTORS: [(DropActual, bool, NullableDrop); 12] = [
+    // The NULL edge: a no-op only where the clause is nullable.
+    (DropActual::Null, true, NullableDrop::NoOp),
+    (
+        DropActual::Null,
+        false,
+        NullableDrop::Drop(DropDecision::Refuse(UNHELD)),
+    ),
+    // One family or NULL: the family's drop where nullable, refused where not.
+    (
+        DropActual::OneOrNull {
+            held: Held::Known(1),
+            handed: false,
+        },
+        true,
+        NullableDrop::Drop(DropDecision::Final),
+    ),
+    (
+        DropActual::OneOrNull {
+            held: Held::Known(2),
+            handed: false,
+        },
+        true,
+        NullableDrop::Drop(DropDecision::Decrement),
+    ),
+    (
+        DropActual::OneOrNull {
+            held: Held::Known(1),
+            handed: true,
+        },
+        true,
+        NullableDrop::Drop(DropDecision::Refuse(UNHELD)),
+    ),
+    (
+        DropActual::OneOrNull {
+            held: Held::Undecided,
+            handed: false,
+        },
+        true,
+        NullableDrop::Drop(DropDecision::Refuse(UNDECIDED)),
+    ),
+    (
+        DropActual::OneOrNull {
+            held: Held::Known(1),
+            handed: false,
+        },
+        false,
+        NullableDrop::Drop(DropDecision::Refuse(UNHELD)),
+    ),
+    // A non-NULL reference the function does not hold still refuses.
+    (
+        DropActual::Plain(Binding::Unbound),
+        true,
+        NullableDrop::Drop(DropDecision::Refuse(UNHELD)),
+    ),
+    (
+        DropActual::Plain(Binding::Other),
+        true,
+        NullableDrop::Drop(DropDecision::Refuse(UNHELD)),
+    ),
+    (
+        DropActual::Plain(Binding::Invalid),
+        true,
+        NullableDrop::Drop(DropDecision::Refuse(DROPPED)),
+    ),
+    (
+        DropActual::Plain(Binding::Freed),
+        true,
+        NullableDrop::Drop(DropDecision::OverDrop),
+    ),
+    // A held reference: exactly today's drop.
+    (
+        DropActual::Plain(Binding::Family {
+            held: Held::Known(1),
+            handed: false,
+        }),
+        true,
+        NullableDrop::Drop(DropDecision::Final),
+    ),
+];
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -624,6 +763,42 @@ mod tests {
     fn reference_trace_vectors_hold() {
         for (path, outcome) in REFERENCE_TRACE_VECTORS {
             assert_eq!(ref_replay(path).outcome(), outcome, "{path:?}");
+        }
+    }
+
+    #[test]
+    fn nullable_drop_vectors_hold() {
+        for (actual, nullable, decision) in NULLABLE_DROP_VECTORS {
+            assert_eq!(
+                decide_drop_actual(actual, nullable),
+                decision,
+                "{actual:?} {nullable}"
+            );
+        }
+    }
+
+    /// A drop not marked nullable decides every NULL class as `Other` did.
+    #[test]
+    fn a_non_nullable_drop_is_unchanged() {
+        for actual in [
+            DropActual::Null,
+            DropActual::OneOrNull {
+                held: Held::Known(1),
+                handed: false,
+            },
+        ] {
+            assert_eq!(
+                decide_drop_actual(actual, false),
+                NullableDrop::Drop(decide_drop(Binding::Other))
+            );
+        }
+        for (binding, _, drop) in REFERENCE_VECTORS {
+            for nullable in [false, true] {
+                assert_eq!(
+                    decide_drop_actual(DropActual::Plain(binding), nullable),
+                    NullableDrop::Drop(drop)
+                );
+            }
         }
     }
 

@@ -174,3 +174,41 @@ fn the_reference_kind_is_spelled_only_on_an_owned_result() {
     let none = "extern fn k() -> unit\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_return_none();\n    ensures normal resource_return_kind(reference);\n};\n";
     assert!(load(none).is_err());
 }
+
+/// Card REFERENCE-DROP-NULL-ACCEPTING: `resource_reference_dropped(p,
+/// nullable)` loads as a NULL-accepting drop; `nullable` is the only word a
+/// drop takes after its parameter, and a keep takes none.
+#[test]
+fn a_null_accepting_drop_loads_and_every_other_word_rejects() {
+    let nullable = declaration(
+        "p: ptr<mut, u8>",
+        "    ensures normal resource_borrowed(p);\n    ensures normal resource_reference_dropped(p, nullable);\n    ensures normal resource_return_none();\n",
+    );
+    let contracts = load(&nullable).expect("loads");
+    assert!(contracts.contract("k").is_none(), "withheld");
+    let declared = contracts.retaining_contract("k").expect("withheld");
+    assert_eq!(
+        declared.references,
+        [ReferenceClause {
+            parameter: 0,
+            operation: ReferenceOperation::Dropped,
+            nullable: true,
+        }]
+    );
+    check_source_assumptions(&contracts).expect("the retained texts reload");
+    for clause in [
+        // `nonnull` is what a drop without the word means: one spelling.
+        "resource_reference_dropped(p, nonnull)",
+        "resource_reference_dropped(p, maybe)",
+        "resource_reference_kept(p, nullable)",
+        "resource_reference_dropped(p, nullable, nullable)",
+    ] {
+        let text = declaration(
+            "p: ptr<mut, u8>",
+            &format!(
+                "    ensures normal resource_borrowed(p);\n    ensures normal {clause};\n    ensures normal resource_return_none();\n"
+            ),
+        );
+        assert!(load(&text).is_err(), "{text}");
+    }
+}

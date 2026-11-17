@@ -46,8 +46,9 @@ use super::{
     LegacyInstruction, Parser, Token,
 };
 use crate::reference_count::{
-    Binding, DROPPED, DropDecision, ExitOutcome, Family, Held, KeepDecision, UNBALANCED, UNDECIDED,
-    WITHDRAWN, decide_drop, decide_exit, decide_keep, owed,
+    Binding, DROPPED, DropActual, DropDecision, ExitOutcome, Family, Held, KeepDecision,
+    NullableDrop, UNBALANCED, UNDECIDED, WITHDRAWN, decide_drop_actual, decide_exit, decide_keep,
+    owed,
 };
 
 /// The largest count a family is tracked to; one more keep makes it
@@ -58,6 +59,11 @@ const HELD_BOUND: u32 = 16;
 #[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct ReferenceOperand {
     pub operation: ReferenceOperation,
+    /// Card **REFERENCE-DROP-NULL-ACCEPTING**: the drop is declared
+    /// `resource_reference_dropped(p, nullable)`. Omitted when false, so every
+    /// operand of a declaration written before the card serializes as it did.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub nullable: bool,
     /// The name the actual denotes (a plain name, or a pointer cast of one),
     /// `None` for any other actual.
     pub name: Option<String>,
@@ -142,6 +148,7 @@ impl Parser<'_> {
                     .map(|words| words.iter().map(String::as_str).collect::<Vec<_>>());
                 ReferenceOperand {
                     operation: clause.operation,
+                    nullable: clause.nullable,
                     name: borrowed.as_deref().and_then(actual_name),
                     text: words.map_or_else(|| "?".to_owned(), |words| words.join(" ")),
                 }
@@ -246,6 +253,11 @@ fn binding(state: &AbstractState, name: &str) -> (Binding, Option<usize>) {
     if pointer.unknown || pointer.may_be_null || state.unresolved_effect_sites.contains(&site) {
         return (Binding::Other, None);
     }
+    family_binding(state, site)
+}
+
+/// The family record of `site` as a binding of a name that denotes it.
+fn family_binding(state: &AbstractState, site: usize) -> (Binding, Option<usize>) {
     let Some(Family { held, .. }) = state.references.get(&site).copied() else {
         return (Binding::Other, None);
     };
@@ -267,6 +279,47 @@ fn binding(state: &AbstractState, name: &str) -> (Binding, Option<usize>) {
             },
             Some(site),
         ),
+    }
+}
+
+/// Card **REFERENCE-DROP-NULL-ACCEPTING**: what `name` denotes for a drop,
+/// with the two NULL classes read apart. A definitely-NULL binding (no
+/// target, not unknown, possibly null: the gateway's own definition of a
+/// definitely-null pointer) is [`DropActual::Null`]; an identity binding of
+/// exactly one site that may also be NULL, not unknown and not an unresolved
+/// effect site, whose site holds a family, is [`DropActual::OneOrNull`] with
+/// that family's record. Everything else is [`binding`]'s reading, so a drop
+/// not marked nullable, which [`decide_drop_actual`] decides on both NULL
+/// classes as `Other`, decides exactly as before the card.
+fn drop_actual(state: &AbstractState, name: &str) -> (DropActual, Option<usize>) {
+    let plain = || {
+        let (found, site) = binding(state, name);
+        (DropActual::Plain(found), site)
+    };
+    if state.invalidated.contains_key(name) {
+        return plain();
+    }
+    let Some(pointer) = state.pointers.get(name) else {
+        return plain();
+    };
+    if !pointer.derivation.is_identity() || pointer.unknown || !pointer.may_be_null {
+        return plain();
+    }
+    if pointer.targets.is_empty() {
+        return (DropActual::Null, None);
+    }
+    let [site] = pointer.targets.iter().copied().collect::<Vec<_>>()[..] else {
+        return plain();
+    };
+    if state.unresolved_effect_sites.contains(&site) {
+        return plain();
+    }
+    // The family on the non-NULL edge, read as `binding` reads a bound name.
+    match family_binding(state, site) {
+        (Binding::Family { held, handed }, Some(site)) => {
+            (DropActual::OneOrNull { held, handed }, Some(site))
+        }
+        _ => plain(),
     }
 }
 
@@ -443,97 +496,114 @@ pub(super) fn apply(
                     bind(state, destination, family);
                 }
             }
-            ReferenceOperation::Dropped => match decide_drop(found) {
-                DropDecision::Decrement => {
-                    if let Some(site) = site
-                        && let Some(family) = state.references.get_mut(&site)
-                        && let Held::Known(held) = family.held
-                    {
-                        family.held = Held::Known(held - 1);
+            ReferenceOperation::Dropped => {
+                // Card REFERENCE-DROP-NULL-ACCEPTING: the drop's actual with
+                // its NULL classes; a drop not marked nullable decides them
+                // as `Other`, exactly as before.
+                let (actual, site) = operand
+                    .name
+                    .as_deref()
+                    .map_or((DropActual::Plain(Binding::Other), None), |name| {
+                        drop_actual(state, name)
+                    });
+                match decide_drop_actual(actual, operand.nullable) {
+                    // The NULL edge of a NULL-accepting drop: nothing is held,
+                    // nothing is discharged, nothing is created.
+                    NullableDrop::NoOp => {}
+                    NullableDrop::Drop(DropDecision::Decrement) => {
+                        if let Some(site) = site
+                            && let Some(family) = state.references.get_mut(&site)
+                            && let Held::Known(held) = family.held
+                        {
+                            family.held = Held::Known(held - 1);
+                        }
+                    }
+                    NullableDrop::Drop(DropDecision::Final) => {
+                        let Some(site) = site else {
+                            continue;
+                        };
+                        // Possibly final: the object may be freed. The family is
+                        // discharged and every name bound to it is invalidated;
+                        // an acquired family's names remember it, so a further
+                        // drop through one is an over-drop.
+                        let acquired = state
+                            .references
+                            .remove(&site)
+                            .is_some_and(|family| family.acquired);
+                        let reason = if acquired {
+                            Invalid::ReferenceFreed { site }
+                        } else {
+                            Invalid::ReferenceDropped
+                        };
+                        state.resources.remove(&site);
+                        state.nullable_sites.remove(&site);
+                        // Card REFCOUNT-REFERENCE-RETURNING-DECLARATIONS (rule
+                        // 13e): the last reference this function holds on an
+                        // object it acquired is dropped, so the object it held
+                        // other pointers in is, as far as this function can see,
+                        // gone (premise P-RESULT-HOLDER-LAST-DROP): what it
+                        // retains is no longer this function's to outlive. A
+                        // borrowed family's object lives on with the caller's
+                        // reference, so its records stand.
+                        if acquired {
+                            super::retained_by_route::holder_released(state, site);
+                        }
+                        let names = state
+                            .pointers
+                            .iter()
+                            .filter(|(_, pointer)| pointer.targets.contains(&site))
+                            .map(|(name, _)| name.clone())
+                            .collect::<Vec<_>>();
+                        for name in names {
+                            state.pointers.remove(&name);
+                            state.invalidated.insert(name, reason);
+                        }
+                    }
+                    // A drop past an acquired family's last drop: every reference
+                    // the function could see is already dropped. A violation
+                    // candidate on a path that refused nothing, provisional and
+                    // never an upstream defect; a refusal on any other path.
+                    NullableDrop::Drop(DropDecision::OverDrop) => {
+                        if state.unmodeled {
+                            refuse(
+                                function,
+                                line,
+                                called,
+                                &operand.text,
+                                "a drop past the last drop of a reference this function acquired",
+                                DROPPED,
+                                state,
+                                diagnostics,
+                            );
+                        } else if let Some(site) = site {
+                            diagnostics.insert(LegacyDiagnostic {
+                                function: function.to_owned(),
+                                line,
+                                kind: LegacyDiagnosticKind::DoubleRelease {
+                                    acquisition_line: super::acquisition_line(
+                                        acquisition_lines,
+                                        site,
+                                    ),
+                                },
+                            });
+                        }
+                    }
+                    NullableDrop::Drop(DropDecision::Refuse(reason)) => {
+                        if !invalid {
+                            refuse(
+                                function,
+                                line,
+                                called,
+                                &operand.text,
+                                "a drop of a reference this function does not hold, or whose count is undecided",
+                                reason,
+                                state,
+                                diagnostics,
+                            );
+                        }
                     }
                 }
-                DropDecision::Final => {
-                    let Some(site) = site else {
-                        continue;
-                    };
-                    // Possibly final: the object may be freed. The family is
-                    // discharged and every name bound to it is invalidated;
-                    // an acquired family's names remember it, so a further
-                    // drop through one is an over-drop.
-                    let acquired = state
-                        .references
-                        .remove(&site)
-                        .is_some_and(|family| family.acquired);
-                    let reason = if acquired {
-                        Invalid::ReferenceFreed { site }
-                    } else {
-                        Invalid::ReferenceDropped
-                    };
-                    state.resources.remove(&site);
-                    state.nullable_sites.remove(&site);
-                    // Card REFCOUNT-REFERENCE-RETURNING-DECLARATIONS (rule
-                    // 13e): the last reference this function holds on an
-                    // object it acquired is dropped, so the object it held
-                    // other pointers in is, as far as this function can see,
-                    // gone (premise P-RESULT-HOLDER-LAST-DROP): what it
-                    // retains is no longer this function's to outlive. A
-                    // borrowed family's object lives on with the caller's
-                    // reference, so its records stand.
-                    if acquired {
-                        super::retained_by_route::holder_released(state, site);
-                    }
-                    let names = state
-                        .pointers
-                        .iter()
-                        .filter(|(_, pointer)| pointer.targets.contains(&site))
-                        .map(|(name, _)| name.clone())
-                        .collect::<Vec<_>>();
-                    for name in names {
-                        state.pointers.remove(&name);
-                        state.invalidated.insert(name, reason);
-                    }
-                }
-                // A drop past an acquired family's last drop: every reference
-                // the function could see is already dropped. A violation
-                // candidate on a path that refused nothing, provisional and
-                // never an upstream defect; a refusal on any other path.
-                DropDecision::OverDrop => {
-                    if state.unmodeled {
-                        refuse(
-                            function,
-                            line,
-                            called,
-                            &operand.text,
-                            "a drop past the last drop of a reference this function acquired",
-                            DROPPED,
-                            state,
-                            diagnostics,
-                        );
-                    } else if let Some(site) = site {
-                        diagnostics.insert(LegacyDiagnostic {
-                            function: function.to_owned(),
-                            line,
-                            kind: LegacyDiagnosticKind::DoubleRelease {
-                                acquisition_line: super::acquisition_line(acquisition_lines, site),
-                            },
-                        });
-                    }
-                }
-                DropDecision::Refuse(reason) => {
-                    if !invalid {
-                        refuse(
-                            function,
-                            line,
-                            called,
-                            &operand.text,
-                            "a drop of a reference this function does not hold, or whose count is undecided",
-                            reason,
-                            state,
-                            diagnostics,
-                        );
-                    }
-                }
-            },
+            }
         }
     }
 }
@@ -624,6 +694,22 @@ fn assignment_at(body: &[&str], at: usize) -> bool {
             .is_some_and(|before| matches!(body[before], "=" | "!" | "<" | ">"))
 }
 
+/// Card **REFERENCE-DROP-NULL-ACCEPTING**: whether a body opens with a
+/// return on a NULL `name`: `{ if ( ! name ) return ;` or `{ if ( name ==
+/// NULL ) return ;`, the null constant spelled `NULL`, `0` or `( ( void * )
+/// 0 )` (NULL after preprocessing).
+fn null_guarded(body: &[&str], name: &str) -> bool {
+    const NULLS: [&[&str]; 3] = [&["NULL"], &["0"], &["(", "(", "void", "*", ")", "0", ")"]];
+    let Some(rest) = body.strip_prefix(&["{", "if", "("][..]) else {
+        return false;
+    };
+    let after_test = rest.strip_prefix(&["!", name][..]).or_else(|| {
+        let rest = rest.strip_prefix(&[name, "=", "="][..])?;
+        NULLS.iter().find_map(|null| rest.strip_prefix(*null))
+    });
+    after_test.is_some_and(|after| after.starts_with(&[")", "return", ";"]))
+}
+
 /// Rule 13c: whether a keep's or a drop's body validates the clause on the
 /// parameter `name`. Structural: `name` is never assigned, never has its
 /// address taken, is never stored or returned (except a keep's `return
@@ -631,16 +717,24 @@ fn assignment_at(body: &[&str], at: usize) -> bool {
 /// of a call, or in a null test; the body has no `goto`; and it touches the
 /// object (a member access, or a whole actual at the same reference position
 /// of a declared callee).
+///
+/// Card **REFERENCE-DROP-NULL-ACCEPTING**: a NULL-accepting drop (`nullable`)
+/// also does nothing on NULL, structurally: its body opens with a return on a
+/// NULL `name` ([`null_guarded`]), or it touches the object only by
+/// forwarding it whole to a declared NULL-accepting drop at the same
+/// position, never through a member access.
 pub(super) fn validated(
     body: &[&str],
     name: &str,
     operation: ReferenceOperation,
+    nullable: bool,
     alias: bool,
     contracts: &ResourceContracts,
 ) -> bool {
     if name.is_empty() || body.contains(&"goto") {
         return false;
     }
+    let unguarded = nullable && !null_guarded(body, name);
     let mut touched = false;
     for (at, word) in body.iter().enumerate() {
         if *word == "return" {
@@ -667,6 +761,10 @@ pub(super) fn validated(
         let previous = at.checked_sub(1).map(|before| body[before]);
         let next = body.get(at + 1).copied();
         if next == Some("->") {
+            // An unguarded NULL-accepting drop never dereferences its formal.
+            if unguarded {
+                return false;
+            }
             touched = true;
             continue;
         }
@@ -707,7 +805,9 @@ pub(super) fn validated(
                         .retaining_contract(callee)
                         .is_some_and(|declared| {
                             declared.references.iter().any(|clause| {
-                                clause.operation == operation && clause.parameter == position
+                                clause.operation == operation
+                                    && clause.parameter == position
+                                    && (clause.nullable || !unguarded)
                             })
                         })
                     {
@@ -761,6 +861,7 @@ fn settle_clauses(tokens: &[Token], contracts: &ResourceContracts) -> Option<Res
                 &body,
                 parameters.get(clause.parameter).map_or("", String::as_str),
                 clause.operation,
+                clause.nullable,
                 alias,
                 contracts,
             )
@@ -803,6 +904,7 @@ mod tests {
             &keep0,
             "rktp",
             ReferenceOperation::Kept,
+            false,
             true,
             &empty()
         ));
@@ -814,6 +916,7 @@ mod tests {
             &q_keep,
             "rkq",
             ReferenceOperation::Kept,
+            false,
             true,
             &empty()
         ));
@@ -826,6 +929,7 @@ mod tests {
             &topic_keep,
             "rkt",
             ReferenceOperation::Kept,
+            false,
             true,
             &empty()
         ));
@@ -842,6 +946,7 @@ mod tests {
             "rktp",
             ReferenceOperation::Dropped,
             false,
+            false,
             &empty()
         ));
     }
@@ -854,6 +959,7 @@ mod tests {
             &stores,
             "rktp",
             ReferenceOperation::Kept,
+            false,
             true,
             &empty()
         ));
@@ -862,6 +968,7 @@ mod tests {
             &returns_other,
             "rktp",
             ReferenceOperation::Kept,
+            false,
             true,
             &empty()
         ));
@@ -870,6 +977,7 @@ mod tests {
             &rebinds,
             "rktp",
             ReferenceOperation::Kept,
+            false,
             true,
             &empty()
         ));
@@ -879,6 +987,7 @@ mod tests {
             "rktp",
             ReferenceOperation::Dropped,
             false,
+            false,
             &empty()
         ));
         let returns = words("{ rktp -> n -- ; return rktp ; }");
@@ -887,6 +996,7 @@ mod tests {
             "rktp",
             ReferenceOperation::Dropped,
             false,
+            false,
             &empty()
         ));
         let untouched = words("{ return rktp ; }");
@@ -894,6 +1004,7 @@ mod tests {
             &untouched,
             "rktp",
             ReferenceOperation::Kept,
+            false,
             true,
             &empty()
         ));
@@ -902,7 +1013,64 @@ mod tests {
             &jumps,
             "rktp",
             ReferenceOperation::Kept,
+            false,
             true,
+            &empty()
+        ));
+    }
+
+    /// Card REFERENCE-DROP-NULL-ACCEPTING: a NULL-accepting drop's body
+    /// returns on NULL before it touches the object, or only forwards it to a
+    /// declared NULL-accepting drop.
+    #[test]
+    fn a_null_accepting_drop_body_does_nothing_on_null() {
+        let guarded = words("{ if ( ! o ) return ; if ( -- o -> refcnt == 0 ) rc_final ( o ) ; }");
+        assert!(validated(
+            &guarded,
+            "o",
+            ReferenceOperation::Dropped,
+            true,
+            false,
+            &empty()
+        ));
+        let preprocessed = words(
+            "{ if ( o = = ( ( void * ) 0 ) ) return ; if ( -- o -> refcnt = = 0 ) rc_final ( o ) ; }",
+        );
+        assert!(validated(
+            &preprocessed,
+            "o",
+            ReferenceOperation::Dropped,
+            true,
+            false,
+            &empty()
+        ));
+        // Dereferenced with no guard: a non-nullable drop body, not a
+        // NULL-accepting one.
+        let unguarded = words("{ if ( -- o -> refcnt == 0 ) rc_final ( o ) ; }");
+        assert!(validated(
+            &unguarded,
+            "o",
+            ReferenceOperation::Dropped,
+            false,
+            false,
+            &empty()
+        ));
+        assert!(!validated(
+            &unguarded,
+            "o",
+            ReferenceOperation::Dropped,
+            true,
+            false,
+            &empty()
+        ));
+        // A guard after the first dereference does not count.
+        let late = words("{ o -> n ++ ; if ( ! o ) return ; o -> n -- ; }");
+        assert!(!validated(
+            &late,
+            "o",
+            ReferenceOperation::Dropped,
+            true,
+            false,
             &empty()
         ));
     }

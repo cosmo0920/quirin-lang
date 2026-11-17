@@ -34,7 +34,11 @@
 //!    documents: a release of a reference-counted object is a reference drop
 //!    (never a final free), a constructor's result is a returned reference
 //!    that may be NULL, and a function that takes or returns nothing has no
-//!    custody clause.
+//!    custody clause. Card **REFERENCE-DROP-NULL-ACCEPTING**: a release whose
+//!    page states that a NULL argument does nothing is a NULL-accepting drop,
+//!    `resource_reference_dropped(p, nullable)`, and the cited snapshot must
+//!    record that exact sentence; the range's series is then the oldest one
+//!    whose page states it.
 //!
 //! Every function passing all four is answered with a `Safe` **claim** and no
 //! certificate, one diagnostic per function naming what was checked; the
@@ -61,6 +65,13 @@ pub enum Documented {
     /// Creates a reference-counted object and returns one reference, or NULL
     /// on failure.
     CountedConstructor,
+    /// Card **REFERENCE-DROP-NULL-ACCEPTING**: a counted release (the
+    /// parameter at `position`) whose page states, in `sentence`, that a NULL
+    /// argument does nothing: a NULL-accepting reference drop.
+    NullAcceptingRelease {
+        position: usize,
+        sentence: &'static str,
+    },
 }
 
 /// What the documentation supports for one function: the page cited, the
@@ -81,16 +92,22 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
     DocumentedFunction {
         function: "BIO_free",
         page: "BIO_new",
-        series: "1.0.2",
-        range: "resource_library_version(openssl, documented \"1.0.2\")",
-        shape: Documented::CountedRelease(0),
+        series: "1.1.1",
+        range: "resource_library_version(openssl, documented \"1.1.1\")",
+        shape: Documented::NullAcceptingRelease {
+            position: 0,
+            sentence: "If a is NULL nothing is done.",
+        },
     },
     DocumentedFunction {
         function: "ENGINE_free",
         page: "ENGINE_add",
-        series: "1.1.1",
-        range: "resource_library_version(openssl, documented \"1.1.1\")",
-        shape: Documented::CountedRelease(0),
+        series: "3.0",
+        range: "resource_library_version(openssl, documented \"3.0\")",
+        shape: Documented::NullAcceptingRelease {
+            position: 0,
+            sentence: "If the argument to ENGINE_free() is NULL, nothing is done.",
+        },
     },
     DocumentedFunction {
         function: "ERR_clear_error",
@@ -102,9 +119,12 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
     DocumentedFunction {
         function: "EVP_PKEY_free",
         page: "EVP_PKEY_new",
-        series: "1.0.2",
-        range: "resource_library_version(openssl, documented \"1.0.2\")",
-        shape: Documented::CountedRelease(0),
+        series: "1.1.1",
+        range: "resource_library_version(openssl, documented \"1.1.1\")",
+        shape: Documented::NullAcceptingRelease {
+            position: 0,
+            sentence: "If key is NULL, nothing is done.",
+        },
     },
     DocumentedFunction {
         function: "OPENSSL_init_ssl",
@@ -116,9 +136,12 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
     DocumentedFunction {
         function: "SSL_CTX_free",
         page: "SSL_CTX_free",
-        series: "1.0.2",
-        range: "resource_library_version(openssl, documented \"1.0.2\")",
-        shape: Documented::CountedRelease(0),
+        series: "1.1.1",
+        range: "resource_library_version(openssl, documented \"1.1.1\")",
+        shape: Documented::NullAcceptingRelease {
+            position: 0,
+            sentence: "If ctx is NULL nothing is done.",
+        },
     },
     DocumentedFunction {
         function: "SSL_CTX_new",
@@ -130,9 +153,12 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
     DocumentedFunction {
         function: "SSL_free",
         page: "SSL_free",
-        series: "1.0.2",
-        range: "resource_library_version(openssl, documented \"1.0.2\")",
-        shape: Documented::CountedRelease(0),
+        series: "1.1.1",
+        range: "resource_library_version(openssl, documented \"1.1.1\")",
+        shape: Documented::NullAcceptingRelease {
+            position: 0,
+            sentence: "If ssl is NULL nothing is done.",
+        },
     },
     DocumentedFunction {
         function: "SSL_new",
@@ -158,9 +184,12 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
     DocumentedFunction {
         function: "X509_free",
         page: "X509_new",
-        series: "1.0.2",
-        range: "resource_library_version(openssl, documented \"1.0.2\")",
-        shape: Documented::CountedRelease(0),
+        series: "1.1.1",
+        range: "resource_library_version(openssl, documented \"1.1.1\")",
+        shape: Documented::NullAcceptingRelease {
+            position: 0,
+            sentence: "If a is NULL nothing is done.",
+        },
     },
 ];
 
@@ -414,6 +443,31 @@ pub fn check_function(module_path: &str, module: &str, function: &str) -> Result
                 ));
             }
         }
+        Documented::NullAcceptingRelease { position, sentence } => {
+            let (name, _) = &declaration.parameters[position];
+            if custody != 1
+                || !has(&format!(
+                    "ensures normal resource_reference_dropped({name}, nullable)"
+                ))
+            {
+                return Err(format!(
+                    "{function}: documented to release one reference on `{name}` and to do \
+                     nothing on NULL (a NULL-accepting counted drop), and the contract does not \
+                     state exactly that"
+                ));
+            }
+            let stated = page["null_sentences"]
+                .as_array()
+                .into_iter()
+                .flatten()
+                .any(|stated| stated.as_str() == Some(sentence));
+            if !stated {
+                return Err(format!(
+                    "{function}: the snapshot of {} at series {} does not record \"{sentence}\"",
+                    documented.page, documented.series
+                ));
+            }
+        }
         Documented::CountedConstructor => {
             if custody != 2
                 || !has("ensures normal resource_return_owned(nullable)")
@@ -571,17 +625,27 @@ mod tests {
             .unwrap();
         // A final free in place of a counted drop.
         let freed = text.replace(
-            "resource_reference_dropped(a)",
+            "resource_reference_dropped(a, nullable)",
             "resource_released(a, nullable)",
         );
         assert!(check_function(path, &freed, "X509_free").is_err());
+        // Card REFERENCE-DROP-NULL-ACCEPTING: a drop that does not state the
+        // documented NULL behaviour, and the NULL-accepting form from a series
+        // whose page does not state it.
+        let strict = text.replace(
+            "resource_reference_dropped(a, nullable)",
+            "resource_reference_dropped(a)",
+        );
+        assert!(check_function(path, &strict, "X509_free").is_err());
+        let older = text.replace("documented \"1.1.1\"", "documented \"1.0.2\"");
+        assert!(check_function(path, &older, "X509_free").is_err());
         // A range the documentation does not support.
-        let ranged = text.replace("documented \"1.0.2\"", "since \"0.9.8\"");
+        let ranged = text.replace("documented \"1.1.1\"", "since \"0.9.8\"");
         assert!(check_function(path, &ranged, "X509_free").is_err());
         // A range that excludes the pinned version.
         let removed = text.replace(
-            "documented \"1.0.2\")",
-            "documented \"1.0.2\", removed \"3.0.0\")",
+            "documented \"1.1.1\")",
+            "documented \"1.1.1\", removed \"3.0.0\")",
         );
         assert!(check_function(path, &removed, "X509_free").is_err());
         // A signature the pinned prototype does not have.
@@ -589,10 +653,49 @@ mod tests {
         assert!(check_function(path, &typed, "X509_free").is_err());
         // No range at all.
         let unranged = text.replace(
-            "    requires resource_library_version(openssl, documented \"1.0.2\");\n",
+            "    requires resource_library_version(openssl, documented \"1.1.1\");\n",
             "",
         );
         assert!(check_function(path, &unranged, "X509_free").is_err());
+    }
+
+    /// Card REFERENCE-DROP-NULL-ACCEPTING: every NULL-accepting drop cites a
+    /// fetched page at its range's series that records the NULL sentence,
+    /// and no older series checked records it (the bound is the oldest).
+    #[test]
+    fn every_null_accepting_drop_cites_the_oldest_series_stating_it() {
+        let snapshots: Value = serde_json::from_str(crate::DOC_SNAPSHOTS).unwrap();
+        let pages = snapshots["pages"].as_array().unwrap();
+        let mut seen = 0;
+        for documented in DOCUMENTED {
+            let Documented::NullAcceptingRelease { sentence, .. } = documented.shape else {
+                continue;
+            };
+            seen += 1;
+            let bound = LibraryVersion::parse(documented.series).unwrap();
+            for page in pages
+                .iter()
+                .filter(|page| page["page"] == documented.page && page["fetched"] == true)
+            {
+                let series = LibraryVersion::parse(page["series"].as_str().unwrap()).unwrap();
+                let states = page["null_sentences"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .any(|stated| stated.as_str() == Some(sentence));
+                if series < bound {
+                    assert!(!states, "{}: {} states it", documented.function, series);
+                }
+                if series == bound {
+                    assert!(
+                        states,
+                        "{}: {} does not state it",
+                        documented.function, series
+                    );
+                }
+            }
+        }
+        assert_eq!(seen, 6);
     }
 
     #[test]

@@ -550,6 +550,53 @@
    ],
    "reference_sentences": [],
    "page": "BIO_new"
+  },
+  {
+   "url": "https://docs.openssl.org/3.0/man3/ENGINE_add/",
+   "series": "3.0",
+   "fetched": true,
+   "sha256": "005219d061be1f4dc569897b6d89eecbf50cec7e1bd818ecee26afa019929fde",
+   "bytes": 993987,
+   "history": "All of these functions were deprecated in OpenSSL 3.0. ENGINE_cleanup() was deprecated in OpenSSL 1.1.0 by the automatic cleanup done by OPENSSL_cleanup() and should not be used.",
+   "null_sentences": [
+    "If the argument to ENGINE_free() is NULL, nothing is done.",
+    "the ENGINE_get_next() and ENGINE_get_prev() functions are used for iterating across the internal ENGINE list - they will return a new structural reference to the next (or previous) ENGINE in the list or NULL if at the end (or beginning) of the list, but in either case the structural reference passed to the function is released on behalf of the caller.",
+    "when calling RSA_new_method(NULL)), a \"get_default\" call will be made to the ENGINE subsystem to process the corresponding state table and return a functional reference to an initialised ENGINE whose implementation should be used.",
+    "If no ENGINE should (or can) be used, it will return NULL and the caller will operate with a NULL ENGINE handle - this usually equates to using the conventional software implementation.",
+    "Likewise, it will cache a NULL response if no ENGINE was available so that future queries won't repeat the same iteration unless the state table changes.",
+    "This behaviour can also be changed; if the ENGINE_TABLE_FLAG_NOINIT flag is set (using ENGINE_set_table_flags()), no attempted initialisations will take place, instead the only way for the state table to return a non-NULL ENGINE to the \"get_default\" query will be if one is expressly set in the table.",
+    "Note that the string-pairs used for control commands consist of a command \"name\" followed by the command \"parameter\" - the parameter could be NULL in some cases but the name can not.",
+    "int generic_load_engine_fn ( const char * engine_id , const char ** pre_cmds , int pre_num , const char ** post_cmds , int post_num ) { ENGINE * e = ENGINE_by_id ( engine_id ); if ( ! e ) return 0 ; while ( pre_num -- ) { if ( ! ENGINE_ctrl_cmd_string ( e , pre_cmds [ 0 ], pre_cmds [ 1 ], 0 )) { fprintf ( stderr , \"Failed command (%s - %s:%s) \\n \" , engine_id , pre_cmds [ 0 ], pre_cmds [ 1 ] ? pre_cmds [ 1 ] : \"(NULL)\" ); ENGINE_free ( e ); return 0 ; } pre_cmds += 2 ; } if ( ! ENGINE_init ( e )) { fprintf ( stderr , \"Failed initialisation \\n \" ); ENGINE_free ( e ); return 0 ; } /* * ENGINE_init() returned a functional reference, so free the structural * reference from ENGINE_by_id().",
+    "*/ ENGINE_free ( e ); while ( post_num -- ) { if ( ! ENGINE_ctrl_cmd_string ( e , post_cmds [ 0 ], post_cmds [ 1 ], 0 )) { fprintf ( stderr , \"Failed command (%s - %s:%s) \\n \" , engine_id , post_cmds [ 0 ], post_cmds [ 1 ] ? post_cmds [ 1 ] : \"(NULL)\" ); ENGINE_finish ( e ); return 0 ; } post_cmds += 2 ; } ENGINE_set_default ( e , ENGINE_METHOD_ALL & ~ ENGINE_METHOD_RAND ); /* Success */ return 1 ; } Note that ENGINE_ctrl_cmd_string() accepts a boolean argument that can relax the semantics of the function - if set nonzero it will only return failure if the ENGINE supported the given command name but failed while executing it, if the ENGINE doesn't support the command name it will simply return success without doing anything.",
+    "ENGINE_get_first(), ENGINE_get_last(), ENGINE_get_next() and ENGINE_get_prev() return a valid ENGINE structure or NULL if an error occurred.",
+    "ENGINE_by_id() returns a valid ENGINE structure or NULL if an error occurred.",
+    "All ENGINE_get_default_TYPE() functions, ENGINE_get_cipher_engine() and ENGINE_get_digest_engine() return a valid ENGINE structure on success or NULL if an error occurred.",
+    "ENGINE_new() returns a valid ENGINE structure on success or NULL if an error occurred.",
+    "ENGINE_get_cipher() returns a valid EVP_CIPHER structure on success or NULL if an error occurred.",
+    "ENGINE_get_digest() returns a valid EVP_MD structure on success or NULL if an error occurred.",
+    "ENGINE_get_cmd_defns() returns an ENGINE_CMD_DEFN structure or NULL if it's not set.",
+    "ENGINE_load_private_key() and ENGINE_load_public_key() return a valid EVP_PKEY structure on success or NULL if an error occurred."
+   ],
+   "reference_sentences": [
+    "At the most basic level, each ENGINE pointer is inherently a structural reference - a structural reference is required to use the pointer value at all, as this kind of reference is a guarantee that the structure can not be deallocated until the reference is released.",
+    "However, a structural reference provides no guarantee that the ENGINE is initialised and able to use any of its cryptographic implementations.",
+    "This kind of reference can be considered a specialised form of structural reference, because each functional reference implicitly contains a structural reference as well - however to avoid difficult-to-find programming bugs, it is recommended to treat the two kinds of reference independently.",
+    "Essentially a structural reference is sufficient if you only need to query or manipulate the data of an ENGINE implementation rather than use its functionality.",
+    "The ENGINE_new() function returns a structural reference to a new (empty) ENGINE object.",
+    "There are other ENGINE API functions that return structural references such as; ENGINE_by_id(), ENGINE_get_first(), ENGINE_get_last(), ENGINE_get_next(), ENGINE_get_prev().",
+    "All structural references should be released by a corresponding to call to the ENGINE_free() function - the ENGINE object itself will only actually be cleaned up and deallocated when the last structural reference is released.",
+    "It should also be noted that many ENGINE API function calls that accept a structural reference will internally obtain another reference - typically this happens whenever the supplied ENGINE will be needed by OpenSSL after the function has returned.",
+    "the function to add a new ENGINE to OpenSSL's internal list is ENGINE_add() - if this function returns success, then OpenSSL will have stored a new structural reference internally so the caller is still responsible for freeing their own reference with ENGINE_free() when they are finished with it.",
+    "In a similar way, some functions will automatically release the structural reference passed to it if part of the function's job is to do so.",
+    "the ENGINE_get_next() and ENGINE_get_prev() functions are used for iterating across the internal ENGINE list - they will return a new structural reference to the next (or previous) ENGINE in the list or NULL if at the end (or beginning) of the list, but in either case the structural reference passed to the function is released on behalf of the caller.",
+    "A functional reference can be obtained in one of two ways; from an existing structural reference to the required ENGINE, or by asking OpenSSL for the default operational ENGINE for a given cryptographic purpose.",
+    "To obtain a functional reference from an existing structural reference, call the ENGINE_init() function.",
+    "All functional references are released by calling ENGINE_finish() (which removes the implicit structural reference as well).",
+    "*/ abort (); ENGINE_set_default_DSA ( e ); ENGINE_set_default_ciphers ( e ); /* Release the functional reference from ENGINE_init() */ ENGINE_finish ( e ); /* Release the structural reference from ENGINE_by_id() */ ENGINE_free ( e ); Automatically using built-in ENGINE implementations Here we'll assume we want to load and register all ENGINE implementations bundled with OpenSSL, such that for any cryptographic algorithm required by OpenSSL - if there is an ENGINE that implements it and can be initialised, it should be used.",
+    "Discovering supported control commands It is possible to discover at run-time the names, numerical-ids, descriptions and input parameters of the control commands supported by an ENGINE using a structural reference."
+   ],
+   "page": "ENGINE_add",
+   "fetched_on": "2026-11-17"
   }
  ]
 }

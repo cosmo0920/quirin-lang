@@ -10,14 +10,14 @@
     {
       "function": "BIO_free",
       "module": "openssl/bio.qv",
-      "contract_sha256": "5f06ee80988e59d65102b6e1e213956e0f831450a94eb376d152d9e6536bc74d",
-      "pinned_at": "2026-11-16T02:51:04Z"
+      "contract_sha256": "342319300ecbb9866e7cc2a2826a55b1a14a18ea8acca5a61c15baf5739fda5d",
+      "pinned_at": "2026-11-17T12:00:37Z"
     },
     {
       "function": "ENGINE_free",
       "module": "openssl/engine.qv",
-      "contract_sha256": "8696d96bd4945abc476fc390eeab6ec34ba879240c8f85eae5bb7c6e65a7121c",
-      "pinned_at": "2026-11-16T02:51:04Z"
+      "contract_sha256": "66e49fdd0ad9bca3cc18a491e82a3c47906a029b3e2f580ef049f88e101de4a9",
+      "pinned_at": "2026-11-17T12:00:37Z"
     },
     {
       "function": "ERR_clear_error",
@@ -28,8 +28,8 @@
     {
       "function": "EVP_PKEY_free",
       "module": "openssl/evp.qv",
-      "contract_sha256": "14264694e330de846bb263e2c103c5b630bb6df073f641577f92499e9b013b07",
-      "pinned_at": "2026-11-16T02:51:04Z"
+      "contract_sha256": "8af9ce6baa1a082635ed8e535eb032b755fcb92a0ee46c4ccf9a38b239f047e9",
+      "pinned_at": "2026-11-17T12:00:37Z"
     },
     {
       "function": "OPENSSL_init_ssl",
@@ -40,8 +40,8 @@
     {
       "function": "SSL_CTX_free",
       "module": "openssl/ssl.qv",
-      "contract_sha256": "fa1bc8d35a4ba4edecb950fcccd55e5f0f5e54f9ac39c5c17c9cb7889e8e6219",
-      "pinned_at": "2026-11-16T02:51:04Z"
+      "contract_sha256": "db9a7f8ee26599b9dcfeec2203a896b7be2b81de98c790da1edd8eb699a9d16b",
+      "pinned_at": "2026-11-17T12:00:37Z"
     },
     {
       "function": "SSL_CTX_new",
@@ -52,8 +52,8 @@
     {
       "function": "SSL_free",
       "module": "openssl/ssl.qv",
-      "contract_sha256": "386bb75f1fdca3fe8ead38257f00824b41b423959320c041d816022374bd793a",
-      "pinned_at": "2026-11-16T02:51:04Z"
+      "contract_sha256": "ac75ed87236f403f0bc5db27183dfd9215c8d2905d846884763326935ce96d86",
+      "pinned_at": "2026-11-17T12:00:37Z"
     },
     {
       "function": "SSL_new",
@@ -76,8 +76,8 @@
     {
       "function": "X509_free",
       "module": "openssl/x509.qv",
-      "contract_sha256": "82faf2e6b0d474333b580a3785aeda5c22bc9895c70bb5d2af14ad158c9c119a",
-      "pinned_at": "2026-11-16T02:51:04Z"
+      "contract_sha256": "74edb8d61d6bf82e9626fc4a8ce9c4388bc8e109dc6b295786d3c49d39ad43eb",
+      "pinned_at": "2026-11-17T12:00:37Z"
     }
   ],
   "library_versions": {
