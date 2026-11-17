@@ -203,8 +203,10 @@ only a NULL or one-family-or-NULL actual, and none of these is one.
 from the measured code, [`scripts/arbiter.sh`](scripts/arbiter.sh): `--no-slots --jobs 8`), over
 [inputs.json](artifacts/inputs.json). Both sides are checkout directories,
 each built in place by the tool: exports of `32336c33d` (base) and
-`a44ed44e7` (tip; `bcf1c91ab` differs from it only by the OpenSSL crate's pin
-lock and the specification text, neither read by a pinned route) under
+`a44ed44e7` (tip: the code commit before it was amended into `bcf1c91ab`,
+which adds only the OpenSSL crate's re-pinned lock and the specification
+text, neither read by a pinned route; the amendments file names `bcf1c91ab`
+as the measured tip because `a44ed44e7` is no longer on the branch) under
 `private/{base,tip}-src`. One measurement-driver adaptation in both exports,
 disclosed as LERI-HELD-AND-LINK-MEMBER-PREMISES did: `scripts/run_pinned_audit.py`
 hard-codes `QCORE_CLANG=/usr/bin/clang`, which this host does not have, so both
@@ -259,7 +261,7 @@ the tree is 28.0.0 (this card's bump). The matrix is the integrator's record,
 regenerated at landing by `build_matrix.py . --gate <gate.json>`
 (`scripts/land.py`), as CURRENT-CONTEXT-NEW-TRIAGE D3's 27.0.0 bump was.
 
-The commit after the gate (this section, the measurement records and the
+The commits after the gate (this section, the measurement records and the
 arbiter's figures in §7) adds report files only and reaches no crate.
 
 ## 9. Follow-ups
@@ -275,3 +277,7 @@ likely to conflict with concurrent cards: the qcore-schemas version in every
 `contracts.lock` (regenerate by `quirin-audit pin`), `doc-snapshots.json`,
 `src/check.rs`, and the generated `docs/agents/gateway.md`/`README.md`
 (rerun `gen_rule_docs.py`).
+
+On the final tip the Python suite was rerun alone (the only step the
+post-gate paths select: `gate_scope.py --paths ... --plan`, 0 crates): 779
+tests, the same single matrix-count failure (`private/python-final.log`).
