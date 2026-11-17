@@ -249,7 +249,32 @@ against `rev:32336c33d` is the arbiter of that block.
 
 ## 7. Gate
 
-GATE_PLACEHOLDER
+`python3 scripts/gate_scope.py --base 32336c33d --out private/gate-1/gate`
+through `private/toolchain/env.sh` (Clang 21.1.8, Lean 4.35.0) on
+`46976389f` (the code of `e556fea4f`; the report uncommitted); scoped, not
+full: the diff reaches `qcore-audit`, a proof root and `providers/`
+(record [`gate/gate-1.json`](gate/gate-1.json), logs `private/gate-1/gate/`).
+
+| Step | Exit | Counts |
+|---|---:|---|
+| submodules, `fmt`, `clippy` (workspace and the four scoped crates) | 0 | |
+| Rust suite (scoped: 7 packages, 42 dependent targets) | 0 | 268 units, 275 summaries; 3411 passed, 0 failed, 9 ignored, 10 filtered |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| Lean (`check_lean_audits.py`) | 0 | 443 audits (`AuditOpensslCalleeShapes.lean` among them) |
+| Python suite | 0 | 779 tests |
+| provider package build, verify-all, verify `qcore.libevent` | 0, 0, 0 | |
+| provider tests | 101 | 32 summaries; 66 passed, 1 failed: `quirin-provider-openssl` `a_drifted_shape_of_the_new_readings_is_refused` |
+| provider fmt, provider clippy | 0, 0 | |
+
+The failure was this card's test: after `pem.qv` lost its callback clause
+(§1) the test still removed that clause, a no-op the checker rightly
+accepted. `4d9d59499` makes it remove the `cb` premise instead (a test-only
+change: no module, checker logic or measured input changes). Reruns on
+`4d9d59499` (`private/gate-1-reruns/`): `cargo test --manifest-path
+providers/Cargo.toml --workspace --locked --offline` exit 0, 46 summaries,
+142 passed, 0 failed; provider clippy exit 0; provider fmt exit 0. Earlier,
+`qcore-audit`'s `user_contract_plugins` binary alone: exit 0, 10 passed
+(`private/logs/ucp-test.log`); `providers/contracts.py check` exit 0.
 
 ## 8. Follow-ups
 
