@@ -333,6 +333,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [current-access-alias-census](current-access-alias-census/README.md) | CURRENT-ACCESS-ALIAS-CENSUS: the IND, ALIAS, COND and RET leaves of the user's `current` run, by shape |
 
+| [current-context-new-triage](current-context-new-triage/README.md) | CURRENT-CONTEXT-NEW-TRIAGE |
+
 | [current-monkey-linked-configuration](current-monkey-linked-configuration/README.md) | CURRENT-MONKEY-LINKED-CONFIGURATION |
 
 | [current-run-defects](current-run-defects/README.md) | CURRENT-RUN-DEFECTS |
@@ -676,6 +678,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [link-standing](link-standing/README.md) | LINK-STANDING |
 
+| [link-standing-import-limiters](link-standing-import-limiters/README.md) | LINK-STANDING-IMPORT-LIMITERS |
+
 | [link-standing-selection-two-configuration-keys](link-standing-selection-two-configuration-keys/README.md) | LINK-STANDING-SELECTION-TWO-CONFIGURATION-KEYS |
 
 | [list-entry-release-identity](list-entry-release-identity/README.md) | LIST-ENTRY-RELEASE-IDENTITY: the released list element and its summary |
@@ -786,6 +790,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [op-callback-member-path-release](op-callback-member-path-release/README.md) | OP-CALLBACK-MEMBER-PATH-RELEASE: a callback's release or move-out at a member path |
 
 | [op-constructor-declarations](op-constructor-declarations/README.md) | OP-CONSTRUCTOR-DECLARATIONS: op constructors and their result states |
+
+| [openssl-provider-plugin](openssl-provider-plugin/README.md) | OPENSSL-PROVIDER-PLUGIN: OpenSSL contracts on the user-contract SDK, with version-ranged declarations |
 
 | [out-parameter-body-summary](out-parameter-body-summary/README.md) | OUT-PARAMETER-BODY-SUMMARY |
 

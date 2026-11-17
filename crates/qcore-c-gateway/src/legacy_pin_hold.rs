@@ -68,6 +68,34 @@ pub fn hold_description(callee: &str) -> String {
     )
 }
 
+/// Card OPENSSL-PROVIDER-PLUGIN: the refusal a call site carries when its
+/// callee's contract is withheld because the audited library version is
+/// outside its range, unreadable or ambiguous (`reason`, a
+/// `LibraryVersionFailure` key). It is **not** a [`held_call`]: no person's
+/// review puts the contract in force at that version, so the call is
+/// `Unknown`, never `Pending` (the user's split of 2026-11-16). A version that
+/// only differs from the pinned one keeps [`hold_description`] and is
+/// `Pending`.
+#[must_use]
+pub fn library_version_hold_description(callee: &str, reason: &str) -> String {
+    format!(
+        "call to `{callee}` whose contract is not in force at the audited library version \
+         ({reason})"
+    )
+}
+
+/// The description a held call site of `callee` carries, by the reason its
+/// declaration is withheld for.
+#[must_use]
+pub fn hold_description_for(callee: &str, contracts: &ResourceContracts) -> String {
+    match contracts.pin_mismatch().get(callee) {
+        Some(withheld) if !withheld.reason.is_human_resolvable() => {
+            library_version_hold_description(callee, withheld.reason.as_str())
+        }
+        _ => hold_description(callee),
+    }
+}
+
 /// The callee a held call site's refusal names, if `description` is one.
 #[must_use]
 pub fn held_call(description: &str) -> Option<&str> {

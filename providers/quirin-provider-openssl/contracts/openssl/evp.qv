@@ -1,0 +1,35 @@
+// SPDX-License-Identifier: Apache-2.0
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+module contract;
+
+// Card OPENSSL-PROVIDER-PLUGIN. EVP_PKEY keys (see err.qv for what every
+// declaration of this crate shares).
+
+// EVP_PKEY_free: https://docs.openssl.org/3.5/man3/EVP_PKEY_new/ HISTORY
+// (3.5, 1.1.1): EVP_PKEY_new() and EVP_PKEY_free() "exist in all versions of
+// OpenSSL" (EVP_PKEY_up_ref() was added in 1.1.0); no version is named, and
+// the 1.0.2 page's HISTORY reads "TBA", so the bound is the oldest series
+// checked that documents it. DESCRIPTION (3.5): EVP_PKEY_free() "decrements
+// the reference count of key" and frees it at zero; "If key is NULL, nothing
+// is done". Pinned prototype: `void EVP_PKEY_free(EVP_PKEY *pkey)`.
+extern fn EVP_PKEY_free(pkey: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.0.2");
+    ensures normal resource_borrowed(pkey);
+    ensures normal resource_reference_dropped(pkey);
+    ensures normal resource_return_none();
+};

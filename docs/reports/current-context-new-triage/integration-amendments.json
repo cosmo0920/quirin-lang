@@ -1,0 +1,39 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "CURRENT-CONTEXT-NEW-TRIAGE",
+  "base": "0f6e17118",
+  "measured_tip": "1e691eecc",
+  "profiles": [],
+  "increment_paragraph": "**CURRENT-CONTEXT-NEW-TRIAGE** (USER DECISION 2026-11-16, \"yes, launch it\"; gateway rule 5l (6), rule 7 pointer; Lean `QCore.RefusedStoreHandOn`; [report](../../reports/current-context-new-triage/README.md)). The `current --monkey-linked` run's new provisional `Unsafe`, Monkey's `context_new` (`lib/monkey/tls/tls_openssl.c` at Fluent Bit `046accf6`, two leaks of `ctx_head`), is a modelling defect: every path from the allocation passes `thctx->contexts = ctx_head`, the head of the per-thread list that `mk_tls_exit` releases through `contexts_free` after the workers join. B08 lowered that store as a typed field store (`thctx` is a local bound once by a call) and its owner check refused it (`thctx` is `pthread_getspecific`'s custody-free result) with `UnknownAlias`, which W44-LEAK-PIN-AUDIT's hand-on rule does not read, so the node stayed live and was accused. Rule 5l (6) gives that refusal rule 5l (5)'s treatment: the stored value (or a refused call's custody actuals) carries an unresolved effect; a withdrawal only, never a transfer or `Safe`. Unit-scoped `current --monkey-linked` reproductions on the evidence tree, base `0f6e17118` against tip `1e691eecc`: only `context_new` moves (`Unsafe -> Unknown`, the unit with it); corpus, system and slice are predicted unchanged (no live route reads the unit, and no `Unsafe` row with an unresolved identity there has the shape). Accepting the list root as an owner (a retained-result relation for `pthread_getspecific` and a checked owner released on a known path) is left as a user decision.",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "CURRENT-CONTEXT-NEW-TRIAGE",
+      "operation": "register",
+      "title": "Monkey's context_new (tls_openssl.c) is provisional Unsafe in the --monkey-linked current run",
+      "text": "The integrator's current --monkey-linked run at 89fa31d21 analysed lib/monkey/tls/tls_openssl.c for the first time; its unit is provisional Unsafe from context_new, two leaks of ctx_head (acquired at :521, reported at :533 and :541) although ctx_head is linked into thctx->contexts first. DISCHARGE: validate or refute from the bodies, and repair the reading if it is a modelling defect, fail-closed.",
+      "source": "docs/reports/current-context-new-triage/README.md",
+      "recorded_by": "CURRENT-CONTEXT-NEW-TRIAGE"
+    },
+    {
+      "id": "CURRENT-CONTEXT-NEW-TRIAGE",
+      "operation": "retire",
+      "why": "Validated as a modelling defect (the node is linked into the per-thread list mk_tls_exit releases via contexts_free after the workers join) and repaired by gateway rule 5l (6): a B08 field store refused on its owner hands on its value, so the stored identity carries an unresolved effect instead of being accused. Lean QCore.RefusedStoreHandOn; fixtures in crates/qcore-c-gateway/tests/refused_store_hand_on.rs. Unit-scoped reproductions: context_new Unsafe -> Unknown, nothing else moves. Accepting the store (Safe) is offered as a user decision in the report, section 7.",
+      "source": "docs/reports/current-context-new-triage/README.md"
+    },
+    {
+      "id": "UNKNOWN-ALIAS-REFUSAL-HAND-ON-CENSUS",
+      "operation": "register",
+      "title": "Transfer refusals that report UnknownAlias before an instruction's effect are not censused for the refused hand-on",
+      "text": "W44-LEAK-PIN-AUDIT's refused hand-on rule fires on Unsupported only. Rule 5l (5) (a call refused before its effects on an unresolved member-address or bound-read aggregate) and rule 5l (6) (CURRENT-CONTEXT-NEW-TRIAGE: a B08 field store refused on its owner) close two branches that report UnknownAlias and return before the instruction's effect, leaving what the instruction handed on live and accusable. No census lists the other branches of legacy_transfer.rs that report UnknownAlias and return early, nor says for each whether its effect is withheld (a hand-on gap) or still applies (most UnknownAlias report a read whose effect still applies; rule 5l (5) forbids widening the rule to every UnknownAlias). DISCHARGE: census every such branch with a fixture per class, extend rule 5l's hand-on to each branch that withholds an effect, with Lean parity, and measure.",
+      "source": "docs/reports/current-context-new-triage/README.md",
+      "recorded_by": "CURRENT-CONTEXT-NEW-TRIAGE"
+    },
+    {
+      "id": "W43-RESULT-ALIAS-CONDITIONAL-AND-RETAINED",
+      "operation": "append",
+      "text": "CURRENT-CONTEXT-NEW-TRIAGE measured a consumer: Monkey's context_new (lib/monkey/tls/tls_openssl.c at 046accf6, analysed only with --monkey-linked) links a node into thctx->contexts with thctx = pthread_getspecific(local_context); with the result custody-free the store is refused and, since rule 5l (6), the node is withdrawn (Unknown). Safe would need this retained-result relation plus a checked-owner reading of the per-thread list (released by mk_tls_exit via contexts_free); offered to the user as a decision (report section 7).",
+      "source": "docs/reports/current-context-new-triage/README.md"
+    }
+  ]
+}

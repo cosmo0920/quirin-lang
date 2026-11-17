@@ -38,6 +38,7 @@ pub mod contract_supersession;
 pub mod digest;
 pub mod handoff;
 pub mod identity;
+pub mod library_version;
 pub mod loop_lifetime;
 pub mod mechanism;
 pub mod member_effect;

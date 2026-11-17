@@ -869,6 +869,78 @@ def reproduce(output, target, work):
           f"CARGO_HOME", file=sys.stderr)
 
 
+def contracts_module():
+    """`contracts.py`, loaded by path (the user-crate list and the user load
+    path's name)."""
+    spec = importlib.util.spec_from_file_location("qcore_provider_contracts", ROOT / "contracts.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def checkers(target):
+    """Card OPENSSL-PROVIDER-PLUGIN: build every user crate's checker plugin,
+    install each as the verified package its `quirin-plugin.json` bindings
+    name (`<crate>/<package>`, a build product the crate ignores), and check
+    the generated user load path against the installed packages: its views
+    (`quirin-audit plugin views`, no write) and the user crates' locks
+    (`quirin-audit pin --verify-contracts`). The package layout is the SDK's
+    (`quirin_provider_plugin::package`): the executable and
+    `verifier-plugin.json`, its embedded template with `package_digest` set
+    to the executable's SHA-256."""
+    contracts = contracts_module()
+    env = os.environ.copy()
+    env.update(CARGO_INCREMENTAL="0", SOURCE_DATE_EPOCH="0")
+    env.pop("RUSTFLAGS", None)
+    installed = []
+    for name in contracts.USER_LOAD_PATH_PACKAGES:
+        crate = ROOT / name
+        manifest = tomllib.loads((crate / "Cargo.toml").read_text())
+        binaries = [entry["name"] for entry in manifest.get("bin", [])]
+        bindings = json.loads((crate / "quirin-plugin.json").read_text())["checkers"]
+        packages = sorted({binding["package"] for binding in bindings})
+        if not packages:
+            continue
+        if len(binaries) != 1 or len(packages) != 1:
+            raise ValueError(f"{name}: expected one checker binary for one package, found "
+                             f"{binaries} for {packages}")
+        subprocess.run(["cargo", "build", "--manifest-path", str(ROOT / "Cargo.toml"),
+                        "--locked", "--offline", "--release", "--target-dir", str(target),
+                        "-p", name, "--bin", binaries[0]], check=True, env=env)
+        executable = target / "release" / binaries[0]
+        data = regular_bytes(executable, "checker executable")
+        template = embedded_template(data)
+        if template["entrypoint"] != {"kind": "executable", "path": binaries[0]}:
+            raise ValueError(f"{executable}: its template's entrypoint is not {binaries[0]}")
+        package = crate / packages[0]
+        if package.exists():
+            shutil.rmtree(package)
+        package.mkdir(parents=True)
+        shutil.copyfile(executable, package / binaries[0])
+        (package / binaries[0]).chmod(0o755)
+        template["package_digest"] = digest(package / binaries[0])
+        (package / "verifier-plugin.json").write_text(json.dumps(template, indent=2) + "\n")
+        # The installed executable's bytes are the digested ones and carry
+        # the template the manifest restates.
+        if regular_bytes(package / binaries[0], "installed checker") != data:
+            raise ValueError(f"{package}: the installed executable differs from the build")
+        installed.append({"crate": name, "package": str(package.relative_to(ROOT)),
+                          "plugin_id": template["plugin_id"],
+                          "executable_sha256": template["package_digest"]})
+    if installed:
+        workspace = REPO / "Cargo.toml"
+        audit = root_workspace_executable("bin", "quirin-audit", "user load path check", workspace)
+        load_path = str(ROOT / contracts.USER_LOAD_PATH)
+        for command in (["plugin", "views", "--load-path", load_path],
+                        ["pin", "--verify-contracts", "--load-path", load_path]):
+            completed = subprocess.run([audit, *command], capture_output=True, text=True)
+            if completed.returncode != 0:
+                raise ValueError(f"quirin-audit {' '.join(command[:2])} on {load_path} failed "
+                                 f"(exit {completed.returncode}): {completed.stdout.strip()} "
+                                 f"{completed.stderr.strip()}")
+    print(json.dumps({"checkers": installed}, indent=2))
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
@@ -889,10 +961,17 @@ def main():
                                   "(default: <output>.reproduce)")
     verify_parser = sub.add_parser("verify")
     verify_parser.add_argument("package", type=Path)
+    checkers_parser = sub.add_parser(
+        "checkers", help="build and install the user crates' checker plugins, and check the "
+        "user load path against them (card OPENSSL-PROVIDER-PLUGIN)")
+    checkers_parser.add_argument("--target-dir", type=Path,
+                                 default=ROOT / "target" / "checkers")
     args = parser.parse_args()
     if args.command == "build":
         build(args.output.resolve(), args.target_dir.resolve(),
               checks=not args.skip_checks)
+    elif args.command == "checkers":
+        checkers(args.target_dir.resolve())
     elif args.command == "reproduce":
         output = args.output.resolve()
         work = (args.work_dir or output.with_name(output.name + ".reproduce")).resolve()

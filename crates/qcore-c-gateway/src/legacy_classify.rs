@@ -1274,7 +1274,7 @@ impl Parser<'_> {
             find_call(&texts).and_then(|(_, function)| pin_hold::held_callee(function))
         {
             return LegacyInstruction::Unknown {
-                description: pin_hold::hold_description(callee),
+                description: pin_hold::hold_description_for(callee, self.contracts),
                 writes: self.refused_writes(&texts),
             };
         }

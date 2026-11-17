@@ -556,6 +556,7 @@ fn decision_vectors_match_lean() {
         pinned: entries,
         flexible: Vec::new(),
         tip: Vec::new(),
+        library_versions: Default::default(),
     };
     use PinMismatchReason::{ContractChanged, NoLock, NotInLock, SourceChanged};
     let vectors: Vec<(Option<ContractLock>, Option<PinMismatchReason>)> = vec![

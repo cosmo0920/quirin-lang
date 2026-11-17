@@ -409,7 +409,11 @@ pub fn in_force_before_pins(
 ) -> Result<BTreeMap<String, qcore_schemas::contract::ResourceFunctionContract>, String> {
     let mut functions = contracts.functions().clone();
     for (name, withheld) in contracts.pin_mismatch() {
-        if contracts.revision_mode(name) != RevisionMode::Pinned {
+        // Card OPENSSL-PROVIDER-PLUGIN: a library version range is checked
+        // whatever the revision mode.
+        if contracts.revision_mode(name) != RevisionMode::Pinned
+            && !withheld.reason.is_library_version()
+        {
             return Err(format!(
                 "`{name}` is withheld for a pin mismatch but its contract is flexible"
             ));

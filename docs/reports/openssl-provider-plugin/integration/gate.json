@@ -1,0 +1,13 @@
+{
+  "note": "Landing integrate/r15. History: built as integrate/r13 from main 0f6e17118 (merges CURRENT-CONTEXT-NEW-TRIAGE phase 1 3d735b88c, LINK-STANDING-IMPORT-LIMITERS 00cf0be02, OPENSSL-PROVIDER-PLUGIN a5d216a24, no conflicts), gated on 0497a6b8b (14 steps exit 0); renamed integrate/r14 when the other lane's integrate/r13 landed (main d7a497822), merged, gated on 5b5ff2912 (14 steps exit 0); renamed integrate/r15 when the other lane's integrate/r14 (W48-PLUGIN-VERDICT-PRESERVATION) landed (main fb2fb465d). That merge conflicted in plugin_firewall.rs and user_plugins.rs, which record a plugin's own answer in both cards: main's fuller version was kept and OPENSSL-PROVIDER-PLUGIN's amendments applied without their amend of the retired W48-PLUGIN-VERDICT-PRESERVATION (amendments-applied.json). Full landing gate on 96bf2cc25 (raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base fb2fb465d --full --landing: every step exit 0 except the Rust suite, 9541 passed / 2 failed / 17 ignored (641 units): both failures in qcore-audit's user_contract_plugins, OPENSSL-PROVIDER-PLUGIN assertions on its proposed/plugin_diagnostics/binding fields, which the merge replaced with main's `answer` record. The assertions were rewritten onto main's fields (test file only) and that binary rerun: 9 passed, 0 failed (r15-user-contract-plugins-rerun.log); cargo fmt --check exit 0. Lean 437 audits; Python 779 tests; provider gate: package build/verify, provider workspace tests 140 passed / 0 failed / 1 ignored, provider fmt/Clippy exit 0. No verdict moves on any pinned route: each card's declared measurement against rev:0f6e17118 matched with 0 moved rows (records in each card's integration/). No profile baseline changes; land.py publish is owed (unpublished since baseline:497bdeb90).",
+  "workspace_tests": 9543,
+  "provider_tests": 140,
+  "python_evidence_validator_tests": 779,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "full landing gate: every step exits 0 except two Rust tests of merged assertions on replaced fields, fixed in the test file and rerun green (disclosed in the note)",
+  "lean_audits": 437,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

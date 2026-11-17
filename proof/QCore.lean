@@ -230,6 +230,7 @@ import QCore.LexicalClosureNestedAssignment
 import QCore.LibcReadingPremises
 import QCore.LibcReadingSiteEvidence
 import QCore.LibcurlContractPlugin
+import QCore.LibraryVersionRange
 import QCore.LifetimeCorrespondence
 import QCore.ListIteration
 import QCore.ListLengthBound
@@ -361,6 +362,7 @@ import QCore.ReferenceCount
 import QCore.ReferenceResult
 import QCore.RefusedCallHandOn
 import QCore.RefusedHandOnCustody
+import QCore.RefusedStoreHandOn
 import QCore.RefusedTestAccusation
 import QCore.RefusedWrites
 import QCore.RefutedContractWithdrawal

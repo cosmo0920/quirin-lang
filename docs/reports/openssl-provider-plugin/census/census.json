@@ -1,0 +1,4072 @@
+{
+ "card": "OPENSSL-PROVIDER-PLUGIN",
+ "openssl_identification": "OpenSSL prefix and declared (function) or defined (macro) in the pinned headers",
+ "pinned_identity": {
+  "rule": "user decision 2026-11-16: the OpenSSL identity is the version the build's headers report; header digests are provenance",
+  "include_flags": {
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-production": 5,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-production/backtrace-prefix/include": 968,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-production/generated/include": 1419,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-production/include": 1419,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-production/lib/c-ares-1.34.6": 1227,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-production/lib/chunkio/include": 1419,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-production/lib/cmetrics": 1419,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-production/lib/cprofiles/include": 1419,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-production/lib/fluent-otel-proto": 12,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-production/lib/jansson-e23f558/include": 1419,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-production/lib/librdkafka-2.15.0/generated/dummy": 830,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-production/lib/luajit-cmake": 918,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-production/lib/luajit-cmake/host/buildvm": 5,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-production/lib/luajit-cmake/host/buildvm/..": 5,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-production/lib/luajit-cmake/host/buildvm/../..": 5,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-production/lib/luajit-cmake/host/buildvm/../../..": 5,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-production/lib/miniz": 717,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-production/lib/monkey/include": 1419,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-production/lib/monkey/include/monkey": 1419,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-production/lib/nghttp2": 1253,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-production/lib/nghttp2-1.65.0": 26,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-production/lib/nghttp2-1.65.0/lib/includes": 739,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-production/lib/nghttp2/lib/includes": 1253,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-production/lib/zstd-1.5.7/build/cmake/lib": 34,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-production/lib/zstd-1.5.7/build/cmake/programs": 16,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-production/plugins/filter_geoip2/libmaxminddb-1.12.2/generated": 750,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-production/plugins/processor_sql/parser": 4,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-production/src/aws": 11,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-production/src/record_accessor": 3,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-production/src/stream_processor/parser": 3,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-production/src/unicode": 8,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/include": 1419,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib": 1419,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/c-ares-1.34.6": 804,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/c-ares-1.34.6/include": 1227,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/c-ares-1.34.6/src/lib": 91,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/c-ares-1.34.6/src/lib/include": 91,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/cfl/include": 1419,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/cfl/lib/xxhash": 1419,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/cfl/lib/xxhash/cmake_unofficial/..": 799,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/chunkio/deps": 16,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/chunkio/deps/monkey/include": 15,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/chunkio/include": 1419,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/cmetrics/include": 1419,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/cmetrics/lib/cfl/include": 35,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/cmetrics/lib/fluent-otel-proto/include": 35,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/cmetrics/lib/fluent-otel-proto/proto_c": 35,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/cmetrics/src": 35,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/cprofiles/include": 1419,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/cprofiles/lib/cfl/include": 19,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/cprofiles/lib/fluent-otel-proto/include": 19,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/cprofiles/lib/fluent-otel-proto/proto_c": 19,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/cprofiles/src": 19,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/ctraces/include": 1419,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/ctraces/lib/fluent-otel-proto/include": 17,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/ctraces/lib/fluent-otel-proto/proto_c": 17,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/ctraces/lib/monkey/include": 17,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/ctraces/src": 17,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/flb_libco": 1419,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/fluent-otel-proto/include": 1419,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/fluent-otel-proto/proto_c": 1419,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/librdkafka-2.15.0/src": 1081,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/librdkafka-2.15.0/src-cpp": 12,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/luajit-7152e154/src": 923,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/luajit-7152e154/src/host": 5,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/luajit-cmake": 70,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/lwrb/dev": 1,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/lwrb/lwrb/src/include": 1419,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/miniz": 1419,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/monkey/.": 38,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/monkey/deps/flb_libco": 38,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/monkey/deps/rbtree": 38,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/monkey/deps/regex": 38,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/monkey/include": 1419,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/monkey/include/monkey": 1419,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/monkey/mk_core/../include/monkey": 7,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/mpack-amalgamation-1.1.1/src": 1419,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/msgpack-c/include": 1391,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/nghttp2-1.65.0/lib/includes": 1253,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/onigmo": 764,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/onigmo/enc": 50,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/onigmo/enc/unicode": 50,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/rbtree": 1419,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/ripser-1.2.1": 715,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/snappy-fef67ac": 1419,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/sqlite-amalgamation-3510100": 975,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/tutf8e/include": 1419,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/aot": 54,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/common": 54,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter": 54,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/libraries/lib-pthread": 54,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/libraries/libc-builtin": 54,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/libraries/libc-wasi/sandboxed-system-primitives/include": 54,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/libraries/libc-wasi/sandboxed-system-primitives/src": 54,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/libraries/thread-mgr": 54,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/shared/mem-alloc": 54,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/shared/platform/common/libc-util": 54,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/shared/platform/linux": 54,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/shared/platform/linux/../include": 54,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/shared/utils": 54,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/shared/utils/uncommon": 54,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/yyjson-0.12.0/src": 1419,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/zstd-1.5.7/build/cmake/../../lib": 729,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/zstd-1.5.7/build/cmake/../../lib/common": 16,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/zstd-1.5.7/build/cmake/../../lib/compress": 16,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/zstd-1.5.7/build/cmake/../../lib/dictBuilder": 16,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/zstd-1.5.7/build/cmake/../../lib/legacy": 16,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/zstd-1.5.7/build/cmake/../../programs": 16,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/zstd-1.5.7/build/cmake/../../programs/legacy": 16,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/zstd-1.5.7/build/cmake/lib": 34,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/zstd-1.5.7/build/cmake/programs": 16,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/lib/zstd-1.5.7/lib": 1381,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/plugins/filter_geoip2/libmaxminddb-1.12.2": 750,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/plugins/filter_geoip2/libmaxminddb-1.12.2/include": 750,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/plugins/filter_geoip2/libmaxminddb-1.12.2/t/../src": 34,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/plugins/filter_geoip2/libmaxminddb/include": 1,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/plugins/filter_wasm/../../lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/include": 1,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/plugins/in_exec_wasi/../../lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/include": 1,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/plugins/processor_cumulative_to_delta": 2,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/plugins/processor_sql": 6,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/plugins/processor_sql/parser": 4,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/src/aws": 11,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/src/record_accessor": 3,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/src/ripser/../../lib/ripser-1.2.1": 1,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/src/simdutf/../../lib/simdutf-amalgamation-5.5.0/src/simdutf": 1,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/src/stream_processor": 12,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/src/stream_processor/parser": 3,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/src/unicode": 8,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/src/wasm/../../lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/include": 54,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/fluent-bit-clang-source/tests/internal/cutest": 97,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/monkey/monkey-build/include": 142,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/monkey/monkey-build/include/monkey": 142,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/monkey/monkey-build/mk_core/deps/libevent/include": 142,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/monkey/monkey-source/.": 142,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/monkey/monkey-source/deps/flb_libco": 142,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/monkey/monkey-source/deps/rbtree": 142,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/monkey/monkey-source/deps/regex": 142,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/monkey/monkey-source/include": 142,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/monkey/monkey-source/include/monkey": 142,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/monkey/monkey-source/mk_core/../include/monkey": 115,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/monkey/monkey-source/mk_core/deps/libevent": 108,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/monkey/monkey-source/mk_core/deps/libevent/compat": 108,
+   "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/run/monkey/monkey-source/mk_core/deps/libevent/include": 142,
+   "/usr/include": 2
+  },
+  "macros": {
+   "OPENSSL_VERSION_MAJOR": "3",
+   "OPENSSL_VERSION_MINOR": "5",
+   "OPENSSL_VERSION_PATCH": "5",
+   "OPENSSL_VERSION_STR": "\"3.5.5\"",
+   "OPENSSL_VERSION_PRE_RELEASE": "\"\"",
+   "OPENSSL_VERSION_NUMBER": "( (OPENSSL_VERSION_MAJOR<<28) |(OPENSSL_VERSION_MINOR<<20) |(OPENSSL_VERSION_PATCH<<4) |0x0L )"
+  },
+  "version": "3.5.5",
+  "version_number": "0x30500050",
+  "header_chain": [
+   {
+    "depth": 1,
+    "path": "/usr/include/openssl/opensslv.h",
+    "sha256": "7acbe88993a8691183aff3277743d8090c6bbba24b6e218919cf8afdbde42de6"
+   },
+   {
+    "depth": 2,
+    "path": "/usr/include/openssl/macros.h",
+    "sha256": "de19de1ecdef8709fecdd76fcaa35e78ca22afd15a0e938f13d98857b8713f49"
+   },
+   {
+    "depth": 3,
+    "path": "/usr/include/x86_64-linux-gnu/openssl/opensslconf.h",
+    "sha256": "7f4b522c049d0bd0d651e6f6ebe71d6df0c37231a94e32524da3f4642ebda3be"
+   },
+   {
+    "depth": 4,
+    "path": "/usr/include/x86_64-linux-gnu/openssl/configuration.h",
+    "sha256": "0fe39d13260d1cbcca3e54fad2a160fa63ae8f955749c3dc15599c87b11f3146"
+   }
+  ],
+  "opensslv_candidates": [
+   "/usr/include/openssl/opensslv.h"
+  ],
+  "header_sets": "one",
+  "package": "libssl-dev 3.5.5-1ubuntu3.7 amd64"
+ },
+ "headers_root": "/usr/include",
+ "header_sha256": {
+  "openssl/aes.h": "130e304c466bda5db6de2fdbca3a970905070ab935d702e61c8371334851ea27",
+  "openssl/asn1.h": "4fa5c0b192a3eb73927fbec13c8a399831afd09bf4c0b5f551f025c7c8044a02",
+  "openssl/asn1err.h": "9d60638b3d0c52170d390fe566c0b96a6381590590cc3dd71339eb85140fe1d6",
+  "openssl/asn1t.h": "b6e9322878b397af0704d856f822ccb7b77a2c221d0402a4086c315e240e1ed9",
+  "openssl/async.h": "708d52ecd7bb5ca83d243ddecb132db0693b0809f65c093eabda549156934030",
+  "openssl/asyncerr.h": "eb6ea0f0389aa7846ea5b8f5b7b8d2a82a7b52e7dbfa105bc137e52be1399a69",
+  "openssl/bio.h": "c2aa5855e8b17a316d5ec8222db127816c601ce5f19ef239788ad4cc24a1ea53",
+  "openssl/bioerr.h": "fe1bf57251e4eaab30d2a6aa2048ee93deb1f0f15ef6634f61093b4d405586c6",
+  "openssl/blowfish.h": "97064924914f71425e48f5d53893abca0f07f329dde7a8b93b581dc9ee2e837a",
+  "openssl/bn.h": "113a732a94b0221fdcda3e0b0f24b7d389072b2920291c23c0849c7bc5030b3f",
+  "openssl/bnerr.h": "beeb78746fbcc2c09e1f833f4c2ea72e845e757390aad7dc8699f7787b580204",
+  "openssl/buffer.h": "c7b9803f89bb492176a1e2738999dad86195ab8048a26e8ec9ef6948b8882e8a",
+  "openssl/buffererr.h": "4dea6e8ec7f09bfbdaa85fa3e75572b95d2ea62a813e7420a04f5f56ee7ccdfd",
+  "openssl/byteorder.h": "f062018f5fbe9f8459967dffaaa8e27f34596fb0da21fc011d0d556384a0305c",
+  "openssl/camellia.h": "e03acf0f3406032e5322e4f3368e8e48e5b73e8846955c3bcb3a4f1cb54d2ebc",
+  "openssl/cast.h": "4fafc375a53d88fe4c709d8ee5fb74dc0fcaf91915837c3c6b4df0d916b07f0a",
+  "openssl/cmac.h": "048677b08aab6fd862d2b8b15556db8355d2142b93a9431ffba1d75a25912847",
+  "openssl/cmp.h": "8945286a4e82fef5a661c23dc3e98deaaba7a9cc75526e726ab1a271f722a603",
+  "openssl/cmp_util.h": "16c51c48c83c930b018ff711553e107f1870f1cedd32d94c06f15709b080c321",
+  "openssl/cmperr.h": "220d1a903b66e25fa1de92f3ee8b3f5ef27de6dface0a4ea68e683a19e3549a7",
+  "openssl/cms.h": "d8c581b225131e918d7f7022cae11d9857d3b7e66167869b78d3c1b1e248f79a",
+  "openssl/cmserr.h": "1cfc091ae52fe85c79bccfe1cc2d0e2979afff511e6a91fd04142596a65ac31a",
+  "openssl/comp.h": "3f95492b4054a8064bc75f770766aa6c8c0866cbd267939460786e13092a053e",
+  "openssl/comperr.h": "03faa7ac9cf7ec99350a55758a685056dae8f75992887e0411c23b0d8c5d83b0",
+  "openssl/conf.h": "14c276c3b47e537d7efc1150bc4bf9054c85a1eba6f60bd7b237885327f071fa",
+  "openssl/conf_api.h": "38dce9e9e0a438fcaf1d173c26e61c821bfd3756e221e3be76cf010580ac52f7",
+  "openssl/conferr.h": "ea9346e399d5dd1fbcca4f34078e1acb5039333602ecaf72faa04e32cdd55484",
+  "openssl/conftypes.h": "496997cc0f4c32b840677eeefd3ecb488453254be6e228b8cd34d4a4061a9e28",
+  "openssl/core.h": "4d4e63e2e01d06530515adbbe3c93601c5f0f5e1a96754d34d3470bccfcbdbc3",
+  "openssl/core_dispatch.h": "43e25c38bbdc9b070ce14111d8722cf1c4072ba52fb0d0fe40f6fbbc2dc70365",
+  "openssl/core_names.h": "7a1e3743f463fe1684953ba27d34592972fd48a2b48dc45319f6a840a8436c21",
+  "openssl/core_object.h": "e8fa8c62ad1367bd325d59d721214d1a7afd5423205134152f60cc39a8590c8a",
+  "openssl/crmf.h": "6c2c4de95fa8e59c0b7bef929eb190aa2cb27bccdd1fe2de35fbed095791628f",
+  "openssl/crmferr.h": "9f2ff7a468b5048d543fef0324b39abdea63fa07bc915f62ff42a1937d7258c2",
+  "openssl/crypto.h": "345267a63492320c5c23550bf10b6b94744c6250bcbb17a87954e324c7a51faf",
+  "openssl/cryptoerr.h": "c457c0591449551657a69ff9727784a79cc1afd899ac733c682c1a41fefdaa19",
+  "openssl/cryptoerr_legacy.h": "985664cb71a62441b2822028340bb4ad5e3f98d6c74ba4c1bc7c997e188b97d3",
+  "openssl/ct.h": "bafa52d57bb3da74016273aca034fdf1f402b935430cbc0943a7526bd7939d0a",
+  "openssl/cterr.h": "26d971ab2166ba4473864506dcd933290fa6c321956ef46220eb61fb33a04c89",
+  "openssl/decoder.h": "72dbf52e4dc4efbfaddbf31ab6f2bec3e9a5c22eed865d057b960a014a4b9ec8",
+  "openssl/decodererr.h": "c6818c667bdf8c37c5423580e0551359c69efc884198d28675db23e9fc70946e",
+  "openssl/des.h": "420afefcf27f28046912c5f156bc9e93d71a2c8a47bf0f605695a13f391cd5f9",
+  "openssl/dh.h": "25080c32c48d5a88053c4b83c326e8f024b68249a0ef65d3c45af4f9aab6e0c6",
+  "openssl/dherr.h": "70f9e260865a9aae4c5f9a72d42d878e4dc216c906709245a8da2cceb79c3a14",
+  "openssl/dsa.h": "dac47d9779f83eb4e5a4f57c234e6eb25277cea68001384360e16c8859c38338",
+  "openssl/dsaerr.h": "b8fb8dae664d18298ae4b0c5444378e3f5c5d095256acb50764230159b1a15d6",
+  "openssl/dtls1.h": "3477022a712ecbb2bfb61b297c57026f1c354d52c638dfb22292183bd68d2e8f",
+  "openssl/e_os2.h": "d7300e16ec04f764e8fd45ae5288c37ab5af09dd1ea204d17c54c0155c69921c",
+  "openssl/e_ostime.h": "0528cffa1548778b3ad52d4abb527e5f31590fb1bab4b0f55aad391efd79fd68",
+  "openssl/ebcdic.h": "f50d3c91cb24772cf3155fe6464d811219b8f7c65ea3d4f974f58c03c3f27ab5",
+  "openssl/ec.h": "2cc0edb6a18c4c1199bfce6799ca56362a6c27d41dfdfee62177a3d53a8c9a65",
+  "openssl/ecdh.h": "5b99fdd1dfea38640ed8a506fb9b66db381cc26a1254448a81cc6b161e41850f",
+  "openssl/ecdsa.h": "5b99fdd1dfea38640ed8a506fb9b66db381cc26a1254448a81cc6b161e41850f",
+  "openssl/ecerr.h": "c072432649cd1e4bd1eb8c1f636bc2b57045d6f620d69d61c85f589d1c6b63e3",
+  "openssl/encoder.h": "73459b25f863cf9bbb3de66f04ffe7ddaf9450f3c26afb1d5827325fa0a89fd9",
+  "openssl/encodererr.h": "d010ca78b1df89c7fe3410d2aa5674179bf6750a445382ab8a0314c20a5b9799",
+  "openssl/engine.h": "185311cc9702aa00fcafefad6f83ca1f597659d5075b66100c61053e1be5f47d",
+  "openssl/engineerr.h": "2732c698916f320ba12ba690a80c1ef0651112015c5eac6141b1c3c315d1f5fc",
+  "openssl/err.h": "0d673984ff62d55d1fb4534d8136b7325e5264efeeb0b911cc94a4922681e080",
+  "openssl/ess.h": "4e2de254dfe25ef69976e53a276681ffca2354b307a8674ef7028bdd515cfe2a",
+  "openssl/esserr.h": "9ab984787cce1224e1426be57987e7726d8c5d38651dd96802a7d433c5288ae4",
+  "openssl/evp.h": "41b42c68adfd98b9d8a80fb2d78bbdaf1094f43dd02be045c7d8605edf36a706",
+  "openssl/evperr.h": "ee0a462f1985667434a2b8a91d5df67ce2ee74e4ad9246f660dece5fafcf4474",
+  "openssl/fips_names.h": "211628f73b7fa7e9ea0514b491e63704714a56c5a7874ef743b79ad3bef1e590",
+  "openssl/fipskey.h": "5d1d3508af245e532d9f6766d499a390d29655f25d89fc5d832edb64348a13f6",
+  "openssl/hmac.h": "9caf0b993c6ae2b3c75b9b585c8539dd358ca5f4edc42447295f87fc504eb1b9",
+  "openssl/hpke.h": "58f81dab37eddc03b86db9dd640980fca872ddf19f4477482826a64f20454cb9",
+  "openssl/http.h": "1f8d65d9633d54a74e8477396f2e3d34f5cdafc753fa8d56a5ee31753f5b734f",
+  "openssl/httperr.h": "cdf601f69893a286d921dfbc8a017c78462959395939c9f1ba639ed27d5c087c",
+  "openssl/idea.h": "d114cb69e2e820008c508b7ad9002586806d82e3006e88162bd4a7c2dcd1e801",
+  "openssl/indicator.h": "4be987d4fe4a4b39feac27c2ee85000e1b6ca7188d8ca9f75689a8205c2b4563",
+  "openssl/kdf.h": "a4a7c722598b9b5b5fa6e4d659a7c8cf659c5db60c7396ed021d434c45e552c6",
+  "openssl/kdferr.h": "cbf4bd667f0a53459163f546920c2c98ce6d10b0db99176c779d8bf32f04e8b7",
+  "openssl/lhash.h": "ba50a0dc4caa9662e138f913566c44454a68f6e59c405c761c1f387f58855af4",
+  "openssl/macros.h": "de19de1ecdef8709fecdd76fcaa35e78ca22afd15a0e938f13d98857b8713f49",
+  "openssl/md2.h": "a8eb0a1cdd0ced053d0f5dc5d1f63fe67f96a83c1cc37b6bf7adde85a567a631",
+  "openssl/md4.h": "75d0ff7b22daa2ab31a0cd03ce9ca10cef64f431d32c49def33d0f0164e36f0d",
+  "openssl/md5.h": "e22e567d09253eebf2c17f620783808f407bc7b969aa90bf3b44ac9001f6d329",
+  "openssl/mdc2.h": "740c2361d9b0ab5330ae0054e368f573416c401cb3855b72323967b29232421f",
+  "openssl/ml_kem.h": "58ecec9d4d95ab5172290a4c5725b7b6940149ecdbff5a33b93cc67ede1b25f7",
+  "openssl/modes.h": "8ea97ace0601cdce6a12d0e1e92aefec062c299d0fcb5ff6477e3d752a9b9763",
+  "openssl/obj_mac.h": "d51cb3f619888a0485ba46ad886f76ac605ce78a3cfbc080460947ab2dbb3a02",
+  "openssl/objects.h": "b6227db488aa39ed20a29e67d48fe8fefb2f649a1afcc3149cba22ac26510057",
+  "openssl/objectserr.h": "fc14e6c9e71fb550363394f912cb72e6078dd11e300bdddfdd17ec118c88dc4b",
+  "openssl/ocsp.h": "f853c0679f955a3140f1cb3d9175ef768bd26c951c029cbf9336a5c1b4e01275",
+  "openssl/ocsperr.h": "51b319980fb406b70ff0aee9c145c260553f4ff6516305b9c2864643096cc30c",
+  "openssl/opensslv.h": "7acbe88993a8691183aff3277743d8090c6bbba24b6e218919cf8afdbde42de6",
+  "openssl/ossl_typ.h": "8d430751bbcd1d9695f3dd85b16958fd6255dfbf55775207923f67cba1754548",
+  "openssl/param_build.h": "f078c5549e172b49da9993ef68c7b7fedafd66b05255c9bf8a37154f0a40bdb7",
+  "openssl/params.h": "b76d73449d8d44d14a7da9918caf3d1feee85b384e2d62ace73a8a1126152702",
+  "openssl/pem.h": "9098124ff7a21c8f1db5ddead59b1cf092f88c9f44bf88dacd3c8de9c67ade76",
+  "openssl/pem2.h": "5bd104c872bbfee2d16f5af88c01b0aeee9f177ecc88c0dd237c9c9948eeedc6",
+  "openssl/pemerr.h": "18c1dbdde2452416b1d49c7512b7c4b8bf26ac7b83f5c0ee5e27e9bec454d2fb",
+  "openssl/pkcs12.h": "96ec6d9eb6df21c2403359c145ede06881fbb4eefb4ad66f3bab220d8f9fbd6e",
+  "openssl/pkcs12err.h": "fbf4142e0ee58b6c6841890d873f07ba0362e21ad74702d70552122e01c096e9",
+  "openssl/pkcs7.h": "667c662d2efd30e5a69e61d8129770425479dae87c5cb28b0c0624ad7fff3b4d",
+  "openssl/pkcs7err.h": "717e017e7d0981928b33820660e19d5c264a06a5e824b94194036a8be92be07c",
+  "openssl/prov_ssl.h": "23b96759ae94e17c7c0e7ee32a531676be2a276a6d9802828e80268e20f224fd",
+  "openssl/proverr.h": "3aaec27b2bf592b5861a3524b6f03a541d7de34e6dfcbcabc2b6bc40221bc743",
+  "openssl/provider.h": "dac4bfad226a8e5513cecf472e41e0b7ed93c95374a0ec3fd56f7b046e0aeff1",
+  "openssl/quic.h": "a80af6c42394132eaad8de7177c6b0b3f747711730e8dd687acdc34284b3c2f8",
+  "openssl/rand.h": "cb240ffedfd9516ec7a8cd0796951d46a4707c0460f940371620c83f7bafd037",
+  "openssl/randerr.h": "a6acbb47da2f26fe5e572f232eb9d9ebcd65bb7c01d5984ab26229e5bf0bd45e",
+  "openssl/rc2.h": "b86a429de0c73aca6e0504b8833c1dcd9e8c7cdf65c2b31b38d0d0c7b19cc5e9",
+  "openssl/rc4.h": "1bb4fa9d14861cdcf0a721d8d1026be80ce019da459ffdd8b5c1d12365110e78",
+  "openssl/rc5.h": "dd71ab468383a2a8ca4ff34f9273b481c1ed518c380da6d1ab82e9ca6b7edbd9",
+  "openssl/ripemd.h": "4457b36942bc0e298c993b48468ef8f3f00331a9d67bd0b894dd5bc5f58ab35d",
+  "openssl/rsa.h": "86d3fcf7e4f018e512f025ba7e51c465a97e2d7d9cdb07cb89f9cda583f7afc4",
+  "openssl/rsaerr.h": "b4f87b5dddc672b81de0dfd7f3c4e6409887bd08b286c99ded8f1255e5836804",
+  "openssl/safestack.h": "0468b87ce8ea20069f621cc4dfc25fe6788408d5f46ce3baec738c89b64c2591",
+  "openssl/seed.h": "75a00b017f40beba051fdaad04876e18d3c80d1b1f1c21d78fafc69ae8e3b034",
+  "openssl/self_test.h": "4bb6ecb6d55e5e1bee6ef79c24bc8691174ad1b5c160f7d3daea150c140d3abb",
+  "openssl/sha.h": "7e006accd6565cc97dee672c097acc5e38482be7cd4fa1e0c316bf466425b895",
+  "openssl/srp.h": "8cc97f89d07e2ec543571253fcaa4229671cd71c0e2fba2993a1b73e7ebdbcc3",
+  "openssl/srtp.h": "6efa8edb1f040ba35cb05a671efc74c1494b9d4badc32d47cd5bb99e1a9cda38",
+  "openssl/ssl.h": "8d68f9a7d1f98ace505505767260a7013468ce6b0ab3fdb43c036adb17abc2a9",
+  "openssl/ssl2.h": "d33dc2afbcdee20f20ffcdd5cda6777c5e49a7cc37d513e4618b71a99129af20",
+  "openssl/ssl3.h": "f98e0eb1702bf99614e92e2d09f1af5b59309e156441e40ab711df7d661536aa",
+  "openssl/sslerr.h": "7a9dab7a198ea5c17fe5cf8e1905a54ae88c0044a86c1accf1e7cc9e7de374e2",
+  "openssl/sslerr_legacy.h": "988c235994713d83d73ee904804f7edb4f6e321b4ab94c5aa5a9a0c7134fb499",
+  "openssl/stack.h": "c81fbb17b5476dca609b96eb11372d1d246a49096838c2cf7e81ad6b25f69316",
+  "openssl/store.h": "0fd665a474792f49055d7bd6e2bebed1449fb2dfd21ac042aa2cbc4cb6c8c66e",
+  "openssl/storeerr.h": "e13ecdf3c46b4dde5d857f8a7a3e2c0a444e309aa05d789bf99d73ecefab87aa",
+  "openssl/symhacks.h": "2b54552189bfbf4204c28c6a421b21702a3cd3dba37570dbcdadb7ee648f155b",
+  "openssl/thread.h": "583716b74d6aa0596c1d1b06cb16f657d4d9fb9c13cf30505ec0327046af6baf",
+  "openssl/tls1.h": "f075f51b48cdc3503e40b8f81fb2b760ba2d4f315d2844759d9089ffb10613dc",
+  "openssl/trace.h": "5b7f86a453e6b404ff019e23e84de856c2a25b8243d4bfb92c92471a3735e332",
+  "openssl/ts.h": "3de4eecd9a731d9a05a1b7baab18cb1c62f59f8a9f9e5ed049525a8ada9207b8",
+  "openssl/tserr.h": "27e66bf494926dea06d8c3800823f2485cf1a7f8f41f5628ff4a443f9bcceb87",
+  "openssl/txt_db.h": "cbd03be764d6d12e12895703756fbe5f2b7611d4cd55d343837d48e8e6e60523",
+  "openssl/types.h": "426f5586d3e21033515498d81ce77c1ae022c5aab52962d91d6c88a36cd07262",
+  "openssl/ui.h": "cef3b9a240669810f11ea82ff463cebf620ee8c1ea55d8908d6aa9925b7f8d17",
+  "openssl/uierr.h": "a21be118ee97343a03dc28256370839e5751c82a2a7bcb4c60fcbd97a9e2bef5",
+  "openssl/whrlpool.h": "d38ef40783400956d571e442d4f459e9c611239d719eb128e19bc64982d01922",
+  "openssl/x509.h": "4221e65e6a73feaed17d839bd5e91f2db2e2d53cec06ab57715c344f326d67c0",
+  "openssl/x509_acert.h": "6e69a569faaebeff0dfe793ad2eb04360c73966f42b3a5443c30ebfa8e583bfb",
+  "openssl/x509_vfy.h": "be68c37fdfeb10ea258609eba9f750478e61a7b9b3017d82a8d3a8dd278175c8",
+  "openssl/x509err.h": "2250a50091ffbc35c6cc45fc2a32b68ea38cf2ba510b197cc7d58c957179bd1e",
+  "openssl/x509v3.h": "9dcdd51c9ca9d8ff6fb6d82293f29472897d2155007b395a843d042a85ba3aca",
+  "openssl/x509v3err.h": "b9be8b0429bfaefb973531e81d598e40779b3788e129c4cc9e33651d2308b990",
+  "x86_64-linux-gnu/openssl/configuration.h": "0fe39d13260d1cbcca3e54fad2a160fa63ae8f955749c3dc15599c87b11f3146",
+  "x86_64-linux-gnu/openssl/opensslconf.h": "7f4b522c049d0bd0d651e6f6ebe71d6df0c37231a94e32524da3f4642ebda3be"
+ },
+ "library_sha256": {
+  "libssl.so.3": "63b47f444efa588e291e9b650a5ba2ab02f856356f2d50f13a2e477db9119e09",
+  "libcrypto.so.3": "5385f0436ac2e284ba8c5fb1488874057c29c04be72dea32add832694f381e28"
+ },
+ "routes": [
+  {
+   "route": "corpus",
+   "report": "/media/Data/GitHub/quirin-lang/private/baselines/497bdeb906e1ad29a94f54079991f0b62bd701df/eight-home/corpus/corpus/resource-diagnostics.json",
+   "report_sha256": "5fed04850a589c395a37b7495360540019f5448c0681c8d54511c5b16ee88313",
+   "fluent_bit_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+   "units": 185,
+   "openssl_callees": 68,
+   "openssl_sites": 147,
+   "openssl_pairs": 99,
+   "rows_blocked": 29,
+   "rows_sole": 4,
+   "rows_co": 25,
+   "callees": [
+    {
+     "callee": "X509_free",
+     "sites": 18,
+     "pairs": 6,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 6,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "exported",
+      "header": null,
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "BIO_free",
+     "sites": 13,
+     "pairs": 5,
+     "rows_sole": 1,
+     "rows_sole_single_callee": 0,
+     "rows_co": 4,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/bio.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "BIO_new_mem_buf",
+     "sites": 4,
+     "pairs": 4,
+     "rows_sole": 1,
+     "rows_sole_single_callee": 0,
+     "rows_co": 3,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/bio.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "EVP_PKEY_free",
+     "sites": 10,
+     "pairs": 4,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 4,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/evp.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "ENGINE_free",
+     "sites": 6,
+     "pairs": 3,
+     "rows_sole": 1,
+     "rows_sole_single_callee": 0,
+     "rows_co": 2,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/engine.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "ERR_clear_error",
+     "sites": 3,
+     "pairs": 3,
+     "rows_sole": 1,
+     "rows_sole_single_callee": 1,
+     "rows_co": 2,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/err.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "BIO_new_file",
+     "sites": 2,
+     "pairs": 2,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 2,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/bio.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "EVP_sha256",
+     "sites": 2,
+     "pairs": 2,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 2,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/evp.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "OPENSSL_sk_pop_free",
+     "sites": 10,
+     "pairs": 2,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 2,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/stack.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "OPENSSL_sk_push",
+     "sites": 2,
+     "pairs": 2,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 2,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/stack.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "OPENSSL_sk_value",
+     "sites": 2,
+     "pairs": 2,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 2,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/stack.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "PEM_read_bio_PrivateKey",
+     "sites": 3,
+     "pairs": 2,
+     "rows_sole": 1,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "exported",
+      "header": null,
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "PKCS12_free",
+     "sites": 4,
+     "pairs": 2,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 2,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "exported",
+      "header": null,
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "SSL_CTX_ctrl",
+     "sites": 2,
+     "pairs": 2,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 2,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_CTX_free",
+     "sites": 2,
+     "pairs": 2,
+     "rows_sole": 1,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_CTX_set_default_verify_paths",
+     "sites": 2,
+     "pairs": 2,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 2,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_write",
+     "sites": 2,
+     "pairs": 2,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 2,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "d2i_PKCS12_bio",
+     "sites": 2,
+     "pairs": 2,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 2,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/pkcs12.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "CRYPTO_free",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/crypto.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "ENGINE_by_id",
+     "sites": 2,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/engine.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "ENGINE_load_ssl_client_cert",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/engine.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "ERR_error_string_n",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/err.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "ERR_peek_error",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/err.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "ERR_peek_last_error",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/err.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "ERR_peek_last_error_all",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/err.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "EVP_EncodeBlock",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/evp.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "EVP_MD_CTX_free",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/evp.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "EVP_MD_CTX_new",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/evp.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "EVP_sha512",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/evp.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "OPENSSL_sk_free",
+     "sites": 2,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/stack.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "OPENSSL_sk_new_null",
+     "sites": 2,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/stack.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "OSSL_PROVIDER_load",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/provider.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "OSSL_PROVIDER_unload",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/provider.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "PEM_read_bio_X509",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "exported",
+      "header": null,
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "SSL_CTX_get_cert_store",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_CTX_load_verify_locations",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_CTX_new",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_CTX_set_cert_cb",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_CTX_set_default_passwd_cb",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_CTX_set_default_passwd_cb_userdata",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_CTX_set_options",
+     "sites": 2,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_CTX_use_PrivateKey",
+     "sites": 2,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_CTX_use_PrivateKey_file",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_CTX_use_cert_and_key",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_CTX_use_certificate",
+     "sites": 2,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_CTX_use_certificate_chain_file",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_certs_clear",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_connect",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_ctrl",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_do_handshake",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_free",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 1,
+     "rows_sole_single_callee": 0,
+     "rows_co": 0,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_get1_peer_certificate",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_get_certificate",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_get_client_CA_list",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_get_error",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_read",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_shutdown",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 1,
+     "rows_sole_single_callee": 0,
+     "rows_co": 0,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "X509_NAME_oneline",
+     "sites": 2,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/x509.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "X509_OBJECT_get0_X509",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/x509_vfy.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "X509_STORE_CTX_get_current_cert",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/x509_vfy.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "X509_STORE_CTX_get_error",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/x509_vfy.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "X509_STORE_CTX_get_error_depth",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/x509_vfy.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "X509_STORE_CTX_set_error",
+     "sites": 2,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/x509_vfy.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "X509_STORE_free",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/x509_vfy.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "X509_STORE_get0_objects",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/x509_vfy.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "X509_STORE_set_flags",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/x509_vfy.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "X509_get_issuer_name",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/x509.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "X509_new",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "exported",
+      "header": null,
+      "exported_by": "libcrypto.so.3"
+     }
+    }
+   ],
+   "rows": [
+    {
+     "library": "librdkafka",
+     "file": "rdhttp.c",
+     "function": "rd_http_ssl_ctx_function",
+     "status": "Unknown",
+     "openssl_callees": [
+      "SSL_CTX_set_default_verify_paths"
+     ],
+     "openssl_sites": 1,
+     "other_diagnostics": 9,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_admin.c",
+     "function": "rd_kafka_AlterUserScramCredentialsRequest_salted_password",
+     "status": "Unknown",
+     "openssl_callees": [
+      "EVP_sha256",
+      "EVP_sha512"
+     ],
+     "openssl_sites": 2,
+     "other_diagnostics": 6,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_cert.c",
+     "function": "rd_kafka_cert_destroy",
+     "status": "Unknown",
+     "openssl_callees": [
+      "EVP_PKEY_free",
+      "X509_STORE_free",
+      "X509_free"
+     ],
+     "openssl_sites": 3,
+     "other_diagnostics": 7,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_cert.c",
+     "function": "rd_kafka_cert_new",
+     "status": "Unknown",
+     "openssl_callees": [
+      "BIO_free",
+      "BIO_new_mem_buf",
+      "ERR_clear_error",
+      "EVP_PKEY_free",
+      "OPENSSL_sk_pop_free",
+      "PKCS12_free",
+      "X509_free",
+      "d2i_PKCS12_bio"
+     ],
+     "openssl_sites": 19,
+     "other_diagnostics": 63,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_sasl_oauthbearer.c",
+     "function": "create_jws_compact_serialization",
+     "status": "Unknown",
+     "openssl_callees": [
+      "EVP_EncodeBlock"
+     ],
+     "openssl_sites": 1,
+     "other_diagnostics": 25,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_sasl_oauthbearer_oidc.c",
+     "function": "rd_kafka_oidc_assertion_create",
+     "status": "Unknown",
+     "openssl_callees": [
+      "BIO_free",
+      "BIO_new_file",
+      "BIO_new_mem_buf",
+      "EVP_MD_CTX_free",
+      "EVP_MD_CTX_new",
+      "EVP_PKEY_free",
+      "EVP_sha256",
+      "PEM_read_bio_PrivateKey"
+     ],
+     "openssl_sites": 9,
+     "other_diagnostics": 72,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_ssl.c",
+     "function": "rd_kafka_ssl_OSSL_PROVIDER_free",
+     "status": "Unknown",
+     "openssl_callees": [
+      "OSSL_PROVIDER_unload"
+     ],
+     "openssl_sites": 1,
+     "other_diagnostics": 1,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_ssl.c",
+     "function": "rd_kafka_ssl_PKEY_from_string",
+     "status": "Unknown",
+     "openssl_callees": [
+      "BIO_free",
+      "BIO_new_mem_buf",
+      "PEM_read_bio_PrivateKey"
+     ],
+     "openssl_sites": 3,
+     "other_diagnostics": 0,
+     "blocking": "sole"
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_ssl.c",
+     "function": "rd_kafka_ssl_X509_from_string",
+     "status": "Unknown",
+     "openssl_callees": [
+      "BIO_free",
+      "BIO_new_mem_buf",
+      "PEM_read_bio_X509",
+      "X509_free"
+     ],
+     "openssl_sites": 6,
+     "other_diagnostics": 2,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_ssl.c",
+     "function": "rd_kafka_ssl_cert_callback",
+     "status": "Unknown",
+     "openssl_callees": [
+      "OPENSSL_sk_value",
+      "SSL_certs_clear",
+      "SSL_ctrl",
+      "SSL_get_certificate",
+      "SSL_get_client_CA_list"
+     ],
+     "openssl_sites": 5,
+     "other_diagnostics": 6,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_ssl.c",
+     "function": "rd_kafka_ssl_cert_issuer_match",
+     "status": "Unknown",
+     "openssl_callees": [
+      "OPENSSL_sk_value",
+      "X509_get_issuer_name"
+     ],
+     "openssl_sites": 2,
+     "other_diagnostics": 2,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_ssl.c",
+     "function": "rd_kafka_ssl_ctx_init",
+     "status": "Unknown",
+     "openssl_callees": [
+      "ENGINE_free",
+      "SSL_CTX_ctrl",
+      "SSL_CTX_free",
+      "SSL_CTX_new",
+      "SSL_CTX_set_default_passwd_cb",
+      "SSL_CTX_set_default_passwd_cb_userdata",
+      "SSL_CTX_set_options"
+     ],
+     "openssl_sites": 8,
+     "other_diagnostics": 28,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_ssl.c",
+     "function": "rd_kafka_ssl_ctx_init_engine",
+     "status": "Unknown",
+     "openssl_callees": [
+      "ENGINE_by_id",
+      "ENGINE_free"
+     ],
+     "openssl_sites": 6,
+     "other_diagnostics": 5,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_ssl.c",
+     "function": "rd_kafka_ssl_ctx_load_providers",
+     "status": "Unknown",
+     "openssl_callees": [
+      "OSSL_PROVIDER_load"
+     ],
+     "openssl_sites": 1,
+     "other_diagnostics": 11,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_ssl.c",
+     "function": "rd_kafka_ssl_ctx_term",
+     "status": "Unknown",
+     "openssl_callees": [
+      "ENGINE_free",
+      "SSL_CTX_free"
+     ],
+     "openssl_sites": 2,
+     "other_diagnostics": 0,
+     "blocking": "sole"
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_ssl.c",
+     "function": "rd_kafka_ssl_error0",
+     "status": "Unknown",
+     "openssl_callees": [
+      "ERR_error_string_n"
+     ],
+     "openssl_sites": 1,
+     "other_diagnostics": 7,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_ssl.c",
+     "function": "rd_kafka_ssl_last_error_str",
+     "status": "Unknown",
+     "openssl_callees": [
+      "ERR_peek_last_error_all"
+     ],
+     "openssl_sites": 1,
+     "other_diagnostics": 1,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_ssl.c",
+     "function": "rd_kafka_ssl_read_cert_chain_from_BIO",
+     "status": "Unknown",
+     "openssl_callees": [
+      "ERR_clear_error",
+      "ERR_peek_last_error",
+      "OPENSSL_sk_push",
+      "X509_free",
+      "X509_new"
+     ],
+     "openssl_sites": 6,
+     "other_diagnostics": 1,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_ssl.c",
+     "function": "rd_kafka_ssl_set_certs",
+     "status": "Unknown",
+     "openssl_callees": [
+      "BIO_free",
+      "BIO_new_file",
+      "ENGINE_load_ssl_client_cert",
+      "EVP_PKEY_free",
+      "OPENSSL_sk_free",
+      "OPENSSL_sk_new_null",
+      "OPENSSL_sk_pop_free",
+      "OPENSSL_sk_push",
+      "PKCS12_free",
+      "SSL_CTX_ctrl",
+      "SSL_CTX_get_cert_store",
+      "SSL_CTX_load_verify_locations",
+      "SSL_CTX_set_cert_cb",
+      "SSL_CTX_set_default_verify_paths",
+      "SSL_CTX_use_PrivateKey",
+      "SSL_CTX_use_PrivateKey_file",
+      "SSL_CTX_use_cert_and_key",
+      "SSL_CTX_use_certificate",
+      "SSL_CTX_use_certificate_chain_file",
+      "X509_OBJECT_get0_X509",
+      "X509_STORE_get0_objects",
+      "X509_STORE_set_flags",
+      "X509_free",
+      "d2i_PKCS12_bio"
+     ],
+     "openssl_sites": 50,
+     "other_diagnostics": 71,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_ssl.c",
+     "function": "rd_kafka_transport_ssl_cert_verify_cb",
+     "status": "Unknown",
+     "openssl_callees": [
+      "CRYPTO_free",
+      "X509_NAME_oneline",
+      "X509_STORE_CTX_get_current_cert",
+      "X509_STORE_CTX_get_error",
+      "X509_STORE_CTX_get_error_depth",
+      "X509_STORE_CTX_set_error"
+     ],
+     "openssl_sites": 8,
+     "other_diagnostics": 13,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_ssl.c",
+     "function": "rd_kafka_transport_ssl_clear_error",
+     "status": "Unknown",
+     "openssl_callees": [
+      "ERR_clear_error"
+     ],
+     "openssl_sites": 1,
+     "other_diagnostics": 0,
+     "blocking": "sole"
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_ssl.c",
+     "function": "rd_kafka_transport_ssl_close",
+     "status": "Unknown",
+     "openssl_callees": [
+      "SSL_free",
+      "SSL_shutdown"
+     ],
+     "openssl_sites": 2,
+     "other_diagnostics": 0,
+     "blocking": "sole"
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_ssl.c",
+     "function": "rd_kafka_transport_ssl_connect",
+     "status": "Unknown",
+     "openssl_callees": [
+      "SSL_connect"
+     ],
+     "openssl_sites": 1,
+     "other_diagnostics": 8,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_ssl.c",
+     "function": "rd_kafka_transport_ssl_handshake",
+     "status": "Unknown",
+     "openssl_callees": [
+      "SSL_do_handshake"
+     ],
+     "openssl_sites": 1,
+     "other_diagnostics": 10,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_ssl.c",
+     "function": "rd_kafka_transport_ssl_io_event",
+     "status": "Unknown",
+     "openssl_callees": [
+      "SSL_write"
+     ],
+     "openssl_sites": 1,
+     "other_diagnostics": 3,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_ssl.c",
+     "function": "rd_kafka_transport_ssl_io_update",
+     "status": "Unknown",
+     "openssl_callees": [
+      "ERR_peek_error",
+      "SSL_get_error"
+     ],
+     "openssl_sites": 2,
+     "other_diagnostics": 6,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_ssl.c",
+     "function": "rd_kafka_transport_ssl_recv",
+     "status": "Unknown",
+     "openssl_callees": [
+      "SSL_read"
+     ],
+     "openssl_sites": 1,
+     "other_diagnostics": 4,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_ssl.c",
+     "function": "rd_kafka_transport_ssl_send",
+     "status": "Unknown",
+     "openssl_callees": [
+      "SSL_write"
+     ],
+     "openssl_sites": 1,
+     "other_diagnostics": 4,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_ssl.c",
+     "function": "rd_kafka_transport_ssl_verify",
+     "status": "Unknown",
+     "openssl_callees": [
+      "SSL_get1_peer_certificate",
+      "X509_free"
+     ],
+     "openssl_sites": 2,
+     "other_diagnostics": 3,
+     "blocking": "co"
+    }
+   ]
+  },
+  {
+   "route": "system",
+   "report": "/media/Data/GitHub/quirin-lang/private/baselines/497bdeb906e1ad29a94f54079991f0b62bd701df/fluent-bit-system/system/resource-diagnostics.json",
+   "report_sha256": "84bacff89d0be58041f2498901f8868fb80b15f35fc4745743aca1288102ec81",
+   "fluent_bit_revision": "046accf6aded7906f66a1baf0202da349e521736",
+   "units": 15,
+   "openssl_callees": 0,
+   "openssl_sites": 0,
+   "openssl_pairs": 0,
+   "rows_blocked": 0,
+   "rows_sole": 0,
+   "rows_co": 0,
+   "callees": [],
+   "rows": []
+  },
+  {
+   "route": "slice",
+   "report": "/media/Data/GitHub/quirin-lang/private/baselines/497bdeb906e1ad29a94f54079991f0b62bd701df/fluent-bit-tail-pause/slice/resource-diagnostics.json",
+   "report_sha256": "b4f639f20631d939a766a584c3eefa6033526f5c5c569e443447081d8d50c817",
+   "fluent_bit_revision": "34155955e4962a56d94eb23c03a002880899a0d1",
+   "units": 16,
+   "openssl_callees": 0,
+   "openssl_sites": 0,
+   "openssl_pairs": 0,
+   "rows_blocked": 0,
+   "rows_sole": 0,
+   "rows_co": 0,
+   "callees": [],
+   "rows": []
+  },
+  {
+   "route": "current",
+   "report": "/media/Data/GitHub/quirin-lang/private/current-linked-556460e31/reports-89fa31d21/resource-diagnostics.json",
+   "report_sha256": "77e8ce8a1d494d864ab124ca9d6e8c86897f1028524bc5a1c884c0c0c814de6b",
+   "fluent_bit_revision": "046accf6aded7906f66a1baf0202da349e521736",
+   "units": 187,
+   "openssl_callees": 72,
+   "openssl_sites": 174,
+   "openssl_pairs": 116,
+   "rows_blocked": 38,
+   "rows_sole": 6,
+   "rows_co": 32,
+   "callees": [
+    {
+     "callee": "X509_free",
+     "sites": 23,
+     "pairs": 7,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 7,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka",
+      "monkey"
+     ],
+     "declared_as": {
+      "kind": "exported",
+      "header": null,
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "BIO_free",
+     "sites": 15,
+     "pairs": 6,
+     "rows_sole": 1,
+     "rows_sole_single_callee": 0,
+     "rows_co": 5,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka",
+      "monkey"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/bio.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "BIO_new_mem_buf",
+     "sites": 6,
+     "pairs": 5,
+     "rows_sole": 1,
+     "rows_sole_single_callee": 0,
+     "rows_co": 4,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka",
+      "monkey"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/bio.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "EVP_PKEY_free",
+     "sites": 13,
+     "pairs": 5,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 5,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka",
+      "monkey"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/evp.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "SSL_write",
+     "sites": 5,
+     "pairs": 4,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 4,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka",
+      "monkey"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "ENGINE_free",
+     "sites": 6,
+     "pairs": 3,
+     "rows_sole": 1,
+     "rows_sole_single_callee": 0,
+     "rows_co": 2,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/engine.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "ERR_clear_error",
+     "sites": 3,
+     "pairs": 3,
+     "rows_sole": 1,
+     "rows_sole_single_callee": 1,
+     "rows_co": 2,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/err.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "PEM_read_bio_PrivateKey",
+     "sites": 4,
+     "pairs": 3,
+     "rows_sole": 1,
+     "rows_sole_single_callee": 0,
+     "rows_co": 2,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka",
+      "monkey"
+     ],
+     "declared_as": {
+      "kind": "exported",
+      "header": null,
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "SSL_free",
+     "sites": 3,
+     "pairs": 3,
+     "rows_sole": 1,
+     "rows_sole_single_callee": 0,
+     "rows_co": 2,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka",
+      "monkey"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "BIO_new_file",
+     "sites": 2,
+     "pairs": 2,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 2,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/bio.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "EVP_sha256",
+     "sites": 2,
+     "pairs": 2,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 2,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/evp.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "OPENSSL_sk_pop_free",
+     "sites": 10,
+     "pairs": 2,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 2,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/stack.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "OPENSSL_sk_push",
+     "sites": 2,
+     "pairs": 2,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 2,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/stack.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "OPENSSL_sk_value",
+     "sites": 2,
+     "pairs": 2,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 2,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/stack.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "PEM_read_bio_X509",
+     "sites": 2,
+     "pairs": 2,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 2,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka",
+      "monkey"
+     ],
+     "declared_as": {
+      "kind": "exported",
+      "header": null,
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "PKCS12_free",
+     "sites": 4,
+     "pairs": 2,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 2,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "exported",
+      "header": null,
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "SSL_CTX_ctrl",
+     "sites": 2,
+     "pairs": 2,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 2,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_CTX_free",
+     "sites": 2,
+     "pairs": 2,
+     "rows_sole": 1,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_CTX_new",
+     "sites": 2,
+     "pairs": 2,
+     "rows_sole": 1,
+     "rows_sole_single_callee": 1,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka",
+      "monkey"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_CTX_set_default_verify_paths",
+     "sites": 2,
+     "pairs": 2,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 2,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_get_error",
+     "sites": 2,
+     "pairs": 2,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 2,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka",
+      "monkey"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_shutdown",
+     "sites": 2,
+     "pairs": 2,
+     "rows_sole": 1,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka",
+      "monkey"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "d2i_PKCS12_bio",
+     "sites": 2,
+     "pairs": 2,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 2,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/pkcs12.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "CRYPTO_free",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/crypto.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "ENGINE_by_id",
+     "sites": 2,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/engine.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "ENGINE_load_ssl_client_cert",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/engine.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "ERR_error_string_n",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/err.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "ERR_peek_error",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/err.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "ERR_peek_last_error",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/err.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "ERR_peek_last_error_all",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/err.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "EVP_EncodeBlock",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/evp.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "EVP_MD_CTX_free",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/evp.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "EVP_MD_CTX_new",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/evp.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "EVP_sha512",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/evp.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "OPENSSL_init_ssl",
+     "sites": 2,
+     "pairs": 1,
+     "rows_sole": 1,
+     "rows_sole_single_callee": 1,
+     "rows_co": 0,
+     "has_body_in_run": false,
+     "libraries": [
+      "monkey"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "OPENSSL_sk_free",
+     "sites": 2,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/stack.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "OPENSSL_sk_new_null",
+     "sites": 2,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/stack.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "OSSL_PROVIDER_load",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/provider.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "OSSL_PROVIDER_unload",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/provider.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "SSL_CTX_get_cert_store",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_CTX_load_verify_locations",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_CTX_set_cert_cb",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_CTX_set_default_passwd_cb",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_CTX_set_default_passwd_cb_userdata",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_CTX_set_options",
+     "sites": 2,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_CTX_use_PrivateKey",
+     "sites": 2,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_CTX_use_PrivateKey_file",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_CTX_use_cert_and_key",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_CTX_use_certificate",
+     "sites": 2,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_CTX_use_certificate_chain_file",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_certs_clear",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_connect",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_ctrl",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_do_handshake",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_get1_peer_certificate",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_get_certificate",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_get_client_CA_list",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_new",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "monkey"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_read",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_set_accept_state",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "monkey"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "SSL_set_fd",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "monkey"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/ssl.h",
+      "exported_by": "libssl.so.3"
+     }
+    },
+    {
+     "callee": "X509_NAME_oneline",
+     "sites": 2,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/x509.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "X509_OBJECT_get0_X509",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/x509_vfy.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "X509_STORE_CTX_get_current_cert",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/x509_vfy.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "X509_STORE_CTX_get_error",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/x509_vfy.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "X509_STORE_CTX_get_error_depth",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/x509_vfy.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "X509_STORE_CTX_set_error",
+     "sites": 2,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/x509_vfy.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "X509_STORE_free",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/x509_vfy.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "X509_STORE_get0_objects",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/x509_vfy.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "X509_STORE_set_flags",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/x509_vfy.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "X509_get_issuer_name",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "function",
+      "header": "openssl/x509.h",
+      "exported_by": "libcrypto.so.3"
+     }
+    },
+    {
+     "callee": "X509_new",
+     "sites": 1,
+     "pairs": 1,
+     "rows_sole": 0,
+     "rows_sole_single_callee": 0,
+     "rows_co": 1,
+     "has_body_in_run": false,
+     "libraries": [
+      "librdkafka"
+     ],
+     "declared_as": {
+      "kind": "exported",
+      "header": null,
+      "exported_by": "libcrypto.so.3"
+     }
+    }
+   ],
+   "rows": [
+    {
+     "library": "librdkafka",
+     "file": "lib/librdkafka-2.15.0/src/rdhttp.c",
+     "function": "rd_http_ssl_ctx_function",
+     "status": "Unknown",
+     "openssl_callees": [
+      "SSL_CTX_set_default_verify_paths"
+     ],
+     "openssl_sites": 1,
+     "other_diagnostics": 9,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+     "function": "rd_kafka_AlterUserScramCredentialsRequest_salted_password",
+     "status": "Unknown",
+     "openssl_callees": [
+      "EVP_sha256",
+      "EVP_sha512"
+     ],
+     "openssl_sites": 2,
+     "other_diagnostics": 6,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "lib/librdkafka-2.15.0/src/rdkafka_cert.c",
+     "function": "rd_kafka_cert_destroy",
+     "status": "Unknown",
+     "openssl_callees": [
+      "EVP_PKEY_free",
+      "X509_STORE_free",
+      "X509_free"
+     ],
+     "openssl_sites": 3,
+     "other_diagnostics": 7,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "lib/librdkafka-2.15.0/src/rdkafka_cert.c",
+     "function": "rd_kafka_cert_new",
+     "status": "Unknown",
+     "openssl_callees": [
+      "BIO_free",
+      "BIO_new_mem_buf",
+      "ERR_clear_error",
+      "EVP_PKEY_free",
+      "OPENSSL_sk_pop_free",
+      "PKCS12_free",
+      "X509_free",
+      "d2i_PKCS12_bio"
+     ],
+     "openssl_sites": 19,
+     "other_diagnostics": 63,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c",
+     "function": "create_jws_compact_serialization",
+     "status": "Unknown",
+     "openssl_callees": [
+      "EVP_EncodeBlock"
+     ],
+     "openssl_sites": 1,
+     "other_diagnostics": 25,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c",
+     "function": "rd_kafka_oidc_assertion_create",
+     "status": "Unknown",
+     "openssl_callees": [
+      "BIO_free",
+      "BIO_new_file",
+      "BIO_new_mem_buf",
+      "EVP_MD_CTX_free",
+      "EVP_MD_CTX_new",
+      "EVP_PKEY_free",
+      "EVP_sha256",
+      "PEM_read_bio_PrivateKey"
+     ],
+     "openssl_sites": 9,
+     "other_diagnostics": 72,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c",
+     "function": "rd_kafka_ssl_OSSL_PROVIDER_free",
+     "status": "Unknown",
+     "openssl_callees": [
+      "OSSL_PROVIDER_unload"
+     ],
+     "openssl_sites": 1,
+     "other_diagnostics": 1,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c",
+     "function": "rd_kafka_ssl_PKEY_from_string",
+     "status": "Unknown",
+     "openssl_callees": [
+      "BIO_free",
+      "BIO_new_mem_buf",
+      "PEM_read_bio_PrivateKey"
+     ],
+     "openssl_sites": 3,
+     "other_diagnostics": 0,
+     "blocking": "sole"
+    },
+    {
+     "library": "librdkafka",
+     "file": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c",
+     "function": "rd_kafka_ssl_X509_from_string",
+     "status": "Unknown",
+     "openssl_callees": [
+      "BIO_free",
+      "BIO_new_mem_buf",
+      "PEM_read_bio_X509",
+      "X509_free"
+     ],
+     "openssl_sites": 6,
+     "other_diagnostics": 2,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c",
+     "function": "rd_kafka_ssl_cert_callback",
+     "status": "Unknown",
+     "openssl_callees": [
+      "OPENSSL_sk_value",
+      "SSL_certs_clear",
+      "SSL_ctrl",
+      "SSL_get_certificate",
+      "SSL_get_client_CA_list"
+     ],
+     "openssl_sites": 5,
+     "other_diagnostics": 6,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c",
+     "function": "rd_kafka_ssl_cert_issuer_match",
+     "status": "Unknown",
+     "openssl_callees": [
+      "OPENSSL_sk_value",
+      "X509_get_issuer_name"
+     ],
+     "openssl_sites": 2,
+     "other_diagnostics": 2,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c",
+     "function": "rd_kafka_ssl_ctx_init",
+     "status": "Unknown",
+     "openssl_callees": [
+      "ENGINE_free",
+      "SSL_CTX_ctrl",
+      "SSL_CTX_free",
+      "SSL_CTX_new",
+      "SSL_CTX_set_default_passwd_cb",
+      "SSL_CTX_set_default_passwd_cb_userdata",
+      "SSL_CTX_set_options"
+     ],
+     "openssl_sites": 8,
+     "other_diagnostics": 28,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c",
+     "function": "rd_kafka_ssl_ctx_init_engine",
+     "status": "Unknown",
+     "openssl_callees": [
+      "ENGINE_by_id",
+      "ENGINE_free"
+     ],
+     "openssl_sites": 6,
+     "other_diagnostics": 5,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c",
+     "function": "rd_kafka_ssl_ctx_load_providers",
+     "status": "Unknown",
+     "openssl_callees": [
+      "OSSL_PROVIDER_load"
+     ],
+     "openssl_sites": 1,
+     "other_diagnostics": 11,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c",
+     "function": "rd_kafka_ssl_ctx_term",
+     "status": "Unknown",
+     "openssl_callees": [
+      "ENGINE_free",
+      "SSL_CTX_free"
+     ],
+     "openssl_sites": 2,
+     "other_diagnostics": 0,
+     "blocking": "sole"
+    },
+    {
+     "library": "librdkafka",
+     "file": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c",
+     "function": "rd_kafka_ssl_error0",
+     "status": "Unknown",
+     "openssl_callees": [
+      "ERR_error_string_n"
+     ],
+     "openssl_sites": 1,
+     "other_diagnostics": 7,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c",
+     "function": "rd_kafka_ssl_last_error_str",
+     "status": "Unknown",
+     "openssl_callees": [
+      "ERR_peek_last_error_all"
+     ],
+     "openssl_sites": 1,
+     "other_diagnostics": 1,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c",
+     "function": "rd_kafka_ssl_read_cert_chain_from_BIO",
+     "status": "Unknown",
+     "openssl_callees": [
+      "ERR_clear_error",
+      "ERR_peek_last_error",
+      "OPENSSL_sk_push",
+      "X509_free",
+      "X509_new"
+     ],
+     "openssl_sites": 6,
+     "other_diagnostics": 1,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c",
+     "function": "rd_kafka_ssl_set_certs",
+     "status": "Unknown",
+     "openssl_callees": [
+      "BIO_free",
+      "BIO_new_file",
+      "ENGINE_load_ssl_client_cert",
+      "EVP_PKEY_free",
+      "OPENSSL_sk_free",
+      "OPENSSL_sk_new_null",
+      "OPENSSL_sk_pop_free",
+      "OPENSSL_sk_push",
+      "PKCS12_free",
+      "SSL_CTX_ctrl",
+      "SSL_CTX_get_cert_store",
+      "SSL_CTX_load_verify_locations",
+      "SSL_CTX_set_cert_cb",
+      "SSL_CTX_set_default_verify_paths",
+      "SSL_CTX_use_PrivateKey",
+      "SSL_CTX_use_PrivateKey_file",
+      "SSL_CTX_use_cert_and_key",
+      "SSL_CTX_use_certificate",
+      "SSL_CTX_use_certificate_chain_file",
+      "X509_OBJECT_get0_X509",
+      "X509_STORE_get0_objects",
+      "X509_STORE_set_flags",
+      "X509_free",
+      "d2i_PKCS12_bio"
+     ],
+     "openssl_sites": 50,
+     "other_diagnostics": 71,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c",
+     "function": "rd_kafka_transport_ssl_cert_verify_cb",
+     "status": "Unknown",
+     "openssl_callees": [
+      "CRYPTO_free",
+      "X509_NAME_oneline",
+      "X509_STORE_CTX_get_current_cert",
+      "X509_STORE_CTX_get_error",
+      "X509_STORE_CTX_get_error_depth",
+      "X509_STORE_CTX_set_error"
+     ],
+     "openssl_sites": 8,
+     "other_diagnostics": 13,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c",
+     "function": "rd_kafka_transport_ssl_clear_error",
+     "status": "Unknown",
+     "openssl_callees": [
+      "ERR_clear_error"
+     ],
+     "openssl_sites": 1,
+     "other_diagnostics": 0,
+     "blocking": "sole"
+    },
+    {
+     "library": "librdkafka",
+     "file": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c",
+     "function": "rd_kafka_transport_ssl_close",
+     "status": "Unknown",
+     "openssl_callees": [
+      "SSL_free",
+      "SSL_shutdown"
+     ],
+     "openssl_sites": 2,
+     "other_diagnostics": 0,
+     "blocking": "sole"
+    },
+    {
+     "library": "librdkafka",
+     "file": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c",
+     "function": "rd_kafka_transport_ssl_connect",
+     "status": "Unknown",
+     "openssl_callees": [
+      "SSL_connect"
+     ],
+     "openssl_sites": 1,
+     "other_diagnostics": 8,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c",
+     "function": "rd_kafka_transport_ssl_handshake",
+     "status": "Unknown",
+     "openssl_callees": [
+      "SSL_do_handshake"
+     ],
+     "openssl_sites": 1,
+     "other_diagnostics": 10,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c",
+     "function": "rd_kafka_transport_ssl_io_event",
+     "status": "Unknown",
+     "openssl_callees": [
+      "SSL_write"
+     ],
+     "openssl_sites": 1,
+     "other_diagnostics": 3,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c",
+     "function": "rd_kafka_transport_ssl_io_update",
+     "status": "Unknown",
+     "openssl_callees": [
+      "ERR_peek_error",
+      "SSL_get_error"
+     ],
+     "openssl_sites": 2,
+     "other_diagnostics": 6,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c",
+     "function": "rd_kafka_transport_ssl_recv",
+     "status": "Unknown",
+     "openssl_callees": [
+      "SSL_read"
+     ],
+     "openssl_sites": 1,
+     "other_diagnostics": 4,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c",
+     "function": "rd_kafka_transport_ssl_send",
+     "status": "Unknown",
+     "openssl_callees": [
+      "SSL_write"
+     ],
+     "openssl_sites": 1,
+     "other_diagnostics": 4,
+     "blocking": "co"
+    },
+    {
+     "library": "librdkafka",
+     "file": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c",
+     "function": "rd_kafka_transport_ssl_verify",
+     "status": "Unknown",
+     "openssl_callees": [
+      "SSL_get1_peer_certificate",
+      "X509_free"
+     ],
+     "openssl_sites": 2,
+     "other_diagnostics": 3,
+     "blocking": "co"
+    },
+    {
+     "library": "monkey",
+     "file": "lib/monkey/tls/tls_openssl.c",
+     "function": "context_new",
+     "status": "Unsafe",
+     "openssl_callees": [
+      "SSL_new",
+      "SSL_set_accept_state",
+      "SSL_set_fd"
+     ],
+     "openssl_sites": 3,
+     "other_diagnostics": 7,
+     "blocking": "co"
+    },
+    {
+     "library": "monkey",
+     "file": "lib/monkey/tls/tls_openssl.c",
+     "function": "context_unset",
+     "status": "Unknown",
+     "openssl_callees": [
+      "SSL_free",
+      "SSL_shutdown"
+     ],
+     "openssl_sites": 2,
+     "other_diagnostics": 3,
+     "blocking": "co"
+    },
+    {
+     "library": "monkey",
+     "file": "lib/monkey/tls/tls_openssl.c",
+     "function": "contexts_free",
+     "status": "Unknown",
+     "openssl_callees": [
+      "SSL_free"
+     ],
+     "openssl_sites": 1,
+     "other_diagnostics": 4,
+     "blocking": "co"
+    },
+    {
+     "library": "monkey",
+     "file": "lib/monkey/tls/tls_openssl.c",
+     "function": "mk_tls_send_file",
+     "status": "Unknown",
+     "openssl_callees": [
+      "SSL_write"
+     ],
+     "openssl_sites": 2,
+     "other_diagnostics": 3,
+     "blocking": "co"
+    },
+    {
+     "library": "monkey",
+     "file": "lib/monkey/tls/tls_openssl.c",
+     "function": "mk_tls_writev",
+     "status": "Unknown",
+     "openssl_callees": [
+      "SSL_write"
+     ],
+     "openssl_sites": 1,
+     "other_diagnostics": 3,
+     "blocking": "co"
+    },
+    {
+     "library": "monkey",
+     "file": "lib/monkey/tls/tls_openssl.c",
+     "function": "tls_create_server_context",
+     "status": "Unknown",
+     "openssl_callees": [
+      "SSL_CTX_new"
+     ],
+     "openssl_sites": 1,
+     "other_diagnostics": 0,
+     "blocking": "sole"
+    },
+    {
+     "library": "monkey",
+     "file": "lib/monkey/tls/tls_openssl.c",
+     "function": "tls_handle_return",
+     "status": "Unknown",
+     "openssl_callees": [
+      "SSL_get_error"
+     ],
+     "openssl_sites": 1,
+     "other_diagnostics": 4,
+     "blocking": "co"
+    },
+    {
+     "library": "monkey",
+     "file": "lib/monkey/tls/tls_openssl.c",
+     "function": "tls_init_library",
+     "status": "Unknown",
+     "openssl_callees": [
+      "OPENSSL_init_ssl"
+     ],
+     "openssl_sites": 2,
+     "other_diagnostics": 0,
+     "blocking": "sole"
+    },
+    {
+     "library": "monkey",
+     "file": "lib/monkey/tls/tls_openssl.c",
+     "function": "tls_load_builtin_credentials",
+     "status": "Unknown",
+     "openssl_callees": [
+      "BIO_free",
+      "BIO_new_mem_buf",
+      "EVP_PKEY_free",
+      "PEM_read_bio_PrivateKey",
+      "PEM_read_bio_X509",
+      "X509_free"
+     ],
+     "openssl_sites": 14,
+     "other_diagnostics": 2,
+     "blocking": "co"
+    }
+   ]
+  }
+ ],
+ "tls_sources": [
+  {
+   "file": "src/tls/openssl.c",
+   "present": true,
+   "sha256": "c3b61796ae5fbd586353378349748c6b4fdab94f6b3f6fb2142d14b899b2303f",
+   "analysed_by": [],
+   "openssl_functions": 73,
+   "openssl_sites": 133,
+   "calls": {
+    "ERR_get_error": 17,
+    "ERR_error_string_n": 9,
+    "SSL_CTX_new": 8,
+    "ERR_clear_error": 4,
+    "SSL_get_error": 4,
+    "X509_free": 4,
+    "SSL_CTX_get_cert_store": 3,
+    "SSL_CTX_load_verify_locations": 3,
+    "SSL_CTX_set_verify": 3,
+    "SSL_state_string_long": 3,
+    "X509_STORE_add_cert": 3,
+    "d2i_X509": 3,
+    "ERR_GET_REASON": 2,
+    "ERR_error_string": 2,
+    "OPENSSL_free": 2,
+    "SSL_CTX_free": 2,
+    "SSL_CTX_set_alpn_select_cb": 2,
+    "SSL_free": 2,
+    "SSL_shutdown": 2,
+    "X509_NAME_oneline": 2,
+    "BIO_f_ssl": 1,
+    "BIO_free": 1,
+    "BIO_new": 1,
+    "BIO_new_file": 1,
+    "BIO_set_ssl": 1,
+    "DTLS_client_method": 1,
+    "DTLS_server_method": 1,
+    "ERR_peek_error": 1,
+    "ERR_print_errors_fp": 1,
+    "OPENSSL_add_all_algorithms_noconf": 1,
+    "PEM_read_bio_X509_CRL": 1,
+    "SSL_CTX_check_private_key": 1,
+    "SSL_CTX_clear_options": 1,
+    "SSL_CTX_get_verify_mode": 1,
+    "SSL_CTX_set_alpn_protos": 1,
+    "SSL_CTX_set_cipher_list": 1,
+    "SSL_CTX_set_default_passwd_cb_userdata": 1,
+    "SSL_CTX_set_keylog_callback": 1,
+    "SSL_CTX_set_options": 1,
+    "SSL_CTX_use_PrivateKey_file": 1,
+    "SSL_CTX_use_certificate_chain_file": 1,
+    "SSL_accept": 1,
+    "SSL_alert_desc_string_long": 1,
+    "SSL_alert_type_string_long": 1,
+    "SSL_connect": 1,
+    "SSL_get0_alpn_selected": 1,
+    "SSL_get0_param": 1,
+    "SSL_get_fd": 1,
+    "SSL_get_verify_result": 1,
+    "SSL_library_init": 1,
+    "SSL_load_error_strings": 1,
+    "SSL_new": 1,
+    "SSL_read": 1,
+    "SSL_select_next_proto": 1,
+    "SSL_set_accept_state": 1,
+    "SSL_set_alpn_protos": 1,
+    "SSL_set_bio": 1,
+    "SSL_set_connect_state": 1,
+    "SSL_set_fd": 1,
+    "SSL_set_info_callback": 1,
+    "SSL_set_tlsext_host_name": 1,
+    "SSL_write": 1,
+    "TLS_client_method": 1,
+    "TLS_server_method": 1,
+    "X509_CRL_free": 1,
+    "X509_STORE_add_crl": 1,
+    "X509_STORE_set_flags": 1,
+    "X509_VERIFY_PARAM_set1_host": 1,
+    "X509_VERIFY_PARAM_set1_ip_asc": 1,
+    "X509_VERIFY_PARAM_set_hostflags": 1,
+    "X509_get_issuer_name": 1,
+    "X509_get_subject_name": 1,
+    "X509_verify_cert_error_string": 1
+   }
+  },
+  {
+   "file": "src/flb_hmac.c",
+   "present": true,
+   "sha256": "dfe01dc384c0c0dfa1c81f5d6c2ee6f2d843d5f5ffd5eff11ff2bad46052fa1b",
+   "analysed_by": [],
+   "openssl_functions": 21,
+   "openssl_sites": 27,
+   "calls": {
+    "ERR_get_error": 7,
+    "EVP_MAC_CTX_free": 1,
+    "EVP_MAC_CTX_get_mac_size": 1,
+    "EVP_MAC_CTX_new": 1,
+    "EVP_MAC_fetch": 1,
+    "EVP_MAC_final": 1,
+    "EVP_MAC_free": 1,
+    "EVP_MAC_init": 1,
+    "EVP_MAC_update": 1,
+    "EVP_MD_size": 1,
+    "EVP_md5": 1,
+    "EVP_sha256": 1,
+    "EVP_sha512": 1,
+    "HMAC_CTX_free": 1,
+    "HMAC_CTX_new": 1,
+    "HMAC_CTX_reset": 1,
+    "HMAC_Final": 1,
+    "HMAC_Init_ex": 1,
+    "HMAC_Update": 1,
+    "OSSL_PARAM_construct_end": 1,
+    "OSSL_PARAM_construct_utf8_string": 1
+   }
+  },
+  {
+   "file": "src/flb_hash.c",
+   "present": true,
+   "sha256": "468977e4bf4f2e3c067e5ffad7fa1077779d922162b43dfe1aa72151050c7d1d",
+   "analysed_by": [],
+   "openssl_functions": 10,
+   "openssl_sites": 14,
+   "calls": {
+    "ERR_get_error": 4,
+    "EVP_MD_CTX_destroy": 2,
+    "EVP_DigestFinal_ex": 1,
+    "EVP_DigestInit_ex": 1,
+    "EVP_DigestUpdate": 1,
+    "EVP_MD_CTX_create": 1,
+    "EVP_MD_CTX_size": 1,
+    "EVP_md5": 1,
+    "EVP_sha256": 1,
+    "EVP_sha512": 1
+   }
+  },
+  {
+   "file": "src/flb_crypto.c",
+   "present": true,
+   "sha256": "621ced872699d3bc30520aa07053d4f9680a8a801e24911fa4b370d13891fad6",
+   "analysed_by": [],
+   "openssl_functions": 35,
+   "openssl_sites": 69,
+   "calls": {
+    "ERR_get_error": 11,
+    "BN_free": 10,
+    "EVP_MD_CTX_free": 4,
+    "EVP_PKEY_free": 3,
+    "RSA_set0_key": 3,
+    "BN_bin2bn": 2,
+    "BN_dup": 2,
+    "EVP_PKEY_CTX_new": 2,
+    "EVP_PKEY_CTX_set_rsa_padding": 2,
+    "EVP_PKEY_new": 2,
+    "EVP_PKEY_size": 2,
+    "RSA_free": 2,
+    "RSA_new": 2,
+    "BIO_free_all": 1,
+    "BIO_new_mem_buf": 1,
+    "EVP_DigestVerify": 1,
+    "EVP_DigestVerifyFinal": 1,
+    "EVP_DigestVerifyInit": 1,
+    "EVP_DigestVerifyUpdate": 1,
+    "EVP_MD_CTX_new": 1,
+    "EVP_PKEY_CTX_free": 1,
+    "EVP_PKEY_CTX_set_signature_md": 1,
+    "EVP_PKEY_assign_RSA": 1,
+    "EVP_PKEY_decrypt": 1,
+    "EVP_PKEY_decrypt_init": 1,
+    "EVP_PKEY_encrypt": 1,
+    "EVP_PKEY_encrypt_init": 1,
+    "EVP_PKEY_set1_RSA": 1,
+    "EVP_PKEY_sign": 1,
+    "EVP_PKEY_sign_init": 1,
+    "EVP_md5": 1,
+    "EVP_sha256": 1,
+    "EVP_sha512": 1,
+    "PEM_read_bio_PUBKEY": 1,
+    "PEM_read_bio_PrivateKey": 1
+   }
+  },
+  {
+   "file": "src/flb_utils.c",
+   "present": true,
+   "sha256": "9d9ce7c5c33ab530affa1fb22276b9843a29e9d4bf235bab5b54566b805c32d4",
+   "analysed_by": [],
+   "openssl_functions": 1,
+   "openssl_sites": 1,
+   "calls": {
+    "RAND_bytes": 1
+   }
+  },
+  {
+   "file": "src/flb_oauth2.c",
+   "present": true,
+   "sha256": "7766a92303f49eedb3278f6702ce447b4892f397de1a78a9f1641554a59fc7a3",
+   "analysed_by": [],
+   "openssl_functions": 8,
+   "openssl_sites": 17,
+   "calls": {
+    "BIO_free": 6,
+    "X509_free": 4,
+    "BIO_new_mem_buf": 2,
+    "EVP_sha1": 1,
+    "EVP_sha256": 1,
+    "PEM_read_bio_X509": 1,
+    "X509_digest": 1,
+    "d2i_X509_bio": 1
+   }
+  },
+  {
+   "file": "src/flb_fips.c",
+   "present": true,
+   "sha256": "d975aeb2ef8e44fe8cf81fc72dc253a3aa789a4283fb7550be8c5e599a4b15ee",
+   "analysed_by": [],
+   "openssl_functions": 9,
+   "openssl_sites": 20,
+   "calls": {
+    "ERR_clear_error": 5,
+    "OSSL_PROVIDER_try_load": 4,
+    "EVP_default_properties_is_fips_enabled": 3,
+    "EVP_default_properties_enable_fips": 2,
+    "OSSL_PROVIDER_unload": 2,
+    "ERR_error_string_n": 1,
+    "ERR_get_error": 1,
+    "EVP_MD_fetch": 1,
+    "EVP_MD_free": 1
+   }
+  },
+  {
+   "file": "plugins/out_azure_kusto/azure_kusto_conf.c",
+   "present": true,
+   "sha256": "5a4f90834599902d2cc100e58b4b1b09cfaa4a391a9b7bd1313a615dd235f1cc",
+   "analysed_by": [],
+   "openssl_functions": 1,
+   "openssl_sites": 2,
+   "calls": {
+    "RAND_bytes": 2
+   }
+  },
+  {
+   "file": "lib/monkey/plugins/tls/tls_openssl.c",
+   "present": true,
+   "sha256": "a22d7654bdb0c41cdea849477438f469e8c54b091fa9e7e9eb7ee45c4b57b4aa",
+   "analysed_by": [],
+   "openssl_functions": 25,
+   "openssl_sites": 30,
+   "calls": {
+    "SSL_write": 4,
+    "SSL_CTX_set_verify": 2,
+    "SSL_free": 2,
+    "BIO_free": 1,
+    "BIO_new_file": 1,
+    "DH_free": 1,
+    "OPENSSL_init_ssl": 1,
+    "PEM_read_bio_DHparams": 1,
+    "SSL_CTX_check_private_key": 1,
+    "SSL_CTX_free": 1,
+    "SSL_CTX_load_verify_locations": 1,
+    "SSL_CTX_new": 1,
+    "SSL_CTX_set_mode": 1,
+    "SSL_CTX_set_session_cache_mode": 1,
+    "SSL_CTX_set_tmp_dh": 1,
+    "SSL_CTX_use_PrivateKey_file": 1,
+    "SSL_CTX_use_certificate_chain_file": 1,
+    "SSL_get_error": 1,
+    "SSL_load_error_strings": 1,
+    "SSL_new": 1,
+    "SSL_read": 1,
+    "SSL_set_accept_state": 1,
+    "SSL_set_fd": 1,
+    "SSL_shutdown": 1,
+    "TLS_server_method": 1
+   }
+  },
+  {
+   "file": "lib/monkey/tls/tls_openssl.c",
+   "present": true,
+   "sha256": "6791f827e13d754871adca75d512a1995c84c7c08d156e6b01f420d76644e362",
+   "analysed_by": [
+    "current"
+   ],
+   "openssl_functions": 37,
+   "openssl_sites": 54,
+   "calls": {
+    "X509_free": 5,
+    "SSL_write": 4,
+    "BIO_free": 3,
+    "EVP_PKEY_free": 3,
+    "BIO_new_mem_buf": 2,
+    "DH_free": 2,
+    "SSL_CTX_new": 2,
+    "SSL_CTX_set_verify": 2,
+    "SSL_free": 2,
+    "SSL_load_error_strings": 2,
+    "BIO_new_file": 1,
+    "OPENSSL_add_all_algorithms_noconf": 1,
+    "OPENSSL_init_ssl": 1,
+    "PEM_read_bio_DHparams": 1,
+    "PEM_read_bio_PrivateKey": 1,
+    "PEM_read_bio_X509": 1,
+    "SSL_CTX_check_private_key": 1,
+    "SSL_CTX_free": 1,
+    "SSL_CTX_load_verify_locations": 1,
+    "SSL_CTX_set_dh_auto": 1,
+    "SSL_CTX_set_ecdh_auto": 1,
+    "SSL_CTX_set_mode": 1,
+    "SSL_CTX_set_session_cache_mode": 1,
+    "SSL_CTX_set_tmp_dh": 1,
+    "SSL_CTX_use_PrivateKey": 1,
+    "SSL_CTX_use_PrivateKey_file": 1,
+    "SSL_CTX_use_certificate": 1,
+    "SSL_CTX_use_certificate_chain_file": 1,
+    "SSL_get_error": 1,
+    "SSL_get_fd": 1,
+    "SSL_library_init": 1,
+    "SSL_new": 1,
+    "SSL_read": 1,
+    "SSL_set_accept_state": 1,
+    "SSL_set_fd": 1,
+    "SSL_shutdown": 1,
+    "TLS_server_method": 1
+   }
+  }
+ ]
+}

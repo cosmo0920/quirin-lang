@@ -1,0 +1,3 @@
+$ /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a35090bafc9d378ff/providers/target/debug/quirin-plugin package --executable /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a35090bafc9d378ff/providers/target/debug/quirin-openssl-check --output providers/quirin-provider-openssl/checkers/openssl-check
+packaged openssl.contract_check at providers/quirin-provider-openssl/checkers/openssl-check (sha256 7f9bf86c7e3e7b729275737f0e348b855857147296e6bfda4183ce8dc5e76713)
+exit 0

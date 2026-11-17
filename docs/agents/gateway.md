@@ -187,9 +187,17 @@ which is not a second authority.
     passed to a setter whose formal a member stores, transitively). Every
     other import is absent from the caller's environment, so a lookup of it
     finds no summary and the call stays uncontracted. A caller that may reach more than
-    `REPLAY_BUDGET_PER_UNIT` homes holds none, and its unit row names the
-    exhausted budget (`cross_unit_imports_withheld`); the certificate check
-    refuses a home set above the budget before any replay. Every check
+    `REPLAY_BUDGET_PER_UNIT` homes holds at most that many, and its unit row
+    names the withheld homes (`cross_unit_imports_withheld`); the certificate
+    check refuses a home set above the budget before any replay. Card
+    LINK-STANDING-IMPORT-LIMITERS (amended in place; before it, such a
+    caller held none): the subset is each function's reachable home set (the
+    names its body uses, closed over the unit's own functions it names),
+    smallest first with function name order breaking ties, held whole while
+    the union fits, then the remaining reachable homes by name while room is
+    left. The subset depends only on the unit and the run's homes. A
+    withheld home's calls stay uncontracted, so the subset changes no
+    per-home check and the bound is unchanged. Every check
     still verifies every held home, but a home unit's W4 re-run is shared
     within one process by every check whose recomputed input and environment
     identities, dialect and selected names equal its own. The replay is
@@ -198,8 +206,11 @@ which is not a second authority.
     have written it. The budget is
     stated in the run's `cross_unit_link_resolution` assumption, and the
     `current` route prints per-phase and per-unit progress on standard error
-    when the link map is selected. `QCore.CrossUnitReplayBudget`;
-    [report](../reports/current-run-worker-spin/README.md).
+    when the link map is selected. `QCore.CrossUnitReplayBudget`
+    (`select_within_budget`, `select_sub_reachable`, `held_lookup_is_full`,
+    `withheld_import_call_is_unknown`);
+    [report](../reports/current-run-worker-spin/README.md),
+    [subset](../reports/link-standing-import-limiters/README.md).
     Card LINK-STANDING: on the `current` route the resolution may instead be
     derived from a link-resolution artifact under rule 40's checked
     conditions; this rule's selection, scope, budget and replay are
@@ -835,6 +846,22 @@ admission and scalar forgetting; [report](../reports/w48-bottom-up-batch5/README
     whose effect still applies. `QCore.ListIteration`,
     `QCore.CheckedSpecification`, `QCore.RefusedCallHandOn`;
     [report](../reports/w45-fb-backlog-custody/README.md).
+    (6) The same holds for an O00 B08 field store `OWNER->F = V` refused
+    **before its effect** because `OWNER` does not resolve to one live identity
+    this body acquired (`resolved_aggregate_owner`; a borrowed or
+    `pthread_getspecific` result, a released, nullable or caller-held object):
+    it reports `UnknownAlias OWNER` and hands on `V`, or, for a contracted
+    call whose result the store would take, what (5) lists for that call
+    (`legacy_transfer::refused_store_hand_ons`). A `Clear` or identity-free
+    `AggregateStore` hands on nothing; an admitted store is untouched. It
+    only withdraws; the node keeps its refusal, so the function is never
+    `Safe`, and the store is **not** a custody transfer: accepting a list
+    root as an owner needs a retained-result relation and a checked owner
+    released on a known path, which no rule states. Without it Monkey's
+    `context_new` (the node linked into `thctx->contexts`, `thctx` from
+    `pthread_getspecific`) was accused of two leaks.
+    `QCore.RefusedStoreHandOn`;
+    [report](../reports/current-context-new-triage/README.md).
 
 <a id="constraint-6"></a>
 
@@ -862,7 +889,7 @@ admission and scalar forgetting; [report](../reports/w48-bottom-up-batch5/README
      first admission card to move no leaf, modelled wrappers that retain nothing.)
    * **Deciding** a leaf, where a **withdrawal** — the site marked through the
      unresolved-effect mechanism, so `report_leaks` skips it (`W44-LEAK-PIN-AUDIT`'s
-     refused hand-on rule, extended by constraint 5l (5)) — is not a **discharge**; only a
+     refused hand-on rule, extended by constraint 5l (5) and (6)) — is not a **discharge**; only a
      discharging contract or rule answers the leak itself.
    No move has promoted anything: a withdrawn leak moves a provisional `Unsafe`
    to `Unknown`, never to `Safe`, and no leak row is a validated upstream
@@ -10463,7 +10490,20 @@ safety claim and no validation of the detach representation premise.
     Conditions (1) and (2) hold or fail for the whole run, and a failure
     holds no import. (4) to (13) are per home: a refused home is never
     exported. (3), (14) and (15) are per caller, applied to the homes that
-    rule 4c's scope and replay budget already hold, both unchanged.
+    rule 4c's scope and replay budget already hold.
+
+    Card LINK-STANDING-IMPORT-LIMITERS (amended in place): on a derived run,
+    rule 4c's scope leaves out, before its budget, a home that only the
+    run's member facts name and whose name has no token anywhere in the
+    caller's preprocessed unit. The unit never declares the name, so Clang
+    gives it no type there and (14) cannot hold. Such a home is not held,
+    not probed, not counted toward the budget and not listed among the
+    caller's refusals; the unit row counts it (`cross_unit_unprobed_homes`).
+    A name the unit declares or uses stays in scope and is probed; when it
+    cannot be typed it still refuses. Before the card, the run-wide
+    member-named set (23 Monkey plugin-API and librdkafka list-destructor
+    functions on the user's linked run) was probed in every caller and
+    exhausted the budget of 95 units.
 
     The type comes from Clang's name-filtered dump of the unit the route
     already preprocesses, with one appended probe,
@@ -10538,8 +10578,11 @@ safety claim and no validation of the detach representation premise.
     `a_usable_second_configuration_refuses`,
     `the_census_leaves_the_linked_home_unique`,
     `an_outside_second_configuration_admits_the_linked_home`,
-    `outside_vectors_hold`); [report](../reports/link-standing/README.md),
-    [two-configuration keys](../reports/link-standing-selection-two-configuration-keys/README.md).
+    `outside_vectors_hold`); for the unprobed homes
+    `QCore.CrossUnitReplayBudget` (`unprobed_is_never_held`,
+    `probing_shrinks_reachable`); [report](../reports/link-standing/README.md),
+    [two-configuration keys](../reports/link-standing-selection-two-configuration-keys/README.md),
+    [import limiters](../reports/link-standing-import-limiters/README.md).
 
 <a id="constraint-41"></a>
 
@@ -11135,5 +11178,52 @@ safety claim and no validation of the detach representation premise.
     report (`openssl@<release>::<function>`); no analysis route reads them
     yet (`W48-OPENSSL-CALLER-COMPOSITION`). `QCore.OpensslContractPlugin`;
     [report](../reports/w48-openssl-contract-plugin/README.md).
+
+<a id="constraint-53"></a>
+
+53. **A library version range is checked against the audited build's own
+    headers and its lock's pinned version; a declaration out of force is
+    held, never Safe, and a user crate's contracts never ride the shipped
+    load path.** Card OPENSSL-PROVIDER-PLUGIN, on the user's decisions of
+    2026-11-16 ("pin the OpenSSL identity ... tied the function contract
+    with supported since"; the official manual pages decide `since`; the
+    clause, split and user-load-path options; contract specification C06.2,
+    grammar G05). Clause loader `crates/qcore-contract/src/library_version.rs`
+    (`requires resource_library_version(LIB, since|documented "V"[, removed
+    "W"])`, at most one, not inherited), schema
+    `crates/qcore-schemas/src/library_version.rs`
+    (`LibraryVersionBound::admits`, `LibraryVersionFailure`; four new
+    `PinMismatchReason`s, `is_human_resolvable`), probe and decision
+    `crates/qcore-audit/src/library_version.rs` (`library-versions.json`
+    beside the lock; Clang preprocessing under every include configuration of
+    `QCORE_LIBRARY_VERSION_COMPILE_DATABASE`, else Clang's default search
+    path), hooked at the end of `contract_revision::apply_pins`, recorded by
+    `pin` in the lock's `library_versions`, and held by the gateway through
+    the pin hold (`legacy_pin_hold::hold_description_for`). **Do not** put a
+    declaration with a range in force when the version is unreadable, when
+    two configurations disagree, outside `[lower, removed)` or different
+    from the pinned one; **do not** re-pin silently: a changed version is
+    `library-version-changed`, held as `contract-pin-mismatch` (`Pending`,
+    review and re-pin), and out of range, unreadable or ambiguous hold every
+    call `Unknown` (`stale-evidence`). **Do not** write a `since` the
+    library's official documentation does not state: with no HISTORY entry
+    the bound is `documented` at the oldest series checked, with the
+    fetched page's SHA-256 kept beside the crate. Without any range nothing
+    runs and every report and lock is byte-identical. **User crates**
+    (`providers/contracts.py`'s `USER_LOAD_PATH_PACKAGES`, first
+    `quirin-provider-openssl`) are providers-workspace members the provider
+    gate builds, tests and packages (`providers/package.py checkers`), never
+    records of `providers/contract-load-path.json`: the shipped load path
+    carries no checker bindings, so **do not** move one there; they are
+    listed in the generated `providers/user-crates-load-path.json`, and
+    `contracts.py check` refuses a declaration no checker binds. The
+    checker's `Safe` is `Pending` (`plugin-claim-uncertified`) while no
+    trusted certificate checker exists, so these contracts move a row
+    `Unknown -> Pending` at most. Premises stated, not proved: Clang
+    reports the macros' values, the official documentation's HISTORY is
+    accurate, and the probe's include configurations are the build's (the
+    default search path is the build's only when the build passes the
+    library no include directory). `QCore.LibraryVersionRange`;
+    [report](../reports/openssl-provider-plugin/README.md).
 
 <!-- generated:rules:end -->

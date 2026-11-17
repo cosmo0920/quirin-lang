@@ -774,6 +774,12 @@ pub struct ResourceContracts {
     /// and disjoint from `functions`. Omitted when empty.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     pin_mismatch: BTreeMap<String, crate::contract_revision::PinMismatch>,
+    /// Card OPENSSL-PROVIDER-PLUGIN: the library version range of every
+    /// declaration that states one (`resource_library_version`), keyed by
+    /// function name. Omitted when empty, so every environment without one
+    /// serializes byte for byte as it did before the card.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    library_version: BTreeMap<String, crate::library_version::LibraryVersionBound>,
     /// Card W45-REFUTED-CONTRACT-WITHDRAWAL: declarations some analysed body
     /// refutes, found by an audit's first phase (contract spec §C06.4). Unlike
     /// a pin mismatch the declaration stays in `functions`, so its own body is
@@ -859,6 +865,7 @@ impl std::fmt::Debug for ResourceContracts {
             .field("pending_review", &self.pending_review)
             .field("revision", &self.revision)
             .field("pin_mismatch", &self.pin_mismatch)
+            .field("library_version", &self.library_version)
             .field("refuted_by_body", &self.refuted_by_body)
             .field("relational", &self.relational)
             .field("retaining", &self.retaining)
@@ -920,6 +927,7 @@ impl ResourceContracts {
                 "pending_review": entry(&self.pending_review, name)?,
                 "revision": entry(&self.revision, name)?,
                 "pin_mismatch": entry(&self.pin_mismatch, name)?,
+                "library_version": entry(&self.library_version, name)?,
                 "refuted_by_body": entry(&self.refuted_by_body, name)?,
                 "relational": entry(&self.relational, name)?,
                 "retaining": entry(&self.retaining, name)?,
@@ -957,6 +965,7 @@ impl ResourceContracts {
             || self.pending_review.contains_key(name)
             || self.revision.contains_key(name)
             || self.pin_mismatch.contains_key(name)
+            || self.library_version.contains_key(name)
             || self.refuted_by_body.contains_key(name)
             || self.relational.contains_key(name)
             || self.retaining.contains_key(name)
@@ -986,6 +995,7 @@ impl ResourceContracts {
             pending_review: BTreeMap::new(),
             revision: BTreeMap::new(),
             pin_mismatch: BTreeMap::new(),
+            library_version: BTreeMap::new(),
             refuted_by_body: BTreeMap::new(),
             relational: BTreeMap::new(),
             retaining: BTreeMap::new(),
@@ -1265,6 +1275,25 @@ impl ResourceContracts {
             })
     }
 
+    /// Card OPENSSL-PROVIDER-PLUGIN: every declaration's library version
+    /// range, keyed by function name.
+    #[must_use]
+    pub fn library_versions(
+        &self,
+    ) -> &BTreeMap<String, crate::library_version::LibraryVersionBound> {
+        self.lookups.whole("library_versions");
+        &self.library_version
+    }
+
+    /// Declares the environment's library version ranges. The contract
+    /// loader rechecks them against the retained source text.
+    pub fn set_library_versions(
+        &mut self,
+        ranges: BTreeMap<String, crate::library_version::LibraryVersionBound>,
+    ) {
+        self.library_version = ranges;
+    }
+
     /// Card W45-CONTRACT-REVISION-MODE: pinned declarations withheld because
     /// the audited source does not match their lock. None of them is in
     /// [`Self::functions`].
@@ -1291,7 +1320,11 @@ impl ResourceContracts {
         lock: Option<String>,
         detail: String,
     ) -> Result<(), String> {
-        if self.revision_mode(name) != crate::contract_revision::RevisionMode::Pinned {
+        // Card OPENSSL-PROVIDER-PLUGIN: a library version range is checked
+        // whatever the declaration's revision mode.
+        if self.revision_mode(name) != crate::contract_revision::RevisionMode::Pinned
+            && !reason.is_library_version()
+        {
             return Err(format!("`{name}` is flexible and has no pin to mismatch"));
         }
         // Card CALLEE-RETENTION-CLASS1: a pinned return-code disposition or

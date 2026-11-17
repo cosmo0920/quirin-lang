@@ -490,6 +490,7 @@ fn tip_vectors_match_lean() {
             pinned: Vec::new(),
             flexible: Vec::new(),
             tip: vec![entry],
+            library_versions: Default::default(),
         };
         let audited = if same { sites.clone() } else { Vec::new() };
         let standing = pin_standing(

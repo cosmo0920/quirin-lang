@@ -1,0 +1,16 @@
+$ /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a35090bafc9d378ff/target/debug/quirin-audit pin --load-path providers/user-crates-load-path.json --source-root docs/reports/openssl-provider-plugin/evidence/fixture
+pin: quirin-provider-openssl: 0 pinned, 12 flexible; recorded at directory; wrote /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a35090bafc9d378ff/providers/quirin-provider-openssl/contracts.lock
+  ~ BIO_free: flexible
+  ~ ENGINE_free: flexible
+  ~ ERR_clear_error: flexible
+  ~ EVP_PKEY_free: flexible
+  ~ OPENSSL_init_ssl: flexible
+  ~ SSL_CTX_free: flexible
+  ~ SSL_CTX_new: flexible
+  ~ SSL_free: flexible
+  ~ SSL_new: flexible
+  ~ SSL_shutdown: flexible
+  ~ TLS_server_method: flexible
+  ~ X509_free: flexible
+  = openssl: version 3.5.5 pinned (/usr/include/openssl/opensslv.h)
+exit 0

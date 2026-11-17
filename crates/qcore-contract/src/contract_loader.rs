@@ -683,6 +683,9 @@ struct LoadedDeclaration {
     /// Card W45-CONTRACT-REVISION-MODE: the declaration's revision markers,
     /// validated as a whole; `None` when it carries none (pinned).
     revision: Option<qcore_schemas::contract_revision::DeclaredRevision>,
+    /// Card OPENSSL-PROVIDER-PLUGIN: the declaration's library version range
+    /// (`requires resource_library_version(...)`), at most one.
+    library_version: Option<qcore_schemas::library_version::LibraryVersionBound>,
     /// Card W48-QR-C-STRUCT-IMPORT: the declaration carries
     /// `[| quant #c_ffi |]`. It is withheld from the function map.
     ffi: Option<DeclaredFfiFunction>,
@@ -940,6 +943,9 @@ fn load_resource_contract_sources_strict(
     // Card W45-CONTRACT-REVISION-MODE: the markers of every declaration that
     // carries one, pending declarations included.
     let mut revisions = BTreeMap::new();
+    // Card OPENSSL-PROVIDER-PLUGIN: the library version range of every
+    // declaration that states one, pending declarations included.
+    let mut library_versions = BTreeMap::new();
     for (path, source) in sources {
         reject_retired_premise_directive(path, source)?;
         reject_unresolved_inclusion(path, source)?;
@@ -973,6 +979,9 @@ fn load_resource_contract_sources_strict(
             let loaded = load_function_in(decl, &aliases).map_err(|e| format!("{context}: {e}"))?;
             if let Some(revision) = loaded.revision {
                 revisions.insert(decl.name.clone(), revision);
+            }
+            if let Some(range) = loaded.library_version {
+                library_versions.insert(decl.name.clone(), range);
             }
             // Card W45-CONTRACT-DEFERRED-REVIEW: a declaration carrying a
             // review marker is validated in full above and then withheld. It
@@ -1013,6 +1022,7 @@ fn load_resource_contract_sources_strict(
     contracts.set_source_assumptions(sources.clone());
     contracts.set_pending_review(pending);
     contracts.set_declared_revisions(revisions);
+    contracts.set_library_versions(library_versions);
     Ok(Ok(contracts))
 }
 
@@ -1380,6 +1390,7 @@ pub fn check_source_assumptions(contracts: &ResourceContracts) -> Result<(), Str
         if loaded.functions() != &crate::contract_revision::in_force_before_pins(contracts)?
             || loaded.pending_review() != contracts.pending_review()
             || loaded.declared_revisions() != contracts.declared_revisions()
+            || loaded.library_versions() != contracts.library_versions()
             || loaded.relational() != &declared_relational(contracts)
             || loaded.retaining() != &declared_retaining(contracts, false)
             || loaded.guarded_retaining() != &declared_retaining(contracts, true)
@@ -1928,6 +1939,7 @@ fn load_function_in(
     };
     let mut review: Vec<ReviewDeferral> = Vec::new();
     let mut revision: Vec<qcore_schemas::contract_revision::RevisionMarker> = Vec::new();
+    let mut library_version: Option<qcore_schemas::library_version::LibraryVersionBound> = None;
     let mut collected = counted_users::Collected::default();
     // Card CG23-RELATIONAL-POSTCONDITIONS: every `resource_on_return` clause,
     // in clause order.
@@ -2009,6 +2021,17 @@ fn load_function_in(
             continue;
         }
         let requires = clause.value.kind == SourceContractClauseKind::Requires;
+        // Card OPENSSL-PROVIDER-PLUGIN: a library version range (§C06.2), at
+        // most one per declaration.
+        if let Some(range) = crate::library_version::library_version_clause(
+            requires,
+            &clause.value.expression_source,
+        )? {
+            if library_version.replace(range).is_some() {
+                return Err("a declaration states at most one library version range".into());
+            }
+            continue;
+        }
         // Card W45-CONTRACT-REVISION-MODE: a revision marker, contract-level (a
         // requirement) or clause-level (wrapping one `ensures normal` clause,
         // which is then read exactly as if written bare).
@@ -3276,6 +3299,7 @@ fn load_function_in(
         review,
         body_checked,
         revision: crate::contract_revision::declared_revision(revision)?,
+        library_version,
         ffi: None,
     })
 }
@@ -3488,6 +3512,7 @@ fn load_ffi_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, Stri
         review: Vec::new(),
         body_checked: false,
         revision: None,
+        library_version: None,
         ffi: Some(DeclaredFfiFunction {
             name: decl.name.clone(),
             module: String::new(),

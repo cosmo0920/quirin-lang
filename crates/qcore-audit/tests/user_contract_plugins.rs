@@ -219,7 +219,13 @@ impl Tree {
                 request_id: request.request_id.clone(),
                 plugin_id: request.plugin_id.clone(),
                 verdict: *verdict,
-                diagnostics: vec![],
+                // Card OPENSSL-PROVIDER-PLUGIN: the plugin's own reason, which
+                // the sidecar must keep (W48-PLUGIN-VERDICT-PRESERVATION).
+                diagnostics: vec![PluginDiagnostic {
+                    code: format!("{PLUGIN}.note"),
+                    message: "both pool functions checked against the pool header".into(),
+                    fact_id: None,
+                }],
                 evidence: evidence.then(|| proposal(&request, &installed)),
             };
             fs::write(
@@ -431,6 +437,14 @@ fn an_uncertified_safe_claim_is_pending_and_the_chain_folds() {
         assert_eq!(binding["code"], if evidence { "QP016" } else { "QP008" });
         assert_eq!(binding["verdict"], "Pending");
         assert_eq!(binding["reasons"][0]["code"], "plugin-claim-uncertified");
+        // Card OPENSSL-PROVIDER-PLUGIN, on W48-PLUGIN-VERDICT-PRESERVATION's
+        // record: what the plugin itself said is kept beside the
+        // classification.
+        assert_eq!(binding["answer"]["proposed"], "Safe");
+        assert_eq!(
+            binding["answer"]["reasons"][0]["detail"],
+            "both pool functions checked against the pool header"
+        );
         let report = tree.read("r.json");
         let unit = Tree::unit(&report, "pool_user.c");
         assert_eq!(Tree::status(unit, "use_pool"), "Pending");
@@ -445,6 +459,8 @@ fn an_uncertified_safe_claim_is_pending_and_the_chain_folds() {
             .unwrap()["plugin_links"];
         assert_eq!(links.as_array().unwrap().len(), 2, "{links}");
         assert_eq!(links[0]["plugin"], PLUGIN);
+        // The composed row keeps the binding's own answer.
+        assert_eq!(links[0]["answer"], binding["answer"]);
         // A unit that applies no bound contract is untouched.
         let other = Tree::unit(&report, "plain.c");
         assert_eq!(other["status"], "Safe");
@@ -464,6 +480,8 @@ fn an_uncertified_unsafe_claim_is_pending_and_never_unsafe() {
     let binding = &tree.read("r.contracts.json")["plugin_checks"]["bindings"][0];
     assert_eq!(binding["claim"], "unvalidated-unsafe");
     assert_eq!(binding["verdict"], "Pending");
+    assert_eq!(binding["answer"]["proposed"], "Unsafe");
+    assert_eq!(binding["answer"]["reasons"].as_array().unwrap().len(), 1);
     let report = tree.read("r.json");
     let unit = Tree::unit(&report, "pool_user.c");
     assert_eq!(Tree::status(unit, "use_pool"), "Pending");
@@ -484,6 +502,8 @@ fn a_timeout_or_a_crash_is_unknown() {
         assert_eq!(binding["claim"], "failure");
         assert_eq!(binding["code"], "QP006");
         assert_eq!(binding["verdict"], "Unknown");
+        // No answer reached the host, so none is recorded.
+        assert!(binding.get("proposed").is_none());
         let report = tree.read("r.json");
         let unit = Tree::unit(&report, "pool_user.c");
         assert_eq!(Tree::status(unit, "use_pool"), "Unknown");

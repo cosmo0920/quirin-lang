@@ -148,6 +148,20 @@ pub enum PinMismatchReason {
     /// missing, tip not descended from the reviewed commit, unreadable blob,
     /// or no site of the function at the tip).
     TipUnresolved,
+    /// Card OPENSSL-PROVIDER-PLUGIN: the declaration carries a library
+    /// version range (`crate::library_version`) and the audited headers
+    /// report a version other than the lock's pinned one. Resolved by review
+    /// and re-pin, like every other mismatch here.
+    LibraryVersionChanged,
+    /// Card OPENSSL-PROVIDER-PLUGIN: the audited version is outside the
+    /// declaration's range. A tool decision: held as `Unknown`.
+    LibraryVersionOutOfRange,
+    /// Card OPENSSL-PROVIDER-PLUGIN: the version source is missing or the
+    /// audited headers report no version. Held as `Unknown`.
+    LibraryVersionUnreadable,
+    /// Card OPENSSL-PROVIDER-PLUGIN: the audited build reports more than one
+    /// version or header. Held as `Unknown`.
+    LibraryVersionAmbiguous,
 }
 
 impl PinMismatchReason {
@@ -160,7 +174,53 @@ impl PinMismatchReason {
             Self::ContractChanged => "contract-changed",
             Self::SourceChanged => "source-changed",
             Self::TipUnresolved => "tip-unresolved",
+            Self::LibraryVersionChanged => "library-version-changed",
+            Self::LibraryVersionOutOfRange => "library-version-out-of-range",
+            Self::LibraryVersionUnreadable => "library-version-unreadable",
+            Self::LibraryVersionAmbiguous => "library-version-ambiguous",
         }
+    }
+
+    /// The reason a library version range failure withholds a declaration
+    /// for.
+    #[must_use]
+    pub const fn from_library_version(
+        failure: crate::library_version::LibraryVersionFailure,
+    ) -> Self {
+        use crate::library_version::LibraryVersionFailure as F;
+        match failure {
+            F::Changed => Self::LibraryVersionChanged,
+            F::OutOfRange => Self::LibraryVersionOutOfRange,
+            F::Unreadable => Self::LibraryVersionUnreadable,
+            F::Ambiguous => Self::LibraryVersionAmbiguous,
+        }
+    }
+
+    /// Whether the reason is a library version range's (card
+    /// OPENSSL-PROVIDER-PLUGIN); such a declaration may be flexible.
+    #[must_use]
+    pub const fn is_library_version(self) -> bool {
+        matches!(
+            self,
+            Self::LibraryVersionChanged
+                | Self::LibraryVersionOutOfRange
+                | Self::LibraryVersionUnreadable
+                | Self::LibraryVersionAmbiguous
+        )
+    }
+
+    /// Whether a call held for this reason is `Pending` (a person resolves
+    /// it by review and re-pin) rather than `Unknown`: every reason but a
+    /// library version outside the range, unreadable or ambiguous (the
+    /// user's split of 2026-11-16).
+    #[must_use]
+    pub const fn is_human_resolvable(self) -> bool {
+        !matches!(
+            self,
+            Self::LibraryVersionOutOfRange
+                | Self::LibraryVersionUnreadable
+                | Self::LibraryVersionAmbiguous
+        )
     }
 }
 

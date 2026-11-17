@@ -116,6 +116,18 @@ CONTRACT_CRATE_PREFIXES = ("quirin-provider-", "qcore-provider-")
 # carries no production contract. Listed by name, and checked to own no
 # contracts.
 NON_CONTRACT_PACKAGES = ("qcore-provider-conformance", "quirin-provider-plugin")
+# Card OPENSSL-PROVIDER-PLUGIN (user decision 2026-11-16, "User load path"):
+# workspace packages that own contracts as **user crates** on the
+# `quirin-provider-plugin` SDK. The provider gate builds, tests and packages
+# them, but they are never on the shipped load path: it carries no checker
+# bindings, and their contracts must never apply without their checker. They
+# are listed instead in the generated user load path `USER_LOAD_PATH`
+# (`quirin-plugin load-path --extends contract-load-path.json`, then
+# `quirin-audit plugin views --write`), which `check` validates
+# (`check_user_crates`): every declaration bound to a checker, every
+# declaration of a crate with a version source stating a range, a lock.
+USER_LOAD_PATH_PACKAGES = ("quirin-provider-openssl",)
+USER_LOAD_PATH = "user-crates-load-path.json"
 NAMESPACE_CONST = re.compile(r'^pub const NAMESPACE: &str = "([a-z_][a-z0-9_]*)";$', re.M)
 PUBLISHED_CONST = re.compile(r'^pub const PUBLISHED: &\[&str\] = &\[([^\]]*)\];$', re.M)
 STRING_LITERAL = re.compile(r'\s*"([a-z0-9_/-]+\.(?:qcore|qv))"\s*')
@@ -193,7 +205,8 @@ def load_path_manifest(root=ROOT, metadata=None):
                                     / "contracts").exists():
             raise ValueError(f"{name} is listed as owning no contracts but has a contracts/ tree")
     names = sorted(name for name in packages
-                   if name.startswith(CONTRACT_CRATE_PREFIXES) and name not in NON_CONTRACT_PACKAGES)
+                   if name.startswith(CONTRACT_CRATE_PREFIXES) and name not in NON_CONTRACT_PACKAGES
+                   and name not in USER_LOAD_PATH_PACKAGES)
     if not names:
         raise ValueError("no contract crate on the load path")
     crates = []
@@ -234,6 +247,90 @@ def load_path_manifest(root=ROOT, metadata=None):
         })
     package_module().validate_source_modes(source_paths)
     return {"schema_version": 1, "crates": crates}
+
+
+def declared_functions(text):
+    """The `extern fn NAME` declarations of a module, comments removed (the
+    lexical reading of `qcore_audit::user_plugins::declared_functions`)."""
+    stripped = re.sub(r"/\*.*?\*/", " ", re.sub(r"//[^\n]*", "", text), flags=re.S)
+    return re.findall(r"\bextern\s+fn\s+([A-Za-z_][A-Za-z0-9_]*)", stripped)
+
+
+def declaration_blocks(text):
+    """Each `extern fn` declaration's text, comments removed."""
+    stripped = re.sub(r"/\*.*?\*/", " ", re.sub(r"//[^\n]*", "", text), flags=re.S)
+    return re.findall(r"\bextern\s+fn\s+([A-Za-z_][A-Za-z0-9_]*)(.*?)\};", stripped, re.S)
+
+
+def check_user_crates(root=ROOT, metadata=None):
+    """Card OPENSSL-PROVIDER-PLUGIN: validate every user crate of the
+    workspace and the generated user load path that lists them. Fail-closed:
+    a declaration no checker binds, a declaration of a crate with a version
+    source that states no range, a missing lock, or a user load path that does
+    not list exactly these crates with their modules and bindings is an
+    error. Returns one summary row per crate."""
+    root = Path(root)
+    metadata = cargo_metadata(root) if metadata is None else metadata
+    packages = {package["name"]: package for package in metadata["packages"]}
+    load_path_file = root / USER_LOAD_PATH
+    if load_path_file.is_symlink() or not load_path_file.is_file():
+        raise ValueError(f"missing or symbolic-link user load path: {load_path_file}")
+    declared = json.loads(load_path_file.read_text())
+    if declared.get("extends") != LOAD_PATH or declared.get("overrides") != []:
+        raise ValueError(f"{load_path_file} must extend {LOAD_PATH} and override nothing")
+    records = {record["name"]: record for record in declared.get("crates", [])}
+    present = sorted(name for name in USER_LOAD_PATH_PACKAGES if name in packages)
+    if sorted(records) != present:
+        raise ValueError(f"{load_path_file} lists {sorted(records)}, not the user crates {present}")
+    rows = []
+    expected_checkers = []
+    for name in present:
+        package = packages[name]
+        directory = Path(package["manifest_path"]).resolve().parent
+        if directory != (root / name).resolve():
+            raise ValueError(f"user crate {name} is not at providers/{name}")
+        modules = files(directory / "contracts")
+        manifest = json.loads((directory / "quirin-plugin.json").read_text())
+        if manifest.get("schema_version") != 1:
+            raise ValueError(f"{name}: quirin-plugin.json schema is not 1")
+        bound = set()
+        for binding in manifest.get("checkers", []):
+            if binding["module"] not in modules:
+                raise ValueError(f"{name}: a checker binds {binding['module']}, which it does not own")
+            module_functions = set(declared_functions(modules[binding["module"]].read_text()))
+            if not set(binding["functions"]) <= module_functions:
+                raise ValueError(f"{name}: a checker of {binding['module']} binds functions it does "
+                                 "not declare")
+            bound.update(binding["functions"])
+            expected_checkers.append({"crate": name, "module": binding["module"],
+                                      "functions": binding["functions"],
+                                      "package": f"{name}/{binding['package']}"})
+        declared_names = set()
+        ranged = (directory / "library-versions.json").is_file()
+        for module, path in modules.items():
+            for function, body in declaration_blocks(path.read_text()):
+                declared_names.add(function)
+                if ranged and "resource_library_version(" not in body:
+                    raise ValueError(f"{name}:{module}: `{function}` states no library version "
+                                     "range, but the crate declares a version source")
+        unbound = sorted(declared_names - bound)
+        if unbound:
+            raise ValueError(f"{name}: declarations no checker binds would apply unchecked: {unbound}")
+        if not (directory / "contracts.lock").is_file():
+            raise ValueError(f"{name}: no contracts.lock; run `quirin-audit pin --load-path "
+                             f"providers/{USER_LOAD_PATH}` after review")
+        record = records[name]
+        if (record.get("contracts") != f"{name}/contracts" or record.get("version") != package["version"]
+                or record.get("modules") != sorted(modules)):
+            raise ValueError(f"stale user load path {load_path_file}: regenerate it with "
+                             "`quirin-plugin load-path` and `quirin-audit plugin views --write`")
+        rows.append({"crate": name, "modules": len(modules), "declarations": len(declared_names),
+                     "checker_bindings": len(manifest.get("checkers", [])),
+                     "resource_view": len(record.get(RESOURCE_VIEW, []))})
+    if declared.get("checkers") != expected_checkers:
+        raise ValueError(f"stale user load path {load_path_file}: its checkers are not the crates' "
+                         "quirin-plugin.json bindings")
+    return rows
 
 
 def package_module():
@@ -666,6 +763,7 @@ def main():
         inventory = maintain_inventory_locks(load_path=load_path, sync=args.action == "sync")
         rows = maintain(sync=args.action == "sync", load_path=load_path)
         locks = verify_locks(ROOT, ROOT / LOAD_PATH)
+        user_crates = check_user_crates(ROOT)
         legacy_sources = {}
         for record in load_path["crates"]:
             directory = ROOT / record["contracts"]
@@ -679,6 +777,7 @@ def main():
         parser.exit(1, f"provider contracts: {error}\n")
     print(json.dumps({
         "locks": locks,
+        "user_crates": user_crates,
         "inventory_locks": inventory,
         "providers": rows,
         "total_contracts": sum(r["contracts"] for r in rows),

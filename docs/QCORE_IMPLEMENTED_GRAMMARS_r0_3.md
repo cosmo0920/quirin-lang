@@ -3738,6 +3738,7 @@ resource_clause = "requires", "resource_contract_v1", ";"
                 | "ensures", "normal", return_code_disposition, ";"
                 | "ensures", "normal", clause_review_marker, ";"
                 | "requires", contract_revision_marker, ";"
+                | "requires", library_version_range, ";"
                 | "ensures", "normal", clause_revision_marker, ";" ;
 hypothesis_atom = "resource_hypothesis", "(", premise_name, ",", STRING, ")" ;
 hypothesis_all = "resource_premise_all", "(", premise_name, ",", premise_name, {",", premise_name}, ")" ;
@@ -3751,6 +3752,13 @@ contract_revision_marker =
 clause_revision_marker =
     "resource_revision", "(", resource_predicate, ",", revision_mode, ")" ;
 revision_mode = "pinned" | "flexible" ;
+library_version_range =
+    "resource_library_version", "(", library_name, ",",
+    ( "since" | "documented" ), version_string,
+    [ ",", "removed", version_string ], ")" ;
+  (* card OPENSSL-PROVIDER-PLUGIN, contract specification C06.2: library_name
+     is [a-z_][a-z0-9_]*; version_string a STRING spelling MAJOR.MINOR or
+     MAJOR.MINOR.PATCH in decimal *)
 contract_review_marker =
     "resource_review_pending", "(", review_note, ")" ;
 clause_review_marker =
@@ -3920,6 +3928,8 @@ The whole-declaration tail clauses `resource_variadic_data_tail()` and (card CG2
 The review markers (card W45-CONTRACT-DEFERRED-REVIEW, contract specification C06) carry their own static conditions. The first `STRING` is the mandatory reason and the second the optional reviewer or owner; each is one lexer string literal, not blank, with no backslash escape and no control character, so each has one spelling. A declaration carries either one `contract_review_marker` or any number of `clause_review_marker`s, never both and never two contract-level markers. A `clause_review_marker` wraps exactly one `resource_predicate` (the kind clauses and `resource_variadic_data_tail()` included), which is then subject to every condition above as if written bare; it cannot wrap a marker, the `resource_contract_v1` selector or a `literal_argument_premise`, and it is admitted only under `ensures normal`, as the contract-level form is only under `requires`. Every violation rejects the whole module. A marked declaration is loaded and validated in full and then withheld (C06); inheritance (G05a, C15) copies its markers with its clauses.
 
 The revision markers (card W45-CONTRACT-REVISION-MODE, contract specification C06.2) have their own static conditions. A declaration carries at most one `contract_revision_marker`; a second one is a duplicate (the same mode) or a conflict (the other mode). A `clause_revision_marker` wraps exactly one `resource_predicate`, read as if written bare, and may not restate the contract-level marker's mode. It cannot wrap a marker of either kind, and a `clause_review_marker` cannot wrap it; it cannot wrap the selector or a `literal_argument_premise`, which take the contract's mode; and it is admitted only under `ensures normal`, as the contract-level form is only under `requires`. A `revision_mode` other than `pinned` or `flexible` is malformed. Every violation rejects the whole module. With no marker a declaration is pinned. Inheritance (G05a, C15) does not copy a parent's revision markers: elaboration drops the contract-level form and unwraps the clause-level one.
+
+A `library_version_range` (card OPENSSL-PROVIDER-PLUGIN, contract specification C06.2) is admitted only under `requires`, at most once per declaration; a version that is not `MAJOR.MINOR[.PATCH]` in decimal, a removal not above the lower bound, a lower-bound word other than `since` or `documented`, an unquoted version, an argument after the removal and an `ensures` form each reject the whole module. Inheritance does not copy it.
 
 The named premise `requires resource_premise(NAME, "STATEMENT");` (card VERDICT-CONTRACT-DEPENDENCIES, contract specification C04.18) names an assumption the declaration rests on: `NAME` a lowercase identifier, the statement one plain, non-blank string with no escape and no control character, each name at most once per declaration; any other shape, a repeated name and an `ensures` spelling each reject the whole module. It changes no mode, is rederived from the retained texts (`declaration_premises`), is part of the declaration's text and so of its contract digest and pin, and inheritance (G05a) copies it, compared by the agreement check. Since card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER the shape check belongs to the contract format: `crates/qcore-frontend/src/frontend.rs` (`premise_clause`) refuses, at parse, any other shape, an introducer other than `requires` and a repeated name in one declaration, in every module. A resource-v1, bounds-v1 (G05f, beside a member clause of any kind only) or Quirin model contract is rejected whole. A model contract's premises are read by `contract_loader::module_premises`.
 
