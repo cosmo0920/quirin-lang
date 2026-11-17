@@ -1,0 +1,22 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "LIBRARY-VERSION-HOLD-CURRENT-ROUTE-PENDING",
+  "base": "681fca01a",
+  "measured_tip": "61626f86a",
+  "increment_paragraph": "**LIBRARY-VERSION-HOLD-CURRENT-ROUTE-PENDING** (fail-closed defect, launched by the user 2026-11-18; rule 53 amended in place, no new rule; [report](../../reports/library-version-hold-current-route-pending/README.md)). A call held because its ranged declaration's library version is out of range, unreadable or ambiguous was published `Pending` with the human-resolvable contract-pin-mismatch text whenever the caller's unit contradicted any other contracted declaration's ABI: the ABI gate (`AbiAgreement::withdraw_environment`, crates/qcore-c-gateway/src/legacy_declared_abi.rs) rebuilt the unit's environment from scratch without `pin_mismatch`, and `legacy_pin_hold::hold_description_for` then found no withheld reason and fell back to `hold_description`. It was not specific to the current route or to checker bindings: the contracts and configured routes did the same, and the binding was not involved (a held call applies no contract, so no link). `ResourceContracts::carry_pin_mismatch` now keeps the withheld table in the reduced environment, so every route classifies the hold by its reason. Tests: the gateway fixture at the four library-version reasons with and without an ABI withdrawal (contract_pin_hold.rs), and the current, contracts and configured routes at in-force, changed, out-of-range, unreadable and ambiguous versions with a checker binding answering an uncertified Safe (library_version_hold_routes.rs; changed stays Pending, in force is the binding's Pending). Lean: QCore.LibraryVersionRange gains six audited theorems (a reduction that carries the table classifies as the unreduced environment, one that drops it lifts a range failure to Pending, a binding's claim is joined and never lowers a hold). Re-measured on this card's own preparation of Fluent Bit 046accf6: the base binary reproduces the defect, and with the fix rd_http_global_init is Unknown (library-version-unreadable) on the unreadable runs and Pending only on the in-force run; nothing else moves. The pinned and live routes cannot move by construction (no unit there classifies a held call whose reason the reduced environment lost; the corpus's one withheld pin, mk_vhost_set, is source-changed and uncalled). Found on the way: the configured route reads a user load path but runs none of its checker bindings, so a bound user contract in force publishes Safe there (amends W45-PLUGIN-ROUTE-COVERAGE).",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "LIBRARY-VERSION-HOLD-CURRENT-ROUTE-PENDING",
+      "operation": "retire",
+      "why": "Discharged by LIBRARY-VERSION-HOLD-CURRENT-ROUTE-PENDING. Cause: AbiAgreement::withdraw_environment (crates/qcore-c-gateway/src/legacy_declared_abi.rs) rebuilt a unit's environment without the pin_mismatch table, so hold_description_for (legacy_pin_hold.rs) fell back to the human-resolvable text for every held call in a unit whose ABI gate withdrew any declaration, on every route. Fix: ResourceContracts::carry_pin_mismatch in the reduced environment. Tests: contract_pin_hold.rs (four reasons, with and without an ABI withdrawal) and library_version_hold_routes.rs (current, contracts, configured at in-force, changed, out-of-range, unreadable and ambiguous, with a checker binding; changed stays Pending). Lean: six theorems in QCore.LibraryVersionRange. The opt-in run re-measured on this card's own preparation: rd_http_global_init Unknown on the unreadable runs, Pending only in force.",
+      "source": "docs/reports/library-version-hold-current-route-pending/README.md"
+    },
+    {
+      "id": "W45-PLUGIN-ROUTE-COVERAGE",
+      "operation": "amend",
+      "text": "AMENDED (LIBRARY-VERSION-HOLD-CURRENT-ROUTE-PENDING): the configured route now reads a user load path (its configuration's `load_path`), yet runs none of its checker bindings: on library_version_hold_routes.rs's fixture a bound user contract in force publishes its caller Safe on the configured route (no plugin_checks section, no plugin_links) where current and contracts publish the binding's Pending. That is below rule 53's 'Unknown -> Pending at most' for user contracts; until the discharge, the configured route should refuse a load path with checker bindings.",
+      "source": "docs/reports/library-version-hold-current-route-pending/README.md"
+    }
+  ]
+}
