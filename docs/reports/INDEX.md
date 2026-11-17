@@ -672,6 +672,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [libevent-core-census-guard-correlation](libevent-core-census-guard-correlation/README.md) | LIBEVENT-CORE-CENSUS-GUARD-CORRELATION |
 
+| [library-version-hold-current-route-pending](library-version-hold-current-route-pending/README.md) | LIBRARY-VERSION-HOLD-CURRENT-ROUTE-PENDING |
+
 | [library-version-probe-route-database](library-version-probe-route-database/README.md) | LIBRARY-VERSION-PROBE-ROUTE-DATABASE |
 
 | [librdkafka-header-inlines](librdkafka-header-inlines/README.md) | LIBRDKAFKA-HEADER-INLINES |
