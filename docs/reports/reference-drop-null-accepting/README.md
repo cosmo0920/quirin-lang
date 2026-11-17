@@ -197,4 +197,81 @@ OpenSSL producer this crate does not declare (`PEM_read_bio_X509`,
 name denotes no family the function holds: the NULL-accepting form changes
 only a NULL or one-family-or-NULL actual, and none of these is one.
 
-<!-- arbiter -->
+## 7. Native measurement and the arbiter
+
+`quirin-audit measure --declared PREDICTION.md` (the measure plugin built
+from the measured code, [`scripts/arbiter.sh`](scripts/arbiter.sh): `--no-slots --jobs 8`), over
+[inputs.json](artifacts/inputs.json). Both sides are checkout directories,
+each built in place by the tool: exports of `32336c33d` (base) and
+`a44ed44e7` (tip; `bcf1c91ab` differs from it only by the OpenSSL crate's pin
+lock and the specification text, neither read by a pinned route) under
+`private/{base,tip}-src`. One measurement-driver adaptation in both exports,
+disclosed as LERI-HELD-AND-LINK-MEMBER-PREMISES did: `scripts/run_pinned_audit.py`
+hard-codes `QCORE_CLANG=/usr/bin/clang`, which this host does not have, so both
+point it at `/usr/lib/llvm-21/bin/clang`.
+
+The first measurement (`measure/arbiter-1`) completed system and slice and
+failed the corpus route on both sides: `could not verify Cycle 18 Libevent
+source: Pin(GitUnavailable)`, the exports' `third_party/libevent` being a copy
+of the worktree's gitlink rather than a repository. Retained, discarded as
+corpus evidence; the corpus was remeasured alone (`measure/arbiter-2`,
+`--routes corpus`) after replacing it in both exports with a clone at the
+pinned `d82464a2` (which rebuilt both binaries: base `c81956ec…`, tip
+`e4854dfe…`; arbiter-1's were `d385436f…`, `10da9cf3…`).
+
+| Route | rows | base = tip | moved | content changed | declared |
+|---|---:|---|---:|---:|---|
+| corpus ([record](artifacts/native-comparison-corpus.json.gz), sha256 `08d9d953…` uncompressed) | 4,704 | 1,082 Safe / 6 Unsafe / 3,616 Unknown; leak 7, double release 1 | 0 | 0 (4,704 environment-only) | **match** |
+| system ([record](artifacts/native-comparison-system-slice.json.gz), sha256 `c59c280a…`) | 448 | 107 / 4 / 337 | 0 | 4 | **match** |
+| slice (same record) | 404 | 63 Safe / 1 Unsafe / 336 Unknown / 4 Pending | 0 | 8 | **match** |
+
+The system and slice content changes are environment-only: each row's
+`review_holds` names its holding module by the checkout path, which differs
+between `private/base-src` and `private/tip-src` (`flb_output_exit` checked
+byte for byte after substituting the path). No unit row and no unit verdict
+moves; diagnostic counts are identical on every route. The system and slice
+base figures equal LERI-HELD-AND-LINK-MEMBER-PREMISES's preparations
+(107 / 4 / 337 at base there was before its own move; these are this base's).
+
+## 8. Gate
+
+`python3 scripts/gate_scope.py --base 32336c33d --out private/gate-1` under
+`private/toolchain/env.sh`, on `00ecd18cb` (full scope: the diff reaches
+`qcore-schemas`; Lean all; provider gate yes; record
+[`gate/gate-1.json`](gate/gate-1.json), Clang [`gate/clang-version.txt`](gate/clang-version.txt);
+logs `private/gate-1/`). It ran while the corpus arbiter and other cards'
+audits loaded the host.
+
+| Step | Exit | Counts |
+|---|---:|---|
+| submodules, `cargo fmt --all -- --check`, `cargo clippy --all-targets -- -D warnings` | 0, 0, 0 | |
+| Rust suite (`run_test_binaries.py`) | 0 | 651 units, 696 summaries; 9,623 passed, 0 failed, 21 ignored, 148 filtered |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| Lean (`check_lean_audits.py`) | 0 | 443 audits (`AuditNullableReferenceDrop.lean` among them) |
+| Python suite | 1 | 779 tests, 1 failure |
+| provider package build, verify-all, verify `qcore.libevent` | 0, 0, 0 | five packages |
+| provider tests, fmt, clippy | 0, 0, 0 | 46 summaries; 141 passed, 0 failed, 1 ignored |
+
+The Python failure is
+`test_build_matrix_sections.test_the_derived_facts_are_recomputed_rather_than_carried`:
+the committed acceptance matrix records `qcore_schemas_rust_api` 27.0.0 and
+the tree is 28.0.0 (this card's bump). The matrix is the integrator's record,
+regenerated at landing by `build_matrix.py . --gate <gate.json>`
+(`scripts/land.py`), as CURRENT-CONTEXT-NEW-TRIAGE D3's 27.0.0 bump was.
+
+The commit after the gate (this section, the measurement records and the
+arbiter's figures in §7) adds report files only and reaches no crate.
+
+## 9. Follow-ups
+
+Registered in [`integration-amendments.json`](integration-amendments.json):
+`REFERENCE-DROP-NULL-ACCEPTING` retired (discharged here);
+`REFCOUNT-MEMBER-REFERENCE-DROP` amended (the OpenSSL member drops it now
+blocks); `REFERENCE-DROP-NULL-ACCEPTING-CANDIDATES` registered (none of
+librdkafka's declared drops accepts NULL; the OpenSSL reference-counted frees
+not yet declared should take the form where their pages state it). Files
+likely to conflict with concurrent cards: the qcore-schemas version in every
+`Cargo.toml` and the three lock files (renumber at merge), the OpenSSL crate's
+`contracts.lock` (regenerate by `quirin-audit pin`), `doc-snapshots.json`,
+`src/check.rs`, and the generated `docs/agents/gateway.md`/`README.md`
+(rerun `gen_rule_docs.py`).
