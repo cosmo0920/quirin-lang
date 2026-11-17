@@ -153,3 +153,121 @@ not built.
 **Result: no published Safe rests on the escape, on any route or baseline.**
 No published figure is defective. Nothing here is an upstream Fluent Bit
 finding.
+
+## 3. The repair (rule 11v (6))
+
+D3 recorded two rejected fixes:
+
+* widening (4)'s guard to every refusal that mentions a tracked object broke
+  `rd_regex_match`'s fallback-lowered `r = regexec(&re, …) != 1;`;
+* the CFG-level name check missed a by-value scalar actual.
+
+The repair avoids both by reading the **tokens once for the whole body** and
+the **finished CFG once**. No individual route is guarded
+(`legacy_in_place_custody.rs`: `InPlaceNames::body_mentions`,
+`verify_mentions`, and their hook at the end of the CFG build in
+`legacy_c.rs`).
+
+1. Every variable mention of a tracked object in the body's token stream
+   (the stream the parser reads, after its rewrites) must be one of:
+   * its declarator: the guard's own `declares_only` over the enclosing
+     statement, not after a statement keyword (`return re;` reads `re`);
+   * `sizeof NAME` or `sizeof ( NAME )`;
+   * a **custody actual**: a whole `&NAME`, or `NAME` at a by-value
+     finaliser or use of a by-value kind, of a direct call to a declared
+     callee with a contract in force, at a position of the object's kind.
+2. Every custody actual `(callee, position, NAME)` must be carried by at
+   least as many `ContractCall` nodes of that callee, holding `NAME` at that
+   position, as the body spells it.
+3. Otherwise a refusal node is added **before the entry**. It lies on every
+   path and replaces no lowering. Its text is either
+   ``tracked in-place object `re` named outside its declarator, a `sizeof`
+   operand or a declared in-place position (rule 11v (6))`` or
+   ``in-place actual `re` of `f` is carried by no call node (rule 11v (6))``.
+
+**Why this closes every census shape.** Every escaping shape in §1 names
+`re` outside a custody actual: as a member operand, a cast, comma or
+conditional operand, a condition or a return. So (1) refuses it, whichever of
+10s, 10z, the non-table statement route or the condition or return reader
+admitted it. A by-value scalar is seen, because the name is read off the
+tokens and not off a node. The D3 shape `(void) pthread_getspecific(key)`
+names `key` at an unkinded position, so it is stray too (the unit test
+`a_by_value_getter_of_a_tracked_key_is_stray`). A kinded call that a route
+dropped, or lowered without its place, fails (2): the census mutant
+`(void) regexec(&re, …)` after `regfree` now carries that refusal beside its
+old one. In a body that tracks nothing, the hook is the identity.
+
+**What stays admitted.** Every kinded form keeps its place. Each is `Safe`
+before the free and Unsafe (`use_after_close`) after it:
+
+* the plain, assigned and declared call;
+* `!= 1` and `(int)` (10y), and the statement expression (11g);
+* the condition and the return.
+
+`sizeof` stays admitted, and so does `rd_regex_match`, both the generic
+fixture and the real unit at both trees. No correct admitted use was found
+unsound.
+
+**Re-probe at the code tip `67fdd5c28`**: all 186 rows of `shapes.tsv` and
+`shapes2.tsv` plus the unit rows, in
+[probe-tip.tsv](census/probe-tip.tsv), compared with the base results by
+[compare.py](census/compare.py). The log is
+`private/cg25-census/probe-fix2.log`.
+
+* All 25 escaping runs moved `Safe -> Unknown`.
+* No other row moved.
+* The only text change is the new refusal, beside existing refusals.
+* In the real unit, `rd_regex_match` and `rd_regex_exec` stay own=Safe on
+  both trees, and the three mutants refuse.
+
+An earlier probe (`probe-fix1`) ran with the hook just after `verify_cfg`
+and gave the same moves. The hook now sits at the end of the build, so it
+counts the finished CFG.
+
+The thread-key creation refusal (`THREAD_KEY_STORAGE_REFUSAL`, D3) is kept.
+Lifting it is a semantic change, outside this card: see the follow-up
+`CG25-THREAD-KEY-AUTOMATIC-REVISIT`.
+
+## 4. Fixtures and Lean
+
+* `crates/qcore-c-gateway/tests/in_place_mention_guard.rs` (7 tests):
+  * every census escape refused, pre and post;
+  * guarded refusals stay refusals;
+  * every kinded form admitted with its place;
+  * the `rd_regex_match` shape `Safe` and its mutant refused;
+  * `sizeof` admitted;
+  * a body with no tracked object untouched;
+  * the Lean `shapeAdmissions` rows bound to the gateway.
+* `legacy_in_place_custody.rs` `mention_tests` (4 lib unit tests over the
+  libc declarations), including the by-value thread-key getter.
+* `tests/resource_kinds.rs`: three deliberate vector updates, each the new
+  refusal beside an existing one, on bodies that were already Unknown:
+  * the unkinded `k_wipe(&re, …)`, the struct copy and `k_free(&re)` gain the
+    stray refusal;
+  * the discarded and condition-consumed statuses gain the uncarried compile.
+* Lean `QCore.InPlaceMentionGuard` (`AuditInPlaceMentionGuard.lean`, 12
+  theorems, standard axioms only). Over **every route** (an arbitrary
+  function from a body's mentions to a lowering):
+  * `every_admitted_lowering_passed_the_guard`, with its two projections
+    (`a_safe_body_mentions_only_admitted_forms`,
+    `a_safe_body_carries_every_custody_actual`);
+  * `a_stray_mention_is_refused_on_every_route`;
+  * `an_uncarried_custody_actual_is_refused`;
+  * `a_passing_body_is_cg25`;
+  * the census vector theorem `shape_admissions_are_the_model`;
+  * the witnesses: D3's getter, `rd_regex_match`'s mentions, and the mutant.
+
+## 5. Follow-ups and measurement
+
+* `CG25-THREAD-KEY-AUTOMATIC-REVISIT` (registered): D3 refuses every
+  automatic key, because a tracked by-value key reached a data route. Rule
+  11v (6) now refuses such a mention on every route, so the stated reason no
+  longer holds. Lifting the refusal is a semantic change and needs a user
+  decision. No Fluent Bit or Monkey row creates an automatic key.
+
+The integrator's declared measurement (base `rev:36b2cf931`, as the brief
+fixes), against [PREDICTION.md](PREDICTION.md):
+
+```sh
+target/release/quirin-audit --plugin-path target/release --output <dir> --timeout-ms 36000000 measure --inputs crates/quirin-audit-plugin-measure/inputs/live.json --inputs-base /media/Data/GitHub/quirin-lang --side base=rev:36b2cf931 --side tip=rev:67fdd5c28 --declared docs/reports/cg25-void-cast-guard-escape/PREDICTION.md
+```

@@ -1,0 +1,25 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "CG25-VOID-CAST-GUARD-ESCAPE",
+  "base": "36b2cf931",
+  "measured_tip": "67fdd5c28",
+  "profiles": [],
+  "increment_paragraph": "**CG25-VOID-CAST-GUARD-ESCAPE** (priority soundness; USER DECISION 2026-11-17 \"Yes, launch it.\"; gateway rule 11v (6); Lean `QCore.InPlaceMentionGuard`; [report](../../reports/cg25-void-cast-guard-escape/README.md)). Rule 11v (4)'s statement guard read only a statement's first classification, so a statement whose first classification was already a refusal reached later routes unguarded: the census certified 25 regex shape runs `Safe` that name a tracked object as data (`(void) re.used;`, `(void) (re.used = 0);` through statement fallback 10s, `(void) (re.used ? 1 : 0);` through 10z, a mixed `t = k_regexec(&re, s) + (int) re.used;`, `if`/`while`/`do`/`switch` on `re.used`, `return (int) re.used;`), and on the real `rdregex.c` unit a `(void) re.re_nsub;` or `if (re.re_nsub)` after `regfree` left `rd_regex_match` Safe. The repair reads the body's token stream once and the finished CFG once, not any route: every mention of a tracked object must be its declarator, a `sizeof` operand or a custody actual (a whole `&NAME`, or a by-value `NAME` of a by-value kind, at a position of its kind of a declared contracted callee), and every custody actual must be carried by as many call nodes as the body spells; otherwise a refusal node is added before the entry. Names come from the tokens, so D3's by-value `(void) pthread_getspecific(key)` is seen too. Published-row census: the only tracked object on any route or baseline (`baseline:497bdeb90` corpus, system, slice; the user's `current` at `89fa31d21`; main `36b2cf931` by unit reproduction) is `rd_regex_match`'s `re`, named only in custody actuals, so no published Safe rested on the escape. Predicted: no move on corpus, system, slice or `current`.",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "CG25-VOID-CAST-GUARD-ESCAPE",
+      "operation": "retire",
+      "why": "Discharged by card CG25-VOID-CAST-GUARD-ESCAPE (gateway rule 11v (6), Lean QCore.InPlaceMentionGuard): every mention of a tracked in-place object, on every route, is its declarator, a sizeof operand or a custody actual carried by as many call nodes as the body spells, read off the tokens (so by-value actuals are seen) and the finished CFG; otherwise the function is refused at a new entry node. All 25 escaping regex census runs refuse; every kinded form, sizeof and rd_regex_match stay admitted; fixtures tests/in_place_mention_guard.rs and the lib mention_tests. No published Safe rested on the escape (census in the report).",
+      "source": "docs/reports/cg25-void-cast-guard-escape/README.md"
+    },
+    {
+      "id": "CG25-THREAD-KEY-AUTOMATIC-REVISIT",
+      "operation": "register",
+      "title": "Decide whether an automatic thread key may be tracked now that rule 11v (6) sees by-value mentions",
+      "text": "CURRENT-CONTEXT-NEW-TRIAGE (D3) refuses every pthread_key_create into anything but static storage (THREAD_KEY_STORAGE_REFUSAL) because a tracked by-value key reached a statement route that read it as data. Rule 11v (6) (card CG25-VOID-CAST-GUARD-ESCAPE) now refuses any by-value mention of a tracked key outside a kinded position (unit test a_by_value_getter_of_a_tracked_key_is_stray), so the refusal's stated reason no longer holds; lifting it would let CG25's in-place protocol track automatic keys (create, witness, delete). No Fluent Bit or Monkey row creates an automatic key, so no measured row moves either way. A semantic change; needs a user decision. DISCHARGE: either keep the refusal with its reason restated, or lift it with fixtures (create/delete Safe, getter after delete refused, missing delete a leak), Lean parity in QCore.ThreadKeyStatic, and a measurement.",
+      "source": "docs/reports/cg25-void-cast-guard-escape/README.md",
+      "recorded_by": "CG25-VOID-CAST-GUARD-ESCAPE"
+    }
+  ]
+}
