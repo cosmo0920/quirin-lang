@@ -922,6 +922,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [refcount-resource-kind](refcount-resource-kind/README.md) | REFCOUNT-RESOURCE-KIND: the reference-count resource kind |
 
+| [reference-drop-null-accepting](reference-drop-null-accepting/README.md) | REFERENCE-DROP-NULL-ACCEPTING: the NULL-accepting reference drop |
+
 | [refused-store-of-call-result-escape](refused-store-of-call-result-escape/README.md) | REFUSED-STORE-OF-CALL-RESULT-ESCAPE: hypothesis refuted |
 
 | [region-credit-joins](region-credit-joins/README.md) | REGION-CREDIT-JOINS — the composed region: parent-local credit after the joins |
