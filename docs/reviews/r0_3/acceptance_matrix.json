@@ -170,7 +170,7 @@
   "note": "Prose revision 0.3 is the specification revision. It is separate from, and does not move with, the package/protocol/evidence/schema versions below.",
   "prose_specification_revision": "0.3",
   "documentation_revision": "0.3",
-  "qcore_schemas_rust_api": "26.0.0",
+  "qcore_schemas_rust_api": "27.0.0",
   "qcore_schemas_version_cause": "P02 added the public PluginLimits::additional field (3.0.0); P04 then added the counter_summary module and one variant each to witness/obligation/plugin plus an optional request field, three source-incompatible additions the documented policy makes a major change (4.0.0). Every later major (5.0.0 through 13.0.0) is the same policy applied to a further source-incompatible Rust API addition as a transported vocabulary landed; 13.0.0 is P04-COMPOSE-FS's three enum variants plus CompositionFamilyInput::nested() returning a vector because that family has two nested questions and one slot could not publish both. Existing wire bytes are unchanged at every step and pinned by crates/qcore-schemas/tests/counter_request_wire.rs and crates/qcore-schemas/tests/composition_request_wire.rs; COMPOSITION_SOURCE_INPUT_VERSION stays 2, so no existing task digest moved; 14.0.0 is P04-COMPOSE-UNSUPPORTED's three enum variants for the fifth and last reachable composition family, with COMPOSITION_SOURCE_INPUT_VERSION still 2 and no accessor changing shape, because P04-COMPOSE-FS had already paid that cost.",
   "plugin_protocol": "v1 (unchanged)",
   "semantic_evidence": "v2 (unchanged)",
@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 972
+  "named_followups": 982
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6881,7 +6881,7 @@
   "workspace_tests": 9525,
   "provider_tests": 133,
   "python_evidence_validator_tests": 779,
-  "lean_audits": 437,
+  "lean_audits": 440,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -7137,6 +7137,7 @@
    "AuditNullMemberPremise.lean",
    "AuditNullMemberQualifier.lean",
    "AuditNullMemberScope.lean",
+   "AuditNullPointerConstantPremise.lean",
    "AuditNullTriage.lean",
    "AuditNullTriagePaths.lean",
    "AuditO05.lean",
@@ -7285,6 +7286,8 @@
    "AuditTaskTraceLeaseBoundary.lean",
    "AuditTaskTraceRelation.lean",
    "AuditTeardownAdmission.lean",
+   "AuditThreadKeyStatic.lean",
+   "AuditThreadLocalRead.lean",
    "AuditTimeoutTeardown.lean",
    "AuditTrackedSelfInit.lean",
    "AuditTrackedSelfInitDisjointFrame.lean",
@@ -10637,8 +10640,8 @@
   {
    "id": "W46-FLUENT-TLS-RETAINED-RESULT",
    "title": "Raw output-thread TLS getter returns retained storage",
-   "why": "flb_output_thread_instance_get returns a thread-local pointer that aliases retained storage, like pthread_getspecific. Resource-v1 return_none cannot express that relation. It stays undeclared even though the scalar flb_output_flush_id_get wrapper can be stated as a borrowed/neutral caller effect. Discharge with a retained-result relation and matching Lean parity or a recorded refusal.",
-   "source": "docs/reports/w46-fluent-event-contract-gaps/README.md",
+   "why": "flb_output_thread_instance_get returns a thread-local pointer that aliases retained storage, like pthread_getspecific. Resource-v1 return_none cannot express that relation. It stays undeclared even though the scalar flb_output_flush_id_get wrapper can be stated as a borrowed/neutral caller effect. Discharge with a retained-result relation and matching Lean parity or a recorded refusal. THREAD-LOCAL-CUSTODY-FREE-READ (gateway rule 54): flb_output_thread_instance_get's own body (th_ins = FLB_TLS_GET(local_thread_instance); return th_ins; with FLB_HAVE_C_TLS) is rule 54's shape, so where its unit is analysed the getter derives as custody-free, the return_none reading; src/flb_output_thread.c is in no live selection, so no row moves. The retained-result relation stays open on its own discharge condition.",
+   "source": "docs/reports/w46-fluent-event-contract-gaps/README.md, docs/reports/thread-local-custody-free-read/README.md",
    "recorded_by": "W46-CONTRACT-GAP-EXPANSION"
   },
   {
@@ -11789,8 +11792,8 @@
   {
    "id": "CG25-IN-PLACE-RESIDUAL-PAIRS",
    "title": "In-place init/destroy pairs still undeclared after CG25 (13 leaves, 10 functions, 5 sole-blocked on the pinned corpus)",
-   "why": "Registered by CG25-RESOURCE-KINDS (gateway rule 11v), which re-registers the part of W43-LIBC-IN-PLACE-LIFECYCLE its in-place mode does not decide. The mode binds an in-place obligation to one automatic object passed as `&NAME`, its initialiser status held by a plain name; the corpus pairs below fail that shape, measured on the card's BEFORE (main b6a3dc42, `scripts/kind_census.py`): pthread_rwlock_init/destroy 2 leaves / 2 functions / 2 sole (tinycthread_extra.c rwlock_init, rwlock_destroy: storage reached through a formal pointer); mtx_init/mtx_destroy 3 / 3 / 1 (rd_kafka_global_init0, rd_kafka_sasl_cyrus_global_init/term: a global object, and `thrd_success` is implementation-defined, 1 in tinycthread, so no zero-status sentinel states it); pthread_key_create 4 / 2 / 1 (an integer key written through an out pointer, plus a destructor callback); pthread_attr_init 2 / 2 / 0 (mk_utils_worker_spawn, mk_sched_launch_thread: never destroyed, and pthread_create refuses both regardless); glob/globfree 2 / 1 / 0 (an error callback). The system route and the tail-pause slice have none. DISCHARGE: per pair, an in-place kind of its own whose storage shape a consumer admits (an obligation delivered to the caller through a formal, or held by a static owner), or a sentinel the implementation fixes, with Lean parity and an arbiter measurement. Dated configuration clarification, W48-BU-EXTERNAL-CALLEE-CONTRACTS, 2026-10-24: fresh BASE 8991b7b58fcbd33da082bbb44e819d47a0fb2561 preprocessing resolves the selected corpus C11 calls through system threads.h with WITH_C11THREADS=1 and thrd_success=0, not the bundled TinyCTHREAD implementation. The TinyCTHREAD translation unit has zero analyzed functions and 30 raw discovered names; the compiled-out names do not establish analyzed home bodies. The selected rd_kafka_sasl_cyrus_global_term remains blocked by uncontracted mtx_destroy: zero-success status does not supply a mutex kind or the missing global-owner init/destroy protocol. No declaration is added for mtx_destroy. This dated observation preserves the original b6a3dc42 checkpoint and its counts; it does not discharge this follow-up. See docs/reports/w48-bu-external-callee-contracts/README.md. AMENDED (LIBC-GAP-DECLARATIONS, 046accf6 current run, pairs): pthread_key_create 4, pthread_rwlock_init 1, pthread_rwlock_destroy 1, pthread_attr_init 2, glob/globfree 1 each, plus pthread_mutex_init 3 (mk_fifo_create, mk_sched_init, mk_server_create: storage reached through a member or a global), pthread_mutex_destroy 1 (mk_exit_all) and pthread_attr_destroy 1 (mk_utils_worker_spawn), all still undeclared on this entry's grounds. mtx_init/mtx_destroy appear there only as tinycthread.c bodies in the run.",
-   "source": "docs/reports/cg25-resource-kinds/README.md, docs/reports/libc-gap-declarations/README.md",
+   "why": "Registered by CG25-RESOURCE-KINDS (gateway rule 11v), which re-registers the part of W43-LIBC-IN-PLACE-LIFECYCLE its in-place mode does not decide. The mode binds an in-place obligation to one automatic object passed as `&NAME`, its initialiser status held by a plain name; the corpus pairs below fail that shape, measured on the card's BEFORE (main b6a3dc42, `scripts/kind_census.py`): pthread_rwlock_init/destroy 2 leaves / 2 functions / 2 sole (tinycthread_extra.c rwlock_init, rwlock_destroy: storage reached through a formal pointer); mtx_init/mtx_destroy 3 / 3 / 1 (rd_kafka_global_init0, rd_kafka_sasl_cyrus_global_init/term: a global object, and `thrd_success` is implementation-defined, 1 in tinycthread, so no zero-status sentinel states it); pthread_key_create 4 / 2 / 1 (an integer key written through an out pointer, plus a destructor callback); pthread_attr_init 2 / 2 / 0 (mk_utils_worker_spawn, mk_sched_launch_thread: never destroyed, and pthread_create refuses both regardless); glob/globfree 2 / 1 / 0 (an error callback). The system route and the tail-pause slice have none. DISCHARGE: per pair, an in-place kind of its own whose storage shape a consumer admits (an obligation delivered to the caller through a formal, or held by a static owner), or a sentinel the implementation fixes, with Lean parity and an arbiter measurement. Dated configuration clarification, W48-BU-EXTERNAL-CALLEE-CONTRACTS, 2026-10-24: fresh BASE 8991b7b58fcbd33da082bbb44e819d47a0fb2561 preprocessing resolves the selected corpus C11 calls through system threads.h with WITH_C11THREADS=1 and thrd_success=0, not the bundled TinyCTHREAD implementation. The TinyCTHREAD translation unit has zero analyzed functions and 30 raw discovered names; the compiled-out names do not establish analyzed home bodies. The selected rd_kafka_sasl_cyrus_global_term remains blocked by uncontracted mtx_destroy: zero-success status does not supply a mutex kind or the missing global-owner init/destroy protocol. No declaration is added for mtx_destroy. This dated observation preserves the original b6a3dc42 checkpoint and its counts; it does not discharge this follow-up. See docs/reports/w48-bu-external-callee-contracts/README.md. AMENDED (LIBC-GAP-DECLARATIONS, 046accf6 current run, pairs): pthread_key_create 4, pthread_rwlock_init 1, pthread_rwlock_destroy 1, pthread_attr_init 2, glob/globfree 1 each, plus pthread_mutex_init 3 (mk_fifo_create, mk_sched_init, mk_server_create: storage reached through a member or a global), pthread_mutex_destroy 1 (mk_exit_all) and pthread_attr_destroy 1 (mk_utils_worker_spawn), all still undeclared on this entry's grounds. mtx_init/mtx_destroy appear there only as tinycthread.c bodies in the run. Narrowed by CURRENT-CONTEXT-NEW-TRIAGE (D3, gateway rule 11v (5)): the pthread_key_create/pthread_key_delete pair is declared with the in-place kind thread_key (finalised by value, null destructor only); a key created into a static-duration object is held by the static owner under the stated premise P-THREAD-KEY-STATIC, and an automatic key is CG25's protocol. Still open for this pair: a key reached through a pointer (mk_plugin_preworker_calls, mk_fifo_create), a key with a destructor (a registration), and a static key's delete (mk_tls_exit), each refused. The other pairs are unchanged.",
+   "source": "docs/reports/cg25-resource-kinds/README.md, docs/reports/libc-gap-declarations/README.md, docs/reports/current-context-new-triage/README.md",
    "recorded_by": "CG25-RESOURCE-KINDS"
   },
   {
@@ -14064,6 +14067,76 @@
    "why": "OPENSSL-PROVIDER-PLUGIN's census: src/tls/openssl.c (73 OpenSSL functions, 133 sites), flb_crypto.c, flb_hmac.c, flb_hash.c, flb_oauth2.c, flb_fips.c, flb_utils.c and out_azure_kusto call OpenSSL, and none is a unit of the corpus, system, slice or the user's current run (Monkey's lib/monkey/plugins/tls/tls_openssl.c neither). DISCHARGE: a selection that brings them into a route (with the OpenSSL user load path), measured.",
    "source": "docs/reports/openssl-provider-plugin/README.md",
    "recorded_by": "OPENSSL-PROVIDER-PLUGIN"
+  },
+  {
+   "id": "THREAD-LOCAL-READ-BORROWED-USES",
+   "title": "Rule 54 withholds the reading when a thread-local value is handed to a borrowed actual or read through",
+   "why": "Rule 54 admits a thread-local pointer's value only as a copy, an initializer, a return or a null test; a call actual (even a Borrowed position), a member read or dereference through the object or a copy withholds the reading for the whole function, because the body could release, transfer or store through it and the admission does not consult the callee's contract or separate reads from stores. Measured instance: librdkafka's rd_kafka_transport_ssl_cert_verify_cb (rktrans = rd_kafka_curr_transport, then rktrans->rktrans_rkb), which carries 21 other diagnostics. DISCHARGE: admit a Borrowed call position under the callee's contract in force and a member read (not a store) through the value, keeping every release, transfer, Owned position and store refused, with Lean parity, fixtures and a measured statement of the rows it moves.",
+   "source": "docs/reports/thread-local-custody-free-read/README.md",
+   "recorded_by": "THREAD-LOCAL-CUSTODY-FREE-READ"
+  },
+  {
+   "id": "STATIC-POINTER-OBJECT-READ",
+   "title": "A copy of a static (not thread-local) pointer object into a local keeps the unresolved-identity refusal",
+   "why": "Rule 11h (3) says a static object's value carries no identity, and route G admits it handed straight out, but a copy into a local (c = g_ctx; return c;) still reports the object and the local as unresolved identities. Rule 54 reads only thread-local objects (THREAD-LOCAL-CUSTODY-FREE-READ's scope); its fixture a_static_object_and_a_formal_destination_keep_the_old_answer pins the static case as refused. DISCHARGE: extend rule 54's admission to static-duration pointer objects with the same per-function conditions (no write, address, member, dereference or call actual in the body), with Lean parity, a census of the rows on corpus, system, slice and current, and a measured statement.",
+   "source": "docs/reports/thread-local-custody-free-read/README.md",
+   "recorded_by": "THREAD-LOCAL-CUSTODY-FREE-READ"
+  },
+  {
+   "id": "CTX-C1-KEYED-SLOT-RETENTION",
+   "title": "C1: keyed-slot retention for internal-linkage pthread keys, with a unit-level slot-protocol pass",
+   "why": "Read pthread_getspecific(k) as \"NULL or an object one of the unit's pthread_setspecific(k, .) sites stored on this thread\" only for a key of internal linkage whose every pthread_key_create/setspecific/getspecific/delete site is in the unit (Monkey's local_context in lib/monkey/tls/tls_openssl.c); an external-linkage key, a key reached through a pointer and any __thread object refuse; a reader must test NULL (get before set is NULL). Needs a unit-level pass before per-function analysis and a libc keyed retention clause (C04.14 extended) in quirin-provider-libc threads.qv. Depends on D3 (thread_key kind). PREDICTION-C share: with C2 makes mk_tls_thread_init Safe; with C4/C5 makes context_get_head, tls_event_interest, context_get Safe (current only). DISCHARGE: the clause, the pass, Lean parity, fixtures (external key refused, get-before-set NULL guard required), measured on the user's current. USER DECISION 2026-11-16 (verbatim): context_new -> \"C: derived -> Safe\"; the integrator split C into these layers. Correction recorded with D3: mk_plugin_preworker_calls stays Unknown (its key is reached through node->thread_key), unlike PROPOSAL.md's D3 row. Rule id: the next free id at launch (PROPOSAL.md's 51/52 are superseded; 51, 53 and 54 are taken).",
+   "source": "docs/reports/current-context-new-triage/PROPOSAL.md",
+   "recorded_by": "CURRENT-CONTEXT-NEW-TRIAGE-D3"
+  },
+  {
+   "id": "CTX-C2-STATIC-HEAP-ROOT",
+   "title": "C2: rule 10f widened to &G->F under P-CRR-STATIC-HEAP",
+   "why": "Rule 10f (1) admits a publication into &G or &G.F for a static G; &G->F (G a static pointer whose only writer stores an allocation the unit releases in one function) stays refused. Census: exactly one row on all inputs, mk_tls_thread_init's &server_context->threads (current only). Depends on C7 (the teardown premise names the releasing function). PREDICTION-C share: mk_tls_thread_init Unknown -> Safe with C1. DISCHARGE: the widened reading with the stated premise P-CRR-STATIC-HEAP, refusals for any other root, Lean parity, measured. USER DECISION 2026-11-16 (verbatim): context_new -> \"C: derived -> Safe\"; the integrator split C into these layers. Rule id: the next free id at launch (PROPOSAL.md's 51/52 are superseded; 51, 53 and 54 are taken).",
+   "source": "docs/reports/current-context-new-triage/PROPOSAL.md",
+   "recorded_by": "CURRENT-CONTEXT-NEW-TRIAGE-D3"
+  },
+  {
+   "id": "CTX-C3-WHOLE-CONTAINER-DESTROY",
+   "title": "C3: a whole-container destroy reading (release every element without unlinking, then release the head's owner)",
+   "why": "mk_tls_exit walks server_context->threads with mk_list_foreach_safe + mk_list_entry and frees each element (after contexts_free) without mk_list_del, then frees server_context; rules 43/46 need a named member and an unlink. Depends on C2 and on a reading of the __builtin_offsetof node of mk_list_entry. PREDICTION-C share: none alone (mk_tls_exit keeps other blockers); it establishes the owner chain C1/C4 rest on. DISCHARGE: the reading, Lean parity, fixtures. USER DECISION 2026-11-16 (verbatim): context_new -> \"C: derived -> Safe\"; the integrator split C into these layers. Rule id: the next free id at launch (PROPOSAL.md's 51/52 are superseded; 51, 53 and 54 are taken).",
+   "source": "docs/reports/current-context-new-triage/PROPOSAL.md",
+   "recorded_by": "CURRENT-CONTEXT-NEW-TRIAGE-D3"
+  },
+  {
+   "id": "CTX-C4-NEXT-CHAIN-FAMILY",
+   "title": "C4: a singly linked `_next` chain family (traversal, head insert with the link, whole-chain destroyer, member release)",
+   "why": "tls_openssl.c's tls_context_head list: context_get_head's traversal, context_new's head insert (ctx_head->_next = thctx->contexts; thctx->contexts = ctx_head, accepted only with the link store), contexts_free's whole-chain release with SSL_free(cur->ssl), context_unset's member release. Rule 5l covers only mk_list headers. Depends on C1 (the chain's owner) and a finiteness premise like rule 48's. PREDICTION-C share: context_get_head, tls_event_interest, context_get Safe (with C1, C5); contexts_free, context_unset Pending with D2. DISCHARGE: the family with refusals (missing link store, other owner), Lean parity, fixtures. USER DECISION 2026-11-16 (verbatim): context_new -> \"C: derived -> Safe\"; the integrator split C into these layers. Rule id: the next free id at launch (PROPOSAL.md's 51/52 are superseded; 51, 53 and 54 are taken).",
+   "source": "docs/reports/current-context-new-triage/PROPOSAL.md",
+   "recorded_by": "CURRENT-CONTEXT-NEW-TRIAGE-D3"
+  },
+  {
+   "id": "CTX-C5-INTERIOR-RESULT-MODE",
+   "title": "C5: an interior result mode (a borrowed element or member of a held element)",
+   "why": "context_get_head returns an element of the thread's list and context_get / context_new return node->ssl, a member the node owns; no result mode states a borrow of a held element or member (the same gap as W43-RESULT-ALIAS-CONDITIONAL-AND-RETAINED). Depends on C1 and C4. PREDICTION-C share: context_get_head, context_get Safe; context_new's H1 (the returned SSL is a borrow). DISCHARGE: the mode (schema change), its caller reading, Lean parity. USER DECISION 2026-11-16 (verbatim): context_new -> \"C: derived -> Safe\"; the integrator split C into these layers. Rule id: the next free id at launch (PROPOSAL.md's 51/52 are superseded; 51, 53 and 54 are taken).",
+   "source": "docs/reports/current-context-new-triage/PROPOSAL.md",
+   "recorded_by": "CURRENT-CONTEXT-NEW-TRIAGE-D3"
+  },
+  {
+   "id": "CTX-C6-FREE-SLOT-INVARIANT",
+   "title": "C6: the free-slot invariant (fd == -1 implies ssl == NULL) by body census, plus the caller premise P-FD-NONNEG",
+   "why": "context_new's reuse path overwrites a free slot's ssl; sound only if every store to fd/ssl in the unit keeps fd == -1 => ssl == NULL (context_unset, context_new, the zeroing allocator) and callers never pass fd == -1 (a node holding an SSL would look free and be overwritten: a leak). Depends on C4. PREDICTION-C share: context_new's H2 (context_new Pending with D2). DISCHARGE: the census with a fixture of a free slot holding a non-NULL ssl refused, the stated caller premise, Lean parity. USER DECISION 2026-11-16 (verbatim): context_new -> \"C: derived -> Safe\"; the integrator split C into these layers. Rule id: the next free id at launch (PROPOSAL.md's 51/52 are superseded; 51, 53 and 54 are taken).",
+   "source": "docs/reports/current-context-new-triage/PROPOSAL.md",
+   "recorded_by": "CURRENT-CONTEXT-NEW-TRIAGE-D3"
+  },
+  {
+   "id": "CTX-C7-TLS-TEARDOWN-PREMISE",
+   "title": "C7: the rule-level premise P-TLS-TEARDOWN, stated as P-CRR-STATIC is",
+   "why": "The unit's teardown function (mk_tls_exit, called by mk_exit after mk_sched_workers_join) runs after every thread that read the slot has stopped, and a process exit before it is not a leak. Not derivable (temporal and whole-program). Prerequisite of C2/C3's Safe. PREDICTION-C share: underlies all four Safe rows and the nine Pending rows. DISCHARGE: the stated premise in the rule text, the rows resting on it named, Lean parity of its use. USER DECISION 2026-11-16 (verbatim): context_new -> \"C: derived -> Safe\"; the integrator split C into these layers. Rule id: the next free id at launch (PROPOSAL.md's 51/52 are superseded; 51, 53 and 54 are taken).",
+   "source": "docs/reports/current-context-new-triage/PROPOSAL.md",
+   "recorded_by": "CURRENT-CONTEXT-NEW-TRIAGE-D3"
+  },
+  {
+   "id": "CG25-VOID-CAST-GUARD-ESCAPE",
+   "title": "A statement fallback can re-lower a cast-to-void call over a tracked in-place object as a plain borrowed call",
+   "why": "CURRENT-CONTEXT-NEW-TRIAGE (D3) measured (private/repro/probe-getter.log): with a tracked automatic thread key, `(void) pthread_getspecific(key)` was admitted Safe even after `pthread_key_delete(key)`, while `pthread_getspecific(key);` and `v = pthread_getspecific(key);` were refused by rule 11v (4)'s guard. The cast statement's first classification is an older refusal, which the guard skips, and a later statement fallback (the cast route's uncast lowering) re-lowers the uncast call without the guard. D3 avoids it by never tracking a thread key. The same shape over a tracked regex object (`(void) f(&re, …)` at an unkinded position) is not measured. A guard widened to every refusal mentioning a tracked object broke rd_regex_match's admitted `r = k_regexec(&re, str) != 1;`, and a CFG-level name check misses a by-value scalar actual (no place is recorded). DISCHARGE: apply rule 11v (4)'s guard to every fallback's admitted lowering (or carry the actual's name for by-value scalars into the node), with a fixture per kind, and measure.",
+   "source": "docs/reports/current-context-new-triage/README.md",
+   "recorded_by": "CURRENT-CONTEXT-NEW-TRIAGE-D3"
   }
  ],
  "updated": "Completed plugin premise integration; exact hand-maintained union retains810followups, borrowed measured-source8419Rust/354Lean/freshcard133provider, exact source equivalence checked; authoritative root committed-matrix Python confirmation in integration receipt. CMetrics map/opts API model specifications added at the explicit user request. Eight declared-model API contracts remain outside interpreted views, with CMT-MAP-OPTS-CONTRACT-ADOPTION and CMT-LABELED-HASH-ZERO-STATIC-STORAGE Open. No trusted API coverage is claimed; the source gate is recorded by this card alongside its separate initializer native checkpoint. W48-CMT-TRACKED-INTERIOR-SELF-INIT implements rule 36b's checked initializer effect transport for an exact live owned root or embedded record, retaining actual self writes, invalidating aliased member facts and preserving resource obligations; nondefault custody frames refuse and no ordinary summary is exported. The canonical CFL intrusive_list.qv declares matching audit preconditions/effects; two CMetrics .qv modules add six map and two opts lifecycle models, including transitive ownership, partial failure, borrowed results and uncleared cleanup fields. All remain outside interpreted views; checked API adoption and labeled zero-hash storage accounting have named Open follow-ups. Fresh BASE/planner precedes prediction f18d96065 and implementation; the later contract amendment 08da23123 precedes .qv edits. Native corpus BASE/TIP Safe/Unknown/Pending/provisional-Unsafe: 1009 / 3816 / 0 / 9 to 1011 / 3814 / 0 / 9; full system/slice, 5781 NULL dictionaries and runtime projections are compared, 241 semantic leaves accounted, zero unexplained leaves and no prior Safe loss. Gate 8654 Rust / 370 Lean / 374 Python, provider 133 Rust / 25 Python and all five package verifies pass. The actual deep source reader uses 328 KiB below 1 MiB. Full getter closure remains Open; W48-CMT-SELF-INIT-DISJOINT-FRAMES tracks the next bounded frame extension, and W48-EXACT-RETURN-WITNESS-PRECISION is unchanged. Native evidence is isolated to measured e92d8aef35a8bd14550e90219d19a56eb3b196e7; later source gate 2d0d85299b830aa24d7f200d63a308653582363f validates the added declared API models separately; see docs/reports/w48-cmt-tracked-interior-self-init/README.md."

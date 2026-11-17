@@ -1,5 +1,7 @@
 # Current status and evidence boundaries
 
+THREAD-LOCAL-CUSTODY-FREE-READ (gateway rule 54, base `0f6e17118`, code tip `1ac1fabbd`): a whole read of a thread-local pointer object copied into a local is custody-free, as `pthread_getspecific`'s result is. Predicted Unknown -> Safe for `flb_engine_evl_get`, `flb_sched_ctx_get` (system) and `flb_context_get`, `flb_cf_context_get` (slice), two configurations each; corpus and current unchanged. Not yet measured: the integrator's measurement against `rev:0f6e17118` decides the figures.
+
 SCHEDULER-DESTROY-MEMBER-STATES (gateway rule 50, base `89fa31d21`, measured tip `7bbea41df`): `mk_http_thread_destroy` states three member-path states and typed refinements of seven of its eight scheduler premises; `mk_thread_destroy` has a helper declaration that rule 50's body reading composes (evidence only). All eight premise names stay Open source truth on the rows resting on the declaration. No status move: system custody 103/341/4, slice 59/340/1 with 4 Pending, corpus 1,081/3,617/6, unchanged; `mk_http_thread_destroy` becomes partly validated in the corpus (its member-path states covered by body evidence `30` and `50`).
 
 List-length bounds (W45-FB-LIST-FINITENESS-PREMISE, gateway rule 48): under the loop-measure selection and a declared list-finiteness premise file, 17 of the Fluent Bit system slice's 87 list-length loops carry a list-length bound fact whose frame the unit establishes; the other 70 carry named refusals (link writes, undefined callees, member-chain heads). A fact, not a verdict: nothing moves.
