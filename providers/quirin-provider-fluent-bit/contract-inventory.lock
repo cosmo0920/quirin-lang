@@ -6,6 +6,23 @@
   "contracts": "quirin-provider-fluent-bit/contracts",
   "crate": "quirin-provider-fluent-bit",
   "files": {
+    "fluent_bit/busy_state.qv": {
+      "clause_count": 7,
+      "declaration_count": 1,
+      "declarations": [
+        {
+          "clauses": 7,
+          "name": "flb_input_chunk_release_lock",
+          "resource_mode": null,
+          "resource_table": null
+        }
+      ],
+      "inherits": [],
+      "other_declarations": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "d5312a86007525cb81fe9dd85ff4cf0efcbe80fdb98720e653fdf6e196f495cf"
+    },
     "fluent_bit/hash_table_publication.qv": {
       "clause_count": 12,
       "declaration_count": 2,

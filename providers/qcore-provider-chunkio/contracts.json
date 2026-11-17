@@ -47,7 +47,6 @@
     "contracts/chunkio/teardown_traversal.qv": "ff03bdaca00d708fd0deccefe4642162842e4c0f92dee742a1f4ceabf52cca4e",
     "contracts/chunkio/unmap_wrapper.qv": "babdff23b769a99eb1c0b2bdb1cd3599f5b99328b72b6ec452354f4a4415bef6",
     "contracts/chunkio/unsupported_close.qv": "e2f377da00b347d5165a0d0bf72115c1e8d82cc5100e89bb6b4bbc15e1149026",
-    "contracts/chunkio/unsupported_constructor_observation.qv": "7d0b0884ed0880e78b27d706d21d30a1adbacefba4e2e36750550c214de4df53",
-    "contracts/fluent_bit/busy_state.qv": "d5312a86007525cb81fe9dd85ff4cf0efcbe80fdb98720e653fdf6e196f495cf"
+    "contracts/chunkio/unsupported_constructor_observation.qv": "7d0b0884ed0880e78b27d706d21d30a1adbacefba4e2e36750550c214de4df53"
   }
 }

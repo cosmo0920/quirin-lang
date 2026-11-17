@@ -18,7 +18,7 @@ use crate::external_integration::PINNED_FLUENT_BIT_REVISION;
 use crate::legacy_c::C11TranslationUnit;
 
 const BUSY: &str =
-    include_str!("../../../../providers/qcore-provider-chunkio/contracts/fluent_bit/busy_state.qv");
+    include_str!("../../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/busy_state.qv");
 const LOCK: &str =
     include_str!("../../../../providers/qcore-provider-chunkio/contracts/chunkio/lock_state.qv");
 

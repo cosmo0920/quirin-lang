@@ -57,10 +57,10 @@ import subprocess
 
 ROOT = Path(__file__).resolve().parent
 # Ownership is intentionally narrow: shared language/support policies stay in
-# the providers/quirin-provider-*/contracts data crates. The ChunkIO provider also handles
-# Fluent Bit's busy-state API.
+# the providers/quirin-provider-*/contracts data crates. Fluent Bit's busy-state
+# API is owned by its data crate, quirin-provider-fluent-bit.
 OWNERS = {
-    "qcore-provider-chunkio": ("chunkio", "fluent_bit/busy_state.qv"),
+    "qcore-provider-chunkio": ("chunkio",),
     "qcore-provider-cmetrics": ("cmetrics",),
     "qcore-provider-ctraces": ("ctraces",),
     "qcore-provider-libevent": ("monkey",),

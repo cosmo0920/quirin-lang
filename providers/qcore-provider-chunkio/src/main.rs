@@ -22,8 +22,7 @@ use quirin_provider_shared::{
 /// CONTRACT-INHERIT-QCORE-PROVIDER-NAMING, the user's option B): the package
 /// name without `qcore-provider-`, `-` read as `_`. A parent this crate owns
 /// is written `chunkio::NAME`.
-/// Its modules (`chunkio/...` and `fluent_bit/busy_state.qv`) are all
-/// `chunkio::NAME` parents, whatever their directory.
+/// Its modules (`chunkio/...`) are all `chunkio::NAME` parents.
 /// Recorded here in the one spelling `providers/contracts.py` reads,
 /// checked against the derivation rule by this crate's tests, and carried
 /// into `providers/contract-load-path.json`, where the load path checks it
