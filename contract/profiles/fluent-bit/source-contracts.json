@@ -20,7 +20,7 @@
     {
       "library": "fluent_bit",
       "provider": "qcore.chunkio",
-      "contract": "../../../providers/qcore-provider-chunkio/contracts/fluent_bit/busy_state.qv"
+      "contract": "../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/busy_state.qv"
     }
   ]
 }

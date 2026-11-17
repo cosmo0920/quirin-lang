@@ -989,23 +989,6 @@
       "premise_bindings": [],
       "premises": {},
       "sha256": "7d0b0884ed0880e78b27d706d21d30a1adbacefba4e2e36750550c214de4df53"
-    },
-    "fluent_bit/busy_state.qv": {
-      "clause_count": 7,
-      "declaration_count": 1,
-      "declarations": [
-        {
-          "clauses": 7,
-          "name": "flb_input_chunk_release_lock",
-          "resource_mode": null,
-          "resource_table": null
-        }
-      ],
-      "inherits": [],
-      "other_declarations": [],
-      "premise_bindings": [],
-      "premises": {},
-      "sha256": "d5312a86007525cb81fe9dd85ff4cf0efcbe80fdb98720e653fdf6e196f495cf"
     }
   },
   "outer_view": [],

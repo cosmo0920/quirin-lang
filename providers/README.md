@@ -86,7 +86,7 @@ and SHA-256 values. The ownership map is `providers/contracts.py`.
 
 | Crate | Owned contract families |
 |---|---|
-| `qcore-provider-chunkio` | `chunkio/` and `fluent_bit/busy_state.qv` |
+| `qcore-provider-chunkio` | `chunkio/` |
 | `qcore-provider-cmetrics` | `cmetrics/` |
 | `qcore-provider-ctraces` | `ctraces/` |
 | `qcore-provider-libevent` | `monkey/` |
