@@ -1,0 +1,13 @@
+corpus@497bdeb90	total	4
+corpus@497bdeb90	rd_regex_comp	Unknown	librdkafka/rdregex.c#rd_regex_comp	regcomp,regerror	1 diag
+corpus@497bdeb90	rd_regex_destroy	Unknown	librdkafka/rdregex.c#rd_regex_destroy	regfree	1 diag
+corpus@497bdeb90	rd_regex_exec	Safe	librdkafka/rdregex.c#rd_regex_exec	regexec	0 diag
+corpus@497bdeb90	rd_regex_match	Safe	librdkafka/rdregex.c#rd_regex_match	regcomp,regerror,regexec,regfree	0 diag
+system@497bdeb90	total	0
+slice@497bdeb90	total	0
+current@89fa31d21	total	4
+current@89fa31d21	rd_regex_comp	Unknown	librdkafka/lib/librdkafka-2.15.0/src/rdregex.c#rd_regex_comp	regcomp,regerror	1 diag
+current@89fa31d21	rd_regex_destroy	Unknown	librdkafka/lib/librdkafka-2.15.0/src/rdregex.c#rd_regex_destroy	regfree	1 diag
+current@89fa31d21	rd_regex_exec	Safe	librdkafka/lib/librdkafka-2.15.0/src/rdregex.c#rd_regex_exec	regexec	0 diag
+current@89fa31d21	rd_regex_match	Safe	librdkafka/lib/librdkafka-2.15.0/src/rdregex.c#rd_regex_match	regcomp,regerror,regexec,regfree	0 diag
+current-monkey@89fa31d21	total	0

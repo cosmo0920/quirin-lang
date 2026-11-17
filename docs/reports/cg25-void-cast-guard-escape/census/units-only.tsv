@@ -1,0 +1,11 @@
+unit/current/rd_regex_match	unit	/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a98e1c52ca31853f9/private/cg25-census/rdregex.current.i|rd_regex_match
+unit/corpus/rd_regex_match	unit	/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a98e1c52ca31853f9/private/cg25-census/rdregex.corpus.i|rd_regex_match
+unit/current/rd_regex_exec	unit	/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a98e1c52ca31853f9/private/cg25-census/rdregex.current.i|rd_regex_exec
+unit/corpus/rd_regex_exec	unit	/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a98e1c52ca31853f9/private/cg25-census/rdregex.corpus.i|rd_regex_exec
+unit/current/rd_regex_comp	unit	/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a98e1c52ca31853f9/private/cg25-census/rdregex.current.i|rd_regex_comp
+unit/corpus/rd_regex_comp	unit	/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a98e1c52ca31853f9/private/cg25-census/rdregex.corpus.i|rd_regex_comp
+unit/current/rd_regex_destroy	unit	/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a98e1c52ca31853f9/private/cg25-census/rdregex.current.i|rd_regex_destroy
+unit/corpus/rd_regex_destroy	unit	/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a98e1c52ca31853f9/private/cg25-census/rdregex.corpus.i|rd_regex_destroy
+unit/mutant-void-member/rd_regex_match	unit	/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a98e1c52ca31853f9/private/cg25-census/rdregex.current.mutant-void-member.i|rd_regex_match
+unit/mutant-cond-member/rd_regex_match	unit	/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a98e1c52ca31853f9/private/cg25-census/rdregex.current.mutant-cond-member.i|rd_regex_match
+unit/mutant-void-peek/rd_regex_match	unit	/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a98e1c52ca31853f9/private/cg25-census/rdregex.current.mutant-void-peek.i|rd_regex_match

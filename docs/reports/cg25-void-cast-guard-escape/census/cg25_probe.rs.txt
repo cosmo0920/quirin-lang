@@ -1,0 +1,158 @@
+// Temporary census probe (card CG25-VOID-CAST-GUARD-ESCAPE); not committed.
+// QCORE_CG25_PROBE=<shapes file>: lines `label\tset\tbody` (set: regex|thread),
+// prints `label\tstatus\tdiagnostics`.
+use std::collections::BTreeMap;
+
+use qcore_c_gateway::legacy_c::{
+    C11TranslationUnit, LegacyDiagnosticKind, ResourceContracts, UnrestrictedLegacyResult,
+    analyze_unrestricted_c11, check_legacy_safety_certificate,
+};
+use qcore_contract::contract_loader::load_resource_contract_sources;
+
+const KINDS: &str = include_str!("fixtures/contracts/resource_kinds_generic.qv");
+const THREADS: &str =
+    include_str!("../../../providers/quirin-provider-libc/contracts/libc/threads.qv");
+const REGEX_QV: &str =
+    include_str!("../../../providers/quirin-provider-libc/contracts/libc/regex.qv");
+const EXTRA: &str = "module contract;
+extern fn k_peek(p: ptr<const, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(p);
+    ensures normal resource_return_none();
+};
+extern fn k_take(n: usize) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(n);
+    ensures normal resource_return_none();
+};
+";
+const REGEX_DECLS: &str = "typedef struct { void *buffer; unsigned long used; } regex_t; \
+void *k_dlopen(const char *path); int k_dlclose(void *handle); void *k_dlsym(void *handle, const char *name); \
+void *k_alloc(__SIZE_TYPE__ size); void k_free(void *p); \
+int k_regcomp(regex_t *preg, const char *pattern, int flags); int k_regexec(const regex_t *preg, const char *text); \
+void k_regfree(regex_t *preg); void k_wipe(void *p, __SIZE_TYPE__ n); int k_peek(const void *p); int k_take(__SIZE_TYPE__ n); \
+struct k_holder { regex_t re; }; regex_t g_re;\n";
+const THREAD_DECLS: &str = "typedef unsigned int pthread_key_t;
+extern int pthread_key_create (pthread_key_t *__key, void (*__destr_function) (void *));
+extern int pthread_key_delete (pthread_key_t __key);
+extern void *pthread_getspecific (pthread_key_t __key);
+extern int pthread_setspecific (pthread_key_t __key, const void *__pointer);
+";
+
+fn key(kind: &LegacyDiagnosticKind) -> String {
+    match kind {
+        LegacyDiagnosticKind::Unsupported { description } => format!("unsupported:{description}"),
+        other => format!("{other:?}")
+            .split([' ', '{', '('])
+            .next()
+            .unwrap_or("")
+            .to_owned(),
+    }
+}
+
+#[test]
+#[ignore = "census probe"]
+fn probe() {
+    let Some(path) = std::env::var_os("QCORE_CG25_PROBE") else {
+        return;
+    };
+    let regex = load_resource_contract_sources(&BTreeMap::from([
+        ("k.qcore".to_owned(), KINDS.to_owned()),
+        ("x.qcore".to_owned(), EXTRA.to_owned()),
+    ]))
+    .expect("loads");
+    let thread = load_resource_contract_sources(&BTreeMap::from([(
+        "libc/threads.qv".to_owned(),
+        THREADS.to_owned(),
+    )]))
+    .expect("loads");
+    let libc_regex = load_resource_contract_sources(&BTreeMap::from([(
+        "libc/regex.qv".to_owned(),
+        REGEX_QV.to_owned(),
+    )]))
+    .expect("loads");
+    let text = std::fs::read_to_string(path).expect("shapes");
+    for line in text
+        .lines()
+        .filter(|l| !l.trim().is_empty() && !l.starts_with('#'))
+    {
+        let mut parts = line.splitn(3, '\t');
+        let (label, set, body) = (
+            parts.next().unwrap(),
+            parts.next().unwrap(),
+            parts.next().unwrap(),
+        );
+        let (decls, contracts): (&str, &ResourceContracts) = match set {
+            "thread" => (THREAD_DECLS, &thread),
+            "unit" => ("", &libc_regex),
+            _ => (REGEX_DECLS, &regex),
+        };
+        let (source, function) = if set == "unit" {
+            let (path, function) = body.split_once('|').expect("path|function");
+            (std::fs::read_to_string(path).expect("unit"), function)
+        } else {
+            (format!("{decls}{body}\n"), "w")
+        };
+        if let Some(census) = std::env::var_os("QCORE_ROUTE_CENSUS") {
+            use std::io::Write;
+            let mut file = std::fs::OpenOptions::new()
+                .create(true)
+                .append(true)
+                .open(census)
+                .expect("census");
+            writeln!(file, "{{\"shape\":\"{label}\"}}").expect("census");
+        }
+        let result = analyze_unrestricted_c11(
+            &C11TranslationUnit {
+                source: &source,
+                ..Default::default()
+            },
+            function,
+            contracts,
+        );
+        let Ok(result) = result else {
+            println!("{label}\tCLANG-REJECT\t{result:?}");
+            continue;
+        };
+        let status = match &result {
+            UnrestrictedLegacyResult::Safe(c) => {
+                check_legacy_safety_certificate(c).expect("rechecks");
+                "Safe"
+            }
+            UnrestrictedLegacyResult::Unsafe(_) => "Unsafe",
+            UnrestrictedLegacyResult::Unknown { .. } => "Unknown",
+        };
+        let summary = match &result {
+            UnrestrictedLegacyResult::Safe(c) => Some(&c.summary),
+            UnrestrictedLegacyResult::Unsafe(s) => Some(s),
+            UnrestrictedLegacyResult::Unknown { partial, .. } => partial.as_ref(),
+        };
+        let mut keys = summary
+            .and_then(|s| s.functions.get(function))
+            .map(|f| {
+                f.diagnostics
+                    .iter()
+                    .map(|d| key(&d.kind))
+                    .collect::<Vec<_>>()
+            })
+            .unwrap_or_default();
+        keys.sort();
+        keys.dedup();
+        let own = summary
+            .and_then(|s| s.functions.get(function))
+            .map(|f| format!("{:?}", f.status))
+            .unwrap_or_else(|| "absent".to_owned());
+        let reason = match &result {
+            UnrestrictedLegacyResult::Unknown { reason, .. } if set == "unit" => {
+                reason.chars().take(200).collect::<String>()
+            }
+            _ => String::new(),
+        };
+        println!(
+            "{label}\t{status}\t{}\town={own}\t{reason}",
+            keys.join(" | ")
+        );
+    }
+}
