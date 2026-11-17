@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "name": "openssl-callers",
+  "description": "REFERENCE-DROP-NULL-ACCEPTING: the units holding the OpenSSL callers OPENSSL-PROVIDER-PLUGIN's census names on the current route (docs/reports/openssl-provider-plugin/census/census.json, route current), Fluent Bit 046accf6.",
+  "groups": [
+    {
+      "library": "librdkafka",
+      "files": [
+        "lib/librdkafka-2.15.0/src/rdhttp.c",
+        "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+        "lib/librdkafka-2.15.0/src/rdkafka_cert.c",
+        "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c",
+        "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c",
+        "lib/librdkafka-2.15.0/src/rdkafka_ssl.c"
+      ]
+    },
+    {
+      "library": "monkey",
+      "files": [
+        "lib/monkey/tls/tls_openssl.c"
+      ],
+      "label": "monkey-tls-openssl"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "REFERENCE-DROP-NULL-ACCEPTING",
+  "base": "32336c33d",
+  "measured_tip": "a44ed44e7",
+  "increment_paragraph": "**REFERENCE-DROP-NULL-ACCEPTING (2026-11-17).** A reference drop may now be NULL-accepting: `resource_reference_dropped(p, nullable)` (contract spec C04.17, grammar G05, gateway rule 13b amended in place; qcore-schemas 28.0.0 adds ReferenceClause::nullable, omitted when false). Its non-NULL edge is exactly rule 13b's drop; its NULL edge discharges nothing and creates nothing. Route G reads a drop's actual in three classes (legacy_reference_count::drop_actual, the pure table reference_count::decide_drop_actual): a definitely-NULL actual is a no-op, a name bound to one live family or NULL is that family's drop, everything else is rule 13b's table, so a NULL-accepting drop of a caller's formal or a member read still refuses; a drop not marked nullable decides both NULL classes as the Other binding it was before, refused. Rule 13c: a defined NULL-accepting drop stands only where its body opens with a return on NULL or only forwards the object to a declared NULL-accepting drop. The OpenSSL user crate's six frees (X509_free, EVP_PKEY_free, SSL_free, SSL_CTX_free, BIO_free, ENGINE_free) declare it, each ranged from the oldest documentation series whose official page states the NULL behaviour (documented \"1.1.1\"; ENGINE_free \"3.0\", its ENGINE_add 3.0 page fetched and recorded); the checker gains the documented shape NullAcceptingRelease (the exact clause and the snapshot's NULL sentence at the range's series); contracts.lock re-pinned (six digests). Lean QCore.NullableReferenceDrop (12 audited theorems, shared vectors bound to Rust). Measured: corpus, system and slice no row moves (declared arbiter); the opt-in current run over the OpenSSL callers' seven files no row moves (all 59 drop diagnostics in 13 rows still reference-drop-unheld: member reads and objects from undeclared OpenSSL producers).",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "REFERENCE-DROP-NULL-ACCEPTING",
+      "operation": "retire",
+      "why": "DISCHARGED by REFERENCE-DROP-NULL-ACCEPTING (2026-11-17): resource_reference_dropped(p, nullable) end to end (C04.17, G05, rule 13b and 13c, qcore-schemas 28.0.0, QCore.NullableReferenceDrop audited, route-G controls with both negative controls) and used by the six OpenSSL frees from the series whose page states the NULL behaviour (1.1.1; ENGINE_free 3.0); the checker accepts the shape (12 bindings Pending); pinned routes no row moves; the opt-in current run no row moves, every drop of the six still refused for a member read or an undeclared producer (REFCOUNT-MEMBER-REFERENCE-DROP, OPENSSL-PROVIDER-REMAINING-CALLEES).",
+      "source": "docs/reports/reference-drop-null-accepting/README.md"
+    },
+    {
+      "id": "REFCOUNT-MEMBER-REFERENCE-DROP",
+      "operation": "amend",
+      "text": "AMENDED (REFERENCE-DROP-NULL-ACCEPTING, 2026-11-17, opt-in current run at 046accf6 over the OpenSSL callers): the same gap at OpenSSL's NULL-accepting frees: rd_kafka_ssl_ctx_term (SSL_CTX_free(rk->rk_conf.ssl.ctx), ENGINE_free through RD_IF_FREE), rd_kafka_transport_ssl_close (SSL_free(rktrans->rktrans_ssl)), and Monkey contexts_free (SSL_free(cur->ssl) under a NULL test) drop a member-held reference and stay reference-drop-unheld although the drop now accepts NULL; a member-path drop is what they need.",
+      "source": "docs/reports/reference-drop-null-accepting/README.md"
+    },
+    {
+      "id": "REFERENCE-DROP-NULL-ACCEPTING-CANDIDATES",
+      "operation": "register",
+      "title": "Further NULL-accepting reference drops to declare",
+      "text": "Registered by REFERENCE-DROP-NULL-ACCEPTING. Read at Fluent Bit 046accf6, none of librdkafka's six declared drops accepts NULL (rd_kafka_toppar_destroy0 rdkafka_partition.h:549, rd_kafka_q_destroy0 rdkafka_queue.h:232 and its owner wrapper, rd_kafka_topic_destroy0 rdkafka_topic.h:249 dereference their argument unconditionally; rd_kafka_enq_once_trigger and ut_destroy_mock_queue likewise), so none takes the form. Candidates elsewhere: the OpenSSL reference-counted frees the census lists but OPENSSL-PROVIDER-PLUGIN did not declare (X509_STORE_free in rd_kafka_cert_destroy, the stack frees over X509 elements) should use resource_reference_dropped(p, nullable) wherever their official page states the NULL behaviour, from the oldest series stating it (OPENSSL-PROVIDER-REMAINING-CALLEES). DISCHARGE: each candidate's body or official documentation read and declared with or without the form, measured.",
+      "source": "docs/reports/reference-drop-null-accepting/README.md",
+      "recorded_by": "REFERENCE-DROP-NULL-ACCEPTING"
+    }
+  ]
+}
