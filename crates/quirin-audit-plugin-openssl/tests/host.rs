@@ -20,6 +20,12 @@
 //! error and a timeout (the run `Unknown`, its claims joined nowhere), and a
 //! host `Unsafe` row that the plugin does not lower. The positive run over
 //! the real pinned release needs its tarball and is ignored without it.
+//!
+//! Unix only, like every host-route test: on another host the host spawns no
+//! external subcommand (its quota kill is a process-group kill), so every run
+//! fails closed as `plugin-spawn` before the plugin is reached.
+
+#![cfg(unix)]
 
 mod support;
 
