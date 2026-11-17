@@ -799,6 +799,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [openssl-provider-plugin](openssl-provider-plugin/README.md) | OPENSSL-PROVIDER-PLUGIN: OpenSSL contracts on the user-contract SDK, with version-ranged declarations |
 
+| [openssl-provider-remaining-callees](openssl-provider-remaining-callees/README.md) | OPENSSL-PROVIDER-REMAINING-CALLEES: the census's remaining OpenSSL callees, and the measured opt-in arbiter |
+
 | [out-parameter-body-summary](out-parameter-body-summary/README.md) | OUT-PARAMETER-BODY-SUMMARY |
 
 | [out-parameter-scalar-frame-premise](out-parameter-scalar-frame-premise/README.md) | OUT-PARAMETER-SCALAR-FRAME-PREMISE |

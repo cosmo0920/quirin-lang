@@ -1,0 +1,13 @@
+{
+  "note": "Landing integrate/r22 (base main 222599c16; merges OPENSSL-PROVIDER-REMAINING-CALLEES c714ef64d, no conflicts; amendments applied in 8edb6e362: the card retired, ten follow-ups registered, OPENSSL-UNDOCUMENTED-CALLEES among them awaiting a user decision). Full landing gate on 8edb6e362 (private/integrate-r22/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base main --full --landing through private/toolchain/env.sh: Rust 652 units / 697 summaries, 9621 passed, 0 failed, 21 ignored; fmt, Clippy and both reevaluation examples exit 0; Lean selected: 443 audits passed (QCore.OpensslCalleeShapes new); provider gate: package build, verify-all and verify exit 0, provider workspace tests 149 passed / 0 failed / 1 ignored, provider fmt and Clippy exit 0. Python (779 tests) exited 1 on two test_build_matrix_sections checks only (lean audit count and named_followups dimension), because the committed matrix predates the amendments; it is regenerated from this record and the suite rerun is recorded in private/integrate-r22/python-rerun.log. Lands qcore_audit::user_plugins::fold_dependencies, closing the fail-closed defect where a scalar return f() over a bound contract published Safe over an uncertified binding (only raising). Known at landing: the openssl_registered_callbacks premise (C04.18) behind SSL_write/read/connect/do_handshake and the two *_file loaders, and the PEM readers bounded to null x and cb (C04.5), are named premises for user review. No measured row moves (the card's opt-in arbiter: 1097 Safe / 2 Pending / 3700 Unknown / 5 Unsafe in every run; no pinned route reads the user load path). No profile baseline is changed and land.py publish is owed.",
+  "workspace_tests": 9621,
+  "provider_tests": 149,
+  "python_evidence_validator_tests": 779,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "full landing gate: every step exits 0 except the Python suite's two stale-matrix checks, cleared by regenerating the matrix from this record (rerun disclosed in the note); Lean selected and run in the gate",
+  "lean_audits": 443,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
