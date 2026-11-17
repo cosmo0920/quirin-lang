@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 989
+  "named_followups": 990
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6881,8 +6881,8 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Landing integrate/r17: the merge of origin/main 285f51092 (the other lane's integrate/r13 through r15: CURRENT-CONTEXT-NEW-TRIAGE, LINK-STANDING-IMPORT-LIMITERS, OPENSSL-PROVIDER-PLUGIN, merged onto W48-PLUGIN-VERDICT-PRESERVATION) into this lane's main 0c0c6b297 (integrate/r15 W48-OPENSSL-CONTRACT-PLUGIN and integrate/r16 W48-LIBCURL-CONTRACT-PLUGIN), merge commit 11d945be5. Conflicts were additive only and resolved by keeping both sides: gateway rules 52 (W48-OPENSSL-CONTRACT-PLUGIN) and 53 (OPENSSL-PROVIDER-PLUGIN) and their router rows, the wave-48 increment paragraphs, proof roots and report index regenerated; the two OpenSSL efforts are distinct (an audit subcommand plugin in crates/quirin-audit-plugin-openssl, and a user contract crate in providers/quirin-provider-openssl) and neither reads the other. Full landing gate on 11d945be5 (private/integrate-r17/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 648 units / 693 summaries, 9588 passed, 0 failed, 21 ignored; Lean all, 439 audits; fmt, Clippy, provider lock and both reevaluation examples exit 0; provider gate not selected (providers/ unchanged by the merge relative to origin/main), so provider_tests carries the other lane's integrate/r15 figure (140). Python (779 tests) exited 1 on one test_build_matrix_sections check only, because the committed matrix predates the merge; it is regenerated from this record and the suite rerun is recorded in private/integrate-r17/python-rerun.log: 778 passed, the matrix check among them; the one failure there was the load-sensitive test_gate_slot_lane.Status.test_status_shows_lane_holders_and_waiters (a third short-lane holder seen), which passed three isolated reruns of its module, appended to the same log. This record replaces the integrate/r16 one (whose figures were Rust 9570 / 646 units, Lean 437). No measured row moves; no profile baseline is changed and land.py publish is owed.",
-  "workspace_tests": 9588,
+  "note": "Landing integrate/r19 (base main 32336c33d; merges LIBRARY-VERSION-PROBE-ROUTE-DATABASE 63435291f, no conflicts; amendments applied in fd03b61d3: LIBRARY-VERSION-PROBE-ROUTE-DATABASE retired, LIBRARY-VERSION-PROBE-CONTRACTS-ROUTE-INCLUDES and LIBRARY-VERSION-PROBE-UNIT-SCOPE registered). Full landing gate on fd03b61d3 (private/integrate-r19/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 651 units / 696 summaries, 9618 passed, 0 failed, 21 ignored (the card gate's load-sensitive cycle20_verifier_plugins row passed here); fmt, Clippy and both reevaluation examples exit 0; the scoper selected no Lean (no proof change), so check_lean_audits.py was run separately: 442 audits passed (private/integrate-r19/lean.log); provider gate not selected (providers/ unchanged). Python (779 tests) exited 1 on one test_build_matrix_sections check only, because the committed matrix predates the amendments; it is regenerated from this record and the suite rerun is recorded in private/integrate-r19/python-rerun.log. No measured row moves: the card argues by construction that no declaration on the corpus, system or slice load paths states a library version range (resource_library_version appears only in the user crate providers/quirin-provider-openssl), so evaluate returns before any database is read; no declared arbiter was run. provider_tests carries the previous landing record's figure. No profile baseline is changed and land.py publish is owed.",
+  "workspace_tests": 9618,
   "provider_tests": 140,
   "python_evidence_validator_tests": 779,
   "lean_audits": 442,
@@ -7334,9 +7334,9 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "full landing gate: every step exits 0 except the Python suite's one stale-matrix check, cleared by regenerating the matrix from this record (rerun disclosed in the note)",
+  "standing_gate": "full landing gate: every step exits 0 except the Python suite's one stale-matrix check, cleared by regenerating the matrix from this record (rerun disclosed in the note); Lean run separately as check_lean_audits.py",
   "full_language_conformance": false,
-  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
+  "measurement_provenance": "integrator_supplied (docs/reports/library-version-probe-route-database/integration/gate.json)"
  },
  "named_followups": [
   {

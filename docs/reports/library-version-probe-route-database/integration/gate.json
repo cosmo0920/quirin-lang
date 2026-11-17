@@ -1,0 +1,13 @@
+{
+  "note": "Landing integrate/r19 (base main 32336c33d; merges LIBRARY-VERSION-PROBE-ROUTE-DATABASE 63435291f, no conflicts; amendments applied in fd03b61d3: LIBRARY-VERSION-PROBE-ROUTE-DATABASE retired, LIBRARY-VERSION-PROBE-CONTRACTS-ROUTE-INCLUDES and LIBRARY-VERSION-PROBE-UNIT-SCOPE registered). Full landing gate on fd03b61d3 (private/integrate-r19/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 651 units / 696 summaries, 9618 passed, 0 failed, 21 ignored (the card gate's load-sensitive cycle20_verifier_plugins row passed here); fmt, Clippy and both reevaluation examples exit 0; the scoper selected no Lean (no proof change), so check_lean_audits.py was run separately: 442 audits passed (private/integrate-r19/lean.log); provider gate not selected (providers/ unchanged). Python (779 tests) exited 1 on one test_build_matrix_sections check only, because the committed matrix predates the amendments; it is regenerated from this record and the suite rerun is recorded in private/integrate-r19/python-rerun.log. No measured row moves: the card argues by construction that no declaration on the corpus, system or slice load paths states a library version range (resource_library_version appears only in the user crate providers/quirin-provider-openssl), so evaluate returns before any database is read; no declared arbiter was run. provider_tests carries the previous landing record's figure. No profile baseline is changed and land.py publish is owed.",
+  "workspace_tests": 9618,
+  "provider_tests": 140,
+  "python_evidence_validator_tests": 779,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "full landing gate: every step exits 0 except the Python suite's one stale-matrix check, cleared by regenerating the matrix from this record (rerun disclosed in the note); Lean run separately as check_lean_audits.py",
+  "lean_audits": 442,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
