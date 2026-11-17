@@ -34,10 +34,21 @@
 //! (`qcore_c_gateway::clang_command`) under each include configuration of the
 //! audited build and reads the three macros, each a decimal integer. The
 //! configurations are the distinct `-I`/`-isystem`/`-iquote`/`-idirafter`
-//! lists of the compile database named by `QCORE_LIBRARY_VERSION_COMPILE_DATABASE`
-//! when it is set, and otherwise one configuration with Clang's default search
-//! path (which is the build's exactly when the build passes the library no
-//! include directory, as the prepared Fluent Bit build does for OpenSSL).
+//! lists of the compile databases the run analyses ([`ProbeDatabases`],
+//! card LIBRARY-VERSION-PROBE-ROUTE-DATABASE): the configured and current
+//! routes (and the pinned route) hand the probe their own databases, and
+//! `quirin-audit pin` takes the same `--compile-database`. Precedence: the
+//! database `QCORE_LIBRARY_VERSION_COMPILE_DATABASE` names, when it is set,
+//! is an explicit override of the run's own (and the record says so); else
+//! the run's databases; else, for a run with no database (the contracts
+//! route, a pin without `--compile-database`), one configuration with Clang's
+//! default search path (which is the build's exactly when the build passes
+//! the library no include directory, as the prepared Fluent Bit build does
+//! for OpenSSL). A database that cannot be read, holds no compile command,
+//! or carries a command whose include configuration cannot be read
+//! ([`include_flags`]) never falls back to the default search path: every
+//! probe under it is [`LibraryVersionFailure::Unreadable`], and a pin
+//! refuses.
 //!
 //! `quirin-audit pin` records the probed version in the crate's lock
 //! (`library_versions`); every audit probes again ([`evaluate`]) before any
@@ -70,8 +81,12 @@ pub const SOURCE_FILE: &str = "library-versions.json";
 pub const SOURCE_SCHEMA: u32 = 1;
 
 /// The variable naming a compile database whose include configurations the
-/// probe reads.
+/// probe reads, overriding the run's own databases.
 pub const PROBE_DATABASE_VARIABLE: &str = "QCORE_LIBRARY_VERSION_COMPILE_DATABASE";
+
+/// The configurations source of a run with no compile database: one
+/// configuration, Clang's default search path.
+pub const DEFAULT_SEARCH_PATH: &str = "clang-default-search-path";
 
 /// What the report record means, carried in it.
 pub const MEANING: &str = "library version ranges (card OPENSSL-PROVIDER-PLUGIN, contract spec C06.2): a declaration stating `resource_library_version(LIB, since|documented V[, removed W])` is in force only where the version the audited build's headers report (read from the crate's library-versions.json source by preprocessing under every include configuration) is readable, unambiguous, within [V, W) and equal to the version its lock pins; a version that only differs from the pinned one is held as contract-pin-mismatch (Pending: review and re-pin), and out of range, unreadable or ambiguous holds every call Unknown";
@@ -167,51 +182,133 @@ pub struct Probed {
     pub configurations: usize,
 }
 
-/// The include configurations of the audited build, and where they came
-/// from.
+/// The compile databases a run analyses units from, whose include
+/// configurations the probe reads (card LIBRARY-VERSION-PROBE-ROUTE-DATABASE).
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub enum ProbeDatabases {
+    /// A run with no compile database (the contracts route, a pin without
+    /// `--compile-database`): Clang's default search path.
+    #[default]
+    None,
+    /// The run's own databases, in the order it reads them.
+    Route(Vec<PathBuf>),
+}
+
+impl ProbeDatabases {
+    /// One route database.
+    #[must_use]
+    pub fn route(database: &Path) -> Self {
+        Self::Route(vec![database.to_path_buf()])
+    }
+}
+
+/// The include configurations of the audited build and where they came from.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Configurations {
+    /// The record's `configurations` value.
+    pub source: String,
+    /// The distinct include-flag lists, or why they cannot be read (every
+    /// probe under them is then unreadable, never the default search path).
+    pub sets: Result<Vec<Vec<String>>, String>,
+}
+
+/// The include configurations of the audited build: the database
+/// [`PROBE_DATABASE_VARIABLE`] names (an explicit override, recorded as one),
+/// else `databases` (the run's own), else Clang's default search path.
+#[must_use]
+pub fn include_configurations(databases: &ProbeDatabases) -> Configurations {
+    if let Some(path) = std::env::var_os(PROBE_DATABASE_VARIABLE) {
+        let path = PathBuf::from(path);
+        return Configurations {
+            source: format!(
+                "override {PROBE_DATABASE_VARIABLE}: compile-database:{}",
+                path.display()
+            ),
+            sets: database_configurations(std::slice::from_ref(&path)),
+        };
+    }
+    match databases {
+        ProbeDatabases::None => Configurations {
+            source: DEFAULT_SEARCH_PATH.into(),
+            sets: Ok(vec![Vec::new()]),
+        },
+        ProbeDatabases::Route(paths) => Configurations {
+            source: paths
+                .iter()
+                .map(|path| format!("compile-database:{}", path.display()))
+                .collect::<Vec<_>>()
+                .join(" + "),
+            sets: database_configurations(paths),
+        },
+    }
+}
+
+/// The distinct include configurations of `paths`, read by the routes' own
+/// compile-record reader ([`crate::compile_db::compile_entries`]). Total or
+/// refused: no database, an unreadable database, one with no compile
+/// command, a record the reader refuses, or a command whose include
+/// configuration cannot be read ([`include_flags`]) is an error, never the
+/// default search path.
+fn database_configurations(paths: &[PathBuf]) -> Result<Vec<Vec<String>>, String> {
+    if paths.is_empty() {
+        return Err("the run names no compile database".into());
+    }
+    let mut sets = BTreeSet::new();
+    for path in paths {
+        let text = fs::read_to_string(path)
+            .map_err(|error| format!("compile database {}: {error}", path.display()))?;
+        let entries = crate::compile_db::compile_entries(&text)
+            .map_err(|error| format!("compile database {}: {error}", path.display()))?;
+        if entries.is_empty() {
+            return Err(format!(
+                "compile database {} holds no compile command",
+                path.display()
+            ));
+        }
+        for entry in &entries {
+            let flags = crate::compile_db::shell_words(&entry.command)
+                .and_then(|words| include_flags(&words, &entry.directory))
+                .map_err(|error| {
+                    format!(
+                        "compile database {}: the include configuration of {} cannot be read: \
+                         {error}",
+                        path.display(),
+                        entry.file.display()
+                    )
+                })?;
+            sets.insert(flags);
+        }
+    }
+    Ok(sets.into_iter().collect())
+}
+
+/// Arguments that change where `#include <HEADER>` resolves other than by an
+/// include directory the probe passes on, matched as the whole argument or as
+/// its prefix (a joined value): a command carrying one has an include
+/// configuration the probe cannot read, so it never guesses one.
+pub const UNREAD_SEARCH_FLAGS: [&str; 11] = [
+    "-nostdinc",
+    "-nostdlibinc",
+    "-nobuiltininc",
+    "--sysroot",
+    "-isysroot",
+    "-iprefix",
+    "-iwithprefix",
+    "-I-",
+    "--include-directory",
+    "-iframework",
+    "-F",
+];
+
+/// The include-path arguments of one compile command, each directory made
+/// absolute against the command's directory (joined with the platform's
+/// separator).
 ///
 /// # Errors
 ///
-/// A named compile database that cannot be read or parsed.
-pub fn include_configurations() -> Result<(Vec<Vec<String>>, String), String> {
-    let Some(path) = std::env::var_os(PROBE_DATABASE_VARIABLE) else {
-        return Ok((vec![Vec::new()], "clang-default-search-path".into()));
-    };
-    let path = PathBuf::from(path);
-    let entries: Vec<Value> = serde_json::from_slice(
-        &fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))?,
-    )
-    .map_err(|error| format!("{}: {error}", path.display()))?;
-    let mut sets = BTreeSet::new();
-    for entry in &entries {
-        let directory = entry["directory"].as_str().unwrap_or(".");
-        let arguments: Vec<String> = match entry["arguments"].as_array() {
-            Some(arguments) => arguments
-                .iter()
-                .filter_map(|a| a.as_str().map(str::to_owned))
-                .collect(),
-            None => entry["command"]
-                .as_str()
-                .unwrap_or_default()
-                .split_whitespace()
-                .map(str::to_owned)
-                .collect(),
-        };
-        sets.insert(include_flags(&arguments, Path::new(directory)));
-    }
-    if sets.is_empty() {
-        sets.insert(Vec::new());
-    }
-    Ok((
-        sets.into_iter().collect(),
-        format!("compile-database:{}", path.display()),
-    ))
-}
-
-/// The include-path arguments of one compile command, each directory made
-/// absolute against the command's directory.
-#[must_use]
-pub fn include_flags(arguments: &[String], directory: &Path) -> Vec<String> {
+/// An include flag naming no directory, or an argument of
+/// [`UNREAD_SEARCH_FLAGS`].
+pub fn include_flags(arguments: &[String], directory: &Path) -> Result<Vec<String>, String> {
     const FLAGS: [&str; 4] = ["-I", "-isystem", "-iquote", "-idirafter"];
     let absolute = |value: &str| {
         let path = Path::new(value);
@@ -223,13 +320,27 @@ pub fn include_flags(arguments: &[String], directory: &Path) -> Vec<String> {
     };
     let mut flags = Vec::new();
     let mut index = 0;
+    // The first word is the compiler, never a flag.
+    if !arguments.is_empty() {
+        index = 1;
+    }
     while index < arguments.len() {
         let argument = &arguments[index];
+        if let Some(flag) = UNREAD_SEARCH_FLAGS
+            .iter()
+            .find(|flag| argument.starts_with(**flag))
+        {
+            return Err(format!(
+                "`{argument}` changes the header search (`{flag}`) in a way the probe does not \
+                 reproduce"
+            ));
+        }
         if let Some(flag) = FLAGS.iter().find(|flag| argument == *flag) {
-            if let Some(value) = arguments.get(index + 1) {
-                flags.push((*flag).to_owned());
-                flags.push(absolute(value));
-            }
+            let value = arguments
+                .get(index + 1)
+                .ok_or_else(|| format!("`{flag}` names no directory"))?;
+            flags.push((*flag).to_owned());
+            flags.push(absolute(value));
             index += 2;
             continue;
         }
@@ -242,7 +353,7 @@ pub fn include_flags(arguments: &[String], directory: &Path) -> Vec<String> {
         }
         index += 1;
     }
-    flags
+    Ok(flags)
 }
 
 fn macro_value(defines: &str, name: &str) -> Option<u32> {
@@ -255,6 +366,23 @@ fn macro_value(defines: &str, name: &str) -> Option<u32> {
     }
     let text = text.trim_end_matches(['L', 'l', 'U', 'u']);
     text.parse().ok()
+}
+
+/// Probe one library's version under the run's include configurations; a
+/// configuration set that cannot be read is
+/// [`LibraryVersionFailure::Unreadable`], never the default search path.
+///
+/// # Errors
+///
+/// As [`probe`], and unreadable configurations.
+pub fn probe_under(
+    source: &VersionSource,
+    configurations: &Configurations,
+) -> Result<Probed, (LibraryVersionFailure, String)> {
+    match &configurations.sets {
+        Ok(sets) => probe(source, sets),
+        Err(detail) => Err((LibraryVersionFailure::Unreadable, detail.clone())),
+    }
 }
 
 /// Probe one library's version under every configuration.
@@ -445,25 +573,28 @@ impl Evaluation {
 /// and withhold each one not in force.
 ///
 /// `crate_root` gives the crate root of a module key; `pinned` the lock's
-/// recorded versions under a crate root.
+/// recorded versions under a crate root; `databases` the run's own compile
+/// databases ([`include_configurations`]).
 ///
 /// # Errors
 ///
-/// A malformed version-source file, an unreadable compile database, or a
-/// withholding the environment refuses.
+/// A malformed version-source file, or a withholding the environment
+/// refuses. An unreadable compile database is not an error: it holds every
+/// ranged declaration `Unknown` (unreadable).
 pub fn evaluate(
     contracts: &mut ResourceContracts,
     module_of: &BTreeMap<String, String>,
     crate_root: &dyn Fn(&str) -> Option<PathBuf>,
     pinned: &dyn Fn(&Path) -> Option<BTreeMap<String, LockedLibraryVersion>>,
+    databases: &ProbeDatabases,
 ) -> Result<Evaluation, String> {
     let ranges = contracts.library_versions().clone();
     let mut evaluation = Evaluation::default();
     if ranges.is_empty() {
         return Ok(evaluation);
     }
-    let (configurations, source) = include_configurations()?;
-    evaluation.configurations_source = Some(source);
+    let configurations = include_configurations(databases);
+    evaluation.configurations_source = Some(configurations.source.clone());
     let mut probes: BTreeMap<(PathBuf, String), Result<Probed, (LibraryVersionFailure, String)>> =
         BTreeMap::new();
     for (name, bound) in ranges {
@@ -485,7 +616,7 @@ pub fn evaluate(
                 if !probes.contains_key(&key) {
                     let result = match read_sources(root)? {
                         Some(sources) => match sources.get(&bound.library) {
-                            Some(source) => probe(source, &configurations),
+                            Some(source) => probe_under(source, &configurations),
                             None => Err((
                                 LibraryVersionFailure::Unreadable,
                                 format!("{SOURCE_FILE} declares no `{}`", bound.library),
@@ -641,10 +772,108 @@ mod tests {
                 "-c".into(),
             ],
             Path::new("/b"),
-        );
+        )
+        .unwrap();
         // A relative directory is joined with the platform's separator.
         let joined = Path::new("/b").join("inc").display().to_string();
         assert_eq!(flags, ["-I", joined.as_str(), "-isystem", "/opt/ssl"]);
+    }
+
+    /// Card LIBRARY-VERSION-PROBE-ROUTE-DATABASE: a configuration the probe
+    /// cannot reproduce is refused, never read as the default search path.
+    #[test]
+    fn an_include_configuration_is_read_total_or_refused() {
+        let words =
+            |text: &str| -> Vec<String> { text.split_whitespace().map(str::to_owned).collect() };
+        let directory = Path::new("/b");
+        // The compiler word is never a flag, whatever its spelling.
+        assert_eq!(
+            include_flags(&words("-F/usr/bin/cc -c x.c"), directory).unwrap(),
+            Vec::<String>::new()
+        );
+        for refused in [
+            "cc -I",
+            "cc -c x.c -isystem",
+            "cc -nostdinc -Iinc",
+            "cc --sysroot=/s -c x.c",
+            "cc --sysroot /s -c x.c",
+            "cc -isysroot /s -c x.c",
+            "cc -iprefix /p -iwithprefix inc",
+            "cc -I- -Iinc",
+            "cc --include-directory=inc",
+            "cc -iframework /f",
+            "cc -F/f",
+        ] {
+            assert!(
+                include_flags(&words(refused), directory).is_err(),
+                "{refused}"
+            );
+        }
+    }
+
+    #[test]
+    fn a_route_database_never_falls_back_to_the_default_search_path() {
+        // The run's own databases are named in the record; with none the
+        // record is the default search path, exactly as before.
+        if std::env::var_os(PROBE_DATABASE_VARIABLE).is_some() {
+            return;
+        }
+        let none = include_configurations(&ProbeDatabases::None);
+        assert_eq!(none.source, DEFAULT_SEARCH_PATH);
+        assert_eq!(none.sets, Ok(vec![Vec::new()]));
+        let root = std::env::temp_dir().join(format!("qcore-libver-db-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&root);
+        fs::create_dir_all(&root).unwrap();
+        let database = root.join("compile_commands.json");
+        let directory = root.display().to_string();
+        let write = |value: Value| fs::write(&database, value.to_string()).unwrap();
+        let read = || include_configurations(&ProbeDatabases::route(&database));
+        // Unreadable, empty, a record the routes' reader refuses (a relative
+        // directory, no command), and a configuration the probe cannot
+        // reproduce: each is an error, held as unreadable.
+        assert!(read().sets.is_err());
+        for bad in [
+            json!([]),
+            json!([{"directory": "relative", "file": "a.c", "arguments": ["cc", "-c", "a.c"]}]),
+            json!([{"directory": directory, "file": "a.c"}]),
+            json!([{"directory": directory, "file": "a.c",
+                    "arguments": ["cc", "--sysroot=/s", "-c", "a.c"]}]),
+            json!([{"directory": directory, "file": "a.c", "arguments": ["cc", "-c", "a.c"]},
+                   {"directory": directory, "file": "b.c", "arguments": ["cc", "-c", "b.c", "-I"]}]),
+        ] {
+            write(bad.clone());
+            let configurations = read();
+            assert!(configurations.sets.is_err(), "{bad}");
+            let source = VersionSource {
+                header: "fakelib/fakelibv.h".into(),
+                major: "A".into(),
+                minor: "B".into(),
+                patch: "C".into(),
+            };
+            assert_eq!(
+                probe_under(&source, &configurations).unwrap_err().0,
+                LibraryVersionFailure::Unreadable
+            );
+        }
+        // A readable database: its distinct configurations, a command with no
+        // include flag among them (that unit is built on the default search
+        // path), the record naming the database.
+        write(json!([
+            {"directory": directory, "file": "a.c", "command": "cc -Ibundled -c a.c"},
+            {"directory": directory, "file": "b.c", "arguments": ["cc", "-Ibundled", "-c", "b.c"]},
+            {"directory": directory, "file": "c.c", "arguments": ["cc", "-c", "c.c"]},
+        ]));
+        let configurations = read();
+        assert_eq!(
+            configurations.source,
+            format!("compile-database:{}", database.display())
+        );
+        let bundled = root.join("bundled").display().to_string();
+        assert_eq!(
+            configurations.sets.unwrap(),
+            vec![Vec::new(), vec!["-I".to_owned(), bundled]]
+        );
+        fs::remove_dir_all(&root).unwrap();
     }
 
     #[test]

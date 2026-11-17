@@ -203,7 +203,21 @@ pub fn run_with_checkpoints(
     )?;
     // Card W45-CONTRACT-REVISION-MODE: every pinned contract is compared with
     // its lock over the audited Fluent Bit source before any unit is analysed.
-    let pins = crate::contract_revision::apply_pins(&mut contracts, &owners, &root)?;
+    // Card LIBRARY-VERSION-PROBE-ROUTE-DATABASE: a library version range
+    // (none of this route's contracts states one) would be probed under the
+    // databases the route analyses.
+    let probe_databases = crate::library_version::ProbeDatabases::Route(
+        std::iter::once(database_path.as_path())
+            .chain(monkey_database)
+            .map(Path::to_path_buf)
+            .collect(),
+    );
+    let pins = crate::contract_revision::apply_pins_probing(
+        &mut contracts,
+        &owners,
+        &root,
+        &probe_databases,
+    )?;
     // Card MEASURE-LOOKUP-RECORD-REUSE: a run claiming the base side's
     // analyzer for a contract-only diff is the base build reading the tip's
     // contract inputs, checked before any unit is analysed.
