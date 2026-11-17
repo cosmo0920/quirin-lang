@@ -210,3 +210,124 @@ reasons:
 * `library_version_hold_routes.rs` asserts that a held row carries no
   `plugin_links`. That stays true after the merge, because the held callee is
   not a declaration the row rests on.
+
+## 6. The opt-in libcurl run, re-measured
+
+**Inputs.** This card made its own inputs under `private/hold/`; the host had
+no shared prepared inputs.
+
+* Fluent Bit was cloned from upstream.
+* `libcurl4-openssl-dev_8.18.0-1ubuntu2.8_amd64.deb` (sha256
+  `eb12af81…`, `apt-get download`) was extracted with `dpkg-deb -x`. CMake saw
+  it through `CMAKE_INCLUDE_PATH` and `CMAKE_LIBRARY_PATH` and found
+  `CURL 8.18.0`.
+* The base binary ran `quirin-audit prepare --revision 046accf6`. The
+  production database has 1,414 commands (sha256 `2076bfa5…`), and 815 of
+  them pass the libcurl include directory. These are the registering card's
+  counts.
+* `selected.json`, the two units' commands, was cut by that card's
+  `probe_database.py` (sha256 `010cbd1f…`).
+* The checker packages were installed by `providers/package.py checkers`
+  (exit 0).
+
+The run is that card's `callers.sh` and `compare_callers.py`, unchanged,
+with `--jobs 2` and `SOURCE_DATE_EPOCH=1767225600`. It ran once with the base
+binary (`681fca01a`, sha256 `0c185c9a…`; `private/hold/callers-base/`) and
+once with the tip binary (`e1a3a2469`, sha256 `ceaf912c…`;
+`private/hold/callers-tip2/`). Every step and both comparisons exited 0.
+[`compare_base_tip.py`](evidence/compare_base_tip.py) compared the two runs
+row by row (exit 0, no unmatched row), and its output is
+[`base-tip.json`](evidence/base-tip.json). Each binary's comparison against
+`without` is kept as
+[`callers-comparison-base.json`](evidence/callers-comparison-base.json) and
+[`callers-comparison-tip.json`](evidence/callers-comparison-tip.json).
+[`rerun.sh`](evidence/rerun.sh) collects the commands. It was not run as one
+script: the card ran the same commands step by step through private wrappers.
+
+| Side | Probe | libcurl declarations | Base: Safe / Pending / Unknown / Unsafe | Tip | `rd_http_global_init`, base → tip |
+|---|---|---|---|---|---|
+| without | none | none | 6 / 0 / 39 / 4 | 6 / 0 / 39 / 4 | Unknown → Unknown |
+| with-selected | the selected units' commands | all 6 in force | 6 / 1 / 38 / 4 | 6 / 1 / 38 / 4 | Pending → **Pending** (the binding's) |
+| with-default | the route's own database (LIBRARY-VERSION-PROBE-ROUTE-DATABASE) | all 6 `library-version-unreadable` | 6 / 1 / 38 / 4 | 6 / 0 / 39 / 4 | Pending → **Unknown** |
+| with-full | the whole database, by override | all 6 `library-version-unreadable` | 6 / 1 / 38 / 4 | 6 / 0 / 39 / 4 | Pending → **Unknown** |
+
+The base binary reproduces the defect on this preparation. With the fix,
+`rd_http_global_init` is `Unknown` on both unreadable runs, carrying "call to
+`curl_global_init` whose contract is not in force at the audited library
+version (library-version-unreadable)". It is `Pending` only in force.
+
+On the unreadable sides, six other rows change their diagnostics but not
+their status. They stay `Unknown` because of other refusals. Each held libcurl
+call's text moves from the pin-mismatch text to the library-version text:
+`rd_http_get`, `rd_http_get_params_append`,
+`rd_kafka_oidc_client_credentials_build_headers`,
+`rd_kafka_oidc_jwt_bearer_build_request_body`,
+`rd_kafka_oidc_token_client_credentials_refresh_cb` and
+`rd_kafka_oidc_token_jwt_bearer_refresh_cb`. The prediction did not name
+these text-only changes. They are the same correction.
+
+Across all four sides:
+
+* every unit stays `Unsafe`;
+* no row reaches `Safe`;
+* nothing moves into or out of `Unsafe`;
+* every side checks 18 bindings, all `Pending`.
+
+The `without` and `with-selected` sides are identical row for row.
+
+A first tip binary carried only the ABI-gate carry (`61626f86a`;
+`private/hold/callers-tip/`, stopped after `with-default`). It still
+published `rd_http_global_init` `Pending` on `with-default`. That is how the
+checked-specification reduction was found (section 2).
+
+The prediction's text (section 1) predates the second reduction. Its figures
+are what was measured.
+
+## 7. Gate
+
+`python3 scripts/gate_scope.py --base 681fca01a --out private/gate-2/gate`
+ran through `private/toolchain/env.sh` on `3ee435abc`, which carries every
+code, test, Lean and rule change of this card. The record is
+[`evidence/gate.json`](evidence/gate.json). The scope was the whole Rust
+suite (the diff reaches `qcore-c-gateway` and `qcore-schemas`), Lean
+`QCore.LibraryVersionRange` with its audit, the Python suite, and no provider
+gate.
+
+| Step | Exit | Counts |
+|---|---:|---|
+| submodules, fmt, Clippy | 0, 0, 0 | |
+| Rust suite | 0 | 653 units, 698 summaries; 9,624 passed, 0 failed, 21 ignored, 148 filtered |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| Lean (`gate_lean.py`) | 0 | 1 audit; the full `check_lean_audits.py` also passed, 442 audits (`private/hold/leanall3.log`) |
+| Python suite | 1 | 779 tests, 1 failure |
+
+The Python failure is
+`test_build_matrix_sections.CommittedMatrixIsSelfConsistent.test_each_derived_dimension_matches_the_section_it_counts`:
+`dimensions.named_followups` is 990 against 993 entries. This card does not
+edit the acceptance matrix, and the base `681fca01a` carries the same
+committed matrix. The count went stale when the LIBCURL-PROVIDER-PLUGIN
+amendments were applied, and the integrator regenerates it at landing.
+
+After `3ee435abc` this card adds only the report, its evidence and the
+amendments file. Their checks on the final commit are given in the card's
+reply.
+
+## 8. Files likely to conflict
+
+* `crates/qcore-c-gateway/src/legacy_declared_abi.rs`,
+  `legacy_checked_spec.rs`, `legacy_neutral.rs` and `legacy_summary.rs`: one
+  line each, next to `carry_cross_unit_imports`.
+* `crates/qcore-schemas/src/contract.rs`: a new method.
+* `crates/qcore-c-gateway/tests/contract_pin_hold.rs`: an appended test.
+* `docs/agents/rules/53.md` and the generated `docs/agents/gateway.md`
+  (rerun `gen_rule_docs.py` on a conflict).
+* `proof/QCore/LibraryVersionRange.lean` and
+  `proof/AuditLibraryVersionRange.lean`.
+* `crates/qcore-audit/src/user_plugins.rs` is **not** touched (section 5).
+
+## 9. Follow-ups
+
+* Retires LIBRARY-VERSION-HOLD-CURRENT-ROUTE-PENDING.
+* Amends W45-PLUGIN-ROUTE-COVERAGE: the configured route reads a user load
+  path but runs no binding (section 3).
+* No new rule and no new follow-up id.
