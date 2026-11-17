@@ -40,7 +40,12 @@
 //!    (never a final free), a constructor of one returns a reference that may
 //!    be NULL, a getter returning what its argument owns is a borrowed result,
 //!    a holder keeping a pointer is a retention, every other position is
-//!    borrowed, and nothing else is stated.
+//!    borrowed, and nothing else is stated. Card
+//!    **REFERENCE-DROP-NULL-ACCEPTING**: a release whose page states that a
+//!    NULL argument does nothing is a NULL-accepting drop,
+//!    `resource_reference_dropped(p, nullable)`, and the cited snapshot must
+//!    record that exact sentence; the range's series is then the oldest one
+//!    whose page states it.
 //!
 //! Every function passing all four is answered with a `Safe` **claim** and no
 //! certificate, one diagnostic per function naming what was checked; the
@@ -331,6 +336,21 @@ pub fn check_function(module_path: &str, module: &str, function: &str) -> Result
             describe(documented.shape)
         ));
     }
+    // Card REFERENCE-DROP-NULL-ACCEPTING: a NULL-accepting drop stands only
+    // on a snapshot that records the page's exact NULL sentence.
+    if let Documented::NullAcceptingRelease { sentence, .. } = documented.shape {
+        let stated = page["null_sentences"]
+            .as_array()
+            .into_iter()
+            .flatten()
+            .any(|stated| stated.as_str() == Some(sentence));
+        if !stated {
+            return Err(format!(
+                "{function}: the snapshot of {} at series {} does not record \"{sentence}\"",
+                documented.page, documented.series
+            ));
+        }
+    }
     Ok(format!(
         "{function}: prototype `{prototype}` ({header}, sha256 {}) matches the contract; `{range}` \
          admits the pinned OpenSSL {pinned_version}; custody as documented at {} (sha256 {} as \
@@ -348,6 +368,9 @@ pub fn describe(shape: Documented) -> &'static str {
         Documented::Plain => "plain call (no custody taken or returned)",
         Documented::CountedRelease(_) => {
             "counted release (one reference dropped, never a final free)"
+        }
+        Documented::NullAcceptingRelease { .. } => {
+            "NULL-accepting counted release (one reference dropped, nothing done on NULL)"
         }
         Documented::CountedConstructor => "returned reference (one reference, or NULL)",
         Documented::Constructor => "fresh object (owned, or NULL)",
@@ -410,6 +433,13 @@ pub fn expected_clauses(
         Documented::CountedRelease(position) => {
             clauses.push(format!(
                 "ensures normal resource_reference_dropped({})",
+                name(position)?
+            ));
+            clauses.push("ensures normal resource_return_none()".to_owned());
+        }
+        Documented::NullAcceptingRelease { position, .. } => {
+            clauses.push(format!(
+                "ensures normal resource_reference_dropped({}, nullable)",
                 name(position)?
             ));
             clauses.push("ensures normal resource_return_none()".to_owned());
@@ -578,17 +608,27 @@ mod tests {
             .unwrap();
         // A final free in place of a counted drop.
         let freed = text.replace(
-            "resource_reference_dropped(a)",
+            "resource_reference_dropped(a, nullable)",
             "resource_released(a, nullable)",
         );
         assert!(check_function(path, &freed, "X509_free").is_err());
+        // Card REFERENCE-DROP-NULL-ACCEPTING: a drop that does not state the
+        // documented NULL behaviour, and the NULL-accepting form from a series
+        // whose page does not state it.
+        let strict = text.replace(
+            "resource_reference_dropped(a, nullable)",
+            "resource_reference_dropped(a)",
+        );
+        assert!(check_function(path, &strict, "X509_free").is_err());
+        let older = text.replace("documented \"1.1.1\"", "documented \"1.0.2\"");
+        assert!(check_function(path, &older, "X509_free").is_err());
         // A range the documentation does not support.
-        let ranged = text.replace("documented \"1.0.2\"", "since \"0.9.8\"");
+        let ranged = text.replace("documented \"1.1.1\"", "since \"0.9.8\"");
         assert!(check_function(path, &ranged, "X509_free").is_err());
         // A range that excludes the pinned version.
         let removed = text.replace(
-            "documented \"1.0.2\")",
-            "documented \"1.0.2\", removed \"3.0.0\")",
+            "documented \"1.1.1\")",
+            "documented \"1.1.1\", removed \"3.0.0\")",
         );
         assert!(check_function(path, &removed, "X509_free").is_err());
         // A signature the pinned prototype does not have.
@@ -596,10 +636,49 @@ mod tests {
         assert!(check_function(path, &typed, "X509_free").is_err());
         // No range at all.
         let unranged = text.replace(
-            "    requires resource_library_version(openssl, documented \"1.0.2\");\n",
+            "    requires resource_library_version(openssl, documented \"1.1.1\");\n",
             "",
         );
         assert!(check_function(path, &unranged, "X509_free").is_err());
+    }
+
+    /// Card REFERENCE-DROP-NULL-ACCEPTING: every NULL-accepting drop cites a
+    /// fetched page at its range's series that records the NULL sentence,
+    /// and no older series checked records it (the bound is the oldest).
+    #[test]
+    fn every_null_accepting_drop_cites_the_oldest_series_stating_it() {
+        let snapshots: Value = serde_json::from_str(crate::DOC_SNAPSHOTS).unwrap();
+        let pages = snapshots["pages"].as_array().unwrap();
+        let mut seen = 0;
+        for documented in DOCUMENTED {
+            let Documented::NullAcceptingRelease { sentence, .. } = documented.shape else {
+                continue;
+            };
+            seen += 1;
+            let bound = LibraryVersion::parse(documented.series).unwrap();
+            for page in pages
+                .iter()
+                .filter(|page| page["page"] == documented.page && page["fetched"] == true)
+            {
+                let series = LibraryVersion::parse(page["series"].as_str().unwrap()).unwrap();
+                let states = page["null_sentences"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .any(|stated| stated.as_str() == Some(sentence));
+                if series < bound {
+                    assert!(!states, "{}: {} states it", documented.function, series);
+                }
+                if series == bound {
+                    assert!(
+                        states,
+                        "{}: {} does not state it",
+                        documented.function, series
+                    );
+                }
+            }
+        }
+        assert_eq!(seen, 6);
     }
 
     #[test]

@@ -17,19 +17,22 @@ module contract;
 // Card OPENSSL-PROVIDER-PLUGIN. X509 certificates (see err.qv for what every
 // declaration of this crate shares).
 
-// X509_free: https://docs.openssl.org/1.0.2/man3/X509_new/ HISTORY (1.0.2):
-// X509_new() and X509_free() "are available in all versions of SSLeay and
-// OpenSSL"; no version is named, so the bound is the oldest series checked.
-// DESCRIPTION (3.5): X509_free() "decrements the reference count" and frees
-// the structure when it is zero; "If the argument is NULL, nothing is done".
+// X509_free: https://docs.openssl.org/1.1.1/man3/X509_new/ (also 3.5,
+// 1.0.2). HISTORY (1.0.2): X509_new() and X509_free() "are available in all
+// versions of SSLeay and OpenSSL"; no version is named. DESCRIPTION (3.5):
+// X509_free() "decrements the reference count" and frees the structure when
+// it is zero; "If the argument is NULL, nothing is done" (3.5; 1.1.1: "If a
+// is NULL nothing is done"; the 1.0.2 page does not say it). Card
+// REFERENCE-DROP-NULL-ACCEPTING: the drop is NULL-accepting (C04.17), so the
+// bound is 1.1.1, the oldest series checked stating the NULL behaviour.
 // Pinned prototype: `void X509_free(X509 *a)`, declared through
 // DECLARE_ASN1_FUNCTIONS in openssl/x509.h.
 extern fn X509_free(a: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
-    requires resource_library_version(openssl, documented "1.0.2");
+    requires resource_library_version(openssl, documented "1.1.1");
     ensures normal resource_borrowed(a);
-    ensures normal resource_reference_dropped(a);
+    ensures normal resource_reference_dropped(a, nullable);
     ensures normal resource_return_none();
 };

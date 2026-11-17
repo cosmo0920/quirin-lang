@@ -6965,6 +6965,33 @@ safety claim and no validation of the detach representation premise.
     `crates/qcore-contract/tests/reference_clause.rs`;
     [report](../reports/refcount-resource-kind/README.md).
 
+Amended by card REFERENCE-DROP-NULL-ACCEPTING (contract specification
+C04.17, grammar G05; follow-up registered by OPENSSL-PROVIDER-PLUGIN): a drop
+declared `resource_reference_dropped(p, nullable)` (`ReferenceClause::nullable`,
+qcore-schemas 28.0.0, omitted when false) is **NULL-accepting**. Its non-NULL
+edge is exactly the drop above; its NULL edge discharges nothing and creates
+nothing. `legacy_reference_count::drop_actual` reads the actual in three
+classes and `reference_count::decide_drop_actual` decides them: a
+definitely-NULL actual (no target, not unknown, possibly null) is a no-op; a
+name bound to exactly one live family or NULL (one identity site, not
+unknown, not an unresolved effect) is that family's drop; every other actual
+is the table above, so a NULL-accepting drop of a caller's formal or a
+member read still refuses (`reference-drop-unheld`). **Do not** read a drop
+not marked nullable as NULL-accepting: it decides both NULL classes as the
+`Other` binding it was before, refused. Rule 13c: a defined NULL-accepting
+drop stands only where its body opens with a return on NULL or forwards the
+object whole to a declared NULL-accepting drop, never touching a member
+first. Used by the OpenSSL user crate's six frees, each ranged from the
+documentation series whose page states the NULL behaviour (1.1.1; `ENGINE_free`
+3.0). Measured: corpus, system and slice no row moves (the declared arbiter,
+`quirin-audit measure --declared`); the opt-in `current` run over the
+OpenSSL callers' seven files no row moves either (all 59 drop diagnostics, in
+13 rows, still read `reference-drop-unheld`: a member read or an object from
+an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
+`nullable_drop_vectors_hold`); tests `tests/reference_drop_null_accepting.rs`,
+`crates/qcore-contract/tests/reference_clause.rs`;
+[report](../reports/reference-drop-null-accepting/README.md).
+
 <a id="constraint-13c"></a>
 
 13c. **In a unit that defines a keep or drop declaration's body, the

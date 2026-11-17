@@ -472,6 +472,7 @@ mod tests {
                 references: vec![ReferenceClause {
                     parameter: 0,
                     operation: ReferenceOperation::Kept,
+                    nullable: false,
                 }],
                 references_withdrawn: false,
                 callbacks: Vec::new(),
@@ -505,6 +506,7 @@ mod tests {
                 references: vec![ReferenceClause {
                     parameter: 0,
                     operation: ReferenceOperation::Dropped,
+                    nullable: false,
                 }],
                 references_withdrawn: false,
                 callbacks: Vec::new(),

@@ -54,6 +54,16 @@ pub enum Documented {
     /// Releases one reference on a reference-counted object (the parameter
     /// at this position): a reference drop, never a final free.
     CountedRelease(usize),
+    /// Card **REFERENCE-DROP-NULL-ACCEPTING**: a counted release (the
+    /// parameter at `position`) whose page states, in `sentence`, that a NULL
+    /// argument does nothing: a NULL-accepting reference drop,
+    /// `resource_reference_dropped(p, nullable)`. The cited snapshot must
+    /// record `sentence`, and the range's series is the oldest one whose page
+    /// states it.
+    NullAcceptingRelease {
+        position: usize,
+        sentence: &'static str,
+    },
     /// Creates (or looks up) a reference-counted object and returns one
     /// reference, or NULL on failure.
     CountedConstructor,
@@ -166,13 +176,23 @@ const CALLBACKS: &[Premise] = &[Premise::RegisteredCallbacks];
 const PEM_READ: &[Premise] = &[Premise::NullArgument(1), Premise::NullArgument(2)];
 
 use Documented::{
-    BorrowedResult, Constructor, CountedConstructor, CountedRelease, Plain, Release, Retains,
+    BorrowedResult, Constructor, CountedConstructor, CountedRelease, NullAcceptingRelease, Plain,
+    Release, Retains,
 };
 use Null::Nullable;
 
 /// The documented semantics of every contracted function, sorted by name.
 pub const DOCUMENTED: &[DocumentedFunction] = &[
-    entry("BIO_free", "BIO_new", "1.0.2", DOC_1_0_2, CountedRelease(0)),
+    entry(
+        "BIO_free",
+        "BIO_new",
+        "1.1.1",
+        DOC_1_1_1,
+        NullAcceptingRelease {
+            position: 0,
+            sentence: "If a is NULL nothing is done.",
+        },
+    ),
     entry(
         "BIO_new_file",
         "BIO_s_file",
@@ -190,9 +210,12 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
     entry(
         "ENGINE_free",
         "ENGINE_add",
-        "1.1.1",
-        DOC_1_1_1,
-        CountedRelease(0),
+        "3.0",
+        DOC_3_0,
+        NullAcceptingRelease {
+            position: 0,
+            sentence: "If the argument to ENGINE_free() is NULL, nothing is done.",
+        },
     ),
     entry(
         "ERR_clear_error",
@@ -240,9 +263,12 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
     entry(
         "EVP_PKEY_free",
         "EVP_PKEY_new",
-        "1.0.2",
-        DOC_1_0_2,
-        CountedRelease(0),
+        "1.1.1",
+        DOC_1_1_1,
+        NullAcceptingRelease {
+            position: 0,
+            sentence: "If key is NULL, nothing is done.",
+        },
     ),
     entry("EVP_sha256", "EVP_DigestInit", "1.0.2", DOC_1_0_2, Plain),
     entry("EVP_sha512", "EVP_DigestInit", "1.0.2", DOC_1_0_2, Plain),
@@ -307,9 +333,12 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
     entry(
         "SSL_CTX_free",
         "SSL_CTX_free",
-        "1.0.2",
-        DOC_1_0_2,
-        CountedRelease(0),
+        "1.1.1",
+        DOC_1_1_1,
+        NullAcceptingRelease {
+            position: 0,
+            sentence: "If ctx is NULL nothing is done.",
+        },
     ),
     entry(
         "SSL_CTX_get_cert_store",
@@ -402,9 +431,12 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
     entry(
         "SSL_free",
         "SSL_free",
-        "1.0.2",
-        DOC_1_0_2,
-        CountedRelease(0),
+        "1.1.1",
+        DOC_1_1_1,
+        NullAcceptingRelease {
+            position: 0,
+            sentence: "If ssl is NULL nothing is done.",
+        },
     ),
     entry(
         "SSL_get1_peer_certificate",
@@ -505,9 +537,12 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
     entry(
         "X509_free",
         "X509_new",
-        "1.0.2",
-        DOC_1_0_2,
-        CountedRelease(0),
+        "1.1.1",
+        DOC_1_1_1,
+        NullAcceptingRelease {
+            position: 0,
+            sentence: "If a is NULL nothing is done.",
+        },
     ),
     entry(
         "X509_get_issuer_name",

@@ -19,7 +19,13 @@
 //! ```text
 //! ensures normal resource_reference_kept(p);      // +1 (rule 13b)
 //! ensures normal resource_reference_dropped(p);   // -1, possibly the last
+//! ensures normal resource_reference_dropped(p, nullable); // NULL: a no-op
 //! ```
+//!
+//! Card **REFERENCE-DROP-NULL-ACCEPTING**: a drop may name one further word,
+//! `nullable`, for a callee documented to do nothing on a NULL argument. Any
+//! other word, and any second word on a keep, rejects the module: `nonnull`
+//! is what a drop without the word already means, so it has one spelling.
 //!
 //! `p` names a depth-one pointer parameter (`ptr<mut, u8>` or
 //! `ptr<const, u8>`) whose mode is `resource_borrowed` and which carries no
@@ -55,19 +61,24 @@ const DEPTH_ONE: [&str; 2] = ["ptr<mut, u8>", "ptr<const, u8>"];
 pub(super) struct WrittenReference {
     pub(super) parameter: String,
     pub(super) operation: ReferenceOperation,
+    /// The nullability word after the parameter, as written.
+    pub(super) null: Option<String>,
 }
 
 /// Read one reference clause from its predicate words, `None` for any other
 /// predicate.
 pub(super) fn clause(words: &[&str]) -> Option<WrittenReference> {
-    let (operation, parameter) = match words {
-        [KEPT, parameter] => (ReferenceOperation::Kept, parameter),
-        [DROPPED, parameter] => (ReferenceOperation::Dropped, parameter),
+    let (operation, parameter, null) = match words {
+        [KEPT, parameter] => (ReferenceOperation::Kept, parameter, None),
+        [DROPPED, parameter] => (ReferenceOperation::Dropped, parameter, None),
+        [KEPT, parameter, null] => (ReferenceOperation::Kept, parameter, Some(null)),
+        [DROPPED, parameter, null] => (ReferenceOperation::Dropped, parameter, Some(null)),
         _ => return None,
     };
     Some(WrittenReference {
         parameter: (*parameter).to_owned(),
         operation,
+        null: null.map(|word| (*word).to_owned()),
     })
 }
 
@@ -88,6 +99,20 @@ pub(super) fn declaration(
         };
     };
     let name = clause.parameter.as_str();
+    let nullable = match (clause.operation, clause.null.as_deref()) {
+        (_, None) => false,
+        (ReferenceOperation::Dropped, Some("nullable")) => true,
+        (ReferenceOperation::Kept, Some(_)) => {
+            return Err(format!(
+                "a keep names only its parameter, `resource_reference_kept({name})`"
+            ));
+        }
+        (ReferenceOperation::Dropped, Some(other)) => {
+            return Err(format!(
+                "a drop takes `nullable` or nothing after its parameter, not `{other}`"
+            ));
+        }
+    };
     let parameter = names
         .get(name)
         .copied()
@@ -129,5 +154,6 @@ pub(super) fn declaration(
     Ok(vec![ReferenceClause {
         parameter,
         operation: clause.operation,
+        nullable,
     }])
 }

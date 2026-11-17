@@ -566,10 +566,13 @@ pub fn declaration_clauses(environment: &ResourceContracts, name: &str) -> Vec<C
     for reference in &declared.references {
         clauses.push(Clause::new(
             ClauseKind::Reference,
+            // Card REFERENCE-DROP-NULL-ACCEPTING: the nullable drop's word,
+            // absent from every clause written before it.
             format!(
-                "{}(#{})",
+                "{}(#{}{})",
                 reference.operation.predicate(),
-                reference.parameter
+                reference.parameter,
+                if reference.nullable { ", nullable" } else { "" }
             ),
         ));
     }
@@ -933,6 +936,7 @@ mod tests {
                 references: vec![qcore_schemas::reference_count::ReferenceClause {
                     parameter: 0,
                     operation: qcore_schemas::reference_count::ReferenceOperation::Kept,
+                    nullable: false,
                 }],
                 references_withdrawn: false,
                 callbacks: Vec::new(),
