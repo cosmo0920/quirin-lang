@@ -961,7 +961,7 @@ fn uncertified_use_refusal(name: &str) -> String {
 /// every other uncertain state (before the creation, before the status test,
 /// on the failure edge, a join of those) refuses: POSIX leaves a use of a key
 /// value not obtained from `pthread_key_create` undefined.
-pub(crate) fn report_uncertified_key_uses(
+pub(super) fn report_uncertified_key_uses(
     cfg: &LegacyCfg,
     incoming: &[Option<AbstractState>],
     diagnostics: &mut BTreeSet<super::LegacyDiagnostic>,
