@@ -58,6 +58,13 @@
 //!   classification; this sees every fallback, condition and return route,
 //!   and a by-value actual too, because it reads names off the tokens rather
 //!   than off the nodes.
+//! * **Automatic thread keys** (card CG25-THREAD-KEY-AUTOMATIC-REVISIT, rule
+//!   11v (7)): `pthread_key_create(&k, 0)` into the one automatic key object
+//!   of the function is tracked like a `regex` object, with
+//!   `pthread_key_delete(k)` and `pthread_getspecific(k)` as by-value
+//!   custody actuals. [`report_uncertified_key_uses`] admits a by-value use
+//!   only where the settled state certifies the key; a released key is the
+//!   `use_after_close` candidate.
 //!
 //! Everything here refuses rather than approximates.
 
@@ -84,10 +91,16 @@ pub(crate) const ACTUAL_REFUSAL: &str = "in-place resource object is not the add
 pub(crate) const STATIC_KEY_RELEASE_REFUSAL: &str = "finaliser of a thread key held by static storage: the holder's lifetime is outside this frame (rule 11v)";
 
 /// Card CURRENT-CONTEXT-NEW-TRIAGE (D3): the refusal of a `thread_key`
-/// creation into anything but an object of static storage duration. An
-/// automatic key would be a tracked in-place object, and a by-value use of
-/// one (`(void) pthread_getspecific(k)`) can reach a statement route that
-/// reads it as data (the card's gate finding), so no key is tracked.
+/// creation into anything but an object of static storage duration. D3
+/// refused automatic keys too: a by-value use (`(void)
+/// pthread_getspecific(k)`) reached a statement route that read the key as
+/// data. Rule 11v (6) now refuses every such mention, so card
+/// CG25-THREAD-KEY-AUTOMATIC-REVISIT (rule 11v (7)) tracks the one automatic
+/// key object of a function (`Parser::automatic_key`). This refusal now
+/// covers every other non-static storage: a member, a formal, an object
+/// reached through a pointer, and a name that also designates a file-scope
+/// object. Its text is unchanged; every object it names is still not of
+/// static storage duration.
 pub(crate) const THREAD_KEY_STORAGE_REFUSAL: &str =
     "thread key created into an object that is not of static storage duration (rule 11v (5))";
 
@@ -160,13 +173,15 @@ impl InPlaceNames {
                     continue;
                 }
                 if let Some(name) = address_of_name(argument) {
-                    if kind == ResourceKind::ThreadKey {
-                        // Card CURRENT-CONTEXT-NEW-TRIAGE (D3): a key is held
-                        // by static storage or refused; it is never tracked.
-                        if static_objects.contains(name) {
-                            static_keys.insert(name.to_owned());
-                        }
+                    if kind == ResourceKind::ThreadKey && static_objects.contains(name) {
+                        // Card CURRENT-CONTEXT-NEW-TRIAGE (D3): a key created
+                        // into static storage is the static holder's.
+                        static_keys.insert(name.to_owned());
                     } else {
+                        // Card CG25-THREAD-KEY-AUTOMATIC-REVISIT (rule 11v
+                        // (7)): any other `&NAME` key is tracked like a
+                        // `regex` object; `in_place_actuals` admits only one
+                        // automatic object every reference of the body names.
                         kinds.entry(name.to_owned()).or_default().insert(kind);
                     }
                 }
@@ -268,11 +283,17 @@ impl InPlaceNames {
                         contract.parameters.get(position),
                         Some(ResourceParameterMode::Out { .. })
                     );
-                let name =
-                    address_of_name(argument).or_else(|| match strip_parentheses(argument) {
-                        [name] if by_value && is_identifier(name) => Some(*name),
+                // Card CG25-THREAD-KEY-AUTOMATIC-REVISIT: a by-value position
+                // names the object by itself and an address position by
+                // `&NAME`; neither spelling is custody at the other.
+                let name = if by_value {
+                    match strip_parentheses(argument) {
+                        [name] if is_identifier(name) => Some(*name),
                         _ => None,
-                    });
+                    }
+                } else {
+                    address_of_name(argument)
+                };
                 let Some(name) = name.filter(|name| self.kind(name) == Some(kind)) else {
                     continue;
                 };
@@ -399,10 +420,15 @@ pub(crate) fn calls_thread_key_initialiser(body: &[&str], contracts: &ResourceCo
         pair[1] == "("
             && is_identifier(pair[0])
             && contracts.contract(pair[0]).is_some_and(|contract| {
-                contract
-                    .parameter_kinds
-                    .values()
-                    .any(|kind| *kind == ResourceKind::ThreadKey)
+                // Card CG25-THREAD-KEY-AUTOMATIC-REVISIT: a by-value use
+                // (`pthread_getspecific`) needs no static objects.
+                contract.parameter_kinds.iter().any(|(position, kind)| {
+                    *kind == ResourceKind::ThreadKey
+                        && !matches!(
+                            contract.parameters.get(*position),
+                            Some(ResourceParameterMode::Borrowed)
+                        )
+                })
             })
     })
 }
@@ -413,6 +439,20 @@ pub(crate) fn has_in_place_position(contract: &ResourceFunctionContract) -> bool
         .parameter_kinds
         .values()
         .any(|kind| kind.is_in_place())
+}
+
+/// Card CG25-THREAD-KEY-AUTOMATIC-REVISIT: whether a contract has an
+/// in-place position other than a by-value use: an initialiser, a finaliser,
+/// or a use that names the object by address.
+fn has_in_place_custody_position(contract: &ResourceFunctionContract) -> bool {
+    contract.parameter_kinds.iter().any(|(position, kind)| {
+        kind.is_in_place()
+            && !(kind.finalised_by_value()
+                && matches!(
+                    contract.parameters.get(*position),
+                    Some(ResourceParameterMode::Borrowed)
+                ))
+    })
 }
 
 /// `NAME` when `argument` is `& NAME`, possibly parenthesised.
@@ -452,6 +492,40 @@ pub(crate) fn one_automatic_object(function: &Value, name: &str) -> bool {
         && !ty.contains("volatile")
 }
 
+/// Card CG25-THREAD-KEY-AUTOMATIC-REVISIT (rule 11v (7)): whether every
+/// `DeclRefExpr` naming `name` in `function` refers to the one `VarDecl` of
+/// that name the function declares. A reference to a file-scope object the
+/// local shadows (before its declarator, or after its block closes) is
+/// another object, so the name is then not one key.
+pub(crate) fn every_reference_is(function: &Value, name: &str) -> bool {
+    fn walk<'a>(
+        node: &'a Value,
+        name: &str,
+        declarations: &mut Vec<&'a str>,
+        references: &mut Vec<Option<&'a str>>,
+    ) {
+        if kind(node) == "VarDecl" && node["name"].as_str() == Some(name) {
+            declarations.push(node["id"].as_str().unwrap_or(""));
+        }
+        if kind(node) == "DeclRefExpr" && node["referencedDecl"]["name"].as_str() == Some(name) {
+            references.push(node["referencedDecl"]["id"].as_str());
+        }
+        for child in children(node) {
+            walk(child, name, declarations, references);
+        }
+    }
+    let mut declarations = Vec::new();
+    let mut references = Vec::new();
+    walk(function, name, &mut declarations, &mut references);
+    let [declaration] = declarations.as_slice() else {
+        return false;
+    };
+    !declaration.is_empty()
+        && references
+            .iter()
+            .all(|reference| *reference == Some(*declaration))
+}
+
 impl Parser<'_> {
     /// Hook (rule 11v): give every in-place-kinded position of one contracted
     /// call its place. `Err` carries the refusal; the call is then lowered to
@@ -486,8 +560,10 @@ impl Parser<'_> {
                         .is_some_and(|name| self.in_place_names.static_key(name))
             })
             .collect::<Vec<_>>();
-        // Card CURRENT-CONTEXT-NEW-TRIAGE (D3): a key created anywhere but
-        // into static storage refuses.
+        // Card CURRENT-CONTEXT-NEW-TRIAGE (D3), narrowed by card
+        // CG25-THREAD-KEY-AUTOMATIC-REVISIT (rule 11v (7)): a key created
+        // anywhere but into static storage or into one automatic key object
+        // of this function refuses.
         if (0..contract.parameters.len()).any(|position| {
             contract.parameter_kind(position) == ResourceKind::ThreadKey
                 && matches!(
@@ -495,6 +571,10 @@ impl Parser<'_> {
                     Some(ResourceParameterMode::Out { .. })
                 )
                 && !static_held.contains(&position)
+                && !raw_arguments
+                    .and_then(|arguments| arguments.get(position))
+                    .and_then(|argument| address_of_name(argument))
+                    .is_some_and(|name| self.automatic_key(name))
         }) {
             return Err(THREAD_KEY_STORAGE_REFUSAL.to_owned());
         }
@@ -529,16 +609,18 @@ impl Parser<'_> {
             }
             let raw = raw_arguments.and_then(|arguments| arguments.get(position));
             // Card CURRENT-CONTEXT-NEW-TRIAGE (D3): a by-value finaliser or use
-            // (`pthread_key_delete(k)`) names the object by itself. The place
-            // is `k` when `k` is the one automatic object this body created a
-            // key into; a static key's finaliser refuses (its holder's
-            // lifetime is outside the frame).
-            if kind.finalised_by_value()
+            // (`pthread_key_delete(k)`, `pthread_getspecific(k)`) names the
+            // object by itself. The place is `k` when `k` is the one automatic
+            // key object of this function (card
+            // CG25-THREAD-KEY-AUTOMATIC-REVISIT, [`Self::automatic_key`]); a
+            // static key's finaliser refuses (its holder's lifetime is outside
+            // the frame). `&k` at a by-value position is never its place.
+            let by_value = kind.finalised_by_value()
                 && !matches!(
                     contract.parameters.get(position),
                     Some(ResourceParameterMode::Out { .. })
-                )
-            {
+                );
+            if by_value {
                 let named = raw
                     .map(|argument| strip_parentheses(argument))
                     .and_then(|argument| match argument {
@@ -547,10 +629,7 @@ impl Parser<'_> {
                     });
                 if let Some(name) = named
                     .filter(|name| self.in_place_names.kind(name) == Some(kind))
-                    .filter(|name| {
-                        self.typed_positions_index()
-                            .is_some_and(|index| one_automatic_object(&index.function, name))
-                    })
+                    .filter(|name| self.automatic_key(name))
                 {
                     *slot = Some(name.to_owned());
                     continue;
@@ -569,11 +648,16 @@ impl Parser<'_> {
                 }
             }
             let name = raw
+                .filter(|_| !by_value)
                 .and_then(|argument| address_of_name(argument))
                 .filter(|name| self.in_place_names.kind(name) == Some(kind))
                 .filter(|name| {
-                    self.typed_positions_index()
-                        .is_some_and(|index| one_automatic_object(&index.function, name))
+                    if kind == ResourceKind::ThreadKey {
+                        self.automatic_key(name)
+                    } else {
+                        self.typed_positions_index()
+                            .is_some_and(|index| one_automatic_object(&index.function, name))
+                    }
                 });
             if let Some(name) = name {
                 *slot = Some(name.to_owned());
@@ -598,6 +682,20 @@ impl Parser<'_> {
             }
         }
         Ok(static_held)
+    }
+
+    /// Card CG25-THREAD-KEY-AUTOMATIC-REVISIT (rule 11v (7)): whether `name`
+    /// is a tracked `thread_key` object that is the one automatic object of
+    /// this function by that name ([`one_automatic_object`]) and that every
+    /// reference to `name` in the function designates
+    /// ([`every_reference_is`]), so no mention of the name can be a
+    /// file-scope object the local shadows.
+    fn automatic_key(&self, name: &str) -> bool {
+        self.in_place_names.kind(name) == Some(ResourceKind::ThreadKey)
+            && self.typed_positions_index().is_some_and(|index| {
+                one_automatic_object(&index.function, name)
+                    && every_reference_is(&index.function, name)
+            })
     }
 
     /// Hook (rule 11v): whether `argument` is `&NAME` of a tracked object at
@@ -826,14 +924,123 @@ pub(crate) fn verify_cfg(cfg: &mut LegacyCfg) {
                     || arguments.get(position).is_some_and(Option::is_some)
             })
         };
+        // Card CG25-THREAD-KEY-AUTOMATIC-REVISIT: a nested by-value use
+        // (`free(pthread_getspecific(k))`) carries no place. When it names a
+        // tracked key, rule 11v (6)'s carried count refuses the function;
+        // otherwise it keeps the plain borrowed reading it had before the use
+        // was kinded. Every other nested in-place position is refused here.
         let nested_in_place = nested
             .iter()
-            .any(|nested| has_in_place_position(&nested.contract));
+            .any(|nested| has_in_place_custody_position(&nested.contract));
         if nested_in_place || !complete(arguments, contract) {
             node.instruction = LegacyInstruction::Unknown {
                 description: ACTUAL_REFUSAL.to_owned(),
                 writes: super::RefusedWrites::Unbounded,
             };
+        }
+    }
+}
+
+/// Card CG25-THREAD-KEY-AUTOMATIC-REVISIT (rule 11v (7)): the refusal of a
+/// by-value use of a tracked key its creation status has not certified.
+fn uncertified_use_refusal(name: &str) -> String {
+    format!("use of thread key `{name}` not certified by its creation status (rule 11v (7))")
+}
+
+/// Card CG25-THREAD-KEY-AUTOMATIC-REVISIT (rule 11v (7)): a by-value use of a
+/// tracked key (`pthread_getspecific(k)`) is admitted only where the key is
+/// certainly created: read from the settled incoming states, as
+/// `report_kind_violations` reads its candidates. The tracked keys are the
+/// places this CFG's own by-value-kind initialisers bind (a static-held
+/// creation's position is borrowed, so it binds none).
+///
+/// At such a use the binding of `k` must be an identity of exactly one site,
+/// not unknown, not possibly failed (`may_be_null` or a nullable site), and
+/// the site must be live. A site released on a reaching path is
+/// `report_kind_violations`' `use_after_close` candidate and is left to it;
+/// every other uncertain state (before the creation, before the status test,
+/// on the failure edge, a join of those) refuses: POSIX leaves a use of a key
+/// value not obtained from `pthread_key_create` undefined.
+pub(crate) fn report_uncertified_key_uses(
+    cfg: &LegacyCfg,
+    incoming: &[Option<AbstractState>],
+    diagnostics: &mut BTreeSet<super::LegacyDiagnostic>,
+) {
+    let by_value_positions = |contract: &ResourceFunctionContract, mode_is_use: bool| {
+        (0..contract.parameters.len())
+            .filter(move |position| {
+                let kind = contract.parameter_kind(*position);
+                let mode = contract.parameters.get(*position);
+                kind.is_in_place()
+                    && kind.finalised_by_value()
+                    && if mode_is_use {
+                        matches!(mode, Some(ResourceParameterMode::Borrowed))
+                    } else {
+                        matches!(mode, Some(ResourceParameterMode::Out { .. }))
+                    }
+            })
+            .collect::<Vec<_>>()
+    };
+    let mut tracked = BTreeSet::new();
+    for node in &cfg.nodes {
+        if let LegacyInstruction::ContractCall {
+            arguments,
+            contract,
+            ..
+        } = &node.instruction
+        {
+            for position in by_value_positions(contract, false) {
+                if let Some(place) = arguments.get(position).and_then(Option::as_deref) {
+                    tracked.insert(place.to_owned());
+                }
+            }
+        }
+    }
+    if tracked.is_empty() {
+        return;
+    }
+    for (node_id, node) in cfg.nodes.iter().enumerate() {
+        let LegacyInstruction::ContractCall {
+            arguments,
+            contract,
+            ..
+        } = &node.instruction
+        else {
+            continue;
+        };
+        let Some(state) = incoming.get(node_id).and_then(Option::as_ref) else {
+            continue;
+        };
+        for position in by_value_positions(contract, true) {
+            let Some(place) = arguments
+                .get(position)
+                .and_then(Option::as_deref)
+                .filter(|place| tracked.contains(*place))
+            else {
+                continue;
+            };
+            let certified = state.pointers.get(place).is_some_and(|pointer| {
+                pointer.derivation.is_identity()
+                    && !pointer.unknown
+                    && !pointer.may_be_null
+                    && pointer.targets.len() == 1
+                    && pointer.targets.iter().all(|site| {
+                        !state.nullable_sites.contains(site)
+                            && state
+                                .resources
+                                .get(site)
+                                .is_some_and(|status| status & (super::LIVE | super::RELEASED) != 0)
+                    })
+            });
+            if !certified {
+                diagnostics.insert(super::LegacyDiagnostic {
+                    function: cfg.function.clone(),
+                    line: node.line,
+                    kind: super::LegacyDiagnosticKind::Unsupported {
+                        description: uncertified_use_refusal(place),
+                    },
+                });
+            }
         }
     }
 }
@@ -900,8 +1107,8 @@ fn carried(cfg: &LegacyCfg, callee: &str, position: usize, name: &str) -> usize 
 /// Card CG25-VOID-CAST-GUARD-ESCAPE: the body reading over the libc
 /// declarations, including the by-value `thread_key` case D3's node-level
 /// check could not see (no place is recorded for a by-value scalar actual).
-/// No key is tracked in a real body (D3 refuses the creation), so the names
-/// are built directly here.
+/// The names are built directly here; `tests/thread_key_in_place.rs` reads
+/// real bodies.
 #[cfg(test)]
 mod mention_tests {
     use super::*;
@@ -1004,10 +1211,13 @@ mod mention_tests {
         assert_eq!(read(&names, &body).stray, None);
     }
 
-    /// D3's escape: the getter's position has no kind, so a by-value mention
-    /// of a tracked key there is stray; the by-value delete is custody.
+    /// D3's escape, after card CG25-THREAD-KEY-AUTOMATIC-REVISIT kinded the
+    /// getter's key: a whole by-value `key` at the getter is custody (whether
+    /// a node carries it is `verify_mentions`' check, which refuses the cast
+    /// route's place-less lowering); `&key` or `key + 0` there is stray, as
+    /// is `&key` at the by-value delete.
     #[test]
-    fn a_by_value_getter_of_a_tracked_key_is_stray() {
+    fn a_by_value_getter_of_a_tracked_key_is_custody_only_whole() {
         let names = tracked("key", ResourceKind::ThreadKey);
         let body = "pthread_key_t key ; int r ; r = pthread_key_create ( & key , 0 ) ; \
              if ( r ) return ; pthread_key_delete ( key ) ;";
@@ -1018,8 +1228,26 @@ mod mention_tests {
             0,
             "key".to_owned()
         )));
-        let escaped = format!("{body} ( void ) pthread_getspecific ( key ) ;");
-        assert_eq!(read(&names, &escaped).stray, Some((6, "key".to_owned())));
+        let cast = format!("{body} ( void ) pthread_getspecific ( key ) ;");
+        let mentions = read(&names, &cast);
+        assert_eq!(mentions.stray, None);
+        assert!(mentions.custody.contains_key(&(
+            "pthread_getspecific".to_owned(),
+            0,
+            "key".to_owned()
+        )));
+        for stray in [
+            "( void ) pthread_getspecific ( & key ) ;",
+            "( void ) pthread_getspecific ( key + 0 ) ;",
+            "pthread_key_delete ( & key ) ;",
+        ] {
+            let body = format!("{body} {stray}");
+            assert_eq!(
+                read(&names, &body).stray,
+                Some((6, "key".to_owned())),
+                "{stray}"
+            );
+        }
     }
 
     #[test]

@@ -218,9 +218,21 @@ theorem shape_admissions_are_the_model :
     shapeAdmissions.map Prod.snd = shapeMentions.map (strayFree .regex) := by
   decide
 
-/-- D3's escape: `(void) pthread_getspecific(key)` names the key at a
-position of no kind, so it is a stray mention of a `thread_key` object. -/
-theorem the_void_cast_getter_is_refused (route : Route) (s : IState) :
+/-- D3's escape: `(void) pthread_getspecific(key)`. Since card
+CG25-THREAD-KEY-AUTOMATIC-REVISIT the getter's key is a kinded by-value use
+(callee 7, `pthread_getspecific`), so the mention is a custody actual; the
+cast route lowers the call without the key's place, so the actual is carried
+by no node and the body is refused. (Callee 5 is `pthread_key_delete`.) -/
+theorem the_void_cast_getter_is_refused (s : IState) (l : Lowering)
+    (hc : l.carried.count (7, 0) = 0) :
+    classify (gate .threadKey s [.declarator, .custody 5 0 .threadKey, .custody 7 0 .threadKey]
+      l).diagnostics ≠ .safe :=
+  an_uncarried_custody_actual_is_refused .threadKey s _ l (7, 0) (by decide) hc
+
+/-- A by-value getter at a position of no kind (the declaration before card
+CG25-THREAD-KEY-AUTOMATIC-REVISIT, or any unkinded callee) is a stray
+mention, refused on every route. -/
+theorem an_unkinded_by_value_mention_is_refused (route : Route) (s : IState) :
     classify (gate .threadKey s [.declarator, .custody 5 0 .threadKey, .other]
       (route [.declarator, .custody 5 0 .threadKey, .other])).diagnostics ≠ .safe :=
   a_stray_mention_is_refused_on_every_route route .threadKey s _ .other (by simp) rfl

@@ -37,5 +37,6 @@ classification of a token as a mention is trust boundary 28's. -/
 -- The census shapes and the witnesses.
 #print axioms QCore.InPlaceMentionGuard.shape_admissions_are_the_model
 #print axioms QCore.InPlaceMentionGuard.the_void_cast_getter_is_refused
+#print axioms QCore.InPlaceMentionGuard.an_unkinded_by_value_mention_is_refused
 #print axioms QCore.InPlaceMentionGuard.the_regex_match_mentions_pass
 #print axioms QCore.InPlaceMentionGuard.the_regex_match_mutant_is_refused
