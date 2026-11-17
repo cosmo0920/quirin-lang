@@ -3242,8 +3242,13 @@ pub(crate) fn recursive_component_census(
         let selected = selected.iter().collect::<BTreeSet<_>>();
         names.retain(|name| selected.contains(name));
     }
-    let names =
-        callee_scope::derivation_scope(&tokens, &names, &definitions, selected_functions.is_some());
+    let names = callee_scope::derivation_scope(
+        &tokens,
+        &names,
+        &definitions,
+        selected_functions.is_some(),
+        contracts,
+    );
     // Card LOADER-ABI-MODES, for the same reason the type gate runs here: the
     // census must read the components the analysis reads, over the stream the
     // analysis reads.
@@ -3477,8 +3482,13 @@ fn analyze_translation_unit_under_holds(
     // Card W44-CORPUS-CALLEE-SUMMARIES: W4 derives over the selection plus the
     // unselected internal-linkage definitions it reaches (`callee_scope`); the
     // rows analysed and reported below stay `names` alone.
-    let scope =
-        callee_scope::derivation_scope(&tokens, &names, &definitions, selected_functions.is_some());
+    let scope = callee_scope::derivation_scope(
+        &tokens,
+        &names,
+        &definitions,
+        selected_functions.is_some(),
+        contracts,
+    );
     // Card W45-FB-BACKLOG-CUSTODY: a checked specification stays in the
     // environment the gate derives over only while its body establishes it.
     // Card W45-REFUTED-CONTRACT-WITHDRAWAL: then every call site of a refuted

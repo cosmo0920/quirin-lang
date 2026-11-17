@@ -2847,6 +2847,70 @@ pub(crate) fn settle(
     Some(settled)
 }
 
+/// Card CG22-CALLBACK-CANDIDATE-CONTRACTS (rule 4a amended): the `candidates`
+/// `function`'s body names as designators (a name not followed by `(`) when
+/// the body calls a declaration in force with a synchronous invocation or a
+/// table dispatch (`resource_callback_invoked`, `resource_callback_table`).
+/// The W4 derivation scope follows these as it follows direct calls, so a
+/// `static` comparator handed to `bsearch` or `qsort` is offered to the
+/// unchanged derivation in the unit that carries its body. An
+/// over-approximation of the candidates (every such designator in the body),
+/// which only offers definitions for derivation: a summary is still published
+/// only when it validates, and the invocation still decides over the
+/// candidates' contracts in force. Empty for a body that calls no such
+/// declaration. Registries, registrations and member invocations add none.
+pub(crate) fn invocation_designators(
+    tokens: &[super::Token],
+    function: &str,
+    candidates: &BTreeSet<String>,
+    contracts: &ResourceContracts,
+) -> BTreeSet<String> {
+    let mut out = BTreeSet::new();
+    if candidates.is_empty()
+        || contracts.retaining().values().all(|declared| {
+            !declared.callbacks.iter().any(|clause| {
+                matches!(
+                    clause,
+                    CallbackClause::Invoked { .. } | CallbackClause::Table { .. }
+                )
+            })
+        })
+    {
+        return out;
+    }
+    let Some((start, _)) = super::find_function_body(tokens, function) else {
+        return out;
+    };
+    let Some(end) = super::matching(tokens, start, "{", "}") else {
+        return out;
+    };
+    let body = &tokens[start + 1..end];
+    let invokes = body.iter().enumerate().any(|(at, token)| {
+        body.get(at + 1).is_some_and(|next| next.text == "(")
+            && contracts
+                .retaining_contract(&token.text)
+                .is_some_and(|declared| {
+                    declared.callbacks.iter().any(|clause| {
+                        matches!(
+                            clause,
+                            CallbackClause::Invoked { .. } | CallbackClause::Table { .. }
+                        )
+                    })
+                })
+    });
+    if invokes {
+        for (at, token) in body.iter().enumerate() {
+            if candidates.contains(&token.text)
+                && token.text != function
+                && body.get(at + 1).is_none_or(|next| next.text != "(")
+            {
+                out.insert(token.text.clone());
+            }
+        }
+    }
+    out
+}
+
 /// Rule 13u (W4's order): the in-unit functions `function`'s body names
 /// beside a call to a callback-invoking declaration. A designator at a
 /// callback position is called during that call, so its summary is derived
