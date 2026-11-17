@@ -1,0 +1,38 @@
+{
+  "schema": "quirin-measure-inputs/1",
+  "description": "CG22-CALLBACK-CANDIDATE-CONTRACTS worktree-private preparation of the pinned corpus route only, as RULE50-CONSUMER-COMPOSITION prepared it: quirin-audit prepare clang-build --link (base 32336c33d binary, system Clang 21 /usr/lib/llvm-21/bin/clang) of the host's local Fluent Bit clone at 66910c10, its production compile database copied into fluent-bit-clang-source/build/, quirin-audit prepare monkey over that tree, and providers/package.py build at the base for provider-packages-wave20 (artifacts/prep.sh). --inputs-base is this card's worktree. SENSITIVITY VARIANT: the eight-home link map plus the three comparator homes rd_kafka_metadata_broker_cmp, rd_kafka_metadata_broker_internal_cmp (librdkafka/rdkafka_metadata.c) and rd_strcmp3 (librdkafka/rdstring.c), rule 4c's stated premise extended by three symbols; not the eight-home profile's input.",
+  "routes": [
+    {
+      "name": "corpus",
+      "profile": "eight-home",
+      "kind": "pinned-corpus",
+      "source_commit": "66910c10",
+      "inputs_root": "private/corpus-inputs",
+      "compile_databases": [
+        {
+          "path": "c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json",
+          "sha256": "1a21f0f6f417eab9f3a7cc43cbb0c02064c9d3430b632b992549fc4082d29db6"
+        },
+        {
+          "path": "c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
+          "sha256": "c72659daaff2a6d432090bed0f52a39660a439bca6329e32d3ebbfda6ed22881"
+        }
+      ],
+      "mirror_trees": [
+        "c-gateway-wave-pin/fluent-bit-clang-source",
+        "c-gateway-wave-pin/monkey",
+        "provider-packages-wave20"
+      ],
+      "link_map": {
+        "path": "docs/reports/cg22-callback-candidate-contracts/artifacts/link-map.eleven-home.json",
+        "sha256": "6be6ace166eae396102308d6e83ca6f681187d1312369eac6fe6d6803eb06a52"
+      },
+      "clang": "/usr/lib/llvm-21/bin/clang",
+      "tracked": [
+        "contract/profiles/fluent-bit/audit.json",
+        "contract/profiles/fluent-bit/profile.json",
+        "contract/profiles/fluent-bit/member-facts-scope.json"
+      ]
+    }
+  ]
+}
